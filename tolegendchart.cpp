@@ -32,11 +32,12 @@
  *
  ****************************************************************************/
 
-#include <qpainter.h>
-#include <qpaintdevicemetrics.h>
+#include "utils.h"
 
 #include "tolegendchart.h"
-#include "tomain.h"
+
+#include <qpainter.h>
+#include <qpaintdevicemetrics.h>
 
 #include "tolegendchart.moc"
 

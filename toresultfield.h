@@ -32,15 +32,15 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTFIELD_H
-#define __TORESULTFIELD_H
+#ifndef TORESULTFIELD_H
+#define TORESULTFIELD_H
 
 #include "tobackground.h"
 #include "tohighlightedtext.h"
 #include "toresult.h"
 
-class toSQL;
 class toNoBlockQuery;
+class toSQL;
 
 /** This widget displays the result of a query where each item in the stream
  * is added as a line in a text editer.

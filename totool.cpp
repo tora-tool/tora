@@ -32,22 +32,25 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "tobackground.h"
+#include "toconf.h"
+#include "toconnection.h"
+#include "tomain.h"
+#include "totool.h"
+
 #ifndef WIN32
 #include <unistd.h>
 #endif
 
-#include <qpixmap.h>
 #include <qapplication.h>
-#include <qstring.h>
-#include <qworkspace.h>
 #include <qfile.h>
-#include <qtimer.h>
+#include <qpixmap.h>
 #include <qregexp.h>
-
-#include "totool.h"
-#include "tomain.h"
-#include "toconf.h"
-#include "toconnection.h"
+#include <qstring.h>
+#include <qtimer.h>
+#include <qworkspace.h>
 
 #ifdef WIN32
 #  include "windows/cregistry.h"

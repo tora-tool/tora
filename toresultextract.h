@@ -32,11 +32,11 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTEXTRACT_H
-#define __TORESULTEXTRACT_H
+#ifndef TORESULTEXTRACT_H
+#define TORESULTEXTRACT_H
 
-#include "toworksheet.h"
 #include "toresult.h"
+#include "toworksheet.h"
 
 class toSQL;
 

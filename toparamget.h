@@ -32,17 +32,17 @@
  *
  ****************************************************************************/
 
-#ifndef __TOPARAMGET_H
-#define __TOPARAMGET_H
+#ifndef TOPARAMGET_H
+#define TOPARAMGET_H
+
+#include "toconnection.h"
+#include "tohelp.h"
 
 #include <list>
 #include <map>
 
 #include <qdialog.h>
 #include <qpushbutton.h>
-
-#include "toconnection.h"
-#include "tohelp.h"
 
 class QLineEdit;
 class QGrid;

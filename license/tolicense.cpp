@@ -32,17 +32,17 @@
  *
  ****************************************************************************/
 
+#include "md5.c"
+#include "tolicense.h"
+
 #include <time.h>
 #include <stdlib.h>
 
-#include <qpushbutton.h>
-#include <qlineedit.h>
 #include <qlayout.h>
-#include <qtextview.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
 #include <qregexp.h>
-
-#include "md5.c"
-#include "tolicense.h"
+#include <qtextview.h>
 
 #include "tolicense.moc"
 #include "tolicenseui.moc"

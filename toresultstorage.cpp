@@ -32,16 +32,17 @@
  *
  ****************************************************************************/
 
-#include <qpainter.h>
-#include <qheader.h>
+#include "utils.h"
 
-#include "toresultstorage.h"
-#include "tomain.h"
 #include "toconf.h"
-#include "totool.h"
-#include "tosql.h"
 #include "toconnection.h"
 #include "tonoblockquery.h"
+#include "toresultstorage.h"
+#include "tosql.h"
+#include "totool.h"
+
+#include <qheader.h>
+#include <qpainter.h>
 
 #include "toresultstorage.moc"
 
@@ -76,6 +77,11 @@ public:
     }
   }
 };
+
+bool toResultStorage::canHandle(toConnection &conn)
+{
+  return toIsOracle(conn);
+}
 
 toResultStorage::toResultStorage(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)

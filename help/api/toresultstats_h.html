@@ -60,16 +60,16 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTSTATS_H
-#define __TORESULTSTATS_H
+#ifndef TORESULTSTATS_H
+#define TORESULTSTATS_H
 
-#include "toresultview.h"
 #include "tobackground.h"
+#include "toresultview.h"
 
 class toNoBlockQuery;
 
-#define TO_STAT_MAX 500
 #define TO_STAT_BLOCKS 10
+#define TO_STAT_MAX 500
 
 /** This widget will displays information about statistics in either a database or a session.
  */
@@ -140,8 +140,7 @@ public:
   void changeSession(int ses);
   /** Support Oracle
    */
-  virtual bool canHandle(toConnection &conn)
-  { return toIsOracle(conn); }
+  virtual bool canHandle(toConnection &conn);
 signals:
   /** Emitted when session is changed.
    * @param ses New session ID.

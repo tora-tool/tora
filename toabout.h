@@ -32,12 +32,12 @@
  *
  ****************************************************************************/
 
-#ifndef __TOABOUT_H
-#define __TOABOUT_H
-
-#include <qvbox.h>
+#ifndef TOABOUT_H
+#define TOABOUT_H
 
 #include "toaboutui.h"
+
+#include <qvbox.h>
 
 class QPushButton;
 class QTextView;

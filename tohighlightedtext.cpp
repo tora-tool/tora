@@ -32,22 +32,23 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "toconf.h"
+#include "toconnection.h"
+#include "tohighlightedtext.h"
+#include "tosqlparse.h"
+#include "totool.h"
+
 #include <ctype.h>
 
+#include <qapplication.h>
+#include <qlistbox.h>
 #include <qpainter.h>
 #include <qpalette.h>
 #include <qsimplerichtext.h>
 #include <qstylesheet.h>
-#include <qapplication.h>
-#include <qlistbox.h>
 #include <qtimer.h>
-
-#include "tohighlightedtext.h"
-#include "toconnection.h"
-#include "tomain.h"
-#include "totool.h"
-#include "toconf.h"
-#include "tosqlparse.h"
 
 #include "todefaultkeywords.h"
 

@@ -60,26 +60,25 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTVIEW_H
-#define __TORESULTVIEW_H
+#ifndef TORESULTVIEW_H
+#define TORESULTVIEW_H
+
+#include "toeditwidget.h"
+#include "toresult.h"
 
 #include <qlistview.h>
 
 #include <map>
 
-#include "toresult.h"
-#include "tomain.h"
-#include "toeditwidget.h"
-
 class QListViewItem;
 class QPopupMenu;
-class toResultView;
-class toListTip;
 class TOPrinter;
-class toSQL;
-class toResultCols;
-class toSearchReplace;
+class toListTip;
 class toQuery;
+class toResultCols;
+class toResultView;
+class toSQL;
+class toSearchReplace;
 
 /** Baseclass for filters to apply to the @ref toResultView to filter out
  * rows that you don't want to add as items to the list.

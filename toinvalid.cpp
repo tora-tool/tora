@@ -32,28 +32,32 @@
  *
  ****************************************************************************/
 
-#include <qlineedit.h>
-#include <qtoolbutton.h>
-#include <qlabel.h>
-#include <qsplitter.h>
-#include <qworkspace.h>
-#include <qpopupmenu.h>
-#include <qmenubar.h>
+#include "utils.h"
+
+#include "tochangeconnection.h"
+#include "toconnection.h"
+#include "toextract.h"
+#include "tohighlightedtext.h"
+#include "toinvalid.h"
+#include "tomain.h"
+#include "toresultextract.h"
+#include "toresultlong.h"
+#include "toresultview.h"
+#include "tosql.h"
+#include "totool.h"
 
 #ifdef TO_KDE
 #  include <kmenubar.h>
 #endif
 
-#include "totool.h"
-#include "tohighlightedtext.h"
-#include "toresultview.h"
-#include "toresultextract.h"
-#include "tosql.h"
-#include "toconnection.h"
-#include "toinvalid.h"
-#include "tochangeconnection.h"
-#include "toextract.h"
-#include "toresultlong.h"
+#include <qlabel.h>
+#include <qlineedit.h>
+#include <qmenubar.h>
+#include <qpopupmenu.h>
+#include <qsplitter.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
+#include <qworkspace.h>
 
 #include "toinvalid.moc"
 

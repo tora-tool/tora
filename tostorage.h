@@ -32,35 +32,34 @@
  *
  ****************************************************************************/
 
-#ifndef __TOSTORAGE_H
-#define __TOSTORAGE_H
+#ifndef TOSTORAGE_H
+#define TOSTORAGE_H
+
+#include "tostoragedatafileui.h"
+#include "tostoragedialogui.h"
+#include "tostoragetablespaceui.h"
+#include "totool.h"
 
 #include <list>
 
 #include <qdialog.h>
 
-#include "totool.h"
-#include "tostoragetablespaceui.h"
-#include "tostoragedialogui.h"
-#include "tostoragedatafileui.h"
-
 class QCheckBox;
 class QGroupBox;
 class QLabel;
 class QLineEdit;
-class QPushButton;
-class QSpinBox;
-class QRadioButton;
-class QTabWidget;
 class QPopupMenu;
+class QPushButton;
+class QRadioButton;
+class QSpinBox;
 class QSplitter;
-
-class toStorageDefinition;
+class QTabWidget;
 class toConnection;
-class toResultStorage;
 class toFilesize;
-class toStorageDialog;
+class toResultStorage;
 class toResultView;
+class toStorageDefinition;
+class toStorageDialog;
 
 class toStorageTablespace : public toStorageTablespaceUI
 { 

@@ -32,19 +32,19 @@
  *
  ****************************************************************************/
 
-#ifndef __TOSCRIPT_H
-#define __TOSCRIPT_H
-
-#include <list>
+#ifndef TOSCRIPT_H
+#define TOSCRIPT_H
 
 #include "tohelp.h"
 #include "toscriptui.h"
 
-class toWorksheet;
+#include <list>
+
 class toConnection;
-class toScriptUI;
-class toListView;
 class toExtract;
+class toListView;
+class toScriptUI;
+class toWorksheet;
 
 class toScript : public toToolWidget {
   Q_OBJECT

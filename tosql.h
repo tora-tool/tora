@@ -32,11 +32,12 @@
  *
  ****************************************************************************/
 
-#ifndef __TOSQL_H
-#define __TOSQL_H
+#ifndef TOSQL_H
+#define TOSQL_H
 
 #include <map>
 #include <list>
+
 #include <qstring.h>
 
 class toConnection;

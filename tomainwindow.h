@@ -32,8 +32,8 @@
  *
  ****************************************************************************/
 
-#ifndef __TOMAINWINDOW_H
-#define __TOMAINWINDOW_H
+#ifndef TOMAINWINDOW_H
+#define TOMAINWINDOW_H
 
 class toMainWindow : public QMainWindow {
   Q_OBJECT

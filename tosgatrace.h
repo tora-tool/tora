@@ -32,21 +32,22 @@
  *
  ****************************************************************************/
 
-#ifndef __TOSGATRACE_H
-#define __TOSGATRACE_H
+#ifndef TOSGATRACE_H
+#define TOSGATRACE_H
 
-#include <qstring.h>
 #include "totool.h"
 
-class toMain;
-class toResultLong;
-class QTabWidget;
+#include <qstring.h>
+
 class QComboBox;
-class toSGAStatement;
-class toConnection;
-class toTool;
 class QListViewItem;
 class QPopupMenu;
+class QTabWidget;
+class toConnection;
+class toMain;
+class toResultLong;
+class toSGAStatement;
+class toTool;
 
 class toSGATrace : public toToolWidget {
   Q_OBJECT

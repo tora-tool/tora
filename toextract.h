@@ -32,8 +32,8 @@
  *
  ****************************************************************************/
 
-#ifndef __TO_EXTRACT
-#define __TO_EXTRACT
+#ifndef TO_EXTRACT
+#define TO_EXTRACT
 
 #include "toconnection.h"
 

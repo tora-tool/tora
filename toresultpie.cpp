@@ -32,12 +32,13 @@
  *
  ****************************************************************************/
 
-#include "toresultpie.h"
-#include "toconnection.h"
-#include "tomain.h"
+#include "utils.h"
+
 #include "toconf.h"
-#include "tosql.h"
+#include "toconnection.h"
 #include "tonoblockquery.h"
+#include "toresultpie.h"
+#include "tosql.h"
 
 #include "toresultpie.moc"
 

@@ -32,10 +32,10 @@
  *
  ****************************************************************************/
 
-#ifndef __TOCHANGECONNECTION_H
-#define __TOCHANGECONNECTION_H
+#ifndef TOCHANGECONNECTION_H
+#define TOCHANGECONNECTION_H
 
-#include "tomain.h"
+#include "utils.h"
 
 /**
  * This button will allow you to change the connection for the nearest toToolWidget

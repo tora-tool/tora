@@ -32,8 +32,8 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTDEPEND_H
-#define __TORESULTDEPEND_H
+#ifndef TORESULTDEPEND_H
+#define TORESULTDEPEND_H
 
 #include "tobackground.h"
 #include "toresultview.h"
@@ -78,8 +78,7 @@ public:
   { toQList p; query(sql,p); }
   /** Support Oracle
    */
-  virtual bool canHandle(toConnection &conn)
-  { return toIsOracle(conn); }
+  virtual bool canHandle(toConnection &conn);
 public slots:
   void poll(void);
 };

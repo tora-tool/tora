@@ -32,14 +32,14 @@
  *
  ****************************************************************************/
 
-#ifndef __TOGLOBALSETTING_H
-#define __TOGLOBALSETTING_H
+#ifndef TOGLOBALSETTING_H
+#define TOGLOBALSETTING_H
 
-#include "totool.h"
-#include "toglobalsettingui.h"
 #include "todatabasesettingui.h"
-#include "totoolsettingui.h"
+#include "toglobalsettingui.h"
 #include "tohelp.h"
+#include "totool.h"
+#include "totoolsettingui.h"
 
 class toGlobalSetting : public toGlobalSettingUI, public toSettingTab {
 public:

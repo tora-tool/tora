@@ -32,16 +32,16 @@
  *
  ****************************************************************************/
 
-#ifndef __TOCONNECTION_H
-#define __TOCONNECTION_H
+#ifndef TOCONNECTION_H
+#define TOCONNECTION_H
+
+#include "toqvalue.h"
+#include "tothread.h"
 
 #include <list>
 #include <map>
 
 #include <qstring.h>
-
-#include "toqvalue.h"
-#include "tothread.h"
 
 class QWidget;
 class toConnection;

@@ -32,17 +32,17 @@
  *
  ****************************************************************************/
 
-#ifndef __TOSQLEDIT_H
-#define __TOSQLEDIT_H
+#ifndef TOSQLEDIT_H
+#define TOSQLEDIT_H
 
 #include "totool.h"
 
-class toWorksheet;
-class toMarkedText;
 class QComboBox;
-class QListView;
 class QLineEdit;
+class QListView;
 class QToolButton;
+class toMarkedText;
+class toWorksheet;
 
 class toSQLEdit : public toToolWidget {
   Q_OBJECT

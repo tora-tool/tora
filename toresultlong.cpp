@@ -32,19 +32,20 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "toresultlong.h"
+#include "toresultlong.moc"
+#include "toconf.h"
+#include "totool.h"
+#include "tonoblockquery.h"
+
 #include <stdio.h>
 
 #include <qregexp.h>
 #include <qclipboard.h>
 #include <qheader.h>
 #include <qtooltip.h>
-
-#include "toresultlong.h"
-#include "toresultlong.moc"
-#include "tomain.h"
-#include "toconf.h"
-#include "totool.h"
-#include "tonoblockquery.h"
 
 toResultLong::toResultLong(bool readable,bool dispCol,toQuery::queryMode mode,
 			   QWidget *parent,const char *name)

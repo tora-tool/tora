@@ -32,12 +32,13 @@
  *
  ****************************************************************************/
 
-#ifndef __TODEBUGTEXT_H
-#define __TODEBUGTEXT_H
+#ifndef TODEBUGTEXT_H
+#define TODEBUGTEXT_H
+
+#include "tohighlightedtext.h"
 
 #include <qlistview.h>
 
-#include "tohighlightedtext.h"
 class toConnection;
 class toDebug;
 

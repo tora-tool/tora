@@ -60,25 +60,27 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTCONTENT_H
-#define __TORESULTCONTENT_H
+#ifndef TORESULTCONTENT_H
+#define TORESULTCONTENT_H
+
+#include "tobackground.h"
+#include "toconnection.h"
+#include "toeditwidget.h"
+#include "tomemoeditor.h"
+#include "toresult.h"
 
 #include <list>
+
 #include <qtable.h>
 #include <qvbox.h>
 
-#include "toresult.h"
-#include "toeditwidget.h"
-#include "toconnection.h"
-#include "tomemoeditor.h"
-
-class toResultContent;
-class toNoBlockQuery;
-class toSearchReplace;
 class QChecBox;
-class QLineEdit;
-class QGrid;
 class QCheckBox;
+class QGrid;
+class QLineEdit;
+class toNoBlockQuery;
+class toResultContent;
+class toSearchReplace;
 
 /** Implement memo editor in result content editor. Only for internal use.
  * @internal
@@ -243,8 +245,7 @@ class toResultContentEditor : public QTable,public toEditWidget {
 
   QString table(void);
 
-  toConnection &connection()
-  { return toCurrentConnection(this); }
+  toConnection &connection();
 
   class contentItem : public QTableItem {
   public:

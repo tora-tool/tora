@@ -32,26 +32,27 @@
  *
  ****************************************************************************/
 
-#include "tomain.h"
+#include "utils.h"
 
-#include <qpainter.h>
-#include <qworkspace.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <qspinbox.h>
-#include <qvalidator.h>
-#include <qprinter.h>
-#include <qpaintdevicemetrics.h>
-#include <qpopupmenu.h>
-
-#include "tolinechart.h"
 #include "toconf.h"
-#include "totool.h"
+#include "tolinechart.h"
 #include "tolinechartsetupui.h"
+#include "tomain.h"
+#include "totool.h"
 
 #ifdef TO_HAS_KPRINT
 #include <kprinter.h>
 #endif
+
+#include <qcheckbox.h>
+#include <qlineedit.h>
+#include <qpaintdevicemetrics.h>
+#include <qpainter.h>
+#include <qpopupmenu.h>
+#include <qprinter.h>
+#include <qspinbox.h>
+#include <qvalidator.h>
+#include <qworkspace.h>
 
 #include "tolinechart.moc"
 #include "tolinechartsetupui.moc"

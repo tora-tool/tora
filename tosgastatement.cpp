@@ -32,17 +32,18 @@
  *
  ****************************************************************************/
 
-#include "totool.h"
-#include "toresultplan.h"
-#include "tosgatrace.h"
-#include "toresultview.h"
-#include "toresultresources.h"
+#include "utils.h"
+
+#include "toconf.h"
 #include "toresultfield.h"
 #include "toresultplan.h"
-#include "toconf.h"
+#include "toresultplan.h"
+#include "toresultresources.h"
+#include "toresultview.h"
 #include "tosgastatement.h"
-#include "tomain.h"
+#include "tosgatrace.h"
 #include "tosqlparse.h"
+#include "totool.h"
 
 #include "tosgastatement.moc"
 

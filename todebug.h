@@ -32,16 +32,17 @@
  *
  ****************************************************************************/
 
-#ifndef __TODEBUG_H
-#define __TODEBUG_H
+#ifndef TODEBUG_H
+#define TODEBUG_H
+
+#include "tobackground.h"
+#include "toconnection.h"
+#include "todebugwatch.h"
+#include "tohighlightedtext.h"
+#include "tothread.h"
+#include "totool.h"
 
 #include <qtimer.h>
-
-#include "totool.h"
-#include "tothread.h"
-#include "tohighlightedtext.h"
-#include "todebugwatch.h"
-#include "toconnection.h"
 
 #define TO_SUCCESS		0
 #define TO_ERROR_ILLEGAL_LINE	12
@@ -72,16 +73,16 @@
 #define TO_BREAK_HANDLER	2048
 #define TO_ABORT_EXECUTION	8192
 
-class QTabWidget;
+class QComboBox;
 class QListView;
 class QListViewItem;
-class QToolButton;
-class toOutput;
-class toDebugText;
-class QComboBox;
-class toConnection;
 class QPopupMenu;
+class QTabWidget;
+class QToolButton;
+class toConnection;
+class toDebugText;
 class toMarkedText;
+class toOutput;
 
 class toDebug : public toToolWidget {
   Q_OBJECT

@@ -32,43 +32,41 @@
  *
  ****************************************************************************/
 
-#ifdef TO_KDE
-#include <kfiledialog.h>
-#endif
+#include "utils.h"
 
-#include "tomain.h"
-
-#include <qpopupmenu.h>
-#include <qclipboard.h>
-#include <qheader.h>
-#include <qtooltip.h>
-#include <qmessagebox.h>
-#include <qprinter.h>
-#include <qpainter.h>
-#include <qapplication.h>
-#include <qpalette.h>
-#include <qpaintdevicemetrics.h>
-#include <qdragobject.h>
-#include <qfiledialog.h>
-#include <qregexp.h>
-#include <qcombobox.h>
-#include <qworkspace.h>
-
-#include "tosearchreplace.h"
-#include "toresultview.h"
-#include "tosql.h"
 #include "toconf.h"
-#include "totool.h"
+#include "tomain.h"
 #include "tomemoeditor.h"
 #include "toparamget.h"
 #include "toresultlistformatui.h"
+#include "toresultview.h"
+#include "tosearchreplace.h"
+#include "tosql.h"
+#include "totool.h"
+
+#ifdef TO_KDE
+#include <kfiledialog.h>
+#include <kprinter.h>
+#endif
+
+#include <qapplication.h>
+#include <qclipboard.h>
+#include <qcombobox.h>
+#include <qdragobject.h>
+#include <qfiledialog.h>
+#include <qheader.h>
+#include <qmessagebox.h>
+#include <qpaintdevicemetrics.h>
+#include <qpainter.h>
+#include <qpalette.h>
+#include <qpopupmenu.h>
+#include <qprinter.h>
+#include <qregexp.h>
+#include <qtooltip.h>
+#include <qworkspace.h>
 
 #include "toresultlistformatui.moc"
 #include "toresultview.moc"
-
-#ifdef TO_HAS_KPRINT
-#include <kprinter.h>
-#endif
 
 static int MaxColDisp;
 

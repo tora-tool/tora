@@ -32,12 +32,14 @@
  *
  ****************************************************************************/
 
-#include <qtabwidget.h>
+#include "utils.h"
 
+#include "toconf.h"
 #include "toresult.h"
 #include "totool.h"
-#include "tomain.h"
-#include "toconf.h"
+
+#include <qtabwidget.h>
+#include <qtimer.h>
 
 #include "toresult.moc"
 

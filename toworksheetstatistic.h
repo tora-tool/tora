@@ -32,18 +32,19 @@
  *
  ****************************************************************************/
 
-#ifndef __TOWORKSHEETSTATISTIC_H
-#define __TOWORKSHEETSTATISTIC_H
+#ifndef TOWORKSHEETSTATISTIC_H
+#define TOWORKSHEETSTATISTIC_H
 
 #include <list>
+#include <map>
 
 #include <qsplitter.h>
 #include <qvbox.h>
 
-class QPopupMenu;
-class toAnalyze;
-class QSplitter;
 class QLabel;
+class QPopupMenu;
+class QSplitter;
+class toAnalyze;
 class toBarChart;
 class toListView;
 class toWorksheetStatistic;

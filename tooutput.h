@@ -32,16 +32,16 @@
  *
  ****************************************************************************/
 
-#ifndef __TOOUTPUT_H
-#define __TOOUTPUT_H
+#ifndef TOOUTPUT_H
+#define TOOUTPUT_H
 
 #include "totool.h"
 
+class QComboBox;
+class QPopupMenu;
+class QToolButton;
 class toConnection;
 class toMarkedText;
-class QToolButton;
-class QPopupMenu;
-class QComboBox;
 
 class toOutput : public toToolWidget {
   Q_OBJECT

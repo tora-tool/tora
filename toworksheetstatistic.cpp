@@ -32,27 +32,27 @@
  *
  ****************************************************************************/
 
-#include <qtooltip.h>
-#include <qtoolbutton.h>
-#include <qtoolbar.h>
+#include "utils.h"
+
+#include "toanalyze.h"
+#include "tobarchart.h"
+#include "toresultview.h"
+#include "toworksheetstatistic.h"
+
+#include <qcheckbox.h>
+#include <qlabel.h>
 #include <qpopupmenu.h>
 #include <qsplitter.h>
-#include <qlabel.h>
-#include <qcheckbox.h>
-
-#include "tomain.h"
-#include "toworksheetstatistic.h"
-#include "toanalyze.h"
-#include "toresultview.h"
-#include "tobarchart.h"
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
+#include <qtooltip.h>
 
 #include "toworksheetstatistic.moc"
 
-#include "icons/filesave.xpm"
 #include "icons/fileopen.xpm"
-#include "icons/trash.xpm"
-
+#include "icons/filesave.xpm"
 #include "icons/grid.xpm"
+#include "icons/trash.xpm"
 #include "icons/tree.xpm"
 
 toAnalyze *toWorksheetStatistic::Widget;

@@ -32,12 +32,14 @@
  *
  ****************************************************************************/
 
-#include <qmovie.h>
-#include <qlabel.h>
-#include <qstatusbar.h>
+#include "utils.h"
 
 #include "tobackground.h"
 #include "tomain.h"
+
+#include <qlabel.h>
+#include <qmovie.h>
+#include <qstatusbar.h>
 
 int toBackground::Running=0;
 QLabel *toBackground::Label;

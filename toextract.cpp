@@ -32,15 +32,10 @@
  *
  ****************************************************************************/
 
-#include <qapplication.h>
-#include <qdatetime.h>
-#include <qprogressdialog.h>
-#include <qregexp.h>
-#include <qstringlist.h>
+#include "utils.h"
 
 #include "toextract.h"
 #include "tosql.h"
-#include "tomain.h"
 #include "toconf.h"
 #include "totool.h"
 
@@ -49,6 +44,12 @@
 #else
 #include <winsock.h>
 #endif
+
+#include <qapplication.h>
+#include <qdatetime.h>
+#include <qprogressdialog.h>
+#include <qregexp.h>
+#include <qstringlist.h>
 
 static toSQL SQLSetSizing("toExtract:SetSizing",
 			  "SELECT block_size\n"

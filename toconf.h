@@ -32,8 +32,8 @@
  *
  ****************************************************************************/
 
-#ifndef __TOCONF_H
-#define __TOCONF_H
+#ifndef TOCONF_H
+#define TOCONF_H
 
 #define CONF_PROVIDER		"Provider"
 #define DEFAULT_PROVIDER	"Oracle"

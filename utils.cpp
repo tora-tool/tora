@@ -32,48 +32,52 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "tobackground.h"
+#include "toconf.h"
+#include "toconnection.h"
+#include "tohighlightedtext.h"
+#include "tomain.h"
+#include "tomessageui.h"
+#include "tonewconnection.h"
+#include "toresult.h"
+#include "tosql.h"
+#include "tothread.h"
+#include "totool.h"
+
 #include <stdlib.h>
 
 #ifdef TO_KDE
-#include <kurl.h>
-#include <ktempfile.h>
+#include <kapp.h>
 #include <kfiledialog.h>
 #include <kio/netaccess.h>
 #include <kmenubar.h>
-#include <kapp.h>
+#include <ktempfile.h>
+#include <kurl.h>
 #endif
 
 #include <qapplication.h>
-#include <qlayout.h>
-#include <qcursor.h>
-#include <qfiledialog.h>
-#include <qstatusbar.h>
+#include <qcheckbox.h>
 #include <qcombobox.h>
-#include <qtimer.h>
-#include <qtooltip.h>
-#include <qtoolbar.h>
-#include <qworkspace.h>
-#include <qvbox.h>
+#include <qcursor.h>
 #include <qfile.h>
+#include <qfiledialog.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qlistview.h>
+#include <qmenubar.h>
 #include <qmessagebox.h>
 #include <qregexp.h>
-#include <qmenubar.h>
-#include <qlistview.h>
-#include <qcheckbox.h>
-#include <qlabel.h>
-
-#include "tohighlightedtext.h"
-#include "tonewconnection.h"
-#include "tomain.h"
-#include "toconf.h"
-#include "totool.h"
-#include "tosql.h"
-#include "toresult.h"
-#include "tothread.h"
-#include "toconnection.h"
-#include "tomessageui.h"
+#include <qstatusbar.h>
+#include <qtimer.h>
+#include <qtoolbar.h>
+#include <qtooltip.h>
+#include <qvbox.h>
+#include <qworkspace.h>
 
 #include "tomessageui.moc"
+#include "utils.moc"
 
 #ifdef WIN32
 #include "windows/cregistry.h"

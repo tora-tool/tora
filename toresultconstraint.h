@@ -32,11 +32,11 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTCONSTRAINT_H
-#define __TORESULTCONSTRAINT_H
+#ifndef TORESULTCONSTRAINT_H
+#define TORESULTCONSTRAINT_H
 
-#include "toresultview.h"
 #include "tobackground.h"
+#include "toresultview.h"
 
 class toNoBlockQuery;
 
@@ -77,8 +77,7 @@ public:
   virtual void query(const QString &sql,const toQList &param);
   /** Support Oracle
    */
-  virtual bool canHandle(toConnection &conn)
-  { return toIsOracle(conn); }
+  virtual bool canHandle(toConnection &conn);
 private slots:
   void poll(void);
 };

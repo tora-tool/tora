@@ -32,11 +32,29 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "tochangeconnection.h"
+#include "toconnection.h"
+#include "tofilesize.h"
+#include "tomain.h"
+#include "tomemoeditor.h"
+#include "toresultview.h"
+#include "tosecurity.h"
+#include "tosql.h"
+#include "totool.h"
+
+#ifdef TO_KDE
+#  include <kmenubar.h>
+#endif
+
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
+#include <qmenubar.h>
 #include <qmessagebox.h>
+#include <qpopupmenu.h>
 #include <qradiobutton.h>
 #include <qsplitter.h>
 #include <qstringlist.h>
@@ -44,37 +62,21 @@
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qvalidator.h>
-#include <qpopupmenu.h>
 #include <qworkspace.h>
-#include <qmenubar.h>
-
-#ifdef TO_KDE
-#  include <kmenubar.h>
-#endif
-
-#include "tochangeconnection.h"
-#include "toconnection.h"
-#include "tofilesize.h"
-#include "tomain.h"
-#include "toresultview.h"
-#include "tosecurity.h"
-#include "tosql.h"
-#include "tomemoeditor.h"
-#include "totool.h"
 
 #include "tosecurity.moc"
 #include "tosecurityquotaui.moc"
 #include "tosecurityroleui.moc"
 #include "tosecurityuserui.moc"
 
-#include "icons/refresh.xpm"
-#include "icons/commit.xpm"
-#include "icons/tosecurity.xpm"
-#include "icons/trash.xpm"
 #include "icons/addrole.xpm"
 #include "icons/adduser.xpm"
+#include "icons/commit.xpm"
 #include "icons/copyuser.xpm"
+#include "icons/refresh.xpm"
 #include "icons/sql.xpm"
+#include "icons/tosecurity.xpm"
+#include "icons/trash.xpm"
 
 static toSQL SQLUserInfo("toSecurity:UserInfo",
 			 "SELECT Account_Status,\n"

@@ -60,22 +60,22 @@
  *
  ****************************************************************************/
 
-#ifndef __TOMARKEDTEXT_H
-#define __TOMARKEDTEXT_H
+#ifndef TOMARKEDTEXT_H
+#define TOMARKEDTEXT_H
 
-#include <qglobal.h>
-
-#include "tomain.h"
 #include "toeditwidget.h"
 
 #if QT_VERSION < 300
-#include <qmultilineedit.h>
 #include "tomarkedtext.2.h"
 #else
 #include "qtlegacy/qttableview.h"
 #include "qtlegacy/qtmultilineedit.h"
 #include "tomarkedtext.3.h"
 #endif
+
+#include <map>
+
+#include <qglobal.h>
 #include <qstring.h>
 
 class TOPrinter;

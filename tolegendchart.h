@@ -32,10 +32,11 @@
  *
  ****************************************************************************/
 
-#ifndef __TOLEGENDCHART_H
-#define __TOLEGENDCHART_H
+#ifndef TOLEGENDCHART_H
+#define TOLEGENDCHART_H
 
 #include <list>
+
 #include <qwidget.h>
 
 /** A widget that displays a legend to other charts.

@@ -32,13 +32,14 @@
  *
  ****************************************************************************/
 
-#ifndef __TOANALYZE_H
-#define __TOANALYZE_H
+#ifndef TOANALYZE_H
+#define TOANALYZE_H
+
+#include "tobackground.h"
+#include "tonoblockquery.h"
+#include "totool.h"
 
 #include <list>
-
-#include "totool.h"
-#include "tonoblockquery.h"
 
 class toResultView;
 class QPopupMenu;

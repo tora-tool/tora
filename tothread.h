@@ -32,8 +32,8 @@
  *
  ****************************************************************************/
 
-#ifndef __TOTHREAD_H
-#define __TOTHREAD_H
+#ifndef TOTHREAD_H
+#define TOTHREAD_H
 
 /** This is an abstract class that defines something that is to be performed by a
  * thread.
@@ -117,8 +117,8 @@ public:
 };
 
 #else
-#include <semaphore.h>
 #include <pthread.h>
+#include <semaphore.h>
 #include <signal.h>
 #include <time.h>
 

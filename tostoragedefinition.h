@@ -32,22 +32,22 @@
  *
  ****************************************************************************/
 
-#ifndef __TOSTORAGEDEFINITION_H
-#define __TOSTORAGEDEFINITION_H
+#ifndef TOSTORAGEDEFINITION_H
+#define TOSTORAGEDEFINITION_H
+
+#include "tostoragedefinitionui.h"
 
 #include <list>
 
 #include <qwidget.h>
 
-#include "tostoragedefinitionui.h"
-
-class QGroupBox;
-class QFrame;
 class QCheckBox;
+class QFrame;
+class QGroupBox;
+class QGroupBox;
 class QLabel;
 class QSpinBox;
 class toFilesize;
-class QGroupBox;
 class toStorageDialog;
 
 class toStorageDefinition : public toStorageDefinitionUI

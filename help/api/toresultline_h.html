@@ -60,19 +60,19 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTLINE_H
-#define __TORESULTLINE_H
+#ifndef TORESULTLINE_H
+#define TORESULTLINE_H
+
+#include "tobackground.h"
+#include "tolinechart.h"
+#include "toresult.h"
 
 #include <time.h>
 
 #include <list>
 
-#include "toresult.h"
-#include "tolinechart.h"
-#include "tobackground.h"
-
-class toSQL;
 class toNoBlockQuery;
+class toSQL;
 
 /** Display the result of a query in a piechart. The first column of the query should
  * contain the x value and the rest of the columns should be values of the diagram. The

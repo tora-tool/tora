@@ -32,44 +32,46 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "toconf.h"
+#include "toconnection.h"
+#include "tohighlightedtext.h"
+#include "tomain.h"
+#include "toresultview.h"
+#include "tosql.h"
+#include "tosqledit.h"
+#include "totool.h"
+#include "toworksheet.h"
+
 #ifdef TO_KDE
 #include <kfiledialog.h>
 #endif
 
 #include <qcombobox.h>
+#include <qcombobox.h>
+#include <qfiledialog.h>
+#include <qfileinfo.h>
 #include <qlabel.h>
+#include <qlineedit.h>
+#include <qlistview.h>
+#include <qmenubar.h>
+#include <qmessagebox.h>
+#include <qpopupmenu.h>
+#include <qsplitter.h>
 #include <qstring.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qworkspace.h>
-#include <qlistview.h>
-#include <qlineedit.h>
-#include <qsplitter.h>
-#include <qcombobox.h>
-#include <qmessagebox.h>
-#include <qfiledialog.h>
-#include <qfileinfo.h>
-#include <qmenubar.h>
-#include <qpopupmenu.h>
-
-#include "totool.h"
-#include "toconf.h"
-#include "tohighlightedtext.h"
-#include "tomain.h"
-#include "tosql.h"
-#include "toworksheet.h"
-#include "tosqledit.h"
-#include "toconnection.h"
-#include "toresultview.h"
 
 #include "tosqledit.moc"
 
+#include "icons/add.xpm"
+#include "icons/commit.xpm"
 #include "icons/fileopen.xpm"
 #include "icons/filesave.xpm"
-#include "icons/trash.xpm"
-#include "icons/commit.xpm"
 #include "icons/tosqledit.xpm"
-#include "icons/add.xpm"
+#include "icons/trash.xpm"
 
 class toSQLEditTool : public toTool {
 protected:

@@ -32,18 +32,19 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "toconf.h"
+#include "tonoblockquery.h"
+#include "toresultstats.h"
+#include "totool.h"
+
 #include <signal.h>
 #include <sys/types.h>
 #ifndef WIN32
 #include <unistd.h>
 #endif
 #include <stdio.h>
-
-#include "tonoblockquery.h"
-#include "totool.h"
-#include "toconf.h"
-#include "tomain.h"
-#include "toresultstats.h"
 
 #undef TO_DEBUG
 #ifdef TO_DEBUG

@@ -32,38 +32,38 @@
  *
  ****************************************************************************/
 
-#include <qcombobox.h>
-#include <qlabel.h>
-#include <qmessagebox.h>
-#include <qpixmap.h>
-#include <qsplitter.h>
-#include <qtabwidget.h>
-#include <qtoolbar.h>
-#include <qtoolbutton.h>
-#include <qmainwindow.h>
-#include <qtimer.h>
-#include <qcheckbox.h>
-#include <qgroupbox.h>
-#include <qtooltip.h>
-#include <qpopupmenu.h>
-#include <qworkspace.h>
-#include <qmenubar.h>
+#include "tochangeconnection.h"
+#include "toconf.h"
+#include "toconnection.h"
+#include "tomain.h"
+#include "toresultlong.h"
+#include "toresultresources.h"
+#include "toresultview.h"
+#include "tosgastatement.h"
+#include "tosgatrace.h"
+#include "tosql.h"
+#include "totool.h"
 
 #ifdef TO_KDE
 #  include <kmenubar.h>
 #endif
 
-#include "tochangeconnection.h"
-#include "totool.h"
-#include "tosgatrace.h"
-#include "toresultview.h"
-#include "toresultresources.h"
-#include "toconf.h"
-#include "tosql.h"
-#include "tosgastatement.h"
-#include "tomain.h"
-#include "toconnection.h"
-#include "toresultlong.h"
+#include <qcheckbox.h>
+#include <qcombobox.h>
+#include <qgroupbox.h>
+#include <qlabel.h>
+#include <qmainwindow.h>
+#include <qmenubar.h>
+#include <qmessagebox.h>
+#include <qpixmap.h>
+#include <qpopupmenu.h>
+#include <qsplitter.h>
+#include <qtabwidget.h>
+#include <qtimer.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
+#include <qtooltip.h>
+#include <qworkspace.h>
 
 #include "tosgatrace.moc"
 

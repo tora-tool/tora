@@ -32,8 +32,8 @@
  *
  ****************************************************************************/
 
-#ifndef __TOQVALUE_H
-#define __TOQVALUE_H
+#ifndef TOQVALUE_H
+#define TOQVALUE_H
 
 #include <list>
 

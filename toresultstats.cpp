@@ -32,11 +32,12 @@
  *
  ****************************************************************************/
 
-#include "tomain.h"
-#include "toresultstats.h"
-#include "tosql.h"
+#include "utils.h"
+
 #include "toconnection.h"
 #include "tonoblockquery.h"
+#include "toresultstats.h"
+#include "tosql.h"
 
 #include "toresultstats.moc"
 
@@ -51,6 +52,11 @@ toResultStats::toResultStats(bool onlyChanged,int ses,QWidget *parent,
   setSQLName("toResultStats");
   System=false;
   setup();
+}
+
+bool toResultStats::canHandle(toConnection &conn)
+{
+  return toIsOracle(conn);
 }
 
 toResultStats::~toResultStats()

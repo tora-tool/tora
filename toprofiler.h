@@ -32,22 +32,22 @@
  *
  ****************************************************************************/
 
-#ifndef __TOPROFILER_H
-#define __TOPROFILER_H
+#ifndef TOPROFILER_H
+#define TOPROFILER_H
 
 #include "totool.h"
 
+class QComboBox;
+class QLineEdit;
+class QSpinBox;
+class QSplitter;
+class QTabWidget;
+class QToolButton;
+class toProfilerSource;
+class toProfilerUnits;
 class toResultItem;
 class toResultLong;
 class toWorksheet;
-class QComboBox;
-class QSpinBox;
-class QToolButton;
-class toProfilerUnits;
-class toProfilerSource;
-class QLineEdit;
-class QSplitter;
-class QTabWidget;
 
 class toProfiler : public toToolWidget {
   Q_OBJECT

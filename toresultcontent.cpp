@@ -32,51 +32,51 @@
  *
  ****************************************************************************/
 
-#include <qpainter.h>
-#include <qdragobject.h>
-#include <qclipboard.h>
-#include <qpopupmenu.h>
-#include <qtoolbar.h>
-#include <qtoolbutton.h>
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <qmessagebox.h>
-#include <qgrid.h>
-#include <qtooltip.h>
-#include <stdio.h>
-#include <qregexp.h>
+#include "utils.h"
 
 #include "toconf.h"
-#include "tomemoeditor.h"
-#include "tomain.h"
-#include "toresultcontent.h"
-#include "toresultview.h"
-#include "totool.h"
-#include "tohighlightedtext.h"
-#include "toresultcontentfilterui.h"
-#include "toresultcols.h"
 #include "toconnection.h"
-#include "tosearchreplace.h"
+#include "tohighlightedtext.h"
+#include "tomain.h"
+#include "tomemoeditor.h"
 #include "tonoblockquery.h"
 #include "toparamget.h"
+#include "toresultcols.h"
+#include "toresultcontent.h"
+#include "toresultcontentfilterui.h"
+#include "toresultview.h"
+#include "tosearchreplace.h"
+#include "totool.h"
+
+#include <qcheckbox.h>
+#include <qclipboard.h>
+#include <qdragobject.h>
+#include <qgrid.h>
+#include <qlabel.h>
+#include <qlineedit.h>
+#include <qmessagebox.h>
+#include <qpainter.h>
+#include <qpopupmenu.h>
+#include <qregexp.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
+#include <qtooltip.h>
+#include <stdio.h>
 
 #include "toresultcontent.moc"
 #include "toresultcontentfilterui.moc"
 
-#include "icons/filter.xpm"
-#include "icons/nofilter.xpm"
 #include "icons/addrecord.xpm"
-#include "icons/saverecord.xpm"
 #include "icons/canceledit.xpm"
-#include "icons/trash.xpm"
-
+#include "icons/filter.xpm"
 #include "icons/forward.xpm"
 #include "icons/next.xpm"
+#include "icons/nofilter.xpm"
 #include "icons/previous.xpm"
 #include "icons/rewind.xpm"
-
+#include "icons/saverecord.xpm"
 #include "icons/single.xpm"
+#include "icons/trash.xpm"
 
 toResultContentEditor *toResultContentMemo::contentEditor()
 {
@@ -152,6 +152,11 @@ void toResultContentMemo::nextColumn()
     else
       cnt->setCurrentCell(cnt->currentRow(),col+1);
   }
+}
+
+toConnection &toResultContentEditor::connection()
+{
+  return toCurrentConnection(this);
 }
 
 toResultContentEditor::contentItem::contentItem(QTable *table,const QString &text)

@@ -47,7 +47,6 @@
 #include "toparamget.h"
 #include "totool.h"
 #include "toconf.h"
-#include "tomain.h"
 #include "tohelp.h"
 #include "tomemoeditor.h"
 

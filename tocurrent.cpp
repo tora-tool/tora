@@ -32,27 +32,29 @@
  *
  ****************************************************************************/
 
-#include <qworkspace.h>
-#include <qtabwidget.h>
-#include <qtoolbutton.h>
-#include <qlabel.h>
-#include <qpopupmenu.h>
-#include <qmenubar.h>
+#include "utils.h"
+
+#include "tochangeconnection.h"
+#include "toconnection.h"
+#include "tocurrent.h"
+#include "tomain.h"
+#include "toresultlong.h"
+#include "toresultparam.h"
+#include "toresultstats.h"
+#include "toresultview.h"
+#include "tosql.h"
+#include "totool.h"
 
 #ifdef TO_KDE
 #  include <kmenubar.h>
 #endif
 
-#include "tochangeconnection.h"
-#include "tomain.h"
-#include "toresultview.h"
-#include "totool.h"
-#include "tosql.h"
-#include "tocurrent.h"
-#include "toresultstats.h"
-#include "toconnection.h"
-#include "toresultparam.h"
-#include "toresultlong.h"
+#include <qlabel.h>
+#include <qmenubar.h>
+#include <qpopupmenu.h>
+#include <qtabwidget.h>
+#include <qtoolbutton.h>
+#include <qworkspace.h>
 
 #include "tocurrent.moc"
 

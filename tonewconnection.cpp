@@ -32,26 +32,28 @@
  *
  ****************************************************************************/
 
-#include <qfile.h>
-#include <qcombobox.h>
-#include <qmessagebox.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
-#include <qvariant.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
-#include <qcheckbox.h>
-#include <qtooltip.h>
-#include <qlistview.h>
-#include <qinputdialog.h>
+#include "utils.h"
 
-#include "totool.h"
 #include "toconf.h"
+#include "toconnection.h"
 #include "tonewconnection.h"
 #include "tomain.h"
-#include "toconnection.h"
+#include "totool.h"
+
+#include <qcheckbox.h>
+#include <qcombobox.h>
+#include <qfile.h>
+#include <qinputdialog.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qlineedit.h>
+#include <qlistview.h>
+#include <qmessagebox.h>
+#include <qpushbutton.h>
+#include <qtooltip.h>
+#include <qtooltip.h>
+#include <qvariant.h>
+#include <qwhatsthis.h>
 
 #ifdef WIN32
 #  include "windows/cregistry.h"

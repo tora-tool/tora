@@ -32,13 +32,14 @@
  *
  ****************************************************************************/
 
-#include "toresultconstraint.h"
-#include "tomain.h"
-#include "totool.h"
+#include "utils.h"
+
 #include "toconf.h"
-#include "tosql.h"
 #include "toconnection.h"
 #include "tonoblockquery.h"
+#include "toresultconstraint.h"
+#include "tosql.h"
+#include "totool.h"
 
 #include "toresultconstraint.moc"
 
@@ -57,6 +58,11 @@ toResultConstraint::toResultConstraint(QWidget *parent,const char *name)
 
   Query=NULL;
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
+}
+
+bool toResultConstraint::canHandle(toConnection &conn)
+{
+  return toIsOracle(conn);
 }
 
 static toSQL SQLConsColumns("toResultConstraint:ForeignColumns",

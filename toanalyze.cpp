@@ -32,38 +32,41 @@
  *
  ****************************************************************************/
 
-#include <qspinbox.h>
-#include <qtoolbutton.h>
-#include <qlabel.h>
-#include <qcombobox.h>
-#include <qtoolbar.h>
-#include <qworkspace.h>
-#include <qpopupmenu.h>
-#include <qmenubar.h>
-#include <qtimer.h>
-#include <qtabwidget.h>
-#include <qsplitter.h>
+#include "utils.h"
+
+#include "toanalyze.h"
+#include "toconf.h"
+#include "toconnection.h"
+#include "tomain.h"
+#include "toresultlong.h"
+#include "toresultplan.h"
+#include "toresultview.h"
+#include "tosql.h"
+#include "totool.h"
+#include "toworksheetstatistic.h"
 
 #ifdef TO_KDE
 #  include <kmenubar.h>
 #endif
 
-#include "totool.h"
-#include "toresultview.h"
-#include "tosql.h"
-#include "toconnection.h"
-#include "toanalyze.h"
-#include "toresultlong.h"
-#include "toresultplan.h"
-#include "toconf.h"
-#include "toworksheetstatistic.h"
+#include <qcombobox.h>
+#include <qlabel.h>
+#include <qmenubar.h>
+#include <qpopupmenu.h>
+#include <qspinbox.h>
+#include <qsplitter.h>
+#include <qtabwidget.h>
+#include <qtimer.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
+#include <qworkspace.h>
 
 #include "toanalyze.moc"
 
-#include "icons/refresh.xpm"
-#include "icons/toanalyze.xpm"
 #include "icons/execute.xpm"
+#include "icons/refresh.xpm"
 #include "icons/stop.xpm"
+#include "icons/toanalyze.xpm"
 
 class toAnalyzeTool : public toTool {
   virtual char **pictureXPM(void)

@@ -32,16 +32,16 @@
  *
  ****************************************************************************/
 
-#ifndef __TOINVALID_H
-#define __TOINVALID_H
-
-#include <list>
+#ifndef TOINVALID_H
+#define TOINVALID_H
 
 #include "totool.h"
 
-class toResultView;
-class toResultExtract;
+#include <list>
+
 class QPopupMenu;
+class toResultExtract;
+class toResultView;
 
 class toInvalid : public toToolWidget {
   Q_OBJECT

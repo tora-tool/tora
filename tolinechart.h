@@ -32,11 +32,12 @@
  *
  ****************************************************************************/
 
-#ifndef __TOLINECHART_H
-#define __TOLINECHART_H
+#ifndef TOLINECHART_H
+#define TOLINECHART_H
 
 #include <list>
 #include <map>
+
 #include <qwidget.h>
 
 class QPopupMenu;

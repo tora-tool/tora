@@ -32,13 +32,14 @@
  *
  ****************************************************************************/
 
-#include "toresultreferences.h"
-#include "tomain.h"
-#include "totool.h"
+#include "utils.h"
+
 #include "toconf.h"
-#include "tosql.h"
 #include "toconnection.h"
 #include "tonoblockquery.h"
+#include "toresultreferences.h"
+#include "tosql.h"
+#include "totool.h"
 
 #include "toresultreferences.moc"
 

@@ -1,3 +1,9 @@
+1.3.1:
+
+2001-11-15: Split tomain.h into toMain declaration and utils.h.
+2001-11-15: Big workover and cleanup of headerfiles.
+2001-11-15: Added some more quotes.
+
 1.3.0: Released 2001-12-17
 
 2001-11-06: Some minor API changes to the editwidget interface.

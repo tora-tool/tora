@@ -32,8 +32,8 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTRESOURCES_H
-#define __TORESULTRESOURCES_H
+#ifndef TORESULTRESOURCES_H
+#define TORESULTRESOURCES_H
 
 #include "toresultitem.h"
 #include "tosql.h"

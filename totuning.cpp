@@ -32,46 +32,46 @@
  *
  ****************************************************************************/
 
-#include <time.h>
-
-#include <qpainter.h>
-#include <qtoolbar.h>
-#include <qtoolbutton.h>
-#include <qtabwidget.h>
-#include <qlabel.h>
-#include <qgroupbox.h>
-#include <qlayout.h>
-#include <qgrid.h>
-#include <qcombobox.h>
-#include <qscrollview.h>
-#include <qvbox.h>
-#include <qworkspace.h>
-#include <qmenubar.h>
-#include <qobjcoll.h>
-#include <qmessagebox.h>
+#include "tochangeconnection.h"
+#include "toconf.h"
+#include "toconnection.h"
+#include "tomain.h"
+#include "tonoblockquery.h"
+#include "toresultbar.h"
+#include "toresultitem.h"
+#include "toresultline.h"
+#include "toresultlock.h"
+#include "toresultlong.h"
+#include "toresultparam.h"
+#include "toresultpie.h"
+#include "toresultstats.h"
+#include "toresultview.h"
+#include "tosql.h"
+#include "totool.h"
+#include "totuning.h"
+#include "totuningsettingui.h"
 
 #ifdef TO_KDE
 #  include <kmenubar.h>
 #endif
 
-#include "toresultparam.h"
-#include "tochangeconnection.h"
-#include "toconnection.h"
-#include "tomain.h"
-#include "toresultview.h"
-#include "tosql.h"
-#include "totool.h"
-#include "totuning.h"
-#include "toresultstats.h"
-#include "toresultbar.h"
-#include "toresultline.h"
-#include "toresultpie.h"
-#include "toconf.h"
-#include "toresultitem.h"
-#include "toresultlong.h"
-#include "totuningsettingui.h"
-#include "tonoblockquery.h"
-#include "toresultlock.h"
+#include <time.h>
+
+#include <qcombobox.h>
+#include <qgrid.h>
+#include <qgroupbox.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qmenubar.h>
+#include <qmessagebox.h>
+#include <qobjcoll.h>
+#include <qpainter.h>
+#include <qscrollview.h>
+#include <qtabwidget.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
+#include <qvbox.h>
+#include <qworkspace.h>
 
 #include "totuning.moc"
 #include "totuningoverviewui.moc"

@@ -32,8 +32,10 @@
  *
  ****************************************************************************/
 
-#include "tosqlparse.h"
+#include "utils.h"
+
 #include "tohighlightedtext.h"
+#include "tosqlparse.h"
 
 #ifdef TOPARSE_DEBUG
 

@@ -32,26 +32,29 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "toconf.h"
+#include "tohighlightedtext.h"
+#include "tosyntaxsetup.h"
+
 #include <stdio.h>
+
 #ifdef TO_KDE
 #  include <kfontdialog.h>
 #else
 #  include <qfontdialog.h>
 #endif
-#include <qfont.h>
-#include <qcolordialog.h>
+
 #include <qapplication.h>
-#include <qlistview.h>
 #include <qcheckbox.h>
-#include <qlistbox.h>
+#include <qcolordialog.h>
+#include <qfont.h>
 #include <qlabel.h>
+#include <qlistbox.h>
+#include <qlistview.h>
 
 #include "tosyntaxsetupui.moc"
-
-#include "tohighlightedtext.h"
-#include "tosyntaxsetup.h"
-#include "toconf.h"
-#include "tomain.h"
 
 toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
   : toSyntaxSetupUI(parent,name,fl),toSettingTab("fonts.html"),

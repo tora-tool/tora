@@ -32,16 +32,16 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTLABEL_H
-#define __TORESULTLABEL_H
-
-#include <qlabel.h>
+#ifndef TORESULTLABEL_H
+#define TORESULTLABEL_H
 
 #include "tobackground.h"
 #include "toresult.h"
 
-class toSQL;
+#include <qlabel.h>
+
 class toNoBlockQuery;
+class toSQL;
 
 /** This widget displays the result of a query where each item in the stream
  * is added to a label separated by an optional string.

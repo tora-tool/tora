@@ -32,11 +32,12 @@
  *
  ****************************************************************************/
 
-#include "toresultdepend.h"
-#include "tosql.h"
-#include "tomain.h"
+#include "utils.h"
+
 #include "toconnection.h"
 #include "tonoblockquery.h"
+#include "toresultdepend.h"
+#include "tosql.h"
 
 #include "toresultdepend.moc"
 
@@ -65,6 +66,11 @@ static toSQL SQLResultDepend7("toResultDepend:Depends",
 			      " ORDER BY referenced_owner,referenced_type,referenced_name",
 			      QString::null,
 			      "7.3");
+
+bool toResultDepend::canHandle(toConnection &conn)
+{
+  return toIsOracle(conn);
+}
 
 toResultDepend::toResultDepend(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)

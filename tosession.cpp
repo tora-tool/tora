@@ -32,43 +32,45 @@
  *
  ****************************************************************************/
 
-#include <qworkspace.h>
-#include <qtoolbar.h>
-#include <qtoolbutton.h>
-#include <qcombobox.h>
-#include <qsplitter.h>
-#include <qtimer.h>
-#include <qmessagebox.h>
-#include <qlabel.h>
-#include <qpopupmenu.h>
-#include <qworkspace.h>
-#include <qmenubar.h>
+#include "utils.h"
+
+#include "tochangeconnection.h"
+#include "toconf.h"
+#include "toconnection.h"
+#include "tomain.h"
+#include "toresultbar.h"
+#include "toresultlock.h"
+#include "toresultlong.h"
+#include "toresultstats.h"
+#include "toresultview.h"
+#include "tosession.h"
+#include "tosgastatement.h"
+#include "tosql.h"
+#include "totool.h"
 
 #ifdef TO_KDE
 #  include <kmenubar.h>
 #endif
 
-#include "tochangeconnection.h"
-#include "tomain.h"
-#include "totool.h"
-#include "tosession.h"
-#include "toresultview.h"
-#include "toconf.h"
-#include "tosql.h"
-#include "tosgastatement.h"
-#include "toresultstats.h"
-#include "toresultlock.h"
-#include "toresultbar.h"
-#include "toconnection.h"
-#include "toresultlong.h"
+#include <qcombobox.h>
+#include <qlabel.h>
+#include <qmenubar.h>
+#include <qmessagebox.h>
+#include <qpopupmenu.h>
+#include <qsplitter.h>
+#include <qtimer.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
+#include <qworkspace.h>
+#include <qworkspace.h>
 
 #include "tosession.moc"
 
+#include "icons/clock.xpm"
+#include "icons/disconnect.xpm"
+#include "icons/noclock.xpm"
 #include "icons/refresh.xpm"
 #include "icons/tosession.xpm"
-#include "icons/clock.xpm"
-#include "icons/noclock.xpm"
-#include "icons/disconnect.xpm"
 
 class toSessionTool : public toTool {
 protected:

@@ -32,11 +32,11 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTREFERENCES_H
-#define __TORESULTREFERENCES_H
+#ifndef TORESULTREFERENCES_H
+#define TORESULTREFERENCES_H
 
-#include "toresultview.h"
 #include "tobackground.h"
+#include "toresultview.h"
 
 class toNoBlockQuery;
 

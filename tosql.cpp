@@ -32,12 +32,13 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "toconnection.h"
+#include "tosql.h"
+
 #include <qfile.h>
 #include <qregexp.h>
-
-#include "tomain.h"
-#include "tosql.h"
-#include "toconnection.h"
 
 toSQL::sqlMap *toSQL::Definitions;
 const char * const toSQL::TOSQL_USERLIST= "Global:UserList";

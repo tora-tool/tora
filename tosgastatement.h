@@ -32,17 +32,17 @@
  *
  ****************************************************************************/
 
-#ifndef __TOSGASTATEMENT_H
-#define __TOSGASTATEMENT_H
+#ifndef TOSGASTATEMENT_H
+#define TOSGASTATEMENT_H
 
 #include <qtabwidget.h>
 
-class toResultView;
+class QComboBox;
 class QTabWidget;
 class toResultField;
-class QComboBox;
-class toResultPlan;
 class toResultItem;
+class toResultPlan;
+class toResultView;
 
 /** This widget displays information about a statement in the Oracle SGA. To get an
  * address use the @ref toSQLToAddress function.

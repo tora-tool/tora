@@ -32,19 +32,19 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTBAR_H
-#define __TORESULTBAR_H
+#ifndef TORESULTBAR_H
+#define TORESULTBAR_H
+
+#include "tobackground.h"
+#include "tobarchart.h"
+#include "toresult.h"
 
 #include <time.h>
 
 #include <list>
 
-#include "toresult.h"
-#include "tobarchart.h"
-#include "tobackground.h"
-
-class toSQL;
 class toNoBlockQuery;
+class toSQL;
 
 /** Display the result of a query in a piechart. The first column of the query should
  * contain the x value and the rest of the columns should be values of the diagram. The

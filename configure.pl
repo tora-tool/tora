@@ -1229,7 +1229,8 @@ API=	\\
 	totemplate.h		\\
 	tothread.h		\\
 	totool.h		\\
-	tovisualize.h
+	tovisualize.h		\\
+	utils.h
 
 SOURCES=\\
 __EOT__

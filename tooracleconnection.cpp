@@ -32,25 +32,26 @@
  *
  ****************************************************************************/
 
-#include <qfile.h>
-#include <qregexp.h>
-#include <qspinbox.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qvalidator.h>
-#include <qcheckbox.h>
+#include "utils.h"
 
+#include "otlv32.h"
+#include "toconf.h"
+#include "toconnection.h"
 #include "tomain.h"
+#include "tosql.h"
+#include "totool.h"
 
 #ifdef WIN32
 #  include "windows/cregistry.h"
 #endif
 
-#include "otlv32.h"
-#include "toconnection.h"
-#include "toconf.h"
-#include "totool.h"
-#include "tosql.h"
+#include <qcheckbox.h>
+#include <qfile.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
+#include <qregexp.h>
+#include <qspinbox.h>
+#include <qvalidator.h>
 
 #include "tooraclesettingui.h"
 #include "tooraclesettingui.moc"

@@ -32,8 +32,8 @@
  *
  ****************************************************************************/
 
-#ifndef __TOHELPBROWSER_H
-#define __TOHELPBROWSER_H
+#ifndef TOHELPBROWSER_H
+#define TOHELPBROWSER_H
 
 #include <list>
 #include <khtml_part.h>

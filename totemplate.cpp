@@ -32,33 +32,34 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "toconf.h"
+#include "toconnection.h"
+#include "tohelp.h"
+#include "tomarkedtext.h"
+#include "tonoblockquery.h"
+#include "toresultview.h"
+#include "totemplate.h"
+#include "totool.h"
+
 #ifdef TO_KDE
 #include <kfiledialog.h>
 #endif
 
-#include <qtimer.h>
+#include <qfiledialog.h>
+#include <qfileinfo.h>
+#include <qlineedit.h>
+#include <qmessagebox.h>
+#include <qpushbutton.h>
 #include <qsplitter.h>
 #include <qtextview.h>
-#include <qfileinfo.h>
-#include <qfiledialog.h>
-#include <qpushbutton.h>
-#include <qmessagebox.h>
-#include <qlineedit.h>
-
-#include "toresultview.h"
-#include "totool.h"
-#include "totemplate.h"
-#include "tomain.h"
-#include "tomarkedtext.h"
-#include "toconf.h"
-#include "tohelp.h"
-#include "toconnection.h"
-#include "tonoblockquery.h"
+#include <qtimer.h>
 
 #include "totemplate.moc"
-#include "totemplatesetupui.moc"
 #include "totemplateaddfileui.moc"
 #include "totemplateeditui.moc"
+#include "totemplatesetupui.moc"
 
 #include "icons/totemplate.xpm"
 

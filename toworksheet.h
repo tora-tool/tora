@@ -32,41 +32,41 @@
  *
  ****************************************************************************/
 
-#ifndef __TOWORKSHEET_H
-#define __TOWORKSHEET_H
+#ifndef TOWORKSHEET_H
+#define TOWORKSHEET_H
+
+#include "toconnection.h"
+#include "totool.h"
 
 #include <map>
 
-#include <qmultilineedit.h>
-#include <qframe.h>
-#include <qtoolbutton.h>
 #include <qdatetime.h>
+#include <qframe.h>
+#include <qmultilineedit.h>
 #include <qtimer.h>
+#include <qtoolbutton.h>
 
-#include "totool.h"
-#include "toconnection.h"
-
-class QTabWidget;
-class toResultLong;
-class toResultView;
-class toResultItem;
-class toResultStats;
-class toResultPlan;
-class toResultCols;
-class toHighlightedText;
-class QGroupBox;
-class QPushButton;
-class QToolButton;
-class QLineEdit;
 class QCheckBox;
-class QLabel;
 class QComboBox;
+class QGroupBox;
+class QLabel;
+class QLineEdit;
 class QPopupMenu;
-class toTool;
+class QPushButton;
 class QSplitter;
-class toVisualize;
+class QTabWidget;
+class QToolButton;
+class toHighlightedText;
 class toListView;
 class toResultBar;
+class toResultCols;
+class toResultItem;
+class toResultLong;
+class toResultPlan;
+class toResultStats;
+class toResultView;
+class toTool;
+class toVisualize;
 
 class toWorksheet : public toToolWidget {
   Q_OBJECT

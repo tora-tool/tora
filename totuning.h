@@ -32,36 +32,36 @@
  *
  ****************************************************************************/
 
-#ifndef __TOTUNING_H
-#define __TOTUNING_H
+#ifndef TOTUNING_H
+#define TOTUNING_H
+
+#include "toresultline.h"
+#include "totool.h"
+#include "totuningoverviewui.h"
 
 #include <list>
 #include <map>
 
-#include <qscrollview.h>
 #include <qgrid.h>
+#include <qscrollview.h>
 
-#include "totool.h"
-#include "totuningoverviewui.h"
-#include "toresultline.h"
-
-class QTabWidget;
 class QComboBox;
+class QGrid;
+class QGridLayout;
+class QLabel;
+class QPopupMenu;
+class QTabWidget;
+class toBarChart;
 class toConnection;
+class toLegendChart;
 class toListView;
-class toResultStats;
-class toResultParam;
-class toResultLong;
+class toPieChart;
 class toResultChart;
 class toResultItem;
-class toPieChart;
-class QLabel;
-class QGridLayout;
-class QGrid;
-class toBarChart;
-class QPopupMenu;
-class toLegendChart;
 class toResultLock;
+class toResultLong;
+class toResultParam;
+class toResultStats;
 
 class toTuningMiss : public toResultLine {
 public:

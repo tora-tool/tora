@@ -32,22 +32,14 @@
  *
  ****************************************************************************/
 
-#include "tomain.h"
+#include "utils.h"
 
-#include <qprinter.h>
-#include <qpainter.h>
-#include <qapplication.h>
-#include <qpalette.h>
-#include <qpaintdevicemetrics.h>
-#include <qfileinfo.h>
-
-#include "tomarkedtext.h"
-#include "totool.h"
 #include "toconf.h"
-#include "tosearchreplace.h"
 #include "tohighlightedtext.h"
-
-#include "tomarkedtext.moc"
+#include "tomain.h"
+#include "tomarkedtext.h"
+#include "tosearchreplace.h"
+#include "totool.h"
 
 #if QT_VERSION >= 300
 #include "qtlegacy/qtmultilineedit.cpp"
@@ -62,6 +54,15 @@
 #ifdef TO_HAS_KPRINT
 #include <kprinter.h>
 #endif
+
+#include <qapplication.h>
+#include <qfileinfo.h>
+#include <qpaintdevicemetrics.h>
+#include <qpainter.h>
+#include <qpalette.h>
+#include <qprinter.h>
+
+#include "tomarkedtext.moc"
 
 toMarkedText::toMarkedText(QWidget *parent,const char *name)
   : toMultiLineEdit(parent,name),toEditWidget()

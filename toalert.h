@@ -32,18 +32,21 @@
  *
  ****************************************************************************/
 
-#ifndef __TOALERT_H
-#define __TOALERT_H
+#ifndef TOALERT_H
+#define TOALERT_H
+
+#include "toconnection.h"
+#include "tothread.h"
+#include "totool.h"
 
 #include <list>
 
-#include "totool.h"
-#include "tothread.h"
+#include <qtimer.h>
 
-class toListView;
-class QLineEdit;
 class QComboBox;
+class QLineEdit;
 class QPopupMenu;
+class toListView;
 
 class toAlert : public toToolWidget {
   Q_OBJECT

@@ -32,8 +32,8 @@
  *
  ****************************************************************************/
 
-#ifndef __TOBACKGROUND_H
-#define __TOBACKGROUND_H
+#ifndef TOBACKGROUND_H
+#define TOBACKGROUND_H
 
 #include <qtimer.h>
 

@@ -32,31 +32,17 @@
  *
  ****************************************************************************/
 
-#include <stdio.h>
+#include "utils.h"
 
-#include <qlineedit.h>
-#include <qtoolbutton.h>
-#include <qlabel.h>
-#include <qcombobox.h>
-#include <qworkspace.h>
-#include <qpopupmenu.h>
-#include <qmenubar.h>
-
-#ifdef TO_KDE
-#  include <kmenubar.h>
-#endif
-
-#include "totool.h"
-#include "toresultview.h"
-#include "tomain.h"
-#include "tosql.h"
-#include "toconnection.h"
-#include "tonoblockquery.h"
 #include "toalert.h"
-#include "toresultview.h"
+#include "toconnection.h"
+#include "tomain.h"
 #include "tomemoeditor.h"
-
-#include "toalert.moc"
+#include "tonoblockquery.h"
+#include "toresultview.h"
+#include "toresultview.h"
+#include "tosql.h"
+#include "totool.h"
 
 #ifndef WIN32
 #include <unistd.h>
@@ -64,11 +50,28 @@
 #include <windows.h>
 #endif
 
+#include <stdio.h>
+
+#include <qcombobox.h>
+#include <qlabel.h>
+#include <qlineedit.h>
+#include <qmenubar.h>
+#include <qpopupmenu.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
+#include <qworkspace.h>
+
+#ifdef TO_KDE
+#  include <kmenubar.h>
+#endif
+
+#include "toalert.moc"
+
+#include "icons/commit.xpm"
+#include "icons/return.xpm"
 #include "icons/toalert.xpm"
 #include "icons/toworksheet.xpm"
-#include "icons/return.xpm"
 #include "icons/trash.xpm"
-#include "icons/commit.xpm"
 
 class toAlertTool : public toTool {
 protected:

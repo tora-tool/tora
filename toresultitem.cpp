@@ -32,20 +32,20 @@
  *
  ****************************************************************************/
 
-#include <qlabel.h>
-#include <qgrid.h>
+#include "utils.h"
 
-#include <qheader.h>
-#include <qtooltip.h>
-
-#include "toresultitem.h"
-#include "toresultresources.h"
-#include "tomain.h"
-#include "totool.h"
 #include "toconf.h"
 #include "toconnection.h"
-#include "tosql.h"
 #include "tonoblockquery.h"
+#include "toresultitem.h"
+#include "toresultresources.h"
+#include "tosql.h"
+#include "totool.h"
+
+#include <qgrid.h>
+#include <qheader.h>
+#include <qlabel.h>
+#include <qtooltip.h>
 
 #include "toresultitem.moc"
 

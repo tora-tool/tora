@@ -32,8 +32,10 @@
  *
  ****************************************************************************/
 
-#ifndef __TOMARKEDTEXT_2_H
-#define __TOMARKEDTEXT_2_H
+#ifndef TOMARKEDTEXT_2_H
+#define TOMARKEDTEXT_2_H
+
+#include <qmultilineedit.h>
 
 /**
  * Container to the correct multi line editor for Qt 2 or 3.

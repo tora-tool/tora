@@ -32,8 +32,8 @@
  *
  ****************************************************************************/
 
-#ifndef __TOSQLPARSE_H
-#define __TOSQLPARSE_H
+#ifndef TOSQLPARSE_H
+#define TOSQLPARSE_H
 
 #include <list>
 

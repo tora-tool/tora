@@ -32,14 +32,15 @@
  *
  ****************************************************************************/
 
-#ifndef __TOSYNTAXSETUP_H
-#define __TOSYNTAXSETUP_H
+#ifndef TOSYNTAXSETUP_H
+#define TOSYNTAXSETUP_H
+
+#include "tohelp.h"
+#include "tohighlightedtext.h"
+#include "tosyntaxsetupui.h"
+#include "totool.h"
 
 #include <map>
-#include "totool.h"
-#include "tosyntaxsetupui.h"
-#include "tohighlightedtext.h"
-#include "tohelp.h"
 
 class QFont;
 

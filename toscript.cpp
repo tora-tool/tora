@@ -32,6 +32,19 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "toextract.h"
+#include "tofilesize.h"
+#include "tohighlightedtext.h"
+#include "tomain.h"
+#include "toresultview.h"
+#include "toscript.h"
+#include "toscriptui.h"
+#include "tosql.h"
+#include "totool.h"
+#include "toworksheet.h"
+
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qlabel.h>
@@ -45,21 +58,11 @@
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 
-#include "toextract.h"
-#include "tofilesize.h"
-#include "tohighlightedtext.h"
-#include "toresultview.h"
-#include "toscript.h"
-#include "toscriptui.h"
-#include "tosql.h"
-#include "totool.h"
-#include "toworksheet.h"
-
 #include "toscript.moc"
 #include "toscriptui.moc"
 
-#include "icons/toscript.xpm"
 #include "icons/execute.xpm"
+#include "icons/toscript.xpm"
 
 class toScriptTool : public toTool {
 protected:

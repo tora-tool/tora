@@ -32,25 +32,26 @@
  *
  ****************************************************************************/
 
-#include <qcombobox.h>
-#include <qtoolbutton.h>
-#include <qtoolbar.h>
-#include <qlabel.h>
-#include <qtooltip.h>
+#include "utils.h"
 
-#include "tomain.h"
 #include "tobarchart.h"
 #include "tolinechart.h"
 #include "topiechart.h"
-#include "tovisualize.h"
 #include "toresultview.h"
+#include "tovisualize.h"
+
+#include <qcombobox.h>
+#include <qlabel.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
+#include <qtooltip.h>
 
 #include "tovisualize.moc"
 
-#include "icons/legend.xpm"
-#include "icons/grid.xpm"
 #include "icons/axis.xpm"
 #include "icons/compile.xpm"
+#include "icons/grid.xpm"
+#include "icons/legend.xpm"
 
 toVisualize::toVisualize(toListView *source,QWidget *parent,const char *name)
   : QVBox(parent,name),Source(source)

@@ -32,31 +32,31 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "tohighlightedtext.h"
+#include "tomarkedtext.h"
+#include "tomemoeditor.h"
+#include "toresultview.h"
+
+#include <qcheckbox.h>
+#include <qheader.h>
+#include <qlabel.h>
+#include <qlayout.h>
 #include <qpixmap.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qheader.h>
-#include <qcheckbox.h>
-
-#include "tomemoeditor.h"
-#include "tohighlightedtext.h"
-#include "tomarkedtext.h"
-#include "tomain.h"
-#include "toresultview.h"
 
 #include "tomemoeditor.moc"
 
 #include "icons/commit.xpm"
+#include "icons/copy.xpm"
+#include "icons/cut.xpm"
 #include "icons/fileopen.xpm"
 #include "icons/filesave.xpm"
-#include "icons/cut.xpm"
-#include "icons/copy.xpm"
-#include "icons/paste.xpm"
-
 #include "icons/forward.xpm"
 #include "icons/next.xpm"
+#include "icons/paste.xpm"
 #include "icons/previous.xpm"
 #include "icons/rewind.xpm"
 

@@ -32,19 +32,20 @@
  *
  ****************************************************************************/
 
-#include <qcheckbox.h>
-#include <qradiobutton.h>
-#include <qpushbutton.h>
-#include <qregexp.h>
-#include <qmultilineedit.h>
-#include <qaccel.h>
+#include "utils.h"
 
-#include "tomarkedtext.h"
-#include "tosearchreplace.h"
-#include "tomain.h"
-#include "toresultview.h"
-#include "toresultcontent.h"
 #include "tohelp.h"
+#include "tomarkedtext.h"
+#include "toresultcontent.h"
+#include "toresultview.h"
+#include "tosearchreplace.h"
+
+#include <qaccel.h>
+#include <qcheckbox.h>
+#include <qmultilineedit.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
+#include <qregexp.h>
 
 #include "tosearchreplaceui.moc"
 

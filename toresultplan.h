@@ -32,13 +32,13 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTPLAN_H
-#define __TORESULTPLAN_H
+#ifndef TORESULTPLAN_H
+#define TORESULTPLAN_H
+
+#include "tobackground.h"
+#include "toresultview.h"
 
 #include <map>
-
-#include "toresultview.h"
-#include "tobackground.h"
 
 class toNoBlockQuery;
 

@@ -32,6 +32,27 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "toconf.h"
+#include "todebug.h"
+#include "todebugchangeui.h"
+#include "todebugtext.h"
+#include "tohelp.h"
+#include "tohighlightedtext.h"
+#include "tomarkedtext.h"
+#include "tomain.h"
+#include "tooutput.h"
+#include "toparamget.h"
+#include "toresultview.h"
+#include "tosql.h"
+#include "tosqlparse.h"
+#include "totool.h"
+
+#ifdef TO_KDE
+#include <kmenubar.h>
+#endif
+
 #include <stack>
 
 #include <qbuttongroup.h>
@@ -54,25 +75,6 @@
 #include <qtoolbutton.h>
 #include <qtooltip.h>
 #include <qworkspace.h>
-
-#ifdef TO_KDE
-#include <kmenubar.h>
-#endif
-
-#include "toconf.h"
-#include "todebug.h"
-#include "todebugtext.h"
-#include "tohighlightedtext.h"
-#include "tomain.h"
-#include "tomarkedtext.h"
-#include "tooutput.h"
-#include "toparamget.h"
-#include "toresultview.h"
-#include "totool.h"
-#include "tosql.h"
-#include "tohelp.h"
-#include "todebugchangeui.h"
-#include "tosqlparse.h"
 
 #include "todebug.moc"
 #include "todebugchangeui.moc"

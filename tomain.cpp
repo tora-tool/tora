@@ -32,42 +32,44 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "toabout.h"
+#include "toconf.h"
+#include "toconnection.h"
+#include "toeditwidget.h"
+#include "tohelp.h"
+#include "tomain.h"
+#include "tomemoeditor.h"
+#include "tonewconnection.h"
+#include "topreferences.h"
+#include "tosearchreplace.h"
+#include "totool.h"
+
 #ifdef TO_KDE
-#include <kmenubar.h>
 #include <kfiledialog.h>
+#include <kmenubar.h>
 #endif
 
 #include <qapplication.h>
 #include <qcombobox.h>
 #include <qevent.h>
-#include <qfiledialog.h>
 #include <qfile.h>
+#include <qfiledialog.h>
+#include <qfileinfo.h>
+#include <qinputdialog.h>
 #include <qlabel.h>
 #include <qmenubar.h>
 #include <qmessagebox.h>
 #include <qnamespace.h>
 #include <qpopupmenu.h>
 #include <qpushbutton.h>
+#include <qregexp.h>
 #include <qstatusbar.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
-#include <qworkspace.h>
-#include <qfileinfo.h>
 #include <qvbox.h>
-#include <qregexp.h>
-#include <qinputdialog.h>
-
-#include "toconf.h"
-#include "tomain.h"
-#include "totool.h"
-#include "tonewconnection.h"
-#include "toabout.h"
-#include "topreferences.h"
-#include "tosearchreplace.h"
-#include "tohelp.h"
-#include "tomemoeditor.h"
-#include "toeditwidget.h"
-#include "toconnection.h"
+#include <qworkspace.h>
 
 #include "tomain.moc"
 #ifdef TO_KDE
@@ -76,21 +78,21 @@
 #include "tomainwindow.moc"
 #endif
 
+#include "icons/commit.xpm"
 #include "icons/connect.xpm"
+#include "icons/copy.xpm"
+#include "icons/cut.xpm"
 #include "icons/disconnect.xpm"
 #include "icons/fileopen.xpm"
 #include "icons/filesave.xpm"
-#include "icons/print.xpm"
-#include "icons/commit.xpm"
-#include "icons/rollback.xpm"
-#include "icons/undo.xpm"
-#include "icons/redo.xpm"
-#include "icons/cut.xpm"
-#include "icons/copy.xpm"
 #include "icons/paste.xpm"
+#include "icons/print.xpm"
+#include "icons/redo.xpm"
+#include "icons/rollback.xpm"
 #include "icons/toramini.xpm"
-#include "icons/up.xpm"
 #include "icons/trash.xpm"
+#include "icons/undo.xpm"
+#include "icons/up.xpm"
 
 #define DEFAULT_TITLE "TOra %s"
 

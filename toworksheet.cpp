@@ -32,70 +32,73 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "tochangeconnection.h"
+#include "toconf.h"
+#include "tohighlightedtext.h"
+#include "tomain.h"
+#include "toparamget.h"
+#include "toresultbar.h"
+#include "toresultcols.h"
+#include "toresultlong.h"
+#include "toresultplan.h"
+#include "toresultresources.h"
+#include "toresultstats.h"
+#include "toresultview.h"
+#include "tosession.h"
+#include "totool.h"
+#include "tovisualize.h"
+#include "toworksheet.h"
+#include "toworksheetsetupui.h"
+#include "toworksheetstatistic.h"
+
 #ifdef TO_KDE
 #include <kfiledialog.h>
 #include <kmenubar.h>
 #endif
 
+#include <qcheckbox.h>
+#include <qcheckbox.h>
 #include <qcombobox.h>
-#include <qregexp.h>
+#include <qfiledialog.h>
+#include <qfileinfo.h>
+#include <qgrid.h>
+#include <qgroupbox.h>
+#include <qheader.h>
+#include <qinputdialog.h>
 #include <qlabel.h>
+#include <qlineedit.h>
 #include <qlistview.h>
+#include <qmenubar.h>
+#include <qmessagebox.h>
 #include <qmultilineedit.h>
 #include <qnamespace.h>
 #include <qpixmap.h>
+#include <qpushbutton.h>
+#include <qregexp.h>
 #include <qsplitter.h>
 #include <qtabwidget.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
-#include <qmenubar.h>
-#include <qworkspace.h>
-#include <qgrid.h>
-#include <qcheckbox.h>
-#include <qgroupbox.h>
-#include <qcheckbox.h>
 #include <qtooltip.h>
-#include <qlineedit.h>
-#include <qfiledialog.h>
-#include <qpushbutton.h>
-#include <qmessagebox.h>
-#include <qheader.h>
-#include <qfileinfo.h>
-#include <qinputdialog.h>
-
-#include "totool.h"
-#include "toresultplan.h"
-#include "toworksheet.h"
-#include "toresultview.h"
-#include "toresultresources.h"
-#include "tohighlightedtext.h"
-#include "toparamget.h"
-#include "toresultlong.h"
-#include "toresultstats.h"
-#include "toresultcols.h"
-#include "toconf.h"
-#include "tochangeconnection.h"
-#include "toworksheetsetupui.h"
-#include "tosession.h"
-#include "toresultbar.h"
-#include "tovisualize.h"
-#include "toworksheetstatistic.h"
+#include <qworkspace.h>
 
 #include "toworksheet.moc"
 #include "toworksheetsetupui.moc"
 
-#include "icons/toworksheet.xpm"
-#include "icons/refresh.xpm"
-#include "icons/execute.xpm"
-#include "icons/executestep.xpm"
-#include "icons/executeall.xpm"
-#include "icons/eraselog.xpm"
-#include "icons/stop.xpm"
 #include "icons/clock.xpm"
-#include "icons/describe.xpm"
 #include "icons/compile.xpm"
-#include "icons/previous.xpm"
+#include "icons/describe.xpm"
+#include "icons/eraselog.xpm"
+#include "icons/execute.xpm"
+#include "icons/executeall.xpm"
+#include "icons/executestep.xpm"
 #include "icons/filesave.xpm"
+#include "icons/previous.xpm"
+#include "icons/refresh.xpm"
+#include "icons/stop.xpm"
+#include "icons/toworksheet.xpm"
 
 #define TO_ID_STATISTICS		(toMain::TO_TOOL_MENU_ID+ 0)
 #define TO_ID_STOP			(toMain::TO_TOOL_MENU_ID+ 1)

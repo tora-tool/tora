@@ -32,21 +32,21 @@
  *
  ****************************************************************************/
 
-#ifndef __TOSGATRACE_H
-#define __TOSGATRACE_H
+#ifndef TOSGATRACE_H
+#define TOSGATRACE_H
+
+#include "torollbackdialogui.h"
+#include "totool.h"
 
 #include <qdialog.h>
 
-#include "totool.h"
-#include "torollbackdialogui.h"
-
+class QComboBox;
+class QPopupMenu;
 class toConnection;
 class toResultItem;
 class toResultView;
 class toSGAStatement;
 class toStorageDefinition;
-class QPopupMenu;
-class QComboBox;
 
 class toRollbackDialog : public toRollbackDialogUI
 { 

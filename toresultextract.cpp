@@ -32,14 +32,15 @@
  *
  ****************************************************************************/
 
-#include "toresultextract.h"
-#include "tohighlightedtext.h"
-#include "tomain.h"
-#include "totool.h"
+#include "utils.h"
+
 #include "toconf.h"
-#include "tosql.h"
 #include "toconnection.h"
 #include "toextract.h"
+#include "tohighlightedtext.h"
+#include "toresultextract.h"
+#include "tosql.h"
+#include "totool.h"
 
 #include "toresultextract.moc"
 

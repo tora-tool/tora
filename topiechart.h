@@ -32,8 +32,8 @@
  *
  ****************************************************************************/
 
-#ifndef __TOPIECHART_H
-#define __TOPIECHART_H
+#ifndef TOPIECHART_H
+#define TOPIECHART_H
 
 #include <list>
 #include <qwidget.h>

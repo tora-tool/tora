@@ -60,17 +60,17 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTPIE_H
-#define __TORESULTPIE_H
+#ifndef TORESULTPIE_H
+#define TORESULTPIE_H
+
+#include "tobackground.h"
+#include "topiechart.h"
+#include "toresult.h"
 
 #include <list>
 
-#include "toresult.h"
-#include "topiechart.h"
-#include "tobackground.h"
-
-class toSQL;
 class toNoBlockQuery;
+class toSQL;
 
 /** Display the result of a query in a piechart. The first column of the query should
  * contain the value and the second should contain an optional label.

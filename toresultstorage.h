@@ -32,11 +32,11 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTSTORAGE_H
-#define __TORESULTSTORAGE_H
+#ifndef TORESULTSTORAGE_H
+#define TORESULTSTORAGE_H
 
-#include "toresultview.h"
 #include "tobackground.h"
+#include "toresultview.h"
 
 class toNoBlockQuery;
 
@@ -66,8 +66,7 @@ public:
   QString currentFilename(void);
   /** Support Oracle
    */
-  virtual bool canHandle(toConnection &conn)
-  { return toIsOracle(conn); }
+  virtual bool canHandle(toConnection &conn);
 public slots:
   virtual void query(void);
 private slots:

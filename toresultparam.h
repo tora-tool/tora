@@ -32,12 +32,14 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTPARAM_H
-#define __TORESULTPARAM_H
+#ifndef TORESULTPARAM_H
+#define TORESULTPARAM_H
+
+#include "toresult.h"
+
+#include <map>
 
 #include <qvbox.h>
-#include <map>
-#include "toresult.h"
 
 class QLineEdit;
 class toResultView;

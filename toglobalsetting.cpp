@@ -32,36 +32,38 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "toconf.h"
+#include "toconnection.h"
+#include "toglobalsetting.h"
+#include "tomain.h"
+#include "toresultview.h"
+#include "tosql.h"
+#include "totool.h"
+
 #ifdef TO_KDE
 #include <kfiledialog.h>
 #endif
 
-#include <qspinbox.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
+#include <qfiledialog.h>
+#include <qfontdialog.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
 #include <qlayout.h>
-#include <qvariant.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
-#include <qfontdialog.h>
-#include <qcombobox.h>
-#include <qvalidator.h>
-#include <qfiledialog.h>
+#include <qlineedit.h>
 #include <qmessagebox.h>
+#include <qpushbutton.h>
+#include <qspinbox.h>
+#include <qtooltip.h>
+#include <qvalidator.h>
+#include <qvariant.h>
+#include <qwhatsthis.h>
 
-#include "toconf.h"
-#include "totool.h"
-#include "tomain.h"
-#include "toglobalsetting.h"
-#include "tosql.h"
-#include "toconnection.h"
-#include "toresultview.h"
-
-#include "toglobalsettingui.moc"
 #include "todatabasesettingui.moc"
+#include "toglobalsettingui.moc"
 #include "totoolsettingui.moc"
 
 toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)

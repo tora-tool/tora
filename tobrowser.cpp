@@ -32,62 +32,56 @@
  *
  ****************************************************************************/
 
-#include <qheader.h>
-#include <qtabwidget.h>
-#include <qtoolbar.h>
-#include <qtoolbutton.h>
-#include <qcombobox.h>
-#include <qcheckbox.h>
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qsplitter.h>
-#include <qworkspace.h>
-#include <qvaluelist.h>
-#include <qbuttongroup.h>
-#include <qregexp.h>
-#include <qpopupmenu.h>
-#include <qmenubar.h>
+#include "tobrowser.h"
+#include "tobrowserfilterui.h"
+#include "tochangeconnection.h"
+#include "toconnection.h"
+#include "tohelp.h"
+#include "tomain.h"
+#include "toresultcols.h"
+#include "toresultconstraint.h"
+#include "toresultcontent.h"
+#include "toresultcontent.h"
+#include "toresultdepend.h"
+#include "toresultextract.h"
+#include "toresultfield.h"
+#include "toresultindexes.h"
+#include "toresultitem.h"
+#include "toresultlong.h"
+#include "toresultreferences.h"
+#include "toresultview.h"
+#include "tosql.h"
+#include "totool.h"
 
 #ifdef TO_KDE
 #  include <kmenubar.h>
 #endif
 
-#include "tochangeconnection.h"
-#include "totool.h"
-#include "tomain.h"
-#include "tobrowser.h"
-#include "toresultview.h"
-#include "toresultcols.h"
-#include "toresultconstraint.h"
-#include "toresultreferences.h"
-#include "toresultitem.h"
-#include "toresultfield.h"
-#include "toresultindexes.h"
-#include "toresultcontent.h"
-#include "toresultcontent.h"
-#include "toresultdepend.h"
-#include "toresultextract.h"
-#include "tosql.h"
-#include "tobrowserfilterui.h"
-#include "tohelp.h"
-#include "toconnection.h"
-#include "toresultlong.h"
+#include <qbuttongroup.h>
+#include <qcheckbox.h>
+#include <qcombobox.h>
+#include <qheader.h>
+#include <qlabel.h>
+#include <qlineedit.h>
+#include <qmenubar.h>
+#include <qpopupmenu.h>
+#include <qregexp.h>
+#include <qsplitter.h>
+#include <qtabwidget.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
+#include <qvaluelist.h>
+#include <qworkspace.h>
 
 #include "tobrowser.moc"
+#include "tobrowserconstraintui.moc"
 #include "tobrowserfilterui.moc"
 #include "tobrowserindexui.moc"
-#include "tobrowserconstraintui.moc"
 #include "tobrowsertableui.moc"
 
 #include "icons/filter.xpm"
 #include "icons/function.xpm"
 #include "icons/index.xpm"
-#if 0
-#include "icons/addtable.xpm"
-#include "icons/modconstraint.xpm"
-#include "icons/modtable.xpm"
-#include "icons/modindex.xpm"
-#endif
 #include "icons/nofilter.xpm"
 #include "icons/refresh.xpm"
 #include "icons/schema.xpm"
@@ -96,6 +90,12 @@
 #include "icons/table.xpm"
 #include "icons/tobrowser.xpm"
 #include "icons/view.xpm"
+#if 0
+#include "icons/addtable.xpm"
+#include "icons/modconstraint.xpm"
+#include "icons/modindex.xpm"
+#include "icons/modtable.xpm"
+#endif
 
 class toBrowserTool : public toTool {
 protected:

@@ -32,20 +32,20 @@
  *
  ****************************************************************************/
 
-#ifndef __TOSECURITY_H
-#define __TOSECURITY_H
-
-#include <list>
+#ifndef TOSECURITY_H
+#define TOSECURITY_H
 
 #include "totool.h"
 
+#include <list>
+
+class QPopupMenu;
+class QTabWidget;
+class QToolButton;
 class toConnection;
 class toListView;
 class toSecurityPage;
 class toSecurityQuota;
-class QTabWidget;
-class QToolButton;
-class QPopupMenu;
 
 class toSecuritySystem : public toListView {
   Q_OBJECT

@@ -32,27 +32,30 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "toabout.h"
+#include "toconf.h"
+#include "tohighlightedtext.h"
+#include "tomain.h"
+#include "tosql.h"
+#include "totool.h"
+
 #ifndef WIN32
 #include <unistd.h>
 #endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
 
-#include <qmessagebox.h>
-#include <qapplication.h>
-#include <qtextcodec.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #ifdef TO_KDE
 #include <kapp.h>
 #endif
 
-#include "tomain.h"
-#include "toconf.h"
-#include "tohighlightedtext.h"
-#include "toabout.h"
-#include "tosql.h"
-#include "totool.h"
+#include <qapplication.h>
+#include <qmessagebox.h>
+#include <qtextcodec.h>
 
 #ifndef TOMONOLITHIC
 #include <dlfcn.h>

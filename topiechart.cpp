@@ -32,24 +32,25 @@
  *
  ****************************************************************************/
 
-#include "tomain.h"
+#include "utils.h"
 
-#include <qpainter.h>
-#include <qapplication.h>
-#include <qworkspace.h>
-#include <qprinter.h>
-#include <qpaintdevicemetrics.h>
-#include <qpopupmenu.h>
-
-#include <math.h>
-
-#include "topiechart.h"
-#include "totool.h"
 #include "toconf.h"
+#include "topiechart.h"
+#include "tomain.h"
+#include "totool.h"
 
 #ifdef TO_HAS_KPRINT
 #include <kprinter.h>
 #endif
+
+#include <math.h>
+
+#include <qapplication.h>
+#include <qpaintdevicemetrics.h>
+#include <qpainter.h>
+#include <qpopupmenu.h>
+#include <qprinter.h>
+#include <qworkspace.h>
 
 #include "topiechart.moc"
 

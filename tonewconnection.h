@@ -32,8 +32,8 @@
  *
  ****************************************************************************/
 
-#ifndef __TONEWCONNECTION_H
-#define __TONEWCONNECTION_H
+#ifndef TONEWCONNECTION_H
+#define TONEWCONNECTION_H
 
 #include "tonewconnectionui.h"
 #include "tohelp.h"

@@ -32,15 +32,16 @@
  *
  ****************************************************************************/
 
+#include "tochangeconnection.h"
+#include "toconnection.h"
+#include "tomain.h"
+#include "totool.h"
+
 #include <qpopupmenu.h>
 #include <qtooltip.h>
 
-#include "tomain.h"
-#include "toconnection.h"
-#include "tochangeconnection.h"
-#include "totool.h"
-
 #include "tochangeconnection.moc"
+
 #include "icons/changeconnect.xpm"
 
 toChangeConnection::toChangeConnection(QToolBar *parent,const char *name)

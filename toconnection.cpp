@@ -32,14 +32,16 @@
  *
  ****************************************************************************/
 
-#include <qwidget.h>
-#include <qapplication.h>
+#include "utils.h"
 
-#include "toconnection.h"
-#include "tosql.h"
 #include "toconf.h"
+#include "toconnection.h"
 #include "tomain.h"
+#include "tosql.h"
 #include "totool.h"
+
+#include <qapplication.h>
+#include <qwidget.h>
 
 // Connection provider implementation
 

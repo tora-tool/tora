@@ -60,15 +60,16 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTCOLS_H
-#define __TORESULTCOLS_H
+#ifndef TORESULTCOLS_H
+#define TORESULTCOLS_H
+
+#include "toconnection.h"
+#include "toresultview.h"
 
 #include <qvbox.h>
-#include "toresultview.h"
-#include "toconnection.h"
 
-class toResultColsItem;
 class QLabel;
+class toResultColsItem;
 
 /** This widget displays information about the returned columns of an object
  * specified by the first and second parameter in the query. The sql is not

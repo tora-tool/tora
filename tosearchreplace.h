@@ -32,14 +32,14 @@
  *
  ****************************************************************************/
 
-#ifndef __TOSEARCHREPLACE_H
-#define __TOSEARCHREPLACE_H
+#ifndef TOSEARCHREPLACE_H
+#define TOSEARCHREPLACE_H
 
 #include "tosearchreplaceui.h"
 #include "tohelp.h"
 
-class toMarkedText;
 class toListView;
+class toMarkedText;
 class toResultContentEditor;
 
 class toSearchReplace : public toSearchReplaceUI, public toHelpContext {

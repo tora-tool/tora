@@ -32,22 +32,23 @@
  *
  ****************************************************************************/
 
-#ifndef __TOSGATRACE_H
-#define __TOSGATRACE_H
+#ifndef TOSGATRACE_H
+#define TOSGATRACE_H
 
 #include "totool.h"
 
+class QComboBox;
+class QListViewItem;
+class QSplitter;
 class QTabWidget;
 class toConnection;
-class toSGAStatement;
-class QListViewItem;
 class toMain;
-class toResultStats;
-class toResultLock;
-class toResultBar;
 class toPopupMenu;
-class QComboBox;
+class toResultBar;
+class toResultLock;
 class toResultLong;
+class toResultStats;
+class toSGAStatement;
 
 #define TO_SESSION_WAIT "toSession:SessionWait"
 #define TO_SESSION_IO   "toSession:SessionIO"

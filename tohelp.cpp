@@ -32,40 +32,41 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "toconf.h"
+#include "tohelp.h"
+#include "tohtml.h"
+#include "tomain.h"
+#include "toresultview.h"
+#include "totool.h"
+
 #ifdef TO_KDE
 #include <kfiledialog.h>
 #include <khtml_part.h>
 #endif
 
 #include <qaccel.h>
+#include <qcombobox.h>
 #include <qdir.h>
 #include <qfiledialog.h>
 #include <qfileinfo.h>
-#include <qlayout.h>
 #include <qlabel.h>
+#include <qlayout.h>
 #include <qlineedit.h>
 #include <qmessagebox.h>
 #include <qprogressbar.h>
 #include <qpushbutton.h>
 #include <qregexp.h>
 #include <qsplitter.h>
-#include <qtoolbar.h>
-#include <qtoolbutton.h>
 #include <qtabwidget.h>
 #include <qtextbrowser.h>
 #include <qtextview.h>
-#include <qcombobox.h>
 #include <qtimer.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
 #include <qtooltip.h>
 #include <qvbox.h>
-
-#include "tomain.h"
-#include "tohtml.h"
-#include "tohelp.h"
-#include "toconf.h"
-
-#include "toresultview.h"
-#include "totool.h"
 
 #include "tohelp.moc"
 #include "tohelpaddfileui.moc"

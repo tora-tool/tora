@@ -32,19 +32,20 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULT_H
-#define __TORESULT_H
+#ifndef TORESULT_H
+#define TORESULT_H
+
+#include "toqvalue.h"
+#include "tosql.h"
 
 #include <list>
 
 #include <qobject.h>
-#include "toqvalue.h"
-#include "tosql.h"
 
-class toTimer;
+class QTabWidget;
 class toConnection;
 class toResult;
-class QTabWidget;
+class toTimer;
 
 /** Used for getting slots into toResult.
  * @internal

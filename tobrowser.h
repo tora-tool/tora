@@ -32,22 +32,22 @@
  *
  ****************************************************************************/
 
-#ifndef __TOBROWSER_H
-#define __TOBROWSER_H
+#ifndef TOBROWSER_H
+#define TOBROWSER_H
+
+#include "totemplate.h"
+#include "totool.h"
 
 #include <map>
 
-#include "totool.h"
-#include "totemplate.h"
-
 class QComboBox;
+class QListViewItem;
+class QPopupMenu;
 class QTabWidget;
 class toResult;
-class toResultView;
-class QListViewItem;
-class toResultFilter;
-class QPopupMenu;
 class toResultContent;
+class toResultFilter;
+class toResultView;
 
 class toBrowser : public toToolWidget {
   Q_OBJECT

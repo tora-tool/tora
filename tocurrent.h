@@ -32,16 +32,16 @@
  *
  ****************************************************************************/
 
-#ifndef __TOCURRENT_H
-#define __TOCURRENT_H
+#ifndef TOCURRENT_H
+#define TOCURRENT_H
 
 #include "totool.h"
 
-class toResultView;
-class QTabWidget;
-class toResultStats;
-class toResultParam;
 class QPopupMenu;
+class QTabWidget;
+class toResultParam;
+class toResultStats;
+class toResultView;
 
 class toCurrent : public toToolWidget {
   Q_OBJECT

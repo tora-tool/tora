@@ -32,37 +32,39 @@
  *
  ****************************************************************************/
 
-#include <qcombobox.h>
-#include <qgroupbox.h>
-#include <qlabel.h>
-#include <qtooltip.h>
-#include <qworkspace.h>
-#include <qtoolbar.h>
-#include <qtoolbutton.h>
-#include <qtimer.h>
-#include <qstring.h>
-#include <qpopupmenu.h>
-#include <qmenubar.h>
+#include "utils.h"
+
+#include "toconnection.h"
+#include "tomain.h"
+#include "tomarkedtext.h"
+#include "tosql.h"
+#include "totool.h"
+
+#include <map>
 
 #ifdef TO_KDE
 #  include <kmenubar.h>
 #endif
 
-#include <map>
-
-#include "totool.h"
-#include "tomarkedtext.h"
-#include "tomain.h"
-#include "tosql.h"
-#include "toconnection.h"
+#include <qcombobox.h>
+#include <qgroupbox.h>
+#include <qlabel.h>
+#include <qmenubar.h>
+#include <qpopupmenu.h>
+#include <qstring.h>
+#include <qtimer.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
+#include <qtooltip.h>
+#include <qworkspace.h>
 
 #include "tooutput.moc"
 
+#include "icons/eraselog.xpm"
+#include "icons/offline.xpm"
+#include "icons/online.xpm"
 #include "icons/refresh.xpm"
 #include "icons/tooutput.xpm"
-#include "icons/eraselog.xpm"
-#include "icons/online.xpm"
-#include "icons/offline.xpm"
 
 #define CONF_POLLING    "Refresh"
 #define DEFAULT_POLLING	"10 seconds"

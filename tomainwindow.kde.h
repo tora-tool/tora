@@ -32,8 +32,8 @@
  *
  ****************************************************************************/
 
-#ifndef __TOMAINWINDOW_KDE_H
-#define __TOMAINWINDOW_KDE_H
+#ifndef TOMAINWINDOW_KDE_H
+#define TOMAINWINDOW_KDE_H
 
 /**
  * A container class that either inherits KDE or Qt main window.

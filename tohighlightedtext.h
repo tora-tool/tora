@@ -32,17 +32,17 @@
  *
  ****************************************************************************/
 
-#ifndef __TOHIGHLIGHTEDTEXT_H
-#define __TOHIGHLIGHTEDTEXT_H
+#ifndef TOHIGHLIGHTEDTEXT_H
+#define TOHIGHLIGHTEDTEXT_H
+
+#include "tomarkedtext.h"
 
 #include <list>
 #include <map>
 
-#include "tomarkedtext.h"
-
+class QListBox;
 class QPainter;
 class toSyntaxSetup;
-class QListBox;
 
 /** This class implements a syntax parser to provide information to
  * a syntax highlighted editor.

@@ -32,14 +32,14 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTITEM_H
-#define __TORESULTITEM_H
-
-#include <qscrollview.h>
-#include <qfont.h>
+#ifndef TORESULTITEM_H
+#define TORESULTITEM_H
 
 #include "tobackground.h"
 #include "toresult.h"
+
+#include <qscrollview.h>
+#include <qfont.h>
 
 class QGrid;
 class toSQL;

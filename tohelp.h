@@ -32,8 +32,8 @@
  *
  ****************************************************************************/
 
-#ifndef __TOHELP_H
-#define __TOHELP_H
+#ifndef TOHELP_H
+#define TOHELP_H
 
 #include <qdialog.h>
 

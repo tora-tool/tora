@@ -32,13 +32,9 @@
  *
  ****************************************************************************/
 
-#include <qlineedit.h>
-#include <qtoolbutton.h>
-#include <qlabel.h>
-#include <qregexp.h>
+#include "utils.h"
 
 #include "toconf.h"
-#include "tomain.h"
 #include "toresultparam.h"
 #include "tosql.h"
 #include "toresultview.h"
@@ -46,11 +42,17 @@
 #include "toconnection.h"
 #include "toresultlong.h"
 
+#include <qlabel.h>
+#include <qlineedit.h>
+#include <qregexp.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
+
 #include "toresultparam.moc"
 
+#include "icons/database.xpm"
 #include "icons/filesave.xpm"
 #include "icons/tocurrent.xpm"
-#include "icons/database.xpm"
 #include "icons/trash.xpm"
 
 static toSQL SQLParams("toResultParam:ListParam",

@@ -32,34 +32,37 @@
  *
  ****************************************************************************/
 
-#include <qmenubar.h>
-#include <qtoolbutton.h>
-#include <qspinbox.h>
-#include <qcheckbox.h>
+#include "utils.h"
+
+#include "toconf.h"
+#include "toeditextensions.h"
+#include "toeditextensionsetupui.h"
+#include "tohighlightedtext.h"
+#include "tomain.h"
+#include "tosqlparse.h"
+#include "totool.h"
 
 #ifdef TO_KDE
 #include <kmenubar.h>
 #endif
 
-#include "totool.h"
-#include "toeditextensions.h"
-#include "tohighlightedtext.h"
-#include "toeditextensionsetupui.h"
-#include "tosqlparse.h"
-#include "toconf.h"
+#include <qcheckbox.h>
+#include <qmenubar.h>
+#include <qspinbox.h>
+#include <qtoolbutton.h>
 
 #include "toeditextensions.moc"
 #include "toeditextensionsetupui.moc"
 
-#include "icons/indent.xpm"
 #include "icons/deindent.xpm"
+#include "icons/indent.xpm"
 
-static int IndentIndex;
-static int DeindentIndex;
-static int AutoIndentBuffer;
 static int AutoIndentBlock;
-static int ObfuscateBuffer;
+static int AutoIndentBuffer;
+static int DeindentIndex;
+static int IndentIndex;
 static int ObfuscateBlock;
+static int ObfuscateBuffer;
 
 #define CONF_EXPAND_SPACES	"ExpandSpaces"
 #define CONF_COMMA_BEFORE	"CommaBefore"
@@ -73,8 +76,8 @@ static int ObfuscateBlock;
 #define CONF_COMMENT_COLUMN	"CommentColumn"
 #define DEFAULT_COMMENT_COLUMN	"60"
 
-QToolButton *IndentButton;
-QToolButton *DeindentButton;
+static QToolButton *IndentButton;
+static QToolButton *DeindentButton;
 
 void toEditExtensions::receivedFocus(QWidget *widget)
 {

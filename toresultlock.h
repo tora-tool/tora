@@ -32,13 +32,13 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTLOCK_H
-#define __TORESULTLOCK_H
+#ifndef TORESULTLOCK_H
+#define TORESULTLOCK_H
 
 #include <map>
 
-#include "toresultview.h"
 #include "tobackground.h"
+#include "toresultview.h"
 
 class toNoBlockQuery;
 
@@ -59,8 +59,7 @@ public:
   { toQList p; query(sql,p); }
   /** Support Oracle
    */
-  virtual bool canHandle(toConnection &conn)
-  { return toIsOracle(conn); }
+  virtual bool canHandle(toConnection &conn);
 private slots:
   void poll(void);
 };

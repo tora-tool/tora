@@ -32,15 +32,16 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "toconnection.h"
+#include "todebug.h"
+#include "todebugtext.h"
+#include "tosql.h"
+
 #include <qapplication.h>
 #include <qpainter.h>
 #include <qpixmap.h>
-
-#include "tomain.h"
-#include "todebugtext.h"
-#include "toconnection.h"
-#include "todebug.h"
-#include "tosql.h"
 
 #include "icons/breakpoint.xpm"
 #include "icons/disbreakpoint.xpm"

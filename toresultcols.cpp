@@ -32,14 +32,15 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "toconnection.h"
+#include "toresultcols.h"
+#include "tosql.h"
+
 #include <map>
 
 #include <qlabel.h>
-
-#include "toresultcols.h"
-#include "tomain.h"
-#include "tosql.h"
-#include "toconnection.h"
 
 static toSQL SQLInfo("toResultCols:Info",
 		     "SELECT Data_Default,\n"

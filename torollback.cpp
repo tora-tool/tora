@@ -32,6 +32,26 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "tochangeconnection.h"
+#include "toconf.h"
+#include "toconnection.h"
+#include "tohelp.h"
+#include "tomain.h"
+#include "tomemoeditor.h"
+#include "toresultitem.h"
+#include "toresultview.h"
+#include "torollback.h"
+#include "tosgastatement.h"
+#include "tosql.h"
+#include "tostoragedefinition.h"
+#include "totool.h"
+
+#ifdef TO_KDE
+#  include <kmenubar.h>
+#endif
+
 #include <list>
 
 #include <qcheckbox.h>
@@ -43,6 +63,7 @@
 #include <qlayout.h>
 #include <qlineedit.h>
 #include <qlistview.h>
+#include <qmenubar.h>
 #include <qmessagebox.h>
 #include <qpainter.h>
 #include <qpopupmenu.h>
@@ -58,35 +79,16 @@
 #include <qwhatsthis.h>
 #include <qwidget.h>
 #include <qworkspace.h>
-#include <qmenubar.h>
-
-#ifdef TO_KDE
-#  include <kmenubar.h>
-#endif
-
-#include "tochangeconnection.h"
-#include "tomain.h"
-#include "totool.h"
-#include "torollback.h"
-#include "toresultview.h"
-#include "toresultitem.h"
-#include "toconf.h"
-#include "tosql.h"
-#include "tostoragedefinition.h"
-#include "tosgastatement.h"
-#include "tohelp.h"
-#include "toconnection.h"
-#include "tomemoeditor.h"
 
 #include "torollback.moc"
 #include "torollbackdialogui.moc"
 
+#include "icons/addrollback.xpm"
+#include "icons/offline.xpm"
+#include "icons/online.xpm"
+#include "icons/refresh.xpm"
 #include "icons/torollback.xpm"
 #include "icons/trash.xpm"
-#include "icons/addrollback.xpm"
-#include "icons/online.xpm"
-#include "icons/offline.xpm"
-#include "icons/refresh.xpm"
 
 #define CONF_NO_EXEC    "NoExec"
 #define CONF_NEED_READ  "NeedRead"

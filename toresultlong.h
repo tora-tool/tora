@@ -32,18 +32,18 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTLONG_H
-#define __TORESULTLONG_H
+#ifndef TORESULTLONG_H
+#define TORESULTLONG_H
 
-#include "toresultview.h"
-#include "toconnection.h"
 #include "tobackground.h"
+#include "toconnection.h"
+#include "toresultview.h"
 
 class QListViewItem;
-class toresultlong;
-class toResultTip;
 class toNoBlockQuery;
 class toResultStats;
+class toResultTip;
+class toresultlong;
 
 /** A widget which contains the result of a query run in the background.
  */

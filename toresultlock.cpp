@@ -32,18 +32,23 @@
  *
  ****************************************************************************/
 
-#include <map>
+#include "utils.h"
 
-#include "toresultlock.h"
-#include "tomain.h"
 #include "toconf.h"
-#include "totool.h"
-#include "tosql.h"
 #include "toconnection.h"
 #include "tonoblockquery.h"
+#include "toresultlock.h"
+#include "tosql.h"
+#include "totool.h"
+
+#include <map>
 
 #include "toresultlock.moc"
 
+bool toResultLock::canHandle(toConnection &conn)
+{
+  return toIsOracle(conn);
+}
 
 toResultLock::toResultLock(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)

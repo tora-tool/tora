@@ -32,6 +32,19 @@
  *
  ****************************************************************************/
 
+#include "tochangeconnection.h"
+#include "toconnection.h"
+#include "tofilesize.h"
+#include "tohelp.h"
+#include "tomain.h"
+#include "tomemoeditor.h"
+#include "toresultstorage.h"
+#include "tosql.h"
+#include "tostorage.h"
+#include "tostoragedefinition.h"
+#include "tostorageprefsui.h"
+#include "totool.h"
+
 #ifdef TO_KDE
 #include <kfiledialog.h>
 #include <kmenubar.h>
@@ -45,6 +58,7 @@
 #include <qlineedit.h>
 #include <qmenubar.h>
 #include <qmessagebox.h>
+#include <qpainter.h>
 #include <qpopupmenu.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
@@ -57,42 +71,28 @@
 #include <qtooltip.h>
 #include <qwhatsthis.h>
 #include <qworkspace.h>
-#include <qpainter.h>
-
-#include "tomemoeditor.h"
-#include "tochangeconnection.h"
-#include "tostorage.h"
-#include "tostoragedefinition.h"
-#include "toresultstorage.h"
-#include "totool.h"
-#include "tomain.h"
-#include "tofilesize.h"
-#include "tosql.h"
-#include "tohelp.h"
-#include "toconnection.h"
-#include "tostorageprefsui.h"
 
 #include "tostorage.moc"
-#include "tostoragetablespaceui.moc"
-#include "tostoragedialogui.moc"
 #include "tostoragedatafileui.moc"
+#include "tostoragedialogui.moc"
 #include "tostorageprefsui.moc"
+#include "tostoragetablespaceui.moc"
 
-#include "icons/refresh.xpm"
-#include "icons/tostorage.xpm"
-#include "icons/online.xpm"
-#include "icons/offline.xpm"
-#include "icons/logging.xpm"
-#include "icons/eraselog.xpm"
-#include "icons/movefile.xpm"
-#include "icons/coalesce.xpm"
 #include "icons/addfile.xpm"
 #include "icons/addtablespace.xpm"
-#include "icons/modtablespace.xpm"
+#include "icons/coalesce.xpm"
+#include "icons/eraselog.xpm"
+#include "icons/logging.xpm"
 #include "icons/modfile.xpm"
+#include "icons/modtablespace.xpm"
+#include "icons/movefile.xpm"
+#include "icons/offline.xpm"
+#include "icons/online.xpm"
 #include "icons/readtablespace.xpm"
-#include "icons/writetablespace.xpm"
+#include "icons/refresh.xpm"
 #include "icons/storageextents.xpm"
+#include "icons/tostorage.xpm"
+#include "icons/writetablespace.xpm"
 
 #define CONF_DISP_COALESCED "DispCoalesced"
 #define CONF_DISP_EXTENTS "DispExtents"

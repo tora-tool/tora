@@ -32,13 +32,14 @@
  *
  ****************************************************************************/
 
-#include "toresultlabel.h"
-#include "tomain.h"
-#include "totool.h"
+#include "utils.h"
+
 #include "toconf.h"
-#include "tosql.h"
 #include "toconnection.h"
 #include "tonoblockquery.h"
+#include "toresultlabel.h"
+#include "tosql.h"
+#include "totool.h"
 
 #include "toresultlabel.moc"
 
