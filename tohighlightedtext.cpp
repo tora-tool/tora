@@ -481,8 +481,6 @@ void toHighlightedText::startComplete(std::list<QString> &completes)
   QPoint p=mapToGlobal(QPoint(cursorPoint().x()-xOffset(),
 			      cursorPoint().y()+cellHeight()-yOffset()));
   p=topLevelWidget()->mapFromGlobal(p);
-  if (Completion->pos()!=p)
-    Completion->move(p);
   connect(Completion,SIGNAL(clicked(QListBoxItem *)),this,SLOT(selectComplete()));
 
   int curline,curcol;
@@ -513,7 +511,7 @@ void toHighlightedText::startComplete(std::list<QString> &completes)
   }
   QSize size=Completion->sizeHint();
   size.setWidth(size.width()+20);
-  Completion->setFixedSize(size);
+  Completion->setGeometry(p.x(),p.y(),size.width(),size.height());
   Completion->show();
 }
 
@@ -643,7 +641,7 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	}
 	QSize size=Completion->sizeHint();
 	size.setWidth(size.width()+20);
-	Completion->setFixedSize(size);
+	Completion->resize(size);
 
 	KeepCompletion=true;
 	insert(mrk,true);
@@ -680,7 +678,7 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	  }
 	  QSize size=Completion->sizeHint();
 	  size.setWidth(size.width()+20);
-	  Completion->setFixedSize(size);
+	  Completion->resize(size);
 
 	  KeepCompletion=true;
 	  insert(mrk,true);

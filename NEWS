@@ -68,6 +68,8 @@
 2001-09-19: Remove duplicates in table completion.
 2001-09-19: Fixed some problems with logged in user case.
 2001-09-19: Added option to clear object cache for connection.
+2001-09-19: Made possible to display errors in memo editor.
+2001-09-19: Fixed duplicate entry in status history on error in worksheet.
 
 1.1.0: Released 2001-09-09
 

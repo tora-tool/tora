@@ -69,6 +69,7 @@
 #include "toresultcontent.h"
 #include "tosearchreplace.h"
 #include "tohelp.h"
+#include "tomemoeditor.h"
 
 #include "tomain.moc"
 #ifdef TO_KDE
@@ -107,6 +108,8 @@ const int toMain::TO_TOOL_MENU_ID_END	= 2999;
 const int toMain::TO_TOOL_ABOUT_ID	= 3000;
 const int toMain::TO_TOOL_ABOUT_ID_END	= 3999;
 
+#define TO_STATUS_ID		4000
+#define TO_STATUS_ID_END	4999
 #define TO_NEW_CONNECTION	100
 #define TO_CLOSE_CONNECTION	101
 #define TO_FILE_OPEN		102
@@ -418,6 +421,7 @@ toMain::toMain()
   dispStatus->setPopupDelay(0);
   connect(StatusMenu,SIGNAL(aboutToShow()),
 	  this,SLOT(statusMenu()));
+  connect(StatusMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
   RowLabel=new QLabel(statusBar());
   statusBar()->addWidget(RowLabel,0,true);
@@ -591,6 +595,9 @@ void toMain::commandCallback(int cmd)
   } else if (cmd>=TO_WINDOWS_WINDOWS&&cmd<=TO_WINDOWS_END) {
     if (cmd-TO_WINDOWS_WINDOWS<int(workspace()->windowList().count()))
       workspace()->windowList().at(cmd-TO_WINDOWS_WINDOWS)->setFocus();
+  } else if (cmd>=TO_STATUS_ID&&cmd<=TO_STATUS_ID_END) {
+    QString str=StatusMenu->text(cmd);
+    new toMemoEditor(this,str);
   } else {
     toMarkedText *mark;
     try {
@@ -1050,8 +1057,9 @@ void toMain::statusMenu(void)
 {
   std::list<QString> status=toStatusMessages();
   StatusMenu->clear();
+  int id=TO_STATUS_ID;
   for(std::list<QString>::iterator i=status.begin();i!=status.end();i++)
-    StatusMenu->insertItem(*i);
+    StatusMenu->insertItem(*i,id++);
 }
 
 void toMain::changeConnection(void)

@@ -178,9 +178,9 @@ void toResultLong::addItem(void)
     if (First) {
       emit firstResult(sql(),str);
       First=false;
-    }
+    } else
+      toStatusMessage(str);
     cleanup();
-    toStatusMessage(str);
   }
 }
 

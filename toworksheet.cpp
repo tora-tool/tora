@@ -440,7 +440,7 @@ void toWorksheet::setup(bool autoLoad)
 	  Editor->setText(QString::fromLocal8Bit(data));
 	  Editor->setEdited(false);
 	} TOCATCH
-	    }
+      }
     }
 
     ToolMenu=NULL;
