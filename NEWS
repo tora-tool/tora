@@ -26,9 +26,11 @@
 2001-09-30: Added auto indent to editors.
 2001-09-30: Added filter option to filter on list of objects.
 2001-09-30: Make insert toggle overwrite in editors.
-2001-09-31: Fixed problem with printing lists in windows.
-2001-09-31: Made commit needed more intelligent in worksheet.
-2001-09-31: Fixed problem with need commit flag not being cleared.
+2001-09-30: Fixed problem with printing lists in windows.
+2001-09-30: Made commit needed more intelligent in worksheet.
+2001-09-30: Fixed problem with need commit flag not being cleared.
+2001-10-01: Fixed problem with default parameters in debugger.
+2001-10-01: List synonyms owner or pointing to objects owner by user.
 
 1.1.1: 2001-09-24
 

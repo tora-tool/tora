@@ -766,10 +766,14 @@ void toDebug::execute(void)
 	  } else {
 	    (*cp).Type+=token;
 	  }
+	  break;
+	case waitingEnd:
+	  if (token==",")
+	    state=name;
+	  break;
 	case done:
 	case returnType:
 	case beginning:
-	case waitingEnd:
 	  break;
 	}
       } else if (state==beginning) {

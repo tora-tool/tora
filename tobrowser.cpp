@@ -408,7 +408,7 @@ static toSQL SQLSequenceInfo("toBrowser:SequenceInformation",
 static toSQL SQLListSynonym("toBrowser:ListSynonym",
 			    "SELECT Synonym_Name FROM ALL_SYNONYMS\n"
 			    " WHERE Table_Owner = :f1<char[101]>\n"
-			    "   AND Owner = :f1<char[101]>\n"
+			    "    OR Owner = :f1<char[101]>\n"
 			    " ORDER BY Synonym_Name",
 			    "List the available synonyms in a schema");
 static toSQL SQLSynonymInfo("toBrowser:SynonymInformation",
