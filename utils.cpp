@@ -1141,7 +1141,7 @@ void toMapImport(std::map<QCString,QString> &data,const QCString &prefix,
   if (i!=data.end()) {
     QCString key=prefix+":d:";
     i=data.find(key+(*i).second.latin1());
-    while(i!=data.end()&&(*i).first.mid(0,key.length()==key)) {
+    while(i!=data.end()&&(*i).first.mid(0,key.length())==key) {
       QCString t=(*i).first.mid(key.length());
       if (t.isNull())
 	t="";
@@ -1149,6 +1149,10 @@ void toMapImport(std::map<QCString,QString> &data,const QCString &prefix,
       i++;
     }
   }
+#if 0
+  for(std::map<QCString,QString>::iterator j=dst.begin();j!=dst.end();j++)
+    printf("%s=%s\n",(const char *)((*j).first),(const char *)((*j).second));
+#endif
 }
 
 bool toCheckModal(QWidget *widget)

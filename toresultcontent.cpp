@@ -368,9 +368,9 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
     SQL=QString::fromLatin1("SELECT * FROM ");
     SQL+=table();
     if (!Criteria[FilterName.utf8()].isEmpty()) {
-      SQL+=QString::fromLatin1(" WHERE (");
+      SQL+=QString::fromLatin1(" WHERE ");
       SQL+=Criteria[FilterName.utf8()];
-      SQL+=QString::fromLatin1(")");
+      SQL+=QString::fromLatin1(" ");
     }
 
     if (!Order[FilterName.utf8()].isEmpty()) {
@@ -1346,7 +1346,7 @@ void toResultContentEditor::exportData(std::map<QCString,QString> &data,const QC
 
 void toResultContentEditor::importData(std::map<QCString,QString> &data,const QCString &prefix)
 {
-  AllFilter=!data[prefix+":All"].isEmpty();
+  AllFilter=!(data[prefix+":All"].isEmpty());
   toMapImport(data,prefix+":Crit",Criteria);
   toMapImport(data,prefix+":Order",Order);
 }

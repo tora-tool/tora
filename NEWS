@@ -1,5 +1,9 @@
 1.3.10:
 
+2003-07-24: Fixed horrific bug in map import.
+2003-07-24: Fixed problem with filter not being saved in session sometimes.
+2003-07-24: Fixed width of content editor filter setup.
+2003-07-24: Workaround Oracle bug when using filters and content editor.
 2003-07-24: Show license nag screen on primary screen only on multiple screen configurations.
 2003-07-24: Fixed recompile bug in invalid objects tool.
 2003-07-24: Added support for invalid indexes in the invalid tool.
