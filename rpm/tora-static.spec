@@ -92,10 +92,8 @@ CXXFLAGS="$RPM_OPT_FLAGS" \
 	 --prefix-bin="%{_prefix}/bin" \
 	 --prefix-lib="%{_prefix}/lib" \
 	 --with-qt="%{_qt2dir}" \
-	 --without-static \
 	 --with-static \
-         --without-rpath \
-         --with-static-oracle
+         --without-rpath
 
 %build
 export QTDIR="%{_qt2dir}"

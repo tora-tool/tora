@@ -1,5 +1,9 @@
 1.3.1: Released 2002-01-02
 
+2001-11-29: Fixes to tora-static.spec.
+2001-11-29: Fixed removing Makefile on distclean.
+2001-11-29: Fixed problem with oversized toolbars in Qt only versions.
+2001-11-29: Fixed problem with maximizing first toolwindow.
 2001-11-29: Made tora-static include postgresql.
 2001-11-29: Update connectionmode from provider.
 2001-11-29: Some of the usual last minute fixes.

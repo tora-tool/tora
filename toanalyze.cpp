@@ -208,7 +208,6 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 
   box=new QVBox(Tabs);
   toolbar=toAllocBar(box,"Explain plans",connection.description());
-  toolbar->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed));
 
   Tabs->addTab(box,"Explain plans");
   QSplitter *splitter=new QSplitter(Horizontal,box);

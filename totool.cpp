@@ -203,9 +203,16 @@ void toTool::createWindow(void)
       main->windowsMenu();
 
       // Maximize window if only window
-      if (toMainWidget()->workspace()->windowList().count()==1&&
-	  toMainWidget()->workspace()->windowList().at(0)==newWin)
-	newWin->showMaximized();
+      {
+	bool max=true;
+	for (unsigned int i=0;i<toMainWidget()->workspace()->windowList().count();i++) {
+	  QWidget *widget=toMainWidget()->workspace()->windowList().at(i);
+	  if (widget&&widget!=newWin&&!widget->isHidden())
+	    max=false;
+	}
+	if (max)
+	  newWin->showMaximized();
+      }
 
 #if 1
       // This is a really ugly workaround for a Qt layout bug

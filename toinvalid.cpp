@@ -112,7 +112,6 @@ toInvalid::toInvalid(QWidget *main,toConnection &connection)
 
   toolbar->setStretchableWidget(new QLabel(toolbar));
   new toChangeConnection(toolbar);
-  toolbar->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed));
 
   QSplitter *splitter=new QSplitter(Horizontal,this);
 
