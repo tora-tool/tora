@@ -254,10 +254,13 @@ AC_DEFUN(AC_PATH_QT,
               $qt_incdirs
               /usr/local/qt/include
               /usr/include/qt
+              /usr/include/qt2
+              /usr/include/qt3
               /usr/include
               /usr/X11R6/include/X11/qt
               /usr/X11R6/include/qt
               /usr/X11R6/include/qt2
+              /usr/X11R6/include/qt3
               /Developer/qt/include
               /sw/include/qt
               $x_includes"
