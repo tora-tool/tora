@@ -106,7 +106,7 @@ private:
   bool ReadAll;
   void setMainSettings(void);
 
-  static std::list<editHandler *> Handlers;
+  static std::list<editHandler *> *Handlers;
 public:
   /** Empty constructor, all functions are disabled.
    */

@@ -5,7 +5,11 @@ Using a binary distribution
 ===========================
 
 Check the release notes for various binary distributions available of this
-release.
+release. All distributions require a working Oracle client installation. This
+includes the statically linked Oracle binary for Linux. Oracle 8i is the only
+supported client side version (At least Oracle 8.1.5), it might work partially
+with earlier or later versions of Oracle but it is as of this version not
+supported (Please try and send me patches).
 
 Installing from source
 ======================
@@ -14,10 +18,10 @@ Before you try to compile TOra you will need the following prerequisites:
 
 1. A unix system which supports Qt (Dooh).
 2. Qt 2.2 or later.
-3. Oracle 8i (Later than Oracle 8.1.5), it might work partially with earlier
+3. Oracle 8i (At least Oracle 8.1.5), it might work partially with earlier
    versions of Oracle but is as of this version not supported (Please try and
    send me patches).
-4. PERL 5
+4. PERL 5.
 5. GNU Make.
 
 Thats about it, you should be set to start trying.

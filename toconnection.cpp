@@ -51,26 +51,39 @@ void toConnectionProvider::checkAlloc(void)
     Providers=new std::map<QString,toConnectionProvider *>;
 }
 
-toConnectionProvider::toConnectionProvider(const QString &provider)
+void toConnectionProvider::addProvider(const QString &provider)
 {
   checkAlloc();
   Provider=provider; (*Providers)[Provider]=this;
 }
 
-toConnectionProvider::~toConnectionProvider()
+toConnectionProvider::toConnectionProvider(const QString &provider,bool add)
+{
+  Provider=provider;
+  if (add)
+    addProvider(provider);
+}
+
+void toConnectionProvider::removeProvider(const QString &provider)
 {
   std::map<QString,toConnectionProvider *>::iterator i=Providers->find(Provider);
   if (i!=Providers->end())
     Providers->erase(i);
 }
 
-std::list<QString> toConnectionProvider::hosts(void)
+toConnectionProvider::~toConnectionProvider()
+{
+  if (!Provider.isEmpty())
+    removeProvider(Provider);
+}
+
+std::list<QString> toConnectionProvider::providedHosts(const QString &)
 {
   std::list<QString> ret;
   return ret;
 }
 
-std::list<QString> toConnectionProvider::providers(void)
+std::list<QString> toConnectionProvider::providers()
 {
   std::list<QString> ret;
   if (!Providers)
@@ -80,7 +93,7 @@ std::list<QString> toConnectionProvider::providers(void)
   return ret;
 }
 
-std::list<QString> toConnectionProvider::modes(void)
+std::list<QString> toConnectionProvider::providedModes(const QString &)
 {
   std::list<QString> ret;
   ret.insert(ret.end(),"Normal");
@@ -98,29 +111,34 @@ toConnectionProvider &toConnectionProvider::fetchProvider(const QString &provide
 
 std::list<QString> toConnectionProvider::modes(const QString &provider)
 {
-  return fetchProvider(provider).hosts();
+  return fetchProvider(provider).providedModes(provider);
+}
+
+QWidget *toConnectionProvider::configurationTab(const QString &provider,QWidget *parent)
+{
+  return fetchProvider(provider).providerConfigurationTab(provider,parent);
 }
 
 toConnection::connectionImpl *toConnectionProvider::connection(const QString &provider,
 							       toConnection *conn)
 {
-  return fetchProvider(provider).connection(conn);
+  return fetchProvider(provider).provideConnection(provider,conn);
 }
 
 std::list<QString> toConnectionProvider::hosts(const QString &provider)
 {
-  return fetchProvider(provider).hosts();
+  return fetchProvider(provider).providedHosts(provider);
 }
 
 std::list<QString> toConnectionProvider::databases(const QString &provider,const QString &host,
 						   const QString &user,const QString &pwd)
 {
-  return fetchProvider(provider).databases(host,user,pwd);
+  return fetchProvider(provider).providedDatabases(provider,host,user,pwd);
 }
 
 const QString &toConnectionProvider::config(const QString &tag,const QString &def)
 {
-  QString str=provider();
+  QString str=Provider;
   str.append(":");
   str.append(tag);
   return toTool::globalConfig(str,def);
@@ -128,7 +146,7 @@ const QString &toConnectionProvider::config(const QString &tag,const QString &de
 
 void toConnectionProvider::setConfig(const QString &tag,const QString &def)
 {
-  QString str=provider();
+  QString str=Provider;
   str.append(":");
   str.append(tag);
   toTool::globalSetConfig(str,def);
@@ -760,12 +778,11 @@ toConnection::toConnection(const QString &provider,
 			   const QString &user,const QString &password,
 			   const QString &host,const QString &database,
 			   const QString &mode,bool cache)
-  : Provider(toConnectionProvider::fetchProvider(provider)),
-    User(user),Password(password),Host(host),Database(database),Mode(mode)
+  : Provider(provider),User(user),Password(password),Host(host),Database(database),Mode(mode)
 {
   BackgroundConnection=NULL;
   BackgroundCount=0;
-  Connection=Provider.connection(this);
+  Connection=toConnectionProvider::connection(Provider,this);
   addConnection();
   Version=Connection->version(mainConnection());
   NeedCommit=Abort=false;
@@ -787,7 +804,7 @@ toConnection::toConnection(const toConnection &conn)
 {
   BackgroundConnection=NULL;
   BackgroundCount=0;
-  Connection=Provider.connection(this);
+  Connection=toConnectionProvider::connection(Provider,this);
   addConnection();
   Version=Connection->version(mainConnection());
   ReadingValues.up();
@@ -1233,7 +1250,7 @@ void toConnection::allExecute(const QString &sql,
 
 const QString &toConnection::provider(void) const
 {
-  return Provider.provider();
+  return Provider;
 }
 
 void toConnection::cacheObjects::run()

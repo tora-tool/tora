@@ -35,7 +35,7 @@
 #include "toeditwidget.h"
 #include "tomain.h"
 
-std::list<toEditWidget::editHandler *> toEditWidget::Handlers;
+std::list<toEditWidget::editHandler *> *toEditWidget::Handlers;
 
 void toEditWidget::setMainSettings(void)
 {
@@ -94,24 +94,34 @@ toEditWidget::~toEditWidget()
 
 void toEditWidget::addHandler(toEditWidget::editHandler *handler)
 {
-  for(std::list<toEditWidget::editHandler *>::iterator i=Handlers.begin();i!=Handlers.end();i++)
+  if (!Handlers)
+    Handlers=new std::list<toEditWidget::editHandler *>;
+  for(std::list<toEditWidget::editHandler *>::iterator i=(*Handlers).begin();
+      i!=(*Handlers).end();
+      i++)
     if (*i==handler)
       return;
-  Handlers.insert(Handlers.end(),handler);
+  (*Handlers).insert((*Handlers).end(),handler);
 }
 
 void toEditWidget::delHandler(toEditWidget::editHandler *handler)
 {
-  for(std::list<toEditWidget::editHandler *>::iterator i=Handlers.begin();i!=Handlers.end();i++)
+  for(std::list<toEditWidget::editHandler *>::iterator i=(*Handlers).begin();
+      i!=(*Handlers).end();
+      i++)
     if (*i==handler) {
-      Handlers.erase(i);
+      (*Handlers).erase(i);
       break;
     }
 }
 
 void toEditWidget::lostFocus(void)
 {
-  for(std::list<editHandler *>::iterator i=Handlers.begin();i!=Handlers.end();i++) {
+  if (!Handlers)
+    return;
+  for(std::list<editHandler *>::iterator i=(*Handlers).begin();
+      i!=(*Handlers).end();
+      i++) {
     (*i)->lostFocus(dynamic_cast<QWidget *>(this));
   }
 }
@@ -119,7 +129,12 @@ void toEditWidget::lostFocus(void)
 void toEditWidget::receivedFocus(void)
 {
   toMain::setEditWidget(this);
-  for(std::list<editHandler *>::iterator i=Handlers.begin();i!=Handlers.end();i++) {
+
+  if (!Handlers)
+    return;
+  for(std::list<editHandler *>::iterator i=(*Handlers).begin();
+      i!=(*Handlers).end();
+      i++) {
     (*i)->receivedFocus(dynamic_cast<QWidget *>(this));
   }
 }

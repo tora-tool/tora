@@ -602,9 +602,9 @@ public:
     otl_connect::otl_initialize(1);
   }
 
-  virtual toConnection::connectionImpl *connection(toConnection *conn)
+  virtual toConnection::connectionImpl *provideConnection(const QString &,toConnection *conn)
   { return new oracleConnection(conn); }
-  virtual std::list<QString> modes(void)
+  virtual std::list<QString> providedModes(const QString &)
   {
     std::list<QString> ret;
     ret.insert(ret.end(),"Normal");
@@ -612,14 +612,14 @@ public:
     ret.insert(ret.end(),"SYS_DBA");
     return ret;
   }
-  virtual std::list<QString> hosts(void)
+  virtual std::list<QString> providedHosts(const QString &)
   {
     std::list<QString> ret;
     ret.insert(ret.end(),QString::null);
     ret.insert(ret.end(),"SQL*Net");
     return ret;
   }
-  virtual std::list<QString> databases(const QString &host,const QString &,const QString &)
+  virtual std::list<QString> providedDatabases(const QString &,const QString &host,const QString &,const QString &)
   {
     QString str;
 #ifdef WIN32
@@ -715,7 +715,7 @@ public:
     delete buf;
     return ret;
   }
-  virtual QWidget *configurationTab(QWidget *parent);
+  virtual QWidget *providerConfigurationTab(const QString &provider,QWidget *parent);
 };
 
 static toOracleProvider OracleProvider;
@@ -930,7 +930,7 @@ public:
   }
 };
 
-QWidget *toOracleProvider::configurationTab(QWidget *parent)
+QWidget *toOracleProvider::providerConfigurationTab(const QString &,QWidget *parent)
 {
   return new toOracleSetting(parent);
 }

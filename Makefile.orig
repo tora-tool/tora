@@ -94,6 +94,7 @@ SOURCES=\
 	topiechart.cpp		        \
 	topreferences.cpp	        \
 	topreferencesui.cpp	        \
+	toprofiler.cpp			\
 	toresult.cpp			\
 	toresultbar.cpp		        \
 	toresultcols.cpp	        \
@@ -245,6 +246,7 @@ plugins/toextract.tso:\
 	objs/toresultextract.o
 plugins/toinvalid.tso:objs/toinvalid.o
 plugins/tooutput.tso:objs/tooutput.o
+plugins/toprofiler.tso:objs/toprofiler.o
 plugins/toresult.tso:\
 	objs/toresultcols.o \
 	objs/toresultconstraint.o \
@@ -345,6 +347,7 @@ tora-plugin: \
 	plugins/toinvalid.tso \
 	plugins/tooutput.tso \
 	plugins/tooracleconnection.tso \
+	plugins/toprofiler.tso \
 	plugins/toresult.tso \
 	plugins/torollback.tso \
 	plugins/toscript.tso \

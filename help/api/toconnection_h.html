@@ -422,7 +422,7 @@ typedef std::list<toQDescribe> toQDescList;
  * executed in their own connection to make sure the interface doesn't lock up for a long time.
  */
 class toConnection {
-  toConnectionProvider &Provider;
+  QString Provider;
   QString User;
   QString Password;
   QString Host;
@@ -840,46 +840,65 @@ class toConnectionProvider {
   static std::map<QString,toConnectionProvider *> *Providers;
   QString Provider;
   static void checkAlloc(void);
-public:
-  /** Create a new provider with the specified name.
-   * @param provider Name of the provider.
-   */
-  toConnectionProvider(const QString &provider);
-  /** Destructor.
-   */
-  virtual ~toConnectionProvider();
-  /** Get name of provider.
-   */
-  const QString &provider(void) const
-  { return Provider; }
-
-  /** Create an implementation of a connection to this database.
-   * @return A connection implementation created with new.
-   */
-  virtual toConnection::connectionImpl *connection(toConnection *conn)=0;
-  /** List the available modes for this database.
-   * @return A list of modes that the connection implementation understands.
-   */
-  virtual std::list<QString> modes(void);
-  /** List the available hosts this database provider knows about.
-   * @return A list of hosts.
-   */
-  virtual std::list<QString> hosts(void);
-  /** List the available databases this provider knows about for a given host.
-   * @param host Host to return connections for.
-   * @param user That might be needed.
-   * @param password That might be needed.
-   * @return A list of databases available for a given host.
-   */
-  virtual std::list<QString> databases(const QString &host,
-				       const QString &user,
-				       const QString &pwd)=0;
 
   /** Get the provider object for a given provider name.
    * @param provider Name of provider.
    * @return Reference to provider object.
    */
   static toConnectionProvider &fetchProvider(const QString &provider);
+protected:
+  /** Add a provider to the list that this provider can handle.
+   */
+  void addProvider(const QString &provider);
+  /** Remove a provider from the list that this provider can handle.
+   */
+  void removeProvider(const QString &provider);
+public:
+  /** Create a new provider with the specified name.
+   * @param provider Name of the provider.
+   */
+  toConnectionProvider(const QString &provider,bool add=true);
+  /** Destructor.
+   */
+  virtual ~toConnectionProvider();
+
+  /** Create an implementation of a connection to this database.
+   * @return A connection implementation created with new.
+   */
+  virtual toConnection::connectionImpl *provideConnection(const QString &provider,
+							  toConnection *conn)=0;
+  /** List the available modes for this database.
+   * @return A list of modes that the connection implementation understands.
+   */
+  virtual std::list<QString> providedModes(const QString &provider);
+  /** List the available hosts this database provider knows about.
+   * @return A list of hosts.
+   */
+  virtual std::list<QString> providedHosts(const QString &provider);
+  /** List the available databases this provider knows about for a given host.
+   * @param host Host to return connections for.
+   * @param user That might be needed.
+   * @param password That might be needed.
+   * @return A list of databases available for a given host.
+   */
+  virtual std::list<QString> providedDatabases(const QString &provider,
+					       const QString &host,
+					       const QString &user,
+					       const QString &pwd)=0;
+
+  /**
+   * Create and return configuration tab for this connectiontype. The returned widget should also
+   * be a childclass of @ref toSettingTab.
+   *
+   * @return A pointer to the widget containing the setup tab for this tool or NULL of
+   * no settings are available.
+   */
+  virtual QWidget *providerConfigurationTab(const QString &provider,QWidget *parent)
+  { return NULL; }
+
+  /** Get a list of names for providers.
+   */
+  static QWidget *configurationTab(const QString &provider,QWidget *parent);
   /** Get a list of names for providers.
    */
   static std::list<QString> providers();
@@ -904,20 +923,12 @@ public:
   static std::list<QString> databases(const QString &provider,const QString &host,
 				      const QString &user,const QString &pwd);
   /**
-   * Create and return configuration tab for this connectiontype. The returned widget should also
-   * be a childclass of @ref toSettingTab.
-   *
-   * @return A pointer to the widget containing the setup tab for this tool or NULL of
-   * no settings are available.
-   */
-  virtual QWidget *configurationTab(QWidget *parent)
-  { return NULL; }
-  /**
    * Get connection specific settings.
    *
    * Setting names are hierachical separated by ':' instead of '/' usually used
    * in filenames. As an example all settings for the tool 'Example' would be
-   * under the 'Example:{settingname}' name.
+   * under the 'Example:{settingname}' name. Observe that the settings are stored
+   * under the main provider name as passed to the toConnectionProvider constructor.
    *
    * @param tag The name of the configuration setting.
    * @param def Contents of this setting.
@@ -929,7 +940,8 @@ public:
    *
    * Setting names are hierachical separated by ':' instead of '/' usually used
    * in filenames. As an example all settings for the tool 'Example' would be
-   * under the 'Example:{settingname}' name.
+   * under the 'Example:{settingname}' name. Observe that the settings are stored
+   * under the main provider name as passed to the toConnectionProvider constructor.
    *
    * @param tag The name of the configuration setting.
    * @param def Default value of the setting, if it is not available.

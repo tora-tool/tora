@@ -106,7 +106,7 @@ toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags 
 
   std::list<QString> prov=toConnectionProvider::providers();
   for (std::list<QString>::iterator i=prov.begin();i!=prov.end();i++) {
-    QWidget *tab=toConnectionProvider::fetchProvider(*i).configurationTab(Parent);
+    QWidget *tab=toConnectionProvider::configurationTab(*i,Parent);
     if (tab) {
       QString str(" ");
       str.append(*i);

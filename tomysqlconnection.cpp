@@ -416,16 +416,16 @@ public:
   {
   }
 
-  virtual toConnection::connectionImpl *connection(toConnection *conn)
+  virtual toConnection::connectionImpl *provideConnection(const QString &,toConnection *conn)
   { return new mysqlConnection(conn); }
-  virtual std::list<QString> hosts(void)
+  virtual std::list<QString> providedHosts(const QString &)
   {
     std::list<QString> ret;
     ret.insert(ret.end(),"localhost");
     return ret;
   }
-  virtual std::list<QString> databases(const QString &host,
-				       const QString &user,const QString &pwd)
+  virtual std::list<QString> providedDatabases(const QString &,const QString &host,
+					       const QString &user,const QString &pwd)
   {
     std::list<QString> ret;
     try {

@@ -35,17 +35,19 @@
 
 echo Trying to configure TOra
 
-if (perl -v | grep v5) > /dev/null 2>/dev/null
+echo Trying to configure TOra
+
+if (perl -v | grep -i "v[^0-9]*5") > /dev/null 2>/dev/null
 then
     PERL=perl
 fi
 
-if [ -z $PERL ]
+if [ "X$PERL" = "X" ]
 then
         PERL=`which perl`
 fi
 
-if [ -z $PERL ]
+if [ "X$PERL" = "X" ]
 then
 	echo PERL Required for installation
 	echo

@@ -9605,7 +9605,9 @@ public:
  {
   if(attached){
     OCIBreak(srvhp,errhp);
+#if 0 // Doesn't work with Oracle 8.0
     OCIReset(srvhp,errhp);
+#endif
   }
  }
 

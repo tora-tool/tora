@@ -205,10 +205,12 @@ public:
     toMainWidget()->editMenu()->insertSeparator();
     IndentIndex=toMainWidget()->editMenu()->insertItem(QPixmap((const char **)indent_xpm),
 						       "Indent block",&EditExtensions,
-						       SLOT(indentBlock()));
+						       SLOT(indentBlock()),
+						       ALT+Key_Right);
     DeindentIndex=toMainWidget()->editMenu()->insertItem(QPixmap((const char **)deindent_xpm),
 							 "De-indent block",&EditExtensions,
-							 SLOT(deindentBlock()));
+							 SLOT(deindentBlock()),
+							 ALT+Key_Left);
 
     toMainWidget()->editToolbar()->addSeparator();
     IndentButton=new QToolButton(QPixmap((const char **)indent_xpm),
