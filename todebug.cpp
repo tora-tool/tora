@@ -715,7 +715,7 @@ void toDebug::execute(void)
 
     do {
       token=toSQLParse::getToken(current,line,pos);
-    } while(token=="CREATE"||token=="OR"||token=="REPLACE");
+    } while(token.upper()=="CREATE"||token.upper()=="OR"||token.upper()=="REPLACE");
 
     if (token.upper()!="FUNCTION"&&token.upper()!="PROCEDURE") {
       toStatusMessage("Expected function or procedure, internal error");
