@@ -117,6 +117,7 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "<B>Dennis Selsky</B>,\n"
 "<B>Roman Stepanov</B>,\n"
 "<B>Daniel Vérité</B>,\n"
+"<B>Matthias Wolle</B>,\n"
 "<B>Joachim Zetzsche</B>,\n"
 "<B>Massimiliano Ziccardi</B>...\n";
 #  endif

@@ -12,6 +12,7 @@
 2005-02-17: Applied patch 1057806 to correctly free memory
 2005-02-17: Applied patch 1058979 to correctly free memory
 2005-02-17: Applied patch 1059686 to fix memory leak
+2005-02-17: Applied patch 1074869 to fix a configure.pl problem with quoting
 
 1.3.14.1: 2004-07-01
 
