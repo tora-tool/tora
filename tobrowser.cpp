@@ -664,19 +664,19 @@ void toBrowser::refresh(void)
 {
   try {
     QString selected=Schema->currentText();
-    if (selected.isEmpty()) {
+    if (selected.isEmpty())
       selected=connection().user().upper();
-      Schema->clear();
-      otl_stream users(1,
-		       toSQL::sql(toSQL::TOSQL_USERLIST,connection()),
-		       otlConnect());
-      for(int i=0;!users.eof();i++) {
-	char buffer[31];
-	users>>buffer;
-	Schema->insertItem(QString::fromUtf8(buffer));
-	if (selected==QString::fromUtf8(buffer))
-	  Schema->setCurrentItem(i);
-      }
+
+    Schema->clear();
+    otl_stream users(1,
+		     toSQL::sql(toSQL::TOSQL_USERLIST,connection()),
+		     otlConnect());
+    for(int i=0;!users.eof();i++) {
+      char buffer[31];
+      users>>buffer;
+      Schema->insertItem(QString::fromUtf8(buffer));
+      if (selected==QString::fromUtf8(buffer))
+	Schema->setCurrentItem(i);
     }
     if (!Schema->currentText().isEmpty()) {
       QListViewItem *item=FirstTab->currentItem();

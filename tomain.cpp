@@ -541,11 +541,20 @@ void toMain::windowsMenu(void)
     WindowsMenu->setItemEnabled(TO_WINDOWS_CLOSE_ALL,false);
   } else {
     WindowsMenu->insertSeparator();
+    QRegExp strip(" <[0-9]+>$");
     for (unsigned int i=0;i<workspace()->windowList().count();i++) {
-      WindowsMenu->insertItem(workspace()->windowList().at(i)->caption(),TO_WINDOWS_WINDOWS+i);
+      QWidget *widget=workspace()->windowList().at(i);
+      QString caption=widget->caption();
+      caption.replace(strip,"");
+      WindowsMenu->insertItem(caption,TO_WINDOWS_WINDOWS+i);
       WindowsMenu->setItemChecked(TO_WINDOWS_WINDOWS+i,workspace()->activeWindow()==workspace()->windowList().at(i));
-      if (i<9)
+      if (i<9) {
 	WindowsMenu->setAccel(Key_1+i|CTRL,TO_WINDOWS_WINDOWS+i);
+	caption+=" <";
+	caption+=QString::number(i+1);
+	caption+=">";
+      }
+      widget->setCaption(caption);
     }
   }
 }
