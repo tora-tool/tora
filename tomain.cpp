@@ -1497,7 +1497,8 @@ void toMain::displayMessage(const QString &str)
 void toMain::versionData(const QByteArray &data,QNetworkOperation *op)
 {
 #if QT_VERSION >= 300
-  VersionString+=QCString(data);
+  if (data.size()>0)
+    VersionString+=QCString(data);
 #endif
 }
 

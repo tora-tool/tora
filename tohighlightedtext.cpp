@@ -282,6 +282,8 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
     return;
   }
 
+  painter->setBackgroundMode(OpaqueMode);
+
   QString str=textLine(row);
 
   int line1,col1,line2,col2;
@@ -396,29 +398,24 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	}
 
 	if (c.length()>0) {
-	  rect=painter->boundingRect(0,0,width,height,AlignLeft|AlignTop,c);
-	  int left=posx;
-	  int cw=rect.right()+1;
-	  if (i==int(str.length()))
-	    cw+=hMargin()-1;
-	  if (i==int(c.length())) {
-	    cw+=left;
-	    left=LeftIgnore;
-	  }
 	  if (wasMarked) {
-	    if (Completion&&Completion->count()==0) {
-	      painter->setBrush(Analyzer->getColor(toSyntaxAnalyzer::ErrorBkg));
-	      painter->fillRect(left,0,cw,height,painter->brush());
-	      painter->setBrush(cp.active().highlight());
-	    } else
-	      painter->fillRect(left,0,cw,height,painter->brush());
+	    if (Completion&&Completion->count()==0)
+	      painter->setBackgroundColor(Analyzer->getColor(toSyntaxAnalyzer::ErrorBkg));
+	    else
+	      painter->setBackgroundColor(cp.active().highlight());
 	    painter->setPen(cp.active().highlightedText());
 	  } else {
 	    painter->setPen(wasCol);
-	    painter->fillRect(left,0,cw,height,bkg);
+	    painter->setBackgroundColor(bkg);
 	  }
 
 	  painter->drawText(posx,0,width-posx,height,AlignLeft|AlignTop,c,c.length(),&rect);
+
+	  if (i==int(c.length()))
+	    painter->fillRect(LeftIgnore,0,posx-LeftIgnore,height,painter->brush());
+	  if (rect.height()<height)
+	    painter->fillRect(posx,rect.height(),rect.width()-posx,height-rect.height(),painter->brush());
+
 	  posx=rect.right()+1;
 	}
 	wasCol=col;
