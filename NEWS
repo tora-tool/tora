@@ -1,5 +1,6 @@
 1.3.16: 
 
+2005-02-25: Applied patch to otlv.h attached to bug 984908
 2005-02-21: Applied gentoo ebuild patch from Nuno Araujo to improve oracle build
 2005-02-24: Applied patch to correct bug #909636 with creating a new proc in PL/SQL Debugger
 2005-02-24: Added doc info about building on oracle instant client. Still waiting for appropriate configure patch.
