@@ -1,0 +1,394 @@
+<!DOCTYPE UI><UI>
+<class>toSecurityUserUI</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>toSecurityUserUI</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>576</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Form1</string>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget row="0"  column="3" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ProfileLabel</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Profile</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>Profile</cstring>
+            </property>
+        </widget>
+        <widget row="0"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>NameLabel</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Name</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>Name</cstring>
+            </property>
+        </widget>
+        <widget row="0"  column="1"  rowspan="1"  colspan="2" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Name</cstring>
+            </property>
+        </widget>
+        <widget row="0"  column="4"  rowspan="1"  colspan="2" >
+            <class>QComboBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Profile</cstring>
+            </property>
+        </widget>
+        <spacer row="4"  column="3" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer4</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="1"  column="0"  rowspan="1"  colspan="6" >
+            <class>QTabWidget</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Authentication</cstring>
+            </property>
+            <widget>
+                <class>QWidget</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>PasswordTab</cstring>
+                </property>
+                <attribute>
+                    <name>title</name>
+                    <string>&amp;Password</string>
+                </attribute>
+                <grid>
+                    <property stdset="1">
+                        <name>margin</name>
+                        <number>11</number>
+                    </property>
+                    <property stdset="1">
+                        <name>spacing</name>
+                        <number>6</number>
+                    </property>
+                    <widget row="0"  column="0" >
+                        <class>QLabel</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>TextLabel4</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>text</name>
+                            <string>Enter Password</string>
+                        </property>
+                        <property>
+                            <name>buddy</name>
+                            <cstring>Password</cstring>
+                        </property>
+                    </widget>
+                    <widget row="0"  column="1" >
+                        <class>QLineEdit</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>Password</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>echoMode</name>
+                            <enum>Password</enum>
+                        </property>
+                    </widget>
+                    <widget row="1"  column="1" >
+                        <class>QLineEdit</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>Password2</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>echoMode</name>
+                            <enum>Password</enum>
+                        </property>
+                    </widget>
+                    <widget row="1"  column="0" >
+                        <class>QLabel</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>TextLabel4_2</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>text</name>
+                            <string>Confirm Password</string>
+                        </property>
+                        <property>
+                            <name>buddy</name>
+                            <cstring>Password2</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="1"  column="2" >
+                        <property>
+                            <name>name</name>
+                            <cstring>Spacer1</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>orientation</name>
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property stdset="1">
+                            <name>sizeType</name>
+                            <enum>Expanding</enum>
+                        </property>
+                        <property>
+                            <name>sizeHint</name>
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget row="2"  column="0" >
+                        <class>QCheckBox</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>ExpirePassword</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>text</name>
+                            <string>Expire Password</string>
+                        </property>
+                    </widget>
+                    <spacer row="3"  column="1" >
+                        <property>
+                            <name>name</name>
+                            <cstring>Spacer4_2</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>orientation</name>
+                            <enum>Vertical</enum>
+                        </property>
+                        <property stdset="1">
+                            <name>sizeType</name>
+                            <enum>Expanding</enum>
+                        </property>
+                        <property>
+                            <name>sizeHint</name>
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </grid>
+            </widget>
+            <widget>
+                <class>QWidget</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>ExternalTab</cstring>
+                </property>
+                <attribute>
+                    <name>title</name>
+                    <string>&amp;External</string>
+                </attribute>
+                <grid>
+                    <property stdset="1">
+                        <name>margin</name>
+                        <number>11</number>
+                    </property>
+                    <property stdset="1">
+                        <name>spacing</name>
+                        <number>6</number>
+                    </property>
+                    <widget row="0"  column="0" >
+                        <class>QLabel</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>TextLabel3</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>text</name>
+                            <string>User authenticated by the operating system</string>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+            <widget>
+                <class>QWidget</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>GlobalTab</cstring>
+                </property>
+                <attribute>
+                    <name>title</name>
+                    <string>&amp;Global</string>
+                </attribute>
+                <grid>
+                    <property stdset="1">
+                        <name>margin</name>
+                        <number>11</number>
+                    </property>
+                    <property stdset="1">
+                        <name>spacing</name>
+                        <number>6</number>
+                    </property>
+                    <widget row="1"  column="0" >
+                        <class>QLineEdit</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>GlobalName</cstring>
+                        </property>
+                    </widget>
+                    <widget row="0"  column="0" >
+                        <class>QLabel</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>TextLabel1</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>text</name>
+                            <string>&amp;X.500 External Name</string>
+                        </property>
+                        <property>
+                            <name>buddy</name>
+                            <cstring>GlobalName</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="2"  column="0" >
+                        <property>
+                            <name>name</name>
+                            <cstring>Spacer5</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>orientation</name>
+                            <enum>Vertical</enum>
+                        </property>
+                        <property stdset="1">
+                            <name>sizeType</name>
+                            <enum>Expanding</enum>
+                        </property>
+                        <property>
+                            <name>sizeHint</name>
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </grid>
+            </widget>
+        </widget>
+        <widget row="2"  column="2" >
+            <class>QComboBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>DefaultSpace</cstring>
+            </property>
+        </widget>
+        <widget row="2"  column="0"  rowspan="1"  colspan="2" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel6</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Default Tablespace</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>DefaultSpace</cstring>
+            </property>
+        </widget>
+        <widget row="2"  column="3"  rowspan="1"  colspan="2" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel6_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Temporary Tablespace</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>TempSpace</cstring>
+            </property>
+        </widget>
+        <widget row="2"  column="5" >
+            <class>QComboBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TempSpace</cstring>
+            </property>
+        </widget>
+        <widget row="3"  column="0"  rowspan="1"  colspan="6" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Locked</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Account Locked</string>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>Name</tabstop>
+    <tabstop>Profile</tabstop>
+    <tabstop>Authentication</tabstop>
+    <tabstop>Password</tabstop>
+    <tabstop>Password2</tabstop>
+    <tabstop>ExpirePassword</tabstop>
+    <tabstop>GlobalName</tabstop>
+    <tabstop>DefaultSpace</tabstop>
+    <tabstop>TempSpace</tabstop>
+    <tabstop>Locked</tabstop>
+</tabstops>
+</UI>

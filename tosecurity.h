@@ -33,6 +33,7 @@
 
 class toConnection;
 class toResultView;
+class toSecurityPage;
 class QTabWidget;
 
 class toSecurity : public QVBox {
@@ -54,12 +55,14 @@ class toSecurity : public QVBox {
 
   toResultView *UserList;
   toResultView *ObjectGrant;
+  toSecurityPage *General;
   QTabWidget *Tabs;
 public:
   toSecurity(QWidget *parent,toConnection &connection);
   virtual ~toSecurity();
 public slots:
   virtual void refresh(void);
+  virtual void changeUser(void);
 };
 
 #endif

@@ -31,8 +31,7 @@
 2001-03-13: Fixed bug in toWorksheet regarding refresh with parameters.
 2001-03-13: Fixed configure to generate empty dependfiles.
 2001-03-21: Fixed commit problem with long connections.
-2001-03-21: Fixed bug in environment setting when missing NLS_LANG (Thanx
-	rhwang).
+2001-03-21: Fixed bug in setting env when missing NLS_LANG (Thanx rhwang).
 
 0.6: Released 2001-02-23
 
