@@ -61,9 +61,13 @@
 #include "icons/nofilter.xpm"
 #include "icons/addrecord.xpm"
 #include "icons/saverecord.xpm"
-#include "icons/lastrecord.xpm"
 #include "icons/canceledit.xpm"
 #include "icons/trash.xpm"
+
+#include "icons/forward.xpm"
+#include "icons/next.xpm"
+#include "icons/previous.xpm"
+#include "icons/rewind.xpm"
 
 #define INC_SIZE 50
 
@@ -287,9 +291,24 @@ void toResultContentEditor::gotoLastRecord()
 {
   editReadAll();
   setNumRows(Row+1);
-  setCurrentCell(Row-1,0);
+  setCurrentCell(Row-1,currentColumn());
 }
   
+void toResultContentEditor::gotoFirstRecord()
+{
+  setCurrentCell(0,currentColumn());
+}
+  
+void toResultContentEditor::gotoPreviousRecord()
+{
+  setCurrentCell(max(0,currentRow()-1),currentColumn());
+}
+  
+void toResultContentEditor::gotoNextRecord()
+{
+  setCurrentCell(min(numRows()-1,currentRow()+1),currentColumn());
+}
+
 void toResultContentEditor::addRecord()
 {
   saveUnsaved();
@@ -707,10 +726,6 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
 		  "Add a new record",
 		  "Add a new record",
 		  Editor,SLOT(addRecord()),toolbar);
-  new QToolButton(QPixmap((const char **)lastrecord_xpm),
-		  "Go to last row",
-		  "Go to last row",
-		  Editor,SLOT(gotoLastRecord()),toolbar);
   new QToolButton(QPixmap((const char **)saverecord_xpm),
 		  "Save changes",
 		  "Save changes",
@@ -723,6 +738,23 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
 		  "Delete current record from table",
 		  "Delete current record from table",
 		  Editor,SLOT(deleteCurrent()),toolbar);
+  toolbar->addSeparator();
+  new QToolButton(QPixmap((const char **)rewind_xpm),
+		  "Go to first row",
+		  "Go to first row",
+		  Editor,SLOT(gotoFirstRecord()),toolbar);
+  new QToolButton(QPixmap((const char **)previous_xpm),
+		  "Go to previous row",
+		  "Go to previous row",
+		  Editor,SLOT(gotoPreviousRecord()),toolbar);
+  new QToolButton(QPixmap((const char **)next_xpm),
+		  "Go to next row",
+		  "Go to next row",
+		  Editor,SLOT(gotoNextRecord()),toolbar);
+  new QToolButton(QPixmap((const char **)forward_xpm),
+		  "Go to last row",
+		  "Go to last row",
+		  Editor,SLOT(gotoLastRecord()),toolbar);
   toolbar->setStretchableWidget(new QLabel(toolbar));
   connect(toMainWidget(),SIGNAL(willCommit(toConnection &,bool)),
 	  this,SLOT(saveUnsaved(toConnection &,bool)));

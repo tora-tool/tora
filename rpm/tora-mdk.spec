@@ -72,7 +72,7 @@ This build is compiled with KDE and Mandrake Menu support.
 %prep
 %setup -q
 %build
-./configure --prefix=/usr --without-rpath --with-kde
+./configure --prefix=/usr --without-rpath --with-kde --with-static-oracle
 make
 
 %install

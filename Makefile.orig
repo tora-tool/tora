@@ -290,7 +290,7 @@ plugins/tooracleconnection.tso: \
 	objs/tooraclesettingui.o
 	@echo Linking plugin $@
 	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
-	$(GCC) -shared $(CFLAGS) $(LFLAGS) $(LFLAGS_GLOB) $(ORACLE_SHARED) -o $@ $^
+	$(GCC) -shared $(CFLAGS) $(LFLAGS) $(LFLAGS_GLOB) -o $@ $^ $(ORACLE_SHARED)
 
 plugins/tomysqlconnection.tso:objs/tomysqlconnection.o
 	@echo Linking plugin $@

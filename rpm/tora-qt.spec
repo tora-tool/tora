@@ -72,7 +72,7 @@ This build does not have KDE support.
 %prep
 %setup -q
 %build
-./configure --prefix=/usr --without-rpath --without-kde
+./configure --prefix=/usr --without-rpath --without-kde --with-static-oracle
 make
 
 %install

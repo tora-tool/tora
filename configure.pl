@@ -90,7 +90,8 @@ my $KDELibs;
 my $NoRPath;
 my $Oracle=1;
 my $OracleRelease;
-my $TestDB="-lclntsh";
+my $OracleShared="-lclntsh";
+my $TestDB=$OracleShared;
 
 my $MySQLInclude;
 my $MySQLLib;
@@ -137,6 +138,8 @@ for (@ARGV) {
     } elsif (/^--with-static$/) {
 	$Target="tora-static";
 	$ForceTarget=1;
+    } elsif (/^--with-static-oracle$/) {
+	$OracleShared="\$(STATIC_ORACLETTLIBS)";
     } elsif (/^--with-kde(?:=(.*))?$/) {
 	$KDEApplication=1;
 	if (defined $1) {
@@ -169,6 +172,7 @@ Options can be any of the following:
 --with-mono          Force monolithic compilation
 --with-lib           Add extra library to include (Include -l as well)
 --with-static        Force static binary compilation
+--with-static-oracle Force use of static Oracle libraries only
 --with-kde           Compile as KDE application (Requires KDE 2.2 or later)
 --without-kde        Dont compile as KDE application even though KDE available.
 --with-kde-include   Where to find KDE include files
@@ -878,7 +882,7 @@ __EOT__
 	print MAKEFILE "\n";
 
 	print MAKEFILE "# Oracle library\n";
-	print MAKEFILE "ORACLE_SHARED=-lclntsh\n";
+	print MAKEFILE "ORACLE_SHARED=$OracleShared\n";
 	print MAKEFILE "\n";
 
 	print MAKEFILE "# Static Oracle libraries\n";

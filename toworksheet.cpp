@@ -1157,6 +1157,8 @@ void toWorksheet::execute(bool all,bool step)
 
 void toWorksheet::eraseLogButton()
 {
+  if (Light)
+    return;
   Logging->clear();
   LastLogItem=NULL;
   for(std::map<int,toResultLong *>::iterator i=History.begin();i!=History.end();i++)
