@@ -89,6 +89,11 @@ public:
  * than is displayed in the cell of the listview.
  */
 class toResultViewItem : public QListViewItem {
+  mutable int CacheSize;
+  mutable QString *KeyCache;
+  QString realKey(int col,bool asc) const;
+  void invalidateCache(void)
+  { delete[] KeyCache; KeyCache=NULL; }
 public:
   /** Create a new item.
    * @param parent Parent list view.
@@ -97,7 +102,7 @@ public:
    */
   toResultViewItem(QListView *parent,QListViewItem *after,const QString &buf=QString::null)
     : QListViewItem(parent,after,QString::null)
-  { if (buf) setText(0,buf); }
+  { if (buf) setText(0,buf); KeyCache=NULL; }
   /** Create a new item.
    * @param parent Parent to this item.
    * @param after Insert after this item.
@@ -105,7 +110,15 @@ public:
    */
   toResultViewItem(QListViewItem *parent,QListViewItem *after,const QString &buf=QString::null)
     : QListViewItem(parent,after,QString::null)
-  { if (buf) setText(0,buf); }
+  { if (buf) setText(0,buf); KeyCache=NULL; }
+  /** Reimplemented for internal reasons.
+   */
+  virtual ~toResultViewItem()
+  { delete[] KeyCache; }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void setText (int col,const QString &txt)
+  { invalidateCache(); QListViewItem::setText(col,txt); }
   /** Reimplemented for internal reasons.
    */
   virtual void paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align);
@@ -186,6 +199,11 @@ public:
  * than is displayed in the cell of the listview.
  */
 class toResultViewCheck : public QCheckListItem {
+  mutable int CacheSize;
+  mutable QString *KeyCache;
+  QString realKey(int col,bool asc) const;
+  void invalidateCache(void)
+  { delete[] KeyCache; KeyCache=NULL; }
 public:
   /** Create a new item.
    * @param parent Parent list view.
@@ -194,7 +212,7 @@ public:
    */
   toResultViewCheck(QListView *parent,const QString &text,QCheckListItem::Type type=Controller)
     : QCheckListItem(parent,QString::null,type)
-  { if (!text.isNull()) setText(0,text); }
+  { if (!text.isNull()) setText(0,text); KeyCache=NULL; }
   /** Create a new item.
    * @param parent Parent item.
    * @param text Text of first column.
@@ -202,7 +220,15 @@ public:
    */
   toResultViewCheck(QListViewItem *parent,const QString &text,QCheckListItem::Type type=Controller)
     : QCheckListItem(parent,QString::null,type)
-  { if (!text.isNull()) setText(0,text); }
+  { if (!text.isNull()) setText(0,text); KeyCache=NULL; }
+  /** Reimplemented for internal reasons.
+   */
+  virtual ~toResultViewCheck()
+  { delete[] KeyCache; }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void setText (int col,const QString &txt)
+  { invalidateCache(); QListViewItem::setText(col,txt); }
   /** Reimplemented for internal reasons.
    */
   virtual void paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align);

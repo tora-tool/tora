@@ -154,6 +154,22 @@ QString toResultViewItem::text(int col) const
 
 QString toResultViewItem::key(int col,bool asc) const
 {
+  if (KeyCache==NULL) {
+    CacheSize=(listView()->columns()+1)*2;
+    KeyCache=new QString[CacheSize];
+    for(int i=0;i<CacheSize;i+=2) {
+      KeyCache[i]=realKey(i/2,true);
+      KeyCache[i+1]=realKey(i/2,false);
+    }
+  }
+  if (col*2>=CacheSize)
+    return realKey(col,asc);
+  else
+    return KeyCache[col*2+(asc==true?0:1)];
+}
+
+QString toResultViewItem::realKey(int col,bool asc) const
+{
   static QRegExp number(QString::fromLatin1("^\\d*\\.?\\d+E?-?\\d*.?.?$"));
 
   QString val=text(col);
@@ -237,11 +253,27 @@ QString toResultViewCheck::text(int col) const
 
 QString toResultViewCheck::key(int col,bool asc) const
 {
+  if (KeyCache==NULL) {
+    CacheSize=(listView()->columns()+1)*2;
+    KeyCache=new QString[CacheSize];
+    for(int i=0;i<CacheSize;i+=2) {
+      KeyCache[i]=realKey(col/2,true);
+      KeyCache[i+1]=realKey(col/2,false);
+    }
+  }
+  if (col*2>=CacheSize)
+    return realKey(col,asc);
+  else
+    return KeyCache[col*2+(asc==true?0:1)];
+}
+
+QString toResultViewCheck::realKey(int col,bool asc) const
+{
   static QRegExp number(QString::fromLatin1("^\\d*\\.?\\d+$"));
   QString val=text(col);
   if (number.match(val)>=0) {
     static char buf[100];
-    sprintf(buf,"%015f",text(col).toFloat());
+    sprintf(buf,"%015.5f",text(col).toFloat());
     return QString::fromLatin1(buf);
   } else if (val=="N/A") {
     if (asc)

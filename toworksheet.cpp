@@ -858,8 +858,8 @@ void toWorksheet::saveHistory(void)
     Result->hide();
     Result->stop();
     disconnect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
-    disconnect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &,true)),
-	       this,SLOT(addLog(const QString &,const toConnection::exception &,true)));
+    disconnect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &,bool)),
+	       this,SLOT(addLog(const QString &,const toConnection::exception &,bool)));
     disconnect(StopButton,SIGNAL(clicked(void)),Result,SLOT(stop(void)));
 
     Result=new toResultLong(Result->parentWidget());

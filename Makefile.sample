@@ -44,13 +44,13 @@ INSTALLBIN=$(ROOT)/usr/local/bin
 INSTALLLIB=$(ROOT)/usr/local/lib
 
 # Additional includes needed to compile program
-INCLUDES="-I/usr/include" "-I$(ORACLE_HOME)/rdbms/demo" "-I$(ORACLE_HOME)/plsql/public" "-I$(ORACLE_HOME)/rdbms/public" "-I$(ORACLE_HOME)/network/public" "-I/usr/include/qt2" "-I/usr/include/mysql"
+INCLUDES="-I/usr/include" "-I$(ORACLE_HOME)/rdbms/demo" "-I$(ORACLE_HOME)/plsql/public" "-I$(ORACLE_HOME)/rdbms/public" "-I$(ORACLE_HOME)/network/public" "-I/usr/lib/qt3/include"
 
 # C++ Compiler to use
 GCC="/usr//bin/cc"
 
 # Additional libraries to link with
-LIBS_GLOB=-lcrypt -lm -lpthread -lkdeprint -lkdecore -lkdeui -lDCOP -lkfile -lkhtml
+LIBS_GLOB=-lm -lpthread -lkdeprint -lkdecore -lkdeui -lDCOP -lkhtml -lkparts -lkio -lcrypt -ldl
 
 # Standard C++ library
 STDCPP_SHARED=-lstdc++
@@ -59,19 +59,19 @@ STDCPP_SHARED=-lstdc++
 STDCPP_STATIC=/usr/lib/libstdc++-3-libc6.2-2-2.10.0.a
 
 # Qt library
-QT_SHARED= -lqt
+QT_SHARED= -lqt-mt
 
 # Static Qt library
-QT_STATIC=/usr/lib/libqt.a
+QT_STATIC=/usr/lib/libqt-mt.a
 
 # Path to Qt meta compiler
-MOC="/usr/lib/qt2/bin/moc"
+MOC="/usr/lib/qt3/bin/moc"
 
 # Path to Qt interface compiler
-UIC="/usr/lib/qt2/bin/uic"
+UIC="/usr/lib/qt3/bin/uic"
 
 # Additional paths to find libraries
-LFLAGS="-L/usr/lib" -Xlinker "--rpath=/usr/lib" "-L$(ORACLE_HOME)/lib" "-L/usr/lib" "-L/usr/lib" -Xlinker "--rpath=$(ORACLE_HOME)/lib" -Xlinker "--rpath=/usr/lib" 
+LFLAGS="-L/usr/lib" -Xlinker "--rpath=/usr/lib" "-L$(ORACLE_HOME)/lib" "-L/usr/lib" -Xlinker "--rpath=$(ORACLE_HOME)/lib"
 
 # Oracle library
 ORACLE_SHARED=-lclntsh
@@ -86,25 +86,26 @@ ORACLE_HOME=/opt/oracle/app/oracle/product/8.1.7
 TARGET=tora-mono
 
 # MySQL found
-MYSQL_FOUND=1
+MYSQL_FOUND=0
 
 # MySQL library
-MYSQL_SHARED= -lmysqlclient
+MYSQL_SHARED=
 
 # Static MySQL libraries
-MYSQL_STATIC=/usr/lib/libmysqlclient.a
+MYSQL_STATIC=
 
 # Base directory of KDE installation
-KDE_BASE=/usr
+KDE_BASE=$(ROOT)/usr
 
 # Additional defines to use while compiling, except for the normal these are available
 #   OTL_ORA9I          - Compile for Oracle 9.x
 #   OTL_ORA8I          - Compile for Oracle 8.1.x
 #   OTL_ORA8           - Compile for Oracle 8.0.x
+#   TO_NEW_CHECK       - Disable new version check globally
 #   TO_KDE             - Compile as KDE application
 DEFINES+=-DOTL_ORA8I
 DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\"$(INSTALLLIB)/tora\"
-DEFINES+=-DTO_KDE
+DEFINES+=-DQT_THREAD_SUPPORT
 
 # Where to find perl on your system
 PERL=/usr/bin/perl
@@ -116,10 +117,10 @@ PERL=/usr/bin/perl
 CPPFLAGS_GLOB=
 
 # Additional flags to set when linking.
-LFLAGS_GLOB=-g
+LFLAGS_GLOB=-g -O3
 
 # Additional flags set when compiling.
-CFLAGS_GLOB=-g -fPIC -Wall
+CFLAGS_GLOB=-g -O3 -Wall
 
 ############################################################################
 #
@@ -158,6 +159,7 @@ API=	\
 	toresult.h		\
 	toresultbar.h		\
 	toresultcols.h		\
+	toresultcombo.h         \
 	toresultconstraint.h	\
 	toresultcontent.h	\
 	toresultdepend.h	\
@@ -228,7 +230,6 @@ SOURCES=\
 	tomarkedtext.cpp \
 	tomemoeditor.cpp \
 	tomessageui.cpp \
-	tomysqlconnection.cpp \
 	tonewconnection.cpp \
 	tonewconnectionui.cpp \
 	tonoblockquery.cpp \
@@ -243,10 +244,12 @@ SOURCES=\
 	topreferencesui.cpp \
 	toprofiler.cpp \
 	toproject.cpp \
+	toqsqlconnection.cpp \
 	toreport.cpp \
 	toresult.cpp \
 	toresultbar.cpp \
 	toresultcols.cpp \
+	toresultcombo.cpp \
 	toresultconstraint.cpp \
 	toresultcontent.cpp \
 	toresultcontentfilterui.cpp \
@@ -306,6 +309,7 @@ SOURCES=\
 	totuningoverviewui.cpp \
 	totuningsettingui.cpp \
 	tovisualize.cpp \
+	towaitevents.cpp \
 	toworksheet.cpp \
 	toworksheetsetupui.cpp \
 	toworksheetstatistic.cpp \
@@ -314,10 +318,15 @@ SOURCES=\
 default: all
 include $(ORACLE_HOME)/rdbms/lib/env_rdbms.mk
 
+TRANSLATIONS=\
+	tora_se.ts\
+	tora_fr.ts\
+
 CPPFLAGS=$(CPPFLAGS_GLOB) $(DEFINES) $(INCLUDES)
 CFLAGS=$(CFLAGS_GLOB) $(INCLUDES) $(DEFINES)
 
 OBJECTS=$(filter %.o,$(SOURCES:%.cpp=objs/%.o))
+TRANSOBJ=$(filter %.qm,$(TRANSLATIONS:%.ts=%.qm))
 
 DEPENDS=$(filter %.d,$(SOURCES:%.cpp=.depends/%.d)) .depends/main.d
 
@@ -325,7 +334,7 @@ vpath %.h $(INCLUDE)
 
 .PHONY: all clean fixmod install distclean
 
-all: $(TARGET)
+all: $(TARGET) lrelease
 
 #$(OBJECTS): Makefile Makefile.common
 
@@ -360,11 +369,13 @@ objs/%.o: %.cpp
 %.o : objs/%.o
 	@echo Faulty dependency, forgot the objs/ part
 
-install-common:
+install-common: lrelease
 	if [ \! -f $(TARGET) ] ; then cp tora $(TARGET) ; fi
+	mkdir -p $(INSTALLBIN)
 	mkdir -p $(INSTALLLIB)/tora/help
 	-cp templates/*.tpl $(INSTALLLIB)/tora >/dev/null 2>&1
-	-cp help/* $(INSTALLLIB)/tora/help >/dev/null 2>&1
+	-cp -r help/* $(INSTALLLIB)/tora/help >/dev/null 2>&1
+	-cp  *.qm $(INSTALLLIB)/tora >/dev/null 2>&1
 
 install: $(TARGET) install-common install-kde
 	@echo Install $(TARGET) to $(INSTALLBIN)
@@ -372,20 +383,19 @@ install: $(TARGET) install-common install-kde
 	-strip $(TARGET) plugins/* >/dev/null 2>&1
 	cp $(TARGET) $(INSTALLBIN)/tora
 	if [ -f tora-plugin ] ; then rm tora-plugin ; fi
-	mkdir -p $(INSTALLLIB)/tora/help
 	rm -f $(INSTALLLIB)/tora/*.tso
 	-cp plugins/* $(INSTALLLIB)/tora >/dev/null 2>&1
-	-cp templates/*.tpl $(INSTALLLIB)/tora >/dev/null 2>&1
-	-cp -r help/* $(INSTALLLIB)/tora/help >/dev/null 2>&1
 
 install-debug: tora-mono install-common
 	@echo Install tora with debugging symbols to $(INSTALLBIN)
 	cp tora-mono $(INSTALLBIN)/tora
 
 install-kde:
+	mkdir -p $(KDE_BASE)/share/icons/hicolor/32x32/apps
+	mkdir -p $(KDE_BASE)/share/icons/hicolor/16x16/apps 
+	mkdir -p $(KDE_BASE)/share/applnk/Development
 	cp -f icons/tora.xpm $(KDE_BASE)/share/icons/hicolor/32x32/apps/tora.xpm
 	cp -f icons/toramini.xpm $(KDE_BASE)/share/icons/hicolor/16x16/apps/tora.xpm
-	mkdir -p $(KDE_BASE)/share/applnk/Development
 	cp -f rpm/tora.desktop $(KDE_BASE)/share/applnk/Development
 
 uninstall:
@@ -465,11 +475,6 @@ plugins/toextract.tso:\
 	objs/toresultextract.o
 plugins/toinvalid.tso:\
 	objs/toinvalid.o
-plugins/tomysqlconnection.tso:\
-	objs/tomysqlconnection.o
-	@echo Linking plugin $@
-	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
-	$(GCC) -shared $(CFLAGS) $(LFLAGS) $(LFLAGS_GLOB) $(MYSQL_SHARED) -o $@ $^
 plugins/tooracleconnection.tso:\
 	objs/tooracleconnection.o \
 	objs/tooracleextract.o \
@@ -485,8 +490,11 @@ plugins/toprofiler.tso:\
 	objs/toprofiler.o
 plugins/toproject.tso:\
 	objs/toproject.o
+plugins/toqsqlconnection.tso:\
+	objs/toqsqlconnection.o
 plugins/toresult.tso:\
 	objs/toresultcols.o \
+	objs/toresultcombo.o \
 	objs/toresultconstraint.o \
 	objs/toresultcontent.o \
 	objs/toresultcontentfilterui.o \
@@ -538,7 +546,8 @@ plugins/towidget.tso:\
 	objs/tochangeconnection.o \
 	objs/tofilesize.o \
 	objs/tosgastatement.o \
-	objs/tovisualize.o
+	objs/tovisualize.o \
+	objs/towaitevents.o
 plugins/toworksheet.tso:\
 	objs/toworksheet.o \
 	objs/toworksheetsetupui.o
@@ -557,12 +566,12 @@ tora-plugin:\
 	plugins/toeditextensions.tso \
 	plugins/toextract.tso \
 	plugins/toinvalid.tso \
-	plugins/tomysqlconnection.tso \
 	plugins/tooracleconnection.tso \
 	plugins/tooutput.tso \
 	plugins/topassword.tso \
 	plugins/toprofiler.tso \
 	plugins/toproject.tso \
+	plugins/toqsqlconnection.tso \
 	plugins/toresult.tso \
 	plugins/torollback.tso \
 	plugins/toscript.tso \
@@ -589,11 +598,25 @@ tora-static: $(OBJECTS) main.cpp
 	@echo Linking $@
 	$(GCC) $(LFLAGS) $(CFLAGS) $(LFLAGS_GLOB) -DTOMONOLITHIC -o $@ $(OBJECTS) main.cpp \
 		$(QT_STATIC) $(STDCPP_STATIC) $(ORACLE_STATIC) $(LIBS_GLOB) \
-		/usr/X11R6/lib/libXext.a /usr/X11R6/lib/libX11.a /usr/X11R6/lib/libGL.a \
-		/usr/lib/mysql/libmysqlclient.a /usr/lib/libpq.a -ldl
-
+		/usr/X11R6/lib/libXext.a /usr/X11R6/lib/libX11.a \
+		$(MYSQL_STATIC) /usr/lib/libpq.a
 
 # The binary for the pluginbased tora
+
+tora.pro: Makefile
+	echo "# Not indended to be used for anything except lupdate" > tora.pro
+	echo 'SOURCES=	license/tolicense.cpp\' >> tora.pro
+	echo '	license/tolicenseui.cpp\' >> tora.pro
+	echo '	main.cpp\' >> tora.pro
+	echo '	toextratranslations.cpp\' >> tora.pro
+	echo "	$(SOURCES)" >> tora.pro
+	echo 'TRANSLATIONS=$(TRANSLATIONS)' >> tora.pro
+
+lupdate: tora.pro
+	$(LUPDATE) tora.pro
+
+lrelease: tora.pro $(TRANSLATIONS)
+	$(LRELEASE) tora.pro
 
 tora:\
 	objs/toabout.o \

@@ -69,14 +69,14 @@
 #include "icons/refresh.xpm"
 #include "icons/tooutput.xpm"
 
-#define CONF_POLLING    "Refresh"
-#define DEFAULT_POLLING	"10 seconds"
+#define CONF_POLLING    	"Refresh"
+#define DEFAULT_POLLING		"10 seconds"
 
-#define CONF_TYPE	"Type"
-#define DEFAULT_TYPE	"0"
+#define CONF_LOG_TYPE		"Type"
+#define DEFAULT_LOG_TYPE	"0"
 
-#define CONF_LOG_USER	"LogUser"
-#define DEFAULT_LOG_USER "ULOG"
+#define CONF_LOG_USER		"LogUser"
+#define DEFAULT_LOG_USER	"ULOG"
 
 class toOutputPrefs : public QGroupBox, public toSettingTab
 { 
@@ -102,7 +102,7 @@ public:
     Type=new QComboBox(this);
     Type->insertItem(qApp->translate("toLogOutput","SQL Output"));
     Type->insertItem(qApp->translate("toLogOutput","Log4PL/SQL"));
-    Type->setCurrentItem(Tool->config(CONF_TYPE,DEFAULT_TYPE).toInt());
+    Type->setCurrentItem(Tool->config(CONF_LOG_TYPE,DEFAULT_LOG_TYPE).toInt());
     label->setBuddy(Type);
 
     label=new QLabel(qApp->translate("toOutputPrefs","Log4PL/SQL &User"),this);
@@ -112,7 +112,7 @@ public:
   virtual void saveSetting(void)
   {
     Tool->setConfig(CONF_POLLING,AutoPolling->currentText());
-    Tool->setConfig(CONF_TYPE,QString::number(Type->currentItem()));
+    Tool->setConfig(CONF_LOG_TYPE,QString::number(Type->currentItem()));
     Tool->setConfig(CONF_LOG_USER,User->text());
   }
 };
@@ -348,7 +348,7 @@ toLogOutput::toLogOutput(QWidget *parent,toConnection &connection)
   Type=new QComboBox(toolBar(),TO_KDE_TOOLBAR_WIDGET);
   Type->insertItem(tr("SQL Output"));
   Type->insertItem(tr("Log4PL/SQL"));
-  Type->setCurrentItem(OutputTool.config(CONF_TYPE,DEFAULT_TYPE).toInt());
+  Type->setCurrentItem(OutputTool.config(CONF_LOG_TYPE,DEFAULT_LOG_TYPE).toInt());
   connect(Type,SIGNAL(activated(int)),this,SLOT(changeType()));
 
   Log=new toResultView(false,false,this);

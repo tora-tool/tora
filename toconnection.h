@@ -47,6 +47,7 @@ class QWidget;
 class toConnection;
 class toConnectionProvider;
 class toSQL;
+class toQuery;
 
 /** This class is an abstract definition of an actual connection to a database.
  * Each @ref toConnection object can have one or more actual connections to the
@@ -56,15 +57,24 @@ class toSQL;
  */
 
 class toConnectionSub {
+  toQuery *Query;
 public:
   /** Create connection to database.
    */
   toConnectionSub()
-  { }
+  { Query=NULL; }
   /** Close connection.
    */
   virtual ~toConnectionSub()
   { }
+  /** Query current running on connection or NULL.
+   */
+  toQuery *query()
+  { return Query; }
+  /** Set query currently running on connection. NULL means none.
+   */
+  void setQuery(toQuery *query)
+  { Query=query; }
   /** Cancel anything running on this sub.
    */
   virtual void cancel(void)
@@ -826,6 +836,9 @@ public:
 
   void writeDiskCache(void);
 
+  /** Get a list of currently running SQL.
+   */
+  std::list<QString> running(void);
 
   void logMessage(QString text);
   

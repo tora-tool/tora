@@ -421,6 +421,7 @@ toQuery::toQuery(toConnection &conn,const toSQL &sql,
     Connection.freeConnection(ConnectionSub);
     throw;
   }
+  ConnectionSub->setQuery(this);
 }
 
 toQuery::toQuery(toConnection &conn,const QString &sql,
@@ -484,6 +485,7 @@ toQuery::toQuery(toConnection &conn,const QString &sql,
     Connection.freeConnection(ConnectionSub);
     throw;
   }
+  ConnectionSub->setQuery(this);
 }
 
 toQuery::toQuery(toConnection &conn,const toSQL &sql,const toQList &params)
@@ -501,6 +503,7 @@ toQuery::toQuery(toConnection &conn,const toSQL &sql,const toQList &params)
     Connection.freeConnection(ConnectionSub);
     throw;
   }
+  ConnectionSub->setQuery(this);
 }
 
 toQuery::toQuery(toConnection &conn,const QString &sql,const toQList &params)
@@ -518,6 +521,7 @@ toQuery::toQuery(toConnection &conn,const QString &sql,const toQList &params)
     Connection.freeConnection(ConnectionSub);
     throw;
   }
+  ConnectionSub->setQuery(this);
 }
 
 toQuery::toQuery(toConnection &conn,queryMode mode,const toSQL &sql,const toQList &params)
@@ -551,6 +555,7 @@ toQuery::toQuery(toConnection &conn,queryMode mode,const toSQL &sql,const toQLis
     Connection.freeConnection(ConnectionSub);
     throw;
   }
+  ConnectionSub->setQuery(this);
 }
 
 toQuery::toQuery(toConnection &conn,queryMode mode,const QString &sql,const toQList &params)
@@ -584,6 +589,7 @@ toQuery::toQuery(toConnection &conn,queryMode mode,const QString &sql,const toQL
     Connection.freeConnection(ConnectionSub);
     throw;
   }
+  ConnectionSub->setQuery(this);
 }
 
 toQuery::toQuery(toConnection &conn,queryMode mode)
@@ -613,6 +619,7 @@ toQuery::toQuery(toConnection &conn,queryMode mode)
     Query=NULL;
     throw;
   }
+  ConnectionSub->setQuery(this);
 }
 
 void toQuery::execute(const toSQL &sql,const toQList &params)
@@ -636,6 +643,8 @@ toQuery::~toQuery()
   toBusy busy;
   delete Query;
   try {
+    if (ConnectionSub->query()==this)
+      ConnectionSub->setQuery(NULL);
     Connection.freeConnection(ConnectionSub);
   } catch(...) {
   }
@@ -853,6 +862,24 @@ toConnection::toConnection(const toConnection &conn)
   ReadingValues.up();
   ReadingCache=false;
   NeedCommit=Abort=false;
+}
+
+std::list<QString> toConnection::running(void)
+{
+  toBusy busy;
+  toLocker lock(Lock);
+  std::list<QString> ret;
+  toConnectionSub *sub=(*(Connections.begin()));
+  if (sub&&sub->query())
+    ret.insert(ret.end(),sub->query()->sql());
+  if (BackgroundConnection&&BackgroundConnection->query())
+    ret.insert(ret.end(),BackgroundConnection->query()->sql());
+  for(std::list<toConnectionSub *>::const_iterator i=Running.begin();i!=Running.end();i++) {
+    sub=*i;
+    if (sub&&sub->query())
+      ret.insert(ret.end(),sub->query()->sql());
+  }
+  return ret;
 }
 
 void toConnection::cancelAll(void)
