@@ -1,0 +1,103 @@
+<HTML><HEAD><TITLE>Rollback Segments</TITLE></HEAD><BODY>
+<H1>Rollback Segments</H1>
+This tool is used to manage rollback segments in the database.<P>
+<IMG SRC=images/rollback.png><P>
+The window consist of three part. The top one displays the available rollback segments and
+you can also see running transaction that use segment in the <B>transactions</B> column of the
+view, the length of the transactions show up as bars in this column. One bar for each running
+transaction using the segment.<P>
+The last part is a unique tool to detect snapshot too old problems in your database. This is
+discussed more <A HREF=rollback.html#later>later</A>.<P>
+<H2>Toolbar</H2>
+The toolbar contain the following commands.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Update</B></TD><TD VALIGN=top>
+Update the view from the database.</TD></TR>
+<TR><TD VALIGN=top><B>
+Online</B></TD><TD VALIGN=top>
+Take currently selected segment online.</TD></TR>
+<TR><TD VALIGN=top><B>
+Offline</B></TD><TD VALIGN=top>
+Take currently selected segment offline.</TD></TR>
+<TR><TD VALIGN=top><B>
+New rollback segment</B></TD><TD VALIGN=top>
+Create new rollback segment. If you are confused about what the items in the dialog mean refer
+to the Oracle Server Concepts manual as well as the Oracle SQL Reference.</TD></TR>
+<TR><TD VALIGN=top><B>
+Drop segment</B></TD><TD VALIGN=top>
+Drop the currently selected segment.</TD></TR>
+<TR><TD VALIGN=top><B>
+Refresh time</B></TD><TD VALIGN=top>
+A list wher you can select the interval between automatic updates.</TD></TR>
+</TABLE><P>
+<H2>Inspecting a session</H2>
+When you select a session the following information is available in the tabed pane at the
+bottom of the window.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Statistics</B></TD><TD VALIGN=top>
+The session statistics available for the session. You will get more statistics if you enable
+timed statistics through the toolbar.</TD></TR>
+<TR><TD VALIGN=top><B>
+Connection info</B></TD><TD VALIGN=top>
+Information about the connection and versions used.</TD></TR>
+<TR><TD VALIGN=top><B>
+Pending locks</B></TD><TD VALIGN=top>
+What locks this session is currently waiting for.</TD></TR>
+<TR><TD VALIGN=top><B>
+Locked objects</B></TD><TD VALIGN=top>
+The objects currently locked by this session.</TD></TR>
+<TR><TD VALIGN=top><B>
+Current statement</B></TD><TD VALIGN=top>
+The statement that is currently being executed. See <A HREF=common.html#sga>SGA statement</A>
+for information about the statement.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Previous statement</B></TD><TD VALIGN=top>
+The next to last statement being executed by the session. See <A HREF=common.html#sga>SGA
+statement</A> for information about the statement.</TD></TR>
+<TR><TD VALIGN=top><B>
+Open cursors</B></TD><TD VALIGN=top>
+This contains a list of all the cursors currently held open by the session. When a statement
+is selected in the list you can investigate it using the normal <A HREF=common.html#sga>SGA
+statement</A> view.</TD></TR>
+</TABLE>
+<H2>Snapshot too old detection</H2>
+The lower part of this view is used to heuristically detect snapshot too old problems. The
+operation of this is that whenever the view is updated all SGA statements are cataloged and
+the corresponding current position in all the rollback segments are also stored the first
+time a new statement is detected. Since the information about the current location of the
+rollback when a statement was executed is not available in the SGA you have to keep the
+tool window open during the entire duration of the execution for this to work.<P>
+In the view you can see when the statement was first detected,
+who is running it the snapshot info which will with graphical bars display how far each of
+the available rollback segments have moved since this statement was executed. If any of these
+bars goes all the way through this column you are likely to encounter a snapshot too old
+statement.<P>
+Last you can see the SQL for the row. Selecting a line will also let you investigate the
+statement using the normal <A HREF=common.html#sga>sga statement</A> view.<P>
+There are a few options to configure the snapshot too old detection is to work.<P>
+<IMG SRC=images/rollbacksetup.png><P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Restart reexecuted statements</B></TD><TD VALIGN=top>
+If the execution count is changed for a statement reset the location of the rollback
+segments to the current location.</TD></TR>
+<TR><TD VALIGN=top><B>
+Must read buffers</B></TD><TD VALIGN=top>
+To display a statement it must be reading buffers, it is still kept in memory if no buffers
+are read. Check this to remove any statements that you execute and simply kept open even though
+you will not be reading from them any more.</TD></TR>
+<TR><TD VALIGN=top><B>
+Exclude first appearance</B></TD><TD VALIGN=top>
+Exclude the first update that would show the statement. Without this checked any statement
+with execution changed and buffers read will show up.</TD></TR>
+<TR><TD VALIGN=top><B>
+Disregard start extent</B></TD><TD VALIGN=top>
+If you check this the bars will always start from the left of the column. Otherwise the bars
+will start corresponding to the current extent of the tablespace and then wrap around as
+they grow.</TD></TR>
+</TABLE>
+</BODY>
+</HTML>

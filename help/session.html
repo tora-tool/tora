@@ -1,0 +1,61 @@
+<HTML><HEAD><TITLE>Session Manager</TITLE></HEAD><BODY>
+<H1>Session Manager</H1>
+This tool is used to manage the connections made to the database.
+<IMG SRC=images/session.png><P>
+The session tool consists of a toolbar, a list displaying the connections currently open to
+the database and at the bottom a tabbed pane where you can investigate a specific connection
+to the database.<P>
+<H2>Toolbar</H2>
+The toolbar contain the following commands.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Update</B></TD><TD VALIGN=top>
+Update the view from the database.</TD></TR>
+<TR><TD VALIGN=top><B>
+Enable timed statistics</B></TD><TD VALIGN=top>
+Enable timed statistics for the currently selected session.</TD></TR>
+<TR><TD VALIGN=top><B>
+Disable timed statistics</B></TD><TD VALIGN=top>
+Disable timed statistics for the currently selected session.</TD></TR>
+<TR><TD VALIGN=top><B>
+Disconnect session</B></TD><TD VALIGN=top>
+Disconnect the currently selected session. You will be asked if you allow the current
+transaction to finnish before kicking the session out ot not.</TD></TR>
+<TR><TD VALIGN=top><B>
+Refresh time</B></TD><TD VALIGN=top>
+A list wher you can select the interval between automatic updates.</TD></TR>
+</TABLE><P>
+<H2>Inspecting a session</H2>
+When you select a session the following information is available in the tabed pane at the
+bottom of the window.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Statistics</B></TD><TD VALIGN=top>
+The session statistics available for the session. You will get more statistics if you enable
+timed statistics through the toolbar.</TD></TR>
+<TR><TD VALIGN=top><B>
+Connection info</B></TD><TD VALIGN=top>
+Information about the connection and versions used.</TD></TR>
+<TR><TD VALIGN=top><B>
+Pending locks</B></TD><TD VALIGN=top>
+What locks this session is currently waiting for.</TD></TR>
+<TR><TD VALIGN=top><B>
+Locked objects</B></TD><TD VALIGN=top>
+The objects currently locked by this session.</TD></TR>
+<TR><TD VALIGN=top><B>
+Current statement</B></TD><TD VALIGN=top>
+The statement that is currently being executed. See <A HREF=common.html#sga>SGA statement</A>
+for information about the statement.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Previous statement</B></TD><TD VALIGN=top>
+The next to last statement being executed by the session. See <A HREF=common.html#sga>SGA
+statement</A> for information about the statement.</TD></TR>
+<TR><TD VALIGN=top><B>
+Open cursors</B></TD><TD VALIGN=top>
+This contains a list of all the cursors currently held open by the session. When a statement
+is selected in the list you can investigate it using the normal <A HREF=common.html#sga>SGA
+statement</A> view.</TD></TR>
+</TABLE>
+</BODY>
+</HTML>
