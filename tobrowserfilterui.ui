@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>468</width>
+            <width>464</width>
             <height>378</height>
         </rect>
     </property>
@@ -336,6 +336,10 @@
                         <name>enabled</name>
                         <bool>false</bool>
                     </property>
+                    <property stdset="1">
+                        <name>focusPolicy</name>
+                        <enum>StrongFocus</enum>
+                    </property>
                 </widget>
             </grid>
         </widget>
@@ -408,8 +412,8 @@
         <class>toResultView</class>
         <header location="local">toresultview.h</header>
         <sizehint>
-            <width>-1</width>
-            <height>-1</height>
+            <width>50</width>
+            <height>50</height>
         </sizehint>
         <container>0</container>
         <sizepolicy>
@@ -466,13 +470,14 @@
 </connections>
 <tabstops>
     <tabstop>OnlyOwnSchema</tabstop>
+    <tabstop>IgnoreCase</tabstop>
+    <tabstop>Invert</tabstop>
     <tabstop>None</tabstop>
     <tabstop>String</tabstop>
-    <tabstop>IgnoreCase</tabstop>
     <tabstop>IncludeAll</tabstop>
     <tabstop>Include</tabstop>
     <tabstop>Exclude</tabstop>
-    <tabstop>Invert</tabstop>
+    <tabstop>Tablespaces</tabstop>
     <tabstop>OkButton</tabstop>
     <tabstop>Cancel</tabstop>
 </tabstops>
