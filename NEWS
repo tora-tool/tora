@@ -20,6 +20,8 @@
 2001-05-13: TOra now compiles for windows (Check the new license though).
 2001-05-13: Fixed problem with rpath in configure (Thanx Ferdinand Gassauer).
 2001-05-14: Moved TOVERSION from Makefile to toconf.h.
+2001-05-14: Outcommented suspect change of width in tohighlightedtext.cpp.
+2001-05-14: Use "" instead of QString::null in empty descriptions of toSQL.
 
 0.8: Released 2001-05-07
 

@@ -18,15 +18,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *      As a special exception, you have permission to link this program
- *      with the Qt and Oracle Client libraries and distribute executables,
- *      as long as you follow the requirements of the GNU GPL in regard to
- *      all of the software in the executable aside from Qt and Oracle client
- *      libraries.
+ *      with the Oracle Client libraries and distribute executables, as long
+ *      as you follow the requirements of the GNU GPL in regard to all of the
+ *      software in the executable aside from Oracle client libraries.
  *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX or Qt/Windows products of TrollTech. And you are not
  *      permitted to distribute binaries compiled against these libraries
- *      without written consent from GlobeCom AB.
+ *      without written consent from GlobeCom AB. Observe that this does not
+ *      disallow linking to the Qt Free Edition.
  *
  * All trademarks belong to their respective owners.
  *
@@ -539,7 +539,7 @@ static toSQL SQLListConstraint7("toExtract:ListConstraint",
 				"  FROM all_constraints\n"
 				" WHERE owner = :own<char[100]>\n"
 				"   AND constraint_name = :nam<char[100]>",
-				QString::null,
+				"",
 				"7.0");
 
 static toSQL SQLConstraintTable("toExtract:ConstraintTable",
@@ -989,7 +989,7 @@ static toSQL SQLIndexColumns7("toExtract:IndexColumns",
 			      " WHERE index_name = :nam<char[100]>\n"
 			      "   AND index_owner = :own<char[100]>\n"
 			      " ORDER BY column_position",
-			      QString::null,
+			      "",
 			      "7");
 static toSQL SQLIndexFunction("toExtract:IndexFunction",
 			      "SELECT c.default$\n"
@@ -1615,7 +1615,7 @@ static toSQL SQLTableColumns7("toExtract:TableColumns",
 			      " WHERE table_name = :nam<char[100]>\n"
 			      "   AND owner = :own<char[100]>\n"
 			      " ORDER BY column_id",
-			      QString::null,
+			      "",
 			      "7.0");
 
 QString toExtract::tableColumns(const QString &owner,const QString &name)
@@ -1790,7 +1790,7 @@ static toSQL SQLIndexInfo("toExtract:IndexInfo",
 			  "  FROM all_indexes\n"
 			  " WHERE index_name = :nam<char[100]>\n"
 			  "   AND owner = :own<char[100]>",
-			  QString::null,
+			  "",
 			  "8.0");
 
 static toSQL SQLIndexSegment("toExtract:IndexSegment",
@@ -1896,7 +1896,7 @@ static toSQL SQLIndexSegment8("toExtract:IndexSegment",
 			      "   AND  s.segment_name = i.index_name\n"
 			      "   AND  i.owner        = :own<char[100]>\n"
 			      "   AND  s.owner        = i.owner",
-			      QString::null,
+			      "",
 			      "8.0");
 
 static toSQL SQLIndexSegment7("toExtract:IndexSegment",
@@ -1943,7 +1943,7 @@ static toSQL SQLIndexSegment7("toExtract:IndexSegment",
 			      "   AND  s.segment_name = i.index_name\n"
 			      "   AND  i.owner        = :own<char[100]>\n"
 			      "   AND  s.owner        = i.owner",
-			      QString::null,
+			      "",
 			      "7.0");
 
 QString toExtract::createIndex(const QString &schema,const QString &owner,const QString &name)
@@ -2284,7 +2284,7 @@ static toSQL SQLIndexPartition("toExtract:IndexPartition",
 			       "        AND i.owner           = :own<char[100]>\n"
 			       "        AND n.owner           = i.owner\n"
 			       "        AND t.owner           = i.owner",
-			       QString::null,
+			       "",
 			       "8.1");
 
 QString toExtract::createPartitionedIndex(const QString &schema,const QString &owner,
@@ -2466,7 +2466,7 @@ static toSQL SQLRangePartitions8("toExtract:RangePartitions",
 				 " WHERE      index_name  =  :nam<char[100]>\n"
 				 "        AND index_owner =  :own<char[100]>\n"
 				 " ORDER BY partition_name",
-				 QString::null,
+				 "",
 				 "8.1");
 
 static toSQL SQLIndexSubPartitionName("toExtract:IndexSubPartitionName",
@@ -3073,7 +3073,7 @@ static toSQL SQLTableType7("toExtract:TableType",
 			   " FROM all_tables\n"
 			   "WHERE table_name = :nam<char[100]>\n"
 			   "  AND owner = :own<char[100]>",
-			   QString::null,
+			   "",
 			   "7.0");
 
 static toSQL SQLTableInfo("toExtract:TableInfo",
@@ -3207,7 +3207,7 @@ static toSQL SQLTableInfo8("toExtract:TableInfo",
 			   "        AND t.table_name   = s.segment_name\n"
 			   "        AND s.owner        = :own<char[100]>\n"
 			   "        AND t.owner        = s.owner",
-			   QString::null,
+			   "",
 			   "8.0");
 
 static toSQL SQLTableInfo7("toExtract:TableInfo",
@@ -3264,7 +3264,7 @@ static toSQL SQLTableInfo7("toExtract:TableInfo",
 			   "        AND t.table_name   = s.segment_name\n"
 			   "        AND s.owner        = :own<char[100]>\n"
 			   "        AND t.owner        = s.owner",
-			   QString::null,
+			   "",
 			   "7.0");
 
 QString toExtract::createTable(const QString &schema,const QString &owner,const QString &name)
@@ -3555,7 +3555,7 @@ static toSQL SQLPartitionedIOTInfo8("toExtract:PartitionedIOTInfo",
 				    "        AND s.tablespace_name = p.def_tablespace_name\n"
 				    "        AND t.owner           = :own<char[100]>\n"
 				    "        AND p.owner           = t.owner",
-				    QString::null,
+				    "",
 				    "8.0");
 
 static toSQL SQLPartitionIndexNames("toExtract:PartitionIndexNames",
@@ -3908,7 +3908,7 @@ static toSQL SQLPartitionTableInfo8("toExtract:PartitionTableInfo",
 				    "        AND s.tablespace_name = p.def_tablespace_name\n"
 				    "        AND t.owner           = :own<char[100]>\n"
 				    "        AND p.owner           = t.owner",
-				    QString::null,
+				    "",
 				    "8.0");
 
 static toSQL SQLPartitionType("toExtract:PartitionType",
@@ -3936,7 +3936,7 @@ static toSQL SQLPartitionType8("toExtract:PartitionType",
 			       " WHERE\n"
 			       "            table_name = :nam<char[100]>\n"
 			       "        AND owner = :own<char[100]>",
-			       QString::null,
+			       "",
 			       "8.0");
 
 static toSQL SQLPartitionSegment("toExtract:PartitionSegment",
@@ -4011,7 +4011,7 @@ static toSQL SQLPartitionSegment8("toExtract:PartitionSegment",
 				  " WHERE  table_name = :nam<char[100]>\n"
 				  "   AND  owner = :nam<char[100]>\n"
 				  " ORDER BY partition_name",
-				  QString::null,
+				  "",
 				  "8.0");
 
 static toSQL SQLSubPartitionName("toExtract:SubPartitionName",
@@ -5004,7 +5004,7 @@ static toSQL SQLTriggerInfo8("toExtract:TriggerInfo",
 			     " WHERE\n"
 			     "            trigger_name = :nam<char[100]>\n"
 			     "        AND owner        = :own<char[100]>",
-			     QString::null,
+			     "",
 			     "8.0");
 
 QString toExtract::createTrigger(const QString &schema,const QString &owner,const QString &name)
@@ -5220,7 +5220,7 @@ static toSQL SQLTablespaceInfo8("toExtract:TablespaceInfo",
 				"        dba_tablespaces\n"
 				" WHERE\n"
 				"        tablespace_name = :nam<char[100]>",
-				QString::null,
+				"",
 				"8.0");
 
 static toSQL SQLTablespaceInfo7("toExtract:TablespaceInfo",
@@ -5256,7 +5256,7 @@ static toSQL SQLTablespaceInfo7("toExtract:TablespaceInfo",
 				"        dba_tablespaces\n"
 				" WHERE\n"
 				"        tablespace_name = :nam<char[100]>",
-				QString::null,
+				"",
 				"7.0");
 
 static toSQL SQLDatafileInfo("toExtract:DatafileInfo",
@@ -5292,7 +5292,7 @@ static toSQL SQLDatafileInfo7("toExtract:DatafileInfo",
 			      " WHERE\n"
 			      "        tablespace_name = :nam<char[100]>\n"
 			      " ORDER  BY file_name",
-			      QString::null,
+			      "",
 			      "7.0");
 
 

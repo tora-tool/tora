@@ -18,15 +18,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *      As a special exception, you have permission to link this program
- *      with the Qt and Oracle Client libraries and distribute executables,
- *      as long as you follow the requirements of the GNU GPL in regard to
- *      all of the software in the executable aside from Qt and Oracle client
- *      libraries.
+ *      with the Oracle Client libraries and distribute executables, as long
+ *      as you follow the requirements of the GNU GPL in regard to all of the
+ *      software in the executable aside from Oracle client libraries.
  *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX or Qt/Windows products of TrollTech. And you are not
  *      permitted to distribute binaries compiled against these libraries
- *      without written consent from GlobeCom AB.
+ *      without written consent from GlobeCom AB. Observe that this does not
+ *      disallow linking to the Qt Free Edition.
  *
  * All trademarks belong to their respective owners.
  *
@@ -39,6 +39,7 @@ TO_NAMESPACE;
 #endif
 #include <stdlib.h>
 
+#include <qmessagebox.h>
 #include <qapplication.h>
 #include <qtextcodec.h>
 
@@ -51,8 +52,6 @@ TO_NAMESPACE;
 #include "tohighlightedtext.h"
 #include "toabout.h"
 #include "tosql.h"
-
-#include <stdio.h>
 
 #ifndef TOMONOLITHIC
 #include <dlfcn.h>
@@ -207,11 +206,20 @@ int main(int argc,char **argv)
     
     return mainApp.exec();
   } catch (const otl_exception &exc) {
-    printf("Unhandled exception:\n%s\n",(const char *)QString::fromUtf8((const char *)exc.msg));
+    QMessageBox::critical(NULL,
+			  "Unhandled exception",
+			  QString(QString::fromUtf8((const char *)exc.msg)),
+			  "Exit");
   } catch (const QString &str) {
-    printf("Unhandled exception:\n%s\n",(const char *)str);
+    QMessageBox::critical(NULL,
+			  "Unhandled exception",
+			  str,
+			  "Exit");
   } catch (...) {
-    printf("Unhandled exception:\nUnknown type\n");
+    QMessageBox::critical(NULL,
+			  "Unhandled exception",
+			  "Unknown type",
+			  "Exit");
   }
   return 1;
 }

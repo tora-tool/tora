@@ -18,15 +18,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *      As a special exception, you have permission to link this program
- *      with the Qt and Oracle Client libraries and distribute executables,
- *      as long as you follow the requirements of the GNU GPL in regard to
- *      all of the software in the executable aside from Qt and Oracle client
- *      libraries.
+ *      with the Oracle Client libraries and distribute executables, as long
+ *      as you follow the requirements of the GNU GPL in regard to all of the
+ *      software in the executable aside from Oracle client libraries.
  *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX or Qt/Windows products of TrollTech. And you are not
  *      permitted to distribute binaries compiled against these libraries
- *      without written consent from GlobeCom AB.
+ *      without written consent from GlobeCom AB. Observe that this does not
+ *      disallow linking to the Qt Free Edition.
  *
  * All trademarks belong to their respective owners.
  *
@@ -140,7 +140,7 @@ static toSQL SQLShowCoalesced8("toResultStorage:ShowCoalesced",
 			       "   and c.tablespace_name = a.tablespace_name\n"
 			       " group by a.tablespace_name,a.status,a.contents,a.logging,a.allocation_type,b.percent_extents_coalesced,b.total_extents,b.total_bytes\n"
 			       " order by a.tablespace_name",
-			       QString::null,
+			       "",
 			       "8.0");
 
 static toSQL SQLNoShowCoalesced("toResultStorage:NoCoalesced",
@@ -185,7 +185,7 @@ static toSQL SQLNoShowCoalesced8("toResultStorage:NoCoalesced",
 				 "   and c.tablespace_name = a.tablespace_name\n"
 				 " group by a.tablespace_name,a.status,a.contents,a.logging,a.allocation_type,b.total_extents,b.total_bytes\n"
 				 " order by a.tablespace_name",
-				 QString::null,
+				 "",
 				 "8.0");
 
 static toSQL SQLDatafile("toResultStorage:Datafile",
@@ -234,7 +234,7 @@ static toSQL SQLDatafile8("toResultStorage:Datafile",
 			  "   and a.tablespace_name = :f1<char[31]>\n"
 			  " group by a.tablespace_name,b.status,b.enabled,b.name,c.user_bytes,c.bytes,b.checkpoint_time,b.creation_time\n"
 			  " order by a.tablespace_name,b.name",
-			  QString::null,
+			  "",
 			  "8.0");
 
 void toResultStorage::query(void)
