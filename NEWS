@@ -56,6 +56,7 @@
 2001-10-04: Don't print selection on row (Problem on some BW printers).
 2001-10-04: Added object list to storage.
 2001-10-04: Display extents in storage.
+2001-10-05: Fixed insertion of objects with schema.
 
 1.1.1: Released 2001-09-24
 

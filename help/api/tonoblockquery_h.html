@@ -79,9 +79,9 @@ private:
   /** A task to implement running the query.
    */
   class queryTask : public toTask {
-    toNoBlockQuery &amp;Parent;
+    toNoBlockQuery &Parent;
   public:
-    queryTask(toNoBlockQuery &amp;parent)
+    queryTask(toNoBlockQuery &parent)
       : Parent(parent)
     { }
     virtual void run(void);
@@ -147,9 +147,9 @@ public:
    * @param param Parameters to pass to query.
    * @param statistics Optional statistics widget to update with values from query.
    */
-  toNoBlockQuery(toConnection &amp;conn,
-		 const QString &amp;sql,
-		 const toQList &amp;param,
+  toNoBlockQuery(toConnection &conn,
+		 const QString &sql,
+		 const toQList &param,
 		 toResultStats *statistics=NULL);
   virtual ~toNoBlockQuery();
 
@@ -161,7 +161,7 @@ public:
   /** Get description of columns.
    * @return Description of columns list. Don't modify this list.
    */
-  toQDescList &amp;describe(void);
+  toQDescList &describe(void);
 
   /** Read the next value from the query.
    * @return The next available value.

@@ -28,11 +28,11 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref2">toTemplateItem</A></b> (<A HREF="toTemplateProvider.html">toTemplateProvider</A> &amp;prov,<A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref2">toTemplateItem</A></b> (<A HREF="toTemplateProvider.html">toTemplateProvider</A> &prov,<A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref3">toTemplateItem</A></b> (<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
+<LI>&nbsp;<b><A HREF="#ref3">toTemplateItem</A></b> (<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name) 
 </LI>
-<LI><A HREF="toTemplateProvider.html">toTemplateProvider</A> &amp;&nbsp;<b><A HREF="#ref4">provider</A></b> (void) 
+<LI><A HREF="toTemplateProvider.html">toTemplateProvider</A> &&nbsp;<b><A HREF="#ref4">provider</A></b> (void) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref5">expand</A></b> (void) 
 </LI>
@@ -46,7 +46,7 @@
  collapse methods that are called when this item is expanded or collapsed from the
  template widget.
  </p>
-<A NAME="toTemplateItem"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTemplateItem</strong> (<A HREF="toTemplateProvider.html">toTemplateProvider</A> &amp;prov,<A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
+<A NAME="toTemplateItem"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTemplateItem</strong> (<A HREF="toTemplateProvider.html">toTemplateProvider</A> &prov,<A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name)
 <br></td><td align="right"><h3><strong>toTemplateItem</strong></h3></td></tr></table><p></p><p> Create an item.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -57,7 +57,7 @@
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Contents of the first column of the item.
    </TD></TR>
 </TABLE></P>
-<A NAME="toTemplateItem"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTemplateItem</strong> (<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
+<A NAME="toTemplateItem"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTemplateItem</strong> (<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name)
 <br></td><td align="right"><h3><strong>toTemplateItem</strong></h3></td></tr></table><p></p><p> Create an item.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -66,7 +66,7 @@
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Contents of the first column of the item.
    </TD></TR>
 </TABLE></P>
-<A NAME="provider"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toTemplateProvider.html">toTemplateProvider</A> &amp;&nbsp;<strong>provider</strong> (void)
+<A NAME="provider"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toTemplateProvider.html">toTemplateProvider</A> &&nbsp;<strong>provider</strong> (void)
 <br></td><td align="right"><h3><strong>provider</strong></h3></td></tr></table><p></p><p> Get a reference to the provider of this item.
 </p>
 <p><b>Returns</b>: Reference to provider.

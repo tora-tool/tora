@@ -652,7 +652,7 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
       if (CompleteItem>=0) {
 	QString tmp=Completion->text(CompleteItem);
 	unsigned int pos=0;
-	while(pos<tmp.length()&&toIsIdent(tmp.at(pos)))
+	while(pos<tmp.length()&&toIsIdent(tmp.at(pos))||tmp.at(pos)=='.')
 	  pos++;
 	tmp=tmp.left(pos);
 	insert(tmp,false);

@@ -77,8 +77,8 @@ public:
 };
 
 #ifdef WIN32
-#include &lt;qthread.h&gt;
-#include &lt;list&gt;
+#include <qthread.h>
+#include <list>
 
 class toSemaphore {
 private:
@@ -89,7 +89,7 @@ public:
   toSemaphore()
     : Condition()
   { Value=0; }
-  toSemaphore(const toSemaphore &amp;);
+  toSemaphore(const toSemaphore &);
   toSemaphore(int val)
     : Condition()
   { Value=val; }
@@ -106,7 +106,7 @@ public:
   toLock(void)
     : Mutex(false)
   { }
-  toLock(const toLock &amp;);
+  toLock(const toLock &);
 
   void lock(void)
   { Mutex.lock(); }
@@ -126,13 +126,13 @@ private:
     taskRunner(toTask *);
     virtual void run(void);
   }			Thread;
-  static std::list&lt;toThread *&gt; *Threads;
+  static std::list<toThread *> *Threads;
   static toLock *Lock;
   static int LastID;
   static __declspec( thread ) int ThreadID;
   static int MainThread;
 
-  toThread(const toThread &amp;);
+  toThread(const toThread &);
 public:
   toThread(toTask *);
   ~toThread();
@@ -144,10 +144,10 @@ public:
 };
 
 #else
-#include &lt;semaphore.h&gt;
-#include &lt;pthread.h&gt;
-#include &lt;signal.h&gt;
-#include &lt;time.h&gt;
+#include <semaphore.h>
+#include <pthread.h>
+#include <signal.h>
+#include <time.h>
 
 /** Encapsulation of pthread semaphores. A semaphore can be raise to any value
  * but will wait till raised above zero when lowered below 0. Can also be implemented
@@ -165,7 +165,7 @@ private:
    */
   void			init(int val);
 
-  toSemaphore(const toSemaphore &amp;);
+  toSemaphore(const toSemaphore &);
 public:
   /** Create semaphore
    */
@@ -196,7 +196,7 @@ private:
   /** Actual pthread mutex of class.
    */
   pthread_mutex_t Mutex;
-  toLock(const toLock &amp;);
+  toLock(const toLock &);
 public:
   /** Create lock
    */
@@ -240,7 +240,7 @@ private:
    */
   static pthread_t MainThread;
   
-  toThread(const toThread &amp;);
+  toThread(const toThread &);
 public:
   /** Create thread.
    * @param task Task to run.
@@ -273,13 +273,13 @@ class toLocker {
 private:
   /** Lock held.
    */
-  toLock &amp;Lock;
-  toLocker(const toLocker &amp;);
+  toLock &Lock;
+  toLocker(const toLocker &);
 public:
   /** Create locker.
    * @param lock Lock to hold.
    */
-  toLocker(toLock &amp;lock)
+  toLocker(toLock &lock)
     : Lock(lock)
   { Lock.lock(); }
   ~toLocker()

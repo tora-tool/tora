@@ -29,9 +29,9 @@
 </TABLE></TD></TR></TABLE>
 <h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref2">toResultReferences</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref3">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const toQList &amp;param) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref3">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const toQList &param) 
 </LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref4">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref4">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &conn) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This widget displays information about other tables that references this one.
  The table is specified by the first and second parameter in the query. The sql is not
@@ -46,11 +46,11 @@
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
    </TD></TR>
 </TABLE></P>
-<A NAME="query"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const toQList &amp;param)
+<A NAME="query"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const toQList &param)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResultView.html#query">toResultView</A>.</p>
-<A NAME="canHandle"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn)
+<A NAME="canHandle"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &conn)
 <br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Support Oracle
    </p>
 <p>Reimplemented from <A HREF="toResultView.html#canHandle">toResultView</A>.</p>

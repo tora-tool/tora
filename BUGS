@@ -28,4 +28,5 @@ toBrowser:
 	Crashes when closing application and browser open.
 
 toHighlightedText:
-	Handle multiline strings correctly.
+	Doesn't handle multiline strings correctly.
+	Doesn't handle multiline comment /* */ correctly.

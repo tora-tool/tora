@@ -32,9 +32,9 @@
 </LI>
 <LI>virtual  &nbsp;<b><A HREF="#ref17">~toHelp</A></b> () 
 </LI>
-</ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref16">path</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;path=QString::null) 
+</ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref16">path</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &path=QString::null) 
 </LI>
-<LI>static  void &nbsp;<b><A HREF="#ref18">displayHelp</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;context,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL) 
+<LI>static  void &nbsp;<b><A HREF="#ref18">displayHelp</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &context,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL) 
 </LI>
 <LI>static  void &nbsp;<b><A HREF="#ref19">displayHelp</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL) 
 </LI>
@@ -57,11 +57,11 @@
 <td bgcolor="#BEEAE0">
 <pre>
 
-&lt;A HREF="first.html"&gt;1 Head&lt;/A&gt;&lt;BR&gt;
-&lt;DL&gt;
-&lt;A HREF="second.html&gt;1.1 Head Head&lt;/A&gt;&lt;/BR&gt;
-&lt;/DL&gt;
-&lt;A HREF="third.html"&gt;2 Foot&lt;/A&gt;&lt;BR&gt;
+<A HREF="first.html">1 Head</A><BR>
+<DL>
+<A HREF="second.html>1.1 Head Head</A></BR>
+</DL>
+<A HREF="third.html">2 Foot</A><BR>
 
 </pre>
 </td></tr>
@@ -70,9 +70,9 @@
 </p>
 <p> The second file which is optional and should be called index.htm if it exists
  should contain a file with links to keywords in the manual. This must be present
- for search to be possible in the manual. Keywords are indicated by the &lt;dd&gt; tag
+ for search to be possible in the manual. Keywords are indicated by the <dd> tag
  in these files as well as a link to where the keyword is described. Indentation
- is possible using the &lt;dl&gt; tag is possible here as well.
+ is possible using the <dl> tag is possible here as well.
 </p>
 <p> The following will make the keywords "Head", "Head, Head Head" and "Foot" available.
 </p><table border="0" width="100%">
@@ -80,11 +80,11 @@
 <td bgcolor="#BEEAE0">
 <pre>
 
-&lt;DD&gt;&lt;A HREF="first.html"&gt;Head&lt;/A&gt;&lt;BR&gt;
-&lt;DL&gt;
-    &lt;DD&gt;&lt;A HREF="second.html"&gt;Head Head&lt;/A&gt;&lt;BR&gt;
-&lt;/DL&gt;
-&lt;DD&gt;&lt;A HREF="third.html"&gt;Foot&lt;/A&gt;
+<DD><A HREF="first.html">Head</A><BR>
+<DL>
+    <DD><A HREF="second.html">Head Head</A><BR>
+</DL>
+<DD><A HREF="third.html">Foot</A>
 
 </pre>
 </td></tr>
@@ -106,7 +106,7 @@
 <TR><TD align="left" valign="top"><i>modal</i></TD><TD align="left" valign="top">If dialog is for a modal dialog or not
    </TD></TR>
 </TABLE></P>
-<A NAME="path"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>path</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;path=QString::null)
+<A NAME="path"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>path</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &path=QString::null)
 <br></td><td align="right"><h3><strong>path</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Help function to get a clean path from a path string. Strips trailing / etc.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -116,7 +116,7 @@
 <p><b>Returns</b>: Stripped path in string.
    </p>
 <A NAME="~toHelp"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toHelp</strong> ()
-<br></td><td align="right"><h3><strong>~toHelp</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="displayHelp"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayHelp</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;context,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL)
+<br></td><td align="right"><h3><strong>~toHelp</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="displayHelp"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayHelp</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &context,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL)
 <br></td><td align="right"><h3><strong>displayHelp</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Display a specific help context in the internal manual. Pops up a help window that
  displays the selected topic.
 </p>

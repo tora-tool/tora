@@ -65,10 +65,10 @@
 #ifndef __TOTEMPLATE_H
 #define __TOTEMPLATE_H
 
-#include &lt;list&gt;
-#include &lt;map&gt;
+#include <list>
+#include <map>
 
-#include &lt;qvbox.h&gt;
+#include <qvbox.h>
 #include "toresultview.h"
 #include "tohelp.h"
 
@@ -104,7 +104,7 @@ public:
   static toTemplate *templateWidget(QListViewItem *item);
   static toTemplate *templateWidget(QListView *obj);
 
-  virtual bool canHandle(toConnection &amp;conn)
+  virtual bool canHandle(toConnection &conn)
   { return true; }
 public slots:
   void expand(QListViewItem *item);
@@ -119,7 +119,7 @@ public slots:
 class toTemplateProvider {
   /** List of currently available template providers.
    */
-  static std::list&lt;toTemplateProvider *&gt; *Providers;
+  static std::list<toTemplateProvider *> *Providers;
 public:
   toTemplateProvider();
   virtual ~toTemplateProvider()
@@ -140,27 +140,27 @@ public:
 class toTemplateItem : public toResultViewItem {
   /** The provider responsible for this item.
    */
-  toTemplateProvider &amp;Provider;
+  toTemplateProvider &Provider;
 public:
   /** Create an item.
    * @param prov Provider for this item.
    * @param parent Parent of this item.
    * @param name Contents of the first column of the item.
    */
-  toTemplateItem(toTemplateProvider &amp;prov,QListView *parent,const QString &amp;name)
+  toTemplateItem(toTemplateProvider &prov,QListView *parent,const QString &name)
     : toResultViewItem(parent,NULL,name),Provider(prov)
   { }
   /** Create an item.
    * @param parent Parent of this item.
    * @param name Contents of the first column of the item.
    */
-  toTemplateItem(toTemplateItem *parent,const QString &amp;name)
-    : toResultViewItem(parent,NULL,name),Provider(parent-&gt;provider())
+  toTemplateItem(toTemplateItem *parent,const QString &name)
+    : toResultViewItem(parent,NULL,name),Provider(parent->provider())
   { }
   /** Get a reference to the provider of this item.
    * @return Reference to provider.
    */
-  toTemplateProvider &amp;provider(void)
+  toTemplateProvider &provider(void)
   { return Provider; }
   /** This function is called when the item is expanded and can be used to fill up the
    * list when needed.
@@ -196,7 +196,7 @@ public:
    * @param name Contents of the first column of the item.
    * @param note Extra text to display if item is selected.
    */
-  toTemplateText(toTemplateItem *parent,const QString &amp;name,const QString &amp;note)
+  toTemplateText(toTemplateItem *parent,const QString &name,const QString &note)
     : toTemplateItem(parent,name), Note(note)
   { }
   /** Reimplemented for internal reasons.
@@ -211,7 +211,7 @@ public:
 class toTemplateSQL : public toTemplateItem {
   /** Connection to run statement in
    */
-  toConnection &amp;Connection;
+  toConnection &Connection;
   /** Statement to run.
    */
   QString SQL;
@@ -223,20 +223,20 @@ public:
    * @param sql SQL statement, observe that it is in @ref QCString format and you
    *            should use utf8 if converting from QString.
    */
-  toTemplateSQL(toConnection &amp;conn,toTemplateItem *parent,
-		const QString &amp;name,const QString &amp;sql)
+  toTemplateSQL(toConnection &conn,toTemplateItem *parent,
+		const QString &name,const QString &sql)
     : toTemplateItem(parent,name),Connection(conn),SQL(sql)
   { setExpandable(true); }
   /** Get connection of this item.
    * @return Reference to connection.
    */
-  toConnection &amp;connection()
+  toConnection &connection()
   { return Connection; }
   /** Create a child of this item.
    * @param name Name of the child.
    * @return A newly created item.
    */
-  virtual toTemplateItem *createChild(const QString &amp;name)
+  virtual toTemplateItem *createChild(const QString &name)
   { return new toTemplateItem(this,name); }
   /** Get parameters to pass to query.
    * @return List of strings to pass as input parameters to query
