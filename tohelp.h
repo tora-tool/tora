@@ -47,47 +47,159 @@ class QProgressBar;
 class toHelpBrowser;
 class QToolButton;
 
-class toHelp : public QDialog {
+/**
+ * Display a help browser. A help manual consists of HTML pages where at least
+ * two pages are mandatory.
+ *
+ * The first one is toc.htm which is parsed for links which are added to the left
+ * pane tree view. Indentation is handled with the tag dl which open and close a
+ * tree branch.
+ *
+ * The following file would result in two main headings with the first one having
+ * one leaf widget as well.
+ *
+<pre>
+<A HREF="first.html">1 Head</A><BR>
+<DL>
+<A HREF="second.html>1.1 Head Head</A></BR>
+</DL>
+<A HREF="third.html">2 Foot</A><BR>
+</pre>
+ * 
+ * The second file which is optional and should be called index.htm if it exists
+ * should contain a file with links to keywords in the manual. This must be present
+ * for search to be possible in the manual. Keywords are indicated by the <dd> tag
+ * in these files as well as a link to where the keyword is described. Indentation
+ * is possible using the <dl> tag is possible here as well.
+ *
+ * The following will make the keywords "Head", "Head, Head Head" and "Foot" available.
+<pre>
+<DD><A HREF="first.html">Head</A><BR>
+<DL>
+    <DD><A HREF="second.html">Head Head</A><BR>
+</DL>
+<DD><A HREF="third.html">Foot</A>
+</pre>
+ * The reason the files look this way is that this way they are compatible with
+ * the Oracle manuals from Oracle Corporation and these can be browsed as well in
+ * this help viewer.
+ */
+
+class toHelp : public QWidget {
   Q_OBJECT
+
+  /** @internal
+   * Pointer to open helpwindow if available, otherwise NULL
+   */
 
   static toHelp *Window;
 
+  /**
+   * True if you are currently searching. You can't close the window while search, would
+   * coredump.
+   */
   bool Searching;
 
+  /**
+   * List containing the manuals and their sections, compiled from the toc.htm files.
+   * @see toHelp
+   */
   toListView *Sections;
+  /**
+   * List containing the search result of the latest search. Search reads the index.htm files.
+   */
   toListView *Result;
+  /**
+   * The line containing the search text.
+   */
   QLineEdit *SearchLine;
+  /**
+   * Manuals to include in search.
+   */
   QComboBox *Manuals;
 
 #ifdef TO_KDE
+  /**
+   * Displays the actual help window.
+   */
   toHelpBrowser *Help;
 #else
   QTextBrowser *Help;
 #endif
+  /**
+   * Display progress of current search.
+   */
   QProgressBar *Progress;
 
+  /**
+   * Set selection and also update selected item in list if any item matches the
+   * selected location.
+   * @param lst Listview to update selected item in.
+   * @param str Location of next help text.
+   */
   virtual void setSelection(QListView *lst,const QString &str);
+  /**
+   * Reimplemented for internal reasons.
+   */
   virtual void closeEvent(QCloseEvent *e)
-  { if (!Searching) QDialog::closeEvent(e); }
-public:
-  static QString path(const QString &path=QString::null);
-  toHelp(QWidget *,const char *name);
-  virtual ~toHelp();
-  static void displayHelp(const QString &context);
-public slots:
+  { if (!Searching) QWidget::closeEvent(e); }
+private slots:
+  /** Initiate a search with the parameters in the internal widgets.
+   * @internal
+   */
   void search(void);
-  void changeContent(QListViewItem *);
+  /** Remove the current selection in the sections and result lists. 
+   * @internal
+   */
   void removeSelection(void);
+  /** Item selected in left pane. Change contents of help viewer.
+   * @internal
+   */
+  void changeContent(QListViewItem *);
+public:
+  /**
+   * Create help widget.
+   * @param parent Parent widget.
+   * @param name Name of widget.
+   */
+  toHelp(QWidget *parent,const char *name);
+  /** Help function to get a clean path from a path string. Strips trailing / etc.
+   * @param path Path to strip.
+   * @return Stripped path in string.
+   */
+  static QString path(const QString &path=QString::null);
+  virtual ~toHelp();
+  /** Display a specific help context in the internal manual. Pops up a help window that
+   * displays the selected topic.
+   * @param context Context to display.
+   */
+  static void displayHelp(const QString &context);
 };
 
+/** This class is used to indicate a help context of an object. When the current context
+ * is to be determined you start at the widget that currently has focus and walk upwards
+ * to it's parent until you find a widget that also inherits this class which specify the
+ * context of all underlying widgets.
+ */
+
 class toHelpContext {
+  /**
+   * The current context.
+   */
   QString Name;
 public:
+  /** Create a context.
+   * @param file File in the help directory that describes the current context.
+   */
   toHelpContext(const QString &file)
     : Name(file)
   { }
   virtual ~toHelpContext()
   { }
+  /**
+   * Get this context
+   * @return The location of a file that describes the current context.
+   */
   virtual const QString &context(void) const
   { return Name; }
 };

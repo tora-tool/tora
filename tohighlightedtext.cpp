@@ -58,6 +58,7 @@ toSyntaxAnalyzer::toSyntaxAnalyzer(const char **keywords)
     list<const char *> &curKey=Keywords[(unsigned char)char(toupper(*keywords[i]))];
     curKey.insert(curKey.end(),keywords[i]);
   }
+  updateSettings();
 }
 
 toSyntaxAnalyzer::posibleHit::posibleHit(const char *text)

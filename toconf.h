@@ -80,17 +80,20 @@
 #define DEFAULT_SIZE_UNIT	"MB"
 #define CONF_HELP_PATH		"HelpPath"
 
-// Undefining this will leave out the style selection option stuff from the program
 #ifndef TO_KDE
+// Undefining this will leave out the style selection option stuff from the program
 #define ENABLE_STYLE
+// Undefining this will enable choosing Qt_Xft support
 #define ENABLE_QT_XFT
 #endif
 #define CONF_STYLE		"Style"
 #define DEFAULT_STYLE		"Windows"
 #ifdef WIN32
+// Wether to build monolithic TOra or not (Without plugin support
 #define TOMONOLITHIC
 #define DEFAULT_PLUGIN_DIR ""
 #endif
+// Version of TOra, must also change rpm files
 #define TOVERSION               "0.12"
 
 #endif

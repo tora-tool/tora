@@ -207,7 +207,7 @@ public:
       bool inDsc=false;
       QRegExp isToc("toc\\.html?$");
       while(!file.eof()) {
-	file.nextTag();
+	file.nextToken();
 	if (file.isTag()) {
 	  if (file.open()&&!strcmp(file.tag(),"a")) {
 	    QString href=toHelp::path(filename);
@@ -247,7 +247,7 @@ public:
 static toHelpTool HelpTool;
 
 toHelp::toHelp(QWidget *parent,const char *name)
-  : QDialog(parent,name,false,WDestructiveClose)
+  : QWidget(parent,name,WType_TopLevel|WDestructiveClose)
 {
   Window=this;
   QBoxLayout *l=new QVBoxLayout(this);
@@ -345,7 +345,7 @@ toHelp::toHelp(QWidget *parent,const char *name)
       QString href;
       QListViewItem *last=NULL;
       while(!file.eof()) {
-	file.nextTag();
+	file.nextToken();
 
 	if (!file.isTag()) {
 	  if (inA) {
@@ -483,7 +483,7 @@ void toHelp::search(void)
 	QString dsc;
 	QString href;
 	while(!file.eof()) {
-	  file.nextTag();
+	  file.nextToken();
 	  if (file.isTag()) {
 	    if (file.open()) {
 	      if (!strcmp(file.tag(),"a")) {

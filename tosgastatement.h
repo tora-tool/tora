@@ -46,21 +46,50 @@ class toResultItem;
 class toConnection;
 class QTimer;
 
+/** This widget displays information about a statement in the Oracle SGA. To get an
+ * address use the @ref toSQLToAddress function.
+ */
+
 class toSGAStatement : public QTabWidget {
   Q_OBJECT
+  /** The SQL run.
+   */
   toResultField *SQLText;
+  /** Tab widget
+   */
   QWidget *CurrentTab;
+  /** Resources used by the statement.
+   */
   toResultItem *Resources;
+  /** Connection of this widget.
+   */
   toConnection &Connection;
+  /** Address of the statement.
+   */
   QString Address;
+  /** Execution plan of the statement.
+   */
   toResultPlan *Plan;
 
+  /** Display resources of statement.
+   */
   void viewResources(void);
+  /** Change the displayed tab.
+   */
+  void changeTab(QWidget *widget);
 public:
+  /** Create widget.
+   * @param parent Parent widget.
+   * @param connection Connection to use to get data.
+   */
   toSGAStatement(QWidget *parent,toConnection &connection);
 public slots:
+  /** Display another statement.
+   * @param address Address of the statement to display.
+   */
   virtual void changeAddress(const QString &address);
-  void changeTab(QWidget *widget);
+  /** Update the contents of this widget.
+   */ 
   void refresh(void)
   { changeTab(CurrentTab); }
 };

@@ -40,68 +40,172 @@
 #include "toresult.h"
 #include "toconnection.h"
 
+/** This widget allows the user to browse the contents of a table and also edit
+ * the content. The table is specified by the first and second parameter in the query.
+ * The sql is not used in the query.
+ */
+
 class toResultContent : public QTable,public toResult {
   Q_OBJECT
 
+  /** Connection of this result content.
+   */
   toConnection &Connection;
+  /** Owner of table.
+   */
   QString Owner;
+  /** Tablename.
+   */
   QString Table;
+  /** Original values of rows currently being edited.
+   */
   list<QString> OrigValues;
+  /** Stream to read data from.
+   */
   otl_stream *Query;
+  /** Description of data stream.
+   */
   otl_column_desc *Description;
+  /** Number of rows read from stream.
+   */
   int Row;
+  /** Current row of editing.
+   */
   int CurrentRow;
+  /** Indicator to add more rows.
+   */
   bool AddRow;
+  /** Used to detect drag.
+   */
   QPoint LastMove;
 
+  /** Popup menu if available.
+   */
   QPopupMenu *Menu;
+  /** Column of item selected when popup menu displayed.
+   */
   int MenuColumn;
+  /** Row of item selected when popup menu displayed.
+   */
   int MenuRow;
 
+  /** Current sorting row.
+   */
   int SortRow;
+  /** Indicate if sorting ascending or descending.
+   */
   bool SortRowAsc;
 
+  /** Add another row to the contents.
+   */
   void addRow(void);
+  /** Throw an exception about wrong usage.
+   */
   void wrongUsage(void);
 
+  /** Reimplemented for internal reasons.
+   */
   virtual void drawContents(QPainter * p,int cx,int cy,int cw,int ch);
+  /** Reimplemented for internal reasons.
+   */
   virtual QWidget *beginEdit(int row,int col,bool replace);
+  /** Reimplemented for internal reasons.
+   */
   virtual void paintCell(QPainter *p,int row,int col,const QRect &cr,bool selected);
+  /** Reimplemented for internal reasons.
+   */
   virtual void keyPressEvent(QKeyEvent *e);
+  /** Reimplemented for internal reasons.
+   */
   virtual void focusInEvent (QFocusEvent *e);
+  /** Reimplemented for internal reasons.
+   */
   virtual void focusOutEvent (QFocusEvent *e); 
+  /** Reimplemented for internal reasons.
+   */
   virtual void activateNextCell();
 
+  /** Reimplemented for internal reasons.
+   */
   virtual void dragEnterEvent(QDragEnterEvent *event);
+  /** Reimplemented for internal reasons.
+   */
   virtual void dropEvent(QDropEvent *event);
+  /** Reimplemented for internal reasons.
+   */
   virtual void contentsMousePressEvent(QMouseEvent *e);
+  /** Reimplemented for internal reasons.
+   */
   virtual void contentsMouseReleaseEvent(QMouseEvent *e);
+  /** Reimplemented for internal reasons.
+   */
   virtual void contentsMouseMoveEvent (QMouseEvent *e);
   
 public:
+  /** Create the widget.
+   * @param conn Connection to display.
+   * @param parent Parent widget.
+   * @param name Name of widget.
+   */
   toResultContent(toConnection &conn,QWidget *parent,const char *name=NULL);
+  /** Reimplemented for internal reasons.
+   */
   virtual void query(const QString &sql,const list<QString> &param)
   { wrongUsage(); }
+  /** Reimplemented for internal reasons.
+   */
   virtual void changeParams(const QString &Param1)
   { wrongUsage(); }
+  /** Reimplemented for internal reasons.
+   */
   virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
   { wrongUsage(); }
 
+  /** Read all rows from the table.
+   */
   void readAll(void);
+  /** Print the contents.
+   */
   void print(void);
+  /** Export contents to file.
+   */
   virtual void exportFile(void);
 public slots:
-  virtual void changeSort(int);
+  /** Change sorting column
+   * @param col Column selected to change as sorting.
+   */
+  virtual void changeSort(int col); 
+  /** Reimplemented for internal reasons.
+   */
   virtual void refresh(void)
   { changeParams(Owner,Table); }
+  /** Reimplemented for internal reasons.
+   */
   virtual void changeParams(const QString &Param1,const QString &Param2);
-  void changePosition(int col,int row);
+  /** Current cell changed.
+   * @param row New row.
+   * @param col New column.
+   */
+  void changePosition(int row,int col);
 
-  virtual void displayMenu(const QPoint &);
+  /** Display popup menu
+   * @param p Point to display popup at.
+   */
+  virtual void displayMenu(const QPoint &p);
+  /** Display editable memo viewer at current position.
+   */
   virtual void displayMemo(void);
 protected slots:
-  virtual void menuCallback(int);
-  virtual void changeData(int,int,const QString &); 
+  /** Callback from popup menu.
+   * @param cmd Command ID.
+   */
+  virtual void menuCallback(int cmd);
+  /** Change data at specified position.
+   * @param row Row to change.
+   * @param col Column to change.
+   * @param data New contents of data.
+   */ 
+  virtual void changeData(int row,int col,const QString &data); 
 };
 
 #endif

@@ -37,10 +37,27 @@
 
 #include "toresultview.h"
 
+/** This widget displays information about indexes of an object
+ * specified by the first and second parameter in the query. The sql is not
+ * used in the query.
+ */
+
 class toResultIndexes : public toResultView {
+  /** Get columns of index.
+   * @param conOwner Owner of object.
+   * @param conName Name of index.
+   * @return Columns separated by ','.
+   */
   QString indexCols(const QString &conOwner,const QString &conName);
 public:
+  /** Create the widget.
+   * @param conn Connection to display.
+   * @param parent Parent widget.
+   * @param name Name of widget.
+   */
   toResultIndexes(toConnection &conn,QWidget *parent,const char *name=NULL);
+  /** Reimplemented for internal reasons.
+   */
   virtual void query(const QString &sql,const list<QString> &param);
 };
 

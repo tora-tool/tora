@@ -37,14 +37,35 @@
 
 #include "toresultview.h"
 
+/** This widget displays information about the dependencies of an object
+ * specified by the first and second parameter in the query. The sql is not
+ * used in the query. It will also recurs through all dependencies of the
+ * objects depended on.
+ */
+
 class toResultDepend : public toResultView {
+  /** Add children to this depend.
+   */
   void addChilds(QListViewItem *item);
+  /** Check if an object already exists.
+   * @param owner Owner of object.
+   * @param name Name of object.
+   * @return True if object exists.
+   */
   bool exists(const QString &owner,const QString &name);
 public:
+  /** Create the widget.
+   * @param conn Connection to display.
+   * @param parent Parent widget.
+   * @param name Name of widget.
+   */
   toResultDepend(toConnection &conn,QWidget *parent,const char *name=NULL);
 
+  /** Reimplemented for internal reasons.
+   */
   virtual void query(const QString &sql,const list<QString> &param);
-  // Why is this needed?
+  /** Reimplemented for internal reasons.
+   */
   void query(const QString &sql)
   { list<QString> p; query(sql,p); }
 };

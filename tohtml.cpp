@@ -72,7 +72,7 @@ bool toHtml::eof(void)
   return Position==Length;
 }
 
-void toHtml::nextTag(void)
+void toHtml::nextToken(void)
 {
   if (eof())
     throw QString("Reading HTML after eof");
@@ -232,7 +232,7 @@ const char *toHtml::mid(size_t start,size_t size)
   return Data+start;
 }
 
-bool toHtml::search(const QString &str)
+bool toHtml::search(const QCString &all,const QString &str)
 {
   QCString data(str.lower().latin1());
   enum {
@@ -243,8 +243,8 @@ bool toHtml::search(const QString &str)
   } lastState,state=beginning;
   unsigned int pos=0;
   char endString;
-  for (size_t i=0;i<Length;i++) {
-    char c=tolower(Data[i]);
+  for (size_t i=0;i<all.length();i++) {
+    char c=tolower(all[i]);
     if (c=='\''||c=='\"') {
       endString=c;
       state=inString;
@@ -263,7 +263,7 @@ bool toHtml::search(const QString &str)
 	} else {
 	  pos++;
 	  if (pos>=data.length()) {
-	    if (i+1>=Length||!isalnum(Data[i+1]))
+	    if (i+1>=all.length()||!isalnum(all[i+1]))
 	      return true;
 	    pos=0;
 	  }

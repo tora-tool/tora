@@ -5,6 +5,8 @@
 * Problem creating new SQL in SQL editor.
 * Problem deleting template in template editor.
 
+* KDoc on the following files: toextract.h, toresultitem.h, toresultlock.h, toresultlong.h
+
 Extended functionality:
 
 * SQL Browser
@@ -33,6 +35,7 @@ Extended functionality:
 * Ability to change/move redofiles.
 * Posibility to delete records in toResultContent.
 * Go through changes in DDL::Oracle and incorporate in toExtract.
+* Posibility to delete rows in toResultContent.
 
 Windows problems:
 

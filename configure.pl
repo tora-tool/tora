@@ -334,7 +334,7 @@ __TEMP__
     print "Using usere interface compiler $UIC\n";
 
     $QtInclude=findFile("^qglobal\\.h\$",sub {
-	                                     return !system("grep -E \"#define[ \t]+QT_VERSION[ \t]+((2[23456789])|(3))\" '".$_[0]."' >/dev/null");
+	                                     return !system("egrep \"#define[ \t]+QT_VERSION[ \t]+((2[23456789])|(3))\" '".$_[0]."' >/dev/null");
 					 },
 			$QtInclude,
 			$QtDir."/include",

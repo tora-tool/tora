@@ -43,9 +43,17 @@
 class QLineEdit;
 class QGrid;
 
+/** A help class to parse SQL for input/output bindings and if available also pop up a 
+ * dialog and ask for values. Also maintains an internal cache of old values.
+ */
+
 class toParamGet : public QDialog {
 private:
+  /** Default values cache
+   */
   static map<QString,QString> DefaultCache;
+  /** Specified values cache
+   */
   static map<QString,QString> Cache;
 
   QGrid *Container;
@@ -53,7 +61,17 @@ private:
   list<QWidget *> Value;
   toParamGet(QWidget *parent=0,const char *name=0);
 public:
+  /** Get parameters for specified SQL string.
+   * @param parent Parent widget if dialog is needed.
+   * @param str SQL to parse for bindings.
+   * @return Returns a list of values to feed into the query.
+   */
   static list<QString> getParam(QWidget *parent,QString &str);
+  /** Specify a default value for the cache. This can not overwrite a manually
+   * specified value by the user.
+   * @param name Name of the bind variable.
+   * @param val Value of the bind variable.
+   */
   static void setDefault(const QString &name,const QString &val);
 };
 

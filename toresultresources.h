@@ -40,8 +40,18 @@
 
 #define TOSQL_RESULTRESOURCE "toResultResources:Information"
 
+/** This widget displays information about resources of a query. The statement
+ * is identified by the first parameter which should be the address as gotten
+ * from the @ref toSQLToAddress function.
+ */
+
 class toResultResources : public toResultItem {
 public:
+  /** Create the widget.
+   * @param conn Connection to display.
+   * @param parent Parent widget.
+   * @param name Name of widget.
+   */
   toResultResources(toConnection &conn,QWidget *parent,const char *name=NULL)
     : toResultItem(3,true,conn,parent,name)
   { setSQL(toSQL::sql(TOSQL_RESULTRESOURCE,conn)); }

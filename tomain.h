@@ -67,7 +67,7 @@ class TOMessageBox : public QMessageBox {
 };
 #endif
 
-#ifndef TO_KDE
+#ifdef TO_KDE
 #  include <kapp.h>
 #  include <kdockwidget.h>
 #  if KDE_VERSION < 220

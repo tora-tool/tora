@@ -140,8 +140,6 @@ int main(int argc,char **argv)
 
     toSQL::loadSQL(toTool::globalConfig(CONF_SQL_FILE,DEFAULT_SQL_FILE));
 
-    toDefaultAnalyzer().updateSettings();
-
     {
       QString nls=getenv("NLS_LANG");
       if (nls.isEmpty())

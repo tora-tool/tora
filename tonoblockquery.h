@@ -40,8 +40,14 @@
 
 class toResultStats;
 
+/** This is class to be able to run a query in the background without
+ * blocking until a response is available from OCI.
+ */
+
 class toNoBlockQuery {
 private:
+  /** A task to implement running the query.
+   */
   class queryTask : public toTask {
     toNoBlockQuery &Parent;
   public:
@@ -52,44 +58,107 @@ private:
   };
   friend queryTask;
 
+  /** This semaphore indicates wether the query is still running.
+   */
   toSemaphore Running;
+  /** This semaphore indicates wether the child thread should
+   * continue reading values.
+   */
   toSemaphore Continue;
+  /** Max column size when reading values.
+   */
   int MaxColSize;
+  /** Lock for all this stuff
+   */
   toLock Lock;
+  /** Current location that values are being read.
+   */
   list<QString>::iterator CurrentValue;
+  /** Values read by the task. This can be changed without holding @ref Lock.
+   */
   list<QString> ReadingValues;
+  /** Values ready to be read by client.
+   */
   list<QString> Values;
+  /** Indicator if at end of query.
+   */
   bool EOQ;
+  /** Indicator if to quit reading from query.
+   */
   bool Quit;
+  /** Long connection to execute query on.
+   */
   otl_connect *LongConn;
+  /** Connection to get long connection from.
+   */
   toConnection &Connection;
+  /** SQL to execute.
+   */
   QString SQL;
+  /** Error string if error occurs.
+   */
   QString Error;
+  /** Length of description of result columns.
+   */
   int DescriptionLength;
+  /** Number of rows processed.
+   */
   int Processed;
+  /** Description of result columns.
+   */
   otl_column_desc *Description;
+  /** Parameters to pass to query before execution.
+   */
   list<QString> Param;
+  /** Child thread.
+   */
   toThread *Thread;
+  /** Statistics to be used if any.
+   */
   toResultStats *Statistics;
 
+  /** Throw error if any.
+   */
   void checkError()
   { if (!Error.isNull()) throw Error; }
 public:
+  /** Create a new query.
+   * @param conn Connection to run on.
+   * @param sql SQL to execute.
+   * @param param Parameters to pass to query.
+   * @param statistics Optional statistics widget to update with values from query.
+   */
   toNoBlockQuery(toConnection &conn,
 		 const QString &sql,
 		 const list<QString> &param,
 		 toResultStats *statistics=NULL);
   virtual ~toNoBlockQuery();
 
+  /** Poll if any result is available.
+   * @return True if new values are available.
+   */
   bool poll(void)
   { return Running.getValue()||CurrentValue!=Values.end(); }
 
+  /** Get description of columns.
+   * @param length Number of columns.
+   * @return Description of columns array.
+   */
   otl_column_desc *describe(int &length);
 
+  /** Read the next value from the query.
+   * @return The next available value.
+   */
   QString readValue(void);
 
+  /** Get the number of rows processed.
+   * @return Number of rows processed.
+   */
   int getProcessed(void);
 
+  /** Check if at end of query.
+   * @return True if query is done.
+   */
   bool eof(void);
 };
 

@@ -37,11 +37,30 @@
 
 #include "toresultview.h"
 
+/** This widget displays information about the constraints of an object
+ * specified by the first and second parameter in the query. The sql is not
+ * used in the query.
+ */
+
 class toResultConstraint : public toResultView {
+  /** The last table queried.
+   */
   QString LastTable;
+  /** Get columns for a constraints.
+   * @param conOwner Owner of constraint.
+   * @param conName Name of constraint.
+   * @return String with column names separated by a ',' character.
+   */
   QString constraintCols(const QString &conOwner,const QString &conName);
 public:
+  /** Create the widget.
+   * @param conn Connection to display.
+   * @param parent Parent widget.
+   * @param name Name of widget.
+   */
   toResultConstraint(toConnection &conn,QWidget *parent,const char *name=NULL);
+  /** Reimplemented for internal reasons.
+   */
   virtual void query(const QString &sql,const list<QString> &param);
 };
 

@@ -39,67 +39,18 @@
 #define TO_QTHREAD
 #endif
 
+/** This is an abstract class that defines something that is to be performed by a
+ * thread.
+ */
 class toTask {
 public:
   virtual ~toTask() { }
+  /** This member is called when the class is started.
+   */
   virtual void run(void) = 0;
 };
 
-#ifndef TO_QTHREAD
-#include <semaphore.h>
-#include <pthread.h>
-#include <signal.h>
-#include <time.h>
-
-class toSemaphore {
-private:
-  sem_t			Semaphore;
-  void			init(int val);
-
-public:
-  toSemaphore();
-  toSemaphore(const toSemaphore &);
-  toSemaphore(int val);
-  ~toSemaphore();
-
-  void up();
-  void down();
-  int getValue();
-};
-
-class toLock {
-private:
-  pthread_mutex_t Mutex;
-public:
-  toLock(void);
-  toLock(const toLock &);
-  ~toLock();
-
-  void lock(void);
-  void unlock(void);
-};
-
-class toThread {
-private:
-  pthread_t		Thread;
-  pthread_attr_t	ThreadAttr;
-  toTask		*Task;
-  toSemaphore		StartSemaphore;
-  void			initAttr(void);
-  friend void		*toThreadStartWrapper(void*);
-  
-  toThread(const toThread &);
-public:
-  toThread(toTask *);
-  ~toThread();
-  
-  void start(void);
-  void startAsync(void);
-
-  void kill(int signo);
-};
-
-#else
+#ifdef TO_QTHREAD
 #include <qthread.h>
 #include <list>
 
@@ -157,19 +108,144 @@ public:
   void startAsync(void);
 };
 
+#else
+#include <semaphore.h>
+#include <pthread.h>
+#include <signal.h>
+#include <time.h>
+
+/** Encapsulation of pthread semaphores. A semaphore can be raise to any value
+ * but will wait till raised above zero when lowered below 0. Can also be implemented
+ * without pthreads using Qt multithreaded primitives.
+ */
+
+class toSemaphore {
+private:
+  /** Actual semaphore.
+   */
+  sem_t			Semaphore;
+  /** Initialise semaphore.
+   * @param val Value to init semaphore to.
+   */
+  void			init(int val);
+
+  toSemaphore(const toSemaphore &);
+public:
+  /** Create semaphore
+   */
+  toSemaphore();
+  /** Create semaphore
+   * @param val Value of new semaphore.
+   */
+  toSemaphore(int val);
+  ~toSemaphore();
+
+  /** Increase semaphore value by 1.
+   */
+  void up();
+  /** Decrease semaphore value by 1, wait for it to never go below 0.
+   */
+  void down();
+  /** Get current semaphore value.
+   */
+  int getValue();
+};
+
+/** A wrapper around the pthread mutexfunctions. A lock can only be locked
+ *  by one thread at a time and is the basis of most thread synchronisation.
+ */
+
+class toLock {
+private:
+  /** Actual pthread mutex of class.
+   */
+  pthread_mutex_t Mutex;
+  toLock(const toLock &);
+public:
+  /** Create lock
+   */
+  toLock(void);
+  ~toLock();
+
+  /** Lock this lock.
+   */
+  void lock(void);
+  /** Unlock this lock.
+   */
+  void unlock(void);
+};
+
+/** Used to create new threads of execution. When a thread exits it will delete the
+ * thread and task objects so the calling thread must never delete a started thread.
+ */
+
+class toThread {
+private:
+  /** PThread identifier.
+   */
+  pthread_t		Thread;
+  /** Thread attributes.
+   */
+  pthread_attr_t	ThreadAttr;
+  /** Task to run in new thread.
+   */
+  toTask		*Task;
+  /** Semaphore that is raised when new thread has started running.
+   */
+  toSemaphore		StartSemaphore;
+  /** Initialise thread attributes.
+   */
+  void			initAttr(void);
+  /** Called when thread is started to execute task. Pointer to @ref toThread
+   * is passed as parameter.
+   */
+  friend void		*toThreadStartWrapper(void*);
+  
+  toThread(const toThread &);
+public:
+  /** Create thread.
+   * @param task Task to run.
+   */
+  toThread(toTask *task);
+  ~toThread();
+
+  /** Start thread and wait for other thread to start running.
+   */
+  void start(void);
+  /** Start thread and continue executing this thread until normal scheduling
+   * handles over execution to child thread.
+   */
+  void startAsync(void);
+
+  /** Send a signal to this thread. This function is not available if using
+   * Qt Threads.
+   */
+  void kill(int signo);
+};
+
 #endif
+
+/** This is a convenience class that holds a lock for the duration of the scope
+ * of the object. It is very convenient to use if exceptions can be thrown, simply
+ * declare an auto @ref toLocker to hold the lock. If any exception is thrown the
+ * locker will be deallocated and the lock released.
+ */
 
 class toLocker {
 private:
+  /** Lock held.
+   */
   toLock &Lock;
+  toLocker(const toLocker &);
 public:
+  /** Create locker.
+   * @param lock Lock to hold.
+   */
   toLocker(toLock &lock)
     : Lock(lock)
   { Lock.lock(); }
-  toLocker(const toLocker &);
   ~toLocker()
   { Lock.unlock(); }
 };
-
 
 #endif

@@ -89,6 +89,45 @@ SOURCES=\
 	toworksheet.cpp		\
 	utils.cpp
 
+API=	\
+	toconf.h		\
+	toconnection.h		\
+	todefaultkeywords.h	\
+	toextract.h		\
+	tofilesize.h		\
+	tohelpbrowser.h		\
+	tohelp.h		\
+	tohighlightedtext.h	\
+	tohtml.h		\
+	tomain.h		\
+	tomainwindow.kde.h	\
+	tomarkedtext.2.h	\
+	tomarkedtext.h		\
+	tomemoeditor.h		\
+	tonoblockquery.h	\
+	toparamget.h		\
+	toresultcols.h		\
+	toresultconstraint.h	\
+	toresultcontent.h	\
+	toresultdepend.h	\
+	toresultfield.h		\
+	toresult.h		\
+	toresultindexes.h	\
+	toresultitem.h		\
+	toresultlock.h		\
+	toresultlong.h		\
+	toresultplan.h		\
+	toresultreferences.h	\
+	toresultresources.h	\
+	toresultstats.h		\
+	toresultview.h		\
+	tosgastatement.h	\
+	tosql.h			\
+	totemplate.h		\
+	tothread.h		\
+	totool.h
+
+
 TARGET=tora-plugin
 
 include Makefile.setup
@@ -230,3 +269,10 @@ tora: \
 	@echo Linking $@
 	$(GCC) $(LFLAGS) -Xlinker "--export-dynamic" $(LFLAGS_GLOB) \
 		-o $@ $^ $(LIBS_GLOB) $(ORACLE_SHARED) $(STDCPP_SHARED) $(QT_SHARED)
+
+# This pretty requires a kdoc installtion and reference files for Qt and KDE Libs.
+# configure won't try to detect those. It's up to you.
+
+api: $(API)
+	mkdir -p help/api
+	kdoc -d help/api $^ -lqt -lkdeui -lkhtml

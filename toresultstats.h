@@ -40,22 +40,65 @@
 #define TO_STAT_MAX 500
 #define TO_STAT_BLOCKS 10
 
+/** This widget will displays information about statistics in either a database or a session.
+ */
+
 class toResultStats : public toResultView {
   Q_OBJECT
+  /** Session ID to get statistics for.
+   */
   int SessionID;
+  /** Get information about if only changed items are to be displayed.
+   */
   bool OnlyChanged;
+  /** Display system statistics.
+   */
   bool System;
+  /** Last read values, used to calculate delta values.
+   */
   double LastValues[TO_STAT_MAX+TO_STAT_BLOCKS];
+  /** Setup widget.
+   */
   void setup();
 public:
+  /** Create statistics widget for session statistics.
+   * @param OnlyChanged Only display changed items.
+   * @param ses Session ID to display info about.
+   * @param conn Connection to display.
+   * @param parent Parent widget.
+   * @param name Name of widget.
+   */
   toResultStats(bool OnlyChanged,int ses,toConnection &conn,QWidget *parent,const char *name=NULL);
+  /** Create statistics widget for the current session statistics.
+   * @param OnlyChanged Only display changed items.
+   * @param conn Connection to display.
+   * @param parent Parent widget.
+   * @param name Name of widget.
+   */
   toResultStats(bool OnlyChanged,toConnection &conn,QWidget *parent,const char *name=NULL);
+  /** Create statistics widget for the current database statistics.
+   * @param conn Connection to display.
+   * @param parent Parent widget.
+   * @param name Name of widget.
+   */
   toResultStats(toConnection &conn,QWidget *parent,const char *name=NULL);
 
+  /** Reset statistics. Read in last values without updating widget data.
+   */
   void resetStats(void);
+  /** Change the session to the current session.
+   * @param conn Connection to change session id to.
+   */
   void changeSession(otl_connect &conn);
+  /** Change session to specified id.
+   * @param ses Session ID to change to.
+   */
   void changeSession(int ses);
 public slots:
+  /** Update the statistics.
+   * @param reset Set delta to current values. This means that the next time this widget
+   *              is updated the delta will be from the new values.
+   */
   void refreshStats(bool reset=true);
 };
 

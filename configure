@@ -39,7 +39,7 @@ fi
 
 # Get the MOC stuff
 
-grep -E "^(UIC)|(MOC)" Makefile.setup > configure.setup
+egrep "^(UIC)|(MOC)" Makefile.setup > configure.setup
 
 . ./configure.setup
 
@@ -69,7 +69,7 @@ for a in *.cpp
 do
     b=.depends/`echo $a | sed 's/\.cpp$/\.d/'`
     true > $b
-    touch --date 1973-12-21 $b
+    touch -t 73122100 $b
 done
 
 if [ -f Makefile.orig ]
