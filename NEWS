@@ -79,6 +79,13 @@
 2001-09-21: Added copy, cut and paste to memo editor.
 2001-09-21: More Oracle 7 fixes (In toExtract this time).
 2001-09-21: Some windows fixes.
+2001-09-21: Include code in toResultExtract.
+2001-09-21: Fixed problem with table lookup at end of editor.
+2001-09-21: Don't use toSQL for enabling timed statistics in worksheet.
+2001-09-21: Implemented easy execution of predefined SQL in worksheet.
+2001-09-22: Fixed multiple provider support in SQL editor.
+2001-09-22: Added dependencies to template database browser.
+2001-09-22: Some UI improvements of SQL editor.
 
 1.1.0: Released 2001-09-09
 

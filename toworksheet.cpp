@@ -93,6 +93,7 @@
 #include "icons/stop.xpm"
 #include "icons/clock.xpm"
 #include "icons/describe.xpm"
+#include "icons/compile.xpm"
 
 #define TO_ID_STATISTICS		(toMain::TO_TOOL_MENU_ID+ 0)
 #define TO_ID_STOP			(toMain::TO_TOOL_MENU_ID+ 1)
@@ -274,6 +275,8 @@ void toWorksheet::viewResources(void)
   } TOCATCH
 }
 
+#define TOWORKSHEET "toWorksheet:"
+
 void toWorksheet::setup(bool autoLoad)
 {
   toConnection &connection=toWorksheet::connection();
@@ -432,7 +435,25 @@ void toWorksheet::setup(bool autoLoad)
     connect(StatisticButton,SIGNAL(toggled(bool)),Refresh,SLOT(setEnabled(bool)));
     Refresh->setEnabled(false);
 
-    toolbar->setStretchableWidget(new QLabel("",toolbar));
+    toolbar->addSeparator();
+    SavedSQL=new QComboBox(toolbar);
+    connect(SavedSQL,SIGNAL(activated(int)),this,SLOT(executeSaved()));
+    toolbar->setStretchableWidget(SavedSQL);
+    
+    const toSQL::sqlMap &def=toSQL::definitions();
+    for(toSQL::sqlMap::iterator i=((toSQL::sqlMap &)def).begin();
+	i!=((toSQL::sqlMap &)def).end();i++) {
+      if ((*i).first.startsWith(TOWORKSHEET))
+	SavedSQL->insertItem((*i).first.mid(strlen(TOWORKSHEET)));
+    }
+
+    new QToolButton(QPixmap((const char **)compile_xpm),
+		    "Run current saved SQL",
+		    "Run current saved SQL",
+		    this,SLOT(executeSaved(void)),
+		    toolbar);
+    toolbar->addSeparator();
+
     new toChangeConnection(toolbar);
 
     connect(ResultTab,SIGNAL(currentChanged(QWidget *)),
@@ -529,6 +550,9 @@ void toWorksheet::windowActivated(QWidget *widget)
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),
 			   "Erase &Log",this,SLOT(eraseLogButton(void)));
+      ToolMenu->insertItem("Edit current saved SQL",
+			   this,SLOT(editSQL()));
+				   
 
       toMainWidget()->menuBar()->insertItem("W&orksheet",ToolMenu,-1,toToolMenuIndex());
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,StopButton->isEnabled());
@@ -1083,9 +1107,7 @@ void toWorksheet::saveDefaults(void)
   }
 }
 
-static toSQL SQLTimedStatistics("toWorksheet:EnableTimed",
-				"ALTER SESSION SET TIMED_STATISTICS = TRUE",
-				"Enable timed statistics for the current session");
+#define ENABLETIMED "ALTER SESSION SET TIMED_STATISTICS = TRUE"
 
 void toWorksheet::enableStatistic(bool ena)
 {
@@ -1102,12 +1124,12 @@ void toWorksheet::enableStatistic(bool ena)
     Statistics->clear();
     if (!WorksheetTool.config(CONF_TIMED_STATS,"Yes").isEmpty()) {
       try {
-	connection().allExecute(SQLTimedStatistics);
-	connection().addInit(SQLTimedStatistics(connection()));
+	connection().allExecute(ENABLETIMED);
+	connection().addInit(ENABLETIMED);
       } TOCATCH
     }
   } else {
-    connection().delInit(SQLTimedStatistics(connection()));
+    connection().delInit(ENABLETIMED);
     Result->setStatistics(NULL);
     ResultTab->setTabEnabled(StatSplitter,false);
     toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,false);
@@ -1170,4 +1192,24 @@ void toWorksheet::describe(void)
     Columns->changeParams(owner,table);
   Columns->show();
   Result->hide();
+}
+
+void toWorksheet::executeSaved(void)
+{
+  QString sql=SavedSQL->currentText();
+  if (sql.length()>0) {
+    sql.prepend(TOWORKSHEET);
+    try {
+      query(toSQL::string(sql,connection()),false);
+    } TOCATCH
+  }
+}
+
+void toWorksheet::editSQL(void)
+{
+  QString sql=SavedSQL->currentText();
+  if (sql.isEmpty())
+    sql="Untitled";
+  sql.prepend(TOWORKSHEET);
+  toMainWidget()->editSQL(sql);
 }

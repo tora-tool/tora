@@ -98,6 +98,7 @@ void toResultExtract::query(const QString &sql,const toQList &param)
       objects.insert(objects.end(),type+":"+owner+"."+name);
 
     toExtract extract(toToolWidget::connection(),NULL);
+    extract.setCode(true);
     extract.setHeading(false);
     extract.setPrompt(Prompt);
     editor()->setText(extract.create(objects));

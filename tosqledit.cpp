@@ -173,11 +173,18 @@ toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
   Statements->setRootIsDecorated(true);
   Statements->addColumn("Text Name");
   QVBox *vbox=new QVBox(splitter);
+
   QHBox *hbox=new QHBox(vbox);
+  new QLabel("Name ",hbox);
   Name=new QLineEdit(hbox);
+  new QLabel(" Database ",hbox);
   Version=new QComboBox(hbox);
   Version->setEditable(true);
   Version->setDuplicatesEnabled(false);
+
+  QFrame *line = new QFrame(vbox);
+  line->setFrameStyle(QFrame::HLine|QFrame::Sunken);
+  new QLabel("Description",vbox);
   splitter=new QSplitter(Vertical,vbox);
   Description=new toMarkedText(splitter);
   Editor=new toWorksheet(splitter,connection,false);
@@ -215,16 +222,16 @@ void toSQLEdit::saveSQL(void)
 
 void toSQLEdit::deleteVersion(void)
 {
-  toSQL::deleteSQL(Name->text(),Version->currentText());
+  QString provider;
+  QString version;
+  if (!splitVersion(Version->currentText(),provider,version))
+    return;
 
-  selectionChanged(connection().version());
-  if (Version->count()==0) {
-    TrashButton->setEnabled(false);
-    CommitButton->setEnabled(true);
-    updateStatements();
-    Name->clear();
-    Description->clear();
-  }
+  toSQL::deleteSQL(Name->text(),version,provider);
+
+  selectionChanged(connection().provider()+":"+connection().version());
+  if (Version->count()==0)
+    newSQL();
 }
 
 bool toSQLEdit::close(bool del)
@@ -234,12 +241,43 @@ bool toSQLEdit::close(bool del)
   return false;
 }
 
+bool toSQLEdit::splitVersion(const QString &split,QString &provider,QString &version)
+{
+  int found=split.find(":");
+  if (found<0) {
+    TOMessageBox::warning(this,"Wrong format of version",
+			  "Should be database provider:version.",
+			  "&Ok");
+    return false;
+  }
+  provider=split.mid(0,found);
+  if (provider.length()==0) {
+    TOMessageBox::warning(this,"Wrong format of version",
+			  "Should be database provider:version. Can't start with :.",
+			  "&Ok");
+    return false;
+  }
+  version=split.mid(found+1);
+  if (version.length()==0) {
+    TOMessageBox::warning(this,"Wrong format of version",
+			  "Should be database provider:version. Can't end with the first :.",
+			  "&Ok");
+    return false;
+  }
+  return true;
+}
+
 void toSQLEdit::commitChanges(void)
 {
+  QString provider;
+  QString version;
+  if (!splitVersion(Version->currentText(),provider,version))
+    return;
   toSQL::updateSQL(Name->text(),
 		   Editor->editor()->text(),
 		   Description->text(),
-		   Version->currentText());
+		   version,
+		   provider);
   TrashButton->setEnabled(true);
   CommitButton->setEnabled(true);
 
@@ -264,13 +302,19 @@ bool toSQLEdit::checkStore(bool justVer)
 				      "Save changes into the SQL dictionary",
 				      "&Yes","&No","&Cancel",0,2)) {
     case 0:
-      toSQL::updateSQL(Name->text(),
-		       Editor->editor()->text(),
-		       Description->text(),
-		       justVer?LastVersion:Version->currentText());
-      TrashButton->setEnabled(true);
-      CommitButton->setEnabled(true);
       {
+	QString provider;
+	QString version;
+	if (!splitVersion(justVer?LastVersion:Version->currentText(),provider,version))
+	  return false;
+	toSQL::updateSQL(Name->text(),
+			 Editor->editor()->text(),
+			 Description->text(),
+			 version,
+			 provider);
+	TrashButton->setEnabled(true);
+	CommitButton->setEnabled(true);
+
 	bool update=Name->edited();
 	Name->setEdited(false);
 	Description->setEdited(false);
@@ -302,7 +346,7 @@ void toSQLEdit::changeVersion(const QString &ver)
 void toSQLEdit::selectionChanged(void)
 {
   if (checkStore(false))
-    selectionChanged(connection().version());
+    selectionChanged(connection().provider()+":"+connection().version());
 }
 
 void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
@@ -321,12 +365,19 @@ void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
   std::list<toSQL::version>::iterator j=ver.end();
   int ind;
   for (std::list<toSQL::version>::iterator i=ver.begin();i!=ver.end();i++) {
-    Version->insertItem((*i).Version);
+    QString str=(*i).Provider;
+    str+=":";
+    str+=(*i).Version;
+    Version->insertItem(str);
     if ((*i).Version<=maxver||j==ver.end()) {
       j=i;
-      LastVersion=(*i).Version;
+      LastVersion=str;
       ind=Version->count()-1;
     }
+  }
+  if (LastVersion.isEmpty()) {
+    LastVersion=connection().provider()+":Any";
+    Version->insertItem(LastVersion);
   }
   if (j!=ver.end()) {
     Editor->editor()->setText((*j).SQL);
@@ -358,12 +409,18 @@ void toSQLEdit::selectionChanged(const QString &maxver)
 void toSQLEdit::editSQL(const QString &nam)
 {
   if (checkStore(false))
-    changeSQL(nam,connection().version());
+    changeSQL(nam,connection().provider()+":"+connection().version());
 }
 
 void toSQLEdit::newSQL(void)
 {
   if (checkStore(false)) {
-    changeSQL(QString::null,QString::null);
+    QString name=Name->text();
+    int found=name.find(":");
+    if(found<0)
+      name=QString::null;
+    else
+      name=name.mid(0,found+1);
+    changeSQL(name,connection().provider()+":Any");
   }
 }

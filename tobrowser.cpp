@@ -1036,6 +1036,12 @@ public:
 			    Connection);
       res=new toResultView(true,false,tool);
       res->setSQL(SQLAnyGrants);
+    } else if (typ=="Dependencies") {
+      tool=new toToolWidget(BrowserTool,
+			    QString::null,
+			    par,
+			    Connection);
+      res=new toResultDepend(tool);
     } else
       return NULL;
     res->changeParams(schema,object);
@@ -1062,7 +1068,10 @@ public:
     } else if (typ=="Views") {
       QPixmap image((const char **)view_xpm);
       setPixmap(0,image);
-      new toTemplateTableItem(conn,this,"Grants");
+      if (conn.provider()=="Oracle") {
+	new toTemplateTableItem(conn,this,"Dependencies");
+	new toTemplateTableItem(conn,this,"Grants");
+      }
     } else if (typ=="Sequences") {
       QPixmap image((const char **)sequence_xpm);
       setPixmap(0,image);
@@ -1073,6 +1082,7 @@ public:
       QPixmap image((const char **)function_xpm);
       setPixmap(0,image);
       if (conn.provider()=="Oracle") {
+	new toTemplateTableItem(conn,this,"Dependencies");
 	new toTemplateTableItem(conn,this,"Grants");
       }
     } else if (typ=="Indexes") {

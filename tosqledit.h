@@ -59,6 +59,7 @@ class toSQLEdit : public toToolWidget {
   QString LastVersion;
   QString Filename;
 
+  bool splitVersion(const QString &split,QString &provider,QString &version);
 protected:
   void updateStatements(const QString &def=QString::null);
 

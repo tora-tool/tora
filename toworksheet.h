@@ -83,6 +83,7 @@ class toWorksheet : public toToolWidget {
   bool TryStrip;
   toResultCols *Columns;
   QComboBox *Refresh;
+  QComboBox *SavedSQL;
   QTime Timer;
 
   QPopupMenu *ToolMenu;
@@ -130,7 +131,8 @@ public slots:
   void enableStatistic(bool);
   void toggleStatistic(void)
   { StatisticButton->setOn(!StatisticButton->isOn()); }
-
+  void executeSaved(void);
+  void editSQL(void);
   void addLog(const QString &sql,const QString &result);
   void changeRefresh(const QString &);
 };

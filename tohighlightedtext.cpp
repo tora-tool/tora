@@ -829,6 +829,10 @@ void toHighlightedText::tableAtCursor(QString &owner,QString &table,bool mark)
   }
   if (mark) {
     setCursorPosition(curline,curcol,false);
+    if (lastline>=numLines()) {
+      lastline=numLines()-1;
+      lastcol=textLine(lastline).length();
+    }
     setCursorPosition(lastline,lastcol,true);
   }
 }

@@ -44,6 +44,7 @@ Extended functionality:
 * Tool menu in all tools.
 * Different highlighter depending on connection.
 * Default names to listen to in alert.
+* Support for different DB providers in SQL editor.
 
 New tools:
 
