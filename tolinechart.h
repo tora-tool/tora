@@ -51,7 +51,6 @@ protected:
   std::list<QString> XValues;
   std::list<QString> Labels;
   bool Legend;
-  bool Throbber;
   bool Last;
   int Grid;
   bool AxisText;
@@ -80,6 +79,12 @@ protected:
 
   int countSamples(void);
   void clearZoom(void);
+
+  virtual void paintLegend(QPainter *p,QRect &rect);
+  virtual void paintTitle(QPainter *p,QRect &rect);
+  virtual void paintAxis(QPainter *p,QRect &rect);
+  virtual void paintGrid(QPainter *p,QRect &rect);
+  virtual void paintChart(QPainter *p,const QRect &rect);
 public:
   /** Create a new linechart.
    * @param parent Parent widget.
@@ -128,19 +133,6 @@ public:
    */
   const QString &title(void)
   { return Title; }
-
-  /** Specify if throbber should be displayed in the graph, default is off.
-   * The throbber is a large bar in the background showing the most recent value more
-   * pominently than the historical values.
-   * @param on Whether to display throbber or not.
-   */
-  void showThrobber(bool on)
-  { Throbber=on; update(); }
-  /** Check if throbber is displayed or not.
-   * @return If throbber is displayed or not.
-   */
-  bool throbber(void) const
-  { return Throbber; }
 
   /** Specify if a grid should be displayed in the graph, default is on.
    * @param div Number of parts to divide grid into.

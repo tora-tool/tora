@@ -24,9 +24,5 @@ toGetToken:
 toMysqlConnection:
 	Doesn't handle other locales than latin1 correctly.
 
-toBrowser:
-	Crashes when closing application and browser open.
-
-toHighlightedText:
-	Doesn't handle multiline strings correctly.
+toWorksheet:
 	Doesn't handle multiline comment /* */ correctly.

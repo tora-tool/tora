@@ -95,7 +95,6 @@ toLineChart::toLineChart(QWidget *parent,const char *name,WFlags f)
   MinAuto=MaxAuto=true;
   MinValue=MaxValue=0;
   Legend=true;
-  Throbber=false;
   Last=false;
   Grid=5;
   AxisText=true;
@@ -168,9 +167,49 @@ QRect toLineChart::fixRect(QPoint p1,QPoint p2)
 
 #define FONT_ALIGN AlignLeft|AlignTop|ExpandTabs
 
+void toLineChart::paintTitle(QPainter *p,QRect &rect)
+{
+  if (!Title.isEmpty()) {
+    p->save();
+    QFont f=p->font();
+    f.setBold(true);
+    p->setFont(f);
+    QRect bounds=fm.boundingRect(0,0,rect.width(),rect.width(),FONT_ALIGN,Title);
+    p->drawText(0,2,rect.width(),bounds.height(),AlignHCenter|AlignTop|ExpandTabs,Title);
+    p->restore();
+    p->translate(0,bounds.height()+2);
+    rect.setTop(rect.top()+bounds.height()+2);
+  }
+  if (Last) {
+    QString str;
+    for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
+      if ((*i).begin()!=(*i).end()) {
+	if (!str.isEmpty())
+	  str+="\n";
+	str+=QString::number(*(*i).rbegin());
+	str+=YPostfix;
+      }
+    }
+    if (!str.isEmpty()) {
+      QRect bounds=fm.boundingRect(0,0,rect.width(),rect.height(),FONT_ALIGN,str);
+      p->drawText(0,2,rect.width(),bounds.height(),AlignHCenter|AlignTop|ExpandTabs,str);
+      p->translate(0,bounds.height());
+      rect.setTop(rect.top()+bounds.height()+2);
+    }
+  }
+}
+
+void toLineChart::paintChart(QPainter *p,QRect &rect)
+{
+  paintTitle(p,rect);
+}
+
 void toLineChart::paintEvent(QPaintEvent *e)
 {
   QPainter p(this);
+  QRect rect(0,0,width(),height());
+  paintChart(&p,rect);
+
   QFontMetrics fm=p.fontMetrics();
 
   int right=width();
