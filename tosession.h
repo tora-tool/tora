@@ -48,6 +48,7 @@ class toResultView;
 class toMain;
 class toResultStats;
 class toResultLock;
+class toResultPie;
 
 class toSession : public toToolWidget {
   Q_OBJECT
@@ -64,7 +65,9 @@ class toSession : public toToolWidget {
   toResultView *ConnectInfo;
   toResultView *LockedObjects;
   toResultLock *PendingLocks;
+  toResultPie *WaitPie;
   QSplitter *OpenSplitter;
+  QSplitter *StatisticSplitter;
   toSGAStatement *OpenStatement;
   toResultView *OpenCursors;
 

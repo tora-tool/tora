@@ -5,6 +5,8 @@
 2001-08-02: Added another quote.
 2001-08-02: Merge from the 0.14 release.
 2001-08-07: Added line chart class.
+2001-08-07: Get connection from toToolWidget in toResult classes.
+2001-08-07: Added piechart of waitstates in session.
 
 0.14: Released 2001-08-02
 

@@ -42,8 +42,8 @@ TO_NAMESPACE;
 #include "toconf.h"
 #include "tosql.h"
 
-toResultReferences::toResultReferences(toConnection &conn,QWidget *parent,const char *name)
-  : toResultView(false,false,conn,parent,name)
+toResultReferences::toResultReferences(QWidget *parent,const char *name)
+  : toResultView(false,false,parent,name)
 {
   setReadAll(true);
   addColumn("Owner");
@@ -64,8 +64,8 @@ static toSQL SQLConsColumns("toResultReferences:ForeignColumns",
 QString toResultReferences::constraintCols(const QString &conOwner,const QString &conName)
 {
   otl_stream Query(1,
-		   SQLConsColumns(Connection),
-		   Connection.connection());
+		   SQLConsColumns(connection()),
+		   connection().connection());
 
   Query<<conOwner.utf8();
   Query<<conName.utf8();
@@ -125,8 +125,8 @@ void toResultReferences::query(const QString &sql,const list<QString> &param)
     int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
 
     otl_stream Query(1,
-		     SQLConstraints(Connection),
-		     Connection.connection());
+		     SQLConstraints(connection()),
+		     connection().connection());
 
     Description=Query.describe_select(DescriptionLen);
 
@@ -175,8 +175,8 @@ void toResultReferences::query(const QString &sql,const list<QString> &param)
       }
 
       otl_stream Deps(1,
-	  	      SQLDependencies(Connection),
-		      Connection.connection());
+	  	      SQLDependencies(connection()),
+		      connection().connection());
       Deps<<Owner.utf8();
       Deps<<TableName.utf8();
       while(!Deps.eof()) {

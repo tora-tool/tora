@@ -48,11 +48,10 @@ class toResultPlan : public toResultView {
   Q_OBJECT
 public:
   /** Create the widget.
-   * @param conn Connection to display.
    * @param parent Parent widget.
    * @param name Name of widget.
    */
-  toResultPlan(toConnection &conn,QWidget *parent,const char *name=NULL);
+  toResultPlan(QWidget *parent,const char *name=NULL);
 
   /** Reimplemented for internal reasons.
    */

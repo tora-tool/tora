@@ -181,11 +181,11 @@ toScript::toScript(QWidget *parent,toConnection &connection)
 {
   QSplitter *hsplitter=new QSplitter(Horizontal,DifferenceTab);
   Worksheet=new toWorksheet(ResultTab,Connection);
-  DropList=new toResultView(false,false,Connection,hsplitter);
+  DropList=new toResultView(false,false,hsplitter);
   DropList->addColumn("Dropped");
   DropList->setRootIsDecorated(true);
   DropList->setSorting(0);
-  CreateList=new toResultView(false,false,Connection,hsplitter);
+  CreateList=new toResultView(false,false,hsplitter);
   CreateList->addColumn("Created");
   CreateList->setRootIsDecorated(true);
   CreateList->setSorting(0);

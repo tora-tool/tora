@@ -48,16 +48,16 @@ TO_NAMESPACE;
 #include "totool.h"
 #include "tonoblockquery.h"
 
-toResultLong::toResultLong(bool readable,bool dispCol,toConnection &conn,QWidget *parent,const char *name)
-  : toResultView(readable,dispCol,conn,parent,name)
+toResultLong::toResultLong(bool readable,bool dispCol,QWidget *parent,const char *name)
+  : toResultView(readable,dispCol,parent,name)
 {
   Query=NULL;
   Statistics=NULL;
   connect(&Timer,SIGNAL(timeout(void)),this,SLOT(addItem(void)));
 }
 
-toResultLong::toResultLong(toConnection &conn,QWidget *parent,const char *name)
-  : toResultView(conn,parent,name)
+toResultLong::toResultLong(QWidget *parent,const char *name)
+  : toResultView(parent,name)
 {
   Query=NULL;
   Statistics=NULL;
@@ -83,7 +83,7 @@ void toResultLong::query(const QString &sql,const list<QString> &param)
     addColumn("#");
 
   try {
-    Query=new toNoBlockQuery(Connection,sql,param,Statistics);
+    Query=new toNoBlockQuery(connection(),sql,param,Statistics);
 
     MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
     addItem();

@@ -41,7 +41,6 @@
 #include <qfont.h>
 #include "toresult.h"
 
-class toConnection;
 class QGrid;
 
 /** Display the first row of a query with each column with a separate label.
@@ -85,9 +84,6 @@ class toResultItem : public QScrollView, public toResult {
    * @param readable Make columns more readable.
    */
   void setup(int num,bool readable);
-  /** Connection of item.
-   */
-  toConnection &Connection;
 protected:
   /** Start new query, hide all widgets.
    */
@@ -105,18 +101,16 @@ public:
    * @param num Number of columns to arrange data in.
    * @param readable Indicate if columns are to be made more readable. This means that the
    * descriptions are capitalised and '_' are converted to ' '.
-   * @param conn Connection to issue query on.
    * @param parent Parent of list.
    * @param name Name of widget.
    */
-  toResultItem(int num,bool readable,toConnection &conn,QWidget *parent,const char *name=NULL);
+  toResultItem(int num,bool readable,QWidget *parent,const char *name=NULL);
   /** Create widget. Readable columns by default.
    * @param num Number of columns to arrange data in.
-   * @param conn Connection to issue query on.
    * @param parent Parent of list.
    * @param name Name of widget.
    */
-  toResultItem(int num,toConnection &conn,QWidget *parent,const char *name=NULL);
+  toResultItem(int num,QWidget *parent,const char *name=NULL);
 
   /** Set SQL to query.
    * @param sql Query to run.

@@ -301,24 +301,24 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   QVBox *box=new QVBox(ResultTab);
   ResultTab->addTab(box,"Result");
 
-  Result=new toResultLong(connection,box);
+  Result=new toResultLong(box);
   connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
   connect(Result,SIGNAL(firstResult(const QString &,const QString &)),
 	  this,SLOT(addLog(const QString &,const QString &)));
 
-  Columns=new toResultCols(connection,box);
+  Columns=new toResultCols(box);
   Columns->hide();
 
   ResultTab->setTabEnabled(Columns,false);
-  Plan=new toResultPlan(connection,ResultTab);
+  Plan=new toResultPlan(ResultTab);
   ResultTab->addTab(Plan,"Execution plan");
-  Resources=new toResultResources(connection,ResultTab);
+  Resources=new toResultResources(ResultTab);
   ResultTab->addTab(Resources,"Information");
-  Statistics=new toResultStats(true,connection,ResultTab);
+  Statistics=new toResultStats(true,ResultTab);
   ResultTab->addTab(Statistics,"Statistics");
   ResultTab->setTabEnabled(Statistics,false);
 
-  Logging=new toResultView(true,false,connection,ResultTab);
+  Logging=new toResultView(true,false,ResultTab);
   ResultTab->addTab(Logging,"Logging");
   Logging->addColumn("SQL");
   Logging->addColumn("Result");

@@ -78,9 +78,6 @@
 class toResultContent : public QTable,public toResult {
   Q_OBJECT
 
-  /** Connection of this result content.
-   */
-  toConnection &amp;Connection;
   /** Owner of table.
    */
   QString Owner;
@@ -173,11 +170,10 @@ class toResultContent : public QTable,public toResult {
   
 public:
   /** Create the widget.
-   * @param conn Connection to display.
    * @param parent Parent widget.
    * @param name Name of widget.
    */
-  toResultContent(toConnection &amp;conn,QWidget *parent,const char *name=NULL);
+  toResultContent(QWidget *parent,const char *name=NULL);
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &amp;sql,const list&lt;QString&gt; &amp;param)

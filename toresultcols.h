@@ -50,11 +50,10 @@ class otl_stream;
 class toResultCols : public toResultView {
 public:
   /** Create the widget.
-   * @param conn Connection to display.
    * @param parent Parent widget.
    * @param name Name of widget.
    */
-  toResultCols(toConnection &conn,QWidget *parent,const char *name=NULL);
+  toResultCols(QWidget *parent,const char *name=NULL);
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &sql,const list<QString> &param);

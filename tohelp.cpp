@@ -473,7 +473,7 @@ void toHelp::displayHelp(QWidget *parent)
   while(cur) {
     try {
       toHelpContext *ctx=dynamic_cast<toHelpContext *>(cur);
-      if (ctx) {
+      if (ctx&&!ctx->context().isEmpty()) {
         toHelp::displayHelp(ctx->context(),parent);
         return;
       }

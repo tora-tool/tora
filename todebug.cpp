@@ -1869,13 +1869,13 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 
   QSplitter *objSplitter=new QSplitter(Vertical,hsplitter);
 
-  Objects=new toResultView(false,false,connection,objSplitter);
+  Objects=new toResultView(false,false,objSplitter);
   Objects->addColumn("Objects");
   Objects->setRootIsDecorated(true);
   Objects->setTreeStepSize(10);
   connect(Objects,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changePackage(QListViewItem *)));
-  Contents=new toResultView(false,false,connection,objSplitter);
+  Contents=new toResultView(false,false,objSplitter);
   Contents->addColumn("Contents");
   Contents->setRootIsDecorated(true);
   Contents->setSorting(-1);
@@ -1883,7 +1883,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   connect(Contents,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeContent(QListViewItem *)));
 
-  StackTrace=new toResultView(false,false,connection,DebugTabs);
+  StackTrace=new toResultView(false,false,DebugTabs);
   StackTrace->addColumn("Object");
   StackTrace->addColumn("Line");
   StackTrace->addColumn("Schema");
@@ -1897,7 +1897,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   connect(StackTrace,SIGNAL(clicked(QListViewItem *)),
 	  this,SLOT(showSource(QListViewItem *)));
 
-  Watch=new toResultView(false,false,connection,DebugTabs);
+  Watch=new toResultView(false,false,DebugTabs);
   Watch->addColumn("Schema");
   Watch->addColumn("Object");
   Watch->addColumn("Variable");
@@ -1911,7 +1911,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   connect(Watch,SIGNAL(doubleClicked(QListViewItem *)),
 	  this,SLOT(changeWatch(QListViewItem *)));
 
-  Breakpoints=new toResultView(false,false,connection,DebugTabs);
+  Breakpoints=new toResultView(false,false,DebugTabs);
   Breakpoints->addColumn("Object");
   Breakpoints->addColumn("Line");
   Breakpoints->addColumn("Schema");
@@ -1924,7 +1924,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   connect(Breakpoints,SIGNAL(clicked(QListViewItem *)),
 	  this,SLOT(showSource(QListViewItem *)));
 
-  Parameters=new toResultView(false,false,connection,DebugTabs);
+  Parameters=new toResultView(false,false,DebugTabs);
   Parameters->addColumn("Name");
   Parameters->addColumn("Content");
   Parameters->setSorting(-1);

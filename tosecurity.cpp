@@ -1365,7 +1365,7 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
   QSplitter *splitter=new QSplitter(Horizontal,this);
-  UserList=new toResultView(false,false,connection,splitter);
+  UserList=new toResultView(false,false,splitter);
   UserList->addColumn("Users/Roles");
   UserList->setSQLName("toSecurity:Users/Roles");
   UserList->setRootIsDecorated(true);

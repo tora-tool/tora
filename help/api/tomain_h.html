@@ -694,6 +694,11 @@ list&lt;QString&gt; toStatusMessages(void);
  * @param index Indicating which chart item to get color for.
  */
 QColor toChartColor(int index);
+/** Return the connection most closely associated with a widget. Currently connections are
+ * only stored in toToolWidgets.
+ * @return Reference toConnection object closest to the current.
+ */
+toConnection &amp;toCurrentConnection(QWidget *widget);
 /* This can't be documented in KDoc, anyway it is an easy way to catch any exception that
  * might be sent by TOra or OTL and display the message in the statusbar of the main window.
  */

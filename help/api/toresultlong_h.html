@@ -109,17 +109,15 @@ public:
    * @param readable Indicate if columns are to be made more readable. This means that the
    * descriptions are capitalised and '_' are converted to ' '.
    * @param numCol If number column is to be displayed.
-   * @param conn Connection to issue query on.
    * @param parent Parent of list.
    * @param name Name of widget.
    */
-  toResultLong(bool readable,bool numCol,toConnection &amp;conn,QWidget *parent,const char *name=NULL);
+  toResultLong(bool readable,bool numCol,QWidget *parent,const char *name=NULL);
   /** Create widget. The columns are not readable and the number column is displayed.
-   * @param conn Connection to issue query on.
    * @param parent Parent of list.
    * @param name Name of widget.
    */
-  toResultLong(toConnection &amp;conn,QWidget *parent,const char *name=NULL);
+  toResultLong(QWidget *parent,const char *name=NULL);
   ~toResultLong();
 
   /** Set statistics widget.

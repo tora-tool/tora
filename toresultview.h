@@ -48,7 +48,6 @@ class toListTip;
 class TOPrinter;
 class toSQL;
 class toResultCols;
-class toConnection;
 class otl_stream;
 class otl_column_desc;
 
@@ -400,9 +399,6 @@ protected:
   QString SQL;
   /** Connection to execute statement on.
    */
-  toConnection &Connection;
-  /** Actual executed query.
-   */
   otl_stream *Query;
   /** Length of described query.
    */
@@ -445,17 +441,15 @@ public:
    * @param readable Indicate if columns are to be made more readable. This means that the
    * descriptions are capitalised and '_' are converted to ' '.
    * @param numCol If number column is to be displayed.
-   * @param conn Connection to issue query on.
    * @param parent Parent of list.
    * @param name Name of widget.
    */
-  toResultView(bool readable,bool numCol,toConnection &conn,QWidget *parent,const char *name=NULL);
+  toResultView(bool readable,bool numCol,QWidget *parent,const char *name=NULL);
   /** Create list. The columns are not readable and the number column is displayed.
-   * @param conn Connection to issue query on.
    * @param parent Parent of list.
    * @param name Name of widget.
    */
-  toResultView(toConnection &conn,QWidget *parent,const char *name=NULL);
+  toResultView(QWidget *parent,const char *name=NULL);
   ~toResultView();
 
   /** Set the read all flag.

@@ -55,10 +55,10 @@ static toSQL SQLResultDepend("toResultDepend:Depends",
 			     "Display dependencies on an object, must have first two "
 			     "columns same and same bindings");
 
-toResultDepend::toResultDepend(toConnection &conn,QWidget *parent,const char *name)
-  : toResultView(false,false,conn,parent,name)
+toResultDepend::toResultDepend(QWidget *parent,const char *name)
+  : toResultView(false,false,parent,name)
 {
-  setSQL(SQLResultDepend(conn));
+  setSQL(SQLResultDepend(connection()));
   setRootIsDecorated(true);
   setReadAll(true);
   setSQLName("toResultDepend");
@@ -69,7 +69,7 @@ void toResultDepend::addChilds(QListViewItem *item)
   try {
     otl_stream query(1,
 		     SQL.utf8(),
-		     Connection.connection());
+		     connection().connection());
     query<<item->text(0).utf8();
     query<<item->text(1).utf8();
     QListViewItem *last=NULL;

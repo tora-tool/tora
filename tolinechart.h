@@ -44,6 +44,8 @@
  */
 
 class toLineChart : public QWidget {
+  Q_OBJECT
+
   list<list<double> > Values;
   list<QString> Labels;
   bool Legend;
@@ -59,6 +61,9 @@ class toLineChart : public QWidget {
   QString YPostfix;
   int Samples;
   bool AutoSamples;
+  QString Title;
+
+  static double round(double round,bool up);
 public:
   /** Create a new linechart.
    * @param parent Parent widget.
@@ -77,6 +82,17 @@ public:
    */
   bool legend(void) const
   { return Legend; }
+
+  /** Set title of the chart. Set to empty string to not display title.
+   * @param title Title of chart.
+   */
+  void setTitle(const QString &title=QString::null)
+  { Title=title; update(); }
+  /** Get title of chart.
+   * @return Title of chart.
+   */
+  const QString &title(void)
+  { return Title; }
 
   /** Specify if throbber should be displayed in the graph, default is off.
    * The throbber is a large bar in the background showing the most recent value more

@@ -57,11 +57,10 @@ class toResultDepend : public toResultView {
   bool exists(const QString &owner,const QString &name);
 public:
   /** Create the widget.
-   * @param conn Connection to display.
    * @param parent Parent widget.
    * @param name Name of widget.
    */
-  toResultDepend(toConnection &conn,QWidget *parent,const char *name=NULL);
+  toResultDepend(QWidget *parent,const char *name=NULL);
 
   /** Reimplemented for internal reasons.
    */

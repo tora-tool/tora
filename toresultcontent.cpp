@@ -114,8 +114,8 @@ void toResultContent::dropEvent(QDropEvent *e)
   }
 }
 
-toResultContent::toResultContent(toConnection &conn,QWidget *parent,const char *name)
-  : QTable(parent,name),Connection(conn)
+toResultContent::toResultContent(QWidget *parent,const char *name)
+  : QTable(parent,name)
 {
   Query=NULL;
   connect(this,SIGNAL(currentChanged(int,int)),this,SLOT(changePosition(int,int)));
@@ -166,7 +166,7 @@ void toResultContent::changeParams(const QString &Param1,const QString &Param2)
     Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
     Query->open(1,
 		sql.utf8(),
-		Connection.connection());
+		connection().connection());
 
     int descriptionLen;
     Description=Query->describe_select(descriptionLen);
@@ -272,9 +272,10 @@ void toResultContent::saveUnsaved()
       }
       sql+=")";
       try {
+	toConnection &conn=connection();
 	otl_stream exec(1,
 			sql.utf8(),
-			Connection.connection());
+			conn.connection());
 	otl_null null;
 	for (int i=0;i<numCols();i++) {
 	  QString str=text(CurrentRow,i);
@@ -287,9 +288,9 @@ void toResultContent::saveUnsaved()
 	Row++;
 	setNumRows(Row+1);
 	if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
-	  Connection.commit();
+	  conn.commit();
 	else
-	  Connection.setNeedCommit();
+	  conn.setNeedCommit();
       } TOCATCH
     } else {
       QString sql="UPDATE \"";
@@ -336,9 +337,10 @@ void toResultContent::saveUnsaved()
 	    sql+=" AND ";
 	}
 	try {
+	  toConnection &conn=connection();
 	  otl_stream exec(1,
 			  sql.utf8(),
-			  Connection.connection());
+			  conn.connection());
       
 	  otl_null null;
 	  list<QString>::iterator k=OrigValues.begin();
@@ -353,9 +355,9 @@ void toResultContent::saveUnsaved()
 	      exec<<str.utf8();
 	  }
 	  if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
-	    Connection.commit();
+	    conn.commit();
 	  else
-	    Connection.setNeedCommit();
+	    conn.setNeedCommit();
 	} catch (const otl_exception &exc) {
 	  int col=0;
 	  for(list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++)
@@ -396,7 +398,7 @@ void toResultContent::readAll(void)
 
 void toResultContent::print(void)
 {
-  toResultView print(false,true,Connection,this);
+  toResultView print(false,true,this);
   print.hide();
   QString name="Content of ";
   name+=Owner;
@@ -414,7 +416,7 @@ void toResultContent::print(void)
 
 void toResultContent::exportFile(void)
 {
-  toResultView list(false,true,Connection,this);
+  toResultView list(false,true,this);
   list.hide();
   QString name="Content of ";
   name+=Owner;

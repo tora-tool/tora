@@ -77,8 +77,8 @@ public:
   }
 };
 
-toResultStorage::toResultStorage(toConnection &conn,QWidget *parent,const char *name)
-  : toResultView(false,false,conn,parent,name)
+toResultStorage::toResultStorage(QWidget *parent,const char *name)
+  : toResultView(false,false,parent,name)
 {
   Unit=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
   setAllColumnsShowFocus(true);
@@ -321,12 +321,13 @@ void toResultStorage::query(void)
 
     QCString sql;
 
+    toConnection &conn=connection();
     if (ShowCoalesced)
-      sql=toSQL::sql(SQLShowCoalesced,Connection);
+      sql=toSQL::sql(SQLShowCoalesced,conn);
     else
-      sql=toSQL::sql(SQLNoShowCoalesced,Connection);
+      sql=toSQL::sql(SQLNoShowCoalesced,conn);
 
-    otl_stream tblspc(1,sql,Connection.connection());
+    otl_stream tblspc(1,sql,conn.connection());
     tblspc<<toSizeDecode(Unit);
 
     while(!tblspc.eof()) {
@@ -343,8 +344,8 @@ void toResultStorage::query(void)
     }
 
     otl_stream datfil(1,
-		      SQLDatafile(Connection),
-		      Connection.connection());
+		      SQLDatafile(conn),
+		      conn.connection());
     datfil<<toSizeDecode(Unit);
     while(!datfil.eof()) {
       datfil>>buffer;

@@ -123,11 +123,13 @@
 </LI>
 <LI><A HREF="http://doc.trolltech.com/qcolor.html">QColor</A> &nbsp;<b><A HREF="#ref648">toChartColor</A></b> (int index) 
 </LI>
-<LI>template &lt;class T&gt;
-T &nbsp;<b><A HREF="#ref649">max</A></b> (T a, T b) 
+<LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref649">toCurrentConnection</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *widget) 
 </LI>
 <LI>template &lt;class T&gt;
-T &nbsp;<b><A HREF="#ref650">min</A></b> (T a, T b) 
+T &nbsp;<b><A HREF="#ref650">max</A></b> (T a, T b) 
+</LI>
+<LI>template &lt;class T&gt;
+T &nbsp;<b><A HREF="#ref651">min</A></b> (T a, T b) 
 </LI>
 </ul>
 <h2>Global member Documentation</h2>
@@ -533,12 +535,18 @@ T &nbsp;<b><A HREF="#ref650">min</A></b> (T a, T b)
 <TR><TD align="left" valign="top"><i>index</i></TD><TD align="left" valign="top">Indicating which chart item to get color for.
  </TD></TR>
 </TABLE></P>
-<A NAME="max"></A><A NAME="ref649"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
+<A NAME="toCurrentConnection"></A><A NAME="ref649"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>toCurrentConnection</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *widget)
+<br></td><td align="right"><h3><strong>toCurrentConnection</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p> Return the connection most closely associated with a widget. Currently connections are
+ only stored in toToolWidgets.
+</p>
+<p><b>Returns</b>: Reference toConnection object closest to the current.
+ </p>
+<A NAME="max"></A><A NAME="ref650"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
 T &nbsp;<strong>max</strong> (T a, T b)
 <br></td><td align="right"><h3><strong>max</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
  Only for WIN32
  </p>
-<A NAME="min"></A><A NAME="ref650"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
+<A NAME="min"></A><A NAME="ref651"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
 T &nbsp;<strong>min</strong> (T a, T b)
 <br></td><td align="right"><h3><strong>min</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
  Only for WIN32

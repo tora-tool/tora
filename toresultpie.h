@@ -34,28 +34,64 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTRESOURCES_H
-#define __TORESULTRESOURCES_H
+#ifndef __TORESULTPIE_H
+#define __TORESULTPIE_H
 
-#include "toresultitem.h"
-#include "tosql.h"
+#include "toresult.h"
+#include "topiechart.h"
 
-#define TOSQL_RESULTRESOURCE "toResultResources:Information"
+class toSQL;
 
-/** This widget displays information about resources of a query. The statement
- * is identified by the first parameter which should be the address as gotten
- * from the @ref toSQLToAddress function.
+/** Display the result of a query in a piechart. The first column of the query should
+ * contain the value and the second should contain an optional label.
  */
 
-class toResultResources : public toResultItem {
+class toResultPie : public toPieChart, public toResult {
+  Q_OBJECT
+  /** Query to run.
+   */
+  QString SQL;
 public:
-  /** Create the widget.
-   * @param parent Parent widget.
+  /** Create widget.
+   * @param parent Parent of list.
    * @param name Name of widget.
    */
-  toResultResources(QWidget *parent,const char *name=NULL)
-    : toResultItem(3,true,parent,name)
-  { setSQL(toSQL::sql(TOSQL_RESULTRESOURCE,connection())); }
+  toResultPie(QWidget *parent,const char *name=NULL);
+
+  /** Set SQL to query.
+   * @param sql Query to run.
+   */
+  void setSQL(const QString &sql)
+  { SQL=sql; }
+  /** Set the SQL statement of this list.
+   * @param sql SQL containing statement.
+   */
+  void setSQL(toSQL &sql);
+
+  /** Reimplemented for internal reasons.
+   */
+  virtual void query(const QString &sql,const list<QString> &param);
+  /** Reimplemented for internal reasons.
+   */
+  void query(const QString &sql)
+  { list<QString> p; query(sql,p); }
+public slots:
+  /** Reimplemented for internal reasons.
+   */
+  virtual void refresh(void)
+  { query(SQL); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &Param1)
+  { list<QString> p; p.insert(p.end(),Param1); query(SQL,p); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &Param1,const QString &Param2)
+  { list<QString> p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
+  { list<QString> p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
 };
 
 #endif

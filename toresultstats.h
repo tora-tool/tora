@@ -66,24 +66,21 @@ public:
   /** Create statistics widget for session statistics.
    * @param OnlyChanged Only display changed items.
    * @param ses Session ID to display info about.
-   * @param conn Connection to display.
    * @param parent Parent widget.
    * @param name Name of widget.
    */
-  toResultStats(bool OnlyChanged,int ses,toConnection &conn,QWidget *parent,const char *name=NULL);
+  toResultStats(bool OnlyChanged,int ses,QWidget *parent,const char *name=NULL);
   /** Create statistics widget for the current session statistics.
    * @param OnlyChanged Only display changed items.
-   * @param conn Connection to display.
    * @param parent Parent widget.
    * @param name Name of widget.
    */
-  toResultStats(bool OnlyChanged,toConnection &conn,QWidget *parent,const char *name=NULL);
+  toResultStats(bool OnlyChanged,QWidget *parent,const char *name=NULL);
   /** Create statistics widget for the current database statistics.
-   * @param conn Connection to display.
    * @param parent Parent widget.
    * @param name Name of widget.
    */
-  toResultStats(toConnection &conn,QWidget *parent,const char *name=NULL);
+  toResultStats(QWidget *parent,const char *name=NULL);
 
   /** Reset statistics. Read in last values without updating widget data.
    */

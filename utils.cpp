@@ -70,6 +70,7 @@ TO_NAMESPACE;
 #include "toconf.h"
 #include "totool.h"
 #include "tosql.h"
+#include "toresult.h"
 
 #define CHUNK_SIZE 63
 
@@ -886,4 +887,25 @@ static QColor ChartColors[]={
 QColor toChartColor(int index)
 {
   return ChartColors[index%(sizeof(ChartColors)/sizeof(QColor))];
+}
+
+toConnection &toCurrentConnection(QWidget *cur)
+{
+  while(cur) {
+    try {
+      toToolWidget *tool=dynamic_cast<toToolWidget *>(cur);
+      if (tool) {
+	return tool->connection();
+      }
+    } catch(...) {
+      // Catch problems with Visual C++ missing RTTI
+    }
+    cur=cur->parentWidget();
+  }
+  throw QString("Couldn't find parent connection. Internal error.");
+}
+
+toConnection &toResult::connection(void)
+{
+  return toCurrentConnection(dynamic_cast<QWidget *>(this));
 }

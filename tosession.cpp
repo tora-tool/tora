@@ -54,6 +54,7 @@ TO_NAMESPACE;
 #include "tosgastatement.h"
 #include "toresultstats.h"
 #include "toresultlock.h"
+#include "toresultpie.h"
 
 #include "tosession.moc"
 
@@ -106,7 +107,10 @@ static toSQL SQLOpenCursors("toSession:OpenCursor",
 			    "select SQL_Text \"SQL\", Address||':'||Hash_Value \" Address\"\n"
 			    "  from v$open_cursor where sid = :f1<char[101]>",
 			    "Display open cursors of this session");
-
+static toSQL SQLSessionWait("toSession:WaitStatistic",
+			    "select decode(time_waited,0,total_waits,time_waited),event\n"
+			    "  from v$session_event where sid = :f1<char[101]> order by event",
+			    "Display statistics about what session have been waiting on.");
 
 toSession::toSession(QWidget *main,toConnection &connection)
   : toToolWidget("session.html",main,connection)
@@ -151,28 +155,35 @@ toSession::toSession(QWidget *main,toConnection &connection)
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
   QSplitter *splitter=new QSplitter(Vertical,this);
-  Sessions=new toResultView(false,false,connection,splitter);
+  Sessions=new toResultView(false,false,splitter);
   ResultTab=new QTabWidget(splitter);
-  SessionStatistics=new toResultStats(false,0,connection,ResultTab);
-  ResultTab->addTab(SessionStatistics,"Statistics");
-  ConnectInfo=new toResultView(true,false,connection,ResultTab);
+  StatisticSplitter=new QSplitter(Horizontal,ResultTab);
+  SessionStatistics=new toResultStats(false,0,StatisticSplitter);
+  WaitPie=new toResultPie(StatisticSplitter);
+  WaitPie->setSQL(SQLSessionWait);
+  WaitPie->setTitle("Session wait states");
+  WaitPie->setDisplayPercent(true);
+  WaitPie->setPostfix("%");
+  ResultTab->addTab(StatisticSplitter,"Statistics");
+
+  ConnectInfo=new toResultView(true,false,ResultTab);
   ConnectInfo->setSQL(SQLConnectInfo);
   ResultTab->addTab(ConnectInfo,"Connect Info");
-  PendingLocks=new toResultLock(connection,ResultTab);
+  PendingLocks=new toResultLock(ResultTab);
   ResultTab->addTab(PendingLocks,"Pending Locks");
-  LockedObjects=new toResultView(false,false,connection,ResultTab);
+  LockedObjects=new toResultView(false,false,ResultTab);
   ResultTab->addTab(LockedObjects,"Locked Objects");
   LockedObjects->setSQL(SQLLockedObject);
-  CurrentStatement=new toSGAStatement(ResultTab,connection);
+  CurrentStatement=new toSGAStatement(ResultTab);
   ResultTab->addTab(CurrentStatement,"Current Statement");
-  PreviousStatement=new toSGAStatement(ResultTab,connection);
+  PreviousStatement=new toSGAStatement(ResultTab);
   ResultTab->addTab(PreviousStatement,"Previous Statement");
 
   OpenSplitter=new QSplitter(Horizontal,ResultTab);
   ResultTab->addTab(OpenSplitter,"Open Cursors");
-  OpenCursors=new toResultView(false,true,connection,OpenSplitter);
+  OpenCursors=new toResultView(false,true,OpenSplitter);
   OpenCursors->setSQL(SQLOpenCursors);
-  OpenStatement=new toSGAStatement(OpenSplitter,connection);
+  OpenStatement=new toSGAStatement(OpenSplitter);
 
   connect(Sessions,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
@@ -184,7 +195,7 @@ toSession::toSession(QWidget *main,toConnection &connection)
   Timer=new QTimer(this);
   connect(Timer,SIGNAL(timeout(void)),this,SLOT(refresh(void)));
   toRefreshParse(Timer,toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
-  CurrentTab=SessionStatistics;
+  CurrentTab=StatisticSplitter;
   CurrentItem=NULL;
   refresh();
 }
@@ -248,9 +259,10 @@ void toSession::changeTab(QWidget *tab)
 {
   CurrentTab=tab;
   if (CurrentItem) {
-    if (CurrentTab==SessionStatistics) {
+    if (CurrentTab==StatisticSplitter) {
       int ses=CurrentItem->text(0).toInt();
       SessionStatistics->changeSession(ses);
+      WaitPie->changeParams(QString::number(ses));
     } else if (CurrentTab==ConnectInfo)
       ConnectInfo->changeParams(CurrentItem->text(0));
     else if (CurrentTab==PendingLocks)

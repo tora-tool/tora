@@ -74,14 +74,14 @@ void toResultItem::setup(int num,bool readable)
   DataFont.setBold(true);
 }
 
-toResultItem::toResultItem(int num,bool readable,toConnection &conn,QWidget *parent,const char *name)
-  : QScrollView(parent,name), DataFont(QFont::defaultFont()), Connection(conn)
+toResultItem::toResultItem(int num,bool readable,QWidget *parent,const char *name)
+  : QScrollView(parent,name), DataFont(QFont::defaultFont())
 {
   setup(num,readable);
 }
 
-toResultItem::toResultItem(int num,toConnection &conn,QWidget *parent,const char *name)
-  : QScrollView(parent,name), DataFont(QFont::defaultFont()), Connection(conn)
+toResultItem::toResultItem(int num,QWidget *parent,const char *name)
+  : QScrollView(parent,name), DataFont(QFont::defaultFont())
 {
   setup(num,false);
 }
@@ -163,7 +163,7 @@ void toResultItem::query(const QString &sql,const list<QString> &param)
 
     Query.open(1,
 	       sql.utf8(),
-	       Connection.connection());
+	       connection().connection());
 
     {
       for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++)

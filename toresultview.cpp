@@ -704,7 +704,7 @@ bool toResultView::eof(void)
 
 QString toResultView::middleString()
 {
-  return Connection.connectString();
+  return connection().connectString();
 }
 
 void toResultView::query(const QString &sql)
@@ -747,14 +747,14 @@ void toResultView::setup(bool readable,bool dispCol)
   Filter=NULL;
 }
 
-toResultView::toResultView(bool readable,bool dispCol,toConnection &conn,QWidget *parent,const char *name)
-  : toListView(parent,name), Connection(conn)
+toResultView::toResultView(bool readable,bool dispCol,QWidget *parent,const char *name)
+  : toListView(parent,name)
 {
   setup(readable,dispCol);
 }
 
-toResultView::toResultView(toConnection &conn,QWidget *parent,const char *name)
-  : toListView(parent,name), Connection(conn)
+toResultView::toResultView(QWidget *parent,const char *name)
+  : toListView(parent,name)
 {
   setup(false,true);
 }
@@ -806,7 +806,7 @@ void toResultView::query(const QString &sql,const list<QString> &param)
     Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
     Query->open(1,
 		sql.utf8(),
-		Connection.connection());
+		connection().connection());
 
     {
       otl_null null;
@@ -908,13 +908,13 @@ void toResultView::keyPressEvent(QKeyEvent *e)
 void toResultView::setSQL(toSQL &sql)
 {
   setSQLName(sql.name());
-  SQL=sql(Connection);
+  SQL=sql(connection());
 }
 
 void toResultView::query(toSQL &sql)
 {
   setSQLName(sql.name());
-  query(sql(Connection));
+  query(sql(connection()));
 }
 
 void toResultView::addMenues(QPopupMenu *menu)

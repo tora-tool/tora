@@ -44,10 +44,14 @@
  */
 
 class toPieChart : public QWidget {
+  Q_OBJECT
+
   list<double> Values;
   list<QString> Labels;
   QString Postfix;
   bool Legend;
+  bool DisplayPercent;
+  QString Title;
 public:
   /** Create a new piechart.
    * @param parent Parent widget.
@@ -68,6 +72,28 @@ public:
    */
   const QString &postfix(void) const
   { return Postfix; }
+
+  /** Set title of the chart. Set to empty string to not display title.
+   * @param title Title of chart.
+   */
+  void setTitle(const QString &title=QString::null)
+  { Title=title; update(); }
+  /** Get title of chart.
+   * @return Title of chart.
+   */
+  const QString &title(void)
+  { return Title; }
+
+  /** Display piecharts in percent instead of actual values
+   * @param pct Wether or not to display percent only.
+   */
+  void setDisplayPercent(bool pct)
+  { DisplayPercent=pct; update(); }
+  /** Check if only percent is displayed
+   * @return True if only percent is displayed.
+   */
+  bool displayPercent(void) const
+  { return DisplayPercent; }
 
   /** Specify if legend should be displayed to the right of the graph, default is on.
    * @param on Whether to display graph or not.

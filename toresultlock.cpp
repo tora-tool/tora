@@ -47,8 +47,8 @@ TO_NAMESPACE;
 #include "toresultlock.moc"
 
 
-toResultLock::toResultLock(toConnection &conn,QWidget *parent,const char *name)
-  : toResultView(false,false,conn,parent,name)
+toResultLock::toResultLock(QWidget *parent,const char *name)
+  : toResultView(false,false,parent,name)
 {
   setAllColumnsShowFocus(true);
   setSorting(-1);
@@ -106,8 +106,8 @@ void toResultLock::query(const QString &sql,
     QString chkPoint=toTool::globalConfig(CONF_PLAN_CHECKPOINT,DEFAULT_PLAN_CHECKPOINT);
 
     otl_stream query(1,
-		     SQLLock(Connection),
-		     Connection.connection());
+		     SQLLock(connection()),
+		     connection().connection());
 
     {
       toResultViewItem *lastItem=NULL;

@@ -408,8 +408,8 @@ public:
   virtual QListViewItem *createItem(QListViewItem *last,const QString &str)
   { return new rollbackItem(this,last,str); }
 
-  toRollbackView(toConnection &conn,QWidget *parent)
-    : toResultView(false,false,conn,parent)
+  toRollbackView(QWidget *parent)
+    : toResultView(false,false,parent)
   {
     setSQL(SQLRollback);
   }
@@ -431,8 +431,8 @@ public:
     }
     try {
       otl_stream trx(1,
-		     SQLStartExt(Connection),
-		     Connection.connection());
+		     SQLStartExt(connection()),
+		     connection().connection());
       for(QListViewItem *i=firstChild();i;i=i->nextSibling()) {
 	trx<<i->text(TRANSCOL-1).utf8();
 	for (int j=TRANSCOL;!trx.eof();j++) {
@@ -524,8 +524,8 @@ public:
   virtual QListViewItem *createItem(QListViewItem *last,const QString &str)
   { return new openItem(this,last,str); }
 
-  toRollbackOpen(toConnection &conn,QWidget *parent)
-    : toResultView(false,false,conn,parent)
+  toRollbackOpen(QWidget *parent)
+    : toResultView(false,false,parent)
   {
     addColumn("Started");
     addColumn("User");
@@ -539,9 +539,10 @@ public:
   {
     try {
       clear();
+      toConnection &conn=connection();
       otl_stream sql(1,
-		     SQLStatementInfo(Connection),
-		     Connection.connection());
+		     SQLStatementInfo(conn),
+		     conn.connection());
       QListViewItem *last=NULL;
       while(!sql.eof()) {
 	char buffer[1024];
@@ -562,8 +563,8 @@ public:
       }
 
       otl_stream rlb(1,
-		     SQLCurrentExtent(Connection),
-		     Connection.connection());
+		     SQLCurrentExtent(conn),
+		     conn.connection());
 
       CurExt.clear();
       MaxExt.clear();
@@ -698,7 +699,7 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
   QSplitter *splitter=new QSplitter(Vertical,this);
-  Segments=new toRollbackView(connection,splitter);
+  Segments=new toRollbackView(splitter);
   connect(Segments,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
 
@@ -706,10 +707,10 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
   QSplitter *horsplit=new QSplitter(Horizontal,splitter);
   tab->addTab(horsplit,"Open Cursors");
   
-  Statements=new toRollbackOpen(connection,horsplit);
+  Statements=new toRollbackOpen(horsplit);
   connect(Statements,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeStatement(QListViewItem *)));
-  CurrentStatement=new toSGAStatement(horsplit,connection);
+  CurrentStatement=new toSGAStatement(horsplit);
 
   Timer=new QTimer(this);
   connect(Timer,SIGNAL(timeout(void)),this,SLOT(refresh(void)));

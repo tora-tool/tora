@@ -742,7 +742,7 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
  
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
-  Storage=new toResultStorage(connection,this);
+  Storage=new toResultStorage(this);
 
   connect(Storage,SIGNAL(selectionChanged(void)),this,SLOT(selectionChanged(void)));
 

@@ -34,28 +34,58 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTRESOURCES_H
-#define __TORESULTRESOURCES_H
-
-#include "toresultitem.h"
+#include "toresultpie.h"
+#include "toconnection.h"
+#include "tomain.h"
+#include "toconf.h"
 #include "tosql.h"
 
-#define TOSQL_RESULTRESOURCE "toResultResources:Information"
+#include "toresultpie.moc"
 
-/** This widget displays information about resources of a query. The statement
- * is identified by the first parameter which should be the address as gotten
- * from the @ref toSQLToAddress function.
- */
+toResultPie::toResultPie(QWidget *parent,const char *name=NULL)
+  : toPieChart(parent,name)
+{ }
 
-class toResultResources : public toResultItem {
-public:
-  /** Create the widget.
-   * @param parent Parent widget.
-   * @param name Name of widget.
-   */
-  toResultResources(QWidget *parent,const char *name=NULL)
-    : toResultItem(3,true,parent,name)
-  { setSQL(toSQL::sql(TOSQL_RESULTRESOURCE,connection())); }
-};
+void toResultPie::query(const QString &sql,const list<QString> &param)
+{
+  try {
+    otl_stream str;
+    str.set_all_column_types(otl_all_num2str|otl_all_date2str);
+    str.open(1,
+	     sql.utf8(),
+	     connection().connection());
+    {
+      otl_null null;
+      for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++) {
+	if ((*i).isNull())
+	  str<<null;
+        else
+    	  str<<(*i).utf8();
+      }
+    }
 
-#endif
+    list<QString> labels;
+    list<double> values;
+    int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
+    int len;
+    otl_column_desc *desc=str.describe_select(len);
+    int num=0;
+    while(!str.eof()) {
+      QString val=toReadValue(desc[num%len],str,MaxColSize);
+      values.insert(values.end(),val.toDouble());
+      num++;
+      if (len>1) {
+	QString lab=toReadValue(desc[num%len],str,MaxColSize);
+	labels.insert(labels.end(),lab);
+	num++;
+      }
+    }
+    setValues(values,labels);
+  } TOCATCH
+  update();
+}
+
+void toResultPie::setSQL(toSQL &sql)
+{
+  SQL=sql(connection());
+}

@@ -42,9 +42,9 @@ TO_NAMESPACE;
 
 #include "toresultstats.moc"
 
-toResultStats::toResultStats(bool onlyChanged,int ses,toConnection &conn,QWidget *parent,
+toResultStats::toResultStats(bool onlyChanged,int ses,QWidget *parent,
 			     const char *name)
-  : toResultView(false,false,conn,parent,name),OnlyChanged(onlyChanged)
+  : toResultView(false,false,parent,name),OnlyChanged(onlyChanged)
 {
   SessionID=ses;
   setSQLName("toResultStats");
@@ -56,14 +56,14 @@ static toSQL SQLSession("toResultStats:Session",
 			"SELECT MIN(SID) FROM V$MYSTAT",
 			"Get session id of current session");
 
-toResultStats::toResultStats(bool onlyChanged,toConnection &conn,QWidget *parent,
+toResultStats::toResultStats(bool onlyChanged,QWidget *parent,
 			     const char *name)
-  : toResultView(false,false,conn,parent,name),OnlyChanged(onlyChanged)
+  : toResultView(false,false,parent,name),OnlyChanged(onlyChanged)
 {
   try {
     otl_stream str(1,
-		   SQLSession(Connection),
-		   Connection.connection());
+		   SQLSession(connection()),
+		   connection().connection());
     str>>SessionID;
   } catch (otl_exc &) {
     SessionID=-1;
@@ -72,8 +72,8 @@ toResultStats::toResultStats(bool onlyChanged,toConnection &conn,QWidget *parent
   setup();
 }
 
-toResultStats::toResultStats(toConnection &conn,QWidget *parent,const char *name)
-  : toResultView(false,false,conn,parent,name),OnlyChanged(false)
+toResultStats::toResultStats(QWidget *parent,const char *name)
+  : toResultView(false,false,parent,name),OnlyChanged(false)
 {
   System=true;
   setup();
@@ -112,14 +112,15 @@ void toResultStats::resetStats(void)
 {
   try {
     otl_stream str;
+    toConnection &conn=connection();
     if (System)
       str.open(1,
-	       SQLSystemStatistics(Connection),
-	       Connection.connection());
+	       SQLSystemStatistics(conn),
+	       conn.connection());
     else {
       str.open(1,
-	       SQLStatistics(Connection),
-	       Connection.connection());
+	       SQLStatistics(conn),
+	       conn.connection());
       str<<SessionID;
     }
     while(!str.eof()) {
@@ -133,8 +134,8 @@ void toResultStats::resetStats(void)
     }
     if (!System) {
       otl_stream sesio(1,
-		       SQLSessionIO(Connection),
-		       Connection.connection());
+		       SQLSessionIO(conn),
+		       conn.connection());
       sesio<<SessionID;
       int id=0;
       while(!sesio.eof()) {
@@ -153,8 +154,8 @@ void toResultStats::changeSession(otl_connect &conn)
     throw QString("Can't change session on system statistics");
   try {
     otl_stream str(1,
-		   SQLSession(Connection),
-		   conn);
+		   SQLSession(connection()),
+		   connection().connection());
     str>>SessionID;
     resetStats();
     refreshStats(true);
@@ -188,17 +189,18 @@ void toResultStats::refreshStats(bool reset)
     clear();
     otl_stream str;
     otl_stream sesio;
+    toConnection &conn=connection();
     if (System)
       str.open(1,
-	       SQLSystemStatisticName(Connection),
-	       Connection.connection());
+	       SQLSystemStatisticName(conn),
+	       conn.connection());
     else {
       str.open(1,
-	       SQLStatisticName(Connection),
-	       Connection.connection());
+	       SQLStatisticName(conn),
+	       conn.connection());
       sesio.open(1,
-		 SQLSessionIO(Connection),
-		 Connection.connection());
+		 SQLSessionIO(conn),
+		 conn.connection());
       sesio<<SessionID;
       str<<SessionID;
     }

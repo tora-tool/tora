@@ -41,7 +41,6 @@
 #include "toresult.h"
 
 class toSQL;
-class toConnection;
 
 /** This widget displays the result of a query where each item in the stream
  * is added as a line in a text editer.
@@ -53,17 +52,13 @@ class toResultField : public toHighlightedText, public toResult {
   /** SQL to run.
    */
   QString SQL;
-  /** Connection to query.
-   */
-  toConnection &Connection;
 
 public:
   /** Create the widget.
-   * @param conn Connection to display.
    * @param parent Parent widget.
    * @param name Name of widget.
    */
-  toResultField(toConnection &conn,QWidget *parent,const char *name=NULL);
+  toResultField(QWidget *parent,const char *name=NULL);
 
   /** Set the SQL to run.
    * @param sql Query.

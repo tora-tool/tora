@@ -78,13 +78,12 @@
 class toResultResources : public toResultItem {
 public:
   /** Create the widget.
-   * @param conn Connection to display.
    * @param parent Parent widget.
    * @param name Name of widget.
    */
-  toResultResources(toConnection &amp;conn,QWidget *parent,const char *name=NULL)
-    : toResultItem(3,true,conn,parent,name)
-  { setSQL(toSQL::sql(TOSQL_RESULTRESOURCE,conn)); }
+  toResultResources(QWidget *parent,const char *name=NULL)
+    : toResultItem(3,true,parent,name)
+  { setSQL(toSQL::sql(TOSQL_RESULTRESOURCE,connection())); }
 };
 
 #endif

@@ -42,8 +42,8 @@ TO_NAMESPACE;
 #include "toconf.h"
 #include "tosql.h"
 
-toResultIndexes::toResultIndexes(toConnection &conn,QWidget *parent,const char *name)
-  : toResultView(false,false,conn,parent,name)
+toResultIndexes::toResultIndexes(QWidget *parent,const char *name)
+  : toResultView(false,false,parent,name)
 {
   setReadAll(true);
   addColumn("Index Name");
@@ -62,8 +62,8 @@ static toSQL SQLColumns("toResultIndexes:Columns",
 QString toResultIndexes::indexCols(const QString &indOwner,const QString &indName)
 {
   otl_stream Query(1,
-		   SQLColumns(Connection),
-		   Connection.connection());
+		   SQLColumns(connection()),
+		   connection().connection());
 
   Query<<indOwner.utf8();
   Query<<indName.utf8();
@@ -108,8 +108,8 @@ void toResultIndexes::query(const QString &sql,const list<QString> &param)
 
   try {
     otl_stream Query(1,
-		     SQLListIndex(Connection),
-		     Connection.connection());
+		     SQLListIndex(connection()),
+		     connection().connection());
 
     Description=Query.describe_select(DescriptionLen);
 

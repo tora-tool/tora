@@ -40,6 +40,38 @@
 #include "tomain.h"
 #include "toconf.h"
 
+#include "tolinechart.moc"
+
+double toLineChart::round(double round,bool up)
+{
+  double base=1;
+  double mult=1;
+  if (round<0) {
+    mult=-1;
+    round=-round;
+    up=!up;
+  }
+  for(;;base*=10) {
+    if (up) {
+      if (base>round)
+	return mult*base;
+      else if (base*2>round)
+	return mult*base*2;
+      else if (base*5>round)
+	return mult*base*5;
+    } else if (base>round) {
+      if (base/2<=round)
+	return mult*base/2;
+      else if (base/5<=round)
+	return mult*base/5;
+      else if (base/10<=round)
+	return mult*base/10;
+      else
+	return 0;
+    }
+  }
+}
+
 void toLineChart::setSamples(int samples)
 {
   if (samples<=0) {
@@ -107,6 +139,14 @@ void toLineChart::paintEvent(QPaintEvent *e)
   int bottom=height();
 
   p.fillRect(0,0,width(),height(),qApp->palette().active().background());
+
+  if (!Title.isEmpty()) {
+    QRect bounds=fm.boundingRect(0,0,width(),height(),FONT_ALIGN,Title);
+    p.drawText(0,2,width(),bounds.height(),AlignHCenter|AlignTop|ExpandTabs,Title);
+    p.translate(0,bounds.height());
+    bottom-=bounds.height();
+  }
+
   if (Legend) {
     int lwidth=0;
     int lheight=0;
@@ -127,7 +167,10 @@ void toLineChart::paintEvent(QPaintEvent *e)
     if (lx<50)
       lx=50;
     right=lx;
+    p.save();
+    p.setBrush(white);
     p.drawRect(lx,ly,lwidth,lheight);
+    p.restore();
     lx+=12;
     ly+=2;
     int cp=0;
@@ -136,8 +179,8 @@ void toLineChart::paintEvent(QPaintEvent *e)
 	QRect bounds=fm.boundingRect(lx,ly,100000,100000,FONT_ALIGN,*i);
 	p.drawText(bounds,FONT_ALIGN,*i);
 	p.save();
-	p.setPen(toChartColor(cp++));
-	p.drawLine(lx-10,ly+bounds.height()/2,lx-2,ly+bounds.height()/2);
+	p.setBrush(toChartColor(cp++));
+	p.drawRect(lx-10,ly+bounds.height()/2-fm.ascent()/2,8,fm.ascent());
 	p.restore();
 	ly+=bounds.height();
       }
@@ -158,6 +201,8 @@ void toLineChart::paintEvent(QPaintEvent *e)
 	  minval=*j;
       }
     }
+    maxval=round(maxval,true);
+    minval=round(minval,false);
   }
   if(!MinAuto)
     minval=MinValue;
@@ -201,7 +246,10 @@ void toLineChart::paintEvent(QPaintEvent *e)
     bottom-=xoffset;
   }
 
+  p.save();
+  p.setBrush(white);
   p.drawRect(2,2,right-4,bottom-4);
+  p.restore();
   if (Grid>1) {
     for (int i=1;i<Grid;i++) {
       int ypos=(bottom-4)*i/Grid+2;
@@ -212,6 +260,8 @@ void toLineChart::paintEvent(QPaintEvent *e)
   }
 
   int cp=0;
+  const QWMatrix &mtx=p.worldMatrix();
+  p.setClipRect(mtx.dx()+2,mtx.dy()+2,right-4,bottom-4);
   for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
     p.save();
     p.setPen(toChartColor(cp++));
@@ -221,7 +271,7 @@ void toLineChart::paintEvent(QPaintEvent *e)
     int lval=0;
     int lx=right-2;
     for(list<double>::reverse_iterator j=val.rbegin();j!=val.rend()&&lx>=2;j++) {
-      int val=int(bottom-2-(*j/(maxval-minval)*(bottom-4)));
+      int val=int(bottom-2-((*j-minval)/(maxval-minval)*(bottom-4)));
       if (!first) {
 	int x=lx;
 	if (AutoSamples)

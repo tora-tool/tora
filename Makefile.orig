@@ -58,6 +58,7 @@ SOURCES=\
 	toresultitem.cpp	\
 	toresultlock.cpp	\
 	toresultlong.cpp	\
+	toresultpie.cpp		\
 	toresultplan.cpp	\
 	toresultreferences.cpp	\
 	toresultstats.cpp	\
@@ -98,8 +99,8 @@ API=	\
 	todefaultkeywords.h	\
 	toextract.h		\
 	tofilesize.h		\
-	tohelpbrowser.h		\
 	tohelp.h		\
+	tohelpbrowser.h		\
 	tohighlightedtext.h	\
 	tohtml.h		\
 	tolinechart.h		\
@@ -111,15 +112,16 @@ API=	\
 	tonoblockquery.h	\
 	toparamget.h		\
 	topiechart.h		\
+	toresult.h		\
 	toresultcols.h		\
 	toresultconstraint.h	\
 	toresultcontent.h	\
 	toresultdepend.h	\
 	toresultfield.h		\
-	toresult.h		\
 	toresultindexes.h	\
 	toresultitem.h		\
 	toresultlong.h		\
+	toresultpie.h		\
 	toresultplan.h		\
 	toresultreferences.h	\
 	toresultresources.h	\
@@ -131,7 +133,6 @@ API=	\
 	tothread.h		\
 	totool.h
 
-
 TARGET=tora-plugin
 
 include Makefile.setup
@@ -142,7 +143,8 @@ plugins/tobrowser.tso:\
 	objs/tobrowserfilterui.o
 plugins/tocharts.tso:\
 	objs/tolinechart.o \
-	objs/topiechart.o
+	objs/topiechart.o \
+	objs/toresultpie.o
 plugins/todebug.tso:\
 	objs/todebug.o \
 	objs/todebugwatch.o \

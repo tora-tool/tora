@@ -45,7 +45,6 @@ class toResultField;
 class QComboBox;
 class toResultPlan;
 class toResultItem;
-class toConnection;
 class QTimer;
 
 /** This widget displays information about a statement in the Oracle SGA. To get an
@@ -63,9 +62,6 @@ class toSGAStatement : public QTabWidget {
   /** Resources used by the statement.
    */
   toResultItem *Resources;
-  /** Connection of this widget.
-   */
-  toConnection &Connection;
   /** Address of the statement.
    */
   QString Address;
@@ -83,9 +79,8 @@ private slots:
 public:
   /** Create widget.
    * @param parent Parent widget.
-   * @param connection Connection to use to get data.
    */
-  toSGAStatement(QWidget *parent,toConnection &connection);
+  toSGAStatement(QWidget *parent);
 public slots:
   /** Display another statement.
    * @param address Address of the statement to display.

@@ -43,10 +43,13 @@
 #include "toconf.h"
 #include "tomain.h"
 
+#include "topiechart.moc"
+
 toPieChart::toPieChart(QWidget *parent,const char *name,WFlags f=0)
   : QWidget(parent,name,f)
 {
   Legend=true;
+  DisplayPercent=false;
   setMinimumSize(100,100);
 
   // Use list font
@@ -67,17 +70,46 @@ void toPieChart::paintEvent(QPaintEvent *e)
   int right=width();
   int bottom=height();
 
+  double tot=0;
+  for(list<double>::iterator i=Values.begin();i!=Values.end();i++)
+    tot+=*i;
+
   p.fillRect(0,0,width(),height(),qApp->palette().active().background());
+
+  if (!Title.isEmpty()) {
+    QRect bounds=fm.boundingRect(0,0,width(),height(),FONT_ALIGN,Title);
+    p.drawText(0,2,width(),bounds.height(),AlignHCenter|AlignTop|ExpandTabs,Title);
+    p.translate(0,bounds.height());
+    bottom-=bounds.height();
+  }
+
   if (Legend) {
     int lwidth=0;
     int lheight=0;
+
+    list<double>::iterator j=Values.begin();
     for(list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
+      QString sizstr;
+      if (j!=Values.end()) {
+	if (DisplayPercent)
+	  sizstr.sprintf("%0.1f",100*(*j)/tot);
+	else
+	  sizstr=QString::number(*j);
+	sizstr+=Postfix;
+      }
+
       if (!(*i).isEmpty()) {
-	QRect bounds=fm.boundingRect(0,0,10000,10000,FONT_ALIGN,*i);
+	QString str=*i;
+	str+=" (";
+	str+=sizstr;
+	str+=")";
+	QRect bounds=fm.boundingRect(0,0,10000,10000,FONT_ALIGN,str);
 	if (lwidth<bounds.width())
 	  lwidth=bounds.width();
 	lheight+=bounds.height();
       }
+      if (j!=Values.end())
+	j++;
     }
     if (lheight>0) {
       lheight+=4;
@@ -88,26 +120,43 @@ void toPieChart::paintEvent(QPaintEvent *e)
     if (lx<50)
       lx=50;
     right=lx;
+    p.save();
+    p.setBrush(white);
     p.drawRect(lx,ly,lwidth,lheight);
+    p.restore();
     lx+=12;
     ly+=2;
     int cp=0;
+    j=Values.begin();
     for(list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
+      QString sizstr;
+      if (j!=Values.end()) {
+	if (DisplayPercent)
+	  sizstr.sprintf("%0.1f",100*(*j)/tot);
+	else
+	  sizstr=QString::number(*j);
+	sizstr+=Postfix;
+      }
+
       if (!(*i).isEmpty()) {
-	QRect bounds=fm.boundingRect(lx,ly,100000,100000,FONT_ALIGN,*i);
-	p.drawText(bounds,FONT_ALIGN,*i);
+	QString str=*i;
+	str+=" (";
+	str+=sizstr;
+	str+=")";
+
+	QRect bounds=fm.boundingRect(lx,ly,100000,100000,FONT_ALIGN,str);
+	p.drawText(bounds,FONT_ALIGN,str);
 	p.save();
-	p.setPen(toChartColor(cp++));
-	p.drawLine(lx-10,ly+bounds.height()/2,lx-2,ly+bounds.height()/2);
+	p.setBrush(toChartColor(cp++));
+	p.drawRect(lx-10,ly+bounds.height()/2-fm.ascent()/2,8,fm.ascent());
 	p.restore();
 	ly+=bounds.height();
       }
+
+      if (j!=Values.end())
+	j++;
     }
   }
-  double tot=0;
-  for(list<double>::iterator i=Values.begin();i!=Values.end();i++)
-    tot+=*i;
-
   int cp=0;
   int pos=0;
   unsigned int count=0;
@@ -122,31 +171,6 @@ void toPieChart::paintEvent(QPaintEvent *e)
     p.setBrush(toChartColor(cp++));
     p.drawPie(2,2,right-4,bottom-4,pos,size);
     p.restore();
-    pos+=size;
-  }
-
-  pos=0;
-  count=0;
-  for(list<double>::iterator i=Values.begin();i!=Values.end();i++) {
-    count++;
-    int size=int(*i*5760/tot);
-    if (size<=0)
-      size=1;
-    if (count==Values.size())
-      size=5760-pos;
-
-    double posy=sin((2*pos+size)*M_PI/5760);
-    double posx=cos((2*pos+size)*M_PI/5760);
-    posy*=-bottom/3;
-    posy+=bottom/2;
-    posx*=right/3;
-    posx+=right/2;
-    QString sizstr=QString::number(*i);
-    sizstr+=Postfix;
-    QRect bounds=fm.boundingRect(sizstr);
-    p.drawText(bounds.x()-bounds.width()/2+posx,
-	       bounds.y()-bounds.height()/2+posy+fm.ascent(),
-	       sizstr);
     pos+=size;
   }
 }

@@ -146,9 +146,9 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
 
   QSplitter *splitter=new QSplitter(Vertical,this);
 
-  Trace=new toResultView(false,false,connection,splitter);
+  Trace=new toResultView(false,false,splitter);
   Trace->setSorting(0);
-  Statement=new toSGAStatement(splitter,connection);
+  Statement=new toSGAStatement(splitter);
 
   connect(Trace,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));

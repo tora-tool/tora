@@ -58,14 +58,14 @@ void toSGAStatement::viewResources(void)
   }
 }
 
-toSGAStatement::toSGAStatement(QWidget *parent,toConnection &connection)
-  : QTabWidget(parent),Connection(connection)
+toSGAStatement::toSGAStatement(QWidget *parent)
+  : QTabWidget(parent)
 {
-  SQLText=new toResultField(Connection,this);
+  SQLText=new toResultField(this);
   addTab(SQLText,"SQL");
-  Plan=new toResultPlan(connection,this);
+  Plan=new toResultPlan(this);
   addTab(Plan,"Execution plan");
-  Resources=new toResultResources(connection,this);
+  Resources=new toResultResources(this);
   addTab(Resources,"Information");
   connect(this,SIGNAL(currentChanged(QWidget *)),
 	  this,SLOT(changeTab(QWidget *)));
@@ -78,9 +78,9 @@ void toSGAStatement::changeTab(QWidget *widget)
     CurrentTab=widget;
     if (!Address.isEmpty()) {
       if (CurrentTab==SQLText)
-	SQLText->setText(toSQLString(Connection,Address));
+	SQLText->setText(toSQLString(toCurrentConnection(this),Address));
       else if (CurrentTab==Plan)
-	Plan->query(toSQLString(Connection,Address));
+	Plan->query(toSQLString(toCurrentConnection(this),Address));
       else if (CurrentTab==Resources)
 	viewResources();
     }

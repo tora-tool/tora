@@ -44,8 +44,8 @@ TO_NAMESPACE;
 
 #include "toresultfield.moc"
 
-toResultField::toResultField(toConnection &conn,QWidget *parent,const char *name)
-  : toHighlightedText(parent,name), Connection(conn)
+toResultField::toResultField(QWidget *parent,const char *name)
+  : toHighlightedText(parent,name)
 {
   setReadOnly(true);
 }
@@ -62,7 +62,7 @@ void toResultField::query(const QString &sql,const list<QString> &param)
     Query.set_all_column_types(otl_all_num2str|otl_all_date2str);
     Query.open(1,
 	       sql.utf8(),
-	       Connection.connection());
+	       connection().connection());
 
     for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++)
       Query<<(*i).utf8();
@@ -84,11 +84,11 @@ void toResultField::query(const QString &sql,const list<QString> &param)
 
 void toResultField::setSQL(toSQL &sql)
 {
-  SQL=sql(Connection);
+  SQL=sql(connection());
   setFilename(sql.name());
 }
 void toResultField::query(toSQL &sql)
 {
   setFilename(sql.name());
-  query(sql(Connection));
+  query(sql(connection()));
 }

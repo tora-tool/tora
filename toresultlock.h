@@ -42,7 +42,7 @@
 class toResultLock : public toResultView {
   Q_OBJECT
 public:
-  toResultLock(toConnection &conn,QWidget *parent,const char *name=NULL);
+  toResultLock(QWidget *parent,const char *name=NULL);
 
   virtual void query(const QString &sql,const list<QString> &param);
   // Why is this needed?

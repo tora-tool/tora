@@ -162,10 +162,10 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Indicators->addColumn("Reference");
   Tabs->addTab(Indicators,"Indicators");
 
-  Statistics=new toResultStats(connection,Tabs);
+  Statistics=new toResultStats(Tabs);
   Tabs->addTab(Statistics,"Statistics");
 
-  Parameters=new toResultView(true,false,connection,Tabs);
+  Parameters=new toResultView(true,false,Tabs);
   Parameters->setSQL(SQLParameters);
   Tabs->addTab(Parameters,"Parameters");
 

@@ -40,12 +40,15 @@
 #include <list>
 
 class QString;
+class toConnection;
 
 /** Abstract baseclass of widgets that can perform queries. Usefull because you can execute
  * the query without knowing how it's UI is presented.
  */
 
 class toResult {
+protected:
+  toConnection &connection(void);
 public:
   toResult(void)
   { }

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<TITLE>Source: toresultconstraint.h</TITLE>
+<TITLE>Source: toresultpie.h</TITLE>
 
 <META NAME="Generator" CONTENT="KDOC ">
 </HEAD>
@@ -10,7 +10,7 @@
 <TD>
 	<TABLE BORDER="0">
 		<TR><TD valign="top" align="left" cellspacing="10">
-		<h1>Source: toresultconstraint.h</h1>
+		<h1>Source: toresultpie.h</h1>
 		</TD>
 		<TD valign="top" align="right" colspan="1"></TD></TR>
 	</TABLE>
@@ -62,35 +62,64 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTCONSTRAINT_H
-#define __TORESULTCONSTRAINT_H
+#ifndef __TORESULTPIE_H
+#define __TORESULTPIE_H
 
-#include "toresultview.h"
+#include "toresult.h"
+#include "topiechart.h"
 
-/** This widget displays information about the constraints of an object
- * specified by the first and second parameter in the query. The sql is not
- * used in the query.
+class toSQL;
+
+/** Display the result of a query in a piechart. The first column of the query should
+ * contain the value and the second should contain an optional label.
  */
 
-class toResultConstraint : public toResultView {
-  /** The last table queried.
+class toResultPie : public toPieChart, public toResult {
+  Q_OBJECT
+  /** Query to run.
    */
-  QString LastTable;
-  /** Get columns for a constraints.
-   * @param conOwner Owner of constraint.
-   * @param conName Name of constraint.
-   * @return String with column names separated by a ',' character.
-   */
-  QString constraintCols(const QString &amp;conOwner,const QString &amp;conName);
+  QString SQL;
 public:
-  /** Create the widget.
-   * @param parent Parent widget.
+  /** Create widget.
+   * @param parent Parent of list.
    * @param name Name of widget.
    */
-  toResultConstraint(QWidget *parent,const char *name=NULL);
+  toResultPie(QWidget *parent,const char *name=NULL);
+
+  /** Set SQL to query.
+   * @param sql Query to run.
+   */
+  void setSQL(const QString &amp;sql)
+  { SQL=sql; }
+  /** Set the SQL statement of this list.
+   * @param sql SQL containing statement.
+   */
+  void setSQL(toSQL &amp;sql);
+
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &amp;sql,const list&lt;QString&gt; &amp;param);
+  /** Reimplemented for internal reasons.
+   */
+  void query(const QString &amp;sql)
+  { list&lt;QString&gt; p; query(sql,p); }
+public slots:
+  /** Reimplemented for internal reasons.
+   */
+  virtual void refresh(void)
+  { query(SQL); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &amp;Param1)
+  { list&lt;QString&gt; p; p.insert(p.end(),Param1); query(SQL,p); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
+  { list&lt;QString&gt; p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
+  { list&lt;QString&gt; p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
 };
 
 #endif

@@ -54,8 +54,8 @@ TO_NAMESPACE;
 #include "toresultplan.moc"
 
 
-toResultPlan::toResultPlan(toConnection &conn,QWidget *parent,const char *name)
-  : toResultView(false,false,conn,parent,name)
+toResultPlan::toResultPlan(QWidget *parent,const char *name)
+  : toResultView(false,false,parent,name)
 {
   setAllColumnsShowFocus(true);
   setSorting(-1);
@@ -88,8 +88,10 @@ void toResultPlan::query(const QString &sql,
 
     QString chkPoint=toTool::globalConfig(CONF_PLAN_CHECKPOINT,DEFAULT_PLAN_CHECKPOINT);
 
+    toConnection &conn=connection();
+
     sprintf(buffer,"SAVEPOINT %s",(const char *)chkPoint.utf8());
-    otl_cursor::direct_exec(Connection.connection(),buffer);
+    otl_cursor::direct_exec(conn.connection(),buffer);
 
     int ident=(int)time(NULL);
 
@@ -97,9 +99,9 @@ void toResultPlan::query(const QString &sql,
 	    ident,(const char *)planTable.utf8());
     QString explain=QString::fromUtf8(buffer);
     explain.append(sql);
-    otl_cursor::direct_exec (Connection.connection(),explain.utf8());
+    otl_cursor::direct_exec (conn.connection(),explain.utf8());
 
-    sprintf(buffer,SQLViewPlan(Connection),
+    sprintf(buffer,SQLViewPlan(conn),
 	    (const char *)planTable.utf8(),ident);
 
     {
@@ -110,7 +112,7 @@ void toResultPlan::query(const QString &sql,
       query.set_all_column_types(otl_all_num2str|otl_all_date2str);
       query.open(1,
 		 buffer,
-		 Connection.connection());
+		 conn.connection());
       while(!query.eof()) {
 	char id[50];
 	char parentid[50];
@@ -162,7 +164,7 @@ void toResultPlan::query(const QString &sql,
     }
 
     sprintf(buffer,"ROLLBACK TO SAVEPOINT %s",(const char *)chkPoint.utf8());
-    otl_cursor::direct_exec(Connection.connection(),buffer);
+    otl_cursor::direct_exec(conn.connection(),buffer);
 
   } catch (const QString &str) {
     toStatusMessage(str);
@@ -175,9 +177,9 @@ void toResultPlan::query(const QString &sql,
 					      "Should TOra try to create it?").arg(planTable),
 				      "&Yes","&No",0,1);
 	if (ret==0) {
-	  otl_cursor::direct_exec(Connection.connection(),
+	  otl_cursor::direct_exec(connection().connection(),
 				  toSQL::string(toSQL::TOSQL_CREATEPLAN,
-						Connection).arg(planTable).utf8());
+						connection()).arg(planTable).utf8());
 	  query(sql,param);
 	}
       } else
