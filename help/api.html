@@ -247,6 +247,9 @@ plugins/tosimplequery.tso:objs/tosimplequery.o
 This should go among the other plugin definitions and you also need to add the
 <code>plugins/tosimplequery.tso</code> to the dependencies of <code>tora-plugin</code>.<p>
 
+You must rerun configure for the tosimplequery.moc file to be generated the first time.
+Any subsequent changes should update the moc file automatically from the Makefile.<p>
+
 Here are the example files in their entire.<p>
 <A HREF=tosimplequery.h>tosimplequery.h</A><br>
 <A HREF=tosimplequery.cpp>tosimplequery.cpp</a><p>
