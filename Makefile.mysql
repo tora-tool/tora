@@ -159,6 +159,7 @@ API=	\
 	tothread.h		\
 	totool.h
 
+default:all
 include Makefile.common
 
 plugins/tobrowser.tso:\

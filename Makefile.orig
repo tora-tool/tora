@@ -41,12 +41,13 @@ MYSQL_CPP=tomysqlconnection.cpp
 MYSQL_PLUGIN=plugins/tomysqlconnection.tso
 endif
 
-MAKEFILE_ORIG=Makefile.mysql
+MAKEFILE_ORIG=Makefile.oracle
 TITLE=TOra
 SUBDIRS=
 SOURCES=\
 	toabout.cpp 		        \
 	toaboutui.cpp			\
+	toalert.cpp			\
 	tobarchart.cpp		        \
 	tobrowser.cpp		        \
 	tobrowserconstraintui.cpp	\
@@ -54,8 +55,13 @@ SOURCES=\
 	tobrowserindexui.cpp	        \
 	tobrowsertableui.cpp	        \
 	toconnection.cpp	        \
+	tocurrent.cpp		        \
 	tochangeconnection.cpp	        \
 	todatabasesettingui.cpp	        \
+	todebug.cpp		        \
+	todebugchange.cpp	        \
+	todebugtext.cpp		        \
+	todebugwatch.cpp	        \
 	toextract.cpp		        \
 	tofilesize.cpp		        \
 	toglobalsetting.cpp             \
@@ -65,6 +71,7 @@ SOURCES=\
 	tohelpsetupui.cpp	        \
 	tohighlightedtext.cpp	        \
 	tohtml.cpp		        \
+	toinvalid.cpp			\
 	tolinechart.cpp		        \
 	tomain.cpp		        \
 	tomarkedtext.cpp	        \
@@ -72,6 +79,9 @@ SOURCES=\
 	tonewconnection.cpp	        \
 	tonewconnectionui.cpp	        \
 	tonoblockquery.cpp	        \
+	tooutput.cpp		        \
+	tooracleconnection.cpp	        \
+	tooraclesettingui.cpp		\
 	toparamget.cpp		        \
 	topiechart.cpp		        \
 	topreferences.cpp	        \
@@ -94,12 +104,29 @@ SOURCES=\
 	toresultplan.cpp	        \
 	toresultreferences.cpp	        \
 	toresultstats.cpp	        \
+	toresultstorage.cpp	        \
 	toresultview.cpp	        \
+	torollback.cpp		        \
+	torollbackdialogui.cpp	        \
+	toscript.cpp		        \
+	toscriptui.cpp		        \
 	tosearchreplace.cpp	        \
 	tosearchreplaceui.cpp	        \
+	tosession.cpp		        \
+	tosecurity.cpp		        \
+	tosecurityquotaui.cpp	        \
+	tosecurityroleui.cpp	        \
+	tosecurityuserui.cpp	        \
 	tosgastatement.cpp	        \
+	tosgatrace.cpp		        \
 	tosql.cpp		        \
 	tosqledit.cpp		        \
+	tostorage.cpp		        \
+	tostoragedatafileui.cpp	        \
+	tostoragedefinition.cpp	        \
+	tostoragedefinitionui.cpp       \
+	tostoragedialogui.cpp		\
+	tostoragetablespaceui.cpp	\
 	tosyntaxsetup.cpp	        \
 	tosyntaxsetupui.cpp		\
 	totemplate.cpp		        \
@@ -110,6 +137,8 @@ SOURCES=\
 	tothread.cpp		        \
 	totool.cpp			\
 	totoolsettingui.cpp		\
+	totuning.cpp			\
+	totuningoverviewui.cpp		\
 	toworksheet.cpp			\
 	toworksheetsetupui.cpp		\
 	utils.cpp			\
@@ -159,8 +188,11 @@ API=	\
 	tothread.h		\
 	totool.h
 
+default: all
+include $(ORACLE_HOME)/rdbms/lib/env_rdbms.mk
 include Makefile.common
 
+plugins/toalert.tso:objs/toalert.o
 plugins/tobrowser.tso:\
 	objs/tobrowser.o \
 	objs/tobrowserconstraintui.o \
@@ -174,8 +206,16 @@ plugins/tocharts.tso:\
 	objs/toresultbar.o \
 	objs/toresultline.o \
 	objs/toresultpie.o
+plugins/todebug.tso:\
+	objs/todebug.o \
+	objs/todebugwatch.o \
+	objs/todebugtext.o \
+	objs/todebugchange.o
+plugins/tocurrent.tso:objs/tocurrent.o
 plugins/toextract.tso:objs/toextract.o
 plugins/tofilesize.tso:objs/tofilesize.o
+plugins/toinvalid.tso:objs/toinvalid.o
+plugins/tooutput.tso:objs/tooutput.o
 plugins/tonoblockquery.tso:objs/tonoblockquery.o
 plugins/toresult.tso:\
 	objs/toresultconstraint.o \
@@ -185,19 +225,51 @@ plugins/toresult.tso:\
 	objs/toresultlock.o \
 	objs/toresultlong.o \
 	objs/toresultreferences.o \
-	objs/toresultstats.o
+	objs/toresultstats.o \
+	objs/toresultstorage.o
+plugins/torollback.tso:\
+	objs/torollback.o \
+	objs/torollbackdialogui.o
+plugins/toscript.tso:\
+	objs/toscript.o \
+	objs/toscriptui.o
+plugins/tosession.tso:objs/tosession.o
+plugins/tosecurity.tso:\
+	objs/tosecurity.o \
+	objs/tosecurityquotaui.o \
+	objs/tosecurityroleui.o \
+	objs/tosecurityuserui.o
 plugins/tosgastatement.tso:objs/tosgastatement.o
+plugins/tosgatrace.tso:objs/tosgatrace.o
 plugins/tosqledit.tso:objs/tosqledit.o
+plugins/tostorage.tso:\
+	objs/tostorage.o \
+	objs/tostoragedatafileui.o \
+	objs/tostoragedialogui.o \
+	objs/tostoragetablespaceui.o
+plugins/tostoragedefinition.tso:\
+	objs/tostoragedefinition.o \
+	objs/tostoragedefinitionui.o
 plugins/totemplate.tso:\
 	objs/totemplate.o \
 	objs/totemplateaddfileui.o \
 	objs/totemplateeditui.o \
 	objs/totemplatesetupui.o
+plugins/totuning.tso:\
+	objs/totuning.o \
+	objs/totuningoverviewui.o
 plugins/toworksheet.tso: \
 	objs/toworksheet.o \
 	objs/toworksheetsetupui.o
 
 # Special plugins
+
+plugins/tooracleconnection.tso: \
+	objs/tooracleconnection.o \
+	objs/tooraclesettingui.o
+	@echo Linking plugin $@
+	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
+	$(GCC) -shared $(CFLAGS) $(LFLAGS) $(LFLAGS_GLOB) $(ORACLE_SHARED) -o $@ $^
 
 plugins/tomysqlconnection.tso:objs/tomysqlconnection.o
 	@echo Linking plugin $@
@@ -225,15 +297,29 @@ tora-static: $(OBJECTS) main.cpp
 
 tora-plugin: \
 	tora \
+	plugins/toalert.tso \
 	plugins/tobrowser.tso \
 	plugins/tocharts.tso \
+	plugins/todebug.tso \
+	plugins/tocurrent.tso \
 	plugins/toextract.tso \
 	plugins/tofilesize.tso \
+	plugins/toinvalid.tso \
 	plugins/tonoblockquery.tso \
+	plugins/tooutput.tso \
+	plugins/tooracleconnection.tso \
 	plugins/toresult.tso \
+	plugins/torollback.tso \
+	plugins/toscript.tso \
+	plugins/tosession.tso \
+	plugins/tosecurity.tso \
 	plugins/tosgastatement.tso \
+	plugins/tosgatrace.tso \
 	plugins/tosqledit.tso \
+	plugins/tostorage.tso \
+	plugins/tostoragedefinition.tso \
 	plugins/totemplate.tso \
+	plugins/totuning.tso \
 	plugins/toworksheet.tso \
 	$(MYSQL_PLUGIN)
 
