@@ -1,4 +1,4 @@
-0.4:
+0.4: Released 2001-01-27
 
 2001-01-17: Added option in storage tool to display Coalesced column.
 2001-01-17: Divide CurBlk by 1000000 instead of 1000 in rollback display.

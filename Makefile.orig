@@ -38,6 +38,7 @@ SOURCES=\
 	tooutput.cpp		\
 	toparamget.cpp		\
 	topreferences.cpp	\
+	torollback.cpp		\
 	toresultcols.cpp	\
 	toresultconstraint.cpp	\
 	toresultcontent.cpp	\
@@ -49,7 +50,6 @@ SOURCES=\
 	toresultstats.cpp	\
 	toresultstorage.cpp	\
 	toresultview.cpp	\
-	torollback.cpp		\
 	tosession.cpp		\
 	tosgatrace.cpp		\
 	tosgastatement.cpp	\
