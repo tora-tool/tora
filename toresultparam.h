@@ -73,6 +73,8 @@ private slots:
   void applySystem(void);
   void changeItem(void);
   void changedData(int row,int col,const QString &data);
+  void dropChanges(void);
+  void done(void);
 public slots:
   virtual void query(const QString &sql,const toQList &param);
   /** Reimplemented for internal reasons.

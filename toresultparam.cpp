@@ -53,6 +53,7 @@
 #include "icons/filesave.xpm"
 #include "icons/tocurrent.xpm"
 #include "icons/database.xpm"
+#include "icons/trash.xpm"
 
 static toSQL SQLParams("toResultParam:ListParam",
 		       "select name \"Parameter\",value \"Value\",' ' \"Changed\",\n"
@@ -84,12 +85,18 @@ toResultParam::toResultParam(QWidget *parent,const char *name)
 		  "Apply changes to session",
 		  "Apply changes to session",
 		  this,SLOT(applySession()),toolbar);
+  toolbar->addSeparator();
+  new QToolButton(QPixmap((const char **)trash_xpm),
+		  "Drop current changes",
+		  "Drop current changes",
+		  this,SLOT(applySession()),toolbar);
   toolbar->setStretchableWidget(new QLabel(toolbar));
 
   Params=new toResultLong(false,false,toQuery::Normal,this);
   Params->setSQL(SQLParams);
   Params->setReadAll(true);
   connect(Params,SIGNAL(selectionChanged()),this,SLOT(changeItem()));
+  connect(Params,SIGNAL(done()),this,SLOT(done()));
   Value=new QLineEdit(this);
   Value->setEnabled(false);
   LastItem=-1;
@@ -101,6 +108,16 @@ void toResultParam::query(const QString &sql,const toQList &param)
   LastItem=-1;
 
   Params->refresh();
+}
+
+void toResultParam::dropChanges(void)
+{
+  NewValues.clear();
+  refresh();
+}
+
+void toResultParam::done()
+{
   for(QListViewItem *item=Params->firstChild();item;item=item->nextSibling()) {
     std::map<int,QString>::iterator i=NewValues.find(item->text(4).toInt());
     if (i!=NewValues.end()) {

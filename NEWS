@@ -2,6 +2,7 @@
 
 2001-11-06: Some minor API changes to the editwidget interface.
 2001-11-06: Fixed a really ugly toThread bug in linux & windows.
+2001-11-06: Added drop changes from parameter editor and fixed update problem.
 
 1.1.5: Branched TORA12 for 1.2 release
 
