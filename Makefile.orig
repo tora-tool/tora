@@ -87,6 +87,7 @@ SOURCES=\
 	totool.cpp		\
 	totuning.cpp		\
 	toworksheet.cpp		\
+	toworksheetsetupui.cpp	\
 	utils.cpp
 
 API=	\
@@ -176,7 +177,9 @@ plugins/totemplate.tso:\
 	objs/totemplateeditui.o \
 	objs/totemplatesetupui.o
 plugins/totuning.tso:objs/totuning.o
-plugins/toworksheet.tso:objs/toworksheet.o
+plugins/toworksheet.tso: \
+	objs/toworksheet.o \
+	objs/toworksheetsetupui.o
 
 # Monolithic target, for non ELF platforms
 

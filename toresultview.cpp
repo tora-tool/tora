@@ -795,11 +795,11 @@ void toResultView::query(const QString &sql,const list<QString> &param)
   RowNumber=0;
 
   clear();
-  while(columns()>1) {
-    removeColumn(1);
-  }
-  if (!NumberColumn)
+  while(columns()>0) {
     removeColumn(0);
+  }
+  if (NumberColumn)
+    addColumn("#");
 
   try {
     Query=new otl_stream;

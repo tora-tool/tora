@@ -75,13 +75,13 @@ void toResultLong::query(const QString &sql,const list<QString> &param)
   First=true;
 
   clear();
-  while(columns()>1) {
-    removeColumn(1);
+  while(columns()>0) {
+    removeColumn(0);
   }
   HasHeaders=false;
 
-  if (!NumberColumn)
-    removeColumn(0);
+  if (NumberColumn)
+    addColumn("#");
 
   try {
     Query=new toNoBlockQuery(Connection,sql,param,Statistics);

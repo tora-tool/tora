@@ -61,30 +61,6 @@ class QCheckBox;
 class QLabel;
 class toTool;
 
-class toWorksheetPrefs : public QFrame, public toSettingTab
-{ 
-  Q_OBJECT
-
-  QGroupBox* GroupBox1;
-  QPushButton* FileChoose;
-  QLineEdit* DefaultFile;
-  QCheckBox* AutoCommit;
-  QCheckBox* AutoSave;
-  QCheckBox* CheckSave;
-  QCheckBox* LogAtEnd;
-  QCheckBox* LogMulti;
-  QCheckBox* PLSQLParse;
-  QCheckBox* Statistics;
-  QLabel* TextLabel2;
-  toTool *Tool;
-
-public:
-  toWorksheetPrefs(toTool *tool,QWidget* parent = 0,const char* name = 0);
-  virtual void saveSetting(void);
-public slots:
-  void chooseFile(void);
-};
-
 class toWorksheet : public toToolWidget {
   Q_OBJECT
 

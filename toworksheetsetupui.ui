@@ -1,0 +1,232 @@
+<!DOCTYPE UI><UI>
+<class>toWorksheetSetupUI</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>toWorksheetSetupUI</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>588</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Form1</string>
+    </property>
+    <property>
+        <name>toolTip</name>
+        <string>Automatically save file when closing worksheet (Without asking any questions).</string>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget row="0"  column="0" >
+            <class>QGroupBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>GroupBox1</cstring>
+            </property>
+            <property stdset="1">
+                <name>title</name>
+                <string>SQL Worksheet</string>
+            </property>
+            <grid>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>11</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget row="0"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>AutoCommit</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Auto commit</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Commit automatically after each executed statement.</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>AutoSave</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Auto &amp;save</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>CheckSave</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Ask about saving &amp;changes</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Ask about saving changes when closing worksheet.</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>LogAtEnd</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Add &amp;log entries at end</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Add newly executed queries at end of log instead of top. Changing this will mess up the log in the windows that are opened.</string>
+                    </property>
+                </widget>
+                <widget row="4"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>LogMulti</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Multiple lines in log.</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Display multiple lines in the SQL column of the logging.</string>
+                    </property>
+                </widget>
+                <widget row="5"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>PLSQLParse</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Parse PL/SQL blocks</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Parse PL/SQL blocks in worksheet. You usually need this but it if you forget one end the rest of the editor will be one block.</string>
+                    </property>
+                </widget>
+                <widget row="6"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Statistics</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Enable statistics</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Enable statistic collection per default.</string>
+                    </property>
+                </widget>
+                <widget row="7"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>DisplayNumber</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Display number column</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Add a numbering column to the left of the result.</string>
+                    </property>
+                </widget>
+                <widget row="8"  column="2" >
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>FileChoose</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Browse</string>
+                    </property>
+                </widget>
+                <widget row="8"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>DefaultFile</cstring>
+                    </property>
+                </widget>
+                <widget row="8"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Default &amp;file</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>DefaultFile</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>File to automatically open in a new worksheet.</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>FileChoose</sender>
+        <signal>clicked()</signal>
+        <receiver>toWorksheetSetupUI</receiver>
+        <slot>chooseFile()</slot>
+    </connection>
+    <slot access="public">chooseFile()</slot>
+</connections>
+<tabstops>
+    <tabstop>AutoCommit</tabstop>
+    <tabstop>AutoSave</tabstop>
+    <tabstop>CheckSave</tabstop>
+    <tabstop>LogAtEnd</tabstop>
+    <tabstop>LogMulti</tabstop>
+    <tabstop>PLSQLParse</tabstop>
+    <tabstop>Statistics</tabstop>
+    <tabstop>DisplayNumber</tabstop>
+    <tabstop>DefaultFile</tabstop>
+    <tabstop>FileChoose</tabstop>
+</tabstops>
+</UI>

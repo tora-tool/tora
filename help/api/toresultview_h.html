@@ -48,7 +48,9 @@
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
- *      software in the executable aside from Oracle client libraries.
+ *      software in the executable aside from Oracle client libraries. You
+ *      are also allowed to link this program with the Qt Non Commercial for
+ *      Windows.
  *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX or Qt/Windows products of TrollTech. And you are not
@@ -517,6 +519,13 @@ public:
    */
   bool numberColumn() const
   { return NumberColumn; }
+  /** Set number column flag. Don't change this while a query is running. Observe
+   * that not all descendants of this class support changing this on the fly. The base
+   * class and @ref toResultLong does though.
+   * @param val New value of number column.
+   */
+  void setNumberColumn(bool val)
+  { NumberColumn=val; }
 
   /** Create a new item in this list. Can be used if a special kind of item is wanted
    * in the list. The rest of the columns will be filled with setText.

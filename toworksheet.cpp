@@ -77,8 +77,10 @@ TO_NAMESPACE;
 #include "toresultstats.h"
 #include "toresultcols.h"
 #include "toconf.h"
+#include "toworksheetsetupui.h"
 
 #include "toworksheet.moc"
+#include "toworksheetsetupui.moc"
 
 #include "icons/toworksheet.xpm"
 #include "icons/refresh.xpm"
@@ -102,6 +104,7 @@ TO_NAMESPACE;
 #define CONF_LOG_MULTI   "LogMulti"
 #define CONF_PLSQL_PARSE "PLSQLParse"
 #define CONF_STATISTICS	 "Statistics"
+#define CONF_NUMBER	 "Number"
 
 static struct {
   int Pos;
@@ -127,121 +130,70 @@ static struct {
 	       { 0,NULL,	false,false,false,false,false }
 };
 
-toWorksheetPrefs::toWorksheetPrefs(toTool *tool,QWidget* parent,const char* name)
-  : QFrame(parent,name),Tool(tool)
-{
-  GroupBox1 = new QGroupBox( this, "GroupBox1" );
-  GroupBox1->setGeometry( QRect( 10, 10, 380, 380 ) ); 
-  GroupBox1->setTitle( tr( "SQL Worksheet"  ) );
-  
-  AutoCommit = new QCheckBox( GroupBox1, "AutoCommit" );
-  AutoCommit->setGeometry( QRect( 20, 30, 340, 20 ) ); 
-  AutoCommit->setText( tr( "&Auto commit"  ) );
-  QToolTip::add(  AutoCommit, tr( "Auto commit each statement." ) );
-  
-  AutoSave = new QCheckBox( GroupBox1, "AutoSave" );
-  AutoSave->setGeometry( QRect( 20, 70, 340, 20 ) ); 
-  AutoSave->setText( tr( "Auto &Save"  ) );
-  QToolTip::add(  AutoSave, tr( "Auto save file when closing worksheet\n"
-				"(Without asking questions)." ) );
-  
-  CheckSave = new QCheckBox( GroupBox1, "CheckSave" );
-  CheckSave->setGeometry( QRect( 20, 110, 340, 20 ) ); 
-  CheckSave->setText( tr( "Ask about saving &changes"  ) );
-  QToolTip::add(  CheckSave, tr( "Ask about saving changes when closing worksheet." ) );
-  
-  LogAtEnd = new QCheckBox( GroupBox1, "LogAtEnd" );
-  LogAtEnd->setGeometry( QRect( 20, 150, 340, 20 ) ); 
-  LogAtEnd->setText( tr( "&Log entries at end"  ) );
-  QToolTip::add(  LogAtEnd, tr( "Add newly executed queries at end of log instead of top.\n"
-				"Changing this will mess up the log in the windows that are opened.") );
-  
-  LogMulti = new QCheckBox( GroupBox1, "LogMulti" );
-  LogMulti->setGeometry( QRect( 20, 190, 340, 20 ) ); 
-  LogMulti->setText( tr( "&Multiple lines in log"  ) );
-  QToolTip::add(  LogMulti, tr( "Display multiple lines in logging SQL column.") );
-  
-  PLSQLParse = new QCheckBox( GroupBox1, "PLSQLParse" );
-  PLSQLParse->setGeometry( QRect( 20, 230, 340, 20 ) ); 
-  PLSQLParse->setText( tr( "&Parse PL/SQL blocks"  ) );
-  QToolTip::add(PLSQLParse, tr( "Parse PL/SQL blocks in worksheet. You usually need this\n"
-				"but it if you forget one end the rest of the editor will\n"
-				"be one block.") );
+class toWorksheetSetup : public toWorksheetSetupUI, public toSettingTab
+{ 
+  toTool *Tool;
 
-  Statistics = new QCheckBox( GroupBox1, "Statistics" );
-  Statistics->setGeometry( QRect( 20, 270, 340, 20 ) ); 
-  Statistics->setText( tr( "&Enable Statistics"  ) );
-  QToolTip::add(Statistics, tr( "Enable statistic collection per default.") );
-
-  FileChoose = new QPushButton( GroupBox1, "FileChoose" );
-  FileChoose->setGeometry( QRect( 280, 304, 80, 32 ) ); 
-  FileChoose->setText( tr( "&Browse"  ) );
-  
-  DefaultFile = new QLineEdit( GroupBox1, "DefaultFile" );
-  DefaultFile->setGeometry( QRect( 100, 310, 170, 23 ) ); 
-  
-  TextLabel2 = new QLabel( GroupBox1, "TextLabel2" );
-  TextLabel2->setGeometry( QRect( 20, 310, 80, 20 ) ); 
-  TextLabel2->setText( tr( "&Default file"  ) );
-  QToolTip::add(  TextLabel2, tr( "File to automatically load when opening a worksheet." ) );
-  
-  TextLabel2->setBuddy( DefaultFile );
-  
-  if (!tool->config(CONF_AUTO_COMMIT,"").isEmpty())
-    AutoCommit->setChecked(true);
-  if (!tool->config(CONF_AUTO_SAVE,"").isEmpty())
-    AutoSave->setChecked(true);
-  if (!tool->config(CONF_CHECK_SAVE,"Yes").isEmpty())
-    CheckSave->setChecked(true);
-  if (!tool->config(CONF_LOG_AT_END,"Yes").isEmpty())
-    LogAtEnd->setChecked(true);
-  if (!tool->config(CONF_LOG_MULTI,"Yes").isEmpty())
-    LogMulti->setChecked(true);
-  if (!tool->config(CONF_PLSQL_PARSE,"Yes").isEmpty())
-    PLSQLParse->setChecked(true);
-  if (!tool->config(CONF_STATISTICS,"").isEmpty())
-    Statistics->setChecked(true);
-  DefaultFile->setText(tool->config(CONF_AUTO_LOAD,""));
-
-  connect(FileChoose,SIGNAL(clicked()),this,SLOT(chooseFile()));
-}
-
-void toWorksheetPrefs::saveSetting(void)
-{
-  if (AutoCommit->isChecked())
-    Tool->setConfig(CONF_AUTO_COMMIT,"Yes");
-  else
-    Tool->setConfig(CONF_AUTO_COMMIT,"");
-  if (AutoSave->isChecked())
-    Tool->setConfig(CONF_AUTO_SAVE,"Yes");
-  else
-    Tool->setConfig(CONF_AUTO_SAVE,"");
-  if (CheckSave->isChecked())
-    Tool->setConfig(CONF_CHECK_SAVE,"Yes");
-  else
-    Tool->setConfig(CONF_CHECK_SAVE,"");
-  if (LogAtEnd->isChecked())
-    Tool->setConfig(CONF_LOG_AT_END,"Yes");
-  else
-    Tool->setConfig(CONF_LOG_AT_END,"");
-  if (LogMulti->isChecked())
-    Tool->setConfig(CONF_LOG_MULTI,"Yes");
-  else
-    Tool->setConfig(CONF_LOG_MULTI,"");
-  if (PLSQLParse->isChecked())
-    Tool->setConfig(CONF_PLSQL_PARSE,"Yes");
-  else
-    Tool->setConfig(CONF_PLSQL_PARSE,"");
-  Tool->setConfig(CONF_STATISTICS,Statistics->isChecked()?"Yes":"");
-  Tool->setConfig(CONF_AUTO_LOAD,DefaultFile->text());
-}
-
-void toWorksheetPrefs::chooseFile(void)
-{
-  QString str=toOpenFilename(DefaultFile->text(),"*.sql\n*.txt",this);
-  if (!str.isEmpty())
-    DefaultFile->setText(str);
-}
+public:
+  toWorksheetSetup(toTool *tool,QWidget* parent = 0,const char* name = 0)
+    : toWorksheetSetupUI(parent,name),Tool(tool)
+  {
+    if (!tool->config(CONF_AUTO_COMMIT,"").isEmpty())
+      AutoCommit->setChecked(true);
+    if (!tool->config(CONF_AUTO_SAVE,"").isEmpty())
+      AutoSave->setChecked(true);
+    if (!tool->config(CONF_CHECK_SAVE,"Yes").isEmpty())
+      CheckSave->setChecked(true);
+    if (!tool->config(CONF_LOG_AT_END,"Yes").isEmpty())
+      LogAtEnd->setChecked(true);
+    if (!tool->config(CONF_LOG_MULTI,"Yes").isEmpty())
+      LogMulti->setChecked(true);
+    if (!tool->config(CONF_PLSQL_PARSE,"Yes").isEmpty())
+      PLSQLParse->setChecked(true);
+    if (!tool->config(CONF_STATISTICS,"").isEmpty())
+      Statistics->setChecked(true);
+    if (!tool->config(CONF_NUMBER,"Yes").isEmpty())
+      DisplayNumber->setChecked(true);
+    DefaultFile->setText(tool->config(CONF_AUTO_LOAD,""));
+  }
+  virtual void saveSetting(void)
+  {
+    if (AutoCommit->isChecked())
+      Tool->setConfig(CONF_AUTO_COMMIT,"Yes");
+    else
+      Tool->setConfig(CONF_AUTO_COMMIT,"");
+    if (AutoSave->isChecked())
+      Tool->setConfig(CONF_AUTO_SAVE,"Yes");
+    else
+      Tool->setConfig(CONF_AUTO_SAVE,"");
+    if (CheckSave->isChecked())
+      Tool->setConfig(CONF_CHECK_SAVE,"Yes");
+    else
+      Tool->setConfig(CONF_CHECK_SAVE,"");
+    if (LogAtEnd->isChecked())
+      Tool->setConfig(CONF_LOG_AT_END,"Yes");
+    else
+      Tool->setConfig(CONF_LOG_AT_END,"");
+    if (LogMulti->isChecked())
+      Tool->setConfig(CONF_LOG_MULTI,"Yes");
+    else
+      Tool->setConfig(CONF_LOG_MULTI,"");
+    if (PLSQLParse->isChecked())
+      Tool->setConfig(CONF_PLSQL_PARSE,"Yes");
+    else
+      Tool->setConfig(CONF_PLSQL_PARSE,"");
+    Tool->setConfig(CONF_STATISTICS,Statistics->isChecked()?"Yes":"");
+    Tool->setConfig(CONF_NUMBER,DisplayNumber->isChecked()?"Yes":"");
+    Tool->setConfig(CONF_AUTO_LOAD,DefaultFile->text());
+  }
+public slots:
+  void chooseFile(void)
+  {
+    QString str=toOpenFilename(DefaultFile->text(),"*.sql\n*.txt",this);
+    if (!str.isEmpty())
+      DefaultFile->setText(str);
+  }
+};
 
 class toWorksheetTool : public toTool {
 protected:
@@ -261,7 +213,7 @@ public:
   }
   virtual QWidget *configurationTab(QWidget *parent)
   {
-    return new toWorksheetPrefs(this,parent);
+    return new toWorksheetSetup(this,parent);
   }
 };
 
@@ -616,6 +568,7 @@ void toWorksheet::query(const QString &str,bool direct)
 	  toStatusMessage(QString::fromUtf8((const char *)exc.msg));
 	}
       } else {
+	Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
 	Result->query(execSql,param);
 	Result->setSQLName(execSql.simplifyWhiteSpace().left(40));
       }

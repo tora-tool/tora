@@ -9,7 +9,9 @@
 2001-07-03: Always update schema list in db browser when refreshing.
 2001-07-03: Display the short key number in the caption of toolwindows.
 2001-07-03: Started the main help pages. The main roadblock on the way to 1.0.
-2001-07-03: Fixed typo in Makefile.common (Thanx Jonas Rather).
+2001-07-04: Fixed typo in Makefile.common (Thanx Jonas Rather).
+2001-07-04: Rewrote settings for worksheet to use designer.
+2001-07-04: Added option to remove numbering column in worksheet.
 
 0.12: Released 2001-07-01
 

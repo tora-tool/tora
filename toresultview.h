@@ -491,6 +491,13 @@ public:
    */
   bool numberColumn() const
   { return NumberColumn; }
+  /** Set number column flag. Don't change this while a query is running. Observe
+   * that not all descendants of this class support changing this on the fly. The base
+   * class and @ref toResultLong does though.
+   * @param val New value of number column.
+   */
+  void setNumberColumn(bool val)
+  { NumberColumn=val; }
 
   /** Create a new item in this list. Can be used if a special kind of item is wanted
    * in the list. The rest of the columns will be filled with setText.

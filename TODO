@@ -41,6 +41,7 @@ Extended functionality:
 	extraction.
 * Full support for Oracle 9i
 * Port to Oracle C++ OCCI instead of OTL?
+* Completion on column & function names in editor.
 
 Windows problems:
 
