@@ -526,7 +526,9 @@ void toHighlightedText::checkComplete(void)
 	QPoint p=mapToGlobal(QPoint(cursorPoint().x()-xOffset(),
 				    cursorPoint().y()+cellHeight()-yOffset()));
 	Completion->move(topLevelWidget()->mapFromGlobal(p));
-	Completion->setFixedHeight(cellHeight()*min(int(AllComplete.size()),8));
+	QSize size=Completion->sizeHint();
+	size.setWidth(size.width()+20);
+	Completion->setFixedSize(size);
 	Completion->show();
 	connect(Completion,SIGNAL(clicked(QListBoxItem *)),this,SLOT(selectComplete()));
 
