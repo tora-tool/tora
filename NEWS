@@ -1,5 +1,7 @@
 1.3.10:
 
+2003-03-13: Added while, out and type reserved words.
+2003-03-10: Added option to execute when selecting from log.
 2003-03-10: Some more work on the mandrake spec file.
 2003-03-10: Changed version.
 2003-03-10: Added a dummy plugin to preload oracle libraries from ORACLE_HOME path.

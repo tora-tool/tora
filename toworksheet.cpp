@@ -118,6 +118,7 @@
 #define CONF_NUMBER	 "Number"
 #define CONF_MOVE_TO_ERR "MoveToError"
 #define CONF_HISTORY	 "History"
+#define CONF_EXEC_LOG    "ExecLog"
 
 class toWorksheetSetup : public toWorksheetSetupUI, public toSettingTab
 { 
@@ -143,6 +144,7 @@ public:
     if (!tool->config(CONF_NUMBER,"Yes").isEmpty())
       DisplayNumber->setChecked(true);
     DefaultFile->setText(tool->config(CONF_AUTO_LOAD,""));
+    ExecLog->setChecked(!tool->config(CONF_EXEC_LOG,"").isEmpty());
   }
   virtual void saveSetting(void)
   {
@@ -167,6 +169,7 @@ public:
     Tool->setConfig(CONF_HISTORY,History->isChecked()?"Yes":"");
     Tool->setConfig(CONF_TIMED_STATS,TimedStatistics->isChecked()?"Yes":"");
     Tool->setConfig(CONF_NUMBER,DisplayNumber->isChecked()?"Yes":"");
+    Tool->setConfig(CONF_EXEC_LOG,ExecLog->isChecked()?"Yes":"");
     Tool->setConfig(CONF_AUTO_LOAD,DefaultFile->text());
   }
 public slots:
@@ -1484,9 +1487,10 @@ void toWorksheet::executeLog(void)
   if (item) {
     insertStatement(item->allText(0));
     
-    if (item->text(4).isEmpty())
-      query(item->allText(0),false);
-    else {
+    if (item->text(4).isEmpty()) {
+      if (!WorksheetTool.config(CONF_EXEC_LOG,"").isEmpty())
+	query(item->allText(0),false);
+    } else {
       std::map<int,QWidget *>::iterator i=History.find(item->text(4).toInt());
       QueryString=item->allText(0);
       changeResult(ResultTab->currentPage());

@@ -155,7 +155,7 @@
                         <string>Add a numbering column to the left of the result.</string>
                     </property>
                 </widget>
-                <spacer row="11"  column="1" >
+                <spacer row="12"  column="1" >
                     <property>
                         <name>name</name>
                         <cstring>Spacer1</cstring>
@@ -176,7 +176,7 @@
                         </size>
                     </property>
                 </spacer>
-                <widget row="10"  column="2" >
+                <widget row="11"  column="2" >
                     <class>QPushButton</class>
                     <property stdset="1">
                         <name>name</name>
@@ -187,14 +187,14 @@
                         <string>&amp;Browse</string>
                     </property>
                 </widget>
-                <widget row="10"  column="1" >
+                <widget row="11"  column="1" >
                     <class>QLineEdit</class>
                     <property stdset="1">
                         <name>name</name>
                         <cstring>DefaultFile</cstring>
                     </property>
                 </widget>
-                <widget row="10"  column="0" >
+                <widget row="11"  column="0" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -243,6 +243,23 @@
                         <string>Keep previous results in while worksheet is open. Will consume lot of memory.</string>
                     </property>
                 </widget>
+                <widget row="10"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>ExecLog</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Execute directory when selecting in log</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Execute a statement when it is
+			selected in the log, if disabled simply selected
+			the statement in the log.</string>
+                    </property>
+                </widget>
             </grid>
         </widget>
     </grid>
@@ -254,6 +271,12 @@
         <receiver>toWorksheetSetupUI</receiver>
         <slot>chooseFile()</slot>
     </connection>
+    <connection>
+        <sender>History</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>ExecLog</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
     <slot access="public">chooseFile()</slot>
 </connections>
 <tabstops>
@@ -264,6 +287,8 @@
     <tabstop>Statistics</tabstop>
     <tabstop>TimedStatistics</tabstop>
     <tabstop>DisplayNumber</tabstop>
+    <tabstop>History</tabstop>
+    <tabstop>ExecLog</tabstop>
     <tabstop>DefaultFile</tabstop>
     <tabstop>FileChoose</tabstop>
 </tabstops>
