@@ -17,7 +17,6 @@ Extended functionality:
 	Make it possible to reorder columns in toResultContent.
 	Add replace to toResultContent.
 * Editor improvements
-	Pretty print
 	CVS support (Or whatever this is called in windows)
 	PL/SQL doc (Like JavaDoc)
 * Add consumer group settings to security manager.
@@ -52,6 +51,7 @@ Extended functionality:
 * Proxy connection provider.
 * QSql connection provider.
 * Store worksheet statistic on save session.
+* Comments in autoindented text.
 
 New tools:
 
