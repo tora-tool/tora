@@ -156,29 +156,29 @@ public:
 static toTuningTool TuningTool;
 
 static toSQL SQLDictionaryMiss("toTuning:Indicators:Important ratios:1DictionaryMiss",
-			       "select to_char(round(sum(getmisses)/sum(gets)*100,2))||' %' from v$rowcache",
+			       "select to_char(round(sum(getmisses)/sum(gets)*100,2)),' %' from v$rowcache",
 			       "Data dictionary row cache miss ratio (%). < 10%-15%");
 
 static toSQL SQLImportantLibraryCache("toTuning:Indicators:Important ratios:2LibraryCache",
-				      "select to_char(round(sum(reloads)/sum(pins)*100,2))||' %' from v$librarycache",
+				      "select to_char(round(sum(reloads)/sum(pins)*100,2)),' %' from v$librarycache",
 				      "Library cache (Shared SQL) miss ratio (%). < 1%");
 
 static toSQL SQLDataCache("toTuning:Indicators:Important ratios:3DataCache",
-			  "SELECT TO_CHAR(ROUND((1-SUM(DECODE(statistic#,40,value,0))/SUM(DECODE(statistic#,38,value,39,value,0)))*100,2))||' %'\n"
+			  "SELECT TO_CHAR(ROUND((1-SUM(DECODE(statistic#,40,value,0))/SUM(DECODE(statistic#,38,value,39,value,0)))*100,2)),' %'\n"
 			  "  FROM v$sysstat\n"
 			  " WHERE statistic# IN (38,39,40)",
 			  "Data buffer cache hit ratio (%). > 60% - 70%",
 			  "8.0");
 
 static toSQL SQLDataCache9("toTuning:Indicators:Important ratios:3DataCache",
-			   "SELECT TO_CHAR(ROUND((1-SUM(DECODE(statistic#,42,value,0))/SUM(DECODE(statistic#,40,value,41,value,0)))*100,2))||' %'\n"
+			   "SELECT TO_CHAR(ROUND((1-SUM(DECODE(statistic#,42,value,0))/SUM(DECODE(statistic#,40,value,41,value,0)))*100,2)),' %'\n"
 			   "  FROM v$sysstat\n"
 			   " WHERE statistic# IN (40,41,42)",
 			   "",
 			   "9.0");
 
 static toSQL SQLDataCache7("toTuning:Indicators:Important ratios:3DataCache",
-			   "SELECT TO_CHAR(ROUND((1-SUM(DECODE(statistic#,39,value,0))/SUM(DECODE(statistic#,37,value,38,value,0)))*100,2))||' %'\n"
+			   "SELECT TO_CHAR(ROUND((1-SUM(DECODE(statistic#,39,value,0))/SUM(DECODE(statistic#,37,value,38,value,0)))*100,2)),' %'\n"
 			   "  FROM v$sysstat\n"
 			   " WHERE statistic# IN (37,38,39)",
 			   "",
@@ -200,95 +200,95 @@ static toSQL SQLLogRedo7("toTuning:Indicators:Redo log contention:1LogSpace",
 			 "7.3");
 
 static toSQL SQLSystemHeadUndo("toTuning:Indicators:RBS contention:1SystemHeadUndo",
-			       "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
+			       "SELECT TO_CHAR(ROUND(count/blocks*100,2)),' %'\n"
 			       "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo header') a,\n"
 			       "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (38,39)) b",
 			       "System undo header waits (%). < 1%",
 			       "8.0");
 
 static toSQL SQLSystemHeadUndo9("toTuning:Indicators:RBS contention:1SystemHeadUndo",
-				"SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
+				"SELECT TO_CHAR(ROUND(count/blocks*100,2)),' %'\n"
 				"  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo header') a,\n"
 				"       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (40,41)) b",
 				"",
 				"9.0");
 
 static toSQL SQLSystemHeadUndo7("toTuning:Indicators:RBS contention:1SystemHeadUndo",
-				"SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
+				"SELECT TO_CHAR(ROUND(count/blocks*100,2)),' %'\n"
 				"  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo header') a,\n"
 				"       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
 				"",
 				"7.3");
 
 static toSQL SQLSystemBlockUndo("toTuning:Indicators:RBS contention:2SystemBlockUndo",
-				"SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
+				"SELECT TO_CHAR(ROUND(count/blocks*100,2)),' %'\n"
 				"  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo block') a,\n"
 				"       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (38,39)) b",
 				"System undo block waits (%). < 1%",
 				"8.0");
 
 static toSQL SQLSystemBlockUndo9("toTuning:Indicators:RBS contention:2SystemBlockUndo",
-				 "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
+				 "SELECT TO_CHAR(ROUND(count/blocks*100,2)),' %'\n"
 				 "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo block') a,\n"
 				 "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (40,41)) b",
 				 "",
 				 "9.0");
 
 static toSQL SQLSystemBlockUndo7("toTuning:Indicators:RBS contention:2SystemBlockUndo",
-				 "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
+				 "SELECT TO_CHAR(ROUND(count/blocks*100,2)),' %'\n"
 				 "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo block') a,\n"
 				 "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
 				 "",
 				 "7.3");
 
 static toSQL SQLHeadUndo("toTuning:Indicators:RBS contention:3HeadUndo",
-			 "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
+			 "SELECT TO_CHAR(ROUND(count/blocks*100,2)),' %'\n"
 			 "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo header') a,\n"
 			 "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (38,39)) b",
 			 "Undo head waits (%). < 1%",
 			 "8.0");
 
 static toSQL SQLHeadUndo9("toTuning:Indicators:RBS contention:3HeadUndo",
-			  "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
+			  "SELECT TO_CHAR(ROUND(count/blocks*100,2)),' %'\n"
 			  "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo header') a,\n"
 			  "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (40,41)) b",
 			  "",
 			  "9.0");
 
 static toSQL SQLHeadUndo7("toTuning:Indicators:RBS contention:3HeadUndo",
-			  "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
+			  "SELECT TO_CHAR(ROUND(count/blocks*100,2)),' %'\n"
 			  "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo header') a,\n"
 			  "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
 			  "",
 			  "7.3");
 
 static toSQL SQLBlockUndo("toTuning:Indicators:RBS contention:4BlockUndo",
-			  "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
+			  "SELECT TO_CHAR(ROUND(count/blocks*100,2)),' %'\n"
 			  "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo block') a,\n"
 			  "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (38,39)) b",
 			  "Undo block waits (%). < 1%",
 			  "8.0");
 
 static toSQL SQLBlockUndo9("toTuning:Indicators:RBS contention:4BlockUndo",
-			   "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
+			   "SELECT TO_CHAR(ROUND(count/blocks*100,2)),' %'\n"
 			   "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo block') a,\n"
 			   "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (40,41)) b",
 			   "",
 			   "9.0");
 
 static toSQL SQLBlockUndo7("toTuning:Indicators:RBS contention:4BlockUndo",
-			   "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
+			   "SELECT TO_CHAR(ROUND(count/blocks*100,2)),' %'\n"
 			   "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo block') a,\n"
 			   "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
 			   "",
 			   "7.3");
 
 static toSQL SQLTotalWaits("toTuning:Indicators:RBS contention:5TotalWaits",
-			  "select to_char(round(sum(waits)/sum(gets)*100,2))||' %' from v$rollstat",
+			  "select to_char(round(sum(waits)/sum(gets)*100,2)),' %' from v$rollstat",
 			  "Total RBS waits (%). < 1%");
 
 static toSQL SQLBusyRate("toTuning:Indicators:MTS contention:1BusyRate",
-			 "SELECT TO_CHAR(ROUND(NVL(SUM(busy)/(SUM(busy)+SUM(idle)),0)*100,2))||' %' FROM v$dispatcher",
+			 "SELECT TO_CHAR(ROUND(NVL(SUM(busy)/(SUM(busy)+SUM(idle)),0)*100,2)),' %' FROM v$dispatcher",
 			 "Busy rate for dispatchers (%). < 50%");
 
 static toSQL SQLDispQueue("toTuning:Indicators:MTS contention:2DispQueue",
@@ -1117,10 +1117,10 @@ void toTuningOverview::overviewQuery::run(void)
 	sql+=tmp.toDouble();
       tot+=tmp.toDouble();
     }
-    tmp=QString::number(tot);
+    tmp=toQValue::formatNumber(tot);
     tmp+=Parent.UnitString;
     setValue("SGATotal",tmp);
-    tmp=QString::number(sql);
+    tmp=toQValue::formatNumber(sql);
     tmp+=Parent.UnitString;
     setValue("SharedSize",tmp);
 
@@ -1236,9 +1236,9 @@ void toTuningOverview::poll(void)
       j++;
       if (j!=values.end())
 	size+=(*j);
-      QString tmp=QString::number(used);
+      QString tmp=toQValue::formatNumber(used);
       tmp+=QString::fromLatin1("/");
-      tmp+=QString::number(size);
+      tmp+=toQValue::formatNumber(size);
       tmp+=UnitString;
       if (tmp!=Filesize->text())
 	Filesize->setText(tmp);
@@ -1622,7 +1622,10 @@ void toTuning::refresh(void)
 	QString first=dsc[0];
 	first+=QString::fromLatin1(".");
 	last=new toResultViewItem(parent,last,first);
-	last->setText(1,*(val.begin()));
+	QString str;
+	for(toQList::iterator j=val.begin();j!=val.end();j++)
+	  str+=*j;
+	last->setText(1,str);
 	if (dsc.count()>1)
 	  last->setText(2,dsc[1]);
       } TOCATCH

@@ -364,6 +364,36 @@ void toQValue::setNumberFormat(int format,int decimals)
   NumberDecimals=decimals;
 }
 
+QString toQValue::formatNumber(double number)
+{
+  switch(NumberFormat) {
+  case 1:
+    {
+      char buf[100];
+      sprintf(buf,"%g",number);
+      return buf;
+    }
+  case 2:
+    {
+      char buf[100];
+      sprintf(buf,"%0.*f",NumberDecimals,number);
+      return buf;
+    }
+  default:
+    return QString::number(number);
+  }
+}
+
+int toQValue::numberFormat(void)
+{
+  return NumberFormat;
+}
+
+int toQValue::numberDecimals(void)
+{
+  return NumberDecimals;
+}
+
 toQValue::operator QString() const
 {
   switch(Type) {
@@ -372,22 +402,7 @@ toQValue::operator QString() const
   case intType:
     return QString::number(Value.Int);
   case doubleType:
-    switch(NumberFormat) {
-    case 1:
-      {
-	char buf[100];
-	sprintf(buf,"%g",Value.Double);
-	return buf;
-      }
-    case 2:
-      {
-	char buf[100];
-	sprintf(buf,"%0.*f",NumberDecimals,Value.Double);
-	return buf;
-      }
-    default:
-      return QString::number(Value.Double);
-    }
+    return formatNumber(Value.Double);
   case stringType:
     return *Value.String;
   }

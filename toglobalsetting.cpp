@@ -286,6 +286,8 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
 
   Decimals->setValue(toTool::globalConfig(CONF_NUMBER_DECIMALS,DEFAULT_NUMBER_DECIMALS).toInt());
   NumberFormat->setCurrentItem(toTool::globalConfig(CONF_NUMBER_FORMAT,DEFAULT_NUMBER_FORMAT).toInt());
+  if (NumberFormat->currentItem()==2)
+    Decimals->setEnabled(true);
 
   AutoCommit->setChecked(!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty());
   DontReread->setChecked(!toTool::globalConfig(CONF_DONT_REREAD,"Yes").isEmpty());
@@ -331,6 +333,11 @@ void toDatabaseSetting::saveSetting(void)
 			  AutoLong->isChecked()?MoveAfter->cleanText():QString::fromLatin1("0"));
   toTool::globalSetConfig(CONF_INDICATE_EMPTY,IndicateEmpty->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_KEEP_ALIVE,KeepAlive->isChecked()?DEFAULT_KEEP_ALIVE:"");
+
+  toTool::globalSetConfig(CONF_NUMBER_FORMAT,QString::number(NumberFormat->currentItem()));
+  toTool::globalSetConfig(CONF_NUMBER_DECIMALS,QString::number(Decimals->value()));
+  toQValue::setNumberFormat(NumberFormat->currentItem(),Decimals->value());
+
   toMainWidget()->updateKeepAlive();
   toUpdateIndicateEmpty();
 }

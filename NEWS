@@ -1,7 +1,8 @@
 1.3.10:
 
-2003-02-10: Fixed problem with first tool... AGAIN.
-2003-02-10: Fixed hang in alert messenger.
+2003-02-10: Changed tuning to remove some implicit number to character conversions.
+2003-02-10: Fixed problem with first tool... again.
+2003-02-10: Fixed hang in alert messenger... again.
 2003-02-10: Definable number format.
 2003-02-10: Added periodic refresh functionality to worksheet.
 2003-02-10: Fixed bug in sorting in SGA trace. (Thanx Jeff Price)

@@ -108,7 +108,21 @@ public:
    */
   operator QString() const;
 
+  /** Set numberformat.
+   * @param format 0 = Default, 1 = Scientific, 2 = Fixed Decimals
+   * @param decimals Number on decimals for fixed decimals.
+   */
   static void setNumberFormat(int format,int decimals);
+  /** Format a number according to current settings.
+   */
+  static QString formatNumber(double number);
+  /** Get number format.
+   * @return Format 0 = Default, 1 = Scientific, 2 = Fixed Decimals
+   */
+  static int numberFormat(void);
+  /** Get decimals if fixed decimals.
+   */
+  static int numberDecimals(void);
 };
 
 /** A short representation of list<toQuery::queryValue>
