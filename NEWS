@@ -69,6 +69,7 @@
 2001-08-20: Fixed problem with y-axis legend and Xft.
 2001-08-20: Fixed some warnings for gcc-2.96.
 2001-08-20: Removed the ugly TO_NAMESPACE hack.
+2001-08-20: Re made toSyntaxSetupUI in designer.
 
 0.14: Released 2001-08-02
 

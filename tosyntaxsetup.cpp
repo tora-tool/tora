@@ -44,14 +44,14 @@
 #include <qcolordialog.h>
 #include <qapplication.h>
 #include <qlistview.h>
+#include <qcheckbox.h>
+
+#include "tosyntaxsetupui.moc"
 
 #include "tohighlightedtext.h"
 #include "tosyntaxsetup.h"
 #include "toconf.h"
 #include "tomain.h"
-
-#include "tosyntaxsetup.ui.moc"
-#include "tosyntaxsetup.ui.cpp"
 
 toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
   : toSyntaxSetupUI(parent,name,fl),toSettingTab("fonts.html"),Analyzer(toDefaultAnalyzer())

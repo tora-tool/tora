@@ -39,6 +39,7 @@
 #include <qpopupmenu.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
+#include <qlineedit.h>
 
 #include "toconf.h"
 #include "tomemoeditor.h"
@@ -46,6 +47,9 @@
 #include "toresultcontent.h"
 #include "toresultview.h"
 #include "totool.h"
+#include "tohighlightedtext.h"
+#include "toresultcontentfilterui.h"
+#include "toresultcols.h"
 
 #include "toresultcontent.moc"
 #include "toresultcontentfilterui.moc"
@@ -53,8 +57,6 @@
 #include "icons/filter.xpm"
 #include "icons/nofilter.xpm"
 #include "icons/trash.xpm"
-
-#include "toresultcontentfilterui.cpp"
 
 #define INC_SIZE 50
 

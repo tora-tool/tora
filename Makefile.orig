@@ -22,82 +22,87 @@
 TITLE=TOra
 SUBDIRS=
 SOURCES=\
-	toabout.cpp 		\
-	tobarchart.cpp		\
-	tobrowser.cpp		\
-	tobrowserfilterui.cpp	\
-	toconnection.cpp	\
-	tocurrent.cpp		\
-	tochangeconnection.cpp	\
-	todebug.cpp		\
-	todebugchange.cpp	\
-	todebugtext.cpp		\
-	todebugwatch.cpp	\
-	toextract.cpp		\
-	tofilesize.cpp		\
-	toglobalsetting.cpp     \
-	tohelp.cpp		\
-	tohelpaddfileui.cpp	\
-	tohelpsetupui.cpp	\
-	tohighlightedtext.cpp	\
-	tohtml.cpp		\
-	tolinechart.cpp		\
-	tomain.cpp		\
-	tomarkedtext.cpp	\
-	tomemoeditor.cpp	\
-	tonewconnection.cpp	\
-	tonewconnectionui.cpp	\
-	tonoblockquery.cpp	\
-	tooutput.cpp		\
-	tooracleconnection.cpp	\
-	toparamget.cpp		\
-	topiechart.cpp		\
-	topreferences.cpp	\
-	toresultbar.cpp		\
-	toresultcols.cpp	\
-	toresultconstraint.cpp	\
-	toresultcontent.cpp	\
-	toresultdepend.cpp	\
-	toresultfield.cpp	\
-	toresultindexes.cpp	\
-	toresultitem.cpp	\
-	toresultline.cpp	\
-	toresultlock.cpp	\
-	toresultlong.cpp	\
-	toresultpie.cpp		\
-	toresultplan.cpp	\
-	toresultreferences.cpp	\
-	toresultstats.cpp	\
-	toresultstorage.cpp	\
-	toresultview.cpp	\
-	torollback.cpp		\
-	toscript.cpp		\
-	toscriptui.cpp		\
-	tosearchreplace.cpp	\
-	tosearchreplaceui.cpp	\
-	tosession.cpp		\
-	tosecurity.cpp		\
-	tosecurityquotaui.cpp	\
-	tosecurityroleui.cpp	\
-	tosecurityuserui.cpp	\
-	tosgastatement.cpp	\
-	tosgatrace.cpp		\
-	tosql.cpp		\
-	tosqledit.cpp		\
-	tostorage.cpp		\
-	tostoragedefinition.cpp	\
-	tosyntaxsetup.cpp	\
-	totemplate.cpp		\
-	totemplateaddfileui.cpp	\
-	totemplateeditui.cpp	\
-	totemplateprovider.cpp	\
-	totemplatesetupui.cpp	\
-	tothread.cpp		\
-	totool.cpp		\
-	totuning.cpp		\
-	totuningoverviewui.cpp	\
-	toworksheet.cpp		\
-	toworksheetsetupui.cpp	\
+	toabout.cpp 		        \
+	tobarchart.cpp		        \
+	tobrowser.cpp		        \
+	tobrowserfilterui.cpp	        \
+	toconnection.cpp	        \
+	tocurrent.cpp		        \
+	tochangeconnection.cpp	        \
+	todatabasesettingui.cpp	        \
+	todebug.cpp		        \
+	todebugchange.cpp	        \
+	todebugtext.cpp		        \
+	todebugwatch.cpp	        \
+	toextract.cpp		        \
+	tofilesize.cpp		        \
+	toglobalsetting.cpp             \
+	toglobalsettingui.cpp	        \
+	tohelp.cpp		        \
+	tohelpaddfileui.cpp	        \
+	tohelpsetupui.cpp	        \
+	tohighlightedtext.cpp	        \
+	tohtml.cpp		        \
+	tolinechart.cpp		        \
+	tomain.cpp		        \
+	tomarkedtext.cpp	        \
+	tomemoeditor.cpp	        \
+	tonewconnection.cpp	        \
+	tonewconnectionui.cpp	        \
+	tonoblockquery.cpp	        \
+	tooutput.cpp		        \
+	tooracleconnection.cpp	        \
+	toparamget.cpp		        \
+	topiechart.cpp		        \
+	topreferences.cpp	        \
+	toresultbar.cpp		        \
+	toresultcols.cpp	        \
+	toresultconstraint.cpp	        \
+	toresultcontent.cpp		\
+	toresultcontentfilterui.cpp	\
+	toresultdepend.cpp	        \
+	toresultfield.cpp	        \
+	toresultindexes.cpp	        \
+	toresultitem.cpp	        \
+	toresultline.cpp	        \
+	toresultlock.cpp	        \
+	toresultlong.cpp	        \
+	toresultpie.cpp		        \
+	toresultplan.cpp	        \
+	toresultreferences.cpp	        \
+	toresultstats.cpp	        \
+	toresultstorage.cpp	        \
+	toresultview.cpp	        \
+	torollback.cpp		        \
+	toscript.cpp		        \
+	toscriptui.cpp		        \
+	tosearchreplace.cpp	        \
+	tosearchreplaceui.cpp	        \
+	tosession.cpp		        \
+	tosecurity.cpp		        \
+	tosecurityquotaui.cpp	        \
+	tosecurityroleui.cpp	        \
+	tosecurityuserui.cpp	        \
+	tosgastatement.cpp	        \
+	tosgatrace.cpp		        \
+	tosql.cpp		        \
+	tosqledit.cpp		        \
+	tostorage.cpp		        \
+	tostoragedefinition.cpp	        \
+	tosyntaxsetup.cpp	        \
+	tosyntaxsetupui.cpp		\
+	totemplate.cpp		        \
+	totemplateaddfileui.cpp	        \
+	totemplateeditui.cpp	        \
+	totemplateprovider.cpp	        \
+	totemplatesetupui.cpp	        \
+	tothread.cpp		        \
+	totool.cpp			\
+	totoolsettingui.cpp		\
+	totuning.cpp			\
+	totuningoverviewui.cpp		\
+	toworksheet.cpp			\
+	toworksheetsetupui.cpp		\
 	utils.cpp
 
 API=	\
@@ -257,7 +262,9 @@ tora: \
 	objs/toabout.o \
 	objs/tochangeconnection.o \
 	objs/toconnection.o \
+	objs/todatabasesettingui.o \
 	objs/toglobalsetting.o \
+	objs/toglobalsettingui.o \
 	objs/tohelp.o \
 	objs/tohelpaddfileui.o \
 	objs/tohelpsetupui.o \
@@ -272,6 +279,7 @@ tora: \
 	objs/topreferences.o \
 	objs/toresultcols.o \
 	objs/toresultcontent.o \
+	objs/toresultcontentfilterui.o \
 	objs/toresultfield.o \
 	objs/toresultitem.o \
 	objs/toresultplan.o \
@@ -280,9 +288,11 @@ tora: \
 	objs/tosearchreplace.o \
 	objs/tosearchreplaceui.o \
 	objs/tosyntaxsetup.o \
+	objs/tosyntaxsetupui.o \
 	objs/totemplateprovider.o \
 	objs/tothread.o \
 	objs/totool.o \
+	objs/totoolsettingui.o \
 	objs/utils.o
 	@echo Linking $@
 	$(GCC) $(LFLAGS) -Xlinker "--export-dynamic" $(LFLAGS_GLOB) \

@@ -39,7 +39,7 @@
 
 #include <map>
 #include "totool.h"
-#include "tosyntaxsetup.ui.h"
+#include "tosyntaxsetupui.h"
 #include "tohighlightedtext.h"
 #include "tohelp.h"
 

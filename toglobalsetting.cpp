@@ -38,6 +38,7 @@
 #include <kfiledialog.h>
 #endif
 
+#include <qspinbox.h>
 #include <qcheckbox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
@@ -62,10 +63,6 @@
 #include "toglobalsettingui.moc"
 #include "todatabasesettingui.moc"
 #include "totoolsettingui.moc"
-
-#include "toglobalsettingui.cpp"
-#include "todatabasesettingui.cpp"
-#include "totoolsettingui.cpp"
 
 toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   : toGlobalSettingUI(parent,name,fl), toSettingTab("preferences.html#global")
