@@ -347,7 +347,7 @@ if (!$InstallLib) {
 
 sub finalTest {
     my ($gcc)=@_;
-    print "trying $gcc compiler ... ";
+    print "checking $gcc compiler ... ";
     open(TEMP,">$tmpName.cpp") || die "Can't open temp file";
 
     print TEMP <<__TEMP__;
@@ -829,7 +829,7 @@ __TEMP__
 
     if (`uname`=~/linux/i) {
 	$Linux=1;
-	print "nono\n";
+	print "none\n";
     } elsif (`uname`=~/sunos/i) {
 	$NoRPath=1;
 	if (`uname -r`>=8.0) {
@@ -841,7 +841,7 @@ __TEMP__
 	}
     } else {
 	$NoRPath=1;
-	print "nono\n";
+	print "none\n";
     }
     if (!$NoRPath) {
 	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\" ";
@@ -939,12 +939,11 @@ __TEMP__
     if (!-f $CC) {
 	findFile("^(g\\+\\+|gcc|cc|kgcc)\$",\&finalTest,split(/:/,$ENV{PATH}));
     } elsif (!&finalTest($CC)) {
-	printf("checking for valid compiler ... failed!\nInvalid compiler specified\n");
+	printf("\n\nInvalid compiler specified\n");
 	exit(2);
     }
     if (!-f $CC) {
 	print <<__EOT__;
-checking for valid compiler ... failed!
 
 Failed to find compatible GCC compiler. This doesn't necessary mean that
 there are no c++ compiler that won't work. This test includes compiling
@@ -959,7 +958,6 @@ compiler used):
 __EOT__
 	exit(2);
     }
-    print "checking for valid compiler ... $CC\n";
 
     if (!$ForceTarget) {
 	print "checking for plugin support ... ";
