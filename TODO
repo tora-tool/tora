@@ -35,8 +35,7 @@ Extended functionality:
 * Different highlighter depending on connection.
 * Default names to listen to in alert.
 * Make menues and toolbuttons work for QLineEdit & QComboBox.
-* Cache database objects in background on connecting.
-* Use object cache in script & debug object lists.
+* Use object cache in script object lists.
 * Add support for Oracle7 in debugger.
 * Optionaly drop before create in toExtract.
 * Tabbed source windows in debugger.

@@ -1694,6 +1694,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   Objects->addColumn("Objects");
   Objects->setRootIsDecorated(true);
   Objects->setTreeStepSize(10);
+  Objects->setSorting(0);
   connect(Objects,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changePackage(QListViewItem *)));
   Contents=new toResultView(false,false,objSplitter);
@@ -1860,31 +1861,44 @@ void toDebug::refresh(void)
 	  break;
 	}
       Objects->clear();
-      toQuery code(connection(),SQLListObjects,selected);
 
-      QListViewItem *typeItem=NULL;
-      QListViewItem *last=NULL;
-      while(!code.eof()) {
-	QString type=code.readValue();
-	QString name=code.readValue();
-	if (!typeItem||typeItem->text(0)!=type) {
-	  typeItem=new QListViewItem(Objects,typeItem,type);
+      std::list<toConnection::objectName> &objs=connection().objects(true);
+
+      std::map<QString,QListViewItem *> typeItems;
+      bool any=false;
+      for (std::list<toConnection::objectName>::iterator i=objs.begin();
+	   i!=objs.end();i++) {
+	if ((*i).Owner==selected) {
+	  any=true;
+	  QString type=(*i).Type;
+	  if (type=="FUNCTION"||type=="PACKAGE"||type=="PROCEDURE"||type=="TYPE") {
+	    QListViewItem *typeItem;
+	    std::map<QString,QListViewItem *>::iterator j=typeItems.find(type);
+	    if (j==typeItems.end()) {
+	      typeItem=new QListViewItem(Objects,type);
+	      typeItems[type]=typeItem;
 #ifndef AUTOEXPAND
-	  typeItem->setSelectable(false);
+	      typeItem->setSelectable(false);
 #endif
-	}
-	QString bodyType(type);
-	bodyType+=" BODY";
-	last=new QListViewItem(typeItem,last,name);
-	last->setText(1,type);
-	if (selected==currentEditor()->schema()&&
-	    (type==currentEditor()->type()||
-	     bodyType==currentEditor()->type())&&
-	    name==currentEditor()->object()) {
-	  Objects->setOpen(typeItem,true);
-	  Objects->setSelected(last,true);
-	}
+	    } else
+	      typeItem=(*j).second;
+
+	    QString bodyType(type);
+	    bodyType+=" BODY";
+	    QString name=(*i).Name;
+	    QListViewItem *item=new QListViewItem(typeItem,name,type);
+	    if (selected==currentEditor()->schema()&&
+		(type==currentEditor()->type()||
+		 bodyType==currentEditor()->type())&&
+		name==currentEditor()->object()) {
+	      Objects->setOpen(typeItem,true);
+	      Objects->setSelected(item,true);
+	    }
+	  }
+	} else if (any)
+	  break;
       }
+
       if (HeadEditor->length()==0)
 	HeadEditor->setSchema(selected);
       if (BodyEditor->length()==0)
