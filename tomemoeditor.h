@@ -38,6 +38,9 @@
 #include <qdialog.h>
 
 class toMarkedText;
+class toListView;
+class toResultContentEditor;
+class QListViewItem;
 
 /** Displays an text in a widget which can optionally be modified and saved back.
  */
@@ -54,9 +57,19 @@ class toMemoEditor : public QDialog {
   /** Column of this field
    */
   int Col;
+  QToolBar *Toolbar;
+
+  void setup(const QString &str,bool sql,bool modal);
+
+  toListView *listView(void);
 private slots:
   void openFile(void);
   void saveFile(void); 
+protected:
+  QToolBar *toolbar()
+  { return Toolbar; }
+  toMarkedText *editor()
+  { return Editor; }
 public:
   /** Create this editor. If row and col is specified, editing is posible.
    * @param parent Parent widget.
@@ -65,9 +78,11 @@ public:
    * @param col Optional location specifier, pass on in @ref changeData call.
    * @param sql Use SQL syntax highlighting of widget.
    * @param modal Display in modal dialog
+   * @param navigation Display navigation buttons
    */
   toMemoEditor(QWidget *parent,const QString &data,int row=-1,int col=-1,
-	       bool sql=false,bool modal=false);
+	       bool sql=false,bool modal=false,bool navigation=false);
+
   /** Get editor text.
    * @return String of editor.
    */
@@ -81,6 +96,15 @@ signals:
   void changeData(int row,int col,const QString &data);
 public slots:
   void store(void);
+
+  void changeCurrent(QListViewItem *item);
+
+  virtual void firstColumn();
+  virtual void nextColumn();
+  virtual void previousColumn();
+  virtual void lastColumn();
+
+  virtual void changePosition(int row,int cols);
 };
 
 #endif

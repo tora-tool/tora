@@ -75,6 +75,78 @@
 
 #include "icons/single.xpm"
 
+toResultContentEditor *toResultContentMemo::contentEditor()
+{
+  return dynamic_cast<toResultContentEditor *>(parent());
+}
+
+toResultContentMemo::toResultContentMemo(QWidget *parent,const QString &data,int row,int col,
+					 bool sql=false)
+  : toMemoEditor(parent,data,row,col,sql,false,true)
+{
+  connect(parent,SIGNAL(currentChanged(int,int)),this,SLOT(changePosition(int,int)));
+}
+
+void toResultContentMemo::changePosition(int row,int cols)
+{
+  toMemoEditor::changePosition(row,cols);
+  toResultContentEditor *cnt=contentEditor();
+  if (cnt) {
+    editor()->setText(cnt->text(row,cols));
+    editor()->setEdited(false);
+  }
+}
+
+void toResultContentMemo::firstColumn()
+{
+  toResultContentEditor *cnt=contentEditor();
+  if (cnt) {
+    int col=cnt->currentColumn();
+    if (col==0)
+      cnt->setCurrentCell(max(cnt->currentRow()-1,0),0);
+    else
+      cnt->setCurrentCell(cnt->currentRow(),0);
+  }
+}
+
+void toResultContentMemo::lastColumn()
+{
+  toResultContentEditor *cnt=contentEditor();
+  if (cnt) {
+    int col=cnt->currentColumn();
+    int maxCol=cnt->numCols()-1;
+    if (col==maxCol)
+      cnt->setCurrentCell(min(cnt->numRows()-1,cnt->currentRow()+1),maxCol);
+    else
+      cnt->setCurrentCell(cnt->currentRow(),maxCol);
+  }
+}
+
+void toResultContentMemo::previousColumn()
+{
+  toResultContentEditor *cnt=contentEditor();
+  if (cnt) {
+    int col=cnt->currentColumn();
+    if (col==0)
+      cnt->setCurrentCell(max(cnt->currentRow()-1,0),cnt->numCols()-1);
+    else
+      cnt->setCurrentCell(cnt->currentRow(),col-1);
+  }
+}
+
+void toResultContentMemo::nextColumn()
+{
+  toResultContentEditor *cnt=contentEditor();
+  if (cnt) {
+    int col=cnt->currentColumn();
+    int maxCol=cnt->numCols()-1;
+    if (col==maxCol)
+      cnt->setCurrentCell(min(cnt->numRows()-1,cnt->currentRow()+1),0);
+    else
+      cnt->setCurrentCell(cnt->currentRow(),col+1);
+  }
+}
+
 void toResultContentEditor::editSearch(toSearchReplace *search)
 {
   search->setTarget(this);
@@ -830,7 +902,7 @@ void toResultContentEditor::displayMenu(const QPoint &p)
 
 void toResultContentEditor::displayMemo(void)
 {
-  toMemoEditor *edit=new toMemoEditor(this,text(MenuRow,MenuColumn),MenuRow,MenuColumn);
+  toMemoEditor *edit=new toResultContentMemo(this,text(MenuRow,MenuColumn),MenuRow,MenuColumn);
   connect(edit,SIGNAL(changeData(int,int,const QString &)),
 	  this,SLOT(changeData(int,int,const QString &)));
 }

@@ -549,7 +549,7 @@ void toListView::displayMemo(void)
 {
   QString str=menuText();
   if (!str.isEmpty())
-    new toMemoEditor(this,str);
+    new toMemoEditor(this,str,0,MenuColumn);
 }
 
 void toListView::menuCallback(int cmd)

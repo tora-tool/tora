@@ -42,6 +42,7 @@
 #include "tohighlightedtext.h"
 #include "tomarkedtext.h"
 #include "tomain.h"
+#include "toresultview.h"
 
 #include "tomemoeditor.moc"
 
@@ -51,6 +52,11 @@
 #include "icons/cut.xpm"
 #include "icons/copy.xpm"
 #include "icons/paste.xpm"
+
+#include "icons/forward.xpm"
+#include "icons/next.xpm"
+#include "icons/previous.xpm"
+#include "icons/rewind.xpm"
 
 class toMemoText : public toMarkedText {
   toMemoEditor *MemoEditor;
@@ -102,18 +108,14 @@ void toMemoEditor::saveFile(void)
   Editor->editSave(true);
 }
 
-toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
-			   bool sql,bool modal)
-  : QDialog(parent,NULL,modal,modal?0:WDestructiveClose)
+void toMemoEditor::setup(const QString &str,bool sql,bool modal)
 {
   setMinimumSize(400,300);
-  Row=row;
-  Col=col;
 
   QBoxLayout *l=new QVBoxLayout(this);
 
-  QToolBar *toolbar=toAllocBar(this,"Memo Editor",QString::null);
-  l->addWidget(toolbar);
+  Toolbar=toAllocBar(this,"Memo Editor",QString::null);
+  l->addWidget(Toolbar);
 
   if (sql)
     Editor=new toMemoSQL(this,this);
@@ -121,30 +123,31 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
     Editor=new toMemoText(this,this);
   l->addWidget(Editor);
   Editor->setText(str);
-  Editor->setReadOnly(row<0||col<0);
+  Editor->setEdited(false);
+  Editor->setReadOnly(Row<0||Col<0||listView());
   Editor->setFocus();
 
   QToolButton *btn;
-  if (row>=0&&col>=0) {
+  if (Row>=0&&Col>=0&&!listView()) {
     new QToolButton(QPixmap((const char **)commit_xpm),
 		    "Save changes",
 		    "Save changes",
 		    this,SLOT(store(void)),
-		    toolbar);
-    toolbar->addSeparator();
+		    Toolbar);
+    Toolbar->addSeparator();
     new QToolButton(QPixmap((const char **)fileopen_xpm),
 		    "Open file",
 		    "Open file",
-		    this,SLOT(openFile()),toolbar);
+		    this,SLOT(openFile()),Toolbar);
     new QToolButton(QPixmap((const char **)filesave_xpm),
 		    "Save file",
 		    "Save file",
-		    this,SLOT(saveFile()),toolbar);
-    toolbar->addSeparator();
+		    this,SLOT(saveFile()),Toolbar);
+    Toolbar->addSeparator();
     btn=new QToolButton(QPixmap((const char **)cut_xpm),
 			"Cut to clipboard",
 			"Cut to clipboard",
-			Editor,SLOT(cut()),toolbar);
+			Editor,SLOT(cut()),Toolbar);
     connect(Editor,SIGNAL(copyAvailable(bool)),
 	    btn,SLOT(setEnabled(bool)));
     btn->setEnabled(false);
@@ -152,26 +155,56 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
     new QToolButton(QPixmap((const char **)filesave_xpm),
 		    "Save file",
 		    "Save file",
-		    this,SLOT(saveFile()),toolbar);
-    toolbar->addSeparator();
+		    this,SLOT(saveFile()),Toolbar);
+    Toolbar->addSeparator();
   }
   btn=new QToolButton(QPixmap((const char **)copy_xpm),
 			     "Copy to clipboard",
 			     "Copy to clipboard",
-			     Editor,SLOT(copy()),toolbar);
+			     Editor,SLOT(copy()),Toolbar);
   connect(Editor,SIGNAL(copyAvailable(bool)),
 	  btn,SLOT(setEnabled(bool)));
   btn->setEnabled(false);
-  if (row>=0&&col>=0)
+  if (Row>=0&&Col>=0&&!listView())
     new QToolButton(QPixmap((const char **)paste_xpm),
 		    "Paste from clipboard",
 		    "Paste from clipboard",
-		    Editor,SLOT(paste()),toolbar);
+		    Editor,SLOT(paste()),Toolbar);
   
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
-
   if (!modal)
     show();
+}
+
+toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
+			   bool sql,bool modal,bool navigation)
+  : QDialog(parent,NULL,modal,modal?0:WDestructiveClose),Row(row),Col(col)
+{
+  setup(str,sql,modal);
+
+  if (listView()||navigation) {
+    if (listView())
+      connect(parent,SIGNAL(currentChanged(QListViewItem *)),
+	      this,SLOT(changeCurrent(QListViewItem *)));
+
+    new QToolButton(QPixmap((const char **)rewind_xpm),
+		    "First column",
+		    "First column",
+		    this,SLOT(firstColumn()),Toolbar);
+    new QToolButton(QPixmap((const char **)previous_xpm),
+		    "Previous column",
+		    "Previous column",
+		    this,SLOT(previousColumn()),Toolbar);
+    new QToolButton(QPixmap((const char **)next_xpm),
+		    "Next column",
+		    "Next column",
+		    this,SLOT(nextColumn()),Toolbar);
+    new QToolButton(QPixmap((const char **)forward_xpm),
+		    "Last column",
+		    "Last column",
+		    this,SLOT(lastColumn()),Toolbar);
+  }
+
+  Toolbar->setStretchableWidget(new QLabel("",Toolbar));
 }
 
 QString toMemoEditor::text(void)
@@ -183,6 +216,199 @@ void toMemoEditor::store(void)
 {
   if (Editor->isReadOnly())
     return;
-  emit changeData(Row,Col,Editor->text());
+  if (Editor->edited())
+    emit changeData(Row,Col,Editor->text());
   accept();
+}
+
+void toMemoEditor::changePosition(int row,int cols)
+{
+  if (Editor->edited())
+    emit changeData(Row,Col,Editor->text());
+  Row=row;
+  Col=cols;
+}
+
+toListView *toMemoEditor::listView(void)
+{
+  return dynamic_cast<toListView *>(parentWidget());
+}
+
+void toMemoEditor::firstColumn(void)
+{
+  toListView *lst=listView();
+  if (lst) {
+    QListViewItem *cur=lst->currentItem();
+    if (!cur)
+      return;
+
+    if (Col==0) {
+      QListViewItem *item=lst->firstChild();
+      QListViewItem *next=item;
+      while(next&&next!=cur) {
+	item=next;
+	if (item->firstChild())
+	  next=item->firstChild();
+	else if (item->nextSibling())
+	  next=item->nextSibling();
+	else {
+	  next=item;
+	  do {
+	    next=next->parent();
+	  } while(next&&!next->nextSibling());
+	  if (next)
+	    next=next->nextSibling();
+	}
+      }
+      lst->setCurrentItem(item);
+    } else {
+      Col=0;
+      toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(cur);
+      toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(cur);
+      if (resItem)
+	Editor->setText(resItem->allText(Col));
+      else if (chkItem)
+	Editor->setText(chkItem->allText(Col));
+      else
+	Editor->setText(cur->text(Col));
+    }
+  }
+}
+
+void toMemoEditor::previousColumn(void)
+{
+  toListView *lst=listView();
+  if (lst) {
+    QListViewItem *cur=lst->currentItem();
+    if (!cur)
+      return;
+
+    if (Col==0) {
+      Col=lst->columns()-1;
+      QListViewItem *item=lst->firstChild();
+      QListViewItem *next=item;
+      while(next&&next!=cur) {
+	item=next;
+	if (item->firstChild())
+	  next=item->firstChild();
+	else if (item->nextSibling())
+	  next=item->nextSibling();
+	else {
+	  next=item;
+	  do {
+	    next=next->parent();
+	  } while(next&&!next->nextSibling());
+	  if (next)
+	    next=next->nextSibling();
+	}
+      }
+      lst->setCurrentItem(item);
+    } else {
+      Col--;
+      toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(cur);
+      toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(cur);
+      if (resItem)
+	Editor->setText(resItem->allText(Col));
+      else if (chkItem)
+	Editor->setText(chkItem->allText(Col));
+      else
+	Editor->setText(cur->text(Col));
+    }
+  }
+}
+
+void toMemoEditor::nextColumn(void)
+{
+  toListView *lst=listView();
+  if (lst) {
+    QListViewItem *cur=lst->currentItem();
+    if (!cur)
+      return;
+
+    if (Col==lst->columns()-1) {
+      Col=0;
+      QListViewItem *next=cur;
+      if (cur->firstChild())
+	next=cur->firstChild();
+      else if (cur->nextSibling())
+	next=cur->nextSibling();
+      else {
+	next=cur;
+	do {
+	  next=next->parent();
+	} while(next&&!next->nextSibling());
+	if (next)
+	  next=next->nextSibling();
+      }
+      if (next)
+	lst->setCurrentItem(next);
+    } else {
+      Col++;
+      toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(cur);
+      toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(cur);
+      if (resItem)
+	Editor->setText(resItem->allText(Col));
+      else if (chkItem)
+	Editor->setText(chkItem->allText(Col));
+      else
+	Editor->setText(cur->text(Col));
+    }
+  }
+}
+
+void toMemoEditor::lastColumn(void)
+{
+  toListView *lst=listView();
+  if (lst) {
+    QListViewItem *cur=lst->currentItem();
+    if (!cur)
+      return;
+
+    if (Col==lst->columns()-1) {
+      QListViewItem *next=cur;
+      if (cur->firstChild())
+	next=cur->firstChild();
+      else if (cur->nextSibling())
+	next=cur->nextSibling();
+      else {
+	next=cur;
+	do {
+	  next=next->parent();
+	} while(next&&!next->nextSibling());
+	if (next)
+	  next=next->nextSibling();
+      }
+      if (next)
+	lst->setCurrentItem(next);
+    } else {
+      Col=lst->columns()-1;
+      toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(cur);
+      toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(cur);
+      if (resItem)
+	Editor->setText(resItem->allText(Col));
+      else if (chkItem)
+	Editor->setText(chkItem->allText(Col));
+      else
+	Editor->setText(cur->text(Col));
+    }
+  }
+}
+
+void toMemoEditor::changeCurrent(QListViewItem *item)
+{
+  toListView *lst=listView();
+  if (lst) {
+    QListViewItem *cur=lst->currentItem();
+    if (!cur)
+      return;
+
+    toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(cur);
+    toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(cur);
+    if (resItem)
+      Editor->setText(resItem->allText(Col));
+    else if (chkItem)
+      Editor->setText(chkItem->allText(Col));
+    else
+      Editor->setText(cur->text(Col));
+  }
 }

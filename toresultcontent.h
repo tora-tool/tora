@@ -42,6 +42,7 @@
 #include "toresult.h"
 #include "toeditwidget.h"
 #include "toconnection.h"
+#include "tomemoeditor.h"
 
 class toResultContent;
 class toNoBlockQuery;
@@ -49,8 +50,30 @@ class toSearchReplace;
 class QChecBox;
 class QLineEdit;
 class QGrid;
+class QCheckBox;
+
+/** Implement memo editor in result content editor. Only for internal use.
+ * @internal
+ */
+
+class toResultContentMemo : public toMemoEditor {
+  Q_OBJECT
+
+  toResultContentEditor *contentEditor();
+public:
+  toResultContentMemo(QWidget *parent,const QString &data,int row,int col,
+		      bool sql=false);
+public slots:
+  virtual void firstColumn();
+  virtual void nextColumn();
+  virtual void previousColumn();
+  virtual void lastColumn();
+
+  virtual void changePosition(int row,int cols);
+};
 
 /** This widget is used for single record view in the content editor. Only for internal use.
+ * @internal
  */
 
 class toResultContentSingle : public QScrollView {
