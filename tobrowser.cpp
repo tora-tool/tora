@@ -82,7 +82,6 @@ public:
   }
 };
 
-static toBrowseTemplate BrowseTemplate;
 static toBrowserTool BrowserTool;
 
 static QPixmap *toRefreshPixmap;
@@ -211,6 +210,18 @@ static toSQL SQLListSQL("toBrowser:ListPL/SQL",
 			"                       'PROCEDURE','TYPE')\n"
 			" ORDER BY Object_Name",
 			"List the available PL/SQL objects in a schema");
+static toSQL SQLListSQLShort("toBrowser:ListPL/SQLShort",
+			     "SELECT Object_Name Type FROM ALL_OBJECTS\n"
+		 	     " WHERE OWNER = :f1<char[31]>\n"
+			     "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
+			     "                       'PROCEDURE','TYPE')\n"
+			     " ORDER BY Object_Name",
+			     "List the available PL/SQL objects in a schema, one column version");
+static toSQL SQLSQLTemplate("toBrowser:PL/SQLTemplate",
+			    "SELECT Text FROM ALL_SOURCE\n"
+			    " WHERE Owner = :f1<char[31]> AND Name = :f2<char[31]>\n"
+			    "   AND Type IN ('PACKAGE','PROCEDURE','FUNCTION','PACKAGE','TYPE')",
+			    "Declaration of object displayed in template window");
 static toSQL SQLSQLHead("toBrowser:PL/SQLHead",
 			"SELECT Text FROM ALL_SOURCE\n"
 			" WHERE Owner = :f1<char[31]> AND Name = :f2<char[31]>\n"
@@ -219,7 +230,7 @@ static toSQL SQLSQLHead("toBrowser:PL/SQLHead",
 static toSQL SQLSQLBody("toBrowser:PL/SQLBody",
 			"SELECT Text FROM ALL_SOURCE\n"
 			" WHERE Owner = :f1<char[31]> AND Name = :f2<char[31]>\n"
-			"   AND Type IN ('PACKAGE','PROCEDURE','PACKAGE BODY','TYPE BODY')",
+			"   AND Type IN ('PACKAGE','PROCEDURE','FUNCTION','PACKAGE BODY','TYPE BODY')",
 			"Implementation of object");
 
 static toSQL SQLListTrigger("toBrowser:ListTrigger",
@@ -595,7 +606,124 @@ void toBrowseTemplate::removeDatabase(const QString &name)
   }
 }
 
-toTemplateItem *toBrowseTemplate::insertItem(QListView *parent)
+void toBrowseTemplate::removeItem(QListViewItem *item)
+{
+  for(list<toTemplateItem *>::iterator i=Parents.begin();i!=Parents.end();i++)
+    if ((*i)==item) {
+      Parents.erase(i);
+      break;
+    }
+}
+
+class toTemplateSchemaItem : public toTemplateItem {
+  toConnection &Connection;
+public:
+  toTemplateSchemaItem(toConnection &conn,toTemplateItem *parent,
+		       const QString &name)
+    : toTemplateItem(parent,name),Connection(conn)
+  { }
+  virtual QWidget *selectedWidget(QWidget *par)
+  {
+    QString object=text(0);
+    QString typ=parent()->text(0);
+    QString schema=parent()->parent()->text(0);
+
+    if (typ=="Code"||typ=="Triggers") {
+      toResultField *fld=new toResultField(Connection,par);
+      if(typ=="Code")
+	fld->setSQL(SQLSQLTemplate);
+      else
+	fld->setSQL(SQLTriggerBody);
+      fld->changeParams(schema,object);
+      return fld;
+    } else if (typ=="Tables"||typ=="Views") {
+      toResultCols *cols=new toResultCols(Connection,par);
+      cols->changeParams(schema,object);
+      return cols;
+    } else if (typ=="Indexes") {
+      toResultView *resultView=new toResultView(true,false,Connection,par);
+      resultView->setSQL(SQLIndexCols);
+      resultView->changeParams(schema,object);
+      return resultView;
+    } else if (typ=="Synonyms"||typ=="Sequences") {
+      toResultItem *resultItem=new toResultItem(1,true,Connection,par);
+      if (typ=="Synonyms")
+	resultItem->setSQL(SQLSynonymInfo(Connection));
+      else
+	resultItem->setSQL(SQLSequenceInfo(Connection));
+      resultItem->changeParams(schema,object);
+      return resultItem;
+    } else
+      return NULL;
+  }
+};
+
+class toTemplateSchemaList : public toTemplateSQL {
+public:
+  toTemplateSchemaList(toConnection &conn,toTemplateItem *parent,
+		       const QString &name,const QCString &sql)
+    : toTemplateSQL(conn,parent,name,sql)
+  { }
+  virtual toTemplateItem *createChild(const QString &name)
+  {
+    return new toTemplateSchemaItem(connection(),this,name);
+  }
+  virtual list<QString> parameters(void)
+  {
+    list<QString> ret;
+    ret.insert(ret.end(),parent()->text(0));
+    return ret;
+  }
+};
+
+class toTemplateDBItem : public toTemplateSQL {
+public:
+  toTemplateDBItem(toConnection &conn,toTemplateItem *parent,
+		   const QString &name)
+    : toTemplateSQL(conn,parent,name,toSQL::sql(TOSQL_USERLIST,conn))
+  { }
+  virtual ~toTemplateDBItem()
+  {
+    toBrowseTemplate *prov=dynamic_cast<toBrowseTemplate *>(&provider());
+    if (prov)
+      prov->removeItem(this);
+  }
+  virtual toTemplateItem *createChild(const QString &name)
+  {
+    toTemplateItem *item=new toTemplateItem(this,name);
+    new toTemplateSchemaList(connection(),
+			     item,
+			     "Tables",
+			     SQLListTables(connection()));
+    new toTemplateSchemaList(connection(),
+			     item,
+			     "Views",
+			     SQLListView(connection()));
+    new toTemplateSchemaList(connection(),
+			     item,
+			     "Indexes",
+			     SQLListIndex(connection()));
+    new toTemplateSchemaList(connection(),
+			     item,
+			     "Sequences",
+			     SQLListSequence(connection()));
+    new toTemplateSchemaList(connection(),
+			     item,
+			     "Synonyms",
+			     SQLListSynonym(connection()));
+    new toTemplateSchemaList(connection(),
+			     item,
+			     "Code",
+			     SQLListSQLShort(connection()));
+    new toTemplateSchemaList(connection(),
+			     item,
+			     "Triggers",
+			     SQLListTrigger(connection()));
+    return item;
+  }
+};
+
+void toBrowseTemplate::insertItems(QListView *parent)
 {
   if (!Registered) {
     connect(toMainWidget(),SIGNAL(addedConnection(const QString &)),
@@ -605,18 +733,11 @@ toTemplateItem *toBrowseTemplate::insertItem(QListView *parent)
   }
   toTemplateItem *dbitem=new toTemplateItem(*this,parent,"DB Browser");
   list<QString> conn=toMainWidget()->connections();
-  for (list<QString>::iterator i=conn.begin();i!=conn.end();i++)
-    new toTemplateItem(dbitem,*i);
+  for (list<QString>::iterator i=conn.begin();i!=conn.end();i++) {
+    toConnection &conn=toMainWidget()->connection(*i);
+    new toTemplateDBItem(conn,dbitem,*i);
+  }
   Parents.insert(Parents.end(),dbitem);
-  return dbitem;
 }
 
-void toBrowseTemplate::removeItem(toTemplateItem *item)
-{
-  for (list<toTemplateItem *>::iterator i=Parents.begin();i!=Parents.end();i++)
-    if ((*i)==item) {
-      Parents.erase(i);
-      break;
-    }
-  delete item;
-}
+static toBrowseTemplate BrowseTemplate;

@@ -73,6 +73,9 @@ SOURCES=\
 	tostoragedefinition.cpp	\
 	tosyntaxsetup.cpp	\
 	totemplate.cpp		\
+	totemplateaddfileui.cpp	\
+	totemplateprovider.cpp	\
+	totemplatesetupui.cpp	\
 	tothread.cpp		\
 	totool.cpp		\
 	toworksheet.cpp		\
@@ -113,12 +116,15 @@ plugins/tosecurity.tso:\
 	objs/tosecurityquotaui.o \
 	objs/tosecurityroleui.o \
 	objs/tosecurityuserui.o
+plugins/totemplate.tso:\
+	objs/totemplate.o \
+	objs/totemplateaddfileui.o \
+	objs/totemplatesetupui.o
 plugins/tosgastatement.tso:objs/tosgastatement.o
 plugins/tosgatrace.tso:objs/tosgatrace.o
 plugins/tosqledit.tso:objs/tosqledit.o
 plugins/tostorage.tso:objs/tostorage.o
 plugins/tostoragedefinition.tso:objs/tostoragedefinition.o
-plugins/totemplate.tso:objs/totemplate.o
 plugins/toworksheet.tso:objs/toworksheet.o
 
 # Monolithic target, for non ELF platforms
@@ -168,7 +174,7 @@ tora-plugin: \
 	plugins/tostorage.tso \
 	plugins/tostoragedefinition.tso \
 	plugins/totemplate.tso \
-	plugins/toworksheet.tso \
+	plugins/toworksheet.tso
 
 # The binary for the pluginbased tora
 
@@ -198,6 +204,7 @@ tora: \
 	objs/tosearchreplace.o \
 	objs/tosearchreplaceui.o \
 	objs/tosyntaxsetup.o \
+	objs/totemplateprovider.o \
 	objs/tothread.o \
 	objs/totool.o \
 	objs/utils.o

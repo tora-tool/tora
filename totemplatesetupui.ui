@@ -1,0 +1,197 @@
+<!DOCTYPE UI><UI>
+<class>toTemplateSetupUI</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>toTemplateSetupUI</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>530</width>
+            <height>448</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Form1</string>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget row="0"  column="0"  rowspan="1"  colspan="5" >
+            <class>QListView</class>
+            <column>
+                <property>
+                    <name>text</name>
+                    <string>Root</string>
+                </property>
+                <property>
+                    <name>clickable</name>
+                    <bool>true</bool>
+                </property>
+                <property>
+                    <name>resizeable</name>
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property>
+                    <name>text</name>
+                    <string>Filename</string>
+                </property>
+                <property>
+                    <name>clickable</name>
+                    <bool>true</bool>
+                </property>
+                <property>
+                    <name>resizeable</name>
+                    <bool>true</bool>
+                </property>
+            </column>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>FileList</cstring>
+            </property>
+            <property stdset="1">
+                <name>allColumnsShowFocus</name>
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget row="1"  column="4" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>AddButton</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>0</vsizetype>
+                </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Add File</string>
+            </property>
+        </widget>
+        <widget row="1"  column="0" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>RemoveButton</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>0</vsizetype>
+                </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Remove File</string>
+            </property>
+        </widget>
+        <widget row="1"  column="2" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>EditButton</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>0</vsizetype>
+                </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Edit File</string>
+            </property>
+        </widget>
+        <spacer row="1"  column="1" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer1</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Horizontal</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <spacer row="1"  column="3" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer2</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Horizontal</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>EditButton</sender>
+        <signal>clicked()</signal>
+        <receiver>toTemplateSetupUI</receiver>
+        <slot>editFile()</slot>
+    </connection>
+    <connection>
+        <sender>RemoveButton</sender>
+        <signal>clicked()</signal>
+        <receiver>toTemplateSetupUI</receiver>
+        <slot>delFile()</slot>
+    </connection>
+    <connection>
+        <sender>AddButton</sender>
+        <signal>clicked()</signal>
+        <receiver>toTemplateSetupUI</receiver>
+        <slot>addFile()</slot>
+    </connection>
+    <slot access="public">addFile()</slot>
+    <slot access="public">editFile()</slot>
+    <slot access="public">delFile()</slot>
+</connections>
+<tabstops>
+    <tabstop>EditButton</tabstop>
+    <tabstop>FileList</tabstop>
+    <tabstop>AddButton</tabstop>
+    <tabstop>RemoveButton</tabstop>
+</tabstops>
+</UI>

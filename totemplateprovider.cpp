@@ -32,61 +32,16 @@
  *
  ****************************************************************************/
 
-#ifndef __TOBROWSER_H
-#define __TOBROWSER_H
-
-#include <qvbox.h>
-#include <map>
+TO_NAMESPACE;
 
 #include "totemplate.h"
 
-class QComboBox;
-class QTabWidget;
-class toResult;
-class toResultView;
-class QListViewItem;
+list<toTemplateProvider *> *toTemplateProvider::Providers;
 
-class toBrowser : public QVBox {
-  Q_OBJECT
+toTemplateProvider::toTemplateProvider()
+{
+  if (!Providers)
+    Providers=new list<toTemplateProvider *>;
+  Providers->insert(Providers->end(),this);
+}
 
-  toConnection &Connection;
-
-  QComboBox *Schema;
-  QTabWidget *TopTab;
-
-  QString SecondText;
-  toResultView *FirstTab;
-  toResult *SecondTab;
-
-  map<QString,toResultView *> Map;
-  map<QString,toResult *> SecondMap;
-public:
-  toBrowser(QWidget *parent,toConnection &connection);
-  virtual ~toBrowser();
-
-public slots:
-  void refresh(void);
-  void changeSchema(int)
-  { refresh(); }
-  void changeTab(QWidget *tab);
-  void changeSecondTab(QWidget *tab);
-  void changeItem(QListViewItem *item);
-};
-
-class toBrowseTemplate : public QObject,public toTemplateProvider {
-  Q_OBJECT
-
-  list<toTemplateItem *> Parents;
-  bool Registered;
-public:
-  toBrowseTemplate(void)
-    : toTemplateProvider()
-  { Registered=false; }
-  void insertItems(QListView *parent);
-  void removeItem(QListViewItem *item);
-public slots:
-  void addDatabase(const QString &);
-  void removeDatabase(const QString &); 
-};
-
-#endif

@@ -31,6 +31,7 @@
 2001-05-16: Use KDE standard dialogs if KDE application.
 2001-05-17: Added start of text and db browser template.
 2001-05-17: Added loadMap/saveMap functions to toTool.
+2001-05-17: Fixed problem browsing function source.
 
 0.8: Released 2001-05-07
 

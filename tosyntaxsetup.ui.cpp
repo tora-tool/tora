@@ -94,7 +94,6 @@ toSyntaxSetupUI::toSyntaxSetupUI( QWidget* parent,  const char* name, WFlags fl 
 
     ExampleColor = new QLabel( GroupBox2, "ExampleColor" );
     ExampleColor->setGeometry( QRect( 10, 190, 80, 16 ) ); 
-    ExampleColor->setText( tr( "" ) );
     QToolTip::add(  ExampleColor, tr( "Example of current color." ) );
 
     SyntaxComponent = new QListBox( GroupBox2, "SyntaxComponent" );

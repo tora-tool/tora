@@ -34,8 +34,14 @@
 
 TO_NAMESPACE;
 
+#ifdef TO_KDE
+#include <kfiledialog.h>
+#endif
+
 #include <qsplitter.h>
 #include <qtextview.h>
+#include <qfileinfo.h>
+#include <qfiledialog.h>
 
 #include "toresultview.h"
 #include "totool.h"
@@ -43,8 +49,77 @@ TO_NAMESPACE;
 #include "tomain.h"
 
 #include "totemplate.moc"
+#include "totemplatesetupui.moc"
+#include "totemplateaddfileui.moc"
 
 #include "icons/totemplate.xpm"
+
+class toTemplateAddFile : public toTemplateAddFileUI {
+public:
+  toTemplateAddFile(QWidget *parent,const char *name=0)
+    : toTemplateAddFileUI(parent,name,true)
+  { OkButton->setEnabled(false); }
+  virtual void browse(void)
+  {
+    QFileInfo file(Filename->text());
+    QString filename=TOFileDialog::getOpenFileName(file.dirPath(),"*.tpl",this);
+    if (!filename.isEmpty())
+      Filename->setText(filename);
+  }
+  virtual void valid(void)
+  {
+    if (Filename->text().isEmpty()||Root->text().isEmpty())
+      OkButton->setEnabled(false);
+    else
+      OkButton->setEnabled(true);
+  }
+};
+
+class toTemplatePrefs : public toTemplateSetupUI, public toSettingTab
+{
+  toTool *Tool;
+public:
+  toTemplatePrefs(toTool *tool,QWidget *parent,const char *name=0)
+    : toTemplateSetupUI(parent,name),Tool(tool)
+  {
+    int tot=Tool->config("Number",QString::number(-1)).toInt();
+    if(tot!=-1) {
+      for(int i=0;i<tot;i++) {
+	QString num=QString::number(i);
+	QString root=Tool->config(num,"");
+	num+="file";
+	QString file=Tool->config(num,"");
+	new QListViewItem(FileList,root,file);
+      }
+    } else {
+      QString file=DEFAULT_PLUGIN_DIR;
+      file+="/sqlfunctions.tpl";
+      new QListViewItem(FileList,"PL/SQL Functions",file);
+    }
+  }
+  virtual void saveSetting(void)
+  {
+    int i=0;
+    for(QListViewItem *item=FileList->firstChild();item;item=item->nextSibling()) {
+      QString nam=QString::number(i);
+      Tool->setConfig(nam,item->text(0));
+      nam+="file";
+      Tool->setConfig(nam,item->text(1));
+      i++;
+    }
+    Tool->setConfig("Number",QString::number(i));
+  }
+  virtual void addFile(void)
+  {
+    toTemplateAddFile file(this);
+    if (file.exec())
+      new QListViewItem(FileList,file.Root->text(),file.Filename->text());
+  }
+  virtual void delFile(void)
+  {
+    delete FileList->selectedItem();
+  }
+};
 
 class toTemplateTool : public toTool {
   TODock *Dock;
@@ -71,17 +146,31 @@ public:
   }
   void closeWindow(toConnection &connection)
   { Dock=NULL; }
+  virtual QWidget *configurationTab(QWidget *parent)
+  { return new toTemplatePrefs(this,parent); }
 };
 
 static toTemplateTool TemplateTool;
 
-list<toTemplateProvider *> *toTemplateProvider::Providers;
-
-toTemplateProvider::toTemplateProvider()
+QWidget *toTemplate::parentWidget(QListViewItem *item)
 {
-  if (!Providers)
-    Providers=new list<toTemplateProvider *>;
-  Providers->insert(Providers->end(),this);
+  return templateWidget(item)->frame();
+}
+
+toTemplate *toTemplate::templateWidget(QListView *obj)
+{
+  QObject *lst=obj;
+  while(lst) {
+    if (dynamic_cast<toTemplate *>(lst))
+      return dynamic_cast<toTemplate *>(lst);
+    lst=lst->parent();
+  }
+  throw("Not a toTemplate parent");
+}
+
+toTemplate *toTemplate::templateWidget(QListViewItem *item)
+{
+  return templateWidget(item->listView());
 }
 
 toTemplate::toTemplate(QWidget *parent)
@@ -93,15 +182,17 @@ toTemplate::toTemplate(QWidget *parent)
   List->setRootIsDecorated(true);
   List->setSorting(0);
   List->setShowSortIndicator(false);
+  List->setTreeStepSize(10);
+  Frame=new QVBox(Splitter);
 
   connect(List,SIGNAL(expanded(QListViewItem *)),this,SLOT(expand(QListViewItem *)));
   connect(List,SIGNAL(collapsed(QListViewItem *)),this,SLOT(collapse(QListViewItem *)));
 
   if (toTemplateProvider::Providers)
-    for (list<toTemplateProvider *>::iterator i=toTemplateProvider::Providers->begin();i!=toTemplateProvider::Providers->end();i++) {
-      toTemplateItem *item=(*i)->insertItem(List);
-      Providers[item]=(*i);
-    }
+    for (list<toTemplateProvider *>::iterator i=toTemplateProvider::Providers->begin();
+	 i!=toTemplateProvider::Providers->end();
+	 i++)
+      (*i)->insertItems(List);
 
   WidgetExtra=NULL;
   setWidget(NULL);
@@ -109,13 +200,6 @@ toTemplate::toTemplate(QWidget *parent)
 
 toTemplate::~toTemplate()
 {
-  for(map<toTemplateItem *,toTemplateProvider *>::iterator i=Providers.begin();
-      i!=Providers.end();
-      i++) {
-    toTemplateItem *item=(*i).first;
-    toTemplateProvider *provider=(*i).second;
-    provider->removeItem(item);
-  }
 }
 
 void toTemplate::expand(QListViewItem *item)
@@ -132,58 +216,27 @@ void toTemplate::collapse(QListViewItem *item)
     ti->collapse();
 }
 
-QWidget *toTemplateProvider::parentWidget(QListViewItem *item)
-{
-  QListView *list=item->listView();
-  return dynamic_cast<QWidget *>(list->parent());
-}
-
-toTemplate *toTemplateProvider::templateWidget(QListViewItem *item)
-{
-  QObject *lst=item->listView();
-  while(lst) {
-    if (dynamic_cast<toTemplate *>(lst))
-      return dynamic_cast<toTemplate *>(lst);
-    lst=lst->parent();
-  }
-  throw("Not a toTemplate parent");
-}
-
 void toTemplateItem::setSelected(bool sel)
 {
-  toTemplate *temp=provider().templateWidget(this);
-  if (sel)
-    temp->setWidget(NULL);
+  toTemplate *temp=toTemplate::templateWidget(this);
+  if (sel&&temp)
+    temp->setWidget(selectedWidget(toTemplate::parentWidget(this)));
   toResultViewItem::setSelected(sel);
 }
-void toTemplateText::setSelected(bool sel)
+
+QWidget *toTemplateText::selectedWidget(QWidget *parent)
 {
-  toTemplate *temp=provider().templateWidget(this);
-  QTextView *view=dynamic_cast<QTextView *>(temp->widget());
-  if (sel) {
-    if (view) {
-      if (!Note.isEmpty())
-	view->setText(Note);
-      else
-	temp->setWidget(NULL);
-    } else if (!Note.isEmpty())
-      temp->setWidget(new QTextView(Note,QString::null,provider().parentWidget(this)));
-    else
-      temp->setWidget(NULL);
-  }
-  toResultViewItem::setSelected(sel);
+  return new QTextView(Note,QString::null,parent);
 }
 
 void toTemplate::setWidget(QWidget *widget)
 {
   if (!widget)
-    widget=new QTextView(Splitter);
+    widget=new QTextView(frame());
 
-  QValueList<int> siz=Splitter->sizes();
   widget->show();
   if (WidgetExtra)
     delete WidgetExtra;
-  Splitter->setSizes(siz);
 
   WidgetExtra=widget;
 }
@@ -192,8 +245,8 @@ class toTextTemplate : toTemplateProvider {
 public:
   toTextTemplate()
   { }
-  virtual toTemplateItem *insertItem(QListView *parent);
-  virtual void removeItem(toTemplateItem *item);
+  void addFile(QListView *parent,const QString &root,const QString &file);
+  virtual void insertItems(QListView *parent);
 };
 
 static bool CompareLists(QStringList &lst1,QStringList &lst2,unsigned int len)
@@ -206,16 +259,32 @@ static bool CompareLists(QStringList &lst1,QStringList &lst2,unsigned int len)
   return true;
 }
 
-toTemplateItem *toTextTemplate::insertItem(QListView *parent)
+void toTextTemplate::insertItems(QListView *parent)
+{
+  int tot=TemplateTool.config("Number",QString::number(-1)).toInt();
+  if(tot!=-1) {
+    for(int i=0;i<tot;i++) {
+      QString num=QString::number(i);
+      QString root=TemplateTool.config(num,"");
+      num+="file";
+      QString file=TemplateTool.config(num,"");
+      addFile(parent,root,file);
+    }
+  } else {
+    QString file=DEFAULT_PLUGIN_DIR;
+    file+="/sqlfunctions.tpl";
+    addFile(parent,"PL/SQL Functions",file);
+  }
+}
+
+void toTextTemplate::addFile(QListView *parent,const QString &root,const QString &file)
 {
   map<QString,QString> pairs;
-  toTool::loadMap("/home/hpj/sqlfunctions.txt",pairs);
-  toTemplateItem *last=new toTemplateItem(*this,parent,"PL/SQL Templates");
-  toTemplateItem *top=last;
+  toTool::loadMap(file,pairs);
+  toTemplateItem *last=new toTemplateItem(*this,parent,root);
   int lastLevel=0;
   QStringList lstCtx;
   for(map<QString,QString>::iterator i=pairs.begin();i!=pairs.end();i++) {
-    //    printf("Adding %s\n",(const char *)*i);
     QStringList ctx=QStringList::split(":",(*i).first);
     if (last) {
       while(last&&lastLevel>=int(ctx.count())) {
@@ -237,12 +306,21 @@ toTemplateItem *toTextTemplate::insertItem(QListView *parent)
     lstCtx=ctx;
     lastLevel++;
   }
-  return top;
 }
 
-void toTextTemplate::removeItem(toTemplateItem *item)
+void toTemplateSQL::expand(void)
 {
-  delete item;
+  while(firstChild())
+    delete firstChild();
+  try {
+    otl_stream inf(1,
+		   SQL,
+		   Connection.connection());
+    list<QString> par=parameters();
+    list<QString> val=toReadQuery(inf,par);
+    for (list<QString>::iterator i=val.begin();i!=val.end();i++)
+      createChild(*i);
+  } TOCATCH
 }
 
 static toTextTemplate TextTemplate;

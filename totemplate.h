@@ -55,14 +55,21 @@ class toTemplate : public QVBox {
 
   QSplitter *Splitter;
   toListView *List;
-  map<toTemplateItem *,toTemplateProvider *> Providers;
   QWidget *WidgetExtra;
+  QVBox *Frame;
 public:
   toTemplate(QWidget *parent);
   virtual ~toTemplate();
   void setWidget(QWidget *widget);
   QWidget *widget(void)
   { return WidgetExtra; }
+  QWidget *frame(void)
+  { return Frame; }
+
+  static QWidget *parentWidget(QListViewItem *item);
+  static toTemplate *templateWidget(QListViewItem *item);
+  static toTemplate *templateWidget(QListView *obj);
+
 public slots:
   void expand(QListViewItem *item);
   void collapse(QListViewItem *item);
@@ -75,11 +82,7 @@ public:
   virtual ~toTemplateProvider()
   { }
 
-  virtual toTemplateItem *insertItem(QListView *parent)=0;
-  virtual void removeItem(toTemplateItem *item)=0;
-
-  static QWidget *parentWidget(QListViewItem *item);
-  static toTemplate *templateWidget(QListViewItem *item);
+  virtual void insertItems(QListView *parent)=0;
 
   friend class toTemplate;
 };
@@ -99,6 +102,8 @@ public:
   { }
   virtual void collapse(void)
   { }
+  virtual QWidget *selectedWidget(QWidget *parent)
+  { return NULL; }
   virtual void setSelected(bool);
 };
 
@@ -108,7 +113,24 @@ public:
   toTemplateText(toTemplateItem *parent,const QString &name,const QString &note)
     : toTemplateItem(parent,name), Note(note)
   { }
-  virtual void setSelected(bool);
+  virtual QWidget *selectedWidget(QWidget *parent);
+};
+
+class toTemplateSQL : public toTemplateItem {
+  toConnection &Connection;
+  QCString SQL;
+public:
+  toTemplateSQL(toConnection &conn,toTemplateItem *parent,
+		const QString &name,const QCString &sql)
+    : toTemplateItem(parent,name),Connection(conn),SQL(sql)
+  { setExpandable(true); }
+  toConnection &connection()
+  { return Connection; }
+  virtual toTemplateItem *createChild(const QString &name)
+  { return new toTemplateItem(this,name); }
+  virtual list<QString> parameters(void)
+  { list<QString> ret; return ret; }
+  virtual void expand(void);
 };
 
 #endif
