@@ -200,7 +200,7 @@ public:
   }
   virtual void oracleManuals(void)
   {
-    QString filename=toOpenFilename(QString::null,"index.htm*",this);
+    QString filename=toOpenFilename(QString::null,"*index.htm*",this);
     try {
       toHtml file(toReadFile(filename));
       QString dsc;
@@ -220,7 +220,7 @@ public:
 	      inDsc=false;
 	      dsc=QString::null;
 	    }
-	  } else if (file.open()&&!strcmp(file.tag(),"dd")) {
+	  } else if (file.open()&&(!strcmp(file.tag(),"dd")||!strcmp(file.tag(),"book"))) {
 	    dsc=QString::null;
 	    inDsc=true;
 	  }

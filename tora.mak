@@ -110,7 +110,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MD /W3 /GR /GX /O2 /I "c:\qt\include" /I "c:\oracle\ora81\oci\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "OTL_ORA8I" /D TO_NAMESPACE="namespace std {}; using namespace std" /D "QT_THREAD_SUPPORT" /D "QT_DLL" /D "NO_DEBUG" /Fp"$(INTDIR)\tora.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /MD /W3 /GR /GX /O2 /I "$(QTDIR)\include" /I "$(ORACLE_HOME)\oci\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "OTL_ORA8I" /D TO_NAMESPACE="namespace std {}; using namespace std" /D "QT_THREAD_SUPPORT" /D "QT_DLL" /D "NO_DEBUG" /Fp"$(INTDIR)\tora.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -150,7 +150,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\tora.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=oci.lib qt-mt230nc.lib qtmain.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib imm32.lib winmm.lib wsock32.lib /nologo /subsystem:windows /incremental:no /pdb:"$(OUTDIR)\tora.pdb" /machine:I386 /out:"$(OUTDIR)\tora.exe" /libpath:"c:\Oracle\ora81\oci\lib\msvc" /libpath:"c:\qt\lib" 
+LINK32_FLAGS=oci.lib qt-mt230nc.lib qtmain.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib imm32.lib winmm.lib wsock32.lib /nologo /subsystem:windows /incremental:no /pdb:"$(OUTDIR)\tora.pdb" /machine:I386 /out:"$(OUTDIR)\tora.exe" /libpath:"$(ORACLE_HOME)\oci\lib\msvc" /libpath:"$(QTDIR)\lib" 
 LINK32_OBJS= \
 	"$(INTDIR)\main.obj" \
 	"$(INTDIR)\toabout.obj" \
@@ -311,7 +311,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MTd /W3 /GR /GX /Zi /Od /I "c:\qt\include" /I "c:\oracle\ora81\oci\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "OTL_ORA8I" /D TO_NAMESPACE="namespace std {}; using namespace std" /D "QT_THREAD_SUPPORT" /D "QT_DLL" /D "NO_DEBUG" /Fp"$(INTDIR)\tora.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
+CPP_PROJ=/nologo /MTd /W3 /GR /GX /Zi /Od /I "$(QTDIR)\include" /I "$(ORACLE_HOME)\oci\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "OTL_ORA8I" /D TO_NAMESPACE="namespace std {}; using namespace std" /D "QT_THREAD_SUPPORT" /D "QT_DLL" /D "NO_DEBUG" /Fp"$(INTDIR)\tora.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -351,7 +351,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\tora.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=oci.lib qt-mt230nc.lib qtmain.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib imm32.lib winmm.lib wsock32.lib /nologo /subsystem:windows /incremental:no /pdb:"$(OUTDIR)\tora.pdb" /debug /machine:I386 /out:"$(OUTDIR)\tora.exe" /pdbtype:sept /libpath:"c:\Oracle\ora81\oci\lib\msvc" /libpath:"c:\qt\lib" 
+LINK32_FLAGS=oci.lib qt-mt230nc.lib qtmain.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib imm32.lib winmm.lib wsock32.lib /nologo /subsystem:windows /incremental:no /pdb:"$(OUTDIR)\tora.pdb" /debug /machine:I386 /out:"$(OUTDIR)\tora.exe" /pdbtype:sept /libpath:"$(ORACLE_HOME)\oci\lib\msvc" /libpath:"$(QTDIR)\lib" 
 LINK32_OBJS= \
 	"$(INTDIR)\main.obj" \
 	"$(INTDIR)\toabout.obj" \

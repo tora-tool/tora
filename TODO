@@ -37,6 +37,8 @@ Extended functionality:
 * Information about SGA memory in DB tuning.
 * Ability to generate into several script (One per object and type) in DB
 	extraction.
+* Full support for Oracle 9i
+* Port to Oracle C++ OCCI?
 
 Windows problems:
 
