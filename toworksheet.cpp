@@ -246,8 +246,7 @@ public:
   virtual bool editOpen(void)
   {
     bool ret=toHighlightedText::editOpen();
-    QFileInfo file(filename());
-    toToolCaption(Worksheet,WorksheetTool.name()+" "+file.fileName());
+    Worksheet->setCaption();
     return ret;
   }
 };
@@ -1424,6 +1423,17 @@ void toWorksheet::importData(std::map<QString,QString> &data,const QString &pref
     StatisticButton->setOn(false);
 
   toToolWidget::importData(data,prefix);
+  setCaption();
+}
+
+void toWorksheet::setCaption(void)
+{
+  QString name=WorksheetTool.name();
+  if (! Editor->filename().isEmpty()) {
+    QFileInfo file(Editor->filename());
+    name+=" "+file.fileName();
+  }
+  toToolCaption(this,name);
 }
 
 toWorksheet *toWorksheet::fileWorksheet(const QString &file)
@@ -1432,8 +1442,8 @@ toWorksheet *toWorksheet::fileWorksheet(const QString &file)
 					 toMainWidget()->currentConnection(),
 					 false);
   worksheet->editor()->openFilename(file);
+  worksheet->setCaption();
   worksheet->show();
-  toToolCaption(worksheet,WorksheetTool.name());
   toMainWidget()->windowsMenu();
   return worksheet;
 }

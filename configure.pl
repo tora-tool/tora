@@ -601,7 +601,7 @@ __TEMP__
 		   "/usr/local/lib/kde",
 		   "/usr/local/lib/kde2",
 		   "/usr/local/lib/kde3") {
-	    if (-d "$a/share/apps/kappfinder" && -d "$a/share/icons/hicolor/32x32/apps" && -d "$a/share/icons/hicolor/16x16/apps") {
+	    if (-d "$a/share/apps/kwin" && -d "$a/share/icons/hicolor/32x32/apps" && -d "$a/share/icons/hicolor/16x16/apps") {
 		$KDEBase=$a;
 		last;
 	    } else {

@@ -42,6 +42,7 @@
 #include <qtoolbutton.h>
 
 #ifdef TO_KDE
+#  include <kapp.h>
 #  if KDE_VERSION < 220
 #    define TOPrinter QPrinter
 #  else
