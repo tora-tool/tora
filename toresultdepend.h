@@ -37,7 +37,11 @@
 #ifndef __TORESULTDEPEND_H
 #define __TORESULTDEPEND_H
 
+#include <qtimer.h>
+
 #include "toresultview.h"
+
+class toNoBlockQuery;
 
 /** This widget displays information about the dependencies of an object
  * specified by the first and second parameter in the query. The sql is not
@@ -46,6 +50,8 @@
  */
 
 class toResultDepend : public toResultView {
+  Q_OBJECT
+
   /** Add children to this depend.
    */
   void addChilds(QListViewItem *item);
@@ -55,6 +61,10 @@ class toResultDepend : public toResultView {
    * @return True if object exists.
    */
   bool exists(const QString &owner,const QString &name);
+
+  toNoBlockQuery *Query;
+  QTimer Poll;
+  QListViewItem *Current;
 public:
   /** Create the widget.
    * @param parent Parent widget.
@@ -62,6 +72,9 @@ public:
    */
   toResultDepend(QWidget *parent,const char *name=NULL);
 
+  /** Object destructor.
+   */
+  ~toResultDepend();
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &sql,const toQList &param);
@@ -73,6 +86,8 @@ public:
    */
   virtual bool canHandle(toConnection &conn)
   { return toIsOracle(conn); }
+public slots:
+  void poll(void);
 };
 
 #endif

@@ -38,6 +38,9 @@
 #include "tosql.h"
 #include "tomain.h"
 #include "toconnection.h"
+#include "tonoblockquery.h"
+
+#include "toresultdepend.moc"
 
 static toSQL SQLResultDepend("toResultDepend:Depends",
 			     "SELECT DISTINCT\n"
@@ -50,7 +53,7 @@ static toSQL SQLResultDepend("toResultDepend:Depends",
 			     "   AND name = :name<char[101]>\n"
 			     " ORDER BY referenced_owner,referenced_type,referenced_name",
 			     "Display dependencies on an object, must have first two "
-			     "columns same and same bindings",
+			     "columns same columns and same bindings",
 			     "8.0");
 static toSQL SQLResultDepend7("toResultDepend:Depends",
 			      "SELECT DISTINCT\n"
@@ -68,10 +71,23 @@ static toSQL SQLResultDepend7("toResultDepend:Depends",
 toResultDepend::toResultDepend(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)
 {
-  setSQL(SQLResultDepend);
+  addColumn("Owner");
+  addColumn("Name");
+  addColumn("Type");
+  addColumn("Dependency");
+
   setRootIsDecorated(true);
   setReadAll(true);
   setSQLName("toResultDepend");
+
+  Query=NULL;
+  Current=NULL;
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
+}
+
+toResultDepend::~toResultDepend()
+{
+  delete Query;
 }
 
 void toResultDepend::addChilds(QListViewItem *item)
@@ -120,10 +136,67 @@ void toResultDepend::query(const QString &sql,const toQList &param)
   if (!handled())
     return;
 
-  toResultView::query(sql,param);
+  delete Query;
+  Query=NULL;
+  Current=NULL;
 
-  for(QListViewItem *item=firstChild();item;item=item->nextSibling())
-    addChilds(item);
+  if (!setSQLParams(sql,param))
+    return;
 
-  updateContents();
+  clear();
+
+  try {
+    Query=new toNoBlockQuery(connection(),
+			     toQuery::Normal,
+			     toSQL::string(SQLResultDepend,connection()),
+			     param);
+    Poll.start(100);
+  } TOCATCH
+
+}
+
+void toResultDepend::poll(void)
+{
+  try {
+    if (Query&&Query->poll()) {
+      int cols=Query->describe().size();
+      while(Query->poll()&&!Query->eof()) {
+	QListViewItem *item;
+	if (Current)
+	  item=new toResultViewItem(this,NULL);
+	else
+	  item=new toResultViewItem(Current,NULL);
+	for(int i=0;i<cols;i++) {
+	  item->setText(i,Query->readValue());
+	}
+      }
+      if (Query->eof()) {
+	if (!Current)
+	  Current=firstChild();
+	else if (Current->firstChild())
+	  Current=Current->firstChild();
+	else if (Current->nextSibling())
+	  Current=Current->nextSibling();
+	else {
+	  do {
+	    Current=Current->parent();
+	  } while(Current&&!Current->nextSibling());
+	  if (Current)
+	    Current=Current->nextSibling();
+	}
+	delete Query;
+	Query=NULL;
+	if (Current) {
+	  toQList param;
+	  param.insert(param.end(),Current->text(0));
+	  param.insert(param.end(),Current->text(1));
+	  Query=new toNoBlockQuery(connection(),
+				   toQuery::Normal,
+				   toSQL::string(SQLResultDepend,connection()),
+				   param);
+	} else
+	  Poll.stop();
+      }
+    }
+  } TOCATCH
 }

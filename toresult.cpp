@@ -107,8 +107,8 @@ toConnection &toResult::connection(void)
 
 void toResult::query(const QString &sql)
 {
-  Params.clear();
-  query(sql,Params);
+  toQList params;
+  query(sql,params);
 }
 
 void toResult::query(toSQL &sql)
@@ -116,8 +116,8 @@ void toResult::query(toSQL &sql)
   setSQLName(sql.name());
   FromSQL=true;
   try {
-    Params.clear();
-    query(toSQL::string(sql,connection()),Params);
+    toQList params;
+    query(toSQL::string(sql,connection()),params);
     setHandle(true);
   } catch(...) {
     setHandle(false);
@@ -140,19 +140,19 @@ void toResult::setSQL(toSQL &sql)
 
 void toResult::changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
 {
-  Params.clear();
-  toPush(Params,toQValue(Param1));
-  toPush(Params,toQValue(Param2));
-  toPush(Params,toQValue(Param3));
-  query(SQL,Params);
+  toQList params;
+  toPush(params,toQValue(Param1));
+  toPush(params,toQValue(Param2));
+  toPush(params,toQValue(Param3));
+  query(SQL,params);
 }
 
 void toResult::changeParams(const QString &Param1,const QString &Param2)
 {
-  Params.clear();
-  toPush(Params,toQValue(Param1));
-  toPush(Params,toQValue(Param2));
-  query(SQL,Params);
+  toQList params;
+  toPush(params,toQValue(Param1));
+  toPush(params,toQValue(Param2));
+  query(SQL,params);
 }
 
 void toResultObject::connectionChanged(void)

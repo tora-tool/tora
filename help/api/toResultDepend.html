@@ -28,20 +28,24 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref3">toResultDepend</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref6">toResultDepend</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref4">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const <A HREF="#toQList">toQList</A> &param) 
+<LI>&nbsp;<b><A HREF="#ref7">~toResultDepend</A></b> () 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref5">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref8">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const <A HREF="#toQList">toQList</A> &param) 
 </LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref6">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &conn) 
+<LI>void &nbsp;<b><A HREF="#ref9">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql) 
+</LI>
+<LI>virtual  bool &nbsp;<b><A HREF="#ref10">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &conn) 
+</LI>
+</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref11">poll</A></b> (void) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This widget displays information about the dependencies of an object
  specified by the first and second parameter in the query. The sql is not
  used in the query. It will also recurs through all dependencies of the
  objects depended on.
  </p>
-<A NAME="toResultDepend"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultDepend</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL)
+<A NAME="toResultDepend"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultDepend</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL)
 <br></td><td align="right"><h3><strong>toResultDepend</strong></h3></td></tr></table><p></p><p> Create the widget.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -50,19 +54,23 @@
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
    </TD></TR>
 </TABLE></P>
-<A NAME="query"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const <A HREF="#toQList">toQList</A> &param)
+<A NAME="~toResultDepend"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toResultDepend</strong> ()
+<br></td><td align="right"><h3><strong>~toResultDepend</strong></h3></td></tr></table><p></p><p> Object destructor.
+   </p>
+<A NAME="query"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const <A HREF="#toQList">toQList</A> &param)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResultView.html#query">toResultView</A>.</p>
-<A NAME="query"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql)
+<A NAME="query"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResultView.html#query">toResultView</A>.</p>
-<A NAME="canHandle"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &conn)
+<A NAME="canHandle"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &conn)
 <br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Support Oracle
    </p>
 <p>Reimplemented from <A HREF="toResultView.html#canHandle">toResultView</A>.</p>
-<HR>
+<A NAME="poll"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>poll</strong> (void)
+<br></td><td align="right"><h3><strong>poll</strong></h3></td></tr></table><p> <small>[slot]</small></p><HR>
 	<table>
 	</table>
 </BODY>
