@@ -150,6 +150,9 @@ void toLineChart::addValues(std::list<double> &value,const QString &xValue)
     Values.insert(Values.end(),t);
     j++;
   }
+
+  emit valueAdded(value,xValue);
+
   update();
 }
 

@@ -67,10 +67,23 @@ toResultIndexes::~toResultIndexes()
 }
 
 static toSQL SQLColumns("toResultIndexes:Columns",
-			"SELECT Column_Name FROM sys.All_Ind_Columns\n"
-			" WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
-			" ORDER BY Column_Position",
-			"List columns an index is built on");
+			"SELECT b.Column_Expression,a.Column_Name\n"
+			"  FROM sys.All_Ind_Columns a,\n"
+			"       sys.All_Ind_Expressions b\n"
+			" WHERE a.Index_Owner = b.Index_Owner(+)\n"
+			"   AND a.Index_Name  = b.Index_Name(+)\n"
+			"   AND a.Column_Position = b.Column_Position(+)\n"
+			"   AND a.Index_Owner = :own<char[101]>\n"
+			"   AND a.Index_Name = :nam<char[101]>\n"
+			" ORDER BY a.Column_Position",
+			"List columns an index is built on",
+			"8.1");
+static toSQL SQLColumns8("toResultIndexes:Columns",
+			 "SELECT Column_Name,NULL FROM sys.All_Ind_Columns\n"
+			 " WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
+			 " ORDER BY Column_Position",
+			 QString::null,
+			 "8.0");
 
 QString toResultIndexes::indexCols(const QString &indOwner,const QString &indName)
 {
@@ -80,7 +93,12 @@ QString toResultIndexes::indexCols(const QString &indOwner,const QString &indNam
   while(!query.eof()) {
     if (!ret.isEmpty())
       ret.append(",");
-    ret.append(query.readValue());
+    QString t=query.readValueNull();
+    if (t.isEmpty())
+      t=query.readValue();
+    else
+      query.readValue();
+    ret.append(t);
   }
   return ret;
 }

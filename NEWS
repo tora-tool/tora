@@ -7,6 +7,8 @@
 2001-11-09: Took up work on the migrate functionality of toExtract.
 2001-11-09: Much quicker startup of toScript tool.
 2001-11-13: Added table aware content editor filter.
+2001-11-19: Added signal on linecharts when values are added.
+2001-11-19: Added methods to stop/start automatic updating of charts.
 
 1.1.5:
 

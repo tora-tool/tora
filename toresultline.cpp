@@ -45,17 +45,27 @@
 toResultLine::toResultLine(QWidget *parent,const char *name)
   : toLineChart(parent,name)
 {
-  connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
   LastStamp=0;
   Flow=true;
   Columns=0;
   Query=NULL;
+  start();
 }
 
 toResultLine::~toResultLine()
 {
   delete Query;
+}
+
+void toResultLine::start(void)
+{
+  connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+}
+
+void toResultLine::stop(void)
+{
+  disconnect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
 }
 
 void toResultLine::query(const QString &sql,const toQList &param,bool first)

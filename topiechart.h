@@ -123,8 +123,7 @@ public:
    * @param values List of values to display.
    * @param labels List of labels, if label is empty it will not appear in legend.
    */
-  void setValues(std::list<double> &values,std::list<QString> &labels)
-  { Values=values; Labels=labels; update(); }
+  void setValues(std::list<double> &values,std::list<QString> &labels);
   /** Add a value to the piechart.
    * @param value New value to add.
    * @param label Label of this new value.
@@ -141,7 +140,8 @@ public:
    */
   std::list<QString> &labels(void)
   { return Labels; }
-
+signals:
+  void newValues(std::list<double> &values,std::list<QString> &labels);
 public slots:
   /** Print the chart
    */

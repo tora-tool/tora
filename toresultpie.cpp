@@ -46,8 +46,17 @@ toResultPie::toResultPie(QWidget *parent,const char *name)
 {
   Query=NULL;
   Columns=0;
-  connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
+}
+
+void toResultPie::start(void)
+{
+  connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+}
+
+void toResultPie::stop(void)
+{
+  disconnect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
 }
 
 void toResultPie::query(const QString &sql,const toQList &param)

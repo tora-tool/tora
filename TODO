@@ -49,9 +49,10 @@ Extended functionality:
 * Information about controlfiles in tuning.
 * Postgress support.
 * Make entire tuning polling in background.
-* Make content editor use ROWNUM initially.
 * Add a more detailed analysis of wait events in tuning.
 * Make it possible to disable tabs in tuning and set default tab.
+* Use object cache in browser if possible.
+* Option to leave execution plans.
 
 New tools:
 
@@ -61,3 +62,4 @@ New tools:
 * Change impact analyzing tool.
 * Alert log viewer.
 * RMAN and backup information.
+* Execution plan table browser.

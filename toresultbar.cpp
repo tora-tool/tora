@@ -45,17 +45,27 @@
 toResultBar::toResultBar(QWidget *parent,const char *name)
   : toBarChart(parent,name)
 {
-  connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
   LastStamp=0;
   Flow=true;
   Columns=0;
   Query=NULL;
+  start();
 }
 
 toResultBar::~toResultBar()
 {
   delete Query;
+}
+
+void toResultBar::start(void)
+{
+  connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+}
+
+void toResultBar::stop(void)
+{
+  disconnect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
 }
 
 void toResultBar::query(const QString &sql,const toQList &param,bool first)

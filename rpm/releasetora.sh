@@ -9,9 +9,9 @@ then
     exit 1
 fi
 
-rm -rf t
-mkdir -p t
-cd t
+rm -rf release
+mkdir -p release
+cd release
 if [ "X$2" = "X" ]
 then
     echo Releasing head
@@ -77,7 +77,7 @@ tar czf $SRCPWD/../tora$TYPE-$1-static.tar.gz tora-$1/tora tora-$1/README tora-$
 #    tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm tora-$1/help
 
 cd $SRCPWD/..
-rm -rf t
+rm -rf release
 cp /usr/src/RPM/RPMS/i686/tora-$1-1gc.i686.rpm tora$TYPE-$1-1gc-$GLIBC.i686.rpm 
 cp /usr/src/RPM/RPMS/i686/tora-$1-1static.i686.rpm tora$TYPE-$1-1static.i686.rpm 
 #rm -rf /usr/src/RPM/BUILD/*

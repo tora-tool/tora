@@ -106,6 +106,16 @@ void toPieChart::openCopy(void)
 #endif
 }
 
+void toPieChart::setValues(std::list<double> &values,std::list<QString> &labels)
+{
+  Values=values;
+  Labels=labels;
+
+  emit newValues(values,labels);
+  update();
+}
+
+
 toPieChart::toPieChart(toPieChart *pie,QWidget *parent,const char *name,WFlags f)
   : QWidget(parent,name,f),
     Values(pie->Values),

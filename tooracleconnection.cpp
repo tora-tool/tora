@@ -231,7 +231,9 @@ public:
 	  {
 	    // The *2 is for raw columns, also dates and numbers are a bit tricky
 	    // but if someone specifies a dateformat longer than 100 bytes he
-	    // deserves everything he gets!
+	    // deserves everything he gets! I'm also making a bet noone has a lot
+	    // of really tricky UTF characters since I think they can be up to 4
+	    // characters.
 	    buffer=new char[max(dsc->elem_size*2+1,100)];
 	    buffer[0]=0;
 	    (*Query)>>buffer;
