@@ -154,10 +154,10 @@ public:
   virtual void editPrint(void);
   /** Reimplemented for internal reasons.
    */
-  virtual void editOpen(void);
+  virtual bool editOpen(void);
   /** Reimplemented for internal reasons.
    */
-  virtual void editSave(bool ask);
+  virtual bool editSave(bool ask);
   /** Reimplemented for internal reasons.
    */
   virtual void editUndo(void)

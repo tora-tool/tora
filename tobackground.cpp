@@ -44,6 +44,7 @@
 #include <qlabel.h>
 #include <qmovie.h>
 #include <qstatusbar.h>
+#include <qtooltip.h>
 
 int toBackground::Running=0;
 QLabel *toBackground::Label;
@@ -240,15 +241,27 @@ static const char *data=
     "\xb2\xc1\x44\x01\x2c\xc0\x80\xc0\x04\x0d\x4c\xd0\x41\x12\x09\x08\x26\x10\x05\x72\x0e\xd4\x83\x79\xc3\x29\x80\x02\x0a\x3b\xc0\x21\x54\x43\x90\x46\x70\xc5\x07\x2a\x04\x22\x01\x83\x0b\x05\x04\x00\x3b";
 static int data_length=9399;
 
+toBackground::toBackground(QObject* parent,const char* name)
+  : toTimer(parent,name)
+{
+  if (!Animation)
+    init();
+}
 void toBackground::start(int msec)
 {
   if (!Animation)
     init();
   if (!isActive()) {
     Running++;
+    if (!Animation)
+      return;
     Animation->unpause();
   }
   Animation->setSpeed(Running*100);
+  if (Running>1)
+    QToolTip::add(Label,QString::number(Running)+" queries running in background.");
+  else
+    QToolTip::add(Label,"One query running in background.");
   toTimer::start(msec);
 }
 
@@ -258,24 +271,37 @@ void toBackground::stop(void)
     init();
   if (isActive()) {
     Running--;
-    if (Running==0)
-      Animation->pause();
-    else
-      Animation->setSpeed(Running*100);
+    if (Animation) {
+      if (Running==0)
+	Animation->pause();
+      else
+	Animation->setSpeed(Running*100);
+      if (Running>1)
+	QToolTip::add(Label,QString::number(Running)+" queries running in background.");
+      else if (Running==1)
+	QToolTip::add(Label,"One query running in background.");
+      else
+	QToolTip::add(Label,"No background queries.");
+    }
   }
   toTimer::stop();
 }
 
 void toBackground::init(void)
 {
+  toMain *main=toMainWidget();
+  if (!main)
+    return;
+
   QByteArray arr;
   arr.assign(data,data_length);
   Animation=new QMovie(arr);
   Animation->pause();
-  Label=new QLabel(toMainWidget()->statusBar());
+  Label=new QLabel(main->statusBar());
   Label->setMovie(*Animation);
   Label->show();
-  toMainWidget()->statusBar()->addWidget(Label,0,true);
+  main->statusBar()->addWidget(Label,0,true);
+  QToolTip::add(Label,"No background queries.");
 }
 
 toBackground::~toBackground()

@@ -191,6 +191,12 @@ public:
   }
 };
 
+static toSQL SQLTableComment("toResultCols:TableComment",
+			     "SELECT Comments FROM sys.All_Tab_Comments\n"
+			     " WHERE Owner = :f1<char[100]>\n"
+			     "   AND Table_Name = :f2<char[100]>",
+			     "Display table comments");
+
 toResultCols::toResultCols(QWidget *parent,const char *name)
   : QVBox(parent,name)
 {
@@ -252,7 +258,15 @@ void toResultCols::query(const QString &,const toQList &param)
     try {
       QString label="<B>";
       label+=object;
-      label+="</B> - Object cache not ready";
+      label+="</B> -";
+      if (connection().provider()=="Oracle") {
+	toQuery query(connection(),SQLTableComment,Owner,Name);
+	while(!query.eof()) {
+	  label+=" ";
+	  label+=query.readValueNull();
+	}
+      }
+      label+=" (Object cache not ready)";
       Columns->query(object,Owner,Name);
       Title->setText(label);
     } catch(const QString &str) {
@@ -294,6 +308,12 @@ void toResultCols::resultCols::describe(toQDescList &desc)
   }
 }
 
+static toSQL SQLComment("toResultCols:Comments",
+			"SELECT Column_name,Comments FROM sys.All_Col_Comments\n"
+			" WHERE Owner = :f1<char[100]>\n"
+			"   AND Table_Name = :f2<char[100]>",
+			"Display column comments");
+
 void toResultCols::resultCols::query(const QString &object,
 				     const QString &owner,const QString &name)
 {
@@ -302,8 +322,29 @@ void toResultCols::resultCols::query(const QString &object,
     sql+=object;
     sql+=" WHERE NULL=NULL";
 
-    toQuery query(toCurrentConnection(this),sql);
+    toConnection &conn=toCurrentConnection(this);
+
+    setSQLName(QString("Description of %1").
+	       arg(object));
+
+    toQuery query(conn,sql);
     toQDescList desc=query.describe();
+
+    if (conn.provider()=="Oracle") {
+      try {
+	toQuery query(conn,SQLComment,owner,name);
+	while(!query.eof()) {
+	  QString col=query.readValueNull();
+	  QString com=query.readValueNull();
+	  for(toQDescList::iterator i=desc.begin();i!=desc.end();i++) {
+	    if ((*i).Name==col) {
+	      (*i).Comment=com;
+	      break;
+	    }
+	  }
+	}
+      } TOCATCH
+    }
 
     Owner=owner;
     Name=name;
@@ -321,8 +362,8 @@ void toResultCols::resultCols::query(const toConnection::objectName &name,bool n
     toConnection &conn=toCurrentConnection(this);
 
     setSQLName(QString("Description of %1.%2").
-	       arg(conn.quote(name.Name)).
-	       arg(conn.quote(name.Owner)));
+	       arg(conn.quote(name.Owner)).
+	       arg(conn.quote(name.Name)));
 
     toQDescList desc=conn.columns(name,nocache);
 

@@ -102,13 +102,13 @@ public:
 
   /** Perform an open on this widget. Default NOP.
    */
-  virtual void editOpen(void)
-  { }
+  virtual bool editOpen(void)
+  { return true; }
   /** Perform a save on this widget. Default NOP.
    * @param askfile Ask filename even if default filename is available.
    */
-  virtual void editSave(bool askfile)
-  { }
+  virtual bool editSave(bool askfile)
+  { return true; }
   /** Print this widgets contents. Default NOP.
    */
   virtual void editPrint(void)

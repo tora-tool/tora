@@ -57,6 +57,7 @@
 
 #include <qapplication.h>
 #include <qfileinfo.h>
+#include <qmessagebox.h>
 #include <qpaintdevicemetrics.h>
 #include <qpainter.h>
 #include <qpalette.h>
@@ -211,8 +212,21 @@ int toMarkedText::printPage(TOPrinter *printer,QPainter *painter,int line,int &o
   return line;
 }
 
-void toMarkedText::editOpen(void)
+bool toMarkedText::editOpen(void)
 {
+  if (edited()) {
+    int ret=TOMessageBox::information(this,
+				      "Save changes?",
+				      "The editor has been changed, do you want to save them\n"
+				      "before opening a new file?",
+				      "&Yes","&No","&Cancel",0,2);
+    if (ret==2)
+      return false;
+    else if (ret==0)
+      if (!editSave(false))
+	return false;
+  }
+
   QFileInfo file(filename());
   QString filename=toOpenFilename(file.dirPath(),"*.sql\n*.txt",this);
   if (!filename.isEmpty()) {
@@ -221,11 +235,13 @@ void toMarkedText::editOpen(void)
       setText(QString::fromLocal8Bit(data));
       setFilename(filename);
       toStatusMessage("File opened successfully",false,false);
+      return true;
     } TOCATCH
   }
+  return false;
 }
 
-void toMarkedText::editSave(bool askfile)
+bool toMarkedText::editSave(bool askfile)
 {
   QFileInfo file(filename());
   QString fn=filename();
@@ -233,10 +249,12 @@ void toMarkedText::editSave(bool askfile)
     fn=toSaveFilename(file.dirPath(),"*.sql\n*.txt",this);
   if (!fn.isEmpty()) {
     if (!toWriteFile(fn,text()))
-      return;
+      return false;
     setFilename(fn);
     setEdited(false);
+    return true;
   }
+  return false;
 }
 
 void toMarkedText::editSearch(toSearchReplace *search)

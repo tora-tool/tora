@@ -67,7 +67,7 @@
 // Must be larger than max long size in otl.
 
 #ifndef DEFAULT_MAX_LONG
-#define DEFAULT_MAX_LONG 33000 
+#define DEFAULT_MAX_LONG 30000 
 #endif
 
 static int toMaxLong=DEFAULT_MAX_LONG;
@@ -838,7 +838,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
     conn=new otl_connect;
     conn->set_stream_pool_size(max(toTool::globalConfig(CONF_OPEN_CURSORS,
 							DEFAULT_OPEN_CURSORS).toInt(),1));
-    if(sqlNet)
+    if(!sqlNet)
       conn->server_attach();
     else
       conn->server_attach(connection().database().utf8());

@@ -408,7 +408,7 @@ public:
   virtual QString exportAsText(bool includeHeader,bool onlySelection,int type=-1);
   /** Export list as file.
    */
-  virtual void editSave(bool ask);
+  virtual bool editSave(bool ask);
 
   /** Export data to a map.
    * @param data A map that can be used to recreate the data of a chart.

@@ -278,11 +278,12 @@ public:
       toHighlightedText::keyPressEvent(e);
     }
   }
-  virtual void editOpen(void)
+  virtual bool editOpen(void)
   {
-    toHighlightedText::editOpen();
+    bool ret=toHighlightedText::editOpen();
     QFileInfo file(filename());
     toToolCaption(Worksheet,WorksheetTool.name()+" "+file.fileName());
+    return ret;
   }
 };
 

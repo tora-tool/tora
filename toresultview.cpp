@@ -685,7 +685,7 @@ toListView *toListView::copyTransposed(void)
   return lst;
 }
 
-void toListView::editSave(bool ask)
+bool toListView::editSave(bool ask)
 {
   try {
     int type=exportType();
@@ -705,10 +705,11 @@ void toListView::editSave(bool ask)
 
     QString filename=toSaveFilename(QString::null,nam,this);
     if (filename.isEmpty())
-      return;
+      return false;
   
-    toWriteFile(filename,exportAsText(true,false,type));
+    return toWriteFile(filename,exportAsText(true,false,type));
   } TOCATCH
+  return false;
 }
 
 int toListView::exportType(void)

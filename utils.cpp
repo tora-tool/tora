@@ -683,9 +683,9 @@ QCString toReadFile(const QString &filename)
   QFile file(expanded);
   if (!file.open(IO_ReadOnly))
     throw QString("Couldn't open file %1.").arg(filename);
-	    
+  
   int size=file.size();
-	    
+  
   char *buf=new char[size+1];
   if (file.readBlock(buf,size)==-1) {
     delete buf;

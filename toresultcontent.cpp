@@ -933,7 +933,7 @@ void toResultContentEditor::editPrint(void)
   print.editPrint();
 }
 
-void toResultContentEditor::editSave(bool ask)
+bool toResultContentEditor::editSave(bool ask)
 {
   toResultView list(false,true,this);
   list.hide();
@@ -944,7 +944,7 @@ void toResultContentEditor::editSave(bool ask)
   list.setSQLName(name);
   list.query(SQL);
   list.editReadAll();
-  list.editSave(ask);
+  return list.editSave(ask);
 }
 
 void toResultContentEditor::activateNextCell()

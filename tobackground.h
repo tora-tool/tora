@@ -80,9 +80,7 @@ public:
    * @param parent Parent widget.
    * @param name Name of widget.
    */
-  toBackground(QObject* parent=0,const char* name=0)
-    : toTimer(parent,name)
-  { }
+  toBackground(QObject* parent=0,const char* name=0);
   ~toBackground();
   /** Start repeating timer with msec interval.
    * @param msec Millsecond repeat interval.

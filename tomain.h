@@ -37,7 +37,7 @@
 
 #include "tobackground.h"
 
-#ifdef TO_KDE
+#if TO_KDE
 #  include <kapp.h>
 #  include <kdockwidget.h>
 #  include "tomainwindow.kde.h"
