@@ -55,6 +55,7 @@ class toScript : public toToolWidget {
   toWorksheet *Worksheet;
   toResultView *DropList;
   toResultView *CreateList;
+  toResultView *SearchList;
 
   void setupExtract(toExtract &);
   void changeConnection(int,bool source);

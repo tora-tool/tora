@@ -1357,8 +1357,8 @@ void toExtract::describeTableText(std::list<QString> &lst,std::list<QString> &ct
 }
 
 static toSQL SQLTableColumns("toExtract:TableColumns",
-			     "SELECT  RPAD(LOWER(column_name),32)\n"
-			     "     || RPAD(\n"
+			     "SELECT  LOWER(column_name),\n"
+			     "        RPAD(\n"
 			     "             DECODE(\n"
 			     "                     data_type\n"
 			     "                    ,'NUMBER',DECODE(\n"
@@ -1451,8 +1451,8 @@ static toSQL SQLTableColumns("toExtract:TableColumns",
 			     "8.0");
 static toSQL SQLTableColumns7("toExtract:TableColumns",
 			      "       SELECT\n"
-			      "        RPAD(LOWER(column_name),32)\n"
-			      "     || RPAD(\n"
+			      "        LOWER(column_name),\n"
+			      "        RPAD(\n"
 			      "             DECODE(\n"
 			      "                     data_type\n"
 			      "                    ,'NUMBER',DECODE(\n"
@@ -1549,6 +1549,7 @@ QString toExtract::tableColumns(const QString &owner,const QString &name)
       first=false;
     else
       ret+="\n  , ";
+    ret+=QString(toShift(cols)).rightJustify(32);
     ret+=toShift(cols);
     QString def=toShift(cols);
     QString notNull=toShift(cols);
@@ -1568,6 +1569,7 @@ void toExtract::describeTableColumns(std::list<QString> &lst,std::list<QString> 
 {
   toQList cols=toQuery::readQueryNull(Connection,SQLTableColumns,name,owner);
   while(cols.size()>0) {
+    QString col=toShift(cols);
     QString line=toShift(cols);
     QString def=toShift(cols);
     if (!def.isEmpty()) {
@@ -1575,7 +1577,8 @@ void toExtract::describeTableColumns(std::list<QString> &lst,std::list<QString> 
       line+=def;
     }
     line+=toShift(cols);
-    addDescription(lst,ctx,"COLUMN",line.simplifyWhiteSpace());
+    addDescription(lst,ctx,"COLUMN",col);
+    addDescription(lst,ctx,"COLUMN",col,line.simplifyWhiteSpace());
   }
 }
 

@@ -38,6 +38,7 @@
 2001-09-16: Fixed problem with cursor on CTRL+Left/Right.
 2001-09-16: Fixed problem with configure and gcc-3.0.0.
 2001-09-16: Added CPU time to wait chart.
+2001-09-16: Added object search to schema comparison.
 
 1.1.0: Released 2001-09-09
 

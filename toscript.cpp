@@ -44,6 +44,7 @@
 #include <qcheckbox.h>
 #include <qradiobutton.h>
 #include <qpushbutton.h>
+#include <qlineedit.h>
 
 #include "tomarkedtext.h"
 #include "tofilesize.h"
@@ -177,7 +178,14 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   ScriptUI=new toScriptUI(this);
 
   QSplitter *hsplitter=new QSplitter(Horizontal,ScriptUI->DifferenceTab);
-  Worksheet=new toWorksheet(ScriptUI->ResultTab,connection);
+  QVBox *box=new QVBox(ScriptUI->ResultTab);
+  Worksheet=new toWorksheet(box,connection);
+  SearchList=new toResultView(false,false,box);
+  SearchList->addColumn("Search result");
+  SearchList->setRootIsDecorated(true);
+  SearchList->setSorting(0);
+  SearchList->hide();
+
   DropList=new toResultView(false,false,hsplitter);
   DropList->addColumn("Dropped");
   DropList->setRootIsDecorated(true);
@@ -190,7 +198,7 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   ScriptUI->Tabs->setTabEnabled(ScriptUI->DifferenceTab,false);
 
   QGridLayout *layout=new QGridLayout(ScriptUI->ResultTab);
-  layout->addWidget(Worksheet,0,0);
+  layout->addWidget(box,0,0);
   layout=new QGridLayout(ScriptUI->DifferenceTab);
   layout->addWidget(hsplitter,0,0);
 
@@ -205,7 +213,6 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   // Remove when migrate and resize is implemented
 #if 1
   ScriptUI->Migrate->hide();
-  ScriptUI->Resize->hide();
 #endif
 
   int def=0;
@@ -399,7 +406,7 @@ void toScript::execute(void)
       mode=1;
     else if (ScriptUI->Migrate->isChecked())
       mode=2;
-    else if (ScriptUI->Resize->isChecked())
+    else if (ScriptUI->Search->isChecked())
       mode=3;
     else {
       toStatusMessage("No mode selected");
@@ -420,9 +427,9 @@ void toScript::execute(void)
       break;
     case 0:
     case 2:
-      sourceDescription=source.describe(sourceObjects);
-      break;
     case 3:
+      destinationDescription=source.describe(sourceObjects);
+      break;
       break;
     }
 
@@ -464,8 +471,59 @@ void toScript::execute(void)
       Worksheet->editor()->setFilename(QString::null);
       Worksheet->editor()->setEdited(true);
     }
-    fillDifference(sourceDescription,DropList);
-    fillDifference(destinationDescription,CreateList);
+    if (mode==3) {
+      Worksheet->hide();
+      SearchList->show();
+      QRegExp re(ScriptUI->SearchWord->text(),false);
+      QStringList words(QStringList::split(QRegExp(" "),
+						   ScriptUI->SearchWord->text().
+						   upper().simplifyWhiteSpace()));
+      QString word=ScriptUI->SearchWord->text().upper();
+      int mode=0;
+      if (ScriptUI->AllWords->isChecked())
+	mode=1;
+      else if (ScriptUI->AnyWords->isChecked())
+	mode=2;
+      else if (ScriptUI->RegExp->isChecked())
+	mode=3;
+      else if (ScriptUI->ExactMatch->isChecked())
+	mode=4;
+      std::list<QString> result;
+      for(std::list<QString>::iterator i=destinationDescription.begin();
+	  i!=destinationDescription.end();
+	  i++) {
+	QStringList ctx=QStringList::split("\01",(*i).upper());
+	switch(mode) {
+	case 1:
+	case 2:
+	  {
+	    unsigned int count=0;
+	    for(unsigned int k=0;k<words.count();k++) {
+	      QString s=words[k];
+	      if (ctx.last().contains(s))
+		count++;
+	    }
+	    if ((mode==2&&count>0)||(mode==1&&count==words.count()))
+	      result.insert(result.end(),*i);
+	  }
+	  break;
+	case 4:
+	  if (ctx.last()==word)
+	    result.insert(result.end(),*i);
+	  break;
+	case 3:
+	  if (re.match(ctx.last())>=0)
+	    result.insert(result.end(),*i);
+	  break;
+	}
+      }
+      fillDifference(result,SearchList);
+    } else {
+      Worksheet->show();
+      SearchList->hide();
+      fillDifference(sourceDescription,DropList);
+      fillDifference(destinationDescription,CreateList);
+    }
   } TOCATCH
       }
 
@@ -608,15 +666,17 @@ void toScript::changeConnection(int,bool source)
 
 void toScript::changeMode(int mode)
 {
+  if (mode<0||mode>3)
+    return;
 
   if (mode==0||mode==2)
     ScriptUI->Destination->setEnabled(true);
   else if (mode==1||mode==3)
     ScriptUI->Destination->setEnabled(false);
 
-  if (mode==1||mode==2||mode==3)
+  if (mode==1||mode==2)
     ScriptUI->Tabs->setTabEnabled(ScriptUI->ResizeTab,true);
-  else if (mode==0)
+  else if (mode==0||mode==3)
     ScriptUI->Tabs->setTabEnabled(ScriptUI->ResizeTab,false);
 
   if (mode==1)
@@ -624,26 +684,26 @@ void toScript::changeMode(int mode)
   else if (mode==0||mode==2||mode==3)
     ScriptUI->IncludeContent->setEnabled(false);
 
-  if (mode==1||mode==2||mode==3) {
+  if (mode==1||mode==2) {
     ScriptUI->IncludeHeader->setEnabled(true);
     ScriptUI->IncludePrompt->setEnabled(true);
-  } else if (mode==0) {
+  } else if (mode==0||mode==3) {
     ScriptUI->IncludeHeader->setEnabled(false);
     ScriptUI->IncludePrompt->setEnabled(false);
   }
 
   if (mode==0||mode==2||mode==3) {
     ScriptUI->IncludeDDL->setEnabled(false);
-    ScriptUI->IncludeDDL->setChecked(mode!=3);
+    ScriptUI->IncludeDDL->setChecked(true);
   } else if (mode==1)
     ScriptUI->IncludeDDL->setEnabled(true);
 
   ScriptUI->IncludeConstraints->setEnabled(ScriptUI->IncludeDDL->isChecked());
   ScriptUI->IncludeIndexes->setEnabled(ScriptUI->IncludeDDL->isChecked());
   ScriptUI->IncludeGrants->setEnabled(ScriptUI->IncludeDDL->isChecked());
-  ScriptUI->IncludeStorage->setEnabled(ScriptUI->IncludeDDL->isChecked());
-  ScriptUI->IncludeParallell->setEnabled(ScriptUI->IncludeDDL->isChecked());
-  ScriptUI->IncludePartition->setEnabled(ScriptUI->IncludeDDL->isChecked());
+  ScriptUI->IncludeStorage->setEnabled(ScriptUI->IncludeDDL->isChecked()&&mode!=3);
+  ScriptUI->IncludeParallell->setEnabled(ScriptUI->IncludeDDL->isChecked()&&mode!=3);
+  ScriptUI->IncludePartition->setEnabled(ScriptUI->IncludeDDL->isChecked()&&mode!=3);
   ScriptUI->IncludeCode->setEnabled(ScriptUI->IncludeDDL->isChecked());
   ScriptUI->IncludeComment->setEnabled(ScriptUI->IncludeDDL->isChecked());
 }

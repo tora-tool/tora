@@ -49,8 +49,8 @@ Extended functionality:
 New tools:
 
 * SQL Builder?
-* Object search
 * Display invalid objects.
 * PL/SQL Profiler.
 * Visual reverse engineering of DB.
 * Change impact analyzing tool.
+* Alert viewer and signaler.
