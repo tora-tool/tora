@@ -174,6 +174,7 @@ static toSQL SQLSessions("toSession:ListSession",
 			 "       b.Block_Changes \"-Block Changes\",\n"
 			 "       b.Consistent_Changes \"-Consistent Changes\",\n"
 			 "       c.Value*10 \"-CPU (ms)\",\n"
+			 "       a.last_call_et \"Last SQL\",\n"
 			 "       a.Process \"-Process\",\n"
 			 "       d.sql_text \"Current statement\",\n"
 			 "       a.SQL_Address||':'||SQL_Hash_Value \" SQL Address\",\n"

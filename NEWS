@@ -1,5 +1,7 @@
 1.3.2:
 
+2002-01-13: Added transaction user tab in rollback.
+2002-01-13: Added last SQL column in sessions.
 2002-01-13: Don't update secondary tabs in worksheet if error occured.
 2002-01-13: Fixed problem with getParams error reporting.
 2002-01-13: Moved clipboard setup from toMain to main function.

@@ -47,6 +47,7 @@ class toResultItem;
 class toResultView;
 class toSGAStatement;
 class toStorageDefinition;
+class toResultLong;
 
 class toRollbackDialog : public toRollbackDialogUI
 { 
@@ -73,7 +74,7 @@ class toRollback : public toToolWidget {
   QWidget *CurrentTab;
 
   toSGAStatement *CurrentStatement;
-  toResultItem *CurrentTransaction;
+  toResultLong *TransactionUsers;
 
   QToolButton *OnlineButton;
   QToolButton *OfflineButton;

@@ -41,6 +41,7 @@
 #include "tomain.h"
 #include "tomemoeditor.h"
 #include "toresultitem.h"
+#include "toresultlong.h"
 #include "toresultview.h"
 #include "torollback.h"
 #include "tosgastatement.h"
@@ -585,6 +586,17 @@ public:
   }
 };
 
+toSQL SQLTransactionUsers("toRollback:TransactionUsers",
+			  "select r.name \"Rollback Seg\",\n"
+			  "       s.sid \"Session ID\",\n"
+			  "       s.osuser \"Os User\",\n"
+			  "       s.username \"Oracle User\"\n"
+			  "from v$rollname r, v$session s, v$lock l\n"
+			  "where l.type = 'TX'\n"
+			  "and s.sid = l.sid\n"
+			  "and r.usn = trunc(l.id1/65536)",
+			  "Get users currently having open transactions");
+
 toRollback::toRollback(QWidget *main,toConnection &connection)
   : toToolWidget(RollbackTool,"rollback.html",main,connection)
 {
@@ -641,6 +653,10 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
   QSplitter *horsplit=new QSplitter(Horizontal,splitter);
   tab->addTab(horsplit,"Open Cursors");
   
+  TransactionUsers=new toResultLong(false,false,toQuery::Background,tab);
+  tab->addTab(TransactionUsers,"Transaction Users");
+  TransactionUsers->setSQL(SQLTransactionUsers);
+
   Statements=new toRollbackOpen(horsplit);
   Statements->setSelectionMode(QListView::Single);
   connect(Statements,SIGNAL(selectionChanged(QListViewItem *)),
@@ -722,6 +738,7 @@ void toRollback::refresh(void)
 	Statements->setSelected(item,true);
 	break;
       }
+  TransactionUsers->refresh();
 }
 
 void toRollback::changeStatement(QListViewItem *item)
