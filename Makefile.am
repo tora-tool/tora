@@ -4,6 +4,31 @@ AUTOMAKE_OPTIONS = 1.6.1
 
 bin_PROGRAMS=tora
 
+METASOURCES = AUTO
+
+INCLUDES = @KDE_INCLUDES@ @QT_INCLUDES@ $(LTDLINCL)
+CPPFLAGS  = $(PCRE_CFLAGS) -DDEFAULT_PLUGIN_DIR=\"$(libdir)\"
+LDFLAGS = $(PCRE_LIBS) \
+	@KDE_LDFLAGS@ \
+	@X_LDFLAGS@ \
+	@QT_LDFLAGS@ \
+	@LIB_KPARTS@ \
+	@LIB_KDEPRINT@ \
+	@LIB_KDECORE@ \
+	@LIB_KDEUI@ \
+	@LIB_KIO@ \
+	@LIB_KFILE@ \
+	@LIB_DCOP@ \
+	@LIB_KHTML@ \
+	-lstdc++ \
+	@LIBPTHREAD@
+
+# just tora. must -export-dynamic on linux in order to dlopen().
+# libtool will do the right thing.
+tora_LDFLAGS = -export-dynamic
+
+tora_LDADD = $(LIBLTDL)
+
 tora_SOURCES=main.cpp aclocal.m4 \
 	toabout.cpp toabout.h \
 	toaboutui.cpp toaboutui.h \
@@ -332,36 +357,7 @@ lib_LTLIBRARIES = toalert.la \
 	toworksheet.la \
 	$(OPTLIB_ORA)
 
-METASOURCES = AUTO
-
-# these are for all targets.
-#LDADD = $(LIB_QT) $(LIB_KDECORE) $(LIB_KDEUI) $(LIB_KFILE) $(LIBSOCKET)
-INCLUDES = @KDE_INCLUDES@ @QT_INCLUDES@
-# these aren't autoconf'ed yet:
-CPPFLAGS  = @PCRE_CFLAGS@ -DDEFAULT_PLUGIN_DIR=\"${exec_prefix}/lib\"
-LDFLAGS = @PCRE_LIBS@ \
-	@KDE_LDFLAGS@ \
-	@X_LDFLAGS@ \
-	@QT_LDFLAGS@ \
-	@LIB_KPARTS@ \
-	@LIB_KDEPRINT@ \
-	@LIB_KDECORE@ \
-	@LIB_KDEUI@ \
-	@LIB_KIO@ \
-	@LIB_KFILE@ \
-	@LIB_DCOP@ \
-	@LIB_KHTML@ \
-	-lstdc++
-
-# just tora. must --export-dynamic on linux in order to dlopen().
-tora_LDFLAGS = -Wl,-export-dynamic
-
-#  uncomment the following if tora requires the math library
-#tora_LDADD=-lm
-
-#EXTRA_DIST=tora.lsm.in NAME.texinfo tora.spec.in
-
-PFLAGS = -module -shared -version-info 1:0:0
+PFLAGS = -module -avoid-version -rpath $(libdir) -shared -dynamiclib
 
 toalert_la_LDFLAGS = $(PFLAGS)
 toalert_la_SOURCES = toalert.cpp toalert.h
@@ -421,13 +417,13 @@ toinvalid_la_LDFLAGS = $(PFLAGS)
 toinvalid_la_SOURCES = toinvalid.cpp toinvalid.h
 
 if HAVE_ORACLE
-tooracleconnection_la_CXXFLAGS  = $(ORACLE_CXXFLAGS)
+tooracleconnection_la_CXXFLAGS  = $(ORACLE_CXXFLAGS) -DOTL_FUNC_THROW_SPEC_ON
 tooracleconnection_la_LDFLAGS = $(PFLAGS) $(ORACLE_LDFLAGS)
 tooracleconnection_la_SOURCES =	tooracleconnection.cpp \
 	tooracleextract.cpp \
 	tooraclesettingui.cpp tooraclesettingui.h
 
-tooraclepreload_la_CXXFLAGS  = $(ORACLE_CXXFLAGS)
+tooraclepreload_la_CXXFLAGS  = $(ORACLE_CXXFLAGS) -DOTL_FUNC_THROW_SPEC_ON
 tooraclepreload_la_LDFLAGS = $(PFLAGS) $(ORACLE_LDFLAGS)
 tooraclepreload_la_SOURCES = tooraclepreload.cpp
 endif
@@ -524,7 +520,6 @@ toworksheet_la_SOURCES = toworksheet.cpp toworksheet.h \
 	toworksheetsetupui.cpp toworksheetsetupui.h
 
 %.cpp %.h: %.ui
-	echo Generating $(<:%.ui=%.cpp) \& $(<:%.ui=%.h)
 	@UIC@ -o $(<:%.ui=%.h) $<
 	@UIC@ -i $(<:%.ui=%.h) -o  $(<:%.ui=%.cpp) $<
 

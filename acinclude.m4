@@ -8,6 +8,18 @@ AC_DEFUN(mrj_SET_PREFIX,
     AC_PREFIX_DEFAULT(/usr/local/tora)
 ])
 
+AC_DEFUN(TORA_LIBTOOL_ALL,
+[
+  AC_LIBTOOL_DLOPEN
+  dnl AC_LIB_LTDL
+  dnl AC_SUBST(LTDLINCL)
+  dnl AC_SUBST(LIBLTDL)
+  dnl AC_DEFINE(HAVE_LTDL, 1, [Always set when using autotools build.])
+  dnl check for dlopen, must be called before AC_PROG_LIBTOOL
+  AC_PROG_LIBTOOL
+  AC_SUBST(LIBTOOL_DEPS)
+])
+
 AC_DEFUN(TORA_CHECK_PUTENV,
 [
   AC_CACHE_CHECK([for putenv], tora_cv_sys_putenv,
@@ -75,9 +87,11 @@ AC_DEFUN(MRJ_CHECK_ORACLE,
 [
   AC_MSG_CHECKING([for oracle])
 
-  have_oracle=yes
+  dnl the default, true if ORACLE_HOME is set
+  test "x$ORACLE_HOME" != "x" && have_oracle=yes
+
   AC_ARG_WITH(oracle,
-  [  --with-oracle=dir       enable support for Oracle (default ORACLE_HOME)],
+  [  --with-oracle=DIR       enable support for Oracle (default ORACLE_HOME)],
   [
     if test $withval = no; then
       have_oracle=no
@@ -86,34 +100,71 @@ AC_DEFUN(MRJ_CHECK_ORACLE,
     fi
   ], )
 
-if test $have_oracle = no || test "x$ORACLE_HOME" = "x"; then
-  AC_MSG_WARN(ORACLE_HOME not set.)
-  dnl yeah, this is backwards.
-  AC_DEFINE(TO_NO_ORACLE, 1, [Define if you do *not* have Oracle.])
-else
-  AC_MSG_RESULT($ORACLE_HOME)
+  oracle_user_inc=
+  AC_ARG_WITH(oracle-includes,
+  [  --with-oracle-includes=DIR
+                          set oracle include dir (default ORACLE_HOME/subdirs)],
+  [
+    have_oracle=yes
+    oracle_user_inc=$withval
+  ], )
 
-  AC_MSG_CHECKING([oci works])
+  oracle_user_lib=
+  AC_ARG_WITH(oracle-libraries,
+  [  --with-oracle-libraries=DIR
+                          set oracle lib dir (default ORACLE_HOME/lib)],
+  [
+    have_oracle=yes
+    oracle_user_lib=$withval
+  ], )
+
+  oracle_user_otl_ver=
+  AC_ARG_WITH(oci-version,
+  [[  --with-oci-version=[8, 8I, 9I]
+                          this is the version of the client, not the database. use 9I for >= 9]],
+  [
+    oracle_user_otl_ver=$withval
+  ], )
+
   cflags_ora_save=$CFLAGS
-  ora_cflags="-I$ORACLE_HOME/rdbms/demo -I$ORACLE_HOME/plsql/public -I$ORACLE_HOME/rdbms/public -I$ORACLE_HOME/network/public"
-  CFLAGS="$CFLAGS $ora_cflags"
+  ldflags_ora_save=$LDFLAGS
 
   ora_libdir=
-  if test -d $ORACLE_HOME/lib; then
-     ora_libdir=$ORACLE_HOME/lib
-  elif test -d $ORACLE_HOME/lib32; then
-     ora_libdir=$ORACLE_HOME/lib32
-  elif test -d $ORACLE_HOME/lib64; then
-     ora_libdir=$ORACLE_HOME/lib64
-  fi
-
   ora_ldflags=
-  if test "x$ora_libdir" != "x"; then
-    ora_ldflags="-L$ora_libdir -lclntsh"
+
+  if test $have_oracle = no; then
+    dnl yeah, this is backwards.
+    AC_DEFINE(TO_NO_ORACLE, 1, [Define if you do *not* have Oracle.])
+  elif test "x$ORACLE_HOME" != "x"; then
+    AC_MSG_RESULT($ORACLE_HOME)
+
+    ora_cflags="-I$ORACLE_HOME/rdbms/demo -I$ORACLE_HOME/plsql/public -I$ORACLE_HOME/rdbms/public -I$ORACLE_HOME/network/public"
+
+    if test -d $ORACLE_HOME/lib; then
+      ora_libdir=$ORACLE_HOME/lib
+    elif test -d $ORACLE_HOME/lib32; then
+      ora_libdir=$ORACLE_HOME/lib32
+    elif test -d $ORACLE_HOME/lib64; then
+      ora_libdir=$ORACLE_HOME/lib64
+    fi
+
+    if test "x$ora_libdir" != "x"; then
+      ora_ldflags="-L$ora_libdir -lclntsh"
+    fi
+  else
+    dnl test if we have includes or libraries
+    if test -z "$oracle_user_lib" || test -z "$oracle_user_inc"; then
+       AC_MSG_ERROR([ORACLE_HOME is not set and the oracle directories were not given manually. This will fail, so try --without-oracle or specifying the include and library directories.])
+    fi;
+
+    ora_ldflags="-L$oracle_user_lib"
+    ora_cflags="-I$oracle_user_inc"
   fi
 
-  ldflags_ora_save=$LDFLAGS
-  LDFLAGS="$LDFLAGS $ora_ldflags"
+if test $have_oracle = yes; then
+  AC_MSG_CHECKING([oci works])
+  CFLAGS="$CFLAGS $ora_cflags"
+  LDFLAGS="$LDFLAGS $ora_ldflags -lclntsh"
 
   # i pulled this from one of the examples in the demo dir.
   AC_RUN_IFELSE([[
@@ -143,8 +194,11 @@ else
     fi
   fi
 
-  if test "x${sqlplus}" = "x"; then
-    AC_MSG_WARN([Couldn't find sqlplus. Set the Oracle version manually.])
+  if test "x$oracle_user_otl_ver" != "x"; then
+    dnl use the version the user supplied
+    otl_ver=$oracle_user_otl_ver
+  elif test "x${sqlplus}" = "x"; then
+    AC_MSG_ERROR([Couldn't find sqlplus. Set the Oracle version manually.])
   else
     # get oracle oci version. know a better way?
     sqlplus_ver=`$sqlplus -? | $AWK '/Release/ {print @S|@3}'`
@@ -155,9 +209,8 @@ else
     else
       otl_ver=8I
     fi
-
-    ora_cflags="$ora_cflags -DOTL_ORA${otl_ver} -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP"
   fi
+  ora_cflags="$ora_cflags -DOTL_ORA${otl_ver} -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP"
 
   # don't change flags for all targets, just export ORA variables.
   CFLAGS=$cflags_ora_save
@@ -211,6 +264,6 @@ else
      fi
   fi
 fi
-AC_SUBST([PCRE_LIBS])
-AC_SUBST([PCRE_CFLAGS])
+AC_SUBST([PCRE_LIBS], $PCRE_LIBS)
+AC_SUBST([PCRE_CFLAGS], $PCRE_CFLAGS)
 ])

@@ -1,8 +1,11 @@
-##   -*- autoconf -*-
+##   -*- coding: autoconf; tab-width: 2; -*-
 
 dnl mrjohnson0: nicked this from a kdevelop-started package
-dnl it didn't work without KDE, so i fixed that.
-dnl then it didn't work on the mac, so i removed the libtool stuff.
+dnl - it didn't work without KDE, so i fixed that.
+dnl - then it didn't work on the mac, so i removed the libtool stuff.
+dnl - then it still had some problems, so my hacks are all over the place.
+dnl
+dnl blame me. mrjohnson0@users.sourceforge.net :-)
 
 dnl    This file is part of the KDE libraries/packages
 dnl    Copyright (C) 1997 Janos Farkas (chexum@shadow.banki.hu)
@@ -23,22 +26,421 @@ dnl    along with this library; see the file COPYING.LIB.  If not, write to
 dnl    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 dnl    Boston, MA 02111-1307, USA.
 
-dnl IMPORTANT NOTE:
-dnl Please do not modify this file unless you expect your modifications to be
-dnl carried into every other module in the repository. 
-dnl
-dnl Single-module modifications are best placed in configure.in for kdelibs
-dnl and kdebase or configure.in.in if present.
-
 dnl ------------------------------------------------------------------------
 dnl Forward compatibility macros (make autoconf 2.13 look like 2.50),
 dnl thanks to Raja R Harinath.
 dnl ------------------------------------------------------------------------
 dnl
-ifdef([_AC_PATH_X_XMKMF],[],
-   [AC_DEFUN([_AC_PATH_X_XMKMF],[AC_PATH_X_XMKMF])])
-ifdef([AC_OUTPUT_SUBDIRS],[],
-   [AC_DEFUN([AC_OUTPUT_SUBDIRS],[subdirs=$1; _AC_OUTPUT_SUBDIRS])])
+dnl ifdef([_AC_PATH_X_XMKMF],[],
+dnl    [AC_DEFUN([_AC_PATH_X_XMKMF],[AC_PATH_X_XMKMF])])
+dnl ifdef([AC_OUTPUT_SUBDIRS],[],
+dnl    [AC_DEFUN([AC_OUTPUT_SUBDIRS],[subdirs=$1; _AC_OUTPUT_SUBDIRS])])
+
+
+dnl ------------------------------------------------------------------------
+dnl mrj
+dnl check for kde. if not, skip the rest of the kde tests.
+AC_DEFUN(TORA_HAVE_KDE,
+[
+  AC_MSG_CHECKING([have kde])
+  have_kde=yes
+  AC_ARG_WITH(kde,
+  [  --with-kde              compile against kde (default yes)],
+  [
+     have_kde=$withval
+  ],)
+
+  AC_MSG_RESULT($have_kde)
+  if test $have_kde != yes; then
+    kde_qtver=0
+  else
+    AC_PATH_KDE
+    AC_DEFINE(TO_KDE, 1, [Define if you have KDE.])
+  fi
+
+  AC_PATH_QT
+
+  KDE_CREATE_LIBS_ALIASES
+  KDE_CHECK_STL
+])
+
+
+dnl ------------------------------------------------------------------------
+dnl Try to find the Qt headers and libraries.
+dnl $(QT_LDFLAGS) will be -Lqtliblocation (if needed)
+dnl and $(QT_INCLUDES) will be -Iqthdrlocation (if needed)
+dnl ------------------------------------------------------------------------
+dnl
+AC_DEFUN(AC_PATH_QT,
+[
+  dnl AC_REQUIRE([K_PATH_X])
+  AC_REQUIRE([AC_PATH_XTRA])
+
+  dnl ------------------------------------------------------------------------
+  dnl Add configure flag to enable linking to MT version of Qt library.
+  dnl ------------------------------------------------------------------------
+
+  AC_ARG_ENABLE(
+    mt,
+    [  --disable-mt            link to non-threaded Qt (deprecated)],
+    kde_use_qt_mt=$enableval,
+    [
+      if test $kde_qtver = 3 || test $kde_qtver = 0; then
+        kde_use_qt_mt=yes
+      else
+        kde_use_qt_mt=no
+      fi
+    ]
+  )
+  
+  USING_QT_MT=""
+  
+  dnl ------------------------------------------------------------------------
+  dnl If we not get --disable-qt-mt then adjust some vars for the host.
+  dnl ------------------------------------------------------------------------
+  
+  KDE_MT_LDFLAGS=
+  KDE_MT_LIBS=
+  if test "x$kde_use_qt_mt" = "xyes"; then
+    KDE_CHECK_THREADING
+    if test "x$kde_use_threading" = "xyes"; then
+      CXXFLAGS="$USE_THREADS -DQT_THREAD_SUPPORT $CXXFLAGS"
+      KDE_MT_LDFLAGS="$USE_THREADS"
+      KDE_MT_LIBS="$LIBPTHREAD"
+    else
+      kde_use_qt_mt=no
+    fi
+  fi
+  AC_SUBST(KDE_MT_LDFLAGS)
+  AC_SUBST(KDE_MT_LIBS)
+  
+  kde_qt_was_given=yes
+  
+  dnl ------------------------------------------------------------------------
+  dnl If we haven't been told how to link to Qt, we work it out for ourselves.
+  dnl ------------------------------------------------------------------------
+  if test -z "$LIBQT_GLOB"; then
+    if test "x$kde_use_qt_emb" = "xyes"; then
+      LIBQT_GLOB="libqte.*"
+    else
+      LIBQT_GLOB="libqt.*"
+    fi
+  fi
+  
+  if test -z "$LIBQT"; then
+  dnl ------------------------------------------------------------
+  dnl If we got --enable-embedded then adjust the Qt library name.
+  dnl ------------------------------------------------------------
+    if test "x$kde_use_qt_emb" = "xyes"; then
+      qtlib="qte"
+    else
+      qtlib="qt"
+    fi
+  
+    kde_int_qt="-l$qtlib"
+  else
+    kde_int_qt="$LIBQT"
+    kde_lib_qt_set=yes
+  fi
+  
+  if test -z "$LIBQPE"; then
+  dnl ------------------------------------------------------------
+  dnl If we got --enable-palmtop then add -lqpe to the link line
+  dnl ------------------------------------------------------------
+    if test "x$kde_use_qt_emb" = "xyes"; then
+      if test "x$kde_use_qt_emb_palm" = "xyes"; then
+        LIB_QPE="-lqpe"
+      else
+        LIB_QPE=""
+      fi
+    else
+      LIB_QPE=""
+    fi
+  fi
+  
+  dnl ------------------------------------------------------------------------
+  dnl If we got --enable-qt-mt then adjust the Qt library name for the host.
+  dnl ------------------------------------------------------------------------
+  
+  if test "x$kde_use_qt_mt" = "xyes"; then
+    if test -z "$LIBQT"; then
+      LIBQT="-l$qtlib-mt"
+      kde_int_qt="-l$qtlib-mt"
+    else
+      LIBQT="-l$qtlib-mt"
+      kde_int_qt="$qtlib-mt"
+    fi
+    LIBQT_GLOB="lib$qtlib-mt.*"
+    USING_QT_MT="using -mt"
+  else
+    LIBQT="-l$qtlib"
+  fi
+  
+  if test $kde_qtver != 1; then
+    AC_FIND_PNG
+    AC_FIND_JPEG
+    LIBQT="$LIBQT $LIBPNG $LIBJPEG"
+  fi
+  
+  AC_MSG_CHECKING([for Qt])
+  
+  if test "x$kde_use_qt_emb" != "xyes"; then
+    LIBQT="$LIBQT $X_PRE_LIBS -lXext -lX11 $LIBSM $LIBSOCKET"
+  fi
+  ac_qt_includes=NO ac_qt_libraries=NO ac_qt_bindir=NO
+  qt_libraries=""
+  qt_includes=""
+  AC_ARG_WITH(qt-dir,
+      [  --with-qt-dir=DIR       where the root of Qt is installed ],
+      [  ac_qt_includes="$withval"/include
+         ac_qt_libraries="$withval"/lib}
+         ac_qt_bindir="$withval"/bin
+      ])
+  
+  AC_ARG_WITH(qt-includes,
+      [  --with-qt-includes=DIR  where the Qt includes are. ],
+      [
+         ac_qt_includes="$withval"
+      ])
+  
+  kde_qt_libs_given=no
+  
+  AC_ARG_WITH(qt-libraries,
+      [  --with-qt-libraries=DIR where the Qt library is installed.],
+      [  ac_qt_libraries="$withval"
+         kde_qt_libs_given=yes
+      ])
+  
+  AC_CACHE_VAL(ac_cv_have_qt,
+  [#try to guess Qt locations
+  
+  qt_incdirs=""
+  for dir in $kde_qt_dirs; do
+     qt_incdirs="$qt_incdirs $dir/include $dir"
+  done
+  qt_incdirs="$QTINC
+              $qt_incdirs
+              /usr/local/qt/include
+              /usr/include/qt
+              /usr/include
+              /usr/X11R6/include/X11/qt
+              /usr/X11R6/include/qt
+              /usr/X11R6/include/qt2
+              /sw/include/qt
+              $x_includes"
+  if test "$ac_qt_includes" != "NO"; then
+     qt_incdirs="$ac_qt_includes $qt_incdirs"
+  fi
+  
+  if test $kde_qtver != 1 && test $kde_qtver != 0; then
+    kde_qt_header=qstyle.h
+  else
+    kde_qt_header=qglobal.h
+  fi
+  
+  AC_FIND_FILE($kde_qt_header, $qt_incdirs, qt_incdir)
+  ac_qt_includes="$qt_incdir"
+  
+  qt_libdirs="$QTLIB $qt_libdirs /sw/lib /usr/X11R6/lib /usr/lib /usr/local/qt/lib $x_libraries"
+  if test "$ac_qt_libraries" != "NO"; then
+    qt_libdir=$ac_qt_libraries
+  else
+    qt_libdirs="$ac_qt_libraries $qt_libdirs"
+    # if the Qt was given, the chance is too big that libqt.* doesn't exist
+    qt_libdir=NONE
+    for dir in $qt_libdirs; do
+      try="ls -1 $dir/${LIBQT_GLOB}"
+      if test -n "`$try 2> /dev/null`"; then
+        qt_libdir=$dir; break
+      else
+        echo "tried $dir" >&AC_FD_CC
+      fi
+    done
+  fi
+  
+  ac_qt_libraries="$qt_libdir"
+  
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  
+  ac_cxxflags_safe="$CXXFLAGS"
+  ac_ldflags_safe="$LDFLAGS"
+  ac_libs_safe="$LIBS"
+  
+  CXXFLAGS="$CXXFLAGS -I$qt_incdir $all_includes $X_CFLAGS"
+  LDFLAGS="$LDFLAGS -L$qt_libdir $all_libraries $USER_LDFLAGS $KDE_MT_LDFLAGS"
+  LIBS="$LIBS $LIBQT $KDE_MT_LIBS $X_LIBS"
+  
+  KDE_PRINT_QT_PROGRAM
+  
+  if AC_TRY_EVAL(ac_link) && test -s conftest; then
+    rm -f conftest*
+  else
+    echo "configure: failed program was:" >&AC_FD_CC
+    cat conftest.$ac_ext >&AC_FD_CC
+    ac_qt_libraries="NO"
+  fi
+  rm -f conftest*
+  CXXFLAGS="$ac_cxxflags_safe"
+  LDFLAGS="$ac_ldflags_safe"
+  LIBS="$ac_libs_safe"
+  
+  AC_LANG_RESTORE
+  if test "$ac_qt_includes" = NO || test "$ac_qt_libraries" = NO; then
+    ac_cv_have_qt="have_qt=no"
+    ac_qt_notfound=""
+    missing_qt_mt=""
+    if test "$ac_qt_includes" = NO; then
+      if test "$ac_qt_libraries" = NO; then
+        ac_qt_notfound="(headers and libraries)";
+      else
+        ac_qt_notfound="(headers)";
+      fi
+    else
+      if test "x$kde_use_qt_mt" = "xyes"; then
+         missing_qt_mt="Make sure that you have compiled Qt with thread support!"
+         ac_qt_notfound="(library $qtlib-mt)";
+      else
+         ac_qt_notfound="(library $qtlib)";
+      fi
+    fi
+  
+    AC_MSG_ERROR([Qt ($kde_qt_minversion) $ac_qt_notfound not found.
+      Please check your installation! For more details about this problem,
+      look at the end of config.log.$missing_qt_mt])
+  else
+    have_qt="yes"
+  fi
+  ])
+  
+  eval "$ac_cv_have_qt"
+  
+  if test "$have_qt" != yes; then
+    AC_MSG_RESULT([$have_qt]);
+  else
+    ac_cv_have_qt="have_qt=yes \
+      ac_qt_includes=$ac_qt_includes ac_qt_libraries=$ac_qt_libraries"
+    qt_libraries="$ac_qt_libraries"
+    qt_includes="$ac_qt_includes"
+  
+    AC_SUBST(qt_libraries)
+    AC_SUBST(qt_includes)
+  
+    AC_MSG_RESULT([
+      libqt:     $LIBQT,
+      libraries: $ac_qt_libraries,
+      headers:   $ac_qt_includes $USING_QT_MT])
+  fi
+  
+  if test "$qt_includes" = "$x_includes" || test -z "$qt_includes"; then
+   QT_INCLUDES=""
+  else
+   QT_INCLUDES="-I$qt_includes"
+   all_includes="$QT_INCLUDES $all_includes"
+  fi
+  
+  if test "$qt_libraries" = "$x_libraries" || test -z "$qt_libraries"; then
+   QT_LDFLAGS=""
+  else
+   QT_LDFLAGS="-L$qt_libraries $LIBQT"
+   all_libraries="$all_libraries $QT_LDFLAGS"
+  fi
+  test -z "$KDE_MT_LDFLAGS" || all_libraries="$all_libraries $KDE_MT_LDFLAGS"
+  
+  AC_SUBST(QT_INCLUDES)
+  AC_SUBST(QT_LDFLAGS)
+  AC_PATH_QT_MOC_UIC
+  
+  dnl KDE_CHECK_QT_JPEG
+  
+  if test "x$kde_use_qt_emb" != "xyes"; then
+  LIB_QT="$kde_int_qt $LIBJPEG_QT "'$(LIBPNG) -lXext $(LIB_X11) $(LIBSM)'
+  else
+  LIB_QT="$kde_int_qt $LIBJPEG_QT "'$(LIBPNG)'
+  fi
+  test -z "$KDE_MT_LIBS" || LIB_QT="$LIB_QT $KDE_MT_LIBS"
+  
+  AC_SUBST(LIB_QT)
+  AC_SUBST(LIB_QPE)
+  
+  AC_SUBST(kde_qtver)
+])
+
+
+
+AC_DEFUN(KDE_USE_QT,
+[
+  if test -z "$1"; then
+    # Current default Qt version: 3.1
+    kde_qtver=3
+    kde_qtsubver=1
+  else
+    kde_qtsubver=`echo "$1" | sed -e 's#[0-9][0-9]*\.\([0-9][0-9]*\).*#\1#'`
+    # following is the check if subversion isnt found in passed argument
+    if test "$kde_qtsubver" = "$1"; then
+      kde_qtsubver=1
+    fi
+    kde_qtver=`echo "$1" | sed -e 's#^\([0-9][0-9]*\)\..*#\1#'`
+    if test "$kde_qtver" = "1"; then
+      kde_qtsubver=42
+    fi
+  fi
+  
+  if test -z "$2"; then
+    if test "$kde_qtver" = "2"; then
+      if test $kde_qtsubver -gt 0; then
+        kde_qt_minversion=">= Qt 2.2.2"
+      else
+        kde_qt_minversion=">= Qt 2.0.2"
+      fi
+    fi
+    if test "$kde_qtver" = "3"; then
+      if test $kde_qtsubver -gt 0; then
+        kde_qt_minversion=">= Qt 3.1.0"
+      else
+        kde_qt_minversion=">= Qt 3.0"
+      fi
+    fi
+    if test "$kde_qtver" = "1"; then
+      kde_qt_minversion=">= 1.42 and < 2.0"
+    fi
+  else
+     kde_qt_minversion=$2
+  fi
+  
+  if test -z "$3"; then
+     if test $kde_qtver = 3; then
+       if test $kde_qtsubver -gt 0; then
+         kde_qt_verstring="QT_VERSION >= 0x030100"
+       else
+         kde_qt_verstring="QT_VERSION >= 300"
+       fi
+     fi
+     if test $kde_qtver = 2; then
+       if test $kde_qtsubver -gt 0; then
+         kde_qt_verstring="QT_VERSION >= 222"
+       else
+         kde_qt_verstring="QT_VERSION >= 200"
+       fi
+     fi
+     if test $kde_qtver = 1; then
+      kde_qt_verstring="QT_VERSION >= 142 && QT_VERSION < 200"
+     fi
+  else
+     kde_qt_verstring=$3
+  fi
+  
+  if test $kde_qtver = 3; then
+    kde_qt_dirs="$QTDIR /usr/lib/qt3 /usr/lib/qt /usr/share/qt3"
+  fi
+  if test $kde_qtver = 2; then
+     kde_qt_dirs="$QTDIR /usr/lib/qt2 /usr/lib/qt"
+  fi
+  if test $kde_qtver = 1; then
+     kde_qt_dirs="$QTDIR /usr/lib/qt"
+  fi
+])
+
 
 # KDE_PATH_X_DIRECT
 dnl Internal subroutine of AC_PATH_X.
@@ -319,7 +721,7 @@ AC_DEFUN(AC_PATH_QT_MOC_UIC,
      if test -z "$UIC_PATH" ; then
        KDE_UIC_ERROR_MESSAGE
        exit 1
-     elif test $kde_qtver = 3; then
+     else
        KDE_CHECK_UIC_FLAG(L,[/nonexistant],ac_uic_supports_libpath=yes,ac_uic_supports_libpath=no)
        KDE_CHECK_UIC_FLAG(nounload,,ac_uic_supports_nounload=yes,ac_uic_supports_nounload=no)
 
@@ -344,50 +746,6 @@ AC_DEFUN(AC_PATH_QT_MOC_UIC,
    fi
 
    AC_SUBST(UIC_TR)
-])
-
-AC_DEFUN(KDE_1_CHECK_PATHS,
-[
-  KDE_1_CHECK_PATH_HEADERS
-
-  KDE_TEST_RPATH=
-
-  if test -n "$USE_RPATH"; then
-
-     if test -n "$kde_libraries"; then
-       KDE_TEST_RPATH="-R $kde_libraries"
-     fi
-
-     if test -n "$qt_libraries"; then
-       KDE_TEST_RPATH="$KDE_TEST_RPATH -R $qt_libraries"
-     fi
-
-     if test -n "$x_libraries"; then
-       KDE_TEST_RPATH="$KDE_TEST_RPATH -R $x_libraries"
-     fi
-
-     KDE_TEST_RPATH="$KDE_TEST_RPATH $KDE_EXTRA_RPATH"
-  fi
-
-AC_MSG_CHECKING([for KDE libraries installed])
-ac_link='$LIBTOOL_SHELL --silent --mode=link ${CXX-g++} -o conftest $CXXFLAGS $all_includes $CPPFLAGS $LDFLAGS $all_libraries conftest.$ac_ext $LIBS -lkdecore $LIBQT $KDE_TEST_RPATH 1>&5'
-
-# mrj, reorganized this so kde check doesn't fail configure
-if AC_TRY_EVAL(ac_link) && test -s conftest; then
-  AC_MSG_RESULT(yes)
-  if eval `KDEDIR= ./conftest 2>&5`; then
-    kde_result=done
-  else
-    kde_result=problems
-  fi
-
-  KDEDIR= ./conftest 2> /dev/null >&5 # make an echo for config.log
-  kde_have_all_paths=yes
-
-  KDE_SET_PATHS($kde_result)
-else
-  AC_MSG_RESULT(no)
-fi
 ])
 
 AC_DEFUN(KDE_SET_PATHS,
@@ -482,8 +840,7 @@ if test "$1" = "default"; then
 else
 
   if test $kde_qtver = 1; then
-     AC_MSG_RESULT([compiling])
-     KDE_1_CHECK_PATHS
+     AC_MSG_ERROR([KDE 1 is too old])
   else
      AC_MSG_ERROR([path checking not yet supported for KDE 2])
   fi
@@ -581,7 +938,6 @@ AC_DEFUN(KDE_SUBST_PROGRAMS,
 
 AC_DEFUN(AC_CREATE_KFSSTND,
 [
-AC_REQUIRE([AC_CHECK_RPATH])
 
 AC_MSG_CHECKING([for KDE paths])
 kde_result=""
@@ -793,7 +1149,7 @@ dnl ------------------------------------------------------------------------
 dnl
 AC_DEFUN(K_PATH_X,
 [
-AC_REQUIRE([KDE_MISC_TESTS])dnl
+AC_REQUIRE([KDE_MISC_TESTS])dnl - may not have kde
 AC_REQUIRE([KDE_CHECK_LIB64])
 
 AC_ARG_ENABLE(
@@ -1018,7 +1374,7 @@ QTE_NORTTI=""
 
 else
   dnl We're using QT Embedded
-  CPPFLAGS=-DQWS
+  CXXFLAGS=-DQWS
   CXXFLAGS="$CXXFLAGS -fno-rtti"
   QTE_NORTTI="-fno-rtti -DQWS"
   X_PRE_LIBS=""
@@ -1047,439 +1403,19 @@ AC_LANG_RESTORE
 
 AC_DEFUN(KDE_PRINT_QT_PROGRAM,
 [
-AC_REQUIRE([KDE_USE_QT])
 cat > conftest.$ac_ext <<EOF
 #include "confdefs.h"
 #include <qglobal.h>
 #include <qapplication.h>
-EOF
-if test "$kde_qtver" = "2"; then
-cat >> conftest.$ac_ext <<EOF
 #include <qevent.h>
 #include <qstring.h>
-#include <qstyle.h>
-EOF
-
-if test $kde_qtsubver -gt 0; then
-cat >> conftest.$ac_ext <<EOF
-#if QT_VERSION < 210
-#error 1
-#endif
-EOF
-fi
-fi
-
-if test "$kde_qtver" = "3"; then
-cat >> conftest.$ac_ext <<EOF
-#include <qcursor.h>
-#include <qstylefactory.h>
-#include <private/qucomextra_p.h>
-EOF
-fi
-
-echo "#if ! ($kde_qt_verstring)" >> conftest.$ac_ext
-cat >> conftest.$ac_ext <<EOF
-#error 1
-#endif
+/* #include <qstyle.h> */
 
 int main() {
-EOF
-if test "$kde_qtver" = "2"; then
-cat >> conftest.$ac_ext <<EOF
-    QStringList *t = new QStringList();
-    Q_UNUSED(t);
-EOF
-if test $kde_qtsubver -gt 0; then
-cat >> conftest.$ac_ext <<EOF
-    QString s;
-    s.setLatin1("Elvis is alive", 14);
-EOF
-fi
-fi
-if test "$kde_qtver" = "3"; then
-cat >> conftest.$ac_ext <<EOF
-    (void)QStyleFactory::create(QString::null);
-    QCursor c(Qt::WhatsThisCursor);
-EOF
-fi
-cat >> conftest.$ac_ext <<EOF
-    return 0;
+  QString::fromLatin1("Elvis is alive");
+  return 0;
 }
 EOF
-])
-
-AC_DEFUN(KDE_USE_QT,
-[
-if test -z "$1"; then
-  # Current default Qt version: 3.1
-  kde_qtver=3
-  kde_qtsubver=1
-else
-  kde_qtsubver=`echo "$1" | sed -e 's#[0-9][0-9]*\.\([0-9][0-9]*\).*#\1#'`
-  # following is the check if subversion isnt found in passed argument
-  if test "$kde_qtsubver" = "$1"; then
-    kde_qtsubver=1
-  fi
-  kde_qtver=`echo "$1" | sed -e 's#^\([0-9][0-9]*\)\..*#\1#'`
-  if test "$kde_qtver" = "1"; then
-    kde_qtsubver=42
-  fi
-fi
-
-if test -z "$2"; then
-  if test "$kde_qtver" = "2"; then
-    if test $kde_qtsubver -gt 0; then
-      kde_qt_minversion=">= Qt 2.2.2"
-    else
-      kde_qt_minversion=">= Qt 2.0.2"
-    fi
-  fi
-  if test "$kde_qtver" = "3"; then
-    if test $kde_qtsubver -gt 0; then
-      kde_qt_minversion=">= Qt 3.1.0"
-    else
-      kde_qt_minversion=">= Qt 3.0"
-    fi
-  fi
-  if test "$kde_qtver" = "1"; then
-    kde_qt_minversion=">= 1.42 and < 2.0"
-  fi
-else
-   kde_qt_minversion=$2
-fi
-
-if test -z "$3"; then
-   if test $kde_qtver = 3; then
-     if test $kde_qtsubver -gt 0; then
-       kde_qt_verstring="QT_VERSION >= 0x030100"
-     else
-       kde_qt_verstring="QT_VERSION >= 300"
-     fi
-   fi
-   if test $kde_qtver = 2; then
-     if test $kde_qtsubver -gt 0; then
-       kde_qt_verstring="QT_VERSION >= 222"
-     else
-       kde_qt_verstring="QT_VERSION >= 200"
-     fi
-   fi
-   if test $kde_qtver = 1; then
-    kde_qt_verstring="QT_VERSION >= 142 && QT_VERSION < 200"
-   fi
-else
-   kde_qt_verstring=$3
-fi
-
-if test $kde_qtver = 3; then
-  kde_qt_dirs="$QTDIR /usr/lib/qt3 /usr/lib/qt /usr/share/qt3"
-fi
-if test $kde_qtver = 2; then
-   kde_qt_dirs="$QTDIR /usr/lib/qt2 /usr/lib/qt"
-fi
-if test $kde_qtver = 1; then
-   kde_qt_dirs="$QTDIR /usr/lib/qt"
-fi
-])
-
-dnl ------------------------------------------------------------------------
-dnl Try to find the Qt headers and libraries.
-dnl $(QT_LDFLAGS) will be -Lqtliblocation (if needed)
-dnl and $(QT_INCLUDES) will be -Iqthdrlocation (if needed)
-dnl ------------------------------------------------------------------------
-dnl
-AC_DEFUN(AC_PATH_QT_1_3,
-[
-AC_REQUIRE([K_PATH_X])
-AC_REQUIRE([KDE_USE_QT])
-AC_REQUIRE([KDE_CHECK_LIB64])
-
-dnl ------------------------------------------------------------------------
-dnl Add configure flag to enable linking to MT version of Qt library.
-dnl ------------------------------------------------------------------------
-
-AC_ARG_ENABLE(
-  mt,
-  [  --disable-mt            link to non-threaded Qt (deprecated)],
-  kde_use_qt_mt=$enableval,
-  [
-    if test $kde_qtver = 3; then
-      kde_use_qt_mt=yes
-    else
-      kde_use_qt_mt=no
-    fi
-  ]
-)
-
-USING_QT_MT=""
-
-dnl ------------------------------------------------------------------------
-dnl If we not get --disable-qt-mt then adjust some vars for the host.
-dnl ------------------------------------------------------------------------
-
-KDE_MT_LDFLAGS=
-KDE_MT_LIBS=
-if test "x$kde_use_qt_mt" = "xyes"; then
-  KDE_CHECK_THREADING
-  if test "x$kde_use_threading" = "xyes"; then
-    CPPFLAGS="$USE_THREADS -DQT_THREAD_SUPPORT $CPPFLAGS"
-    KDE_MT_LDFLAGS="$USE_THREADS"
-    KDE_MT_LIBS="$LIBPTHREAD"
-  else
-    kde_use_qt_mt=no
-  fi
-fi
-AC_SUBST(KDE_MT_LDFLAGS)
-AC_SUBST(KDE_MT_LIBS)
-
-kde_qt_was_given=yes
-
-dnl ------------------------------------------------------------------------
-dnl If we haven't been told how to link to Qt, we work it out for ourselves.
-dnl ------------------------------------------------------------------------
-if test -z "$LIBQT_GLOB"; then
-  if test "x$kde_use_qt_emb" = "xyes"; then
-    LIBQT_GLOB="libqte.*"
-  else
-    LIBQT_GLOB="libqt.*"
-  fi
-fi
-
-if test -z "$LIBQT"; then
-dnl ------------------------------------------------------------
-dnl If we got --enable-embedded then adjust the Qt library name.
-dnl ------------------------------------------------------------
-  if test "x$kde_use_qt_emb" = "xyes"; then
-    qtlib="qte"
-  else
-    qtlib="qt"
-  fi
-
-  kde_int_qt="-l$qtlib"
-else
-  kde_int_qt="$LIBQT"
-  kde_lib_qt_set=yes
-fi
-
-if test -z "$LIBQPE"; then
-dnl ------------------------------------------------------------
-dnl If we got --enable-palmtop then add -lqpe to the link line
-dnl ------------------------------------------------------------
-  if test "x$kde_use_qt_emb" = "xyes"; then
-    if test "x$kde_use_qt_emb_palm" = "xyes"; then
-      LIB_QPE="-lqpe"
-    else
-      LIB_QPE=""
-    fi
-  else
-    LIB_QPE=""
-  fi
-fi
-
-dnl ------------------------------------------------------------------------
-dnl If we got --enable-qt-mt then adjust the Qt library name for the host.
-dnl ------------------------------------------------------------------------
-
-if test "x$kde_use_qt_mt" = "xyes"; then
-  if test -z "$LIBQT"; then
-    LIBQT="-l$qtlib-mt"
-    kde_int_qt="-l$qtlib-mt"
-  else
-    LIBQT="$qtlib-mt"
-    kde_int_qt="$qtlib-mt"
-  fi
-  LIBQT_GLOB="lib$qtlib-mt.*"
-  USING_QT_MT="using -mt"
-else
-  LIBQT="-l$qtlib"
-fi
-
-if test $kde_qtver != 1; then
-
-  AC_REQUIRE([AC_FIND_PNG])
-  AC_REQUIRE([AC_FIND_JPEG])
-  LIBQT="$LIBQT $LIBPNG $LIBJPEG"
-fi
-
-if test $kde_qtver = 3; then
-  AC_REQUIRE([KDE_CHECK_LIBDL])
-  LIBQT="$LIBQT $LIBDL"
-fi
-
-AC_MSG_CHECKING([for Qt])
-
-if test "x$kde_use_qt_emb" != "xyes"; then
-LIBQT="$LIBQT $X_PRE_LIBS -lXext -lX11 $LIBSM $LIBSOCKET"
-fi
-ac_qt_includes=NO ac_qt_libraries=NO ac_qt_bindir=NO
-qt_libraries=""
-qt_includes=""
-AC_ARG_WITH(qt-dir,
-    [  --with-qt-dir=DIR       where the root of Qt is installed ],
-    [  ac_qt_includes="$withval"/include
-       ac_qt_libraries="$withval"/lib${kdelibsuff}
-       ac_qt_bindir="$withval"/bin
-    ])
-
-AC_ARG_WITH(qt-includes,
-    [  --with-qt-includes=DIR  where the Qt includes are. ],
-    [
-       ac_qt_includes="$withval"
-    ])
-
-kde_qt_libs_given=no
-
-AC_ARG_WITH(qt-libraries,
-    [  --with-qt-libraries=DIR where the Qt library is installed.],
-    [  ac_qt_libraries="$withval"
-       kde_qt_libs_given=yes
-    ])
-
-AC_CACHE_VAL(ac_cv_have_qt,
-[#try to guess Qt locations
-
-qt_incdirs=""
-for dir in $kde_qt_dirs; do
-   qt_incdirs="$qt_incdirs $dir/include $dir"
-done
-qt_incdirs="$QTINC $qt_incdirs /usr/local/qt/include /usr/include/qt /usr/include /usr/X11R6/include/X11/qt /usr/X11R6/include/qt /usr/X11R6/include/qt2 $x_includes"
-if test ! "$ac_qt_includes" = "NO"; then
-   qt_incdirs="$ac_qt_includes $qt_incdirs"
-fi
-
-if test "$kde_qtver" != "1"; then
-  kde_qt_header=qstyle.h
-else
-  kde_qt_header=qglobal.h
-fi
-
-AC_FIND_FILE($kde_qt_header, $qt_incdirs, qt_incdir)
-ac_qt_includes="$qt_incdir"
-
-qt_libdirs=""
-for dir in $kde_qt_dirs; do
-   qt_libdirs="$qt_libdirs $dir/lib${kdelibsuff} $dir"
-done
-qt_libdirs="$QTLIB $qt_libdirs /usr/X11R6/lib /usr/lib /usr/local/qt/lib $x_libraries"
-if test ! "$ac_qt_libraries" = "NO"; then
-  qt_libdir=$ac_qt_libraries
-else
-  qt_libdirs="$ac_qt_libraries $qt_libdirs"
-  # if the Qt was given, the chance is too big that libqt.* doesn't exist
-  qt_libdir=NONE
-  for dir in $qt_libdirs; do
-    try="ls -1 $dir/${LIBQT_GLOB}"
-    if test -n "`$try 2> /dev/null`"; then qt_libdir=$dir; break; else echo "tried $dir" >&AC_FD_CC ; fi
-  done
-fi
-
-ac_qt_libraries="$qt_libdir"
-
-AC_LANG_SAVE
-AC_LANG_CPLUSPLUS
-
-ac_cxxflags_safe="$CXXFLAGS"
-ac_ldflags_safe="$LDFLAGS"
-ac_libs_safe="$LIBS"
-
-CXXFLAGS="$CXXFLAGS -I$qt_incdir $all_includes"
-LDFLAGS="$LDFLAGS -L$qt_libdir $all_libraries $USER_LDFLAGS $KDE_MT_LDFLAGS"
-LIBS="$LIBS $LIBQT $KDE_MT_LIBS"
-
-KDE_PRINT_QT_PROGRAM
-
-if AC_TRY_EVAL(ac_link) && test -s conftest; then
-  rm -f conftest*
-else
-  echo "configure: failed program was:" >&AC_FD_CC
-  cat conftest.$ac_ext >&AC_FD_CC
-  ac_qt_libraries="NO"
-fi
-rm -f conftest*
-CXXFLAGS="$ac_cxxflags_safe"
-LDFLAGS="$ac_ldflags_safe"
-LIBS="$ac_libs_safe"
-
-AC_LANG_RESTORE
-if test "$ac_qt_includes" = NO || test "$ac_qt_libraries" = NO; then
-  ac_cv_have_qt="have_qt=no"
-  ac_qt_notfound=""
-  missing_qt_mt=""
-  if test "$ac_qt_includes" = NO; then
-    if test "$ac_qt_libraries" = NO; then
-      ac_qt_notfound="(headers and libraries)";
-    else
-      ac_qt_notfound="(headers)";
-    fi
-  else
-    if test "x$kde_use_qt_mt" = "xyes"; then
-       missing_qt_mt="
-Make sure that you have compiled Qt with thread support!"
-       ac_qt_notfound="(library $qtlib-mt)";
-    else
-       ac_qt_notfound="(library $qtlib)";
-    fi
-  fi
-
-  AC_MSG_ERROR([Qt ($kde_qt_minversion) $ac_qt_notfound not found. Please check your installation!
-For more details about this problem, look at the end of config.log.$missing_qt_mt])
-else
-  have_qt="yes"
-fi
-])
-
-eval "$ac_cv_have_qt"
-
-if test "$have_qt" != yes; then
-  AC_MSG_RESULT([$have_qt]);
-else
-  ac_cv_have_qt="have_qt=yes \
-    ac_qt_includes=$ac_qt_includes ac_qt_libraries=$ac_qt_libraries"
-  qt_libraries="$ac_qt_libraries"
-  qt_includes="$ac_qt_includes"
-
-  AC_SUBST(qt_libraries)
-  AC_SUBST(qt_includes)
-
-  AC_MSG_RESULT([libraries $ac_qt_libraries, headers $ac_qt_includes $USING_QT_MT])
-fi
-
-if test "$qt_includes" = "$x_includes" || test -z "$qt_includes"; then
- QT_INCLUDES=""
-else
- QT_INCLUDES="-I$qt_includes"
- all_includes="$QT_INCLUDES $all_includes"
-fi
-
-if test "$qt_libraries" = "$x_libraries" || test -z "$qt_libraries"; then
- QT_LDFLAGS=""
-else
- QT_LDFLAGS="-L$qt_libraries"
- all_libraries="$all_libraries $QT_LDFLAGS"
-fi
-test -z "$KDE_MT_LDFLAGS" || all_libraries="$all_libraries $KDE_MT_LDFLAGS"
-
-AC_SUBST(QT_INCLUDES)
-AC_SUBST(QT_LDFLAGS)
-AC_PATH_QT_MOC_UIC
-
-KDE_CHECK_QT_JPEG
-
-if test "x$kde_use_qt_emb" != "xyes"; then
-LIB_QT="$kde_int_qt $LIBJPEG_QT "'$(LIBPNG) -lXext $(LIB_X11) $(LIBSM)'
-else
-LIB_QT="$kde_int_qt $LIBJPEG_QT "'$(LIBPNG)'
-fi
-test -z "$KDE_MT_LIBS" || LIB_QT="$LIB_QT $KDE_MT_LIBS"
-
-AC_SUBST(LIB_QT)
-AC_SUBST(LIB_QPE)
-
-AC_SUBST(kde_qtver)
-])
-
-AC_DEFUN(AC_PATH_QT,
-[
-AC_PATH_QT_1_3
 ])
 
 AC_DEFUN(KDE_CHECK_UIC_PLUGINS,
@@ -1559,6 +1495,7 @@ AC_DEFUN(KDE_CHECK_FINAL,
   AC_SUBST(KDE_USE_CLOSURE_FALSE)
 ])
 
+
 dnl ------------------------------------------------------------------------
 dnl Now, the same with KDE
 dnl $(KDE_LDFLAGS) will be the kdeliblocation (if needed)
@@ -1567,11 +1504,9 @@ dnl ------------------------------------------------------------------------
 dnl
 AC_DEFUN(AC_BASE_PATH_KDE,
 [
-AC_PREREQ([2.13])
-AC_REQUIRE([AC_PATH_QT])dnl
-AC_REQUIRE([KDE_CHECK_LIB64])
+KDE_USE_QT
+KDE_CHECK_LIB64
 
-AC_CHECK_RPATH
 AC_MSG_CHECKING([for KDE])
 
 if test "${prefix}" != NONE; then
@@ -1615,11 +1550,9 @@ AC_FIND_FILE($kde_check_header, $kde_incdirs, kde_incdir)
 ac_kde_includes="$kde_incdir"
 
 if test -n "$ac_kde_includes" && test ! -r "$ac_kde_includes/$kde_check_header"; then
-# mrj: don't fail here
-  AC_MSG_RESULT(no)
-#  AC_MSG_ERROR([
-#in the prefix, you've chosen, are no KDE headers installed. This will fail.
-#So, check this please and use another prefix!])
+ AC_MSG_ERROR([
+In the prefix you've chosen there are no KDE headers installed. This will fail.
+Check this please and use another prefix (or use --without-kde)!])
 fi
 
 kde_libdirs="/usr/lib/kde/lib${kdelibsuff} /usr/local/kde/lib${kdelibsuff} /usr/kde/lib${kdelibsuff} /usr/lib${kdelibsuff}/kde /usr/lib${kdelibsuff}/kde3 /usr/lib${kdelibsuff} /usr/X11R6/lib${kdelibsuff} /usr/local/lib${kdelibsuff} /opt/kde3/lib${kdelibsuff} /opt/kde/lib${kdelibsuff} /usr/X11R6/kde/lib${kdelibsuff}"
@@ -1719,9 +1652,10 @@ all_includes="$all_includes $USER_INCLUDES"
 AC_SUBST(all_includes)
 AC_SUBST(all_libraries)
 
-if test -z "$1"; then
-KDE_CHECK_UIC_PLUGINS
-fi
+dnl will re-run test in some cases
+dnl if test -z "$1"; then
+dnl KDE_CHECK_UIC_PLUGINS
+dnl fi
 
 ac_kde_libraries="$kde_libdir"
 
@@ -1785,55 +1719,6 @@ AC_MSG_RESULT($kde_use_extra_libs)
 
 ])
 
-AC_DEFUN(KDE_1_CHECK_PATH_HEADERS,
-[
-    AC_MSG_CHECKING([for KDE headers installed])
-    AC_LANG_SAVE
-    AC_LANG_CPLUSPLUS
-cat > conftest.$ac_ext <<EOF
-#ifdef STDC_HEADERS
-# include <stdlib.h>
-#endif
-#include <stdio.h>
-#include "confdefs.h"
-#include <kapp.h>
-
-int main() {
-    printf("kde_htmldir=\\"%s\\"\n", KApplication::kde_htmldir().data());
-    printf("kde_appsdir=\\"%s\\"\n", KApplication::kde_appsdir().data());
-    printf("kde_icondir=\\"%s\\"\n", KApplication::kde_icondir().data());
-    printf("kde_sounddir=\\"%s\\"\n", KApplication::kde_sounddir().data());
-    printf("kde_datadir=\\"%s\\"\n", KApplication::kde_datadir().data());
-    printf("kde_locale=\\"%s\\"\n", KApplication::kde_localedir().data());
-    printf("kde_cgidir=\\"%s\\"\n", KApplication::kde_cgidir().data());
-    printf("kde_confdir=\\"%s\\"\n", KApplication::kde_configdir().data());
-    printf("kde_mimedir=\\"%s\\"\n", KApplication::kde_mimedir().data());
-    printf("kde_toolbardir=\\"%s\\"\n", KApplication::kde_toolbardir().data());
-    printf("kde_wallpaperdir=\\"%s\\"\n",
-	KApplication::kde_wallpaperdir().data());
-    printf("kde_bindir=\\"%s\\"\n", KApplication::kde_bindir().data());
-    printf("kde_partsdir=\\"%s\\"\n", KApplication::kde_partsdir().data());
-    printf("kde_servicesdir=\\"/tmp/dummy\\"\n");
-    printf("kde_servicetypesdir=\\"/tmp/dummy\\"\n");
-    printf("kde_moduledir=\\"/tmp/dummy\\"\n");
-    printf("kde_styledir=\\"/tmp/dummy\\"\n");
-    printf("kde_widgetdir=\\"/tmp/dummy\\"\n");
-    return 0;
-    }
-EOF
-
- ac_compile='${CXX-g++} -c $CXXFLAGS $all_includes $CPPFLAGS conftest.$ac_ext'
- if AC_TRY_EVAL(ac_compile); then
-   AC_MSG_RESULT(yes)
- else
-   AC_MSG_ERROR([your system is not able to compile a small KDE application!
-Check, if you installed the KDE header files correctly.
-For more details about this problem, look at the end of config.log.])
-  fi
-
-  AC_LANG_RESTORE
-])
-
 AC_DEFUN(KDE_CHECK_KDEQTADDON,
 [
 AC_MSG_CHECKING(for kde-qt-addon)
@@ -1872,12 +1757,12 @@ fi
 
 AC_DEFUN(KDE_CHECK_KIMGIO,
 [
-   AC_REQUIRE([AC_BASE_PATH_KDE])
-   AC_REQUIRE([KDE_CHECK_EXTRA_LIBS])
-   AC_REQUIRE([AC_FIND_TIFF])
-   AC_REQUIRE([AC_FIND_JPEG])
-   AC_REQUIRE([AC_FIND_PNG])
-   AC_REQUIRE([KDE_CREATE_LIBS_ALIASES])
+   AC_BASE_PATH_KDE
+   KDE_CHECK_EXTRA_LIBS
+   AC_FIND_TIFF
+   AC_FIND_JPEG
+   AC_FIND_PNG
+   KDE_CREATE_LIBS_ALIASES
 
    if test "$1" = "existance"; then
      AC_LANG_SAVE
@@ -1902,10 +1787,6 @@ AC_DEFUN(KDE_CHECK_KIMGIO,
 
 AC_DEFUN(KDE_CREATE_LIBS_ALIASES,
 [
-   AC_REQUIRE([KDE_MISC_TESTS])
-   AC_REQUIRE([KDE_CHECK_LIBDL])
-   AC_REQUIRE([K_PATH_X])
-
 if test $kde_qtver = 3; then
    AC_SUBST(LIB_KDECORE, "-lkdecore")
    AC_SUBST(LIB_KDEUI, "-lkdeui")
@@ -1917,10 +1798,10 @@ if test $kde_qtver = 3; then
    AC_SUBST(LIB_KSPELL, "-lkspell")
    AC_SUBST(LIB_KPARTS, "-lkparts")
    AC_SUBST(LIB_KDEPRINT, "-lkdeprint")
+   AC_SUBST(LIB_DCOP, "-lDCOP")
 # these are for backward compatibility
    AC_SUBST(LIB_KSYCOCA, "-lkio")
    AC_SUBST(LIB_KFILE, "-lkio")
-   AC_SUBST(LIB_DCOP, "-lDCOP")
 elif test $kde_qtver = 2; then
    AC_SUBST(LIB_KDECORE, "-lkdecore")
    AC_SUBST(LIB_KDEUI, "-lkdeui")
@@ -1935,16 +1816,24 @@ elif test $kde_qtver = 2; then
    AC_SUBST(LIB_KDEPRINT, "-lkdeprint")
    AC_SUBST(LIB_DCOP, "-lDCOP")
 else
-   AC_SUBST(LIB_KDECORE, "-lkdecore -lXext $(LIB_QT)")
-   AC_SUBST(LIB_KDEUI, "-lkdeui $(LIB_KDECORE)")
-   AC_SUBST(LIB_KFM, "-lkfm $(LIB_KDECORE)")
-   AC_SUBST(LIB_KFILE, "-lkfile $(LIB_KFM) $(LIB_KDEUI)")
-   AC_SUBST(LIB_KAB, "-lkab $(LIB_KIMGIO) $(LIB_KDECORE)")
+   AC_SUBST(LIB_KDECORE, "")
+   AC_SUBST(LIB_KDEUI, "")
+   AC_SUBST(LIB_KIO, "")
+   AC_SUBST(LIB_SMB, "")
+   AC_SUBST(LIB_KAB, "")
+   AC_SUBST(LIB_KABC, "")
+   AC_SUBST(LIB_KHTML, "")
+   AC_SUBST(LIB_KSPELL, "")
+   AC_SUBST(LIB_KPARTS, "")
+   AC_SUBST(LIB_KDEPRINT, "")
+   AC_SUBST(LIB_DCOP, "")
 fi
 ])
 
 AC_DEFUN(AC_PATH_KDE,
 [
+  KDE_MISC_TESTS
+  K_PATH_X
   AC_BASE_PATH_KDE
   AC_ARG_ENABLE(path-check, [  --disable-path-check    don't try to find out, where to install],
   [
@@ -1964,7 +1853,6 @@ AC_DEFUN(AC_PATH_KDE,
   AC_CREATE_KFSSTND($ac_use_path_checking)
 
   AC_SUBST_KFSSTND
-  KDE_CREATE_LIBS_ALIASES
 ])
 
 dnl KDE_CHECK_FUNC_EXT(<func>, [headers], [sample-use], [C prototype], [autoheader define], [call if found])
@@ -2932,33 +2820,6 @@ AM_KDE_WITH_NLS
 AC_PATH_KDE
 ])
 
-AC_DEFUN(AC_CHECK_RPATH,
-[
-AC_MSG_CHECKING(for rpath)
-AC_ARG_ENABLE(rpath,
-      [  --disable-rpath         do not use the rpath feature of ld],
-      USE_RPATH=$enableval, USE_RPATH=yes)
-
-if test -z "$KDE_RPATH" && test "$USE_RPATH" = "yes"; then
-
-  KDE_RPATH="-R \$(kde_libraries)"
-
-  if test -n "$qt_libraries"; then
-    KDE_RPATH="$KDE_RPATH -R \$(qt_libraries)"
-  fi
-  dnl $x_libraries is set to /usr/lib in case
-  if test -n "$X_LDFLAGS"; then
-    KDE_RPATH="$KDE_RPATH -R \$(x_libraries)"
-  fi
-  if test -n "$KDE_EXTRA_RPATH"; then
-    KDE_RPATH="$KDE_RPATH \$(KDE_EXTRA_RPATH)"
-  fi
-fi
-AC_SUBST(KDE_EXTRA_RPATH)
-AC_SUBST(KDE_RPATH)
-AC_MSG_RESULT($USE_RPATH)
-])
-
 dnl Check for the type of the third argument of getsockname
 AC_DEFUN(AC_CHECK_SOCKLEN_T, [
   AC_MSG_CHECKING(for socklen_t)
@@ -3836,8 +3697,11 @@ AC_SUBST(LIBPTHREAD)
 
 AC_DEFUN(KDE_CHECK_PTHREAD_OPTION,
 [
-    AC_ARG_ENABLE(kernel-threads, [  --enable-kernel-threads Enable the use of the LinuxThreads port on FreeBSD/i386 only.],
-	kde_use_kernthreads=$enableval, kde_use_kernthreads=no)
+    AC_ARG_ENABLE(
+      kernel-threads,
+      [  --enable-kernel-threads Enable the use of the LinuxThreads port on FreeBSD/i386 only.],
+      kde_use_kernthreads=$enableval,
+      kde_use_kernthreads=no)
 
     if test "$kde_use_kernthreads" = "yes"; then
       ac_save_CXXFLAGS="$CXXFLAGS"
@@ -3873,19 +3737,19 @@ AC_DEFUN(KDE_CHECK_PTHREAD_OPTION,
     case $host_os in
  	solaris*)
 		KDE_CHECK_COMPILER_FLAG(mt, [USE_THREADS="-mt"])
-                CPPFLAGS="$CPPFLAGS -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -DUSE_SOLARIS -DSVR4"
+                CXXFLAGS="$CXXFLAGS -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -DUSE_SOLARIS -DSVR4"
     		;;
         freebsd*)
-                CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE"
+                CXXFLAGS="$CXXFLAGS -D_THREAD_SAFE"
                 ;;
         aix*)
-                CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE"
+                CXXFLAGS="$CXXFLAGS -D_THREAD_SAFE"
                 LIBPTHREAD="$LIBPTHREAD -lc_r"
                 ;;
-        linux*) CPPFLAGS="$CPPFLAGS -D_REENTRANT"
+        linux*) CXXFLAGS="$CXXFLAGS -D_REENTRANT"
                 if test "$CXX" = "KCC"; then
                   CXXFLAGS="$CXXFLAGS --thread_safe"
-		  NOOPT_CXXFLAGS="$NOOPT_CXXFLAGS --thread_safe"
+                  NOOPT_CXXFLAGS="$NOOPT_CXXFLAGS --thread_safe"
                 fi
                 ;;
 	*)
@@ -3909,183 +3773,15 @@ AC_DEFUN(KDE_CHECK_THREADING,
   else
     kde_check_threading_default=yes
   fi
-  AC_ARG_ENABLE(threading, [  --disable-threading     disables threading even if libpthread found ],
-   kde_use_threading=$enableval, kde_use_threading=$kde_check_threading_default)
+
+  AC_ARG_ENABLE(
+    threading,
+    [  --disable-threading     disables threading even if libpthread found ],
+    kde_use_threading=$enableval, kde_use_threading=$kde_check_threading_default)
+
   if test "x$kde_use_threading" = "xyes"; then
-    AC_DEFINE(HAVE_LIBPTHREAD, 1, [Define if you have a working libpthread (will enable threaded code)])
+    AC_DEFINE(HAVE_LIBPTHREAD, 1, [Define if you have a working libpthread])
   fi
-])
-
-AC_DEFUN(KDE_TRY_LINK_PYTHON,
-[
-if test "$kde_python_link_found" = no; then
-
-if test "$1" = normal; then
-  AC_MSG_CHECKING(if a Python application links)
-else
-  AC_MSG_CHECKING(if Python depends on $2)
-fi
-
-AC_CACHE_VAL(kde_cv_try_link_python_$1,
-[
-AC_LANG_SAVE
-AC_LANG_C
-kde_save_cflags="$CFLAGS"
-CFLAGS="$CFLAGS $PYTHONINC"
-kde_save_libs="$LIBS"
-LIBS="$LIBS $LIBPYTHON $2 $LIBDL $LIBSOCKET"
-kde_save_ldflags="$LDFLAGS"
-LDFLAGS="$LDFLAGS $PYTHONLIB"
-
-AC_TRY_LINK(
-[
-#include <Python.h>
-],[
-	PySys_SetArgv(1, 0);
-],
-	[kde_cv_try_link_python_$1=yes],
-	[kde_cv_try_link_python_$1=no]
-)
-CFLAGS="$kde_save_cflags"
-LIBS="$kde_save_libs"
-LDFLAGS="$kde_save_ldflags"
-])
-
-if test "$kde_cv_try_link_python_$1" = "yes"; then
-  AC_MSG_RESULT(yes)
-  kde_python_link_found=yes
-  if test ! "$1" = normal; then
-    LIBPYTHON="$LIBPYTHON $2"
-  fi
-  $3
-else
-  AC_MSG_RESULT(no)
-  $4
-fi
-AC_LANG_RESTORE
-
-fi
-
-])
-
-AC_DEFUN(KDE_CHECK_PYTHON_DIR,
-[
-AC_MSG_CHECKING([for Python directory])
- 
-AC_CACHE_VAL(kde_cv_pythondir,
-[
-  if test -z "$PYTHONDIR"; then
-    kde_cv_pythondir=/usr/local
-  else
-    kde_cv_pythondir="$PYTHONDIR"
-  fi
-])
- 
-AC_ARG_WITH(pythondir,
-[  --with-pythondir=pythondir   use python installed in pythondir ],
-[
-  ac_python_dir=$withval
-], ac_python_dir=$kde_cv_pythondir
-)
- 
-AC_MSG_RESULT($ac_python_dir)
-])
-
-AC_DEFUN(KDE_CHECK_PYTHON_INTERN,
-[
-AC_REQUIRE([KDE_CHECK_LIBDL])
-AC_REQUIRE([KDE_CHECK_LIBPTHREAD])
-AC_REQUIRE([KDE_CHECK_PYTHON_DIR])
-
-if test -z "$1"; then
-  version="1.5"
-else
-  version="$1"
-fi
-
-AC_MSG_CHECKING([for Python$version])
-
-python_incdirs="$ac_python_dir/include /usr/include /usr/local/include/ $kde_extra_includes"
-AC_FIND_FILE(Python.h, $python_incdirs, python_incdir)
-if test ! -r $python_incdir/Python.h; then
-  AC_FIND_FILE(python$version/Python.h, $python_incdirs, python_incdir)
-  python_incdir=$python_incdir/python$version
-  if test ! -r $python_incdir/Python.h; then
-    python_incdir=no
-  fi
-fi
-
-PYTHONINC=-I$python_incdir
-
-python_libdirs="$ac_python_dir/lib /usr/lib /usr/local /usr/lib $kde_extra_libs"
-AC_FIND_FILE(libpython$version.a, $python_libdirs, python_libdir)
-if test ! -r $python_libdir/libpython$version.a; then
-  AC_FIND_FILE(python$version/config/libpython$version.a, $python_libdirs, python_libdir)
-  python_libdir=$python_libdir/python$version/config
-  if test ! -r $python_libdir/libpython$version.a; then
-    python_libdir=no
-  fi
-fi
-
-PYTHONLIB=-L$python_libdir
-kde_orig_LIBPYTHON=$LIBPYTHON
-if test -z "$LIBPYTHON"; then
-  LIBPYTHON=-lpython$version
-fi
-
-python_libdirs="$ac_python_dir/lib /usr/lib /usr/local /usr/lib $kde_extra_libs"
-AC_FIND_FILE(python$version/copy.py, $python_libdirs, python_moddir)
-python_moddir=$python_moddir/python$version
-if test ! -r $python_moddir/copy.py; then
-  python_moddir=no
-fi
-
-PYTHONMODDIR=$python_moddir
-
-AC_MSG_RESULT(header $python_incdir library $python_libdir modules $python_moddir)
-
-if test x$python_incdir = xno ||  test x$python_libdir = xno ||  test x$python_moddir = xno; then
-   LIBPYTHON=$kde_orig_LIBPYTHON
-   test "x$PYTHONLIB" = "x-Lno" && PYTHONLIB=""
-   test "x$PYTHONINC" = "x-Ino" && PYTHONINC=""
-   $2
-else 
-  dnl Note: this test is very weak
-  kde_python_link_found=no
-  KDE_TRY_LINK_PYTHON(normal)
-  KDE_TRY_LINK_PYTHON(m, -lm)
-  KDE_TRY_LINK_PYTHON(pthread, $LIBPTHREAD)
-  KDE_TRY_LINK_PYTHON(tcl, -ltcl)
-  KDE_TRY_LINK_PYTHON(db2, -ldb2)
-  KDE_TRY_LINK_PYTHON(m_and_thread, [$LIBPTHREAD -lm])
-  KDE_TRY_LINK_PYTHON(m_and_thread_and_util, [$LIBPTHREAD -lm -lutil])
-  KDE_TRY_LINK_PYTHON(m_and_thread_and_db3, [$LIBPTHREAD -lm -ldb-3 -lutil])
-  KDE_TRY_LINK_PYTHON(pthread_and_db3, [$LIBPTHREAD -ldb-3])
-  KDE_TRY_LINK_PYTHON(m_and_thread_and_db, [$LIBPTHREAD -lm -ldb -ltermcap -lutil])
-  KDE_TRY_LINK_PYTHON(pthread_and_dl, [$LIBPTHREAD $LIBDL -lutil -lreadline -lncurses -lm])
-  KDE_TRY_LINK_PYTHON(m_and_thread_and_db_special, [$LIBPTHREAD -lm -ldb -lutil], [],
-	[AC_MSG_WARN([it seems, Python depends on another library.
-    Pleae set LIBPYTHON to '-lpython$version -lotherlib' before calling configure to fix this
-    and contact the authors to let them know about this problem])
-	])
-
-  LIBPYTHON="$LIBPYTHON $LIBDL $LIBSOCKET"
-  AC_SUBST(PYTHONINC)
-  AC_SUBST(PYTHONLIB)
-  AC_SUBST(LIBPYTHON)
-  AC_SUBST(PYTHONMODDIR)
-  AC_DEFINE(HAVE_PYTHON, 1, [Define if you have the development files for python])
-fi
-
-])
-
-
-AC_DEFUN(KDE_CHECK_PYTHON,
-[
-  KDE_CHECK_PYTHON_INTERN("2.2", 
-    [KDE_CHECK_PYTHON_INTERN("2.1", 
-      [KDE_CHECK_PYTHON_INTERN("2.0", [ KDE_CHECK_PYTHON_INTERN($1, $2) ])
-  ])])
 ])
 
 AC_DEFUN(KDE_CHECK_STL_SGI,
@@ -4856,7 +4552,7 @@ AC_DEFUN(AC_PATH_QTOPIA,
   qtopia_minver="$qtopia_minver_maj$qtopia_minver_min$qtopia_minver_pat"
   qtopia_minverstr="$qtopia_minver_maj.$qtopia_minver_min.$qtopia_minver_pat"
 
-  AC_REQUIRE([AC_PATH_QT])
+  dnl mrj, don't do that   AC_REQUIRE([AC_PATH_QT])
 
   AC_MSG_CHECKING([for Qtopia])
 
