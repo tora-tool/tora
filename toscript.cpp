@@ -462,16 +462,6 @@ void toScript::execute(void)
   } TOCATCH
 }
 
-static bool CompareLists(QStringList &lst1,QStringList &lst2,unsigned int len)
-{
-  if (lst1.count()<len||lst2.count()<len)
-    return false;
-  for (unsigned int i=0;i<len;i++)
-    if (lst1[i]!=lst2[i])
-      return false;
-  return true;
-}
-
 void toScript::fillDifference(list<QString> &objects,QListView *view)
 {
   view->clear();
@@ -486,7 +476,7 @@ void toScript::fillDifference(list<QString> &objects,QListView *view)
 	last=last->parent();
 	lastLevel--;
       }
-      while(last&&lastLevel>=0&&!CompareLists(lstCtx,ctx,(unsigned int)lastLevel)) {
+      while(last&&lastLevel>=0&&!toCompareLists(lstCtx,ctx,(unsigned int)lastLevel)) {
 	last=last->parent();
 	lastLevel--;
       }

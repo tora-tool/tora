@@ -34,6 +34,7 @@ SOURCES=\
 	toextract.cpp		\
 	tofilesize.cpp		\
 	toglobalsetting.cpp     \
+	tohelp.cpp		\
 	tohighlightedtext.cpp	\
 	tomain.cpp		\
 	tomarkedtext.cpp	\
@@ -200,6 +201,7 @@ tora: \
 	objs/toabout.o \
 	objs/toconnection.o \
 	objs/toglobalsetting.o \
+	objs/tohelp.o \
 	objs/tohighlightedtext.o \
 	objs/tomain.o \
 	objs/tomarkedtext.o \

@@ -568,30 +568,32 @@ void toListView::exportFile(void)
     for (int i=0;i<columns();i++)
       sizes[i]=header()->label(i).length();
 
-    QListViewItem *next=NULL;
-    for (QListViewItem *item=firstChild();item;item=next) {
+    {
+      QListViewItem *next=NULL;
+      for (QListViewItem *item=firstChild();item;item=next) {
 
-      for (int i=0;i<columns();i++) {
-	int csiz=item->text(i).length();
-	if (i==0)
-	  csiz+=level;
-	if (sizes[i]<csiz)
-	  sizes[i]=csiz;
-      }
+        for (int i=0;i<columns();i++) {
+	  int csiz=item->text(i).length();
+	  if (i==0)
+	    csiz+=level;
+	  if (sizes[i]<csiz)
+	    sizes[i]=csiz;
+	}
 
-      if (item->firstChild()) {
-	level++;
-	next=item->firstChild();
-      } else if (item->nextSibling())
-	next=item->nextSibling();
-      else {
-	next=item;
-	do {
-	  next=next->parent();
-	  level--;
-	} while(next&&!next->nextSibling());
-	if (next)
-	  next=next->nextSibling();
+        if (item->firstChild()) {
+	  level++;
+	  next=item->firstChild();
+	} else if (item->nextSibling())
+	  next=item->nextSibling();
+        else {
+	  next=item;
+	  do {
+	    next=next->parent();
+	    level--;
+	  } while(next&&!next->nextSibling());
+	  if (next)
+	    next=next->nextSibling();
+	}
       }
     }
 
@@ -599,17 +601,17 @@ void toListView::exportFile(void)
 
     QString indent;
 
-    for (int i=0;i<columns();i++)
-      output+=QString("%1 ").arg(header()->label(i),-sizes[i]);
+    for (int j=0;j<columns();j++)
+      output+=QString("%1 ").arg(header()->label(j),-sizes[j]);
     output+="\n";
-    for (int i=0;i<columns();i++) {
-      for (int j=0;j<sizes[i];j++)
+    for (int k=0;k<columns();k++) {
+      for (int l=0;l<sizes[k];l++)
 	output+="=";
       output+=" ";
     }
     output+="\n";
 
-    next=NULL;
+    QListViewItem *next=NULL;
     for (QListViewItem *item=firstChild();item;item=next) {
 
       QString line=indent;

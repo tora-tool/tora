@@ -78,6 +78,7 @@
 #define CONF_DB_TITLE		"DBTitle"
 #define CONF_SIZE_UNIT		"SizeUnit"
 #define DEFAULT_SIZE_UNIT	"MB"
+#define CONF_HELP_PATH		"HelpPath"
 
 // Undefining this will leave out the style selection option stuff from the program
 #ifndef TO_KDE
@@ -90,6 +91,6 @@
 #define TOMONOLITHIC
 #define DEFAULT_PLUGIN_DIR ""
 #endif
-#define TOVERSION               "0.10"
+#define TOVERSION               "0.11"
 
 #endif

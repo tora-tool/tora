@@ -67,6 +67,7 @@ TO_NAMESPACE;
 #include "toresultview.h"
 #include "toresultcontent.h"
 #include "tosearchreplace.h"
+#include "tohelp.h"
 
 #include "tomain.moc"
 #ifdef TO_KDE
@@ -118,7 +119,10 @@ TO_NAMESPACE;
 #define TO_WINDOWS_CLOSE_ALL	303
 #define TO_WINDOWS_WINDOWS	310
 #define TO_WINDOWS_END		399
-#define TO_HELP_ABOUT		900
+
+#define TO_HELP_CONTENTS	900
+#define TO_HELP_CONTEXT		901
+#define TO_HELP_ABOUT		902
 
 #define TO_TOOLS		1000
 
@@ -150,9 +154,6 @@ static toResultContent *toContent(QWidget *widget)
 toMain::toMain()
   : toMainWindow()
 {
-  qApp->setMainWidget(this);
-  setDockMenuEnabled(true);
-
   if (!toConnectPixmap)
     toConnectPixmap=new QPixmap((const char **)connect_xpm);
   if (!toDisconnectPixmap)
@@ -179,6 +180,9 @@ toMain::toMain()
     toPrintPixmap=new QPixmap((const char **)print_xpm);
   if (!toTOraPixmap)
     toTOraPixmap=new QPixmap((const char **)toramini_xpm);
+
+  qApp->setMainWidget(this);
+  setDockMenuEnabled(true);
 
   char buffer[100];
   sprintf(buffer,DEFAULT_TITLE,TOVERSION);
@@ -366,7 +370,11 @@ toMain::toMain()
   menuBar()->insertSeparator();
 
   HelpMenu=new QPopupMenu(this);
+  HelpMenu->insertItem("C&urrent Context",TO_HELP_CONTEXT);
+  HelpMenu->insertItem("&Contents",TO_HELP_CONTENTS);
+  HelpMenu->insertSeparator();
   HelpMenu->insertItem("&About TOra",TO_HELP_ABOUT);
+  HelpMenu->setAccel(Key_F1,TO_HELP_CONTEXT);
   menuBar()->insertItem("&Help",HelpMenu,TO_HELP_MENU);
 
 #ifdef TO_KDE
@@ -660,6 +668,12 @@ void toMain::commandCallback(int cmd)
     case TO_NEW_CONNECTION:
       addConnection();
       break;
+    case TO_HELP_CONTEXT:
+      contextHelp();
+      break;
+    case TO_HELP_CONTENTS:
+      toHelp::displayHelp("index.html");
+      break;
     case TO_HELP_ABOUT:
       {
 	toAbout *about=new toAbout(this,"About TOra",true);
@@ -929,4 +943,18 @@ void toMain::editSQL(const QString &str)
     Tools[SQLEditor]->createWindow();
     emit sqlEditor(str);
   }
+}
+
+void toMain::contextHelp(void)
+{
+  QObject *cur=qApp->focusWidget();
+  while(cur) {
+    toHelpContext *ctx=dynamic_cast<toHelpContext *>(cur);
+    if (ctx) {
+      toHelp::displayHelp(ctx->context());
+      return;
+    }
+    cur=cur->parent();
+  }
+  toHelp::displayHelp("index.html");
 }

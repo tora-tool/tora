@@ -545,7 +545,7 @@ void toWorksheet::refresh(void)
 
 static QString unQuote(const QString &str)
 {
-  if (str[0]=='\"'&&str[str.length()-1]=='\"')
+  if (str.at(0)=='\"'&&str.at(str.length()-1)=='\"')
     return str.left(str.length()-1).right(str.length()-2);
   return str.upper();
 }

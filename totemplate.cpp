@@ -52,6 +52,7 @@ TO_NAMESPACE;
 #include "totemplate.h"
 #include "tomain.h"
 #include "tomarkedtext.h"
+#include "toconf.h"
 
 #include "totemplate.moc"
 #include "totemplatesetupui.moc"
@@ -59,18 +60,6 @@ TO_NAMESPACE;
 #include "totemplateeditui.moc"
 
 #include "icons/totemplate.xpm"
-
-static bool CompareLists(QStringList &lst1,QStringList &lst2,unsigned int len)
-{
-  if (lst1.count()<len||lst2.count()<len)
-    return false;
-  for (unsigned int i=0;i<len;i++)
-    if (lst1[i]!=lst2[i])
-      return false;
-  return true;
-}
-
-#include <stdio.h>
 
 class toTemplateEdit : public toTemplateEditUI {
   map<QString,QString> &TemplateMap;
@@ -91,7 +80,7 @@ public:
 	  last=last->parent();
 	  lastLevel--;
 	}
-	while(last&&lastLevel>=0&&!CompareLists(lstCtx,ctx,(unsigned int)lastLevel)) {
+	while(last&&lastLevel>=0&&!toCompareLists(lstCtx,ctx,(unsigned int)lastLevel)) {
 	  last=last->parent();
 	  lastLevel--;
 	}
@@ -449,7 +438,7 @@ void toTextTemplate::addFile(QListView *parent,const QString &root,const QString
 	last=dynamic_cast<toTemplateItem *>(last->parent());
 	lastLevel--;
       }
-      while(last&&lastLevel>=0&&!CompareLists(lstCtx,ctx,(unsigned int)lastLevel)) {
+      while(last&&lastLevel>=0&&!toCompareLists(lstCtx,ctx,(unsigned int)lastLevel)) {
 	last=dynamic_cast<toTemplateItem *>(last->parent());
 	lastLevel--;
       }

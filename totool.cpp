@@ -145,6 +145,7 @@ bool toTool::saveMap(const QString &file,map<QString,QString> &pairs)
   }
   QString oldfile=(file);
   oldfile.append(".old");
+#ifndef WIN32
   unlink(oldfile);
   if (!link(file,oldfile)) {
     unlink(file);
@@ -155,6 +156,9 @@ bool toTool::saveMap(const QString &file,map<QString,QString> &pairs)
     unlink(newfile);
     return false;
   }
+#else
+  return false;
+#endif
 }
 
 #define APPLICATION_NAME "/tora/"
@@ -242,61 +246,67 @@ bool toTool::loadMap(const QString &filename,map<QString,QString> &pairs)
 
   int size=file.size();
   
-  char buf[size+1];
-  if (file.readBlock(buf,size)==-1) {
-    throw QString("Encountered problems reading map");
-  }
-  buf[size]=0;
-  int pos=0;
-  int bol=0;
-  int endtag=-1;
-  int wpos=0;
-  while(pos<size) {
-    switch(buf[pos]) {
-    case '\n':
-      if (endtag==-1)
-	throw QString("Malformed tag in config file. Missing = on row. (%1)").
-	  arg(buf+bol);
-      buf[wpos]=0;
-      {
-	QString tag=buf+bol;
-	QString val=buf+endtag+1;
-	pairs[tag]=QString::fromUtf8(val);
-      }
-      bol=pos+1;
-      endtag=-1;
-      wpos=pos;
-      break;
-    case '=':
-      if (endtag==-1) {
-	endtag=pos;
-	buf[wpos]=0;
-	wpos=pos;
-      } else
-	buf[wpos]=buf[pos];
-      break;
-    case '\\':
-      pos++;
+  char *buf=new char[size+1];
+  try {
+    if (file.readBlock(buf,size)==-1) {
+      throw QString("Encountered problems reading map");
+    }
+    buf[size]=0;
+    int pos=0;
+    int bol=0;
+    int endtag=-1;
+    int wpos=0;
+    while(pos<size) {
       switch(buf[pos]) {
-      case 'n':
-	buf[wpos]='\n';
+      case '\n':
+	if (endtag==-1)
+	  throw QString("Malformed tag in config file. Missing = on row. (%1)").
+	    arg(buf+bol);
+        buf[wpos]=0;
+        {
+  	  QString tag=buf+bol;
+	  QString val=buf+endtag+1;
+	  pairs[tag]=QString::fromUtf8(val);
+	}
+	bol=pos+1;
+	endtag=-1;
+	wpos=pos;
+	break;
+      case '=':
+	if (endtag==-1) {
+	  endtag=pos;
+	  buf[wpos]=0;
+	  wpos=pos;
+	} else
+	  buf[wpos]=buf[pos];
 	break;
       case '\\':
-	if (endtag>=0)
-	  buf[wpos]='\\';
-	else
-	  buf[wpos]=':';
+	pos++;
+	switch(buf[pos]) {
+	case 'n':
+	  buf[wpos]='\n';
+	  break;
+	case '\\':
+	  if (endtag>=0)
+	    buf[wpos]='\\';
+	  else
+	    buf[wpos]=':';
+	  break;
+	default:
+	  throw QString("Unknown escape character in string (Only \\\\ and \\n recognised)");
+	}
 	break;
       default:
-	throw QString("Unknown escape character in string (Only \\\\ and \\n recognised)");
+	buf[wpos]=buf[pos];
       }
-      break;
-    default:
-      buf[wpos]=buf[pos];
+      wpos++;
+      pos++;
     }
-    wpos++;
-    pos++;
+  } catch(...) {
+    delete buf;
+    throw;
   }
+  delete buf;
   return true;
 }
 

@@ -173,6 +173,7 @@ void toTuning::refresh(void)
   Indicators->clear();
   list<QString> val=toSQL::range("toTuning");
   QListViewItem *parent=NULL;
+  QListViewItem *last=NULL;
   for(list<QString>::iterator i=val.begin();i!=val.end();i++) {
     try {
       list<QString> val=toReadQuery(Connection,toSQL::sql(*i,Connection));
@@ -180,14 +181,15 @@ void toTuning::refresh(void)
       if (!parent||parent->text(0)!=parts[1]) {
 	parent=new toResultViewItem(Indicators,NULL,parts[1]);
 	parent->setOpen(true);
+	last=NULL;
       }
       QStringList dsc=QStringList::split(".",toSQL::description(*i));
       QString first=dsc[0];
       first+=".";
-      toResultViewItem *item=new toResultViewItem(parent,NULL,first);
-      item->setText(1,*(val.begin()));
+      last=new toResultViewItem(parent,last,first);
+      last->setText(1,*(val.begin()));
       if (dsc.count()>1)
-	item->setText(2,dsc[1]);
+	last->setText(2,dsc[1]);
     } TOCATCH
   }
   Statistics->refreshStats();

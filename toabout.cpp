@@ -50,7 +50,7 @@ TO_NAMESPACE;
 
 #include "LICENSE.h"
 
-#include "icons/largelogo.xpm"
+#include "help/largelogo.xpm"
 
 static const char *AboutText="<IMG SRC=largelogo.xpm BORDER=1><BR>\n"
 "Version %s\n"

@@ -222,7 +222,10 @@ bool toSQL::saveSQL(const QString &filename,bool all)
 QString toSQL::expandFile(const QString &file)
 {
   QString ret(file);
-  ret.replace(QRegExp("$HOME"),getenv("HOME"));
+  const char *home=getenv("HOME");
+  if (!home)
+    home="";
+  ret.replace(QRegExp("$HOME"),home);
   return ret;
 }
 

@@ -42,6 +42,8 @@ TO_NAMESPACE;
 #include <qtoolbar.h>
 #include <qworkspace.h>
 #include <qvbox.h>
+#include <qfile.h>
+#include <qmessagebox.h>
 
 #ifdef TO_KDE
 #include <kapp.h>
@@ -607,3 +609,46 @@ int toSizeDecode(const QString &str)
     return 1024*1024;
   return 1;
 }
+
+QString toHelpPath(void)
+{
+  QString str=toTool::globalConfig(CONF_HELP_PATH,"");
+  if (str.isEmpty()) {
+    str=DEFAULT_PLUGIN_DIR;
+    str+="/help";
+  }
+  return str;
+}
+
+QString toReadFile(const QString &filename,bool local)
+{
+  QFile file(filename);
+  if (!file.open(IO_ReadOnly))
+    throw QString("Couldn't open file %1.").arg(filename);
+	    
+  int size=file.size();
+	    
+  char *buf=new char[size+1];
+  if (file.readBlock(buf,size)==-1) {
+    delete buf;
+    throw QString("Encountered problems read configuration");
+  }
+  buf[size]=0;
+  QString ret;
+  if (local)
+    ret=QString::fromLocal8Bit(buf);
+  else
+    ret=QString::fromLatin1(buf);
+  return ret;
+}
+
+bool toCompareLists(QStringList &lst1,QStringList &lst2,unsigned int len)
+{
+  if (lst1.count()<len||lst2.count()<len)
+    return false;
+  for (unsigned int i=0;i<len;i++)
+    if (lst1[i]!=lst2[i])
+      return false;
+  return true;
+}
+

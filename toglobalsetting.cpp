@@ -77,6 +77,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   Status->setValue(toTool::globalConfig(CONF_STATUS_MESSAGE,
 					DEFAULT_STATUS_MESSAGE).toInt());
   IncludeDB->setChecked(!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty());
+  HelpDirectory->setText(toHelpPath());
 
   QString typ=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
   if (typ=="KB")
@@ -149,6 +150,13 @@ void toGlobalSetting::sqlBrowse(void)
     CustomSQL->setText(str);
 }
 
+void toGlobalSetting::helpBrowse(void)
+{
+  QString str=TOFileDialog::getOpenFileName(HelpDirectory->text(),"*.sql",this);
+  if (!str.isEmpty())
+    HelpDirectory->setText(str);
+}
+
 void toGlobalSetting::saveSetting(void)
 {
   if (!toMonolithic())
@@ -163,6 +171,7 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_DOCK_TOOLBAR,DockToolbar->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DB_TITLE,IncludeDB->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_SIZE_UNIT,SizeUnit->currentText());
+  toTool::globalSetConfig(CONF_HELP_PATH,HelpDirectory->text());
 #ifdef ENABLE_STYLE
   toTool::globalSetConfig(CONF_STYLE,Style->currentText());
   toSetSessionType(Style->currentText());

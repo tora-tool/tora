@@ -2,6 +2,11 @@
 
 2001-05-25: Move application declaration outside try catch in main.
 2001-05-25: Added the messageboxes on exception again.
+2001-05-25: Some additional windows fixes.
+2001-05-26: Added help system in place (Still no help though).
+2001-05-26: Fixed sorting of indicators in toTuning.
+2001-05-26: Minor fix on the logo to work better on other backgrounds.
+2001-05-26: Added some util function for reading files and comparing lists.
 
 0.10: Released 2001-05-25
 

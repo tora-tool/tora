@@ -32,31 +32,49 @@
  *
  ****************************************************************************/
 
-#ifndef __TOGLOBALSETTING_H
-#define __TOGLOBALSETTING_H
+#ifndef __TOHELP_H
+#define __TOHELP_H
 
-#include "totool.h"
-#include "toglobalsettingui.h"
-#include "todatabasesettingui.h"
+#include <qdialog.h>
 
-class toGlobalSetting : public toGlobalSettingUI, public toSettingTab {
-  QComboBox *Refresh;
+#include <map>
+
+class toListView;
+class QLineEdit;
+class QTextBrowser;
+class QListViewItem;
+class QProgressBar;
+
+class toHelp : public QDialog {
+  Q_OBJECT
+
+  static toHelp *Window;
+  static map<QString,QString> *Files;
+
+  toListView *Sections;
+  toListView *Result;
+  QLineEdit *SearchLine;
+  QTextBrowser *Help;
+  QProgressBar *Progress;
 public:
-  toGlobalSetting(QWidget *parent=0,const char *name=0,WFlags fl=0);
-
-  virtual void saveSetting(void);
-
-  virtual void pluginBrowse(void);
-  virtual void sqlBrowse(void);
-  virtual void helpBrowse(void);
+  toHelp(QWidget *,const char *name);
+  virtual ~toHelp();
+  static void displayHelp(const QString &context);
+public slots:
+  void search(void);
+  void changeContent(QListViewItem *);
 };
 
-class toDatabaseSetting : public toDatabaseSettingUI, public toSettingTab {
+class toHelpContext {
+  QString Name;
 public:
-  toDatabaseSetting(QWidget *parent=0,const char *name=0,WFlags fl=0);
-
-  virtual void saveSetting(void);
-  virtual void createPlanTable(void);
+  toHelpContext(const QString &file)
+    : Name(file)
+  { }
+  virtual ~toHelpContext()
+  { }
+  virtual const QString &context(void) const
+  { return Name; }
 };
 
 #endif

@@ -137,6 +137,7 @@ signals:
   void removedConnection(const QString &str);
 public slots:
   void windowsMenu(void);
+  void contextHelp(void);
 private slots:
   void addConnection(void);
   bool delConnection(void);
@@ -196,6 +197,9 @@ QString toPop(list<QString> &lst);
 void toPush(list<QString> &lst,const QString &);
 QFont toStringToFont(const QString &str);
 QString toFontToString(const QFont &fnt);
+QString toHelpPath(void);
+QString toReadFile(const QString &,bool local=true);
+bool toCompareLists(QStringList &lst1,QStringList &lst2,unsigned int len);
 
 #define TO_FILE_MENU		10
 #define TO_EDIT_MENU		20
@@ -230,6 +234,7 @@ T min(T a, T b)
 {
     return a < b ? a : b ;
 }
+
 #endif
 
 #endif

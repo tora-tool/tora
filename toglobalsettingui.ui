@@ -11,158 +11,21 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>377</width>
+            <width>400</width>
             <height>401</height>
         </rect>
+    </property>
+    <property stdset="1">
+        <name>minimumSize</name>
+        <size>
+            <width>400</width>
+            <height>400</height>
+        </size>
     </property>
     <property stdset="1">
         <name>caption</name>
         <string>toGlobalSettingUI</string>
     </property>
-    <widget>
-        <class>QGroupBox</class>
-        <property stdset="1">
-            <name>name</name>
-            <cstring>GroupBox2</cstring>
-        </property>
-        <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>10</x>
-                <y>5</y>
-                <width>380</width>
-                <height>100</height>
-            </rect>
-        </property>
-        <property stdset="1">
-            <name>title</name>
-            <string>Paths</string>
-        </property>
-        <widget>
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>TextLabel5</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>25</y>
-                    <width>100</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Custom SQL</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>CustomSQL</cstring>
-            </property>
-        </widget>
-        <widget>
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>SQLBrowse</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>290</x>
-                    <y>15</y>
-                    <width>80</width>
-                    <height>28</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Browse</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>PluginBrowse</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>290</x>
-                    <y>55</y>
-                    <width>80</width>
-                    <height>28</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Browse</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>PluginLabel</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>65</y>
-                    <width>100</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Plugin directory</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>PluginDirectory</cstring>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Directory where to find plugins when starting tora.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QLineEdit</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>PluginDirectory</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>120</x>
-                    <y>60</y>
-                    <width>160</width>
-                    <height>22</height>
-                </rect>
-            </property>
-        </widget>
-        <widget>
-            <class>QLineEdit</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>CustomSQL</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>120</x>
-                    <y>20</y>
-                    <width>160</width>
-                    <height>22</height>
-                </rect>
-            </property>
-        </widget>
-    </widget>
     <widget>
         <class>QGroupBox</class>
         <property stdset="1">
@@ -173,9 +36,9 @@
             <name>geometry</name>
             <rect>
                 <x>10</x>
-                <y>115</y>
+                <y>140</y>
                 <width>381</width>
-                <height>260</height>
+                <height>255</height>
             </rect>
         </property>
         <property stdset="1">
@@ -551,6 +414,214 @@ the interface from locking up when executing.</string>
             </property>
         </widget>
     </widget>
+    <widget>
+        <class>QGroupBox</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>GroupBox2</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>10</x>
+                <y>5</y>
+                <width>380</width>
+                <height>135</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>title</name>
+            <string>Paths</string>
+        </property>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel5</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>25</y>
+                    <width>100</width>
+                    <height>16</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Custom SQL</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>CustomSQL</cstring>
+            </property>
+        </widget>
+        <widget>
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>SQLBrowse</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>290</x>
+                    <y>15</y>
+                    <width>80</width>
+                    <height>28</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Browse</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>CustomSQL</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>120</x>
+                    <y>20</y>
+                    <width>160</width>
+                    <height>22</height>
+                </rect>
+            </property>
+        </widget>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>PluginLabel</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>105</y>
+                    <width>100</width>
+                    <height>16</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Plugin directory</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>PluginDirectory</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Directory where to find plugins when starting tora.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>PluginBrowse</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>290</x>
+                    <y>95</y>
+                    <width>80</width>
+                    <height>28</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Browse</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>PluginDirectory</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>120</x>
+                    <y>100</y>
+                    <width>160</width>
+                    <height>22</height>
+                </rect>
+            </property>
+        </widget>
+        <widget>
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>HelpDirectory</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>120</x>
+                    <y>60</y>
+                    <width>160</width>
+                    <height>22</height>
+                </rect>
+            </property>
+        </widget>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>PluginLabel_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>65</y>
+                    <width>100</width>
+                    <height>16</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Help directory</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>HelpDirectory</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Directory where to find plugins when starting tora.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>HelpBrowse</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>290</x>
+                    <y>55</y>
+                    <width>80</width>
+                    <height>28</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Browse</string>
+            </property>
+        </widget>
+    </widget>
 </widget>
 <connections>
     <connection>
@@ -571,23 +642,32 @@ the interface from locking up when executing.</string>
         <receiver>toGlobalSettingUI</receiver>
         <slot>sqlBrowse()</slot>
     </connection>
-    <slot access="public">sqlBrowse()</slot>
+    <connection>
+        <sender>HelpBrowse</sender>
+        <signal>clicked()</signal>
+        <receiver>toGlobalSettingUI</receiver>
+        <slot>helpBrowse()</slot>
+    </connection>
+    <slot access="public">helpBrowse()</slot>
     <slot access="public">pluginBrowse()</slot>
+    <slot access="public">sqlBrowse()</slot>
 </connections>
 <tabstops>
     <tabstop>CustomSQL</tabstop>
     <tabstop>SQLBrowse</tabstop>
+    <tabstop>HelpDirectory</tabstop>
+    <tabstop>HelpBrowse</tabstop>
     <tabstop>PluginDirectory</tabstop>
     <tabstop>PluginBrowse</tabstop>
     <tabstop>SavePassword</tabstop>
     <tabstop>LongSession</tabstop>
     <tabstop>DesktopAware</tabstop>
+    <tabstop>IncludeDB</tabstop>
     <tabstop>AntialiaseFonts</tabstop>
     <tabstop>DockToolbar</tabstop>
-    <tabstop>IncludeDB</tabstop>
     <tabstop>ListScale</tabstop>
-    <tabstop>Style</tabstop>
     <tabstop>Status</tabstop>
     <tabstop>SizeUnit</tabstop>
+    <tabstop>Style</tabstop>
 </tabstops>
 </UI>
