@@ -118,7 +118,7 @@
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Run UI blocking queries exclusively in main thread</string>
+                        <string>Run UI blocking queries exclusively in main connection</string>
                     </property>
                     <property>
                         <name>toolTip</name>
@@ -308,6 +308,12 @@
                 <property>
                     <name>text</name>
                     <string>Never read object cache until mandatory</string>
+                </property>
+            </item>
+            <item>
+                <property>
+                    <name>text</name>
+                    <string>Never read object cache (Will leave parts of TOra nonfunctianal)</string>
                 </property>
             </item>
             <property stdset="1">

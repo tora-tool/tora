@@ -283,6 +283,7 @@ my $OracleRelease;
 my $OracleShared="-lclntsh";
 my $TestDB;
 my $RPMGenerate=0;
+my $OptLevel="-O3";
 
 my $MySQLInclude;
 my $MySQLLib;
@@ -352,6 +353,8 @@ for (@ARGV) {
 	$NewCheck=0;
     } elsif (/^--with-rpm-contents(?:=(.*))$/) {
 	$RPMGenerate=$1;
+    } elsif (/^--enable-opt-flag(?:=(.*))$/) {
+	$OptLevel=$1;
     } elsif (/^--without-rpath$/) {
 	$NoRPath=1;
     } elsif (/^--with-kde-include=(.*)$/) {
@@ -390,6 +393,7 @@ Options can be any of the following:
 --without-mysql      Don't compile in MySQL support (MySQL enabled if detected)
 --without-rpath      Compile without rpath to Oracle libraries (Not enabled by default)
 --disable-new-check  Disable new version check globally in TOra (Not enabled by default)
+--enable-opt-flag    Set the optimize flag to use for the compile (Default -O3)
 __USAGE__
         exit(2);
     }
@@ -1457,10 +1461,10 @@ __EOT__
 CPPFLAGS_GLOB=
 
 # Additional flags to set when linking.
-LFLAGS_GLOB=-g
+LFLAGS_GLOB=-g $OptLevel
 
 # Additional flags set when compiling.
-CFLAGS_GLOB=-g -fPIC -W -Wall
+CFLAGS_GLOB=-g $OptLevel -fPIC -W -Wall
 
 ############################################################################
 #

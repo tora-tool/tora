@@ -217,6 +217,7 @@ toMain::toMain()
   FileMenu->setAccel(Key_O|CTRL,TO_FILE_OPEN);
   FileMenu->setAccel(Key_W|CTRL,TO_FILE_SAVE);
   FileMenu->setAccel(Key_L|CTRL,TO_FILE_COMMIT);
+  FileMenu->setAccel(Key_J|CTRL,TO_STOP_ALL);
   FileMenu->setAccel(Key_Less|CTRL,TO_FILE_ROLLBACK);
   FileMenu->setAccel(Key_U|CTRL,TO_FILE_CURRENT);
 

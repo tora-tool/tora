@@ -1454,7 +1454,6 @@ void toConnection::cacheObjects::run()
 
 void toConnection::readObjects(void)
 {
-
   if (toTool::globalConfig(CONF_OBJECT_CACHE,"0").toInt()==3) {
     ReadingCache=false;
     return;
