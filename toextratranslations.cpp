@@ -250,7 +250,7 @@ QT_TRANSLATE_NOOP("toCurrent:ResourceLimit","Resource Name"),
 QT_TRANSLATE_NOOP("toCurrent:Version","Version"),
 QT_TRANSLATE_NOOP("toInvalid:ListInvalid","Object"),
 QT_TRANSLATE_NOOP("toInvalid:ListInvalid","Owner"),
-QT_TRANSLATE_NOOP("toInvalid:ListInvalid","Type")
+QT_TRANSLATE_NOOP("toInvalid:ListInvalid","Type"),
 QT_TRANSLATE_NOOP("toResultParam:ListParam","Changed"),
 QT_TRANSLATE_NOOP("toResultParam:ListParam","Description"),
 QT_TRANSLATE_NOOP("toResultParam:ListParam","Parameter"),

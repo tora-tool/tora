@@ -1,5 +1,8 @@
 1.3.13: Released 2004-01-17
 
+2004-01-19: Fixed problem with highlighted text in windows.
+2004-01-18: Fixed memory corruption when missing internet connection.
+2004-01-18: Some minor Windows compilation fixes.
 2004-01-11: Fixed uncought exceptions from enabling or disbling constraints in browser.
 2004-01-06: Changed copyright from Underscore to Quest Software.
 2003-12-24: Fixed parsing problem with ' at end of line in multiline strings.

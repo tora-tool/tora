@@ -1570,7 +1570,6 @@ void toMain::versionFinished(QNetworkOperation *)
   if (VersionString[0].isNumber()&&VersionString > TOVERSION)
     toStatusMessage(tr("A new version of TOra (%1) is available from\n\n"
 		       "http://www.globecom.se/tora").arg(VersionString));
-  delete VersionUrl;
 #endif
 }
 
