@@ -15,7 +15,7 @@ key bindings are defined.<P>
 </TD></TR><TR><TD><B>Delete</B></TD><TD>Delete the character to the right of the cursor
 </TD></TR><TR><TD><B>Shift - Left Arrow</B></TD><TD>Mark text one character to the left
 </TD></TR><TR><TD><B>Shift - Right Arrow</B></TD><TD>Mark text one character to the right
-</TD></TR><TR><TD><B>Control-A</B></TD><TD>Move the cursor to the beginning of the line
+</TD></TR><TR><TD><B>Control-A</B></TD><TD>Select the entire buffer.
 </TD></TR><TR><TD><B>Control-B</B></TD><TD>Move the cursor one character leftwards
 </TD></TR><TR><TD><B>Control-C</B></TD><TD>Copy the marked text to the clipboard
 </TD></TR><TR><TD><B>Control-D</B></TD><TD>Delete the character to the right of the cursor
@@ -61,5 +61,15 @@ any other text source onto an editable editor to insert the dragged text at the 
 location.<P>
 Also as a shortcut pressing the right mouse button will display a context menu containing the
 entries from the edit menu which pertain to the editors.
+<H2>SQL editors</H2>
+Editors for SQL have another feature which is code completion. If you place the cursor after
+a '.' character TOra will this the available columns for the table referenced by the name
+before the '.' character. This will only work for defined views and tables. You can also
+look up tablenames using the <B>CTRL+T</B> key which will list all tables starting with the
+same word as you currently have the cursor in. When the completion list is open you can
+navigate it using <B>Up</B>, <B>Down</B> keys and selecting an entry using <B>Return</B>.
+You can also remove the list by pressing the <B>Escape</B> key.
+The completion values are saved in the object cache and can not be used until it is read.
+If you find this annoying you can disable this in the <A HREF=fonts.html>preferences</A>.
 </BODY>
 </HTML>

@@ -3,14 +3,15 @@
 These describe other elements that are used in several parts of the user interface.<P>
 <A NAME=sga><H2>SGA Statement</H2>
 This element is used to describe an element in the SGA.<P>
-<IMG SRC=images/sgastatement.png><P>
+<IMG SRC=images/sgastatement.png BORDER=1><P>
 The SGA statement have three tabs. The first tab called <B>SQL</B> simply display all of the SQL of the statement.
 The second tab called <B>Execution plan</B> displays the execution plan of the statement. This is described in more
 detail later. The last tab called <B>Information</B> simply display the information available about the statement
 in the SGA.<P>
 <A NAME=explain><H2>Explain plan</H2>
-This element can be either part of an SGA statement or by itself in some cases. For more information about
-execution paths check the Oracle manual Designing and Tuning for Performance, chapter 5 in the 8i release.<P>
+This element can be either part of an SGA statement or by itself in some cases (See above for a screenshot).
+For more information about execution paths check the Oracle manual Designing and Tuning for Performance,
+chapter 5 in the 8i release.<P>
 A few notes here is that the execution plan displayed here is not necessarily the same as when run depending
 on one of these reasons.<P>
 <UL>
@@ -32,12 +33,24 @@ select * from essprc where prcid > :prcid and begrdt > :begrdt;
 <IMG SRC=images/getparam.png><P>
 As you can see the field name as specified after the : character is presented as a title. If the same field name is used at
 several parts of the query you only get to specify it once. You specify the value in the editor line just to the right of the
-field name label. If you want to specify a NULL value check the <B>NULL</B> checkbox to the right of the editor.<P>
+field name label. If you want to specify a NULL value check the <B>NULL</B> checkbox to the right of the editor. You can
+also edit the value in a <A HREF=common.html#memo>memo editor</A> pressing the <B>Edit</B> button to the right on the
+value.<P>
 The parameter editor will cache it's value so it will remember the last parameters you fed to it when you run the query again.
 <A NAME=describe><H2>Object description</H2>
+<IMG SRC=images/describe.png BORDER=1><P>
 This is a list that describes the columns of a table or view. There is nothing much special
 about this view except that you can check the collected analyze statistics for the column by
 placing the cursor over it and reading the tooltip that will be displayed. If no tooltip
-is displayed there is no analyzed statistics available.
+is displayed there is no analyzed statistics available. Also notable is that this list is
+read completely from the object cache if it available. This will mean that if you are modifying
+the object you are modifying you need to reread the object cache before you can see the
+changes.<P>
+<A NAME=memo><H2>Memo editor</H2>
+<IMG SRC=images/memo.png><P>
+This is used to display or edit larger text than is easily entered in a oneline editor or list. To the top
+is a toolbar with some editing buttons. Specifically you have the save changes button to the right. You can
+also do this using the key <B>CTRL+Return</B>. You can remove the editor without saving changes using the <B>Escape</B>
+key or closing the window.
 </BODY>
 </HTML>

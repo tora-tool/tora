@@ -7,7 +7,13 @@ After selecting the menu you will be presented with the following dialog.<P>
 <IMG SRC=images/newconnection.png><P>
 The filling out of this dialog is pretty straight forward.
 <TABLE>
-<H1>Connecting to a database</H1>
+<TR><TD VALIGN=top><B>Previous connections</B></TD>
+<TD VALIGN=top>This list contains the previous connection made, selecting an entry from
+this list will set all the values to the right to the correct values to connect to
+this database again.</TD></TR>
+<TR><TD VALIGN=top><B>Connection provider</B></TD>
+<TD VALIGN=top>The type of connection to create. Usually Oracle,
+but MySQL is also supported on some platforms.</TD></TR>
 <TR><TD VALIGN=top><B>Username</B></TD>
 <TD VALIGN=top>The username with which to connect to the database</TD></TR>
 <TR><TD VALIGN=top><B>Password</B></TD>
@@ -18,7 +24,12 @@ the <A HREF=preferences.html#global>options dialog</A>.</TD></TR>
 <TD VALIGN=top>This is perhaps the most difficult setting. This indicates whether
 to connect locally to the database or use SQL*Net. If you check this box the
 connection is made through the Oracle listener, otherwise a local connection
-usually using shared memory or named pipes is made.
+usually using shared memory or named pipes is made. This is only available for
+Oracle connections.
+</TD></TR>
+<TR><TD VALIGN=top><B>Hostname</B></TD>
+<TD VALIGN=top>The host on which the database resides. This is only available for
+non Oracle connections.
 </TD></TR>
 <TR><TD VALIGN=top><B>Database</B></TD>
 <TD VALIGN=top>What database to connect to, the listbox is filled with the
