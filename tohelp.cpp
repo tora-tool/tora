@@ -209,26 +209,14 @@ toHelp::toHelp(QWidget *parent,const char *name)
       while(!file.eof()) {
 	file.nextTag();
 
-#if 0
-	if (tag.Tag.isEmpty()) {
-	  printf("Text:%s\n",(const char *)tag.Text);
+	if (!file.isTag()) {
+	  if (inA) {
+	    dsc+=QString::fromLatin1(file.text());
+	    dsc=dsc.simplifyWhiteSpace();
+	  }
 	} else {
-	  if (tag.Open)
-	    printf("Open ");
-	  else
-	    printf("Close ");
-	  printf("Tag:%s\n",(const char *)tag.Tag);
-	  for(map<QString,QString>::iterator i=tag.Qualifiers.begin();i!=tag.Qualifiers.end();i++)
-	    printf("  %s=%s\n",(const char *)(*i).first,(const char *)(*i).second);
-	}
-#endif
-
-	if (!file.isTag()&&inA) {
-	  dsc+=QString::fromLatin1(file.text());
-	  dsc=dsc.simplifyWhiteSpace();
-	} else {
-	  QCString tag=file.tag();
-	  if (tag=="a") {
+	  const char *c=file.tag();
+	  if (!strcmp(c,"a")) {
 	    if (file.open()) {
 	      href=QString::fromLatin1(file.value("href"));
 	      if (!href.isEmpty())
@@ -249,7 +237,7 @@ toHelp::toHelp(QWidget *parent,const char *name)
 	      }
 	      inA=false;
 	    }
-	  } else if (tag=="dl") {
+	  } else if (!strcmp(c,"dl")) {
 	    if (file.open()) {
 	      if (!last)
 		last=new QListViewItem(parent,NULL,"--------");

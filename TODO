@@ -2,6 +2,8 @@
 
 * Compile objects in target thread in toDebug.
 * Search in help needs implementing.
+* Write help.
+* Finnish PL/SQL function templates.
 
 Extended functionality:
 

@@ -14,13 +14,12 @@ class toHtml {
 
   char LastChar;
 
-  struct strOfsPair {
+  struct {
     const char *Name;
     const char *Value;
-  };
+  } Qualifiers[TO_HTML_MAX_QUAL];
 
   int QualifierNum;
-  strOfsPair Qualifiers[TO_HTML_MAX_QUAL];
   bool Open;
   bool IsTag;
   const char *Tag;
@@ -38,12 +37,20 @@ public:
 
   void nextTag(void);
 
+  // name should be in lowercase.
+
   const char *value(const QCString &name);
   bool isTag(void)
   { return IsTag; }
   bool open(void)
   { return Open; }
+
+  // &# characters are expanded before returned.
+
   QCString text(void);
+
+  // The tag is converted to lowercase before it is returned
+
   const char *tag(void)
   { return Tag; }
 
