@@ -85,6 +85,7 @@ Extended functionality:
 * Handle AQ_ priviledges correctly in security manager (Using DBMS_AQADM package).
 * Easier to grant all priviledges to a user.
 * Save column order of open tools when saving/restoring session.
+* Remember last directory of save dialogs and settings in print dialog.
 
 New tools:
 
