@@ -164,6 +164,7 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   Limit->insertItem(tr("Top diskreads/exec"));
   Limit->insertItem(tr("Top buffergets/exec"));
   Limit->insertItem(tr("Top rows/exec"));
+  Limit->insertItem(tr("Top buffers/row"));
 
   toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
   new toChangeConnection(toolbar);
@@ -345,6 +346,8 @@ void toSGATrace::refresh(void)
     case 10:
       order=QString::fromLatin1("DECODE(a.Executions,0,0,a.Rows_Processed/a.Executions)");
       break;
+    case 11:
+      order=QString::fromLatin1("DECODE(a.Rows_Processed,0,0,a.Buffer_Gets/a.Rows_Processed,3)");
     default:
       toStatusMessage(tr("Unknown selection"));
       break;
