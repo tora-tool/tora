@@ -474,7 +474,7 @@ void toWorksheet::execute(bool all,bool step)
 
     int startLine=-1,startPos=-1;
     int endLine=-1,endPos=-1;
-    state=beginning;
+    lastState=state=beginning;
     NewStatement();
     int BlockCount=0;
     code=false;

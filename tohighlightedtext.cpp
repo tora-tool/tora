@@ -212,7 +212,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
     QColor col=Analyzer->getColor(toSyntaxAnalyzer::Normal);
     bool upper=false;
 
-    bool wasMarked;
+    bool wasMarked=false;
     QColor wasCol;
 
     QString c;
