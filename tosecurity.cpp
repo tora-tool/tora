@@ -1359,7 +1359,7 @@ void toSecurity::windowActivated(QWidget *widget)
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)sql_xpm),"Display SQL",
 			   this,SLOT(displaySQL()),Key_F4);
-      toMainWidget()->menuBar()->insertItem("&Tuning",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem("&Security",ToolMenu,-1,toToolMenuIndex());
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_COPY,CopyButton->isEnabled());
     }

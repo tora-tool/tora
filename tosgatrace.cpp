@@ -196,12 +196,12 @@ void toSGATrace::windowActivated(QWidget *widget)
       ToolMenu->insertSeparator();
       ToolMenu->insertItem("Change &schema",
 			   Schema,SLOT(setFocus()),ALT+Key_S);
-      ToolMenu->insertItem("Change &Refresh",
+      ToolMenu->insertItem("Change &refresh",
 			   Refresh,SLOT(setFocus(void)),
 			   Key_R+ALT);
       ToolMenu->insertItem("Change t&ype",
 			   Type,SLOT(setFocus()),ALT+Key_Y);
-      toMainWidget()->menuBar()->insertItem("&Session",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem("&SGA Trace",ToolMenu,-1,toToolMenuIndex());
     }
   } else {
     delete ToolMenu;

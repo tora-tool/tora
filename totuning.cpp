@@ -1415,7 +1415,7 @@ void toTuning::windowActivated(QWidget *widget)
 			   Key_F5);
       ToolMenu->insertItem("&Change Refresh",Refresh,SLOT(setFocus(void)),
 			   Key_R+ALT);
-      toMainWidget()->menuBar()->insertItem("&Security",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem("&Tuning",ToolMenu,-1,toToolMenuIndex());
     }
   } else {
     delete ToolMenu;
