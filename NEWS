@@ -10,6 +10,8 @@
 2001-09-10: Made template db browser handle mysql better.
 2001-09-10: Fixed problems with extra info in template browser.
 2001-09-10: Fixed problem with changing connection in workspace.
+2001-09-10: After a bit discussion about licensing with Daniel Person changed
+	back to GPL.
 
 1.1.0: Released 2001-09-09
 

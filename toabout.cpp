@@ -1,23 +1,38 @@
 //***************************************************************************
-/* $Id$
-**
-** Copyright (C) 2000-2001 GlobeCom AB.  All rights reserved.
-**
-** This file is part of the Toolkit for Oracle.
-**
-** This file may be distributed under the terms of the Q Public License
-** as defined by Trolltech AS of Norway and appearing in the file
-** LICENSE included in the packaging of this file.
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-**
-** See http://www.globecom.net/tora/ for more information.
-**
-** Contact tora@globecom.se if any conditions of this licensing are
-** not clear to you.
-**
-**********************************************************************/
+/*
+ * TOra - An Oracle Toolkit for DBA's and developers
+ * Copyright (C) 2000-2001,2001 GlobeCom AB
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation;  only version 2 of
+ * the License is valid for this program.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *      As a special exception, you have permission to link this program
+ *      with the Oracle Client libraries and distribute executables, as long
+ *      as you follow the requirements of the GNU GPL in regard to all of the
+ *      software in the executable aside from Oracle client libraries. You
+ *      are also allowed to link this program with the Qt Non Commercial for
+ *      Windows.
+ *
+ *      Specifically you are not permitted to link this program with the
+ *      Qt/UNIX or Qt/Windows products of TrollTech. And you are not
+ *      permitted to distribute binaries compiled against these libraries
+ *      without written consent from GlobeCom AB. Observe that this does not
+ *      disallow linking to the Qt Free Edition.
+ *
+ * All trademarks belong to their respective owners.
+ *
+ ****************************************************************************/
 
 #include <stdio.h>
 
@@ -48,7 +63,7 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "(<A HREF=http://www.globecom.se>http://www.globecom.se/</a>).<P>\n"
 "Written by Henrik Johnson.<P>\n"
 "This program is available\n"
-"under the Q Public License.<P>\n"
+"under the GNU General Public License.<P>\n"
 "Uses the Qt library version 2.2 by TrollTech\n"
 "(<A HREF=http://www.troll.no>http://www.troll.no/</A>).<P>\n"
 "\n"
@@ -56,7 +71,7 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "This program is distributed in the hope that it will be useful,\n"
 "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
 "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-"Q General Public License for more details.";
+"GNU General Public License for more details.";
 
 static const char *QuoteText="<H3>People who think they know everything tend to irritate those of us who do.</H3>\n"
 "<DIV ALIGN=RIGHT>Oscar Wilde<DIV ALIGN=LEFT>\n"
@@ -274,7 +289,7 @@ toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
     TextView->setPaper(QColor(255,255,255));
     break;
   case 1:
-    setCaption("Q Public License");
+    setCaption("GNU General Public License");
     TextView->setText(LicenseText);
     TextView->setPaper(QColor(255,255,255));
     break;
