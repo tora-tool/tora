@@ -21,14 +21,14 @@ Extended functionality:
 	Deintent block
 	Pretty print
 	CVS support (Or whatever this is called in windows)
+	PL/SQL doc (Like JavaDoc)
 * Ability to save a session (Including breakpoints, parameter cache windows etc).
 * Add consumer group settings to security manager.
 * Extract grants from objects.
 * Implement extract of temporary tables.
 * Implement migration, resize and report in toExtract.
-* Lots of more template texts including hints and SQL syntax.
+* Lots of more template texts including SQL syntax.
 * DB Links in DB browser.
-* Segments view in storage view.
 * Ability to change/move redofiles.
 * Go through changes in DDL::Oracle and incorporate in toExtract.
 * Ability to generate into several script (One per object and type) in DB extraction.
@@ -50,6 +50,7 @@ Extended functionality:
 * Make entire tuning polling in background.
 * Add a more detailed analysis of wait events in tuning.
 * Use object cache in browser if possible.
+* Tooltips in content editor.
 
 New tools:
 
@@ -59,4 +60,3 @@ New tools:
 * Change impact analyzing tool.
 * Alert log viewer.
 * RMAN and backup information.
-* Execution plan table browser.

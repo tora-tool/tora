@@ -224,6 +224,7 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   Tabs->addTab(Worksheet,"Worksheet statistics");
 
   refresh();
+  setFocusProxy(Tabs);
 }
 
 void toAnalyze::selectPlan(void)

@@ -520,10 +520,7 @@ void toWorksheet::setup(bool autoLoad)
     connect(this,SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
   }
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
-#if 0
-  if (autoLoad)
-    Editor->setFocus();
-#endif
+  setFocusProxy(Editor);
 }
 
 toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
