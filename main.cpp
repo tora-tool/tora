@@ -152,7 +152,6 @@ int main(int argc,char **argv)
 
     toMain *mainWidget=new toMain;
 
-    mainApp.setMainWidget(mainWidget);
     mainWidget->createDefault();
     
     return mainApp.exec();

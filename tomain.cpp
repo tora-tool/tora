@@ -136,49 +136,47 @@ toMain::toMain()
   if (!toPastePixmap)
     toPastePixmap=new QPixmap((const char **)paste_xpm);
 
-  QPopupMenu *curr;
-
   char buffer[100];
   sprintf(buffer,DEFAULT_TITLE,TOVERSION);
   setCaption(buffer);
 
-  curr=new QPopupMenu(this);
-  curr->insertItem(*toConnectPixmap,"&New Connection...",TO_NEW_CONNECTION);
-  curr->insertItem(*toDisconnectPixmap,"&Close Connection",this,SLOT(delConnection()),0,TO_CLOSE_CONNECTION);
-  curr->insertSeparator();
-  curr->insertItem(*toCommitPixmap,"&Commit connection",TO_FILE_COMMIT);
-  curr->insertItem(*toRollbackPixmap,"&Rollback connection",TO_FILE_ROLLBACK);
-  curr->insertSeparator();
-  curr->insertItem(*toLoadPixmap,"&Open File...",TO_FILE_OPEN);
-  curr->insertItem(*toSavePixmap,"&Save",TO_FILE_SAVE);
-  curr->insertItem("&Save As..",TO_FILE_SAVE_AS);
-  curr->insertSeparator();
-  curr->insertItem("&Quit",TO_FILE_QUIT);
-  menuBar()->insertItem("&File",curr,TO_FILE_MENU);
-  curr->setAccel(Key_C|CTRL,TO_NEW_CONNECTION);
-  curr->setAccel(Key_O|CTRL,TO_FILE_OPEN);
-  curr->setAccel(Key_S|CTRL,TO_FILE_SAVE);
-  connect(curr,SIGNAL(aboutToShow()),this,SLOT( editFileMenu()));
+  FileMenu=new QPopupMenu(this);
+  FileMenu->insertItem(*toConnectPixmap,"&New Connection...",TO_NEW_CONNECTION);
+  FileMenu->insertItem(*toDisconnectPixmap,"&Close Connection",this,SLOT(delConnection()),0,TO_CLOSE_CONNECTION);
+  FileMenu->insertSeparator();
+  FileMenu->insertItem(*toCommitPixmap,"&Commit connection",TO_FILE_COMMIT);
+  FileMenu->insertItem(*toRollbackPixmap,"&Rollback connection",TO_FILE_ROLLBACK);
+  FileMenu->insertSeparator();
+  FileMenu->insertItem(*toLoadPixmap,"&Open File...",TO_FILE_OPEN);
+  FileMenu->insertItem(*toSavePixmap,"&Save",TO_FILE_SAVE);
+  FileMenu->insertItem("&Save As..",TO_FILE_SAVE_AS);
+  FileMenu->insertSeparator();
+  FileMenu->insertItem("&Quit",TO_FILE_QUIT);
+  menuBar()->insertItem("&File",FileMenu,TO_FILE_MENU);
+  FileMenu->setAccel(Key_C|CTRL,TO_NEW_CONNECTION);
+  FileMenu->setAccel(Key_O|CTRL,TO_FILE_OPEN);
+  FileMenu->setAccel(Key_S|CTRL,TO_FILE_SAVE);
+  connect(FileMenu,SIGNAL(aboutToShow()),this,SLOT( editFileMenu()));
 
-  curr=new QPopupMenu(this);
-  curr->insertItem(*toUndoPixmap,"&Undo",TO_EDIT_UNDO);
-  curr->insertItem(*toRedoPixmap,"&Redo",TO_EDIT_REDO);
-  curr->insertSeparator();
-  curr->insertItem(*toCutPixmap,"Cu&t",TO_EDIT_CUT);
-  curr->insertItem(*toCopyPixmap,"&Copy",TO_EDIT_COPY);
-  curr->insertItem(*toPastePixmap,"&Paste",TO_EDIT_PASTE);
-  curr->insertSeparator();
-  curr->insertItem("&Select All",TO_EDIT_SELECT_ALL);
-  curr->insertItem("Read All &Items",TO_EDIT_READ_ALL);
-  curr->insertSeparator();
-  curr->insertItem("&Options",TO_EDIT_OPTIONS);
-  curr->setAccel(Key_Z|CTRL,TO_EDIT_UNDO);
-  curr->setAccel(Key_Z|CTRL|SHIFT,TO_EDIT_REDO);
-  curr->setAccel(Key_X|CTRL,TO_EDIT_CUT);
-  curr->setAccel(Key_C|CTRL,TO_EDIT_COPY);
-  curr->setAccel(Key_V|CTRL,TO_EDIT_PASTE);
-  connect(curr,SIGNAL(aboutToShow()),this,SLOT( editFileMenu()));
-  menuBar()->insertItem("&Edit",curr,TO_EDIT_MENU);
+  EditMenu=new QPopupMenu(this);
+  EditMenu->insertItem(*toUndoPixmap,"&Undo",TO_EDIT_UNDO);
+  EditMenu->insertItem(*toRedoPixmap,"&Redo",TO_EDIT_REDO);
+  EditMenu->insertSeparator();
+  EditMenu->insertItem(*toCutPixmap,"Cu&t",TO_EDIT_CUT);
+  EditMenu->insertItem(*toCopyPixmap,"&Copy",TO_EDIT_COPY);
+  EditMenu->insertItem(*toPastePixmap,"&Paste",TO_EDIT_PASTE);
+  EditMenu->insertSeparator();
+  EditMenu->insertItem("&Select All",TO_EDIT_SELECT_ALL);
+  EditMenu->insertItem("Read All &Items",TO_EDIT_READ_ALL);
+  EditMenu->insertSeparator();
+  EditMenu->insertItem("&Options",TO_EDIT_OPTIONS);
+  EditMenu->setAccel(Key_Z|CTRL,TO_EDIT_UNDO);
+  EditMenu->setAccel(Key_Z|CTRL|SHIFT,TO_EDIT_REDO);
+  EditMenu->setAccel(Key_X|CTRL,TO_EDIT_CUT);
+  EditMenu->setAccel(Key_C|CTRL,TO_EDIT_COPY);
+  EditMenu->setAccel(Key_V|CTRL,TO_EDIT_PASTE);
+  connect(EditMenu,SIGNAL(aboutToShow()),this,SLOT( editFileMenu()));
+  menuBar()->insertItem("&Edit",EditMenu,TO_EDIT_MENU);
 
   map<QString,toTool *> &tools=toTool::tools();
 
@@ -222,7 +220,7 @@ toMain::toMain()
   CopyButton->setEnabled(false);
   PasteButton->setEnabled(false);
 
-  curr=new QPopupMenu(this);
+  ToolsMenu=new QPopupMenu(this);
 
 #ifdef TOOL_TOOLBAR
   toolbar=new QToolBar(this);
@@ -232,18 +230,24 @@ toMain::toMain()
 #endif
 
   int toolID=TO_TOOLS;
-  int lastPriority=0;
+  int lastPriorityPix=0;
+  int lastPriorityMenu=0;
   for (map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
     const QPixmap *pixmap=(*i).second->toolbarImage();
     const char *toolTip=(*i).second->toolbarTip();
     const char *menuName=(*i).second->menuItem();
 
     int priority=(*i).second->priority();
-    if (priority/100!=lastPriority/100) {
-      curr->insertSeparator();
+    if (priority/100!=lastPriorityPix/100&&
+	pixmap) {
       toolbar->addSeparator();
+      lastPriorityPix=priority;
     }
-    lastPriority=priority;
+    if (priority/100!=lastPriorityMenu/100&&
+	menuName) {
+      ToolsMenu->insertSeparator();
+      lastPriorityMenu=priority;
+    }
 
     if (pixmap) {
       if (!toolTip)
@@ -259,10 +263,10 @@ toMain::toMain()
 
     if (menuName) {
       if (pixmap)
-	curr->insertItem(*pixmap,menuName,toolID);
+	ToolsMenu->insertItem(*pixmap,menuName,toolID);
       else
-	curr->insertItem(menuName,toolID);
-      curr->setItemEnabled(toolID,false);
+	ToolsMenu->insertItem(menuName,toolID);
+      ToolsMenu->setItemEnabled(toolID,false);
     }
 
     Tools[toolID]=(*i).second;
@@ -299,7 +303,7 @@ toMain::toMain()
   ConnectionSelection=new QComboBox(toolbar);
   ConnectionSelection->setFixedWidth(200);
 
-  menuBar()->insertItem("&Tools",curr,TO_TOOLS_MENU);
+  menuBar()->insertItem("&Tools",ToolsMenu,TO_TOOLS_MENU);
 
   WindowsMenu=new QPopupMenu(this);
   WindowsMenu->setCheckable(true);
@@ -308,9 +312,9 @@ toMain::toMain()
 
   menuBar()->insertSeparator();
 
-  curr=new QPopupMenu(this);
-  curr->insertItem("&About TOra",TO_HELP_ABOUT);
-  menuBar()->insertItem("&Help",curr,TO_HELP_MENU);
+  HelpMenu=new QPopupMenu(this);
+  HelpMenu->insertItem("&About TOra",TO_HELP_ABOUT);
+  menuBar()->insertItem("&Help",HelpMenu,TO_HELP_MENU);
 
   Workspace=new QWorkspace(this);
   setCentralWidget(Workspace);
@@ -356,8 +360,13 @@ toMain::toMain()
   ColumnLabel->setMinimumWidth(60);
   ColumnLabel->show();
 
-  for (map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++)
-    (*i).second->customSetup();
+  qApp->setMainWidget(this);
+
+  toolID=TO_TOOLS;
+  for (map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
+    (*i).second->customSetup(toolID);
+    toolID++;
+  }
 }
 
 void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child windows

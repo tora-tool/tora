@@ -63,7 +63,11 @@ private:
   QToolButton *CopyButton;
   QToolButton *PasteButton;
 
+  QPopupMenu *FileMenu;
+  QPopupMenu *EditMenu;
+  QPopupMenu *ToolsMenu;
   QPopupMenu *WindowsMenu;
+  QPopupMenu *HelpMenu;
   QLabel *ColumnLabel;
   QLabel *RowLabel;
 public:
@@ -83,6 +87,15 @@ public:
   virtual bool close(bool del);
   void createDefault(void);
   void setCoordinates(int,int);
+
+  QPopupMenu *fileMenu()
+  { return FileMenu; }
+  QPopupMenu *editMenu()
+  { return EditMenu; }
+  QPopupMenu *toolsMenu()
+  { return ToolsMenu; }
+  QPopupMenu *helpMenu()
+  { return HelpMenu; }
 public slots:
   void windowsMenu(void);
 private slots:

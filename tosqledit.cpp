@@ -40,6 +40,8 @@ TO_NAMESPACE;
 #include <qmessagebox.h>
 #include <qfiledialog.h>
 #include <qfileinfo.h>
+#include <qmenubar.h>
+#include <qpopupmenu.h>
 
 #include "totool.h"
 #include "toconf.h"
@@ -56,16 +58,16 @@ TO_NAMESPACE;
 #include "icons/trash.xpm"
 #include "icons/commit.xpm"
 
+#include <stdio.h>
+
 class toSQLEditTool : public toTool {
 protected:
   QWidget * Window;
 
 public:
   toSQLEditTool()
-    : toTool(201,"SQL Dictionary Editor")
+    : toTool(301,"SQL Dictionary Editor")
   { Window=NULL; }
-  virtual const char *menuItem()
-  { return "Edit SQL"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
     if (Window)
@@ -74,9 +76,9 @@ public:
       Window=new toSQLEdit(parent,connection);
     return Window;
   }
-  virtual void customSetup(void)
+  virtual void customSetup(int toolid)
   {
-    
+    toMainWidget()->editMenu()->insertItem("&Edt SQL",toolid);
   }
   void closeWindow(void)
   {

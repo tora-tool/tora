@@ -59,36 +59,38 @@ private:
 protected:
   virtual char **pictureXPM(void);
 public:
-  toTool(int priority,const char *name);
-  ~toTool();
-
   QString name() const
   { return Name; }
   int priority() const
   { return Priority; }
-  static map<QString,toTool *> &tools(void)
-  { if (!Tools) Tools=new map<QString,toTool *>; return *Tools; }
+  ~toTool();
+
+  // You can't use the main widget in these functions
+  toTool(int priority,const char *name);
   virtual const QPixmap *toolbarImage();
   virtual const char *menuItem()
   { return NULL; }
   virtual const char *toolbarTip()
   { return menuItem(); }
-  virtual void customSetup(void)
+  // Now it's safe to use the main widget again
+
+  virtual void customSetup(int toolid)
   { }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection) = NULL;
+  // The returned widget should also be derived from toSettingTab
+  virtual QWidget *configurationTab(QWidget *parent)
+  { return NULL; }
 
-  // These should not be used by the actual tools
+  static map<QString,toTool *> &tools(void)
+  { if (!Tools) Tools=new map<QString,toTool *>; return *Tools; }
   static void saveConfig(void);
   static const QString &globalConfig(const QString &tag,const QString &def);
   static void globalSetConfig(const QString &tag,const QString &value);
 
-  // This should be used by the tool
+  // This should be used by the tool for toolspecific settings
   const QString &config(const QString &tag,const QString &def);
   void setConfig(const QString &tag,const QString &value);
   
-  // The returned widget should also be derived from toSettingTab
-  virtual QWidget *configurationTab(QWidget *parent)
-  { return NULL; }
 public slots:
   void createWindow(void);
 };
