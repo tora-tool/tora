@@ -153,9 +153,7 @@ toSQL toSQL::sql(const QString &name)
   QString str="Tried to get unknown SQL (";
   str+=name;
   str+=")";
-  toStatusMessage(str);
-  toSQL empty("Unknown");
-  return empty;
+  throw str;
 }
 
 QString toSQL::string(const QString &name,
@@ -193,8 +191,7 @@ QString toSQL::string(const QString &name,
   QString str="Tried to get unknown SQL (";
   str+=name;
   str+=")";
-  toStatusMessage(str);
-  return "";
+  throw str;
 }
 
 bool toSQL::saveSQL(const QString &filename,bool all)

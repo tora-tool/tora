@@ -1,5 +1,6 @@
 1.3.7:
 
+2002-07-02: Fixed a bug with not disabling unsupported features for different databases.
 2002-07-02: Added new template to view SQL dictionary.
 2002-07-02: Save last format used when exporting result as text.
 2002-07-02: Fixed problem with starting alert manager without privs to use it.
