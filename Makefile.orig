@@ -24,6 +24,7 @@ SUBDIRS=
 SOURCES=\
 	toabout.cpp 		\
 	tobrowser.cpp		\
+	tobrowserfilterui.cpp	\
 	toconnection.cpp	\
 	tocurrent.cpp		\
 	todebug.cpp		\
@@ -88,7 +89,9 @@ TARGET=tora-plugin
 include Makefile.setup
 include Makefile.common
 
-plugins/tobrowser.tso:objs/tobrowser.o
+plugins/tobrowser.tso:\
+	objs/tobrowser.o \
+	objs/tobrowserfilterui.o
 plugins/todebug.tso:\
 	objs/todebug.o \
 	objs/todebugwatch.o \
