@@ -1533,7 +1533,7 @@ tora-static: \$(OBJECTS) main.cpp
 	\$(GCC) \$(LFLAGS) \$(CFLAGS) \$(LFLAGS_GLOB) -DTOMONOLITHIC -o \$\@ \$(OBJECTS) main.cpp \\
 		\$(QT_STATIC) \$(STDCPP_STATIC) \$(ORACLE_STATIC) \$(LIBS_GLOB) \\
 		/usr/X11R6/lib/libXext.a /usr/X11R6/lib/libX11.a /usr/X11R6/lib/libGL.a \\
-		/usr/lib/mysql/libmysqlclient.a /usr/lib/libpq.a
+		/usr/lib/mysql/libmysqlclient.a /usr/lib/libpq.a -ldl
 
 
 # The binary for the pluginbased tora
