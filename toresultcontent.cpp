@@ -367,27 +367,40 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
   try {
     SQL=QString::fromLatin1("SELECT * FROM ");
     SQL+=table();
+    bool where=false;
     if (!Criteria[FilterName.utf8()].isEmpty()) {
       SQL+=QString::fromLatin1(" WHERE ");
       SQL+=Criteria[FilterName.utf8()];
       SQL+=QString::fromLatin1(" ");
-    }
-
-    if (!Order[FilterName.utf8()].isEmpty()) {
-      SQL+=QString::fromLatin1(" ORDER BY ");
-      SQL+=Order[FilterName.utf8()];
+      where=true;
     }
 
     toQList par;
 
+    QString order;
+    if (!Order[FilterName.utf8()].isEmpty()) {
+      order=QString::fromLatin1(" ORDER BY ");
+      order+=Order[FilterName.utf8()];
+    }
+
     QString init=SQL;
     SkipNumber=toTool::globalConfig(CONF_MAX_CONTENT,DEFAULT_MAX_CONTENT).toInt();
+
     if (SkipNumber>0) {
       if (connection().provider()=="Oracle")
-	init=QString::fromLatin1("SELECT * FROM (")+SQL+QString::fromLatin1(") WHERE ROWNUM <= ")+QString::number(SkipNumber);
+	init="SELECT * FROM ("+SQL+order+") WHERE ROWNUM <= "+QString::number(SkipNumber);
       else if (connection().provider()=="MySQL")
-	init=SQL+QString::fromLatin1(" LIMIT ")+QString::number(SkipNumber);
+	init=SQL+order+" LIMIT "+QString::number(SkipNumber);
+      else if (connection().provider()=="SapDB") {
+	init=SQL;
+	if (where)
+	  init+=" AND ";
+	else
+	  init+=" WHERE ";
+	init+="ROWNO <= "+QString::number(SkipNumber)+order;
+      }
     }
+    SQL+=order;
     Query=new toNoBlockQuery(connection(),toQuery::Background,init,par);
     Poll.start(100);
     OrigValues.clear();

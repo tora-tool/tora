@@ -481,7 +481,7 @@ public slots:
    */
   virtual void saveUnsaved(toConnection &conn,bool cmt);
 
-  /** Handle Oracle & MySQL
+  /** Handle all databases
    */
   virtual bool canHandle(toConnection &);
 };

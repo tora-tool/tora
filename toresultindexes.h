@@ -61,7 +61,8 @@ class toResultIndexes : public toResultView {
   enum {
     Oracle,
     MySQL,
-    PostgreSQL
+    PostgreSQL,
+    SapDB
   } Type;
 
   toNoBlockQuery *Query;

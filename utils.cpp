@@ -105,6 +105,12 @@ static toSQL SQLUserNamesPgSQL(toSQL::TOSQL_USERLIST,
 			       "7.1",
 			       "PostgreSQL");
 
+static toSQL SQLUserNamesSapDB(toSQL::TOSQL_USERLIST,
+			       "SELECT username \"UserName\" FROM users ORDER BY username",
+			       "",
+			       "",
+			       "SapDB");
+
 static toSQL SQLTextPiece("Global:SQLText",
 			  "SELECT SQL_Text\n"
 			  "  FROM V$SQLText_With_Newlines\n"
@@ -1077,6 +1083,21 @@ void toReadableColumn(QString &name)
 bool toIsOracle(const toConnection &conn)
 {
   return conn.provider()=="Oracle";
+}
+
+bool toIsSapDB(const toConnection &conn)
+{
+  return conn.provider()=="SapDB";
+}
+
+bool toIsMySQL(const toConnection &conn)
+{
+  return conn.provider()=="MySQL";
+}
+
+bool toIsPostgreSQL(const toConnection &conn)
+{
+  return conn.provider()=="PostgreSQL";
 }
 
 static QListViewItem *FindItem(QListView *lst,QListViewItem *first,const QString &str)

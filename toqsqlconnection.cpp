@@ -51,6 +51,12 @@ static toSQL SQLVersion("toQSqlConnection:Version",
 			"3.0",
 			"MySQL");
 
+static toSQL SQLVersionSapDb("toQSqlConnection:Version",
+			"select ltrim(substring(kernel,10,10)) from versions",
+			"",
+			"",
+			"SapDB");
+
 static toSQL SQLVersionPgSQL("toQSqlConnection:Version",
 			     "SELECT SUBSTR(version(), STRPOS(version(), ' ') + 1, STRPOS(version(), 'on') - STRPOS(version(), ' ') - 2)",
 			     "",
@@ -63,6 +69,17 @@ static toSQL SQLListObjects("toQSqlConnection:ListObjects",
 			    "3.0",
 			    "MySQL");
 
+static toSQL SQLListObjectsSapDb("toQSqlConnection:ListObjects",
+			    "select tablename \"Tablename\",\n"
+			    "       owner     \"Owner\",\n"
+			    "       tabletype \"Type\",\n"
+			    "from tables \n"
+			    "where tabletype not in (\'SYNONYM\',\'RESULT\') \n"
+			    "order by tablename",
+			    "",
+			    "",
+			    "SapDB");
+
 static toSQL SQLListObjectsPgSQL("toQSqlConnection:ListObjects",
 				 "SELECT c.relname AS \"Tablename\",\n"
 				 "       u.usename AS \"Owner\",\n"
@@ -73,11 +90,20 @@ static toSQL SQLListObjectsPgSQL("toQSqlConnection:ListObjects",
 				 "7.1",
 				 "PostgreSQL");
 
+static toSQL SQLListSynonymsSapDb("toQSqlConnection:ListSynonyms",
+			     "SELECT synonymname \"Synonym\", owner \"Schema\", tablename \"Object\"\n"
+			    "from synonyms \n"
+			    "where tabletype not in (\'SYNONYM\',\'RESULT\') \n"
+			    "order by owner,tablename",
+			     "Get synonym list, should have same columns",
+			     "",
+			     "SapDb");
+
 static toSQL SQLListSynonyms("toQSqlConnection:ListSynonyms",
 			     "SELECT c.relname AS \"Synonym\", u.usename AS \"Schema\", c.relname AS \"Object\"\n"
 			     "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
 			     " ORDER BY u.usename, c.relname",
-			     "Get synonym list, should have same columns",
+			     "",
 			     "7.1",
 			     "PostgreSQL");
 
@@ -300,6 +326,40 @@ enum enum_field_types { FIELD_TYPE_DECIMAL, FIELD_TYPE_TINY,
                         FIELD_TYPE_VAR_STRING=253,
                         FIELD_TYPE_STRING=254
 };
+
+// SAPDb Datatypes (from /opt/sapdb/interfaces/odbc/incl/*.h)
+#define SAP_SQL_UNKNOWN_TYPE    0
+#define SAP_SQL_DECIMAL         3
+#define SAP_SQL_NUMERIC         2
+#define SAP_SQL_REAL            7
+#define SAP_SQL_FLOAT           6
+#define SAP_SQL_DOUBLE          8
+
+#define SAP_SQL_INTEGER         4
+#define SAP_SQL_SMALLINT        5
+#define SAP_SQL_BIT            (-7) 
+#define SAP_SQL_TINYINT        (-6)     
+#define SAP_SQL_BIGINT         (-5)    
+
+#define SAP_SQL_CHAR            1
+#define SAP_SQL_VARCHAR        12
+#define SAP_SQL_LONGVARCHAR    (-1) 
+
+#define SAP_SQL_BINARY         (-2)
+#define SAP_SQL_VARBINARY      (-3) 
+#define SAP_SQL_LONGVARBINARY  (-4)      
+
+#define SAP_SQL_DATE      	9
+#define SAP_SQL_DATETIME      	9
+#define SAP_SQL_TYPE_DATE      91
+
+#define SAP_SQL_TIME     	10
+#define SAP_SQL_TYPE_TIME       92
+
+#define SAP_SQL_TIMESTAMP	11 
+#define SAP_SQL_TYPE_TIMESTAMP  93
+
+
 
 static std::list<toQuery::queryDescribe> Describe(const QCString &type,QSqlRecordInfo recInfo)
 {
@@ -557,6 +617,81 @@ static std::list<toQuery::queryDescribe> Describe(const QCString &type,QSqlRecor
 	desc.Datatype=QString::fromLatin1("UNKNOWN");
 	break;
       }
+    } else if (type=="SapDB") {
+      switch(info.typeID()) {
+      case SAP_SQL_UNKNOWN_TYPE:
+	desc.Datatype=QString::fromLatin1("UNKNOWN");
+	break;
+      case SAP_SQL_BIT:
+	desc.Datatype=QString::fromLatin1("BIT");
+	break;
+      case SAP_SQL_INTEGER:
+	desc.Datatype=QString::fromLatin1("INTEGER");
+	break;
+      case SAP_SQL_SMALLINT:
+	desc.Datatype=QString::fromLatin1("SMALLINT");
+	break;
+      case SAP_SQL_BIGINT:
+	desc.Datatype=QString::fromLatin1("BIGINT");
+	break;
+      case SAP_SQL_TINYINT:
+	desc.Datatype=QString::fromLatin1("TINYINT");
+	break;
+      case SAP_SQL_NUMERIC:
+	desc.Datatype=QString::fromLatin1("NUMERIC");
+	break;
+      case SAP_SQL_DECIMAL:
+	desc.Datatype=QString::fromLatin1("DECIMAL");
+	break;
+      case SAP_SQL_FLOAT:
+	desc.Datatype=QString::fromLatin1("FLOAT");
+	break;
+      case SAP_SQL_REAL:
+	desc.Datatype=QString::fromLatin1("REAL");
+	break;
+      case SAP_SQL_DOUBLE:
+	desc.Datatype=QString::fromLatin1("DOUBLE");
+	break;
+      case SAP_SQL_DATE:
+	desc.Datatype=QString::fromLatin1("DATE");
+	break;
+      case SAP_SQL_TYPE_DATE:
+	desc.Datatype=QString::fromLatin1("DATE");
+	break;
+      case SAP_SQL_TIME:
+	desc.Datatype=QString::fromLatin1("TIME");
+	break;
+      case SAP_SQL_TYPE_TIME:
+	desc.Datatype=QString::fromLatin1("TIME");
+	break;
+      case SAP_SQL_TIMESTAMP:
+	desc.Datatype=QString::fromLatin1("TIMESTAMP");
+	break;
+      case SAP_SQL_TYPE_TIMESTAMP:
+	desc.Datatype=QString::fromLatin1("TIMESTAMP");
+	break;
+      case SAP_SQL_CHAR:
+	desc.Datatype=QString::fromLatin1("CHAR");
+	break;
+      case SAP_SQL_VARCHAR:
+	desc.Datatype=QString::fromLatin1("VARCHAR");
+	break;
+      case SAP_SQL_LONGVARCHAR:
+	desc.Datatype=QString::fromLatin1("LONGVARCHAR");
+	break;
+      case SAP_SQL_BINARY:
+	desc.Datatype=QString::fromLatin1("BINARY");
+	break;
+      case SAP_SQL_VARBINARY:
+	desc.Datatype=QString::fromLatin1("BINARY");
+	break;
+      case SAP_SQL_LONGVARBINARY:
+	desc.Datatype=QString::fromLatin1("LONGVARBINARY");
+	break;
+      default:
+	desc.Datatype=QString::fromLatin1("UNKNOWN");
+	break;
+      }	
     } else {
       switch(info.type()) {
       default:
@@ -700,6 +835,8 @@ public:
       return "PostgreSQL";
     else if (driv==QString::fromLatin1("QTDS"))
       return "Microsoft SQL/TDS";
+    else if (driv==QString::fromLatin1("QSAPDB7"))
+      return "SapDB";
     else if (driv==QString::fromLatin1("QODBC3"))
       return "ODBC";
     return "";
@@ -712,20 +849,36 @@ public:
       return QString::fromLatin1("QPSQL7");
     else if (driv=="Microsoft SQL/TDS")
       return QString::fromLatin1("QTDS");
+    else if (driv=="SapDB")
+      return QString::fromLatin1("QSAPDB7");
     else if (driv=="ODBC")
       return QString::fromLatin1("QODBC3");
     return QString::null;
   }
+ 
 
   class qSqlSub : public toConnectionSub {
-  public:
     toSemaphore Lock;
+  public:
     QSqlDatabase *Connection;
     QString name;
 
     qSqlSub(QSqlDatabase *conn,const QString &)
       : Lock(1),Connection(conn)
     { }
+
+    void lockUp() {
+	Lock.up();
+    }
+
+    void lockDown () {
+	Lock.down();
+    }
+
+    int getLockValue() {
+	return Lock.getValue();
+    } 
+
     ~qSqlSub()
     { QSqlDatabase::removeDatabase(name); }
     void throwError(const QString &sql)
@@ -737,18 +890,33 @@ public:
     QSqlRecord Record;
     qSqlSub *Connection;
     bool EOQ;
+    bool cancelSupported;
+    bool validCheck;
     unsigned int Column;
   public:
     qSqlQuery(toQuery *query,qSqlSub *conn)
       : toQuery::queryImpl(query),Connection(conn)
-    { Column=0; EOQ=true; Column=0; Query=NULL; }
+    { Column=0; 
+      EOQ=true; 
+      Query=NULL;
+      // sapdb marks value as invalid on some views	
+      // for example tables,indexes etc
+      if(query->connection().provider() == "SapDB")  {
+	validCheck =false;
+        cancelSupported=true;
+      }else {
+	validCheck =true;
+	cancelSupported=false;
+      }
+    }
     virtual ~qSqlQuery()
     { delete Query; }
     virtual void execute(void);
 
     virtual void cancel(void)
     {
-      // Not implemented
+	if (cancelSupported) {
+        }
     }
 
     virtual toQValue readValue(void)
@@ -758,18 +926,24 @@ public:
       if (EOQ)
 	throw QString::fromLatin1("Tried to read past end of query");
 
-      Connection->Lock.down();
+      Connection->lockDown();
       QVariant val=Query->value(Column);
-      if (!val.isValid()) {
-	Connection->Lock.up();
-	Connection->throwError(query()->sql());
+      // sapdb marks value as invalid on some views	
+      // for example tables,indexes etc, so ignore this check
+      if (validCheck && !val.isValid()) {
+	Connection->lockUp();
+    	QString msg = QString::fromLatin1("Query Value not valid <");
+	msg +=Column;
+	msg +=QString::fromLatin1("> ");
+	msg +=query()->sql();
+	Connection->throwError(msg);
       }
       Column++;
       if (Column==Record.count()) {
 	Column=0;
 	EOQ=!Query->next();
       }
-      Connection->Lock.up();
+      Connection->lockUp();
 
       return val.toString();
     }
@@ -781,30 +955,31 @@ public:
     {
       if (!Query)
 	return 0;
-      Connection->Lock.down();
+      Connection->lockDown();
       int ret=Query->numRowsAffected();
-      Connection->Lock.up();
+      Connection->lockUp();
       return ret;
     }
     virtual int columns(void)
     {
-      Connection->Lock.down();
+      Connection->lockDown();
       int ret=Record.count();;
-      Connection->Lock.up();
+      Connection->lockUp();
       return ret;
     }
     virtual std::list<toQuery::queryDescribe> describe(void)
     {
       QCString provider=query()->connection().provider();
-      Connection->Lock.down();
+      Connection->lockDown();
       QSqlRecordInfo recInfo=Connection->Connection->recordInfo(*Query);
       std::list<toQuery::queryDescribe> ret=Describe(provider,recInfo);
-      Connection->Lock.up();
+      Connection->lockUp();
       return ret;
     }
   };
 
   class qSqlConnection : public toConnection::connectionImpl {
+    bool multiple;
     qSqlSub *qSqlConv(toConnectionSub *sub)
     {
       qSqlSub *conn=dynamic_cast<qSqlSub *>(sub);
@@ -815,7 +990,12 @@ public:
   public:
     qSqlConnection(toConnection *conn)
       : toConnection::connectionImpl(conn)
-    { }
+    { 
+	if (conn->provider() == "SapDB")
+		multiple=false;
+	else 
+		multiple=true;
+    }
 
     virtual std::list<toConnection::objectName> objectNames(void)
     {
@@ -888,9 +1068,9 @@ public:
 	  toQuery query(connection(),toQuery::Normal);
 	  qSqlSub *sub=dynamic_cast<qSqlSub *>(query.connectionSub());
 	  if (sub) {
-	    sub->Lock.down();
+	    sub->lockDown();
 	    desc=Describe(connection().provider(),sub->Connection->recordInfo(quote(table.Name)));
-	    sub->Lock.up();
+	    sub->lockUp();
 	  }
 	} else {
 	  QString SQL=QString::fromLatin1("SELECT * FROM ");
@@ -910,6 +1090,10 @@ public:
 
       toQDescList ret;
       return ret;
+    }
+
+    virtual bool handleMultipleQueries() { 
+	return multiple; 
     }
 
     virtual void commit(toConnectionSub *sub)
@@ -936,7 +1120,7 @@ public:
     {
       QCString ret;
       qSqlSub *conn=qSqlConv(sub);
-      conn->Lock.down();
+      conn->lockDown();
       try {
 	QSqlQuery query=conn->Connection->exec(toSQL::string(SQLVersion,connection()));
 	if (query.next()) {
@@ -948,7 +1132,7 @@ public:
 	}
       } catch(...) {
       }
-      conn->Lock.up();
+      conn->lockUp();
       return ret;
     }
 
@@ -957,15 +1141,16 @@ public:
     virtual void execute(toConnectionSub *sub,const QCString &sql,toQList &params)
     {
       qSqlSub *conn=qSqlConv(sub);
-
-      conn->Lock.down();
+      conn->lockDown();
       QSqlQuery Query(conn->Connection->exec(QueryParam(sql,params)));
       if (!Query.isActive()) {
-	conn->Lock.up();
-	conn->throwError(sql);
+	conn->lockUp();
+	QString msg = QString::fromLatin1("Query not active ");
+	msg +=sql;
+	conn->throwError(msg);
       }
 
-      conn->Lock.up();
+      conn->lockUp();
     }
   };
 
@@ -1011,19 +1196,21 @@ public:
 };
 
 static toQSqlProvider QSqlProvider;
+toLock myLock;
 
 void toQSqlProvider::qSqlQuery::execute(void)
 {
-  while (Connection->Lock.getValue()>1) {
-    Connection->Lock.down();
+  while (Connection->getLockValue()>1) {
+    Connection->lockDown();
     toStatusMessage(QString::fromLatin1("Too high value on connection lock semaphore"));
   }
-  
-  Connection->Lock.down();
+  Connection->lockDown(); 
   Query=new QSqlQuery(Connection->Connection->exec(QueryParam(query()->sql(),query()->params())));
   if (!Query->isActive()) {
-    Connection->Lock.up();
-    Connection->throwError(query()->sql());
+    Connection->lockUp();
+    QString msg = QString::fromLatin1("Query not active ");
+    msg +=query()->sql();
+    Connection->throwError(msg);
   }
   
   if (Query->isSelect()) {
@@ -1033,7 +1220,7 @@ void toQSqlProvider::qSqlQuery::execute(void)
   } else
     EOQ=true;
   
-  Connection->Lock.up();
+  Connection->lockUp();
 }
 
 toConnectionSub *toQSqlProvider::qSqlConnection::createConnection(void)

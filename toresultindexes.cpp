@@ -40,12 +40,11 @@
 #include "toresultindexes.h"
 #include "tosql.h"
 #include "totool.h"
-
 #include "toresultindexes.moc"
 
 bool toResultIndexes::canHandle(toConnection &conn)
 {
-  return toIsOracle(conn)||conn.provider()=="MySQL"||conn.provider()=="PostgreSQL";
+  return toIsOracle(conn)||conn.provider()=="MySQL"||conn.provider()=="PostgreSQL"|| conn.provider()=="SapDB";
 }
 
 toResultIndexes::toResultIndexes(QWidget *parent,const char *name)
@@ -57,7 +56,6 @@ toResultIndexes::toResultIndexes(QWidget *parent,const char *name)
   addColumn(tr("Type"));
   addColumn(tr("Unique"));
   setSQLName(QString::fromLatin1("toResultIndexes"));
-
   Query=NULL;
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
 }
@@ -95,6 +93,15 @@ static toSQL SQLColumnsPgSQL("toResultIndexes:Columns",
 			     "",
 			     "7.1",
 			     "PostgreSQL");
+
+static toSQL SQLColumnsSapDB("toResultIndexes:Columns",
+			       "SELECT columnname,datatype\n"
+			       "  FROM indexcolumns\n"
+			       " WHERE owner = :f1<char101> and indexname = :f2<char[101]>\n"
+			       " ORDER BY columnno\n",
+			       "",
+			       "",
+			       "SapDB");
 
 QString toResultIndexes::indexCols(const QString &indOwner,const QString &indName)
 {
@@ -160,6 +167,17 @@ static toSQL SQLListIndexPgSQL("toResultIndexes:ListIndex",
 			       "",
 			       "7.1",
 			       "PostgreSQL");
+static toSQL SQLListIndexSapDB("toResultIndexes:ListIndex",
+			       "SELECT owner,\n"
+			       "       indexname \"Index_Name\",\n"
+			       "       'NORMAL',\n"
+			       "       type\n"
+			       " FROM indexes \n"
+			       " WHERE owner = :f1<char[101]> and tablename = :f2<char[101]> \n"
+			       " ORDER by indexname",
+			       "",
+			       "",
+			       "SapDB");
 
 void toResultIndexes::query(const QString &,const toQList &param)
 {
@@ -178,6 +196,8 @@ void toResultIndexes::query(const QString &,const toQList &param)
       Type=MySQL;
     else if (conn.provider()=="PostgreSQL")
       Type=PostgreSQL;
+    else if (conn.provider()=="SapDB")
+      Type=SapDB;
     else
       return;
     
@@ -211,7 +231,7 @@ void toResultIndexes::poll(void)
       return;
     if (Query&&Query->poll()) {
       while(Query->poll()&&!Query->eof()) {
-	if (Type==Oracle||Type==PostgreSQL) {
+	if (Type==Oracle||Type==PostgreSQL||Type==SapDB) {
 	  Last=new toResultViewItem(this,NULL);
 	  
 	  QString indexOwner(Query->readValue());

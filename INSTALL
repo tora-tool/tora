@@ -58,6 +58,14 @@ in the next version.
 Then copy the file Makefile.sample to Makefile and edit it to
 fill out the correct values in it.
 
+SAP support
+===========
+
+To use SAP you need to compile SAP support for Qt which is available
+from this address:
+
+http://www.mn-logistik.de/unsupported/sapdb/
+
 Why I'm not using autoconf
 ==========================
 

@@ -1,5 +1,6 @@
 1.3.11:
 
+2003-07-25: Added experimental SAP support. (Thanx Oliver Jehle)
 2003-07-25: Added ugly hack to remove version of Oracle lib in RPM:s.
 2003-07-25: Added check for temporary tool to only be enabled for 8.0 or later.
 2003-07-25: Updated version to 1.3.11.

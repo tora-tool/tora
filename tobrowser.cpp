@@ -122,7 +122,7 @@ public:
     return new toBrowser(parent,connection);
   }
   virtual bool canHandle(toConnection &conn)
-  { return conn.provider()=="Oracle"||conn.provider()=="MySQL"||conn.provider()=="PostgreSQL"; }
+  { return conn.provider()=="Oracle"||conn.provider()=="MySQL"||conn.provider()=="PostgreSQL" || conn.provider()=="SapDB"; }
 };
 
 static toBrowserTool BrowserTool;
@@ -384,6 +384,7 @@ public:
 #define TAB_TABLE_GRANTS	"TablesGrants"
 #define TAB_TABLE_TRIGGERS	"TablesTriggers"
 #define TAB_TABLE_INFO		"TablesInfo"
+#define TAB_TABLE_STATISTIC	"TablesStatistic"
 #define TAB_TABLE_EXTENT	"TablesExtent"
 #define TAB_TABLE_EXTRACT	"TablesExtract"
 
@@ -405,6 +406,7 @@ public:
 #define TAB_INDEX_INFO		"IndexInfo"
 #define TAB_INDEX_EXTENT	"IndexesExtent"
 #define TAB_INDEX_EXTRACT	"IndexExtract"
+#define TAB_INDEX_STATISTIC	"IndexStatistic"
 
 #define TAB_SYNONYM		"Synonym"
 #define TAB_SYNONYM_GRANTS	"SynonymGrants"
@@ -458,12 +460,27 @@ static toSQL SQLListTablesPgSQL("toBrowser:ListTables",
                                 "",
                                 "7.1",
                                 "PostgreSQL");
-
+static toSQL SQLListTablesSapDB("toBrowser:ListTables",
+                            "SELECT tablename \"Table Name\"\n"
+                            " FROM tables \n"
+                            " WHERE tabletype = 'TABLE' and owner = upper(:f1<char[101]>) \n"
+                            " ORDER by tablename",
+                            "",
+                            "",
+                            "SapDB");
 static toSQL SQLAnyGrants("toBrowser:AnyGrants",
 			  "SELECT Privilege,Grantee,Grantor,Grantable FROM SYS.ALL_TAB_PRIVS\n"
 			  " WHERE Table_Schema = :f1<char[101]> AND Table_Name = :f2<char[101]>\n"
 			  " ORDER BY Privilege,Grantee",
 			  "Display the grants on an object");
+static toSQL SQLAnyGrantsSapDB("toBrowser:AnyGrants",
+                            "SELECT privilege,grantee,grantor,is_grantable\n"
+                            " FROM tableprivileges \n"
+                            " WHERE owner = upper(:f1<char[101]>) and tablename = :f2<char[101]>\n"
+                            " ORDER by privilege,grantee ",
+                            "",
+                            "",
+                            "SapDB");
 static toSQL SQLTableTrigger("toBrowser:TableTrigger",
 			     "SELECT Trigger_Name,Triggering_Event,Column_Name,Status,Description \n"
 			     "  FROM SYS.ALL_TRIGGERS\n"
@@ -476,6 +493,25 @@ static toSQL SQLTableTrigger8("toBrowser:TableTrigger",
 			      " WHERE Table_Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>",
 			      "",
 			      "8.0");
+static toSQL SQLTableTriggerSapDB("toBrowser:TableTrigger",
+                            "SELECT TriggerName,'UPDATE' \"Event\",''\"Column\",'ENABLED' \"Status\",''\"Description\"\n"
+                            " FROM triggers \n"
+                            " WHERE owner = upper(:f1<char[101]>) and tablename = :f2<char[101]>\n"
+                            "  and update='YES'\n"
+                            "UNION\n"
+                            "SELECT TriggerName,'INSERT','','ENABLED',''\n"
+                            " FROM triggers \n"
+                            " WHERE owner = upper(:f1<char[101]>) and  tablename = :f2<char[101]>\n"
+                            "  and insert='YES'\n"
+                            "UNION\n"
+                            "SELECT TriggerName,'DELETE','','ENABLED',''\n"
+                            " FROM triggers \n"
+                            " WHERE owner = upper(:f1<char[101]>) and  tablename = :f2<char[101]>\n"
+                            "  and delete='YES'\n"
+                            " ORDER by 1 ",
+                            "",
+                            "",
+                            "SapDB");
 static toSQL SQLTableInfo("toBrowser:TableInformation",
 			  "SELECT *\n"
 			  "  FROM SYS.ALL_TABLES\n"
@@ -495,7 +531,20 @@ static toSQL SQLTableInfoPgSQL("toBrowser:TableInformation",
                                "",
                                "7.1",
                                "PostgreSQL");
-
+static toSQL SQLTableInfoSapDB("toBrowser:TableInformation",
+                            "SELECT TABLENAME,PRIVILEGES,CREATEDATE,CREATETIME,UPDSTATDATE,UPDSTATTIME,ALTERDATE,ALTERTIME,TABLEID \n"
+                            " FROM tables \n"
+                            " WHERE tabletype = 'TABLE' and owner = upper(:f1<char[101]>) and tablename = :f2<char[101]>",
+                            "",
+                            "",
+                            "SapDB");
+static toSQL SQLTableStatistic("toBrowser:TableStatstics",
+                            "SELECT description \"Description\", value(char_value,numeric_value) \"Value\" \n"
+                            " FROM tablestatistics \n"
+                            " WHERE owner = upper(:f1<char[101]>) and tablename = :f2<char[101]>",
+                            "Table Statistics",
+                            "",
+                            "SapDB");
 static toSQL SQLListView("toBrowser:ListView",
 			 "SELECT View_Name FROM SYS.ALL_VIEWS WHERE OWNER = :f1<char[101]>\n"
 			 "   AND UPPER(VIEW_NAME) LIKE :f2<char[101]>\n"
@@ -510,7 +559,14 @@ static toSQL SQLListViewPgSQL("toBrowser:ListView",
                          "",
                          "7.1",
                          "PostgreSQL");
-			 
+static toSQL SQLListViewSapDb("toBrowser:ListView",
+                            "SELECT tablename \"View_Name\"\n"
+                            " FROM tables \n"
+                            " WHERE tabletype = 'VIEW' and owner = upper(:f1<char[101]>)\n"
+                            " ORDER by tablename",
+                            "",
+                            "",
+                            "SapDB");
 static toSQL SQLViewSQL("toBrowser:ViewSQL",	
 			"SELECT Text SQL\n"
 			"  FROM SYS.ALL_Views\n"
@@ -524,7 +580,13 @@ static toSQL SQLViewSQLPgSQL("toBrowser:ViewSQL",
                         "",
                         "7.1",
                         "PostgreSQL");
-
+static toSQL SQLViewSQLSapDb("toBrowser:ViewSQL",
+                            "SELECT definition \"SQL\"\n"
+                            " FROM viewdefs \n"
+                            " WHERE  viewname = :f2<char[101]> and owner = upper(:f1<char[101]>)\n",
+                            "",
+                            "",
+                            "SapDB");
 static toSQL SQLListIndex("toBrowser:ListIndex",
 			  "SELECT Index_Name,NULL \" Ignore\",NULL \" Ignore2\",Tablespace_name \" Ignore2\"\n"
 			  "  FROM SYS.ALL_INDEXES\n"
@@ -541,8 +603,13 @@ static toSQL SQLListIndexPgSQL("toBrowser:ListIndex",
 			       "",
 			       "7.1",
 			       "PostgreSQL");
-
-
+static toSQL SQLListIndexSapDb("toBrowser:ListIndex",
+                            "SELECT IndexName \"Index Name\"\n"
+                            " FROM indexes \n"
+                            " WHERE  owner = upper(:f1<char[101]>)",
+                            "",
+                            "",
+                            "SapDB");
 static toSQL SQLIndexCols("toBrowser:IndexCols",
 			  "SELECT a.Table_Name,a.Column_Name,a.Column_Length,a.Descend,b.Column_Expression \" \"\n"
 			  "  FROM sys.All_Ind_Columns a,sys.All_Ind_Expressions b\n"
@@ -582,12 +649,32 @@ static toSQL SQLIndexColsPgSQL("toBrowser:IndexCols",
 			       "",
 			       "7.1",
                                "PostgreSQL");
-
+static toSQL SQLIndexColsSapDb("toBrowser:IndexCols",
+                            "SELECT tablename,columnno,columnname,len \"Length\",DataType,Sort \n"
+                            " FROM indexcolumns \n"
+                            " WHERE  owner = upper(:f1<char[101]>) and indexname = upper(:f2<char[101]>)\n"
+                            " ORDER BY indexname,columnno",
+                            "",
+                            "",
+                            "SapDB");
 static toSQL SQLIndexInfo("toBrowser:IndexInformation",
 			  "SELECT * FROM SYS.ALL_INDEXES\n"
 			  " WHERE Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>",
 			  "Display information about an index");
-
+static toSQL SQLIndexInfoSapDb("toBrowser:IndexInformation",
+                            "SELECT  INDEXNAME,TABLENAME, TYPE, CREATEDATE,CREATETIME,INDEX_USED, DISABLED \n"
+                            " FROM indexes\n"
+                            " WHERE  owner = upper(:f1<char[101]>) and indexname = :f2<char[101]>\n",
+                            "",
+                            "",
+                            "SapDB");
+static toSQL SQLIndexStatistic("toBrowser:IndexStatstics",
+                            "SELECT description \"Description\", value(char_value,numeric_value) \"Value\" \n"
+                            " FROM indexstatistics \n"
+                            " WHERE owner = upper(:f1<char[101]>) and indexname = :f2<char[101]>",
+                            "Index Statistics",
+                            "",
+                            "SapDB");
 static toSQL SQLListSequence("toBrowser:ListSequence",
 			     "SELECT Sequence_Name FROM SYS.ALL_SEQUENCES\n"
 			     " WHERE SEQUENCE_OWNER = :f1<char[101]>\n"
@@ -609,13 +696,11 @@ static toSQL SQLListSequencePgSQL("toBrowser:ListSequence",
 			          "",
 			          "7.1",
                                   "PostgreSQL");
-
 static toSQL SQLSequenceInfoPgSQL("toBrowser:SequenceInformation",
                                   "SELECT *, substr(:f1,1) as \"Owner\" FROM :f2<noquote>",
 			          "",
 			          "7.1",
                                   "PostgreSQL");
-
 static toSQL SQLListSynonym("toBrowser:ListSynonym",
 			    "SELECT DECODE(Owner,'PUBLIC','',Owner||'.')||Synonym_Name \"Synonym Name\"\n"
 			    "  FROM Sys.All_Synonyms\n"
@@ -629,7 +714,6 @@ static toSQL SQLSynonymInfo("toBrowser:SynonymInformation",
 			    " WHERE Owner = :f1<char[101]>\n"
 			    "   AND Synonym_Name = :f2<char[101]>",
 			    "Display information about a synonym");
-
 static toSQL SQLListSQL("toBrowser:ListCode",
 			"SELECT Object_Name,Object_Type,Status Type FROM SYS.ALL_OBJECTS\n"
 			" WHERE OWNER = :f1<char[101]>\n"
@@ -793,7 +877,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   Schema->setSQL(toSQL::sql(toSQL::TOSQL_USERLIST));
   if (connection.provider()=="MySQL")
     Schema->setSelected(connection.database());
-  else if (connection.provider()=="Oracle")
+  else if (connection.provider()=="Oracle"||connection.provider()=="SapDB")
     Schema->setSelected(connection.user().upper());
   else
     Schema->setSelected(connection.user());
@@ -866,14 +950,14 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_TABLE_DEPEND]=resultReferences;
 
   resultView=new toResultLong(true,false,toQuery::Background,curr,TAB_TABLE_GRANTS);
-  resultView->setReadAll(true);
   resultView->setSQL(SQLAnyGrants);
+  resultView->setReadAll(true);
   curr->addTab(resultView,tr("&Grants"));
   SecondMap[TAB_TABLE_GRANTS]=resultView;
 
   resultView=new toResultLong(true,false,toQuery::Background,curr,TAB_TABLE_TRIGGERS);
-  resultView->setReadAll(true);
   resultView->setSQL(SQLTableTrigger);
+  resultView->setReadAll(true);
   curr->addTab(resultView,tr("Triggers"));
   SecondMap[TAB_TABLE_TRIGGERS]=resultView;
 
@@ -881,15 +965,21 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(TableContent,tr("&Data"));
   SecondMap[TAB_TABLE_DATA]=TableContent;
 
-  toResultItem *resultItem=new toResultItem(2,true,curr,TAB_TABLE_INFO);
-  resultItem->setSQL(SQLTableInfo);
-  curr->addTab(resultItem,tr("Information"));
-  SecondMap[TAB_TABLE_INFO]=resultItem;
+  toResultItem *resultInfo=new toResultItem(2,true,curr,TAB_TABLE_INFO);
+  resultInfo->setSQL(SQLTableInfo);
+  curr->addTab(resultInfo,tr("Information"));
+  SecondMap[TAB_TABLE_INFO]=resultInfo;
+
+  resultView=new toResultLong(true,false,toQuery::Background,curr,TAB_TABLE_STATISTIC);
+  resultView->setSQL(SQLTableStatistic);
+  resultView->setResizeMode(QListView::AllColumns);
+  resultView->setReadAll(true);
+  curr->addTab(resultView,tr("Statistic"));
+  SecondMap[TAB_TABLE_STATISTIC]=resultView;
 
   toResultExtent *resultExtent=new toResultExtent(curr,TAB_TABLE_EXTENT);
   curr->addTab(resultExtent,tr("Extents"));
   SecondMap[TAB_TABLE_EXTENT]=resultExtent;
-
   toResultExtract *resultExtract=new toResultExtract(true,this,TAB_TABLE_EXTRACT);
   curr->addTab(resultExtract,tr("Script"));
   SecondMap[TAB_TABLE_EXTRACT]=resultExtract;
@@ -928,8 +1018,8 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_VIEW_DATA]=ViewContent;
 
   resultView=new toResultLong(true,false,toQuery::Background,curr,TAB_VIEW_GRANTS);
-  resultView->setReadAll(true);
   resultView->setSQL(SQLAnyGrants);
+  resultView->setReadAll(true);
   curr->addTab(resultView,tr("&Grants"));
   SecondMap[TAB_VIEW_GRANTS]=resultView;
 
@@ -940,7 +1030,6 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultExtract=new toResultExtract(true,this,TAB_VIEW_EXTRACT);
   curr->addTab(resultExtract,tr("Script"));
   SecondMap[TAB_VIEW_EXTRACT]=resultExtract;
-
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_INDEX);
@@ -967,10 +1056,19 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_INDEX]=resultView;
   SecondMap[TAB_INDEX_COLS]=resultView;
 
-  resultItem=new toResultItem(2,true,curr,TAB_INDEX_INFO);
-  resultItem->setSQL(SQLIndexInfo);
-  curr->addTab(resultItem,tr("Info"));
-  SecondMap[TAB_INDEX_INFO]=resultItem;
+  toResultItem *resultIdxInfo=new toResultItem(2,true,curr,TAB_INDEX_INFO);
+  resultIdxInfo->setSQL(SQLIndexInfo);
+  curr->addTab(resultIdxInfo,tr("Info"));
+  SecondMap[TAB_INDEX_INFO]=resultIdxInfo;
+
+  resultView=new toResultLong(true,false,toQuery::Background,curr,TAB_INDEX_STATISTIC);
+  resultView->setSQL(SQLIndexStatistic);
+  resultView->setResizeMode(QListView::AllColumns);
+  resultView->setReadAll(true);
+  curr->addTab(resultView,tr("&Statistic"));
+  SecondMap[TAB_INDEX]=resultView;
+  SecondMap[TAB_INDEX_COLS]=resultView;
+
 
   resultExtent=new toResultExtent(curr,TAB_INDEX_EXTENT);
   curr->addTab(resultExtent,tr("Extents"));
@@ -979,13 +1077,13 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultExtract=new toResultExtract(true,this,TAB_INDEX_EXTRACT);
   curr->addTab(resultExtract,tr("Script"));
   SecondMap[TAB_INDEX_EXTRACT]=resultExtract;
-
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_SEQUENCES);
   TopTab->addTab(splitter,tr("Se&quences"));
   resultView=new toResultLong(true,false,toQuery::Background,splitter);
   resultView->setReadAll(true);
+  resultView->setSQL(SQLListSequence);
   connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
   Map[TAB_SEQUENCES]=resultView;
   resultView->setTabWidget(TopTab);
@@ -998,15 +1096,15 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   curr=new QTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
-  resultItem=new toResultItem(2,true,curr,TAB_SEQUENCES_INFO);
-  resultItem->setSQL(SQLSequenceInfo);
-  curr->addTab(resultItem,tr("Info"));
-  SecondMap[TAB_SEQUENCES]=resultItem;
-  SecondMap[TAB_SEQUENCES_INFO]=resultItem;
 
+  toResultItem *resultSequences=new toResultItem(2,true,curr,TAB_SEQUENCES_INFO);
+  resultSequences->setSQL(SQLSequenceInfo);
+  curr->addTab(resultSequences,tr("Info"));
+  SecondMap[TAB_SEQUENCES]=resultSequences;
+  SecondMap[TAB_SEQUENCES_INFO]=resultSequences;
   resultView=new toResultLong(true,false,toQuery::Background,curr,TAB_SEQUENCES_GRANTS);
-  resultView->setReadAll(true);
   resultView->setSQL(SQLAnyGrants);
+  resultView->setReadAll(true);
   curr->addTab(resultView,tr("&Grants"));
   SecondMap[TAB_SEQUENCES_GRANTS]=resultView;
 
@@ -1032,15 +1130,16 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   curr=new QTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
-  resultItem=new toResultItem(2,true,curr,TAB_SYNONYM_INFO);
-  resultItem->setSQL(SQLSynonymInfo);
-  curr->addTab(resultItem,tr("Info"));
-  SecondMap[TAB_SYNONYM]=resultItem;
-  SecondMap[TAB_SYNONYM_INFO]=resultItem;
+
+  toResultItem *resultSynonym=new toResultItem(2,true,curr,TAB_SYNONYM_INFO);
+  resultSynonym->setSQL(SQLSynonymInfo);
+  curr->addTab(resultSynonym,tr("Info"));
+  SecondMap[TAB_SYNONYM]=resultSynonym;
+  SecondMap[TAB_SYNONYM_INFO]=resultSynonym;
 
   resultView=new toResultLong(true,false,toQuery::Background,curr,TAB_SYNONYM_GRANTS);
-  resultView->setReadAll(true);
   resultView->setSQL(SQLAnyGrants);
+  resultView->setReadAll(true);
   curr->addTab(resultView,tr("&Grants"));
   SecondMap[TAB_SYNONYM_GRANTS]=resultView;
 
@@ -1083,7 +1182,6 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setSQL(SQLAnyGrants);
   curr->addTab(resultView,tr("&Grants"));
   SecondMap[TAB_PLSQL_GRANTS]=resultView;
-
   resultDepend=new toResultDepend(curr,TAB_PLSQL_DEPEND);
   curr->addTab(resultDepend,tr("De&pendencies"));
   SecondMap[TAB_PLSQL_DEPEND]=resultDepend;
@@ -1091,7 +1189,6 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultExtract=new toResultExtract(true,this,TAB_PLSQL_EXTRACT);
   curr->addTab(resultExtract,tr("Script"));
   SecondMap[TAB_PLSQL_EXTRACT]=resultExtract;
-
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_TRIGGER);
@@ -1111,11 +1208,11 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr=new QTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
-  resultItem=new toResultItem(2,true,curr,TAB_TRIGGER_INFO);
-  resultItem->setSQL(SQLTriggerInfo);
-  curr->addTab(resultItem,tr("Info"));
-  SecondMap[TAB_TRIGGER]=resultItem;
-  SecondMap[TAB_TRIGGER_INFO]=resultItem;
+  toResultItem *resultTrigger=new toResultItem(2,true,curr,TAB_TRIGGER_INFO);
+  resultTrigger->setSQL(SQLTriggerInfo);
+  curr->addTab(resultTrigger,tr("Info"));
+  SecondMap[TAB_TRIGGER]=resultTrigger;
+  SecondMap[TAB_TRIGGER_INFO]=resultTrigger; 
 
   resultField=new toResultField(curr,TAB_TRIGGER_SOURCE);
   resultField->setSQL(SQLTriggerBody);
@@ -1127,9 +1224,10 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultView,tr("&Columns"));
   SecondMap[TAB_TRIGGER_COLS]=resultView;
 
+
   resultView=new toResultLong(true,false,toQuery::Background,curr,TAB_TRIGGER_GRANTS);
-  resultView->setReadAll(true);
   resultView->setSQL(SQLAnyGrants);
+  resultView->setReadAll(true);
   curr->addTab(resultView,tr("&Grants"));
   SecondMap[TAB_TRIGGER_GRANTS]=resultView;
 
@@ -1337,7 +1435,7 @@ void toBrowser::defineFilter(void)
 
 bool toBrowser::canHandle(toConnection &conn)
 {
-  return conn.provider()=="Oracle"||conn.provider()=="MySQL";
+  return conn.provider()=="Oracle"||conn.provider()=="MySQL"||conn.provider()=="SapDB";
 }
 
 void toBrowser::modifyTable(void)
