@@ -7422,8 +7422,24 @@ toOracleExtract::~toOracleExtract()
 }
 
 static toSQL SQLSetSizing("toOracleExtract:SetSizing",
-			  "SELECT db_block_size FROM v$parameter WHERE name = 'db_block_size'",
+			  "SELECT value FROM v$parameter WHERE name = 'db_block_size'",
 			  "Get information about block sizes from alloced space, same columns");
+
+static toSQL SQLSetSizingFallback("toOracleExtract:SetSizingFallback",
+				  "SELECT bytes/blocks/1024   AS block_size\n"
+				  "  FROM user_free_space\n"
+				  " WHERE bytes  IS NOT NULL\n"
+				  "   AND blocks IS NOT NULL\n"
+				  "   AND ROWNUM < 2",
+				  "Get information about block sizes, same columns");
+
+static toSQL SQLSetSizingFallback2("toOracleExtract:SetSizingFallback2",
+				   "SELECT bytes/blocks/1024   AS block_size\n"
+				   "  FROM user_segments\n"
+				   " WHERE bytes  IS NOT NULL\n"
+				   "   AND blocks IS NOT NULL\n"
+				   "   AND ROWNUM < 2",
+				   "Get information about block sizes, same columns");
 
 void toOracleExtract::initialize(toExtract &ext) const
 {
@@ -7437,8 +7453,15 @@ void toOracleExtract::initialize(toExtract &ext) const
   }
   ext.setState("Segments",DbaSegments);
 
-  toQList ret=toQuery::readQueryNull(CONNECTION,SQLSetSizing);
-  ext.setBlockSize(toShift(ret).toInt());
+  try {
+    toQList ret=toQuery::readQueryNull(CONNECTION,SQLSetSizing);
+    ext.setBlockSize(toShift(ret).toInt());
+  } catch(...) {
+    toQList ret=toQuery::readQueryNull(CONNECTION,SQLSetSizingFallback);
+    if (ret.size()==0)
+      ret=toQuery::readQueryNull(CONNECTION,SQLSetSizingFallback2);
+    ext.setBlockSize(toShift(ret).toInt());
+  }
 }
 
 void toOracleExtract::create(toExtract &ext,

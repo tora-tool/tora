@@ -53,6 +53,7 @@
 
 #include <qcheckbox.h>
 #include <qfile.h>
+#include <qinputdialog.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qregexp.h>
@@ -915,16 +916,53 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
       session_mode=OCI_SYSOPER;
     else if (mode==QString::fromLatin1("SYS_DBA"))
       session_mode=OCI_SYSDBA;
-    conn=new otl_connect;
-    conn->set_stream_pool_size(max(toTool::globalConfig(CONF_OPEN_CURSORS,
-							DEFAULT_OPEN_CURSORS).toInt(),1));
-    if(!sqlNet)
-      conn->server_attach();
-    else
-      conn->server_attach(connection().database().utf8());
-    QCString user=connection().user().utf8();
-    QCString pass=connection().password().utf8();
-    conn->session_begin(user.isEmpty()?"":(const char *)user,pass.isEmpty()?"":(const char *)pass,0,session_mode);
+    do {
+      conn=new otl_connect;
+      conn->set_stream_pool_size(max(toTool::globalConfig(CONF_OPEN_CURSORS,
+							  DEFAULT_OPEN_CURSORS).toInt(),1));
+      if(!sqlNet)
+	conn->server_attach();
+      else
+	conn->server_attach(connection().database().utf8());
+      QCString user=connection().user().utf8();
+      QCString pass=connection().password().utf8();
+      try {
+	conn->session_begin(user.isEmpty()?"":(const char *)user,pass.isEmpty()?"":(const char *)pass,0,session_mode);
+      } catch(const otl_exception &exc) {
+	if (toThread::mainThread()&&exc.code==28001) {
+	  bool ok=false;
+	  QString newpass=QInputDialog::getText(qApp->translate("toOracleConnection","Password expired"),
+						qApp->translate("toOracleConnection","Enter new password"),
+						QLineEdit::Password,
+						QString::null,
+						&ok,
+						toMainWidget());
+	  if (ok) {
+	    QString newpass2=QInputDialog::getText(qApp->translate("toOracleConnection","Password expired"),
+						   qApp->translate("toOracleConnection","Enter password again for confirmation"),
+						   QLineEdit::Password,
+						   QString::null,
+						   &ok,
+						   toMainWidget());
+	    if (ok) {
+	      if (newpass2!=newpass)
+		throw qApp->translate("toOracleConnection","The two passwords doesn't match");
+	      QCString nputf=newpass.utf8();
+	      conn->change_password(user.isEmpty()?"":(const char *)user,
+				    pass.isEmpty()?"":(const char *)pass,
+				    newpass.isEmpty()?"":(const char *)nputf);
+	      connection().setPassword(newpass);
+	      delete conn;
+	      conn=NULL;
+	    } else
+	      throw exc;
+	  } else {
+	    throw exc;
+	  }
+	} else
+	  throw exc;
+      }
+    } while(!conn);
   } catch (const otl_exception &exc) {
     if (!sqlNet) {
       if (oldSid.isNull())

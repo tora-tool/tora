@@ -620,6 +620,10 @@ public:
    */
   const QString &password() const
   { return Password; }
+  /** Change password of connection.
+   */
+  void setPassword(const QString &pwd)
+  { Password=pwd; }
   /** Get host of connection.
    */
   const QString &host() const

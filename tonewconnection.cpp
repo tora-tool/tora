@@ -214,12 +214,6 @@ toConnection *toNewConnection::makeConnection(void)
     toTool::globalSetConfig(CONF_PROVIDER,Provider->currentText());
     toTool::globalSetConfig(CONF_USER,Username->text());
     QString pass;
-    if (toTool::globalConfig(CONF_SAVE_PWD,DEFAULT_SAVE_PWD)!=DEFAULT_SAVE_PWD)
-      pass=Password->text();
-    else
-      pass=DEFAULT_SAVE_PWD;
-    toTool::globalSetConfig(CONF_PASSWORD,toObfuscate(pass));
-    toTool::globalSetConfig(CONF_DATABASE,Database->currentText());
     QString host;
     if (SqlNet->isHidden())
       host=Host->currentText();
@@ -257,12 +251,21 @@ toConnection *toNewConnection::makeConnection(void)
 	}
       }
     }
+
+    if (toTool::globalConfig(CONF_SAVE_PWD,DEFAULT_SAVE_PWD)!=DEFAULT_SAVE_PWD)
+      pass=retCon->password();
+    else
+      pass=DEFAULT_SAVE_PWD;
+    toTool::globalSetConfig(CONF_PASSWORD,toObfuscate(pass));
+    toTool::globalSetConfig(CONF_DATABASE,Database->currentText());
+    toTool::globalSetConfig(CONF_PASSWORD,toObfuscate(retCon->password()));
+
     new QListViewItem(Previous,NULL,
 		      Provider->currentText(),
 		      host,
 		      Database->currentText(),
 		      Username->text(),
-		      pass);
+		      retCon->password());
     historySave();
     return retCon;
   } catch (const QString &exc) {

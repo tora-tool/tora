@@ -1,5 +1,8 @@
 1.3.10:
 
+2003-02-14: Change password when it has expired.
+2003-02-14: Get password from new connection instead of the password editor in new connections.
+2003-02-14: Fixed problem with getting sizing in oracle extractor.
 2003-02-13: Fixed problem with connectionhistory.
 2003-02-13: Format BLOB:s as hex when reading.
 2003-02-13: Check if tools are supported on a database when creating windows.

@@ -6803,6 +6803,28 @@ public:
 
  }
 
+ int change_password
+   (const char* userid,
+    const char* password,
+    const char* newpass)
+ {int status;
+
+  if(!attached)return 0;
+
+  status=OCIPasswordChange
+   (svchp,
+    errhp,
+    OTL_RCAST(text*,OTL_CCAST(char*,userid)),
+    strlen(userid),
+    OTL_RCAST(text*,OTL_CCAST(char*,password)),
+    strlen(password),
+    OTL_RCAST(text*,OTL_CCAST(char*,newpass)),
+    strlen(newpass),
+    OTL_SCAST(ub4,OCI_DEFAULT));
+  if(status)return 0;
+  return 1;
+ }
+
  int cancel(void)
  {int status;
   status=OCIBreak(srvhp,errhp);
@@ -8555,6 +8577,25 @@ public:
    connected=0;
    ++throw_count;
    if(throw_count>1)return;
+#if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
+   if(STD_NAMESPACE_PREFIX uncaught_exception())return; 
+#endif
+   throw otl_exception(connect_struct);
+  }
+ }
+
+ void change_password
+   (const char* userid,
+    const char* password,
+    const char* newpass)
+ {
+  retcode=connect_struct.change_password
+   (userid,password,newpass);
+  if(!retcode) {
+#if 0
+   ++throw_count;
+   if(throw_count>1)return;
+#endif
 #if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
    if(STD_NAMESPACE_PREFIX uncaught_exception())return; 
 #endif
