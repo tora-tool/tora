@@ -84,10 +84,9 @@ public:
   {
     if (Window)
       Window->setFocus();
-    else {
+    else
       Window=new toSQLEdit(parent,connection);
-      Window->setIcon(QPixmap((const char **)tosqledit_xpm));
-    }
+    Window->setIcon(QPixmap((const char **)tosqledit_xpm));
     return Window;
   }
   virtual void customSetup(int toolid)
@@ -117,18 +116,21 @@ void toSQLEdit::updateStatements(const QString &sel)
     int i=str.find(":");
     if (i>=0) {
       if (!head||head->text(0)!=str.left(i)) {
-	head=new QListViewItem(Statements,head,str.left(i));
+	head=new QListViewItem(Statements,str.left(i));
 	head->setSelectable(false);
       }
-      item=new QListViewItem(head,item,str.right(str.length()-i-1));
+      item=new QListViewItem(head,str.right(str.length()-i-1));
       if (sel==str) {
 	Statements->setSelected(item,true);
+	Statements->setCurrentItem(item);
 	Statements->setOpen(head,true);
       }
     } else {
       head=new QListViewItem(Statements,head,str);
-      if (sel==str)
+      if (sel==str) {
 	Statements->setSelected(head,true);
+	Statements->setCurrentItem(item);
+      }
     }
   }
 }
@@ -172,6 +174,7 @@ toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
   Statements=new QListView(splitter);
   Statements->setRootIsDecorated(true);
   Statements->addColumn("Text Name");
+  Statements->setSorting(0);
   QVBox *vbox=new QVBox(splitter);
 
   QHBox *hbox=new QHBox(vbox);
@@ -189,11 +192,19 @@ toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
   Description=new toMarkedText(splitter);
   Editor=new toWorksheet(splitter,connection,false);
 
-  connect(Statements,SIGNAL(selectionChanged(void)),this,SLOT(selectionChanged(void)));
+  connectList(true);
   connect(Version,SIGNAL(activated(const QString &)),this,SLOT(changeVersion(const QString &)));
   connect(toMainWidget(),SIGNAL(sqlEditor(const QString &)),this,SLOT(editSQL(const QString &)));
 
   updateStatements();
+}
+
+void toSQLEdit::connectList(bool conn)
+{
+  if (conn)
+    connect(Statements,SIGNAL(selectionChanged(void)),this,SLOT(selectionChanged(void)));
+  else
+    disconnect(Statements,SIGNAL(selectionChanged(void)),this,SLOT(selectionChanged(void)));
 }
 
 toSQLEdit::~toSQLEdit()
@@ -230,9 +241,15 @@ void toSQLEdit::deleteVersion(void)
   toSQL::deleteSQL(Name->text(),version,provider);
   Version->removeItem(Version->currentItem());
 
-  if (Version->count()==0)
+  if (Version->count()==0) {
+    QListViewItem *item=toFindItem(Statements,Name->text());
+    if (item) {
+      connectList(false);
+      delete item;
+      connectList(true);
+    }
     newSQL();
-  else
+  } else
     selectionChanged(connection().provider()+":"+connection().version());
 }
 
@@ -269,13 +286,40 @@ bool toSQLEdit::splitVersion(const QString &split,QString &provider,QString &ver
   return true;
 }
 
-void toSQLEdit::commitChanges(void)
+void toSQLEdit::commitChanges(bool changeSelected)
 {
   QString provider;
   QString version;
   if (!splitVersion(Version->currentText(),provider,version))
     return;
-  toSQL::updateSQL(Name->text(),
+  QString name=Name->text();
+  QListViewItem *item=toFindItem(Statements,name);
+  if (!item) {
+    int i=name.find(":");
+    if (i>=0) {
+      item=toFindItem(Statements,name.mid(0,i));
+      if (!item)
+	item=new QListViewItem(Statements,name.mid(0,i));
+      item=new QListViewItem(item,name.mid(i+1));
+    } else
+      item=new QListViewItem(Statements,name);
+  }
+  connectList(false);
+  if (changeSelected) {
+    Statements->setSelected(item,true);
+    Statements->setCurrentItem(item);
+    if (item->parent()&&!item->parent()->isOpen())
+      item->parent()->setOpen(true);
+  }
+  connectList(true);
+  if (Description->text().isEmpty()) {
+    TOMessageBox::warning(this,"Missing description",
+			  "No description filled in. This is necessary to save SQL."
+			  " Adding undescribed as description.",
+			  "&Ok");
+    Description->setText("Undescribed");
+  }
+  toSQL::updateSQL(name,
 		   Editor->editor()->text(),
 		   Description->text(),
 		   version,
@@ -291,6 +335,7 @@ void toSQLEdit::commitChanges(void)
   LastVersion=Version->currentText();
   if (update)
     updateStatements(Name->text());
+  Statements->setFocus();
 }
 
 bool toSQLEdit::checkStore(bool justVer)
@@ -304,27 +349,7 @@ bool toSQLEdit::checkStore(bool justVer)
 				      "Save changes into the SQL dictionary",
 				      "&Yes","&No","&Cancel",0,2)) {
     case 0:
-      {
-	QString provider;
-	QString version;
-	if (!splitVersion(justVer?LastVersion:Version->currentText(),provider,version))
-	  return false;
-	toSQL::updateSQL(Name->text(),
-			 Editor->editor()->text(),
-			 Description->text(),
-			 version,
-			 provider);
-	TrashButton->setEnabled(true);
-	CommitButton->setEnabled(true);
-
-	bool update=Name->edited();
-	Name->setEdited(false);
-	Description->setEdited(false);
-	Editor->editor()->setEdited(false);
-	LastVersion=Version->currentText();
-	if (update)
-	  updateStatements(Name->text());
-      }
+      commitChanges(false);
       break;
     case 1:
       Name->setEdited(false);
@@ -341,8 +366,13 @@ bool toSQLEdit::checkStore(bool justVer)
 
 void toSQLEdit::changeVersion(const QString &ver)
 {
-  if (!Editor->editor()->edited()||checkStore(true))
+  if (!Editor->editor()->edited()||checkStore(true)) {
     selectionChanged(ver);
+    if (Version->currentText()!=ver) {
+      Version->insertItem(ver);
+      Version->lineEdit()->setText(ver);
+    }
+  }
 }
 
 void toSQLEdit::selectionChanged(void)
@@ -357,6 +387,16 @@ void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
   Name->setText(name);
   Name->setEdited(false);
   
+  QListViewItem *item=toFindItem(Statements,name);
+  if (item) {
+    connectList(false);
+    Statements->setSelected(item,true);
+    Statements->setCurrentItem(item);
+    if (item->parent()&&!item->parent()->isOpen())
+      item->parent()->setOpen(true);
+    connectList(true);
+  }
+
   Version->clear();
   LastVersion="";
   if (sql.find(name)!=sql.end()) {
@@ -373,7 +413,7 @@ void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
       str+=":";
       str+=(*i).Version;
       Version->insertItem(str);
-      if ((*i).Version<=maxver||j==ver.end()) {
+      if (str<=maxver||j==ver.end()) {
 	j=i;
 	LastVersion=str;
 	ind=Version->count()-1;

@@ -176,25 +176,31 @@ plugins/tocharts.tso:\
 	objs/toresultline.o \
 	objs/toresultpie.o
 plugins/toextract.tso:objs/toextract.o
-plugins/tofilesize.tso:objs/tofilesize.o
 plugins/tonoblockquery.tso:objs/tonoblockquery.o
 plugins/toresult.tso:\
+	objs/toresultcols.o \
 	objs/toresultconstraint.o \
+	objs/toresultcontent.o \
+	objs/toresultcontentfilterui.o \
 	objs/toresultdepend.o \
 	objs/toresultextract.o \
 	objs/toresultindexes.o \
 	objs/toresultlock.o \
 	objs/toresultlong.o \
+	objs/toresultplan.o \
 	objs/toresultreferences.o \
 	objs/toresultstats.o
-plugins/tosgastatement.tso:objs/tosgastatement.o
 plugins/tosqledit.tso:objs/tosqledit.o
 plugins/totemplate.tso:\
 	objs/totemplate.o \
 	objs/totemplateaddfileui.o \
 	objs/totemplateeditui.o \
 	objs/totemplatesetupui.o
-plugins/toworksheet.tso: \
+plugins/towidgets.tso:\
+	objs/tochangeconnection.o \
+	objs/tofilesize.o \
+	objs/tosgastatement.o
+plugins/toworksheet.tso:\
 	objs/toworksheet.o \
 	objs/toworksheetsetupui.o
 
@@ -235,6 +241,7 @@ tora-plugin: \
 	plugins/tosgastatement.tso \
 	plugins/tosqledit.tso \
 	plugins/totemplate.tso \
+	plugins/towidgets.tso \
 	plugins/toworksheet.tso \
 	$(MYSQL_PLUGIN)
 
@@ -244,9 +251,9 @@ tora: \
 	objs/main.o \
 	objs/toabout.o \
 	objs/toaboutui.o \
-	objs/tochangeconnection.o \
 	objs/toconnection.o \
 	objs/todatabasesettingui.o \
+	objs/toeditwidget.o \
 	objs/toglobalsetting.o \
 	objs/toglobalsettingui.o \
 	objs/tohelp.o \
@@ -263,16 +270,12 @@ tora: \
 	objs/topreferences.o \
 	objs/topreferencesui.o \
 	objs/toresult.o \
-	objs/toresultcols.o \
-	objs/toresultcontent.o \
-	objs/toresultcontentfilterui.o \
 	objs/toresultfield.o \
 	objs/toresultitem.o \
-	objs/toresultplan.o \
 	objs/toresultview.o \
-	objs/tosql.o \
 	objs/tosearchreplace.o \
 	objs/tosearchreplaceui.o \
+	objs/tosql.o \
 	objs/tosyntaxsetup.o \
 	objs/tosyntaxsetupui.o \
 	objs/totemplateprovider.o \

@@ -153,9 +153,7 @@ public:
   { return "Rollback Segments"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    QWidget *window=new toRollback(parent,connection);
-    window->setIcon(*toolbarImage());
-    return window;
+    return new toRollback(parent,connection);
   }
   virtual QWidget *configurationTab(QWidget *parent)
   {

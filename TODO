@@ -13,8 +13,6 @@ Extended functionality:
 		Remove constraints
 	Rename table
 		ALTER TABLE ... RENAME TO ...
-	Editing triggers
-	Reverse engeneering of objects
 * toResultContent improvements
 	Make it possible to reorder columns in toResultContent.
 	Add replace to toResultContent.
@@ -22,7 +20,7 @@ Extended functionality:
 * Add consumer group settings to security manager.
 * Extract grants from objects.
 * Implement extract of temporary tables.
-* Implement migration, resize and report in toScript.
+* Implement migration, resize and report in toExtract.
 * Lots of more template texts including hints and SQL syntax.
 * DB Links in DB browser.
 * Display execution type of statements.
@@ -44,7 +42,7 @@ Extended functionality:
 * Tool menu in all tools.
 * Different highlighter depending on connection.
 * Default names to listen to in alert.
-* Support for different DB providers in SQL editor.
+* Make menues and toolbuttons work for QLineEdit & QComboBox.
 
 New tools:
 
@@ -52,3 +50,4 @@ New tools:
 * PL/SQL Profiler.
 * Visual reverse engineering of DB.
 * Change impact analyzing tool.
+* Analyze tool.

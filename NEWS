@@ -86,6 +86,14 @@
 2001-09-22: Fixed multiple provider support in SQL editor.
 2001-09-22: Added dependencies to template database browser.
 2001-09-22: Some UI improvements of SQL editor.
+2001-09-22: Made a workover for the template editor.
+2001-09-23: Implemented new interface to standard Ui menu items.
+2001-09-23: Reorganized objectfiles in plugins.
+2001-09-23: Set icons on windows in create window instead of every tool.
+2001-09-23: Fixed problem with busy cursor not being cleared when multithreading.
+2001-09-23: Fixed problem adding new versions to sql.
+2001-09-23: Use fontmetrics of list to check if tooltip necessary.
+2001-09-23: Added tool menu to storage, tuning and security tool.
 
 1.1.0: Released 2001-09-09
 

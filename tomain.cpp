@@ -62,14 +62,13 @@
 #include "tomain.h"
 #include "totool.h"
 #include "tonewconnection.h"
-#include "tomarkedtext.h"
 #include "toabout.h"
 #include "topreferences.h"
-#include "toresultview.h"
-#include "toresultcontent.h"
 #include "tosearchreplace.h"
 #include "tohelp.h"
 #include "tomemoeditor.h"
+#include "toeditwidget.h"
+#include "toconnection.h"
 
 #include "tomain.moc"
 #ifdef TO_KDE
@@ -147,19 +146,6 @@ const int toMain::TO_TOOL_ABOUT_ID_END	= 3999;
 
 #define TO_TOOLS		1000
 #define TO_ABOUT_ID_OFFSET	(toMain::TO_TOOL_ABOUT_ID-TO_TOOLS)
-
-static toResultContent *toContent(QWidget *widget)
-{
-  while(widget) {
-    if (widget->inherits("toResultContent")) {
-      toResultContent *ret=dynamic_cast<toResultContent *>(widget);
-      if (ret)
-        return ret;
-    }
-    widget=widget->parentWidget();
-  }
-  return NULL;
-}
 
 toMain::toMain()
   : toMainWindow()
@@ -492,59 +478,17 @@ void toMain::windowActivated(QWidget *widget)
 
 void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child windows
 {
-  QWidget *currWidget=qApp->focusWidget();
-  if (currWidget && currWidget->inherits("toMarkedText")) {
-    toMarkedText *marked=dynamic_cast<toMarkedText *>(currWidget);
-    bool readOnly=marked->isReadOnly();
-    menuBar()->setItemEnabled(TO_EDIT_UNDO,!readOnly&&marked->getUndoAvailable());
-    menuBar()->setItemEnabled(TO_EDIT_REDO,!readOnly&&marked->getRedoAvailable());
-    if (marked->hasMarkedText()) {
-      menuBar()->setItemEnabled(TO_EDIT_CUT,!readOnly);
-      menuBar()->setItemEnabled(TO_EDIT_COPY,true);
-    } else {
-      menuBar()->setItemEnabled(TO_EDIT_CUT,false);
-      menuBar()->setItemEnabled(TO_EDIT_COPY,false);
-    }
-    menuBar()->setItemEnabled(TO_EDIT_PASTE,!readOnly);
-    menuBar()->setItemEnabled(TO_EDIT_SELECT_ALL,true);
-    menuBar()->setItemEnabled(TO_FILE_OPEN,!readOnly);
-    menuBar()->setItemEnabled(TO_FILE_SAVE,true);
-    menuBar()->setItemEnabled(TO_FILE_SAVE_AS,true);
-    menuBar()->setItemEnabled(TO_EDIT_READ_ALL,false);
-    menuBar()->setItemEnabled(TO_FILE_PRINT,true);
-    menuBar()->setItemEnabled(TO_EDIT_SEARCH,true);
-  } else {
-    menuBar()->setItemEnabled(TO_EDIT_UNDO,false);
-    menuBar()->setItemEnabled(TO_EDIT_REDO,false);
-    menuBar()->setItemEnabled(TO_EDIT_CUT,false);
-    menuBar()->setItemEnabled(TO_EDIT_COPY,false);
-    menuBar()->setItemEnabled(TO_EDIT_PASTE,false);
-    menuBar()->setItemEnabled(TO_EDIT_SELECT_ALL,false);
-    menuBar()->setItemEnabled(TO_FILE_OPEN,false);
-    menuBar()->setItemEnabled(TO_FILE_SAVE,false);
-    menuBar()->setItemEnabled(TO_FILE_SAVE_AS,false);
-    if (currWidget && (currWidget->inherits("toResultView")||
-	toContent(currWidget))) {
-      menuBar()->setItemEnabled(TO_EDIT_READ_ALL,true);
-      menuBar()->setItemEnabled(TO_FILE_PRINT,true);
-      menuBar()->setItemEnabled(TO_EDIT_SEARCH,true);
-      menuBar()->setItemEnabled(TO_FILE_SAVE,true);
-      menuBar()->setItemEnabled(TO_FILE_SAVE_AS,true);
-    } else {
-      menuBar()->setItemEnabled(TO_EDIT_READ_ALL,false);
-      if (currWidget && currWidget->inherits("toListView")) {
-	menuBar()->setItemEnabled(TO_FILE_PRINT,true);
-        menuBar()->setItemEnabled(TO_EDIT_SEARCH,true);
-	menuBar()->setItemEnabled(TO_FILE_SAVE,true);
-	menuBar()->setItemEnabled(TO_FILE_SAVE_AS,true);
-      } else {
-	menuBar()->setItemEnabled(TO_FILE_PRINT,false);
-        menuBar()->setItemEnabled(TO_EDIT_SEARCH,false);
-	menuBar()->setItemEnabled(TO_FILE_SAVE,false);
-	menuBar()->setItemEnabled(TO_FILE_SAVE_AS,false);
-      }
-    }
-  }
+  menuBar()->setItemEnabled(TO_EDIT_UNDO,Edit&&Edit->undoEnabled());
+  menuBar()->setItemEnabled(TO_EDIT_REDO,Edit&&Edit->redoEnabled());
+  menuBar()->setItemEnabled(TO_EDIT_CUT,Edit&&Edit->cutEnabled());
+  menuBar()->setItemEnabled(TO_EDIT_COPY,Edit&&Edit->copyEnabled());
+  menuBar()->setItemEnabled(TO_EDIT_PASTE,Edit&&Edit->pasteEnabled());
+  menuBar()->setItemEnabled(TO_EDIT_SELECT_ALL,Edit&&Edit->selectAllEnabled());
+  menuBar()->setItemEnabled(TO_EDIT_READ_ALL,Edit&&Edit->readAllEnabled());
+  menuBar()->setItemEnabled(TO_EDIT_SEARCH,Edit&&Edit->searchEnabled());
+  menuBar()->setItemEnabled(TO_FILE_OPEN,Edit&&Edit->openEnabled());
+  menuBar()->setItemEnabled(TO_FILE_SAVE,Edit&&Edit->saveEnabled());
+  menuBar()->setItemEnabled(TO_FILE_SAVE_AS,Edit&&Edit->saveEnabled());
   menuBar()->setItemEnabled(TO_EDIT_SEARCH_NEXT,
 			    Search&&Search->searchNextAvailable());
 }
@@ -587,6 +531,11 @@ void toMain::windowsMenu(void)
 
 void toMain::commandCallback(int cmd)
 {
+  QWidget *focus=qApp->focusWidget();
+  if (focus&&(focus->isA("QLineEdit")||
+	      focus->isA("QComboBox")))
+    editDisable(Edit);
+
   if (Tools[cmd])
     Tools[cmd]->createWindow();
   else if (cmd>=TO_TOOL_ABOUT_ID&&cmd<=TO_TOOL_ABOUT_ID_END) {
@@ -599,69 +548,58 @@ void toMain::commandCallback(int cmd)
     QString str=StatusMenu->text(cmd);
     new toMemoEditor(this,str);
   } else {
-    toMarkedText *mark;
-    try {
-      mark=dynamic_cast<toMarkedText *>(qApp->focusWidget());
-    } catch(...) {
-      mark=NULL;
+    QWidget *currWidget=qApp->focusWidget();
+    toEditWidget *edit=NULL;
+    while(currWidget&&!edit) {
+      try {
+	edit=dynamic_cast<toEditWidget *>(currWidget);
+      } catch(...) {
+      }
+      currWidget=currWidget->parentWidget();
     }
-    if (mark) {
-      bool readOnly=mark->isReadOnly();
-      bool newFilename=false;
+    if (edit) {
       switch(cmd) {
-      case TO_EDIT_UNDO:
-	if (!readOnly)
-	  mark->undo();
-	break;
       case TO_EDIT_REDO:
-	if (!readOnly)
-	  mark->redo();
+	edit->editRedo();
+	break;
+      case TO_EDIT_UNDO:
+	edit->editUndo();
 	break;
       case TO_EDIT_COPY:
-	mark->copy();
-	break;
-      case TO_EDIT_CUT:
-	if (!readOnly)
-	  mark->cut();
+	edit->editCopy();
 	break;
       case TO_EDIT_PASTE:
-	if (!readOnly)
-	  mark->paste();
+	edit->editPaste();
+	break;
+      case TO_EDIT_CUT:
+	edit->editCut();
 	break;
       case TO_EDIT_SELECT_ALL:
-	mark->selectAll();
+	edit->editSelectAll();;
+	break;
+      case TO_EDIT_READ_ALL:
+	edit->editReadAll();
+	break;
+      case TO_EDIT_SEARCH:
+	if (!Search)
+	  Search=new toSearchReplace(this);
+	edit->editSearch(Search);
 	break;
       case TO_FILE_OPEN:
-	if (!readOnly) {
-	  QFileInfo file(mark->filename());
-	  QString filename=toOpenFilename(file.dirPath(),"*.sql\n*.txt",this);
-	  if (!filename.isEmpty()) {
-	    try {
-	      QCString data=toReadFile(filename);
-	      mark->setText(QString::fromLocal8Bit(data));
-	      mark->setFilename(filename);
-	      toStatusMessage("File opened successfully",false,false);
-	    } TOCATCH
-	  }
-	}
+	edit->editOpen();
 	break;
       case TO_FILE_SAVE_AS:
-	newFilename=true;
+	edit->editSave(true);
+	break;
       case TO_FILE_SAVE:
-	QFileInfo file(mark->filename());
-	QString filename=mark->filename();
-	if (newFilename||filename.isEmpty())
-	  filename=toSaveFilename(file.dirPath(),"*.sql\n*.txt",this);
-	if (!filename.isEmpty()) {
-	  if (!toWriteFile(filename,mark->text()))
-	    return;
-	  mark->setFilename(filename);
-	  mark->setEdited(false);
-	}
+	edit->editSave(false);
+	break;
+      case TO_FILE_PRINT:
+	edit->editPrint();
 	break;
       }
     }
-    switch (cmd) {
+    switch(cmd) {
     case TO_FILE_COMMIT:
       try {
 	toConnection &conn=currentConnection();
@@ -681,75 +619,8 @@ void toMain::commandCallback(int cmd)
 	conn.rollback();
       } TOCATCH
       break;
-    case TO_EDIT_READ_ALL:
-      {
-	toResultView *res;
-	try {
-	  res=dynamic_cast<toResultView *>(qApp->focusWidget());
-	} catch(...) {
-	  res=NULL;
-	}
-	toResultContent *cnt=toContent(qApp->focusWidget());
-	if (res)
-	  res->readAll();
-	else if (cnt)
-	  cnt->readAll();
-      }
-      break;
-    case TO_FILE_SAVE_AS:
-    case TO_FILE_SAVE:
-      {
-	toListView *res;
-	try {
-	  res=dynamic_cast<toListView *>(qApp->focusWidget());
-	} catch(...) {
-	  res=NULL;
-	}
-	toResultContent *cnt=toContent(qApp->focusWidget());
-	if (res)
-	  res->exportFile();
-	else if (cnt)
-	  cnt->exportFile();
-      }
-      break;
-    case TO_FILE_PRINT:
-      {
-	toListView *res;
-	try {
-	  res=dynamic_cast<toListView *>(qApp->focusWidget());
-	} catch(...) {
-	  res=NULL;
-	}
-	toResultContent *cnt=toContent(qApp->focusWidget());
-	if (res)
-	  res->print();
-	else if (cnt)
-	  cnt->print();
-	else if (mark)
-	  mark->print();
-      }
-      break;
     case TO_FILE_QUIT:
       close(true);
-      break;
-    case TO_EDIT_SEARCH:
-      if (!Search)
-	Search=new toSearchReplace(this);
-      if (mark)
-	Search->setTarget(mark);
-      else {
-	toListView *res;
-	try {
-	  res=dynamic_cast<toListView *>(qApp->focusWidget());
-	} catch(...) {
-	  res=NULL;
-	}
-	toResultContent *cnt=toContent(qApp->focusWidget());
-	if (res)
-	  Search->setTarget(res);
-	else if (cnt)
-	  Search->setTarget(cnt);
-      }
       break;
     case TO_EDIT_SEARCH_NEXT:
       if (Search)
@@ -964,47 +835,107 @@ void toMain::printButton(void)
   commandCallback(TO_FILE_PRINT);
 }
 
-void toMain::editEnable(bool open,bool save,bool print,
-			bool undo,bool redo,
-			bool cut,bool copy,bool paste,
-			bool search)
+void toMain::setEditWidget(toEditWidget *edit)
 {
   toMain *main=(toMain *)qApp->mainWidget();
+  if (main&&edit) {
+    main->Edit=edit;
+    main->RowLabel->hide();
+    main->ColumnLabel->hide();
+    main->editEnable(edit);
+  }
+}
+
+void toMain::editEnable(toEditWidget *edit)
+{
+  toMain *main=(toMain *)qApp->mainWidget();
+  if (main)
+    main->editEnable(edit,
+		     edit->openEnabled(),
+		     edit->saveEnabled(),
+		     edit->printEnabled(),
+		     edit->undoEnabled(),
+		     edit->redoEnabled(),
+		     edit->cutEnabled(),
+		     edit->copyEnabled(),
+		     edit->pasteEnabled(),
+		     edit->searchEnabled(),
+		     edit->selectAllEnabled(),
+		     edit->readAllEnabled());
+}
+
+void toMain::editDisable(toEditWidget *edit)
+{
+  toMain *main=(toMain *)qApp->mainWidget();
+
   if (main) {
-    main->LoadButton->setEnabled(open);
-    if (save) {
-      main->SaveButton->setEnabled(true);
-      main->RowLabel->show();
-      main->ColumnLabel->show();
-    } else {
-      main->SaveButton->setEnabled(false);
-      main->RowLabel->setText("");
-      main->ColumnLabel->setText("");
+    edit=main->findEdit(edit);
+    if(edit&&edit==main->Edit) {
+      main->editEnable(edit,false,false,false,false,false,false,false,false,false,false,false);
+      main->Edit=NULL;
     }
-    main->PrintButton->setEnabled(print);
+  }
+}
+
+toEditWidget *toMain::findEdit(toEditWidget *edit)
+{
+  if (edit!=Edit) {
+    try {
+      QWidget *widget=dynamic_cast<QWidget *>(edit);
+      if (widget)
+	while(widget) {
+	  try {
+	    edit=dynamic_cast<toEditWidget *>(widget);
+	  } catch(...) {
+	    edit=NULL;
+	  }
+	  if (edit==Edit)
+	    break;
+	  widget=widget->parentWidget();
+	}
+    } catch(...) {
+    }
+  }
+  return edit;
+}
+
+void toMain::editEnable(toEditWidget *edit,bool open,bool save,bool print,
+			bool undo,bool redo,
+			bool cut,bool copy,bool paste,
+			bool,bool,bool)
+{
+  edit=findEdit(edit);
+  if (edit&&edit==Edit) {
+    LoadButton->setEnabled(open);
+    if (save)
+      SaveButton->setEnabled(true);
+    else
+      SaveButton->setEnabled(false);
+
+    PrintButton->setEnabled(print);
 
     if (undo)
-      main->UndoButton->setEnabled(true);
+      UndoButton->setEnabled(true);
     else
-      main->UndoButton->setEnabled(false);
+      UndoButton->setEnabled(false);
     if (redo)
-      main->RedoButton->setEnabled(true);
+      RedoButton->setEnabled(true);
     else
-      main->RedoButton->setEnabled(false);
+      RedoButton->setEnabled(false);
 
     if (cut)
-      main->CutButton->setEnabled(true);
+      CutButton->setEnabled(true);
     else
-      main->CutButton->setEnabled(false);
+      CutButton->setEnabled(false);
     if (copy)
-      main->CopyButton->setEnabled(true);
+      CopyButton->setEnabled(true);
     else
-      main->CopyButton->setEnabled(false);
+      CopyButton->setEnabled(false);
 
     if (paste)
-      main->PasteButton->setEnabled(true);
+      PasteButton->setEnabled(true);
     else
-      main->PasteButton->setEnabled(false);
+      PasteButton->setEnabled(false);
   }
 }
 
@@ -1038,6 +969,8 @@ void toMain::setCoordinates(int line,int col)
   str="Col:";
   str+=QString::number(col);
   ColumnLabel->setText(str);
+  RowLabel->show();
+  ColumnLabel->show();
 }
 
 void toMain::editSQL(const QString &str)

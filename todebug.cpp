@@ -131,7 +131,6 @@ public:
     } else {
       QWidget *window=new toDebug(parent,connection);
       Windows[&connection]=window;
-      window->setIcon(*toolbarImage());
       return window;
     }
   }

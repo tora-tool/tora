@@ -60,6 +60,7 @@ class toSQLEdit : public toToolWidget {
   QString Filename;
 
   bool splitVersion(const QString &split,QString &provider,QString &version);
+  void connectList(bool connect);
 protected:
   void updateStatements(const QString &def=QString::null);
 
@@ -71,6 +72,7 @@ protected:
 public:
   toSQLEdit(QWidget *parent,toConnection &connection);
   virtual ~toSQLEdit();
+  void commitChanges(bool);
 
 public slots:
   void loadSQL(void);
@@ -78,7 +80,8 @@ public slots:
   void deleteVersion(void);
   void selectionChanged(void);
   void changeVersion(const QString &);
-  void commitChanges(void);
+  void commitChanges(void)
+  { commitChanges(true); }
   void editSQL(const QString &);
   void newSQL();
 };

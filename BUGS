@@ -12,26 +12,12 @@ Qt:
 	The toResultContent never seem to receive focus as it should, how should this be fixes?
 	There are some redraw problems with QListItems that don't draw left justified text.
 
-toMain:
-	Traversing the menues using keys will disable some file/edit entries that should be
-	enabled.
-
 toResultContent:
 	Doesn't display multiline data correctly.
 	Doesn't sort numbers numerically.
-	Deleting rows doesn't seem to work.
-
-toTemplate:
-	Doesn't seem to remember more than one template file.
 
 toGetToken:
 	Doesn't handle comments when going backwards.
 
-toHighlightedText:
-	Doesn't handle quoted tablenames on code completion.
-
 toMysqlConnection:
 	Doesn't handle other locales than latin1 correctly.
-
-toSQLEdit:
-	Problems with the left pane when adding or deleting items.

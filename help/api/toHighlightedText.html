@@ -34,9 +34,9 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref25">clear</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref26">setText</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+<LI>void &nbsp;<b><A HREF="#ref26">setText</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref27">setErrors</A></b> (const std::map<int,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &errors) 
+<LI>void &nbsp;<b><A HREF="#ref27">setErrors</A></b> (const std::map&lt;int,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;errors) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref28">setCurrent</A></b> (int current) 
 </LI>
@@ -46,13 +46,13 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref31">setHighlight</A></b> (bool val) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref32">setAnalyzer</A></b> (<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &analyzer) 
+<LI>void &nbsp;<b><A HREF="#ref32">setAnalyzer</A></b> (<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;analyzer) 
 </LI>
-<LI><A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &&nbsp;<b><A HREF="#ref33">analyzer</A></b> (void) 
+<LI><A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;&nbsp;<b><A HREF="#ref33">analyzer</A></b> (void) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref34">paintCell</A></b> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *painter,int row,int col) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref35">tableAtCursor</A></b> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &owner,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &table,bool highlight=false) 
+<LI>void &nbsp;<b><A HREF="#ref35">tableAtCursor</A></b> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;owner,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;table,bool highlight=false) 
 </LI>
 </ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref38">nextError</A></b> (void) 
 </LI>
@@ -70,7 +70,7 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref20">checkComplete</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref21">startComplete</A></b> (std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &completes) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref21">startComplete</A></b> (std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;completes) 
 </LI>
 </ul><h4>Protected Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref37">textChanged</A></b> (void) 
 </LI>
@@ -86,11 +86,11 @@
 <A NAME="focusOutEvent"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>focusOutEvent</strong> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e)
 <br></td><td align="right"><h3><strong>focusOutEvent</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<p>Reimplemented from <A HREF="toMarkedText.html#focusOutEvent">toMarkedText</A>.</p>
+<p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#33ebb8">QMultiLineEdit</A>.</p>
 <A NAME="checkComplete"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>checkComplete</strong> (void)
 <br></td><td align="right"><h3><strong>checkComplete</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p> Check if to view completion.
    </p>
-<A NAME="startComplete"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>startComplete</strong> (std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &completes)
+<A NAME="startComplete"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>startComplete</strong> (std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;completes)
 <br></td><td align="right"><h3><strong>startComplete</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p> Start a completion with a given completelist.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -127,11 +127,11 @@
 <br></td><td align="right"><h3><strong>clear</strong></h3></td></tr></table><p></p><p> Clear the editor.
    </p>
 <p>Reimplemented from <A HREF="toMarkedText.html#clear">toMarkedText</A>.</p>
-<A NAME="setText"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setText</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<A NAME="setText"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setText</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
 <br></td><td align="right"><h3><strong>setText</strong></h3></td></tr></table><p></p><p> Set the text of this editor.
    </p>
 <p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#d5e499">QMultiLineEdit</A>.</p>
-<A NAME="setErrors"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setErrors</strong> (const std::map<int,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &errors)
+<A NAME="setErrors"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setErrors</strong> (const std::map&lt;int,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;errors)
 <br></td><td align="right"><h3><strong>setErrors</strong></h3></td></tr></table><p></p><p> Set the error list map.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -161,14 +161,14 @@
 <A NAME="setHighlight"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setHighlight</strong> (bool val)
 <br></td><td align="right"><h3><strong>setHighlight</strong></h3></td></tr></table><p></p><p> The the highlighting flag. If this isn't set no highlighting is done.
    </p>
-<A NAME="setAnalyzer"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setAnalyzer</strong> (<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &analyzer)
+<A NAME="setAnalyzer"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setAnalyzer</strong> (<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;analyzer)
 <br></td><td align="right"><h3><strong>setAnalyzer</strong></h3></td></tr></table><p></p><p> Set the syntax highlighter to use.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>analyzer</i></TD><TD align="left" valign="top">Analyzer to use.
    </TD></TR>
 </TABLE></P>
-<A NAME="analyzer"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &&nbsp;<strong>analyzer</strong> (void)
+<A NAME="analyzer"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;&nbsp;<strong>analyzer</strong> (void)
 <br></td><td align="right"><h3><strong>analyzer</strong></h3></td></tr></table><p></p><p> Get the current syntaxhighlighter.
 </p>
 <p><b>Returns</b>: Analyzer used.
@@ -177,7 +177,7 @@
 <br></td><td align="right"><h3><strong>paintCell</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#a74781">QMultiLineEdit</A>.</p>
-<A NAME="tableAtCursor"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>tableAtCursor</strong> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &owner,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &table,bool highlight=false)
+<A NAME="tableAtCursor"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>tableAtCursor</strong> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;owner,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;table,bool highlight=false)
 <br></td><td align="right"><h3><strong>tableAtCursor</strong></h3></td></tr></table><p></p><p> Get the tablename currently under the cursor.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">

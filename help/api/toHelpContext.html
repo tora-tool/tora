@@ -27,18 +27,18 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref2">toHelpContext</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &file) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref2">toHelpContext</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;file) 
 </LI>
 <LI>virtual  &nbsp;<b><A HREF="#ref3">~toHelpContext</A></b> () 
 </LI>
-<LI>virtual  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<b><A HREF="#ref4">context</A></b> (void)  const
+<LI>virtual  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<b><A HREF="#ref4">context</A></b> (void)  const
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class is used to indicate a help context of an object. When the current context
  is to be determined you start at the widget that currently has focus and walk upwards
  to it's parent until you find a widget that also inherits this class which specify the
  context of all underlying widgets.
  </p>
-<A NAME="toHelpContext"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toHelpContext</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &file)
+<A NAME="toHelpContext"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toHelpContext</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;file)
 <br></td><td align="right"><h3><strong>toHelpContext</strong></h3></td></tr></table><p></p><p> Create a context.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -46,7 +46,7 @@
    </TD></TR>
 </TABLE></P>
 <A NAME="~toHelpContext"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toHelpContext</strong> ()
-<br></td><td align="right"><h3><strong>~toHelpContext</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="context"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<strong>context</strong> (void)
+<br></td><td align="right"><h3><strong>~toHelpContext</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="context"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<strong>context</strong> (void)
 <br></td><td align="right"><h3><strong>context</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
  Get this context
 </p>

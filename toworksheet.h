@@ -132,7 +132,8 @@ public slots:
   void toggleStatistic(void)
   { StatisticButton->setOn(!StatisticButton->isOn()); }
   void executeSaved(void);
-  void editSQL(void);
+  void editSaved(void);
+  void selectSaved(void);
   void addLog(const QString &sql,const QString &result);
   void changeRefresh(const QString &);
 };

@@ -40,6 +40,7 @@
 #include <qglobal.h>
 
 #include "tomain.h"
+#include "toeditwidget.h"
 
 #if QT_VERSION < 300
 #include <qmultilineedit.h>
@@ -57,15 +58,8 @@ class TOPrinter;
  * menues and printsupport in addition to normal QMultiLineEdit.
  */
 
-class toMarkedText : public toMultiLineEdit {
+class toMarkedText : public toMultiLineEdit, public toEditWidget {
   Q_OBJECT
-
-  /** Indicates if redo is available.
-   */
-  bool RedoAvailable;
-  /** Indicates if undo is available.
-   */
-  bool UndoAvailable;
 
   /** Filename of the file in this buffer.
    */
@@ -86,7 +80,6 @@ public:
    * @param name Name of this widget.
    */
   toMarkedText(QWidget *parent,const char *name=NULL);
-  ~toMarkedText();
 
   /** Get selected text. This function is now public.
    * @return The selected text.
@@ -101,18 +94,8 @@ public:
   /** Erase the contents of the editor.
    */
   void clear(void)
-  { Filename=""; RedoAvailable=false; UndoAvailable=false; setEdit(); toMultiLineEdit::clear(); setEdited(false); }
+  { Filename=""; redoEnabled(false); undoEnabled(false); setEdit(); toMultiLineEdit::clear(); setEdited(false); }
 
-  /** Check if redo is available.
-   * @return True if redo is available.
-   */
-  bool getRedoAvailable(void)
-  { return RedoAvailable; }
-  /** Check if undo is available.
-   * @return True if undo is available.
-   */
-  bool getUndoAvailable(void)
-  { return UndoAvailable; }
   /** Get location of the current selection. This function is now public. See the
    * Qt documentation for more information.
    */
@@ -122,7 +105,7 @@ public:
   /** Get filename of current file in editor.
    * @return Filename of editor.
    */
-  virtual const QString &filename(void) const
+  virtual QString filename(void) const
   { return Filename; }
   /** Set the current filename of the file in editor.
    * @param str String containing filename.
@@ -137,19 +120,49 @@ public:
   virtual void focusInEvent (QFocusEvent *e);
   /** Reimplemented for internal reasons.
    */
-  virtual void focusOutEvent (QFocusEvent *e); 
-  /** Reimplemented for internal reasons.
-   */
   virtual void paintEvent(QPaintEvent *pe);
   /** Print this editor.
    */
-  virtual void print(void);
+  virtual void editPrint(void);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void editOpen(void);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void editSave(bool ask);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void editUndo(void)
+  { undo(); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void editRedo(void)
+  { redo(); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void editCut(void)
+  { cut(); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void editCopy(void)
+  { copy(); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void editPaste(void)
+  { paste(); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void editSearch(toSearchReplace *search);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void editSelectAll(void)
+  { selectAll(); }
 
 private slots:
   void setRedoAvailable(bool avail)
-  { RedoAvailable=avail; setEdit(); }
+  { redoEnabled(avail); }
   void setUndoAvailable(bool avail)
-  { UndoAvailable=avail; setEdit(); }
+  { undoEnabled(avail); }
   void setCopyAvailable(bool avail)
   { setEdit(); }
 };

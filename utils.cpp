@@ -818,18 +818,38 @@ toConnection &toCurrentConnection(QObject *cur)
 
 unsigned int toBusy::Count=0;
 
+static toLock BusyLock;
+
+void toBusy::clear()
+{
+  BusyLock.lock();
+  Count=0;
+  BusyLock.unlock();
+  qApp->restoreOverrideCursor();
+}
+
 toBusy::toBusy()
 {
-  if (!Count&&toThread::mainThread())
-    qApp->setOverrideCursor(Qt::waitCursor);
-  Count++;
+  BusyLock.lock();
+  if (toThread::mainThread()) {
+    if (!Count)
+      qApp->setOverrideCursor(Qt::waitCursor);
+    Count++;
+  }
+  BusyLock.unlock();
 }
 
 toBusy::~toBusy()
 {
-  Count--;
-  if (!Count&&toThread::mainThread())
-    qApp->restoreOverrideCursor();
+  BusyLock.lock();
+  if (toThread::mainThread()) {
+    Count--;
+    if (Count<0)
+      Count=0;
+    if (!Count)
+      qApp->restoreOverrideCursor();
+  }
+  BusyLock.unlock();
 }
 
 void toReadableColumn(QString &name)
@@ -940,6 +960,30 @@ QString toGetToken(toMarkedText *text,int &curLine,int &pos,bool forward)
       break;
   }
   return QString::null;
+}
+
+static QListViewItem *FindItem(QListView *lst,QListViewItem *first,const QString &str)
+{
+  while(first) {
+    QString tmp=first->text(0);
+    if (tmp==str)
+      return first;
+    else {
+      tmp+=":";
+      if (str.startsWith(tmp)) {
+	QListViewItem *ret=FindItem(lst,first->firstChild(),str.mid(tmp.length()));
+	if (ret)
+	  return ret;
+      }
+    }
+    first=first->nextSibling();
+  }
+  return NULL;
+}
+
+QListViewItem *toFindItem(QListView *lst,const QString &str)
+{
+  return FindItem(lst,lst->firstChild(),str);
 }
 
 #ifndef TO_LICENSE

@@ -37,7 +37,7 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref14">setReadAll</A></b> (bool all) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref15">readAll</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref15">editReadAll</A></b> (void) 
 </LI>
 <LI>int &nbsp;<b><A HREF="#ref16">queryColumns</A></b> ()  const
 </LI>
@@ -53,23 +53,23 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref22">setReadableColumns</A></b> (bool val) 
 </LI>
-<LI>virtual  <A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *&nbsp;<b><A HREF="#ref23">createItem</A></b> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *last,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+<LI>virtual  <A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *&nbsp;<b><A HREF="#ref23">createItem</A></b> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *last,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref24">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const toQList &param) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref24">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const toQList &amp;param) 
 </LI>
 <LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref25">sqlName</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref26">setSQLName</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref26">setSQLName</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref27">setSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql) 
+<LI>void &nbsp;<b><A HREF="#ref27">setSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref28">setSQL</A></b> (<A HREF="toSQL.html">toSQL</A> &sql) 
+<LI>void &nbsp;<b><A HREF="#ref28">setSQL</A></b> (<A HREF="toSQL.html">toSQL</A> &amp;sql) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref29">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql) 
+<LI>void &nbsp;<b><A HREF="#ref29">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref30">query</A></b> (<A HREF="toSQL.html">toSQL</A> &sql) 
+<LI>void &nbsp;<b><A HREF="#ref30">query</A></b> (<A HREF="toSQL.html">toSQL</A> &amp;sql) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref31">print</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref31">editPrint</A></b> (void) 
 </LI>
 <LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref32">middleString</A></b> () 
 </LI>
@@ -77,15 +77,15 @@
 </LI>
 </ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref34">refresh</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref35">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref35">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref36">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref36">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref37">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref37">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param3) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref38">addItem</A></b> (void) 
 </LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref39">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref39">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;) 
 </LI>
 </ul><h4>Protected Methods</h4><ul><LI>void &nbsp;<b><A HREF="#ref9">setup</A></b> (bool readable,bool dispCol) 
 </LI>
@@ -156,11 +156,12 @@
 <TR><TD align="left" valign="top"><i>all</i></TD><TD align="left" valign="top">New value of flag.
    </TD></TR>
 </TABLE></P>
-<A NAME="readAll"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>readAll</strong> (void)
-<br></td><td align="right"><h3><strong>readAll</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get read all flag
+<A NAME="editReadAll"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editReadAll</strong> (void)
+<br></td><td align="right"><h3><strong>editReadAll</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get read all flag
 </p>
 <p><b>Returns</b>: Value of read all flag.
    </p>
+<p>Reimplemented from <A HREF="toEditWidget.html#editReadAll">toEditWidget</A>.</p>
 <A NAME="queryColumns"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>queryColumns</strong> ()
 <br></td><td align="right"><h3><strong>queryColumns</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get the number of columns in query.
 </p>
@@ -200,7 +201,7 @@
 <A NAME="setReadableColumns"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setReadableColumns</strong> (bool val)
 <br></td><td align="right"><h3><strong>setReadableColumns</strong></h3></td></tr></table><p></p><p> Set readable column flag.
    </p>
-<A NAME="createItem"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *&nbsp;<strong>createItem</strong> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *last,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<A NAME="createItem"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *&nbsp;<strong>createItem</strong> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *last,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
 <br></td><td align="right"><h3><strong>createItem</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Create a new item in this list. Can be used if a special kind of item is wanted
  in the list. The rest of the columns will be filled with setText.
 </p>
@@ -212,7 +213,7 @@
 </TABLE></P>
 <p><b>Returns</b>: Allocated item.
    </p>
-<A NAME="query"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const toQList &param)
+<A NAME="query"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const toQList &amp;param)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#query">toResult</A>.</p>
@@ -220,11 +221,11 @@
 <br></td><td align="right"><h3><strong>sqlName</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get SQL name of list.
    </p>
 <p>Reimplemented from <A HREF="toListView.html#sqlName">toListView</A>.</p>
-<A NAME="setSQLName"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setSQLName</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name)
+<A NAME="setSQLName"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setSQLName</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
 <br></td><td align="right"><h3><strong>setSQLName</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Set SQL name of list.
    </p>
 <p>Reimplemented from <A HREF="toListView.html#setSQLName">toListView</A>.</p>
-<A NAME="setSQL"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSQL</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql)
+<A NAME="setSQL"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSQL</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
 <br></td><td align="right"><h3><strong>setSQL</strong></h3></td></tr></table><p></p><p> Set the SQL statement of this list
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -232,7 +233,7 @@
    </TD></TR>
 </TABLE></P>
 <p>Reimplemented from <A HREF="toResult.html#setSQL">toResult</A>.</p>
-<A NAME="setSQL"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSQL</strong> (<A HREF="toSQL.html">toSQL</A> &sql)
+<A NAME="setSQL"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSQL</strong> (<A HREF="toSQL.html">toSQL</A> &amp;sql)
 <br></td><td align="right"><h3><strong>setSQL</strong></h3></td></tr></table><p></p><p> Set the SQL statement of this list. This will also affect Name.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -240,7 +241,7 @@
    </TD></TR>
 </TABLE></P>
 <p>Reimplemented from <A HREF="toResult.html#setSQL">toResult</A>.</p>
-<A NAME="query"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql)
+<A NAME="query"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p></p><p> Set new SQL and run query.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -249,7 +250,7 @@
 </TABLE></P>
 <p><b>See also</b>: setSQL</p>
 <p>Reimplemented from <A HREF="toResult.html#query">toResult</A>.</p>
-<A NAME="query"></A><A NAME="ref30"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (<A HREF="toSQL.html">toSQL</A> &sql)
+<A NAME="query"></A><A NAME="ref30"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (<A HREF="toSQL.html">toSQL</A> &amp;sql)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p></p><p> Set new SQL and run query.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -258,10 +259,10 @@
 </TABLE></P>
 <p><b>See also</b>: setSQL</p>
 <p>Reimplemented from <A HREF="toResult.html#query">toResult</A>.</p>
-<A NAME="print"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>print</strong> (void)
-<br></td><td align="right"><h3><strong>print</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
+<A NAME="editPrint"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editPrint</strong> (void)
+<br></td><td align="right"><h3><strong>editPrint</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<p>Reimplemented from <A HREF="toListView.html#print">toListView</A>.</p>
+<p>Reimplemented from <A HREF="toListView.html#editPrint">toListView</A>.</p>
 <A NAME="middleString"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>middleString</strong> ()
 <br></td><td align="right"><h3><strong>middleString</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
@@ -274,22 +275,22 @@
 <br></td><td align="right"><h3><strong>refresh</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#refresh">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1)
+<A NAME="changeParams"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2)
+<A NAME="changeParams"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented For internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3)
+<A NAME="changeParams"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param3)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
 <A NAME="addItem"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addItem</strong> (void)
 <br></td><td align="right"><h3><strong>addItem</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Try to add an item to the list if available.
    </p>
-<A NAME="canHandle"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &)
+<A NAME="canHandle"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &amp;)
 <br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Handle any connection by default
    </p>
 <p>Reimplemented from <A HREF="toResult.html#canHandle">toResult</A>.</p>

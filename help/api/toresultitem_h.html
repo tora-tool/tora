@@ -65,8 +65,8 @@
 #ifndef __TORESULTITEM_H
 #define __TORESULTITEM_H
 
-#include <qscrollview.h>
-#include <qfont.h>
+#include &lt;qscrollview.h&gt;
+#include &lt;qfont.h&gt;
 #include "toresult.h"
 
 class QGrid;
@@ -120,7 +120,7 @@ protected:
    * @param title Title of this value.
    * @param value Value.
    */
-  void addItem(const QString &title,const QString &value);
+  void addItem(const QString &amp;title,const QString &amp;value);
   /** Done with adding queries.
    */
   void done(void);
@@ -152,16 +152,16 @@ public:
   { Right=val; }
   /** Set the font to display data with.
    */
-  void dataFont(const QFont &val)
+  void dataFont(const QFont &amp;val)
   { DataFont=val; }
 
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &sql,const toQList &param);
+  virtual void query(const QString &amp;sql,const toQList &amp;param);
 
   /** Handle any connection
    */
-  virtual bool canHandle(toConnection &)
+  virtual bool canHandle(toConnection &amp;)
   { return true; }
 
   // Why are these needed?
@@ -169,24 +169,24 @@ public:
   /** Set the SQL statement of this list
    * @param sql String containing statement.
    */
-  void setSQL(const QString &sql)
+  void setSQL(const QString &amp;sql)
   { toResult::setSQL(sql); }
   /** Set the SQL statement of this list. This will also affect @ref Name.
    * @param sql SQL containing statement.
    */
-  void setSQL(toSQL &sql)
+  void setSQL(toSQL &amp;sql)
   { toResult::setSQL(sql); }
   /** Set new SQL and run query.
    * @param sql New sql.
    * @see setSQL
    */
-  void query(const QString &sql)
+  void query(const QString &amp;sql)
   { toResult::query(sql); }
   /** Set new SQL and run query.
    * @param sql New sql.
    * @see setSQL
    */
-  void query(toSQL &sql)
+  void query(toSQL &amp;sql)
   { toResult::query(sql); }
 #endif
 public slots:
@@ -196,15 +196,15 @@ public slots:
   { toResult::refresh(); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1)
+  virtual void changeParams(const QString &amp;Param1)
   { toResult::changeParams(Param1); }
   /** Reimplemented For internal reasons.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2)
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
   { toResult::changeParams(Param1,Param2); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
   { toResult::changeParams(Param1,Param2,Param3); }
 };
 

@@ -52,6 +52,7 @@
 #include <qfiledialog.h>
 #include <qregexp.h>
 
+#include "tosearchreplace.h"
 #include "tomain.h"
 #include "toresultview.h"
 #include "tosql.h"
@@ -277,7 +278,7 @@ public:
 	key=chkItem->tooltip(col);
       else
 	key=text;
-      int textWidth=TextWidth(qApp->fontMetrics(),text)+List->itemMargin()*2+2;
+      int textWidth=TextWidth(List->fontMetrics(),text)+List->itemMargin()*2+2;
       if (key!=text||
 	  width<textWidth) {
 	QRect itemRect=List->itemRect(item);
@@ -290,7 +291,11 @@ public:
 };
 
 toListView::toListView(QWidget *parent,const char *name)
-  : QListView(parent,name)
+  : QListView(parent,name),
+    toEditWidget(false,true,true,
+		 false,false,
+		 false,false,false,
+		 true,false,false)
 {
   setAllColumnsShowFocus(true);
   AllTip=new toListTip(this);
@@ -305,12 +310,6 @@ toListView::toListView(QWidget *parent,const char *name)
     setFont(font);
   }
   LastMove=QPoint(-1,-1);
-}
-
-toListView::~toListView()
-{
-  if (qApp->focusWidget()==this)
-    toMain::editDisable();
 }
 
 void toListView::contentsMouseDoubleClickEvent (QMouseEvent *e)
@@ -501,7 +500,7 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
   return item;
 }
 
-void toListView::print(void)
+void toListView::editPrint(void)
 {
   TOPrinter printer;
   printer.setMinMax(1,1000);
@@ -579,7 +578,7 @@ void toListView::menuCallback(int cmd)
     toMainWidget()->editSQL(Name);
     break;
   case TORESULT_EXPORT:
-    exportFile();
+    editSave(false);
     break;
   }
 }
@@ -610,16 +609,8 @@ QString toListView::menuText(void)
 
 void toListView::focusInEvent (QFocusEvent *e)
 {
-  toMain::editEnable(false,true,true,
-		     false,false,
-		     false,false,false,true);
+  receivedFocus();
   QListView::focusInEvent(e);
-}
-
-void toListView::focusOutEvent (QFocusEvent *e)
-{
-  toMain::editDisable();
-  QListView::focusOutEvent(e);
 }
 
 static QString QuoteString(const QString &str)
@@ -630,11 +621,31 @@ static QString QuoteString(const QString &str)
   return t;
 }
 
-void toListView::exportFile(void)
+void toListView::editSearch(toSearchReplace *search)
+{
+  search->setTarget(this);
+}
+
+void toListView::editSave(bool ask)
 {
   int type=TOMessageBox::information(this,"Export format",
 				     "Select format to use for exporting to file",
 				     "Text","Tab delimited","CSV");
+
+  QString nam;
+  switch(type) {
+  default:
+    nam="*.txt";
+    break;
+  case 2:
+    nam="*.csv";
+    break;
+  }
+
+  QString filename=toSaveFilename(QString::null,nam,this);
+  if (filename.isEmpty())
+    return;
+  
   int *sizes=NULL;
   try {
     if (type==0) {
@@ -738,10 +749,7 @@ void toListView::exportFile(void)
 	  next=next->nextSibling();
       }
     }
-    QString filename=toSaveFilename(QString::null,"*.txt",this);
-    if (!filename.isEmpty()) {
-      toWriteFile(filename,output);
-    }
+    toWriteFile(filename,output);
 
   } catch(...) {
     delete sizes;
@@ -769,6 +777,7 @@ void toResultView::setup(bool readable,bool dispCol)
   if (NumberColumn)
     addColumn("#");
   Filter=NULL;
+  readAllEnabled(true);
 }
 
 toResultView::toResultView(bool readable,bool dispCol,QWidget *parent,const char *name)
@@ -861,7 +870,7 @@ void toResultView::query(const QString &sql,const toQList &param)
     for (int j=0;j<MaxNumber&&!Query->eof();j++)
       addItem();
     if (ReadAll||MaxNumber<0)
-      readAll();
+      editReadAll();
 
     char buffer[100];
     if (Query->rowsProcessed()>0)
@@ -872,7 +881,7 @@ void toResultView::query(const QString &sql,const toQList &param)
   updateContents();
 }
 
-void toResultView::readAll(void)
+void toResultView::editReadAll(void)
 {
   if (!ReadAll)
     toStatusMessage("Reading all entries",false,false);
@@ -915,10 +924,10 @@ void toResultView::addMenues(QPopupMenu *menu)
 void toResultView::menuCallback(int cmd)
 {
   if (cmd==TORESULT_READ_ALL)
-    readAll();
+    editReadAll();
   else {
     if (cmd==TORESULT_EXPORT)
-      readAll();
+      editReadAll();
     toListView::menuCallback(cmd);
   }
 }
@@ -927,3 +936,4 @@ int toResultView::queryColumns(void) const
 {
   return Query?Query->columns():0;
 }
+

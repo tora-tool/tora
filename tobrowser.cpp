@@ -72,6 +72,7 @@
 #include "tosql.h"
 #include "tobrowserfilterui.h"
 #include "tohelp.h"
+#include "toconnection.h"
 
 #include "tobrowser.moc"
 #include "tobrowserfilterui.moc"
@@ -107,9 +108,7 @@ public:
   { return "Schema Browser"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    QWidget *window=new toBrowser(parent,connection);
-    window->setIcon(*toolbarImage());
-    return window;
+    return new toBrowser(parent,connection);
   }
   virtual bool canHandle(toConnection &conn)
   { return conn.provider()=="Oracle"||conn.provider()=="MySQL"; }
@@ -679,7 +678,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_SEQUENCES);
-  TopTab->addTab(splitter,"&Sequences");
+  TopTab->addTab(splitter,"Se&quences");
   resultView=new toResultView(true,false,splitter);
   resultView->setReadAll(true);
   Map[TAB_SEQUENCES]=resultView;

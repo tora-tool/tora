@@ -1,5 +1,6 @@
 <!DOCTYPE UI><UI>
 <class>toSecurityUserUI</class>
+<include location="local">toeditwidget.h</include>
 <widget>
     <class>QWidget</class>
     <property stdset="1">
@@ -11,7 +12,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>568</width>
+            <width>560</width>
             <height>480</height>
         </rect>
     </property>

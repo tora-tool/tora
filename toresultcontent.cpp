@@ -50,6 +50,8 @@
 #include "tohighlightedtext.h"
 #include "toresultcontentfilterui.h"
 #include "toresultcols.h"
+#include "toconnection.h"
+#include "tosearchreplace.h"
 
 #include "toresultcontent.moc"
 #include "toresultcontentfilterui.moc"
@@ -59,6 +61,11 @@
 #include "icons/trash.xpm"
 
 #define INC_SIZE 50
+
+void toResultContentEditor::editSearch(toSearchReplace *search)
+{
+  search->setTarget(this);
+}
 
 void toResultContentEditor::contentsMouseMoveEvent (QMouseEvent *e)
 {
@@ -125,7 +132,11 @@ void toResultContentEditor::dropEvent(QDropEvent *e)
 }
 
 toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
-  : QTable(parent,name)
+  : QTable(parent,name),
+    toEditWidget(false,true,true,
+		 false,false,
+		 false,false,false,
+		 true,false,true)
 {
   Query=NULL;
   connect(this,SIGNAL(currentChanged(int,int)),this,SLOT(changePosition(int,int)));
@@ -204,7 +215,7 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
       addRow();
     }
     if (MaxNumber<0)
-      readAll();
+      editReadAll();
     setNumRows(Row+1);
   } TOCATCH
   OrigValues.clear();
@@ -448,7 +459,7 @@ void toResultContentEditor::drawContents(QPainter * p,int cx,int cy,int cw,int c
     addRow();
 }
 
-void toResultContentEditor::readAll(void)
+void toResultContentEditor::editReadAll(void)
 {
   while (Query&&!Query->eof()) {
     if (Row+2>=numRows())
@@ -458,7 +469,7 @@ void toResultContentEditor::readAll(void)
   setNumRows(Row+1);
 }
 
-void toResultContentEditor::print(void)
+void toResultContentEditor::editPrint(void)
 {
   toResultView print(false,true,this);
   print.hide();
@@ -470,10 +481,10 @@ void toResultContentEditor::print(void)
   QString sql="SELECT * FROM ";
   sql+=table();
   print.query(sql);
-  print.print();
+  print.editPrint();
 }
 
-void toResultContentEditor::exportFile(void)
+void toResultContentEditor::editSave(bool ask)
 {
   toResultView list(false,true,this);
   list.hide();
@@ -485,8 +496,8 @@ void toResultContentEditor::exportFile(void)
   QString sql="SELECT * FROM ";
   sql+=table();
   list.query(sql);
-  list.readAll();
-  list.exportFile();
+  list.editReadAll();
+  list.editSave(ask);
 }
 
 void toResultContentEditor::activateNextCell()
@@ -502,17 +513,8 @@ void toResultContentEditor::activateNextCell()
 
 void toResultContentEditor::focusInEvent (QFocusEvent *e)
 {
-  toMain::editEnable(false,true,true,
-		     false,false,
-		     false,false,false,true);
+  receivedFocus();
   QTable::focusInEvent(e);
-}
-
-void toResultContentEditor::focusOutEvent (QFocusEvent *e)
-{
-  toMain::editDisable();
-  saveUnsaved();
-  QTable::focusOutEvent(e);
 }
 
 #define TORESULT_COPY     1
@@ -598,10 +600,10 @@ void toResultContentEditor::menuCallback(int cmd)
     displayMemo();
     break;
   case TORESULT_READ_ALL:
-    readAll();
+    editReadAll();
     break;
   case TORESULT_EXPORT:
-    exportFile();
+    editSave(false);
     break;
   }
 }
@@ -673,3 +675,4 @@ bool toResultContent::canHandle(toConnection &conn)
 {
   return conn.provider()=="Oracle"||conn.provider()=="MySQL";
 }
+

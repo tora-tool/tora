@@ -57,6 +57,7 @@ class QLabel;
 class QGridLayout;
 class QGrid;
 class toBarChart;
+class QPopupMenu;
 
 class toTuningMiss : public toResultLine {
 public:
@@ -103,11 +104,12 @@ public:
 class toTuning : public toToolWidget {
   Q_OBJECT
 
+  QPopupMenu *ToolMenu;
   QTabWidget *Tabs;
   toListView *Indicators;
   toResultView *Parameters;
   toResultStats *Statistics;
-  QComboBox *Schema;
+  QComboBox *Refresh;
   toTuningOverview *Overview;
   toTuningFileIO *FileIO;
 public:
@@ -115,6 +117,7 @@ public:
 public slots:
   virtual void refresh(void);
   virtual void changeRefresh(const QString &str);
+  virtual void windowActivated(QWidget *widget);
 };
 
 #endif

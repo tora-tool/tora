@@ -89,7 +89,7 @@ void toSearchReplace::setTarget(toMarkedText *parent)
   searchChanged();
 }
 
-void toSearchReplace::setTarget(toResultContent *parent)
+void toSearchReplace::setTarget(toResultContentEditor *parent)
 {
   release();
   Content=parent;
@@ -264,22 +264,22 @@ void toSearchReplace::searchNext(void)
     if (FromTop)
       FromTop=false;
     else {
-      row=Content->editor()->currentRow();
-      col=Content->editor()->currentColumn()+1;
-      if (col>=Content->editor()->numCols()) {
+      row=Content->currentRow();
+      col=Content->currentColumn()+1;
+      if (col>=Content->numCols()) {
 	row++;
 	col=0;
       }
-      while(row<Content->editor()->numRows()) {
+      while(row<Content->numRows()) {
 	int pos=0;
 	int endPos;
-	if (findString(Content->editor()->text(row,col),pos,endPos)) {
-	  Content->editor()->setCurrentCell(row,col);
+	if (findString(Content->text(row,col),pos,endPos)) {
+	  Content->setCurrentCell(row,col);
 	  SearchNext->setDefault(true);
 	  return;
 	}
 	col++;
-	if (col>=Content->editor()->numCols()) {
+	if (col>=Content->numCols()) {
 	  row++;
 	  col=0;
 	}
@@ -317,4 +317,9 @@ void toSearchReplace::searchChanged(void)
     Search->setDefault(true);
   else
     Close->setDefault(true);
+}
+
+bool toSearchReplace::searchNextAvailable()
+{
+  return SearchNext->isEnabled();
 }

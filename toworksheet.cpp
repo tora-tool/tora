@@ -208,9 +208,7 @@ public:
   { return "SQL Worksheet"; }
   virtual QWidget *toolWindow(QWidget *main,toConnection &connection)
   {
-    QWidget *window=new toWorksheet(main,connection);
-    window->setIcon(*toolbarImage());
-    return window;
+    return new toWorksheet(main,connection);
   }
   virtual QWidget *configurationTab(QWidget *parent)
   {
@@ -247,6 +245,10 @@ public:
     } else if (e->state()==ShiftButton&&
 	       e->key()==Key_F9) {
       Worksheet->executeNewline();
+      e->accept();
+    } else if (e->state()==0&&
+	       e->key()==Key_F7) {
+      Worksheet->executeSaved();
       e->accept();
     } else if (e->state()==0&&
 	       e->key()==Key_F2) {
@@ -482,8 +484,14 @@ void toWorksheet::setup(bool autoLoad)
     } else {
       StatisticButton->setEnabled(false);
     }
+    setTabOrder(Refresh,SavedSQL);
+    setTabOrder(SavedSQL,Editor);
+    setTabOrder(Editor,Result);
+
     connect(this,SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
   }
+  if (autoLoad)
+    Editor->setFocus();
 }
 
 toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
@@ -548,11 +556,17 @@ void toWorksheet::windowActivated(QWidget *widget)
 			   "&Stop execution",Result,SLOT(stop(void)),
 			   0,TO_ID_STOP);
       ToolMenu->insertSeparator();
+      ToolMenu->insertItem("Execute Saved SQL",
+			   this,SLOT(executeSaved()),
+			   Key_F7);
+      ToolMenu->insertItem("Select Saved SQL",
+			   this,SLOT(selectSaved()),
+			   CTRL+SHIFT+Key_S);
+      ToolMenu->insertItem("Edit saved SQL",
+			   this,SLOT(editSaved()));
+      ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),
 			   "Erase &Log",this,SLOT(eraseLogButton(void)));
-      ToolMenu->insertItem("Edit saved SQL",
-			   this,SLOT(editSQL()));
-				   
 
       toMainWidget()->menuBar()->insertItem("W&orksheet",ToolMenu,-1,toToolMenuIndex());
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,StopButton->isEnabled());
@@ -1196,6 +1210,9 @@ void toWorksheet::describe(void)
 
 void toWorksheet::executeSaved(void)
 {
+  if (Light)
+    return;
+
   QString sql=SavedSQL->currentText();
   if (sql.length()>0) {
     sql.prepend(TOWORKSHEET);
@@ -1205,11 +1222,16 @@ void toWorksheet::executeSaved(void)
   }
 }
 
-void toWorksheet::editSQL(void)
+void toWorksheet::editSaved(void)
 {
   QString sql=SavedSQL->currentText();
   if (sql.isEmpty())
     sql="Untitled";
   sql.prepend(TOWORKSHEET);
   toMainWidget()->editSQL(sql);
+}
+
+void toWorksheet::selectSaved()
+{
+  SavedSQL->setFocus();
 }

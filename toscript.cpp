@@ -76,10 +76,7 @@ public:
   { return "DB or schema extraction and compare"; }
   virtual QWidget *toolWindow(QWidget *main,toConnection &connection)
   {
-    QWidget *window=new toScript(main,connection);
-    window->setIcon(*toolbarImage());
-
-    return window;
+    return new toScript(main,connection);
   }
 };
 

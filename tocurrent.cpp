@@ -74,7 +74,6 @@ public:
     } else {
       QWidget *window=new toCurrent(parent,connection);
       Windows[&connection]=window;
-      window->setIcon(*toolbarImage());
       return window;
     }
   }

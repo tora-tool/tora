@@ -65,11 +65,11 @@
 #ifndef __TOPARAMGET_H
 #define __TOPARAMGET_H
 
-#include <list>
-#include <map>
+#include &lt;list&gt;
+#include &lt;map&gt;
 
-#include <qdialog.h>
-#include <qpushbutton.h>
+#include &lt;qdialog.h&gt;
+#include &lt;qpushbutton.h&gt;
 
 #include "toconnection.h"
 
@@ -98,14 +98,14 @@ class toParamGet : public QDialog {
   Q_OBJECT
   /** Default values cache
    */
-  static std::map<QString,QString> DefaultCache;
+  static std::map&lt;QString,QString&gt; DefaultCache;
   /** Specified values cache
    */
-  static std::map<QString,QString> Cache;
+  static std::map&lt;QString,QString&gt; Cache;
 
   QGrid *Container;
 
-  std::list<QLineEdit *> Value;
+  std::list&lt;QLineEdit *&gt; Value;
   toParamGet(QWidget *parent=0,const char *name=0);
 public:
   /** Get parameters for specified SQL string.
@@ -114,13 +114,13 @@ public:
    *            declare the binds.
    * @return Returns a list of values to feed into the query.
    */
-  static toQList getParam(QWidget *parent,QString &str);
+  static toQList getParam(QWidget *parent,QString &amp;str);
   /** Specify a default value for the cache. This can not overwrite a manually
    * specified value by the user.
    * @param name Name of the bind variable.
    * @param val Value of the bind variable.
    */
-  static void setDefault(const QString &name,const QString &val);
+  static void setDefault(const QString &amp;name,const QString &amp;val);
 private slots:
 
   virtual void showMemo(int row);

@@ -46,6 +46,12 @@
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qvalidator.h>
+#include <qpopupmenu.h>
+#include <qworkspace.h>
+
+#ifdef TO_KDE
+#  include <kmenubar.h>
+#endif
 
 #include "tochangeconnection.h"
 #include "toconnection.h"
@@ -176,9 +182,7 @@ public:
   { return "Security Manager"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    QWidget *widget=new toSecurity(parent,connection);
-    widget->setIcon(*toolbarImage());
-    return widget;
+    return new toSecurity(parent,connection);
   }
 };
 
@@ -1249,8 +1253,8 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   QToolBar *toolbar=toAllocBar(this,"Security manager",connection.description());
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Poll for output now",
-		  "Poll for output now",
+		  "Update user and role list",
+		  "Update user and role list",
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
@@ -1299,19 +1303,57 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   Tabs=new QTabWidget(splitter);
   Quota=new toSecurityQuota(connection,Tabs);
   General=new toSecurityPage(Quota,connection,Tabs);
-  Tabs->addTab(General,"General");
+  Tabs->addTab(General,"&General");
   RoleGrant=new toSecurityRoleGrant(connection,Tabs);
-  Tabs->addTab(RoleGrant,"Roles");
+  Tabs->addTab(RoleGrant,"&Roles");
   SystemGrant=new toSecuritySystem(connection,Tabs);
-  Tabs->addTab(SystemGrant,"System Privileges");
+  Tabs->addTab(SystemGrant,"&System Privileges");
   ObjectGrant=new toSecurityObject(connection,Tabs);
-  Tabs->addTab(ObjectGrant,"Object Privileges");
-  Tabs->addTab(Quota,"Quota");
+  Tabs->addTab(ObjectGrant,"&Object Privileges");
+  Tabs->addTab(Quota,"&Quota");
   connect(UserList,SIGNAL(currentChanged(QListViewItem *)),
 	  this,SLOT(changeUser(QListViewItem *)));
+  ToolMenu=NULL;
+  connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
+	  this,SLOT(windowActivated(QWidget *)));
   refresh();
   connect(this,SIGNAL(connectionChange()),
 	  this,SLOT(refresh()));
+}
+
+#define TO_ID_COPY		(toMain::TO_TOOL_MENU_ID+ 0)
+#define TO_ID_DROP		(toMain::TO_TOOL_MENU_ID+ 1)
+
+void toSecurity::windowActivated(QWidget *widget)
+{
+  if (widget==this) {
+    if (!ToolMenu) {
+      ToolMenu=new QPopupMenu(this);
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+			   this,SLOT(refresh(void)),Key_F5);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(QPixmap((const char **)commit_xpm),"&Save changes",
+			   this,SLOT(saveChanges()),CTRL+Key_Return);
+      ToolMenu->insertItem(QPixmap((const char **)trash_xpm),"&Remove user/role",
+			   this,SLOT(drop()),0,TO_ID_DROP);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(QPixmap((const char **)adduser_xpm),"Add &user",
+			   this,SLOT(addUser()),CTRL+Key_U);
+      ToolMenu->insertItem(QPixmap((const char **)addrole_xpm),"Add &role",
+			   this,SLOT(addRole()),CTRL+Key_R);
+      ToolMenu->insertItem(QPixmap((const char **)copyuser_xpm),"&Copy current",
+			   this,SLOT(copy()),CTRL+Key_O,TO_ID_COPY);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(QPixmap((const char **)sql_xpm),"Display SQL",
+			   this,SLOT(displaySQL()),Key_F4);
+      toMainWidget()->menuBar()->insertItem("&Tuning",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_COPY,CopyButton->isEnabled());
+    }
+  } else {
+    delete ToolMenu;
+    ToolMenu=NULL;
+  }
 }
 
 void toSecurity::displaySQL(void)
@@ -1380,6 +1422,8 @@ void toSecurity::changeUser(bool ask)
       UserID=item->text(1);
       DropButton->setEnabled(item->parent());
       CopyButton->setEnabled(item->parent());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_COPY,CopyButton->isEnabled());
 
       if (UserID[4]!=':')
 	throw QString("Invalid security ID");

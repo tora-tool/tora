@@ -106,9 +106,7 @@ public:
   { return "SGA Trace"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    QWidget *window=new toSGATrace(parent,connection);
-    window->setIcon(*toolbarImage());
-    return window;
+    return new toSGATrace(parent,connection);
   }
   virtual QWidget *configurationTab(QWidget *parent)
   { return new toSGATracePrefs(this,parent); }

@@ -42,12 +42,12 @@
 
 class toMarkedText;
 class toListView;
-class toResultContent;
+class toResultContentEditor;
 
 class toSearchReplace : public toSearchReplaceUI, public toHelpContext {
   toMarkedText *Text;
   toListView *List;
-  toResultContent *Content;
+  toResultContentEditor *Content;
   bool FromTop;
 
   int findIndex(const QString &str,int line,int col);
@@ -60,9 +60,8 @@ public:
 
   void setTarget(toMarkedText *parent);
   void setTarget(toListView *parent);
-  void setTarget(toResultContent *parent);
-  bool searchNextAvailable()
-  { return SearchNext->isEnabled(); }
+  void setTarget(toResultContentEditor *parent);
+  bool searchNextAvailable();
 public slots:
   virtual void destroyed();
   virtual void replaceAll();

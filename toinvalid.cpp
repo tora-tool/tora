@@ -82,7 +82,9 @@ public:
   virtual const char *menuItem()
   { return "Invalid Objects"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
-  { return new toInvalid(parent,connection); }
+  {
+    return new toInvalid(parent,connection);
+  }
 };
 
 static toInvalidTool InvalidTool;

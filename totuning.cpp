@@ -46,6 +46,11 @@
 #include <qcombobox.h>
 #include <qscrollview.h>
 #include <qvbox.h>
+#include <qworkspace.h>
+
+#ifdef TO_KDE
+#  include <kmenubar.h>
+#endif
 
 #include "tochangeconnection.h"
 #include "toconnection.h"
@@ -226,9 +231,7 @@ public:
   { return "Server Tuning"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    QWidget *window=new toTuning(parent,connection);
-    window->setIcon(*toolbarImage());
-    return window;
+    return new toTuning(parent,connection);
   }
 };
 
@@ -621,7 +624,8 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 		  toolbar);
   toolbar->addSeparator();
   new QLabel("Refresh",toolbar);
-  connect(toRefreshCreate(toolbar),SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
+  Refresh=toRefreshCreate(toolbar);
+  connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
   toRefreshParse(timer());
   toolbar->setStretchableWidget(new QLabel("",toolbar));
   new toChangeConnection(toolbar);
@@ -629,7 +633,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Tabs=new QTabWidget(this);
 
   Overview=new toTuningOverview(this);
-  Tabs->addTab(Overview,"Overview");
+  Tabs->addTab(Overview,"&Overview");
 
   QGrid *grid=new QGrid(2,Tabs);
 
@@ -692,31 +696,51 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
     }
   }
 
-  Tabs->addTab(grid,"Charts");
+  Tabs->addTab(grid,"&Charts");
 
   FileIO=new toTuningFileIO(this);
-  Tabs->addTab(FileIO,"File I/O");
+  Tabs->addTab(FileIO,"FFile I/O");
 
   Indicators=new toListView(Tabs);
   Indicators->setRootIsDecorated(true);
   Indicators->addColumn("Indicator");
   Indicators->addColumn("Value");
   Indicators->addColumn("Reference");
-  Tabs->addTab(Indicators,"Indicators");
+  Tabs->addTab(Indicators,"&Indicators");
 
   Statistics=new toResultStats(Tabs);
-  Tabs->addTab(Statistics,"Statistics");
+  Tabs->addTab(Statistics,"&Statistics");
 
   Parameters=new toResultView(true,false,Tabs);
   Parameters->setSQL(SQLParameters);
-  Tabs->addTab(Parameters,"Parameters");
+  Tabs->addTab(Parameters,"&Parameters");
 
   Tabs->setCurrentPage(0);
 
   connect(Tabs,SIGNAL(currentChanged(QWidget *)),this,SLOT(refresh()));
   connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
+  ToolMenu=NULL;
+  connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
+	  this,SLOT(windowActivated(QWidget *)));
 
   refresh();
+}
+
+void toTuning::windowActivated(QWidget *widget)
+{
+  if (widget==this) {
+    if (!ToolMenu) {
+      ToolMenu=new QPopupMenu(this);
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",this,SLOT(refresh(void)),
+			   Key_F5);
+      ToolMenu->insertItem("&Change Refresh",Refresh,SLOT(setFocus(void)),
+			   Key_R+ALT);
+      toMainWidget()->menuBar()->insertItem("&Security",ToolMenu,-1,toToolMenuIndex());
+    }
+  } else {
+    delete ToolMenu;
+    ToolMenu=NULL;
+  }
 }
 
 void toTuning::changeRefresh(const QString &str)

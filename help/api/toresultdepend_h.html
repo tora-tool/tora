@@ -82,7 +82,7 @@ class toResultDepend : public toResultView {
    * @param name Name of object.
    * @return True if object exists.
    */
-  bool exists(const QString &owner,const QString &name);
+  bool exists(const QString &amp;owner,const QString &amp;name);
 public:
   /** Create the widget.
    * @param parent Parent widget.
@@ -92,14 +92,14 @@ public:
 
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &sql,const toQList &param);
+  virtual void query(const QString &amp;sql,const toQList &amp;param);
   /** Reimplemented for internal reasons.
    */
-  void query(const QString &sql)
+  void query(const QString &amp;sql)
   { toQList p; query(sql,p); }
   /** Support Oracle
    */
-  virtual bool canHandle(toConnection &conn)
+  virtual bool canHandle(toConnection &amp;conn)
   { return toIsOracle(conn); }
 };
 

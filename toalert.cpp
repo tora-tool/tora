@@ -85,7 +85,6 @@ public:
     } else {
       QWidget *window=new toAlert(parent,connection);
       Windows[&connection]=window;
-      window->setIcon(*toolbarImage());
       return window;
     }
   }

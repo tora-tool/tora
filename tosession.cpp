@@ -76,9 +76,7 @@ public:
   { return "Sessions"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    QWidget *window=new toSession(parent,connection);
-    window->setIcon(*toolbarImage());
-    return window;
+    return new toSession(parent,connection);
   }
 };
 

@@ -41,6 +41,7 @@
 
 #include "toresult.h"
 #include "tomain.h"
+#include "toeditwidget.h"
 
 class QListViewItem;
 class QPopupMenu;
@@ -49,6 +50,7 @@ class toListTip;
 class TOPrinter;
 class toSQL;
 class toResultCols;
+class toSearchReplace;
 class toQuery;
 
 /** Baseclass for filters to apply to the @ref toResultView to filter out
@@ -272,7 +274,7 @@ public:
  * integration into toMain with Edit menu etc, drag & drop, export as file, display item
  * as memo and context menu.
  */
-class toListView : public QListView {
+class toListView : public QListView,public toEditWidget {
   Q_OBJECT
 
   /** Name of this list, used primarily when printing. Also used to be able to edit
@@ -326,7 +328,6 @@ public:
    * @param name Name of list.
    */
   toListView(QWidget *parent,const char *name=NULL);
-  ~toListView();
 
   /** Get SQL name of list.
    */
@@ -342,13 +343,13 @@ public:
 
   /** Print this list
    */
-  virtual void print(void);
+  virtual void editPrint(void);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void editSearch(toSearchReplace *);
   /** Reimplemented for internal reasons.
    */
   virtual void focusInEvent (QFocusEvent *e);
-  /** Reimplemented for internal reasons.
-   */
-  virtual void focusOutEvent (QFocusEvent *e);
   /** The string to be displayed in the middle of the footer when printing.
    * @return String to be placed in middle.
    */
@@ -361,7 +362,7 @@ public:
   { }
   /** Export list as file
    */
-  virtual void exportFile(void);
+  virtual void editSave(bool ask);
 public slots:
   /** Display the menu at the given point and column.
    * @param item Item to display.
@@ -452,7 +453,7 @@ public:
   /** Get read all flag
    * @return Value of read all flag.
    */
-  virtual void readAll(void);
+  virtual void editReadAll(void);
 
   /** Get the number of columns in query.
    * @return Columns in query.
@@ -543,8 +544,8 @@ public:
 
   /** Reimplemented for internal reasons.
    */
-  virtual void print(void)
-  { readAll(); toListView::print(); }
+  virtual void editPrint(void)
+  { editReadAll(); toListView::editPrint(); }
   /** Reimplemented for internal reasons.
    */
   virtual QString middleString();

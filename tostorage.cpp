@@ -36,6 +36,7 @@
 
 #ifdef TO_KDE
 #include <kfiledialog.h>
+#include <kmenubar.h>
 #endif
 
 #include <qcheckbox.h>
@@ -54,6 +55,7 @@
 #include <qtooltip.h>
 #include <qwhatsthis.h>
 #include <qworkspace.h>
+#include <qpopupmenu.h>
 #include <qlayout.h>
 
 #include "tomemoeditor.h"
@@ -130,9 +132,7 @@ public:
   { return "Storage Manager"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    QWidget *window=new toStorage(parent,connection);
-    window->setIcon(*toolbarImage());
-    return window;
+    return new toStorage(parent,connection);
   }
   virtual QWidget *configurationTab(QWidget *parent)
   {
@@ -682,9 +682,85 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
   Storage=new toResultStorage(this);
 
   connect(Storage,SIGNAL(selectionChanged(void)),this,SLOT(selectionChanged(void)));
+  ToolMenu=NULL;
+  connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
+	  this,SLOT(windowActivated(QWidget *)));
 
   refresh();
   selectionChanged();
+}
+
+#define TO_ID_ONLINE		(toMain::TO_TOOL_MENU_ID+ 0)
+#define TO_ID_OFFLINE		(toMain::TO_TOOL_MENU_ID+ 1)
+#define TO_ID_LOGGING		(toMain::TO_TOOL_MENU_ID+ 2)
+#define TO_ID_NOLOGGING		(toMain::TO_TOOL_MENU_ID+ 3)
+#define TO_ID_READ_WRITE	(toMain::TO_TOOL_MENU_ID+ 4)
+#define TO_ID_READ_ONLY		(toMain::TO_TOOL_MENU_ID+ 5)
+#define TO_ID_MODIFY_TABLESPACE	(toMain::TO_TOOL_MENU_ID+ 6)
+#define TO_ID_MODIFY_DATAFILE	(toMain::TO_TOOL_MENU_ID+ 7)
+#define TO_ID_NEW_TABLESPACE	(toMain::TO_TOOL_MENU_ID+ 8)
+#define TO_ID_ADD_DATAFILE	(toMain::TO_TOOL_MENU_ID+ 9)
+#define TO_ID_COALESCE		(toMain::TO_TOOL_MENU_ID+ 10)
+#define TO_ID_MOVE_FILE		(toMain::TO_TOOL_MENU_ID+ 11)
+
+void toStorage::windowActivated(QWidget *widget)
+{
+  if (widget==this) {
+    if (!ToolMenu) {
+      ToolMenu=new QPopupMenu(this);
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+			   this,SLOT(refresh(void)),Key_F5);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(QPixmap((const char **)online_xpm),"Tablespace online",
+			   this,SLOT(online()),0,TO_ID_ONLINE);
+      ToolMenu->insertItem(QPixmap((const char **)offline_xpm),"Tablespace offline",
+			   this,SLOT(offline()),0,TO_ID_OFFLINE);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(QPixmap((const char **)logging_xpm),"Default logging",
+			   this,SLOT(logging()),0,TO_ID_LOGGING);
+      ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),"Default not logging",
+			   this,SLOT(noLogging()),0,TO_ID_NOLOGGING);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(QPixmap((const char **)writetablespace_xpm),"Read write access",
+			   this,SLOT(readWrite()),0,TO_ID_READ_WRITE);
+      ToolMenu->insertItem(QPixmap((const char **)readtablespace_xpm),"Read only access",
+			   this,SLOT(readOnly()),0,TO_ID_READ_ONLY);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(QPixmap((const char **)modtablespace_xpm),"Modify tablespace",
+			   this,SLOT(modifyTablespace()),0,TO_ID_MODIFY_TABLESPACE);
+      ToolMenu->insertItem(QPixmap((const char **)modfile_xpm),"Modify datafile",
+			   this,SLOT(modifyDatafile()),0,TO_ID_MODIFY_DATAFILE);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(QPixmap((const char **)addtablespace_xpm),"New tablespace",
+			   this,SLOT(newTablespace()),0,TO_ID_NEW_TABLESPACE);
+      ToolMenu->insertItem(QPixmap((const char **)addfile_xpm),"Add datafile",
+			   this,SLOT(newDatafile()),0,TO_ID_ADD_DATAFILE);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(QPixmap((const char **)coalesce_xpm),"Coalesce tablespace",
+			   this,SLOT(coalesce()),0,TO_ID_COALESCE);
+      ToolMenu->insertItem(QPixmap((const char **)movefile_xpm),"Move datafile",
+			   this,SLOT(moveFile()),0,TO_ID_MOVE_FILE);
+
+      toMainWidget()->menuBar()->insertItem("&Storage",ToolMenu,-1,toToolMenuIndex());
+
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_ONLINE,OnlineButton->isEnabled());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_OFFLINE,OfflineButton->isEnabled());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_LOGGING,LoggingButton->isEnabled());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_NOLOGGING,EraseLogButton->isEnabled());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_READ_WRITE,ReadWriteButton->isEnabled());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_READ_ONLY,ReadOnlyButton->isEnabled());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_MODIFY_TABLESPACE,
+						ModTablespaceButton->isEnabled());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_MODIFY_DATAFILE,
+						ModFileButton->isEnabled());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_ADD_DATAFILE,NewFileButton->isEnabled());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_COALESCE,CoalesceButton->isEnabled());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_MOVE_FILE,MoveFileButton->isEnabled());
+    }
+  } else {
+    delete ToolMenu;
+    ToolMenu=NULL;
+  }
 }
 
 void toStorage::refresh(void)
@@ -840,6 +916,19 @@ void toStorage::selectionChanged(void)
     NewFileButton->setEnabled(true);
     ModTablespaceButton->setEnabled(true);
   }
+  toMainWidget()->menuBar()->setItemEnabled(TO_ID_ONLINE,OnlineButton->isEnabled());
+  toMainWidget()->menuBar()->setItemEnabled(TO_ID_OFFLINE,OfflineButton->isEnabled());
+  toMainWidget()->menuBar()->setItemEnabled(TO_ID_LOGGING,LoggingButton->isEnabled());
+  toMainWidget()->menuBar()->setItemEnabled(TO_ID_NOLOGGING,EraseLogButton->isEnabled());
+  toMainWidget()->menuBar()->setItemEnabled(TO_ID_READ_WRITE,ReadWriteButton->isEnabled());
+  toMainWidget()->menuBar()->setItemEnabled(TO_ID_READ_ONLY,ReadOnlyButton->isEnabled());
+  toMainWidget()->menuBar()->setItemEnabled(TO_ID_MODIFY_TABLESPACE,
+					    ModTablespaceButton->isEnabled());
+  toMainWidget()->menuBar()->setItemEnabled(TO_ID_MODIFY_DATAFILE,
+					    ModFileButton->isEnabled());
+  toMainWidget()->menuBar()->setItemEnabled(TO_ID_ADD_DATAFILE,NewFileButton->isEnabled());
+  toMainWidget()->menuBar()->setItemEnabled(TO_ID_COALESCE,CoalesceButton->isEnabled());
+  toMainWidget()->menuBar()->setItemEnabled(TO_ID_MOVE_FILE,MoveFileButton->isEnabled());
 }
 
 void toStorage::newDatafile(void)

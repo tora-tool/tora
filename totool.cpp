@@ -156,6 +156,9 @@ void toTool::createWindow(void)
     QWidget *newWin=toolWindow(main->workspace(),main->currentConnection());
 
     if (newWin) {
+      const QPixmap *icon=toolbarImage();
+      if (icon)
+	newWin->setIcon(*icon);
       QString title;
       if (!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
 	title=main->currentConnection().description();

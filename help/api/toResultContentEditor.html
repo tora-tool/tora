@@ -18,7 +18,7 @@
 	<HR>
 	<TABLE BORDER="0">
 		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="toresultcontent_h.html">toresultcontent.h</A>&gt;</code></TD></TR>
-<TR><TH>Inherits</TH><TD><A HREF="http://doc.trolltech.com/qtable.html">QTable</A> <small>(qt)</small> <small>[public ]</small></TD></TR>
+<TR><TH>Inherits</TH><TD><A HREF="http://doc.trolltech.com/qtable.html">QTable</A> <small>(qt)</small> <small>[public ]</small>, <A HREF="toEditWidget.html">toEditWidget</A> <small>[public ]</small></TD></TR>
 <TR><TH><A HREF="full-list-toResultContentEditor.html">List of all Methods</A></TH></TR>
 	</TABLE>
 	</TD>
@@ -28,31 +28,33 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref32">toResultContentEditor</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref31">toResultContentEditor</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref33">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const toQList &param) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref32">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const toQList &amp;param) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref34">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref33">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref35">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref34">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param3) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref36">readAll</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref35">editPrint</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref37">print</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref36">editSave</A></b> (bool ask) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref38">exportFile</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref37">editSearch</A></b> (<A HREF="#toSearchReplace">toSearchReplace</A> *search) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref39">changeFilter</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &criteria,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &order) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref38">editReadAll</A></b> (void) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref39">changeFilter</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;criteria,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;order) 
 </LI>
 </ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref41">changeSort</A></b> (int col) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref42">refresh</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref43">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref43">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref44">changePosition</A></b> (int row,int col) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref45">displayMenu</A></b> (const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &p) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref45">displayMenu</A></b> (const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &amp;p) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref46">displayMemo</A></b> (void) 
 </LI>
@@ -63,13 +65,13 @@
 </ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref40">toResultContent</A></b></LI>
 </ul><h4>Protected Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref49">menuCallback</A></b> (int cmd) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref50">changeData</A></b> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &data) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref50">changeData</A></b> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This widget allows the user to browse the contents of a table and also edit
  the content. The table is specified by the first and second parameter in the query.
  The sql is not used in the query.
  </p>
-<A NAME="toResultContentEditor"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultContentEditor</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL)
+<A NAME="toResultContentEditor"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultContentEditor</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL)
 <br></td><td align="right"><h3><strong>toResultContentEditor</strong></h3></td></tr></table><p></p><p> Create the widget.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -78,34 +80,33 @@
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
    </TD></TR>
 </TABLE></P>
-<A NAME="query"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const toQList &param)
+<A NAME="query"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const toQList &amp;param)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<A NAME="changeParams"></A><A NAME="ref34"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1)
+<A NAME="changeParams"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<A NAME="changeParams"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3)
+<A NAME="changeParams"></A><A NAME="ref34"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param3)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<A NAME="readAll"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>readAll</strong> (void)
-<br></td><td align="right"><h3><strong>readAll</strong></h3></td></tr></table><p></p><p> Read all rows from the table.
+<A NAME="editPrint"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editPrint</strong> (void)
+<br></td><td align="right"><h3><strong>editPrint</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Print this editor.
    </p>
-<A NAME="print"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>print</strong> (void)
-<br></td><td align="right"><h3><strong>print</strong></h3></td></tr></table><p></p><p> Print the contents.
+<p>Reimplemented from <A HREF="toEditWidget.html#editPrint">toEditWidget</A>.</p>
+<A NAME="editSave"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editSave</strong> (bool ask)
+<br></td><td align="right"><h3><strong>editSave</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<A NAME="exportFile"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportFile</strong> (void)
-<br></td><td align="right"><h3><strong>exportFile</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export contents to file.
+<p>Reimplemented from <A HREF="toEditWidget.html#editSave">toEditWidget</A>.</p>
+<A NAME="editSearch"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editSearch</strong> (<A HREF="#toSearchReplace">toSearchReplace</A> *search)
+<br></td><td align="right"><h3><strong>editSearch</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<A NAME="changeFilter"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeFilter</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &criteria,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &order)
-<br></td><td align="right"><h3><strong>changeFilter</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Change filter the filter setting. Pass empty strings to remove filter.
-</p>
-<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
-<TR><TD align="left" valign="top"><i>criteria</i></TD><TD align="left" valign="top">Selection criteria.
-</TD></TR>
-<TR><TD align="left" valign="top"><i>order</i></TD><TD align="left" valign="top">Sort order of retreive.
-   </TD></TR>
-</TABLE></P>
-<A NAME="toResultContent"></A><A NAME="ref40"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toResultContent</strong>
+<p>Reimplemented from <A HREF="toEditWidget.html#editSearch">toEditWidget</A>.</p>
+<A NAME="editReadAll"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editReadAll</strong> (void)
+<br></td><td align="right"><h3><strong>editReadAll</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
+   </p>
+<p>Reimplemented from <A HREF="toEditWidget.html#editReadAll">toEditWidget</A>.</p>
+<A NAME="changeFilter"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeFilter</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;criteria,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;order)
+<br></td><td align="right"><h3><strong>changeFilter</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="toResultContent"></A><A NAME="ref40"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toResultContent</strong>
 </td><td align="right"><h3><strong>toResultContent</strong></h3></td></tr></table><p></p><A NAME="changeSort"></A><A NAME="ref41"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeSort</strong> (int col)
 <br></td><td align="right"><h3><strong>changeSort</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Change sorting column
 </p>
@@ -116,7 +117,7 @@
 <A NAME="refresh"></A><A NAME="ref42"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>refresh</strong> (void)
 <br></td><td align="right"><h3><strong>refresh</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
-<A NAME="changeParams"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2)
+<A NAME="changeParams"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <A NAME="changePosition"></A><A NAME="ref44"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>changePosition</strong> (int row,int col)
@@ -128,7 +129,7 @@
 <TR><TD align="left" valign="top"><i>col</i></TD><TD align="left" valign="top">New column.
    </TD></TR>
 </TABLE></P>
-<A NAME="displayMenu"></A><A NAME="ref45"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayMenu</strong> (const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &p)
+<A NAME="displayMenu"></A><A NAME="ref45"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayMenu</strong> (const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &amp;p)
 <br></td><td align="right"><h3><strong>displayMenu</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Display popup menu
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -151,7 +152,7 @@
 <TR><TD align="left" valign="top"><i>cmd</i></TD><TD align="left" valign="top">Command ID.
    </TD></TR>
 </TABLE></P>
-<A NAME="changeData"></A><A NAME="ref50"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeData</strong> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &data)
+<A NAME="changeData"></A><A NAME="ref50"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeData</strong> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data)
 <br></td><td align="right"><h3><strong>changeData</strong></h3></td></tr></table><p> <small>[protected slots virtual slot]</small></p><p> Change data at specified position.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">

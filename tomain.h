@@ -101,6 +101,9 @@ class toTool;
 class toToolWidget;
 class toConnection;
 class toMarkedText;
+class QListView;
+class QListViewItem;
+class toEditWidget;
 
 /** This class defines the main window. Observe that this class will have different baseclass
  * depending on if TOra is a Qt or KDE application. In the case of Qt this will be a
@@ -219,6 +222,16 @@ private:
    * Default tool id
    */
   int DefaultTool;
+
+  toEditWidget *Edit;
+
+  toEditWidget *findEdit(toEditWidget *edit);
+  void editEnable(toEditWidget *edit,
+		  bool open,bool save,bool print,
+		  bool undo,bool redo,
+		  bool cut,bool copy,bool paste,
+		  bool search,
+		  bool selectAll,bool readAll);
 public:
 
   /** ID of the file menu
@@ -270,20 +283,22 @@ public:
   toConnection &currentConnection(void);
 
   /**
+   * Set the widget to edit through menues and toolbar.
+   */
+  static void setEditWidget(toEditWidget *edit);
+  /**
    * Set available menu items in user interface. It is not enough to just call
    * this function to make open for instance to actually work. It is a lot of
-   * more especially in @ref commandCallback and @ref editFileMenu.
+   * more especially in @ref commandCallback and @ref editFileMenu. Will only
+   * update if this is the current editing widget.
    */
-  static void editEnable(bool open,bool save,bool print,
-			 bool undo,bool redo,
-			 bool cut,bool copy,bool paste,
-			 bool search);
+  static void editEnable(toEditWidget *edit);
   /**
    * Disable all the current available items in the user interface (That @ref
-   * editEnable can enable).
+   * editEnable can enable). If specified widget has the focus the edit widget
+   * is cleared.
    */
-  static void editDisable(void)
-  { editEnable(false,false,false,false,false,false,false,false,false); }
+  static void editDisable(toEditWidget *edit);
 
   /**
    * Close window
@@ -742,6 +757,12 @@ QString toSQLStripSpecifier(const QString &sql);
  * @return Return a string containing the same statement without binds.
  */
 QString toSQLStripBind(const QString &sql);
+
+/** Find an item in a listview.
+ * @param list The list to search for the item.
+ * @param str The string to search for. You can specify parent/child with : in the string.
+ */
+QListViewItem *toFindItem(QListView *list,const QString &str);
 /** Whenever this class is instantiated the window will display a busy cursor. You
  * can instantiate this function as many time as you want, only when all of them are
  * destructed the curser will revert back to normal.
@@ -749,6 +770,7 @@ QString toSQLStripBind(const QString &sql);
 class toBusy {
   static unsigned int Count;
 public:
+  static void clear(void);
   toBusy();
   ~toBusy();
 };

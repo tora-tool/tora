@@ -48,6 +48,7 @@ class toSecurityPage;
 class toSecurityQuota;
 class QTabWidget;
 class QToolButton;
+class QPopupMenu;
 
 class toSecuritySystem : public toListView {
   Q_OBJECT
@@ -106,6 +107,7 @@ class toSecurity : public toToolWidget {
 
   QString UserID;
 
+  QPopupMenu *ToolMenu;
   toResultView *UserList;
   toSecuritySystem *SystemGrant;
   toSecurityRoleGrant *RoleGrant;
@@ -130,6 +132,7 @@ public slots:
   virtual void drop(void);
   virtual void copy(void);
   virtual void displaySQL(void);
+  virtual void windowActivated(QWidget *widget);
 };
 
 #endif

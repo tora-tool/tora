@@ -39,11 +39,13 @@
 #include <qapplication.h>
 #include <qpalette.h>
 #include <qpaintdevicemetrics.h>
+#include <qfileinfo.h>
 
 #include "tomain.h"
 #include "tomarkedtext.h"
 #include "totool.h"
 #include "toconf.h"
+#include "tosearchreplace.h"
 
 #include "tomarkedtext.moc"
 
@@ -62,12 +64,11 @@
 #endif
 
 toMarkedText::toMarkedText(QWidget *parent,const char *name)
-: toMultiLineEdit(parent,name)
+  : toMultiLineEdit(parent,name),toEditWidget()
 {
+  setEdit();
   setFont(toStringToFont(toTool::globalConfig(CONF_TEXT,"")));
 
-  UndoAvailable=false;
-  RedoAvailable=false;
   connect(this,SIGNAL(redoAvailable(bool)),this,SLOT(setRedoAvailable(bool)));
   connect(this,SIGNAL(undoAvailable(bool)),this,SLOT(setUndoAvailable(bool)));
   connect(this,SIGNAL(copyAvailable(bool)),this,SLOT(setCopyAvailable(bool)));
@@ -76,32 +77,26 @@ toMarkedText::toMarkedText(QWidget *parent,const char *name)
 void toMarkedText::setEdit(void)
 {
   if (isReadOnly()) {
-    toMain::editEnable(false,true,true,
-		       false,false,
-		       hasMarkedText(),hasMarkedText(),false,true);
+    toEditWidget::setEdit(false,true,true,
+			  false,false,
+			  hasMarkedText(),hasMarkedText(),false,
+			  true,true,false);
   } else {
-    toMain::editEnable(true,true,true,
-		       getUndoAvailable(),getRedoAvailable(),
-		       hasMarkedText(),hasMarkedText(),true,true);
+    toEditWidget::setEdit(true,true,true,
+			  undoEnabled(),redoEnabled(),
+			  hasMarkedText(),hasMarkedText(),true,
+			  true,true,false);
   }
+  toMain::editEnable(this);
 }
 
 void toMarkedText::focusInEvent (QFocusEvent *e)
 {
-  setEdit();
+  receivedFocus();
+  int curline,curcol;
+  getCursorPosition (&curline,&curcol);
+  toMainWidget()->setCoordinates(curline+1,curcol+1);
   toMultiLineEdit::focusInEvent(e);
-}
-
-void toMarkedText::focusOutEvent (QFocusEvent *e)
-{
-  toMain::editDisable();
-  toMultiLineEdit::focusOutEvent(e);
-}
-
-toMarkedText::~toMarkedText()
-{
-  if (qApp->focusWidget()==this)
-    toMain::editDisable();
 }
 
 void toMarkedText::paintEvent(QPaintEvent *pe)
@@ -114,7 +109,7 @@ void toMarkedText::paintEvent(QPaintEvent *pe)
   }
 }
 
-void toMarkedText::print(void)
+void toMarkedText::editPrint(void)
 {
   TOPrinter printer;
   printer.setMinMax(1,1000);
@@ -188,4 +183,37 @@ int toMarkedText::printPage(TOPrinter *printer,QPainter *painter,int line,int &o
   offset=totalHeight;
   painter->setFont(defFont);
   return line;
+}
+
+void toMarkedText::editOpen(void)
+{
+  QFileInfo file(filename());
+  QString filename=toOpenFilename(file.dirPath(),"*.sql\n*.txt",this);
+  if (!filename.isEmpty()) {
+    try {
+      QCString data=toReadFile(filename);
+      setText(QString::fromLocal8Bit(data));
+      setFilename(filename);
+      toStatusMessage("File opened successfully",false,false);
+    } TOCATCH
+  }
+}
+
+void toMarkedText::editSave(bool askfile)
+{
+  QFileInfo file(filename());
+  QString fn=filename();
+  if (askfile||fn.isEmpty())
+    file=toSaveFilename(file.dirPath(),"*.sql\n*.txt",this);
+  if (!fn.isEmpty()) {
+    if (!toWriteFile(fn,text()))
+      return;
+    setFilename(fn);
+    setEdited(false);
+  }
+}
+
+void toMarkedText::editSearch(toSearchReplace *search)
+{
+  search->setTarget(this);
 }

@@ -42,16 +42,18 @@
 #include <qvbox.h>
 
 #include "toresult.h"
-#include "toconnection.h"
+#include "toeditwidget.h"
 
 class toResultContent;
+class toQuery;
+class toSearchReplace;
 
 /** This widget allows the user to browse the contents of a table and also edit
  * the content. The table is specified by the first and second parameter in the query.
  * The sql is not used in the query.
  */
 
-class toResultContentEditor : public QTable {
+class toResultContentEditor : public QTable,public toEditWidget {
   Q_OBJECT
 
   /** Owner of table.
@@ -124,12 +126,6 @@ class toResultContentEditor : public QTable {
   virtual void keyPressEvent(QKeyEvent *e);
   /** Reimplemented for internal reasons.
    */
-  virtual void focusInEvent (QFocusEvent *e);
-  /** Reimplemented for internal reasons.
-   */
-  virtual void focusOutEvent (QFocusEvent *e); 
-  /** Reimplemented for internal reasons.
-   */
   virtual void activateNextCell();
   
   /** Reimplemented for internal reasons.
@@ -147,7 +143,10 @@ class toResultContentEditor : public QTable {
   /** Reimplemented for internal reasons.
    */
   virtual void contentsMouseMoveEvent (QMouseEvent *e);
-  
+  /** Reimplemented for internal reasons.
+   */
+  virtual void focusInEvent (QFocusEvent *e);
+
   QString table(void);
 
   toConnection &connection()
@@ -172,19 +171,19 @@ public:
   virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
   { wrongUsage(); }
   
-  /** Read all rows from the table.
+  /** Print this editor.
    */
-  void readAll(void);
-  /** Print the contents.
+  virtual void editPrint(void);
+  /** Reimplemented for internal reasons.
    */
-  void print(void);
-  /** Export contents to file.
+  virtual void editSave(bool ask);
+  /** Reimplemented for internal reasons.
    */
-  virtual void exportFile(void);
-  /** Change filter the filter setting. Pass empty strings to remove filter.
-   * @param criteria Selection criteria.
-   * @param order Sort order of retreive.
+  virtual void editSearch(toSearchReplace *search);
+  /** Reimplemented for internal reasons.
    */
+  virtual void editReadAll(void);
+
   virtual void changeFilter(const QString &criteria,const QString &order);
 
   friend class toResultContent;
@@ -256,16 +255,16 @@ public:
 
   /** Read all rows from the table.
    */
-  void readAll(void)
-  { Editor->readAll(); }
+  void editReadAll(void)
+  { Editor->editReadAll(); }
   /** Print the contents.
    */
-  void print(void)
-  { Editor->print(); }
+  void editPrint(void)
+  { Editor->editPrint(); }
   /** Export contents to file.
    */
-  virtual void exportFile(void)
-  { Editor->exportFile(); }
+  virtual void editSave(bool ask)
+  { Editor->editSave(ask); }
 private slots:
   void changeFilter(void);
   void removeFilter(void)

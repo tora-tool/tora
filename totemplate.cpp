@@ -66,7 +66,60 @@
 class toTemplateEdit : public toTemplateEditUI, public toHelpContext {
   std::map<QString,QString> &TemplateMap;
   std::map<QString,QString>::iterator LastTemplate;
-  toTimer Timer;
+  void connectList(bool conn)
+  {
+    if (conn)
+      connect(Templates,SIGNAL(selectionChanged()),this,SLOT(changeSelection()));
+    else
+      disconnect(Templates,SIGNAL(selectionChanged()),this,SLOT(changeSelection()));
+  }
+  QListViewItem *findLast(void)
+  {
+    QString name=(*LastTemplate).first;
+    return toFindItem(Templates,name);
+  }
+  void allocateItem(void)
+  {
+    QStringList lst=QStringList::split(":",Name->text());
+    unsigned int li=0;
+    QListViewItem *parent=NULL;
+    for(QListViewItem *item=Templates->firstChild();item&&li<lst.count();) {
+      if (item->text(0)==lst[li]) {
+	li++;
+	parent=item;
+	item=item->firstChild();
+      } else
+	item=item->nextSibling();
+    }
+    while(li<lst.count()) {
+      if (parent)
+	parent=new QListViewItem(parent,lst[li]);
+      else
+	parent=new QListViewItem(Templates,lst[li]);
+      li++;
+    }
+  }
+  bool clearUnused(QListViewItem *first,const QString &pre)
+  {
+    bool ret=false;
+    while(first) {
+      QListViewItem *delitem=first;
+      QString str=pre;
+      if (!str.isEmpty())
+	str+=":";
+      str+=first->text(0);
+      if (first->firstChild()&&clearUnused(first->firstChild(),str))
+	delitem=NULL;
+      if (delitem&&TemplateMap.find(str)!=TemplateMap.end())
+	delitem=NULL;
+      first=first->nextSibling();
+      if (!delitem)
+	ret=true;
+      else
+	delete delitem;
+    }
+    return ret;
+  }
 public:
   virtual void updateFromMap(void)
   {
@@ -115,18 +168,22 @@ public:
   {
     toHelp::connectDialog(this);
     LastTemplate=TemplateMap.end();
-    connect(&Timer,SIGNAL(timeout()),this,SLOT(updateFromMap()));
     updateFromMap();
     Description->setWordWrap(toMarkedText::WidgetWidth);
   }
   virtual void remove(void)
   {
     if (LastTemplate!=TemplateMap.end()) {
+      QListViewItem *item=findLast();
       TemplateMap.erase(LastTemplate);
       LastTemplate=TemplateMap.end();
       Name->setText("");
       Description->setText("");
-      updateFromMap();
+      if (item) {
+	connectList(false);
+	clearUnused(Templates->firstChild(),"");
+	connectList(true);
+      }
     }
   }
   virtual void preview(void)
@@ -148,8 +205,12 @@ public:
     LastTemplate=TemplateMap.end();
     Description->setText("");
     QListViewItem *item=Templates->selectedItem();
-    if (item)
+    if (item) {
+      connectList(false);
+      Templates->setSelected(item,false);
+      connectList(true);
       item=item->parent();
+    }
     QString str;
     if (item) {
       str=name(item);
@@ -165,10 +226,12 @@ public:
 	  Description->text()!=(*LastTemplate).second) {
 	TemplateMap.erase(LastTemplate);
 	TemplateMap[Name->text()]=Description->text();
+	allocateItem();
 	update=true;
       }
     } else if (!Name->text().isEmpty()) {
       TemplateMap[Name->text()]=Description->text();
+      allocateItem();
       update=true;
     }
     LastTemplate=TemplateMap.end();
@@ -183,11 +246,12 @@ public:
 	Preview->setText((*LastTemplate).second);
       } else {
 	Name->setText("");
+	Description->clear();
+	Preview->setText("");
       }
     } else
       LastTemplate=TemplateMap.end();
-    if (update)
-      Timer.start(500,true);
+    clearUnused(Templates->firstChild(),"");
   }
 };
 

@@ -54,6 +54,7 @@ class QPushButton;
 class QSpinBox;
 class QRadioButton;
 class QTabWidget;
+class QPopupMenu;
 
 class toStorageDefinition;
 class toConnection;
@@ -146,6 +147,7 @@ class toStorage : public toToolWidget {
 
   toResultStorage *Storage;
 
+  QPopupMenu *ToolMenu;
   QToolButton *OnlineButton;
   QToolButton *OfflineButton;
   QToolButton *CoalesceButton;
@@ -181,6 +183,7 @@ public slots:
   void moveFile(void);
 
   void selectionChanged(void);
+  void windowActivated(QWidget *widget);
 };
 
 #endif
