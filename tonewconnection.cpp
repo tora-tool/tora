@@ -51,6 +51,7 @@ TO_NAMESPACE;
 #include "totool.h"
 #include "toconf.h"
 #include "tonewconnection.h"
+#include "tomain.h"
 
 
 toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WFlags fl)
@@ -197,9 +198,9 @@ toConnection *toNewConnection::makeConnection(void)
   } catch (const otl_exception &exc) {
     QString str("Unable to connect to the database.\n");
     str.append(QString::fromUtf8((const char *)exc.msg));
-    QMessageBox::information(this,
-			     "Unable to connect to the database",
-			     str);
+    TOMessageBox::information(this,
+			      "Unable to connect to the database",
+			      str);
     return NULL;
   }
 }

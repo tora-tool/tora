@@ -34,6 +34,10 @@
 
 TO_NAMESPACE;
 
+#ifdef TO_KDE
+#include <kfiledialog.h>
+#endif
+
 #include <qcheckbox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
@@ -120,14 +124,14 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
 
 void toGlobalSetting::pluginBrowse(void)
 {
-  QString str=QFileDialog::getExistingDirectory(PluginDirectory->text(),this);
+  QString str=TOFileDialog::getExistingDirectory(PluginDirectory->text(),this);
   if (!str.isEmpty())
     PluginDirectory->setText(str);
 }
 
 void toGlobalSetting::sqlBrowse(void)
 {
-  QString str=QFileDialog::getOpenFileName(CustomSQL->text(),"*.sql",this);
+  QString str=TOFileDialog::getOpenFileName(CustomSQL->text(),"*.sql",this);
   if (!str.isEmpty())
     CustomSQL->setText(str);
 }

@@ -39,7 +39,7 @@ fi
 
 # Get the MOC stuff
 
-grep -E "^(UIC)|(MOC)|(FIXKDE)" Makefile.setup > configure.setup
+grep -E "^(UIC)|(MOC)" Makefile.setup > configure.setup
 
 . ./configure.setup
 
@@ -49,13 +49,6 @@ do
     base=`echo $a | sed s/\.[^\.]*$//`
     $UIC -o $base.h $a
     $UIC -i $base.h -o $base.cpp $a
-done
-
-echo Making KDE/Qt substitution
-for a in *.kde
-do
-    b=`echo $a | sed 's/\.kde$/\.h/'`
-    $FIXKDE < $a > $b
 done
 
 echo Metacompiling moc files

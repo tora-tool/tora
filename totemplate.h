@@ -32,28 +32,69 @@
  *
  ****************************************************************************/
 
-#ifndef __TOPARAMGET_H
-#define __TOPARAMGET_H
+#ifndef __TOTEMPLATE_H
+#define __TOTEMPLATE_H
 
 #include <list>
 #include <map>
 
-#include <qdialog.h>
+#include <qvbox.h>
+#include "toresultview.h"
 
-class QLineEdit;
-class QGrid;
+class toListView;
+class QMultiLineEdit;
+class toConnection;
+class QSplitter;
+class toTemplateProvider;
+class QListViewItem;
+class toMarkedText;
+class QListView;
+class toTemplateItem;
 
-class toParamGet : public QDialog {
-private:
-  static map<QString,QString> Cache;
+class toTemplate : public QVBox {
+  Q_OBJECT
 
-  QGrid *Container;
-
-  list<QWidget *> Value;
-  toParamGet(QWidget *parent=0,const char *name=0);
+  QSplitter *Splitter;
+  toListView *List;
+  map<toTemplateItem *,toTemplateProvider *> Providers;
 public:
-  static list<QString> getParam(QWidget *parent,QString &str);
-  static void setDefault(const QString &name,const QString &val,bool overwrite=true);
+  toTemplate(QWidget *parent);
+  virtual ~toTemplate();
+public slots:
+  void expand(QListViewItem *item);
+  void collapse(QListViewItem *item);
+};
+
+class toTemplateProvider {
+  static list<toTemplateProvider *> *Providers;
+public:
+  toTemplateProvider();
+  virtual ~toTemplateProvider()
+  { }
+
+  virtual toTemplateItem *insertItem(QListView *parent)=0;
+  virtual void removeItem(toTemplateItem *item)=0;
+
+  friend class toTemplate;
+};
+
+class toTemplateItem : public toResultViewItem {
+  toTemplateProvider &Provider;
+public:
+  toTemplateItem(toTemplateProvider &prov,QListView *parent,const QString &name)
+    : toResultViewItem(parent,NULL,name),Provider(prov)
+  { }
+  toTemplateItem(toTemplateItem *parent,const QString &name)
+    : toResultViewItem(parent,NULL,name),Provider(parent->provider())
+  { }
+  toTemplateProvider &provider(void)
+  { return Provider; }
+  virtual void expand(void)
+  { }
+  virtual void collapse(void)
+  { }
+  virtual void setSelected(bool)
+  { }
 };
 
 #endif

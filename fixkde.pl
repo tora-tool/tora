@@ -23,6 +23,6 @@
 use strict;
 
 while(<>) {
-    s/QMainWindow/KMainWindow/;
+    s/QMainWindow/KDockMainWindow/;
     print;
 }

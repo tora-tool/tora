@@ -36,8 +36,12 @@ TO_NAMESPACE;
 
 #include <stdio.h>
 
-#include <qfont.h>
+#ifdef TO_KDE
+#include <kfontdialog.h>
+#else
 #include <qfontdialog.h>
+#endif
+#include <qfont.h>
 #include <qcolordialog.h>
 #include <qapplication.h>
 
@@ -184,8 +188,13 @@ void toSyntaxSetup::checkFixedWidth(const QFont &fnt)
 
 void toSyntaxSetup::selectFont(void)
 {
+#ifdef TO_KDE
+  QFont font=toStringToFont(Text);
+  bool ok=KFontDialog::getFont(font,true,this);
+#else
   bool ok=true;
   QFont font=QFontDialog::getFont (&ok,toStringToFont(Text),this);
+#endif
   if (ok) {
     Text=toFontToString(font);
     CodeExample->setFont(font);

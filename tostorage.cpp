@@ -34,6 +34,10 @@
 
 TO_NAMESPACE;
 
+#ifdef TO_KDE
+#include <kfiledialog.h>
+#endif
+
 #include <qcheckbox.h>
 #include <qfiledialog.h>
 #include <qgroupbox.h>
@@ -356,7 +360,7 @@ QString toStorageDatafile::getSQL(void)
 
 void toStorageDatafile::browseFile(void)
 {
-  QString str=QFileDialog::getSaveFileName(Filename->text(),"*.dbf",this);
+  QString str=TOFileDialog::getSaveFileName(Filename->text(),"*.dbf",this);
   if (!str.isEmpty())
     Filename->setText(str);
 }
@@ -667,7 +671,7 @@ void toStorage::offline(void)
     QString dsc("Select mode to take tablespace ");
     dsc.append(Storage->currentTablespace());
     dsc.append(" offline for.");
-    switch (QMessageBox::information(this,"Tablespace offline",dsc,"Normal","Temporary","Cancel")) {
+    switch (TOMessageBox::information(this,"Tablespace offline",dsc,"Normal","Temporary","Cancel")) {
     case 0:
       reason="NORMAL";
       break;
@@ -786,7 +790,7 @@ void toStorage::moveFile(void)
 {
   try {
     QString orig=Storage->currentFilename();
-    QString file=QFileDialog::getSaveFileName(orig,"*.dbf",this);
+    QString file=TOFileDialog::getSaveFileName(orig,"*.dbf",this);
     if (!file.isEmpty()&&file!=orig) {
       QString str;
       str="ALTER TABLESPACE \"";

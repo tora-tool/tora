@@ -297,6 +297,59 @@ QToolBar *toAllocBar(QWidget *parent,const QString &str,const QString &db)
   return tool;
 }
 
+TODock *toAllocDock(const QString &name,
+		    const QString &db,
+		    const QPixmap &icon)
+{
+#ifdef TO_KDE
+  KDockMainWindow *main=dynamic_cast<KDockMainWindow *>(toMainWidget());
+  if (main) {
+    QString str=name;
+    if (db.isEmpty()) {
+      str+=" ";
+      str+=db;
+    }
+    return main->createDockWidget(str,icon);
+  } else
+    throw QString("Main widget not KDockMainWindow");
+#else
+  QToolBar *toolbar=toAllocBar(toMainWidget(),name,db);
+  return toolbar;
+#endif
+}
+
+void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place)
+{
+#ifdef TO_KDE
+  KDockMainWindow *main=dynamic_cast<KDockMainWindow *>(toMainWidget());
+  if (main) {
+    KDockWidget::DockPosition pos;
+    switch (place) {
+    case QMainWindow::Top:
+      pos=KDockWidget::DockTop;
+      break;
+    case QMainWindow::Bottom:
+      pos=KDockWidget::DockBottom;
+      break;
+    case QMainWindow::Left:
+      pos=KDockWidget::DockLeft;
+      break;
+    case QMainWindow::Right:
+      pos=KDockWidget::DockRight;
+      break;
+    default:
+      throw QString("Unknown dock position");
+    }
+    dock->setWidget(container);
+    dock->manualDock(main->getMainDockWidget(),pos,20);
+  } else
+    throw QString("Main widget not KDockMainWindow");
+#else
+  toMainWidget()->moveToolBar(dock,place);
+  dock->setStretchableWidget(container);
+#endif
+}
+
 list<QString> toReadQuery(otl_stream &str,list<QString> &args)
 {
   otl_null null;

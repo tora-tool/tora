@@ -18,3 +18,6 @@ gcc-2.96:
 
 toNoBlockQuery:
 	Can't abort execution on queries when using TO_QTHREAD.
+
+toWorksheet:
+	Doesn't seem to detect end of query all the time.

@@ -36,6 +36,10 @@ TO_NAMESPACE;
 
 #include <time.h>
 
+#ifdef TO_KDE
+#include <kfiledialog.h>
+#endif
+
 #include <qlabel.h>
 #include <qlistview.h>
 #include <qmultilineedit.h>
@@ -56,6 +60,7 @@ TO_NAMESPACE;
 #include <qfiledialog.h>
 #include <qpushbutton.h>
 #include <qmessagebox.h>
+#include <qheader.h>
 
 #include "totool.h"
 #include "toresultplan.h"
@@ -226,7 +231,7 @@ void toWorksheetPrefs::saveSetting(void)
 
 void toWorksheetPrefs::chooseFile(void)
 {
-  QString str=QFileDialog::getOpenFileName(DefaultFile->text(),"*.sql\n*.txt",this);
+  QString str=TOFileDialog::getOpenFileName(DefaultFile->text(),"*.sql\n*.txt",this);
   if (!str.isEmpty())
     DefaultFile->setText(str);
 }
@@ -459,10 +464,10 @@ bool toWorksheet::checkSave(bool input)
 	if (input) {
 	  QString str("Save changes to worksheet for ");
 	  str.append(Connection.connectString());
-	  int ret=QMessageBox::information(this,
-					   "Save file",
-					   str,
-					   "&Yes","&No","&Cancel",0,2);
+	  int ret=TOMessageBox::information(this,
+					    "Save file",
+					    str,
+					    "&Yes","&No","&Cancel",0,2);
 	  if (ret==1)
 	    return true;
 	  else if (ret==2)
@@ -472,19 +477,19 @@ bool toWorksheet::checkSave(bool input)
       } else
 	return true;
       if (Editor->filename().isEmpty()&&input)
-	Editor->setFilename(QFileDialog::getSaveFileName(Editor->filename(),
-							 "*.sql\n*.txt",this));
+	Editor->setFilename(TOFileDialog::getSaveFileName(Editor->filename(),
+							  "*.sql\n*.txt",this));
       if (Editor->filename().isEmpty())
 	return false;	
     }
     QFile file(Editor->filename());
     if (!file.open(IO_WriteOnly)) {
-      QMessageBox::warning(this,"File error","Couldn't open file for writing");
+      TOMessageBox::warning(this,"File error","Couldn't open file for writing");
       return false;
     }
     QString data=Editor->text();
     if (file.writeBlock(data,data.length())==-1) {
-      QMessageBox::warning(this,"File error","Couldn't save data to file");
+      TOMessageBox::warning(this,"File error","Couldn't save data to file");
       return false;
     }
     Editor->setEdited(false);
@@ -826,17 +831,36 @@ void toWorksheet::queryDone(void)
 {
   StopButton->setEnabled(false);
   toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,false);
+  QListViewItem *item=Result->firstChild();
+  if (item) {
+    QHeader *head=Result->header();
+    for (int i=0;i<Result->columns();i++) {
+      toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
+      toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
+      QString str;
+      if (resItem)
+	str=resItem->allText(i);
+      else if (chkItem)
+	str=chkItem->allText(i);
+      else if (item)
+	str=item->text(i);
+
+      if (str=="{null}")
+	str=QString::null;
+      toParamGet::setDefault(head->label(i).lower(),str,false);
+    }
+  }
 }
 
 void toWorksheet::enableStatistic(bool ena)
 {
   if (ena) {
     if (toTool::globalConfig(CONF_LONG_SESSION,"").isEmpty())
-      QMessageBox::warning(this,
-			   "Enable statistics",
-			   "Enabling statistics without enabling the long sessions option\n"
-			   "is unreliable at bests.",
-			   "Ok");
+      TOMessageBox::warning(this,
+			    "Enable statistics",
+			    "Enabling statistics without enabling the long sessions option\n"
+			    "is unreliable at bests.",
+			    "Ok");
     Result->setStatistics(Statistics);
     ResultTab->setTabEnabled(Statistics,true);
     toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,true);

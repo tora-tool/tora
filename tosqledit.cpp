@@ -34,6 +34,10 @@
 
 TO_NAMESPACE;
 
+#ifdef TO_KDE
+#include <kfiledialog.h>
+#endif
+
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qstring.h>
@@ -208,7 +212,7 @@ toSQLEdit::~toSQLEdit()
 
 void toSQLEdit::loadSQL(void)
 {
-  QString filename=QFileDialog::getOpenFileName(QString::null,"*.sql\n*.txt",this);
+  QString filename=TOFileDialog::getOpenFileName(QString::null,"*.sql\n*.txt",this);
   if (!filename.isEmpty()) {
     toSQL::loadSQL(filename);
     Filename=filename;
@@ -217,7 +221,7 @@ void toSQLEdit::loadSQL(void)
 
 void toSQLEdit::saveSQL(void)
 {
-  QString filename=QFileDialog::getSaveFileName(QString::null,"*.sql\n*.txt",this);
+  QString filename=TOFileDialog::getSaveFileName(QString::null,"*.sql\n*.txt",this);
   if (!filename.isEmpty()) {
     Filename=filename;
     toSQL::saveSQL(filename);
@@ -267,9 +271,9 @@ bool toSQLEdit::checkStore(bool justVer)
        (!justVer&&Version->currentText()!=LastVersion)||
        Description->edited())&&
       Version->currentText().length()>0) {
-    switch (QMessageBox::information(this,"Modified SQL dictionary",
-				     "Save changes into the SQL dictionary",
-				     "&Yes","&No","&Cancel",0,2)) {
+    switch (TOMessageBox::information(this,"Modified SQL dictionary",
+				      "Save changes into the SQL dictionary",
+				      "&Yes","&No","&Cancel",0,2)) {
     case 0:
       toSQL::updateSQL(Name->text(),
 		       Editor->editor()->text(),

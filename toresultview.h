@@ -43,7 +43,7 @@
 class QListViewItem;
 class QPopupMenu;
 class toResultView;
-class toResultTip;
+class toListTip;
 class QPrinter;
 class toSQL;
 
@@ -125,9 +125,48 @@ public:
   virtual void paintCell (QPainter *pnt,const QColorGroup & cg,int column,int width,int alignment);
 };
 
-class toResultView : public QListView, public toResult {
+class toListView : public QListView {
   Q_OBJECT
 
+  QString Name;
+  toListTip *AllTip;
+  QListViewItem *MenuItem;
+  int MenuColumn;
+  QPopupMenu *Menu;
+
+  virtual void contentsMouseDoubleClickEvent (QMouseEvent *e);
+  virtual void contentsMouseMoveEvent (QMouseEvent *e);
+
+  virtual QListViewItem *printPage(QPrinter *printer,QPainter *painter,QListViewItem *top,
+				   int &column,int &level,int pageNo,bool paint=true);
+public:
+  toListView(QWidget *parent,const char *name=NULL);
+  ~toListView();
+
+  QString sqlName(void)
+  { return Name; }
+  void setSQLName(const QString &name)
+  { Name=name; }
+  QString menuText(void);
+
+  virtual void print(void);
+  virtual void focusInEvent (QFocusEvent *e);
+  virtual void focusOutEvent (QFocusEvent *e);
+  virtual QString middleString()
+  { return QString::null; }
+  virtual void addMenues(QPopupMenu *)
+  { }
+public slots:
+  virtual void displayMenu(QListViewItem *,const QPoint &,int);
+  virtual void displayMemo(void);
+protected slots:
+  virtual void menuCallback(int);
+};
+
+class toResultView : public toListView, public toResult {
+  Q_OBJECT
+
+  virtual void keyPressEvent (QKeyEvent * e);
 protected:
   QString SQL;
   toConnection &Connection;
@@ -135,12 +174,6 @@ protected:
   int DescriptionLen;
   otl_column_desc *Description;
   QListViewItem *LastItem;
-  QString Name;
-  toResultTip *AllResult;
-
-  QListViewItem *MenuItem;
-  int MenuColumn;
-  QPopupMenu *Menu;
 
   int RowNumber;
   bool ReadableColumns;
@@ -148,15 +181,9 @@ protected:
   bool ReadAll;
   void setup(bool readable,bool dispCol);
 
-  virtual void contentsMouseDoubleClickEvent (QMouseEvent *e);
-  virtual void contentsMouseMoveEvent (QMouseEvent *e);
   virtual bool eof(void)
   { return !Query||Query->eof(); }
 
-  virtual void keyPressEvent (QKeyEvent * e);
-
-  virtual QListViewItem *printPage(QPrinter *printer,QPainter *painter,QListViewItem *top,
-				   int &column,int &level,int pageNo,bool paint=true);
 public:
   toResultView(bool readable,bool numCol,toConnection &conn,QWidget *parent,const char *name=NULL);
   toResultView(toConnection &conn,QWidget *parent,const char *name=NULL);
@@ -175,12 +202,6 @@ public:
   bool numberColumn() const
   { return NumberColumn; }
 
-  QString sqlName(void)
-  { return Name; }
-  void setSQLName(const QString &name)
-  { Name=name; }
-  QString menuText(void);
-
   virtual QListViewItem *createItem(QListView *parent,QListViewItem *last,const char *str)
   { return new toResultViewItem(parent,last,str); }
 
@@ -193,9 +214,12 @@ public:
   { list<QString> p; query(sql,p); }
   void query(toSQL &sql);
 
-  virtual void print(void);
-  virtual void focusInEvent (QFocusEvent *e);
-  virtual void focusOutEvent (QFocusEvent *e);
+  virtual void print(void)
+  { readAll(); toListView::print(); }
+  virtual QString middleString()
+  { return Connection.connectString(); }
+
+  virtual void addMenues(QPopupMenu *);
 public slots:
   virtual void refresh(void)
   { query(SQL); }
@@ -206,10 +230,8 @@ public slots:
   virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
   { list<QString> p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
   virtual void addItem(void);
-  virtual void displayMenu(QListViewItem *,const QPoint &,int);
-  virtual void displayMemo(void);
 protected slots:
-  void menuCallback(int);
+  virtual void menuCallback(int);
 };
 
 #endif

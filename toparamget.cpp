@@ -233,3 +233,13 @@ list<QString> toParamGet::getParam(QWidget *parent,QString &str)
   str=res;
   return ret;
 }
+
+void toParamGet::setDefault(const QString &name,const QString &val,bool overwrite)
+{
+  if (!overwrite) {
+    map<QString,QString>::iterator fnd=Cache.find(name);
+    if (fnd!=Cache.end())
+      return;
+  }
+  Cache[name]=val;
+}

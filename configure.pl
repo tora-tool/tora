@@ -438,7 +438,7 @@ __TEMP__
 	}
 	print "KDE libraries at $KDELibs\n";
 
-	$Libs.=" -lkdecore -lkdeui -lDCOP";
+	$Libs.=" -lkdecore -lkdeui -lDCOP -lkfile";
 	$LFlags.=" \"-L".$KDELibs."\"";
 	if ($Linux) {
 	    $LFlags.=" -Xlinker \"--rpath=$KDELibs\"";
@@ -614,7 +614,7 @@ __EOT__
 
 	print MAKEFILE "# How to generate kde files, either \$PERL fixkde.pl (If TO_KDE is set) or cat\n";
 	if ($KDEApplication) {
-	    print MAKEFILE "FIXKDE=fixkde.pl\n";
+	    print MAKEFILE "FIXKDE=./fixkde.pl\n";
 	} else {
 	    print MAKEFILE "FIXKDE=cat\n";
 	}
@@ -637,6 +637,10 @@ CFLAGS_GLOB=-g -fPIC -Wall
 __EOT__
 
 	close MAKEFILE;
+	if ($KDEApplication) {
+	    print "Making KDE/Qt substitution\n";
+	    require "fixkde.pl";
+	}
     } else {
 	print "Couldn't open Makefile.setup for writing\n";
 	exit(2);

@@ -34,6 +34,10 @@
 
 TO_NAMESPACE;
 
+#ifdef TO_KDE
+#include <kfiledialog.h>
+#endif
+
 #include <qapplication.h>
 #include <qcombobox.h>
 #include <qevent.h>
@@ -83,6 +87,7 @@ TO_NAMESPACE;
 #include "icons/cut.xpm"
 #include "icons/copy.xpm"
 #include "icons/paste.xpm"
+#include "icons/toramini.xpm"
 
 #define DEFAULT_TITLE "TOra %s"
 
@@ -129,6 +134,7 @@ static QPixmap *toCutPixmap;
 static QPixmap *toCopyPixmap;
 static QPixmap *toPastePixmap;
 static QPixmap *toPrintPixmap;
+static QPixmap *toTOraPixmap;
 
 static toResultContent *toContent(QWidget *widget)
 {
@@ -143,7 +149,7 @@ static toResultContent *toContent(QWidget *widget)
 
 toMain::toMain()
 #ifdef TO_KDE
-  : KMainWindow(0,"Main Window")
+  : KDockMainWindow(0,"Main Window")
 #else
   : QMainWindow(0,"Main Window")
 #endif
@@ -175,6 +181,8 @@ toMain::toMain()
     toPastePixmap=new QPixmap((const char **)paste_xpm);
   if (!toPrintPixmap)
     toPrintPixmap=new QPixmap((const char **)print_xpm);
+  if (!toTOraPixmap)
+    toTOraPixmap=new QPixmap((const char **)toramini_xpm);
 
   char buffer[100];
   sprintf(buffer,DEFAULT_TITLE,TOVERSION);
@@ -365,8 +373,16 @@ toMain::toMain()
   HelpMenu->insertItem("&About TOra",TO_HELP_ABOUT);
   menuBar()->insertItem("&Help",HelpMenu,TO_HELP_MENU);
 
+#ifdef TO_KDE
+  KDockWidget *mainDock=createDockWidget("TOra Workspace",*toTOraPixmap);
+  Workspace=new QWorkspace(mainDock);
+  mainDock->setWidget(Workspace);
+  setView(mainDock);
+  setMainDockWidget(mainDock);
+#else
   Workspace=new QWorkspace(this);
   setCentralWidget(Workspace);
+#endif
 
   statusBar()->message("Ready");
   menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,false);
@@ -378,6 +394,23 @@ toMain::toMain()
     (*j)->setEnabled(false);
 
   connect(menuBar(),SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
+
+  RowLabel=new QLabel(statusBar());
+  statusBar()->addWidget(RowLabel,0,true);
+  RowLabel->setMinimumWidth(60);
+  RowLabel->show();
+
+  ColumnLabel=new QLabel(statusBar());
+  statusBar()->addWidget(ColumnLabel,0,true);
+  ColumnLabel->setMinimumWidth(60);
+  ColumnLabel->show();
+
+  toolID=TO_TOOLS;
+  for (map<QString,toTool *>::iterator k=tools.begin();k!=tools.end();k++) {
+    (*k).second->customSetup(toolID);
+    toolID++;
+  }
+  Search=NULL;
 
   show();
   {
@@ -400,22 +433,7 @@ toMain::toMain()
     }
   }
 
-  RowLabel=new QLabel(statusBar());
-  statusBar()->addWidget(RowLabel,0,true);
-  RowLabel->setMinimumWidth(60);
-  RowLabel->show();
-
-  ColumnLabel=new QLabel(statusBar());
-  statusBar()->addWidget(ColumnLabel,0,true);
-  ColumnLabel->setMinimumWidth(60);
-  ColumnLabel->show();
-
-  toolID=TO_TOOLS;
-  for (map<QString,toTool *>::iterator k=tools.begin();k!=tools.end();k++) {
-    (*k).second->customSetup(toolID);
-    toolID++;
-  }
-  Search=NULL;
+  toStatusMessage("Welcome to Tora",true);
 }
 
 void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child windows
@@ -461,7 +479,10 @@ void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child w
       menuBar()->setItemEnabled(TO_FILE_PRINT,true);
     } else {
       menuBar()->setItemEnabled(TO_EDIT_READ_ALL,false);
-      menuBar()->setItemEnabled(TO_FILE_PRINT,false);
+      if (dynamic_cast<toListView *>(currWidget))
+	menuBar()->setItemEnabled(TO_FILE_PRINT,true);
+      else
+	menuBar()->setItemEnabled(TO_FILE_PRINT,false);
     }
   }
 }
@@ -540,11 +561,11 @@ void toMain::commandCallback(int cmd)
       case TO_FILE_OPEN:
 	if (!readOnly) {
 	  QFileInfo file(mark->filename());
-	  QString filename=QFileDialog::getOpenFileName(file.dirPath(),"*.sql\n*.txt",this);
+	  QString filename=TOFileDialog::getOpenFileName(file.dirPath(),"*.sql\n*.txt",this);
 	  if (!filename.isEmpty()) {
 	    QFile file(filename);
 	    if (!file.open(IO_ReadOnly)) {
-	      QMessageBox::warning(this,"File error","Couldn't read file");
+	      TOMessageBox::warning(this,"File error","Couldn't read file");
 	      return;
 	    }
 	    
@@ -569,11 +590,11 @@ void toMain::commandCallback(int cmd)
 	QFileInfo file(mark->filename());
 	QString filename=mark->filename();
 	if (newFilename||filename.isEmpty())
-	  filename=QFileDialog::getSaveFileName(file.dirPath(),"*.sql\n*.txt",this);
+	  filename=TOFileDialog::getSaveFileName(file.dirPath(),"*.sql\n*.txt",this);
 	if (!filename.isEmpty()) {
 	  QFile file(filename);
 	  if (!file.open(IO_WriteOnly)) {
-	    QMessageBox::warning(this,"File error","Couldn't open file for writing");
+	    TOMessageBox::warning(this,"File error","Couldn't open file for writing");
 	    return;
 	  }
 	  QString data=mark->text();
@@ -608,7 +629,7 @@ void toMain::commandCallback(int cmd)
       break;
     case TO_FILE_PRINT:
       {
-	toResultView *res=dynamic_cast<toResultView *>(qApp->focusWidget());
+	toListView *res=dynamic_cast<toListView *>(qApp->focusWidget());
 	toResultContent *cnt=toContent(qApp->focusWidget());
 	if (res)
 	  res->print();
@@ -699,6 +720,9 @@ void toMain::addConnection(toConnection *conn)
     for (map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++)
       menuBar()->setItemEnabled((*j).first,true);
   }
+
+  emit addedConnection(conn->connectString());
+  createDefault();
 }
 
 bool toMain::delConnection(void)
@@ -712,7 +736,7 @@ bool toMain::delConnection(void)
 	QString str("Commit work in session to ");
 	str.append(conn->connectString());
 	str.append(" before closing it?");
-	switch(QMessageBox::warning(this,"Commit work?",str,"&Yes","&No","&Cancel")) {
+	switch(TOMessageBox::warning(this,"Commit work?",str,"&Yes","&No","&Cancel")) {
 	case 0:
 	  conn->commit();
 	  break;
@@ -729,6 +753,7 @@ bool toMain::delConnection(void)
       ConnectionSelection->removeItem(pos);
       if (ConnectionSelection->count())
 	ConnectionSelection->setCurrentItem(max(pos-1,0));
+      emit removedConnection(conn->connectString());
       delete conn;
       break;
     }
@@ -877,7 +902,6 @@ bool toMain::close(bool del)
 void toMain::createDefault(void)
 {
   commandCallback(TO_TOOLS);
-  toStatusMessage("Welcome to Tora",true);
 }
 
 void toMain::setCoordinates(int line,int col)

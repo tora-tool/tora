@@ -121,10 +121,9 @@ int toResultViewItem::width(const QFontMetrics &fm, const QListView *top, int co
 void toResultViewItem::paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align)
 {
   QListViewItem::paintCell(p,cg,column,width,align);
-  if (itemBelow()==NULL||itemBelow()->itemBelow()==NULL) {
-    toResultView *view=(toResultView *)listView();
+  toResultView *view=dynamic_cast<toResultView *>(listView());
+  if (view&&(itemBelow()==NULL||itemBelow()->itemBelow()==NULL))
     view->addItem();
-  }
 }
 
 QString toResultViewItem::text(int col) const
@@ -199,10 +198,9 @@ int toResultViewCheck::width(const QFontMetrics &fm, const QListView *top, int c
 void toResultViewCheck::paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align)
 {
   QCheckListItem::paintCell(p,cg,column,width,align);
-  if (itemBelow()==NULL||itemBelow()->itemBelow()==NULL) {
-    toResultView *view=(toResultView *)listView();
+  toResultView *view=dynamic_cast<toResultView *>(listView());
+  if (view&&(itemBelow()==NULL||itemBelow()->itemBelow()==NULL))
     view->addItem();
-  }
 }
 
 QString toResultViewCheck::text(int col) const
@@ -229,26 +227,26 @@ QString toResultViewCheck::key(int col,bool asc) const
   return val;
 }
 
-class toResultTip : public QToolTip {
+class toListTip : public QToolTip {
 private:
-  toResultView *Result;
+  toListView *List;
 public:
-  toResultTip(toResultView *parent)
+  toListTip(toListView *parent)
     : QToolTip(parent->viewport())
   {
-    Result=parent;
+    List=parent;
   }
 
   virtual void maybeTip(const QPoint &p)
   {
-    QListViewItem *item=Result->itemAt(p);
+    QListViewItem *item=List->itemAt(p);
     toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
     toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
     if (item) {
-      int col=Result->header()->sectionAt(Result->viewportToContents(p).x());
-      QPoint t(Result->header()->sectionPos(col),0);
-      int pos=Result->contentsToViewport(t).x();
-      int width=Result->header()->sectionSize(col);
+      int col=List->header()->sectionAt(List->viewportToContents(p).x());
+      QPoint t(List->header()->sectionPos(col),0);
+      int pos=List->contentsToViewport(t).x();
+      int width=List->header()->sectionSize(col);
       QString key;
 	
       QString text=item->text(col);
@@ -258,10 +256,10 @@ public:
 	key=chkItem->tooltip(col);
       else
 	key=text;
-      int textWidth=TextWidth(qApp->fontMetrics(),text)+Result->itemMargin()*2+2;
+      int textWidth=TextWidth(qApp->fontMetrics(),text)+List->itemMargin()*2+2;
       if (key!=text||
 	  width<textWidth) {
-	QRect itemRect=Result->itemRect(item);
+	QRect itemRect=List->itemRect(item);
 	itemRect.setLeft(pos);
 	itemRect.setRight(pos+width);
 	tip(itemRect,key);
@@ -270,15 +268,11 @@ public:
   }
 };
 
-void toResultView::setup(bool readable,bool dispCol)
+toListView::toListView(QWidget *parent,const char *name)
+  : QListView(parent,name)
 {
-  Query=NULL;
-  ReadableColumns=readable;
   setAllColumnsShowFocus(true);
-  NumberColumn=dispCol;
-  if (NumberColumn)
-    addColumn("#");
-  AllResult=new toResultTip(this);
+  AllTip=new toListTip(this);
   setShowSortIndicator(true);
   setSorting(-1);
   Menu=NULL;
@@ -286,14 +280,273 @@ void toResultView::setup(bool readable,bool dispCol)
 	  this,SLOT(displayMenu(QListViewItem *,const QPoint &,int)));
 }
 
+toListView::~toListView()
+{
+  if (qApp->focusWidget()==this)
+    toMain::editDisable();
+}
+
+void toListView::contentsMouseDoubleClickEvent (QMouseEvent *e)
+{
+  QPoint p=e->pos();
+  int col=header()->sectionAt(p.x());
+  QListViewItem *item=itemAt(contentsToViewport(p));
+  toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
+  toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
+  QClipboard *clip=qApp->clipboard();
+  if (resItem)
+    clip->setText(resItem->allText(col));
+  else if (chkItem)
+    clip->setText(chkItem->allText(col));
+  else if (item)
+    clip->setText(item->text(col));
+  
+}
+
+void toListView::contentsMouseMoveEvent (QMouseEvent *e)
+{
+  if (e->state()==LeftButton&&
+      e->stateAfter()==LeftButton) {
+    QPoint p=e->pos();
+    int col=header()->sectionAt(p.x());
+    QListViewItem *item=itemAt(contentsToViewport(p));
+    toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
+    toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
+    QString str;
+    if (resItem)
+      str=resItem->allText(col);
+    else if (chkItem)
+      str=chkItem->allText(col);
+    else if (item)
+      str=item->text(col);
+    if (str.length()) {
+      QDragObject *d=new QTextDrag(str,this);
+      d->dragCopy();
+    }
+  } else
+    QListView::contentsMouseMoveEvent(e);
+}
+
+QListViewItem *toListView::printPage(QPrinter *printer,QPainter *painter,QListViewItem *top,int &column,int &level,int pageNo,bool paint)
+{
+  QPaintDeviceMetrics metrics(printer);
+  double scale=toTool::globalConfig(CONF_LIST_SCALE,DEFAULT_LIST_SCALE).toFloat();
+  double mwidth=metrics.width()/scale;
+  double mheight=metrics.height()/scale;
+  double x=0;
+  if (paint) {
+    QString numPage("Page: ");
+    numPage+=QString::number(pageNo);
+    painter->drawText(0,metrics.height()-header()->height(),metrics.width(),
+		      header()->height(),
+		      SingleLine|AlignRight|AlignVCenter,
+		      numPage);
+    painter->drawText(0,metrics.height()-header()->height(),metrics.width(),
+		      header()->height(),
+		      SingleLine|AlignHCenter|AlignVCenter,
+		      middleString());
+    painter->drawText(0,metrics.height()-header()->height(),metrics.width(),
+		      header()->height(),
+		      SingleLine|AlignLeft|AlignVCenter,
+		      sqlName());
+    painter->scale(scale,scale);
+    painter->drawLine(0,header()->height()-1,int(mwidth),header()->height()-1);
+  }
+  for (int i=column;i<columns();i++) {
+    double width=columnWidth(i);
+    if (width+x>=mwidth) {
+      if (i==column)
+	width=mwidth-x-1;
+      else
+	break;
+    }
+    if (paint)
+      painter->drawText(int(x),0,int(width),header()->height(),SingleLine|AlignLeft|AlignVCenter,header()->label(i));
+    x+=width;
+  }
+  if (paint)
+    painter->translate(0,header()->height());
+
+  double y=(header()->height()+1)/scale+header()->height();
+  int curLevel=level;
+  int tree=rootIsDecorated()?treeStepSize():0;
+  int newCol=-1;
+  QListViewItem *item=top;
+  while(item&&(y<mheight||item==top)) {
+    if (column==0)
+      x=curLevel;
+    else
+      x=0;
+    painter->translate(x,0);
+    for (int i=column;i<columns();i++) {
+      double width=columnWidth(i);
+      if (width+x>=mwidth) {
+	if (i==column)
+	  width=mwidth-x-1;
+	else {
+	  newCol=i;
+	  break;
+	}
+      }
+      if (i==0)
+	width-=curLevel;
+      if (paint) {
+	item->paintCell(painter,qApp->palette().active(),i,int(width),columnAlignment(i));
+	painter->translate(width,0);
+      }
+      x+=width;
+    }
+    if (paint)
+      painter->translate(-x,item->height());
+    y+=item->height();
+    if (item->firstChild()) {
+      item=item->firstChild();
+      curLevel+=tree;
+    } else if (item->nextSibling())
+      item=item->nextSibling();
+    else {
+      do {
+	item=item->parent();
+	curLevel-=tree;
+      } while(item&&!item->nextSibling());
+      if (item)
+	item=item->nextSibling();
+    }
+  }
+  if (paint)
+    painter->drawLine(0,0,int(mwidth),0);
+  if (newCol>=0) {
+    column=newCol;
+    return top;
+  }
+  column=0;
+  level=curLevel;
+  return item;
+}
+
+void toListView::print(void)
+{
+  TOPrinter printer;
+  printer.setMinMax(1,1000);
+  if (printer.setup()) {
+    printer.setCreator("TOra");
+    QPainter painter(&printer);
+    QListViewItem *item=firstChild();
+    int column=0;
+    int tree=rootIsDecorated()?treeStepSize():0;
+    int page=1;
+    while(page<printer.fromPage()&&
+	  (item=printPage(&printer,&painter,item,column,tree,page++,false)))
+      painter.resetXForm();
+    while((item=printPage(&printer,&painter,item,column,tree,page++))&&
+	  (printer.toPage()==0||page<=printer.toPage())) {
+      printer.newPage();
+      painter.resetXForm();
+      qApp->processEvents();
+      QString str("Printing page ");
+      str+=QString::number(page);
+      toStatusMessage(str);
+    }
+    painter.end();
+    toStatusMessage("Done printing");
+  }
+}
+
+#define TORESULT_COPY     1
+#define TORESULT_MEMO     2
+#define TORESULT_SQL      3
+#define TORESULT_READ_ALL 4
+
+void toListView::displayMenu(QListViewItem *item,const QPoint &p,int col)
+{
+  if (item) {
+    if (!Menu) {
+      Menu=new QPopupMenu(this);
+      Menu->insertItem("&Copy",TORESULT_COPY);
+      Menu->insertItem("Display in editor",TORESULT_MEMO);
+      if (!Name.isEmpty()) {
+	Menu->insertSeparator();
+	Menu->insertItem("Edit SQL",TORESULT_SQL);
+      }
+      connect(Menu,SIGNAL(activated(int)),this,SLOT(menuCallback(int)));
+      addMenues(Menu);
+    }
+    MenuItem=item;
+    MenuColumn=col;
+    Menu->popup(p);
+  }
+}
+
+void toListView::displayMemo(void)
+{
+  QString str=menuText();
+  if (!str.isEmpty())
+    new toMemoEditor(this,str);
+}
+
+void toListView::menuCallback(int cmd)
+{
+  switch(cmd) {
+  case TORESULT_COPY:
+    {
+      QClipboard *clip=qApp->clipboard();
+      clip->setText(menuText());
+    }
+    break;
+  case TORESULT_MEMO:
+    displayMemo();
+    break;
+  case TORESULT_SQL:
+    toMainWidget()->editSQL(Name);
+    break;
+  }
+}
+
+QString toListView::menuText(void)
+{
+  toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(MenuItem);
+  toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(MenuItem);
+  QString str;
+  if (resItem)
+    str=resItem->allText(MenuColumn);
+  else if (chkItem)
+    str=chkItem->allText(MenuColumn);
+  else if (MenuItem)
+    str=MenuItem->text(MenuColumn);
+  return str;
+}
+
+void toListView::focusInEvent (QFocusEvent *e)
+{
+  toMain::editEnable(false,false,true,
+		     false,false,
+		     false,false,false,true);
+  QListView::focusInEvent(e);
+}
+
+void toListView::focusOutEvent (QFocusEvent *e)
+{
+  toMain::editDisable();
+  QListView::focusOutEvent(e);
+}
+
+void toResultView::setup(bool readable,bool dispCol)
+{
+  Query=NULL;
+  ReadableColumns=readable;
+  NumberColumn=dispCol;
+  if (NumberColumn)
+    addColumn("#");
+}
+
 toResultView::toResultView(bool readable,bool dispCol,toConnection &conn,QWidget *parent,const char *name)
-  : QListView(parent,name), Connection(conn)
+  : toListView(parent,name), Connection(conn)
 {
   setup(readable,dispCol);
 }
 
 toResultView::toResultView(toConnection &conn,QWidget *parent,const char *name)
-  : QListView(parent,name), Connection(conn)
+  : toListView(parent,name), Connection(conn)
 {
   setup(false,true);
 }
@@ -317,47 +570,6 @@ void toResultView::addItem(void)
 	LastItem->setText(j+disp,toReadValue(Description[j],*Query,MaxColSize));
     }
   } TOCATCH
-}
-
-void toResultView::contentsMouseDoubleClickEvent (QMouseEvent *e)
-{
-  QPoint p=e->pos();
-  int col=header()->sectionAt(p.x());
-  QListViewItem *item=itemAt(contentsToViewport(p));
-  toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
-  toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
-  QClipboard *clip=qApp->clipboard();
-  if (resItem)
-    clip->setText(resItem->allText(col));
-  else if (chkItem)
-    clip->setText(chkItem->allText(col));
-  else if (item)
-    clip->setText(item->text(col));
-  
-}
-
-void toResultView::contentsMouseMoveEvent (QMouseEvent *e)
-{
-  if (e->state()==LeftButton&&
-      e->stateAfter()==LeftButton) {
-    QPoint p=e->pos();
-    int col=header()->sectionAt(p.x());
-    QListViewItem *item=itemAt(contentsToViewport(p));
-    toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
-    toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
-    QString str;
-    if (resItem)
-      str=resItem->allText(col);
-    else if (chkItem)
-      str=chkItem->allText(col);
-    else if (item)
-      str=item->text(col);
-    if (str.length()) {
-      QDragObject *d=new QTextDrag(str,this);
-      d->dragCopy();
-    }
-  } else
-    QListView::contentsMouseMoveEvent(e);
 }
 
 void toResultView::query(const QString &sql,const list<QString> &param)
@@ -462,134 +674,6 @@ void toResultView::readAll(void)
 toResultView::~toResultView()
 {
   delete Query;
-  if (qApp->focusWidget()==this)
-    toMain::editDisable();
-}
-
-QListViewItem *toResultView::printPage(QPrinter *printer,QPainter *painter,QListViewItem *top,int &column,int &level,int pageNo,bool paint)
-{
-  QPaintDeviceMetrics metrics(printer);
-  double scale=toTool::globalConfig(CONF_LIST_SCALE,DEFAULT_LIST_SCALE).toFloat();
-  double mwidth=metrics.width()/scale;
-  double mheight=metrics.height()/scale;
-  double x=0;
-  if (paint) {
-    QString numPage("Page: ");
-    numPage+=QString::number(pageNo);
-    painter->drawText(0,metrics.height()-header()->height(),metrics.width(),
-		      header()->height(),
-		      SingleLine|AlignRight|AlignVCenter,
-		      numPage);
-    painter->drawText(0,metrics.height()-header()->height(),metrics.width(),
-		      header()->height(),
-		      SingleLine|AlignHCenter|AlignVCenter,
-		      Connection.connectString());
-    painter->drawText(0,metrics.height()-header()->height(),metrics.width(),
-		      header()->height(),
-		      SingleLine|AlignLeft|AlignVCenter,
-		      sqlName());
-    painter->scale(scale,scale);
-    painter->drawLine(0,header()->height()-1,int(mwidth),header()->height()-1);
-  }
-  for (int i=column;i<columns();i++) {
-    double width=columnWidth(i);
-    if (width+x>=mwidth) {
-      if (i==column)
-	width=mwidth-x-1;
-      else
-	break;
-    }
-    if (paint)
-      painter->drawText(int(x),0,int(width),header()->height(),SingleLine|AlignLeft|AlignVCenter,header()->label(i));
-    x+=width;
-  }
-  if (paint)
-    painter->translate(0,header()->height());
-
-  double y=(header()->height()+1)/scale+header()->height();
-  int curLevel=level;
-  int tree=rootIsDecorated()?treeStepSize():0;
-  int newCol=-1;
-  QListViewItem *item=top;
-  while(item&&(y<mheight||item==top)) {
-    if (column==0)
-      x=curLevel;
-    else
-      x=0;
-    painter->translate(x,0);
-    for (int i=column;i<columns();i++) {
-      double width=columnWidth(i);
-      if (width+x>=mwidth) {
-	if (i==column)
-	  width=mwidth-x-1;
-	else {
-	  newCol=i;
-	  break;
-	}
-      }
-      if (i==0)
-	width-=curLevel;
-      if (paint) {
-	item->paintCell(painter,qApp->palette().active(),i,int(width),columnAlignment(i));
-	painter->translate(width,0);
-      }
-      x+=width;
-    }
-    if (paint)
-      painter->translate(-x,item->height());
-    y+=item->height();
-    if (item->firstChild()) {
-      item=item->firstChild();
-      curLevel+=tree;
-    } else if (item->nextSibling())
-      item=item->nextSibling();
-    else {
-      do {
-	item=item->parent();
-	curLevel-=tree;
-      } while(item&&!item->nextSibling());
-      if (item)
-	item=item->nextSibling();
-    }
-  }
-  if (paint)
-    painter->drawLine(0,0,int(mwidth),0);
-  if (newCol>=0) {
-    column=newCol;
-    return top;
-  }
-  column=0;
-  level=curLevel;
-  return item;
-}
-
-void toResultView::print(void)
-{
-  readAll();
-  TOPrinter printer;
-  printer.setMinMax(1,1000);
-  if (printer.setup()) {
-    printer.setCreator("TOra");
-    QPainter painter(&printer);
-    QListViewItem *item=firstChild();
-    int column=0;
-    int tree=rootIsDecorated()?treeStepSize():0;
-    int page=1;
-    while(page<printer.fromPage()&&
-	  (item=printPage(&printer,&painter,item,column,tree,page++,false)))
-      painter.resetXForm();
-    while((item=printPage(&printer,&painter,item,column,tree,page++))&&
-	  (printer.toPage()==0||page<=printer.toPage())) {
-      printer.newPage();
-      painter.resetXForm();
-      qApp->processEvents();
-      QString str("Printing page ");
-      str+=QString::number(page);
-      toStatusMessage(str);
-    }
-    painter.end();
-    toStatusMessage("Done printing");
-  }
 }
 
 void toResultView::keyPressEvent(QKeyEvent *e)
@@ -607,90 +691,28 @@ void toResultView::keyPressEvent(QKeyEvent *e)
   QListView::keyPressEvent(e);
 }
 
-void toResultView::focusInEvent (QFocusEvent *e)
-{
-  toMain::editEnable(false,false,true,
-		     false,false,
-		     false,false,false,true);
-  QListView::focusInEvent(e);
-}
-
-void toResultView::focusOutEvent (QFocusEvent *e)
-{
-  toMain::editDisable();
-  QListView::focusOutEvent(e);
-}
-
 void toResultView::setSQL(toSQL &sql)
 {
+  setSQLName(sql.name());
   SQL=sql(Connection);
-  Name=sql.name();
 }
 
 void toResultView::query(toSQL &sql)
 {
-  Name=sql.name();
+  setSQLName(sql.name());
   query(sql(Connection));
 }
 
-#define TORESULT_COPY 1
-#define TORESULT_MEMO 2
-#define TORESULT_SQL  3
-
-void toResultView::displayMenu(QListViewItem *item,const QPoint &p,int col)
+void toResultView::addMenues(QPopupMenu *menu)
 {
-  if (item) {
-    if (!Menu) {
-      Menu=new QPopupMenu(this);
-      Menu->insertItem("&Copy",TORESULT_COPY);
-      Menu->insertItem("Display in editor",TORESULT_MEMO);
-      if (!Name.isEmpty()) {
-	Menu->insertSeparator();
-	Menu->insertItem("Edit SQL",TORESULT_SQL);
-      }
-      connect(Menu,SIGNAL(activated(int)),this,SLOT(menuCallback(int)));
-    }
-    MenuItem=item;
-    MenuColumn=col;
-    Menu->popup(p);
-  }
-}
-
-void toResultView::displayMemo(void)
-{
-  QString str=menuText();
-  if (!str.isEmpty())
-    new toMemoEditor(this,str);
+  menu->insertSeparator();
+  menu->insertItem("Read All",TORESULT_READ_ALL);
 }
 
 void toResultView::menuCallback(int cmd)
 {
-  switch(cmd) {
-  case TORESULT_COPY:
-    {
-      QClipboard *clip=qApp->clipboard();
-      clip->setText(menuText());
-    }
-    break;
-  case TORESULT_MEMO:
-    displayMemo();
-    break;
-  case TORESULT_SQL:
-    toMainWidget()->editSQL(Name);
-    break;
-  }
-}
-
-QString toResultView::menuText(void)
-{
-  toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(MenuItem);
-  toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(MenuItem);
-  QString str;
-  if (resItem)
-    str=resItem->allText(MenuColumn);
-  else if (chkItem)
-    str=chkItem->allText(MenuColumn);
-  else if (MenuItem)
-    str=MenuItem->text(MenuColumn);
-  return str;
+  if (cmd==TORESULT_READ_ALL)
+    readAll();
+  else
+    toListView::menuCallback(cmd);
 }

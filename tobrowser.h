@@ -38,6 +38,8 @@
 #include <qvbox.h>
 #include <map>
 
+#include "totemplate.h"
+
 class QComboBox;
 class QTabWidget;
 class toResult;
@@ -69,6 +71,22 @@ public slots:
   void changeTab(QWidget *tab);
   void changeSecondTab(QWidget *tab);
   void changeItem(QListViewItem *item);
+};
+
+class toBrowseTemplate : public QObject,public toTemplateProvider {
+  Q_OBJECT
+
+  list<toTemplateItem *> Parents;
+  bool Registered;
+public:
+  toBrowseTemplate(void)
+    : toTemplateProvider()
+  { Registered=false; }
+  toTemplateItem *insertItem(QListView *parent);
+  void removeItem(toTemplateItem *item);
+public slots:
+  void addDatabase(const QString &);
+  void removeDatabase(const QString &); 
 };
 
 #endif

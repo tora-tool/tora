@@ -2029,9 +2029,9 @@ bool toDebug::checkStop(void)
   Lock.lock();
   if (RunningTarget) {
     Lock.unlock();
-    if (QMessageBox::information(this,"Stop execution?",
-				 "Do you want to abort the current execution?",
-				 "&Ok","Cancel")!=0)
+    if (TOMessageBox::information(this,"Stop execution?",
+				  "Do you want to abort the current execution?",
+				  "&Ok","Cancel")!=0)
       return false;
     stop();
   } else
@@ -2042,12 +2042,12 @@ bool toDebug::checkStop(void)
 bool toDebug::checkCompile(void)
 {
   if (HeadEditor->edited()) {
-    switch (QMessageBox::warning(this,
-				 "Header changed",
-				 "Header changed. Continuing will discard uncompiled or saved changes",
-				 "&Compile",
-				 "&Discard changes",
-				 "Cancel")) {
+    switch (TOMessageBox::warning(this,
+				  "Header changed",
+				  "Header changed. Continuing will discard uncompiled or saved changes",
+				  "&Compile",
+				  "&Discard changes",
+				  "Cancel")) {
     case 0:
       if (!checkStop())
 	return false;
@@ -2062,12 +2062,12 @@ bool toDebug::checkCompile(void)
     }
   }
   if (BodyEditor->edited()) {
-    switch (QMessageBox::warning(this,
-				 "Body changed",
-				 "Body changed. Continuing will discard uncompiled or saved changes",
-				 "&Compile",
-				 "&Discard changes",
-				 "Cancel")) {
+    switch (TOMessageBox::warning(this,
+				  "Body changed",
+				  "Body changed. Continuing will discard uncompiled or saved changes",
+				  "&Compile",
+				  "&Discard changes",
+				  "Cancel")) {
     case 0:
       if (!checkStop())
 	return false;

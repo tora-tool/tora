@@ -41,14 +41,20 @@
 #include <qmainwindow.h>
 
 #ifdef TO_KDE
-#  include <kmainwindow.h>
+#  include <kdockwidget.h>
 #  include <ktoolbar.h>
 #  include <kmenubar.h>
 // In preparation of KPrinter landing
 #  define TOPrinter QPrinter
+#  define TODock KDockWidget
+#  define TOFileDialog KFileDialog
 #else
+#  include <qtoolbar.h>
 #  define TOPrinter QPrinter
+#  define TODock QToolBar
+#  define TOFileDialog QFileDialog
 #endif
+#  define TOMessageBox QMessageBox
 
 class QWorkspace;
 class QComboBox;
@@ -125,6 +131,8 @@ public:
   void registerSQLEditor(int toolid);
 signals:
   void sqlEditor(const QString &str);
+  void addedConnection(const QString &str);
+  void removedConnection(const QString &str);
 public slots:
   void windowsMenu(void);
 private slots:
@@ -161,6 +169,10 @@ QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize);
 bool toMonolithic(void);
 QString toDeepCopy(const QString &);
 QToolBar *toAllocBar(QWidget *parent,const QString &name,const QString &db);
+TODock *toAllocDock(const QString &name,
+		    const QString &db,
+		    const QPixmap &icon);
+void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place);
 list<QString> toReadQuery(otl_stream &,list<QString> &args);
 list<QString> toReadQuery(otl_stream &,
 			  const QString &arg1=QString::null,const QString &arg2=QString::null,

@@ -199,26 +199,24 @@ int main(int argc,char **argv)
 	toTool::globalSetConfig(CONF_USER,user);
     }
 
-    toMain *mainWidget=new toMain;
+    new toMain;
 
-    mainWidget->createDefault();
-    
     return mainApp.exec();
   } catch (const otl_exception &exc) {
-    QMessageBox::critical(NULL,
-			  "Unhandled exception",
-			  QString(QString::fromUtf8((const char *)exc.msg)),
-			  "Exit");
+    TOMessageBox::critical(NULL,
+			   "Unhandled exception",
+			   QString(QString::fromUtf8((const char *)exc.msg)),
+			   "Exit");
   } catch (const QString &str) {
-    QMessageBox::critical(NULL,
-			  "Unhandled exception",
-			  str,
-			  "Exit");
+    TOMessageBox::critical(NULL,
+			   "Unhandled exception",
+			   str,
+			   "Exit");
   } catch (...) {
-    QMessageBox::critical(NULL,
-			  "Unhandled exception",
-			  "Unknown type",
-			  "Exit");
+    TOMessageBox::critical(NULL,
+			   "Unhandled exception",
+			   "Unknown type",
+			   "Exit");
   }
   return 1;
 }

@@ -376,10 +376,10 @@ QString toSecurityUser::sql(void)
   QString extra;
   if (Authentication->currentPage()==PasswordTab) {
     if (Password->text()!=Password2->text()) {
-      switch(QMessageBox::warning(this,
-				  "Passwords don't match",
-				  "The two versions of the password doesn't match",
-				  "Don't save","Cancel")) {
+      switch(TOMessageBox::warning(this,
+				   "Passwords don't match",
+				   "The two versions of the password doesn't match",
+				   "Don't save","Cancel")) {
       case 0:
 	return QString::null;
       case 1:
@@ -600,10 +600,10 @@ QString toSecurityRole::sql(void)
   QString extra;
   if (Authentication->currentPage()==PasswordTab) {
     if (Password->text()!=Password2->text()) {
-      switch(QMessageBox::warning(this,
-				  "Passwords don't match",
-				  "The two versions of the password doesn't match",
-				  "Don't save","Cancel")) {
+      switch(TOMessageBox::warning(this,
+				   "Passwords don't match",
+				   "The two versions of the password doesn't match",
+				   "Don't save","Cancel")) {
       case 0:
 	return QString::null;
       case 1:
@@ -1408,10 +1408,10 @@ void toSecurity::changeUser(bool ask)
     try {
       list<QString> sqlList=sql();
       if (sqlList.size()!=0) {
-	switch(QMessageBox::warning(this,
-				    "Save changes?",
-				    "Save the changes made to this user?",
-				    "Save","Discard","Cancel")) {
+	switch(TOMessageBox::warning(this,
+				     "Save changes?",
+				     "Save the changes made to this user?",
+				     "Save","Discard","Cancel")) {
 	case 0:
 	  saveChanges();
 	  return;
@@ -1527,10 +1527,10 @@ void toSecurity::drop()
       refresh();
       changeUser(false);
     } catch(...) {
-      switch(QMessageBox::warning(this,
-				  "Are you sure?",
-				  "The user still owns objects, add the cascade option?",
-				  "Yes","No")) {
+      switch(TOMessageBox::warning(this,
+				   "Are you sure?",
+				   "The user still owns objects, add the cascade option?",
+				   "Yes","No")) {
       case 0:
 	str+=" CASCADE";
 	try {

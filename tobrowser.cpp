@@ -576,3 +576,48 @@ void toBrowser::changeTab(QWidget *tab)
       refresh();
   }
 }
+
+void toBrowseTemplate::addDatabase(const QString &name)
+{
+  for(list<toTemplateItem *>::iterator i=Parents.begin();i!=Parents.end();i++)
+    new toTemplateItem(*i,name);
+}
+
+void toBrowseTemplate::removeDatabase(const QString &name)
+{
+  for(list<toTemplateItem *>::iterator i=Parents.begin();i!=Parents.end();i++) {
+    for (QListViewItem *item=(*i)->firstChild();item;item=item->nextSibling())
+      if (item->text(0)==name) {
+	delete item;
+	break;
+      }
+  }
+}
+
+toTemplateItem *toBrowseTemplate::insertItem(QListView *parent)
+{
+  if (!Registered) {
+    connect(toMainWidget(),SIGNAL(addedConnection(const QString &)),
+	    this,SLOT(addDatabase(const QString &)));
+    connect(toMainWidget(),SIGNAL(removedConnection(const QString &)),
+	    this,SLOT(removeDatabase(const QString &)));
+  }
+  toTemplateItem *dbitem=new toTemplateItem(*this,parent,"DB Browser");
+  list<QString> conn=toMainWidget()->connections();
+  for (list<QString>::iterator i=conn.begin();i!=conn.end();i++)
+    new toTemplateItem(dbitem,*i);
+  Parents.insert(Parents.end(),dbitem);
+  return dbitem;
+}
+
+void toBrowseTemplate::removeItem(toTemplateItem *item)
+{
+  for (list<toTemplateItem *>::iterator i=Parents.begin();i!=Parents.end();i++)
+    if ((*i)==item) {
+      Parents.erase(i);
+      break;
+    }
+  delete item;
+}
+
+static toBrowseTemplate BrowseTemplate;
