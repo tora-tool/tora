@@ -12,9 +12,13 @@ Extended functionality:
 		ALTER TABLE ... RENAME TO ...
 	Filter on tablespace
 	Editing triggers
+* toResultContent improvements
+	Make it possible to reorder columns in toResultContent.
+	Add replace to toResultContent.
+	Posibility to delete records in toResultContent.
+	Filter of rows in toResultContent.
 * Ability to save a session (Including breakpoints, parameter cache windows etc).
 * Add consumer group settings to security manager.
-* Make it possible to reorder columns in toResultContent.
 * Extract grants from objects.
 * Implement extract of temporary tables.
 * Implement migration, resize and report in toScript.
@@ -24,16 +28,12 @@ Extended functionality:
 * Display execution type of statements (Until first response if not next option).
 * Display objects in tablespace storage manager.
 * Segments view in storage view.
-* Add replace to toResultContent.
 * Ability to change/move redofiles.
-* Posibility to delete records in toResultContent.
 * Go through changes in DDL::Oracle and incorporate in toExtract.
 * Posibility to delete rows in toResultContent.
 * Information about SGA memory in DB tuning.
-* Ability to generate into several script (One per object and type) in DB
-	extraction.
+* Ability to generate into several script (One per object and type) in DB extraction.
 * Full support for Oracle 9i
-* Port to Oracle C++ OCCI instead of OTL?
 * Completion on column & function names in editor.
 * Parameter file editor in server tuning.
 * Install in KDE menu if KDE detected.
