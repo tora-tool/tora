@@ -39,6 +39,7 @@
 
 #include <qvbox.h>
 #include "toresultview.h"
+#include "toconnection.h"
 
 class toResultColsItem;
 class QLabel;
@@ -49,7 +50,7 @@ class QLabel;
  */
 
 class toResultCols : public QVBox, public toResult {
-  class resultCols : public toResultView {
+  class resultCols : public toListView {
   public:
     /** Create the widget.
      * @param parent Parent widget.
@@ -58,7 +59,7 @@ class toResultCols : public QVBox, public toResult {
     resultCols(QWidget *parent,const char *name=NULL);
     /** Reimplemented for internal reasons.
      */
-    virtual void query(const QString &sql,const toQList &param);
+    virtual void query(const toConnection::objectName &);
     friend class toResultColsItem;
   };
   QLabel *Title;

@@ -74,14 +74,20 @@ static toSQL SQLComment("toOracleConnection:Comments",
 			"Display column comments");
 
 static toSQL SQLListObjects("toOracleConnection:ListObjects",
-			    "select table_name,owner,null from all_tables\n"
-			    "union\n"
-			    "select view_name,owner,null from all_views\n"
-			    "union\n"
-			    "select table_name,table_owner,synonym_name\n"
-			    "  from all_synonyms where owner in ('PUBLIC',:owner<char[101]>)",
+			    "select a.owner,a.object_name,a.object_type,b.comments\n"
+			    "  from all_objects a,\n"
+			    "       all_tab_comments b\n"
+			    " where a.owner = b.owner(+) and a.object_name = b.table_name(+)\n"
+			    "   and a.object_type = b.table_type(+) and a.object_type != 'SYNONYM'",
 			    "List the objects to cache for a connection, should have same "
 			    "columns and binds");
+
+static toSQL SQLListSynonyms("toOracleConnection:ListSynonyms",
+			     "select synonym_name,table_owner,table_name\n"
+			     "  from all_synonyms\n"
+			     " where owner = :usr<char[101]> or owner = 'PUBLIC'\n"
+			     " order by table_owner,table_name",
+			     "List the synonyms available to a user, should have same columns and binds");
 
 static void ThrowException(const otl_exception &exc)
 {
@@ -355,26 +361,60 @@ public:
       else
 	return "\""+name+"\"";
     }
-
-    virtual std::list<toConnection::tableName> tableNames(void)
+    virtual QString unQuote(const QString &str)
     {
-      std::list<toConnection::tableName> ret;
+      if (str.at(0)=='\"'&&str.at(str.length()-1)=='\"')
+	return str.left(str.length()-1).right(str.length()-2);
+      return str.upper();
+    }
+
+    virtual std::list<toConnection::objectName> objectNames(void)
+    {
+      std::list<toConnection::objectName> ret;
       try {
-	toQuery tables(connection(),SQLListObjects,connection().user().upper());
-	toConnection::tableName cur;
-	while(!tables.eof()) {
-	  cur.Name=tables.readValueNull();
-	  cur.Owner=tables.readValueNull();
-	  cur.Synonym=tables.readValueNull();
+	std::list<toQValue> par;
+	toQuery objects(connection(),toQuery::Long,
+			SQLListObjects,par);
+	toConnection::objectName cur;
+	while(!objects.eof()) {
+	  cur.Owner=objects.readValueNull();
+	  cur.Name=objects.readValueNull();
+	  cur.Type=objects.readValueNull();
+	  cur.Comment=objects.readValueNull();
 	  ret.insert(ret.end(),cur);
 	}
       } catch (...) {
       }
       return ret;
     }
-    virtual std::list<toConnection::columnDescription> columnDesc(const toConnection::tableName &table)
+    virtual std::map<QString,toConnection::objectName> synonymMap(std::list<toConnection::objectName> &objects)
     {
-      std::list<toConnection::columnDescription> ret;
+      std::map<QString,toConnection::objectName> ret;
+      try {
+	toConnection::objectName cur;
+	cur.Type="A";
+	std::list<toQValue> par;
+	par.insert(par.end(),toQValue(connection().user().upper()));
+	toQuery synonyms(connection(),toQuery::Long,
+			 SQLListSynonyms,par);
+	std::list<toConnection::objectName>::iterator i=objects.begin();
+	while(!synonyms.eof()) {
+	  QString synonym=synonyms.readValueNull();
+	  cur.Owner=synonyms.readValueNull();
+	  cur.Name=synonyms.readValueNull();
+	  while(i!=objects.end()&&(*i)<cur)
+	    i++;
+	  if (i==objects.end())
+	    break;
+	  if (cur.Name==(*i).Name&&cur.Owner==(*i).Owner)
+	    ret[synonym]=(*i);
+	}
+      } catch(...) {
+      }
+      return ret;
+    }
+    virtual toQDescList columnDesc(const toConnection::objectName &table)
+    {
       std::map<QString,QString> comments;
       try {
 	toQuery comment(connection(),SQLComment,table.Owner,table.Name);
@@ -393,17 +433,14 @@ public:
 	SQL+="\" WHERE NULL=NULL";
 	toQuery query(connection(),SQL);
 	toQDescList desc=query.describe();
-	toConnection::columnDescription cur;
-	for(toQDescList::iterator j=desc.begin();j!=desc.end();j++) {
-	  QString name=(*j).Name;
-	  cur.Comment=comments[name];
-	  cur.Name=name;
+	for(toQDescList::iterator j=desc.begin();j!=desc.end();j++)
+	  (*j).Comment=comments[(*j).Name];
 
-	  toPush(ret,cur);
-	}
+	return desc;
       } catch(...) {
       }
 
+      toQDescList ret;
       return ret;
     }
 

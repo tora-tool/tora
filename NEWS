@@ -1,3 +1,10 @@
+1.1.2:
+
+2001-09-24: Fixes for Oracle7 in toStorage.
+2001-09-24: Implemented an extended object cache instead of table cache.
+2001-09-24: Read object cache in background instead of when needed.
+2001-09-24: toResultCols uses new object cache.
+
 1.1.1: 2001-09-24
 
 2001-09-10: Fixed bug with no graphs being drawn.

@@ -646,14 +646,17 @@ void toConnection::addConnection(void)
 toConnection::toConnection(const QString &provider,
 			   const QString &user,const QString &password,
 			   const QString &host,const QString &database,
-			   const QString &mode)
+			   const QString &mode,bool cache)
   : Provider(toConnectionProvider::fetchProvider(provider)),
     User(user),Password(password),Host(host),Database(database),Mode(mode)
 {
   Connection=Provider.connection(this);
   addConnection();
   Version=Connection->version(mainConnection());
-  ReadTables=false;
+  if (cache)
+    readObjects();
+  else
+    ReadingValues.up();
 }
 
 toConnection::toConnection(const toConnection &conn)
@@ -667,11 +670,13 @@ toConnection::toConnection(const toConnection &conn)
   Connection=Provider.connection(this);
   addConnection();
   Version=Connection->version(mainConnection());
+  ReadingValues.up();
 }
 
 toConnection::~toConnection()
 {
   toBusy busy;
+  ReadingValues.down();
   {
     for (std::list<QWidget *>::iterator i=Widgets.begin();i!=Widgets.end();i=Widgets.begin()) {
       delete (*i);
@@ -1051,27 +1056,35 @@ const QString &toConnection::provider(void) const
   return Provider.provider();
 }
 
-void toConnection::readObjects(void)
+void toConnection::cacheObjects::run()
 {
   try {
-    if (!ReadTables) {
-      ReadTables=true;
-      toBusy busy;
-      toStatusMessage("Reading available objects",true);
-      qApp->processEvents();
-      TableNames=Connection->tableNames();
-      TableNames.sort();
-      toStatusMessage("");
-    }
-  } catch (...) {
+    Connection.ObjectNames=Connection.Connection->objectNames();
+    Connection.SynonymMap=Connection.Connection->synonymMap(Connection.ObjectNames);
+    Connection.ObjectNames.sort();
+  } catch(...) {
   }
+  Connection.ReadingValues.up();
 }
 
-void toConnection::clearCache(void)
+
+void toConnection::readObjects(void)
 {
-  ReadTables=false;
-  TableNames.clear();
+  (new toThread(new cacheObjects(*this)))->start();
+}
+
+void toConnection::rereadCache(void)
+{
+  if(ReadingValues.getValue()==0) {
+    toStatusMessage("Not done caching objects, can not clear unread cache");
+    return;
+  }
+  while(ReadingValues.getValue()>0)
+    ReadingValues.down();
+  ObjectNames.clear();
   ColumnCache.clear();
+  SynonymMap.clear();
+  readObjects();
 }
 
 QString toConnection::quote(const QString &name)
@@ -1079,14 +1092,52 @@ QString toConnection::quote(const QString &name)
   return Connection->quote(name);
 }
 
-std::list<toConnection::tableName> &toConnection::tables(void)
+QString toConnection::unQuote(const QString &name)
 {
-  readObjects();
-  return TableNames;
+  return Connection->unQuote(name);
 }
 
-const toConnection::tableName &toConnection::realName(const QString &object)
+bool toConnection::checkAvail(bool block)
 {
+  if (ReadingValues.getValue()==0) {
+    if (block) {
+      ReadingValues.down();
+      ReadingValues.up();
+    } else
+      return false;
+  }
+  return true;
+}
+
+std::list<toConnection::objectName> &toConnection::objects(bool block)
+{
+  if (!checkAvail(block)) {
+    toStatusMessage("Not done caching objects");
+    static std::list<objectName> ret;
+    return ret;
+  }
+
+  return ObjectNames;
+}
+
+std::map<QString,toConnection::objectName> &toConnection::synonyms(bool block)
+{
+  if (!checkAvail(block)) {
+    toStatusMessage("Not done caching objects");
+    static std::map<QString,objectName> ret;
+    return ret;
+  }
+
+  return SynonymMap;
+}
+
+const toConnection::objectName &toConnection::realName(const QString &object,
+						       QString &synonym,
+						       bool block)
+{
+  if (!checkAvail(block))
+    throw QString("Not done caching objects");
+
   QString name;
   QString owner;
 
@@ -1106,59 +1157,79 @@ const toConnection::tableName &toConnection::realName(const QString &object)
   QString uo=owner.upper();
   QString un=name.upper();
 
-  readObjects();
-  for(std::list<tableName>::iterator i=TableNames.begin();i!=TableNames.end();i++) {
+  synonym=QString::null;
+  for(std::list<objectName>::iterator i=ObjectNames.begin();i!=ObjectNames.end();i++) {
     if (owner.isEmpty()) {
-      if ((*i).Synonym==un||(*i).Synonym==name)
-	return *i;
-      if (((*i).Name==un||(*i).Name==name)&&(*i).Owner==user().upper())
-	  return *i;
-    } else {
       if (((*i).Name==un||(*i).Name==name)&&
-	  ((*i).Owner==uo||(*i).Owner==owner))
+	  ((*i).Owner==user().upper()||(*i).Owner.isNull()))
 	return *i;
+    } else if (((*i).Name==un||(*i).Name==name)&&
+	       ((*i).Owner==uo||(*i).Owner==owner))
+      return *i;
+  }
+  if (owner.isEmpty()) {
+    std::map<QString,objectName>::iterator i=SynonymMap.find(name);
+    if (i==SynonymMap.end()&&un!=name) {
+      i=SynonymMap.find(un);
+      synonym=un;
+    } else
+      synonym=name;
+    if (i!=SynonymMap.end()) {
+      return (*i).second;
     }
   }
   throw QString("Object %1 not available for %2").arg(object).arg(user());
 }
 
-std::list<toConnection::columnDescription> &toConnection::columns(const tableName &table)
+const toConnection::objectName &toConnection::realName(const QString &object,bool block)
 {
-  std::map<tableName,std::list<columnDescription> >::iterator i=ColumnCache.find(table);
-  if (i==ColumnCache.end())
-    ColumnCache[table]=Connection->columnDesc(table);
-
-  return ColumnCache[table];
+  QString dummy;
+  return realName(object,dummy,block);
 }
 
-bool toConnection::tableName::operator < (const tableName &nam) const
+toQDescList &toConnection::columns(const objectName &object)
 {
-  if (Owner<nam.Owner)
+  std::map<objectName,toQDescList>::iterator i=ColumnCache.find(object);
+  if (i==ColumnCache.end())
+    ColumnCache[object]=Connection->columnDesc(object);
+
+  return ColumnCache[object];
+}
+
+bool toConnection::objectName::operator < (const objectName &nam) const
+{
+  if (Owner<nam.Owner||(Owner.isNull()&&!nam.Owner.isNull()))
     return true;
-  if (Owner>nam.Owner)
+  if (Owner>nam.Owner||(!Owner.isNull()&&nam.Owner.isNull()))
     return false;
-  if (Name<nam.Name)
+  if (Name<nam.Name||(Name.isNull()&&!nam.Name.isNull()))
     return true;
-  if (Name>nam.Name)
+  if (Name>nam.Name||(!Name.isNull()&&nam.Name.isNull()))
     return false;
-  if (Synonym.isNull()&&!nam.Synonym.isNull())
+  if (Type<nam.Type)
     return true;
   return false;
 }
 
-bool toConnection::tableName::operator == (const tableName &nam) const
+bool toConnection::objectName::operator == (const objectName &nam) const
 {
-  return Owner==nam.Owner&&Name==nam.Name;
+  return Owner==nam.Owner&&Name==nam.Name&&Type==nam.Type;
 }
 
-std::list<toConnection::tableName> toConnection::connectionImpl::tableNames(void)
+std::list<toConnection::objectName> toConnection::connectionImpl::objectNames(void)
 {
-  std::list<toConnection::tableName> ret;
+  std::list<toConnection::objectName> ret;
   return ret;
 }
 
-std::list<toConnection::columnDescription> toConnection::connectionImpl::columnDesc(const tableName &)
+std::map<QString,toConnection::objectName> toConnection::connectionImpl::synonymMap(std::list<toConnection::objectName> &)
 {
-  std::list<toConnection::columnDescription> ret;
+  std::map<QString,toConnection::objectName> ret;
+  return ret;
+}
+
+toQDescList toConnection::connectionImpl::columnDesc(const objectName &)
+{
+  toQDescList ret;
   return ret;
 }

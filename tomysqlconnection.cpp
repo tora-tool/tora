@@ -298,6 +298,7 @@ public:
   };
 
   class mysqlConnection : public toConnection::connectionImpl {
+    toLock Lock;
     MYSQL *Connection;
     QString Codec;
   public:
@@ -317,39 +318,33 @@ public:
 	throw QString("Couldn't open MySQL connection");
     }
 
-    virtual std::list<toConnection::tableName> tableNames(void)
+    virtual std::list<toConnection::objectName> objectNames(void)
     {
-      std::list<toConnection::tableName> ret;
+      std::list<toConnection::objectName> ret;
       try {
 	toQuery tables(connection(),SQLListTables);
-	toConnection::tableName cur;
+	toConnection::objectName cur;
+	cur.Type="TABLE";
 	while(!tables.eof()) {
 	  cur.Name=tables.readValueNull();
-	  cur.Synonym=cur.Name;
 	  ret.insert(ret.end(),cur);
 	}
       } catch (...) {
       }
       return ret;
     }
-    virtual std::list<toConnection::columnDescription> columnDesc(const toConnection::tableName &table)
+    virtual toQDescList columnDesc(const toConnection::objectName &table)
     {
-      std::list<toConnection::columnDescription> ret;
-
       try {
 	QString SQL="SELECT * FROM ";
 	SQL+=table.Name;
 	SQL+=" WHERE NULL=NULL";
 	toQuery query(connection(),SQL);
-	toQDescList desc=query.describe();
-	toConnection::columnDescription cur;
-	for(toQDescList::iterator j=desc.begin();j!=desc.end();j++) {
-	  cur.Name=(*j).Name;
-	  ret.insert(ret.end(),cur);
-	}
+	return query.describe();
       } catch(...) {
       }
 
+      toQDescList ret;
       return ret;
     }
 
@@ -380,6 +375,8 @@ public:
     { return Connection; }
     const QString &codec(void) const
     { return Codec; }
+    toLock &lock(void)
+    { return Lock; }
 
 
     virtual toConnectionSub *createConnection(void)
@@ -405,6 +402,7 @@ public:
     { return new mysqlQuery(query,sub); }
     virtual void execute(toConnectionSub *sub,const QCString &sql,toQList &params)
     {
+      toLocker lock(Lock);
       QCString query=QueryParam(sql,params,Codec);
       if(mysql_real_query(Connection,query,query.length())!=0)
 	throwError();
@@ -429,7 +427,7 @@ public:
   {
     std::list<QString> ret;
     try {
-      toConnection conn("MySQL",user,pwd,host,QString::null,"Normal");
+      toConnection conn("MySQL",user,pwd,host,QString::null,"Normal",false);
       {
 	toQuery query(conn,"SHOW DATABASES");
 	while(!query.eof())
@@ -452,6 +450,7 @@ void toMysqlProvider::mysqlQuery::execute(void)
   }
   QCString sql=QueryParam(QString::fromUtf8(query()->sql()),
 			  query()->params(),mysql()->codec());
+  toLocker lock(mysql()->lock());
   if(mysql_real_query(mysql()->mysql(),
 		      sql,
 		      sql.length())!=0)

@@ -43,6 +43,7 @@
 #include <qstring.h>
 
 #include "toqvalue.h"
+#include "tothread.h"
 
 class QWidget;
 class toConnection;
@@ -100,6 +101,9 @@ public:
     /** If column can contain null values.
      */
     bool Null;
+    /** Comment on column (Only filled out in column cache.
+     */
+    QString Comment;
   };
   /** Abstract parent of implementations of a query for a database provider
    * (See @ref toConnection::connectionImpl and @ref toConnectionProvider)
@@ -388,31 +392,22 @@ public:
 
   /** Contain information about a tablename.
    */
-  struct tableName {
+  struct objectName {
     /** The object name
      */
     QString Name;
     /** The schema that owns it
      */
     QString Owner;
-    /** Synonym name, only available if this is a synonym. The tablename & owner will
-     * point to what it is a synonym for.
+    /** Object type
      */
-    QString Synonym;
-
-    bool operator < (const tableName &) const;
-    bool operator == (const tableName &) const;
-  };
-
-  /** Contain information about a column in a table.
-   */
-  struct columnDescription {
-    /** Column name
-     */
-    QString Name;
-    /** Column Description
+    QString Type;
+    /** Comment about this object
      */
     QString Comment;
+
+    bool operator < (const objectName &) const;
+    bool operator == (const objectName &) const;
   };
 
   /** This class is an abstract baseclass to actually implement the comunication with the
@@ -463,16 +458,31 @@ public:
      */
     virtual QString quote(const QString &name)
     { return name; }
+    /** Perform the opposite of @ref quote.
+     * @param name The name to be un-quoted.
+     * @return String addressing table.
+     */
+    virtual QString unQuote(const QString &name)
+    { return name; }
 
-    /** Extract available objects to query for connection.
+    /** Extract available objects to query for connection. Any access to the
+     * database should always be run using a long running query.
      * @return List of available objects.
      */
-    virtual std::list<tableName> tableNames(void);
-    /** Extract available columns to query for a table.
-     * @param table Table to get column for.
-     * @return List of columns for table.
+    virtual std::list<objectName> objectNames(void);
+    /** Get synonyms available for connection. Any access to the
+     * database should always be run using a long running query.
+     * @param objects Available objects for the connection. Objects
+     *                are sorted in owner and name order. Don't modify
+     *                this list.
+     * @return Map of synonyms to objectnames.
      */
-    virtual std::list<columnDescription> columnDesc(const tableName &table);
+    virtual std::map<QString,objectName> synonymMap(std::list<objectName> &objects);
+    /* Extract available columns to query for a table.
+     * @param table Table to get column for.
+     * @return List of columns for table or view.
+     */
+    virtual toQDescList columnDesc(const objectName &table);
 
     /** Create a new query implementation for this connection.
      * @return A query implementation, allocated with new.
@@ -494,14 +504,26 @@ private:
 
   connectionImpl *Connection;
 
-  bool ReadTables;
-  std::map<tableName,std::list<columnDescription> > ColumnCache;
-  std::list<tableName> TableNames;
+  class cacheObjects : public toTask {
+    toConnection &Connection;
+  public:
+    cacheObjects(toConnection &conn)
+      : Connection(conn)
+    { }
+    virtual void run(void);
+  };
+  friend class cacheObjects;
+
+  toSemaphore ReadingValues;
+  std::map<objectName,toQDescList> ColumnCache;
+  std::list<objectName> ObjectNames;
+  std::map<QString,objectName> SynonymMap;
 
   toConnectionSub *mainConnection(void);
   toConnectionSub *longConnection(void);
   void freeConnection(toConnectionSub *);
   void readObjects(void);
+  bool checkAvail(bool);
 public:
   /** Create a new connection.
    * @param provider Which database provider to use for this connection.
@@ -511,10 +533,13 @@ public:
    * @param host Host to connect to the database with.
    * @param database Database to connect to.
    * @param mode Mode to connect to the database with.
+   * @param cache Enable object cache for this connection.
    */
   toConnection(const QString &provider,const QString &user,const QString &password,
-	       const QString &host,const QString &database,const QString &mode=QString::null);
-  /** Create a copy of a connection.
+	       const QString &host,const QString &database,const QString &mode=QString::null,
+	       bool cache=true);
+  /** Create a copy of a connection. Will not cache objects, so objects will never be available
+   *  in a subconnection.
    * @param conn Connection to copy.
    */
   toConnection(const toConnection &conn);
@@ -677,28 +702,49 @@ public:
    * @return String addressing table.
    */
   QString quote(const QString &name);
+  /** Perform the opposite of @ref quote.
+   * @param name The name to be un-quoted.
+   * @return String addressing table.
+   */
+  QString unQuote(const QString &name);
 
   /**
-   * Get the tables available for the current user. This function caches the responses
-   * and should be fairly fast after the first call. Do not modify the returned list.
-   * @return A list of tables available for the current user, including psynonyms and
-   *         views.
+   * Get the objects available for the current user. Do not modify the returned list.
+   * @param block Indicate wether or not to block until cached objects are available.
+   * @return A list of object available for the current user. The list is sorted in
+   *         owner and name order.
    */
-  std::list<tableName> &tables(void);
+  std::list<objectName> &objects(bool block);
+
+  /**
+   * Get the synonyms available for objects. Do not modify the returned list.
+   * @param block Indicate wether or not to block until cached objects are available.
+   * @return A list of synonyms to objects available for the current user.
+   */
+  std::map<QString,objectName> &synonyms(bool block);
   /**
    * Get a list of the available columns for a table. This function caches the responses
    * and should be fairly fast after the first call. Do not modify the returned list.
    * @return A list of the columns for a table.
    */
-  std::list<columnDescription> &columns(const tableName &table);
+  toQDescList &columns(const objectName &table);
   /**
-   * Clear the object and column cache.
+   * Reread the object and column cache.
    */
-  void clearCache(void);
+  void rereadCache(void);
+  /**
+   * Get the real object name of an object.
+   * @param object Object name
+   * @param block Block if not done caching object.
+   */
+  const objectName &realName(const QString &object,bool block);
   /**
    * Get the real object name of a synonym.
+   * @param object Object name
+   * @param synonym Filled with the synonym used to access the object returned or empty.
+   * @param block Block if not done caching object.
    */
-  const tableName &realName(const QString &object);
+  const objectName &realName(const QString &object,QString &synonym,bool block);
 
   friend class toQuery;
 };

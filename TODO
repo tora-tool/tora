@@ -39,10 +39,11 @@ Extended functionality:
 * Show only one bar in barchart/linechart.
 * Never lock while executing in debugger.
 * Database provider setup tabs.
-* Tool menu in all tools.
 * Different highlighter depending on connection.
 * Default names to listen to in alert.
 * Make menues and toolbuttons work for QLineEdit & QComboBox.
+* Cache database objects in background on connecting.
+* Use object cache in script, security & debug object lists.
 
 New tools:
 

@@ -161,7 +161,7 @@ toMain::toMain()
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)commit_xpm),"&Commit connection",TO_FILE_COMMIT);
   FileMenu->insertItem(QPixmap((const char **)rollback_xpm),"&Rollback connection",TO_FILE_ROLLBACK);
-  FileMenu->insertItem(QPixmap((const char **)trash_xpm),"Clear connection cache",TO_FILE_CLEARCACHE);
+  FileMenu->insertItem(QPixmap((const char **)trash_xpm),"Reread object cache",TO_FILE_CLEARCACHE);
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"&Open File...",TO_FILE_OPEN);
   FileMenu->insertItem(QPixmap((const char **)filesave_xpm),"&Save",TO_FILE_SAVE);
@@ -537,8 +537,8 @@ void toMain::commandCallback(int cmd)
     toEditWidget *edit=findEdit(focus);
     if (edit&&edit!=Edit)
       setEditWidget(edit);
-    else if (focus->isA("QLineEdit")||
-	       focus->isA("QComboBox"))
+    else if (focus->inherits("QLineEdit")||
+	     focus->isA("QSpinBox"))
       editDisable(Edit);
   }
 
@@ -615,7 +615,7 @@ void toMain::commandCallback(int cmd)
       break;
     case TO_FILE_CLEARCACHE:
       try {
-	currentConnection().clearCache();
+	currentConnection().rereadCache();
       } TOCATCH
       break;
     case TO_FILE_ROLLBACK:

@@ -160,15 +160,36 @@ static toSQL SQLShowCoalesced8("toResultStorage:ShowCoalesced",
 			       "       TO_CHAR(ROUND(f.percent_extents_coalesced,1))||'%',\n"
 			       "	TO_CHAR(f.total_extents)\n"
 			       "  FROM  sys.dba_tablespaces d,\n"
-			       "	(select tablespace_name, sum(bytes) bytes, from dba_data_files group by tablespace_name) a,\n"
+			       "	(select tablespace_name, sum(bytes) bytes from dba_data_files group by tablespace_name) a,\n"
 			       "	(select tablespace_name, total_bytes bytes, total_extents, percent_extents_coalesced from dba_free_space_coalesced) f,\n"
 			       "       (select :unit<int> unit from dual) b\n"
 			       " WHERE  d.tablespace_name = a.tablespace_name(+)\n"
 			       "   AND  d.tablespace_name = f.tablespace_name(+)\n"
-			       "   AND  NOT (d.extent_management like 'LOCAL' AND d.contents like 'TEMPORARY')\n"
 			       " ORDER  BY d.tablespace_name",
 			       "",
 			       "8.0");
+
+static toSQL SQLShowCoalesced7("toResultStorage:ShowCoalesced",
+			       "SELECT  d.tablespace_name, \n"
+			       "	d.status,\n"
+			       "	' ',\n"
+			       "	d.contents,\n"
+			       "        'N/A',\n"
+			       "	TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
+			       "	TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
+			       "	TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)), \n"
+			       "	TO_CHAR(ROUND(NVL(f.bytes, 0) / a.bytes * 100, 2))||'%',\n"
+			       "       TO_CHAR(ROUND(f.percent_extents_coalesced,1))||'%',\n"
+			       "	TO_CHAR(f.total_extents)\n"
+			       "  FROM  sys.dba_tablespaces d,\n"
+			       "	(select tablespace_name, sum(bytes) bytes from dba_data_files group by tablespace_name) a,\n"
+			       "	(select tablespace_name, total_bytes bytes, total_extents, percent_extents_coalesced from dba_free_space_coalesced) f,\n"
+			       "       (select :unit<int> unit from dual) b\n"
+			       " WHERE  d.tablespace_name = a.tablespace_name(+)\n"
+			       "   AND  d.tablespace_name = f.tablespace_name(+)\n"
+			       " ORDER  BY d.tablespace_name",
+			       "",
+			       "7.3");
 
 static toSQL SQLNoShowCoalesced("toResultStorage:NoCoalesced",
 				"SELECT  d.tablespace_name, \n"
@@ -231,10 +252,31 @@ static toSQL SQLNoShowCoalesced8("toResultStorage:NoCoalesced",
 				 "       (select :unit<int> unit from dual) b\n"
 				 " WHERE  d.tablespace_name = a.tablespace_name(+)\n"
 				 "   AND  d.tablespace_name = f.tablespace_name(+)\n"
-				 "   AND  NOT (d.extent_management like 'LOCAL' AND d.contents like 'TEMPORARY')\n"
 				 " ORDER BY d.tablespace_name",
 				 "",
 				 "8.0");
+
+static toSQL SQLNoShowCoalesced7("toResultStorage:NoCoalesced",
+				 "SELECT  d.tablespace_name, \n"
+				 "	d.status,\n"
+				 "	' ',\n"
+				 "	d.contents,\n"
+				 "      'N/A',\n"
+				 "	TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
+				 "	TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
+				 "	TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)), \n"
+				 "	TO_CHAR(ROUND(NVL(f.bytes, 0) / a.bytes * 100, 2))||'%',\n"
+				 "	'-',\n"
+				 "	TO_CHAR(f.total_extents)\n"
+				 "  FROM  sys.dba_tablespaces d,\n"
+				 "	(select tablespace_name, sum(bytes) bytes from dba_data_files group by tablespace_name) a,\n"
+				 "	(select tablespace_name, sum(bytes) bytes, count(1) total_extents from dba_free_space group by tablespace_name) f,\n"
+				 "       (select :unit<int> unit from dual) b\n"
+				 " WHERE  d.tablespace_name = a.tablespace_name(+)\n"
+				 "   AND  d.tablespace_name = f.tablespace_name(+)\n"
+				 " ORDER BY d.tablespace_name",
+				 "",
+				 "7.3");
 
 static toSQL SQLDatafile("toResultStorage:Datafile",
 			 "SELECT  d.tablespace_name,\n"
@@ -288,7 +330,7 @@ static toSQL SQLDatafile8("toResultStorage:Datafile",
 			  "        to_char(round(d.bytes/b.unit,2)),\n"
 			  "        to_char(round(d.bytes/b.unit,2)),\n"
 			  "        to_char(round(s.bytes/b.unit,2)),\n"
-			  "        to_char(round(s.bytes*100/d.user_bytes,2))||'%',\n"
+			  "        to_char(round(s.bytes*100/d.bytes,2))||'%',\n"
 			  "	' ',\n"
 			  "	to_char(s.num)\n"
 			  "  FROM  sys.dba_data_files d,\n"

@@ -80,8 +80,8 @@ static toSQL SQLInfo7("toResultCols:Info",
 
 class toResultColsItem : public toResultViewMLine {
 public:
-  toResultColsItem(QListView *parent,QListViewItem *after,const char *buffer)
-    : toResultViewMLine(parent,after,buffer)
+  toResultColsItem(QListView *parent,QListViewItem *after)
+    : toResultViewMLine(parent,after)
   { }
   virtual QString key (int column,bool ascending)
   {
@@ -96,9 +96,10 @@ public:
   {
     toResultCols::resultCols *view=dynamic_cast<toResultCols::resultCols *>(listView());
     try {
-      if (view->connection().provider()!="Oracle")
+      toConnection &conn=toCurrentConnection(view);
+      if (conn.provider()!="Oracle")
 	return QString::null;
-      toQList resLst=toQuery::readQueryNull(view->connection(),SQLInfo,
+      toQList resLst=toQuery::readQueryNull(conn,SQLInfo,
 					    text(10),text(11),text(1));
       QString result("<B>");
       result+=(text(1));
@@ -210,153 +211,82 @@ void toResultCols::query(const QString &,const toQList &param)
 
   toConnection &conn=connection();
 
-  QString sql;
-  QString Owner;
-  QString TableName;
+  QString object;
   toQList::iterator cp=((toQList &)param).begin();
   if (cp!=((toQList &)param).end()) {
-    sql=conn.quote(*cp);
-    Owner=*cp;
+    object=conn.quote(*cp);
   }
   cp++;
   if (cp!=((toQList &)param).end()) {
-    sql+=".";
-    sql+=conn.quote(*cp);
-    TableName=(*cp);
-  } else {
-    try {
-      sql=QString::null;
-      const toConnection::tableName &name=conn.realName(Owner);
-      if (!name.Synonym.isEmpty())
-	sql=conn.quote(name.Synonym)+"</B> synonym for <B>";
-
-      sql+=conn.quote(name.Owner);
-      if (!sql.isEmpty())
-	sql+=".";
-      sql+=conn.quote(name.Name);
-      Owner=name.Owner;
-      TableName=name.Name;
-    } catch(...) {
-      TableName=Owner;
-      Owner=QString::null;
-    }
+    object+=".";
+    object+=conn.quote(*cp);
   }
-  if (!Owner.isEmpty())
-    toPush(subp,toQValue(Owner));
-  toPush(subp,toQValue(TableName));
 
-  Columns->query(QString::null,subp);
-
-  sql.prepend("<B>");
-  sql+="</B>";
+  QString synonym;
   try {
-    QString comment;
-    toQuery query(conn,SQLTableComment,Owner,TableName);
-    while(!query.eof()) {
-      if (comment)
-	comment+=" ";
-      comment+=query.readValueNull();
+    const toConnection::objectName &name=conn.realName(object,synonym,false);
+
+    QString label="<B>";
+    if (!synonym.isEmpty()) {
+      label+=conn.quote(synonym);
+      label+="</B> synonym for <B>";
     }
-    if (comment) {
-      sql+=" - ";
-      sql+=comment;
+    label+=conn.quote(name.Owner);
+    if (!label.isEmpty())
+      label+=".";
+    label+=conn.quote(name.Name);
+    
+    label+="</B>";
+    if (name.Comment) {
+      label+=" - ";
+      label+=name.Comment;
     }
-  } catch(...) {
+
+    Columns->query(name);
+    Title->setText(label);
+  } catch(const QString &str) {
+    Title->setText(str);
+    toStatusMessage(str);
   }
-  Title->setText(sql);
 }
 
 toResultCols::resultCols::resultCols(QWidget *parent,const char *name)
-  : toResultView(false,true,parent,name)
+  : toListView(parent,name)
 {
-  setReadAll(true);
+  addColumn("#");
   addColumn("Column Name");
   addColumn("Data Type");
   addColumn("NULL");
   addColumn("Comments");
-  setSQLName("toResultCols");
   setSorting(0);
 }
 
-static toSQL SQLComment("toResultCols:Comments",
-			"SELECT Column_name,Comments FROM All_Col_Comments\n"
-			" WHERE Owner = :f1<char[100]>\n"
-			"   AND Table_Name = :f2<char[100]>",
-			"Display column comments");
-
-void toResultCols::resultCols::query(const QString &,const toQList &param)
+void toResultCols::resultCols::query(const toConnection::objectName &name)
 {
-  setParams(param);
-  if (!handled())
-    return;
-
-  toConnection &conn=connection();
-
-  QString sql;
-  QString Owner;
-  QString TableName;
-
-  toQList::iterator cp=((toQList &)param).begin();
-  if (cp!=((toQList &)param).end()) {
-    sql=conn.quote(*cp);
-    Owner=*cp;
-  }
-  cp++;
-  if (cp!=((toQList &)param).end()) {
-    sql+=".";
-    sql+=conn.quote(*cp);
-    TableName=*cp;
-  } else {
-    TableName=Owner;
-    Owner=QString::null;
-  }
-
-  LastItem=NULL;
-  RowNumber=0;
-
-  clear();
-
   try {
-    QString str("SELECT * FROM ");
-    str.append(sql);
-    str.append(" WHERE NULL = NULL");
+    clear();
+    toConnection &conn=toCurrentConnection(this);
 
-    toQuery Query(conn,str);
-    std::map<QString,QString> comments;
-    try {
-      toQuery comment(conn,SQLComment,Owner,TableName);
-      while(!comment.eof()) {
-	QString col=comment.readValue();
-	comments[col]=comment.readValueNull();
-      }
-    } catch (...) {
-    }
-
-    toQDescList desc=Query.describe();
+    toQDescList desc=conn.columns(name);
 
     int col=1;
     for (toQDescList::iterator i=desc.begin();i!=desc.end();i++) {
-      LastItem=new toResultColsItem(this,LastItem,NULL);
+      QListViewItem *item=new toResultColsItem(this,NULL);
 
-      LastItem->setText(10,Owner);
-      LastItem->setText(11,TableName);
-      LastItem->setText(1,(*i).Name);
-      LastItem->setText(0,QString::number(col++));
-
-      LastItem->setText(2,(*i).Datatype);
+      item->setText(0,QString::number(col++));
+      item->setText(1,(*i).Name);
+      item->setText(2,(*i).Datatype);
       if ((*i).Null)
-	LastItem->setText(3,"NULL");
+	item->setText(3,"NULL");
       else
-	LastItem->setText(3,"NOT NULL");
+	item->setText(3,"NOT NULL");
+      item->setText(4,(*i).Comment);
 
-      toQList lst;
-      toPush(lst,toQValue(Owner));
-      toPush(lst,toQValue(TableName));
-      toPush(lst,toQValue((*i).Name));
-      LastItem->setText(4,comments[(*i).Name]);
+      item->setText(10,name.Owner);
+      item->setText(11,name.Name);
     }
   } catch(...) {
-    toStatusMessage("Failed to describe "+sql);
+    toStatusMessage("Failed to describe "+name.Owner+"."+name.Name);
   }
   updateContents();
 }

@@ -577,9 +577,9 @@ void toHighlightedText::checkComplete(void)
     if (!name.isEmpty()) {
       try {
 	toConnection &conn=toCurrentConnection(this);
-	std::list<toConnection::columnDescription> &desc=conn.columns(conn.realName(name));
+	toQDescList &desc=conn.columns(conn.realName(name,false));
 	std::list<QString> complete;
-	for (std::list<toConnection::columnDescription>::iterator i=desc.begin();
+	for (toQDescList::iterator i=desc.begin();
 	     i!=desc.end();i++) {
 	  QString t=conn.quote((*i).Name);
 	  if (!(*i).Comment.isEmpty()) {
@@ -696,31 +696,37 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
   if (e->state()==ControlButton&&e->key()==Key_T) {
     try {
       toConnection &conn=toCurrentConnection(this);
-      std::list<toConnection::tableName> &tables=conn.tables();
+      std::list<toConnection::objectName> &objects=conn.objects(false);
+      std::map<QString,toConnection::objectName> &synonyms=conn.synonyms(false);
 
       QString table;
       QString owner;
       tableAtCursor(owner,table,true);
 
       std::list<QString> complete;
-      QString last;
-      for(std::list<toConnection::tableName>::iterator i=tables.begin();i!=tables.end();i++) {
-	QString add;
-	if((*i).Synonym.isEmpty()) {
+
+      if (owner.isEmpty()) {
+	for(std::map<QString,toConnection::objectName>::iterator i=synonyms.begin();
+	    i!=synonyms.end();i++) {
+	  if ((*i).second.Type=="TABLE"||(*i).second.Type=="VIEW")
+	    complete.insert(complete.end(),conn.quote((*i).first));
+	}
+      }
+
+      for(std::list<toConnection::objectName>::iterator i=objects.begin();i!=objects.end();i++) {
+	if ((*i).Type=="TABLE"||(*i).Type=="VIEW") {
 	  if (owner.isEmpty()) {
-	    if ((*i).Owner.upper()==conn.user().upper())
-	      add=conn.quote((*i).Name);
+	    if ((*i).Owner.upper()==conn.user().upper()) {
+	      if (synonyms.find((*i).Owner)==synonyms.end())
+		complete.insert(complete.end(),conn.quote((*i).Name));
+	    }
 	  } else {
-	    add=conn.quote((*i).Owner);
+	    QString add=conn.quote((*i).Owner);
 	    if (!add.isEmpty())
 	      add+=".";
 	    add+=conn.quote((*i).Name);
+	    complete.insert(complete.end(),add);
 	  }
-	} else if (owner.isEmpty())
-	  add=conn.quote((*i).Synonym);
-	if (add!=last) {
-	  complete.insert(complete.end(),add);
-	  last=add;
 	}
       }
       startComplete(complete);
@@ -783,56 +789,53 @@ toHighlightedText::~toHighlightedText()
   Completion=NULL;
 }
 
-static QString unQuote(const QString &str)
-{
-  if (str.at(0)=='\"'&&str.at(str.length()-1)=='\"')
-    return str.left(str.length()-1).right(str.length()-2);
-  return str.upper();
-}
-
 void toHighlightedText::tableAtCursor(QString &owner,QString &table,bool mark)
 {
-  int curline,curcol;
-  getCursorPosition (&curline,&curcol);
+  try {
+    toConnection &conn=toCurrentConnection(this);
+    int curline,curcol;
+    getCursorPosition (&curline,&curcol);
 
-  QString token=textLine(curline);
-  if (curcol>0&&toIsIdent(token[curcol-1]))
+    QString token=textLine(curline);
+    if (curcol>0&&toIsIdent(token[curcol-1]))
+      token=toGetToken(this,curline,curcol,false);
+    else
+      token=QString::null;
+
+    int lastline=curline;
+    int lastcol=curcol;
+
     token=toGetToken(this,curline,curcol,false);
-  else
-    token=QString::null;
-
-  int lastline=curline;
-  int lastcol=curcol;
-
-  token=toGetToken(this,curline,curcol,false);
-  if (token==".") {
-    lastline=curline;
-    lastcol=curcol;
-    owner=unQuote(toGetToken(this,curline,curcol,false));
-    toGetToken(this,lastline,lastcol,true);
-    table+=unQuote(toGetToken(this,lastline,lastcol,true));
-  } else {
-    curline=lastline;
-    curcol=lastcol;
-    owner=unQuote(toGetToken(this,lastline,lastcol,true));
-    int tmplastline=lastline;
-    int tmplastcol=lastcol;
-    token=toGetToken(this,lastline,lastcol,true);
-    if (token==".")
-      table=unQuote(toGetToken(this,lastline,lastcol,true));
-    else {
-      lastline=tmplastline;
-      lastcol=tmplastcol;
-      table=owner;
-      owner=QString::null;
+    if (token==".") {
+      lastline=curline;
+      lastcol=curcol;
+      owner=conn.unQuote(toGetToken(this,curline,curcol,false));
+      toGetToken(this,lastline,lastcol,true);
+      table+=conn.unQuote(toGetToken(this,lastline,lastcol,true));
+    } else {
+      curline=lastline;
+      curcol=lastcol;
+      owner=conn.unQuote(toGetToken(this,lastline,lastcol,true));
+      int tmplastline=lastline;
+      int tmplastcol=lastcol;
+      token=toGetToken(this,lastline,lastcol,true);
+      if (token==".")
+	table=conn.unQuote(toGetToken(this,lastline,lastcol,true));
+      else {
+	lastline=tmplastline;
+	lastcol=tmplastcol;
+	table=owner;
+	owner=QString::null;
+      }
     }
-  }
-  if (mark) {
-    setCursorPosition(curline,curcol,false);
-    if (lastline>=numLines()) {
-      lastline=numLines()-1;
-      lastcol=textLine(lastline).length();
+    if (mark) {
+      setCursorPosition(curline,curcol,false);
+      if (lastline>=numLines()) {
+	lastline=numLines()-1;
+	lastcol=textLine(lastline).length();
+      }
+      setCursorPosition(lastline,lastcol,true);
     }
-    setCursorPosition(lastline,lastcol,true);
+  } catch(...) {
   }
 }
