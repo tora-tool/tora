@@ -537,7 +537,7 @@ void toLineChart::paintChart(QPainter *p,QRect &rect)
   }
 }
 
-void toLineChart::paintEvent(QPaintEvent *e)
+void toLineChart::paintEvent(QPaintEvent *)
 {
   QPainter p(this);
   p.setFont(font());

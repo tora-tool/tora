@@ -136,7 +136,7 @@ void toResultParam::showHidden(bool hid)
   refresh();
 }
 
-void toResultParam::query(const QString &sql,const toQList &param)
+void toResultParam::query(const QString &,const toQList &)
 {
   saveChange();
   LastItem=-1;
@@ -283,7 +283,7 @@ void toResultParam::changeItem(void)
   }
 }
 
-void toResultParam::changedData(int row,int col,const QString &data)
+void toResultParam::changedData(int,int,const QString &data)
 {
   QString file=toSaveFilename(QString::null,QString::fromLatin1("*.pfile"),this);
   if (!file.isEmpty())

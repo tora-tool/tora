@@ -63,3 +63,11 @@ void toTemplateProvider::importAllData(std::map<QCString,QString> &data,const QC
        i++)
     (*i)->importData(data,prefix+":"+(*i)->name());
 }
+
+void toTemplateProvider::exportData(std::map<QCString,QString> &,const QCString &)
+{
+}
+
+void toTemplateProvider::importData(std::map<QCString,QString> &,const QCString &)
+{
+}

@@ -77,7 +77,7 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void focusInEvent (QFocusEvent *e)
-  { receivedFocus(); }
+  { receivedFocus(); QTextView::focusInEvent(e); }
 };
 
 #endif

@@ -1268,7 +1268,7 @@ void toResultContentEditor::changeFilter(bool all,const QString &crit,const QStr
   changeParams(t,Table);
 }
 
-void toResultContent::saveUnsaved(toConnection &conn,bool cmt)
+void toResultContent::saveUnsaved(toConnection &conn,bool)
 {
   try {
     toConnection &mycon=connection();
@@ -1277,7 +1277,7 @@ void toResultContent::saveUnsaved(toConnection &conn,bool cmt)
   } TOCATCH
 }
 
-bool toResultContent::canHandle(toConnection &conn)
+bool toResultContent::canHandle(toConnection &)
 {
   return true;
 }

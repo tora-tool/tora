@@ -313,7 +313,7 @@ QComboBox *toRefreshCreate(QWidget *parent,const char *name,const QString &def,Q
   if (item)
     refresh=item;
   else
-    refresh=new QComboBox(false,parent,TO_KDE_TOOLBAR_WIDGET);
+    refresh=new QComboBox(false,parent,name);
 
   refresh->insertItem(qApp->translate("toRefreshCreate","None"));
   refresh->insertItem(qApp->translate("toRefreshCreate","2 seconds"));
@@ -1018,9 +1018,8 @@ toBusy::~toBusy()
 {
   BusyLock.lock();
   if (toThread::mainThread()) {
-    Count--;
-    if (Count<0)
-      Count=0;
+    if (Count>0)
+      Count--;
     if (!Count)
       qApp->restoreOverrideCursor();
   }

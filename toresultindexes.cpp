@@ -161,7 +161,7 @@ static toSQL SQLListIndexPgSQL("toResultIndexes:ListIndex",
 			       "7.1",
 			       "PostgreSQL");
 
-void toResultIndexes::query(const QString &sql,const toQList &param)
+void toResultIndexes::query(const QString &,const toQList &param)
 {
   if (!handled())
     return;

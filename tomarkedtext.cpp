@@ -172,14 +172,16 @@ int toMarkedText::printPage(TOPrinter *printer,QPainter *painter,int line,int &o
 				   AlignLeft|AlignTop|ExpandTabs|SingleLine,
 				   Filename);
   QString str=tr("Page: %1").arg(pageNo);
-  painter->drawText(0,metrics.height()-size.height(),size.width(),size.height(),
-		    AlignLeft|AlignTop|ExpandTabs|SingleLine,
-		    Filename);
-  painter->drawText(size.width(),metrics.height()-size.height(),metrics.width()-size.width(),
-		    size.height(),
-		    AlignRight|AlignTop|SingleLine,
-		    str);
-  painter->drawLine(0,0,metrics.width(),0);
+  if (paint) {
+    painter->drawText(0,metrics.height()-size.height(),size.width(),size.height(),
+		      AlignLeft|AlignTop|ExpandTabs|SingleLine,
+		      Filename);
+    painter->drawText(size.width(),metrics.height()-size.height(),metrics.width()-size.width(),
+		      size.height(),
+		      AlignRight|AlignTop|SingleLine,
+		      str);
+    painter->drawLine(0,0,metrics.width(),0);
+  }
   int margin=size.height()+2;
 
   QFont defFont=painter->font();
@@ -189,15 +191,22 @@ int toMarkedText::printPage(TOPrinter *printer,QPainter *painter,int line,int &o
 			     QString::fromLatin1("x"));
   int height=size.height();
   int totalHeight=(metrics.height()-margin)/height*height;
-  painter->drawLine(0,totalHeight+2,metrics.width(),totalHeight+2);
+  if (paint)
+    painter->drawLine(0,totalHeight+2,metrics.width(),totalHeight+2);
   painter->setClipRect(0,2,metrics.width(),totalHeight);
   int pos=1+offset;
   do {
     QRect bound;
-    painter->drawText(0,pos,
-		      metrics.width(),metrics.height(),
-		      AlignLeft|AlignTop|ExpandTabs|WordBreak,
-		      textLine(line),-1,&bound);
+    if (paint) {
+      painter->drawText(0,pos,
+			metrics.width(),metrics.height(),
+			AlignLeft|AlignTop|ExpandTabs|WordBreak,
+			textLine(line),-1,&bound);
+    } else
+      bound=painter->boundingRect(0,pos,
+				  metrics.width(),metrics.height(),
+				  AlignLeft|AlignTop|ExpandTabs|WordBreak,
+				  textLine(line));
     int cheight=bound.height()?bound.height():height;
     totalHeight-=cheight;
     pos+=cheight;
@@ -451,7 +460,7 @@ static int FindIndex(const QString &str,int line,int col)
   return pos+col;
 }
 
-void toMarkedText::findPosition(const QString &str,int index,int &line,int &col)
+void toMarkedText::findPosition(int index,int &line,int &col)
 {
   int pos=0;
   for (int i=0;i<numLines();i++) {
@@ -481,8 +490,8 @@ bool toMarkedText::searchNext(toSearchReplace *search)
   if (search->findString(text,pos,endPos)) {
     int endCol;
     int endLine;
-    findPosition(text,pos,line,col);
-    findPosition(text,endPos,endLine,endCol);
+    findPosition(pos,line,col);
+    findPosition(endPos,endLine,endCol);
     setCursorPosition(line,col,false);
     setCursorPosition(endLine,endCol,true);
     

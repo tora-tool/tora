@@ -78,7 +78,7 @@ public:
   toChartTool()
     : toTool(930,"Chart Manager")
   { Window=NULL; }
-  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
+  virtual QWidget *toolWindow(QWidget *,toConnection &)
   {
     if (!Window)
       return NULL;
@@ -101,7 +101,7 @@ public:
   {
     Window=NULL;
   }
-  virtual bool canHandle(toConnection &conn)
+  virtual bool canHandle(toConnection &)
   { return true; }
 };
 

@@ -117,7 +117,7 @@ static toSQL SQLConstraints7("toResultConstraint:ListConstraints",
 			     "",
 			     "7.3");
 
-void toResultConstraint::query(const QString &sql,const toQList &param)
+void toResultConstraint::query(const QString &,const toQList &param)
 {
   if (!handled())
     return;

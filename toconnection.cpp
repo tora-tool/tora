@@ -78,7 +78,7 @@ toConnectionProvider::toConnectionProvider(const QCString &provider,bool add)
 
 void toConnectionProvider::removeProvider(const QCString &provider)
 {
-  std::map<QCString,toConnectionProvider *>::iterator i=Providers->find(Provider);
+  std::map<QCString,toConnectionProvider *>::iterator i=Providers->find(provider);
   if (i!=Providers->end())
     Providers->erase(i);
 }
@@ -176,6 +176,11 @@ void toConnectionProvider::setConfig(const QCString &tag,const QCString &def)
   str.append(":");
   str.append(tag);
   toTool::globalSetConfig(str,def);
+}
+
+QWidget *toConnectionProvider::providerConfigurationTab(const QCString &,QWidget *)
+{
+  return NULL;
 }
 
 // Query value implementation

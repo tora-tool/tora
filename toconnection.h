@@ -882,8 +882,7 @@ public:
    * @return A pointer to the widget containing the setup tab for this tool or NULL of
    * no settings are available.
    */
-  virtual QWidget *providerConfigurationTab(const QCString &provider,QWidget *parent)
-  { return NULL; }
+  virtual QWidget *providerConfigurationTab(const QCString &provider,QWidget *parent);
 
   /** Get a list of names for providers.
    */

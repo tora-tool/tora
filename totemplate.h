@@ -122,8 +122,7 @@ public:
    * @param data Map of data.
    * @param prefix Prefix of where to save info.
    */
-  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix)
-  { }
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
   /** Save settings for all template providers.
    * @param data Map of data.
    * @param prefix Prefix of where to save info.
@@ -133,8 +132,7 @@ public:
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix)
-  { }
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
   /** Import data for all template providers.
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.

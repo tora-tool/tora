@@ -73,7 +73,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   SavePassword->setChecked(!toTool::globalConfig(CONF_SAVE_PWD,"").isEmpty());
   DesktopAware->setChecked(!toTool::globalConfig(CONF_DESKTOP_AWARE,"Yes").isEmpty());
   ToolsLeft->setChecked(!toTool::globalConfig(CONF_TOOLS_LEFT,"Yes").isEmpty());
-  toRefreshCreate(OptionGroup,NULL,QString::null,Refresh);
+  toRefreshCreate(OptionGroup,TO_KDE_TOOLBAR_WIDGET,QString::null,Refresh);
   DefaultSession->setText(toTool::globalConfig(CONF_DEFAULT_SESSION,DEFAULT_SESSION));
   Status->setValue(toTool::globalConfig(CONF_STATUS_MESSAGE,
 					DEFAULT_STATUS_MESSAGE).toInt());

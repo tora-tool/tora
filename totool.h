@@ -172,8 +172,7 @@ public:
    *
    * @param toolid The tool menu id that should be used if it inserts a custom menu entry.
    */
-  virtual void customSetup(int toolid)
-  { }
+  virtual void customSetup(int toolid);
   /**
    * Create a new tool window.
    *
@@ -188,15 +187,12 @@ public:
    * @return A pointer to the widget containing the setup tab for this tool or NULL of
    * no settings are available.
    */
-  virtual QWidget *configurationTab(QWidget *parent)
-  { return NULL; }
-
+  virtual QWidget *configurationTab(QWidget *parent);
 
   /** Display an about dialog for this tool.
    * @param parent The parent widget of the about dialog.
    */
-  virtual void about(QWidget *parent)
-  { }
+  virtual void about(QWidget *parent);
   /** Indicate whether or not this tool has an about dialog.
    */
   virtual bool hasAbout(void)

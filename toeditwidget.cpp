@@ -148,3 +148,27 @@ toEditWidget::editHandler::~editHandler()
 {
   toEditWidget::delHandler(this);
 }
+
+bool toEditWidget::editOpen(QString)
+{
+  return true;
+}
+
+bool toEditWidget::editSave(bool)
+{
+  return true;
+}
+
+bool toEditWidget::searchNext(toSearchReplace *)
+{
+  return false;
+}
+
+void toEditWidget::searchReplace(const QString &)
+{
+}
+
+bool toEditWidget::searchCanReplace(bool)
+{
+  return false;
+}

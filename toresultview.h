@@ -76,14 +76,12 @@ public:
    * @param data A map that can be used to recreate the data of a chart.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix)
-  { }
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix)
-  { }
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
 };
 
 /** An item to display in a toListView or toResultView. They differ from normal
@@ -370,8 +368,7 @@ public:
   /** Adds option to add menues to the popup menu before it is displayed.
    * @param menu Menu to add entries to.
    */
-  virtual void addMenues(QPopupMenu *menu)
-  { }
+  virtual void addMenues(QPopupMenu *menu);
   /** Export list as a string.
    * @param includeHeader Include header.
    * @param onlySelection Only include selection.
@@ -395,8 +392,7 @@ public:
   /** Check if data can be modified by search
    * @param all If true can replace all, otherwise can replace right now.
    */
-  virtual bool searchCanReplace(bool all)
-  { return false; }
+  virtual bool searchCanReplace(bool all);
 
   /** Export data to a map.
    * @param data A map that can be used to recreate the data of a chart.

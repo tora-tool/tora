@@ -449,7 +449,7 @@ void toMemoEditor::lastColumn(void)
   }
 }
 
-void toMemoEditor::changeCurrent(QListViewItem *item)
+void toMemoEditor::changeCurrent(QListViewItem *)
 {
   toListView *lst=listView();
   if (lst) {

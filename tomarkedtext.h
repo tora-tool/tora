@@ -82,7 +82,7 @@ class toMarkedText : public toMultiLineEdit, public toEditWidget {
 
   void searchFound(int line,int col);
   void incrementalSearch(bool forward,bool next);
-  void findPosition(const QString &str,int index,int &line,int &col);
+  void findPosition(int index,int &line,int &col);
 protected:
   /** Reimplemented for internal reasons.
    */
@@ -226,7 +226,7 @@ private slots:
   { redoEnabled(avail); }
   void setUndoAvailable(bool avail)
   { undoEnabled(avail); }
-  void setCopyAvailable(bool avail)
+  void setCopyAvailable(bool)
   { setEdit(); }
 };
 

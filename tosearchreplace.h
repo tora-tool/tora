@@ -52,7 +52,7 @@ public:
 
   bool findString(const QString &text,int &pos,int &endPos);
   void receivedFocus(toEditWidget *widget);
-  void lostFocus(toEditWidget *widget)
+  void lostFocus(toEditWidget *)
   { receivedFocus(NULL); }
   bool searchNextAvailable(void);
 public slots:

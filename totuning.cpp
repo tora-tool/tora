@@ -1315,7 +1315,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 		  toolbar);
   toolbar->addSeparator();
   new QLabel(tr("Refresh")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
-  Refresh=toRefreshCreate(toolbar);
+  Refresh=toRefreshCreate(toolbar,TO_KDE_TOOLBAR_WIDGET);
   connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
   toolbar->addSeparator();
   TabButton=new toPopupButton(QPixmap((const char **)compile_xpm),

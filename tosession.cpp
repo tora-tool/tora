@@ -232,7 +232,7 @@ toSession::toSession(QWidget *main,toConnection &connection)
 		  toolbar);
   toolbar->addSeparator();
   new QLabel(tr("Refresh")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
-  connect(Refresh=toRefreshCreate(toolbar),SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
+  connect(Refresh=toRefreshCreate(toolbar,TO_KDE_TOOLBAR_WIDGET),SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
 
   toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
   new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);

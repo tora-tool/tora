@@ -498,6 +498,15 @@ bool toTool::canHandle(toConnection &conn)
   return (conn.provider()=="Oracle");
 }
 
+void toTool::customSetup(int)
+{
+}
+
+QWidget *toTool::configurationTab(QWidget *)
+{
+  return NULL;
+}
+
 toTool *toTool::tool(const QCString &key)
 {
   if (!Tools)
@@ -507,4 +516,8 @@ toTool *toTool::tool(const QCString &key)
     return NULL;
   
   return (*i).second;
+}
+
+void toTool::about(QWidget *)
+{
 }

@@ -747,7 +747,7 @@ toListView *toListView::copyTransposed(void)
   return lst;
 }
 
-bool toListView::editSave(bool ask)
+bool toListView::editSave(bool)
 {
   try {
     QString delimiter;
@@ -775,6 +775,15 @@ bool toListView::editSave(bool ask)
   
     return toWriteFile(filename,exportAsText(true,false,type,separator,delimiter));
   } TOCATCH
+  return false;
+}
+
+void toListView::addMenues(QPopupMenu *)
+{
+}
+
+bool toListView::searchCanReplace(bool)
+{
   return false;
 }
 
@@ -1347,4 +1356,12 @@ void toResultListFormat::saveDefault(void)
   toTool::globalSetConfig(CONF_CSV_DELIMITER,Delimiter->text());
   toTool::globalSetConfig(CONF_CSV_SEPARATOR,Separator->text());
   toTool::globalSetConfig(CONF_DEFAULT_FORMAT,QString::number(Format->currentItem()));
+}
+
+void toResultFilter::exportData(std::map<QCString,QString> &,const QCString &)
+{
+}
+
+void toResultFilter::importData(std::map<QCString,QString> &,const QCString &)
+{
 }

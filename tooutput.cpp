@@ -95,7 +95,7 @@ public:
     label->setGeometry(QRect(20,30,100,20));
     QToolTip::add(label,qApp->translate("toOutputPrefs","Time between trying to poll for output."));
 
-    AutoPolling=toRefreshCreate(this,NULL,Tool->config(CONF_POLLING,DEFAULT_POLLING));
+    AutoPolling=toRefreshCreate(this,TO_KDE_TOOLBAR_WIDGET,Tool->config(CONF_POLLING,DEFAULT_POLLING));
     label->setBuddy(AutoPolling);
 
     label=new QLabel(qApp->translate("toOutputPrefs","Default &source"),this);
@@ -186,7 +186,7 @@ toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
 		  ToolBar);
   ToolBar->addSeparator();
   new QLabel(tr("Refresh")+" ",ToolBar,TO_KDE_TOOLBAR_WIDGET);
-  connect(Refresh=toRefreshCreate(ToolBar,NULL,OutputTool.config(CONF_POLLING,DEFAULT_POLLING)),
+  connect(Refresh=toRefreshCreate(ToolBar,TO_KDE_TOOLBAR_WIDGET,OutputTool.config(CONF_POLLING,DEFAULT_POLLING)),
 	  SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
   ToolBar->setStretchableWidget(new QLabel(ToolBar,TO_KDE_TOOLBAR_WIDGET));
 

@@ -1168,7 +1168,7 @@ void toMain::editEnable(toEditWidget *edit,bool open,bool save,bool print,
     menuBar()->setItemEnabled(TO_EDIT_COPY,copy);
     menuBar()->setItemEnabled(TO_EDIT_PASTE,paste);
     menuBar()->setItemEnabled(TO_EDIT_SELECT_ALL,selectAll);
-    menuBar()->setItemEnabled(TO_EDIT_READ_ALL,edit->readAllEnabled());
+    menuBar()->setItemEnabled(TO_EDIT_READ_ALL,readAll);
     menuBar()->setItemEnabled(TO_EDIT_SEARCH,search);
     menuBar()->setItemEnabled(TO_EDIT_SEARCH_NEXT,Search&&Search->searchNextAvailable());
 
@@ -1517,7 +1517,7 @@ void toMain::displayMessage(const QString &str)
   QTimer::singleShot(1,this,SLOT(displayMessage()));
 }
 
-void toMain::versionData(const QByteArray &data,QNetworkOperation *op)
+void toMain::versionData(const QByteArray &data,QNetworkOperation *)
 {
 #if QT_VERSION >= 300
   if (data.size()>0)
@@ -1525,7 +1525,7 @@ void toMain::versionData(const QByteArray &data,QNetworkOperation *op)
 #endif
 }
 
-void toMain::versionFinished(QNetworkOperation *op)
+void toMain::versionFinished(QNetworkOperation *)
 {
 #if QT_VERSION >= 300
   int i=VersionString.find('\n');

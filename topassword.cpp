@@ -55,7 +55,7 @@ public:
   { }
   virtual const char *menuItem()
   { return "Password Change"; }
-  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
+  virtual QWidget *toolWindow(QWidget *,toConnection &connection)
   {
     QString np=QInputDialog::getText(qApp->translate("toPasswordTool","Enter new password"),
 				     qApp->translate("toPasswordTool","Enter new password"),

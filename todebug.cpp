@@ -156,7 +156,7 @@ public:
 
 static toDebugTool DebugTool;
 
-QListViewItem *toDebugWatch::findMisc(const QString &str,QListViewItem *item,toDebugText *editor)
+QListViewItem *toDebugWatch::findMisc(const QString &str,QListViewItem *item)
 {
   if (item) {
     while(item&&item->text(0)!=str) {
@@ -195,14 +195,14 @@ toDebugWatch::toDebugWatch(toDebug *parent)
   }
   QString type=Debugger->headEditor()->type();
   if (type.left(7)==QString::fromLatin1("PACKAGE")||type.left(4)==QString::fromLatin1("TYPE"))
-    HeadItems=findMisc(qApp->translate("toDebug","Head"),items,Debugger->headEditor());
+    HeadItems=findMisc(qApp->translate("toDebug","Head"),items);
   else {
     HeadScope->setEnabled(false);
     HeadItems=NULL;
   }
   type=Debugger->bodyEditor()->type();
   if (type.left(7)==QString::fromLatin1("PACKAGE")||type.left(4)==QString::fromLatin1("TYPE"))
-    BodyItems=findMisc(qApp->translate("toDebug","Body"),items,Debugger->bodyEditor());
+    BodyItems=findMisc(qApp->translate("toDebug","Body"),items);
   else {
     BodyScope->setEnabled(false);
     BodyItems=NULL;

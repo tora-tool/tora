@@ -90,7 +90,7 @@ public:
   toHelpTool()
     : toTool(501,"Additional Help")
   { }
-  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
+  virtual QWidget *toolWindow(QWidget *,toConnection &)
   { return NULL; }
   virtual QWidget *configurationTab(QWidget *parent);
 public slots:

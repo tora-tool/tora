@@ -950,6 +950,7 @@ void toHighlightedText::focusOutEvent(QFocusEvent *e)
 {
   delete Completion;
   Completion=NULL;
+  toMarkedText::focusOutEvent(e);
 }
 
 toHighlightedText::~toHighlightedText()

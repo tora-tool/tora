@@ -241,7 +241,7 @@ class toDebugWatch : public toDebugWatchUI {
   toDebug *Debugger;
   QString Object;
   QString Default;
-  QListViewItem *findMisc(const QString &str,QListViewItem *,toDebugText *);
+  QListViewItem *findMisc(const QString &str,QListViewItem *);
 public:
   toDebugWatch(toDebug *parent);
 

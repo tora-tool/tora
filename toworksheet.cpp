@@ -457,7 +457,7 @@ void toWorksheet::setup(bool autoLoad)
     connect(StatisticButton,SIGNAL(toggled(bool)),this,SLOT(enableStatistic(bool)));
     QToolTip::add(StatisticButton,tr("Gather session statistic of execution"));
     new QLabel(tr("Refresh")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
-    Refresh=toRefreshCreate(toolbar);
+    Refresh=toRefreshCreate(toolbar,TO_KDE_TOOLBAR_WIDGET);
     connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
     connect(StatisticButton,SIGNAL(toggled(bool)),Refresh,SLOT(setEnabled(bool)));
     Refresh->setEnabled(false);

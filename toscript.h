@@ -62,7 +62,7 @@ class toScript : public toToolWidget {
   void changeSchema(int,bool source);
   std::list<QString> createObjectList(QListView *);
   void fillDifference(std::list<QString> &objects,QListView *list);
-  void readOwnerObjects(QListView *list,QListViewItem *item,toConnection &conn);
+  void readOwnerObjects(QListViewItem *item,toConnection &conn);
 public:
   toScript(QWidget *parent,toConnection &connection);
   virtual ~toScript();

@@ -231,7 +231,7 @@ void toRollbackDialog::displaySQL(void)
     toStatusMessage(tr("No changes made"),false,false);
 }
 
-void toRollbackDialog::valueChanged(const QString &str)
+void toRollbackDialog::valueChanged(const QString &)
 {
   if (Name->text().isEmpty()||
       Tablespace->currentText().isEmpty())
@@ -377,7 +377,7 @@ public:
   {
     setSQL(SQLRollback);
   }
-  virtual void query(const QString &sql,const toQList &param)
+  virtual void query(const QString &sql,const toQList &)
   {
     QString unit=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
     
@@ -497,7 +497,7 @@ public:
     NumExtents=0;
     setSQLName(QString::fromLatin1("toRollbackOpen"));
   }
-  virtual void query(const QString &sql,const toQList &param)
+  virtual void query(const QString &,const toQList &)
   {
     try {
       clear();
@@ -637,7 +637,7 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
   toolbar->addSeparator();
 
   new QLabel(tr("Refresh")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
-  connect(Refresh=toRefreshCreate(toolbar),
+  connect(Refresh=toRefreshCreate(toolbar,TO_KDE_TOOLBAR_WIDGET),
 	  SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
 
   toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));

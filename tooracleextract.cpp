@@ -638,7 +638,7 @@ static toSQL SQLContextColumn("toOracleExtract:ContextColumn",
 			      "8.1");
 
 QString toOracleExtract::createContextPrefs(toExtract &ext,
-					    const QString &schema,
+					    const QString &,
 					    const QString &owner,
 					    const QString &name,
 					    const QString &sql) const
@@ -1751,7 +1751,7 @@ static toSQL SQLIndexPartition("toOracleExtract:IndexPartition",
 			       "8.1");
 
 QString toOracleExtract::createPartitionedIndex(toExtract &ext,
-						const QString &schema,
+						const QString &,
 						const QString &owner,
 						const QString &name,
 						const QString &sql) const
@@ -3217,7 +3217,7 @@ void toOracleExtract::describePartitionedIOT(toExtract &ext,
 void toOracleExtract::describePartitionedIndex(toExtract &ext,
 					       std::list<QString> &lst,
 					       std::list<QString> &ctx,
-					       const QString &schema,
+					       const QString &,
 					       const QString &owner,
 					       const QString &name) const
 {
@@ -3385,7 +3385,7 @@ void toOracleExtract::describeTableText(toExtract &ext,
 					std::list<QString> &lst,
 					std::list<QString> &ctx,
 					toQList &result,
-					const QString &schema,
+					const QString &,
 					const QString &owner,
 					const QString &name) const
 {
@@ -3534,7 +3534,7 @@ static toSQL SQLDBLink("toOracleExtract:ExtractDBLink",
 		       "Get information about a DB Link, must have same binds and columns");
 
 QString toOracleExtract::createDBLink(toExtract &ext,
-				      const QString &schema,
+				      const QString &,
 				      const QString &owner,
 				      const QString &name) const
 {
@@ -4110,8 +4110,8 @@ static toSQL SQLProfileInfo("toOracleExtract:ProfileInfo",
 			    "Get information about a profile, must have same binds and columns");
 
 QString toOracleExtract::createProfile(toExtract &ext,
-				       const QString &schema,
-				       const QString &owner,
+				       const QString &,
+				       const QString &,
 				       const QString &name) const
 {
   toQList info=toQuery::readQueryNull(CONNECTION,
@@ -4157,8 +4157,8 @@ static toSQL SQLRoleInfo("toOracleExtract:RoleInfo",
 			 "Get information about a role, must have same binds and columns");
 
 QString toOracleExtract::createRole(toExtract &ext,
-				    const QString &schema,
-				    const QString &owner,
+				    const QString &,
+				    const QString &,
 				    const QString &name) const
 {
   toQList info=toQuery::readQueryNull(CONNECTION,
@@ -4199,8 +4199,8 @@ static toSQL SQLRollbackSegment("toOracleExtract:RollbackSegment",
 				"must have same binds and columns");
 
 QString toOracleExtract::createRollbackSegment(toExtract &ext,
-					       const QString &schema,
-					       const QString &owner,
+					       const QString &,
+					       const QString &,
 					       const QString &name) const
 {
   toQList result=toQuery::readQueryNull(CONNECTION,SQLRollbackSegment,name);
@@ -4951,8 +4951,8 @@ static toSQL SQLDatafileInfo7("toOracleExtract:DatafileInfo",
 			      "7.0");
 
 QString toOracleExtract::createTablespace(toExtract &ext,
-					  const QString &schema,
-					  const QString &owner,
+					  const QString &,
+					  const QString &,
 					  const QString &name) const
 {
   toQList info=toQuery::readQueryNull(CONNECTION,
@@ -5216,8 +5216,8 @@ static toSQL SQLUserQuotas("toOracleExtract:UserQuotas",
 			   "same binds and columns");
 
 QString toOracleExtract::createUser(toExtract &ext,
-				    const QString &schema,
-				    const QString &owner,
+				    const QString &,
+				    const QString &,
 				    const QString &name) const
 {
   toQList info=toQuery::readQueryNull(CONNECTION,
@@ -5398,7 +5398,7 @@ void toOracleExtract::describeConstraint(toExtract &ext,
 
 void toOracleExtract::describeDBLink(toExtract &ext,
 				     std::list<QString> &lst,
-				     const QString &schema,
+				     const QString &,
 				     const QString &owner,
 				     const QString &name) const
 {
@@ -5615,8 +5615,8 @@ void toOracleExtract::describeProcedure(toExtract &ext,
 
 void toOracleExtract::describeProfile(toExtract &ext,
 				      std::list<QString> &lst,
-				      const QString &schema,
-				      const QString &owner,
+				      const QString &,
+				      const QString &,
 				      const QString &name) const
 {
   toQList info=toQuery::readQueryNull(CONNECTION,
@@ -5640,8 +5640,8 @@ void toOracleExtract::describeProfile(toExtract &ext,
 
 void toOracleExtract::describeRole(toExtract &ext,
 				   std::list<QString> &lst,
-				   const QString &schema,
-				   const QString &owner,
+				   const QString &,
+				   const QString &,
 				   const QString &name) const
 {
   toQList info=toQuery::readQueryNull(CONNECTION,
@@ -5660,8 +5660,8 @@ void toOracleExtract::describeRole(toExtract &ext,
 
 void toOracleExtract::describeRollbackSegment(toExtract &ext,
 					      std::list<QString> &lst,
-					      const QString &schema,
-					      const QString &owner,
+					      const QString &,
+					      const QString &,
 					      const QString &name) const
 {
   toQList result=toQuery::readQueryNull(CONNECTION,SQLRollbackSegment,name);
@@ -5733,7 +5733,7 @@ void toOracleExtract::describeSnapshotLog(toExtract &ext,
 
 void toOracleExtract::describeSynonym(toExtract &ext,
 				      std::list<QString> &lst,
-				      const QString &schema,
+				      const QString &,
 				      const QString &owner,
 				      const QString &name) const
 {
@@ -5841,8 +5841,8 @@ void toOracleExtract::describeTableReferences(toExtract &ext,
 
 void toOracleExtract::describeTablespace(toExtract &ext,
 					 std::list<QString> &lst,
-					 const QString &schema,
-					 const QString &owner,
+					 const QString &,
+					 const QString &,
 					 const QString &name) const
 {
   toQList info=toQuery::readQueryNull(CONNECTION,
@@ -6022,8 +6022,8 @@ void toOracleExtract::describeType(toExtract &ext,
 
 void toOracleExtract::describeUser(toExtract &ext,
 				   std::list<QString> &lst,
-				   const QString &schema,
-				   const QString &owner,
+				   const QString &,
+				   const QString &,
 				   const QString &name) const
 {
   toQList info=toQuery::readQueryNull(CONNECTION,
@@ -6107,7 +6107,7 @@ void toOracleExtract::describeView(toExtract &ext,
 QString toOracleExtract::dropConstraint(toExtract &ext,
 					const QString &schema,
 					const QString &owner,
-					const QString &type,
+					const QString &,
 					const QString &name) const
 {
   toQList tableName=toQuery::readQueryNull(CONNECTION,
@@ -6132,9 +6132,9 @@ QString toOracleExtract::dropConstraint(toExtract &ext,
 }
 
 QString toOracleExtract::dropDatabaseLink(toExtract &ext,
-					  const QString &schema,
+					  const QString &,
 					  const QString &owner,
-					  const QString &type,
+					  const QString &,
 					  const QString &name) const
 {
   QString sql=QString("DROP%1 DATABASE LINK %2").
@@ -6153,7 +6153,7 @@ QString toOracleExtract::dropDatabaseLink(toExtract &ext,
 
 QString toOracleExtract::dropMViewLog(toExtract &ext,
 				      const QString &schema,
-				      const QString &owner,
+				      const QString &,
 				      const QString &type,
 				      const QString &name) const
 {
@@ -6171,8 +6171,8 @@ QString toOracleExtract::dropMViewLog(toExtract &ext,
 }
 
 QString toOracleExtract::dropObject(toExtract &ext,
-				    const QString &schema,
-				    const QString &owner,
+				    const QString &,
+				    const QString &,
 				    const QString &type,
 				    const QString &name) const
 {
@@ -6189,9 +6189,9 @@ QString toOracleExtract::dropObject(toExtract &ext,
 }
 
 QString toOracleExtract::dropProfile(toExtract &ext,
-				     const QString &schema,
-				     const QString &owner,
-				     const QString &type,
+				     const QString &,
+				     const QString &,
+				     const QString &,
 				     const QString &name) const
 {
   QString sql=QString("DROP PROFILE %1 CASCADE").arg(QUOTE(name));
@@ -6208,7 +6208,7 @@ QString toOracleExtract::dropProfile(toExtract &ext,
 
 QString toOracleExtract::dropSchemaObject(toExtract &ext,
 					  const QString &schema,
-					  const QString &owner,
+					  const QString &,
 					  const QString &type,
 					  const QString &name) const
 {
@@ -6227,7 +6227,7 @@ QString toOracleExtract::dropSchemaObject(toExtract &ext,
 QString toOracleExtract::dropSynonym(toExtract &ext,
 				     const QString &schema,
 				     const QString &owner,
-				     const QString &type,
+				     const QString &,
 				     const QString &name) const
 {
   QString sql=QString("DROP%1 SYNONYM %2%3").
@@ -6247,8 +6247,8 @@ QString toOracleExtract::dropSynonym(toExtract &ext,
 
 QString toOracleExtract::dropTable(toExtract &ext,
 				   const QString &schema,
-				   const QString &owner,
-				   const QString &type,
+				   const QString &,
+				   const QString &,
 				   const QString &name) const
 {
   QString sql=QString("DROP TABLE %1%2 CASCADE CONSTRAINTS").
@@ -6266,9 +6266,9 @@ QString toOracleExtract::dropTable(toExtract &ext,
 }
 
 QString toOracleExtract::dropTablespace(toExtract &ext,
-					const QString &schema,
-					const QString &owner,
-					const QString &type,
+					const QString &,
+					const QString &,
+					const QString &,
 					const QString &name) const
 {
   QString sql=QString("DROP TABLESPACE %1 INCLUDING CONTENTS CASCADE CONSTRAINTS").
@@ -6285,9 +6285,9 @@ QString toOracleExtract::dropTablespace(toExtract &ext,
 }
 
 QString toOracleExtract::dropUser(toExtract &ext,
-				  const QString &schema,
-				  const QString &owner,
-				  const QString &type,
+				  const QString &,
+				  const QString &,
+				  const QString &,
 				  const QString &name) const
 {
   QString sql=QString("DROP USER %1 CASCADE").
@@ -6530,7 +6530,7 @@ QString toOracleExtract::migrateSource(toExtract &ext,
 QString toOracleExtract::migratePrivs(toExtract &ext,
 				      std::list<QString> &source,
 				      std::list<QString> &destin,
-				      const QString &sourcetype) const
+				      const QString &) const
 {
   std::list<QString> drop;
   std::list<QString> create;

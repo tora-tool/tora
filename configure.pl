@@ -1386,7 +1386,7 @@ CPPFLAGS_GLOB=
 LFLAGS_GLOB=-g
 
 # Additional flags set when compiling.
-CFLAGS_GLOB=-g -fPIC -Wall
+CFLAGS_GLOB=-g -fPIC -W -Wall
 
 ############################################################################
 #

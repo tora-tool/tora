@@ -117,7 +117,7 @@ static toSQL SQLDependencies7("toResultReferences:Dependencies",
 			      "",
 			      "7.3");
 
-void toResultReferences::query(const QString &sql,const toQList &param)
+void toResultReferences::query(const QString &,const toQList &param)
 {
   if (!handled())
     return;

@@ -191,7 +191,7 @@ public:
     bool Running;
     otl_stream *Query;
   public:
-    oracleQuery(toQuery *query,oracleSub *conn)
+    oracleQuery(toQuery *query,oracleSub *)
       : toQuery::queryImpl(query)
     {
       Running=Cancel=false;

@@ -294,7 +294,7 @@ void toPieChart::paintChart(QPainter *p,QRect rect)
   }
 }
 
-void toPieChart::paintEvent(QPaintEvent *e)
+void toPieChart::paintEvent(QPaintEvent *)
 {
   QPainter p(this);
   paintChart(&p,QRect(0,0,width(),height()));

@@ -720,7 +720,7 @@ void toScript::changeConnection(int,bool source)
   } TOCATCH
 }
 
-void toScript::readOwnerObjects(QListView *list,QListViewItem *item,toConnection &conn)
+void toScript::readOwnerObjects(QListViewItem *item,toConnection &conn)
 {
   if (!item->parent()&&!item->firstChild()) {
     try {
@@ -972,7 +972,7 @@ void toScript::expandSource(QListViewItem *item)
 {
   try {
     if (item)
-      readOwnerObjects(ScriptUI->SourceObjects,item,
+      readOwnerObjects(item,
 		       toMainWidget()->connection(ScriptUI->SourceConnection->currentText()));
   } TOCATCH
 }
@@ -981,7 +981,7 @@ void toScript::expandDestination(QListViewItem *item)
 {
   try {
     if (item)
-      readOwnerObjects(ScriptUI->DestinationObjects,item,
+      readOwnerObjects(item,
 		       toMainWidget()->connection(ScriptUI->DestinationConnection->currentText()));
   } TOCATCH
 }

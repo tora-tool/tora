@@ -362,11 +362,11 @@ public:
     cur.CommentColumn=config(CONF_COMMENT_COLUMN,DEFAULT_COMMENT_COLUMN).toInt();
     toSQLParse::setSetting(cur);
   }
-  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
+  virtual QWidget *toolWindow(QWidget *,toConnection &)
   {
     return NULL; // Has no tool window
   }
-  virtual void customSetup(int toolid)
+  virtual void customSetup(int)
   {
     toMainWidget()->editMenu()->insertSeparator();
 
