@@ -45,6 +45,7 @@ class toVisualize : public QVBox {
   Q_OBJECT
 
   QComboBox *Type;
+  QComboBox *Title;
 
   QWidget *Result;
   toListView *Source;

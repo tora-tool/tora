@@ -159,8 +159,10 @@ void toWorksheetStatistic::remove(int selid)
   for(std::list<data>::iterator i=Open.begin();i!=Open.end();i++) {
     if (selid==id) {
       delete (*i).Top;
-      if (Open.size()==1)
+      if (Open.size()==1) {
 	Dummy=new QWidget(Splitter);
+	Dummy->show();
+      }
       Open.erase(i);
       break;
     }

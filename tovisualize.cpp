@@ -82,6 +82,16 @@ toVisualize::toVisualize(toListView *source,QWidget *parent,const char *name)
   QToolTip::add(Axis,"Display axis legend");
   Axis->setOn(true);
 
+  QToolTip::add(new QLabel(" Title columns ",toolbar),
+		"Number of columns to use as title");
+  Title=new QComboBox(toolbar);
+  Title->insertItem("1");
+  Title->insertItem("2");
+  Title->insertItem("3");
+  Title->insertItem("4");
+  Title->insertItem("5");
+  Title->insertItem("6");
+
   toolbar->addSeparator();
 
   new QToolButton(QPixmap((const char **)compile_xpm),
@@ -105,6 +115,7 @@ void toVisualize::display(void)
       toBarChart *chart=new toBarChart(this);
       chart->showLegend(Legend->isOn());
       int add=0;
+      int tit=max(1,Title->currentText().toInt());
       if(Source->columnText(0)=="#")
 	add=1;
       chart->setTitle(Source->columnText(add));
@@ -112,16 +123,19 @@ void toVisualize::display(void)
       chart->showAxisLegend(Axis->isOn());
       chart->setSamples();
 
-
       std::list<QString> lst;
-      for (int i=1+add;i<Source->columns();i++)
+      for (int i=tit+add;i<Source->columns();i++)
 	toPush(lst,Source->columnText(i));
       chart->setLabels(lst);
 
       for (QListViewItem *item=Source->firstChild();item;item=item->nextSibling()) {
 	QString label=item->text(add);
+	for (int j=add+1;j<tit+add;j++) {
+	  label+=", ";
+	  label+=item->text(j);
+	}
 	std::list<double> val;
-	for (int i=1+add;i<Source->columns();i++) {
+	for (int i=tit+add;i<Source->columns();i++) {
 	  toPush(val,item->text(i).toDouble());
 	}
 	chart->addValues(val,label);
@@ -134,6 +148,7 @@ void toVisualize::display(void)
       toLineChart *chart=new toLineChart(this);
       chart->showLegend(Legend->isOn());
       int add=0;
+      int tit=max(1,Title->currentText().toInt());
       if(Source->columnText(0)=="#")
 	add=1;
       chart->setTitle(Source->columnText(add));
@@ -141,16 +156,19 @@ void toVisualize::display(void)
       chart->showAxisLegend(Axis->isOn());
       chart->setSamples();
 
-
       std::list<QString> lst;
-      for (int i=1+add;i<Source->columns();i++)
+      for (int i=tit+add;i<Source->columns();i++)
 	toPush(lst,Source->columnText(i));
       chart->setLabels(lst);
 
       for (QListViewItem *item=Source->firstChild();item;item=item->nextSibling()) {
 	QString label=item->text(add);
+	for (int j=add+1;j<tit+add;j++) {
+	  label+=", ";
+	  label+=item->text(j);
+	}
 	std::list<double> val;
-	for (int i=1+add;i<Source->columns();i++) {
+	for (int i=tit+add;i<Source->columns();i++) {
 	  toPush(val,item->text(i).toDouble());
 	}
 	chart->addValues(val,label);
@@ -163,11 +181,18 @@ void toVisualize::display(void)
       toPieChart *chart=new toPieChart(this);
       chart->showLegend(Legend->isOn());
       int add=0;
+      int tit=max(1,Title->currentText().toInt());
       if(Source->columnText(0)=="#")
 	add=1;
       chart->setTitle(Source->columnText(add));
-      for (QListViewItem *item=Source->firstChild();item;item=item->nextSibling())
-	chart->addValue(item->text(1+add).toDouble(),item->text(add));
+      for (QListViewItem *item=Source->firstChild();item;item=item->nextSibling()) {
+	QString label=item->text(add);
+	for (int j=add+1;j<tit+add;j++) {
+	  label+=", ";
+	  label+=item->text(j);
+	}
+	chart->addValue(item->text(tit+add).toDouble(),label);
+      }
       Result=chart;
     }
     break;

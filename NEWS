@@ -41,6 +41,8 @@
 2001-11-22: Fixed problems with restored session tools window caption.
 2001-11-22: Fixed problem with resetting statistics in worksheet.
 2001-11-22: Fixed problem stoping query in worksheet.
+2001-11-23: Fixed problem with deleting last statistic in worksheet statistics.
+2001-11-23: Made visualize able to handle more than 1 title column.
 
 1.1.5:
 
@@ -124,6 +126,8 @@
 2001-11-19: Fixed problem with timer in worksheet after first result.
 2001-11-19: Fixed problem with rownum in result content for non oracle DB.
 2001-11-20: Fixed focus in all the other tools on startup as well.
+2001-11-22: Fixed problem with legend in charts.
+2001-11-22: Change label of refresh to reexecute in worksheet.
 
 1.1.4: Released 2001-11-02
 
