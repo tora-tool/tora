@@ -52,6 +52,9 @@ schema as the source database is used. If you select <B>None</B>, no schema is g
 Specifying anything else will replace the source schema with the one entered here.
 </TD></TR>
 </TABLE><P>
+The next thing you need to do is to specify which objects you want to extract or compare. If you
+extract you only need to specify the source, if comparing destination objects are also needed.<P>
+Selecting or deselecting an item in this list will select all it's child items.<P>
 If you specify the <B>extract</B> mode you can also indicate a way to resize generated
 storage specifications. This could be usefull to make a database have only a few standard
 storage specifications making less prone to fragmentation.<P>
@@ -61,5 +64,21 @@ which means leave the same as the original. Then there is <B>Auto resize</B> whi
 work for pretty much everyone. In this a resize specification for each order of magnitude of
 size is given a specific storage specication. And last is the <B>Custom resize</B> mode in
 which you specify how to transform the storage specifications to new values.<P>
+When you specify a custom resize you add items to the list with a <B>limit</B> size,
+<B>initial</B> size and <B>next</B> size. The sizes are used in the following way. When TOra
+is to determine the storage clause of an object it will take the <B>initial</B> and <B>next</B>
+sizes of the row in this list with the lowest <B>limit</B> size still higher than the current
+size of the object. If no row is found the one with the highest <B>limit</B> is used.<P>
+<H2>Reading the result</H2>
+If you <b>extract</B> the result is available under the <B>Result</B> tag of the dialog in the
+form of a worksheet tool where you can either start executing it or save it to a file. If you
+are comparing objects you will get the result under the <B>Difference</B> tab. The tab will
+look something like this.<P>
+<IMG SRC=images/difference.png><P>
+On the left is a pane containing objects only available in the source database. On the right
+is a pane containing the objects only available in the destination database.<P>
+Only the items in the lists that have checks on them are actually dropped or created, the
+other items only need to be added to lead the list tree to the items that are actually dropped
+or created.<P>
 </BODY>
 </HTML>

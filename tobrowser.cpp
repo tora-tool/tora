@@ -50,6 +50,7 @@ TO_NAMESPACE;
 #include <qbuttongroup.h>
 #include <qregexp.h>
 #include <qpopupmenu.h>
+#include <qmenubar.h>
 
 #ifdef TO_KDE
 #  include <kmenubar.h>
