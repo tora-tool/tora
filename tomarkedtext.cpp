@@ -290,7 +290,7 @@ void toMarkedText::incrementalSearch(bool forward,bool next)
   if (forward) {
     if (next)
       curcol++;
-    if (curcol+SearchString.length()<line.length()) {
+    if (curcol+SearchString.length()<=line.length()) {
       int pos=line.find(SearchString,curcol,false);
       if (pos>=0) {
 	searchFound(curline,pos);
@@ -308,14 +308,14 @@ void toMarkedText::incrementalSearch(bool forward,bool next)
     if (next)
       curcol--;
     if (curcol>=0) {
-      int pos=line.findRev(SearchString,curcol+SearchString.length(),false);
+      int pos=line.findRev(SearchString,curcol,false);
       if (pos>=0) {
 	searchFound(curline,pos);
 	return;
       }
     }
     for(curline--;curline>=0;curline--) {
-      int pos=textLine(curline).findRev(SearchString,0,false);
+      int pos=textLine(curline).findRev(SearchString,-1,false);
       if (pos>=0) {
 	searchFound(curline,pos);
 	return;
