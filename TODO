@@ -7,7 +7,6 @@ Beta todo list:
 	Schema filter
 	Object search
 * Modify datafiles in storage manager.
-* Posibility to connect as SYS_DBA/SYS_OPER.
 
 Extended functionality:
 
@@ -33,6 +32,7 @@ Extended functionality:
 * Display objects in tablespace storage manager.
 * Segments view in storage view.
 * Add replace to toResultContent.
+* Ability to change redofiles.
 
 Windows problems:
 
