@@ -116,6 +116,13 @@ void toSearchReplace::replaceAll(void)
   }
 }
 
+void toSearchReplace::show()
+{
+  SearchText->selectAll();
+  toSearchReplaceUI::show();
+}
+    
+
 bool toSearchReplace::findString(const QString &text,int &pos,int &endPos)
 {
   bool ok;

@@ -79,6 +79,7 @@
 #include "todebug.moc"
 #include "todebugchangeui.moc"
 #include "todebugwatch.moc"
+#include "todebuggotolineui.moc"
 
 #include "icons/addwatch.xpm"
 #include "icons/changewatch.xpm"
@@ -112,6 +113,7 @@
 #define TO_ID_DEL_WATCH		(toMain::TO_TOOL_MENU_ID+10)
 #define TO_ID_CHANGE_WATCH	(toMain::TO_TOOL_MENU_ID+11)
 #define TO_ID_CLOSE_EDITOR	(toMain::TO_TOOL_MENU_ID+12)
+#define TO_ID_GOTO_LINE		(toMain::TO_TOOL_MENU_ID+12)
 
 class toDebugTool : public toTool {
   std::map<toConnection *,QWidget *> Windows;
@@ -155,6 +157,24 @@ public:
 };
 
 static toDebugTool DebugTool;
+
+toDebugGotoLine::toDebugGotoLine(toDebug *parent)
+  :toDebugGoToLineUI(parent,"GotoLine",true),Debugger(parent)
+{
+  toHelp::connectDialog(this);
+  spinBox1->setMaxValue(Debugger->currentEditor()->numLines());
+  spinBox1->setMinValue(1);
+  {
+    int curline,curcol;
+    Debugger->currentEditor()->getCursorPosition (&curline,&curcol);
+    spinBox1->setValue(curline);
+  }
+}
+
+void toDebugGotoLine::gotoLine()
+{
+  Debugger->currentEditor()->setCursorPosition(spinBox1->value()-1,0,false);
+}
 
 toDebugWatch::toDebugWatch(toDebug *parent)
   : toDebugWatchUI(parent,"AddWatch",true),Debugger(parent)
@@ -2200,6 +2220,14 @@ void toDebug::addWatch(void)
   }
 }
 
+void toDebug::goToLine(void)
+{
+  toDebugGotoLine gotoLine(this);
+  if (gotoLine.exec()) {
+    gotoLine.gotoLine();
+  }
+}
+
 void toDebug::windowActivated(QWidget *widget)
 {
   if (widget==this) {
@@ -2262,6 +2290,9 @@ void toDebug::windowActivated(QWidget *widget)
       ToolMenu->insertItem(QPixmap((const char **)changewatch_xpm),
 			   tr("Chan&ge Watch..."),this,SLOT(changeWatch(void)),
 			   CTRL+Key_F4,TO_ID_CHANGE_WATCH);
+
+      ToolMenu->insertItem(tr("&Go to line..."),this,SLOT(goToLine(void)),
+                           ALT+Key_G,TO_ID_GOTO_LINE);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(tr("Refresh Object List"),this,SLOT(refresh()),
 			   Key_F5);
@@ -2300,7 +2331,7 @@ void toDebug::selectedWatch()
 {
   QListViewItem *item=Watch->selectedItem();
   if (item) {
-    if (!item->text(5).isEmpty()&&item->text(5)!=QString::fromLatin1("LIST")) {
+    if (!item->text(5).isEmpty()&&item->text(5)!=QString::fromLatin1("LIST")&&item->text(5)!=QString::fromLatin1("NULL")) {
       DelWatchButton->setEnabled(false);
       ToolMenu->setItemEnabled(TO_ID_DEL_WATCH,false);
     } else {

@@ -52,9 +52,10 @@ public:
   ~toSearchReplace()
   { toEditWidget::delHandler(this); }
 
+  virtual void show();
   bool findString(const QString &text,int &pos,int &endPos);
-  void receivedFocus(toEditWidget *widget);
-  void lostFocus(toEditWidget *)
+  virtual void receivedFocus(toEditWidget *widget);
+  virtual void lostFocus(toEditWidget *)
   { receivedFocus(NULL); }
   bool searchNextAvailable(void);
 public slots:
