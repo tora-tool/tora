@@ -425,7 +425,7 @@ static toSQL SQLDebugInit("toDebug:Initialize",
 			  "  \n"
 			  "  ret:=SYS.DBMS_DEBUG.INITIALIZE;\n"
 			  "  SYS.DBMS_DEBUG.DEBUG_ON;\n"
-			  "  SELECT ret,sys.dbms_session.unique_session_id INTO :f2<char[201],out>,:f3<char[25],out> FROM sys.DUAL;\n"
+			  "  SELECT ret INTO :f2<char[201],out> FROM sys.DUAL;\n"
 			  "END;",
 			  "Initialize the debug session, must have same bindings");
 
@@ -445,7 +445,6 @@ void toDebug::targetTask::run(void)
       Parent.DebuggerStarted=true;
       toLocker lock(Parent.Lock);
       Parent.TargetID=init.readValue();
-      Parent.TargetSession=init.readValue();
       Parent.ChildSemaphore.up();
       Parent.TargetLog+="Debug session connected\n";
     } catch (const QString &exc) {

@@ -7282,13 +7282,10 @@ public:
     OTL_SCAST(ub1,SQLCS_IMPLICIT));
   switch(rc){
   case OCI_SUCCESS:
-   if(aoffset==1)
-    s.set_len(amt);
-   else
-    s.set_len(amt);
+   s.set_len(amt);
    break;
   case OCI_NEED_DATA:
-   s.set_len(s.buf_size);
+   s.set_len(amt<s.buf_size?amt:s.buf_size);
    break;
   case OCI_ERROR:
    s.set_len(0);

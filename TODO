@@ -25,6 +25,17 @@ Extended functionality:
 * Editor improvements
 	CVS support (Or whatever this is called in windows).
 	PL/SQL doc (Like JavaDoc).
+* Debugger
+	Don't lock during execution.
+	Support for Oracle 7
+	Support for multiple open editors
+	Use toSQLParse
+	Attaching to remote debugging session
+	Support for one referential cursor output variable
+* Statistics manager.
+	Index only analyzing.
+	Display only analyzed/not analyzed.
+	All schemas option.
 * Add consumer group settings to security manager.
 * Extract grants from objects.
 * Implement extract of temporary tables.
@@ -36,30 +47,21 @@ Extended functionality:
 * Full support for Oracle 9i.
 * Install in KDE menu if KDE detected.
 * Printing of toResultItems.
-* Never lock while executing in debugger.
 * Different highlighter depending on connection.
 * Default names to listen to in alert.
 * Make menues and toolbuttons work for QLineEdit & QComboBox.
 * Use object cache in script object lists.
-* Add support for Oracle7 in debugger.
 * Optionaly drop before create in toExtract.
-* Tabbed source windows in debugger.
 * Ability to modify rollback segment.
 * Ability to drop tablespaces.
 * Information about controlfiles in tuning.
 * Make entire tuning polling in background.
 * Use object cache in browser if possible.
-* Make toExtract plugin based.
 * Add support to run profiling in background.
 * Track session statistics while profiling.
 * Proxy connection provider.
 * Store worksheet statistic on save session.
-* Use new toSQLParse for tree structure in toDebug.
 * Configure key bindings.
-* Statistics manager.
-	Index only analyzing.
-	Display only analyzed/not analyzed.
-	All schemas option.
 * Use QTable to display the result in the worksheet.
 * Improved visualisation of any list and any columns.
 * Session:Long operations(v$session_longops)

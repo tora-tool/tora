@@ -145,7 +145,6 @@ class toDebug : public toToolWidget {
   bool DebuggerStarted;
   // Can be read after thread startup
   QString TargetID;
-  QString TargetSession;
   // End of lock stuff
   toTimer StartTimer;
 
