@@ -1,6 +1,8 @@
 1.1:
 
 2001-08-01: Added pie chart class.
+2001-08-02: Fixed release script to grab correct tag if specified.
+2001-08-02: Added another quote.
 
 1.0:
 

@@ -14,9 +14,11 @@ mkdir -p t
 cd t
 if [ "X$2" = "X" ]
 then
+    echo Releasing head
     cvs -z3 -d:pserver:anonymous@cvs.tora.sourceforge.net:/cvsroot/tora co tora
 else
-    cvs -z3 -r$2 -d:pserver:anonymous@cvs.tora.sourceforge.net:/cvsroot/tora co tora
+    echo Releasing branch $2
+    cvs -z3 -d:pserver:anonymous@cvs.tora.sourceforge.net:/cvsroot/tora co -r$2 tora
 fi
 rm -rf `find tora -name CVS`
 touch tora/* tora/*/*
