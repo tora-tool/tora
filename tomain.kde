@@ -164,6 +164,8 @@ QString toShift(list<QString> &lst);
 void toUnShift(list<QString> &lst,const QString &);
 QString toPop(list<QString> &lst);
 void toPush(list<QString> &lst,const QString &);
+QFont toStringToFont(const QString &str);
+QString toFontToString(const QFont &fnt);
 
 #define TO_FILE_MENU		10
 #define TO_EDIT_MENU		20
