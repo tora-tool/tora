@@ -321,9 +321,9 @@ QString toOracleExtract::displaySource(toExtract &ext,
   re+=type;
   re+="\\s+";
   for(unsigned int i=0;i<name.length();i++) {
-    if (!name[i].isLetterOrNumber())
+    if (!name.at(i).isLetterOrNumber())
       re+="\\";
-    re+=name[i];
+    re+=name.at(i);
   }
   QRegExp StripType(re,false);
 
