@@ -3373,7 +3373,7 @@ QString toExtract::createPartitionedIOT(const QString &schema,const QString &own
 					const QString &name)
 {
   toQList result=toQuery::readQuery(Connection,SQLPartitionedIOTInfo,
-				   QString::number(BlockSize),name,owner);
+				    QString::number(BlockSize),name,owner);
   QString ret=createTableText(result,schema,owner,name);
   if (Storage) {
     toQList overflow=toQuery::readQuery(Connection,SQLOverflowInfo,name,owner);
@@ -3402,7 +3402,7 @@ void toExtract::describePartitionedIOT(list<QString> &lst,list<QString> &ctx,
 				       const QString &name)
 {
   toQList result=toQuery::readQuery(Connection,SQLPartitionedIOTInfo,
-				   QString::number(BlockSize),name,owner);
+				    QString::number(BlockSize),name,owner);
   describeTableText(lst,ctx,result,schema,owner,name);
   toQuery inf(Connection,SQLPartitionIndexNames,name,owner);
   if (!inf.eof())
@@ -3831,7 +3831,7 @@ QString toExtract::createPartitionedTable(const QString &schema,const QString &o
 					  const QString &name)
 {
   toQList storage=toQuery::readQuery(Connection,SQLPartitionTableInfo,
-				    QString::number(BlockSize),name,owner);
+				     QString::number(BlockSize),name,owner);
 
   QString organization;
   {
@@ -3883,7 +3883,7 @@ QString toExtract::createPartitionedTable(const QString &schema,const QString &o
 
       if (subPartitionType=="HASH") {
 	toQList subs=toQuery::readQuery(Connection,SQLSubPartitionName,
-				       name,partition,owner);
+					name,partition,owner);
 	bool first=true;
 	ret+="        (\n            ";
 	while(subs.size()>0) {
@@ -3900,7 +3900,7 @@ QString toExtract::createPartitionedTable(const QString &schema,const QString &o
     }
   } else {
     toQList hash=toQuery::readQuery(Connection,SQLSubPartitionName,
-				   name,owner);
+				    name,owner);
     bool first=true;
     ret+="(\n    ";
     while(hash.size()>0) {
@@ -3924,7 +3924,7 @@ void toExtract::describePartitionedTable(list<QString> &lst,list<QString> &ctx,
 					 const QString &name)
 {
   toQList storage=toQuery::readQuery(Connection,SQLPartitionTableInfo,
-				    QString::number(BlockSize),name,owner);
+				     QString::number(BlockSize),name,owner);
 
   QString organization;
   {
@@ -3971,7 +3971,7 @@ void toExtract::describePartitionedTable(list<QString> &lst,list<QString> &ctx,
 
       if (subPartitionType=="HASH") {
 	toQList subs=toQuery::readQuery(Connection,SQLSubPartitionName,
-				       name,partition,owner);
+					name,partition,owner);
 	while(subs.size()>0) {
 	  QString subpart=QString(toShift(subs)).lower();
 	  QString tabspac=toShift(subs);
@@ -3983,7 +3983,7 @@ void toExtract::describePartitionedTable(list<QString> &lst,list<QString> &ctx,
     }
   } else {
     toQList hash=toQuery::readQuery(Connection,SQLSubPartitionName,
-				   name,owner);
+				    name,owner);
     while(hash.size()>0) {
       QString partition=QString(toShift(hash)).lower();
       QString tablespac=toShift(hash);
@@ -4081,8 +4081,8 @@ static toSQL SQLProfileInfo("toExtract:ProfileInfo",
 QString toExtract::createProfile(const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
-				 SQLProfileInfo,
-				 name);
+				  SQLProfileInfo,
+				  name);
   if (info.size()==0)
     throw QString("Couldn't find profile %1").arg(name);
 
@@ -4104,8 +4104,8 @@ void toExtract::describeProfile(list<QString> &lst,
 				const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
-				 SQLProfileInfo,
-				 name);
+				  SQLProfileInfo,
+				  name);
   if (info.size()==0)
     throw QString("Couldn't find profile %1").arg(name);
 
@@ -4141,8 +4141,8 @@ static toSQL SQLRoleInfo("toExtract:RoleInfo",
 QString toExtract::createRole(const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
-				 SQLRoleInfo,
-				 name);
+				  SQLRoleInfo,
+				  name);
   if (info.size()==0)
     throw QString("Couldn't find role %1").arg(name);
 
@@ -4158,8 +4158,8 @@ void toExtract::describeRole(list<QString> &lst,
 			     const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
-				 SQLRoleInfo,
-				 name);
+				  SQLRoleInfo,
+				  name);
   if (info.size()==0)
     throw QString("Couldn't find role %1").arg(name);
 
@@ -4424,8 +4424,8 @@ static toSQL SQLSequenceInfo("toExtract:SequenceInfo",
 QString toExtract::createSequence(const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
-				 SQLSequenceInfo,
-				 name,owner);
+				  SQLSequenceInfo,
+				  name,owner);
   if (info.size()==0)
     throw QString("Couldn't find sequence %1").arg(name);
 
@@ -4447,8 +4447,8 @@ void toExtract::describeSequence(list<QString> &lst,
 				 const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
-				 SQLSequenceInfo,
-				 name,owner);
+				  SQLSequenceInfo,
+				  name,owner);
   if (info.size()==0)
     throw QString("Couldn't find sequence %1").arg(name);
 
@@ -4477,8 +4477,8 @@ static toSQL SQLSynonymInfo("toExtract:SynonymInfo",
 QString toExtract::createSynonym(const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
-				 SQLSynonymInfo,
-				 name,owner);
+				  SQLSynonymInfo,
+				  name,owner);
   if (info.size()==0)
     throw QString("Couldn't find synonym %1.%2").arg(owner).arg(name);
   
@@ -4511,8 +4511,8 @@ void toExtract::describeSynonym(list<QString> &lst,
 				const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
-				 SQLSynonymInfo,
-				 name,owner);
+				  SQLSynonymInfo,
+				  name,owner);
   if (info.size()==0)
     throw QString("Couldn't find synonym %1.%2").arg(owner).arg(name);
   
@@ -5072,9 +5072,9 @@ static toSQL SQLDatafileInfo7("toExtract:DatafileInfo",
 QString toExtract::createTablespace(const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
-				 SQLTablespaceInfo,
-				 QString::number(BlockSize),
-				 name);
+				  SQLTablespaceInfo,
+				  QString::number(BlockSize),
+				  name);
 
   if (info.size()!=10)
     throw QString("Couldn't find tablespace %1").arg(name);
@@ -5106,9 +5106,9 @@ QString toExtract::createTablespace(const QString &schema,const QString &owner,c
   ret+=sql;
 
   toQList files=toQuery::readQuery(Connection,
-				  SQLDatafileInfo,
-				  QString::number(BlockSize),
-				  name);
+				   SQLDatafileInfo,
+				   QString::number(BlockSize),
+				   name);
   if (extentManagement=="LOCAL"&&contents=="TEMPORARY")
     ret+="TEMPFILE\n";
   else
@@ -5176,9 +5176,9 @@ void toExtract::describeTablespace(list<QString> &lst,
 				   const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
-				 SQLTablespaceInfo,
-				 QString::number(BlockSize),
-				 name);
+				  SQLTablespaceInfo,
+				  QString::number(BlockSize),
+				  name);
 
   if (info.size()!=10)
     throw QString("Couldn't find tablespace %1").arg(name);
@@ -5205,9 +5205,9 @@ void toExtract::describeTablespace(list<QString> &lst,
   addDescription(lst,ctx);
 
   toQList files=toQuery::readQuery(Connection,
-				  SQLDatafileInfo,
-				  QString::number(BlockSize),
-				  name);
+				   SQLDatafileInfo,
+				   QString::number(BlockSize),
+				   name);
   while(files.size()>0) {
     QString fileName       =toShift(files);
     QString bytes          =toShift(files);
@@ -5306,8 +5306,8 @@ static toSQL SQLUserQuotas("toExtract:UserQuotas",
 QString toExtract::createUser(const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
-				 SQLUserInfo,
-				 name);
+				  SQLUserInfo,
+				  name);
 
   if (info.size()!=4)
     throw QString("Couldn't find user %1").arg(name);
@@ -5354,8 +5354,8 @@ void toExtract::describeUser(list<QString> &lst,
 			     const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
-				 SQLUserInfo,
-				 name);
+				  SQLUserInfo,
+				  name);
 
   if (info.size()!=4)
     throw QString("Couldn't find user %1").arg(name);
@@ -5413,8 +5413,8 @@ QString toExtract::createView(const QString &schema,const QString &owner,const Q
   if (!Code)
     return "";
   toQList source=toQuery::readQuery(Connection,
-				   SQLViewSource,
-				   name,owner);
+				    SQLViewSource,
+				    name,owner);
   if (source.size()==0)
     throw QString("Couldn't find user %1.%2").arg(owner.lower()).arg(name.lower());
 
@@ -5428,8 +5428,8 @@ QString toExtract::createView(const QString &schema,const QString &owner,const Q
   }
   ret+=sql;
   toQList cols=toQuery::readQuery(Connection,
-				 SQLViewColumns,
-				 name,owner);
+				  SQLViewColumns,
+				  name,owner);
   ret+="(";
   QString sep="\n    ";
   while(cols.size()>0) {
@@ -5451,8 +5451,8 @@ void toExtract::describeView(list<QString> &lst,
   if (!Code)
     return;
   toQList source=toQuery::readQuery(Connection,
-				   SQLViewSource,
-				   name,owner);
+				    SQLViewSource,
+				    name,owner);
   if (source.size()==0)
     throw QString("Couldn't find user %1.%2").arg(owner.lower()).arg(name.lower());
 
@@ -5470,8 +5470,8 @@ QString toExtract::dropConstraint(const QString &schema,const QString &owner,
 				  const QString &type,const QString &name)
 {
   toQList tableName=toQuery::readQuery(Connection,
-				      SQLConstraintTable,
-				      owner,name);
+				       SQLConstraintTable,
+				       owner,name);
   if (tableName.size()==0)
     throw QString("Couldn't find constraint %1.%2").arg(owner.lower()).arg(name.lower());
   QString sql=QString("ALTER TABLE %1%2 DROP CONSTRAINT %3").
@@ -5694,7 +5694,7 @@ QString toExtract::resizeIndex(const QString &schema,const QString &owner,const 
 
   if (!partition.isEmpty()) {
     toQList result=toQuery::readQuery(Connection,SQLPartitionSegmentType,
-				     index,partition);
+				      index,partition);
 
     if (result.size()!=2)
       throw QString("Index partition %1.%2 not found").arg(owner).arg(name);
@@ -5707,7 +5707,7 @@ QString toExtract::resizeIndex(const QString &schema,const QString &owner,const 
   QString partitioned=toShift(result);
   if (partitioned=="NO") {
     toQList segment=toQuery::readQuery(Connection,SQLIndexSegmentInfo,
-				      name,"INDEX",owner);
+				       name,"INDEX",owner);
     QString blocks =toShift(segment);
     QString initial=toShift(segment);
     QString next   =toShift(segment);
@@ -5729,8 +5729,8 @@ QString toExtract::resizeIndex(const QString &schema,const QString &owner,const 
     return ret;
   } else {
     toQList partitions=toQuery::readQuery(Connection,
-					 SQLObjectPartitions,
-					 name,owner);
+					  SQLObjectPartitions,
+					  name,owner);
     QString ret;
     while(partitions.size()>0) {
       QString partition=toShift(partitions);
@@ -5764,7 +5764,7 @@ QString toExtract::resizeIndexPartition(const QString &schema,const QString &own
 					const QString &seqType)
 {
   toQList result=toQuery::readQuery(Connection,SQLIndexPartitionSegment,
-				   name,partition,owner);
+				    name,partition,owner);
   QString blocks          =toShift(result);
   QString initial         =toShift(result);
   QString next            =toShift(result);
@@ -5840,7 +5840,7 @@ QString toExtract::resizeTable(const QString &schema,const QString &owner,const 
 
   if (!partition.isEmpty()) {
     toQList result=toQuery::readQuery(Connection,SQLPartitionSegmentType,
-				     table,partition);
+				      table,partition);
 
     if (result.size()!=2)
       throw QString("Table partition %1.%2 not found").arg(owner).arg(name);
@@ -5848,7 +5848,7 @@ QString toExtract::resizeTable(const QString &schema,const QString &owner,const 
     QString ret=resizeTablePartition(schema,owner,table,partition,toShift(result));
 
     toQList indexes=toQuery::readQuery(Connection,SQLTablePartIndex,
-				      table,owner);
+				       table,owner);
     while(indexes.size()>0) {
       QString schema2=intSchema(toShift(indexes));
       QString index=intSchema(toShift(indexes));
@@ -5885,8 +5885,8 @@ QString toExtract::resizeTable(const QString &schema,const QString &owner,const 
     return ret;
   } else {
     toQList partitions=toQuery::readQuery(Connection,
-					 SQLObjectPartitions,
-					 name,owner);
+					  SQLObjectPartitions,
+					  name,owner);
     QString ret;
     while(partitions.size()>0) {
       QString partition=toShift(partitions);
@@ -5895,7 +5895,7 @@ QString toExtract::resizeTable(const QString &schema,const QString &owner,const 
     }
 
     toQList indexes=toQuery::readQuery(Connection,SQLTablePartIndexes,
-				      name,owner);
+				       name,owner);
     while(indexes.size()>0) {
       QString schema2=intSchema(toShift(indexes));
       ret+=resizeIndex(schema2,owner,toShift(indexes));
@@ -5930,9 +5930,8 @@ QString toExtract::resizeTablePartition(const QString &schema,const QString &own
 					const QString &seqType)
 {
   toQList result=toQuery::readQuery(Connection,
-				   toSQL::string(SQLTablePartitionSegment,Connection).
-				   arg(seqType).utf8(),
-				   name,partition,owner);
+				    toSQL::string(SQLTablePartitionSegment,Connection).arg(seqType),
+				    name,partition,owner);
   QString blocks          =toShift(result);
   QString initial         =toShift(result);
   QString next            =toShift(result);

@@ -236,8 +236,8 @@ public:
    * @param conn Connection to get version from.
    * @return String containing the statement.
    */
-  const QCString operator () (const toConnection &conn)
-  { return sql(Name,conn); }
+  const QString operator () (const toConnection &conn)
+  { return string(Name,conn); }
 
   /** Get name of this SQL.
    * @return Name.

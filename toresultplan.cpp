@@ -153,7 +153,7 @@ void toResultPlan::query(const QString &sql,
 				      "&Yes","&No",0,1);
 	if (ret==0) {
 	  connection().execute(toSQL::string(toSQL::TOSQL_CREATEPLAN,
-					     connection()).arg(planTable).utf8());
+					     connection()).arg(planTable));
 	  query(sql,param);
 	}
       } else

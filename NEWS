@@ -61,6 +61,8 @@
 2001-08-17: Started implementing tool connection handling code.
 2001-08-17: As a proof of concept debugger doesn't support Oracle 7.x databases.
 2001-08-17: Added support for canHandle in changeConnection class.
+2001-08-17: Fixed a couple of utf8 bugs.
+2001-08-17: Changed operator () in toSQL to return QString.
 
 0.14: Released 2001-08-02
 

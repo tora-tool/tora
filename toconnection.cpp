@@ -718,7 +718,7 @@ void toConnection::delInit(const QString &sql)
 void toConnection::execute(toSQL &sql,toQList &params)
 {
   toBusy busy;
-  Connection->execute(mainConnection(),sql(*this),params);
+  Connection->execute(mainConnection(),toSQL::sql(sql,*this),params);
 }
 
 void toConnection::execute(const QString &sql,toQList &params)
@@ -777,7 +777,7 @@ void toConnection::execute(toSQL &sql,
     args.insert(args.end(),arg9);
 
   toBusy busy;
-  Connection->execute(mainConnection(),sql(*this),args);
+  Connection->execute(mainConnection(),toSQL::sql(sql,*this),args);
 }
 
 void toConnection::execute(const QString &sql,
@@ -838,7 +838,7 @@ void toConnection::allExecute(toSQL &sql,toQList &params)
   toBusy busy;
   for(list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     try {
-      Connection->execute(*i,sql(*this),params);
+      Connection->execute(*i,toSQL::sql(sql,*this),params);
     } TOCATCH
   }
 }
@@ -905,7 +905,7 @@ void toConnection::allExecute(toSQL &sql,
   toBusy busy;
   for(list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     try {
-      Connection->execute(*i,sql(*this),args);
+      Connection->execute(*i,toSQL::sql(sql,*this),args);
     } TOCATCH
   }
 }

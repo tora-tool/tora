@@ -216,8 +216,7 @@ void toResultCols::query(const QString &sql,const toQList &param)
     str.append(SQL);
     str.append(" WHERE NULL = NULL");
 
-    toQuery Query(connection(),
-		  str.utf8());
+    toQuery Query(connection(),str);
 
     toQDescList desc=Query.describe();
 
