@@ -34,6 +34,7 @@ TO_NAMESPACE;
 #include "tomain.h"
 #include "toconf.h"
 #include "totool.h"
+#include "tosql.h"
 
 #include "toresultlock.moc"
 
@@ -57,6 +58,36 @@ toResultLock::toResultLock(toConnection &conn,QWidget *parent,const char *name)
   addColumn("Requested");
 }
 
+static toSQL SQLLock("toResultLock:Locks",
+		     "select TO_CHAR(b.sid),\n"
+		     "       a.id1||':'||a.id2,\n"
+		     "       b.schemaname,\n"
+		     "       b.osuser,\n"
+		     "       b.program,\n"
+		     "       DECODE(e.type,'TM','DML enqueue','TX','Transaction enqueue','UL','User supplied','Internal ('||a.type||')'),\n"
+		     "       DECODE(a.lmode,0,'None',1,'Null',2,'Row-S',3,'Row-X',4,'Share',5,'S/Row-X',6,'Exclusive',TO_CHAR(a.lmode)),\n"
+		     "       DECODE(e.request,0,'None',1,'Null',2,'Row-S',3,'Row-X',4,'Share',5,'S/Row-X',6,'Exclusive',TO_CHAR(e.request)),\n"
+		     "       d.object_name,\n"
+		     "       TO_CHAR(SYSDATE-a.CTIME/3600/24),\n"
+		     "       TO_CHAR(SYSDATE-e.CTIME/3600/24)\n"
+		     "  from v$lock a, v$session b,v$locked_object c,all_objects d,v$lock e\n"
+		     " where a.sid = b.sid\n"
+		     "   and a.lmode != 0\n"
+		     "   and c.session_id = a.sid\n"
+		     "   and c.object_id = d.object_id\n"
+		     "   and exists (select 'X'\n"
+		     "                 from v$locked_object bb,\n\n"
+		     "                      v$lock cc\n"
+		     "                where bb.session_id = cc.sid\n"
+		     "                  and cc.sid != a.sid\n"
+		     "                  and cc.id1 = a.id1\n"
+		     "                  and cc.id2 = a.id2\n"
+		     "                  and bb.object_id = c.object_id)\n"
+		     "   and a.id1 = e.id1\n"
+		     "   and a.id2 = e.id2\n"
+		     "   and (e.id1,e.id2,e.sid) in (select aa.id1,aa.id2,aa.sid from v$lock aa where aa.sid = :f1<char[31]> and aa.lmode != aa.request and aa.request != 0)",
+		     "List locks in a session");
+
 QString toResultLock::query(const QString &sql,
 			    const list<QString> &param)
 {
@@ -66,33 +97,7 @@ QString toResultLock::query(const QString &sql,
     QString chkPoint=toTool::globalConfig(CONF_PLAN_CHECKPOINT,DEFAULT_PLAN_CHECKPOINT);
 
     otl_stream query(1,
-		     "select TO_CHAR(b.sid),"
-		     "       a.id1||':'||a.id2,"
-		     "       b.schemaname,"
-		     "       b.osuser,"
-		     "       b.program,"
-		     "       DECODE(e.type,'TM','DML enqueue','TX','Transaction enqueue','UL','User supplied','Internal ('||a.type||')'),"
-		     "       DECODE(a.lmode,0,'None',1,'Null',2,'Row-S',3,'Row-X',4,'Share',5,'S/Row-X',6,'Exclusive',TO_CHAR(a.lmode)),"
-		     "       DECODE(e.request,0,'None',1,'Null',2,'Row-S',3,'Row-X',4,'Share',5,'S/Row-X',6,'Exclusive',TO_CHAR(e.request)),"
-		     "       d.object_name,"
-		     "       TO_CHAR(SYSDATE-a.CTIME/3600/24),"
-		     "       TO_CHAR(SYSDATE-e.CTIME/3600/24)"
-		     "  from v$lock a, v$session b,v$locked_object c,all_objects d,v$lock e"
-		     " where a.sid = b.sid"
-		     "   and a.lmode != 0"
-		     "   and c.session_id = a.sid"
-		     "   and c.object_id = d.object_id"
-		     "   and exists (select 'X'"
-		     "                 from v$locked_object bb,"
-		     "                      v$lock cc"
-		     "                where bb.session_id = cc.sid"
-		     "                  and cc.sid != a.sid"
-		     "                  and cc.id1 = a.id1"
-		     "                  and cc.id2 = a.id2"
-		     "                  and bb.object_id = c.object_id)"
-		     "   and a.id1 = e.id1"
-		     "   and a.id2 = e.id2"
-		     "   and (e.id1,e.id2,e.sid) in (select aa.id1,aa.id2,aa.sid from v$lock aa where aa.sid = :f1<char[31]> and aa.lmode != aa.request and aa.request != 0)",
+		     SQLLock(Connection),
 		     Connection.connection());
 
     {

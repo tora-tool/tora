@@ -31,6 +31,7 @@ TO_NAMESPACE;
 #include "tomain.h"
 #include "toconf.h"
 #include "totool.h"
+#include "tosql.h"
 
 class toResultStorageItem : public QListViewItem {
 public:
@@ -89,6 +90,73 @@ toResultStorage::toResultStorage(toConnection &conn,QWidget *parent,const char *
   ShowCoalesced=false;
 }
 
+static toSQL SQLShowCoalesced("toResultStorage:ShowCoalesced",
+			      "select a.tablespace_name,
+       a.status,
+       ' ',
+       a.contents,
+       a.logging,
+       to_char(round(sum(c.bytes)/1024/1024,2)),
+       to_char(round(sum(c.user_bytes)/1024/1024,2)),
+       to_char(round(b.total_bytes/1024/1023,2)),
+       to_char(round(b.total_bytes*100/sum(c.user_bytes),2))||'%',
+       to_char(round(b.percent_extents_coalesced,1))||'%',
+       to_char(b.total_extents)
+  from dba_tablespaces a,
+       dba_data_files c,
+       dba_free_space_coalesced b
+ where a.tablespace_name = b.tablespace_name
+   and c.tablespace_name = a.tablespace_name
+ group by a.tablespace_name,a.status,a.contents,a.logging,a.allocation_type,b.percent_extents_coalesced,b.total_extents,b.total_bytes
+ order by a.tablespace_name",
+			      "Display storage usage of database. This includes the coalesced columns which may make the query sluggish on some DB:s. "
+			      "All columns must be present in output (Should be 11)");
+
+static toSQL SQLNoShowCoalesced("toResultStorage:NoCoalesced",
+				"select a.tablespace_name,
+       a.status,
+       ' ',
+       a.contents,
+       a.logging,
+       to_char(round(sum(c.bytes)/1024/1024,2)),
+       to_char(round(sum(c.user_bytes)/1024/1024,2)),
+       to_char(round(b.total_bytes/1024/1023,2)),
+       to_char(round(b.total_bytes*100/sum(c.user_bytes),2))||'%',
+       '-',
+       to_char(b.total_extents)
+  from dba_tablespaces a,
+       dba_data_files c,
+       (select tablespace_name,sum(bytes) total_bytes,count(1) total_extents from dba_free_space group by tablespace_name) b
+ where a.tablespace_name = b.tablespace_name
+   and c.tablespace_name = a.tablespace_name
+ group by a.tablespace_name,a.status,a.contents,a.logging,a.allocation_type,b.total_extents,b.total_bytes
+ order by a.tablespace_name",
+				"Display storage usage of database. This does not include the coalesced columns which may make the query sluggish on some DB:s. "
+				"All columns must be present in output (Should be 11)");
+
+static toSQL SQLDatafile("toResultStorage:Datafile",
+			 "select b.name,
+       b.status,
+       b.enabled,
+       ' ',
+       ' ',
+       to_char(round(c.bytes/1024/1024,2)),
+       to_char(round(c.user_bytes/1024/1024,2)),
+       to_char(round(sum(a.bytes)/1024/1023,2)),
+       to_char(round(sum(a.bytes)*100/c.user_bytes,2))||'%',
+       ' ',
+       to_char(count(1)),
+       a.tablespace_name
+  from dba_free_space a,
+       v$datafile b,
+       dba_data_files c
+ where a.file_id=b.file#
+   and a.file_id=c.file_id
+   and a.tablespace_name = :f1<char[31]>
+ group by a.tablespace_name,b.status,b.enabled,b.name,c.user_bytes,c.bytes,b.checkpoint_time,b.creation_time
+ order by a.tablespace_name,b.name",
+			 "Display information about a datafile in a tablespace. All columns must be present in the output (Should be 12)");
+
 QString toResultStorage::query()
 {
   QListViewItem *item=selectedItem();
@@ -109,68 +177,14 @@ QString toResultStorage::query()
     const char *sql;
 
     if (ShowCoalesced)
-      sql=
-	"select a.tablespace_name,"
-	"       a.status,"
-	"       ' ',"
-	"       a.contents,"
-	"       a.logging,"
-	"       to_char(round(sum(c.bytes)/1024/1024,2)),"
-	"       to_char(round(sum(c.user_bytes)/1024/1024,2)),"
-	"       to_char(round(b.total_bytes/1024/1023,2)),"
-	"       to_char(round(b.total_bytes*100/sum(c.user_bytes),2))||'%',"
-	"       to_char(round(b.percent_extents_coalesced,1))||'%',"
-	"       to_char(b.total_extents)"
-	"  from dba_tablespaces a,"
-	"       dba_data_files c,"
-	"       dba_free_space_coalesced b"
-	" where a.tablespace_name = b.tablespace_name"
-	"   and c.tablespace_name = a.tablespace_name"
-	" group by a.tablespace_name,a.status,a.contents,a.logging,a.allocation_type,b.percent_extents_coalesced,b.total_extents,b.total_bytes"
-	" order by a.tablespace_name";
+      sql=toSQL::sql(SQLShowCoalesced,Connection);
     else
-      sql=
-	"select a.tablespace_name,"
-	"       a.status,"
-	"       ' ',"
-	"       a.contents,"
-	"       a.logging,"
-	"       to_char(round(sum(c.bytes)/1024/1024,2)),"
-	"       to_char(round(sum(c.user_bytes)/1024/1024,2)),"
-	"       to_char(round(b.total_bytes/1024/1023,2)),"
-	"       to_char(round(b.total_bytes*100/sum(c.user_bytes),2))||'%',"
-	"       '-',"
-	"       to_char(b.total_extents)"
-	"  from dba_tablespaces a,"
-	"       dba_data_files c,"
-	"       (select tablespace_name,sum(bytes) total_bytes,count(1) total_extents from dba_free_space group by tablespace_name) b"
-	" where a.tablespace_name = b.tablespace_name"
-	"   and c.tablespace_name = a.tablespace_name"
-	" group by a.tablespace_name,a.status,a.contents,a.logging,a.allocation_type,b.total_extents,b.total_bytes"
-	" order by a.tablespace_name";
+      sql=toSQL::sql(SQLNoShowCoalesced,Connection);
+
     otl_stream tblspc(1,sql,Connection.connection());
 
     otl_stream datfil(1,
-		      "select b.name,"
-		      "       b.status,"
-		      "       b.enabled,"
-		      "       ' ',"
-		      "       ' ',"
-		      "       to_char(round(c.bytes/1024/1024,2)),"
-		      "       to_char(round(c.user_bytes/1024/1024,2)),"
-		      "       to_char(round(sum(a.bytes)/1024/1023,2)),"
-		      "       to_char(round(sum(a.bytes)*100/c.user_bytes,2))||'%',"
-		      "       ' ',"
-		      "       to_char(count(1)),"
-		      "       a.tablespace_name"
-		      "  from dba_free_space a,"
-		      "       v$datafile b,"
-		      "       dba_data_files c"
-		      " where a.file_id=b.file#"
-		      "   and a.file_id=c.file_id"
-		      "   and a.tablespace_name = :f1<char[31]>"
-		      " group by a.tablespace_name,b.status,b.enabled,b.name,c.user_bytes,c.bytes,b.checkpoint_time,b.creation_time"
-		      " order by a.tablespace_name,b.name",
+		      toSQL::sql(SQLDatafile,Connection),
 		      Connection.connection());
     QListViewItem *lastTablespace=NULL;
     while(!tblspc.eof()) {

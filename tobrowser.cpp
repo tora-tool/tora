@@ -49,6 +49,7 @@ TO_NAMESPACE;
 #include "toresultindexes.h"
 #include "toresultcontent.h"
 #include "toresultcontent.h"
+#include "tosql.h"
 
 #include "tobrowser.moc"
 
@@ -113,6 +114,159 @@ static QPixmap *toRefreshPixmap;
 #define TAB_TRIGGER_COLS	"TriggerCols"
 #define TAB_TRIGGER_DEPEND	"TriggerDepend"
 
+static toSQL SQLListTables("toBrowser:ListTables",
+			   "SELECT Table_Name FROM ALL_TABLES WHERE OWNER = :f1<char[31]>\n"
+			   " ORDER BY Table_Name",
+			   "List the available tables in a schema.");
+static toSQL SQLTableGrants("toBrowser:TableGrants",
+			    "SELECT Privilege,Grantee,Grantor,Grantable FROM ALL_TAB_PRIVS\n"
+			    " WHERE Table_Schema = :f1<char[31]> AND Table_Name = :f2<char[31]>\n"
+			    " ORDER BY Privilege,Grantee",
+			    "Display the grants on a table");
+static toSQL SQLTableTrigger("toBrowser:TableTrigger",
+			     "SELECT Trigger_Name,Triggering_Event,Column_Name,Status,Description \n"
+			     "  FROM ALL_TRIGGERS\n"
+			     " WHERE Table_Owner = :f1<char[31]> AND Table_Name = :f2<char[31]>",
+			     "Display the triggers operating on a table");
+static toSQL SQLTableInfo("toBrowser:TableInformation",
+			  "SELECT *\n"
+			  "  FROM ALL_TABLES\n"
+			  " WHERE OWNER = :f1<char[31]> AND Table_Name = :f2<char[31]>",
+			  "Display information about a table");
+static toSQL SQLTableComment("toBrowser:TableComment",
+			     "SELECT Comments FROM ALL_TAB_COMMENTS\n"
+			     " WHERE Owner = :f1<char[31]> AND Table_Name = :f2<char[31]>",
+			     "Display comment on a table");
+
+static toSQL SQLListView("toBrowser:ListView",
+			 "SELECT View_Name FROM ALL_VIEWS WHERE OWNER = :f1<char[31]>\n"
+			 " ORDER BY View_Name",
+			 "List the available views in a schema");
+static toSQL SQLViewSQL("toBrowser:ViewSQL",	
+			"SELECT Text SQL\n"
+			"  FROM ALL_Views\n"
+			" WHERE Owner = :f1<char[31]> AND View_Name = :f2<char[31]>",
+			"Display SQL of a specified view");
+static toSQL SQLViewGrants("toBrowser:ViewGrants",
+			   "SELECT Privilege,Grantee,Grantor,Grantable FROM ALL_TAB_PRIVS\n"
+			   " WHERE Table_Schema = :f1<char[31]> AND Table_Name = :f2<char[31]>\n"
+			   " ORDER BY Privilege,Grantee",
+			   "Display grants on a view");
+static toSQL SQLViewDepend("toBrowser:ViewDepend",
+			   "SELECT referenced_owner \"Owner\",\n"
+			   "       referenced_type \"Type\",\n"
+			   "       referenced_name \"Name\",\n"
+			   "       dependency_type \"Dependency Type\"\n"
+			   "  FROM dba_dependencies\n"
+			   " WHERE owner = :owner<char[31]>\n"
+			   "   AND name = :name<char[31]>\n"
+			   " ORDER BY referenced_owner,referenced_type,referenced_name",
+			   "Display dependencies on a view");
+static toSQL SQLViewComment("toBrowser:ViewComment",
+			    "SELECT Comments FROM ALL_TAB_COMMENTS\n"
+			    " WHERE Owner = :f1<char[31]> AND Table_Name = :f2<char[31]>",
+			    "Display comment on a view");
+
+static toSQL SQLListIndex("toBrowser:ListIndex",
+			  "SELECT Index_Name\n"
+			  "  FROM ALL_INDEXES\n"
+			  " WHERE OWNER = :f1<char[31]>\n"
+			  " ORDER BY Index_Name\n",
+			  "List the available indexes in a schema");
+static toSQL SQLIndexCols("toBrowser:IndexCols",
+			  "SELECT Table_Name,Column_Name,Column_Length,Descend\n"
+			  "  FROM ALL_IND_COLUMNS\n"
+			  " WHERE Index_Owner = :f1<char[31]> AND Index_Name = :f2<char[31]>\n"
+			  " ORDER BY Column_Position",
+			  "Display columns on which an index is built");
+static toSQL SQLIndexInfo("toBrowser:IndexInformation",
+			  "SELECT * FROM ALL_INDEXES\n"
+			  " WHERE Owner = :f1<char[31]> AND Index_Name = :f2<char[31]>",
+			  "Display information about an index");
+
+static toSQL SQLListSequence("toBrowser:ListSequence",
+			     "SELECT Sequence_Name FROM ALL_SEQUENCES\n"
+			     " WHERE SEQUENCE_OWNER = :f1<char[31]>\n"
+			     " ORDER BY Sequence_Name",
+			     "List the available sequences in a schema");
+static toSQL SQLSequenceInfo("toBrowser:SequenceInformation",
+			     "SELECT * FROM ALL_SEQUENCES\n"
+			     " WHERE Sequence_Owner = :f1<char[31]>\n"
+			     "   AND Sequence_Name = :f2<char[31]>",
+			     "Display information about a sequence");
+
+static toSQL SQLListSynonym("toBrowser:ListSynonym",
+			    "SELECT Synonym_Name FROM ALL_SYNONYMS\n"
+			    " WHERE Table_Owner = :f1<char[31]>"
+			    " ORDER BY Synonym_Name",
+			    "List the available synonyms in a schema");
+static toSQL SQLSynonymInfo("toBrowser:SynonymInformation",
+			    "SELECT * FROM ALL_SYNONYMS\n"
+			    " WHERE Table_Owner = :f1<char[31]> AND Synonym_Name = :f2<char[31]>",
+			    "Display information about a synonym");
+
+static toSQL SQLListSQL("toBrowser:ListPL/SQL",
+			"SELECT Object_Name,Object_Type Type FROM ALL_OBJECTS\n"
+			" WHERE OWNER = :f1<char[31]>\n"
+			"   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
+			"                       'PROCEDURE','TYPE')\n"
+			" ORDER BY Object_Name",
+			"List the available PL/SQL objects in a schema");
+static toSQL SQLSQLHead("toBrowser:PL/SQLHead",
+			"SELECT Text FROM ALL_SOURCE\n"
+			" WHERE Owner = :f1<char[31]> AND Name = :f2<char[31]>\n"
+			"   AND Type IN ('PACKAGE','TYPE')",
+			"Declaration of object");
+static toSQL SQLSQLBody("toBrowser:PL/SQLBody",
+			"SELECT Text FROM ALL_SOURCE\n"
+			" WHERE Owner = :f1<char[31]> AND Name = :f2<char[31]>\n"
+			"   AND Type IN ('PACKAGE','PROCEDURE','PACKAGE BODY','TYPE BODY')",
+			"Implementation of object");
+static toSQL SQLSQLDepend("toBrowser:PL/SQLDepend",
+			  "SELECT referenced_owner \"Owner\",\n"
+			  "       referenced_type \"Type\",\n"
+			  "       referenced_name \"Name\",\n"
+			  "       dependency_type \"Dependency Type\"\n"
+			  "  FROM dba_dependencies\n"
+			  " WHERE owner = :owner<char[31]>\n"
+			  "   AND name = :name<char[31]>\n"
+			  " ORDER BY referenced_owner,referenced_type,referenced_name",
+			  "Display dependencies on a PL/SQL object");
+
+static toSQL SQLListTrigger("toBrowser:ListTrigger",
+			    "SELECT Trigger_Name FROM ALL_TRIGGERS\n"
+			    " WHERE OWNER = :f1<char[31]>\n"
+			    " ORDER BY Trigger_Name",
+			    "List the available triggers in a schema");
+static toSQL SQLTriggerInfo("toBrowser:TriggerInfo",
+			    "SELECT Owner,Trigger_Name,\n"
+			    "       Trigger_Type,Triggering_Event,\n"
+			    "       Table_Owner,Base_Object_Type,Table_Name,Column_Name,\n"
+			    "       Referencing_Names,When_Clause,Status,\n"
+			    "       Description,Action_Type\n"
+			    "  FROM ALL_TRIGGERS\n"
+			    "WHERE Owner = :f1<char[31]> AND Trigger_Name = :f2<char[31]>",
+			    "Display information about a trigger");
+static toSQL SQLTriggerBody("toBrowser:TriggerBody",
+			    "SELECT Trigger_Body FROM ALL_TRIGGERS\n"
+			    " WHERE Owner = :f1<char[31]> AND Trigger_Name = :f2<char[31]>",
+			    "Implementation of trigger");
+static toSQL SQLTriggerCols("toBrowser:TriggerCols",
+			    "SELECT Column_Name,Column_List \"In Update\",Column_Usage Usage\n"
+			    "  FROM ALL_TRIGGER_COLS\n"
+			    " WHERE Trigger_Owner = :f1<char[31]> AND Trigger_Name = :f2<char[31]>",
+			    "Columns used by trigger");
+static toSQL SQLTriggerDepend("toBrowser:TriggerDepend",
+			      "SELECT referenced_owner \"Owner\",\n"
+			      "       referenced_type \"Type\",\n"
+			      "       referenced_name \"Name\",\n"
+			      "       dependency_type \"Dependency Type\"\n"
+			      "  FROM dba_dependencies\n"
+			      " WHERE owner = :owner<char[31]>\n"
+			      "   AND name = :name<char[31]>\n"
+			      " ORDER BY referenced_owner,referenced_type,referenced_name",
+			      "Display dependencies on a trigger");
+
 toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   : QVBox(parent,NULL,WDestructiveClose),Connection(connection)
 {
@@ -137,8 +291,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   TopTab->addTab(splitter,"Tables");
   toResultView *resultView=new toResultView(true,false,Connection,splitter);
   resultView->setReadAll(true);
-  resultView->setSQL("SELECT Table_Name FROM ALL_TABLES WHERE OWNER = :f1<char[31]>"
-		     " ORDER BY Table_Name");
+  resultView->setSQL(toSQL::sql(SQLListTables,Connection));
   resultView->resize(FIRST_WIDTH,resultView->height());
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   FirstTab=resultView;
@@ -171,17 +324,13 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   resultView=new toResultView(true,false,Connection,curr,TAB_TABLE_GRANTS);
   resultView->setReadAll(true);
-  resultView->setSQL("SELECT Privilege,Grantee,Grantor,Grantable FROM ALL_TAB_PRIVS "
-		     " WHERE Table_Schema = :f1<char[31]> AND Table_Name = :f2<char[31]>"
-		     " ORDER BY Privilege,Grantee");
+  resultView->setSQL(toSQL::sql(SQLTableGrants,Connection));
   curr->addTab(resultView,"Grants");
   SecondMap[TAB_TABLE_GRANTS]=resultView;
 
   resultView=new toResultView(true,false,Connection,curr,TAB_TABLE_TRIGGERS);
   resultView->setReadAll(true);
-  resultView->setSQL("SELECT Trigger_Name,Triggering_Event,Column_Name,Status,Description "
-		     "  FROM ALL_TRIGGERS "
-		     "WHERE Table_Owner = :f1<char[31]> AND Table_Name = :f2<char[31]>");
+  resultView->setSQL(toSQL::sql(SQLTableTrigger,Connection));
   curr->addTab(resultView,"Triggers");
   SecondMap[TAB_TABLE_TRIGGERS]=resultView;
 
@@ -190,16 +339,13 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_TABLE_DATA]=resultView;
 
   toResultItem *resultItem=new toResultItem(2,true,Connection,curr,TAB_TABLE_INFO);
-  resultItem->setSQL("SELECT * "
-		     "  FROM ALL_TABLES "
-		     " WHERE OWNER = :f1<char[31]> AND Table_Name = :f2<char[31]>");
+  resultItem->setSQL(toSQL::sql(SQLTableInfo,Connection));
   curr->addTab(resultItem,"Information");
   SecondMap[TAB_TABLE_INFO]=resultItem;
 
   resultItem=new toResultItem(1,true,Connection,curr,TAB_TABLE_COMMENT);
   resultItem->showTitle(false);
-  resultItem->setSQL("SELECT Comments FROM ALL_TAB_COMMENTS "
-		     " WHERE Owner = :f1<char[31]> AND Table_Name = :f2<char[31]>");
+  resultItem->setSQL(toSQL::sql(SQLTableComment,Connection));
   curr->addTab(resultItem,"Comment");
   SecondMap[TAB_TABLE_COMMENT]=resultItem;
 
@@ -208,8 +354,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView=new toResultView(true,false,Connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_VIEWS]=resultView;
-  resultView->setSQL("SELECT View_Name FROM ALL_VIEWS WHERE OWNER = :f1<char[31]>"
-		     " ORDER BY View_Name");
+  resultView->setSQL(toSQL::sql(SQLListView,Connection));
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
@@ -222,9 +367,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_VIEW_COLUMNS]=resultView;
 
   toResultField *resultField=new toResultField(Connection,curr,TAB_VIEW_SQL);
-  resultField->setSQL("SELECT Text SQL"
-		     "  FROM ALL_Views"
-		     " WHERE Owner = :f1<char[31]> AND View_Name = :f2<char[31]>");
+  resultField->setSQL(toSQL::sql(SQLViewSQL,Connection));
   curr->addTab(resultField,"SQL");
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
   SecondMap[TAB_VIEW_SQL]=resultField;
@@ -235,29 +378,19 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   resultView=new toResultView(true,false,Connection,curr,TAB_VIEW_GRANTS);
   resultView->setReadAll(true);
-  resultView->setSQL("SELECT Privilege,Grantee,Grantor,Grantable FROM ALL_TAB_PRIVS "
-		     " WHERE Table_Schema = :f1<char[31]> AND Table_Name = :f2<char[31]>"
-		     " ORDER BY Privilege,Grantee");
+  resultView->setSQL(toSQL::sql(SQLViewGrants,Connection));
   curr->addTab(resultView,"Grants");
   SecondMap[TAB_VIEW_GRANTS]=resultView;
 
   resultView=new toResultView(true,false,Connection,curr,TAB_VIEW_DEPEND);
   resultView->setReadAll(true);
-  resultView->setSQL("SELECT referenced_owner \"Owner\","
-		     "       referenced_type \"Type\","
-		     "       referenced_name \"Name\","
-		     "       dependency_type \"Dependency Type\""
-		     "  FROM dba_dependencies"
-		     " WHERE owner = :owner<char[31]>"
-		     "   AND name = :name<char[31]>"
-		     " ORDER BY referenced_owner,referenced_type,referenced_name");
+  resultView->setSQL(toSQL::sql(SQLViewDepend,Connection));
   curr->addTab(resultView,"Dependencies");
   SecondMap[TAB_VIEW_DEPEND]=resultView;
 
   resultItem=new toResultItem(1,true,Connection,curr,TAB_VIEW_COMMENT);
   resultItem->showTitle(false);
-  resultItem->setSQL("SELECT Comments FROM ALL_TAB_COMMENTS "
-		     " WHERE Owner = :f1<char[31]> AND Table_Name = :f2<char[31]>");
+  resultItem->setSQL(toSQL::sql(SQLViewComment,Connection));
   curr->addTab(resultItem,"Comment");
   SecondMap[TAB_VIEW_COMMENT]=resultItem;
 
@@ -266,10 +399,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView=new toResultView(true,false,Connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_INDEX]=resultView;
-  resultView->setSQL("SELECT Index_Name"
-		     "  FROM ALL_INDEXES"
-		     " WHERE OWNER = :f1<char[31]>"
-		     " ORDER BY Index_Name");
+  resultView->setSQL(toSQL::sql(SQLListIndex,Connection));
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
@@ -279,17 +409,13 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
   resultView=new toResultView(true,false,Connection,curr,TAB_INDEX_COLS);
-  resultView->setSQL("SELECT Table_Name,Column_Name,Column_Length,Descend"
-		     "  FROM ALL_IND_COLUMNS"
-		     " WHERE Index_Owner = :f1<char[31]> AND Index_Name = :f2<char[31]>"
-		     " ORDER BY Column_Position");
+  resultView->setSQL(toSQL::sql(SQLIndexCols,Connection));
   curr->addTab(resultView,"Columns");
   SecondMap[TAB_INDEX]=resultView;
   SecondMap[TAB_INDEX_COLS]=resultView;
 
   resultItem=new toResultItem(2,true,Connection,curr,TAB_INDEX_INFO);
-  resultItem->setSQL("SELECT * FROM ALL_INDEXES "
-		     "WHERE Owner = :f1<char[31]> AND Index_Name = :f2<char[31]>");
+  resultItem->setSQL(toSQL::sql(SQLIndexInfo,Connection));
   curr->addTab(resultItem,"Info");
   SecondMap[TAB_INDEX_INFO]=resultItem;
 
@@ -298,9 +424,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView=new toResultView(true,false,Connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_SEQUENCES]=resultView;
-  resultView->setSQL("SELECT Sequence_Name FROM ALL_SEQUENCES"
-		     " WHERE SEQUENCE_OWNER = :f1<char[31]>"
-		     " ORDER BY Sequence_Name");
+  resultView->setSQL(toSQL::sql(SQLListSequence,Connection));
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
@@ -309,8 +433,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
   splitter->setResizeMode(curr,QSplitter::Stretch);
   resultItem=new toResultItem(2,true,Connection,curr,TAB_SEQUENCES_INFO);
-  resultItem->setSQL("SELECT * FROM ALL_SEQUENCES "
-		     "WHERE Sequence_Owner = :f1<char[31]> AND Sequence_Name = :f2<char[31]>");
+  resultItem->setSQL(toSQL::sql(SQLSequenceInfo,Connection));
   curr->addTab(resultItem,"Info");
   SecondMap[TAB_SEQUENCES]=resultItem;
   SecondMap[TAB_SEQUENCES_INFO]=resultItem;
@@ -320,8 +443,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView=new toResultView(true,false,Connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_SYNONYM]=resultView;
-  resultView->setSQL("SELECT Synonym_Name FROM ALL_SYNONYMS WHERE TABLE_OWNER = :f1<char[31]>"
-		     " ORDER BY Synonym_Name");
+  resultView->setSQL(toSQL::sql(SQLListSynonym,Connection));
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
@@ -330,8 +452,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
   splitter->setResizeMode(curr,QSplitter::Stretch);
   resultItem=new toResultItem(2,true,Connection,curr,TAB_SYNONYM_INFO);
-  resultItem->setSQL("SELECT * FROM ALL_SYNONYMS "
-		     "WHERE Table_Owner = :f1<char[31]> AND Synonym_Name = :f2<char[31]>");
+  resultItem->setSQL(toSQL::sql(SQLSynonymInfo,Connection));
   curr->addTab(resultItem,"Info");
   SecondMap[TAB_SYNONYM]=resultItem;
   SecondMap[TAB_SYNONYM_INFO]=resultItem;
@@ -341,11 +462,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView=new toResultView(true,false,Connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_PLSQL]=resultView;
-  resultView->setSQL("SELECT Object_Name,Object_Type Type FROM ALL_OBJECTS"
-		     " WHERE OWNER = :f1<char[31]>"
-		     "   AND Object_Type IN ('FUNCTION','PACKAGE',"
-		     "                       'PROCEDURE','TYPE')"
-		     " ORDER BY Object_Name");
+  resultView->setSQL(toSQL::sql(SQLListSQL,Connection));
   resultView->resize(FIRST_WIDTH*2,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
@@ -355,30 +472,19 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
   resultField=new toResultField(Connection,curr,TAB_PLSQL_SOURCE);
-  resultField->setSQL("SELECT Text FROM ALL_SOURCE "
-		      "WHERE Owner = :f1<char[31]> AND Name = :f2<char[31]>"
-		      "AND Type NOT LIKE '% BODY'");
+  resultField->setSQL(toSQL::sql(SQLSQLHead,Connection));
   curr->addTab(resultField,"Declaration");
   SecondMap[TAB_PLSQL]=resultField;
   SecondMap[TAB_PLSQL_SOURCE]=resultField;
 
   resultField=new toResultField(Connection,curr,TAB_PLSQL_BODY);
-  resultField->setSQL("SELECT Text FROM ALL_SOURCE "
-		      "WHERE Owner = :f1<char[31]> AND Name = :f2<char[31]> "
-		      "AND Type LIKE '% BODY'");
+  resultField->setSQL(toSQL::sql(SQLSQLBody,Connection));
   curr->addTab(resultField,"Body");
   SecondMap[TAB_PLSQL_BODY]=resultField;
 
   resultView=new toResultView(true,false,Connection,curr,TAB_PLSQL_DEPEND);
   resultView->setReadAll(true);
-  resultView->setSQL("SELECT referenced_owner \"Owner\","
-		     "       referenced_type \"Type\","
-		     "       referenced_name \"Name\","
-		     "       dependency_type \"Dependency Type\""
-		     "  FROM dba_dependencies"
-		     " WHERE owner = :owner<char[31]>"
-		     "   AND name = :name<char[31]>"
-		     " ORDER BY referenced_owner,referenced_type,referenced_name");
+  resultView->setSQL(toSQL::sql(SQLSQLDepend,Connection));
   curr->addTab(resultView,"Dependencies");
   SecondMap[TAB_PLSQL_DEPEND]=resultView;
 
@@ -387,9 +493,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView=new toResultView(true,false,Connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_TRIGGER]=resultView;
-  resultView->setSQL("SELECT Trigger_Name FROM ALL_TRIGGERS"
-		     " WHERE OWNER = :f1<char[31]>"
-		     " ORDER BY Trigger_Name");
+  resultView->setSQL(toSQL::sql(SQLListTrigger,Connection));
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
@@ -399,40 +503,24 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
   resultItem=new toResultItem(2,true,Connection,curr,TAB_TRIGGER_INFO);
-  resultItem->setSQL("SELECT Owner,Trigger_Name,"
-		     "       Trigger_Type,Triggering_Event,"
-		     "       Table_Owner,Base_Object_Type,Table_Name,Column_Name,"
-		     "       Referencing_Names,When_Clause,Status,"
-		     "       Description,Action_Type"
-		     "  FROM ALL_TRIGGERS "
-		     "WHERE Owner = :f1<char[31]> AND Trigger_Name = :f2<char[31]>");
+  resultItem->setSQL(toSQL::sql(SQLTriggerInfo,Connection));
   curr->addTab(resultItem,"Info");
   SecondMap[TAB_TRIGGER]=resultItem;
   SecondMap[TAB_TRIGGER_INFO]=resultItem;
 
   resultField=new toResultField(Connection,curr,TAB_TRIGGER_SOURCE);
-  resultField->setSQL("SELECT Trigger_Body FROM ALL_TRIGGERS "
-		      "WHERE Owner = :f1<char[31]> AND Trigger_Name = :f2<char[31]>");
+  resultField->setSQL(toSQL::sql(SQLTriggerBody,Connection));
   curr->addTab(resultField,"Code");
   SecondMap[TAB_TRIGGER_SOURCE]=resultField;
 
   resultView=new toResultView(true,false,Connection,curr,TAB_TRIGGER_COLS);
-  resultView->setSQL("SELECT Column_Name,Column_List \"In Update\",Column_Usage Usage"
-		     "  FROM ALL_TRIGGER_COLS "
-		     "WHERE Trigger_Owner = :f1<char[31]> AND Trigger_Name = :f2<char[31]>");
+  resultView->setSQL(toSQL::sql(SQLTriggerCols,Connection));
   curr->addTab(resultView,"Columns");
   SecondMap[TAB_TRIGGER_COLS]=resultView;
 
   resultView=new toResultView(true,false,Connection,curr,TAB_TRIGGER_DEPEND);
   resultView->setReadAll(true);
-  resultView->setSQL("SELECT referenced_owner \"Owner\","
-		     "       referenced_type \"Type\","
-		     "       referenced_name \"Name\","
-		     "       dependency_type \"Dependency Type\""
-		     "  FROM dba_dependencies"
-		     " WHERE owner = :owner<char[31]>"
-		     "   AND name = :name<char[31]>"
-		     " ORDER BY referenced_owner,referenced_type,referenced_name");
+  resultView->setSQL(toSQL::sql(SQLTriggerDepend,Connection));
   curr->addTab(resultView,"Dependencies");
   SecondMap[TAB_TRIGGER_DEPEND]=resultView;
 
@@ -454,7 +542,7 @@ void toBrowser::refresh(void)
       selected=Connection.user().upper();
       Schema->clear();
       otl_stream users(1,
-		       "SELECT Username FROM ALL_Users ORDER BY Username",
+		       toSQL::sql(TOSQL_USERLIST,Connection),
 		       Connection.connection());
       for(int i=0;!users.eof();i++) {
 	char buffer[31];

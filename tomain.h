@@ -117,10 +117,17 @@ void toRefreshParse(QTimer *timer,const QString &str);
 QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize);
 bool toMonolithic(void);
 
-#define TO_WINDOWS_MENU		10
+#define TO_FILE_MENU		10
+#define TO_EDIT_MENU		20
+#define TO_TOOLS_MENU		30
+#define TO_WINDOWS_MENU		40
+#define TO_HELP_MENU		40
+
 #define TO_TOOL_MENU_INDEX	(toMainWidget()->menuBar()->indexOf(TO_WINDOWS_MENU))
 #define TO_TOOL_MENU_ID		2000
 #define TO_TOOL_MENU_ID_END	2999
+
+#define TOSQL_USERLIST "Global:UserList"
 
 #define TOCATCH \
     catch (const otl_exception &exc) {\

@@ -73,6 +73,8 @@ public:
   { return NULL; }
   virtual const char *toolbarTip()
   { return menuItem(); }
+  virtual void customSetup(void)
+  { }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection) = NULL;
 
   // These should not be used by the actual tools

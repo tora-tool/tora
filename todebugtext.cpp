@@ -33,6 +33,8 @@ TO_NAMESPACE;
 #include "todebugtext.h"
 #include "toconnection.h"
 #include "todebug.h"
+#include "tosql.h"
+
 #include "icons/breakpoint.xpm"
 #include "icons/disbreakpoint.xpm"
 
@@ -66,14 +68,8 @@ toBreakpointItem::toBreakpointItem(QListView *parent,QListViewItem *after,toConn
   setText(4,"DEFERED");
 }
 
-void toBreakpointItem::setBreakpoint(void)
-{
-  bool ok=false;
-  try {
-    clearBreakpoint();
-    otl_stream str(1,
-		   "
-DECLARE
+static toSQL SQLBreakpoint("toDebug:SetBreakpoint",
+			   "DECLARE
     proginf DBMS_DEBUG.PROGRAM_INFO;
     bnum BINARY_INTEGER;
     ret BINARY_INTEGER;
@@ -88,6 +84,16 @@ BEGIN
     ret:=DBMS_DEBUG.SET_BREAKPOINT(proginf,proginf.Line#,bnum,0,1);
     SELECT ret,bnum INTO :ret<int,out>,:bnum<int,out> FROM DUAL;
 END;",
+			   "Set breakpoint, must have same bindings");
+		       
+
+void toBreakpointItem::setBreakpoint(void)
+{
+  bool ok=false;
+  try {
+    clearBreakpoint();
+    otl_stream str(1,
+		   toSQL::sql(SQLBreakpoint,Connection),
 		   Connection.connection());
     str<<Namespace;
     str<<(const char *)text(0);
@@ -111,13 +117,8 @@ END;",
     setText(4,"NOT SET");
 }
 
-void toBreakpointItem::clearBreakpoint()
-{
-  if (text(4)=="ENABLED"&&!text(TO_BREAK_COL).isEmpty()) {
-    try {
-      otl_stream str(1,
-		     "
-DECLARE
+static toSQL SQLClearBreakpoint("toDebug:ClearBreakpoint",
+				"DECLARE
     bnum BINARY_INTEGER;
     ret BINARY_INTEGER;
 BEGIN
@@ -125,6 +126,14 @@ BEGIN
     ret:=DBMS_DEBUG.DELETE_BREAKPOINT(bnum);
     SELECT ret INTO :ret<int,out> FROM DUAL;
 END;",
+				"Clear breakpoint, must have same bindings");
+
+void toBreakpointItem::clearBreakpoint()
+{
+  if (text(4)=="ENABLED"&&!text(TO_BREAK_COL).isEmpty()) {
+    try {
+      otl_stream str(1,
+		     toSQL::sql(SQLClearBreakpoint,Connection),
 		     Connection.connection());
       str<<text(TO_BREAK_COL).toInt();
       int res;
@@ -146,6 +155,21 @@ END;",
 static QPixmap *toBreakpointPixmap;
 static QPixmap *toDisBreakpointPixmap;
 
+static toSQL SQLReadSource("toDebug:ReadSource",
+			   "SELECT Text FROM All_Source\n"
+			   " WHERE OWNER = :f1<char[31]>\n"
+			   "   AND NAME = :f2<char[31]>\n"
+			   "   AND TYPE = :f3<char[31]>\n"
+			   " ORDER BY Type,Line",
+			   "Read sourcecode for object");
+static toSQL SQLReadErrors("toDebug:ReadErrors",
+			   "SELECT Line-1,Text FROM All_Errors\n"
+			   " WHERE OWNER = :f1<char[31]>\n"
+			   "   AND NAME = :f2<char[31]>\n"
+			   "   AND TYPE = :f3<char[31]>\n"
+			   " ORDER BY Type,Line",
+			   "Get lines with errors in object (Observe first line 0)");
+
 bool toDebugText::readData(toConnection &conn,QListView *Stack)
 {
   QListViewItem *item=NULL;
@@ -154,18 +178,10 @@ bool toDebugText::readData(toConnection &conn,QListView *Stack)
       ;
   try {
     otl_stream lines(1,
-		     "SELECT Text FROM All_Source"
-		     " WHERE OWNER = :f1<char[31]>"
-		     "   AND NAME = :f2<char[31]>"
-		     "   AND TYPE = :f3<char[31]>"
-		     " ORDER BY Type,Line",
+		     toSQL::sql(SQLReadSource,Connection),
 		     conn.connection());
     otl_stream errors(1,
-		      "SELECT Line-1,Text FROM All_Errors"
-		      " WHERE OWNER = :f1<char[31]>"
-		      "   AND NAME = :f2<char[31]>"
-		      "   AND TYPE = :f3<char[31]>"
-		      " ORDER BY Type,Line",
+		      toSQL::sql(SQLReadErrors,Connection),
 		      conn.connection());
 
     map<int,QString> Errors;
@@ -215,9 +231,7 @@ void toDebugText::setData(const QString &schema,const QString &type,const QStrin
   Object=object;
   FirstItem=NULL;
   NoBreakpoints=false;
-#if 0
-  repaint();
-#endif
+  update();
 }
 
 toDebugText::toDebugText(QListView *breakpoints,
@@ -390,7 +404,7 @@ void toDebugText::toggleBreakpoint(int row,bool enable)
       FirstItem=CurrentItem=NULL;
       NoBreakpoints=false;
     }
-    repaint();
+    updateCell(row,0,false);
   }
 }
 

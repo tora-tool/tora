@@ -194,7 +194,8 @@ list<QString> toParamGet::getParam(QWidget *parent,QString &str)
       }
       fname="";
     }
-    res+=c;
+    if (i<str.length())
+      res+=c;
   }
 
   list<QString> ret;

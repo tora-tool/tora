@@ -41,6 +41,7 @@ class toConnection {
   QString User;
   QString Password;
   QString Host;
+  QString Version;
   list<QWidget *> Widgets;
   bool NeedCommit;
   void connect(void);
@@ -55,6 +56,8 @@ public:
   { return Password; }
   const QString &host() const
   { return Host; }
+  const QString &version() const
+  { return Version; }
   bool needCommit(void) const
   { return NeedCommit; }
   void commit(void)

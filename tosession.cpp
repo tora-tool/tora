@@ -41,6 +41,7 @@ TO_NAMESPACE;
 #include "tosession.h"
 #include "toresultview.h"
 #include "toconf.h"
+#include "tosql.h"
 #include "tosgastatement.h"
 #include "toresultstats.h"
 #include "toresultlock.h"
@@ -77,6 +78,26 @@ static QPixmap *toRefreshPixmap;
 static QPixmap *toClockPixmap;
 static QPixmap *toNoClockPixmap;
 static QPixmap *toDisconnectPixmap;
+
+static toSQL SQLConnectInfo("toSession:ConnectInfo",
+			    "select authentication_type,osuser,network_service_banner\n"
+			    "  from v$session_connect_info where sid = :f1<char[31]>",
+			    "Get connection info for a session");
+static toSQL SQLLockedObject("toSession:LockedObject",
+			     "select b.Object_Name \"Object Name\",\n"
+			     "       b.Object_Type \"Type\",\n"
+			     "       DECODE(a.locked_mode,0,'None',1,'Null',2,'Row-S',\n"
+			     "                            3,'Row-X',4,'Share',5,'S/Row-X',\n"
+			     "                            6,'Exclusive',a.Locked_Mode) \"Locked Mode\"\n"
+			     "  from v$locked_object a,all_objects b\n"
+			     " where a.object_id = b.object_id\n"
+			     "   and a.session_id = :f1<char[31]>",
+			     "Display info about objects locked by this session");
+static toSQL SQLOpenCursors("toSession:OpenCursor",
+			    "select SQL_Text \"SQL\", Address||':'||Hash_Value \" Address\"\n"
+			    "  from v$open_cursor where sid = :f1<char[31]>",
+			    "Display open cursors of this session");
+
 
 toSession::toSession(QWidget *main,toConnection &connection)
   : QVBox(main,NULL,WDestructiveClose),Connection(connection)
@@ -125,19 +146,13 @@ toSession::toSession(QWidget *main,toConnection &connection)
   SessionStatistics=new toResultStats(0,Connection,ResultTab);
   ResultTab->addTab(SessionStatistics,"Statistics");
   ConnectInfo=new toResultView(true,false,Connection,ResultTab);
-  ConnectInfo->setSQL("select authentication_type,osuser,network_service_banner"
-		      "  from v$session_connect_info where sid = :f1<char[31]>");
+  ConnectInfo->setSQL(SQLConnectInfo(Connection));
   ResultTab->addTab(ConnectInfo,"Connect Info");
   PendingLocks=new toResultLock(Connection,ResultTab);
   ResultTab->addTab(PendingLocks,"Pending Locks");
   LockedObjects=new toResultView(false,false,Connection,ResultTab);
   ResultTab->addTab(LockedObjects,"Locked Objects");
-  LockedObjects->setSQL("select b.Object_Name \"Object Name\","
-			"       b.Object_Type \"Type\","
-			"       DECODE(a.locked_mode,0,'None',1,'Null',2,'Row-S',3,'Row-X',4,'Share',5,'S/Row-X',6,'Exclusive',a.Locked_Mode) \"Locked Mode\""
-			"  from v$locked_object a,all_objects b"
-			" where a.object_id = b.object_id"
-			"   and a.session_id = :f1<char[31]>");
+  LockedObjects->setSQL(SQLLockedObject(Connection));
   CurrentStatement=new toSGAStatement(ResultTab,Connection);
   ResultTab->addTab(CurrentStatement,"Current Statement");
   PreviousStatement=new toSGAStatement(ResultTab,Connection);
@@ -146,8 +161,7 @@ toSession::toSession(QWidget *main,toConnection &connection)
   OpenSplitter=new QSplitter(Horizontal,ResultTab);
   ResultTab->addTab(OpenSplitter,"Open Cursors");
   OpenCursors=new toResultView(false,true,Connection,OpenSplitter);
-  OpenCursors->setSQL("select SQL_Text \"SQL\", Address||':'||Hash_Value \" Address\""
-		      "  from v$open_cursor where sid = :f1<char[31]>");
+  OpenCursors->setSQL(SQLOpenCursors(Connection));
   OpenStatement=new toSGAStatement(OpenSplitter,Connection);
 
   connect(Sessions,SIGNAL(selectionChanged(QListViewItem *)),
@@ -172,6 +186,28 @@ toSession::~toSession()
   Connection.delWidget(this);
 }
 
+static toSQL SQLSessions("toSession:ListSession",
+			 "SELECT Sid \"-Id\",\n"
+			 "       Serial# \"-Serial#\",\n"
+			 "       SchemaName \"Schema\",\n"
+			 "       Status \"Status\",\n"
+			 "       Server \"Server\",\n"
+			 "       OsUser \"Osuser\",\n"
+			 "       Machine \"Machine\",\n"
+			 "       Program \"Program\",\n"
+			 "       Type \"Type\",\n"
+			 "       Module \"Module\",\n"
+			 "       Action \"Action\",\n"
+			 "       Client_Info \"Client Info\",\n"
+			 "       Process \"-Process\",\n"
+			 "       SQL_Address||':'||SQL_Hash_Value \" SQL Address\",\n"
+			 "       Prev_SQL_Addr||':'||Prev_Hash_Value \" Prev SQl Address\"\n"
+			 "  FROM v$session\n"
+			 " ORDER BY Sid",
+			 "List sessions, must have same number of culumns and the last 2 must be "
+			 "the same");
+			 
+
 void toSession::refresh(void)
 {
   QString session;
@@ -180,23 +216,7 @@ void toSession::refresh(void)
     session=CurrentItem->text(0);
     serial=CurrentItem->text(1);
   }
-  Sessions->query("SELECT Sid \"-Id\","
-		  "       Serial# \"-Serial#\","
-		  "       SchemaName \"Schema\","
-		  "       Status \"Status\","
-		  "       Server \"Server\","
-		  "       OsUser \"Osuser\","
-		  "       Machine \"Machine\","
-		  "       Program \"Program\","
-		  "       Type \"Type\","
-		  "       Module \"Module\","
-		  "       Action \"Action\","
-		  "       Client_Info \"Client Info\","
-		  "       Process \"-Process\","
-		  "       SQL_Address||':'||SQL_Hash_Value \" SQL Address\","
-		  "       Prev_SQL_Addr||':'||Prev_Hash_Value \" Prev SQl Address\""
-		  "  FROM v$session"
-		  " ORDER BY Sid");
+  Sessions->query(SQLSessions(Connection));
   for (CurrentItem=Sessions->firstChild();CurrentItem;CurrentItem=CurrentItem->nextSibling())
     if (CurrentItem->text(0)==session&&
 	CurrentItem->text(1)==serial) {

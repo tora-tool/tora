@@ -62,9 +62,33 @@ void toConnection::connect(void)
   }
 
   QString str="ALTER SESSION SET NLS_DATE_FORMAT = '";
-  str.append(toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT));
-  str.append("'");
-  otl_stream date(1,(const char *)str,*Connection);
+  str+=toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT);
+  str+="'";
+  otl_stream date(1,str,*Connection);
+
+  try {
+    otl_stream version(1,
+		       "SELECT banner FROM v$version",
+		       *Connection);
+    QRegExp verre("[0-9]\\.[0-9\\.]+[0-9]");
+    QRegExp orare("^oracle",false);
+    while(!version.eof()) {
+      char buffer[1024];
+      version>>buffer;
+      if (orare.match(buffer)>=0) {
+	int pos;
+	int len;
+	pos=verre.match(buffer,0,&len);
+	if (pos>=0) {
+	  Version=buffer+pos;
+	  Version.truncate(len);
+	  break;
+	}
+      }
+    }
+  } catch (...) {
+    // Ignore any errors here
+  }
   NeedCommit=false;
 }
 
@@ -110,6 +134,11 @@ QString toConnection::connectString(bool pw=false) const
   if (!pw||SqlNet) {
     ret.append("@");
     ret.append(Host);
+  }
+  if (!pw && !Version.isEmpty()) {
+    ret+=" [";
+    ret+=Version;
+    ret+="]";
   }
   return ret;
 }

@@ -31,6 +31,7 @@ TO_NAMESPACE;
 #include "tomain.h"
 #include "totool.h"
 #include "toconf.h"
+#include "tosql.h"
 
 toResultReferences::toResultReferences(toConnection &conn,QWidget *parent,const char *name=NULL)
   : toResultView(false,false,conn,parent,name)
@@ -44,12 +45,16 @@ toResultReferences::toResultReferences(toConnection &conn,QWidget *parent,const 
   addColumn("Delete Rule");
 }
 
+static toSQL SQLConsColumns("toResultReferences:ForeignColumns",
+			    "SELECT Column_Name FROM All_Cons_Columns\n"
+			    " WHERE Owner = :f1<char[31]> AND Constraint_Name = :f2<char[31]>\n"
+			    " ORDER BY Position",
+			    "Get columns of foreign constraint, must return same number of cols");
+
 QString toResultReferences::constraintCols(const QString &conOwner,const QString &conName)
 {
   otl_stream Query(1,
-		   "SELECT Column_Name FROM All_Cons_Columns"
-		   " WHERE Owner = :f1<char[31]> AND Constraint_Name = :f2<char[31]>"
-		   " ORDER BY Position",
+		   SQLConsColumns(Connection),
 		   Connection.connection());
 
   Query<<(const char *)conOwner;
@@ -65,6 +70,30 @@ QString toResultReferences::constraintCols(const QString &conOwner,const QString
   }
   return ret;
 }
+
+static toSQL SQLConstraints("toResultReferences:References",
+			    "SELECT Owner,
+       Table_Name,
+       Constraint_Name,
+       R_Owner,
+       R_Constraint_Name,
+       Status,
+       Delete_Rule
+  FROM all_constraints a
+ WHERE constraint_type = 'R'
+   AND (r_owner,r_constraint_name) IN (SELECT b.owner,b.constraint_name
+                                         FROM all_constraints b
+                                        WHERE b.OWNER = :owner<char[31]>
+                                          AND b.TABLE_NAME = :tab<char[31]>)
+ ORDER BY Constraint_Name",
+			    "List the references from foreign constraints to specified table, must return same columns");
+static toSQL SQLDependencies("toResultReferences:Dependencies",
+			     "SELECT owner,name,type||' '||dependency_type
+  FROM dba_dependencies
+ WHERE referenced_owner = :owner<char[31]>
+   AND referenced_name = :tab<char[31]>
+ ORDER BY owner,type,name",
+			     "List the dependencies from other objects to this object, must return same number of columns");
 
 QString toResultReferences::query(const QString &sql,const list<QString> &param)
 {
@@ -85,21 +114,8 @@ QString toResultReferences::query(const QString &sql,const list<QString> &param)
   try {
     int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
 
-    otl_stream Query(1,"
-SELECT Owner,
-       Table_Name,
-       Constraint_Name,
-       R_Owner,
-       R_Constraint_Name,
-       Status,
-       Delete_Rule
-  FROM all_constraints a
- WHERE constraint_type = 'R'
-   AND (r_owner,r_constraint_name) IN (SELECT b.owner,b.constraint_name
-                                         FROM all_constraints b
-                                        WHERE b.OWNER = :owner<char[31]>
-                                          AND b.TABLE_NAME = :tab<char[31]>)
- ORDER BY Constraint_Name",
+    otl_stream Query(1,
+		     SQLConstraints(Connection),
 		     Connection.connection());
 
     Description=Query.describe_select(DescriptionLen);
@@ -147,12 +163,8 @@ SELECT Owner,
       item->setText(5,buffer);
     }
 
-    otl_stream Deps(1,"
-SELECT owner,name,type||' '||dependency_type
-  FROM dba_dependencies
- WHERE referenced_owner = :owner<char[31]>
-   AND referenced_name = :tab<char[31]>
- ORDER BY owner,type,name",
+    otl_stream Deps(1,
+		    SQLDependencies(Connection),
 		    Connection.connection());
     Deps<<Owner;
     Deps<<TableName;

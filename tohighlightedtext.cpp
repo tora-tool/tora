@@ -162,12 +162,14 @@ void toHighlightedText::setText(const QString &str)
 
 void toHighlightedText::setCurrent(int line)
 {
+  int lCur=Current;
   Current=line;
-  if (line>=0)
+  if (lCur>=0)
+    updateCell(lCur,0,false);
+  if (line>=0) {
     setCursorPosition(line,0);
-#if 0
-  repaint();
-#endif
+    updateCell(line,0,false);
+  }
 }
 
 void toHighlightedText::paintCell(QPainter *painter,int row,int col)
@@ -350,7 +352,7 @@ void toHighlightedText::textChanged(void)
 	Current=convertLine(Current,curline-diff,diff);
       Errors=newErr;
       emit insertedLines(curline-diff,diff);
-      repaint();
+      update();
     }
     LastLength=lines;
   }

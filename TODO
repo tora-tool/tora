@@ -1,6 +1,5 @@
 Extended functionality:
 * SQL Browser
-	Add referenses to tables view to display referential constraints to and from the table.
 	Add information about partitions.
 	Modify tables
 		Caching/Nocaching
@@ -10,7 +9,6 @@ Extended functionality:
 		Add columns
 	Rename table
 		ALTER TABLE ... RENAME TO ...
-* Update syntax highlighting from v$reserved_words (Is this a good idea, stuff seems to missing there, OUT and EXCEPTION wasn't in there).
 * Modify storage in storage manager.
 * OTL Doesn't seem to support object types.
 * Being able to modify data in the toResultContent widget.

@@ -61,6 +61,7 @@ TO_NAMESPACE;
 #include "toparamget.h"
 #include "toresultview.h"
 #include "totool.h"
+#include "tosql.h"
 
 #include "todebug.moc"
 #include "todebugchange.moc"
@@ -283,22 +284,8 @@ QListViewItem *toDebugWatch::createWatch(QListView *watches)
   return item;
 }
 
-class toDebugOutput : public toOutput {
-  toDebug *Debugger;
-public:
-  toDebugOutput(toDebug *debug,QWidget *parent,toConnection &conn)
-    : toOutput(parent,conn),Debugger(debug)
-  {
-  }
-  virtual void refresh(void)
-  {
-    if (Debugger->isRunning()&&enabled()) {
-      try {
-	int ret;
-	do {
-	  otl_stream poll(1,
-			  "
-DECLARE
+static toSQL SQLDebugOutputPoll("toDebugOutput:Poll",
+				"DECLARE
    coll sys.dbms_debug_vc2coll;
    ret INTEGER;
    i INTEGER;
@@ -334,6 +321,47 @@ BEGIN
   END IF;
   SELECT ret,line INTO :ret<int,out>,:line<char[101,out> FROM DUAL;
 END;",
+				"Poll for output in the debug session, must have same bindings");
+static toSQL SQLDebugOutputDisable("toDebugOutput:Disable",
+				   "DECLARE
+   coll sys.dbms_debug_vc2coll;
+   errm VARCHAR2(100);
+BEGIN
+  DBMS_DEBUG.EXECUTE('BEGIN DBMS_OUTPUT.DISABLE; END;',
+                     -1,
+                     0,
+                     coll,
+                     errm);
+END;",
+				   "Disable output in the debug session");
+static toSQL SQLDebugOutputEnable("toDebugOutput:Enable",
+				  "DECLARE
+   coll sys.dbms_debug_vc2coll;
+   errm VARCHAR2(100);
+BEGIN
+  DBMS_DEBUG.EXECUTE('BEGIN DBMS_OUTPUT.ENABLE; END;',
+                     -1,
+                     0,
+                     coll,
+                     errm);
+END;",
+				  "Enable output in the debug session");
+
+class toDebugOutput : public toOutput {
+  toDebug *Debugger;
+public:
+  toDebugOutput(toDebug *debug,QWidget *parent,toConnection &conn)
+    : toOutput(parent,conn),Debugger(debug)
+  {
+  }
+  virtual void refresh(void)
+  {
+    if (Debugger->isRunning()&&enabled()) {
+      try {
+	int ret;
+	do {
+	  otl_stream poll(1,
+			  SQLDebugOutputPoll(Connection),
 			  Connection.connection());
 	  poll>>ret;
 	  char buffer[101];
@@ -350,30 +378,10 @@ END;",
       try {
 	if (dis)
 	  otl_cursor::direct_exec(Connection.connection(),
-				"
-DECLARE
-   coll sys.dbms_debug_vc2coll;
-   errm VARCHAR2(100);
-BEGIN
-  DBMS_DEBUG.EXECUTE('BEGIN DBMS_OUTPUT.DISABLE; END;',
-                     -1,
-                     0,
-                     coll,
-                     errm);
-END;");
+				  toSQL::sql(SQLDebugOutputDisable,Connection));
 	else
 	  otl_cursor::direct_exec(Connection.connection(),
-				"
-DECLARE
-   coll sys.dbms_debug_vc2coll;
-   errm VARCHAR2(100);
-BEGIN
-  DBMS_DEBUG.EXECUTE('BEGIN DBMS_OUTPUT.ENABLE; END;',
-                     -1,
-                     0,
-                     coll,
-                     errm);
-END;");
+				  toSQL::sql(SQLDebugOutputEnable,Connection));
       } catch (...) {
 	toStatusMessage("Couldn't enable/disable output for session");
       }
@@ -387,20 +395,24 @@ bool toDebug::isRunning(void)
   return RunningTarget;
 }
 
-void toDebug::targetTask::run(void)
-{
-  {
-    toConnection Connection(Parent.Connection);
-    otl_stream init(1,"
-DECLARE
+static toSQL SQLDebugInit("toDebug:Initialize",
+			  "DECLARE
   ret VARCHAR2(200);
 BEGIN
   
   ret:=DBMS_DEBUG.INITIALIZE;
   DBMS_DEBUG.DEBUG_ON;
   SELECT ret,dbms_session.unique_session_id INTO :f2<char[201],out>,:f3<char[25],out> FROM DUAL;
-END;
-",
+END;",
+			  "Initialize the debug session, must have same bindings");
+
+
+void toDebug::targetTask::run(void)
+{
+  {
+    toConnection Connection(Parent.Connection);
+    otl_stream init(1,
+		    toSQL::sql(SQLDebugInit,Connection),
 		    Connection.connection());
     int colSize;
     {
@@ -900,11 +912,8 @@ void toDebug::execute(void)
     toStatusMessage("Couldn't find any function or procedure under cursor.");
 }
 
-int toDebug::sync(void)
-{
-  try {
-    otl_stream sync(1,"
-DECLARE
+static toSQL SQLSync("toDebug:Sync",
+		     "DECLARE
   ret binary_integer;
   runinf DBMS_DEBUG.Runtime_Info;
 BEGIN
@@ -914,8 +923,14 @@ BEGIN
     INTO :ret<int,out>,
          :reason<int,out>
     FROM DUAL;
-END;
-",
+END;",
+		     "Sync with the debugging session, must have same binds");
+
+int toDebug::sync(void)
+{
+  try {
+    otl_stream sync(1,
+		    toSQL::sql(SQLSync,Connection),
 		    Connection.connection());
     int ret;
     int reason;
@@ -1151,6 +1166,106 @@ void toDebug::readLog(void)
   }
 }
 
+static toSQL SQLRuntimeInfo("toDebug:RuntimeInfo",
+			    "DECLARE
+  info DBMS_DEBUG.RUNTIME_INFO;
+  ret BINARY_INTEGER;
+BEGIN
+  ret:=DBMS_DEBUG.GET_RUNTIME_INFO(DBMS_DEBUG.info_getStackDepth,info);
+  SELECT ret,info.stackDepth INTO :ret<int,out>,:depth<int,out> FROM DUAL;
+END;",
+			    "Get runtime info from debug session, must have same bindings");
+static toSQL SQLStackTrace("toDebug:StackTrace",
+			   "DECLARE
+  info DBMS_DEBUG.PROGRAM_INFO;
+  stack DBMS_DEBUG.BACKTRACE_TABLE;
+  i BINARY_INTEGER;
+BEGIN
+  DBMS_DEBUG.PRINT_BACKTRACE(stack);
+  i:=:num<int,in>;
+  info:=stack(i);
+  SELECT info.Name,info.Owner,info.Line#,DECODE(info.LibunitType,DBMS_DEBUG.LibunitType_cursor,'CURSOR',
+                                                                 DBMS_DEBUG.LibunitType_function,'FUNCTION',
+                                                                 DBMS_DEBUG.LibunitType_procedure,'PROCEDURE',
+                                                                 DBMS_DEBUG.LibunitType_package,'PACKAGE',
+                                                                 DBMS_DEBUG.LibunitType_package_body,'PACKAGE BODY',
+                                                                 DBMS_DEBUG.LibunitType_trigger,'TRIGGEER',
+                                                                 'UNKNOWN')
+    INTO :name<char[31],out>,:owner<char[31],out>,:line<int,out>,:type<char[31],out> FROM DUAL;
+END;",
+			   "Get stacktrace from debug session, must have same bindings");
+static toSQL SQLLocalWatch("toDebug:LocalWatch",	
+			   "DECLARE
+  ret BINARY_INTEGER;
+  data VARCHAR2(4000);
+BEGIN
+  ret:=DBMS_DEBUG.GET_VALUE(:name<char[41],in>,0,data,NULL);
+  SELECT ret,data INTO :ret<int,out>,:val<char[4001],out> FROM DUAL;
+END;",
+			   "Get data from local watch, must have same bindings");
+static toSQL SQLGlobalWatch("toDebug:GlobalWatch",
+			    "DECLARE
+  data VARCHAR2(4000);
+  proginf DBMS_DEBUG.program_info;
+  ret BINARY_INTEGER;
+BEGIN
+  proginf.Namespace:=DBMS_DEBUG.Namespace_pkg_body;
+  proginf.Name:=:object<char[41],in>;
+  proginf.Owner:=:owner<char[41],in>;
+  proginf.DBLink:=NULL;
+  ret:=DBMS_DEBUG.GET_VALUE(:name<char[41],in>,proginf,data,NULL);
+  IF ret =DBMS_DEBUG.error_no_such_object THEN
+    proginf.Namespace:=DBMS_DEBUG.namespace_pkgspec_or_toplevel;
+    ret:=DBMS_DEBUG.GET_VALUE(:name<char[41],in>,proginf,data,NULL);
+  END IF;
+  SELECT ret          ,data                ,proginf.Namespace
+    INTO :ret<int,out>,:val<char[4001],out>,:namespace<int,out>
+    FROM DUAL;
+END;",
+			    "Get data from global watch, must have same bindings");
+static toSQL SQLLocalIndex("toDebug:LocalIndex",
+			   "DECLARE
+  ret BINARY_INTEGER;
+  proginf DBMS_DEBUG.program_info;
+  i BINARY_INTEGER;
+  indata DBMS_DEBUG.index_table;
+  outdata VARCHAR2(4000) := '';
+BEGIN
+  ret:=DBMS_DEBUG.GET_INDEXES(:name<char[41],in>,0,proginf,indata);
+  IF ret = DBMS_DEBUG.success THEN
+    i:=indata.first;
+    WHILE i IS NOT NULL OR LENGTH(outdata)>3900 LOOP
+      outdata:=outdata||indata(i)||',';
+      i:=indata.next(i);
+    END LOOP;
+  END IF;
+  SELECT outdata INTO :data<char[4001],out> FROM DUAL;
+END;",
+			   "Get indexes of local watch, must have same bindings");
+static toSQL SQLGlobalIndex("toDebug:GlobalIndex",
+			    "DECLARE
+  ret BINARY_INTEGER;
+  proginf DBMS_DEBUG.program_info;
+  i BINARY_INTEGER;
+  indata DBMS_DEBUG.index_table;
+  outdata VARCHAR2(4000) := '';
+BEGIN
+  proginf.Namespace:=:namespace<int,in>;
+  proginf.Name:=:object<char[41],in>;
+  proginf.Owner:=:owner<char[41],in>;
+  proginf.DBLink:=NULL;
+  ret:=DBMS_DEBUG.GET_INDEXES(:name<char[41],in>,NULL,proginf,indata);
+  IF ret = DBMS_DEBUG.success THEN
+    i:=indata.first;
+    WHILE i IS NOT NULL OR LENGTH(outdata)>3900 LOOP
+      outdata:=outdata||indata(i)||',';
+      i:=indata.next(i);
+    END LOOP;
+  END IF;
+  SELECT outdata INTO :data<char[4001],out> FROM DUAL;
+END;",
+			    "Get indexes of global watch, must have same bindings");
+
 void toDebug::updateState(int reason)
 {
   switch(reason) {
@@ -1228,14 +1343,7 @@ void toDebug::updateState(int reason)
     }
     try {
       otl_stream info(1,
-		      "
-DECLARE
-  info DBMS_DEBUG.RUNTIME_INFO;
-  ret BINARY_INTEGER;
-BEGIN
-  ret:=DBMS_DEBUG.GET_RUNTIME_INFO(DBMS_DEBUG.info_getStackDepth,info);
-  SELECT ret,info.stackDepth INTO :ret<int,out>,:depth<int,out> FROM DUAL;
-END;",
+		      toSQL::sql(SQLRuntimeInfo,Connection),
 		      Connection.connection());
       int ret,depth;
       info>>ret;
@@ -1248,24 +1356,7 @@ END;",
 	return;
       }
       otl_stream stack(1,
-		       "
-DECLARE
-  info DBMS_DEBUG.PROGRAM_INFO;
-  stack DBMS_DEBUG.BACKTRACE_TABLE;
-  i BINARY_INTEGER;
-BEGIN
-  DBMS_DEBUG.PRINT_BACKTRACE(stack);
-  i:=:num<int,in>;
-  info:=stack(i);
-  SELECT info.Name,info.Owner,info.Line#,DECODE(info.LibunitType,DBMS_DEBUG.LibunitType_cursor,'CURSOR',
-                                                                 DBMS_DEBUG.LibunitType_function,'FUNCTION',
-                                                                 DBMS_DEBUG.LibunitType_procedure,'PROCEDURE',
-                                                                 DBMS_DEBUG.LibunitType_package,'PACKAGE',
-                                                                 DBMS_DEBUG.LibunitType_package_body,'PACKAGE BODY',
-                                                                 DBMS_DEBUG.LibunitType_trigger,'TRIGGEER',
-                                                                 'UNKNOWN')
-    INTO :name<char[31],out>,:owner<char[31],out>,:line<int,out>,:type<char[31],out> FROM DUAL;
-END;",
+		       toSQL::sql(SQLStackTrace,Connection),
 		       Connection.connection());
       char name[31];
       char schema[31];
@@ -1293,80 +1384,16 @@ END;",
 	    delete item->firstChild();
 	}
 	otl_stream local(1,
-			 "
-DECLARE
-  ret BINARY_INTEGER;
-  data VARCHAR2(4000);
-BEGIN
-  ret:=DBMS_DEBUG.GET_VALUE(:name<char[41],in>,0,data,NULL);
-  SELECT ret,data INTO :ret<int,out>,:val<char[4001],out> FROM DUAL;
-END;
-",
+			 toSQL::sql(SQLLocalWatch,Connection),
 			 Connection.connection());
 	otl_stream global(1,
-			  "
-DECLARE
-  data VARCHAR2(4000);
-  proginf DBMS_DEBUG.program_info;
-  ret BINARY_INTEGER;
-BEGIN
-  proginf.Namespace:=DBMS_DEBUG.Namespace_pkg_body;
-  proginf.Name:=:object<char[41],in>;
-  proginf.Owner:=:owner<char[41],in>;
-  proginf.DBLink:=NULL;
-  ret:=DBMS_DEBUG.GET_VALUE(:name<char[41],in>,proginf,data,NULL);
-  IF ret =DBMS_DEBUG.error_no_such_object THEN
-    proginf.Namespace:=DBMS_DEBUG.namespace_pkgspec_or_toplevel;
-    ret:=DBMS_DEBUG.GET_VALUE(:name<char[41],in>,proginf,data,NULL);
-  END IF;
-  SELECT ret          ,data                ,proginf.Namespace
-    INTO :ret<int,out>,:val<char[4001],out>,:namespace<int,out>
-    FROM DUAL;
-END;",
+			  toSQL::sql(SQLGlobalWatch,Connection),
 			  Connection.connection());
 	otl_stream index(1,
-			 "
-DECLARE
-  ret BINARY_INTEGER;
-  proginf DBMS_DEBUG.program_info;
-  i BINARY_INTEGER;
-  indata DBMS_DEBUG.index_table;
-  outdata VARCHAR2(4000) := '';
-BEGIN
-  ret:=DBMS_DEBUG.GET_INDEXES(:name<char[41],in>,0,proginf,indata);
-  IF ret = DBMS_DEBUG.success THEN
-    i:=indata.first;
-    WHILE i IS NOT NULL OR LENGTH(outdata)>3900 LOOP
-      outdata:=outdata||indata(i)||',';
-      i:=indata.next(i);
-    END LOOP;
-  END IF;
-  SELECT outdata INTO :data<char[4001],out> FROM DUAL;
-END;",
+			 toSQL::sql(SQLLocalIndex,Connection),
 			 Connection.connection());
 	otl_stream globind(1,
-			   "
-DECLARE
-  ret BINARY_INTEGER;
-  proginf DBMS_DEBUG.program_info;
-  i BINARY_INTEGER;
-  indata DBMS_DEBUG.index_table;
-  outdata VARCHAR2(4000) := '';
-BEGIN
-  proginf.Namespace:=:namespace<int,in>;
-  proginf.Name:=:object<char[41],in>;
-  proginf.Owner:=:owner<char[41],in>;
-  proginf.DBLink:=NULL;
-  ret:=DBMS_DEBUG.GET_INDEXES(:name<char[41],in>,NULL,proginf,indata);
-  IF ret = DBMS_DEBUG.success THEN
-    i:=indata.first;
-    WHILE i IS NOT NULL OR LENGTH(outdata)>3900 LOOP
-      outdata:=outdata||indata(i)||',';
-      i:=indata.next(i);
-    END LOOP;
-  END IF;
-  SELECT outdata INTO :data<char[4001],out> FROM DUAL;
-END;",
+			   toSQL::sql(SQLGlobalIndex,Connection),
 			   Connection.connection());
   
 	QListViewItem *next=NULL;
@@ -1476,7 +1503,6 @@ bool toDebug::viewSource(const QString &schema,const QString &name,const QString
       HeadEditor->setCursorPosition(line-1,0);
     HeadEditor->setFocus();
     ShowButton->setOn(true);
-    HeadEditor->repaint();
   } else if (BodyEditor->schema()==schema&&
 	     BodyEditor->object()==name&&
 	     BodyEditor->type()==type) {
@@ -1487,7 +1513,6 @@ bool toDebug::viewSource(const QString &schema,const QString &name,const QString
 
     BodyEditor->setFocus();
     ShowButton->setOn(false);
-    BodyEditor->repaint();
   } else if (!BodyEditor->edited()&&(setCurrent||BodyEditor->current()<0)) {
     BodyEditor->setData(schema,type,name);
     BodyEditor->readData(Connection,StackTrace);
@@ -1510,8 +1535,6 @@ bool toDebug::viewSource(const QString &schema,const QString &name,const QString
     if (setCurrent) {
       HeadEditor->setCurrent(-1);
       BodyEditor->setCurrent(-1);
-      HeadEditor->repaint();
-      BodyEditor->repaint();
     }
     return false;
   }
@@ -1529,17 +1552,8 @@ void toDebug::setDeferedBreakpoints(void)
   }
 }
 
-int toDebug::continueExecution(int stopon)
-{
-  Lock.lock();
-  if (RunningTarget) {
-    Lock.unlock();
-    try {
-      int ret,reason;
-      setDeferedBreakpoints();
-      otl_stream cont(1,
-		   "
-DECLARE
+static toSQL SQLContinue("toDebug:Continue",
+			 "DECLARE
   runinf DBMS_DEBUG.runtime_info;
   ret BINARY_INTEGER;
 BEGIN
@@ -1550,7 +1564,19 @@ BEGIN
          :reason<int,out>
     FROM DUAL;
 END;",
-		   Connection.connection());
+			 "Continue execution, must have same bindings");
+
+int toDebug::continueExecution(int stopon)
+{
+  Lock.lock();
+  if (RunningTarget) {
+    Lock.unlock();
+    try {
+      int ret,reason;
+      setDeferedBreakpoints();
+      otl_stream cont(1,
+		      toSQL::sql(SQLContinue,Connection),
+		      Connection.connection());
       cont<<stopon;
       cont>>ret>>reason;
       if (reason==TO_REASON_TIMEOUT||ret==TO_ERROR_TIMEOUT) {
@@ -1891,6 +1917,14 @@ void toDebug::changeSchema(int)
   refresh();
 }
 
+static toSQL SQLListObjects("toDebug:ListObjects",
+			    "SELECT Object_Type,Object_Name Type FROM ALL_OBJECTS\n"
+			    " WHERE OWNER = :owner<char[31]>\n"
+			    "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
+			    "                       'PROCEDURE','TYPE')\n"
+			    " ORDER BY Object_Type,Object_Name",
+			    "List objects available in a schema, must have same result columns");
+
 void toDebug::refresh(void)
 {
   try {
@@ -1900,7 +1934,7 @@ void toDebug::refresh(void)
       selected=Connection.user().upper();
       Schema->clear();
       otl_stream users(1,
-		       "SELECT Username FROM ALL_Users ORDER BY Username",
+		       toSQL::sql(TOSQL_USERLIST,Connection),
 		       Connection.connection());
       for(int i=0;!users.eof();i++) {
 	char buffer[31];
@@ -1916,11 +1950,7 @@ void toDebug::refresh(void)
 	}
       Objects->clear();
       otl_stream code(1,
-		      "SELECT Object_Type,Object_Name Type FROM ALL_OBJECTS"
-		      " WHERE OWNER = :Long_Name_Etc<char[31]>"
-		      "   AND Object_Type IN ('FUNCTION','PACKAGE',"
-		      "                       'PROCEDURE','TYPE')"
-		      " ORDER BY Object_Type,Object_Name",
+		      toSQL::sql(SQLListObjects,Connection),
 		      Connection.connection());
       code<<(const char *)selected;
       QListViewItem *typeItem=NULL;
@@ -2431,6 +2461,34 @@ void toDebug::changeWatch(void)
   changeWatch(Watch->selectedItem());
 }
 
+static toSQL SQLChangeLocal("toDebug:ChangeLocalWatch",
+			    "DECLARE
+  ret BINARY_INTEGER;
+  data VARCHAR2(4000);
+BEGIN
+  ret:=DBMS_DEBUG.SET_VALUE(0,:assign<char[4001],in>);
+  SELECT ret INTO :ret<int,out> FROM DUAL;
+END;",
+			    "Change local watch value, must have same bindings");
+static toSQL SQLChangeGlobal("toDebug:ChangeGlobalWatch",
+			    "DECLARE
+  data VARCHAR2(4000);
+  proginf DBMS_DEBUG.program_info;
+  ret BINARY_INTEGER;
+BEGIN
+  proginf.Namespace:=DBMS_DEBUG.Namespace_pkg_body;
+  proginf.Name:=:object<char[41],in>;
+  proginf.Owner:=:owner<char[41],in>;
+  proginf.DBLink:=NULL;
+  ret:=DBMS_DEBUG.SET_VALUE(proginf,:assign<char[4001],in>);
+  IF ret =DBMS_DEBUG.error_no_such_object THEN
+    proginf.Namespace:=DBMS_DEBUG.namespace_pkgspec_or_toplevel;
+    ret:=DBMS_DEBUG.SET_VALUE(proginf,:assign<char[4001],in>);
+  END IF;
+  SELECT ret INTO :ret<int,out> FROM DUAL;
+END;",
+			    "Change global watch value, must have same bindings");
+
 void toDebug::changeWatch(QListViewItem *item)
 {
   if (item&&item->text(4).isEmpty()) {
@@ -2477,37 +2535,13 @@ void toDebug::changeWatch(QListViewItem *item)
       try {
 	if (item->text(0).isEmpty()) {
 	  otl_stream local(1,
-			   "
-DECLARE
-  ret BINARY_INTEGER;
-  data VARCHAR2(4000);
-BEGIN
-  ret:=DBMS_DEBUG.SET_VALUE(0,:assign<char[4001],in>);
-  SELECT ret INTO :ret<int,out> FROM DUAL;
-END;
-",
+			   toSQL::sql(SQLChangeLocal,Connection),
 			   Connection.connection());
 	  local<<assign;
 	  local>>ret;
 	} else {
 	  otl_stream global(1,
-			    "
-DECLARE
-  data VARCHAR2(4000);
-  proginf DBMS_DEBUG.program_info;
-  ret BINARY_INTEGER;
-BEGIN
-  proginf.Namespace:=DBMS_DEBUG.Namespace_pkg_body;
-  proginf.Name:=:object<char[41],in>;
-  proginf.Owner:=:owner<char[41],in>;
-  proginf.DBLink:=NULL;
-  ret:=DBMS_DEBUG.SET_VALUE(proginf,:assign<char[4001],in>);
-  IF ret =DBMS_DEBUG.error_no_such_object THEN
-    proginf.Namespace:=DBMS_DEBUG.namespace_pkgspec_or_toplevel;
-    ret:=DBMS_DEBUG.SET_VALUE(proginf,:assign<char[4001],in>);
-  END IF;
-  SELECT ret INTO :ret<int,out> FROM DUAL;
-END;",
+			    toSQL::sql(SQLChangeGlobal,Connection),
 			    Connection.connection());
 	  if (item->text(1).isEmpty())
 	    global<<"";

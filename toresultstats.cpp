@@ -29,6 +29,7 @@ TO_NAMESPACE;
 
 #include "tomain.h"
 #include "toresultstats.h"
+#include "tosql.h"
 
 #include "toresultstats.moc"
 
@@ -40,13 +41,17 @@ toResultStats::toResultStats(int ses,toConnection &conn,QWidget *parent,
   setup();
 }
 
+static toSQL SQLSession("toResultStats:Session",
+			"SELECT MIN(SID) FROM V$MYSTAT",
+			"Get session id of current session");
+
 toResultStats::toResultStats(toConnection &conn,QWidget *parent,
 			     const char *name=NULL)
   : toResultView(false,false,conn,parent,name)
 {
   try {
     otl_stream str(1,
-		   "SELECT MIN(SID) FROM V$MYSTAT",
+		   SQLSession(Connection),
 		   Connection.connection());
     str>>SessionID;
   } catch (otl_exc &exc) {
@@ -68,11 +73,15 @@ void toResultStats::setup(void)
   setColumnAlignment(2,AlignRight);
 }
 
+static toSQL SQLStatistics("toResultStats:Statistics",
+			   "SELECT Statistic#,Value FROM V$SesStat WHERE SID = :f1<int>",
+			   "Get statistics for session, must have same number of columns");
+
 void toResultStats::resetStats(void)
 {
   try {
     otl_stream str(1,
-		   "SELECT Statistic#,Value FROM V$SesStat WHERE SID = :f1<int>",
+		   SQLStatistics(Connection),
 		   Connection.connection());
     str<<SessionID;
     while(!str.eof()) {
@@ -97,15 +106,19 @@ void toResultStats::changeSession(int ses)
   }
 }
 
+static toSQL SQLStatisticName("toResultStats:StatisticName",
+			      "SELECT b.Name,a.Statistic#,a.Value\n"
+			      "  FROM V$SesStat a,V$StatName b\n"
+			      " WHERE a.SID = :f1<int> AND a.Statistic# = b.Statistic#\n"
+			      " ORDER BY UPPER(b.Name) Desc",
+			      "Get statistics and their names for session, must have same number of columns");
+
 void toResultStats::refreshStats(void)
 {
   try {
     clear();
     otl_stream str(1,
-		   "SELECT b.Name,a.Statistic#,a.Value"
-		   "  FROM V$SesStat a,V$StatName b"
-		   " WHERE a.SID = :f1<int> AND a.Statistic# = b.Statistic#"
-		   " ORDER BY UPPER(b.Name) Desc",
+		   SQLStatisticName(Connection),
 		   Connection.connection());
     str<<SessionID;
     while(!str.eof()) {

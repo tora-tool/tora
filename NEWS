@@ -6,10 +6,16 @@
 2001-02-14: Link oracle libs statically as well in tora-static
 2001-02-17: Added a whole bunch of quotes.
 2001-02-19: Removed a lot of flickering when changing packages in toDebug.
-2001-02-19: No automatic updates in toHighlightedText when changing
-		current/errors.
 2001-02-20: Added dependency views to database browser.
 2001-02-20: Pass path instead of filename to file open dialog.
+2001-02-20: Removed some more flickering in text editing (Don't use repaint).
+2001-02-21: Added version detection in toConnection.
+2001-02-21: Added SQL dictionary functionality.
+2001-02-22: Adopted TOra to use SQL dictionary (Woah, that was boring)
+2001-02-22: Added index to all menues so tools can add themselves anywhere in the menus.
+2001-02-22: Added customSetup function to tools, called when toMain is setup.
+2001-02-22: Don't hide row/column labels since it doesn't seem to work.
+2001-02-22: Fixed bug in toParamGet that added \n to end of all statements.
 
 0.5: Released 2001-02-12
 

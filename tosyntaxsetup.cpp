@@ -209,7 +209,7 @@ void toSyntaxSetup::selectColor(void)
       Colors[Current->text()]=col;
       ExampleColor->setBackgroundColor(col);
       Example->analyzer().Colors[toSyntaxAnalyzer::typeString(Current->text())]=col;
-      Example->repaint();
+      Example->update();
     }
   }
 }

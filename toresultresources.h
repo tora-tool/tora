@@ -30,21 +30,15 @@
 #define __TORESULTRESOURCES_H
 
 #include "toresultitem.h"
+#include "tosql.h"
+
+#define TOSQL_RESULTRESOURCE "toResultResources:Information"
 
 class toResultResources : public toResultItem {
 public:
   toResultResources(toConnection &conn,QWidget *parent,const char *name=NULL)
     : toResultItem(3,true,conn,parent,name)
-  {
-    setSQL("SELECT Loads,		Sorts,			First_Load_Time,"
-	   "       Parse_Calls,		Disk_Reads,		Parsing_User_Id,"
-	   "       Executions,		Buffer_Gets,		Parsing_Schema_Id,"
-	   "       Users_Executing,	Users_Opening,		Open_Versions,"
-	   "       Sharable_Mem,	Rows_Processed,		Kept_Versions,"
-	   "       Persistent_Mem,	Optimizer_Mode,		Loaded_Versions,"
-	   "       Runtime_Mem,		Serializable_Aborts,	Invalidations"
-	   " FROM v$sqlarea WHERE Address||':'||Hash_Value = :f1<char[100]>");
-  }
+  { setSQL(toSQL::sql(TOSQL_RESULTRESOURCE,Connection)); }
 };
 
 #endif

@@ -50,8 +50,6 @@ TO_NAMESPACE;
 #include <qpushbutton.h>
 #include <qmessagebox.h>
 
-#include <stdio.h>
-
 #include "totool.h"
 #include "toresultplan.h"
 #include "toworksheet.h"
@@ -242,9 +240,7 @@ void toWorksheet::viewResources(void)
     QString address=toSQLToAddress(Connection,QueryString);
 
     Resources->changeParams(address);
-  } catch (...) {
-    toStatusMessage("Couldn't find SQL statement in SGA");
-  }
+  } TOCATCH
 }
 
 toWorksheet::toWorksheet(QWidget *main,toConnection &connection)

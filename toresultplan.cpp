@@ -34,6 +34,7 @@ TO_NAMESPACE;
 #include "tomain.h"
 #include "toconf.h"
 #include "totool.h"
+#include "tosql.h"
 
 #include "toresultplan.moc"
 
@@ -53,6 +54,11 @@ toResultPlan::toResultPlan(toConnection &conn,QWidget *parent,const char *name)
   addColumn("Bytes");
   addColumn("Cardinality");
 }
+
+static toSQL SQLViewPlan("toResultPlan:ViewPlan",
+			 "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer, to_char(Cost), to_char(Bytes), to_char(Cardinality)\n"
+			 "  FROM %s WHERE Statement_ID = 'Tora %d' ORDER BY NVL(Parent_ID,0),ID",
+			 "Get the contents of a plan table. Observe the %s and %s which must be present and in the same order. Must return same columns");
 
 QString toResultPlan::query(const QString &sql,
 			    const list<QString> &param)
@@ -77,8 +83,7 @@ QString toResultPlan::query(const QString &sql,
     explain.append(sql);
     otl_cursor::direct_exec (Connection.connection(),(const char *)explain);
 
-    sprintf(buffer,"SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer, to_char(Cost), to_char(Bytes), to_char(Cardinality)"
-	    "  FROM %s WHERE Statement_ID = 'Tora %d' ORDER BY NVL(Parent_ID,0),ID",
+    sprintf(buffer,SQLViewPlan(Connection),
 	    (const char *)planTable,ident);
 
     {

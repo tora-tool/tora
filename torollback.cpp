@@ -54,6 +54,7 @@ TO_NAMESPACE;
 #include "toresultview.h"
 #include "toresultitem.h"
 #include "toconf.h"
+#include "tosql.h"
 #include "tostoragedefinition.h"
 #include "tosgastatement.h"
 
@@ -311,6 +312,40 @@ static void PaintBars(QListViewItem *item,QPainter *p,const QColorGroup & cg,
   }
 }
 
+static toSQL SQLRollback("toRollback:Information",
+			 "select a.segment_name \"Segment\",
+       a.owner \"Owner\",
+       a.tablespace_name \"Tablespace\",
+       a.status \"Status\",
+       b.xacts \"-Transactions\",
+       ROUND(a.initial_extent/1024/1024,3) \"-Initial (MB)\",
+       ROUND(a.next_extent/1024/1024,3) \"-Next (MB)\",
+       a.pct_increase \"-PCT Increase\",
+       ROUND(b.rssize/1024/1024,3) \"-Current (MB)\",
+       ROUND(b.optsize/1024/1024,3) \"-Optimal (MB)\",
+       ROUND(b.aveactive/1024/1024,3) \"-Used (MB)\",
+       b.Extents \"-Extents\",
+       b.CurExt \"-Current\",
+       b.CurBlk \"-Block\",
+       c.Blocks \"-Blocks\",
+       a.segment_id \" USN\"
+  from dba_rollback_segs a,
+       v$rollstat b,
+       dba_extents c
+ where a.segment_id = b.usn(+)
+   and a.owner = c.owner
+   and a.segment_name = c.segment_name
+   and c.segment_type = 'ROLLBACK'
+   and (c.extent_id = b.CurExt or (b.curext is null and c.extent_id = 0))
+ order by a.segment_name",
+			 "Get information about rollback segments.");
+
+static toSQL SQLStartExt("toRollback:StartExtent",
+			 "select to_char(b.start_uext)\n"
+			 "  from v$transaction b\n"
+			 " where b.xidusn = :f1<char[40]>",
+			 "Get information about current extent in rollback of transactions");
+
 class toRollbackView : public toResultView {
 public:
   class rollbackItem : public toResultViewItem {
@@ -356,40 +391,14 @@ public:
   toRollbackView(toConnection &conn,QWidget *parent)
     : toResultView(false,false,conn,parent)
   {
-    setSQL("select a.segment_name \"Segment\","
-	   "       a.owner \"Owner\","
-	   "       a.tablespace_name \"Tablespace\","
-	   "       a.status \"Status\","
-	   "       b.xacts \"-Transactions\","
-	   "       ROUND(a.initial_extent/1024/1024,3) \"-Initial (MB)\","
-	   "       ROUND(a.next_extent/1024/1024,3) \"-Next (MB)\","
-	   "       a.pct_increase \"-PCT Increase\","
-	   "       ROUND(b.rssize/1024/1024,3) \"-Current (MB)\","
-	   "       ROUND(b.optsize/1024/1024,3) \"-Optimal (MB)\","
-	   "       ROUND(b.aveactive/1024/1024,3) \"-Used (MB)\","
-	   "       b.Extents \"-Extents\","
-	   "       b.CurExt \"-Current\","
-	   "       b.CurBlk \"-Block\","
-	   "       c.Blocks \"-Blocks\","
-	   "       a.segment_id \" USN\""
-	   "  from dba_rollback_segs a,"
-	   "       v$rollstat b,"
-	   "       dba_extents c"
-	   " where a.segment_id = b.usn(+)"
-	   "   and a.owner = c.owner"
-	   "   and a.segment_name = c.segment_name"
-	   "   and c.segment_type = 'ROLLBACK'"
-	   "   and (c.extent_id = b.CurExt or (b.curext is null and c.extent_id = 0))" // Is there always an extent 0?
-	   " order by a.segment_name");
+    setSQL(SQLRollback(conn));
   }
   virtual QString query(const QString &sql,const list<QString> &param)
   {
     QString ret=toResultView::query(sql,param);
     try {
       otl_stream trx(1,
-		     "select to_char(b.start_uext)"
-		     "  from v$transaction b"
-		     " where b.xidusn = :f1<char[40]>",
+		     SQLStartExt(Connection),
 		     Connection.connection());
       for(QListViewItem *i=firstChild();i;i=i->nextSibling()) {
 	trx<<i->text(TRANSCOL-1);
@@ -403,6 +412,30 @@ public:
     return ret;
   }
 };
+
+static toSQL SQLStatementInfo("toRollback:StatementInfo",
+			      "SELECT TO_CHAR(SYSDATE),\n"
+			      "       a.User_Name,\n"
+			      "       a.SQL_Text,\n"
+			      "       a.Address||':'||a.Hash_Value,\n"
+			      "       TO_CHAR(b.Executions),\n"
+			      "       TO_CHAR(b.Buffer_Gets)\n"
+			      "  FROM v$open_cursor a,v$sql b\n"
+			      " WHERE a.Address = b.Address AND a.Hash_Value = b.Hash_Value",	
+			      "Get information about statements in SGA. All columns must "
+			      "be in exactly the same order.");
+static toSQL SQLCurrentExtent("toRollback:CurrentExtent",
+			      "select b.Extents,\n"
+			      "       b.CurExt+b.CurBlk/c.Blocks\n"
+			      "  from dba_rollback_segs a,v$rollstat b,dba_extents c\n"
+			      " where a.segment_id = b.usn\n"
+			      "   and a.owner = c.owner\n"
+			      "   and a.segment_name = c.segment_name\n"
+			      "   and c.segment_type = 'ROLLBACK'\n"
+			      "   and b.curext = c.extent_id\n"
+			      " order by a.segment_name",
+			      "Get current extent (And fraction of) of rollback segments, "
+			      "columns must be in exactly the same order");
 
 class toRollbackOpen : public toResultView {
   struct statementData {
@@ -474,14 +507,7 @@ public:
     try {
       clear();
       otl_stream sql(1,
-		     "SELECT TO_CHAR(SYSDATE),"
-		     "       a.User_Name,"
-		     "       a.SQL_Text,"
-		     "       a.Address||':'||a.Hash_Value,"
-		     "       TO_CHAR(b.Executions),"
-		     "       TO_CHAR(b.Buffer_Gets)"
-		     "  FROM v$open_cursor a,v$sql b"
-		     " WHERE a.Address = b.Address AND a.Hash_Value = b.Hash_Value",
+		     SQLStatementInfo(Connection),
 		     Connection.connection());
       QListViewItem *last=NULL;
       while(!sql.eof()) {
@@ -503,15 +529,7 @@ public:
       }
 
       otl_stream rlb(1,
-		     "select b.Extents,"
-		     "       b.CurExt+b.CurBlk/c.Blocks"
-		     "  from dba_rollback_segs a,v$rollstat b,dba_extents c"
-		     " where a.segment_id = b.usn"
-		     "   and a.owner = c.owner"
-		     "   and a.segment_name = c.segment_name"
-		     "   and c.segment_type = 'ROLLBACK'"
-		     "   and b.curext = c.extent_id"
-		     " order by a.segment_name",
+		     SQLCurrentExtent(Connection),
 		     Connection.connection());
 
       CurExt.clear();

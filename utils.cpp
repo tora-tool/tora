@@ -38,8 +38,13 @@ TO_NAMESPACE;
 #include "tomain.h"
 #include "toconf.h"
 #include "totool.h"
+#include "tosql.h"
 
 #define CHUNK_SIZE 63
+
+static toSQL SQLUserNames(TOSQL_USERLIST,
+			  "SELECT UserName FROM All_Users ORDER BY UserName",
+			  "List users in the database");
 
 QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize)
 {
@@ -70,14 +75,18 @@ QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize)
   }
 }
 
+static toSQL SQLTextPiece("Global:SQLText",
+			  "SELECT SQL_Text\n"
+			  "  FROM V$SQLText_With_Newlines\n"
+			  " WHERE Address||':'||Hash_Value = :f1<char[100]>\n"
+			  " ORDER BY Piece",
+			  "Get text of SQL statement.");
+
 QString toSQLString(toConnection &conn,const QString &address)
 {
   QString sql;
   otl_stream q(1,
-	       "SELECT SQL_Text"
-	       "  FROM V$SQLText_With_Newlines"
-	       " WHERE Address||':'||Hash_Value = :f1<char[100]>"
-	       " ORDER BY Piece",
+	       SQLTextPiece(conn),
 	       conn.connection());
 
   q<<(const char *)address;
@@ -92,26 +101,31 @@ QString toSQLString(toConnection &conn,const QString &address)
   return sql;
 }
 
+static toSQL SQLNow("Global:Now",
+		    "SELECT TO_CHAR(SYSDATE) FROM DUAL",
+		    "Get current date/time from database");
+
 QString toNow(toConnection &conn)
 {
   otl_stream q(1,
-	       "SELECT TO_CHAR(SYSDATE) FROM DUAL",
+	       SQLNow(conn),
 	       conn.connection());
   char buffer[1024];
   q>>buffer;
   return buffer;
 }
 
+static toSQL SQLAddress("Global:Address",
+			"SELECT Address||':'||Hash_Value\n"
+			"  FROM V$SQLText_With_Newlines\n"
+			" WHERE SQL_Text LIKE :f1<char[150]>||'%%'",
+			"Get address of an SQL statement");
+
 QString toSQLToAddress(toConnection &conn,const QString &sql)
 {
   QString search;
 
-  search.sprintf("SELECT Address||':'||Hash_Value"
-		 "  FROM V$SQLText_With_Newlines"
-		 " WHERE SQL_Text LIKE :f1<char[%d]>||'%%'",
-		 CHUNK_SIZE+1);
-
-  otl_stream q(1,(const char *)search,conn.connection());
+  otl_stream q(1,SQLAddress(conn),conn.connection());
 
   q<<(const char *)sql.left(CHUNK_SIZE);
 

@@ -31,6 +31,7 @@ TO_NAMESPACE;
 #include "tomain.h"
 #include "totool.h"
 #include "toconf.h"
+#include "tosql.h"
 
 toResultConstraint::toResultConstraint(toConnection &conn,QWidget *parent,const char *name=NULL)
   : toResultView(false,false,conn,parent,name)
@@ -43,12 +44,16 @@ toResultConstraint::toResultConstraint(toConnection &conn,QWidget *parent,const 
   addColumn("Generated");
 }
 
+static toSQL SQLConsColumns("toResultConstraint:ForeignColumns",
+			    "SELECT Column_Name,Table_Name FROM All_Cons_Columns\n"
+			    " WHERE Owner = :f1<char[31]> AND Constraint_Name = :f2<char[31]>\n"
+			    " ORDER BY Position",
+			    "Get columns of foreign constraint, must return same number of cols");
+
 QString toResultConstraint::constraintCols(const QString &conOwner,const QString &conName)
 {
   otl_stream Query(1,
-		   "SELECT Column_Name,Table_Name FROM All_Cons_Columns"
-		   " WHERE Owner = :f1<char[31]> AND Constraint_Name = :f2<char[31]>"
-		   " ORDER BY Position",
+		   SQLConsColumns(Connection),
 		   Connection.connection());
 
   Query<<(const char *)conOwner;
@@ -66,6 +71,21 @@ QString toResultConstraint::constraintCols(const QString &conOwner,const QString
   }
   return ret;
 }
+
+static toSQL SQLConstraints("toResultConstraint:ListConstraints",
+			    "SELECT Constraint_Name,\n"
+			    "       Search_Condition,\n"
+			    "       R_Owner,\n"
+			    "       R_Constraint_Name,\n"
+			    "       Status,\n"
+			    "       Constraint_Type,\n"
+			    "       Delete_Rule,\n"
+			    "       Generated\n"
+			    "  FROM All_Constraints\n"
+			    " WHERE Owner = :f1<char[31]>\n"
+			    "   AND Table_Name = :f2<char[31]>\n"
+			    " ORDER BY Constraint_Name",
+			    "List constraints on a table. Must have same column order");
 
 QString toResultConstraint::query(const QString &sql,const list<QString> &param)
 {
@@ -91,19 +111,8 @@ QString toResultConstraint::query(const QString &sql,const list<QString> &param)
 
     Query.set_column_type(2,otl_var_char,MaxColSize);
     Query.open(1,
-		"SELECT Constraint_Name,"
-		"       Search_Condition,"
-		"       R_Owner,"
-		"       R_Constraint_Name,"
-	        "       Status,"
-		"       Constraint_Type,"
-		"       Delete_Rule,"
-		"       Generated"
-		"  FROM All_Constraints"
-		" WHERE Owner = :f1<char[31]>"
-		"   AND Table_Name = :f2<char[31]>"
-	        " ORDER BY Constraint_Name",
-		Connection.connection());
+	       SQLConstraints(Connection),
+	       Connection.connection());
 
     Description=Query.describe_select(DescriptionLen);
 

@@ -31,6 +31,7 @@ TO_NAMESPACE;
 #include "tomain.h"
 #include "totool.h"
 #include "toconf.h"
+#include "tosql.h"
 
 toResultIndexes::toResultIndexes(toConnection &conn,QWidget *parent,const char *name=NULL)
   : toResultView(false,false,conn,parent,name)
@@ -42,12 +43,16 @@ toResultIndexes::toResultIndexes(toConnection &conn,QWidget *parent,const char *
   addColumn("Unique");
 }
 
+static toSQL SQLColumns("toResultIndexes:Columns",
+			"SELECT Column_Name FROM All_Ind_Columns\n"
+			" WHERE Index_Owner = :f1<char[31]> AND Index_Name = :f2<char[31]>\n"
+			" ORDER BY Column_Position",
+			"List columns an index is built on");
+
 QString toResultIndexes::indexCols(const QString &indOwner,const QString &indName)
 {
   otl_stream Query(1,
-		   "SELECT Column_Name FROM All_Ind_Columns"
-		   " WHERE Index_Owner = :f1<char[31]> AND Index_Name = :f2<char[31]>"
-		   " ORDER BY Column_Position",
+		   SQLColumns(Connection),
 		   Connection.connection());
 
   Query<<(const char *)indOwner;
@@ -63,6 +68,17 @@ QString toResultIndexes::indexCols(const QString &indOwner,const QString &indNam
   }
   return ret;
 }
+
+static toSQL SQLListIndex("toResultIndexes:ListIndex",
+			  "SELECT Owner,"
+			  "       Index_Name,"
+			  "       Index_Type,"
+			  "       Uniqueness"
+			  "  FROM All_Indexes"
+			  " WHERE Table_Owner = :f1<char[31]>"
+			  "   AND Table_Name = :f2<char[31]>"
+			  " ORDER BY Index_Name",
+			  "List the indexes available on a table");
 
 QString toResultIndexes::query(const QString &sql,const list<QString> &param)
 {
@@ -82,14 +98,7 @@ QString toResultIndexes::query(const QString &sql,const list<QString> &param)
 
   try {
     otl_stream Query(1,
-		     "SELECT Owner,"
-		     "       Index_Name,"
-		     "       Index_Type,"
-		     "       Uniqueness"
-		     "  FROM All_Indexes"
-		     " WHERE Table_Owner = :f1<char[31]>"
-		     "   AND Table_Name = :f2<char[31]>"
-		     " ORDER BY Index_Name",
+		     SQLListIndex(Connection),
 		     Connection.connection());
 
     Description=Query.describe_select(DescriptionLen);

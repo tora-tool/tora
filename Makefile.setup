@@ -11,5 +11,5 @@ QT_STATIC=/usr/lib/qt2/lib/libqt.a
 MOC="/usr/lib/qt2/bin/moc"
 LFLAGS="-L/opt/oracle/app/oracle/product/8.1.7/lib" "-L/usr/lib/qt2/lib"
 UIC=uic
-TARGET=tora-static
+TARGET=tora-plugin
 PERL=/usr/bin/perl

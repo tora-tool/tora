@@ -29,6 +29,24 @@ TO_NAMESPACE;
 
 #include "toresultcols.h"
 #include "tomain.h"
+#include "tosql.h"
+
+static toSQL SQLInfo("toResultCols:Info",
+		     "SELECT Data_Default,\n"
+		     "       Num_Distinct,\n"
+		     "       Low_Value,\n"
+		     "       High_Value,\n"
+		     "       Density,\n"
+		     "       Num_Nulls,\n"
+		     "       Num_Buckets,\n"
+		     "       Last_Analyzed,\n"
+		     "       Sample_Size,\n"
+		     "       Avg_Col_Len\n"
+		     "  FROM All_Tab_Columns\n"
+		     " WHERE Owner = :f1<char[31]>\n"
+		     "   AND Table_Name = :f2<char[31]>\n"
+		     "   AND Column_Name = :f3<char[31]>",
+		     "Display analyze statistics about a column");
 
 class toResultColsItem : public toResultViewMLine {
 public:
@@ -40,20 +58,7 @@ public:
     toResultCols *view=dynamic_cast<toResultCols *>(listView());
     try {
       otl_stream ColInfo(1,
-			 "SELECT Data_Default,"
-			 "       Num_Distinct,"
-			 "       Low_Value,"
-			 "       High_Value,"
-			 "       Density,"
-			 "       Num_Nulls,"
-			 "       Num_Buckets,"
-			 "       Last_Analyzed,"
-			 "       Sample_Size,"
-			 "       Avg_Col_Len"
-			 "  FROM All_Tab_Columns"
-			 " WHERE Owner = :f1<char[31]>"
-			 "   AND Table_Name = :f2<char[31]>"
-			 "   AND Column_Name = :f3<char[31]>",
+			 SQLInfo(view->Connection),
 			 view->Connection.connection());
       ColInfo.set_all_column_types(otl_all_num2str|otl_all_date2str);
       ColInfo<<(const char *)text(10)<<(const char *)text(11)<<(const char *)text(0);
@@ -159,6 +164,13 @@ toResultCols::toResultCols(toConnection &conn,QWidget *parent,const char *name=N
   addColumn("Comments");
 }
 
+static toSQL SQLComment("toResultCols:Comments",
+			"SELECT Comments FROM All_Col_Comments\n"
+			" WHERE Owner = :f1<char[31]>\n"
+			"   AND Table_Name = :f2<char[31]>\n"
+			"   AND Column_Name = :f3<char[31]>",
+			"Display column comments");
+
 QString toResultCols::query(const QString &sql,const list<QString> &param)
 {
   SQL=sql;
@@ -182,10 +194,7 @@ QString toResultCols::query(const QString &sql,const list<QString> &param)
 
   try {
     otl_stream ColComment(1,
-			  "SELECT Comments FROM All_Col_Comments"
-			  " WHERE Owner = :f1<char[31]>"
-			  "   AND Table_Name = :f2<char[31]>"
-			  "   AND Column_Name = :f3<char[31]>",
+			  SQLComment(Connection),
 			  Connection.connection());
 
     Query=new otl_stream;

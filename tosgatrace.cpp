@@ -47,6 +47,7 @@ TO_NAMESPACE;
 #include "toresultview.h"
 #include "toresultresources.h"
 #include "toconf.h"
+#include "tosql.h"
 #include "tosgastatement.h"
 #include "tomain.h"
 
@@ -270,7 +271,7 @@ void toSGATrace::updateSchemas(void)
   try {
     Schema->clear();
     otl_stream users(1,
-		     "SELECT Username FROM ALL_Users ORDER BY Username",
+		     toSQL::sql(TOSQL_USERLIST,Connection),
 		     Connection.connection());
     Schema->insertItem("Any");
     for(int i=0;!users.eof();i++) {

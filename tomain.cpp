@@ -154,7 +154,7 @@ toMain::toMain()
   curr->insertItem("&Save As..",TO_FILE_SAVE_AS);
   curr->insertSeparator();
   curr->insertItem("&Quit",TO_FILE_QUIT);
-  menuBar()->insertItem("&File",curr);
+  menuBar()->insertItem("&File",curr,TO_FILE_MENU);
   curr->setAccel(Key_C|CTRL,TO_NEW_CONNECTION);
   curr->setAccel(Key_O|CTRL,TO_FILE_OPEN);
   curr->setAccel(Key_S|CTRL,TO_FILE_SAVE);
@@ -178,7 +178,7 @@ toMain::toMain()
   curr->setAccel(Key_C|CTRL,TO_EDIT_COPY);
   curr->setAccel(Key_V|CTRL,TO_EDIT_PASTE);
   connect(curr,SIGNAL(aboutToShow()),this,SLOT( editFileMenu()));
-  menuBar()->insertItem("&Edit",curr);
+  menuBar()->insertItem("&Edit",curr,TO_EDIT_MENU);
 
   map<QString,toTool *> &tools=toTool::tools();
 
@@ -299,7 +299,7 @@ toMain::toMain()
   ConnectionSelection=new QComboBox(toolbar);
   ConnectionSelection->setFixedWidth(200);
 
-  menuBar()->insertItem("&Tools",curr);
+  menuBar()->insertItem("&Tools",curr,TO_TOOLS_MENU);
 
   WindowsMenu=new QPopupMenu(this);
   WindowsMenu->setCheckable(true);
@@ -310,7 +310,7 @@ toMain::toMain()
 
   curr=new QPopupMenu(this);
   curr->insertItem("&About TOra",TO_HELP_ABOUT);
-  menuBar()->insertItem("&Help",curr);
+  menuBar()->insertItem("&Help",curr,TO_HELP_MENU);
 
   Workspace=new QWorkspace(this);
   setCentralWidget(Workspace);
@@ -349,12 +349,15 @@ toMain::toMain()
   RowLabel=new QLabel(statusBar());
   statusBar()->addWidget(RowLabel,0,true);
   RowLabel->setMinimumWidth(60);
-  RowLabel->hide();
+  RowLabel->show();
 
   ColumnLabel=new QLabel(statusBar());
   statusBar()->addWidget(ColumnLabel,0,true);
   ColumnLabel->setMinimumWidth(60);
-  ColumnLabel->hide();
+  ColumnLabel->show();
+
+  for (map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++)
+    (*i).second->customSetup();
 }
 
 void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child windows
@@ -718,8 +721,8 @@ void toMain::editEnable(bool open,bool save,
       main->ColumnLabel->show();
     } else {
       main->SaveButton->setEnabled(false);
-      main->RowLabel->hide();
-      main->ColumnLabel->hide();
+      main->RowLabel->setText("");
+      main->ColumnLabel->setText("");
     }
 
     if (undo)

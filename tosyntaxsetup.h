@@ -50,9 +50,9 @@ public slots:
   virtual void selectColor(void);
   virtual void selectFont(void);
   virtual void changeUpper(bool val)
-  { Example->setKeywordUpper(val); Example->repaint(); }
+  { Example->setKeywordUpper(val); Example->update(); }
   virtual void changeHighlight(bool val)
-  { Example->setHighlight(val); Example->repaint(); }
+  { Example->setHighlight(val); Example->update(); }
 };
 
 #endif

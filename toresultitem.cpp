@@ -36,10 +36,22 @@ TO_NAMESPACE;
 #include <qheader.h>
 #include <qtooltip.h>
 #include "toresultitem.h"
+#include "toresultresources.h"
 #include "toresultitem.moc"
 #include "tomain.h"
 #include "totool.h"
 #include "toconf.h"
+
+static toSQL SQLResource(TOSQL_RESULTRESOURCE,
+			 "SELECT Loads,           Sorts,               First_Load_Time,\n"
+			 "       Parse_Calls,     Disk_Reads,          Parsing_User_Id,\n"
+			 "       Executions,      Buffer_Gets,         Parsing_Schema_Id,\n"
+			 "       Users_Executing, Users_Opening,       Open_Versions,\n"
+			 "       Sharable_Mem,    Rows_Processed,      Kept_Versions,\n"
+			 "       Persistent_Mem,  Optimizer_Mode,      Loaded_Versions,\n"
+			 "       Runtime_Mem,     Serializable_Aborts, Invalidations\n"
+			 " FROM v$sqlarea WHERE Address||':'||Hash_Value = :f1<char[100]>",
+			 "Display information about an SQL statement");
 
 void toResultItem::setup(int num,bool readable)
 {

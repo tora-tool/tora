@@ -112,16 +112,16 @@ public:
   void setText(const QString &str);
 
   void setErrors(const map<int,QString> &errors)
-  { Errors=errors; }
+  { Errors=errors; update(); }
   void setCurrent(int current);
   int current(void)
-  { return Current; }
+  { return Current; update(); }
   void setKeywordUpper(bool val)
-  { KeywordUpper=val; }
+  { KeywordUpper=val; update(); }
   void setHighlight(bool val)
-  { Highlight=val; }
+  { Highlight=val; update(); }
   void setAnalyzer(toSyntaxAnalyzer &analyzer)
-  { Analyzer=&analyzer; repaint(); }
+  { Analyzer=&analyzer; update(); }
   toSyntaxAnalyzer &analyzer(void)
   { return *Analyzer; }
 
