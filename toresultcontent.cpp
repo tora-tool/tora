@@ -280,6 +280,7 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
   CurrentEditor=NULL;
   SearchStart=SearchEnd=0;
   NoUseReturning=false;
+  AllFilter=false;
   MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
   Query=NULL;
   SingleEdit=NULL;
@@ -377,6 +378,7 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
       SQL+=QString::fromLatin1(" ");
       where=true;
     }
+    emit filterEnabled(where);
 
     toQList par;
 
@@ -1204,10 +1206,16 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
   QToolBar *toolbar=toAllocBar(this,tr("Content editor"));
   Editor=new toResultContentEditor(this,name);
 
-  new QToolButton(QPixmap((const char **)filter_xpm),
-		  tr("Define filter for editor"),
-		  tr("Define filter for editor"),
-		  this,SLOT(changeFilter()),toolbar);
+  QToolButton *btn=new QToolButton(QPixmap((const char **)filter_xpm),
+				   tr("Define filter for editor"),
+				   tr("Define filter for editor"),
+				   this,SLOT(changeFilter()),toolbar);
+  connect(Editor,
+	  SIGNAL(filterEnabled(bool)),
+	  btn,
+	  SLOT(setOn(bool)));
+  btn->setToggleButton(true);
+
   new QToolButton(QPixmap((const char **)nofilter_xpm),
 		  tr("Remove any filter"),
 		  tr("Remove any filter"),
@@ -1248,7 +1256,7 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
 		  Editor,SLOT(gotoLastRecord()),toolbar);
   toolbar->addSeparator();
 
-  QToolButton *btn=new QToolButton(toolbar);
+  btn=new QToolButton(toolbar);
   btn->setToggleButton(true);
   btn->setIconSet(QIconSet(QPixmap((const char **)single_xpm)));
   connect(btn,SIGNAL(toggled(bool)),Editor,SLOT(singleRecordForm(bool)));

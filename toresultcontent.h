@@ -377,6 +377,10 @@ public slots:
    * @param all If true can replace all, otherwise can replace right now.
    */
   virtual bool searchCanReplace(bool all);
+signals:
+  /** Emitted to indicate wether a filter is used.
+   */
+  void filterEnabled(bool);
 protected slots:
   /** Callback from popup menu.
    * @param cmd Command ID.
