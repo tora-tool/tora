@@ -10,6 +10,7 @@
 2001-06-13: Changed nextTag to nextToken in toHtml and made search static.
 2001-06-13: Added api target in Makefile.
 2001-06-13: Some fixes for Solaris.
+2001-06-13: Lots of api documentation writing.
 
 0.11: Released 2001-06-03
 

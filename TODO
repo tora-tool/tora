@@ -4,7 +4,6 @@
 * Write help.
 * Problem creating new SQL in SQL editor.
 * Problem deleting template in template editor.
-
 * KDoc on the following files: toextract.h, toresultitem.h, toresultlock.h, toresultlong.h
 
 Extended functionality:
