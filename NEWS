@@ -19,6 +19,7 @@
 2001-05-13: Minor change to license.
 2001-05-13: TOra now compiles for windows (Check the new license though).
 2001-05-13: Fixed problem with rpath in configure (Thanx Ferdinand Gassauer).
+2001-05-14: Moved TOVERSION from Makefile to toconf.h.
 
 0.8: Released 2001-05-07
 

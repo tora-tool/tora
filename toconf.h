@@ -85,6 +85,6 @@
 #define TOMONOLITHIC
 #define DEFAULT_PLUGIN_DIR ""
 #endif
-#define TOVERSION               "TOra 0.9"
+#define TOVERSION               "0.9"
 
 #endif
