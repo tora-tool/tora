@@ -42,6 +42,7 @@
 #include <qvbox.h>
 
 class QLineEdit;
+class QToolButton;
 class toResultView;
 
 /** This widget displays the parameters of a session and lets
@@ -57,6 +58,7 @@ class toResultParam : public QVBox, public toResult {
 
   toResultView *Params;
   QLineEdit *Value;
+  QToolButton *Hidden;
 
   void saveChange();
 public:
@@ -75,6 +77,7 @@ private slots:
   void changedData(int row,int col,const QString &data);
   void dropChanges(void);
   void done(void);
+  void showHidden(bool);
 public slots:
   virtual void query(const QString &sql,const toQList &param);
   /** Reimplemented for internal reasons.

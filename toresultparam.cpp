@@ -47,11 +47,13 @@
 #include <qregexp.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
+#include <qtooltip.h>
 
 #include "toresultparam.moc"
 
 #include "icons/database.xpm"
 #include "icons/filesave.xpm"
+#include "icons/scansource.xpm"
 #include "icons/tocurrent.xpm"
 #include "icons/trash.xpm"
 
@@ -63,6 +65,21 @@ static toSQL SQLParams("toResultParam:ListParam",
 		       "  from v$parameter order by name",
 		       "List parameters available in the database");
 
+static toSQL SQLHiddenParams("toResultParam:ListHidden",
+			     "SELECT KSPPINM \"Parameter\",\n"
+			     "       KSPFTCTXVL \"Value\",\n"
+			     "       ' ' \"Changed\",\n"
+			     "       KSPPDESC \"Description\",\n"
+			     "       KSPFTCTXPN \" Num\",\n"
+			     "       ksppity \" Type\",\n"
+			     "       KSPFTCTXDF \" Default\",\n"
+			     "       DECODE(MOD(TRUNC(KSPPIFLG/256),2),0,'FALSE','TRUE') \" Sesmod\",\n"
+			     "       DECODE(MOD(TRUNC(KSPPIFLG/65536),8),0,'FALSE','TRUE') \" Sysmod\"\n"
+			     "  FROM X$KSPPI x,\n"
+			     "       X$KSPPCV2 y\n"
+			     " WHERE x.INDX+1=y.KSPFTCTXPN ORDER BY KSPPINM",
+			     "List parameters available in the database including hidden parameters");
+
 bool toResultParam::canHandle(toConnection &conn)
 {
   return toIsOracle(conn);
@@ -72,6 +89,13 @@ toResultParam::toResultParam(QWidget *parent,const char *name)
   : QVBox(parent,name)
 {
   QToolBar *toolbar=toAllocBar(this,"Parameter editor",connection().description());
+  Hidden=new QToolButton(toolbar);
+  Hidden->setToggleButton(true);
+  Hidden->setIconSet(QIconSet(QPixmap((const char **)scansource_xpm)),false);
+  connect(Hidden,SIGNAL(toggled(bool)),this,SLOT(showHidden(bool)));
+  QToolTip::add(Hidden,"Display hidden parameters. This will only word if you are logged in as the sys user.");
+  toolbar->addSeparator();
+
   new QToolButton(QPixmap((const char **)filesave_xpm),
 		  "Generate pfile",
 		  "Generate pfile",
@@ -101,6 +125,15 @@ toResultParam::toResultParam(QWidget *parent,const char *name)
   Value=new QLineEdit(this);
   Value->setEnabled(false);
   LastItem=-1;
+}
+
+void toResultParam::showHidden(bool hid)
+{
+  if (hid)
+    Params->setSQL(SQLHiddenParams);
+  else
+    Params->setSQL(SQLParams);
+  refresh();
 }
 
 void toResultParam::query(const QString &sql,const toQList &param)
