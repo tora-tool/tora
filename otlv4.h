@@ -3907,7 +3907,7 @@ public:
    cur.parse(sqlstm);
    cur.check_syntax();
    return 1;
-  }catch(otl_tmpl_exception
+  }catch(OTL_CONST_EXCEPTION otl_tmpl_exception
           <TExceptionStruct,
            TConnectStruct,
            TCursorStruct>){
