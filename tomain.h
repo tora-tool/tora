@@ -213,6 +213,9 @@ private:
   toEditWidget *Edit;
 
   toEditWidget *findEdit(QWidget *edit);
+
+  void updateRecent(void);
+
   void editEnable(toEditWidget *edit,
 		  bool open,bool save,bool print,
 		  bool undo,bool redo,

@@ -395,11 +395,7 @@ void toWorksheet::setup(bool autoLoad)
     Statistics=new toResultStats(true,splitter);
     Statistics->setTabWidget(ResultTab);
     WaitChart=new toResultBar(splitter);
-    try {
-      toSQL sql=toSQL::sql(TO_SESSION_WAIT);
-      WaitChart->setSQL(sql);
-    } catch(...) {
-    }
+    WaitChart->setSQL(TO_SESSION_WAIT);
     WaitChart->setTitle("Wait states");
     WaitChart->setYPostfix("ms/s");
     WaitChart->setSamples(-1);
@@ -407,11 +403,7 @@ void toWorksheet::setup(bool autoLoad)
     connect(Statistics,SIGNAL(sessionChanged(const QString &)),
 	    WaitChart,SLOT(changeParams(const QString &)));
     IOChart=new toResultBar(splitter);
-    try {
-      toSQL sql=toSQL::sql(TO_SESSION_IO);
-      IOChart->setSQL(sql);
-    } catch(...) {
-    }
+    IOChart->setSQL(TO_SESSION_IO);
     IOChart->setTitle("I/O");
     IOChart->setYPostfix("blocks/s");
     IOChart->setSamples(-1);

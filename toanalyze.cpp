@@ -168,7 +168,9 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   Schema=new toResultCombo(toolbar);
   Schema->setSelected("All");
   Schema->additionalItem("All");
-  Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
+  try {
+    Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
+  } TOCATCH
 
   Type=new QComboBox(toolbar);
   Type->insertItem("Tables");
@@ -238,9 +240,11 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   QSplitter *splitter=new QSplitter(Horizontal,box);
   Plans=new toResultLong(false,false,toQuery::Background,splitter);
   Plans->setSelectionMode(QListView::Single);
-  Plans->query(toSQL::string(SQLListPlans,
-			     connection).arg(toTool::globalConfig(CONF_PLAN_TABLE,
-								  DEFAULT_PLAN_TABLE)));
+  try {
+    Plans->query(toSQL::string(SQLListPlans,
+			       connection).arg(toTool::globalConfig(CONF_PLAN_TABLE,
+								    DEFAULT_PLAN_TABLE)));
+  } TOCATCH
 
   connect(Plans,SIGNAL(selectionChanged()),
 	  this,SLOT(selectPlan()));

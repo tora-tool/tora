@@ -223,11 +223,13 @@ toSQLEdit::~toSQLEdit()
 
 void toSQLEdit::loadSQL(void)
 {
-  QString filename=toOpenFilename(QString::null,QString::null,this);
-  if (!filename.isEmpty()) {
-    toSQL::loadSQL(filename);
-    Filename=filename;
-  }
+  try {
+    QString filename=toOpenFilename(QString::null,QString::null,this);
+    if (!filename.isEmpty()) {
+      toSQL::loadSQL(filename);
+      Filename=filename;
+    }
+  } TOCATCH
 }
 
 void toSQLEdit::saveSQL(void)
@@ -246,22 +248,21 @@ void toSQLEdit::deleteVersion(void)
   if (!splitVersion(Version->currentText(),provider,version))
     return;
 
-  toSQL::deleteSQL(Name->text(),version,provider);
-  Version->removeItem(Version->currentItem());
+  try {
+    toSQL::deleteSQL(Name->text(),version,provider);
+    Version->removeItem(Version->currentItem());
 
-  if (Version->count()==0) {
-    QListViewItem *item=toFindItem(Statements,Name->text());
-    if (item) {
-      connectList(false);
-      delete item;
-      connectList(true);
-    }
-    newSQL();
-  } else {
-    try {
+    if (Version->count()==0) {
+      QListViewItem *item=toFindItem(Statements,Name->text());
+      if (item) {
+	connectList(false);
+	delete item;
+	connectList(true);
+      }
+      newSQL();
+    } else
       selectionChanged(connection().provider()+":"+connection().version());
-    } TOCATCH
-  }
+  } TOCATCH
 }
 
 bool toSQLEdit::close(bool del)
@@ -453,16 +454,18 @@ void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
 
 void toSQLEdit::selectionChanged(const QString &maxver)
 {
-  QListViewItem *item=Statements->selectedItem();
-  if (item) {
-    QString name=item->text(0);
-    while(item->parent()) {
-      item=item->parent();
-      name.prepend(":");
-      name.prepend(item->text(0));
+  try {
+    QListViewItem *item=Statements->selectedItem();
+    if (item) {
+      QString name=item->text(0);
+      while(item->parent()) {
+	item=item->parent();
+	name.prepend(":");
+	name.prepend(item->text(0));
+      }
+      changeSQL(name,maxver);
     }
-    changeSQL(name,maxver);
-  }
+  } TOCATCH
 }
 
 void toSQLEdit::editSQL(const QString &nam)
