@@ -62,15 +62,7 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
   QBoxLayout *l=new QVBoxLayout(this);
 
   QToolBar *toolbar=toAllocBar(this,"Memo Editor",QString::null);
-
-  if (row>=0&&col>=0) {
-    new QToolButton(QPixmap((const char **)filesave_xpm),
-		    "Save changes",
-		    "Save changes",
-		    this,SLOT(store(void)),
-		    toolbar);
-    toolbar->addSeparator();
-  }
+  l->addWidget(toolbar);
 
   if (sql)
     Editor=new toHighlightedText(this);
@@ -80,6 +72,38 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
   Editor->setText(str);
   Editor->setReadOnly(row<0||col<0);
   Editor->setFocus();
+
+  QToolButton *btn;
+  if (row>=0&&col>=0) {
+    new QToolButton(QPixmap((const char **)filesave_xpm),
+		    "Save changes",
+		    "Save changes",
+		    this,SLOT(store(void)),
+		    toolbar);
+    toolbar->addSeparator();
+    btn=new QToolButton(QPixmap((const char **)cut_xpm),
+			"Cut to clipboard",
+			"Cut to clipboard",
+			Editor,SLOT(cut()),toolbar);
+    connect(Editor,SIGNAL(copyAvailable(bool)),
+	    btn,SLOT(setEnabled(bool)));
+    btn->setEnabled(false);
+  }
+  btn=new QToolButton(QPixmap((const char **)copy_xpm),
+			     "Copy to clipboard",
+			     "Copy to clipboard",
+			     Editor,SLOT(copy()),toolbar);
+  connect(Editor,SIGNAL(copyAvailable(bool)),
+	  btn,SLOT(setEnabled(bool)));
+  btn->setEnabled(false);
+  if (row>=0&&col>=0)
+    new QToolButton(QPixmap((const char **)paste_xpm),
+		    "Paste from clipboard",
+		    "Paste from clipboard",
+		    Editor,SLOT(paste()),toolbar);
+  
+  toolbar->setStretchableWidget(new QLabel("",toolbar));
+
   if (!modal)
     show();
 }

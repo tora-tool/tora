@@ -38,7 +38,6 @@ Extended functionality:
 * Change parameters in tuning info.
 * Generate new pfile from modified parameters.
 * Printing of charts and toResultItems.
-* Copy, cut & paste icons in memo editor.
 * Show only one bar in barchart/linechart.
 * Never lock while executing in debugger.
 * Database provider setup tabs.

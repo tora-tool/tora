@@ -35,6 +35,7 @@
 ############################################################################
 
 use strict;
+use File::Copy;
 
 my $tmpName="/tmp/toraconfig.$$";
 
@@ -87,6 +88,9 @@ my $NoKDE;
 my $KDEInclude;
 my $KDELibs;
 my $NoRPath;
+my $Oracle=1;
+my $OracleRelease;
+my $TestDB="-lclntsh";
 
 my $MySQLInclude;
 my $MySQLLib;
@@ -126,6 +130,8 @@ for (@ARGV) {
 	$ForceTarget=1;
     } elsif (/^--without-mysql$/) {
 	$MySQLFound=0;
+    } elsif (/^--without-oracle$/) {
+	$Oracle=0;
     } elsif (/^--without-kde$/) {
 	$NoKDE=1;
     } elsif (/^--with-static$/) {
@@ -169,6 +175,7 @@ Options can be any of the following:
 --with-kde-libs      Where to find KDE libraries
 --with-mysql-include Where to find MySQL include files
 --with-mysql-libs    Where to find MySQL library files
+--without-oracle     Compile without Oracle support
 --without-mysql      Don't compile in MySQL support
 --without-rpath      Compile without rpath to Oracle libraries
 
@@ -193,6 +200,10 @@ sub finalTest {
 #include <stdio.h>
 #include <map>
 #include <qapplication.h>
+
+__TEMP__
+    if ($Oracle) {
+	print TEMP <<__TEMP__;
 #define OTL_ORA8I
 #include "otlv32.h"
 
@@ -200,6 +211,17 @@ void test(void) // Not called
 {
     otl_connect *test=new otl_connect("Test",0);
 }
+__TEMP__
+    } else {
+	print TEMP <<__TEMP__;
+#include <mysql.h>
+void test(void)
+{
+    mysql_free_result(NULL);
+}
+__TEMP__
+    }
+    print TEMP <<__TEMP__;
 
 int main(int argv,char **argc)
 {
@@ -246,7 +268,7 @@ void test2(void)
 __TEMP__
     }
     close TEMP;
-    if (!system("$gcc $LFlags -I`pwd` $Includes $Libs $QtLibShared -lclntsh -o$tmpName $tmpName.cpp")) {
+    if (!system("$gcc $LFlags -I`pwd` $Includes $Libs $QtLibShared $TestDB -o$tmpName $tmpName.cpp")) {
 	if (!system($tmpName)) {
 	    $CC=$gcc;
 	}
@@ -260,28 +282,31 @@ __TEMP__
 }
 
 {
-    if (!$ENV{ORACLE_HOME}) {
-	print "ORACLE_HOME environment not set\n";
-	exit(2);
-    }
-    print "Using Oracle Home ".$ENV{ORACLE_HOME}."\n";
+    if ($Oracle) {
+        if (!$ENV{ORACLE_HOME}) {
+	    print "ORACLE_HOME environment not set. To compile without Oracle use --without-oracle.\n";
+	    exit(2);
+	}
+	print "Using Oracle Home ".$ENV{ORACLE_HOME}."\n";
 
-    # try to find out the Oracle client release
-    my ($ORACLE_RELEASE) = undef;
-    open(ORA,"$ENV{ORACLE_HOME}/bin/sqlplus '-?' |") || die "Cannot call sqlplus: $!";
-    while (<ORA>) {
-        if (/Release\s(\S+)/) {
-             $ORACLE_RELEASE = $1;
-             last;
-        }
-    }
-    close(ORA);
-    unless ($ORACLE_RELEASE) {
-        print "Could not find out your Oracle client release\n";
-        exit(2);
-    }
-    else {
-        print "Oracle client release seems to be $ORACLE_RELEASE\n";
+	# try to find out the Oracle client release
+	open(ORA,"$ENV{ORACLE_HOME}/bin/sqlplus '-?' |") || die "Cannot call sqlplus: $!";
+	while (<ORA>) {
+	    if (/Release\s(\S+)/) {
+		$OracleRelease = $1;
+		last;
+	    }
+	}
+	close(ORA);
+	unless ($OracleRelease) {
+	    print "Could not find out your Oracle client release\n";
+	    exit(2);
+	}
+	else {
+	    print "Oracle client release seems to be $OracleRelease\n";
+	}
+    } else {
+	$TestDB="-lmysqlclient";
     }
 
     if (!defined $MOC || ! -x $MOC) {
@@ -576,6 +601,11 @@ __TEMP__
     }
     print "MySQL library directory at $MySQLLib\n";
 
+    if (!$MySQLFound&&!$Oracle) {
+	print "Need either MySQL or Oracle. Neither found.\n";
+	exit(2);
+    }
+
     findFile("^libmysqlclient.*\\.a",sub {
 	                                $MySQLStatic=$_[0];
 					return -f $_[0];
@@ -597,7 +627,7 @@ __TEMP__
     if (defined $MySQLLib) {
 	$LFlags.="\"-L".$MySQLLib."\" ";
     }
-    if ($ORACLE_RELEASE =~ /^8.0/) {
+    if ($OracleRelease =~ /^8.0/) {
         $LFlags.="\"$ENV{ORACLE_HOME}/lib/scorept.o\" ";
         $LFlags.="\"-lcore4\" ";
         $LFlags.="\"-lnlsrtl3\" ";
@@ -720,7 +750,7 @@ this test will fail.
 The command tried was the following (\$CC is replaced with whatever C
 compiler used):
 
-\$CC $LFlags -I`pwd` $Includes $Libs $QtLibShared -lclntsh -otemp $tmpName.cpp
+\$CC $LFlags -I`pwd` $Includes $Libs $QtLibShared $TestDB -otemp $tmpName.cpp
 
 __EOT__
 	exit(2);
@@ -875,7 +905,7 @@ __EOT__
 	print MAKEFILE "#   TO_NAMESPACE    - Any namespaces that should be used\n";
 	print MAKEFILE "#   TO_DEBUG_MEMORY - Enable memory debugging framework (SLOW)\n";
 	
-	if ($ORACLE_RELEASE =~ /^8.0/) {
+	if ($OracleRelease =~ /^8.0/) {
 	    print MAKEFILE "DEFINES+=-DOTL_ORA8\n";
 	} else {
 	    print MAKEFILE "DEFINES+=-DOTL_ORA8I\n";
@@ -907,6 +937,16 @@ CFLAGS_GLOB=-g -fPIC -Wall
 __EOT__
 
 	close MAKEFILE;
+
+	if ($Oracle) {
+	    copy("Makefile.orig","Makefile");
+	} else {
+	    copy("Makefile.mysql","Makefile");
+	}
+	if (!-f "Makefile") {
+	    print "Couldn't create Makefile\n";
+	}
+
     } else {
 	print "Couldn't open Makefile.setup for writing\n";
 	exit(2);

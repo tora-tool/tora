@@ -87,11 +87,6 @@ do
     touch -t 7312210000 $b
 done
 
-if [ -f Makefile.orig ]
-then
-    cp Makefile.orig Makefile
-fi
-
 echo "static char *LicenseText=\"<PRE>\\n\"" > LICENSE.h
 $PERL -e 'while(<>) { chomp; s/\\/\\\\/; s/\"/\\\"/g; print "\"$_\\n\"\n"; }' < LICENSE >> LICENSE.h
 echo "\"</PRE>\\n\";" >> LICENSE.h

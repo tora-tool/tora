@@ -368,16 +368,22 @@ void toWorksheet::setup(bool autoLoad)
     Statistics=new toResultStats(true,StatSplitter);
     Statistics->setTabWidget(ResultTab);
     toResultBar *bar=new toResultBar(StatSplitter);
-    toSQL sql=toSQL::sql(TO_SESSION_WAIT);
-    bar->setSQL(sql);
+    try {
+      toSQL sql=toSQL::sql(TO_SESSION_WAIT);
+      bar->setSQL(sql);
+    } catch(...) {
+    }
     bar->setTitle("Wait states");
     bar->setYPostfix("ms/s");
     bar->setSamples(-1);
     connect(Statistics,SIGNAL(sessionChanged(const QString &)),
 	    bar,SLOT(changeParams(const QString &)));
     bar=new toResultBar(StatSplitter);
-    sql=toSQL::sql(TO_SESSION_IO);
-    bar->setSQL(sql);
+    try {
+      toSQL sql=toSQL::sql(TO_SESSION_IO);
+      bar->setSQL(sql);
+    } catch(...) {
+    }
     bar->setTitle("I/O");
     bar->setYPostfix("blocks/s");
     bar->setSamples(-1);

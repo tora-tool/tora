@@ -36,8 +36,6 @@
 
 default: all
 
-include $(ORACLE_HOME)/rdbms/lib/env_rdbms.mk
-
 CPPFLAGS=$(CPPFLAGS_GLOB) $(DEFINES) $(INCLUDES)
 CFLAGS=$(CFLAGS_GLOB) $(INCLUDES) $(DEFINES)
 
@@ -49,10 +47,10 @@ vpath %.h $(INCLUDE)
 
 .PHONY: all clean fixmod install distclean
 
-all: $(TARGET) Makefile.orig
+all: $(TARGET) $(MAKEFILE_ORIG)
 
-Makefile.orig: Makefile
-	cp Makefile Makefile.orig
+$(MAKEFILE_ORIG): Makefile
+	cp Makefile $(MAKEFILE_ORIG)
 
 #$(OBJECTS): Makefile Makefile.common
 
