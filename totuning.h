@@ -131,6 +131,8 @@ class toTuningWait : public QFrame {
   std::list<std::list<double> > Times;
   std::list<double> Current;
   std::list<double> CurrentTimes;
+  std::map<int,int> LabelMap;
+
 public:
   toTuningWait(QWidget *parent);
 public slots:

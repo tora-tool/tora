@@ -805,9 +805,9 @@ int toToolMenuIndex(void)
   return toMainWidget()->menuBar()->indexOf(toMain::TO_WINDOWS_MENU);
 }
 
-#define COLORS 2
+#define COLORS 3
 
-#define TYPES 13
+#define TYPES 10
 
 QColor toChartColor(int index)
 {
@@ -819,42 +819,27 @@ QColor toChartColor(int index)
   int offset=1;
   int divoffset=0;
   switch(type) {
-  case 12:
-    r=1;
-    break;
-  case 11:
-    g=1;
-    break;
-  case 10:
-    b=1;
-    break;
   case 9:
-    r=g=1;
+    r=1;
     break;
   case 8:
-    r=b=1;
+    g=1;
     break;
   case 7:
-    b=g=1;
+    b=1;
     break;
   case 6:
-    r=b=g=1;
-    offset=0;
+    r=g=1;
     break;
   case 5:
-    r=1;
-    g=b=COLORS;
-    divoffset=1;
+    r=b=1;
     break;
   case 4:
-    g=1;
-    r=b=COLORS;
-    divoffset=1;
+    b=g=1;
     break;
   case 3:
-    b=1;
-    r=g=COLORS;
-    divoffset=1;
+    r=b=g=1;
+    offset=0;
     break;
   case 2:
     r=g=1;

@@ -1650,24 +1650,23 @@ void toTuningWait::stop(void)
 void toTuningWait::changeSelection(void)
 {
 
-  int count=0;
-  {
-    for (QListViewItem *item=Types->firstChild();item;item=item->nextSibling())
-      count++;
-  }
+  int count=int(Labels.size());
 
   bool *enabled=new bool[count];
   int typ=0;
   std::list<QString> used;
+  std::map<QString,int> usedMap;
+  for (std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
+    usedMap[*i]=typ;
+    enabled[typ]=false;
+    typ++;
+  }
   for (QListViewItem *item=Types->firstChild();item;item=item->nextSibling()) {
     if (enabled[typ]=item->isSelected()) {
-      toResultViewItem *ri=dynamic_cast<toResultViewItem *>(item);
-      if (ri)
-	used.insert(used.end(),ri->allText(0));
-      else
-	used.insert(used.end(),item->text(0));
+      QString txt=item->text(0);
+      used.insert(used.end(),txt);
+      enabled[usedMap[txt]]=true;
     }
-    typ++;
   }
       
   try {
@@ -1734,17 +1733,27 @@ void toTuningWait::poll(void)
 	CurrentTimes.insert(CurrentTimes.end(),Query->readValueNull().toDouble());
       }
       if (Query->eof()) {
-	if (First) {
-	  QListViewItem *item=NULL;
-	  std::list<double>::iterator j=CurrentTimes.begin();
-	  for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
-	    item=new toResultViewItem(Types,item,*i);
-	    if ((*j)!=0)
-	      item->setSelected(true);
-	    j++;
+	QListViewItem *item=NULL;
+	std::map<QString,bool> types;
+	int typ=0;
+	for(QListViewItem *ci=Types->firstChild();ci;ci=ci->nextSibling()) {
+	  types[ci->text(0)]=true;
+	  item=ci;
+	  typ++;
+	}
+	std::list<double>::iterator j=CurrentTimes.begin();
+	for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
+	  if ((*j)!=0&&!types[*i]) {
+	    item=new QListViewItem(Types,item,*i);
+	    item->setSelected(First);
+	    types[*i]=typ;
+	    typ++;
 	  }
+	  j++;
+	}
+	if (First)
 	  First=false;
-	} else
+	else
 	  XValues.insert(XValues.end(),Now);
 	TimeStamp.insert(TimeStamp.end(),time(NULL));
 	Values.insert(Values.end(),Current);
