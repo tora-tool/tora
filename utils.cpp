@@ -908,7 +908,7 @@ toToolWidget *toCurrentTool(QWidget *cur)
 
 toConnection &toCurrentConnection(QWidget *cur)
 {
-  return tool->connection();
+  return toCurrentTool(cur)->connection();
 }
 
 toConnection &toResult::connection(void)
@@ -933,5 +933,5 @@ otl_connect &toResult::otlConnection(void)
 
 QTimer *toResult::timer(void)
 {
-  return toCurrentTool(this)->timer();
+  return toCurrentTool(dynamic_cast<QWidget *>(this))->timer();
 }
