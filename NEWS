@@ -1,6 +1,7 @@
 1.3.6:
 
-2002-04-17: Updated version to 1.3.6 again.
+2002-04-19: Always recompile everything on configure.
+2002-04-19: Updated version to 1.3.6 again.
 2002-04-19: Fixed compile problem on Solaris.
 2002-04-19: Added option to globally disable upgrade check.
 

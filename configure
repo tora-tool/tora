@@ -116,7 +116,11 @@ do
     touch -t 7312210000 $b
 done
 
-echo
+echo "done"
+
+echo $ac_n "removing leftover object files ... $ac_c"
+rm -rf objs 2> /dev/null
+echo "done"
 
 echo 'static char *LicenseText="<PRE>\n"' > LICENSE.h
 $PERL -e 'while(<>) { chomp; s/\\/\\\\/; s/\"/\\\"/g; print "\"$_\\n\"\n"; }' < LICENSE >> LICENSE.h
