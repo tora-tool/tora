@@ -1306,7 +1306,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   }
 
   for (std::map<QString,QGrid *>::iterator k=Charts.begin();k!=Charts.end();k++)
-    Tabs->addTab((*k).second,(*k).first);
+    Tabs->addTab((*k).second,(*k).first.mid(strlen(CONF_CHART)));
 
   FileIO=new toTuningFileIO(this,"fileio");
   connect(this,SIGNAL(connectionChange()),FileIO,SLOT(changeConnection()));
@@ -1420,7 +1420,7 @@ void toTuning::enableTab(const QString &name,bool enable)
       Overview->stop();
     widget=Overview;
   } else if (Charts.find(CONF_CHART+name)!=Charts.end()) {
-    QGrid *chart=Charts[name];
+    QGrid *chart=Charts[CONF_CHART+name];
     QObjectList *childs=(QObjectList *)chart->children();
     for(unsigned int i=0;i<childs->count();i++) {
       toResultLine *line=dynamic_cast<toResultLine *>(childs->at(i));
