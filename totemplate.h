@@ -68,7 +68,7 @@ class toTemplate : public QVBox, public toHelpContext {
   QWidget *Result;
   QVBox *Frame;
 public:
-  toTemplate(QWidget *parent);
+  toTemplate(TODock *parent);
   virtual ~toTemplate();
   void setWidget(QWidget *widget);
   QWidget *widget(void)
@@ -83,7 +83,7 @@ public:
   { return true; }
 
   void closeFrame(void);
-  void attachResult(void);
+  void showResult(bool show);
 public slots:
   void expand(QListViewItem *item);
   void collapse(QListViewItem *item);

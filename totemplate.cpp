@@ -382,35 +382,35 @@ public:
 
 class toTemplateTool : public toTool {
   TODock *Dock;
+  toTemplate *Window;
 protected:
   virtual char **pictureXPM(void)
   { return totemplate_xpm; }
 public:
   toTemplateTool()
     : toTool(410,"SQL Template")
-  { Dock=NULL; }
+  { Dock=NULL; Window=NULL; }
   virtual const char *menuItem()
   { return "SQL Template"; }
   virtual QWidget *toolWindow(QWidget *,toConnection &)
   {
-    if (Dock) {
-      if (Dock->isHidden()) {
-	delete Dock;
-	Dock=NULL;
-      } else {
-	delete Dock;
-	Dock=NULL;
-	return NULL;
-      }
+    bool first=false;
+    if (!Dock||!Window) {
+      first=true;
+      Dock=toAllocDock(qApp->translate("toTemplateTool","Template"),QString::null,*toolbarImage());
+      Window=new toTemplate(Dock);
     }
-    Dock=toAllocDock(qApp->translate("toTemplateTool","Template"),QString::null,*toolbarImage());
-    toTemplate *window=new toTemplate(Dock);
-    toAttachDock(Dock,window,QMainWindow::Left);
-    window->attachResult();
-    return Dock;
+    if (Dock->isHidden()||first) {
+      toAttachDock(Dock,Window,QMainWindow::Left);
+      Window->showResult(true);
+    } else {
+      toAttachDock(Dock,Window,QMainWindow::Minimized);
+      Window->showResult(false);
+    }
+    return NULL;
   }
-  void closeWindow(toConnection &)
-  { Dock=NULL; }
+  void closeWindow()
+  { Dock=NULL; Window=NULL; }
   virtual QWidget *configurationTab(QWidget *parent)
   { return new toTemplatePrefs(this,parent); }
   virtual bool canHandle(toConnection &)
@@ -455,7 +455,7 @@ public:
   { Template->closeFrame(); }
 };
 
-toTemplate::toTemplate(QWidget *parent)
+toTemplate::toTemplate(TODock *parent)
   : QVBox(parent),toHelpContext(QString::fromLatin1("template.html"))
 {
   Toolbar=toAllocBar(this,tr("Template Toolbar"));
@@ -490,16 +490,26 @@ toTemplate::toTemplate(QWidget *parent)
   setWidget(NULL);
 
   setFocusProxy(List);
+  toAttachDock(parent,this,QMainWindow::Left);
+  toAttachDock((TODock *)Result,Frame,QMainWindow::Bottom);
 }
 
 toTemplate::~toTemplate()
 {
+  TemplateTool.closeWindow();
   delete Result;
 }
 
-void toTemplate::attachResult(void)
+void toTemplate::showResult(bool show)
 {
-  toAttachDock((TODock *)Result,Frame,QMainWindow::Bottom);
+  if (!Result)
+    return;
+
+  if (show) {
+    toAttachDock((TODock *)Result,Frame,QMainWindow::Bottom);
+  } else {
+    toAttachDock((TODock *)Result,Frame,QMainWindow::Minimized);
+  }
 }
 
 void toTemplate::closeFrame(void)
@@ -531,7 +541,7 @@ void toTemplate::selected(QListViewItem *item)
 QWidget *toTemplate::frame(void)
 {
   if (Result->isHidden())
-    attachResult();
+    showResult(true);
   return Frame;
 }
 

@@ -32,6 +32,8 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
 #include "totemplate.h"
 
 std::list<toTemplateProvider *> *toTemplateProvider::Providers;

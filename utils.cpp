@@ -551,11 +551,16 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
       pct=80;
       pos=KDockWidget::DockRight;
       break;
+    case QMainWindow::Minimized:
+      break;
     }
     KDockWidget *dw=(KDockWidget *)(dock);
     if (dw) {
       dw->setWidget(container);
-      dw->manualDock(main->getMainDockWidget(),pos,pct);
+      if (place==QMainWindow::Minimized)
+	main->makeDockInvisible(dw);
+      else
+	dw->manualDock(main->getMainDockWidget(),pos,pct);
     }
   } else {
     toStatusMessage(qApp->translate("toAttachDock","Main widget not KDockMainWindow"));
