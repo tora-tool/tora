@@ -34,6 +34,12 @@ tora_CXXFLAGS  = $(AM_CXXFLAGS)
 
 tora_LDADD = $(ORACLE_LIBS) $(@TORA_LINK_OTHERS@)
 
+if HAVE_ORACLE
+EXTRA_ORACLE_MONO_SOURCE = tooracleconnection.cpp \
+	tooracleextract.cpp \
+	tooraclesettingui.cpp tooraclesettingui.h
+endif
+
 if ENABLE_MONO
 EXTRA_tora_SOURCES = toalert.cpp toalert.h \
     toanalyze.cpp toanalyze.h  \
@@ -45,7 +51,6 @@ EXTRA_tora_SOURCES = toalert.cpp toalert.h \
     toeditextensions.cpp toeditextensions.h  \
     todatatype.cpp todatatype.h  \
     toinvalid.cpp toinvalid.h \
-    tooracleconnection.cpp  \
     tooutput.cpp tooutput.h \
     topassword.cpp \
     toprofiler.cpp toprofiler.h \
@@ -91,8 +96,6 @@ EXTRA_tora_SOURCES = toalert.cpp toalert.h \
     toreport.cpp toreport.h  \
     toresultconstraint.cpp toresultconstraint.h  \
     toresultextract.cpp toresultextract.h \
-    tooracleextract.cpp  \
-    tooraclesettingui.cpp tooraclesettingui.h \
     toresultcols.cpp toresultcols.h  \
     toresultcombo.cpp toresultcombo.h  \
     toresultcontent.cpp toresultcontent.h  \
@@ -126,7 +129,8 @@ EXTRA_tora_SOURCES = toalert.cpp toalert.h \
     totableselect.cpp totableselect.h  \
     tovisualize.cpp tovisualize.h  \
     towaitevents.cpp towaitevents.h \
-    toworksheetsetupui.cpp toworksheetsetupui.h
+    toworksheetsetupui.cpp toworksheetsetupui.h \
+    $(EXTRA_ORACLE_MONO_SOURCE)
 endif
 
 tora_SOURCES=main.cpp aclocal.m4 \
