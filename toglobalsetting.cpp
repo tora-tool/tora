@@ -68,7 +68,6 @@
 toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   : toGlobalSettingUI(parent,name,fl), toSettingTab("preferences.html#global")
 {
-  LongSession->setChecked(!toTool::globalConfig(CONF_LONG_SESSION,"").isEmpty());
   SavePassword->setChecked(!toTool::globalConfig(CONF_SAVE_PWD,"").isEmpty());
   DesktopAware->setChecked(!toTool::globalConfig(CONF_DESKTOP_AWARE,"Yes").isEmpty());
   toRefreshCreate(OptionGroup,NULL,NULL,Refresh);
@@ -175,7 +174,6 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_REFRESH,Refresh->currentText());
   toTool::globalSetConfig(CONF_LIST_SCALE,ListScale->text());
   toTool::globalSetConfig(CONF_SAVE_PWD,SavePassword->isChecked()?"Yes":"");
-  toTool::globalSetConfig(CONF_LONG_SESSION,LongSession->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DESKTOP_AWARE,DesktopAware->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_STATUS_MESSAGE,QString::number(Status->value()));
   toTool::globalSetConfig(CONF_STATUS_SAVE,QString::number(HistorySize->value()));

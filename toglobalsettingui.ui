@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>581</width>
+            <width>577</width>
             <height>589</height>
         </rect>
     </property>
@@ -192,37 +192,6 @@
                         <name>toolTip</name>
                         <string>Remember the last password you used to connect.
 Will leave the password unencryptet in the config file.</string>
-                    </property>
-                </widget>
-                <widget row="2"  column="0"  rowspan="1"  colspan="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>LongSession</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Long sessions</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Open new connections to the database to prevent
-the interface from locking up when executing.</string>
-                    </property>
-                </widget>
-                <widget row="3"  column="0"  rowspan="1"  colspan="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>IncludeDB</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Include DB in caption</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Include database connection in window captions</string>
                     </property>
                 </widget>
                 <widget row="2"  column="3" >
@@ -453,37 +422,33 @@ the interface from locking up when executing.</string>
                         <string>Number of samples to keep in line and barcharts by default.</string>
                     </property>
                 </widget>
-                <widget row="6"  column="0"  rowspan="1"  colspan="2" >
+                <widget row="0"  column="0"  rowspan="1"  colspan="4" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>AntialiaseFonts</cstring>
+                        <cstring>ChangeConnection</cstring>
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>&amp;Antialiase fonts</string>
+                        <string>Change current connection with active window</string>
                     </property>
                     <property>
                         <name>toolTip</name>
-                        <string>Use antialiase fonts if Qt supports this. You need to restart tora for this to take affect.</string>
+                        <string>Change currently select connection to the connection of the new active window</string>
                     </property>
                 </widget>
-                <widget row="7"  column="0"  rowspan="1"  colspan="2" >
+                <widget row="3"  column="0"  rowspan="1"  colspan="2" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>DockToolbar</cstring>
+                        <cstring>MaximizeMain</cstring>
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Docks use toolbars</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Check this if docks are to use toolbars instead of normal frames.</string>
+                        <string>Maximize window on start</string>
                     </property>
                 </widget>
-                <widget row="8"  column="0" >
+                <widget row="7"  column="0" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -502,14 +467,37 @@ the interface from locking up when executing.</string>
                         <string>The style to use for the user interface.</string>
                     </property>
                 </widget>
-                <widget row="8"  column="1" >
-                    <class>QComboBox</class>
+                <widget row="5"  column="0"  rowspan="1"  colspan="2" >
+                    <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>Style</cstring>
+                        <cstring>AntialiaseFonts</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Antialiase fonts</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Use antialiase fonts if Qt supports this. You need to restart tora for this to take affect.</string>
                     </property>
                 </widget>
-                <widget row="5"  column="0"  rowspan="1"  colspan="2" >
+                <widget row="2"  column="0"  rowspan="1"  colspan="2" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>IncludeDB</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Include DB in caption</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Include database connection in window captions</string>
+                    </property>
+                </widget>
+                <widget row="4"  column="0"  rowspan="1"  colspan="2" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -524,30 +512,26 @@ the interface from locking up when executing.</string>
                         <string>Colors get really weird in KDE if you select this.</string>
                     </property>
                 </widget>
-                <widget row="4"  column="0"  rowspan="1"  colspan="2" >
-                    <class>QCheckBox</class>
+                <widget row="7"  column="1" >
+                    <class>QComboBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>MaximizeMain</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Maximize window on start</string>
+                        <cstring>Style</cstring>
                     </property>
                 </widget>
-                <widget row="0"  column="0"  rowspan="1"  colspan="4" >
+                <widget row="6"  column="0"  rowspan="1"  colspan="2" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>ChangeConnection</cstring>
+                        <cstring>DockToolbar</cstring>
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Change current connection with active window</string>
+                        <string>Docks use toolbars</string>
                     </property>
                     <property>
                         <name>toolTip</name>
-                        <string>Change currently select connection to the connection of the new active window</string>
+                        <string>Check this if docks are to use toolbars instead of normal frames.</string>
                     </property>
                 </widget>
             </grid>
@@ -592,7 +576,6 @@ the interface from locking up when executing.</string>
     <tabstop>PluginBrowse</tabstop>
     <tabstop>ChangeConnection</tabstop>
     <tabstop>SavePassword</tabstop>
-    <tabstop>LongSession</tabstop>
     <tabstop>IncludeDB</tabstop>
     <tabstop>MaximizeMain</tabstop>
     <tabstop>DesktopAware</tabstop>

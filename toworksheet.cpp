@@ -1130,12 +1130,6 @@ void toWorksheet::saveDefaults(void)
 void toWorksheet::enableStatistic(bool ena)
 {
   if (ena) {
-    if (toTool::globalConfig(CONF_LONG_SESSION,"").isEmpty())
-      TOMessageBox::warning(this,
-			    "Enable statistics",
-			    "Enabling statistics without enabling the long sessions option\n"
-			    "is unreliable at bests.",
-			    "Ok");
     Result->setStatistics(Statistics);
     ResultTab->setTabEnabled(StatSplitter,true);
     toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,true);

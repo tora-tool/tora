@@ -71,7 +71,6 @@
 #define CONF_PLUGIN_DIR		"PluginDir"
 #define CONF_SQL_FILE		"SQLDictionary"
 #define DEFAULT_SQL_FILE	"$HOME/.torasql"
-#define CONF_LONG_SESSION	"LongSeparate"
 #define CONF_LIST_SCALE		"ListScale"
 #define DEFAULT_LIST_SCALE	"0.8"
 #define CONF_DESKTOP_AWARE	"DesktopAware"
