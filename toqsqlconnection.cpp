@@ -76,7 +76,7 @@ static toSQL SQLListSynonyms("toQSqlConnection:ListSynonyms",
 			     "SELECT c.relname AS \"Synonym\", u.usename AS \"Schema\", c.relname AS \"Object\"\n"
 			     "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
 			     " WHERE relkind = 'r'"
-			     " ORDER BY \"Tablename\" ORDER BY u.usename, c.relname",
+			     " ORDER BY u.usename, c.relname",
 			     "Get synonym list, should have same columns",
 			     "7.1",
 			     "PostgreSQL");
@@ -267,8 +267,8 @@ public:
 	throw QString("Tried to read past end of query");
 
       Connection->Lock.down();
-      QVariant ret=Query->value(Column);
-      if (!ret.isValid()) {
+      QVariant val=Query->value(Column);
+      if (!val.isValid()) {
 	Connection->Lock.up();
 	Connection->throwError();
       }
@@ -278,7 +278,26 @@ public:
 	EOQ=!Query->next();
       }
       Connection->Lock.up();
-      return ret.toString();
+
+      QString ret;
+      switch(val.type()) {
+      case QVariant::ByteArray:
+#if 0
+	{
+	  QByteArray arr=val.toByteArray();
+	  for(unsigned int i=0;i<arr.size();i++) {
+	    char buf[10];
+	    sprintf(buf,"%02x",int(arr[i]));
+	    ret+=buf;
+	  }
+	}
+	break;
+#endif
+      default:
+	ret=val.toString();
+      }
+
+      return ret;
     }
     virtual bool eof(void)
     {
@@ -579,7 +598,23 @@ public:
 	if (query.next()) {
 	  if (query.isValid()) {
 	    QSqlRecord record=conn->Connection->record(query);
-	    ret=query.value(record.count()-1).toString();
+	    QVariant val=query.value(record.count()-1);
+	    switch(val.type()) {
+#if 0
+	    case QVariant::ByteArray:
+	      {
+		QByteArray arr=val.toByteArray();
+		for(unsigned int i=0;i<arr.size();i++) {
+		  char buf[10];
+		  sprintf(buf,"%02x",int(arr[i]));
+		  ret+=buf;
+		}
+	      }
+	      break;
+#endif
+	    default:
+	      ret=val.toString();
+	    }
 	  }
 	}
       } catch(...) {
