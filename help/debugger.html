@@ -15,7 +15,7 @@ instance where a variable or method is declared.<P>
 To the right is a large editor area where you can edit the current object. The editor is
 describe more <A HREF=debugger.html#editor>later</A>.<P>
 The last part of the screen is not always visible and contain information about the
-currently running <A HREF=debugging.html#debugging>debugging</A> session.<P>
+currently running <A HREF=debugger.html#debugging>debugging</A> session.<P>
 <A NAME=toolbar><H2>Toolbar &amp; menu</H2>
 The toolbar and menu contain pretty much the same commands with a few exceptions.
 <TABLE>
@@ -72,7 +72,7 @@ Switch between the head and body editor. For more information see the
 The keyboard shortcut for this is <B>CTRL+Space</B>.</TD></TR>
 <TR><TD VALIGN=top><B>
 Debug pane</B></TD><TD VALIGN=top>
-Display or hide the <A HREF=debugging.html#debugging>debugging pane</A> at the bottom of
+Display or hide the <A HREF=debugger.html#debugging>debugging pane</A> at the bottom of
 the debugging window. The keyboard shortcut for this is <B>F11</B>.</TD></TR>
 <TR><TD VALIGN=top><B>
 Next error</B></TD><TD VALIGN=top>
@@ -141,7 +141,7 @@ Which brings us to the last special thing in this editor which is the current li
 this is an indication of where the execution currently is at. This line is indicated by a
 special background (Default is green, but that is configurable in the
 <A HREF=fonts.html>options</A>).<P>
-<A NAME=debugger.html><H2>Debugger information</H2>
+<A NAME=debugging><H2>Debugger information</H2>
 Information about the current state of execution is shown in the pane at the bottom of
 the debugger window which you can be hidden. You hide or show this by selecting the command
 <B>debug pane</B> command or by pressing the <B>F11</B> key. The debug pane consist of
@@ -193,7 +193,7 @@ name when you select anything but the <B>local</B> scope.<P>
 Finally you have to fill out the variable name. If you have the cursor on a variable in the editor that
 name is the default when you add the watch.<P>
 You can then see the contents of this variable in the <B>watch</B> pane of the
-<A HREF=debugger.html>debugger info</A>. The value will be updated every time execution stops
+<A HREF=debugger.html#debugging>debugger info</A>. The value will be updated every time execution stops
 while you are debugging. If the variable can not be found it will be <B>{Unavailable}</B>. If
 all variables are unavailable even though they shouldn't you have probably forgotten to compile
 the object with the debug option. You can remedy this by simply using the <B>compile</B>

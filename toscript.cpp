@@ -69,12 +69,12 @@ protected:
   { return toscript_xpm; }
 public:
   toScriptTool()
-    : toTool(201,"Schema extraction")
+    : toTool(201,"DB Extraction/Compare/Search")
   { }
   virtual const char *menuItem()
-  { return "DB Extraction/Compare"; }
+  { return "DB Extraction/Compare/Search"; }
   virtual const char *toolbarTip()
-  { return "DB or schema extraction and compare"; }
+  { return "DB or schema extraction, compare and search"; }
   virtual QWidget *toolWindow(QWidget *main,toConnection &connection)
   {
     return new toScript(main,connection);
