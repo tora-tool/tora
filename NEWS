@@ -1,5 +1,6 @@
 1.3.6:
 
+2002-06-04: Added option to open file in new worksheet.
 2002-06-04: Fixed problem with docks when not compiling with KDE support.
 2002-06-04: Fixed problem with writing file without KDE support.
 2002-06-04: Bugfix of highlighted text drawing.

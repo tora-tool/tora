@@ -243,11 +243,42 @@ public:
       toHighlightedText::keyPressEvent(e);
     }
   }
-  virtual bool editOpen(void)
+  virtual bool editOpen(QString suggestedFile)
   {
-    bool ret=toHighlightedText::editOpen();
-    Worksheet->setCaption();
-    return ret;
+    int ret=1;
+    if (edited()) {
+      ret=TOMessageBox::information(this,"Save changes?",
+				    "The editor has been changed. Do you want to save them,\n"
+				    "discard changes or open file in new worksheet?",
+				    "&Save","&Discard","&New worksheet",0);
+      if (ret<0)
+	return false;
+      else if (ret==0) {
+	if (!editSave(false))
+	  return false;
+      }
+    }
+
+    QString fname;
+    if (suggestedFile!=QString::null)
+      fname=suggestedFile;
+    else {
+      QFileInfo file(filename());
+      fname=toOpenFilename(file.dirPath(),QString::null,this);
+    }
+    if (fname.isEmpty())
+      return false;
+    try {
+      if (ret==2)
+	toWorksheet::fileWorksheet(fname);
+      else {
+	openFilename(fname);
+        Worksheet->setCaption();
+      }
+      return true;
+    } TOCATCH
+
+    return false;
   }
 };
 

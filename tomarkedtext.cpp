@@ -218,6 +218,7 @@ void toMarkedText::openFilename(const QString &file)
   setText(QString::fromLocal8Bit(data));
   setFilename(file);
   setEdited(false);
+  toMainWidget()->addRecentFile(file);
   toStatusMessage("File opened successfully",false,false);
 }
 
@@ -246,7 +247,6 @@ bool toMarkedText::editOpen(QString suggestedFile)
   if (!fname.isEmpty()) {
     try {
       openFilename(fname);
-      toMainWidget()->addRecentFile(fname);
       return true;
     } TOCATCH
   }
