@@ -46,6 +46,7 @@ TO_NAMESPACE;
 #include <qworkspace.h>
 #include <qvaluelist.h>
 #include <qbuttongroup.h>
+#include <qregexp.h>
 
 #include "totool.h"
 #include "tomain.h"

@@ -34,7 +34,10 @@ vpath %.h $(INCLUDE)
 
 .PHONY: all clean fixmod install distclean
 
-all: $(TARGET)
+all: $(TARGET) Makefile.orig
+
+Makefile.orig: Makefile
+	cp Makefile Makefile.orig
 
 #$(OBJECTS): Makefile Makefile.common
 

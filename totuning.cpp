@@ -37,7 +37,6 @@ TO_NAMESPACE;
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qtabwidget.h>
-#include <qregexp.h>
 #include <qlabel.h>
 
 #include "toconnection.h"
