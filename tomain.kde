@@ -184,6 +184,6 @@ void toPush(list<QString> &lst,const QString &);
       toStatusMessage(str);\
     }
 
-#define toIsIdent(c) (isalnum(c)||(c)=='_'||(c)=='%'||(c)=='$'||(c)=='#')
+#define toIsIdent(c) (c.isLetterOrNumber()||(c)=='_'||(c)=='%'||(c)=='$'||(c)=='#')
 
 #endif
