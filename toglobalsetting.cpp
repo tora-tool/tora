@@ -57,6 +57,7 @@
 #include <qmessagebox.h>
 #include <qpushbutton.h>
 #include <qspinbox.h>
+#include <qtextcodec.h>
 #include <qtooltip.h>
 #include <qvalidator.h>
 #include <qvariant.h>
@@ -154,6 +155,8 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
 #else
   UpgradeCheck->hide();
 #endif
+
+  Locale->setText(toTool::globalConfig(CONF_LOCALE,QTextCodec::locale()));
 }
 
 void toGlobalSetting::pluginBrowse(void)
@@ -229,6 +232,8 @@ void toGlobalSetting::saveSetting(void)
 #if QT_VERSION >= 300
   toTool::globalSetConfig(CONF_UPGRADE_CHECK,UpgradeCheck->isChecked()?"Yes":"");
 #endif
+
+  toTool::globalSetConfig(CONF_LOCALE,Locale->text());
 }
 
 toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)

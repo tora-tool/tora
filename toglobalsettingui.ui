@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>623</width>
-            <height>563</height>
+            <width>625</width>
+            <height>425</height>
         </rect>
     </property>
     <property stdset="1">
@@ -246,7 +246,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Include database connection in window captions</string>
                     </property>
                 </widget>
-                <widget row="0"  column="0"  rowspan="1"  colspan="2" >
+                <widget row="0"  column="0"  rowspan="1"  colspan="3" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -261,7 +261,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Change currently select connection to the connection of the new active window</string>
                     </property>
                 </widget>
-                <widget row="0"  column="2" >
+                <widget row="0"  column="3" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -280,7 +280,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Number of connections to save in history.</string>
                     </property>
                 </widget>
-                <widget row="0"  column="3"  rowspan="1"  colspan="2" >
+                <widget row="0"  column="4"  rowspan="1"  colspan="2" >
                     <class>QSpinBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -295,7 +295,7 @@ Will leave the password unencryptet in the config file.</string>
                         <number>1000</number>
                     </property>
                 </widget>
-                <widget row="2"  column="3"  rowspan="1"  colspan="2" >
+                <widget row="2"  column="4"  rowspan="1"  colspan="2" >
                     <class>QSpinBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -310,7 +310,7 @@ Will leave the password unencryptet in the config file.</string>
                         <number>1000</number>
                     </property>
                 </widget>
-                <widget row="2"  column="2" >
+                <widget row="2"  column="3" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -329,7 +329,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Number of status messages to save in the message history.</string>
                     </property>
                 </widget>
-                <widget row="1"  column="3"  rowspan="1"  colspan="2" >
+                <widget row="1"  column="4"  rowspan="1"  colspan="2" >
                     <class>QSpinBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -340,7 +340,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string> seconds</string>
                     </property>
                 </widget>
-                <widget row="1"  column="2" >
+                <widget row="1"  column="3" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -359,7 +359,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>The time in seconds temporary messages will be displayed in the status bar. 0 menas keep.</string>
                     </property>
                 </widget>
-                <widget row="1"  column="1" >
+                <widget row="1"  column="1"  rowspan="1"  colspan="2" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -374,7 +374,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Display alerts in messagebar instead of poping up a dialog with a warning.</string>
                     </property>
                 </widget>
-                <widget row="3"  column="1" >
+                <widget row="3"  column="1"  rowspan="1"  colspan="2" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -389,7 +389,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Start using the tools toolbar on the left of the main window instead of at the top.</string>
                     </property>
                 </widget>
-                <widget row="2"  column="1" >
+                <widget row="2"  column="1"  rowspan="1"  colspan="2" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -456,7 +456,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Check this if docks are to use toolbars instead of normal frames.</string>
                     </property>
                 </widget>
-                <widget row="8"  column="2" >
+                <widget row="8"  column="3" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -475,7 +475,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>The style to use for the user interface.</string>
                     </property>
                 </widget>
-                <widget row="5"  column="2" >
+                <widget row="5"  column="3" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -494,14 +494,14 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Define the unit sizes should be displayed in tora.</string>
                     </property>
                 </widget>
-                <widget row="6"  column="3"  rowspan="1"  colspan="2" >
+                <widget row="6"  column="4"  rowspan="1"  colspan="2" >
                     <class>QComboBox</class>
                     <property stdset="1">
                         <name>name</name>
                         <cstring>Refresh</cstring>
                     </property>
                 </widget>
-                <widget row="5"  column="3"  rowspan="1"  colspan="2" >
+                <widget row="5"  column="4"  rowspan="1"  colspan="2" >
                     <class>QComboBox</class>
                     <item>
                         <property>
@@ -526,7 +526,7 @@ Will leave the password unencryptet in the config file.</string>
                         <cstring>SizeUnit</cstring>
                     </property>
                 </widget>
-                <widget row="7"  column="3"  rowspan="1"  colspan="2" >
+                <widget row="7"  column="4"  rowspan="1"  colspan="2" >
                     <class>QComboBox</class>
                     <item>
                         <property>
@@ -557,7 +557,7 @@ Will leave the password unencryptet in the config file.</string>
                         <cstring>DefaultFormat</cstring>
                     </property>
                 </widget>
-                <widget row="7"  column="2" >
+                <widget row="7"  column="3" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -568,7 +568,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Default list format</string>
                     </property>
                 </widget>
-                <widget row="6"  column="2" >
+                <widget row="6"  column="3" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -587,14 +587,14 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Default refreshtime in tools.</string>
                     </property>
                 </widget>
-                <widget row="8"  column="3"  rowspan="1"  colspan="2" >
+                <widget row="8"  column="4"  rowspan="1"  colspan="2" >
                     <class>QComboBox</class>
                     <property stdset="1">
                         <name>name</name>
                         <cstring>Style</cstring>
                     </property>
                 </widget>
-                <widget row="3"  column="2" >
+                <widget row="3"  column="3" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -613,7 +613,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Number of samples to keep in line and barcharts by default.</string>
                     </property>
                 </widget>
-                <widget row="3"  column="3" >
+                <widget row="3"  column="4" >
                     <class>QSpinBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -628,7 +628,7 @@ Will leave the password unencryptet in the config file.</string>
                         <number>1000</number>
                     </property>
                 </widget>
-                <widget row="3"  column="4" >
+                <widget row="3"  column="5" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -643,7 +643,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Save unlimited number of samples. Can large amounts of consume memory.</string>
                     </property>
                 </widget>
-                <widget row="4"  column="2" >
+                <widget row="4"  column="3" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -662,7 +662,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Number of samples to display in line and barcharts by default.</string>
                     </property>
                 </widget>
-                <widget row="4"  column="3" >
+                <widget row="4"  column="4" >
                     <class>QSpinBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -677,7 +677,7 @@ Will leave the password unencryptet in the config file.</string>
                         <number>1000</number>
                     </property>
                 </widget>
-                <widget row="4"  column="4" >
+                <widget row="4"  column="5" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -692,7 +692,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Display all available samples</string>
                     </property>
                 </widget>
-                <widget row="4"  column="1" >
+                <widget row="4"  column="1"  rowspan="1"  colspan="2" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -705,6 +705,42 @@ Will leave the password unencryptet in the config file.</string>
                     <property>
                         <name>toolTip</name>
                         <string>Check the TOra webpage for upgrades to the program. Does not send any information about the users computer or TOra installation.</string>
+                    </property>
+                </widget>
+                <widget row="8"  column="1" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>1</vsizetype>
+                        </sizepolicy>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Translation</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Which translation locale to use for this program. Must restart to have effect.</string>
+                    </property>
+                </widget>
+                <widget row="8"  column="2" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Locale</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>4</hsizetype>
+                            <vsizetype>0</vsizetype>
+                        </sizepolicy>
                     </property>
                 </widget>
             </grid>
@@ -779,6 +815,7 @@ Will leave the password unencryptet in the config file.</string>
     <tabstop>MaximizeMain</tabstop>
     <tabstop>ToolsLeft</tabstop>
     <tabstop>UpgradeCheck</tabstop>
+    <tabstop>Locale</tabstop>
     <tabstop>ConnectHistory</tabstop>
     <tabstop>Status</tabstop>
     <tabstop>HistorySize</tabstop>
