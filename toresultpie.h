@@ -37,10 +37,14 @@
 #ifndef __TORESULTPIE_H
 #define __TORESULTPIE_H
 
+#include <list>
+#include <qtimer.h>
+
 #include "toresult.h"
 #include "topiechart.h"
 
 class toSQL;
+class toNoBlockQuery;
 
 /** Display the result of a query in a piechart. The first column of the query should
  * contain the value and the second should contain an optional label.
@@ -48,6 +52,12 @@ class toSQL;
 
 class toResultPie : public toPieChart, public toResult {
   Q_OBJECT
+
+  toNoBlockQuery *Query;
+  std::list<QString> Labels;
+  std::list<double> Values;
+  QTimer Poll;
+  int Columns;
 public:
   /** Create widget.
    * @param parent Parent of list.
@@ -103,6 +113,8 @@ public slots:
    */
   virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
   { toResult::changeParams(Param1,Param2,Param3); }
+private slots:
+  void poll(void);
 };
 
 #endif

@@ -40,6 +40,7 @@
 #include "toconf.h"
 #include "tosql.h"
 #include "totool.h"
+#include "tonoblockquery.h"
 
 #include "toresultline.moc"
 
@@ -47,65 +48,95 @@ toResultLine::toResultLine(QWidget *parent,const char *name)
   : toLineChart(parent,name)
 {
   connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
   LastStamp=0;
   Flow=true;
+  Columns=0;
+  Query=NULL;
+}
+
+toResultLine::~toResultLine()
+{
+  delete Query;
 }
 
 void toResultLine::query(const QString &sql,const toQList &param,bool first)
 {
-  if (!handled())
+  if (!handled()||Query)
     return;
 
   setSQL(sql);
   setParams(param);
   try {
-    toQuery query(connection(),sql,param);
+    First=first;
+    Query=new toNoBlockQuery(connection(),toQuery::Normal,sql,param);
+    Poll.start(100);
+  } TOCATCH
+}
 
-    toQDescList desc=query.describe();
-
-    if (first) {
-      clear();
-      std::list<QString> labels;
-      for(toQDescList::iterator i=desc.begin();i!=desc.end();i++)
-	if (i!=desc.begin())
-	  labels.insert(labels.end(),(*i).Name);
-      setLabels(labels);
-    }
-
-    while(!query.eof()) {
-      int num=0;
-      QString lab=query.readValue();
-      num++;
-      std::list<double> vals;
-      while(num<query.columns()) {
-	vals.insert(vals.end(),query.readValue().toDouble());
-	num++;
+void toResultLine::poll(void)
+{
+  try {
+    if (Query&&Query->poll()) {
+      toQDescList desc;
+      if (!Columns) {
+	desc=Query->describe();
+	Columns=desc.size();
       }
-      if (Flow) {
-	time_t now=time(NULL);
-	if (now!=LastStamp) {
-	  if (LastValues.size()>0) {
-	    std::list<double> dispVal;
-	    std::list<double>::iterator i=vals.begin();
-	    std::list<double>::iterator j=LastValues.begin();
-	    while(i!=vals.end()&&j!=LastValues.end()) {
-	      dispVal.insert(dispVal.end(),(*i-*j)/(now-LastStamp));
-	      i++;
-	      j++;
-	    }
-	    std::list<double> tmp=transform(dispVal);
-	    addValues(tmp,lab);
-	  }
-	  LastValues=vals;
-	  LastStamp=now;
+
+      if (First) {
+	if (desc.size()==0)
+	  desc=Query->describe();
+	clear();
+	std::list<QString> labels;
+	for(toQDescList::iterator i=desc.begin();i!=desc.end();i++)
+	  if (i!=desc.begin())
+	    labels.insert(labels.end(),(*i).Name);
+	setLabels(labels);
+      }
+
+       while(Query->poll()&&!Query->eof()) {
+	unsigned int num=0;
+	QString lab=Query->readValue();
+	num++;
+	std::list<double> vals;
+	while(!Query->eof()&&num<Columns) {
+	  vals.insert(vals.end(),Query->readValue().toDouble());
+	  num++;
 	}
-      } else {
-	std::list<double> tmp=transform(vals);
-	addValues(tmp,lab);
+
+	if (Flow) {
+	  time_t now=time(NULL);
+	  if (now!=LastStamp) {
+	    if (LastValues.size()>0) {
+	      std::list<double> dispVal;
+	      std::list<double>::iterator i=vals.begin();
+	      std::list<double>::iterator j=LastValues.begin();
+	      while(i!=vals.end()&&j!=LastValues.end()) {
+		dispVal.insert(dispVal.end(),(*i-*j)/(now-LastStamp));
+		i++;
+		j++;
+	      }
+	      std::list<double> tmp=transform(dispVal);
+	      addValues(tmp,lab);
+	    }
+	    LastValues=vals;
+	    LastStamp=now;
+	  }
+	} else {
+	  std::list<double> tmp=transform(vals);
+	  addValues(tmp,lab);
+	}
+      }
+      if (Query->eof()) {
+	Poll.stop();
+	Columns=0;
+	delete Query;
+	Query=NULL;
+	update();
       }
     }
   } TOCATCH
-  update();
 }
 
 std::list<double> toResultLine::transform(std::list<double> &input)

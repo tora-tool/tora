@@ -39,37 +39,55 @@
 #include "tomain.h"
 #include "toconf.h"
 #include "tosql.h"
+#include "tonoblockquery.h"
 
 #include "toresultpie.moc"
 
 toResultPie::toResultPie(QWidget *parent,const char *name)
   : toPieChart(parent,name)
 {
+  Query=NULL;
+  Columns=0;
   connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
 }
 
 void toResultPie::query(const QString &sql,const toQList &param)
 {
-  if (!handled())
+  if (!handled()||Query)
     return;
 
   setSQL(sql);
   setParams(param);
   try {
-    toQuery query(connection(),sql,param);
+    Query=new toNoBlockQuery(connection(),toQuery::Normal,sql,param);
+    Poll.start(100);
+  } TOCATCH
+}
 
-    std::list<QString> labels;
-    std::list<double> values;
-    int len=query.columns();
-    while(!query.eof()) {
-      QString val=query.readValue();
-      values.insert(values.end(),val.toDouble());
-      if (len>1) {
-	QString lab=query.readValue();
-	labels.insert(labels.end(),lab);
+void toResultPie::poll(void)
+{
+  try {
+    if (Query) {
+      if (!Columns)
+	Columns=Query->describe().size();
+      while(Query->poll()&&!Query->eof()) {
+	QString val=Query->readValue();
+	Values.insert(Values.end(),val.toDouble());
+	if (Columns>1) {
+	  QString lab=Query->readValue();
+	  Labels.insert(Labels.end(),lab);
+	}
+      }
+      if (Query->eof()) {
+	setValues(Values,Labels);
+	Values.clear();
+	Labels.clear();
+	delete Query;
+	Query=NULL;
+	Columns=0;
+	Poll.stop();
       }
     }
-    setValues(values,labels);
   } TOCATCH
-  update();
 }

@@ -39,10 +39,15 @@
 
 #include <time.h>
 
+#include <list>
+
+#include <qtimer.h>
+
 #include "toresult.h"
 #include "tolinechart.h"
 
 class toSQL;
+class toNoBlockQuery;
 
 /** Display the result of a query in a piechart. The first column of the query should
  * contain the x value and the rest of the columns should be values of the diagram. The
@@ -60,6 +65,10 @@ class toResultLine : public toLineChart, public toResult {
   /** Last read values.
    */
   std::list<double> LastValues;
+  bool First;
+  toNoBlockQuery *Query;
+  QTimer Poll;
+  unsigned int Columns;
   void query(const QString &sql,const toQList &param,bool first);
 public:
   /** Create widget.
@@ -67,6 +76,9 @@ public:
    * @param name Name of widget.
    */
   toResultLine(QWidget *parent,const char *name=NULL);
+  /** Destroy chart
+   */
+  ~toResultLine();
 
   /** Display actual values or flow/s.
    * @param on Display flow or absolute values.
@@ -145,6 +157,8 @@ protected slots:
   /** Reimplemented for internal reasons.
    */
   virtual void connectionChanged(void);
+private slots:
+  void poll(void);
 };
 
 #endif

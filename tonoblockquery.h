@@ -123,6 +123,18 @@ public:
 		 const QString &sql,
 		 const toQList &param,
 		 toResultStats *statistics=NULL);
+  /** Create a new query.
+   * @param conn Connection to run on.
+   * @param mode Query mode to execute query in.
+   * @param sql SQL to execute.
+   * @param param Parameters to pass to query.
+   * @param statistics Optional statistics widget to update with values from query.
+   */
+  toNoBlockQuery(toConnection &conn,
+		 toQuery::queryMode mode,
+		 const QString &sql,
+		 const toQList &param,
+		 toResultStats *statistics=NULL);
   virtual ~toNoBlockQuery();
 
   /** Poll if any result is available.

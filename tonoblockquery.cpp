@@ -183,6 +183,30 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
   TO_DEBUGOUT("Started thread\n");
 }
 
+toNoBlockQuery::toNoBlockQuery(toConnection &conn,toQuery::queryMode mode,
+			       const QString &sql,const toQList &param,toResultStats *stats)
+  : SQL(sql),
+    Error(QString::null),
+    Param(param),
+    Statistics(stats),
+    Query(conn,mode)
+{
+  TO_DEBUGOUT("Created no block query\n");
+  CurrentValue=Values.end();
+  Quit=EOQ=false;
+  Processed=0;
+
+  if (Statistics)
+    Statistics->changeSession(Query);
+
+  toLocker lock(Lock);
+  TO_DEBUGOUT("Creating thread\n");
+  Thread=new toThread(new queryTask(*this));
+  TO_DEBUGOUT("Created thread\n");
+  Thread->start();
+  TO_DEBUGOUT("Started thread\n");
+}
+
 toQDescList &toNoBlockQuery::describe(void)
 {
   TO_DEBUGOUT("Locking describe\n");
