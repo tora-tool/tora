@@ -238,10 +238,19 @@ bool toThread::mainThread(void)
   return pthread_equal(MainThread,pthread_self());
 }
 
+#ifdef QT_THREAD_SUPPORT
+class toThreadWrapper : public QThread {
+public:
+  static void msleep(int num)
+  { QThread::msleep(num); }
+};
+
+#endif
+
 void toThread::msleep(int msec)
 {
 #ifdef QT_THREAD_SUPPORT
-  QThread::msleep(msec);
+  toThreadWrapper::msleep(msec);
 #else
   struct timespec req;
   req.tv_sec=msec/1000;
