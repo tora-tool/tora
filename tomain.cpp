@@ -633,10 +633,10 @@ void toMain::commandCallback(int cmd)
       } TOCATCH
       break;
     case TO_FILE_CLEARCACHE:
-      checkCaching();
       try {
 	currentConnection().rereadCache();
       } TOCATCH
+      checkCaching();
       break;
     case TO_FILE_ROLLBACK:
       try {
@@ -1070,8 +1070,8 @@ void toMain::checkCaching(void)
     if (!CachingLabel) {
       CachingLabel=new QLabel(statusBar());
       statusBar()->addWidget(CachingLabel,0,true);
-      CachingLabel->show();
     }
+    CachingLabel->show();
     if (num>1)
       CachingLabel->setText("Caching "+QString::number(num));
     else
