@@ -311,6 +311,7 @@ void toToolSetting::changeEnable(void)
     str=toTool::globalConfig(CONF_DEFAULT_TOOL,FirstTool);
   }
 
+  DefaultTool->clear();
   int id=0;
   int sel=0;
   for(QListViewItem *item=Enabled->firstChild();item;item=item->nextSibling()) {
