@@ -184,7 +184,7 @@ void toResultItem::addItem(const QString &title,const QString &value)
     Widgets[WidgetPos]=widget;
   } else
     widget=Widgets[WidgetPos];
-  setValue(widget,t,value);
+  setValue(widget,title,value);
 
   widget->show();
   WidgetPos++;

@@ -392,7 +392,7 @@ protected:
 public:
   toTemplateTool()
     : toTool(410,"SQL Template")
-  { Dock=NULL; Window=NULL; }
+  { Dock=NULL; Window=NULL; toTemplateProvider::setToolKey(key()); }
   virtual const char *menuItem()
   { return "SQL Template"; }
   virtual QWidget *toolWindow(QWidget *,toConnection &)
@@ -418,7 +418,7 @@ public:
     return NULL;
   }
   void closeWindow()
-  { Dock=NULL; Window=NULL; }
+  { Dock=NULL; Window=NULL; toTemplateProvider::setShown(false); }
   virtual QWidget *configurationTab(QWidget *parent)
   { return new toTemplatePrefs(this,parent); }
   virtual bool canHandle(toConnection &)
@@ -426,6 +426,18 @@ public:
 };
 
 static toTemplateTool TemplateTool;
+
+void toTemplate::hideEvent(QHideEvent *e)
+{
+  toTemplateProvider::setShown(false);
+  QVBox::hideEvent(e);
+}
+
+void toTemplate::showEvent(QShowEvent *e)
+{
+  toTemplateProvider::setShown(true);
+  QVBox::showEvent(e);
+}
 
 QWidget *toTemplate::parentWidget(QListViewItem *item)
 {
@@ -671,8 +683,16 @@ void toTextTemplate::addFile(QListView *parent,const QString &root,const QString
 
 toTemplateSQL::toTemplateSQL(toConnection &conn,toTemplateItem *parent,
 			     const QString &name,const QString &sql)
-  : toTemplateItem(parent,name),Object(this),Connection(conn),SQL(sql)
+  : toTemplateItem(parent,name),Object(this),Connection(&conn),SQL(sql)
 {
+  setExpandable(true);
+}
+
+toTemplateSQL::toTemplateSQL(toTemplateItem *parent,
+			     const QString &name,const QString &sql)
+  : toTemplateItem(parent,name),Object(this),SQL(sql)
+{
+  Connection=NULL;
   setExpandable(true);
 }
 
@@ -709,9 +729,9 @@ void toTemplateSQLObject::poll(void)
     if (Query&&Query->poll()) {
       toQDescList desc=Query->describe();
       while(Query->poll()&&!Query->eof()) {
-	Parent->createChild(Query->readValue());
+	QListViewItem *item=Parent->createChild(Query->readValue());
 	for (unsigned int j=1;j<desc.size();j++)
-	  Query->readValue();
+	  item->setText(j,Query->readValue());
       }
       if (Query->eof()) {
 	delete Query;

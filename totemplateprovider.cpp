@@ -37,6 +37,8 @@
 #include "totemplate.h"
 
 std::list<toTemplateProvider *> *toTemplateProvider::Providers;
+bool toTemplateProvider::Shown=false;
+QCString toTemplateProvider::ToolKey;
 
 toTemplateProvider::toTemplateProvider(const QCString &name)
   : Name(name)
@@ -54,6 +56,8 @@ void toTemplateProvider::exportAllData(std::map<QCString,QString> &data,const QC
        i!=toTemplateProvider::Providers->end();
        i++)
     (*i)->exportData(data,prefix+":"+(*i)->name());
+  if (Shown)
+    data[prefix+":Shown"]="Yes";
 }
 
 void toTemplateProvider::importAllData(std::map<QCString,QString> &data,const QCString &prefix)
@@ -64,6 +68,14 @@ void toTemplateProvider::importAllData(std::map<QCString,QString> &data,const QC
        i!=toTemplateProvider::Providers->end();
        i++)
     (*i)->importData(data,prefix+":"+(*i)->name());
+  if(ToolKey.length()>0&&data[prefix+":Shown"]=="Yes") {
+    try {
+      toTool *tool=toTool::tool(ToolKey);
+      if (tool)
+	tool->createWindow();
+    } catch(...) {
+    }
+  }
 }
 
 void toTemplateProvider::exportData(std::map<QCString,QString> &,const QCString &)
@@ -72,4 +84,9 @@ void toTemplateProvider::exportData(std::map<QCString,QString> &,const QCString 
 
 void toTemplateProvider::importData(std::map<QCString,QString> &,const QCString &)
 {
+}
+
+void toTemplateProvider::setShown(bool shown)
+{
+  Shown=shown;
 }

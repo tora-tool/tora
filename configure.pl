@@ -1616,7 +1616,7 @@ include \$(DEPENDS)
 plugins/\%.tso:
 	\@echo Linking plugin \$\@
 	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
-	\$(GCC) -shared \$(LFLAGS) \$(LFLAGS_GLOB) \$(CFLAGS) -o \$\@ \$^
+	\$(GCC) -shared \$(LFLAGS) \$(LFLAGS_GLOB) \$(CFLAGS) \$(QT_SHARED) -o \$\@ \$^
 
 objs/\%.o: \%.cpp
 	\@echo Compiling \$<

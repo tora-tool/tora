@@ -141,7 +141,7 @@ static QString QueryParam(const QString &in,toQList &params)
 	  rc=query.at(i);
 	  if (!rc.isLetterOrNumber())
 	    break;
-	  nam+=c;
+	  nam+=rc;
 	}
 	c=rc.latin1();
 	QString in;

@@ -414,7 +414,7 @@ class toConnection {
   QString Database;
   QString Mode;
   QCString Version;
-  std::list<QWidget *> Widgets;
+  std::list<QObject *> Widgets;
   std::list<QCString> InitStrings;
   toLock Lock;
   std::list<toConnectionSub *> Connections;
@@ -736,13 +736,13 @@ public:
 		  const QString &arg9=QString::null);
 
   /**
-   * Add a widget that uses this connection. This is needed to ensure that all widgets
+   * Add a object that uses this connection. This is needed to ensure that all widgets
    * that make use of a connection are destroyed when the connection is closed. Usually
    * tool windows need to call this function.
    *
    * @param widget The widget to add to the connection.
    */
-  void addWidget(QWidget *widget)
+  void addWidget(QObject *widget)
   { Widgets.insert(Widgets.end(),widget); }
   /**
    * Remove a widget from this connection. Should be called by the destructor of the
@@ -751,7 +751,7 @@ public:
    * @see addWidget
    * @param widget Widget to remove from the widget list.
    */
-  void delWidget(QWidget *widget);
+  void delWidget(QObject *widget);
 
   /**
    * Add a statement to be run uppon making new connections.

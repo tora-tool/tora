@@ -78,12 +78,16 @@ public:
   static QWidget *parentWidget(QListViewItem *item);
   static toTemplate *templateWidget(QListViewItem *item);
   static toTemplate *templateWidget(QListView *obj);
+  static bool templateShown();
 
   virtual bool canHandle(toConnection &)
   { return true; }
 
   void closeFrame(void);
   void showResult(bool show);
+
+  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *);
 public slots:
   void expand(QListViewItem *item);
   void collapse(QListViewItem *item);
@@ -100,6 +104,8 @@ class toTemplateProvider {
   /** List of currently available template providers.
    */
   static std::list<toTemplateProvider *> *Providers;
+  static bool Shown;
+  static QCString ToolKey;;
   QCString Name;
   bool Open;
 public:
@@ -138,6 +144,14 @@ public:
    * @param prefix Prefix to read data from.
    */
   static void importAllData(std::map<QCString,QString> &data,const QCString &prefix);
+
+  /** Used internally to indicate if template help is shown.
+   */
+  static void setShown(bool shown);
+  /** Used internally to indicate tool key string
+   */
+  static void setToolKey(const QCString &key)
+  { ToolKey=key; }
 
   friend class toTemplate;
 };
@@ -247,10 +261,20 @@ class toTemplateSQL :public toTemplateItem {
 
   /** Connection to run statement in
    */
-  toConnection &Connection;
+  toConnection *Connection;
   /** Statement to run.
    */
   QString SQL;
+protected:
+  /** Create an item.
+   * @param conn Connection to query.
+   * @param parent Parent of this item.
+   * @param name Contents of the first column of the item.
+   * @param sql SQL statement, observe that it is in @ref QCString format and you
+   *            should use utf8 if converting from QString.
+   */
+  toTemplateSQL(toTemplateItem *parent,
+		const QString &name,const QString &sql);
 public:
   /** Create an item.
    * @param conn Connection to query.
@@ -264,8 +288,8 @@ public:
   /** Get connection of this item.
    * @return Reference to connection.
    */
-  toConnection &connection()
-  { return Connection; }
+  virtual toConnection &connection()
+  { return *Connection; }
   /** Create a child of this item.
    * @param name Name of the child.
    * @return A newly created item.

@@ -871,20 +871,24 @@ void toOracleProvider::oracleQuery::execute(void)
 	(*Query)<<null;
       else {
 	otl_var_desc *next=Query->describe_next_in_var();
-	switch(next->ftype) {
-	case otl_var_double:
-	case otl_var_float:
-	  (*Query)<<(*i).toDouble();
-	  break;
-	case otl_var_int:
-	case otl_var_unsigned_int:
-	case otl_var_short:
-	case otl_var_long_int:
-	  (*Query)<<(*i).toInt();
-	  break;
-	default:
-	  (*Query)<<QString(*i).utf8();
-	  break;
+	if (next) {
+	  switch(next->ftype) {
+	  case otl_var_double:
+	  case otl_var_float:
+	    (*Query)<<(*i).toDouble();
+	    break;
+	  case otl_var_int:
+	  case otl_var_unsigned_int:
+	  case otl_var_short:
+	  case otl_var_long_int:
+	    (*Query)<<(*i).toInt();
+	    break;
+	  default:
+	    (*Query)<<QString(*i).utf8();
+	    break;
+	  }
+	} else {
+	  printf("ERROR: More parameters than binds\n");
 	}
       }
     }

@@ -309,6 +309,7 @@ void toWorksheet::viewResources(void)
     QString sql=toSQL::string(TOSQL_LONGOPS,connection());
     sql+="   AND b.SQL_Address||':'||b.SQL_Hash_Value = :addr<char[100]>";
     LongOps->setSQL(sql);
+    LongOps->clearParams();
     LongOps->changeParams(address);
   } TOCATCH
 }

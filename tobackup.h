@@ -32,8 +32,8 @@
  *
  ****************************************************************************/
 
-#ifndef TOCURRENT_H
-#define TOCURRENT_H
+#ifndef TOBACKUP_H
+#define TOBACKUP_H
 
 #include "totool.h"
 

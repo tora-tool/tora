@@ -1228,6 +1228,7 @@ bool toMain::close(bool del)
       return false;
   }
   editDisable(Edit);
+  toTool::saveConfig();
   return QMainWindow::close(del);
 }
 

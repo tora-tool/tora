@@ -953,7 +953,7 @@ toConnection::~toConnection()
   {
     toLocker lock(Lock);
     {
-      for (std::list<QWidget *>::iterator i=Widgets.begin();i!=Widgets.end();i=Widgets.begin()) {
+      for (std::list<QObject *>::iterator i=Widgets.begin();i!=Widgets.end();i=Widgets.begin()) {
 	delete (*i);
       }
     }
@@ -1075,9 +1075,9 @@ void toConnection::rollback(void)
   setNeedCommit(false);
 }
 
-void toConnection::delWidget(QWidget *widget)
+void toConnection::delWidget(QObject *widget)
 {
-  for (std::list<QWidget *>::iterator i=Widgets.begin();i!=Widgets.end();i++) {
+  for (std::list<QObject *>::iterator i=Widgets.begin();i!=Widgets.end();i++) {
     if ((*i)==widget) {
       Widgets.erase(i);
       break;
@@ -1087,10 +1087,14 @@ void toConnection::delWidget(QWidget *widget)
 
 bool toConnection::closeWidgets(void)
 {
-  for (std::list<QWidget *>::iterator i=Widgets.begin();i!=Widgets.end();i=Widgets.begin()) {
-    if (!(*i)->close(true))
-      return false;
-    std::list<QWidget *>::iterator nextI=Widgets.begin();
+  for (std::list<QObject *>::iterator i=Widgets.begin();i!=Widgets.end();i=Widgets.begin()) {
+    if ((*i)->inherits("QWidget")) {
+      QWidget *widget=static_cast<QWidget *>(*i);
+      if (!widget->close(true))
+	return false;
+    } else
+      delete *i;
+    std::list<QObject *>::iterator nextI=Widgets.begin();
     if (i==nextI)
       throw qApp->translate("toConnection","All tool widgets need to have autodelete flag set");
   }
