@@ -84,13 +84,13 @@ void toExtract::extractor::initialize(toExtract &) const
 {
 }
 
-QString toExtract::extractor::create(toExtract &,
-				     const QString &,
-				     const QString &,
-				     const QString &,
-				     const QString &) const
+void toExtract::extractor::create(toExtract &,
+				  QTextStream &,
+				  const QString &,
+				  const QString &,
+				  const QString &,
+				  const QString &) const
 {
-  return QString::null;
 }
 
 void toExtract::extractor::describe(toExtract &,
@@ -102,21 +102,21 @@ void toExtract::extractor::describe(toExtract &,
 {
 }
 
-QString toExtract::extractor::migrate(toExtract &,
-				      const QString &,
-				      std::list<QString> &,
-				      std::list<QString> &) const
+void toExtract::extractor::migrate(toExtract &,
+				   QTextStream &,
+				   const QString &,
+				   std::list<QString> &,
+				   std::list<QString> &) const
 {
-  return QString::null;
 }
 
-QString toExtract::extractor::drop(toExtract &,
-				   const QString &,
-				   const QString &,
-				   const QString &,
-				   const QString &) const
+void toExtract::extractor::drop(toExtract &,
+				QTextStream &,
+				const QString &,
+				const QString &,
+				const QString &,
+				const QString &) const
 {
-  return QString::null;
 }
 
 toExtract::extractor::extractor()
@@ -269,9 +269,9 @@ bool toExtract::canHandle(toConnection &conn)
   return bool(findExtractor(conn,QString::null,QString::null));
 }
 
-QString toExtract::create(std::list<QString> &objects)
+void toExtract::create(QTextStream &ret,std::list<QString> &objects)
 {
-  QString ret=generateHeading(qApp->translate("toExtract","CREATE"),objects);
+  ret<<generateHeading(qApp->translate("toExtract","CREATE"),objects);
 
   QProgressDialog *progress=NULL;
   QLabel *label=NULL;
@@ -306,19 +306,18 @@ QString toExtract::create(std::list<QString> &objects)
       type.truncate(pos);
       QString utype=type.upper();
       QString schema=intSchema(owner,false);
-
       try {
 	try {
 	  extractor *ext=findExtractor(QString::fromLatin1("CREATE"),utype);
 	  if (ext)
-	    ret+=ext->create(*this,
-			     utype,
-			     schema,
-			     owner,
-			     name);
-	  else {
+	    ext->create(*this,
+			ret,
+			utype,
+			schema,
+			owner,
+			name);
+	  else
 	    throw qApp->translate("toExtract","Invalid type %1 to create").arg(type);
-	  }
 	} catch (const QString &exc) {
 	  rethrow(qApp->translate("toExtract","Create"),*i,exc);
 	}
@@ -331,7 +330,6 @@ QString toExtract::create(std::list<QString> &objects)
     throw;
   }
   delete progress;
-  return ret;
 }
 
 std::list<QString> toExtract::describe(std::list<QString> &objects)
@@ -404,9 +402,9 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
   return ret;
 }
 
-QString toExtract::drop(std::list<QString> &objects)
+void toExtract::drop(QTextStream &ret,std::list<QString> &objects)
 {
-  QString ret=generateHeading(qApp->translate("toExtract","DROP"),objects);
+  ret<<generateHeading(qApp->translate("toExtract","DROP"),objects);
 
   QProgressDialog *progress=NULL;
   QLabel *label=NULL;
@@ -444,11 +442,12 @@ QString toExtract::drop(std::list<QString> &objects)
 	try {
 	  extractor *ext=findExtractor(QString::fromLatin1("DROP"),utype);
 	  if (ext)
-	    ret+=ext->drop(*this,
-			   utype,
-			   schema,
-			   owner,
-			   name);
+	    ext->drop(*this,
+		      ret,
+		      utype,
+		      schema,
+		      owner,
+		      name);
 	  else {
 	    throw qApp->translate("toExtract","Invalid type %1 to drop");;
 	  }
@@ -464,7 +463,6 @@ QString toExtract::drop(std::list<QString> &objects)
     throw;
   }
   delete progress;
-  return ret;
 }
 
 std::map<QString,std::list<QString> > toExtract::migrateGroup(std::list<QString> &grpLst)
@@ -486,11 +484,11 @@ std::map<QString,std::list<QString> > toExtract::migrateGroup(std::list<QString>
   return ret;
 }
 
-QString toExtract::migrate(std::list<QString> &drpLst,std::list<QString> &crtLst)
+void toExtract::migrate(QTextStream &ret,std::list<QString> &drpLst,std::list<QString> &crtLst)
 {
   std::list<QString> t;
   t.insert(t.end(),qApp->translate("toExtract","Object list not available in migration"));
-  QString ret=generateHeading(qApp->translate("toExtract","MIGRATE"),t);
+  ret<<generateHeading(qApp->translate("toExtract","MIGRATE"),t);
 
   QProgressDialog *progress=NULL;
   QLabel *label=NULL;
@@ -539,10 +537,11 @@ QString toExtract::migrate(std::list<QString> &drpLst,std::list<QString> &crtLst
 	try {
 	  extractor *ext=findExtractor(QString::fromLatin1("MIGRATE"),utype);
 	  if (ext)
-	    ret+=ext->migrate(*this,
-			      utype,
-			      drp,
-			      crt);
+	    ext->migrate(*this,
+			 ret,
+			 utype,
+			 drp,
+			 crt);
 	  else {
 	    throw qApp->translate("toExtract","Invalid type %1 to migrate").arg(utype);
 	  }
@@ -559,7 +558,6 @@ QString toExtract::migrate(std::list<QString> &drpLst,std::list<QString> &crtLst
     throw;
   }
   delete progress;
-  return ret;
 }
 
 QString toExtract::generateHeading(const QString &action,

@@ -205,8 +205,8 @@ class toOracleExtract : public toExtract::extractor {
 		      const QString &name) const;
   QString createTableFamily(toExtract &ext,const QString &schema,const QString &owner,
 			    const QString &name) const;
-  QString createTableContents(toExtract &ext,const QString &schema,const QString &owner,
-			      const QString &name) const;
+  void createTableContents(toExtract &ext,QTextStream &stream,
+			   const QString &schema,const QString &owner,const QString &name) const;
   QString createTableReferences(toExtract &ext,const QString &schema,const QString &owner,
 				const QString &name) const;
   QString createTablespace(toExtract &ext,const QString &schema,const QString &owner,
@@ -320,12 +320,13 @@ public:
   virtual ~toOracleExtract();
 
   virtual void initialize(toExtract &ext) const;
-  virtual QString create(toExtract &ext,const QString &type,const QString &schema,
-			 const QString &owner,const QString &name) const;
+  virtual void create(toExtract &ext,QTextStream &stream,
+		      const QString &type,const QString &schema,
+		      const QString &owner,const QString &name) const;
   virtual void describe(toExtract &ext,std::list<QString> &lst,const QString &type,
 			const QString &schema,const QString &owner,const QString &name) const;
-  virtual QString drop(toExtract &ext,const QString &type,const QString &schema,
-		       const QString &owner,const QString &name) const;
+  virtual void drop(toExtract &ext,QTextStream &stream,const QString &type,const QString &schema,
+		    const QString &owner,const QString &name) const;
 };
 
 static toOracleExtract OracleExtractor;
@@ -4727,15 +4728,15 @@ QString toOracleExtract::createTableFamily(toExtract &ext,
   return ret;
 }
 
-QString toOracleExtract::createTableContents(toExtract &ext,
-					     const QString &schema,
-					     const QString &owner,
-					     const QString &name) const
+void toOracleExtract::createTableContents(toExtract &ext,
+					  QTextStream &stream,
+					  const QString &schema,
+					  const QString &owner,
+					  const QString &name) const
 {
-  QString ret;
   if (ext.getContents()) {
     if (PROMPT)
-      ret+=QString("PROMPT CONTENTS OF %1%2\n\n").arg(schema).arg(QUOTE(name));
+      stream<<QString("PROMPT CONTENTS OF %1%2\n\n").arg(schema).arg(QUOTE(name));
 
     toQuery query(CONNECTION,QString("SELECT * FROM %1.%2").arg(QUOTE(owner)).arg(QUOTE(name)));
 
@@ -4786,17 +4787,15 @@ QString toOracleExtract::createTableContents(toExtract &ext,
 	  };
 	}
 	line+=");\n";
-	ret+=line;
+	stream<<line;
       }
     } catch (...) {
       delete[] dates;
       throw;
     }
     delete[] dates;
-    ret+="COMMIT;\n\n";
+    stream<<"COMMIT;\n\n";
   }
-
-  return ret;
 }
 
 QString toOracleExtract::createTableReferences(toExtract &ext,
@@ -7446,77 +7445,78 @@ void toOracleExtract::initialize(toExtract &ext) const
   ext.setBlockSize(toShift(ret).toInt());
 }
 
-QString toOracleExtract::create(toExtract &ext,
-				const QString &type,
-				const QString &schema,
-				const QString &owner,
-				const QString &name) const
+void toOracleExtract::create(toExtract &ext,
+			     QTextStream &stream,
+			     const QString &type,
+			     const QString &schema,
+			     const QString &owner,
+			     const QString &name) const
 {
   clearFlags(ext);
 
   if (type=="CONSTRAINT")
-    return createConstraint(ext,schema,owner,name);
+    stream<<createConstraint(ext,schema,owner,name);
   else if (type=="DATABASE LINK")
-    return createDBLink(ext,schema,owner,name);
+    stream<<createDBLink(ext,schema,owner,name);
   else if (type=="EXCHANGE INDEX")
-    return createExchangeIndex(ext,schema,owner,name);
+    stream<<createExchangeIndex(ext,schema,owner,name);
   else if (type=="EXCHANGE TABLE")
-    return createExchangeTable(ext,schema,owner,name);
+    stream<<createExchangeTable(ext,schema,owner,name);
   else if (type=="FUNCTION")
-    return createFunction(ext,schema,owner,name);
+    stream<<createFunction(ext,schema,owner,name);
   else if (type=="INDEX")
-    return createIndex(ext,schema,owner,name);
+    stream<<createIndex(ext,schema,owner,name);
   else if (type=="MATERIALIZED VIEW")
-    return createMaterializedView(ext,schema,owner,name);
+    stream<<createMaterializedView(ext,schema,owner,name);
   else if (type=="MATERIALIZED VIEW LOG")
-    return createMaterializedViewLog(ext,schema,owner,name);
+    stream<<createMaterializedViewLog(ext,schema,owner,name);
   else if (type=="PACKAGE")
-    return createPackage(ext,schema,owner,name);
+    stream<<createPackage(ext,schema,owner,name);
   else if (type=="PACKAGE BODY")
-    return createPackageBody(ext,schema,owner,name);
+    stream<<createPackageBody(ext,schema,owner,name);
   else if (type=="PROCEDURE")
-    return createProcedure(ext,schema,owner,name);
+    stream<<createProcedure(ext,schema,owner,name);
   else if (type=="PROFILE")
-    return createProfile(ext,schema,owner,name);
+    stream<<createProfile(ext,schema,owner,name);
   else if (type=="ROLE")
-    return createRole(ext,schema,owner,name);
+    stream<<createRole(ext,schema,owner,name);
   else if (type=="ROLE GRANTS")
-    return grantedPrivs(ext,QUOTE(name),name,6);
+    stream<<grantedPrivs(ext,QUOTE(name),name,6);
   else if (type=="ROLLBACK SEGMENT")
-    return createRollbackSegment(ext,schema,owner,name);
+    stream<<createRollbackSegment(ext,schema,owner,name);
   else if (type=="SEQUENCE")
-    return createSequence(ext,schema,owner,name);
+    stream<<createSequence(ext,schema,owner,name);
   else if (type=="SNAPSHOT")
-    return createSnapshot(ext,schema,owner,name);
+    stream<<createSnapshot(ext,schema,owner,name);
   else if (type=="SNAPSHOT LOG")
-    return createSnapshotLog(ext,schema,owner,name);
+    stream<<createSnapshotLog(ext,schema,owner,name);
   else if (type=="SYNONYM")
-    return createSynonym(ext,schema,owner,name);
+    stream<<createSynonym(ext,schema,owner,name);
   else if (type=="TABLE")
-    return createTable(ext,schema,owner,name);
+    stream<<createTable(ext,schema,owner,name);
   else if (type=="TABLE FAMILY")
-    return createTableFamily(ext,schema,owner,name);
+    stream<<createTableFamily(ext,schema,owner,name);
   else if (type=="TABLE CONTENTS")
-    return createTableContents(ext,schema,owner,name);
+    createTableContents(ext,stream,schema,owner,name);
   else if (type=="TABLE REFERENCES")
-    return createTableReferences(ext,schema,owner,name);
+    stream<<createTableReferences(ext,schema,owner,name);
   else if (type=="TABLESPACE")
-    return createTablespace(ext,schema,owner,name);
+    stream<<createTablespace(ext,schema,owner,name);
   else if (type=="TRIGGER")
-    return createTrigger(ext,schema,owner,name);
+    stream<<createTrigger(ext,schema,owner,name);
   else if (type=="TYPE")
-    return createType(ext,schema,owner,name);
+    stream<<createType(ext,schema,owner,name);
   else if (type=="USER")
-    return createUser(ext,schema,owner,name);
+    stream<<createUser(ext,schema,owner,name);
   else if (type=="USER GRANTS") {
     QString nam;
     if (ext.getSchema()!="1"&&!ext.getSchema().isEmpty())
       nam=ext.getSchema().lower();
     else
       nam=QUOTE(name);
-    return grantedPrivs(ext,nam,name,4);
+    stream<<grantedPrivs(ext,nam,name,4);
   } else if (type=="VIEW")
-    return createView(ext,schema,owner,name);
+    stream<<createView(ext,schema,owner,name);
   else {
     throw qApp->translate("toOracleExtract","Invalid type %1 to create").arg(type);
   }  
@@ -7594,59 +7594,60 @@ void toOracleExtract::describe(toExtract &ext,
   }
 }
 
-QString toOracleExtract::drop(toExtract &ext,
-			      const QString &type,
-			      const QString &schema,
-			      const QString &owner,
-			      const QString &name) const
+void toOracleExtract::drop(toExtract &ext,
+			   QTextStream &stream,
+			   const QString &type,
+			   const QString &schema,
+			   const QString &owner,
+			   const QString &name) const
 {
   clearFlags(ext);
   if (type=="CONSTRAINT")
-    return dropConstraint(ext,schema,owner,type,name);
+    stream<<dropConstraint(ext,schema,owner,type,name);
   else if (type=="DATABASE LINK")
-    return dropDatabaseLink(ext,schema,owner,type,name);
+    stream<<dropDatabaseLink(ext,schema,owner,type,name);
   else if (type=="DIMENSION")
-    return dropSchemaObject(ext,schema,owner,type,name);
+    stream<<dropSchemaObject(ext,schema,owner,type,name);
   else if (type=="DIRECTORY")
-    return dropObject(ext,schema,owner,type,name);
+    stream<<dropObject(ext,schema,owner,type,name);
   else if (type=="FUNCTION")
-    return dropSchemaObject(ext,schema,owner,type,name);
+    stream<<dropSchemaObject(ext,schema,owner,type,name);
   else if (type=="INDEX")
-    return dropSchemaObject(ext,schema,owner,type,name);
+    stream<<dropSchemaObject(ext,schema,owner,type,name);
   else if (type=="MATERIALIZED VIEW")
-    return dropSchemaObject(ext,schema,owner,type,name);
+    stream<<dropSchemaObject(ext,schema,owner,type,name);
   else if (type=="MATERIALIZED VIEW LOG")
-    return dropMViewLog(ext,schema,owner,type,name);
+    stream<<dropMViewLog(ext,schema,owner,type,name);
   else if (type=="PACKAGE")
-    return dropSchemaObject(ext,schema,owner,type,name);
+    stream<<dropSchemaObject(ext,schema,owner,type,name);
   else if (type=="PROCEDURE")
-    return dropSchemaObject(ext,schema,owner,type,name);
+    stream<<dropSchemaObject(ext,schema,owner,type,name);
   else if (type=="PROFILE")
-    return dropProfile(ext,schema,owner,type,name);
+    stream<<dropProfile(ext,schema,owner,type,name);
   else if (type=="ROLE")
-    return dropObject(ext,schema,owner,type,name);
+    stream<<dropObject(ext,schema,owner,type,name);
   else if (type=="ROLLBACK SEGMENT")
-    return dropObject(ext,schema,owner,type,name);
+    stream<<dropObject(ext,schema,owner,type,name);
   else if (type=="SEQUENCE")
-    return dropSchemaObject(ext,schema,owner,type,name);
+    stream<<dropSchemaObject(ext,schema,owner,type,name);
   else if (type=="SNAPSHOT")
-    return dropSchemaObject(ext,schema,owner,type,name);
+    stream<<dropSchemaObject(ext,schema,owner,type,name);
   else if (type=="SNAPSHOT LOG")
-    return dropMViewLog(ext,schema,owner,type,name);
+    stream<<dropMViewLog(ext,schema,owner,type,name);
   else if (type=="SYNONYM")
-    return dropSynonym(ext,schema,owner,type,name);
+    stream<<dropSynonym(ext,schema,owner,type,name);
   else if (type=="TABLE")
-    return dropTable(ext,schema,owner,type,name);
+    stream<<dropTable(ext,schema,owner,type,name);
   else if (type=="TABLESPACE")
-    return dropTablespace(ext,schema,owner,type,name);
+    stream<<dropTablespace(ext,schema,owner,type,name);
   else if (type=="TRIGGER")
-    return dropSchemaObject(ext,schema,owner,type,name);
+    stream<<dropSchemaObject(ext,schema,owner,type,name);
   else if (type=="TYPE")
-    return dropSchemaObject(ext,schema,owner,type,name);
+    stream<<dropSchemaObject(ext,schema,owner,type,name);
   else if (type=="USER")
-    return dropUser(ext,schema,owner,type,name);
+    stream<<dropUser(ext,schema,owner,type,name);
   else if (type=="VIEW")
-    return dropSchemaObject(ext,schema,owner,type,name);
+    stream<<dropSchemaObject(ext,schema,owner,type,name);
   else {
     throw qApp->translate("toOracleExtract","Invalid type %1 to drop").arg(type);
   }

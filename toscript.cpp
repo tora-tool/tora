@@ -481,7 +481,6 @@ void toScript::execute(void)
     case 4:
       sourceDescription=source.describe(sourceObjects);
       break;
-      break;
     }
 
     if (ScriptUI->Destination->isEnabled()) {
@@ -760,7 +759,7 @@ void toScript::readOwnerObjects(QListViewItem *item,toConnection &conn)
 
 void toScript::changeMode(int mode)
 {
-  if (mode<0||mode>3)
+  if (mode<0||mode>4)
     return;
 
   if (mode==0||mode==2)
@@ -791,6 +790,8 @@ void toScript::changeMode(int mode)
     ScriptUI->IncludeDDL->setChecked(true);
   } else if (mode==1)
     ScriptUI->IncludeDDL->setEnabled(true);
+
+  ScriptUI->OutputGroup->setEnabled(mode==1||mode==2||mode==4);
 
   ScriptUI->IncludeConstraints->setEnabled(ScriptUI->IncludeDDL->isChecked());
   ScriptUI->IncludeIndexes->setEnabled(ScriptUI->IncludeDDL->isChecked());

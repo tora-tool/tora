@@ -394,17 +394,22 @@ public:
   { return "SQL Template"; }
   virtual QWidget *toolWindow(QWidget *,toConnection &)
   {
-    bool first=false;
     if (!Dock||!Window) {
-      first=true;
       Dock=toAllocDock(qApp->translate("toTemplateTool","Template"),QString::null,*toolbarImage());
       Window=new toTemplate(Dock);
-    }
-    if (Dock->isHidden()||first) {
+    } else if (Dock->isHidden()) {
+#if TO_KDE
       toAttachDock(Dock,Window,QMainWindow::Left);
+#else
+      Dock->show();
+#endif
       Window->showResult(true);
     } else {
+#if TO_KDE
       toAttachDock(Dock,Window,QMainWindow::Minimized);
+#else
+      Dock->hide();
+#endif
       Window->showResult(false);
     }
     return NULL;
@@ -506,9 +511,17 @@ void toTemplate::showResult(bool show)
     return;
 
   if (show) {
+#if TO_KDE
     toAttachDock((TODock *)Result,Frame,QMainWindow::Bottom);
+#else
+    Result->show();
+#endif
   } else {
+#if TO_KDE
     toAttachDock((TODock *)Result,Frame,QMainWindow::Minimized);
+#else
+    Result->hide();
+#endif
   }
 }
 

@@ -67,7 +67,6 @@ public:
   toScript(QWidget *parent,toConnection &connection);
   virtual ~toScript();
 
-
 public slots:
   void execute(void);
   void changeMode(int);

@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>654</width>
-            <height>585</height>
+            <width>642</width>
+            <height>669</height>
         </rect>
     </property>
     <property stdset="1">
@@ -63,131 +63,7 @@
                         <name>spacing</name>
                         <number>6</number>
                     </property>
-                    <widget row="0"  column="1"  rowspan="2"  colspan="1" >
-                        <class>QGroupBox</class>
-                        <property stdset="1">
-                            <name>name</name>
-                            <cstring>GroupBox2</cstring>
-                        </property>
-                        <property stdset="1">
-                            <name>sizePolicy</name>
-                            <sizepolicy>
-                                <hsizetype>5</hsizetype>
-                                <vsizetype>7</vsizetype>
-                            </sizepolicy>
-                        </property>
-                        <property stdset="1">
-                            <name>title</name>
-                            <string>&amp;Source</string>
-                        </property>
-                        <grid>
-                            <property stdset="1">
-                                <name>margin</name>
-                                <number>11</number>
-                            </property>
-                            <property stdset="1">
-                                <name>spacing</name>
-                                <number>6</number>
-                            </property>
-                            <widget row="0"  column="0" >
-                                <class>QLabel</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>TextLabel2</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Connection</string>
-                                </property>
-                            </widget>
-                            <widget row="2"  column="0" >
-                                <class>QLabel</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>TextLabel2_2</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Schema</string>
-                                </property>
-                            </widget>
-                            <widget row="1"  column="0" >
-                                <class>QComboBox</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>SourceConnection</cstring>
-                                </property>
-                            </widget>
-                            <widget row="3"  column="0" >
-                                <class>QComboBox</class>
-                                <item>
-                                    <property>
-                                        <name>text</name>
-                                        <string>All</string>
-                                    </property>
-                                </item>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>SourceSchema</cstring>
-                                </property>
-                            </widget>
-                            <widget row="5"  column="0" >
-                                <class>QListView</class>
-                                <column>
-                                    <property>
-                                        <name>text</name>
-                                        <string>Objects</string>
-                                    </property>
-                                    <property>
-                                        <name>clickable</name>
-                                        <bool>true</bool>
-                                    </property>
-                                    <property>
-                                        <name>resizeable</name>
-                                        <bool>true</bool>
-                                    </property>
-                                </column>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>SourceObjects</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>sizePolicy</name>
-                                    <sizepolicy>
-                                        <hsizetype>7</hsizetype>
-                                        <vsizetype>7</vsizetype>
-                                    </sizepolicy>
-                                </property>
-                                <property stdset="1">
-                                    <name>rootIsDecorated</name>
-                                    <bool>true</bool>
-                                </property>
-                            </widget>
-                            <widget row="4"  column="0" >
-                                <class>QLabel</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>TextLabel1</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>sizePolicy</name>
-                                    <sizepolicy>
-                                        <hsizetype>1</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                    </sizepolicy>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>&amp;Include objects</string>
-                                </property>
-                                <property>
-                                    <name>buddy</name>
-                                    <cstring>SourceObjects</cstring>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <widget row="0"  column="2"  rowspan="2"  colspan="1" >
+                    <widget row="0"  column="2"  rowspan="3"  colspan="1" >
                         <class>QGroupBox</class>
                         <property stdset="1">
                             <name>name</name>
@@ -806,7 +682,7 @@
                             </widget>
                         </grid>
                     </widget>
-                    <widget row="1"  column="0" >
+                    <widget row="2"  column="0" >
                         <class>QButtonGroup</class>
                         <property stdset="1">
                             <name>name</name>
@@ -862,6 +738,10 @@
                                     <cstring>AllWords</cstring>
                                 </property>
                                 <property stdset="1">
+                                    <name>focusPolicy</name>
+                                    <enum>NoFocus</enum>
+                                </property>
+                                <property stdset="1">
                                     <name>text</name>
                                     <string>Contain all words</string>
                                 </property>
@@ -879,6 +759,10 @@
                                 <property stdset="1">
                                     <name>name</name>
                                     <cstring>RegExp</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>focusPolicy</name>
+                                    <enum>NoFocus</enum>
                                 </property>
                                 <property stdset="1">
                                     <name>text</name>
@@ -900,6 +784,10 @@
                                     <cstring>ExactMatch</cstring>
                                 </property>
                                 <property stdset="1">
+                                    <name>focusPolicy</name>
+                                    <enum>NoFocus</enum>
+                                </property>
+                                <property stdset="1">
                                     <name>text</name>
                                     <string>Exact match</string>
                                 </property>
@@ -907,6 +795,255 @@
                                     <name>buttonGroupId</name>
                                     <number>4</number>
                                 </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget row="0"  column="1"  rowspan="3"  colspan="1" >
+                        <class>QGroupBox</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>GroupBox2</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>sizePolicy</name>
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>7</vsizetype>
+                            </sizepolicy>
+                        </property>
+                        <property stdset="1">
+                            <name>title</name>
+                            <string>&amp;Source</string>
+                        </property>
+                        <grid>
+                            <property stdset="1">
+                                <name>margin</name>
+                                <number>11</number>
+                            </property>
+                            <property stdset="1">
+                                <name>spacing</name>
+                                <number>6</number>
+                            </property>
+                            <widget row="0"  column="0" >
+                                <class>QLabel</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>TextLabel2</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Connection</string>
+                                </property>
+                            </widget>
+                            <widget row="2"  column="0" >
+                                <class>QLabel</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>TextLabel2_2</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Schema</string>
+                                </property>
+                            </widget>
+                            <widget row="1"  column="0" >
+                                <class>QComboBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>SourceConnection</cstring>
+                                </property>
+                            </widget>
+                            <widget row="3"  column="0" >
+                                <class>QComboBox</class>
+                                <item>
+                                    <property>
+                                        <name>text</name>
+                                        <string>All</string>
+                                    </property>
+                                </item>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>SourceSchema</cstring>
+                                </property>
+                            </widget>
+                            <widget row="5"  column="0" >
+                                <class>QListView</class>
+                                <column>
+                                    <property>
+                                        <name>text</name>
+                                        <string>Objects</string>
+                                    </property>
+                                    <property>
+                                        <name>clickable</name>
+                                        <bool>true</bool>
+                                    </property>
+                                    <property>
+                                        <name>resizeable</name>
+                                        <bool>true</bool>
+                                    </property>
+                                </column>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>SourceObjects</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>sizePolicy</name>
+                                    <sizepolicy>
+                                        <hsizetype>7</hsizetype>
+                                        <vsizetype>7</vsizetype>
+                                    </sizepolicy>
+                                </property>
+                                <property stdset="1">
+                                    <name>rootIsDecorated</name>
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget row="4"  column="0" >
+                                <class>QLabel</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>TextLabel1</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>sizePolicy</name>
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>4</vsizetype>
+                                    </sizepolicy>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>&amp;Include objects</string>
+                                </property>
+                                <property>
+                                    <name>buddy</name>
+                                    <cstring>SourceObjects</cstring>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget row="1"  column="0" >
+                        <class>QButtonGroup</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>OutputGroup</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>enabled</name>
+                            <bool>false</bool>
+                        </property>
+                        <property stdset="1">
+                            <name>title</name>
+                            <string>Output</string>
+                        </property>
+                        <grid>
+                            <property stdset="1">
+                                <name>margin</name>
+                                <number>11</number>
+                            </property>
+                            <property stdset="1">
+                                <name>spacing</name>
+                                <number>6</number>
+                            </property>
+                            <widget row="0"  column="0" >
+                                <class>QRadioButton</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>OutputTab</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Output tab</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>true</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>buttonGroupId</name>
+                                    <number>1</number>
+                                </property>
+                            </widget>
+                            <widget row="0"  column="2" >
+                                <class>QRadioButton</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>OutputDir</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>focusPolicy</name>
+                                    <enum>NoFocus</enum>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Output dir</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>buttonGroupId</name>
+                                    <number>3</number>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>Output to directory so that each object is placed in a different file with the objects file.</string>
+                                </property>
+                            </widget>
+                            <widget row="0"  column="1" >
+                                <class>QRadioButton</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>OutputFile</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>focusPolicy</name>
+                                    <enum>NoFocus</enum>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Output file</string>
+                                </property>
+                            </widget>
+                            <widget row="1"  column="0"  rowspan="1"  colspan="3" >
+                                <class>QLayoutWidget</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>Layout1</cstring>
+                                </property>
+                                <hbox>
+                                    <property stdset="1">
+                                        <name>margin</name>
+                                        <number>0</number>
+                                    </property>
+                                    <property stdset="1">
+                                        <name>spacing</name>
+                                        <number>6</number>
+                                    </property>
+                                    <widget>
+                                        <class>QLineEdit</class>
+                                        <property stdset="1">
+                                            <name>name</name>
+                                            <cstring>LineEdit2_2</cstring>
+                                        </property>
+                                        <property stdset="1">
+                                            <name>enabled</name>
+                                            <bool>false</bool>
+                                        </property>
+                                    </widget>
+                                    <widget>
+                                        <class>QPushButton</class>
+                                        <property stdset="1">
+                                            <name>name</name>
+                                            <cstring>Browse</cstring>
+                                        </property>
+                                        <property stdset="1">
+                                            <name>enabled</name>
+                                            <bool>false</bool>
+                                        </property>
+                                        <property stdset="1">
+                                            <name>text</name>
+                                            <string>Browse</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
                             </widget>
                         </grid>
                     </widget>
@@ -1331,6 +1468,24 @@
         <receiver>SearchGroup</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>OutputTab</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>LineEdit2_2</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>OutputTab</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>Browse</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>Extract</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>OutputDir</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
     <slot access="public">newSize(void)</slot>
     <slot access="public">removeSize(void)</slot>
 </connections>
@@ -1350,6 +1505,9 @@
     <tabstop>IncludePrompt</tabstop>
     <tabstop>IncludeHeader</tabstop>
     <tabstop>Schema</tabstop>
+    <tabstop>OutputTab</tabstop>
+    <tabstop>LineEdit2_2</tabstop>
+    <tabstop>Browse</tabstop>
     <tabstop>AnyWords</tabstop>
     <tabstop>SearchWord</tabstop>
     <tabstop>SourceConnection</tabstop>
@@ -1358,6 +1516,7 @@
     <tabstop>DestinationConnection</tabstop>
     <tabstop>DestinationSchema</tabstop>
     <tabstop>DestinationObjects</tabstop>
+    <tabstop>OutputFile</tabstop>
     <tabstop>DontResize</tabstop>
     <tabstop>AutoResize</tabstop>
     <tabstop>CustomResize</tabstop>
@@ -1371,5 +1530,7 @@
     <tabstop>RegExp</tabstop>
     <tabstop>Extract</tabstop>
     <tabstop>Migrate</tabstop>
+    <tabstop>AllWords</tabstop>
+    <tabstop>OutputDir</tabstop>
 </tabstops>
 </UI>

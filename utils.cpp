@@ -498,7 +498,11 @@ QToolBar *toAllocBar(QWidget *parent,const QString &str)
 
 TODock *toAllocDock(const QString &name,
 		    const QString &db,
+#ifdef TO_KDE
 		    const QPixmap &icon)
+#else
+		    const QPixmap &)
+#endif
 {
   QString str=name;
   if (!db.isEmpty()&&!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {

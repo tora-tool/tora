@@ -38,7 +38,9 @@
 #include <list>
 #include <map>
 
+#include <qfile.h>
 #include <qstring.h>
+#include <qtextstream.h>
 #include <qvariant.h>
 
 class QWidget;
@@ -100,6 +102,7 @@ public:
 
     /** Called to generate a script to recreate a database object.
      * @param ext Extractor to generate script.
+     * @param stream Stream to write script to.
      * @param type Type of object to recreate.
      * @param schema Specify the schema of the output script or description. If empty
      *               don't specify any object. If the string "1" use same object as input.
@@ -108,11 +111,12 @@ public:
      * @param name Name of database object.
      * @return A string containing a script to recreate an object.
      */
-    virtual QString create(toExtract &ext,
-			   const QString &type,
-			   const QString &schema,
-			   const QString &owner,
-			   const QString &name) const;
+    virtual void create(toExtract &ext,
+			QTextStream &stream,
+			const QString &type,
+			const QString &schema,
+			const QString &owner,
+			const QString &name) const;
     /** Called to describe a database object.
      * @param ext Extractor to generate script.
      * @param lst List of descriptions for the object. Should be appended.
@@ -137,10 +141,12 @@ public:
      * @param dst Destination description list.
      * @return A script to change the src database object to dst.
      */
-    virtual QString migrate(toExtract &ext,
-			    const QString &type,
-			    std::list<QString> &src,
-			    std::list<QString> &dst) const;
+    virtual void migrate(toExtract &ext,
+			 QTextStream &stream,
+			 const QString &type,
+			 std::list<QString> &src,
+			 std::list<QString> &dst) const;
+
     /** Called to generate a script to drop an object.
      * @param ext Extractor to generate script.
      * @param type Type of object to recreate.
@@ -151,11 +157,12 @@ public:
      * @param name Name of database object.
      * @return A string containing a script to recreate an object.
      */
-    virtual QString drop(toExtract &ext,
-			 const QString &type,
-			 const QString &schema,
-			 const QString &owner,
-			 const QString &name) const;
+    virtual void drop(toExtract &ext,
+		      QTextStream &stream,
+		      const QString &type,
+		      const QString &schema,
+		      const QString &owner,
+		      const QString &name) const;
   };
 
 private:
@@ -234,7 +241,21 @@ public:
    *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
    * @return A string containing a script to recreate the specified objects.
    */
-  QString create(std::list<QString> &object);
+  QString create(std::list<QString> &object)
+  { QString ret; QTextStream s(&ret,IO_WriteOnly); create(s,object); return ret; }
+  /** Create script to recreate list of objects.
+   * @param stream Stream to write result to.
+   * @param object List of object. This has the format {type}:{schema}.{object}.
+   *               The type is database dependent but can as an example be of
+   *               CONSTRAINT, DATABASE LINK, EXCHANGE INDEX,
+   *               EXCHANGE TABLE, FUNCTION, INDEX, MATERIALIZED VIEW,
+   *               MATERIALIZED VIEW LOG, PACKAGE, PACKAGE BODY, PROCEDURE,
+   *               PROFILE, ROLE, ROLE GRANTS, ROLLBACK SEGMENT, SEQUENCE,
+   *               SNAPSHOT, SNAPSHOT LOG, SYNONYM, TABLE, TABLE FAMILY,
+   *               TABLE CONTENTS, TABLE REFERENCES, TABLESPACE, TRIGGER,
+   *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
+   */
+  void create(QTextStream &stream,std::list<QString> &object);
 
   /** Create a description of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
@@ -264,15 +285,42 @@ public:
    *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
    * @return A string containing a script to drop the specified objects.
    */
-  QString drop(std::list<QString> &object);
+  QString drop(std::list<QString> &object)
+  { QString ret; QTextStream s(&ret,IO_WriteOnly); drop(s,object); return ret; }
+
+  /** Create script to drop a list of objects.
+   * @param stream Stream to write result to.
+   * @param object List of object. This has the format {type}:{schema}.{object}.
+   *               The type is database dependent but can as an example be of
+   *               CONSTRAINT, DATABASE LINK, EXCHANGE INDEX,
+   *               EXCHANGE TABLE, FUNCTION, INDEX, MATERIALIZED VIEW,
+   *               MATERIALIZED VIEW LOG, PACKAGE, PACKAGE BODY, PROCEDURE,
+   *               PROFILE, ROLE, ROLE GRANTS, ROLLBACK SEGMENT, SEQUENCE,
+   *               SNAPSHOT, SNAPSHOT LOG, SYNONYM, TABLE, TABLE FAMILY,
+   *               TABLE CONTENTS, TABLE REFERENCES, TABLESPACE, TRIGGER,
+   *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
+   * @return A string containing a script to drop the specified objects.
+   */
+  void drop(QTextStream &stream,std::list<QString> &object);
 
   /** Called to generate a script to migrate a database object from one description to
    * another description.
+   * @param stream Stream to write result to.
    * @param src Source description list, generated by describes for the same database.
    * @param dst Destination description list, generated by describes for the same database.
    * @return A script to change the src database object to dst.
    */
-  QString migrate(std::list<QString> &drpLst,std::list<QString> &crtLst);
+  QString migrate(std::list<QString> &drpLst,std::list<QString> &crtLst)
+  { QString ret; QTextStream s(&ret,IO_WriteOnly); migrate(s,drpLst,crtLst); return ret; }
+
+  /** Called to generate a script to migrate a database object from one description to
+   * another description.
+   * @param stream Stream to write result to.
+   * @param src Source description list, generated by describes for the same database.
+   * @param dst Destination description list, generated by describes for the same database.
+   * @return A script to change the src database object to dst.
+   */
+  void migrate(QTextStream &stream,std::list<QString> &drpLst,std::list<QString> &crtLst);
 
   /** Set a context for this extractor.
    * @param name Name of this context
