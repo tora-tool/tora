@@ -35,8 +35,12 @@
 #include "otlv32.h"
 
 class toResultStorage : public toResultView {
+  bool ShowCoalesced;
 public:
   toResultStorage(toConnection &conn,QWidget *parent,const char *name=NULL);
+
+  void showCoalesced(bool shw)
+  { ShowCoalesced=shw; }
 
   QString currentTablespace(void);
   QString currentFilename(void);

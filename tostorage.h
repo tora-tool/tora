@@ -151,6 +151,7 @@ class toStorage : public QVBox {
   QToolButton *MoveFileButton;
 public:
   toStorage(toMain *parent,toConnection &connection);
+  ~toStorage();
 public slots:
   void refresh(void);
 

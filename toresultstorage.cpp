@@ -85,6 +85,8 @@ toResultStorage::toResultStorage(toConnection &conn,QWidget *parent,const char *
   setColumnAlignment(6,AlignRight);
   setColumnAlignment(7,AlignRight);
   setColumnAlignment(10,AlignRight);
+
+  ShowCoalesced=false;
 }
 
 QString toResultStorage::query()
@@ -104,26 +106,49 @@ QString toResultStorage::query()
   try {
     char buffer[1000];
 
-    otl_stream tblspc(1,
-		      "select a.tablespace_name,"
-		      "       a.status,"
-		      "       ' ',"
-		      "       a.contents,"
-		      "       a.logging,"
-		      "       to_char(round(sum(c.bytes)/1024/1024,2)),"
-		      "       to_char(round(sum(c.user_bytes)/1024/1024,2)),"
-		      "       to_char(round(b.total_bytes/1024/1023,2)),"
-		      "       to_char(round(b.total_bytes*100/sum(c.user_bytes),2))||'%',"
-		      "       to_char(round(b.percent_extents_coalesced,1))||'%',"
-		      "       to_char(b.total_extents)"
-		      "  from dba_tablespaces a,"
-		      "       dba_data_files c,"
-		      "       dba_free_space_coalesced b"
-		      " where a.tablespace_name = b.tablespace_name"
-		      "   and c.tablespace_name = a.tablespace_name"
-		      " group by a.tablespace_name,a.status,a.contents,a.logging,a.allocation_type,b.percent_extents_coalesced,b.total_extents,b.total_bytes"
-		      " order by a.tablespace_name",
-		      Connection.connection());
+    const char *sql;
+
+    if (ShowCoalesced)
+      sql=
+	"select a.tablespace_name,"
+	"       a.status,"
+	"       ' ',"
+	"       a.contents,"
+	"       a.logging,"
+	"       to_char(round(sum(c.bytes)/1024/1024,2)),"
+	"       to_char(round(sum(c.user_bytes)/1024/1024,2)),"
+	"       to_char(round(b.total_bytes/1024/1023,2)),"
+	"       to_char(round(b.total_bytes*100/sum(c.user_bytes),2))||'%',"
+	"       to_char(round(b.percent_extents_coalesced,1))||'%',"
+	"       to_char(b.total_extents)"
+	"  from dba_tablespaces a,"
+	"       dba_data_files c,"
+	"       dba_free_space_coalesced b"
+	" where a.tablespace_name = b.tablespace_name"
+	"   and c.tablespace_name = a.tablespace_name"
+	" group by a.tablespace_name,a.status,a.contents,a.logging,a.allocation_type,b.percent_extents_coalesced,b.total_extents,b.total_bytes"
+	" order by a.tablespace_name";
+    else
+      sql=
+	"select a.tablespace_name,"
+	"       a.status,"
+	"       ' ',"
+	"       a.contents,"
+	"       a.logging,"
+	"       to_char(round(sum(c.bytes)/1024/1024,2)),"
+	"       to_char(round(sum(c.user_bytes)/1024/1024,2)),"
+	"       to_char(round(b.total_bytes/1024/1023,2)),"
+	"       to_char(round(b.total_bytes*100/sum(c.user_bytes),2))||'%',"
+	"       '-',"
+	"       to_char(b.total_extents)"
+	"  from dba_tablespaces a,"
+	"       dba_data_files c,"
+	"       (select tablespace_name,sum(bytes) total_bytes,count(1) total_extents from dba_free_space group by tablespace_name) b"
+	" where a.tablespace_name = b.tablespace_name"
+	"   and c.tablespace_name = a.tablespace_name"
+	" group by a.tablespace_name,a.status,a.contents,a.logging,a.allocation_type,b.total_extents,b.total_bytes"
+	" order by a.tablespace_name";
+    otl_stream tblspc(1,sql,Connection.connection());
 
     otl_stream datfil(1,
 		      "select b.name,"

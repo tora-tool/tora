@@ -67,6 +67,40 @@
 #include "icons/readtablespace.xpm"
 #include "icons/writetablespace.xpm"
 
+#define CONF_DISP_COALESCED "DispCoalesced"
+
+class toStoragePrefs : public QFrame, public toSettingTab
+{ 
+  QGroupBox *GroupBox1;
+  QCheckBox *DispCoalesced;
+  toTool *Tool;
+
+public:
+  toStoragePrefs(toTool *tool,QWidget* parent = 0,const char* name = 0);
+  virtual void saveSetting(void);
+};
+
+toStoragePrefs::toStoragePrefs(toTool *tool,QWidget* parent = 0,const char* name = 0)
+  : QFrame(parent,name),Tool(tool)
+{
+  GroupBox1 = new QGroupBox( this, "GroupBox1" );
+  GroupBox1->setGeometry( QRect( 10, 10, 380, 380 ) ); 
+  GroupBox1->setTitle( tr( "Storage Tool"  ) );
+  
+  DispCoalesced = new QCheckBox( GroupBox1, "DispCoalesced" );
+  DispCoalesced->setGeometry( QRect( 20, 30, 340, 20 ) ); 
+  DispCoalesced->setText( tr( "&Display coalesced column"  ) );
+  QToolTip::add( DispCoalesced, tr( "Can degrade performance noticably on large databases." ) );
+  
+  if (!tool->config(CONF_DISP_COALESCED,"Yes").isEmpty())
+    DispCoalesced->setChecked(true);
+}
+
+void toStoragePrefs::saveSetting(void)
+{
+  Tool->setConfig(CONF_DISP_COALESCED,DispCoalesced->isChecked()?"Yes":"");
+}
+
 class toStorageTool : public toTool {
 protected:
   virtual char **pictureXPM(void)
@@ -82,6 +116,10 @@ public:
     QWidget *window=new toStorage(main,connection);
     window->setIcon(*toolbarImage());
     return window;
+  }
+  virtual QWidget *configurationTab(QWidget *parent)
+  {
+    return new toStoragePrefs(this,parent);
   }
 };
 
@@ -523,10 +561,17 @@ toStorage::toStorage(toMain *main,toConnection &connection)
 
   refresh();
   selectionChanged();
+  Connection.addWidget(this);
+}
+
+toStorage::~toStorage()
+{
+  Connection.delWidget(this);
 }
 
 void toStorage::refresh(void)
 {
+  Storage->showCoalesced(!StorageTool.config(CONF_DISP_COALESCED,"Yes").isEmpty());
   Storage->query();
 }
 

@@ -151,7 +151,7 @@ public:
   }
 };
 
-toRollbackTool RollbackTool;
+static toRollbackTool RollbackTool;
 
 toRollbackDialog::toRollbackDialog(toConnection &Connection,QWidget* parent,const char* name)
   : QDialog(parent,name,true)
@@ -494,7 +494,7 @@ public:
 
       otl_stream rlb(1,
 		     "select b.Extents,"
-		     "       b.CurExt+b.CurBlk/1000"
+		     "       b.CurExt+b.CurBlk/1000000"
 		     "  from dba_rollback_segs a,v$rollstat b where a.segment_id = b.usn"
 		     " order by a.segment_name",
 		     Connection.connection());
@@ -650,6 +650,12 @@ toRollback::toRollback(toMain *main,toConnection &connection)
   toRefreshParse(Timer,toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
 
   refresh();
+  Connection.addWidget(this);
+}
+
+toRollback::~toRollback()
+{
+  Connection.delWidget(this);
 }
 
 void toRollback::refresh(void)
