@@ -12,7 +12,10 @@ stdc++ 2.95.2
 Qt 2.3 (Should be binary compatible with 2.2 and above)
 Oracle 8.1.7
 
-The base distribution was Mandrake 7.2.
+The base distribution was Mandrake 7.2. Whatever you use you need a working
+Oracle client installation (Even if you go with the static binary). If you
+have trouble connecting first make sure sqlplus can connect before trying to
+get support for TOra.
 
 tora-{version}-1gc.i686.rpm
 ---------------------------
