@@ -131,13 +131,11 @@ public:
   /** Perform an open on this widget. Default NOP.
    * @param file The file to open, if not specified prompt for file.
    */
-  virtual bool editOpen(QString file=QString::null)
-  { return true; }
+  virtual bool editOpen(QString file=QString::null);
   /** Perform a save on this widget. Default NOP.
    * @param askfile Ask filename even if default filename is available.
    */
-  virtual bool editSave(bool askfile)
-  { return true; }
+  virtual bool editSave(bool askfile);
   /** Print this widgets contents. Default NOP.
    */
   virtual void editPrint(void)
@@ -268,17 +266,14 @@ public:
   /** Search for next entry
    * @return True if found, should select the found text.
    */
-  virtual bool searchNext(toSearchReplace *search)
-  { return false; }
+  virtual bool searchNext(toSearchReplace *search);
   /** Replace entry with new data
    */
-  virtual void searchReplace(const QString &newData)
-  { }
+  virtual void searchReplace(const QString &newData);
   /** Check if data can be modified by search
    * @param all If true can replace all, otherwise can replace right now.
    */
-  virtual bool searchCanReplace(bool all)
-  { return false; }
+  virtual bool searchCanReplace(bool all);
 
   /** Call this when this widget has received the focus. Must be called by the implementor.
    */

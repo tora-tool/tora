@@ -1119,6 +1119,7 @@ void toResultView::setup(bool readable,bool dispCol)
   Query=NULL;
   ReadableColumns=readable;
   NumberColumn=dispCol;
+  SortConnected=false;
   if (NumberColumn) {
     addColumn(QString::fromLatin1("#"));
     setColumnAlignment(0,AlignRight);

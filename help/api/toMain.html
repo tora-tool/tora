@@ -85,7 +85,7 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref87">windowActivated</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref88">editFileMenu</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref88">showFileMenu</A></b> (void) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref89">checkCaching</A></b> (void) 
 </LI>
@@ -167,7 +167,7 @@
 <br></td><td align="right"><h3><strong>editEnable</strong></h3></td></tr></table><p> <small>[static]</small></p><p>
  Set available menu items in user interface. It is not enough to just call
  this function to make open for instance to actually work. It is a lot of
- more especially in <A HREF="toMain.html#commandCallback">commandCallback</A> and <A HREF="toMain.html#editFileMenu">editFileMenu</A>. Will only
+ more especially in <A HREF="toMain.html#commandCallback">commandCallback</A> and editFileMenu. Will only
  update if this is the current editing widget.
    </p>
 <A NAME="editDisable"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editDisable</strong> (<A HREF="toEditWidget.html">toEditWidget</A> *edit)
@@ -350,8 +350,8 @@
 <A NAME="windowActivated"></A><A NAME="ref87"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>windowActivated</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *)
 <br></td><td align="right"><h3><strong>windowActivated</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Called when active window is changed.
    </p>
-<A NAME="editFileMenu"></A><A NAME="ref88"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>editFileMenu</strong> (void)
-<br></td><td align="right"><h3><strong>editFileMenu</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Used to enable/disable entries in the edit & file menu
+<A NAME="showFileMenu"></A><A NAME="ref88"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>showFileMenu</strong> (void)
+<br></td><td align="right"><h3><strong>showFileMenu</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Used to enable/disable entries in the file menu
    </p>
 <A NAME="checkCaching"></A><A NAME="ref89"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>checkCaching</strong> (void)
 <br></td><td align="right"><h3><strong>checkCaching</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Check if object caching is done.

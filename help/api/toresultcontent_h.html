@@ -280,15 +280,15 @@ public:
   ~toResultContentEditor();
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &sql,const toQList &param)
+  virtual void query(const QString &,const toQList &)
   { wrongUsage(); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1)
+  virtual void changeParams(const QString &)
   { wrongUsage(); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
+  virtual void changeParams(const QString &,const QString &,const QString &)
   { wrongUsage(); }
   
   /** Print this editor.
