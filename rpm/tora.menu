@@ -1,0 +1,5 @@
+?package(DrakeLogo): needs="X11" icon="tora.xpm" \
+section="Applications/Developement/Tools" \
+title="TOra" longtitle="Tool for Oracle" \
+command="/usr/X11R6/bin/tora"
+

@@ -37,7 +37,7 @@ CHFLAGS=$(CHFLAGS_GLOB) $(INCLUDES) $(DEFINES)
 
 OBJECTS=$(filter %.o,$(SOURCES:%.cpp=objs/%.o))
 
-DEPENDS=$(filter %.d,$(SOURCES:%.cpp=.depends/%.d))
+DEPENDS=$(filter %.d,$(SOURCES:%.cpp=.depends/%.d)) .depends/main.d
 
 vpath %.h $(INCLUDE)
 

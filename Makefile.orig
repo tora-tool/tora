@@ -95,6 +95,7 @@ plugins/toworksheet.so:objs/toworksheet.o
 # Monolithic target, for non ELF platforms
 
 tora-mono: $(OBJECTS) main.cpp
+	@echo Linking $@
 	$(CC) $(CFLAGS) $(LFLAGS) $(LFLAGS_GLOB) -DTOMONOLITHIC -o $@ $(OBJECTS) main.cpp \
 		$(LIBS_GLOB) $(QT_SHARED)
 
