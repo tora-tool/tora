@@ -236,7 +236,7 @@ QString toResultView::query(const QString &sql,const list<QString> &param)
 
   try {
     Query=new otl_stream;
-
+    Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
     Query->open(1,
 		(const char *)sql,
 		Connection.connection());

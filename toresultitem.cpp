@@ -97,6 +97,10 @@ void toResultItem::addItem(const QString &title,const QString &value)
   } else {
     widget=((QLabel *)Widgets[WidgetPos]);
     widget->setText(title);
+    if (ShowTitle)
+      widget->show();
+    else
+      widget->hide();
   }
   WidgetPos++;
   if (!Widgets[WidgetPos]) {
@@ -107,20 +111,20 @@ void toResultItem::addItem(const QString &title,const QString &value)
       widget->setAlignment(AlignRight|AlignTop|ExpandTabs|WordBreak);
     else
       widget->setAlignment(AlignLeft|AlignTop|ExpandTabs|WordBreak);
-    widget->show();
     Widgets[WidgetPos]=widget;
   } else {
     widget=((QLabel *)Widgets[WidgetPos]);
     widget->setText(value);
   }
+  widget->show();
   WidgetPos++;
 }
 
 void toResultItem::done(void)
 {
   for (int i=WidgetPos;i<NumWidgets;i++)
-    delete Widgets[i];
-  NumWidgets=WidgetPos;
+    if (Widgets[i])
+      Widgets[i]->hide();
 }
 
 QString toResultItem::query(const QString &sql,const list<QString> &param)
@@ -134,8 +138,9 @@ QString toResultItem::query(const QString &sql,const list<QString> &param)
     otl_column_desc *Description;
     otl_stream Query;
 
-    int MaxColNum=toTool::globalConfig(CONF_MAX_COL_NUM,DEFAULT_MAX_COL_NUM).toInt();
     int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
+
+    Query.set_all_column_types(otl_all_num2str|otl_all_date2str);
 
     Query.open(1,
 	       (const char *)sql,
@@ -146,13 +151,10 @@ QString toResultItem::query(const QString &sql,const list<QString> &param)
 
     Description=Query.describe_select(DescriptionLen);
 
-    if (DescriptionLen>MaxColNum)
-      toStatusMessage("Too many column in result, increase MAX_COL_SIZE");
-
     char buffer[MaxColSize+1];
     buffer[MaxColSize]=0;
 
-    for (int i=0;i<DescriptionLen;i++) {
+    for (int i=0;i<DescriptionLen&&!Query.eof();i++) {
       if (ReadableColumns) {
 	bool inWord=false;
 	char *name=Description[i].name;

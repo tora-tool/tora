@@ -84,9 +84,11 @@ QString toResultPlan::query(const QString &sql,
       map <QString,QListViewItem *> parents;
       map <QString,QListViewItem *> last;
       QListViewItem *lastTop=NULL;
-      otl_stream query(1,
-		       buffer,
-		       Connection.connection());
+      otl_stream query;
+      query.set_all_column_types(otl_all_num2str|otl_all_date2str);
+      query.open(1,
+		 buffer,
+		 Connection.connection());
       while(!query.eof()) {
 	char id[50];
 	char parentid[50];

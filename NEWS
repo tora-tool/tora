@@ -20,6 +20,10 @@
 2001-02-02: Minor change in largelogo.xpm.
 2001-02-02: Added static compile option (Not in configure, no one will
 		probably need this except me).
+2001-02-06: Installed new otl which makes patch unnecessary (Some fixes required
+		though)
+2001-02-06: Created splash screen while loading plugins.
+2001-02-06: Fixed bug in toResultItem regarding eof queries.
 
 0.4: Released 2001-01-27
 

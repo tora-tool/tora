@@ -32,6 +32,8 @@
 #include <qpushbutton.h>
 #include <qsizepolicy.h>
 #include <qpixmap.h>
+#include <qlabel.h>
+#include <qprogressbar.h>
 
 #include "toabout.h"
 
@@ -42,8 +44,8 @@
 #include "icons/largelogo.xpm"
 
 static const char *AboutText=
-"<IMG SRC=largelogo.xpm ALIGN=left><BR>
-Version %s
+"<IMG SRC=largelogo.xpm ALIGN=right><BR>
+<H1>TOra</H1>Version %s
 <P>
 &copy; 2000 copyright of GlobeCom AB
 (<A HREF=http://www.globecom.se>http://www.globecom.se/</a>).<P>
@@ -53,6 +55,7 @@ under the GNU Public License.<P>
 Uses the Qt library version 2.2 by TrollTech
 (<A HREF=http://www.troll.no>http://www.troll.no/</A>).<P>
 
+<HR BREAK=ALL>
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -108,6 +111,9 @@ especially since I rule.</H3>
 <H3>If you don't know where you are going you are never lost.</H3>
 <DIV ALIGN=RIGHT>Unknown
 <DIV ALIGN=LEFT>
+<H3>Hiroshima '45 Chernobyl '86 Windows '95</H3>
+<DIV ALIGN=RIGHT>Unknown
+<DIV ALIGN=LEFT>
 <H3>Jag spenderade mina pengar på sprit kvinnor och sång.<BR>
 Resten slösade jag bort.</H3>
 <DIV ALIGN=RIGHT>Unknown Swede
@@ -116,14 +122,37 @@ Resten slösade jag bort.</H3>
 
 #define ABOUT_CAPTION "TOra %s"
 
+static QPixmap *toLogoPixmap=NULL;
+
+void toAllocLogo(void)
+{
+  if (!toLogoPixmap) {
+    toLogoPixmap=new QPixmap((const char **)largelogo_xpm);
+    QMimeSourceFactory::defaultFactory()->setPixmap("largelogo.xpm",*toLogoPixmap);
+  }
+}
+
+toSplash::toSplash(QWidget *parent=0,const char *name=0,WFlags f=0,bool allowLines=TRUE)
+  : QVBox(parent,name,f,allowLines)
+{
+  toAllocLogo();
+
+  setBackgroundColor(white);
+  QLabel *logo=new QLabel(this,"Logo");
+  logo->setBackgroundColor(white);
+  logo->setPixmap(*toLogoPixmap);
+  Label=new QLabel("Loading plugins",this);
+  Label->setBackgroundColor(white);
+  Progress=new QProgressBar(this,"Progress");
+
+  QWidget *d=QApplication::desktop();
+  move((d->width()-width())/2,(d->height()-height())/2);
+}
+
 toAbout::toAbout(QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0)
   : QDialog(parent,name,modal,fl)
 {
-  static QPixmap *Logo=NULL;
-  if (!Logo) {
-    Logo=new QPixmap((const char **)largelogo_xpm);
-    QMimeSourceFactory::defaultFactory()->setPixmap("largelogo.xpm",*Logo);
-  }
+  toAllocLogo();
 
   TextView=new QTextView(this);
   TextView->setTextFormat(RichText);

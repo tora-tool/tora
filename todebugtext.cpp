@@ -159,15 +159,13 @@ bool toDebugText::readData(toConnection &conn,QListView *Stack)
 		     "   AND TYPE = :f3<char[31]>"
 		     " ORDER BY Type,Line",
 		     conn.connection());
-    otl_stream errors;
-    errors.set_column_type(1,otl_var_int);
-    errors.open(1,
-		"SELECT Line-1,Text FROM All_Errors"
-		" WHERE OWNER = :f1<char[31]>"
-		"   AND NAME = :f2<char[31]>"
-		"   AND TYPE = :f3<char[31]>"
-		" ORDER BY Type,Line",
-		conn.connection());
+    otl_stream errors(1,
+		      "SELECT Line-1,Text FROM All_Errors"
+		      " WHERE OWNER = :f1<char[31]>"
+		      "   AND NAME = :f2<char[31]>"
+		      "   AND TYPE = :f3<char[31]>"
+		      " ORDER BY Type,Line",
+		      conn.connection());
 
     map<int,QString> Errors;
 

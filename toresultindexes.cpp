@@ -80,19 +80,16 @@ QString toResultIndexes::query(const QString &sql,const list<QString> &param)
   clear();
 
   try {
-    otl_stream Query;
-    int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
-    Query.set_column_type(2,otl_var_char,MaxColSize);
-    Query.open(1,
-		"SELECT Owner,"
-	        "       Index_Name,"
-		"       Index_Type,"
-		"       Uniqueness"
-		"  FROM All_Indexes"
-		" WHERE Table_Owner = :f1<char[31]>"
-		"   AND Table_Name = :f2<char[31]>"
-	        " ORDER BY Index_Name",
-		Connection.connection());
+    otl_stream Query(1,
+		     "SELECT Owner,"
+		     "       Index_Name,"
+		     "       Index_Type,"
+		     "       Uniqueness"
+		     "  FROM All_Indexes"
+		     " WHERE Table_Owner = :f1<char[31]>"
+		     "   AND Table_Name = :f2<char[31]>"
+		     " ORDER BY Index_Name",
+		     Connection.connection());
 
     Description=Query.describe_select(DescriptionLen);
 
@@ -104,8 +101,8 @@ QString toResultIndexes::query(const QString &sql,const list<QString> &param)
       item=new QListViewItem(this,LastItem,NULL);
       LastItem=item;
 
-      char buffer[MaxColSize+1];
-      buffer[MaxColSize]=0;
+      char buffer[101];
+      buffer[100]=0;
       Query>>buffer;
       QString indexOwner(buffer);
       Query>>buffer;

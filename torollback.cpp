@@ -501,20 +501,17 @@ public:
 	item->setText(6,buffer);
       }
 
-      otl_stream rlb;
-      rlb.set_column_type(1,otl_var_double);
-      rlb.set_column_type(2,otl_var_double);
-      rlb.open(1,
-	       "select b.Extents,"
-	       "       b.CurExt+b.CurBlk/c.Blocks"
-	       "  from dba_rollback_segs a,v$rollstat b,dba_extents c"
-	       " where a.segment_id = b.usn"
-	       "   and a.owner = c.owner"
-	       "   and a.segment_name = c.segment_name"
-	       "   and c.segment_type = 'ROLLBACK'"
-	       "   and b.curext = c.extent_id"
-	       " order by a.segment_name",
-	       Connection.connection());
+      otl_stream rlb(1,
+		     "select b.Extents,"
+		     "       b.CurExt+b.CurBlk/c.Blocks"
+		     "  from dba_rollback_segs a,v$rollstat b,dba_extents c"
+		     " where a.segment_id = b.usn"
+		     "   and a.owner = c.owner"
+		     "   and a.segment_name = c.segment_name"
+		     "   and c.segment_type = 'ROLLBACK'"
+		     "   and b.curext = c.extent_id"
+		     " order by a.segment_name",
+		     Connection.connection());
 
       CurExt.clear();
       MaxExt.clear();

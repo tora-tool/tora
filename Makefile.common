@@ -23,7 +23,7 @@ default: all
 
 include $(ORACLE_HOME)/rdbms/lib/env_rdbms.mk
 
-DEFINES+=-DOTL_ORA8I -DOTL_FORCE_CHAR -D_REENTRANT -DDEFAULT_PLUGIN_DIR=\"$(INSTALLLIB)/tora\"
+DEFINES+=-DOTL_ORA8I -D_REENTRANT -DDEFAULT_PLUGIN_DIR=\"$(INSTALLLIB)/tora\"
 CPPFLAGS_GLOB=
 
 ARCH=$(shell uname)
@@ -66,7 +66,7 @@ include $(DEPENDS)
 	$(UIC) -i $(<:%.ui=%.h) -o $@ $<
 
 plugins/%.so:
-	@echo Linking plugin $<
+	@echo Linking plugin $@
 	if [ ! -d plugins ] ; then mkdir plugins ; fi
 	$(CC) -shared $(CFLAGS) -o $@ $^
 
@@ -107,3 +107,4 @@ distclean: clean
 	-cp Makefile.setup.orig Makefile.setup 2>&1 >/dev/null
 	-mv Makefile Makefile.orig 2>&1 >/dev/null
 	-rm LICENSE.h
+	-rm configure.setup

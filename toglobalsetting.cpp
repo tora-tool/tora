@@ -54,22 +54,6 @@ toGlobalSettings::toGlobalSettings( QWidget* parent,  const char* name, bool mod
     setName( "toGlobalSettings" );
   setCaption( tr( "Global settings"  ) );
 
-  if (!toMonolithic()) {
-    GroupBox7 = new QGroupBox( this, "GroupBox5" );
-    GroupBox7->setGeometry( QRect( 10, 195, 380, 60 ) ); 
-    GroupBox7->setTitle( tr( "Plugin directory"  ) );
-
-    PluginDirectory = new QLineEdit( GroupBox7, "PluginDirectory" );
-    PluginDirectory->setGeometry( QRect( 10, 20, 270, 23 ) ); 
-    PluginDirectory->setText(toTool::globalConfig(CONF_PLUGIN_DIR,
-						  DEFAULT_PLUGIN_DIR));
-
-    SelectDir = new QPushButton( GroupBox7, "FileChoose" );
-    SelectDir->setGeometry( QRect( 290, 14, 80, 32 ) ); 
-    SelectDir->setText( tr( "&Browse"  ) );
-    connect(SelectDir,SIGNAL(clicked(void)),this,SLOT(chooseFile(void)));
-  }
-
   GroupBox5 = new QGroupBox( this, "GroupBox5" );
   GroupBox5->setGeometry( QRect( 10, 265, 380, 135 ) ); 
   GroupBox5->setTitle( tr( "Database settings"  ) );
@@ -208,11 +192,33 @@ toGlobalSettings::toGlobalSettings( QWidget* parent,  const char* name, bool mod
   label->setBuddy(StyleList);
 #endif
 
+  if (!toMonolithic()) {
+    GroupBox7 = new QGroupBox( this, "GroupBox5" );
+    GroupBox7->setGeometry( QRect( 10, 195, 380, 60 ) ); 
+    GroupBox7->setTitle( tr( "Plugin directory"  ) );
+
+    PluginDirectory = new QLineEdit( GroupBox7, "PluginDirectory" );
+    PluginDirectory->setGeometry( QRect( 10, 20, 270, 23 ) ); 
+    PluginDirectory->setText(toTool::globalConfig(CONF_PLUGIN_DIR,
+						  DEFAULT_PLUGIN_DIR));
+
+    SelectDir = new QPushButton( GroupBox7, "FileChoose" );
+    SelectDir->setGeometry( QRect( 290, 14, 80, 32 ) ); 
+    SelectDir->setText( tr( "&Browse"  ) );
+    connect(SelectDir,SIGNAL(clicked(void)),this,SLOT(chooseFile(void)));
+  }
+
   // tab order
   setTabOrder( MaxNumber, MaxColSize );
   setTabOrder( MaxColSize, MaxColDisp );
   setTabOrder( MaxColDisp, MaxColNum );
-  setTabOrder( MaxColNum, PlanTable );
+  if (toMonolithic())
+    setTabOrder( MaxColNum, PlanTable );
+  else {
+    setTabOrder( MaxColNum, PluginDirectory );
+    setTabOrder( PluginDirectory, SelectDir );
+    setTabOrder( SelectDir, PlanTable );
+  }
   setTabOrder( PlanTable, PlanCheckpoint );
   setTabOrder( PlanCheckpoint, DefaultDate );
   setTabOrder( DefaultDate, SavePassword );

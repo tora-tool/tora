@@ -25,6 +25,7 @@
  *
  ****************************************************************************/
 
+#include <unistd.h>
 
 #include <qapplication.h>
 
@@ -37,7 +38,11 @@
 
 #ifndef MONOLITHIC
 #include <dlfcn.h>
+
 #include <qdir.h>
+#include <qfileinfo.h>
+#include <qlabel.h>
+#include <qprogressbar.h>
 #endif
 
 bool toMonolithic(void)
@@ -62,12 +67,19 @@ int main(int argc,char **argv)
 
 #ifndef TOMONOLITHIC
     {
+      toSplash splash(NULL,"About TOra",false);
+      splash.show();
       list<QString> failed;
       QString dirPath=toTool::globalConfig(CONF_PLUGIN_DIR,DEFAULT_PLUGIN_DIR);
       QDir d(dirPath,"*.so",QDir::Name,QDir::Files);
       for (unsigned int i=0;i<d.count();i++) {
 	failed.insert(failed.end(),d.filePath(d[i]));
       }
+      QProgressBar *progress=splash.progress();
+      QLabel *label=splash.label();
+      progress->setTotalSteps(failed.size());
+      progress->setProgress(1);
+      mainApp.processEvents();
       bool success;
       do {
 	success=false;
@@ -76,8 +88,15 @@ int main(int argc,char **argv)
 	for(list<QString>::iterator i=current.begin();i!=current.end();i++) {
 	  if (!dlopen(*i,RTLD_LAZY|RTLD_GLOBAL)) {
 	    failed.insert(failed.end(),*i);
-	  } else
+	  } else {
 	    success=true;
+	    progress->setProgress(progress->progress()+1);
+	    QString str("Loaded plugin ");
+	    QFileInfo file(*i);
+	    str+=file.fileName();
+	    label->setText(str);
+	    mainApp.processEvents();
+	  }
 	}
       } while(failed.begin()!=failed.end()&&success);
       for(list<QString>::iterator i=failed.begin();i!=failed.end();i++)

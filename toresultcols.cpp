@@ -38,25 +38,23 @@ public:
   {
     toResultCols *view=dynamic_cast<toResultCols *>(listView());
     try {
-      otl_stream ColInfo;
-      for (int i=0;i<10;i++)
-	ColInfo.set_column_type(i+1,otl_var_char,4001);
-      ColInfo.open(1,
-		   "SELECT Data_Default,"
-		   "       Num_Distinct,"
-		   "       Low_Value,"
-		   "       High_Value,"
-		   "       Density,"
-		   "       Num_Nulls,"
-		   "       Num_Buckets,"
-		   "       Last_Analyzed,"
-		   "       Sample_Size,"
-		   "       Avg_Col_Len"
-		   "  FROM All_Tab_Columns"
-		   " WHERE Owner = :f1<char[31]>"
-		   "   AND Table_Name = :f2<char[31]>"
-		   "   AND Column_Name = :f3<char[31]>",
-		   view->Connection.connection());
+      otl_stream ColInfo(1,
+			 "SELECT Data_Default,"
+			 "       Num_Distinct,"
+			 "       Low_Value,"
+			 "       High_Value,"
+			 "       Density,"
+			 "       Num_Nulls,"
+			 "       Num_Buckets,"
+			 "       Last_Analyzed,"
+			 "       Sample_Size,"
+			 "       Avg_Col_Len"
+			 "  FROM All_Tab_Columns"
+			 " WHERE Owner = :f1<char[31]>"
+			 "   AND Table_Name = :f2<char[31]>"
+			 "   AND Column_Name = :f3<char[31]>",
+			 view->Connection.connection());
+      ColInfo.set_all_column_types(otl_all_num2str|otl_all_date2str);
       ColInfo<<(const char *)text(10)<<(const char *)text(11)<<(const char *)text(0);
       char buffer[4001];
       QString result("<B>");

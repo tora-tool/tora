@@ -44,11 +44,9 @@ toResultStats::toResultStats(toConnection &conn,QWidget *parent,
   : toResultView(false,false,conn,parent,name)
 {
   try {
-    otl_stream str;
-    str.set_column_type(1,otl_var_int);
-    str.open(1,
-	     "SELECT MIN(SID) FROM V$MYSTAT",
-	     Connection.connection());
+    otl_stream str(1,
+		   "SELECT MIN(SID) FROM V$MYSTAT",
+		   Connection.connection());
     str>>SessionID;
   } catch (otl_exc &exc) {
     SessionID=-1;
@@ -72,12 +70,9 @@ void toResultStats::setup(void)
 void toResultStats::resetStats(void)
 {
   try {
-    otl_stream str;
-    str.set_column_type(1,otl_var_int);
-    str.set_column_type(2,otl_var_double);
-    str.open(1,
-	     "SELECT Statistic#,Value FROM V$SesStat WHERE SID = :f1<int>",
-	     Connection.connection());
+    otl_stream str(1,
+		   "SELECT Statistic#,Value FROM V$SesStat WHERE SID = :f1<int>",
+		   Connection.connection());
     str<<SessionID;
     while(!str.eof()) {
       int id;
@@ -105,15 +100,12 @@ void toResultStats::refreshStats(void)
 {
   try {
     clear();
-    otl_stream str;
-    str.set_column_type(2,otl_var_int);
-    str.set_column_type(3,otl_var_double);
-    str.open(1,
-	     "SELECT b.Name,a.Statistic#,a.Value"
-	     "  FROM V$SesStat a,V$StatName b"
-	     " WHERE a.SID = :f1<int> AND a.Statistic# = b.Statistic#"
-	     " ORDER BY UPPER(b.Name) Desc",
-	     Connection.connection());
+    otl_stream str(1,
+		   "SELECT b.Name,a.Statistic#,a.Value"
+		   "  FROM V$SesStat a,V$StatName b"
+		   " WHERE a.SID = :f1<int> AND a.Statistic# = b.Statistic#"
+		   " ORDER BY UPPER(b.Name) Desc",
+		   Connection.connection());
     str<<SessionID;
     while(!str.eof()) {
       int id;
