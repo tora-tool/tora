@@ -1382,6 +1382,7 @@ void toMain::importData(std::map<QCString,QString> &data,const QCString &prefix)
 		  data[prefix+":Y"].toInt(),
 		  width,
 		  data[prefix+":Height"].toInt());
+    showNormal();
   }
 
   std::map<int,toConnection *> connMap;

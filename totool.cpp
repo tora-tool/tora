@@ -129,12 +129,11 @@ void toToolWidget::exportData(std::map<QCString,QString> &data,const QCString &p
     data[prefix+":State"]=QString::fromLatin1("Maximized");
   else if (isMinimized())
     data[prefix+":State"]=QString::fromLatin1("Minimized");
-  else {
-    data[prefix+":X"]=QString::number(par->x());
-    data[prefix+":Y"]=QString::number(par->y());
-    data[prefix+":Width"]=QString::number(par->width());
-    data[prefix+":Height"]=QString::number(par->height());
-  }
+
+  data[prefix+":X"]=QString::number(par->x());
+  data[prefix+":Y"]=QString::number(par->y());
+  data[prefix+":Width"]=QString::number(par->width());
+  data[prefix+":Height"]=QString::number(par->height());
 }
 
 void toToolWidget::importData(std::map<QCString,QString> &data,const QCString &prefix)
@@ -142,17 +141,17 @@ void toToolWidget::importData(std::map<QCString,QString> &data,const QCString &p
   QWidget *par=parentWidget();
   if (!par)
     par=this;
-  if (data[prefix+":State"]==QString::fromLatin1("Maximized"))
-    showMaximized();
-  else if (data[prefix+":State"]==QString::fromLatin1("Minimized"))
-    showMinimized();
-  else {
-    par->showNormal();
+  if(data[prefix+":Width"].toInt()>0)
     par->setGeometry(data[prefix+":X"].toInt(),
 		     data[prefix+":Y"].toInt(),
 		     data[prefix+":Width"].toInt(),
 		     data[prefix+":Height"].toInt());
-  }
+  if (data[prefix+":State"]==QString::fromLatin1("Maximized"))
+    showMaximized();
+  else if (data[prefix+":State"]==QString::fromLatin1("Minimized"))
+    showMinimized();
+  else
+    par->showNormal();
 }
 
 std::map<QCString,toTool *> *toTool::Tools;

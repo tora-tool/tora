@@ -1,5 +1,6 @@
 1.3.11:
 
+2003-07-28: Fixed problem with restoring window sizes on session restore.
 2003-07-28: Added tooltips of piecharts.
 2003-07-28: Added toolbutton for explain plan in worksheet.
 2003-07-28: Fixed problem with SQL not being updated on some queries on connectionchange.
