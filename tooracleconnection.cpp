@@ -72,9 +72,10 @@ static toSQL SQLComment("toOracleConnection:Comments",
 			"Display column comments");
 
 static toSQL SQLMembers("toOracleConnection:Members",
-			"SELECT object_name,argument_name FROM sys.All_Arguments\n"
+			"SELECT object_name,overload,argument_name FROM sys.All_Arguments\n"
 			" WHERE Owner = :f1<char[100]>\n"
-			"   AND Package_Name = :f2<char[100]>",
+			"   AND Package_Name = :f2<char[100]>\n"
+			" ORDER BY object_name,overload,sequence",
 			"Get list of package members");
 
 static toSQL SQLListObjects("toOracleConnection:ListObjects",
@@ -467,17 +468,20 @@ public:
 	  desc.Datatype="MEMBER";
 	  desc.Null=false;
 	  QString lastName;
+	  QString lastOver;
 	  toQuery member(connection(),SQLMembers,table.Owner,table.Name);
 	  while(!member.eof()) {
 	    QString name = member.readValue();
+	    QString overload = member.readValue();
 	    QString arg = member.readValueNull();
-	    if (lastName!=name) {
+	    if (lastName!=name||overload!=lastOver) {
 	      if (desc.Name.contains("("))
 		desc.Name+=")";
 	      if (!desc.Name.isEmpty())
 		ret.insert(ret.end(),desc);
 	      desc.Name=name;
 	      lastName=name;
+	      lastOver=overload;
 	      if (!arg.isEmpty())
 		desc.Name+=" (";
 	    } else

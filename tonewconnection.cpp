@@ -135,26 +135,31 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
 
 void toNewConnection::changeProvider(void)
 {
-  std::list<QString> hosts=toConnectionProvider::hosts(Provider->currentText());
-  QString current=Host->currentText();
+  try {
+    std::list<QString> hosts=toConnectionProvider::hosts(Provider->currentText());
+    QString current=Host->currentText();
 
-  Host->clear();
-  bool sqlNet=false;
-  for(std::list<QString>::iterator i=hosts.begin();i!=hosts.end();i++) {
-    if ((*i).isEmpty())
-      sqlNet=true;
-    Host->insertItem(*i);
+    Host->clear();
+    bool sqlNet=false;
+    for(std::list<QString>::iterator i=hosts.begin();i!=hosts.end();i++) {
+      if ((*i).isEmpty())
+	sqlNet=true;
+      Host->insertItem(*i);
+    }
+    if (sqlNet) {
+      HostLabel->hide();
+      Host->hide();
+      SqlNet->show();
+    } else {
+      HostLabel->show();
+      Host->show();
+      SqlNet->hide();
+    }
+    Host->lineEdit()->setText(current);
+  } catch (const QString &str) {
+    Host->clear();
+    toStatusMessage(str);
   }
-  if (sqlNet) {
-    HostLabel->hide();
-    Host->hide();
-    SqlNet->show();
-  } else {
-    HostLabel->show();
-    Host->show();
-    SqlNet->hide();
-  }
-  Host->lineEdit()->setText(current);
 }
 
 void toNewConnection::changeHost(void)
@@ -164,16 +169,21 @@ void toNewConnection::changeHost(void)
     host=Host->currentText();
   else
     host=(SqlNet->isChecked()?QString("SQL*Net"):QString::null);
-  std::list<QString> databases=toConnectionProvider::databases(Provider->currentText(),
-							       host,
-							       Username->text(),
-							       Password->text());
-  QString current=Database->currentText();
+  try {
+    std::list<QString> databases=toConnectionProvider::databases(Provider->currentText(),
+								 host,
+								 Username->text(),
+								 Password->text());
+    QString current=Database->currentText();
 
-  Database->clear();
-  for(std::list<QString>::iterator i=databases.begin();i!=databases.end();i++)
-    Database->insertItem(*i);
-  Database->lineEdit()->setText(current);
+    Database->clear();
+    for(std::list<QString>::iterator i=databases.begin();i!=databases.end();i++)
+      Database->insertItem(*i);
+    Database->lineEdit()->setText(current);
+  } catch (const QString &str) {
+    Database->clear();
+    toStatusMessage(str);
+  } 
 }
 
 toConnection *toNewConnection::makeConnection(void)

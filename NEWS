@@ -57,6 +57,9 @@
 2001-11-28: Commented out OCIReset (Doesn't work with Oracle 8.0).
 2001-11-29: Fixes for bourn shell in configure.
 2001-11-29: Changes to toConnectionProvider to be able to provide several providers.
+2001-11-29: Redrew the clock icons.
+2001-11-29: Fixed problem with exceptions in provider being thrown.
+2001-11-29: Fixed completion with overloaded functions.
 
 1.1.5: Released 2001-11-26
 

@@ -40,17 +40,32 @@
 class toResultItem;
 class toResultLong;
 class toHighlightedText;
+class QComboBox;
+class QSpinBox;
+class QToolButton;
+class toProfilerUnits;
+class QLineEdit;
 
 class toProfiler : public toToolWidget {
   Q_OBJECT
 
+  int CurrentRun;
+
+  QToolButton *Background;
+  QSpinBox *Repeat;
+  QLineEdit *Comment;
+
   QComboBox *Run;
   toResultItem *Info;
-  toResultLong *Units;
+  toProfilerUnits *Units;
   toResultLong *Lines;
   toHighlightedText *Script;
 public:
   toProfiler(QWidget *parent,toConnection &connection);
+public slots:
+  void refresh(void);
+  void changeRun(void); 
+  void execute(void);
 };
 
 #endif
