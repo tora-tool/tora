@@ -59,7 +59,7 @@
 static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "Version %1\n"
 "<P>\n"
-"&copy; 2000 copyright of GlobeCom AB\n"
+"&copy; 2000-2001,2001 copyright of GlobeCom AB\n"
 "(<A HREF=http://www.globecom.se>http://www.globecom.se/</a>).<P>\n"
 "Written by Henrik Johnson.<P>\n"
 "This program is available\n"
