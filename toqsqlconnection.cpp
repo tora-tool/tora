@@ -527,18 +527,21 @@ public:
 
     virtual QString version(toConnectionSub *sub)
     {
-      qSqlSub *conn=qSqlConv(sub);
-
-      conn->Lock.down();
-      QSqlQuery query=conn->Connection->exec(toSQL::string(SQLVersion,connection()));
       QString ret;
-      if (query.isValid()) {
-	if (query.next()) {
-	  QSqlRecord record=conn->Connection->record(query);
-	  ret=query.value(record.count()-1).toString();
+      try {
+	qSqlSub *conn=qSqlConv(sub);
+
+	conn->Lock.down();
+	QSqlQuery query=conn->Connection->exec(toSQL::string(SQLVersion,connection()));
+	if (query.isValid()) {
+	  if (query.next()) {
+	    QSqlRecord record=conn->Connection->record(query);
+	    ret=query.value(record.count()-1).toString();
+	  }
 	}
+	conn->Lock.up();
+      } catch(...) {
       }
-      conn->Lock.up();
       return ret;
     }
 
