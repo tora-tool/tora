@@ -1046,6 +1046,9 @@ __TEMP__
     $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/plsql/public");
     $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/rdbms/public");
     $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/network/public");
+    if ( $ENV{C_INCLUDE_PATH} ) {
+      $Includes=&addInclude($Includes,$ENV{C_INCLUDE_PATH});
+    }
     $Includes=&addInclude($Includes,$QtInclude);
 
     if (!$ForceTarget) {
@@ -1375,10 +1378,6 @@ __EOT__
 	}
 	print MAKEFILE "\t".join(".cpp \\\n\t",sort @allsource).
 	    ".cpp\n\ndefault: all\n";
-
-	if ($OracleFound) {
-	    print MAKEFILE "include \$(ORACLE_HOME)/rdbms/lib/env_rdbms.mk\n";
-	}
 
 	print MAKEFILE "\nTRANSLATIONS=\\\n";
 	for my $t (@translations) {
