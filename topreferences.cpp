@@ -123,11 +123,15 @@ toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags 
   TabSelection->setCurrentItem(0);
 
   map<QString,toTool *> tools=toTool::tools();
-  for (map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
+  map<QString,toTool *> newSort;
+  for (map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++)
+    newSort[(*i).second->name()]=(*i).second;
+
+  for (map<QString,toTool *>::iterator i=newSort.begin();i!=newSort.end();i++) {
     QWidget *tab=(*i).second->configurationTab(this);
     if (tab) {
       QString str(" ");
-      str.append((*i).second->name());
+      str.append((*i).first);
       addWidget(new QListBoxText(TabSelection,str),tab);
     }
   }

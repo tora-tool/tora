@@ -21,6 +21,7 @@
 2001-05-28: Use KHTML if KDE as help viewer.
 2001-05-28: Collapsed TORA10 branch (Everything done do far should be in 1.0).
 2001-05-29: Some layout changes to global settings.
+2001-05-29: Sort tool tabs in alphabetic order in settings.
 
 0.10: Released 2001-05-25
 
