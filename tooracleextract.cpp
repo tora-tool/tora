@@ -6910,6 +6910,7 @@ QString toOracleExtract::migrateRole(toExtract &ext,
   for(std::list<QString>::iterator i=create.begin();i!=create.end();i++) {
     std::list<QString> ctx=toExtract::splitDescribe(*i);
     QString owner=toShift(ctx);
+    
   }
   return ret;
 }
