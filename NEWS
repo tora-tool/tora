@@ -3,6 +3,8 @@
 2001-07-12: Added check for Oracle Client in windows installer.
 2001-07-12: Removed the index.html file.
 2001-07-12: Fixed update problem with statistics in worksheet.
+2001-07-12: Added 3 more quotes (Only really criticall fixes now, eh?).
+2001-07-12: Fixed a workaround for the Qt layout bug on maximized windows.
 
 0.13: Released 2001-07-11
 
