@@ -149,7 +149,10 @@ void toEditExtensions::autoIndentBlock(void)
   if (Current) {
     int line1,col1,line2,col2;
     if (Current->getMarkedRegion(&line1,&col1,&line2,&col2)) {
-      QString ind=toSQLParse::indentString(col1);
+      QString t=Current->textLine(line1).mid(0,col1);
+      t+="a";
+      int chars=0;
+      QString ind=toSQLParse::indentString(toSQLParse::countIndent(t,chars));
       QString mrk=Current->markedText();
       QString res=toSQLParse::indent(ind+mrk);
       res=res.mid(ind.length()); // Strip indent.

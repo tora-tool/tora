@@ -83,6 +83,24 @@ void printStatement(toSQLParse::statement &stat,int level)
 
 int main(int argc,char **argv) {
   QString res="
+    /* A little comment
+     */
+    SELECT /*+
+FULL(a)
+*/ a.TskCod TskCod -- Test comment
+      ,a.CreEdt CreEdt,
+       a.TspActOprID /* One comment OprID */ , -- Another comment
+       COUNT(1) Tot,
+       COUNT(a.TspActOprID) Lft,
+       b.TraCod TraCod,
+       SUM(b.FinAmt) FinAmt,
+       TraCod
+  FROM EssTsk a,EssTra b
+ WHERE DECODE(a.TspActOprID, --Hello?
+NULL,NULL,a.PrsID /* Dobedoo? */ )+5 = b.PrsID(+)
+   AND DECODE(a.TspActOprID,NULL,NULL,a.TskID) = b.TskID(+)
+ GROUP BY a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod
+HAVING COUNT(a.TspActOprID) > 0;
 -- Another comment
 
 CREATE OR REPLACE procedure spTuxGetAccData (oRet                        OUT  NUMBER,
@@ -138,24 +156,6 @@ select a.TskCod TskCod,
  where decode(a.TspActOprID,NULL,NULL,a.PrsID)+5 = b.PrsID(+)
  group by a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod
 having count(a.TspActOprID) > 0;
-/* A little comment
- */
-SELECT /*+
-FULL(a)
-*/ a.TskCod TskCod -- Test comment
-      ,a.CreEdt CreEdt,
-       a.TspActOprID /* One comment OprID */ , -- Another comment
-       COUNT(1) Tot,
-       COUNT(a.TspActOprID) Lft,
-       b.TraCod TraCod,
-       SUM(b.FinAmt) FinAmt,
-       TraCod
-  FROM EssTsk a,EssTra b
- WHERE DECODE(a.TspActOprID, --Hello?
-NULL,NULL,a.PrsID /* Dobedoo? */ )+5 = b.PrsID(+)
-   AND DECODE(a.TspActOprID,NULL,NULL,a.TskID) = b.TskID(+)
- GROUP BY a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod
-HAVING COUNT(a.TspActOprID) > 0;
 
 CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)
 AS
@@ -918,6 +918,8 @@ QString toSQLParse::indentStatement(statement &stat,int level)
     if (stat.Type==statement::Statement) {
       ret+=IndentComment(Settings.CommentColumn,current,comment,true);
       comment=QString::null;
+      if (Settings.EndBlockNewline&&level==0)
+	ret+="\n";
     } else if (!comment.isEmpty()) {
       ret+=IndentComment(Settings.CommentColumn,current,comment,true);
       comment=QString::null;

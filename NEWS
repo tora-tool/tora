@@ -1,4 +1,4 @@
-1.3.0: Released 2001-12-13
+1.3.0: Released 2001-12-14
 
 2001-11-06: Some minor API changes to the editwidget interface.
 2001-11-06: Fixed a really ugly toThread bug in linux & windows.
@@ -164,6 +164,7 @@
 2001-12-13: Don't log Abort Execution error in worksheet.
 2001-12-13: Don't forget to display linking in custom plugins in configure.
 2001-12-13: Fixed building static oracle on Oracle9.
+2001-12-13: Fix to indent block.
 
 1.1.5: Released 2001-11-26
 
