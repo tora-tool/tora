@@ -200,7 +200,8 @@ void toCurrent::refresh()
     QListViewItem *item;
     item=new toResultViewItem(Grants,NULL);
     item->setText(0,toShift(result));
-    item->setText(1,toShift(result));
+    item->setText(1,"Role");
+    item->setText(2,toShift(result));
     addRole(item);
   }
 }
