@@ -17,6 +17,7 @@
 2001-03-05: Added option to ignore desktop settings (Don't work with
 	KDE for me).
 2001-03-07: There now are 3 spec files for mdk, others and static (RedHat)
+2001-03-07: Removed build reqs part (libqt2-devel/qt2-devel controversy)
 
 0.6: Released 2001-02-23
 

@@ -11,7 +11,6 @@ Source0: %{name}-%{version}.tar.bz2
 Copyright: GPL
 BuildRoot: %{_tmppath}/tora-root
 Group: %{group}
-BuildRequires: qt-devel >= 2
 
 %Description
 Tool for Oracle (Tora) is a tool for DBAs and database software developers.
