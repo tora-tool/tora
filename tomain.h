@@ -611,6 +611,18 @@ template <class T> void toPush(std::list<T> &lst,const T &str)
   lst.push_back(str);
 }
 
+/** Find if an item exists in a list.
+ * @param lst List to search for value.
+ * @param str Object to search for.
+ */
+template <class T> std::list<T>::iterator toFind(std::list<T> &lst,const T &str)
+{
+  for(std::list<T>::iterator i=lst.begin();i!=lst.end();i++)
+    if (*i==str)
+      return i;
+  return lst.end();
+}
+
 /** Convert a string representation to a font structure.
  * @param str String representing the font.
  * @return Font structure represented by the string.

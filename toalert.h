@@ -37,7 +37,10 @@
 #ifndef __TOALERT_H
 #define __TOALERT_H
 
+#include <list>
+
 #include "totool.h"
+#include "tothread.h"
 
 class toListView;
 class QLineEdit;
@@ -46,18 +49,49 @@ class QComboBox;
 class toAlert : public toToolWidget {
   Q_OBJECT
 
+  class pollTask : public toTask {
+    toAlert &Parent;
+  public:
+    pollTask(toAlert &parent)
+      : Parent(parent)
+    { }
+    virtual void run(void);
+  };
+
   toListView *Alerts;
   QComboBox *Registered;
   QLineEdit *Name;
   QLineEdit *Message;
   QTimer Timer;
+  toConnection Connection;
+  toConnection *SendConnection;
+
+  toLock Lock;
+  std::list<QString> AddNames;
+  std::list<QString> DelNames;
+  std::list<QString> Names;
+
+  std::list<QString> NewAlerts;
+  std::list<QString> NewMessages;
+
+  std::list<QString> SendAlerts;
+  std::list<QString> SendMessages;
+
+  enum {
+    Started,
+    Quit,
+    Done
+  } State;
 public:
   toAlert(QWidget *parent,toConnection &connection);
   virtual ~toAlert();
+
+  friend class pollTask;
 public slots:
   virtual void poll(void);
   virtual void send(void);
   virtual void memo(void);
+  virtual void changeMessage(int,int,const QString &str);
   virtual void add(void);
   virtual void remove(void);
 };
