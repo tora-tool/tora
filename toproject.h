@@ -41,16 +41,21 @@
 
 class toProjectTemplateItem : public toTemplateItem {
   QString Filename;
+  int Order;
   void setup(const QString &name,bool open);
+  int order(bool asc);
 public:
-  toProjectTemplateItem(toTemplateItem *item,QString name,bool open=true);
+  toProjectTemplateItem(toTemplateItem *item,QListViewItem *after,QString name,bool open=true);
   toProjectTemplateItem(QListView *item,QString name=QString::null,bool open=true);
+
+  virtual QString key(int col,bool asc) const;
 
   const QString &filename(void) const
   { return Filename; }
   void setFilename(const QString &file);
   bool project(void);
   virtual void selected(void);
+  toProjectTemplateItem *previousSibling(void);
 
   virtual QWidget *selectedWidget(QWidget *parent);
 };
@@ -77,6 +82,8 @@ public slots:
   void saveProject(void);
   void generateSQL(void);
   void selectionChanged(void);
+  void moveDown(void);
+  void moveUp(void);
 };
 
 class toProjectTemplate : public QObject, public toTemplateProvider {
@@ -108,7 +115,7 @@ public:
   friend class toProject;
 public slots:
   void addFile();
-  void delFile(); 
+  void delFile();
   void changeItem(QListViewItem *item);
 };
 

@@ -383,7 +383,6 @@ toMain::toMain()
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 #endif
 
-
   ConnectionToolbar=toAllocBar(this,"Connections",QString::null);
   new QToolButton(QPixmap((const char **)connect_xpm),
 		  "Connect to database",

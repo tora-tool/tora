@@ -55,6 +55,8 @@
 #include "icons/new.xpm"
 #include "icons/sql.xpm"
 #include "icons/trash.xpm"
+#include "icons/up.xpm"
+#include "icons/down.xpm"
 
 static toProjectTemplate ProjectTemplate;
 
@@ -75,13 +77,15 @@ bool toProjectTemplateItem::project(void)
 
 void toProjectTemplateItem::setup(const QString &name,bool open)
 {
+  Order=-1;
   setFilename(name);
   if (project()&&!Filename.isEmpty()&&open) {
     try {
       QString data=QString::fromUtf8(toReadFile(Filename));
       QStringList files=QStringList::split(QRegExp("\n"),data);
+      toProjectTemplateItem *last=NULL;
       for(unsigned int i=0;i<files.count();i++)
-	new toProjectTemplateItem(this,files[i]);
+	last=new toProjectTemplateItem(this,last,files[i]);
     } catch(const QString &exc) {
       toStatusMessage(exc);
     }
@@ -102,8 +106,10 @@ void toProjectTemplateItem::setFilename(const QString &name)
   Filename=name;
 }
 
-toProjectTemplateItem::toProjectTemplateItem(toTemplateItem *item,QString name,bool open)
-  : toTemplateItem(item,QString::null)
+toProjectTemplateItem::toProjectTemplateItem(toTemplateItem *item,
+					     QListViewItem *after,
+					     QString name,bool open)
+  : toTemplateItem(item,QString::null,after)
 {
   setup(name,open);
 }
@@ -112,6 +118,53 @@ toProjectTemplateItem::toProjectTemplateItem(QListView *item,QString name,bool o
   : toTemplateItem(ProjectTemplate,item,"SQL Project")
 {
   setup(name,open);
+}
+
+int toProjectTemplateItem::order(bool asc)
+{
+  if(asc) {
+    toProjectTemplateItem *item=previousSibling();
+    if (item) {
+      int attemptOrder=item->Order+1;
+      if (attemptOrder!=Order)
+	Order=item->order(asc)+1;
+    } else
+      Order=1;
+  } else {
+    toProjectTemplateItem *item=dynamic_cast<toProjectTemplateItem *>(nextSibling());
+    if (item) {
+      int attemptOrder=item->Order+1;
+      if (attemptOrder!=Order)
+	Order=item->order(asc)+1;
+    } else
+      Order=1;
+  }
+  return Order;
+}
+
+toProjectTemplateItem *toProjectTemplateItem::previousSibling()
+{
+  QListViewItem *item=itemAbove();
+  if (!item)
+    return NULL;
+  if (item==parent())
+    return NULL;
+  while (item&&item->parent()!=parent())
+    item=item->parent();
+  return dynamic_cast<toProjectTemplateItem *>(item);
+}
+
+// Here be dragons! Basically all the order stuff will retain whatever order the
+// items were created in.
+
+QString toProjectTemplateItem::key(int col,bool asc) const
+{
+  if (!parent())
+    return text(col);
+  int no=((toProjectTemplateItem *)this)->order(asc);
+  QString ret;
+  ret.sprintf("%010d",no);
+  return ret;
 }
 
 void toProjectTemplateItem::selected(void)
@@ -205,17 +258,18 @@ void toProjectTemplate::insertItems(QListView *parent,QToolBar *toolbar)
   std::map<QString,QString>::iterator i;
   std::map<int,toProjectTemplateItem *> itemMap;
 
+  toProjectTemplateItem *last=NULL;
+
   while((i=Import.find("Items:"+QString::number(id)+":Parent"))!=Import.end()) {
     QString nam="Items:"+QString::number(id)+":";
     int parent=(*i).second.toInt();
-    toProjectTemplateItem *item;
     if (parent)
-      item=new toProjectTemplateItem(itemMap[parent],Import[nam+"0"],false);
+      last=new toProjectTemplateItem(itemMap[parent],last,Import[nam+"0"],false);
     else
-      item=new toProjectTemplateItem(Root,Import[nam+"0"],false);
+      last=new toProjectTemplateItem(Root,last,Import[nam+"0"],false);
     if (!Import[nam+"Open"].isEmpty())
-      item->setOpen(true);
-    itemMap[id]=item;
+      last->setOpen(true);
+    itemMap[id]=last;
     id++;
   }
 
@@ -256,12 +310,15 @@ void toProjectTemplate::addFile(void)
     toProjectTemplateItem *item=dynamic_cast<toProjectTemplateItem *>(view->currentItem());
     if (item) {
       item->setOpen(true);
+      QListViewItem *last=item->firstChild();
+      while(last&&last->nextSibling())
+	last=last->nextSibling();
       if (item->project())
-	new toProjectTemplateItem(item,file);
+	new toProjectTemplateItem(item,last,file);
       else {
 	item=dynamic_cast<toProjectTemplateItem *>(item->parent());
 	if (item)
-	  new toProjectTemplateItem(item,file);
+	  new toProjectTemplateItem(item,last,file);
       }
     }
     if (Details)
@@ -336,6 +393,17 @@ toProject::toProject(toProjectTemplateItem *top,QWidget *parent)
 		  "Generate SQL for this project",
 		  this,SLOT(generateSQL()),
 		  toolbar);
+  toolbar->addSeparator();
+  new QToolButton(QPixmap((const char **)up_xpm),
+		  "Move up in project",
+		  "Move up in project",
+		  this,SLOT(moveUp()),
+		  toolbar);
+  new QToolButton(QPixmap((const char **)down_xpm),
+		  "Move down in project",
+		  "Move down in project",
+		  this,SLOT(moveDown()),
+		  toolbar);
   toolbar->setStretchableWidget(new QLabel(toolbar));
   Project=new toListView(this);
   Project->addColumn("File");
@@ -378,16 +446,54 @@ void toProject::delFile(void)
   ProjectTemplate.delFile();
 }
 
+void toProject::moveDown(void)
+{
+  QListViewItem *item=Project->selectedItem();
+  if (item) {
+    toProjectTemplateItem *oi=ItemMap[item];
+    if (oi) {
+      QListViewItem *item=oi->nextSibling();
+      QListViewItem *parent=oi->parent();
+      if (item&&parent) {
+	oi->moveItem(item);
+	update();
+      }
+    }
+  }
+}
+
+void toProject::moveUp(void)
+{
+  QListViewItem *item=Project->selectedItem();
+  if (item) {
+    toProjectTemplateItem *oi=ItemMap[item];
+    if (oi) {
+      QListViewItem *item=oi->previousSibling();
+      QListViewItem *parent=oi->parent();
+      if (item&&parent) {
+	item->moveItem(oi);
+	update();
+      }
+    }
+  }
+}
+
 void toProject::newProject(void)
 {
   QListViewItem *item=Project->selectedItem();
   if (item) {
     toProjectTemplateItem *oi=ItemMap[item];
     if (oi) {
+      QListViewItem *last=oi;
       if (!oi->project())
 	oi=dynamic_cast<toProjectTemplateItem *>(oi->parent());
+      else {
+	last=last->firstChild();
+	while(last&&last->nextSibling())
+	  last=last->nextSibling();
+      }
       if (oi) {
-	new toProjectTemplateItem(oi,"untitled.tpr");
+	new toProjectTemplateItem(oi,last,"untitled.tpr");
 	Project->update();
       }
     }

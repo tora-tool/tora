@@ -1,5 +1,9 @@
 1.3.4: Released 2002-03-04
 
+2002-03-04: Added support for moving around project items.
+2002-03-04: Added an optional after argument to template items.
+2002-03-04: Added a quote.
+2002-03-04: Added order support to SQL project.
 2002-03-03: Added a method to open a worksheet on a specific file.
 2002-03-03: Added open file method to editor.
 2002-03-03: Added template for SQL projects.

@@ -192,9 +192,10 @@ public:
   /** Create an item.
    * @param parent Parent of this item.
    * @param name Contents of the first column of the item.
+   * @param after The item to put this item after.
    */
-  toTemplateItem(toTemplateItem *parent,const QString &name)
-    : toResultViewItem(parent,NULL,name),Provider(parent->provider())
+  toTemplateItem(toTemplateItem *parent,const QString &name,QListViewItem *after=NULL)
+    : toResultViewItem(parent,after,name),Provider(parent->provider())
   { }
   /** Get a reference to the provider of this item.
    * @return Reference to provider.

@@ -284,6 +284,8 @@ static const char *QuoteText="<H3>People who think they know everything tend to 
 "<LI>&lt;-- Your information went that way --&gt;<P>\n"
 "<LI>Go away, or I will replace you with a very small shell script.<P>\n"
 "<LI>Do not meddle in the affairs of sysadmins, for they are suddle and quick to anger.\n"
+"<LI>SELECT * FROM users WHERE clue > 0<BR>\n"
+"0 rows returned\n"
 "</UL>\n"
 "</H3>\n"
 "<DIV ALIGN=RIGHT>Think Geek (http://www.thinkgeek.com/)\n"
