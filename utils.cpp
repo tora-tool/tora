@@ -1053,20 +1053,26 @@ toPopupButton::toPopupButton(const QIconSet &iconSet,const QString &textLabel,
 			     const QString &grouptext,QToolBar *parent,const char *name)
   : QToolButton(iconSet,textLabel,grouptext,NULL,NULL,parent,name)
 {
+#if QT_VERSION >= 300
   connect(this,SIGNAL(clicked()),this,SLOT(click()));
+#endif
   setPopupDelay(0);
 }
 
 toPopupButton::toPopupButton(QWidget *parent,const char *name)
   : QToolButton(parent,name)
 {
+#if QT_VERSION >= 300
   connect(this,SIGNAL(clicked()),this,SLOT(click()));
+#endif
   setPopupDelay(0);
 }
 
 void toPopupButton::click(void)
 {
+#if QT_VERSION >= 300
   openPopup();
+#endif
 }
 
 #ifndef TO_LICENSE
