@@ -223,7 +223,122 @@ toScript::~toScript()
   Connection.delWidget(this);
 }
 
-#include <stdio.h>
+list<QString> toScript::createObjectList(QListView *source)
+{
+  list<QString> lst;
+
+  list<QString> otherGlobal;
+  list<QString> profiles;
+  list<QString> roles;
+  list<QString> tableSpace;
+  list<QString> tables;
+  list<QString> userOther;
+  list<QString> userViews;
+  list<QString> users;
+
+  QListViewItem *next=NULL;
+  for (QListViewItem *item=source->firstChild();item;item=next) {
+    QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
+    
+    if (chk&&chk->isEnabled()) {
+      QString name=chk->text(0);
+      QString type=chk->text(1);
+      QString user=chk->text(2);
+      if (!user.isEmpty()) {
+	if (chk->isOn()&&chk->isEnabled()) {
+	  QString line;
+	  if (type=="TABLE") {
+	    line=user;
+	    line+=".";
+	    line+=name;
+	    toPush(tables,line);
+	  } else {
+	    line=type;
+	    line+=":";
+	    line+=user;
+	    line+=".";
+	    line+=name;
+	    if (type=="VIEW")
+	      toPush(userViews,line);
+	    else
+	      toPush(userOther,line);
+	  }
+	}
+      } else if (!type.isEmpty()) {
+	if (chk->isOn()&&chk->isEnabled()) {
+	  QString line=type;
+	  line+=":";
+	  line+=name;
+	  if (type=="TABLESPACE")
+	    toPush(tableSpace,line);
+	  else if (type=="PROFILE")
+	    toPush(profiles,line);
+	  else if (type=="ROLE")
+	    toPush(roles,name);
+	  else if (type=="USER")
+	    toPush(users,name);
+	  else
+	    toPush(otherGlobal,line);
+	}
+      }
+    }
+    
+    if (item->firstChild()&&chk&&chk->isEnabled())
+      next=item->firstChild();
+    else if (item->nextSibling())
+      next=item->nextSibling();
+    else {
+      next=item;
+      do {
+	next=next->parent();
+      } while(next&&!next->nextSibling());
+      if (next)
+	next=next->nextSibling();
+    }
+  }
+  
+  for(list<QString>::iterator i=tableSpace.begin();i!=tableSpace.end();i++)
+    toPush(lst,*i);
+  for(list<QString>::iterator i=profiles.begin();i!=profiles.end();i++)
+    toPush(lst,*i);
+  for(list<QString>::iterator i=otherGlobal.begin();i!=otherGlobal.end();i++)
+    toPush(lst,*i);
+  for(list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
+    QString line="ROLE:";
+    line+=*i;
+    toPush(lst,line);
+  }
+  for(list<QString>::iterator i=users.begin();i!=users.end();i++) {
+    QString line="USER:";
+    line+=*i;
+    toPush(lst,line);
+  }
+  for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
+    QString line="TABLE FAMILY:";
+    line+=*i;
+    toPush(lst,line);
+  }
+  for(list<QString>::iterator i=userViews.begin();i!=userViews.end();i++)
+    toPush(lst,*i);
+  for(list<QString>::iterator i=userOther.begin();i!=userOther.end();i++)
+    toPush(lst,*i);
+  for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
+    QString line="TABLE REFERENCES:";
+    line+=*i;
+    toPush(lst,line);
+  }
+  for(list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
+    QString line="ROLE GRANTS:";
+    line+=*i;
+    toPush(lst,line);
+  }
+  for(list<QString>::iterator i=users.begin();i!=users.end();i++) {
+    QString line="USER GRANTS:";
+    line+=*i;
+    toPush(lst,line);
+  }
+  return lst;
+}
 
 void toScript::execute(void)
 {
@@ -242,123 +357,10 @@ void toScript::execute(void)
       return;
     }
 
-    list<QString> tableSpace;
-    list<QString> profiles;
-    list<QString> otherGlobal;
-
-    list<QString> roles;
-    list<QString> tables;
-    list<QString> users;
-
-    list<QString> userViews;
-    list<QString> userOther;
-
-    QListViewItem *next=NULL;
-    for (QListViewItem *item=SourceObjects->firstChild();item;item=next) {
-      QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
-
-      if (chk&&chk->isEnabled()) {
-	QString name=chk->text(0);
-	QString type=chk->text(1);
-	QString user=chk->text(2);
-	if (!user.isEmpty()) {
-	  if (chk->isOn()&&chk->isEnabled()) {
-	    QString line;
-	    if (type=="TABLE") {
-	      line=user;
-	      line+=".";
-	      line+=name;
-	      toPush(tables,line);
-	    } else {
-	      line=type;
-	      line+=":";
-	      line+=user;
-	      line+=".";
-	      line+=name;
-	      if (type=="VIEW")
-		toPush(userViews,line);
-	      else
-		toPush(userOther,line);
-	    }
-	  }
-	} else if (!type.isEmpty()) {
-	  if (chk->isOn()&&chk->isEnabled()) {
-	    QString line=type;
-	    line+=":";
-	    line+=name;
-	    if (type=="TABLESPACE")
-	      toPush(tableSpace,line);
-	    else if (type=="PROFILE")
-	      toPush(profiles,line);
-	    else if (type=="ROLE")
-	      toPush(roles,name);
-	    else if (type=="USER")
-	      toPush(users,name);
-	    else
-	      toPush(otherGlobal,line);
-	  }
-	}
-      }
-
-      if (item->firstChild()&&chk&&chk->isEnabled())
-	next=item->firstChild();
-      else if (item->nextSibling())
-	next=item->nextSibling();
-      else {
-	next=item;
-	do {
-	  next=next->parent();
-	} while(next&&!next->nextSibling());
-	if (next)
-	  next=next->nextSibling();
-      }
-    }
-
-    list<QString> sourceObjects;
-    list<QString> destinationObjects;
-
-    for(list<QString>::iterator i=tableSpace.begin();i!=tableSpace.end();i++)
-      toPush(sourceObjects,*i);
-    for(list<QString>::iterator i=profiles.begin();i!=profiles.end();i++)
-      toPush(sourceObjects,*i);
-    for(list<QString>::iterator i=otherGlobal.begin();i!=otherGlobal.end();i++)
-      toPush(sourceObjects,*i);
-    for(list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
-      QString line="ROLE:";
-      line+=*i;
-      toPush(sourceObjects,line);
-    }
-    for(list<QString>::iterator i=users.begin();i!=users.end();i++) {
-      QString line="USER:";
-      line+=*i;
-      toPush(sourceObjects,line);
-    }
-    for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
-      QString line="TABLE FAMILY:";
-      line+=*i;
-      toPush(sourceObjects,line);
-    }
-    for(list<QString>::iterator i=userViews.begin();i!=userViews.end();i++)
-      toPush(sourceObjects,*i);
-    for(list<QString>::iterator i=userOther.begin();i!=userOther.end();i++)
-      toPush(sourceObjects,*i);
-    for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
-      QString line="TABLE REFERENCES:";
-      line+=*i;
-      toPush(sourceObjects,line);
-    }
-    for(list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
-      QString line="ROLE GRANTS:";
-      line+=*i;
-      toPush(sourceObjects,line);
-    }
-    for(list<QString>::iterator i=users.begin();i!=users.end();i++) {
-      QString line="USER GRANTS:";
-      line+=*i;
-      toPush(sourceObjects,line);
-    }
+    list<QString> sourceObjects=createObjectList(SourceObjects);
 
     list<QString> sourceDescription;
+    list<QString> destinationDescription;
     QString script;
 
     try {
@@ -380,6 +382,33 @@ void toScript::execute(void)
     }
 
     if (Destination->isEnabled()) {
+      list<QString> destinationObjects=createObjectList(DestinationObjects);
+      toExtract destination(toMainWidget()->connection(DestinationConnection->currentText()),this);
+      setupExtract(destination);
+      switch(mode) {
+      case 0:
+      case 2:
+	destinationDescription=destination.describe(destinationObjects);
+	break;
+      case 1:
+      case 3:
+	throw QString ("Destination shouldn't be enabled now, internal error");
+      }
+
+      // Remove entries existing in both source and destination
+      list<QString>::iterator i=sourceDescription.begin();
+      list<QString>::iterator j=destinationDescription.begin();
+      while(i!=sourceDescription.end()&&j!=destinationDescription.end()) {
+	if (*i==*j) {
+	  sourceDescription.erase(i);
+	  destinationDescription.erase(j);
+	  i=sourceDescription.begin();
+	  j=destinationDescription.begin();
+	} else if (*i<*j)
+	  i++;
+	else
+	  j++;
+      }
     }
     Tabs->setTabEnabled(ResultTab,mode==1||mode==2||mode==3);
     Tabs->setTabEnabled(DifferenceTab,mode==0||mode==2);
@@ -416,6 +445,8 @@ void toScript::changeConnection(int,bool source)
 	else
 	  parent=new QCheckListItem(parent,item->text(0),
 				    QCheckListItem::CheckBox);
+	parent->setText(1,item->text(1));
+	parent->setText(2,item->text(2));
 	if (item->firstChild())
 	  next=item->firstChild();
 	else if (item->nextSibling()) {

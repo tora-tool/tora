@@ -6084,7 +6084,7 @@ QString toExtract::compile(list<QString> &objects)
     QString owner;
     QString name;
     int pos=type.find(":");
-    if (pos>=0)
+    if (pos<0)
       throw QString("Internal error, missing : in object description");
     parseObject(type.right(type.length()-pos-1),owner,name);
     type.truncate(pos);
@@ -6259,7 +6259,7 @@ list<QString> toExtract::describe(list<QString> &objects)
     QString owner;
     QString name;
     int pos=type.find(":");
-    if (pos>=0)
+    if (pos<0)
       throw QString("Internal error, missing : in object description");
     parseObject(type.right(type.length()-pos-1),owner,name);
     type.truncate(pos);
@@ -6363,7 +6363,7 @@ QString toExtract::drop(list<QString> &objects)
     QString owner;
     QString name;
     int pos=type.find(":");
-    if (pos>=0)
+    if (pos<0)
       throw QString("Internal error, missing : in object description");
     parseObject(type.right(type.length()-pos-1),owner,name);
     type.truncate(pos);
@@ -6453,7 +6453,7 @@ QString toExtract::resize(list<QString> &objects)
     QString owner;
     QString name;
     int pos=type.find(":");
-    if (pos>=0)
+    if (pos<0)
       throw QString("Internal error, missing : in object description");
     parseObject(type.right(type.length()-pos-1),owner,name);
     type.truncate(pos);
