@@ -800,6 +800,12 @@ QString toSQLStripBind(const QString &sql);
 /** Expand filename with $HOME to be replaced with home directory or my documents.
  */
 QString toExpandFile(const QString &file);
+/** Convert string read by readValue to value read by readValueNull
+ */
+QString toUnnull(const QString &str);
+/** Convert string read by readValueNull to value to be read by readValue.
+ */
+QString toNull(const QString &str);
 
 /** Export the contents of a map into another map.
  * @param data The destination map.

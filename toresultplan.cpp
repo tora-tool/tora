@@ -83,13 +83,17 @@ void toResultPlan::oracleSetup(void)
   setSorting(-1);
   setRootIsDecorated(true);
   addColumn("#");
+  setColumnAlignment(0,AlignRight);
   addColumn("Operation");
   addColumn("Options");
   addColumn("Object name");
   addColumn("Mode");
   addColumn("Cost");
+  setColumnAlignment(6,AlignRight);
   addColumn("Bytes");
+  setColumnAlignment(7,AlignRight);
   addColumn("Cardinality");
+  setColumnAlignment(8,AlignRight);
 }
 
 void toResultPlan::query(const QString &sql,

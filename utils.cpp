@@ -459,11 +459,8 @@ TODock *toAllocDock(const QString &name,
     str+=db;
   }
 #ifdef TO_KDE
-  KDockMainWindow *main=dynamic_cast<KDockMainWindow *>(toMainWidget());
-  if (main)
-    return main->createDockWidget(str,icon);
-  else
-    throw QString("Main widget not KDockMainWindow");
+  KDockMainWindow *main=(KDockMainWindow *)toMainWidget();
+  return main->createDockWidget(str,icon);
 #else
 #  if QT_VERSION < 300
   if (toTool::globalConfig(CONF_DOCK_TOOLBAR,"Yes").isEmpty()) {
@@ -486,17 +483,20 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
   KDockMainWindow *main=dynamic_cast<KDockMainWindow *>(toMainWidget());
   if (main) {
     KDockWidget::DockPosition pos;
+    int pct=20;
     switch (place) {
     case QMainWindow::Top:
       pos=KDockWidget::DockTop;
       break;
     case QMainWindow::Bottom:
+      pct=80;
       pos=KDockWidget::DockBottom;
       break;
     case QMainWindow::Left:
       pos=KDockWidget::DockLeft;
       break;
     case QMainWindow::Right:
+      pct=80;
       pos=KDockWidget::DockRight;
       break;
     default:
@@ -505,7 +505,7 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
     KDockWidget *dw=(KDockWidget *)(dock);
     if (dw) {
       dw->setWidget(container);
-      dw->manualDock(main->getMainDockWidget(),pos,20);
+      dw->manualDock(main->getMainDockWidget(),pos,pct);
     }
   } else
     throw QString("Main widget not KDockMainWindow");
@@ -1016,6 +1016,35 @@ void toMapImport(std::map<QString,QString> &data,const QString &prefix,
       i++;
     }
   }
+}
+
+static bool IndicateEmpty=false;
+
+void toUpdateIndicateEmpty(void)
+{
+  IndicateEmpty=!toTool::globalConfig(CONF_INDICATE_EMPTY,"").isEmpty();
+}
+
+QString toNull(const QString &str)
+{
+  if (IndicateEmpty) {
+    if (str.isNull())
+      return str;
+    if (str.isEmpty())
+      return "''";
+  } else if (str.isNull())
+    return "{null}";
+  return str;
+}
+
+QString toUnnull(const QString &str)
+{
+  if (IndicateEmpty) {
+    if (str=="''")
+      return "";
+  } else if (str=="{null}")
+    return QString::null;
+  return str;
 }
 
 #ifndef TO_LICENSE

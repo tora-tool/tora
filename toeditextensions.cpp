@@ -107,26 +107,31 @@ void toEditExtensions::intIndent(int delta)
 {
   int line1,col1,line2,col2;
 
-  if (!Current->getMarkedRegion(&line1,&col1,&line2,&col2)) {
-    Current->getCursorPosition (&line1,&col1);
-    line2=line1;
-  } else if (col2==0) {
-    line2--;
+  if (Current) {
+    if (!Current->getMarkedRegion(&line1,&col1,&line2,&col2)) {
+      Current->getCursorPosition (&line1,&col1);
+      line2=line1;
+    } else if (col2==0) {
+      line2--;
+    }
+
+    QString res;
+    for(int i=line1;i<=line2;i++) {
+      QString t=Current->textLine(i);
+      int chars=0;
+      int level=toSQLParse::countIndent(t,chars);
+      res+=toSQLParse::indentString(max(0,level+delta));
+      if (i<line2)
+	res+=t.mid(chars)+"\n";
+      else
+	res+=t.mid(chars);
+    }
+
+    Current->setCursorPosition(line1,0,false);
+    Current->setCursorPosition(line2,Current->textLine(line2).length(),true);
+
+    Current->insert(res,true);
   }
-
-  QString res;
-  for(int i=line1;i<=line2;i++) {
-    QString t=Current->textLine(i);
-    int chars=0;
-    int level=toSQLParse::countIndent(t,chars);
-    res+=toSQLParse::indentString(max(0,level+delta));
-    res+=t.mid(chars);
-  }
-
-  Current->setCursorPosition(line1,0,false);
-  Current->setCursorPosition(line2,Current->textLine(line2).length(),true);
-
-  Current->insert(res.mid(1),true);
 }
 
 void toEditExtensions::deindentBlock(void)

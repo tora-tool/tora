@@ -85,9 +85,10 @@ void toResultLong::query(const QString &sql,const toQList &param)
   }
   HasHeaders=false;
 
-  if (NumberColumn)
+  if (NumberColumn) {
     addColumn("#");
-
+    setColumnAlignment(0,AlignRight);
+  }
   try {
     Query=new toNoBlockQuery(connection(),Mode,sql,param,Statistics);
 
@@ -151,8 +152,11 @@ void toResultLong::addItem(void)
 	      if (name[0]=='-') {
 		addColumn(name.right(name.length()-1));
 		setColumnAlignment(columns()-1,AlignRight);
-	      } else
+	      } else {
 		addColumn(name);
+		if ((*i).AlignRight)
+		  setColumnAlignment(columns()-1,AlignRight);
+	      }
 	    } else
 	      hidden=true;
 	  }

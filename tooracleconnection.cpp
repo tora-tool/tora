@@ -296,7 +296,7 @@ public:
 
       for (int i=0;i<descriptionLen;i++) {
 	toQuery::queryDescribe desc;
-
+	desc.AlignRight=false;
 	desc.Name=QString::fromUtf8(description[i].name);
 
 	switch(description[i].dbtype) {
@@ -311,6 +311,7 @@ public:
 	case 4:
 	case 6:
 	case 68:
+	  desc.AlignRight=true;
 	  desc.Datatype="NUMBER";
 	  break;
 	case 8:
@@ -324,6 +325,7 @@ public:
 	  break;
 	case 12:
 	case 156:
+	  desc.AlignRight=true;
 	  desc.Datatype="DATE";
 	  break;
 	case 15:
@@ -348,6 +350,9 @@ public:
 	case 114:
 	  desc.Datatype="BLOB";
 	  break;
+	default:
+	  desc.Datatype="UNKNOWN";
+          break;
 	}
 
 	if (desc.Datatype=="NUMBER") {

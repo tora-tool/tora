@@ -1025,6 +1025,7 @@ bool toMain::close(bool del)
     if (!delConnection())
       return false;
   }
+  editDisable(Edit);
   return QMainWindow::close(del);
 }
 

@@ -238,10 +238,13 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
   DontReread->setChecked(!toTool::globalConfig(CONF_DONT_REREAD,"Yes").isEmpty());
   CacheConnect->setChecked(!toTool::globalConfig(CONF_CACHE_CONNECT,"").isEmpty());
   BkgndConnect->setChecked(!toTool::globalConfig(CONF_BKGND_CONNECT,"").isEmpty());
+  IndicateEmpty->setChecked(!toTool::globalConfig(CONF_INDICATE_EMPTY,"").isEmpty());
   int val=toTool::globalConfig(CONF_AUTO_LONG,"0").toInt();
   AutoLong->setChecked(val);
   MoveAfter->setValue(val);
 }
+
+void toUpdateIndicateEmpty(void);
 
 void toDatabaseSetting::saveSetting(void)
 {
@@ -272,6 +275,8 @@ void toDatabaseSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_BKGND_CONNECT,BkgndConnect->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_AUTO_LONG,
 			  AutoLong->isChecked()?MoveAfter->cleanText():QString("0"));
+  toTool::globalSetConfig(CONF_INDICATE_EMPTY,IndicateEmpty->isChecked()?"Yes":"");
+  toUpdateIndicateEmpty();
 }
 
 toToolSetting::toToolSetting(QWidget *parent,const char *name,WFlags fl)

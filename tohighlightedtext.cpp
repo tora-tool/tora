@@ -383,7 +383,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	}
 
 	if (c.length()>0) {
-	  rect=painter->boundingRect(0,0,width,height,AlignLeft|AlignTop|ExpandTabs,c);
+	  rect=painter->boundingRect(0,0,width,height,AlignLeft|AlignTop,c);
 	  int left=posx;
 	  int cw=rect.right()+1;
 	  if (i==int(str.length()))
@@ -405,7 +405,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	    painter->fillRect(left,0,cw,height,bkg);
 	  }
 
-	  painter->drawText(posx,0,width-posx,height,AlignLeft|AlignTop|ExpandTabs,c,c.length(),&rect);
+	  painter->drawText(posx,0,width-posx,height,AlignLeft|AlignTop,c,c.length(),&rect);
 	  posx=rect.right()+1;
 	}
 	wasCol=col;

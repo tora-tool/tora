@@ -72,6 +72,8 @@ bool toMonolithic(void)
 #endif
 }
 
+void toUpdateIndicateEmpty(void);
+
 int main(int argc,char **argv)
 {
 #if 0
@@ -197,6 +199,8 @@ int main(int argc,char **argv)
       if (!user.isEmpty())
 	toTool::globalSetConfig(CONF_USER,user);
     }
+
+    toUpdateIndicateEmpty();
 
     new toMain;
 

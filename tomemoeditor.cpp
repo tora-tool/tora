@@ -38,6 +38,7 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qheader.h>
+#include <qcheckbox.h>
 
 #include "tomemoeditor.h"
 #include "tohighlightedtext.h"
@@ -65,8 +66,6 @@ public:
   toMemoText(toMemoEditor *edit,QWidget *parent,const char *name=NULL)
     : toMarkedText(parent,name),MemoEditor(edit)
   { }
-  /** Reimplemented for internal reasons.
-   */
   virtual void keyPressEvent(QKeyEvent *e)
   {
     if (e->state()==ControlButton&&
@@ -85,8 +84,6 @@ public:
   toMemoSQL(toMemoEditor *edit,QWidget *parent,const char *name=NULL)
     : toHighlightedText(parent,name),MemoEditor(edit)
   { }
-  /** Reimplemented for internal reasons.
-   */
   virtual void keyPressEvent(QKeyEvent *e)
   {
     if (e->state()==ControlButton&&
@@ -109,7 +106,9 @@ void toMemoEditor::saveFile(void)
   Editor->editSave(true);
 }
 
-void toMemoEditor::setup(const QString &str,bool sql,bool modal)
+toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
+			   bool sql,bool modal,bool navigation)
+  : QDialog(parent,NULL,modal,modal?0:WDestructiveClose),Row(row),Col(col)
 {
   setMinimumSize(400,300);
 
@@ -123,8 +122,6 @@ void toMemoEditor::setup(const QString &str,bool sql,bool modal)
   else
     Editor=new toMemoText(this,this);
   l->addWidget(Editor);
-  Editor->setText(str);
-  Editor->setEdited(false);
   Editor->setReadOnly(Row<0||Col<0||listView());
   Editor->setFocus();
 
@@ -171,20 +168,10 @@ void toMemoEditor::setup(const QString &str,bool sql,bool modal)
 		    "Paste from clipboard",
 		    "Paste from clipboard",
 		    Editor,SLOT(paste()),Toolbar);
-  
-  if (!modal)
-    show();
-}
-
-toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
-			   bool sql,bool modal,bool navigation)
-  : QDialog(parent,NULL,modal,modal?0:WDestructiveClose),Row(row),Col(col)
-{
-  setup(str,sql,modal);
 
   toListView *lst=listView();
   if (lst||navigation) {
-
+    Toolbar->addSeparator();
     new QToolButton(QPixmap((const char **)rewind_xpm),
 		    "First column",
 		    "First column",
@@ -202,15 +189,40 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
 		    "Last column",
 		    this,SLOT(lastColumn()),Toolbar);
   }
+  Toolbar->addSeparator();
+  Null=new QCheckBox("NULL",Toolbar);
+  connect(Null,SIGNAL(toggled(bool)),this,SLOT(null(bool)));
+  if (Row<0||Col<0)
+    Null->setEnabled(false);
+  Null->setFocusPolicy(StrongFocus);
+
+  setText(str);
+
   Label=new QLabel("",Toolbar);
-  Label->setAlignment(AlignRight);
+  Label->setAlignment(AlignRight|AlignVCenter);
   Toolbar->setStretchableWidget(Label);
 
   if (lst) {
     connect(parent,SIGNAL(currentChanged(QListViewItem *)),
 	    this,SLOT(changeCurrent(QListViewItem *)));
-    Label->setText(lst->header()->label(Col));
+    Label->setText("<B>"+lst->header()->label(Col)+"</B>");
   }
+
+  if (!modal)
+    show();
+}
+
+void toMemoEditor::setText(const QString &str)
+{
+  Editor->setText(str);
+  Null->setChecked(str.isNull());
+  Editor->setEdited(false);
+}
+
+void toMemoEditor::null(bool nul)
+{
+  Editor->setEdited(true);
+  Editor->setDisabled(nul);
 }
 
 QString toMemoEditor::text(void)
@@ -222,21 +234,28 @@ void toMemoEditor::store(void)
 {
   if (Editor->isReadOnly())
     return;
-  if (Editor->edited())
-    emit changeData(Row,Col,Editor->text());
+  if (Editor->edited()) {
+    if (!Editor->isEnabled())
+      emit changeData(Row,Col,QString::null);
+    else
+      emit changeData(Row,Col,Editor->text());
+  }
   accept();
 }
 
 void toMemoEditor::changePosition(int row,int cols)
 {
   if (Editor->edited()) {
-    emit changeData(Row,Col,Editor->text());
+    if (!Editor->isEnabled())
+      emit changeData(Row,Col,QString::null);
+    else
+      emit changeData(Row,Col,Editor->text());
     Editor->setEdited(false);
   }
 
   toListView *lst=listView();
   if (lst)
-    Label->setText(lst->header()->label(Col));
+    Label->setText("<B>"+lst->header()->label(Col)+"</B>");
 
   Row=row;
   Col=cols;
@@ -276,16 +295,16 @@ void toMemoEditor::firstColumn(void)
       lst->setCurrentItem(item);
     } else {
       Col=0;
-      Label->setText(lst->header()->label(Col));
+      Label->setText("<B>"+lst->header()->label(Col)+"</B>");
 
       toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(cur);
       toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(cur);
       if (resItem)
-	Editor->setText(resItem->allText(Col));
+	setText(resItem->allText(Col));
       else if (chkItem)
-	Editor->setText(chkItem->allText(Col));
+	setText(chkItem->allText(Col));
       else
-	Editor->setText(cur->text(Col));
+	setText(cur->text(Col));
     }
   }
 }
@@ -323,13 +342,13 @@ void toMemoEditor::previousColumn(void)
       toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(cur);
       toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(cur);
       if (resItem)
-	Editor->setText(resItem->allText(Col));
+	setText(resItem->allText(Col));
       else if (chkItem)
-	Editor->setText(chkItem->allText(Col));
+	setText(chkItem->allText(Col));
       else
-	Editor->setText(cur->text(Col));
+	setText(cur->text(Col));
     }
-    Label->setText(lst->header()->label(Col));
+    Label->setText("<B>"+lst->header()->label(Col)+"</B>");
   }
 }
 
@@ -363,13 +382,13 @@ void toMemoEditor::nextColumn(void)
       toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(cur);
       toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(cur);
       if (resItem)
-	Editor->setText(resItem->allText(Col));
+	setText(resItem->allText(Col));
       else if (chkItem)
-	Editor->setText(chkItem->allText(Col));
+	setText(chkItem->allText(Col));
       else
-	Editor->setText(cur->text(Col));
+	setText(cur->text(Col));
     }
-    Label->setText(lst->header()->label(Col));
+    Label->setText("<B>"+lst->header()->label(Col)+"</B>");
   }
 }
 
@@ -399,15 +418,15 @@ void toMemoEditor::lastColumn(void)
 	lst->setCurrentItem(next);
     } else {
       Col=lst->columns()-1;
-      Label->setText(lst->header()->label(Col));
+      Label->setText("<B>"+lst->header()->label(Col)+"</B>");
       toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(cur);
       toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(cur);
       if (resItem)
-	Editor->setText(resItem->allText(Col));
+	setText(resItem->allText(Col));
       else if (chkItem)
-	Editor->setText(chkItem->allText(Col));
+	setText(chkItem->allText(Col));
       else
-	Editor->setText(cur->text(Col));
+	setText(cur->text(Col));
     }
   }
 }
@@ -423,10 +442,10 @@ void toMemoEditor::changeCurrent(QListViewItem *item)
     toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(cur);
     toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(cur);
     if (resItem)
-      Editor->setText(resItem->allText(Col));
+      setText(resItem->allText(Col));
     else if (chkItem)
-      Editor->setText(chkItem->allText(Col));
+      setText(chkItem->allText(Col));
     else
-      Editor->setText(cur->text(Col));
+      setText(cur->text(Col));
   }
 }

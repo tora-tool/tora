@@ -33,21 +33,25 @@
 </LI>
 <LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref14">text</A></b> (void) 
 </LI>
-</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref16">store</A></b> (void) 
+<LI>int &nbsp;<b><A HREF="#ref15">row</A></b> ()  const
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref17">changeCurrent</A></b> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item) 
+<LI>int &nbsp;<b><A HREF="#ref16">column</A></b> ()  const
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref18">firstColumn</A></b> () 
+</ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref18">store</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref19">nextColumn</A></b> () 
+<LI>virtual  void &nbsp;<b><A HREF="#ref19">firstColumn</A></b> () 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref20">previousColumn</A></b> () 
+<LI>virtual  void &nbsp;<b><A HREF="#ref20">nextColumn</A></b> () 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref21">lastColumn</A></b> () 
+<LI>virtual  void &nbsp;<b><A HREF="#ref21">previousColumn</A></b> () 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref22">changePosition</A></b> (int row,int cols) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref22">lastColumn</A></b> () 
 </LI>
-</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref15">changeData</A></b> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &data) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref23">changePosition</A></b> (int row,int cols) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref24">setText</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &) 
+</LI>
+</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref17">changeData</A></b> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &data) 
 </LI>
 </ul><h4>Protected Methods</h4><ul><LI><A HREF="http://doc.trolltech.com/qtoolbar.html">QToolBar</A> *&nbsp;<b><A HREF="#ref10">toolbar</A></b> () 
 </LI>
@@ -85,7 +89,13 @@
 </p>
 <p><b>Returns</b>: String of editor.
    </p>
-<A NAME="changeData"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>changeData</strong> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &data)
+<A NAME="row"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>row</strong> ()
+<br></td><td align="right"><h3><strong>row</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Current row being edited.
+   </p>
+<A NAME="column"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>column</strong> ()
+<br></td><td align="right"><h3><strong>column</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Current column being edited.
+   </p>
+<A NAME="changeData"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>changeData</strong> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &data)
 <br></td><td align="right"><h3><strong>changeData</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted when data is to be stored back to the creator
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -96,14 +106,28 @@
 <TR><TD align="left" valign="top"><i>data</i></TD><TD align="left" valign="top">New data to save.
    </TD></TR>
 </TABLE></P>
-<A NAME="store"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>store</strong> (void)
-<br></td><td align="right"><h3><strong>store</strong></h3></td></tr></table><p> <small>[slot]</small></p><A NAME="changeCurrent"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>changeCurrent</strong> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item)
-<br></td><td align="right"><h3><strong>changeCurrent</strong></h3></td></tr></table><p> <small>[slot]</small></p><A NAME="firstColumn"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>firstColumn</strong> ()
-<br></td><td align="right"><h3><strong>firstColumn</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><A NAME="nextColumn"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>nextColumn</strong> ()
-<br></td><td align="right"><h3><strong>nextColumn</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><A NAME="previousColumn"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>previousColumn</strong> ()
-<br></td><td align="right"><h3><strong>previousColumn</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><A NAME="lastColumn"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>lastColumn</strong> ()
-<br></td><td align="right"><h3><strong>lastColumn</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><A NAME="changePosition"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changePosition</strong> (int row,int cols)
-<br></td><td align="right"><h3><strong>changePosition</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><HR>
+<A NAME="store"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>store</strong> (void)
+<br></td><td align="right"><h3><strong>store</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Save changes and close.
+   </p>
+<A NAME="firstColumn"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>firstColumn</strong> ()
+<br></td><td align="right"><h3><strong>firstColumn</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Goto first column.
+   </p>
+<A NAME="nextColumn"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>nextColumn</strong> ()
+<br></td><td align="right"><h3><strong>nextColumn</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Goto next column.
+   </p>
+<A NAME="previousColumn"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>previousColumn</strong> ()
+<br></td><td align="right"><h3><strong>previousColumn</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Goto previous column.
+   </p>
+<A NAME="lastColumn"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>lastColumn</strong> ()
+<br></td><td align="right"><h3><strong>lastColumn</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Goto last column.
+   </p>
+<A NAME="changePosition"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changePosition</strong> (int row,int cols)
+<br></td><td align="right"><h3><strong>changePosition</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Change position in whatever it is your displaying.
+   </p>
+<A NAME="setText"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setText</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &)
+<br></td><td align="right"><h3><strong>setText</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Change value of editor.
+   </p>
+<HR>
 	<table>
 	</table>
 </BODY>

@@ -1345,7 +1345,10 @@ void toDebug::updateState(int reason)
 	  if (ret==TO_SUCCESS)
 	    item->setText(3,value);
 	  else if (ret==TO_ERROR_NULLVALUE) {
-	    item->setText(3,"{null}");
+	    if (toTool::globalConfig(CONF_INDICATE_EMPTY,"").isEmpty())
+	      item->setText(3,"{null}");
+	    else
+	      item->setText(3,QString::null);
 	    item->setText(5,"NULL");
 	  } else if (ret==TO_ERROR_NULLCOLLECTION) {
 	    item->setText(3,"[Count 0]");
@@ -2487,11 +2490,9 @@ void toDebug::changeWatch(QListViewItem *item)
 
     if (dialog.exec()) {
       int ret=-1;
-      QString data;
       QString escdata;
       QString assign;
       if (dialog.NullValue->isChecked()) {
-	data="{null}";
 	escdata="NULL";
       } else {
 	escdata=data=dialog.Value->text();

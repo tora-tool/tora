@@ -266,6 +266,7 @@ toResultCols::resultCols::resultCols(QWidget *parent,const char *name)
   : toListView(parent,name)
 {
   addColumn("#");
+  setColumnAlignment(0,AlignRight);
   addColumn("Column Name");
   addColumn("Data Type");
   addColumn("NULL");

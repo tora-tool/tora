@@ -1254,9 +1254,7 @@ void toWorksheet::saveDefaults(void)
       else if (item)
 	str=item->text(i);
 
-      if (str=="{null}")
-	str=QString::null;
-      toParamGet::setDefault(head->label(i).lower(),str);
+      toParamGet::setDefault(head->label(i).lower(),toUnnull(str));
     }
   }
 }

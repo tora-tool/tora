@@ -223,6 +223,7 @@ public:
       toQDescribe cur;
       for(int i=0;i<Columns;i++) {
 	QString type;
+	cur.AlignRight=true;
 	cur.Name=Fields[i].name;
 	if (IS_NUM(Fields[i].type)&&Fields[i].flags&UNSIGNED_FLAG)
 	  type="UNSIGNED ";
@@ -267,11 +268,13 @@ public:
 	  type+="YEAR";
 	  break;
 	case FIELD_TYPE_VAR_STRING:
+	  cur.AlignRight=false;
 	  type+="VARCHAR(";
 	  type+=QString::number(Fields[i].length);
 	  type+=")";
 	  break;
 	case FIELD_TYPE_STRING:
+	  cur.AlignRight=false;
 	  type+="CHAR(";
 	  type+=QString::number(Fields[i].length);
 	  type+=")";
@@ -280,16 +283,21 @@ public:
 	case FIELD_TYPE_MEDIUM_BLOB:
 	case FIELD_TYPE_LONG_BLOB:
 	case FIELD_TYPE_BLOB:
+	  cur.AlignRight=false;
 	  type+="BLOB";
 	  break;
 	case FIELD_TYPE_SET:
+	  cur.AlignRight=false;
 	  type+="SET";
 	  break;
 	case FIELD_TYPE_ENUM:
+	  cur.AlignRight=false;
 	  type+="ENUM";
 	  break;
 	default:
+	  cur.AlignRight=false;
 	  type+="UNKNOWN";
+	  break;
 	}
 	cur.Datatype=type;
 	cur.Null=!(Fields[i].type&NOT_NULL_FLAG);

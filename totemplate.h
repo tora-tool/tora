@@ -50,6 +50,7 @@ class toConnection;
 class toListView;
 class toTemplateItem;
 class toTemplateProvider;
+class toNoBlockQuery;
 
 /** Not part of the API.
  */
@@ -60,6 +61,7 @@ class toTemplate : public QVBox, public toHelpContext {
   QSplitter *Splitter;
   toListView *List;
   QWidget *WidgetExtra;
+  QWidget *Result;
   QVBox *Frame;
 public:
   toTemplate(QWidget *parent);
@@ -67,8 +69,7 @@ public:
   void setWidget(QWidget *widget);
   QWidget *widget(void)
   { return WidgetExtra; }
-  QWidget *frame(void)
-  { return Frame; }
+  QWidget *frame(void);
 
   static QWidget *parentWidget(QListViewItem *item);
   static toTemplate *templateWidget(QListViewItem *item);
@@ -76,6 +77,8 @@ public:
 
   virtual bool canHandle(toConnection &conn)
   { return true; }
+
+  virtual void closeFrame(void);
 public slots:
   void expand(QListViewItem *item);
   void collapse(QListViewItem *item);
@@ -174,11 +177,34 @@ public:
   virtual QWidget *selectedWidget(QWidget *parent);
 };
 
+class toTemplateSQL;
+
+/** Used by toTemplateSQL. Only for internal use.
+ * @internal
+ */
+
+class toTemplateSQLObject : public QObject {
+  Q_OBJECT
+
+  toNoBlockQuery *Query;
+  toBackground Poll;
+  toTemplateSQL *Parent;
+  toTemplateSQLObject(toTemplateSQL *parent);
+  virtual ~toTemplateSQLObject();
+  void expand(void);
+
+  friend class toTemplateSQL;
+private slots:
+  void poll(void); 
+};
+
 /** This class represent an item that when expanded will execute an SQL statement
  * and create child items which are the result of the query.
  */
 
-class toTemplateSQL : public toTemplateItem {
+class toTemplateSQL :public toTemplateItem {
+  toTemplateSQLObject Object;
+
   /** Connection to run statement in
    */
   toConnection &Connection;
@@ -194,9 +220,7 @@ public:
    *            should use utf8 if converting from QString.
    */
   toTemplateSQL(toConnection &conn,toTemplateItem *parent,
-		const QString &name,const QString &sql)
-    : toTemplateItem(parent,name),Connection(conn),SQL(sql)
-  { setExpandable(true); }
+		const QString &name,const QString &sql);
   /** Get connection of this item.
    * @return Reference to connection.
    */
@@ -216,6 +240,7 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void expand(void);
+  friend class toTemplateSQLObject;
 };
 
 #endif

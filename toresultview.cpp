@@ -330,9 +330,7 @@ void toListView::contentsMouseDoubleClickEvent (QMouseEvent *e)
     else if (item)
       str=item->text(i);
 
-    if (str=="{null}")
-      str=QString::null;
-    toParamGet::setDefault(head->label(i).lower(),str);
+    toParamGet::setDefault(head->label(i).lower(),toUnnull(str));
   }
 }
 
@@ -1024,8 +1022,10 @@ void toResultView::setup(bool readable,bool dispCol)
   Query=NULL;
   ReadableColumns=readable;
   NumberColumn=dispCol;
-  if (NumberColumn)
+  if (NumberColumn) {
     addColumn("#");
+    setColumnAlignment(0,AlignRight);
+  }
   Filter=NULL;
   readAllEnabled(true);
   ReadAll=false;
@@ -1086,8 +1086,10 @@ void toResultView::query(const QString &sql,const toQList &param)
   while(columns()>0) {
     removeColumn(0);
   }
-  if (NumberColumn)
+  if (NumberColumn) {
     addColumn("#");
+    setColumnAlignment(0,AlignRight);
+  }
 
   try {
     Query=new toQuery(connection(),sql,param);
@@ -1107,8 +1109,11 @@ void toResultView::query(const QString &sql,const toQList &param)
 	if (name.at(0)=='-') {
 	  addColumn(name.right(name.length()-1));
 	  setColumnAlignment(columns()-1,AlignRight);
-	} else
+	} else {
 	  addColumn(name);
+	  if ((*i).AlignRight)
+	    setColumnAlignment(columns()-1,AlignRight);
+	}
       } else
 	hidden=true;
     }

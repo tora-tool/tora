@@ -12,8 +12,10 @@ Qt:
 	Looses titlebar on resulution change, seems to be a Qt bug.
 	When using antialiased text doesn't draw left axis legend correctly in charts.
 
+KDE:
+	When destructing several docked windows sometimes make weird slot disconnect.
+
 toResultContent:
-	Doesn't display multiline data correctly.
 	Doesn't sort numbers numerically.
 
 toGetToken:

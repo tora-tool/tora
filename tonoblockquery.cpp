@@ -173,10 +173,7 @@ QString toNoBlockQuery::readValueNull()
 
 QString toNoBlockQuery::readValue()
 {
-  QString ret=readValueNull();
-  if (ret.isNull())
-    ret="{null}";
-  return ret;
+  return toNull(readValueNull());
 }
 
 toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,

@@ -70,6 +70,7 @@ class toListView;
 class toResultContentEditor;
 class QListViewItem;
 class QLabel;
+class QCheckBox;
 
 /** Displays an text in a widget which can optionally be modified and saved back.
  */
@@ -88,8 +89,7 @@ class toMemoEditor : public QDialog {
   int Col;
   QToolBar *Toolbar;
   QLabel *Label;
-
-  void setup(const QString &str,bool sql,bool modal);
+  QCheckBox *Null;
 
   toListView *listView(void);
 private slots:
@@ -119,6 +119,14 @@ public:
    * @return String of editor.
    */
   QString text(void);
+  /** Current row being edited.
+   */
+  int row() const
+  { return Row; }
+  /** Current column being edited.
+   */
+  int column() const
+  { return Col; }
 signals:
   /** Emitted when data is to be stored back to the creator
    * @param row Pass on from creation.
@@ -127,16 +135,32 @@ signals:
    */
   void changeData(int row,int col,const QString &data);
 public slots:
-  void store(void);
+  /** Save changes and close.
+   */
+  virtual void store(void);
 
-  void changeCurrent(QListViewItem *item);
-
+  /** Goto first column.
+   */ 
   virtual void firstColumn();
+  /** Goto next column.
+   */ 
   virtual void nextColumn();
+  /** Goto previous column.
+   */ 
   virtual void previousColumn();
+  /** Goto last column.
+   */ 
   virtual void lastColumn();
 
+  /** Change position in whatever it is your displaying.
+   */ 
   virtual void changePosition(int row,int cols);
+  /** Change value of editor.
+   */
+  virtual void setText(const QString &);
+private slots:
+  void changeCurrent(QListViewItem *item);
+  virtual void null(bool);
 };
 
 #endif

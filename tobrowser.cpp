@@ -1227,7 +1227,15 @@ public:
     toResultView *res;
 
     toToolWidget *tool;
-    if (typ=="Constraints") {
+    if (typ=="Data") {
+      tool=new toToolWidget(BrowserTool,
+			    QString::null,
+			    par,
+			    Connection);
+      toResultContent *cnt=new toResultContent(tool);
+      cnt->changeParams(schema,object);
+      return tool;
+    } else if (typ=="Constraints") {
       tool=new toToolWidget(BrowserTool,
 			    QString::null,
 			    par,
@@ -1274,6 +1282,7 @@ public:
 	new toTemplateTableItem(conn,this,"Constraints");
 	new toTemplateTableItem(conn,this,"References");
 	new toTemplateTableItem(conn,this,"Grants");
+	new toTemplateTableItem(conn,this,"Data");
       }
     } else if (typ=="Views") {
       QPixmap image((const char **)view_xpm);
@@ -1281,6 +1290,7 @@ public:
       if (conn.provider()=="Oracle") {
 	new toTemplateTableItem(conn,this,"Dependencies");
 	new toTemplateTableItem(conn,this,"Grants");
+	new toTemplateTableItem(conn,this,"Data");
       }
     } else if (typ=="Sequences") {
       QPixmap image((const char **)sequence_xpm);

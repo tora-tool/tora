@@ -86,7 +86,7 @@ toResultContentMemo::toResultContentMemo(QWidget *parent,const QString &data,int
 {
   toResultContentEditor *cnt=contentEditor();
   if (cnt)
-    label()->setText(cnt->horizontalHeader()->label(col));
+    label()->setText("<B>"+cnt->horizontalHeader()->label(col)+"</B>");
   connect(parent,SIGNAL(currentChanged(int,int)),this,SLOT(changePosition(int,int)));
 }
 
@@ -96,9 +96,8 @@ void toResultContentMemo::changePosition(int row,int cols)
   toResultContentEditor *cnt=contentEditor();
   if (cnt) {
     cnt->setCurrentCell(row,cols); // Nasty workaround but it'll work I think.
-    editor()->setText(cnt->text(row,cols));
-    editor()->setEdited(false);
-    label()->setText(cnt->horizontalHeader()->label(cols));
+    setText(cnt->text(row,cols));
+    label()->setText("<B>"+cnt->horizontalHeader()->label(cols)+"</B>");
   }
 }
 
@@ -496,7 +495,28 @@ void toResultContentEditor::paintCell(QPainter *p,int row,int col,const QRect &c
 	MaxNumber+=5;
     }
   }
-  QTable::paintCell(p,row,col,cr,selected);
+
+  QString txt=text(row,col);
+  int nl=txt.find("\n");
+  if (nl>=0) {
+    txt=txt.mid(0,nl);
+    txt+="...";
+  }
+
+  toQDescList::iterator i=Description.begin();
+  for(;col>0&&i!=Description.end();i++,col--)
+    ;
+  int align=AlignLeft;
+  if (i!=Description.end()&&(*i).AlignRight)
+    align=AlignRight;
+  align|=ExpandTabs|AlignVCenter;
+
+  p->setBrush(selected?colorGroup().highlight():colorGroup().base());
+  p->setPen(colorGroup().foreground());
+  p->drawRect(-1,-1,cr.width()+1,cr.height()+1);
+  if (selected)
+    p->setPen(colorGroup().highlightedText());
+  p->drawText(1,1,cr.width()-3,cr.height()-3,align,txt);
 }
 
 QWidget *toResultContentEditor::beginEdit(int row,int col,bool replace)
@@ -504,6 +524,13 @@ QWidget *toResultContentEditor::beginEdit(int row,int col,bool replace)
   if (CurrentRow!=row)
     toStatusMessage("Unsaved data in contents, select other row to store",true);
   saveRow(row);
+
+  QString txt=text(row,col);
+  if (txt.contains("\n")) {
+    toMemoEditor *edit=new toResultContentMemo(this,txt,row,col);
+    connect(edit,SIGNAL(changeData(int,int,const QString &)),
+	    this,SLOT(changeData(int,int,const QString &)));
+  }
 
   return QTable::beginEdit(row,col,replace);
 }
@@ -675,10 +702,12 @@ void toResultContentEditor::saveUnsaved(void)
     for (int i=0;i<numCols()&&j!=OrigValues.end();i++,j++)
       if (*j!=text(CurrentRow,i))
 	break;
-    if (j==OrigValues.end())
+    if (j==OrigValues.end()) {
+      toStatusMessage("No changes made",false,false);
       return;
+    }
 
-    QString rowid = "";
+    QString rowid;
     bool mysql=(connection().provider()=="MySQL");
     bool oracle=(connection().provider()=="Oracle");
     toStatusMessage("Saved row",false,false);
@@ -695,7 +724,7 @@ void toResultContentEditor::saveUnsaved(void)
       }
       sql+=")";
       if(oracle) 
-	sql+=" RETURNING ROWID INTO :r<char[32],out>";
+	sql+=" RETURNING ROWID INTO :r<char[101],out>";
 	
       try {
 	toConnection &conn = connection();
@@ -777,7 +806,7 @@ void toResultContentEditor::saveUnsaved(void)
 	  di++;
 	}
 	if(oracle)
-	  sql+=" RETURNING ROWID INTO :r<char[32],out>";
+	  sql+=" RETURNING ROWID INTO :r<char[101],out>";
 	try {
 	  toConnection &conn = connection();
 	  toQList args;
@@ -818,7 +847,7 @@ void toResultContentEditor::saveUnsaved(void)
 	QString sql;
 	sql="SELECT * FROM ";
 	sql+=table();
-	sql+=" WHERE rowid = :r<char[32]>";
+	sql+=" WHERE rowid = :r<char[101]>";
 	toQuery q(connection(),sql,rowid);
 	for (int j=0;j<numCols()&&!q.eof();j++)
 	  setText(CurrentRow,j,q.readValueNull());
@@ -1196,10 +1225,21 @@ toListView *toResultContentEditor::copySelection(bool header)
     toListView *lst=new toListView(this);
     int row;
     int col;
-    if (header)
+    if (header) {
       lst->addColumn("#");
-    for (col=sel.leftCol();col<=sel.rightCol();col++)
-      lst->addColumn(horizontalHeader()->label(col));
+      lst->setColumnAlignment(0,AlignRight);
+    }
+    for (col=sel.leftCol();col<=sel.rightCol();col++) {
+      QString lab=horizontalHeader()->label(col);
+      lst->addColumn(lab);
+      for(toQDescList::iterator i=Description.begin();i!=Description.end();i++) {
+	if ((*i).Name==lab) {
+	  if ((*i).AlignRight)
+	    lst->setColumnAlignment(lst->columns()-1,AlignRight);
+	  break;
+	}
+      }
+    }
     QListViewItem *item=NULL;
     for (row=sel.topRow();row<=sel.bottomRow();row++) {
       item=new toResultViewItem(lst,item);

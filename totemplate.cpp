@@ -53,6 +53,7 @@
 #include "toconf.h"
 #include "tohelp.h"
 #include "toconnection.h"
+#include "tonoblockquery.h"
 
 #include "totemplate.moc"
 #include "totemplatesetupui.moc"
@@ -380,15 +381,16 @@ public:
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
     if (Dock) {
-      if (Dock->isHidden())
+      if (Dock->isHidden()) {
 	delete Dock;
-      else {
+	Dock=NULL;
+      } else {
 	delete Dock;
 	Dock=NULL;
 	return NULL;
       }
     }
-    Dock=toAllocDock("Template",connection.description(),*toolbarImage());
+    Dock=toAllocDock("Template",QString::null,*toolbarImage());
     QWidget *window=new toTemplate(Dock);
     toAttachDock(Dock,window,QMainWindow::Left);
     return Dock;
@@ -425,17 +427,32 @@ toTemplate *toTemplate::templateWidget(QListViewItem *item)
   return templateWidget(item->listView());
 }
 
+class toTemplateResult : public QVBox {
+  toTemplate *Template;
+public:
+  toTemplateResult(TODock *parent,toTemplate *temp)
+    : QVBox(parent),Template(temp)
+  { }
+  virtual ~toTemplateResult()
+  { Template->closeFrame(); }
+};
+
 toTemplate::toTemplate(QWidget *parent)
   : QVBox(parent),toHelpContext("template.html")
 {
-  Splitter=new QSplitter(Vertical,this);
-  List=new toListView(Splitter);
+  List=new toListView(this);
   List->addColumn("Template");
   List->setRootIsDecorated(true);
   List->setSorting(0);
   List->setShowSortIndicator(false);
   List->setTreeStepSize(10);
-  Frame=new QVBox(Splitter);
+  List->setSelectionMode(QListView::Single);
+  TODock *dock;
+  dock=Result=toAllocDock("Template result",
+			  QString::null,
+			  *TemplateTool.toolbarImage());
+  Frame=new toTemplateResult(dock,this);
+  toAttachDock(dock,Frame,QMainWindow::Bottom);
 
   connect(List,SIGNAL(expanded(QListViewItem *)),this,SLOT(expand(QListViewItem *)));
   connect(List,SIGNAL(collapsed(QListViewItem *)),this,SLOT(collapse(QListViewItem *)));
@@ -454,6 +471,13 @@ toTemplate::toTemplate(QWidget *parent)
 
 toTemplate::~toTemplate()
 {
+  delete Result;
+}
+
+void toTemplate::closeFrame(void)
+{
+  Result=NULL;
+  Frame=NULL;
 }
 
 void toTemplate::expand(QListViewItem *item)
@@ -466,6 +490,13 @@ void toTemplate::expand(QListViewItem *item)
   }
 }
 
+QWidget *toTemplate::frame(void)
+{
+  if (Result->isHidden())
+    toAttachDock((TODock *)Result,Frame,QMainWindow::Bottom);
+  return Frame;
+}
+
 void toTemplate::collapse(QListViewItem *item)
 {
   toTemplateItem *ti=dynamic_cast<toTemplateItem *>(item);
@@ -476,8 +507,11 @@ void toTemplate::collapse(QListViewItem *item)
 void toTemplateItem::setSelected(bool sel)
 {
   toTemplate *temp=toTemplate::templateWidget(this);
-  if (sel&&temp)
-    temp->setWidget(selectedWidget(toTemplate::parentWidget(this)));
+  if (sel&&temp) {
+    QWidget *frame=toTemplate::parentWidget(this);
+    if (frame)
+      temp->setWidget(selectedWidget(frame));
+  }
   toResultViewItem::setSelected(sel);
 }
 
@@ -557,19 +591,65 @@ void toTextTemplate::addFile(QListView *parent,const QString &root,const QString
   }
 }
 
+toTemplateSQL::toTemplateSQL(toConnection &conn,toTemplateItem *parent,
+			     const QString &name,const QString &sql)
+  : toTemplateItem(parent,name),Object(this),Connection(conn),SQL(sql)
+{
+  setExpandable(true);
+}
+
+toTemplateSQLObject::toTemplateSQLObject(toTemplateSQL *parent)
+  : Parent(parent)
+{
+  Query=NULL;
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
+}
+
 void toTemplateSQL::expand(void)
 {
   while(firstChild())
     delete firstChild();
+  Object.expand();
+}
+
+void toTemplateSQLObject::expand(void)
+{
   try {
-    toBusy busy;
-    toQuery query(connection(),SQL,parameters());
-    while(!query.eof()) {
-      createChild(query.readValue());
-      for (int j=1;j<query.columns();j++)
-	query.readValue();
-    }
+    delete Query;
+    Query=NULL;
+    Query=new toNoBlockQuery(Parent->connection(),toQuery::Background,
+			     Parent->SQL,Parent->parameters());
+    Poll.start(100);
   } TOCATCH
+}
+
+void toTemplateSQLObject::poll(void)
+{
+  try {
+    if (Query&&Query->poll()) {
+      toQDescList desc=Query->describe();
+      while(Query->poll()&&!Query->eof()) {
+	Parent->createChild(Query->readValue());
+	for (unsigned int j=1;j<desc.size();j++)
+	  Query->readValue();
+      }
+      if (Query->eof()) {
+	delete Query;
+	Query=NULL;
+	Poll.stop();
+      }
+    }
+  } catch (const QString &str) {
+    delete Query;
+    Query=NULL;
+    Poll.stop();
+    toStatusMessage(str);
+  }
+}
+
+toTemplateSQLObject::~toTemplateSQLObject()
+{
+  delete Query;
 }
 
 static toTextTemplate TextTemplate;

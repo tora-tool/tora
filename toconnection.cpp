@@ -737,10 +737,7 @@ toQValue toQuery::readValue(void)
     throw QString("Query aborted");
   if (Mode==All)
     eof();
-  toQValue ret=Query->readValue();
-  if (ret.isNull())
-    return QString("{null}");
-  return ret;
+  return toNull(Query->readValue());
 }
 
 toQValue toQuery::readValueNull(void)

@@ -108,6 +108,9 @@ public:
     /** If column can contain null values.
      */
     bool Null;
+    /** Preferred alignment of this kind of value.
+     */
+    bool AlignRight;
     /** Comment on column (Only filled out in column cache.
      */
     QString Comment;

@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>340</width>
+            <width>336</width>
             <height>401</height>
         </rect>
     </property>
@@ -313,6 +313,17 @@
                         <string>&amp;All</string>
                     </property>
                 </widget>
+                <widget row="3"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>IndicateEmpty</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Indicate empty values as '' instead of NULL as {null}.</string>
+                    </property>
+                </widget>
             </grid>
         </widget>
     </grid>
@@ -345,6 +356,7 @@
     <tabstop>MaxContent</tabstop>
     <tabstop>UnlimitedContent</tabstop>
     <tabstop>MaxColDisp</tabstop>
+    <tabstop>IndicateEmpty</tabstop>
     <tabstop>BkgndConnect</tabstop>
     <tabstop>DontReread</tabstop>
     <tabstop>AutoLong</tabstop>

@@ -110,6 +110,7 @@
 #define CONF_TOOLS_LEFT		"ToolsLeft"
 #define CONF_DEFAULT_FORMAT	"DefaultFormat"
 #define CONF_AUTO_INDENT_RO	"AutoIndent"
+#define CONF_INDICATE_EMPTY	"IndicateEmpty"
 
 #ifndef TO_KDE
 #  ifndef WIN32
