@@ -401,6 +401,7 @@ toMain::toMain()
   Workspace=new QWorkspace(this);
   setCentralWidget(Workspace);
 #endif
+  setIcon(*toTOraPixmap);
 
   statusBar()->message("Ready");
   menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,false);

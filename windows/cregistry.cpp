@@ -1,8 +1,7 @@
 // Registry Access class (updated) by David Overton (david@insomniavisions.com).
 // These will compile either ANSI or UNICODE.
 
-#include "stdafx.h"
-#include "cregistry.h"
+#include "windows/cregistry.h"
 
 // Returns true if the OS is Windows NT or Windows 2000
 bool CRegistry::IsWinNTor2K()
@@ -274,7 +273,8 @@ bool CRegistry::SetStringValue(HKEY hKeyRoot, LPCTSTR pszSubKey, LPCTSTR pszValu
         return false;
     }   
 	
-    lRes = RegSetValueEx(hKey, pszValue, 0, REG_SZ, reinterpret_cast<const BYTE*>(pszString), dwSize);
+    lRes = RegSetValueEx(hKey, pszValue, 0, REG_SZ,
+			 reinterpret_cast<BYTE*>(pszString), dwSize);
 	
     RegCloseKey(hKey);
 

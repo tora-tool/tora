@@ -167,26 +167,36 @@ bool toTool::saveMap(const QString &file,map<QString,QString> &pairs)
 #  define APPLICATION_NAME "/tora/"
 #else
 #  if WIN32
-#    define APPLICATION_NAME "SOFTWARE\\GlobeCom\\tora\+"
+#    define APPLICATION_NAME "SOFTWARE\\GlobeCom\\tora\\"
 
 #    include "windows/cregistry.cpp"
 
-static QString toKeyPath(const QString &str,CRegistry &registry)
+static char *toKeyPath(const QString &str,CRegistry &registry)
 {
-  int pos=str.find('\\',-1);
+  static char *buf=NULL;
+  for(int pos=str.length()-1;pos>=0&&str.at(pos)!='\\';pos--)
+    ;
   if (pos<0)
     throw QString("Couldn't find \\ in path");
   QString ret=str.mid(0,pos);
-  registry.CreateKey(HKEY_CURRENT_USER,str.mid(0,ret);
-  return str.mid(0,pos);
+  if (buf)
+    free(buf);
+  buf=strdup(ret);
+  registry.CreateKey(HKEY_CURRENT_USER,buf);
+  return buf;
 }
 
-static QString toKeyValue(const QString &str)
+static char *toKeyValue(const QString &str)
 {
-  int pos=str.find('\\',-1);
+  static char *buf=NULL;
+  for(int pos=str.length()-1;pos>=0&&str.at(pos)!='\\';pos--)
+    ;
   if (pos<0)
     throw QString("Couldn't find \\ in path");
-  return str.mid(pos+1);
+  if (buf)
+    free(buf);
+  buf=strdup(str.mid(pos+1));
+  return buf;
 }
 
 #  endif
@@ -230,10 +240,14 @@ void toTool::saveConfig(void)
 			      toKeyPath(path,registry),
 			      toKeyValue(path),
 			      "");
-    else
+    else {
+      char *t=strdup(value.utf8());
       registry.SetStringValue(HKEY_CURRENT_USER,
-			      (const char *)path,
-			      (const char *)value.utf8());
+			      toKeyPath(path,registry),
+			      toKeyValue(path),
+			      t);
+      free(t);
+    }
   }
 #  endif
 #endif
@@ -377,15 +391,22 @@ const QString &toTool::globalConfig(const QString &tag,const QString &def)
     QString path=tag;
     path.prepend(APPLICATION_NAME);
     path.replace(re,"\\");
-    int siz=1024;
-    char buffer[siz];
-    if (registry.GetStringValue(HKEY_CURRENT_USER,
-				toKeyPath(path,registry),
-				toKeyValue(path),
-				buffer,siz)) {
-      QString ret=QString::fromUtf8(buffer);
-      (*Configuration)[tag]=ret;
-      return ret;
+    DWORD siz=1024;
+    char buffer[1024];
+    try {
+      if (registry.GetStringValue(HKEY_CURRENT_USER,
+  				  toKeyPath(path,registry),
+				  toKeyValue(path),
+				  buffer,siz)) {
+	if (siz>0) {
+	  QString ret=QString::fromUtf8(buffer);
+	  (*Configuration)[tag]=ret;
+	} else {
+	  (*Configuration)[tag]="";
+	}
+	return (*Configuration)[tag];
+      }
+    } catch (...) {
     }
 #endif
     return def;
