@@ -25,6 +25,8 @@
 2001-12-18: Fixed bug with permanent & online mixed up in new tablespace dialog.
 2001-12-18: Check if profiler tables exists on profiler startup, not in execute.
 2001-12-19: Some more fixes to when profiler tables are missing.
+2001-12-19: Added option to never read object cache unless mandatory.
+2001-12-19: Always start reading object cache when choosing reread in menu.
 
 1.3.0: Released 2001-12-17
 

@@ -960,9 +960,14 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	  }
 	maxlev=maxlevorig;
 	QString word=Settings.KeywordUpper?(*i).String.upper():(*i).String;
-	ret+=QString("%1").arg(word,
-			       Settings.RightSeparator?maxlev-1:1-maxlev);
-	current=level+max(int(word.length()),maxlev-1);
+	if (ret.length()) {
+	  ret+=QString("%1").arg(word,
+				 Settings.RightSeparator?maxlev-1:1-maxlev);
+	  current=level+max(int(word.length()),maxlev-1);
+	} else {
+	  ret+=word;
+	  current=level;
+	}
 	any=false;
 	lineList=false;
       } else {

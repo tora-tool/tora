@@ -787,7 +787,7 @@ toConnection::toConnection(const QString &provider,
   NeedCommit=Abort=false;
   ReadingCache=false;
   if (cache) {
-    if (!toTool::globalConfig(CONF_CACHE_CONNECT,"").isEmpty())
+    if (toTool::globalConfig(CONF_OBJECT_CACHE,"0").toInt()==1)
       readObjects();
   } else
     ReadingValues.up();
@@ -1275,7 +1275,7 @@ void toConnection::readObjects(void)
 
 void toConnection::rereadCache(void)
 {
-  if(ReadingValues.getValue()==0) {
+  if(ReadingValues.getValue()==0&&ReadingCache) {
     toStatusMessage("Not done caching objects, can not clear unread cache");
     return;
   }
@@ -1302,6 +1302,8 @@ bool toConnection::cacheAvailable(bool block,bool need)
 {
   if (!ReadingCache) {
     if (!need)
+      return true;
+    if (toTool::globalConfig(CONF_OBJECT_CACHE,"0").toInt()==2&&!block)
       return true;
     readObjects();
     toMainWidget()->checkCaching();

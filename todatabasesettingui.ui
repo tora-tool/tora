@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>336</width>
+            <width>332</width>
             <height>401</height>
         </rect>
     </property>
@@ -65,21 +65,6 @@
             <property>
                 <name>toolTip</name>
                 <string>Specify if changes should be automatically commited.</string>
-            </property>
-        </widget>
-        <widget row="1"  column="0" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>CacheConnect</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Read object cache on connect</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>If checked the object cache will be read on connect, otherwise it will be read when first needed.</string>
             </property>
         </widget>
         <widget row="3"  column="0" >
@@ -326,6 +311,31 @@
                 </widget>
             </grid>
         </widget>
+        <widget row="1"  column="0" >
+            <class>QComboBox</class>
+            <item>
+                <property>
+                    <name>text</name>
+                    <string>Start read object cache when needed</string>
+                </property>
+            </item>
+            <item>
+                <property>
+                    <name>text</name>
+                    <string>Read object cache on connect</string>
+                </property>
+            </item>
+            <item>
+                <property>
+                    <name>text</name>
+                    <string>Never read object cache until mandatory</string>
+                </property>
+            </item>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ObjectCache</cstring>
+            </property>
+        </widget>
     </grid>
 </widget>
 <connections>
@@ -350,7 +360,6 @@
 </connections>
 <tabstops>
     <tabstop>AutoCommit</tabstop>
-    <tabstop>CacheConnect</tabstop>
     <tabstop>InitialFetch</tabstop>
     <tabstop>ReadAll</tabstop>
     <tabstop>MaxContent</tabstop>
