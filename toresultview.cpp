@@ -1376,6 +1376,8 @@ void toResultView::query(const QString &sql,const toQList &param)
       } else
 	hidden=true;
     }
+    if (resizeMode()!=QListView::NoColumn)
+      setResizeMode(resizeMode());
 
     if (NumberColumn)
       setSorting(0);

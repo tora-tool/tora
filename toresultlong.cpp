@@ -170,6 +170,9 @@ void toResultLong::addItem(void)
 	  }
 	  HasHeaders=true;
 
+	  if (resizeMode()!=QListView::NoColumn)
+	    setResizeMode(resizeMode());
+
 	  if (sortColumn()<0) {
 	    if (NumberColumn)
 	      setSorting(0);
