@@ -778,6 +778,7 @@ void toWorksheet::query(const QString &str,bool direct)
 	addLog(QueryString,exc);
       }
     } else {
+      Result->stop();
       Timer.start();
       StopButton->setEnabled(true);
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);

@@ -97,6 +97,7 @@ private:
     toTask		*Task;
     taskRunner(toTask *);
     virtual void run(void);
+    friend class toThread;
   }			Thread;
   static std::list<toThread *> *Threads;
   static toLock *Lock;
@@ -111,6 +112,7 @@ public:
   
   void start(void);
   void startAsync(void);
+  static void msleep(int msec);
   static bool mainThread(void);
   friend class taskRunner;
 };
@@ -227,7 +229,9 @@ public:
    * handles over execution to child thread.
    */
   void startAsync(void);
-
+  /** Sleep in milliseconds.
+   */
+  static void msleep(int msec);
   /** Returns true if this is the main thread.
    */
   static bool mainThread(void);

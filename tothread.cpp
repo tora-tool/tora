@@ -43,6 +43,8 @@
 
 #ifndef WIN32
 
+#include <time.h>
+
 pthread_t toThread::MainThread=pthread_self();
 
 #define SEM_ASSERT(x) if((x)!=0) { throw QString(\
@@ -187,6 +189,14 @@ bool toThread::mainThread(void)
   return pthread_equal(MainThread,pthread_self());
 }
 
+void toThread::msleep(int msec)
+{
+  struct timespec req;
+  req.tv_sec=msec/1000;
+  req.tv_nsec=(msec%1000)*1000000;
+  nanosleep(&req,&req);
+}
+
 #else
 
 std::list<toThread *> *toThread::Threads;
@@ -279,6 +289,11 @@ void toThread::startAsync(void)
   Lock->lock();
   Threads->insert(Threads->end(),this);
   Lock->unlock();
+}
+
+void toThread::msleep(int msec)
+{
+  QThread::msleep(msec);
 }
 
 toThread::taskRunner::taskRunner(toTask *task)

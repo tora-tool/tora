@@ -211,12 +211,21 @@ toNoBlockQuery::~toNoBlockQuery()
 {
   {
     TO_DEBUGOUT("Locking for delete\n");
-    toLocker lock(Lock);
+    Lock.lock();
     if (!EOQ) {
       TO_DEBUGOUT("Sending INT\n");
-      Query.cancel();
-      Quit=true;
+      do {
+	if (Quit) {
+	  TO_DEBUGOUT("Sleeping and retrying cancel\n");
+	  Lock.unlock();
+	  toThread::msleep(100);
+	  Lock.lock();
+	}
+	Query.cancel();
+	Quit=true;
+      } while(Running.getValue()==0);
     }
+    Lock.unlock();
   }
   do {
     TO_DEBUGOUT("Waiting for client\n");
