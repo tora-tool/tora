@@ -1429,7 +1429,6 @@ fi
 
 eval "$ac_cv_have_qt"
 
-AC_MSG_WARN([here])
 if test "$have_qt" != yes; then
   AC_MSG_RESULT([$have_qt]);
 else
@@ -1445,7 +1444,6 @@ else
 fi
 
 if test "$qt_includes" = "$x_includes" || test -z "$qt_includes"; then
- AC_MSG_WARN([fuck])
  QT_INCLUDES=""
 else
  QT_INCLUDES="-I$qt_includes"
@@ -1453,7 +1451,6 @@ else
 fi
 
 if test "$qt_libraries" = "$x_libraries" || test -z "$qt_libraries"; then
- AC_MSG_WARN([fuck2])
  QT_LDFLAGS=""
 else
  QT_LDFLAGS="-L$qt_libraries"
