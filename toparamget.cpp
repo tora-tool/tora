@@ -334,9 +334,14 @@ void toParamGet::showMemo(int row)
 {
   QObject *obj=child(QString::number(row));
   if (obj) {
-    toMemoEditor *memo=new toMemoEditor(this,((QLineEdit *)obj)->text(),row,0,false,true);
-    if (memo->exec())
-      ((QLineEdit *)obj)->setText(memo->text());
+    toMemoEditor *memo = new toMemoEditor(this,
+                                          ((QComboBox *) obj)->currentText(),
+                                          row,
+                                          0,
+                                          false,
+                                          true);
+    if(memo->exec())
+      ((QComboBox *)obj)->setCurrentText(memo->text());
   }
 }
 
