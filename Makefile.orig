@@ -29,6 +29,7 @@ SOURCES=\
 	todebugchange.cpp	\
 	todebugtext.cpp		\
 	todebugwatch.cpp	\
+	toextract.cpp		\
 	tofilesize.cpp		\
 	toglobalsetting.cpp     \
 	tohighlightedtext.cpp	\
@@ -73,7 +74,7 @@ SOURCES=\
 
 TARGET=tora-plugin
 
-TOVERSION=-DTOVERSION=\"0.7.1\"
+TOVERSION=-DTOVERSION=\"0.8\"
 
 include Makefile.setup
 include Makefile.common
@@ -84,6 +85,7 @@ plugins/todebug.tso:\
 	objs/todebugwatch.o \
 	objs/todebugtext.o \
 	objs/todebugchange.o
+plugins/toextract.tso:objs/toextract.o
 plugins/tofilesize.tso:objs/tofilesize.o
 plugins/tooutput.tso:objs/tooutput.o
 plugins/tonoblockquery.tso:objs/tonoblockquery.o
@@ -132,6 +134,7 @@ tora-plugin: \
 	tora \
 	plugins/tobrowser.tso \
 	plugins/todebug.tso \
+	plugins/toextract.tso \
 	plugins/tofilesize.tso \
 	plugins/tonoblockquery.tso \
 	plugins/tooutput.tso \
