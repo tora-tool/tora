@@ -842,8 +842,19 @@ toTuningOverview::toTuningOverview(QWidget *parent,const char *name,WFlags fl)
   FileUsed->query(toSQL::string(SQLOverviewFilespace,toCurrentConnection(this)),(const toQList)val);
   FileUsed->showLegend(false);
 
+  Done.up();
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
+
   // Will be called later anyway
   //refresh();
+}
+
+toTuningOverview::~toTuningOverview()
+{
+    if (Done.getValue()==0) {
+      Quit=true;
+      Done.down();
+    }
 }
 
 void toTuningOverview::stop(void)
@@ -988,76 +999,66 @@ static toSQL SQLOverviewDatafiles7("toTuning:Overview:Datafiles",
 				   QString::null,
 				   "7.3");
 
-void toTuningOverview::refresh(void)
+void toTuningOverview::overviewQuery::setValue(const QString &nam,const QString &val)
+{
+  if (Parent.Quit)
+    throw 1;
+  toLocker lock(Parent.Lock);
+  Parent.Values[nam]=val;
+}
+
+void toTuningOverview::overviewQuery::run(void)
 {
   try {
-    toConnection &conn=toCurrentConnection(this);
-
     toQList val;
-    QString unitStr=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
-    val.insert(val.end(),toQValue(toSizeDecode(unitStr)));
+    val.insert(val.end(),toQValue(toSizeDecode(Parent.UnitString)));
 
-    toQList res=toQuery::readQuery(conn,SQLOverviewArchive,val);
+    toQList res=toQuery::readQuery(*Parent.Connection,SQLOverviewArchive,val);
     QString tmp=toShift(res);
     tmp+="/";
     tmp+=toShift(res);
-    tmp+=unitStr;
-    ArchiveInfo->setText(tmp);
+    tmp+=Parent.UnitString;
+    setValue("ArchiveInfo",tmp);
 
-    std::list<QLabel *>::iterator labIt=Backgrounds.begin();
-
-    res=toQuery::readQuery(conn,SQLOverviewRound);
+    res=toQuery::readQuery(*Parent.Connection,SQLOverviewRound);
     tmp=toShift(res);
     tmp+=" ms";
-    SendFromClient->setText(tmp);
+    setValue("SendFromClient",tmp);
     tmp=toShift(res);
     tmp+=" ms";
-    SendToClient->setText(tmp);
+    setValue("SendToClient",tmp);
 
-    res=toQuery::readQuery(conn,SQLOverviewClientTotal);
+    res=toQuery::readQuery(*Parent.Connection,SQLOverviewClientTotal);
     tmp=toShift(res);
-    TotalClient->setText(tmp);
+    setValue("TotalClient",tmp);
     tmp=toShift(res);
-    ActiveClient->setText(tmp);
+    setValue("ActiveClient",tmp);
 
     int totJob=0;
-    res=toQuery::readQuery(conn,SQLOverviewDedicated);
+    res=toQuery::readQuery(*Parent.Connection,SQLOverviewDedicated);
     tmp=toShift(res);
     totJob+=tmp.toInt();
-    DedicatedServer->setText(tmp);
+    setValue("DedicatedServer",tmp);
 
-    res=toQuery::readQuery(conn,SQLOverviewDispatcher);
+    res=toQuery::readQuery(*Parent.Connection,SQLOverviewDispatcher);
     tmp=toShift(res);
     totJob+=tmp.toInt();
-    DispatcherServer->setText(tmp);
+    setValue("DispatcherServer",tmp);
 
-    res=toQuery::readQuery(conn,SQLOverviewShared);
+    res=toQuery::readQuery(*Parent.Connection,SQLOverviewShared);
     tmp=toShift(res);
     totJob+=tmp.toInt();
-    SharedServer->setText(tmp);
+    setValue("SharedServer",tmp);
 
-    res=toQuery::readQuery(conn,SQLOverviewParallell);
+    res=toQuery::readQuery(*Parent.Connection,SQLOverviewParallell);
     tmp=toShift(res);
     totJob+=tmp.toInt();
-    ParallellServer->setText(tmp);
+    setValue("ParallellServer",tmp);
 
-    res=toQuery::readQuery(conn,SQLOverviewBackground);
+    res=toQuery::readQuery(*Parent.Connection,SQLOverviewBackground);
+    QStringList back;
     while(res.size()>0) {
       tmp=toShift(res);
-      QLabel *label;
-      if (labIt==Backgrounds.end()||*labIt==NULL) {
-	label=new QLabel(BackgroundGroup);
-	if (labIt==Backgrounds.end()) {
-	  Backgrounds.insert(Backgrounds.end(),label);
-	  labIt=Backgrounds.end();
-	} else {
-	  *labIt=label;
-	  labIt++;
-	}
-      } else {
-	label=*labIt;
-	labIt++;
-      }
       if(tmp=="DBW")
 	tmp="DBWR";
       else if (tmp=="PMO")
@@ -1082,70 +1083,153 @@ void toTuningOverview::refresh(void)
       totJob+=job.toInt();
       tmp+=job;
       tmp+="</B>";
-      label->setText(tmp);
+      back<<tmp;
     }
-    while(labIt!=Backgrounds.end()) {
-      delete *labIt;
-      *labIt=NULL;
-      labIt++;
-    }
-    TotalProcess->setText(QString::number(totJob));
+    setValue("Background",back.join(","));
+    setValue("TotalProcess",QString::number(totJob));
 
     double tot=0;
     double sql=0;
-    res=toQuery::readQuery(conn,SQLOverviewSGA,val);
+    res=toQuery::readQuery(*Parent.Connection,SQLOverviewSGA,val);
     while(res.size()>0) {
-      QLabel *widget=NULL;
       QString nam=toShift(res);
       tmp=toShift(res);
-      if (nam=="Database Buffers")
-	widget=BufferSize;
-      else if (nam=="Redo Buffers")
-	widget=RedoBuffer;
+      if (nam=="Database Buffers"||nam=="Redo Buffers")
+	setValue(nam,tmp);
       else if (nam=="Fixed Size"||nam=="Variable Size")
 	sql+=tmp.toDouble();
       tot+=tmp.toDouble();
-      if (widget) {
-	tmp+=unitStr;
-	widget->setText(tmp);
-      }
     }
     tmp=QString::number(tot);
-    tmp+=unitStr;
-    SGATotal->setText(tmp);
+    tmp+=Parent.UnitString;
+    setValue("SGATotal",tmp);
     tmp=QString::number(sql);
-    tmp+=unitStr;
-    SharedSize->setText(tmp);
+    tmp+=Parent.UnitString;
+    setValue("SharedSize",tmp);
 
-    res=toQuery::readQuery(conn,SQLOverviewLog,val);
-    RedoFiles->setText(toShift(res));
-    ActiveRedo->setText(toShift(res));
+    res=toQuery::readQuery(*Parent.Connection,SQLOverviewLog,val);
+    setValue("RedoFiles",toShift(res));
+    setValue("ActiveRedo",toShift(res));
     tmp=toShift(res);
     tmp+="/";
     tmp+=toShift(res);
-    tmp+=unitStr;
-    RedoSize->setText(tmp);
+    tmp+=Parent.UnitString;
+    setValue("RedoSize",tmp);
+
+    res=toQuery::readQuery(*Parent.Connection,SQLOverviewTablespaces);
+    setValue("Tablespaces",toShift(res));
+
+    res=toQuery::readQuery(*Parent.Connection,SQLOverviewDatafiles);
+    setValue("Files",toShift(res));
+  } catch(const QString &str) {
+    printf("Exception occured:\n\n%s\n",(const char *)str);
+  } catch(int) {
+  }
+  Parent.Done.up();
+}
+
+void toTuningOverview::refresh(void)
+{
+  try {
+    if (Done.getValue()==1) {
+      Done.down();
+      Quit=false;
+      Connection=&toCurrentConnection(this);
+      UnitString=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
+      toThread *thread=new toThread(new overviewQuery(*this));
+      thread->start();
+      Poll.start(500);
+    }
+  } TOCATCH
+}
+
+void toTuningOverview::setValue(QLabel *label,const QString &nam)
+{
+  toLocker lock(Lock);
+  std::map<QString,QString>::iterator i=Values.find(nam);
+  if (i!=Values.end()) {
+    label->setText((*i).second);
+    Values.erase(i);
+  }
+}
+
+void toTuningOverview::poll(void)
+{
+  try {
+
+    setValue(ArchiveInfo,"ArchiveInfo");
+    setValue(SendFromClient,"SendFromClient");
+    setValue(SendToClient,"SendToClient");
+    setValue(TotalClient,"TotalClient");
+    setValue(ActiveClient,"ActiveClient");
+    setValue(DedicatedServer,"DedicatedServer");
+    setValue(DispatcherServer,"DispatcherServer");
+    setValue(SharedServer,"SharedServer");
+    setValue(ParallellServer,"ParallellServer");
+
+    {
+      toLocker lock(Lock);
+      std::map<QString,QString>::iterator i=Values.find("Background");
+      if (i!=Values.end()) {
+	std::list<QLabel *>::iterator labIt=Backgrounds.begin();
+
+	QStringList lst=QStringList::split(",",(*i).second);
+	for(unsigned int j=0;j<lst.count();j++) {
+	  QLabel *label;
+	  if (labIt==Backgrounds.end()||*labIt==NULL) {
+	    label=new QLabel(BackgroundGroup);
+	    if (labIt==Backgrounds.end()) {
+	      Backgrounds.insert(Backgrounds.end(),label);
+	      labIt=Backgrounds.end();
+	    } else {
+	      *labIt=label;
+	      labIt++;
+	    }
+	  } else {
+	    label=*labIt;
+	    labIt++;
+	  }
+	  label->setText(lst[j]);
+	}
+	while(labIt!=Backgrounds.end()) {
+	  delete *labIt;
+	  *labIt=NULL;
+	  labIt++;
+	}
+	Values.erase(i);
+      }
+    }
+    setValue(TotalProcess,"TotalProcess");
+    setValue(BufferSize,"Database Buffers");
+    setValue(RedoBuffer,"Redo Buffers");
+    setValue(SGATotal,"SGATotal");
+    setValue(SharedSize,"SharedSize");
+    setValue(RedoFiles,"RedoFiles");
+    setValue(ActiveRedo,"ActiveRedo");
+    setValue(RedoSize,"RedoSize");
 
     std::list<double> &values=FileUsed->values();
-    std::list<double>::iterator i=values.begin();
-    double size=0;
-    double used=0;
-    if (i!=values.end())
-      used=size=(*i);
-    i++;
-    if (i!=values.end())
-      size+=(*i);
-    tmp=QString::number(used);
-    tmp+="/";
-    tmp+=QString::number(size);
-    tmp+=unitStr;
-    Filesize->setText(tmp);
+    std::list<double>::iterator j=values.begin();
+    if (j!=values.end()) {
+      double size=0;
+      double used=0;
+      if (j!=values.end())
+	used=size=(*j);
+      j++;
+      if (j!=values.end())
+	size+=(*j);
+      QString tmp=QString::number(used);
+      tmp+="/";
+      tmp+=QString::number(size);
+      tmp+=UnitString;
+      if (tmp!=Filesize->text())
+	Filesize->setText(tmp);
+    }
 
-    res=toQuery::readQuery(conn,SQLOverviewTablespaces);
-    Tablespaces->setText(toShift(res));
-
-    res=toQuery::readQuery(conn,SQLOverviewDatafiles);
-    Files->setText(toShift(res));
+    setValue(Tablespaces,"Tablespaces");
+    setValue(Files,"Files");
+    if (Done.getValue()==1)
+      Poll.stop();
   } TOCATCH
 }
 
@@ -1216,6 +1300,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Refresh=toRefreshCreate(toolbar);
   connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
   toRefreshParse(timer());
+  connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
 
   toolbar->addSeparator();
   TabButton=new toPopupButton(QPixmap((const char **)compile_xpm),

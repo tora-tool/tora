@@ -1,3 +1,10 @@
+1.3.6:
+
+2002-04-17: Fixed spelling error of tuning dialog.
+2002-04-17: Update to contributors section of about.
+2002-04-17: Made overview window of tuning poll in background.
+2002-04-17: Fixed refresh problem in tuning.
+
 1.3.5: Released 2002-04-17
 
 2002-04-16: Fixed wrong caption of license window in Windows.

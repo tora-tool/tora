@@ -11,7 +11,7 @@ Extended functionality:
 		Remove columns
 		Add constraints
 		Remove constraints
-	Rename table
+	Rename table (And everything else)
 		ALTER TABLE ... RENAME TO ...
 	DB Links
 	Libraries

@@ -35,7 +35,9 @@
 #ifndef TOTUNING_H
 #define TOTUNING_H
 
+#include "tobackground.h"
 #include "toresultline.h"
+#include "tothread.h"
 #include "totool.h"
 #include "totuningoverviewui.h"
 
@@ -102,13 +104,38 @@ public slots:
 };
 
 class toTuningOverview : public toTuningOverviewUI {
+  Q_OBJECT
+
+  bool Quit;
+  toSemaphore Done;
+  std::map<QString,QString> Values;
+  toConnection *Connection;
+  toLock Lock;
+  QString UnitString;
+
+  struct overviewQuery : public toTask {
+    toTuningOverview &Parent;
+    overviewQuery(toTuningOverview &parent)
+      : Parent(parent)
+    { }
+    virtual void run(void);
+    void setValue(const QString &name,const QString &val);
+  };
+
+  toBackground Poll;
+
   std::list<QLabel *> Backgrounds;
   void setupChart(toResultLine *chart,const QString &,const QString &,const toSQL &sql);
+  void setValue(QLabel *label,const QString &val);
 public:
   toTuningOverview(QWidget *parent=0,const char *name=0,WFlags fl=0);
+  ~toTuningOverview();
   void refresh(void);
   void stop(void);
   void start(void);
+
+public slots:
+  void poll(void);
 };
 
 class toTuningWait : public QVBox {
