@@ -27,7 +27,7 @@
 
 #include "toresultpie.moc"
 
-toResultPie::toResultPie(QWidget *parent,const char *name=NULL)
+toResultPie::toResultPie(QWidget *parent,const char *name)
   : toPieChart(parent,name)
 {
   connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
@@ -45,7 +45,7 @@ void toResultPie::query(const QString &sql,const toQList &param)
 
     std::list<QString> labels;
     std::list<double> values;
-    int len;
+    int len=query.columns();
     while(!query.eof()) {
       QString val=query.readValue();
       values.insert(values.end(),val.toDouble());

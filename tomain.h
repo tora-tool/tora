@@ -703,14 +703,6 @@ public:
   toBusy();
   ~toBusy();
 };
-/* This can't be documented in KDoc, anyway it is an easy way to catch any exception that
- * might be sent by TOra or OTL and display the message in the statusbar of the main window.
- */
-#define TOCATCH \
-    catch (const QString &str) {\
-      toStatusMessage(str);\
-    }
-
 /**
  * Get maximum number of a and b.
  */
@@ -728,5 +720,13 @@ T min(T a, T b)
 {
     return a < b ? a : b ;
 }
+
+/* This can't be documented in KDoc, anyway it is an easy way to catch any exception that
+ * might be sent by TOra or OTL and display the message in the statusbar of the main window.
+ */
+#define TOCATCH \
+    catch (const QString &str) {\
+      toStatusMessage(str);\
+    }
 
 #endif

@@ -200,12 +200,14 @@ void toBarChart::paintEvent(QPaintEvent *e)
   if (Legend) {
     int lwidth=0;
     int lheight=0;
-    for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
-      if (!(*i).isEmpty()&&*i!=" ") {
-	QRect bounds=fm.boundingRect(0,0,10000,10000,FONT_ALIGN,*i);
-	if (lwidth<bounds.width())
-	  lwidth=bounds.width();
-	lheight+=bounds.height();
+    {
+      for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
+        if (!(*i).isEmpty()&&*i!=" ") {
+	  QRect bounds=fm.boundingRect(0,0,10000,10000,FONT_ALIGN,*i);
+	  if (lwidth<bounds.width())
+	    lwidth=bounds.width();
+	  lheight+=bounds.height();
+	}
       }
     }
     if (lheight>0) {
@@ -254,15 +256,17 @@ void toBarChart::paintEvent(QPaintEvent *e)
     if (MaxAuto) {
       bool first=true;
       std::list<double> total;
-      for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
-	std::list<double>::iterator k=total.begin();
-	for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
-	  if (k==total.end()) {
-	    total.insert(total.end(),*j);
-	    k=total.end();
-	  } else {
-	    *k+=*j;
-	    k++;
+      {
+	for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
+	  std::list<double>::iterator k=total.begin();
+	  for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
+	    if (k==total.end()) {
+	      total.insert(total.end(),*j);
+	      k=total.end();
+	    } else {
+	      *k+=*j;
+	      k++;
+	    }
 	  }
 	}
       }

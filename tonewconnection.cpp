@@ -19,10 +19,6 @@
 **
 **********************************************************************/
 
-#ifdef WIN32
-#  include "windows/cregistry.h"
-#endif
-
 #include <qfile.h>
 #include <qcombobox.h>
 #include <qmessagebox.h>
@@ -42,6 +38,10 @@
 #include "tonewconnection.h"
 #include "tomain.h"
 #include "toconnection.h"
+
+#ifdef WIN32
+#  include "windows/cregistry.h"
+#endif
 
 #include "tonewconnection.moc"
 #include "tonewconnectionui.moc"

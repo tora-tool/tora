@@ -30,7 +30,7 @@
 
 #include "topiechart.moc"
 
-toPieChart::toPieChart(QWidget *parent,const char *name,WFlags f=0)
+toPieChart::toPieChart(QWidget *parent,const char *name,WFlags f)
   : QWidget(parent,name,f)
 {
   Legend=true;
@@ -57,8 +57,10 @@ void toPieChart::paintEvent(QPaintEvent *e)
   int bottom=height();
 
   double tot=0;
-  for(std::list<double>::iterator i=Values.begin();i!=Values.end();i++)
-    tot+=*i;
+  {
+    for(std::list<double>::iterator i=Values.begin();i!=Values.end();i++)
+      tot+=*i;
+  }
 
   p.fillRect(0,0,width(),height(),qApp->palette().active().background());
 
@@ -79,25 +81,26 @@ void toPieChart::paintEvent(QPaintEvent *e)
     int lheight=0;
 
     std::list<double>::iterator j=Values.begin();
-    for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
-      QString sizstr;
-      if (j!=Values.end()) {
-	if (DisplayPercent)
-	  sizstr.sprintf("%0.1f",100*(*j)/tot);
-	else
-	  sizstr=QString::number(*j);
-	sizstr+=Postfix;
-      }
-
-      if (!(*i).isEmpty()) {
-	QString str=*i;
-	str+=" (";
-	str+=sizstr;
-	str+=")";
-	QRect bounds=fm.boundingRect(0,0,10000,10000,FONT_ALIGN,str);
-	if (lwidth<bounds.width())
-	  lwidth=bounds.width();
-	lheight+=bounds.height();
+    {
+      for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
+	QString sizstr;
+	if (j!=Values.end()) {
+	  if (DisplayPercent)
+	    sizstr.sprintf("%0.1f",100*(*j)/tot);
+	  else
+	    sizstr=QString::number(*j);
+	  sizstr+=Postfix;
+	}
+        if (!(*i).isEmpty()) {
+  	  QString str=*i;
+	  str+=" (";
+	  str+=sizstr;
+	  str+=")";
+	  QRect bounds=fm.boundingRect(0,0,10000,10000,FONT_ALIGN,str);
+	  if (lwidth<bounds.width())
+	    lwidth=bounds.width();
+	  lheight+=bounds.height();
+	}
       }
       if (j!=Values.end())
 	j++;

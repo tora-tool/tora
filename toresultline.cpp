@@ -28,7 +28,7 @@
 
 #include "toresultline.moc"
 
-toResultLine::toResultLine(QWidget *parent,const char *name=NULL)
+toResultLine::toResultLine(QWidget *parent,const char *name)
   : toLineChart(parent,name)
 {
   connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));

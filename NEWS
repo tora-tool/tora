@@ -123,6 +123,7 @@
 2001-09-05: Some fixes in debugtext when changing data.
 2001-09-06: Some rather extensive toResult changes in the API.
 2001-09-07: Finnished MySQL support in browser and worksheet.
+2001-09-09: A bunch of Windows fixes so TOra compiles in Windows again.
 
 0.14: Released 2001-08-02 (Branched TORA10 for 1.0 release)
 

@@ -30,6 +30,12 @@
 #include <qfile.h>
 #include <qtimer.h>
 #include <qregexp.h>
+
+#include "totool.h"
+#include "tomain.h"
+#include "toconf.h"
+#include "toconnection.h"
+
 #ifdef WIN32
 #  include "windows/cregistry.h"
 #  include "windows/cregistry.cpp"
@@ -38,11 +44,6 @@
 #    include <qsettings.h>
 #  endif
 #endif
-
-#include "totool.h"
-#include "tomain.h"
-#include "toconf.h"
-#include "toconnection.h"
 
 #include "totool.moc"
 

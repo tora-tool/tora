@@ -29,9 +29,6 @@
 #include <kmenubar.h>
 #include <kapp.h>
 #endif
-#ifdef WIN32
-#include "windows/cregistry.h"
-#endif
 
 #include <qapplication.h>
 #include <qcursor.h>
@@ -57,6 +54,10 @@
 #include "toresult.h"
 #include "tothread.h"
 #include "toconnection.h"
+
+#ifdef WIN32
+#include "windows/cregistry.h"
+#endif
 
 #define CHUNK_SIZE 63
 

@@ -22,6 +22,9 @@
 #include <qfile.h>
 #include <qregexp.h>
 
+#ifdef WIN32
+#include <winsock.h>
+#endif
 #include <mysql.h>
 
 #include "toconnection.h"
@@ -36,14 +39,14 @@ static QCString QueryParam(const QString &query,toQList &params,const QString &c
   bool inString=false;
   toQList::iterator cpar=params.begin();
 
-  map<QString,QString> binds;
+  std::map<QString,QString> binds;
 
   for(unsigned int i=0;i<query.length();i++) {
-    QChar c=query[i];
+    QChar c=query.at(i);
     switch(char(c)) {
     case '\\':
       ret+=c;
-      ret+=query[++i];
+      ret+=query.at(++i);
       break;
     case '\'':
       inString=!inString;
@@ -53,7 +56,7 @@ static QCString QueryParam(const QString &query,toQList &params,const QString &c
       if (!inString) {
 	QString nam;
 	for (i++;i<query.length();i++) {
-	  c=query[i];
+	  c=query.at(i);
 	  if (!c.isLetterOrNumber())
 	    break;
 	  nam+=c;
@@ -61,7 +64,7 @@ static QCString QueryParam(const QString &query,toQList &params,const QString &c
 	QString in;
 	if (c=='<') {
 	  for (i++;i<query.length();i++) {
-	    c=query[i];
+	    c=query.at(i);
 	    if (c=='>') {
 	      i++;
 	      break;
@@ -90,7 +93,7 @@ static QCString QueryParam(const QString &query,toQList &params,const QString &c
 	    str+="'";
 	  QString tmp=(*cpar);
 	  for(unsigned int j=0;j<tmp.length();j++) {
-	    QChar d=tmp[j];
+	    QChar d=tmp.at(j);
 	    switch(char(d)) {
 	    case 0:
 	      str+="\\0";

@@ -273,11 +273,11 @@ toQValue::operator QString() const
 // toQuery implementation
 
 toQuery::toQuery(toConnection &conn,toSQL &sql,
-		 const QString &arg1=QString::null,const QString &arg2=QString::null,
-		 const QString &arg3=QString::null,const QString &arg4=QString::null,
-		 const QString &arg5=QString::null,const QString &arg6=QString::null,
-		 const QString &arg7=QString::null,const QString &arg8=QString::null,
-		 const QString &arg9=QString::null)
+		 const QString &arg1,const QString &arg2,
+		 const QString &arg3,const QString &arg4,
+		 const QString &arg5,const QString &arg6,
+		 const QString &arg7,const QString &arg8,
+		 const QString &arg9)
   : Connection(conn),ConnectionSub(conn.mainConnection()),SQL(sql(Connection))
 {
   Mode=Normal;
@@ -328,11 +328,11 @@ toQuery::toQuery(toConnection &conn,toSQL &sql,
 }
 
 toQuery::toQuery(toConnection &conn,const QString &sql,
-		 const QString &arg1=QString::null,const QString &arg2=QString::null,
-		 const QString &arg3=QString::null,const QString &arg4=QString::null,
-		 const QString &arg5=QString::null,const QString &arg6=QString::null,
-		 const QString &arg7=QString::null,const QString &arg8=QString::null,
-		 const QString &arg9=QString::null)
+		 const QString &arg1,const QString &arg2,
+		 const QString &arg3,const QString &arg4,
+		 const QString &arg5,const QString &arg6,
+		 const QString &arg7,const QString &arg8,
+		 const QString &arg9)
   : Connection(conn),ConnectionSub(conn.mainConnection()),SQL(sql.utf8())
 {
   Mode=Normal;
@@ -637,8 +637,10 @@ toConnection::toConnection(const toConnection &conn)
 toConnection::~toConnection()
 {
   toBusy busy;
-  for (std::list<QWidget *>::iterator i=Widgets.begin();i!=Widgets.end();i=Widgets.begin()) {
-    delete (*i);
+  {
+    for (std::list<QWidget *>::iterator i=Widgets.begin();i!=Widgets.end();i=Widgets.begin()) {
+      delete (*i);
+    }
   }
   for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     Connection->closeConnection(*i);

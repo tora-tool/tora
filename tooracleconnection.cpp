@@ -22,9 +22,14 @@
 #include <qfile.h>
 #include <qregexp.h>
 
+#include "tomain.h"
+
+#ifdef WIN32
+#  include "windows/cregistry.h"
+#endif
+
 #include "otlv32.h"
 #include "toconnection.h"
-#include "tomain.h"
 #include "toconf.h"
 #include "totool.h"
 

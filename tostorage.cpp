@@ -557,9 +557,11 @@ std::list<QString> toStorageDialog::sql(void)
       start+=Datafile->getName().upper();
       start+="\" DATAFILE ";
       std::list<QString> lst=Datafile->sql();
-      for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
-	start+=" ";
-	start+=*i;
+      {
+	for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
+	  start+=" ";
+	  start+=*i;
+	}
       }
       lst=Tablespace->sql();
       for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {

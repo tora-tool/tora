@@ -1430,7 +1430,7 @@ void toDebug::updateState(int reason)
 	    QListViewItem *last=NULL;
 	    int num=0;
 	    for (end=start;end<value.length();end++) {
-	      if (value[end]==',') {
+	      if (value.at(end)==',') {
 		if (start<end) {
 		  QString name=item->text(2);
 		  name+="(";

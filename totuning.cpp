@@ -325,7 +325,7 @@ void toTuningOverview::setupChart(toResultLine *chart,const QString &title,const
   chart->query(toSQL::string(sql,toCurrentConnection(this)),val);
 }
 
-toTuningOverview::toTuningOverview(QWidget *parent=0,const char *name=0,WFlags fl=0)
+toTuningOverview::toTuningOverview(QWidget *parent,const char *name,WFlags fl)
   : toTuningOverviewUI(parent,name,fl)
 {
   BackgroundGroup->setColumnLayout(1,Horizontal);
@@ -755,7 +755,7 @@ static toSQL SQLFileIO("toTuning:FileIO",
 		       " order by a.name",
 		       "Get file for files and tablespaces. Must have same columns.");
 
-toTuningFileIO::toTuningFileIO(QWidget *parent=0,const char *name=0,WFlags fl=0)
+toTuningFileIO::toTuningFileIO(QWidget *parent,const char *name,WFlags fl)
   : QScrollView(parent,name,fl)
 {
   connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
@@ -967,7 +967,7 @@ void toTuningFileIO::resizeEvent(QResizeEvent *e)
   TablespaceTime->setFixedWidth(viewport()->width()-50);
 }
 
-toTuningMiss::toTuningMiss(QWidget *parent=0,const char *name=0)
+toTuningMiss::toTuningMiss(QWidget *parent,const char *name)
   : toResultLine(parent,name)
 {
 }

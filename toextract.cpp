@@ -19,12 +19,6 @@
 **
 **********************************************************************/
 
-#ifndef WIN32
-#include <unistd.h>
-#else
-#include <winsock.h>
-#endif
-
 #include <qapplication.h>
 #include <qdatetime.h>
 #include <qprogressdialog.h>
@@ -36,6 +30,12 @@
 #include "tomain.h"
 #include "toconf.h"
 #include "totool.h"
+
+#ifndef WIN32
+#include <unistd.h>
+#else
+#include <winsock.h>
+#endif
 
 static toSQL SQLSetSizing("toExtract:SetSizing",
 			  "SELECT block_size\n"
@@ -4618,48 +4618,54 @@ QString toExtract::createTableContents(const QString &schema,const QString &owne
     QString dateformat=toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT);
 
     QString beg=QString("INSERT INTO %1%2 (").arg(schema).arg(name.lower());
-    bool dates[desc.size()];
-    int num=0;
-    for (toQDescList::iterator i=desc.begin();i!=desc.end();i++) {
-      if (first)
-	first=false;
-      else
-	beg+=",";
-      beg+=(*i).Name;
-      dates[num]=(*i).Datatype.contains("DATE");
-      num++;
-    }
-    beg+=") VALUES (";
-
-    QRegExp find("'");
-    while(!query.eof()) {
-      QString line=beg;
-      first=true;
-      for (int i=0;i<cols;i++) {
+    bool *dates=new bool[desc.size()];
+    try {
+      int num=0;
+      for (toQDescList::iterator i=desc.begin();i!=desc.end();i++) {
 	if (first)
 	  first=false;
 	else
-	  line+=",";
-	QString val=query.readValueNull();
-	if (dates[i]) {
-	  if (val.isNull())
-	    line+="NULL";
-	  else
-	    line+=QString("TO_DATE('%1','%2')").arg(val).arg(dateformat);
-	} else {
-	  if (val.isNull())
-	    line+="NULL";
-	  else {
-	    val.replace(find,"''");
-	    line+="'";
-	    line+=val;
-	    line+="'";
-	  }
-	};
+	  beg+=",";
+	beg+=(*i).Name;
+	dates[num]=(*i).Datatype.contains("DATE");
+	num++;
       }
-      line+=");\n";
-      ret+=line;
+      beg+=") VALUES (";
+
+      QRegExp find("'");
+      while(!query.eof()) {
+	QString line=beg;
+	first=true;
+	for (int i=0;i<cols;i++) {
+	  if (first)
+	    first=false;
+	  else
+	    line+=",";
+	  QString val=query.readValueNull();
+	  if (dates[i]) {
+	    if (val.isNull())
+	      line+="NULL";
+	    else
+	      line+=QString("TO_DATE('%1','%2')").arg(val).arg(dateformat);
+	  } else {
+	    if (val.isNull())
+	      line+="NULL";
+	    else {
+	      val.replace(find,"''");
+	      line+="'";
+	      line+=val;
+	      line+="'";
+	    }
+	  };
+	}
+	line+=");\n";
+	ret+=line;
+      }
+    } catch (...) {
+      delete dates;
+      throw;
     }
+    delete dates;
     ret+="COMMIT;\n\n";
   }
 

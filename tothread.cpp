@@ -179,7 +179,7 @@ bool toThread::mainThread(void)
 
 #else
 
-list<toThread *> *toThread::Threads;
+std::list<toThread *> *toThread::Threads;
 toLock *toThread::Lock;
 HANDLE toThread::MainThread=QThread::currentThread();
 

@@ -28,7 +28,7 @@
 
 #include "toresultbar.moc"
 
-toResultBar::toResultBar(QWidget *parent,const char *name=NULL)
+toResultBar::toResultBar(QWidget *parent,const char *name)
   : toBarChart(parent,name)
 {
   connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
