@@ -163,7 +163,7 @@ toQList toParamGet::getParam(QWidget *parent,QString &str)
 	  fname="";
 	  break;
 	case '?':
-	  fname="q";
+	  fname="f";
 	  fname+=QString::number(colon);
 	  colon++;
 	  res+=":";

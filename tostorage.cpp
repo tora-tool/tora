@@ -1056,7 +1056,7 @@ toStorageExtent::extentName::extentName(const QString &owner,const QString &tabl
   Size=size;
 }
 
-bool toStorageExtent::extentName::operator < (const toStorageExtent::extentName &ext)
+bool toStorageExtent::extentName::operator < (const toStorageExtent::extentName &ext) const
 {
   if (Owner<ext.Owner)
     return true;
@@ -1071,7 +1071,7 @@ bool toStorageExtent::extentName::operator < (const toStorageExtent::extentName 
   return false;
 }
 
-bool toStorageExtent::extentName::operator == (const toStorageExtent::extentName &ext)
+bool toStorageExtent::extentName::operator == (const toStorageExtent::extentName &ext) const
 {
   return Owner==ext.Owner&&Table==ext.Table&&Partition==ext.Partition;
 }
@@ -1085,7 +1085,7 @@ toStorageExtent::extent::extent(const QString &owner,const QString &table,
   Block=block;
 }
 
-bool toStorageExtent::extent::operator < (const toStorageExtent::extent &ext)
+bool toStorageExtent::extent::operator < (const toStorageExtent::extent &ext) const
 {
   if (File<ext.File)
     return true;
@@ -1096,7 +1096,7 @@ bool toStorageExtent::extent::operator < (const toStorageExtent::extent &ext)
   return false;
 }
 
-bool toStorageExtent::extent::operator == (const toStorageExtent::extent &ext)
+bool toStorageExtent::extent::operator == (const toStorageExtent::extent &ext) const
 {
   return Owner==ext.Owner&&Table==ext.Table&&Partition==ext.Partition&&
     File==ext.File&&Block==ext.Block&&Size==ext.Size;

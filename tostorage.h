@@ -156,8 +156,8 @@ public:
     extentName(void)
     { }
     extentName(const QString &owner,const QString &table,const QString &partition,int size);
-    bool operator < (const extentName &);
-    bool operator == (const extentName &);
+    bool operator < (const extentName &) const;
+    bool operator == (const extentName &) const;
   };
   struct extent : public extentName {
     int File;
@@ -167,8 +167,8 @@ public:
     { File=Block=0; }
     extent(const QString &owner,const QString &table,const QString &partition,
 	   int file,int block,int size);
-    bool operator < (const extent &);
-    bool operator == (const extent &);
+    bool operator < (const extent &) const;
+    bool operator == (const extent &) const;
   };
 private:
   std::list<extent> Extents;

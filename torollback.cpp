@@ -500,6 +500,7 @@ public:
     try {
       clear();
       toConnection &conn=connection();
+      toBusy busy;
       toQuery sql(conn,SQLStatementInfo);
       QListViewItem *last=NULL;
       while(!sql.eof()) {
