@@ -50,10 +50,12 @@ static toSQL SQLInfo("toResultCols:Info",
 		     "       Sample_Size,\n"
 		     "       Avg_Col_Len\n"
 		     "  FROM All_Tab_Columns\n"
-		     " WHERE Owner = :f1<char[31]>\n"
-		     "   AND Table_Name = :f2<char[31]>\n"
-		     "   AND Column_Name = :f3<char[31]>",
+		     " WHERE Owner = :f1<char[100]>\n"
+		     "   AND Table_Name = :f2<char[100]>\n"
+		     "   AND Column_Name = :f3<char[100]>",
 		     "Display analyze statistics about a column");
+
+#include <stdio.h>
 
 class toResultColsItem : public toResultViewMLine {
 public:
@@ -73,91 +75,94 @@ public:
   {
     toResultCols *view=dynamic_cast<toResultCols *>(listView());
     try {
-      otl_stream ColInfo(1,
-			 SQLInfo(view->Connection),
-			 view->Connection.connection());
+      otl_stream ColInfo;
       ColInfo.set_all_column_types(otl_all_num2str|otl_all_date2str);
-      list<QString> resLst=toReadQuery(ColInfo,text(10),text(11),text(0));
+      ColInfo.open(1,
+		   SQLInfo(view->Connection),
+		   view->Connection.connection());
+      printf("Checking %s %s %s\n",(const char *)text(10),(const char *)text(11),
+	     (const char *)text(1));
+      list<QString> resLst=toReadQuery(ColInfo,text(10),text(11),text(1));
       QString result("<B>");
-      result.append(text(0));
-      result.append("</B><BR><BR>");
+      result+=(text(1));
+      result+=("</B><BR><BR>");
 
       int any=0;
       QString cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	result.append("Default value: <B>");
-	result.append(cur);
-	result.append("</B><BR><BR>");
+	result+=("Default value: <B>");
+	result+=(cur);
+	result+=("</B><BR><BR>");
 	any++;
       }
 
       QString analyze;
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze.append("Distinct values: <B>");
-	analyze.append(cur);
-	analyze.append("</B><BR>");
+	analyze+=("Distinct values: <B>");
+	analyze+=(cur);
+	analyze+=("</B><BR>");
 	any++;
       }
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze.append("Low value: <B>");
-	analyze.append(cur);
-	analyze.append("</B><BR>");
+	analyze+=("Low value: <B>");
+	analyze+=(cur);
+	analyze+=("</B><BR>");
 	any++;
       }
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze.append("High value: <B>");
-	analyze.append(cur);
-	analyze.append("</B><BR>");
+	analyze+=("High value: <B>");
+	analyze+=(cur);
+	analyze+=("</B><BR>");
 	any++;
       }
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze.append("Density: <B>");
-	analyze.append(cur);
-	analyze.append("</B><BR>");
+	analyze+=("Density: <B>");
+	analyze+=(cur);
+	analyze+=("</B><BR>");
 	any++;
       }
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze.append("Number of nulls: <B>");
-	analyze.append(cur);
-	analyze.append("</B><BR>");
+	analyze+=("Number of nulls: <B>");
+	analyze+=(cur);
+	analyze+=("</B><BR>");
 	any++;
       }
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze.append("Number of histogram buckets: <B>");
-	analyze.append(cur);
-	analyze.append("</B><BR>");
+	analyze+=("Number of histogram buckets: <B>");
+	analyze+=(cur);
+	analyze+=("</B><BR>");
 	any++;
       }
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze.append("Last analyzed: <B>");
-	analyze.append(cur);
-	analyze.append("</B><BR>");
+	analyze+=("Last analyzed: <B>");
+	analyze+=(cur);
+	analyze+=("</B><BR>");
 	any++;
       }
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze.append("Sample size: <B>");
-	analyze.append(cur);
-	analyze.append("</B><BR>");
+	analyze+=("Sample size: <B>");
+	analyze+=(cur);
+	analyze+=("</B><BR>");
 	any++;
       }
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze.append("Average column size: <B>");
-	analyze.append(cur);
-	analyze.append("</B><BR>");
+	analyze+=("Average column size: <B>");
+	analyze+=(cur);
+	analyze+=("</B><BR>");
 	any++;
       }
       if (!analyze.isEmpty()) {	
-	result.append("<B>Analyze statistics:</B><BR>");
-	result.append(analyze);
+	result+=("<B>Analyze statistics:</B><BR>");
+	result+=(analyze);
       }
       if (!any)
 	return text(col);
@@ -182,9 +187,9 @@ toResultCols::toResultCols(toConnection &conn,QWidget *parent,const char *name)
 
 static toSQL SQLComment("toResultCols:Comments",
 			"SELECT Comments FROM All_Col_Comments\n"
-			" WHERE Owner = :f1<char[31]>\n"
-			"   AND Table_Name = :f2<char[31]>\n"
-			"   AND Column_Name = :f3<char[31]>",
+			" WHERE Owner = :f1<char[100]>\n"
+			"   AND Table_Name = :f2<char[100]>\n"
+			"   AND Column_Name = :f3<char[100]>",
 			"Display column comments");
 
 void toResultCols::query(const QString &sql,const list<QString> &param)

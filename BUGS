@@ -27,3 +27,6 @@ toNoBlockQuery:
 
 toTemplate:
 	Can't seem to delete entries from the template lists.
+
+toResultCols:
+	Doesn't follow synonyms for comments and statistics.
