@@ -25,7 +25,6 @@
  *
  ****************************************************************************/
 
-
 #ifndef __TORESULTCONSTRAINT_H
 #define __TORESULTCONSTRAINT_H
 

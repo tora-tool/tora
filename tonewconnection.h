@@ -25,7 +25,6 @@
  *
  ****************************************************************************/
 
-
 #ifndef __TONEWCONNECTION_H
 #define __TONEWCONNECTION_H
 

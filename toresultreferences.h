@@ -25,7 +25,6 @@
  *
  ****************************************************************************/
 
-
 #ifndef __TORESULTREFERENCES_H
 #define __TORESULTREFERENCES_H
 

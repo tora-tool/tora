@@ -25,7 +25,6 @@
  *
  ****************************************************************************/
 
-
 #ifndef __TOGLOBALSETTING_H
 #define __TOGLOBALSETTING_H
 

@@ -25,7 +25,6 @@
  *
  ****************************************************************************/
 
-
 #ifndef TOSYNTAXSETUPUI_H
 #define TOSYNTAXSETUPUI_H
 

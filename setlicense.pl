@@ -75,7 +75,6 @@ for my $file (@ARGV) {
 		print "Couldn't open $file.bak for writing\n";
 	    }
 	    print OUTFILE $license;
-	    print OUTFILE "\n";
 	    while(<FILE>) {
 		if (!/^\s*$/) {
 		    last;

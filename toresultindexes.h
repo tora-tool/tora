@@ -25,7 +25,6 @@
  *
  ****************************************************************************/
 
-
 #ifndef __TORESULTINDEXES_H
 #define __TORESULTINDEXES_H
 
