@@ -93,6 +93,12 @@ static toSQL SQLUserNamesMySQL(toSQL::TOSQL_USERLIST,
 			       "3.0",
 			       "MySQL");
 
+static toSQL SQLUserNamesPgSQL(toSQL::TOSQL_USERLIST,
+			       "SELECT usename AS UserName FROM pg_user ORDER BY UserName",
+			       QString::null,
+			       "7.1",
+			       "PostgreSQL");
+
 static toSQL SQLTextPiece("Global:SQLText",
 			  "SELECT SQL_Text\n"
 			  "  FROM V$SQLText_With_Newlines\n"

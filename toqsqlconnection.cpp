@@ -51,11 +51,25 @@ static toSQL SQLVersion("toQSqlConnection:Version",
 			"3.0",
 			"MySQL");
 
+static toSQL SQLVersionPgSQL("toQSqlConnection:Version",
+			"SELECT SUBSTR(version(), 12, 5) AS version",
+			QString::null,
+			"7.1",
+			"PostgreSQL");
+
 static toSQL SQLListTables("toQSqlConnection:ListTables",
 			   "show tables",
 			   "Get the available tables for a mysql connection",
 			   "3.0",
 			   "MySQL");
+static toSQL SQLListTablesPgSQL("toQSqlConnection:ListTables",
+			   "SELECT c.relname AS Name\n"
+                           "  FROM pg_class c\n"
+                           " WHERE relname !~ '^pg_' and relname !~ '^pga_'\n"
+                           "   AND relkind = 'r'",
+			   QString::null,
+			   "7.1",
+			   "PostgreSQL");
 
 static QString QueryParam(const QString &in,toQList &params)
 {

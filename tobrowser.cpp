@@ -112,7 +112,7 @@ public:
     return new toBrowser(parent,connection);
   }
   virtual bool canHandle(toConnection &conn)
-  { return conn.provider()=="Oracle"||conn.provider()=="MySQL"; }
+  { return conn.provider()=="Oracle"||conn.provider()=="MySQL"||conn.provider()=="PostgreSQL"; }
 };
 
 static toBrowserTool BrowserTool;
@@ -381,6 +381,15 @@ static toSQL SQLListTablesMysql("toBrowser:ListTables",
 				QString::null,
 				"3.0",
 				"MySQL");
+static toSQL SQLListTablesPgSQL("toBrowser:ListTables",
+				"SELECT c.*\n"
+                                "  FROM pg_class c, pg_user u\n"
+                                " WHERE u.usesysid=c.relowner and u.usename = :f1\n"
+                                "   AND c.relkind = 'r'",
+				QString::null,
+				"7.1",
+				"PostgreSQL");
+
 static toSQL SQLAnyGrants("toBrowser:AnyGrants",
 			  "SELECT Privilege,Grantee,Grantor,Grantable FROM SYS.ALL_TAB_PRIVS\n"
 			  " WHERE Table_Schema = :f1<char[101]> AND Table_Name = :f2<char[101]>\n"
@@ -408,6 +417,13 @@ static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
 			       QString::null,
 			       "3.0",
 			       "MySQL");
+static toSQL SQLTableInfoPgSQL("toBrowser:TableInformation",
+			       "SELECT *\n"
+                               "  FROM pg_class c, pg_user u\n"
+                               " WHERE u.usesysid=c.relowner and c.relname = :f2",
+			       QString::null,
+			       "7.1",
+			       "PostgreSQL");
 
 static toSQL SQLListView("toBrowser:ListView",
 			 "SELECT View_Name FROM SYS.ALL_VIEWS WHERE OWNER = :f1<char[101]>\n"
