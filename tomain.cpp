@@ -704,8 +704,10 @@ void toMain::commandCallback(int cmd)
       toPreferences::displayPreferences(this);
       break;
     case TO_WINDOWS_CLOSE_ALL:
-      while (workspace()->windowList().count()>0)
-	delete workspace()->windowList().at(0);
+      while (workspace()->windowList().count()>0&&workspace()->windowList().at(0))
+	if (workspace()->windowList().at(0)&&
+	    !workspace()->windowList().at(0)->close(true))
+	  return;
       break;
     case TO_WINDOWS_CLOSE:
       {

@@ -108,6 +108,7 @@
 2001-12-06: Fixed problem with multiline comments in paramget.
 2001-12-06: Fixed problem with multiline comments in worksheet.
 2001-12-06: Fixed wrong menu titles on toolmenues.
+2001-12-06: Fixed problem with closing all windows.
 
 1.1.5: Released 2001-11-26
 
