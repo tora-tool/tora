@@ -65,7 +65,7 @@ public:
   virtual void setEdit(void);
   virtual void focusInEvent (QFocusEvent *e);
   virtual void focusOutEvent (QFocusEvent *e); 
-
+  virtual void paintEvent(QPaintEvent *pe);
 signals:
   void execute(void);
 

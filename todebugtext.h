@@ -77,9 +77,9 @@ public:
   const QString &object(void) const
   { return Object; }
   void setType(const QString &type)
-  { Type=type; }
+  { setData(Schema,type,Object); }
   void setSchema(const QString &schema)
-  { Schema=schema; }
+  { setData(schema,Type,Object); }
   const QString &type(void) const
   { return Type; }
   void clear(void);

@@ -33,9 +33,12 @@
 #include <qcombobox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
+#include <qinputdialog.h>
+#include <qmenubar.h>
 #include <qmessagebox.h>
 #include <qnamespace.h>
 #include <qradiobutton.h>
+#include <qregexp.h>
 #include <qsizepolicy.h>
 #include <qsplitter.h>
 #include <qstring.h>
@@ -61,6 +64,7 @@
 #include "todebugwatch.moc"
 
 #include "icons/addwatch.xpm"
+#include "icons/changewatch.xpm"
 #include "icons/compile.xpm"
 #include "icons/delwatch.xpm"
 #include "icons/enablebreak.xpm"
@@ -80,7 +84,18 @@
 #include "icons/togglebreak.xpm"
 #include "icons/toworksheet.xpm"
 
-#define TO_DEBUG
+#define TO_ID_NEW_SHEET		(TO_TOOL_MENU_ID+ 0)
+#define TO_ID_SCAN_SOURCE	(TO_TOOL_MENU_ID+ 1)
+#define TO_ID_COMPILE		(TO_TOOL_MENU_ID+ 2)
+#define TO_ID_EXECUTE		(TO_TOOL_MENU_ID+ 3)
+#define TO_ID_STOP		(TO_TOOL_MENU_ID+ 4)
+#define TO_ID_STEP_INTO		(TO_TOOL_MENU_ID+ 5)
+#define TO_ID_STEP_OVER		(TO_TOOL_MENU_ID+ 6)
+#define TO_ID_RETURN_FROM	(TO_TOOL_MENU_ID+ 7)
+#define TO_ID_HEAD_TOGGLE	(TO_TOOL_MENU_ID+ 8)
+#define TO_ID_DEBUG_PANE	(TO_TOOL_MENU_ID+ 9)
+#define TO_ID_DEL_WATCH		(TO_TOOL_MENU_ID+10)
+#define TO_ID_CHANGE_WATCH	(TO_TOOL_MENU_ID+11)
 
 class toDebugTool : public toTool {
   map<toConnection *,QWidget *> Windows;
@@ -116,13 +131,28 @@ public:
 
 static toDebugTool DebugTool;
 
-#include <stdio.h>
+QListViewItem *toDebugWatch::findMisc(const QString &str,QListViewItem *item,toDebugText *editor)
+{
+  if (item) {
+    while(item&&item->text(0)!=str) {
+      item=item->nextSibling();
+    }
+    if (item) {
+      item=item->firstChild();
+      while(item&&item->text(0)!="Misc") {
+	item=item->nextSibling();
+      }
+      if (item)
+	item=item->firstChild();
+    }
+  }
+  return item;
+}
 
 toDebugWatch::toDebugWatch(toDebug *parent)
   : toDebugWatchUI(parent,"AddWatch",true),Debugger(parent)
 {
-  Items=Debugger->currentContents();
-  QString type=Debugger->currentEditor()->type();
+  QListViewItem *items=Debugger->contents();
   {
     int curline,curcol;
     Debugger->currentEditor()->getCursorPosition (&curline,&curcol);
@@ -139,14 +169,23 @@ toDebugWatch::toDebugWatch(toDebug *parent)
       curcol++;
     Default=Default.left(curcol);
   }
-  if (Items&&(type.left(7)=="PACKAGE"||type.left(4)=="TYPE")) {
-    Object=Debugger->currentEditor()->object();
-    for (Items=Items->firstChild();Items&&Items->text(0)!="Misc";Items=Items->nextSibling())
-      ;
-  } else {
-    CurrentScope->setEnabled(false);
-    Items=NULL;
+  QString type=Debugger->headEditor()->type();
+  if (type.left(7)=="PACKAGE"||type.left(4)=="TYPE")
+    HeadItems=findMisc("Head",items,Debugger->headEditor());
+  else {
+    HeadScope->setEnabled(false);
+    HeadItems=NULL;
   }
+  type=Debugger->bodyEditor()->type();
+  if (type.left(7)=="PACKAGE"||type.left(4)=="TYPE")
+    BodyItems=findMisc("Body",items,Debugger->bodyEditor());
+  else {
+    BodyScope->setEnabled(false);
+    BodyItems=NULL;
+  }
+  
+  Object=Debugger->currentEditor()->object();
+
   connect(Scope,SIGNAL(clicked(int)),this,SLOT(changeScope(int)));
   changeScope(1);
 }
@@ -160,22 +199,26 @@ void toDebugWatch::changeScope(int num)
     break;
   case 2:
     Name->clear();
-    QListViewItem *item;
-    if (Items) {
-      for (item=Items->firstChild();item;item=item->nextSibling())
-	Name->insertItem(item->text(0));
-    }
+    for (QListViewItem *item=HeadItems;item;item=item->nextSibling())
+      Name->insertItem(item->text(0));
     break;
   case 3:
     Name->clear();
-    QString str=Debugger->currentEditor()->schema();
-    str+=".";
-    if (!Object.isEmpty()) {
-      str+=Object;
+    for (QListViewItem *item=BodyItems;item;item=item->nextSibling())
+      Name->insertItem(item->text(0));
+    break;
+  case 4:
+    {
+      Name->clear();
+      QString str=Debugger->currentEditor()->schema();
       str+=".";
+      if (!Object.isEmpty()) {
+	str+=Object;
+	str+=".";
+      }
+      str+=Default;
+      Name->insertItem(str);
     }
-    str+=Default;
-    Name->insertItem(str);
     break;
   }
 }
@@ -187,11 +230,20 @@ QListViewItem *toDebugWatch::createWatch(QListView *watches)
   case 1:
     return new QListViewItem(watches,"","",Name->currentText());
   case 2:
-    str=Debugger->currentEditor()->schema();
+    str=Debugger->headEditor()->schema();
+    str+=".";
+    str+=Debugger->headEditor()->object();
     str+=".";
     str+=Name->currentText();
     break;
   case 3:
+    str=Debugger->bodyEditor()->schema();
+    str+=".";
+    str+=Debugger->bodyEditor()->object();
+    str+=".";
+    str+=Name->currentText();
+    break;
+  case 4:
     str=Name->currentText();
     break;
   }
@@ -211,7 +263,7 @@ QListViewItem *toDebugWatch::createWatch(QListView *watches)
     object=str.left(pos);
     str.remove(0,pos+1);
   }
-  return new QListViewItem(watches,schema,object,str);
+  return new QListViewItem(watches,schema,object,str,"","NOCHANGE");
 }
 
 class toDebugOutput : public toOutput {
@@ -320,9 +372,6 @@ bool toDebug::isRunning(void)
 
 void toDebug::targetTask::run(void)
 {
-#ifdef TO_DEBUG
-  printf("Started task\n");
-#endif
   {
     toConnection Connection(Parent.Connection.user(),
 			    Parent.Connection.password(),
@@ -347,10 +396,8 @@ END;
       init>>buffer;
       Parent.TargetSession=buffer;
       Parent.ChildSemaphore.up();
+      Parent.TargetLog+="Debug session connected\n";
     }
-#ifdef TO_DEBUG
-    printf("Connected to database\n");
-#endif
     while(1) {
       {
 	toLocker lock(Parent.Lock);
@@ -358,9 +405,6 @@ END;
 	colSize=Parent.ColumnSize;
       }
       Parent.TargetSemaphore.down();
-#ifdef TO_DEBUG
-      printf("Anything to do?\n");
-#endif
 
       QString sql;
       list<QString> inParams;
@@ -378,9 +422,9 @@ END;
 	break;
 
       try {
-#ifdef TO_DEBUG
-	printf("Running SQL\n%s\n",(const char *)sql);
-#endif
+	Parent.Lock.lock();
+	Parent.TargetLog+="Executing SQL\n";
+	Parent.Lock.unlock();
 
 	otl_stream q(1,
 		     (const char *)sql,
@@ -391,46 +435,44 @@ END;
 
 	outParams=new list<QString>;
 
-#ifdef TO_DEBUG
-	printf("Checking output\n");
-#endif
 	while(!q.eof()) {
 	  char buffer[colSize];
 	  q>>buffer;
 	  outParams->insert(outParams->end(),buffer);
 	}
       } catch (const QString &str) {
-	printf("Encountered error:\n%s\n",(const char *)str);
+	Parent.Lock.lock();
+	Parent.TargetLog+="Encountered error: ";
+	Parent.TargetLog+=str;
+	Parent.TargetLog+="\n";
+	Parent.Lock.unlock();
       } catch (const otl_exception &exc) {
-	printf("Running SQL\n%s\n",(const char *)sql);
-	printf("Encountered SQL error:\n%s\n",exc.msg);
+	Parent.Lock.lock();
+	Parent.TargetLog+="SQL Error Encountered\n";
+	Parent.TargetLog+=QString((const char *)exc.msg);
+	Parent.Lock.unlock();
       } catch (...) {
-	printf("Encountered error in target SQL\n");
+	Parent.Lock.lock();
+	Parent.TargetLog+="Encountered unknown exception\n";
+	Parent.Lock.unlock();
       }
 
-#ifdef TO_DEBUG
-      printf("Storing result\n");
-#endif
       {
 	toLocker lock(Parent.Lock);
 	if (outParams) {
 	  Parent.OutputData=(*outParams);
 	  delete outParams;
 	}
+	Parent.TargetLog+="Execution ended\n";
       }
       Parent.ChildSemaphore.up();
     }
 
-#ifdef TO_DEBUG
-    printf("Target thread exiting\n");
-#endif
   }
   toLocker lock(Parent.Lock);
+  Parent.TargetLog+="Closing debug session\n";
   Parent.TargetThread=NULL;
   Parent.ChildSemaphore.up();
-#ifdef TO_DEBUG
-  printf("Done exiting\n");
-#endif
 }
 
 static struct toBlock {
@@ -540,14 +582,9 @@ QString toDebug::currentSchema(void)
   return Schema->currentText();
 }
 
-QListViewItem *toDebug::currentContents(void)
+QListViewItem *toDebug::contents(void)
 {
-  QListViewItem *item;
-  QString name=currentName();
-  for (item=Contents->firstChild();item;item=item->nextSibling())
-    if (item->text(0)==name)
-      break;
-  return item;
+  return Contents->firstChild();
 }
 
 void toDebug::reorderContent(int start,int diff)
@@ -768,9 +805,11 @@ void toDebug::execute(void)
 
     QChar sep='(';
     QString sql;
+    if (!retType.isEmpty())
+      sql+="DECLARE\n  ret VARCHAR2(4000);\n";
     sql+="BEGIN\n  ";
     if (!retType.isEmpty())
-      sql+="SELECT ";
+      sql+="ret:=";
     sql+=currentEditor()->schema();
     sql+=".";
     if (hasMembers(currentEditor()->type())) {
@@ -805,7 +844,7 @@ void toDebug::execute(void)
     if (sep==',')
       sql+=")";
     if (!retType.isEmpty()) {
-      sql+=" INTO :tora_int_return<char[";
+      sql+=";\n  SELECT ret INTO :tora_int_return<char[";
       sql+=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE);
       sql+="],out> FROM DUAL";
     }
@@ -813,8 +852,10 @@ void toDebug::execute(void)
 
     try {
       {
+	// Can't hold lock since refresh of output will try to lock
+	list<QString> input=toParamGet::getParam(this,sql);
 	toLocker lock(Lock);
-	InputData=toParamGet::getParam(this,sql);
+	InputData=input;
 	last=head->firstChild();
 	if (InputData.begin()!=InputData.end())
 	  for(list<QString>::iterator i=InputData.begin();
@@ -858,6 +899,7 @@ END;
       sync>>ret>>reason;
       {
 	toLocker lock(Lock);
+	TargetLog+="Syncing debug session\n";
 	if (!RunningTarget) {
 	  return TO_REASON_KNL_EXIT;
 	}
@@ -1070,7 +1112,19 @@ static QPixmap *toDebugPixmap;
 static QPixmap *toToggleBreakPixmap;
 static QPixmap *toEnableBreakPixmap;
 static QPixmap *toAddWatchPixmap;
+static QPixmap *toChangeWatchPixmap;
 static QPixmap *toDelWatchPixmap;
+
+void toDebug::readLog(void)
+{
+  toLocker lock(Lock);
+  if (!TargetLog.isEmpty()) {
+    TargetLog.replace(TargetLog.length()-1,1,"");
+    RuntimeLog->insertLine(TargetLog);
+    RuntimeLog->setCursorPosition(RuntimeLog->numLines()-1,0);
+    TargetLog="";
+  }
+}
 
 void toDebug::updateState(int reason)
 {
@@ -1078,10 +1132,17 @@ void toDebug::updateState(int reason)
   case TO_REASON_EXIT:
   case TO_REASON_KNL_EXIT:
     ChildSemaphore.down();
+  case TO_REASON_NO_SESSION:
     StopButton->setEnabled(false);
     StepOverButton->setEnabled(false);
     StepIntoButton->setEnabled(false);
     ReturnButton->setEnabled(false);
+    if (ToolMenu) {
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,false);
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STEP_INTO,false);
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STEP_OVER,false);
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_RETURN_FROM,false);
+    }
     HeadEditor->setCurrent(-1);
     BodyEditor->setCurrent(-1);
     StackTrace->clear();
@@ -1093,17 +1154,37 @@ void toDebug::updateState(int reason)
 	  head=head->nextSibling();
 	head=new QListViewItem(Parameters,head,"Output");
 	head->setOpen(true);
-	list<debugParam>::iterator cp=CurrentParams.begin();
+	list<debugParam>::iterator cp;
+	for(cp=CurrentParams.begin();cp!=CurrentParams.end()&&!(*cp).Out;cp++)
+	  ;
 
 	QListViewItem *last=NULL;
 	for (list<QString>::iterator i=OutputData.begin();i!=OutputData.end();i++) {
 	  QString name;
-	  for(;cp!=CurrentParams.end()&&!(*cp).Out;cp++)
-	    ;
+	  if (cp!=CurrentParams.end()) {
+	    name=(*cp).Name;
+	    for(cp++;cp!=CurrentParams.end()&&!(*cp).Out;cp++)
+	      ;
+	  }
 	  if (name.isEmpty())
 	    name="Returning";
 	  last=new QListViewItem(head,last,name);
 	  last->setText(1,(const char *)*i); // Deep copy just to be sure
+	}
+      }
+    }
+    {
+      QListViewItem *next=NULL;
+      for (QListViewItem *item=Watch->firstChild();item;item=next) {
+	item->setText(4,"NOCHANGE");
+	if (item->firstChild())
+	  next=item->firstChild();
+	else if (item->nextSibling())
+	  next=item->nextSibling();
+	else {
+	  next=item->parent();
+	  if (next)
+	    next=next->nextSibling();
 	}
       }
     }
@@ -1114,6 +1195,12 @@ void toDebug::updateState(int reason)
     StepOverButton->setEnabled(true);
     StepIntoButton->setEnabled(true);
     ReturnButton->setEnabled(true);
+    if (ToolMenu) {
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STEP_INTO,true);
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STEP_OVER,true);
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_RETURN_FROM,true);
+    }
     try {
       otl_stream info(1,
 		      "
@@ -1167,7 +1254,7 @@ END;",
 	stack>>schema;
 	stack>>line;
 	stack>>type;
-
+	
 	if (!item)
 	  item=new QListViewItem(StackTrace,name,QString::number(line),schema,type);
 	else
@@ -1175,14 +1262,13 @@ END;",
 	item->setOpen(true);
       }
       Output->refresh();
-      if (depth>=2) {
-	try {
-	  for (QListViewItem *item=Watch->firstChild();item;item=item->nextSibling()) {
-	    while (item->firstChild())
-	      delete item->firstChild();
-	  }
-	  otl_stream local(1,
-			   "
+      try {
+	for (QListViewItem *item=Watch->firstChild();item;item=item->nextSibling()) {
+	  while (item->firstChild())
+	    delete item->firstChild();
+	}
+	otl_stream local(1,
+			 "
 DECLARE
   ret BINARY_INTEGER;
   data VARCHAR2(4000);
@@ -1191,9 +1277,30 @@ BEGIN
   SELECT ret,data INTO :ret<int,out>,:val<char[4001],out> FROM DUAL;
 END;
 ",
-			   Connection.connection());
-	  otl_stream index(1,
-			   "
+			 Connection.connection());
+	otl_stream global(1,
+			  "
+DECLARE
+  data VARCHAR2(4000);
+  proginf DBMS_DEBUG.program_info;
+  ret BINARY_INTEGER;
+BEGIN
+  proginf.Namespace:=DBMS_DEBUG.Namespace_pkg_body;
+  proginf.Name:=:object<char[41],in>;
+  proginf.Owner:=:owner<char[41],in>;
+  proginf.DBLink:=NULL;
+  ret:=DBMS_DEBUG.GET_VALUE(:name<char[41],in>,proginf,data,NULL);
+  IF ret =DBMS_DEBUG.error_no_such_object THEN
+    proginf.Namespace:=DBMS_DEBUG.namespace_pkgspec_or_toplevel;
+    ret:=DBMS_DEBUG.GET_VALUE(:name<char[41],in>,proginf,data,NULL);
+  END IF;
+  SELECT ret          ,data                ,proginf.Namespace
+    INTO :ret<int,out>,:val<char[4001],out>,:namespace<int,out>
+    FROM DUAL;
+END;",
+			  Connection.connection());
+	otl_stream index(1,
+			 "
 DECLARE
   ret BINARY_INTEGER;
   proginf DBMS_DEBUG.program_info;
@@ -1208,70 +1315,120 @@ BEGIN
       outdata:=outdata||indata(i)||',';
       i:=indata.next(i);
     END LOOP;
-  ELSE
-    outdata:='Data';
+  END IF;
+  SELECT outdata INTO :data<char[4001],out> FROM DUAL;
+END;",
+			 Connection.connection());
+	otl_stream globind(1,
+			   "
+DECLARE
+  ret BINARY_INTEGER;
+  proginf DBMS_DEBUG.program_info;
+  i BINARY_INTEGER;
+  indata DBMS_DEBUG.index_table;
+  outdata VARCHAR2(4000) := '';
+BEGIN
+  proginf.Namespace:=:namespace<int,in>;
+  proginf.Name:=:object<char[41],in>;
+  proginf.Owner:=:owner<char[41],in>;
+  proginf.DBLink:=NULL;
+  ret:=DBMS_DEBUG.GET_INDEXES(:name<char[41],in>,NULL,proginf,indata);
+  IF ret = DBMS_DEBUG.success THEN
+    i:=indata.first;
+    WHILE i IS NOT NULL OR LENGTH(outdata)>3900 LOOP
+      outdata:=outdata||indata(i)||',';
+      i:=indata.next(i);
+    END LOOP;
   END IF;
   SELECT outdata INTO :data<char[4001],out> FROM DUAL;
 END;",
 			   Connection.connection());
   
-	  QListViewItem *next=NULL;
-	  for (QListViewItem *item=Watch->firstChild();item;item=next) {
+	QListViewItem *next=NULL;
+	for (QListViewItem *item=Watch->firstChild();item;item=next) {
+	  int ret;
+	  int space;
+	  char buffer[4001];
+	  if (item->text(0).isEmpty()) {
 	    local<<item->text(2);
-	    int ret;
 	    local>>ret;
-	    char buffer[4001];
 	    local>>buffer;
-	    if (ret==TO_SUCCESS)
-	      item->setText(3,buffer);
-	    else if (ret==TO_ERROR_NULLVALUE)
-	      item->setText(3,"{Null}");
-	    else if (ret==TO_ERROR_NULLCOLLECTION)
-	      item->setText(3,"{Null}");
-	    else if (ret==TO_ERROR_INDEX_TABLE) {
+	  } else {
+	    global<<item->text(1);
+	    global<<item->text(0);
+	    global<<item->text(2);
+	    global>>ret;
+	    global>>buffer;
+	    global>>space;
+	  }
+	  item->setText(4,"");
+	  if (ret==TO_SUCCESS)
+	    item->setText(3,buffer);
+	  else if (ret==TO_ERROR_NULLVALUE)
+	    item->setText(3,"{null}");
+	  else if (ret==TO_ERROR_NULLCOLLECTION)
+	    item->setText(3,"{null}");
+	  else if (ret==TO_ERROR_INDEX_TABLE) {
+	    char buffer[4001];
+	    if (item->text(0).isEmpty()) {
 	      index<<item->text(2);
-	      char buffer[4001];
 	      index>>buffer;
-	      char *start=buffer;
-	      char *end;
-	      QListViewItem *last=NULL;
-	      for (end=start;*end;end++) {
-		if (*end==',') {
-		  *end=0;
-		  if (start<end) {
-		    QString name=item->text(2);
-		    name+="(";
-		    name+=start;
-		    name+=")";
-		    last=new QListViewItem(item,last,item->text(0),item->text(1),name);
-		  }
-		  start=end+1;
+	    } else {
+	      globind<<space;
+	      globind<<item->text(1);
+	      globind<<item->text(0);
+	      globind<<item->text(2);
+	      globind>>buffer;
+	    }
+	    char *start=buffer;
+	    char *end;
+	    QListViewItem *last=NULL;
+	    int num=0;
+	    for (end=start;*end;end++) {
+	      if (*end==',') {
+		*end=0;
+		if (start<end) {
+		  QString name=item->text(2);
+		  name+="(";
+		  name+=start;
+		  name+=")";
+		  last=new QListViewItem(item,last,item->text(0),item->text(1),name,"","NOCHANGE");
+		  num++;
 		}
-	      }
-	    } else
-	      item->setText(3,"{Unavailable}");
-	    if (item->firstChild())
-	      next=item->firstChild();
-	    else if (item->nextSibling())
-	      next=item->nextSibling();
-	    else {
-	      next=item->parent();
-	      if (next) {
-		QString str="[Count ";
-		str+=QString::number(next->childCount());
-		str+="]";
-		next->setText(3,str);
-		next=next->nextSibling();
+		start=end+1;
 	      }
 	    }
+	    QString str="[Count ";
+	    str+=QString::number(num);
+	    str+="]";
+	    item->setText(3,str);
+	    item->setText(4,"NOCHANGE");
+	  } else {
+	    item->setText(3,"{Unavailable}");
+	    item->setText(4,"NOCHANGE");
 	  }
-	} TOCATCH
+	  if (item->firstChild())
+	    next=item->firstChild();
+	  else if (item->nextSibling())
+	    next=item->nextSibling();
+	  else {
+	    next=item->parent();
+	    if (next)
+	      next=next->nextSibling();
+	  }
+	}
+      } TOCATCH
+      if (depth>=2) {
 	viewSource(schema,name,type,line,true);
-      } else
+      } else {
 	continueExecution(TO_BREAK_NEXT_LINE);
+	return;
+      }
     } TOCATCH
     break;
   }
+  selectedWatch();
+  readLog();
 }
 
 bool toDebug::viewSource(const QString &schema,const QString &name,const QString &type,
@@ -1310,6 +1467,8 @@ bool toDebug::viewSource(const QString &schema,const QString &name,const QString
     HeadEditor->setCursorPosition(line-1,0);
     HeadEditor->setFocus();
     ShowButton->setEnabled(true);
+    if (ToolMenu)
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
     ShowButton->setOn(true);
     updateContent(false);
   } else { 
@@ -1419,10 +1578,12 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
     toEnableBreakPixmap=new QPixmap((const char **)enablebreak_xpm);
   if (!toAddWatchPixmap)
     toAddWatchPixmap=new QPixmap((const char **)addwatch_xpm);
+  if (!toChangeWatchPixmap)
+    toChangeWatchPixmap=new QPixmap((const char **)changewatch_xpm);
   if (!toDelWatchPixmap)
     toDelWatchPixmap=new QPixmap((const char **)delwatch_xpm);
 
-  QToolBar *toolbar=new QToolBar("SQL Output",toMainWidget(),this);
+  QToolBar *toolbar=new QToolBar("PL/SQL Debugger",toMainWidget(),this);
 
   new QToolButton(*toRefreshPixmap,
 		  "Update code list",
@@ -1450,6 +1611,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 		  "Compile",
 		  this,SLOT(compile(void)),
 		  toolbar);
+  toolbar->addSeparator();
   new QToolButton(*toExecutePixmap,
 		  "Run current block",
 		  "Run current block",
@@ -1525,11 +1687,18 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 		  "Add new variable watch",
 		  this,SLOT(addWatch(void)),
 		  toolbar);
-  new QToolButton(*toDelWatchPixmap,
-		  "Delete variable watch",
-		  "Delete variable watch",
-		  this,SLOT(toggleEnable(void)),
-		  toolbar);
+  DelWatchButton=new QToolButton(*toDelWatchPixmap,
+				 "Delete variable watch",
+				 "Delete variable watch",
+				 this,SLOT(deleteWatch(void)),
+				 toolbar);
+  ChangeWatchButton=new QToolButton(*toChangeWatchPixmap,
+				    "Change value of watched variable",
+				    "Change value of watched variable",
+				    this,SLOT(changeWatch(void)),
+				    toolbar);
+  DelWatchButton->setEnabled(false);
+  ChangeWatchButton->setEnabled(false);
 
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
@@ -1542,6 +1711,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 
   {
     QValueList<int> sizes=splitter->sizes();
+    sizes[0]+=sizes[1]-200;
     sizes[1]=200;
     splitter->setSizes(sizes);
     splitter->setResizeMode(DebugTabs,QSplitter::KeepSize);
@@ -1549,13 +1719,13 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 
   QSplitter *objSplitter=new QSplitter(Vertical,hsplitter);
 
-  Objects=new QListView(objSplitter);
+  Objects=new toResultView(false,false,Connection,objSplitter);
   Objects->addColumn("Objects");
   Objects->setRootIsDecorated(true);
   Objects->setTreeStepSize(10);
   connect(Objects,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changePackage(QListViewItem *)));
-  Contents=new QListView(objSplitter);
+  Contents=new toResultView(false,false,Connection,objSplitter);
   Contents->addColumn("Contents");
   Contents->setRootIsDecorated(true);
   Contents->setSorting(-1);
@@ -1563,7 +1733,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   connect(Contents,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeContent(QListViewItem *)));
 
-  StackTrace=new QListView(DebugTabs);
+  StackTrace=new toResultView(false,false,Connection,DebugTabs);
   StackTrace->addColumn("Object");
   StackTrace->addColumn("Line");
   StackTrace->addColumn("Schema");
@@ -1573,7 +1743,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   StackTrace->setRootIsDecorated(true);
   StackTrace->setTreeStepSize(10);
   StackTrace->setAllColumnsShowFocus(true);
-  DebugTabs->addTab(StackTrace,"Stack Trace");
+  DebugTabs->addTab(StackTrace,"&Stack Trace");
   connect(StackTrace,SIGNAL(clicked(QListViewItem *)),
 	  this,SLOT(showSource(QListViewItem *)));
 
@@ -1585,9 +1755,13 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   Watch->setRootIsDecorated(true);
   Watch->setTreeStepSize(10);
   Watch->setAllColumnsShowFocus(true);
-  DebugTabs->addTab(Watch,"Watch");
+  DebugTabs->addTab(Watch,"W&atch");
+  connect(Watch,SIGNAL(selectionChanged(void)),
+	  this,SLOT(selectedWatch(void)));
+  connect(Watch,SIGNAL(doubleClicked(QListViewItem *)),
+	  this,SLOT(changeWatch(QListViewItem *)));
 
-  Breakpoints=new QListView(DebugTabs);
+  Breakpoints=new toResultView(false,false,Connection,DebugTabs);
   Breakpoints->addColumn("Object");
   Breakpoints->addColumn("Line");
   Breakpoints->addColumn("Schema");
@@ -1596,21 +1770,24 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   Breakpoints->setColumnAlignment(1,AlignRight);
   Breakpoints->setSorting(-1);
   Breakpoints->setAllColumnsShowFocus(true);
-  DebugTabs->addTab(Breakpoints,"Breakpoints");
+  DebugTabs->addTab(Breakpoints,"&Breakpoints");
   connect(Breakpoints,SIGNAL(clicked(QListViewItem *)),
 	  this,SLOT(showSource(QListViewItem *)));
 
-  Parameters=new QListView(DebugTabs);
+  Parameters=new toResultView(false,false,Connection,DebugTabs);
   Parameters->addColumn("Name");
   Parameters->addColumn("Content");
   Parameters->setSorting(-1);
   Parameters->setTreeStepSize(10);
   Parameters->setRootIsDecorated(true);
   Parameters->setAllColumnsShowFocus(true);
-  DebugTabs->addTab(Parameters,"Parameters");
+  DebugTabs->addTab(Parameters,"&Parameters");
 
   Output=new toDebugOutput(this,DebugTabs,Connection);
-  DebugTabs->addTab(Output,"Debug Output");
+  DebugTabs->addTab(Output,"Debug &Output");
+
+  RuntimeLog=new toMarkedText(DebugTabs);
+  DebugTabs->addTab(RuntimeLog,"&Runtime Log");
 
   HeadEditor=new toDebugText(Breakpoints,Connection,hsplitter);
   BodyEditor=new toDebugText(Breakpoints,Connection,hsplitter);
@@ -1619,10 +1796,12 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 	  this,SLOT(reorderContent(int,int)));
   connect(BodyEditor,SIGNAL(insertedLines(int,int)),
 	  this,SLOT(reorderContent(int,int)));
+#if 0
   connect(HeadEditor,SIGNAL(execute(void)),
 	  this,SLOT(execute(void)));
   connect(BodyEditor,SIGNAL(execute(void)),
 	  this,SLOT(execute(void)));
+#endif
 
   {
     QValueList<int> sizes=hsplitter->sizes();
@@ -1631,10 +1810,15 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
     hsplitter->setResizeMode(objSplitter,QSplitter::KeepSize);
   }
 
+  ToolMenu=NULL;
+  connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
+	  this,SLOT(windowActivated(QWidget *)));
+
   Connection.addWidget(this);
 
   refresh();
   startTarget();
+  readLog();
 }
 
 void toDebug::startTarget(void)
@@ -1771,6 +1955,7 @@ bool toDebug::checkCompile(void)
 	return false;
       break;
     case 1:
+      HeadEditor->setEdited(false);
       break;
     case 2:
       return false;
@@ -1790,6 +1975,7 @@ bool toDebug::checkCompile(void)
 	return false;
       break;
     case 1:
+      BodyEditor->setEdited(false);
       break;
     case 2:
       return false;
@@ -1823,10 +2009,13 @@ void toDebug::updateCurrent()
     HeadEditor->hide();
     ShowButton->setEnabled(false);
     ShowButton->setOn(false);
+    if (ToolMenu)
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,false);
   } else {
     HeadEditor->readData(Connection,StackTrace);
     ShowButton->setEnabled(true);
-    ShowButton->setOn(true);
+    if (ToolMenu)
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
   }
 
   currentEditor()->setFocus();
@@ -1854,17 +2043,21 @@ void toDebug::showDebug(bool show)
     DebugTabs->show();
   else
     DebugTabs->hide();
+  if (ToolMenu)
+    toMainWidget()->menuBar()->setItemChecked(TO_ID_DEBUG_PANE,show);
 }
 
 void toDebug::changeView(bool head)
 {
   if (head) {
     HeadEditor->show();
-    BodyEditor->hide();
+    BodyEditor->hide();    
   } else {
     BodyEditor->show();
     HeadEditor->hide();
   }
+  if (ToolMenu)
+    toMainWidget()->menuBar()->setItemChecked(TO_ID_HEAD_TOGGLE,head);
   currentEditor()->setFocus();
 }
 
@@ -2046,6 +2239,8 @@ void toDebug::newSheet(void)
     HeadEditor->setSchema(Schema->currentText());
     BodyEditor->setSchema(Schema->currentText());
     scanSource();
+    if (ToolMenu)
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
     ShowButton->setEnabled(true);
   }
 }
@@ -2084,14 +2279,193 @@ void toDebug::addWatch(void)
   }
 }
 
-void toDebug::focusInEvent(QFocusEvent *e)
+void toDebug::windowActivated(QWidget *widget)
 {
-  QVBox::focusInEvent(e);
-  printf("Focus in");
+  if (widget==this) {
+    if (!ToolMenu) {
+      ToolMenu=new QPopupMenu(this);
+      ToolMenu->insertItem(*toNewPixmap,"&New Sheet",this,SLOT(newSheet(void)),
+			   0,TO_ID_NEW_SHEET);
+      ToolMenu->insertItem(*toScanPixmap,"S&can Source",this,SLOT(scanSource(void)),
+			   CTRL+Key_F9,TO_ID_SCAN_SOURCE);
+      ToolMenu->insertItem(*toCompilePixmap,"&Compile",this,SLOT(compile(void)),
+			   Key_F9,TO_ID_COMPILE);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(*toExecutePixmap,"&Execute",this,SLOT(execute(void)),
+			   CTRL+Key_Return,TO_ID_EXECUTE);
+      ToolMenu->insertItem(*toStopPixmap,"&Stop",this,SLOT(stop(void)),
+			   Key_F12,TO_ID_STOP);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(*toStepIntoPixmap,"Step &Into",this,SLOT(stepInto(void)),
+			   Key_F7,TO_ID_STEP_INTO);
+      ToolMenu->insertItem(*toStepOverPixmap,"&Next Line",this,SLOT(stepOver(void)),
+			   Key_F8,TO_ID_STEP_OVER);
+      ToolMenu->insertItem(*toReturnFromPixmap,"&Return From",this,SLOT(returnFrom(void)),
+			   Key_F6,TO_ID_RETURN_FROM);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem("&Head Editor",this,SLOT(toggleHead(void)),
+			   CTRL+Key_Space,TO_ID_HEAD_TOGGLE);
+      ToolMenu->insertItem("&Debug Pane",this,SLOT(toggleDebug(void)),
+			   Key_F11,TO_ID_DEBUG_PANE);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(*toNextBugPixmap,"Next &Error",this,SLOT(nextError(void)),
+			   CTRL+Key_N);
+      ToolMenu->insertItem(*toPrevBugPixmap,"Pre&vious Error",this,SLOT(prevError(void)),
+			   CTRL+Key_P);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(*toToggleBreakPixmap,"&Toggle Breakpoint",this,SLOT(toggleBreak(void)),
+			   Key_F5);
+      ToolMenu->insertItem(*toEnableBreakPixmap,"D&isable Breakpoint",
+			   this,SLOT(toggleEnable(void)),
+			   CTRL+Key_F5);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(*toAddWatchPixmap,"&Add Watch",this,SLOT(addWatch(void)),
+			   Key_F4);
+      ToolMenu->insertItem(*toDelWatchPixmap,"Delete &Watch",this,SLOT(deleteWatch(void)),
+			   CTRL+Key_Delete,TO_ID_DEL_WATCH);
+      ToolMenu->insertItem(*toChangeWatchPixmap,"Chan&ge Watch",this,SLOT(changeWatch(void)),
+			   CTRL+Key_F4,TO_ID_CHANGE_WATCH);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem("Erase Runtime &Log",this,SLOT(clearLog(void)));
+
+      toMainWidget()->menuBar()->insertItem("&Debug",ToolMenu,-1,TO_TOOL_MENU_INDEX);
+
+      if (!isRunning()) {
+	toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,false);
+	toMainWidget()->menuBar()->setItemEnabled(TO_ID_STEP_INTO,false);
+	toMainWidget()->menuBar()->setItemEnabled(TO_ID_STEP_OVER,false);
+	toMainWidget()->menuBar()->setItemEnabled(TO_ID_RETURN_FROM,false);
+      }
+      if (currentEditor()==HeadEditor)
+	toMainWidget()->menuBar()->setItemChecked(TO_ID_HEAD_TOGGLE,true);
+      if (!ShowButton->isEnabled())
+	toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,false);
+      if (!DebugTabs->isHidden())
+	toMainWidget()->menuBar()->setItemChecked(TO_ID_DEBUG_PANE,true);
+    }
+  } else {
+    delete ToolMenu;
+    ToolMenu=NULL;
+  }
 }
 
-void toDebug::focusOutEvent(QFocusEvent *e)
+void toDebug::toggleHead(void)
 {
-  QVBox::focusOutEvent(e);
-  printf("Focus out");
+  ShowButton->setOn(!ShowButton->isOn());
+}
+
+void toDebug::toggleDebug(void)
+{
+  DebugButton->setOn(!DebugButton->isOn());
+}
+
+void toDebug::selectedWatch()
+{
+  QListViewItem *item=Watch->selectedItem();
+  if (item) {
+    DelWatchButton->setEnabled(true);
+    toMainWidget()->menuBar()->setItemEnabled(TO_ID_DEL_WATCH,true);
+    if (item->text(4).isEmpty()) {
+      ChangeWatchButton->setEnabled(true);
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_CHANGE_WATCH,true);
+    } else {
+      ChangeWatchButton->setEnabled(false);
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_CHANGE_WATCH,false);
+    }
+  } else {
+    DelWatchButton->setEnabled(false);
+    ChangeWatchButton->setEnabled(false);
+    toMainWidget()->menuBar()->setItemEnabled(TO_ID_DEL_WATCH,false);
+    toMainWidget()->menuBar()->setItemEnabled(TO_ID_CHANGE_WATCH,false);
+  }
+}
+
+void toDebug::deleteWatch(void)
+{
+  delete Watch->selectedItem();
+}
+
+void toDebug::clearLog(void)
+{
+  RuntimeLog->clear();
+}
+
+void toDebug::changeWatch(void)
+{
+  changeWatch(Watch->selectedItem());
+}
+
+void toDebug::changeWatch(QListViewItem *item)
+{
+  if (item&&item->text(4).isEmpty()) {
+    bool ok=false;
+    QString description="Enter new value to the watch ";
+    description+=item->text(2);
+    QString data=item->text(3);
+    data=QInputDialog::getText("Change value of watch",
+			       description,
+			       data,&ok,this);
+    if (ok) {
+      int ret=-1;
+      QString escdata=data;
+      escdata.replace(QRegExp("'"),"''");
+      QString assign=item->text(2);
+      assign+=":='";
+      assign+=escdata;
+      assign+="';";
+      try {
+	if (item->text(0).isEmpty()) {
+	  otl_stream local(1,
+			   "
+DECLARE
+  ret BINARY_INTEGER;
+  data VARCHAR2(4000);
+BEGIN
+  ret:=DBMS_DEBUG.SET_VALUE(0,:assign<char[4001],in>);
+  SELECT ret INTO :ret<int,out> FROM DUAL;
+END;
+",
+			   Connection.connection());
+	  local<<assign;
+	  local>>ret;
+	} else {
+	  otl_stream global(1,
+			    "
+DECLARE
+  data VARCHAR2(4000);
+  proginf DBMS_DEBUG.program_info;
+  ret BINARY_INTEGER;
+BEGIN
+  proginf.Namespace:=DBMS_DEBUG.Namespace_pkg_body;
+  proginf.Name:=:object<char[41],in>;
+  proginf.Owner:=:owner<char[41],in>;
+  proginf.DBLink:=NULL;
+  ret:=DBMS_DEBUG.SET_VALUE(proginf,:assign<char[4001],in>);
+  IF ret =DBMS_DEBUG.error_no_such_object THEN
+    proginf.Namespace:=DBMS_DEBUG.namespace_pkgspec_or_toplevel;
+    ret:=DBMS_DEBUG.SET_VALUE(proginf,:assign<char[4001],in>);
+  END IF;
+  SELECT ret INTO :ret<int,out> FROM DUAL;
+END;",
+			    Connection.connection());
+	  if (item->text(1).isEmpty())
+	    global<<"";
+	  else
+	    global<<item->text(1);
+	  global<<item->text(0);
+	  global<<assign;
+	  global>>ret;
+	}
+	if (ret==TO_ERROR_UNIMPLEMENTED) {
+	  toStatusMessage("Unimplemented in PL/SQL debug interface");
+	} else if (ret!=TO_SUCCESS) {
+	  QString str("Assignment failed (Reason ");
+	  str+=QString::number(ret);
+	  str+=")";
+	  toStatusMessage(str);
+	} else
+	  item->setText(3,data);
+      } TOCATCH
+    }
+  }
 }

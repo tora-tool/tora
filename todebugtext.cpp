@@ -327,9 +327,12 @@ void toDebugText::paintEvent(QPaintEvent *pe)
     if (fromY+view.top()<view.height()) {
       QPainter painter(this);
       QPalette cp=qApp->palette();
-      painter.fillRect(view.left(),fromY,DEBUG_INDENT-2,view.bottom()-fromY,cp.active().background());
-      painter.fillRect(view.left()+DEBUG_INDENT-2,fromY,1,view.bottom()-fromY,cp.active().midlight());
-      painter.fillRect(view.left()+DEBUG_INDENT-1,fromY,1,view.bottom()-fromY,cp.active().dark());
+      if (xOffset()<DEBUG_INDENT-3)
+	painter.fillRect(view.left(),fromY,DEBUG_INDENT-2-xOffset(),view.bottom()-fromY,cp.active().background());
+      if (xOffset()<DEBUG_INDENT-2)
+	painter.fillRect(view.left()+DEBUG_INDENT-2-xOffset(),fromY,1,view.bottom()-fromY,cp.active().midlight());
+      if (xOffset()<DEBUG_INDENT-1)
+	painter.fillRect(view.left()+DEBUG_INDENT-1-xOffset(),fromY,1,view.bottom()-fromY,cp.active().dark());
     }
   }
 }

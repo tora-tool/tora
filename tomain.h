@@ -39,6 +39,7 @@ class QComboBox;
 class QToolButton;
 class QPopupMenu;
 class QTimer;
+class QLabel;
 
 #include "toconnection.h"
 #include "totool.h"
@@ -63,6 +64,8 @@ private:
   QToolButton *PasteButton;
 
   QPopupMenu *WindowsMenu;
+  QLabel *ColumnLabel;
+  QLabel *RowLabel;
 public:
   toMain();
 
@@ -79,6 +82,7 @@ public:
 
   virtual bool close(bool del);
   void createDefault(void);
+  void setCoordinates(int,int);
 public slots:
   void windowsMenu(void);
 private slots:
@@ -111,6 +115,11 @@ QString toGetSessionType(void);
 QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const char *def=NULL);
 void toRefreshParse(QTimer *timer,const QString &str);
 QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize);
+
+#define TO_WINDOWS_MENU		10
+#define TO_TOOL_MENU_INDEX	(toMainWidget()->menuBar()->indexOf(TO_WINDOWS_MENU))
+#define TO_TOOL_MENU_ID		2000
+#define TO_TOOL_MENU_ID_END	2999
 
 #define TOCATCH \
     catch (const otl_exception &exc) {\

@@ -90,3 +90,13 @@ toMarkedText::~toMarkedText()
   if (qApp->focusWidget()==this)
     toMain::editDisable();
 }
+
+void toMarkedText::paintEvent(QPaintEvent *pe)
+{
+  QMultiLineEdit::paintEvent(pe);
+  if (hasFocus()) {
+    int curline,curcol;
+    getCursorPosition (&curline,&curcol);
+    toMainWidget()->setCoordinates(curline+1,curcol+1);
+  }
+}

@@ -153,7 +153,7 @@ toMain::toMain()
   curr->insertSeparator();
   curr->insertItem("&Quit",TO_FILE_QUIT);
   menuBar()->insertItem("&File",curr);
-  curr->setAccel(Key_N|CTRL,TO_NEW_CONNECTION);
+  curr->setAccel(Key_C|CTRL,TO_NEW_CONNECTION);
   curr->setAccel(Key_O|CTRL,TO_FILE_OPEN);
   curr->setAccel(Key_S|CTRL,TO_FILE_SAVE);
   connect(curr,SIGNAL(aboutToShow()),this,SLOT( editFileMenu()));
@@ -302,7 +302,9 @@ toMain::toMain()
   WindowsMenu=new QPopupMenu(this);
   WindowsMenu->setCheckable(true);
   connect(WindowsMenu,SIGNAL(aboutToShow()),this,SLOT( windowsMenu()));
-  menuBar()->insertItem("&Windows",WindowsMenu);
+  menuBar()->insertItem("&Windows",WindowsMenu,TO_WINDOWS_MENU);
+
+  menuBar()->insertSeparator();
 
   curr=new QPopupMenu(this);
   curr->insertItem("&About TOra",TO_HELP_ABOUT);
@@ -320,6 +322,7 @@ toMain::toMain()
     (*i)->setEnabled(false);
 
   connect(menuBar(),SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
+
   show();
   {
     toNewConnection newConnection(this,"First connection",true);
@@ -331,13 +334,25 @@ toMain::toMain()
       if (newConnection.exec()) {
 	conn=newConnection.makeConnection();
       } else {
-	return;
+	break;
       }
     } while(!conn);
     
-    addConnection(conn);
+    if (conn) {
+      addConnection(conn);
+      toTool::saveConfig();
+    }
   }
-  toTool::saveConfig();
+
+  RowLabel=new QLabel(statusBar());
+  statusBar()->addWidget(RowLabel,0,true);
+  RowLabel->setMinimumWidth(60);
+  RowLabel->hide();
+
+  ColumnLabel=new QLabel(statusBar());
+  statusBar()->addWidget(ColumnLabel,0,true);
+  ColumnLabel->setMinimumWidth(60);
+  ColumnLabel->hide();
 }
 
 void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child windows
@@ -409,9 +424,10 @@ void toMain::commandCallback(int cmd)
 {
   if (Tools[cmd])
     Tools[cmd]->createWindow();
-  else if (cmd>=TO_WINDOWS_WINDOWS&&cmd<=TO_WINDOWS_END)
-    workspace()->windowList().at(cmd-TO_WINDOWS_WINDOWS)->setFocus();
-  else {
+  else if (cmd>=TO_WINDOWS_WINDOWS&&cmd<=TO_WINDOWS_END) {
+    if (cmd-TO_WINDOWS_WINDOWS<int(workspace()->windowList().count()))
+      workspace()->windowList().at(cmd-TO_WINDOWS_WINDOWS)->setFocus();
+  } else {
     toMarkedText *mark=dynamic_cast<toMarkedText *>(qApp->focusWidget());
     if (mark) {
       bool readOnly=mark->isReadOnly();
@@ -546,16 +562,16 @@ void toMain::commandCallback(int cmd)
 
 void toMain::addConnection(void)
 {
-    toNewConnection newConnection(this,"New connection",true);
+  toNewConnection newConnection(this,"New connection",true);
 
-    toConnection *conn=NULL;
+  toConnection *conn=NULL;
 
-    if (newConnection.exec()) {
-      conn=newConnection.makeConnection();
-    }
+  if (newConnection.exec()) {
+    conn=newConnection.makeConnection();
+  }
 
-    if (conn)
-      addConnection(conn);
+  if (conn)
+    addConnection(conn);
 }
 
 toConnection &toMain::currentConnection()
@@ -693,10 +709,15 @@ void toMain::editEnable(bool open,bool save,
       main->LoadButton->setEnabled(true);
     else
       main->LoadButton->setEnabled(false);
-    if (save)
+    if (save) {
       main->SaveButton->setEnabled(true);
-    else
+      main->RowLabel->show();
+      main->ColumnLabel->show();
+    } else {
       main->SaveButton->setEnabled(false);
+      main->RowLabel->hide();
+      main->ColumnLabel->hide();
+    }
 
     if (undo)
       main->UndoButton->setEnabled(true);
@@ -739,4 +760,14 @@ void toMain::createDefault(void)
 {
   commandCallback(TO_TOOLS);
   toStatusMessage("Welcome to Tora");
+}
+
+void toMain::setCoordinates(int line,int col)
+{
+  QString str("Row: ");
+  str+=QString::number(line);
+  RowLabel->setText(str);
+  str="Col:";
+  str+=QString::number(col);
+  ColumnLabel->setText(str);
 }

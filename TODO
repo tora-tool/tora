@@ -13,8 +13,6 @@ Extended functionality:
 * Update syntax highlighting from v$reserved_words (Is this a good idea, stuff seems to missing there, OUT and EXCEPTION wasn't in there).
 * Modify storage in storage manager.
 * OTL Doesn't seem to support object types.
-* PL/SQL debugger
-	Global watches not implemented.
 
 New tools:
 * Info about current session.

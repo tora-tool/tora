@@ -12,27 +12,71 @@
             <x>0</x>
             <y>0</y>
             <width>200</width>
-            <height>250</height>
+            <height>270</height>
         </rect>
     </property>
     <property stdset="1">
         <name>minimumSize</name>
         <size>
             <width>200</width>
-            <height>250</height>
+            <height>270</height>
         </size>
     </property>
     <property stdset="1">
         <name>maximumSize</name>
         <size>
             <width>200</width>
-            <height>250</height>
+            <height>270</height>
         </size>
     </property>
     <property stdset="1">
         <name>caption</name>
         <string>Add variable watch</string>
     </property>
+    <widget>
+        <class>QPushButton</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>PushButton1_2</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>110</x>
+                <y>225</y>
+                <width>80</width>
+                <height>32</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>Cancel</string>
+        </property>
+    </widget>
+    <widget>
+        <class>QPushButton</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>PushButton1</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>10</x>
+                <y>225</y>
+                <width>80</width>
+                <height>32</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>&amp;Ok</string>
+        </property>
+        <property stdset="1">
+            <name>default</name>
+            <bool>true</bool>
+        </property>
+    </widget>
     <widget>
         <class>QComboBox</class>
         <property stdset="1">
@@ -43,7 +87,7 @@
             <name>geometry</name>
             <rect>
                 <x>10</x>
-                <y>165</y>
+                <y>185</y>
                 <width>180</width>
                 <height>27</height>
             </rect>
@@ -67,7 +111,7 @@
             <name>geometry</name>
             <rect>
                 <x>10</x>
-                <y>140</y>
+                <y>160</y>
                 <width>180</width>
                 <height>16</height>
             </rect>
@@ -97,7 +141,7 @@
                 <x>10</x>
                 <y>5</y>
                 <width>180</width>
-                <height>125</height>
+                <height>145</height>
             </rect>
         </property>
         <property stdset="1">
@@ -140,24 +184,48 @@
             <class>QRadioButton</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>CurrentScope</cstring>
+                <cstring>BodyScope</cstring>
             </property>
             <property stdset="1">
                 <name>geometry</name>
                 <rect>
                     <x>10</x>
-                    <y>60</y>
+                    <y>85</y>
                     <width>160</width>
                     <height>19</height>
                 </rect>
             </property>
             <property stdset="1">
                 <name>text</name>
-                <string>&amp;Current Scope</string>
+                <string>&amp;Body Scope</string>
             </property>
             <property stdset="1">
-                <name>focusPolicy</name>
-                <enum>NoFocus</enum>
+                <name>buttonGroupId</name>
+                <number>3</number>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>The scope of the file in the body editor.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QRadioButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>HeadScope</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>55</y>
+                    <width>160</width>
+                    <height>19</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Head Scope</string>
             </property>
             <property stdset="1">
                 <name>buttonGroupId</name>
@@ -178,7 +246,7 @@
                 <name>geometry</name>
                 <rect>
                     <x>10</x>
-                    <y>95</y>
+                    <y>115</y>
                     <width>160</width>
                     <height>19</height>
                 </rect>
@@ -189,57 +257,13 @@
             </property>
             <property stdset="1">
                 <name>buttonGroupId</name>
-                <number>3</number>
+                <number>4</number>
             </property>
             <property>
                 <name>toolTip</name>
                 <string>Global scope of variable.</string>
             </property>
         </widget>
-    </widget>
-    <widget>
-        <class>QPushButton</class>
-        <property stdset="1">
-            <name>name</name>
-            <cstring>PushButton1_2</cstring>
-        </property>
-        <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>110</x>
-                <y>205</y>
-                <width>80</width>
-                <height>32</height>
-            </rect>
-        </property>
-        <property stdset="1">
-            <name>text</name>
-            <string>Cancel</string>
-        </property>
-    </widget>
-    <widget>
-        <class>QPushButton</class>
-        <property stdset="1">
-            <name>name</name>
-            <cstring>PushButton1</cstring>
-        </property>
-        <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>10</x>
-                <y>205</y>
-                <width>80</width>
-                <height>32</height>
-            </rect>
-        </property>
-        <property stdset="1">
-            <name>text</name>
-            <string>&amp;Ok</string>
-        </property>
-        <property stdset="1">
-            <name>default</name>
-            <bool>true</bool>
-        </property>
     </widget>
 </widget>
 <connections>
@@ -258,7 +282,8 @@
 </connections>
 <tabstops>
     <tabstop>LocalScope</tabstop>
-    <tabstop>CurrentScope</tabstop>
+    <tabstop>HeadScope</tabstop>
+    <tabstop>BodyScope</tabstop>
     <tabstop>GlobalScope</tabstop>
     <tabstop>Name</tabstop>
     <tabstop>PushButton1</tabstop>
