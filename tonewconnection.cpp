@@ -275,57 +275,56 @@ toConnection *toNewConnection::makeConnection(void)
   }
 }
 void toNewConnection::historySave(void) {
-      int siz=toTool::globalConfig(CONF_CONNECT_SIZE,DEFAULT_CONNECT_SIZE).toInt();
-      int i=0;
-      int j=0;
-      int oldHist=toTool::globalConfig(CONF_CONNECT_CURRENT,0).toInt();
+  int siz=toTool::globalConfig(CONF_CONNECT_SIZE,DEFAULT_CONNECT_SIZE).toInt();
+  int i=0;
+  int j=0;
 
-      for(QListViewItem *item=Previous->firstChild();i<oldHist;item=(item?item=item->nextSibling():0)) {
-	QCString path=CONF_CONNECT_HISTORY;
-	path+=":";
-	path+=QString::number(i).latin1();
-
-	QCString tmp=path;
-	tmp+=CONF_PROVIDER;
-	if (i<siz&&item)
-	  toTool::globalSetConfig(tmp,item->text(0));
-	else
-	  toTool::globalEraseConfig(tmp);
-
-	tmp=path;
-	tmp+=CONF_HOST;
-	if (i<siz&&item)
-	  toTool::globalSetConfig(tmp,item->text(1));
-	else
-	  toTool::globalEraseConfig(tmp);
-
-	tmp=path;
-	tmp+=CONF_DATABASE;
-	if (i<siz&&item)
-	  toTool::globalSetConfig(tmp,item->text(2));
-	else
-	  toTool::globalEraseConfig(tmp);
-
-	tmp=path;
-	tmp+=CONF_USER;
-	if (i<siz&&item)
-	  toTool::globalSetConfig(tmp,item->text(3));
-	else
-	  toTool::globalEraseConfig(tmp);
-
-	tmp=path;
-	tmp+=CONF_PASSWORD;
-	if (i<siz&&item)
-	  toTool::globalSetConfig(tmp,toObfuscate(item->text(4)));
-	else
-	  toTool::globalEraseConfig(tmp);
-
-	i++;
-	if (i<siz&&item)
-	  j++;
-      }
-      toTool::globalSetConfig(CONF_CONNECT_CURRENT,QString::number(j));
-      toTool::saveConfig();
+  for(QListViewItem *item=Previous->firstChild();i<siz;item=(item?item=item->nextSibling():0)) {
+    QCString path=CONF_CONNECT_HISTORY;
+    path+=":";
+    path+=QString::number(i).latin1();
+    
+    QCString tmp=path;
+    tmp+=CONF_PROVIDER;
+    if (i<siz&&item)
+      toTool::globalSetConfig(tmp,item->text(0));
+    else
+      toTool::globalEraseConfig(tmp);
+    
+    tmp=path;
+    tmp+=CONF_HOST;
+    if (i<siz&&item)
+      toTool::globalSetConfig(tmp,item->text(1));
+    else
+      toTool::globalEraseConfig(tmp);
+    
+    tmp=path;
+    tmp+=CONF_DATABASE;
+    if (i<siz&&item)
+      toTool::globalSetConfig(tmp,item->text(2));
+    else
+      toTool::globalEraseConfig(tmp);
+    
+    tmp=path;
+    tmp+=CONF_USER;
+    if (i<siz&&item)
+      toTool::globalSetConfig(tmp,item->text(3));
+    else
+      toTool::globalEraseConfig(tmp);
+    
+    tmp=path;
+    tmp+=CONF_PASSWORD;
+    if (i<siz&&item)
+      toTool::globalSetConfig(tmp,toObfuscate(item->text(4)));
+    else
+      toTool::globalEraseConfig(tmp);
+    
+    i++;
+    if (i<siz&&item)
+      j++;
+  }
+  toTool::globalSetConfig(CONF_CONNECT_CURRENT,QString::number(j));
+  toTool::saveConfig();
 }
 
 void toNewConnection::historySelection(void)

@@ -293,7 +293,17 @@ public:
 		printf("Data exists past length of LOB in thread\n");
 	    }
 	    buffer[data.len()]=0;
-	    QString buf(QString::fromUtf8(buffer));
+	    QString buf;
+	    if (dsc->ftype==otl_var_clob)
+	      buf=QString::fromUtf8(buffer);
+	    else {
+	      buf.fill('0',data.len()*2);
+	      QString t;
+	      for(int i=0;i<data.len();i++) {
+		t.sprintf("%02x",((unsigned int)buffer[i])%0xff);
+		buf.replace(i*2,2,t);
+	      }
+	    }
 	    delete[] buffer;
 	    Running=false;
 	    conn->Lock.up();
