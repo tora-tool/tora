@@ -245,6 +245,10 @@ public slots:
   /** Print the chart.
    */
   virtual void editPrint(void);
+
+  /** Open chart in new window.
+   */
+  virtual void openCopy(void);
 protected:
   /** Reimplemented for internal reasons.
    */

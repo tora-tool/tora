@@ -56,6 +56,8 @@
 #include "tolinechart.moc"
 #include "tolinechartsetupui.moc"
 
+#include "icons/print.xpm"
+
 double toLineChart::round(double round,bool up)
 {
   double base=1.0E-5;
@@ -241,7 +243,7 @@ void toLineChart::paintLegend(QPainter *p,QRect &rect)
     p->setBrush(white);
     p->drawRect(lx,ly,lwidth,lheight);
     p->restore();
-    rect.setRight(lx);
+    rect.setRight(lx-2);
     lx+=12;
     ly+=2;
     int cp=0;
@@ -488,8 +490,10 @@ void toLineChart::mousePressEvent(QMouseEvent *e)
     if (!Chart.contains(e->pos())||!Zooming) {
       if (!Menu) {
 	Menu=new QPopupMenu(this);
-	Menu->insertItem("&Setup",this,SLOT(setup()));
-	Menu->insertItem("&Print",this,SLOT(editPrint()));
+	Menu->insertItem(QPixmap((const char *)print_xpm),"&Print",this,SLOT(editPrint()));
+	Menu->insertItem("&Open in new window",this,SLOT(openCopy()));
+	Menu->insertSeparator();
+	Menu->insertItem("&Properties",this,SLOT(setup()));
       }
       Menu->popup(e->globalPos());
     }
@@ -562,30 +566,34 @@ void toLineChart::mouseMoveEvent(QMouseEvent *e)
 
 void toLineChart::mouseDoubleClickEvent(QMouseEvent *e)
 {
-  if (e->button()==LeftButton) {
-    QWidget *newWin=new toLineChart(this,toMainWidget()->workspace());
-    newWin->show();
-    toMainWidget()->windowsMenu();
+  if (e->button()==LeftButton)
+    openCopy();
+}
+
+void toLineChart::openCopy(void)
+{
+  QWidget *newWin=new toLineChart(this,toMainWidget()->workspace());
+  newWin->show();
+  toMainWidget()->windowsMenu();
 
 #if 1
-      // This is a really ugly workaround for a Qt layout bug
-      QWidget *tmp=NULL;
-      QWidget *tmp2=NULL;
-      for (unsigned int i=0;i<toMainWidget()->workspace()->windowList().count();i++) {
-        QWidget *widget=toMainWidget()->workspace()->windowList().at(i);
-        if (newWin!=widget)
-	  tmp2=widget;
-	else
-	    tmp=newWin;
-	if (tmp2&&tmp)
-	  break;
-      }
-      if(tmp2&&tmp) {
-        tmp2->setFocus();
-        tmp->setFocus();
-      }
-#endif
+  // This is a really ugly workaround for a Qt layout bug
+  QWidget *tmp=NULL;
+  QWidget *tmp2=NULL;
+  for (unsigned int i=0;i<toMainWidget()->workspace()->windowList().count();i++) {
+    QWidget *widget=toMainWidget()->workspace()->windowList().at(i);
+    if (newWin!=widget)
+      tmp2=widget;
+    else
+      tmp=newWin;
+    if (tmp2&&tmp)
+      break;
   }
+  if(tmp2&&tmp) {
+    tmp2->setFocus();
+    tmp->setFocus();
+  }
+#endif
 }
 
 toLineChart::toLineChart (toLineChart *chart,QWidget *parent,const char *name,WFlags f)
