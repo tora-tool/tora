@@ -46,7 +46,6 @@
 #include "toresultcombo.h"
 #include "toresultconstraint.h"
 #include "toresultcontent.h"
-#include "toresultcontent.h"
 #include "toresultdepend.h"
 #include "toresultextract.h"
 #include "toresultfield.h"
@@ -85,10 +84,16 @@
 #include "tobrowserindexui.moc"
 #include "tobrowsertableui.moc"
 
+#include "icons/addtable.xpm"
 #include "icons/filter.xpm"
 #include "icons/function.xpm"
 #include "icons/index.xpm"
+#include "icons/modconstraint.xpm"
+#include "icons/modindex.xpm"
+#include "icons/modtable.xpm"
 #include "icons/nofilter.xpm"
+#include "icons/offline.xpm"
+#include "icons/online.xpm"
 #include "icons/refresh.xpm"
 #include "icons/schema.xpm"
 #include "icons/sequence.xpm"
@@ -96,10 +101,7 @@
 #include "icons/table.xpm"
 #include "icons/tobrowser.xpm"
 #include "icons/view.xpm"
-#include "icons/addtable.xpm"
-#include "icons/modconstraint.xpm"
-#include "icons/modindex.xpm"
-#include "icons/modtable.xpm"
+
 #define TO_DEBUGOUT(x) fprintf(stderr,(const char *)x);
 
 #define CONF_FILTER_IGNORE_CASE "FilterIgnoreCase"
@@ -950,6 +952,17 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 		     tr("Modify indexes"),
 		     tr("Modify indexes"),
 		     this,SLOT(modifyTable()),
+		     toolbar);
+  toolbar->addSeparator();
+  new toBrowseButton(QPixmap((const char **)online_xpm),
+		     tr("Enable constraint or trigger"),
+		     tr("Enable constraint or trigger"),
+		     this,SLOT(enableConstraints()),
+		     toolbar);
+  new toBrowseButton(QPixmap((const char **)offline_xpm),
+		     tr("Disable constraint or trigger"),
+		     tr("Disable constraint or trigger"),
+		     this,SLOT(disableConstraints()),
 		     toolbar);
   toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 
@@ -1983,4 +1996,71 @@ void toBrowseTemplate::exportData(std::map<QCString,QString> &data,const QCStrin
 {
   if (Filter)
     Filter->exportData(data,prefix+":Filter");
+}
+
+void toBrowser::enableDisableConstraints(const QString &what)
+{
+  if (SecondTab) {
+    toResultView *lst=dynamic_cast<toResultConstraint *>(SecondTab);
+    toConnection &conn=connection();
+    std::list<QString> migrate;
+    if (lst) {
+      for(QListViewItem *item=lst->firstChild();item;item=item->nextSibling()) {
+	if (item->isSelected()) {
+	  toResultViewItem *res=dynamic_cast<toResultViewItem *>(item);
+	  if (res) {
+	    toPush(migrate,
+		   conn.quote(schema())+":"+
+		   "TABLE:"+
+		   conn.quote(SecondText)+":"+
+		   "CONSTRAINT:"+
+		   conn.quote(res->allText(0))+":"+
+		   "DEFINITION:"+
+		   what);
+	  }
+	}
+      }
+    } else {
+      lst=dynamic_cast<toResultReferences *>(SecondTab);
+      if (lst) {
+	for(QListViewItem *item=lst->firstChild();item;item=item->nextSibling()) {
+	  if (item->isSelected()) {
+	    toResultViewItem *res=dynamic_cast<toResultViewItem *>(item);
+	    if (res) {
+	      toPush(migrate,
+		     conn.quote(res->allText(0))+":"+
+		     "TABLE:"+
+		     conn.quote(res->allText(1))+":"+
+		     "CONSTRAINT:"+
+		     conn.quote(res->allText(2))+":"+
+		     "DEFINITION:"+
+		     what);
+	    }
+	  }
+	}
+      } else {
+	lst=dynamic_cast<toResultView *>(SecondTab);
+	if (lst&&lst->sqlName()=="toBrowser:TableTrigger") {
+	}
+      }
+    }
+    if (migrate.begin()!=migrate.end()) {
+      std::list<QString> drop;
+      toExtract extract(conn,this);
+      extract.setPrompt(false);
+      extract.setHeading(false);
+      QString sql=extract.migrate(drop,migrate);
+      conn.execute("BEGIN\n"+sql+"\nEND;");
+    }
+  }
+}
+
+void toBrowser::enableConstraints(void)
+{
+  enableDisableConstraints("ENABLE");
+}
+
+void toBrowser::disableConstraints(void)
+{
+  enableDisableConstraints("DISABLE");
 }

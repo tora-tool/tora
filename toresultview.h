@@ -335,11 +335,7 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual QString text(int col) const
-  { return QListViewItem::text(col); }
-  /** Reimplemented for internal reasons.
-   */
-  virtual QString allText(int col) const
-  { return QListViewItem::text(col); }
+  { return toResultViewCheck::allText(col); }
   /** Reimplemented for internal reasons.
    */
   virtual void paintCell (QPainter *pnt,const QColorGroup & cg,int column,int width,int alignment);

@@ -1,6 +1,10 @@
 1.3.11:
 
-2003-07-29: Enable buttons in browser depending on extraction support.
+2003-07-30: Fixed problem with looking in destination table view in schema comparison.
+2003-07-30: Added support for trigger status in oracle extractor.
+2003-07-30: Added enable/disable constraints/trigger buttons to browser.
+2003-07-30: Fixed problem with multiline check list view items.
+2003-07-30: Enable buttons in browser depending on extraction support.
 2003-07-29: Only invalidate layout after all result read in resultitem.
 2003-07-29: Fixed really tricky bug with multiline strings in editors.
 2003-07-28: Fixed problem with restoring window sizes on session restore.

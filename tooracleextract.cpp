@@ -5076,7 +5076,8 @@ static toSQL SQLTriggerInfo("toOracleExtract:TriggerInfo",
 			    "               ,null,null\n"
 			    "               ,'WHEN (' || when_clause || ')' || CHR(10)\n"
 			    "              )\n"
-			    "      , trigger_body\n"
+			    "      , trigger_body,\n"
+			    "      , status\n"
 			    " FROM\n"
 			    "        sys.all_triggers\n"
 			    " WHERE\n"
@@ -5099,7 +5100,8 @@ static toSQL SQLTriggerInfo8("toOracleExtract:TriggerInfo",
 			     "               ,null,null\n"
 			     "               ,'WHEN (' || when_clause || ')' || CHR(10)\n"
 			     "              )\n"
-			     "      , trigger_body\n"
+			     "      , trigger_body,\n"
+			     "      , status\n"
 			     " FROM\n"
 			     "        sys.all_triggers\n"
 			     " WHERE\n"
@@ -5116,7 +5118,7 @@ QString toOracleExtract::createTrigger(toExtract &ext,
   if (!ext.getCode())
     return "";
   toQList result=toQuery::readQueryNull(CONNECTION,SQLTriggerInfo,name,owner);
-  if (result.size()!=9)
+  if (result.size()!=10)
     throw qApp->translate("toOracleExtract","Couldn't find trigger %1.%2").arg(owner).arg(name);
   QString triggerType=toShift(result);
   QString event      =toShift(result);
@@ -5127,6 +5129,7 @@ QString toOracleExtract::createTrigger(toExtract &ext,
   QString description=toShift(result);
   QString when       =toShift(result);
   QString body       =toShift(result);
+  QString status     =toShift(result);
 
   QString trgType;
   if (triggerType.find("BEFORE")>=0)
@@ -5178,6 +5181,9 @@ QString toOracleExtract::createTrigger(toExtract &ext,
     ret+=when;
   ret+=body;
   ret+="\n/\n\n";
+  if (status!="ENABLED") {
+    ret+=QString("ALTER TRIGGER %1%2 DISABLE;\n\n").arg(schema).arg(QUOTE(name));
+  }
   return ret;
 }
 
@@ -5948,7 +5954,7 @@ void toOracleExtract::describeTrigger(toExtract &ext,
     return;
 
   toQList result=toQuery::readQueryNull(CONNECTION,SQLTriggerInfo,name,owner);
-  if (result.size()!=9)
+  if (result.size()!=10)
     throw qApp->translate("toOracleExtract","Couldn't find trigger %1.%2").arg(owner).arg(name);
   QString triggerType=toShift(result);
   QString event      =toShift(result);
@@ -5959,6 +5965,7 @@ void toOracleExtract::describeTrigger(toExtract &ext,
   QString description=toShift(result);
   QString when       =toShift(result);
   QString body       =toShift(result);
+  QString status     =toShift(result);
 
   QString trgType;
   if (triggerType.find("BEFORE")>=0)
@@ -6016,6 +6023,7 @@ void toOracleExtract::describeTrigger(toExtract &ext,
   if (!when.isEmpty())
     addDescription(lst,ctx,when);
   addDescription(lst,ctx,"BODY",body);
+  addDescription(lst,ctx,status);
 }
 
 void toOracleExtract::describeType(toExtract &ext,

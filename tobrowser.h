@@ -74,6 +74,7 @@ class toBrowser : public toToolWidget {
   QTimer Poll;
 
   QString schema(void);
+  void enableDisableConstraints(const QString &);
 public:
   toBrowser(QWidget *parent,toConnection &connection);
   virtual ~toBrowser();
@@ -99,6 +100,9 @@ public slots:
   void modifyTable(void);
   void addTable(void);
   void fixIndexCols(void);
+
+  void enableConstraints(void);
+  void disableConstraints(void);
 };
 
 class toBrowseTemplate : public QObject,public toTemplateProvider {

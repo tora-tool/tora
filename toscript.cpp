@@ -266,7 +266,7 @@ toScript::toScript(QWidget *parent,toConnection &connection)
 
   connect(ScriptUI->SourceObjects,SIGNAL(expanded(QListViewItem *)),
 	  this,SLOT(expandSource(QListViewItem *)));
-  connect(ScriptUI->DestinationObjects,SIGNAL(clicked(QListViewItem *)),
+  connect(ScriptUI->DestinationObjects,SIGNAL(expanded(QListViewItem *)),
 	  this,SLOT(expandDestination(QListViewItem *)));
 
   connect(toMainWidget(),SIGNAL(addedConnection(const QString &)),
