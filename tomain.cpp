@@ -49,6 +49,7 @@
 #ifdef TO_KDE
 #include <kfiledialog.h>
 #include <kmenubar.h>
+#include <kstatusbar.h>
 #endif
 
 #include <qapplication.h>

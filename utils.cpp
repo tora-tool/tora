@@ -376,9 +376,7 @@ void toRefreshParse(toTimer *timer,const QString &str)
 
 QString toDeepCopy(const QString &str)
 {
-  QString ret=str;
-  ret+=" ";
-  return ret.left(ret.length()-1);
+  return str.copy();
 }
 
 #ifdef ENABLE_STYLE

@@ -32,8 +32,8 @@
  *
  ****************************************************************************/
 
-#ifndef TOSGATRACE_H
-#define TOSGATRACE_H
+#ifndef TOSESSION_H
+#define TOSESSION_H
 
 #include "totool.h"
 

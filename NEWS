@@ -5,6 +5,10 @@
 2001-11-15: Added some more quotes.
 2001-11-16: Added toLegendChart to api.
 2001-11-16: Make configure able to generate which plugins to what rpm packages.
+2001-11-16: Don't generate useless .new file when saving map.
+2001-11-16: Plugin support for all ELF systems.
+2001-11-16: Fixes to configure if Qt is not in a standard place.
+2001-11-16: Fixes to configure if KDE3 is used.
 
 1.3.0: Released 2001-12-17
 

@@ -232,14 +232,8 @@ void toTool::createWindow(void)
 bool toTool::saveMap(const QString &file,std::map<QString,QString> &pairs)
 {
   QCString data;
-  QString newfile(toExpandFile(file));
 
-  newfile.append(".new");
   {
-    QFile file(newfile);
-    if (!file.open(IO_WriteOnly))
-      return false;
-
     QRegExp newline("\n");
     QRegExp backslash("\\");
     for (std::map<QString,QString>::iterator i=pairs.begin();i!=pairs.end();i++) {
@@ -248,8 +242,6 @@ bool toTool::saveMap(const QString &file,std::map<QString,QString> &pairs)
       line.replace(backslash,"\\\\");
       line.replace(newline,"\\n");
       QCString str=line.latin1();
-
-      file.writeBlock(str,str.length());
       line=(*i).second;
       line.replace(backslash,"\\\\");
       line.replace(newline,"\\n");

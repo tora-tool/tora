@@ -225,7 +225,6 @@ my $MOC;
 my $UIC;
 my $QtDir;
 my $QtInclude;
-my $QtLibDir;
 my $QtVersion;
 my $QtLib;
 my $QtLibOrig;
@@ -238,11 +237,11 @@ my $Target="tora-mono";
 my $ForceTarget=0;
 my $Perl=`which perl`;
 chomp $Perl;
-my $Linux;
 my $KDEApplication;
 my $NoKDE;
 my $KDEInclude;
 my $KDELibs;
+my $KDEVersion;
 my $NoRPath;
 my $OracleFound=1;
 my $OracleRelease;
@@ -484,9 +483,9 @@ __TEMP__
     }
 
     findFile("^libstdc\\+\\+.*\\.a",sub {
-	$StdCppLibStatic=$_[0];
-	return -f $_[0];
-    },
+	                                $StdCppLibStatic=$_[0];
+					return -f $_[0];
+				    },
 	     "/usr/lib",
 	     "/usr/local/lib");
     if (! -f $StdCppLibStatic) {
@@ -569,8 +568,25 @@ __TEMP__
 
     if (!$NoKDE||$KDEApplication) {
 	print "checking for KDE include files ... ";
-	$KDEInclude=findFile("^kapp\\.h\$",sub {
-	                                       return !system("egrep \"#define[ \t]+KDE_VERSION[ \t]+((2[12345678])|(3))\" '".$_[0]."' >/dev/null");
+	$KDEInclude=findFile("^kapp.*\\.h\$",sub {
+	                                     if (open(KDE,"<$_[0]")) {
+						 while(<KDE>) {
+						     if (/#define\s+KDE_VERSION_STRING\s+\"([0-9\.]+)/) {
+							 $KDEVersion=$1;
+							 if ($KDEVersion ge "2.1") {
+							     last;
+							 }
+						     }
+						 }
+						 close KDE;
+						 if ($KDEVersion ge "2.2") {
+						     return 1;
+						 } else {
+						     return 0;
+						 }
+					     } else {
+						 return 0;
+					     }
 					   },
 			     $KDEInclude,
 			     $ENV{KDEDIR}."/include",
@@ -592,6 +608,7 @@ __TEMP__
 	} else {
 	    print "no\n";
 	}
+	print "checking KDE version ... $KDEVersion\n";
     }
     if ($KDEApplication) {
 	print "checking for KDE print support ... ";
@@ -608,7 +625,7 @@ __TEMP__
 	    print "no\n";
 	}
 
-	$Includes.=" \"-I".$KDEInclude."\"";
+	$Includes.="\"-I".$KDEInclude."\" ";
 
 	print "checking for KDE libraries ... ";
 
@@ -849,7 +866,6 @@ __TEMP__
 					     } else {
 						 return 0;
 					     }
-	                                     return !system("egrep \"#define[ \t]+QT_VERSION[ \t]+((2[23456789])|(3))\" '".$_[0]."' >/dev/null");
 					 },
 			$QtInclude,
 			$QtDir."/include",
@@ -955,7 +971,6 @@ __TEMP__
     print "checking for extra libraries ... ";
 
     if (`uname`=~/linux/i) {
-	$Linux=1;
 	print "none\n";
     } elsif (`uname`=~/sunos/i) {
 	$NoRPath=1;
@@ -971,10 +986,10 @@ __TEMP__
 	print "none\n";
     }
     if (!$NoRPath) {
-	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\" ";
+	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\" -Xlinker \"--rpath\=$QtLib\" ";
     }
 
-    $Includes ="\"-I".$ENV{ORACLE_HOME}."/rdbms/demo\" ";
+    $Includes.="\"-I".$ENV{ORACLE_HOME}."/rdbms/demo\" ";
     $Includes.="\"-I".$ENV{ORACLE_HOME}."/plsql/public\" ";
     $Includes.="\"-I".$ENV{ORACLE_HOME}."/rdbms/public\" ";
     $Includes.="\"-I".$ENV{ORACLE_HOME}."/network/public\" ";
@@ -985,7 +1000,15 @@ __TEMP__
 
     if (!$ForceTarget) {
 	print "checking for plugin support ... ";
-	if ($Linux) {
+
+	my $dlfcn;
+
+	findFile("^dlfcn.h\$",sub {
+	                         $dlfcn=$_[0];
+				 return -f $_[0];
+			     },
+	         "/usr/include");
+	if (-f $dlfcn) {
 	    $Libs.=" -ldl";
 	    print "yes\n";
 	    $Target="tora-plugin";
@@ -1347,6 +1370,7 @@ distclean: clean
 	-rm -rf .xvpics >/dev/null 2>&1
 	-rm -rf icons/.xvpics >/dev/null 2>&1
 	-rm -f *.moc qtlegacy/*.moc >/dev/null 2>&1 
+	-rm -f rpmcommon rpmoracle rpmmysql >/dev/null 2>&1 
 	-rm \\#*\\# >/dev/null 2>&1
 	-rm Makefile.setup >/dev/null 2>&1
 	-mv Makefile >/dev/null 2>&1
