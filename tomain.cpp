@@ -444,6 +444,7 @@ toMain::toMain()
   statusBar()->message("Ready");
   menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,false);
   menuBar()->setItemEnabled(TO_FILE_COMMIT,false);
+  menuBar()->setItemEnabled(TO_STOP_ALL,false);
   menuBar()->setItemEnabled(TO_FILE_ROLLBACK,false);
   menuBar()->setItemEnabled(TO_FILE_CLEARCACHE,false);
   DisconnectButton->setEnabled(false);
@@ -852,6 +853,7 @@ toConnection *toMain::addConnection(toConnection *conn,bool def)
 
   if (ConnectionSelection->count()==1) {
     menuBar()->setItemEnabled(TO_FILE_COMMIT,true);
+    menuBar()->setItemEnabled(TO_STOP_ALL,true);
     menuBar()->setItemEnabled(TO_FILE_ROLLBACK,true);
     menuBar()->setItemEnabled(TO_FILE_CLEARCACHE,true);
     menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,true);
@@ -921,6 +923,7 @@ bool toMain::delConnection(void)
   }
   if (ConnectionSelection->count()==0) {
     menuBar()->setItemEnabled(TO_FILE_COMMIT,false);
+    menuBar()->setItemEnabled(TO_STOP_ALL,false);
     menuBar()->setItemEnabled(TO_FILE_ROLLBACK,false);
     menuBar()->setItemEnabled(TO_FILE_CLEARCACHE,false);
     menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,false);
