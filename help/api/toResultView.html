@@ -69,31 +69,29 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref30">query</A></b> (const <A HREF="toSQL.html">toSQL</A> &sql) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref31">query</A></b> (const <A HREF="toSQL.html">toSQL</A> &sql,<A HREF="#toQList">toQList</A> &par) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref31">editPrint</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref32">editPrint</A></b> (void) 
+<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref32">middleString</A></b> () 
 </LI>
-<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref33">middleString</A></b> () 
+<LI>virtual  void &nbsp;<b><A HREF="#ref33">addMenues</A></b> (<A HREF="http://doc.trolltech.com/qpopupmenu.html">QPopupMenu</A> *) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref34">addMenues</A></b> (<A HREF="http://doc.trolltech.com/qpopupmenu.html">QPopupMenu</A> *) 
+</ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref34">refresh</A></b> (void) 
 </LI>
-</ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref35">refresh</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref35">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref36">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref36">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref37">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref37">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref38">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref38">addItem</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref39">addItem</A></b> (void) 
-</LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref40">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref39">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &) 
 </LI>
 </ul><h4>Protected Methods</h4><ul><LI>void &nbsp;<b><A HREF="#ref9">setup</A></b> (bool readable,bool dispCol) 
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref10">eof</A></b> (void) 
 </LI>
-</ul><h4>Protected Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref41">menuCallback</A></b> (int) 
+</ul><h4>Protected Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref40">menuCallback</A></b> (int) 
 </LI>
 </ul><h4>Protected Members</h4><ul><LI>toQuery *<b><A HREF="#ref2">Query</A></b></LI>
 <LI>QListViewItem *<b><A HREF="#ref3">LastItem</A></b></LI>
@@ -261,51 +259,42 @@
 </TABLE></P>
 <p><b>See also</b>: setSQL</p>
 <p>Reimplemented from <A HREF="toResult.html#query">toResult</A>.</p>
-<A NAME="query"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const <A HREF="toSQL.html">toSQL</A> &sql,<A HREF="#toQList">toQList</A> &par)
-<br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p></p><p> Set new SQL and run query.
-</p>
-<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
-<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">New sql.
-</TD></TR>
-</TABLE></P>
-<p><b>See also</b>: setSQL</p>
-<p>Reimplemented from <A HREF="toResult.html#query">toResult</A>.</p>
-<A NAME="editPrint"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editPrint</strong> (void)
+<A NAME="editPrint"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editPrint</strong> (void)
 <br></td><td align="right"><h3><strong>editPrint</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toListView.html#editPrint">toListView</A>.</p>
-<A NAME="middleString"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>middleString</strong> ()
+<A NAME="middleString"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>middleString</strong> ()
 <br></td><td align="right"><h3><strong>middleString</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toListView.html#middleString">toListView</A>.</p>
-<A NAME="addMenues"></A><A NAME="ref34"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addMenues</strong> (<A HREF="http://doc.trolltech.com/qpopupmenu.html">QPopupMenu</A> *)
+<A NAME="addMenues"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addMenues</strong> (<A HREF="http://doc.trolltech.com/qpopupmenu.html">QPopupMenu</A> *)
 <br></td><td align="right"><h3><strong>addMenues</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toListView.html#addMenues">toListView</A>.</p>
-<A NAME="refresh"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>refresh</strong> (void)
+<A NAME="refresh"></A><A NAME="ref34"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>refresh</strong> (void)
 <br></td><td align="right"><h3><strong>refresh</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#refresh">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1)
+<A NAME="changeParams"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2)
+<A NAME="changeParams"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented For internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3)
+<A NAME="changeParams"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
-<A NAME="addItem"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addItem</strong> (void)
+<A NAME="addItem"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addItem</strong> (void)
 <br></td><td align="right"><h3><strong>addItem</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Try to add an item to the list if available.
    </p>
-<A NAME="canHandle"></A><A NAME="ref40"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &)
+<A NAME="canHandle"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &)
 <br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Handle any connection by default
    </p>
 <p>Reimplemented from <A HREF="toResult.html#canHandle">toResult</A>.</p>
-<A NAME="menuCallback"></A><A NAME="ref41"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>menuCallback</strong> (int)
+<A NAME="menuCallback"></A><A NAME="ref40"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>menuCallback</strong> (int)
 <br></td><td align="right"><h3><strong>menuCallback</strong></h3></td></tr></table><p> <small>[protected slots virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toListView.html#menuCallback">toListView</A>.</p>

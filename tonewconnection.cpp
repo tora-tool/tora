@@ -167,6 +167,10 @@ void toNewConnection::changeProvider(void)
       SqlNet->hide();
     }
     Host->lineEdit()->setText(current);
+    Mode->clear();
+    std::list<QString> modes=toConnectionProvider::modes(Provider->currentText());
+    for(std::list<QString>::iterator j=modes.begin();j!=modes.end();j++)
+      Mode->insertItem(*j);
   } catch (const QString &str) {
     Host->clear();
     toStatusMessage(str);

@@ -278,24 +278,6 @@
         </widget>
         <widget row="12"  column="1"  rowspan="1"  colspan="3" >
             <class>QComboBox</class>
-            <item>
-                <property>
-                    <name>text</name>
-                    <string>Normal</string>
-                </property>
-            </item>
-            <item>
-                <property>
-                    <name>text</name>
-                    <string>SYS_DBA</string>
-                </property>
-            </item>
-            <item>
-                <property>
-                    <name>text</name>
-                    <string>SYS_OPER</string>
-                </property>
-            </item>
             <property stdset="1">
                 <name>name</name>
                 <cstring>Mode</cstring>

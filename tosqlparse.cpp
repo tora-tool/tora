@@ -316,7 +316,7 @@ END;";
 
 #endif
 
-toSQLParse::statement::statement(type ntype,const QString &token,int cline=-1)
+toSQLParse::statement::statement(type ntype,const QString &token,int cline)
   : Type(ntype),String(token),Line(cline)
 {
   SubTokens=NULL;

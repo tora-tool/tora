@@ -180,11 +180,11 @@ public:
   {
     if (driv=="QMYSQL3")
       return "MySQL";
-    else if (driv=="QPSQL")
+    else if (driv=="QPSQL7")
       return "PostrgeSQL";
     else if (driv=="QTDS")
       return "Microsoft SQL/TDS";
-    else if (driv=="QODBC")
+    else if (driv=="QODBC3")
       return "ODBC";
     return QString::null;
   }
@@ -193,11 +193,11 @@ public:
     if (driv=="MySQL")
       return "QMYSQL3";
     else if (driv=="PostgreSQL")
-      return "QPSQL";
+      return "QPSQL7";
     else if (driv=="Microsoft SQL/TDS")
       return "QTDS";
     else if (driv=="ODBC")
-      return "ODBC";
+      return "QODBC3";
     return QString::null;
   }
 
@@ -634,13 +634,13 @@ toConnectionSub *toQSqlProvider::qSqlConnection::createConnection(void)
   if (!db)
     throw QString("Couldn't create QSqlDatabase object");
   db->setHostName(connection().host());
-  QString db=connection().database();
-  int pos=db.find(":");
+  QString dbname=connection().database();
+  int pos=dbname.find(":");
   if (pos<0)
-    db->setDatabaseName(db);
+    db->setDatabaseName(dbname);
   else {
-    db->setDatabaseName(db.mid(0,pos));
-    db->setPort(db.mid(pos+1).toInt());
+    db->setDatabaseName(dbname.mid(0,pos));
+    db->setPort(dbname.mid(pos+1).toInt());
   }
   db->open(connection().user(),connection().password());
   if (!db->isOpen()) {

@@ -382,7 +382,7 @@ public:
     
     toQList par;
     par.insert(par.end(),QString::number(toSizeDecode(unit)));
-    toResultView::query(sql,par);
+    toResultView::query(sql,(const toQList &)par);
     QRegExp repl("(MB)");
     QString res="(";
     res+=unit;

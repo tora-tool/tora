@@ -75,7 +75,7 @@ protected:
 
 public:
   toChartTool()
-    : toTool(920,"Chart Manager")
+    : toTool(930,"Chart Manager")
   { Window=NULL; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
@@ -332,6 +332,11 @@ void toChartManager::removeChart(toLineChart *chart)
   }
 }
 
+toChartManager::alarmSignal::alarmSignal(void)
+{
+  Action=Ignore;
+}
+
 toChartManager::chartAlarm::chartAlarm(const QString &inp,bool pers)
 {
   char oper[100];
@@ -519,19 +524,23 @@ void toChartManager::chartAlarm::valueAdded(toChartManager *manager,
   bool sig=false;
   switch(Operation) {
   case Any:
-    for(std::list<double>::iterator i=vals.begin();i!=vals.end();i++)
-      if (checkValue(*i)) {
-	sig=true;
-	break;
-      }
+    {
+      for(std::list<double>::iterator i=vals.begin();i!=vals.end();i++)
+	if (checkValue(*i)) {
+	  sig=true;
+	  break;
+	}
+    }
     break;
   case All:
     sig=true;
-    for(std::list<double>::iterator i=vals.begin();i!=vals.end();i++)
-      if (!checkValue(*i)) {
-	sig=false;
-	break;
-      }
+    {
+      for(std::list<double>::iterator i=vals.begin();i!=vals.end();i++)
+	if (!checkValue(*i)) {
+	  sig=false;
+	  break;
+	}
+    }
     break;
   case Sum:
     {
@@ -705,14 +714,14 @@ void toChartManager::valueAdded(toLineChart *chart,
 static QString ReadCSV(const QCString &data,unsigned int &pos,bool &nl)
 {
   QCString ret;
-  if (data[pos]!='\"')
+  if (data.at(pos)!='\"')
     throw QString("Initial value didn't start with \" in CSV file");
   pos++;
   while(pos<data.length()&&
-	(data[pos]!='\"'||(pos+1<data.length()&&
-			   data[pos+1]=='\"'))) {
-    ret+=data[pos];
-    if (data[pos]=='\"')
+	(data.at(pos)!='\"'||(pos+1<data.length()&&
+			   data.at(pos+1)=='\"'))) {
+    ret+=data.at(pos);
+    if (data.at(pos)=='\"')
       pos++;
     pos++;
   }
@@ -720,8 +729,8 @@ static QString ReadCSV(const QCString &data,unsigned int &pos,bool &nl)
     throw QString("Missing closing \" in CSV file");
   pos++;
   nl=false;
-  while(pos<data.length()&&(isspace(data[pos])||data[pos]==','||data[pos]==';')) {
-    if (data[pos]=='\n')
+  while(pos<data.length()&&(isspace(data.at(pos))||data.at(pos)==','||data.at(pos)==';')) {
+    if (data.at(pos)=='\n')
       nl=true;
     pos++;
   }

@@ -81,8 +81,7 @@ class toChartManager : public QVBox, public toHelpContext {
     QString xValue;
     QString Chart;
     QString Alarm;
-    alarmSignal()
-    { Action=Ignore; }
+    alarmSignal();
     alarmSignal(action act,const QString &xvalue,const QString &chart,const QString &alarm)
       : Action(act),xValue(xvalue),Chart(chart),Alarm(alarm)
     { }
@@ -161,7 +160,8 @@ class toChartManager : public QVBox, public toHelpContext {
   std::list<toChartReceiver *> Charts;
   std::list<alarmSignal> SignalAlarms;
 
-  friend class chartAlarm;
+  friend struct chartAlarm;
+  friend struct alarmSignal;
 
   toChartReceiver *selectedChart(void);
   void loadSettings(void);

@@ -1989,25 +1989,27 @@ void toTuningWait::changeSelection(void)
     Delta->setEnabledCharts(Enabled);
     DeltaTimes->setEnabledCharts(Enabled);
 
-    std::list<double>::iterator i=(ShowTimes?LastTimes:LastCurrent).begin();
-    std::list<double>::iterator j=(ShowTimes?RelativeTimes:Relative).begin();
-    std::list<bool>::iterator k=Enabled.begin();
     std::list<double> absolute;
     std::list<double> relative;
-    while(i!=(ShowTimes?LastTimes:LastCurrent).end()&&k!=Enabled.end()) {
-      if (*k) {
+    {
+      std::list<double>::iterator i=(ShowTimes?LastTimes:LastCurrent).begin();
+      std::list<double>::iterator j=(ShowTimes?RelativeTimes:Relative).begin();
+      std::list<bool>::iterator k=Enabled.begin();
+      while(i!=(ShowTimes?LastTimes:LastCurrent).end()&&k!=Enabled.end()) {
+	if (*k) {
+	  if (j!=(ShowTimes?RelativeTimes:Relative).end())
+	    relative.insert(relative.end(),*j);
+	  absolute.insert(absolute.end(),*i);
+	} else {
+	  if (j!=(ShowTimes?RelativeTimes:Relative).end())
+	    relative.insert(relative.end(),0);
+	  absolute.insert(absolute.end(),0);
+	}
+	i++;
 	if (j!=(ShowTimes?RelativeTimes:Relative).end())
-	  relative.insert(relative.end(),*j);
-	absolute.insert(absolute.end(),*i);
-      } else {
-	if (j!=(ShowTimes?RelativeTimes:Relative).end())
-	  relative.insert(relative.end(),0);
-	absolute.insert(absolute.end(),0);
+	  j++;
+	k++;
       }
-      i++;
-      if (j!=(ShowTimes?RelativeTimes:Relative).end())
-        j++;
-      k++;
     }
 
     double total=0;

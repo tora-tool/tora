@@ -34,6 +34,10 @@
 
 #include "utils.h"
 
+#ifdef WIN32
+#  include "windows/cregistry.h"
+#endif
+
 #define OTL_STL
 #define OTL_STREAM_POOLING_ON
 
@@ -44,10 +48,6 @@
 #include "tomain.h"
 #include "tosql.h"
 #include "totool.h"
-
-#ifdef WIN32
-#  include "windows/cregistry.h"
-#endif
 
 #include <qcheckbox.h>
 #include <qfile.h>

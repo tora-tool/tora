@@ -1172,8 +1172,8 @@ void toMain::exportData(std::map<QString,QString> &data,const QString &prefix)
       tool->exportData(data,key);
       data[key+":Type"]=tool->tool().key();
       data[key+":Connection"]=QString::number(connMap[&tool->connection()]);
+      id++;
     }
-    id++;
   }
 }
 
