@@ -143,8 +143,11 @@ class toDebug : public QVBox {
   void updateState(int reason);
   void updateContent(bool body);
   void reorderContent(QListViewItem *item,int,int);
+  bool viewSource(const QString &schema,const QString &name,const QString &type,
+		  int line,bool current=false);
 
   void setDeferedBreakpoints(void);
+  bool checkStop(void);
 public:
   toDebug(QWidget *parent,toConnection &connection);
 
@@ -163,6 +166,7 @@ public slots:
   void prevError(void);
   void nextError(void);
   void changeContent(QListViewItem *);
+  void showSource(QListViewItem *);
   void scanSource(void);
   void reorderContent(int,int);
   void newSheet(void);

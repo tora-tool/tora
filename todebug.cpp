@@ -409,6 +409,9 @@ bool toDebug::hasMembers(const QString &str)
 
 void toDebug::execute(void)
 {
+  if (!checkStop())
+    return;
+
   if (!checkCompile())
     return;
 
@@ -841,8 +844,8 @@ void toDebug::updateState(int reason)
     StepOverButton->setEnabled(false);
     StepIntoButton->setEnabled(false);
     ReturnButton->setEnabled(false);
-    HeadEditor->setReadOnly(false);
-    BodyEditor->setReadOnly(false);
+    HeadEditor->setCurrent(-1);
+    BodyEditor->setCurrent(-1);
     StackTrace->clear();
     {
       toLocker lock(Lock);
@@ -927,43 +930,74 @@ END;",
 	stack>>type;
 
 	if (!item)
-	  item=new QListViewItem(StackTrace,schema,name,QString::number(line),type);
+	  item=new QListViewItem(StackTrace,name,QString::number(line),schema,type);
 	else
-	  item=new QListViewItem(item,schema,name,QString::number(line),type);
+	  item=new QListViewItem(item,name,QString::number(line),schema,type);
 	item->setOpen(true);
       }
-      if (depth>=2) {
-	if (HeadEditor->schema()==schema&&
-	    HeadEditor->object()==name&&
-	    HeadEditor->type()==type) {
-	  HeadEditor->setCurrent(line-1);
-	  ShowButton->setOn(true);
-	} else if (BodyEditor->schema()==schema&&
-		   BodyEditor->object()==name&&
-		   BodyEditor->type()==type) {
-	  BodyEditor->setCurrent(line-1);
-	  ShowButton->setOn(false);
-	} else if (!BodyEditor->edited()) {
-	  BodyEditor->setData(schema,type,name);
-	  BodyEditor->readData(Connection);
-	  BodyEditor->setCurrent(line-1);
-	  updateContent(true);
-	} else if (!HeadEditor->edited()) {
-	  toStatusMessage("Reading current execution into head editor");
-	  HeadEditor->setData(schema,type,name);
-	  HeadEditor->readData(Connection);
-	  HeadEditor->setCurrent(line-1);
-	  ShowButton->setEnabled(true);
-	  ShowButton->setOn(true);
-	  updateContent(false);
-	} else {
-	  
-	}
-      } else
+      if (depth>=2)
+	viewSource(schema,name,type,line,true);
+      else
 	continueExecution(TO_BREAK_ANY_RETURN);
     } TOCATCH
     break;
   }
+}
+
+bool toDebug::viewSource(const QString &schema,const QString &name,const QString &type,
+			 int line,bool setCurrent)
+{
+  if (HeadEditor->schema()==schema&&
+      HeadEditor->object()==name&&
+      HeadEditor->type()==type) {
+    if (setCurrent) {
+      HeadEditor->setCurrent(line-1);
+      BodyEditor->setCurrent(-1);
+    } else
+      HeadEditor->setCursorPosition(line-1,0);
+    HeadEditor->setFocus();
+    ShowButton->setOn(true);
+  } else if (BodyEditor->schema()==schema&&
+	     BodyEditor->object()==name&&
+	     BodyEditor->type()==type) {
+    if (setCurrent) {
+      BodyEditor->setCurrent(line-1);
+      HeadEditor->setCurrent(-1);
+    } else
+      BodyEditor->setCursorPosition(line-1,0);
+    BodyEditor->setFocus();
+    ShowButton->setOn(false);
+  } else if (!BodyEditor->edited()&&(setCurrent||BodyEditor->current()<0)) {
+    BodyEditor->setData(schema,type,name);
+    BodyEditor->readData(Connection);
+    if (setCurrent) {
+      BodyEditor->setCurrent(line-1);
+      HeadEditor->setCurrent(-1);
+    } else
+      BodyEditor->setCursorPosition(line-1,0);
+    BodyEditor->setFocus();
+    updateContent(true);
+  } else if (!HeadEditor->edited()&&(setCurrent||HeadEditor->current()<0)) {
+    toStatusMessage("Reading source into head editor");
+    HeadEditor->setData(schema,type,name);
+    HeadEditor->readData(Connection);
+    if (setCurrent) {
+      HeadEditor->setCurrent(line-1);
+      BodyEditor->setCurrent(-1);
+    } else
+      HeadEditor->setCursorPosition(line-1,0);
+    HeadEditor->setFocus();
+    ShowButton->setEnabled(true);
+    ShowButton->setOn(true);
+    updateContent(false);
+  } else { 
+    if (setCurrent) {
+      HeadEditor->setCurrent(-1);
+      BodyEditor->setCurrent(-1);
+    }
+    return false;
+  }
+  return true;
 }
 
 void toDebug::setDeferedBreakpoints(void)
@@ -1178,29 +1212,36 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   Parameters->setSorting(-1);
   Parameters->setTreeStepSize(10);
   Parameters->setRootIsDecorated(true);
+  Parameters->setAllColumnsShowFocus(true);
   DebugTabs->addTab(Parameters,"Parameters");
 
   Breakpoints=new QListView(DebugTabs);
-  Breakpoints->addColumn("Schema");
   Breakpoints->addColumn("Object");
   Breakpoints->addColumn("Line");
+  Breakpoints->addColumn("Schema");
   Breakpoints->addColumn("Object Type");
   Breakpoints->addColumn("Enabled");
   Breakpoints->addColumn("Breakpoint#");
-  Breakpoints->setColumnAlignment(2,AlignRight);
+  Breakpoints->setColumnAlignment(1,AlignRight);
   Breakpoints->setSorting(-1);
+  Breakpoints->setAllColumnsShowFocus(true);
   DebugTabs->addTab(Breakpoints,"Breakpoints");
+  connect(Breakpoints,SIGNAL(clicked(QListViewItem *)),
+	  this,SLOT(showSource(QListViewItem *)));
 
   StackTrace=new QListView(DebugTabs);
-  StackTrace->addColumn("Schema");
   StackTrace->addColumn("Object");
   StackTrace->addColumn("Line");
+  StackTrace->addColumn("Schema");
   StackTrace->addColumn("Type");
-  StackTrace->setColumnAlignment(2,AlignRight);
+  StackTrace->setColumnAlignment(1,AlignRight);
   StackTrace->setSorting(-1);
   StackTrace->setRootIsDecorated(true);
   StackTrace->setTreeStepSize(10);
+  StackTrace->setAllColumnsShowFocus(true);
   DebugTabs->addTab(StackTrace,"Stack Trace");
+  connect(StackTrace,SIGNAL(clicked(QListViewItem *)),
+	  this,SLOT(showSource(QListViewItem *)));
 
   Watch=new toResultView(false,false,Connection,DebugTabs);
   Watch->addColumn("Schema");
@@ -1210,6 +1251,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   Watch->setSorting(-1);
   Watch->setRootIsDecorated(true);
   Watch->setTreeStepSize(10);
+  Watch->setAllColumnsShowFocus(true);
   DebugTabs->addTab(Watch,"Watch");
 
   Output=new toDebugOutput(DebugTabs,Connection);
@@ -1343,20 +1385,26 @@ void toDebug::refresh(void)
   } TOCATCH
 }
 
-bool toDebug::checkCompile(void)
+bool toDebug::checkStop(void)
 {
   Lock.lock();
   if (RunningTarget) {
     Lock.unlock();
-    if (QMessageBox::information(this,"Restart execution?",
-				 "Do you want to abort the current execution to recompile?",
+    if (QMessageBox::information(this,"Stop execution?",
+				 "Do you want to abort the current execution?",
 				 "&Ok","Cancel")!=0)
       return false;
     stop();
   } else
     Lock.unlock();
+  return true;
+}
 
+bool toDebug::checkCompile(void)
+{
   if (HeadEditor->edited()) {
+    if (!checkStop())
+      return false;
     switch (QMessageBox::warning(this,
 				 "Header changed",
 				 "Header changed. Continuing will discard uncompiled or saved changes",
@@ -1374,6 +1422,8 @@ bool toDebug::checkCompile(void)
     }
   }
   if (BodyEditor->edited()) {
+    if (!checkStop())
+      return false;
     switch (QMessageBox::warning(this,
 				 "Body changed",
 				 "Body changed. Continuing will discard uncompiled or saved changes",
@@ -1617,16 +1667,8 @@ bool toDebugText::compile(void)
 
 void toDebug::compile(void)
 {
-  Lock.lock();
-  if (RunningTarget) {
-    Lock.unlock();
-    if (QMessageBox::information(this,"Stop execution?",
-				 "Do you want to abort the current execution and compile this function?",
-				 "&Ok","Cancel")!=0)
-      return;
-    stop();
-  } else
-    Lock.unlock();
+  if (!checkStop())
+    return;
 
   QString lastSchema=currentEditor()->schema();
   if (HeadEditor->compile()&&
@@ -1704,5 +1746,17 @@ void toDebug::newSheet(void)
     BodyEditor->setSchema(Schema->currentText());
     scanSource();
     ShowButton->setEnabled(true);
+  }
+}
+
+void toDebug::showSource(QListViewItem *item)
+{
+  if (item) {
+    if (!viewSource(item->text(2),item->text(0),item->text(3),item->text(1).toInt(),false)) {
+      if (checkCompile()) {
+	BodyEditor->setEdited(false); // Write over this editor
+	viewSource(item->text(0),item->text(1),item->text(3),item->text(2).toInt(),false);
+      }
+    }
   }
 }

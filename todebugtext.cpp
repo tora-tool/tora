@@ -13,9 +13,9 @@ toBreakpointItem::toBreakpointItem(QListView *parent,QListViewItem *after,toConn
 				   const QString &object,int line)
 : QListViewItem(parent,after),Connection(conn)
 {
-  setText(0,schema);
-  setText(1,object);
-  setText(2,QString::number(line+1));
+  setText(2,schema);
+  setText(0,object);
+  setText(1,QString::number(line+1));
   setText(3,type);
   if(type=="PACKAGE"||type=="PROCEDURE"||type=="FUNCTION"||type=="TYPE")
     Namespace=TO_NAME_TOPLEVEL;
@@ -51,8 +51,8 @@ BEGIN
 END;",
 		   Connection.connection());
     str<<Namespace;
-    str<<(const char *)text(1);
     str<<(const char *)text(0);
+    str<<(const char *)text(2);
     str<<Line+1;
     int ret;
     str>>ret;
@@ -141,9 +141,9 @@ bool toDebugText::checkItem(toBreakpointItem *item)
 {
   if (!item)
     return false;
-  if (item->text(0)==Schema&&
+  if (item->text(2)==Schema&&
       item->text(3)==Type&&
-      item->text(1)==Object)
+      item->text(0)==Object)
     return true;
   return false;
 }

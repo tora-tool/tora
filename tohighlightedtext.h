@@ -114,6 +114,8 @@ public:
   void setErrors(const map<int,QString> &errors)
   { Errors=errors; repaint(); }
   void setCurrent(int current);
+  int current(void)
+  { return Current; }
   void setKeywordUpper(bool val)
   { KeywordUpper=val; }
   void setHighlight(bool val)
