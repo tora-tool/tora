@@ -56,6 +56,7 @@ class toSGATrace : public toToolWidget {
   QComboBox *Schema;
   QComboBox *Type;
   QComboBox *Refresh;
+  QComboBox *Limit;
   QPopupMenu *ToolMenu;
 
   toSGAStatement *Statement;

@@ -145,6 +145,20 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   Type->insertItem("SGA");
   Type->insertItem("Long operations");
 
+  toolbar->addSeparator();
+  new QLabel("Selection ",toolbar);
+  Limit=new QComboBox(toolbar);
+  Limit->insertItem("All");
+  Limit->insertItem("Top executions");
+  Limit->insertItem("Top sorts");
+  Limit->insertItem("Top diskreads");
+  Limit->insertItem("Top buffergets");
+  Limit->insertItem("Top rows");
+  Limit->insertItem("Top sorts/exec");
+  Limit->insertItem("Top diskreads/exec");
+  Limit->insertItem("Top buffergets/exec");
+  Limit->insertItem("Top rows/exec");
+
   toolbar->setStretchableWidget(new QLabel("",toolbar));
   new toChangeConnection(toolbar);
 
@@ -281,6 +295,43 @@ void toSGATrace::refresh(void)
   }
   if (!CurrentSchema.isEmpty())
     select.append("\n   and b.username = :f1<char[101]>");
+
+  QString order;
+  switch (Limit->currentItem()) {
+  case 0:
+    break;
+  case 1:
+    order="a.Executions";
+    break;
+  case 2:
+    order="a.Sorts";
+    break;
+  case 3:
+    order="a.Disk_Reads";
+    break;
+  case 4:
+    order="a.Buffer_Gets";
+    break;
+  case 5:
+    order="a.Rows_Processed";
+    break;
+  case 6:
+    order="DECODE(a.Executions,0,0,a.Sorts/a.Executions)";
+    break;
+  case 7:
+    order="DECODE(a.Executions,0,0,a.Disk_Reads/a.Executions)";
+    break;
+  case 8:
+    order="DECODE(a.Executions,0,0,a.Buffer_Gets/a.Executions)";
+    break;
+  case 9:
+    order="DECODE(a.Executions,0,0,a.Rows_Processed/a.Executions)";
+    break;
+  }
+
+  if (!order.isEmpty())
+    select="SELECT * FROM (\n"+select+"\n ORDER BY "+order+" DESC)\n WHERE ROWNUM < 20";
+
   if (!CurrentSchema.isEmpty()) {
     toQList p;
     p.insert(p.end(),CurrentSchema);

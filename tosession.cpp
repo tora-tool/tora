@@ -143,6 +143,37 @@ static toSQL SQLSessionIO(TO_SESSION_IO,
 			  "  from v$sess_io where sid in (select b.sid from v$session a,v$session b where a.sid = :f1<char[101]> and a.audsid = b.audsid)",
 			  "Display chart of session generated I/O");
 
+static toSQL SQLSessions("toSession:ListSession",
+			 "SELECT a.Sid \"-Id\",\n"
+			 "       a.Serial# \"-Serial#\",\n"
+			 "       a.SchemaName \"Schema\",\n"
+			 "       a.Status \"Status\",\n"
+			 "       a.Server \"Server\",\n"
+			 "       a.OsUser \"Osuser\",\n"
+			 "       a.Machine \"Machine\",\n"
+			 "       a.Program \"Program\",\n"
+			 "       a.Type \"Type\",\n"
+			 "       a.Module \"Module\",\n"
+			 "       a.Action \"Action\",\n"
+			 "       a.Client_Info \"Client Info\",\n"
+			 "       b.Block_Gets \"Block Gets\",\n"
+			 "       b.Consistent_Gets \"Consistent Gets\",\n"
+			 "       b.Physical_Reads \"Physical Reads\",\n"
+			 "       b.Block_Changes \"Block Changes\",\n"
+			 "       b.Consistent_Changes \"Consistent Changes\",\n"
+			 "       c.Value*10 \"CPU (ms)\",\n"
+			 "       a.Process \"-Process\",\n"
+			 "       a.SQL_Address||':'||SQL_Hash_Value \" SQL Address\",\n"
+			 "       a.Prev_SQL_Addr||':'||Prev_Hash_Value \" Prev SQl Address\"\n"
+			 "  FROM v$session a,\n"
+			 "       v$sess_io b,\n"
+			 "       v$sesstat c\n"
+			 " WHERE a.sid = b.sid(+)\n"
+			 "   AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)\n"
+			 " ORDER BY a.Sid",
+			 "List sessions, must have same number of culumns and the first and last 2 must be "
+			 "the same");
+
 toSession::toSession(QWidget *main,toConnection &connection)
   : toToolWidget(SessionTool,"session.html",main,connection)
 {
@@ -179,6 +210,7 @@ toSession::toSession(QWidget *main,toConnection &connection)
 
   QSplitter *splitter=new QSplitter(Vertical,this);
   Sessions=new toResultLong(false,false,toQuery::Background,splitter);
+  Sessions->setSQL(SQLSessions);
   Sessions->setReadAll(true);
   connect(Sessions,SIGNAL(done()),this,SLOT(done()));
 
@@ -259,27 +291,6 @@ void toSession::windowActivated(QWidget *widget)
   }
 }
 
-static toSQL SQLSessions("toSession:ListSession",
-			 "SELECT Sid \"-Id\",\n"
-			 "       Serial# \"-Serial#\",\n"
-			 "       SchemaName \"Schema\",\n"
-			 "       Status \"Status\",\n"
-			 "       Server \"Server\",\n"
-			 "       OsUser \"Osuser\",\n"
-			 "       Machine \"Machine\",\n"
-			 "       Program \"Program\",\n"
-			 "       Type \"Type\",\n"
-			 "       Module \"Module\",\n"
-			 "       Action \"Action\",\n"
-			 "       Client_Info \"Client Info\",\n"
-			 "       Process \"-Process\",\n"
-			 "       SQL_Address||':'||SQL_Hash_Value \" SQL Address\",\n"
-			 "       Prev_SQL_Addr||':'||Prev_Hash_Value \" Prev SQl Address\"\n"
-			 "  FROM v$session\n"
-			 " ORDER BY Sid",
-			 "List sessions, must have same number of culumns and the last 2 must be "
-			 "the same");			 
-
 void toSession::refresh(void)
 {
   QListViewItem *item=Sessions->selectedItem();
@@ -288,8 +299,7 @@ void toSession::refresh(void)
     Serial=item->text(1);
   } else
     Session=Serial=QString::null;
-  toQList par;
-  Sessions->query(toSQL::string(SQLSessions,connection()),par);
+  Sessions->refresh();
 }
 
 void toSession::done(void)
