@@ -805,9 +805,9 @@ int toToolMenuIndex(void)
   return toMainWidget()->menuBar()->indexOf(toMain::TO_WINDOWS_MENU);
 }
 
-#define COLORS 4
+#define COLORS 2
 
-#define TYPES 7
+#define TYPES 13
 
 QColor toChartColor(int index)
 {
@@ -816,37 +816,68 @@ QColor toChartColor(int index)
   int type=index%TYPES;
   index/=TYPES;
   int r=0,g=0,b=0;
-  int offset=2;
+  int offset=1;
+  int divoffset=0;
   switch(type) {
-  case 6:
+  case 12:
     r=1;
     break;
-  case 5:
+  case 11:
     g=1;
     break;
-  case 4:
+  case 10:
     b=1;
     break;
-  case 3:
+  case 9:
     r=g=1;
     break;
-  case 2:
+  case 8:
     r=b=1;
     break;
-  case 1:
+  case 7:
     b=g=1;
     break;
-  case 0:
+  case 6:
     r=b=g=1;
-    offset=1;
+    offset=0;
+    break;
+  case 5:
+    r=1;
+    g=b=COLORS;
+    divoffset=1;
+    break;
+  case 4:
+    g=1;
+    r=b=COLORS;
+    divoffset=1;
+    break;
+  case 3:
+    b=1;
+    r=g=COLORS;
+    divoffset=1;
+    break;
+  case 2:
+    r=g=1;
+    b=COLORS;
+    divoffset=1;
+    break;
+  case 1:
+    r=b=1;
+    g=COLORS;
+    divoffset=1;
+    break;
+  case 0:
+    b=g=1;
+    r=COLORS;
+    divoffset=1;
     break;
   }
 
   index+=offset;
 
-  return QColor(min(255,r*index*256/(COLORS+1)),
-		min(255,g*index*256/(COLORS+1)),
-		min(255,b*index*256/(COLORS+1)));
+  return QColor(min(255,r*index*256/(COLORS+divoffset)),
+		min(255,g*index*256/(COLORS+divoffset)),
+		min(255,b*index*256/(COLORS+divoffset)));
 }
 
 toToolWidget *toCurrentTool(QObject *cur)

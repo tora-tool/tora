@@ -1692,7 +1692,7 @@ void toTuningWait::changeSelection(void)
 	if (enabled[typ]) {
 	  current.insert(current.end(),*j);
 	  if (k!=lastAbsolute.end()) {
-	    relative.insert(relative.end(),((*j)-(*k))/((*ctime)-last));
+	    relative.insert(relative.end(),max(double(0),((*j)-(*k))/((*ctime)-last)));
 	    k++;
 	  }
 	}
@@ -1736,9 +1736,12 @@ void toTuningWait::poll(void)
       if (Query->eof()) {
 	if (First) {
 	  QListViewItem *item=NULL;
+	  std::list<double>::iterator j=CurrentTimes.begin();
 	  for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
 	    item=new toResultViewItem(Types,item,*i);
-	    item->setSelected(true);
+	    if ((*j)!=0)
+	      item->setSelected(true);
+	    j++;
 	  }
 	  First=false;
 	} else
@@ -1767,8 +1770,10 @@ void toTuningWait::poll(void)
 }
 
 static toSQL SQLWaitEvents("toTuning:WaitEvents",
-			   "select event,sysdate,time_waited*10,total_waits\n"
-			   "  from v$system_event order by event",
+			   "select b.name,sysdate,a.time_waited*10,a.total_waits\n"
+			   "  from v$system_event a,v$event_name b\n"
+			   " where b.name=a.event(+)\n"
+			   " order by b.name",
 			   "Get all available system wait events");
 
 void toTuningWait::refresh(void)
