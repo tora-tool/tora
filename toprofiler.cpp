@@ -471,7 +471,7 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
   show();
 
   try {
-    toQuery query(connection(),SQLProfilerDetect);
+    toQuery query(connection,SQLProfilerDetect);
   } catch(const QString &) {
     int ret=TOMessageBox::warning(this,
 				  "Profiler tables doesn't exist",
@@ -480,12 +480,20 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
 				  "Should TOra try to create it?",
 				  "&Yes","&No",0,1);
     if (ret==0) {
-      connection().execute(SQLProfilerRuns);
-      connection().execute(SQLProfilerUnits);
-      connection().execute(SQLProfilerData);
-      connection().execute(SQLProfilerNumber);
-    } else
+      try {
+	connection.execute(SQLProfilerRuns);
+	connection.execute(SQLProfilerUnits);
+	connection.execute(SQLProfilerData);
+	connection.execute(SQLProfilerNumber);
+      } catch (const QString &str) {
+	toStatusMessage(str);
+	QTimer::singleShot(1,this,SLOT(noTables()));
+	return;
+      }
+    } else {
+      QTimer::singleShot(1,this,SLOT(noTables()));
       return;
+    }
   }
 
   refresh();
