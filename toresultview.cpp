@@ -536,6 +536,12 @@ void toListView::editPrint(void)
   }
 }
 
+void toListView::setDisplayMenu(QPopupMenu *m) {
+	if (Menu)
+		delete Menu;
+	Menu=m;
+}
+
 #define TORESULT_COPY_FIELD     1
 #define TORESULT_COPY_SEL	2
 #define TORESULT_COPY_SEL_HEAD	3

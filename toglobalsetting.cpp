@@ -287,6 +287,7 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
   int val=toTool::globalConfig(CONF_AUTO_LONG,"0").toInt();
   AutoLong->setChecked(val);
   MoveAfter->setValue(val);
+  KeepAlive->setChecked(!toTool::globalConfig(CONF_KEEP_ALIVE,"").isEmpty());
 }
 
 void toUpdateIndicateEmpty(void);
@@ -321,6 +322,8 @@ void toDatabaseSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_AUTO_LONG,
 			  AutoLong->isChecked()?MoveAfter->cleanText():QString::fromLatin1("0"));
   toTool::globalSetConfig(CONF_INDICATE_EMPTY,IndicateEmpty->isChecked()?"Yes":"");
+  toTool::globalSetConfig(CONF_KEEP_ALIVE,KeepAlive->isChecked()?DEFAULT_KEEP_ALIVE:"");
+  toMainWidget()->updateKeepAlive();
   toUpdateIndicateEmpty();
 }
 

@@ -35,6 +35,8 @@
 #ifndef TONEWCONNECTION_H
 #define TONEWCONNECTION_H
 
+#define TONEWCONNECTION_DELETE 1
+
 #include "tonewconnectionui.h"
 #include "tohelp.h"
 
@@ -43,13 +45,16 @@ class toNewConnection : public toNewConnectionUI, public toHelpContext
   Q_OBJECT
 public:
   toNewConnection(QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0);
-
+  ~toNewConnection();
   toConnection *makeConnection();
 public slots:
+  virtual void historyDelete(void);
+  virtual void menuCallback(int);
   virtual void historySelection(void);
   virtual void changeProvider(void); 
   virtual void changeHost(void); 
   virtual void historyConnect(void);
+  virtual void historySave(void);
 };
 
 #endif // TONEWCONNECTION_H

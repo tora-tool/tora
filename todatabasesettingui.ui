@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>332</width>
-            <height>401</height>
+            <width>518</width>
+            <height>468</height>
         </rect>
     </property>
     <property stdset="1">
@@ -31,27 +31,6 @@
             <name>spacing</name>
             <number>6</number>
         </property>
-        <spacer row="4"  column="0" >
-            <property>
-                <name>name</name>
-                <cstring>Spacer1</cstring>
-            </property>
-            <property stdset="1">
-                <name>orientation</name>
-                <enum>Vertical</enum>
-            </property>
-            <property stdset="1">
-                <name>sizeType</name>
-                <enum>Expanding</enum>
-            </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
         <widget row="0"  column="0" >
             <class>QCheckBox</class>
             <property stdset="1">
@@ -334,6 +313,42 @@
             <property stdset="1">
                 <name>name</name>
                 <cstring>ObjectCache</cstring>
+            </property>
+        </widget>
+        <spacer row="5"  column="0" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer1</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="4"  column="0" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>KeepAlive</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Keep alive</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Make sure connections are kept alive by periodically (5 minutes) sending a query on all idle connections.</string>
             </property>
         </widget>
     </grid>

@@ -50,6 +50,7 @@
 #include <qlineedit.h>
 #include <qlistview.h>
 #include <qmessagebox.h>
+#include <qpopupmenu.h>
 #include <qpushbutton.h>
 #include <qtooltip.h>
 #include <qtooltip.h>
@@ -69,13 +70,16 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
 {
   toHelp::connectDialog(this);
 
+  QPopupMenu *menu = new QPopupMenu(Previous);
   Database->insertItem(toTool::globalConfig(CONF_DATABASE,DEFAULT_DATABASE));
   Previous->addColumn(tr("Provider"));
   Previous->addColumn(tr("Host"));
   Previous->addColumn(tr("Database"));
   Previous->addColumn(tr("Username"));
   Previous->setSelectionMode(QListView::Single);
-
+  menu->insertItem("Delete",TONEWCONNECTION_DELETE);
+  connect(menu,SIGNAL(activated(int)),this,SLOT(menuCallback(int)));
+  Previous->setDisplayMenu(menu);
   std::list<QCString> lst=toConnectionProvider::providers();
   int sel=0,cur=0;
   QCString provider=toTool::globalConfig(CONF_PROVIDER,DEFAULT_PROVIDER).latin1();
@@ -142,6 +146,9 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
       last=new QListViewItem(Previous,last,provider,host,database,user,passstr);
     }
   }
+}
+
+toNewConnection::~toNewConnection() {
 }
 
 void toNewConnection::changeProvider(void)
@@ -256,7 +263,18 @@ toConnection *toNewConnection::makeConnection(void)
 		      Database->currentText(),
 		      Username->text(),
 		      pass);
-    {
+    historySave();
+    return retCon;
+  } catch (const QString &exc) {
+    QString str=tr("Unable to connect to the database.\n");
+    str.append(exc);
+    TOMessageBox::information(this,
+			      tr("Unable to connect to the database"),
+			      str);
+    return NULL;
+  }
+}
+void toNewConnection::historySave(void) {
       int siz=toTool::globalConfig(CONF_CONNECT_SIZE,DEFAULT_CONNECT_SIZE).toInt();
       int i=0;
       for(QListViewItem *item=Previous->firstChild();item&&i<siz;item=item->nextSibling()) {
@@ -287,19 +305,7 @@ toConnection *toNewConnection::makeConnection(void)
 	i++;
       }
       toTool::globalSetConfig(CONF_CONNECT_CURRENT,QString::number(i));
-    }
-
-    toTool::saveConfig();
-
-    return retCon;
-  } catch (const QString &exc) {
-    QString str=tr("Unable to connect to the database.\n");
-    str.append(exc);
-    TOMessageBox::information(this,
-			      tr("Unable to connect to the database"),
-			      str);
-    return NULL;
-  }
+      toTool::saveConfig();
 }
 
 void toNewConnection::historySelection(void)
@@ -336,4 +342,23 @@ void toNewConnection::historyConnect(void)
   }
   if (ok)
     accept();
+}
+void toNewConnection::menuCallback(int cmd)
+{
+  switch(cmd) {
+  case TONEWCONNECTION_DELETE:
+    {
+      historyDelete();
+      break;
+    }
+  }
+}
+
+void toNewConnection::historyDelete() {
+  QListViewItem *item=Previous->selectedItem();
+  if (item) {
+        Previous->takeItem(item);
+	delete item;
+        historySave();
+  }
 }

@@ -409,6 +409,10 @@ public:
    */
   virtual toListView *copyTransposed(void);
 public slots:
+  /** set the popup menu --> see displayMenu()
+   * @param item Item to display.
+   */
+  virtual void setDisplayMenu(QPopupMenu *item);
   /** Display the menu at the given point and column.
    * @param item Item to display.
    * @param pnt Point to display menu at.

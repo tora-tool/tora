@@ -1,5 +1,8 @@
 1.3.9:
 
+2002-01-23: Added delete history connection in connect dialog. (Thanx Oliver Jehle)
+2002-01-23: Added funtionality for custom popup menues for listviews. (Thanx Oliver Jehle)
+2002-01-23: Added a keep alive option to the database settings.
 2002-01-17: Fixed compile warning in result columns.
 2002-01-16: Add recompile all to invalid objects.
 2002-01-16: Added support for object cache disk caching (Whoah, lot of caching there) (Thanx Oliver Jehle)

@@ -127,6 +127,8 @@
 #define DEFAULT_RECENT_MAX	"5"
 #define CONF_LAST_DIR		"LastDir"
 #define CONF_LOCALE		"Locale"
+#define CONF_KEEP_ALIVE		"KeepAlive"
+#define DEFAULT_KEEP_ALIVE	"300"
 
 #ifdef TO_KDE
 #define DEFAULT_EXTENSIONS	"*.sql *.pkg *.pkb|SQL files\n*.txt|Text files\n*|All files"

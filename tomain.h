@@ -205,6 +205,8 @@ private:
    */
   int DefaultTool;
 
+  QTimer KeepAlive;
+
 #if QT_VERSION >= 300
   QUrlOperator *VersionUrl;
   QString VersionString;
@@ -344,6 +346,10 @@ public:
    */
   QPopupMenu *helpMenu()
   { return HelpMenu; }
+
+  /* Update the keepalive from configuration
+   */
+  void updateKeepAlive();
 
   /**
    * Get a list of currently open connections.
@@ -522,6 +528,7 @@ private slots:
 
   void versionData(const QByteArray &data,QNetworkOperation *op);
   void versionFinished(QNetworkOperation *op);
+  void keepAlive();
 };
 
 /** Get a pointer to the main window

@@ -39,13 +39,15 @@
 #include "tomain.h"
 #include "tosql.h"
 #include "totool.h"
+
 #include <sstream>
 #include <string>
 #include <time.h>
-#include <qdir.h>
 
 #include <qapplication.h>
+#include <qdir.h>
 #include <qprogressdialog.h>
+#include <qtextstream.h>
 #include <qwidget.h>
 
 // A little magic to get lrefresh to work and get a check on qApp
