@@ -65,6 +65,7 @@ toHelp::toHelp(QWidget *parent,const char *name)
   QTabWidget *tabs=new QTabWidget(splitter);
   Sections=new toListView(tabs);
   Sections->addColumn("Contents");
+  Sections->addColumn("File");
   Sections->setSorting(0);
   Sections->setRootIsDecorated(true);
 
@@ -88,7 +89,7 @@ toHelp::toHelp(QWidget *parent,const char *name)
   setGeometry(x(),y(),640,480);
   if (!Files) {
     Files=new map<QString,QString>;
-    QDir d(path,"*.html",QDir::Name,QDir::Files);
+    QDir d(path,"*.htm*",QDir::Name,QDir::Files);
     QRegExp begin("<TITLE>",false);
     QRegExp end("</TITLE>",false);
     for (unsigned int i=0;i<d.count();i++) {
@@ -165,6 +166,10 @@ void toHelp::displayHelp(const QString &context)
 
 void toHelp::changeContent(QListViewItem *item)
 {
+  if (item->text(1).find("htm")>=0)
+    Help->setTextFormat(RichText);
+  else
+    Help->setTextFormat(AutoText);
   Help->setSource(item->text(1));
 }
 

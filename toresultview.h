@@ -36,9 +36,7 @@
 #define __TORESULTVIEW_H
 
 #include <qlistview.h>
-#include "toconnection.h"
 #include "toresult.h"
-#include "otlv32.h"
 
 class QListViewItem;
 class QPopupMenu;
@@ -47,6 +45,9 @@ class toListTip;
 class QPrinter;
 class toSQL;
 class toResultCols;
+class toConnection;
+class otl_stream;
+class otl_column_desc;
 
 class toResultFilter {
 public:
@@ -198,8 +199,7 @@ protected:
 
   void setup(bool readable,bool dispCol);
 
-  virtual bool eof(void)
-  { return !Query||Query->eof(); }
+  virtual bool eof(void);
 
 public:
   toResultView(bool readable,bool numCol,toConnection &conn,QWidget *parent,const char *name=NULL);
@@ -232,25 +232,20 @@ public:
   void setSQL(toSQL &sql);
 
   virtual void query(const QString &sql,const list<QString> &param);
-  void query(const QString &sql)
-  { list<QString> p; query(sql,p); }
+  void query(const QString &sql);
   void query(toSQL &sql);
 
   virtual void print(void)
   { readAll(); toListView::print(); }
-  virtual QString middleString()
-  { return Connection.connectString(); }
+  virtual QString middleString();
 
   virtual void addMenues(QPopupMenu *);
 public slots:
   virtual void refresh(void)
   { query(SQL); }
-  virtual void changeParams(const QString &Param1)
-  { list<QString> p; p.insert(p.end(),Param1); query(SQL,p); }
-  virtual void changeParams(const QString &Param1,const QString &Param2)
-  { list<QString> p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
-  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
-  { list<QString> p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
+  virtual void changeParams(const QString &Param1);
+  virtual void changeParams(const QString &Param1,const QString &Param2);
+  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3);
   virtual void addItem(void);
 protected slots:
   virtual void menuCallback(int);

@@ -37,10 +37,7 @@
 
 #include <map>
 #include <qstring.h>
-#include <qpopupmenu.h>
 #include <qobject.h>
-
-#include "otlv32.h"
 
 class toConnection;
 

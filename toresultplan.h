@@ -36,8 +36,6 @@
 #define __TORESULTPLAN_H
 
 #include "toresultview.h"
-#include "toconnection.h"
-#include "otlv32.h"
 
 class toResultPlan : public toResultView {
   Q_OBJECT

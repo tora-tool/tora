@@ -35,12 +35,11 @@
 #ifndef __TORESULTFIELD_H
 #define __TORESULTFIELD_H
 
-#include "toconnection.h"
 #include "tohighlightedtext.h"
 #include "toresult.h"
-#include "otlv32.h"
 
 class toSQL;
+class toConnection;
 
 class toResultField : public toHighlightedText, public toResult {
   Q_OBJECT

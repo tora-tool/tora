@@ -37,10 +37,9 @@
 
 #include <qscrollview.h>
 #include <qfont.h>
-#include "toconnection.h"
 #include "toresult.h"
-#include "otlv32.h"
 
+class toConnection;
 class QGrid;
 
 class toResultItem : public QScrollView, public toResult {

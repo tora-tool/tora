@@ -36,8 +36,6 @@
 #define __TORESULTSTORAGE_H
 
 #include "toresultview.h"
-#include "toconnection.h"
-#include "otlv32.h"
 
 class toResultStorage : public toResultView {
   bool ShowCoalesced;

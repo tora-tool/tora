@@ -35,11 +35,8 @@
 #ifndef __TORESULTLONG_H
 #define __TORESULTLONG_H
 
-#include <qlistview.h>
 #include <qtimer.h>
-#include "toconnection.h"
 #include "toresultview.h"
-#include "otlv32.h"
 
 class QListViewItem;
 class toresultlong;

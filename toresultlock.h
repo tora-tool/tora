@@ -36,8 +36,6 @@
 #define __TORESULTLOCK_H
 
 #include "toresultview.h"
-#include "toconnection.h"
-#include "otlv32.h"
 
 class toResultLock : public toResultView {
   Q_OBJECT

@@ -38,6 +38,7 @@ TO_NAMESPACE;
 #include <kfiledialog.h>
 #endif
 
+#include <qpopupmenu.h>
 #include <qclipboard.h>
 #include <qheader.h>
 #include <qtooltip.h>
@@ -653,6 +654,47 @@ void toListView::exportFile(void)
     throw;
   }
   delete sizes;
+}
+
+
+bool toResultView::eof(void)
+{
+  return !Query||Query->eof();
+}
+
+QString toResultView::middleString()
+{
+  return Connection.connectString();
+}
+
+void toResultView::query(const QString &sql)
+{
+  list<QString> p;
+  query(sql,p);
+}
+
+void toResultView::changeParams(const QString &Param1)
+{
+  list<QString> p;
+  p.insert(p.end(),Param1);
+  query(SQL,p);
+}
+
+void toResultView::changeParams(const QString &Param1,const QString &Param2)
+{
+  list<QString> p;
+  p.insert(p.end(),Param1);
+  p.insert(p.end(),Param2);
+  query(SQL,p);
+}
+
+void toResultView::changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
+{
+  list<QString> p;
+  p.insert(p.end(),Param1);
+  p.insert(p.end(),Param2);
+  p.insert(p.end(),Param3);
+  query(SQL,p);
 }
 
 void toResultView::setup(bool readable,bool dispCol)

@@ -36,8 +36,6 @@
 #define __TORESULTDEPEND_H
 
 #include "toresultview.h"
-#include "toconnection.h"
-#include "otlv32.h"
 
 class toResultDepend : public toResultView {
   void addChilds(QListViewItem *item);

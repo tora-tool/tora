@@ -38,6 +38,7 @@ TO_NAMESPACE;
 #include <unistd.h>
 #endif
 
+#include <qpixmap.h>
 #include <qapplication.h>
 #include <qstring.h>
 #include <qworkspace.h>

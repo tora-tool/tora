@@ -101,13 +101,19 @@ for (@ARGV) {
     } elsif (/^--with-static$/) {
 	$Target="tora-static";
 	$ForceTarget=1;
-    } elsif (/^--with-kde$/) {
+    } elsif (/^--with-kde(?:=(.*))?$/) {
 	$KDEApplication=1;
+	if (defined $1) {
+	    $KDEInclude="$1/include";
+	    $KDELibs="$1/lib";
+	}
     } elsif (/^--without-rpath$/) {
 	$NoRPath=1;
     } elsif (/^--with-kde-include=(.*)$/) {
+	$KDEApplication=1;
 	$KDEInclude=$1;
     } elsif (/^--with-kde-libs=(.*)$/) {
+	$KDEApplication=1;
 	$KDELibs=$1;
     } else {
 	print <<__USAGE__;

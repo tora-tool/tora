@@ -37,6 +37,7 @@ TO_NAMESPACE;
 #include <stdio.h>
 #include <qdragobject.h>
 #include <qclipboard.h>
+#include <qpopupmenu.h>
 
 #include "toconf.h"
 #include "tomemoeditor.h"
