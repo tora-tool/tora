@@ -575,6 +575,7 @@ QString toResultStorage::currentFilename(void)
 
 void toResultStorage::setOnlyFiles(bool only)
 {
+  saveSelected();
   if (only&&!OnlyFiles) {
     addColumn("Tablespace");
     setRootIsDecorated(false);
@@ -582,7 +583,6 @@ void toResultStorage::setOnlyFiles(bool only)
     removeColumn(columns()-1);
     setRootIsDecorated(true);
   }
-  saveSelected();
   OnlyFiles=only;
   update();
 }
