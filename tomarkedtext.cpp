@@ -87,12 +87,12 @@ void toMarkedText::setEdit(void)
   if (isReadOnly()) {
     toEditWidget::setEdit(false,true,true,
 			  false,false,
-			  hasMarkedText(),hasMarkedText(),false,
+			  false,hasMarkedText(),false,
 			  true,true,false);
   } else {
     toEditWidget::setEdit(true,true,true,
 			  undoEnabled(),redoEnabled(),
-			  false,hasMarkedText(),true,
+			  hasMarkedText(),hasMarkedText(),true,
 			  true,true,false);
   }
   toMain::editEnable(this);

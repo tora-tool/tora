@@ -23,6 +23,8 @@ connection will also be closed when closing a connection.</TD></TR>
 <TD VALIGN=top>Commit the changes currently made to the database.</TD></TR>
 <TR><TD VALIGN=top><B>Rollback connection</B></TD>
 <TD VALIGN=top>Rollback any changes made in the current connection.</TD></TR>
+<TR><TD VALIGN=top><B>Reread object cache</B></TD>
+<TD VALIGN=top>Clear the <A HREF=window.html#object>object cache</A> and read it again from the database.</TD></TR>
 <TR><TD VALIGN=top><B>Load</B></TD>
 <TD VALIGN=top>This command will open a dialog asking you for a filename to
 load into the editor that currently holds the focus.</TD></TR>
@@ -105,8 +107,11 @@ If no specific context is found the table of contents is shown.</TD></TR>
 <TR><TD><B>Content</B></TD>
 <TD>Open the help window displaying the contents of the TOra help.</TD></TR>
 <TR><TD><B>About TOra</B></TD>
-<TD>Display information about TOra copyright and licensing. Also be sure not to
-miss the quotes page which is nice food for thought.</TD></TR>
+<TD>Display information about TOra copyrigh.</TD></TR>
+<TR><TD><B>License</B></TD>
+<TD>Display the license under which TOra is distributed.</TD></TR>
+<TR><TD><B>Quotes</B></TD>
+<TD>Food for thought.</TD></TR>
 </TABLE>
 <H1>Application toolbar</H1>
 Using the toolbar you can perform the most common editing operations, handle your connections
@@ -175,7 +180,9 @@ There is an up button available to the right of the toolbar which when pressed c
 a history of the contents of the status bar. This is also useful since the statusbar usually
 clears after certain amount of time but the information is always available here. Both the
 time until a message disappears and the amount of backlog to keep is configurable from the
-<A HREF=preferences.html#global>option</A> dialog.
+<A HREF=preferences.html#global>option</A> dialog. If you select an item in the popup menu
+the contents of the entry will be opened in a <A HREF=common.html#memo>memo editor</A>
+where you can read them more easily.<P>
 Furthest to the right is the coordinates of the editor that currently has the focus.<P>
 <H2>Tool windows</H2>
 These are the tools that actually let you interact with Oracle. For more information check out
@@ -190,5 +197,12 @@ For more information about key bindings etc. in editors check out the
 <H2>Result List</H2>
 These mean every kind of list displayed in TOra. For information about
 how to interact with these check out the <A HREF=lists.html>dedicated section</A>.
+<A NAME=object>
+<H2>Object Cache</H2>
+When TOra opens a new connection to a database the database connected to is queried for all
+its objects and the synonyms available. This data is then used in most places when lists of
+objects are displayed. The thing to understand is that this data is cached so that any objects
+modified during the connection will not be visible unless you clear the cache and reread it
+from the database.
 </body>
 </html>
