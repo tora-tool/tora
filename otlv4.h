@@ -1,5 +1,5 @@
 // ==============================================================
-// Oracle, ODBC and DB2/CLI Template Library, Version 4.0.109,
+// Oracle, ODBC and DB2/CLI Template Library, Version 4.0.110,
 // Copyright (C) Sergei Kuchin, 1996,2005
 // Author: Sergei Kuchin
 // This library is free software. Permission to use, copy,
@@ -11,7 +11,7 @@
 #ifndef __OTL_H__
 #define __OTL_H__
 
-#define OTL_VERSION_NUMBER (0x04006DL)
+#define OTL_VERSION_NUMBER (0x04006EL)
 
 #include <string.h>
 #include <ctype.h>
@@ -318,7 +318,7 @@
        OTL_TRACE_STREAM<<", ref_cur_placeholder="<<ref_cur_placeholder; \
     if(sqlstm_label)                                                    \
       OTL_TRACE_STREAM<<", label="<<sqlstm_label;                       \
-    OTL_TRACE_STREAM<<");"                                             \
+    OTL_TRACE_STREAM<<");"                                              \
                     <<OTL_TRACE_LINE_SUFFIX;                            \
   }
 #endif
@@ -737,7 +737,7 @@ protected:
 
 #if defined(OTL_VALUE_TEMPLATE_ON) && !defined(OTL_STL) && !defined(OTL_ACE)
 #define STD_NAMESPACE_PREFIX
-#if defined(_MSC_VER) && (_MSC_VER >= 1300)
+#if (defined(_MSC_VER)&&(_MSC_VER>=1300))||defined(OTL_ANSI_CPP)
 #include <iostream>
 using namespace std;
 #else
@@ -1167,6 +1167,10 @@ public:
   int  scale;
   int  prec;
   int  nullok;
+#if defined(OTL_ORA_UNICODE)
+  int charset_form;
+  int char_size;
+#endif
 
   otl_column_desc()
   {
@@ -1178,6 +1182,10 @@ public:
     scale=0;
     prec=0;
     nullok=0;
+#if defined(OTL_ORA_UNICODE)
+    charset_form=0;
+    char_size=0;
+#endif
   }
 
   ~otl_column_desc()
@@ -1205,6 +1213,11 @@ public:
     scale=desc.scale;
     prec=desc.prec;
     nullok=desc.nullok;
+#if defined(OTL_ORA_UNICODE)
+    charset_form=desc.charset_form;
+    char_size=desc.char_size;
+#endif
+
     return *this;
   }
 
@@ -2777,7 +2790,7 @@ public:
   v=new T[tab_size];
   null_flag=new short[tab_size];
   p_null=null_flag;
-  p_v=(unsigned char*)v;
+  p_v=OTL_RCAST(unsigned char*,v);
   elem_size=sizeof(T);
   for(i=0;i<atab_size;++i)
    null_flag[i]=0;
@@ -2815,7 +2828,7 @@ public:
   v=new T[tab_size];
   null_flag=new short[tab_size];
   p_null=null_flag;
-  p_v=(unsigned char*)v;
+  p_v=OTL_RCAST(unsigned char*,v);
   elem_size=sizeof(otl_oracle_date);
   for(i=0;i<atab_size;++i)
    null_flag[i]=0;
@@ -3329,7 +3342,13 @@ public:
   otl_select_struct_override& override,
   const int column_ndx)
  {
-  TVariableStruct::map_ftype(desc,max_long_size,aftype,aelem_size,override,column_ndx);
+  TVariableStruct::map_ftype
+    (desc,
+     max_long_size,
+     aftype,
+     aelem_size,
+     override,
+     column_ndx);
  }
 
 };
@@ -4780,6 +4799,10 @@ public:
      this->local_override?*this->local_override:*override,
      j+1);
    sl[j].copy_pos(j+1);
+#if defined(OTL_ORA_UNICODE)
+   if(sl_desc_tmp[j].charset_form==2)
+     sl[j].var_struct.nls_flag=true;
+#endif
    sl[j].init(ftype,
               elem_size,
               OTL_SCAST(short,(this->array_size)),
@@ -6287,7 +6310,8 @@ public:
         ++ext_dt;
       }
     }else
-     memcpy(OTL_RCAST(char*,this->vl[cur_x]->val()),OTL_RCAST(char*,tab.val()),
+     memcpy(OTL_RCAST(char*,this->vl[cur_x]->val()),
+            OTL_RCAST(char*,tab.val()),
             tab.elem_size*tmp_len);
     for(i=0;i<tmp_len;++i){
      if(tab.is_null(i))
@@ -7025,9 +7049,9 @@ public:
            this->stm_text);
       }
 #if (defined(OTL_STL) || defined(USER_DEFINED_STRING_CLASS)) && !defined(OTL_ACE)
-      s.assign((char*)temp_buf,len);
+      s.assign(OTL_RCAST(char*,temp_buf),len);
 #elif defined(OTL_ACE)
-      s.set((char*)temp_buf,len,1);
+      s.set(OTL_RCAST(char*,temp_buf),len,1);
 #endif
 
       null_fetched=is_null_intern();
@@ -7963,8 +7987,11 @@ public:
    if(status!=SQL_SUCCESS&&status!=SQL_SUCCESS_WITH_INFO)return 0;
 
 #if (ODBCVER >= 0x0300)
-   status=SQLSetEnvAttr(henv,SQL_ATTR_ODBC_VERSION,
-                        OTL_RCAST(void*,SQL_OV_ODBC3),SQL_NTS);
+   status=SQLSetEnvAttr
+     (henv,
+      SQL_ATTR_ODBC_VERSION,
+      OTL_RCAST(void*,SQL_OV_ODBC3),
+      SQL_NTS);
    if(status!=SQL_SUCCESS&&status!=SQL_SUCCESS_WITH_INFO)return 0;
 #endif
 
@@ -7982,13 +8009,13 @@ public:
    status=SQLSetConnectAttr
     (hdbc,
      SQL_ATTR_AUTOCOMMIT,
-     (SQLPOINTER)SQL_AUTOCOMMIT_ON,
+     OTL_RCAST(SQLPOINTER,SQL_AUTOCOMMIT_ON),
      SQL_IS_POINTER);
   else
    status=SQLSetConnectAttr
     (hdbc,
      SQL_ATTR_AUTOCOMMIT,
-     (SQLPOINTER)SQL_AUTOCOMMIT_OFF,
+     OTL_RCAST(SQLPOINTER,SQL_AUTOCOMMIT_OFF),
      SQL_IS_POINTER);
 #else
   if(auto_commit)
@@ -8018,7 +8045,7 @@ public:
   status=SQLSetConnectAttr
    (hdbc,
     SQL_ATTR_LONGDATA_COMPAT,
-    (SQLPOINTER)SQL_LD_COMPAT_YES,
+    OTL_RCAST(SQLPOINTER,SQL_LD_COMPAT_YES),
     SQL_IS_INTEGER);
   if(status!=SQL_SUCCESS&&status!=SQL_SUCCESS_WITH_INFO)return 0;
 #endif
@@ -8115,7 +8142,7 @@ public:
   status=SQLSetConnectAttr
    (hdbc,
     SQL_ATTR_AUTOCOMMIT,
-    (SQLPOINTER)SQL_AUTOCOMMIT_ON,
+    OTL_RCAST(SQLPOINTER,SQL_AUTOCOMMIT_ON),
     SQL_IS_POINTER);
 #else
   status=SQLSetConnectOption(hdbc,SQL_AUTOCOMMIT,1); 
@@ -8136,7 +8163,7 @@ public:
   status=SQLSetConnectAttr
    (hdbc,
     SQL_ATTR_AUTOCOMMIT,
-    (SQLPOINTER)SQL_AUTOCOMMIT_OFF,
+    OTL_RCAST(SQLPOINTER,SQL_AUTOCOMMIT_OFF),
     SQL_IS_POINTER);
 #else
  status=SQLSetConnectOption(hdbc,SQL_AUTOCOMMIT,0); 
@@ -8616,9 +8643,22 @@ public:
 #else
   case SQL_CHAR: return SQL_C_CHAR;
   case SQL_VARCHAR: return SQL_C_CHAR;
+#if defined(SQL_WCHAR)
+  case SQL_WCHAR: return SQL_C_CHAR;
+#else
+  case -8: return SQL_C_CHAR;
+#endif
+#if defined(SQL_WVARCHAR)
   case SQL_WVARCHAR: return SQL_C_CHAR;
+#else
+  case -9: return SQL_C_CHAR;
+#endif
   case SQL_LONGVARCHAR: return SQL_LONGVARCHAR;
+#if defined(SQL_WLONGVARCHAR)
   case SQL_WLONGVARCHAR: return SQL_LONGVARCHAR;
+#else
+  case -10: return SQL_LONGVARCHAR;
+#endif
   case OTL_SQL_UNICODE_VARCHAR: return SQL_C_CHAR;
   case OTL_SQL_UNICODE_CHAR: return SQL_C_CHAR;
   case OTL_SQL_UNICODE_LONGVARCHAR: return SQL_LONGVARCHAR;
@@ -9309,7 +9349,7 @@ public:
   const int aparam_type,
   const int name_pos,
   const int /* apl_tab_size */)
- {OTL_SQLSMALLINT ftype=(OTL_SQLSMALLINT)tmpl_ftype2odbc_ftype(aftype);
+ {OTL_SQLSMALLINT ftype=OTL_SCAST(OTL_SQLSMALLINT,tmpl_ftype2odbc_ftype(aftype));
   OTL_SQLSMALLINT ftype_save=ftype;
   int param_type;
   int parm_pos=name_pos;
@@ -9404,9 +9444,11 @@ public:
       temp_column_size=aelem_size;
 #endif
     OTL_SQLINTEGER buflen=0;
+#if defined(OTL_UNICODE)
     if(ftype==SQL_C_WCHAR)
       buflen=aelem_size*sizeof(OTL_CHAR);
     else
+#endif
       buflen=aelem_size;
    status=SQLBindParameter
     (cda,
@@ -9463,8 +9505,10 @@ public:
    return 1;
   }else{
     SQLINTEGER buflen=elem_size;
+#if defined(OTL_UNICODE)
     if(ftype==SQL_C_WCHAR||ftype==SQL_WLONGVARCHAR)
       buflen=elem_size*sizeof(OTL_CHAR);
+#endif
    status=SQLBindCol
     (cda,
      OTL_SCAST(unsigned short,column_num),
@@ -17623,7 +17667,7 @@ public:
      int var_elem_size;
 #ifdef OTL_UNICODE
      if(ftype==otl_var_char)
-      var_elem_size=elem_size*sizeof(OTL_WCHAR);
+       var_elem_size=elem_size*sizeof(OTL_WCHAR);// ###
      else if(ftype==otl_var_varchar_long)
       var_elem_size=elem_size;
      else
@@ -17946,6 +17990,28 @@ public:
     OTL_SCAST(ub4,OCI_ATTR_DATA_TYPE),
     OTL_RCAST(OCIError*,errhp));
   if(status!=OCI_SUCCESS)return 0;
+#if defined(OTL_ORA_UNICODE)
+  ub1 charset_form;
+  status=OCIAttrGet
+   (OTL_RCAST(dvoid*,pard),
+    OTL_SCAST(ub4,OCI_DTYPE_PARAM),
+    OTL_RCAST(dvoid*,&charset_form),
+    0,
+    OTL_SCAST(ub4,OCI_ATTR_CHARSET_FORM),
+    OTL_RCAST(OCIError*,errhp));
+  if(status!=OCI_SUCCESS)return 0;
+  col.charset_form=OTL_SCAST(int,charset_form);
+  ub2 char_size;
+  status=OCIAttrGet
+   (OTL_RCAST(dvoid*,pard),
+    OTL_SCAST(ub4,OCI_DTYPE_PARAM),
+    OTL_RCAST(dvoid*,&char_size),
+    0,
+    OTL_SCAST(ub4,OCI_ATTR_CHAR_SIZE),
+    OTL_RCAST(OCIError*,errhp));
+  if(status!=OCI_SUCCESS)return 0;
+  col.char_size=OTL_SCAST(int,char_size);
+#endif
   col.dbtype=dtype;
   status=OCIAttrGet
    (OTL_RCAST(dvoid*,pard),

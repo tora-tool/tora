@@ -455,6 +455,13 @@ public:
             desc.Datatype=QString::fromLatin1("UNKNOWN");
             break;
           }
+#ifdef OTL_ORA_UNICODE
+           if (description[i].charset_form==2 && 
+                 ((desc.Datatype==QString::fromLatin1("VARCHAR2")) ||
+                      (desc.Datatype==QString::fromLatin1("CHAR")))) {
+              desc.Datatype=QString::fromLatin1("N")+desc.Datatype;
+           }
+#endif
 
           if (desc.Datatype==QString::fromLatin1("NUMBER")) {
             if (description[i].prec) {
@@ -472,7 +479,14 @@ public:
                   desc.Datatype.append(QString::number(description[i].scale));
                   desc.Datatype.append(QString::fromLatin1(")"));
                 }
-            }
+            } 
+#ifdef OTL_ORA_UNICODE
+              else if (desc.Datatype==QString::fromLatin1("NVARCHAR2") || desc.Datatype==QString::fromLatin1("NCHAR")) {
+                  desc.Datatype.append(QString::fromLatin1(" ("));
+                  desc.Datatype.append(QString::number(description[i].char_size));
+                  desc.Datatype.append(QString::fromLatin1(")"));
+	      }
+#endif
           else {
             desc.Datatype.append(QString::fromLatin1(" ("));
             desc.Datatype.append(QString::number(description[i].dbsize));

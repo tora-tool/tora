@@ -1269,6 +1269,7 @@ __EOT__
 	print MAKEFILE "#   OTL_ORA9I          - Compile for Oracle 9.x\n";
 	print MAKEFILE "#   OTL_ORA8I          - Compile for Oracle 8.1.x\n";
 	print MAKEFILE "#   OTL_ORA8           - Compile for Oracle 8.0.x\n";
+	print MAKEFILE "#   OTL_ORA_UNICODE    - Add (some) support for UNICODE\n";
 	print MAKEFILE "#   OTL_ORA_TIMESTAMP  - Include support for timestamps\n";
 	print MAKEFILE "#   TO_NEW_CHECK       - Disable new version check globally\n";
 	print MAKEFILE "#   TO_KDE             - Compile as KDE application\n";
@@ -1276,11 +1277,11 @@ __EOT__
 	if ($OracleRelease =~ /^8.0/) {
 	    print MAKEFILE "DEFINES+=-DOTL_ORA8 -DOTL_ANSI_CPP\n";
 	} elsif ($OracleRelease ge "9") {
-	    print MAKEFILE "DEFINES+=-DOTL_ORA9I -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP\n";
+	    print MAKEFILE "DEFINES+=-DOTL_ORA9I -DOTL_ORA_UNICODE -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP\n";
 	} elsif (!$OracleFound) {
 	    print MAKEFILE "DEFINES+=-DTO_NO_ORACLE -DOTL_ANSI_CPP\n";
 	} else {
-	    print MAKEFILE "DEFINES+=-DOTL_ORA8I -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP\n";
+	    print MAKEFILE "DEFINES+=-DOTL_ORA8I -DOTL_ORA_UNICODE -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP\n";
 	}
 	if (!$NewCheck) {
 	    print MAKEFILE "DEFINES+=-DTO_NO_NEW_CHECK\n";
