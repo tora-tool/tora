@@ -1,5 +1,5 @@
 %define _name		tora
-%define _version	1.3.14.1
+%define _version	1.3.15
 %define _release	1static
 %define _prefix		/usr/X11R6
 %define _qt3dir		/usr/local/qt3
@@ -9,10 +9,10 @@ Name:				%{_name}
 Version:			%{_version}
 Release:			%{_release}
 Source:				%{_name}-%{_version}.tar.gz
-URL:				http://www.globecom.se/tora
+URL:				http://tora.sourceforge.net
 Group:				Development/Databases
-Packager:			Henrik Johnson <tora@underscore.se>
-Distribution:			Mandrake Linux 9.1
+Packager:			Nathan Neulinger <nneul@umr.edu>
+Distribution:			Mandrake Linux Cooker
 Copyright:			GPL
 BuildRoot:			%{_tmppath}/tora-root
 Prefix:				%{_prefix}
@@ -79,8 +79,8 @@ features that are available so far is (As of version 1.2):
 This build is compiled without KDE support.
 
 %changelog
-* Tue Dec 18 2001 Henrik Johnson <tora@underscore.se>
-- created from SuSE specfile by Pascal Bleser
+* Thu Feb 17 2005 Nathan Neulinger <nneul@umr.edu>
+- updates for new maintainer
 
 %prep
 %setup -q

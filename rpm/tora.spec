@@ -6,7 +6,7 @@
 
 
 %define _name		tora
-%define _version	1.3.14.1
+%define _version	1.3.15
 %define _release	1mdk
 %define _prefix		/usr
 %define _qtdir		/usr/lib/qt3
@@ -16,10 +16,10 @@ Name:			%{_name}
 Version:		%{_version}
 Release:		%{_release}
 Source:			%{_name}-%{_version}.tar.gz
-URL:			http://www.globecom.se/tora
+URL:			http://tora.sourceforge.net
 Group:			Development/Databases
-Packager:		Henrik Johnson <tora@underscore.se>
-Distribution:		Mandrake Linux 9.1
+Packager:		Nathan Neulinger <nneul@umr.edu>
+Distribution:		Mandrake Linux Cooker
 Copyright:		GPL
 BuildRoot:		%{_tmppath}/tora-root
 Prefix:			%{_prefix}
@@ -99,22 +99,8 @@ will require to download the entire server distribution to install the client, b
 it is available as a choice in the installer.
 
 %changelog
-* Mon Mar 10 2003 Henrik Johnson <tora@underscore.se>
-- change description of Oracle package to reflect needing an Oracle Client installation.
-
-* Mon Mar 10 2003 Henrik Johnson <tora@underscore.se>
-- added the oracle preload and a LD_LIBRARY_PATH setup to make compilation work without Oracle in your ld.so path.
-- also added a workaround of the whole requires problem for the Oracle package.
-- changed version to 1.3.10.
-
-* Mon Mar 10 2003 Henrik Johnson <tora@underscore.se>
-- added comment about fixing requires problem.
-
-* Sun Mar 9 2003 Henrik Johnson <tora@underscore.se>
-- adapted to Mandrake Linux.
-
-* Tue Dec 18 2001 Henrik Johnson <tora@underscore.se>
-- created from SuSE specfile by Pascal Bleser.
+* Thu Feb 17 2005 Nathan Neulinger <nneul@umr.edu>
+- updates for new package maintainer
 
 %prep
 %setup -q
