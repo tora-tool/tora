@@ -58,6 +58,8 @@
 2001-07-10: Removed extra status message in resultview query.
 2001-07-10: Fixed bug with object owner in wrong place in current.
 2001-07-10: Added parameters to tuning.
+2001-07-10: Added help context to extract module.
+2001-07-10: Fixed some spelling in extract.
 
 0.12: Released 2001-07-01
 

@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>714</width>
+            <width>710</width>
             <height>585</height>
         </rect>
     </property>
@@ -820,7 +820,7 @@
                                 </property>
                                 <property stdset="1">
                                     <name>text</name>
-                                    <string>Custom Resize</string>
+                                    <string>Custom resize</string>
                                 </property>
                             </widget>
                         </grid>

@@ -177,7 +177,7 @@ static toSQL SQLSchemas("toScript:ExtractSchema",
 			"Get usernames available in database, must have same columns");
 
 toScript::toScript(QWidget *parent,toConnection &connection)
-  : toScriptUI(parent), Connection(connection)
+  : toScriptUI(parent),toHelpContext("script.html"),Connection(connection)
 {
   QSplitter *hsplitter=new QSplitter(Horizontal,DifferenceTab);
   Worksheet=new toWorksheet(ResultTab,Connection);
@@ -604,18 +604,22 @@ void toScript::changeConnection(int,bool source)
 
 void toScript::changeMode(int mode)
 {
+
   if (mode==0||mode==2)
     Destination->setEnabled(true);
   else if (mode==1||mode==3)
     Destination->setEnabled(false);
+
   if (mode==1||mode==2||mode==3)
     Tabs->setTabEnabled(ResizeTab,true);
   else if (mode==0)
     Tabs->setTabEnabled(ResizeTab,false);
+
   if (mode==1)
     IncludeContent->setEnabled(true);
   else if (mode==0||mode==2||mode==3)
     IncludeContent->setEnabled(false);
+
   if (mode==1||mode==2||mode==3) {
     IncludeHeader->setEnabled(true);
     IncludePrompt->setEnabled(true);
@@ -623,11 +627,13 @@ void toScript::changeMode(int mode)
     IncludeHeader->setEnabled(false);
     IncludePrompt->setEnabled(false);
   }
+
   if (mode==0||mode==2||mode==3) {
     IncludeDDL->setEnabled(false);
     IncludeDDL->setChecked(mode!=3);
   } else if (mode==1)
     IncludeDDL->setEnabled(true);
+
   IncludeConstraints->setEnabled(IncludeDDL->isChecked());
   IncludeIndexes->setEnabled(IncludeDDL->isChecked());
   IncludeGrants->setEnabled(IncludeDDL->isChecked());

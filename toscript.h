@@ -37,8 +37,10 @@
 #ifndef __TOSCRIPT_H
 #define __TOSCRIPT_H
 
-#include "toscriptui.h"
 #include <list>
+
+#include "tohelp.h"
+#include "toscriptui.h"
 
 class toWorksheet;
 class toConnection;
@@ -46,7 +48,7 @@ class toScriptUI;
 class toResultView;
 class toExtract;
 
-class toScript : public toScriptUI {
+class toScript : public toScriptUI, public toHelpContext {
   Q_OBJECT
 
   toScriptUI *ScriptUI;
