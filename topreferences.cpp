@@ -137,3 +137,10 @@ toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags 
     }
   }
 }
+
+void toPreferences::help(void)
+{
+  if (Shown)
+    Shown->setFocus();
+  toHelp::displayHelp(this);
+}

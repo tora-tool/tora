@@ -195,6 +195,7 @@ toResultCols::toResultCols(QWidget *parent,const char *name)
 {
   Title=new QLabel(this);
   Columns=new resultCols(this);
+  NoCache=false;
 }
 
 void toResultCols::query(const QString &,const toQList &param)
@@ -244,7 +245,8 @@ void toResultCols::query(const QString &,const toQList &param)
       label+=name.Comment;
     }
 
-    Columns->query(name);
+    Columns->query(name,NoCache);
+    NoCache=false;
     Title->setText(label);
   } catch(const QString &str) {
     try {
@@ -311,7 +313,7 @@ void toResultCols::resultCols::query(const QString &object,
   }
 }
 
-void toResultCols::resultCols::query(const toConnection::objectName &name)
+void toResultCols::resultCols::query(const toConnection::objectName &name,bool nocache)
 {
   try {
     clear();
@@ -321,7 +323,7 @@ void toResultCols::resultCols::query(const toConnection::objectName &name)
 	       arg(conn.quote(name.Name)).
 	       arg(conn.quote(name.Owner)));
 
-    toQDescList desc=conn.columns(name);
+    toQDescList desc=conn.columns(name,nocache);
 
     Owner=name.Owner;
     Name=name.Name;

@@ -181,7 +181,7 @@ void toResultObject::setup(void)
 
 bool toResult::setSQLParams(const QString &sql,const toQList &par)
 {
-  if (!toTool::globalConfig(CONF_DONT_REREAD,"").isEmpty()) {
+  if (!toTool::globalConfig(CONF_DONT_REREAD,"Yes").isEmpty()) {
     if (SQL==sql&&par.size()==Params.size()) {
       toQList::iterator i=((toQList &)par).begin();
       toQList::iterator j=Params.begin();

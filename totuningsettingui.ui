@@ -1,17 +1,17 @@
 <!DOCTYPE UI><UI>
-<class>Form1</class>
+<class>toTuningSettingUI</class>
 <widget>
     <class>QWidget</class>
     <property stdset="1">
         <name>name</name>
-        <cstring>Form1</cstring>
+        <cstring>toTuningSettingUI</cstring>
     </property>
     <property stdset="1">
         <name>geometry</name>
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>596</width>
+            <width>588</width>
             <height>480</height>
         </rect>
     </property>
@@ -35,7 +35,7 @@
             <class>QGroupBox</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>toTuningSettingUI</cstring>
+                <cstring>ServerTuning</cstring>
             </property>
             <property stdset="1">
                 <name>title</name>
@@ -66,59 +66,13 @@
                             <bool>true</bool>
                         </property>
                     </column>
-                <item>
-                    <property>
-                        <name>text</name>
-                        <string>Overview</string>
-                    </property>
-                    <property>
-                        <name>pixmap</name>
-                        <pixmap></pixmap>
-                    </property>
-                </item>
-                <item>
-                    <property>
-                        <name>text</name>
-                        <string>Charts</string>
-                    </property>
-                    <property>
-                        <name>pixmap</name>
-                        <pixmap></pixmap>
-                    </property>
-                </item>
-                <item>
-                    <property>
-                        <name>text</name>
-                        <string>Server Events</string>
-                    </property>
-                    <property>
-                        <name>pixmap</name>
-                        <pixmap></pixmap>
-                    </property>
-                </item>
-                <item>
-                    <property>
-                        <name>text</name>
-                        <string>Session Events</string>
-                    </property>
-                    <property>
-                        <name>pixmap</name>
-                        <pixmap></pixmap>
-                    </property>
-                </item>
-                <item>
-                    <property>
-                        <name>text</name>
-                        <string>File I/O</string>
-                    </property>
-                    <property>
-                        <name>pixmap</name>
-                        <pixmap></pixmap>
-                    </property>
-                </item>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>ListView1</cstring>
+                        <cstring>EnabledTabs</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>selectionMode</name>
+                        <enum>Multi</enum>
                     </property>
                 </widget>
                 <widget row="0"  column="0" >

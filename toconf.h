@@ -103,6 +103,9 @@
 #define CONF_MESSAGE_STATUSBAR	"MessageStatusbar"
 #define CONF_CACHE_CONNECT	"CacheConnect"
 #define CONF_BKGND_CONNECT	"BackgroundConnect"
+#define CONF_MAX_CONTENT	"MaxContent"
+#define DEFAULT_MAX_CONTENT	"100"
+#define CONF_KEEP_PLANS		"KeepPlans"
 
 #ifndef TO_KDE
 // Undefining this will leave out the style selection option stuff from the program

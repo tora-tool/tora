@@ -50,9 +50,7 @@ Extended functionality:
 * Postgress support.
 * Make entire tuning polling in background.
 * Add a more detailed analysis of wait events in tuning.
-* Make it possible to disable tabs in tuning and set default tab.
 * Use object cache in browser if possible.
-* Option to leave execution plans.
 
 New tools:
 

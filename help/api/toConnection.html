@@ -122,7 +122,7 @@
 </LI>
 <LI>std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,objectName> &&nbsp;<b><A HREF="#ref66">synonyms</A></b> (bool block) 
 </LI>
-<LI><A HREF="#toQDescList">toQDescList</A> &&nbsp;<b><A HREF="#ref67">columns</A></b> (const objectName &table) 
+<LI><A HREF="#toQDescList">toQDescList</A> &&nbsp;<b><A HREF="#ref67">columns</A></b> (const objectName &table,bool nocache=false) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref68">rereadCache</A></b> (void) 
 </LI>
@@ -395,11 +395,17 @@
 </TABLE></P>
 <p><b>Returns</b>: A list of synonyms to objects available for the current user.
    </p>
-<A NAME="columns"></A><A NAME="ref67"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#toQDescList">toQDescList</A> &&nbsp;<strong>columns</strong> (const objectName &table)
+<A NAME="columns"></A><A NAME="ref67"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#toQDescList">toQDescList</A> &&nbsp;<strong>columns</strong> (const objectName &table,bool nocache=false)
 <br></td><td align="right"><h3><strong>columns</strong></h3></td></tr></table><p></p><p>
  Get a list of the available columns for a table. This function caches the responses
  and should be fairly fast after the first call. Do not modify the returned list.
 </p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>table</i></TD><TD align="left" valign="top">The table to describe.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>nocache</i></TD><TD align="left" valign="top">Don't use cached values even if they are available.
+</TD></TR>
+</TABLE></P>
 <p><b>Returns</b>: A list of the columns for a table.
    </p>
 <A NAME="rereadCache"></A><A NAME="ref68"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>rereadCache</strong> (void)

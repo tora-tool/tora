@@ -46,6 +46,8 @@
 #include <qvbox.h>
 #include <qworkspace.h>
 #include <qmenubar.h>
+#include <qobjcoll.h>
+#include <qmessagebox.h>
 
 #ifdef TO_KDE
 #  include <kmenubar.h>
@@ -66,12 +68,73 @@
 #include "toconf.h"
 #include "toresultitem.h"
 #include "toresultlong.h"
+#include "totuningsettingui.h"
 
 #include "totuning.moc"
 #include "totuningoverviewui.moc"
+#include "totuningsettingui.moc"
 
 #include "icons/refresh.xpm"
 #include "icons/totuning.xpm"
+#include "icons/compile.xpm"
+
+#define CONF_OVERVIEW "Overview"
+#define CONF_FILEIO   "File I/O"
+#define CONF_CHARTS   "Charts"
+
+static std::list<QString> TabList(void)
+{
+  std::list<QString> ret;
+  ret.insert(ret.end(),CONF_OVERVIEW);
+  ret.insert(ret.end(),CONF_CHARTS);
+  ret.insert(ret.end(),CONF_FILEIO);
+  return ret;
+}
+
+class toTuningSetup : public toTuningSettingUI, public toSettingTab {
+  toTool *Tool;
+public:
+  toTuningSetup(toTool *tool,QWidget* parent = 0,const char* name = 0)
+    : toTuningSettingUI(parent,name),toSettingTab("tuning.html#preferences"),Tool(tool)
+  {
+    std::list<QString> tabs=TabList();
+    for(std::list<QString>::iterator i=tabs.begin();i!=tabs.end();i++) {
+      QListViewItem *item=new QListViewItem(EnabledTabs,*i);
+      if (!tool->config(*i,"").isEmpty())
+	item->setSelected(true);
+    }
+    EnabledTabs->setSorting(-1);
+  }
+  virtual void saveSetting(void)
+  {
+    for (QListViewItem *item=EnabledTabs->firstChild();item;item=item->nextSibling()) {
+      if (item->isSelected()||Tool->config(item->text(0),"Undefined")!="Undefined")
+	Tool->setConfig(item->text(0),(item->isSelected()?"Yes":""));
+    }
+  }
+};
+
+class toTuningTool : public toTool {
+protected:
+  virtual char **pictureXPM(void)
+  { return totuning_xpm; }
+public:
+  toTuningTool()
+    : toTool(10,"Server Tuning")
+  { }
+  virtual const char *menuItem()
+  { return "Server Tuning"; }
+  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
+  {
+    return new toTuning(parent,connection);
+  }
+  virtual QWidget *configurationTab(QWidget *parent)
+  {
+    return new toTuningSetup(this,parent);
+  }
+};
+
+static toTuningTool TuningTool;
 
 static toSQL SQLDictionaryMiss("toTuning:Indicators:Important ratios:1DictionaryMiss",
 			       "select to_char(round(sum(getmisses)/sum(gets)*100,2))||' %' from v$rowcache",
@@ -345,24 +408,6 @@ static toSQL SQLChartsRedo7("toTuning:Charts:7BSRedo log I/O",
 			    QString::null,
 			    "7.3");
 
-class toTuningTool : public toTool {
-protected:
-  virtual char **pictureXPM(void)
-  { return totuning_xpm; }
-public:
-  toTuningTool()
-    : toTool(10,"Server Tuning")
-  { }
-  virtual const char *menuItem()
-  { return "Server Tuning"; }
-  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
-  {
-    return new toTuning(parent,connection);
-  }
-};
-
-static toTuningTool TuningTool;
-
 static toSQL SQLOverviewArchiveWrite("toTuning:Overview:ArchiveWrite",
 				     "select sysdate,sum(blocks) from v$archived_log",
 				     "Archive log write",
@@ -617,6 +662,46 @@ toTuningOverview::toTuningOverview(QWidget *parent,const char *name,WFlags fl)
 
   // Will be called later anyway
   //refresh();
+}
+
+void toTuningOverview::stop(void)
+{
+  ArchiveWrite->stop();
+  BufferHit->stop();
+  ClientInput->stop();
+  ClientOutput->stop();
+  ExecuteCount->stop();
+  LogWrite->stop();
+  LogicalChange->stop();
+  LogicalRead->stop();
+  ParseCount->stop();
+  PhysicalRead->stop();
+  PhysicalWrite->stop();
+  RedoEntries->stop();
+  Timescale->stop();
+  ClientChart->stop();
+  SharedUsed->stop();
+  FileUsed->stop();
+}
+
+void toTuningOverview::start(void)
+{
+  ArchiveWrite->start();
+  BufferHit->start();
+  ClientInput->start();
+  ClientOutput->start();
+  ExecuteCount->start();
+  LogWrite->start();
+  LogicalChange->start();
+  LogicalRead->start();
+  ParseCount->start();
+  PhysicalRead->start();
+  PhysicalWrite->start();
+  RedoEntries->start();
+  Timescale->start();
+  ClientChart->start();
+  SharedUsed->start();
+  FileUsed->start();
 }
 
 static toSQL SQLOverviewArchive("toTuning:Overview:Archive",
@@ -885,6 +970,23 @@ void toTuningOverview::refresh(void)
 toTuning::toTuning(QWidget *main,toConnection &connection)
   : toToolWidget(TuningTool,"tuning.html",main,connection)
 {
+  if (TuningTool.config(CONF_OVERVIEW,"Undefined")=="Undefined") {
+    QString def=QString::null;
+    if (TOMessageBox::warning(toMainWidget(),
+			      "Enable all tuning statistics",
+			      "Are you sure you want to enable all tuning features.\n"
+			      "This can put heavy strain on a database and unless you\n"
+			      "are the DBA you probably don't want this. Selecting\n"
+			      "no here will give you the option to enable or disable\n"
+			      "tabs individually as they are needed.",
+			      "Yes","&No",QString::null,1)==0) {
+      def="Yes";
+    }
+    std::list<QString> tabs=TabList();
+    for(std::list<QString>::iterator i=tabs.begin();i!=tabs.end();i++)
+      TuningTool.setConfig(*i,def);
+  }
+
   QToolBar *toolbar=toAllocBar(this,"Server Tuning",connection.description());
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
@@ -897,6 +999,19 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Refresh=toRefreshCreate(toolbar);
   connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
   toRefreshParse(timer());
+
+  toolbar->addSeparator();
+  TabButton=new QToolButton(QPixmap((const char **)compile_xpm),
+			    "Enable and disable tuning tabs",
+			    "Enable and disable tuning tabs",
+			    this,SLOT(showTabMenu(void)),
+			    toolbar);
+  TabMenu=new QPopupMenu(TabButton);
+  TabButton->setPopup(TabMenu);
+  TabButton->setPopupDelay(0);
+  connect(TabMenu,SIGNAL(aboutToShow()),this,SLOT(showTabMenu()));
+  connect(TabMenu,SIGNAL(activated(int)),this,SLOT(enableTabMenu(int)));
+
   toolbar->setStretchableWidget(new QLabel("",toolbar));
   new toChangeConnection(toolbar);
 
@@ -905,7 +1020,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Overview=new toTuningOverview(this);
   Tabs->addTab(Overview,"&Overview");
 
-  QGrid *grid=new QGrid(2,Tabs);
+  Charts=new QGrid(2,Tabs);
 
   QString unitStr=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
   toQList unit;
@@ -915,7 +1030,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
     for(std::list<QString>::iterator i=val.begin();i!=val.end();i++) {
       QStringList parts=QStringList::split(":",*i);
       if (parts[2].mid(1,1)=="B") {
-	toResultBar *chart=new toResultBar(grid);
+	toResultBar *chart=new toResultBar(Charts);
 	chart->setTitle(parts[2].mid(3));
 	toQList par;
 	if (parts[2].mid(2,1)=="B")
@@ -935,9 +1050,9 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
       } else if (parts[2].mid(1,1)=="L"||parts[2].mid(1,1)=="C") {
 	toResultLine *chart;
 	if (parts[2].mid(1,1)=="C")
-	  chart=new toTuningMiss(grid);
+	  chart=new toTuningMiss(Charts);
 	else
-	  chart=new toResultLine(grid);
+	  chart=new toResultLine(Charts);
 	chart->setTitle(parts[2].mid(3));
 	toQList par;
 	if (parts[2].mid(2,1)=="B")
@@ -954,7 +1069,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 	  chart->setYPostfix("/s");
 	chart->query(toSQL::string(*i,connection),par);
       } else if (parts[2].mid(1,1)=="P") {
-	toResultPie *chart=new toResultPie(grid);
+	toResultPie *chart=new toResultPie(Charts);
 	chart->setTitle(parts[2].mid(3));
 	if (parts[2].mid(2,1)=="S") {
 	  chart->query(toSQL::string(*i,connection),unit);
@@ -966,7 +1081,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
     }
   }
 
-  Tabs->addTab(grid,"&Charts");
+  Tabs->addTab(Charts,"&Charts");
 
   FileIO=new toTuningFileIO(this);
   connect(this,SIGNAL(connectionChange()),FileIO,SLOT(changeConnection()));
@@ -1004,7 +1119,100 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
 
+  std::list<QString> tabs=TabList();
+  for(std::list<QString>::iterator i=tabs.begin();i!=tabs.end();i++)
+    if (TuningTool.config(*i,QString::null).isEmpty())
+      enableTab(*i,false);
+
   refresh();
+}
+
+QWidget *toTuning::tabWidget(const QString &name)
+{
+  QWidget *widget=NULL;
+  if (name==CONF_OVERVIEW) {
+    widget=Overview;
+  } else if (name==CONF_CHARTS) {
+    widget=Charts;
+  } else if (name==CONF_FILEIO) {
+    widget=FileIO;
+  }
+  return widget;
+}
+
+void toTuning::showTabMenu(void)
+{
+  int id=1;
+  TabMenu->clear();
+  std::list<QString> tab=TabList();
+  for(std::list<QString>::iterator i=tab.begin();i!=tab.end();i++) {
+    id++;
+    TabMenu->insertItem(*i,id);
+    QWidget *widget=tabWidget(*i);
+    if (widget&&Tabs->isTabEnabled(widget))
+      TabMenu->setItemChecked(id,true);
+  }
+}
+
+void toTuning::enableTabMenu(int selid)
+{
+  std::list<QString> tab=TabList();
+  int id=1;
+  for(std::list<QString>::iterator i=tab.begin();i!=tab.end();i++) {
+    id++;
+    if (selid==id) {
+      QWidget *widget=tabWidget(*i);
+      if (widget)
+	enableTab(*i,!Tabs->isTabEnabled(widget));
+      break;
+    }
+  }
+}
+
+void toTuning::enableTab(const QString &name,bool enable)
+{
+  QWidget *widget=NULL;
+  if (name==CONF_OVERVIEW) {
+    if (enable)
+      Overview->start();
+    else
+      Overview->stop();
+    widget=Overview;
+  } else if (name==CONF_CHARTS) {
+    QObjectList *childs=(QObjectList *)Charts->children();
+    for(unsigned int i=0;i<childs->count();i++) {
+      toResultLine *line=dynamic_cast<toResultLine *>(childs->at(i));
+      if (line) {
+	if (enable)
+	  line->start();
+	else
+	  line->stop();
+      }
+      toResultBar *bar=dynamic_cast<toResultBar *>(childs->at(i));
+      if (bar) {
+	if (enable)
+	  bar->start();
+	else
+	  bar->stop();
+      }
+      toResultPie *pie=dynamic_cast<toResultPie *>(childs->at(i));
+      if (pie) {
+	if (enable)
+	  pie->start();
+	else
+	  pie->stop();
+      }
+    }
+    widget=Charts;
+  } else if (name==CONF_FILEIO) {
+    if (enable)
+      FileIO->start();
+    else
+      FileIO->stop();
+    widget=FileIO;
+  }
+  if (widget)
+    Tabs->setTabEnabled(widget,enable);
 }
 
 void toTuning::changeTab(QWidget *widget)
@@ -1336,4 +1544,14 @@ std::list<double> toTuningMiss::transform(std::list<double> &inp)
     }
   }
   return ret;
+}
+
+void toTuningFileIO::stop(void)
+{
+  disconnect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+}
+
+void toTuningFileIO::start(void)
+{
+  connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
 }

@@ -63,6 +63,7 @@ public:
 
 public slots:
   void selectTab(QListBoxItem *item);
+  void help(void); 
 };
 
 #endif // TOPREFERENCES_H

@@ -72,6 +72,7 @@ public:
   virtual bool canHandle(toConnection &conn);
 public slots:
   void refresh(void);
+  void updateTabs(void);
   void changeSchema(int)
   { refresh(); }
   void changeTab(QWidget *tab);
@@ -80,9 +81,11 @@ public slots:
   void clearFilter(void);
   void defineFilter(void);
   void windowActivated(QWidget *widget);
+  void firstDone(void);
 
   void modifyTable(void);
   void addTable(void);
+  void fixIndexCols(void);
 };
 
 class toBrowseTemplate : public QObject,public toTemplateProvider {

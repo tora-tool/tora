@@ -376,13 +376,24 @@ static toSQL SQLListIndex("toBrowser:ListIndex",
 			  " WHERE OWNER = :f1<char[101]>\n"
 			  " ORDER BY Index_Name\n",
 			  "List the available indexes in a schema");
+
 static toSQL SQLIndexCols("toBrowser:IndexCols",
-			  "SELECT Table_Name,Column_Name,Column_Length,Descend\n"
-			  "  FROM SYS.ALL_IND_COLUMNS\n"
-			  " WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
-			  " ORDER BY Column_Position",
+			  "SELECT a.Table_Name,a.Column_Name,a.Column_Length,a.Descend,b.Column_Expression \" \"\n"
+			  "  FROM sys.All_Ind_Columns a,sys.All_Ind_Expressions b\n"
+			  " WHERE a.Index_Owner = :f1<char[101]> AND a.Index_Name = :f2<char[101]>\n"
+			  "   AND a.Index_Owner = b.Index_Owner(+) AND a.Index_Name = b.Index_Name(+)\n"
+			  "   AND a.column_Position = b.Column_Position(+)\n"
+			  " ORDER BY a.Column_Position",
 			  "Display columns on which an index is built",
-			  "8.0");
+			  "8.1");
+
+static toSQL SQLIndexCols8("toBrowser:IndexCols",
+			   "SELECT Table_Name,Column_Name,Column_Length,Descend\n"
+			   "  FROM SYS.ALL_IND_COLUMNS\n"
+			   " WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
+			   " ORDER BY Column_Position",
+			   QString::null,
+			   "8.0");
 static toSQL SQLIndexCols7("toBrowser:IndexCols",
 			   "SELECT Table_Name,Column_Name,Column_Length,' '\n"
 			   "  FROM SYS.ALL_IND_COLUMNS\n"
@@ -498,7 +509,7 @@ void toBrowser::setNewFilter(toResultFilter *filter)
     Filter=filter;
   for(std::map<QString,toResultView *>::iterator i=Map.begin();i!=Map.end();i++)
     (*i).second->setFilter(filter?filter->clone():NULL);
-  refresh();
+  updateTabs();
 }
 
 toBrowser::toBrowser(QWidget *parent,toConnection &connection)
@@ -538,6 +549,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setSQL(SQLListTables);
   resultView->resize(FIRST_WIDTH,resultView->height());
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
+  connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
   FirstTab=resultView;
   Map[TAB_TABLES]=resultView;
   resultView->setTabWidget(TopTab);
@@ -623,6 +635,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   TopTab->addTab(splitter,"&Views");
   resultView=new toResultLong(true,false,toQuery::Background,splitter);
   resultView->setReadAll(true);
+  connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
   Map[TAB_VIEWS]=resultView;
   resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListView);
@@ -666,6 +679,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   TopTab->addTab(splitter,"Inde&xes");
   resultView=new toResultLong(true,false,toQuery::Background,splitter);
   resultView->setReadAll(true);
+  connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
   Map[TAB_INDEX]=resultView;
   resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListIndex);
@@ -678,6 +692,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   resultView=new toResultLong(true,false,toQuery::Background,curr,TAB_INDEX_COLS);
   resultView->setSQL(SQLIndexCols);
+  connect(resultView,SIGNAL(done()),this,SLOT(fixIndexCols()));
   curr->addTab(resultView,"&Columns");
   SecondMap[TAB_INDEX]=resultView;
   SecondMap[TAB_INDEX_COLS]=resultView;
@@ -697,6 +712,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   TopTab->addTab(splitter,"Se&quences");
   resultView=new toResultLong(true,false,toQuery::Background,splitter);
   resultView->setReadAll(true);
+  connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
   Map[TAB_SEQUENCES]=resultView;
   resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListSequence);
@@ -728,6 +744,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   TopTab->addTab(splitter,"S&ynonyms");
   resultView=new toResultLong(true,false,toQuery::Background,splitter);
   resultView->setReadAll(true);
+  connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
   Map[TAB_SYNONYM]=resultView;
   resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListSynonym);
@@ -759,6 +776,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   TopTab->addTab(splitter,"&PL/SQL");
   resultView=new toResultLong(true,false,toQuery::Background,splitter);
   resultView->setReadAll(true);
+  connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
   Map[TAB_PLSQL]=resultView;
   resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListSQL);
@@ -800,6 +818,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   TopTab->addTab(splitter,"Tri&ggers");
   resultView=new toResultLong(true,false,toQuery::Background,splitter);
   resultView->setReadAll(true);
+  connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
   Map[TAB_TRIGGER]=resultView;
   resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListTrigger);
@@ -897,24 +916,38 @@ void toBrowser::refresh(void)
 	Schema->setCurrentItem(j);
       j++;
     }
-    if (!Schema->currentText().isEmpty()&&FirstTab) {
-      QListViewItem *item=FirstTab->currentItem();
-      QString str;
-      if (item)
-	str=item->text(0);
+    if (FirstTab)
+      FirstTab->clearParams();
+    if (SecondTab)
+      SecondTab->clearParams();
+    updateTabs();
+  } TOCATCH
+}
+
+
+void toBrowser::updateTabs(void)
+{
+  try {
+    if (!Schema->currentText().isEmpty()&&FirstTab)
       FirstTab->changeParams(schema());
-      if (!str.isEmpty()) {
-	for (item=FirstTab->firstChild();item;item=item->nextSibling()) {
-	  if (item->text(0)==str) {
-	    FirstTab->setSelected(item,true);
-	    break;
-	  }
-	}
-      }
-    }
+    firstDone(); // In case it is ignored cause it is already done.
     if (SecondTab&&!SecondText.isEmpty())
       changeSecond();
   } TOCATCH
+}
+
+void toBrowser::firstDone(void)
+{
+  if (!SecondText.isEmpty()&&FirstTab) {
+    for (QListViewItem *item=FirstTab->firstChild();item;item=item->nextSibling()) {
+      if (item->text(0)==SecondText) {
+	FirstTab->setSelected(item,true);
+	FirstTab->setCurrentItem(item);
+	FirstTab->ensureItemVisible(item);
+	break;
+      }
+    }
+  }
 }
 
 void toBrowser::changeItem(QListViewItem *item)
@@ -925,8 +958,6 @@ void toBrowser::changeItem(QListViewItem *item)
       changeSecond();
   }
 }
-
-#include <stdio.h>
 
 void toBrowser::changeSecond(void)
 {
@@ -976,7 +1007,7 @@ void toBrowser::changeTab(QWidget *tab)
     SecondText="";
     TopTab->setFocus();
     if (FirstTab&&SecondTab)
-      refresh();
+      updateTabs();
   }
 }
 
@@ -1012,6 +1043,19 @@ void toBrowser::modifyTable(void)
 void toBrowser::addTable(void)
 {
 
+}
+
+void toBrowser::fixIndexCols(void)
+{
+  toResultLong *tmp=dynamic_cast<toResultLong *>(SecondMap[TAB_INDEX_COLS]);
+  if (tmp)
+    for(QListViewItem *item=tmp->firstChild();item;item=item->nextSibling()) {
+      if (!item->text(4).isEmpty()) {
+	toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
+	if (resItem)
+	  resItem->setText(1,item->text(4));
+      }
+    }
 }
 
 void toBrowseTemplate::removeDatabase(const QString &name)

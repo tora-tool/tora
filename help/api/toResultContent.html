@@ -38,21 +38,23 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref6">editSave</A></b> (bool ask) 
 </LI>
-</ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref9">refresh</A></b> (void) 
+</ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref9">clearParams</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref10">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const <A HREF="#toQList">toQList</A> &param) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref10">refresh</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref11">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref11">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const <A HREF="#toQList">toQList</A> &param) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref12">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref12">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref13">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref13">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref14">saveUnsaved</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref14">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref15">saveUnsaved</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,bool cmt) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref15">saveUnsaved</A></b> (void) 
 </LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref16">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref16">saveUnsaved</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,bool cmt) 
+</LI>
+<LI>virtual  bool &nbsp;<b><A HREF="#ref17">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This widget allows the user to browse the contents of a table and also edit
  the content. The table is specified by the first and second parameter in the query.
@@ -81,30 +83,34 @@
 <A NAME="editSave"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editSave</strong> (bool ask)
 <br></td><td align="right"><h3><strong>editSave</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export contents to file.
    </p>
-<A NAME="refresh"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>refresh</strong> (void)
+<A NAME="clearParams"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>clearParams</strong> (void)
+<br></td><td align="right"><h3><strong>clearParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Erase last parameters
+   </p>
+<p>Reimplemented from <A HREF="toResult.html#clearParams">toResult</A>.</p>
+<A NAME="refresh"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>refresh</strong> (void)
 <br></td><td align="right"><h3><strong>refresh</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#refresh">toResult</A>.</p>
-<A NAME="query"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const <A HREF="#toQList">toQList</A> &param)
+<A NAME="query"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const <A HREF="#toQList">toQList</A> &param)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#query">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1)
+<A NAME="changeParams"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2)
+<A NAME="changeParams"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3)
+<A NAME="changeParams"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
-<A NAME="saveUnsaved"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>saveUnsaved</strong> (void)
+<A NAME="saveUnsaved"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>saveUnsaved</strong> (void)
 <br></td><td align="right"><h3><strong>saveUnsaved</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Save unsaved changes in the editor
    </p>
-<A NAME="saveUnsaved"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>saveUnsaved</strong> (<A HREF="toConnection.html">toConnection</A> &conn,bool cmt)
+<A NAME="saveUnsaved"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>saveUnsaved</strong> (<A HREF="toConnection.html">toConnection</A> &conn,bool cmt)
 <br></td><td align="right"><h3><strong>saveUnsaved</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Commit connection
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -113,7 +119,7 @@
 <TR><TD align="left" valign="top"><i>cmt</i></TD><TD align="left" valign="top">If commit or rollback
    </TD></TR>
 </TABLE></P>
-<A NAME="canHandle"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &)
+<A NAME="canHandle"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &)
 <br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Handle Oracle & MySQL
    </p>
 <p>Reimplemented from <A HREF="toResult.html#canHandle">toResult</A>.</p>

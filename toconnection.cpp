@@ -1378,10 +1378,10 @@ const toConnection::objectName &toConnection::realName(const QString &object,boo
   return realName(object,dummy,block);
 }
 
-toQDescList &toConnection::columns(const objectName &object)
+toQDescList &toConnection::columns(const objectName &object,bool nocache)
 {
   std::map<objectName,toQDescList>::iterator i=ColumnCache.find(object);
-  if (i==ColumnCache.end())
+  if (i==ColumnCache.end()||nocache)
     ColumnCache[object]=Connection->columnDesc(object);
 
   return ColumnCache[object];

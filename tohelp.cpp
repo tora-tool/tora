@@ -99,7 +99,9 @@ bool toHelpBrowser::openURL(const KURL &url)
   if (Backward.size()==1)
     emit backwardAvailable(true);
   toPush(Backward,url.url());
-  return KHTMLPart::openURL(url);
+  bool ret=KHTMLPart::openURL(url);
+  emit textChanged();
+  return ret;
 }
 
 void toHelpBrowser::backward(void)
@@ -442,16 +444,19 @@ void toHelp::displayHelp(const QString &context,QWidget *parent)
     window=new toHelp(NULL,"Help window",parent);
   else
     window=Window;
-#ifdef TO_KDE
   QString file=path();
   file+=context;
+#ifdef TO_KDE
   window->Help->openURL(file);
 #else
   if (context.find("htm")>=0)
     window->Help->setTextFormat(RichText);
   else
     window->Help->setTextFormat(AutoText);
-  window->Help->setSource(context);
+  window->Help->setSource(file);
+#  if 0 // Necessary?
+  window->removeSelection();
+#  endif
 #endif
   if (parent) {
     window->exec();
@@ -602,11 +607,24 @@ void toHelp::setSelection(toListView *lst,const QString &source)
   disconnect(lst,SIGNAL(selectionChanged(QListViewItem *)),
 	     this,SLOT(changeContent(QListViewItem *)));
 
+  bool any=false;
+
+  QString t=source;
+  t.replace(QRegExp("^file:"),"");
+
   QListViewItem *next=NULL;
   for (QListViewItem *item=lst->firstChild();item;item=next) {
 
-    if ((item->text(2)==source)!=bool(item->isSelected())) {
-      lst->setSelected(item,item->text(2)==source);
+    if ((item->text(2)==t)!=bool(item->isSelected())) {
+      if (item->text(2)==t) {
+	any=true;
+	lst->setSelected(item,true);
+	lst->ensureItemVisible(item);
+	for(QListViewItem *parent=item->parent();parent;parent=parent->parent())
+	  lst->setOpen(parent,true);
+	break;
+      } else
+	lst->setSelected(item,false);
     }
 
     if (item->firstChild())
@@ -625,6 +643,13 @@ void toHelp::setSelection(toListView *lst,const QString &source)
 
   connect(lst,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeContent(QListViewItem *)));
+
+  if (!any) {
+    QString t=source;
+    t.replace(QRegExp("#[^#]*$"),"");
+    if (t!=source)
+      setSelection(lst,t);
+  }
 }
 
 void toHelp::removeSelection(void)

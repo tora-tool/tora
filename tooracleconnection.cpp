@@ -71,6 +71,12 @@ static toSQL SQLComment("toOracleConnection:Comments",
 			"   AND Table_Name = :f2<char[100]>",
 			"Display column comments");
 
+static toSQL SQLMembers("toOracleConnection:Members",
+			"SELECT object_name,argument_name FROM sys.All_Arguments\n"
+			" WHERE Owner = :f1<char[100]>\n"
+			"   AND Package_Name = :f2<char[100]>",
+			"Get list of package members");
+
 static toSQL SQLListObjects("toOracleConnection:ListObjects",
 			    "select a.owner,a.object_name,a.object_type,b.comments\n"
 			    "  from sys.all_objects a,\n"
@@ -229,12 +235,10 @@ public:
 	  break;
 	default:  // Try using char if all else fails
 	  {
-	    // The *2 is for raw columns, also dates and numbers are a bit tricky
-	    // but if someone specifies a dateformat longer than 100 bytes he
-	    // deserves everything he gets! I'm also making a bet noone has a lot
-	    // of really tricky UTF characters since I think they can be up to 4
-	    // characters.
-	    buffer=new char[max(dsc->elem_size*2+1,100)];
+	    // The *5 is for raw columns or UTF expanded data, also dates and numbers
+	    // are a bit tricky but if someone specifies a dateformat longer than 100 bytes he
+	    // deserves everything he gets!
+	    buffer=new char[max(dsc->elem_size*5+1,100)];
 	    buffer[0]=0;
 	    (*Query)>>buffer;
 	    Running=false;
@@ -455,6 +459,40 @@ public:
     }
     virtual toQDescList columnDesc(const toConnection::objectName &table)
     {
+      toBusy busy;
+      if(table.Type=="PACKAGE") {
+	toQDescList ret;
+	try {
+	  toQuery::queryDescribe desc;
+	  desc.Datatype="MEMBER";
+	  desc.Null=false;
+	  QString lastName;
+	  toQuery member(connection(),SQLMembers,table.Owner,table.Name);
+	  while(!member.eof()) {
+	    QString name = member.readValue();
+	    QString arg = member.readValueNull();
+	    if (lastName!=name) {
+	      if (desc.Name.contains("("))
+		desc.Name+=")";
+	      if (!desc.Name.isEmpty())
+		ret.insert(ret.end(),desc);
+	      desc.Name=name;
+	      lastName=name;
+	      if (!arg.isEmpty())
+		desc.Name+=" (";
+	    } else
+	      desc.Name+=", ";
+	    desc.Name+=arg;
+	  }
+	  if (desc.Name.contains("("))
+	    desc.Name+=")";
+	  if (!desc.Name.isEmpty())
+	    ret.insert(ret.end(),desc);
+	} catch (...) {
+	}
+	return ret;
+      }
+
       std::map<QString,QString> comments;
       try {
 	toQuery comment(connection(),SQLComment,table.Owner,table.Name);
@@ -849,6 +887,7 @@ public:
 					     DEFAULT_PLAN_CHECKPOINT));
     ExplainPlan->setText(toTool::globalConfig(CONF_PLAN_TABLE,
 					      DEFAULT_PLAN_TABLE));
+    KeepPlans->setChecked(!toTool::globalConfig(CONF_KEEP_PLANS,"").isEmpty());
     int len=toTool::globalConfig(CONF_MAX_LONG,
 				 QString::number(DEFAULT_MAX_LONG)).toInt();
     if (len>=0) {
@@ -865,6 +904,7 @@ public:
   }
   virtual void saveSetting(void)
   {
+    toTool::globalSetConfig(CONF_KEEP_PLANS,KeepPlans->isChecked()?"Yes":"");
     toTool::globalSetConfig(CONF_DATE_FORMAT,DefaultDate->text());
     toTool::globalSetConfig(CONF_PLAN_CHECKPOINT,CheckPoint->text());
     toTool::globalSetConfig(CONF_PLAN_TABLE,ExplainPlan->text());

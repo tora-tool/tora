@@ -70,7 +70,8 @@
 #include "icons/previous.xpm"
 #include "icons/rewind.xpm"
 
-#define INC_SIZE 50
+#define CONF_MAX_CONTENT "MaxContent"
+#define DEFAULT_MAX_CONTENT "3"
 
 void toResultContentEditor::editSearch(toSearchReplace *search)
 {
@@ -200,7 +201,7 @@ void toResultContentEditor::changeSort(int col)
 
 void toResultContentEditor::changeParams(const QString &Param1,const QString &Param2)
 {
-  if (Param1==Owner&&Param2==Table&&!toTool::globalConfig(CONF_DONT_REREAD,"").isEmpty())
+  if (Param1==Owner&&Param2==Table&&!toTool::globalConfig(CONF_DONT_REREAD,"Yes").isEmpty())
     return;
 
   Owner=Param1;
@@ -222,19 +223,38 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
   Query=NULL;
 
   try {
-    QString sql;
-    sql="SELECT * FROM ";
-    sql+=table();
+    bool where=false;
+    SQL="SELECT * FROM ";
+    SQL+=table();
     if (!Criteria[FilterName].isEmpty()) {
-      sql+=" WHERE ";
-      sql+=Criteria[FilterName];
+      SQL+=" WHERE (";
+      SQL+=Criteria[FilterName];
+      where=true;
     }
+    QString init=SQL;
+
+    SkipNumber=toTool::globalConfig(CONF_MAX_CONTENT,DEFAULT_MAX_CONTENT).toInt();
+    
+    if (SkipNumber>0) {
+      if (where) {
+	SQL+=")";
+	init+=") AND ";
+      } else
+	init+=" WHERE ";
+      init+="ROWNUM <= ";
+      init+=QString::number(SkipNumber);
+    }
+
     if (!Order[FilterName].isEmpty()) {
-      sql+=" ORDER BY ";
-      sql+=Order[FilterName];
+      SQL+=" ORDER BY ";
+      init+=" ORDER BY ";
+      SQL+=Order[FilterName];
+      init+=Order[FilterName];
     }
+
     toQList par;
-    Query=new toNoBlockQuery(connection(),toQuery::Background,sql,par);
+
+    Query=new toNoBlockQuery(connection(),toQuery::Background,init,par);
     Poll.start(100);
     OrigValues.clear();
     CurrentRow=-1;
@@ -246,12 +266,12 @@ void toResultContentEditor::poll(void)
   try {
     if (Query&&Query->poll()) {
       if (numRows()==0) {
-	toQDescList desc=Query->describe();
-	setNumCols(desc.size());
+	Description=Query->describe();
+	setNumCols(Description.size());
 
 	QHeader *head=horizontalHeader();
 	int col=0;
-	for (toQDescList::iterator i=desc.begin();i!=desc.end();i++) {
+	for (toQDescList::iterator i=Description.begin();i!=Description.end();i++) {
 	  head->setLabel(col,(*i).Name);
 	  col++;
 	}
@@ -260,23 +280,37 @@ void toResultContentEditor::poll(void)
       
       std::list<QString> data;
 
-      for (int j=Row;(j<MaxNumber||MaxNumber<0)&&Query->poll()&&!Query->eof();j++)
+      for (int j=Row;(j<MaxNumber||MaxNumber<0)&&Query->poll()&&!Query->eof();j++) {
 	for (int k=0;k<numCols();k++)
-	  data.insert(data.end(),Query->readValueNull());
+	  if (SkipNumber==0||j<SkipNumber)
+	    data.insert(data.end(),Query->readValueNull());
+	  else
+	    Query->readValueNull();
+	if (SkipNumber!=0&&j>=SkipNumber)
+	  SkipNumber--;
+      }
 
-      setNumRows(Row+data.size()/numCols()+1);
+      int rows=Row+data.size()/numCols()+1;
+      if (numRows()!=rows) {
+	setNumRows(rows);
 
-      while(data.size()>0) {
-	verticalHeader()->setLabel(Row,QString::number(Row+1));
-	for(int j=0;j<numCols();j++)
-	  setText(Row,j,toShift(data));
-	Row++;
+	while(data.size()>0) {
+	  verticalHeader()->setLabel(Row,QString::number(Row+1));
+	  for(int j=0;j<numCols();j++)
+	    setText(Row,j,toShift(data));
+	  Row++;
+	}
       }
 
       if (Query->eof()) {
 	delete Query;
 	Query=NULL;
-	Poll.stop();
+
+	if (SkipNumber>0&&Row==SkipNumber) {
+	  toQList par;
+	  Query=new toNoBlockQuery(connection(),toQuery::Background,SQL,par);
+	} else
+	  Poll.stop();
       } else if (Row>=MaxNumber&&MaxNumber>=0)
 	Poll.stop();
     }
@@ -457,30 +491,39 @@ void toResultContentEditor::deleteCurrent()
     sql+=" WHERE ";
     
     QHeader *head=horizontalHeader();
+    toQDescList::iterator di=Description.begin();
+    bool where=false;
     for(int i=0;i<numCols();i++) {
-      if (!mysql)
-	sql+="\"";
-      sql+=head->label(i);
-      if (!mysql)
-	sql+="\" ";
-      if (!text(currentRow(),i))
-	sql+=" IS NULL";
-      else {
-	sql+="= :c";
-	sql+=QString::number(i);
-	sql+="<char[4000]>";
+      if (!(*di).Datatype.startsWith("LONG")) {
+	if (where)
+	  sql+=" AND ";
+	else
+	  where=true;
+	if (!mysql)
+	  sql+="\"";
+	sql+=head->label(i);
+	if (!mysql)
+	  sql+="\" ";
+	if (!text(currentRow(),i))
+	  sql+=" IS NULL";
+	else {
+	  sql+="= :c";
+	  sql+=QString::number(i);
+	  sql+="<char[4000]>";
+	}
       }
-      if (i+1<numCols())
-	sql+=" AND ";
+      di++;
     }
     try {
       toConnection &conn=connection();
       
       toQList args;
+      toQDescList::iterator di=Description.begin();
       for(int i=0;i<numCols();i++) {
 	QString str=text(currentRow(),i);
-	if (!str.isNull())
+	if (!str.isNull()&&!(*di).Datatype.startsWith("LONG"))
 	  toPush(args,toQValue(str));
+	di++;
       }
       conn.execute(sql,args);
       if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
@@ -500,6 +543,8 @@ void toResultContentEditor::deleteCurrent()
   setNumRows(Row+1);
   setCurrentCellFocus(crow,0);
 }
+
+#include <stdio.h>
 
 void toResultContentEditor::saveUnsaved()
 {
@@ -557,7 +602,8 @@ void toResultContentEditor::saveUnsaved()
       std::list<QString>::iterator k=OrigValues.begin();
       bool first=false;
       for(int i=0;i<numCols();i++,k++) {
-	if (*k!=text(CurrentRow,i)) {
+	QString fld=text(CurrentRow,i);
+	if (*k!=fld) {
 	  if (!first)
 	    first=true;
 	  else
@@ -567,7 +613,7 @@ void toResultContentEditor::saveUnsaved()
 	  sql+=head->label(i);
 	  if (!mysql)
 	    sql+="\" ";
-	  if (text(CurrentRow,i).isNull())
+	  if (fld.isNull())
 	    sql+=" = NULL";
 	  else {
 	    sql+="= :f";
@@ -579,21 +625,28 @@ void toResultContentEditor::saveUnsaved()
       if (first) {
 	sql+=" WHERE ";
 	int col=0;
+	bool where=false;
+	toQDescList::iterator di=Description.begin();
 	for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
-	  if (!mysql)
-	    sql+="\"";
-	  sql+=head->label(col);
-	  if (!mysql)
-	    sql+="\" ";
-	  if ((*j).isNull())
-	    sql+=" IS NULL";
-	  else {
-	    sql+="= :c";
-	    sql+=QString::number(col);
-	    sql+="<char[4000],in>";
+	  if (!(*di).Datatype.startsWith("LONG")) {
+	    if (where)
+	      sql+=" AND ";
+	    else
+	      where=true;
+	    if (!mysql)
+	      sql+="\"";
+	    sql+=head->label(col);
+	    if (!mysql)
+	      sql+="\" ";
+	    if ((*j).isNull())
+	      sql+=" IS NULL";
+	    else {
+	      sql+="= :c";
+	      sql+=QString::number(col);
+	      sql+="<char[4000],in>";
+	    }
 	  }
-	  if (col+1<numCols())
-	    sql+=" AND ";
+	  di++;
 	}
 	if(oracle)
 	  sql+=" RETURNING ROWID INTO :r<char[32],out>";
@@ -607,11 +660,15 @@ void toResultContentEditor::saveUnsaved()
 	    if (str!=*k&&!str.isNull())
 	      toPush(args,toQValue(str));
 	  }
+
+	  toQDescList::iterator di=Description.begin();
 	  for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
 	    QString str=(*j);
-	    if (!str.isNull())
+	    if (!str.isNull()&&!(*di).Datatype.startsWith("LONG"))
 	      toPush(args,toQValue(str));
+	    di++;
 	  }
+	  printf("%s %d\n",(const char *)sql,args.size());
 	  toQuery q(conn,sql,args);
 	  if(oracle)
 	    rowid = q.readValueNull();
@@ -677,9 +734,7 @@ void toResultContentEditor::editPrint(void)
   name+=".";
   name+=Table;
   print.setSQLName(name);
-  QString sql="SELECT * FROM ";
-  sql+=table();
-  print.query(sql);
+  print.query(SQL);
   print.editPrint();
 }
 
@@ -692,9 +747,7 @@ void toResultContentEditor::editSave(bool ask)
   name+=".";
   name+=Table;
   list.setSQLName(name);
-  QString sql="SELECT * FROM ";
-  sql+=table();
-  list.query(sql);
+  list.query(SQL);
   list.editReadAll();
   list.editSave(ask);
 }
@@ -902,7 +955,10 @@ void toResultContentEditor::changeFilter(bool all,const QString &crit,const QStr
   Criteria[nam]=crit;
   Order[nam]=ord;
   saveUnsaved();
-  changeParams(Owner,Table);
+  
+  QString t=Owner;
+  Owner=QString::null;
+  changeParams(t,Table);
 }
 
 void toResultContent::saveUnsaved(toConnection &conn,bool cmt)

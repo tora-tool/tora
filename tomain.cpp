@@ -433,9 +433,6 @@ toMain::toMain()
 	  this,SLOT(statusMenu()));
   connect(StatusMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
-  // Display twirl
-  Poll.start(200);
-
   toolID=TO_TOOLS;
   for (std::map<QString,toTool *>::iterator k=tools.begin();k!=tools.end();k++) {
     (*k).second->customSetup(toolID);

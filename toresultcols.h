@@ -58,12 +58,13 @@ class toResultCols : public QVBox, public toResult {
      */
     resultCols(QWidget *parent,const char *name=NULL);
     virtual void describe(toQDescList &desc);
-    virtual void query(const toConnection::objectName &);
+    virtual void query(const toConnection::objectName &,bool nocache);
     virtual void query(const QString &table,const QString &owner,const QString &name);
     friend class toResultColsItem;
   };
   QLabel *Title;
   resultCols *Columns;
+  bool NoCache;
 
   friend class resultCols;
 public:
@@ -108,6 +109,10 @@ public:
 
   friend class toResultColsItem;
 public slots:
+  /** Erase last parameters
+   */
+  virtual void clearParams(void)
+  { toResult::clearParams(); NoCache=true; }
   /** Reimplemented for internal reasons.
    */
   virtual void refresh(void)

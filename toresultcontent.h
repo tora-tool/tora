@@ -41,6 +41,7 @@
 
 #include "toresult.h"
 #include "toeditwidget.h"
+#include "toconnection.h"
 
 class toResultContent;
 class toNoBlockQuery;
@@ -60,14 +61,20 @@ class toResultContentEditor : public QTable,public toEditWidget {
   /** Tablename.
    */
   QString Table;
+  /** The SQL used to read the data.
+   */
+  QString SQL;
   /** Original values of rows currently being edited.
    */
   std::list<QString> OrigValues;
   /** Stream to read data from.
    */
   toNoBlockQuery *Query;
+
+  toQDescList Description;
   toBackground Poll;
   int MaxNumber;
+  int SkipNumber;
   /** Number of rows read from stream.
    */
   int Row;
@@ -210,6 +217,10 @@ public:
 
   friend class toResultContent;
 public slots:
+  /** Erase last parameters
+   */
+  virtual void clearParams(void)
+  { Owner=Table=QString::null; }
   /** Change sorting column
    * @param col Column selected to change as sorting.
    */
@@ -311,6 +322,10 @@ private slots:
   void changeFilter(void);
   void removeFilter(void);
 public slots:
+  /** Erase last parameters
+   */
+  virtual void clearParams(void)
+  { Editor->clearParams(); }
   /** Reimplemented for internal reasons.
    */
   virtual void refresh(void)

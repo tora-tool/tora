@@ -1052,25 +1052,28 @@ QString toExtract::indexColumns(const QString &indent,
 				const QString &name)
 {
   static QRegExp quote("\"");
-  static QRegExp func("^sys_nc[0-9]g");
+  static QRegExp func("^sys_nc[0-9]+",false);
   toQuery inf(Connection,SQLIndexColumns,name,owner);
   QString ret=indent;
   ret+="(\n";
   bool first=true;
   while(!inf.eof()) {
-    QString col=QString(inf.readValue()).lower();
+    QString col=inf.readValue();
     QString asc=inf.readValue();
     QString row;
     if (func.match(col)>=0) {
-      toQuery def(Connection,SQLIndexFunction,col,name,owner);
-      QString function(inf.readValue());
-      function.replace(quote,"");
-      if (asc=="DESC")
-	row=QString("%1 DESC").arg(function.lower(),30);
-      else
-	row=function.lower();
+      toQuery def(Connection,SQLIndexFunction,name,col,owner);
+      if (!def.eof()) {
+	QString function(def.readValue());
+	function.replace(quote,"");
+	if (asc=="DESC")
+	  row=QString("%1 DESC").arg(function,30);
+	else
+	  row=function;
+      } else
+	row=col.lower();
     } else
-      row=col;
+      row=col.lower();
     ret+=indent;
     if(first) {
       first=false;

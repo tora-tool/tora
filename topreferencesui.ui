@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>596</width>
+            <width>588</width>
             <height>480</height>
         </rect>
     </property>
@@ -69,27 +69,6 @@
                 <string>Cancel</string>
             </property>
         </widget>
-        <spacer row="1"  column="0"  rowspan="1"  colspan="2" >
-            <property>
-                <name>name</name>
-                <cstring>Spacer1</cstring>
-            </property>
-            <property stdset="1">
-                <name>orientation</name>
-                <enum>Horizontal</enum>
-            </property>
-            <property stdset="1">
-                <name>sizeType</name>
-                <enum>Expanding</enum>
-            </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
         <widget row="0"  column="0" >
             <class>QListBox</class>
             <property stdset="1">
@@ -104,6 +83,45 @@
                 </sizepolicy>
             </property>
         </widget>
+        <widget row="1"  column="0" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>HelpButton</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>4</hsizetype>
+                    <vsizetype>0</vsizetype>
+                </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Help</string>
+            </property>
+        </widget>
+        <spacer row="1"  column="1" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer1</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Horizontal</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Preferred</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
     </grid>
 </widget>
 <connections>
@@ -125,10 +143,18 @@
         <receiver>toPreferencesUI</receiver>
         <slot>selectTab(QListBoxItem *)</slot>
     </connection>
+    <connection>
+        <sender>HelpButton</sender>
+        <signal>clicked()</signal>
+        <receiver>toPreferencesUI</receiver>
+        <slot>help()</slot>
+    </connection>
+    <slot access="public">help()</slot>
     <slot access="public">selectTab(QListBoxItem *)</slot>
 </connections>
 <tabstops>
     <tabstop>TabSelection</tabstop>
+    <tabstop>HelpButton</tabstop>
     <tabstop>PushButton1</tabstop>
     <tabstop>PushButton2</tabstop>
 </tabstops>

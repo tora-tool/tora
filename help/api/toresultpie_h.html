@@ -97,6 +97,13 @@ public:
   virtual bool canHandle(toConnection &)
   { return true; }
 
+  /** Stop automatic updating from tool timer.
+   */
+  void stop();
+  /** Start automatic updating from tool timer.
+   */
+  void start();
+
   // Why are these needed?
 #if 1
   /** Set the SQL statement of this list

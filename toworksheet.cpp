@@ -61,6 +61,7 @@
 #include <qmessagebox.h>
 #include <qheader.h>
 #include <qfileinfo.h>
+#include <qinputdialog.h>
 
 #include "totool.h"
 #include "toresultplan.h"
@@ -92,6 +93,7 @@
 #include "icons/clock.xpm"
 #include "icons/describe.xpm"
 #include "icons/compile.xpm"
+#include "icons/previous.xpm"
 
 #define TO_ID_STATISTICS		(toMain::TO_TOOL_MENU_ID+ 0)
 #define TO_ID_STOP			(toMain::TO_TOOL_MENU_ID+ 1)
@@ -458,6 +460,11 @@ void toWorksheet::setup(bool autoLoad)
     SavedButton->setPopupDelay(0);
     connect(SavedMenu,SIGNAL(aboutToShow()),this,SLOT(showSaved()));
     connect(SavedMenu,SIGNAL(activated(int)),this,SLOT(executeSaved(int)));
+    new QToolButton(QPixmap((const char **)previous_xpm),
+		    "Save last SQL",
+		    "Save last SQL",
+		    this,SLOT(saveLast(void)),
+		    toolbar);
 
     toolbar->setStretchableWidget(Started=new QLabel(toolbar));
     Started->setAlignment(AlignRight|AlignVCenter|ExpandTabs);
@@ -567,6 +574,9 @@ void toWorksheet::windowActivated(QWidget *widget)
       ToolMenu->insertItem("Select Saved SQL",
 			   this,SLOT(selectSaved()),
 			   CTRL+SHIFT+Key_S);
+      ToolMenu->insertItem(QPixmap((const char **)previous_xpm),
+			   "Save last SQL",
+			   this,SLOT(saveLast()));
       ToolMenu->insertItem("Edit Saved SQL",
 			   this,SLOT(editSaved()));
       ToolMenu->insertSeparator();
@@ -1451,4 +1461,27 @@ void toWorksheet::executeNextLog(void)
 void toWorksheet::poll(void)
 {
   Started->setText(duration(Timer.elapsed(),false));
+}
+
+void toWorksheet::saveLast(void)
+{
+  if (QueryString.isEmpty()) {
+    TOMessageBox::warning(this,"No SQL to save",
+			  "You haven't executed any SQL yet",
+			  "&Ok");
+    return;
+  }
+  bool ok=false;
+  QString name=QInputDialog::getText("Enter title",
+				     "Enter the title in the menu of the saved SQL,\n"
+				     "submenues are separated by a ':' character.",
+				     QString::null,&ok,this);
+  if (ok&&!name.isEmpty()) {
+    toSQL::updateSQL(TOWORKSHEET+name,
+		     QueryString,
+		     "Undescribed",
+		     "Any",
+		     connection().provider());
+    toSQL::saveSQL(toTool::globalConfig(CONF_SQL_FILE,DEFAULT_SQL_FILE));
+  }
 }

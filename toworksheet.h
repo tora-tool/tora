@@ -157,6 +157,7 @@ public slots:
   void executeNextLog(void);
   void addLog(const QString &sql,const toConnection::exception &result);
   void changeRefresh(const QString &);
+  void saveLast(void);
 private slots:
   void poll(void);
 };

@@ -50,6 +50,7 @@
 #include <qcombobox.h>
 #include <qvalidator.h>
 #include <qfiledialog.h>
+#include <qmessagebox.h>
 
 #include "toconf.h"
 #include "totool.h"
@@ -202,16 +203,24 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
   MaxColDisp->setText(toTool::globalConfig(CONF_MAX_COL_DISP,
 					   DEFAULT_MAX_COL_DISP));
   QString str=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER);
-  if (str.toInt()<0)
+  if (str.toInt()<=0)
     ReadAll->setChecked(true);
   else
     InitialFetch->setText(str);
 
+  str=toTool::globalConfig(CONF_MAX_CONTENT,DEFAULT_MAX_CONTENT);
+  if (str.toInt()<=0) {
+    MaxContent->setText(InitialFetch->text());
+    UnlimitedContent->setChecked(true);
+  } else
+    MaxContent->setText(str);
+
   MaxColDisp->setValidator(new QIntValidator(MaxColDisp));
   InitialFetch->setValidator(new QIntValidator(InitialFetch));
+  MaxContent->setValidator(new QIntValidator(InitialFetch));
 
   AutoCommit->setChecked(!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty());
-  DontReread->setChecked(!toTool::globalConfig(CONF_DONT_REREAD,"").isEmpty());
+  DontReread->setChecked(!toTool::globalConfig(CONF_DONT_REREAD,"Yes").isEmpty());
   CacheConnect->setChecked(!toTool::globalConfig(CONF_CACHE_CONNECT,"").isEmpty());
   BkgndConnect->setChecked(!toTool::globalConfig(CONF_BKGND_CONNECT,"").isEmpty());
   int val=toTool::globalConfig(CONF_AUTO_LONG,"0").toInt();
@@ -226,6 +235,22 @@ void toDatabaseSetting::saveSetting(void)
     toTool::globalSetConfig(CONF_MAX_NUMBER,"-1");
   else
     toTool::globalSetConfig(CONF_MAX_NUMBER,InitialFetch->text());
+  if (UnlimitedContent->isChecked())
+    toTool::globalSetConfig(CONF_MAX_CONTENT,"-1");
+  else {
+    int num=InitialFetch->text().toInt();
+    int maxnum=MaxContent->text().toInt();
+    if (num<0)
+      maxnum=num;
+    else if (num>=maxnum)
+      maxnum=num+1;
+    if (maxnum!=MaxContent->text().toInt())
+      TOMessageBox::information(this,"Invalid values",
+				"Doesn't make sence to have max content less than initial\n"
+				"fetch size. Will adjust value to be higher.",
+				"&Ok");
+    toTool::globalSetConfig(CONF_MAX_CONTENT,QString::number(maxnum));
+  }
   toTool::globalSetConfig(CONF_AUTO_COMMIT,AutoCommit->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DONT_REREAD,DontReread->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_CACHE_CONNECT,CacheConnect->isChecked()?"Yes":"");

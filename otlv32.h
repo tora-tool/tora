@@ -6754,7 +6754,7 @@ public:
    case inRaw:
     return maxsz*2+1;
    default:
-    return maxsz+1;
+    return maxsz*5+1;
    }
   case extLongVarChar:
    return max_long_size;
@@ -9604,8 +9604,8 @@ public:
  void cancel(void)
  {
   if(attached){
-    OCIBreak(svchp,errhp);
-    OCIReset(svchp,errhp);
+    OCIBreak(srvhp,errhp);
+    OCIReset(srvhp,errhp);
   }
  }
 
@@ -10251,7 +10251,7 @@ public:
    case inRaw:
     return maxsz*2+1;
    default:
-    return maxsz+1;
+    return maxsz*5+1;
    }
   case extLongVarChar:
    return max_long_size;

@@ -257,7 +257,12 @@ public:
    */
   std::list<std::list<double> > &values(void)
   { return Values; }
-
+signals:
+  /** A new value set was added to the chart.
+   * @param value New values for charts (One for each line).
+   * @param label X-value on these values.
+   */
+  virtual void valueAdded(std::list<double> &value,const QString &xValues);
 public slots:
   /** Clear the values from the chart.
    */

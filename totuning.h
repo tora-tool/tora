@@ -88,6 +88,9 @@ class toTuningFileIO : public QScrollView {
 
 public:
   toTuningFileIO(QWidget *parent=0,const char *name=0,WFlags fl=0);
+
+  void stop(void);
+  void start(void);
 public slots:
   virtual void refresh(void);
   virtual void changeCharts(int val);
@@ -100,10 +103,15 @@ class toTuningOverview : public toTuningOverviewUI {
 public:
   toTuningOverview(QWidget *parent=0,const char *name=0,WFlags fl=0);
   void refresh(void);
+  void stop(void);
+  void start(void);
 };
 
 class toTuning : public toToolWidget {
   Q_OBJECT
+
+  QPopupMenu *TabMenu;
+  QToolButton *TabButton;
 
   QPopupMenu *ToolMenu;
   QTabWidget *Tabs;
@@ -112,10 +120,16 @@ class toTuning : public toToolWidget {
   toResultLong *Options;
   toResultItem *Licenses;
   toResultStats *Statistics;
+
+  QGrid *Charts;
+
   QComboBox *Refresh;
   toTuningOverview *Overview;
   toTuningFileIO *FileIO;
   QWidget *LastTab;
+
+  virtual void enableTab(const QString &name,bool enable);
+  virtual QWidget *tabWidget(const QString &name);
 public:
   toTuning(QWidget *parent,toConnection &connection);
 public slots:
@@ -123,6 +137,9 @@ public slots:
   virtual void changeTab(QWidget *widget); 
   virtual void changeRefresh(const QString &str);
   virtual void windowActivated(QWidget *widget);
+
+  virtual void showTabMenu(void);
+  virtual void enableTabMenu(int);
 };
 
 #endif

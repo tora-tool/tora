@@ -801,9 +801,11 @@ public:
   /**
    * Get a list of the available columns for a table. This function caches the responses
    * and should be fairly fast after the first call. Do not modify the returned list.
+   * @param table The table to describe.
+   * @param nocache Don't use cached values even if they are available.
    * @return A list of the columns for a table.
    */
-  toQDescList &columns(const objectName &table);
+  toQDescList &columns(const objectName &table,bool nocache=false);
   /**
    * Reread the object and column cache.
    */

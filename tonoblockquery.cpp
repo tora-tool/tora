@@ -275,8 +275,6 @@ int toNoBlockQuery::rowsProcessed(void)
   return Processed;
 }
 
-#include <stdio.h>
-
 void toNoBlockQuery::stop(void)
 {
   Lock.lock();
@@ -294,9 +292,8 @@ void toNoBlockQuery::stop(void)
     if (Running.getValue()==0) {
       TO_DEBUGOUT("Query cancel\n");
       if (Query) {
-	printf("Calling cancel on %s\n",(const char *)SQL);
 	Query->cancel();
-	sleep*=2;
+	sleep+=100;
       }
     }
   } while(!EOQ);

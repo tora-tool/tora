@@ -102,6 +102,10 @@ public:
   virtual ~toResult()
   { }
 
+  /** Erase last parameters
+   */
+  virtual void clearParams(void)
+  { Params.clear(); }
   /** Re execute last query
    */
   virtual void refresh(void)

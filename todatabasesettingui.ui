@@ -52,6 +52,36 @@
                 </size>
             </property>
         </spacer>
+        <widget row="0"  column="0" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>AutoCommit</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Autocommit changes</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Specify if changes should be automatically commited.</string>
+            </property>
+        </widget>
+        <widget row="1"  column="0" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>CacheConnect</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Read object cache on connect</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>If checked the object cache will be read on connect, otherwise it will be read when first needed.</string>
+            </property>
+        </widget>
         <widget row="3"  column="0" >
             <class>QGroupBox</class>
             <property stdset="1">
@@ -124,7 +154,7 @@
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Run UI blocking threads exclusively in main thread</string>
+                        <string>Run UI blocking queries exclusively in main thread</string>
                     </property>
                     <property>
                         <name>toolTip</name>
@@ -139,11 +169,11 @@
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Don't reread data if query is exactly same</string>
+                        <string>Don't reread data if parameters are exactly same</string>
                     </property>
                     <property>
                         <name>toolTip</name>
-                        <string>If checked TOra will not refresh a query if it is reexecuted exactly the same two times in a row.</string>
+                        <string>If checked TOra will not refresh a result if it is reexecuted exactly the same two times in a row.</string>
                     </property>
                 </widget>
             </grid>
@@ -175,32 +205,6 @@
                     <name>spacing</name>
                     <number>6</number>
                 </property>
-                <widget row="0"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>TextLabel6</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Initial rows to fetch in query</string>
-                    </property>
-                    <property>
-                        <name>buddy</name>
-                        <cstring>InitialFetch</cstring>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>The number of rows to always fetch when executing a query.</string>
-                    </property>
-                </widget>
-                <widget row="2"  column="1"  rowspan="1"  colspan="2" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>MaxColDisp</cstring>
-                    </property>
-                </widget>
                 <widget row="2"  column="0" >
                     <class>QLabel</class>
                     <property stdset="1">
@@ -218,6 +222,13 @@
                     <property>
                         <name>toolTip</name>
                         <string>The largest default size of a column in query results.</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="1"  rowspan="1"  colspan="2" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>MaxColDisp</cstring>
                     </property>
                 </widget>
                 <widget row="0"  column="1" >
@@ -242,37 +253,67 @@
                         <string>&amp;All</string>
                     </property>
                 </widget>
+                <widget row="0"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel6</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Initial rows to fetch in query</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>InitialFetch</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>The number of rows to always fetch when executing a query.</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel6_2</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Initially read in content editor</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>InitialFetch</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Number of rows to initially start reading in content editor, use unlimited on slow connections.</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>MaxContent</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget row="1"  column="2" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>UnlimitedContent</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;All</string>
+                    </property>
+                </widget>
             </grid>
-        </widget>
-        <widget row="0"  column="0" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>AutoCommit</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Autocommit changes</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Specify if changes should be automatically commited.</string>
-            </property>
-        </widget>
-        <widget row="1"  column="0" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>CacheConnect</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Read object cache on connect</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>If checked the object cache will be read on connect, otherwise it will be read when first needed.</string>
-            </property>
         </widget>
     </grid>
 </widget>
@@ -289,12 +330,22 @@
         <receiver>MoveAfter</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>UnlimitedContent</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>MaxContent</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>AutoCommit</tabstop>
+    <tabstop>CacheConnect</tabstop>
     <tabstop>InitialFetch</tabstop>
     <tabstop>ReadAll</tabstop>
+    <tabstop>MaxContent</tabstop>
+    <tabstop>UnlimitedContent</tabstop>
     <tabstop>MaxColDisp</tabstop>
+    <tabstop>BkgndConnect</tabstop>
     <tabstop>DontReread</tabstop>
     <tabstop>AutoLong</tabstop>
     <tabstop>MoveAfter</tabstop>

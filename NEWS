@@ -9,6 +9,7 @@
 2001-11-13: Added table aware content editor filter.
 2001-11-19: Added signal on linecharts when values are added.
 2001-11-19: Added methods to stop/start automatic updating of charts.
+2001-11-19: Added options to disable tabs in tuning view.
 
 1.1.5:
 
@@ -70,6 +71,25 @@
 2001-11-13: Fixed code completion problem.
 2001-11-13: Added option to read object cache on first use (On by default).
 2001-11-13: Added option to run background queries on separate connection (Off by default).
+2001-11-13: Added option to limit initial read in content editor.
+2001-11-14: Made don't reread same query default on.
+2001-11-14: Added help button to preferences.
+2001-11-14: Fixed problem with resultcontent and criteria (Newly introduced).
+2001-11-14: Don't reread users except on refresh in browser.
+2001-11-14: Always reread data on explicit refresh from databrowser.
+2001-11-14: Made column view also refresh on explicit databrowser refresh.
+2001-11-14: Fixed keeping selection after refresh in browser.
+2001-11-14: Selecting current item in help on context help now works.
+2001-11-14: Added support for function indexes in schema browser.
+2001-11-14: Fixed support for function indexes in extractor.
+2001-11-14: Fixed problem with second browser pane not updating correctly.
+2001-11-15: Realised that UTF8 conversion can make a string 5 times longer.
+2001-11-15: Fixed a problem in OTL when using UTF-8 conversions.
+2001-11-15: Fixed update in content editor with long editors.
+2001-11-15: Fixed SIGSEGV on cancelling running oracle queries.
+2001-11-15: Added option to keep execution plans.
+2001-11-16: Added onebutton shortcut to add SQL to Saved SQL in worksheet.
+2001-11-17: Applied patch for completion on package members. (From Selcuk Ozturk)
 
 1.1.4: Released 2001-11-02
 

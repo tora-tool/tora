@@ -26,6 +26,13 @@ or not at all while reading many lines. It will also keep the entire result in m
 the <B>All</B> box and reading a really large table could bring your machine to it's knees.
 </TD></TR>
 <TR><TD VALIGN=top>
+<B>Initially read in content editor</B></TD>
+<TD VALIGN=top>If set to something other than <B>All</B> a query will be placed only this number
+of rows initially from Oracle when browsing the content. The reason for this is that Oracle will be under high load if
+a content list is started on a large table. When this value is reached the query will be reread
+to fetch the rest of the values so you as a user will not see any difference.
+</TD></TR>
+<TR><TD VALIGN=top>
 <B>Maximum size display</B></TD>
 <TD VALIGN=top>The maximum width a list column will get automatically regardless of how large the content
 is. This is so you can still see the rest of the columns even if one of the first can contain
@@ -78,6 +85,12 @@ conversion specification. For more information see the Oracle SQL Reference.
 <B>Explain plan table</B></TD>
 <TD VALIGN=top>The table to use to temporarily store explained execution plans. Use the <B>Create Table</B>
 button to create the table if you don't have it.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Keep plans</B></TD>
+<TD VALIGN=top>If this is check explained plans are left in the explain plan table. The normal
+behaviour is to rollback the explanation after it is initially read to keep the explain plan
+table from filling up with old plans.
 </TD></TR>
 <TR><TD VALIGN=top>
 <B>Max LONG and LOB data length</B></TD>
