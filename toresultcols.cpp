@@ -204,7 +204,6 @@ void toResultCols::query(const QString &,const toQList &param)
 
   toConnection &conn=connection();
 
-
   QString Owner;
   QString Name;
   QString object;
