@@ -39,6 +39,8 @@ class toMarkedText : public QMultiLineEdit {
   bool UndoAvailable;
 
   QString Filename;
+  virtual int printPage(QPrinter *printer,QPainter *painter,int line,int &offset,
+			int pageNo,bool paint=true);
 public:
   toMarkedText(QWidget *parent,const char *name=NULL);
   ~toMarkedText();
@@ -65,6 +67,7 @@ public:
   virtual void focusInEvent (QFocusEvent *e);
   virtual void focusOutEvent (QFocusEvent *e); 
   virtual void paintEvent(QPaintEvent *pe);
+  virtual void print(void);
 
 private slots:
   void setRedoAvailable(bool avail)

@@ -9,6 +9,8 @@
 2001-03-02: Fixed a really pesky bug in toReadValue.
 2001-03-02: Created hierachichal depend widget.
 2001-03-02: Fixed bug when readiing config and sql.
+2001-03-03: Added printing.
+2001-03-03: Fixed file path bug when opening/saving (again).
 
 0.6: Released 2001-02-23
 

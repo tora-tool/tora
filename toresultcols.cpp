@@ -53,6 +53,15 @@ public:
   toResultColsItem(QListView *parent,QListViewItem *after,const char *buffer)
     : toResultViewMLine(parent,after,buffer)
   { }
+  virtual QString key (int column,bool ascending)
+  {
+    if (column==0) {
+      QString ret;
+      ret.sprintf("%04d",text(0).toInt());
+      return ret;
+    }
+    return toResultViewMLine::key(column,ascending);
+  }
   virtual QString allText(int col) const
   {
     toResultCols *view=dynamic_cast<toResultCols *>(listView());
@@ -155,7 +164,7 @@ public:
 };
 
 toResultCols::toResultCols(toConnection &conn,QWidget *parent,const char *name=NULL)
-  : toResultView(false,false,conn,parent,name)
+  : toResultView(false,true,conn,parent,name)
 {
   setReadAll(true);
   addColumn("Column Name");
@@ -191,6 +200,7 @@ void toResultCols::query(const QString &sql,const list<QString> &param)
   RowNumber=0;
 
   clear();
+  setSorting(0);
 
   try {
     otl_stream ColComment(1,
@@ -218,7 +228,8 @@ void toResultCols::query(const QString &sql,const list<QString> &param)
 
       item->setText(10,Owner);
       item->setText(11,TableName);
-      item->setText(0,Description[i].name);
+      item->setText(1,Description[i].name);
+      item->setText(0,QString::number(i));
 
       QString datatype;
       switch(Description[i].dbtype) {
@@ -286,17 +297,17 @@ void toResultCols::query(const QString &sql,const list<QString> &param)
 	datatype.append(QString::number(Description[i].dbsize));
 	datatype.append(")");
       }
-      item->setText(1,datatype);
+      item->setText(2,datatype);
       if (Description[i].nullok)
-	item->setText(2,"NULL");
+	item->setText(3,"NULL");
       else
-	item->setText(2,"NOT NULL");
+	item->setText(3,"NOT NULL");
       ColComment<<(const char *)Owner<<(const char *)TableName<<
 	Description[i].name;
       if (!ColComment.eof()) {
 	char buffer[4001];
 	ColComment>>buffer;
-	item->setText(3,buffer);
+	item->setText(4,buffer);
       }
     }
   } catch (const QString &str) {

@@ -57,6 +57,7 @@ private:
   QToolButton *DisconnectButton;
   QToolButton *LoadButton;
   QToolButton *SaveButton;
+  QToolButton *PrintButton;
   QToolButton *UndoButton;
   QToolButton *RedoButton;
   QToolButton *CutButton;
@@ -78,11 +79,11 @@ public:
 
   toConnection &currentConnection(void);
 
-  static void editEnable(bool open,bool save,
+  static void editEnable(bool open,bool save,bool print,
 			 bool undo,bool redo,
 			 bool cut,bool copy,bool paste);
   static void editDisable(void)
-  { editEnable(false,false,false,false,false,false,false); }
+  { editEnable(false,false,false,false,false,false,false,false); }
 
   virtual bool close(bool del);
   void createDefault(void);
@@ -108,6 +109,7 @@ private slots:
 
   void loadButton(void);
   void saveButton(void);
+  void printButton(void);
 
   void editFileMenu(void);
 

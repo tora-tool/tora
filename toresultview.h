@@ -37,6 +37,7 @@
 class QListViewItem;
 class toResultView;
 class toResultTip;
+class QPrinter;
 
 class toResultViewItem : public QListViewItem {
 public:
@@ -98,6 +99,9 @@ protected:
   { return !Query||Query->eof(); }
 
   virtual void keyPressEvent (QKeyEvent * e);
+
+  virtual QListViewItem *printPage(QPrinter *printer,QPainter *painter,QListViewItem *top,
+				   int &column,int &level,int pageNo,bool paint=true);
 public:
   toResultView(bool readable,bool numCol,toConnection &conn,QWidget *parent,const char *name=NULL);
   toResultView(toConnection &conn,QWidget *parent,const char *name=NULL);
@@ -117,6 +121,9 @@ public:
   virtual void query(const QString &sql,const list<QString> &param);
   void query(const QString &sql)
   { list<QString> p; query(sql,p); }
+  virtual void print(void);
+  virtual void focusInEvent (QFocusEvent *e);
+  virtual void focusOutEvent (QFocusEvent *e); 
 public slots:
   virtual void refresh(void)
   { query(SQL); }

@@ -27,6 +27,12 @@
 
 TO_NAMESPACE;
 
+#include <qprinter.h>
+#include <qpainter.h>
+#include <qapplication.h>
+#include <qpalette.h>
+#include <qpaintdevicemetrics.h>
+
 #include "tomarkedtext.h"
 #include "tomain.h"
 #include "totool.h"
@@ -55,11 +61,11 @@ toMarkedText::toMarkedText(QWidget *parent,const char *name)
 void toMarkedText::setEdit(void)
 {
   if (isReadOnly()) {
-    toMain::editEnable(false,true,
+    toMain::editEnable(false,true,true,
 		       false,false,
 		       hasMarkedText(),hasMarkedText(),false);
   } else {
-    toMain::editEnable(true,true,
+    toMain::editEnable(true,true,true,
 		       getUndoAvailable(),getRedoAvailable(),
 		       hasMarkedText(),hasMarkedText(),true);
   }
@@ -91,4 +97,80 @@ void toMarkedText::paintEvent(QPaintEvent *pe)
     getCursorPosition (&curline,&curcol);
     toMainWidget()->setCoordinates(curline+1,curcol+1);
   }
+}
+
+void toMarkedText::print(void)
+{
+  QPrinter printer;
+  printer.setMinMax(1,1000);
+  if (printer.setup()) {
+    printer.setCreator("TOra");
+    QPainter painter(&printer);
+    int line=0;
+    int offset=0;
+    int page=1;
+    while(page<printer.fromPage()&&
+	  (line=printPage(&printer,&painter,line,offset,page++,false)))
+      painter.resetXForm();
+    while((line=printPage(&printer,&painter,line,offset,page++))&&
+	  line<numLines()&&
+	  (printer.toPage()==0||page<=printer.toPage())) {
+      printer.newPage();
+      painter.resetXForm();
+      qApp->processEvents();
+      QString str("Printing page ");
+      str+=QString::number(page);
+      toStatusMessage(str);
+    }
+    painter.end();
+    toStatusMessage("Done printing");
+  }
+}
+
+int toMarkedText::printPage(QPrinter *printer,QPainter *painter,int line,int &offset,
+			    int pageNo,bool paint=true)
+{
+  QPaintDeviceMetrics metrics(printer);
+  painter->drawLine(0,0,metrics.width(),0);
+  QRect size=painter->boundingRect(0,0,metrics.width(),metrics.height(),
+				   AlignLeft|AlignTop|ExpandTabs|SingleLine,
+				   Filename);
+  QString str("Page: ");
+  str+=QString::number(pageNo);
+  painter->drawText(0,metrics.height()-size.height(),size.width(),size.height(),
+		    AlignLeft|AlignTop|ExpandTabs|SingleLine,
+		    Filename);
+  painter->drawText(size.width(),metrics.height()-size.height(),metrics.width()-size.width(),
+		    size.height(),
+		    AlignRight|AlignTop|SingleLine,
+		    str);
+  painter->drawLine(0,0,metrics.width(),0);
+  int margin=size.height()+2;
+
+  QFont defFont=painter->font();
+  painter->setFont(font());
+  size=painter->boundingRect(0,0,metrics.width(),metrics.height(),
+			     AlignLeft|AlignTop,
+			     "x");
+  int height=size.height();
+  int totalHeight=(metrics.height()-margin)/height*height;
+  painter->drawLine(0,totalHeight+2,metrics.width(),totalHeight+2);
+  painter->setClipRect(0,2,metrics.width(),totalHeight);
+  int pos=1+offset;
+  do {
+    QRect bound;
+    painter->drawText(0,pos,
+		      metrics.width(),metrics.height(),
+		      AlignLeft|AlignTop|ExpandTabs|WordBreak,
+		      textLine(line),-1,&bound);
+    int cheight=bound.height()?bound.height():height;
+    totalHeight-=cheight;
+    pos+=cheight;
+    if (totalHeight>=0)
+      line++;
+  } while(totalHeight>0&&line<numLines());
+  painter->setClipping(false);
+  offset=totalHeight;
+  painter->setFont(defFont);
+  return line;
 }

@@ -60,6 +60,7 @@ TO_NAMESPACE;
 #include "icons/disconnect.xpm"
 #include "icons/fileopen.xpm"
 #include "icons/filesave.xpm"
+#include "icons/print.xpm"
 #include "icons/commit.xpm"
 #include "icons/rollback.xpm"
 #include "icons/undo.xpm"
@@ -77,7 +78,8 @@ TO_NAMESPACE;
 #define TO_FILE_SAVE_AS		104
 #define TO_FILE_COMMIT		105
 #define TO_FILE_ROLLBACK	106
-#define TO_FILE_QUIT		107
+#define TO_FILE_PRINT		107
+#define TO_FILE_QUIT		108
 
 #define TO_EDIT_UNDO		200
 #define TO_EDIT_REDO		201
@@ -109,6 +111,7 @@ static QPixmap *toRedoPixmap;
 static QPixmap *toCutPixmap;
 static QPixmap *toCopyPixmap;
 static QPixmap *toPastePixmap;
+static QPixmap *toPrintPixmap;
 
 toMain::toMain()
   : QMainWindow(0,"Main Window")
@@ -135,6 +138,8 @@ toMain::toMain()
     toCopyPixmap=new QPixmap((const char **)copy_xpm);
   if (!toPastePixmap)
     toPastePixmap=new QPixmap((const char **)paste_xpm);
+  if (!toPrintPixmap)
+    toPrintPixmap=new QPixmap((const char **)print_xpm);
 
   char buffer[100];
   sprintf(buffer,DEFAULT_TITLE,TOVERSION);
@@ -150,6 +155,8 @@ toMain::toMain()
   FileMenu->insertItem(*toLoadPixmap,"&Open File...",TO_FILE_OPEN);
   FileMenu->insertItem(*toSavePixmap,"&Save",TO_FILE_SAVE);
   FileMenu->insertItem("&Save As..",TO_FILE_SAVE_AS);
+  FileMenu->insertSeparator();
+  FileMenu->insertItem(*toPrintPixmap,"&Print..",TO_FILE_PRINT);
   FileMenu->insertSeparator();
   FileMenu->insertItem("&Quit",TO_FILE_QUIT);
   menuBar()->insertItem("&File",FileMenu,TO_FILE_MENU);
@@ -191,6 +198,10 @@ toMain::toMain()
 			     "Save file from editor",
 			     "Save file from editor",
 			     this,SLOT(saveButton()),toolbar);
+  PrintButton=new QToolButton(*toPrintPixmap,
+			     "Print",
+			     "Print",
+			     this,SLOT(printButton()),toolbar);
   LoadButton->setEnabled(false);
   SaveButton->setEnabled(false);
   toolbar->addSeparator();
@@ -390,6 +401,7 @@ void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child w
     menuBar()->setItemEnabled(TO_FILE_SAVE,true);
     menuBar()->setItemEnabled(TO_FILE_SAVE_AS,true);
     menuBar()->setItemEnabled(TO_EDIT_READ_ALL,false);
+    menuBar()->setItemEnabled(TO_FILE_PRINT,true);
   } else {
     menuBar()->setItemEnabled(TO_EDIT_UNDO,false);
     menuBar()->setItemEnabled(TO_EDIT_REDO,false);
@@ -400,10 +412,13 @@ void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child w
     menuBar()->setItemEnabled(TO_FILE_OPEN,false);
     menuBar()->setItemEnabled(TO_FILE_SAVE,false);
     menuBar()->setItemEnabled(TO_FILE_SAVE_AS,false);
-    if (dynamic_cast<toResultView *>(currWidget))
+    if (dynamic_cast<toResultView *>(currWidget)) {
       menuBar()->setItemEnabled(TO_EDIT_READ_ALL,true);
-    else
+      menuBar()->setItemEnabled(TO_FILE_PRINT,true);
+    } else {
       menuBar()->setItemEnabled(TO_EDIT_READ_ALL,false);
+      menuBar()->setItemEnabled(TO_FILE_PRINT,false);
+    }
   }
 }
 
@@ -472,7 +487,7 @@ void toMain::commandCallback(int cmd)
       case TO_FILE_OPEN:
 	if (!readOnly) {
 	  QFileInfo file(mark->filename());
-	  QString filename=QFileDialog::getOpenFileName(file.filePath(),"*.sql\n*.txt",this);
+	  QString filename=QFileDialog::getOpenFileName(file.dirPath(),"*.sql\n*.txt",this);
 	  if (!filename.isEmpty()) {
 	    QFile file(filename);
 	    if (!file.open(IO_ReadOnly)) {
@@ -499,7 +514,7 @@ void toMain::commandCallback(int cmd)
 	QFileInfo file(mark->filename());
 	QString filename=mark->filename();
 	if (newFilename||filename.isEmpty())
-	  filename=QFileDialog::getSaveFileName(file.filePath(),"*.sql\n*.txt",this);
+	  filename=QFileDialog::getSaveFileName(file.dirPath(),"*.sql\n*.txt",this);
 	if (!filename.isEmpty()) {
 	  QFile file(filename);
 	  if (!file.open(IO_WriteOnly)) {
@@ -539,6 +554,15 @@ void toMain::commandCallback(int cmd)
 	toResultView *res=dynamic_cast<toResultView *>(qApp->focusWidget());
 	if (res)
 	  res->readAll();
+      }
+      break;
+    case TO_FILE_PRINT:
+      {
+	toResultView *res=dynamic_cast<toResultView *>(qApp->focusWidget());
+	if (res)
+	  res->print();
+	if (mark)
+	  mark->print();
       }
       break;
     case TO_FILE_QUIT:
@@ -715,16 +739,18 @@ void toMain::pasteButton(void)
   commandCallback(TO_EDIT_PASTE);
 }
 
-void toMain::editEnable(bool open,bool save,
+void toMain::printButton(void)
+{
+  commandCallback(TO_FILE_PRINT);
+}
+
+void toMain::editEnable(bool open,bool save,bool print,
 			bool undo,bool redo,
 			bool cut,bool copy,bool paste)
 {
   toMain *main=(toMain *)qApp->mainWidget();
   if (main) {
-    if (open)
-      main->LoadButton->setEnabled(true);
-    else
-      main->LoadButton->setEnabled(false);
+    main->LoadButton->setEnabled(open);
     if (save) {
       main->SaveButton->setEnabled(true);
       main->RowLabel->show();
@@ -734,6 +760,7 @@ void toMain::editEnable(bool open,bool save,
       main->RowLabel->setText("");
       main->ColumnLabel->setText("");
     }
+    main->PrintButton->setEnabled(print);
 
     if (undo)
       main->UndoButton->setEnabled(true);

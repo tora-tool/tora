@@ -33,6 +33,13 @@ TO_NAMESPACE;
 #include <qclipboard.h>
 #include <qheader.h>
 #include <qtooltip.h>
+#include <qmessagebox.h>
+#include <qprinter.h>
+#include <qpainter.h>
+#include <qapplication.h>
+#include <qpalette.h>
+#include <qpaintdevicemetrics.h>
+
 #include "toresultview.h"
 #include "toresultview.moc"
 #include "tomain.h"
@@ -308,6 +315,116 @@ void toResultView::readAll(void)
     addItem();
 }
 
+QListViewItem *toResultView::printPage(QPrinter *printer,QPainter *painter,QListViewItem *top,int &column,int &level,int pageNo,bool paint)
+{
+  QPaintDeviceMetrics metrics(printer);
+  int y=0;
+  int x=0;
+  for (int i=column;i<columns();i++) {
+    int width=columnWidth(i);
+    if (width+x>=metrics.width()) {
+      if (i==column)
+	width=metrics.width()-x-1;
+      else
+	break;
+    }
+    if (paint)
+      painter->drawText(x,0,width,header()->height(),SingleLine|AlignLeft|AlignVCenter,header()->label(i));
+    x+=width;
+  }
+  if (paint) {
+    QString numPage("Page: ");
+    numPage+=QString::number(pageNo);
+    painter->drawText(0,metrics.height()-header()->height(),metrics.width(),header()->height(),SingleLine|AlignRight|AlignVCenter,numPage);
+    painter->drawLine(0,header()->height()-1,metrics.width(),header()->height()-1);
+    painter->translate(0,header()->height());
+  }
+  y+=header()->height()*2;
+  int curLevel=level;
+  int tree=rootIsDecorated()?treeStepSize():0;
+  int newCol=-1;
+  QListViewItem *item=top;
+  while(item&&y+item->height()<metrics.height()) {
+    if (column==0)
+      x=curLevel;
+    else
+      x=0;
+    painter->translate(x,0);
+    for (int i=column;i<columns();i++) {
+      int width=columnWidth(i);
+      if (width+x>=metrics.width()) {
+	if (i==column)
+	  width=metrics.width()-x-1;
+	else {
+	  newCol=i;
+	  break;
+	}
+      }
+      if (i==0)
+	width-=curLevel;
+      if (paint) {
+	item->paintCell(painter,qApp->palette().active(),i,width,columnAlignment(i));
+	painter->translate(width,0);
+      }
+      x+=width;
+    }
+    if (paint)
+      painter->translate(-x,item->height());
+    y+=item->height();
+    if (item->firstChild()) {
+      item=item->firstChild();
+      curLevel+=tree;
+    } else if (item->nextSibling())
+      item=item->nextSibling();
+    else {
+      do {
+	item=item->parent();
+	curLevel-=tree;
+      } while(item&&!item->nextSibling());
+      if (item)
+	item=item->nextSibling();
+    }
+  }
+  if (paint)
+    painter->drawLine(0,0,metrics.width(),0);
+  if (newCol>=0) {
+    column=newCol;
+    return top;
+  }
+  column=0;
+  level=curLevel;
+  return item;
+}
+
+void toResultView::print(void)
+{
+  readAll();
+  QPrinter printer;
+  printer.setMinMax(1,1000);
+  if (printer.setup()) {
+    printer.setCreator("TOra");
+    QPainter painter(&printer);
+    QListViewItem *item=firstChild();
+    int column=0;
+    int tree=rootIsDecorated()?treeStepSize():0;
+    int page=1;
+    while(page<printer.fromPage()&&
+	  (item=printPage(&printer,&painter,item,column,tree,page++,false)))
+      painter.resetXForm();
+    while((item=printPage(&printer,&painter,item,column,tree,page++))&&
+	  (printer.toPage()==0||page<=printer.toPage())) {
+      printer.newPage();
+      painter.resetXForm();
+      qApp->processEvents();
+      QString str("Printing page ");
+      str+=QString::number(page);
+      toStatusMessage(str);
+    }
+    painter.end();
+    toStatusMessage("Done printing");
+  }
+}
+
 void toResultView::keyPressEvent(QKeyEvent *e)
 {
   if (e->key()==Key_PageDown) {
@@ -322,3 +439,18 @@ void toResultView::keyPressEvent(QKeyEvent *e)
   }
   QListView::keyPressEvent(e);
 }
+
+void toResultView::focusInEvent (QFocusEvent *e)
+{
+  toMain::editEnable(false,false,true,
+		     false,false,
+		     false,false,false);
+  QListView::focusInEvent(e);
+}
+
+void toResultView::focusOutEvent (QFocusEvent *e)
+{
+  toMain::editDisable();
+  QListView::focusOutEvent(e);
+}
+
