@@ -37,6 +37,7 @@
 TO_NAMESPACE;
 
 #include <qpainter.h>
+#include <qheader.h>
 
 #include "toresultstorage.h"
 #include "tomain.h"

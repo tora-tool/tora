@@ -205,6 +205,12 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   SourceObjects->setSorting(0);
   DestinationObjects->setSorting(0);
 
+  // Remove when migrate and resize is implemented
+#if 1
+  Migrate->hide();
+  Resize->hide();
+#endif
+
   int def=0;
   list<QString> cons=toMainWidget()->connections();
   int i=0;
