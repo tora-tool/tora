@@ -402,7 +402,7 @@ public:
 	else
 	  connection().execute(SQLDebugOutputEnable);
       } catch (...) {
-	toStatusMessage(tr("Couldn't enable/disable output for session"));
+	toStatusMessage(qApp->translate("toDebugOutput","Couldn't enable/disable output for session"));
       }
     }
   }

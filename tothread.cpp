@@ -181,9 +181,9 @@ void *toThreadStartWrapper(void *t)
     thread->StartSemaphore.up();
     thread->Task->run();
   } catch(const QString &exc) {
-    printf("Unhandled exception in thread:\n%s\n",(const char *)exc);
+    fprintf(stderr,"Unhandled exception in thread:\n%s\n",(const char *)exc);
   } catch(...) {
-    printf("Unhandled exception in thread:\nUnknown type\n");
+    fprintf(stderr,"Unhandled exception in thread:\nUnknown type\n");
   }
   delete thread->Task;
   toThread::Lock->lock();
@@ -300,9 +300,9 @@ void toThread::taskRunner::run(void)
     Task=NULL;
     Lock->unlock();
   } catch(const QString &exc) {
-    printf("Unhandled exception in thread:\n%s\n",(const char *)exc);
+    fprintf(stderr,"Unhandled exception in thread:\n%s\n",(const char *)exc);
   } catch(...) {
-    printf("Unhandled exception in thread:\nUnknown type\n");
+    fprintf(stderr,"Unhandled exception in thread:\nUnknown type\n");
   }
 
 

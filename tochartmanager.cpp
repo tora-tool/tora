@@ -90,10 +90,10 @@ public:
   virtual void customSetup(int toolid)
   {
     toMainWidget()->editMenu()->insertItem(QPixmap((const char **)grid_xpm),
-					   tr("Chart Manager..."),toolid);
+					   qApp->translate("toChartTool","Chart Manager..."),toolid);
 
     Window=new toChartManager(toMainWidget()->workspace());
-    Window->setCaption(tr("Chart Manager"));
+    Window->setCaption(qApp->translate("toChartTool","Chart Manager"));
     Window->setIcon(QPixmap((const char **)grid_xpm));
     Window->close();
   }
@@ -115,7 +115,7 @@ public:
   virtual void changeValue(int val)
   { 
     if (val==1)
-      ExtraLabel->setText(tr("Email"));
+      ExtraLabel->setText(qApp->translate("toChartAlarm","Email"));
     else
       ExtraLabel->setText(QString::null);
 
@@ -148,7 +148,7 @@ public:
     diag.Value->setValidator(new QDoubleValidator(diag.Value));
     diag.Extra->setText(alarm.Extra);
     std::list<int>::iterator sel=alarm.Columns.begin();
-    diag.Charts->addColumn(tr("Charts"));
+    diag.Charts->addColumn(qApp->translate("toChartSetup","Charts"));
     diag.Charts->setSelectionMode(QListView::Multi);
     QListViewItem *item=NULL;
     std::list<QString>::iterator lab=Chart->labels().begin();
@@ -183,17 +183,17 @@ public:
     toChartManager::chartAlarm alarm;
     QString str=modifyAlarm(alarm.toString(),alarm.Persistent);
     if (!str.isEmpty())
-      new QListViewItem(Alarms,str,alarm.Persistent?tr("Persistent"):tr("Temporary"));
+      new QListViewItem(Alarms,str,alarm.Persistent?qApp->translate("toChartSetup","Persistent"):qApp->translate("toChartSetup","Temporary"));
   }
   virtual void modifyAlarm()
   {
     QListViewItem *item=Alarms->selectedItem();
     if (item) {
-      bool pers=item->text(1)==tr("Persistent");
+      bool pers=item->text(1)==qApp->translate("toChartSetup","Persistent");
       QString str=modifyAlarm(item->text(0),pers);
       if (!str.isEmpty()) {
 	item->setText(0,str);
-	item->setText(1,pers?tr("Persistent"):tr("Temporary"));
+	item->setText(1,pers?qApp->translate("toChartSetup","Persistent"):qApp->translate("toChartSetup","Temporary"));
       }
     }
   }

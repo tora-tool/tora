@@ -234,7 +234,7 @@ public:
 	  dsc+=QString::fromLatin1(file.text());
       }
     } catch (const QString &str) {
-      TOMessageBox::warning(toMainWidget(),tr("File error"),str);
+      TOMessageBox::warning(toMainWidget(),qApp->translate("toHelpPrefs","File error"),str);
     }
   }
 };

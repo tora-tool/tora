@@ -82,11 +82,11 @@ public:
   toSGATracePrefs(toTool *tool,QWidget* parent = 0,const char* name = 0)
     : QGroupBox(1,Horizontal,parent,name),toSettingTab("trace.html"),Tool(tool)
   {
-    setTitle(tr("SGA Trace"));
+    setTitle(qApp->translate("toSGATracePrefs","SGA Trace"));
 
     AutoUpdate = new QCheckBox(this,"AutoRefresh");
-    AutoUpdate->setText(tr("&Auto update"));
-    QToolTip::add(AutoUpdate,tr("Update automatically after change of schema."));
+    AutoUpdate->setText(qApp->translate("toSGATracePrefs","&Auto update"));
+    QToolTip::add(AutoUpdate,qApp->translate("toSGATracePrefs","Update automatically after change of schema."));
 
     if (!Tool->config(CONF_AUTO_UPDATE,"Yes").isEmpty())
       AutoUpdate->setChecked(true);

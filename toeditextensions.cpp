@@ -374,48 +374,48 @@ public:
 
     QPopupMenu *menu=new QPopupMenu(toMainWidget());
     
-    IncrementalSearch=menu->insertItem(tr("Forward"),&EditExtensions,SLOT(searchForward()),
+    IncrementalSearch=menu->insertItem(qApp->translate("toEditExtensionTool","Forward"),&EditExtensions,SLOT(searchForward()),
 				       CTRL+Key_S);
-    ReverseSearch=menu->insertItem(tr("Backward"),&EditExtensions,SLOT(searchBackward()),
+    ReverseSearch=menu->insertItem(qApp->translate("toEditExtensionTool","Backward"),&EditExtensions,SLOT(searchBackward()),
 				   CTRL+Key_R);
 
-    toMainWidget()->editMenu()->insertItem(tr("Incremental Search"),menu,-1,(idx>=0?idx+1:0));
+    toMainWidget()->editMenu()->insertItem(qApp->translate("toEditExtensionTool","Incremental Search"),menu,-1,(idx>=0?idx+1:0));
     
     menu=new QPopupMenu(toMainWidget());
-    AutoIndentBlock=menu->insertItem(tr("Selection"),
+    AutoIndentBlock=menu->insertItem(qApp->translate("toEditExtensionTool","Selection"),
 				     &EditExtensions,
 				     SLOT(autoIndentBlock()),
 				     ALT+CTRL+Key_I);
-    AutoIndentBuffer=menu->insertItem(tr("Editor"),
+    AutoIndentBuffer=menu->insertItem(qApp->translate("toEditExtensionTool","Editor"),
 				      &EditExtensions,
 				      SLOT(autoIndentBuffer()),
 				      ALT+CTRL+SHIFT+Key_I);
     menu->insertSeparator();
-    ObfuscateBlock=menu->insertItem(tr("Obfuscate Selection"),
+    ObfuscateBlock=menu->insertItem(qApp->translate("toEditExtensionTool","Obfuscate Selection"),
 				    &EditExtensions,
 				    SLOT(obfuscateBlock()));
-    ObfuscateBuffer=menu->insertItem(tr("Obfuscate Editor"),
+    ObfuscateBuffer=menu->insertItem(qApp->translate("toEditExtensionTool","Obfuscate Editor"),
 				     &EditExtensions,
 				     SLOT(obfuscateBuffer()));
-    toMainWidget()->editMenu()->insertItem(tr("Auto Indent"),menu);
+    toMainWidget()->editMenu()->insertItem(qApp->translate("toEditExtensionTool","Auto Indent"),menu);
 
     IndentIndex=toMainWidget()->editMenu()->insertItem(QPixmap((const char **)indent_xpm),
-						       tr("Indent Block"),&EditExtensions,
+						       qApp->translate("toEditExtensionTool","Indent Block"),&EditExtensions,
 						       SLOT(indentBlock()),
 						       ALT+Key_Right);
     DeindentIndex=toMainWidget()->editMenu()->insertItem(QPixmap((const char **)deindent_xpm),
-							 tr("De-indent Block"),&EditExtensions,
+							 qApp->translate("toEditExtensionTool","De-indent Block"),&EditExtensions,
 							 SLOT(deindentBlock()),
 							 ALT+Key_Left);
 
     IndentButton=new QToolButton(QPixmap((const char **)indent_xpm),
-				 tr("Indent block in editor"),
-				 tr("Indent block in editor"),
+				 qApp->translate("toEditExtensionTool","Indent block in editor"),
+				 qApp->translate("toEditExtensionTool","Indent block in editor"),
 				 &EditExtensions,SLOT(indentBlock()),
 				 toMainWidget()->editToolbar());
     DeindentButton=new QToolButton(QPixmap((const char **)deindent_xpm),
-				   tr("De-indent block in editor"),
-				   tr("De-indent block in editor"),
+				   qApp->translate("toEditExtensionTool","De-indent block in editor"),
+				   qApp->translate("toEditExtensionTool","De-indent block in editor"),
 				   &EditExtensions,SLOT(deindentBlock()),
 				   toMainWidget()->editToolbar());
 

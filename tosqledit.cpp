@@ -93,7 +93,7 @@ public:
   {
     toMainWidget()->editMenu()->insertSeparator();
     toMainWidget()->editMenu()->insertItem(QPixmap((const char **)tosqledit_xpm),
-					   tr("&Edit SQL..."),toolid);
+					   qApp->translate("toSQLEditTool","&Edit SQL..."),toolid);
     toMainWidget()->registerSQLEditor(toolid);
   }
   void closeWindow(void)

@@ -1139,7 +1139,7 @@ void toTuningOverview::overviewQuery::run(void)
     res=toQuery::readQuery(*Parent.Connection,SQLOverviewDatafiles);
     setValue("Files",toShift(res));
   } catch(const QString &str) {
-    printf("Exception occured:\n\n%s\n",(const char *)str.latin1());
+    fprintf(stderr,"Exception occured:\n\n%s\n",(const char *)str.latin1());
   } catch(int) {
   }
   Parent.Done.up();

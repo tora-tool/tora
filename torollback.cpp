@@ -112,23 +112,23 @@ public:
 toRollbackPrefs::toRollbackPrefs(toTool *tool,QWidget* parent,const char* name)
   : QGroupBox(1,Horizontal,parent,name),toSettingTab("rollback.html#options"),Tool(tool)
 {
-  setTitle(tr("Rollback Tool" ));
+  setTitle(qApp->translate("toRollbackPrefs","Rollback Tool" ));
 
   NoExec=new QCheckBox(this,"NoCopy");
-  NoExec->setText(tr("&Restart reexecuted statements" ));
-  QToolTip::add(NoExec,tr("Start statements again that have been reexecuted."));
+  NoExec->setText(qApp->translate("toRollbackPrefs","&Restart reexecuted statements" ));
+  QToolTip::add(NoExec,qApp->translate("toRollbackPrefs","Start statements again that have been reexecuted."));
   
   NeedRead=new QCheckBox(this,"Needread");
-  NeedRead->setText(tr("&Must read buffers" ));
-  QToolTip::add(NeedRead,tr("Don't display statements that have not read buffers."));
+  NeedRead->setText(qApp->translate("toRollbackPrefs","&Must read buffers" ));
+  QToolTip::add(NeedRead,qApp->translate("toRollbackPrefs","Don't display statements that have not read buffers."));
   
   NeedTwo=new QCheckBox(this,"NeedTwo");
-  NeedTwo->setText(tr("&Exclude first appearance" ));
-  QToolTip::add(NeedTwo,tr("A statement must be visible at least two consecutive polls to be displayed."));
+  NeedTwo->setText(qApp->translate("toRollbackPrefs","&Exclude first appearance" ));
+  QToolTip::add(NeedTwo,qApp->translate("toRollbackPrefs","A statement must be visible at least two consecutive polls to be displayed."));
   
   AlignLeft=new QCheckBox(this,"AlignLeft");
-  AlignLeft->setText(tr("&Disregard start extent." ));
-  QToolTip::add(AlignLeft,tr("Always start from the left border when displaying extent usage."));
+  AlignLeft->setText(qApp->translate("toRollbackPrefs","&Disregard start extent." ));
+  QToolTip::add(AlignLeft,qApp->translate("toRollbackPrefs","Always start from the left border when displaying extent usage."));
   
   if (!tool->config(CONF_NO_EXEC,"Yes").isEmpty())
     NoExec->setChecked(true);
@@ -489,13 +489,13 @@ public:
   toRollbackOpen(QWidget *parent)
     : toResultView(false,false,parent)
   {
-    addColumn(tr("Started"));
-    addColumn(tr("User"));
-    addColumn(tr("Snapshot"));
-    addColumn(tr("SQL"));
+    addColumn(qApp->translate("toRollbackOpen","Started"));
+    addColumn(qApp->translate("toRollbackOpen","User"));
+    addColumn(qApp->translate("toRollbackOpen","Snapshot"));
+    addColumn(qApp->translate("toRollbackOpen","SQL"));
     setSorting(0);
     NumExtents=0;
-    setSQLName(tr("toRollbackOpen"));
+    setSQLName(QString::fromLatin1("toRollbackOpen"));
   }
   virtual void query(const QString &sql,const toQList &param)
   {

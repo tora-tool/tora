@@ -78,11 +78,11 @@ public:
   toOutputPrefs(toTool *tool,QWidget* parent = 0,const char* name = 0)
     : QGroupBox(1,Horizontal,parent,name),toSettingTab("output.html"),Tool(tool)
   {
-    setTitle(tr("SQL Output"));
+    setTitle(qApp->translate("toOutputPrefs","SQL Output"));
 
-    QLabel *label=new QLabel(tr("&Polling timeout"),this);
+    QLabel *label=new QLabel(qApp->translate("toOutputPrefs","&Polling timeout"),this);
     label->setGeometry(QRect(20,30,100,20));
-    QToolTip::add(label,tr("Time between trying to poll for output."));
+    QToolTip::add(label,qApp->translate("toOutputPrefs","Time between trying to poll for output."));
 
     AutoPolling=toRefreshCreate(this,NULL,Tool->config(CONF_POLLING,DEFAULT_POLLING));
     label->setBuddy(AutoPolling);

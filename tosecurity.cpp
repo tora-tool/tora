@@ -212,9 +212,9 @@ void toSecurityQuota::changeSize(void)
       siz.sprintf("%.0f KB",double(Size->value()));
       CurrentItem->setText(1,siz);
     } else if (None->isChecked()) {
-      CurrentItem->setText(1,tr("None"));
+      CurrentItem->setText(1,qApp->translate("toSecurityQuota","None"));
     } else if (Unlimited->isChecked()) {
-      CurrentItem->setText(1,tr("Unlimited"));
+      CurrentItem->setText(1,qApp->translate("toSecurityQuota","Unlimited"));
     }
   } else
     SizeGroup->setEnabled(false);
@@ -229,23 +229,23 @@ toSecurityQuota::toSecurityQuota(toConnection &conn,QWidget *parent)
     QListViewItem *item=NULL;
     while(!tablespaces.eof()) {
       item=new toResultViewItem(Tablespaces,item,tablespaces.readValue());
-      item->setText(1,tr("None"));
-      item->setText(3,tr("None"));
+      item->setText(1,qApp->translate("toSecurityQuota","None"));
+      item->setText(3,qApp->translate("toSecurityQuota","None"));
     }
   } TOCATCH
 }
 
 void toSecurityQuota::clearItem(QListViewItem *item)
 {
-  item->setText(1,tr("None"));
+  item->setText(1,qApp->translate("toSecurityQuota","None"));
   item->setText(2,QString::null);
-  item->setText(3,tr("None"));
+  item->setText(3,qApp->translate("toSecurityQuota","None"));
 }
 
 void toSecurityQuota::clear(void)
 {
   for (QListViewItem *item=Tablespaces->firstChild();item;item=item->nextSibling())
-    item->setText(3,tr("None"));
+    item->setText(3,qApp->translate("toSecurityQuota","None"));
 }
 
 void toSecurityQuota::changeUser(const QString &user)
@@ -274,9 +274,9 @@ void toSecurityQuota::changeUser(const QString &user)
 	  QString maxStr;
 	  usedStr.sprintf("%.0f KB",usedQuota/1024);
 	  if (maxQuota<0)
-	    maxStr=tr("Unlimited");
+	    maxStr=qApp->translate("toSecurityQuota","Unlimited");
 	  else if (maxQuota==0)
-	    maxStr=tr("None");
+	    maxStr=qApp->translate("toSecurityQuota","None");
 	  else {
 	    maxStr.sprintf("%.0f KB",maxQuota/1024);
 	  }
@@ -301,9 +301,9 @@ void toSecurityQuota::changeTablespace(void)
   CurrentItem=Tablespaces->selectedItem();
   if (CurrentItem) {
     QString siz=CurrentItem->text(1);
-    if (siz==tr("None"))
+    if (siz==qApp->translate("toSecurityQuota","None"))
       None->setChecked(true);
-    else if (siz==tr("Unlimited"))
+    else if (siz==qApp->translate("toSecurityQuota","Unlimited"))
       Unlimited->setChecked(true);
     else {
       Value->setChecked(true);
@@ -321,9 +321,9 @@ QString toSecurityQuota::sql(void)
       QString siz=item->text(1);
       if (siz.right(2)==QString::fromLatin1("KB"))
 	siz.truncate(siz.length()-1);
-      else if (siz==tr("None"))
+      else if (siz==qApp->translate("toSecurityQuota","None"))
 	siz=QString::fromLatin1("0 K");
-      else if (siz==tr("Unlimited"))
+      else if (siz==qApp->translate("toSecurityQuota","Unlimited"))
 	siz=QString::fromLatin1("UNLIMITED");
       ret+=QString::fromLatin1(" QUOTA ");
       ret+=siz;
@@ -375,14 +375,14 @@ QString toSecurityUser::sql(void)
   if (Authentication->currentPage()==PasswordTab) {
     if (Password->text()!=Password2->text()) {
       switch(TOMessageBox::warning(this,
-				   tr("Passwords don't match"),
-				   tr("The two versions of the password doesn't match"),
-				   tr("Don't save"),	
-				   tr("Cancel"))) {
+				   qApp->translate("toSecurityUser","Passwords don't match"),
+				   qApp->translate("toSecurityUser","The two versions of the password doesn't match"),
+				   qApp->translate("toSecurityUser","Don't save"),	
+				   qApp->translate("toSecurityUser","Cancel"))) {
       case 0:
 	return QString::null;
       case 1:
-	throw tr("Passwords don't match");
+	throw qApp->translate("toSecurityUser","Passwords don't match");
       }
     }
     if (Password->text()!=OrgPassword) {
@@ -588,14 +588,14 @@ QString toSecurityRole::sql(void)
   if (Authentication->currentPage()==PasswordTab) {
     if (Password->text()!=Password2->text()) {
       switch(TOMessageBox::warning(this,
-				   tr("Passwords don't match"),
-				   tr("The two versions of the password doesn't match"),
-				   tr("Don't save"),
-				   tr("Cancel"))) {
+				   qApp->translate("toSecurityRole","Passwords don't match"),
+				   qApp->translate("toSecurityRole","The two versions of the password doesn't match"),
+				   qApp->translate("toSecurityRole","Don't save"),
+				   qApp->translate("toSecurityRole","Cancel"))) {
       case 0:
 	return QString::null;
       case 1:
-	throw tr("Passwords don't match");
+	throw qApp->translate("toSecurityRole","Passwords don't match");
       }
     }
     if (Password->text().length()>0) {

@@ -139,8 +139,8 @@ int main(int argc,char **argv)
       } while(failed.begin()!=failed.end()&&success);
       for(std::list<QString>::iterator i=failed.begin();i!=failed.end();i++)
 	if (!dlopen(*i,RTLD_NOW|RTLD_GLOBAL))
-	  printf("Failed to load %s\n  %s\n",
-		 (const char *)(*i),dlerror());
+	  fprintf(stderr,"Failed to load %s\n  %s\n",
+		  (const char *)(*i),dlerror());
     }
 #endif
 
@@ -213,15 +213,15 @@ int main(int argc,char **argv)
     int ret=qApp->exec();
     return ret;
   } catch (const QString &str) {
-    printf("Unhandled exception:\n\n%s\n",
-	   (const char *)str);
+    fprintf(stderr,"Unhandled exception:\n\n%s\n",
+	    (const char *)str);
     TOMessageBox::critical(NULL,
                            qApp->translate("main","Unhandled exception"),
                            str,
                            qApp->translate("main","Exit"));
 #if 0
   } catch (...) {
-    printf("Unhandled exception of unknown type.\n\n");
+    fprintf(stderr,"Unhandled exception of unknown type.\n\n");
     TOMessageBox::critical(NULL,
                            qApp->translate("main","Unhandled exception"),
                            qApp->translate("main","Unknown type"),

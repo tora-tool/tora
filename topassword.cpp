@@ -56,15 +56,15 @@ public:
   { return "Password Change"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    QString np=QInputDialog::getText(tr("Enter new password"),
-				     tr("Enter new password"),
+    QString np=QInputDialog::getText(qApp->translate("toPasswordTool","Enter new password"),
+				     qApp->translate("toPasswordTool","Enter new password"),
 				     QLineEdit::Password,
 				     QString::null,
 				     NULL,
 				     toMainWidget());
     if (!np.isNull()) {
-      QString np2=QInputDialog::getText(tr("Enter new password again for confirmation"),
-					tr("Enter new password again for confirmation"),
+      QString np2=QInputDialog::getText(qApp->translate("toPasswordTool","Enter new password again for confirmation"),
+					qApp->translate("toPasswordTool","Enter new password again for confirmation"),
 					QLineEdit::Password,
 					QString::null,
 					NULL,
@@ -72,8 +72,8 @@ public:
       if (!np2.isNull()) {
 	if (np!=np2)
 	  TOMessageBox::warning(toMainWidget(),
-				tr("Passwords doesn't match"),
-				tr("The two givens passwords doesn't match, please try again"));
+				qApp->translate("toPasswordTool","Passwords doesn't match"),
+				qApp->translate("toPasswordTool","The two givens passwords doesn't match, please try again"));
 	else {
 	  try {
 	    connection.execute(toSQL::string(SQLChangePassword,connection).

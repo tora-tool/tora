@@ -253,10 +253,13 @@ public:
   {
     int ret=1;
     if (edited()) {
-      ret=TOMessageBox::information(this,tr("Save changes?"),
-				    tr("The editor has been changed. Do you want to save them,\n"
-				       "discard changes or open file in new worksheet?"),
-				    tr("&Save"),tr("&Discard"),tr("&New worksheet"),0);
+      ret=TOMessageBox::information(this,
+				    qApp->translate("toWorksheetText","Save changes?"),
+				    qApp->translate("toWorksheetText","The editor has been changed. Do you want to save them,\n"
+						    "discard changes or open file in new worksheet?"),
+				    qApp->translate("toWorksheetText","&Save"),
+				    qApp->translate("toWorksheetText","&Discard"),
+				    qApp->translate("toWorksheetText","&New worksheet"),0);
       if (ret<0)
 	return false;
       else if (ret==0) {

@@ -323,9 +323,9 @@ void toAlert::pollTask::run(void)
 #endif
       }
     } catch(const QString &str) {
-      printf("Exception in alert polling:\n%s\n",(const char *)str.latin1());
+      fprintf(stderr,"Exception in alert polling:\n%s\n",(const char *)str.latin1());
     } catch(...) {
-      printf("Unexpected alert in polling.\n");
+      fprintf(stderr,"Unexpected alert in polling.\n");
     }
 
     Parent.Lock.lock();

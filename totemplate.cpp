@@ -156,7 +156,7 @@ public:
 	  }
 	}
 	if (lastLevel<0)
-	  throw tr("Internal error, lastLevel < 0");
+	  throw qApp->translate("toTemplateEdit","Internal error, lastLevel < 0");
 	while(lastLevel<int(ctx.count())-1) {
 	  if (last)
 	    last=new QListViewItem(last,ctx[lastLevel]);
@@ -351,23 +351,23 @@ public:
 	  toTool::loadMap(file,pairs);
 	} catch(...) {
 	  if (TOMessageBox::warning(this,
-				    tr("Couldn't open file."),
-				    tr("Couldn't open file. Start on new file?"),
-				    tr("&Ok"),
-				    tr("Cancel"))==1)
+				    qApp->translate("toTemplatePrefs","Couldn't open file."),
+				    qApp->translate("toTemplatePrefs","Couldn't open file. Start on new file?"),
+				    qApp->translate("toTemplatePrefs","&Ok"),
+				    qApp->translate("toTemplatePrefs","Cancel"))==1)
 	    return;
 	}
 	toTemplateEdit edit(pairs,this);
 	if (edit.exec()) {
 	  edit.changeSelection();
 	  if (!toTool::saveMap(file,pairs))
-	    throw tr("Couldn't write file");
+	    throw qApp->translate("toTemplatePrefs","Couldn't write file");
 	}
       } catch (const QString &str) {
 	TOMessageBox::warning(this,
-			      tr("Couldn't open file"),
+			      qApp->translate("toTemplatePrefs","Couldn't open file"),
 			      str,
-			      tr("&Ok"));
+			      qApp->translate("toTemplatePrefs","&Ok"));
       }
     }
   }
@@ -400,7 +400,7 @@ public:
 	return NULL;
       }
     }
-    Dock=toAllocDock(tr("Template"),QString::null,*toolbarImage());
+    Dock=toAllocDock(qApp->translate("toTemplateTool","Template"),QString::null,*toolbarImage());
     toTemplate *window=new toTemplate(Dock);
     toAttachDock(Dock,window,QMainWindow::Left);
     window->attachResult();

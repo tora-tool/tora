@@ -86,212 +86,211 @@ void printStatement(toSQLParse::statement &stat,int level)
 }
 
 int main(int argc,char **argv) {
-  QString res="
-BEGIN
-IF 1 == 1 THEN
-NULL;
-END IF;
-IF appraisal IS NULL THEN
-NULL;
-END IF;
-END;
+  QString res="\n"
+"BEGIN\n"
+"IF 1 == 1 THEN\n"
+"NULL;\n"
+"END IF;\n"
+"IF appraisal IS NULL THEN\n"
+"NULL;\n"
+"END IF;\n"
+"END;\n"
+"\n"
+"DECLARE\n"
+"grade CHAR(1);\n"
+"appraisal VARCHAR2(20);\n"
+"BEGIN\n"
+"CASE grade\n"
+"WHEN 'A' THEN 'Excellent'\n"
+"WHEN 'B' THEN 'Very Good'\n"
+"WHEN 'C' THEN 'Good'\n"
+"WHEN 'D' THEN 'Fair'\n"
+"WHEN 'F' THEN 'Poor'\n"
+"ELSE 'No such grade'\n"
+"END;\n"
+"IF appraisal IS NULL THEN\n"
+"NULL;\n"
+"END IF;\n"
+"END;\n"
+"\n"
+"select count(case when dummy = 'Y' then dummy\n"
+"             else null end) as tot_str\n"
+"from dual;\n"
+"\n"
+"SET TRANSACTION READ ONLY\n"
+"\n"
+"PROMPT Hello\n"
+"\n"
+"/* Test comment\n"
+"*/\n"
+"INSERT INTO cdrProcess(ProcessID,\n"
+"		       StartDate,\n"
+"		       EnvDate,\n"
+"		       ProgramID,\n"
+"		       OSUser,\n"
+"		       SystemUser,\n"
+"		       ExecName,\n"
+"		       ExecVersion,\n"
+"		       ExecParameters,\n"
+"		       HostName)\n"
+"VALUES (:1,\n"
+"	SYSDATE,\n"
+"	SYSDATE,\n"
+"	:2,\n"
+"	:3,\n"
+"	:4,\n"
+"	:5,\n"
+"	:6,\n"
+"	:7,\n"
+"	:8);\n"
+"\n"
+"CREATE or REPLACE Procedure TEST_SPR\n"
+"(\n"
+"    IN_TICKET_NUM   IN  VARCHAR2\n"
+")\n"
+"IS\n"
+"\n"
+"BEGIN\n"
+"\n"
+"BEGIN\n"
+"\n"
+"for cur_rec in (select emp_id from employees) loop\n"
+"\n"
+"	update employees set emp_id = emp_id + 1\n"
+"	where emp_id = cur_rec.emp_id;\n"
+"	commit;\n"
+"end loop;\n"
+"	\n"
+"END;\n"
+"END TEST_SPR;\n"
 
-DECLARE
-grade CHAR(1);
-appraisal VARCHAR2(20);
-BEGIN
-CASE grade
-WHEN 'A' THEN 'Excellent'
-WHEN 'B' THEN 'Very Good'
-WHEN 'C' THEN 'Good'
-WHEN 'D' THEN 'Fair'
-WHEN 'F' THEN 'Poor'
-ELSE 'No such grade'
-END;
-IF appraisal IS NULL THEN
-NULL;
-END IF;
-END;
-
-select count(case when dummy = 'Y' then dummy
-             else null end) as tot_str
-from dual;
-
-SET TRANSACTION READ ONLY
-
-PROMPT Hello
-
-/* Test comment
-*/
-INSERT INTO cdrProcess(ProcessID,
-		       StartDate,
-		       EnvDate,
-		       ProgramID,
-		       OSUser,
-		       SystemUser,
-		       ExecName,
-		       ExecVersion,
-		       ExecParameters,
-		       HostName)
-VALUES (:1,
-	SYSDATE,
-	SYSDATE,
-	:2,
-	:3,
-	:4,
-	:5,
-	:6,
-	:7,
-	:8);
-
-CREATE or REPLACE Procedure TEST_SPR
-(
-    IN_TICKET_NUM   IN  VARCHAR2
-)
-IS
-
-BEGIN
-
-BEGIN
-
-for cur_rec in (select emp_id from employees) loop
-
-	update employees set emp_id = emp_id + 1
-	where emp_id = cur_rec.emp_id;
-	commit;
-end loop;
-	
-END;
-END TEST_SPR;
-"
 #if 1
-"
+"\n"
+"SELECT owner,\n"
+"       OBJECT,\n"
+"       TYPE FROM v$access\n"
+" WHERE sid=:f1<char[101]>\n"
+" ORDER BY owner,\n"
+"	  OBJECT,\n"
+"	  TYPE;\n"
+"\n"
+"CREATE TABLE ess.EssCalLog (\n"
+"        CalID		CHAR(5) NOT NULL,		-- Calender type\n"
+"	SeqID		NUMBER(8) NOT NULL,\n"
+"	ActStt		CHAR(1) NOT NULL\n"
+"		CONSTRAINT EssCalLog_CK_ActStt CHECK (ActStt IN ('A','D') ),\n"
+"	LogRun		CHAR(1) NOT NULL		-- Should runs of this type be logged\n"
+"		CONSTRAINT EssCalLog_CK_LogRun CHECK (LogRun IN ('Y','N') ),\n"
+"	PrcID		NUMBER(8) NOT NULL\n"
+"		CONSTRAINT EssCalDay_FK_PrcID REFERENCES ess.EssPrc(PrcID),\n"
+"	Dsc		VARCHAR2(4000) NOT NULL,	-- Description of this type\n"
+"	CONSTRAINT EssCal_PK PRIMARY KEY (CalID,SeqID)\n"
+"		USING INDEX TABLESPACE Index02 -- A Comment\n"
+");\n"
+"-- Another comment\n"
+"\n"
+"CREATE OR REPLACE procedure spTuxGetAccData (oRet                        OUT  NUMBER,\n"
+"					     oNumSwt                     OUT  NUMBER)\n"
+"IS\n"
+"  vYear  CHAR(4);\n"
+"BEGIN\n"
+"    <<label>>\n"
+"    DECLARE\n"
+"      oTrdStt NUMBER;\n"
+"    BEGIN\n"
+"      oTrdStt := 0;\n"
+"    END;\n"
+"\n"
+"    EXCEPTION\n"
+"        WHEN VALUE_ERROR THEN\n"
+"	    oRet := 3;\n"
+"	WHEN NO_DATA_FOUND THEN\n"
+"	    oRet := 2;\n"
+"	WHEN OTHERS THEN\n"
+"	    oRet := 1;\n"
+"END;\n"
+"CREATE OR REPLACE procedure spTuxGetAccData as\n"
+"  vYear  CHAR(4);\n"
+"begin\n"
+"  null;\n"
+"end;\n"
+"-------------------------------------------------------------------\n"
+"--    EssCal, Current calendar view\n"
+"\n"
+"CREATE VIEW ess.EssCal AS\n"
+"        SELECT CalID,\n"
+"	       LogRun,\n"
+"	       PrcID,\n"
+"	       Dsc\n"
+"	  FROM ess.EssCalLog a\n"
+"	 WHERE SeqID = (SELECT MAX(aa.SeqID) FROM EssCalLog aa WHERE aa.CalID = a.CalID)\n"
+"	   AND ActStt = 'A';\n"
+"\n"
+"    /* A little comment\n"
+"     */\n"
+"    SELECT /*+\n"
+"FULL(a)\n"
+"*/ a.TskCod TskCod -- Test comment\n"
+"      ,a.CreEdt CreEdt,\n"
+"       a.TspActOprID /* One comment OprID */ , -- Another comment\n"
+"       COUNT(1) Tot,\n"
+"       COUNT(a.TspActOprID) Lft,\n"
+"       b.TraCod TraCod,\n"
+"       SUM(b.FinAmt) FinAmt,\n"
+"       TraCod\n"
+"  FROM EssTsk a,EssTra b\n"
+" WHERE ((a.TspActOprID = 'Test') OR a.TspActOprID IS NULL)\n"
+"   AND DECODE(a.TspActOprID,NULL,NULL,a.TskID) = b.TskID(+)\n"
+" GROUP BY a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod\n"
+"HAVING COUNT(a.TspActOprID) > 0;\n"
+"SELECT a.Sid \"-Id\",\n"
+"       a.Serial# \"-Serial#\",\n"
+"       a.SchemaName \"Schema\",\n"
+"       a.Status \"Status\",\n"
+"       a.Server \"Server\",\n"
+"       a.OsUser \"Osuser\",\n"
+"       a.Machine \"Machine\",\n"
+"       a.Program \"Program\",\n"
+"       a.Type \"Type\",\n"
+"       a.Module \"Module\",\n"
+"       a.Action \"Action\",\n"
+"       a.Client_Info \"Client Info\",\n"
+"       b.Block_Gets \"-Block Gets\",\n"
+"       b.Consistent_Gets \"-Consistent Gets\",\n"
+"       b.Physical_Reads \"-Physical Reads\",\n"
+"       b.Block_Changes \"-Block Changes\",\n"
+"       b.Consistent_Changes \"-Consistent Changes\",\n"
+"       c.Value*10 \"-CPU (ms)\",\n"
+"       a.Process \"-Process\",\n"
+"       a.SQL_Address||':'||SQL_Hash_Value \" SQL Address\",\n"
+"       a.Prev_SQL_Addr||':'||Prev_Hash_Value \" Prev SQl Address\"\n"
+"  FROM v$session a,\n"
+"       v$sess_io b,\n"
+"       v$sesstat c\n"
+" WHERE a.sid = b.sid(+)\n"
+"   AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)\n"
+" ORDER BY a.Sid;\n"
+"select a.TskCod TskCod,\n"
+"       count(1) Tot\n"
+"  from (select * from EssTsk where PrsID >= '1940') ,EssTra b\n"
+" where decode(a.TspActOprID,NULL,NULL,a.PrsID)+5 = b.PrsID(+)\n"
+" group by a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod\n"
+"having count(a.TspActOprID) > 0;\n"
+"\n"
+"CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)\n"
+"AS\n"
+"  vYear  CHAR(4);\n"
+"BEGIN\n"
+"    DECLARE\n"
+"      oTrdStt NUMBER;\n"
+"    BEGIN\n"
+"      oTrdStt := 0;\n"
+"    END;\n"
+"    EXCEPTION\n"
+"        WHEN VALUE_ERROR THEN\n"
+"	    oRet := 3;\n"
+"END;"
 
-
-SELECT owner,
-       OBJECT,
-       TYPE FROM v$access
- WHERE sid=:f1<char[101]>
- ORDER BY owner,
-	  OBJECT,
-	  TYPE;
-
-CREATE TABLE ess.EssCalLog (
-        CalID		CHAR(5) NOT NULL,		-- Calender type
-	SeqID		NUMBER(8) NOT NULL,
-	ActStt		CHAR(1) NOT NULL
-		CONSTRAINT EssCalLog_CK_ActStt CHECK (ActStt IN ('A','D') ),
-	LogRun		CHAR(1) NOT NULL		-- Should runs of this type be logged
-		CONSTRAINT EssCalLog_CK_LogRun CHECK (LogRun IN ('Y','N') ),
-	PrcID		NUMBER(8) NOT NULL
-		CONSTRAINT EssCalDay_FK_PrcID REFERENCES ess.EssPrc(PrcID),
-	Dsc		VARCHAR2(4000) NOT NULL,	-- Description of this type
-	CONSTRAINT EssCal_PK PRIMARY KEY (CalID,SeqID)
-		USING INDEX TABLESPACE Index02 -- A Comment
-);
--- Another comment
-
-CREATE OR REPLACE procedure spTuxGetAccData (oRet                        OUT  NUMBER,
-					     oNumSwt                     OUT  NUMBER)
-IS
-  vYear  CHAR(4);
-BEGIN
-    <<label>>
-    DECLARE
-      oTrdStt NUMBER;
-    BEGIN
-      oTrdStt := 0;
-    END;
-
-    EXCEPTION
-        WHEN VALUE_ERROR THEN
-	    oRet := 3;
-	WHEN NO_DATA_FOUND THEN
-	    oRet := 2;
-	WHEN OTHERS THEN
-	    oRet := 1;
-END;
-CREATE OR REPLACE procedure spTuxGetAccData as
-  vYear  CHAR(4);
-begin
-  null;
-end;
--------------------------------------------------------------------
---    EssCal, Current calendar view
-
-CREATE VIEW ess.EssCal AS
-        SELECT CalID,
-	       LogRun,
-	       PrcID,
-	       Dsc
-	  FROM ess.EssCalLog a
-	 WHERE SeqID = (SELECT MAX(aa.SeqID) FROM EssCalLog aa WHERE aa.CalID = a.CalID)
-	   AND ActStt = 'A';
-
-    /* A little comment
-     */
-    SELECT /*+
-FULL(a)
-*/ a.TskCod TskCod -- Test comment
-      ,a.CreEdt CreEdt,
-       a.TspActOprID /* One comment OprID */ , -- Another comment
-       COUNT(1) Tot,
-       COUNT(a.TspActOprID) Lft,
-       b.TraCod TraCod,
-       SUM(b.FinAmt) FinAmt,
-       TraCod
-  FROM EssTsk a,EssTra b
- WHERE ((a.TspActOprID = 'Test') OR a.TspActOprID IS NULL)
-   AND DECODE(a.TspActOprID,NULL,NULL,a.TskID) = b.TskID(+)
- GROUP BY a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod
-HAVING COUNT(a.TspActOprID) > 0;
-SELECT a.Sid \"-Id\",
-       a.Serial# \"-Serial#\",
-       a.SchemaName \"Schema\",
-       a.Status \"Status\",
-       a.Server \"Server\",
-       a.OsUser \"Osuser\",
-       a.Machine \"Machine\",
-       a.Program \"Program\",
-       a.Type \"Type\",
-       a.Module \"Module\",
-       a.Action \"Action\",
-       a.Client_Info \"Client Info\",
-       b.Block_Gets \"-Block Gets\",
-       b.Consistent_Gets \"-Consistent Gets\",
-       b.Physical_Reads \"-Physical Reads\",
-       b.Block_Changes \"-Block Changes\",
-       b.Consistent_Changes \"-Consistent Changes\",
-       c.Value*10 \"-CPU (ms)\",
-       a.Process \"-Process\",
-       a.SQL_Address||':'||SQL_Hash_Value \" SQL Address\",
-       a.Prev_SQL_Addr||':'||Prev_Hash_Value \" Prev SQl Address\"
-  FROM v$session a,
-       v$sess_io b,
-       v$sesstat c
- WHERE a.sid = b.sid(+)
-   AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)
- ORDER BY a.Sid;
-select a.TskCod TskCod,
-       count(1) Tot
-  from (select * from EssTsk where PrsID >= '1940') ,EssTra b
- where decode(a.TspActOprID,NULL,NULL,a.PrsID)+5 = b.PrsID(+)
- group by a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod
-having count(a.TspActOprID) > 0;
-
-CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)
-AS
-  vYear  CHAR(4);
-BEGIN
-    DECLARE
-      oTrdStt NUMBER;
-    BEGIN
-      oTrdStt := 0;
-    END;
-    EXCEPTION
-        WHEN VALUE_ERROR THEN
-	    oRet := 3;
-END;"
 #endif
   ;
 #if 0

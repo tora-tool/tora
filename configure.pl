@@ -1604,6 +1604,16 @@ tora-static: \$(OBJECTS) main.cpp
 
 # The binary for the pluginbased tora
 
+lupdate:
+	echo "# Not indended to be used for anything except lupdate" > tora.pro
+	echo 'SOURCES=	license/tolicense.cpp\\' >> tora.pro
+	echo '	license/tolicenseui.cpp\\' >> tora.pro
+	echo '	main.cpp\\' >> tora.pro
+	echo '	toextratranslations.cpp\\' >> tora.pro
+	echo "	\$(SOURCES)" >> tora.pro
+	echo 'TRANSLATIONS=tora_se.ts' >> tora.pro
+	lupdate tora.pro
+
 tora:\\
 __EOT__
 	print MAKEFILE "\tobjs/".join(".o \\\n\tobjs/",sort @source).

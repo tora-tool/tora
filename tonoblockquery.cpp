@@ -49,7 +49,7 @@
 #undef TO_DEBUG
 #ifdef TO_DEBUG
 #include <stdio.h>
-#define TO_DEBUGOUT(x) printf((const char *)x);
+#define TO_DEBUGOUT(x) fprintf(stderr,(const char *)x);
 #else
 #define TO_DEBUGOUT(x)
 #endif
@@ -333,7 +333,7 @@ void toNoBlockQuery::stop(void)
     Statistics->refreshStats(false);
   }
   while(Query) {
-    printf("Internal error, query not deleted after stopping it.\n");
+    fprintf(stderr,"Internal error, query not deleted after stopping it.\n");
     toThread::msleep(100);
   }
   TO_DEBUGOUT("Done deleting\n");

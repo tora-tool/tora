@@ -61,7 +61,7 @@ void toExtract::extractor::registerExtract(const QString &db,
   QString name=toExtract::extractorName(db,oper,type);
 
   if ((*toExtract::Extractors).find(name)!=(*toExtract::Extractors).end())
-    printf("Extractor %s multiply defined\n",(const char *)name);
+    fprintf(stderr,"Extractor %s multiply defined\n",(const char *)name);
 
   (*toExtract::Extractors)[name]=this;
 }
@@ -75,7 +75,7 @@ void toExtract::extractor::unregisterExtract(const QString &db,
   QString name=toExtract::extractorName(db,oper,type);
   std::map<QString,extractor *>::iterator i=(*toExtract::Extractors).find(name);
   if (i==(*toExtract::Extractors).end())
-    printf("Extractor %s not defined on unregistering\n",(const char *)name);
+    fprintf(stderr,"Extractor %s not defined on unregistering\n",(const char *)name);
   else
     (*toExtract::Extractors).erase(i);
 }

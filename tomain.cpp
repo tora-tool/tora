@@ -368,6 +368,9 @@ toMain::toMain()
     }
 
     if (menuName) {
+#ifdef TODEBUG_TRANSLATION
+      printf("QT_TRANSLATE_NOOP(\"toTool\",\"%s\"),\n",(const char *)menuName);
+#endif
       if (pixmap)
 	ToolsMenu->insertItem(*pixmap,qApp->translate("toTool",menuName),toolID);
       else

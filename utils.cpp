@@ -415,7 +415,7 @@ QString toGetSessionType(void)
     return "Platinum";
   else if (style->isA("QWindowsStyle"))
     return "Windows";
-  toStatusMessage(qApp->translate("togetSessionType","Failed to find style match"));
+  toStatusMessage(qApp->translate("toGetSessionType","Failed to find style match"));
   return DEFAULT_STYLE;
 }
 
