@@ -213,7 +213,7 @@ __EOMK__
 sub addInclude {
     my ($before,$newinc)=@_;
     return $before if ($newinc eq "/usr/include");
-    return $before if (/\"$newinc\"/=~$before);
+    return $before if (defined $before && $before=~/\"$newinc\"/);
     my $inc="\"-I$newinc\"";
     if (defined $before) {
 	$before.=" $inc";
