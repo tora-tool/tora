@@ -78,7 +78,7 @@
 #include <qvbox.h>
 #include <qworkspace.h>
 
-#if QT_VERSION >= 300
+#if QT_VERSION >= 0x030000
 #include <qurloperator.h>
 #include <qnetwork.h>
 #include <qstyle.h>
@@ -632,8 +632,13 @@ void toMain::windowsMenu(void)
   QRegExp strip(QString::fromLatin1(" <[0-9]+>$"));
   int id=0;
   unsigned int i;
+#if QT_VERSION < 0x030200
+  for (i=0;i<workspace()->windowList().count();i++) {
+    QWidget *widget=workspace()->windowList().at(i);
+#else
   for (i=0;i<workspace()->windowList(QWorkspace::CreationOrder).count();i++) {
     QWidget *widget=workspace()->windowList(QWorkspace::CreationOrder).at(i);
+#endif
     if (widget&&!widget->isHidden()) {
       if (first)
 	first=false;
@@ -643,8 +648,13 @@ void toMain::windowsMenu(void)
 	WindowsMenu->insertItem(caption,TO_WINDOWS_WINDOWS+i);
       else
 	WindowsMenu->changeItem(TO_WINDOWS_WINDOWS+i,caption);
+#if QT_VERSION < 0x030200
+      WindowsMenu->setItemChecked(TO_WINDOWS_WINDOWS+i,
+				  workspace()->activeWindow()==workspace()->windowList().at(i));
+#else
       WindowsMenu->setItemChecked(TO_WINDOWS_WINDOWS+i,
 				  workspace()->activeWindow()==workspace()->windowList(QWorkspace::CreationOrder).at(i));
+#endif
       if (i<9) {
 	WindowsMenu->setAccel(Key_1+id|CTRL,TO_WINDOWS_WINDOWS+i);
 	caption+=QString::fromLatin1(" <");
@@ -683,8 +693,13 @@ void toMain::commandCallback(int cmd)
     if (Tools[cmd-TO_ABOUT_ID_OFFSET])
       Tools[cmd-TO_ABOUT_ID_OFFSET]->about(this);
   } else if (cmd>=TO_WINDOWS_WINDOWS&&cmd<=TO_WINDOWS_END) {
+#if QT_VERSION < 0x030200
+    if (cmd-TO_WINDOWS_WINDOWS<int(workspace()->windowList().count())) {
+      QWidget *widget=workspace()->windowList().at(cmd-TO_WINDOWS_WINDOWS);
+#else
     if (cmd-TO_WINDOWS_WINDOWS<int(workspace()->windowList(QWorkspace::CreationOrder).count())) {
       QWidget *widget=workspace()->windowList(QWorkspace::CreationOrder).at(cmd-TO_WINDOWS_WINDOWS);
+#endif
       widget->raise();
       widget->setFocus();
     }
@@ -812,9 +827,15 @@ void toMain::commandCallback(int cmd)
       toPreferences::displayPreferences(this);
       break;
     case TO_WINDOWS_CLOSE_ALL:
+#if QT_VERSION < 0x030200
+      while (workspace()->windowList().count()>0&&workspace()->windowList().at(0))
+	if (workspace()->windowList().at(0)&&
+	    !workspace()->windowList().at(0)->close(true))
+#else
       while (workspace()->windowList(QWorkspace::CreationOrder).count()>0&&workspace()->windowList(QWorkspace::CreationOrder).at(0))
 	if (workspace()->windowList(QWorkspace::CreationOrder).at(0)&&
 	    !workspace()->windowList(QWorkspace::CreationOrder).at(0)->close(true))
+#endif
 	  return;
       break;
     case TO_WINDOWS_CLOSE:
@@ -1086,7 +1107,7 @@ void toMain::editEnable(toEditWidget *edit)
 		     edit->selectAllEnabled(),
 		     edit->readAllEnabled());
 
-#if QT_VERSION >= 300
+#if QT_VERSION >= 0x030000
     // Set Selection Mode on X11
     QClipboard *clip=qApp->clipboard();
     if(clip->supportsSelection())
@@ -1339,8 +1360,13 @@ void toMain::exportData(std::map<QCString,QString> &data,const QCString &prefix)
     }
 
     id=1;
+#if QT_VERSION < 0x030200
+    for (unsigned int i=0;i<workspace()->windowList().count();i++) {
+      toToolWidget *tool=dynamic_cast<toToolWidget *>(workspace()->windowList().at(i));
+#else
     for (unsigned int i=0;i<workspace()->windowList(QWorkspace::CreationOrder).count();i++) {
       toToolWidget *tool=dynamic_cast<toToolWidget *>(workspace()->windowList(QWorkspace::CreationOrder).at(i));
+#endif
       if (tool) {
 	QCString key=prefix+":Tools:"+QString::number(id).latin1();
 	tool->exportData(data,key);
@@ -1478,10 +1504,17 @@ void toMain::closeSession(void)
   } TOCATCH
 
   // Workaround in bug in Qt 3.0.0
+#if QT_VERSION < 0x030200
+  while (workspace()->windowList().count()>0&&workspace()->windowList().at(0))
+    if (workspace()->windowList().at(0)&&
+	!workspace()->windowList().at(0)->close(true))
+      return;
+#else
   while (workspace()->windowList(QWorkspace::CreationOrder).count()>0&&workspace()->windowList(QWorkspace::CreationOrder).at(0))
     if (workspace()->windowList(QWorkspace::CreationOrder).at(0)&&
 	!workspace()->windowList(QWorkspace::CreationOrder).at(0)->close(true))
       return;
+#endif
   while (Connections.end()!=Connections.begin()) {
     if (!delConnection())
       return;
@@ -1527,7 +1560,7 @@ void toMain::displayMessage(void)
   for(QString str=toShift(StatusMessages);!str.isEmpty();str=toShift(StatusMessages)) {
     toMessageUI dialog(toMainWidget(),NULL,true);
     dialog.Message->setReadOnly(true);
-#if QT_VERSION >= 300
+#if QT_VERSION >= 0x030000
     dialog.Icon->setPixmap(QApplication::style().stylePixmap(QStyle::SP_MessageBoxWarning));
 #endif
     dialog.Message->setText(str);

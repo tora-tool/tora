@@ -391,7 +391,7 @@ QString toDeepCopy(const QString &str)
 }
 
 #ifdef ENABLE_STYLE
-#  if QT_VERSION < 300
+#  if QT_VERSION < 0x030000
 #    include <qmotifstyle.h>
 #    include <qmotifplusstyle.h>
 #    include <qsgistyle.h>
@@ -543,7 +543,7 @@ TODock *toAllocDock(const QString &name,
   KDockMainWindow *main=(KDockMainWindow *)toMainWidget();
   return main->createDockWidget(str,icon);
 #else
-#  if QT_VERSION < 300
+#  if QT_VERSION < 0x030000
   if (toTool::globalConfig(CONF_DOCK_TOOLBAR,"Yes").isEmpty()) {
     QVBox *frm=new QVBox(toMainWidget()->workspace());
     frm->setCaption(str);
@@ -600,7 +600,7 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
     return;
   }
 #else
-#  if QT_VERSION < 300
+#  if QT_VERSION < 0x030000
   if (!toTool::globalConfig(CONF_DOCK_TOOLBAR,"Yes").isEmpty()) {
     QToolBar *bar=(QToolBar *)dock;
     if (bar) {
@@ -622,7 +622,7 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
 
 QString toFontToString(const QFont &fnt)
 {
-#if QT_VERSION >= 300
+#if QT_VERSION >= 0x030000
   return fnt.toString();
 #else
 #  ifdef TO_FONT_RAW_NAME
@@ -643,7 +643,7 @@ QFont toStringToFont(const QString &str)
 {
   if (str.isEmpty())
     return QFont(QString::fromLatin1("Courier"),12);
-#if QT_VERSION >= 300
+#if QT_VERSION >= 0x030000
   QFont fnt;
   if (fnt.fromString(str))
     return fnt;
@@ -658,7 +658,7 @@ QFont toStringToFont(const QString &str)
     return QFont(QString::fromLatin1("Courier"),12);
   return QFont(lst[0],lst[1].toInt(),lst[2].toInt(),
 	       bool(lst[3].toInt())
-#  if QT_VERSION < 300
+#  if QT_VERSION < 0x030000
 	       ,QFont::CharSet(lst[4].toInt())
 #  endif
 	       );
@@ -1293,7 +1293,7 @@ toPopupButton::toPopupButton(const QIconSet &iconSet,const QString &textLabel,
 			     const QString &grouptext,QToolBar *parent,const char *name)
   : QToolButton(iconSet,textLabel,grouptext,NULL,NULL,parent,name)
 {
-#if QT_VERSION >= 300
+#if QT_VERSION >= 0x030000
   connect(this,SIGNAL(clicked()),this,SLOT(click()));
 #endif
   setPopupDelay(0);
@@ -1302,7 +1302,7 @@ toPopupButton::toPopupButton(const QIconSet &iconSet,const QString &textLabel,
 toPopupButton::toPopupButton(QWidget *parent,const char *name)
   : QToolButton(parent,name)
 {
-#if QT_VERSION >= 300
+#if QT_VERSION >= 0x030000
   connect(this,SIGNAL(clicked()),this,SLOT(click()));
 #endif
   setPopupDelay(0);
@@ -1310,7 +1310,7 @@ toPopupButton::toPopupButton(QWidget *parent,const char *name)
 
 void toPopupButton::click(void)
 {
-#if QT_VERSION >= 300
+#if QT_VERSION >= 0x030000
   openPopup();
 #endif
 }

@@ -136,7 +136,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
 #ifdef WIN32
   DesktopAware->hide();
 #endif
-#if QT_VERSION < 300
+#if QT_VERSION < 0x030000
   DockToolbar->setChecked(toTool::globalConfig(CONF_DOCK_TOOLBAR,"Yes"));
 #else
   DockToolbar->hide();
@@ -219,7 +219,7 @@ void toGlobalSetting::saveSetting(void)
 			  QString::number(DefaultFormat->currentItem()));
   toTool::globalSetConfig(CONF_TOAD_BINDINGS,ToadBindings->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DISPLAY_GRIDLINES,DisplayGrid->isChecked()?"Yes":"");
-#if QT_VERSION < 300
+#if QT_VERSION < 0x030000
   toTool::globalSetConfig(CONF_DOCK_TOOLBAR,DockToolbar->isChecked()?"Yes":"");
 #endif
   toTool::globalSetConfig(CONF_CHANGE_CONNECTION,ChangeConnection->isChecked()?"Yes":"");

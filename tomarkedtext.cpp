@@ -41,7 +41,7 @@
 #include "tosearchreplace.h"
 #include "totool.h"
 
-#if QT_VERSION >= 300
+#if QT_VERSION >= 0x030000
 #include "qtlegacy/qtmultilineedit.cpp"
 #include "qtlegacy/qttableview.cpp"
 #include "qtlegacy/qtmultilineedit.moc"

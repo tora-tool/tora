@@ -167,7 +167,7 @@ toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
   ToolBar->addSeparator();
   DisableButton=new QToolButton(ToolBar);
   DisableButton->setToggleButton(true);
-#if QT_VERSION >= 300
+#if QT_VERSION >= 0x030000
   QIconSet iconset;
   iconset.setPixmap(QPixmap((const char **)online_xpm),QIconSet::Automatic,QIconSet::Normal,QIconSet::Off);
   iconset.setPixmap(QPixmap((const char **)offline_xpm),QIconSet::Automatic,QIconSet::Normal,QIconSet::On);

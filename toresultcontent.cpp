@@ -484,7 +484,7 @@ void toResultContentEditor::poll(void)
 	setUpdatesEnabled(false);
 	setNumRows(rows);
 
-#if QT_VERSION >= 300
+#if QT_VERSION >= 0x030000
 	int origRow=Row;
 #endif
 	while(dataSize>0) {
@@ -495,7 +495,7 @@ void toResultContentEditor::poll(void)
 	  }
 	  Row++;
 	}
-#if QT_VERSION >= 300
+#if QT_VERSION >= 0x030000
 	if (numRows()<STOP_RESIZE_ROW)
 	  for(int j=0;j<numCols();j++) {
 	    int width=columnWidth(j);
@@ -1261,7 +1261,7 @@ bool toResultContentEditor::searchNext(toSearchReplace *search)
     if (search->findString(text(row,col),pos,endPos)) {
       setCurrentCell(row,col);
 
-#if QT_VERSION >= 300
+#if QT_VERSION >= 0x030000
       editCell(row,col);
       if (CurrentEditor)
 	CurrentEditor->setSelection(pos,endPos-pos);

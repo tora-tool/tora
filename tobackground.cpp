@@ -333,7 +333,7 @@ public:
 	  }
 	}
 	toMainWidget()->displayMessage(str);
-#if QT_VERSION >= 300
+#if QT_VERSION >= 0x030000
 	e->accept();
 #endif
       } else

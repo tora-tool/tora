@@ -106,7 +106,7 @@ int main(int argc,char **argv)
     QTranslator torats(0);
     torats.load(toPluginPath()+"/"+QString("tora_")+toTool::globalConfig(CONF_LOCALE,QTextCodec::locale()),".");
     qApp->installTranslator(&torats);
-    QTranslator toadbindings;
+    QTranslator toadbindings(0);
     if (!toTool::globalConfig(CONF_TOAD_BINDINGS,DEFAULT_TOAD_BINDINGS).isEmpty()) {
       if (!toadbindings.load(tora_toad,sizeof(tora_toad)))
 	printf("Internal error, couldn't load TOAD bindings");

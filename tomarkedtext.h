@@ -37,7 +37,7 @@
 
 #include "toeditwidget.h"
 
-#if QT_VERSION < 300
+#if QT_VERSION < 0x030000
 #include "tomarkedtext.2.h"
 #else
 #include "qtlegacy/qttableview.h"
