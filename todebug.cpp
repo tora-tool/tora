@@ -2058,7 +2058,7 @@ bool toDebugText::compile(void)
   if (!str.isEmpty()) {
     bool inWord=false;
     int curWord=0;
-    QString words[6];
+    QString words[10];
     bool body=false;
     int begin[6];
 
@@ -2066,7 +2066,7 @@ bool toDebugText::compile(void)
       if (str.at(i).isSpace()) {
 	if (inWord) {
 	  curWord++;
-	  if (curWord>=6)
+	  if (curWord>=10)
 	    break;
 	  inWord=false;
 	}
@@ -2079,16 +2079,23 @@ bool toDebugText::compile(void)
       }
     }
 
-    if (words[0].upper()!="PROCEDURE"&&
-	words[0].upper()!="TYPE"&&
-	words[0].upper()!="FUNCTION"&&
-	words[0].upper()!="PACKAGE") {
+    int word=0;
+    if (words[word].upper()=="CREATE") {
+      word++;
+      if (words[word].upper()=="OR"&&words[word+1].upper()=="REPLACE")
+	word+=2;
+    }
+
+    if (words[word].upper()!="PROCEDURE"&&
+	words[word].upper()!="TYPE"&&
+	words[word].upper()!="FUNCTION"&&
+	words[word].upper()!="PACKAGE") {
       toStatusMessage("Invalid start of code");
       return false;
     }
+    word++;
 
-    int word=1;
-    if (words[1].upper()=="BODY") {
+    if (words[word].upper()=="BODY") {
       body=true;
       word++;
     }

@@ -213,7 +213,7 @@ void toMarkedText::editSave(bool askfile)
   QFileInfo file(filename());
   QString fn=filename();
   if (askfile||fn.isEmpty())
-    file=toSaveFilename(file.dirPath(),"*.sql\n*.txt",this);
+    fn=toSaveFilename(file.dirPath(),"*.sql\n*.txt",this);
   if (!fn.isEmpty()) {
     if (!toWriteFile(fn,text()))
       return;

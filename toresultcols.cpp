@@ -199,12 +199,6 @@ toResultCols::toResultCols(QWidget *parent,const char *name)
   Columns=new resultCols(this);
 }
 
-static toSQL SQLTableComment("toResultCols:TableComments",
-			     "SELECT Comments FROM All_Tab_Comments\n"
-			     " WHERE Owner = :f1<char[100]>\n"
-			     "   AND Table_Name = :f2<char[100]>",
-			     "Display column comments");
-
 void toResultCols::query(const QString &,const toQList &param)
 {
   toQList subp;
