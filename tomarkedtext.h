@@ -164,6 +164,7 @@ public:
 
 protected:
   virtual void newLine(void);
+  virtual void dropEvent(QDropEvent *);
 private slots:
   void setRedoAvailable(bool avail)
   { redoEnabled(avail); }

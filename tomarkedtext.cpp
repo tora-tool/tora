@@ -107,6 +107,12 @@ void toMarkedText::focusInEvent (QFocusEvent *e)
   toMultiLineEdit::focusInEvent(e);
 }
 
+void toMarkedText::dropEvent(QDropEvent *e)
+{
+  toMultiLineEdit::dropEvent(e);
+  setFocus();
+}
+
 void toMarkedText::paintEvent(QPaintEvent *pe)
 {
   toMultiLineEdit::paintEvent(pe);
