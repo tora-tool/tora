@@ -2792,7 +2792,7 @@ void toOracleExtract::describeAttributes(toExtract &ext,
   QString ret;
   if (organization == "HEAP") {
     if (cache!="N/A")
-      addDescription(dsp,ctx,cache);
+      addDescription(dsp,ctx,"PARAMETERS",cache);
     if (!ext.state("IsASnapIndex").toBool())
       addDescription(dsp,ctx,"PARAMETERS",QString("PCTUSED %1").arg(pctUsed));
   }
@@ -2814,7 +2814,7 @@ void toOracleExtract::describeAttributes(toExtract &ext,
     addDescription(dsp,ctx,"STORAGE",QString("BUFFER_POOL %1").arg(QUOTE(bufferPool)));
   }
   if (CONNECTION.version()>="8.0")
-    addDescription(dsp,ctx,QString("%1").arg(logging));
+    addDescription(dsp,ctx,"PARAMETERS",QString("%1").arg(logging));
   addDescription(dsp,ctx,"PARAMETERS",QString("TABLESPACE %1").arg(QUOTE(tablespace)));
 }
 
@@ -2849,13 +2849,13 @@ void toOracleExtract::describePrivs(toExtract &ext,
   toQList result=toQuery::readQueryNull(CONNECTION,SQLRolePrivs,name);
   while(result.size()>0) {
     QString role=QUOTE(toShift(result));
-    addDescription(lst,ctx,"GRANT","ROLE",role,toShift(result));
+    addDescription(lst,ctx,"GRANT","ROLE "+role+" "+toShift(result));
   }
 
   result=toQuery::readQueryNull(CONNECTION,SQLSystemPrivs,name);
   while(result.size()>0) {
     QString priv=QString(toShift(result)).lower();
-    addDescription(lst,ctx,"GRANT",priv,toShift(result));
+    addDescription(lst,ctx,"GRANT",priv+" "+toShift(result));
   }
 
   result=toQuery::readQueryNull(CONNECTION,SQLObjectPrivs,name);
@@ -2867,7 +2867,7 @@ void toOracleExtract::describePrivs(toExtract &ext,
     if (!schema.isEmpty())
       res+=".";
     res+=QUOTE(toShift(result));
-    addDescription(lst,ctx,"GRANT",priv.lower(),res,toShift(result));
+    addDescription(lst,ctx,"GRANT",priv.lower(),res+" "+toShift(result));
   }
 }
 
@@ -3361,9 +3361,9 @@ void toOracleExtract::describeTableText(toExtract &ext,
   addDescription(lst,ctx);
   describeTableColumns(ext,lst,ctx,owner,name);
   if (CONNECTION.version()>="8.0"&&ext.getStorage())
-    addDescription(lst,ctx,QString("ORGANIZATION %1").arg(organization));
+    addDescription(lst,ctx,"PARAMETERS",QString("ORGANIZATION %1").arg(organization));
   if (CONNECTION.version()>="8.1"&&ext.getStorage())
-    addDescription(lst,ctx,monitoring);
+    addDescription(lst,ctx,"PARAMETERS",monitoring);
   if (ext.getParallel()) {
     addDescription(lst,ctx,"PARALLEL",QString("DEGREE %1").arg(degree));
     addDescription(lst,ctx,"PARALLEL",QString("INSTANCES %1").arg(instances));
