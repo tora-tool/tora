@@ -44,11 +44,11 @@ TO_NAMESPACE;
 
 class toResultStorageItem : public QListViewItem {
 public:
-  toResultStorageItem(QListView *parent,QListViewItem *after,const char *buffer=NULL)
-    : QListViewItem(parent,after,buffer)
+  toResultStorageItem(QListView *parent,QListViewItem *after,const QString &buf=QString::null)
+    : QListViewItem(parent,after,buf)
   { }
-  toResultStorageItem(QListViewItem *parent,QListViewItem *after,const char *buffer=NULL)
-    : QListViewItem(parent,after,buffer)
+  toResultStorageItem(QListViewItem *parent,QListViewItem *after,const QString &buf=QString::null)
+    : QListViewItem(parent,after,buf)
   { }
   virtual void paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align)
   {

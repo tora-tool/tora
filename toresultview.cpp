@@ -727,7 +727,7 @@ void toResultView::addItem(void)
       RowNumber++;
       int disp=0;
       QListViewItem *last=LastItem;
-      LastItem=createItem(this,LastItem,NULL);
+      LastItem=createItem(LastItem,NULL);
       if (NumberColumn) {
 	LastItem->setText(0,QString::number(RowNumber));
 	disp=1;

@@ -51,8 +51,26 @@ TO_NAMESPACE;
 #include "totool.h"
 #include "tomain.h"
 #include "toconf.h"
+#include "toconnection.h"
 
 #include "totool.moc"
+
+toToolWidget::toToolWidget(QWidget *parent,toConnection &conn,const char *name)
+  : QVBox(parent,name,WDestructiveClose)
+{
+  Connection=&conn;
+  Connection->addWidget(this);
+}
+
+toToolWidget::~toToolWidget()
+{
+  Connection->delWidget(this);
+}
+
+otl_connect &toToolWidget::otlConnect()
+{
+  return Connection->connection();
+}
 
 map<QString,toTool *> *toTool::Tools;
 map<QString,QString> *toTool::Configuration;

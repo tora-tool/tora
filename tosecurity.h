@@ -37,8 +37,8 @@
 
 #include <list>
 
-#include <qvbox.h>
 #include <qlistview.h>
+#include "totool.h"
 
 class toConnection;
 class toResultView;
@@ -87,7 +87,7 @@ public slots:
   virtual void changed(QListViewItem *item);
 };
 
-class toSecurity : public QVBox {
+class toSecurity : public toToolWidget {
   Q_OBJECT
 
   struct privilege {
@@ -104,8 +104,6 @@ class toSecurity : public QVBox {
 
   QString UserID;
 
-  toConnection &Connection;
-
   toResultView *UserList;
   toSecuritySystem *SystemGrant;
   toSecurityRoleGrant *RoleGrant;
@@ -118,7 +116,6 @@ class toSecurity : public QVBox {
   list<QString> sql(void);
 public:
   toSecurity(QWidget *parent,toConnection &connection);
-  virtual ~toSecurity();
   virtual void changeUser(bool);
 
 public slots:

@@ -132,7 +132,7 @@ static QPixmap *toOnlinePixmap;
 static QPixmap *toOfflinePixmap;
 
 toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
-  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
+  : toToolWidget(main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -175,7 +175,6 @@ toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
   Timer=new QTimer(this);
   connect(Timer,SIGNAL(timeout(void)),this,SLOT(refresh(void)));
   toRefreshParse(Timer,OutputTool.config(CONF_POLLING,DEFAULT_POLLING));
-  Connection.addWidget(this);
   if (enabled)
     disable(false);
 }
@@ -196,25 +195,25 @@ void toOutput::disable(bool dis)
 {
   try {
     if (dis)
-      otl_cursor::direct_exec(Connection.connection(),
-			      SQLDisable(Connection));
+      otl_cursor::direct_exec(otlConnect(),
+			      SQLDisable(connection()));
     else
-      otl_cursor::direct_exec(Connection.connection(),
-			      SQLEnable(Connection));
-    list<otl_connect *> &other=Connection.otherSessions();
+      otl_cursor::direct_exec(otlConnect(),
+			      SQLEnable(connection()));
+    list<otl_connect *> &other=connection().otherSessions();
     for(list<otl_connect *>::iterator i=other.begin();i!=other.end();i++) {
       if (dis)
 	otl_cursor::direct_exec(*(*i),
-				SQLDisable(Connection));
+				SQLDisable(connection()));
       else
 	otl_cursor::direct_exec(*(*i),
-				SQLEnable(Connection));
+				SQLEnable(connection()));
     }
-    QString str=QString::fromUtf8(SQLEnable(Connection));
+    QString str=QString::fromUtf8(SQLEnable(connection()));
     if (dis)
-      Connection.delInit(str);
+      connection().delInit(str);
     else
-      Connection.addInit(str);
+      connection().addInit(str);
   } catch (...) {
     toStatusMessage("Couldn't enable/disable output for session");
   }
@@ -223,8 +222,7 @@ void toOutput::disable(bool dis)
 toOutput::~toOutput()
 {
   disable(true);
-  OutputTool.closeWindow(Connection);
-  Connection.delWidget(this);
+  OutputTool.closeWindow(connection());
 }
 
 static toSQL SQLLines("toOutput:Poll",
@@ -240,7 +238,7 @@ void toOutput::poll(otl_connect &conn)
     int numlines;
     do {
       otl_stream query(1,
-		       SQLLines(Connection),
+		       SQLLines(connection()),
 		       conn);
       query<<254;
       otl_cstr_tab<257,255> lines;
@@ -254,8 +252,8 @@ void toOutput::poll(otl_connect &conn)
 
 void toOutput::refresh(void)
 {
-  poll(Connection.connection());
-  list<otl_connect *> &other=Connection.otherSessions();
+  poll(otlConnect());
+  list<otl_connect *> &other=connection().otherSessions();
   for(list<otl_connect *>::iterator i=other.begin();i!=other.end();i++)
     poll(*(*i));
 }

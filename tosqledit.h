@@ -35,7 +35,7 @@
 #ifndef __TOSQLEDIT_H
 #define __TOSQLEDIT_H
 
-#include <qvbox.h>
+#include "totool.h"
 
 class toWorksheet;
 class toMarkedText;
@@ -44,7 +44,7 @@ class QListView;
 class QLineEdit;
 class QToolButton;
 
-class toSQLEdit : public QVBox {
+class toSQLEdit : public toToolWidget {
   Q_OBJECT
 
   QListView *Statements;
@@ -58,7 +58,6 @@ class toSQLEdit : public QVBox {
   QString Filename;
 
 protected:
-  toConnection &Connection;
   void updateStatements(const QString &def=QString::null);
 
   bool checkStore(bool);

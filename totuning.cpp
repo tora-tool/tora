@@ -134,7 +134,7 @@ static toTuningTool TuningTool;
 static QPixmap *toRefreshPixmap;
 
 toTuning::toTuning(QWidget *main,toConnection &connection)
-  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
+  : toToolWidget(main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -156,16 +156,10 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Indicators->addColumn("Reference");
   Tabs->addTab(Indicators,"Indicators");
 
-  Statistics=new toResultStats(Connection,Tabs);
+  Statistics=new toResultStats(connection,Tabs);
   Tabs->addTab(Statistics,"Statistics");
 
-  Connection.addWidget(this);
   refresh();
-}
-
-toTuning::~toTuning()
-{
-  Connection.delWidget(this);
 }
 
 void toTuning::refresh(void)
@@ -176,7 +170,7 @@ void toTuning::refresh(void)
   QListViewItem *last=NULL;
   for(list<QString>::iterator i=val.begin();i!=val.end();i++) {
     try {
-      list<QString> val=toReadQuery(Connection,toSQL::sql(*i,Connection));
+      list<QString> val=toReadQuery(connection(),toSQL::sql(*i,connection()));
       QStringList parts=QStringList::split(":",*i);
       if (!parent||parent->text(0)!=parts[1]) {
 	parent=new toResultViewItem(Indicators,NULL,parts[1]);

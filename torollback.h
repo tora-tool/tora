@@ -35,8 +35,8 @@
 #ifndef __TOSGATRACE_H
 #define __TOSGATRACE_H
 
-#include <qvbox.h>
 #include <qdialog.h>
+#include "totool.h"
 
 class QCheckBox;
 class QComboBox;
@@ -76,7 +76,7 @@ public slots:
   void valueChanged(const QString &str);
 };
 
-class toRollback : public QVBox {
+class toRollback : public toToolWidget {
   Q_OBJECT
 
   toResultView *Segments;
@@ -88,7 +88,6 @@ class toRollback : public QVBox {
   toResultItem *CurrentTransaction;
 
   QTimer *Timer;
-  toConnection &Connection;
 
   QToolButton *OnlineButton;
   QToolButton *OfflineButton;

@@ -97,7 +97,7 @@ static toSQL SQLParameters("toCurrent:Parameters",
 			   "Display parameters of Oracle server");
 
 toCurrent::toCurrent(QWidget *main,toConnection &connection)
-  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
+  : toToolWidget(main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -119,22 +119,20 @@ toCurrent::toCurrent(QWidget *main,toConnection &connection)
   Grants->addColumn("Grantable");
   Grants->setRootIsDecorated(true);
   Tabs->addTab(Grants,"Grants");
-  Version=new toResultView(true,false,Connection,Tabs);
+  Version=new toResultView(true,false,connection,Tabs);
   Version->setSQL(SQLVersion);
   Tabs->addTab(Version,"Version");
-  Parameters=new toResultView(true,false,Connection,Tabs);
+  Parameters=new toResultView(true,false,connection,Tabs);
   Parameters->setSQL(SQLParameters);
   Tabs->addTab(Parameters,"Parameters");
-  Statistics=new toResultStats(false,Connection,Tabs);
+  Statistics=new toResultStats(false,connection,Tabs);
   Tabs->addTab(Statistics,"Statistics");
-  Connection.addWidget(this);
   refresh();
 }
 
 toCurrent::~toCurrent()
 {
-  CurrentTool.closeWindow(Connection);
-  Connection.delWidget(this);
+  CurrentTool.closeWindow(connection());
 }
 
 static toSQL SQLRoleTabPrivs("toCurrent:RoleTabPrivs",
@@ -163,7 +161,7 @@ static toSQL SQLUserRolePrivs("toCurrent:UserRolePrivs",
 
 void toCurrent::addList(QListViewItem *parent,const QString &type,toSQL &sql,const QString &role)
 {
-  list<QString> result=toReadQuery(Connection,sql(Connection),role);
+  list<QString> result=toReadQuery(connection(),sql(connection()),role);
   while(result.size()>0) {
     QListViewItem *item;
     if (parent)
@@ -180,7 +178,7 @@ void toCurrent::addRole(QListViewItem *parent)
 {
   addList(parent,"System",SQLRoleSysPrivs,parent->text(0));
   addList(parent,"Object",SQLRoleTabPrivs,parent->text(0));
-  list<QString> result=toReadQuery(Connection,SQLRoleRolePrivs(Connection),parent->text(0));
+  list<QString> result=toReadQuery(connection(),SQLRoleRolePrivs(connection()),parent->text(0));
   while(result.size()>0) {
     QListViewItem *item;
     item=new toResultViewItem(parent,NULL);
@@ -202,7 +200,7 @@ void toCurrent::refresh()
   addList(NULL,"System",SQLUserSysPrivs);
   addList(NULL,"Object",SQLUserTabPrivs);
 
-  list<QString> result=toReadQuery(Connection,SQLUserRolePrivs(Connection));
+  list<QString> result=toReadQuery(connection(),SQLUserRolePrivs(connection()));
   while(result.size()>0) {
     QListViewItem *item;
     item=new toResultViewItem(Grants,NULL);

@@ -633,7 +633,7 @@ static QPixmap *toWriteTablespacePixmap;
 static QPixmap *toModFilePixmap;
 
 toStorage::toStorage(QWidget *main,toConnection &connection)
-  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
+  : toToolWidget(main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -738,18 +738,12 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
  
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
-  Storage=new toResultStorage(Connection,this);
+  Storage=new toResultStorage(connection,this);
 
   connect(Storage,SIGNAL(selectionChanged(void)),this,SLOT(selectionChanged(void)));
 
   refresh();
   selectionChanged();
-  Connection.addWidget(this);
-}
-
-toStorage::~toStorage()
-{
-  Connection.delWidget(this);
 }
 
 void toStorage::refresh(void)
@@ -765,7 +759,7 @@ void toStorage::coalesce(void)
     str="ALTER TABLESPACE \"";
     str.append(Storage->currentTablespace());
     str.append("\" COALESCE");
-    otl_cursor::direct_exec(Connection.connection(),
+    otl_cursor::direct_exec(otlConnect(),
 			    str.utf8());
     refresh();
   } TOCATCH
@@ -778,7 +772,7 @@ void toStorage::online(void)
     str="ALTER TABLESPACE \"";
     str.append(Storage->currentTablespace());
     str.append("\" ONLINE");
-    otl_cursor::direct_exec(Connection.connection(),
+    otl_cursor::direct_exec(otlConnect(),
 			    str.utf8());
     refresh();
   } TOCATCH
@@ -791,7 +785,7 @@ void toStorage::logging(void)
     str="ALTER TABLESPACE \"";
     str.append(Storage->currentTablespace());
     str.append("\" LOGGING");
-    otl_cursor::direct_exec(Connection.connection(),
+    otl_cursor::direct_exec(otlConnect(),
 			    str.utf8());
     refresh();
   } TOCATCH
@@ -804,7 +798,7 @@ void toStorage::noLogging(void)
     str="ALTER TABLESPACE \"";
     str.append(Storage->currentTablespace());
     str.append("\" NOLOGGING");
-    otl_cursor::direct_exec(Connection.connection(),
+    otl_cursor::direct_exec(otlConnect(),
 			    str.utf8());
     refresh();
   } TOCATCH
@@ -817,7 +811,7 @@ void toStorage::readOnly(void)
     str="ALTER TABLESPACE \"";
     str.append(Storage->currentTablespace());
     str.append("\" READ ONLY");
-    otl_cursor::direct_exec(Connection.connection(),
+    otl_cursor::direct_exec(otlConnect(),
 			    str.utf8());
     refresh();
   } TOCATCH
@@ -830,7 +824,7 @@ void toStorage::readWrite(void)
     str="ALTER TABLESPACE \"";
     str.append(Storage->currentTablespace());
     str.append("\" READ WRITE");
-    otl_cursor::direct_exec(Connection.connection(),
+    otl_cursor::direct_exec(otlConnect(),
 			    str.utf8());
     refresh();
   } TOCATCH
@@ -858,7 +852,7 @@ void toStorage::offline(void)
     str.append(Storage->currentTablespace());
     str.append("\" OFFLINE ");
     str.append(reason);
-    otl_cursor::direct_exec(Connection.connection(),
+    otl_cursor::direct_exec(otlConnect(),
 			    str.utf8());
     refresh();
   } TOCATCH
@@ -925,7 +919,7 @@ void toStorage::newDatafile(void)
       str.append(Storage->currentTablespace());
       str.append("\" ADD DATAFILE ");
       str.append(newFile.Datafile->getSQL().join(" "));
-      otl_cursor::direct_exec(Connection.connection(),
+      otl_cursor::direct_exec(otlConnect(),
 			      str.utf8());
       refresh();
     }
@@ -949,7 +943,7 @@ void toStorage::newTablespace(void)
 	str.append(" DEFAULT ");
 	str.append(newSpace.Default->getSQL());
       }
-      otl_cursor::direct_exec(Connection.connection(),
+      otl_cursor::direct_exec(otlConnect(),
 			      str.utf8());
       refresh();
     }
@@ -959,7 +953,7 @@ void toStorage::newTablespace(void)
 void toStorage::modifyTablespace(void)
 {
   try {
-    toStorageDialog modifySpace(Connection,Storage->currentTablespace(),this);
+    toStorageDialog modifySpace(connection(),Storage->currentTablespace(),this);
 
     if (modifySpace.exec()) {
       QString start;
@@ -970,14 +964,14 @@ void toStorage::modifyTablespace(void)
       for (unsigned int i=0;i<opr.count();i++) {
 	QString str=start;
 	str+=opr[i];
-	otl_cursor::direct_exec(Connection.connection(),
+	otl_cursor::direct_exec(otlConnect(),
 				str.utf8());
       }
       if (modifySpace.Tablespace->allowStorage()) {
 	QString str=start;
 	str.append("DEFAULT ");
 	str.append(modifySpace.Default->getSQL());
-	otl_cursor::direct_exec(Connection.connection(),
+	otl_cursor::direct_exec(otlConnect(),
 				str.utf8());
       }
       refresh();
@@ -990,7 +984,7 @@ void toStorage::modifyTablespace(void)
 void toStorage::modifyDatafile(void)
 {
   try {
-    toStorageDialog modifySpace(Connection,Storage->currentTablespace(),
+    toStorageDialog modifySpace(connection(),Storage->currentTablespace(),
 				Storage->currentFilename(),this);
 
     if (modifySpace.exec()) {
@@ -999,7 +993,7 @@ void toStorage::modifyDatafile(void)
       for (unsigned int i=0;i<opr.count();i++) {
 	QString str=start;
 	str+=opr[i];
-	otl_cursor::direct_exec(Connection.connection(),
+	otl_cursor::direct_exec(otlConnect(),
 				str.utf8());
       }
       refresh();
@@ -1023,7 +1017,7 @@ void toStorage::moveFile(void)
       str.append("' TO '");
       str.append(file);
       str.append("'");
-      otl_cursor::direct_exec(Connection.connection(),
+      otl_cursor::direct_exec(otlConnect(),
 			      str.utf8());
       refresh();
     }

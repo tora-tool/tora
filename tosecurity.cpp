@@ -1307,7 +1307,7 @@ void toSecurityRoleGrant::changeUser(bool user,const QString &username)
 }
 
 toSecurity::toSecurity(QWidget *main,toConnection &connection)
-  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
+  : toToolWidget(main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -1360,32 +1360,25 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   CopyButton->setEnabled(false);
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
-  Connection.addWidget(this);
-
   QSplitter *splitter=new QSplitter(Horizontal,this);
-  UserList=new toResultView(false,false,Connection,splitter);
+  UserList=new toResultView(false,false,connection,splitter);
   UserList->addColumn("Users/Roles");
   UserList->setSQLName("toSecurity:Users/Roles");
   UserList->setRootIsDecorated(true);
   Tabs=new QTabWidget(splitter);
-  Quota=new toSecurityQuota(Connection,Tabs);
-  General=new toSecurityPage(Quota,Connection,Tabs);
+  Quota=new toSecurityQuota(connection,Tabs);
+  General=new toSecurityPage(Quota,connection,Tabs);
   Tabs->addTab(General,"General");
-  RoleGrant=new toSecurityRoleGrant(Connection,Tabs);
+  RoleGrant=new toSecurityRoleGrant(connection,Tabs);
   Tabs->addTab(RoleGrant,"Roles");
-  SystemGrant=new toSecuritySystem(Connection,Tabs);
+  SystemGrant=new toSecuritySystem(connection,Tabs);
   Tabs->addTab(SystemGrant,"System Privileges");
-  ObjectGrant=new toSecurityObject(Connection,Tabs);
+  ObjectGrant=new toSecurityObject(connection,Tabs);
   Tabs->addTab(ObjectGrant,"Object Privileges");
   Tabs->addTab(Quota,"Quota");
   connect(UserList,SIGNAL(currentChanged(QListViewItem *)),
 	  this,SLOT(changeUser(QListViewItem *)));
   refresh();
-}
-
-toSecurity::~toSecurity()
-{
-  Connection.delWidget(this);
 }
 
 list<QString> toSecurity::sql(void)
@@ -1467,8 +1460,8 @@ void toSecurity::refresh(void)
     parent->setOpen(true);
     parent->setSelectable(false);
     otl_stream user(1,
-		    toSQL::sql(toSQL::TOSQL_USERLIST,Connection),
-		    Connection.connection());
+		    toSQL::sql(toSQL::TOSQL_USERLIST,connection()),
+		    otlConnect());
     QListViewItem *item=NULL;
     while(!user.eof()) {
       char buffer[1024];
@@ -1483,8 +1476,8 @@ void toSecurity::refresh(void)
     parent->setOpen(true);
     parent->setSelectable(false);
     otl_stream roles(1,
-		    SQLRoles(Connection),
-		    Connection.connection());
+		    SQLRoles(connection()),
+		    otlConnect());
     item=NULL;
     while(!roles.eof()) {
       char buffer[1024];
@@ -1505,7 +1498,7 @@ void toSecurity::saveChanges()
   list<QString> sqlList=sql();
   for (list<QString>::iterator i=sqlList.begin();i!=sqlList.end();i++) {
     try {
-      otl_cursor::direct_exec(Connection.connection(),(*i).utf8());
+      otl_cursor::direct_exec(otlConnect(),(*i).utf8());
     } TOCATCH
   }
   if (General->user())
@@ -1529,7 +1522,7 @@ void toSecurity::drop()
     str+=UserID.right(UserID.length()-5);
     str+="\"";
     try {
-      otl_cursor::direct_exec(Connection.connection(),str.utf8());
+      otl_cursor::direct_exec(otlConnect(),str.utf8());
       refresh();
       changeUser(false);
     } catch(...) {
@@ -1540,7 +1533,7 @@ void toSecurity::drop()
       case 0:
 	str+=" CASCADE";
 	try {
-	  otl_cursor::direct_exec(Connection.connection(),str.utf8());
+	  otl_cursor::direct_exec(otlConnect(),str.utf8());
 	  refresh();
 	  changeUser(false);
 	} TOCATCH

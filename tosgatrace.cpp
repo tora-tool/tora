@@ -162,7 +162,7 @@ static QComboBox *CreateSort(QWidget *parent,const char *name)
 }
 
 toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
-  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
+  : toToolWidget(main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -193,13 +193,11 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   QSplitter *splitter=new QSplitter(Vertical,this);
 
   Trace=new toResultView(false,false,connection,splitter);
-  Statement=new toSGAStatement(splitter,Connection);
-
-  Connection.addWidget(this);
+  Statement=new toSGAStatement(splitter,connection);
 
   connect(Trace,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
-  CurrentSchema=Connection.user().upper();
+  CurrentSchema=connection.user().upper();
   updateSchemas();
 
   Timer=new QTimer(this);
@@ -217,11 +215,6 @@ void toSGATrace::changeSort(const QString &str)
 void toSGATrace::changeRefresh(const QString &str)
 {
   toRefreshParse(Timer,str);
-}
-
-toSGATrace::~toSGATrace()
-{
-  Connection.delWidget(this);
 }
 
 #define LARGE_BUFFER 4096
@@ -279,8 +272,8 @@ void toSGATrace::updateSchemas(void)
   try {
     Schema->clear();
     otl_stream users(1,
-		     toSQL::sql(toSQL::TOSQL_USERLIST,Connection),
-		     Connection.connection());
+		     toSQL::sql(toSQL::TOSQL_USERLIST,connection()),
+		     otlConnect());
     Schema->insertItem("Any");
     for(int i=0;!users.eof();i++) {
       char buffer[31];

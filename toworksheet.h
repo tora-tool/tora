@@ -35,7 +35,6 @@
 #ifndef __TOWORKSHEET_H
 #define __TOWORKSHEET_H
 
-#include <qvbox.h>
 #include <qmultilineedit.h>
 #include <qframe.h>
 #include <qtoolbutton.h>
@@ -84,7 +83,7 @@ public slots:
   void chooseFile(void);
 };
 
-class toWorksheet : public QVBox {
+class toWorksheet : public toToolWidget {
   Q_OBJECT
 
   toMarkedText *Editor;
@@ -104,8 +103,6 @@ class toWorksheet : public QVBox {
   toResultCols *Columns;
 
   QPopupMenu *ToolMenu;
-
-  toConnection &Connection;
 
   void viewResources(void);
   void query(const QString &str,bool direct);
@@ -131,9 +128,9 @@ public slots:
   void executeStep()
   { execute(false,true); }
   void commitButton()
-  { Connection.commit(); }
+  { connection().commit(); }
   void rollbackButton()
-  { Connection.rollback(); }
+  { connection().rollback(); }
   void eraseLogButton();
   void changeResult(QWidget *widget);
   void windowActivated(QWidget *w);

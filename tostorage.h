@@ -35,8 +35,9 @@
 #ifndef __TOSTORAGE_H
 #define __TOSTORAGE_H
 
-#include <qvbox.h>
 #include <qdialog.h>
+
+#include "totool.h"
 
 class QCheckBox;
 class QGroupBox;
@@ -152,10 +153,8 @@ public slots:
   void allowStorage(bool val);
 };
 
-class toStorage : public QVBox {
+class toStorage : public toToolWidget {
   Q_OBJECT
-
-  toConnection &Connection;
 
   toResultStorage *Storage;
 
@@ -172,7 +171,6 @@ class toStorage : public QVBox {
   QToolButton *ModFileButton;
 public:
   toStorage(QWidget *parent,toConnection &connection);
-  ~toStorage();
 
 public slots:
   void refresh(void);

@@ -38,8 +38,10 @@
 #include <map>
 #include <qstring.h>
 #include <qobject.h>
+#include <qvbox.h>
 
 class toConnection;
+class otl_connect;
 
 /**
  * Abstract baseclass for widgets defining tool settings.
@@ -59,6 +61,31 @@ public:
    * entry using the @ref toTool::setConfig function.
    */
   virtual void saveSetting(void) = 0;
+};
+
+/** Simple baseclass for widgets defining the main tool widget. It is in
+ * no way mandatory and all it does is register the widget in the connetion.
+ */
+class toToolWidget : public QVBox {
+  Q_OBJECT
+  toConnection *Connection;
+public:
+  /** Create widget.
+   * @param parent Parent widget.
+   * @param conn Connection of widget.
+   * @param name Name of widget.
+   */
+  toToolWidget(QWidget *parent,toConnection &conn,const char *name=NULL);
+  ~toToolWidget();
+  /** Get the otl_connect structure of the current connection.
+   * @return Reference to otl_connect object.
+   */
+  otl_connect &otlConnect();
+  /** Get the current connection.
+   * @return Reference to connection.
+   */
+  toConnection &connection()
+  { return *Connection; }
 };
 
 /**

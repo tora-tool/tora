@@ -39,6 +39,10 @@
 
 class QString;
 
+/** Abstract baseclass of widgets that can perform queries. Usefull because you can execute
+ * the query without knowing how it's UI is presented.
+ */
+
 class toResult {
 public:
   toResult(void)
@@ -46,11 +50,29 @@ public:
   virtual ~toResult()
   { }
 
-  virtual void refresh(void) = NULL;
-  virtual void query(const QString &sql,const list<QString> &params) = NULL;
-  virtual void changeParams(const QString &Param1) = NULL;
-  virtual void changeParams(const QString &Param1,const QString &Param2) = NULL;
-  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3) = NULL;
+  /** Re execute last query
+   */
+  virtual void refresh(void) = 0;
+  /** Perform a query.
+   * @param sql Execute an SQL statement.
+   * @param params Parameters needed as input to execute statement.
+   */
+  virtual void query(const QString &sql,const list<QString> &params) = 0;
+  /** Reexecute with changed parameters.
+   * @param Param1 First parameter.
+   */
+  virtual void changeParams(const QString &Param1) = 0;
+  /** Reexecute with changed parameters.
+   * @param Param1 First parameter.
+   * @param Param1 Second parameter.
+   */
+  virtual void changeParams(const QString &Param1,const QString &Param2) = 0;
+  /** Reexecute with changed parameters.
+   * @param Param1 First parameter.
+   * @param Param2 Second parameter.
+   * @param Param3 Third parameter.
+   */
+  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3) = 0;
 };
 
 #endif

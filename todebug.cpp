@@ -374,8 +374,8 @@ public:
 	int ret = -1;
 	do {
 	  otl_stream poll(1,
-			  SQLDebugOutputPoll(Connection),
-			  Connection.connection());
+			  SQLDebugOutputPoll(connection()),
+			  otlConnect());
 	  poll>>ret;
 	  char buffer[101];
           buffer[0] = 0;
@@ -391,11 +391,11 @@ public:
     if (Debugger->isRunning()) {
       try {
 	if (dis)
-	  otl_cursor::direct_exec(Connection.connection(),
-				  SQLDebugOutputDisable(Connection));
+	  otl_cursor::direct_exec(otlConnect(),
+				  SQLDebugOutputDisable(connection()));
 	else
-	  otl_cursor::direct_exec(Connection.connection(),
-				  SQLDebugOutputEnable(Connection));
+	  otl_cursor::direct_exec(otlConnect(),
+				  SQLDebugOutputEnable(connection()));
       } catch (...) {
 	toStatusMessage("Couldn't enable/disable output for session");
       }
@@ -424,7 +424,7 @@ static toSQL SQLDebugInit("toDebug:Initialize",
 void toDebug::targetTask::run(void)
 {
   {
-    toConnection Connection(Parent.Connection);
+    toConnection Connection(Parent.connection());
     otl_stream init(1,
 		    SQLDebugInit(Connection),
 		    Connection.connection());
@@ -957,8 +957,8 @@ int toDebug::sync(void)
 {
   try {
     otl_stream sync(1,
-		    SQLSync(Connection),
-		    Connection.connection());
+		    SQLSync(connection()),
+		    otlConnect());
     int ret;
     int reason;
     do {
@@ -1375,8 +1375,8 @@ void toDebug::updateState(int reason)
     }
     try {
       otl_stream info(1,
-		      SQLRuntimeInfo(Connection),
-		      Connection.connection());
+		      SQLRuntimeInfo(connection()),
+		      otlConnect());
       int ret,depth;
       info>>ret;
       info>>depth;
@@ -1388,8 +1388,8 @@ void toDebug::updateState(int reason)
 	return;
       }
       otl_stream stack(1,
-		       SQLStackTrace(Connection),
-		       Connection.connection());
+		       SQLStackTrace(connection()),
+		       otlConnect());
       char name[31];
       char schema[31];
       int line;
@@ -1422,17 +1422,17 @@ void toDebug::updateState(int reason)
 	  }
 	}
 	otl_stream local(1,
-			 SQLLocalWatch(Connection),
-			 Connection.connection());
+			 SQLLocalWatch(connection()),
+			 otlConnect());
 	otl_stream global(1,
-			  SQLGlobalWatch(Connection),
-			  Connection.connection());
+			  SQLGlobalWatch(connection()),
+			  otlConnect());
 	otl_stream index(1,
-			 SQLLocalIndex(Connection),
-			 Connection.connection());
+			 SQLLocalIndex(connection()),
+			 otlConnect());
 	otl_stream globind(1,
-			   SQLGlobalIndex(Connection),
-			   Connection.connection());
+			   SQLGlobalIndex(connection()),
+			   otlConnect());
   
 	QListViewItem *next=NULL;
 	for (QListViewItem *item=Watch->firstChild();item;item=next) {
@@ -1558,7 +1558,7 @@ bool toDebug::viewSource(const QString &schema,const QString &name,const QString
     ShowButton->setOn(false);
   } else if (!BodyEditor->edited()&&(setCurrent||BodyEditor->current()<0)) {
     BodyEditor->setData(schema,type,name);
-    BodyEditor->readData(Connection,StackTrace);
+    BodyEditor->readData(connection(),StackTrace);
     BodyEditor->setCursorPosition(line-1,0);
     BodyEditor->setFocus();
     updateContent(true);
@@ -1566,7 +1566,7 @@ bool toDebug::viewSource(const QString &schema,const QString &name,const QString
   } else if (!HeadEditor->edited()&&(setCurrent||HeadEditor->current()<0)) {
     toStatusMessage("Reading source into head editor");
     HeadEditor->setData(schema,type,name);
-    HeadEditor->readData(Connection,StackTrace);
+    HeadEditor->readData(connection(),StackTrace);
     HeadEditor->setCursorPosition(line-1,0);
     HeadEditor->setFocus();
     ShowButton->setEnabled(true);
@@ -1618,8 +1618,8 @@ int toDebug::continueExecution(int stopon)
       int ret,reason;
       setDeferedBreakpoints();
       otl_stream cont(1,
-		      SQLContinue(Connection),
-		      Connection.connection());
+		      SQLContinue(connection()),
+		      otlConnect());
       cont<<stopon;
       cont>>ret>>reason;
       if (reason==TO_REASON_TIMEOUT||ret==TO_ERROR_TIMEOUT) {
@@ -1647,8 +1647,7 @@ void toDebug::stop(void)
 }
 
 toDebug::toDebug(QWidget *main,toConnection &connection)
-  : QVBox(main,NULL,WDestructiveClose),Connection(connection),
-    TargetThread()
+  : toToolWidget(main,connection),TargetThread()
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -1825,13 +1824,13 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 
   QSplitter *objSplitter=new QSplitter(Vertical,hsplitter);
 
-  Objects=new toResultView(false,false,Connection,objSplitter);
+  Objects=new toResultView(false,false,connection,objSplitter);
   Objects->addColumn("Objects");
   Objects->setRootIsDecorated(true);
   Objects->setTreeStepSize(10);
   connect(Objects,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changePackage(QListViewItem *)));
-  Contents=new toResultView(false,false,Connection,objSplitter);
+  Contents=new toResultView(false,false,connection,objSplitter);
   Contents->addColumn("Contents");
   Contents->setRootIsDecorated(true);
   Contents->setSorting(-1);
@@ -1839,7 +1838,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   connect(Contents,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeContent(QListViewItem *)));
 
-  StackTrace=new toResultView(false,false,Connection,DebugTabs);
+  StackTrace=new toResultView(false,false,connection,DebugTabs);
   StackTrace->addColumn("Object");
   StackTrace->addColumn("Line");
   StackTrace->addColumn("Schema");
@@ -1853,7 +1852,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   connect(StackTrace,SIGNAL(clicked(QListViewItem *)),
 	  this,SLOT(showSource(QListViewItem *)));
 
-  Watch=new toResultView(false,false,Connection,DebugTabs);
+  Watch=new toResultView(false,false,connection,DebugTabs);
   Watch->addColumn("Schema");
   Watch->addColumn("Object");
   Watch->addColumn("Variable");
@@ -1867,7 +1866,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   connect(Watch,SIGNAL(doubleClicked(QListViewItem *)),
 	  this,SLOT(changeWatch(QListViewItem *)));
 
-  Breakpoints=new toResultView(false,false,Connection,DebugTabs);
+  Breakpoints=new toResultView(false,false,connection,DebugTabs);
   Breakpoints->addColumn("Object");
   Breakpoints->addColumn("Line");
   Breakpoints->addColumn("Schema");
@@ -1880,7 +1879,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   connect(Breakpoints,SIGNAL(clicked(QListViewItem *)),
 	  this,SLOT(showSource(QListViewItem *)));
 
-  Parameters=new toResultView(false,false,Connection,DebugTabs);
+  Parameters=new toResultView(false,false,connection,DebugTabs);
   Parameters->addColumn("Name");
   Parameters->addColumn("Content");
   Parameters->setSorting(-1);
@@ -1889,14 +1888,14 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   Parameters->setAllColumnsShowFocus(true);
   DebugTabs->addTab(Parameters,"&Parameters");
 
-  Output=new toDebugOutput(this,DebugTabs,Connection);
+  Output=new toDebugOutput(this,DebugTabs,connection);
   DebugTabs->addTab(Output,"Debug &Output");
 
   RuntimeLog=new toMarkedText(DebugTabs);
   DebugTabs->addTab(RuntimeLog,"&Runtime Log");
 
-  HeadEditor=new toDebugText(Breakpoints,Connection,hsplitter);
-  BodyEditor=new toDebugText(Breakpoints,Connection,hsplitter);
+  HeadEditor=new toDebugText(Breakpoints,connection,hsplitter);
+  BodyEditor=new toDebugText(Breakpoints,connection,hsplitter);
   HeadEditor->hide();
   connect(HeadEditor,SIGNAL(insertedLines(int,int)),
 	  this,SLOT(reorderContent(int,int)));
@@ -1913,8 +1912,6 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
-
-  Connection.addWidget(this);
 
   refresh();
   startTarget();
@@ -1945,11 +1942,11 @@ void toDebug::startTarget(void)
   ChildSemaphore.down();
   try {
     otl_stream attach(1,
-		      SQLAttach(Connection),
-		      Connection.connection());
+		      SQLAttach(connection()),
+		      otlConnect());
     attach<<TargetID.utf8();
-    otl_cursor::direct_exec(Connection.connection(),
-			    SQLDebugEnable(Connection));
+    otl_cursor::direct_exec(otlConnect(),
+			    SQLDebugEnable(connection()));
   } TOCATCH  // Trying to run somthing after this won't work (And will hang tora I think)
 }
 
@@ -1980,11 +1977,11 @@ void toDebug::refresh(void)
     QString selected=Schema->currentText();
     QString currentSchema;
     if (selected.isEmpty()) {
-      selected=Connection.user().upper();
+      selected=connection().user().upper();
       Schema->clear();
       otl_stream users(1,
-		       toSQL::sql(toSQL::TOSQL_USERLIST,Connection),
-		       Connection.connection());
+		       toSQL::sql(toSQL::TOSQL_USERLIST,connection()),
+		       otlConnect());
       for(int i=0;!users.eof();i++) {
 	char buffer[31];
 	users>>buffer;
@@ -1999,8 +1996,8 @@ void toDebug::refresh(void)
 	}
       Objects->clear();
       otl_stream code(1,
-		      SQLListObjects(Connection),
-		      Connection.connection());
+		      SQLListObjects(connection()),
+		      otlConnect());
       code<<selected.utf8();
       QListViewItem *typeItem=NULL;
       QListViewItem *last=NULL;
@@ -2113,9 +2110,9 @@ void toDebug::updateCurrent()
   QString bodyType=type;
   bodyType+=" BODY";
   BodyEditor->setType(bodyType);
-  if (!BodyEditor->readData(Connection,StackTrace)) {
+  if (!BodyEditor->readData(connection(),StackTrace)) {
     BodyEditor->setType(type);
-    BodyEditor->readData(Connection,StackTrace);
+    BodyEditor->readData(connection(),StackTrace);
     HeadEditor->clear();
     BodyEditor->show();
     HeadEditor->hide();
@@ -2124,7 +2121,7 @@ void toDebug::updateCurrent()
     if (ToolMenu)
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,false);
   } else {
-    HeadEditor->readData(Connection,StackTrace);
+    HeadEditor->readData(connection(),StackTrace);
     ShowButton->setEnabled(true);
     if (ToolMenu)
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
@@ -2300,8 +2297,7 @@ toDebug::~toDebug()
   }
   ChildSemaphore.down();
 
-  DebugTool.closeWindow(Connection);
-  Connection.delWidget(this);
+  DebugTool.closeWindow(connection());
 }
 
 void toDebug::prevError(void)
@@ -2586,14 +2582,14 @@ void toDebug::changeWatch(QListViewItem *item)
       try {
 	if (item->text(0).isEmpty()) {
 	  otl_stream local(1,
-			   SQLChangeLocal(Connection),
-			   Connection.connection());
+			   SQLChangeLocal(connection()),
+			   otlConnect());
 	  local<<assign;
 	  local>>ret;
 	} else {
 	  otl_stream global(1,
-			    SQLChangeGlobal(Connection),
-			    Connection.connection());
+			    SQLChangeGlobal(connection()),
+			    otlConnect());
 	  if (item->text(1).isEmpty())
 	    global<<"";
 	  else

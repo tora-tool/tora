@@ -35,21 +35,19 @@
 #ifndef __TOTUNING_H
 #define __TOTUNING_H
 
-#include <qvbox.h>
+#include "totool.h"
 
 class toConnection;
 class toListView;
 class toResultStats;
 
-class toTuning : public QVBox {
+class toTuning : public toToolWidget {
   Q_OBJECT
 
   toListView *Indicators;
   toResultStats *Statistics;
-  toConnection &Connection;
 public:
   toTuning(QWidget *parent,toConnection &connection);
-  virtual ~toTuning();
 public slots:
   virtual void refresh(void);
 };

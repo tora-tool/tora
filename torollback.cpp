@@ -365,8 +365,8 @@ class toRollbackView : public toResultView {
 public:
   class rollbackItem : public toResultViewItem {
   public:
-    rollbackItem(QListView *parent,QListViewItem *after,const char *buffer=NULL)
-      : toResultViewItem(parent,after,buffer)
+    rollbackItem(QListView *parent,QListViewItem *after,const QString &buf=QString::null)
+      : toResultViewItem(parent,after,buf)
     { }
     virtual void paintCell (QPainter *pnt,const QColorGroup & cg,
 			    int column,int width,int alignment)
@@ -400,8 +400,8 @@ public:
     }
   };
 
-  virtual QListViewItem *createItem(QListView *parent,QListViewItem *last,const char *str)
-  { return new rollbackItem(parent,last,str); }
+  virtual QListViewItem *createItem(QListViewItem *last,const QString &str)
+  { return new rollbackItem(this,last,str); }
 
   toRollbackView(toConnection &conn,QWidget *parent)
     : toResultView(false,false,conn,parent)
@@ -483,8 +483,8 @@ public:
     toRollbackOpen *parent(void)
     { return (toRollbackOpen *)listView(); }
   public:
-    openItem(QListView *parent,QListViewItem *after,const char *buffer=NULL)
-      : toResultViewItem(parent,after,buffer)
+    openItem(QListView *parent,QListViewItem *after,const QString &buf=QString::null)
+      : toResultViewItem(parent,after,buf)
     { }
     virtual void paintCell (QPainter *pnt,const QColorGroup & cg,
 			    int column,int width,int alignment)
@@ -516,8 +516,8 @@ public:
 
   friend openItem;
 
-  virtual QListViewItem *createItem(QListView *parent,QListViewItem *last,const char *str)
-  { return new openItem(parent,last,str); }
+  virtual QListViewItem *createItem(QListViewItem *last,const QString &str)
+  { return new openItem(this,last,str); }
 
   toRollbackOpen(toConnection &conn,QWidget *parent)
     : toResultView(false,false,conn,parent)
@@ -540,7 +540,7 @@ public:
       QListViewItem *last=NULL;
       while(!sql.eof()) {
 	char buffer[1024];
-	QListViewItem *item=createItem(this,last,NULL);
+	QListViewItem *item=createItem(last,NULL);
 	last=item;
 	sql>>buffer;
 	item->setText(0,QString::fromUtf8(buffer));
@@ -638,7 +638,7 @@ static QPixmap *toOnlinePixmap;
 static QPixmap *toOfflinePixmap;
 
 toRollback::toRollback(QWidget *main,toConnection &connection)
-  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
+  : toToolWidget(main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -711,12 +711,6 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
   toRefreshParse(Timer,toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
 
   refresh();
-  Connection.addWidget(this);
-}
-
-toRollback::~toRollback()
-{
-  Connection.delWidget(this);
 }
 
 void toRollback::refresh(void)
@@ -790,10 +784,10 @@ QString toRollback::currentSegment(void)
 
 void toRollback::addSegment(void)
 {
-  toRollbackDialog newSegment(Connection,this);
+  toRollbackDialog newSegment(connection(),this);
   if (newSegment.exec()) {
     try {
-      otl_cursor::direct_exec(Connection.connection(),
+      otl_cursor::direct_exec(otlConnect(),
 			      newSegment.getSQL().utf8());
       refresh();
     } TOCATCH
@@ -807,7 +801,7 @@ void toRollback::offline(void)
     str="ALTER ROLLBACK SEGMENT \"";
     str.append(currentSegment());
     str.append("\" OFFLINE");
-    otl_cursor::direct_exec(Connection.connection(),
+    otl_cursor::direct_exec(otlConnect(),
 			    str.utf8());
     refresh();
   } TOCATCH
@@ -820,7 +814,7 @@ void toRollback::dropSegment(void)
     str="DROP ROLLBACK SEGMENT \"";
     str.append(currentSegment());
     str.append("\"");
-    otl_cursor::direct_exec(Connection.connection(),
+    otl_cursor::direct_exec(otlConnect(),
 			    str.utf8());
     refresh();
   } TOCATCH
@@ -833,7 +827,7 @@ void toRollback::online(void)
     str="ALTER ROLLBACK SEGMENT \"";
     str.append(currentSegment());
     str.append("\" ONLINE");
-    otl_cursor::direct_exec(Connection.connection(),
+    otl_cursor::direct_exec(otlConnect(),
 			    str.utf8());
     refresh();
   } TOCATCH

@@ -35,9 +35,9 @@
 #ifndef __TOBROWSER_H
 #define __TOBROWSER_H
 
-#include <qvbox.h>
 #include <map>
 
+#include "totool.h"
 #include "totemplate.h"
 
 class QComboBox;
@@ -47,10 +47,8 @@ class toResultView;
 class QListViewItem;
 class toResultFilter;
 
-class toBrowser : public QVBox {
+class toBrowser : public toToolWidget {
   Q_OBJECT
-
-  toConnection &Connection;
 
   QComboBox *Schema;
   QTabWidget *TopTab;

@@ -35,7 +35,7 @@
 #ifndef __TODEBUG_H
 #define __TODEBUG_H
 
-#include <qvbox.h>
+#include "totool.h"
 #include "tothread.h"
 #include "tohighlightedtext.h"
 #include "todebugwatch.h"
@@ -80,7 +80,7 @@ class toConnection;
 class QPopupMenu;
 class toMarkedText;
 
-class toDebug : public QVBox {
+class toDebug : public toToolWidget {
   Q_OBJECT
 
   struct debugParam {
@@ -91,8 +91,6 @@ class toDebug : public QVBox {
     bool In;
     bool Out;
   };
-
-  toConnection &Connection;
 
   list<debugParam> CurrentParams;
 

@@ -277,14 +277,14 @@ static QPixmap *toStatisticPixmap;
 void toWorksheet::viewResources(void)
 {
   try {
-    QString address=toSQLToAddress(Connection,QueryString);
+    QString address=toSQLToAddress(connection(),QueryString);
 
     Resources->changeParams(address);
   } TOCATCH
 }
 
 toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
-  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
+  : toToolWidget(main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -388,8 +388,6 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
 		  toolbar);
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
-  Connection.addWidget(this);
-
   connect(ResultTab,SIGNAL(currentChanged(QWidget *)),
 	  this,SLOT(changeResult(QWidget *)));
 
@@ -463,7 +461,7 @@ bool toWorksheet::checkSave(bool input)
       if (!WorksheetTool.config(CONF_CHECK_SAVE,"Yes").isEmpty()) {
 	if (input) {
 	  QString str("Save changes to worksheet for ");
-	  str.append(Connection.connectString());
+	  str.append(connection().connectString());
 	  int ret=TOMessageBox::information(this,
 					    "Save file",
 					    str,
@@ -499,7 +497,6 @@ bool toWorksheet::close(bool del)
 toWorksheet::~toWorksheet()
 {
   checkSave(false);
-  Connection.delWidget(this);
 }
 
 #define LARGE_BUFFER 4096
@@ -593,7 +590,7 @@ void toWorksheet::query(const QString &str,bool direct)
 	try {
 	  otl_stream inf(1,
 			 execSql.utf8(),
-			 Connection.connection());
+			 otlConnect());
 	  list<QString> param=toParamGet::getParam(this,execSql);
 	  {
 	    otl_null null;
@@ -628,7 +625,7 @@ void toWorksheet::query(const QString &str,bool direct)
 
 void toWorksheet::addLog(const QString &sql,const QString &result)
 {
-  QString now=toNow(Connection);
+  QString now=toNow(connection());
   toResultViewItem *item;
 
   if (WorksheetTool.config(CONF_LOG_MULTI,"Yes").isEmpty()) {
@@ -648,9 +645,9 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
   Logging->setCurrentItem(item);
   Logging->ensureItemVisible(item);
   if (!WorksheetTool.config(CONF_AUTO_COMMIT,"").isEmpty())
-    Connection.connection().commit();
+    connection().commit();
   else
-    Connection.setNeedCommit();
+    connection().setNeedCommit();
 }
 
 void NewStatement(void)

@@ -142,7 +142,7 @@ static QPixmap *toCommitPixmap;
 static QPixmap *toTrashPixmap;
 
 toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
-  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
+  : toToolWidget(main,connection)
 {
   if (!toLoadPixmap)
     toLoadPixmap=new QPixmap((const char **)fileopen_xpm);
@@ -192,21 +192,18 @@ toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
   Version->setDuplicatesEnabled(false);
   splitter=new QSplitter(Vertical,vbox);
   Description=new toMarkedText(splitter);
-  Editor=new toWorksheet(splitter,Connection,false);
+  Editor=new toWorksheet(splitter,connection,false);
 
   connect(Statements,SIGNAL(selectionChanged(void)),this,SLOT(selectionChanged(void)));
   connect(Version,SIGNAL(activated(const QString &)),this,SLOT(changeVersion(const QString &)));
   connect(toMainWidget(),SIGNAL(sqlEditor(const QString &)),this,SLOT(editSQL(const QString &)));
 
   updateStatements();
-
-  Connection.addWidget(this);
 }
 
 toSQLEdit::~toSQLEdit()
 {
   SQLEditTool.closeWindow();
-  Connection.delWidget(this);
   toSQL::saveSQL(toTool::globalConfig(CONF_SQL_FILE,DEFAULT_SQL_FILE));
 }
 
@@ -232,7 +229,7 @@ void toSQLEdit::deleteVersion(void)
 {
   toSQL::deleteSQL(Name->text(),Version->currentText());
 
-  selectionChanged(Connection.version());
+  selectionChanged(connection().version());
   if (Version->count()==0) {
     TrashButton->setEnabled(false);
     CommitButton->setEnabled(false);
@@ -305,7 +302,7 @@ void toSQLEdit::changeVersion(const QString &ver)
 void toSQLEdit::selectionChanged(void)
 {
   if (checkStore(false))
-    selectionChanged(Connection.version());
+    selectionChanged(connection().version());
 }
 
 void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
@@ -361,5 +358,5 @@ void toSQLEdit::selectionChanged(const QString &maxver)
 void toSQLEdit::editSQL(const QString &nam)
 {
   if (checkStore(false))
-    changeSQL(nam,Connection.version());
+    changeSQL(nam,connection().version());
 }

@@ -40,14 +40,40 @@
 
 #include <qmainwindow.h>
 
-#ifdef TO_KDE
+#if 0
+/**
+ * The class to use for a printer object.
+ */
+class TOPrinter : public QPrinter {
+
+};
+/**
+ * The class to use for a dock widget.
+ */
+class TODock : public QWidget {
+
+};
+/**
+ * The class to use for a file dialog.
+ */
+class TOFileDialog : public QFileDialog {
+
+};
+/**
+ * The class to use for a messagebox.
+ */
+class TOMessageBox : public QMessageBox {
+
+};
+#endif
+
+#ifndef TO_KDE
 #  include <kapp.h>
 #  include <kdockwidget.h>
 #  if KDE_VERSION < 220
 #    define TOPrinter QPrinter
 #  else
 #    define TOPrinter KPrinter
-
 #    define TO_HAS_KPRINT
 #  endif
 #  define TODock QWidget
@@ -61,31 +87,6 @@
 #  include "tomainwindow.h"
 #endif
 #define TOMessageBox QMessageBox
-
-#if 0
-// KDoc stuff
-
-/**
- * The class to use for a printer object.
- */
-class TOPrinter : public QPrinter {
-};
-/**
- * The class to use for a dock widget.
- */
-class TODock : public QWidget {
-};
-/**
- * The class to use for a file dialog.
- */
-class TOFileDialog : public QFileDialog {
-};
-/**
- * The class to use for a messagebox.
- */
-class TOMessageBox : public QMessageBox {
-};
-#endif
 
 class QWorkspace;
 class QComboBox;
@@ -450,7 +451,7 @@ QString toGetSessionType(void);
  * @param def Default value of the combobox.
  * @param item Combo box to fill. If not specified a new combobox is created.
  */
-QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const char *def=NULL,
+QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const QString &def=QString::null,
 			   QComboBox *item=NULL);
 /** Set a timer with the value from a refresh combobox (See @ref toRefreshCreate).
  * @param timer Timer to set timeout in.

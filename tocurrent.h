@@ -35,13 +35,13 @@
 #ifndef __TOCURRENT_H
 #define __TOCURRENT_H
 
-#include <qvbox.h>
+#include "totool.h"
 
 class toResultView;
 class QTabWidget;
 class toResultStats;
 
-class toCurrent : public QVBox {
+class toCurrent : public toToolWidget {
   Q_OBJECT
 
   QTabWidget *Tabs;
@@ -49,7 +49,6 @@ class toCurrent : public QVBox {
   toListView *Grants;
   toResultView *Parameters;
   toResultStats *Statistics;
-  toConnection &Connection;
   virtual void addRole(QListViewItem *parent);
   virtual void addList(QListViewItem *parent,const QString &typ,toSQL &sql,const QString &role=QString::null);
 public:

@@ -35,8 +35,7 @@
 #ifndef __TOSGATRACE_H
 #define __TOSGATRACE_H
 
-#include <qvbox.h>
-#include <qstring.h>
+#include "totool.h"
 
 class QTabWidget;
 class QTimer;
@@ -48,7 +47,7 @@ class toMain;
 class toResultStats;
 class toResultLock;
 
-class toSession : public QVBox {
+class toSession : public toToolWidget {
   Q_OBJECT
 
   toResultView *Sessions;
@@ -68,14 +67,12 @@ class toSession : public QVBox {
   toResultView *OpenCursors;
 
   QTimer *Timer;
-  toConnection &Connection;
 
   void updateSchemas(void);
   void enableStatistics(bool enable);
 
 public:
   toSession(QWidget *parent,toConnection &connection);
-  virtual ~toSession();
 public slots:
   void changeTab(QWidget *tab);
   void changeItem(QListViewItem *item);

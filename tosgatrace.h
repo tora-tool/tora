@@ -35,8 +35,8 @@
 #ifndef __TOSGATRACE_H
 #define __TOSGATRACE_H
 
-#include <qvbox.h>
 #include <qstring.h>
+#include "totool.h"
 
 class toMain;
 class toResultView;
@@ -48,7 +48,7 @@ class toConnection;
 class toTool;
 class QListViewItem;
 
-class toSGATrace : public QVBox {
+class toSGATrace : public toToolWidget {
   Q_OBJECT
 
   toResultView *Trace;
@@ -59,13 +59,11 @@ class toSGATrace : public QVBox {
   QString CurrentSchema;
   QString CurrentSort;
   QTimer *Timer;
-  toConnection &Connection;
 
   void updateSchemas(void);
 
 public:
   toSGATrace(QWidget *parent,toConnection &connection);
-  virtual ~toSGATrace();
 public slots:
   void changeSchema(const QString &str);
   void changeSort(const QString &str);

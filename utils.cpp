@@ -41,6 +41,8 @@ TO_NAMESPACE;
 #include <ktempfile.h>
 #include <kfiledialog.h>
 #include <kio/netaccess.h>
+#include <kmenubar.h>
+#include <kapp.h>
 #endif
 
 #include <qapplication.h>
@@ -55,10 +57,6 @@ TO_NAMESPACE;
 #include <qfile.h>
 #include <qmessagebox.h>
 #include <qregexp.h>
-
-#ifdef TO_KDE
-#include <kapp.h>
-#endif
 
 #include "tohighlightedtext.h"
 #include "tonewconnection.h"
@@ -205,7 +203,7 @@ toMain *toMainWidget(void)
   return dynamic_cast<toMain *>(qApp->mainWidget());
 }
 
-QComboBox *toRefreshCreate(QWidget *parent,const char *name,const char *def,QComboBox *item)
+QComboBox *toRefreshCreate(QWidget *parent,const char *name,const QString &def,QComboBox *item)
 {
   QComboBox *refresh;
   if (item)
@@ -804,6 +802,11 @@ void toUnSetEnv(const QCString &var)
 #endif
 }
 
+int toToolMenuIndex(void)
+{
+  return toMainWidget()->menuBar()->indexOf(toMain::TO_WINDOWS_MENU);
+}
+
 #ifdef TO_DEBUG_MEMORY
 #  ifndef LARGE_NUMBER
 #    define LARGE_NUMBER 1024
@@ -1021,8 +1024,4 @@ int toDisplayMemLost(void)
   return 0;
 }
 
-int toToolMenuIndex(void)
-{
-  return toMainWidget()->menuBar()->indexOf(TO_WINDOWS_MENU);
-}
 #endif

@@ -107,7 +107,7 @@ static toSQL SQLOpenCursors("toSession:OpenCursor",
 
 
 toSession::toSession(QWidget *main,toConnection &connection)
-  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
+  : toToolWidget(main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -151,26 +151,26 @@ toSession::toSession(QWidget *main,toConnection &connection)
   QSplitter *splitter=new QSplitter(Vertical,this);
   Sessions=new toResultView(false,false,connection,splitter);
   ResultTab=new QTabWidget(splitter);
-  SessionStatistics=new toResultStats(false,0,Connection,ResultTab);
+  SessionStatistics=new toResultStats(false,0,connection,ResultTab);
   ResultTab->addTab(SessionStatistics,"Statistics");
-  ConnectInfo=new toResultView(true,false,Connection,ResultTab);
+  ConnectInfo=new toResultView(true,false,connection,ResultTab);
   ConnectInfo->setSQL(SQLConnectInfo);
   ResultTab->addTab(ConnectInfo,"Connect Info");
-  PendingLocks=new toResultLock(Connection,ResultTab);
+  PendingLocks=new toResultLock(connection,ResultTab);
   ResultTab->addTab(PendingLocks,"Pending Locks");
-  LockedObjects=new toResultView(false,false,Connection,ResultTab);
+  LockedObjects=new toResultView(false,false,connection,ResultTab);
   ResultTab->addTab(LockedObjects,"Locked Objects");
   LockedObjects->setSQL(SQLLockedObject);
-  CurrentStatement=new toSGAStatement(ResultTab,Connection);
+  CurrentStatement=new toSGAStatement(ResultTab,connection);
   ResultTab->addTab(CurrentStatement,"Current Statement");
-  PreviousStatement=new toSGAStatement(ResultTab,Connection);
+  PreviousStatement=new toSGAStatement(ResultTab,connection);
   ResultTab->addTab(PreviousStatement,"Previous Statement");
 
   OpenSplitter=new QSplitter(Horizontal,ResultTab);
   ResultTab->addTab(OpenSplitter,"Open Cursors");
-  OpenCursors=new toResultView(false,true,Connection,OpenSplitter);
+  OpenCursors=new toResultView(false,true,connection,OpenSplitter);
   OpenCursors->setSQL(SQLOpenCursors);
-  OpenStatement=new toSGAStatement(OpenSplitter,Connection);
+  OpenStatement=new toSGAStatement(OpenSplitter,connection);
 
   connect(Sessions,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
@@ -179,19 +179,12 @@ toSession::toSession(QWidget *main,toConnection &connection)
   connect(ResultTab,SIGNAL(currentChanged(QWidget *)),
 	  this,SLOT(changeTab(QWidget *)));
 
-  Connection.addWidget(this);
-
   Timer=new QTimer(this);
   connect(Timer,SIGNAL(timeout(void)),this,SLOT(refresh(void)));
   toRefreshParse(Timer,toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
   CurrentTab=SessionStatistics;
   CurrentItem=NULL;
   refresh();
-}
-
-toSession::~toSession()
-{
-  Connection.delWidget(this);
 }
 
 static toSQL SQLSessions("toSession:ListSession",
@@ -243,7 +236,7 @@ void toSession::enableStatistics(bool enable)
   try {
     otl_stream str(1,
 		   sql.utf8(),
-		   Connection.connection());
+		   otlConnect());
   } catch (...) {
     toStatusMessage("No access to timed statistics flags");
   }
@@ -316,7 +309,7 @@ void toSession::disconnectSession(void)
     try {
       otl_stream str(1,
 		     sql.utf8(),
-		     Connection.connection());
+		     otlConnect());
     } TOCATCH
   }
 }

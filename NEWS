@@ -5,6 +5,8 @@
 2001-06-07: Started documenting API using kdoc.
 2001-06-07: Head slightly changed to not confuse kdoc.
 2001-06-07: Minor cleanups in the API.
+2001-06-07: Added toToolWidget as baseclass for tool widgets.
+2001-06-07: Fixed bug in autocommit in worksheet.
 
 0.11: Released 2001-06-03
 
