@@ -228,10 +228,12 @@ void toSQLEdit::deleteVersion(void)
     return;
 
   toSQL::deleteSQL(Name->text(),version,provider);
+  Version->removeItem(Version->currentItem());
 
-  selectionChanged(connection().provider()+":"+connection().version());
   if (Version->count()==0)
     newSQL();
+  else
+    selectionChanged(connection().provider()+":"+connection().version());
 }
 
 bool toSQLEdit::close(bool del)
@@ -352,42 +354,46 @@ void toSQLEdit::selectionChanged(void)
 void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
 {
   toSQL::sqlMap sql=toSQL::definitions();
-  toSQL::definition &def=sql[name];
-  std::list<toSQL::version> &ver=def.Versions;
-  
   Name->setText(name);
   Name->setEdited(false);
-  Description->setText(def.Description);
-  Description->setEdited(false);
   
   Version->clear();
   LastVersion="";
-  std::list<toSQL::version>::iterator j=ver.end();
-  int ind;
-  for (std::list<toSQL::version>::iterator i=ver.begin();i!=ver.end();i++) {
-    QString str=(*i).Provider;
-    str+=":";
-    str+=(*i).Version;
-    Version->insertItem(str);
-    if ((*i).Version<=maxver||j==ver.end()) {
-      j=i;
-      LastVersion=str;
-      ind=Version->count()-1;
+  if (sql.find(name)!=sql.end()) {
+    toSQL::definition &def=sql[name];
+    std::list<toSQL::version> &ver=def.Versions;
+  
+    Description->setText(def.Description);
+    Description->setEdited(false);
+
+    std::list<toSQL::version>::iterator j=ver.end();
+    int ind;
+    for (std::list<toSQL::version>::iterator i=ver.begin();i!=ver.end();i++) {
+      QString str=(*i).Provider;
+      str+=":";
+      str+=(*i).Version;
+      Version->insertItem(str);
+      if ((*i).Version<=maxver||j==ver.end()) {
+	j=i;
+	LastVersion=str;
+	ind=Version->count()-1;
+      }
     }
+    if (j!=ver.end()) {
+      Editor->editor()->setText((*j).SQL);
+      TrashButton->setEnabled(true);
+      CommitButton->setEnabled(true);
+      Version->setCurrentItem(ind);
+    }
+  } else {
+    Description->clear();
+    Editor->editor()->clear();
+    TrashButton->setEnabled(false);
+    CommitButton->setEnabled(true);
   }
   if (LastVersion.isEmpty()) {
     LastVersion=connection().provider()+":Any";
     Version->insertItem(LastVersion);
-  }
-  if (j!=ver.end()) {
-    Editor->editor()->setText((*j).SQL);
-    TrashButton->setEnabled(true);
-    CommitButton->setEnabled(true);
-    Version->setCurrentItem(ind);
-  } else {
-    Editor->editor()->clear();
-    TrashButton->setEnabled(false);
-    CommitButton->setEnabled(true);
   }
   Editor->editor()->setEdited(false);
 }

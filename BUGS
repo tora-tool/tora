@@ -32,3 +32,6 @@ toHighlightedText:
 
 toMysqlConnection:
 	Doesn't handle other locales than latin1 correctly.
+
+toSQLEdit:
+	Problems with the left pane when adding or deleting items.
