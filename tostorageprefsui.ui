@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>596</width>
+            <width>592</width>
             <height>480</height>
         </rect>
     </property>
@@ -76,7 +76,7 @@
                         <string>Display object and extent list on startup.</string>
                     </property>
                 </widget>
-                <spacer row="2"  column="0" >
+                <spacer row="3"  column="0" >
                     <property>
                         <name>name</name>
                         <cstring>Spacer1</cstring>
@@ -97,6 +97,21 @@
                         </size>
                     </property>
                 </spacer>
+                <widget row="2"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>DispTablespaces</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Display tablespaces or just datafiles.</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Display tablespaces or just datafiles.</string>
+                    </property>
+                </widget>
             </grid>
         </widget>
     </grid>

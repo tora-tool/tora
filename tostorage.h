@@ -214,6 +214,7 @@ class toStorage : public toToolWidget {
   QToolButton *MoveFileButton;
   QToolButton *ModFileButton;
   QToolButton *ExtentButton;
+  QToolButton *TablespaceButton;
 public:
   toStorage(QWidget *parent,toConnection &connection);
 
@@ -238,6 +239,7 @@ public slots:
   void moveFile(void);
 
   void showExtent(bool);
+  void showTablespaces(bool);
   void selectionChanged(void);
   void selectObject(void);
   void windowActivated(QWidget *widget);

@@ -94,11 +94,12 @@
 #include "icons/tostorage.xpm"
 #include "icons/writetablespace.xpm"
 
+#define CONF_DISP_TABLESPACES "DispTablespaces"
 #define CONF_DISP_COALESCED "DispCoalesced"
 #define CONF_DISP_EXTENTS "DispExtents"
 
 class toStoragePrefs : public toStoragePrefsUI, public toSettingTab
-{ 
+{
   toTool *Tool;
 
 public:
@@ -111,12 +112,14 @@ toStoragePrefs::toStoragePrefs(toTool *tool,QWidget* parent,const char* name)
 {
   DispCoalesced->setChecked(!tool->config(CONF_DISP_COALESCED,"").isEmpty());
   DispExtents->setChecked(!tool->config(CONF_DISP_EXTENTS,"").isEmpty());
+  DispTablespaces->setChecked(!tool->config(CONF_DISP_TABLESPACES,"Yes").isEmpty());
 }
 
 void toStoragePrefs::saveSetting(void)
 {
   Tool->setConfig(CONF_DISP_COALESCED,DispCoalesced->isChecked()?"Yes":"");
   Tool->setConfig(CONF_DISP_EXTENTS,DispExtents->isChecked()?"Yes":"");
+  Tool->setConfig(CONF_DISP_TABLESPACES,DispTablespaces->isChecked()?"Yes":"");
 }
 
 class toStorageTool : public toTool {
@@ -665,6 +668,17 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
     connect(ExtentButton,SIGNAL(toggled(bool)),this,SLOT(showExtent(bool)));
   }
   QToolTip::add(ExtentButton,"Show extent view.");
+
+  TablespaceButton=new QToolButton(toolbar);
+  TablespaceButton->setToggleButton(true);
+  TablespaceButton->setIconSet(QIconSet(QPixmap((const char **)tostorage_xpm)));
+  bool tablespaces=!StorageTool.config(CONF_DISP_TABLESPACES,"Yes").isEmpty();
+  if (tablespaces) {
+    TablespaceButton->setOn(true);
+    connect(TablespaceButton,SIGNAL(toggled(bool)),this,SLOT(showTablespaces(bool)));
+  }
+  QToolTip::add(ExtentButton,"Show tablespaces or just datafiles.");
+
   toolbar->addSeparator();
 
   OnlineButton=new QToolButton(QPixmap((const char **)online_xpm),
@@ -753,6 +767,10 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
     connect(Objects,SIGNAL(selectionChanged(void)),this,SLOT(selectObject(void)));
   } else
     ExtentParent->hide();
+
+  if (!tablespaces)
+    Storage->setOnlyFiles(true);
+
   connect(Storage,SIGNAL(selectionChanged(void)),this,SLOT(selectionChanged(void)));
 
   ToolMenu=NULL;
@@ -958,8 +976,8 @@ void toStorage::selectionChanged(void)
 
   QListViewItem *item=Storage->selectedItem();
   if (item) {
-    if (item->parent()) {
-      Extents->setFile(item->text(13),item->text(12).toInt());
+    if (item->parent()||Storage->onlyFiles()) {
+      Extents->setFile(item->text(12),item->text(13).toInt());
       item=item->parent();
       MoveFileButton->setEnabled(true);
       ModFileButton->setEnabled(true);
@@ -975,30 +993,32 @@ void toStorage::selectionChanged(void)
       objItem->setText(3,QString::number((*i).Size));
     }
 
-    QListViewItem *child=item->firstChild();
-    if (!child) {
-      OnlineButton->setEnabled(true);
-      OfflineButton->setEnabled(true);
-      ReadWriteButton->setEnabled(true);
-      ReadOnlyButton->setEnabled(true);
-    } else {
-      if (child->text(1)=="OFFLINE")
+    if (item) {
+      QListViewItem *child=item->firstChild();
+      if (!child) {
 	OnlineButton->setEnabled(true);
-      else if (child->text(1)=="ONLINE") {
 	OfflineButton->setEnabled(true);
-	if (child->text(2)=="READ ONLY")
-	  ReadWriteButton->setEnabled(true);
-	else
-	  ReadOnlyButton->setEnabled(true);
+	ReadWriteButton->setEnabled(true);
+	ReadOnlyButton->setEnabled(true);
+      } else {
+	if (child->text(1)=="OFFLINE")
+	  OnlineButton->setEnabled(true);
+	else if (child->text(1)=="ONLINE") {
+	  OfflineButton->setEnabled(true);
+	  if (child->text(2)=="READ ONLY")
+	    ReadWriteButton->setEnabled(true);
+	  else
+	    ReadOnlyButton->setEnabled(true);
+	}
       }
-    }
-    if (item->text(4)=="LOGGING")
-      EraseLogButton->setEnabled(true);
-    else
-      LoggingButton->setEnabled(true);
+      if (item->text(4)=="LOGGING")
+	EraseLogButton->setEnabled(true);
+      else
+	LoggingButton->setEnabled(true);
 
-    if (item->text(10)!="100%")
-      CoalesceButton->setEnabled(true);
+      if (item->text(10)!="100%")
+	CoalesceButton->setEnabled(true);
+    }
     NewFileButton->setEnabled(true);
     ModTablespaceButton->setEnabled(true);
   }
@@ -1386,4 +1406,9 @@ void toStorage::showExtent(bool ena)
     disconnect(Storage,SIGNAL(selectionChanged(void)),this,SLOT(selectionChanged(void)));
     ExtentParent->hide();
   }
+}
+
+void toStorage::showTablespaces(bool tab)
+{
+  Storage->setOnlyFiles(!tab);
 }

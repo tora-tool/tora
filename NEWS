@@ -1,5 +1,6 @@
 1.3.2:
 
+2002-01-14: Added support for only files in storage manager.
 2002-01-14: Added contributors to end of about dialog.
 2002-01-14: More PostgreSQL patches. (Thanx Volker Götz)
 2002-01-14: Cache all object types on postgresql connection.
