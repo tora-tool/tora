@@ -26,10 +26,11 @@
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
 <pre>
-//***************************************************************************
-/*
+/*****
+ *
  * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2003 Quest Software, Inc
+ * Copyright (C) 2003-2005 Quest Software, Inc
+ * Portions Copyright (C) 2005 Other Contributors
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,16 +57,18 @@
  *      these libraries without written consent from Quest Software, Inc.
  *      Observe that this does not disallow linking to the Qt Free Edition.
  *
+ *      You may link this product with any GPL'd Qt library such as Qt/Free
+ *
  * All trademarks belong to their respective owners.
  *
- ****************************************************************************/
+ *****/
 
 #ifndef TOSQLPARSE_H
 #define TOSQLPARSE_H
 
-#include &lt;list&gt;
+#include <list>
 
-#include &lt;qstring.h&gt;
+#include <qstring.h>
 
 class toConnection;
 class toMarkedText;
@@ -93,7 +96,7 @@ public:
   class statement {
     /** Subtokens to this token.
      */
-    std::list&lt;statement&gt; *SubTokens;
+    std::list<statement> *SubTokens;
   public:
     /** Type of this token.
      */
@@ -130,22 +133,22 @@ public:
     int Line;
     /** Create statement
      */
-    statement(type ntype=Token,const QString &amp;token=QString::null,int cline=-1);
+    statement(type ntype=Token,const QString &token=QString::null,int cline=-1);
     /** Allocate subtokens if not available and return reference to subtokens
      */
-    std::list&lt;statement&gt; &amp;subTokens();
+    std::list<statement> &subTokens();
     /** Copy constructor
      */
-    statement(const statement &amp;);
+    statement(const statement &);
     /** Copy operator
      */
-    const statement &amp;operator = (const statement &amp;);
+    const statement &operator = (const statement &);
     /** Equality operator. Does not include the line for comparison.
      */
-    bool operator == (const statement &amp;) const;
+    bool operator == (const statement &) const;
     /** Non rquality operator. Does not include the line for comparison.
      */
-    bool operator != (const statement &amp;stat) const
+    bool operator != (const statement &stat) const
       { return !((*this)==stat); }
     /** Destroy statement
      */
@@ -167,8 +170,8 @@ public:
     { Line=line; Offset=offset; Analyzer=NULL; }
     /** Create a tokenizer. Optionally specify which line and offset to start at.
      */
-    tokenizer(toSyntaxAnalyzer &amp;analyzer,int offset=0,int line=0)
-    { Line=line; Offset=offset; Analyzer=&amp;analyzer; }
+    tokenizer(toSyntaxAnalyzer &analyzer,int offset=0,int line=0)
+    { Line=line; Offset=offset; Analyzer=&analyzer; }
     virtual ~tokenizer()
     { }
     /** Get a token from the string.
@@ -179,9 +182,9 @@ public:
     /** Specify the syntax analyzer to use for the tokanizer
      * @param analyzer
      */
-    virtual void setAnalyzer(toSyntaxAnalyzer &amp;analyzer)
-    { Analyzer=&amp;analyzer; }
-    virtual toSyntaxAnalyzer &amp;analyzer();
+    virtual void setAnalyzer(toSyntaxAnalyzer &analyzer)
+    { Analyzer=&analyzer; }
+    virtual toSyntaxAnalyzer &analyzer();
     /** Get the current line of the tokenizer. A line is defined by a \n character
      */
     virtual int line(void)
@@ -210,10 +213,10 @@ public:
   class stringTokenizer : public tokenizer {
     QString String;
   public:
-    stringTokenizer(const QString &amp;str,int offset=0,int line=0)
+    stringTokenizer(const QString &str,int offset=0,int line=0)
       : tokenizer(offset,line)
     { String=str; }
-    stringTokenizer(const QString &amp;str,toSyntaxAnalyzer &amp;analyzer,int offset=0,int line=0)
+    stringTokenizer(const QString &str,toSyntaxAnalyzer &analyzer,int offset=0,int line=0)
       : tokenizer(analyzer,offset,line)
     { String=str; }
     /** Get a token from the string.
@@ -253,67 +256,67 @@ public:
    * @param tokens Tokenizer provider to generate parsed tree from.
    * @return Parsed statement tree.
    */
-  static std::list&lt;statement&gt; parse(tokenizer &amp;tokens);
+  static std::list<statement> parse(tokenizer &tokens);
   /** Parse a string.
    * @param str String to parse.
    * @return Parsed statement tree.
    */
-  static std::list&lt;statement&gt; parse(const QString &amp;str)
+  static std::list<statement> parse(const QString &str)
   { stringTokenizer tokens(str); return parse(tokens); }
   /** Parse a string.
    * @param str String to parse.
    * @param conn Connection to determine SQL dialect. (For future use)
    * @return Parsed statement tree.
    */
-  static std::list&lt;statement&gt; parse(const QString &amp;str,toConnection &amp;conn);
+  static std::list<statement> parse(const QString &str,toConnection &conn);
 
   /** Get one statement (or block) from the root of an editor or string.
    * @param tokens Tokenizer to get tokens from.
    * @param conn Connection to determine SQL dialog. (For future use)
    */
-  static statement parseStatement(tokenizer &amp;tokens);
+  static statement parseStatement(tokenizer &tokens);
   /** Get one statement (or block) from the root of an editor or string.
    * @param str Tokenizer to get tokens from.
    * @param conn Connection to determine SQL dialog. (For future use)
    */
-  static statement parseStatement(const QString &amp;str)
+  static statement parseStatement(const QString &str)
   { stringTokenizer tokens(str); return parseStatement(tokens); }
   /** Get one statement (or block) from the root of an editor or string.
    * @param tokens Tokenizer to get tokens from.
    * @param conn Connection to determine SQL dialog. (For future use)
    */
-  static statement parseStatement(tokenizer &amp;tokens,toConnection &amp;conn);
+  static statement parseStatement(tokenizer &tokens,toConnection &conn);
   /** Get one statement (or block) from the root of an editor or string.
    * @param str Tokenizer to get tokens from.
    * @param conn Connection to determine SQL dialog. (For future use)
    */
-  static statement parseStatement(const QString &amp;str,toConnection &amp;conn)
+  static statement parseStatement(const QString &str,toConnection &conn)
   { stringTokenizer tokens(str); return parseStatement(tokens,conn); }
 
   /** Indent a string.
    * @param str String to indent.
    * @return An indented string.
    */
-  static QString indent(const QString &amp;str);
+  static QString indent(const QString &str);
   /** Indent a parse statement structure into a string.
    * @param stat Statement to indent.
    * @param level Initial indentation level to use.
    * @param syntax The syntax analyzer to use.
    * @return A string with the indented statement.
    */
-  static QString indentStatement(statement &amp;stat,toConnection &amp;conn,int level=0);
+  static QString indentStatement(statement &stat,toConnection &conn,int level=0);
   /** Indent a parse statement structure into a string.
    * @param stat Statement to indent.
    * @param level Initial indentation level to use.
    * @return A string with the indented statement.
    */
-  static QString indentStatement(statement &amp;stat,int level=0);
+  static QString indentStatement(statement &stat,int level=0);
   /** Indent a string.
    * @param str String to indent.
    * @param conn Connection to determine SQL dialect. (For future use)
    * @return An indented string.
    */
-  static QString indent(const QString &amp;str,toConnection &amp;conn);
+  static QString indent(const QString &str,toConnection &conn);
 
   /** Create an indentation string.
    * @param level Number of characters to indent.
@@ -325,33 +328,33 @@ public:
    * @param conn Connection to determine SQL dialect. (For future use)
    * @return An indented string.
    */
-  static QString indent(std::list&lt;statement&gt; &amp;stat,toConnection &amp;conn);
+  static QString indent(std::list<statement> &stat,toConnection &conn);
   /** Indent a string.
    * @param stat List of statements
    * @return An indented string.
    */
-  static QString indent(std::list&lt;statement&gt; &amp;stat);
+  static QString indent(std::list<statement> &stat);
 
   /** Count indentation level of a string.
    * @param str String to check.
    * @param chars Position in string.
    */
-  static int countIndent(const QString &amp;str,int &amp;chars);
+  static int countIndent(const QString &str,int &chars);
   /** Indent a string.
    * @param str String to indent.
    * @param syntax Syntax analyzer to determine SQL dialect. (For future use)
    * @return An indented string.
    */
-  static QString indent(const QString &amp;str,toSyntaxAnalyzer &amp;syntax);
+  static QString indent(const QString &str,toSyntaxAnalyzer &syntax);
   /** Indent a string.
    * @param stat List of statements
    * @param syntax Syntax analyzer to determine SQL dialect. (For future use)
    * @return An indented string.
    */
-  static QString indent(std::list&lt;statement&gt; &amp;stat,toSyntaxAnalyzer &amp;syntax);
+  static QString indent(std::list<statement> &stat,toSyntaxAnalyzer &syntax);
 private:
   static settings Settings;
-  static statement parseStatement(tokenizer &amp;tokens,
+  static statement parseStatement(tokenizer &tokens,
 				  bool declare,bool lst);
   /** Indent a parse statement structure into a string.
    * @param stat Statement to indent.
@@ -359,7 +362,7 @@ private:
    * @param syntax The syntax analyzer to use.
    * @return A string with the indented statement.
    */
-  static QString indentStatement(statement &amp;stat,int level,toSyntaxAnalyzer &amp;conn);
+  static QString indentStatement(statement &stat,int level,toSyntaxAnalyzer &conn);
 public:
   /** Get current settings.
    */
@@ -367,12 +370,15 @@ public:
   { return Settings; }
   /** Get current settings.
    */
-  static void setSetting(const settings &amp;setting)
+  static void setSetting(const settings &setting)
   { Settings=setting; }
 };
 
 #endif
 </pre>
 <HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
 </BODY>
 </HTML>

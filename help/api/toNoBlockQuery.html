@@ -12,8 +12,8 @@
 		<TR><TD valign="top" align="left" cellspacing="10">
 		<h1>class toNoBlockQuery</h1>
 		</TD>
-		<TD valign="top" align="right" colspan="1"> This is class to be able to run a query in the background without
- blocking until a response is available from OCI. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+		<TD valign="top" align="right" colspan="1">
+ <small><A HREF="#longdesc">More...</A></small></TD></TR>
 	</TABLE>
 	<HR>
 	<TABLE BORDER="0">
@@ -27,22 +27,22 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref21">toNoBlockQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,
-		 const QString &amp;sql,
-		 const <A HREF="#toQList">toQList</A> &amp;param,
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref21">toNoBlockQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,
+		 const QString &sql,
+		 const <A HREF="#toQList">toQList</A> &param,
 		 <A HREF="toResultStats.html">toResultStats</A> *statistics=NULL) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref22">toNoBlockQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,
+<LI>&nbsp;<b><A HREF="#ref22">toNoBlockQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,
 		 <A HREF="toQuery.html#queryMode">toQuery::queryMode</A> mode,
-		 const QString &amp;sql,
-		 const <A HREF="#toQList">toQList</A> &amp;param,
+		 const QString &sql,
+		 const <A HREF="#toQList">toQList</A> &param,
 		 <A HREF="toResultStats.html">toResultStats</A> *statistics=NULL) 
 </LI>
 <LI>virtual  &nbsp;<b><A HREF="#ref23">~toNoBlockQuery</A></b> () 
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref24">poll</A></b> (void) 
 </LI>
-<LI><A HREF="#toQDescList">toQDescList</A> &amp;&nbsp;<b><A HREF="#ref25">describe</A></b> (void) 
+<LI><A HREF="#toQDescList">toQDescList</A> &&nbsp;<b><A HREF="#ref25">describe</A></b> (void) 
 </LI>
 <LI><A HREF="toQValue.html">toQValue</A> &nbsp;<b><A HREF="#ref26">readValue</A></b> (void) 
 </LI>
@@ -52,12 +52,45 @@
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref29">eof</A></b> (void) 
 </LI>
-</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This is class to be able to run a query in the background without
- blocking until a response is available from OCI.
- </p>
-<A NAME="toNoBlockQuery"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toNoBlockQuery</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,
-		 const QString &amp;sql,
-		 const <A HREF="#toQList">toQList</A> &amp;param,
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
+</p>
+<p> TOra - An Oracle Toolkit for DBA's and developers
+ Copyright (C) 2003-2005 Quest Software, Inc
+ Portions Copyright (C) 2005 Other Contributors
+</p>
+<p> This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation;  only version 2 of
+ the License is valid for this program.
+</p>
+<p> This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+</p>
+<p> You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+</p>
+<p>      As a special exception, you have permission to link this program
+      with the Oracle Client libraries and distribute executables, as long
+      as you follow the requirements of the GNU GPL in regard to all of the
+      software in the executable aside from Oracle client libraries.
+</p>
+<p>      Specifically you are not permitted to link this program with the
+      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+      And you are not permitted to distribute binaries compiled against
+      these libraries without written consent from Quest Software, Inc.
+      Observe that this does not disallow linking to the Qt Free Edition.
+</p>
+<p>      You may link this product with any GPL'd Qt library such as Qt/Free
+</p>
+<p> All trademarks belong to their respective owners.
+</p>
+<p>***</p>
+<A NAME="toNoBlockQuery"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toNoBlockQuery</strong> (<A HREF="toConnection.html">toConnection</A> &conn,
+		 const QString &sql,
+		 const <A HREF="#toQList">toQList</A> &param,
 		 <A HREF="toResultStats.html">toResultStats</A> *statistics=NULL)
 <br></td><td align="right"><h3><strong>toNoBlockQuery</strong></h3></td></tr></table><p></p><p> Create a new query.
 </p>
@@ -71,10 +104,10 @@
 <TR><TD align="left" valign="top"><i>statistics</i></TD><TD align="left" valign="top">Optional statistics widget to update with values from query.
    </TD></TR>
 </TABLE></P>
-<A NAME="toNoBlockQuery"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toNoBlockQuery</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,
+<A NAME="toNoBlockQuery"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toNoBlockQuery</strong> (<A HREF="toConnection.html">toConnection</A> &conn,
 		 <A HREF="toQuery.html#queryMode">toQuery::queryMode</A> mode,
-		 const QString &amp;sql,
-		 const <A HREF="#toQList">toQList</A> &amp;param,
+		 const QString &sql,
+		 const <A HREF="#toQList">toQList</A> &param,
 		 <A HREF="toResultStats.html">toResultStats</A> *statistics=NULL)
 <br></td><td align="right"><h3><strong>toNoBlockQuery</strong></h3></td></tr></table><p></p><p> Create a new query.
 </p>
@@ -96,7 +129,7 @@
 </p>
 <p><b>Returns</b>: True if at least one row is available.
    </p>
-<A NAME="describe"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#toQDescList">toQDescList</A> &amp;&nbsp;<strong>describe</strong> (void)
+<A NAME="describe"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#toQDescList">toQDescList</A> &&nbsp;<strong>describe</strong> (void)
 <br></td><td align="right"><h3><strong>describe</strong></h3></td></tr></table><p></p><p> Get description of columns.
 </p>
 <p><b>Returns</b>: Description of columns list. Don't modify this list.
@@ -122,5 +155,8 @@
 <p><b>Returns</b>: True if query is done.
    </p>
 <HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
 </BODY>
 </HTML>

@@ -33,29 +33,29 @@
 </LI>
 <LI>struct <A HREF="toExtract__columnInfo.html">columnInfo</A>
 </LI>
-</ul><h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref36">toExtract</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="#QWidget">QWidget</A> *parent) 
+</ul><h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref36">toExtract</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,<A HREF="#QWidget">QWidget</A> *parent) 
 </LI>
-<LI>QString &nbsp;<b><A HREF="#ref37">create</A></b> (std::list&lt;QString&gt; &amp;object) 
+<LI>QString &nbsp;<b><A HREF="#ref37">create</A></b> (std::list<QString> &object) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref38">create</A></b> (<A HREF="#QTextStream">QTextStream</A> &amp;stream,std::list&lt;QString&gt; &amp;object) 
+<LI>void &nbsp;<b><A HREF="#ref38">create</A></b> (<A HREF="#QTextStream">QTextStream</A> &stream,std::list<QString> &object) 
 </LI>
-<LI>std::list&lt;QString&gt; &nbsp;<b><A HREF="#ref39">describe</A></b> (std::list&lt;QString&gt; &amp;object) 
+<LI>std::list<QString> &nbsp;<b><A HREF="#ref39">describe</A></b> (std::list<QString> &object) 
 </LI>
-<LI>QString &nbsp;<b><A HREF="#ref40">drop</A></b> (std::list&lt;QString&gt; &amp;object) 
+<LI>QString &nbsp;<b><A HREF="#ref40">drop</A></b> (std::list<QString> &object) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref41">drop</A></b> (<A HREF="#QTextStream">QTextStream</A> &amp;stream,std::list&lt;QString&gt; &amp;object) 
+<LI>void &nbsp;<b><A HREF="#ref41">drop</A></b> (<A HREF="#QTextStream">QTextStream</A> &stream,std::list<QString> &object) 
 </LI>
-<LI>QString &nbsp;<b><A HREF="#ref42">migrate</A></b> (std::list&lt;QString&gt; &amp;drpLst,std::list&lt;QString&gt; &amp;crtLst) 
+<LI>QString &nbsp;<b><A HREF="#ref42">migrate</A></b> (std::list<QString> &drpLst,std::list<QString> &crtLst) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref43">migrate</A></b> (<A HREF="#QTextStream">QTextStream</A> &amp;stream,std::list&lt;QString&gt; &amp;drpLst,std::list&lt;QString&gt; &amp;crtLst) 
+<LI>void &nbsp;<b><A HREF="#ref43">migrate</A></b> (<A HREF="#QTextStream">QTextStream</A> &stream,std::list<QString> &drpLst,std::list<QString> &crtLst) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref44">setState</A></b> (const QCString &amp;name,const QVariant &amp;val) 
+<LI>void &nbsp;<b><A HREF="#ref44">setState</A></b> (const QCString &name,const QVariant &val) 
 </LI>
-<LI>QVariant &nbsp;<b><A HREF="#ref45">state</A></b> (const QCString &amp;name) 
+<LI>QVariant &nbsp;<b><A HREF="#ref45">state</A></b> (const QCString &name) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref46">setSchema</A></b> (const QString &amp;schema) 
+<LI>void &nbsp;<b><A HREF="#ref46">setSchema</A></b> (const QString &schema) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref47">setResize</A></b> (const QString &amp;resize) 
+<LI>void &nbsp;<b><A HREF="#ref47">setResize</A></b> (const QString &resize) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref48">setPrompt</A></b> (bool prompt) 
 </LI>
@@ -81,7 +81,7 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref59">setBlockSize</A></b> (int val) 
 </LI>
-<LI>const QString &amp;&nbsp;<b><A HREF="#ref60">getSchema</A></b> (void) 
+<LI>const QString &&nbsp;<b><A HREF="#ref60">getSchema</A></b> (void) 
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref61">getResize</A></b> (void) 
 </LI>
@@ -111,40 +111,40 @@
 </LI>
 <LI>int &nbsp;<b><A HREF="#ref74">getBlockSize</A></b> (void) 
 </LI>
-<LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref75">connection</A></b> () 
+<LI><A HREF="toConnection.html">toConnection</A> &&nbsp;<b><A HREF="#ref75">connection</A></b> () 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref76">initialNext</A></b> (const QString &amp;blocks,QString &amp;initial,QString &amp;next) 
+<LI>void &nbsp;<b><A HREF="#ref76">initialNext</A></b> (const QString &blocks,QString &initial,QString &next) 
 </LI>
-<LI>QString &nbsp;<b><A HREF="#ref77">intSchema</A></b> (const QString &amp;owner,bool desc) 
+<LI>QString &nbsp;<b><A HREF="#ref77">intSchema</A></b> (const QString &owner,bool desc) 
 </LI>
-<LI>std::list&lt;datatype&gt; &nbsp;<b><A HREF="#ref78">datatypes</A></b> () 
+<LI>std::list<datatype> &nbsp;<b><A HREF="#ref78">datatypes</A></b> () 
 </LI>
-<LI>QString &nbsp;<b><A HREF="#ref79">createFromParse</A></b> (std::list&lt;<A HREF="toSQLParse__statement.html">toSQLParse::statement</A>&gt;::iterator start,
-			  std::list&lt;<A HREF="toSQLParse__statement.html">toSQLParse::statement</A>&gt;::iterator end) 
+<LI>QString &nbsp;<b><A HREF="#ref79">createFromParse</A></b> (std::list<<A HREF="toSQLParse__statement.html">toSQLParse::statement</A>>::iterator start,
+			  std::list<<A HREF="toSQLParse__statement.html">toSQLParse::statement</A>>::iterator end) 
 </LI>
-</ul><h4>Public Static Methods</h4><ul><LI>static  void &nbsp;<b><A HREF="#ref80">srcDst2DropCreate</A></b> (std::list&lt;QString&gt; &amp;source,std::list&lt;QString&gt; &amp;destination,
-				std::list&lt;QString&gt; &amp;drop,std::list&lt;QString&gt; &amp;creat) 
+</ul><h4>Public Static Methods</h4><ul><LI>static  void &nbsp;<b><A HREF="#ref80">srcDst2DropCreate</A></b> (std::list<QString> &source,std::list<QString> &destination,
+				std::list<QString> &drop,std::list<QString> &creat) 
 </LI>
-<LI>static  bool &nbsp;<b><A HREF="#ref81">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn) 
+<LI>static  bool &nbsp;<b><A HREF="#ref81">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &conn) 
 </LI>
-<LI>static  void &nbsp;<b><A HREF="#ref82">addDescription</A></b> (std::list&lt;QString&gt; &amp;ret,const std::list&lt;QString&gt; &amp;ctx,
-			     const QString &amp;arg1=QString::null,const QString &amp;arg2=QString::null,
-			     const QString &amp;arg3=QString::null,const QString &amp;arg4=QString::null,
-			     const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
-			     const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
-			     const QString &amp;arg9=QString::null) 
+<LI>static  void &nbsp;<b><A HREF="#ref82">addDescription</A></b> (std::list<QString> &ret,const std::list<QString> &ctx,
+			     const QString &arg1=QString::null,const QString &arg2=QString::null,
+			     const QString &arg3=QString::null,const QString &arg4=QString::null,
+			     const QString &arg5=QString::null,const QString &arg6=QString::null,
+			     const QString &arg7=QString::null,const QString &arg8=QString::null,
+			     const QString &arg9=QString::null) 
 </LI>
-<LI>static  std::list&lt;QString&gt; &nbsp;<b><A HREF="#ref83">splitDescribe</A></b> (const QString &amp;str) 
+<LI>static  std::list<QString> &nbsp;<b><A HREF="#ref83">splitDescribe</A></b> (const QString &str) 
 </LI>
-<LI>static  QString &nbsp;<b><A HREF="#ref84">partDescribe</A></b> (const QString &amp;str,int level) 
+<LI>static  QString &nbsp;<b><A HREF="#ref84">partDescribe</A></b> (const QString &str,int level) 
 </LI>
-<LI>static  QString &nbsp;<b><A HREF="#ref85">contextDescribe</A></b> (const QString &amp;str,int level) 
+<LI>static  QString &nbsp;<b><A HREF="#ref85">contextDescribe</A></b> (const QString &str,int level) 
 </LI>
-<LI>static  std::list&lt;columnInfo&gt; &nbsp;<b><A HREF="#ref87">parseColumnDescription</A></b> (std::list&lt;QString&gt;::const_iterator begin,
-						      std::list&lt;QString&gt;::const_iterator end,
+<LI>static  std::list<columnInfo> &nbsp;<b><A HREF="#ref87">parseColumnDescription</A></b> (std::list<QString>::const_iterator begin,
+						      std::list<QString>::const_iterator end,
 						      int level=3) 
 </LI>
-<LI>static  std::list&lt;columnInfo&gt; &nbsp;<b><A HREF="#ref88">parseColumnDescription</A></b> (const std::list&lt;QString&gt; &amp;description,int level=3) 
+<LI>static  std::list<columnInfo> &nbsp;<b><A HREF="#ref88">parseColumnDescription</A></b> (const std::list<QString> &description,int level=3) 
 </LI>
 </ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref89">extractor</A></b></LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
@@ -156,7 +156,7 @@
  that an extractor must be stateless and threadsafe except for constructors and
  destructors. Use the toExtract::context function for saving context.
    </p>
-<A NAME="toExtract"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toExtract</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="#QWidget">QWidget</A> *parent)
+<A NAME="toExtract"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toExtract</strong> (<A HREF="toConnection.html">toConnection</A> &conn,<A HREF="#QWidget">QWidget</A> *parent)
 <br></td><td align="right"><h3><strong>toExtract</strong></h3></td></tr></table><p></p><p> Create a new extractor.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -165,7 +165,7 @@
 <TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent widget of progress indicator.
    </TD></TR>
 </TABLE></P>
-<A NAME="create"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QString &nbsp;<strong>create</strong> (std::list&lt;QString&gt; &amp;object)
+<A NAME="create"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QString &nbsp;<strong>create</strong> (std::list<QString> &object)
 <br></td><td align="right"><h3><strong>create</strong></h3></td></tr></table><p></p><p> Create script to recreate list of objects.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -182,7 +182,7 @@
 </TABLE></P>
 <p><b>Returns</b>: A string containing a script to recreate the specified objects.
    </p>
-<A NAME="create"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>create</strong> (<A HREF="#QTextStream">QTextStream</A> &amp;stream,std::list&lt;QString&gt; &amp;object)
+<A NAME="create"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>create</strong> (<A HREF="#QTextStream">QTextStream</A> &stream,std::list<QString> &object)
 <br></td><td align="right"><h3><strong>create</strong></h3></td></tr></table><p></p><p> Create script to recreate list of objects.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -199,7 +199,7 @@
                TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
    </TD></TR>
 </TABLE></P>
-<A NAME="describe"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;QString&gt; &nbsp;<strong>describe</strong> (std::list&lt;QString&gt; &amp;object)
+<A NAME="describe"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<QString> &nbsp;<strong>describe</strong> (std::list<QString> &object)
 <br></td><td align="right"><h3><strong>describe</strong></h3></td></tr></table><p></p><p> Create a description of objects.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -218,7 +218,7 @@
          considered like a list of strings separated by the character '\001'.
          The later in each string the smaller item the change and it is hierachical.
    </p>
-<A NAME="drop"></A><A NAME="ref40"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QString &nbsp;<strong>drop</strong> (std::list&lt;QString&gt; &amp;object)
+<A NAME="drop"></A><A NAME="ref40"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QString &nbsp;<strong>drop</strong> (std::list<QString> &object)
 <br></td><td align="right"><h3><strong>drop</strong></h3></td></tr></table><p></p><p> Create script to drop a list of objects.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -235,7 +235,7 @@
 </TABLE></P>
 <p><b>Returns</b>: A string containing a script to drop the specified objects.
    </p>
-<A NAME="drop"></A><A NAME="ref41"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>drop</strong> (<A HREF="#QTextStream">QTextStream</A> &amp;stream,std::list&lt;QString&gt; &amp;object)
+<A NAME="drop"></A><A NAME="ref41"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>drop</strong> (<A HREF="#QTextStream">QTextStream</A> &stream,std::list<QString> &object)
 <br></td><td align="right"><h3><strong>drop</strong></h3></td></tr></table><p></p><p> Create script to drop a list of objects.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -254,7 +254,7 @@
 </TABLE></P>
 <p><b>Returns</b>: A string containing a script to drop the specified objects.
    </p>
-<A NAME="migrate"></A><A NAME="ref42"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QString &nbsp;<strong>migrate</strong> (std::list&lt;QString&gt; &amp;drpLst,std::list&lt;QString&gt; &amp;crtLst)
+<A NAME="migrate"></A><A NAME="ref42"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QString &nbsp;<strong>migrate</strong> (std::list<QString> &drpLst,std::list<QString> &crtLst)
 <br></td><td align="right"><h3><strong>migrate</strong></h3></td></tr></table><p></p><p> Called to generate a script to migrate a database object from one description to
  another description.
 </p>
@@ -268,7 +268,7 @@
 </TABLE></P>
 <p><b>Returns</b>: A script to change the src database object to dst.
    </p>
-<A NAME="migrate"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>migrate</strong> (<A HREF="#QTextStream">QTextStream</A> &amp;stream,std::list&lt;QString&gt; &amp;drpLst,std::list&lt;QString&gt; &amp;crtLst)
+<A NAME="migrate"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>migrate</strong> (<A HREF="#QTextStream">QTextStream</A> &stream,std::list<QString> &drpLst,std::list<QString> &crtLst)
 <br></td><td align="right"><h3><strong>migrate</strong></h3></td></tr></table><p></p><p> Called to generate a script to migrate a database object from one description to
  another description.
 </p>
@@ -282,7 +282,7 @@
 </TABLE></P>
 <p><b>Returns</b>: A script to change the src database object to dst.
    </p>
-<A NAME="setState"></A><A NAME="ref44"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setState</strong> (const QCString &amp;name,const QVariant &amp;val)
+<A NAME="setState"></A><A NAME="ref44"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setState</strong> (const QCString &name,const QVariant &val)
 <br></td><td align="right"><h3><strong>setState</strong></h3></td></tr></table><p></p><p> Set a context for this extractor.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -291,7 +291,7 @@
 <TR><TD align="left" valign="top"><i>val</i></TD><TD align="left" valign="top">Value of this context
    </TD></TR>
 </TABLE></P>
-<A NAME="state"></A><A NAME="ref45"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QVariant &nbsp;<strong>state</strong> (const QCString &amp;name)
+<A NAME="state"></A><A NAME="ref45"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QVariant &nbsp;<strong>state</strong> (const QCString &name)
 <br></td><td align="right"><h3><strong>state</strong></h3></td></tr></table><p></p><p> Get the value of a context for the current extractor.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -300,7 +300,7 @@
 </TABLE></P>
 <p><b>Returns</b>: The value of the context.
    </p>
-<A NAME="setSchema"></A><A NAME="ref46"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSchema</strong> (const QString &amp;schema)
+<A NAME="setSchema"></A><A NAME="ref46"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSchema</strong> (const QString &schema)
 <br></td><td align="right"><h3><strong>setSchema</strong></h3></td></tr></table><p></p><p> Set the schema of the extraction.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -309,7 +309,7 @@
                Otherwise use the specified schema.
    </TD></TR>
 </TABLE></P>
-<A NAME="setResize"></A><A NAME="ref47"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setResize</strong> (const QString &amp;resize)
+<A NAME="setResize"></A><A NAME="ref47"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setResize</strong> (const QString &resize)
 <br></td><td align="right"><h3><strong>setResize</strong></h3></td></tr></table><p></p><p> Set sizes to use for resize of object on extraction.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -405,7 +405,7 @@
 <TR><TD align="left" valign="top"><i>val</i></TD><TD align="left" valign="top">New value of blocksize.
    </TD></TR>
 </TABLE></P>
-<A NAME="getSchema"></A><A NAME="ref60"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const QString &amp;&nbsp;<strong>getSchema</strong> (void)
+<A NAME="getSchema"></A><A NAME="ref60"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const QString &&nbsp;<strong>getSchema</strong> (void)
 <br></td><td align="right"><h3><strong>getSchema</strong></h3></td></tr></table><p></p><p> Get schema specification.
 </p>
 <p><b>Returns</b>: Schema specification.
@@ -480,10 +480,10 @@
 <A NAME="getBlockSize"></A><A NAME="ref74"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>getBlockSize</strong> (void)
 <br></td><td align="right"><h3><strong>getBlockSize</strong></h3></td></tr></table><p></p><p> Get blocksize.
    </p>
-<A NAME="connection"></A><A NAME="ref75"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>connection</strong> ()
+<A NAME="connection"></A><A NAME="ref75"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &&nbsp;<strong>connection</strong> ()
 <br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p></p><p> Get the connection this extractor is working on.
    </p>
-<A NAME="initialNext"></A><A NAME="ref76"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>initialNext</strong> (const QString &amp;blocks,QString &amp;initial,QString &amp;next)
+<A NAME="initialNext"></A><A NAME="ref76"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>initialNext</strong> (const QString &blocks,QString &initial,QString &next)
 <br></td><td align="right"><h3><strong>initialNext</strong></h3></td></tr></table><p></p><p> Fill in the initial and next value for an object currently holding a number of
  allocated blocks. Uses the resize or default sizes.
 </p>
@@ -495,7 +495,7 @@
 <TR><TD align="left" valign="top"><i>next</i></TD><TD align="left" valign="top">New next value.
    </TD></TR>
 </TABLE></P>
-<A NAME="intSchema"></A><A NAME="ref77"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QString &nbsp;<strong>intSchema</strong> (const QString &amp;owner,bool desc)
+<A NAME="intSchema"></A><A NAME="ref77"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QString &nbsp;<strong>intSchema</strong> (const QString &owner,bool desc)
 <br></td><td align="right"><h3><strong>intSchema</strong></h3></td></tr></table><p></p><p> Get the schema name specified by the extractor setup. Will include the following '.'
  if needed.
 </p>
@@ -507,13 +507,13 @@
 </TABLE></P>
 <p><b>Returns</b>: The translated schema.
    </p>
-<A NAME="datatypes"></A><A NAME="ref78"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;datatype&gt; &nbsp;<strong>datatypes</strong> ()
+<A NAME="datatypes"></A><A NAME="ref78"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<datatype> &nbsp;<strong>datatypes</strong> ()
 <br></td><td align="right"><h3><strong>datatypes</strong></h3></td></tr></table><p></p><p> Get the available datatypes for a database.
 </p>
 <p><b>Returns</b>: A list of datatypes.
    </p>
-<A NAME="createFromParse"></A><A NAME="ref79"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QString &nbsp;<strong>createFromParse</strong> (std::list&lt;<A HREF="toSQLParse__statement.html">toSQLParse::statement</A>&gt;::iterator start,
-			  std::list&lt;<A HREF="toSQLParse__statement.html">toSQLParse::statement</A>&gt;::iterator end)
+<A NAME="createFromParse"></A><A NAME="ref79"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QString &nbsp;<strong>createFromParse</strong> (std::list<<A HREF="toSQLParse__statement.html">toSQLParse::statement</A>>::iterator start,
+			  std::list<<A HREF="toSQLParse__statement.html">toSQLParse::statement</A>>::iterator end)
 <br></td><td align="right"><h3><strong>createFromParse</strong></h3></td></tr></table><p></p><p> Utility function, creates a statement from the start to the end specified by the
  parameters. The connection used to specify parsing is the one of the extractor.
 </p>
@@ -525,8 +525,8 @@
 </TABLE></P>
 <p><b>Returns</b>: The indented statement.
    </p>
-<A NAME="srcDst2DropCreate"></A><A NAME="ref80"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>srcDst2DropCreate</strong> (std::list&lt;QString&gt; &amp;source,std::list&lt;QString&gt; &amp;destination,
-				std::list&lt;QString&gt; &amp;drop,std::list&lt;QString&gt; &amp;creat)
+<A NAME="srcDst2DropCreate"></A><A NAME="ref80"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>srcDst2DropCreate</strong> (std::list<QString> &source,std::list<QString> &destination,
+				std::list<QString> &drop,std::list<QString> &creat)
 <br></td><td align="right"><h3><strong>srcDst2DropCreate</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Create a source and destination object list to two other lists
  containing dropped and created objects or attributes.
 </p>
@@ -540,7 +540,7 @@
 <TR><TD align="left" valign="top"><i>create</i></TD><TD align="left" valign="top">Create list output (Will be overwritten).
    </TD></TR>
 </TABLE></P>
-<A NAME="canHandle"></A><A NAME="ref81"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn)
+<A NAME="canHandle"></A><A NAME="ref81"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &conn)
 <br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Check if a database is supported at all by the extractor.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -549,12 +549,12 @@
 </TABLE></P>
 <p><b>Returns</b>: True if the database is supported.
    </p>
-<A NAME="addDescription"></A><A NAME="ref82"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addDescription</strong> (std::list&lt;QString&gt; &amp;ret,const std::list&lt;QString&gt; &amp;ctx,
-			     const QString &amp;arg1=QString::null,const QString &amp;arg2=QString::null,
-			     const QString &amp;arg3=QString::null,const QString &amp;arg4=QString::null,
-			     const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
-			     const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
-			     const QString &amp;arg9=QString::null)
+<A NAME="addDescription"></A><A NAME="ref82"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addDescription</strong> (std::list<QString> &ret,const std::list<QString> &ctx,
+			     const QString &arg1=QString::null,const QString &arg2=QString::null,
+			     const QString &arg3=QString::null,const QString &arg4=QString::null,
+			     const QString &arg5=QString::null,const QString &arg6=QString::null,
+			     const QString &arg7=QString::null,const QString &arg8=QString::null,
+			     const QString &arg9=QString::null)
 <br></td><td align="right"><h3><strong>addDescription</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Add a list to description.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -565,7 +565,7 @@
 <TR><TD align="left" valign="top"><i>arg1</i></TD><TD align="left" valign="top">First extra argument to add.
    </TD></TR>
 </TABLE></P>
-<A NAME="splitDescribe"></A><A NAME="ref83"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;QString&gt; &nbsp;<strong>splitDescribe</strong> (const QString &amp;str)
+<A NAME="splitDescribe"></A><A NAME="ref83"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<QString> &nbsp;<strong>splitDescribe</strong> (const QString &str)
 <br></td><td align="right"><h3><strong>splitDescribe</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Split a description line into its components.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -574,7 +574,7 @@
 </TABLE></P>
 <p><b>Returns</b>: The list of components.
    </p>
-<A NAME="partDescribe"></A><A NAME="ref84"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>partDescribe</strong> (const QString &amp;str,int level)
+<A NAME="partDescribe"></A><A NAME="ref84"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>partDescribe</strong> (const QString &str,int level)
 <br></td><td align="right"><h3><strong>partDescribe</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get the part of a description indicated by the level
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -583,7 +583,7 @@
 <TR><TD align="left" valign="top"><i>level</i></TD><TD align="left" valign="top">The level to get (0 is the first level)
    </TD></TR>
 </TABLE></P>
-<A NAME="contextDescribe"></A><A NAME="ref85"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>contextDescribe</strong> (const QString &amp;str,int level)
+<A NAME="contextDescribe"></A><A NAME="ref85"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>contextDescribe</strong> (const QString &str,int level)
 <br></td><td align="right"><h3><strong>contextDescribe</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get the context of a given level.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -596,8 +596,8 @@
    </p>
 <A NAME="toExtract__columnInfo.html"></A><A NAME="ref86"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>columnInfo</strong> <small>(struct)</small></td><td align="right"><h3><strong>columnInfo</strong></h3></td></tr></table><p></p><p> Used to get column information from a describe list
    </p>
-<A NAME="parseColumnDescription"></A><A NAME="ref87"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;columnInfo&gt; &nbsp;<strong>parseColumnDescription</strong> (std::list&lt;QString&gt;::const_iterator begin,
-						      std::list&lt;QString&gt;::const_iterator end,
+<A NAME="parseColumnDescription"></A><A NAME="ref87"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<columnInfo> &nbsp;<strong>parseColumnDescription</strong> (std::list<QString>::const_iterator begin,
+						      std::list<QString>::const_iterator end,
 						      int level=3)
 <br></td><td align="right"><h3><strong>parseColumnDescription</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Parse a column description and return a sorted list of column data.
 </p>
@@ -611,7 +611,7 @@
 </TABLE></P>
 <p><b>Returns</b>: The list of column definitions. Sorted by column order.
    </p>
-<A NAME="parseColumnDescription"></A><A NAME="ref88"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;columnInfo&gt; &nbsp;<strong>parseColumnDescription</strong> (const std::list&lt;QString&gt; &amp;description,int level=3)
+<A NAME="parseColumnDescription"></A><A NAME="ref88"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<columnInfo> &nbsp;<strong>parseColumnDescription</strong> (const std::list<QString> &description,int level=3)
 <br></td><td align="right"><h3><strong>parseColumnDescription</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Parse a column description and return a sorted list of column data.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -624,5 +624,8 @@
    </p>
 <A NAME="extractor"></A><A NAME="ref89"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>extractor</strong>
 </td><td align="right"><h3><strong>extractor</strong></h3></td></tr></table><p></p><HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
 </BODY>
 </HTML>

@@ -26,10 +26,11 @@
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
 <pre>
-//***************************************************************************
-/*
+/*****
+ *
  * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2003 Quest Software, Inc
+ * Copyright (C) 2003-2005 Quest Software, Inc
+ * Portions Copyright (C) 2005 Other Contributors
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,20 +57,22 @@
  *      these libraries without written consent from Quest Software, Inc.
  *      Observe that this does not disallow linking to the Qt Free Edition.
  *
+ *      You may link this product with any GPL'd Qt library such as Qt/Free
+ *
  * All trademarks belong to their respective owners.
  *
- ****************************************************************************/
+ *****/
 
 #ifndef TO_EXTRACT
 #define TO_EXTRACT
 
-#include &lt;list&gt;
-#include &lt;map&gt;
+#include <list>
+#include <map>
 
-#include &lt;qfile.h&gt;
-#include &lt;qstring.h&gt;
-#include &lt;qtextstream.h&gt;
-#include &lt;qvariant.h&gt;
+#include <qfile.h>
+#include <qstring.h>
+#include <qtextstream.h>
+#include <qvariant.h>
 
 class QWidget;
 class toConnection;
@@ -98,7 +101,7 @@ public:
      * @param maxLength Maximum length of parameter if length is needed.
      * @param maxPrecision Maximum precision of parameter if precision is supported.
      */
-    datatype(const QString &amp;name,int maxLength=-1,int maxPrecision=-1)
+    datatype(const QString &name,int maxLength=-1,int maxPrecision=-1)
       : Name(name),MaxLength(maxLength),MaxPrecision(maxPrecision)
     { }
     /** Returns true if type has length specification.
@@ -119,16 +122,16 @@ public:
     { return MaxPrecision; }
     /** Get the name of the datatype.
      */
-    const QString &amp;name()
+    const QString &name()
     { return Name; }
 
     /** Implemented so that you can easily sort a list of them. Just compares the names.
      */
-    bool operator &lt; (const datatype &amp;dat) const
-    { return Name&lt;dat.Name; }
+    bool operator < (const datatype &dat) const
+    { return Name<dat.Name; }
     /** Implemented so that you can easily sort a list of them. Just compares the names.
      */
-    bool operator == (const datatype &amp;dat) const
+    bool operator == (const datatype &dat) const
     { return Name==dat.Name; }    
   };
 
@@ -144,18 +147,18 @@ public:
      *             DESCRIBE, MIGRATE or DROP.
      * @param type The type of object that this is implemented for. Database specific.
      */
-    void registerExtract(const QString &amp;db,
-			 const QString &amp;oper,
-			 const QString &amp;type);
+    void registerExtract(const QString &db,
+			 const QString &oper,
+			 const QString &type);
     /** Unregister an operation to be handled by this extractor.
      * @param db Database this extractor works on.
      * @param oper What kind of operation to implement. Can be one of CREATE,
      *             DESCRIBE, MIGRATE or DROP.
      * @param type The type of object that this is implemented for. Database specific.
      */
-    void unregisterExtract(const QString &amp;db,
-			   const QString &amp;oper,
-			   const QString &amp;type);
+    void unregisterExtract(const QString &db,
+			   const QString &oper,
+			   const QString &type);
   public:
     /** Create an extractor. Normally called from a statical instantiator. Should register
      * objects it can handle @ref registerExtract. Apart from the objects it handles one
@@ -174,7 +177,7 @@ public:
      * toExtract::setBlocksize).
      * @param ext Extractor to generate script.
      */
-    virtual void initialize(toExtract &amp;ext) const;
+    virtual void initialize(toExtract &ext) const;
 
     /** Called to generate a script to recreate a database object.
      * @param ext Extractor to generate script.
@@ -187,12 +190,12 @@ public:
      * @param name Name of database object.
      * @return A string containing a script to recreate an object.
      */
-    virtual void create(toExtract &amp;ext,
-			QTextStream &amp;stream,
-			const QString &amp;type,
-			const QString &amp;schema,
-			const QString &amp;owner,
-			const QString &amp;name) const;
+    virtual void create(toExtract &ext,
+			QTextStream &stream,
+			const QString &type,
+			const QString &schema,
+			const QString &owner,
+			const QString &name) const;
     /** Called to describe a database object.
      * @param ext Extractor to generate script.
      * @param lst List of descriptions for the object. Should be appended.
@@ -203,12 +206,12 @@ public:
      * @param owner Owner of database object.
      * @param name Name of database object.
      */
-    virtual void describe(toExtract &amp;ext,
-			  std::list&lt;QString&gt; &amp;lst,
-			  const QString &amp;type,
-			  const QString &amp;schema,
-			  const QString &amp;owner,
-			  const QString &amp;name) const;
+    virtual void describe(toExtract &ext,
+			  std::list<QString> &lst,
+			  const QString &type,
+			  const QString &schema,
+			  const QString &owner,
+			  const QString &name) const;
     /** Called to generate a script to migrate a database object from one description to
      * another description.
      * @param ext Extractor to generate script.
@@ -217,11 +220,11 @@ public:
      * @param dst Destination description list.
      * @return A script to change the src database object to dst.
      */
-    virtual void migrate(toExtract &amp;ext,
-			 QTextStream &amp;stream,
-			 const QString &amp;type,
-			 std::list&lt;QString&gt; &amp;src,
-			 std::list&lt;QString&gt; &amp;dst) const;
+    virtual void migrate(toExtract &ext,
+			 QTextStream &stream,
+			 const QString &type,
+			 std::list<QString> &src,
+			 std::list<QString> &dst) const;
 
     /** Called to generate a script to drop an object.
      * @param ext Extractor to generate script.
@@ -233,20 +236,20 @@ public:
      * @param name Name of database object.
      * @return A string containing a script to recreate an object.
      */
-    virtual void drop(toExtract &amp;ext,
-		      QTextStream &amp;stream,
-		      const QString &amp;type,
-		      const QString &amp;schema,
-		      const QString &amp;owner,
-		      const QString &amp;name) const;
+    virtual void drop(toExtract &ext,
+		      QTextStream &stream,
+		      const QString &type,
+		      const QString &schema,
+		      const QString &owner,
+		      const QString &name) const;
 
     /** Get the available datatypes for the database.
      */
-    virtual std::list&lt;datatype&gt; datatypes() const;
+    virtual std::list<datatype> datatypes() const;
   };
 
 private:
-  toConnection &amp;Connection;
+  toConnection &Connection;
   QWidget *Parent;
 
   // Attributes
@@ -269,25 +272,25 @@ private:
 
   // Database info
   int BlockSize;
-  std::list&lt;QString&gt; Initial;
-  std::list&lt;QString&gt; Next;
-  std::list&lt;QString&gt; Limit;
+  std::list<QString> Initial;
+  std::list<QString> Next;
+  std::list<QString> Limit;
 
   // Context, can be used by the extractor to save context
-  std::map&lt;QCString,QVariant&gt; Context;
+  std::map<QCString,QVariant> Context;
 
   // Stuff to handle extractors
-  static std::map&lt;QString,extractor *&gt; *Extractors;
+  static std::map<QString,extractor *> *Extractors;
 
   static void allocExtract(void);
-  static QString extractorName(const QString &amp;db,
-			       const QString &amp;oper,
-			       const QString &amp;type);
-  static extractor *findExtractor(toConnection &amp;conn,
-				  const QString &amp;oper,
-				  const QString &amp;type);
-  extractor *findExtractor(const QString &amp;oper,
-			   const QString &amp;type)
+  static QString extractorName(const QString &db,
+			       const QString &oper,
+			       const QString &type);
+  static extractor *findExtractor(toConnection &conn,
+				  const QString &oper,
+				  const QString &type);
+  extractor *findExtractor(const QString &oper,
+			   const QString &type)
   { return findExtractor(Connection,oper,type); }
   void initialize(void);
 
@@ -298,18 +301,18 @@ private:
    * @param owner Reference to string which will get the object owner.
    * @param name Reference to string which will get the object name.
    */
-  void parseObject(const QString &amp;object,QString &amp;owner,QString &amp;name);
+  void parseObject(const QString &object,QString &owner,QString &name);
   void setSizes(void);
 
-  void rethrow(const QString &amp;what,const QString &amp;object,const QString &amp;exc);
-  QString generateHeading(const QString &amp;action,std::list&lt;QString&gt; &amp;list);
-  static std::map&lt;QString,std::list&lt;QString&gt; &gt; migrateGroup(std::list&lt;QString&gt; &amp;grpLst);
+  void rethrow(const QString &what,const QString &object,const QString &exc);
+  QString generateHeading(const QString &action,std::list<QString> &list);
+  static std::map<QString,std::list<QString> > migrateGroup(std::list<QString> &grpLst);
 public:
   /** Create a new extractor.
    * @param conn Connection to extract from.
    * @param parent Parent widget of progress indicator.
    */
-  toExtract(toConnection &amp;conn,QWidget *parent);
+  toExtract(toConnection &conn,QWidget *parent);
 
   /** Create script to recreate list of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
@@ -323,8 +326,8 @@ public:
    *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
    * @return A string containing a script to recreate the specified objects.
    */
-  QString create(std::list&lt;QString&gt; &amp;object)
-  { QString ret; QTextStream s(&amp;ret,IO_WriteOnly); create(s,object); return ret; }
+  QString create(std::list<QString> &object)
+  { QString ret; QTextStream s(&ret,IO_WriteOnly); create(s,object); return ret; }
   /** Create script to recreate list of objects.
    * @param stream Stream to write result to.
    * @param object List of object. This has the format {type}:{schema}.{object}.
@@ -337,7 +340,7 @@ public:
    *               TABLE CONTENTS, TABLE REFERENCES, TABLESPACE, TRIGGER,
    *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
    */
-  void create(QTextStream &amp;stream,std::list&lt;QString&gt; &amp;object);
+  void create(QTextStream &stream,std::list<QString> &object);
 
   /** Create a description of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
@@ -353,7 +356,7 @@ public:
    *         considered like a list of strings separated by the character '\001'.
    *         The later in each string the smaller item the change and it is hierachical.
    */
-  std::list&lt;QString&gt; describe(std::list&lt;QString&gt; &amp;object);
+  std::list<QString> describe(std::list<QString> &object);
 
   /** Create script to drop a list of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
@@ -367,8 +370,8 @@ public:
    *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
    * @return A string containing a script to drop the specified objects.
    */
-  QString drop(std::list&lt;QString&gt; &amp;object)
-  { QString ret; QTextStream s(&amp;ret,IO_WriteOnly); drop(s,object); return ret; }
+  QString drop(std::list<QString> &object)
+  { QString ret; QTextStream s(&ret,IO_WriteOnly); drop(s,object); return ret; }
 
   /** Create script to drop a list of objects.
    * @param stream Stream to write result to.
@@ -383,7 +386,7 @@ public:
    *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
    * @return A string containing a script to drop the specified objects.
    */
-  void drop(QTextStream &amp;stream,std::list&lt;QString&gt; &amp;object);
+  void drop(QTextStream &stream,std::list<QString> &object);
 
   /** Called to generate a script to migrate a database object from one description to
    * another description.
@@ -392,8 +395,8 @@ public:
    * @param dst Destination description list, generated by describes for the same database.
    * @return A script to change the src database object to dst.
    */
-  QString migrate(std::list&lt;QString&gt; &amp;drpLst,std::list&lt;QString&gt; &amp;crtLst)
-  { QString ret; QTextStream s(&amp;ret,IO_WriteOnly); migrate(s,drpLst,crtLst); return ret; }
+  QString migrate(std::list<QString> &drpLst,std::list<QString> &crtLst)
+  { QString ret; QTextStream s(&ret,IO_WriteOnly); migrate(s,drpLst,crtLst); return ret; }
 
   /** Called to generate a script to migrate a database object from one description to
    * another description.
@@ -402,25 +405,25 @@ public:
    * @param dst Destination description list, generated by describes for the same database.
    * @return A script to change the src database object to dst.
    */
-  void migrate(QTextStream &amp;stream,std::list&lt;QString&gt; &amp;drpLst,std::list&lt;QString&gt; &amp;crtLst);
+  void migrate(QTextStream &stream,std::list<QString> &drpLst,std::list<QString> &crtLst);
 
   /** Set a context for this extractor.
    * @param name Name of this context
    * @param val Value of this context
    */
-  void setState(const QCString &amp;name,const QVariant &amp;val);
+  void setState(const QCString &name,const QVariant &val);
   /** Get the value of a context for the current extractor.
    * @param name Name of the context to extract.
    * @return The value of the context.
    */
-  QVariant state(const QCString &amp;name);
+  QVariant state(const QCString &name);
 
   /** Set the schema of the extraction.
    * @param schema Specify the schema of the output script or description. If empty
    *               don't specify any object. If the string "1" use same object as input.
    *               Otherwise use the specified schema.
    */
-  void setSchema(const QString &amp;schema)
+  void setSchema(const QString &schema)
   { Schema=schema; }
   /** Set sizes to use for resize of object on extraction.
    * @param A list of sizes separated by ':'. Should be an even multiple of three where
@@ -428,7 +431,7 @@ public:
    *        value is the initial value to use, the last is the next increment value to
    *        use. As a special case the string "1" can be used to set up auto resize.
    */
-  void setResize(const QString &amp;resize)
+  void setResize(const QString &resize)
   { Resize=resize; setSizes(); }
   /** Set inclusion of prompts.
    * @param prompt If prompt generation should be generated.
@@ -496,7 +499,7 @@ public:
    * @return Schema specification.
    * @see setSchema
    */
-  const QString &amp;getSchema(void)
+  const QString &getSchema(void)
   { return Schema; }
   /** Get resize specification.
    * @return Resize specification.
@@ -570,7 +573,7 @@ public:
   { return BlockSize; }
   /** Get the connection this extractor is working on.
    */
-  toConnection &amp;connection()
+  toConnection &connection()
   { return Connection; }
 
   /** Fill in the initial and next value for an object currently holding a @ref number of
@@ -579,7 +582,7 @@ public:
    * @param initial New initial value.
    * @param next New next value.
    */
-  void initialNext(const QString &amp;blocks,QString &amp;initial,QString &amp;next);
+  void initialNext(const QString &blocks,QString &initial,QString &next);
 
   /** Get the schema name specified by the extractor setup. Will include the following '.'
    * if needed.
@@ -587,12 +590,12 @@ public:
    * @param desc Used from describe and not to generate script.
    * @return The translated schema.
    */
-  QString intSchema(const QString &amp;owner,bool desc);
+  QString intSchema(const QString &owner,bool desc);
 
   /** Get the available datatypes for a database.
    * @return A list of datatypes.
    */
-  std::list&lt;datatype&gt; datatypes();
+  std::list<datatype> datatypes();
 
   /** Utility function, creates a statement from the start to the end specified by the
    * parameters. The connection used to specify parsing is the one of the extractor.
@@ -600,8 +603,8 @@ public:
    * @param end End of parameters.
    * @return The indented statement.
    */
-  QString createFromParse(std::list&lt;toSQLParse::statement&gt;::iterator start,
-			  std::list&lt;toSQLParse::statement&gt;::iterator end);
+  QString createFromParse(std::list<toSQLParse::statement>::iterator start,
+			  std::list<toSQLParse::statement>::iterator end);
 
   /** Create a source and destination object list to two other lists
    * containing dropped and created objects or attributes.
@@ -610,44 +613,44 @@ public:
    * @param drop Drop list output (Will be overwritten).
    * @param create Create list output (Will be overwritten).
    */
-  static void srcDst2DropCreate(std::list&lt;QString&gt; &amp;source,std::list&lt;QString&gt; &amp;destination,
-				std::list&lt;QString&gt; &amp;drop,std::list&lt;QString&gt; &amp;creat);
+  static void srcDst2DropCreate(std::list<QString> &source,std::list<QString> &destination,
+				std::list<QString> &drop,std::list<QString> &creat);
 
   /** Check if a database is supported at all by the extractor.
    * @param conn Connection to check for support.
    * @return True if the database is supported.
    */
-  static bool canHandle(toConnection &amp;conn);
+  static bool canHandle(toConnection &conn);
 
   /** Add a list to description.
    * @param ret The return list to add a line to.
    * @param ctx The current description context.
    * @param arg1 First extra argument to add.
    */
-  static void addDescription(std::list&lt;QString&gt; &amp;ret,const std::list&lt;QString&gt; &amp;ctx,
-			     const QString &amp;arg1=QString::null,const QString &amp;arg2=QString::null,
-			     const QString &amp;arg3=QString::null,const QString &amp;arg4=QString::null,
-			     const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
-			     const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
-			     const QString &amp;arg9=QString::null);
+  static void addDescription(std::list<QString> &ret,const std::list<QString> &ctx,
+			     const QString &arg1=QString::null,const QString &arg2=QString::null,
+			     const QString &arg3=QString::null,const QString &arg4=QString::null,
+			     const QString &arg5=QString::null,const QString &arg6=QString::null,
+			     const QString &arg7=QString::null,const QString &arg8=QString::null,
+			     const QString &arg9=QString::null);
   /** Split a description line into its components.
    * @param str The description line to split.
    * @return The list of components.
    */
-  static std::list&lt;QString&gt; splitDescribe(const QString &amp;str);
+  static std::list<QString> splitDescribe(const QString &str);
 
   /** Get the part of a description indicated by the level
    * @param str Description string
    * @param level The level to get (0 is the first level)
    */
-  static QString partDescribe(const QString &amp;str,int level);
+  static QString partDescribe(const QString &str,int level);
 
   /** Get the context of a given level.
    * @param str Description string
    * @param level The level to get the context for (1 is the first to not return empty string.
    * @return The context, if not enough parts are available null is returned.
    */
-  static QString contextDescribe(const QString &amp;str,int level);
+  static QString contextDescribe(const QString &str,int level);
 
   /** Used to get column information from a describe list
    */
@@ -660,23 +663,23 @@ public:
     QString Definition;
     /** Extra data for the column (Except for order which has own field.
      */
-    std::map&lt;QString,QString&gt; Data;
+    std::map<QString,QString> Data;
     /** Order of the column. Used for sorting.
      */
     int Order;
 
     /** Create column information from name.
      */
-    columnInfo(const QString &amp;name)
+    columnInfo(const QString &name)
       : Name(name)
     { Order=0; }
     /** Implement sort order based only on Order field.
      */
-    bool operator &lt;(const columnInfo &amp;inf)
-    { return Order&lt;inf.Order; }
+    bool operator <(const columnInfo &inf)
+    { return Order<inf.Order; }
     /** Implement sort order based only on Order field.
      */
-    bool operator ==(const columnInfo &amp;inf)
+    bool operator ==(const columnInfo &inf)
     { return Order==inf.Order; }
   };
 
@@ -686,8 +689,8 @@ public:
    * @param level Number of levels of context to discard before looking for "COLUMN" definition.
    * @return The list of column definitions. Sorted by column order.
    */
-  static std::list&lt;columnInfo&gt; parseColumnDescription(std::list&lt;QString&gt;::const_iterator begin,
-						      std::list&lt;QString&gt;::const_iterator end,
+  static std::list<columnInfo> parseColumnDescription(std::list<QString>::const_iterator begin,
+						      std::list<QString>::const_iterator end,
 						      int level=3);
 
   /** Parse a column description and return a sorted list of column data.
@@ -695,7 +698,7 @@ public:
    * @param level Number of levels of context to discard before looking for "COLUMN" definition.
    * @return The list of column definitions. Sorted by column order.
    */
-  static std::list&lt;columnInfo&gt; parseColumnDescription(const std::list&lt;QString&gt; &amp;description,int level=3)
+  static std::list<columnInfo> parseColumnDescription(const std::list<QString> &description,int level=3)
   { return parseColumnDescription(description.begin(),description.end(),level); }
 
   friend class extractor;
@@ -704,5 +707,8 @@ public:
 #endif
 </pre>
 <HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
 </BODY>
 </HTML>

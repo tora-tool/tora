@@ -36,43 +36,43 @@
 </LI>
 <LI>class <A HREF="toSQLParse__editorTokenizer.html">editorTokenizer</A>
 </LI>
-</ul><h4>Public Static Methods</h4><ul><LI>static  std::list&lt;statement&gt; &nbsp;<b><A HREF="#ref6">parse</A></b> (tokenizer &amp;tokens) 
+</ul><h4>Public Static Methods</h4><ul><LI>static  std::list<statement> &nbsp;<b><A HREF="#ref6">parse</A></b> (tokenizer &tokens) 
 </LI>
-<LI>static  std::list&lt;statement&gt; &nbsp;<b><A HREF="#ref7">parse</A></b> (const QString &amp;str) 
+<LI>static  std::list<statement> &nbsp;<b><A HREF="#ref7">parse</A></b> (const QString &str) 
 </LI>
-<LI>static  std::list&lt;statement&gt; &nbsp;<b><A HREF="#ref8">parse</A></b> (const QString &amp;str,<A HREF="toConnection.html">toConnection</A> &amp;conn) 
+<LI>static  std::list<statement> &nbsp;<b><A HREF="#ref8">parse</A></b> (const QString &str,<A HREF="toConnection.html">toConnection</A> &conn) 
 </LI>
-<LI>static  statement &nbsp;<b><A HREF="#ref9">parseStatement</A></b> (tokenizer &amp;tokens) 
+<LI>static  statement &nbsp;<b><A HREF="#ref9">parseStatement</A></b> (tokenizer &tokens) 
 </LI>
-<LI>static  statement &nbsp;<b><A HREF="#ref10">parseStatement</A></b> (const QString &amp;str) 
+<LI>static  statement &nbsp;<b><A HREF="#ref10">parseStatement</A></b> (const QString &str) 
 </LI>
-<LI>static  statement &nbsp;<b><A HREF="#ref11">parseStatement</A></b> (tokenizer &amp;tokens,<A HREF="toConnection.html">toConnection</A> &amp;conn) 
+<LI>static  statement &nbsp;<b><A HREF="#ref11">parseStatement</A></b> (tokenizer &tokens,<A HREF="toConnection.html">toConnection</A> &conn) 
 </LI>
-<LI>static  statement &nbsp;<b><A HREF="#ref12">parseStatement</A></b> (const QString &amp;str,<A HREF="toConnection.html">toConnection</A> &amp;conn) 
+<LI>static  statement &nbsp;<b><A HREF="#ref12">parseStatement</A></b> (const QString &str,<A HREF="toConnection.html">toConnection</A> &conn) 
 </LI>
-<LI>static  QString &nbsp;<b><A HREF="#ref13">indent</A></b> (const QString &amp;str) 
+<LI>static  QString &nbsp;<b><A HREF="#ref13">indent</A></b> (const QString &str) 
 </LI>
-<LI>static  QString &nbsp;<b><A HREF="#ref14">indentStatement</A></b> (statement &amp;stat,<A HREF="toConnection.html">toConnection</A> &amp;conn,int level=0) 
+<LI>static  QString &nbsp;<b><A HREF="#ref14">indentStatement</A></b> (statement &stat,<A HREF="toConnection.html">toConnection</A> &conn,int level=0) 
 </LI>
-<LI>static  QString &nbsp;<b><A HREF="#ref15">indentStatement</A></b> (statement &amp;stat,int level=0) 
+<LI>static  QString &nbsp;<b><A HREF="#ref15">indentStatement</A></b> (statement &stat,int level=0) 
 </LI>
-<LI>static  QString &nbsp;<b><A HREF="#ref16">indent</A></b> (const QString &amp;str,<A HREF="toConnection.html">toConnection</A> &amp;conn) 
+<LI>static  QString &nbsp;<b><A HREF="#ref16">indent</A></b> (const QString &str,<A HREF="toConnection.html">toConnection</A> &conn) 
 </LI>
 <LI>static  QString &nbsp;<b><A HREF="#ref17">indentString</A></b> (int level) 
 </LI>
-<LI>static  QString &nbsp;<b><A HREF="#ref18">indent</A></b> (std::list&lt;statement&gt; &amp;stat,<A HREF="toConnection.html">toConnection</A> &amp;conn) 
+<LI>static  QString &nbsp;<b><A HREF="#ref18">indent</A></b> (std::list<statement> &stat,<A HREF="toConnection.html">toConnection</A> &conn) 
 </LI>
-<LI>static  QString &nbsp;<b><A HREF="#ref19">indent</A></b> (std::list&lt;statement&gt; &amp;stat) 
+<LI>static  QString &nbsp;<b><A HREF="#ref19">indent</A></b> (std::list<statement> &stat) 
 </LI>
-<LI>static  int &nbsp;<b><A HREF="#ref20">countIndent</A></b> (const QString &amp;str,int &amp;chars) 
+<LI>static  int &nbsp;<b><A HREF="#ref20">countIndent</A></b> (const QString &str,int &chars) 
 </LI>
-<LI>static  QString &nbsp;<b><A HREF="#ref21">indent</A></b> (const QString &amp;str,<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;syntax) 
+<LI>static  QString &nbsp;<b><A HREF="#ref21">indent</A></b> (const QString &str,<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &syntax) 
 </LI>
-<LI>static  QString &nbsp;<b><A HREF="#ref22">indent</A></b> (std::list&lt;statement&gt; &amp;stat,<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;syntax) 
+<LI>static  QString &nbsp;<b><A HREF="#ref22">indent</A></b> (std::list<statement> &stat,<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &syntax) 
 </LI>
 <LI>static  settings &nbsp;<b><A HREF="#ref26">getSetting</A></b> (void) 
 </LI>
-<LI>static  void &nbsp;<b><A HREF="#ref27">setSetting</A></b> (const settings &amp;setting) 
+<LI>static  void &nbsp;<b><A HREF="#ref27">setSetting</A></b> (const settings &setting) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A bunch of functions to parse and indent SQL text.
  </p>
@@ -84,7 +84,7 @@
    </p>
 <A NAME="toSQLParse__editorTokenizer.html"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>editorTokenizer</strong> <small>(class)</small></td><td align="right"><h3><strong>editorTokenizer</strong></h3></td></tr></table><p></p><p> Tokenizer class which gets tokens from an editor.
    </p>
-<A NAME="parse"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;statement&gt; &nbsp;<strong>parse</strong> (tokenizer &amp;tokens)
+<A NAME="parse"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<statement> &nbsp;<strong>parse</strong> (tokenizer &tokens)
 <br></td><td align="right"><h3><strong>parse</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Parse a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -93,7 +93,7 @@
 </TABLE></P>
 <p><b>Returns</b>: Parsed statement tree.
    </p>
-<A NAME="parse"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;statement&gt; &nbsp;<strong>parse</strong> (const QString &amp;str)
+<A NAME="parse"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<statement> &nbsp;<strong>parse</strong> (const QString &str)
 <br></td><td align="right"><h3><strong>parse</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Parse a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -102,7 +102,7 @@
 </TABLE></P>
 <p><b>Returns</b>: Parsed statement tree.
    </p>
-<A NAME="parse"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;statement&gt; &nbsp;<strong>parse</strong> (const QString &amp;str,<A HREF="toConnection.html">toConnection</A> &amp;conn)
+<A NAME="parse"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<statement> &nbsp;<strong>parse</strong> (const QString &str,<A HREF="toConnection.html">toConnection</A> &conn)
 <br></td><td align="right"><h3><strong>parse</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Parse a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -113,7 +113,7 @@
 </TABLE></P>
 <p><b>Returns</b>: Parsed statement tree.
    </p>
-<A NAME="parseStatement"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> statement &nbsp;<strong>parseStatement</strong> (tokenizer &amp;tokens)
+<A NAME="parseStatement"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> statement &nbsp;<strong>parseStatement</strong> (tokenizer &tokens)
 <br></td><td align="right"><h3><strong>parseStatement</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get one statement (or block) from the root of an editor or string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -122,7 +122,7 @@
 <TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to determine SQL dialog. (For future use)
    </TD></TR>
 </TABLE></P>
-<A NAME="parseStatement"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> statement &nbsp;<strong>parseStatement</strong> (const QString &amp;str)
+<A NAME="parseStatement"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> statement &nbsp;<strong>parseStatement</strong> (const QString &str)
 <br></td><td align="right"><h3><strong>parseStatement</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get one statement (or block) from the root of an editor or string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -131,7 +131,7 @@
 <TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to determine SQL dialog. (For future use)
    </TD></TR>
 </TABLE></P>
-<A NAME="parseStatement"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> statement &nbsp;<strong>parseStatement</strong> (tokenizer &amp;tokens,<A HREF="toConnection.html">toConnection</A> &amp;conn)
+<A NAME="parseStatement"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> statement &nbsp;<strong>parseStatement</strong> (tokenizer &tokens,<A HREF="toConnection.html">toConnection</A> &conn)
 <br></td><td align="right"><h3><strong>parseStatement</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get one statement (or block) from the root of an editor or string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -140,7 +140,7 @@
 <TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to determine SQL dialog. (For future use)
    </TD></TR>
 </TABLE></P>
-<A NAME="parseStatement"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> statement &nbsp;<strong>parseStatement</strong> (const QString &amp;str,<A HREF="toConnection.html">toConnection</A> &amp;conn)
+<A NAME="parseStatement"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> statement &nbsp;<strong>parseStatement</strong> (const QString &str,<A HREF="toConnection.html">toConnection</A> &conn)
 <br></td><td align="right"><h3><strong>parseStatement</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get one statement (or block) from the root of an editor or string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -149,7 +149,7 @@
 <TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to determine SQL dialog. (For future use)
    </TD></TR>
 </TABLE></P>
-<A NAME="indent"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>indent</strong> (const QString &amp;str)
+<A NAME="indent"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>indent</strong> (const QString &str)
 <br></td><td align="right"><h3><strong>indent</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Indent a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -158,7 +158,7 @@
 </TABLE></P>
 <p><b>Returns</b>: An indented string.
    </p>
-<A NAME="indentStatement"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>indentStatement</strong> (statement &amp;stat,<A HREF="toConnection.html">toConnection</A> &amp;conn,int level=0)
+<A NAME="indentStatement"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>indentStatement</strong> (statement &stat,<A HREF="toConnection.html">toConnection</A> &conn,int level=0)
 <br></td><td align="right"><h3><strong>indentStatement</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Indent a parse statement structure into a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -171,7 +171,7 @@
 </TABLE></P>
 <p><b>Returns</b>: A string with the indented statement.
    </p>
-<A NAME="indentStatement"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>indentStatement</strong> (statement &amp;stat,int level=0)
+<A NAME="indentStatement"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>indentStatement</strong> (statement &stat,int level=0)
 <br></td><td align="right"><h3><strong>indentStatement</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Indent a parse statement structure into a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -182,7 +182,7 @@
 </TABLE></P>
 <p><b>Returns</b>: A string with the indented statement.
    </p>
-<A NAME="indent"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>indent</strong> (const QString &amp;str,<A HREF="toConnection.html">toConnection</A> &amp;conn)
+<A NAME="indent"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>indent</strong> (const QString &str,<A HREF="toConnection.html">toConnection</A> &conn)
 <br></td><td align="right"><h3><strong>indent</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Indent a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -200,7 +200,7 @@
 <TR><TD align="left" valign="top"><i>level</i></TD><TD align="left" valign="top">Number of characters to indent.
    </TD></TR>
 </TABLE></P>
-<A NAME="indent"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>indent</strong> (std::list&lt;statement&gt; &amp;stat,<A HREF="toConnection.html">toConnection</A> &amp;conn)
+<A NAME="indent"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>indent</strong> (std::list<statement> &stat,<A HREF="toConnection.html">toConnection</A> &conn)
 <br></td><td align="right"><h3><strong>indent</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Indent a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -211,7 +211,7 @@
 </TABLE></P>
 <p><b>Returns</b>: An indented string.
    </p>
-<A NAME="indent"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>indent</strong> (std::list&lt;statement&gt; &amp;stat)
+<A NAME="indent"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>indent</strong> (std::list<statement> &stat)
 <br></td><td align="right"><h3><strong>indent</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Indent a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -220,7 +220,7 @@
 </TABLE></P>
 <p><b>Returns</b>: An indented string.
    </p>
-<A NAME="countIndent"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>countIndent</strong> (const QString &amp;str,int &amp;chars)
+<A NAME="countIndent"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>countIndent</strong> (const QString &str,int &chars)
 <br></td><td align="right"><h3><strong>countIndent</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Count indentation level of a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -229,7 +229,7 @@
 <TR><TD align="left" valign="top"><i>chars</i></TD><TD align="left" valign="top">Position in string.
    </TD></TR>
 </TABLE></P>
-<A NAME="indent"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>indent</strong> (const QString &amp;str,<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;syntax)
+<A NAME="indent"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>indent</strong> (const QString &str,<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &syntax)
 <br></td><td align="right"><h3><strong>indent</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Indent a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -240,7 +240,7 @@
 </TABLE></P>
 <p><b>Returns</b>: An indented string.
    </p>
-<A NAME="indent"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>indent</strong> (std::list&lt;statement&gt; &amp;stat,<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;syntax)
+<A NAME="indent"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>indent</strong> (std::list<statement> &stat,<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &syntax)
 <br></td><td align="right"><h3><strong>indent</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Indent a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -254,9 +254,12 @@
 <A NAME="getSetting"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> settings &nbsp;<strong>getSetting</strong> (void)
 <br></td><td align="right"><h3><strong>getSetting</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get current settings.
    </p>
-<A NAME="setSetting"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setSetting</strong> (const settings &amp;setting)
+<A NAME="setSetting"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setSetting</strong> (const settings &setting)
 <br></td><td align="right"><h3><strong>setSetting</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get current settings.
    </p>
 <HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
 </BODY>
 </HTML>

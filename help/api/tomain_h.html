@@ -26,10 +26,11 @@
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
 <pre>
-//***************************************************************************
-/*
+/*****
+ *
  * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2003 Quest Software, Inc
+ * Copyright (C) 2003-2005 Quest Software, Inc
+ * Portions Copyright (C) 2005 Other Contributors
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,9 +57,11 @@
  *      these libraries without written consent from Quest Software, Inc.
  *      Observe that this does not disallow linking to the Qt Free Edition.
  *
+ *      You may link this product with any GPL'd Qt library such as Qt/Free
+ *
  * All trademarks belong to their respective owners.
  *
- ****************************************************************************/
+ *****/
 
 #ifndef TOMAIN_H
 #define TOMAIN_H
@@ -71,12 +74,12 @@
 #  include "tomainwindow.h"
 #endif
 
-#include &lt;list&gt;
-#include &lt;map&gt;
+#include <list>
+#include <map>
 
-#include &lt;qtimer.h&gt;
+#include <qtimer.h>
 
-#if QT_VERSION &gt;= 300
+#if QT_VERSION >= 0x030000
 class QUrlOperator;
 #endif
 
@@ -109,7 +112,7 @@ private:
   /**
    * The connections that have been opened in TOra.
    */
-  std::list&lt;toConnection *&gt; Connections;
+  std::list<toConnection *> Connections;
   /**
    * Workspace of main window.
    */
@@ -126,11 +129,11 @@ private:
   /**
    * A map from menu ID:s to tools.
    */
-  std::map&lt;int,toTool *&gt; Tools;
+  std::map<int,toTool *> Tools;
   /**
    * A list of toolbuttons that need an open connection to be enabled.
    */
-  std::map&lt;QToolButton *,bool&gt; NeedConnection;
+  std::map<QToolButton *,bool> NeedConnection;
   /**
    * The ID of the tool providing the SQL editor.
    */
@@ -138,7 +141,7 @@ private:
 
   /** Status messages to display
    */
-  std::list&lt;QString&gt; StatusMessages;
+  std::list<QString> StatusMessages;
 
   /**
    * Disconnect connection button.
@@ -228,7 +231,7 @@ private:
   QLabel *RowLabel;
   toBackground Poll;
   /**
-   * Search &amp; replace dialog if available.
+   * Search & replace dialog if available.
    */
   toSearchReplace *Search;
   /**
@@ -237,11 +240,6 @@ private:
   int DefaultTool;
 
   QTimer KeepAlive;
-
-#if QT_VERSION &gt;= 300
-  QUrlOperator *VersionUrl;
-  QString VersionString;
-#endif
 
   toEditWidget *Edit;
 
@@ -310,7 +308,7 @@ public:
    * Get the current database connection
    * @return Reference to current connection.
    */
-  toConnection &amp;currentConnection(void);
+  toConnection &currentConnection(void);
 
   /**
    * Set the widget to edit through menues and toolbar.
@@ -387,20 +385,20 @@ public:
    * @return List of connection names. The returned list can then be used by
    * @ref connection to get the actual connection.
    */
-  std::list&lt;QString&gt; connections(void);
+  std::list<QString> connections(void);
   /** Get a connection identified by a string.
    * @return A reference to a connection.
    * @exception QString If connection wasn't found.
    */
-  toConnection &amp;connection(const QString &amp;);
+  toConnection &connection(const QString &);
   /** Set if a connection needs to be commited. Also updates visual feedback in interface.
    */
-  void setNeedCommit(toConnection &amp;conn,bool needCommit=true);
+  void setNeedCommit(toConnection &conn,bool needCommit=true);
 
   /** Edit an SQL statement in the SQL editor if any connected.
    * @param str Identifier of the SQL to edit.
    */
-  void editSQL(const QString &amp;str);
+  void editSQL(const QString &str);
   /**
    * Register a tool which to use as an SQL editor. When something is to be edited
    * first a toolwindow will be created and the @ref sqlEditor will be emited, so
@@ -425,12 +423,12 @@ public:
    * @param data A map that can be used to recreate the session.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
   /** Get edit toolbar pointer.
    */
   QToolBar *editToolbar()
@@ -450,15 +448,15 @@ public:
   void setupChart(toLineChart *chart);
   /** Display status message in dialog.
    */
-  void displayMessage(const QString &amp;str);
+  void displayMessage(const QString &str);
   /** Add recent file
    */
-  void addRecentFile(const QString &amp;filename);
+  void addRecentFile(const QString &filename);
 signals:
   /** Invoked to start editing an SQL identifier.
    * @param str Identifier to start editing.
    */
-  void sqlEditor(const QString &amp;str);
+  void sqlEditor(const QString &str);
   /** Invoked when a new chart is created.
    */
   void chartAdded(toLineChart *chart);
@@ -471,11 +469,11 @@ signals:
   /** Invoked when a connection is added.
    * @param str Connection identifier.
    */
-  void addedConnection(const QString &amp;str);
+  void addedConnection(const QString &str);
   /** Invoked when a connection is removed.
    * @param str Connection identifier.
    */
-  void removedConnection(const QString &amp;str);
+  void removedConnection(const QString &str);
   /** Invoked when a tool window is created.
    * @param tool The tool created.
    */
@@ -488,7 +486,7 @@ signals:
    * @param conn Connection that is commited
    * @param cmt True if commit, false if rollback.
    */
-  void willCommit(toConnection &amp;conn,bool cmt);
+  void willCommit(toConnection &conn,bool cmt);
 public slots:
   /** Used to enable/disable entries in the windows menu
    */
@@ -576,8 +574,6 @@ private slots:
    */
   void displayMessage(void);
 
-  void versionData(const QByteArray &amp;data,QNetworkOperation *op);
-  void versionFinished(QNetworkOperation *op);
   void keepAlive();
 };
 
@@ -589,5 +585,8 @@ toMain *toMainWidget(void);
 #endif
 </pre>
 <HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
 </BODY>
 </HTML>

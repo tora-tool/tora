@@ -38,9 +38,9 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref6">editSave</A></b> (bool ask) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref7">exportData</A></b> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref7">exportData</A></b> (std::map<QCString,QString> &data,const QCString &prefix) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref8">importData</A></b> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref8">importData</A></b> (std::map<QCString,QString> &data,const QCString &prefix) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref9">useNoReturning</A></b> (bool use) 
 </LI>
@@ -48,19 +48,19 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref14">refresh</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref15">query</A></b> (const QString &amp;sql,const <A HREF="#toQList">toQList</A> &amp;param) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref15">query</A></b> (const QString &sql,const <A HREF="#toQList">toQList</A> &param) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref16">changeParams</A></b> (const QString &amp;Param1) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref16">changeParams</A></b> (const QString &Param1) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref17">changeParams</A></b> (const QString &amp;Param1,const QString &amp;Param2) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref17">changeParams</A></b> (const QString &Param1,const QString &Param2) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref18">changeParams</A></b> (const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref18">changeParams</A></b> (const QString &Param1,const QString &Param2,const QString &Param3) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref19">saveUnsaved</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref20">saveUnsaved</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,bool cmt) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref20">saveUnsaved</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,bool cmt) 
 </LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref21">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref21">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &) 
 </LI>
 </ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref12">changesSaved</A></b> (void) 
 </LI>
@@ -91,7 +91,7 @@
 <A NAME="editSave"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editSave</strong> (bool ask)
 <br></td><td align="right"><h3><strong>editSave</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export contents to file.
    </p>
-<A NAME="exportData"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix)
+<A NAME="exportData"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map<QCString,QString> &data,const QCString &prefix)
 <br></td><td align="right"><h3><strong>exportData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export data to a map.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -100,7 +100,7 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to add to the map.
    </TD></TR>
 </TABLE></P>
-<A NAME="importData"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix)
+<A NAME="importData"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map<QCString,QString> &data,const QCString &prefix)
 <br></td><td align="right"><h3><strong>importData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Import data
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -121,26 +121,26 @@
 <br></td><td align="right"><h3><strong>refresh</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#refresh">toResult</A>.</p>
-<A NAME="query"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const QString &amp;sql,const <A HREF="#toQList">toQList</A> &amp;param)
+<A NAME="query"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const QString &sql,const <A HREF="#toQList">toQList</A> &param)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#query">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const QString &amp;Param1)
+<A NAME="changeParams"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const QString &Param1)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const QString &amp;Param1,const QString &amp;Param2)
+<A NAME="changeParams"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const QString &Param1,const QString &Param2)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
+<A NAME="changeParams"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const QString &Param1,const QString &Param2,const QString &Param3)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
 <A NAME="saveUnsaved"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>saveUnsaved</strong> (void)
 <br></td><td align="right"><h3><strong>saveUnsaved</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Save unsaved changes in the editor
    </p>
-<A NAME="saveUnsaved"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>saveUnsaved</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,bool cmt)
+<A NAME="saveUnsaved"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>saveUnsaved</strong> (<A HREF="toConnection.html">toConnection</A> &conn,bool cmt)
 <br></td><td align="right"><h3><strong>saveUnsaved</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Commit connection
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -149,10 +149,13 @@
 <TR><TD align="left" valign="top"><i>cmt</i></TD><TD align="left" valign="top">If commit or rollback
    </TD></TR>
 </TABLE></P>
-<A NAME="canHandle"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &amp;)
+<A NAME="canHandle"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &)
 <br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Handle all databases
    </p>
 <p>Reimplemented from <A HREF="toResult.html#canHandle">toResult</A>.</p>
 <HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
 </BODY>
 </HTML>

@@ -27,27 +27,27 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref5">toToolWidget</A></b> (<A HREF="toTool.html">toTool</A> &amp;tool,
-	       const QString &amp;ctx,
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref5">toToolWidget</A></b> (<A HREF="toTool.html">toTool</A> &tool,
+	       const QString &ctx,
 	       <A HREF="#QWidget">QWidget</A> *parent,
-	       <A HREF="toConnection.html">toConnection</A> &amp;conn,
+	       <A HREF="toConnection.html">toConnection</A> &conn,
 	       const char *name=NULL) 
 </LI>
 <LI>&nbsp;<b><A HREF="#ref6">~toToolWidget</A></b> () 
 </LI>
-<LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref7">connection</A></b> () 
+<LI><A HREF="toConnection.html">toConnection</A> &&nbsp;<b><A HREF="#ref7">connection</A></b> () 
 </LI>
-<LI><A HREF="toTool.html">toTool</A> &amp;&nbsp;<b><A HREF="#ref8">tool</A></b> (void) 
+<LI><A HREF="toTool.html">toTool</A> &&nbsp;<b><A HREF="#ref8">tool</A></b> (void) 
 </LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref9">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref9">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &conn) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref10">setConnection</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn) 
+<LI>void &nbsp;<b><A HREF="#ref10">setConnection</A></b> (<A HREF="toConnection.html">toConnection</A> &conn) 
 </LI>
 <LI><A HREF="toTimer.html">toTimer</A> *&nbsp;<b><A HREF="#ref11">timer</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref12">exportData</A></b> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref12">exportData</A></b> (std::map<QCString,QString> &data,const QCString &prefix) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref13">importData</A></b> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref13">importData</A></b> (std::map<QCString,QString> &data,const QCString &prefix) 
 </LI>
 </ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref4">connectionChange</A></b> (void) 
 </LI>
@@ -57,10 +57,10 @@
 <A NAME="connectionChange"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>connectionChange</strong> (void)
 <br></td><td align="right"><h3><strong>connectionChange</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted when the connection is changed.
    </p>
-<A NAME="toToolWidget"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toToolWidget</strong> (<A HREF="toTool.html">toTool</A> &amp;tool,
-	       const QString &amp;ctx,
+<A NAME="toToolWidget"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toToolWidget</strong> (<A HREF="toTool.html">toTool</A> &tool,
+	       const QString &ctx,
 	       <A HREF="#QWidget">QWidget</A> *parent,
-	       <A HREF="toConnection.html">toConnection</A> &amp;conn,
+	       <A HREF="toConnection.html">toConnection</A> &conn,
 	       const char *name=NULL)
 <br></td><td align="right"><h3><strong>toToolWidget</strong></h3></td></tr></table><p></p><p> Create widget.
 </p>
@@ -75,18 +75,18 @@
    </TD></TR>
 </TABLE></P>
 <A NAME="~toToolWidget"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toToolWidget</strong> ()
-<br></td><td align="right"><h3><strong>~toToolWidget</strong></h3></td></tr></table><p></p><A NAME="connection"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>connection</strong> ()
+<br></td><td align="right"><h3><strong>~toToolWidget</strong></h3></td></tr></table><p></p><A NAME="connection"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &&nbsp;<strong>connection</strong> ()
 <br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p></p><p> Get the current connection.
 </p>
 <p><b>Returns</b>: Reference to connection.
    </p>
 <p>Reimplemented from <A HREF="toConnectionWidget.html#connection">toConnectionWidget</A>.</p>
-<A NAME="tool"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toTool.html">toTool</A> &amp;&nbsp;<strong>tool</strong> (void)
+<A NAME="tool"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toTool.html">toTool</A> &&nbsp;<strong>tool</strong> (void)
 <br></td><td align="right"><h3><strong>tool</strong></h3></td></tr></table><p></p><p> Get the tool for this tool widget.
 </p>
 <p><b>Returns</b>: Reference to a tool object.
    </p>
-<A NAME="canHandle"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn)
+<A NAME="canHandle"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &conn)
 <br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Check if this tool can handle a specific connection.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -95,7 +95,7 @@
 </TABLE></P>
 <p><b>Returns</b>: True if connection is handled.
    </p>
-<A NAME="setConnection"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setConnection</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn)
+<A NAME="setConnection"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setConnection</strong> (<A HREF="toConnection.html">toConnection</A> &conn)
 <br></td><td align="right"><h3><strong>setConnection</strong></h3></td></tr></table><p></p><p> Change connection of tool.
    </p>
 <p>Reimplemented from <A HREF="toConnectionWidget.html#setConnection">toConnectionWidget</A>.</p>
@@ -104,7 +104,7 @@
 </p>
 <p><b>Returns</b>: Pointer to a timer object.
    </p>
-<A NAME="exportData"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix)
+<A NAME="exportData"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map<QCString,QString> &data,const QCString &prefix)
 <br></td><td align="right"><h3><strong>exportData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export data to a map.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -113,7 +113,7 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to add to the map.
    </TD></TR>
 </TABLE></P>
-<A NAME="importData"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix)
+<A NAME="importData"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map<QCString,QString> &data,const QCString &prefix)
 <br></td><td align="right"><h3><strong>importData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Import data
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -123,5 +123,8 @@
    </TD></TR>
 </TABLE></P>
 <HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
 </BODY>
 </HTML>

@@ -26,10 +26,11 @@
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
 <pre>
-//***************************************************************************
-/*
+/*****
+ *
  * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2003 Quest Software, Inc
+ * Copyright (C) 2003-2005 Quest Software, Inc
+ * Portions Copyright (C) 2005 Other Contributors
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,18 +57,20 @@
  *      these libraries without written consent from Quest Software, Inc.
  *      Observe that this does not disallow linking to the Qt Free Edition.
  *
+ *      You may link this product with any GPL'd Qt library such as Qt/Free
+ *
  * All trademarks belong to their respective owners.
  *
- ****************************************************************************/
+ *****/
 
 #ifndef TOTOOL_H
 #define TOTOOL_H
 
-#include &lt;map&gt;
+#include <map>
 
-#include &lt;qobject.h&gt;
-#include &lt;qstring.h&gt;
-#include &lt;qvbox.h&gt;
+#include <qobject.h>
+#include <qstring.h>
+#include <qvbox.h>
 
 class toConnection;
 class toTimer;
@@ -106,7 +109,7 @@ private:
    * A map of @ref Key to tools. Used to keep track of the different tools
    * available.
    */
-  static std::map&lt;QCString,toTool *&gt; *Tools;
+  static std::map<QCString,toTool *> *Tools;
   /**
    * A map containing the available configuration settings. By convention the
    * character ':' is used to separate parts of the path.
@@ -116,7 +119,7 @@ private:
    * @see config
    * @see setConfig
    */
-  static std::map&lt;QCString,QString&gt; *Configuration;
+  static std::map<QCString,QString> *Configuration;
   /**
    * Contain the pixmap of this tool if any. Used for the toolbar and menu entries.
    */
@@ -130,7 +133,7 @@ protected:
   /**
    * Should return the xpm used to create the @ref ButtonPicture.
    */
-  virtual char **pictureXPM(void);
+  virtual const char **pictureXPM(void);
 public:
   /**
    * Get the name.
@@ -192,7 +195,7 @@ public:
    * connections from the provider Oracle.
    * @return True if connection can be handled.
    */
-  virtual bool canHandle(toConnection &amp;conn);
+  virtual bool canHandle(toConnection &conn);
   /**
    * This function is called as a last step after the main widget is created. It could
    * be used to insert the tool pretty much anywhere in the user interface if the toolmenu,
@@ -207,7 +210,7 @@ public:
    * @param parent Parent window, which is the worksheet of the main window.
    * @param connection The database connection that this tool should operate on.
    */
-  virtual QWidget *toolWindow(QWidget *parent,toConnection &amp;connection) = 0;
+  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection) = 0;
   /**
    * Create and return configuration tab for this tool. The returned widget should also
    * be a childclass of @ref toSettingTab.
@@ -234,15 +237,15 @@ public:
    * @see Tools
    * @return A reference to the tool map.
    */
-  static std::map&lt;QCString,toTool *&gt; &amp;tools(void)
-  { if (!Tools) Tools=new std::map&lt;QCString,toTool *&gt;; return *Tools; }
+  static std::map<QCString,toTool *> &tools(void)
+  { if (!Tools) Tools=new std::map<QCString,toTool *>; return *Tools; }
   /**
    * Get a pointer to the tool with a specified key.
    *
    * @see Tools
    * @return A pointer to the tool or NULL if tool doesn't exist.
    */
-  static toTool *tool(const QCString &amp;key);
+  static toTool *tool(const QCString &key);
   /**
    * Save configuration to file.
    */
@@ -257,7 +260,7 @@ public:
    * @param tag The name of the configuration setting.
    * @param def Default value of the setting, if it is not available.
    */
-  static const QString &amp;globalConfig(const QCString &amp;tag,const QCString &amp;def);
+  static const QString &globalConfig(const QCString &tag,const QCString &def);
   /**
    * Change a setting. Depending on the implementation this can change the
    * contents on disk or not.
@@ -269,12 +272,12 @@ public:
    * @param tag The name of the configuration setting.
    * @param def Contents of this setting.
    */
-  static void globalSetConfig(const QCString &amp;tag,const QString &amp;value);
+  static void globalSetConfig(const QCString &tag,const QString &value);
   /**
    * Remove a setting. Can be usefull for removing sensetive information.
    * @param tag The name of the configuration setting to remove.
    */
-  static void globalEraseConfig(const QCString &amp;tag);
+  static void globalEraseConfig(const QCString &tag);
 
   /**
    * Get tool specific settings.
@@ -286,7 +289,7 @@ public:
    * @param tag The name of the configuration setting.
    * @param def Contents of this setting.
    */
-  const QString &amp;config(const QCString &amp;tag,const QCString &amp;def);
+  const QString &config(const QCString &tag,const QCString &def);
   /**
    * Change toolspecific setting. Depending on the implementation this can change the
    * contents on disk or not.
@@ -298,25 +301,25 @@ public:
    * @param tag The name of the configuration setting.
    * @param def Default value of the setting, if it is not available.
    */
-  void setConfig(const QCString &amp;tag,const QString &amp;value);
+  void setConfig(const QCString &tag,const QString &value);
   /**
    * Remove a toolspecific setting. Can be usefull for removing sensetive information.
    * @param tag The name of the configuration setting to remove.
    */
-  void eraseConfig(const QCString &amp;tag);
+  void eraseConfig(const QCString &tag);
   /**
    * Load a string to string map from file saved by the @ref saveMap function.
    * @param filename Filename to load
    * @param map Reference to the map to fill with the new values.
    */
-  static void loadMap(const QString &amp;filename,std::map&lt;QCString,QString&gt; &amp;map);
+  static void loadMap(const QString &filename,std::map<QCString,QString> &map);
   /**
    * Save a string to string map to file.
    * @see loadMap
    * @param filename Filename to load
    * @param map Reference to the map to fill with the new values.
    */
-  static bool saveMap(const QString &amp;filename,std::map&lt;QCString,QString&gt; &amp;map);
+  static bool saveMap(const QString &filename,std::map<QCString,QString> &map);
 public slots:
   /**
    * Create a window of the current tool. This function sets up a toolwindow for
@@ -338,7 +341,7 @@ public:
    * Default constructor.
    * @param ctx Help context for this setting tab.
    */
-  toSettingTab(const QString &amp;ctx)
+  toSettingTab(const QString &ctx)
     : toHelpContext(ctx)
   { }
   /**
@@ -361,7 +364,7 @@ class toConnectionWidget {
 public:
   /** Constructor with the connection it should be set to initially.
    */
-  toConnectionWidget(toConnection &amp;conn,QWidget *widget);
+  toConnectionWidget(toConnection &conn,QWidget *widget);
   /** Constructor without a connection. Will inherit the connection from a parent connection widget.
    */
   toConnectionWidget(QWidget *widget);
@@ -370,10 +373,10 @@ public:
   virtual ~toConnectionWidget();
   /** Change connection of the widget.
    */
-  virtual void setConnection(toConnection &amp;conn);
+  virtual void setConnection(toConnection &conn);
   /** Get the connection it is pointed to.
    */
-  virtual toConnection &amp;connection();
+  virtual toConnection &connection();
 };
 
 /** Simple baseclass for widgets defining the main tool widget. It is in
@@ -382,7 +385,7 @@ public:
 class toToolWidget : public QVBox, public toHelpContext, public toConnectionWidget {
   Q_OBJECT
   toTimer *Timer;
-  toTool &amp;Tool;
+  toTool &Tool;
 private slots:
   void parentConnection(void);
 signals:
@@ -396,31 +399,31 @@ public:
    * @param conn Connection of widget.
    * @param name Name of widget.
    */
-  toToolWidget(toTool &amp;tool,
-	       const QString &amp;ctx,
+  toToolWidget(toTool &tool,
+	       const QString &ctx,
 	       QWidget *parent,
-	       toConnection &amp;conn,
+	       toConnection &conn,
 	       const char *name=NULL);
   ~toToolWidget();
   /** Get the current connection.
    * @return Reference to connection.
    */
-  toConnection &amp;connection()
+  toConnection &connection()
   { return toConnectionWidget::connection(); }
   /** Get the tool for this tool widget.
    * @return Reference to a tool object.
    */
-  toTool &amp;tool(void)
+  toTool &tool(void)
   { return Tool; }
   /** Check if this tool can handle a specific connection.
    * @param provider Name of connection.
    * @return True if connection is handled.
    */
-  virtual bool canHandle(toConnection &amp;conn)
+  virtual bool canHandle(toConnection &conn)
   { return Tool.canHandle(conn); }
   /** Change connection of tool.
    */
-  void setConnection(toConnection &amp;conn);
+  void setConnection(toConnection &conn);
   /** Get timer of tool. Used by some results to get update time.
    * @return Pointer to a timer object.
    */
@@ -430,16 +433,19 @@ public:
    * @param data A map that can be used to recreate the data of a chart.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
 };
 
 #endif
 </pre>
 <HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
 </BODY>
 </HTML>

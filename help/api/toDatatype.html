@@ -1,0 +1,90 @@
+<HTML>
+<HEAD>
+<TITLE>class toDatatype</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toDatatype</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1">
+ Widget used to represent a datatype selection for a column. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="todatatype_h.html">todatatype.h</A>&gt;</code></TD></TR>
+<TR><TH>Inherits</TH><TD>QHBox <small>(unknown)</small> <small>[public ]</small></TD></TR>
+<TR><TH><A HREF="full-list-toDatatype.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref12">toDatatype</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,const QString &def,<A HREF="#QWidget">QWidget</A> *parent,const char *name=NULL) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref13">toDatatype</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,<A HREF="#QWidget">QWidget</A> *parent,const char *name=NULL) 
+</LI>
+<LI>QString &nbsp;<b><A HREF="#ref14">type</A></b> ()  const
+</LI>
+</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref15">setType</A></b> (const QString &type) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref16">setCustom</A></b> (bool prefer) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
+ Widget used to represent a datatype selection for a column.
+ </p>
+<A NAME="toDatatype"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toDatatype</strong> (<A HREF="toConnection.html">toConnection</A> &conn,const QString &def,<A HREF="#QWidget">QWidget</A> *parent,const char *name=NULL)
+<br></td><td align="right"><h3><strong>toDatatype</strong></h3></td></tr></table><p></p><p> Create the widget and specify connection and the datatype.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to specify datatype for.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>def</i></TD><TD align="left" valign="top">Initial datatype to use.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">The parent widget.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
+   </TD></TR>
+</TABLE></P>
+<A NAME="toDatatype"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toDatatype</strong> (<A HREF="toConnection.html">toConnection</A> &conn,<A HREF="#QWidget">QWidget</A> *parent,const char *name=NULL)
+<br></td><td align="right"><h3><strong>toDatatype</strong></h3></td></tr></table><p></p><p> Create the widget and specify connection.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to specify datatype for.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">The parent widget.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
+   </TD></TR>
+</TABLE></P>
+<A NAME="type"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QString &nbsp;<strong>type</strong> ()
+<br></td><td align="right"><h3><strong>type</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get a string representation of the type.
+   </p>
+<A NAME="setType"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setType</strong> (const QString &type)
+<br></td><td align="right"><h3><strong>setType</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Change the type.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>type</i></TD><TD align="left" valign="top">The entire type specification (Including posible size and precision)
+   </TD></TR>
+</TABLE></P>
+<A NAME="setCustom"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setCustom</strong> (bool prefer)
+<br></td><td align="right"><h3><strong>setCustom</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Indicate if you would prefer to enter a custom datatype or if posible use the simpler controls.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>prefer</i></TD><TD align="left" valign="top">If true always use custom controls.
+   </TD></TR>
+</TABLE></P>
+<HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

@@ -29,9 +29,9 @@
 </TABLE></TD></TR></TABLE>
 <h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref10">toResultPie</A></b> (<A HREF="#QWidget">QWidget</A> *parent,const char *name=NULL) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref11">query</A></b> (const QString &amp;sql,const <A HREF="#toQList">toQList</A> &amp;param) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref11">query</A></b> (const QString &sql,const <A HREF="#toQList">toQList</A> &param) 
 </LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref12">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref12">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref13">stop</A></b> () 
 </LI>
@@ -41,29 +41,29 @@
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref16">labelFirst</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref17">setFilter</A></b> (const QRegExp &amp;filter,const QRegExp &amp;valueFilter) 
+<LI>void &nbsp;<b><A HREF="#ref17">setFilter</A></b> (const QRegExp &filter,const QRegExp &valueFilter) 
 </LI>
-<LI>const QRegExp &amp;&nbsp;<b><A HREF="#ref18">filter</A></b> (void) 
+<LI>const QRegExp &&nbsp;<b><A HREF="#ref18">filter</A></b> (void) 
 </LI>
-<LI>const QRegExp &amp;&nbsp;<b><A HREF="#ref19">valueFilter</A></b> (void) 
+<LI>const QRegExp &&nbsp;<b><A HREF="#ref19">valueFilter</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref20">setSQL</A></b> (const QString &amp;sql) 
+<LI>void &nbsp;<b><A HREF="#ref20">setSQL</A></b> (const QString &sql) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref21">setSQL</A></b> (const <A HREF="toSQL.html">toSQL</A> &amp;sql) 
+<LI>void &nbsp;<b><A HREF="#ref21">setSQL</A></b> (const <A HREF="toSQL.html">toSQL</A> &sql) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref22">query</A></b> (const QString &amp;sql) 
+<LI>void &nbsp;<b><A HREF="#ref22">query</A></b> (const QString &sql) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref23">query</A></b> (const <A HREF="toSQL.html">toSQL</A> &amp;sql) 
+<LI>void &nbsp;<b><A HREF="#ref23">query</A></b> (const <A HREF="toSQL.html">toSQL</A> &sql) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref24">query</A></b> (const <A HREF="toSQL.html">toSQL</A> &amp;sql,<A HREF="#toQList">toQList</A> &amp;par) 
+<LI>void &nbsp;<b><A HREF="#ref24">query</A></b> (const <A HREF="toSQL.html">toSQL</A> &sql,<A HREF="#toQList">toQList</A> &par) 
 </LI>
 </ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref25">refresh</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref26">changeParams</A></b> (const QString &amp;Param1) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref26">changeParams</A></b> (const QString &Param1) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref27">changeParams</A></b> (const QString &amp;Param1,const QString &amp;Param2) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref27">changeParams</A></b> (const QString &Param1,const QString &Param2) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref28">changeParams</A></b> (const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref28">changeParams</A></b> (const QString &Param1,const QString &Param2,const QString &Param3) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Display the result of a query in a piechart. The first column of the query should
  contain the value and the second should contain an optional label.
@@ -77,11 +77,11 @@
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
    </TD></TR>
 </TABLE></P>
-<A NAME="query"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const QString &amp;sql,const <A HREF="#toQList">toQList</A> &amp;param)
+<A NAME="query"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const QString &sql,const <A HREF="#toQList">toQList</A> &param)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#query">toResult</A>.</p>
-<A NAME="canHandle"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &amp;)
+<A NAME="canHandle"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &)
 <br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p>Reimplemented from <A HREF="toResult.html#canHandle">toResult</A>.</p>
 <A NAME="stop"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>stop</strong> ()
 <br></td><td align="right"><h3><strong>stop</strong></h3></td></tr></table><p></p><p> Stop automatic updating from tool timer.
@@ -95,7 +95,7 @@
 <A NAME="labelFirst"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>labelFirst</strong> (void)
 <br></td><td align="right"><h3><strong>labelFirst</strong></h3></td></tr></table><p></p><p> Check label first status.
    </p>
-<A NAME="setFilter"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setFilter</strong> (const QRegExp &amp;filter,const QRegExp &amp;valueFilter)
+<A NAME="setFilter"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setFilter</strong> (const QRegExp &filter,const QRegExp &valueFilter)
 <br></td><td align="right"><h3><strong>setFilter</strong></h3></td></tr></table><p></p><p> Set a filter on which columns to add based on label.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -104,13 +104,13 @@
 <TR><TD align="left" valign="top"><i>valueFilter</i></TD><TD align="left" valign="top">A regexp which the value must match.
    </TD></TR>
 </TABLE></P>
-<A NAME="filter"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const QRegExp &amp;&nbsp;<strong>filter</strong> (void)
+<A NAME="filter"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const QRegExp &&nbsp;<strong>filter</strong> (void)
 <br></td><td align="right"><h3><strong>filter</strong></h3></td></tr></table><p></p><p> Get the current filter.
    </p>
-<A NAME="valueFilter"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const QRegExp &amp;&nbsp;<strong>valueFilter</strong> (void)
+<A NAME="valueFilter"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const QRegExp &&nbsp;<strong>valueFilter</strong> (void)
 <br></td><td align="right"><h3><strong>valueFilter</strong></h3></td></tr></table><p></p><p> Get the current value filter.
    </p>
-<A NAME="setSQL"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSQL</strong> (const QString &amp;sql)
+<A NAME="setSQL"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSQL</strong> (const QString &sql)
 <br></td><td align="right"><h3><strong>setSQL</strong></h3></td></tr></table><p></p><p> Set the SQL statement of this list
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -118,7 +118,7 @@
    </TD></TR>
 </TABLE></P>
 <p>Reimplemented from <A HREF="toResult.html#setSQL">toResult</A>.</p>
-<A NAME="setSQL"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSQL</strong> (const <A HREF="toSQL.html">toSQL</A> &amp;sql)
+<A NAME="setSQL"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSQL</strong> (const <A HREF="toSQL.html">toSQL</A> &sql)
 <br></td><td align="right"><h3><strong>setSQL</strong></h3></td></tr></table><p></p><p> Set the SQL statement of this list. This will also affect Name.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -126,7 +126,7 @@
    </TD></TR>
 </TABLE></P>
 <p>Reimplemented from <A HREF="toResult.html#setSQL">toResult</A>.</p>
-<A NAME="query"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const QString &amp;sql)
+<A NAME="query"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const QString &sql)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p></p><p> Set new SQL and run query.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -135,7 +135,7 @@
 </TABLE></P>
 <p><b>See also</b>: setSQL</p>
 <p>Reimplemented from <A HREF="toResult.html#query">toResult</A>.</p>
-<A NAME="query"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const <A HREF="toSQL.html">toSQL</A> &amp;sql)
+<A NAME="query"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const <A HREF="toSQL.html">toSQL</A> &sql)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p></p><p> Set new SQL and run query.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -144,7 +144,7 @@
 </TABLE></P>
 <p><b>See also</b>: setSQL</p>
 <p>Reimplemented from <A HREF="toResult.html#query">toResult</A>.</p>
-<A NAME="query"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const <A HREF="toSQL.html">toSQL</A> &amp;sql,<A HREF="#toQList">toQList</A> &amp;par)
+<A NAME="query"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const <A HREF="toSQL.html">toSQL</A> &sql,<A HREF="#toQList">toQList</A> &par)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p></p><p> Set new SQL and run query.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -157,18 +157,21 @@
 <br></td><td align="right"><h3><strong>refresh</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#refresh">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const QString &amp;Param1)
+<A NAME="changeParams"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const QString &Param1)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const QString &amp;Param1,const QString &amp;Param2)
+<A NAME="changeParams"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const QString &Param1,const QString &Param2)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented For internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
+<A NAME="changeParams"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const QString &Param1,const QString &Param2,const QString &Param3)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
 <HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
 </BODY>
 </HTML>

@@ -34,9 +34,9 @@
 </LI>
 <LI>&nbsp;<b><A HREF="#ref53">~toResultContentEditor</A></b> () 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref54">query</A></b> (const QString &amp;,const <A HREF="#toQList">toQList</A> &amp;) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref54">query</A></b> (const QString &,const <A HREF="#toQList">toQList</A> &) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref55">changeParams</A></b> (const QString &amp;Param1,const QString &amp;Param2) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref55">changeParams</A></b> (const QString &Param1,const QString &Param2) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref56">editPrint</A></b> (void) 
 </LI>
@@ -46,15 +46,15 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref59">editSelectAll</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref60">setText</A></b> (int row,int col,const QString &amp;text) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref60">setText</A></b> (int row,int col,const QString &text) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref61">changeFilter</A></b> (bool all,const QString &amp;criteria,const QString &amp;order) 
+<LI>void &nbsp;<b><A HREF="#ref61">changeFilter</A></b> (bool all,const QString &criteria,const QString &order) 
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref62">allFilter</A></b> () 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref65">exportData</A></b> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref65">exportData</A></b> (std::map<QCString,QString> &data,const QCString &prefix) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref66">importData</A></b> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref66">importData</A></b> (std::map<QCString,QString> &data,const QCString &prefix) 
 </LI>
 </ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref67">clearParams</A></b> (void) 
 </LI>
@@ -62,7 +62,7 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref69">changePosition</A></b> (int row,int col) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref70">displayMenu</A></b> (const QPoint &amp;p) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref70">displayMenu</A></b> (const QPoint &p) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref71">displayMemo</A></b> (void) 
 </LI>
@@ -90,7 +90,7 @@
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref83">searchNext</A></b> (<A HREF="#toSearchReplace">toSearchReplace</A> *search) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref84">searchReplace</A></b> (const QString &amp;newData) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref84">searchReplace</A></b> (const QString &newData) 
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref85">searchCanReplace</A></b> (bool all) 
 </LI>
@@ -102,7 +102,7 @@
 <LI>friend class <b><A HREF="#ref64">toResultContent</A></b></LI>
 </ul><h4>Protected Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref88">menuCallback</A></b> (int cmd) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref89">changeData</A></b> (int row,int col,const QString &amp;data) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref89">changeData</A></b> (int row,int col,const QString &data) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This widget allows the user to browse the contents of a table and also edit
  the content. The table is specified by the first and second parameter in the query.
@@ -123,10 +123,10 @@
 <A NAME="~toResultContentEditor"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toResultContentEditor</strong> ()
 <br></td><td align="right"><h3><strong>~toResultContentEditor</strong></h3></td></tr></table><p></p><p> Destruct object
    </p>
-<A NAME="query"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const QString &amp;,const <A HREF="#toQList">toQList</A> &amp;)
+<A NAME="query"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const QString &,const <A HREF="#toQList">toQList</A> &)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<A NAME="changeParams"></A><A NAME="ref55"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const QString &amp;Param1,const QString &amp;Param2)
+<A NAME="changeParams"></A><A NAME="ref55"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const QString &Param1,const QString &Param2)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <A NAME="editPrint"></A><A NAME="ref56"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editPrint</strong> (void)
@@ -145,10 +145,10 @@
 <br></td><td align="right"><h3><strong>editSelectAll</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Select all contents. Default NOP.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editSelectAll">toEditWidget</A>.</p>
-<A NAME="setText"></A><A NAME="ref60"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setText</strong> (int row,int col,const QString &amp;text)
+<A NAME="setText"></A><A NAME="ref60"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setText</strong> (int row,int col,const QString &text)
 <br></td><td align="right"><h3><strong>setText</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<A NAME="changeFilter"></A><A NAME="ref61"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>changeFilter</strong> (bool all,const QString &amp;criteria,const QString &amp;order)
+<A NAME="changeFilter"></A><A NAME="ref61"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>changeFilter</strong> (bool all,const QString &criteria,const QString &order)
 <br></td><td align="right"><h3><strong>changeFilter</strong></h3></td></tr></table><p></p><p> Set a new filter setting.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -164,7 +164,7 @@
    </p>
 <A NAME="contentItem"></A><A NAME="ref63"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>contentItem</strong>
 </td><td align="right"><h3><strong>contentItem</strong></h3></td></tr></table><p></p><A NAME="toResultContent"></A><A NAME="ref64"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toResultContent</strong>
-</td><td align="right"><h3><strong>toResultContent</strong></h3></td></tr></table><p></p><A NAME="exportData"></A><A NAME="ref65"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix)
+</td><td align="right"><h3><strong>toResultContent</strong></h3></td></tr></table><p></p><A NAME="exportData"></A><A NAME="ref65"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map<QCString,QString> &data,const QCString &prefix)
 <br></td><td align="right"><h3><strong>exportData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export data to a map.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -173,7 +173,7 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to add to the map.
    </TD></TR>
 </TABLE></P>
-<A NAME="importData"></A><A NAME="ref66"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix)
+<A NAME="importData"></A><A NAME="ref66"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map<QCString,QString> &data,const QCString &prefix)
 <br></td><td align="right"><h3><strong>importData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Import data
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -201,7 +201,7 @@
 <TR><TD align="left" valign="top"><i>col</i></TD><TD align="left" valign="top">New column.
    </TD></TR>
 </TABLE></P>
-<A NAME="displayMenu"></A><A NAME="ref70"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayMenu</strong> (const QPoint &amp;p)
+<A NAME="displayMenu"></A><A NAME="ref70"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayMenu</strong> (const QPoint &p)
 <br></td><td align="right"><h3><strong>displayMenu</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Display popup menu
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -251,7 +251,7 @@
 <p><b>Returns</b>: True if found, should select the found text.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#searchNext">toEditWidget</A>.</p>
-<A NAME="searchReplace"></A><A NAME="ref84"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>searchReplace</strong> (const QString &amp;newData)
+<A NAME="searchReplace"></A><A NAME="ref84"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>searchReplace</strong> (const QString &newData)
 <br></td><td align="right"><h3><strong>searchReplace</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Replace entry with new data
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#searchReplace">toEditWidget</A>.</p>
@@ -274,7 +274,7 @@
 <TR><TD align="left" valign="top"><i>cmd</i></TD><TD align="left" valign="top">Command ID.
    </TD></TR>
 </TABLE></P>
-<A NAME="changeData"></A><A NAME="ref89"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeData</strong> (int row,int col,const QString &amp;data)
+<A NAME="changeData"></A><A NAME="ref89"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeData</strong> (int row,int col,const QString &data)
 <br></td><td align="right"><h3><strong>changeData</strong></h3></td></tr></table><p> <small>[protected slots virtual slot]</small></p><p> Change data at specified position.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -286,5 +286,8 @@
    </TD></TR>
 </TABLE></P>
 <HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
 </BODY>
 </HTML>

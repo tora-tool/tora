@@ -34,9 +34,9 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref27">clear</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref28">setText</A></b> (const QString &amp;str) 
+<LI>void &nbsp;<b><A HREF="#ref28">setText</A></b> (const QString &str) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref29">setErrors</A></b> (const std::map&lt;int,QString&gt; &amp;errors) 
+<LI>void &nbsp;<b><A HREF="#ref29">setErrors</A></b> (const std::map<int,QString> &errors) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref30">setCurrent</A></b> (int current) 
 </LI>
@@ -46,15 +46,15 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref33">setHighlight</A></b> (bool val) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref34">setAnalyzer</A></b> (<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;analyzer) 
+<LI>void &nbsp;<b><A HREF="#ref34">setAnalyzer</A></b> (<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &analyzer) 
 </LI>
-<LI><A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;&nbsp;<b><A HREF="#ref35">analyzer</A></b> (void) 
+<LI><A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &&nbsp;<b><A HREF="#ref35">analyzer</A></b> (void) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref36">paintCell</A></b> (<A HREF="#QPainter">QPainter</A> *painter,int row,int col) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref37">paintEvent</A></b> (QPaintEvent *pe) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref38">tableAtCursor</A></b> (QString &amp;owner,QString &amp;table,bool highlight=false) 
+<LI>void &nbsp;<b><A HREF="#ref38">tableAtCursor</A></b> (QString &owner,QString &table,bool highlight=false) 
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref39">hasErrors</A></b> () 
 </LI>
@@ -74,7 +74,7 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref22">checkComplete</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref23">startComplete</A></b> (std::list&lt;QString&gt; &amp;completes) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref23">startComplete</A></b> (std::list<QString> &completes) 
 </LI>
 </ul><h4>Protected Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref41">textChanged</A></b> (void) 
 </LI>
@@ -94,7 +94,7 @@
 <A NAME="checkComplete"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>checkComplete</strong> (void)
 <br></td><td align="right"><h3><strong>checkComplete</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p> Check if to view completion.
    </p>
-<A NAME="startComplete"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>startComplete</strong> (std::list&lt;QString&gt; &amp;completes)
+<A NAME="startComplete"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>startComplete</strong> (std::list<QString> &completes)
 <br></td><td align="right"><h3><strong>startComplete</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p> Start a completion with a given completelist.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -131,10 +131,10 @@
 <br></td><td align="right"><h3><strong>clear</strong></h3></td></tr></table><p></p><p> Clear the editor.
    </p>
 <p>Reimplemented from <A HREF="toMarkedText.html#clear">toMarkedText</A>.</p>
-<A NAME="setText"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setText</strong> (const QString &amp;str)
+<A NAME="setText"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setText</strong> (const QString &str)
 <br></td><td align="right"><h3><strong>setText</strong></h3></td></tr></table><p></p><p> Set the text of this editor.
    </p>
-<A NAME="setErrors"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setErrors</strong> (const std::map&lt;int,QString&gt; &amp;errors)
+<A NAME="setErrors"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setErrors</strong> (const std::map<int,QString> &errors)
 <br></td><td align="right"><h3><strong>setErrors</strong></h3></td></tr></table><p></p><p> Set the error list map.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -164,14 +164,14 @@
 <A NAME="setHighlight"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setHighlight</strong> (bool val)
 <br></td><td align="right"><h3><strong>setHighlight</strong></h3></td></tr></table><p></p><p> The the highlighting flag. If this isn't set no highlighting is done.
    </p>
-<A NAME="setAnalyzer"></A><A NAME="ref34"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setAnalyzer</strong> (<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;analyzer)
+<A NAME="setAnalyzer"></A><A NAME="ref34"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setAnalyzer</strong> (<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &analyzer)
 <br></td><td align="right"><h3><strong>setAnalyzer</strong></h3></td></tr></table><p></p><p> Set the syntax highlighter to use.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>analyzer</i></TD><TD align="left" valign="top">Analyzer to use.
    </TD></TR>
 </TABLE></P>
-<A NAME="analyzer"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;&nbsp;<strong>analyzer</strong> (void)
+<A NAME="analyzer"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &&nbsp;<strong>analyzer</strong> (void)
 <br></td><td align="right"><h3><strong>analyzer</strong></h3></td></tr></table><p></p><p> Get the current syntaxhighlighter.
 </p>
 <p><b>Returns</b>: Analyzer used.
@@ -183,7 +183,7 @@
 <br></td><td align="right"><h3><strong>paintEvent</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toMarkedText.html#paintEvent">toMarkedText</A>.</p>
-<A NAME="tableAtCursor"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>tableAtCursor</strong> (QString &amp;owner,QString &amp;table,bool highlight=false)
+<A NAME="tableAtCursor"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>tableAtCursor</strong> (QString &owner,QString &table,bool highlight=false)
 <br></td><td align="right"><h3><strong>tableAtCursor</strong></h3></td></tr></table><p></p><p> Get the tablename currently under the cursor.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -214,5 +214,8 @@
 <br></td><td align="right"><h3><strong>previousError</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Go to previous error.
    </p>
 <HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
 </BODY>
 </HTML>

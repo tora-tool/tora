@@ -26,10 +26,11 @@
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
 <pre>
-//***************************************************************************
-/*
+/*****
+ *
  * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2003 Quest Software, Inc
+ * Copyright (C) 2003-2005 Quest Software, Inc
+ * Portions Copyright (C) 2005 Other Contributors
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,9 +57,11 @@
  *      these libraries without written consent from Quest Software, Inc.
  *      Observe that this does not disallow linking to the Qt Free Edition.
  *
+ *      You may link this product with any GPL'd Qt library such as Qt/Free
+ *
  * All trademarks belong to their respective owners.
  *
- ****************************************************************************/
+ *****/
 
 #ifndef TOTEMPLATE_H
 #define TOTEMPLATE_H
@@ -67,10 +70,10 @@
 #include "tohelp.h"
 #include "toresultview.h"
 
-#include &lt;list&gt;
-#include &lt;map&gt;
+#include <list>
+#include <map>
 
-#include &lt;qvbox.h&gt;
+#include <qvbox.h>
 
 class QListView;
 class QListViewItem;
@@ -108,7 +111,7 @@ public:
   static toTemplate *templateWidget(QListView *obj);
   static bool templateShown();
 
-  virtual bool canHandle(toConnection &amp;)
+  virtual bool canHandle(toConnection &)
   { return true; }
 
   void closeFrame(void);
@@ -132,13 +135,13 @@ public slots:
 class toTemplateProvider {
   /** List of currently available template providers.
    */
-  static std::list&lt;toTemplateProvider *&gt; *Providers;
+  static std::list<toTemplateProvider *> *Providers;
   static bool Shown;
   static QCString *ToolKey;;
   QCString Name;
   bool Open;
 public:
-  toTemplateProvider(const QCString &amp;name);
+  toTemplateProvider(const QCString &name);
   virtual ~toTemplateProvider()
   { }
 
@@ -157,29 +160,29 @@ public:
    * @param data Map of data.
    * @param prefix Prefix of where to save info.
    */
-  virtual void exportData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
   /** Save settings for all template providers.
    * @param data Map of data.
    * @param prefix Prefix of where to save info.
    */
-  static void exportAllData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
+  static void exportAllData(std::map<QCString,QString> &data,const QCString &prefix);
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
   /** Import data for all template providers.
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  static void importAllData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
+  static void importAllData(std::map<QCString,QString> &data,const QCString &prefix);
 
   /** Used internally to indicate if template help is shown.
    */
   static void setShown(bool shown);
   /** Used internally to indicate tool key string
    */
-  static void setToolKey(const QCString &amp;key);
+  static void setToolKey(const QCString &key);
 
   friend class toTemplate;
 };
@@ -191,14 +194,14 @@ public:
 class toTemplateItem : public toResultViewItem {
   /** The provider responsible for this item.
    */
-  toTemplateProvider &amp;Provider;
+  toTemplateProvider &Provider;
 public:
   /** Create an item.
    * @param prov Provider for this item.
    * @param parent Parent of this item.
    * @param name Contents of the first column of the item.
    */
-  toTemplateItem(toTemplateProvider &amp;prov,QListView *parent,const QString &amp;name)
+  toTemplateItem(toTemplateProvider &prov,QListView *parent,const QString &name)
     : toResultViewItem(parent,NULL,name),Provider(prov)
   { }
   /** Create an item.
@@ -206,13 +209,13 @@ public:
    * @param name Contents of the first column of the item.
    * @param after The item to put this item after.
    */
-  toTemplateItem(toTemplateItem *parent,const QString &amp;name,QListViewItem *after=NULL)
-    : toResultViewItem(parent,after,name),Provider(parent-&gt;provider())
+  toTemplateItem(toTemplateItem *parent,const QString &name,QListViewItem *after=NULL)
+    : toResultViewItem(parent,after,name),Provider(parent->provider())
   { }
   /** Get a reference to the provider of this item.
    * @return Reference to provider.
    */
-  toTemplateProvider &amp;provider(void)
+  toTemplateProvider &provider(void)
   { return Provider; }
   /** This function is called when the item is expanded and can be used to fill up the
    * list when needed.
@@ -251,7 +254,7 @@ public:
    * @param name Contents of the first column of the item.
    * @param note Extra text to display if item is selected.
    */
-  toTemplateText(toTemplateItem *parent,const QString &amp;name,const QString &amp;note)
+  toTemplateText(toTemplateItem *parent,const QString &name,const QString &note)
     : toTemplateItem(parent,name), Note(note)
   { }
   /** Reimplemented for internal reasons.
@@ -301,7 +304,7 @@ protected:
    * @param sql SQL statement.
    */
   toTemplateSQL(toTemplateItem *parent,
-		const QString &amp;name,const QString &amp;sql);
+		const QString &name,const QString &sql);
 public:
   /** Create an item.
    * @param conn Connection to query.
@@ -309,18 +312,18 @@ public:
    * @param name Contents of the first column of the item.
    * @param sql SQL statement.
    */
-  toTemplateSQL(toConnection &amp;conn,toTemplateItem *parent,
-		const QString &amp;name,const QString &amp;sql);
+  toTemplateSQL(toConnection &conn,toTemplateItem *parent,
+		const QString &name,const QString &sql);
   /** Get connection of this item.
    * @return Reference to connection.
    */
-  virtual toConnection &amp;connection()
+  virtual toConnection &connection()
   { return *Connection; }
   /** Create a child of this item.
    * @param name Name of the child.
    * @return A newly created item.
    */
-  virtual toTemplateItem *createChild(const QString &amp;name)
+  virtual toTemplateItem *createChild(const QString &name)
   { return new toTemplateItem(this,name); }
   /** Get parameters to pass to query.
    * @return List of strings to pass as input parameters to query
@@ -336,5 +339,8 @@ public:
 #endif
 </pre>
 <HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
 </BODY>
 </HTML>

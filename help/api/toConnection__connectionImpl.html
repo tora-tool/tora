@@ -28,7 +28,7 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref2">connection</A></b> (void) 
+<h4>Public Methods</h4><ul><LI><A HREF="toConnection.html">toConnection</A> &&nbsp;<b><A HREF="#ref2">connection</A></b> (void) 
 </LI>
 <LI>&nbsp;<b><A HREF="#ref3">connectionImpl</A></b> (<A HREF="toConnection.html">toConnection</A> *conn) 
 </LI>
@@ -46,29 +46,29 @@
 </LI>
 <LI>virtual  QCString &nbsp;<b><i><A HREF="#ref10">version</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *) 
 </LI>
-<LI>virtual  QString &nbsp;<b><A HREF="#ref11">quote</A></b> (const QString &amp;name) 
+<LI>virtual  QString &nbsp;<b><A HREF="#ref11">quote</A></b> (const QString &name) 
 </LI>
-<LI>virtual  QString &nbsp;<b><A HREF="#ref12">unQuote</A></b> (const QString &amp;name) 
+<LI>virtual  QString &nbsp;<b><A HREF="#ref12">unQuote</A></b> (const QString &name) 
 </LI>
-<LI>virtual  <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;&nbsp;<b><A HREF="#ref13">analyzer</A></b> () 
+<LI>virtual  <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &&nbsp;<b><A HREF="#ref13">analyzer</A></b> () 
 </LI>
-<LI>virtual  std::list&lt;objectName&gt; &nbsp;<b><A HREF="#ref14">objectNames</A></b> (void) 
+<LI>virtual  std::list<objectName> &nbsp;<b><A HREF="#ref14">objectNames</A></b> (void) 
 </LI>
-<LI>virtual  std::map&lt;QString,objectName&gt; &nbsp;<b><A HREF="#ref15">synonymMap</A></b> (std::list&lt;objectName&gt; &amp;objects) 
+<LI>virtual  std::map<QString,objectName> &nbsp;<b><A HREF="#ref15">synonymMap</A></b> (std::list<objectName> &objects) 
 </LI>
-<LI>virtual  <A HREF="#toQDescList">toQDescList</A> &nbsp;<b><A HREF="#ref16">columnDesc</A></b> (const objectName &amp;table) 
+<LI>virtual  <A HREF="#toQDescList">toQDescList</A> &nbsp;<b><A HREF="#ref16">columnDesc</A></b> (const objectName &table) 
 </LI>
 <LI>virtual  <A HREF="toQuery__queryImpl.html">toQuery::queryImpl</A> *&nbsp;<b><i><A HREF="#ref17">createQuery</A></i></b> (<A HREF="toQuery.html">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn) 
 </LI>
-<LI>virtual  void &nbsp;<b><i><A HREF="#ref18">execute</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const QCString &amp;sql,<A HREF="#toQList">toQList</A> &amp;params) 
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref18">execute</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const QCString &sql,<A HREF="#toQList">toQList</A> &params) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref19">parse</A></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const QCString &amp;sql) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref19">parse</A></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const QCString &sql) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class is an abstract baseclass to actually implement the comunication with the
  database. 
  (See also toQuery::queryImpl and <A HREF="toConnectionProvider.html">toConnectionProvider</A>)
    </p>
-<A NAME="connection"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>connection</strong> (void)
+<A NAME="connection"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &&nbsp;<strong>connection</strong> (void)
 <br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p></p><p> Get the parent connection object of this connection.
      </p>
 <A NAME="connectionImpl"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>connectionImpl</strong> (<A HREF="toConnection.html">toConnection</A> *conn)
@@ -100,7 +100,7 @@
 <A NAME="version"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QCString &nbsp;<i><strong>version</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
 <br></td><td align="right"><h3><i><strong>version</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Get the version of the database connected to.
      </p>
-<A NAME="quote"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>quote</strong> (const QString &amp;name)
+<A NAME="quote"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>quote</strong> (const QString &name)
 <br></td><td align="right"><h3><strong>quote</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Return a string representation to address an object.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -109,7 +109,7 @@
 </TABLE></P>
 <p><b>Returns</b>: String addressing table.
      </p>
-<A NAME="unQuote"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>unQuote</strong> (const QString &amp;name)
+<A NAME="unQuote"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>unQuote</strong> (const QString &name)
 <br></td><td align="right"><h3><strong>unQuote</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Perform the opposite of <A HREF="toConnection__connectionImpl.html#quote">quote</A>.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -118,20 +118,20 @@
 </TABLE></P>
 <p><b>Returns</b>: String addressing table.
      </p>
-<A NAME="analyzer"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;&nbsp;<strong>analyzer</strong> ()
+<A NAME="analyzer"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &&nbsp;<strong>analyzer</strong> ()
 <br></td><td align="right"><h3><strong>analyzer</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p>
  Get syntax analyzer for connection
 </p>
 <p><b>Returns</b>: A reference to the syntax analyzer to use for the connection.
      </p>
-<A NAME="objectNames"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;objectName&gt; &nbsp;<strong>objectNames</strong> (void)
+<A NAME="objectNames"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<objectName> &nbsp;<strong>objectNames</strong> (void)
 <br></td><td align="right"><h3><strong>objectNames</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Extract available objects to query for connection. Any access to the
  database should always be run using a long running query. If something
  goes wrong should throw exception.
 </p>
 <p><b>Returns</b>: List of available objects.
      </p>
-<A NAME="synonymMap"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::map&lt;QString,objectName&gt; &nbsp;<strong>synonymMap</strong> (std::list&lt;objectName&gt; &amp;objects)
+<A NAME="synonymMap"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::map<QString,objectName> &nbsp;<strong>synonymMap</strong> (std::list<objectName> &objects)
 <br></td><td align="right"><h3><strong>synonymMap</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get synonyms available for connection. Any access to the
  database should always be run using a long running query. If something
  goes wrong should throw exception.
@@ -144,13 +144,13 @@
 </TABLE></P>
 <p><b>Returns</b>: Map of synonyms to objectnames.
      </p>
-<A NAME="columnDesc"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="#toQDescList">toQDescList</A> &nbsp;<strong>columnDesc</strong> (const objectName &amp;table)
+<A NAME="columnDesc"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="#toQDescList">toQDescList</A> &nbsp;<strong>columnDesc</strong> (const objectName &table)
 <br></td><td align="right"><h3><strong>columnDesc</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="createQuery"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toQuery__queryImpl.html">toQuery::queryImpl</A> *&nbsp;<i><strong>createQuery</strong></i> (<A HREF="toQuery.html">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn)
 <br></td><td align="right"><h3><i><strong>createQuery</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Create a new query implementation for this connection.
 </p>
 <p><b>Returns</b>: A query implementation, allocated with new.
      </p>
-<A NAME="execute"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>execute</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const QCString &amp;sql,<A HREF="#toQList">toQList</A> &amp;params)
+<A NAME="execute"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>execute</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const QCString &sql,<A HREF="#toQList">toQList</A> &params)
 <br></td><td align="right"><h3><i><strong>execute</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Execute a query on an actual connection without caring about the result.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -161,7 +161,7 @@
 <TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
      </TD></TR>
 </TABLE></P>
-<A NAME="parse"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>parse</strong> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const QCString &amp;sql)
+<A NAME="parse"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>parse</strong> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const QCString &sql)
 <br></td><td align="right"><h3><strong>parse</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Parse a query on an actual connection and report any syntax problems encountered.
  Defaults to not implemented.
 </p>
@@ -172,5 +172,8 @@
      </TD></TR>
 </TABLE></P>
 <HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
 </BODY>
 </HTML>
