@@ -1468,18 +1468,18 @@ if ($RPMGenerate) {
         if ($plugins{$t}{Oracle}&&!($plugins{$t}{MySQL}||
 				    $plugins{$t}{Qt3}||
 				    $plugins{$t}{Any})) {
-	    push(@oracle,$RPMGenerate."/$t.tso");
+	    push(@oracle,$RPMGenerate."/tora/$t.tso");
 	} elsif ($plugins{$t}{MySQL}&&!($plugins{$t}{Oracle}||
 					$plugins{$t}{Qt3}||
 					$plugins{$t}{Any})) {
-	    push(@mysql,$RPMGenerate."/$t.tso");
+	    push(@mysql,$RPMGenerate."/tora/$t.tso");
 	} else {
 	    if ($QtVersion lt "3"&&$plugins{$t}{Qt3}&&!($plugins{$t}{MySQL}||
 							$plugins{$t}{Oracle}||
 							$plugins{$t}{Any})) {
 		# Qt3 only without Qt3 support.
 	    } else {
-		push(@common,$RPMGenerate."/$t.tso");
+		push(@common,$RPMGenerate."/tora/$t.tso");
 	    }
 	}
     }
