@@ -195,6 +195,7 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
     if (Statistics)
       Statistics->changeSession(*LongConn);
 
+    TO_DEBUGOUT("Creating thread\n");
     Thread=new toThread(new queryTask(*this));
     TO_DEBUGOUT("Created thread\n");
     Thread->start();
@@ -236,14 +237,11 @@ toNoBlockQuery::~toNoBlockQuery()
     toLocker lock(Lock);
     if (!EOQ) {
       TO_DEBUGOUT("Sending INT\n");
-#ifndef __WIN__
-#if 1
+#ifndef TO_QTHREAD
       // This is how I would like it to work
       Thread->kill(SIGINT);
 #else
-      // This is how it works
-      kill(getpid(),SIGINT);
-#endif
+      // Can't kill it, so well just leave it alone till it's done
 #endif
       Quit=true;
     }

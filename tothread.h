@@ -29,7 +29,7 @@
 #define __TOTHREAD_H
 
 #ifdef __WIN__
-#define TOQTTHREAD
+#define TO_QTHREAD
 #endif
 
 class toTask {
@@ -38,7 +38,7 @@ public:
   virtual void run(void) = 0;
 };
 
-#ifndef TOQTTHREAD
+#ifndef TO_QTHREAD
 #include <semaphore.h>
 #include <pthread.h>
 #include <signal.h>
@@ -57,7 +57,6 @@ public:
 
   void up();
   void down();
-  bool tryDown();
   int getValue();
 };
 
@@ -71,7 +70,6 @@ public:
 
   void lock(void);
   void unlock(void);
-  bool tryLock(void);
 };
 
 class toThread {
@@ -91,56 +89,58 @@ public:
   void start(void);
   void startAsync(void);
 
-  operator pthread_t()
-  { return Thread; };
-
   void kill(int signo);
-
-  static pthread_t getID(void)
-  { return pthread_self(); }
-  static void yield(void)
-  { sched_yield(); }
-  static void sleep(struct timespec time);
 };
 
 #else
 #include <qthread.h>
+#include <list>
 
 class toSemaphore {
 private:
-  QSemaphore sem;
+  QMutex Mutex;
+  QWaitCondition Condition;
+  int Value;
 public:
-  toSemaphore();
+  toSemaphore()
+    : Condition()
+  { Value=0; }
   toSemaphore(const toSemaphore &);
-  toSemaphore(int val);
-  ~toSemaphore();
+  toSemaphore(int val)
+    : Condition()
+  { Value=val; }
 
   void up();
   void down();
-  bool tryDown();
   int getValue();
 };
 
 class toLock {
 private:
-  QMutex Mutex
+  QMutex Mutex;
 public:
-  toLock(void);
+  toLock(void)
+    : Mutex(false)
+  { }
   toLock(const toLock &);
-  ~toLock();
 
-  void lock(void);
-  void unlock(void);
-  bool tryLock(void);
+  void lock(void)
+  { Mutex.lock(); }
+  void unlock(void)
+  { Mutex.unlock(); }
 };
 
 class toThread {
 private:
-  QThread		Thread;
-  toTask		*Task;
-  toSemaphore		StartSemaphore;
-  friend void		*toThreadStartWrapper(void*);
-  
+  class taskRunner : public QThread {
+  public:
+    toSemaphore		StartSemaphore;
+    toTask		*Task;
+    taskRunner(toTask *);
+    virtual void run(void);
+  }			Thread;
+  static list<toThread *> *Threads;
+  static toLock *Lock;
   toThread(const toThread &);
 public:
   toThread(toTask *);
@@ -148,8 +148,6 @@ public:
   
   void start(void);
   void startAsync(void);
-
-  static void sleep(struct timespec time);
 };
 
 #endif

@@ -36,6 +36,8 @@ TO_NAMESPACE;
 
 #include "tothread.h"
 
+#ifndef TO_QTHREAD
+
 #define SEM_ASSERT(x) if((x)!=0) { throw QString(\
 "Error in semaphore function \"" #x "\" didn't work"); }
 
@@ -70,13 +72,6 @@ void toSemaphore::down()
   SEM_ASSERT(sem_wait(&Semaphore));
 }
 
-bool toSemaphore::tryDown()
-{
-  if(sem_trywait(&Semaphore)==0)
-    return true;
-  return false;
-}
-
 int toSemaphore::getValue()
 {
   int r;
@@ -105,18 +100,6 @@ void toLock::lock()
 void toLock::unlock() 
 {
   MUTEX_ASSERT(pthread_mutex_unlock(&Mutex));
-}
-
-bool toLock::tryLock() 
-{
-  int r;
-  r=pthread_mutex_trylock(&Mutex);
-  if (r==EBUSY)
-    return false;
-  else if (r==0)
-    return true;
-  else
-    throw QString("The mutex function \"pthread_mutex_trylock\" failed");
 }
 
 #define THREAD_ASSERT(x) if((x)!=0) { \
@@ -159,12 +142,6 @@ void toThread::startAsync()
 			       (void *)this));
 }
 
-void toThread::sleep(struct timespec tv)
-{
-  struct timespec tmp;
-  THREAD_ASSERT(nanosleep(&tv,&tmp));
-}
-
 void *toThreadStartWrapper(void *t) 
 {
   toThread *thread=(toThread*)t;
@@ -203,5 +180,113 @@ void *toThreadStartWrapper(void *t)
 
 void toThread::kill(int signo)
 {
-  THREAD_ASSERT(pthread_kill(*this,signo));
+  THREAD_ASSERT(pthread_kill(Thread,signo));
 }
+
+#else
+
+list<toThread *> *toThread::Threads;
+toLock *toThread::Lock;
+
+void toSemaphore::up(void)
+{
+  Mutex.lock();
+  Value++;
+  if (Value>0)
+    Condition.wakeOne();
+  Mutex.unlock();
+}
+
+void toSemaphore::down(void)
+{
+  Mutex.lock();
+  while(Value<=0) {
+    Mutex.unlock();
+    Condition.wait();
+    Mutex.lock();
+  }
+  Value++;
+  Mutex.unlock();
+}
+
+int toSemaphore::getValue(void)
+{
+  Mutex.lock();
+  int val=Value;
+  Mutex.unlock();
+  return val;
+}
+
+toThread::toThread(toTask *task)
+  : Thread(task)
+{
+  if (!Threads)
+    Threads=new list<toThread *>;
+  if (!Lock)
+    Lock=new toLock;
+
+  // This is a cludge to clean up finnished threads, there won't be many hanging at least
+
+  Lock->lock();
+  for (list<toThread *>::iterator i=Threads->begin();i!=Threads->end();) {
+    if ((*i)->Thread.finished()&&(*i)!=this) {
+      Lock->unlock();
+      delete (*i);
+      Lock->lock();
+      i=Threads->begin();
+    } else
+      i++;
+  }
+  Lock->unlock();
+}
+
+toThread::~toThread()
+{
+  Lock->lock();
+  for (list<toThread *>::iterator i=Threads->begin();i!=Threads->end();i++) {
+    if ((*i)==this) {
+      Threads->erase(i);
+      break;
+    }
+  }
+  Lock->unlock();
+}
+
+void toThread::start(void)
+{
+  Thread.start();
+  Thread.StartSemaphore.down();
+  Lock->lock();
+  Threads->insert(Threads->end(),this);
+  Lock->unlock();
+}
+
+void toThread::startAsync(void)
+{
+  Thread.start();
+  Lock->lock();
+  Threads->insert(Threads->end(),this);
+  Lock->unlock();
+}
+
+toThread::taskRunner::taskRunner(toTask *task)
+  : Task(task)
+{
+}
+
+void toThread::taskRunner::run(void)
+{
+  try {
+    StartSemaphore.up();
+    Task->run();
+  } catch (const otl_exception &exc) {
+    printf("Unhandled exception in thread:\n%s\n",
+	   (const char *)QString::fromUtf8((const char *)exc.msg));
+  } catch(const QString &exc) {
+    printf("Unhandled exception in thread:\n%s\n",(const char *)exc);
+  } catch(...) {
+    printf("Unhandled exception in thread:\nUnknown type\n");
+  }
+}
+
+#endif

@@ -12,6 +12,8 @@
 2001-05-10: Fixed parameter parsing again.
 2001-05-10: Lots of changes to push code through Visual C++.
 2001-05-10: Changed how LICENSE.h is generated.
+2001-05-11: Removed tryLock and tryDown in tothread.
+2001-05-11: Added option to compile using QThread instead of PThreads.
 
 0.8: Released 2001-05-07
 

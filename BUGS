@@ -15,3 +15,6 @@ Qt:
 
 gcc-2.96:
 	Seems really bad at handling exceptions, won't work with TOra.
+
+toNoBlockQuery:
+	Can't abort execution on queries when using TO_QTHREAD.
