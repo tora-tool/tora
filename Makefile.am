@@ -27,7 +27,9 @@ LDFLAGS = $(PCRE_LIBS) \
 # libtool will do the right thing.
 tora_LDFLAGS = -export-dynamic
 
-tora_LDADD = $(LIBLTDL)
+if !ENABLE_PLUGIN
+tora_LDADD = $(lib_LTLIBRARIES)
+endif
 
 tora_SOURCES=main.cpp aclocal.m4 \
 	toabout.cpp toabout.h \
@@ -320,57 +322,60 @@ BUILT_SOURCES = \
 # have_oracle conditional. these libraries are not built if oracle is
 # not present.
 if HAVE_ORACLE
-OPTLIB_ORA = tooracleconnection.la tooraclepreload.la
+OPTLIB_ORA = libtooracleconnection.la libtooraclepreload.la
 else
 OPTlIB_ORA =
 endif
 
 # plugins
-lib_LTLIBRARIES = toalert.la \
-	toanalyze.la \
-	tobackup.la \
-	tobrowser.la \
-	tochart.la \
-	tocurrent.la \
-	todebug.la \
-	toeditextensions.la \
-	toextract.la \
-	toinvalid.la \
-	tooutput.la \
-	topassword.la \
-	toprofiler.la \
-	toproject.la \
-	toqsqlconnection.la \
-	toresult.la \
-	torollback.la \
-	toscript.la \
-	tosecurity.la \
-	tosession.la \
-	tosgatrace.la \
-	tosqledit.la \
-	tostorage.la \
-	tostoragedefinition.la \
-	totemplate.la \
-	totemporary.la \
-	totuning.la \
-	towidget.la \
-	toworksheet.la \
+lib_LTLIBRARIES = libtoalert.la \
+	libtoanalyze.la \
+	libtobackup.la \
+	libtobrowser.la \
+	libtochart.la \
+	libtocurrent.la \
+	libtodebug.la \
+	libtoeditextensions.la \
+	libtoextract.la \
+	libtoinvalid.la \
+	libtooutput.la \
+	libtopassword.la \
+	libtoprofiler.la \
+	libtoproject.la \
+	libtoqsqlconnection.la \
+	libtoresult.la \
+	libtorollback.la \
+	libtoscript.la \
+	libtosecurity.la \
+	libtosession.la \
+	libtosgatrace.la \
+	libtosqledit.la \
+	libtostorage.la \
+	libtostoragedefinition.la \
+	libtotemplate.la \
+	libtotemporary.la \
+	libtotuning.la \
+	libtowidget.la \
+	libtoworksheet.la \
 	$(OPTLIB_ORA)
 
-PFLAGS = -module -avoid-version -rpath $(libdir) -shared -dynamiclib
+if ENABLE_PLUGIN
+PLUGIN_PFLAGS = -module -shared
+endif
+PFLAGS = -avoid-version -rpath $(libdir) $(PLUGIN_PFLAGS)
 
-toalert_la_LDFLAGS = $(PFLAGS)
-toalert_la_SOURCES = toalert.cpp toalert.h
+libtoalert_la_LDFLAGS = $(PFLAGS)
+libtoalert_la_SOURCES = toalert.cpp toalert.h
 
-toanalyze_la_LDFLAGS = $(PFLAGS)
-toanalyze_la_SOURCES = toanalyze.cpp toanalyze.h \
+libtoanalyze_la_LDFLAGS = $(PFLAGS)
+libtoanalyze_la_SOURCES = toanalyze.cpp toanalyze.h \
 	toworksheetstatistic.cpp toworksheetstatistic.h
 
-tobackup_la_LDFLAGS = $(PFLAGS)
-tobackup_la_SOURCES = tobackup.cpp tobackup.h
+libtobackup_la_LDFLAGS = $(PFLAGS)
+libtobackup_la_SOURCES = tobackup.cpp tobackup.h
 
-tobrowser_la_LDFLAGS = $(PFLAGS)
-tobrowser_la_SOURCES = tobrowser.cpp tobrowser.h \
+libtobrowser_la_LDFLAGS = $(PFLAGS)
+libtobrowser_la_SOURCES = tobrowser.cpp tobrowser.h \
 	tobrowserconstraint.cpp tobrowserconstraint.h \
 	tobrowserconstraintui.cpp tobrowserconstraintui.h \
 	tobrowserfilterui.cpp tobrowserfilterui.h \
@@ -379,8 +384,8 @@ tobrowser_la_SOURCES = tobrowser.cpp tobrowser.h \
 	tobrowsertable.cpp tobrowsertable.h \
 	tobrowsertableui.cpp tobrowsertableui.h
 
-tochart_la_LDFLAGS = $(PFLAGS)
-tochart_la_SOURCES = tobarchart.cpp tobarchart.h \
+libtochart_la_LDFLAGS = $(PFLAGS)
+libtochart_la_SOURCES = tobarchart.cpp tobarchart.h \
 	tochartalarmui.cpp tochartalarmui.h \
 	tochartmanager.cpp tochartmanager.h \
 	tochartsetupui.cpp tochartsetupui.h \
@@ -392,59 +397,59 @@ tochart_la_SOURCES = tobarchart.cpp tobarchart.h \
 	toresultline.cpp toresultline.h \
 	toresultpie.cpp toresultpie.h
 
-tocurrent_la_LDFLAGS = $(PFLAGS)
-tocurrent_la_SOURCES = tocurrent.cpp tocurrent.h
+libtocurrent_la_LDFLAGS = $(PFLAGS)
+libtocurrent_la_SOURCES = tocurrent.cpp tocurrent.h
 
-todebug_la_LDFLAGS = $(PFLAGS)
-todebug_la_SOURCES = todebug.cpp todebug.h \
+libtodebug_la_LDFLAGS = $(PFLAGS)
+libtodebug_la_SOURCES = todebug.cpp todebug.h \
 	todebugwatch.cpp todebugwatch.h \
 	todebugtext.cpp todebugtext.h \
 	todebugchangeui.cpp todebugchangeui.h
 
-toeditextensions_la_LDFLAGS = $(PFLAGS)
-toeditextensions_la_SOURCES = toeditextensions.cpp toeditextensions.h \
+libtoeditextensions_la_LDFLAGS = $(PFLAGS)
+libtoeditextensions_la_SOURCES = toeditextensions.cpp toeditextensions.h \
 	toeditextensiongotoui.cpp toeditextensiongotoui.h \
 	toeditextensionsetupui.cpp toeditextensionsetupui.h
 
-toextract_la_LDFLAGS = $(PFLAGS)
-toextract_la_SOURCES = todatatype.cpp todatatype.h \
+libtoextract_la_LDFLAGS = $(PFLAGS)
+libtoextract_la_SOURCES = todatatype.cpp todatatype.h \
 	toextract.cpp toextract.h \
 	toreport.cpp toreport.h \
 	toresultconstraint.cpp toresultconstraint.h \
 	toresultextract.cpp toresultextract.h
 
-toinvalid_la_LDFLAGS = $(PFLAGS)
-toinvalid_la_SOURCES = toinvalid.cpp toinvalid.h
+libtoinvalid_la_LDFLAGS = $(PFLAGS)
+libtoinvalid_la_SOURCES = toinvalid.cpp toinvalid.h
 
 if HAVE_ORACLE
-tooracleconnection_la_CXXFLAGS  = $(ORACLE_CXXFLAGS) -DOTL_FUNC_THROW_SPEC_ON
-tooracleconnection_la_LDFLAGS = $(PFLAGS) $(ORACLE_LDFLAGS)
-tooracleconnection_la_SOURCES =	tooracleconnection.cpp \
+libtooracleconnection_la_CXXFLAGS  = $(ORACLE_CXXFLAGS) -DOTL_FUNC_THROW_SPEC_ON
+libtooracleconnection_la_LDFLAGS = $(PFLAGS) $(ORACLE_LDFLAGS)
+libtooracleconnection_la_SOURCES =	tooracleconnection.cpp \
 	tooracleextract.cpp \
 	tooraclesettingui.cpp tooraclesettingui.h
 
-tooraclepreload_la_CXXFLAGS  = $(ORACLE_CXXFLAGS) -DOTL_FUNC_THROW_SPEC_ON
-tooraclepreload_la_LDFLAGS = $(PFLAGS) $(ORACLE_LDFLAGS)
-tooraclepreload_la_SOURCES = tooraclepreload.cpp
+libtooraclepreload_la_CXXFLAGS  = $(ORACLE_CXXFLAGS) -DOTL_FUNC_THROW_SPEC_ON
+libtooraclepreload_la_LDFLAGS = $(PFLAGS) $(ORACLE_LDFLAGS)
+libtooraclepreload_la_SOURCES = tooraclepreload.cpp
 endif
 
-tooutput_la_LDFLAGS = $(PFLAGS)
-tooutput_la_SOURCES = tooutput.cpp tooutput.h
+libtooutput_la_LDFLAGS = $(PFLAGS)
+libtooutput_la_SOURCES = tooutput.cpp tooutput.h
 
-topassword_la_LDFLAGS = $(PFLAGS)
-topassword_la_SOURCES =	topassword.cpp
+libtopassword_la_LDFLAGS = $(PFLAGS)
+libtopassword_la_SOURCES =	topassword.cpp
 
-toprofiler_la_LDFLAGS = $(PFLAGS)
-toprofiler_la_SOURCES = toprofiler.cpp toprofiler.h
+libtoprofiler_la_LDFLAGS = $(PFLAGS)
+libtoprofiler_la_SOURCES = toprofiler.cpp toprofiler.h
 
-toproject_la_LDFLAGS = $(PFLAGS)
-toproject_la_SOURCES = toproject.cpp toproject.h
+libtoproject_la_LDFLAGS = $(PFLAGS)
+libtoproject_la_SOURCES = toproject.cpp toproject.h
 
-toqsqlconnection_la_LDFLAGS = $(PFLAGS)
-toqsqlconnection_la_SOURCES = toqsqlconnection.cpp
+libtoqsqlconnection_la_LDFLAGS = $(PFLAGS)
+libtoqsqlconnection_la_SOURCES = toqsqlconnection.cpp
 
-toresult_la_LDFLAGS = $(PFLAGS)
-toresult_la_SOURCES = \
+libtoresult_la_LDFLAGS = $(PFLAGS)
+libtoresult_la_SOURCES = \
 	toresultcols.cpp toresultcols.h \
 	toresultcombo.cpp toresultcombo.h \
 	toresultcontent.cpp toresultcontent.h \
@@ -459,64 +464,64 @@ toresult_la_SOURCES = \
 	toresultreferences.cpp toresultreferences.h \
 	toresultstorage.cpp toresultstorage.h
 
-torollback_la_LDFLAGS = $(PFLAGS)
-torollback_la_SOURCES =	torollback.cpp torollback.h \
+libtorollback_la_LDFLAGS = $(PFLAGS)
+libtorollback_la_SOURCES =	torollback.cpp torollback.h \
 	torollbackdialogui.cpp torollbackdialogui.h
 
-toscript_la_LDFLAGS = $(PFLAGS)
-toscript_la_SOURCES = toscript.cpp toscript.h \
+libtoscript_la_LDFLAGS = $(PFLAGS)
+libtoscript_la_SOURCES = toscript.cpp toscript.h \
 	toscriptui.cpp toscriptui.h
 
-tosecurity_la_LDFLAGS = $(PFLAGS)
-tosecurity_la_SOURCES = tosecurity.cpp tosecurity.h \
+libtosecurity_la_LDFLAGS = $(PFLAGS)
+libtosecurity_la_SOURCES = tosecurity.cpp tosecurity.h \
 	tosecurityquotaui.cpp tosecurityquotaui.h \
 	tosecurityroleui.cpp tosecurityroleui.h \
 	tosecurityuserui.cpp tosecurityuserui.h
 
-tosession_la_LDFLAGS = $(PFLAGS)
-tosession_la_SOURCES = tosession.cpp tosession.h
+libtosession_la_LDFLAGS = $(PFLAGS)
+libtosession_la_SOURCES = tosession.cpp tosession.h
 
-tosgatrace_la_LDFLAGS = $(PFLAGS)
-tosgatrace_la_SOURCES = tosgatrace.cpp tosgatrace.h
+libtosgatrace_la_LDFLAGS = $(PFLAGS)
+libtosgatrace_la_SOURCES = tosgatrace.cpp tosgatrace.h
 
-tosqledit_la_LDFLAGS = $(PFLAGS)
-tosqledit_la_SOURCES = tosqledit.cpp tosqledit.h
+libtosqledit_la_LDFLAGS = $(PFLAGS)
+libtosqledit_la_SOURCES = tosqledit.cpp tosqledit.h
 
-tostorage_la_LDFLAGS = $(PFLAGS)
-tostorage_la_SOURCES = tostorage.cpp tostorage.h \
+libtostorage_la_LDFLAGS = $(PFLAGS)
+libtostorage_la_SOURCES = tostorage.cpp tostorage.h \
 	tostoragedatafileui.cpp tostoragedatafileui.h \
 	tostoragedialogui.cpp tostoragedialogui.h \
 	tostorageprefsui.cpp tostorageprefsui.h \
 	tostoragetablespaceui.cpp tostoragetablespaceui.h
 
-tostoragedefinition_la_LDFLAGS = $(PFLAGS)
-tostoragedefinition_la_SOURCES = tostoragedefinition.cpp tostoragedefinition.h \
+libtostoragedefinition_la_LDFLAGS = $(PFLAGS)
+libtostoragedefinition_la_SOURCES = tostoragedefinition.cpp tostoragedefinition.h \
 	tostoragedefinitionui.cpp tostoragedefinitionui.h
 
-totemplate_la_LDFLAGS = $(PFLAGS)
-totemplate_la_SOURCES = totemplate.cpp totemplate.h \
+libtotemplate_la_LDFLAGS = $(PFLAGS)
+libtotemplate_la_SOURCES = totemplate.cpp totemplate.h \
 	totemplateaddfileui.cpp totemplateaddfileui.h \
 	totemplateeditui.cpp totemplateeditui.h \
 	totemplatesetupui.cpp totemplatesetupui.h
 
-totemporary_la_LDFLAGS = $(PFLAGS)
-totemporary_la_SOURCES = totemporary.cpp totemporary.h
+libtotemporary_la_LDFLAGS = $(PFLAGS)
+libtotemporary_la_SOURCES = totemporary.cpp totemporary.h
 
-totuning_la_LDFLAGS = $(PFLAGS)
-totuning_la_SOURCES = totuning.cpp totuning.h \
+libtotuning_la_LDFLAGS = $(PFLAGS)
+libtotuning_la_SOURCES = totuning.cpp totuning.h \
 	totuningoverviewui.cpp totuningoverviewui.h \
 	totuningsettingui.cpp totuningsettingui.h
 
-towidget_la_LDFLAGS = $(PFLAGS)
-towidget_la_SOURCES = tochangeconnection.cpp tochangeconnection.h \
+libtowidget_la_LDFLAGS = $(PFLAGS)
+libtowidget_la_SOURCES = tochangeconnection.cpp tochangeconnection.h \
 	tofilesize.cpp tofilesize.h \
 	tosgastatement.cpp tosgastatement.h \
 	totableselect.cpp totableselect.h \
 	tovisualize.cpp tovisualize.h \
 	towaitevents.cpp towaitevents.h
 
-toworksheet_la_LDFLAGS = $(PFLAGS)
-toworksheet_la_SOURCES = toworksheet.cpp toworksheet.h \
+libtoworksheet_la_LDFLAGS = $(PFLAGS)
+libtoworksheet_la_SOURCES = toworksheet.cpp toworksheet.h \
 	toworksheetsetupui.cpp toworksheetsetupui.h
 
 %.cpp %.h: %.ui

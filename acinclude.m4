@@ -1,4 +1,4 @@
-##   -*- autoconf -*-
+##   -*- mode: autoconf; tab-width: 2; -*-
 
 m4_include([qtkde.m4])
 
@@ -6,6 +6,21 @@ dnl mrj: set default prefix for tora
 AC_DEFUN(mrj_SET_PREFIX,
 [
     AC_PREFIX_DEFAULT(/usr/local/tora)
+])
+
+AC_DEFUN(TORA_CHECK_PLUGIN,
+[
+  AC_MSG_CHECKING([enable plugin support])
+  AC_ARG_ENABLE(plugin,
+  [  --enable-plugin         enable support for plugins. (default no)],
+  [ enable_plugin=yes ],
+  [ enable_plugin=no ])
+
+  if test $enable_plugin = no; then
+    AC_DEFINE(TOMONOLITHIC, 1, [True if using monolithic build.])
+  fi
+
+  AC_MSG_RESULT($enable_plugin)
 ])
 
 AC_DEFUN(TORA_LIBTOOL_ALL,

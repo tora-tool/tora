@@ -1,4 +1,4 @@
-##   -*- coding: autoconf; tab-width: 2; -*-
+##   -*- mode: autoconf; tab-width: 2; -*-
 
 dnl mrjohnson0: nicked this from a kdevelop-started package
 dnl - it didn't work without KDE, so i fixed that.
