@@ -104,8 +104,41 @@ class toOracleExtract : public toExtract::extractor {
   // Describe utility functions
   void describeAttributes(toExtract &ext,std::list<QString> &dsp,std::list<QString> &ctx,
 			  toQList &result) const;
+  void describeComments(toExtract &ext,std::list<QString> &lst,std::list<QString> &ctx,
+			const QString &schema,const QString &owner,const QString &name) const;
+  void describePrivs(toExtract &ext,std::list<QString> &lst,std::list<QString> &ctx,
+		     const QString &name) const;
+  void describeIOT(toExtract &ext,std::list<QString> &lst,std::list<QString> &ctx,
+		   const QString &schema,const QString &owner,const QString &name) const;
   void describeIndexColumns(toExtract &ext,std::list<QString> &lst,std::list<QString> &ctx,
 			    const QString &owner,const QString &name) const;
+  void describeMView(toExtract &ext,std::list<QString> &lst,const QString &schema,
+		     const QString &owner,const QString &name,const QString &type) const;
+  void describeMViewIndex(toExtract &ext,std::list<QString> &lst,std::list<QString> &ctx,
+			  const QString &schema,const QString &owner,const QString &name) const;
+  void describeMViewLog(toExtract &ext,std::list<QString> &lst,const QString &schema,
+			const QString &owner,const QString &name,const QString &type) const;
+  void describeMViewTable(toExtract &ext,std::list<QString> &lst,std::list<QString> &ctx,
+			  const QString &schema,const QString &owner,const QString &name) const;
+  void describePartitions(toExtract &ext,std::list<QString> &lst,std::list<QString> &ctx,
+			  const QString &owner,const QString &name,
+			  const QString &subPartitionType,const QString &caller) const;
+  void describePartitionedIOT(toExtract &ext,std::list<QString> &lst,std::list<QString> &ctx,
+			      const QString &schema,const QString &owner,
+			      const QString &name) const;
+  void describePartitionedIndex(toExtract &ext,std::list<QString> &lst,std::list<QString> &ctx,
+				const QString &schema,const QString &owner,
+				const QString &name) const;
+  void describePartitionedTable(toExtract &ext,std::list<QString> &lst,std::list<QString> &ctx,
+				const QString &schema,const QString &owner,
+				const QString &name) const;
+  void describeSource(toExtract &ext,std::list<QString> &lst,const QString &schema,
+		      const QString &owner,const QString &name,const QString &type) const;
+  void describeTableColumns(toExtract &ext,std::list<QString> &lst,std::list<QString> &ctx,
+			    const QString &owner,const QString &name) const;
+  void describeTableText(toExtract &ext,std::list<QString> &lst,std::list<QString> &ctx,
+			 toQList &result,const QString &schema,const QString &owner,
+			 const QString &name) const;
 
   // Create functions
 
@@ -248,6 +281,8 @@ public:
   virtual void initialize(toExtract &ext) const;
   virtual QString create(toExtract &ext,const QString &type,const QString &schema,
 			 const QString &owner,const QString &name) const;
+  virtual void describe(toExtract &ext,std::list<QString> &lst,const QString &type,
+			const QString &schema,const QString &owner,const QString &name) const;
   virtual QString drop(toExtract &ext,const QString &type,const QString &schema,
 		       const QString &owner,const QString &name) const;
 };
@@ -2783,6 +2818,79 @@ void toOracleExtract::describeAttributes(toExtract &ext,
   addDescription(dsp,ctx,QString("TABLESPACE %1").arg(QUOTE(tablespace)));
 }
 
+void toOracleExtract::describeComments(toExtract &ext,
+				       std::list<QString> &lst,
+				       std::list<QString> &ctx,
+				       const QString &schema,
+				       const QString &owner,
+				       const QString &name) const
+{
+  if (ext.getComments()) {
+    toQuery inf(CONNECTION,SQLTableComments,name,owner);
+    while(!inf.eof()) {
+      addDescription(lst,ctx,"COMMENT",inf.readValue());
+    }
+    toQuery col(CONNECTION,SQLColumnComments,name,owner);
+    while(!col.eof()) {
+      QString column=col.readValue();
+      addDescription(lst,ctx,"COLUMN",QUOTE(column),"COMMENT",col.readValue());
+    }
+  }
+}
+
+void toOracleExtract::describePrivs(toExtract &ext,
+				    std::list<QString> &lst,
+				    std::list<QString> &ctx,
+				    const QString &name) const
+{
+  if (!ext.getGrants())
+    return;
+
+  toQList result=toQuery::readQueryNull(CONNECTION,SQLRolePrivs,name);
+  while(result.size()>0) {
+    QString role=QUOTE(toShift(result));
+    addDescription(lst,ctx,"GRANT","ROLE",role,toShift(result));
+  }
+
+  result=toQuery::readQueryNull(CONNECTION,SQLSystemPrivs,name);
+  while(result.size()>0) {
+    QString priv=QString(toShift(result)).lower();
+    addDescription(lst,ctx,"GRANT",priv,toShift(result));
+  }
+
+  result=toQuery::readQueryNull(CONNECTION,SQLObjectPrivs,name);
+  while(result.size()>0) {
+    QString priv=toShift(result);
+    QString schema=ext.intSchema(toShift(result),true);
+    QString res="ON ";
+    res+=schema;
+    if (!schema.isEmpty())
+      res+=".";
+    res+=QUOTE(toShift(result));
+    addDescription(lst,ctx,"GRANT",priv.lower(),res,toShift(result));
+  }
+}
+
+void toOracleExtract::describeIOT(toExtract &ext,
+				  std::list<QString> &lst,
+				  std::list<QString> &ctx,
+				  const QString &schema,
+				  const QString &owner,
+				  const QString &name) const
+{
+  toQList storage=toQuery::readQueryNull(CONNECTION,SQLIOTInfo,name,owner);
+
+  describeTableText(ext,lst,ctx,storage,schema,owner,name);
+  describeComments(ext,lst,ctx,schema,owner,name);
+  if (ext.getStorage()) {
+    toQList overflow=toQuery::readQueryNull(CONNECTION,segments(ext,SQLOverflowInfo),name,owner);
+    if (overflow.size()==18) {
+      ctx.insert(ctx.end(),"OVERFLOW");
+      describeAttributes(ext,lst,ctx,overflow);
+    }
+  }
+}
+
 void toOracleExtract::describeIndexColumns(toExtract &ext,
 					   std::list<QString> &lst,
 					   std::list<QString> &ctx,
@@ -2808,6 +2916,457 @@ void toOracleExtract::describeIndexColumns(toExtract &ext,
       row=col;
     addDescription(lst,ctx,"COLUMN",row);
   }
+}
+
+void toOracleExtract::describeMView(toExtract &ext,std::list<QString> &lst,
+				    const QString &schema,const QString &owner,
+				    const QString &name,const QString &type) const
+{
+  toQList result=toQuery::readQueryNull(CONNECTION,SQLMViewInfo,name,owner);
+  if (result.size()==0)
+    throw QString("Couldn't find materialised table %1.%2").
+      arg(QUOTE(owner)).arg(QUOTE(name));
+  QString table        =toShift(result);
+  QString buildMode    =toShift(result);
+  QString refreshMethod=toShift(result);
+  QString refreshMode  =toShift(result);
+  QString startWith    =toShift(result);
+  QString next         =toShift(result);
+  QString usingPK      =toShift(result);
+  QString masterRBSeg  =toShift(result);
+  QString updatable    =toShift(result);
+  QString query        =toShift(result);
+
+  toQuery inf(CONNECTION,SQLIndexName,table,owner);
+  QString index(inf.readValue());
+
+  std::list<QString> ctx;
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),type);
+  ctx.insert(ctx.end(),QUOTE(name));
+
+  describeMViewTable(ext,lst,ctx,schema,owner,table);
+  addDescription(lst,ctx,buildMode);
+  ctx.insert(ctx.end(),"INDEX");
+  ctx.insert(ctx.end(),index.lower());
+  describeMViewIndex(ext,lst,ctx,schema,owner,index);
+
+  if (refreshMethod!="NEVER REFRESH") {
+    addDescription(lst,ctx,QString("START WITH %1").arg(startWith));
+    if (!next.isEmpty())
+      addDescription(lst,ctx,QString("NEXT %1").arg(next));
+    addDescription(lst,ctx,usingPK);
+    if (!masterRBSeg.isEmpty()&&ext.getStorage())
+      addDescription(lst,ctx,QString("USING MASTER ROLLBACK SEGMENT %1").
+		     arg(QUOTE(masterRBSeg)));
+  }
+
+  if (!updatable.isEmpty())
+    addDescription(lst,ctx,updatable);
+  addDescription(lst,ctx,QString("AS %1").arg(query));
+}
+
+static QString ReContext(std::list<QString> &ctx,int strip,const QString &str)
+{
+  QStringList lst=QStringList::split("\01",str);
+  QString ret;
+  QString sep="";
+  for(std::list<QString>::iterator i=ctx.begin();i!=ctx.end();i++) {
+    ret+=sep;
+    ret+=*i;
+    if (sep.isEmpty())
+      sep="\01";
+  }
+  for(QStringList::Iterator j=lst.begin();j!=lst.end();j++) {
+    if (strip>0) {
+      ret+=sep;
+      ret+=*j;
+    } else
+      strip--;
+    if (sep.isEmpty())
+      sep="\01";
+  }
+  return ret;
+}
+
+void toOracleExtract::describeMViewIndex(toExtract &ext,
+					 std::list<QString> &lst,
+					 std::list<QString> &ctx,
+					 const QString &schema,
+					 const QString &owner,
+					 const QString &name) const
+{
+  if (!ext.getStorage()||!ext.getParallel())
+    return;
+  ext.setState("IsASnapIndex",true);
+
+  static QRegExp start("^[^\001]+[\001][^\001]+[\001][^\001]+[\001]INITTRANS");
+  static QRegExp ignore("^[^\001]+[\001][^\001]+[\001][^\001]+[\001]LOGGING");
+
+  bool started=false;
+  bool done=false;
+
+  std::list<QString> tbllst;
+  describeIndex(ext,tbllst,schema,owner,name);
+  QString ret;
+
+  for(std::list<QString>::iterator i=tbllst.begin();i!=tbllst.end()&&!done;i++) {
+    if(start.match(*i)>=0)
+      started=true;
+    if (started)
+      lst.insert(lst.end(),ReContext(ctx,3,*i));
+  }
+
+  ext.setState("IsASnapIndex",false);
+}
+
+void toOracleExtract::describeMViewLog(toExtract &ext,
+				       std::list<QString> &lst,
+				       const QString &schema,
+				       const QString &owner,
+				       const QString &name,
+				       const QString &type) const
+{
+  toQList result=toQuery::readQueryNull(CONNECTION,SQLSnapshotInfo,name,owner);
+  if (result.size()!=4)
+    throw QString("Couldn't find log %1.%2").arg(owner).arg(name);
+
+  QString table        =toShift(result);
+  QString rowIds       =toShift(result);
+  QString primaryKey   =toShift(result);
+  QString filterColumns=toShift(result);
+
+  std::list<QString> ctx;
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),type);
+  ctx.insert(ctx.end(),QUOTE(name));
+
+  describeMViewTable(ext,lst,ctx,schema,owner,table);
+
+  if (rowIds=="YES" && primaryKey=="YES")
+    ctx.insert(ctx.end(),"WITH PRIMARY KEY, ROWID");
+  else if (rowIds=="YES")
+    ctx.insert(ctx.end(),"WITH ROWID");
+  else if (primaryKey=="YES")
+    ctx.insert(ctx.end(),"WITH PRIMARY KEY");
+  addDescription(lst,ctx);
+
+  toQuery inf(CONNECTION,SQLSnapshotColumns,name,owner);
+  bool first=true;
+  if (!inf.eof()) {
+    QString col="(";
+    while(!inf.eof()) {
+      if (first)
+	first=false;
+      else
+	col+=",";
+      col+=QString(inf.readValue()).lower();
+    }
+    col+=")";
+    addDescription(lst,ctx,col);
+  }
+}
+
+void toOracleExtract::describeMViewTable(toExtract &ext,
+					 std::list<QString> &lst,
+					 std::list<QString> &ctx,
+					 const QString &schema,
+					 const QString &owner,
+					 const QString &name) const
+{
+  if (!ext.getStorage()||!ext.getParallel())
+    return;
+  ext.setState("IsASnapTable",true);
+  //                        Schema        Table         Name
+  static QRegExp parallel("^[^\001]+[\001][^\001]+[\001][^\001]+[\001]PARALLEL");
+
+  bool started=false;
+  bool done=false;
+
+  std::list<QString> tbllst;
+  describeTable(ext,tbllst,schema,owner,name);
+  QString ret;
+
+  for(std::list<QString>::iterator i=tbllst.begin();i!=tbllst.end()&&!done;i++) {
+    if(parallel.match(*i)>=0)
+      started=true;
+    if (started)
+      lst.insert(lst.end(),ReContext(ctx,3,*i));
+  }
+
+  ext.setState("IsASnapTable",false);
+}
+
+void toOracleExtract::describePartitions(toExtract &ext,
+					 std::list<QString> &lst,
+					 std::list<QString> &ctx,
+					 const QString &owner,
+					 const QString &name,
+					 const QString &subPartitionType,
+					 const QString &caller) const
+{
+  if (!ext.getPartition())
+    return;
+
+  toQList result=toQuery::readQueryNull(CONNECTION,SQLRangePartitions,name,owner);
+  if (result.size()==0||result.size()%18)
+    throw QString("Couldn't find partition range %1.%2").arg(owner).arg(name);
+
+  while(result.size()>0) {
+    QString partition=toShift(result);
+    QString highValue=toShift(result);
+
+    toQList storage;
+    toPush(storage,toQValue("      "));
+    toPush(storage,toQValue("INDEX"));
+    for (int i=0;i<16;i++)
+      toPush(storage,toShift(result));
+
+    std::list<QString> cctx=ctx;
+    cctx.insert(cctx.end(),QUOTE(partition));
+
+    addDescription(lst,cctx);
+    if (caller!="LOCAL")
+      addDescription(lst,cctx,"RANGE",QString("VALUES LESS THAN %1").arg(highValue));
+    describeAttributes(ext,lst,cctx,storage);
+
+    if(subPartitionType=="HASH") {
+      toQuery inf(CONNECTION,SQLIndexSubPartitionName,name,partition,owner);
+      while(!inf.eof()) {
+	QString sub(inf.readValue());
+	QString tablespace(inf.readValue());
+	addDescription(lst,cctx,"HASH",sub.lower(),
+		       QString("TABLESPACE %1").arg(QUOTE(tablespace)));
+      }
+    }
+  }
+}
+
+void toOracleExtract::describePartitionedIOT(toExtract &ext,
+					     std::list<QString> &lst,
+					     std::list<QString> &ctx,
+					     const QString &schema,
+					     const QString &owner,
+					     const QString &name) const
+{
+  toQList result=toQuery::readQueryNull(CONNECTION,SQLPartitionedIOTInfo,
+					QString::number(ext.getBlockSize()),name,owner);
+  describeTableText(ext,lst,ctx,result,schema,owner,name);
+  if (ext.getPartition()) {
+    toQuery inf(CONNECTION,SQLPartitionIndexNames,name,owner);
+    if (!inf.eof())
+      throw QString("Couldn't find index partitions for %1.%2").arg(owner).arg(name);
+    QString index(inf.readValue());
+    std::list<QString> cctx=ctx;
+    toPush(cctx,QString("PARTITION COLUMNS"));
+    toPush(cctx,partitionKeyColumns(ext,owner,name,"TABLE"));
+    addDescription(lst,cctx);
+    describePartitions(ext,lst,cctx,owner,index,"NONE","IOT");
+  }
+  describeComments(ext,lst,ctx,schema,owner,name);
+  if (ext.getStorage()) {
+    toQList overflow=toQuery::readQueryNull(CONNECTION,segments(ext,SQLOverflowInfo),name,owner);
+    if (overflow.size()==18) {
+      ctx.insert(ctx.end(),"OVERFLOW");
+      describeAttributes(ext,lst,ctx,overflow);
+    }
+  }
+}
+
+void toOracleExtract::describePartitionedIndex(toExtract &ext,
+					       std::list<QString> &lst,
+					       std::list<QString> &ctx,
+					       const QString &schema,
+					       const QString &owner,
+					       const QString &name) const
+{
+  if (!ext.getPartition())
+    return;
+
+  toQList result=toQuery::readQueryNull(CONNECTION,SQLIndexPartition,
+					QString::number(ext.getBlockSize()),owner,name);
+  QString partitionType   =toShift(result);
+  QString subPartitionType=toShift(result);
+  QString locality        =toShift(result);
+  QString compressed      =toShift(result);
+  toUnShift(result,toQValue(""));
+
+  describeAttributes(ext,lst,ctx,result);
+
+  if (!compressed.isEmpty())
+    addDescription(lst,ctx,QString("COMPRESS %1").arg(compressed));
+
+  if (locality=="GLOBAL") {
+    std::list<QString> cctx=ctx;
+    toPush(cctx,QString("GLOBAL PARTITION COLUMNS"));
+    toPush(cctx,partitionKeyColumns(ext,owner,name,"INDEX"));
+    
+    addDescription(lst,cctx);
+    describePartitions(ext,lst,cctx,owner,name,subPartitionType,"GLOBAL");
+  } else {
+    std::list<QString> cctx=ctx;
+    toPush(cctx,QString("LOCAL PARTITION"));
+    addDescription(lst,cctx);
+    if (partitionType=="RANGE")
+      describePartitions(ext,lst,cctx,owner,name,subPartitionType,"LOCAL");
+  }
+}
+
+void toOracleExtract::describePartitionedTable(toExtract &ext,
+					       std::list<QString> &lst,
+					       std::list<QString> &ctx,
+					       const QString &schema,
+					       const QString &owner,
+					       const QString &name) const
+{
+  toQList storage=toQuery::readQueryNull(CONNECTION,SQLPartitionTableInfo,
+					 QString::number(ext.getBlockSize()),name,owner);
+
+  QString organization;
+  {
+    toQList::iterator i=storage.begin();
+    i++; i++; i++; i++;
+    organization=*i;
+  }
+
+  describeTableText(ext,lst,ctx,storage,schema,owner,name);
+
+  if (ext.getPartition()) {
+    toQList type=toQuery::readQueryNull(CONNECTION,SQLPartitionType,name,owner);
+    QString partitionType    (toShift(type));
+    QString partitionCount   (toShift(type));
+    QString subPartitionType (toShift(type));
+    QString subPartitionCount(toShift(type));
+
+    QString prtstr=QString("PARTITION BY %1 (%2)").
+      arg(partitionType).
+      arg(partitionKeyColumns(ext,owner,name,"TABLE"));
+    addDescription(lst,ctx,prtstr);
+    QString subprtstr;
+
+    if (partitionType=="RANGE") {
+      if (subPartitionType=="HASH") {
+	subprtstr=QString("SUBPARTITIONED BY HASH (%1) SUBPARTITIONS %2").
+	  arg(subPartitionKeyColumns(ext,owner,name,"TABLE")).
+	  arg(subPartitionCount);
+	addDescription(lst,ctx,subprtstr);
+      }
+
+      toQList segment=toQuery::readQueryNull(CONNECTION,SQLPartitionSegment,name,owner);
+
+      while(segment.size()>0) {
+	toQList storage;
+	QString partition=toShift(segment);
+	QString highValue=toShift(segment);
+	toPush(storage,toQValue("      "));
+	toPush(storage,toQValue(organization));
+	for(int i=0;i<16;i++)
+	  toPush(storage,toShift(segment));
+
+	std::list<QString> cctx=ctx;
+	cctx.insert(cctx.end(),prtstr);
+	cctx.insert(cctx.end(),QUOTE(partition));
+	addDescription(lst,cctx,"RANGE",QString("VALUES LESS THAN %2").
+		       arg(highValue));
+	describeAttributes(ext,lst,cctx,storage);
+
+	if (subPartitionType=="HASH") {
+	  toQList subs=toQuery::readQueryNull(CONNECTION,SQLSubPartitionName,
+					      name,partition,owner);
+	  while(subs.size()>0) {
+	    QString subpart=QUOTE(toShift(subs));
+	    QString tabspac=toShift(subs);
+	    addDescription(lst,cctx,subprtstr,subpart);
+	    addDescription(lst,cctx,subprtstr,subpart,
+			   QString("TABLESPACE %1").arg(QUOTE(tabspac)));
+	  }
+	}
+      }
+    } else {
+      toQList hash=toQuery::readQueryNull(CONNECTION,SQLSubPartitionName,
+					  name,owner);
+      while(hash.size()>0) {
+	QString partition=QUOTE(toShift(hash));
+	QString tablespac=toShift(hash);
+	addDescription(lst,ctx,prtstr,partition);
+	addDescription(lst,ctx,prtstr,partition,
+		       QString("TABLESPACE %1").arg(QUOTE(tablespac)));
+      }
+    }
+  }
+
+  describeComments(ext,lst,ctx,schema,owner,name);
+}
+
+void toOracleExtract::describeSource(toExtract &ext,
+				     std::list<QString> &lst,
+				     const QString &schema,
+				     const QString &owner,
+				     const QString &name,
+				     const QString &type) const
+{
+  if (!ext.getCode())
+    return;
+
+  std::list<QString> ctx;
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),type);
+  ctx.insert(ctx.end(),name.lower());
+  addDescription(lst,ctx);
+  addDescription(lst,ctx,displaySource(ext,schema,owner,name,type,true).simplifyWhiteSpace());
+}
+
+void toOracleExtract::describeTableColumns(toExtract &ext,
+					   std::list<QString> &lst,
+					   std::list<QString> &ctx,
+					   const QString &owner,
+					   const QString &name) const
+{
+  toQList cols=toQuery::readQueryNull(CONNECTION,SQLTableColumns,name,owner);
+  while(cols.size()>0) {
+    QString col=toShift(cols);
+    QString line=toShift(cols);
+    QString def=toShift(cols);
+    if (!def.isEmpty()) {
+      line+=" DEFAULT ";
+      line+=def;
+    }
+    line+=toShift(cols);
+    addDescription(lst,ctx,"COLUMN",col);
+    addDescription(lst,ctx,"COLUMN",col,line.simplifyWhiteSpace());
+  }
+}
+
+void toOracleExtract::describeTableText(toExtract &ext,
+					std::list<QString> &lst,
+					std::list<QString> &ctx,
+					toQList &result,
+					const QString &schema,
+					const QString &owner,
+					const QString &name) const
+{
+  QString monitoring     =toShift(result);
+  QString table          =toShift(result);
+  QString degree         =toShift(result);
+  QString instances      =toShift(result);
+  QString organization   =toShift(result);
+
+  QString ret;
+  addDescription(lst,ctx);
+  describeTableColumns(ext,lst,ctx,owner,name);
+  if (CONNECTION.version()>="8.0"&&ext.getStorage())
+    addDescription(lst,ctx,QString("ORGANIZATION %1").arg(organization));
+  if (CONNECTION.version()>="8.1"&&ext.getStorage())
+    addDescription(lst,ctx,monitoring);
+  if (ext.getParallel()) {
+    addDescription(lst,ctx,"PARALLEL",QString("DEGREE %1").arg(degree));
+    addDescription(lst,ctx,"PARALLEL",QString("INSTANCES %1").arg(instances));
+  }
+
+  toUnShift(result,toQValue(organization));
+  toUnShift(result,toQValue(""));
+
+  describeAttributes(ext,lst,ctx,result);
 }
 
 // Implementation create functions
@@ -4853,6 +5412,626 @@ void toOracleExtract::describeExchangeIndex(toExtract &ext,
   describeAttributes(ext,lst,ctx,result);
 }
 
+void toOracleExtract::describeExchangeTable(toExtract &ext,
+					    std::list<QString> &lst,
+					    const QString &schema,
+					    const QString &owner,
+					    const QString &name) const
+{
+  QStringList str=QStringList::split(":",name);
+  if (str.count()!=2)
+    throw ("When calling createExchangeTable name should contain :");
+  QString segment=str.first();
+  QString partition=str.last();
+
+  toQuery inf(CONNECTION,segments(ext,SQLPartitionSegmentType),segment,partition,owner);
+  if (inf.eof())
+    throw QString("Exchange table %1.%2 doesn't exist").arg(owner).arg(name);
+  QString type=inf.readValue();
+  QString blocks=inf.readValue();
+
+  QString sql=toSQL::string(SQLExchangeTable,CONNECTION).arg(type).arg(blocks);
+  toQList result=toQuery::readQueryNull(CONNECTION,sql,segment,partition,owner);
+  std::list<QString> ctx;
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),"EXCHANGE TABLE");
+  ctx.insert(ctx.end(),segment);
+  ctx.insert(ctx.end(),partition);
+  describeTableText(ext,lst,ctx,result,schema,owner,segment);
+}
+
+void toOracleExtract::describeFunction(toExtract &ext,
+				       std::list<QString> &lst,
+				       const QString &schema,
+				       const QString &owner,
+				       const QString &name) const
+{
+  describeSource(ext,lst,schema,owner,name,"FUNCTION");
+}
+
+void toOracleExtract::describeIndex(toExtract &ext,
+				    std::list<QString> &lst,
+				    const QString &schema,
+				    const QString &owner,
+				    const QString &name) const
+{
+  if (!ext.getIndexes())
+    return;
+
+  toQList res=toQuery::readQueryNull(CONNECTION,SQLIndexInfo,name,owner);
+  if (res.size()!=10)
+    throw QString("Couldn't find index %1.%2").arg(owner).arg(name);
+
+  QString partitioned=toShift(res);
+  QString table      =toShift(res);
+  QString tableOwner =toShift(res);
+  QString reverse    =toShift(res);
+  QString unique     =toShift(res);
+  QString bitmap     =toShift(res);
+  QString domain     =toShift(res);
+  QString domOwner   =toShift(res);
+  QString domName    =toShift(res);
+  QString domParam   =toShift(res);
+
+  toQList storage=toQuery::readQueryNull(CONNECTION,segments(ext,SQLIndexSegment),name,owner);
+  QString degree     =toShift(storage);
+  QString instances  =toShift(storage);
+  QString compressed =toShift(storage);
+
+  QString schema2=ext.intSchema(tableOwner,true);
+
+  std::list<QString> ctx;
+  ctx.insert(ctx.end(),schema2);
+  ctx.insert(ctx.end(),"TABLE");
+  ctx.insert(ctx.end(),QUOTE(table));
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),"INDEX");
+  ctx.insert(ctx.end(),QUOTE(name));
+
+  addDescription(lst,ctx);
+  if (!reverse.isEmpty())
+    addDescription(lst,ctx,reverse);
+  describeIndexColumns(ext,lst,ctx,owner,name);
+  if (domain=="DOMAIN") {
+    addDescription(lst,ctx,"DOMAIN",QString("DOMAINOWNER \"%1\".\"%2\"").
+		   arg(domOwner).
+		   arg(domName));
+    addDescription(lst,ctx,"DOMAIN",QString("PARAMETERS %1").arg(domParam));
+    return;
+  }
+  if (CONNECTION.version()>="8.0"&&ext.getParallel()) {
+    addDescription(lst,ctx,"PARALLEL",QString("DEGREE %1").arg(degree));
+    addDescription(lst,ctx,"PARALLEL",QString("INSTANCES %1").arg(instances));
+  }
+  if (partitioned == "YES") {
+    describePartitionedIndex(ext,lst,ctx,schema,owner,name);
+    return;
+  }
+
+  toUnShift(storage,toQValue(""));
+  describeAttributes(ext,lst,ctx,storage);
+  if (!compressed.isEmpty()&&compressed!="0"&&ext.getStorage())
+    addDescription(lst,ctx,QString("COMPRESS %1").arg(compressed));
+}
+
+void toOracleExtract::describeMaterializedView(toExtract &ext,
+					       std::list<QString> &lst,
+					       const QString &schema,
+					       const QString &owner,
+					       const QString &name) const
+{
+  describeMView(ext,lst,schema,owner,name,"MATERIALIZED VIEW");
+}
+
+void toOracleExtract::describeMaterializedViewLog(toExtract &ext,
+						  std::list<QString> &lst,
+						  const QString &schema,
+						  const QString &owner,
+						  const QString &name) const
+{
+  describeMViewLog(ext,lst,schema,owner,name,"MATERIALIZED VIEW LOG");
+}
+
+void toOracleExtract::describePackage(toExtract &ext,
+				      std::list<QString> &lst,
+				      const QString &schema,
+				      const QString &owner,
+				      const QString &name) const
+{
+  describeSource(ext,lst,schema,owner,name,"PACKAGE");
+}
+
+void toOracleExtract::describePackageBody(toExtract &ext,
+					  std::list<QString> &lst,
+					  const QString &schema,
+					  const QString &owner,
+					  const QString &name) const
+{
+  describeSource(ext,lst,schema,owner,name,"PACKAGE BODY");
+}
+
+void toOracleExtract::describeProcedure(toExtract &ext,
+					std::list<QString> &lst,
+					const QString &schema,
+					const QString &owner,
+					const QString &name) const
+{
+  describeSource(ext,lst,schema,owner,name,"PROCEDURE");
+}
+
+void toOracleExtract::describeProfile(toExtract &ext,
+				      std::list<QString> &lst,
+				      const QString &schema,
+				      const QString &owner,
+				      const QString &name) const
+{
+  toQList info=toQuery::readQueryNull(CONNECTION,
+				      SQLProfileInfo,
+				      name);
+  if (info.size()==0)
+    throw QString("Couldn't find profile %1").arg(name);
+
+  std::list<QString> ctx;
+  ctx.insert(ctx.end(),"PROFILE");
+  ctx.insert(ctx.end(),QUOTE(name));
+  addDescription(lst,ctx);
+
+  while(info.size()!=0) {
+    QString nam=toShift(info);
+    QString val=toShift(info);
+    addDescription(lst,ctx,nam,val);
+  }
+}
+
+void toOracleExtract::describeRole(toExtract &ext,
+				   std::list<QString> &lst,
+				   const QString &schema,
+				   const QString &owner,
+				   const QString &name) const
+{
+  toQList info=toQuery::readQueryNull(CONNECTION,
+				      SQLRoleInfo,
+				      name);
+  if (info.size()==0)
+    throw QString("Couldn't find role %1").arg(name);
+
+  std::list<QString> ctx;
+  ctx.insert(ctx.end(),"ROLE");
+  ctx.insert(ctx.end(),QUOTE(name));
+  addDescription(lst,ctx);
+  describePrivs(ext,lst,ctx,name);
+}
+
+void toOracleExtract::describeRollbackSegment(toExtract &ext,
+					      std::list<QString> &lst,
+					      const QString &schema,
+					      const QString &owner,
+					      const QString &name) const
+{
+  toQList result=toQuery::readQueryNull(CONNECTION,SQLRollbackSegment,name);
+  QString isPublic      = toShift(result);
+  QString tablespaceName= toShift(result);
+  QString initialExtent = toShift(result);
+  QString nextExtent    = toShift(result);
+  QString minExtent     = toShift(result);
+  QString maxExtent     = toShift(result);
+
+  std::list<QString> ctx;
+  ctx.insert(ctx.end(),"ROLLBACK SEGMENT");
+  ctx.insert(ctx.end(),QUOTE(name));
+
+  addDescription(lst,ctx);
+  addDescription(lst,ctx,QString("TABLESPACE %1").arg(QUOTE(tablespaceName)));
+
+  if (ext.getStorage()) {
+    ctx.insert(ctx.end(),"STORAGE");
+    addDescription(lst,ctx,QString("INITIAL %1").arg(initialExtent));
+    if (!nextExtent.isEmpty())
+      addDescription(lst,ctx,QString("NEXT %1").arg(nextExtent));
+    addDescription(lst,ctx,QString("MINEXTENTS %1").arg(minExtent));
+    addDescription(lst,ctx,QString("MAXEXTENTS %1").arg(maxExtent));
+  }
+}
+
+void toOracleExtract::describeSequence(toExtract &ext,
+				       std::list<QString> &lst,
+				       const QString &schema,
+				       const QString &owner,
+				       const QString &name) const
+{
+  toQList info=toQuery::readQueryNull(CONNECTION,
+				      SQLSequenceInfo,
+				      name,owner);
+  if (info.size()==0)
+    throw QString("Couldn't find sequence %1").arg(name);
+
+  std::list<QString> ctx;
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),"SEQUENCE");
+  ctx.insert(ctx.end(),QUOTE(name));
+
+  addDescription(lst,ctx);
+
+  while(info.size()!=0)
+    addDescription(lst,ctx,toShift(info));
+}
+
+void toOracleExtract::describeSnapshot(toExtract &ext,
+				       std::list<QString> &lst,
+				       const QString &schema,
+				       const QString &owner,
+				       const QString &name) const
+{
+  describeMView(ext,lst,schema,owner,name,"SNAPSHOT");
+}
+
+void toOracleExtract::describeSnapshotLog(toExtract &ext,
+					  std::list<QString> &lst,
+					  const QString &schema,
+					  const QString &owner,
+					  const QString &name) const
+{
+  describeMViewLog(ext,lst,schema,owner,name,"SNAPSHOT LOG");
+}
+
+void toOracleExtract::describeSynonym(toExtract &ext,
+				      std::list<QString> &lst,
+				      const QString &schema,
+				      const QString &owner,
+				      const QString &name) const
+{
+  toQList info=toQuery::readQueryNull(CONNECTION,
+				      SQLSynonymInfo,
+				      name,owner);
+  if (info.size()==0)
+    throw QString("Couldn't find synonym %1.%2").arg(owner).arg(name);
+  
+  QString tableOwner = toShift(info);
+  QString tableName  = toShift(info);
+  QString dbLink     = toShift(info);
+  if (dbLink=="NULL")
+    dbLink="";
+  else
+    dbLink="@"+QUOTE(dbLink);
+  QString useSchema=(schema=="PUBLIC")?QString(""):schema;
+  QString tableSchema=ext.intSchema(tableOwner,true);
+
+  std::list<QString> ctx;
+  if (owner=="PUBLIC")
+    ctx.insert(ctx.end(),owner);
+  addDescription(lst,ctx,"SYNONYM",QString("%1%2%3").
+		 arg(tableSchema).arg(QUOTE(tableName)).arg(dbLink));
+}
+
+void toOracleExtract::describeTable(toExtract &ext,
+				    std::list<QString> &lst,
+				    const QString &schema,
+				    const QString &owner,
+				    const QString &name) const
+{
+  toQuery inf(CONNECTION,SQLTableType,name,owner);
+  if (inf.eof())
+    throw QString("Couldn't find table %1.%2").arg(owner).arg(name);
+
+  QString partitioned(inf.readValue());
+  QString iot_type(inf.readValue());
+
+  std::list<QString> ctx;
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),"TABLE");
+  ctx.insert(ctx.end(),QUOTE(name));
+
+  if (iot_type=="IOT"&&ext.getIndexes()) {
+    if (partitioned=="YES")
+      describePartitionedIOT(ext,lst,ctx,schema,owner,name);
+    else
+      describeIOT(ext,lst,ctx,schema,owner,name);
+    return;
+  } else if (partitioned=="YES") {
+    describePartitionedTable(ext,lst,ctx,schema,owner,name);
+    return;
+  }
+
+  toQList result=toQuery::readQueryNull(CONNECTION,segments(ext,SQLTableInfo),name,owner);
+  describeTableText(ext,lst,ctx,result,schema,owner,name);
+  describeComments(ext,lst,ctx,schema,owner,name);
+}
+
+void toOracleExtract::describeTableFamily(toExtract &ext,
+					  std::list<QString> &lst,
+					  const QString &schema,
+					  const QString &owner,
+					  const QString &name) const
+{
+  describeTable(ext,lst,schema,owner,name);
+
+  toQList indexes=toQuery::readQueryNull(CONNECTION,SQLIndexNames,name,owner);
+  while(indexes.size()>0) {
+    QString indOwner(toShift(indexes));
+    describeIndex(ext,lst,ext.intSchema(indOwner,true),indOwner,toShift(indexes));
+  }
+
+  toQuery inf(CONNECTION,SQLTableType,name,owner);
+  if (inf.eof())
+    throw QString("Couldn't find table %1.%2").arg(owner).arg(name);
+
+  inf.readValue();
+  QString iotType(inf.readValue());
+
+  toQList constraints=toQuery::readQueryNull(CONNECTION,SQLTableConstraints,name,owner);
+  while(constraints.size()>0) {
+    if (toShift(constraints)!="P"||iotType!="IOT")
+      describeConstraint(ext,lst,schema,owner,toShift(constraints));
+    else
+      toShift(constraints);
+    toShift(constraints);
+  }
+
+  toQList triggers=toQuery::readQueryNull(CONNECTION,SQLTableTriggers,name,owner);
+  while(triggers.size()>0)
+    describeTrigger(ext,lst,schema,owner,toShift(triggers));
+}
+
+void toOracleExtract::describeTableReferences(toExtract &ext,
+					      std::list<QString> &lst,
+					      const QString &schema,
+					      const QString &owner,
+					      const QString &name) const
+{
+  toQList constraints=toQuery::readQueryNull(CONNECTION,SQLTableReferences,name,owner);
+  while(constraints.size()>0)
+    describeConstraint(ext,lst,schema,owner,toShift(constraints));
+}
+
+void toOracleExtract::describeTablespace(toExtract &ext,
+					 std::list<QString> &lst,
+					 const QString &schema,
+					 const QString &owner,
+					 const QString &name) const
+{
+  toQList info=toQuery::readQueryNull(CONNECTION,
+				      SQLTablespaceInfo,
+				      QString::number(ext.getBlockSize()),
+				      name);
+
+  if (info.size()!=10)
+    throw QString("Couldn't find tablespace %1").arg(name);
+
+  QString initial          =toShift(info);
+  QString next             =toShift(info);
+  QString minExtents       =toShift(info);
+  QString maxExtents       =toShift(info);
+  QString pctIncrease      =toShift(info);
+  QString minExtlen        =toShift(info);
+  QString contents         =toShift(info);
+  QString logging          =toShift(info);
+  QString extentManagement =toShift(info);
+  QString allocationType   =toShift(info);
+
+  std::list<QString> ctx;
+
+  if (extentManagement=="LOCAL"&&contents=="TEMPORARY")
+    ctx.insert(ctx.end(),"TEMPORARY TABLESPACE");
+  else
+    ctx.insert(ctx.end(),"TABLESPACE");
+  ctx.insert(ctx.end(),QUOTE(name));
+
+  addDescription(lst,ctx);
+
+  toQList files=toQuery::readQueryNull(CONNECTION,
+				       SQLDatafileInfo,
+				       QString::number(ext.getBlockSize()),
+				       name);
+  while(files.size()>0) {
+    QString fileName       =toShift(files);
+    QString bytes          =toShift(files);
+    QString autoExtensible =toShift(files);
+    QString maxBytes       =toShift(files);
+    QString incrementBy    =toShift(files);
+
+    std::list<QString> cctx=ctx;
+    if (extentManagement=="LOCAL"&&contents=="TEMPORARY")
+      cctx.insert(cctx.end(),"TEMPFILE");
+    else
+      cctx.insert(cctx.end(),"DATAFILE");
+    cctx.insert(cctx.end(),prepareDB(fileName));
+
+    addDescription(lst,cctx);
+    addDescription(lst,cctx,QString("SIZE %3").arg(bytes));
+
+    if (CONNECTION.version()>="8.0"&&ext.getStorage()) {
+      QString ret="AUTOEXTEND ";
+      if (autoExtensible=="YES")
+	ret+=QString("ON NEXT %1 MAXSIZE %2\n").
+	  arg(incrementBy).
+	  arg(maxBytes);
+      else
+	ret+="OFF\n";
+      addDescription(lst,cctx,ret);
+    }
+  }
+
+  if (ext.getStorage()) {
+    if (extentManagement=="LOCAL") {
+      QString ret="EXTENT MANAGEMENT LOCAL ";
+      if (allocationType=="SYSTEM")
+	ret+="AUTOALLOCATE";
+      else
+	ret+=QString("UNIFORM SIZE %1").arg(next);
+      addDescription(lst,ctx,ret);
+    } else {
+      addDescription(lst,ctx,"STORAGE",QString("INITIAL %1").arg(initial));
+      if (!next.isEmpty())
+	addDescription(lst,ctx,"STORAGE",QString("NEXT %1").arg(next));
+      addDescription(lst,ctx,"STORAGE",QString("MINEXTENTS %1").arg(minExtents));
+      addDescription(lst,ctx,"STORAGE",QString("MAXEXTENTS %1").arg(maxExtents));
+      addDescription(lst,ctx,"STORAGE",QString("PCTINCREASE %1").arg(pctIncrease));
+      addDescription(lst,ctx,QString("MINIMUM EXTENT %1").arg(minExtlen));
+      addDescription(lst,ctx,"EXTENT MANAGEMENT DICTIONARY");
+    }
+    if (CONNECTION.version()>="8.0"&&(contents!="TEMPORARY"||extentManagement!="LOCAL"))
+      addDescription(lst,ctx,logging);
+  }
+}
+
+void toOracleExtract::describeTrigger(toExtract &ext,
+				      std::list<QString> &lst,
+				      const QString &schema,
+				      const QString &owner,
+				      const QString &name) const
+{
+  if (!ext.getCode())
+    return;
+
+  toQList result=toQuery::readQueryNull(CONNECTION,SQLTriggerInfo,name,owner);
+  if (result.size()!=9)
+    throw QString("Couldn't find trigger %1.%2").arg(owner).arg(name);
+  QString triggerType=toShift(result);
+  QString event      =toShift(result);
+  QString tableOwner =toShift(result);
+  QString table      =toShift(result);
+  QString baseType   =toShift(result);
+  QString refNames   =toShift(result);
+  QString description=toShift(result);
+  QString when       =toShift(result);
+  QString body       =toShift(result);
+
+  QString trgType;
+  if (triggerType.find("BEFORE")>=0)
+    trgType="BEFORE";
+  else if (triggerType.find("AFTER")>=0)
+    trgType="AFTER";
+  else if (triggerType.find("INSTEAD OF")>=0)
+    trgType="INSTEAD OF";
+
+  QString src=trgType;
+  src+=" ";
+  src+=event;
+  int pos=description.find(src);
+  QString columns;
+  if (pos>=0) {
+    pos+=src.length();
+    int endPos=description.find(" ON ",pos);
+    if (endPos>=0) {
+      columns=description.right(description.length()-pos);
+      columns.truncate(endPos-pos);
+    }
+  }
+  QString schema2=ext.intSchema(tableOwner,true);
+  QString object;
+  if (baseType=="TABLE") {
+    object=schema2;
+    if (!schema2.isEmpty())
+      object+=".";
+    object+=table;
+  } else if (baseType=="SCHEMA") {
+    object=schema;
+    if (!schema.isEmpty())
+      object+=".";
+    object+="SCHEMA";
+  } else {
+    object=baseType;
+  }
+
+  std::list<QString> ctx;
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),"TRIGGER");
+  ctx.insert(ctx.end(),QUOTE(name));
+  addDescription(lst,ctx);
+  QString tmp=triggerType;
+  tmp+=event;
+  tmp+=columns;
+  addDescription(lst,ctx,tmp);
+  tmp="ON ";
+  tmp+=object;
+  if (!refNames.isEmpty()) {
+    tmp+=" ";
+    tmp+=refNames;
+  }
+  addDescription(lst,ctx,object);
+  if (!when.isEmpty())
+    addDescription(lst,ctx,when);
+  addDescription(lst,ctx,"BODY",body);
+}
+
+void toOracleExtract::describeType(toExtract &ext,
+				   std::list<QString> &lst,
+				   const QString &schema,
+				   const QString &owner,
+				   const QString &name) const
+{
+  describeSource(ext,lst,schema,owner,name,"TYPE");
+}
+
+void toOracleExtract::describeUser(toExtract &ext,
+				   std::list<QString> &lst,
+				   const QString &schema,
+				   const QString &owner,
+				   const QString &name) const
+{
+  toQList info=toQuery::readQueryNull(CONNECTION,
+				      SQLUserInfo,
+				      name);
+
+  if (info.size()!=4)
+    throw QString("Couldn't find user %1").arg(name);
+
+  QString password           =toShift(info);
+  QString profile            =toShift(info);
+  QString defaultTablespace  =toShift(info);
+  QString temporaryTablespace=toShift(info);
+
+  std::list<QString> ctx;
+  ctx.insert(ctx.end(),"USER");
+  QString nam;
+  if (ext.getSchema()!="1"&&!ext.getSchema().isEmpty())
+    nam=ext.getSchema().lower();
+  else
+    nam=QUOTE(name);
+  ctx.insert(ctx.end(),nam);
+
+  addDescription(lst,ctx);
+  addDescription(lst,ctx,QString("PROFILE %1").arg(QUOTE(profile)));
+  addDescription(lst,ctx,QString("DEFAULT TABLESPACE %1").arg(QUOTE(defaultTablespace)));
+  addDescription(lst,ctx,QString("TEMPORARY TABLESPACE %1").arg(QUOTE(temporaryTablespace)));
+
+  if (ext.getStorage()) {
+    toQList quota=toQuery::readQueryNull(CONNECTION,SQLUserQuotas,name);
+    while(quota.size()>0) {
+      QString siz=toShift(quota);
+      QString tab=toShift(quota);
+      addDescription(lst,ctx,"QUOTA",QString("%1 ON %2").
+		     arg(siz).
+		     arg(QUOTE(tab)));
+    }
+  }
+  describePrivs(ext,lst,ctx,name);
+}
+
+void toOracleExtract::describeView(toExtract &ext,
+				   std::list<QString> &lst,
+				   const QString &schema,
+				   const QString &owner,
+				   const QString &name) const
+{
+  if (!ext.getCode())
+    return;
+  toQList source=toQuery::readQueryNull(CONNECTION,
+					SQLViewSource,
+					name,owner);
+  if (source.size()==0)
+    throw QString("Couldn't find user %1.%2").arg(QUOTE(owner)).arg(QUOTE(name));
+
+  std::list<QString> ctx;
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),"VIEW");
+  ctx.insert(ctx.end(),QUOTE(name));
+
+  addDescription(lst,ctx);
+  QString text=toShift(source);
+  addDescription(lst,ctx,"AS",text.simplifyWhiteSpace());
+}
+
 // Implementation drop functions
 
 QString toOracleExtract::dropConstraint(toExtract &ext,
@@ -5677,6 +6856,81 @@ QString toOracleExtract::create(toExtract &ext,
     str+=" to create";
     throw str;
   }  
+}
+
+void toOracleExtract::describe(toExtract &ext,
+			       std::list<QString> &lst,
+			       const QString &type,
+			       const QString &schema,
+			       const QString &owner,
+			       const QString &name) const
+{
+  clearFlags(ext);
+
+  if (type=="CONSTRAINT")
+    describeConstraint(ext,lst,schema,owner,name);
+  else if (type=="DATABASE LINK")
+    describeDBLink(ext,lst,schema,owner,name);
+  else if (type=="EXCHANGE INDEX")
+    describeExchangeIndex(ext,lst,schema,owner,name);
+  else if (type=="EXCHANGE TABLE")
+    describeExchangeTable(ext,lst,schema,owner,name);
+  else if (type=="FUNCTION")
+    describeFunction(ext,lst,schema,owner,name);
+  else if (type=="INDEX")
+    describeIndex(ext,lst,schema,owner,name);
+  else if (type=="MATERIALIZED VIEW")
+    describeMaterializedView(ext,lst,schema,owner,name);
+  else if (type=="MATERIALIZED VIEW LOG")
+    describeMaterializedViewLog(ext,lst,schema,owner,name);
+  else if (type=="PACKAGE")
+    describePackage(ext,lst,schema,owner,name);
+  else if (type=="PACKAGE BODY")
+    describePackageBody(ext,lst,schema,owner,name);
+  else if (type=="PROCEDURE")
+    describeProcedure(ext,lst,schema,owner,name);
+  else if (type=="PROFILE")
+    describeProfile(ext,lst,schema,owner,name);
+  else if (type=="ROLE")
+    describeRole(ext,lst,schema,owner,name);
+  else if (type=="ROLE GRANTS") {
+    // A nop, everything is done in describe role
+  } else if (type=="ROLLBACK SEGMENT")
+    describeRollbackSegment(ext,lst,schema,owner,name);
+  else if (type=="SEQUENCE")
+    describeSequence(ext,lst,schema,owner,name);
+  else if (type=="SNAPSHOT")
+    describeSnapshot(ext,lst,schema,owner,name);
+  else if (type=="SNAPSHOT LOG")
+    describeSnapshotLog(ext,lst,schema,owner,name);
+  else if (type=="SYNONYM")
+    describeSynonym(ext,lst,schema,owner,name);
+  else if (type=="TABLE")
+    describeTable(ext,lst,schema,owner,name);
+  else if (type=="TABLE FAMILY")
+    describeTableFamily(ext,lst,schema,owner,name);
+  else if (type=="TABLE REFERENCES")
+    describeTableReferences(ext,lst,schema,owner,name);
+  else if (type=="TABLE CONTENTS") {
+    // A nop, nothing is described of contents
+  } else if (type=="TABLESPACE")
+    describeTablespace(ext,lst,schema,owner,name);
+  else if (type=="TRIGGER")
+    describeTrigger(ext,lst,schema,owner,name);
+  else if (type=="TYPE")
+    describeType(ext,lst,schema,owner,name);
+  else if (type=="USER")
+    describeUser(ext,lst,schema,owner,name);
+  else if (type=="USER GRANTS") {
+    // A nop, everything is done in describe user
+  } else if (type=="VIEW")
+    describeView(ext,lst,schema,owner,name);
+  else {
+    QString str="Invalid type ";
+    str+=type;
+    str+=" to describe";
+    throw str;
+  }
 }
 
 QString toOracleExtract::drop(toExtract &ext,
