@@ -678,7 +678,7 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
   if (tablespaces)
     TablespaceButton->setOn(true);
   connect(TablespaceButton,SIGNAL(toggled(bool)),this,SLOT(showTablespaces(bool)));
-  QToolTip::add(ExtentButton,"Show tablespaces or just datafiles.");
+  QToolTip::add(TablespaceButton,"Show tablespaces or just datafiles.");
 
   toolbar->addSeparator();
 

@@ -1,5 +1,5 @@
 %define _name		tora
-%define _version	1.3.3
+%define _version	1.3.4
 %define _release	1static
 %define _prefix		/usr/X11R6
 %define _qt3dir		/usr/local/qt3
