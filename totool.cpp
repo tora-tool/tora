@@ -141,17 +141,20 @@ void toToolWidget::importData(std::map<QCString,QString> &data,const QCString &p
   QWidget *par=parentWidget();
   if (!par)
     par=this;
-  if(data[prefix+":Width"].toInt()>0)
+  if (data[prefix+":State"]==QString::fromLatin1("Maximized")) {
+    par->showMaximized();
+    showMaximized();
+  } else if (data[prefix+":State"]==QString::fromLatin1("Minimized")) {
+    par->showMinimized();
+    showMinimized();
+  } else {
+    par->showNormal();
     par->setGeometry(data[prefix+":X"].toInt(),
 		     data[prefix+":Y"].toInt(),
 		     data[prefix+":Width"].toInt(),
 		     data[prefix+":Height"].toInt());
-  if (data[prefix+":State"]==QString::fromLatin1("Maximized"))
-    showMaximized();
-  else if (data[prefix+":State"]==QString::fromLatin1("Minimized"))
-    showMinimized();
-  else
-    par->showNormal();
+
+  }
 }
 
 std::map<QCString,toTool *> *toTool::Tools;
