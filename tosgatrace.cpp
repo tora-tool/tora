@@ -229,7 +229,7 @@ static toSQL SQLSGATrace("toSGATrace:SGATrace",
 			 "       DECODE(a.Rows_Processed,0,'N/A',ROUND(a.Buffer_Gets/a.Rows_Processed,3)) \"Buffers/Rows\",\n"
 			 "       a.Address||':'||a.Hash_Value \" \"\n"
 			 "  from v$sqlarea a,\n"
-			 "       all_users b\n"
+			 "       sys.all_users b\n"
 			 " where a.parsing_user_id = b.user_id",
 			 "Display the contents of the SGA stack. Must have one hidden column "
 			 "with SGA address at the end and a table name 'b' with a column username.");

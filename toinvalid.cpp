@@ -63,16 +63,16 @@
 
 static toSQL SQLListInvalid("toInvalid:ListInvalid",
 			    "SELECT owner \"Owner\",object_name \"Object\",object_type \"Type\"\n"
-			    "  FROM all_objects WHERE status = 'INVALID'",
+			    "  FROM sys.all_objects WHERE status = 'INVALID'",
 			    "Get invalid objects, must have same first three columns.");
 
 static toSQL SQLListSource("toInvalid:ListSource",
-			   "SELECT Text FROM ALL_SOURCE\n"
+			   "SELECT Text FROM SYS.ALL_SOURCE\n"
 			   " WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]> AND type = :f3<char[101]>",
 			   "List source of an object.");
 
 static toSQL SQLReadErrors("toInvalid:ReadErrors",
-			   "SELECT Line-1,Text FROM All_Errors\n"
+			   "SELECT Line-1,Text FROM sys.All_Errors\n"
 			   " WHERE OWNER = :f1<char[101]>\n"
 			   "   AND NAME = :f2<char[101]>\n"
 			   "   AND TYPE = :f3<char[101]>",

@@ -80,10 +80,10 @@ toExtract::toExtract(toConnection &conn,QWidget *parent)
   Comments=true;
   Partition=true;
   try {
-    toQuery(conn,"select * from dba_segments where null=null");
-    DbaSegments="dba_segments";
+    toQuery(conn,"select * from sys.dba_segments where null=null");
+    DbaSegments="sys.dba_segments";
   } catch(...) {
-    DbaSegments=QString("(select '%1' owner,user_segments.* from user_segments)").arg(conn.user().upper());
+    DbaSegments=QString("(select '%1' owner,user_segments.* from sys.user_segments)").arg(conn.user().upper());
   }
 
   Schema="1";
@@ -236,7 +236,7 @@ void toExtract::setSizes(void)
 static toSQL SQLObjectExists("toExtract:ObjectExists",
 			     "SELECT\n"
 			     "       'X'\n"
-			     "  FROM all_objects\n"
+			     "  FROM sys.all_objects\n"
 			     " WHERE object_name = :nam<char[100]>\n"
 			     "   AND owner = :own<char[100]>\n"
 			     "   AND object_type = :typ<char[100]>",
@@ -290,7 +290,7 @@ QString toExtract::compilePackage(const QString &schema,const QString &owner,con
 
 static toSQL SQLConstraintCols("toExtract:ConstraintCols",
 			       "SELECT LOWER(column_name)\n"
-			       "  FROM all_cons_columns\n"
+			       "  FROM sys.all_cons_columns\n"
 			       " WHERE owner = :own<char[100]>\n"
 			       "   AND constraint_name = :con<char[100]>\n"
 			       " ORDER BY position",
@@ -315,7 +315,7 @@ QString toExtract::constraintColumns(const QString &owner,const QString &name)
 
 static toSQL SQLTableComments("toExtract:TableComment",
 			      "SELECT comments\n"
-			      "  FROM all_tab_comments\n"
+			      "  FROM sys.all_tab_comments\n"
 			      " WHERE table_name = :nam<char[100]>\n"
 			      "   AND comments IS NOT NULL\n"
 			      "   AND owner = :own<char[100]>",
@@ -323,7 +323,7 @@ static toSQL SQLTableComments("toExtract:TableComment",
 static toSQL SQLColumnComments("toExtract:ColumnComment",
 			       "SELECT column_name,\n"
 			       "       comments\n"
-			       "  FROM all_col_comments\n"
+			       "  FROM sys.all_col_comments\n"
 			       " WHERE table_name = :nam<char[100]>\n"
 			       "   AND comments IS NOT NULL\n"
 			       "   AND owner = :own<char[100]>",
@@ -508,7 +508,7 @@ static toSQL SQLListConstraint("toExtract:ListConstraint",
 			       "       DECODE(status,'ENABLED','ENABLE NOVALIDATE','DISABLE'),\n"
 			       "       deferrable,\n"
 			       "       deferred\n"
-			       "  FROM all_constraints\n"
+			       "  FROM sys.all_constraints\n"
 			       " WHERE owner = :own<char[100]>\n"
 			       "   AND constraint_name = :nam<char[100]>",
 			       "Get information about a constraint, same binds and columns",
@@ -524,7 +524,7 @@ static toSQL SQLListConstraint7("toExtract:ListConstraint",
 				"       DECODE(status,'ENABLED','ENABLE','DISABLE'),\n"
 				"       NULL,\n"
 				"       NULL\n"
-				"  FROM all_constraints\n"
+				"  FROM sys.all_constraints\n"
 				" WHERE owner = :own<char[100]>\n"
 				"   AND constraint_name = :nam<char[100]>",
 				"",
@@ -532,7 +532,7 @@ static toSQL SQLListConstraint7("toExtract:ListConstraint",
 
 static toSQL SQLConstraintTable("toExtract:ConstraintTable",
 				"SELECT table_name\n"
-				"  FROM all_constraints\n"
+				"  FROM sys.all_constraints\n"
 				" WHERE owner = :own<char[100]>\n"
 				"   AND constraint_name = :nam<char[100]>",
 				"Get tablename from constraint name, same binds and columns");
@@ -840,8 +840,8 @@ static toSQL SQLExchangeIndex("toExtract:ExchangeIndex",
 			      "      , LOWER(p.tablespace_name)      AS tablespace_name\n"
 			      "      , %2                            AS blocks\n"
 			      " FROM\n"
-			      "        all_indexes  i\n"
-			      "      , all_ind_%1s  p\n"
+			      "        sys.all_indexes  i\n"
+			      "      , sys.all_ind_%1s  p\n"
 			      " WHERE\n"
 			      "            p.index_name   = :nam<char[100]>\n"
 			      "        AND p.%1_name      = :typ<char[100]>\n"
@@ -946,7 +946,7 @@ void toExtract::describeExchangeIndex(std::list<QString> &lst,const QString &sch
 static toSQL SQLIndexColumns("toExtract:IndexColumns",
 			     "SELECT column_name,\n"
 			     "       descend\n"
-			     "  FROM all_ind_columns\n"
+			     "  FROM sys.all_ind_columns\n"
 			     " WHERE index_name = :nam<char[100]>\n"
 			     "   AND index_owner = :own<char[100]>\n"
 			     " ORDER BY column_position",
@@ -955,7 +955,7 @@ static toSQL SQLIndexColumns("toExtract:IndexColumns",
 static toSQL SQLIndexColumns7("toExtract:IndexColumns",
 			      "SELECT column_name,\n"
 			      "       'ASC'\n"
-			      "  FROM all_ind_columns\n"
+			      "  FROM sys.all_ind_columns\n"
 			      " WHERE index_name = :nam<char[100]>\n"
 			      "   AND index_owner = :own<char[100]>\n"
 			      " ORDER BY column_position",
@@ -964,8 +964,8 @@ static toSQL SQLIndexColumns7("toExtract:IndexColumns",
 static toSQL SQLIndexFunction("toExtract:IndexFunction",
 			      "SELECT c.default$\n"
 			      "  FROM sys.col$ c,\n"
-			      "       all_indexes i,\n"
-			      "       all_objects o\n"
+			      "       sys.all_indexes i,\n"
+			      "       sys.all_objects o\n"
 			      " WHERE i.index_name = :ind<char[100]>\n"
 			      "   AND o.object_name = i.table_name\n"
 			      "   AND c.obj# = o.object_id\n"
@@ -1076,8 +1076,8 @@ static toSQL SQLExchangeTable("toExtract:ExchangeTable",
 			      "      , LOWER(p.tablespace_name)             AS tablespace_name\n"
 			      "      , %2 - NVL(p.empty_blocks,0)           AS blocks\n"
 			      " FROM\n"
-			      "        all_tables        t\n"
-			      "      , all_tab_%1s       p\n"
+			      "        sys.all_tables        t\n"
+			      "      , sys.all_tab_%1s       p\n"
 			      " WHERE\n"
 			      "            p.table_name   = :nam<char[100]>\n"
 			      "        AND p.%1_name      = :sgm<char[100]>\n"
@@ -1285,7 +1285,7 @@ void toExtract::describeAttributes(std::list<QString> &dsp,std::list<QString> &c
 
 static toSQL SQLPrimaryKey("toExtract:PrimaryKey",
 			   "SELECT a.constraint_name,b.tablespace_name\n"
-			   "  FROM all_constraints a,all_indexes b\n"
+			   "  FROM sys.all_constraints a,sys.all_indexes b\n"
 			   " WHERE a.table_name = :nam<char[100]>\n"
 			   "   AND a.constraint_type = 'P'\n"
 			   "   AND a.owner = :own<char[100]>\n"
@@ -1458,7 +1458,7 @@ static toSQL SQLTableColumns("toExtract:TableColumns",
 			     "               ,'N','NOT NULL'\n"
 			     "               ,     null\n"
 			     "              )\n"
-			     "  FROM all_tab_columns\n"
+			     "  FROM sys.all_tab_columns\n"
 			     " WHERE table_name = :nam<char[100]>\n"
 			     "   AND owner = :own<char[100]>\n"
 			     " ORDER BY column_id",
@@ -1552,7 +1552,7 @@ static toSQL SQLTableColumns7("toExtract:TableColumns",
 			      "               ,'N','NOT NULL'\n"
 			      "               ,     null\n"
 			      "              )\n"
-			      "  FROM all_tab_columns\n"
+			      "  FROM sys.all_tab_columns\n"
 			      " WHERE table_name = :nam<char[100]>\n"
 			      "   AND owner = :own<char[100]>\n"
 			      " ORDER BY column_id",
@@ -1605,7 +1605,7 @@ void toExtract::describeTableColumns(std::list<QString> &lst,std::list<QString> 
 
 static toSQL SQLDisplaySource("toExtract:ListSource",
 			      "SELECT text\n"
-			      "  FROM all_source\n"
+			      "  FROM sys.all_source\n"
 			      " WHERE type = :typ<char[100]>\n"
 			      "   AND name = :nam<char[100]>\n"
 			      "   AND owner = :own<char[100]>\n"
@@ -1694,7 +1694,7 @@ static toSQL SQLIndexInfo7("toExtract:IndexInfo",
 			   "      , null\n"
 			   "      , null\n"
 			   "      , null\n"
-			   "  FROM all_indexes\n"
+			   "  FROM sys.all_indexes\n"
 			   " WHERE index_name = :nam<char[100]>\n"
 			   "   AND owner = :own<char[100]>",
 			   "Initial information about an index, same binds and columns",
@@ -1722,7 +1722,7 @@ static toSQL SQLIndexInfo("toExtract:IndexInfo",
 			  "      , ityp_owner\n"
 			  "      , ityp_name\n"
 			  "      , parameters\n"
-			  "  FROM all_indexes\n"
+			  "  FROM sys.all_indexes\n"
 			  " WHERE index_name = :nam<char[100]>\n"
 			  "   AND owner = :own<char[100]>",
 			  "",
@@ -1771,7 +1771,7 @@ static toSQL SQLIndexSegment("toExtract:IndexSegment",
 			     "              )                       AS logging\n"
 			     "      , LOWER(i.tablespace_name)      AS tablespace_name\n"
 			     "      , s.blocks\n"
-			     "  FROM  all_indexes   i\n"
+			     "  FROM  sys.all_indexes   i\n"
 			     "      , %1  s\n"
 			     " WHERE  i.index_name   = :nam<char[100]>\n"
 			     "   AND  s.segment_name = i.index_name\n"
@@ -1819,7 +1819,7 @@ static toSQL SQLIndexSegment8("toExtract:IndexSegment",
 			      "              )                       AS logging\n"
 			      "      , LOWER(i.tablespace_name)      AS tablespace_name\n"
 			      "      , s.blocks\n"
-			      "  FROM  all_indexes   i\n"
+			      "  FROM  sys.all_indexes   i\n"
 			      "      , %1  s\n"
 			      " WHERE  i.index_name   = :nam<char[100]>\n"
 			      "   AND  s.segment_name = i.index_name\n"
@@ -1863,7 +1863,7 @@ static toSQL SQLIndexSegment7("toExtract:IndexSegment",
 			      "      , 'N/A'                         AS logging\n"
 			      "      , LOWER(i.tablespace_name)      AS tablespace_name\n"
 			      "      , s.blocks\n"
-			      "  FROM  all_indexes   i\n"
+			      "  FROM  sys.all_indexes   i\n"
 			      "      , %1  s\n"
 			      " WHERE  i.index_name   = :nam<char[100]>\n"
 			      "   AND  s.segment_name = i.index_name\n"
@@ -2092,9 +2092,9 @@ static toSQL SQLIndexPartition8("toExtract:IndexPartition",
 				"                        )\n"
 				"                )                     AS blocks\n"
 				" FROM\n"
-				"        all_part_indexes  i\n"
-				"      , dba_tablespaces   s\n"
-				"      , all_part_tables   t\n"
+				"        sys.all_part_indexes  i\n"
+				"      , sys.dba_tablespaces   s\n"
+				"      , sys.all_part_tables   t\n"
 				" WHERE\n"
 				"            i.index_name      = :nam<char[100]>\n"
 				"        AND t.table_name      = i.table_name\n"
@@ -2194,10 +2194,10 @@ static toSQL SQLIndexPartition("toExtract:IndexPartition",
 			       "                        )\n"
 			       "                )                     AS blocks\n"
 			       " FROM\n"
-			       "        all_part_indexes  i\n"
-			       "      , all_indexes       n\n"
-			       "      , dba_tablespaces   s\n"
-			       "      , all_part_tables   t\n"
+			       "        sys.all_part_indexes  i\n"
+			       "      , sys.all_indexes       n\n"
+			       "      , sys.dba_tablespaces   s\n"
+			       "      , sys.all_part_tables   t\n"
 			       " WHERE\n"
 			       "            i.index_name      = :nam<char[100]>\n"
 			       "        AND n.index_name      = i.index_name\n"
@@ -2298,7 +2298,7 @@ QString toExtract::subPartitionKeyColumns(const QString &owner,const QString &na
 
 static toSQL SQLKeyColumns("toExtract:KeyColumns",	
 			   "SELECT  column_name\n"
-			   "  FROM all_%1_key_columns\n"
+			   "  FROM sys.all_%1_key_columns\n"
 			   " WHERE name           = :nam<char[100]>\n"
 			   "   AND owner          = :owner<char[100]>\n"
 			   "   AND object_type LIKE :typ<char[100]>||'%'",
@@ -2349,7 +2349,7 @@ static toSQL SQLRangePartitions("toExtract:RangePartitions",
 				"              )                       AS logging\n"
 				"      , tablespace_name\n"
 				"      , leaf_blocks                   AS blocks\n"
-				" FROM   all_ind_partitions\n"
+				" FROM   sys.all_ind_partitions\n"
 				" WHERE      index_name  =  :nam<char[100]>\n"
 				"        AND index_owner =  :own<char[100]>\n"
 				" ORDER BY partition_name",
@@ -2384,7 +2384,7 @@ static toSQL SQLRangePartitions8("toExtract:RangePartitions",
 				 "              )                       AS logging\n"
 				 "      , tablespace_name\n"
 				 "      , leaf_blocks                   AS blocks\n"
-				 " FROM   all_ind_partitions\n"
+				 " FROM   sys.all_ind_partitions\n"
 				 " WHERE      index_name  =  :nam<char[100]>\n"
 				 "        AND index_owner =  :own<char[100]>\n"
 				 " ORDER BY partition_name",
@@ -2394,7 +2394,7 @@ static toSQL SQLRangePartitions8("toExtract:RangePartitions",
 static toSQL SQLIndexSubPartitionName("toExtract:IndexSubPartitionName",
 				      "SELECT subpartition_name,\n"
 				      "       tablespace_name\n"
-				      "  FROM all_ind_subpartitions\n"
+				      "  FROM sys.all_ind_subpartitions\n"
 				      " WHERE index_name     = :ind<char[100]>\n"
 				      "   AND partition_name = :prt<char[100]>\n"
 				      "   AND index_owner    = :own<char[100]>\n"
@@ -2571,8 +2571,8 @@ static toSQL SQLMViewInfo("toExtract:MaterializedViewInfo",
 			  "                    )                                  AS updatable\n"
 			  "            , s.query\n"
 			  "       FROM\n"
-			  "              all_mviews     m\n"
-			  "            , all_snapshots  s\n"
+			  "              sys.all_mviews     m\n"
+			  "            , sys.all_snapshots  s\n"
 			  "       WHERE\n"
 			  "                  m.mview_name  = :nam<char[100]>\n"
 			  "              AND s.name        = m.mview_name\n"
@@ -2582,7 +2582,7 @@ static toSQL SQLMViewInfo("toExtract:MaterializedViewInfo",
 
 static toSQL SQLIndexName("toExtract:TableIndexes",
 			  "SELECT index_name\n"
-			  "  FROM all_indexes\n"
+			  "  FROM sys.all_indexes\n"
 			  " WHERE table_name = :nam<char[100]>\n"
 			  "   AND owner = own<char[100]>",
 			  "Get indexes available to a table, must have same binds and columns");
@@ -2824,7 +2824,7 @@ static toSQL SQLSnapshotInfo("toExtract:SnapshotInfo",
 			     "       rowids,\n"
 			     "       primary_key,\n"
 			     "       filter_columns\n"
-			     "  FROM all_snapshot_logs\n"
+			     "  FROM sys.all_snapshot_logs\n"
 			     "   AND master = :nam<char[100]>\n"
 			     "   AND log_owner = :own<char[100]>",
 			     "Get information about snapshot or materialized view log, "
@@ -2834,7 +2834,7 @@ static toSQL SQLSnapshotColumns("toExtract:SnapshotColumns",
 				"SELECT\n"
 				"        column_name\n"
 				" FROM\n"
-				"        dba_snapshot_log_filter_cols\n"
+				"        sys.dba_snapshot_log_filter_cols\n"
 				" WHERE\n"
 				"            name  = :nam<char[100]>\n"
 				"        AND owner = :own<char[100]>\n"
@@ -2842,8 +2842,8 @@ static toSQL SQLSnapshotColumns("toExtract:SnapshotColumns",
 				" SELECT\n"
 				"        column_name\n"
 				" FROM\n"
-				"        all_cons_columns  c\n"
-				"      , all_constraints   d\n"
+				"        sys.all_cons_columns  c\n"
+				"      , sys.all_constraints   d\n"
 				" WHERE\n"
 				"            d.table_name      = :nam<char[100]>\n"
 				"        AND d.constraint_type = 'P'\n"
@@ -2949,7 +2949,7 @@ void toExtract::describeMViewLog(std::list<QString> &lst,
 static toSQL SQLTableType("toExtract:TableType",
 			  "SELECT partitioned,\n"
 			  "      iot_type\n"
-			  " FROM all_tables\n"
+			  " FROM sys.all_tables\n"
 			  "WHERE table_name = :nam<char[100]>\n"
 			  "  AND owner = :own<char[100]>",
 			  "Get table type, must have same columns and binds",
@@ -2958,7 +2958,7 @@ static toSQL SQLTableType("toExtract:TableType",
 static toSQL SQLTableType7("toExtract:TableType",
 			   "SELECT 'NO',\n"
 			   "      'NOT IOT'\n"
-			   " FROM all_tables\n"
+			   " FROM sys.all_tables\n"
 			   "WHERE table_name = :nam<char[100]>\n"
 			   "  AND owner = :own<char[100]>",
 			   "",
@@ -3018,7 +3018,7 @@ static toSQL SQLTableInfo("toExtract:TableInfo",
 			  "      , LOWER(t.tablespace_name)      AS tablespace_name\n"
 			  "      , s.blocks - NVL(t.empty_blocks,0)\n"
 			  " FROM\n"
-			  "        all_tables    t\n"
+			  "        sys.all_tables    t\n"
 			  "      , %1  s\n"
 			  " WHERE\n"
 			  "            t.table_name   = :nam<char[100]>\n"
@@ -3078,7 +3078,7 @@ static toSQL SQLTableInfo8("toExtract:TableInfo",
 			   "      , LOWER(t.tablespace_name)      AS tablespace_name\n"
 			   "      , s.blocks - NVL(t.empty_blocks,0)\n"
 			   " FROM\n"
-			   "        all_tables    t\n"
+			   "        sys.all_tables    t\n"
 			   "      , %1  s\n"
 			   " WHERE\n"
 			   "            t.table_name   = :nam<char[100]>\n"
@@ -3130,7 +3130,7 @@ static toSQL SQLTableInfo7("toExtract:TableInfo",
 			   "      , LOWER(t.tablespace_name)      AS tablespace_name\n"
 			   "      , s.blocks - NVL(t.empty_blocks,0)\n"
 			   " FROM\n"
-			   "        all_tables    t\n"
+			   "        sys.all_tables    t\n"
 			   "      , %1  s\n"
 			   " WHERE\n"
 			   "            t.table_name   = :nam<char[100]>\n"
@@ -3238,7 +3238,7 @@ static toSQL SQLOverflowInfo("toExtract:OverflowInfo",
 			     "      , LOWER(t.tablespace_name)      AS tablespace_name\n"
 			     "      , s.blocks - NVL(t.empty_blocks,0)\n"
 			     " FROM\n"
-			     "        all_tables    t\n"
+			     "        sys.all_tables    t\n"
 			     "      , %1  s\n"
 			     " WHERE\n"
 			     "            t.iot_name     = :nam<char[100]>\n"
@@ -3317,9 +3317,9 @@ static toSQL SQLPartitionedIOTInfo("toExtract:PartitionedIOTInfo",
 				   "      , LOWER(p.def_tablespace_name)  AS tablespace_name\n"
 				   "      , t.blocks - NVL(t.empty_blocks,0)\n"
 				   " FROM\n"
-				   "        all_all_tables    t\n"
-				   "      , all_part_indexes  p\n"
-				   "      , dba_tablespaces   s\n"
+				   "        sys.all_all_tables    t\n"
+				   "      , sys.all_part_indexes  p\n"
+				   "      , sys.dba_tablespaces   s\n"
 				   " WHERE\n"
 				   "            t.table_name      = :name<char[100]>\n"
 				   "        AND p.table_name      = t.table_name\n"
@@ -3395,9 +3395,9 @@ static toSQL SQLPartitionedIOTInfo8("toExtract:PartitionedIOTInfo",
 				    "      , LOWER(p.def_tablespace_name)  AS tablespace_name\n"
 				    "      , t.blocks - NVL(t.empty_blocks,0)\n"
 				    " FROM\n"
-				    "        all_all_tables    t\n"
-				    "      , all_part_indexes  p\n"
-				    "      , dba_tablespaces   s\n"
+				    "        sys.all_all_tables    t\n"
+				    "      , sys.all_part_indexes  p\n"
+				    "      , sys.dba_tablespaces   s\n"
 				    " WHERE\n"
 				    "            t.table_name      = :name<char[100]>\n"
 				    "        AND p.table_name      = t.table_name\n"
@@ -3409,7 +3409,7 @@ static toSQL SQLPartitionedIOTInfo8("toExtract:PartitionedIOTInfo",
 
 static toSQL SQLPartitionIndexNames("toExtract:PartitionIndexNames",
 				    "SELECT index_name\n"
-				    "  FROM all_part_indexes\n"
+				    "  FROM sys.all_part_indexes\n"
 				    " WHERE table_name = :nam<char[100]>\n"
 				    "   AND owner      = :own<char[100]>\n"
 				    " ORDER BY index_name",
@@ -3527,9 +3527,9 @@ static toSQL SQLIOTInfo("toExtract:IOTInfo",
 			"                ,b.blocks\n"
 			"              )                       AS blocks\n"
 			" FROM\n"
-			"        all_indexes a,\n"
-			"        all_all_tables b,\n"
-			"        all_constraints c\n"
+			"        sys.all_indexes a,\n"
+			"        sys.all_all_tables b,\n"
+			"        sys.all_constraints c\n"
 			" WHERE  a.table_name  = :nam<char[100]>\n"
 			"   AND  b.owner = a.owner\n"
 			"   AND  b.table_name = a.table_name\n"
@@ -3647,9 +3647,9 @@ static toSQL SQLPartitionTableInfo("toExtract:PartitionTableInfo",
 				   "      , LOWER(p.def_tablespace_name)  AS tablespace_name\n"
 				   "      , t.blocks - NVL(t.empty_blocks,0)\n"
 				   " FROM\n"
-				   "        all_all_tables   t\n"
-				   "      , all_part_tables  p\n"
-				   "      , dba_tablespaces  s\n"
+				   "        sys.all_all_tables   t\n"
+				   "      , sys.all_part_tables  p\n"
+				   "      , sys.dba_tablespaces  s\n"
 				   " WHERE\n"
 				   "            t.table_name      = :nam<char[100]>\n"
 				   "        AND p.table_name      = t.table_name\n"
@@ -3729,9 +3729,9 @@ static toSQL SQLPartitionTableInfo8("toExtract:PartitionTableInfo",
 				    "      , LOWER(p.def_tablespace_name)  AS tablespace_name\n"
 				    "      , t.blocks - NVL(t.empty_blocks,0)\n"
 				    " FROM\n"
-				    "        all_all_tables   t\n"
-				    "      , all_part_tables  p\n"
-				    "      , dba_tablespaces  s\n"
+				    "        sys.all_all_tables   t\n"
+				    "      , sys.all_part_tables  p\n"
+				    "      , sys.dba_tablespaces  s\n"
 				    " WHERE\n"
 				    "            t.table_name      = :nam<char[100]>\n"
 				    "        AND p.table_name      = t.table_name\n"
@@ -3748,7 +3748,7 @@ static toSQL SQLPartitionType("toExtract:PartitionType",
 			      "      , subpartitioning_type\n"
 			      "      , def_subpartition_count\n"
 			      " FROM\n"
-			      "        all_part_tables\n"
+			      "        sys.all_part_tables\n"
 			      " WHERE\n"
 			      "            table_name = :nam<char[100]>\n"
 			      "        AND owner = :own<char[100]>",
@@ -3762,7 +3762,7 @@ static toSQL SQLPartitionType8("toExtract:PartitionType",
 			       "      , 'N/A'                        AS subpartitioning_type\n"
 			       "      , 'N/A'                        AS def_subpartition_count\n"
 			       " FROM\n"
-			       "        all_part_tables\n"
+			       "        sys.all_part_tables\n"
 			       " WHERE\n"
 			       "            table_name = :nam<char[100]>\n"
 			       "        AND owner = :own<char[100]>",
@@ -3798,7 +3798,7 @@ static toSQL SQLPartitionSegment("toExtract:PartitionSegment",
 				 "      , LOWER(tablespace_name)\n"
 				 "      , blocks - NVL(empty_blocks,0)\n"
 				 " FROM\n"
-				 "        all_tab_partitions\n"
+				 "        sys.all_tab_partitions\n"
 				 " WHERE  table_name = :nam<char[100]>\n"
 				 "   AND  table_owner = :own<char[100]>\n"
 				 " ORDER BY partition_name",
@@ -3835,7 +3835,7 @@ static toSQL SQLPartitionSegment8("toExtract:PartitionSegment",
 				  "      , LOWER(tablespace_name)\n"
 				  "      , blocks - NVL(empty_blocks,0)\n"
 				  " FROM\n"
-				  "        all_tab_partitions\n"
+				  "        sys.all_tab_partitions\n"
 				  " WHERE  table_name = :nam<char[100]>\n"
 				  "   AND  table_owner = :own<char[100]>\n"
 				  " ORDER BY partition_name",
@@ -3845,7 +3845,7 @@ static toSQL SQLPartitionSegment8("toExtract:PartitionSegment",
 static toSQL SQLSubPartitionName("toExtract:SubPartitionName",
 				 "SELECT subpartition_name,\n"
 				 "       tablespace_name\n"
-				 "  FROM all_tab_subpartitions\n"
+				 "  FROM sys.all_tab_subpartitions\n"
 				 " WHERE table_name = :nam<char[100]>\n"
 				 "   AND partition_name = :prt<char[100]>\n"
 				 "   AND table_owner = :own<char[100]>\n"
@@ -3856,7 +3856,7 @@ static toSQL SQLSubPartitionName("toExtract:SubPartitionName",
 static toSQL SQLPartitionName("toExtract:PartitionName",
 			      "SELECT partition_name,\n"
 			      "       tablespace_name\n"
-			      "  FROM all_tab_partitions\n"
+			      "  FROM sys.all_tab_partitions\n"
 			      " WHERE table_name = :nam<char[100]>\n"
 			      "   AND table_owner = :own<char[100]>\n"
 			      " ORDER BY partition_name",
@@ -4110,7 +4110,7 @@ static toSQL SQLProfileInfo("toExtract:ProfileInfo",
 			    "               ,                           LOWER(limit)\n"
 			    "              )\n"
 			    " FROM\n"
-			    "        dba_profiles\n"
+			    "        sys.dba_profiles\n"
 			    " WHERE\n"
 			    "        profile = :nam<char[100]>\n"
 			    " ORDER\n"
@@ -4177,7 +4177,7 @@ static toSQL SQLRoleInfo("toExtract:RoleInfo",
 			 "               ,'NOT IDENTIFIED'\n"
 			 "              )                         AS password\n"
 			 " FROM\n"
-			 "        dba_roles   r\n"
+			 "        sys.dba_roles   r\n"
 			 "      , sys.user$  u\n"
 			 " WHERE\n"
 			 "            r.role = :rol<char[100]>\n"
@@ -4224,7 +4224,7 @@ static toSQL SQLRolePrivs("toExtract:RolePrivs",
 			  "               ,'YES','WITH ADMIN OPTION'\n"
 			  "               ,null\n"
 			  "              )                         AS admin_option\n"
-			  "  FROM  dba_role_privs\n"
+			  "  FROM  sys.dba_role_privs\n"
 			  " WHERE  grantee = :nam<char[100]>\n"
 			  " ORDER  BY granted_role",
 			  "Get roles granted, must have same columns and binds");
@@ -4237,7 +4237,7 @@ static toSQL SQLSystemPrivs("toExtract:SystemPrivs",
 			    "               ,'YES','WITH ADMIN OPTION'\n"
 			    "               ,null\n"
 			    "              )                         AS admin_option\n"
-			    "  FROM  dba_sys_privs\n"
+			    "  FROM  sys.dba_sys_privs\n"
 			    " WHERE  grantee = :nam<char[100]>\n"
 			    " ORDER  BY privilege",
 			    "Get system priveleges granted, must have same columns and binds");
@@ -4251,7 +4251,7 @@ static toSQL SQLObjectPrivs("toExtract:ObjectPrivs",
 			    "               ,'YES','WITH GRANT OPTION'\n"
 			    "               ,null\n"
 			    "              )                         AS grantable\n"
-			    "  FROM  all_tab_privs\n"
+			    "  FROM  sys.all_tab_privs\n"
 			    " WHERE  grantee = :nam<char[100]>\n"
 			    " ORDER  BY table_name,privilege",
 			    "Get object priveleges granted, must have same columns and binds");
@@ -4367,8 +4367,8 @@ static toSQL SQLRollbackSegment("toExtract:RollbackSegment",
 				"               ,2147483645,'unlimited'\n"
 				"               ,           r.max_extents\n"
 				"              )                                  AS max_extents\n"
-				"  FROM  dba_rollback_segs    r\n"
-				"      , dba_tablespaces  t\n"
+				"  FROM  sys.dba_rollback_segs    r\n"
+				"      , sys.dba_tablespaces  t\n"
 				" WHERE\n"
 				"            r.segment_name    = :nam<char[100]>\n"
 				"        AND t.tablespace_name = r.tablespace_name",
@@ -4464,7 +4464,7 @@ static toSQL SQLSequenceInfo("toExtract:SequenceInfo",
 			     "               ,'N', 'NOORDER'\n"
 			     "              )                          AS order_flag\n"
 			     " FROM\n"
-			     "        all_sequences\n"
+			     "        sys.all_sequences\n"
 			     " WHERE\n"
 			     "            sequence_name  = :nam<char[100]>\n"
 			     "        AND sequence_owner = :own<char[100]>",
@@ -4517,7 +4517,7 @@ static toSQL SQLSynonymInfo("toExtract:SynonymInfo",
 			    "      , table_name\n"
 			    "      , NVL(db_link,'NULL')\n"
 			    " FROM\n"
-			    "        all_synonyms\n"
+			    "        sys.all_synonyms\n"
 			    " WHERE\n"
 			    "            synonym_name = :nam<char[100]>\n"
 			    "        AND owner = :own<char[100]>",
@@ -4588,7 +4588,7 @@ static toSQL SQLTableConstraints("toExtract:TableConstraints",
 				 "        constraint_name,\n"
 				 "        NULL\n"
 				 " FROM\n"
-				 "        all_constraints cn\n"
+				 "        sys.all_constraints cn\n"
 				 " WHERE      table_name       = :nam<char[100]>\n"
 				 "        AND owner            = :own<char[100]>\n"
 				 "        AND constraint_type IN('P','U','C')\n"
@@ -4610,7 +4610,7 @@ static toSQL SQLTableConstraints7("toExtract:TableConstraints",
 				  "        constraint_name,\n"
 				  "        search_condition\n"
 				  " FROM\n"
-				  "        all_constraints cn\n"
+				  "        sys.all_constraints cn\n"
 				  " WHERE      table_name       = :nam<char[100]>\n"
 				  "        AND owner            = :own<char[100]>\n"
 				  "        AND constraint_type IN('P','U','C')\n"
@@ -4630,7 +4630,7 @@ static toSQL SQLTableReferences("toExtract:TableReferences",
 				"SELECT\n"
 				"        constraint_name\n"
 				" FROM\n"
-				"        all_constraints cn\n"
+				"        sys.all_constraints cn\n"
 				" WHERE      table_name       = :nam<char[100]>\n"
 				"        AND owner            = :own<char[100]>\n"
 				"        AND constraint_type IN('R')\n"
@@ -4649,7 +4649,7 @@ static toSQL SQLTableReferences7("toExtract:TableReferences",
 				 "SELECT\n"
 				 "        constraint_name\n"
 				 " FROM\n"
-				 "        all_constraints cn\n"
+				 "        sys.all_constraints cn\n"
 				 " WHERE      table_name       = :nam<char[100]>\n"
 				 "        AND owner            = :own<char[100]>\n"
 				 "        AND constraint_type IN('R')\n"
@@ -4665,7 +4665,7 @@ static toSQL SQLTableReferences7("toExtract:TableReferences",
 
 static toSQL SQLTableTriggers("toExtract:TableTriggers",
 			      "SELECT  trigger_name\n"
-			      "  FROM  all_triggers\n"
+			      "  FROM  sys.all_triggers\n"
 			      " WHERE      table_name = :nam<char[100]>\n"
 			      "        AND owner      = :own<char[100]>\n"
 			      " ORDER  BY  trigger_name",
@@ -4673,7 +4673,7 @@ static toSQL SQLTableTriggers("toExtract:TableTriggers",
 
 static toSQL SQLIndexNames("toExtract:IndexNames",
 			   "SELECT owner,index_name\n"
-			   "  FROM all_indexes a\n"
+			   "  FROM sys.all_indexes a\n"
 			   " WHERE table_name = :nam<char[100]>\n"
 			   "   AND table_owner = :own<char[100]>",
 			   "Get all indexes on table, same binds and columns");
@@ -4858,7 +4858,7 @@ static toSQL SQLTriggerInfo("toExtract:TriggerInfo",
 			    "              )\n"
 			    "      , trigger_body\n"
 			    " FROM\n"
-			    "        all_triggers\n"
+			    "        sys.all_triggers\n"
 			    " WHERE\n"
 			    "            trigger_name = :nam<char[100]>\n"
 			    "        AND owner        = :own<char[100]>",
@@ -4881,7 +4881,7 @@ static toSQL SQLTriggerInfo8("toExtract:TriggerInfo",
 			     "              )\n"
 			     "      , trigger_body\n"
 			     " FROM\n"
-			     "        all_triggers\n"
+			     "        sys.all_triggers\n"
 			     " WHERE\n"
 			     "            trigger_name = :nam<char[100]>\n"
 			     "        AND owner        = :own<char[100]>",
@@ -5062,7 +5062,7 @@ static toSQL SQLTablespaceInfo("toExtract:TablespaceInfo",
 			       "      , extent_management\n"
 			       "      , allocation_type\n"
 			       " FROM\n"
-			       "        dba_tablespaces\n"
+			       "        sys.dba_tablespaces\n"
 			       " WHERE\n"
 			       "        tablespace_name = :nam<char[100]>",
 			       "Get tablespace information, must have same columns and binds",
@@ -5098,7 +5098,7 @@ static toSQL SQLTablespaceInfo8("toExtract:TablespaceInfo",
 				"      , 'N/A'                         AS extent_management\n"
 				"      , 'N/A'                         AS allocation_type\n"
 				" FROM\n"
-				"        dba_tablespaces\n"
+				"        sys.dba_tablespaces\n"
 				" WHERE\n"
 				"        tablespace_name = :nam<char[100]>",
 				"",
@@ -5134,7 +5134,7 @@ static toSQL SQLTablespaceInfo7("toExtract:TablespaceInfo",
 				"      , 'N/A'                         AS extent_management\n"
 				"      , 'N/A'                         AS allocation_type\n"
 				" FROM\n"
-				"        dba_tablespaces\n"
+				"        sys.dba_tablespaces\n"
 				" WHERE\n"
 				"        tablespace_name = :nam<char[100]>",
 				"",
@@ -5152,7 +5152,7 @@ static toSQL SQLDatafileInfo("toExtract:DatafileInfo",
 			     "              )                               AS maxbytes\n"
 			     "      , increment_by * :bs<char[100]> * 1024     AS increment_by\n"
 			     " FROM\n"
-			     "        (select * from dba_temp_files union select * from dba_data_files)\n"
+			     "        (select * from sys.dba_temp_files union select * from sys.dba_data_files)\n"
 			     " WHERE\n"
 			     "        tablespace_name = :nam<char[100]>\n"
 			     " ORDER  BY file_name",
@@ -5169,7 +5169,7 @@ static toSQL SQLDatafileInfo7("toExtract:DatafileInfo",
 			      "      , DECODE(:bs<char[100]>,\n"
 			      "               NULL,'N/A','N/A')              AS increment_by\n"
 			      " FROM\n"
-			      "        dba_data_files\n"
+			      "        sys.dba_data_files\n"
 			      " WHERE\n"
 			      "        tablespace_name = :nam<char[100]>\n"
 			      " ORDER  BY file_name",
@@ -5389,7 +5389,7 @@ static toSQL SQLUserInfo("toExtract:UserInfo",
 			 "      , default_tablespace\n"
 			 "      , temporary_tablespace\n"
 			 " FROM\n"
-			 "        dba_users\n"
+			 "        sys.dba_users\n"
 			 " WHERE\n"
 			 "        username = :nam<char[100]>",
 			 "Information about authentication for a user, "
@@ -5404,7 +5404,7 @@ static toSQL SQLUserQuotas("toExtract:UserQuotas",
 			   "              )                         AS max_bytes\n"
 			   "      , tablespace_name\n"
 			   " FROM\n"
-			   "        dba_ts_quotas\n"
+			   "        sys.dba_ts_quotas\n"
 			   " WHERE\n"
 			   "        username = :nam<char[100]>\n"
 			   " ORDER  BY tablespace_name",
@@ -5503,7 +5503,7 @@ void toExtract::describeUser(std::list<QString> &lst,
 static toSQL SQLViewSource("toExtract:ViewSource",
 			   "SELECT  text\n"
 			   " FROM\n"
-			   "        all_views\n"
+			   "        sys.all_views\n"
 			   " WHERE\n"
 			   "            view_name = :nam<char[100]>\n"
 			   "        AND owner = :own<char[100]>",
@@ -5511,7 +5511,7 @@ static toSQL SQLViewSource("toExtract:ViewSource",
 
 static toSQL SQLViewColumns("toExtract:ViewColumns",
 			    "SELECT LOWER(column_name)\n"
-			    "  FROM all_tab_columns\n"
+			    "  FROM sys.all_tab_columns\n"
 			    " WHERE table_name = :nam<char[100]>\n"
 			    "   AND owner      = :own<char[100]>\n",
 			    "Get column names of the view, must have same binds and columns");
@@ -5744,7 +5744,7 @@ QString toExtract::dropUser(const QString &schema,const QString &owner,
 
 static toSQL SQLIndexPartitioned("toExtract:IndexPartitioned",
 				 "SELECT partitioned\n"
-				 "  FROM all_indexes\n"
+				 "  FROM sys.all_indexes\n"
 				 " WHERE index_name = :nam<char[100]>\n"
 				 "   AND owner = :own<char[100]>",
 				 "Get information about if an index is partitioned or not, "
@@ -5757,7 +5757,7 @@ static toSQL SQLSegmentInfo("toExtract:SegmentInfo",
 			    "     , s.next_extent\n"
 			    "FROM\n"
 			    "       %1 s\n"
-			    "     , all_tables   t\n"
+			    "     , sys.all_tables   t\n"
 			    "WHERE\n"
 			    "           s.segment_name = :nam<char[100]>\n"
 			    "       AND s.segment_type = 'TABLE'\n"
@@ -5857,7 +5857,7 @@ static toSQL SQLIndexPartitionSegment("toExtract:IndexPartitionSegment",
 				      "     , p.partitioning_type\n"
 				      "FROM\n"
 				      "       %1      s\n"
-				      "     , all_part_indexes  p\n"
+				      "     , sys.all_part_indexes  p\n"
 				      "WHERE\n"
 				      "           s.segment_name   = :nam<char[100]>\n"
 				      "       AND s.partition_name = :prt<char[100]>\n"
@@ -5905,7 +5905,7 @@ QString toExtract::resizeIndexPartition(const QString &schema,const QString &own
 
 static toSQL SQLTablePartitioned("toExtract:TablePartitioned",
 				 "SELECT partitioned\n"
-				 "  FROM all_tables\n"
+				 "  FROM sys.all_tables\n"
 				 " WHERE table_name = :nam<char[100]>\n"
 				 "   AND owner = :own<char[100]>",
 				 "Get information about if a table is partitioned or not, "
@@ -5916,7 +5916,7 @@ static toSQL SQLTablePartIndexes("toExtract:TablePartIndexes",
 				 "       owner\n"
 				 "     , index_name\n"
 				 "FROM\n"
-				 "       all_part_indexes\n"
+				 "       sys.all_part_indexes\n"
 				 "WHERE\n"
 				 "           table_name = :nam<char[100]>\n"
 				 "       AND owner      = :own<char[100]>",
@@ -5928,7 +5928,7 @@ static toSQL SQLTablePartIndex("toExtract:TablePartIndex",
 			       "       owner\n"
 			       "     , index_name\n"
 			       "FROM\n"
-			       "       all_part_indexes\n"
+			       "       sys.all_part_indexes\n"
 			       "WHERE\n"
 			       "           table_name = :nam<char[100]>\n"
 			       "       AND owner      = :own<char[100]>\n"
@@ -6020,8 +6020,8 @@ static toSQL SQLTablePartitionSegment("toExtract:TablePartitionSegment",
 				      "            , p.partitioning_type\n"
 				      "       FROM\n"
 				      "              %1          s\n"
-				      "            , all_tab_%2s  t\n"
-				      "            , all_part_tables       p\n"
+				      "            , sys.all_tab_%2s  t\n"
+				      "            , sys.all_part_tables       p\n"
 				      "       WHERE\n"
 				      "                  s.segment_name   = :nam<char[100]>\n"
 				      "              AND s.partition_name = :prt<char[100]>\n"

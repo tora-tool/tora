@@ -85,25 +85,25 @@ static toSQL SQLUserInfo("toSecurity:UserInfo",
 			 "       Profile,\n"
 			 "       Default_Tablespace,\n"
 			 "       Temporary_Tablespace\n"
-			 "  FROM DBA_Users\n"
+			 "  FROM sys.DBA_Users\n"
 			 " WHERE UserName = :f1<char[100]>",
 			 "Get information about a user, must have same columns and same binds.");
 
 static toSQL SQLRoleInfo("toSecurity:RoleInfo",
-			 "SELECT Role,Password_required FROM DBA_Roles WHERE Role = :f1<char[101]>",
+			 "SELECT Role,Password_required FROM sys.DBA_Roles WHERE Role = :f1<char[101]>",
 			 "Get information about a role, must have same columns and same binds.");
 
 static toSQL SQLProfiles("toSecurity:Profiles",
-			 "SELECT DISTINCT Profile FROM DBA_Profiles ORDER BY Profile",
+			 "SELECT DISTINCT Profile FROM sys.DBA_Profiles ORDER BY Profile",
 			 "Get profiles available.");
 
 static toSQL SQLTablespace("toSecurity:Tablespaces",
-			   "SELECT DISTINCT Tablespace_Name FROM DBA_Tablespaces"
+			   "SELECT DISTINCT Tablespace_Name FROM sys.DBA_Tablespaces"
 			   " ORDER BY Tablespace_Name",
 			   "Get tablespaces available.");
 
 static toSQL SQLRoles("toSecurity:Roles",
-		      "SELECT Role FROM Dba_Roles ORDER BY Role",
+		      "SELECT Role FROM sys.Dba_Roles ORDER BY Role",
 		      "Get roles available in DB, should return one entry");
 
 static toSQL SQLListSystem("toSecurity:ListSystemPrivs",
@@ -118,14 +118,14 @@ static toSQL SQLQuota("toSecurity:Quota",
 		      "SELECT Tablespace_name,\n"
 		      "       Bytes,\n"
 		      "       Max_bytes\n"
-		      "  FROM DBA_TS_Quotas\n"
+		      "  FROM sys.DBA_TS_Quotas\n"
 		      " WHERE Username = :f1<char[200]>\n"
 		      " ORDER BY Tablespace_name",
 		      "Get information about what quotas the user has, "
 		      "must have same columns and same binds.");
 
 static toSQL SQLSystemGrant("toSecurity:SystemGrant",
-			    "SELECT privilege, NVL(admin_option,'NO') FROM dba_sys_privs WHERE grantee = :f1<char[100]>",
+			    "SELECT privilege, NVL(admin_option,'NO') FROM sys.dba_sys_privs WHERE grantee = :f1<char[100]>",
 			    "Get information about the system privileges a user has, should have same bindings and columns");
 
 static toSQL SQLObjectPrivs("toSecurity:ObjectPrivs",
@@ -139,7 +139,7 @@ static toSQL SQLObjectPrivs("toSecurity:ObjectPrivs",
 			    "			       'VIEW','DELETE,SELECT,INSERT,UPDATE',\n"
 			    "			       'OPERATOR','EXECUTE',\n"
 			    "			       'DIRECTORY','READ',\n"
-			    "			       NULL) FROM DUAL",
+			    "			       NULL) FROM sys.DUAL",
 			    "Takes a type as parameter and return ',' separated list of privileges");
 
 static toSQL SQLObjectGrant("toSecurity:ObjectGrant",
@@ -147,7 +147,7 @@ static toSQL SQLObjectGrant("toSecurity:ObjectGrant",
 			    "       table_name,\n"
 			    "       privilege,\n"
 			    "       grantable\n"
-			    "  FROM dba_tab_privs\n"
+			    "  FROM sys.dba_tab_privs\n"
 			    " WHERE grantee = :f1<char[100]>",
 			    "Get the privilege on objects for a user or role, "
 			    "must have same columns and binds");
@@ -156,7 +156,7 @@ static toSQL SQLRoleGrant("toSecurity:RoleGrant",
 			  "SELECT granted_role,\n"
 			  "       admin_option,\n"
 			  "       default_role\n"
-			  "  FROM dba_role_privs\n"
+			  "  FROM sys.dba_role_privs\n"
 			  " WHERE grantee = :f1<char[100]>",
 			  "Get the roles granted to a user or role, "
 			  "must have same columns and binds");

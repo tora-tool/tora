@@ -58,7 +58,7 @@ toResultIndexes::toResultIndexes(QWidget *parent,const char *name)
 }
 
 static toSQL SQLColumns("toResultIndexes:Columns",
-			"SELECT Column_Name FROM All_Ind_Columns\n"
+			"SELECT Column_Name FROM sys.All_Ind_Columns\n"
 			" WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
 			" ORDER BY Column_Position",
 			"List columns an index is built on");
@@ -81,7 +81,7 @@ static toSQL SQLListIndex("toResultIndexes:ListIndex",
 			  "       Index_Name,\n"
 			  "       Index_Type,\n"
 			  "       Uniqueness\n"
-			  "  FROM All_Indexes\n"
+			  "  FROM sys.All_Indexes\n"
 			  " WHERE Table_Owner = :f1<char[101]>\n"
 			  "   AND Table_Name = :f2<char[101]>\n"
 			  " ORDER BY Index_Name",
@@ -92,7 +92,7 @@ static toSQL SQLListIndex7("toResultIndexes:ListIndex",
 			   "       Index_Name,\n"
 			   "       'NORMAL',\n"
 			   "       Uniqueness\n"
-			   "  FROM All_Indexes\n"
+			   "  FROM sys.All_Indexes\n"
 			   " WHERE Table_Owner = :f1<char[101]>\n"
 			   "   AND Table_Name = :f2<char[101]>\n"
 			   " ORDER BY Index_Name",

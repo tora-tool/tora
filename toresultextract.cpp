@@ -52,7 +52,7 @@ toResultExtract::toResultExtract(bool prompt,QWidget *parent,const char *name)
 }
 
 static toSQL SQLObjectType("toResultExtract:ObjectType",
-			   "SELECT Object_Type FROM All_Objects\n"
+			   "SELECT Object_Type FROM sys.All_Objects\n"
 			   " WHERE Owner = :f1<char[101]> AND Object_Name = :f2<char[101]>",
 			   "Get type of an object by name");
 

@@ -78,7 +78,7 @@ static toSQL SQLLock("toResultLock:Locks",
 		     "       d.object_name,\n"
 		     "       TO_CHAR(SYSDATE-a.CTIME/3600/24),\n"
 		     "       TO_CHAR(SYSDATE-e.CTIME/3600/24)\n"
-		     "  from v$lock a, v$session b,v$locked_object c,all_objects d,v$lock e\n"
+		     "  from v$lock a, v$session b,v$locked_object c,sys.all_objects d,v$lock e\n"
 		     " where a.sid = b.sid\n"
 		     "   and a.lmode != 0\n"
 		     "   and c.session_id = a.sid\n"

@@ -91,7 +91,7 @@ static toSQL SQLBreakpoint("toDebug:SetBreakpoint",
 			   "    proginf.EntryPointName:=NULL;\n"
 			   "    proginf.Line#:=:line<int,in>;\n"
 			   "    ret:=DBMS_DEBUG.SET_BREAKPOINT(proginf,proginf.Line#,bnum,0,1);\n"
-			   "    SELECT ret,bnum INTO :ret<int,out>,:bnum<int,out> FROM DUAL;\n"
+			   "    SELECT ret,bnum INTO :ret<int,out>,:bnum<int,out> FROM sys.DUAL;\n"
 			   "END;",
 			   "Set breakpoint, must have same bindings");
 		       
@@ -130,7 +130,7 @@ static toSQL SQLClearBreakpoint("toDebug:ClearBreakpoint",
 				"BEGIN\n"
 				"    bnum:=:bnum<int,in>;\n"
 				"    ret:=DBMS_DEBUG.DELETE_BREAKPOINT(bnum);\n"
-				"    SELECT ret INTO :ret<int,out> FROM DUAL;\n"
+				"    SELECT ret INTO :ret<int,out> FROM sys.DUAL;\n"
 				"END;",
 				"Clear breakpoint, must have same bindings");
 
@@ -162,14 +162,14 @@ static QPixmap *toBreakpointPixmap;
 static QPixmap *toDisBreakpointPixmap;
 
 static toSQL SQLReadSource("toDebug:ReadSource",
-			   "SELECT Text FROM All_Source\n"
+			   "SELECT Text FROM SYS.All_Source\n"
 			   " WHERE OWNER = :f1<char[101]>\n"
 			   "   AND NAME = :f2<char[101]>\n"
 			   "   AND TYPE = :f3<char[101]>\n"
 			   " ORDER BY Type,Line",
 			   "Read sourcecode for object");
 static toSQL SQLReadErrors("toDebug:ReadErrors",
-			   "SELECT Line-1,Text FROM All_Errors\n"
+			   "SELECT Line-1,Text FROM SYS.All_Errors\n"
 			   " WHERE OWNER = :f1<char[101]>\n"
 			   "   AND NAME = :f2<char[101]>\n"
 			   "   AND TYPE = :f3<char[101]>\n"

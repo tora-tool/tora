@@ -90,7 +90,7 @@ static toSQL SQLListTables("toAnalyze:ListTables",
 			   "       avg_row_len \"Average row length\",\n"
 			   "       sample_size,\n"
 			   "       last_analyzed\n"
-			   "  from all_all_tables\n"
+			   "  from sys.all_all_tables\n"
 			   " where owner = :own<char[101]> and iot_name is null",
 			   "Get table statistics, first two columns and binds must be same",
 			   "8.0");
@@ -105,7 +105,7 @@ static toSQL SQLListTables7("toAnalyze:ListTables",
 			    "       avg_row_len \"Average row length\",\n"
 			    "       sample_size,\n"
 			    "       last_analyzed\n"
-			    "  from all_tables\n"
+			    "  from sys.all_tables\n"
 			    " where owner = :own<char[101]>",
 			    QString::null,
 			    "7.3");

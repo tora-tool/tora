@@ -45,7 +45,7 @@ static toSQL SQLResultDepend("toResultDepend:Depends",
 			     "       referenced_name \"Name\",\n"
 			     "       referenced_type \"Type\",\n"
 			     "       dependency_type \"Dependency Type\"\n"
-			     "  FROM all_dependencies\n"
+			     "  FROM sys.all_dependencies\n"
 			     " WHERE owner = :owner<char[101]>\n"
 			     "   AND name = :name<char[101]>\n"
 			     " ORDER BY referenced_owner,referenced_type,referenced_name",
@@ -58,7 +58,7 @@ static toSQL SQLResultDepend7("toResultDepend:Depends",
 			      "       referenced_name \"Name\",\n"
 			      "       referenced_type \"Type\",\n"
 			      "       'N/A' \"Dependency Type\"\n"
-			      "  FROM all_dependencies\n"
+			      "  FROM sys.all_dependencies\n"
 			      " WHERE owner = :owner<char[101]>\n"
 			      "   AND name = :name<char[101]>\n"
 			      " ORDER BY referenced_owner,referenced_type,referenced_name",

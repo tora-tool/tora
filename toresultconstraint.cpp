@@ -54,7 +54,7 @@ toResultConstraint::toResultConstraint(QWidget *parent,const char *name)
 }
 
 static toSQL SQLConsColumns("toResultConstraint:ForeignColumns",
-			    "SELECT Column_Name,Table_Name FROM All_Cons_Columns\n"
+			    "SELECT Column_Name,Table_Name FROM sys.All_Cons_Columns\n"
 			    " WHERE Owner = :f1<char[101]> AND Constraint_Name = :f2<char[101]>\n"
 			    " ORDER BY Position",
 			    "Get columns of foreign constraint, must return same number of cols");
@@ -83,7 +83,7 @@ static toSQL SQLConstraints("toResultConstraint:ListConstraints",
 			    "       Constraint_Type,\n"
 			    "       Delete_Rule,\n"
 			    "       Generated\n"
-			    "  FROM All_Constraints\n"
+			    "  FROM sys.All_Constraints\n"
 			    " WHERE Owner = :f1<char[101]>\n"
 			    "   AND Table_Name = :f2<char[101]>\n"
 			    " ORDER BY Constraint_Name",
@@ -98,7 +98,7 @@ static toSQL SQLConstraints7("toResultConstraint:ListConstraints",
 			     "       Constraint_Type,\n"
 			     "       Delete_Rule,\n"
 			     "       'N/A'\n"
-			     "  FROM All_Constraints\n"
+			     "  FROM sys.All_Constraints\n"
 			     " WHERE Owner = :f1<char[101]>\n"
 			     "   AND Table_Name = :f2<char[101]>\n"
 			     " ORDER BY Constraint_Name",

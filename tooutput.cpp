@@ -200,12 +200,12 @@ void toOutput::windowActivated(QWidget *widget)
 
 static toSQL SQLEnable("toOutput:Enable",
 		       "BEGIN\n"
-		       "    DBMS_OUTPUT.ENABLE;\n"
+		       "    SYS.DBMS_OUTPUT.ENABLE;\n"
 		       "END;",
 		       "Enable output collection");
 static toSQL SQLDisable("toOutput:Disable",
 			"BEGIN\n"
-			"    DBMS_OUTPUT.DISABLE;\n"
+			"    SYS.DBMS_OUTPUT.DISABLE;\n"
 			"END;",
 			"Disable output collection");
 
@@ -241,8 +241,8 @@ toOutput::~toOutput()
 
 static toSQL SQLLines("toOutput:Poll",
 		      "BEGIN\n"
-		      "    DBMS_OUTPUT.GET_LINE(:lines<char[1000],out>,\n"
-		      "                         :stat<int,out>);\n"
+		      "    SYS.DBMS_OUTPUT.GET_LINE(:lines<char[1000],out>,\n"
+		      "                             :stat<int,out>);\n"
 		      "END;",
 		      "Get lines from SQL Output, must use same bindings");
 

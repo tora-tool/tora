@@ -170,7 +170,7 @@ public:
 static toRollbackTool RollbackTool;
 
 static toSQL SQLTablespace("toRollbackDialog:TablespaceName",
-			   "select tablespace_name from dba_tablespaces order by tablespace_name",
+			   "select tablespace_name from sys.dba_tablespaces order by tablespace_name",
 			   "Get a list of tablespace names, should only have one column and same binds");
 
 toRollbackDialog::toRollbackDialog(toConnection &Connection,QWidget* parent,const char* name)
@@ -311,10 +311,10 @@ static toSQL SQLRollback("toRollback:Information",
 			 "       b.gets \"-Reads\",\n"
 			 "       ROUND((b.gets-b.waits)*100/b.gets,2)||'%' \"-Hitrate\",\n"
 			 "       a.segment_id \" USN\"\n"
-			 "  from dba_rollback_segs a,\n"
+			 "  from sys.dba_rollback_segs a,\n"
 			 "       v$rollstat b,\n"
-			 "       dba_extents c,\n"
-			 "       (select :unit<char[100]> unit from dual) d\n"
+			 "       sys.dba_extents c,\n"
+			 "       (select :unit<char[100]> unit from sys.dual) d\n"
 			 " where a.segment_id = b.usn(+)\n"
 			 "   and (a.owner = c.owner or a.owner = 'PUBLIC')\n"
 			 "   and a.segment_name = c.segment_name\n"
@@ -419,7 +419,7 @@ static toSQL SQLStatementInfo("toRollback:StatementInfo",
 static toSQL SQLCurrentExtent("toRollback:CurrentExtent",
 			      "select b.Extents,\n"
 			      "       b.CurExt+b.CurBlk/c.Blocks\n"
-			      "  from dba_rollback_segs a,v$rollstat b,dba_extents c\n"
+			      "  from sys.dba_rollback_segs a,v$rollstat b,sys.dba_extents c\n"
 			      " where a.segment_id = b.usn\n"
 			      "   and a.owner = c.owner\n"
 			      "   and a.segment_name = c.segment_name\n"

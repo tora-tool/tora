@@ -86,31 +86,31 @@ static toScriptTool ScriptTool;
 static toSQL SQLObjectList("toScript:ExtractObject",
 			   "SELECT *\n"
 			   "  FROM (SELECT 'TABLESPACE',tablespace_name,NULL\n"
-			   "	  FROM dba_tablespaces\n"
+			   "	  FROM sys.dba_tablespaces\n"
 			   "	UNION\n"
 			   "	SELECT 'ROLE',role,NULL\n"
-			   "	  FROM dba_roles\n"
+			   "	  FROM sys.dba_roles\n"
 			   "	UNION\n"
 			   "	SELECT 'PUBLIC','SYNONYM',synonym_name\n"
-			   "	  FROM all_synonyms WHERE owner = 'PUBLIC'\n"
+			   "	  FROM sys.all_synonyms WHERE owner = 'PUBLIC'\n"
 			   "	UNION\n"
 			   "	SELECT owner,'DATABASE LINK',db_link\n"
-			   "	  FROM all_db_links\n"
+			   "	  FROM sys.all_db_links\n"
 			   "	UNION\n"
 			   "	SELECT owner,object_type,object_name\n"
-			   "	  FROM all_objects\n"
+			   "	  FROM sys.all_objects\n"
 			   "	 WHERE object_type IN ('VIEW','TYPE','SEQUENCE','PACKAGE',\n"
 			   "			       'PACKAGE BODY','FUNCTION','PROCEDURE')\n"
 			   "	UNION\n"
 			   "	SELECT owner,'TABLE',table_name\n"
-			   "	  FROM all_tables\n"
+			   "	  FROM sys.all_tables\n"
 			   "	 WHERE temporary != 'Y' AND secondary = 'N' AND iot_name IS NULL\n"
 			   "	UNION\n"
 			   "	SELECT owner,'MATERIALIZED TABLE',mview_name AS object\n"
-			   "	  FROM all_mviews\n"
+			   "	  FROM sys.all_mviews\n"
 			   "	UNION\n"
 			   "	SELECT username,NULL,NULL\n"
-			   "	  FROM all_users)\n"
+			   "	  FROM sys.all_users)\n"
 			   "  ORDER BY 1,2,3",
 			   "Extract objects available to extract from the database, "
 			   "should have same columns",
@@ -119,38 +119,38 @@ static toSQL SQLObjectList("toScript:ExtractObject",
 static toSQL SQLObjectList7("toScript:ExtractObject",
 			    "SELECT *\n"
 			    "  FROM (SELECT 'TABLESPACE',tablespace_name,NULL\n"
-			    "	  FROM dba_tablespaces\n"
+			    "	  FROM sys.dba_tablespaces\n"
 			    "	UNION\n"
 			    "	SELECT 'ROLE',role,NULL\n"
-			    "	  FROM dba_roles\n"
+			    "	  FROM sys.dba_roles\n"
 			    "	UNION\n"
 			    "	SELECT 'PUBLIC','SYNONYM',synonym_name\n"
-			    "	  FROM all_synonyms WHERE owner = 'PUBLIC'\n"
+			    "	  FROM sys.all_synonyms WHERE owner = 'PUBLIC'\n"
 			    "	UNION\n"
 			    "	SELECT owner,'DATABASE LINK',db_link\n"
-			    "	  FROM all_db_links\n"
+			    "	  FROM sys.all_db_links\n"
 			    "	UNION\n"
 			    "	SELECT owner,object_type,object_name\n"
-			    "	  FROM all_objects\n"
+			    "	  FROM sys.all_objects\n"
 			    "	 WHERE object_type IN ('VIEW','TYPE','SEQUENCE','PACKAGE',\n"
 			    "			       'PACKAGE BODY','FUNCTION','PROCEDURE')\n"
 			    "	UNION\n"
 			    "	SELECT owner,'TABLE',table_name\n"
-			    "	  FROM all_tables\n"
+			    "	  FROM sys.all_tables\n"
 			    "	 WHERE temporary != 'Y' AND secondary = 'N'\n"
 			    "	UNION\n"
 			    "	SELECT owner,'MATERIALIZED TABLE',mview_name AS object\n"
-			    "	  FROM all_mviews\n"
+			    "	  FROM sys.all_mviews\n"
 			    "	UNION\n"
 			    "	SELECT username,NULL,NULL\n"
-			    "	  FROM all_users)\n"
+			    "	  FROM sys.all_users)\n"
 			    "  ORDER BY 1,2,3",
 			    "",
 			    "7.0");
 
 static toSQL SQLUserObjectList("toScript:UserExtractObject",
 			       "SELECT owner,object_type,object_name\n"
-			       "  FROM all_objects\n"
+			       "  FROM sys.all_objects\n"
 			       " WHERE object_type IN ('VIEW','TABLE','TYPE','SEQUENCE','PACKAGE',\n"
 			       "	               'PACKAGE BODY','FUNCTION','PROCEDURE')\n"
 			       " ORDER BY 1,2,3",
@@ -158,7 +158,7 @@ static toSQL SQLUserObjectList("toScript:UserExtractObject",
 			       "don't have admin access, should have same columns");
 
 static toSQL SQLSchemas("toScript:ExtractSchema",
-			"SELECT username FROM all_users ORDER BY username",
+			"SELECT username FROM sys.all_users ORDER BY username",
 			"Get usernames available in database, must have same columns");
 
 toScript::toScript(QWidget *parent,toConnection &connection)

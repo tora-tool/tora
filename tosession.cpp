@@ -99,7 +99,7 @@ static toSQL SQLLockedObject("toSession:LockedObject",
 			     "       DECODE(a.locked_mode,0,'None',1,'Null',2,'Row-S',\n"
 			     "                            3,'Row-X',4,'Share',5,'S/Row-X',\n"
 			     "                            6,'Exclusive',a.Locked_Mode) \"Locked Mode\"\n"
-			     "  from v$locked_object a,all_objects b\n"
+			     "  from v$locked_object a,sys.all_objects b\n"
 			     " where a.object_id = b.object_id\n"
 			     "   and a.session_id = :f1<char[101]>",
 			     "Display info about objects locked by this session");

@@ -79,7 +79,7 @@
 #define CHUNK_SIZE 31
 
 static toSQL SQLUserNames(toSQL::TOSQL_USERLIST,
-			  "SELECT UserName FROM All_Users ORDER BY UserName",
+			  "SELECT UserName FROM sys.All_Users ORDER BY UserName",
 			  "List users in the database");
 
 static toSQL SQLUserNamesMySQL(toSQL::TOSQL_USERLIST,
@@ -110,7 +110,7 @@ QString toSQLString(toConnection &conn,const QString &address)
 }
 
 static toSQL SQLNow("Global:Now",
-		    "SELECT TO_CHAR(SYSDATE) FROM DUAL",
+		    "SELECT TO_CHAR(SYSDATE) FROM sys.DUAL",
 		    "Get current date/time from database");
 
 static toSQL SQLNowMySQL("Global:Now",

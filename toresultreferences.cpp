@@ -55,7 +55,7 @@ toResultReferences::toResultReferences(QWidget *parent,const char *name)
 }
 
 static toSQL SQLConsColumns("toResultReferences:ForeignColumns",
-			    "SELECT Column_Name FROM All_Cons_Columns\n"
+			    "SELECT Column_Name FROM sys.All_Cons_Columns\n"
 			    " WHERE Owner = :f1<char[101]> AND Constraint_Name = :f2<char[101]>\n"
 			    " ORDER BY Position",
 			    "Get columns of foreign constraint, must return same number of cols");
@@ -82,17 +82,17 @@ static toSQL SQLConstraints("toResultReferences:References",
 			    "       R_Constraint_Name,\n"
 			    "       Status,\n"
 			    "       Delete_Rule\n"
-			    "  FROM all_constraints a\n"
+			    "  FROM sys.all_constraints a\n"
 			    " WHERE constraint_type = 'R'\n"
 			    "   AND (r_owner,r_constraint_name) IN (SELECT b.owner,b.constraint_name\n"
-			    "                                         FROM all_constraints b\n"
+			    "                                         FROM sys.all_constraints b\n"
 			    "                                        WHERE b.OWNER = :owner<char[101]>\n"
 			    "                                          AND b.TABLE_NAME = :tab<char[101]>)\n"
 			    " ORDER BY Constraint_Name",
 			    "List the references from foreign constraints to specified table, must return same columns");
 static toSQL SQLDependencies("toResultReferences:Dependencies",
 			     "SELECT owner,name,type||' '||dependency_type\n"
-			     "  FROM all_dependencies\n"
+			     "  FROM sys.all_dependencies\n"
 			     " WHERE referenced_owner = :owner<char[101]>\n"
 			     "   AND referenced_name = :tab<char[101]>\n"
 			     " ORDER BY owner,type,name",
@@ -100,7 +100,7 @@ static toSQL SQLDependencies("toResultReferences:Dependencies",
 			     "8.0");
 static toSQL SQLDependencies7("toResultReferences:Dependencies",
 			      "SELECT owner,name,type\n"
-			      "  FROM all_dependencies\n"
+			      "  FROM sys.all_dependencies\n"
 			      " WHERE referenced_owner = :owner<char[101]>\n"
 			      "   AND referenced_name = :tab<char[101]>\n"
 			      " ORDER BY owner,type,name",

@@ -370,7 +370,7 @@ static toSQL SQLOverviewArchiveWrite("toTuning:Overview:ArchiveWrite",
 				     "8.0");
 
 static toSQL SQLOverviewArchiveWrite7("toTuning:Overview:ArchiveWrite",
-				      "select sysdate,0 from dual",
+				      "select sysdate,0 from sys.dual",
 				      QString::null,
 				      "7.3");
 
@@ -540,16 +540,16 @@ static toSQL SQLOverviewSGAUsed7("toTuning:Overview:SGAUsed",
 				 "7.3");
 
 static toSQL SQLOverviewTimescale("toTuning:Overview:Timescale",
-				  "select sysdate,0 from dual",
+				  "select sysdate,0 from sys.dual",
 				  "Get timescale of other graphs");
 
 static toSQL SQLOverviewFilespace("toTuning:Overview:Filespace",
 				  "select sum(bytes)/:f1<int>,'Free'\n"
-				  "  from dba_free_space\n"
+				  "  from sys.dba_free_space\n"
 				  "union\n"
 				  "select (total-free)/:f1<int>,'Used'\n"
-				  "  from (select sum(bytes) free from dba_free_space),\n"
-				  "       (select sum(bytes) total from dba_data_files)",
+				  "  from (select sum(bytes) free from sys.dba_free_space),\n"
+				  "       (select sum(bytes) total from sys.dba_data_files)",
 				  "Filespace used");
 
 void toTuningOverview::setupChart(toResultLine *chart,const QString &title,const QString &postfix,toSQL &sql)
@@ -630,7 +630,7 @@ static toSQL SQLOverviewArchive("toTuning:Overview:Archive",
 static toSQL SQLOverviewArchive7("toTuning:Overview:Archive",
 				 "select 'N/A',\n"
 				 "       'N/A'\n"
-				 "  from dual where 0 != :f1<int>",
+				 "  from sys.dual where 0 != :f1<int>",
 				 QString::null,
 				 "7.3");
 
@@ -647,7 +647,7 @@ static toSQL SQLOverviewTablespaces("toTuning:Overview:Tablespaces",
 				    "8.0");
 
 static toSQL SQLOverviewTablespaces7("toTuning:Overview:Tablespaces",
-				    "select count(1) from dba_tablespaces",
+				    "select count(1) from sys.dba_tablespaces",
 				    QString::null,
 				     "7.3");
 
@@ -682,7 +682,7 @@ static toSQL SQLOverviewParallell("toTuning:Overview:Parallel",
 				  "8.1");
 
 static toSQL SQLOverviewParallell8("toTuning:Overview:Parallel",
-				   "select 'N/A' from dual",
+				   "select 'N/A' from sys.dual",
 				   QString::null,
 				   "8.0");
 
@@ -718,7 +718,7 @@ static toSQL SQLOverviewDatafiles("toTuning:Overview:Datafiles",
 				  "8.0");
 
 static toSQL SQLOverviewDatafiles7("toTuning:Overview:Datafiles",
-				   "select count(1) from dba_tablespaces",
+				   "select count(1) from sys.dba_tablespaces",
 				   QString::null,
 				   "7.3");
 

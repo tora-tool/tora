@@ -119,7 +119,7 @@ public:
 static toBrowserTool BrowserTool;
 
 static toSQL SQLListTablespaces("toBrowser:ListTablespaces",
-				"SELECT Tablespace_Name FROM DBA_TABLESPACES\n"
+				"SELECT Tablespace_Name FROM sys.DBA_TABLESPACES\n"
 				" ORDER BY Tablespace_Name",
 				"List the available tablespaces in a database.");
 
@@ -318,13 +318,13 @@ public:
 
 static toSQL SQLListTables("toBrowser:ListTables",
 			   "SELECT Table_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
-			   "  FROM ALL_ALL_TABLES WHERE OWNER = :f1<char[101]> AND IOT_Name IS NULL\n"
+			   "  FROM SYS.ALL_ALL_TABLES WHERE OWNER = :f1<char[101]> AND IOT_Name IS NULL\n"
 			   " ORDER BY Table_Name",
 			   "List the available tables in a schema.",
 			   "8.0");
 static toSQL SQLListTables7("toBrowser:ListTables",
 			    "SELECT Table_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
-			    "  FROM ALL_TABLES WHERE OWNER = :f1<char[101]>\n"
+			    "  FROM SYS.ALL_TABLES WHERE OWNER = :f1<char[101]>\n"
 			    " ORDER BY Table_Name",
 			    QString::null,
 			    "7.3");
@@ -334,25 +334,25 @@ static toSQL SQLListTablesMysql("toBrowser:ListTables",
 				"3.0",
 				"MySQL");
 static toSQL SQLAnyGrants("toBrowser:AnyGrants",
-			  "SELECT Privilege,Grantee,Grantor,Grantable FROM ALL_TAB_PRIVS\n"
+			  "SELECT Privilege,Grantee,Grantor,Grantable FROM SYS.ALL_TAB_PRIVS\n"
 			  " WHERE Table_Schema = :f1<char[101]> AND Table_Name = :f2<char[101]>\n"
 			  " ORDER BY Privilege,Grantee",
 			  "Display the grants on an object");
 static toSQL SQLTableTrigger("toBrowser:TableTrigger",
 			     "SELECT Trigger_Name,Triggering_Event,Column_Name,Status,Description \n"
-			     "  FROM ALL_TRIGGERS\n"
+			     "  FROM SYS.ALL_TRIGGERS\n"
 			     " WHERE Table_Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>",
 			     "Display the triggers operating on a table",
 			     "8.1");
 static toSQL SQLTableTrigger8("toBrowser:TableTrigger",
 			      "SELECT Trigger_Name,Triggering_Event,Status,Description \n"
-			      "  FROM ALL_TRIGGERS\n"
+			      "  FROM SYS.ALL_TRIGGERS\n"
 			      " WHERE Table_Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>",
 			      QString::null,
 			      "8.0");
 static toSQL SQLTableInfo("toBrowser:TableInformation",
 			  "SELECT *\n"
-			  "  FROM ALL_TABLES\n"
+			  "  FROM SYS.ALL_TABLES\n"
 			  " WHERE OWNER = :f1<char[101]> AND Table_Name = :f2<char[101]>",
 			  "Display information about a table");
 static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
@@ -362,95 +362,95 @@ static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
 			       "MySQL");
 
 static toSQL SQLListView("toBrowser:ListView",
-			 "SELECT View_Name FROM ALL_VIEWS WHERE OWNER = :f1<char[101]>\n"
+			 "SELECT View_Name FROM SYS.ALL_VIEWS WHERE OWNER = :f1<char[101]>\n"
 			 " ORDER BY View_Name",
 			 "List the available views in a schema");
 static toSQL SQLViewSQL("toBrowser:ViewSQL",	
 			"SELECT Text SQL\n"
-			"  FROM ALL_Views\n"
+			"  FROM SYS.ALL_Views\n"
 			" WHERE Owner = :f1<char[101]> AND View_Name = :f2<char[101]>",
 			"Display SQL of a specified view");
 
 static toSQL SQLListIndex("toBrowser:ListIndex",
 			  "SELECT Index_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
-			  "  FROM ALL_INDEXES\n"
+			  "  FROM SYS.ALL_INDEXES\n"
 			  " WHERE OWNER = :f1<char[101]>\n"
 			  " ORDER BY Index_Name\n",
 			  "List the available indexes in a schema");
 static toSQL SQLIndexCols("toBrowser:IndexCols",
 			  "SELECT Table_Name,Column_Name,Column_Length,Descend\n"
-			  "  FROM ALL_IND_COLUMNS\n"
+			  "  FROM SYS.ALL_IND_COLUMNS\n"
 			  " WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
 			  " ORDER BY Column_Position",
 			  "Display columns on which an index is built",
 			  "8.0");
 static toSQL SQLIndexCols7("toBrowser:IndexCols",
 			   "SELECT Table_Name,Column_Name,Column_Length,' '\n"
-			   "  FROM ALL_IND_COLUMNS\n"
+			   "  FROM SYS.ALL_IND_COLUMNS\n"
 			   " WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
 			   " ORDER BY Column_Position",
 			   QString::null,
 			   "7.3");
 static toSQL SQLIndexInfo("toBrowser:IndexInformation",
-			  "SELECT * FROM ALL_INDEXES\n"
+			  "SELECT * FROM SYS.ALL_INDEXES\n"
 			  " WHERE Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>",
 			  "Display information about an index");
 
 static toSQL SQLListSequence("toBrowser:ListSequence",
-			     "SELECT Sequence_Name FROM ALL_SEQUENCES\n"
+			     "SELECT Sequence_Name FROM SYS.ALL_SEQUENCES\n"
 			     " WHERE SEQUENCE_OWNER = :f1<char[101]>\n"
 			     " ORDER BY Sequence_Name",
 			     "List the available sequences in a schema");
 static toSQL SQLSequenceInfo("toBrowser:SequenceInformation",
-			     "SELECT * FROM ALL_SEQUENCES\n"
+			     "SELECT * FROM SYS.ALL_SEQUENCES\n"
 			     " WHERE Sequence_Owner = :f1<char[101]>\n"
 			     "   AND Sequence_Name = :f2<char[101]>",
 			     "Display information about a sequence");
 
 static toSQL SQLListSynonym("toBrowser:ListSynonym",
-			    "SELECT Synonym_Name FROM ALL_SYNONYMS\n"
+			    "SELECT Synonym_Name FROM SYS.ALL_SYNONYMS\n"
 			    " WHERE Table_Owner = :f1<char[101]>\n"
 			    "    OR Owner = :f1<char[101]>\n"
 			    " ORDER BY Synonym_Name",
 			    "List the available synonyms in a schema");
 static toSQL SQLSynonymInfo("toBrowser:SynonymInformation",
-			    "SELECT * FROM ALL_SYNONYMS\n"
+			    "SELECT * FROM SYS.ALL_SYNONYMS\n"
 			    " WHERE (Table_Owner = :f1<char[101]> OR Owner = :f1<char[101]>)\n"
 			    "   AND Synonym_Name = :f2<char[101]>",
 			    "Display information about a synonym");
 
 static toSQL SQLListSQL("toBrowser:ListPL/SQL",
-			"SELECT Object_Name,Object_Type Type FROM ALL_OBJECTS\n"
+			"SELECT Object_Name,Object_Type Type FROM SYS.ALL_OBJECTS\n"
 			" WHERE OWNER = :f1<char[101]>\n"
 			"   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
 			"                       'PROCEDURE','TYPE')\n"
 			" ORDER BY Object_Name",
 			"List the available PL/SQL objects in a schema");
 static toSQL SQLListSQLShort("toBrowser:ListPL/SQLShort",
-			     "SELECT Object_Name Type FROM ALL_OBJECTS\n"
+			     "SELECT Object_Name Type FROM SYS.ALL_OBJECTS\n"
 		 	     " WHERE OWNER = :f1<char[101]>\n"
 			     "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
 			     "                       'PROCEDURE','TYPE')\n"
 			     " ORDER BY Object_Name",
 			     "List the available PL/SQL objects in a schema, one column version");
 static toSQL SQLSQLTemplate("toBrowser:PL/SQLTemplate",
-			    "SELECT Text FROM ALL_SOURCE\n"
+			    "SELECT Text FROM SYS.ALL_SOURCE\n"
 			    " WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
 			    "   AND Type IN ('PACKAGE','PROCEDURE','FUNCTION','PACKAGE','TYPE')",
 			    "Declaration of object displayed in template window");
 static toSQL SQLSQLHead("toBrowser:PL/SQLHead",
-			"SELECT Text FROM ALL_SOURCE\n"
+			"SELECT Text FROM SYS.ALL_SOURCE\n"
 			" WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
 			"   AND Type IN ('PACKAGE','TYPE')",
 			"Declaration of object");
 static toSQL SQLSQLBody("toBrowser:PL/SQLBody",
-			"SELECT Text FROM ALL_SOURCE\n"
+			"SELECT Text FROM SYS.ALL_SOURCE\n"
 			" WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
 			"   AND Type IN ('PROCEDURE','FUNCTION','PACKAGE BODY','TYPE BODY')",
 			"Implementation of object");
 
 static toSQL SQLListTrigger("toBrowser:ListTrigger",
-			    "SELECT Trigger_Name FROM ALL_TRIGGERS\n"
+			    "SELECT Trigger_Name FROM SYS.ALL_TRIGGERS\n"
 			    " WHERE OWNER = :f1<char[101]>\n"
 			    " ORDER BY Trigger_Name",
 			    "List the available triggers in a schema");
@@ -460,7 +460,7 @@ static toSQL SQLTriggerInfo("toBrowser:TriggerInfo",
 			    "       Table_Owner,Base_Object_Type,Table_Name,Column_Name,\n"
 			    "       Referencing_Names,When_Clause,Status,\n"
 			    "       Description,Action_Type\n"
-			    "  FROM ALL_TRIGGERS\n"
+			    "  FROM SYS.ALL_TRIGGERS\n"
 			    "WHERE Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
 			    "Display information about a trigger",
 			    "8.1");
@@ -470,17 +470,17 @@ static toSQL SQLTriggerInfo8("toBrowser:TriggerInfo",
 			     "       Table_Owner,Table_Name,\n"
 			     "       Referencing_Names,When_Clause,Status,\n"
 			     "       Description\n"
-			     "  FROM ALL_TRIGGERS\n"
+			     "  FROM SYS.ALL_TRIGGERS\n"
 			     "WHERE Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
 			     QString::null,
 			     "8.0");
 static toSQL SQLTriggerBody("toBrowser:TriggerBody",
-			    "SELECT Trigger_Body FROM ALL_TRIGGERS\n"
+			    "SELECT Trigger_Body FROM SYS.ALL_TRIGGERS\n"
 			    " WHERE Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
 			    "Implementation of trigger");
 static toSQL SQLTriggerCols("toBrowser:TriggerCols",
 			    "SELECT Column_Name,Column_List \"In Update\",Column_Usage Usage\n"
-			    "  FROM ALL_TRIGGER_COLS\n"
+			    "  FROM SYS.ALL_TRIGGER_COLS\n"
 			    " WHERE Trigger_Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
 			    "Columns used by trigger");
 

@@ -341,7 +341,7 @@ static toSQL SQLDebugOutputPoll("toDebugOutput:Poll",
 				"  ELSE\n"
 				"    ret:=1;\n"
 				"  END IF;\n"
-				"  SELECT ret,line INTO :ret<int,out>,:line<char[101,out> FROM DUAL;\n"
+				"  SELECT ret,line INTO :ret<int,out>,:line<char[101,out> FROM sys.DUAL;\n"
 				"END;",
 				"Poll for output in the debug session, must have same bindings");
 static toSQL SQLDebugOutputDisable("toDebugOutput:Disable",
@@ -423,7 +423,7 @@ static toSQL SQLDebugInit("toDebug:Initialize",
 			  "  \n"
 			  "  ret:=DBMS_DEBUG.INITIALIZE;\n"
 			  "  DBMS_DEBUG.DEBUG_ON;\n"
-			  "  SELECT ret,dbms_session.unique_session_id INTO :f2<char[201],out>,:f3<char[25],out> FROM DUAL;\n"
+			  "  SELECT ret,dbms_session.unique_session_id INTO :f2<char[201],out>,:f3<char[25],out> FROM sys.DUAL;\n"
 			  "END;",
 			  "Initialize the debug session, must have same bindings");
 
@@ -833,7 +833,7 @@ void toDebug::execute(void)
     if (!retType.isEmpty()) {
       sql+=";\n  SELECT ret INTO :tora_int_return<char[";
       sql+=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE);
-      sql+="],out> FROM DUAL";
+      sql+="],out> FROM sys.DUAL";
     }
     sql+=";\nEND;\n";
 
@@ -875,7 +875,7 @@ static toSQL SQLSync("toDebug:Sync",
 		     "         runinf.Reason\n"
 		     "    INTO :ret<int,out>,\n"
 		     "         :reason<int,out>\n"
-		     "    FROM DUAL;\n"
+		     "    FROM sys.DUAL;\n"
 		     "END;",
 		     "Sync with the debugging session, must have same binds");
 
@@ -1108,7 +1108,7 @@ static toSQL SQLRuntimeInfo("toDebug:RuntimeInfo",
 			    "  ret BINARY_INTEGER;\n"
 			    "BEGIN\n"
 			    "  ret:=DBMS_DEBUG.GET_RUNTIME_INFO(DBMS_DEBUG.info_getStackDepth,info);\n"
-			    "  SELECT ret,info.stackDepth INTO :ret<int,out>,:depth<int,out> FROM DUAL;\n"
+			    "  SELECT ret,info.stackDepth INTO :ret<int,out>,:depth<int,out> FROM sys.DUAL;\n"
 			    "END;",
 			    "Get runtime info from debug session, must have same bindings");
 static toSQL SQLStackTrace("toDebug:StackTrace",
@@ -1127,7 +1127,7 @@ static toSQL SQLStackTrace("toDebug:StackTrace",
 			   "                                                                 DBMS_DEBUG.LibunitType_package_body,'PACKAGE BODY',\n"
 			   "                                                                 DBMS_DEBUG.LibunitType_trigger,'TRIGGEER',\n"
 			   "                                                                 'UNKNOWN')\n"
-			   "    INTO :name<char[101],out>,:owner<char[101],out>,:line<int,out>,:type<char[101],out> FROM DUAL;\n"
+			   "    INTO :name<char[101],out>,:owner<char[101],out>,:line<int,out>,:type<char[101],out> FROM sys.DUAL;\n"
 			   "END;",
 			   "Get stacktrace from debug session, must have same bindings");
 static toSQL SQLLocalWatch("toDebug:LocalWatch",	
@@ -1136,7 +1136,7 @@ static toSQL SQLLocalWatch("toDebug:LocalWatch",
 			   "  data VARCHAR2(4000);\n"
 			   "BEGIN\n"
 			   "  ret:=DBMS_DEBUG.GET_VALUE(:name<char[101],in>,0,data,NULL);\n"
-			   "  SELECT ret,data INTO :ret<int,out>,:val<char[4001],out> FROM DUAL;\n"
+			   "  SELECT ret,data INTO :ret<int,out>,:val<char[4001],out> FROM sys.DUAL;\n"
 			   "END;",
 			   "Get data from local watch, must have same bindings");
 static toSQL SQLGlobalWatch("toDebug:GlobalWatch",
@@ -1156,7 +1156,7 @@ static toSQL SQLGlobalWatch("toDebug:GlobalWatch",
 			    "  END IF;\n"
 			    "  SELECT ret          ,data                ,proginf.Namespace\n"
 			    "    INTO :ret<int,out>,:val<char[4001],out>,:namespace<int,out>\n"
-			    "    FROM DUAL;\n"
+			    "    FROM sys.DUAL;\n"
 			    "END;",
 			    "Get data from global watch, must have same bindings");
 static toSQL SQLLocalIndex("toDebug:LocalIndex",
@@ -1175,7 +1175,7 @@ static toSQL SQLLocalIndex("toDebug:LocalIndex",
 			   "      i:=indata.next(i);\n"
 			   "    END LOOP;\n"
 			   "  END IF;\n"
-			   "  SELECT outdata INTO :data<char[4001],out> FROM DUAL;\n"
+			   "  SELECT outdata INTO :data<char[4001],out> FROM sys.DUAL;\n"
 			   "END;",
 			   "Get indexes of local watch, must have same bindings");
 static toSQL SQLGlobalIndex("toDebug:GlobalIndex",
@@ -1198,7 +1198,7 @@ static toSQL SQLGlobalIndex("toDebug:GlobalIndex",
 			    "      i:=indata.next(i);\n"
 			    "    END LOOP;\n"
 			    "  END IF;\n"
-			    "  SELECT outdata INTO :data<char[4001],out> FROM DUAL;\n"
+			    "  SELECT outdata INTO :data<char[4001],out> FROM sys.DUAL;\n"
 			    "END;",
 			    "Get indexes of global watch, must have same bindings");
 
@@ -1493,7 +1493,7 @@ static toSQL SQLContinue("toDebug:Continue",
 			 "         runinf.Reason\n"
 			 "    INTO :ret<int,out>,\n"
 			 "         :reason<int,out>\n"
-			 "    FROM DUAL;\n"
+			 "    FROM sys.DUAL;\n"
 			 "END;",
 			 "Continue execution, must have same bindings");
 
@@ -1837,7 +1837,7 @@ void toDebug::changeSchema(int)
 }
 
 static toSQL SQLListObjects("toDebug:ListObjects",
-			    "SELECT Object_Type,Object_Name Type FROM ALL_OBJECTS\n"
+			    "SELECT Object_Type,Object_Name Type FROM SYS.ALL_OBJECTS\n"
 			    " WHERE OWNER = :owner<char[101]>\n"
 			    "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
 			    "                       'PROCEDURE','TYPE')\n"
@@ -2432,7 +2432,7 @@ static toSQL SQLChangeLocal("toDebug:ChangeLocalWatch",
 			    "  data VARCHAR2(4000);\n"
 			    "BEGIN\n"
 			    "  ret:=DBMS_DEBUG.SET_VALUE(0,:assign<char[4001],in>);\n"
-			    "  SELECT ret INTO :ret<int,out> FROM DUAL;\n"
+			    "  SELECT ret INTO :ret<int,out> FROM sys.DUAL;\n"
 			    "END;",
 			    "Change local watch value, must have same bindings");
 static toSQL SQLChangeGlobal("toDebug:ChangeGlobalWatch",
@@ -2450,7 +2450,7 @@ static toSQL SQLChangeGlobal("toDebug:ChangeGlobalWatch",
 			     "    proginf.Namespace:=DBMS_DEBUG.namespace_pkgspec_or_toplevel;\n"
 			     "    ret:=DBMS_DEBUG.SET_VALUE(proginf,:assign<char[4001],in>);\n"
 			     "  END IF;\n"
-			     "  SELECT ret INTO :ret<int,out> FROM DUAL;\n"
+			     "  SELECT ret INTO :ret<int,out> FROM sys.DUAL;\n"
 			     "END;",
 			     "Change global watch value, must have same bindings");
 

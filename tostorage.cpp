@@ -392,7 +392,7 @@ static toSQL SQLTablespaceInfo("toStorage:TablespaceInfo",
 			       "       min_extents,\n"
 			       "       max_extents,\n"
 			       "       pct_increase\n"
-			       "  FROM dba_tablespaces\n"
+			       "  FROM sys.dba_tablespaces\n"
 			       " WHERE tablespace_name = :nam<char[70]>",
 			       "Get information about a tablespace for the modify dialog, "
 			       "must have same columns and bindings");
@@ -448,7 +448,7 @@ static toSQL SQLDatafileInfo("toStorage:DatafileInfo",
 			     "       autoextensible,\n"
 			     "       bytes/blocks*increment_by/1024,\n"
 			     "       maxbytes/1024\n"
-			     "  FROM dba_data_files\n"
+			     "  FROM sys.dba_data_files\n"
 			     " WHERE tablespace_name = :nam<char[70]>"
 			     "   AND file_name = :fil<char[1500]>",
 			     "Get information about a datafile for the modify dialog, "
@@ -1124,7 +1124,7 @@ static toSQL SQLObjectsFile("toStorage:ObjectsFile",
 			    "       file_id,\n"
 			    "       block_id,\n"
 			    "       blocks\n"
-			    "  FROM dba_extents\n"
+			    "  FROM sys.dba_extents\n"
 			    " WHERE tablespace_name = :tab<char[101]>\n"
 			    "   AND file_id = :fil<int>",
 			    "Get objects in a datafile, must have same columns and binds",
@@ -1137,7 +1137,7 @@ static toSQL SQLObjectsFile7("toStorage:ObjectsFile",
 			     "       file_id,\n"
 			     "       block_id,\n"
 			     "       blocks\n"
-			     "  FROM dba_extents\n"
+			     "  FROM sys.dba_extents\n"
 			     " WHERE tablespace_name = :tab<char[101]>\n"
 			     "   AND file_id = :fil<int>",
 			     QString::null,
@@ -1150,7 +1150,7 @@ static toSQL SQLObjectsTablespace("toStorage:ObjectsTablespace",
 				  "       file_id,\n"
 				  "       block_id,\n"
 				  "       blocks\n"
-				  "  FROM dba_extents WHERE tablespace_name = :tab<char[101]>",
+				  "  FROM sys.dba_extents WHERE tablespace_name = :tab<char[101]>",
 				  "Get objects in a tablespace, must have same columns and binds",
 				  "8.0");
 
@@ -1161,19 +1161,19 @@ static toSQL SQLObjectsTablespace7("toStorage:ObjectsTablespace",
 				   "       file_id,\n"
 				   "       block_id,\n"
 				   "       blocks\n"
-				   "  FROM dba_extents WHERE tablespace_name = :tab<char[101]>",
+				   "  FROM sys.dba_extents WHERE tablespace_name = :tab<char[101]>",
 				   QString::null,
 				   "7.3");
 
 static toSQL SQLFileBlocks("toStorage:FileSize",
-			   "SELECT file_id,blocks FROM dba_data_files\n"
+			   "SELECT file_id,blocks FROM sys.dba_data_files\n"
 			   " WHERE tablespace_name = :tab<char[101]>\n"
 			   "   AND file_id = :fil<int>\n"
 			   " ORDER BY file_id",
 			   "Get blocks for datafiles, must have same columns and binds");
 
 static toSQL SQLTablespaceBlocks("toStorage:TablespaceSize",
-				 "SELECT file_id,blocks FROM dba_data_files\n"
+				 "SELECT file_id,blocks FROM sys.dba_data_files\n"
 				 " WHERE tablespace_name = :tab<char[101]>"
 				 " ORDER BY file_id",
 				 "Get blocks for tablespace datafiles, must have same columns and binds");

@@ -70,15 +70,15 @@
 #endif
 
 static toSQL SQLComment("toOracleConnection:Comments",
-			"SELECT Column_name,Comments FROM All_Col_Comments\n"
+			"SELECT Column_name,Comments FROM sys.All_Col_Comments\n"
 			" WHERE Owner = :f1<char[100]>\n"
 			"   AND Table_Name = :f2<char[100]>",
 			"Display column comments");
 
 static toSQL SQLListObjects("toOracleConnection:ListObjects",
 			    "select a.owner,a.object_name,a.object_type,b.comments\n"
-			    "  from all_objects a,\n"
-			    "       all_tab_comments b\n"
+			    "  from sys.all_objects a,\n"
+			    "       sys.all_tab_comments b\n"
 			    " where a.owner = b.owner(+) and a.object_name = b.table_name(+)\n"
 			    "   and a.object_type = b.table_type(+) and a.object_type != 'SYNONYM'",
 			    "List the objects to cache for a connection, should have same "
@@ -86,7 +86,7 @@ static toSQL SQLListObjects("toOracleConnection:ListObjects",
 
 static toSQL SQLListSynonyms("toOracleConnection:ListSynonyms",
 			     "select synonym_name,table_owner,table_name\n"
-			     "  from all_synonyms\n"
+			     "  from sys.all_synonyms\n"
 			     " where owner = :usr<char[101]> or owner = 'PUBLIC'\n"
 			     " order by table_owner,table_name",
 			     "List the synonyms available to a user, should have same columns and binds");
@@ -747,7 +747,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
     {
       otl_stream info(1,
 		      "BEGIN\n"
-		      "  DBMS_APPLICATION_INFO.SET_CLIENT_INFO('TOra (http://www.globecom.net/tora)');\n"
+		      "  SYS.DBMS_APPLICATION_INFO.SET_CLIENT_INFO('TOra (http://www.globecom.net/tora)');\n"
 		      "END;",
 		      *conn);
     }

@@ -54,7 +54,7 @@ static toSQL SQLInfo("toResultCols:Info",
 		     "       Last_Analyzed,\n"
 		     "       Sample_Size,\n"
 		     "       Avg_Col_Len\n"
-		     "  FROM All_Tab_Columns\n"
+		     "  FROM sys.All_Tab_Columns\n"
 		     " WHERE Owner = :f1<char[100]>\n"
 		     "   AND Table_Name = :f2<char[100]>\n"
 		     "   AND Column_Name = :f3<char[100]>",
@@ -71,7 +71,7 @@ static toSQL SQLInfo7("toResultCols:Info",
 		      "       NULL,\n"
 		      "       NULL,\n"
 		      "       NULL,\n"
-		      "  FROM All_Tab_Columns\n"
+		      "  FROM sys.All_Tab_Columns\n"
 		      " WHERE Owner = :f1<char[100]>\n"
 		      "   AND Table_Name = :f2<char[100]>\n"
 		      "   AND Column_Name = :f3<char[100]>",
