@@ -79,6 +79,8 @@ TO_NAMESPACE;
 #include "toconf.h"
 #include "tochangeconnection.h"
 #include "toworksheetsetupui.h"
+#include "tosession.h"
+#include "toresultbar.h"
 
 #include "toworksheet.moc"
 #include "toworksheetsetupui.moc"
@@ -315,9 +317,22 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   ResultTab->addTab(Plan,"Execution plan");
   Resources=new toResultResources(ResultTab);
   ResultTab->addTab(Resources,"Information");
-  Statistics=new toResultStats(true,ResultTab);
-  ResultTab->addTab(Statistics,"Statistics");
-  ResultTab->setTabEnabled(Statistics,false);
+  StatSplitter=new QSplitter(Horizontal,ResultTab);
+  Statistics=new toResultStats(true,StatSplitter);
+  toResultBar *bar=new toResultBar(StatSplitter);
+  bar->setSQL(toSQL::string(TO_SESSION_WAIT,connection));
+  bar->setTitle("Wait states");
+  bar->setYPostfix("ms/s");
+  connect(Statistics,SIGNAL(sessionChanged(const QString &)),
+	  bar,SLOT(changeParams(const QString &)));
+  bar=new toResultBar(StatSplitter);
+  bar->setSQL(toSQL::string(TO_SESSION_IO,connection));
+  bar->setTitle("I/O");
+  bar->setYPostfix("blocks/s");
+  connect(Statistics,SIGNAL(sessionChanged(const QString &)),
+	  bar,SLOT(changeParams(const QString &)));
+  ResultTab->addTab(StatSplitter,"Statistics");
+  ResultTab->setTabEnabled(StatSplitter,false);
 
   Logging=new toResultView(true,false,ResultTab);
   ResultTab->addTab(Logging,"Logging");
@@ -329,12 +344,6 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   LastLogItem=NULL;
 
   toolbar->addSeparator();
-  StatisticButton=new QToolButton(toolbar);
-  StatisticButton->setToggleButton(true);
-  StatisticButton->setIconSet(QIconSet(*toStatisticPixmap));
-  connect(StatisticButton,SIGNAL(toggled(bool)),this,SLOT(enableStatistic(bool)));
-  QToolTip::add(StatisticButton,"Gather session statistic of execution");
-
   StopButton=new QToolButton(*toStopPixmap,
 			     "Stop execution",
 			     "Stop execution",
@@ -347,6 +356,19 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
 		  "Clear execution log",
 		  this,SLOT(eraseLogButton(void)),
 		  toolbar);
+
+  toolbar->addSeparator();
+  StatisticButton=new QToolButton(toolbar);
+  StatisticButton->setToggleButton(true);
+  StatisticButton->setIconSet(QIconSet(*toStatisticPixmap));
+  connect(StatisticButton,SIGNAL(toggled(bool)),this,SLOT(enableStatistic(bool)));
+  QToolTip::add(StatisticButton,"Gather session statistic of execution");
+  new QLabel("Refresh",toolbar);
+  Refresh=toRefreshCreate(toolbar);
+  connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
+  connect(StatisticButton,SIGNAL(toggled(bool)),Refresh,SLOT(setEnabled(bool)));
+  Refresh->setEnabled(false);
+
   toolbar->setStretchableWidget(new QLabel("",toolbar));
   new toChangeConnection(toolbar);
 
@@ -372,6 +394,12 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
     show();
     StatisticButton->setOn(true);
   }
+}
+
+void toWorksheet::changeRefresh(const QString &str)
+{
+  if (StopButton->isEnabled())
+    toRefreshParse(timer(),str);
 }
 
 void toWorksheet::windowActivated(QWidget *widget)
@@ -596,6 +624,9 @@ void toWorksheet::query(const QString &str,bool direct)
 	Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
 	Result->query(execSql,param);
 	time(&Started);
+	if (StatisticButton->isEnabled())
+	  toRefreshParse(timer(),Refresh->currentText());
+	  
 	Result->setSQLName(execSql.simplifyWhiteSpace().left(40));
       }
       StopButton->setEnabled(true);
@@ -895,6 +926,7 @@ void toWorksheet::queryDone(void)
   if (Started>0&&!QueryString.isEmpty())
     addLog(QueryString,"Aborted");
 
+  timer()->stop();
   StopButton->setEnabled(false);
   toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,false);
   saveDefaults();
@@ -934,7 +966,7 @@ void toWorksheet::enableStatistic(bool ena)
 			    "is unreliable at bests.",
 			    "Ok");
     Result->setStatistics(Statistics);
-    ResultTab->setTabEnabled(Statistics,true);
+    ResultTab->setTabEnabled(StatSplitter,true);
     toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,true);
     Statistics->clear();
     if (!WorksheetTool.config(CONF_TIMED_STATS,"Yes").isEmpty()) {
@@ -950,7 +982,7 @@ void toWorksheet::enableStatistic(bool ena)
     }
   } else {
     Result->setStatistics(NULL);
-    ResultTab->setTabEnabled(Statistics,false);
+    ResultTab->setTabEnabled(StatSplitter,false);
     toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,false);
   }
 }

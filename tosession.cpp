@@ -55,7 +55,6 @@ TO_NAMESPACE;
 #include "tosgastatement.h"
 #include "toresultstats.h"
 #include "toresultlock.h"
-#include "toresultpie.h"
 #include "toresultbar.h"
 
 #include "tosession.moc"
@@ -109,11 +108,30 @@ static toSQL SQLOpenCursors("toSession:OpenCursor",
 			    "select SQL_Text \"SQL\", Address||':'||Hash_Value \" Address\"\n"
 			    "  from v$open_cursor where sid = :f1<char[101]>",
 			    "Display open cursors of this session");
-static toSQL SQLSessionWait("toSession:WaitStatistic",
-			    "select decode(time_waited,0,total_waits,time_waited),event\n"
-			    "  from v$session_event where sid = :f1<char[101]> order by event",
-			    "Display statistics about what session have been waiting on.");
-static toSQL SQLSessionIO("toSession:SessionIO",
+static toSQL SQLSessionWait(TO_SESSION_WAIT,
+			    "select sysdate,\n"
+			    "       QueueWait \"Dispatching\",\n"
+			    "       DBWriteWait \"DB File Write\",\n"
+			    "       WriteWait \"Write Complete\",\n"
+			    "       DBReadWait-DBReadSingleWait \"DB File Read\",\n"
+			    "       DBReadSingleWait \"DB File Single Read\",\n"
+			    "       CtrlWait \"Control File I/O\",\n"
+			    "       DirectWait \"Direct I/O\",\n"
+			    "       LogWait \"Log file I/O\",\n"
+			    "       SQLWait \"SQL*Net\"\n,"
+			    "       TotalWait-SQLWait-QueueWait-WriteWait-DBReadWait-DBWriteWait-CtrlWait-DirectWait-LogWait \"Other\"\n"
+			    "  from (select sum(time_waited) TotalWait from v$session_event where sid = :f1<char[101]>),\n"
+			    "       (select sum(time_waited) SQLWait from v$session_event where sid = :f1<char[101]> and event like 'SQL*Net%'),\n"
+			    "       (select sum(time_waited) QueueWait from v$session_event where sid = :f1<char[101]> and event like 'PX%' and event != 'PX Idle Wait'),\n"
+			    "       (select sum(time_waited) WriteWait from v$session_event where sid = :f1<char[101]> and event like 'write complete waits'),\n"
+			    "       (select sum(time_waited) DBReadWait from v$session_event where sid = :f1<char[101]> and event like 'db file % read'),\n"
+			    "       (select sum(time_waited) DBWriteWait from v$session_event where sid = :f1<char[101]> and event like 'db file % write'),\n"
+			    "       (select sum(time_waited) DBReadSingleWait from v$session_event where sid = :f1<char[101]> and event like 'db file scattered read'),\n"
+			    "       (select sum(time_waited) CtrlWait from v$session_event where sid = :f1<char[101]> and event like 'control file%'),\n"
+			    "       (select sum(time_waited) DirectWait from v$session_event where sid = :f1<char[101]> and event like 'direct path%'),\n"
+			    "       (select sum(time_waited) LogWait from v$session_event where sid = :f1<char[101]> and event like 'log file%' or event like 'LGRW%')",
+			    "Used to generate chart for session wait time.");
+static toSQL SQLSessionIO(TO_SESSION_IO,
 			  "select sysdate,\n"
 			  "       block_gets \"Block gets\",\n"
 			  "       consistent_gets \"Consistent gets\",\n"
@@ -171,11 +189,10 @@ toSession::toSession(QWidget *main,toConnection &connection)
   ResultTab=new QTabWidget(splitter);
   StatisticSplitter=new QSplitter(Horizontal,ResultTab);
   SessionStatistics=new toResultStats(false,0,StatisticSplitter);
-  WaitPie=new toResultPie(StatisticSplitter);
-  WaitPie->setSQL(SQLSessionWait);
-  WaitPie->setTitle("Session wait states");
-  WaitPie->setDisplayPercent(true);
-  WaitPie->setPostfix("%");
+  WaitBar=new toResultBar(StatisticSplitter);
+  WaitBar->setSQL(SQLSessionWait);
+  WaitBar->setTitle("Session wait states");
+  WaitBar->setYPostfix("ms/s");
   IOBar=new toResultBar(StatisticSplitter);
   IOBar->setSQL(SQLSessionIO);
   IOBar->setTitle("Session I/O");
@@ -350,7 +367,7 @@ void toSession::changeItem(QListViewItem *item)
   CurrentItem=item;
   if (CurrentItem&&LastSession!=CurrentItem->text(0)) {
     if (!CurrentItem->text(0).isEmpty()) {
-      WaitPie->changeParams(CurrentItem->text(0));
+      WaitBar->changeParams(CurrentItem->text(0));
       IOBar->changeParams(CurrentItem->text(0));
     }
     LastSession=CurrentItem->text(0);

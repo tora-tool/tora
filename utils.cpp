@@ -234,23 +234,32 @@ QComboBox *toRefreshCreate(QWidget *parent,const char *name,const QString &def,Q
     refresh=new QComboBox(false,parent);
 
   refresh->insertItem("None");
+  refresh->insertItem("2 seconds");
+  refresh->insertItem("5 seconds");
   refresh->insertItem("10 seconds");
   refresh->insertItem("30 seconds");
   refresh->insertItem("1 min");
+  refresh->insertItem("5 min");
   refresh->insertItem("10 min");
   QString str;
   if (def)
     str=def;
   else
     str=toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH);
-  if (str=="10 seconds")
+  if (str=="2 seconds")
     refresh->setCurrentItem(1);
-  else if (str=="30 seconds")
+  else if (str=="5 seconds")
     refresh->setCurrentItem(2);
-  else if (str=="1 min")
+  else if (str=="10 seconds")
     refresh->setCurrentItem(3);
-  else if (str=="10 min")
+  else if (str=="30 seconds")
     refresh->setCurrentItem(4);
+  else if (str=="1 min")
+    refresh->setCurrentItem(5);
+  else if (str=="5 min")
+    refresh->setCurrentItem(6);
+  else if (str=="10 min")
+    refresh->setCurrentItem(7);
   else
     refresh->setCurrentItem(0);
   return refresh;
@@ -260,12 +269,18 @@ void toRefreshParse(toTimer *timer,const QString &str)
 {
   if (str=="None")
     timer->stop();
+  else if (str=="2 seconds")
+    timer->start(2*1000);
+  else if (str=="5 seconds")
+    timer->start(5*1000);
   else if (str=="10 seconds")
     timer->start(10*1000);
   else if (str=="30 seconds")
     timer->start(30*1000);
   else if (str=="1 min")
     timer->start(60*1000);
+  else if (str=="5 min")
+    timer->start(300*1000);
   else if (str=="10 min")
     timer->start(600*1000);
   else

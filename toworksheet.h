@@ -59,6 +59,7 @@ class QToolButton;
 class QLineEdit;
 class QCheckBox;
 class QLabel;
+class QComboBox;
 class toTool;
 
 class toWorksheet : public toToolWidget {
@@ -77,8 +78,10 @@ class toWorksheet : public toToolWidget {
   QListViewItem *LastLogItem;
   QToolButton *StopButton;
   QToolButton *StatisticButton;
+  QSplitter *StatSplitter;
   bool TryStrip;
   toResultCols *Columns;
+  QComboBox *Refresh;
   time_t Started;
 
   QPopupMenu *ToolMenu;
@@ -121,6 +124,7 @@ public slots:
   { StatisticButton->setOn(!StatisticButton->isOn()); }
 
   void addLog(const QString &sql,const QString &result);
+  void changeRefresh(const QString &);
 };
 
 #endif

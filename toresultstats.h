@@ -93,6 +93,15 @@ public:
    * @param ses Session ID to change to.
    */
   void changeSession(int ses);
+signals:
+  /** Emitted when session is changed.
+   * @param ses New session ID.
+   */
+  void sessionChanged(int ses);
+  /** Emitted when session is changed.
+   * @param ses New session ID as string.
+   */
+  void sessionChanged(const QString &);
 public slots:
   /** Update the statistics.
    * @param reset Set delta to current values. This means that the next time this widget

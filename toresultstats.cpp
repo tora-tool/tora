@@ -157,6 +157,8 @@ void toResultStats::changeSession(otl_connect &conn)
 		   SQLSession(connection()),
 		   otlConnection());
     str>>SessionID;
+    emit sessionChanged(SessionID);
+    emit sessionChanged(QString::number(SessionID));
     resetStats();
     refreshStats(true);
   } TOCATCH
@@ -168,6 +170,8 @@ void toResultStats::changeSession(int ses)
     throw QString("Can't change session on system statistics");
   if (SessionID!=ses) {
     SessionID=ses;
+    emit sessionChanged(SessionID);
+    emit sessionChanged(QString::number(SessionID));
     resetStats();
   }
   refreshStats();

@@ -47,8 +47,10 @@ class toResultView;
 class toMain;
 class toResultStats;
 class toResultLock;
-class toResultPie;
 class toResultBar;
+
+#define TO_SESSION_WAIT "toSession:SessionIO"
+#define TO_SESSION_IO   "toSession:SessionWait"
 
 class toSession : public toToolWidget {
   Q_OBJECT
@@ -65,7 +67,7 @@ class toSession : public toToolWidget {
   toResultView *ConnectInfo;
   toResultView *LockedObjects;
   toResultLock *PendingLocks;
-  toResultPie *WaitPie;
+  toResultBar *WaitBar;
   toResultBar *IOBar;
   QSplitter *OpenSplitter;
   QSplitter *StatisticSplitter;

@@ -35,6 +35,8 @@ Extended functionality:
 * Statistics saving and comparison in worksheet.
 * Zooming in line and barcharts.
 * File I/O statistics in storage.
+* Change parameters in tuning info.
+* Generate new pfile from modified parameters.
 
 New tools:
 

@@ -152,7 +152,7 @@ static toSQL SQLChartsWait("toTuning:Charts:3BMWait events",
 			   "       LogWait \"Log file I/O\",\n"
 			   "       SQLWait \"SQL*Net\"\n"
 			   "  from (select sum(time_waited) TotalWait from v$system_event),\n"
-			   "       (select sum(time_waited) SQLWait from v$system_event where event like 'SQL*Net%' and event != 'SQL*Net message from client'),\n"
+			   "       (select sum(time_waited) SQLWait from v$system_event where event like 'SQL*Net%'),\n"
 			   "       (select sum(time_waited) QueueWait from v$system_event where event like 'PX%' and event != 'PX Idle Wait'),\n"
 			   "       (select sum(time_waited) WriteWait from v$system_event where event like 'write complete waits'),\n"
 			   "       (select sum(time_waited) DBReadWait from v$system_event where event like 'db file % read'),\n"
