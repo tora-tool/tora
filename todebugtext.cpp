@@ -33,6 +33,7 @@
 #include "toconnection.h"
 #include "todebug.h"
 #include "icons/breakpoint.xpm"
+#include "icons/disbreakpoint.xpm"
 
 #define TO_BREAK_COL 5
 
@@ -41,10 +42,19 @@ toBreakpointItem::toBreakpointItem(QListView *parent,QListViewItem *after,toConn
 				   const QString &object,int line)
 : QListViewItem(parent,after),Connection(conn)
 {
-  setText(2,schema);
-  setText(0,object);
+  if (schema.isNull())
+    setText(2,"");
+  else
+    setText(2,schema);
+  if (object.isNull())
+    setText(0,"");
+  else
+    setText(0,object);
+  if (type.isNull())
+    setText(3,"");
+  else
+    setText(3,type);
   setText(1,QString::number(line+1));
-  setText(3,type);
   if(type=="PACKAGE"||type=="PROCEDURE"||type=="FUNCTION"||type=="TYPE")
     Namespace=TO_NAME_TOPLEVEL;
   else if (type=="PACKAGE BODY"||type=="TYPE BODY")
@@ -52,7 +62,7 @@ toBreakpointItem::toBreakpointItem(QListView *parent,QListViewItem *after,toConn
   else
     Namespace=TO_NAME_NONE;
   Line=line;
-  setBreakpoint();
+  setText(4,"DEFERED");
 }
 
 void toBreakpointItem::setBreakpoint(void)
@@ -87,11 +97,8 @@ END;",
     if (ret==TO_SUCCESS) {
       int bnum;
       str>>bnum;
-      if (bnum!=0) {
-	setText(TO_BREAK_COL,QString::number(bnum));
-	setText(4,"ENABLED");
-      } else
-	setText(4,"DEFERED");
+      setText(TO_BREAK_COL,QString::number(bnum));
+      setText(4,"ENABLED");
       ok=true;
     } else if (ret==TO_ERROR_ILLEGAL_LINE) {
       toStatusMessage("Can not enable breakpoint, not a valid line. Perhaps needs to recompile.");
@@ -103,10 +110,9 @@ END;",
     setText(4,"NOT SET");
 }
 
-void toBreakpointItem::clearBreakpoint(void)
+void toBreakpointItem::clearBreakpoint()
 {
-  if (text(4)=="ENABLED"||text(4)=="DISABLED") {
-    setText(4,"NOT SET");
+  if (text(4)=="ENABLED"&&!text(TO_BREAK_COL).isEmpty()) {
     try {
       otl_stream str(1,
 		     "
@@ -114,11 +120,12 @@ DECLARE
     bnum BINARY_INTEGER;
     ret BINARY_INTEGER;
 BEGIN
-    ret:=DBMS_DEBUG.DELETE_BREAKPOINT(:bnum<char[100],in>);
+    bnum:=:bnum<int,in>;
+    ret:=DBMS_DEBUG.DELETE_BREAKPOINT(bnum);
     SELECT ret INTO :ret<int,out> FROM DUAL;
 END;",
 		     Connection.connection());
-      str<<(const char *)text(TO_BREAK_COL);
+      str<<text(TO_BREAK_COL).toInt();
       int res;
       str>>res;
       if (res!=TO_SUCCESS) {
@@ -130,11 +137,77 @@ END;",
     } TOCATCH
     setText(TO_BREAK_COL,NULL);
   }
+  setText(4,"DISABLED");
 }
 
 #define DEBUG_INDENT 10
 
 static QPixmap *toBreakpointPixmap;
+static QPixmap *toDisBreakpointPixmap;
+
+bool toDebugText::readData(toConnection &conn,QListView *Stack)
+{
+  QListViewItem *item=NULL;
+  if (Stack&&Stack->firstChild())
+    for(item=Stack->firstChild();item->firstChild();item=item->firstChild())
+      ;
+  try {
+    otl_stream lines(1,
+		     "SELECT Text FROM All_Source"
+		     " WHERE OWNER = :f1<char[31]>"
+		     "   AND NAME = :f2<char[31]>"
+		     "   AND TYPE = :f3<char[31]>"
+		     " ORDER BY Type,Line",
+		     conn.connection());
+    otl_stream errors;
+    errors.set_column_type(1,otl_var_int);
+    errors.open(1,
+		"SELECT Line-1,Text FROM All_Errors"
+		" WHERE OWNER = :f1<char[31]>"
+		"   AND NAME = :f2<char[31]>"
+		"   AND TYPE = :f3<char[31]>"
+		" ORDER BY Type,Line",
+		conn.connection());
+
+    map<int,QString> Errors;
+
+    lines<<(const char *)Schema;
+    lines<<(const char *)Object;
+    lines<<(const char *)Type;
+    QString str;
+    while(!lines.eof()) {
+      char buffer[4001];
+      lines>>buffer;
+      str+=buffer;
+    }
+    setText(str);
+    setEdited(false);
+    setCurrent(-1);
+    if (str.isEmpty())
+      return false;
+    else {
+      errors<<(const char *)Schema;
+      errors<<(const char *)Object;
+      errors<<(const char *)Type;
+      while(!errors.eof()) {
+	char buffer[4001];
+	int line;
+	errors>>line;
+	errors>>buffer;
+	Errors[line]+=" ";
+	Errors[line]+=buffer;
+      }
+      setErrors(Errors);
+      if (item&&
+	  Schema==item->text(2)&&
+	  Object==item->text(0)&&
+	  Type==item->text(3))
+	setCurrent(item->text(1).toInt()-1);
+      return true;
+    }
+  } TOCATCH
+  return false;
+}
 
 void toDebugText::setData(const QString &schema,const QString &type,const QString &object)
 {
@@ -163,6 +236,8 @@ toDebugText::toDebugText(QListView *breakpoints,
   NoBreakpoints=false;
   if (!toBreakpointPixmap)
     toBreakpointPixmap=new QPixmap((const char **)breakpoint_xpm);
+  if (!toDisBreakpointPixmap)
+    toDisBreakpointPixmap=new QPixmap((const char **)disbreakpoint_xpm);
 }
 
 bool toDebugText::checkItem(toBreakpointItem *item)
@@ -184,7 +259,7 @@ void toDebugText::clear(void)
   toHighlightedText::clear();
 }
 
-bool toDebugText::hasBreakpoint(int row)
+bool toDebugText::hasBreakpoint(int row) // This has to leave CurrentItem on the breakpoint
 {
   if (!FirstItem&&!NoBreakpoints) {
     FirstItem=dynamic_cast<toBreakpointItem *>(Breakpoints->firstChild());
@@ -225,13 +300,19 @@ bool toDebugText::hasBreakpoint(int row)
 void toDebugText::paintCell(QPainter *painter,int row,int col)
 {
   toHighlightedText::paintCell(painter,row,col);
-  QPalette cp=qApp->palette();
-  painter->fillRect(0,0,DEBUG_INDENT-2,cellHeight(),cp.active().background());
-  painter->fillRect(DEBUG_INDENT-2,0,1,cellHeight(),cp.active().midlight());
-  painter->fillRect(DEBUG_INDENT-1,0,1,cellHeight(),cp.active().dark());
-  if (hasBreakpoint(row)) {
-    int h=max((cellHeight()-toBreakpointPixmap->height())/2,0);
-    painter->drawPixmap(0,h,*toBreakpointPixmap);
+  if (col==0) {
+    QPalette cp=qApp->palette();
+    painter->fillRect(0,0,DEBUG_INDENT-2,cellHeight(),cp.active().background());
+    painter->fillRect(DEBUG_INDENT-2,0,1,cellHeight(),cp.active().midlight());
+    painter->fillRect(DEBUG_INDENT-1,0,1,cellHeight(),cp.active().dark());
+
+    if (hasBreakpoint(row)) {
+      int h=max((cellHeight()-toBreakpointPixmap->height())/2,0);
+      if (CurrentItem->text(4)=="DISABLED")
+	painter->drawPixmap(0,h,*toDisBreakpointPixmap);
+      else
+	painter->drawPixmap(0,h,*toBreakpointPixmap);
+    }
   }
 }
 
@@ -269,14 +350,24 @@ void toDebugText::mouseMoveEvent(QMouseEvent *me)
   LastX=me->x();
 }
 
-void toDebugText::mouseDoubleClickEvent(QMouseEvent *me)
+void toDebugText::toggleBreakpoint(int row,bool enable)
 {
-  if (me->x()+xOffset()>DEBUG_INDENT)
-    toHighlightedText::mouseDoubleClickEvent(me);
-  else {
-    int row=findRow(me->y());
-    if (row>=0) {
-      if (hasBreakpoint(row)) {
+  if (Schema.isEmpty()||
+      Type.isEmpty()||
+      Object.isEmpty())
+    return;
+
+  int curcol;
+  if (row<0)
+    getCursorPosition (&row,&curcol);
+  if (row>=0) {
+    if (hasBreakpoint(row)) {
+      if (enable) {
+	if (CurrentItem->text(4)=="DISABLED")
+	  CurrentItem->setText(4,"DEFERED");
+	else
+	  CurrentItem->clearBreakpoint();
+      } else {
 	CurrentItem->clearBreakpoint();
 	delete CurrentItem;
 	if (FirstItem==CurrentItem) {
@@ -284,17 +375,27 @@ void toDebugText::mouseDoubleClickEvent(QMouseEvent *me)
 	  CurrentItem=FirstItem=NULL;
 	} else
 	  CurrentItem=FirstItem;
-      } else {
-	if (CurrentItem&&CurrentItem->line()>row)
-	  new toBreakpointItem(Breakpoints,NULL,Connection,
-			       Schema,Type,Object,row);
-	else
-	  new toBreakpointItem(Breakpoints,CurrentItem,Connection,
-			       Schema,Type,Object,row);
-	FirstItem=CurrentItem=NULL;
-	NoBreakpoints=false;
       }
-      repaint();
+    } else if (!enable) {
+      if (CurrentItem&&CurrentItem->line()>row)
+	new toBreakpointItem(Breakpoints,NULL,Connection,
+			     Schema,Type,Object,row);
+      else
+	new toBreakpointItem(Breakpoints,CurrentItem,Connection,
+			     Schema,Type,Object,row);
+      FirstItem=CurrentItem=NULL;
+      NoBreakpoints=false;
     }
+    repaint();
+  }
+}
+
+void toDebugText::mouseDoubleClickEvent(QMouseEvent *me)
+{
+  if (me->x()+xOffset()>DEBUG_INDENT)
+    toHighlightedText::mouseDoubleClickEvent(me);
+  else {
+    int row=findRow(me->y());
+    toggleBreakpoint(row);
   }
 }

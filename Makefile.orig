@@ -28,6 +28,7 @@ SOURCES=\
 	toconnection.cpp	\
 	todebug.cpp		\
 	todebugtext.cpp		\
+	todebugwatch.cpp	\
 	tofilesize.cpp		\
 	toglobalsetting.cpp     \
 	tohighlightedtext.cpp	\

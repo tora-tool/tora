@@ -33,12 +33,14 @@
 
 class toConnection;
 class toMarkedText;
+class QToolButton;
 class QTimer;
 
 class toOutput : public QVBox {
   Q_OBJECT
 
   toMarkedText *Output;
+  QToolButton *DisableButton;
   QTimer *Timer;
 
 protected:
@@ -48,6 +50,7 @@ public:
   virtual ~toOutput();
   void insertLine(const QString &str)
   { Output->insertLine(str); }
+  bool enabled(void);
 public slots:
   void clear(void);
   virtual void refresh(void);

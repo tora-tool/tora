@@ -142,13 +142,13 @@ toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  QToolButton *disableButton=new QToolButton(toolbar);
-  disableButton->setToggleButton(true);
-  disableButton->setIconSet(QIconSet(*toOnlinePixmap),false);
-  disableButton->setIconSet(QIconSet(*toOfflinePixmap),true);
-  disableButton->setOn(!enabled);
-  connect(disableButton,SIGNAL(toggled(bool)),this,SLOT(disable(bool)));
-  QToolTip::add(disableButton,"Enable or disable getting SQL output.");
+  DisableButton=new QToolButton(toolbar);
+  DisableButton->setToggleButton(true);
+  DisableButton->setIconSet(QIconSet(*toOnlinePixmap),false);
+  DisableButton->setIconSet(QIconSet(*toOfflinePixmap),true);
+  DisableButton->setOn(!enabled);
+  connect(DisableButton,SIGNAL(toggled(bool)),this,SLOT(disable(bool)));
+  QToolTip::add(DisableButton,"Enable or disable getting SQL output.");
 
   new QToolButton(*toEraseLogPixmap,
 		  "Clear output",	
@@ -231,3 +231,7 @@ void toOutput::changeRefresh(const QString &str)
   toRefreshParse(Timer,str);
 }
 
+bool toOutput::enabled(void)
+{
+  return !DisableButton->isOn();
+}

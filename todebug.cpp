@@ -29,6 +29,7 @@
 #include <ctype.h>
 #include <stack>
 
+#include <qsizepolicy.h>
 #include <qmessagebox.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
@@ -71,6 +72,10 @@
 #include "icons/showdebug.xpm"
 #include "icons/scansource.xpm"
 #include "icons/toworksheet.xpm"
+#include "icons/togglebreak.xpm"
+#include "icons/enablebreak.xpm"
+#include "icons/addwatch.xpm"
+#include "icons/delwatch.xpm"
 
 class toDebugTool : public toTool {
   map<toConnection *,QWidget *> Windows;
@@ -109,21 +114,114 @@ static toDebugTool DebugTool;
 #include <stdio.h>
 
 class toDebugOutput : public toOutput {
+  toDebug *Debugger;
 public:
-  toDebugOutput(QWidget *parent,toConnection &conn)
-    : toOutput(parent,conn,false)
-  { }
+  toDebugOutput(toDebug *debug,QWidget *parent,toConnection &conn)
+    : toOutput(parent,conn),Debugger(debug)
+  {
+  }
   virtual void refresh(void)
   {
+    if (Debugger->isRunning()&&enabled()) {
+      try {
+	int ret;
+	do {
+	  otl_stream poll(1,
+			  "
+DECLARE
+   coll sys.dbms_debug_vc2coll;
+   ret INTEGER;
+   i INTEGER;
+   line VARCHAR2(100);
+   errm VARCHAR2(100);
+BEGIN
+  DBMS_DEBUG.EXECUTE('DECLARE '||
+                     '  pp SYS.dbms_debug_vc2coll := SYS.dbms_debug_vc2coll(); '||
+                     '  line VARCHAR2(100); '||
+                     '  ret INTEGER; '||
+                     'BEGIN '||
+                     '  DBMS_OUTPUT.GET_LINE(line,ret); '||
+                     '  pp.EXTEND(2); '||
+                     '  pp(1):=ret; '||
+                     '  pp(2):=line; '||
+                     '  :1 := pp; '||
+                     'END;',
+                     -1,
+                     1,
+                     coll,
+                     line);
+  i:=coll.first;
+  IF i IS NOT NULL THEN
+    ret:=coll(i);
+    IF ret = 0 THEN
+      i:=coll.next(i);
+      line:=coll(i);
+    ELSE
+      line:='';
+    END IF;
+  ELSE
+    ret:=1;
+  END IF;
+  SELECT ret,line INTO :ret<int,out>,:line<char[101,out> FROM DUAL;
+END;",
+			  Connection.connection());
+	  poll>>ret;
+	  char buffer[101];
+	  poll>>buffer;
+	  if (ret==0||strlen(buffer))
+	    insertLine(buffer);
+	} while(ret==0);
+      } TOCATCH
+    }    
   }
   virtual void disable(bool dis)
   {
+    if (Debugger->isRunning()) {
+      try {
+	if (dis)
+	  otl_cursor::direct_exec(Connection.connection(),
+				"
+DECLARE
+   coll sys.dbms_debug_vc2coll;
+   errm VARCHAR2(100);
+BEGIN
+  DBMS_DEBUG.EXECUTE('BEGIN DBMS_OUTPUT.DISABLE; END;',
+                     -1,
+                     0,
+                     coll,
+                     errm);
+END;");
+	else
+	  otl_cursor::direct_exec(Connection.connection(),
+				"
+DECLARE
+   coll sys.dbms_debug_vc2coll;
+   errm VARCHAR2(100);
+BEGIN
+  DBMS_DEBUG.EXECUTE('BEGIN DBMS_OUTPUT.ENABLE; END;',
+                     -1,
+                     0,
+                     coll,
+                     errm);
+END;");
+      } catch (...) {
+	toStatusMessage("Couldn't enable/disable output for session");
+      }
+    }
   }
 };
 
+bool toDebug::isRunning(void)
+{
+  toLocker lock(Lock);
+  return RunningTarget;
+}
+
 void toDebug::targetTask::run(void)
 {
+#ifdef TO_DEBUG
   printf("Started task\n");
+#endif
   {
     toConnection Connection(Parent.Connection.user(),
 			    Parent.Connection.password(),
@@ -149,7 +247,9 @@ END;
       Parent.TargetSession=buffer;
       Parent.ChildSemaphore.up();
     }
+#ifdef TO_DEBUG
     printf("Connected to database\n");
+#endif
     while(1) {
       {
 	toLocker lock(Parent.Lock);
@@ -157,7 +257,9 @@ END;
 	colSize=Parent.ColumnSize;
       }
       Parent.TargetSemaphore.down();
+#ifdef TO_DEBUG
       printf("Anything to do?\n");
+#endif
 
       QString sql;
       list<QString> inParams;
@@ -175,7 +277,9 @@ END;
 	break;
 
       try {
+#ifdef TO_DEBUG
 	printf("Running SQL\n%s\n",(const char *)sql);
+#endif
 
 	otl_stream q(1,
 		     (const char *)sql,
@@ -186,7 +290,9 @@ END;
 
 	outParams=new list<QString>;
 
+#ifdef TO_DEBUG
 	printf("Checking output\n");
+#endif
 	while(!q.eof()) {
 	  char buffer[colSize];
 	  q>>buffer;
@@ -195,12 +301,15 @@ END;
       } catch (const QString &str) {
 	printf("Encountered error:\n%s\n",(const char *)str);
       } catch (const otl_exception &exc) {
+	printf("Running SQL\n%s\n",(const char *)sql);
 	printf("Encountered SQL error:\n%s\n",exc.msg);
       } catch (...) {
 	printf("Encountered error in target SQL\n");
       }
 
+#ifdef TO_DEBUG
       printf("Storing result\n");
+#endif
       {
 	toLocker lock(Parent.Lock);
 	if (outParams) {
@@ -211,12 +320,16 @@ END;
       Parent.ChildSemaphore.up();
     }
 
+#ifdef TO_DEBUG
     printf("Target thread exiting\n");
+#endif
   }
   toLocker lock(Parent.Lock);
   Parent.TargetThread=NULL;
   Parent.ChildSemaphore.up();
+#ifdef TO_DEBUG
   printf("Done exiting\n");
+#endif
 }
 
 static struct toBlock {
@@ -599,7 +712,7 @@ void toDebug::execute(void)
 	TargetSemaphore.up(); // Go go power rangers!
       }
       if (sync()>=0)
-	continueExecution(TO_BREAK_ANY_RETURN);
+	continueExecution(TO_BREAK_ANY_CALL);
     } TOCATCH
   } else
     toStatusMessage("Couldn't find any function or procedure under cursor.");
@@ -638,6 +751,10 @@ END;
 #endif
     } while(reason==TO_REASON_TIMEOUT||ret==TO_ERROR_TIMEOUT);
     setDeferedBreakpoints();
+    if (Output->enabled())
+      Output->disable(false);
+    else
+      Output->disable(true);
     return reason;
   } TOCATCH
   return -1;
@@ -834,6 +951,10 @@ static QPixmap *toPrevBugPixmap;
 static QPixmap *toScanPixmap;
 static QPixmap *toNewPixmap;
 static QPixmap *toDebugPixmap;
+static QPixmap *toToggleBreakPixmap;
+static QPixmap *toEnableBreakPixmap;
+static QPixmap *toAddWatchPixmap;
+static QPixmap *toDelWatchPixmap;
 
 void toDebug::updateState(int reason)
 {
@@ -872,6 +993,7 @@ void toDebug::updateState(int reason)
     }
     break;
   default:
+    DebugTabs->show();
     StopButton->setEnabled(true);
     StepOverButton->setEnabled(true);
     StepIntoButton->setEnabled(true);
@@ -936,10 +1058,11 @@ END;",
 	  item=new QListViewItem(item,name,QString::number(line),schema,type);
 	item->setOpen(true);
       }
+      Output->refresh();
       if (depth>=2)
 	viewSource(schema,name,type,line,true);
       else
-	continueExecution(TO_BREAK_ANY_RETURN);
+	continueExecution(TO_BREAK_NEXT_LINE);
     } TOCATCH
     break;
   }
@@ -951,42 +1074,34 @@ bool toDebug::viewSource(const QString &schema,const QString &name,const QString
   if (HeadEditor->schema()==schema&&
       HeadEditor->object()==name&&
       HeadEditor->type()==type) {
-    if (setCurrent) {
+    if (setCurrent)
       HeadEditor->setCurrent(line-1);
-      BodyEditor->setCurrent(-1);
-    } else
+    else
       HeadEditor->setCursorPosition(line-1,0);
     HeadEditor->setFocus();
     ShowButton->setOn(true);
   } else if (BodyEditor->schema()==schema&&
 	     BodyEditor->object()==name&&
 	     BodyEditor->type()==type) {
-    if (setCurrent) {
+    if (setCurrent)
       BodyEditor->setCurrent(line-1);
-      HeadEditor->setCurrent(-1);
-    } else
+    else
       BodyEditor->setCursorPosition(line-1,0);
+
     BodyEditor->setFocus();
     ShowButton->setOn(false);
   } else if (!BodyEditor->edited()&&(setCurrent||BodyEditor->current()<0)) {
     BodyEditor->setData(schema,type,name);
-    BodyEditor->readData(Connection);
-    if (setCurrent) {
-      BodyEditor->setCurrent(line-1);
-      HeadEditor->setCurrent(-1);
-    } else
-      BodyEditor->setCursorPosition(line-1,0);
+    BodyEditor->readData(Connection,StackTrace);
+    BodyEditor->setCursorPosition(line-1,0);
     BodyEditor->setFocus();
     updateContent(true);
+    ShowButton->setOn(false);
   } else if (!HeadEditor->edited()&&(setCurrent||HeadEditor->current()<0)) {
     toStatusMessage("Reading source into head editor");
     HeadEditor->setData(schema,type,name);
-    HeadEditor->readData(Connection);
-    if (setCurrent) {
-      HeadEditor->setCurrent(line-1);
-      BodyEditor->setCurrent(-1);
-    } else
-      HeadEditor->setCursorPosition(line-1,0);
+    HeadEditor->readData(Connection,StackTrace);
+    HeadEditor->setCursorPosition(line-1,0);
     HeadEditor->setFocus();
     ShowButton->setEnabled(true);
     ShowButton->setOn(true);
@@ -1092,6 +1207,14 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
     toNewPixmap=new QPixmap((const char **)toworksheet_xpm);
   if (!toDebugPixmap)
     toDebugPixmap=new QPixmap((const char **)showdebug_xpm);
+  if (!toToggleBreakPixmap)
+    toToggleBreakPixmap=new QPixmap((const char **)togglebreak_xpm);
+  if (!toEnableBreakPixmap)
+    toEnableBreakPixmap=new QPixmap((const char **)enablebreak_xpm);
+  if (!toAddWatchPixmap)
+    toAddWatchPixmap=new QPixmap((const char **)addwatch_xpm);
+  if (!toDelWatchPixmap)
+    toDelWatchPixmap=new QPixmap((const char **)delwatch_xpm);
 
   QToolBar *toolbar=new QToolBar("SQL Output",toMainWidget(),this);
 
@@ -1166,6 +1289,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   connect(DebugButton,SIGNAL(toggled(bool)),this,SLOT(showDebug(bool)));
   QToolTip::add(DebugButton,"Show/hide debug info pane.");
 
+  toolbar->addSeparator();
   new QToolButton(*toNextBugPixmap,
 		  "Go to next error",
 		  "Go to next error",
@@ -1177,12 +1301,38 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 		  this,SLOT(prevError(void)),
 		  toolbar);
 
+  toolbar->addSeparator();
+  new QToolButton(*toToggleBreakPixmap,
+		  "Toggle breakpoint on current line",
+		  "Toggle breakpoint on current line",
+		  this,SLOT(toggleBreak(void)),
+		  toolbar);
+  new QToolButton(*toEnableBreakPixmap,
+		  "Enable/disable breakpoint on current line",
+		  "Enable/disable breakpoint on current line",
+		  this,SLOT(toggleEnable(void)),
+		  toolbar);
+
+  toolbar->addSeparator();
+  new QToolButton(*toAddWatchPixmap,
+		  "Add new variable watch",
+		  "Add new variable watch",
+		  this,SLOT(toggleBreak(void)),
+		  toolbar);
+  new QToolButton(*toDelWatchPixmap,
+		  "Delete variable watch",
+		  "Delete variable watch",
+		  this,SLOT(toggleEnable(void)),
+		  toolbar);
+
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
   QSplitter *splitter=new QSplitter(Vertical,this);
   QSplitter *hsplitter=new QSplitter(Horizontal,splitter);
   DebugTabs=new QTabWidget(splitter);
+  DebugTabs->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,QSizePolicy::Minimum));
   DebugTabs->hide();
+
 
   {
     QValueList<int> sizes=splitter->sizes();
@@ -1206,29 +1356,6 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   Contents->setTreeStepSize(10);
   connect(Contents,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeContent(QListViewItem *)));
-
-  Parameters=new QListView(DebugTabs);
-  Parameters->addColumn("Name");
-  Parameters->addColumn("Content");
-  Parameters->setSorting(-1);
-  Parameters->setTreeStepSize(10);
-  Parameters->setRootIsDecorated(true);
-  Parameters->setAllColumnsShowFocus(true);
-  DebugTabs->addTab(Parameters,"Parameters");
-
-  Breakpoints=new QListView(DebugTabs);
-  Breakpoints->addColumn("Object");
-  Breakpoints->addColumn("Line");
-  Breakpoints->addColumn("Schema");
-  Breakpoints->addColumn("Object Type");
-  Breakpoints->addColumn("Enabled");
-  Breakpoints->addColumn("Breakpoint#");
-  Breakpoints->setColumnAlignment(1,AlignRight);
-  Breakpoints->setSorting(-1);
-  Breakpoints->setAllColumnsShowFocus(true);
-  DebugTabs->addTab(Breakpoints,"Breakpoints");
-  connect(Breakpoints,SIGNAL(clicked(QListViewItem *)),
-	  this,SLOT(showSource(QListViewItem *)));
 
   StackTrace=new QListView(DebugTabs);
   StackTrace->addColumn("Object");
@@ -1255,7 +1382,29 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   Watch->setAllColumnsShowFocus(true);
   DebugTabs->addTab(Watch,"Watch");
 
-  Output=new toDebugOutput(DebugTabs,Connection);
+  Breakpoints=new QListView(DebugTabs);
+  Breakpoints->addColumn("Object");
+  Breakpoints->addColumn("Line");
+  Breakpoints->addColumn("Schema");
+  Breakpoints->addColumn("Object Type");
+  Breakpoints->addColumn("Enabled");
+  Breakpoints->setColumnAlignment(1,AlignRight);
+  Breakpoints->setSorting(-1);
+  Breakpoints->setAllColumnsShowFocus(true);
+  DebugTabs->addTab(Breakpoints,"Breakpoints");
+  connect(Breakpoints,SIGNAL(clicked(QListViewItem *)),
+	  this,SLOT(showSource(QListViewItem *)));
+
+  Parameters=new QListView(DebugTabs);
+  Parameters->addColumn("Name");
+  Parameters->addColumn("Content");
+  Parameters->setSorting(-1);
+  Parameters->setTreeStepSize(10);
+  Parameters->setRootIsDecorated(true);
+  Parameters->setAllColumnsShowFocus(true);
+  DebugTabs->addTab(Parameters,"Parameters");
+
+  Output=new toDebugOutput(this,DebugTabs,Connection);
   DebugTabs->addTab(Output,"Debug Output");
 
   HeadEditor=new toDebugText(Breakpoints,Connection,hsplitter);
@@ -1404,8 +1553,6 @@ bool toDebug::checkStop(void)
 bool toDebug::checkCompile(void)
 {
   if (HeadEditor->edited()) {
-    if (!checkStop())
-      return false;
     switch (QMessageBox::warning(this,
 				 "Header changed",
 				 "Header changed. Continuing will discard uncompiled or saved changes",
@@ -1413,6 +1560,8 @@ bool toDebug::checkCompile(void)
 				 "&Discard changes",
 				 "Cancel")) {
     case 0:
+      if (!checkStop())
+	return false;
       if (!HeadEditor->compile())
 	return false;
       break;
@@ -1423,8 +1572,6 @@ bool toDebug::checkCompile(void)
     }
   }
   if (BodyEditor->edited()) {
-    if (!checkStop())
-      return false;
     switch (QMessageBox::warning(this,
 				 "Body changed",
 				 "Body changed. Continuing will discard uncompiled or saved changes",
@@ -1432,6 +1579,8 @@ bool toDebug::checkCompile(void)
 				 "&Discard changes",
 				 "Cancel")) {
     case 0:
+      if (!checkStop())
+	return false;
       if (!BodyEditor->compile())
 	return false;
       break;
@@ -1451,61 +1600,6 @@ bool toDebug::close(bool del)
   return false;
 }
 
-bool toDebugText::readData(toConnection &conn)
-{
-  try {
-    otl_stream lines(1,
-		     "SELECT Text FROM All_Source"
-		     " WHERE OWNER = :f1<char[31]>"
-		     "   AND NAME = :f2<char[31]>"
-		     "   AND TYPE = :f3<char[31]>"
-		     " ORDER BY Type,Line",
-		     conn.connection());
-    otl_stream errors;
-    errors.set_column_type(1,otl_var_int);
-    errors.open(1,
-		"SELECT Line-1,Text FROM All_Errors"
-		" WHERE OWNER = :f1<char[31]>"
-		"   AND NAME = :f2<char[31]>"
-		"   AND TYPE = :f3<char[31]>"
-		" ORDER BY Type,Line",
-		conn.connection());
-
-    map<int,QString> Errors;
-
-    lines<<(const char *)Schema;
-    lines<<(const char *)Object;
-    lines<<(const char *)Type;
-    QString str;
-    while(!lines.eof()) {
-      char buffer[4001];
-      lines>>buffer;
-      str+=buffer;
-    }
-    setText(str);
-    setEdited(false);
-    setCurrent(-1);
-    if (str.isEmpty())
-      return false;
-    else {
-      errors<<(const char *)Schema;
-      errors<<(const char *)Object;
-      errors<<(const char *)Type;
-      while(!errors.eof()) {
-	char buffer[4001];
-	int line;
-	errors>>line;
-	errors>>buffer;
-	Errors[line]+=" ";
-	Errors[line]+=buffer;
-      }
-      setErrors(Errors);
-      return true;
-    }
-  } TOCATCH
-  return false;
-}
-
 void toDebug::updateCurrent()
 {
   QString type=HeadEditor->type();
@@ -1516,16 +1610,16 @@ void toDebug::updateCurrent()
   QString bodyType=type;
   bodyType+=" BODY";
   BodyEditor->setType(bodyType);
-  if (!BodyEditor->readData(Connection)) {
+  if (!BodyEditor->readData(Connection,StackTrace)) {
     BodyEditor->setType(type);
-    BodyEditor->readData(Connection);
+    BodyEditor->readData(Connection,StackTrace);
     HeadEditor->clear();
     BodyEditor->show();
     HeadEditor->hide();
     ShowButton->setEnabled(false);
     ShowButton->setOn(false);
   } else {
-    HeadEditor->readData(Connection);
+    HeadEditor->readData(Connection,StackTrace);
     ShowButton->setEnabled(true);
     ShowButton->setOn(true);
   }
@@ -1566,6 +1660,7 @@ void toDebug::changeView(bool head)
     BodyEditor->show();
     HeadEditor->hide();
   }
+  currentEditor()->setFocus();
 }
 
 bool toDebugText::compile(void)
@@ -1756,8 +1851,20 @@ void toDebug::showSource(QListViewItem *item)
     if (!viewSource(item->text(2),item->text(0),item->text(3),item->text(1).toInt(),false)) {
       if (checkCompile()) {
 	BodyEditor->setEdited(false); // Write over this editor
-	viewSource(item->text(0),item->text(1),item->text(3),item->text(2).toInt(),false);
+	viewSource(item->text(2),item->text(0),item->text(3),item->text(1).toInt(),false);
       }
     }
   }
+}
+
+void toDebug::toggleBreak(void)
+{
+  currentEditor()->toggleBreakpoint();
+  currentEditor()->setFocus();
+}
+
+void toDebug::toggleEnable(void)
+{
+  currentEditor()->toggleBreakpoint(-1,true);
+  currentEditor()->setFocus();
 }

@@ -155,6 +155,8 @@ public:
 
   friend targetTask;
 
+  bool isRunning(void);
+
 public slots:
   void stop(void);
   void compile(void);
@@ -171,6 +173,8 @@ public slots:
   void reorderContent(int,int);
   void newSheet(void);
   void execute(void);
+  void toggleBreak(void);
+  void toggleEnable(void);
   void stepInto(void)
   { continueExecution(TO_BREAK_ANY_CALL); }
   void stepOver(void)

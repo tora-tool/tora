@@ -29,6 +29,12 @@ then
 	echo PERL Required for installation
 fi
 
+for a in *.ui
+do
+    touch $a.h
+    echo "#include \"$a.h\"" >$a.cpp
+    touch $a.moc
+done
 for a in *.h
 do
     if grep -i Q_OBJECT $a >/dev/null
@@ -38,13 +44,6 @@ do
 done
 sleep 1
 touch *.h
-
-for a in *.ui
-do
-    touch $a.h
-    touch $a.cpp
-    touch $a.moc
-done
 sleep 1
 touch *.ui
 

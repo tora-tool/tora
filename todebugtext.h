@@ -69,6 +69,8 @@ public:
 	      QWidget *parent,
 	      const char *name=NULL);
 
+  void toggleBreakpoint(int row=-1,bool enable=false);
+
   void setData(const QString &schema,const QString &type,const QString &data);
   const QString &schema(void) const
   { return Schema; }
@@ -82,7 +84,7 @@ public:
   { return Type; }
   void clear(void);
 
-  bool readData(toConnection &connection);
+  bool readData(toConnection &connection,QListView *);
   bool compile(void);
 protected:
   virtual void paintCell(QPainter *painter,int row,int col);
