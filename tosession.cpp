@@ -39,6 +39,7 @@
 #include "toconnection.h"
 #include "tomain.h"
 #include "toresultbar.h"
+#include "toresultcombo.h"
 #include "toresultlock.h"
 #include "toresultlong.h"
 #include "toresultstats.h"
@@ -202,14 +203,12 @@ toSession::toSession(QWidget *main,toConnection &connection)
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  Select=new QComboBox(toolbar);
-  Select->insertItem("All");
-  Select->insertItem("No background");
-  Select->insertItem("No system");
-  toQList users=toQuery::readQuery(connection,
-				   toSQL::string(toSQL::TOSQL_USERLIST,connection));
-  for(toQList::iterator i=users.begin();i!=users.end();i++)
-    Select->insertItem(*i);
+  Select=new toResultCombo(toolbar);
+  Select->setSelected("All");
+  Select->additionalItem("All");
+  Select->additionalItem("No background");
+  Select->additionalItem("No system");
+  Select->query(toSQL::sql(toSQL::TOSQL_USERLIST));
 
   connect(Select,SIGNAL(activated(int)),this,SLOT(refresh()));
   

@@ -45,6 +45,7 @@ class toConnection;
 class toMain;
 class toPopupMenu;
 class toResultBar;
+class toResultCombo;
 class toResultLock;
 class toResultLong;
 class toResultStats;
@@ -61,7 +62,7 @@ class toSession : public toToolWidget {
 
   QWidget *CurrentTab;
 
-  QComboBox *Select;
+  toResultCombo *Select;
 
   toSGAStatement *CurrentStatement;
   toSGAStatement *PreviousStatement;

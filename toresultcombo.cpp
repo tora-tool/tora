@@ -64,6 +64,11 @@ void toResultCombo::query(const QString &sql,const toQList &param)
 
   try {
     clear();
+    insertStringList(Additional);
+    for(unsigned int i=0;i<Additional.count();i++)
+      if (Additional[i]==Selected)
+	setCurrentItem(i);
+
     if (Query) {
       delete Query;
       Query=NULL;

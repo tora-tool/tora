@@ -41,14 +41,15 @@
 
 #include <list>
 
-class toResultView;
-class QPopupMenu;
 class QComboBox;
+class QPopupMenu;
 class QSpinBox;
-class QTimer;
-class toResultPlan;
-class toWorksheetStatistic;
 class QTabWidget;
+class QTimer;
+class toResultCombo;
+class toResultPlan;
+class toResultView;
+class toWorksheetStatistic;
 
 class toAnalyze : public toToolWidget {
   Q_OBJECT
@@ -56,7 +57,7 @@ class toAnalyze : public toToolWidget {
   QTabWidget *Tabs;
   toResultView *Statistics;
   QComboBox *Analyzed;
-  QComboBox *Schema;
+  toResultCombo *Schema;
   QComboBox *Type;
   QComboBox *Operation;
   QComboBox *For;

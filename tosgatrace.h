@@ -45,6 +45,7 @@ class QPopupMenu;
 class QTabWidget;
 class toConnection;
 class toMain;
+class toResultCombo;
 class toResultLong;
 class toSGAStatement;
 class toTool;
@@ -54,7 +55,7 @@ class toSGATrace : public toToolWidget {
 
   toResultLong *Trace;
   QTabWidget *ResultTab;
-  QComboBox *Schema;
+  toResultCombo *Schema;
   QComboBox *Type;
   QComboBox *Refresh;
   QComboBox *Limit;

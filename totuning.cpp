@@ -95,7 +95,7 @@ static std::list<QString> TabList(void)
   QString last;
   for(std::list<QString>::iterator i=val.begin();i!=val.end();i++) {
     QStringList parts=QStringList::split(":",*i);
-    if (parts.size()==3) {
+    if (parts.count()==3) {
       parts.append(parts[2]);
       parts[2]="Charts";
     }
@@ -1242,7 +1242,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
     std::list<QString> val=toSQL::range("toTuning:Charts");
     for(std::list<QString>::iterator i=val.begin();i!=val.end();i++) {
       QStringList parts=QStringList::split(":",*i);
-      if (parts.size()==3) {
+      if (parts.count()==3) {
 	parts.append(parts[2]);
 	parts[2]="Charts";
       }

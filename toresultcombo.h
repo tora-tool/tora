@@ -39,6 +39,7 @@
 #include "toresult.h"
 
 #include <qcombobox.h>
+#include <qstringlist.h>
 
 class toNoBlockQuery;
 class toSQL;
@@ -54,6 +55,7 @@ class toResultCombo : public QComboBox, public toResult {
   toBackground Poll;
 
   QString Selected;
+  QStringList Additional;
 public:
   /** Create the widget.
    * @param parent Parent widget.
@@ -67,6 +69,15 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &sql,const toQList &param);
+
+  /** Clear list of additional items.
+   */
+  virtual void clearAdditional()
+  { Additional.clear(); }
+  /** Item to add before the query is read. Can be called several times.
+   */
+  virtual void additionalItem(const QString &item)
+  { Additional<<item; }
 
   /** Handle any connection by default
    */

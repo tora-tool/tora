@@ -36,6 +36,7 @@
 #include "toconf.h"
 #include "toconnection.h"
 #include "tomain.h"
+#include "toresultcombo.h"
 #include "toresultlong.h"
 #include "toresultresources.h"
 #include "toresultview.h"
@@ -131,7 +132,11 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
 		  toolbar);
   toolbar->addSeparator();
   new QLabel("Schema ",toolbar);
-  Schema=new QComboBox(false,toolbar);
+  Schema=new toResultCombo(toolbar);
+  Schema->additionalItem("Any");
+  Schema->setSelected(connection.user().upper());
+  Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
+
   connect(Schema,SIGNAL(activated(const QString &)),this,SLOT(changeSchema(const QString &)));
 
   toolbar->addSeparator();
@@ -345,16 +350,7 @@ void toSGATrace::refresh(void)
 void toSGATrace::updateSchemas(void)
 {
   try {
-    Schema->clear();
-    toQuery users(connection(),
-		  toSQL::string(toSQL::TOSQL_USERLIST,connection()));
-    Schema->insertItem("Any");
-    for(int i=0;!users.eof();i++) {
-      QString user=users.readValue();
-      Schema->insertItem(user);
-      if (CurrentSchema==user)
-	Schema->setCurrentItem(i+1);
-    }
+    Schema->refresh();
   } TOCATCH
 }
 

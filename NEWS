@@ -1,5 +1,8 @@
 1.3.5:
 
+2002-04-15: Some minor Qt2 fixes.
+2002-04-15: Made use of result combos in all user lists where applicable.
+2002-04-15: Added additional items functionality to result combos.
 2002-04-15: Removed empty HTML table from API documentation.
 2002-04-15: Fixed problem with ORA-24344 not being correctly reported.
 2002-04-15: Don't log errors from OCI_SUCCESS_WITH_INFO returns.

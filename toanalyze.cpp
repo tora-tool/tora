@@ -38,6 +38,7 @@
 #include "toconf.h"
 #include "toconnection.h"
 #include "tomain.h"
+#include "toresultcombo.h"
 #include "toresultlong.h"
 #include "toresultplan.h"
 #include "toresultview.h"
@@ -164,17 +165,11 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   Analyzed->insertItem("Not analyzed");
   Analyzed->insertItem("Analyzed");
 
-  Schema=new QComboBox(toolbar);
-  toQList users=toQuery::readQuery(connection,
-				   toSQL::string(toSQL::TOSQL_USERLIST,connection));
-  int j=0;
-  Schema->insertItem("All");
+  Schema=new toResultCombo(toolbar);
+  Schema->setSelected("All");
+  Schema->additionalItem("All");
+  Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
 
-  for(toQList::iterator i=users.begin();i!=users.end();i++,j++) {
-    Schema->insertItem(*i);
-    if ((*i)==connection.user().upper())
-      Schema->setCurrentItem(j);
-  }
   Type=new QComboBox(toolbar);
   Type->insertItem("Tables");
   Type->insertItem("Indexes");
@@ -309,8 +304,8 @@ void toAnalyze::refresh(void)
     sql=toSQL::string(SQLListTables,connection());
   else
     sql=toSQL::string(SQLListIndex,connection());
-  if (Schema->currentItem()!=0) {
-    par.insert(par.end(),Schema->currentText());
+  if (Schema->selected()!="All") {
+    par.insert(par.end(),Schema->selected());
     sql+="\n   AND owner = :own<char[100]>";
   }
   switch (Analyzed->currentItem()) {
