@@ -44,7 +44,6 @@ Extended functionality:
 * Add support for Oracle7 in debugger.
 * Optionaly drop before create in toExtract.
 * Tabbed source windows in debugger.
-* Better indication of need commit detection.
 
 New tools:
 

@@ -88,8 +88,6 @@
 #include "icons/execute.xpm"
 #include "icons/executestep.xpm"
 #include "icons/executeall.xpm"
-#include "icons/commit.xpm"
-#include "icons/rollback.xpm"
 #include "icons/eraselog.xpm"
 #include "icons/stop.xpm"
 #include "icons/clock.xpm"
@@ -252,16 +250,8 @@ public:
       Worksheet->executeSaved();
       e->accept();
     } else if (e->state()==0&&
-	       e->key()==Key_F2) {
-      Worksheet->commitButton();
-      e->accept();
-    } else if (e->state()==0&&
 	       e->key()==Key_F4) {
       Worksheet->describe();
-      e->accept();
-    } else if (e->state()==ControlButton&&
-	       e->key()==Key_Backspace) {
-      Worksheet->rollbackButton();
       e->accept();
     } else if (e->state()==ControlButton&&
 	       e->key()==Key_Up) {
@@ -313,17 +303,6 @@ void toWorksheet::setup(bool autoLoad)
 		  "Refresh",
 		  "Update last executed statement",
 		  this,SLOT(refresh(void)),
-		  toolbar);
-  toolbar->addSeparator();
-  new QToolButton(QPixmap((const char **)commit_xpm),
-		  "Commit work",
-		  "Commit work",
-		  this,SLOT(commitButton(void)),
-		  toolbar);
-  new QToolButton(QPixmap((const char **)rollback_xpm),
-		  "Rollback work",
-		  "Rollback work",
-		  this,SLOT(rollbackButton(void)),
 		  toolbar);
 
   if (Light) {
@@ -551,13 +530,6 @@ void toWorksheet::windowActivated(QWidget *widget)
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),
 			   "&Refresh",this,SLOT(refresh(void)),
 			   Key_F5);
-      ToolMenu->insertSeparator();
-      ToolMenu->insertItem(QPixmap((const char **)commit_xpm),
-			   "&Commit",this,SLOT(commitButton(void)),
-			   Key_F2);
-      ToolMenu->insertItem(QPixmap((const char **)rollback_xpm),
-			   "&Rollback",this,SLOT(rollbackButton(void)),
-			   CTRL+Key_Backspace);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)describe_xpm),
 			   "&Describe under cursor",this,SLOT(describe(void)),
@@ -866,7 +838,7 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
     if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
       connection().commit();
     else
-      connection().setNeedCommit();
+      toMainWidget()->setNeedCommit(connection());
   }
   saveDefaults();
 }
@@ -1209,16 +1181,6 @@ void toWorksheet::executeNewline(void)
   Editor->setCursorPosition(eline,epos,true);
   if (Editor->hasMarkedText())
     query(Editor->markedText(),false);
-}
-
-void toWorksheet::commitButton(void)
-{
-  connection().commit();
-}
-
-void toWorksheet::rollbackButton(void)
-{
-  connection().rollback();
 }
 
 void toWorksheet::describe(void)

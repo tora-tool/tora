@@ -611,6 +611,7 @@ void toMain::commandCallback(int cmd)
 	toConnection &conn=currentConnection();
 	emit willCommit(conn,true);
 	conn.commit();
+	setNeedCommit(conn,false);
       } TOCATCH
       break;
     case TO_FILE_CLEARCACHE:
@@ -623,6 +624,7 @@ void toMain::commandCallback(int cmd)
 	toConnection &conn=currentConnection();
 	emit willCommit(conn,false);
 	conn.rollback();
+	setNeedCommit(conn,false);
       } TOCATCH
       break;
     case TO_FILE_QUIT:
@@ -691,7 +693,7 @@ void toMain::addConnection(void)
 toConnection &toMain::currentConnection()
 {
   for (std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
-    if ((*i)->description()==ConnectionSelection->currentText()) {
+    if (ConnectionSelection->currentText().startsWith((*i)->description())) {
       return *(*i);
     }
   }
@@ -726,12 +728,28 @@ void toMain::addConnection(toConnection *conn)
   createDefault();
 }
 
+void toMain::setNeedCommit(toConnection &conn,bool needCommit)
+{
+  int pos=0;
+  for (std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+    if (conn.description()==(*i)->description()) {
+      QString dsc=conn.description();
+      if (needCommit)
+	dsc+=" *";
+      ConnectionSelection->changeItem(dsc,pos);
+      break;
+    }
+    pos++;
+  }
+  conn.setNeedCommit(needCommit);
+}
+
 bool toMain::delConnection(void)
 {
   toConnection *conn=NULL;
   int pos=0;
   for (std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
-    if ((*i)->description()==ConnectionSelection->currentText()) {
+    if (ConnectionSelection->currentText().startsWith((*i)->description())) {
       conn=(*i);
       if (conn->needCommit()) {
 	QString str("Commit work in session to ");

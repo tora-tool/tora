@@ -123,9 +123,7 @@ public slots:
   void executeStep()
   { execute(false,true); }
   void executeNewline();
-  void commitButton();
   void describe();
-  void rollbackButton();
   void eraseLogButton();
   void changeResult(QWidget *widget);
   void windowActivated(QWidget *w);

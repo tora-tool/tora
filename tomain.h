@@ -355,6 +355,9 @@ public:
    * @exception QString If connection wasn't found.
    */
   toConnection &connection(const QString &);
+  /** Set if a connection needs to be commited. Also updates visual feedback in interface.
+   */
+  void setNeedCommit(toConnection &conn,bool needCommit=true);
 
   /** Edit an SQL statement in the SQL editor if any connected.
    * @param str Identifier of the SQL to edit.

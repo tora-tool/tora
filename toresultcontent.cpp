@@ -316,7 +316,7 @@ void toResultContentEditor::deleteCurrent()
       if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
 	conn.commit();
       else
-	conn.setNeedCommit();
+	toMainWidget()->setNeedCommit(conn);
     } TOCATCH
   }
   int crow=currentRow();
@@ -365,7 +365,7 @@ void toResultContentEditor::saveUnsaved()
 	if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
 	  conn.commit();
 	else
-	  conn.setNeedCommit();
+	  toMainWidget()->setNeedCommit(conn);
       } TOCATCH
     } else {
       QString sql="UPDATE ";
@@ -433,7 +433,7 @@ void toResultContentEditor::saveUnsaved()
 	  if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
 	    conn.commit();
 	  else
-	    conn.setNeedCommit();
+	    toMainWidget()->setNeedCommit(conn);
 	} catch (const QString &str) {
 	  int col=0;
 	  for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++)

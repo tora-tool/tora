@@ -44,6 +44,8 @@
 2001-10-02: Made printing of lists use same fonts as on screen.
 2001-10-02: Comment out DBA buttons for tables.
 2001-10-02: Fixed assert error output in configure.
+2001-10-02: Removed commit/rollback from worksheet.
+2001-10-02: Made the connectionlist indicate wether commit is needed.
 
 1.1.1: Released 2001-09-24
 
