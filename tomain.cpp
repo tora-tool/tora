@@ -715,7 +715,7 @@ void toMain::commandCallback(int cmd)
       {
 	QWidget *widget=workspace()->activeWindow();
 	if (widget)
-	  widget->close();
+	  widget->close(true);
 	break;
       }
     case TO_FILE_OPEN_SESSION:
