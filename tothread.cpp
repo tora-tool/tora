@@ -60,8 +60,11 @@ void toSemaphore::up(void)
 void toSemaphore::down(void)
 {
   Mutex.lock();
-  while(Value<=0)
+  while(Value<=0) {
+    Mutex.unlock();
     Condition.wait(&Mutex);
+    Mutex.lock();
+  }
   Value--;
   Mutex.unlock();
 }
