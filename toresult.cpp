@@ -35,7 +35,7 @@ toResult::toResult()
   Setup->start(1,true);
   Handled=true;
   Tabs=NULL;
-  FromSQL=false;
+  ParametersSet=FromSQL=false;
 }
 
 void toResult::changeHandle(void)
@@ -71,7 +71,8 @@ void toResult::connectionChanged(void)
 {
   if(FromSQL) {
     try {
-      query(toSQL::string(sqlName(),connection()),Params);
+      if (ParametersSet)
+	query(toSQL::string(sqlName(),connection()),Params);
       setHandle(true);
     } catch(...) {
       setHandle(false);

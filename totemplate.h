@@ -61,6 +61,8 @@ public:
   static toTemplate *templateWidget(QListViewItem *item);
   static toTemplate *templateWidget(QListView *obj);
 
+  virtual bool canHandle(toConnection &conn)
+  { return true; }
 public slots:
   void expand(QListViewItem *item);
   void collapse(QListViewItem *item);

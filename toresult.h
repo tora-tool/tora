@@ -65,6 +65,7 @@ class toResult {
   QTabWidget *Tabs;
 
   QString SQL;
+  bool ParametersSet;
   toQList Params;
   bool FromSQL;
   QString Name;
@@ -80,7 +81,7 @@ protected:
   /** Set parameters of last query.
    */
   void setParams(const toQList &par)
-  { Params=par; }
+  { Params=par; ParametersSet=true; }
 public:
   toResult(void);
   virtual ~toResult()

@@ -26,6 +26,3 @@ toResultContent:
 
 toTemplate:
 	Doesn't seem to remember more than one template file.
-
-toWorksheet:
-	Lots of errors when changing connection.

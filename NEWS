@@ -5,6 +5,11 @@
 2001-09-10: Fixed problem with non QToolBar dock in Qt.
 2001-09-10: Fixed problem with database name in tool toolbars.
 2001-09-10: Dont use QSettings for Qt 3.0, stick with the old working one.
+2001-09-10: Fixed problem with added database in template DB browser.
+2001-09-10: Made template handle any connection.
+2001-09-10: Made template db browser handle mysql better.
+2001-09-10: Fixed problems with extra info in template browser.
+2001-09-10: Fixed problem with changing connection in workspace.
 
 1.1.0: Released 2001-09-09
 

@@ -306,6 +306,8 @@ public:
   { Dock=NULL; }
   virtual QWidget *configurationTab(QWidget *parent)
   { return new toTemplatePrefs(this,parent); }
+  virtual bool canHandle(toConnection &conn)
+  { return true; }
 };
 
 static toTemplateTool TemplateTool;
