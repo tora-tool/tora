@@ -88,6 +88,7 @@ void toChangeConnection::changeConnection(int val)
     if (tool) {
       tool->setConnection(toMainWidget()->connection(*i));
       toMainWidget()->windowActivated(tool);
+      toMainWidget()->changeConnection();
       return;
     }
     cur=cur->parentWidget();

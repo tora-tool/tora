@@ -436,6 +436,9 @@ public slots:
   /** Close all windows and connections.
    */
   void closeSession(void);
+  /** Change current connection
+   */
+  void changeConnection(void);
 private slots:
   /** Add a connection
    */
@@ -465,9 +468,6 @@ private slots:
    */
   void printButton(void);
 
-  /** Change current connection
-   */
-  void changeConnection(void);
   /** Undo button pressed
    */
   void undoButton(void);

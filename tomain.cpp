@@ -521,6 +521,7 @@ void toMain::windowActivated(QWidget *widget)
     for (std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
       if (&conn==*i) {
 	ConnectionSelection->setCurrentItem(pos);
+	changeConnection();
 	break;
       }
       pos++;
@@ -879,7 +880,8 @@ bool toMain::delConnection(void)
       (*i).first->setEnabled(false);
     for (std::map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++)
       menuBar()->setItemEnabled((*j).first,false);
-  }
+  } else
+    changeConnection();
   return true;
 }
 
