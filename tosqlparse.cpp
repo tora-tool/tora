@@ -709,7 +709,7 @@ static QString IndentComment(int level,int current,const QString &comment,bool e
   bool nl=true;
   QString ret;
   if (comment.length()) {
-    if (level<=current) {
+    if (level<=current&&(level||current)) {
       ret+="\n";
       current=0;
     }
@@ -872,7 +872,10 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	  current++;
 	}
 	QString t=indentStatement(*i,current);
-	current+=CurrentColumn(t);
+	if (t.find("\n")>=0)
+	  current=CurrentColumn(t);
+	else
+	  current+=CurrentColumn(t);
 	ret+=t;
 	any=true;
       } else if ((*i).String==",") {
