@@ -1,5 +1,5 @@
-/****************************************************************************
- *
+//***************************************************************************
+/*
  * TOra - An Oracle Toolkit for DBA's and developers
  * Copyright (C) 2000 GlobeCom AB
  * 
@@ -1467,7 +1467,7 @@ void toSecurity::refresh(void)
     parent->setOpen(true);
     parent->setSelectable(false);
     otl_stream user(1,
-		    toSQL::sql(TOSQL_USERLIST,Connection),
+		    toSQL::sql(toSQL::TOSQL_USERLIST,Connection),
 		    Connection.connection());
     QListViewItem *item=NULL;
     while(!user.eof()) {

@@ -1,5 +1,5 @@
-/****************************************************************************
- *
+//***************************************************************************
+/*
  * TOra - An Oracle Toolkit for DBA's and developers
  * Copyright (C) 2000 GlobeCom AB
  * 
@@ -69,7 +69,7 @@ TO_NAMESPACE;
 
 #define CHUNK_SIZE 63
 
-static toSQL SQLUserNames(TOSQL_USERLIST,
+static toSQL SQLUserNames(toSQL::TOSQL_USERLIST,
 			  "SELECT UserName FROM All_Users ORDER BY UserName",
 			  "List users in the database");
 
@@ -384,8 +384,11 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
     default:
       throw QString("Unknown dock position");
     }
-    dock->setWidget(container);
-    dock->manualDock(main->getMainDockWidget(),pos,20);
+    KDockWidget *dw=dynamic_cast<KDockWidget *>(dock);
+    if (dw) {
+      dw->setWidget(container);
+      dw->manualDock(main->getMainDockWidget(),pos,20);
+    }
   } else
     throw QString("Main widget not KDockMainWindow");
 #else
@@ -1018,4 +1021,8 @@ int toDisplayMemLost(void)
   return 0;
 }
 
+int toToolMenuIndex(void)
+{
+  return toMainWidget()->menuBar()->indexOf(TO_WINDOWS_MENU);
+}
 #endif

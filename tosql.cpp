@@ -1,5 +1,5 @@
-/****************************************************************************
- *
+//***************************************************************************
+/*
  * TOra - An Oracle Toolkit for DBA's and developers
  * Copyright (C) 2000 GlobeCom AB
  * 
@@ -42,6 +42,7 @@ TO_NAMESPACE;
 #include "toconnection.h"
 
 toSQL::sqlMap *toSQL::Definitions;
+const char * const toSQL::TOSQL_USERLIST= "Global:UserList";
 
 toSQL::toSQL(const QString &name,
 	     const QString &sql,

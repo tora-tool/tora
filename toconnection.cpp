@@ -1,5 +1,5 @@
-/****************************************************************************
- *
+//***************************************************************************
+/*
  * TOra - An Oracle Toolkit for DBA's and developers
  * Copyright (C) 2000 GlobeCom AB
  * 
@@ -218,7 +218,8 @@ void toConnection::longOperationFree(otl_connect *conn)
 {
   if (!conn)
     throw QString("Tried to give back NULL long connection");
-  FreeConnect.insert(FreeConnect.end(),conn);
+  if (conn!=Connection)
+    FreeConnect.insert(FreeConnect.end(),conn);
 }
 
 void toConnection::commit(void)

@@ -1,5 +1,5 @@
-/****************************************************************************
- *
+//***************************************************************************
+/*
  * TOra - An Oracle Toolkit for DBA's and developers
  * Copyright (C) 2000 GlobeCom AB
  * 
@@ -279,7 +279,7 @@ void toSGATrace::updateSchemas(void)
   try {
     Schema->clear();
     otl_stream users(1,
-		     toSQL::sql(TOSQL_USERLIST,Connection),
+		     toSQL::sql(toSQL::TOSQL_USERLIST,Connection),
 		     Connection.connection());
     Schema->insertItem("Any");
     for(int i=0;!users.eof();i++) {

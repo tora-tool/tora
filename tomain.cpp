@@ -1,5 +1,5 @@
-/****************************************************************************
- *
+//***************************************************************************
+/*
  * TOra - An Oracle Toolkit for DBA's and developers
  * Copyright (C) 2000 GlobeCom AB
  * 
@@ -91,6 +91,15 @@ TO_NAMESPACE;
 #include "icons/toramini.xpm"
 
 #define DEFAULT_TITLE "TOra %s"
+
+const int toMain::TO_FILE_MENU		= 10;
+const int toMain::TO_EDIT_MENU		= 20;
+const int toMain::TO_TOOLS_MENU		= 30;
+const int toMain::TO_WINDOWS_MENU	= 40;
+const int toMain::TO_HELP_MENU		= 50;
+
+const int toMain::TO_TOOL_MENU_ID	= 2000;
+const int toMain::TO_TOOL_MENU_ID_END	= 2999;
 
 #define TO_NEW_CONNECTION	100
 #define TO_CLOSE_CONNECTION	101

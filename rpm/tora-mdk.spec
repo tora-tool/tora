@@ -1,6 +1,6 @@
 %define name tora
 %define group Developement/Databases
-%define version 0.11
+%define version 0.12
 %define release 1mdk
 
 Name: %{name}

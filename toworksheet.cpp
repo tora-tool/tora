@@ -1,5 +1,5 @@
-/****************************************************************************
- *
+//***************************************************************************
+/*
  * TOra - An Oracle Toolkit for DBA's and developers
  * Copyright (C) 2000 GlobeCom AB
  * 
@@ -89,8 +89,8 @@ TO_NAMESPACE;
 #include "icons/stop.xpm"
 #include "icons/clock.xpm"
 
-#define TO_ID_STATISTICS		(TO_TOOL_MENU_ID+ 0)
-#define TO_ID_STOP			(TO_TOOL_MENU_ID+ 1)
+#define TO_ID_STATISTICS		(toMain::TO_TOOL_MENU_ID+ 0)
+#define TO_ID_STOP			(toMain::TO_TOOL_MENU_ID+ 1)
 
 #define CONF_AUTO_COMMIT "AutoCommit"
 #define CONF_AUTO_SAVE   "AutoSave"
@@ -444,7 +444,7 @@ void toWorksheet::windowActivated(QWidget *widget)
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(*toEraseLogPixmap,"Erase &Log",this,SLOT(eraseLogButton(void)));
 
-      toMainWidget()->menuBar()->insertItem("W&orksheet",ToolMenu,-1,TO_TOOL_MENU_INDEX);
+      toMainWidget()->menuBar()->insertItem("W&orksheet",ToolMenu,-1,toToolMenuIndex());
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,StopButton->isEnabled());
       toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,
 						StatisticButton->isOn());

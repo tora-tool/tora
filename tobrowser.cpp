@@ -1,5 +1,5 @@
-/****************************************************************************
- *
+//***************************************************************************
+/*
  * TOra - An Oracle Toolkit for DBA's and developers
  * Copyright (C) 2000 GlobeCom AB
  * 
@@ -636,7 +636,7 @@ void toBrowser::refresh(void)
       selected=Connection.user().upper();
       Schema->clear();
       otl_stream users(1,
-		       toSQL::sql(TOSQL_USERLIST,Connection),
+		       toSQL::sql(toSQL::TOSQL_USERLIST,Connection),
 		       Connection.connection());
       for(int i=0;!users.eof();i++) {
 	char buffer[31];
@@ -872,7 +872,7 @@ class toTemplateDBItem : public toTemplateSQL {
 public:
   toTemplateDBItem(toConnection &conn,toTemplateItem *parent,
 		   const QString &name)
-    : toTemplateSQL(conn,parent,name,toSQL::sql(TOSQL_USERLIST,conn))
+    : toTemplateSQL(conn,parent,name,toSQL::sql(toSQL::TOSQL_USERLIST,conn))
   {
   }
   virtual ~toTemplateDBItem()

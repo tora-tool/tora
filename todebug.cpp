@@ -1,5 +1,5 @@
-/****************************************************************************
- *
+//***************************************************************************
+/*
  * TOra - An Oracle Toolkit for DBA's and developers
  * Copyright (C) 2000 GlobeCom AB
  * 
@@ -99,18 +99,18 @@ TO_NAMESPACE;
 #include "icons/togglebreak.xpm"
 #include "icons/toworksheet.xpm"
 
-#define TO_ID_NEW_SHEET		(TO_TOOL_MENU_ID+ 0)
-#define TO_ID_SCAN_SOURCE	(TO_TOOL_MENU_ID+ 1)
-#define TO_ID_COMPILE		(TO_TOOL_MENU_ID+ 2)
-#define TO_ID_EXECUTE		(TO_TOOL_MENU_ID+ 3)
-#define TO_ID_STOP		(TO_TOOL_MENU_ID+ 4)
-#define TO_ID_STEP_INTO		(TO_TOOL_MENU_ID+ 5)
-#define TO_ID_STEP_OVER		(TO_TOOL_MENU_ID+ 6)
-#define TO_ID_RETURN_FROM	(TO_TOOL_MENU_ID+ 7)
-#define TO_ID_HEAD_TOGGLE	(TO_TOOL_MENU_ID+ 8)
-#define TO_ID_DEBUG_PANE	(TO_TOOL_MENU_ID+ 9)
-#define TO_ID_DEL_WATCH		(TO_TOOL_MENU_ID+10)
-#define TO_ID_CHANGE_WATCH	(TO_TOOL_MENU_ID+11)
+#define TO_ID_NEW_SHEET		(toMain::TO_TOOL_MENU_ID+ 0)
+#define TO_ID_SCAN_SOURCE	(toMain::TO_TOOL_MENU_ID+ 1)
+#define TO_ID_COMPILE		(toMain::TO_TOOL_MENU_ID+ 2)
+#define TO_ID_EXECUTE		(toMain::TO_TOOL_MENU_ID+ 3)
+#define TO_ID_STOP		(toMain::TO_TOOL_MENU_ID+ 4)
+#define TO_ID_STEP_INTO		(toMain::TO_TOOL_MENU_ID+ 5)
+#define TO_ID_STEP_OVER		(toMain::TO_TOOL_MENU_ID+ 6)
+#define TO_ID_RETURN_FROM	(toMain::TO_TOOL_MENU_ID+ 7)
+#define TO_ID_HEAD_TOGGLE	(toMain::TO_TOOL_MENU_ID+ 8)
+#define TO_ID_DEBUG_PANE	(toMain::TO_TOOL_MENU_ID+ 9)
+#define TO_ID_DEL_WATCH		(toMain::TO_TOOL_MENU_ID+10)
+#define TO_ID_CHANGE_WATCH	(toMain::TO_TOOL_MENU_ID+11)
 
 class toDebugTool : public toTool {
   map<toConnection *,QWidget *> Windows;
@@ -1983,7 +1983,7 @@ void toDebug::refresh(void)
       selected=Connection.user().upper();
       Schema->clear();
       otl_stream users(1,
-		       toSQL::sql(TOSQL_USERLIST,Connection),
+		       toSQL::sql(toSQL::TOSQL_USERLIST,Connection),
 		       Connection.connection());
       for(int i=0;!users.eof();i++) {
 	char buffer[31];
@@ -2440,7 +2440,7 @@ void toDebug::windowActivated(QWidget *widget)
       ToolMenu->insertSeparator();
       ToolMenu->insertItem("Erase Runtime &Log",this,SLOT(clearLog(void)));
 
-      toMainWidget()->menuBar()->insertItem("&Debug",ToolMenu,-1,TO_TOOL_MENU_INDEX);
+      toMainWidget()->menuBar()->insertItem("&Debug",ToolMenu,-1,toToolMenuIndex());
 
       if (!isRunning()) {
 	toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,false);
