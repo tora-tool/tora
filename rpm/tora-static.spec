@@ -22,7 +22,7 @@ schema extraction and compare.
 %prep
 %setup -q
 %build
-./configure --prefix=/usr --with-static
+./configure --prefix=/usr --with-static --without-rpath
 make
 
 %install

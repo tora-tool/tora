@@ -69,6 +69,7 @@ my $Linux;
 my $KDEApplication;
 my $KDEInclude;
 my $KDELibs;
+my $NoRPath;
 
 $QtDir=$ENV{QTDIR};
 
@@ -99,6 +100,8 @@ for (@ARGV) {
 	$ForceTarget=1;
     } elsif (/^--with-kde$/) {
 	$KDEApplication=1;
+    } elsif (/^--without-rpath$/) {
+	$NoRPath=1;
     } elsif (/^--with-kde-include=(.*)$/) {
 	$KDEInclude=$1;
     } elsif (/^--with-kde-libs=(.*)$/) {
@@ -123,6 +126,7 @@ Options can be any of the following:
 --with-kde         Compile as KDE application (Requires KDE 2.2 or later)
 --with-kde-include Where to find KDE include files
 --with-kde-libs    Where to find KDE libraries
+--without-rpath    Compile without rpath to Oracle libraries
 
 __USAGE__
         exit(2);
@@ -394,8 +398,11 @@ __TEMP__
     }
 
     if (`uname`=~/linux/i) {
-	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\" ";
+	$NoRPath=1;
 	$Linux=1;
+    }
+    if (!$NoRPath) {
+	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\" ";
     }
 
     $LFlags.="\"-L".$QtLib."\"";
@@ -457,7 +464,7 @@ __TEMP__
 
 	$Libs.=" -lkdecore -lkdeui -lDCOP -lkfile";
 	$LFlags.=" \"-L".$KDELibs."\"";
-	if ($Linux) {
+	if (!$NoRPath) {
 	    $LFlags.=" -Xlinker \"--rpath=$KDELibs\"";
 	}
 	print "Generating KDE application\n";
