@@ -181,6 +181,7 @@ void toNewConnection::changeHost(void)
 toConnection *toNewConnection::makeConnection(void)
 {
   try {
+
     toTool::globalSetConfig(CONF_PROVIDER,Provider->currentText());
     toTool::globalSetConfig(CONF_USER,Username->text());
     QString pass;
@@ -196,6 +197,20 @@ toConnection *toNewConnection::makeConnection(void)
     else
       host=SqlNet->isChecked()?QString("SQL*Net"):QString::null;
     toTool::globalSetConfig(CONF_HOST,host);
+
+    std::list<QString> con=toMainWidget()->connections();
+    for(std::list<QString>::iterator i=con.begin();i!=con.end();i++) {
+      try {
+	toConnection &conn=toMainWidget()->connection(*i);
+	if(conn.user()==Username->text()&&
+	   conn.provider()==Provider->currentText()&&
+	   conn.host()==host&&
+	   conn.database()==Database->currentText())
+	  return &conn;
+      } catch(...) {
+      }
+    }
+
     toConnection *retCon=new toConnection(Provider->currentText(),
 					  Username->text(),
 					  Password->text(),

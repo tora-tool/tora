@@ -40,8 +40,7 @@ Extended functionality:
 * Optionaly drop before create in toExtract.
 * Tabbed source windows in debugger.
 * Ability to modify rollback segment.
-* When not using SQL*Net use SID in database list.
-* Reorder fields in new connection dialog?
+* Ability to drop tablespaces.
 
 New tools:
 

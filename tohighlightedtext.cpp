@@ -77,6 +77,8 @@ QColor toSyntaxAnalyzer::getColor(toSyntaxAnalyzer::infoType typ)
   return Colors[typ];
 }
 
+#define ISIDENT(c) (isalnum(c)||(c)=='_'||(c)=='%'||(c)=='$'||(c)=='#')
+
 std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const QString &str,
 									 toSyntaxAnalyzer::infoType in,
 									 toSyntaxAnalyzer::infoType &out)
@@ -97,39 +99,47 @@ std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const Q
     multiComment=0;
   }
 
+  char c;
+  char nc=str[0];
   for (int i=0;i<int(str.length());i++) {
     std::list<posibleHit>::iterator j=search.begin();
 
-    bool nextSymbol=((int(str.length())!=i+1)&&isSymbol(str[i+1]));
+    c=nc;
+    if (int(str.length())>i)
+      nc=str[i+1];
+    else
+      nc=' ';
+
+    bool nextSymbol=ISIDENT(nc);
     if (multiComment>=0) {
-      if (str[i]=='*'&&str[i+1]=='/') {
+      if (c=='*'&&nc=='/') {
 	highs.insert(highs.end(),highlightInfo(multiComment,Comment));
 	highs.insert(highs.end(),highlightInfo(i+2));
 	multiComment=-1;
       }
     } else if (inString>=0) {
-      if (str[i]==endString) {
+      if (c==endString) {
 	highs.insert(highs.end(),highlightInfo(inString,String));
 	highs.insert(highs.end(),highlightInfo(i+1));
 	inString=-1;
       }
-    } else if (str[i]=='\''||str[i]=='\"') {
+    } else if (c=='\''||c=='\"') {
       inString=i;
       endString=str[i];
       search.clear();
       wasWord=false;
-    } else if (str[i]=='-'&&str[i+1]=='-') {
+    } else if (c=='-'&&c=='-') {
       highs.insert(highs.end(),highlightInfo(i,Comment));
       highs.insert(highs.end(),highlightInfo(str.length()+1));
       return highs;
-    } else if (str[i]=='/'&&str[i+1]=='*') {
+    } else if (c=='/'&&c=='*') {
       multiComment=i;
       search.clear();
       wasWord=false;
     } else {
       while (j!=search.end()) {
 	posibleHit &cur=(*j);
-	if (cur.Text[cur.Pos]==str[i].upper()) {
+	if (cur.Text[cur.Pos]==toupper(c)) {
 	  cur.Pos++;
 	  if (!cur.Text[cur.Pos]&&!nextSymbol) {
 	    search.clear();
@@ -144,13 +154,13 @@ std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const Q
 	  search.erase(k);
 	}
       }
-      if (isSymbol(str[i]))
+      if (ISIDENT(c))
 	inWord=true;
       else
 	inWord=false;
 
       if (!wasWord&&inWord) {
-	std::list<const char *> &curKey=Keywords[(unsigned char)char(str[i].upper())];
+	std::list<const char *> &curKey=Keywords[(unsigned char)char(toupper(c))];
 	for (std::list<const char *>::iterator j=curKey.begin();
 	     j!=curKey.end();j++) {
 	  if (strlen(*j)==1) {
@@ -213,8 +223,7 @@ void toHighlightedText::setText(const QString &str)
 
   toSyntaxAnalyzer::infoType typ=toSyntaxAnalyzer::Normal;
   for(int i=0;i<numLines();i++) {
-    Analyzer->analyzeLine(str,typ,typ);
-    i++;
+    Analyzer->analyzeLine(textLine(i),typ,typ);
     if (typ!=toSyntaxAnalyzer::Normal)
       LineInput[i]=typ;
   }

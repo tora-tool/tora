@@ -681,9 +681,8 @@ void toMain::addConnection(void)
 
     toConnection *conn=NULL;
 
-    if (newConnection.exec()) {
+    if (newConnection.exec())
       conn=newConnection.makeConnection();
-    }
 
     if (conn)
       addConnection(conn);
