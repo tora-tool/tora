@@ -440,8 +440,7 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
 		      SingleLine|AlignLeft|AlignVCenter,
 		      sqlName());
     painter->scale(scale,scale);
-    painter->drawLine(0,header()->height()-1,
-		      int(mwidth),header()->height()-1);
+    painter->drawLine(0,header()->height()-1,int(mwidth),header()->height()-1);
   }
   font=toListView::font();
   font.setPointSizeFloat(font.pointSizeFloat()/max(wpscalex,wpscaley));
