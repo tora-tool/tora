@@ -224,6 +224,7 @@ AC_DEFUN(MRJ_CHECK_ORACLE,
 
     dnl try to find oracle includes
     ora_check_inc="
+      $oracle_user_inc
       $ORACLE_HOME/rdbms/demo
       $ORACLE_HOME/plsql/public
       $ORACLE_HOME/rdbms/public
@@ -238,6 +239,7 @@ AC_DEFUN(MRJ_CHECK_ORACLE,
     done
 
     ora_check_lib="
+      $oracle_user_lib
       $ORACLE_HOME/lib
       $ORACLE_HOME/lib32
       $ORACLE_HOME/lib64"
