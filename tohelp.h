@@ -1,39 +1,39 @@
 /*****
- *
- * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2003-2005 Quest Software, Inc
- * Portions Copyright (C) 2005 Other Contributors
- * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation;  only version 2 of
- * the License is valid for this program.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- *      As a special exception, you have permission to link this program
- *      with the Oracle Client libraries and distribute executables, as long
- *      as you follow the requirements of the GNU GPL in regard to all of the
- *      software in the executable aside from Oracle client libraries.
- *
- *      Specifically you are not permitted to link this program with the
- *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
- *      And you are not permitted to distribute binaries compiled against
- *      these libraries without written consent from Quest Software, Inc.
- *      Observe that this does not disallow linking to the Qt Free Edition.
- *
- *      You may link this product with any GPL'd Qt library such as Qt/Free
- *
- * All trademarks belong to their respective owners.
- *
- *****/
+*
+* TOra - An Oracle Toolkit for DBA's and developers
+* Copyright (C) 2003-2005 Quest Software, Inc
+* Portions Copyright (C) 2005 Other Contributors
+* 
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation;  only version 2 of
+* the License is valid for this program.
+* 
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+*      As a special exception, you have permission to link this program
+*      with the Oracle Client libraries and distribute executables, as long
+*      as you follow the requirements of the GNU GPL in regard to all of the
+*      software in the executable aside from Oracle client libraries.
+*
+*      Specifically you are not permitted to link this program with the
+*      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+*      And you are not permitted to distribute binaries compiled against
+*      these libraries without written consent from Quest Software, Inc.
+*      Observe that this does not disallow linking to the Qt Free Edition.
+*
+*      You may link this product with any GPL'd Qt library such as Qt/Free
+*
+* All trademarks belong to their respective owners.
+*
+*****/
 
 #ifndef TOHELP_H
 #define TOHELP_H
@@ -60,26 +60,29 @@ class QComboBox;
  * context of all underlying widgets.
  */
 
-class toHelpContext {
-  /**
-   * The current context.
-   */
-  QString Context;
+class toHelpContext
+{
+    /**
+     * The current context.
+     */
+    QString Context;
 public:
-  /** Create a context.
-   * @param file File in the help directory that describes the current context.
-   */
-  toHelpContext(const QString &file)
-    : Context(file)
-  { }
-  virtual ~toHelpContext()
-  { }
-  /**
-   * Get this context
-   * @return The location of a file that describes the current context.
-   */
-  virtual const QString &context(void) const
-  { return Context; }
+    /** Create a context.
+     * @param file File in the help directory that describes the current context.
+     */
+    toHelpContext(const QString &file)
+            : Context(file)
+    { }
+    virtual ~toHelpContext()
+    { }
+    /**
+     * Get this context
+     * @return The location of a file that describes the current context.
+     */
+    virtual const QString &context(void) const
+    {
+        return Context;
+    }
 };
 
 #include "totool.h"
@@ -89,17 +92,20 @@ public:
  * for modal dialogs. Only to be used internally.
  * @internal
  */
-class toHelpTool : public toTool {
-  Q_OBJECT
+class toHelpTool : public toTool
+{
+    Q_OBJECT
 public:
-  toHelpTool()
-    : toTool(501,"Additional Help")
-  { }
-  virtual QWidget *toolWindow(QWidget *,toConnection &)
-  { return NULL; }
-  virtual QWidget *configurationTab(QWidget *parent);
+    toHelpTool()
+            : toTool(501, "Additional Help")
+    { }
+    virtual QWidget *toolWindow(QWidget *, toConnection &)
+    {
+        return NULL;
+    }
+    virtual QWidget *configurationTab(QWidget *parent);
 public slots:
-  void displayHelp(void);
+    void displayHelp(void);
 };
 
 /**
@@ -140,109 +146,114 @@ public slots:
  * this help viewer.
  */
 
-class toHelp : public QDialog {
-  Q_OBJECT
+class toHelp : public QDialog
+{
+    Q_OBJECT
 
-  /** @internal
-   * Pointer to open helpwindow if available, otherwise NULL
-   */
+    /** @internal
+     * Pointer to open helpwindow if available, otherwise NULL
+     */
 
-  static toHelp *Window;
+    static toHelp *Window;
 
-  /**
-   * True if you are currently searching. You can't close the window while search, would
-   * coredump.
-   */
-  bool Searching;
+    /**
+     * True if you are currently searching. You can't close the window while search, would
+     * coredump.
+     */
+    bool Searching;
 
-  /**
-   * List containing the manuals and their sections, compiled from the toc.htm files.
-   * @see toHelp
-   */
-  toListView *Sections;
-  /**
-   * List containing the search result of the latest search. Search reads the index.htm files.
-   */
-  toListView *Result;
-  /**
-   * The line containing the search text.
-   */
-  QLineEdit *SearchLine;
-  /**
-   * Manuals to include in search.
-   */
-  QComboBox *Manuals;
+    /**
+     * List containing the manuals and their sections, compiled from the toc.htm files.
+     * @see toHelp
+     */
+    toListView *Sections;
+    /**
+     * List containing the search result of the latest search. Search reads the index.htm files.
+     */
+    toListView *Result;
+    /**
+     * The line containing the search text.
+     */
+    QLineEdit *SearchLine;
+    /**
+     * Manuals to include in search.
+     */
+    QComboBox *Manuals;
 #ifdef TO_KDE
-  /**
-   * Displays the actual help window.
-   */
-  toHelpBrowser *Help;
+    /**
+     * Displays the actual help window.
+     */
+    toHelpBrowser *Help;
 #else
-  QTextBrowser *Help;
+
+    QTextBrowser *Help;
 #endif
-  /**
-   * Display progress of current search.
-   */
-  QProgressBar *Progress;
+    /**
+     * Display progress of current search.
+     */
+    QProgressBar *Progress;
 
-  /**
-   * Set selection and also update selected item in list if any item matches the
-   * selected location.
-   * @param lst Listview to update selected item in.
-   * @param str Location of next help text.
-   */
-  virtual void setSelection(toListView *lst,const QString &str);
-  /**
-   * Reimplemented for internal reasons.
-   */
-  virtual void closeEvent(QCloseEvent *e)
-  { if (!Searching) QWidget::closeEvent(e); }
+    /**
+     * Set selection and also update selected item in list if any item matches the
+     * selected location.
+     * @param lst Listview to update selected item in.
+     * @param str Location of next help text.
+     */
+    virtual void setSelection(toListView *lst, const QString &str);
+    /**
+     * Reimplemented for internal reasons.
+     */
+    virtual void closeEvent(QCloseEvent *e)
+    {
+        if (!Searching)
+            QWidget::closeEvent(e);
+    }
 private slots:
-  /** Initiate a search with the parameters in the internal widgets.
-   * @internal
-   */
-  void search(void);
-  /** Remove the current selection in the sections and result lists. 
-   * @internal
-   */
-  void removeSelection(void);
-  /** Item selected in left pane. Change contents of help viewer.
-   * @internal
-   */
-  void changeContent(QListViewItem *);
+    /** Initiate a search with the parameters in the internal widgets.
+     * @internal
+     */
+    void search(void);
+    /** Remove the current selection in the sections and result lists.
+     * @internal
+     */
+    void removeSelection(void);
+    /** Item selected in left pane. Change contents of help viewer.
+     * @internal
+     */
+    void changeContent(QListViewItem *);
 public:
-  /**
-   * Create help widget.
-   * @param parent Parent widget.
-   * @param name Name of widget.
-   * @param modal If dialog is for a modal dialog or not
-   */
-  toHelp(QWidget *parent,const char *name,bool modal=true);
-  /** Help function to get a clean path from a path string. Strips trailing / etc.
-   * @param path Path to strip.
-   * @return Stripped path in string.
-   */
-  static QString path(const QString &path=QString::null);
-  virtual ~toHelp();
-  /** Display a specific help context in the internal manual. Pops up a help window that
-   * displays the selected topic.
-   * @param context Context to diaplay.
-   * @param parent If NULL use modal dialog and main window.
-   */
-  static void displayHelp(const QString &context,QWidget *parent=NULL);
-  /** Display a specific help context in the internal manual. The context is derived from
-   * the widget that currently holds the focus.
-   * @param parent If NULL use modal dialog and main window.
-   */
-  static void displayHelp(QWidget *parent=NULL);
-  /** Connect the F1 key to display help for a modal dialog. Don't use this directly,
-   * instead call displayHelp directly and bind Key_F1 to that call. This is because the
-   * help in modal dialogs are cludgy at best and should be avoided if possible.
-   * @param dialog Dialog to connect accelerator to.
-   */
-  static void connectDialog(QDialog *dialog);
+    /**
+     * Create help widget.
+     * @param parent Parent widget.
+     * @param name Name of widget.
+     * @param modal If dialog is for a modal dialog or not
+     */
+    toHelp(QWidget *parent, const char *name, bool modal = true);
+    /** Help function to get a clean path from a path string. Strips trailing / etc.
+     * @param path Path to strip.
+     * @return Stripped path in string.
+     */
+    static QString path(const QString &path = QString::null);
+    virtual ~toHelp();
+    /** Display a specific help context in the internal manual. Pops up a help window that
+     * displays the selected topic.
+     * @param context Context to diaplay.
+     * @param parent If NULL use modal dialog and main window.
+     */
+    static void displayHelp(const QString &context, QWidget *parent = NULL);
+    /** Display a specific help context in the internal manual. The context is derived from
+     * the widget that currently holds the focus.
+     * @param parent If NULL use modal dialog and main window.
+     */
+    static void displayHelp(QWidget *parent = NULL);
+    /** Connect the F1 key to display help for a modal dialog. Don't use this directly,
+     * instead call displayHelp directly and bind Key_F1 to that call. This is because the
+     * help in modal dialogs are cludgy at best and should be avoided if possible.
+     * @param dialog Dialog to connect accelerator to.
+     */
+    static void connectDialog(QDialog *dialog);
 
-  friend class toHelpPrefs;
+    friend class toHelpPrefs;
 };
 
 #endif

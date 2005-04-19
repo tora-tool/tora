@@ -1,39 +1,39 @@
 /*****
- *
- * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2003-2005 Quest Software, Inc
- * Portions Copyright (C) 2005 Other Contributors
- * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation;  only version 2 of
- * the License is valid for this program.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- *      As a special exception, you have permission to link this program
- *      with the Oracle Client libraries and distribute executables, as long
- *      as you follow the requirements of the GNU GPL in regard to all of the
- *      software in the executable aside from Oracle client libraries.
- *
- *      Specifically you are not permitted to link this program with the
- *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
- *      And you are not permitted to distribute binaries compiled against
- *      these libraries without written consent from Quest Software, Inc.
- *      Observe that this does not disallow linking to the Qt Free Edition.
- *
- *      You may link this product with any GPL'd Qt library such as Qt/Free
- *
- * All trademarks belong to their respective owners.
- *
- *****/
+*
+* TOra - An Oracle Toolkit for DBA's and developers
+* Copyright (C) 2003-2005 Quest Software, Inc
+* Portions Copyright (C) 2005 Other Contributors
+* 
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation;  only version 2 of
+* the License is valid for this program.
+* 
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+*      As a special exception, you have permission to link this program
+*      with the Oracle Client libraries and distribute executables, as long
+*      as you follow the requirements of the GNU GPL in regard to all of the
+*      software in the executable aside from Oracle client libraries.
+*
+*      Specifically you are not permitted to link this program with the
+*      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+*      And you are not permitted to distribute binaries compiled against
+*      these libraries without written consent from Quest Software, Inc.
+*      Observe that this does not disallow linking to the Qt Free Edition.
+*
+*      You may link this product with any GPL'd Qt library such as Qt/Free
+*
+* All trademarks belong to their respective owners.
+*
+*****/
 
 #ifndef TOTHREAD_H
 #define TOTHREAD_H
@@ -45,91 +45,104 @@
 /** This is an abstract class that defines something that is to be performed by a
  * thread.
  */
-class toTask {
+class toTask
+{
 public:
-  virtual ~toTask() { }
-  /** This member is called when the class is started.
-   */
-  virtual void run(void) = 0;
+    virtual ~toTask()
+    { }
+    /** This member is called when the class is started.
+     */
+    virtual void run(void) = 0;
 };
 
 #ifndef QT_THREAD_SUPPORT
 #include <semaphore.h>
 
-class toSemaphore {
+class toSemaphore
+{
 private:
-  sem_t Semaphore;
-  void init(int val);
+    sem_t Semaphore;
+    void init(int val);
 
-  toSemaphore(const toSemaphore &);
+    toSemaphore(const toSemaphore &);
 public:
-  toSemaphore();
-  toSemaphore(int val);
-  ~toSemaphore();
+    toSemaphore();
+    toSemaphore(int val);
+    ~toSemaphore();
 
-  void up();
-  void down();
-  int getValue();
+    void up();
+    void down();
+    int getValue();
 };
 
 #else
 
-#ifdef WIN32
+#ifdef WIN32 
 /**
- * Implementing missing functionality from QWaitCondition for Win32
- */
-class toWaitCondition : public QWaitCondition {
+* Implementing missing functionality from QWaitCondition for Win32
+*/
+class toWaitCondition : public QWaitCondition
+{
 public:
-  // create the wait condition
-  toWaitCondition():QWaitCondition() {}
+    // create the wait condition
+    toWaitCondition(): QWaitCondition()
+    {}
 
-  // this method is not implemented in QT Free port
-  bool wait( QMutex *mutex, unsigned long time = ULONG_MAX );
+    // this method is not implemented in QT Free port
+    bool wait( QMutex *mutex, unsigned long time = ULONG_MAX );
 
 };
 
 #endif
 
 /** Encapsulation of pthread semaphores. A semaphore can be raise to any value
- * but will wait till raised above zero when lowered below 0. Can also be implemented
- * without pthreads using Qt multithreaded primitives. Observe that these function
- * different than Qt semaphores.
- */
+* but will wait till raised above zero when lowered below 0. Can also be implemented
+* without pthreads using Qt multithreaded primitives. Observe that these function
+* different than Qt semaphores.
+*/
 
-class toSemaphore {
+class toSemaphore
+{
 private:
-  QMutex Mutex;
+    QMutex Mutex;
 #ifdef WIN32
-  toWaitCondition Condition;
-#else
-  QWaitCondition Condition;
-#endif
-  int Value;
-public:
-  /** Create semaphore
-   */
-  toSemaphore()
-    : Condition()
-  { Value=0; }
-  /** Unimplemented copy constructor.
-   */
-  toSemaphore(const toSemaphore &);
-  /** Create semaphore
-   * @param val Value of new semaphore.
-   */
-  toSemaphore(int val)
-    : Condition()
-  { Value=val; }
 
-  /** Increase semaphore value by 1.
-   */
-  void up();
-  /** Decrease semaphore value by 1, wait for it to never go below 0.
-   */
-  void down();
-  /** Get current semaphore value.
-   */
-  int getValue();
+    toWaitCondition Condition;
+#else
+
+QWaitCondition Condition;
+#endif
+
+    int Value;
+public:
+    /** Create semaphore
+    */
+    toSemaphore()
+            : Condition()
+    {
+        Value = 0;
+    }
+    /** Unimplemented copy constructor.
+    */
+    toSemaphore(const toSemaphore &);
+    /** Create semaphore
+    * @param val Value of new semaphore.
+    */
+    toSemaphore(int val)
+            : Condition()
+    {
+        Value = val;
+    }
+
+    /** Increase semaphore value by 1.
+    */
+    void up();
+    /** Decrease semaphore value by 1, wait for it to never go below 0.
+    */
+    void down();
+    /** Get current semaphore value.
+    */
+    int getValue();
 };
 
 #endif
@@ -138,50 +151,58 @@ public:
 
 #ifdef WIN32
 
-class toLock {
+class toLock
+{
 private:
-  QMutex Mutex;
+    QMutex Mutex;
 public:
-  toLock(void)
-    : Mutex(false)
-  { }
-  toLock(const toLock &);
+    toLock(void)
+            : Mutex(false)
+    { }
+    toLock(const toLock &);
 
-  void lock(void)
-  { Mutex.lock(); }
-  void unlock(void)
-  { Mutex.unlock(); }
+    void lock (void)
+    {
+        Mutex.lock();
+    }
+    void unlock(void)
+    {
+        Mutex.unlock();
+    }
 };
 
-class toThread {
+class toThread
+{
 private:
-  /** Not part of the API.
-   */
+    /** Not part of the API.
+     */
 
-  class taskRunner : public QThread {
-  public:
-    toSemaphore StartSemaphore;
-    toTask *Task;
-    taskRunner(toTask *);
-    virtual void run(void);
-    friend class toThread;
-  } Thread;
-  static std::list<toThread *> *Threads;
-  static toLock *Lock;
-  static int LastID;
-  static __declspec( thread ) int ThreadID;
-  static int MainThread;
+class taskRunner : public QThread
+    {
+    public:
+        toSemaphore StartSemaphore;
+        toTask *Task;
+        taskRunner(toTask *);
+        virtual void run(void);
+        friend class toThread;
+    }
+    Thread;
+    static std::list<toThread *> *Threads;
+    static toLock *Lock;
+    static int LastID;
+    static __declspec( thread ) int ThreadID;
+    static int MainThread;
 
-  toThread(const toThread &);
+    toThread(const toThread &);
 public:
-  toThread(toTask *);
-  ~toThread();
-  
-  void start(void);
-  void startAsync(void);
-  static void msleep(int msec);
-  static bool mainThread(void);
-  friend class taskRunner;
+    toThread(toTask *);
+    ~toThread();
+
+    void start(void);
+    void startAsync(void);
+    static void msleep(int msec);
+    static bool mainThread(void);
+    friend class taskRunner;
 };
 
 #else
@@ -190,81 +211,84 @@ public:
 #include <time.h>
 
 /** A wrapper around the pthread mutexfunctions. A lock can only be locked
- *  by one thread at a time and is the basis of most thread synchronisation.
- */
+*  by one thread at a time and is the basis of most thread synchronisation.
+*/
 
-class toLock {
+class toLock
+{
 private:
-  /** Actual pthread mutex of class.
-   */
-  pthread_mutex_t Mutex;
-  toLock(const toLock &);
+    /** Actual pthread mutex of class.
+    */
+    pthread_mutex_t Mutex;
+    toLock(const toLock &);
 public:
-  /** Create lock
-   */
-  toLock(void);
-  ~toLock();
+    /** Create lock
+    */
+    toLock(void);
+    ~toLock();
 
-  /** Lock this lock.
-   */
-  void lock(void);
-  /** Unlock this lock.
-   */
-  void unlock(void);
+    /** Lock this lock.
+    */
+    void lock (void)
+        ;
+    /** Unlock this lock.
+    */
+    void unlock(void);
 };
 
 /** Used to create new threads of execution. When a thread exits it will delete the
- * thread and task objects so the calling thread must never delete a started thread.
- */
+* thread and task objects so the calling thread must never delete a started thread.
+*/
 
-class toThread {
+class toThread
+{
 private:
-  static toThread *DeleteThread;
-  static toLock *Lock; 
- /** PThread identifier.
-   */
-  pthread_t		Thread;
-  /** Thread attributes.
-   */
-  pthread_attr_t	ThreadAttr;
-  /** Task to run in new thread.
-   */
-  toTask		*Task;
-  /** Semaphore that is raised when new thread has started running.
-   */
-  toSemaphore		StartSemaphore;
-  /** Initialise thread attributes.
-   */
-  void			initAttr(void);
-  /** Called when thread is started to execute task. Pointer to @ref toThread
-   * is passed as parameter.
-   */
-  friend void		*toThreadStartWrapper(void*);
-  /** Main thread id
-   */
-  static pthread_t MainThread;
-  
-  toThread(const toThread &);
-public:
-  /** Create thread.
-   * @param task Task to run.
-   */
-  toThread(toTask *task);
-  ~toThread();
+    static toThread *DeleteThread;
+    static toLock *Lock;
+    /** PThread identifier.
+    */
+    pthread_t Thread;
+    /** Thread attributes.
+    */
+    pthread_attr_t ThreadAttr;
+    /** Task to run in new thread.
+    */
+    toTask *Task;
+    /** Semaphore that is raised when new thread has started running.
+    */
+    toSemaphore StartSemaphore;
+    /** Initialise thread attributes.
+    */
+    void initAttr(void);
+    /** Called when thread is started to execute task. Pointer to @ref toThread
+    * is passed as parameter.
+    */
+    friend void *toThreadStartWrapper(void*);
+    /** Main thread id
+    */
+    static pthread_t MainThread;
 
-  /** Start thread and wait for other thread to start running.
-   */
-  void start(void);
-  /** Start thread and continue executing this thread until normal scheduling
-   * handles over execution to child thread.
-   */
-  void startAsync(void);
-  /** Sleep in milliseconds.
-   */
-  static void msleep(int msec);
-  /** Returns true if this is the main thread.
-   */
-  static bool mainThread(void);
+    toThread(const toThread &);
+public:
+    /** Create thread.
+    * @param task Task to run.
+    */
+    toThread(toTask *task);
+    ~toThread();
+
+    /** Start thread and wait for other thread to start running.
+    */
+    void start(void);
+    /** Start thread and continue executing this thread until normal scheduling
+    * handles over execution to child thread.
+    */
+    void startAsync(void);
+    /** Sleep in milliseconds.
+    */
+    static void msleep(int msec);
+    /** Returns true if this is the main thread.
+    */
+    static bool mainThread(void);
 };
 
 #endif
@@ -275,21 +299,26 @@ public:
  * locker will be deallocated and the lock released.
  */
 
-class toLocker {
+class toLocker
+{
 private:
-  /** Lock held.
-   */
-  toLock &Lock;
-  toLocker(const toLocker &);
+    /** Lock held.
+     */
+    toLock &Lock;
+    toLocker(const toLocker &);
 public:
-  /** Create locker.
-   * @param lock Lock to hold.
-   */
-  toLocker(toLock &lock)
-    : Lock(lock)
-  { Lock.lock(); }
-  ~toLocker()
-  { Lock.unlock(); }
+    /** Create locker.
+     * @param lock Lock to hold.
+     */
+    toLocker(toLock &lock )
+            : Lock(lock )
+    {
+        Lock.lock();
+    }
+    ~toLocker()
+    {
+        Lock.unlock();
+    }
 };
 
 #endif

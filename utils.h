@@ -1,39 +1,39 @@
 /*****
- *
- * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2003-2005 Quest Software, Inc
- * Portions Copyright (C) 2005 Other Contributors
- * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation;  only version 2 of
- * the License is valid for this program.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- *      As a special exception, you have permission to link this program
- *      with the Oracle Client libraries and distribute executables, as long
- *      as you follow the requirements of the GNU GPL in regard to all of the
- *      software in the executable aside from Oracle client libraries.
- *
- *      Specifically you are not permitted to link this program with the
- *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
- *      And you are not permitted to distribute binaries compiled against
- *      these libraries without written consent from Quest Software, Inc.
- *      Observe that this does not disallow linking to the Qt Free Edition.
- *
- *      You may link this product with any GPL'd Qt library such as Qt/Free
- *
- * All trademarks belong to their respective owners.
- *
- *****/
+*
+* TOra - An Oracle Toolkit for DBA's and developers
+* Copyright (C) 2003-2005 Quest Software, Inc
+* Portions Copyright (C) 2005 Other Contributors
+* 
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation;  only version 2 of
+* the License is valid for this program.
+* 
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+*      As a special exception, you have permission to link this program
+*      with the Oracle Client libraries and distribute executables, as long
+*      as you follow the requirements of the GNU GPL in regard to all of the
+*      software in the executable aside from Oracle client libraries.
+*
+*      Specifically you are not permitted to link this program with the
+*      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+*      And you are not permitted to distribute binaries compiled against
+*      these libraries without written consent from Quest Software, Inc.
+*      Observe that this does not disallow linking to the Qt Free Edition.
+*
+*      You may link this product with any GPL'd Qt library such as Qt/Free
+*
+* All trademarks belong to their respective owners.
+*
+*****/
 
 #ifndef UTILS_H
 #define UTILS_H
@@ -62,31 +62,35 @@
 #define TOMessageBox QMessageBox
 #define TODock QWidget
 
-#if 0
+#if 0 
 /**
  * The class to use for a printer object.
  */
-class TOPrinter : public QPrinter {
-
-};
+class TOPrinter : public QPrinter
+{
+}
+;
 /**
  * The class to use for a dock widget.
  */
-class TODock : public QWidget {
-
-};
+class TODock : public QWidget
+{
+}
+;
 /**
  * The class to use for a file dialog.
  */
-class TOFileDialog : public QFileDialog {
-
-};
+class TOFileDialog : public QFileDialog
+{
+}
+;
 /**
  * The class to use for a messagebox.
  */
-class TOMessageBox : public QMessageBox {
-
-};
+class TOMessageBox : public QMessageBox
+{
+}
+;
 #endif
 
 class QComboBox;
@@ -105,7 +109,7 @@ class toToolWidget;
  * @param save If true don't remove the message after a specified interval.
  * @param log Log message. Will never log saved messages.
  */
-void toStatusMessage(const QString &str,bool save=false,bool log=true);
+void toStatusMessage(const QString &str, bool save = false, bool log = true);
 /** Get an address to a SQL statement in the SGA. The address has the form
  * 'address:hash_value' which are resolved from the v$sqltext_with_newlines
  * view in Oracle.
@@ -114,7 +118,7 @@ void toStatusMessage(const QString &str,bool save=false,bool log=true);
  * @return String with address in.
  * @exception QString if address not found.
  */
-QString toSQLToAddress(toConnection &conn,const QString &sql);
+QString toSQLToAddress(toConnection &conn, const QString &sql);
 /** Get the full SQL of an address (See @ref toSQLToAddress) from the
  * SGA.
  * @param conn Connection to get address from
@@ -122,7 +126,7 @@ QString toSQLToAddress(toConnection &conn,const QString &sql);
  * @return String with SQL of statement.
  * @exception QString if address not found.
  */
-QString toSQLString(toConnection &conn,const QString &address);
+QString toSQLString(toConnection &conn, const QString &address);
 /** Make a column name more readable.
  * @param col Name of column name, will be modified.
  */
@@ -151,13 +155,13 @@ QStringList toGetSessionTypes(void);
  * @param def Default value of the combobox.
  * @param item Combo box to fill. If not specified a new combobox is created.
  */
-QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const QString &def=QString::null,
-			   QComboBox *item=NULL);
+QComboBox *toRefreshCreate(QWidget *parent, const char *name = NULL, const QString &def = QString::null,
+                           QComboBox *item = NULL);
 /** Set a timer with the value from a refresh combobox (See @ref toRefreshCreate).
  * @param timer Timer to set timeout in.
  * @param str String from currentText of combobox. If empty, set to default.
  */
-void toRefreshParse(toTimer *timer,const QString &str=QString::null);
+void toRefreshParse(toTimer *timer, const QString &str = QString::null);
 /** Get information about wether this TOra has plugin support or not.
  * @return True if plugin support is enabled.
  */
@@ -172,7 +176,7 @@ QString toDeepCopy(const QString &str);
  * @param name Name of toolbar.
  * @return A newly created toolbar.
  */
-QToolBar *toAllocBar(QWidget *parent,const QString &name);
+QToolBar *toAllocBar(QWidget *parent, const QString &name);
 /** Allocate a new docked window. This is needed since Qt and KDE docks windows differently
  * (Qt 2.x doesn't even have support for docked windows). Observe that you must attach a
  * dock using @ref toAttachDock after allocating it.
@@ -182,14 +186,14 @@ QToolBar *toAllocBar(QWidget *parent,const QString &name);
  * @return A newly allocated fock.
  */
 TODock *toAllocDock(const QString &name,
-		    const QString &db,
-		    const QPixmap &icon);
+                    const QString &db,
+                    const QPixmap &icon);
 /** Attach a dock to a specified position.
  * @param dock Dock to attach
  * @param container Whatever container is supposed to be in the dock window.
  * @param place Where to place the dock.
  */
-void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place);
+void toAttachDock(TODock *dock, QWidget *container, QMainWindow::ToolBarDock place);
 /** Decode a size string this basically converts "KB" to 1024, "MB" to 1024KB and
  * everything else to 1.
  * @return Multiplier specified by string.
@@ -205,54 +209,60 @@ QKeySequence toKeySequence(const QString &keysequence);
  * @param event Key event.
  * @param key Key sequence.
  */
-bool toCheckKeyEvent(QKeyEvent *event,const QKeySequence &key);
+bool toCheckKeyEvent(QKeyEvent *event, const QKeySequence &key);
 
 /** Shift the first value out of a list.
  * @param lst List to shift value from (Also modified).
  * @return The first value in the list.
  */
-template <class T> T toShift(std::list<T> &lst)
+template <class T>
+T toShift(std::list<T> &lst)
 {
-  if (lst.begin()==lst.end()) {
-    T ret;
+    if (lst.begin() == lst.end())
+    {
+        T ret;
+        return ret;
+    }
+    T ret = (*lst.begin());
+    lst.erase(lst.begin());
     return ret;
-  }
-  T ret=(*lst.begin());
-  lst.erase(lst.begin());
-  return ret;
 }
 
 /** Push an object to the beginning of a list.
  * @param lst List to push value in from of.
  * @param str Object to push.
  */
-template <class T> void toUnShift(std::list<T> &lst,const T &str)
+template <class T>
+void toUnShift(std::list<T> &lst, const T &str)
 {
-  lst.insert(lst.begin(),str);
+    lst.insert(lst.begin(), str);
 }
 
 /** Pop the last value out of a list.
  * @param lst List to pop value from (Also modified).
  * @return The value in the list of objects.
  */
-template <class T> T toPop(std::list<T> &lst)
+template <class T>
+T toPop(std::list<T> &lst)
 {
-  if (lst.begin()==lst.end()) {
-    T ret;
+    if (lst.begin() == lst.end())
+    {
+        T ret;
+        return ret;
+    }
+    T ret = (*lst.rbegin());
+    lst.pop_back();
     return ret;
-  }
-  T ret=(*lst.rbegin());
-  lst.pop_back();
-  return ret;
 }
 
 /** Push an object to the end of a list.
  * @param lst List to push value in from of.
  * @param str Object to push.
  */
-template <class T> void toPush(std::list<T> &lst,const T &str)
+template <class T>
+void toPush(std::list<T> &lst, const T &str)
 {
-  lst.push_back(str);
+    lst.push_back(str);
 }
 
 /** Convert a string representation to a font structure.
@@ -280,24 +290,24 @@ QCString toReadFile(const QString &filename);
  * @param filename Filename to write file to.
  * @param data Data to write to file.
  */
-bool toWriteFile(const QString &filename,const QCString &data);
+bool toWriteFile(const QString &filename, const QCString &data);
 /** Write file to filename.
  * @param filename Filename to write file to.
  * @param data Data to write to file.
  */
-bool toWriteFile(const QString &filename,const QString &data);
+bool toWriteFile(const QString &filename, const QString &data);
 /** Compare two string lists.
  * @param l1 First list to compare.
  * @param l2 Second list to compare.
  * @param len Length of lists to compare.
  * @return True if all first len elements match.
  */
-bool toCompareLists(QStringList &l1,QStringList &l2,unsigned int len);
+bool toCompareLists(QStringList &l1, QStringList &l2, unsigned int len);
 /** Set environment variable.
  * @param var Variable name to set.
  * @param val Value to set variable to.
  */
-void toSetEnv(const QCString &var,const QCString &val);
+void toSetEnv(const QCString &var, const QCString &val);
 /** Delete an environment variable.
  * @param var Environment variable to delete.
  */
@@ -308,14 +318,14 @@ void toUnSetEnv(const QCString &var);
  * @param parent Parent of dialog.
  * @return Selected filename.
  */
-QString toOpenFilename(const QString &filename,const QString &filter,QWidget *parent);
+QString toOpenFilename(const QString &filename, const QString &filter, QWidget *parent);
 /** Pop up a dialog and choose a file to save to.
  * @param filename Default filename to open.
  * @param filter Filter of filenames (See @ref QFileDialog)
  * @param parent Parent of dialog.
  * @return Selected filename.
  */
-QString toSaveFilename(const QString &filename,const QString &filter,QWidget *parent);
+QString toSaveFilename(const QString &filename, const QString &filter, QWidget *parent);
 
 /** Get index of menu to insert tool specific menu at.
  * @return Index of the tool menu entry.
@@ -327,7 +337,7 @@ int toToolMenuIndex(void);
  */
 inline bool toIsIdent(QChar c)
 {
-  return c.isLetterOrNumber()||c=='_'||c=='%'||c=='$'||c=='#';
+    return c.isLetterOrNumber() || c == '_' || c == '%' || c == '$' || c == '#';
 }
 /** Get installation directory of application (Plugin directory on unix, installation
  * target on windows).
@@ -404,38 +414,39 @@ bool toCheckModal(QWidget *widget);
  * @param prefix Prefix to save map using.
  * @param src The map to save.
  */
-void toMapExport(std::map<QCString,QString> &data,const QCString &prefix,
-		 std::map<QCString,QString> &src);
+void toMapExport(std::map<QCString, QString> &data, const QCString &prefix,
+                 std::map<QCString, QString> &src);
 /** Import the contents of a map from another map.
  * @param data The source map.
  * @param prefix Prefix to use for restoring from map.
  * @param dst The map to save into.
  */
-void toMapImport(std::map<QCString,QString> &data,const QCString &prefix,
-		 std::map<QCString,QString> &dst);
+void toMapImport(std::map<QCString, QString> &data, const QCString &prefix,
+                 std::map<QCString, QString> &dst);
 
 /** Find an item in a listview.
  * @param list The list to search for the item.
  * @param str The string to search for. You can specify parent/child with : in the string.
  */
-QListViewItem *toFindItem(QListView *list,const QString &str);
+QListViewItem *toFindItem(QListView *list, const QString &str);
 /** Whenever this class is instantiated the window will display a busy cursor. You
  * can instantiate this function as many time as you want, only when all of them are
  * destructed the curser will revert back to normal.
  */
-class toBusy {
-  static unsigned int Count;
+class toBusy
+{
+    static unsigned int Count;
 public:
-  static void clear(void);
-  toBusy();
-  ~toBusy();
+    static void clear(void);
+    toBusy();
+    ~toBusy();
 };
 /**
  * Set or change title of a tool window.
  * @param tool Widget of tool.
  * @param caption Caption to set to the tool.
  */
-void toToolCaption(toToolWidget *tool,const QString &caption);
+void toToolCaption(toToolWidget *tool, const QString &caption);
 /**
  * Translate string if the context and text is strictly ASCII7 and the context doesn't
  * contain any spaces. Otherwise just return the text.
@@ -443,7 +454,7 @@ void toToolCaption(toToolWidget *tool,const QString &caption);
  * @param text The text to translate.
  * @return Translated text if appropriate, or original text otherwise.
  */
-QString toTranslateMayby(const QString &context,const QString &text);
+QString toTranslateMayby(const QString &context, const QString &text);
 
 /**
  * Get maximum number of a and b.
@@ -466,18 +477,19 @@ T min(T a, T b)
 /** Popup toolbutton that works like I think they should under Qt 3.0 as well.
  * this means they will pop up a tool menu when you click on the button as well.
  */
-class toPopupButton : public QToolButton {
-  Q_OBJECT
+class toPopupButton : public QToolButton
+{
+    Q_OBJECT
 public:
-  /** Create button, same constructor as toolbutton except no slots
-   */
-  toPopupButton(const QIconSet &iconSet,const QString &textLabel,
-                const QString &grouptext,QToolBar *parent,const char *name=0);
-  /** Create button somewhere else than in a toolbar.
-   */
-  toPopupButton(QWidget *parent,const char *name=0);
+    /** Create button, same constructor as toolbutton except no slots
+     */
+    toPopupButton(const QIconSet &iconSet, const QString &textLabel,
+                  const QString &grouptext, QToolBar *parent, const char *name = 0);
+    /** Create button somewhere else than in a toolbar.
+     */
+    toPopupButton(QWidget *parent, const char *name = 0);
 private slots:
-  void click(void);
+    void click(void);
 };
 
 /* This can't be documented in KDoc, anyway it is an easy way to catch any exception that
@@ -486,7 +498,7 @@ private slots:
 #define TOCATCH \
     catch (const QString &str) {\
       toStatusMessage(str);\
-    }
+    } 
 /* This can't be documented in KDoc, anyway it is an easy way to catch any exception that
  * might be sent by TOra or OTL and display the message in the statusbar of the main window.
  */

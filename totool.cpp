@@ -1,39 +1,39 @@
 /*****
- *
- * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2003-2005 Quest Software, Inc
- * Portions Copyright (C) 2005 Other Contributors
- * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation;  only version 2 of
- * the License is valid for this program.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- *      As a special exception, you have permission to link this program
- *      with the Oracle Client libraries and distribute executables, as long
- *      as you follow the requirements of the GNU GPL in regard to all of the
- *      software in the executable aside from Oracle client libraries.
- *
- *      Specifically you are not permitted to link this program with the
- *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
- *      And you are not permitted to distribute binaries compiled against
- *      these libraries without written consent from Quest Software, Inc.
- *      Observe that this does not disallow linking to the Qt Free Edition.
- *
- *      You may link this product with any GPL'd Qt library such as Qt/Free
- *
- * All trademarks belong to their respective owners.
- *
- *****/
+*
+* TOra - An Oracle Toolkit for DBA's and developers
+* Copyright (C) 2003-2005 Quest Software, Inc
+* Portions Copyright (C) 2005 Other Contributors
+* 
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation;  only version 2 of
+* the License is valid for this program.
+* 
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+*      As a special exception, you have permission to link this program
+*      with the Oracle Client libraries and distribute executables, as long
+*      as you follow the requirements of the GNU GPL in regard to all of the
+*      software in the executable aside from Oracle client libraries.
+*
+*      Specifically you are not permitted to link this program with the
+*      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+*      And you are not permitted to distribute binaries compiled against
+*      these libraries without written consent from Quest Software, Inc.
+*      Observe that this does not disallow linking to the Qt Free Edition.
+*
+*      You may link this product with any GPL'd Qt library such as Qt/Free
+*
+* All trademarks belong to their respective owners.
+*
+*****/
 
 #include "utils.h"
 
@@ -66,133 +66,145 @@
 #undef QT_TRANSLATE_NOOP
 #define QT_TRANSLATE_NOOP(x,y) QTRANS(x,y)
 
-toConnectionWidget::toConnectionWidget(toConnection &conn,QWidget *widget)
-  : Connection(&conn),Widget(widget)
+toConnectionWidget::toConnectionWidget(toConnection &conn, QWidget *widget)
+        : Connection(&conn), Widget(widget)
 {
-  Connection->addWidget(Widget);
+    Connection->addWidget(Widget);
 }
 
 void toConnectionWidget::setConnection(toConnection &conn)
 {
-  if (Connection)
-    Connection->delWidget(Widget);
-  Connection=&conn;
-  Connection->addWidget(Widget);
+    if (Connection)
+        Connection->delWidget(Widget);
+    Connection = &conn;
+    Connection->addWidget(Widget);
 }
 
 toConnectionWidget::toConnectionWidget(QWidget *widget)
-  : Widget(widget)
+        : Widget(widget)
 {
-  Connection=NULL;
+    Connection = NULL;
 }
 
 toConnection &toConnectionWidget::connection()
 {
-  if (Connection)
-    return *Connection;
-  QWidget *widget=Widget;
-  if (!widget)
-    throw qApp->translate("toConnectionWidget","toConnectionWidget not inherited with a QWidget");
-  return toCurrentConnection(widget->parentWidget());
+    if (Connection)
+        return *Connection;
+    QWidget *widget = Widget;
+    if (!widget)
+        throw qApp->translate("toConnectionWidget", "toConnectionWidget not inherited with a QWidget");
+    return toCurrentConnection(widget->parentWidget());
 }
 
-toToolWidget::toToolWidget(toTool &tool,const QString &ctx,QWidget *parent,toConnection &conn,const char *name)
-  : QVBox(parent,name,WDestructiveClose),toHelpContext(ctx),toConnectionWidget(conn,this),Tool(tool)
+toToolWidget::toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, toConnection &conn, const char *name)
+        : QVBox(parent, name, WDestructiveClose), toHelpContext(ctx), toConnectionWidget(conn, this), Tool(tool)
 {
-  Timer=NULL;
+    Timer = NULL;
 
-  if (parent) {
-    // Voodoo for making connection changing cascade to sub tools.
-    try {
-      toToolWidget *tool=toCurrentTool(parent);
-      if (tool)
-	connect(tool,SIGNAL(connectionChange()),this,SLOT(parentConnection()));
-    } catch(...) {
+    if (parent)
+    {
+        // Voodoo for making connection changing cascade to sub tools.
+        try
+        {
+            toToolWidget *tool = toCurrentTool(parent);
+            if (tool)
+                connect(tool, SIGNAL(connectionChange()), this, SLOT(parentConnection()));
+        }
+        catch (...)
+        {}
     }
-  }
 }
 
 toConnectionWidget::~toConnectionWidget()
 {
-  if (Connection)
-    Connection->delWidget(Widget);
+    if (Connection)
+        Connection->delWidget(Widget);
 }
 
 void toToolWidget::parentConnection(void)
 {
-  try {
-    setConnection(toCurrentConnection(parentWidget()));
-  } TOCATCH
+    try
+    {
+        setConnection(toCurrentConnection(parentWidget()));
+    }
+    TOCATCH
 }
 
 toToolWidget::~toToolWidget()
 {
-  toMainWidget()->toolWidgetRemoved(this);
+    toMainWidget()->toolWidgetRemoved(this);
 }
 
 void toToolWidget::setConnection(toConnection &conn)
 {
-  bool connCap=false;
-  QString name=connection().description();
-  QString capt=caption();
-  if (capt.startsWith(name)) {
-    connCap=true;
-    capt=capt.mid(name.length());
-  }
-  toConnectionWidget::setConnection(conn);
-  if (connCap) {
-    capt.prepend(connection().description());
-    setCaption(capt);
-  }
-  emit connectionChange();
+    bool connCap = false;
+    QString name = connection().description();
+    QString capt = caption();
+    if (capt.startsWith(name))
+    {
+        connCap = true;
+        capt = capt.mid(name.length());
+    }
+    toConnectionWidget::setConnection(conn);
+    if (connCap)
+    {
+        capt.prepend(connection().description());
+        setCaption(capt);
+    }
+    emit connectionChange();
 }
 
 toTimer *toToolWidget::timer(void)
 {
-  if (!Timer)
-    Timer=new toTimer(this);
-  return Timer;
+    if (!Timer)
+        Timer = new toTimer(this);
+    return Timer;
 }
 
-void toToolWidget::exportData(std::map<QCString,QString> &data,const QCString &prefix)
+void toToolWidget::exportData(std::map<QCString, QString> &data, const QCString &prefix)
 {
-  QWidget *par=parentWidget();
-  if (!par)
-    par=this;
-  if (isMaximized()||par->width()>=toMainWidget()->workspace()->width())
-    data[prefix+":State"]=QString::fromLatin1("Maximized");
-  else if (isMinimized())
-    data[prefix+":State"]=QString::fromLatin1("Minimized");
+    QWidget *par = parentWidget();
+    if (!par)
+        par = this;
+    if (isMaximized() || par->width() >= toMainWidget()->workspace()->width())
+        data[prefix + ":State"] = QString::fromLatin1("Maximized");
+    else if (isMinimized())
+        data[prefix + ":State"] = QString::fromLatin1("Minimized");
 
-  data[prefix+":X"]=QString::number(par->x());
-  data[prefix+":Y"]=QString::number(par->y());
-  data[prefix+":Width"]=QString::number(par->width());
-  data[prefix+":Height"]=QString::number(par->height());
+    data[prefix + ":X"] = QString::number(par->x());
+    data[prefix + ":Y"] = QString::number(par->y());
+    data[prefix + ":Width"] = QString::number(par->width());
+    data[prefix + ":Height"] = QString::number(par->height());
 }
 
-void toToolWidget::importData(std::map<QCString,QString> &data,const QCString &prefix)
+void toToolWidget::importData(std::map<QCString, QString> &data, const QCString &prefix)
 {
-  QWidget *par=parentWidget();
-  if (!par)
-    par=this;
-  if (data[prefix+":State"]==QString::fromLatin1("Maximized")) {
-    par->showMaximized();
-    showMaximized();
-  } else if (data[prefix+":State"]==QString::fromLatin1("Minimized")) {
-    par->showMinimized();
-    showMinimized();
-  } else {
-    par->showNormal();
-    par->setGeometry(data[prefix+":X"].toInt(),
-		     data[prefix+":Y"].toInt(),
-		     data[prefix+":Width"].toInt(),
-		     data[prefix+":Height"].toInt());
+    QWidget *par = parentWidget();
+    if (!par)
+        par = this;
+    if (data[prefix + ":State"] == QString::fromLatin1("Maximized"))
+    {
+        par->showMaximized();
+        showMaximized();
+    }
+    else if (data[prefix + ":State"] == QString::fromLatin1("Minimized"))
+    {
+        par->showMinimized();
+        showMinimized();
+    }
+    else
+    {
+        par->showNormal();
+        par->setGeometry(data[prefix + ":X"].toInt(),
+                         data[prefix + ":Y"].toInt(),
+                         data[prefix + ":Width"].toInt(),
+                         data[prefix + ":Height"].toInt());
 
-  }
+    }
 }
 
-std::map<QCString,toTool *> *toTool::Tools;
-std::map<QCString,QString> *toTool::Configuration;
+std::map<QCString, toTool *> *toTool::Tools;
+std::map<QCString, QString> *toTool::Configuration;
 
 #ifdef TOAD
 #define CONFIG_FILE "/.toadrc"
@@ -204,120 +216,132 @@ std::map<QCString,QString> *toTool::Configuration;
 
 const char **toTool::pictureXPM(void)
 {
-  return (const char **) NULL;  // compiler warning
+    return (const char **) NULL;  // compiler warning
 }
 
-toTool::toTool(int priority,const char *name)
-  : Name(name)
+toTool::toTool(int priority, const char *name)
+        : Name(name)
 {
-  if (!Tools)
-    Tools=new std::map<QCString,toTool *>;
-  Priority=priority;
-  Key.sprintf("%05d%s",priority,name);
-  (*Tools)[Key]=this;
-  ButtonPicture=NULL;
+    if (!Tools)
+        Tools = new std::map<QCString, toTool *>;
+    Priority = priority;
+    Key.sprintf("%05d%s", priority, name);
+    (*Tools)[Key] = this;
+    ButtonPicture = NULL;
 }
 
 toTool::~toTool()
 {
-  Tools->erase(Key);
+    Tools->erase(Key);
 }
 
 const QPixmap *toTool::toolbarImage()
 {
-  if (!ButtonPicture) {
-    const char **picture=pictureXPM();
-    if (picture)
-      ButtonPicture=new QPixmap(picture);
-  }
-  return ButtonPicture;
+    if (!ButtonPicture)
+    {
+        const char **picture = pictureXPM();
+        if (picture)
+            ButtonPicture = new QPixmap(picture);
+    }
+    return ButtonPicture;
 }
 
 void toTool::createWindow(void)
 {
-  toMain *main=(toMain *)qApp->mainWidget();
-  try {
-    if (!canHandle(main->currentConnection()))
-      throw QString("The tool %1 doesn't support the current database").arg(name());
-    QWidget *newWin=toolWindow(main->workspace(),main->currentConnection());
+    toMain *main = (toMain *)qApp->mainWidget();
+    try
+    {
+        if (!canHandle(main->currentConnection()))
+            throw QString("The tool %1 doesn't support the current database").arg(name());
+        QWidget *newWin = toolWindow(main->workspace(), main->currentConnection());
 
-    if (newWin) {
-      const QPixmap *icon=toolbarImage();
-      if (icon)
-	newWin->setIcon(*icon);
-      toToolWidget *tool=dynamic_cast<toToolWidget *>(newWin);
-      if (tool)
-	toToolCaption(tool,name());
+        if (newWin)
+        {
+            const QPixmap *icon = toolbarImage();
+            if (icon)
+                newWin->setIcon(*icon);
+            toToolWidget *tool = dynamic_cast<toToolWidget *>(newWin);
+            if (tool)
+                toToolCaption(tool, name());
 
-      newWin->show();
-      newWin->raise();
-      newWin->setFocus();
+            newWin->show();
+            newWin->raise();
+            newWin->setFocus();
 
-      main->windowsMenu();
+            main->windowsMenu();
 
-      if (tool)
-	main->toolWidgetAdded(tool);
+            if (tool)
+                main->toolWidgetAdded(tool);
 
-      // Maximize window if only window
-      {
-	bool max=true;
+            // Maximize window if only window
+            {
+                bool max = true;
 #if QT_VERSION < 0x030200
-	for (unsigned int i=0;i<toMainWidget()->workspace()->windowList().count();i++) {
-	  QWidget *widget=toMainWidget()->workspace()->windowList().at(i);
+
+                for (unsigned int i = 0;i < toMainWidget()->workspace()->windowList().count();i++)
+                {
+                    QWidget *widget = toMainWidget()->workspace()->windowList().at(i);
 #else
-	for (unsigned int i=0;i<toMainWidget()->workspace()->windowList(QWorkspace::CreationOrder).count();i++) {
-	  QWidget *widget=toMainWidget()->workspace()->windowList(QWorkspace::CreationOrder).at(i);
+
+                for (unsigned int i = 0;i < toMainWidget()->workspace()->windowList(QWorkspace::CreationOrder).count();i++)
+                {
+                    QWidget *widget = toMainWidget()->workspace()->windowList(QWorkspace::CreationOrder).at(i);
 #endif
-	  if (widget&&widget!=newWin&&!widget->isHidden())
-	    max=false;
-	}
-	if (max)
-	  newWin->showMaximized();
-      }
+
+                    if (widget && widget != newWin && !widget->isHidden())
+                        max = false;
+                }
+                if (max)
+                    newWin->showMaximized();
+            }
 
 #if QT_VERSION < 0x030100
-      // This is a really ugly workaround for a Qt layout bug
-      QWidget *tmp=NULL;
-      QWidget *tmp2=NULL;
-      for (unsigned int i=0;i<toMainWidget()->workspace()->windowList().count();i++) {
-        QWidget *widget=toMainWidget()->workspace()->windowList().at(i);
-        if (newWin!=widget)
-	  tmp2=widget;
-	else
-	  tmp=newWin;
-	if (tmp2&&tmp)
-	  break;
-      }
-      if(tmp2&&tmp) {
-        tmp2->setFocus();
-        tmp->setFocus();
-      }
+            // This is a really ugly workaround for a Qt layout bug
+            QWidget *tmp = NULL;
+            QWidget *tmp2 = NULL;
+            for (unsigned int i = 0;i < toMainWidget()->workspace()->windowList().count();i++)
+            {
+                QWidget *widget = toMainWidget()->workspace()->windowList().at(i);
+                if (newWin != widget)
+                    tmp2 = widget;
+                else
+                    tmp = newWin;
+                if (tmp2 && tmp)
+                    break;
+            }
+            if (tmp2 && tmp)
+            {
+                tmp2->setFocus();
+                tmp->setFocus();
+            }
 #endif
+        }
     }
-  } TOCATCH
+    TOCATCH
 }
 
-bool toTool::saveMap(const QString &file,std::map<QCString,QString> &pairs)
+bool toTool::saveMap(const QString &file, std::map<QCString, QString> &pairs)
 {
-  QCString data;
+    QCString data;
 
-  {
-    QRegExp newline(QString::fromLatin1("\n"));
-    QRegExp backslash(QString::fromLatin1("\\"));
-    for (std::map<QCString,QString>::iterator i=pairs.begin();i!=pairs.end();i++) {
-      QCString str=(*i).first;
-      str.append(QString::fromLatin1("="));
-      str.replace(backslash,QString::fromLatin1("\\\\"));
-      str.replace(newline,QString::fromLatin1("\\n"));
-      QString line=(*i).second;
-      line.replace(backslash,QString::fromLatin1("\\\\"));
-      line.replace(newline,QString::fromLatin1("\\n"));
-      str+=line.utf8();
-      str+=QString::fromLatin1("\n");
-      data+=str;
+    {
+        QRegExp newline(QString::fromLatin1("\n"));
+        QRegExp backslash(QString::fromLatin1("\\"));
+        for (std::map<QCString, QString>::iterator i = pairs.begin();i != pairs.end();i++)
+        {
+            QCString str = (*i).first;
+            str.append(QString::fromLatin1("="));
+            str.replace(backslash, QString::fromLatin1("\\\\"));
+            str.replace(newline, QString::fromLatin1("\\n"));
+            QString line = (*i).second;
+            line.replace(backslash, QString::fromLatin1("\\\\"));
+            line.replace(newline, QString::fromLatin1("\\n"));
+            str += line.utf8();
+            str += QString::fromLatin1("\n");
+            data += str;
+        }
     }
-  }
-  return toWriteFile(file,data);
+    return toWriteFile(file, data);
 }
 
 #ifdef WIN32
@@ -328,291 +352,328 @@ bool toTool::saveMap(const QString &file,std::map<QCString,QString> &pairs)
 #  define FALLBACK_NAME    "SOFTWARE\\Underscore\\tora\\"
 #  endif
 
-static char *toKeyPath(const QString &str,CRegistry &registry)
+static char *toKeyPath(const QString &str, CRegistry &registry)
 {
-  static char *buf=NULL;
-  int pos=str.length()-1;
-  while (pos>=0&&str.at(pos)!='\\')
-    pos--;
-  if (pos<0)
-    throw QT_TRANSLATE_NOOP("toKeyPath","Couldn't find \\ in path");
-  QString ret=str.mid(0,pos);
-  if (buf)
-    free(buf);
-  buf=strdup(ret);
-  registry.CreateKey(HKEY_CURRENT_USER,buf);
-  return buf;
+    static char *buf = NULL;
+    int pos = str.length() - 1;
+    while (pos >= 0 && str.at(pos) != '\\')
+        pos--;
+    if (pos < 0)
+        throw QT_TRANSLATE_NOOP("toKeyPath", "Couldn't find \\ in path");
+    QString ret = str.mid(0, pos);
+    if (buf)
+        free(buf);
+    buf = strdup(ret);
+    registry.CreateKey(HKEY_CURRENT_USER, buf);
+    return buf;
 }
 
 static char *toKeyValue(const QString &str)
 {
-  static char *buf=NULL;
-  int pos=str.length()-1;
-  while (pos>=0&&str.at(pos)!='\\')
-    pos--;
-  if (pos<0)
-    throw QT_TRANSLATE_NOOP("toKeyValue","Couldn't find \\ in path");
-  if (buf)
-    free(buf);
-  buf=strdup(str.mid(pos+1));
-  return buf;
+    static char *buf = NULL;
+    int pos = str.length() - 1;
+    while (pos >= 0 && str.at(pos) != '\\')
+        pos--;
+    if (pos < 0)
+        throw QT_TRANSLATE_NOOP("toKeyValue", "Couldn't find \\ in path");
+    if (buf)
+        free(buf);
+    buf = strdup(str.mid(pos + 1));
+    return buf;
 }
 
 #endif
 
 void toTool::saveConfig(void)
 {
-  try {
+    try
+    {
 #ifdef WIN32
-    CRegistry registry;
-    QRegExp re(":");
-    for (std::map<QCString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
-      QCString path=(*i).first;
-      QString value=(*i).second;
-      path.prepend(APPLICATION_NAME);
-      path.replace(re,"\\");
-      if (value.isEmpty()) {
-	if (!registry.SetStringValue(HKEY_CURRENT_USER,
-				     toKeyPath(path,registry),
-				     toKeyValue(path),
-				     ""))
-	  toStatusMessage(QT_TRANSLATE_NOOP("toTool","Couldn't save empty value at key %1").arg(path));
-      } else {
-	char *t=strdup(value.utf8());
-	if (!registry.SetStringValue(HKEY_CURRENT_USER,
-				     toKeyPath(path,registry),
-				     toKeyValue(path),
-				     t))
-	  toStatusMessage(QT_TRANSLATE_NOOP("toTool","Couldn't save %1 value at key %2").arg(value).arg(path));
-	free(t);
-      }
-    }
+        CRegistry registry;
+        QRegExp re(":");
+        for (std::map<QCString, QString>::iterator i = Configuration->begin();i != Configuration->end();i++)
+        {
+            QCString path = (*i).first;
+            QString value = (*i).second;
+            path.prepend(APPLICATION_NAME);
+            path.replace(re, "\\");
+            if (value.isEmpty())
+            {
+                if (!registry.SetStringValue(HKEY_CURRENT_USER,
+                                             toKeyPath(path, registry),
+                                             toKeyValue(path),
+                                             ""))
+                    toStatusMessage(QT_TRANSLATE_NOOP("toTool", "Couldn't save empty value at key %1").arg(path));
+            }
+            else
+            {
+                char *t = strdup(value.utf8());
+                if (!registry.SetStringValue(HKEY_CURRENT_USER,
+                                             toKeyPath(path, registry),
+                                             toKeyValue(path),
+                                             t))
+                    toStatusMessage(QT_TRANSLATE_NOOP("toTool", "Couldn't save %1 value at key %2").arg(value).arg(path));
+                free(t);
+            }
+        }
 #else
-    if (!Configuration)
-      return;
-    QCString conf;
-    if (getenv("HOME")) {
-      conf=getenv("HOME");
-    }
-    conf.append(CONFIG_FILE);
-    saveMap(conf,*Configuration);
+        if (!Configuration)
+            return ;
+        QCString conf;
+        if (getenv("HOME"))
+        {
+            conf = getenv("HOME");
+        }
+        conf.append(CONFIG_FILE);
+        saveMap(conf, *Configuration);
 #endif
-  } TOCATCH
+
+    }
+    TOCATCH
 }
 
 void toTool::loadConfig(void)
 {
-  if (Configuration)
-    delete Configuration;
-  Configuration=new std::map<QCString,QString>;
+    if (Configuration)
+        delete Configuration;
+    Configuration = new std::map<QCString, QString>;
 
 #ifndef WIN32
-  QString conf;
-  if (getenv("HOME")) {
-    conf=QString::fromLatin1(getenv("HOME"));
-  }
-  conf.append(QString::fromLatin1(CONFIG_FILE));
-  try {
-    loadMap(conf,*Configuration);
-  } catch(...) {
-    try {
-      loadMap(QString::fromLatin1(DEF_CONFIG_FILE),*Configuration);
-    } catch(...) {
+
+    QString conf;
+    if (getenv("HOME"))
+    {
+        conf = QString::fromLatin1(getenv("HOME"));
     }
-  }
+    conf.append(QString::fromLatin1(CONFIG_FILE));
+    try
+    {
+        loadMap(conf, *Configuration);
+    }
+    catch (...)
+    {
+        try
+        {
+            loadMap(QString::fromLatin1(DEF_CONFIG_FILE), *Configuration);
+        }
+        catch (...)
+        {}
+    }
 #endif
 }
 
-void toTool::loadMap(const QString &filename,std::map<QCString,QString> &pairs)
+void toTool::loadMap(const QString &filename, std::map<QCString, QString> &pairs)
 {
-  QCString data=toReadFile(filename);
+    QCString data = toReadFile(filename);
 
-  int pos=0;
-  int bol=0;
-  int endtag=-1;
-  int wpos=0;
-  int size=data.length();
-  while(pos<size) {
-    switch(data[pos]) {
-    case '\n':
-      data[wpos]=0;
-      if (endtag==-1)
-	throw QT_TRANSLATE_NOOP("toTool","Malformed tag in config file. Missing = on row. (%1)").
-	  arg(data.mid(bol,wpos-bol));
-      {
-	QCString tag=((const char *)data)+bol;
-	QCString val=((const char *)data)+endtag+1;
-	pairs[tag]=QString::fromUtf8(val);
-      }
-      bol=pos+1;
-      endtag=-1;
-      wpos=pos;
-      break;
-    case '=':
-      if (endtag==-1) {
-	endtag=pos;
-	data[wpos]=0;
-	wpos=pos;
-      } else
-	data[wpos]=data[pos];
-      break;
-    case '\\':
-      pos++;
-      switch(data[pos]) {
-      case 'n':
-	data[wpos]='\n';
-	break;
-      case '\\':
-	if (endtag>=0)
-	  data[wpos]='\\';
-	else
-	  data[wpos]=':';
-	break;
-      default:
-	throw QT_TRANSLATE_NOOP("toTool","Unknown escape character in string (Only \\\\ and \\n recognised)");
-      }
-      break;
-    default:
-      data[wpos]=data[pos];
+    int pos = 0;
+    int bol = 0;
+    int endtag = -1;
+    int wpos = 0;
+    int size = data.length();
+    while (pos < size)
+    {
+        switch (data[pos])
+        {
+        case '\n':
+            data[wpos] = 0;
+            if (endtag == -1)
+                throw QT_TRANSLATE_NOOP("toTool", "Malformed tag in config file. Missing = on row. (%1)").
+                arg(data.mid(bol, wpos - bol));
+            {
+                QCString tag = ((const char *)data) + bol;
+                QCString val = ((const char *)data) + endtag + 1;
+                pairs[tag] = QString::fromUtf8(val);
+            }
+            bol = pos + 1;
+            endtag = -1;
+            wpos = pos;
+            break;
+        case '=':
+            if (endtag == -1)
+            {
+                endtag = pos;
+                data[wpos] = 0;
+                wpos = pos;
+            }
+            else
+                data[wpos] = data[pos];
+            break;
+        case '\\':
+            pos++;
+            switch (data[pos])
+            {
+            case 'n':
+                data[wpos] = '\n';
+                break;
+            case '\\':
+                if (endtag >= 0)
+                    data[wpos] = '\\';
+                else
+                    data[wpos] = ':';
+                break;
+            default:
+                throw QT_TRANSLATE_NOOP("toTool", "Unknown escape character in string (Only \\\\ and \\n recognised)");
+            }
+            break;
+        default:
+            data[wpos] = data[pos];
+        }
+        wpos++;
+        pos++;
     }
-    wpos++;
-    pos++;
-  }
-  return;
+    return ;
 }
 
-const QString &toTool::config(const QCString &tag,const QCString &def)
+const QString &toTool::config(const QCString &tag, const QCString &def)
 {
-  QCString str=name();
-  str.append(":");
-  str.append(tag);
-  return globalConfig(str,def);
+    QCString str = name();
+    str.append(":");
+    str.append(tag);
+    return globalConfig(str, def);
 }
 
 void toTool::eraseConfig(const QCString &tag)
 {
-  QCString str=name();
-  str.append(":");
-  str.append(tag);
-  globalEraseConfig(str);
+    QCString str = name();
+    str.append(":");
+    str.append(tag);
+    globalEraseConfig(str);
 }
 
-void toTool::setConfig(const QCString &tag,const QString &def)
+void toTool::setConfig(const QCString &tag, const QString &def)
 {
-  QCString str=name();
-  str.append(":");
-  str.append(tag);
-  globalSetConfig(str,def);
+    QCString str = name();
+    str.append(":");
+    str.append(tag);
+    globalSetConfig(str, def);
 }
 
-const QString &toTool::globalConfig(const QCString &tag,const QCString &def)
+const QString &toTool::globalConfig(const QCString &tag, const QCString &def)
 {
-  if (!Configuration)
-    loadConfig();
+    if (!Configuration)
+        loadConfig();
 
-  std::map<QCString,QString>::iterator i=Configuration->find(tag);
-  if (i==Configuration->end()) {
+    std::map<QCString, QString>::iterator i = Configuration->find(tag);
+    if (i == Configuration->end())
+    {
 #if defined(WIN32)
-    CRegistry registry;
-    QRegExp re(QString::fromLatin1(":"));
-    QCString path=tag;
-    path.prepend(APPLICATION_NAME);
-    path.replace(re,"\\");
-    DWORD siz=1024;
-    char buffer[1024];
-    try {
-      if (registry.GetStringValue(HKEY_CURRENT_USER,
-  				  toKeyPath(path,registry),
-				  toKeyValue(path),
-				  buffer,siz)) {
-	if (siz>0) {
-	  QString ret=QString::fromUtf8(buffer);
-	  (*Configuration)[tag]=ret;
-	} else {
-	  (*Configuration)[tag]="";
-	}
-	return (*Configuration)[tag];
-      }
-    } catch (...) {
+        CRegistry registry;
+        QRegExp re(QString::fromLatin1(":"));
+        QCString path = tag;
+        path.prepend(APPLICATION_NAME);
+        path.replace(re, "\\");
+        DWORD siz = 1024;
+        char buffer[1024];
+        try
+        {
+            if (registry.GetStringValue(HKEY_CURRENT_USER,
+                                        toKeyPath(path, registry),
+                                        toKeyValue(path),
+                                        buffer, siz))
+            {
+                if (siz > 0)
+                {
+                    QString ret = QString::fromUtf8(buffer);
+                    (*Configuration)[tag] = ret;
+                }
+                else
+                {
+                    (*Configuration)[tag] = "";
+                }
+                return (*Configuration)[tag];
+            }
+        }
+        catch (...)
+        {
 #ifdef FALLBACK_NAME
-      try {
-	path=tag;
-	path.prepend(FALLBACK_NAME);
-	path.replace(re,"\\");
-	if (registry.GetStringValue(HKEY_CURRENT_USER,
-				    toKeyPath(path,registry),
-				    toKeyValue(path),
-				    buffer,siz)) {
-	  if (siz>0) {
-	    QString ret=QString::fromUtf8(buffer);
-	    (*Configuration)[tag]=ret;
-	  } else {
-	    (*Configuration)[tag]="";
-	  }
-	  return (*Configuration)[tag];
-	}
-      } catch (...) {
-      }
+            try
+            {
+                path = tag;
+                path.prepend(FALLBACK_NAME);
+                path.replace(re, "\\");
+                if (registry.GetStringValue(HKEY_CURRENT_USER,
+                                            toKeyPath(path, registry),
+                                            toKeyValue(path),
+                                            buffer, siz))
+                {
+                    if (siz > 0)
+                    {
+                        QString ret = QString::fromUtf8(buffer);
+                        (*Configuration)[tag] = ret;
+                    }
+                    else
+                    {
+                        (*Configuration)[tag] = "";
+                    }
+                    return (*Configuration)[tag];
+                }
+            }
+            catch (...)
+            {}
 #endif
+
+        }
+#endif
+
+        (*Configuration)[tag] = QString::fromLatin1(def);
+        return (*Configuration)[tag];
     }
-#endif
-    (*Configuration)[tag]=QString::fromLatin1(def);
-    return (*Configuration)[tag];
-  }
-  return (*i).second;
+    return (*i).second;
 }
 
 void toTool::globalEraseConfig(const QCString &tag)
 {
-  if (!Configuration)
-    loadConfig();
-  std::map<QCString,QString>::iterator i=Configuration->find(tag);
-  if (i!=Configuration->end()) {
-    Configuration->erase(i);
+    if (!Configuration)
+        loadConfig();
+    std::map<QCString, QString>::iterator i = Configuration->find(tag);
+    if (i != Configuration->end())
+    {
+        Configuration->erase(i);
 #if defined(WIN32)
-    CRegistry registry;
-    QRegExp re(QString::fromLatin1(":"));
-    QCString path=tag;
-    path.prepend(APPLICATION_NAME);
-    path.replace(re,"\\"); 
-    registry.DeleteKey(HKEY_CURRENT_USER,path); // Don't really care if it works.
+
+        CRegistry registry;
+        QRegExp re(QString::fromLatin1(":"));
+        QCString path = tag;
+        path.prepend(APPLICATION_NAME);
+        path.replace(re, "\\");
+        registry.DeleteKey(HKEY_CURRENT_USER, path); // Don't really care if it works.
 #endif
-  }
+
+    }
 }
 
-void toTool::globalSetConfig(const QCString &tag,const QString &value)
+void toTool::globalSetConfig(const QCString &tag, const QString &value)
 {
-  if (!Configuration)
-    loadConfig();
+    if (!Configuration)
+        loadConfig();
 
-  (*Configuration)[tag]=value;
+    (*Configuration)[tag] = value;
 }
 
 bool toTool::canHandle(toConnection &conn)
 {
-  return (toIsOracle(conn));
+    return (toIsOracle(conn));
 }
 
 void toTool::customSetup(int)
-{
-}
+{}
 
 QWidget *toTool::configurationTab(QWidget *)
 {
-  return NULL;
+    return NULL;
 }
 
 toTool *toTool::tool(const QCString &key)
 {
-  if (!Tools)
-    Tools=new std::map<QCString,toTool *>;
-  std::map<QCString,toTool *>::iterator i=Tools->find(key);
-  if (i==Tools->end())
-    return NULL;
-  
-  return (*i).second;
+    if (!Tools)
+        Tools = new std::map<QCString, toTool *>;
+    std::map<QCString, toTool *>::iterator i = Tools->find(key);
+    if (i == Tools->end())
+        return NULL;
+
+    return (*i).second;
 }
 
 void toTool::about(QWidget *)
-{
-}
+{}

@@ -8,7 +8,7 @@ bool CRegistry::IsWinNTor2K()
 {
     OSVERSIONINFO OsVer;
     GetVersionEx(&OsVer);
-    return (OsVer.dwPlatformId == VER_PLATFORM_WIN32_NT)!=0;
+    return (OsVer.dwPlatformId == VER_PLATFORM_WIN32_NT) != 0;
 }
 
 // Creates a key specified by pszSubKey - you can't create
@@ -18,22 +18,23 @@ bool CRegistry::CreateKey(HKEY hKeyRoot, LPCTSTR pszSubKey)
 {
     HKEY hKey;
     DWORD dwFunc;
-    LONG  lRet;
+    LONG lRet;
 
     lRet = RegCreateKeyEx(
-        hKeyRoot, 
-        pszSubKey,
-        0,
-        (LPTSTR)NULL,
-        REG_OPTION_NON_VOLATILE,
-        KEY_WRITE, 
-        (LPSECURITY_ATTRIBUTES)NULL,
-        &hKey,
-        &dwFunc
-    );
+               hKeyRoot,
+               pszSubKey,
+               0,
+               (LPTSTR)NULL,
+               REG_OPTION_NON_VOLATILE,
+               KEY_WRITE,
+               (LPSECURITY_ATTRIBUTES)NULL,
+               &hKey,
+               &dwFunc
+           );
 
-    if(lRet==ERROR_SUCCESS) {
-    
+    if (lRet == ERROR_SUCCESS)
+    {
+
         RegCloseKey(hKey);
         hKey = (HKEY)NULL;
 
@@ -41,56 +42,63 @@ bool CRegistry::CreateKey(HKEY hKeyRoot, LPCTSTR pszSubKey)
     }
 
     SetLastError((DWORD)lRet);
-    return false;   
+    return false;
 }
 
 bool CRegistry::DeleteKey(HKEY hKeyRoot, LPCTSTR pszSubKey)
 {
-    DWORD dwRet=ERROR_SUCCESS;
+    DWORD dwRet = ERROR_SUCCESS;
 
-    if(IsWinNTor2K()) { 
+    if (IsWinNTor2K())
+    {
         // WinNT/2K will not allow you to delete keys which have
         // subkeys/values inside them. MS's platform SDK tells you
         // to use the SHDeleteKey function in shlwapi.dll. This dll
         // is not available on NT platforms without IE 4.0 or later.
-        // Because of this I first attempt to delete the key in the 
+        // Because of this I first attempt to delete the key in the
         // hope that it is empty. If that is not possible I load shlwapi
         // and call the function in that. This prevents the app bombing
         // out if the dll can't be found.
-        if(RegDeleteKey(hKeyRoot, pszSubKey)!=ERROR_SUCCESS) {
-        
+        if (RegDeleteKey(hKeyRoot, pszSubKey) != ERROR_SUCCESS)
+        {
+
             HINSTANCE hLibInst = LoadLibrary(_T("shlwapi.dll"));
-        
-            if(!hLibInst) {
+
+            if (!hLibInst)
+            {
                 throw ERROR_NO_SHLWAPI_DLL;
             }
 
-#if defined(UNICODE) || defined(_UNICODE) 
+#if defined(UNICODE) || defined(_UNICODE)
             SHDELKEYPROC DeleteKeyRecursive = (SHDELKEYPROC)GetProcAddress(hLibInst, "SHDeleteKeyW");
 #else
+
             SHDELKEYPROC DeleteKeyRecursive = (SHDELKEYPROC)GetProcAddress(hLibInst, "SHDeleteKeyA");
 #endif
-            if(!DeleteKeyRecursive) {
+
+            if (!DeleteKeyRecursive)
+            {
                 FreeLibrary(hLibInst);
                 throw ERROR_NO_SHDELETEKEY;
             }
-        
+
             dwRet = DeleteKeyRecursive(hKeyRoot, pszSubKey);
-        
+
             FreeLibrary(hLibInst);
         }
     }
-    else {
+    else
+    {
         // Windows 9x will allow RegDeleteKey to delete keys
         // even if they have subkeys/values.
         dwRet = RegDeleteKey(hKeyRoot, pszSubKey);
     }
 
-    if(dwRet == ERROR_SUCCESS)
+    if (dwRet == ERROR_SUCCESS)
         return true;
-    
+
     SetLastError(dwRet);
-    return false;    
+    return false;
 }
 
 // Deletes a value from a given subkey and root
@@ -99,16 +107,17 @@ bool CRegistry::DeleteValue(HKEY hKeyRoot, LPCTSTR pszSubKey, LPCTSTR pszValue)
     HKEY hKey;
     LONG lRes;
 
-    if((lRes = RegOpenKeyEx(hKeyRoot, pszSubKey, 0, KEY_SET_VALUE, &hKey))!=ERROR_SUCCESS) {
+    if ((lRes = RegOpenKeyEx(hKeyRoot, pszSubKey, 0, KEY_SET_VALUE, &hKey)) != ERROR_SUCCESS)
+    {
         SetLastError((DWORD)lRes);
         return false;
     }
 
     lRes = RegDeleteValue(hKey, pszValue);
-    
+
     RegCloseKey(hKey);
 
-    if(lRes==ERROR_SUCCESS)
+    if (lRes == ERROR_SUCCESS)
         return true;
 
     SetLastError(lRes);
@@ -119,30 +128,33 @@ bool CRegistry::DeleteValue(HKEY hKeyRoot, LPCTSTR pszSubKey, LPCTSTR pszValue)
 // be set to the correct size.
 bool CRegistry::GetBinaryValue(HKEY hKeyRoot, LPCTSTR pszSubKey, LPCTSTR pszValue, PVOID pBuffer, DWORD& rdwSize)
 {
-    HKEY  hKey;
+    HKEY hKey;
     DWORD dwType = REG_BINARY;
     DWORD dwSize = rdwSize;
-    LONG  lRes   = 0;
+    LONG lRes = 0;
 
-    if((lRes = RegOpenKeyEx(hKeyRoot, pszSubKey, 0, KEY_READ, &hKey))!=ERROR_SUCCESS) {
+    if ((lRes = RegOpenKeyEx(hKeyRoot, pszSubKey, 0, KEY_READ, &hKey)) != ERROR_SUCCESS)
+    {
         SetLastError((DWORD)lRes);
         return false;
     }
 
     lRes = RegQueryValueEx(hKey, pszValue, 0, &dwType, (LPBYTE)pBuffer, &dwSize);
-    
-    rdwSize = dwSize;    
+
+    rdwSize = dwSize;
     RegCloseKey(hKey);
-    
-    if(lRes!=ERROR_SUCCESS) {
+
+    if (lRes != ERROR_SUCCESS)
+    {
         SetLastError(lRes);
         return false;
     }
 
-    if(dwType!=REG_BINARY) {
+    if (dwType != REG_BINARY)
+    {
         throw ERROR_WRONG_TYPE;
     }
-    
+
     return true;
 }
 
@@ -150,32 +162,34 @@ bool CRegistry::GetBinaryValue(HKEY hKeyRoot, LPCTSTR pszSubKey, LPCTSTR pszValu
 bool CRegistry::GetDWORDValue(HKEY hKeyRoot, LPCTSTR pszSubKey, LPCTSTR pszValue, DWORD &rdwBuff)
 {
     HKEY hKey;
-    DWORD dwType  = REG_DWORD;
-    DWORD dwSize  = sizeof(DWORD);
+    DWORD dwType = REG_DWORD;
+    DWORD dwSize = sizeof(DWORD);
     DWORD dwValue = 0;
-    LONG  lRes;
+    LONG lRes;
 
     rdwBuff = 0;
 
-    if((lRes = RegOpenKeyEx(hKeyRoot, pszSubKey, 0, KEY_READ, &hKey))!=ERROR_SUCCESS) {
+    if ((lRes = RegOpenKeyEx(hKeyRoot, pszSubKey, 0, KEY_READ, &hKey)) != ERROR_SUCCESS)
+    {
         SetLastError(lRes);
         return false;
     }
-	
-    lRes = RegQueryValueEx(hKey, pszValue, 0, &dwType, (LPBYTE)&dwValue, &dwSize);
-    
+
+    lRes = RegQueryValueEx(hKey, pszValue, 0, &dwType, (LPBYTE) & dwValue, &dwSize);
+
     RegCloseKey(hKey);
-    
-    if(dwType!=REG_DWORD)
+
+    if (dwType != REG_DWORD)
         throw ERROR_WRONG_TYPE;
-    
-    if(lRes!=ERROR_SUCCESS) {
+
+    if (lRes != ERROR_SUCCESS)
+    {
         SetLastError(lRes);
         return false;
     }
 
     rdwBuff = dwValue;
-        
+
     return true;
 }
 
@@ -187,27 +201,29 @@ bool CRegistry::GetStringValue(HKEY hKeyRoot, LPCTSTR pszSubKey, LPCTSTR pszValu
 {
     HKEY hKey;
     DWORD dwType = REG_SZ;
-    LONG  lRes;
+    LONG lRes;
     DWORD dwBufferSize = rdwSize;
 
-    if(!pszBuffer)
+    if (!pszBuffer)
         throw ERROR_INVALID_BUFFER;
 
-    if((lRes=RegOpenKeyEx(hKeyRoot, pszSubKey, 0, KEY_READ, &hKey))!=ERROR_SUCCESS) {
+    if ((lRes = RegOpenKeyEx(hKeyRoot, pszSubKey, 0, KEY_READ, &hKey)) != ERROR_SUCCESS)
+    {
         SetLastError(lRes);
         return false;
     }
-		
+
     lRes = RegQueryValueEx(hKey, pszValue, NULL, &dwType, (unsigned char*)pszBuffer, &dwBufferSize);
 
     RegCloseKey(hKey);
     rdwSize = dwBufferSize;
 
-    if(dwType!=REG_SZ)
+    if (dwType != REG_SZ)
         throw ERROR_WRONG_TYPE;
-    
-			
-    if(lRes!=ERROR_SUCCESS) {
+
+
+    if (lRes != ERROR_SUCCESS)
+    {
         SetLastError(lRes);
         return false;
     }
@@ -219,22 +235,24 @@ bool CRegistry::GetStringValue(HKEY hKeyRoot, LPCTSTR pszSubKey, LPCTSTR pszValu
 bool CRegistry::SetBinaryValue(HKEY hKeyRoot, LPCTSTR pszSubKey, LPCTSTR pszValue, PVOID pData, DWORD dwSize)
 {
     HKEY hKey;
-    LONG  lRes	 = 0;
+    LONG lRes = 0;
 
-    if((lRes = RegOpenKeyEx(hKeyRoot, pszSubKey, 0, KEY_WRITE, &hKey))!=ERROR_SUCCESS) {
+    if ((lRes = RegOpenKeyEx(hKeyRoot, pszSubKey, 0, KEY_WRITE, &hKey)) != ERROR_SUCCESS)
+    {
         SetLastError(lRes);
         return false;
     }
-		
+
     lRes = RegSetValueEx(hKey, pszValue, 0, REG_BINARY, reinterpret_cast<BYTE*>(pData), dwSize);
-	
+
     RegCloseKey(hKey);
 
-    if(lRes!=ERROR_SUCCESS) {
+    if (lRes != ERROR_SUCCESS)
+    {
         SetLastError(lRes);
         return false;
     }
-    
+
     return true;
 }
 
@@ -244,44 +262,48 @@ bool CRegistry::SetDWORDValue(HKEY hKeyRoot, LPCTSTR pszSubKey, LPCTSTR pszValue
     HKEY hKey;
     LONG lRes;
 
-    if((lRes = RegOpenKeyEx(hKeyRoot, pszSubKey, 0, KEY_WRITE, &hKey))!=ERROR_SUCCESS) {
-        SetLastError(lRes);
-        return false;
-    }
-	
-    lRes = RegSetValueEx(hKey, pszValue,0,REG_DWORD,reinterpret_cast<BYTE*>(&dwValue),sizeof(DWORD));
-	
-    RegCloseKey(hKey);
-	
-    if(lRes!=ERROR_SUCCESS) {
+    if ((lRes = RegOpenKeyEx(hKeyRoot, pszSubKey, 0, KEY_WRITE, &hKey)) != ERROR_SUCCESS)
+    {
         SetLastError(lRes);
         return false;
     }
 
-	return true;
+    lRes = RegSetValueEx(hKey, pszValue, 0, REG_DWORD, reinterpret_cast<BYTE*>(&dwValue), sizeof(DWORD));
+
+    RegCloseKey(hKey);
+
+    if (lRes != ERROR_SUCCESS)
+    {
+        SetLastError(lRes);
+        return false;
+    }
+
+    return true;
 }
 
 // Writes a string to the registry.
 bool CRegistry::SetStringValue(HKEY hKeyRoot, LPCTSTR pszSubKey, LPCTSTR pszValue, LPCTSTR pszString)
 {
-    HKEY  hKey;
-    LONG  lRes;
+    HKEY hKey;
+    LONG lRes;
     DWORD dwSize = lstrlen(pszString) * sizeof(TCHAR);
 
-    if((lRes = RegOpenKeyEx(hKeyRoot, pszSubKey, 0, KEY_WRITE, &hKey))!=ERROR_SUCCESS) {
-        SetLastError(lRes);
-        return false;
-    }   
-	
-    lRes = RegSetValueEx(hKey, pszValue, 0, REG_SZ,
-			 (BYTE*)(pszString), dwSize);
-	
-    RegCloseKey(hKey);
-
-    if(lRes!=ERROR_SUCCESS) {
+    if ((lRes = RegOpenKeyEx(hKeyRoot, pszSubKey, 0, KEY_WRITE, &hKey)) != ERROR_SUCCESS)
+    {
         SetLastError(lRes);
         return false;
     }
-        
+
+    lRes = RegSetValueEx(hKey, pszValue, 0, REG_SZ,
+                         (BYTE*)(pszString), dwSize);
+
+    RegCloseKey(hKey);
+
+    if (lRes != ERROR_SUCCESS)
+    {
+        SetLastError(lRes);
+        return false;
+    }
+
     return true;
 }

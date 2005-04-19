@@ -34,28 +34,53 @@ class QtMultiLineEditCommand
 {
 public:
     enum Commands { Invalid, Begin, End, Insert, Delete };
-    virtual ~QtMultiLineEditCommand() {};
-    virtual Commands type() { return Invalid; };
-    virtual int terminator() { return 0; }
+    virtual ~QtMultiLineEditCommand()
+    {}
+    ;
+    virtual Commands type()
+    {
+        return Invalid;
+    };
+    virtual int terminator()
+    {
+        return 0;
+    }
 
-    virtual bool merge( QtMultiLineEditCommand* ) { return FALSE;}
+    virtual bool merge( QtMultiLineEditCommand* )
+    {
+        return FALSE;
+    }
 };
 
 class QBeginCommand : public QtMultiLineEditCommand
 {
 
 public:
-    QBeginCommand() {}
-    int terminator() { return 1; }
-    Commands type() { return Begin; };
+    QBeginCommand()
+    {}
+    int terminator()
+    {
+        return 1;
+    }
+    Commands type()
+    {
+        return Begin;
+    };
 };
 
 class QEndCommand : public QtMultiLineEditCommand
 {
 public:
-    QEndCommand() {}
-    int terminator() { return -1; }
-    Commands type() { return End; };
+    QEndCommand()
+    {}
+    int terminator()
+    {
+        return -1;
+    }
+    Commands type()
+    {
+        return End;
+    };
 };
 
 // QtMultiLineEditUndoRedo methods
@@ -67,23 +92,27 @@ public:
 
     // have to handle deletion of current selection
     QDelTextCmd(int offset, const QString &str )
-	: mOffset( offset ),
-	  mStr ( str )
+            : mOffset( offset ),
+            mStr ( str )
+    {}
+    Commands type()
     {
-    }
-    Commands type() { return Delete; };
+        return Delete;
+    };
 
     bool merge( QtMultiLineEditCommand* other)
     {
-	if ( other->type() == type() ) {
-	    QDelTextCmd* o = (QDelTextCmd*) other;
-	    if ( mOffset + int(mStr.length()) == o->mOffset ) {
-		o->mStr.prepend( mStr );
-		o->mOffset = mOffset;
-		return TRUE;
-	    }
-	}
-	return FALSE;
+        if ( other->type() == type() )
+        {
+            QDelTextCmd* o = (QDelTextCmd*) other;
+            if ( mOffset + int(mStr.length()) == o->mOffset )
+            {
+                o->mStr.prepend( mStr );
+                o->mOffset = mOffset;
+                return TRUE;
+            }
+        }
+        return FALSE;
     }
 
 
@@ -93,230 +122,235 @@ class QInsTextCmd : public QDelTextCmd
 {
 
 public:
-    QInsTextCmd(int offset,const QString &str )
-	: QDelTextCmd( offset, str )
-    {
-    }
+    QInsTextCmd(int offset, const QString &str )
+            : QDelTextCmd( offset, str )
+    {}
 
-    Commands type() { return Insert; };
+    Commands type()
+    {
+        return Insert;
+    };
 
     bool merge( QtMultiLineEditCommand* other)
     {
-	if ( other->type() == type() ) {
-	    QInsTextCmd* o = (QInsTextCmd*) other;
-	    if ( mOffset == o->mOffset + int(o->mStr.length()) ) {
-		o->mStr += mStr;
-		return TRUE;
-	    }
-	}
-	return FALSE;
+        if ( other->type() == type() )
+        {
+            QInsTextCmd* o = (QInsTextCmd*) other;
+            if ( mOffset == o->mOffset + int(o->mStr.length()) )
+            {
+                o->mStr += mStr;
+                return TRUE;
+            }
+        }
+        return FALSE;
     }
 };
 
 
 /*!
   \class QtMultiLineEdit qtmultilineedit.h
-
+ 
   \brief The QtMultiLineEdit widget is a simple editor for inputting text.
-
+ 
   \obsolete
-
+ 
   The QtMultiLineEdit widget provides multiple line text input and display.
   It is intended for moderate amounts of text. There are no arbitrary
   limitations, but if you try to handle megabytes of data, performance
   will suffer.
-
+ 
   Per default, the edit widget does not perform any word
   wrapping. This can be adjusted by calling setWordWrap(). Both
   dynamic wrapping according to the visible width or a fixed number of
   character or pixels is supported.
-
+ 
   The widget can be used to display text by calling setReadOnly(TRUE).
-
+ 
   The default key bindings are described in keyPressEvent(); they cannot
   be customized except by inheriting the class.
-
+ 
   <img src=qmlined-m.png> <img src=qmlined-w.png>
 */
 
 /*!
     \property QtMultiLineEdit::numLines
     \brief the number of lines in the multi-line edit
-
+ 
   numLines() returns the number of lines in the editor. The count
   includes any empty lines at top and bottom, so for an empty editor
   this method will return 1.
-*/
+*/ 
 /*!
     \property QtMultiLineEdit::atBeginning
     \brief whether the cursor is at the beginning
-
+ 
     atBeginning() returns TRUE if the cursor is placed at the
     beginning of the text.
-*/
+*/ 
 /*!
     \property QtMultiLineEdit::atEnd
     \brief whether the cursor is at the end
-
+ 
   atEnd() returns TRUE if the cursor is placed at the end of the text.
-*/
+*/ 
 /*!
     \property QtMultiLineEdit::maxLineWidth
     \brief the maximum line width in pixels
   Returns the width in pixels of the longest text line in this editor.
-*/
+*/ 
 /*!
     \property QtMultiLineEdit::alignment
     \brief the alignment
-
+ 
     Possible values are \c AlignLeft, \c Align(H)Center and \c
     AlignRight.
   \sa Qt::AlignmentFlags
-*/
+*/ 
 /*!
     \property QtMultiLineEdit::edited
     \brief whether the text had been edited
-
+ 
 edited() returns the edited flag of the line edit.  If this returns FALSE,
 the contents has not been changed since the construction of the
 QtMultiLineEdit (or the last call to setEdited( FALSE ), if any).  If
 it returns TRUE, the contents have been edited, or setEdited( TRUE )
 has been called.
-
+ 
 setEdited() sets the edited flag of this line edit to \e e.  The
 edited flag is never read by QtMultiLineEdit, but is changed to TRUE
 whenever the user changes its contents.
-
+ 
 This is useful e.g. for things that need to provide a default value,
 but cannot find the default at once.  Just open the widget without the
 best default and when the default is known, check the edited() return
 value and set the line edit's contents if the user has not started
 editing the line edit.  Another example is to detect whether the
 contents need saving.
-
-*/
+ 
+*/ 
 /*!
     \property QtMultiLineEdit::echoMode
     \brief the echo mode
-*/
+*/ 
 /*!
     \property QtMultiLineEdit::maxLength
     \brief the maximum length of the text
-
+ 
   The currently set text length limit, or -1 if there is
   no limit (this is the default).
-
-*/
+ 
+*/ 
 /*!
     \property QtMultiLineEdit::maxLines
     \brief the maximum number of lines
   The currently set line limit, or -1 if there is
   no limit (the default).
-
+ 
   Note that excess lines are deleted from the \e bottom of the
   lines. If you want teletype behaviour with lines disappearing
   from the \e top as the limit is exceed, you probably just want
   to use removeLine(0) prior to adding an excess line.
-
-*/
+ 
+*/ 
 /*!
     \property QtMultiLineEdit::hMargin
     \brief the horizontal margin
   The horizontal margin current set.  The default is 3.
-*/
+*/ 
 /*!
     \property QtMultiLineEdit::wordWrap
     \brief the word wrap mode
-
+ 
   By default, wrapping keeps words intact. To allow breaking within
   words, set the wrap policy to \c Anywhere (see setWrapPolicy() ).
-
+ 
   The default wrap mode is \c NoWrap.
-
+ 
   \sa wordWrap(), setWrapColumnOrWidth(), setWrapPolicy()
-*/
+*/ 
 /*!
     \property QtMultiLineEdit::wrapColumnOrWidth
     \brief the wrap width in columns or pixels
   The wrap column or wrap width, depending on the word wrap
   mode.
   \sa setWordWrap(), setWrapColumnOrWidth()
-*/
+*/ 
 /*!
     \property QtMultiLineEdit::wrapPolicy
     \brief the wrap policy mode
    The default is \c AtWhiteSpace.
-
-*/
+ 
+*/ 
 /*!
     \property QtMultiLineEdit::autoUpdate
     \brief whether auto update is enabled
-
+ 
   autoUpdate() returns TRUE if the view updates itself automatically
   whenever it is changed in some way.
-
+ 
   If autoUpdate() is TRUE (this is the default) then the editor updates
   itself automatically whenever it has changed in some way (generally,
   when text has been inserted or deleted).
-
+ 
   If autoUpdate() is FALSE, the view does NOT repaint itself, or update
   its internal state variables itself when it is changed.  This can be
   useful to avoid flicker during large changes, and is singularly
   useless otherwise: Disable auto-update, do the changes, re-enable
   auto-update, and call repaint().
-
+ 
   \warning Do not leave the view in this state for a long time
   (i.e. between events ). If, for example, the user interacts with the
   view when auto-update is off, strange things can happen.
-
+ 
   Setting auto-update to TRUE does not repaint the view, you must call
   repaint() to do this (preferable repaint(FALSE) to avoid flicker).
-
+ 
   \sa autoUpdate() repaint()
-
-*/
+ 
+*/ 
 /*!
     \property QtMultiLineEdit::undoEnabled
     \brief whether undo is enabled
-*/
+*/ 
 /*!
     \property QtMultiLineEdit::undoDepth
     \brief the undo depth
-
+ 
   The maximum number of operations that can be stored on the undo stack.
-
+ 
   \sa setUndoDepth()
-*/
+*/ 
 /*!
     \property QtMultiLineEdit::readOnly
     \brief whether the multi-line edit is read-only
-*/
+*/ 
 /*!
     \property QtMultiLineEdit::overWriteMode
     \brief the overwrite mode
-*/
+*/ 
 /*!
     \property QtMultiLineEdit::text
     \brief the multi-line edit's text
-*/
+*/ 
 /*!
     \property QtMultiLineEdit::length
     \brief the length of the text
 */
 
-static const char * const arrow_xpm[] = {
-    "     8     8        2            1",
-    ". c None",
-    "# c #000000",
-    "........",
-    "..####..",
-    "..#####.",
-    ".....##.",
-    ".#..###.",
-    ".#####..",
-    ".####...",
-    ".#####.."
-};
+static const char * const arrow_xpm[] =
+    {
+        "     8     8        2            1",
+        ". c None",
+        "# c #000000",
+        "........",
+        "..####..",
+        "..#####.",
+        ".....##.",
+        ".#..###.",
+        ".#####..",
+        ".####...",
+        ".#####.."
+    };
 
 enum {
     IdUndo,
@@ -335,43 +369,43 @@ enum {
 struct QtMultiLineData
 {
     QtMultiLineData() :
-	isHandlingEvent(FALSE),
-	edited(FALSE),
-	maxLineWidth(0),
-	align(Qt::AlignLeft),
-	maxlines(-1),
-	maxlinelen(-1),
-	maxlen(-1),
-	wordwrap( QtMultiLineEdit::NoWrap ),
-	wrapcol( -1 ),
-	wrappolicy( QtMultiLineEdit::AtWhiteSpace ),
-	// This doesn't use font bearings, as textWidthWithTabs does that.
-	// This is just an aesthetics value.
-	// It should probably be QMAX(0,3-fontMetrics().minLeftBearing()) though,
-	// as bearings give some border anyway.
-	lr_marg(3),
-	marg_extra(0),
-	echomode(QtMultiLineEdit::Normal),
-	val(0),
-	dnd_primed(FALSE),
-	dnd_forcecursor(FALSE),
-	undo( TRUE ),
-	undodepth( 256 )
+            isHandlingEvent(FALSE),
+            edited(FALSE),
+            maxLineWidth(0),
+            align(Qt::AlignLeft),
+            maxlines( -1),
+            maxlinelen( -1),
+            maxlen( -1),
+            wordwrap( QtMultiLineEdit::NoWrap ),
+            wrapcol( -1 ),
+            wrappolicy( QtMultiLineEdit::AtWhiteSpace ),
+            // This doesn't use font bearings, as textWidthWithTabs does that.
+            // This is just an aesthetics value.
+            // It should probably be QMAX(0,3-fontMetrics().minLeftBearing()) though,
+            // as bearings give some border anyway.
+            lr_marg(3),
+            marg_extra(0),
+            echomode(QtMultiLineEdit::Normal),
+            val(0),
+            dnd_primed(FALSE),
+            dnd_forcecursor(FALSE),
+            undo( TRUE ),
+            undodepth( 256 )
     {
-	undoList.setAutoDelete( TRUE );
-	redoList.setAutoDelete( TRUE );
-	clearChartable();
+        undoList.setAutoDelete( TRUE );
+        redoList.setAutoDelete( TRUE );
+        clearChartable();
     }
     bool isHandlingEvent;
     bool edited;
-    int  maxLineWidth;
-    int	 scrollTime;
-    int	 scrollAccel;
-    int  align;
-    int  numlines;
-    int  maxlines;
-    int  maxlinelen;
-    int  maxlen;
+    int maxLineWidth;
+    int scrollTime;
+    int scrollAccel;
+    int align;
+    int numlines;
+    int maxlines;
+    int maxlinelen;
+    int maxlen;
     QtMultiLineEdit::WordWrap wordwrap;
     int wrapcol;
     QtMultiLineEdit::WrapPolicy wrappolicy;
@@ -390,14 +424,15 @@ struct QtMultiLineData
     short chartable[256];
     void clearChartable()
     {
-	int i = 256;
-	while ( i )
-	    chartable[--i] = 0;
+        int i = 256;
+        while ( i )
+            chartable[--i] = 0;
     }
     QPixmap arrow;
     QPoint dnd_startpos;
     QTimer *blinkTimer, *scrollTimer;
 #ifndef QT_NO_DRAGANDDROP
+
     QTimer *dnd_timer;
 #endif
 };
@@ -409,25 +444,27 @@ struct QtMultiLineData
 void QtMultiLineEdit::addUndoCmd(QtMultiLineEditCommand* c)
 {
     if ( d->undoList.isEmpty() )
-	emit undoAvailable(TRUE);
-    else if ( c->merge( d->undoList.last() ) ) {
-	delete c;
-	return;
+        emit undoAvailable(TRUE);
+    else if ( c->merge( d->undoList.last() ) )
+    {
+        delete c;
+        return ;
     }
     if ( int(d->undoList.count()) >= d->undodepth )
-	d->undoList.removeFirst();
+        d->undoList.removeFirst();
     d->undoList.append(c);
 
-    if ( !d->redoList.isEmpty() ) {
-	d->redoList.clear();
-	emit redoAvailable( FALSE );
+    if ( !d->redoList.isEmpty() )
+    {
+        d->redoList.clear();
+        emit redoAvailable( FALSE );
     }
 }
 
 void QtMultiLineEdit::addRedoCmd(QtMultiLineEditCommand* c)
 {
     if ( d->redoList.isEmpty() )
-	emit redoAvailable(TRUE);
+        emit redoAvailable(TRUE);
     d->redoList.append(c);
 }
 
@@ -447,8 +484,8 @@ static int tabStopDist( const QFontMetrics &fm )
 {
     int dist;
     dist = fm.width( QChar('x' ));
-    if( dist == 0 )
-       dist = fm.maxWidth();
+    if ( dist == 0 )
+        dist = fm.maxWidth();
     return defTabStop*dist;
 }
 
@@ -457,10 +494,10 @@ static int tabStopDist( const QFontMetrics &fm )
   Sets the distance between tab stops for all QtMultiLineEdit instances
   to \a ex, which is measured in multiples of the width of a lower case 'x'
   in the widget's font. The initial value is 8.
-
+ 
   \warning This function does not cause a redraw. It is best to call
   it before any QtMultiLineEdit widgets are shown.
-
+ 
   \sa defaultTabStop()
 */
 
@@ -473,7 +510,7 @@ void QtMultiLineEdit::setDefaultTabStop( int ex )
 
 /*!
   Returns the distance between tab stops.
-
+ 
   \sa setDefaultTabStop();
 */
 
@@ -488,71 +525,86 @@ int QtMultiLineEdit::defaultTabStop()
 static int textWidthWithTabs( const QFontMetrics &fm, const QString &s, uint start, uint nChars, int align )
 {
     if ( s.isEmpty() )
-	return 0;
+        return 0;
 
     int dist = -fm.leftBearing( s[(int)start] );
     int i = start;
     int tabDist = -1; // lazy eval
-    while ( (uint)i < s.length() && (uint)i < start+nChars ) {
-	if ( s[i] == '\t' && align == Qt::AlignLeft ) {
-	    if ( tabDist<0 )
-		tabDist = tabStopDist(fm);
-	    dist = ( (dist+tabDist+1)/tabDist ) * tabDist;
-	    i++;
-	} else {
-	    int ii = i;
-	    while ( (uint)i < s.length() && (uint)i < start + nChars && ( align != Qt::AlignLeft || s[i] != '\t' ) )
-		i++;
-	    dist += fm.width( s.mid(ii,i-ii) );
-	}
+    while ( (uint)i < s.length() && (uint)i < start + nChars )
+    {
+        if ( s[i] == '\t' && align == Qt::AlignLeft )
+        {
+            if ( tabDist < 0 )
+                tabDist = tabStopDist(fm);
+            dist = ( (dist + tabDist + 1) / tabDist ) * tabDist;
+            i++;
+        }
+        else
+        {
+            int ii = i;
+            while ( (uint)i < s.length() && (uint)i < start + nChars && ( align != Qt::AlignLeft || s[i] != '\t' ) )
+                i++;
+            dist += fm.width( s.mid(ii, i - ii) );
+        }
     }
     return dist;
 }
 
 static int xPosToCursorPos( const QString &s, const QFontMetrics &fm,
-			    int xPos, int width, int align )
+                            int xPos, int width, int align )
 {
     int i = 0;
-    int	  dist;
+    int dist;
     int tabDist;
 
     if ( s.isEmpty() )
-	return 0;
+        return 0;
     if ( xPos > width )
-	xPos = width;
+        xPos = width;
     if ( xPos <= 0 )
-	return 0;
+        return 0;
 
-    dist    = -fm.leftBearing( s[0] );
+    dist = -fm.leftBearing( s[0] );
 
     if ( align == Qt::AlignCenter || align == Qt::AlignHCenter )
-	dist = ( width - textWidthWithTabs( fm, s, 0, s.length(), align ) ) / 2;
+        dist = ( width - textWidthWithTabs( fm, s, 0, s.length(), align ) ) / 2;
     else if ( align == Qt::AlignRight )
-	dist = width - textWidthWithTabs( fm, s, 0, s.length(), align );
+        dist = width - textWidthWithTabs( fm, s, 0, s.length(), align );
 
-    int     distBeforeLastTab = dist;
+    int distBeforeLastTab = dist;
     tabDist = tabStopDist(fm);
-    while ( (uint)i < s.length() && dist < xPos ) {
-	if ( s[i] == '\t' && align == Qt::AlignLeft ) {
-	    distBeforeLastTab = dist;
-	    dist = (dist/tabDist + 1) * tabDist;
-	} else {
-	    dist += fm.width( s[i] );
-	}
-	i++;
+    while ( (uint)i < s.length() && dist < xPos )
+    {
+        if ( s[i] == '\t' && align == Qt::AlignLeft )
+        {
+            distBeforeLastTab = dist;
+            dist = (dist / tabDist + 1) * tabDist;
+        }
+        else
+        {
+            dist += fm.width( s[i] );
+        }
+        i++;
     }
-    if ( dist > xPos ) {
-	if ( dist > width ) {
-	    i--;
-	} else {
-	    if ( s[i-1] == '\t' && align == Qt::AlignLeft ) { // dist equals a tab stop position
-		if ( xPos - distBeforeLastTab < (dist - distBeforeLastTab)/2 )
-		    i--;
-	    } else {
-		if ( fm.width(s[i-1])/2 < dist-xPos )
-		    i--;
-	    }
-	}
+    if ( dist > xPos )
+    {
+        if ( dist > width )
+        {
+            i--;
+        }
+        else
+        {
+            if ( s[i - 1] == '\t' && align == Qt::AlignLeft )
+            { // dist equals a tab stop position
+                if ( xPos - distBeforeLastTab < (dist - distBeforeLastTab) / 2 )
+                    i--;
+            }
+            else
+            {
+                if ( fm.width(s[i - 1]) / 2 < dist - xPos )
+                    i--;
+            }
+        }
     }
     return i;
 }
@@ -563,7 +615,7 @@ static int xPosToCursorPos( const QString &s, const QFontMetrics &fm,
 */
 
 QtMultiLineEdit::QtMultiLineEdit( QWidget *parent , const char *name )
-    :QtTableView( parent, name, WStaticContents | WRepaintNoErase )
+        : QtTableView( parent, name, WStaticContents | WRepaintNoErase )
 {
     d = new QtMultiLineData;
     QFontMetrics fm( font() );
@@ -573,59 +625,67 @@ QtMultiLineEdit::QtMultiLineEdit( QWidget *parent , const char *name )
     contents = new QPtrList<QtMultiLineEditRow>;
     contents->setAutoDelete( TRUE );
 
-    cursorX = 0; cursorY = 0;
+    cursorX = 0;
+    cursorY = 0;
     curXPos = 0;
 
-    setTableFlags( Tbl_autoVScrollBar|Tbl_autoHScrollBar|
-		   Tbl_smoothVScrolling |
-		   Tbl_clipCellPainting
-		   );
+    setTableFlags( Tbl_autoVScrollBar | Tbl_autoHScrollBar |
+                   Tbl_smoothVScrolling |
+                   Tbl_clipCellPainting
+                 );
     setFrameStyle( QFrame::WinPanel | QFrame::Sunken );
     setBackgroundMode( PaletteBase );
     setWFlags( WResizeNoErase );
     setKeyCompression( TRUE );
     setFocusPolicy( WheelFocus );
 #ifndef QT_NO_CURSOR
+
     setCursor( ibeamCursor );
     verticalScrollBar()->setCursor( arrowCursor );
     horizontalScrollBar()->setCursor( arrowCursor );
 #endif
-    readOnly 	   = FALSE;
-    cursorOn	   = FALSE;
-    markIsOn	   = FALSE;
-    dragScrolling  = FALSE;
-    dragMarking    = FALSE;
-    textDirty	   = FALSE;
-    wordMark	   = FALSE;
-    overWrite	   = FALSE;
-    markAnchorX    = 0;
-    markAnchorY    = 0;
-    markDragX      = 0;
-    markDragY      = 0;
+
+    readOnly = FALSE;
+    cursorOn = FALSE;
+    markIsOn = FALSE;
+    dragScrolling = FALSE;
+    dragMarking = FALSE;
+    textDirty = FALSE;
+    wordMark = FALSE;
+    overWrite = FALSE;
+    markAnchorX = 0;
+    markAnchorY = 0;
+    markDragX = 0;
+    markDragY = 0;
     d->blinkTimer = new QTimer( this );
     connect( d->blinkTimer, SIGNAL( timeout() ),
-	     this, SLOT( blinkTimerTimeout() ) );
+             this, SLOT( blinkTimerTimeout() ) );
     d->scrollTimer = new QTimer( this );
     connect( d->scrollTimer, SIGNAL( timeout() ),
-	     this, SLOT( scrollTimerTimeout() ) );
+             this, SLOT( scrollTimerTimeout() ) );
 #ifndef QT_NO_DRAGANDDROP
+
     d->dnd_timer = new QTimer( this );
     connect( d->dnd_timer, SIGNAL( timeout() ),
-	     this, SLOT( dndTimeout() ) );
+             this, SLOT( dndTimeout() ) );
 #endif
+
     d->scrollTime = 0;
 
     dummy = TRUE;
 
-    int w  = textWidth( QString::fromLatin1("") );
+    int w = textWidth( QString::fromLatin1("") );
     contents->append( new QtMultiLineEditRow(QString::fromLatin1(""), w) );
     (void)setNumRowsAndTruncate();
     setWidth( w );
     setAcceptDrops(TRUE);
-    if ( d->maxlines >= 0 && d->maxlines <= 6 ) {
-	setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
-    } else {
-	setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+    if ( d->maxlines >= 0 && d->maxlines <= 6 )
+    {
+        setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
+    }
+    else
+    {
+        setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
     }
 }
 
@@ -635,30 +695,30 @@ QtMultiLineEdit::QtMultiLineEdit( QWidget *parent , const char *name )
 */
 
 /*! \fn QString *QtMultiLineEdit::getString( int line ) const
-
+ 
   Returns a pointer to the text at line \a line.
 */
 
 /*! \fn void QtMultiLineEdit::textChanged()
-
+ 
   This signal is emitted when the text is changed by an event or by a
   slot. Note that the signal is not emitted when you call a non-slot
   function such as insertLine().
-
+ 
   \sa returnPressed()
 */
 
 /*! \fn void QtMultiLineEdit::returnPressed()
-
+ 
   This signal is emitted when the user presses the return or enter
   key. It is not emitted if isReadOnly() is TRUE.
-
+ 
   \sa textChanged()
 */
 
 /*!
   \fn void QtMultiLineEdit::undoAvailable (bool yes)
-
+ 
   This signal is emitted when the availability of undo changes.
   If \a yes is TRUE, then undo() will work until
   undoAvailable( FALSE ) is next emitted.
@@ -666,7 +726,7 @@ QtMultiLineEdit::QtMultiLineEdit( QWidget *parent , const char *name )
 
 /*!
   \fn void QtMultiLineEdit::redoAvailable (bool yes)
-
+ 
   This signal is emitted when the availability of redo changes.
   If \a yes is TRUE, then redo() will work until
   redoAvailable( FALSE ) is next emitted.
@@ -674,7 +734,7 @@ QtMultiLineEdit::QtMultiLineEdit( QWidget *parent , const char *name )
 
 /*!
   \fn void QtMultiLineEdit::copyAvailable (bool yes)
-
+ 
   This signal is emitted when the availability of cut/copy changes.
   If \a yes is TRUE, then cut() and copy() will work until
   copyAvailable( FALSE ) is next emitted.
@@ -684,17 +744,20 @@ QtMultiLineEdit::QtMultiLineEdit( QWidget *parent , const char *name )
 /*
   If \a on is FALSE, this multi line edit accepts text input.
   Scrolling and cursor movements are accepted in any case.
-
+ 
   \sa isReadOnly() QWidget::setEnabled()
 */
 
 void QtMultiLineEdit::setReadOnly( bool on )
 {
-    if ( readOnly != on ) {
-	readOnly = on;
+    if ( readOnly != on )
+    {
+        readOnly = on;
 #ifndef QT_NO_CURSOR
-	setCursor( on ? arrowCursor : ibeamCursor );
+
+        setCursor( on ? arrowCursor : ibeamCursor );
 #endif
+
     }
 }
 
@@ -725,13 +788,14 @@ static void cleanupMLBuffer()
 
 static QPixmap *getCacheBuffer( QSize sz )
 {
-    if ( !buffer ) {
-	qAddPostRoutine( cleanupMLBuffer );
-	buffer = new QPixmap;
+    if ( !buffer )
+    {
+        qAddPostRoutine( cleanupMLBuffer );
+        buffer = new QPixmap;
     }
 
     if ( buffer->width() < sz.width() || buffer->height() < sz.height() )
-	buffer->resize( sz );
+        buffer->resize( sz );
     return buffer;
 }
 
@@ -744,10 +808,11 @@ void QtMultiLineEdit::paintCell( QPainter *painter, int row, int )
     const QColorGroup & g = colorGroup();
     QFontMetrics fm( painter->font() );
     QString s = stringShown(row);
-    if ( s.isNull() ) {
-	qWarning( "QtMultiLineEdit::paintCell: (%s) no text at line %d",
-		  name( "unnamed" ), row );
-	return;
+    if ( s.isNull() )
+    {
+        qWarning( "QtMultiLineEdit::paintCell: (%s) no text at line %d",
+                  name( "unnamed" ), row );
+        return ;
     }
     QRect updateR = cellUpdateRect();
     QPixmap *buffer = getCacheBuffer( updateR.size() );
@@ -761,101 +826,116 @@ void QtMultiLineEdit::paintCell( QPainter *painter, int row, int )
     p.setTabStops( tabStopDist(fm) );
 
     int yPos = 0;
-    int markX1, markX2;				// in x-coordinate pixels
-    markX1 = markX2 = 0;			// avoid gcc warning
-    if ( markIsOn ) {
-	int markBeginX, markBeginY;
-	int markEndX, markEndY;
-	getMarkedRegion( &markBeginY, &markBeginX, &markEndY, &markEndX );
-	if ( row >= markBeginY && row <= markEndY ) {
-	    if ( row == markBeginY ) {
-		markX1 = markBeginX;
-		if ( row == markEndY ) 		// both marks on same row
-		    markX2 = markEndX;
-		else
-		    markX2 = s.length();	// mark till end of line
-	    } else {
-		if ( row == markEndY ) {
-		    markX1 = 0;
-		    markX2 = markEndX;
-		} else {
-		    markX1 = 0;			// whole line is marked
-		    markX2 = s.length();	// whole line is marked
-		}
-	    }
-	}
+    int markX1, markX2;    // in x-coordinate pixels
+    markX1 = markX2 = 0;   // avoid gcc warning
+    if ( markIsOn )
+    {
+        int markBeginX, markBeginY;
+        int markEndX, markEndY;
+        getMarkedRegion( &markBeginY, &markBeginX, &markEndY, &markEndX );
+        if ( row >= markBeginY && row <= markEndY )
+        {
+            if ( row == markBeginY )
+            {
+                markX1 = markBeginX;
+                if ( row == markEndY )   // both marks on same row
+                    markX2 = markEndX;
+                else
+                    markX2 = s.length(); // mark till end of line
+            }
+            else
+            {
+                if ( row == markEndY )
+                {
+                    markX1 = 0;
+                    markX2 = markEndX;
+                }
+                else
+                {
+                    markX1 = 0;   // whole line is marked
+                    markX2 = s.length(); // whole line is marked
+                }
+            }
+        }
     }
     p.setPen( g.text() );
     QtMultiLineEditRow* r = contents->at( row );
-    int wcell = cellWidth() - 2*d->lr_marg;// - d->marg_extra;
+    int wcell = cellWidth() - 2 * d->lr_marg; // - d->marg_extra;
     int wrow = r->w;
     int x = d->lr_marg - p.fontMetrics().leftBearing(s[0]);
     if ( d->align == Qt::AlignCenter || d->align == Qt::AlignHCenter )
-	x += (wcell - wrow) / 2;
+        x += (wcell - wrow) / 2;
     else if ( d->align == Qt::AlignRight )
-	x += wcell - wrow;
-    p.drawText( x,  yPos, cellWidth()-d->lr_marg-x, cellHeight(),
-		d->align == AlignLeft?ExpandTabs:0, s );
+        x += wcell - wrow;
+    p.drawText( x, yPos, cellWidth() - d->lr_marg - x, cellHeight(),
+                d->align == AlignLeft ? ExpandTabs : 0, s );
     if ( !r->newline && BREAK_WITHIN_WORDS )
-	p.drawPixmap( x + wrow - d->lr_marg - d->marg_extra, yPos, d->arrow );
+        p.drawPixmap( x + wrow - d->lr_marg - d->marg_extra, yPos, d->arrow );
 #if 0
+
     if ( r->newline )
-	p.drawLine( d->lr_marg,  yPos+cellHeight()-2, cellWidth() - d->lr_marg, yPos+cellHeight()-2);
+        p.drawLine( d->lr_marg, yPos + cellHeight() - 2, cellWidth() - d->lr_marg, yPos + cellHeight() - 2);
 #endif
-    if ( markX1 != markX2 ) {
-	int sLength = s.length();
-	int xpos1   =  mapToView( markX1, row );
-	int xpos2   =  mapToView( markX2, row );
-	int fillxpos1 = xpos1;
-	int fillxpos2 = xpos2;
-	if ( markX1 == 0 )
-	    fillxpos1 -= 2;
-	if ( markX2 == sLength )
-	    fillxpos2 += 3;
-	p.setClipping( TRUE );
-	p.setClipRect( fillxpos1 - updateR.left(), 0,
-		       fillxpos2 - fillxpos1, cellHeight(row) );
-	p.fillRect( fillxpos1, 0, fillxpos2 - fillxpos1, cellHeight(row),
-		    g.brush( QColorGroup::Highlight ) );
-	p.setPen( g.highlightedText() );
-	p.drawText( x,  yPos, cellWidth()-d->lr_marg-x, cellHeight(),
-		    d->align == AlignLeft?ExpandTabs:0, s );
-	p.setClipping( FALSE );
+
+    if ( markX1 != markX2 )
+    {
+        int sLength = s.length();
+        int xpos1 = mapToView( markX1, row );
+        int xpos2 = mapToView( markX2, row );
+        int fillxpos1 = xpos1;
+        int fillxpos2 = xpos2;
+        if ( markX1 == 0 )
+            fillxpos1 -= 2;
+        if ( markX2 == sLength )
+            fillxpos2 += 3;
+        p.setClipping( TRUE );
+        p.setClipRect( fillxpos1 - updateR.left(), 0,
+                       fillxpos2 - fillxpos1, cellHeight(row) );
+        p.fillRect( fillxpos1, 0, fillxpos2 - fillxpos1, cellHeight(row),
+                    g.brush( QColorGroup::Highlight ) );
+        p.setPen( g.highlightedText() );
+        p.drawText( x, yPos, cellWidth() - d->lr_marg - x, cellHeight(),
+                    d->align == AlignLeft ? ExpandTabs : 0, s );
+        p.setClipping( FALSE );
     }
 
-    if ( row == cursorY && cursorOn && !readOnly ) {
-	int cursorPos = QMIN( (int)s.length(), cursorX );
-	int cXPos   = QMAX( mapToView( cursorPos, row ), 0 );
-	int cYPos   = 0;
-	if ( hasFocus() || d->dnd_forcecursor ) {
-	    p.setPen( g.text() );
-	    /* styled?
-	       p.drawLine( cXPos - 2, cYPos,
-	       cXPos + 2, cYPos );
-	    */
-	    p.drawLine( cXPos, cYPos,
-			cXPos, cYPos + fm.height() - 2);
-	    /* styled?
-	       p.drawLine( cXPos - 2, cYPos + fm.height() - 2,
-	       cXPos + 2, cYPos + fm.height() - 2);
-	    */
+    if ( row == cursorY && cursorOn && !readOnly )
+    {
+        int cursorPos = QMIN( (int)s.length(), cursorX );
+        int cXPos = QMAX( mapToView( cursorPos, row ), 0 );
+        int cYPos = 0;
+        if ( hasFocus() || d->dnd_forcecursor )
+        {
+            p.setPen( g.text() );
+            /* styled?
+               p.drawLine( cXPos - 2, cYPos,
+               cXPos + 2, cYPos );
+            */
+            p.drawLine( cXPos, cYPos,
+                        cXPos, cYPos + fm.height() - 2);
+            /* styled?
+               p.drawLine( cXPos - 2, cYPos + fm.height() - 2,
+               cXPos + 2, cYPos + fm.height() - 2);
+            */
 
 #ifndef QT_NO_TRANSFORMATIONS
-	    // TODO: set it other times, eg. when scrollbar moves view
-	    QWMatrix wm = painter->worldMatrix();
-	    setMicroFocusHint( int(wm.dx()+cXPos),
-			       int (wm.dy()+cYPos),
-			       1, fm.ascent() );
+            // TODO: set it other times, eg. when scrollbar moves view
+            QWMatrix wm = painter->worldMatrix();
+            setMicroFocusHint( int(wm.dx() + cXPos),
+                               int (wm.dy() + cYPos),
+                               1, fm.ascent() );
 #else
-	    setMicroFocusHint( cXPos,
-			       cYPos,
-			       1, fm.ascent() );
+
+            setMicroFocusHint( cXPos,
+                               cYPos,
+                               1, fm.ascent() );
 #endif
-	}
+
+        }
     }
     p.end();
     painter->drawPixmap( updateR.left(), updateR.top(), *buffer,
-			 0, 0, updateR.width(), updateR.height() );
+                         0, 0, updateR.width(), updateR.height() );
 }
 
 
@@ -868,9 +948,10 @@ void QtMultiLineEdit::paintCell( QPainter *painter, int row, int )
 int QtMultiLineEdit::textWidth( const QString &s )
 {
     int w = 0;
-    if ( !s.isNull() ) {
-	w = textWidthWithTabs( QFontMetrics( font() ), s, 0, s.length(),
-			       d->align );
+    if ( !s.isNull() )
+    {
+        w = textWidthWithTabs( QFontMetrics( font() ), s, 0, s.length(),
+                               d->align );
     }
     return w + 2 * d->lr_marg + d->marg_extra;
 }
@@ -882,12 +963,13 @@ int QtMultiLineEdit::textWidth( const QString &s )
 
 int QtMultiLineEdit::textWidth( int line )
 {
-    if ( d->echomode == Password) {
-	QString s = stringShown(line);
-	return textWidth( s );
+    if ( d->echomode == Password)
+    {
+        QString s = stringShown(line);
+        return textWidth( s );
     }
     QtMultiLineEditRow* r = contents->at(line);
-    return r?r->w:0;
+    return r ? r->w : 0;
 }
 
 /*!
@@ -898,7 +980,7 @@ void QtMultiLineEdit::focusInEvent( QFocusEvent * )
 {
     stopAutoScroll();
     if ( !d->blinkTimer->isActive() )
-	d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
+        d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
     cursorOn = TRUE;
     updateCell( cursorY, 0, FALSE );
 }
@@ -907,8 +989,7 @@ void QtMultiLineEdit::focusInEvent( QFocusEvent * )
 /*!\reimp
 */
 void QtMultiLineEdit::leaveEvent( QEvent * )
-{
-}
+{}
 
 
 /*!\reimp
@@ -917,9 +998,10 @@ void QtMultiLineEdit::focusOutEvent( QFocusEvent * )
 {
     stopAutoScroll();
     d->blinkTimer->stop();
-    if ( cursorOn ) {
-	cursorOn = FALSE;
-	updateCell( cursorY, 0, FALSE );
+    if ( cursorOn )
+    {
+        cursorOn = FALSE;
+        updateCell( cursorY, 0, FALSE );
     }
 }
 
@@ -937,18 +1019,23 @@ void QtMultiLineEdit::timerEvent( QTimerEvent * )
 #ifndef QT_NO_DRAGANDDROP
 void QtMultiLineEdit::doDrag()
 {
-    if ( d->dnd_timer ) {
-	d->dnd_timer->stop();
+    if ( d->dnd_timer )
+    {
+        d->dnd_timer->stop();
     }
     QDragObject *drag_text = new QTextDrag(markedText(), this);
-    if ( readOnly ) {
-	drag_text->dragCopy();
-    } else {
-	if ( drag_text->drag() && QDragObject::target() != this ) {
-	    del();
-	    if ( textDirty && !d->isHandlingEvent )
-		emit textChanged();
-	}
+    if ( readOnly )
+    {
+        drag_text->dragCopy();
+    }
+    else
+    {
+        if ( drag_text->drag() && QDragObject::target() != this )
+        {
+            del();
+            if ( textDirty && !d->isHandlingEvent )
+                emit textChanged();
+        }
     }
     d->dnd_primed = FALSE;
 }
@@ -960,29 +1047,34 @@ void QtMultiLineEdit::doDrag()
   FALSE if there is no marked text.
  */
 bool QtMultiLineEdit::getMarkedRegion( int *line1, int *col1,
-				      int *line2, int *col2 ) const
+                                       int *line2, int *col2 ) const
 {
     if ( !markIsOn || !line1 || !line2 || !col1 || !col2 )
-	return FALSE;
+        return FALSE;
     if ( markAnchorY < markDragY ||
-	 markAnchorY == markDragY && markAnchorX < markDragX) {
-	*line1 = markAnchorY;
-	*col1 = markAnchorX;
-	*line2 = markDragY;
-	*col2 = markDragX;
-	if ( *line2 > numLines() - 1 ) {
-	    *line2 = numLines() - 1;
-	    *col2 = lineLength( *line2 );
-	}
-    } else {
-	*line1 = markDragY;
-	*col1 = markDragX;
-	*line2 = markAnchorY;
-	*col2 = markAnchorX;
-	if ( *line2 > numLines() - 1 ) {
-	    *line2 = numLines() - 1;
-	    *col2 = lineLength( *line2 );
-	}
+            markAnchorY == markDragY && markAnchorX < markDragX)
+    {
+        *line1 = markAnchorY;
+        *col1 = markAnchorX;
+        *line2 = markDragY;
+        *col2 = markDragX;
+        if ( *line2 > numLines() - 1 )
+        {
+            *line2 = numLines() - 1;
+            *col2 = lineLength( *line2 );
+        }
+    }
+    else
+    {
+        *line1 = markDragY;
+        *col1 = markDragX;
+        *line2 = markAnchorY;
+        *col2 = markAnchorX;
+        if ( *line2 > numLines() - 1 )
+        {
+            *line2 = numLines() - 1;
+            *col2 = lineLength( *line2 );
+        }
     }
     return markIsOn;
 }
@@ -1007,34 +1099,41 @@ QString QtMultiLineEdit::markedText() const
     int markBeginX, markBeginY;
     int markEndX, markEndY;
     if ( !getMarkedRegion( &markBeginY, &markBeginX, &markEndY, &markEndX ) )
-	return QString();
-    if ( markBeginY == markEndY ) { //just one line
-	QString *s  = getString( markBeginY );
-	return s->mid( markBeginX, markEndX - markBeginX );
-    } else { //multiline
-	QString *firstS, *lastS;
-	firstS = getString( markBeginY );
-	lastS  = getString( markEndY );
-	int i;
-	QString tmp;
-	if ( firstS )
-	    tmp += firstS->mid(markBeginX);
-	if ( contents->at( markBeginY )->newline )
-	    tmp += '\n';
+        return QString();
+    if ( markBeginY == markEndY )
+    { //just one line
+        QString *s = getString( markBeginY );
+        return s->mid( markBeginX, markEndX - markBeginX );
+    }
+    else
+    { //multiline
+        QString *firstS, *lastS;
+        firstS = getString( markBeginY );
+        lastS = getString( markEndY );
+        int i;
+        QString tmp;
+        if ( firstS )
+            tmp += firstS->mid(markBeginX);
+        if ( contents->at( markBeginY )->newline )
+            tmp += '\n';
 
-	for( i = markBeginY + 1; i < markEndY ; i++ ) {
-	    tmp += *getString(i);
-	    if ( contents->at( i )->newline )
-		tmp += '\n';
-	}
+        for ( i = markBeginY + 1; i < markEndY ; i++ )
+        {
+            tmp += *getString(i);
+            if ( contents->at( i )->newline )
+                tmp += '\n';
+        }
 
-	if ( lastS ) {
-	    tmp += lastS->left(markEndX);
-	} else {
-	    tmp.truncate(tmp.length()-1);
-	}
+        if ( lastS )
+        {
+            tmp += lastS->left(markEndX);
+        }
+        else
+        {
+            tmp.truncate(tmp.length() - 1);
+        }
 
-	return tmp;
+        return tmp;
     }
 }
 
@@ -1048,13 +1147,15 @@ QString QtMultiLineEdit::markedText() const
 QString QtMultiLineEdit::textLine( int line ) const
 {
     QString *s = getString(line);
-    if ( s ) {
-	if ( s->isNull() )
-	    return QString::fromLatin1("");
-	else
-	    return *s;
-    } else
-	return QString::null;
+    if ( s )
+    {
+        if ( s->isNull() )
+            return QString::fromLatin1("");
+        else
+            return *s;
+    }
+    else
+        return QString::null;
 }
 
 
@@ -1068,10 +1169,11 @@ QString QtMultiLineEdit::textLine( int line ) const
 QString QtMultiLineEdit::text() const
 {
     QString tmp;
-    for( int i = 0 ; i < (int)contents->count() ; i++ ) {
-	tmp += *getString(i);
-	if ( i+1 < (int)contents->count() && contents->at(i)->newline )
-	    tmp += '\n';
+    for ( int i = 0 ; i < (int)contents->count() ; i++ )
+    {
+        tmp += *getString(i);
+        if ( i + 1 < (int)contents->count() && contents->at(i)->newline )
+            tmp += '\n';
     }
     return tmp;
 }
@@ -1083,13 +1185,13 @@ QString QtMultiLineEdit::text() const
 
 void QtMultiLineEdit::selectAll()
 {
-    markAnchorX    = 0;
-    markAnchorY    = 0;
+    markAnchorX = 0;
+    markAnchorY = 0;
     markDragY = numLines() - 1;
     markDragX = lineLength( markDragY );
     turnMark( markDragX != markAnchorX || markDragY != markAnchorY );
     if ( autoUpdate() )
-	update();
+        update();
 }
 
 
@@ -1124,7 +1226,7 @@ void QtMultiLineEdit::setText( const QString &s )
     emit textChanged();
     setAutoUpdate(oldAuto);
     if ( autoUpdate() )
-	update();
+        update();
     setUndoEnabled( oldUndo );
 }
 
@@ -1145,7 +1247,8 @@ void QtMultiLineEdit::append( const QString &s )
 /*! \reimp
 Passes wheel events to the vertical scrollbar.
 */
-void QtMultiLineEdit::wheelEvent( QWheelEvent *e ){
+void QtMultiLineEdit::wheelEvent( QWheelEvent *e )
+{
     QApplication::sendEvent( verticalScrollBar(), e);
 }
 
@@ -1153,7 +1256,7 @@ void QtMultiLineEdit::wheelEvent( QWheelEvent *e ){
 /*!
   The key press event handler converts a key press in event \a e to
   some line editor action.
-
+ 
   Here are the default key bindings when isReadOnly() is FALSE:
   \list
   \i <i> Left Arrow </i> Move the cursor one character leftwards
@@ -1196,7 +1299,7 @@ void QtMultiLineEdit::wheelEvent( QWheelEvent *e ){
   \i <i> Control - Insert </i> Copy the marked text to the clipboard
   \endlist
   All other keys with valid ASCII codes insert themselves into the line.
-
+ 
   Here are the default key bindings when isReadOnly() is TRUE:
   \list
   \i <i> Left Arrow </i> Scrolls the table rightwards
@@ -1207,7 +1310,7 @@ void QtMultiLineEdit::wheelEvent( QWheelEvent *e ){
   \i <i> Page Down </i> Scrolls the table one page upwards
   \i <i> Control-C </i> Copy the marked text to the clipboard
   \endlist
-
+ 
 */
 
 void QtMultiLineEdit::keyPressEvent( QKeyEvent *e )
@@ -1215,224 +1318,246 @@ void QtMultiLineEdit::keyPressEvent( QKeyEvent *e )
     textDirty = FALSE;
     d->isHandlingEvent = TRUE;
     int unknown = 0;
-    if ( readOnly ) {
-	int pageSize = viewHeight() / cellHeight();
+    if ( readOnly )
+    {
+        int pageSize = viewHeight() / cellHeight();
 
-	switch ( e->key() ) {
-	case Key_Left:
-	    setXOffset( xOffset() - viewWidth()/10 );
-	    break;
-	case Key_Right:
-	    setXOffset( xOffset() + viewWidth()/10 );
-	    break;
-	case Key_Up:
-	    setTopCell( topCell() - 1 );
-	    break;
-	case Key_Down:
-	    setTopCell( topCell() + 1 );
-	    break;
-	case Key_Home:
-	    setCursorPosition(0,0, e->state() & ShiftButton );
-	    break;
-	case Key_End:
-	    setCursorPosition( numLines()-1, lineLength( numLines()-1 ),
-			       e->state() & ShiftButton );
-	    break;
+        switch ( e->key() )
+        {
+        case Key_Left:
+            setXOffset( xOffset() - viewWidth() / 10 );
+            break;
+        case Key_Right:
+            setXOffset( xOffset() + viewWidth() / 10 );
+            break;
+        case Key_Up:
+            setTopCell( topCell() - 1 );
+            break;
+        case Key_Down:
+            setTopCell( topCell() + 1 );
+            break;
+        case Key_Home:
+            setCursorPosition(0, 0, e->state() & ShiftButton );
+            break;
+        case Key_End:
+            setCursorPosition( numLines() - 1, lineLength( numLines() - 1 ),
+                               e->state() & ShiftButton );
+            break;
         case Key_Next:
-	    setTopCell( topCell() + pageSize );
-	    break;
-	case Key_Prior:
-	    setTopCell( QMAX( topCell() - pageSize, 0 ) );
-	    break;
+            setTopCell( topCell() + pageSize );
+            break;
+        case Key_Prior:
+            setTopCell( QMAX( topCell() - pageSize, 0 ) );
+            break;
 #ifndef QT_NO_CLIPBOARD
-	case Key_C:
-	    if ( echoMode() == Normal && (e->state()&ControlButton) )
-		copy();
-	    else
-		unknown++;
-	    break;
-	case Key_F16: // Copy key on Sun keyboards
-	    if ( echoMode() == Normal )
-		copy();
-	    else
-		unknown++;
-	    break;
+
+        case Key_C:
+            if ( echoMode() == Normal && (e->state()&ControlButton) )
+                copy();
+            else
+                unknown++;
+            break;
+        case Key_F16:  // Copy key on Sun keyboards
+            if ( echoMode() == Normal )
+                copy();
+            else
+                unknown++;
+            break;
 #endif
-	default:
-	    unknown++;
-	}
-	if ( unknown )
-	    e->ignore();
-	d->isHandlingEvent = FALSE;
-	return;
+
+        default:
+            unknown++;
+        }
+        if ( unknown )
+            e->ignore();
+        d->isHandlingEvent = FALSE;
+        return ;
     }
     if ( e->text().length() &&
-	 e->key() != Key_Return &&
-	 e->key() != Key_Enter &&
-	 e->key() != Key_Delete &&
-	 e->key() != Key_Backspace &&
-	 (!e->ascii() || e->ascii()>=32)
-	 ) {
-	insert( e->text() );
-	//QApplication::sendPostedEvents( this, QEvent::Paint );
-	if ( textDirty )
-	    emit textChanged();
-	d->isHandlingEvent = FALSE;
-	return;
+            e->key() != Key_Return &&
+            e->key() != Key_Enter &&
+            e->key() != Key_Delete &&
+            e->key() != Key_Backspace &&
+            (!e->ascii() || e->ascii() >= 32)
+       )
+    {
+        insert( e->text() );
+        //QApplication::sendPostedEvents( this, QEvent::Paint );
+        if ( textDirty )
+            emit textChanged();
+        d->isHandlingEvent = FALSE;
+        return ;
     }
-    if ( e->state() & ControlButton ) {
-	switch ( e->key() ) {
-	case Key_A:
-	    home( e->state() & ShiftButton );
-	    break;
-	case Key_B:
-	    cursorLeft( e->state() & ShiftButton );
-	    break;
+    if ( e->state() & ControlButton )
+    {
+        switch ( e->key() )
+        {
+        case Key_A:
+            home( e->state() & ShiftButton );
+            break;
+        case Key_B:
+            cursorLeft( e->state() & ShiftButton );
+            break;
 #ifndef QT_NO_CLIPBOARD
-	case Key_C:
-	    if ( echoMode() == Normal )
-		copy();
-	    break;
+
+        case Key_C:
+            if ( echoMode() == Normal )
+                copy();
+            break;
 #endif
-	case Key_D:
-	    del();
-	    break;
-	case Key_E:
-	    end( e->state() & ShiftButton );
-	    break;
-	case Key_Left:
-	    cursorWordBackward( e->state() & ShiftButton );
-	    break;
-	case Key_Right:
-	    cursorWordForward( e->state() & ShiftButton );
-	    break;
-	case Key_Up:
-	    cursorUp( e->state() & ShiftButton );
-	    break;
-	case Key_Down:
-	    cursorDown( e->state() & ShiftButton );
-	    break;
-	case Key_Home:
-	    setCursorPosition(0,0, e->state() & ShiftButton );
-	    break;
-	case Key_End:
-	    setCursorPosition( numLines()-1, lineLength( numLines()-1 ),
-			       e->state() & ShiftButton );
-	    break;
-	case Key_F:
-	    cursorRight( e->state() & ShiftButton );
-	    break;
-	case Key_H:
-	    backspace();
-	    break;
-	case Key_K:
-	    killLine();
-	    break;
-	case Key_N:
-	    cursorDown( e->state() & ShiftButton );
-	    break;
-	case Key_P:
-	    cursorUp( e->state() & ShiftButton );
-	    break;
+
+        case Key_D:
+            del();
+            break;
+        case Key_E:
+            end( e->state() & ShiftButton );
+            break;
+        case Key_Left:
+            cursorWordBackward( e->state() & ShiftButton );
+            break;
+        case Key_Right:
+            cursorWordForward( e->state() & ShiftButton );
+            break;
+        case Key_Up:
+            cursorUp( e->state() & ShiftButton );
+            break;
+        case Key_Down:
+            cursorDown( e->state() & ShiftButton );
+            break;
+        case Key_Home:
+            setCursorPosition(0, 0, e->state() & ShiftButton );
+            break;
+        case Key_End:
+            setCursorPosition( numLines() - 1, lineLength( numLines() - 1 ),
+                               e->state() & ShiftButton );
+            break;
+        case Key_F:
+            cursorRight( e->state() & ShiftButton );
+            break;
+        case Key_H:
+            backspace();
+            break;
+        case Key_K:
+            killLine();
+            break;
+        case Key_N:
+            cursorDown( e->state() & ShiftButton );
+            break;
+        case Key_P:
+            cursorUp( e->state() & ShiftButton );
+            break;
 #ifndef QT_NO_CLIPBOARD
-	case Key_V:
-	    paste();
-	    break;
-	case Key_X:
-	    cut();
-	    break;
+
+        case Key_V:
+            paste();
+            break;
+        case Key_X:
+            cut();
+            break;
 #endif
-	case Key_Z:
-	    undo();
-	    break;
-	case Key_Y:
-	    redo();
-	    break;
+
+        case Key_Z:
+            undo();
+            break;
+        case Key_Y:
+            redo();
+            break;
 #if defined (Q_WS_WIN)
-	case Key_Insert:
-	    copy();
+
+        case Key_Insert:
+            copy();
 #endif
-	default:
-	    unknown++;
-	}
-    } else {
-	switch ( e->key() ) {
-	case Key_Left:
-	    cursorLeft( e->state() & ShiftButton );
-	    break;
-	case Key_Right:
-	    cursorRight( e->state() & ShiftButton );
-	    break;
-	case Key_Up:
-	    cursorUp( e->state() & ShiftButton );
-	    break;
-	case Key_Down:
-	    cursorDown( e->state() & ShiftButton );
-	    break;
-	case Key_Backspace:
-	    backspace();
-	    break;
-	case Key_Home:
-	    home( e->state() & ShiftButton );
-	    break;
-	case Key_End:
-	    end( e->state() & ShiftButton );
-	    break;
-	case Key_Delete:
+
+        default:
+            unknown++;
+        }
+    }
+    else
+    {
+        switch ( e->key() )
+        {
+        case Key_Left:
+            cursorLeft( e->state() & ShiftButton );
+            break;
+        case Key_Right:
+            cursorRight( e->state() & ShiftButton );
+            break;
+        case Key_Up:
+            cursorUp( e->state() & ShiftButton );
+            break;
+        case Key_Down:
+            cursorDown( e->state() & ShiftButton );
+            break;
+        case Key_Backspace:
+            backspace();
+            break;
+        case Key_Home:
+            home( e->state() & ShiftButton );
+            break;
+        case Key_End:
+            end( e->state() & ShiftButton );
+            break;
+        case Key_Delete:
 #if defined (Q_WS_WIN)
-	    if ( e->state() & ShiftButton ) {
-		cut();
-		break;
-	    }
+
+            if ( e->state() & ShiftButton )
+            {
+                cut();
+                break;
+            }
 #endif
-	    del();
-	    break;
-	case Key_Next:
-	    pageDown( e->state() & ShiftButton );
-	    break;
-	case Key_Prior:
-	    pageUp( e->state() & ShiftButton );
-	    break;
-	case Key_Enter:
-	case Key_Return:
-	    newLine();
-	    emit returnPressed();
-	    break;
-	case Key_Tab:
-	    insert( e->text() );
-	    break;
+            del();
+            break;
+        case Key_Next:
+            pageDown( e->state() & ShiftButton );
+            break;
+        case Key_Prior:
+            pageUp( e->state() & ShiftButton );
+            break;
+        case Key_Enter:
+        case Key_Return:
+            newLine();
+            emit returnPressed();
+            break;
+        case Key_Tab:
+            insert( e->text() );
+            break;
 #if defined (Q_WS_WIN)
-	case Key_Insert:
-	    if ( e->state() & ShiftButton )
-		paste();
-	    else
-		unknown++;
-	    break;
+
+        case Key_Insert:
+            if ( e->state() & ShiftButton )
+                paste();
+            else
+                unknown++;
+            break;
 #endif
-	case Key_F14: // Undo key on Sun keyboards
-	    undo();
-	    break;
+
+        case Key_F14:  // Undo key on Sun keyboards
+            undo();
+            break;
 #ifndef QT_NO_CLIPBOARD
-	case Key_F16: // Copy key on Sun keyboards
-	    if ( echoMode() == Normal )
-		copy();
-	    break;
-	case Key_F18: // Paste key on Sun keyboards
-	    paste();
-	    break;
-	case Key_F20: // Paste key on Sun keyboards
-	    cut();
-	    break;
+
+        case Key_F16:  // Copy key on Sun keyboards
+            if ( echoMode() == Normal )
+                copy();
+            break;
+        case Key_F18:  // Paste key on Sun keyboards
+            paste();
+            break;
+        case Key_F20:  // Paste key on Sun keyboards
+            cut();
+            break;
 #endif
-	default:
-	    unknown++;
-	}
+
+        default:
+            unknown++;
+        }
     }
     if ( textDirty )
-	emit textChanged();
+        emit textChanged();
 
-    if ( unknown )				// unknown key
-	e->ignore();
+    if ( unknown )    // unknown key
+        e->ignore();
 
     d->isHandlingEvent = FALSE;
 }
@@ -1447,47 +1572,55 @@ void QtMultiLineEdit::pageDown( bool mark )
 {
     bool oldAuto = autoUpdate();
     if ( mark )
-	setAutoUpdate( FALSE );
+        setAutoUpdate( FALSE );
 
     if ( partiallyInvisible( cursorY ) )
-	cursorY = topCell();
+        cursorY = topCell();
     int delta = cursorY - topCell();
     int pageSize = viewHeight() / cellHeight();
     int newTopCell = QMIN( topCell() + pageSize, numLines() - 1 - pageSize );
 
-    if ( pageSize >= numLines() ) { // quick fix to handle small texts
-	newTopCell = topCell();
+    if ( pageSize >= numLines() )
+    { // quick fix to handle small texts
+        newTopCell = topCell();
     }
     if ( !curXPos )
-	curXPos = mapToView( cursorX, cursorY );
+        curXPos = mapToView( cursorX, cursorY );
     int oldY = cursorY;
 
-    if ( mark && !hasMarkedText() ) {
-	markAnchorX    = cursorX;
-	markAnchorY    = cursorY;
+    if ( mark && !hasMarkedText() )
+    {
+        markAnchorX = cursorX;
+        markAnchorY = cursorY;
     }
-    if ( newTopCell != topCell() ) {
-	cursorY = newTopCell + delta;
-	cursorX = mapFromView( curXPos, cursorY );
-	if ( mark )
-	    newMark( cursorX, cursorY, FALSE );
-	setTopCell( newTopCell );
-    } else if ( cursorY != (int)contents->count() - 1) { // just move the cursor
-	cursorY = QMIN( cursorY + pageSize, numLines() - 1);
-	cursorX = mapFromView( curXPos, cursorY );
-	if ( mark )
-	    newMark( cursorX, cursorY, FALSE );
-	makeVisible();
+    if ( newTopCell != topCell() )
+    {
+        cursorY = newTopCell + delta;
+        cursorX = mapFromView( curXPos, cursorY );
+        if ( mark )
+            newMark( cursorX, cursorY, FALSE );
+        setTopCell( newTopCell );
+    }
+    else if ( cursorY != (int)contents->count() - 1)
+    { // just move the cursor
+        cursorY = QMIN( cursorY + pageSize, numLines() - 1);
+        cursorX = mapFromView( curXPos, cursorY );
+        if ( mark )
+            newMark( cursorX, cursorY, FALSE );
+        makeVisible();
     }
     if ( oldAuto )
-	if ( mark ) {
-	    setAutoUpdate( TRUE );
-	    update();
-	} else {
-	    updateCell( oldY, 0, FALSE );
-	}
+        if ( mark )
+        {
+            setAutoUpdate( TRUE );
+            update();
+        }
+        else
+        {
+            updateCell( oldY, 0, FALSE );
+        }
     if ( !mark )
-	turnMark( FALSE );
+        turnMark( FALSE );
 }
 
 
@@ -1500,47 +1633,55 @@ void QtMultiLineEdit::pageUp( bool mark )
 {
     bool oldAuto = autoUpdate();
     if ( mark )
-	setAutoUpdate( FALSE );
+        setAutoUpdate( FALSE );
     if ( partiallyInvisible( cursorY ) )
-	cursorY = topCell();
+        cursorY = topCell();
     int delta = cursorY - topCell();
     int pageSize = viewHeight() / cellHeight();
     bool partial = delta == pageSize && viewHeight() != pageSize * cellHeight();
     int newTopCell = QMAX( topCell() - pageSize, 0 );
-    if ( pageSize > numLines() ) { // quick fix to handle small texts
-	newTopCell = 0;
-	delta = 0;
+    if ( pageSize > numLines() )
+    { // quick fix to handle small texts
+        newTopCell = 0;
+        delta = 0;
     }
-    if ( mark && !hasMarkedText() ) {
-	markAnchorX    = cursorX;
-	markAnchorY    = cursorY;
+    if ( mark && !hasMarkedText() )
+    {
+        markAnchorX = cursorX;
+        markAnchorY = cursorY;
     }
     if ( !curXPos )
-	curXPos = mapToView( cursorX, cursorY );
+        curXPos = mapToView( cursorX, cursorY );
     int oldY = cursorY;
-    if ( newTopCell != topCell() ) {
-	cursorY = QMIN( newTopCell + delta, numLines() - 1 );
-	if ( partial )
-	    cursorY--;
-	cursorX = mapFromView( curXPos, cursorY );
-	if ( mark )
-	    newMark( cursorX, cursorY, FALSE );
-	setTopCell( newTopCell );
-    } else { // just move the cursor
-	cursorY = QMAX( cursorY - pageSize, 0 );
-	cursorX = mapFromView( curXPos, cursorY );
-	if ( mark )
-	    newMark( cursorX, cursorY, FALSE );
+    if ( newTopCell != topCell() )
+    {
+        cursorY = QMIN( newTopCell + delta, numLines() - 1 );
+        if ( partial )
+            cursorY--;
+        cursorX = mapFromView( curXPos, cursorY );
+        if ( mark )
+            newMark( cursorX, cursorY, FALSE );
+        setTopCell( newTopCell );
+    }
+    else
+    { // just move the cursor
+        cursorY = QMAX( cursorY - pageSize, 0 );
+        cursorX = mapFromView( curXPos, cursorY );
+        if ( mark )
+            newMark( cursorX, cursorY, FALSE );
     }
     if ( oldAuto )
-	if ( mark ) {
-	    setAutoUpdate( TRUE );
-	    update();
-	} else {
-	    updateCell( oldY, 0, FALSE );
-	}
+        if ( mark )
+        {
+            setAutoUpdate( TRUE );
+            update();
+        }
+        else
+        {
+            updateCell( oldY, 0, FALSE );
+        }
     if ( !mark )
-	turnMark( FALSE );
+        turnMark( FALSE );
 }
 
 // THE CORE INSERTION FUNCTION
@@ -1552,60 +1693,66 @@ void QtMultiLineEdit::insertAtAux( const QString &txt, int line, int col, bool m
     int oldw = contentsRect().width();
 
     line = QMAX( QMIN( line, numLines() - 1), 0 );
-    col = QMAX( QMIN( col,  lineLength( line )), 0 );
+    col = QMAX( QMIN( col, lineLength( line )), 0 );
 
     QString itxt = txt;
-    QtMultiLineEditRow  *row = contents->at( line );
+    QtMultiLineEditRow *row = contents->at( line );
     if ( d->maxlen >= 0 && length() + int(txt.length()) > d->maxlen )
-	itxt.truncate( d->maxlen - length() );
+        itxt.truncate( d->maxlen - length() );
 
     row->s.insert( uint(col), itxt );
 
-    if ( mark ) {
-	markAnchorX = col;
-	markAnchorY = line;
+    if ( mark )
+    {
+        markAnchorX = col;
+        markAnchorY = line;
     }
-    if ( cursorX == col && cursorY == line ) {
-	cursorX += itxt.length();
+    if ( cursorX == col && cursorY == line )
+    {
+        cursorX += itxt.length();
     }
     QFontMetrics fm( font() );
     if ( !WORD_WRAP || ( col == 0 && itxt.contains('\n') == int(itxt.length())) )
-	wrapLine( line, 0 );
-    else if ( WORD_WRAP && itxt.find('\n')<0 && itxt.find('\t')<0
-	      && (
-		  ( DYNAMIC_WRAP && fm.width( itxt ) + row->w < contentsRect().width() -  2*d->lr_marg - d->marg_extra )
-		  ||
-		  ( FIXED_WIDTH_WRAP && ( d->wrapcol < 0 || fm.width( itxt ) + row->w < d->wrapcol ) )
-		  ||
-		  ( FIXED_COLUMN_WRAP && ( d->wrapcol < 0 || int(row->s.length()) < d->wrapcol ) )
-		  )
-	      && ( itxt.find(' ') < 0 || row->s.find(' ') >= 0 && row->s.find(' ') < col ) ){
-	row->w = textWidth( row->s );
-	setWidth( QMAX( maxLineWidth(), row->w) );
-	updateCell( line, 0, FALSE );
+        wrapLine( line, 0 );
+    else if ( WORD_WRAP && itxt.find('\n') < 0 && itxt.find('\t') < 0
+              && (
+                  ( DYNAMIC_WRAP && fm.width( itxt ) + row->w < contentsRect().width() - 2*d->lr_marg - d->marg_extra )
+                  ||
+                  ( FIXED_WIDTH_WRAP && ( d->wrapcol < 0 || fm.width( itxt ) + row->w < d->wrapcol ) )
+                  ||
+                  ( FIXED_COLUMN_WRAP && ( d->wrapcol < 0 || int(row->s.length()) < d->wrapcol ) )
+              )
+              && ( itxt.find(' ') < 0 || row->s.find(' ') >= 0 && row->s.find(' ') < col ) )
+    {
+        row->w = textWidth( row->s );
+        setWidth( QMAX( maxLineWidth(), row->w) );
+        updateCell( line, 0, FALSE );
     }
-    else {
-	if ( line > 0 && !contents->at( line-1)->newline )
-	    rebreakParagraph( line-1 );
-	else
-	    rebreakParagraph( line );
+    else
+    {
+        if ( line > 0 && !contents->at( line - 1)->newline )
+            rebreakParagraph( line - 1 );
+        else
+            rebreakParagraph( line );
     }
     if ( mark )
-	newMark( cursorX, cursorY, FALSE );
+        newMark( cursorX, cursorY, FALSE );
 
     setNumRowsAndTruncate();
 
     textDirty = TRUE;
     d->edited = TRUE;
-    if ( autoUpdate() ) {
-	makeVisible();
-	d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
-	if ( DYNAMIC_WRAP && oldw != contentsRect().width() ) {
-	    setAutoUpdate( FALSE );
-	    rebreakAll();
-	    setAutoUpdate( TRUE );
-	    update();
-	}
+    if ( autoUpdate() )
+    {
+        makeVisible();
+        d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
+        if ( DYNAMIC_WRAP && oldw != contentsRect().width() )
+        {
+            setAutoUpdate( FALSE );
+            rebreakAll();
+            setAutoUpdate( TRUE );
+            update();
+        }
     }
 }
 
@@ -1614,7 +1761,7 @@ void QtMultiLineEdit::insertAtAux( const QString &txt, int line, int col, bool m
   Inserts \a txt at line number \a line. If \a line is less than zero,
   or larger than the number of rows, the new text is put at the end.
   If \a txt contains newline characters, several lines are inserted.
-
+ 
   The cursor position is not changed.
 */
 
@@ -1623,13 +1770,16 @@ void QtMultiLineEdit::insertLine( const QString &txt, int line )
     QString s = txt;
     int oldXPos = cursorX;
     int oldYPos = cursorY;
-    if ( line < 0 || line >= int( contents->count() ) ) {
-	if ( !dummy )
-	    contents->append( new QtMultiLineEditRow(QString::fromLatin1(""), 0) );
-	insertAt( s, numLines()-1, 0 );
-    } else {
-	s.append('\n');
-	insertAt( s, line, 0 );
+    if ( line < 0 || line >= int( contents->count() ) )
+    {
+        if ( !dummy )
+            contents->append( new QtMultiLineEditRow(QString::fromLatin1(""), 0) );
+        insertAt( s, numLines() - 1, 0 );
+    }
+    else
+    {
+        s.append('\n');
+        insertAt( s, line, 0 );
     }
     cursorX = oldXPos;
     cursorY = oldYPos;
@@ -1644,28 +1794,30 @@ void QtMultiLineEdit::insertLine( const QString &txt, int line )
 void QtMultiLineEdit::removeLine( int line )
 {
     CLEAR_UNDO
-    if ( line >= numLines()  )
-	return;
+    if ( line >= numLines() )
+        return ;
     if ( cursorY >= line && cursorY > 0 )
-	cursorY--;
+        cursorY--;
     bool updt = autoUpdate() && rowIsVisible( line );
     QtMultiLineEditRow* r = contents->at( line );
     ASSERT( r );
     bool recalc = r->w == maxLineWidth();
-    contents->remove( line );
-    if ( contents->count() == 0 ) {
-	int w  = textWidth( QString::fromLatin1("") );
-	contents->append( new QtMultiLineEditRow(QString::fromLatin1(""), w) );
-	setWidth( w );
-	dummy = TRUE;
+    contents->remove
+    ( line );
+    if ( contents->count() == 0 )
+    {
+        int w = textWidth( QString::fromLatin1("") );
+        contents->append( new QtMultiLineEditRow(QString::fromLatin1(""), w) );
+        setWidth( w );
+        dummy = TRUE;
     }
     if ( setNumRowsAndTruncate() )
-	recalc = updt = FALSE;
+        recalc = updt = FALSE;
     if ( recalc )
-	updateCellWidth();
+        updateCellWidth();
     makeVisible();
     if (updt)
-	update();
+        update();
     textDirty = TRUE;
     d->edited = TRUE;
 }
@@ -1699,19 +1851,19 @@ void QtMultiLineEdit::insert( const QString& str, bool mark )
     dummy = FALSE;
     bool wasMarkedText = hasMarkedText();
     if ( wasMarkedText )
-	addUndoCmd( new QBeginCommand );
+        addUndoCmd( new QBeginCommand );
     if ( wasMarkedText )
-	del();					// ## Will flicker
+        del();     // ## Will flicker
     QString *s = getString( cursorY );
     if ( cursorX > (int)s->length() )
-	cursorX = s->length();
+        cursorX = s->length();
     else if ( overWrite && !wasMarkedText && cursorX < (int)s->length() )
-	del();                                 // ## Will flicker
+        del();                                 // ## Will flicker
     insertAt(str, cursorY, cursorX, mark );
     makeVisible();
 
     if ( wasMarkedText )
-	addUndoCmd( new QEndCommand() );
+        addUndoCmd( new QEndCommand() );
 }
 
 /*!
@@ -1731,22 +1883,25 @@ void QtMultiLineEdit::killLineAux()
 {
     deselect(); // -sanders Don't let del() delete marked region
     QtMultiLineEditRow* r = contents->at( cursorY );
-    if ( cursorX == (int)r->s.length() ) {
-	//      if (r->newline) // -sanders Only del newlines!
-	del();
-	return;
-    } else {
-	bool recalc = r->w == maxLineWidth();
-	r->s.remove( cursorX, r->s.length() );
-	r->w = textWidth( r->s );
-	updateCell( cursorY, 0, FALSE );
-	if ( recalc )
-	    updateCellWidth();
-	rebreakParagraph( cursorY ); // -sanders
-	textDirty = TRUE;
-	d->edited = TRUE;
+    if ( cursorX == (int)r->s.length() )
+    {
+        //      if (r->newline) // -sanders Only del newlines!
+        del();
+        return ;
     }
-    curXPos  = 0;
+    else
+    {
+        bool recalc = r->w == maxLineWidth();
+        r->s.remove( cursorX, r->s.length() );
+        r->w = textWidth( r->s );
+        updateCell( cursorY, 0, FALSE );
+        if ( recalc )
+            updateCellWidth();
+        rebreakParagraph( cursorY ); // -sanders
+        textDirty = TRUE;
+        d->edited = TRUE;
+    }
+    curXPos = 0;
     makeVisible();
     turnMark( FALSE );
 }
@@ -1756,49 +1911,55 @@ void QtMultiLineEdit::killLineAux()
   Moves the cursor one character to the left. If \a mark is TRUE, the text
   is marked. If \a wrap is TRUE, the cursor moves to the end of the
   previous line  if it is placed at the beginning of the current line.
-
+ 
   \sa cursorRight() cursorUp() cursorDown()
 */
 
 void QtMultiLineEdit::cursorLeft( bool mark, bool wrap )
 {
-    cursorLeft(mark,!mark,wrap);
+    cursorLeft(mark, !mark, wrap);
 }
 void QtMultiLineEdit::cursorLeft( bool mark, bool clear_mark, bool wrap )
 {
-    if ( cursorX != 0 || cursorY != 0 && wrap ) {
-	if ( mark && !hasMarkedText() ) {
-	    markAnchorX    = cursorX;
-	    markAnchorY    = cursorY;
-	}
-	d->blinkTimer->stop();
-	int ll = lineLength( cursorY );
-	if ( cursorX > ll )
-	    cursorX = ll;
-	cursorOn = TRUE;
-	cursorX--;
-	if ( cursorX < 0 ) {
-	    int oldY = cursorY;
-	    if ( cursorY > 0 ) {
-		cursorY--;
-		cursorX = lineLength( cursorY );
-		if ( cursorX > 1 && !isEndOfParagraph( cursorY ) )
-		    cursorX--;
-	    } else {
-		cursorY = 0; //### ?
-		cursorX = 0;
-	    }
-	    updateCell( oldY, 0, FALSE );
-	}
-	if ( mark )
-	    newMark( cursorX, cursorY, FALSE );
-	d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
-	updateCell( cursorY, 0, FALSE );
+    if ( cursorX != 0 || cursorY != 0 && wrap )
+    {
+        if ( mark && !hasMarkedText() )
+        {
+            markAnchorX = cursorX;
+            markAnchorY = cursorY;
+        }
+        d->blinkTimer->stop();
+        int ll = lineLength( cursorY );
+        if ( cursorX > ll )
+            cursorX = ll;
+        cursorOn = TRUE;
+        cursorX--;
+        if ( cursorX < 0 )
+        {
+            int oldY = cursorY;
+            if ( cursorY > 0 )
+            {
+                cursorY--;
+                cursorX = lineLength( cursorY );
+                if ( cursorX > 1 && !isEndOfParagraph( cursorY ) )
+                    cursorX--;
+            }
+            else
+            {
+                cursorY = 0; //### ?
+                cursorX = 0;
+            }
+            updateCell( oldY, 0, FALSE );
+        }
+        if ( mark )
+            newMark( cursorX, cursorY, FALSE );
+        d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
+        updateCell( cursorY, 0, FALSE );
     }
-    curXPos  = 0;
+    curXPos = 0;
     makeVisible();
     if ( clear_mark )
-	turnMark( FALSE );
+        turnMark( FALSE );
 }
 
 /*!
@@ -1810,40 +1971,46 @@ void QtMultiLineEdit::cursorLeft( bool mark, bool clear_mark, bool wrap )
 
 void QtMultiLineEdit::cursorRight( bool mark, bool wrap )
 {
-    cursorRight(mark,!mark,wrap);
+    cursorRight(mark, !mark, wrap);
 }
 void QtMultiLineEdit::cursorRight( bool mark, bool clear_mark, bool wrap )
 {
     int strl = lineLength( cursorY );
     if ( strl > 1 && !isEndOfParagraph( cursorY ) )
-	 strl--;
-    if ( cursorX < strl || cursorY < (int)contents->count() - 1 && wrap ) {
-	if ( mark && !hasMarkedText() ) {
-	    markAnchorX    = cursorX;
-	    markAnchorY    = cursorY;
-	}
-	d->blinkTimer->stop();
-	cursorOn = TRUE;
-	cursorX++;
-	if ( cursorX > strl ) {
-	    int oldY = cursorY;
-	    if ( cursorY < (int) contents->count() - 1 ) {
-		cursorY++;
-		cursorX = 0;
-	    } else {
-		cursorX = lineLength( cursorY );
-	    }
-	    updateCell( oldY, 0, FALSE );
-	}
-	if ( mark )
-	    newMark( cursorX, cursorY, FALSE );
-	updateCell( cursorY, 0, FALSE );
-	d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
+        strl--;
+    if ( cursorX < strl || cursorY < (int)contents->count() - 1 && wrap )
+    {
+        if ( mark && !hasMarkedText() )
+        {
+            markAnchorX = cursorX;
+            markAnchorY = cursorY;
+        }
+        d->blinkTimer->stop();
+        cursorOn = TRUE;
+        cursorX++;
+        if ( cursorX > strl )
+        {
+            int oldY = cursorY;
+            if ( cursorY < (int) contents->count() - 1 )
+            {
+                cursorY++;
+                cursorX = 0;
+            }
+            else
+            {
+                cursorX = lineLength( cursorY );
+            }
+            updateCell( oldY, 0, FALSE );
+        }
+        if ( mark )
+            newMark( cursorX, cursorY, FALSE );
+        updateCell( cursorY, 0, FALSE );
+        d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
     }
-    curXPos  = 0;
+    curXPos = 0;
     makeVisible();
     if ( clear_mark )
-	turnMark( FALSE );
+        turnMark( FALSE );
 }
 
 /*!
@@ -1854,34 +2021,37 @@ void QtMultiLineEdit::cursorRight( bool mark, bool clear_mark, bool wrap )
 
 void QtMultiLineEdit::cursorUp( bool mark )
 {
-    cursorUp(mark,!mark);
+    cursorUp(mark, !mark);
 }
 void QtMultiLineEdit::cursorUp( bool mark, bool clear_mark )
 {
-    if ( cursorY != 0 ) {
-	if ( mark && !hasMarkedText() ) {
-	    markAnchorX    = cursorX;
-	    markAnchorY    = cursorY;
-	}
-	if ( !curXPos )
-	    curXPos = mapToView( cursorX, cursorY );
-	int oldY = cursorY;
-	d->blinkTimer->stop();
-	cursorOn = TRUE;
-	cursorY--;
-	if ( cursorY < 0 ) {
-	    cursorY = 0;
-	}
-	cursorX = mapFromView( curXPos, cursorY );
-	if ( mark )
-	    newMark( cursorX, cursorY, FALSE );
-	updateCell( oldY, 0, FALSE );
-	updateCell( cursorY, 0, FALSE );
-	d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
+    if ( cursorY != 0 )
+    {
+        if ( mark && !hasMarkedText() )
+        {
+            markAnchorX = cursorX;
+            markAnchorY = cursorY;
+        }
+        if ( !curXPos )
+            curXPos = mapToView( cursorX, cursorY );
+        int oldY = cursorY;
+        d->blinkTimer->stop();
+        cursorOn = TRUE;
+        cursorY--;
+        if ( cursorY < 0 )
+        {
+            cursorY = 0;
+        }
+        cursorX = mapFromView( curXPos, cursorY );
+        if ( mark )
+            newMark( cursorX, cursorY, FALSE );
+        updateCell( oldY, 0, FALSE );
+        updateCell( cursorY, 0, FALSE );
+        d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
     }
     makeVisible();
     if ( clear_mark )
-	turnMark( FALSE );
+        turnMark( FALSE );
 }
 
 /*!
@@ -1892,35 +2062,38 @@ void QtMultiLineEdit::cursorUp( bool mark, bool clear_mark )
 
 void QtMultiLineEdit::cursorDown( bool mark )
 {
-    cursorDown(mark,!mark);
+    cursorDown(mark, !mark);
 }
 void QtMultiLineEdit::cursorDown( bool mark, bool clear_mark )
 {
     int lastLin = contents->count() - 1;
-    if ( cursorY != lastLin ) {
-	if ( mark && !hasMarkedText() ) {
-	    markAnchorX    = cursorX;
-	    markAnchorY    = cursorY;
-	}
-	if ( !curXPos )
-	    curXPos = mapToView( cursorX, cursorY );
-	int oldY = cursorY;
-	d->blinkTimer->stop();
-	cursorOn = TRUE;
-	cursorY++;
-	if ( cursorY > lastLin ) {
-	    cursorY = lastLin;
-	}
-	cursorX = mapFromView( curXPos, cursorY );
-	if ( mark )
-	    newMark( cursorX, cursorY, FALSE );
-	updateCell( oldY, 0, FALSE );
-	updateCell( cursorY, 0, FALSE );
-	d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
+    if ( cursorY != lastLin )
+    {
+        if ( mark && !hasMarkedText() )
+        {
+            markAnchorX = cursorX;
+            markAnchorY = cursorY;
+        }
+        if ( !curXPos )
+            curXPos = mapToView( cursorX, cursorY );
+        int oldY = cursorY;
+        d->blinkTimer->stop();
+        cursorOn = TRUE;
+        cursorY++;
+        if ( cursorY > lastLin )
+        {
+            cursorY = lastLin;
+        }
+        cursorX = mapFromView( curXPos, cursorY );
+        if ( mark )
+            newMark( cursorX, cursorY, FALSE );
+        updateCell( oldY, 0, FALSE );
+        updateCell( cursorY, 0, FALSE );
+        d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
     }
     makeVisible();
     if ( clear_mark )
-	turnMark( FALSE );
+        turnMark( FALSE );
 }
 
 /*!
@@ -1928,11 +2101,12 @@ void QtMultiLineEdit::cursorDown( bool mark, bool clear_mark )
 */
 void QtMultiLineEdit::turnMark( bool on )
 {
-    if ( on != markIsOn ) {
-	markIsOn = on;
-	if ( echoMode() == Normal )
-	    emit copyAvailable( on );
-	update();
+    if ( on != markIsOn )
+    {
+        markIsOn = on;
+        if ( echoMode() == Normal )
+            emit copyAvailable( on );
+        update();
     }
 }
 
@@ -1949,13 +2123,17 @@ void QtMultiLineEdit::turnMark( bool on )
 
 void QtMultiLineEdit::backspace()
 {
-    if ( hasMarkedText() ) {
-	del();
-    } else {
-	if ( !atBeginning() ) {
-	    cursorLeft( FALSE );
-	    del();
-	}
+    if ( hasMarkedText() )
+    {
+        del();
+    }
+    else
+    {
+        if ( !atBeginning() )
+        {
+            cursorLeft( FALSE );
+            del();
+        }
     }
     makeVisible();
 }
@@ -1965,95 +2143,109 @@ void QtMultiLineEdit::delAux()
     int markBeginX, markBeginY;
     int markEndX, markEndY;
     QRect oldContents = contentsRect();
-    if ( getMarkedRegion( &markBeginY, &markBeginX, &markEndY, &markEndX ) ) {
-	turnMark( FALSE );
-	textDirty = TRUE;
-	d->edited = TRUE;
-	if ( markBeginY == markEndY ) { //just one line
-	    QtMultiLineEditRow *r = contents->at( markBeginY );
-	    ASSERT(r);
-	    bool recalc = r->w == maxLineWidth();
-	    r->s.remove( markBeginX, markEndX - markBeginX );
-	    r->w = textWidth( r->s );
-	    cursorX  = markBeginX;
-	    cursorY  = markBeginY;
+    if ( getMarkedRegion( &markBeginY, &markBeginX, &markEndY, &markEndX ) )
+    {
+        turnMark( FALSE );
+        textDirty = TRUE;
+        d->edited = TRUE;
+        if ( markBeginY == markEndY )
+        { //just one line
+            QtMultiLineEditRow *r = contents->at( markBeginY );
+            ASSERT(r);
+            bool recalc = r->w == maxLineWidth();
+            r->s.remove( markBeginX, markEndX - markBeginX );
+            r->w = textWidth( r->s );
+            cursorX = markBeginX;
+            cursorY = markBeginY;
 
-	    if (autoUpdate() )
-		updateCell( cursorY, 0, FALSE );
-	    if ( recalc )
-		updateCellWidth();
-	} else { //multiline
-	    bool oldAuto = autoUpdate();
-	    setAutoUpdate( FALSE );
-	    ASSERT( markBeginY >= 0);
-	    ASSERT( markEndY < (int)contents->count() );
+            if (autoUpdate() )
+                updateCell( cursorY, 0, FALSE );
+            if ( recalc )
+                updateCellWidth();
+        }
+        else
+        { //multiline
+            bool oldAuto = autoUpdate();
+            setAutoUpdate( FALSE );
+            ASSERT( markBeginY >= 0);
+            ASSERT( markEndY < (int)contents->count() );
 
-	    QtMultiLineEditRow *firstR, *lastR;
-	    firstR = contents->at( markBeginY );
-	    lastR  = contents->at( markEndY );
-	    ASSERT( firstR != lastR );
-	    firstR->s.remove( markBeginX, firstR->s.length() - markBeginX  );
-	    lastR->s.remove( 0, markEndX  );
-	    firstR->s.append( lastR->s );  // lastS will be removed in loop below
-	    firstR->newline = lastR->newline; // Don't forget this -sanders
-	    firstR->w = textWidth( firstR->s );
+            QtMultiLineEditRow *firstR, *lastR;
+            firstR = contents->at( markBeginY );
+            lastR = contents->at( markEndY );
+            ASSERT( firstR != lastR );
+            firstR->s.remove( markBeginX, firstR->s.length() - markBeginX );
+            lastR->s.remove( 0, markEndX );
+            firstR->s.append( lastR->s );  // lastS will be removed in loop below
+            firstR->newline = lastR->newline; // Don't forget this -sanders
+            firstR->w = textWidth( firstR->s );
 
-	    for( int i = markBeginY + 1 ; i <= markEndY ; i++ )
-		contents->remove( markBeginY + 1 );
+            for ( int i = markBeginY + 1 ; i <= markEndY ; i++ )
+                contents->remove
+                ( markBeginY + 1 );
 
-	    if ( contents->isEmpty() )
-		insertLine( QString::fromLatin1(""), -1 );
+            if ( contents->isEmpty() )
+                insertLine( QString::fromLatin1(""), -1 );
 
-	    cursorX  = markBeginX;
-	    cursorY  = markBeginY;
-	    curXPos  = 0;
+            cursorX = markBeginX;
+            cursorY = markBeginY;
+            curXPos = 0;
 
-	    setNumRowsAndTruncate();
-	    updateCellWidth();
-	    setAutoUpdate( oldAuto );
-	    if ( autoUpdate() )
-		update();
-	}
-	markAnchorY = markDragY = cursorY;
-	markAnchorX = markDragX = cursorX;
-    } else {
-	if ( !atEnd() ) {
-	    textDirty = TRUE;
-	    d->edited = TRUE;
-	    QtMultiLineEditRow *r = contents->at( cursorY );
-	    if ( cursorX == (int) r->s.length() ) { // remove newline
-		QtMultiLineEditRow* other = contents->at( cursorY + 1 );
-		if ( ! r->newline && cursorX )
-		    r->s.truncate( r->s.length()-1 );
-
-		bool needBreak = !r->s.isEmpty();
-		r->s += other->s;
-		r->newline =  other->newline;
-		contents->remove( cursorY + 1 );
-		if ( needBreak )
-		    rebreakParagraph( cursorY, 1 );
-		else
-		    wrapLine( cursorY, 1 );
-	    } else {
-		bool recalc = r->w == maxLineWidth();
-		r->s.remove( cursorX, 1 );
-		rebreakParagraph( cursorY );
-		if ( recalc )
-		    updateCellWidth();
-	    }
-	}
+            setNumRowsAndTruncate();
+            updateCellWidth();
+            setAutoUpdate( oldAuto );
+            if ( autoUpdate() )
+                update();
+        }
+        markAnchorY = markDragY = cursorY;
+        markAnchorX = markDragX = cursorX;
     }
-    if ( DYNAMIC_WRAP && oldContents != contentsRect() ) {
-	if ( oldContents.width() != contentsRect().width() ) {
-	    bool oldAuto = autoUpdate();
-	    setAutoUpdate( FALSE );
-	    rebreakAll();
-	    setAutoUpdate( oldAuto );
-	}
-	if ( autoUpdate() )
-	    update();
+    else
+    {
+        if ( !atEnd() )
+        {
+            textDirty = TRUE;
+            d->edited = TRUE;
+            QtMultiLineEditRow *r = contents->at( cursorY );
+            if ( cursorX == (int) r->s.length() )
+            { // remove newline
+                QtMultiLineEditRow* other = contents->at( cursorY + 1 );
+                if ( ! r->newline && cursorX )
+                    r->s.truncate( r->s.length() - 1 );
+
+                bool needBreak = !r->s.isEmpty();
+                r->s += other->s;
+                r->newline = other->newline;
+                contents->remove
+                ( cursorY + 1 );
+                if ( needBreak )
+                    rebreakParagraph( cursorY, 1 );
+                else
+                    wrapLine( cursorY, 1 );
+            }
+            else
+            {
+                bool recalc = r->w == maxLineWidth();
+                r->s.remove( cursorX, 1 );
+                rebreakParagraph( cursorY );
+                if ( recalc )
+                    updateCellWidth();
+            }
+        }
     }
-    curXPos  = 0;
+    if ( DYNAMIC_WRAP && oldContents != contentsRect() )
+    {
+        if ( oldContents.width() != contentsRect().width() )
+        {
+            bool oldAuto = autoUpdate();
+            setAutoUpdate( FALSE );
+            rebreakAll();
+            setAutoUpdate( oldAuto );
+        }
+        if ( autoUpdate() )
+            update();
+    }
+    curXPos = 0;
     makeVisible();
 }
 
@@ -2061,28 +2253,30 @@ void QtMultiLineEdit::delAux()
   Moves the text cursor to the left end of the line. If \a mark is
   TRUE, text is marked towards the first position. If it is FALSE and
   the cursor is moved, all marked text is unmarked.
-
+ 
   \sa end()
 */
 
 void QtMultiLineEdit::home( bool mark )
 {
-    if ( cursorX != 0 ) {
-	if ( mark && !hasMarkedText() ) {
-	    markAnchorX    = cursorX;
-	    markAnchorY    = cursorY;
-	}
-	d->blinkTimer->stop();
-	cursorX = 0;
-	cursorOn = TRUE;
-	if ( mark )
-	    newMark( cursorX, cursorY, FALSE );
-	updateCell( cursorY, 0, FALSE );
-	d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
+    if ( cursorX != 0 )
+    {
+        if ( mark && !hasMarkedText() )
+        {
+            markAnchorX = cursorX;
+            markAnchorY = cursorY;
+        }
+        d->blinkTimer->stop();
+        cursorX = 0;
+        cursorOn = TRUE;
+        if ( mark )
+            newMark( cursorX, cursorY, FALSE );
+        updateCell( cursorY, 0, FALSE );
+        d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
     }
-    curXPos  = 0;
+    curXPos = 0;
     if ( !mark )
-	turnMark( FALSE );
+        turnMark( FALSE );
     makeVisible();
 }
 
@@ -2090,30 +2284,32 @@ void QtMultiLineEdit::home( bool mark )
   Moves the text cursor to the right end of the line. If \a mark is TRUE
   text is marked towards the last position.  If it is FALSE and the
   cursor is moved, all marked text is unmarked.
-
+ 
   \sa home()
 */
 
 void QtMultiLineEdit::end( bool mark )
 {
     int tlen = lineLength( cursorY );
-    if ( cursorX != tlen ) {
-	if ( mark && !hasMarkedText() ) {
-	    markAnchorX    = cursorX;
-	    markAnchorY    = cursorY;
-	}
-	d->blinkTimer->stop();
-	cursorX = tlen;
-	cursorOn  = TRUE;
-	if ( mark )
-	    newMark( cursorX, cursorY, FALSE );
-	d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
-	updateCell( cursorY, 0, FALSE );
+    if ( cursorX != tlen )
+    {
+        if ( mark && !hasMarkedText() )
+        {
+            markAnchorX = cursorX;
+            markAnchorY = cursorY;
+        }
+        d->blinkTimer->stop();
+        cursorX = tlen;
+        cursorOn = TRUE;
+        if ( mark )
+            newMark( cursorX, cursorY, FALSE );
+        d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
+        updateCell( cursorY, 0, FALSE );
     }
-    curXPos  = 0;
+    curXPos = 0;
     makeVisible();
     if ( !mark )
-	turnMark( FALSE );
+        turnMark( FALSE );
 }
 
 /*!\reimp
@@ -2123,176 +2319,200 @@ void QtMultiLineEdit::mousePressEvent( QMouseEvent *e )
     stopAutoScroll();
     d->dnd_startpos = e->pos();
 
-    if ( e->button() == RightButton ) {
-	QPopupMenu *popup = new QPopupMenu( this );
-	int id[ (int)IdCount ];
-	id[ IdUndo ] = popup->insertItem( tr( "Undo" ) );
-	id[ IdRedo ] = popup->insertItem( tr( "Redo" ) );
-	popup->insertSeparator();
+    if ( e->button() == RightButton )
+    {
+        QPopupMenu *popup = new QPopupMenu( this );
+        int id[ (int)IdCount ];
+        id[ IdUndo ] = popup->insertItem( tr( "Undo" ) );
+        id[ IdRedo ] = popup->insertItem( tr( "Redo" ) );
+        popup->insertSeparator();
 #ifndef QT_NO_CLIPBOARD
-	id[ IdCut ] = popup->insertItem( tr( "Cut" ) );
-	id[ IdCopy ] = popup->insertItem( tr( "Copy" ) );
-	id[ IdPaste ] = popup->insertItem( tr( "Paste" ) );
-#ifndef QT_NO_MIMECLIPBOARD
-	id[ IdPasteSpecial ] = popup->insertItem( tr( "Paste special..." ) );
-#endif
-#endif
-	id[ IdClear ] = popup->insertItem( tr( "Clear" ) );
-	popup->insertSeparator();
-	id[ IdSelectAll ] = popup->insertItem( tr( "Select All" ) );
-	popup->setItemEnabled( id[ IdUndo ],
-				  !this->d->undoList.isEmpty() );
-	popup->setItemEnabled( id[ IdRedo ],
-				  !this->d->redoList.isEmpty() );
-#ifndef QT_NO_CLIPBOARD
-	popup->setItemEnabled( id[ IdCut ],
-			          !isReadOnly() && hasMarkedText() );
-	popup->setItemEnabled( id[ IdCopy ], hasMarkedText() );
-	popup->setItemEnabled( id[ IdPaste ],
-	    !isReadOnly() && (bool)QApplication::clipboard()->text().length() );
-#ifndef QT_NO_MIMECLIPBOARD
-	// Any non-plain types?
-	QMimeSource* ms = QApplication::clipboard()->data();
-	bool ps = FALSE;
-	if ( ms )  {
-	    if ( !isReadOnly() ) {
-		const char* fmt;
-		for (int i=0; !ps && (fmt=ms->format(i)); i++) {
-		    ps = qstrnicmp(fmt,"text/",5)==0
-		      && qstrnicmp(fmt+5,"plain",5)!=0;
-		}
-	    }
-	}
-	popup->setItemEnabled( id[ IdPasteSpecial ], ps );
-#endif
-#endif
-	popup->setItemEnabled( id[ IdClear ],
-				  !isReadOnly() && (bool)text().length() );
-	int allSelected = markIsOn && markAnchorX == 0 && markAnchorY == 0 &&
-			  markDragY == numLines() - 1 && markDragX == lineLength( markDragY );
-	popup->setItemEnabled( id[ IdSelectAll ],
-				  (bool)text().length() && !allSelected );
-	emit displayMenu(popup);
-	int r = popup->exec( e->globalPos() );
-	delete popup;
 
-	if ( r == id[ IdUndo ] )
-	    undo();
-	else if ( r == id[ IdRedo ] )
-	    redo();
+        id[ IdCut ] = popup->insertItem( tr( "Cut" ) );
+        id[ IdCopy ] = popup->insertItem( tr( "Copy" ) );
+        id[ IdPaste ] = popup->insertItem( tr( "Paste" ) );
+#ifndef QT_NO_MIMECLIPBOARD
+
+        id[ IdPasteSpecial ] = popup->insertItem( tr( "Paste special..." ) );
+#endif
+#endif
+
+        id[ IdClear ] = popup->insertItem( tr( "Clear" ) );
+        popup->insertSeparator();
+        id[ IdSelectAll ] = popup->insertItem( tr( "Select All" ) );
+        popup->setItemEnabled( id[ IdUndo ],
+                               !this->d->undoList.isEmpty() );
+        popup->setItemEnabled( id[ IdRedo ],
+                               !this->d->redoList.isEmpty() );
 #ifndef QT_NO_CLIPBOARD
-	else if ( r == id[ IdCut ] )
-	    cut();
-	else if ( r == id[ IdCopy ] )
-	    copy();
-	else if ( r == id[ IdPaste ] )
-	    paste();
+
+        popup->setItemEnabled( id[ IdCut ],
+                               !isReadOnly() && hasMarkedText() );
+        popup->setItemEnabled( id[ IdCopy ], hasMarkedText() );
+        popup->setItemEnabled( id[ IdPaste ],
+                               !isReadOnly() && (bool)QApplication::clipboard()->text().length() );
+#ifndef QT_NO_MIMECLIPBOARD
+        // Any non-plain types?
+        QMimeSource* ms = QApplication::clipboard()->data();
+        bool ps = FALSE;
+        if ( ms )
+        {
+            if ( !isReadOnly() )
+            {
+                const char* fmt;
+                for (int i = 0; !ps && (fmt = ms->format(i)); i++)
+                {
+                    ps = qstrnicmp(fmt, "text/", 5) == 0
+                         && qstrnicmp(fmt + 5, "plain", 5) != 0;
+                }
+            }
+        }
+        popup->setItemEnabled( id[ IdPasteSpecial ], ps );
+#endif
+#endif
+
+        popup->setItemEnabled( id[ IdClear ],
+                               !isReadOnly() && (bool)text().length() );
+        int allSelected = markIsOn && markAnchorX == 0 && markAnchorY == 0 &&
+                          markDragY == numLines() - 1 && markDragX == lineLength( markDragY );
+        popup->setItemEnabled( id[ IdSelectAll ],
+                               (bool)text().length() && !allSelected );
+        emit displayMenu(popup);
+        int r = popup->exec( e->globalPos() );
+        delete popup;
+
+        if ( r == id[ IdUndo ] )
+            undo();
+        else if ( r == id[ IdRedo ] )
+            redo();
+#ifndef QT_NO_CLIPBOARD
+
+        else if ( r == id[ IdCut ] )
+            cut();
+        else if ( r == id[ IdCopy ] )
+            copy();
+        else if ( r == id[ IdPaste ] )
+            paste();
 # ifndef QT_NO_MIMECLIPBOARD
-	else if ( r == id[ IdPasteSpecial ] )
-	    pasteSpecial(QCursor::pos());
+
+        else if ( r == id[ IdPasteSpecial ] )
+            pasteSpecial(QCursor::pos());
 # endif
 #endif
-	else if ( r == id[ IdClear ] )
-	    clear();
-	else if ( r == id[ IdSelectAll ] )
-	    selectAll();
-	return;
+
+        else if ( r == id[ IdClear ] )
+            clear();
+        else if ( r == id[ IdSelectAll ] )
+            selectAll();
+        return ;
     }
 
     if ( e->button() != MidButton && e->button() != LeftButton)
-	return;
+        return ;
 
     int newX, newY;
     pixelPosToCursorPos( e->pos(), &newX, &newY );
 
-    if ( e->state() & ShiftButton ) {
-	wordMark = FALSE;
-	dragMarking    = TRUE;
-	setCursorPosition( newY, newX, TRUE);
-	return;
+    if ( e->state() & ShiftButton )
+    {
+        wordMark = FALSE;
+        dragMarking = TRUE;
+        setCursorPosition( newY, newX, TRUE);
+        return ;
     }
 
 #ifndef QT_NO_DRAGANDDROP
     if (
-	inMark(newX, newY)		// Click on highlighted text
-	&& echoMode() == Normal		// No DnD of passwords, etc.
-	&& e->pos().y() < totalHeight() // Click past the end is not dragging
-	)
+        inMark(newX, newY)  // Click on highlighted text
+        && echoMode() == Normal  // No DnD of passwords, etc.
+        && e->pos().y() < totalHeight() // Click past the end is not dragging
+    )
     {
-	// The user might be trying to drag
-	d->dnd_primed = TRUE;
-	d->dnd_timer->start( QApplication::startDragTime(), FALSE );
-    } else
+        // The user might be trying to drag
+        d->dnd_primed = TRUE;
+        d->dnd_timer->start( QApplication::startDragTime(), FALSE );
+    }
+    else
 #endif
+
     {
-	wordMark = FALSE;
-	dragMarking    = TRUE;
-	setCursorPixelPosition(e->pos());
+        wordMark = FALSE;
+        dragMarking = TRUE;
+        setCursorPixelPosition(e->pos());
     }
 }
 
 void QtMultiLineEdit::pixelPosToCursorPos(QPoint p, int* x, int* y) const
 {
     *y = findRow( p.y() );
-    if ( *y < 0 ) {
-	if ( p.y() < lineWidth() ) {
-	    *y = topCell();
-	} else {
-	    *y = lastRowVisible();
-	    p.setX(cellWidth());
-	}
+    if ( *y < 0 )
+    {
+        if ( p.y() < lineWidth() )
+        {
+            *y = topCell();
+        }
+        else
+        {
+            *y = lastRowVisible();
+            p.setX(cellWidth());
+        }
     }
     *y = QMIN( (int)contents->count() - 1, *y );
     QFontMetrics fm( font() );
     *x = xPosToCursorPos( stringShown( *y ), fm,
-			  p.x() - d->lr_marg + xOffset(),
-			  cellWidth() - 2 * d->lr_marg - d->marg_extra,
-			  d->align );
+                          p.x() - d->lr_marg + xOffset(),
+                          cellWidth() - 2 * d->lr_marg - d->marg_extra,
+                          d->align );
     QtMultiLineEditRow* r = contents->at( *y );
     if (r && !r->newline && ((unsigned int)*x == r->s.length()) && (*x > 0))
-	--*x;
+        --*x;
 }
 
 void QtMultiLineEdit::setCursorPixelPosition(QPoint p, bool clear_mark)
 {
     int newY;
     pixelPosToCursorPos( p, &cursorX, &newY );
-    curXPos        = 0;
-    if ( clear_mark ) {
-	markAnchorX    = cursorX;
-	markAnchorY    = newY;
-	bool markWasOn = markIsOn;
-	turnMark( FALSE );
-	if ( markWasOn ) {
-	    cursorY = newY;
-	    update();
-	    d->isHandlingEvent = FALSE;
-	    return;
-	}
+    curXPos = 0;
+    if ( clear_mark )
+    {
+        markAnchorX = cursorX;
+        markAnchorY = newY;
+        bool markWasOn = markIsOn;
+        turnMark( FALSE );
+        if ( markWasOn )
+        {
+            cursorY = newY;
+            update();
+            d->isHandlingEvent = FALSE;
+            return ;
+        }
     }
-    if ( cursorY != newY ) {
-	int oldY = cursorY;
-	cursorY = newY;
-	updateCell( oldY, 0, FALSE );
+    if ( cursorY != newY )
+    {
+        int oldY = cursorY;
+        cursorY = newY;
+        updateCell( oldY, 0, FALSE );
     }
-    updateCell( cursorY, 0, FALSE );		// ###
+    updateCell( cursorY, 0, FALSE );  // ###
 }
 
 void QtMultiLineEdit::startAutoScroll()
 {
-    if ( !dragScrolling ) {
-	d->scrollTime = initialScrollTime;
-	d->scrollAccel = initialScrollAccel;
-	d->scrollTimer->start( d->scrollTime, FALSE );
-	dragScrolling = TRUE;
+    if ( !dragScrolling )
+    {
+        d->scrollTime = initialScrollTime;
+        d->scrollAccel = initialScrollAccel;
+        d->scrollTimer->start( d->scrollTime, FALSE );
+        dragScrolling = TRUE;
     }
 }
 
 void QtMultiLineEdit::stopAutoScroll()
 {
-    if ( dragScrolling ) {
-	d->scrollTimer->stop();
-	dragScrolling = FALSE;
+    if ( dragScrolling )
+    {
+        d->scrollTimer->stop();
+        dragScrolling = FALSE;
     }
 }
 
@@ -2303,53 +2523,62 @@ void QtMultiLineEdit::mouseMoveEvent( QMouseEvent *e )
 #ifndef QT_NO_DRAGANDDROP
     d->dnd_timer->stop();
     if ( d->dnd_primed &&
-	 ( d->dnd_startpos - e->pos() ).manhattanLength() > QApplication::startDragDistance() ) {
-	doDrag();
-	return;
+            ( d->dnd_startpos - e->pos() ).manhattanLength() > QApplication::startDragDistance() )
+    {
+        doDrag();
+        return ;
     }
 #endif
     if ( !dragMarking )
-	return;
-    if ( rect().contains( e->pos() ) ) {
-	stopAutoScroll();
-    } else if ( !dragScrolling ) {
-	startAutoScroll();
+        return ;
+    if ( rect().contains( e->pos() ) )
+    {
+        stopAutoScroll();
+    }
+    else if ( !dragScrolling )
+    {
+        startAutoScroll();
     }
 
     int newX, newY;
     pixelPosToCursorPos(e->pos(), &newX, &newY);
 
-    if ( wordMark ) {
-	extendSelectionWord( newX, newY);
+    if ( wordMark )
+    {
+        extendSelectionWord( newX, newY);
     }
 
     if ( markDragX == newX && markDragY == newY )
-	return;
+        return ;
     int oldY = markDragY;
     newMark( newX, newY, FALSE );
-    for ( int i = QMIN(oldY,newY); i <= QMAX(oldY,newY); i++ )
-	updateCell( i, 0, FALSE );
+    for ( int i = QMIN(oldY, newY); i <= QMAX(oldY, newY); i++ )
+        updateCell( i, 0, FALSE );
 }
 
 void QtMultiLineEdit::extendSelectionWord( int &newX, int&newY)
 {
     QString s = stringShown( newY );
     int lim = s.length();
-    if ( newX >= 0 && newX < lim ) {
-	int i = newX;
-	int startclass = charClass(s.at(i));
-	if ( markAnchorY < markDragY ||
-	     ( markAnchorY == markDragY && markAnchorX < markDragX ) ) {
-	    // going right
-	    while ( i < lim && charClass(s.at(i)) == startclass )
-		i++;
-	} else {
-	    // going left
-	    while ( i >= 0 && charClass(s.at(i)) == startclass )
-		i--;
-	    i++;
-	}
-	newX = i;
+    if ( newX >= 0 && newX < lim )
+    {
+        int i = newX;
+        int startclass = charClass(s.at(i));
+        if ( markAnchorY < markDragY ||
+                ( markAnchorY == markDragY && markAnchorX < markDragX ) )
+        {
+            // going right
+            while ( i < lim && charClass(s.at(i)) == startclass )
+                i++;
+        }
+        else
+        {
+            // going left
+            while ( i >= 0 && charClass(s.at(i)) == startclass )
+                i--;
+            i++;
+        }
+        newX = i;
     }
 }
 
@@ -2362,41 +2591,47 @@ void QtMultiLineEdit::mouseReleaseEvent( QMouseEvent *e )
 {
     stopAutoScroll();
 #ifndef QT_NO_DRAGANDDROP
-    if ( d->dnd_timer->isActive() ) {
-	d->dnd_timer->stop();
-	d->dnd_primed = FALSE;
-	setCursorPixelPosition(e->pos());
+
+    if ( d->dnd_timer->isActive() )
+    {
+        d->dnd_timer->stop();
+        d->dnd_primed = FALSE;
+        setCursorPixelPosition(e->pos());
     }
 #endif
     wordMark = FALSE;
-    dragMarking   = FALSE;
+    dragMarking = FALSE;
     textDirty = FALSE;
     d->isHandlingEvent = TRUE;
     if ( markAnchorY == markDragY && markAnchorX == markDragX )
-	turnMark( FALSE );
+        turnMark( FALSE );
 
 #ifndef QT_NO_CLIPBOARD
 #if defined(Q_WS_X11)
+
     else if ( echoMode() == Normal )
-	copy();
+        copy();
 #endif
 
-    if ( e->button() == MidButton && !readOnly ) {
+    if ( e->button() == MidButton && !readOnly )
+    {
 #if defined(Q_WS_X11)
-	paste();		// Will repaint the cursor line.
+        paste();  // Will repaint the cursor line.
 #else
 #ifndef QT_NO_COMPAT
-	if ( style().styleHint(QStyle::SH_GUIStyle) == Qt::MotifStyle )
-	    paste();
+
+        if ( style().styleHint(QStyle::SH_GUIStyle) == Qt::MotifStyle )
+            paste();
 #endif
 #endif
+
     }
 #endif
 
     d->isHandlingEvent = FALSE;
 
     if ( !readOnly && textDirty )
-	emit textChanged();
+        emit textChanged();
 }
 
 
@@ -2404,18 +2639,22 @@ void QtMultiLineEdit::mouseReleaseEvent( QMouseEvent *e )
 */
 void QtMultiLineEdit::mouseDoubleClickEvent( QMouseEvent *m )
 {
-    if ( m->button() == LeftButton ) {
-	if ( m->state() & ShiftButton ) {
-	    int newX = cursorX;
-	    int newY = cursorY;
-	    extendSelectionWord( newX, newY);
-	    newMark( newX, newY, FALSE );
-	} else {
-	    markWord( cursorX, cursorY );
-	}
-	dragMarking    = TRUE;
-	wordMark = TRUE;
-	updateCell( cursorY, 0, FALSE );
+    if ( m->button() == LeftButton )
+    {
+        if ( m->state() & ShiftButton )
+        {
+            int newX = cursorX;
+            int newY = cursorY;
+            extendSelectionWord( newX, newY);
+            newMark( newX, newY, FALSE );
+        }
+        else
+        {
+            markWord( cursorX, cursorY );
+        }
+        dragMarking = TRUE;
+        wordMark = TRUE;
+        updateCell( cursorY, 0, FALSE );
 
     }
 }
@@ -2436,27 +2675,30 @@ void QtMultiLineEdit::dragEnterEvent( QDragEnterEvent * )
 */
 void QtMultiLineEdit::dragMoveEvent( QDragMoveEvent* event )
 {
-    if ( readOnly ) return;
+    if ( readOnly )
+        return ;
     event->accept( QTextDrag::canDecode(event) );
     d->dnd_forcecursor = TRUE;
     setCursorPixelPosition(event->pos(), FALSE);
     d->dnd_forcecursor = FALSE;
     QRect inside_margin(scroll_margin, scroll_margin,
-			width()-scroll_margin*2, height()-scroll_margin*2);
-    if ( !inside_margin.contains(event->pos()) ) {
-	startAutoScroll();
+                        width() - scroll_margin*2, height() - scroll_margin*2);
+    if ( !inside_margin.contains(event->pos()) )
+    {
+        startAutoScroll();
     }
     if ( event->source() == this && event->action() == QDropEvent::Move )
-	event->acceptAction();
+        event->acceptAction();
 }
 
 /*!\reimp
 */
 void QtMultiLineEdit::dragLeaveEvent( QDragLeaveEvent* )
 {
-    if ( cursorOn ) {
-	cursorOn = FALSE;
-	updateCell( cursorY, 0, FALSE );
+    if ( cursorOn )
+    {
+        cursorOn = FALSE;
+        updateCell( cursorY, 0, FALSE );
     }
     stopAutoScroll();
 }
@@ -2465,49 +2707,62 @@ void QtMultiLineEdit::dragLeaveEvent( QDragLeaveEvent* )
 */
 void QtMultiLineEdit::dropEvent( QDropEvent* event )
 {
-    if ( readOnly ) return;
+    if ( readOnly )
+        return ;
     QString text;
-    QCString fmt = pickSpecial(event,FALSE,event->pos());
-    if ( QTextDrag::decode(event, text, fmt) ) {
-	int i = -1;
-	while ( ( i = text.find( '\r' ) ) != -1 )
-	    text.replace( i,1,"" );
-	if ( event->source() == this && event->action() == QDropEvent::Move ) {
-	    event->acceptAction();
-	    // Careful not to tread on my own feet
-	    int newX, newY;
-	    pixelPosToCursorPos( event->pos(), &newX, &newY );
-	    if ( afterMark( newX, newY ) ) {
-		// The tricky case
-		int x1, y1, x2, y2;
-		getMarkedRegion( &y1, &x1, &y2, &x2 );
-		if ( newY == y2 ) {
-		    newY = y1;
-		    newX = x1 + newX - x2;
-		} else {
-		    newY -= y2 - y1;
-		}
-		addUndoCmd( new QBeginCommand );
-		del();
-		setCursorPosition(newY, newX);
-		insert(text, TRUE);
-		addUndoCmd( new QEndCommand );
-	    } else if ( beforeMark( newX, newY ) ) {
-		// Easy
-		addUndoCmd( new QBeginCommand );
-		del();
-		setCursorPosition(newY, newX);
-		insert(text, TRUE);
-		addUndoCmd( new QEndCommand );
-	    } else {
-		// Do nothing.
-	    }
-	} else {
-	    setCursorPixelPosition(event->pos());
-	    insert(text, TRUE);
-	}
-	update();
-	emit textChanged();
+    QCString fmt = pickSpecial(event, FALSE, event->pos());
+    if ( QTextDrag::decode(event, text, fmt) )
+    {
+        int i = -1;
+        while ( ( i = text.find( '\r' ) ) != -1 )
+            text.replace( i, 1, "" );
+        if ( event->source() == this && event->action() == QDropEvent::Move )
+        {
+            event->acceptAction();
+            // Careful not to tread on my own feet
+            int newX, newY;
+            pixelPosToCursorPos( event->pos(), &newX, &newY );
+            if ( afterMark( newX, newY ) )
+            {
+                // The tricky case
+                int x1, y1, x2, y2;
+                getMarkedRegion( &y1, &x1, &y2, &x2 );
+                if ( newY == y2 )
+                {
+                    newY = y1;
+                    newX = x1 + newX - x2;
+                }
+                else
+                {
+                    newY -= y2 - y1;
+                }
+                addUndoCmd( new QBeginCommand );
+                del();
+                setCursorPosition(newY, newX);
+                insert(text, TRUE);
+                addUndoCmd( new QEndCommand );
+            }
+            else if ( beforeMark( newX, newY ) )
+            {
+                // Easy
+                addUndoCmd( new QBeginCommand );
+                del();
+                setCursorPosition(newY, newX);
+                insert(text, TRUE);
+                addUndoCmd( new QEndCommand );
+            }
+            else
+            {
+                // Do nothing.
+            }
+        }
+        else
+        {
+            setCursorPixelPosition(event->pos());
+            insert(text, TRUE);
+        }
+        update();
+        emit textChanged();
     }
 }
 
@@ -2522,11 +2777,11 @@ bool QtMultiLineEdit::partiallyInvisible( int line )
 {
     int y;
     if ( !rowYPos( line, &y ) )
-	return TRUE;
+        return TRUE;
     if ( y < 0 )
-	return TRUE;
+        return TRUE;
     else if ( y + cellHeight() - 2 > viewHeight() )
-	return TRUE;
+        return TRUE;
 
     return FALSE;
 }
@@ -2538,21 +2793,25 @@ bool QtMultiLineEdit::partiallyInvisible( int line )
 void QtMultiLineEdit::makeVisible()
 {
     if ( !autoUpdate() )
-	return;
+        return ;
 
-    if ( partiallyInvisible( cursorY ) ) {
-	if ( cursorY >= lastRowVisible() )
-	    setBottomCell( cursorY );
-	else
-	    setTopCell( cursorY );
+    if ( partiallyInvisible( cursorY ) )
+    {
+        if ( cursorY >= lastRowVisible() )
+            setBottomCell( cursorY );
+        else
+            setTopCell( cursorY );
     }
     int xPos = mapToView( cursorX, cursorY );
-    if ( xPos < xOffset() ) {
-	int of = xPos - 10; //###
-	setXOffset( of );
-    } else if ( xPos > xOffset() + viewWidth() ) {
-	int of = xPos - viewWidth() + 10; //###
-	setXOffset( of );
+    if ( xPos < xOffset() )
+    {
+        int of = xPos - 10; //###
+        setXOffset( of );
+    }
+    else if ( xPos > xOffset() + viewWidth() )
+    {
+        int of = xPos - viewWidth() + 10; //###
+        setXOffset( of );
     }
 }
 
@@ -2565,15 +2824,15 @@ int QtMultiLineEdit::mapFromView( int xPos, int line )
 {
     QString s = stringShown( line );
     if ( !s )
-	return 0;
+        return 0;
     QFontMetrics fm( font() );
     int index = xPosToCursorPos( s, fm,
-				 xPos - d->lr_marg,
-				 cellWidth() - 2 * d->lr_marg - d->marg_extra,
-				 d->align );
+                                 xPos - d->lr_marg,
+                                 cellWidth() - 2 * d->lr_marg - d->marg_extra,
+                                 d->align );
     QtMultiLineEditRow* r = contents->at( line );
     if (r && !r->newline && ((unsigned int)index == r->s.length()) && (index > 0))
-	--index;
+        --index;
     return index;
 }
 
@@ -2587,13 +2846,13 @@ int QtMultiLineEdit::mapToView( int xIndex, int line )
     QString s = stringShown( line );
     xIndex = QMIN( (int)s.length(), xIndex );
     QFontMetrics fm( font() );
-    int wcell = cellWidth() - 2 * d->lr_marg;// - d->marg_extra;
+    int wcell = cellWidth() - 2 * d->lr_marg; // - d->marg_extra;
     int wrow = contents->at( line )->w;
     int w = textWidthWithTabs( fm, s, 0, xIndex, d->align ) - 1;
     if ( d->align == Qt::AlignCenter || d->align == Qt::AlignHCenter )
-	w += (wcell - wrow) / 2;
+        w += (wcell - wrow) / 2;
     else if ( d->align == Qt::AlignRight )
-	w += wcell - wrow;
+        w += wcell - wrow;
     return d->lr_marg + w;
 }
 
@@ -2607,28 +2866,32 @@ void QtMultiLineEdit::updateCellWidth()
     QtMultiLineEditRow* r = contents->first();
     int maxW = 0;
     int w;
-    switch ( d->echomode ) {
+    switch ( d->echomode )
+    {
     case Normal:
-	while ( r ) {
-	    w = r->w;
-	    if ( w > maxW )
-		maxW = w;
-	    r = contents->next();
-	}
-	break;
-    case Password: {
-	uint l = 0;
-	while ( r ) {
-	    l = QMAX(l,  r->s.length() );
-	    r = contents->next();
-	}
-	QString t;
-	t.fill(QChar('*'), l);
-	maxW = textWidth(t);
-    }
-    break;
+        while ( r )
+        {
+            w = r->w;
+            if ( w > maxW )
+                maxW = w;
+            r = contents->next();
+        }
+        break;
+    case Password:
+        {
+            uint l = 0;
+            while ( r )
+            {
+                l = QMAX(l, r->s.length() );
+                r = contents->next();
+            }
+            QString t;
+            t.fill(QChar('*'), l);
+            maxW = textWidth(t);
+        }
+        break;
     case NoEcho:
-	maxW = textWidth(QString::fromLatin1(""));
+        maxW = textWidth(QString::fromLatin1(""));
     }
     setWidth( maxW );
 }
@@ -2641,7 +2904,7 @@ void QtMultiLineEdit::updateCellWidth()
 void QtMultiLineEdit::setBottomCell( int line )
 {
     int rowY = cellHeight() * line;
-    int newYPos = rowY +  cellHeight() - viewHeight();
+    int newYPos = rowY + cellHeight() - viewHeight();
     setYOffset( QMAX( newYPos, 0 ) );
 }
 
@@ -2658,28 +2921,30 @@ void QtMultiLineEdit::pasteSubType(const QCString& subtype)
     addUndoCmd( new QBeginCommand );
 
     if ( hasMarkedText() )
-	del();
+        del();
     QString t = QApplication::clipboard()->text(st);
-    if ( !t.isEmpty() ) {
-	if ( hasMarkedText() )
-	    turnMark( FALSE );
+    if ( !t.isEmpty() )
+    {
+        if ( hasMarkedText() )
+            turnMark( FALSE );
 
 #if defined(_OS_WIN32_)
-	// Need to convert CRLF to NL
-	t.replace( "\r\n", "\n" );
+        // Need to convert CRLF to NL
+        t.replace( "\r\n", "\n" );
 #endif
 
-	for (int i=0; (uint)i<t.length(); i++) {
-	    if ( t[i] < ' ' && t[i] != '\n' && t[i] != '\t' )
-		t[i] = ' ';
-	}
-	insertAt( t, cursorY, cursorX );
-	turnMark( FALSE );
-	curXPos  = 0;
-	makeVisible();
+        for (int i = 0; (uint)i < t.length(); i++)
+        {
+            if ( t[i] < ' ' && t[i] != '\n' && t[i] != '\t' )
+                t[i] = ' ';
+        }
+        insertAt( t, cursorY, cursorX );
+        turnMark( FALSE );
+        curXPos = 0;
+        makeVisible();
     }
     if ( textDirty && !d->isHandlingEvent )
-	emit textChanged();
+        emit textChanged();
 
     addUndoCmd( new QEndCommand );
 }
@@ -2693,7 +2958,7 @@ void QtMultiLineEdit::paste()
     pasteSubType("plain");
 }
 
-#ifndef QT_NO_MIMECLIPBOARD
+#ifndef QT_NO_MIMECLIPBOARD 
 /*!
   Prompts the user for a type from a list of text types available,
   Then copies text from the clipboard onto the current cursor position.
@@ -2701,37 +2966,42 @@ void QtMultiLineEdit::paste()
 */
 void QtMultiLineEdit::pasteSpecial(const QPoint& pt)
 {
-    QCString st = pickSpecial(QApplication::clipboard()->data(),TRUE,pt);
+    QCString st = pickSpecial(QApplication::clipboard()->data(), TRUE, pt);
     if ( !st.isEmpty() )
-	pasteSubType(st);
+        pasteSubType(st);
 }
 #endif
 #ifndef QT_NO_MIME
 QCString QtMultiLineEdit::pickSpecial(QMimeSource* ms, bool always_ask, const QPoint& pt)
 {
-    if ( ms )  {
-	QPopupMenu popup(this);
-	QString fmt;
-	int n=0;
-	QDict<void> done;
-	for (int i=0; !(fmt=ms->format(i)).isNull(); i++) {
-	    int semi=fmt.find(";");
-	    if ( semi >= 0 )
-		fmt = fmt.left(semi);
-	    if ( fmt.left(5) == "text/" ) {
-		fmt = fmt.mid(5);
-		if ( !done.find(fmt) ) {
-		    done.insert(fmt,(void*)1);
-		    popup.insertItem(fmt,i);
-		    n++;
-		}
-	    }
-	}
-	if ( n ) {
-	    int i = n==1 && !always_ask ? popup.idAt(0) : popup.exec(pt);
-	    if ( i >= 0 )
-		return popup.text(i).latin1();
-	}
+    if ( ms )
+    {
+        QPopupMenu popup(this);
+        QString fmt;
+        int n = 0;
+        QDict<void> done;
+        for (int i = 0; !(fmt = ms->format(i)).isNull(); i++)
+        {
+            int semi = fmt.find(";");
+            if ( semi >= 0 )
+                fmt = fmt.left(semi);
+            if ( fmt.left(5) == "text/" )
+            {
+                fmt = fmt.mid(5);
+                if ( !done.find(fmt) )
+                {
+                    done.insert(fmt, (void*)1);
+                    popup.insertItem(fmt, i);
+                    n++;
+                }
+            }
+        }
+        if ( n )
+        {
+            int i = n == 1 && !always_ask ? popup.idAt(0) : popup.exec(pt);
+            if ( i >= 0 )
+                return popup.text(i).latin1();
+        }
     }
     return QCString();
 }
@@ -2749,16 +3019,16 @@ void QtMultiLineEdit::clear()
     setEdited( TRUE );
     contents->clear();
     cursorX = cursorY = 0;
-    int w  = textWidth( QString::fromLatin1("") );
+    int w = textWidth( QString::fromLatin1("") );
     contents->append( new QtMultiLineEditRow(QString::fromLatin1(""), w) );
     setNumRowsAndTruncate();
     setWidth( w );
     dummy = TRUE;
     turnMark( FALSE );
     if ( autoUpdate() )
-	update();
+        update();
     if ( !d->isHandlingEvent ) //# && not already empty
-	emit textChanged();
+        emit textChanged();
     update();
 }
 
@@ -2773,7 +3043,7 @@ void QtMultiLineEdit::setFont( const QFont &font )
     QFontMetrics fm( font );
     setCellHeight( fm.lineSpacing() );
     for ( QtMultiLineEditRow* r = contents->first(); r; r = contents->next() )
-	r->w = textWidth( r->s  );
+        r->w = textWidth( r->s );
     rebreakAll();
     updateCellWidth();
 }
@@ -2785,12 +3055,12 @@ void QtMultiLineEdit::setFont( const QFont &font )
 void QtMultiLineEdit::newMark( int posx, int posy, bool /*copy*/ )
 {
     if ( markIsOn && markDragX == posx && markDragY == posy &&
-	 cursorX   == posx && cursorY   == posy )
-	return;
-    markDragX  = posx;
-    markDragY  = posy;
-    cursorX    = posx;
-    cursorY    = posy;
+            cursorX == posx && cursorY == posy )
+        return ;
+    markDragX = posx;
+    markDragY = posy;
+    cursorX = posx;
+    cursorY = posy;
     turnMark( markDragX != markAnchorX || markDragY != markAnchorY );
 }
 
@@ -2798,30 +3068,30 @@ bool QtMultiLineEdit::beforeMark( int posx, int posy ) const
 {
     int x1, y1, x2, y2;
     if ( !getMarkedRegion( &y1, &x1, &y2, &x2 ) )
-	return FALSE;
+        return FALSE;
     return
-	(y1 > posy || y1 == posy && x1 > posx)
-	&& (y2 > posy || y2 == posy && x2 > posx);
+        (y1 > posy || y1 == posy && x1 > posx)
+        && (y2 > posy || y2 == posy && x2 > posx);
 }
 
 bool QtMultiLineEdit::afterMark( int posx, int posy ) const
 {
     int x1, y1, x2, y2;
     if ( !getMarkedRegion( &y1, &x1, &y2, &x2 ) )
-	return FALSE;
+        return FALSE;
     return
-	(y1 < posy || y1 == posy && x1 < posx)
-	&& (y2 < posy || y2 == posy && x2 < posx);
+        (y1 < posy || y1 == posy && x1 < posx)
+        && (y2 < posy || y2 == posy && x2 < posx);
 }
 
 bool QtMultiLineEdit::inMark( int posx, int posy ) const
 {
     int x1, y1, x2, y2;
     if ( !getMarkedRegion( &y1, &x1, &y2, &x2 ) )
-	return FALSE;
+        return FALSE;
     return
-	(y1 < posy || y1 == posy && x1 <= posx)
-	&& (y2 > posy || y2 == posy && x2 >= posx);
+        (y1 < posy || y1 == posy && x1 <= posx)
+        && (y2 > posy || y2 == posy && x2 >= posx);
 }
 
 /*!
@@ -2833,21 +3103,22 @@ void QtMultiLineEdit::markWord( int posx, int posy )
 
     int i = posx - 1;
     while ( i >= 0 && s[i].isPrint() && !s[i].isSpace() )
-	i--;
+        i--;
     i++;
     markAnchorY = posy;
     markAnchorX = i;
 
     while ( s[i].isPrint() && !s[i].isSpace() )
-	i++;
+        i++;
     markDragX = i;
     markDragY = posy;
     turnMark( markDragX != markAnchorX || markDragY != markAnchorY );
 
 #ifndef QT_NO_CLIPBOARD
 #if defined(Q_WS_X11)
+
     if ( echoMode() == Normal )
-	copy();
+        copy();
 #endif
 #endif
 }
@@ -2859,14 +3130,17 @@ void QtMultiLineEdit::markWord( int posx, int posy )
 */
 int QtMultiLineEdit::charClass( QChar ch )
 {
-    if ( !ch.isPrint() || ch.isSpace() ) return 1;
-    else if ( ch.isLetter() || ch=='-' || ch=='+' || ch==':'
-	      || ch=='.' || ch=='/' || ch=='\\'
-	      || ch=='@' || ch=='$' || ch=='~' ) return 2;
-    else return 3;
+    if ( !ch.isPrint() || ch.isSpace() )
+        return 1;
+    else if ( ch.isLetter() || ch == '-' || ch == '+' || ch == ':'
+              || ch == '.' || ch == '/' || ch == '\\'
+              || ch == '@' || ch == '$' || ch == '~' )
+        return 2;
+    else
+        return 3;
 }
 
-#ifndef QT_NO_CLIPBOARD
+#ifndef QT_NO_CLIPBOARD 
 /*!
   Copies the marked text to the clipboard.  Will copy only
   if echoMode() is Normal.
@@ -2875,24 +3149,28 @@ int QtMultiLineEdit::charClass( QChar ch )
 void QtMultiLineEdit::copy() const
 {
     QString t = markedText();
-    if ( !t.isEmpty() && echoMode() == Normal ) {
+    if ( !t.isEmpty() && echoMode() == Normal )
+    {
 #if defined(Q_WS_X11)
-	disconnect( QApplication::clipboard(), SIGNAL(dataChanged()), this, 0);
+        disconnect( QApplication::clipboard(), SIGNAL(dataChanged()), this, 0);
 #endif
 #if defined(_OS_WIN32_)
-	// Need to convert NL to CRLF
-	t.replace( "\n", "\r\n" );
+        // Need to convert NL to CRLF
+        t.replace( "\n", "\r\n" );
 #endif
-	QApplication::clipboard()->setText( t );
+
+        QApplication::clipboard()->setText( t );
 #if defined(_WS_X11_)
-	connect( QApplication::clipboard(), SIGNAL(dataChanged()),
-		 this, SLOT(clipboardChanged()) );
+
+        connect( QApplication::clipboard(), SIGNAL(dataChanged()),
+                 this, SLOT(clipboardChanged()) );
 #endif
+
     }
 }
 
 /*! \obsolete
-
+ 
   Backward compatibility.
 */
 void QtMultiLineEdit::copyText() const
@@ -2906,12 +3184,13 @@ void QtMultiLineEdit::copyText() const
 
 void QtMultiLineEdit::cut()
 {
-    if ( hasMarkedText() ) {
-	if ( echoMode() == Normal )
-	    copy();
-	del();
-	if ( textDirty && !d->isHandlingEvent )
-	    emit textChanged();
+    if ( hasMarkedText() )
+    {
+        if ( echoMode() == Normal )
+            copy();
+        del();
+        if ( textDirty && !d->isHandlingEvent )
+            emit textChanged();
     }
 }
 
@@ -2926,7 +3205,7 @@ void QtMultiLineEdit::clipboardChanged()
 {
 #if defined(Q_WS_X11)
     disconnect( QApplication::clipboard(), SIGNAL(dataChanged()),
-		this, SLOT(clipboardChanged()) );
+                this, SLOT(clipboardChanged()) );
     turnMark( FALSE );
     update();
 #endif
@@ -2939,61 +3218,65 @@ void QtMultiLineEdit::clipboardChanged()
 
 void QtMultiLineEdit::setWidth( int w )
 {
-    if ( w ==d->maxLineWidth )
-	return;
+    if ( w == d->maxLineWidth )
+        return ;
     bool u = autoUpdate();
     setAutoUpdate( FALSE );
     d->maxLineWidth = w;
     if ( d->align == AlignLeft )
-	setCellWidth( w );
+        setCellWidth( w );
     else
-	setCellWidth( QMAX( w, contentsRect().width() ) );
+        setCellWidth( QMAX( w, contentsRect().width() ) );
     setAutoUpdate( u );
     if ( autoUpdate() && d->align != AlignLeft )
-	update();
+        update();
 }
 
 
 /*!
   Sets the cursor position to character number \a col in line number \a line.
   The parameters are adjusted to lie within the legal range.
-
+ 
   If \a mark is FALSE, the selection is cleared. otherwise it is extended
-
+ 
   \sa cursorPosition()
 */
 
 void QtMultiLineEdit::setCursorPosition( int line, int col, bool mark )
 {
-    if ( mark && !hasMarkedText() ) {
-	markAnchorX    = cursorX;
-	markAnchorY    = cursorY;
+    if ( mark && !hasMarkedText() )
+    {
+        markAnchorX = cursorX;
+        markAnchorY = cursorY;
     }
     int oldY = cursorY;
     cursorY = QMAX( QMIN( line, numLines() - 1), 0 );
-    cursorX = QMAX( QMIN( col,  lineLength( cursorY )), 0 );
+    cursorX = QMAX( QMIN( col, lineLength( cursorY )), 0 );
     curXPos = 0;
     makeVisible();
-    if ( mark ) {
-	newMark( cursorX, cursorY, FALSE );
-	for ( int i = QMIN(oldY,cursorY); i <= QMAX(oldY,cursorY); i++ )
-	    updateCell( i, 0, FALSE );
-    } else {
-	updateCell( oldY, 0, FALSE );
-	turnMark( FALSE );
+    if ( mark )
+    {
+        newMark( cursorX, cursorY, FALSE );
+        for ( int i = QMIN(oldY, cursorY); i <= QMAX(oldY, cursorY); i++ )
+            updateCell( i, 0, FALSE );
+    }
+    else
+    {
+        updateCell( oldY, 0, FALSE );
+        turnMark( FALSE );
     }
 }
 
 
 
 /*! \obsolete
-
+ 
   Use getCursorPosition() instead.
 */
 
 void QtMultiLineEdit::cursorPosition( int *line, int *col ) const
 {
-    getCursorPosition(line,col);
+    getCursorPosition(line, col);
 }
 
 
@@ -3001,16 +3284,16 @@ void QtMultiLineEdit::cursorPosition( int *line, int *col ) const
   Returns the current line and character
   position within that line, in the variables pointed to
   by \a line and \a col respectively.
-
+ 
   \sa setCursorPosition()
 */
 
 void QtMultiLineEdit::getCursorPosition( int *line, int *col ) const
 {
     if ( line )
-	*line = cursorY;
+        *line = cursorY;
     if ( col )
-	*col = cursorX;
+        *col = cursorX;
 }
 
 
@@ -3026,7 +3309,7 @@ bool QtMultiLineEdit::autoUpdate() const
 
 /*
   Sets the auto-update option of multi-line editor to \a enable.
-
+ 
 */
 
 void QtMultiLineEdit::setAutoUpdate( bool enable )
@@ -3037,14 +3320,14 @@ void QtMultiLineEdit::setAutoUpdate( bool enable )
 /*!
   Sets the fixed height of the QtMultiLineEdit so that \a lines text lines
   are visible given the current font.
-
+ 
   \sa setMaxLines(), setFixedHeight()
  */
 void QtMultiLineEdit::setFixedVisibleLines( int lines )
 {
     int ls = fontMetrics().lineSpacing();
     setFixedHeight( frameWidth()*2 + ls*lines );
-    return;
+    return ;
 }
 
 
@@ -3084,18 +3367,21 @@ QSize QtMultiLineEdit::sizeHint() const
 {
     constPolish();
     int expected_lines;
-    if ( d->maxlines >= 0 && d->maxlines <= 6 ) {
-	expected_lines = d->maxlines;
-    } else {
-	expected_lines = 6;
+    if ( d->maxlines >= 0 && d->maxlines <= 6 )
+    {
+        expected_lines = d->maxlines;
+    }
+    else
+    {
+        expected_lines = 6;
     }
     QFontMetrics fm( font() );
-    int h = fm.lineSpacing()*(expected_lines-1)+fm.height() + frameWidth()*2;
-    int w = fm.width('x')*35;
+    int h = fm.lineSpacing() * (expected_lines - 1) + fm.height() + frameWidth() * 2;
+    int w = fm.width('x') * 35;
 
     int maxh = maximumSize().height();
     if ( maxh < QWIDGETSIZE_MAX )
-	h = maxh;
+        h = maxh;
 
     return QSize( w, h ).expandedTo( QApplication::globalStrut() );
 }
@@ -3109,15 +3395,15 @@ QSize QtMultiLineEdit::minimumSizeHint() const
 {
     constPolish();
     QFontMetrics fm( font() );
-    int h = fm.lineSpacing() + frameWidth()*2;
+    int h = fm.lineSpacing() + frameWidth() * 2;
     int w = fm.maxWidth();
     h += frameWidth();
     w += frameWidth();
-    if ( testTableFlags(Tbl_hScrollBar|Tbl_autoHScrollBar) )
-	w += verticalScrollBar()->sizeHint().width();
-    if ( testTableFlags(Tbl_vScrollBar|Tbl_autoVScrollBar) )
-	h += horizontalScrollBar()->sizeHint().height();
-    return QSize(w,h);
+    if ( testTableFlags(Tbl_hScrollBar | Tbl_autoHScrollBar) )
+        w += verticalScrollBar()->sizeHint().width();
+    if ( testTableFlags(Tbl_vScrollBar | Tbl_autoVScrollBar) )
+        h += horizontalScrollBar()->sizeHint().height();
+    return QSize(w, h);
 }
 
 
@@ -3130,41 +3416,45 @@ void QtMultiLineEdit::resizeEvent( QResizeEvent *e )
     int oldw = contentsRect().width();
     QtTableView::resizeEvent( e );
     if ( DYNAMIC_WRAP
-	 && (e->oldSize().width() != width()
-	     || oldw != contentsRect().width() ) ) {
-	bool oldAuto = autoUpdate();
-	setAutoUpdate( FALSE );
-	rebreakAll();
-	if ( oldw != contentsRect().width() )
-	    rebreakAll();
-	setAutoUpdate( oldAuto );
-	if ( autoUpdate() )
-	    repaint( FALSE );
-    } else if ( d->align != AlignLeft ) {
- 	d->maxLineWidth = 0; // trigger update
-	updateCellWidth();
+            && (e->oldSize().width() != width()
+                || oldw != contentsRect().width() ) )
+    {
+        bool oldAuto = autoUpdate();
+        setAutoUpdate( FALSE );
+        rebreakAll();
+        if ( oldw != contentsRect().width() )
+            rebreakAll();
+        setAutoUpdate( oldAuto );
+        if ( autoUpdate() )
+            repaint( FALSE );
+    }
+    else if ( d->align != AlignLeft )
+    {
+        d->maxLineWidth = 0; // trigger update
+        updateCellWidth();
     }
     if ( isVisible() )
-	deselect();
+        deselect();
 }
 
 /*
   Sets the alignment to \a flags. Possible values are \c AlignLeft, \c
   Align(H)Center and \c AlignRight.
-
+ 
   \sa alignment(), Qt::AlignmentFlags
 */
 void QtMultiLineEdit::setAlignment( int flags )
 {
-    if ( d->align != flags ) {
-	d->align = flags;
-	update();
+    if ( d->align != flags )
+    {
+        d->align = flags;
+        update();
     }
 }
 
 /*
   Returns the alignment.
-
+ 
 */
 int QtMultiLineEdit::alignment() const
 {
@@ -3205,43 +3495,44 @@ bool QtMultiLineEdit::edited() const
 }
 
 /*! \enum QtMultiLineEdit::EchoMode
-
+ 
   This enum type describes the ways in which QLineEdit can display its
   contents.  The currently defined values are: \list
-
+ 
   \i Normal - display characters as they are entered.  This is
   the default.
-
+ 
   \i NoEcho - do not display anything.
-
+ 
   \i Password - display asterisks instead of the characters
   actually entered.
-
+ 
   \endlist
-
+ 
   \sa setEchoMode() echoMode() QLineEdit::EchoMode
 */
 
 
 /*
   Sets the echo mode to \a em.  The default is \c Normal.
-
+ 
   The display is updated according.
-
+ 
   \sa setEchoMode()
 */
 void QtMultiLineEdit::setEchoMode( EchoMode em )
 {
-    if ( d->echomode != em ) {
-	d->echomode = em;
-	updateCellWidth();
-	update();
+    if ( d->echomode != em )
+    {
+        d->echomode = em;
+        updateCellWidth();
+        update();
     }
 }
 
 /*
   Returns the currently set echo mode.
-
+ 
   \sa setEchoMode()
 */
 QtMultiLineEdit::EchoMode QtMultiLineEdit::echoMode() const
@@ -3258,26 +3549,30 @@ QtMultiLineEdit::EchoMode QtMultiLineEdit::echoMode() const
 QString QtMultiLineEdit::stringShown(int row) const
 {
     QString* s = getString(row);
-    if ( !s ) return QString::null;
-    switch ( d->echomode ) {
+    if ( !s )
+        return QString::null;
+    switch ( d->echomode )
+    {
     case Normal:
-	if (!*s) return QString::fromLatin1("");
-	return *s;
+        if (!*s)
+            return QString::fromLatin1("");
+        return *s;
     case Password:
-	{
-	    QString r;
-	    r.fill(QChar('*'), (int)s->length());
-	    if ( !r ) r = QString::fromLatin1("");
-	    return r;
-	}
+        {
+            QString r;
+            r.fill(QChar('*'), (int)s->length());
+            if ( !r )
+                r = QString::fromLatin1("");
+            return r;
+        }
     case NoEcho:
-	return QString::fromLatin1("");
+        return QString::fromLatin1("");
     }
     return QString::fromLatin1("");
 }
 
 /*
-
+ 
   \sa maxLength()
 */
 void QtMultiLineEdit::setMaxLength(int m)
@@ -3296,49 +3591,55 @@ int QtMultiLineEdit::maxLength() const
 
 /*
   Returns the length of the current text.
-
+ 
   \sa setMaxLength()
  */
 int QtMultiLineEdit::length() const
 {
     int l = 0;
-    for ( QtMultiLineEditRow* r = contents->first(); r; r = contents->next() ) {
-	l += r->s.length();
-	if ( r->newline )
-	    ++l;
+    for ( QtMultiLineEditRow* r = contents->first(); r; r = contents->next() )
+    {
+        l += r->s.length();
+        if ( r->newline )
+            ++l;
     }
-    return l-1;
+    return l -1;
 }
 
 
 /*!
   Sets the maximum length of lines to \a m.  Use -1 for unlimited
   (the default).  Existing long lines will be truncated.
-
+ 
   \sa maxLineLength()
 */
 void QtMultiLineEdit::setMaxLineLength(int m)
 {
     bool trunc = d->maxlinelen < 0 || m < d->maxlinelen;
     d->maxlinelen = m;
-    if ( trunc ) {
-	QtMultiLineEditRow* r = contents->first();
-	while ( r ) {
-	    r->s.truncate( m );
-	    r = contents->next();
-	}
-	if ( cursorX > m ) cursorX = m;
-	if ( markAnchorX > m ) markAnchorX = m;
-	if ( markDragX > m ) markDragX = m;
-	update();
-	updateCellWidth();
+    if ( trunc )
+    {
+        QtMultiLineEditRow* r = contents->first();
+        while ( r )
+        {
+            r->s.truncate( m );
+            r = contents->next();
+        }
+        if ( cursorX > m )
+            cursorX = m;
+        if ( markAnchorX > m )
+            markAnchorX = m;
+        if ( markDragX > m )
+            markDragX = m;
+        update();
+        updateCellWidth();
     }
 }
 
 /*!
   Returns the currently set line length limit, or -1 if there is
   no limit (this is the default).
-
+ 
   \sa setMaxLineLength()
 */
 int QtMultiLineEdit::maxLineLength() const
@@ -3349,22 +3650,26 @@ int QtMultiLineEdit::maxLineLength() const
 /*
   Sets the maximum number of lines to \a m.  Use -1 for unlimited
   (the default).  Existing excess lines will be deleted.
-
+ 
   \sa maxLines(), numLines()
 */
 void QtMultiLineEdit::setMaxLines(int m)
 {
     if ( m == 0 ) // bad value
-	m = -1;
+        m = -1;
     d->maxlines = m;
-    if ( d->maxlines >= 0 && d->maxlines <= 6 ) {
-	setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
-    } else {
-	setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+    if ( d->maxlines >= 0 && d->maxlines <= 6 )
+    {
+        setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
     }
-    if ( setNumRowsAndTruncate() ) {
-	updateCellWidth();
-	update();
+    else
+    {
+        setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+    }
+    if ( setNumRowsAndTruncate() )
+    {
+        updateCellWidth();
+        update();
     }
 }
 
@@ -3378,20 +3683,21 @@ int QtMultiLineEdit::maxLines() const
 
 /*
   Sets the horizontal margin to \a m.
-
+ 
   \sa hMargin()
 */
 void QtMultiLineEdit::setHMargin(int m)
 {
-    if ( m != d->lr_marg ) {
-	d->lr_marg = m;
-	updateCellWidth();
-	update();
+    if ( m != d->lr_marg )
+    {
+        d->lr_marg = m;
+        updateCellWidth();
+        update();
     }
 }
 
 /*
-
+ 
   \sa setHMargin()
 */
 int QtMultiLineEdit::hMargin() const
@@ -3404,7 +3710,7 @@ int QtMultiLineEdit::hMargin() const
   at \a row_to, \a col_to.
 */
 void QtMultiLineEdit::setSelection( int row_from, int col_from,
-				   int row_to, int col_to )
+                                    int row_to, int col_to )
 {
     setCursorPosition( row_from, col_from, FALSE );
     setCursorPosition( row_to, col_to, TRUE );
@@ -3421,32 +3727,36 @@ void QtMultiLineEdit::cursorWordForward( bool mark )
     int x = cursorX;
     int y = cursorY;
 
-    if ( x == lineLength( y ) || textLine(y).at(x).isSpace() ) {
-	while ( x < lineLength( y ) && textLine(y).at(x).isSpace() )
-	    ++x;
-	if ( x == lineLength( y ) ) {
-	    if ( y < (int)contents->count() - 1) {
-		++y;
-		x = 0;
-		while ( x < lineLength( y ) && textLine(y).at(x).isSpace() )
-		    ++x;
-	    }
-	}
+    if ( x == lineLength( y ) || textLine(y).at(x).isSpace() )
+    {
+        while ( x < lineLength( y ) && textLine(y).at(x).isSpace() )
+            ++x;
+        if ( x == lineLength( y ) )
+        {
+            if ( y < (int)contents->count() - 1)
+            {
+                ++y;
+                x = 0;
+                while ( x < lineLength( y ) && textLine(y).at(x).isSpace() )
+                    ++x;
+            }
+        }
     }
-    else {
-	while ( x < lineLength( y ) && !textLine(y).at(x).isSpace() )
-	    ++x;
-	int xspace = x;
-	while ( xspace < lineLength( y ) && textLine(y).at(xspace).isSpace() )
-	    ++xspace;
-	if ( xspace <  lineLength( y ) )
-	    x = xspace;
+    else
+    {
+        while ( x < lineLength( y ) && !textLine(y).at(x).isSpace() )
+            ++x;
+        int xspace = x;
+        while ( xspace < lineLength( y ) && textLine(y).at(xspace).isSpace() )
+            ++xspace;
+        if ( xspace < lineLength( y ) )
+            x = xspace;
     }
     cursorOn = TRUE;
     int oldY = cursorY;
     setCursorPosition( y, x, mark );
     if ( oldY != cursorY )
-	updateCell( oldY, 0, FALSE );
+        updateCell( oldY, 0, FALSE );
     updateCell( cursorY, 0, FALSE );
     d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
 }
@@ -3461,26 +3771,29 @@ void QtMultiLineEdit::cursorWordBackward( bool mark )
     int x = cursorX;
     int y = cursorY;
 
-    while ( x > 0 && textLine(y).at(x-1).isSpace() )
-	--x;
+    while ( x > 0 && textLine(y).at(x - 1).isSpace() )
+        --x;
 
-    if ( x == 0 ) {
-	if ( y > 0 ) {
-	    --y;
-	    x = lineLength( y );
-	    while ( x > 0  && textLine(y).at(x-1).isSpace() )
-		--x;
-	}
+    if ( x == 0 )
+    {
+        if ( y > 0 )
+        {
+            --y;
+            x = lineLength( y );
+            while ( x > 0 && textLine(y).at(x - 1).isSpace() )
+                --x;
+        }
     }
-    else {
-	while ( x > 0  && !textLine(y).at(x-1).isSpace() )
-	    --x;
+    else
+    {
+        while ( x > 0 && !textLine(y).at(x - 1).isSpace() )
+            --x;
     }
     cursorOn = TRUE;
     int oldY = cursorY;
     setCursorPosition( y, x, mark );
     if ( oldY != cursorY )
-	updateCell( oldY, 0, FALSE );
+        updateCell( oldY, 0, FALSE );
     updateCell( cursorY, 0, FALSE );
     d->blinkTimer->start( QApplication::cursorFlashTime() / 2, FALSE );
 }
@@ -3498,7 +3811,7 @@ void QtMultiLineEdit::wrapLine( int line, int removed )
     int yPos;
     (void) rowYPos( line, &yPos );
     QFontMetrics fm( font() );
-    int i  = 0;
+    int i = 0;
     QString s = r->s;
     int a = 0;
     int l = line;
@@ -3509,88 +3822,111 @@ void QtMultiLineEdit::wrapLine( int line, int removed )
     int linew = 0;
     int lastw = 0;
     int tabDist = -1; // lazy eval
-    while ( i < int(s.length()) ) {
-	doBreak = FALSE;
-	if ( s[i] == '\t' && d->align == Qt::AlignLeft ) {
-	    if ( tabDist<0 )
-		tabDist = tabStopDist(fm);
-	    linew = ( linew/tabDist + 1 ) * tabDist;
-	} else if ( s[i] != '\n' ) {
-	    char c = s[i].latin1();
-	    if ( c > 0 ) {
-		if ( !d->chartable[(unsigned int)c] )
-		    d->chartable[(unsigned int)c] = fm.width( s[i] );
-		linew += d->chartable[(unsigned int)c];
-	    } else {
-		linew += fm.width( s[i] );
-	    }
-	}
-	if ( WORD_WRAP &&
-	     lastSpace >= a && s[i] != '\n' ) {
-	    if ( DYNAMIC_WRAP ) {
-		if  (linew >= contentsRect().width() -  2*d->lr_marg - d->marg_extra) {
-		    DO_BREAK
-		}
-	    } else if ( FIXED_COLUMN_WRAP ) {
-		if ( d->wrapcol >= 0 && i-a >= d->wrapcol ) {
-		    DO_BREAK
-		}
-	    } else if ( FIXED_WIDTH_WRAP ) {
-		if ( d->wrapcol >= 0 && linew > d->wrapcol - d->marg_extra ) {
-		    DO_BREAK
-		}
-	    }
-	}
-	if ( s[i] == '\n' || doBreak ) {
-	    r->s = s.mid( a, i - a + (doBreak?1:0) );
-	    r->w = linew - fm.leftBearing(r->s[0]) + 2 * d->lr_marg + d->marg_extra;
-	    if ( r->w > w )
-		w = r->w;
-	    if ( cursorY > l )
-		++cursorY;
-	    else if ( cursorY == line && cursorX >=a && cursorX <= i +  (doBreak?1:0)) {
-		cursorY = l;
-		cursorX -= a;
-	    }
-	    if ( markAnchorY > l )
-		++markAnchorY;
-	    else if ( markAnchorY == line && markAnchorX >=a && markAnchorX <= i +  (doBreak?1:0)) {
-		markAnchorY = l;
-		markAnchorX -= a;
-	    }
-	    a = i + 1;
-	    lastSpace = a;
-	    linew = 0;
-	    bool oldnewline = r->newline;
-	    r->newline = !doBreak;
-	    r = new QtMultiLineEditRow( QString::null, 0, oldnewline );
-	    ++nlines;
-	    contents->insert( l + 1, r );
-	    ++l;
-	}
-	if ( s[i].isSpace() || BREAK_WITHIN_WORDS ) {
-	    lastSpace = i;
-	    lastw = linew;
-	}
-	if ( lastSpace <= a )
-	    lastw = linew;
+    while ( i < int(s.length()) )
+    {
+        doBreak = FALSE;
+        if ( s[i] == '\t' && d->align == Qt::AlignLeft )
+        {
+            if ( tabDist < 0 )
+                tabDist = tabStopDist(fm);
+            linew = ( linew / tabDist + 1 ) * tabDist;
+        }
+        else if ( s[i] != '\n' )
+        {
+            char c = s[i].latin1();
+            if ( c > 0 )
+            {
+                if ( !d->chartable[(unsigned int)c] )
+                    d->chartable[(unsigned int)c] = fm.width( s[i] );
+                linew += d->chartable[(unsigned int)c];
+            }
+            else
+            {
+                linew += fm.width( s[i] );
+            }
+        }
+        if ( WORD_WRAP &&
+                lastSpace >= a && s[i] != '\n' )
+        {
+            if ( DYNAMIC_WRAP )
+            {
+                if (linew >= contentsRect().width() - 2*d->lr_marg - d->marg_extra)
+                {
+                    DO_BREAK
+                }
+            }
+            else if ( FIXED_COLUMN_WRAP )
+            {
+                if ( d->wrapcol >= 0 && i - a >= d->wrapcol )
+                {
+                    DO_BREAK
+                }
+            }
+            else if ( FIXED_WIDTH_WRAP )
+            {
+                if ( d->wrapcol >= 0 && linew > d->wrapcol - d->marg_extra )
+                {
+                    DO_BREAK
+                }
+            }
+        }
+        if ( s[i] == '\n' || doBreak )
+        {
+            r->s = s.mid( a, i - a + (doBreak ? 1 : 0) );
+            r->w = linew - fm.leftBearing(r->s[0]) + 2 * d->lr_marg + d->marg_extra;
+            if ( r->w > w )
+                w = r->w;
+            if ( cursorY > l )
+                ++cursorY;
+            else if ( cursorY == line && cursorX >= a && cursorX <= i + (doBreak ? 1 : 0))
+            {
+                cursorY = l;
+                cursorX -= a;
+            }
+            if ( markAnchorY > l )
+                ++markAnchorY;
+            else if ( markAnchorY == line && markAnchorX >= a && markAnchorX <= i + (doBreak ? 1 : 0))
+            {
+                markAnchorY = l;
+                markAnchorX -= a;
+            }
+            a = i + 1;
+            lastSpace = a;
+            linew = 0;
+            bool oldnewline = r->newline;
+            r->newline = !doBreak;
+            r = new QtMultiLineEditRow( QString::null, 0, oldnewline );
+            ++nlines;
+            contents->insert( l + 1, r );
+            ++l;
+        }
+        if ( s[i].isSpace() || BREAK_WITHIN_WORDS )
+        {
+            lastSpace = i;
+            lastw = linew;
+        }
+        if ( lastSpace <= a )
+            lastw = linew;
 
-	++i;
+        ++i;
     }
-    if ( a < int(s.length()) ){
-	r->s = s.mid( a, i - a  );
-	r->w = linew - fm.leftBearing( r->s[0] ) + 2 * d->lr_marg + d->marg_extra;
+    if ( a < int(s.length()) )
+    {
+        r->s = s.mid( a, i - a );
+        r->w = linew - fm.leftBearing( r->s[0] ) + 2 * d->lr_marg + d->marg_extra;
     }
-    if ( cursorY == line && cursorX >= a ) {
-	cursorY = l;
-	cursorX -= a;
+    if ( cursorY == line && cursorX >= a )
+    {
+        cursorY = l;
+        cursorX -= a;
     }
-    if ( markAnchorY == line && markAnchorX >= a ) {
-	markAnchorY = l;
-	markAnchorX -= a;
+    if ( markAnchorY == line && markAnchorX >= a )
+    {
+        markAnchorY = l;
+        markAnchorX -= a;
     }
     if ( r->w > w )
-	w = r->w;
+        w = r->w;
 
     setWidth( QMAX( maxLineWidth(), w ) );
     bool oldAuto = autoUpdate();
@@ -3598,52 +3934,63 @@ void QtMultiLineEdit::wrapLine( int line, int removed )
     (void)setNumRowsAndTruncate();
     setAutoUpdate( oldAuto );
 
-    yPos += (nlines+1)  * cellHeight();
-    int sh = (nlines-removed)  * cellHeight();
-    if ( autoUpdate() ) {
-	if ( sh && yPos >= contentsRect().top() && yPos < contentsRect().bottom() ) {
-	    int h = contentsRect().bottom() - yPos + 1;
-	    if ( d->maxlines >= 0 ) {
-		int maxy;
-		if ( rowYPos( d->maxlines-1, &maxy ) ) {
-		    maxy += cellHeight();
-		    if ( maxy < contentsRect().bottom() && maxy > yPos )
-			h = maxy - yPos + 1;
-		}
-	    }
-	    QWidget::scroll( 0, sh, QRect( contentsRect().left(), yPos,
-					   contentsRect().width(),
-					   h ) );
-	}
-	for (int ul = 0; ul <= nlines; ++ul )
-	    updateCell( line + ul, 0, FALSE );
+    yPos += (nlines + 1) * cellHeight();
+    int sh = (nlines - removed) * cellHeight();
+    if ( autoUpdate() )
+    {
+        if ( sh && yPos >= contentsRect().top() && yPos < contentsRect().bottom() )
+        {
+            int h = contentsRect().bottom() - yPos + 1;
+            if ( d->maxlines >= 0 )
+            {
+                int maxy;
+                if ( rowYPos( d->maxlines - 1, &maxy ) )
+                {
+                    maxy += cellHeight();
+                    if ( maxy < contentsRect().bottom() && maxy > yPos )
+                        h = maxy - yPos + 1;
+                }
+            }
+            QWidget::scroll( 0, sh, QRect( contentsRect().left(), yPos,
+                                           contentsRect().width(),
+                                           h ) );
+        }
+        for (int ul = 0; ul <= nlines; ++ul )
+            updateCell( line + ul, 0, FALSE );
     }
 }
 
 void QtMultiLineEdit::rebreakParagraph( int line, int removed )
 {
     QtMultiLineEditRow* r = contents->at( line );
-    if ( WORD_WRAP ) {
-	QtMultiLineEditRow* other = 0;
-	while (line < int(contents->count())-1 && !r->newline ) {
-	    other = contents->at( line + 1 );
-	    if ( cursorY > line ) {
-		--cursorY;
-		if ( cursorY == line ) {
-		    cursorX += r->s.length();
-		}
-	    }
-	    if ( markAnchorY > line ) {
-		--markAnchorY;
-		if ( markAnchorY == line ) {
-		    markAnchorX += r->s.length();
-		}
-	    }
-	    r->s.append( other->s );
-	    r->newline = other->newline;
-	    contents->remove( line + 1 );
-	    ++removed;
-	}
+    if ( WORD_WRAP )
+    {
+        QtMultiLineEditRow* other = 0;
+        while (line < int(contents->count()) - 1 && !r->newline )
+        {
+            other = contents->at( line + 1 );
+            if ( cursorY > line )
+            {
+                --cursorY;
+                if ( cursorY == line )
+                {
+                    cursorX += r->s.length();
+                }
+            }
+            if ( markAnchorY > line )
+            {
+                --markAnchorY;
+                if ( markAnchorY == line )
+                {
+                    markAnchorX += r->s.length();
+                }
+            }
+            r->s.append( other->s );
+            r->newline = other->newline;
+            contents->remove
+            ( line + 1 );
+            ++removed;
+        }
     }
     wrapLine( line, removed );
 }
@@ -3651,26 +3998,28 @@ void QtMultiLineEdit::rebreakParagraph( int line, int removed )
 void QtMultiLineEdit::rebreakAll()
 {
     if ( !WORD_WRAP )
-	return;
+        return ;
     d->maxLineWidth = 0;
-    for (int i = 0; i < int(contents->count()); ++i ) {
-	if ( contents->at( i )->newline &&
-	     contents->at( i )->w < contentsRect().width() -  2*d->lr_marg - d->marg_extra ) {
-	    setWidth( QMAX( d->maxLineWidth, contents->at( i )->w ) );
-	    continue;
-	}
-	rebreakParagraph( i );
-	while ( i < int(contents->count() )
-		&& !contents->at( i )->newline )
-	    ++i;
+    for (int i = 0; i < int(contents->count()); ++i )
+    {
+        if ( contents->at( i )->newline &&
+                contents->at( i )->w < contentsRect().width() - 2*d->lr_marg - d->marg_extra )
+        {
+            setWidth( QMAX( d->maxLineWidth, contents->at( i )->w ) );
+            continue;
+        }
+        rebreakParagraph( i );
+        while ( i < int(contents->count() )
+                && !contents->at( i )->newline )
+            ++i;
     }
 }
 
 
 /*! \enum QtMultiLineEdit::WordWrap
-
+ 
   This enum describes the multiline edit's word wrap mode.
-
+ 
   The following values are valid:
     \list
     \i NoWrap - no word wrap at all.
@@ -3684,30 +4033,33 @@ void QtMultiLineEdit::rebreakAll()
      fonts, for example a standard VT100 terminal. In that case
      wrapColumnOrWidth() should typically be set to 80.
   \endlist
-
+ 
  \sa setWordWrap()
 */
 
 /*
   Sets the word wrap mode to \a mode.
-
+ 
  */
 void QtMultiLineEdit::setWordWrap( WordWrap mode )
 {
     if ( mode == d->wordwrap )
-	return;
+        return ;
     d->wordwrap = mode;
 
-    if ( BREAK_WITHIN_WORDS  ) {
-	d->arrow = QPixmap( (const char **)arrow_xpm );
-	d->marg_extra = 8;
-	if ( DYNAMIC_WRAP )
-	    clearTableFlags( Tbl_autoHScrollBar );
+    if ( BREAK_WITHIN_WORDS )
+    {
+        d->arrow = QPixmap( (const char **)arrow_xpm );
+        d->marg_extra = 8;
+        if ( DYNAMIC_WRAP )
+            clearTableFlags( Tbl_autoHScrollBar );
         else
             setTableFlags( Tbl_autoHScrollBar );
-    } else {
-	d->marg_extra = 0;
-	setTableFlags( Tbl_autoHScrollBar );
+    }
+    else
+    {
+        d->marg_extra = 0;
+        setTableFlags( Tbl_autoHScrollBar );
     }
     if ( !text().isEmpty() )
         setText( text() );
@@ -3715,7 +4067,7 @@ void QtMultiLineEdit::setWordWrap( WordWrap mode )
 
 /*
   Returns the current word wrap mode.
-
+ 
   \sa setWordWrap()
  */
 QtMultiLineEdit::WordWrap QtMultiLineEdit::wordWrap() const
@@ -3726,16 +4078,16 @@ QtMultiLineEdit::WordWrap QtMultiLineEdit::wordWrap() const
 /*
   Sets the wrap column or wrap width to \a value, depending on the
   word wrap mode.
-
+ 
   \sa setWordWrap()
  */
 void QtMultiLineEdit::setWrapColumnOrWidth( int value )
 {
     if ( value == d->wrapcol )
-	return;
+        return ;
     d->wrapcol = value;
     if ( wordWrap() != NoWrap )
-	setText( text() );
+        setText( text() );
 }
 
 /*
@@ -3747,40 +4099,41 @@ int QtMultiLineEdit::wrapColumnOrWidth() const
 
 
 /*! \enum QtMultiLineEdit::WrapPolicy
-
+ 
   Defines where text can be wrapped in word wrap mode.
-
+ 
   The following values are valid:
   \list
   \i AtWhiteSpace - break only after whitespace
   \i Anywhere - break anywhere
    \endlist
-
+ 
    \sa setWrapPolicy()
 */
 
 /*
   Sets the wrap \a policy, i.e. where text can be wrapped in word wrap
   mode.
-
+ 
   \sa setWordWrap(), wrapPolicy()
  */
 void QtMultiLineEdit::setWrapPolicy( WrapPolicy policy )
 {
     if ( d->wrappolicy == policy )
-	return;
+        return ;
     d->wrappolicy = policy;
     WordWrap m = d->wordwrap;
-    if ( m != NoWrap ) { // trigger update
-	d->wordwrap = NoWrap;
-	setWordWrap( m );
+    if ( m != NoWrap )
+    { // trigger update
+        d->wordwrap = NoWrap;
+        setWordWrap( m );
     }
 }
 
 /*
-
+ 
   Returns the current word wrap policy.
-
+ 
   \sa setWrapPolicy()
  */
 QtMultiLineEdit::WrapPolicy QtMultiLineEdit::wrapPolicy() const
@@ -3790,10 +4143,10 @@ QtMultiLineEdit::WrapPolicy QtMultiLineEdit::wrapPolicy() const
 
 /*!
   Returns wether \a row is the last row in a paragraph.
-
+ 
   This function is only interesting in word wrap mode, otherwise its
   return value is always TRUE.
-
+ 
   \sa setWordWrap()
  */
 bool QtMultiLineEdit::isEndOfParagraph( int row ) const
@@ -3804,23 +4157,25 @@ bool QtMultiLineEdit::isEndOfParagraph( int row ) const
 int QtMultiLineEdit::positionToOffsetInternal( int row, int col ) const
 {
     row = QMAX( QMIN( row, numLines() - 1), 0 ); // Sanity check
-    col = QMAX( QMIN( col,  lineLength( row )), 0 ); // Sanity check
+    col = QMAX( QMIN( col, lineLength( row )), 0 ); // Sanity check
     if ( row == 0 )
-	return QMIN( col, lineLength( 0 ));
-    else {
-	int lastI;
-	lastI  = lineLength( row );
-	int i, tmp = 0;
+        return QMIN( col, lineLength( 0 ));
+    else
+    {
+        int lastI;
+        lastI = lineLength( row );
+        int i, tmp = 0;
 
-	for( i = 0; i < row ; i++ ) {
-	    tmp += lineLength( i );
-	    if ( contents->at( i )->newline )
-		++tmp;
-	}
+        for ( i = 0; i < row ; i++ )
+        {
+            tmp += lineLength( i );
+            if ( contents->at( i )->newline )
+                ++tmp;
+        }
 
-	tmp += QMIN( lastI, col );
+        tmp += QMIN( lastI, col );
 
-	return tmp;
+        return tmp;
     }
 
 }
@@ -3828,38 +4183,44 @@ int QtMultiLineEdit::positionToOffsetInternal( int row, int col ) const
 // if position is <0 = returns row 0, col 0, if position >= amount of text
 // returns pointer to end of text.
 void QtMultiLineEdit::offsetToPositionInternal( int position,
-				       int *row, int *col ) const
+        int *row, int *col ) const
 {
-    if (position <= 0) {
-	*row = 0;
-	*col = 0;
-	return;
+    if (position <= 0)
+    {
+        *row = 0;
+        *col = 0;
+        return ;
     }
-    else {
-	int charsLeft = position;
-	int i;
+    else
+    {
+        int charsLeft = position;
+        int i;
 
-	for( i = 0; contents->at( i ); ++i ) {
-	    if (lineLength( i ) < charsLeft)
-		charsLeft -= lineLength( i );
-	    else {
-		*row = i;
-		*col = charsLeft;
-		return;
-	    }
-	    if ( contents->at( i )->newline )
-		--charsLeft;
-	}
+        for ( i = 0; contents->at( i ); ++i )
+        {
+            if (lineLength( i ) < charsLeft)
+                charsLeft -= lineLength( i );
+            else
+            {
+                *row = i;
+                *col = charsLeft;
+                return ;
+            }
+            if ( contents->at( i )->newline )
+                --charsLeft;
+        }
 
-	if (contents->at( i - 1) && !contents->at( i - 1 )->newline) {
-	    *row = i - 1;
-	    *col = lineLength( i - 1 );
-	}
-	else {
-	    *row = i;
-	    *col = 0;
-	}
-	return;
+        if (contents->at( i - 1) && !contents->at( i - 1 )->newline)
+        {
+            *row = i - 1;
+            *col = lineLength( i - 1 );
+        }
+        else
+        {
+            *row = i;
+            *col = 0;
+        }
+        return ;
     }
 }
 
@@ -3872,30 +4233,33 @@ void QtMultiLineEdit::processCmd( QtMultiLineEditCommand* cmd, bool undo)
     QDelTextCmd* delcmd = (QDelTextCmd*) cmd;
     bool ins = TRUE;
     if (cmd->type() == QtMultiLineEditCommand::Delete )
-	ins = undo;
+        ins = undo;
     else if (cmd->type() == QtMultiLineEditCommand::Insert )
-	ins = !undo;
+        ins = !undo;
     else
-	return;
+        return ;
 
-    if ( ins ) {
-	int row, col;
-	offsetToPositionInternal( delcmd->mOffset, &row, &col );
-	setCursorPosition( row, col, FALSE );
-	insertAt( delcmd->mStr, row, col, FALSE );
-	offsetToPositionInternal( delcmd->mOffset+delcmd->mStr.length(), &row, &col );
-	setCursorPosition( row, col, FALSE );
-    } else { // del
-	int row, col, rowEnd, colEnd;
-	offsetToPositionInternal( delcmd->mOffset, &row, &col );
-	offsetToPositionInternal( delcmd->mOffset + delcmd->mStr.length(), &rowEnd, &colEnd );
-	markAnchorY    = row;
-	markAnchorX    = col;
-	setCursorPosition( rowEnd, colEnd, FALSE );
-	markDragY    = rowEnd;
-	markDragX    = colEnd;
-	turnMark( TRUE );
-	del();
+    if ( ins )
+    {
+        int row, col;
+        offsetToPositionInternal( delcmd->mOffset, &row, &col );
+        setCursorPosition( row, col, FALSE );
+        insertAt( delcmd->mStr, row, col, FALSE );
+        offsetToPositionInternal( delcmd->mOffset + delcmd->mStr.length(), &row, &col );
+        setCursorPosition( row, col, FALSE );
+    }
+    else
+    { // del
+        int row, col, rowEnd, colEnd;
+        offsetToPositionInternal( delcmd->mOffset, &row, &col );
+        offsetToPositionInternal( delcmd->mOffset + delcmd->mStr.length(), &rowEnd, &colEnd );
+        markAnchorY = row;
+        markAnchorX = col;
+        setCursorPosition( rowEnd, colEnd, FALSE );
+        markDragY = rowEnd;
+        markDragX = colEnd;
+        turnMark( TRUE );
+        del();
     }
 }
 
@@ -3905,24 +4269,26 @@ void QtMultiLineEdit::processCmd( QtMultiLineEditCommand* cmd, bool undo)
 void QtMultiLineEdit::undo()
 {
     if ( d->undoList.isEmpty() || isReadOnly() )
-	return;
+        return ;
     textDirty = FALSE;
     int macroLevel = 0;
     bool before = d->undo;
     d->undo = FALSE;
-    do {
-	QtMultiLineEditCommand *command = d->undoList.take();
-	if ( !command )
-	    break;
-	processCmd( command, TRUE );
-	macroLevel += command->terminator();
-	if ( d->undoList.isEmpty() )
-	    emit undoAvailable( FALSE );
-	addRedoCmd( command );
-    } while (macroLevel != 0);
+    do
+    {
+        QtMultiLineEditCommand *command = d->undoList.take();
+        if ( !command )
+            break;
+        processCmd( command, TRUE );
+        macroLevel += command->terminator();
+        if ( d->undoList.isEmpty() )
+            emit undoAvailable( FALSE );
+        addRedoCmd( command );
+    }
+    while (macroLevel != 0);
     d->undo = before;
     if ( textDirty )
-	emit textChanged();
+        emit textChanged();
     textDirty = FALSE;
 }
 
@@ -3932,26 +4298,28 @@ void QtMultiLineEdit::undo()
 void QtMultiLineEdit::redo()
 {
     if ( d->redoList.isEmpty() || isReadOnly() )
-	return;
+        return ;
     textDirty = FALSE;
     int macroLevel = 0;
     bool before = d->undo;
     d->undo = FALSE;
-    do {
-	QtMultiLineEditCommand *command = d->redoList.take();
-	if ( !command )
-	    break;
-	processCmd( command, FALSE );
-	macroLevel += command->terminator();
-	if ( d->redoList.isEmpty() )
-	    emit redoAvailable( FALSE );
-	if ( d->undoList.isEmpty() )
-	    emit undoAvailable(TRUE);
-	d->undoList.append( command );
-    } while (macroLevel != 0);
+    do
+    {
+        QtMultiLineEditCommand *command = d->redoList.take();
+        if ( !command )
+            break;
+        processCmd( command, FALSE );
+        macroLevel += command->terminator();
+        if ( d->redoList.isEmpty() )
+            emit redoAvailable( FALSE );
+        if ( d->undoList.isEmpty() )
+            emit undoAvailable(TRUE);
+        d->undoList.append( command );
+    }
+    while (macroLevel != 0);
     d->undo = before;
     if ( textDirty )
-	emit textChanged();
+        emit textChanged();
     textDirty = FALSE;
 }
 
@@ -3960,26 +4328,27 @@ void QtMultiLineEdit::redo()
   in the line.
   If \a s contains newline characters, new lines are inserted.
   If \a mark is TRUE the inserted text is selected.
-
+ 
   The cursor position is adjusted. If the insertion position is equal to
   the cursor position, the cursor is placed after the end of the new text.
-
+ 
  */
 
 void QtMultiLineEdit::insertAt( const QString &s, int line, int col, bool mark )
 {
-    if ( d->undo ) {
-	d->undo = FALSE;
-	QString itxt = s;
-	int offset = positionToOffsetInternal( line, col );
-	if ( d->maxlen >= 0 && length() + int(s.length()) > d->maxlen )
-	    itxt.truncate( d->maxlen - length() );
-	addUndoCmd( new QInsTextCmd( offset, itxt ) );
-	insertAtAux( s, line, col, mark ); // may perform del op
-	d->undo = TRUE;
+    if ( d->undo )
+    {
+        d->undo = FALSE;
+        QString itxt = s;
+        int offset = positionToOffsetInternal( line, col );
+        if ( d->maxlen >= 0 && length() + int(s.length()) > d->maxlen )
+            itxt.truncate( d->maxlen - length() );
+        addUndoCmd( new QInsTextCmd( offset, itxt ) );
+        insertAtAux( s, line, col, mark ); // may perform del op
+        d->undo = TRUE;
     }
     else
-	insertAtAux( s, line, col, mark ); // may perform del op
+        insertAtAux( s, line, col, mark ); // may perform del op
 }
 
 void QtMultiLineEdit::deleteNextChar( int offset, int row, int col )
@@ -4001,30 +4370,33 @@ void QtMultiLineEdit::deleteNextChar( int offset, int row, int col )
 
 void QtMultiLineEdit::killLine()
 {
-    if ( d->undo ) {
-	d->undo = FALSE;
-	int curY, curX;
-	cursorPosition( &curY, &curX );
-	int offset = positionToOffsetInternal( curY, curX );
-	QtMultiLineEditRow* r = contents->at( curY );
-	deselect();
+    if ( d->undo )
+    {
+        d->undo = FALSE;
+        int curY, curX;
+        cursorPosition( &curY, &curX );
+        int offset = positionToOffsetInternal( curY, curX );
+        QtMultiLineEditRow* r = contents->at( curY );
+        deselect();
 
-	addUndoCmd( new QBeginCommand );
-	if (curX == (int)r->s.length()) {
-	    if ( ! atEnd() && r->newline )
-		deleteNextChar( offset, curY, curX );
-	}
-	else {
-	    QString str = r->s.mid( curX, r->s.length() );
-	    addUndoCmd( new QDelTextCmd( offset, str ) );
-	}
+        addUndoCmd( new QBeginCommand );
+        if (curX == (int)r->s.length())
+        {
+            if ( ! atEnd() && r->newline )
+                deleteNextChar( offset, curY, curX );
+        }
+        else
+        {
+            QString str = r->s.mid( curX, r->s.length() );
+            addUndoCmd( new QDelTextCmd( offset, str ) );
+        }
 
-	addUndoCmd( new QEndCommand );
-	killLineAux();
-	d->undo = TRUE;
+        addUndoCmd( new QEndCommand );
+        killLineAux();
+        d->undo = TRUE;
     }
     else
-	killLineAux();
+        killLineAux();
 }
 
 /*!
@@ -4036,60 +4408,65 @@ void QtMultiLineEdit::killLine()
 
 void QtMultiLineEdit::del()
 {
-    if (d->undo ) {
-	d->undo = FALSE;
-	bool oldAuto = autoUpdate();
-	setAutoUpdate( FALSE );
-	int markBeginX, markBeginY;
-	int markEndX, markEndY;
+    if (d->undo )
+    {
+        d->undo = FALSE;
+        bool oldAuto = autoUpdate();
+        setAutoUpdate( FALSE );
+        int markBeginX, markBeginY;
+        int markEndX, markEndY;
 
-	if ( getMarkedRegion( &markBeginY, &markBeginX, &markEndY, &markEndX ) ) {
-	    addUndoCmd( new QBeginCommand );
-	    int offset = positionToOffsetInternal( markBeginY, markBeginX );
-	    QString str = markedText();
-	    d->undoList.append( new QDelTextCmd( offset, str ) );
-	    addUndoCmd( new QEndCommand );
-	}
-	else if ( ! atEnd() ) {
-	    int crsorY, crsorX;
-	    cursorPosition( &crsorY, &crsorX );
-	    int offset = positionToOffsetInternal( crsorY, crsorX );
-	    QtMultiLineEditRow* r = contents->at( crsorY );
-	    if (r) {
-		if (crsorX != (int)r->s.length())
-		    deleteNextChar( offset, crsorY, crsorX );
-		else if (r->newline)
-		    deleteNextChar( offset, crsorY, crsorX );
-		// else noop
-	    }
-	}
-	setAutoUpdate( oldAuto );
-	delAux();
-	d->undo = TRUE;
+        if ( getMarkedRegion( &markBeginY, &markBeginX, &markEndY, &markEndX ) )
+        {
+            addUndoCmd( new QBeginCommand );
+            int offset = positionToOffsetInternal( markBeginY, markBeginX );
+            QString str = markedText();
+            d->undoList.append( new QDelTextCmd( offset, str ) );
+            addUndoCmd( new QEndCommand );
+        }
+        else if ( ! atEnd() )
+        {
+            int crsorY, crsorX;
+            cursorPosition( &crsorY, &crsorX );
+            int offset = positionToOffsetInternal( crsorY, crsorX );
+            QtMultiLineEditRow* r = contents->at( crsorY );
+            if (r)
+            {
+                if (crsorX != (int)r->s.length())
+                    deleteNextChar( offset, crsorY, crsorX );
+                else if (r->newline)
+                    deleteNextChar( offset, crsorY, crsorX );
+                // else noop
+            }
+        }
+        setAutoUpdate( oldAuto );
+        delAux();
+        d->undo = TRUE;
     }
     else
-	delAux();
+        delAux();
 }
 
 /*
   Sets undo enabled to \a enable.
-
+ 
   \sa isUndoEnabled()
 */
 void QtMultiLineEdit::setUndoEnabled( bool enable )
 {
     if ( d->undo == enable )
-	return;
+        return ;
     d->undo = enable;
-    if ( !enable ) {
-	CLEAR_UNDO
+    if ( !enable )
+    {
+        CLEAR_UNDO
     }
 }
 
 
 /*
   Returns whether the multilineedit is currently undo enabled or not.
-
+ 
   \sa setUndoEnabled()
  */
 bool QtMultiLineEdit::isUndoEnabled() const
@@ -4101,7 +4478,7 @@ bool QtMultiLineEdit::isUndoEnabled() const
 /*
   Sets the maximum number of operations that can be stored on the undo
   stack to \a depth.
-
+ 
   \sa undoDepth()
  */
 void QtMultiLineEdit::setUndoDepth( int depth )
@@ -4126,32 +4503,43 @@ void QtMultiLineEdit::blinkTimerTimeout()
 void QtMultiLineEdit::scrollTimerTimeout()
 {
     QPoint p = mapFromGlobal( QCursor::pos() );
-    if ( d->scrollAccel-- <= 0 && d->scrollTime ) {
-	d->scrollAccel = initialScrollAccel;
-	d->scrollTime--;
-	d->scrollTimer->stop();
-	d->scrollTimer->start( d->scrollTime );
+    if ( d->scrollAccel-- <= 0 && d->scrollTime )
+    {
+        d->scrollAccel = initialScrollAccel;
+        d->scrollTime--;
+        d->scrollTimer->stop();
+        d->scrollTimer->start( d->scrollTime );
     }
-    int l = QMAX(1,(initialScrollTime-d->scrollTime)/5);
+    int l = QMAX(1, (initialScrollTime - d->scrollTime) / 5);
 
-	// auto scrolling is dual-use - for highlighting and DND
+    // auto scrolling is dual-use - for highlighting and DND
     int margin = d->dnd_primed ? scroll_margin : 0;
     bool mark = !d->dnd_primed;
     bool clear_mark = d->dnd_primed ? FALSE : !mark;
 
-    for (int i=0; i<l; i++) {
-	if ( p.y() < margin ) {
-	    cursorUp( mark, clear_mark );
-	} else if ( p.y() > height()-margin ) {
-	    cursorDown( mark, clear_mark );
-	} else if ( p.x() < margin ) {
-	    cursorLeft( mark, clear_mark, FALSE );
-	} else if ( p.x() > width()-margin ) {
-	    cursorRight( mark, clear_mark, FALSE );
-	} else {
-	    stopAutoScroll();
-	    break;
-	}
+    for (int i = 0; i < l; i++)
+    {
+        if ( p.y() < margin )
+        {
+            cursorUp( mark, clear_mark );
+        }
+        else if ( p.y() > height() - margin )
+        {
+            cursorDown( mark, clear_mark );
+        }
+        else if ( p.x() < margin )
+        {
+            cursorLeft( mark, clear_mark, FALSE );
+        }
+        else if ( p.x() > width() - margin )
+        {
+            cursorRight( mark, clear_mark, FALSE );
+        }
+        else
+        {
+            stopAutoScroll();
+            break;
+        }
     }
 }
 
@@ -4166,20 +4554,22 @@ int QtMultiLineEdit::setNumRowsAndTruncate()
 {
     int n = contents->count();
     int r = 0;
-    while ( d->maxlines >= 0 && n > d->maxlines ) {
-	// truncate
-	contents->at(n-2)->newline = TRUE;
-	contents->removeLast();
-	if ( markAnchorY == n-1 )
-	    markAnchorY--;
-	if ( markDragY == n-1 )
-	    markDragY--;
-	if ( cursorY == n-1 ) {
-	    cursorY--;
-	    cursorX = contents->at(cursorY)->s.length();
-	}
-	n--;
-	r++;
+    while ( d->maxlines >= 0 && n > d->maxlines )
+    {
+        // truncate
+        contents->at(n - 2)->newline = TRUE;
+        contents->removeLast();
+        if ( markAnchorY == n - 1 )
+            markAnchorY--;
+        if ( markDragY == n - 1 )
+            markDragY--;
+        if ( cursorY == n - 1 )
+        {
+            cursorY--;
+            cursorX = contents->at(cursorY)->s.length();
+        }
+        n--;
+        r++;
     }
     setNumRows( n );
     return r;
@@ -4189,39 +4579,47 @@ int QtMultiLineEdit::setNumRowsAndTruncate()
 */
 bool QtMultiLineEdit::event( QEvent * e )
 {
-    if ( e->type() == QEvent::AccelOverride && !isReadOnly() ) {
-	QKeyEvent* ke = (QKeyEvent*) e;
-	if ( ke->state() & ControlButton ) {
-	    switch ( ke->key() ) {
-	    case Key_A:
-	    case Key_E:
+    if ( e->type() == QEvent::AccelOverride && !isReadOnly() )
+    {
+        QKeyEvent* ke = (QKeyEvent*) e;
+        if ( ke->state() & ControlButton )
+        {
+            switch ( ke->key() )
+            {
+            case Key_A:
+            case Key_E:
 #if defined (Q_WS_WIN)
-	    case Key_Insert:
+
+            case Key_Insert:
 #endif
-	    case Key_X:
-	    case Key_V:
-	    case Key_C:
-	    case Key_Left:
-	    case Key_Right:
-	    case Key_Up:
-	    case Key_Down:
-	    case Key_Home:
-	    case Key_End:
-		ke->accept();
-	    default:
-		break;
-	    }
-	} else {
-	    switch ( ke->key() ) {
-	    case Key_Delete:
-	    case Key_Home:
-	    case Key_End:
-	    case Key_Backspace:
-		ke->accept();
-	    default:
-		break;
-	    }
-	}
+
+            case Key_X:
+            case Key_V:
+            case Key_C:
+            case Key_Left:
+            case Key_Right:
+            case Key_Up:
+            case Key_Down:
+            case Key_Home:
+            case Key_End:
+                ke->accept();
+            default:
+                break;
+            }
+        }
+        else
+        {
+            switch ( ke->key() )
+            {
+            case Key_Delete:
+            case Key_Home:
+            case Key_End:
+            case Key_Backspace:
+                ke->accept();
+            default:
+                break;
+            }
+        }
     }
     return QWidget::event( e );
 }

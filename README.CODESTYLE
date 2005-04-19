@@ -1,0 +1,17 @@
+Coding style for TOra:
+======================
+
+TOra source code is formatted with AStyle code formatter 
+
+   http://sourceforge.net/projects/astyle/ 
+   
+with the following formatting options:
+
+   astyle --convert-tabs --pad=oper --indent=spaces=4 --brackets=break
+
+All code should be formatted with the above options before 
+checking in.
+
+The otl.h is an exception from this because formatting of such immense 
+amount of template code is not handled by AStyle very well (it's breaking 
+some code from OTL).

@@ -19,15 +19,16 @@
 #include <shlwapi.h>
 #include <tchar.h>
 
-const unsigned int ERROR_WRONG_TYPE     = 0x01; // Wrong type of data
-const unsigned int ERROR_BUFFER_SIZE    = 0x02; // Buffer too small
+const unsigned int ERROR_WRONG_TYPE = 0x01; // Wrong type of data
+const unsigned int ERROR_BUFFER_SIZE = 0x02; // Buffer too small
 const unsigned int ERROR_NO_SHLWAPI_DLL = 0x03; // Only under NT if shlwapi.dll doesn't exist
 const unsigned int ERROR_INVALID_BUFFER = 0x04; // Occurs if buffer invalid (ie no buffer)
 const unsigned int ERROR_NO_SHDELETEKEY = 0x05; // Occurs in NT if no SHDeleteKey fn in shlwapi.dll
 
 typedef DWORD (__stdcall* SHDELKEYPROC)(HKEY, LPCTSTR);
 
-class CRegistry {
+class CRegistry
+{
     bool IsWinNTor2K();
 public:
     bool CreateKey(HKEY hKeyRoot, LPCTSTR pszSubKey);
