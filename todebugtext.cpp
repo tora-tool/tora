@@ -109,7 +109,11 @@ void toBreakpointItem::setBreakpoint(void)
     bool ok = false;
     try
     {
-        clearBreakpoint();
+        try
+        {
+            clearBreakpoint();
+        }
+        TOCATCH // I don't the removal of the breakpoint to interact with the setting of the breakpoint
         toConnection &conn = toCurrentConnection(listView());
         toQList args;
         toPush(args, toQValue(Namespace));
@@ -149,25 +153,24 @@ static toSQL SQLClearBreakpoint("toDebug:ClearBreakpoint",
                                 "END;",
                                 "Clear breakpoint, must have same bindings");
 
+/** If something goes wrong it throws an exception (type QString with the error message */
 void toBreakpointItem::clearBreakpoint()
 {
     if (text(4) == qApp->translate("toDebug", "ENABLED") && !text(TO_BREAK_COL).isEmpty())
     {
-        try
-        {
-            toConnection &conn = toCurrentConnection(listView());
-            toQList args;
-            toPush(args, toQValue(text(TO_BREAK_COL).toInt()));
-            toQuery query(conn, SQLBreakpoint);
-            int res = query.readValue().toInt();
+        toConnection &conn = toCurrentConnection(listView());
+        toQList args;
+        toPush(args, toQValue(text(TO_BREAK_COL)));
+        toQuery query(conn, SQLClearBreakpoint, args);
+        int res = query.readValue().toInt();
 
-            if (res != TO_SUCCESS)
-            {
-                toStatusMessage(qApp->translate("toDebug", "Failed to remove breakpoint (Reason %1)").arg(res));
-            }
+        if (res != TO_SUCCESS && res != TO_NO_SUCH_BREAKPOINT)
+        {
+            QString message = qApp->translate("toDebug", "Failed to remove breakpoint (Reason %1)").arg(res);
+            toStatusMessage(message);
+            throw(message);
         }
-        TOCATCH
-        setText(TO_BREAK_COL, QString::null);
+
     }
     setText(4, qApp->translate("toDebug", "DISABLED"));
 }
@@ -414,25 +417,30 @@ void toDebugText::toggleBreakpoint(int row, bool enable)
     {
         if (hasBreakpoint(row))
         {
-            if (enable)
+            try
             {
-                if (CurrentItem->text(4) == qApp->translate("toDebug", "DISABLED"))
-                    CurrentItem->setText(4, qApp->translate("toDebug", "DEFERED"));
-                else
-                    CurrentItem->clearBreakpoint();
-            }
-            else
-            {
-                CurrentItem->clearBreakpoint();
-                delete CurrentItem;
-                if (FirstItem == CurrentItem)
+                if (enable)
                 {
-                    NoBreakpoints = false;
-                    CurrentItem = FirstItem = NULL;
+                    if (CurrentItem->text(4) == qApp->translate("toDebug", "DISABLED"))
+                        CurrentItem->setText(4, qApp->translate("toDebug", "DEFERED"));
+                    else
+                        CurrentItem->clearBreakpoint();
                 }
                 else
-                    CurrentItem = FirstItem;
+                {
+                    CurrentItem->clearBreakpoint();
+                    delete CurrentItem;
+                    if (FirstItem == CurrentItem)
+                    {
+                        NoBreakpoints = false;
+                        CurrentItem = FirstItem = NULL;
+                    }
+                    else
+                        CurrentItem = FirstItem;
+                }
             }
+            TOCATCH
+
         }
         else if (!enable)
         {

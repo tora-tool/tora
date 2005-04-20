@@ -50,6 +50,7 @@
 #include <qtimer.h>
 
 #define TO_SUCCESS  0
+#define TO_NO_SUCH_BREAKPOINT 13
 #define TO_ERROR_NO_DEBUG_INFO  2
 #define TO_ERROR_ILLEGAL_LINE 12
 #define TO_ERROR_BAD_HANDLE 16
@@ -158,7 +159,7 @@ class toDebug : public toToolWidget
     // End of lock stuff
     toTimer StartTimer;
 
-class targetTask : public toTask
+    class targetTask : public toTask
     {
         toDebug &Parent;
     public:
@@ -196,7 +197,7 @@ class targetTask : public toTask
     bool checkStop(void);
     void closeEditor(toDebugText* &editor);
 
-private slots:
+    private slots:
     void startTarget(void);
 public:
     toDebug(QWidget *parent, toConnection &connection);
@@ -217,7 +218,7 @@ public:
 
     virtual void exportData(std::map<QCString, QString> &data, const QCString &prefix);
     virtual void importData(std::map<QCString, QString> &data, const QCString &prefix);
-public slots:
+    public slots:
     void stop(void);
     void compile(void);
     void refresh(void);
@@ -272,7 +273,7 @@ public:
     toDebugWatch(toDebug *parent);
 
     QListViewItem *createWatch(QListView *watches);
-public slots:
+    public slots:
     void changeScope(int num);
 };
 

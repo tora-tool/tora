@@ -10,6 +10,7 @@
 2005-04-02: Fix bug with NVARCHAR2/NCHAR2 fields not displaying properly (Bug# 1115326)
 2005-05-19: Applied patch 1175927 to fix memory leak.
 2005-05-19: Applied patch 1186247 to convert more code to STL.
+2005-05-19: Applied patch 1180569 to allow removing breakpoints.
 
 1.3.16: 2005-03-04
 
