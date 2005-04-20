@@ -45,6 +45,8 @@
 #include <qscrollview.h>
 #include <qfont.h>
 
+#include <vector>
+
 class QGrid;
 class toSQL;
 class toNoBlockQuery;
@@ -70,7 +72,7 @@ class toResultItem : public QScrollView, public toResult
     int WidgetPos;
     /** List of allocated widgets.
      */
-    QWidget **Widgets;
+    std::vector<QWidget*> Widgets;
 
     /** If title names are to be made more readable.
      */

@@ -80,7 +80,6 @@ void toResultItem::setup(int num, bool readable)
 {
     enableClipper(true);
     ReadableColumns = readable;
-    Widgets = NULL;
     NumWidgets = 0;
     WidgetPos = 0;
     viewport()->setBackgroundMode(PaletteBackground);
@@ -168,13 +167,7 @@ void toResultItem::addItem(const QString &title, const QString &value)
     if (WidgetPos >= NumWidgets)
     {
         NumWidgets += ALLOC_SIZE;
-        QWidget **tmp = new QWidget * [NumWidgets];
-        for (int i = 0;i < WidgetPos;i++)
-            tmp[i] = Widgets[i];
-        delete Widgets;
-        Widgets = tmp;
-        for (int j = WidgetPos;j < NumWidgets;j++)
-            Widgets[j] = NULL;
+        Widgets.resize(NumWidgets,0);
     }
     QString t;
     if (title != "-")
