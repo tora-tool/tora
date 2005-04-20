@@ -43,6 +43,7 @@
 #include "toscriptui.h"
 
 #include <list>
+#include <algorithm>
 
 class QTextView;
 class toConnection;
@@ -68,6 +69,17 @@ class toScript : public toToolWidget
     std::list<QString> createObjectList(QListView *);
     void fillDifference(std::list<QString> &objects, QListView *list);
     void readOwnerObjects(QListViewItem *item, toConnection &conn);
+
+    struct PrefixString
+    {
+public:
+        PrefixString(std::list<QString> & l, QString s);
+        void operator()(QString& tmp);
+private:
+        std::list<QString> & _l;
+        QString _s;
+    };
+
 public:
     toScript(QWidget *parent, toConnection &connection);
     virtual ~toScript();
@@ -102,5 +114,13 @@ public slots:
     void addConnection(const QString &name);
     void delConnection(const QString &name);
 };
+
+inline void toScript::PrefixString::operator()(QString& txt)
+{
+    _l.push_back(_s + txt);
+}
+
+inline toScript::PrefixString::PrefixString(std::list<QString> & l, QString s) : _l(l), _s(s)
+{}
 
 #endif

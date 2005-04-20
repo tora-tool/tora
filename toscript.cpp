@@ -440,83 +440,21 @@ std::list<QString> toScript::createObjectList(QListView *source)
 
     if (ScriptUI->IncludeDDL->isChecked())
     {
-        {
-            for (std::list<QString>::iterator i = tableSpace.begin();i != tableSpace.end();i++)
-                toPush(lst, *i);
-        }
-        {
-            for (std::list<QString>::iterator i = profiles.begin();i != profiles.end();i++)
-                toPush(lst, *i);
-        }
-        {
-            for (std::list<QString>::iterator i = otherGlobal.begin();i != otherGlobal.end();i++)
-                toPush(lst, *i);
-        }
-        {
-            for (std::list<QString>::iterator i = roles.begin();i != roles.end();i++)
-            {
-                QString line = QString::fromLatin1("ROLE:");
-                line += *i;
-                toPush(lst, line);
-            }
-        }
-        {
-            for (std::list<QString>::iterator i = users.begin();i != users.end();i++)
-            {
-                QString line = QString::fromLatin1("USER:");
-                line += *i;
-                toPush(lst, line);
-            }
-        }
-        {
-            for (std::list<QString>::iterator i = tables.begin();i != tables.end();i++)
-            {
-                QString line = QString::fromLatin1("TABLE FAMILY:");
-                line += *i;
-                toPush(lst, line);
-            }
-        }
-        {
-            for (std::list<QString>::iterator i = userViews.begin();i != userViews.end();i++)
-                toPush(lst, *i);
-        }
-        {
-            for (std::list<QString>::iterator i = userOther.begin();i != userOther.end();i++)
-                toPush(lst, *i);
-        }
+        copy(tableSpace.begin(), tableSpace.end(), back_inserter(lst));
+        copy(profiles.begin(), profiles.end(), back_inserter(lst));
+        copy(otherGlobal.begin(), otherGlobal.end(), back_inserter(lst));
+        for_each(roles.begin(), roles.end(), PrefixString(lst, QString::fromLatin1("ROLE:")));
+        for_each(users.begin(), users.end(), PrefixString(lst, QString::fromLatin1("USER:")));
+        for_each(tables.begin(), tables.end(), PrefixString(lst, QString::fromLatin1("TABLE FAMILY:")));
+        copy(userViews.begin(), userViews.end(), back_inserter(lst));
+        copy(userOther.begin(), userOther.end(), back_inserter(lst));
     }
-    for (std::list<QString>::iterator i = tables.begin();i != tables.end();i++)
-    {
-        QString line = QString::fromLatin1("TABLE CONTENTS:");
-        line += *i;
-        toPush(lst, line);
-    }
+    for_each(tables.begin(), tables.end(), PrefixString(lst, QString::fromLatin1("TABLE CONTENTS:")));
     if (ScriptUI->IncludeDDL->isChecked())
     {
-        {
-            for (std::list<QString>::iterator i = tables.begin();i != tables.end();i++)
-            {
-                QString line = QString::fromLatin1("TABLE REFERENCES:");
-                line += *i;
-                toPush(lst, line);
-            }
-        }
-        {
-            for (std::list<QString>::iterator i = roles.begin();i != roles.end();i++)
-            {
-                QString line = QString::fromLatin1("ROLE GRANTS:");
-                line += *i;
-                toPush(lst, line);
-            }
-        }
-        {
-            for (std::list<QString>::iterator i = users.begin();i != users.end();i++)
-            {
-                QString line = QString::fromLatin1("USER GRANTS:");
-                line += *i;
-                toPush(lst, line);
-            }
-        }
+        for_each(tables.begin(), tables.end(), PrefixString(lst, QString::fromLatin1("TABLE REFERENCES:")));
+        for_each(roles.begin(), roles.end(), PrefixString(lst, QString::fromLatin1("ROLE GRANTS:")));
+        for_each(users.begin(), users.end(), PrefixString(lst, QString::fromLatin1("USER GRANTS:")));
     }
     return lst;
 }
