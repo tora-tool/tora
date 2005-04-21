@@ -466,7 +466,7 @@ public:
      * want to indicate error offset.
      */
 
-class exception : public QString
+    class exception : public QString
     {
         int Offset;
     public:
@@ -649,7 +649,7 @@ private:
 
     connectionImpl *Connection;
 
-class cacheObjects : public toTask
+    class cacheObjects : public toTask
     {
         toConnection &Connection;
     public:

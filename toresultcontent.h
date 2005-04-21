@@ -71,7 +71,7 @@ class toResultContentMemo : public toMemoEditor
 public:
     toResultContentMemo(QWidget *parent, const QString &data, int row, int col,
                         bool sql = false);
-public slots:
+    public slots:
     virtual void firstColumn();
     virtual void nextColumn();
     virtual void previousColumn();
@@ -98,7 +98,7 @@ public:
     void changeSource(QTable *table);
     void changeRow(QTable *table, int row);
     void saveRow(QTable *table, int row);
-private slots:
+    private slots:
     virtual void showMemo(int row);
 };
 
@@ -241,7 +241,7 @@ class toResultContentEditor : public QTable, public toEditWidget
     int SearchStart;
     int SearchEnd;
 
-class contentItem : public QTableItem
+    class contentItem : public QTableItem
     {
     public:
         contentItem(QTable *table, const QString &text);
@@ -321,7 +321,7 @@ public:
      * @param prefix Prefix to read data from.
      */
     virtual void importData(std::map<QCString, QString> &data, const QCString &prefix);
-public slots:
+    public slots:
     /** Erase last parameters
      */
     virtual void clearParams(void)
@@ -399,7 +399,7 @@ signals:
     void filterEnabled(bool);
     //* Emitted when changes were saved.
     void changesSaved();
-protected slots:
+    protected slots:
     /** Callback from popup menu.
      * @param cmd Command ID.
      */
@@ -410,7 +410,7 @@ protected slots:
      * @param data New contents of data.
      */
     virtual void changeData(int row, int col, const QString &data);
-private slots:
+    private slots:
     virtual void poll(void);
 };
 
@@ -480,13 +480,13 @@ public:
     {
         Editor->useNoReturning(use);
     }
-private slots:
+    private slots:
     void changeFilter(void);
     void removeFilter(void);
 signals:
     //* Emitted when changes were saved.
     void changesSaved(void);
-public slots:
+    public slots:
     /** Erase last parameters
      */
     virtual void clearParams(void)

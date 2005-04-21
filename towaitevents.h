@@ -90,7 +90,7 @@ public:
 
     virtual void exportData(std::map<QCString, QString> &data, const QCString &prefix);
     virtual void importData(std::map<QCString, QString> &data, const QCString &prefix);
-public slots:
+    public slots:
     virtual void connectionChanged(void);
     virtual void changeSelection(void);
     virtual void poll(void);

@@ -84,7 +84,7 @@ public:
     {
         return toIsOracle(conn);
     }
-private slots:
+    private slots:
     void poll(void);
 };
 

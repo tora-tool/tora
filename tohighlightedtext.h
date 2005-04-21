@@ -374,17 +374,17 @@ signals:
      * @param diff Number of lines inserted or removed.
      */
     void insertedLines(int start, int diff);
-protected slots:
+    protected slots:
     void textChanged(void);
 
-public slots:
+    public slots:
     /** Go to next error.
      */
     void nextError(void);
     /** Go to previous error.
      */
     void previousError(void);
-private slots:
+    private slots:
     void selectComplete(void);
     void setStatusMessage(void);
 };

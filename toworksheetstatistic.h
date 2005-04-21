@@ -62,7 +62,7 @@ public:
     toHideSplitter(QSplitter::Orientation o, QWidget *parent, toWorksheetStatistic *statlist)
             : QSplitter(o, parent), StatList(statlist)
     { }
-public slots:
+    public slots:
     void setHidden(bool hid);
 };
 
@@ -102,7 +102,7 @@ public:
     void addStatistics(std::map<QCString, QString> &stats);
 
     void updateSplitter(void);
-public slots:
+    public slots:
 
     virtual void showPlans(bool);
     virtual void showCharts(bool);

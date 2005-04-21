@@ -57,7 +57,7 @@ class toInvalid : public toToolWidget
 public:
     toInvalid(QWidget *parent, toConnection &connection);
 
-public slots:
+    public slots:
     virtual void changeSelection(void);
     virtual void refresh(void);
     virtual void recompileSelected(void);

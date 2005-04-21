@@ -478,7 +478,7 @@ signals:
      * @param cmt True if commit, false if rollback.
      */
     void willCommit(toConnection &conn, bool cmt);
-public slots:
+    public slots:
     /** Used to enable/disable entries in the windows menu
      */
     void windowsMenu(void);
@@ -509,7 +509,7 @@ public slots:
     /** Change current connection
      */
     void changeConnection(void);
-private slots:
+    private slots:
     /** Add a connection
      */
     void addConnection(void);

@@ -311,7 +311,7 @@ public:
      * @param map Reference to the map to fill with the new values.
      */
     static bool saveMap(const QString &filename, std::map<QCString, QString> &map);
-public slots:
+    public slots:
     /**
      * Create a window of the current tool. This function sets up a toolwindow for
      * this tool. It calls the @ref toolWindow function to get widget and sets it
@@ -380,7 +380,7 @@ class toToolWidget : public QVBox, public toHelpContext, public toConnectionWidg
     Q_OBJECT
     toTimer *Timer;
     toTool &Tool;
-private slots:
+    private slots:
     void parentConnection(void);
 signals:
     /** Emitted when the connection is changed.

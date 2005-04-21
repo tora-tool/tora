@@ -68,7 +68,7 @@ public:
            const QString &subject, const QString &body);
     ~toSMTP();
 
-private slots:
+    private slots:
     void dnsLookupHelper();
     void readyRead();
     void connected();

@@ -366,7 +366,7 @@ public:
                         }
                     }
                     break;
-                default:     // Try using char if all else fails
+                default:      // Try using char if all else fails
                     {
                         // The *5 is for raw columns or UTF expanded data, also dates and numbers
                         // are a bit tricky but if someone specifies a dateformat longer than 100 bytes he

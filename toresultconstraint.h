@@ -84,7 +84,7 @@ public:
     /** Support Oracle
      */
     virtual bool canHandle(toConnection &conn);
-private slots:
+    private slots:
     void poll(void);
 };
 

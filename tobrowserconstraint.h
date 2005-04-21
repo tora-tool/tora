@@ -75,7 +75,7 @@ private:
     QString sql(void);
 public:
     static void modifyConstraint(toConnection &conn, const QString &owner, const QString &table, QWidget *parent);
-public slots:
+    public slots:
     virtual void displaySQL();
     virtual void addConstraint();
     virtual void delConstraint();

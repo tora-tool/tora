@@ -83,7 +83,7 @@ public:
     ~toProject();
 
     void selectItem(toProjectTemplateItem *);
-public slots:
+    public slots:
     void update(void);
     void addFile(void);
     void delFile(void);
@@ -127,7 +127,7 @@ public:
     }
 
     friend class toProject;
-public slots:
+    public slots:
     void addFile();
     void delFile();
     void changeItem(QListViewItem *item);

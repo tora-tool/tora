@@ -75,7 +75,7 @@ class toSGAStatement : public QTabWidget
     /** Display resources of statement.
      */
     void viewResources(void);
-private slots:
+    private slots:
     /** Change the displayed tab.
      */
     void changeTab(QWidget *widget);
@@ -84,7 +84,7 @@ public:
      * @param parent Parent widget.
      */
     toSGAStatement(QWidget *parent);
-public slots:
+    public slots:
     /** Display another statement.
      * @param address Address of the statement to display.
      */

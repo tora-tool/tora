@@ -85,7 +85,7 @@ signals:
     void allowStorage(bool);
     void tempFile(bool);
 
-public slots:
+    public slots:
     virtual void permanentToggle(bool);
     virtual void dictionaryToggle(bool);
     virtual void uniformToggle(bool);
@@ -114,7 +114,7 @@ public:
 signals:
     void validContent(bool);
 
-public slots:
+    public slots:
     virtual void browseFile(void);
     virtual void autoExtend(bool);
     virtual void setTempFile(bool temp)
@@ -148,7 +148,7 @@ public:
     toStorageDialog(const QString &tablespace, QWidget *parent);
 
     std::list<QString> sql(void);
-public slots:
+    public slots:
     void validContent(bool val);
     void allowStorage(bool val);
     virtual void displaySQL(void);
@@ -181,7 +181,7 @@ class toStorage : public toToolWidget
 public:
     toStorage(QWidget *parent, toConnection &connection);
 
-public slots:
+    public slots:
     void refresh(void);
 
     void coalesce(void);

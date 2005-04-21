@@ -76,7 +76,7 @@ public:
     {
         return Output;
     }
-public slots:
+    public slots:
     void clear(void);
     virtual void refresh(void);
     virtual void disable(bool);
@@ -93,7 +93,7 @@ class toLogOutput : public toOutput
     toResultView *Log;
 public:
     toLogOutput(QWidget *parent, toConnection &connection);
-public slots:
+    public slots:
     virtual void refresh(void);
     void changeType(void);
 };

@@ -93,7 +93,7 @@ class toCurrent : public toToolWidget
 public:
     toCurrent(QWidget *parent, toConnection &connection);
     virtual ~toCurrent();
-public slots:
+    public slots:
     void refresh(void);
     void poll(void);
     void windowActivated(QWidget *widget);

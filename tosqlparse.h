@@ -208,7 +208,7 @@ public:
 
     /** Tokenizer class which gets tokens from a string.
      */
-class stringTokenizer : public tokenizer
+    class stringTokenizer : public tokenizer
     {
         QString String;
     public:
@@ -235,7 +235,7 @@ class stringTokenizer : public tokenizer
 
     /** Tokenizer class which gets tokens from an editor.
      */
-class editorTokenizer : public tokenizer
+    class editorTokenizer : public tokenizer
     {
         toMarkedText *Editor;
     public:

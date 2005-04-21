@@ -61,7 +61,7 @@ public:
     toSyntaxSetup(QWidget *parent = 0, const char *name = 0, WFlags fl = 0);
     virtual void saveSetting(void);
     void checkFixedWidth(const QFont &fnt);
-public slots:
+    public slots:
     virtual void changeLine(QListBoxItem *);
     virtual void selectColor(void);
     virtual void selectFont(void);

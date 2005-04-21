@@ -67,7 +67,7 @@ public:
         bool operator == (const extentName &) const;
     };
 
-struct extentTotal : public extentName
+    struct extentTotal : public extentName
     {
         int Extents;
         extentTotal(const QString &owner, const QString &table, const QString &partition, int size)
@@ -77,7 +77,7 @@ struct extentTotal : public extentName
         }
     };
 
-struct extent : public extentName
+    struct extent : public extentName
     {
         int File;
         int Block;
@@ -124,7 +124,7 @@ public:
     /** Support Oracle
      */
     virtual bool canHandle(toConnection &conn);
-public slots:
+    public slots:
     /** Perform a query.
      * @param sql Execute an SQL statement.
      * @param params Parameters needed as input to execute statement.
@@ -173,9 +173,9 @@ public:
     /** Support Oracle
      */
     virtual bool canHandle(toConnection &conn);
-public slots:
+    public slots:
     virtual void query(void);
-private slots:
+    private slots:
     void poll(void);
 };
 

@@ -105,7 +105,7 @@ public:
         return NULL;
     }
     virtual QWidget *configurationTab(QWidget *parent);
-public slots:
+    public slots:
     void displayHelp(void);
 };
 
@@ -209,7 +209,7 @@ class toHelp : public QDialog
         if (!Searching)
             QWidget::closeEvent(e);
     }
-private slots:
+    private slots:
     /** Initiate a search with the parameters in the internal widgets.
      * @internal
      */

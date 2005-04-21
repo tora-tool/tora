@@ -946,7 +946,7 @@ static struct TypeMapType
     bool WantName;
     bool Declaration;
 }
-TypeMap[] = { { "FUNCTION", "Function", true , true },   // Must be first in list
+TypeMap[] = { { "FUNCTION", "Function", true , true },    // Must be first in list
               { "PROCEDURE", "Procedure", true , true },
               { "PACKAGE", "Package", true , true },
               { "DECLARE", "Anonymous", false, true },

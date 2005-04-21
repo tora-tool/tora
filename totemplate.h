@@ -97,7 +97,7 @@ public:
 
     void hideEvent(QHideEvent *);
     void showEvent(QShowEvent *);
-public slots:
+    public slots:
     void expand(QListViewItem *item);
     void collapse(QListViewItem *item);
     void selected(QListViewItem *item);
@@ -266,7 +266,7 @@ class toTemplateSQLObject : public QObject
     void expand(void);
 
     friend class toTemplateSQL;
-private slots:
+    private slots:
     void poll(void);
 };
 

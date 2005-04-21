@@ -341,7 +341,7 @@ signals:
      * @param label X-value on these values.
      */
     virtual void valueAdded(std::list<double> &value, const QString &xValues);
-public slots:
+    public slots:
     /** Clear the values from the chart.
      */
     virtual void clear(void)
@@ -371,7 +371,7 @@ protected:
      */
     virtual void addMenues(QPopupMenu *)
     { }
-private slots:
+    private slots:
     void horizontalChange(int);
     void verticalChange(int);
     void chartSetup(void);

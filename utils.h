@@ -467,7 +467,7 @@ public:
     /** Create button somewhere else than in a toolbar.
      */
     toPopupButton(QWidget *parent, const char *name = 0);
-private slots:
+    private slots:
     void click(void);
 };
 

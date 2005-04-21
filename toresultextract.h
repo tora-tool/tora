@@ -68,7 +68,7 @@ public:
     /** Support Oracle
      */
     virtual bool canHandle(toConnection &conn);
-public slots:
+    public slots:
     /** Reimplemented for internal reasons.
      */
     virtual void refresh(void)

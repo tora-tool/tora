@@ -86,7 +86,7 @@ public:
     toWorksheetStatistic *worksheet(void);
 
     static void createTool(void);
-public slots:
+    public slots:
     virtual void displaySQL(void);
     virtual void changeOperation(int);
     virtual void execute(void);

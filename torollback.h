@@ -66,7 +66,7 @@ public:
 
     std::list<QString> sql(void);
 
-public slots:
+    public slots:
     void valueChanged(const QString &str);
     void displaySQL(void);
 };
@@ -94,7 +94,7 @@ class toRollback : public toToolWidget
 
 public:
     toRollback(QWidget *parent, toConnection &connection);
-public slots:
+    public slots:
     void changeStatement(QListViewItem *item);
     void changeItem(QListViewItem *item);
     void changeRefresh(const QString &str);

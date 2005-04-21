@@ -55,7 +55,7 @@ class toNoBlockQuery
 private:
     /** A task to implement running the query.
      */
-class queryTask : public toTask
+    class queryTask : public toTask
     {
         toNoBlockQuery &Parent;
     public:

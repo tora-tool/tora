@@ -56,7 +56,7 @@ class toAlert : public toToolWidget
 {
     Q_OBJECT
 
-class pollTask : public toTask
+    class pollTask : public toTask
     {
         toAlert &Parent;
     public:
@@ -98,7 +98,7 @@ public:
     virtual ~toAlert();
 
     friend class pollTask;
-public slots:
+    public slots:
     virtual void poll(void);
     virtual void send(void);
     virtual void memo(void);

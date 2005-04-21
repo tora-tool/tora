@@ -120,7 +120,7 @@ public:
 
     void stop(void);
     void start(void);
-public slots:
+    public slots:
     void refresh(void);
     void changeCharts(int val);
     void changeConnection(void);
@@ -138,7 +138,7 @@ class toTuningOverview : public toTuningOverviewUI
     toLock Lock;
     QString UnitString;
 
-struct overviewQuery : public toTask
+    struct overviewQuery : public toTask
     {
         toTuningOverview &Parent;
         overviewQuery(toTuningOverview &parent)
@@ -161,7 +161,7 @@ public:
     void stop(void);
     void start(void);
 
-public slots:
+    public slots:
     void refresh(void);
     void poll(void);
 };
@@ -199,7 +199,7 @@ class toTuning : public toToolWidget
     virtual void importData(std::map<QCString, QString> &data, const QCString &prefix);
 public:
     toTuning(QWidget *parent, toConnection &connection);
-public slots:
+    public slots:
     virtual void refresh(void);
     virtual void changeTab(QWidget *widget);
     virtual void changeRefresh(const QString &str);

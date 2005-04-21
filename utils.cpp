@@ -771,6 +771,7 @@ QString toPluginPath(void)
 
 
 
+
     { // MacOS
         char resourcePath[MAXPATHLEN];
         memset( &resourcePath[0], 0, MAXPATHLEN );

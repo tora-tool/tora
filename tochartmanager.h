@@ -73,7 +73,7 @@ public:
     }
     toResult *result(void);
     QString name(void);
-public slots:
+    public slots:
     void valueAdded(std::list<double> &value, const QString &xValues);
 };
 
@@ -192,7 +192,7 @@ public:
     friend class toChartSetup;
     friend class toChartAlarm;
     friend class toChartHandler;
-public slots:
+    public slots:
     void refresh(void);
     void windowActivated(QWidget *widget);
     void setupChart(void);
@@ -222,7 +222,7 @@ public:
     friend class toChartManager;
     friend struct toChartManager::alarmSignal;
     friend struct toChartManager::chartAlarm;
-public slots:
+    public slots:
     void alarm(void);
     void addChart(toLineChart *chart);
     void setupChart(toLineChart *chart);
