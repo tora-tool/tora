@@ -158,7 +158,7 @@ void toEditExtensions::intIndent(int delta)
             QString t = Current->textLine(i);
             int chars = 0;
             int level = toSQLParse::countIndent(t, chars);
-            res += toSQLParse::indentString(max(0, level + delta));
+            res += toSQLParse::indentString(std::max(0, level + delta));
             if (i < line2)
                 res += t.mid(chars) + "\n";
             else

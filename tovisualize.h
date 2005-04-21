@@ -42,6 +42,8 @@
 
 #include <qvbox.h>
 
+#include <algorithm>
+
 class QComboBox;
 class QToolButton;
 class toListView;

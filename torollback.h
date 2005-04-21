@@ -44,6 +44,8 @@
 
 #include <qdialog.h>
 
+#include <algorithm>
+
 class QComboBox;
 class QPopupMenu;
 class toConnection;

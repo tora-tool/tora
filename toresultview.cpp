@@ -112,7 +112,7 @@ void toResultViewMLine::paintCell(QPainter *pnt, const QColorGroup & cg,
                                   int column, int width, int alignment)
 {
     toResultViewItem::paintCell(pnt, cg, column,
-                                max(QListViewItem::width(pnt->fontMetrics(), listView(), column), width),
+                                std::max(QListViewItem::width(pnt->fontMetrics(), listView(), column), width),
                                 alignment);
     if (Gridlines)
     {
@@ -149,7 +149,7 @@ int toResultViewMLine::realWidth(const QFontMetrics &fm, const QListView *top, i
     QString t = text(column);
     if (t.isNull())
         t = txt;
-    return min(TextWidth(fm, t), MaxColDisp) + top->itemMargin()*2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
+    return std::min(TextWidth(fm, t), MaxColDisp) + top->itemMargin()*2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
 }
 
 QString toResultViewItem::firstText(int col) const
@@ -183,7 +183,7 @@ int toResultViewItem::realWidth(const QFontMetrics &fm, const QListView *top, in
     if (t.isNull())
         t = txt;
     QRect bounds = fm.boundingRect(t);
-    return min(bounds.width(), MaxColDisp) + top->itemMargin()*2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
+    return std::min(bounds.width(), MaxColDisp) + top->itemMargin()*2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
 }
 
 void toResultViewItem::paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align)
@@ -394,7 +394,7 @@ void toResultViewMLCheck::paintCell (QPainter *pnt, const QColorGroup & cg,
                                      int column, int width, int alignment)
 {
     toResultViewCheck::paintCell(pnt, cg, column,
-                                 max(QCheckListItem::width(pnt->fontMetrics(), listView(), column), width),
+                                 std::max(QCheckListItem::width(pnt->fontMetrics(), listView(), column), width),
                                  alignment);
 }
 
@@ -418,7 +418,7 @@ int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const QListView *top,
         wx += 20;
 #endif
 
-    return min(TextWidth(fm, t), MaxColDisp) + wx;
+    return std::min(TextWidth(fm, t), MaxColDisp) + wx;
 }
 
 int toResultViewCheck::realWidth(const QFontMetrics &fm, const QListView *top, int column, const QString &txt) const
@@ -442,7 +442,7 @@ int toResultViewCheck::realWidth(const QFontMetrics &fm, const QListView *top, i
         wx += 20;
 #endif
 
-    return min(bounds.width(), MaxColDisp) + wx;
+    return std::min(bounds.width(), MaxColDisp) + wx;
 }
 
 
@@ -647,7 +647,7 @@ QListViewItem *toListView::printPage(TOPrinter *printer, QPainter *painter, QLis
 
     painter->save();
     QFont font = painter->font();
-    font.setPointSizeFloat(font.pointSizeFloat() / max(wpscalex, wpscaley));
+    font.setPointSizeFloat(font.pointSizeFloat() / std::max(wpscalex, wpscaley));
     painter->setFont(font);
 
     painter->scale(wpscalex, wpscaley);
@@ -673,7 +673,7 @@ QListViewItem *toListView::printPage(TOPrinter *printer, QPainter *painter, QLis
         painter->drawLine(0, header()->height() - 1, int(mwidth), header()->height() - 1);
     }
     font = toListView::font();
-    font.setPointSizeFloat(font.pointSizeFloat() / max(wpscalex, wpscaley));
+    font.setPointSizeFloat(font.pointSizeFloat() / std::max(wpscalex, wpscaley));
     painter->setFont(font);
 
     for (int i = column;i < columns();i++)

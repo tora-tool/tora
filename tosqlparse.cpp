@@ -1176,7 +1176,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                     int i;
                     for (i = ret.length() - 1;i >= 0 && ret[i].isSpace();i--)
                         ;
-                    ret = ret.mid(0, max(i + 1, 0));
+                    ret = ret.mid(0, std::max(i + 1, 0));
                     ret += ("\n");
                     ret += indentString(level + exc);
                 }
@@ -1363,7 +1363,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                 {
                     ret += QString("%1").arg(word,
                                              Settings.RightSeparator ? maxlev - 1 : 1 - maxlev);
-                    current = level + max(int(word.length()), maxlev - 1);
+                    current = level + std::max(int(word.length()), maxlev - 1);
                 }
                 else
                 {

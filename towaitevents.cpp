@@ -439,9 +439,9 @@ void toWaitEvents::poll(void)
                             if (item->text(1) == *k)
                             {
                                 item->setColor(col);
-                                item->setText(2, QString::number((*i - item->text(3).toDouble()) / max(int(now - LastTime), 1)));
+                                item->setText(2, QString::number((*i - item->text(3).toDouble()) / std::max(int(now - LastTime), 1)));
                                 item->setText(3, QString::number(*i));
-                                item->setText(4, QString::number((*j - item->text(5).toDouble()) / max(int(now - LastTime), 1)));
+                                item->setText(4, QString::number((*j - item->text(5).toDouble()) / std::max(int(now - LastTime), 1)));
                                 item->setText(5, QString::number(*j));
                                 break;
                             }
@@ -460,7 +460,7 @@ void toWaitEvents::poll(void)
                 std::list<double>::iterator i = Current.begin();
                 while (i != Current.end() && j != LastCurrent.end())
                 {
-                    Relative.insert(Relative.end(), ((*i) - (*j)) / max(int(now - LastTime), 1));
+                    Relative.insert(Relative.end(), ((*i) - (*j)) / std::max(int(now - LastTime), 1));
                     i++;
                     j++;
                 }
@@ -469,7 +469,7 @@ void toWaitEvents::poll(void)
                 i = CurrentTimes.begin();
                 while (i != CurrentTimes.end() && j != LastTimes.end())
                 {
-                    RelativeTimes.insert(RelativeTimes.end(), ((*i) - (*j)) / max(int(now - LastTime), 1));
+                    RelativeTimes.insert(RelativeTimes.end(), ((*i) - (*j)) / std::max(int(now - LastTime), 1));
                     i++;
                     j++;
                 }

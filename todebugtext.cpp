@@ -352,7 +352,7 @@ void toDebugText::paintCell(QPainter *painter, int row, int col)
 
         if (hasBreakpoint(row))
         {
-            int h = max((cellHeight() - toBreakpointPixmap->height()) / 2, 0);
+            int h = std::max((cellHeight() - toBreakpointPixmap->height()) / 2, 0);
             if (CurrentItem->text(4) == "DISABLED")
                 painter->drawPixmap(0, h, *toDisBreakpointPixmap);
             else

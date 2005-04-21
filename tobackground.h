@@ -42,6 +42,8 @@
 
 #include <qtimer.h>
 
+#include <algorithm>
+
 class QLabel;
 class QMovie;
 

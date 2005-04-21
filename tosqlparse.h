@@ -41,6 +41,7 @@
 #include "config.h"
 
 #include <list>
+#include <algorithm>
 #include <qstring.h>
 
 class toConnection;

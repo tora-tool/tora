@@ -769,6 +769,8 @@ QString toPluginPath(void)
 #elif defined( Q_OS_MACX )
 
 
+
+
     { // MacOS
         char resourcePath[MAXPATHLEN];
         memset( &resourcePath[0], 0, MAXPATHLEN );
@@ -1158,9 +1160,9 @@ QBrush toChartBrush(int index)
 
     color += offset;
 
-    return QBrush(QColor(min(255, r*color*256 / (COLORS)),
-                         min(255, g*color*256 / (COLORS)),
-                         min(255, b*color*256 / (COLORS))),
+    return QBrush(QColor(std::min(255, r*color*256 / (COLORS)),
+                         std::min(255, g*color*256 / (COLORS)),
+                         std::min(255, b*color*256 / (COLORS))),
                   rets);
 }
 

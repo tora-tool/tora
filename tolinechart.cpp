@@ -203,8 +203,8 @@ QRect toLineChart::fixRect(QPoint p1, QPoint p2)
     if (p2.y() > Chart.y() + Chart.height())
         p2.setY(Chart.y() + Chart.height());
 
-    return QRect(min(p1.x(), p2.x()),
-                 min(p1.y(), p2.y()),
+    return QRect(std::min(p1.x(), p2.x()),
+                 std::min(p1.y(), p2.y()),
                  abs(p1.x() - p2.x()),
                  abs(p1.y() - p2.y()));
 }

@@ -217,8 +217,7 @@ toRollbackDialog::toRollbackDialog(toConnection &Connection, QWidget* parent, co
             Tablespace->insertItem(q.readValue());
     }
     catch (...)
-    {
-    }
+    {}
     connect(Tablespace, SIGNAL(textChanged(const QString &)),
             this, SLOT(valueChanged(const QString &)));
 
@@ -377,7 +376,7 @@ static toSQL SQLStartExt("toRollback:StartExtent",
 class toRollbackView : public toResultView
 {
 public:
-class rollbackItem : public toResultViewItem
+    class rollbackItem : public toResultViewItem
     {
     public:
         rollbackItem(QListView *parent, QListViewItem *after, const QString &buf = QString::null)
@@ -414,7 +413,7 @@ class rollbackItem : public toResultViewItem
             int i;
             for (i = TRANSCOL;!text(i).isEmpty();i++)
                 ;
-            setHeight(max(toResultViewItem::height(), MIN_HEIGHT*(i - TRANSCOL)));
+            setHeight(std::max(toResultViewItem::height(), MIN_HEIGHT*(i - TRANSCOL)));
         }
     };
 
@@ -503,7 +502,7 @@ class toRollbackOpen : public toResultView
     std::list<double> CurExt;
     std::list<double> MaxExt;
 public:
-class openItem : public toResultViewItem
+    class openItem : public toResultViewItem
     {
         toRollbackOpen *parent(void)
         {
@@ -539,7 +538,7 @@ class openItem : public toResultViewItem
             QString address = text(3);
             statementData &data = parent()->Statements[address];
             toResultViewItem::setup();
-            setHeight(max(toResultViewItem::height(), int(MIN_HEIGHT*data.OpenExt.size())));
+            setHeight(std::max(toResultViewItem::height(), int(MIN_HEIGHT*data.OpenExt.size())));
         }
     };
 

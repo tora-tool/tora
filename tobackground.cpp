@@ -378,7 +378,7 @@ void toBackground::start(int msec)
             return ;
         Animation->unpause();
     }
-    Animation->setSpeed(min(Running, 1)*100);
+    Animation->setSpeed(std::min(Running, 1)*100);
     if (Running > 1)
         QToolTip::add
             (Label, tr("%1 queries running in background.").arg(Running));

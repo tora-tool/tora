@@ -43,6 +43,7 @@
 
 #include <list>
 #include <map>
+#include <algorithm>
 
 #include <qvbox.h>
 

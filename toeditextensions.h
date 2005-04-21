@@ -42,6 +42,8 @@
 #include "toeditwidget.h"
 #include "toeditextensiongotoui.h"
 
+#include <algorithm>
+
 class toMarkedText;
 
 class toEditExtensions : public QObject, public toEditWidget::editHandler

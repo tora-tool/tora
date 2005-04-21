@@ -180,7 +180,7 @@ static QString DescribeColumns(std::list<QString> &desc,
         if (extra == QString::fromLatin1("ORDER"))
         {
             cols[col].Order = toExtract::partDescribe(*i, level + 2);
-            maxCol = max(maxCol, cols[col].Order.toInt());
+            maxCol = std::max(maxCol, cols[col].Order.toInt());
         }
         else if (extra == QString::fromLatin1("COMMENT"))
         {

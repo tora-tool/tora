@@ -167,7 +167,7 @@ void toResultItem::addItem(const QString &title, const QString &value)
     if (WidgetPos >= NumWidgets)
     {
         NumWidgets += ALLOC_SIZE;
-        Widgets.resize(NumWidgets,0);
+        Widgets.resize(NumWidgets, 0);
     }
     QString t;
     if (title != "-")

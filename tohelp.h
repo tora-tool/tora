@@ -43,6 +43,7 @@
 #include <qdialog.h>
 
 #include <map>
+#include <algorithm>
 
 class toListView;
 class QLineEdit;

@@ -151,7 +151,7 @@ static void ThrowException(const otl_exception &exc)
 class toOracleProvider : public toConnectionProvider
 {
 public:
-class connectionDeleter : public toTask
+    class connectionDeleter : public toTask
     {
         otl_connect *Connection;
     public:
@@ -163,7 +163,7 @@ class connectionDeleter : public toTask
             delete Connection;
         }
     };
-class oracleSub : public toConnectionSub
+    class oracleSub : public toConnectionSub
     {
     public:
         toSemaphore Lock;
@@ -214,7 +214,7 @@ class oracleSub : public toConnectionSub
         }
     };
 
-class oracleQuery : public toQuery::queryImpl
+    class oracleQuery : public toQuery::queryImpl
     {
         bool Cancel;
         bool Running;
@@ -366,12 +366,12 @@ class oracleQuery : public toQuery::queryImpl
                         }
                     }
                     break;
-                default:   // Try using char if all else fails
+                default:     // Try using char if all else fails
                     {
                         // The *5 is for raw columns or UTF expanded data, also dates and numbers
                         // are a bit tricky but if someone specifies a dateformat longer than 100 bytes he
                         // deserves everything he gets!
-                        buffer = new char[max(dsc->elem_size * 5 + 1, 100)];
+                        buffer = new char[std::max(dsc->elem_size * 5 + 1, 100)];
                         buffer[0] = 0;
                         (*Query) >> buffer;
                         Running = false;
@@ -549,7 +549,7 @@ class oracleQuery : public toQuery::queryImpl
         }
     };
 
-class oracleConnection : public toConnection::connectionImpl
+    class oracleConnection : public toConnection::connectionImpl
     {
         QCString connectString(void)
         {
@@ -733,7 +733,7 @@ class oracleConnection : public toConnection::connectionImpl
                 // Need to clear the stream cache first.
                 oracleSub *sub = dynamic_cast<oracleSub *>(query.connectionSub());
                 sub->Lock.down();
-                sub->Connection->set_stream_pool_size(max(toTool::globalConfig(CONF_OPEN_CURSORS,
+                sub->Connection->set_stream_pool_size(std::max(toTool::globalConfig(CONF_OPEN_CURSORS,
                                                       DEFAULT_OPEN_CURSORS).toInt(), 1));
                 sub->Lock.up();
 #endif
@@ -1177,8 +1177,8 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
             conn = new otl_connect;
 #ifdef OTL_STREAM_POOLING_ON
 
-            conn->set_stream_pool_size(max(toTool::globalConfig(CONF_OPEN_CURSORS,
-                                           DEFAULT_OPEN_CURSORS).toInt(), 1));
+            conn->set_stream_pool_size(std::max(toTool::globalConfig(CONF_OPEN_CURSORS,
+                                                DEFAULT_OPEN_CURSORS).toInt(), 1));
 #endif
 
             if (!sqlNet)

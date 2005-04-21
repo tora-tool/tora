@@ -46,6 +46,7 @@
 #include "toresult.h"
 
 #include <list>
+#include <algorithm>
 
 #include <qtable.h>
 #include <qvbox.h>

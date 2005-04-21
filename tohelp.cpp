@@ -376,7 +376,7 @@ toHelp::toHelp(QWidget *parent, const char *name, bool modal)
     }
 
     splitter->setResizeMode(tabs, QSplitter::KeepSize);
-    setGeometry(x(), y(), max(width(), 640), max(height(), 480));
+    setGeometry(x(), y(), std::max(width(), 640), std::max(height(), 480));
 
     QListViewItem *lastParent = NULL;
     for (std::map<QString, QString>::iterator i = Dsc.begin();i != Dsc.end();i++)

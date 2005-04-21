@@ -126,7 +126,7 @@ void toVisualize::display(void)
             chart->showLegend(Legend->isOn());
             int add
                 = 0;
-            int tit = max(1, Title->currentText().toInt());
+            int tit = std::max(1, Title->currentText().toInt());
             if (Source->columnText(0) == QString::fromLatin1("#"))
                 add
                     = 1;
@@ -170,7 +170,7 @@ void toVisualize::display(void)
             chart->showLegend(Legend->isOn());
             int add
                 = 0;
-            int tit = max(1, Title->currentText().toInt());
+            int tit = std::max(1, Title->currentText().toInt());
             if (Source->columnText(0) == QString::fromLatin1("#"))
                 add
                     = 1;
@@ -214,7 +214,7 @@ void toVisualize::display(void)
             chart->showLegend(Legend->isOn());
             int add
                 = 0;
-            int tit = max(1, Title->currentText().toInt());
+            int tit = std::max(1, Title->currentText().toInt());
             if (Source->columnText(0) == QString::fromLatin1("#"))
                 add
                     = 1;

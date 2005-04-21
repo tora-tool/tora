@@ -273,7 +273,7 @@ class toProfilerUnits : public toResultLong
 {
     double Total;
 public:
-class unitsItem : public toResultViewItem
+    class unitsItem : public toResultViewItem
     {
     public:
         unitsItem(QListView *parent, QListViewItem *after, const QString &buf = QString::null)
@@ -337,7 +337,7 @@ class toProfilerSource : public toResultLong
     double MaxTime;
     double MinTime;
 public:
-class listItem : public toResultViewItem
+    class listItem : public toResultViewItem
     {
     public:
         listItem(QListView *parent, QListViewItem *after, const QString &buf = QString::null)

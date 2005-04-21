@@ -970,7 +970,7 @@ class toQSqlProvider : public toConnectionProvider
 public:
     static bool OnlyForward;
 
-class qSqlSetting : public QWidget, public toSettingTab
+    class qSqlSetting : public QWidget, public toSettingTab
     {
         QCheckBox *OnlyForward;
     public:
@@ -1032,7 +1032,7 @@ class qSqlSetting : public QWidget, public toSettingTab
         return QString::null;
     }
 
-class mySQLAnalyzer : public toSyntaxAnalyzer
+    class mySQLAnalyzer : public toSyntaxAnalyzer
     {
     public:
         mySQLAnalyzer()
@@ -1048,7 +1048,7 @@ class mySQLAnalyzer : public toSyntaxAnalyzer
         }
     };
 
-class qSqlSub : public toConnectionSub
+    class qSqlSub : public toConnectionSub
     {
         toSemaphore Lock;
     public:
@@ -1088,7 +1088,7 @@ class qSqlSub : public toConnectionSub
         }
     };
 
-class qSqlQuery : public toQuery::queryImpl
+    class qSqlQuery : public toQuery::queryImpl
     {
         QSqlQuery *Query;
         QSqlRecord Record;
@@ -1159,8 +1159,7 @@ class qSqlQuery : public toQuery::queryImpl
                     Connection->reconnect(conn);
                 }
                 catch (...)
-                {
-                }
+                {}
             }
         }
 
@@ -1344,7 +1343,7 @@ class qSqlQuery : public toQuery::queryImpl
         }
     };
 
-class qSqlConnection : public toConnection::connectionImpl
+    class qSqlConnection : public toConnection::connectionImpl
     {
         bool Multiple;
         bool HasTransactions;

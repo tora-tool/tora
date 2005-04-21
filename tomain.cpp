@@ -1070,7 +1070,7 @@ bool toMain::delConnection(void)
             Connections.erase(i);
             ConnectionSelection->removeItem(pos);
             if (ConnectionSelection->count())
-                ConnectionSelection->setCurrentItem(max(pos - 1, 0));
+                ConnectionSelection->setCurrentItem(std::max(pos - 1, 0));
             delete conn;
             break;
         }

@@ -119,7 +119,7 @@ void toResultContentMemo::firstColumn()
     {
         int col = cnt->currentColumn();
         if (col == 0)
-            cnt->setCurrentCell(max(cnt->currentRow() - 1, 0), 0);
+            cnt->setCurrentCell(std::max(cnt->currentRow() - 1, 0), 0);
         else
             cnt->setCurrentCell(cnt->currentRow(), 0);
     }
@@ -133,7 +133,7 @@ void toResultContentMemo::lastColumn()
         int col = cnt->currentColumn();
         int maxCol = cnt->numCols() - 1;
         if (col == maxCol)
-            cnt->setCurrentCell(min(cnt->numRows() - 1, cnt->currentRow() + 1), maxCol);
+            cnt->setCurrentCell(std::min(cnt->numRows() - 1, cnt->currentRow() + 1), maxCol);
         else
             cnt->setCurrentCell(cnt->currentRow(), maxCol);
     }
@@ -146,7 +146,7 @@ void toResultContentMemo::previousColumn()
     {
         int col = cnt->currentColumn();
         if (col == 0)
-            cnt->setCurrentCell(max(cnt->currentRow() - 1, 0), cnt->numCols() - 1);
+            cnt->setCurrentCell(std::max(cnt->currentRow() - 1, 0), cnt->numCols() - 1);
         else
             cnt->setCurrentCell(cnt->currentRow(), col - 1);
     }
@@ -160,7 +160,7 @@ void toResultContentMemo::nextColumn()
         int col = cnt->currentColumn();
         int maxCol = cnt->numCols() - 1;
         if (col == maxCol)
-            cnt->setCurrentCell(min(cnt->numRows() - 1, cnt->currentRow() + 1), 0);
+            cnt->setCurrentCell(std::min(cnt->numRows() - 1, cnt->currentRow() + 1), 0);
         else
             cnt->setCurrentCell(cnt->currentRow(), col + 1);
     }
@@ -539,7 +539,7 @@ void toResultContentEditor::poll(void)
                         for (int k = origRow;k < Row;k++)
                         {
                             QRect bounds = fontMetrics().boundingRect(text(k, j));
-                            int cw = min(bounds.width(), MaxColDisp);
+                            int cw = std::min(bounds.width(), MaxColDisp);
                             if (cw > width)
                                 width = cw;
                         }
@@ -612,7 +612,7 @@ void toResultContentEditor::keyPressEvent(QKeyEvent *e)
             if (MaxNumber >= 0)
             {
                 int height = verticalHeader()->sectionSize(0);
-                MaxNumber += max(height + 1, 20);
+                MaxNumber += std::max(height + 1, 20);
             }
             else
                 MaxNumber += 20;
@@ -739,12 +739,12 @@ void toResultContentEditor::gotoFirstRecord()
 
 void toResultContentEditor::gotoPreviousRecord()
 {
-    setCurrentCellFocus(max(0, currentRow() - 1), currentColumn());
+    setCurrentCellFocus(std::max(0, currentRow() - 1), currentColumn());
 }
 
 void toResultContentEditor::gotoNextRecord()
 {
-    setCurrentCellFocus(min(numRows() - 1, currentRow() + 1), currentColumn());
+    setCurrentCellFocus(std::min(numRows() - 1, currentRow() + 1), currentColumn());
 }
 
 void toResultContentEditor::addRecord()

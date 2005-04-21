@@ -42,6 +42,7 @@
 
 #include <list>
 #include <map>
+#include <algorithm>
 
 #include <qmainwindow.h>
 #include <qtoolbutton.h>
@@ -67,29 +68,25 @@
  * The class to use for a printer object.
  */
 class TOPrinter : public QPrinter
-{
-}
+    {}
 ;
 /**
  * The class to use for a dock widget.
  */
 class TODock : public QWidget
-{
-}
+    {}
 ;
 /**
  * The class to use for a file dialog.
  */
 class TOFileDialog : public QFileDialog
-{
-}
+    {}
 ;
 /**
  * The class to use for a messagebox.
  */
 class TOMessageBox : public QMessageBox
-{
-}
+    {}
 ;
 #endif
 
@@ -455,24 +452,6 @@ void toToolCaption(toToolWidget *tool, const QString &caption);
  * @return Translated text if appropriate, or original text otherwise.
  */
 QString toTranslateMayby(const QString &context, const QString &text);
-
-/**
- * Get maximum number of a and b.
- */
-template <class T>
-T max(T a, T b)
-{
-    return a > b ? a : b ;
-}
-
-/**
- * Get minimum number of a and b.
- */
-template <class T>
-T min(T a, T b)
-{
-    return a < b ? a : b ;
-}
 
 /** Popup toolbutton that works like I think they should under Qt 3.0 as well.
  * this means they will pop up a tool menu when you click on the button as well.

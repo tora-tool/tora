@@ -46,6 +46,7 @@
 
 #include <list>
 #include <map>
+#include <algorithm>
 
 class toChartManager;
 class toLineChart;

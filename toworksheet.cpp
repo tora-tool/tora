@@ -192,7 +192,7 @@ public:
         Tool->setConfig(CONF_EXEC_LOG, ExecLog->isChecked() ? "Yes" : "");
         Tool->setConfig(CONF_AUTO_LOAD, DefaultFile->text());
     }
-public slots:
+    public slots:
     void chooseFile(void)
     {
         QString str = toOpenFilename(DefaultFile->text(), QString::null, this);

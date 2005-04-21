@@ -488,6 +488,8 @@ void toHighlightedText::paintCell(QPainter *painter, int row, int col)
                     if (i == int(c.length()))
                         painter->fillRect(LeftIgnore, 0, posx - LeftIgnore, height, painter->backgroundColor());
 
+                    rect.setWidth(rect.width() + 1);
+
 #if 0 && defined (WIN32)
 
                     rect.setWidth(rect.width() - 2);
@@ -500,7 +502,7 @@ void toHighlightedText::paintCell(QPainter *painter, int row, int col)
                     if (rect.height() <= height)
                         painter->fillRect(posx, rect.height(), rect.width(), height - rect.height(), painter->backgroundColor());
 
-                    posx = rect.right() + 1;
+                    posx = rect.right();
                 }
                 wasCol = col;
                 wasMarked = marked;

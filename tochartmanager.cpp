@@ -676,7 +676,7 @@ void toChartManager::chartAlarm::valueAdded(toChartHandler *handler,
                     val = *i;
                 }
                 else
-                    val = max(*i, val);
+                    val = std::max(*i, val);
             }
             sig = checkValue(val);
         }
@@ -693,7 +693,7 @@ void toChartManager::chartAlarm::valueAdded(toChartHandler *handler,
                     val = *i;
                 }
                 else
-                    val = min(*i, val);
+                    val = std::min(*i, val);
             }
             sig = checkValue(val);
         }

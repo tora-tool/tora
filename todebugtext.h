@@ -43,6 +43,8 @@
 
 #include <qlistview.h>
 
+#include <algorithm>
+
 class toConnection;
 class toDebug;
 

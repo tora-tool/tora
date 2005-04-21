@@ -49,6 +49,7 @@
 
 #include <list>
 #include <map>
+#include <algorithm>
 
 #include <qtimer.h>
 

@@ -46,6 +46,7 @@
 #include <qlistview.h>
 
 #include <map>
+#include <algorithm>
 
 class QListViewItem;
 class QPopupMenu;
