@@ -467,8 +467,20 @@ public:
     /** Create button somewhere else than in a toolbar.
      */
     toPopupButton(QWidget *parent, const char *name = 0);
-    private slots:
+private slots:
     void click(void);
+};
+
+/**
+ * functor for cleanup containers of pointers
+ */
+struct DeleteObject
+{
+    template <typename T>
+    void operator()(const T* ptr) const
+    {
+        delete ptr;
+    }
 };
 
 /* This can't be documented in KDoc, anyway it is an easy way to catch any exception that

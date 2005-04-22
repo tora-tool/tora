@@ -588,8 +588,7 @@ void toAnalyze::stop(void)
 {
     try
     {
-        for (std::list<toNoBlockQuery *>::iterator i = Running.begin();i != Running.end();i++)
-            delete (*i);
+        for_each(Running.begin(), Running.end(), DeleteObject());
         Running.clear();
         Pending.clear();
         Stop->setEnabled(false);

@@ -1147,12 +1147,7 @@ toConnection::~toConnection()
     {
         toLocker lock (Lock)
             ;
-        {
-            for (std::list<QObject *>::iterator i = Widgets.begin();i != Widgets.end();i = Widgets.begin())
-            {
-                delete (*i);
-            }
-        }
+        for_each(Widgets.begin(), Widgets.end(), DeleteObject());
         {
             for (std::list<toConnectionSub *>::iterator i = Running.begin();i != Running.end();i++)
                 try

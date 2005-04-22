@@ -12,6 +12,7 @@
 2005-05-19: Applied patch 1186247 to convert more code to STL.
 2005-05-19: Applied patch 1180569 to allow removing breakpoints.
 2005-05-20: Applied patch 1186958 to convert min/max to std routines
+2005-05-20: Applied patch 1188297, more refactoring
 
 1.3.16: 2005-03-04
 
