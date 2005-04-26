@@ -232,40 +232,40 @@ public:
 
     /** ID of the file menu
      */
-    static const int TO_FILE_MENU;
+    static const int TO_FILE_MENU = 10;
     /** ID of the edit menu
      */
-    static const int TO_EDIT_MENU;
+    static const int TO_EDIT_MENU = 20;
     /** ID of the tools menu
      */
-    static const int TO_TOOLS_MENU;
+    static const int TO_TOOLS_MENU = 30;
     /** ID of the windows menu
      */
-    static const int TO_WINDOWS_MENU;
+    static const int TO_WINDOWS_MENU = 40;
     /** ID of the help menu
      */
-    static const int TO_HELP_MENU;
+    static const int TO_HELP_MENU = 50;
 
     /** First ID of the tool specific menu items.
      */
-    static const int TO_TOOL_MENU_ID;
+    static const int TO_TOOL_MENU_ID = 2000;
     /** Last ID of the tool specific menu items.
      */
-    static const int TO_TOOL_MENU_ID_END;
+    static const int TO_TOOL_MENU_ID_END = 2999;
 
     /** First ID of the tool specific menu items.
      */
-    static const int TO_LAST_FILE_ID;
+    static const int TO_LAST_FILE_ID = 5000;
     /** Last ID of the tool specific menu items.
      */
-    static const int TO_LAST_FILE_ID_END;
+    static const int TO_LAST_FILE_ID_END = 5999;
 
     /** First ID of the tool specific about menu items.
      */
-    static const int TO_TOOL_ABOUT_ID;
+    static const int TO_TOOL_ABOUT_ID = 3000;
     /** Last ID of the tool specific about menu items.
      */
-    static const int TO_TOOL_ABOUT_ID_END;
+    static const int TO_TOOL_ABOUT_ID_END = 3999;
 
     /**
      * Create main window. Always NULL as parent.
@@ -478,7 +478,7 @@ signals:
      * @param cmt True if commit, false if rollback.
      */
     void willCommit(toConnection &conn, bool cmt);
-    public slots:
+public slots:
     /** Used to enable/disable entries in the windows menu
      */
     void windowsMenu(void);
@@ -509,7 +509,7 @@ signals:
     /** Change current connection
      */
     void changeConnection(void);
-    private slots:
+private slots:
     /** Add a connection
      */
     void addConnection(void);

@@ -124,22 +124,6 @@
 
 #define DEFAULT_TITLE TOAPPNAME " %s"
 
-const int toMain::TO_FILE_MENU = 10;
-const int toMain::TO_EDIT_MENU = 20;
-const int toMain::TO_TOOLS_MENU = 30;
-const int toMain::TO_WINDOWS_MENU = 40;
-const int toMain::TO_HELP_MENU = 50;
-
-const int toMain::TO_TOOL_MENU_ID = 2000;
-const int toMain::TO_TOOL_MENU_ID_END = 2999;
-
-const int toMain::TO_TOOL_ABOUT_ID = 3000;
-const int toMain::TO_TOOL_ABOUT_ID_END = 3999;
-
-const int toMain::TO_LAST_FILE_ID = 5000;
-const int toMain::TO_LAST_FILE_ID_END = 5999;
-
-
 #define TO_STATUS_ID  4000
 #define TO_STATUS_ID_END 4999
 #define TO_NEW_CONNECTION 100
