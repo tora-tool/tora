@@ -151,7 +151,7 @@ static void ThrowException(const otl_exception &exc)
 class toOracleProvider : public toConnectionProvider
 {
 public:
-    class connectionDeleter : public toTask
+class connectionDeleter : public toTask
     {
         otl_connect *Connection;
     public:
@@ -163,7 +163,7 @@ public:
             delete Connection;
         }
     };
-    class oracleSub : public toConnectionSub
+class oracleSub : public toConnectionSub
     {
     public:
         toSemaphore Lock;
@@ -214,7 +214,7 @@ public:
         }
     };
 
-    class oracleQuery : public toQuery::queryImpl
+class oracleQuery : public toQuery::queryImpl
     {
         bool Cancel;
         bool Running;
@@ -366,7 +366,7 @@ public:
                         }
                     }
                     break;
-                default:      // Try using char if all else fails
+                default:       // Try using char if all else fails
                     {
                         // The *5 is for raw columns or UTF expanded data, also dates and numbers
                         // are a bit tricky but if someone specifies a dateformat longer than 100 bytes he
@@ -549,7 +549,7 @@ public:
         }
     };
 
-    class oracleConnection : public toConnection::connectionImpl
+class oracleConnection : public toConnection::connectionImpl
     {
         QCString connectString(void)
         {
@@ -831,7 +831,7 @@ public:
         {
             oracleSub *conn = oracleConv(sub);
 
-            if (params.size() == 0)
+            if ( params.empty() )
             {
                 try
                 {

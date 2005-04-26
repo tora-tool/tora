@@ -540,14 +540,14 @@ toMain::toMain()
         TOCATCH
     }
 
-    if (!toTool::globalConfig(CONF_MAXIMIZE_MAIN, "Yes").isEmpty() && Connections.size() == 0)
+    if (!toTool::globalConfig(CONF_MAXIMIZE_MAIN, "Yes").isEmpty() && Connections.empty() )
         showMaximized();
     else
         show();
 
     toBackground::init();
 
-    if (Connections.size() == 0)
+    if (Connections.empty() )
     {
         try
         {

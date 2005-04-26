@@ -123,7 +123,7 @@ void toResultBar::poll(void)
 
             if (First)
             {
-                if (desc.size() == 0)
+                if ( desc.empty() )
                     desc = Query->describe();
                 clear();
                 std::list<QString> labels;

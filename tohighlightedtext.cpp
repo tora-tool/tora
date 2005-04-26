@@ -654,7 +654,7 @@ int toHighlightedText::convertLine(int line, int start, int diff)
 
 bool toHighlightedText::hasErrors()
 {
-    if ( Errors.size() == 0 )
+    if ( Errors.empty() )
         return (false);
     else
         return (true);

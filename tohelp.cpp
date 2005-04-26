@@ -124,7 +124,7 @@ void toHelpBrowser::backward(void)
 void toHelpBrowser::forward(void)
 {
     QString url = toPop(Forward);
-    if (Forward.size() == 0)
+    if (Forward.empty())
         emit forwardAvailable(false);
     if (Backward.size() == 1)
         emit backwardAvailable(true);

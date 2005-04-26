@@ -1216,7 +1216,7 @@ toConnectionSub *toConnection::longConnection()
     Lock.lock();
     bool multiple = Connection->handleMultipleQueries();
     if ((multiple && Connections.size() == 1) ||
-            (!multiple && Connections.size() == 0))
+            (!multiple && Connections.empty()))
     {
         Lock.unlock();
         addConnection();
