@@ -440,14 +440,14 @@ std::list<QString> toScript::createObjectList(QListView *source)
 
     if (ScriptUI->IncludeDDL->isChecked())
     {
-        copy(tableSpace.begin(), tableSpace.end(), back_inserter(lst));
-        copy(profiles.begin(), profiles.end(), back_inserter(lst));
-        copy(otherGlobal.begin(), otherGlobal.end(), back_inserter(lst));
+        lst.insert(lst.end(), tableSpace.begin(), tableSpace.end());
+        lst.insert(lst.end(), profiles.begin(), profiles.end());
+        lst.insert(lst.end(), otherGlobal.begin(), otherGlobal.end());
         for_each(roles.begin(), roles.end(), PrefixString(lst, QString::fromLatin1("ROLE:")));
         for_each(users.begin(), users.end(), PrefixString(lst, QString::fromLatin1("USER:")));
         for_each(tables.begin(), tables.end(), PrefixString(lst, QString::fromLatin1("TABLE FAMILY:")));
-        copy(userViews.begin(), userViews.end(), back_inserter(lst));
-        copy(userOther.begin(), userOther.end(), back_inserter(lst));
+        lst.insert(lst.end(), userViews.begin(), userViews.end());
+        lst.insert(lst.end(), userOther.begin(), userOther.end());
     }
     for_each(tables.begin(), tables.end(), PrefixString(lst, QString::fromLatin1("TABLE CONTENTS:")));
     if (ScriptUI->IncludeDDL->isChecked())
