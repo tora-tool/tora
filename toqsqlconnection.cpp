@@ -294,7 +294,7 @@ static QString QueryParam(const QString &in, toQList &params, std::list<QString>
                     {
                         if (extradata)
                         {
-                            if (extradata->begin() == extradata->end())
+                            if ( extradata->empty() )
                                 return QString::null;
                             tmp = toShift(*extradata);
                         }
@@ -970,7 +970,7 @@ class toQSqlProvider : public toConnectionProvider
 public:
     static bool OnlyForward;
 
-    class qSqlSetting : public QWidget, public toSettingTab
+class qSqlSetting : public QWidget, public toSettingTab
     {
         QCheckBox *OnlyForward;
     public:
@@ -1032,7 +1032,7 @@ public:
         return QString::null;
     }
 
-    class mySQLAnalyzer : public toSyntaxAnalyzer
+class mySQLAnalyzer : public toSyntaxAnalyzer
     {
     public:
         mySQLAnalyzer()
@@ -1048,7 +1048,7 @@ public:
         }
     };
 
-    class qSqlSub : public toConnectionSub
+class qSqlSub : public toConnectionSub
     {
         toSemaphore Lock;
     public:
@@ -1088,7 +1088,7 @@ public:
         }
     };
 
-    class qSqlQuery : public toQuery::queryImpl
+class qSqlQuery : public toQuery::queryImpl
     {
         QSqlQuery *Query;
         QSqlRecord Record;
@@ -1343,7 +1343,7 @@ public:
         }
     };
 
-    class qSqlConnection : public toConnection::connectionImpl
+class qSqlConnection : public toConnection::connectionImpl
     {
         bool Multiple;
         bool HasTransactions;

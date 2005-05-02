@@ -163,7 +163,7 @@ bool toSQL::deleteSQL(const QCString &name,
             if ((*j).Version == ver && (*j).Provider == provider)
             {
                 cl.erase(j);
-                if (cl.begin() == cl.end())
+                if ( cl.empty() )
                     Definitions->erase(i);
                 return true;
             }

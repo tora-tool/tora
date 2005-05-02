@@ -933,7 +933,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
         }
         else if (upp.startsWith(("/*")) || upp.startsWith(("--")) || upp.startsWith("//"))
         {
-            if (ret.subTokens().begin() == ret.subTokens().end())
+            if ( ret.subTokens().empty() )
             {
                 if (ret.Comment.isNull())
                     ret.Comment = token;

@@ -260,7 +260,7 @@ void toCurrent::poll()
 
         if (!Query)
         {
-            if (Updates.begin() == Updates.end())
+            if ( Updates.empty() )
             {
                 Poll.stop();
                 return ;

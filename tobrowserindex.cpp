@@ -179,7 +179,7 @@ void toBrowserIndex::describeTable(const QString &table)
         Current = QString::null;
         if (!table.isEmpty())
         {
-            if (OriginalDescription[table].begin() == OriginalDescription[table].end())
+            if ( OriginalDescription[table].empty() )
             {
                 std::list<QString> Objects;
                 Objects.insert(Objects.end(), "TABLE:" + table);
@@ -228,7 +228,7 @@ void toBrowserIndex::describeTable(const QString &table)
             if (beg != origDescription.end())
                 registerIndex(realtype, lname, beg, origDescription.end());
         }
-        if (OriginalDescription[table].begin() == OriginalDescription[table].end())
+        if ( OriginalDescription[table].empty() )
             OriginalDescription[table] = NewDescription[table];
 
         Name->clear();

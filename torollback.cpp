@@ -284,7 +284,7 @@ static bool BarsAlignLeft = true;
 static void PaintBars(QListViewItem *item, QPainter *p, const QColorGroup & cg,
                       int width, std::list<double> &val, std::list<double> &maxExt, std::list<double> &curExt)
 {
-    if (val.begin() == val.end())
+    if ( val.empty() )
     {
         p->fillRect(0, 0, width, item->height(),
                     QBrush(item->isSelected() ? cg.highlight() : cg.base()));
@@ -376,7 +376,7 @@ static toSQL SQLStartExt("toRollback:StartExtent",
 class toRollbackView : public toResultView
 {
 public:
-    class rollbackItem : public toResultViewItem
+class rollbackItem : public toResultViewItem
     {
     public:
         rollbackItem(QListView *parent, QListViewItem *after, const QString &buf = QString::null)
@@ -502,7 +502,7 @@ class toRollbackOpen : public toResultView
     std::list<double> CurExt;
     std::list<double> MaxExt;
 public:
-    class openItem : public toResultViewItem
+class openItem : public toResultViewItem
     {
         toRollbackOpen *parent(void)
         {

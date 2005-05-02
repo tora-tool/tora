@@ -881,7 +881,7 @@ void toStorageExtent::setFile(const QString &tablespace, int file)
 void toStorageExtent::paintEvent(QPaintEvent *)
 {
     QPainter paint(this);
-    if (FileOffset.begin() == FileOffset.end())
+    if ( FileOffset.empty() )
         return ;
     QFontMetrics fm = paint.fontMetrics();
 

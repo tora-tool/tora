@@ -263,7 +263,7 @@ void toNewConnection::changeProvider(void)
                 OptionWidgets.insert(OptionWidgets.end(), ow);
             }
         }
-        if (options.begin() == options.end())
+        if ( options.empty() )
             OptionGroup->hide();
         else
             OptionGroup->show();

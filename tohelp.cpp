@@ -135,7 +135,7 @@ void toHelpBrowser::forward(void)
 
 QString toHelpBrowser::source(void)
 {
-    if (Backward.begin() == Backward.end())
+    if ( Backward.end() )
         return QString::null;
     return (*Backward.rbegin());
 }

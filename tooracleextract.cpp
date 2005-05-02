@@ -7329,7 +7329,7 @@ QString toOracleExtract::migrateRole(toExtract &ext,
             QString role = toShift(ctx);
             if (role != lrole)
                 dropped = false;
-            if (ctx.begin() == ctx.end())
+            if ( ctx.empty() )
             {
                 QString sql = "DROP ROLE " + QUOTE(role) + ";";
                 if (PROMPT)
@@ -7370,7 +7370,7 @@ QString toOracleExtract::migrateRole(toExtract &ext,
         if (toShift(ctx) != "ROLE")
             continue;
         QString role = toShift(ctx);
-        if (ctx.begin() == ctx.end())
+        if ( ctx.empty() )
             continue;
         else
         {
@@ -7420,7 +7420,7 @@ QString toOracleExtract::migrateSequence(toExtract &ext,
             if (toShift(ctx) != "SEQUENCE")
                 continue;
             QString sequence = toShift(ctx);
-            if (ctx.begin() == ctx.end())
+            if ( ctx.empty() )
             {
                 QString sql = QString("DROP SEQUENCE %1.%2").arg(QUOTE(owner)).arg(QUOTE(sequence));
                 if (PROMPT)
@@ -7460,7 +7460,7 @@ QString toOracleExtract::migrateSequence(toExtract &ext,
             prompt = sql =
                          created = false;
         }
-        if (ctx.begin() == ctx.end())
+        if ( ctx.empty() )
             created = true;
         else
             sql += " " + toShift(ctx);

@@ -1733,7 +1733,7 @@ void toBrowser::refresh(void)
         if (FirstTab)
         {
             toQList pars = FirstTab->params();
-            if (pars.begin() == pars.end())
+            if ( pars.empty() )
             {
                 updateTabs();
                 return ;
@@ -1743,7 +1743,7 @@ void toBrowser::refresh(void)
         if (SecondTab)
         {
             toQList pars = SecondTab->params();
-            if (pars.begin() == pars.end())
+            if ( pars.empty() )
             {
                 updateTabs();
                 return ;

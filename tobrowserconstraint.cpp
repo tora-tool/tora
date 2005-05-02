@@ -142,7 +142,7 @@ void toBrowserConstraint::describeTable(const QString &table)
 
         if (!Table.isEmpty())
         {
-            if (OriginalDescription[table].begin() == OriginalDescription[table].end())
+            if ( OriginalDescription[table].empty() )
             {
                 std::list<QString> Objects;
                 Objects.insert(Objects.end(), "TABLE:" + Owner + "." + Table);
@@ -168,7 +168,7 @@ void toBrowserConstraint::describeTable(const QString &table)
                 else
                     i = origDescription.erase(i);  // Remove everything that isn't constraints
             }
-            if (OriginalDescription[table].begin() == OriginalDescription[table].end())
+            if ( OriginalDescription[table].empty() )
                 OriginalDescription[table] = NewDescription[table];
         }
         Name->clear();
