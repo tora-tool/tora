@@ -48,20 +48,22 @@ run() {
     fi
 }
 
+
 libtool() {
-    opts="--automake --copy"
+    opts="'--automake --copy'"
 
     if glibtoolize --version >/dev/null 2>&1; then
-        run glibtoolize $opts
+        eval run glibtoolize $opts
     elif libtoolize --version >/dev/null 2>&1; then
-        run libtoolize $opts
+        eval run libtoolize $opts
     else
         err "libtoolize not found"
     fi
 }
 
-run autoheader
+
 run aclocal '' 1 5
+run autoheader
 run autoconf
 libtool
 run automake -a 1 5
