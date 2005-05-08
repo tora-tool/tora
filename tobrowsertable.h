@@ -87,14 +87,14 @@ public:
     {
         editTable(conn, owner, QString::null, parent);
     }
-    public slots:
+public slots:
     virtual void displaySQL();
     virtual void addColumn();
     virtual void removeColumn();
     virtual void toggleCustom(bool);
 private:
     bool UglyFlag;
-    private slots:
+private slots:
     virtual void uglyWorkaround();
 };
 

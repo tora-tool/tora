@@ -134,7 +134,7 @@ class toStorageTool : public toTool
 protected:
     virtual const char **pictureXPM(void)
     {
-        return tostorage_xpm;
+        return const_cast<const char**>(tostorage_xpm);
     }
 public:
     toStorageTool()
@@ -755,7 +755,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
 {
     QToolBar *toolbar = toAllocBar(this, tr("Storage manager"));
 
-    new QToolButton(QPixmap((const char **)refresh_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                     tr("Update"),
                     tr("Update"),
                     this, SLOT(refresh(void)),
@@ -763,7 +763,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     toolbar->addSeparator();
     ExtentButton = new QToolButton(toolbar);
     ExtentButton->setToggleButton(true);
-    ExtentButton->setIconSet(QIconSet(QPixmap((const char **)storageextents_xpm)));
+    ExtentButton->setIconSet(QIconSet(QPixmap(const_cast<const char**>(storageextents_xpm))));
     bool extents = !StorageTool.config(CONF_DISP_EXTENTS, "").isEmpty();
     if (extents)
         ExtentButton->setOn(true);
@@ -773,7 +773,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
 
     TablespaceButton = new QToolButton(toolbar);
     TablespaceButton->setToggleButton(true);
-    TablespaceButton->setIconSet(QIconSet(QPixmap((const char **)tostorage_xpm)));
+    TablespaceButton->setIconSet(QIconSet(QPixmap(const_cast<const char**>(tostorage_xpm))));
     bool tablespaces = !StorageTool.config(CONF_DISP_TABLESPACES, "Yes").isEmpty();
     if (tablespaces)
         TablespaceButton->setOn(true);
@@ -783,67 +783,67 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
 
     toolbar->addSeparator();
 
-    OnlineButton = new QToolButton(QPixmap((const char **)online_xpm),
+    OnlineButton = new QToolButton(QPixmap(const_cast<const char**>(online_xpm)),
                                    tr("Take tablespace online"),
                                    tr("Take tablespace online"),
                                    this, SLOT(online(void)),
                                    toolbar);
-    OfflineButton = new QToolButton(QPixmap((const char **)offline_xpm),
+    OfflineButton = new QToolButton(QPixmap(const_cast<const char**>(offline_xpm)),
                                     tr("Take tablespace offline"),
                                     tr("Take tablespace offline"),
                                     this, SLOT(offline(void)),
                                     toolbar);
     toolbar->addSeparator();
-    LoggingButton = new QToolButton(QPixmap((const char **)logging_xpm),
+    LoggingButton = new QToolButton(QPixmap(const_cast<const char**>(logging_xpm)),
                                     tr("Set tablespace default to logging"),
                                     tr("Set tablespace default to logging"),
                                     this, SLOT(logging(void)),
                                     toolbar);
-    EraseLogButton = new QToolButton(QPixmap((const char **)eraselog_xpm),
+    EraseLogButton = new QToolButton(QPixmap(const_cast<const char**>(eraselog_xpm)),
                                      tr("Set tablespace default to no logging"),
                                      tr("Set tablespace default to no logging"),
                                      this, SLOT(noLogging(void)),
                                      toolbar);
     toolbar->addSeparator();
-    ReadWriteButton = new QToolButton(QPixmap((const char **)writetablespace_xpm),
+    ReadWriteButton = new QToolButton(QPixmap(const_cast<const char**>(writetablespace_xpm)),
                                       tr("Allow read write access to tablespace"),
                                       tr("Allow read write access to tablespace"),
                                       this, SLOT(readWrite(void)),
                                       toolbar);
-    ReadOnlyButton = new QToolButton(QPixmap((const char **)readtablespace_xpm),
+    ReadOnlyButton = new QToolButton(QPixmap(const_cast<const char**>(readtablespace_xpm)),
                                      tr("Set tablespace to read only"),
                                      tr("Set tablespace to read only"),
                                      this, SLOT(readOnly(void)),
                                      toolbar);
     toolbar->addSeparator();
-    ModTablespaceButton = new QToolButton(QPixmap((const char **)modtablespace_xpm),
+    ModTablespaceButton = new QToolButton(QPixmap(const_cast<const char**>(modtablespace_xpm)),
                                           tr("Modify tablespace"),
                                           tr("Modify tablespace"),
                                           this, SLOT(modifyTablespace(void)),
                                           toolbar);
-    ModFileButton = new QToolButton(QPixmap((const char **)modfile_xpm),
+    ModFileButton = new QToolButton(QPixmap(const_cast<const char**>(modfile_xpm)),
                                     tr("Modify file"),
                                     tr("Modify file"),
                                     this, SLOT(modifyDatafile(void)),
                                     toolbar);
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)addtablespace_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(addtablespace_xpm)),
                     tr("Create new tablespace"),
                     tr("Create new tablespace"),
                     this, SLOT(newTablespace(void)),
                     toolbar);
-    NewFileButton = new QToolButton(QPixmap((const char **)addfile_xpm),
+    NewFileButton = new QToolButton(QPixmap(const_cast<const char**>(addfile_xpm)),
                                     tr("Add datafile to tablespace"),
                                     tr("Add datafile to tablespace"),
                                     this, SLOT(newDatafile(void)),
                                     toolbar);
     toolbar->addSeparator();
-    CoalesceButton = new QToolButton(QPixmap((const char **)coalesce_xpm),
+    CoalesceButton = new QToolButton(QPixmap(const_cast<const char**>(coalesce_xpm)),
                                      tr("Coalesce tablespace"),
                                      tr("Coalesce tablespace"),
                                      this, SLOT(coalesce(void)),
                                      toolbar);
-    MoveFileButton = new QToolButton(QPixmap((const char **)movefile_xpm),
+    MoveFileButton = new QToolButton(QPixmap(const_cast<const char**>(movefile_xpm)),
                                      tr("Move datafile"),
                                      tr("Move datafile"),
                                      this, SLOT(moveFile(void)),
@@ -909,38 +909,38 @@ void toStorage::windowActivated(QWidget *widget)
         if (!ToolMenu)
         {
             ToolMenu = new QPopupMenu(this);
-            ToolMenu->insertItem(QPixmap((const char **)refresh_xpm), tr("&Refresh"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("&Refresh"),
                                  this, SLOT(refresh(void)),
                                  toKeySequence(tr("F5", "Storage|Refresh")));
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)online_xpm), tr("Tablespace online"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(online_xpm)), tr("Tablespace online"),
                                  this, SLOT(online()), 0, TO_ID_ONLINE);
-            ToolMenu->insertItem(QPixmap((const char **)offline_xpm), tr("Tablespace offline"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(offline_xpm)), tr("Tablespace offline"),
                                  this, SLOT(offline()), 0, TO_ID_OFFLINE);
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)logging_xpm), tr("Default logging"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(logging_xpm)), tr("Default logging"),
                                  this, SLOT(logging()), 0, TO_ID_LOGGING);
-            ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm), tr("Default not logging"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(eraselog_xpm)), tr("Default not logging"),
                                  this, SLOT(noLogging()), 0, TO_ID_NOLOGGING);
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)writetablespace_xpm), tr("Read write access"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(writetablespace_xpm)), tr("Read write access"),
                                  this, SLOT(readWrite()), 0, TO_ID_READ_WRITE);
-            ToolMenu->insertItem(QPixmap((const char **)readtablespace_xpm), tr("Read only access"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(readtablespace_xpm)), tr("Read only access"),
                                  this, SLOT(readOnly()), 0, TO_ID_READ_ONLY);
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)modtablespace_xpm), tr("Modify tablespace..."),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(modtablespace_xpm)), tr("Modify tablespace..."),
                                  this, SLOT(modifyTablespace()), 0, TO_ID_MODIFY_TABLESPACE);
-            ToolMenu->insertItem(QPixmap((const char **)modfile_xpm), tr("Modify datafile..."),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(modfile_xpm)), tr("Modify datafile..."),
                                  this, SLOT(modifyDatafile()), 0, TO_ID_MODIFY_DATAFILE);
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)addtablespace_xpm), tr("New tablespace..."),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(addtablespace_xpm)), tr("New tablespace..."),
                                  this, SLOT(newTablespace()), 0, TO_ID_NEW_TABLESPACE);
-            ToolMenu->insertItem(QPixmap((const char **)addfile_xpm), tr("Add datafile..."),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(addfile_xpm)), tr("Add datafile..."),
                                  this, SLOT(newDatafile()), 0, TO_ID_ADD_DATAFILE);
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)coalesce_xpm), tr("Coalesce tablespace"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(coalesce_xpm)), tr("Coalesce tablespace"),
                                  this, SLOT(coalesce()), 0, TO_ID_COALESCE);
-            ToolMenu->insertItem(QPixmap((const char **)movefile_xpm), tr("Move datafile..."),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(movefile_xpm)), tr("Move datafile..."),
                                  this, SLOT(moveFile()), 0, TO_ID_MOVE_FILE);
 
             toMainWidget()->menuBar()->insertItem(tr("&Storage"), ToolMenu, -1, toToolMenuIndex());

@@ -64,7 +64,7 @@ class toWaitEvents;
 class toSessionList : public toResultLong
 {
 public:
-    class sessionFilter : public toResultFilter
+class sessionFilter : public toResultFilter
     {
         struct sessionID
         {
@@ -168,7 +168,7 @@ public:
     toSession(QWidget *parent, toConnection &connection);
 
     virtual bool canHandle(toConnection &conn);
-    public slots:
+public slots:
     void changeTab(QWidget *tab);
     void changeItem(QListViewItem *item);
     void changeCursor(QListViewItem *item);

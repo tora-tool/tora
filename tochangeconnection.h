@@ -49,7 +49,7 @@
 class toChangeConnection : public toPopupButton
 {
     Q_OBJECT
-    private slots:
+private slots:
     void changeConnection(int id);
     void popupMenu(void);
 public:

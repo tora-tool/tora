@@ -61,7 +61,7 @@ public:
     void eraseUser(bool all = true);
     void sql(const QString &user, std::list<QString> &sql);
     void update(void);
-    public slots:
+public slots:
     virtual void changed(QListViewItem *item);
 };
 
@@ -76,7 +76,7 @@ public:
     void sql(const QString &user, std::list<QString> &sql);
     void eraseUser(bool user, bool all = true);
     void update(void);
-    public slots:
+public slots:
     virtual void changed(QListViewItem *item);
 };
 
@@ -90,7 +90,7 @@ public:
     void sql(const QString &user, std::list<QString> &sql);
     void eraseUser(bool all = true);
     void update(void);
-    public slots:
+public slots:
     virtual void changed(QListViewItem *item);
 };
 
@@ -129,7 +129,7 @@ public:
     toSecurity(QWidget *parent, toConnection &connection);
     virtual void changeUser(bool);
 
-    public slots:
+public slots:
     virtual void refresh(void);
     virtual void changeUser(QListViewItem *)
     {

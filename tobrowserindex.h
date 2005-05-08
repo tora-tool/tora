@@ -79,7 +79,7 @@ private:
 public:
     static void modifyIndex(toConnection &conn, const QString &owner, const QString &table, QWidget *parent, const QString &index = QString::null);
     static void addIndex(toConnection &conn, const QString &owner, const QString &table, QWidget *parent);
-    public slots:
+public slots:
     virtual void displaySQL();
     virtual void addIndex();
     virtual void delIndex();

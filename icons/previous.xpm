@@ -1,5 +1,5 @@
 /* XPM */
-static const char * previous_xpm[] = {
+static const char* const previous_xpm[] = {
 "16 16 11 1",
 " 	c None",
 ".	c #A6A6A6",

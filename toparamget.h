@@ -62,7 +62,7 @@ public:
     {
         connect(this, SIGNAL(clicked()), this, SLOT(internalClicked()));
     }
-    private slots:
+private slots:
     void internalClicked(void)
     {
         emit clicked(Row);
@@ -109,7 +109,7 @@ public:
      * @param val Value of the bind variable.
      */
     static void setDefault(toConnection &conn, const QString &name, const QString &val);
-    private slots:
+private slots:
 
     virtual void showMemo(int row);
 };

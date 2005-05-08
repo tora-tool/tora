@@ -1,5 +1,5 @@
 /* XPM */
-static const char * totemporary_xpm[] = {
+static const char* const totemporary_xpm[] = {
 "16 16 195 2",
 "  	c None",
 ". 	c #C4C4CE",

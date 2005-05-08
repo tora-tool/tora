@@ -173,7 +173,7 @@ public:
     void setCaption(void);
 signals:
     void executed(void);
-    public slots:
+public slots:
     void changeSchema(void);
     void connectionChanged(void);
     void refresh();
@@ -210,7 +210,7 @@ signals:
     void saveStatistics(void);
     void refreshSetup(void);
     void stop(void);
-    private slots:
+private slots:
     void poll(void);
     void displayMenu(QPopupMenu *menu);
 };

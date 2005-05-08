@@ -1,5 +1,5 @@
 /* XPM */
-static const char * search_xpm[] = {
+static const char* const search_xpm[] = {
 "16 16 69 1",
 " 	c None",
 ".	c #FFFFFF",

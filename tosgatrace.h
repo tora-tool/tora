@@ -75,7 +75,7 @@ class toSGATrace : public toToolWidget
 
 public:
     toSGATrace(QWidget *parent, toConnection &connection);
-    public slots:
+public slots:
     void changeSchema(const QString &str);
     void changeItem(QListViewItem *item);
     void changeRefresh(const QString &str);

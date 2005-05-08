@@ -159,7 +159,7 @@ class toDebug : public toToolWidget
     // End of lock stuff
     toTimer StartTimer;
 
-    class targetTask : public toTask
+class targetTask : public toTask
     {
         toDebug &Parent;
     public:
@@ -197,7 +197,7 @@ class toDebug : public toToolWidget
     bool checkStop(void);
     void closeEditor(toDebugText* &editor);
 
-    private slots:
+private slots:
     void startTarget(void);
 public:
     toDebug(QWidget *parent, toConnection &connection);
@@ -218,7 +218,7 @@ public:
 
     virtual void exportData(std::map<QCString, QString> &data, const QCString &prefix);
     virtual void importData(std::map<QCString, QString> &data, const QCString &prefix);
-    public slots:
+public slots:
     void stop(void);
     void compile(void);
     void refresh(void);
@@ -273,7 +273,7 @@ public:
     toDebugWatch(toDebug *parent);
 
     QListViewItem *createWatch(QListView *watches);
-    public slots:
+public slots:
     void changeScope(int num);
 };
 

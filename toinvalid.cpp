@@ -94,7 +94,7 @@ class toInvalidTool : public toTool
 {
     virtual const char **pictureXPM(void)
     {
-        return toinvalid_xpm;
+        return const_cast<const char**>(toinvalid_xpm);
     }
 public:
     toInvalidTool()
@@ -117,13 +117,13 @@ toInvalid::toInvalid(QWidget *main, toConnection &connection)
 {
     QToolBar *toolbar = toAllocBar(this, tr("Invalid Objects"));
 
-    new QToolButton(QPixmap((const char **)refresh_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                     tr("Refresh list"),
                     tr("Refresh list"),
                     this, SLOT(refresh()),
                     toolbar);
 
-    new QToolButton(QPixmap((const char **)compile_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(compile_xpm)),
                     tr("Recompile all invalid"),
                     tr("Recompile all invalid"),
                     this, SLOT(recompileSelected()),
@@ -211,7 +211,7 @@ void toInvalid::windowActivated(QWidget *widget)
         if (!ToolMenu)
         {
             ToolMenu = new QPopupMenu(this);
-            ToolMenu->insertItem(QPixmap((const char **)refresh_xpm), tr("&Refresh"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("&Refresh"),
                                  this, SLOT(refresh(void)),
                                  toKeySequence(tr("F5", "Invalid|Refresh")));
 

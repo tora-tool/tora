@@ -666,7 +666,7 @@ void toLineChart::mousePressEvent(QMouseEvent *e)
             if (!Menu)
             {
                 Menu = new QPopupMenu(this);
-                Menu->insertItem(QPixmap((const char **)print_xpm), tr("&Print..."), this, SLOT(editPrint()));
+                Menu->insertItem(QPixmap(const_cast<const char**>(print_xpm)), tr("&Print..."), this, SLOT(editPrint()));
                 Menu->insertItem(tr("&Open in new window"), this, SLOT(openCopy()));
                 Menu->insertSeparator();
                 Menu->insertItem(tr("&Chart Manager..."), this, SLOT(chartSetup()));

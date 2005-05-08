@@ -179,7 +179,7 @@ class toRollbackTool : public toTool
 protected:
     virtual const char **pictureXPM(void)
     {
-        return torollback_xpm;
+        return const_cast<const char**>(torollback_xpm);
     }
 public:
     toRollbackTool()
@@ -678,7 +678,7 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
 {
     QToolBar *toolbar = toAllocBar(this, tr("Rollback analyzer"));
 
-    new QToolButton(QPixmap((const char **)refresh_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                     tr("Update segment list"),
                     tr("Update segment list"),
                     this, SLOT(refresh(void)),
@@ -687,19 +687,19 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
 
     QToolButton *enableOld = new QToolButton(toolbar);
     enableOld->setToggleButton(true);
-    enableOld->setIconSet(QIconSet(QPixmap((const char **)torollback_xpm)));
+    enableOld->setIconSet(QIconSet(QPixmap(const_cast<const char**>(torollback_xpm))));
     connect(enableOld, SIGNAL(toggled(bool)), this, SLOT(enableOld(bool)));
     QToolTip::add
         (enableOld, tr("Enable snapshot too old detection."));
     toolbar->addSeparator();
 
-    OnlineButton = new QToolButton(QPixmap((const char **)online_xpm),
+    OnlineButton = new QToolButton(QPixmap(const_cast<const char**>(online_xpm)),
                                    tr("Take segment online"),
                                    tr("Take segment online"),
                                    this, SLOT(online(void)),
                                    toolbar);
     OnlineButton->setEnabled(false);
-    OfflineButton = new QToolButton(QPixmap((const char **)offline_xpm),
+    OfflineButton = new QToolButton(QPixmap(const_cast<const char**>(offline_xpm)),
                                     tr("Take segment offline"),
                                     tr("Take segment offline"),
                                     this, SLOT(offline(void)),
@@ -707,12 +707,12 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
     OfflineButton->setEnabled(false);
     toolbar->addSeparator();
 
-    new QToolButton(QPixmap((const char **)addrollback_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(addrollback_xpm)),
                     tr("Create new rollback segment"),
                     tr("Create new rollback segment"),
                     this, SLOT(addSegment(void)),
                     toolbar);
-    DropButton = new QToolButton(QPixmap((const char **)trash_xpm),
+    DropButton = new QToolButton(QPixmap(const_cast<const char**>(trash_xpm)),
                                  tr("Drop segment"),
                                  tr("Drop segment"),
                                  this, SLOT(dropSegment(void)),
@@ -780,18 +780,18 @@ void toRollback::windowActivated(QWidget *widget)
         if (!ToolMenu)
         {
             ToolMenu = new QPopupMenu(this);
-            ToolMenu->insertItem(QPixmap((const char **)refresh_xpm), tr("&Refresh"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("&Refresh"),
                                  this, SLOT(refresh(void)),
                                  toKeySequence(tr("F5", "Rollback|Refresh")));
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)online_xpm), tr("Online"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(online_xpm)), tr("Online"),
                                  this, SLOT(online(void)), 0, TO_ID_ONLINE);
-            ToolMenu->insertItem(QPixmap((const char **)offline_xpm), tr("Offline"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(offline_xpm)), tr("Offline"),
                                  this, SLOT(offline(void)), 0, TO_ID_OFFLINE);
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)addrollback_xpm), tr("Create segment..."),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(addrollback_xpm)), tr("Create segment..."),
                                  this, SLOT(addSegment(void)), 0, TO_ID_CREATE);
-            ToolMenu->insertItem(QPixmap((const char **)trash_xpm), tr("Drop segment"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(trash_xpm)), tr("Drop segment"),
                                  this, SLOT(dropSegment(void)), 0, TO_ID_DROP);
             ToolMenu->insertSeparator();
             ToolMenu->insertItem(tr("&Change Refresh"), Refresh, SLOT(setFocus(void)),

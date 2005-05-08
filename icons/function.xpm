@@ -1,5 +1,5 @@
 /* XPM */
-static const char * function_xpm[] = {
+static const char* const function_xpm[] = {
 "16 16 2 1",
 " 	c white",
 ".	c black",

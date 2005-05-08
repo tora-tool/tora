@@ -71,7 +71,7 @@ class toMemoEditor : public QDialog
     QCheckBox *Null;
 
     toListView *listView(void);
-    private slots:
+private slots:
     void openFile(void);
     void saveFile(void);
 protected:
@@ -123,7 +123,7 @@ signals:
      * @param data New data to save.
      */
     void changeData(int row, int col, const QString &data);
-    public slots:
+public slots:
     /** Save changes and close.
      */
     virtual void store(void);
@@ -147,7 +147,7 @@ signals:
     /** Change value of editor.
      */
     virtual void setText(const QString &);
-    private slots:
+private slots:
     void changeCurrent(QListViewItem *item);
     virtual void null(bool);
 };

@@ -299,12 +299,12 @@ void toProjectTemplate::insertItems(QListView *parent, QToolBar *toolbar)
     }
 
     connect(parent, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(changeItem(QListViewItem *)));
-    AddFile = new QToolButton(QPixmap((const char **)addproject_xpm),
+    AddFile = new QToolButton(QPixmap(const_cast<const char**>(addproject_xpm)),
                               qApp->translate("toProject", "Add file to project"),
                               qApp->translate("toProject", "Add file to project"),
                               this, SLOT(addFile()),
                               toolbar);
-    DelFile = new QToolButton(QPixmap((const char **)trash_xpm),
+    DelFile = new QToolButton(QPixmap(const_cast<const char**>(trash_xpm)),
                               qApp->translate("toProject", "Remove file from project"),
                               qApp->translate("toProject", "Remove file from project"),
                               this, SLOT(delFile()),
@@ -398,39 +398,39 @@ toProject::toProject(toProjectTemplateItem *top, QWidget *parent)
     Root = top;
 
     QToolBar *toolbar = toAllocBar(this, tr("SQL project"));
-    new QToolButton(QPixmap((const char **)addproject_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(addproject_xpm)),
                     tr("Add file to project"),
                     tr("Add file to project"),
                     this, SLOT(addFile()),
                     toolbar);
-    new QToolButton(QPixmap((const char **)filesave_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(filesave_xpm)),
                     tr("Save project"),
                     tr("Save project"),
                     this, SLOT(saveProject()),
                     toolbar);
-    DelFile = new QToolButton(QPixmap((const char **)trash_xpm),
+    DelFile = new QToolButton(QPixmap(const_cast<const char**>(trash_xpm)),
                               tr("Remove file from project"),
                               tr("Remove file from project"),
                               this, SLOT(delFile()),
                               toolbar);
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)new_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(new_xpm)),
                     tr("Add new subproject"),
                     tr("Add new subproject"),
                     this, SLOT(newProject()),
                     toolbar);
-    new QToolButton(QPixmap((const char **)sql_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(sql_xpm)),
                     tr("Generate SQL for this project"),
                     tr("Generate SQL for this project"),
                     this, SLOT(generateSQL()),
                     toolbar);
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)up_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(up_xpm)),
                     tr("Move up in project"),
                     tr("Move up in project"),
                     this, SLOT(moveUp()),
                     toolbar);
-    new QToolButton(QPixmap((const char **)down_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(down_xpm)),
                     tr("Move down in project"),
                     tr("Move down in project"),
                     this, SLOT(moveDown()),

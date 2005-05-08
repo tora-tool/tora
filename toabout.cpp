@@ -369,7 +369,7 @@ void toAllocLogo(void)
     {
         Alloced = true;
         QMimeSourceFactory::defaultFactory()->setPixmap(QString::fromLatin1("largelogo.xpm"),
-                QPixmap((const char **)largelogo_xpm));
+                QPixmap(const_cast<const char**>(largelogo_xpm)));
     }
 }
 
@@ -381,7 +381,7 @@ toSplash::toSplash(QWidget *parent, const char *name, WFlags f)
     setBackgroundColor(white);
     QLabel *logo = new QLabel(this, "Logo");
     logo->setBackgroundColor(white);
-    logo->setPixmap(QPixmap((const char **)largelogo_xpm));
+    logo->setPixmap(QPixmap(const_cast<const char**>(largelogo_xpm)));
     Label = new QLabel(tr("Loading plugins"), this);
     Label->setBackgroundColor(white);
     Progress = new QProgressBar(this, "Progress");

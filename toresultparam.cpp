@@ -109,15 +109,15 @@ toResultParam::toResultParam(QWidget *parent, const char *name)
     Toggle->setToggleButton(true);
     if (toIsOracle(connection()))
     {
-        Toggle->setIconSet(QIconSet(QPixmap((const char **)scansource_xpm)));
+        Toggle->setIconSet(QIconSet(QPixmap(const_cast<const char**>(scansource_xpm))));
         connect(Toggle, SIGNAL(toggled(bool)), this, SLOT(showHidden(bool)));
         QToolTip::add
             (Toggle, tr("Display hidden parameters. This will only word if you are logged in as the sys user."));
     }
     else
     {
-        QIconSet iconset(QPixmap((const char **)tocurrent_xpm));
-        iconset.setPixmap(QPixmap((const char **)database_xpm), QIconSet::Automatic, QIconSet::Normal, QIconSet::On);
+        QIconSet iconset(QPixmap(const_cast<const char**>(tocurrent_xpm)));
+        iconset.setPixmap(QPixmap(const_cast<const char**>(database_xpm)), QIconSet::Automatic, QIconSet::Normal, QIconSet::On);
         Toggle->setIconSet(iconset);
         connect(Toggle, SIGNAL(toggled(bool)), this, SLOT(showGlobal(bool)));
         QToolTip::add
@@ -125,25 +125,25 @@ toResultParam::toResultParam(QWidget *parent, const char *name)
     }
     toolbar->addSeparator();
 
-    new QToolButton(QPixmap((const char **)filesave_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(filesave_xpm)),
                     tr("Generate configuration file"),
                     tr("Generate configuration file"),
                     this, SLOT(generateFile()), toolbar);
     toolbar->addSeparator();
     if (toIsOracle(connection()))
     {
-        new QToolButton(QPixmap((const char **)database_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(database_xpm)),
                         tr("Apply changes to system"),
                         tr("Apply changes to system"),
                         this, SLOT(applySystem()), toolbar);
-        new QToolButton(QPixmap((const char **)tocurrent_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(tocurrent_xpm)),
                         tr("Apply changes to session"),
                         tr("Apply changes to session"),
                         this, SLOT(applySession()), toolbar);
     }
     else
     {
-        new QToolButton(QPixmap((const char **)commit_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(commit_xpm)),
                         tr("Apply changes"),
                         tr("Apply changes"),
                         this, SLOT(applyChanges()), toolbar);
@@ -151,7 +151,7 @@ toResultParam::toResultParam(QWidget *parent, const char *name)
     if (toIsOracle(connection()))
     {
         toolbar->addSeparator();
-        new QToolButton(QPixmap((const char **)trash_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(trash_xpm)),
                         tr("Drop current changes"),
                         tr("Drop current changes"),
                         this, SLOT(dropChanges()), toolbar);

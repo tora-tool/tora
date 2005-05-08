@@ -89,7 +89,7 @@ toPieChart::toPieChart(QWidget *parent, const char *name, WFlags f)
     Legend = true;
     DisplayPercent = false;
 
-    setIcon(QPixmap((const char **)chart_xpm));
+    setIcon(QPixmap(const_cast<const char**>(chart_xpm)));
     setMinimumSize(60, 60);
     Menu = NULL;
 
@@ -167,7 +167,7 @@ toPieChart::toPieChart(toPieChart *pie, QWidget *parent, const char *name, WFlag
         DisplayPercent(pie->DisplayPercent),
         Title(pie->Title)
 {
-    setIcon(QPixmap((const char **)chart_xpm));
+    setIcon(QPixmap(const_cast<const char**>(chart_xpm)));
     Menu = NULL;
 
     setMinimumSize(60, 60);
@@ -188,7 +188,7 @@ void toPieChart::mousePressEvent(QMouseEvent *e)
         if (!Menu)
         {
             Menu = new QPopupMenu(this);
-            Menu->insertItem(QPixmap((const char **)print_xpm), tr("&Print..."), this, SLOT(editPrint()));
+            Menu->insertItem(QPixmap(const_cast<const char**>(print_xpm)), tr("&Print..."), this, SLOT(editPrint()));
             Menu->insertItem(tr("&Open in new window"), this, SLOT(openCopy()));
         }
         Menu->popup(e->globalPos());

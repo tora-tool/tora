@@ -87,7 +87,7 @@ class toSessionTool : public toTool
 protected:
     virtual const char **pictureXPM(void)
     {
-        return tosession_xpm;
+        return const_cast<const char**>(tosession_xpm);
     }
 public:
     toSessionTool()
@@ -229,7 +229,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
 {
     QToolBar *toolbar = toAllocBar(this, tr("Session manager"));
 
-    new QToolButton(QPixmap((const char **)refresh_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                     tr("Update sessionlist"),
                     tr("Update sessionlist"),
                     this, SLOT(refresh(void)),
@@ -246,18 +246,18 @@ toSession::toSession(QWidget *main, toConnection &connection)
     connect(Select, SIGNAL(activated(int)), this, SLOT(refresh()));
 
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)clock_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(clock_xpm)),
                     tr("Enable timed statistics"),
                     tr("Enable timed statistics"),
                     this, SLOT(enableStatistics(void)),
                     toolbar);
-    new QToolButton(QPixmap((const char **)noclock_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(noclock_xpm)),
                     tr("Disable timed statistics"),
                     tr("Disable timed statistics"),
                     this, SLOT(disableStatistics(void)),
                     toolbar);
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)kill_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(kill_xpm)),
                     tr("Disconnect selected session"),
                     tr("Disconnect selected session"),
                     this, SLOT(disconnectSession(void)),
@@ -269,16 +269,16 @@ toSession::toSession(QWidget *main, toConnection &connection)
 
     QToolButton *btn = new QToolButton(toolbar);
     btn->setToggleButton(true);
-    btn->setIconSet(QPixmap((const char **)filter_xpm));
+    btn->setIconSet(QPixmap(const_cast<const char**>(filter_xpm)));
     connect(btn, SIGNAL(toggled(bool)), this, SLOT(excludeSelection(bool)));
     QToolTip::add
         (btn, tr("Exclude selected sessions"));
-    new QToolButton(QPixmap((const char **)add_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(add_xpm)),
                     tr("Select all sessions"),
                     tr("Select all sessions"),
                     this, SLOT(selectAll(void)),
                     toolbar);
-    new QToolButton(QPixmap((const char **)minus_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(minus_xpm)),
                     tr("Deselect all sessions"),
                     tr("Deselect all sessions"),
                     this, SLOT(selectNone(void)),
@@ -472,16 +472,16 @@ void toSession::windowActivated(QWidget *widget)
         if (!ToolMenu)
         {
             ToolMenu = new QPopupMenu(this);
-            ToolMenu->insertItem(QPixmap((const char **)refresh_xpm), tr("&Refresh"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("&Refresh"),
                                  this, SLOT(refresh(void)),
                                  toKeySequence(tr("F5", "Session|Refresh")));
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)clock_xpm), tr("Enable timed statistics"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(clock_xpm)), tr("Enable timed statistics"),
                                  this, SLOT(enableStatistics(void)));
-            ToolMenu->insertItem(QPixmap((const char **)noclock_xpm), tr("Disable timed statistics"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(noclock_xpm)), tr("Disable timed statistics"),
                                  this, SLOT(disableStatistics(void)));
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)kill_xpm), tr("Disconnect session"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(kill_xpm)), tr("Disconnect session"),
                                  this, SLOT(disconnectSession(void)));
             ToolMenu->insertSeparator();
             ToolMenu->insertItem(tr("&Change Refresh"), Refresh, SLOT(setFocus(void)),

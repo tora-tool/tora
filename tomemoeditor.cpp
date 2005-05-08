@@ -139,22 +139,22 @@ toMemoEditor::toMemoEditor(QWidget *parent, const QString &str, int row, int col
     QToolButton *btn;
     if (Row >= 0 && Col >= 0 && !listView())
     {
-        new QToolButton(QPixmap((const char **)commit_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(commit_xpm)),
                         tr("Save changes"),
                         tr("Save changes"),
                         this, SLOT(store(void)),
                         Toolbar);
         Toolbar->addSeparator();
-        new QToolButton(QPixmap((const char **)fileopen_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(fileopen_xpm)),
                         tr("Open file"),
                         tr("Open file"),
                         this, SLOT(openFile()), Toolbar);
-        new QToolButton(QPixmap((const char **)filesave_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(filesave_xpm)),
                         tr("Save file"),
                         tr("Save file"),
                         this, SLOT(saveFile()), Toolbar);
         Toolbar->addSeparator();
-        btn = new QToolButton(QPixmap((const char **)cut_xpm),
+        btn = new QToolButton(QPixmap(const_cast<const char**>(cut_xpm)),
                               tr("Cut to clipboard"),
                               tr("Cut to clipboard"),
                               Editor, SLOT(cut()), Toolbar);
@@ -164,13 +164,13 @@ toMemoEditor::toMemoEditor(QWidget *parent, const QString &str, int row, int col
     }
     else
     {
-        new QToolButton(QPixmap((const char **)filesave_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(filesave_xpm)),
                         tr("Save file"),
                         tr("Save file"),
                         this, SLOT(saveFile()), Toolbar);
         Toolbar->addSeparator();
     }
-    btn = new QToolButton(QPixmap((const char **)copy_xpm),
+    btn = new QToolButton(QPixmap(const_cast<const char**>(copy_xpm)),
                           tr("Copy to clipboard"),
                           tr("Copy to clipboard"),
                           Editor, SLOT(copy()), Toolbar);
@@ -178,7 +178,7 @@ toMemoEditor::toMemoEditor(QWidget *parent, const QString &str, int row, int col
             btn, SLOT(setEnabled(bool)));
     btn->setEnabled(false);
     if (Row >= 0 && Col >= 0 && !listView())
-        new QToolButton(QPixmap((const char **)paste_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(paste_xpm)),
                         tr("Paste from clipboard"),
                         tr("Paste from clipboard"),
                         Editor, SLOT(paste()), Toolbar);
@@ -187,19 +187,19 @@ toMemoEditor::toMemoEditor(QWidget *parent, const QString &str, int row, int col
     if (lst || navigation)
     {
         Toolbar->addSeparator();
-        new QToolButton(QPixmap((const char **)rewind_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(rewind_xpm)),
                         tr("First column"),
                         tr("First column"),
                         this, SLOT(firstColumn()), Toolbar);
-        new QToolButton(QPixmap((const char **)previous_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(previous_xpm)),
                         tr("Previous column"),
                         tr("Previous column"),
                         this, SLOT(previousColumn()), Toolbar);
-        new QToolButton(QPixmap((const char **)next_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(next_xpm)),
                         tr("Next column"),
                         tr("Next column"),
                         this, SLOT(nextColumn()), Toolbar);
-        new QToolButton(QPixmap((const char **)forward_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(forward_xpm)),
                         tr("Last column"),
                         tr("Last column"),
                         this, SLOT(lastColumn()), Toolbar);

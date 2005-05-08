@@ -68,7 +68,7 @@ public:
      * @param source Source list view to get data from.
      */
     toVisualize(toListView *Source, QWidget *parent, const char *name = NULL);
-    public slots:
+public slots:
     /** Refresh result
      */
     void display(void);

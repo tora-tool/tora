@@ -70,7 +70,7 @@ public:
     toResultColsComment(QWidget *parent);
     void setComment(bool table, const QString &name, const QString &comment);
     void setCachedComment(bool table, const QString &name, QString &comment);
-    public slots:
+public slots:
     void commentChanged();
 };
 
@@ -87,7 +87,7 @@ class toResultCols : public QVBox, public toResult
     class resultColsEdit;
     friend class resultCols;
     friend class resultColsEdit;
-    class resultColsEdit : public toResultItem
+class resultColsEdit : public toResultItem
     {
         QString Table;
         bool Cached;
@@ -100,7 +100,7 @@ class toResultCols : public QVBox, public toResult
         void describe(toQDescList &desc, const QString &table, bool cached);
         friend class resultCols;
     };
-    class resultCols : public toListView
+class resultCols : public toListView
     {
         resultColsEdit *Edit;
         QString Owner;
@@ -190,7 +190,7 @@ public:
 #endif
 
     friend class toResultColsItem;
-    public slots:
+public slots:
     /** Erase last parameters
      */
     virtual void clearParams(void)
@@ -221,7 +221,7 @@ public:
     {
         toResult::changeParams(Param1, Param2, Param3);
     }
-    private slots:
+private slots:
     void editComment(bool val);
 };
 

@@ -25,7 +25,7 @@ public:
     void setTable(const QString &table);
 signals:
     void selectTable(const QString &table);
-    private slots:
+private slots:
     void setup(void);
     void changeSchema(void);
     void changeTable(void);

@@ -1,5 +1,5 @@
 /* XPM */
-static const char * addrole_xpm[] = {
+static const char* const addrole_xpm[] = {
 "16 16 5 1",
 " 	c None",
 ".	c #000000",

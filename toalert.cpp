@@ -86,7 +86,7 @@ protected:
 
     virtual const char **pictureXPM(void)
     {
-        return toalert_xpm;
+        return const_cast<const char**>(toalert_xpm);
     }
 public:
     toAlertTool()
@@ -158,14 +158,14 @@ toAlert::toAlert(QWidget *main, toConnection &connection)
 
     AddNames.insert(AddNames.end(), def);
 
-    new QToolButton(QPixmap((const char **)commit_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(commit_xpm)),
                     tr("Register current"),
                     tr("Register current"),
                     this, SLOT(add
                                ()),
                     toolbar);
 
-    new QToolButton(QPixmap((const char **)trash_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(trash_xpm)),
                     tr("Remove registered"),
                     tr("Remove registered"),
                     this, SLOT(remove
@@ -181,13 +181,13 @@ toAlert::toAlert(QWidget *main, toConnection &connection)
     new QLabel(tr("Message") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
     Message = new QLineEdit(toolbar, TO_KDE_TOOLBAR_WIDGET);
     connect(Message, SIGNAL(returnPressed()), this, SLOT(send()));
-    new QToolButton(QPixmap((const char **)toworksheet_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(toworksheet_xpm)),
                     tr("Edit message in memo"),
                     tr("Edit message in memo"),
                     this, SLOT(memo()),
                     toolbar);
     toolbar->setStretchableWidget(Message);
-    new QToolButton(QPixmap((const char **)return_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(return_xpm)),
                     tr("Send alert"),
                     tr("Send alert"),
                     this, SLOT(send()),
@@ -227,15 +227,15 @@ void toAlert::windowActivated(QWidget *widget)
         {
             ToolMenu = new QPopupMenu(this);
             ToolMenu->insertItem(tr("&Add name"), Registered, SLOT(setFocus()), toKeySequence(tr("Alt+R", "Alert|Add Name")));
-            ToolMenu->insertItem(QPixmap((const char **)trash_xpm), tr("&Remove name"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(trash_xpm)), tr("&Remove name"),
                                  this, SLOT(remove
                                             (void)), toKeySequence(tr("Ctrl+Backspace", "Alert|Remove name")));
             ToolMenu->insertSeparator();
             ToolMenu->insertItem(tr("Edit &name"), Name, SLOT(setFocus()), toKeySequence(tr("Alt+N", "Alert|Edit name")));
             ToolMenu->insertItem(tr("Edit &message"), Message, SLOT(setFocus()), toKeySequence(tr("Alt+M", "Alert|Message")));
-            ToolMenu->insertItem(QPixmap((const char **)toworksheet_xpm), tr("&Message in memo..."),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(toworksheet_xpm)), tr("&Message in memo..."),
                                  this, SLOT(memo(void)), toKeySequence(tr("Ctrl+M", "Alert|Message in memo")));
-            ToolMenu->insertItem(QPixmap((const char **)return_xpm), tr("&Send alert"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(return_xpm)), tr("&Send alert"),
                                  this, SLOT(send(void)), toKeySequence(tr("Ctrl+Return", "Alert|Send alert")));
 
             toMainWidget()->menuBar()->insertItem(tr("&Alert"), ToolMenu, -1, toToolMenuIndex());

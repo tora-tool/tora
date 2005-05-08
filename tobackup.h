@@ -60,7 +60,7 @@ class toBackup : public toToolWidget
 public:
     toBackup(QWidget *parent, toConnection &connection);
     virtual ~toBackup();
-    public slots:
+public slots:
     void refresh(void);
     void windowActivated(QWidget *widget);
 };

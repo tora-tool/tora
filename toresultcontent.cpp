@@ -312,14 +312,14 @@ toResultContentEditor::toResultContentEditor(QWidget *parent, const char *name)
     Menu = new QPopupMenu(this);
     Menu->insertItem(tr("&Display in editor..."), TORESULT_MEMO);
     Menu->insertSeparator();
-    Menu->insertItem(QPixmap((const char **)addrecord_xpm), tr("New record"), this, SLOT(addRecord()));
-    Menu->insertItem(QPixmap((const char **)duplicaterecord_xpm), tr("Copy record"), this, SLOT(duplicateRecord()));
-    Menu->insertItem(QPixmap((const char **)saverecord_xpm), tr("Save changes"), this, SLOT(saveUnsaved()));
-    Menu->insertItem(QPixmap((const char **)canceledit_xpm), tr("Discard changes"), this, SLOT(cancelEdit()));
-    Menu->insertItem(QPixmap((const char **)trash_xpm), tr("Delete record"), this, SLOT(deleteCurrent()));
+    Menu->insertItem(QPixmap(const_cast<const char**>(addrecord_xpm)), tr("New record"), this, SLOT(addRecord()));
+    Menu->insertItem(QPixmap(const_cast<const char**>(duplicaterecord_xpm)), tr("Copy record"), this, SLOT(duplicateRecord()));
+    Menu->insertItem(QPixmap(const_cast<const char**>(saverecord_xpm)), tr("Save changes"), this, SLOT(saveUnsaved()));
+    Menu->insertItem(QPixmap(const_cast<const char**>(canceledit_xpm)), tr("Discard changes"), this, SLOT(cancelEdit()));
+    Menu->insertItem(QPixmap(const_cast<const char**>(trash_xpm)), tr("Delete record"), this, SLOT(deleteCurrent()));
     Menu->insertSeparator();
-    Menu->insertItem(QPixmap((const char **)filter_xpm), tr("Define filter"), parentWidget(), SLOT(changeFilter()));
-    Menu->insertItem(QPixmap((const char **)nofilter_xpm), tr("Remove all filters"), parentWidget(), SLOT(removeFilter()));
+    Menu->insertItem(QPixmap(const_cast<const char**>(filter_xpm)), tr("Define filter"), parentWidget(), SLOT(changeFilter()));
+    Menu->insertItem(QPixmap(const_cast<const char**>(nofilter_xpm)), tr("Remove all filters"), parentWidget(), SLOT(removeFilter()));
     Menu->insertSeparator();
     Menu->insertItem(tr("&Copy field"), TORESULT_COPY_FIELD);
     Menu->insertItem(tr("&Paste field"), TORESULT_PASTE);
@@ -1461,7 +1461,7 @@ toResultContent::toResultContent(QWidget *parent, const char *name)
     QToolBar *toolbar = toAllocBar(this, tr("Content editor"));
     Editor = new toResultContentEditor(this, name);
 
-    QToolButton *btn = new QToolButton(QPixmap((const char **)filter_xpm),
+    QToolButton *btn = new QToolButton(QPixmap(const_cast<const char**>(filter_xpm)),
                                        tr("Define filter for editor"),
                                        tr("Define filter for editor"),
                                        this, SLOT(changeFilter()), toolbar);
@@ -1471,45 +1471,45 @@ toResultContent::toResultContent(QWidget *parent, const char *name)
             SLOT(setOn(bool)));
     btn->setToggleButton(true);
 
-    new QToolButton(QPixmap((const char **)nofilter_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(nofilter_xpm)),
                     tr("Remove any filter"),
                     tr("Remove any filter"),
                     this, SLOT(removeFilter()), toolbar);
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)addrecord_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(addrecord_xpm)),
                     tr("Add a new record"),
                     tr("Add a new record"),
                     Editor, SLOT(addRecord()), toolbar);
-    new QToolButton(QPixmap((const char **)duplicaterecord_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(duplicaterecord_xpm)),
                     tr("Duplicate an existing record"),
                     tr("Duplicate an existing record"),
                     Editor, SLOT(duplicateRecord()), toolbar);
-    new QToolButton(QPixmap((const char **)saverecord_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(saverecord_xpm)),
                     tr("Save changes"),
                     tr("Save changes"),
                     Editor, SLOT(saveUnsaved()), toolbar);
-    new QToolButton(QPixmap((const char **)canceledit_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(canceledit_xpm)),
                     tr("Discard changes"),
                     tr("Discard changes"),
                     Editor, SLOT(cancelEdit()), toolbar);
-    new QToolButton(QPixmap((const char **)trash_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(trash_xpm)),
                     tr("Delete current record from table"),
                     tr("Delete current record from table"),
                     Editor, SLOT(deleteCurrent()), toolbar);
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)rewind_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(rewind_xpm)),
                     tr("Go to first row"),
                     tr("Go to first row"),
                     Editor, SLOT(gotoFirstRecord()), toolbar);
-    new QToolButton(QPixmap((const char **)previous_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(previous_xpm)),
                     tr("Go to previous row"),
                     tr("Go to previous row"),
                     Editor, SLOT(gotoPreviousRecord()), toolbar);
-    new QToolButton(QPixmap((const char **)next_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(next_xpm)),
                     tr("Go to next row"),
                     tr("Go to next row"),
                     Editor, SLOT(gotoNextRecord()), toolbar);
-    new QToolButton(QPixmap((const char **)forward_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(forward_xpm)),
                     tr("Go to last row"),
                     tr("Go to last row"),
                     Editor, SLOT(gotoLastRecord()), toolbar);
@@ -1517,7 +1517,7 @@ toResultContent::toResultContent(QWidget *parent, const char *name)
 
     btn = new QToolButton(toolbar);
     btn->setToggleButton(true);
-    btn->setIconSet(QIconSet(QPixmap((const char **)single_xpm)));
+    btn->setIconSet(QIconSet(QPixmap(const_cast<const char**>(single_xpm))));
     connect(btn, SIGNAL(toggled(bool)), Editor, SLOT(singleRecordForm(bool)));
     QToolTip::add
         (btn, tr("Toggle between table or single record editing"));

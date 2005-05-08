@@ -1,5 +1,5 @@
 /* XPM */
-static const char * tree_xpm[] = {
+static const char* const tree_xpm[] = {
 "16 16 4 1",
 " 	c None",
 ".	c #E69500",

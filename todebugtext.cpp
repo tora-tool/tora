@@ -273,9 +273,9 @@ toDebugText::toDebugText(QListView *breakpoints,
     CurrentItem = FirstItem = NULL;
     NoBreakpoints = false;
     if (!toBreakpointPixmap)
-        toBreakpointPixmap = new QPixmap((const char **)breakpoint_xpm);
+        toBreakpointPixmap = new QPixmap(const_cast<const char**>(breakpoint_xpm));
     if (!toDisBreakpointPixmap)
-        toDisBreakpointPixmap = new QPixmap((const char **)disbreakpoint_xpm);
+        toDisBreakpointPixmap = new QPixmap(const_cast<const char**>(disbreakpoint_xpm));
 }
 
 bool toDebugText::checkItem(toBreakpointItem *item)

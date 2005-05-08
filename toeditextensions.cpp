@@ -519,23 +519,23 @@ public:
                                      toKeySequence(qApp->translate("toEditExtensionTool", "Ctrl+L", "Edit|Lowercase")));
         toMainWidget()->editMenu()->insertItem(qApp->translate("toEditExtensionTool", "Modify Case"), menu);
 
-        IndentIndex = toMainWidget()->editMenu()->insertItem(QPixmap((const char **)indent_xpm),
+        IndentIndex = toMainWidget()->editMenu()->insertItem(QPixmap(const_cast<const char**>(indent_xpm)),
                       qApp->translate("toEditExtensionTool", "Indent Block"), &EditExtensions,
                       SLOT(indentBlock()),
                       toKeySequence(qApp->translate("toEditExtensionTool", "Alt+Right", "Edit|Indent block")));
-        DeindentIndex = toMainWidget()->editMenu()->insertItem(QPixmap((const char **)deindent_xpm),
+        DeindentIndex = toMainWidget()->editMenu()->insertItem(QPixmap(const_cast<const char**>(deindent_xpm)),
                         qApp->translate("toEditExtensionTool", "De-indent Block"), &EditExtensions,
                         SLOT(deindentBlock()),
                         toKeySequence(qApp->translate("toEditExtensionTool", "Alt+Left", "Edit|De-indent block")));
         GotoLine = toMainWidget()->editMenu()->insertItem(qApp->translate("toEditExtensionTool", "Goto Line"), &EditExtensions,
                    SLOT(gotoLine()));
 
-        IndentButton = new QToolButton(QPixmap((const char **)indent_xpm),
+        IndentButton = new QToolButton(QPixmap(const_cast<const char**>(indent_xpm)),
                                        qApp->translate("toEditExtensionTool", "Indent block in editor"),
                                        qApp->translate("toEditExtensionTool", "Indent block in editor"),
                                        &EditExtensions, SLOT(indentBlock()),
                                        toMainWidget()->editToolbar());
-        DeindentButton = new QToolButton(QPixmap((const char **)deindent_xpm),
+        DeindentButton = new QToolButton(QPixmap(const_cast<const char**>(deindent_xpm)),
                                          qApp->translate("toEditExtensionTool", "De-indent block in editor"),
                                          qApp->translate("toEditExtensionTool", "De-indent block in editor"),
                                          &EditExtensions, SLOT(deindentBlock()),

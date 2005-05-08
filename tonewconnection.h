@@ -60,7 +60,7 @@ public:
     toNewConnection(QWidget* parent = 0, const char* name = 0, bool modal = false, WFlags fl = 0);
     ~toNewConnection();
     toConnection *makeConnection();
-    public slots:
+public slots:
     virtual void historyDelete(void);
     virtual void menuCallback(int);
     virtual void historySelection(void);

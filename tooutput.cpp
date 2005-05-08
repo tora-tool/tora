@@ -128,7 +128,7 @@ protected:
 
     virtual const char **pictureXPM(void)
     {
-        return tooutput_xpm;
+        return const_cast<const char**>(tooutput_xpm);
     }
 public:
     toOutputTool()
@@ -173,7 +173,7 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
 {
     ToolBar = toAllocBar(this, tr("SQL Output"));
 
-    new QToolButton(QPixmap((const char **)refresh_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                     tr("Poll for output now"),
                     tr("Poll for output now"),
                     this, SLOT(refresh(void)),
@@ -184,13 +184,13 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
 #if QT_VERSION >= 0x030000
 
     QIconSet iconset;
-    iconset.setPixmap(QPixmap((const char **)online_xpm), QIconSet::Automatic, QIconSet::Normal, QIconSet::Off);
-    iconset.setPixmap(QPixmap((const char **)offline_xpm), QIconSet::Automatic, QIconSet::Normal, QIconSet::On);
+    iconset.setPixmap(QPixmap(const_cast<const char**>(online_xpm)), QIconSet::Automatic, QIconSet::Normal, QIconSet::Off);
+    iconset.setPixmap(QPixmap(const_cast<const char**>(offline_xpm)), QIconSet::Automatic, QIconSet::Normal, QIconSet::On);
     DisableButton->setIconSet(iconset);
 #else
 
-    DisableButton->setIconSet(QIconSet(QPixmap((const char **)online_xpm)), false);
-    DisableButton->setIconSet(QIconSet(QPixmap((const char **)offline_xpm)), true);
+    DisableButton->setIconSet(QIconSet(QPixmap(const_cast<const char**>(online_xpm))), false);
+    DisableButton->setIconSet(QIconSet(QPixmap(const_cast<const char**>(offline_xpm))), true);
 #endif
 
     DisableButton->setOn(!enabled);
@@ -198,7 +198,7 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
     QToolTip::add
         (DisableButton, tr("Enable or disable getting SQL output."));
 
-    new QToolButton(QPixmap((const char **)eraselog_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(eraselog_xpm)),
                     tr("Clear output"),
                     tr("Clear output"),
                     this, SLOT(clear()),
@@ -236,14 +236,14 @@ void toOutput::windowActivated(QWidget *widget)
         if (!ToolMenu)
         {
             ToolMenu = new QPopupMenu(this);
-            ToolMenu->insertItem(QPixmap((const char **)refresh_xpm), tr("&Refresh"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("&Refresh"),
                                  this, SLOT(refresh(void)),
                                  toKeySequence(tr("F5", "Output|Refresh")));
             ToolMenu->insertSeparator();
             ToolMenu->insertItem(tr("Output enabled"),
                                  this, SLOT(toggleMenu()),
                                  toKeySequence(tr("F4", "Output|Enable")), TO_ID_TOGGLE);
-            ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm), tr("Clear output"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(eraselog_xpm)), tr("Clear output"),
                                  this, SLOT(clear()),
                                  toKeySequence(tr("Ctrl+Backspace", "Output|Clear output")));
             ToolMenu->insertSeparator();

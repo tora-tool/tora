@@ -127,13 +127,13 @@ signals:
      * @param ses New session ID as string.
      */
     void sessionChanged(const QString &);
-    public slots:
+public slots:
     /** Update the statistics.
      * @param reset Set delta to current values. This means that the next time this widget
      *              is updated the delta will be from the new values.
      */
     void refreshStats(bool reset = true);
-    private slots:
+private slots:
     void poll(void);
 };
 

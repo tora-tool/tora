@@ -74,7 +74,7 @@ protected:
 
     virtual const char **pictureXPM(void)
     {
-        return tocurrent_xpm;
+        return const_cast<const char**>(tocurrent_xpm);
     }
 public:
     toCurrentInfoTool()
@@ -123,7 +123,7 @@ toCurrent::toCurrent(QWidget *main, toConnection &connection)
 {
     QToolBar *toolbar = toAllocBar(this, tr("Current Session"));
 
-    new QToolButton(QPixmap((const char **)refresh_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                     tr("Update"),
                     tr("Update"),
                     this, SLOT(refresh(void)),
@@ -174,7 +174,7 @@ void toCurrent::windowActivated(QWidget *widget)
         if (!ToolMenu)
         {
             ToolMenu = new QPopupMenu(this);
-            ToolMenu->insertItem(QPixmap((const char **)refresh_xpm), tr("&Refresh"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("&Refresh"),
                                  this, SLOT(refresh(void)),
                                  toKeySequence(tr("F5", "Current session|Refresh")));
             toMainWidget()->menuBar()->insertItem(tr("&Current Session"), ToolMenu, -1, toToolMenuIndex());

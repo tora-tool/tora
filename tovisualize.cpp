@@ -71,21 +71,21 @@ toVisualize::toVisualize(toListView *source, QWidget *parent, const char *name)
 
     Legend = new QToolButton(toolbar);
     Legend->setToggleButton(true);
-    Legend->setIconSet(QIconSet(QPixmap((const char **)legend_xpm)));
+    Legend->setIconSet(QIconSet(QPixmap(const_cast<const char**>(legend_xpm))));
     QToolTip::add
         (Legend, tr("Display legend"));
     Legend->setOn(true);
 
     Grid = new QToolButton(toolbar);
     Grid->setToggleButton(true);
-    Grid->setIconSet(QIconSet(QPixmap((const char **)grid_xpm)));
+    Grid->setIconSet(QIconSet(QPixmap(const_cast<const char**>(grid_xpm))));
     QToolTip::add
         (Grid, tr("Display grid"));
     Grid->setOn(true);
 
     Axis = new QToolButton(toolbar);
     Axis->setToggleButton(true);
-    Axis->setIconSet(QIconSet(QPixmap((const char **)axis_xpm)));
+    Axis->setIconSet(QIconSet(QPixmap(const_cast<const char**>(axis_xpm))));
     QToolTip::add
         (Axis, tr("Display axis legend"));
     Axis->setOn(true);
@@ -103,7 +103,7 @@ toVisualize::toVisualize(toListView *source, QWidget *parent, const char *name)
 
     toolbar->addSeparator();
 
-    new QToolButton(QPixmap((const char **)execute_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(execute_xpm)),
                     tr("Update chart"),
                     tr("Update chart"),
                     this, SLOT(display(void)),

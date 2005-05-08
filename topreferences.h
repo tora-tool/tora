@@ -65,7 +65,7 @@ public:
 
     static void displayPreferences(QWidget *parent);
 
-    public slots:
+public slots:
     void saveSetting(void);
     void selectTab(QListBoxItem *item);
     void help(void);

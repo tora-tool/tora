@@ -186,7 +186,7 @@ class toScriptTool : public toTool
 protected:
     virtual const char **pictureXPM(void)
     {
-        return toscript_xpm;
+        return const_cast<const char**>(toscript_xpm);
     }
 public:
     toScriptTool()
@@ -224,7 +224,7 @@ toScript::toScript(QWidget *parent, toConnection &connection)
 {
     QToolBar *toolbar = toAllocBar(this, tr("Extraction and Compare"));
 
-    new QToolButton(QPixmap((const char **)execute_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(execute_xpm)),
                     tr("Perform defined extraction"),
                     tr("Perform defined extraction"),
                     this, SLOT(execute(void)),

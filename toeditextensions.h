@@ -60,7 +60,7 @@ public:
     virtual void receivedFocus(toEditWidget *widget);
     virtual void lostFocus(toEditWidget *widget);
 
-    public slots:
+public slots:
     void indentBlock(void);
     void deindentBlock(void);
 

@@ -182,7 +182,7 @@ class toSecurityTool : public toTool
 protected:
     virtual const char **pictureXPM(void)
     {
-        return tosecurity_xpm;
+        return const_cast<const char**>(tosecurity_xpm);
     }
 public:
     toSecurityTool()
@@ -1507,42 +1507,42 @@ toSecurity::toSecurity(QWidget *main, toConnection &connection)
     QToolBar *toolbar = toAllocBar(this, tr("Security manager"));
     toolbar->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
 
-    new QToolButton(QPixmap((const char **)refresh_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                     tr("Update user and role list"),
                     tr("Update user and role list"),
                     this, SLOT(refresh(void)),
                     toolbar);
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)commit_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(commit_xpm)),
                     tr("Save changes"),
                     tr("Save changes"),
                     this, SLOT(saveChanges(void)),
                     toolbar);
-    DropButton = new QToolButton(QPixmap((const char **)trash_xpm),
+    DropButton = new QToolButton(QPixmap(const_cast<const char**>(trash_xpm)),
                                  tr("Remove user/role"),
                                  tr("Remove user/role"),
                                  this, SLOT(drop(void)),
                                  toolbar);
     DropButton->setEnabled(false);
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)adduser_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(adduser_xpm)),
                     tr("Add new user"),
                     tr("Add new user"),
                     this, SLOT(addUser(void)),
                     toolbar);
-    new QToolButton(QPixmap((const char **)addrole_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(addrole_xpm)),
                     tr("Add new role"),
                     tr("Add new role"),
                     this, SLOT(addRole(void)),
                     toolbar);
-    CopyButton = new QToolButton(QPixmap((const char **)copyuser_xpm),
+    CopyButton = new QToolButton(QPixmap(const_cast<const char**>(copyuser_xpm)),
                                  tr("Copy current user or role"),
                                  tr("Copy current user or role"),
                                  this, SLOT(copy(void)),
                                  toolbar);
     CopyButton->setEnabled(false);
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)sql_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(sql_xpm)),
                     tr("Display SQL needed to make current changes"),
                     tr("Display SQL needed to make current changes"),
                     this, SLOT(displaySQL(void)),
@@ -1589,27 +1589,27 @@ void toSecurity::windowActivated(QWidget *widget)
         if (!ToolMenu)
         {
             ToolMenu = new QPopupMenu(this);
-            ToolMenu->insertItem(QPixmap((const char **)refresh_xpm), tr("&Refresh"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("&Refresh"),
                                  this, SLOT(refresh(void)),
                                  toKeySequence(tr("F5", "Security|Refresh")));
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)commit_xpm), tr("&Save changes"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(commit_xpm)), tr("&Save changes"),
                                  this, SLOT(saveChanges()),
                                  toKeySequence(tr("Ctrl+Return", "Security|Save changes")));
-            ToolMenu->insertItem(QPixmap((const char **)trash_xpm), tr("&Remove user/role"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(trash_xpm)), tr("&Remove user/role"),
                                  this, SLOT(drop()), 0, TO_ID_DROP);
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)adduser_xpm), tr("Add &user"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(adduser_xpm)), tr("Add &user"),
                                  this, SLOT(addUser()),
                                  toKeySequence(tr("Ctrl+Shift+U", "Security|Add user")));
-            ToolMenu->insertItem(QPixmap((const char **)addrole_xpm), tr("Add &role"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(addrole_xpm)), tr("Add &role"),
                                  this, SLOT(addRole()),
                                  toKeySequence(tr("Ctrl+Shift+R", "Security|Add role")));
-            ToolMenu->insertItem(QPixmap((const char **)copyuser_xpm), tr("&Copy current"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(copyuser_xpm)), tr("&Copy current"),
                                  this, SLOT(copy()),
                                  toKeySequence(tr("Ctrl+Shift+O", "Security|Copy current")), TO_ID_COPY);
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)sql_xpm), tr("Display SQL..."),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(sql_xpm)), tr("Display SQL..."),
                                  this, SLOT(displaySQL()),
                                  toKeySequence(tr("F4", "Security|Display SQL")));
             toMainWidget()->menuBar()->insertItem(tr("&Security"), ToolMenu, -1, toToolMenuIndex());

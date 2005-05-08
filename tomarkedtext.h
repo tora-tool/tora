@@ -270,7 +270,7 @@ protected:
     virtual void newLine(void);
     virtual void dropEvent(QDropEvent *);
     virtual void timerEvent(QTimerEvent *);
-    private slots:
+private slots:
     void setRedoAvailable(bool avail)
     {
         redoEnabled(avail);

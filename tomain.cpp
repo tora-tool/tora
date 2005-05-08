@@ -180,33 +180,33 @@ toMain::toMain()
 
     FileMenu = new QPopupMenu(this);
 
-    FileMenu->insertItem(QPixmap((const char **)connect_xpm),
+    FileMenu->insertItem(QPixmap(const_cast<const char**>(connect_xpm)),
                          tr("&New Connection..."), TO_NEW_CONNECTION);
-    FileMenu->insertItem(QPixmap((const char **)disconnect_xpm),
+    FileMenu->insertItem(QPixmap(const_cast<const char**>(disconnect_xpm)),
                          tr("&Close Connection"), this, SLOT(delConnection()), 0, TO_CLOSE_CONNECTION);
 #ifndef OAS
 
     FileMenu->insertSeparator();
-    FileMenu->insertItem(QPixmap((const char **)commit_xpm), tr("&Commit Connection"), TO_FILE_COMMIT);
-    FileMenu->insertItem(QPixmap((const char **)rollback_xpm), tr("&Rollback Connection"), TO_FILE_ROLLBACK);
+    FileMenu->insertItem(QPixmap(const_cast<const char**>(commit_xpm)), tr("&Commit Connection"), TO_FILE_COMMIT);
+    FileMenu->insertItem(QPixmap(const_cast<const char**>(rollback_xpm)), tr("&Rollback Connection"), TO_FILE_ROLLBACK);
     FileMenu->insertItem(tr("C&urrent Connection"), TO_FILE_CURRENT);
-    FileMenu->insertItem(QPixmap((const char **)stop_xpm), tr("Stop All Queries"), TO_STOP_ALL);
-    FileMenu->insertItem(QPixmap((const char **)refresh_xpm), tr("Reread Object Cache"), TO_FILE_CLEARCACHE);
+    FileMenu->insertItem(QPixmap(const_cast<const char**>(stop_xpm)), tr("Stop All Queries"), TO_STOP_ALL);
+    FileMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("Reread Object Cache"), TO_FILE_CLEARCACHE);
 #endif
 
     FileMenu->insertSeparator();
-    FileMenu->insertItem(QPixmap((const char **)fileopen_xpm), tr("&Open File..."), TO_FILE_OPEN);
-    FileMenu->insertItem(QPixmap((const char **)filesave_xpm), tr("&Save"), TO_FILE_SAVE);
+    FileMenu->insertItem(QPixmap(const_cast<const char**>(fileopen_xpm)), tr("&Open File..."), TO_FILE_OPEN);
+    FileMenu->insertItem(QPixmap(const_cast<const char**>(filesave_xpm)), tr("&Save"), TO_FILE_SAVE);
     FileMenu->insertItem(tr("Save A&s..."), TO_FILE_SAVE_AS);
     FileMenu->insertSeparator();
-    FileMenu->insertItem(QPixmap((const char **)fileopen_xpm), tr("Open Session..."),
+    FileMenu->insertItem(QPixmap(const_cast<const char**>(fileopen_xpm)), tr("Open Session..."),
                          TO_FILE_OPEN_SESSION);
-    FileMenu->insertItem(QPixmap((const char **)filesave_xpm), tr("Save Session..."),
+    FileMenu->insertItem(QPixmap(const_cast<const char**>(filesave_xpm)), tr("Save Session..."),
                          TO_FILE_SAVE_SESSION);
     FileMenu->insertItem(tr("Restore Last Session"), TO_FILE_LAST_SESSION);
     FileMenu->insertItem(tr("Close Session"), TO_FILE_CLOSE_SESSION);
     FileMenu->insertSeparator();
-    FileMenu->insertItem(QPixmap((const char **)print_xpm), tr("&Print..."), TO_FILE_PRINT);
+    FileMenu->insertItem(QPixmap(const_cast<const char**>(print_xpm)), tr("&Print..."), TO_FILE_PRINT);
     FileMenu->insertSeparator();
     FileMenu->insertItem(tr("&Quit"), TO_FILE_QUIT);
 
@@ -229,14 +229,14 @@ toMain::toMain()
     connect(FileMenu, SIGNAL(activated(int)), this, SLOT(commandCallback(int)));
 
     EditMenu = new QPopupMenu(this);
-    EditMenu->insertItem(QPixmap((const char **)undo_xpm), tr("&Undo"), TO_EDIT_UNDO);
-    EditMenu->insertItem(QPixmap((const char **)redo_xpm), tr("&Redo"), TO_EDIT_REDO);
+    EditMenu->insertItem(QPixmap(const_cast<const char**>(undo_xpm)), tr("&Undo"), TO_EDIT_UNDO);
+    EditMenu->insertItem(QPixmap(const_cast<const char**>(redo_xpm)), tr("&Redo"), TO_EDIT_REDO);
     EditMenu->insertSeparator();
-    EditMenu->insertItem(QPixmap((const char **)cut_xpm), tr("Cu&t"), TO_EDIT_CUT);
-    EditMenu->insertItem(QPixmap((const char **)copy_xpm), tr("&Copy"), TO_EDIT_COPY);
-    EditMenu->insertItem(QPixmap((const char **)paste_xpm), tr("&Paste"), TO_EDIT_PASTE);
+    EditMenu->insertItem(QPixmap(const_cast<const char**>(cut_xpm)), tr("Cu&t"), TO_EDIT_CUT);
+    EditMenu->insertItem(QPixmap(const_cast<const char**>(copy_xpm)), tr("&Copy"), TO_EDIT_COPY);
+    EditMenu->insertItem(QPixmap(const_cast<const char**>(paste_xpm)), tr("&Paste"), TO_EDIT_PASTE);
     EditMenu->insertSeparator();
-    EditMenu->insertItem(QPixmap((const char **)search_xpm), tr("&Search && Replace..."),
+    EditMenu->insertItem(QPixmap(const_cast<const char**>(search_xpm)), tr("&Search && Replace..."),
                          TO_EDIT_SEARCH);
     EditMenu->insertItem(tr("Search &Next"), TO_EDIT_SEARCH_NEXT);
     EditMenu->insertItem(tr("Select &All"), TO_EDIT_SELECT_ALL);
@@ -244,7 +244,7 @@ toMain::toMain()
     EditMenu->insertSeparator();
     EditMenu->insertItem(
 #ifdef TOAD
-        QPixmap((const char **)options_xpm),
+        QPixmap(const_cast<const char**>(options_xpm)),
 #endif
         tr("&Preferences..."), TO_EDIT_OPTIONS);
 
@@ -272,15 +272,15 @@ toMain::toMain()
 
     EditToolbar = toAllocBar(this, tr("Application"));
 
-    LoadButton = new QToolButton(QPixmap((const char **)fileopen_xpm),
+    LoadButton = new QToolButton(QPixmap(const_cast<const char**>(fileopen_xpm)),
                                  tr("Load file into editor"),
                                  tr("Load file into editor"),
                                  this, SLOT(loadButton()), EditToolbar);
-    SaveButton = new QToolButton(QPixmap((const char **)filesave_xpm),
+    SaveButton = new QToolButton(QPixmap(const_cast<const char**>(filesave_xpm)),
                                  tr("Save file from editor"),
                                  tr("Save file from editor"),
                                  this, SLOT(saveButton()), EditToolbar);
-    PrintButton = new QToolButton(QPixmap((const char **)print_xpm),
+    PrintButton = new QToolButton(QPixmap(const_cast<const char**>(print_xpm)),
                                   tr("Print"),
                                   tr("Print"),
                                   this, SLOT(printButton()), EditToolbar);
@@ -289,35 +289,35 @@ toMain::toMain()
     SaveButton->setEnabled(false);
 #ifdef TOAD
 
-    new QToolButton(QPixmap((const char **)options_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(options_xpm)),
                     tr("Edit options"),
                     tr("Edit options"),
                     this, SLOT(optionButton()), EditToolbar);
 #endif
 
     EditToolbar->addSeparator();
-    UndoButton = new QToolButton(QPixmap((const char **)undo_xpm),
+    UndoButton = new QToolButton(QPixmap(const_cast<const char**>(undo_xpm)),
                                  tr("Undo"),
                                  tr("Undo"),
                                  this, SLOT(undoButton()), EditToolbar);
-    RedoButton = new QToolButton(QPixmap((const char **)redo_xpm),
+    RedoButton = new QToolButton(QPixmap(const_cast<const char**>(redo_xpm)),
                                  tr("Redo"),
                                  tr("Redo"),
                                  this, SLOT(redoButton()), EditToolbar);
-    CutButton = new QToolButton(QPixmap((const char **)cut_xpm),
+    CutButton = new QToolButton(QPixmap(const_cast<const char**>(cut_xpm)),
                                 tr("Cut to clipboard"),
                                 tr("Cut to clipboard"),
                                 this, SLOT(cutButton()), EditToolbar);
-    CopyButton = new QToolButton(QPixmap((const char **)copy_xpm),
+    CopyButton = new QToolButton(QPixmap(const_cast<const char**>(copy_xpm)),
                                  tr("Copy to clipboard"),
                                  tr("Copy to clipboard"),
                                  this, SLOT(copyButton()), EditToolbar);
-    PasteButton = new QToolButton(QPixmap((const char **)paste_xpm),
+    PasteButton = new QToolButton(QPixmap(const_cast<const char**>(paste_xpm)),
                                   tr("Paste from clipboard"),
                                   tr("Paste from clipboard"),
                                   this, SLOT(pasteButton()), EditToolbar);
     EditToolbar->addSeparator();
-    SearchButton = new QToolButton(QPixmap((const char **)search_xpm),
+    SearchButton = new QToolButton(QPixmap(const_cast<const char**>(search_xpm)),
                                    tr("Search & replace"),
                                    tr("Search & replace"),
                                    this, SLOT(searchButton()), EditToolbar);
@@ -330,11 +330,11 @@ toMain::toMain()
     SearchButton->setEnabled(false);
 
     ConnectionToolbar = toAllocBar(this, tr("Connections"));
-    new QToolButton(QPixmap((const char **)connect_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(connect_xpm)),
                     tr("Connect to database"),
                     tr("Connect to database"),
                     this, SLOT(addConnection()), ConnectionToolbar);
-    DisconnectButton = new QToolButton(QPixmap((const char **)disconnect_xpm),
+    DisconnectButton = new QToolButton(QPixmap(const_cast<const char**>(disconnect_xpm)),
                                        tr("Disconnect current connection"),
                                        tr("Disconnect current connection"),
                                        this, SLOT(delConnection()), ConnectionToolbar);
@@ -342,16 +342,16 @@ toMain::toMain()
 #ifndef OAS
 
     ConnectionToolbar->addSeparator();
-    NeedConnection[new QToolButton(QPixmap((const char **)commit_xpm),
+    NeedConnection[new QToolButton(QPixmap(const_cast<const char**>(commit_xpm)),
                                    tr("Commit connection"),
                                    tr("Commit connection"),
                                    this, SLOT(commitButton()), ConnectionToolbar)] = true;
-    NeedConnection[new QToolButton(QPixmap((const char **)rollback_xpm),
+    NeedConnection[new QToolButton(QPixmap(const_cast<const char**>(rollback_xpm)),
                                    tr("Rollback connection"),
                                    tr("Rollback connection"),
                                    this, SLOT(rollbackButton()), ConnectionToolbar)] = true;
     ConnectionToolbar->addSeparator();
-    NeedConnection[new QToolButton(QPixmap((const char **)stop_xpm),
+    NeedConnection[new QToolButton(QPixmap(const_cast<const char**>(stop_xpm)),
                                    tr("Stop all running queries on connection"),
                                    tr("Stop all running queries on connection"),
                                    this, SLOT(stopButton()), ConnectionToolbar)] = true;
@@ -454,7 +454,7 @@ toMain::toMain()
 
 #ifdef TO_KDE
 
-    KDockWidget *mainDock = createDockWidget(tr(buffer), QPixmap((const char **)toramini_xpm));
+    KDockWidget *mainDock = createDockWidget(tr(buffer), QPixmap(const_cast<const char**>(toramini_xpm)));
     Workspace = new QWorkspace(mainDock);
     mainDock->setWidget(Workspace);
     setView(mainDock);
@@ -466,7 +466,7 @@ toMain::toMain()
     setCentralWidget(Workspace);
 #endif
 
-    setIcon(QPixmap((const char **)tora_xpm));
+    setIcon(QPixmap(const_cast<const char**>(tora_xpm)));
 
     statusBar()->message(QString::null);
     FileMenu->setItemEnabled(TO_CLOSE_CONNECTION, false);
@@ -487,7 +487,7 @@ toMain::toMain()
     //  ColumnLabel->hide();
 
     QToolButton *dispStatus = new toPopupButton(statusBar());
-    dispStatus->setIconSet(QPixmap((const char **)up_xpm));
+    dispStatus->setIconSet(QPixmap(const_cast<const char**>(up_xpm)));
     statusBar()->addWidget(dispStatus, 0, true);
     StatusMenu = new QPopupMenu(dispStatus);
     dispStatus->setPopup(StatusMenu);

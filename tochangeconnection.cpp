@@ -48,7 +48,7 @@
 #include "icons/changeconnect.xpm"
 
 toChangeConnection::toChangeConnection(QToolBar *parent, const char *name)
-        : toPopupButton(QPixmap((const char **)changeconnect_xpm),
+        : toPopupButton(QPixmap(const_cast<const char**>(changeconnect_xpm)),
                         tr("Change the connection of the tool."),
                         tr("Change the connection of the tool."),
                         parent, name)

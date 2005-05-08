@@ -123,7 +123,7 @@ class toDebugTool : public toTool
 
     virtual const char **pictureXPM(void)
     {
-        return todebug_xpm;
+        return const_cast<const char**>(todebug_xpm);
     }
 public:
     toDebugTool()
@@ -1637,7 +1637,7 @@ bool toDebug::viewSource(const QString &schema, const QString &name, const QStri
             updateContent(editor);
             Editors->changeTab(editor, editorName(editor));
             if (editor->hasErrors())
-                Editors->setTabIconSet(editor, QIconSet(QPixmap((const char **)nextbug_xpm)));
+                Editors->setTabIconSet(editor, QIconSet(QPixmap(const_cast<const char**>(nextbug_xpm))));
             else
                 Editors->setTabIconSet(editor, QIconSet());
         }
@@ -1752,7 +1752,7 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
 {
     QToolBar *toolbar = toAllocBar(this, tr("Debugger"));
 
-    new QToolButton(QPixmap((const char **)refresh_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                     tr("Update object list"),
                     tr("Update object list"),
                     this, SLOT(refresh(void)),
@@ -1763,47 +1763,47 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
             this, SLOT(changeSchema(int)));
 
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)toworksheet_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(toworksheet_xpm)),
                     tr("New sheet"),
                     tr("New sheet"),
                     this, SLOT(newSheet(void)),
                     toolbar);
-    new QToolButton(QPixmap((const char **)scansource_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(scansource_xpm)),
                     tr("Rescan source"),
                     tr("Rescan source"),
                     this, SLOT(scanSource(void)),
                     toolbar);
-    new QToolButton(QPixmap((const char **)compile_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(compile_xpm)),
                     tr("Compile"),
                     tr("Compile"),
                     this, SLOT(compile(void)),
                     toolbar);
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)execute_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(execute_xpm)),
                     tr("Execute or continue execution"),
                     tr("Execute or continue execution"),
                     this, SLOT(execute(void)),
                     toolbar);
-    StopButton = new QToolButton(QPixmap((const char **)stop_xpm),
+    StopButton = new QToolButton(QPixmap(const_cast<const char**>(stop_xpm)),
                                  tr("Stop running"),
                                  tr("Stop running"),
                                  this, SLOT(stop(void)),
                                  toolbar);
     StopButton->setEnabled(false);
     toolbar->addSeparator();
-    StepIntoButton = new QToolButton(QPixmap((const char **)stepinto_xpm),
+    StepIntoButton = new QToolButton(QPixmap(const_cast<const char**>(stepinto_xpm)),
                                      tr("Step into procedure or function"),
                                      tr("Step into procedure or function"),
                                      this, SLOT(stepInto(void)),
                                      toolbar);
     StepIntoButton->setEnabled(false);
-    StepOverButton = new QToolButton(QPixmap((const char **)stepover_xpm),
+    StepOverButton = new QToolButton(QPixmap(const_cast<const char**>(stepover_xpm)),
                                      tr("Step over procedure or function"),
                                      tr("Step over procedure or function"),
                                      this, SLOT(stepOver(void)),
                                      toolbar);
     StepOverButton->setEnabled(false);
-    ReturnButton = new QToolButton(QPixmap((const char **)returnfrom_xpm),
+    ReturnButton = new QToolButton(QPixmap(const_cast<const char**>(returnfrom_xpm)),
                                    tr("Return from procedure or function"),
                                    tr("Return from procedure or function"),
                                    this, SLOT(returnFrom(void)),
@@ -1814,47 +1814,47 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
 
     DebugButton = new QToolButton(toolbar);
     DebugButton->setToggleButton(true);
-    DebugButton->setIconSet(QIconSet(QPixmap((const char **)todebug_xpm)));
+    DebugButton->setIconSet(QIconSet(QPixmap(const_cast<const char**>(todebug_xpm))));
     connect(DebugButton, SIGNAL(toggled(bool)), this, SLOT(showDebug(bool)));
     QToolTip::add
         (DebugButton, tr("Show/hide debug info pane."));
 
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)nextbug_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(nextbug_xpm)),
                     tr("Go to next error"),
                     tr("Go to next error"),
                     this, SLOT(nextError(void)),
                     toolbar);
-    new QToolButton(QPixmap((const char **)prevbug_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(prevbug_xpm)),
                     tr("Go to previous error"),
                     tr("Go to previous error"),
                     this, SLOT(prevError(void)),
                     toolbar);
 
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)togglebreak_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(togglebreak_xpm)),
                     tr("Toggle breakpoint on current line"),
                     tr("Toggle breakpoint on current line"),
                     this, SLOT(toggleBreak(void)),
                     toolbar);
-    new QToolButton(QPixmap((const char **)enablebreak_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(enablebreak_xpm)),
                     tr("Enable/disable breakpoint on current line"),
                     tr("Enable/disable breakpoint on current line"),
                     this, SLOT(toggleEnable(void)),
                     toolbar);
 
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)addwatch_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(addwatch_xpm)),
                     tr("Add new variable watch"),
                     tr("Add new variable watch"),
                     this, SLOT(addWatch(void)),
                     toolbar);
-    DelWatchButton = new QToolButton(QPixmap((const char **)delwatch_xpm),
+    DelWatchButton = new QToolButton(QPixmap(const_cast<const char**>(delwatch_xpm)),
                                      tr("Delete variable watch"),
                                      tr("Delete variable watch"),
                                      this, SLOT(deleteWatch(void)),
                                      toolbar);
-    ChangeWatchButton = new QToolButton(QPixmap((const char **)changewatch_xpm),
+    ChangeWatchButton = new QToolButton(QPixmap(const_cast<const char**>(changewatch_xpm)),
                                         tr("Change value of watched variable"),
                                         tr("Change value of watched variable"),
                                         this, SLOT(changeWatch(void)),
@@ -1970,7 +1970,7 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
 #if QT_VERSION >= 0x030200
 
     QToolButton *closeButton = new toPopupButton(Editors);
-    closeButton->setIconSet(QPixmap((const char **)close_xpm));
+    closeButton->setIconSet(QPixmap(const_cast<const char**>(close_xpm)));
     closeButton->setFixedSize(20, 18);
 
     connect(closeButton, SIGNAL(clicked()), this, SLOT(closeEditor()));
@@ -2354,7 +2354,7 @@ void toDebug::compile(void)
                     }
             }
             if (editor->hasErrors())
-                Editors->setTabIconSet(editor, QIconSet(QPixmap((const char **)nextbug_xpm)));
+                Editors->setTabIconSet(editor, QIconSet(QPixmap(const_cast<const char**>(nextbug_xpm))));
             else
                 Editors->setTabIconSet(editor, QIconSet());
             Editors->changeTab(editor, editorName(editor));
@@ -2488,63 +2488,63 @@ void toDebug::windowActivated(QWidget *widget)
         if (!ToolMenu)
         {
             ToolMenu = new QPopupMenu(this);
-            ToolMenu->insertItem(QPixmap((const char **)toworksheet_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(toworksheet_xpm)),
                                  tr("&New Sheet"), this, SLOT(newSheet(void)),
                                  0, TO_ID_NEW_SHEET);
-            ToolMenu->insertItem(QPixmap((const char **)scansource_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(scansource_xpm)),
                                  tr("S&can Source"), this, SLOT(scanSource(void)),
                                  toKeySequence(tr("Ctrl+F9", "Debug|Scan source")), TO_ID_SCAN_SOURCE);
-            ToolMenu->insertItem(QPixmap((const char **)compile_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(compile_xpm)),
                                  tr("&Compile"), this, SLOT(compile(void)),
                                  toKeySequence(tr("F9", "Debug|Compile")), TO_ID_COMPILE);
-            ToolMenu->insertItem(QPixmap((const char **)close_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(close_xpm)),
                                  tr("Close"), this, SLOT(closeEditor(void)),
                                  0, TO_ID_CLOSE_EDITOR);
             ToolMenu->insertItem(tr("CloseAll"), this, SLOT(closeAllEditor(void)),
                                  0, TO_ID_CLOSE_ALL_EDITOR);
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)execute_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(execute_xpm)),
                                  tr("&Execute or continue"), this, SLOT(execute(void)),
                                  toKeySequence(tr("Ctrl+Return", "Debug|Execute")), TO_ID_EXECUTE);
-            ToolMenu->insertItem(QPixmap((const char **)stop_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(stop_xpm)),
                                  tr("&Stop"), this, SLOT(stop(void)),
                                  toKeySequence(tr("F12", "Debug|Stop")), TO_ID_STOP);
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)stepinto_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(stepinto_xpm)),
                                  tr("Step &Into"), this, SLOT(stepInto(void)),
                                  toKeySequence(tr("F7", "Debug|Step into")), TO_ID_STEP_INTO);
-            ToolMenu->insertItem(QPixmap((const char **)stepover_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(stepover_xpm)),
                                  tr("&Next Line"), this, SLOT(stepOver(void)),
                                  toKeySequence(tr("F8", "Debug|Stop over")), TO_ID_STEP_OVER);
-            ToolMenu->insertItem(QPixmap((const char **)returnfrom_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(returnfrom_xpm)),
                                  tr("&Return From"), this, SLOT(returnFrom(void)),
                                  toKeySequence(tr("F6", "Debug|Return from")), TO_ID_RETURN_FROM);
             ToolMenu->insertSeparator();
             ToolMenu->insertItem(tr("&Debug Pane"), this, SLOT(toggleDebug(void)),
                                  toKeySequence(tr("F11", "Debug|Debug pane")), TO_ID_DEBUG_PANE);
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)nextbug_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(nextbug_xpm)),
                                  tr("Next &Error"), this, SLOT(nextError(void)),
                                  toKeySequence(tr("Ctrl+N", "Debug|Next error")));
-            ToolMenu->insertItem(QPixmap((const char **)prevbug_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(prevbug_xpm)),
                                  tr("Pre&vious Error"), this, SLOT(prevError(void)),
                                  toKeySequence(tr("Ctrl+P", "Debug|Previous error")));
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)togglebreak_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(togglebreak_xpm)),
                                  tr("&Toggle Breakpoint"), this, SLOT(toggleBreak(void)),
                                  toKeySequence(tr("Ctrl+F5", "Debug|Toggle breakpoint")));
-            ToolMenu->insertItem(QPixmap((const char **)enablebreak_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(enablebreak_xpm)),
                                  tr("D&isable Breakpoint"),
                                  this, SLOT(toggleEnable(void)),
                                  toKeySequence(tr("Ctrl+F6", "Debug|Disable breakpoint")));
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)addwatch_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(addwatch_xpm)),
                                  tr("&Add Watch..."), this, SLOT(addWatch(void)),
                                  toKeySequence(tr("F4", "Debug|Add watch")));
-            ToolMenu->insertItem(QPixmap((const char **)delwatch_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(delwatch_xpm)),
                                  tr("Delete &Watch"), this, SLOT(deleteWatch(void)),
                                  toKeySequence(tr("Ctrl+Delete", "Debug|Delete watch")), TO_ID_DEL_WATCH);
-            ToolMenu->insertItem(QPixmap((const char **)changewatch_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(changewatch_xpm)),
                                  tr("Chan&ge Watch..."), this, SLOT(changeWatch(void)),
                                  toKeySequence(tr("Ctrl+F4", "Debug|Change watch")), TO_ID_CHANGE_WATCH);
             ToolMenu->insertSeparator();

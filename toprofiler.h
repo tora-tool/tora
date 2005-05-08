@@ -73,7 +73,7 @@ class toProfiler : public toToolWidget
     toWorksheet *Script;
 public:
     toProfiler(QWidget *parent, toConnection &connection);
-    public slots:
+public slots:
     void refresh(void);
     void changeRun(void);
     void execute(void);

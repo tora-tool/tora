@@ -109,7 +109,7 @@ class toSGATraceTool : public toTool
 protected:
     virtual const char **pictureXPM(void)
     {
-        return tosgatrace_xpm;
+        return const_cast<const char**>(tosgatrace_xpm);
     }
 public:
     toSGATraceTool()
@@ -136,7 +136,7 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
 {
     QToolBar *toolbar = toAllocBar(this, tr("SGA trace"));
 
-    new QToolButton(QPixmap((const char **)refresh_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                     tr("Fetch statements in SGA"),
                     tr("Fetch statements in SGA"),
                     this, SLOT(refresh(void)),
@@ -215,7 +215,7 @@ void toSGATrace::windowActivated(QWidget *widget)
         if (!ToolMenu)
         {
             ToolMenu = new QPopupMenu(this);
-            ToolMenu->insertItem(QPixmap((const char **)refresh_xpm), tr("&Refresh"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("&Refresh"),
                                  this, SLOT(refresh(void)),
                                  toKeySequence(tr("F5", "SGA Trace|Refresh")));
             ToolMenu->insertSeparator();

@@ -194,7 +194,7 @@ public:
     }
 signals:
     void newValues(std::list<double> &values, std::list<QString> &labels);
-    public slots:
+public slots:
     /** Print the chart
      */
     void editPrint(void);
@@ -240,7 +240,7 @@ public:
     {
         return Flow;
     }
-    private slots:
+private slots:
     void newValues(std::list<double> &values, std::list<QString> &labels);
 };
 

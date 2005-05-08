@@ -1,5 +1,5 @@
 /* XPM */
-static const char * noclock_xpm[] = {
+static const char* const noclock_xpm[] = {
 "16 16 86 1",
 " 	c None",
 ".	c #848584",

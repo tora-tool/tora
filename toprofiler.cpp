@@ -228,7 +228,7 @@ class toProfilerTool : public toTool
 {
     virtual const char **pictureXPM(void)
     {
-        return clock_xpm;
+        return const_cast<const char**>(clock_xpm);
     }
 public:
     toProfilerTool()
@@ -273,7 +273,7 @@ class toProfilerUnits : public toResultLong
 {
     double Total;
 public:
-    class unitsItem : public toResultViewItem
+class unitsItem : public toResultViewItem
     {
     public:
         unitsItem(QListView *parent, QListViewItem *after, const QString &buf = QString::null)
@@ -337,7 +337,7 @@ class toProfilerSource : public toResultLong
     double MaxTime;
     double MinTime;
 public:
-    class listItem : public toResultViewItem
+class listItem : public toResultViewItem
     {
     public:
         listItem(QListView *parent, QListViewItem *after, const QString &buf = QString::null)
@@ -466,7 +466,7 @@ toProfiler::toProfiler(QWidget *parent, toConnection &connection)
 {
     QToolBar *toolbar = toAllocBar(this, tr("PL/SQL Profiler"));
 
-    new QToolButton(QPixmap((const char **)refresh_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                     tr("Refresh list"),
                     tr("Refresh list"),
                     this, SLOT(refresh()),
@@ -492,14 +492,14 @@ toProfiler::toProfiler(QWidget *parent, toConnection &connection)
 
     Background = new QToolButton(toolbar);
     Background->setToggleButton(true);
-    Background->setIconSet(QIconSet(QPixmap((const char **)background_xpm)));
+    Background->setIconSet(QIconSet(QPixmap(const_cast<const char**>(background_xpm))));
     QToolTip::add
         (Background, tr("Run profiling in background"));
 
     toolbar->addSeparator();
 #endif
 
-    new QToolButton(QPixmap((const char **)execute_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(execute_xpm)),
                     tr("Execute current profiling"),
                     tr("Execute current profiling"),
                     this, SLOT(execute()),

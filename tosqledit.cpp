@@ -95,13 +95,13 @@ public:
 
         Window->raise();
         Window->setFocus();
-        Window->setIcon(QPixmap((const char **)tosqledit_xpm));
+        Window->setIcon(QPixmap(const_cast<const char**>(tosqledit_xpm)));
         return Window;
     }
     virtual void customSetup(int toolid)
     {
         toMainWidget()->editMenu()->insertSeparator();
-        toMainWidget()->editMenu()->insertItem(QPixmap((const char **)tosqledit_xpm),
+        toMainWidget()->editMenu()->insertItem(QPixmap(const_cast<const char**>(tosqledit_xpm)),
                                                qApp->translate("toSQLEditTool", "&Edit SQL..."), toolid);
         toMainWidget()->registerSQLEditor(toolid);
     }
@@ -161,28 +161,28 @@ toSQLEdit::toSQLEdit(QWidget *main, toConnection &connection)
 {
     QToolBar *toolbar = toAllocBar(this, tr("SQL editor"));
 
-    new QToolButton(QPixmap((const char **)fileopen_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(fileopen_xpm)),
                     tr("Load SQL dictionary file"),
                     tr("Load SQL dictionary file"),
                     this, SLOT(loadSQL()),
                     toolbar);
-    new QToolButton(QPixmap((const char **)filesave_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(filesave_xpm)),
                     tr("Save modified SQL to dictionary file"),
                     tr("Save modified SQL to dictionary file"),
                     this, SLOT(saveSQL()),
                     toolbar);
     toolbar->addSeparator();
-    CommitButton = new QToolButton(QPixmap((const char **)commit_xpm),
+    CommitButton = new QToolButton(QPixmap(const_cast<const char**>(commit_xpm)),
                                    tr("Save this entry in the dictionary"),
                                    tr("Save this entry in the dictionary"),
                                    this, SLOT(commitChanges()),
                                    toolbar);
-    TrashButton = new QToolButton(QPixmap((const char **)trash_xpm),
+    TrashButton = new QToolButton(QPixmap(const_cast<const char**>(trash_xpm)),
                                   tr("Delete this version from the SQL dictionary"),
                                   tr("Delete this version from the SQL dictionary"),
                                   this, SLOT(deleteVersion()),
                                   toolbar);
-    new QToolButton(QPixmap((const char **)add_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(add_xpm)),
                     tr("Start new SQL definition"),
                     tr("Start new SQL definition"),
                     this, SLOT(newSQL()),

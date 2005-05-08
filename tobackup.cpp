@@ -69,7 +69,7 @@ protected:
 
     virtual const char **pictureXPM(void)
     {
-        return tobackup_xpm;
+        return const_cast<const char**>(tobackup_xpm);
     }
 public:
     toBackupTool()
@@ -360,7 +360,7 @@ toBackup::toBackup(QWidget *main, toConnection &connection)
 {
     QToolBar *toolbar = toAllocBar(this, tr("Backup Manager"));
 
-    new QToolButton(QPixmap((const char **)refresh_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                     tr("Update"),
                     tr("Update"),
                     this, SLOT(refresh(void)),
@@ -406,7 +406,7 @@ void toBackup::windowActivated(QWidget *widget)
         if (!ToolMenu)
         {
             ToolMenu = new QPopupMenu(this);
-            ToolMenu->insertItem(QPixmap((const char **)refresh_xpm), tr("&Refresh"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("&Refresh"),
                                  this, SLOT(refresh(void)), toKeySequence(tr("F5", "Backup|Refresh")));
             toMainWidget()->menuBar()->insertItem(tr("&Backup Manager"), ToolMenu, -1, toToolMenuIndex());
         }

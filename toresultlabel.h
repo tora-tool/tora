@@ -135,7 +135,7 @@ public:
         toResult::query(sql, par);
     }
 #endif
-    public slots:
+public slots:
     /** Reimplemented for internal reasons.
      */
     virtual void refresh(void)
@@ -160,7 +160,7 @@ public:
     {
         toResult::changeParams(Param1, Param2, Param3);
     }
-    private slots:
+private slots:
     void poll(void);
 };
 

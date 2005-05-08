@@ -103,7 +103,7 @@ public:
     virtual void importData(std::map<QCString, QString> &data, const QCString &prefix);
 
     virtual bool close(bool del);
-    public slots:
+public slots:
     void refresh(void);
     void updateTabs(void);
     void changeSchema(int);
@@ -171,7 +171,7 @@ public:
     }
     virtual void exportData(std::map<QCString, QString> &data, const QCString &prefix);
     virtual void importData(std::map<QCString, QString> &data, const QCString &prefix);
-    public slots:
+public slots:
     void addDatabase(const QString &);
     void removeDatabase(const QString &);
     void defineFilter(void);
@@ -189,7 +189,7 @@ public:
                    const char * slot,
                    QToolBar * parent,
                    const char * name = 0);
-    private slots:
+private slots:
     void connectionChanged(void);
 };
 
@@ -205,7 +205,7 @@ public:
     virtual QWidget *toolWindow(QWidget *parent, toConnection &connection);
     virtual bool canHandle(toConnection &conn);
     virtual void customSetup(int id);
-    public slots:
+public slots:
     void addTable(void);
     void addConstraint(void);
     void addIndex(void);

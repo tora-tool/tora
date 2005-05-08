@@ -66,13 +66,13 @@ toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
 {
     QToolBar *toolbar = toAllocBar(this, tr("Server Tuning"));
 
-    new QToolButton(QPixmap((const char **)fileopen_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(fileopen_xpm)),
                     tr("Load statistics from file"),
                     tr("Load statistics from file"),
                     this, SLOT(load(void)),
                     toolbar);
 
-    QToolButton *button = new toPopupButton(QPixmap((const char **)filesave_xpm),
+    QToolButton *button = new toPopupButton(QPixmap(const_cast<const char**>(filesave_xpm)),
                                             tr("Save statistics to file"),
                                             tr("Save statistics to file"),
                                             toolbar);
@@ -83,7 +83,7 @@ toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
 
     toolbar->addSeparator();
 
-    button = new toPopupButton(QPixmap((const char **)trash_xpm),
+    button = new toPopupButton(QPixmap(const_cast<const char**>(trash_xpm)),
                                tr("Remove statistics"),
                                tr("Remove statistics"),
                                toolbar);
@@ -99,7 +99,7 @@ toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
 
     ShowCharts = new QToolButton(toolbar);
     ShowCharts->setToggleButton(true);
-    ShowCharts->setIconSet(QIconSet(QPixmap((const char **)grid_xpm)));
+    ShowCharts->setIconSet(QIconSet(QPixmap(const_cast<const char**>(grid_xpm))));
     QToolTip::add
         (ShowCharts, tr("Display charts"));
     ShowCharts->setOn(true);
@@ -107,7 +107,7 @@ toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
 
     ShowPlans = new QToolButton(toolbar);
     ShowPlans->setToggleButton(true);
-    ShowPlans->setIconSet(QIconSet(QPixmap((const char **)tree_xpm)));
+    ShowPlans->setIconSet(QIconSet(QPixmap(const_cast<const char**>(tree_xpm))));
     QToolTip::add
         (ShowPlans, tr("Display execution plans"));
     ShowPlans->setOn(true);

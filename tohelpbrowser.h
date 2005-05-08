@@ -59,7 +59,7 @@ class toHelpBrowser : public KHTMLPart
     /** List of forward history if you have started walking backwards.
      */
     std::list<QString> Forward;
-    private slots:
+private slots:
     /** Reimplemented for internal reasons.
      */
     void openURLRequest(const KURL &url, const KParts::URLArgs &);
@@ -78,7 +78,7 @@ public:
      * @return String containing the current localtion.
      */
     QString source(void);
-    public slots:
+public slots:
     /** Go forward if available.
      */
     void forward(void);

@@ -90,7 +90,7 @@ public:
     /** Get a string representation of the type.
      */
     QString type() const;
-    public slots:
+public slots:
     /** Change the type.
      * @param type The entire type specification (Including posible size and precision)
      */
@@ -99,7 +99,7 @@ public:
      * @param prefer If true always use custom controls.
      */
     void setCustom(bool prefer);
-    private slots:
+private slots:
     void changeType(int);
 };
 

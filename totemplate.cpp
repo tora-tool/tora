@@ -435,7 +435,7 @@ class toTemplateTool : public toTool
 protected:
     virtual const char **pictureXPM(void)
     {
-        return totemplate_xpm;
+        return const_cast<const char**>(totemplate_xpm);
     }
 public:
     toTemplateTool()

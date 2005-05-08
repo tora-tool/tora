@@ -192,7 +192,7 @@ public:
         Tool->setConfig(CONF_EXEC_LOG, ExecLog->isChecked() ? "Yes" : "");
         Tool->setConfig(CONF_AUTO_LOAD, DefaultFile->text());
     }
-    public slots:
+public slots:
     void chooseFile(void)
     {
         QString str = toOpenFilename(DefaultFile->text(), QString::null, this);
@@ -206,7 +206,7 @@ class toWorksheetTool : public toTool
 protected:
     virtual const char **pictureXPM(void)
     {
-        return toworksheet_xpm;
+        return const_cast<const char**>(toworksheet_xpm);
     }
 public:
     toWorksheetTool()
@@ -370,23 +370,23 @@ void toWorksheet::setup(bool autoLoad)
 {
     QToolBar *toolbar = toAllocBar(this, tr("SQL worksheet"));
 
-    new QToolButton(QPixmap((const char **)execute_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(execute_xpm)),
                     tr("Execute current statement"),
                     tr("Execute current statement"),
                     this, SLOT(execute(void)),
                     toolbar);
-    new QToolButton(QPixmap((const char **)executestep_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(executestep_xpm)),
                     tr("Step through statements"),
                     tr("Step through statements"),
                     this, SLOT(executeStep(void)),
                     toolbar);
-    new QToolButton(QPixmap((const char **)executeall_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(executeall_xpm)),
                     tr("Execute all statements"),
                     tr("Execute all statements"),
                     this, SLOT(executeAll(void)),
                     toolbar);
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)refresh_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                     tr("Reexecute Last Statement"),
                     tr("Reexecute Last Statement"),
                     this, SLOT(refreshSetup(void)),
@@ -420,7 +420,7 @@ void toWorksheet::setup(bool autoLoad)
         Visualize = NULL;
         WaitChart = IOChart = NULL;
         toolbar->addSeparator();
-        StopButton = new QToolButton(QPixmap((const char **)stop_xpm),
+        StopButton = new QToolButton(QPixmap(const_cast<const char**>(stop_xpm)),
                                      tr("Stop execution"),
                                      tr("Stop execution"),
                                      Result, SLOT(stop(void)),
@@ -464,7 +464,7 @@ void toWorksheet::setup(bool autoLoad)
         StatTab = new QVBox(ResultTab);
         {
             QToolBar *stattool = toAllocBar(StatTab, tr("Worksheet Statistics"));
-            new QToolButton(QPixmap((const char **)filesave_xpm),
+            new QToolButton(QPixmap(const_cast<const char**>(filesave_xpm)),
                             tr("Save statistics for later analysis"),
                             tr("Save statistics for later analysis"),
                             this, SLOT(saveStatistics(void)),
@@ -515,25 +515,25 @@ void toWorksheet::setup(bool autoLoad)
         LastLogItem = NULL;
 
         toolbar->addSeparator();
-        new QToolButton(QPixmap((const char **)describe_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(describe_xpm)),
                         tr("Describe under cursor"),
                         tr("Describe under cursor"),
                         this, SLOT(describe(void)),
                         toolbar);
-        PlanButton = new QToolButton(QPixmap((const char **)explainplan_xpm),
+        PlanButton = new QToolButton(QPixmap(const_cast<const char**>(explainplan_xpm)),
                                      tr("Explain plan of current statement"),
                                      tr("Explain plan of current statement"),
                                      this, SLOT(explainPlan(void)),
                                      toolbar);
         PlanButton->setEnabled(Plan->handled());
-        StopButton = new QToolButton(QPixmap((const char **)stop_xpm),
+        StopButton = new QToolButton(QPixmap(const_cast<const char**>(stop_xpm)),
                                      tr("Stop execution"),
                                      tr("Stop execution"),
                                      this, SLOT(stop(void)),
                                      toolbar);
         StopButton->setEnabled(false);
         toolbar->addSeparator();
-        new QToolButton(QPixmap((const char **)eraselog_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(eraselog_xpm)),
                         tr("Clear execution log"),
                         tr("Clear execution log"),
                         this, SLOT(eraseLogButton(void)),
@@ -542,7 +542,7 @@ void toWorksheet::setup(bool autoLoad)
         toolbar->addSeparator();
         StatisticButton = new QToolButton(toolbar);
         StatisticButton->setToggleButton(true);
-        StatisticButton->setIconSet(QIconSet(QPixmap((const char **)clock_xpm)));
+        StatisticButton->setIconSet(QIconSet(QPixmap(const_cast<const char**>(clock_xpm))));
         connect(StatisticButton, SIGNAL(toggled(bool)), this, SLOT(enableStatistic(bool)));
         QToolTip::add
             (StatisticButton, tr("Gather session statistic of execution"));
@@ -566,19 +566,19 @@ void toWorksheet::setup(bool autoLoad)
         Refresh->setEnabled(false);
         Refresh->setFocusPolicy(NoFocus);
 
-        new QToolButton(QPixmap((const char **)up_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(up_xpm)),
                         tr("Previous log entry"),
                         tr("Previous log entry"),
                         this, SLOT(executePreviousLog()),
                         toolbar);
-        new QToolButton(QPixmap((const char **)down_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(down_xpm)),
                         tr("Next log entry"),
                         tr("Next log entry"),
                         this, SLOT(executeNextLog()),
                         toolbar);
         toolbar->addSeparator();
 
-        InsertSavedButton = new toPopupButton(QPixmap((const char **)insertsaved_xpm),
+        InsertSavedButton = new toPopupButton(QPixmap(const_cast<const char**>(insertsaved_xpm)),
                                               tr("Insert current saved SQL"),
                                               tr("Insert current saved SQL"),
                                               toolbar);
@@ -587,7 +587,7 @@ void toWorksheet::setup(bool autoLoad)
         connect(InsertSavedMenu, SIGNAL(aboutToShow()), this, SLOT(showInsertSaved()));
         connect(InsertSavedMenu, SIGNAL(activated(int)), this, SLOT(insertSaved(int)));
 
-        SavedButton = new toPopupButton(QPixmap((const char **)recall_xpm),
+        SavedButton = new toPopupButton(QPixmap(const_cast<const char**>(recall_xpm)),
                                         tr("Run current saved SQL"),
                                         tr("Run current saved SQL"),
                                         toolbar);
@@ -596,7 +596,7 @@ void toWorksheet::setup(bool autoLoad)
         connect(SavedMenu, SIGNAL(aboutToShow()), this, SLOT(showSaved()));
         connect(SavedMenu, SIGNAL(activated(int)), this, SLOT(executeSaved(int)));
 
-        new QToolButton(QPixmap((const char **)previous_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(previous_xpm)),
                         tr("Save last SQL"),
                         tr("Save last SQL"),
                         this, SLOT(saveLast(void)),
@@ -709,19 +709,19 @@ void toWorksheet::windowActivated(QWidget *widget)
         if (!ToolMenu)
         {
             ToolMenu = new QPopupMenu(this);
-            ToolMenu->insertItem(QPixmap((const char **)execute_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(execute_xpm)),
                                  tr("&Execute Current"), this, SLOT(execute(void)),
                                  toKeySequence(tr("Ctrl+Return", "Worksheet|Execute current")));
-            ToolMenu->insertItem(QPixmap((const char **)executestep_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(executestep_xpm)),
                                  tr("Execute &Next"), this, SLOT(executeStep(void)),
                                  toKeySequence(tr("F9", "Worksheet|Execute next")));
-            ToolMenu->insertItem(QPixmap((const char **)executeall_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(executeall_xpm)),
                                  tr("Execute &All"), this, SLOT(executeAll(void)),
                                  toKeySequence(tr("F8", "Worksheet|Execute all")));
             ToolMenu->insertItem(tr("Execute &Newline Separated"), this,
                                  SLOT(executeNewline(void)),
                                  toKeySequence(tr("Shift+F9", "Worksheet|Execute newline separated")));
-            ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)),
                                  tr("&Reexecute Last Statement"), this, SLOT(refresh(void)),
                                  toKeySequence(tr("F5", "Worksheet|Reexecute last statement")));
             if (connection().provider() == "Oracle")
@@ -729,7 +729,7 @@ void toWorksheet::windowActivated(QWidget *widget)
                                      this, SLOT(parseAll()),
                                      toKeySequence(tr("Ctrl+F9", "Worksheet|Check syntax of buffer")));
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)describe_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(describe_xpm)),
                                  tr("&Describe Under Cursor"), this, SLOT(describe(void)),
                                  toKeySequence(tr("F4", "Worksheet|Describe under cursor")));
             ToolMenu->insertItem(tr("&Explain current statement"), this, SLOT(explainPlan(void)),
@@ -737,7 +737,7 @@ void toWorksheet::windowActivated(QWidget *widget)
             if (connection().provider() == "Oracle")
                 ToolMenu->insertItem(tr("&Enable Statistics"), this, SLOT(toggleStatistic(void)),
                                      0, TO_ID_STATISTICS);
-            ToolMenu->insertItem(QPixmap((const char **)stop_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(stop_xpm)),
                                  tr("&Stop Execution"), Result, SLOT(stop(void)),
                                  0, TO_ID_STOP);
             ToolMenu->insertSeparator();
@@ -747,7 +747,7 @@ void toWorksheet::windowActivated(QWidget *widget)
             ToolMenu->insertItem(tr("Select Saved SQL"),
                                  this, SLOT(selectSaved()),
                                  toKeySequence(tr("Ctrl+Shift+S", "Worksheet|Select saved SQL")));
-            ToolMenu->insertItem(QPixmap((const char **)previous_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(previous_xpm)),
                                  tr("Save last SQL"),
                                  this, SLOT(saveLast()));
             ToolMenu->insertItem(tr("Edit Saved SQL..."),
@@ -757,7 +757,7 @@ void toWorksheet::windowActivated(QWidget *widget)
                                  toKeySequence(tr("Alt+Up", "Worksheet|Previous log entry")));
             ToolMenu->insertItem(tr("Next Log Entry"), this, SLOT(executeNextLog()),
                                  toKeySequence(tr("Alt+Down", "Worksheet|Next log entry")));
-            ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(eraselog_xpm)),
                                  tr("Erase &Log"), this, SLOT(eraseLogButton(void)));
 
 
@@ -2079,7 +2079,7 @@ void toWorksheet::displayMenu(QPopupMenu *menu)
     {
         menu->insertItem(tr("&Explain current statement"), this, SLOT(explainPlan(void)),
                          toKeySequence(tr("F3", "Worksheet|Explain plan")), TO_ID_PLAN, 0);
-        menu->insertItem(QPixmap((const char **)describe_xpm),
+        menu->insertItem(QPixmap(const_cast<const char**>(describe_xpm)),
                          tr("&Describe Under Cursor"), this, SLOT(describe(void)),
                          toKeySequence(tr("F4", "Worksheet|Describe under cursor")), 0, 0);
         menu->insertSeparator(0);
@@ -2088,19 +2088,19 @@ void toWorksheet::displayMenu(QPopupMenu *menu)
         menu->insertItem(tr("Check syntax of buffer"),
                          this, SLOT(parseAll()),
                          toKeySequence(tr("Ctrl+F9", "Worksheet|Check syntax of buffer")), 0, 0);
-    menu->insertItem(QPixmap((const char **)refresh_xpm),
+    menu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)),
                      tr("&Reexecute Last Statement"), this, SLOT(refresh(void)),
                      toKeySequence(tr("F5", "Worksheet|Reexecute last statement")), 0, 0);
     menu->insertItem(tr("Execute &Newline Separated"), this,
                      SLOT(executeNewline(void)),
                      toKeySequence(tr("Shift+F9", "Worksheet|Execute newline separated")), 0, 0);
-    menu->insertItem(QPixmap((const char **)executeall_xpm),
+    menu->insertItem(QPixmap(const_cast<const char**>(executeall_xpm)),
                      tr("Execute &All"), this, SLOT(executeAll(void)),
                      toKeySequence(tr("F8", "Worksheet|Execute all")), 0, 0);
-    menu->insertItem(QPixmap((const char **)executestep_xpm),
+    menu->insertItem(QPixmap(const_cast<const char**>(executestep_xpm)),
                      tr("Execute &Next"), this, SLOT(executeStep(void)),
                      toKeySequence(tr("F9", "Worksheet|Execute next")), 0, 0);
-    menu->insertItem(QPixmap((const char **)execute_xpm),
+    menu->insertItem(QPixmap(const_cast<const char**>(execute_xpm)),
                      tr("&Execute Current"), this, SLOT(execute(void)),
                      toKeySequence(tr("Ctrl+Return", "Worksheet|Execute current")), 0, 0);
 
@@ -2111,7 +2111,7 @@ void toWorksheet::displayMenu(QPopupMenu *menu)
             menu->insertItem(tr("&Enable Statistics"), this, SLOT(toggleStatistic(void)),
                              0, TO_ID_STATISTICS);
     }
-    menu->insertItem(QPixmap((const char **)stop_xpm),
+    menu->insertItem(QPixmap(const_cast<const char**>(stop_xpm)),
                      tr("&Stop Execution"), Result, SLOT(stop(void)),
                      0, TO_ID_STOP);
     if (!Light)
@@ -2126,7 +2126,7 @@ void toWorksheet::displayMenu(QPopupMenu *menu)
         menu->insertItem(tr("Select Saved SQL"),
                          this, SLOT(selectSaved()),
                          toKeySequence(tr("Ctrl+Shift+S", "Worksheet|Select saved SQL")));
-        menu->insertItem(QPixmap((const char **)previous_xpm),
+        menu->insertItem(QPixmap(const_cast<const char**>(previous_xpm)),
                          tr("Save last SQL"),
                          this, SLOT(saveLast()));
     }

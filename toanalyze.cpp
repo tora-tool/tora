@@ -78,7 +78,7 @@ class toAnalyzeTool : public toTool
 {
     virtual const char **pictureXPM(void)
     {
-        return toanalyze_xpm;
+        return const_cast<const char**>(toanalyze_xpm);
     }
 public:
     toAnalyzeTool()
@@ -173,7 +173,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
 
     QToolBar *toolbar = toAllocBar(box, tr("Statistics Manager"));
 
-    new QToolButton(QPixmap((const char **)refresh_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                     tr("Refresh"),
                     tr("Refresh"),
                     this, SLOT(refresh()),
@@ -247,12 +247,12 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
     Parallel = new QSpinBox(1, 100, 1, toolbar, TO_KDE_TOOLBAR_WIDGET);
     toolbar->addSeparator();
 
-    new QToolButton(QPixmap((const char **)execute_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(execute_xpm)),
                     tr("Start analyzing"),
                     tr("Start analyzing"),
                     this, SLOT(execute()),
                     toolbar);
-    new QToolButton(QPixmap((const char **)sql_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(sql_xpm)),
                     tr("Display SQL"),
                     tr("Display SQL"),
                     this, SLOT(displaySQL()),
@@ -262,7 +262,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
     Current->setAlignment(AlignRight | AlignVCenter | ExpandTabs);
     toolbar->setStretchableWidget(Current);
 
-    Stop = new QToolButton(QPixmap((const char **)stop_xpm),
+    Stop = new QToolButton(QPixmap(const_cast<const char**>(stop_xpm)),
                            tr("Stop current run"),
                            tr("Stop current run"),
                            this, SLOT(stop()),
@@ -306,7 +306,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
 
         connect(Plans, SIGNAL(selectionChanged()),
                 this, SLOT(selectPlan()));
-        new QToolButton(QPixmap((const char **)refresh_xpm),
+        new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                         tr("Refresh"),
                         tr("Refresh"),
                         Plans, SLOT(refresh()),
@@ -352,7 +352,7 @@ void toAnalyze::windowActivated(QWidget *widget)
         if (!ToolMenu)
         {
             ToolMenu = new QPopupMenu(this);
-            ToolMenu->insertItem(QPixmap((const char **)refresh_xpm), tr("&Refresh"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("&Refresh"),
                                  this, SLOT(refresh(void)), toKeySequence(tr("F5", "Statistics|Refresh")));
 
             toMainWidget()->menuBar()->insertItem(tr("&Statistics"), ToolMenu, -1, toToolMenuIndex());
@@ -614,8 +614,8 @@ void toAnalyze::createTool(void)
 void toAnalyze::displayMenu(QPopupMenu *menu)
 {
     menu->insertSeparator(0);
-    menu->insertItem(QPixmap((const char **)sql_xpm), tr("Display SQL"), this, SLOT(displaySQL()), 0, 0, 0);
-    menu->insertItem(QPixmap((const char **)execute_xpm), tr("Execute"), this, SLOT(execute()), 0, 0, 0);
+    menu->insertItem(QPixmap(const_cast<const char**>(sql_xpm)), tr("Display SQL"), this, SLOT(displaySQL()), 0, 0, 0);
+    menu->insertItem(QPixmap(const_cast<const char**>(execute_xpm)), tr("Execute"), this, SLOT(execute()), 0, 0, 0);
     menu->insertSeparator(0);
-    menu->insertItem(QPixmap((const char **)refresh_xpm), tr("Refresh"), this, SLOT(refresh()), 0, 0, 0);
+    menu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("Refresh"), this, SLOT(refresh()), 0, 0, 0);
 }

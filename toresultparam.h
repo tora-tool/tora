@@ -74,7 +74,7 @@ public:
     toResultParam(QWidget *parent, const char *name = NULL);
 
     virtual bool canHandle(toConnection &conn);
-    private slots:
+private slots:
     void generateFile(void);
     void applySession(void);
     void applySystem(void);
@@ -85,7 +85,7 @@ public:
     void done(void);
     void showHidden(bool);
     void showGlobal(bool);
-    public slots:
+public slots:
     virtual void query(const QString &sql, const toQList &param);
     /** Reimplemented for internal reasons.
      */

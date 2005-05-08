@@ -78,7 +78,7 @@ public:
     virtual ~toSQLEdit();
     void commitChanges(bool);
 
-    public slots:
+public slots:
     void loadSQL(void);
     void saveSQL(void);
     void deleteVersion(void);

@@ -146,7 +146,7 @@ signals:
      */
     void firstResult(const QString &sql, const toConnection::exception &res, bool error);
 
-    public slots:
+public slots:
     /** Stop running query.
      */
     void stop(void);

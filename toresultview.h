@@ -582,7 +582,7 @@ signals:
      * @param menu Pointer to the menu about to be shown.
      */
     void displayMenu(QPopupMenu *menu);
-    public slots:
+public slots:
     /** set the popup menu --> see displayMenu()
      * @param item Item to display.
      */
@@ -596,7 +596,7 @@ signals:
     /** Display memo of selected menu column
      */
     virtual void displayMemo(void);
-    protected slots:
+protected slots:
     /** Callback when menu is selected. If you override this make sure you
      * call the parents function when you have parsed your entries.
      * @param id ID of the menu item selected.
@@ -835,7 +835,7 @@ public:
     {
         return SortColumn;
     }
-    public slots:
+public slots:
     /** Reimplemented for internal reasons.
      */
     virtual void refresh(void);
@@ -866,10 +866,10 @@ public:
     {
         return true;
     }
-    private slots:
+private slots:
     void headingClicked(int col);
     void checkHeading(void);
-    protected slots:
+protected slots:
     /** Reimplemented for internal reasons.
      */
     virtual void menuCallback(int);
@@ -886,7 +886,7 @@ class toResultListFormat : public toResultListFormatUI
 public:
     toResultListFormat(QWidget *parent, const char *name);
     void saveDefault(void);
-    public slots:
+public slots:
     virtual void formatChanged(int pos);
 };
 

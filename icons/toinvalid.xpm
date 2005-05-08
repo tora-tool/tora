@@ -1,5 +1,5 @@
 /* XPM */
-static const char * toinvalid_xpm[] = {
+static const char* const toinvalid_xpm[] = {
 "16 16 74 1",
 " 	c None",
 ".	c #929253",

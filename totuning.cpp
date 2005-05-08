@@ -150,7 +150,7 @@ class toTuningTool : public toTool
 protected:
     virtual const char **pictureXPM(void)
     {
-        return totuning_xpm;
+        return const_cast<const char**>(totuning_xpm);
     }
 public:
     toTuningTool()
@@ -1361,7 +1361,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
 
     QToolBar *toolbar = toAllocBar(this, tr("Server Tuning"));
 
-    new QToolButton(QPixmap((const char **)refresh_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                     tr("Refresh"),
                     tr("Refresh"),
                     this, SLOT(refresh(void)),
@@ -1371,7 +1371,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     Refresh = toRefreshCreate(toolbar, TO_KDE_TOOLBAR_WIDGET);
     connect(Refresh, SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
     toolbar->addSeparator();
-    TabButton = new toPopupButton(QPixmap((const char **)compile_xpm),
+    TabButton = new toPopupButton(QPixmap(const_cast<const char**>(compile_xpm)),
                                   tr("Enable and disable tuning tabs"),
                                   tr("Enable and disable tuning tabs"),
                                   toolbar);
@@ -1674,7 +1674,7 @@ void toTuning::windowActivated(QWidget *widget)
         if (!ToolMenu)
         {
             ToolMenu = new QPopupMenu(this);
-            ToolMenu->insertItem(QPixmap((const char **)refresh_xpm), tr("&Refresh"), this, SLOT(refresh(void)),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("&Refresh"), this, SLOT(refresh(void)),
                                  toKeySequence(tr("F5", "Tuning|Refresh")));
             ToolMenu->insertItem(tr("&Change Refresh"), Refresh, SLOT(setFocus(void)),
                                  toKeySequence(tr("Alt+R", "Tuning|Change refresh")));

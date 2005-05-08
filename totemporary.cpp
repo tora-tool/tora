@@ -112,7 +112,7 @@ class toTemporaryTool : public toTool
 {
     virtual const char **pictureXPM(void)
     {
-        return totemporary_xpm;
+        return const_cast<const char**>(totemporary_xpm);
     }
 public:
     toTemporaryTool()
@@ -143,7 +143,7 @@ toTemporary::toTemporary(QWidget *main, toConnection &connection)
 {
     QToolBar *toolbar = toAllocBar(this, tr("Temporary Objects"));
 
-    new QToolButton(QPixmap((const char **)refresh_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                     tr("Refresh list"),
                     tr("Refresh list"),
                     this, SLOT(refresh()),
@@ -182,7 +182,7 @@ void toTemporary::windowActivated(QWidget *widget)
         if (!ToolMenu)
         {
             ToolMenu = new QPopupMenu(this);
-            ToolMenu->insertItem(QPixmap((const char **)refresh_xpm), tr("&Refresh"),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("&Refresh"),
                                  this, SLOT(refresh(void)),
                                  toKeySequence(tr("F5", "Temporary|Refresh")));
 

@@ -132,7 +132,7 @@
 
 const char **toBrowserTool::pictureXPM(void)
 {
-    return tobrowser_xpm;
+    return const_cast<const char**>(tobrowser_xpm);
 }
 
 toBrowserTool::toBrowserTool()
@@ -157,11 +157,11 @@ bool toBrowserTool::canHandle(toConnection &conn)
 void toBrowserTool::customSetup(int)
 {
     QPopupMenu *createMenu = new QPopupMenu(toMainWidget());
-    createMenu->insertItem(QPixmap((const char **)modtable_xpm), tr("&Table"),
+    createMenu->insertItem(QPixmap(const_cast<const char**>(modtable_xpm)), tr("&Table"),
                            this, SLOT(addTable()));
-    createMenu->insertItem(QPixmap((const char **)modindex_xpm), tr("&Index"),
+    createMenu->insertItem(QPixmap(const_cast<const char**>(modindex_xpm)), tr("&Index"),
                            this, SLOT(addIndex()));
-    createMenu->insertItem(QPixmap((const char **)modconstraint_xpm), tr("&Constraint"),
+    createMenu->insertItem(QPixmap(const_cast<const char**>(modconstraint_xpm)), tr("&Constraint"),
                            this, SLOT(addConstraint()));
     toMainWidget()->menuBar()->insertItem(tr("&Create"), createMenu, -1, toToolMenuIndex());
 }
@@ -1095,7 +1095,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     QToolBar *toolbar = toAllocBar(this, tr("DB Browser"));
 
-    new QToolButton(QPixmap((const char **)refresh_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(refresh_xpm)),
                     tr("Update from DB"),
                     tr("Update from DB"),
                     this, SLOT(refresh(void)),
@@ -1103,12 +1103,12 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     toolbar->addSeparator();
     FilterButton = new QToolButton(toolbar);
     FilterButton->setToggleButton(true);
-    FilterButton->setIconSet(QIconSet(QPixmap((const char **)filter_xpm)));
+    FilterButton->setIconSet(QIconSet(QPixmap(const_cast<const char**>(filter_xpm))));
     QToolTip::add
         (FilterButton, tr("Define the object filter"));
     connect(FilterButton, SIGNAL(toggled(bool)), this, SLOT(defineFilter()));
 
-    new QToolButton(QPixmap((const char **)nofilter_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(nofilter_xpm)),
                     tr("Remove any object filter"),
                     tr("Remove any object filter"),
                     this, SLOT(clearFilter(void)),
@@ -1134,29 +1134,29 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     QVBox *box = new QVBox(splitter);
 
     toolbar = toAllocBar(box, tr("Database browser"));
-    new toBrowseButton(QPixmap((const char **)addtable_xpm),
+    new toBrowseButton(QPixmap(const_cast<const char**>(addtable_xpm)),
                        tr("Create new table"),
                        tr("Create new table"),
                        this, SLOT(addTable()),
                        toolbar);
     toolbar->addSeparator();
-    new toBrowseButton(QPixmap((const char **)modtable_xpm),
+    new toBrowseButton(QPixmap(const_cast<const char**>(modtable_xpm)),
                        tr("Modify table columns"),
                        tr("Modify table columns"),
                        this, SLOT(modifyTable()),
                        toolbar);
-    new toBrowseButton(QPixmap((const char **)modconstraint_xpm),
+    new toBrowseButton(QPixmap(const_cast<const char**>(modconstraint_xpm)),
                        tr("Modify constraints"),
                        tr("Modify constraints"),
                        this, SLOT(modifyConstraint()),
                        toolbar);
-    new toBrowseButton(QPixmap((const char **)modindex_xpm),
+    new toBrowseButton(QPixmap(const_cast<const char**>(modindex_xpm)),
                        tr("Modify indexes"),
                        tr("Modify indexes"),
                        this, SLOT(modifyIndex()),
                        toolbar);
     toolbar->addSeparator();
-    new toBrowseButton(QPixmap((const char **)trash_xpm),
+    new toBrowseButton(QPixmap(const_cast<const char**>(trash_xpm)),
                        tr("Drop table"),
                        tr("Drop table"),
                        this, SLOT(dropTable()),
@@ -1164,12 +1164,12 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 #ifndef TO_NO_ORACLE
 
     toolbar->addSeparator();
-    new toBrowseButton(QPixmap((const char **)online_xpm),
+    new toBrowseButton(QPixmap(const_cast<const char**>(online_xpm)),
                        tr("Enable constraint or trigger"),
                        tr("Enable constraint or trigger"),
                        this, SLOT(enableConstraints()),
                        toolbar);
-    new toBrowseButton(QPixmap((const char **)offline_xpm),
+    new toBrowseButton(QPixmap(const_cast<const char**>(offline_xpm)),
                        tr("Disable constraint or trigger"),
                        tr("Disable constraint or trigger"),
                        this, SLOT(disableConstraints()),
@@ -1309,19 +1309,19 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     box = new QVBox(splitter);
     toolbar = toAllocBar(box, tr("Database browser"));
-    new toBrowseButton(QPixmap((const char **)addindex_xpm),
+    new toBrowseButton(QPixmap(const_cast<const char**>(addindex_xpm)),
                        tr("Add indexes"),
                        tr("Add indexes"),
                        this, SLOT(addIndex()),
                        toolbar);
     toolbar->addSeparator();
-    new toBrowseButton(QPixmap((const char **)modindex_xpm),
+    new toBrowseButton(QPixmap(const_cast<const char**>(modindex_xpm)),
                        tr("Modify indexes"),
                        tr("Modify indexes"),
                        this, SLOT(modifyIndex()),
                        toolbar);
     toolbar->addSeparator();
-    new toBrowseButton(QPixmap((const char **)trash_xpm),
+    new toBrowseButton(QPixmap(const_cast<const char**>(trash_xpm)),
                        tr("Drop index"),
                        tr("Drop index"),
                        this, SLOT(dropIndex()),
@@ -1535,7 +1535,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     TopTab->addTab(splitter, tr("DBLinks"));
     box = new QVBox(splitter);
     toolbar = toAllocBar(box, tr("Database browser"));
-    new toBrowseButton(QPixmap((const char **)modconstraint_xpm),
+    new toBrowseButton(QPixmap(const_cast<const char**>(modconstraint_xpm)),
                        tr("Test DBLink"),
                        tr("Test DBLink"),
                        this, SLOT(testDBLink()),
@@ -1579,12 +1579,12 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     box = new QVBox(splitter);
     toolbar = toAllocBar(box, tr("Database browser"));
-    new toBrowseButton(QPixmap((const char **)new_xpm),
+    new toBrowseButton(QPixmap(const_cast<const char**>(new_xpm)),
                        tr("Add user"),
                        tr("Add user"),
                        this, SLOT(addUser()),
                        toolbar);
-    new toBrowseButton(QPixmap((const char **)trash_xpm),
+    new toBrowseButton(QPixmap(const_cast<const char**>(trash_xpm)),
                        tr("Drop user"),
                        tr("Drop user"),
                        this, SLOT(dropUser()),
@@ -1665,17 +1665,17 @@ void toBrowser::windowActivated(QWidget *widget)
         if (!ToolMenu)
         {
             ToolMenu = new QPopupMenu(this);
-            ToolMenu->insertItem(QPixmap((const char **)refresh_xpm), tr("&Refresh"), this, SLOT(refresh(void)),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("&Refresh"), this, SLOT(refresh(void)),
                                  toKeySequence(tr("F5", "Browser|Refresh")));
             ToolMenu->insertItem(tr("&Change Schema"), Schema, SLOT(setFocus(void)),
                                  toKeySequence(tr("Alt+S", "Browser|Change Schema")));
             ToolMenu->insertItem(tr("Change &Object"), this, SLOT(focusObject(void)),
                                  toKeySequence(tr("Alt+N", "Browser|Change object")));
             ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap((const char **)filter_xpm), tr("&Define filter..."),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(filter_xpm)), tr("&Define filter..."),
                                  this, SLOT(defineFilter(void)),
                                  toKeySequence(tr("Ctrl+Shift+G", "Browser|Define filter")));
-            ToolMenu->insertItem(QPixmap((const char **)nofilter_xpm), tr("&Clear filter"), this, SLOT(clearFilter(void)),
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(nofilter_xpm)), tr("&Clear filter"), this, SLOT(clearFilter(void)),
                                  toKeySequence(tr("Ctrl+Shift+H", "Browser|Clear filter")));
             toMainWidget()->menuBar()->insertItem(tr("&Browser"), ToolMenu, -1, toToolMenuIndex());
         }
@@ -1990,7 +1990,7 @@ void toBrowser::addIndex(void)
 void toBrowser::displayTableMenu(QPopupMenu *menu)
 {
     menu->insertSeparator(0);
-    menu->insertItem(QPixmap((const char **)trash_xpm), tr("Drop table"), this, SLOT(dropTable()), 0, 0, 0);
+    menu->insertItem(QPixmap(const_cast<const char**>(trash_xpm)), tr("Drop table"), this, SLOT(dropTable()), 0, 0, 0);
     menu->insertItem(tr("Truncate table"), this, SLOT(truncateTable()), 0, 0, 0);
     menu->insertSeparator(0);
     if (toIsMySQL(connection()))
@@ -2001,21 +2001,21 @@ void toBrowser::displayTableMenu(QPopupMenu *menu)
         menu->insertItem(tr("Change type"), this, SLOT(changeType()), 0, 0, 0);
         menu->insertSeparator(0);
     }
-    menu->insertItem(QPixmap((const char **)modconstraint_xpm), tr("Modify constraints"), this, SLOT(modifyConstraint()), 0, 0, 0);
-    menu->insertItem(QPixmap((const char **)modindex_xpm), tr("Modify indexes"), this, SLOT(modifyIndex()), 0, 0, 0);
-    menu->insertItem(QPixmap((const char **)addtable_xpm), tr("Create table"), this, SLOT(addTable()), 0, 0, 0);
+    menu->insertItem(QPixmap(const_cast<const char**>(modconstraint_xpm)), tr("Modify constraints"), this, SLOT(modifyConstraint()), 0, 0, 0);
+    menu->insertItem(QPixmap(const_cast<const char**>(modindex_xpm)), tr("Modify indexes"), this, SLOT(modifyIndex()), 0, 0, 0);
+    menu->insertItem(QPixmap(const_cast<const char**>(addtable_xpm)), tr("Create table"), this, SLOT(addTable()), 0, 0, 0);
     menu->insertSeparator(0);
-    menu->insertItem(QPixmap((const char **)refresh_xpm), tr("Refresh"), this, SLOT(refresh()), 0, 0, 0);
+    menu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("Refresh"), this, SLOT(refresh()), 0, 0, 0);
 }
 
 void toBrowser::displayIndexMenu(QPopupMenu *menu)
 {
     menu->insertSeparator(0);
-    menu->insertItem(QPixmap((const char **)trash_xpm), tr("Drop index"), this, SLOT(dropIndex()), 0, 0, 0);
-    menu->insertItem(QPixmap((const char **)modindex_xpm), tr("Modify index"), this, SLOT(modifyIndex()), 0, 0, 0);
-    menu->insertItem(QPixmap((const char **)addindex_xpm), tr("Create index"), this, SLOT(addIndex()), 0, 0, 0);
+    menu->insertItem(QPixmap(const_cast<const char**>(trash_xpm)), tr("Drop index"), this, SLOT(dropIndex()), 0, 0, 0);
+    menu->insertItem(QPixmap(const_cast<const char**>(modindex_xpm)), tr("Modify index"), this, SLOT(modifyIndex()), 0, 0, 0);
+    menu->insertItem(QPixmap(const_cast<const char**>(addindex_xpm)), tr("Create index"), this, SLOT(addIndex()), 0, 0, 0);
     menu->insertSeparator(0);
-    menu->insertItem(QPixmap((const char **)refresh_xpm), tr("Refresh"), this, SLOT(refresh()), 0, 0, 0);
+    menu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("Refresh"), this, SLOT(refresh()), 0, 0, 0);
 }
 
 void toBrowser::dropSomething(const QString &type, const QString &what)
@@ -2573,7 +2573,7 @@ public:
         QString typ = parent->text(0);
         if (typ == qApp->translate("toBrowser", "Tables"))
         {
-            QPixmap image((const char **)table_xpm);
+            QPixmap image(const_cast<const char**>(table_xpm));
             setPixmap(0, image);
             new toTemplateTableItem(conn, this, qApp->translate("toBrowser", "Indexes"));
             if (toIsOracle(conn))
@@ -2593,7 +2593,7 @@ public:
         }
         else if (typ == qApp->translate("toBrowser", "Views"))
         {
-            QPixmap image((const char **)view_xpm);
+            QPixmap image(const_cast<const char**>(view_xpm));
             setPixmap(0, image);
             if (toIsOracle(conn))
             {
@@ -2606,7 +2606,7 @@ public:
         }
         else if (typ == qApp->translate("toBrowser", "Sequences"))
         {
-            QPixmap image((const char **)sequence_xpm);
+            QPixmap image(const_cast<const char**>(sequence_xpm));
             setPixmap(0, image);
             if (toIsOracle(conn))
             {
@@ -2616,7 +2616,7 @@ public:
         }
         else if (typ == qApp->translate("toBrowser", "Code"))
         {
-            QPixmap image((const char **)function_xpm);
+            QPixmap image(const_cast<const char**>(function_xpm));
             setPixmap(0, image);
             if (toIsOracle(conn))
             {
@@ -2627,7 +2627,7 @@ public:
         }
         else if (typ == qApp->translate("toBrowser", "Triggers"))
         {
-            QPixmap image((const char **)function_xpm);
+            QPixmap image(const_cast<const char**>(function_xpm));
             setPixmap(0, image);
             if (toIsOracle(conn))
             {
@@ -2640,7 +2640,7 @@ public:
         }
         else if (typ == qApp->translate("toBrowser", "Indexes"))
         {
-            QPixmap image((const char **)index_xpm);
+            QPixmap image(const_cast<const char**>(index_xpm));
             setPixmap(0, image);
             if (toIsOracle(conn) || toIsSapDB(conn))
             {
@@ -2655,7 +2655,7 @@ public:
         }
         else if (typ == qApp->translate("toBrowser", "Synonyms"))
         {
-            QPixmap image((const char **)synonym_xpm);
+            QPixmap image(const_cast<const char**>(synonym_xpm));
             setPixmap(0, image);
             if (toIsOracle(conn))
             {
@@ -2794,14 +2794,14 @@ public:
         try
         {
             toTemplateItem *item = new toTemplateItem(this, name);
-            QPixmap image((const char **)schema_xpm);
+            QPixmap image(const_cast<const char**>(schema_xpm));
             item->setPixmap(0, image);
-            QPixmap table((const char **)table_xpm);
-            QPixmap view((const char **)view_xpm);
-            QPixmap sequence((const char **)sequence_xpm);
-            QPixmap function((const char **)function_xpm);
-            QPixmap index((const char **)index_xpm);
-            QPixmap synonym((const char **)synonym_xpm);
+            QPixmap table(const_cast<const char**>(table_xpm));
+            QPixmap view(const_cast<const char**>(view_xpm));
+            QPixmap sequence(const_cast<const char**>(sequence_xpm));
+            QPixmap function(const_cast<const char**>(function_xpm));
+            QPixmap index(const_cast<const char**>(index_xpm));
+            QPixmap synonym(const_cast<const char**>(synonym_xpm));
 
             toBrowserFilter *filter = BrowseTemplate.filter();
             if (filter && filter->onlyOwnSchema() &&
@@ -2888,12 +2888,12 @@ void toBrowseTemplate::insertItems(QListView *parent, QToolBar *toolbar)
 
     FilterButton = new QToolButton(toolbar);
     FilterButton->setToggleButton(true);
-    FilterButton->setIconSet(QIconSet(QPixmap((const char **)filter_xpm)));
+    FilterButton->setIconSet(QIconSet(QPixmap(const_cast<const char**>(filter_xpm))));
     QToolTip::add
         (FilterButton, tr("Define the object filter for database browser"));
     connect(FilterButton, SIGNAL(toggled(bool)), this, SLOT(defineFilter()));
 
-    new QToolButton(QPixmap((const char **)nofilter_xpm),
+    new QToolButton(QPixmap(const_cast<const char**>(nofilter_xpm)),
                     qApp->translate("toBrowser", "Remove any object filter for database browser"),
                     qApp->translate("toBrowser", "Remove any object filter for database browser"),
                     this, SLOT(clearFilter(void)),

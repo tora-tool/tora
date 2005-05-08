@@ -56,7 +56,7 @@ class toTemporary : public toToolWidget
 public:
     toTemporary(QWidget *parent, toConnection &connection);
 
-    public slots:
+public slots:
     virtual void refresh(void);
     virtual void windowActivated(QWidget *widget);
     virtual void changeItem(QListViewItem *item);

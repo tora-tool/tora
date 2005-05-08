@@ -67,9 +67,9 @@ public:
         receivedFocus(NULL);
     }
     bool searchNextAvailable(void);
-    public slots:
+public slots:
     virtual void searchNext();
-    private slots:
+private slots:
     virtual void replaceAll();
     virtual void replace();
     virtual void search();

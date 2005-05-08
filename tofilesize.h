@@ -71,7 +71,7 @@ class toFilesize : public QButtonGroup
      * Setup this widget
      */
     void setup(void);
-    private slots:
+private slots:
     /**
      * @internal
      * Change the unit type callback.
