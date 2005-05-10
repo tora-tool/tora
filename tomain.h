@@ -228,6 +228,52 @@ private:
                     bool cut, bool copy, bool paste,
                     bool search,
                     bool selectAll, bool readAll);
+
+    static const int TO_STATUS_ID = 4000;
+    static const int TO_STATUS_ID_END = 4999;
+    static const int TO_NEW_CONNECTION = 100;
+    static const int TO_CLOSE_CONNECTION = 101;
+    static const int TO_STOP_ALL = 102;
+    static const int TO_FILE_OPEN = 103;
+    static const int TO_FILE_SAVE = 104;
+    static const int TO_FILE_SAVE_AS = 105;
+    static const int TO_FILE_COMMIT = 106;
+    static const int TO_FILE_ROLLBACK = 107;
+    static const int TO_FILE_CURRENT = 108;
+    static const int TO_FILE_CLEARCACHE = 109;
+    static const int TO_FILE_PRINT = 110;
+    static const int TO_FILE_QUIT = 111;
+    static const int TO_FILE_OPEN_SESSION = 112;
+    static const int TO_FILE_SAVE_SESSION = 113;
+    static const int TO_FILE_CLOSE_SESSION = 114;
+    static const int TO_FILE_LAST_SESSION = 115;
+
+    static const int TO_EDIT_UNDO = 200;
+    static const int TO_EDIT_REDO = 201;
+    static const int TO_EDIT_CUT = 202;
+    static const int TO_EDIT_COPY = 203;
+    static const int TO_EDIT_PASTE = 204;
+    static const int TO_EDIT_SELECT_ALL = 205;
+    static const int TO_EDIT_OPTIONS = 206;
+    static const int TO_EDIT_READ_ALL = 207;
+    static const int TO_EDIT_SEARCH = 208;
+    static const int TO_EDIT_SEARCH_NEXT = 209;  // Used by edit extension
+
+    static const int TO_WINDOWS_TILE = 300;
+    static const int TO_WINDOWS_CASCADE = 301;
+    static const int TO_WINDOWS_CLOSE = 302;
+    static const int TO_WINDOWS_CLOSE_ALL = 303;
+    static const int TO_WINDOWS_WINDOWS = 310;
+    static const int TO_WINDOWS_END = 399;
+
+    static const int TO_HELP_CONTENTS = 900;
+    static const int TO_HELP_CONTEXT = 901;
+    static const int TO_HELP_ABOUT = 902;
+    static const int TO_HELP_LICENSE = 903;
+    static const int TO_HELP_QUOTES = 904;
+
+    static const int TO_TOOLS = 1000;
+
 public:
 
     /** ID of the file menu
