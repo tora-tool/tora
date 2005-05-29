@@ -276,21 +276,9 @@ private:
 
 public:
 
-    /** ID of the file menu
+    /** IDs of the menu bar
      */
-    static const int TO_FILE_MENU = 10;
-    /** ID of the edit menu
-     */
-    static const int TO_EDIT_MENU = 20;
-    /** ID of the tools menu
-     */
-    static const int TO_TOOLS_MENU = 30;
-    /** ID of the windows menu
-     */
-    static const int TO_WINDOWS_MENU = 40;
-    /** ID of the help menu
-     */
-    static const int TO_HELP_MENU = 50;
+    enum {TO_FILE_MENU, TO_EDIT_MENU, TO_TOOLS_MENU, TO_WINDOWS_MENU, TO_HELP_MENU};
 
     /** First ID of the tool specific menu items.
      */
