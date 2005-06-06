@@ -66,6 +66,16 @@
 #  include "windows/cregistry.h"
 #endif
 
+#ifdef TO_KDE
+#  if KDE_VERSION >= 0x30400
+#    define TO_KDE_KACCELMANAGER
+#  endif
+#endif
+ 
+#ifdef TO_KDE_KACCELMANAGER
+#  include <kaccelmanager.h>
+#endif
+
 #include "tonewconnection.moc"
 #include "tonewconnectionui.moc"
 
@@ -80,6 +90,9 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name, bool modal, 
     OptionGroup->layout()->setMargin( 11 );
     OptionGroupLayout = new QVBoxLayout( OptionGroup->layout() );
     OptionGroupLayout->setAlignment( Qt::AlignTop );
+#ifdef TO_KDE_KACCELMANAGER
+    KAcceleratorManager::setNoAccel( OptionGroup );
+#endif
 
     QPopupMenu *menu = new QPopupMenu(Previous);
     Database->insertItem(toTool::globalConfig(CONF_DATABASE, DEFAULT_DATABASE));
