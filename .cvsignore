@@ -234,4 +234,7 @@ libtool
 missing
 mkinstalldirs
 stamp-h1
+aclocal.m4
+config.h
+configure
 
