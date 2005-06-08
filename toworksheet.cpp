@@ -113,6 +113,10 @@
 #include "icons/up.xpm"
 #include "icons/down.xpm"
 
+#ifdef TO_KDE_KACCELMANAGER
+#  include <kaccelmanager.h>
+#endif
+
 #define TO_ID_STATISTICS  (toMain::TO_TOOL_MENU_ID+ 0)
 #define TO_ID_STOP   (toMain::TO_TOOL_MENU_ID+ 1)
 #define TO_ID_PLAN   (toMain::TO_TOOL_MENU_ID+ 2)
@@ -400,6 +404,9 @@ void toWorksheet::setup(bool autoLoad)
     if (Light)
     {
         Editor = new toWorksheetText(this, this);
+#ifdef TO_KDE_KACCELMANAGER
+        KAcceleratorManager::setNoAccel( Editor );
+#endif
         Current = Result = new toResultLong(this);
         Result->hide();
         connect(Result, SIGNAL(done(void)), this, SLOT(queryDone(void)));
@@ -434,6 +441,9 @@ void toWorksheet::setup(bool autoLoad)
         QSplitter *splitter = new QSplitter(Vertical, this);
 
         Editor = new toWorksheetText(this, splitter);
+#ifdef TO_KDE_KACCELMANAGER
+        KAcceleratorManager::setNoAccel( Editor );
+#endif
         ResultTab = new toTabWidget(splitter);
         QVBox *box = new QVBox(ResultTab);
         ResultTab->addTab(box, tr("&Result"));

@@ -66,12 +66,6 @@
 #  include "windows/cregistry.h"
 #endif
 
-#ifdef TO_KDE
-#  if KDE_VERSION >= 0x30400
-#    define TO_KDE_KACCELMANAGER
-#  endif
-#endif
- 
 #ifdef TO_KDE_KACCELMANAGER
 #  include <kaccelmanager.h>
 #endif

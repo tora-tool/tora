@@ -63,7 +63,13 @@
 #define TOMessageBox QMessageBox
 #define TODock QWidget
 
-#if 0 
+#ifdef TO_KDE
+#  if KDE_VERSION >= 0x30400
+#    define TO_KDE_KACCELMANAGER
+#  endif
+#endif
+
+#if 0
 /**
  * The class to use for a printer object.
  */
