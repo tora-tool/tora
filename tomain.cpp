@@ -3,17 +3,17 @@
 * TOra - An Oracle Toolkit for DBA's and developers
 * Copyright (C) 2003-2005 Quest Software, Inc
 * Portions Copyright (C) 2005 Other Contributors
-* 
+*
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
 * as published by the Free Software Foundation;  only version 2 of
 * the License is valid for this program.
-* 
+*
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
-* 
+*
 * You should have received a copy of the GNU General Public License
 * along with this program; if not, write to the Free Software
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -56,6 +56,10 @@
 #include <kfiledialog.h>
 #include <kmenubar.h>
 #include <kstatusbar.h>
+#endif
+
+#ifdef TO_KDE_KACCELMANAGER
+#include <kaccelmanager.h>
 #endif
 
 #include <qaccel.h>
@@ -1667,6 +1671,12 @@ void toMain::displayMessage(void)
     {
         toMessageUI dialog(toMainWidget(), NULL, true);
         dialog.Message->setReadOnly(true);
+
+#ifdef TO_KDE_KACCELMANAGER
+
+        KAcceleratorManager::setNoAccel( dialog.Message );
+#endif
+
 #if QT_VERSION >= 0x030000
 
         dialog.Icon->setPixmap(QApplication::style().stylePixmap(QStyle::SP_MessageBoxWarning));
