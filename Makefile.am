@@ -184,7 +184,6 @@ tora_SOURCES=main.cpp aclocal.m4 \
 EXTRA_DIST = debian \
 	help \
 	icons \
-	otl \
 	qtlegacy \
 	rpm \
 	templates \
@@ -197,6 +196,7 @@ EXTRA_DIST = debian \
 	chex.pl \
 	qtkde.m4 \
 	toconf.h \
+	otlv4.h \
 	todefaultkeywords.h \
 	toextratranslations.cpp \
 	tomainwindow.h \
