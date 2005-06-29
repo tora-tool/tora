@@ -6,10 +6,10 @@
 
 
 %define _name		tora
+
 %define _version	@VERSION@
 %define _release	1
 %define _prefix		/usr
-%define _qtdir		/usr/lib/qt3
 
 Summary:		Toolkit for Oracle
 Name:			%{_name}
@@ -134,45 +134,42 @@ it is available as a choice in the installer.
 
 %prep
 %setup -q
-export QTDIR="%{_qtdir}"
+
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ORACLE_HOME/lib"
-CFLAGS="$RPM_OPT_FLAGS" \
-CXXFLAGS="$RPM_OPT_FLAGS" \
+
+export CFLAGS="$RPM_OPT_FLAGS"
+export CXXFLAGS="$RPM_OPT_FLAGS"
+
 ./configure \
 	 --prefix="%{_prefix}" \
-	 --prefix-bin="%{_prefix}/bin" \
-	 --prefix-lib="%{_prefix}/lib" \
-	 --with-qt="%{_qtdir}" \
-	 --with-kde \
-         --without-rpath \
-         --with-rpm-contents="%{_prefix}/lib"
+	 --bindir="%{_prefix}/bin" \
+	 --libdir="%{_prefix}/lib" \
+	--with-qt=$QTDIR \
+	--with-qt-libraries=$QTDIR/lib \
+	--with-qt-includes=$QTDIR/include 
 
 %build
-export QTDIR="%{_qtdir}"
+
 %{__make}
 %{__strip} \
 	 plugins/*.tso \
 	 tora
 
 # Ugly hack to remove version from libclntsh.so, if someone knows a better way please let me know
+perl -pi -e 's/libclntsh.so.\d\d.\d\d/libclntsh.so\0\0\0\0\0\0/g' plugins/tooracleconnection.tso
+perl -pi -e 's/libclntsh.so.\d\d.\d/libclntsh.so\0\0\0\0\0/g' plugins/tooracleconnection.tso
 perl -pi -e 's/libclntsh.so.\d.\d/libclntsh.so\0\0\0\0/g' plugins/tooracleconnection.tso
+
 
 %install
 %{__rm} -rf "${RPM_BUILD_ROOT}"
 %{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/bin"
 %{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/lib"
-%{__make} \
-	ROOT="${RPM_BUILD_ROOT}" \
-	install
-
-mkdir -p $RPM_BUILD_ROOT%{_menudir}
-cp rpm/tora.menu $RPM_BUILD_ROOT%{_menudir}/tora
+%{__make} ROOT="${RPM_BUILD_ROOT}" install
 
 %post
-%{update_menus}
 
 %postun
-%{clean_menus}
 
 %clean
 %{__rm} -rf "${RPM_BUILD_ROOT}"
