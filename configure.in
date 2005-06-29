@@ -53,7 +53,6 @@ dnl Makefile.am uses these
 AM_CONDITIONAL(ENABLE_MONO, test "$enable_mono" = yes)
 AM_CONDITIONAL(HAVE_ORACLE, test "$enable_oracle" = yes)
 
-dnl Checks for library functions.
-AC_CONFIG_FILES([ Makefile ])
+AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT

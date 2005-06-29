@@ -176,9 +176,6 @@
 
 #define TOHOMEPAGE  "http://tora.sourceforge.net"
 
-#ifndef TOVERSION
-#  define TOVERSION               "1.3.18"
-#endif 
 // Stable or development version of TOra
 #define TOTYPE   "DEVELOP"
 
