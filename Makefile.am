@@ -197,7 +197,6 @@ EXTRA_DIST = debian \
 	chex.pl \
 	qtkde.m4 \
 	toconf.h \
-	otlv4.h \
 	todefaultkeywords.h \
 	toextratranslations.cpp \
 	tomainwindow.h \
