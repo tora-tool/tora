@@ -210,7 +210,9 @@ EXTRA_DIST = debian \
 	toqvalue.h \
 	toresultresources.h \
 	$(TRANSLATIONS) \
-	autogen.sh
+	autogen.sh \
+	otlv4.h \
+	LICENSE.h
 
 # this is a hack (but it *is* mentioned in the automake manual, of all
 # places). EXTRA_DIST includes all files, even things like CVS
