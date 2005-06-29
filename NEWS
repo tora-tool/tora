@@ -1,6 +1,8 @@
 1.3.18: 2005-06-29
 
 2005-06-29: Fixes to build system
+2005-06-29: Default spec file to build rpms for mandrake and redhat
+2005-06-29: Other misc. updates to get build process cleaner.
 
 1.3.17: 2005-06-29
 
