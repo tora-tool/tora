@@ -1,4 +1,4 @@
-1.3.17: ?
+1.3.17: 2005-06-29
 
 2005-03-12: Fix bug 1017639 with table script for partitioned tables
 2005-03-14: Fix crasher when displaying memo dialog from toparamget.cpp
