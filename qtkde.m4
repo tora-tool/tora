@@ -225,7 +225,7 @@ AC_DEFUN(AC_PATH_QT,
   AC_ARG_WITH(qt-dir,
       [  --with-qt-dir=DIR       where the root of Qt is installed ],
       [  ac_qt_includes="$withval"/include
-         ac_qt_libraries="$withval"/lib}
+         ac_qt_libraries="$withval"/lib
          ac_qt_bindir="$withval"/bin
       ])
   
