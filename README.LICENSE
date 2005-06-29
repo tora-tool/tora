@@ -1,12 +1,5 @@
-TOra is licensed under the GPL, however, there is a license
-exception in place for all current code allowing Henrik
-and Quest software to produce binary releases of TOra for
-Windows using the commercial Qt/Windows library.
-
-As soon as the port to Qt/Free for windows or Qt/GPL for 
-windows is completed, this license exception will be
-removed and future contributions will not include
-that exception.
-
--- Nathan
-
+TOra is licensed under the GPL. Copyright in the code is held by a combination of the
+various authors. Originally there was a license exception for commercial binary-only
+builds with the closed source Qt. This is no longer the case, and the relase is fully
+GPL'd. Builds for windows can be made using any Qt release that is compatible with
+the GPL.
