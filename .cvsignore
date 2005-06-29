@@ -237,4 +237,4 @@ stamp-h1
 aclocal.m4
 config.h
 configure
-
+*.tar.gz
