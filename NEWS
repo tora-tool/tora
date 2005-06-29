@@ -1,3 +1,7 @@
+1.3.18: 2005-06-29
+
+2005-06-29: Fixes to build system
+
 1.3.17: 2005-06-29
 
 2005-03-12: Fix bug 1017639 with table script for partitioned tables
