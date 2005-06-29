@@ -128,7 +128,8 @@ static const char *AboutText = "<IMG SRC=largelogo.xpm><BR>\n"
                                "<B>Matthias Wolle</B>,\n"
                                "<B>Joachim Zetzsche</B>,\n"
                                "<B>Massimiliano Ziccardi</B>,\n"
-                               "<B>Raj Thukral</B>...\n";
+                               "<B>Raj Thukral</B>,\n"
+                               "<B>Mike Johnson</B>...\n";
 #  endif
 #endif
 
