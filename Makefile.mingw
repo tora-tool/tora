@@ -434,15 +434,7 @@ distclean: clean
 	-rm -f rpmcommon rpmoracle rpmmysql >/dev/null 2>&1 
 	-rm -f \#*\# >/dev/null 2>&1
 	-rm -f Makefile >/dev/null 2>&1
-	-rm -f LICENSE.h >/dev/null 2>&1
 	-rm -f configure.setup >/dev/null 2>&1
-
-# Specific rule for generation of LICENSE.h file
-LICENSE.h: LICENSE.txt
-	@echo Generating LICENSE.h
-	@echo 'static char *LicenseText="<PRE>"' > LICENSE.h
-	$(PERL) -e 'while(<>) { chomp; s/\\/\\\\/; s/\"/\\\"/g; print "\"$$_\\n\"\n"; }' < $< >> $@
-	@echo '"</PRE>";' >> LICENSE.h
 
 # Keyboard shortcuts
 

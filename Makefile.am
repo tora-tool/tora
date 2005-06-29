@@ -193,6 +193,7 @@ EXTRA_DIST = debian \
 	COPYRIGHT \
 	Makefile.* \
 	README* \
+	LICENSE.h \
 	chex.pl \
 	qtkde.m4 \
 	toconf.h \

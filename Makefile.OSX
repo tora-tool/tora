@@ -437,7 +437,6 @@ distclean: clean
 	-rm -f *.moc qtlegacy/*.moc >/dev/null 2>&1 
 	-rm -f rpmcommon rpmoracle rpmmysql >/dev/null 2>&1 
 	-rm -f \#*\# >/dev/null 2>&1
-	-rm -f LICENSE.h >/dev/null 2>&1
 	-rm -f configure.setup >/dev/null 2>&1
 
 # Keyboard shortcuts
