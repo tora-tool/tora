@@ -55,4 +55,4 @@ AM_CONDITIONAL(HAVE_ORACLE, test "$enable_oracle" = yes)
 
 AC_CONFIG_FILES([Makefile])
 
-AC_OUTPUT
+AC_OUTPUT([rpm/tora.spec])
