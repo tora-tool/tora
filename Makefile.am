@@ -9,7 +9,8 @@ METASOURCES = AUTO
 TRANSLATIONS= \
 	tora_se.ts \
 	tora_fr.ts \
-	tora_it.ts
+	tora_it.ts \
+	tora_toad.ts
 
 INCLUDES = @KDE_INCLUDES@ @QT_INCLUDES@ $(LTDLINCL)
 AM_CPPFLAGS  = $(PCRE_CFLAGS) -DDEFAULT_PLUGIN_DIR=\"$(libdir)\" $(ORACLE_CXXFLAGS)
@@ -187,7 +188,28 @@ EXTRA_DIST = debian \
 	qtlegacy \
 	rpm \
 	templates \
-	windows
+	windows \
+	*.ui \
+	BUGS \
+	COPYRIGHT \
+	Makefile.* \
+	README* \
+	chex.pl \
+	qtkde.m4 \
+	toconf.h \
+	todefaultkeywords.h \
+	toextratranslations.cpp \
+	tomainwindow.h \
+	tomainwindow.kde.h \
+	tomarkedtext.2.h \
+	tomarkedtext.3.h \
+	tomysqlkeywords.h \
+	toocistub.cpp \
+	tooraclepreload.cpp \
+	toqvalue.h \
+	toresultresources.h \
+	$(TRANSLATIONS) \
+	autogen.sh
 
 # this is a hack (but it *is* mentioned in the automake manual, of all
 # places). EXTRA_DIST includes all files, even things like CVS
