@@ -6,8 +6,8 @@
 
 
 %define _name		tora
-%define _version	1.3.15
-%define _release	1mdk
+%define _version	1.3.17
+%define _release	1
 %define _prefix		/usr
 %define _qtdir		/usr/lib/qt3
 
@@ -19,17 +19,37 @@ Source:			%{_name}-%{_version}.tar.gz
 URL:			http://tora.sourceforge.net
 Group:			Development/Databases
 Packager:		Nathan Neulinger <nneul@umr.edu>
-Distribution:		Mandrake Linux Cooker
-Copyright:		GPL
+License:		GPL
 BuildRoot:		%{_tmppath}/tora-root
 Prefix:			%{_prefix}
 
+
+#
+# Description below is copied verbatim from the README file
+#
+
 %description
-Toolkit for Oracle is a program for database developers and administrators. The
+
+TOra - Toolkit for Oracle
+=========================
+Copyright (C) 2003-2005 Quest Software, Inc (http://www.quest.com/)
+Portions Copyright (C) 2005 Other Contributors
+
+For information about license see the LICENSE.txt file. It is distributed 
+under the GPL which basically means that any derivatory work must be 
+released under an open source license as well.
+
+TOra is supported for running with an Oracle 8.1.7 or newer
+client installation. It has been verified to work with Oracle 10g.
+
+In addition, TOra also supports postgres and mysql if your Qt library
+is compiled with that support.
+
+Toolkit for Oracle is a program for Oracle developers and administrators. The
 features that are available so far is (As of version 1.2):
 
 * Handles multiple connections
-* Support Oracle, MySQL & PostgreSQL
+* Support Oracle & MySQL
 * Advanced SQL Worksheet
 	* Explain plan
 	* PL/SQL auto indentation
@@ -83,7 +103,17 @@ features that are available so far is (As of version 1.2):
 * Full UNICODE support
 * Printing of any list, text or chart
 
-This build is compiled with KDE and Mandrake Menu support.
+For installation instructions se the file INSTALL.
+
+TOra is developed by a community of Open Source developers. The original 
+(pre 1.3.15) development was done by Henrik Johnson of Quest Software, Inc.
+
+The homepage for the TOra project is http://tora.sourceforge.net. If you 
+encounter problems you can find both mailinglists and bugtracking tools 
+from this page.
+
+Oracle is copyright of Oracle Corporation.
+
 
 %package oracle
 Summary:		Oracle specific plugins for %{_name}
@@ -99,8 +129,8 @@ will require to download the entire server distribution to install the client, b
 it is available as a choice in the installer.
 
 %changelog
-* Thu Feb 17 2005 Nathan Neulinger <nneul@umr.edu>
-- updates for new package maintainer
+* Mon Jun 29 2005 Nathan Neulinger <nneul@umr.edu>
+- standardize on a single tora spec file
 
 %prep
 %setup -q
