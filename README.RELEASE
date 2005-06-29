@@ -4,6 +4,9 @@ Release Procedures:
 Source tarball:
 ---------------
 Check out the tora module from CVS
+Edit the configure.in, toconf.h files to set the version number
+Edit the NEWS file to set a release date
+Tag the release "cvs tag TORA_1_3_XX"
 find tora -name CVS -exec rm -rf {} \;
 mv tora tora-$VERSION
 gtar -czvf tora-$VERSION.tar.gz tora-$VERSION
