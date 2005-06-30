@@ -315,12 +315,19 @@ AC_DEFUN(AC_PATH_QT,
   dnl separate the qt tests into testing linking/compiling and finding QTDIR.
   TORA_CHECK_MAC_NATIVE
 
-  if test $have_qt_mac_native != yes && test "x$kde_use_qt_emb" != "xyes"; then
-    dnl don't append this until we're sure we're not using a native qt.
-    K_PATH_X
-    LIBQT="$LIBQT $X_PRE_LIBS -lXext -lX11 $LIBSM $LIBSOCKET"
-  fi
-
+  case $host in
+  *-*-cygwin*)
+      dnl no x for windows
+      ;;
+  *)
+    if test $have_qt_mac_native != yes && test "x$kde_use_qt_emb" != "xyes"; then
+      dnl don't append this until we're sure we're not using a native qt.
+      K_PATH_X
+      LIBQT="$LIBQT $X_PRE_LIBS -lXext -lX11 $LIBSM $LIBSOCKET"
+    fi
+    ;;
+  esac
+ 
   ac_cxxflags_safe="$CXXFLAGS"
   ac_ldflags_safe="$LDFLAGS"
   ac_libs_safe="$LIBS"
