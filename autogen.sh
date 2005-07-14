@@ -28,7 +28,7 @@ run() {
         while expr $major \< 10 >/dev/null; do
             # find a version number greater than param
             ${prog}-${major}.${minor} --version >/dev/null 2>&1
-            if test "$?" == "0"; then
+            if test "$?" -eq "0"; then
                 prog=${prog}-${major}.${minor}
                 break
             fi
