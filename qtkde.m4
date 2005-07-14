@@ -263,6 +263,7 @@ AC_DEFUN(AC_PATH_QT,
               /usr/X11R6/include/qt3
               /Developer/qt/include
               /sw/include/qt
+              /usr/qt/3/include
               $x_includes"
   if test "$ac_qt_includes" != "NO"; then
      qt_incdirs="$ac_qt_includes $qt_incdirs"
@@ -284,6 +285,7 @@ AC_DEFUN(AC_PATH_QT,
               /usr/X11R6/lib
               /usr/lib
               /usr/local/qt/lib
+              /usr/qt/3/lib
               $x_libraries"
   if test "$ac_qt_libraries" != "NO"; then
     qt_libdir=$ac_qt_libraries
