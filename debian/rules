@@ -17,7 +17,7 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
-	./configure --prefix=/usr --without-oracle --without-rpath --disable-new-check --with-kde
+	./configure --prefix=/usr --without-rpath --disable-new-check
 
 	touch configure-stamp
 
@@ -51,8 +51,8 @@ install: build
 	dh_installdirs
 
 	# Add here commands to install the package into debian/tora.
-	$(MAKE) install ROOT=$(CURDIR)/debian/tora
-	-mkdir $(CURDIR)/debian/tora/usr/lib/tora/help/images
+	$(MAKE) install ROOT=$(CURDIR)/debian/tora DESTDIR=$(CURDIR)/debian/tora
+	-mkdir -p $(CURDIR)/debian/tora/usr/lib/tora/help/images
 	-install --owner root --group root --mode=644 help/images/* $(CURDIR)/debian/tora/usr/lib/tora/help/images
 	rm -f $(CURDIR)/debian/tora/usr/lib/tora/help/images/.cvsignore
 	-mv $(CURDIR)/debian/tora/usr/bin/tora $(CURDIR)/debian/tora/usr/lib/tora/tora.real
@@ -88,6 +88,7 @@ binary-arch: build install
 #	since the shared libs are named .tso we have to strip them manually
 #
 	strip --strip-unneeded --remove-section=.comment --remove-section=.note `pwd`/debian/tora/usr/lib/tora/*.tso
+	cp -a ./templates/*.tpl `pwd`/debian/tora/usr/lib/tora/
 	chmod 644 `pwd`/debian/tora/usr/lib/tora/*.tpl
 	dh_compress
 	dh_fixperms
