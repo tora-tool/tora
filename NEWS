@@ -1,3 +1,8 @@
+1.3.19:
+
+2005-09-01: Updates to debian build rules
+2005-09-01: Applied patch #144512 to fix setenv bug #1242423
+
 1.3.18: 2005-06-29
 
 2005-06-29: Fixes to build system
