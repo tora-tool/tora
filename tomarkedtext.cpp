@@ -544,7 +544,7 @@ void toMarkedText::findPosition(int index, int &line, int &col)
             col = index - pos;
             return ;
         }
-        pos += str.length() + 1;
+        pos += str.length();
     }
     col = -1;
     line = -1;
