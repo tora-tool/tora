@@ -11,14 +11,14 @@ rem -------------------------------------------
 
 set QSCINTILLA=D:\_Projects_\qscintilla
 set MINGW=C:\Development\msys\mingw
-set QTDIR=D:\_Projects_\qt-3\mingw
+set QTDIR=D:\_Projects_\qt-win-free-mingw-3.3.4
 
 rem ------------ END OF WARNING ------------
 
 set QMAKESPEC=win32-g++
 set MAKE=mingw32-make
 
-set PATH=%MINGW%\bin;%QTDIR%\bin;%PATH%
+set PATH=%MINGW%\bin;%QTDIR%\bin
 
 echo Generating Makefiles ...
 
