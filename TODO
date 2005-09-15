@@ -16,6 +16,8 @@ QSscintilla port:
     
 * PL/SQL debugging (toDebugText class)
     This has to be updated to use marker facilities provided by QextScintilla 
+    
+* Autoconf scripts need to be updated to check QScintilla dependency
 
 
     
