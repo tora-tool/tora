@@ -267,7 +267,7 @@ int main(int argc, char **argv)
                 toTool::globalSetConfig(CONF_USER, user);
         }
 
-        toMarkedText::setDefaultTabStop(
+        toMarkedText::setDefaultTabWidth(
             toTool::globalConfig(CONF_TAB_STOP, DEFAULT_TAB_STOP).toInt());
 
         toUpdateIndicateEmpty();

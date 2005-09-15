@@ -42,6 +42,8 @@
 
 #include "tomarkedtext.h"
 
+#include <qextscintillalexer.h>
+
 #include <list>
 #include <map>
 
@@ -199,80 +201,65 @@ public:
     static toSyntaxAnalyzer &defaultAnalyzer();
 };
 
-/** A simple editor which supports syntax highlighting.
+
+/** 
+ * A simple editor which supports syntax highlighting.
+ * 
+ * This needs to be heavily re-implemented/simplified to use QScintilla syntax 
+ * colouring. For now it only stubs used API from previous version of
+ * toHighlightedText. The rest of the API comes unchanged from toMarkedText 
+ * which is now derived from QScintilla.
  */
 
 class toHighlightedText : public toMarkedText
 {
 private:
     Q_OBJECT
+    
+    // Associated lexer (may be not used)
+    QextScintillaLexer *lexer;       // NOTE: this should be used in instead of toSyntaxAnalyzer
+    bool syntaxColoring;
 
-    /** Used internally for drawing.
-     */
-    int LastCol;
-    /** Used internally for drawing.
-     */
-    int LastRow;
-    /** Used internally for drawing.
-     */
-    int LastLength;
-    /** Current line has different background than others.
-     */
-    int Current;
-    /** Indicate how many pixels on the left to ignore painting.
-     */
-    int LeftIgnore;
-    /** Indicate if text should be highlighted or not.
-     */
-    bool Highlight;
-    /** Indicate if keywords should be converted to uppercase when displayed.
-     */
-    bool KeywordUpper;
-    /** Used internally for drawing.
-     */
-    int Cursor;
-    /** Map of rows with errors and their error message.
-     */
-    std::map<int, QString> Errors;
-    /** Map of infoType that are NOT Normal
-     */
-    std::map<int, toSyntaxAnalyzer::infoType> LineInput;
-    /** The syntax analyzer to use.
-     */
-    toSyntaxAnalyzer *Analyzer;
-
-    bool NoCompletion;
-    bool KeepCompletion;
-    QListBox *Completion;
-    int CompleteItem;
-    std::list<QString> AllComplete;
-
-    bool invalidToken(int line, int col);
-
-    toSyntaxAnalyzer::infoType lineIn(int line);
-protected:
-    /** Set how much of the left margin to ignore painting.
-     */
-    void setLeftIgnore(int ignore)
-    {
-        LeftIgnore = ignore;
-    }
-    /** Reimplemented for internal reasons.
-     */
-    virtual void keyPressEvent(QKeyEvent *e);
-    /** Reimplemented for internal reasons.
-     */
-    virtual void focusOutEvent(QFocusEvent *e);
-    /** Check if to view completion.
-     */
-    virtual void checkComplete(void);
-
-    /** Start a completion with a given completelist.
-     * @param completes List of available completions.
-     */
-
-    virtual void startComplete(std::list<QString> &completes);
 public:
+
+    /** Create a new editor.
+     * @param parent Parent of widget.
+     * @param name Name of widget.
+     */
+    toHighlightedText(QWidget *parent, const char *name = NULL);
+
+    /** 
+     * Cleaning up done here
+     */
+    virtual ~toHighlightedText();
+
+public:
+    /**
+     * Set the lexer to use. 
+     * @param lexer to use,
+     *        0 if no syntax colouring
+     */
+    void setLexer(QextScintillaLexer *lexer);
+    
+    /** 
+     * Get the current lexer.
+     * @return lexer used or 0 if no syntax colouring.
+     */
+    QextScintillaLexer * getLexer(void)
+    {
+        return lexer;
+    }
+    
+    /**
+     * Overriden to set font for lexer as well. 
+     * @param font the font to set
+     */
+    void setFont (const QFont & font);
+
+public:
+    // ------------------ API used by TOra classes ----------------------
+    // NOTE: currently all stubs
+    
     /** Convert a linenumber after a change of the buffer to another linenumber. Can be
      * used to convert a specific linenumber after receiving a @ref insertedLines call.
      * @param line Line number.
@@ -280,84 +267,67 @@ public:
      * @param diff Lines added or removed.
      * @return New linenumber or -1 if line doesn't exist anymore.
      */
-    static int convertLine(int line, int start, int diff);
-    /** Create a new editor.
-     * @param parent Parent of widget.
-     * @param name Name of widget.
-     */
-    toHighlightedText(QWidget *parent, const char *name = NULL);
-    /** Reimplemented for internal reasons
-     */
-    virtual ~toHighlightedText();
-
-    /** Clear the editor.
-     */
-    void clear(void)
+    static int convertLine(int line, int start, int diff) 
     {
-        Errors.clear();
-        LineInput.clear();
-        Current = -1;
-        toMarkedText::clear();
+        return line;
     }
-    /** Set the text of this editor.
-     */
-    void setText(const QString &str);
 
+    /** Set current line. Will be indicated with a different background.
+     * @param current Current line.
+     */
+    void setCurrent(int current)
+    {
+        setCursorPosition (current, 0);
+    }
+    
+    /** Returns true if the editor has any errors.
+     */
+    bool hasErrors()
+    {
+        return false;
+    }
+    
     /** Set the error list map.
      * @param errors A map of linenumbers to errorstrings. These will be displayed in the
      *               statusbar if the cursor is placed on the line.
      */
-    void setErrors(const std::map<int, QString> &errors);
-    /** Set current line. Will be indicated with a different background.
-     * @param current Current line.
-     */
-    void setCurrent(int current);
-    /** Get current line.
-     * @return Current line.
-     */
-    int current(void)
-    {
-        return Current;
-        update();
-    }
-    /** Set keyword upper flag. If this is set keywords will be converted to uppercase when painted.
-     * @param val New value of keyword to upper flag.
-     */
-    void setKeywordUpper(bool val)
-    {
-        KeywordUpper = val;
-        update();
-    }
-    /** The the highlighting flag. If this isn't set no highlighting is done.
-     */
-    void setHighlight(bool val)
-    {
-        Highlight = val;
-        update();
-    }
-    /** Set the syntax highlighter to use.
+    void setErrors(const std::map<int, QString> &errors) {}
+    
+    /**
+     * DEPRECATED: should use setLexer() instead!!!
+     *
+     * Set the syntax highlighter to use.
      * @param analyzer Analyzer to use.
      */
-    void setAnalyzer(toSyntaxAnalyzer &analyzer)
-    {
-        Analyzer = &analyzer;
-        update();
-    }
-    /** Get the current syntaxhighlighter.
+    void setAnalyzer(toSyntaxAnalyzer &analyzer) {}
+    
+    /** 
+     * DEPRECATED: should use getLexer() instead!!!
+     *
+     * Get the current syntaxhighlighter.
      * @return Analyzer used.
      */
     toSyntaxAnalyzer &analyzer(void)
     {
-        return *Analyzer;
+        return toSyntaxAnalyzer::defaultAnalyzer();
     }
-
-    /** Reimplemented for internal reasons.
+    
+    /** 
+     * Set keyword upper flag. If this is set keywords will be converted 
+     * to uppercase when painted.
+     *
+     * NOTE: this may be quite tricky to implement - have to check 
+     *       how the Scintilla Lexers are working
+     *
+     * @param val New value of keyword to upper flag.
      */
-    virtual void paintCell (QPainter *painter, int row, int col);
-    /** Reimplemented for internal reasons.
+    void setKeywordUpper(bool val) {}
+    
+    /** 
+     * Sets the syntax colouring flag.
      */
-    virtual void paintEvent(QPaintEvent *pe);
-
+    void setSyntaxColoring(bool val);
+    
     /** Get the tablename currently under the cursor.
      * @param owner Filled with owner or table or QString::null if no owner specified.
      * @param table Filled with tablename.
@@ -365,28 +335,16 @@ public:
      */
     void tableAtCursor(QString &owner, QString &table, bool highlight = false);
 
-    /** Returns true if the editor has any errors.
-     */
-    bool hasErrors();
-signals:
-    /** Emitted when lines are inserted or removed.
-     * @param start Start of line inserted.
-     * @param diff Number of lines inserted or removed.
-     */
-    void insertedLines(int start, int diff);
-protected slots:
-    void textChanged(void);
+    
+    // ------------------ END OF API used by TOra classes ----------------------
 
 public slots:
     /** Go to next error.
      */
-    void nextError(void);
+    void nextError(void) {}
     /** Go to previous error.
      */
-    void previousError(void);
-private slots:
-    void selectComplete(void);
-    void setStatusMessage(void);
+    void previousError(void) {}
 };
 
 #endif

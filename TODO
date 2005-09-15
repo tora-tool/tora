@@ -1,3 +1,27 @@
+QSscintilla port:
+
+* More integrated QScintilla features (toMarkedText class)
+    The toMarkedText class is still using its own version of the search/replace 
+    functionality from the pre-QScintilla times. Since QextScintilla has powerful 
+    search mechanism (regex support etc) - this needs to be integrated and the old 
+    one got rid of.
+
+* Finish implementation of syntax colouring editor component (toHighlightedText class)
+    Get rid of toSyntaxAnalyzer, code completion in SQL editor (using QextScintillaAPIs
+    class), better integration with lexer class (QextScintillaLexer). We also probably 
+    need to override QextScintillaLexerSQL to better suit TOra purposes.
+    
+* Syntax colouring configuration options (toSyntaxSetup class and UI dialog) 
+    This has to be reimplemented to use QextScintillaLexer class instead of toSyntaxAnalyzer. 
+    
+* PL/SQL debugging (toDebugText class)
+    This has to be updated to use marker facilities provided by QextScintilla 
+
+
+    
+Previous TODO:
+
+
 Extended functionality:
 
 * SQL Browser

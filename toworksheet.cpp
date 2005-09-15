@@ -306,7 +306,7 @@ public:
     virtual bool editOpen(QString suggestedFile)
     {
         int ret = 1;
-        if (edited())
+        if (isModified())
         {
             ret = TOMessageBox::information(this,
                                             qApp->translate("toWorksheetText", "Save changes?"),
@@ -645,7 +645,7 @@ void toWorksheet::setup(bool autoLoad)
                 {
                     QCString data = toReadFile(Editor->filename());
                     Editor->setText(QString::fromLocal8Bit(data));
-                    Editor->setEdited(false);
+                    Editor->setModified(false);
                 }
                 TOCATCH
             }
@@ -803,7 +803,7 @@ bool toWorksheet::checkSave(bool input)
 {
     if (Light)
         return true;
-    if (Editor->edited())
+    if (Editor->isModified())
     {
         if (WorksheetTool.config(CONF_AUTO_SAVE, "").isEmpty() ||
                 Editor->filename().isEmpty())
@@ -845,7 +845,7 @@ bool toWorksheet::checkSave(bool input)
         }
         if (!toWriteFile(Editor->filename(), Editor->text()))
             return false;
-        Editor->setEdited(false);
+        Editor->setModified(false);
     }
     return true;
 }
@@ -1223,7 +1223,7 @@ void toWorksheet::addLog(const QString &sql, const toConnection::exception &resu
                 lines++;
             }
         }
-        Editor->setCursorPosition(LastLine + lines, LastOffset + result.offset() - lastnl, false);
+        Editor->setCursorPosition(LastLine + lines, LastOffset + result.offset() - lastnl);
         LastLine = LastOffset = -1;
     }
 
@@ -1277,9 +1277,8 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens, int line, int pos, exec
 {
     LastLine = line;
     LastOffset = pos;
-    Editor->setCursorPosition(line, pos, false);
-    Editor->setCursorPosition(tokens.line(), tokens.offset(), true);
-    QString t = Editor->markedText();
+    Editor->setSelection(line, pos, tokens.line(), tokens.offset());
+    QString t = Editor->selectedText();
 
     bool comment = false;
     bool multiComment = false;
@@ -1329,8 +1328,7 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens, int line, int pos, exec
     {
         LastLine = line;
         LastOffset = pos;
-        Editor->setCursorPosition(line, pos, false);
-        Editor->setCursorPosition(tokens.line(), tokens.offset(), true);
+        Editor->setSelection(line, pos, tokens.line(), tokens.offset());
         t = t.mid(i);
     }
     if (t.length())
@@ -1339,9 +1337,9 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens, int line, int pos, exec
 
 void toWorksheet::execute()
 {
-    if (Editor->hasMarkedText())
+    if (Editor->hasSelectedText())
     {
-        query(Editor->markedText(), Normal);
+        query(Editor->selectedText(), Normal);
         return ;
     }
 
@@ -1366,9 +1364,9 @@ void toWorksheet::execute()
 
 void toWorksheet::explainPlan()
 {
-    if (Editor->hasMarkedText())
+    if (Editor->hasSelectedText())
     {
-        query(Editor->markedText(), OnlyPlan);
+        query(Editor->selectedText(), OnlyPlan);
         return ;
     }
 
@@ -1421,7 +1419,7 @@ void toWorksheet::executeAll()
 
     QProgressDialog dialog(tr("Executing all statements"),
                            tr("Cancel"),
-                           Editor->numLines(),
+                           Editor->lines(),
                            this,
                            "Progress",
                            true);
@@ -1447,7 +1445,7 @@ void toWorksheet::executeAll()
             cpos = pos;
         }
 
-        if (tokens.line() < Editor->numLines() && !ignore)
+        if (tokens.line() < Editor->lines() && !ignore)
         {
             execute(tokens, line, pos, Direct);
             if (Current)
@@ -1459,10 +1457,9 @@ void toWorksheet::executeAll()
             }
         }
     }
-    while (tokens.line() < Editor->numLines());
+    while (tokens.line() < Editor->lines());
 
-    Editor->setCursorPosition(cline, cpos, false);
-    Editor->setCursorPosition(tokens.line(), tokens.offset(), true);
+    Editor->setSelection(cline, cpos, tokens.line(), tokens.offset());
 }
 
 void toWorksheet::parseAll()
@@ -1474,7 +1471,7 @@ void toWorksheet::parseAll()
 
     QProgressDialog dialog(tr("Parsing all statements"),
                            tr("Cancel"),
-                           Editor->numLines(),
+                           Editor->lines(),
                            this,
                            "Progress",
                            true);
@@ -1500,7 +1497,7 @@ void toWorksheet::parseAll()
             cpos = pos;
         }
 
-        if (tokens.line() < Editor->numLines() && !ignore)
+        if (tokens.line() < Editor->lines() && !ignore)
         {
             execute(tokens, line, pos, Parse);
             if (Current)
@@ -1512,10 +1509,9 @@ void toWorksheet::parseAll()
             }
         }
     }
-    while (tokens.line() < Editor->numLines());
+    while (tokens.line() < Editor->lines());
 
-    Editor->setCursorPosition(cline, cpos, false);
-    Editor->setCursorPosition(tokens.line(), tokens.offset(), true);
+    Editor->setSelection(cline, cpos, tokens.line(), tokens.offset());
 }
 
 void toWorksheet::eraseLogButton()
@@ -1617,7 +1613,7 @@ void toWorksheet::executeNewline(void)
         cline--;
     while (cline > 0)
     {
-        QString data = Editor->textLine(cline).simplifyWhiteSpace();
+        QString data = Editor->text(cline).simplifyWhiteSpace();
         if (data.length() == 0 || data == QString::fromLatin1(" "))
         {
             cline++;
@@ -1626,9 +1622,9 @@ void toWorksheet::executeNewline(void)
         cline--;
     }
 
-    while (cline < Editor->numLines())
+    while (cline < Editor->lines())
     {
-        QString data = Editor->textLine(cline).simplifyWhiteSpace();
+        QString data = Editor->text(cline).simplifyWhiteSpace();
         if (data.length() != 0 && data != QString::fromLatin1(" "))
             break;
         cline++;
@@ -1636,23 +1632,22 @@ void toWorksheet::executeNewline(void)
 
     int eline = cline;
 
-    while (eline < Editor->numLines())
+    while (eline < Editor->lines())
     {
-        QString data = Editor->textLine(eline).simplifyWhiteSpace();
+        QString data = Editor->text(eline).simplifyWhiteSpace();
         if (data.length() == 0 || data == QString::fromLatin1(" "))
         {
             eline--;
             break;
         }
-        epos = Editor->textLine(eline).length();
+        epos = Editor->text(eline).length();
         eline++;
     }
-    Editor->setCursorPosition(cline, 0, false);
-    Editor->setCursorPosition(eline, epos, true);
+    Editor->setSelection(cline, 0, eline, epos);
     LastLine = cline;
     LastOffset = 0;
-    if (Editor->hasMarkedText())
-        query(Editor->markedText(), Normal);
+    if (Editor->hasSelectedText())
+        query(Editor->selectedText(), Normal);
 }
 
 void toWorksheet::describe(void)
@@ -1858,15 +1853,15 @@ void toWorksheet::insertStatement(const QString &str)
 
     if (i >= 0)
     {
-        int col;
-        int line;
-        Editor->findPosition(i, line, col);
-        Editor->setCursorPosition(line, col, false);
-
-        Editor->findPosition(i + str.length(), line, col);
-        if (Editor->textLine(line).at(col) == ';')
-            col++;
-        Editor->setCursorPosition(line, col, true);
+        int startCol, endCol;
+        int startRow, endRow;
+        
+        Editor->findPosition(i, startRow, startCol);
+        Editor->findPosition(i + str.length(), endRow, endCol);
+        
+        if (Editor->text(endRow).at(endCol) == ';')
+            endCol++;
+        Editor->setSelection(startRow, startCol, endRow, endCol);
     }
     else
     {

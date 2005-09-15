@@ -36,6 +36,12 @@
 #
 #####
 
+# Locations of OCI Dll and home, QT and QScintilla
+#    paths below are just an example
+OCI_DLL=/c/Oracle9/bin/oci.dll
+OCI_HOME=/c/Oracle9/oci
+QTDIR=/c/qt-3
+
 # Perl executable - needed for key transalations generation
 PERL=/c/Perl/bin/perl
 
@@ -47,7 +53,7 @@ INSTALLDIR=/c/TOra
 TARGET=tora
 
 # Additional includes needed to compile program
-INCLUDES="-I$(ORACLE_HOME)/oci/include" \
+INCLUDES="-I$(OCI_HOME)/include" \
 	 "-I$(QTDIR)/include"
 
 # C++ Compiler to use
@@ -62,8 +68,9 @@ STDCPP_SHARED=-lstdc++
 # Static version of C++ library (Only needed when linking statically
 STDCPP_STATIC=
 
-# Qt library
+# Qt and QScintilla libraries (QScintilla is only shared on Windows)
 QT_SHARED=-lqt-mt
+QT_SCINTILLA=-lqscintilla
 
 # Static Qt library
 QT_STATIC=
@@ -83,8 +90,7 @@ LUPDATE="$(QTDIR)/bin/lupdate"
 # Additional paths to find libraries
 LFLAGS="-L$(QTDIR)/lib" "-Llib"
 
-# Oracle OCI DLL and appropriate export library
-OCI_DLL=$(ORACLE_HOME)/bin/oci.dll
+# Oracle OCI export library
 OCI_LIB=lib/liboci.a
 
 # Oracle library
@@ -113,6 +119,7 @@ DEFINES+=-D_REENTRANT
 DEFINES+=-DQT_THREAD_SUPPORT
 DEFINES+=-DTOMONOLITHIC
 DEFINES+=-DWIN32 -D_WIN32
+DEFINES+=-D_int64="long long"
 
 # Comment out this line if you want more output from compile
 .SILENT:
@@ -153,7 +160,6 @@ API=	\
 	tolinechart.h		\
 	tomain.h		\
 	tomainwindow.kde.h	\
-	tomarkedtext.2.h	\
 	tomarkedtext.h		\
 	tomemoeditor.h		\
 	tonoblockquery.h	\
@@ -436,6 +442,11 @@ distclean: clean
 	-rm -f Makefile >/dev/null 2>&1
 	-rm -f configure.setup >/dev/null 2>&1
 
+# Specific rule for generation of LICENSE.h file
+config.h: windows/config.h
+	@echo Creating default config.h
+	@cp $< $@
+	
 # Keyboard shortcuts
 
 main.cpp: tora_toad.h
@@ -452,7 +463,8 @@ tora_toad.qm: tora_toad.ts
 tora-static: $(OCI_LIB) $(OBJECTS) windows/tora.o windows/cregistry.o
 	@echo Linking $@
 	$(GCC) $(LFLAGS) $(LFLAGS_GLOB) -mwindows -o $@ $(OBJECTS) windows/tora.o windows/cregistry.o \
-		$(LIBS_GLOB) $(QT_STATIC) $(ORACLE_SHARED) $(STDCPP_STATIC) $(MYSQL_STATIC) 
+		$(LIBS_GLOB) $(QT_STATIC) $(ORACLE_SHARED) $(STDCPP_STATIC) $(MYSQL_STATIC) \
+		$(QT_SCINTILLA)
 
 
 # The binary for the tora
@@ -460,4 +472,5 @@ tora-static: $(OCI_LIB) $(OBJECTS) windows/tora.o windows/cregistry.o
 tora:   $(OCI_LIB) $(OBJECTS) windows/tora.o windows/cregistry.o
 	@echo Linking $@
 	$(GCC) $(LFLAGS) $(LFLAGS_GLOB) -mwindows -o $@ $(OBJECTS) windows/tora.o windows/cregistry.o \
-		$(LIBS_GLOB) $(QT_SHARED) $(ORACLE_SHARED) $(STDCPP_SHARED) 
+		$(LIBS_GLOB) $(QT_SHARED) $(ORACLE_SHARED) $(STDCPP_SHARED) \
+		$(QT_SCINTILLA)

@@ -213,7 +213,7 @@ public:
         toHelp::connectDialog(this);
         LastTemplate = TemplateMap.end();
         updateFromMap();
-        Description->setWordWrap(toMarkedText::WidgetWidth);
+        Description->setWrapMode(QextScintilla::WrapWord);
     }
     virtual void remove
         (void)

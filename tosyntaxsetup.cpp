@@ -72,7 +72,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, WFlags fl)
     CompletionSort->setChecked(!toTool::globalConfig(CONF_COMPLETION_SORT, "Yes").isEmpty());
     AutoIndent->setChecked(!toTool::globalConfig(CONF_AUTO_INDENT, "Yes").isEmpty());
     Extensions->setText(toTool::globalConfig(CONF_EXTENSIONS, DEFAULT_EXTENSIONS));
-    TabStop->setValue(toMarkedText::defaultTabStop());
+    TabStop->setValue(toMarkedText::defaultTabWidth());
 
     {
         QFont font(toStringToFont(toTool::globalConfig(CONF_CODE, "")));
@@ -342,8 +342,8 @@ void toSyntaxSetup::saveSetting(void)
     toTool::globalSetConfig(CONF_CODE_COMPLETION, highlight && CodeCompletion->isChecked() ? "Yes" : "");
     toTool::globalSetConfig(CONF_COMPLETION_SORT, CompletionSort->isChecked() ? "Yes" : "");
     toTool::globalSetConfig(CONF_AUTO_INDENT, AutoIndent->isChecked() ? "Yes" : "");
-    toMarkedText::setDefaultTabStop(TabStop->value());
-    toTool::globalSetConfig(CONF_TAB_STOP, QString::number(toMarkedText::defaultTabStop()));
+    toMarkedText::setDefaultTabWidth(TabStop->value());
+    toTool::globalSetConfig(CONF_TAB_STOP, QString::number(toMarkedText::defaultTabWidth()));
     for (std::map<QCString, QColor>::iterator i = Colors.begin();i != Colors.end();i++)
     {
         QCString str(CONF_COLOR);

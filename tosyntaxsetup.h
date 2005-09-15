@@ -74,7 +74,7 @@ public slots:
     }
     virtual void changeHighlight(bool val)
     {
-        Example->setHighlight(val);
+        Example->setSyntaxColoring(val);
         Example->update();
     }
 };

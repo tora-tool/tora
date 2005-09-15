@@ -178,7 +178,7 @@ toDebugWatch::toDebugWatch(toDebug *parent)
     {
         int curline, curcol;
         Debugger->currentEditor()->getCursorPosition (&curline, &curcol);
-        Default = Debugger->currentEditor()->textLine(curline);
+        Default = Debugger->currentEditor()->text(curline);
         while (curcol > 0 && toIsIdent(Default[curcol - 1]))
             curcol--;
         while (curcol < int(Default.length()) && !toIsIdent(Default[curcol]))
@@ -1123,8 +1123,8 @@ void toDebug::readLog(void)
     if (!TargetLog.isEmpty())
     {
         TargetLog.replace(TargetLog.length() - 1, 1, QString::null);
-        RuntimeLog->insertLine(TargetLog);
-        RuntimeLog->setCursorPosition(RuntimeLog->numLines() - 1, 0);
+        RuntimeLog->insert(TargetLog);
+        RuntimeLog->setCursorPosition(RuntimeLog->lines() - 1, 0);
         TargetLog = QString::null;
     }
     if (!TargetException.isEmpty())
@@ -1620,7 +1620,7 @@ bool toDebug::viewSource(const QString &schema, const QString &name, const QStri
                 editor = te;
                 break;
             }
-            if (Editors->tabLabel(te) == tr("Unknown") && !te->edited())
+            if (Editors->tabLabel(te) == tr("Unknown") && !te->isModified())
                 editor = te;
         }
         if (!editor)
@@ -1630,7 +1630,7 @@ bool toDebug::viewSource(const QString &schema, const QString &name, const QStri
                     this, SLOT(reorderContent(int, int)));
             Editors->addTab(editor, editorName(editor));
         }
-        if (editor->numLines() <= 1)
+        if (editor->lines() <= 1)
         {
             editor->setData(schema, type, name);
             editor->readData(connection(), StackTrace);
@@ -2162,7 +2162,7 @@ bool toDebug::checkStop(void)
 
 bool toDebug::checkCompile(toDebugText *editor)
 {
-    if (editor->edited())
+    if (editor->isModified())
     {
         switch (TOMessageBox::warning(this,
                                       tr("%1 changed").arg(editorName(editor)),
@@ -2178,7 +2178,7 @@ bool toDebug::checkCompile(toDebugText *editor)
                 return false;
             break;
         case 1:
-            editor->setEdited(false);
+            editor->setModified(false);
             break;
         case 2:
             return false;
@@ -2316,7 +2316,7 @@ bool toDebugText::compile(void)
             if (body)
                 Type += QString::fromLatin1(" BODY");
             readErrors(Debugger->connection());
-            setEdited(false);
+            setModified(false);
             toConnection::objectName no;
             no.Name = Object;
             no.Owner = Schema;

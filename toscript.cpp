@@ -619,7 +619,7 @@ void toScript::execute(void)
         {
             Worksheet->editor()->setText(script);
             Worksheet->editor()->setFilename(QString::null);
-            Worksheet->editor()->setEdited(true);
+            Worksheet->editor()->setModified(true);
         }
         if (mode == 3)
         {

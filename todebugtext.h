@@ -119,8 +119,6 @@ public:
     virtual void exportData(std::map<QCString, QString> &data, const QCString &prefix);
     virtual void importData(std::map<QCString, QString> &data, const QCString &prefix);
 protected:
-    virtual void paintCell(QPainter *painter, int row, int col);
-    virtual void paintEvent(QPaintEvent *pe);
     virtual void mouseDoubleClickEvent (QMouseEvent *me);
     virtual void mouseMoveEvent (QMouseEvent *me);
 };

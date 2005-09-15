@@ -669,9 +669,9 @@ toSQLParse::editorTokenizer::editorTokenizer(toMarkedText *editor, int offset, i
 QString toSQLParse::editorTokenizer::getToken(bool forward, bool comments)
 {
     bool first = true;
-    while (Line < int(Editor->numLines()) && Line >= 0)
+    while (Line < int(Editor->lines()) && Line >= 0)
     {
-        QString line = Editor->textLine(Line);
+        QString line = Editor->text(Line);
         if (!first)
         {
             if (forward)
@@ -706,12 +706,12 @@ QString toSQLParse::editorTokenizer::getToken(bool forward, bool comments)
                 if (!end.isNull())
                 {
                     for (Line++;
-                            Line < int(Editor->numLines()) && (Offset = Editor->textLine(Line).find(end)) < 0;
+                            Line < int(Editor->lines()) && (Offset = Editor->text(Line).find(end)) < 0;
                             Line++)
-                        ret += ("\n") + Editor->textLine(Line);
-                    if (Line < int(Editor->numLines()))
+                        ret += ("\n") + Editor->text(Line);
+                    if (Line < int(Editor->lines()))
                     {
-                        ret += ("\n") + Editor->textLine(Line).mid(0, Offset + end.length());
+                        ret += ("\n") + Editor->text(Line).mid(0, Offset + end.length());
                         Offset += end.length();
                     }
                 }
@@ -739,12 +739,12 @@ QString toSQLParse::editorTokenizer::getToken(bool forward, bool comments)
                 if (!end.isNull())
                 {
                     for (Line--;
-                            Line >= 0 && (Offset = Editor->textLine(Line).findRev(end)) < 0;
+                            Line >= 0 && (Offset = Editor->text(Line).findRev(end)) < 0;
                             Line--)
-                        ret.prepend(Editor->textLine(Line) + ("\n"));
+                        ret.prepend(Editor->text(Line) + ("\n"));
                     if (Line >= 0)
                     {
-                        QString str = Editor->textLine(Line);
+                        QString str = Editor->text(Line);
                         ret.prepend(str.mid(Offset, str.length() - Offset) + ("\n"));
                     }
                 }
@@ -765,21 +765,21 @@ QString toSQLParse::editorTokenizer::getToken(bool forward, bool comments)
 
 QString toSQLParse::editorTokenizer::remaining(bool eol)
 {
-    if (Line >= Editor->numLines())
+    if (Line >= Editor->lines())
         return QString::null;
     if (!eol)
     {
         QStringList rows;
-        rows << Editor->textLine(Line).mid(Offset);
-        for (int i = Line;i < Editor->numLines();i++)
-            rows << Editor->textLine(i);
-        Line = Editor->numLines();
+        rows << Editor->text(Line).mid(Offset);
+        for (int i = Line;i < Editor->lines();i++)
+            rows << Editor->text(i);
+        Line = Editor->lines();
         Offset = 0;
         return rows.join(("\n"));
     }
     else
     {
-        QString line = Editor->textLine(Line);
+        QString line = Editor->text(Line);
         QString ret = line.mid(offset());
         Offset = line.length();
         return ret;
@@ -990,8 +990,6 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens)
     return cur;
 }
 
-#define TABSTOP (toMarkedText::defaultTabStop())
-
 int toSQLParse::countIndent(const QString &txt, int &chars)
 {
     int level = 0;
@@ -1003,7 +1001,7 @@ int toSQLParse::countIndent(const QString &txt, int &chars)
         else if (c == ' ')
             level++;
         else if (c == '\t')
-            level = (level / TABSTOP + 1) * TABSTOP;
+            level = (level / toMarkedText::defaultTabWidth() + 1) * toMarkedText::defaultTabWidth();
         chars++;
     }
     return level;
@@ -1050,7 +1048,7 @@ static int CurrentColumn(const QString &txt)
         if (c == '\n')
             level = 0;
         else if (c == '\t')
-            level = (level / TABSTOP + 1) * TABSTOP;
+            level = (level / toMarkedText::defaultTabWidth() + 1) * toMarkedText::defaultTabWidth();
         else
             level++;
         pos++;

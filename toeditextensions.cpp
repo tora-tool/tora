@@ -142,7 +142,7 @@ void toEditExtensions::intIndent(int delta)
 
     if (Current)
     {
-        if (!Current->getMarkedRegion(&line1, &col1, &line2, &col2))
+        if (!Current->getSelection(&line1, &col1, &line2, &col2))
         {
             Current->getCursorPosition (&line1, &col1);
             line2 = line1;
@@ -155,7 +155,7 @@ void toEditExtensions::intIndent(int delta)
         QString res;
         for (int i = line1;i <= line2;i++)
         {
-            QString t = Current->textLine(i);
+            QString t = Current->text(i);
             int chars = 0;
             int level = toSQLParse::countIndent(t, chars);
             res += toSQLParse::indentString(std::max(0, level + delta));
@@ -165,9 +165,7 @@ void toEditExtensions::intIndent(int delta)
                 res += t.mid(chars);
         }
 
-        Current->setCursorPosition(line1, 0, false);
-        Current->setCursorPosition(line2, Current->textLine(line2).length(), true);
-
+        Current->setSelection(line1, 0, line2, Current->text(line2).length());
         Current->insert(res, true);
     }
 }
@@ -189,13 +187,13 @@ void toEditExtensions::autoIndentBlock(void)
         try
         {
             int line1, col1, line2, col2;
-            if (Current->getMarkedRegion(&line1, &col1, &line2, &col2))
+            if (Current->getSelection(&line1, &col1, &line2, &col2))
             {
-                QString t = Current->textLine(line1).mid(0, col1);
+                QString t = Current->text(line1).mid(0, col1);
                 t += QString::fromLatin1("a");
                 int chars = 0;
                 QString ind = toSQLParse::indentString(toSQLParse::countIndent(t, chars));
-                QString mrk = Current->markedText();
+                QString mrk = Current->selectedText();
                 QString res;
                 try
                 {
@@ -205,7 +203,7 @@ void toEditExtensions::autoIndentBlock(void)
                 {
                     res = toSQLParse::indent(ind + mrk);
                 }
-                t = Current->textLine(line2);
+                t = Current->text(line2);
                 unsigned int l = res.length() - ind.length();
                 if (col2 == int(t.length()) && t.length() > 0) // Strip last newline if on last col of line
                     l--;
@@ -247,7 +245,7 @@ void toEditExtensions::upperCase(void)
 {
     if (Current)
     {
-        QString text = Current->markedText().upper();
+        QString text = Current->selectedText().upper();
         if (!text.isEmpty())
             Current->insert(text, true);
     }
@@ -257,7 +255,7 @@ void toEditExtensions::lowerCase(void)
 {
     if (Current)
     {
-        QString text = Current->markedText().lower();
+        QString text = Current->selectedText().lower();
         if (!text.isEmpty())
             Current->insert(text, true);
     }
@@ -302,7 +300,7 @@ void toEditExtensions::obfuscateBlock(void)
 {
     if (Current)
     {
-        QString str = Current->markedText();
+        QString str = Current->selectedText();
         if (!str.isEmpty())
         {
             toSQLParse::statement stat;
@@ -571,7 +569,7 @@ toEditExtensionGoto::toEditExtensionGoto(toMarkedText *editor)
         : toEditExtensionGotoUI(editor, "GotoLine", true), Editor(editor)
 {
     toHelp::connectDialog(this);
-    Line->setMaxValue(Editor->numLines());
+    Line->setMaxValue(Editor->lines());
     Line->setMinValue(1);
     {
         int curline, curcol;
@@ -582,5 +580,5 @@ toEditExtensionGoto::toEditExtensionGoto(toMarkedText *editor)
 
 void toEditExtensionGoto::gotoLine()
 {
-    Editor->setCursorPosition(Line->value() - 1, 0, false);
+    Editor->setCursorPosition(Line->value() - 1, 0);
 }

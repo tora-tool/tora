@@ -228,7 +228,7 @@ bool toDebugText::readData(toConnection &conn, QListView *Stack)
         while (!lines.eof())
             str += lines.readValue();
         setText(str);
-        setEdited(false);
+        setModified(false);
         setCurrent( -1);
 
         if (str.isEmpty())
@@ -265,10 +265,10 @@ toDebugText::toDebugText(QListView *breakpoints,
         Debugger(debugger),
         Breakpoints(breakpoints)
 {
-    setLeftIgnore(DEBUG_INDENT);
-    setHMargin(DEBUG_INDENT + hMargin());
+    //setLeftIgnore(DEBUG_INDENT);
+    setMarginWidth(0, DEBUG_INDENT + marginWidth(0));
     setMouseTracking(true);
-    QRect view = viewRect();
+    QRect view = childrenRect ();
     LastX = DEBUG_INDENT + view.left();
     CurrentItem = FirstItem = NULL;
     NoBreakpoints = false;
@@ -340,53 +340,9 @@ bool toDebugText::hasBreakpoint(int row) // This has to leave CurrentItem on the
     return false;
 }
 
-void toDebugText::paintCell(QPainter *painter, int row, int col)
-{
-    toHighlightedText::paintCell(painter, row, col);
-    if (col == 0)
-    {
-        QPalette cp = qApp->palette();
-        painter->fillRect(0, 0, DEBUG_INDENT - 2, cellHeight(), cp.active().background());
-        painter->fillRect(DEBUG_INDENT - 2, 0, 1, cellHeight(), cp.active().midlight());
-        painter->fillRect(DEBUG_INDENT - 1, 0, 1, cellHeight(), cp.active().dark());
-
-        if (hasBreakpoint(row))
-        {
-            int h = std::max((cellHeight() - toBreakpointPixmap->height()) / 2, 0);
-            if (CurrentItem->text(4) == "DISABLED")
-                painter->drawPixmap(0, h, *toDisBreakpointPixmap);
-            else
-                painter->drawPixmap(0, h, *toBreakpointPixmap);
-        }
-    }
-}
-
-void toDebugText::paintEvent(QPaintEvent *pe)
-{
-    toHighlightedText::paintEvent(pe);
-    int fromY = 0;
-    if (numRows() == 0 || rowYPos(numRows() - 1, &fromY))
-    {
-        if (numRows())
-            fromY += cellHeight();
-        QRect view = viewRect();
-        if (fromY + view.top() < view.height())
-        {
-            QPainter painter(this);
-            QPalette cp = qApp->palette();
-            if (xOffset() < DEBUG_INDENT - 3)
-                painter.fillRect(view.left(), fromY, DEBUG_INDENT - 2 - xOffset(), view.bottom() - fromY, cp.active().background());
-            if (xOffset() < DEBUG_INDENT - 2)
-                painter.fillRect(view.left() + DEBUG_INDENT - 2 - xOffset(), fromY, 1, view.bottom() - fromY, cp.active().midlight());
-            if (xOffset() < DEBUG_INDENT - 1)
-                painter.fillRect(view.left() + DEBUG_INDENT - 1 - xOffset(), fromY, 1, view.bottom() - fromY, cp.active().dark());
-        }
-    }
-}
-
 void toDebugText::mouseMoveEvent(QMouseEvent *me)
 {
-    QRect view = viewRect();
+    QRect view = childrenRect ();
     if (me->x() > DEBUG_INDENT + view.left())
     {
         if (LastX <= DEBUG_INDENT + view.left())
@@ -453,12 +409,14 @@ void toDebugText::toggleBreakpoint(int row, bool enable)
             FirstItem = CurrentItem = NULL;
             NoBreakpoints = false;
         }
-        updateCell(row, 0, false);
+        //updateCell(row, 0, false);
     }
 }
 
 void toDebugText::mouseDoubleClickEvent(QMouseEvent *me)
 {
+    toHighlightedText::mouseDoubleClickEvent(me);
+/*
     if (me->x() + xOffset() > DEBUG_INDENT)
         toHighlightedText::mouseDoubleClickEvent(me);
     else
@@ -466,6 +424,7 @@ void toDebugText::mouseDoubleClickEvent(QMouseEvent *me)
         int row = findRow(me->y());
         toggleBreakpoint(row);
     }
+*/
 }
 
 void toDebugText::exportData(std::map<QCString, QString> &data, const QCString &prefix)

@@ -233,12 +233,12 @@ void toMemoEditor::setText(const QString &str)
 {
     Editor->setText(str);
     Null->setChecked(str.isNull());
-    Editor->setEdited(false);
+    Editor->setModified(false);
 }
 
 void toMemoEditor::null(bool nul)
 {
-    Editor->setEdited(true);
+    Editor->setModified(true);
     Editor->setDisabled(nul);
 }
 
@@ -251,7 +251,7 @@ void toMemoEditor::store(void)
 {
     if (Editor->isReadOnly())
         return ;
-    if (Editor->edited())
+    if (Editor->isModified())
     {
         if (!Editor->isEnabled())
             emit changeData(Row, Col, QString::null);
@@ -263,13 +263,13 @@ void toMemoEditor::store(void)
 
 void toMemoEditor::changePosition(int row, int cols)
 {
-    if (Editor->edited())
+    if (Editor->isModified())
     {
         if (!Editor->isEnabled())
             emit changeData(Row, Col, QString::null);
         else
             emit changeData(Row, Col, Editor->text());
-        Editor->setEdited(false);
+        Editor->setModified(false);
     }
 
     toListView *lst = listView();

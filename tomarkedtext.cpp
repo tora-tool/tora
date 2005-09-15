@@ -44,16 +44,6 @@
 #include "tosearchreplace.h"
 #include "totool.h"
 
-#if QT_VERSION >= 0x030000
-#include "qtlegacy/qtmultilineedit.cpp"
-#include "qtlegacy/qttableview.cpp"
-#include "qtlegacy/qtmultilineedit.moc"
-#include "qtlegacy/qttableview.moc"
-#include "tomarkedtext.3.moc"
-#else
-#include "tomarkedtext.2.moc"
-#endif
-
 #ifdef TO_HAS_KPRINT
 #include <kprinter.h>
 #endif
@@ -68,8 +58,12 @@
 
 #include "tomarkedtext.moc"
 
+// static value for default tab width
+int toMarkedText::defTabWidth = 8;
+
+
 toMarkedText::toMarkedText(QWidget *parent, const char *name)
-        : toMultiLineEdit(parent, name), toEditWidget()
+        : QextScintilla(parent, name), toEditWidget()
 {
     setEdit();
     Search = false;
@@ -87,6 +81,9 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
     setPalette(pal);
 
     CursorTimerID = -1;
+    
+    // sets default tab width
+    setTabWidth(defaultTabWidth());
 }
 
 void toMarkedText::setEdit(void)
@@ -95,14 +92,14 @@ void toMarkedText::setEdit(void)
     {
         toEditWidget::setEdit(false, true, true,
                               false, false,
-                              false, hasMarkedText(), false,
+                              false, hasSelectedText(), false,
                               true, true, false);
     }
     else
     {
         toEditWidget::setEdit(true, true, true,
                               undoEnabled(), redoEnabled(),
-                              hasMarkedText(), hasMarkedText(), true,
+                              hasSelectedText(), hasSelectedText(), true,
                               true, true, false);
     }
     toMain::editEnable(this);
@@ -114,7 +111,7 @@ void toMarkedText::focusInEvent (QFocusEvent *e)
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
     toMainWidget()->setCoordinates(curline + 1, curcol + 1);
-    toMultiLineEdit::focusInEvent(e);
+    QextScintilla::focusInEvent(e);
     if (CursorTimerID < 0)
         CursorTimerID = startTimer(500);
 }
@@ -128,7 +125,7 @@ void toMarkedText::timerEvent(QTimerEvent *e)
         toMainWidget()->setCoordinates(curline + 1, curcol + 1);
     }
     else
-        toMultiLineEdit::timerEvent(e);
+        QextScintilla::timerEvent(e);
 }
 
 void toMarkedText::focusOutEvent (QFocusEvent *e)
@@ -144,18 +141,13 @@ void toMarkedText::focusOutEvent (QFocusEvent *e)
         killTimer(CursorTimerID);
         CursorTimerID = -1;
     }
-    toMultiLineEdit::focusOutEvent(e);
+    QextScintilla::focusOutEvent(e);
 }
 
 void toMarkedText::dropEvent(QDropEvent *e)
 {
-    toMultiLineEdit::dropEvent(e);
+    QextScintilla::dropEvent(e);
     setFocus();
-}
-
-void toMarkedText::paintEvent(QPaintEvent *pe)
-{
-    toMultiLineEdit::paintEvent(pe);
 }
 
 void toMarkedText::editPrint(void)
@@ -175,7 +167,7 @@ void toMarkedText::editPrint(void)
                 (line = printPage(&printer, &painter, line, offset, page++, false)))
             painter.resetXForm();
         while ((line = printPage(&printer, &painter, line, offset, page++)) &&
-                line < numLines() &&
+                line < lines() &&
                 (printer.toPage() == 0 || page <= printer.toPage()))
         {
             printer.newPage();
@@ -229,20 +221,20 @@ int toMarkedText::printPage(TOPrinter *printer, QPainter *painter, int line, int
             painter->drawText(0, pos,
                               metrics.width(), metrics.height(),
                               AlignLeft | AlignTop | ExpandTabs | WordBreak,
-                              textLine(line), -1, &bound);
+                              text(line), -1, &bound);
         }
         else
             bound = painter->boundingRect(0, pos,
                                           metrics.width(), metrics.height(),
                                           AlignLeft | AlignTop | ExpandTabs | WordBreak,
-                                          textLine(line));
+                                          text(line));
         int cheight = bound.height() ? bound.height() : height;
         totalHeight -= cheight;
         pos += cheight;
         if (totalHeight >= 0)
             line++;
     }
-    while (totalHeight > 0 && line < numLines());
+    while (totalHeight > 0 && line < lines());
     painter->setClipping(false);
     offset = totalHeight;
     painter->setFont(defFont);
@@ -254,14 +246,14 @@ void toMarkedText::openFilename(const QString &file)
     QCString data = toReadFile(file);
     setText(QString::fromLocal8Bit(data));
     setFilename(file);
-    setEdited(false);
+    setModified(false);
     toMainWidget()->addRecentFile(file);
     toStatusMessage(tr("File opened successfully"), false, false);
 }
 
 bool toMarkedText::editOpen(QString suggestedFile)
 {
-    if (edited())
+    if (isModified())
     {
         int ret = TOMessageBox::information(this,
                                             tr("Save changes?"),
@@ -307,7 +299,7 @@ bool toMarkedText::editSave(bool askfile)
             return false;
         toMainWidget()->addRecentFile(fn);
         setFilename(fn);
-        setEdited(false);
+        setModified(false);
         return true;
     }
     return false;
@@ -315,14 +307,29 @@ bool toMarkedText::editSave(bool askfile)
 
 void toMarkedText::newLine(void)
 {
-    toMultiLineEdit::newLine();
+    // new line
+    switch (eolMode()) {
+        case EolWindows:
+            insert ("\n\r");
+            break;
+		
+		case EolMac:
+           insert ("\n");
+           break;
+
+        default:
+            // Unix is default one
+            insert ("\r");
+            break;
+    }
+    
     if (!toTool::globalConfig(CONF_AUTO_INDENT, "Yes").isEmpty())
     {
         int curline, curcol;
         getCursorPosition (&curline, &curcol);
         if (curline > 0)
         {
-            QString str = textLine(curline - 1);
+            QString str = text(curline - 1);
             QString ind;
             for (unsigned int i = 0;i < str.length() && str.at(i).isSpace();i++)
                 ind += str.at(i);
@@ -334,8 +341,8 @@ void toMarkedText::newLine(void)
 
 void toMarkedText::searchFound(int line, int col)
 {
-    setCursorPosition(line, col + SearchString.length(), false);
-    setCursorPosition(line, col, true);
+    setSelection (line, col + SearchString.length(), line, col);
+    
     toStatusMessage(tr("Incremental search") + QString::fromLatin1(":") + SearchString, false, false);
 }
 
@@ -351,19 +358,19 @@ void toMarkedText::incrementalSearch(bool forward, bool next)
             curline = 0;
             curcol = 0;
             next = false;
-            line = textLine(curline);
+            line = text(curline);
         }
         else
         {
-            curline = numLines() - 1;
-            line = textLine(curline);
+            curline = lines() - 1;
+            line = text(curline);
             curcol = line.length();
             next = false;
         }
         SearchFailed = false;
     }
     else
-        line = textLine(curline);
+        line = text(curline);
     if (forward)
     {
         if (next)
@@ -377,9 +384,9 @@ void toMarkedText::incrementalSearch(bool forward, bool next)
                 return ;
             }
         }
-        for (curline++;curline < numLines();curline++)
+        for (curline++;curline < lines();curline++)
         {
-            int pos = textLine(curline).find(SearchString, 0, false);
+            int pos = text(curline).find(SearchString, 0, false);
             if (pos >= 0)
             {
                 searchFound(curline, pos);
@@ -402,7 +409,7 @@ void toMarkedText::incrementalSearch(bool forward, bool next)
         }
         for (curline--;curline >= 0;curline--)
         {
-            int pos = textLine(curline).findRev(SearchString, -1, false);
+            int pos = text(curline).findRev(SearchString, -1, false);
             if (pos >= 0)
             {
                 searchFound(curline, pos);
@@ -422,7 +429,7 @@ void toMarkedText::mousePressEvent(QMouseEvent *e)
         LastSearch = SearchString;
         toStatusMessage(QString::null);
     }
-    toMultiLineEdit::mousePressEvent(e);
+    QextScintilla::mousePressEvent(e);
 }
 
 void toMarkedText::incrementalSearch(bool forward)
@@ -446,19 +453,7 @@ void toMarkedText::incrementalSearch(bool forward)
 
 void toMarkedText::keyPressEvent(QKeyEvent *e)
 {
-    if (e->state() == 0 && e->key() == Key_Insert)
-    {
-        setOverwriteMode(!isOverwriteMode());
-        e->accept();
-        return ;
-    }
-    else if (toCheckKeyEvent(e, QKeySequence(tr("Ctrl+A", "Edit|Select All"))))
-    {
-        selectAll();
-        e->accept();
-        return ;
-    }
-    else if (Search)
+    if (Search)
     {
         bool ok = false;
         if (e->state() == NoButton && e->key() == Key_Backspace)
@@ -498,7 +493,7 @@ void toMarkedText::keyPressEvent(QKeyEvent *e)
             toStatusMessage(QString::null);
         }
     }
-    toMultiLineEdit::keyPressEvent(e);
+    QextScintilla::keyPressEvent(e);
 }
 
 void toMarkedText::exportData(std::map<QCString, QString> &data, const QCString &prefix)
@@ -509,7 +504,7 @@ void toMarkedText::exportData(std::map<QCString, QString> &data, const QCString 
     getCursorPosition (&curline, &curcol);
     data[prefix + ":Column"] = QString::number(curcol);
     data[prefix + ":Line"] = QString::number(curline);
-    if (edited())
+    if (isModified())
         data[prefix + ":Edited"] = "Yes";
 }
 
@@ -521,7 +516,7 @@ void toMarkedText::importData(std::map<QCString, QString> &data, const QCString 
     Filename = data[prefix + ":Filename"];
     setCursorPosition(data[prefix + ":Line"].toInt(), data[prefix + ":Column"].toInt());
     if (data[prefix + ":Edited"].isEmpty())
-        setEdited(false);
+        setModified(false);
 }
 
 static int FindIndex(const QString &str, int line, int col)
@@ -540,9 +535,9 @@ static int FindIndex(const QString &str, int line, int col)
 void toMarkedText::findPosition(int index, int &line, int &col)
 {
     int pos = 0;
-    for (int i = 0;i < numLines();i++)
+    for (int i = 0;i < lines();i++)
     {
-        QString str = textLine(i);
+        QString str = text(i);
         if (str.length() + pos >= (unsigned int)index)
         {
             line = i;
@@ -562,7 +557,7 @@ bool toMarkedText::searchNext(toSearchReplace *search)
 
     int col;
     int line;
-    cursorPosition(&line, &col);
+    getCursorPosition(&line, &col);
     int pos = FindIndex(text, line, col);
 
     int endPos;
@@ -572,8 +567,7 @@ bool toMarkedText::searchNext(toSearchReplace *search)
         int endLine;
         findPosition(pos, line, col);
         findPosition(endPos, endLine, endCol);
-        setCursorPosition(line, col, false);
-        setCursorPosition(endLine, endCol, true);
+        setSelection(line, col, endLine, endCol);
 
         return true;
     }
@@ -591,7 +585,30 @@ bool toMarkedText::searchCanReplace(bool all)
 {
     if (isReadOnly())
         return false;
-    if (all || hasMarkedText())
+    if (all || hasSelectedText())
         return true;
     return false;
+}
+
+void toMarkedText::insert(const QString &str, bool select)
+{
+    // NOTE: this may need some modification in case of insertion when
+    //       there is active selection causes selection replacement
+    int lineFrom;
+    int indexFrom;
+    int lineTo;
+    int indexTo;
+    
+    // get current position
+    if (select) {
+        getCursorPosition (&lineFrom, &indexFrom);
+    }
+    
+    QextScintilla::insert(str);
+    
+    // get new position and select if requested
+    if (select) {
+        getCursorPosition (&lineTo, &indexTo);
+        setSelection (lineFrom, indexFrom, lineTo, indexTo);
+    }
 }

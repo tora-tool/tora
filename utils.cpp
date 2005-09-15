@@ -1068,8 +1068,8 @@ QString toSaveFilename(const QString &filename, const QString &filter, QWidget *
 
 void toSetEnv(const QCString &var, const QCString &val)
 {
-#if TO_HAS_SETENV
-  setenv(var, val, 1);
+#if TO_HAS_SETENV && !defined(WIN32)
+    setenv(var, val, 1);
 #else
     // Has a memory leak, but just a minor one.
 
@@ -1083,11 +1083,10 @@ void toSetEnv(const QCString &var, const QCString &val)
 
 void toUnSetEnv(const QCString &var)
 {
-#ifndef TO_HAS_SETENV
-    toSetEnv(var, "");
-#else
-
+#if TO_HAS_SETENV && !defined(WIN32)
     unsetenv(var);
+#else
+    toSetEnv(var, "");
 #endif
 }
 

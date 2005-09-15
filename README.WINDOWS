@@ -34,24 +34,29 @@ Building with MINGW.
        with the addition of the following: 
          when running configure.bat add -rtti command line parameter
          
-    3. Obtain TOra sources from CVS
+    3. Get the QScintilla sources here
+        http://www.riverbankcomputing.co.uk/qscintilla/index.php
     
-    4. Rename Makefile.migw to Makefile in your TOra directory
+    4. Obtain TOra sources from CVS 
     
-    5. Edit Makefile and change path for PERL (and optionally for 
-       INSTALLDIR). Optionally edit the TARGET to set the desirable 
-       executable. Also check the CFLAGS_GLOB and LFLAGS_GLOB for the 
-       debug option (-g) depending on whether you want debug executable
-       or not.
+    5. Modify the qscintilla\build.cmd file in TOra directory with
+       your environment settings (MINGW, QT and QScintilla paths)
     
-    6. Ensure that your environment has QTDIR and ORACLE_HOME variables 
-       setup properly.
-       
-    7. Run 'make' in MSYS environment from TOra directory.
+    6. Build and install QScintilla by running qscintilla\build.cmd
     
-    8. Optionally run 'make install' - this will strip down the executable
-       and copy the necessary files (not yet all of them) to the install 
-       directory (INSTALLDIR)
+    7. Rename Makefile.migw to Makefile in your TOra directory
+    
+    8. Edit Makefile and change path for PERL, QTDIR, OCI_DLL and OCI_HOME
+       (and optionally for INSTALLDIR). Optionally edit the TARGET to 
+       set the desirable executable. Also check the CFLAGS_GLOB and 
+       LFLAGS_GLOB for the debug option (-g) depending on whether you 
+       want debug executable or not.
+    
+    9. Run 'make' in MSYS environment from TOra directory.
+    
+    10. Optionally run 'make install' - this will strip down the executable
+        and copy the necessary files (not yet all of them) to the install 
+        directory (INSTALLDIR)
        
 Please report any bugs should you find them as this port is still in the
 experimental stage.

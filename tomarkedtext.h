@@ -41,27 +41,23 @@
 #include "config.h"
 #include "toeditwidget.h"
 
-#if QT_VERSION < 0x030000
-#include "tomarkedtext.2.h"
-#else
-#include "qtlegacy/qttableview.h"
-#include "qtlegacy/qtmultilineedit.h"
-#include "tomarkedtext.3.h"
-#endif
-
 #include <map>
 
 #include <qglobal.h>
 #include <qstring.h>
 #include <qtimer.h>
 
+#include <qextscintilla.h>
+
 class TOPrinter;
 
-/** This is the enhanced editor used in TOra. It mainly offers integration in the TOra
- * menues and printsupport in addition to normal QMultiLineEdit.
+/** 
+ * This is the enhanced editor used in TOra. It mainly offers integration in the TOra
+ * menues and print support. It is based on QextScintilla which is API compatible
+ * with QTextEdit class.
  */
 
-class toMarkedText : public toMultiLineEdit, public toEditWidget
+class toMarkedText : public QextScintilla, public toEditWidget
 {
     Q_OBJECT
 
@@ -76,6 +72,8 @@ class toMarkedText : public toMultiLineEdit, public toEditWidget
     QString LastSearch;
 
     int CursorTimerID;
+    
+    static int defTabWidth;
 
     /** Print one page to printer.
      * @param printer Printer to print to.
@@ -103,53 +101,52 @@ public:
      * @param name Name of this widget.
      */
     toMarkedText(QWidget *parent, const char *name = NULL);
+    
+    /**
+     * Returns the default tab width.
+     */
+    static int defaultTabWidth() 
+    {
+        return defTabWidth;
+    }
+
+    /**
+     * Sets the default tab width.
+     * @param width the new default tab width;
+     */
+    static void setDefaultTabWidth(int width) 
+    {
+        if (width > 0) {
+            defTabWidth = width;
+        }
+    }
+
     /** Insert text and optionallly mark inserted text.
      * @param str String to insert.
      * @param mark True if mark inserted as selected.
      */
-    virtual void insert(const QString &str, bool mark)
-    {
-        toMultiLineEdit::insert(str, mark);
-    }
-    /** Insert text.
-     * @param str String to insert.
-     */
-    virtual void insert(const QString &str)
-    {
-        toMultiLineEdit::insert(str);
-    }
-    /** Get selected text. This function is now public.
-     * @return The selected text.
-     */
-    QString markedText()
-    {
-        return toMultiLineEdit::markedText();
-    }
-    /** Check if selection is available. This function is now public.
-     * @return True if selection is available.
-     */
-    bool hasMarkedText()
-    {
-        return toMultiLineEdit::hasMarkedText();
-    }
+    virtual void insert(const QString &str, bool select = false);
+
     /** Erase the contents of the editor.
      */
-    void clear(void)
+    virtual void clear(void)
     {
         Filename = "";
         redoEnabled(false);
         undoEnabled(false);
         setEdit();
-        toMultiLineEdit::clear();
-        setEdited(false);
+        QextScintilla::clear();
+        setModified(false);
     }
 
     /** Get location of the current selection. This function is now public. See the
      * Qt documentation for more information.
      */
-    bool getMarkedRegion (int * line1, int * col1, int * line2, int * col2) const
+    bool getSelection (int * line1, int * col1, int * line2, int * col2)
     {
-        return toMultiLineEdit::getMarkedRegion(line1, col1, line2, col2);
+        QextScintilla::getSelection(line1, col1, line2, col2);
+        
+        return hasSelectedText();
     }
 
     /** Get filename of current file in editor.
@@ -179,9 +176,6 @@ public:
     /** Reimplemented for internal reasons.
      */
     virtual void focusOutEvent (QFocusEvent *e);
-    /** Reimplemented for internal reasons.
-     */
-    virtual void paintEvent(QPaintEvent *pe);
     /** Print this editor.
      */
     virtual void editPrint(void);
@@ -232,7 +226,7 @@ public:
      */
     virtual void searchTop(void)
     {
-        setCursorPosition(0, 0, false);
+        setCursorPosition(0, 0);
     }
     /** Search for next entry
      * @return True if found, should select the found text.

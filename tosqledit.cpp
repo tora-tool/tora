@@ -374,11 +374,11 @@ void toSQLEdit::commitChanges(bool changeSelected)
     TrashButton->setEnabled(true);
     CommitButton->setEnabled(true);
 
-    bool update = Name->edited();
+    bool update = Name->isModified();
 
     Name->setEdited(false);
-    Description->setEdited(false);
-    Editor->editor()->setEdited(false);
+    Description->setModified(false);
+    Editor->editor()->setModified(false);
     LastVersion = Version->currentText();
     if (update)
         updateStatements(Name->text());
@@ -387,10 +387,10 @@ void toSQLEdit::commitChanges(bool changeSelected)
 
 bool toSQLEdit::checkStore(bool justVer)
 {
-    if ((Name->edited() ||
-            Editor->editor()->edited() ||
+    if ((Name->isModified() ||
+            Editor->editor()->isModified() ||
             (!justVer && Version->currentText() != LastVersion) ||
-            Description->edited()) &&
+            Description->isModified()) &&
             Version->currentText().length() > 0)
     {
         switch (TOMessageBox::information(this, tr("Modified SQL dictionary"),
@@ -402,8 +402,8 @@ bool toSQLEdit::checkStore(bool justVer)
             break;
         case 1:
             Name->setEdited(false);
-            Description->setEdited(false);
-            Editor->editor()->setEdited(false);
+            Description->setModified(false);
+            Editor->editor()->setModified(false);
             LastVersion = Version->currentText();
             return true;
         case 2:
@@ -415,7 +415,7 @@ bool toSQLEdit::checkStore(bool justVer)
 
 void toSQLEdit::changeVersion(const QString &ver)
 {
-    if (!Editor->editor()->edited() || checkStore(true))
+    if (!Editor->editor()->isModified() || checkStore(true))
     {
         selectionChanged(ver);
         if (Version->currentText() != ver)
@@ -461,7 +461,7 @@ void toSQLEdit::changeSQL(const QString &name, const QString &maxver)
         std::list<toSQL::version> &ver = def.Versions;
 
         Description->setText(def.Description);
-        Description->setEdited(false);
+        Description->setModified(false);
 
         std::list<toSQL::version>::iterator j = ver.end();
         int ind = 0;
@@ -498,7 +498,7 @@ void toSQLEdit::changeSQL(const QString &name, const QString &maxver)
         LastVersion = QString::fromLatin1("Any:Any");
         Version->insertItem(LastVersion);
     }
-    Editor->editor()->setEdited(false);
+    Editor->editor()->setModified(false);
 }
 
 void toSQLEdit::selectionChanged(const QString &maxver)

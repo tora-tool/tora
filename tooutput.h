@@ -65,7 +65,7 @@ public:
     virtual ~toOutput();
     void insertLine(const QString &str)
     {
-        Output->insertLine(str);
+        Output->append(str);
     }
     bool enabled(void);
     QToolBar *toolBar(void)
