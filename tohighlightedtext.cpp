@@ -297,6 +297,7 @@ void toHighlightedText::setSyntaxColoring(bool val)
     syntaxColoring = val;
     if (syntaxColoring) {
         QextScintilla::setLexer(lexer);
+        update();
     }
     else {
         QextScintilla::setLexer(0);
@@ -322,7 +323,9 @@ void toHighlightedText::setFont (const QFont & font)
     // Only sets fint lexer - one for all styles
     // this may (or may not) need to be changed in a future
     if (lexer) {
+        lexer->setDefaultFont(font);
         lexer->setFont(font);
+        update();
     }
 }
 
