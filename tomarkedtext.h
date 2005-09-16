@@ -265,18 +265,7 @@ protected:
     virtual void dropEvent(QDropEvent *);
     virtual void timerEvent(QTimerEvent *);
 private slots:
-    void setRedoAvailable(bool avail)
-    {
-        redoEnabled(avail);
-    }
-    void setUndoAvailable(bool avail)
-    {
-        undoEnabled(avail);
-    }
-    void setCopyAvailable(bool)
-    {
-        setEdit();
-    }
+    void setTextChanged();
 };
 
 #endif

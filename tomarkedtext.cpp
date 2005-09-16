@@ -69,9 +69,7 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
     Search = false;
     setFont(toStringToFont(toTool::globalConfig(CONF_TEXT, "")));
 
-    connect(this, SIGNAL(redoAvailable(bool)), this, SLOT(setRedoAvailable(bool)));
-    connect(this, SIGNAL(undoAvailable(bool)), this, SLOT(setUndoAvailable(bool)));
-    connect(this, SIGNAL(copyAvailable(bool)), this, SLOT(setCopyAvailable(bool)));
+    connect(this, SIGNAL(textChanged()), this, SLOT(setTextChanged()));
 
     QPalette pal = palette();
     pal.setColor(QColorGroup::Base,
@@ -610,5 +608,14 @@ void toMarkedText::insert(const QString &str, bool select)
     if (select) {
         getCursorPosition (&lineTo, &indexTo);
         setSelection (lineFrom, indexFrom, lineTo, indexTo);
+    }
+}
+
+void toMarkedText::setTextChanged()
+{
+    redoEnabled(isRedoAvailable());
+    undoEnabled(isUndoAvailable());
+    if (hasSelectedText()) {
+        setEdit();
     }
 }
