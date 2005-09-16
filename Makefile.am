@@ -26,6 +26,7 @@ AM_LDFLAGS = $(PCRE_LIBS) \
 	@LIB_KFILE@ \
 	@LIB_DCOP@ \
 	@LIB_KHTML@ \
+	-lqscintilla \
 	-lstdc++ \
 	@LIBPTHREAD@ \
 	$(ORACLE_LDFLAGS)
