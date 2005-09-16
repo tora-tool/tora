@@ -201,8 +201,6 @@ EXTRA_DIST = debian \
 	toextratranslations.cpp \
 	tomainwindow.h \
 	tomainwindow.kde.h \
-	tomarkedtext.2.h \
-	tomarkedtext.3.h \
 	tomysqlkeywords.h \
 	toocistub.cpp \
 	tooraclepreload.cpp \
@@ -273,8 +271,6 @@ BUILT_SOURCES = \
 	tomain.moc \
 	tomainwindow.kde.moc \
 	tomainwindow.moc \
-	tomarkedtext.2.moc \
-	tomarkedtext.3.moc \
 	tomarkedtext.moc \
 	tomemoeditor.moc \
 	tomessageui.moc \
