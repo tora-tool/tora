@@ -7,9 +7,15 @@ QSscintilla port:
     one got rid of.
 
 * Finish implementation of syntax colouring editor component (toHighlightedText class)
-    Get rid of toSyntaxAnalyzer, code completion in SQL editor (using QextScintillaAPIs
-    class), better integration with lexer class (QextScintillaLexer). We also probably 
-    need to override QextScintillaLexerSQL to better suit TOra purposes.
+    Code completion in SQL editor (using QextScintillaAPIs class), better integration 
+    with lexer class (QextScintillaLexer). We also probably need to override 
+    QextScintillaLexerSQL to better suit TOra purposes.
+    
+* Subtask from previous - integrate toSyntaxAnalyzer with QextScintillaLexer (or our 
+    subclass of it). This is needed to because toSyntaxAnalyzer used all over TOra to 
+    do validity checks of SQL, parameter parsing and other related things (not just 
+    syntax colouring). Hence it would make much more sense to integrate it with 
+    QextScintillaLexer where the latter can take keyword lists out of toSyntaxAnalyzer.
     
 * Syntax colouring configuration options (toSyntaxSetup class and UI dialog) 
     This has to be reimplemented to use QextScintillaLexer class instead of toSyntaxAnalyzer. 
