@@ -62,8 +62,8 @@ libtool() {
 }
 
 
-run aclocal '' 1 5
+run aclocal '' 1 6
 run autoheader
 run autoconf
 libtool
-run automake -a 1 5
+run automake -a 1 6
