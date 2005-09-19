@@ -46,6 +46,7 @@
 #include <qglobal.h>
 #include <qstring.h>
 #include <qtimer.h>
+#include <qpopupmenu.h>
 
 #include <qextscintilla.h>
 
@@ -260,12 +261,40 @@ public:
      * @param col Will be filled out with the col.
      */
     void findPosition(int index, int &line, int &col);
+    
+signals:
+    void displayMenu(QPopupMenu *);
+
 protected:
     virtual void newLine(void);
     virtual void dropEvent(QDropEvent *);
     virtual void timerEvent(QTimerEvent *);
+    virtual void contentsContextMenuEvent(QContextMenuEvent *e);
+    
+    /**
+     * This function is called to create a right mouse button popup menu
+     * at the specified position. If you want to create a custom popup menu, 
+     * reimplement this function and return the created popup menu. Ownership 
+     * of the popup menu is transferred to the caller.
+     */
+    virtual QPopupMenu *createPopupMenu(const QPoint& pos);
+    
 private slots:
     void setTextChanged();
+
+private:
+    enum {
+        IdUndo = 0,
+        IdRedo,
+        IdCut,
+        IdCopy,
+        IdPaste,
+        IdClear,
+        IdSelectAll,
+        IdSize
+    };
+    
+    int id[IdSize];
 };
 
 #endif

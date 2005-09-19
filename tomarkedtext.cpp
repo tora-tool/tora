@@ -55,8 +55,12 @@
 #include <qpainter.h>
 #include <qpalette.h>
 #include <qprinter.h>
+#include <qclipboard.h>
 
 #include "tomarkedtext.moc"
+
+#define ACCEL_KEY(k) "\t" + QString("Ctrl+" #k)
+
 
 // static value for default tab width
 int toMarkedText::defTabWidth = 8;
@@ -618,4 +622,81 @@ void toMarkedText::setTextChanged()
     if (hasSelectedText()) {
         setEdit();
     }
+}
+
+void toMarkedText::contentsContextMenuEvent(QContextMenuEvent *e)
+{
+    e->accept();
+    QGuardedPtr<toMarkedText> that = this;
+    QGuardedPtr<QPopupMenu> popup = createPopupMenu( e->pos() );
+    if ( !popup )
+	return;
+
+    // NOTE: this emit exist for compatibility with older 
+    //       version of TOra. It will have to be removed 
+    //       once the way around it will be figured out
+    emit displayMenu(popup);
+    
+    int r = popup->exec( e->globalPos() );
+    delete popup;
+    
+    if (!that)
+        return;
+
+    if ( r == id[ IdClear ] )
+	    clear();
+    else if ( r == id[ IdSelectAll ] ) 
+	    selectAll();
+    else if ( r == id[ IdUndo ] )
+	    undo();
+    else if ( r == id[ IdRedo ] )
+	    redo();
+    else if ( r == id[ IdCut ] )
+	    cut();
+    else if ( r == id[ IdCopy ] )
+	    copy();
+    else if ( r == id[ IdPaste ] )
+	    paste();
+}
+
+/**
+ * This function is called to create a right mouse button popup menu
+ * at the specified position. If you want to create a custom popup menu, 
+ * reimplement this function and return the created popup menu. Ownership 
+ * of the popup menu is transferred to the caller.
+ */
+QPopupMenu *toMarkedText::createPopupMenu(const QPoint& pos)
+{
+    Q_UNUSED( pos )
+
+    // clear ID array
+    for (int i=0; i<IdSize; i++)
+        id[i] = 0;
+
+    // create menu
+    QPopupMenu *popup = new QPopupMenu( this, "qt_edit_menu" );
+    if ( !isReadOnly() ) {
+        id[ IdUndo ] = popup->insertItem( tr( "&Undo" ) + ACCEL_KEY( Z ) );
+        id[ IdRedo ] = popup->insertItem( tr( "&Redo" ) + ACCEL_KEY( Y ) );
+        popup->insertSeparator();
+        id[ IdCut ] = popup->insertItem( tr( "Cu&t" ) + ACCEL_KEY( X ) );
+        id[ IdCopy ] = popup->insertItem( tr( "&Copy" ) + ACCEL_KEY( C ) );
+    	id[ IdPaste ] = popup->insertItem( tr( "&Paste" ) + ACCEL_KEY( V ) );
+    	id[ IdClear ] = popup->insertItem( tr( "Clear" ) );
+	    popup->insertSeparator();
+    }
+#if defined(Q_WS_X11)
+    id[ IdSelectAll ] = popup->insertItem( tr( "Select All" ) );
+#else
+    id[ IdSelectAll ] = popup->insertItem( tr( "Select All" ) + ACCEL_KEY( A ) );
+#endif
+    popup->setItemEnabled( id[ IdUndo ], !isReadOnly() && isUndoAvailable() );
+    popup->setItemEnabled( id[ IdRedo ], !isReadOnly() && isRedoAvailable() );
+    popup->setItemEnabled( id[ IdCut ], !isReadOnly() && hasSelectedText() );
+    popup->setItemEnabled( id[ IdCopy ], hasSelectedText() );
+    popup->setItemEnabled( id[ IdPaste ], !isReadOnly() && !QApplication::clipboard()->text(QClipboard::Clipboard).isEmpty() );
+    const bool isEmptyDocument = (lines() == 0);
+    popup->setItemEnabled( id[ IdClear ], !isReadOnly() && !isEmptyDocument );
+    popup->setItemEnabled( id[ IdSelectAll ], !isEmptyDocument );
+    return popup;
 }
