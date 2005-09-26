@@ -624,13 +624,14 @@ void toMarkedText::setTextChanged()
     }
 }
 
-void toMarkedText::contentsContextMenuEvent(QContextMenuEvent *e)
+void toMarkedText::contextMenuEvent(QContextMenuEvent *e)
 {
-    e->accept();
     QGuardedPtr<toMarkedText> that = this;
     QGuardedPtr<QPopupMenu> popup = createPopupMenu( e->pos() );
     if ( !popup )
 	return;
+    
+    e->accept();
 
     // NOTE: this emit exist for compatibility with older 
     //       version of TOra. It will have to be removed 

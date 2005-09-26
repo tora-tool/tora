@@ -269,7 +269,7 @@ protected:
     virtual void newLine(void);
     virtual void dropEvent(QDropEvent *);
     virtual void timerEvent(QTimerEvent *);
-    virtual void contentsContextMenuEvent(QContextMenuEvent *e);
+    void contextMenuEvent(QContextMenuEvent *);
     
     /**
      * This function is called to create a right mouse button popup menu
