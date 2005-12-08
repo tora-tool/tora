@@ -65,6 +65,101 @@ AC_DEFUN(TORA_HAVE_KDE,
 ])
 
 
+dnl mrj
+dnl check for qscintilla, fail if no
+AC_DEFUN(TORA_CHECK_QSCINTILLA,
+[
+  AC_REQUIRE([TORA_HAVE_KDE])
+  AC_MSG_CHECKING([for qscintilla])
+
+  scin_cflags=
+  scin_ldflags=
+
+  qscintilla_user_inc=
+  AC_ARG_WITH(qscintilla-includes,
+  [  --with-qscintilla-includes=DIR
+                          QScintilla header file location],
+  [
+     qscintilla_user_inc=$withval
+  ], )
+
+  qscintilla_user_lib=
+  AC_ARG_WITH(qscintilla-libraries,
+  [
+     --with-qscintilla-libraries
+                          QScintilla library dir],
+  [
+    qscintilla_user_lib=$withval
+  ], )
+
+  scin_check_inc="
+    $qscintilla_user_inc
+    /usr/include/qscintilla"
+
+  for dir in $scin_check_inc; do
+    if test -d $dir; then
+      scin_cflags="$scin_cflags -I$dir"
+    fi
+  done
+
+  scin_check_lib="
+    $qscintilla_user_lib"
+
+  for dir in $scin_check_lib; do
+    if test -d $dir; then
+      scin_ldflags="$scin_ldflags -L$dir"
+    fi
+  done
+
+  dnl test that the library works
+  cflags_scin_save=$CXXFLAGS
+  ldflags_scin_save=$LDFLAGS
+  libs_scin_save=$LIBS
+
+  CXXFLAGS="$CXXFLAGS $KDE_INCLUDES $QT_INCLUDES $scin_cflags"
+  LDFLAGS="$LDFLAGS
+    @KDE_LDFLAGS@ \
+    @X_LDFLAGS@ \
+    @QT_LDFLAGS@ \
+    @LIB_KPARTS@ \
+    @LIB_KDEPRINT@ \
+    @LIB_KDECORE@ \
+    @LIB_KDEUI@ \
+    @LIB_KIO@ \
+    @LIB_KFILE@ \
+    @LIB_DCOP@ \
+    @LIB_KHTML@ \
+    $scin_ldflags"
+  LIBS="-lqscintilla"
+
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+
+  AC_TRY_COMPILE(
+    [
+#include <qextscintilla.h>
+#include <qextscintillalexersql.h>
+    ],
+    [QextScintillaLexerSQL sqlLexer(0);],
+    scin_works=yes,
+    scin_works=no)
+
+  AC_LANG_RESTORE
+
+  if test $scin_works = no; then
+    AC_MSG_ERROR([Couldn't compile a simple QScintilla application. See config.log or specify its location with --with-qscintilla-includes])
+  fi
+
+  CXXFLAGS=$cflags_scin_save
+  LDFLAGS=$ldflags_scin_save
+  LIBS=$libs_scin_save
+
+  AC_SUBST(QSCINTILLA_CXXFLAGS, $scin_cflags)
+  AC_SUBST(QSCINTILLA_LDFLAGS, $scin_ldflags)
+  AC_MSG_RESULT(yes)
+])
+
+
 dnl --------------------------------------------------
 dnl find out if we're running qt/mac native.
 dnl doesn't print "checking..." messages because it's included from AC_PATH_QT
@@ -393,8 +488,7 @@ AC_DEFUN(AC_PATH_QT,
     AC_SUBST(qt_libraries)
     AC_SUBST(qt_includes)
   
-    AC_MSG_RESULT([
-      libqt:     $LIBQT,
+    AC_MSG_RESULT([      libqt:     $LIBQT,
       libraries: $ac_qt_libraries,
       headers:   $ac_qt_includes $USING_QT_MT])
   fi
