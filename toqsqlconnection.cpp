@@ -211,6 +211,15 @@ static QString QueryParam(const QString &in, toQList &params, std::list<QString>
     {
         QChar rc = query.at(i);
         char c = rc.latin1();
+
+        char nc = 0;
+        if(i + 1 < query.length())
+            nc = query.at(i + 1).latin1();
+
+        char pc = 0;
+        if(i - 1 >= 0)
+            pc = query.at(i - 1).latin1();
+
         switch (c)
         {
         case '\\':
@@ -222,6 +231,12 @@ static QString QueryParam(const QString &in, toQList &params, std::list<QString>
             ret += rc;
             break;
         case ':':
+            // mostly for postgres-style casts, ignore ::
+            if(nc == ':' || pc == ':') {
+                ret += rc;
+                break;
+            }
+
             if (!inString)
             {
                 QString nam;
@@ -265,10 +280,12 @@ static QString QueryParam(const QString &in, toQList &params, std::list<QString>
 
                 QString str;
                 QString tmp;
-                if (aggr.Type == toQSqlProviderAggregate::None || aggr.Type == toQSqlProviderAggregate::SpecifiedDatabase)
+                if (aggr.Type == toQSqlProviderAggregate::None ||
+                    aggr.Type == toQSqlProviderAggregate::SpecifiedDatabase)
                 {
                     if (nam.isEmpty())
-                        throw QString::fromLatin1("No bind name");
+                        throw QString::fromLatin1("No bind name, nc = " + QString(QChar(nc)) +
+                            " pc = " + QString(QChar(pc)));
 
                     if (binds.find(nam) != binds.end())
                     {

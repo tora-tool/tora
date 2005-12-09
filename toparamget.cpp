@@ -133,15 +133,18 @@ toQList toParamGet::getParam(toConnection &conn, QWidget *parent, QString &str, 
     {
         QChar c;
         QChar nc;
+        QChar pc;
 
-        if (i < str.length())
+        c = nc = pc = '\n';
+
+        if(i < str.length())
             c = str.at(i);
-        else
-            c = '\n';
-        if (i < str.length() - 1)
+
+        if(i < str.length() - 1)
             nc = str.at(i + 1);
-        else
-            nc = '\n';
+
+        if(i - 1 > 0)
+            pc = str.at(i - 1);
 
         if (state == normal && c == '-' && nc == '-')
             state = comment;
@@ -172,7 +175,12 @@ toQList toParamGet::getParam(toConnection &conn, QWidget *parent, QString &str, 
                     state = inString;
                     break;
                 case ':':
-                    if (nc != '=')
+                    // ignore ::
+                    // this is a type cast for postgres, not a parameter.
+                    if(nc == ':' || pc == ':')
+                        break;
+
+                    if(nc != '=')
                         state = name;
                     direction = "";
                     fname = "";
