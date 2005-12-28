@@ -56,6 +56,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include <memory>
+
 #ifdef TO_KDE
 #include <kcmdlineargs.h>
 #include <kapplication.h>
@@ -214,14 +216,14 @@ int main(int argc, char **argv)
 
         if (toTool::globalConfig("LastVersion", "") != TOVERSION)
         {
-            toAbout *about = new toAbout(0, NULL, "About " TOAPPNAME, true);
+            std::auto_ptr<toAbout> about ( new toAbout(0, NULL, "About " TOAPPNAME, true));
             if (!about->exec())
             {
                 exit (2);
             }
-            delete about;
+            toTool::globalSetConfig("LastVersion", TOVERSION);
         }
-        toTool::globalSetConfig("LastVersion", TOVERSION);
+
 
         if (toTool::globalConfig("FirstInstall", "").isEmpty())
         {
