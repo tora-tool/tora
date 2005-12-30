@@ -282,6 +282,14 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     
     // set the font
     setFont(toStringToFont(toTool::globalConfig(CONF_CODE, "")));
+
+    errorMarker=markerDefine(Circle,4);
+    setMarkerBackgroundColor(Qt::red,errorMarker);
+    debugMarker=markerDefine(Rectangle,8);
+    setMarkerBackgroundColor(Qt::darkGreen,debugMarker);
+    setMarkerBackgroundColor(Qt::red,errorMarker);
+    setMarginMarkerMask(1,0);
+    connect(this,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(setStatusMessage(void )));
 }
 
 toHighlightedText::~toHighlightedText() 
@@ -328,7 +336,13 @@ void toHighlightedText::setFont (const QFont & font)
         update();
     }
 }
-
+void toHighlightedText::setCurrent(int current)
+    {
+        setCursorPosition (current, 0);
+        markerDeleteAll(debugMarker);
+        if(current>=0)
+          markerAdd(current,debugMarker);
+    }
 void toHighlightedText::tableAtCursor(QString &owner, QString &table, bool mark)
 {
     try
@@ -384,4 +398,59 @@ void toHighlightedText::tableAtCursor(QString &owner, QString &table, bool mark)
     }
     catch (...)
     {}
+}
+
+ bool toHighlightedText::hasErrors(){
+     if ( Errors.empty() )
+         return (false); 
+     else
+         return (true);
+}
+
+void toHighlightedText::nextError(void){
+    int curline, curcol;
+    getCursorPosition (&curline, &curcol);
+    for (std::map<int, QString>::iterator i = Errors.begin();i != Errors.end();i++){   
+        if ((*i).first > curline){
+            setCursorPosition((*i).first, 0);
+            break;
+        }
+    }
+}
+
+void toHighlightedText::previousError(void){
+    int curline, curcol;
+    getCursorPosition (&curline, &curcol);
+    curcol = -1;
+    for (std::map<int, QString>::iterator i = Errors.begin();i != Errors.end();i++){
+        if ((*i).first >= curline){
+            if (curcol < 0)
+                curcol = (*i).first;
+            break;
+        }
+        curcol = (*i).first;
+    }
+    if (curcol >= 0)
+        setCursorPosition(curcol, 0);
+}
+
+void toHighlightedText::setErrors(const std::map<int, QString> &errors)
+{
+    Errors = errors;
+    setStatusMessage();
+    markerDeleteAll(errorMarker);
+    for (std::map<int, QString>::iterator i = Errors.begin();i != Errors.end();i++){
+       markerAdd((*i).first,errorMarker);
+    }
+}
+
+void toHighlightedText::setStatusMessage(void)
+{
+    int curline, curcol;
+    getCursorPosition (&curline, &curcol);
+    std::map<int, QString>::iterator err = Errors.find(curline);
+    if (err == Errors.end())
+        toStatusMessage(QString::null);
+    else
+        toStatusMessage((*err).second, true);
 }

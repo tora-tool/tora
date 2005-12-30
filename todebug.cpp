@@ -157,14 +157,15 @@ public:
     }
     virtual bool canHandle(toConnection &conn)
     {
-        if (!toIsOracle(conn))
+        if (!toIsOracle(conn)){
             return false;
+	}
 #if 1
-
-        if (conn.version() < "8.0")
+        QString version=conn.version();
+	if(version.left(version.find('.')).toInt()<8){
             return false;
+	}
 #endif
-
         return true;
     }
 };

@@ -67,6 +67,7 @@ public:
 
 class toDebugText : public toHighlightedText
 {
+Q_OBJECT
     QString Schema;
     QString Object;
     QString Type;
@@ -80,7 +81,8 @@ class toDebugText : public toHighlightedText
 
     bool checkItem(toBreakpointItem *item);
     bool hasBreakpoint(int row);
-
+    int breakMarker;
+    int disabledBreakMarker;
     static int ID;
 public:
     toDebugText(QListView *breakpoints,
@@ -118,9 +120,11 @@ public:
 
     virtual void exportData(std::map<QCString, QString> &data, const QCString &prefix);
     virtual void importData(std::map<QCString, QString> &data, const QCString &prefix);
+protected slots:
+    virtual void toggleBreakpoint(int margin, int line, Qt::ButtonState   state);
 protected:
-    virtual void mouseDoubleClickEvent (QMouseEvent *me);
     virtual void mouseMoveEvent (QMouseEvent *me);
+
 };
 
 #endif

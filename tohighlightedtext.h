@@ -110,6 +110,13 @@ private:
     /** Colors allocated for the different @ref infoType values.
      */
     QColor Colors[8];
+
+    /** marker per linea contenente errori
+      */
+    int errorMarker;
+    /** marker per linea corrente
+      */
+    int debugMarker;
     /** Keeps track of possible hits found so far.
      */
     struct posibleHit
@@ -219,6 +226,12 @@ private:
     // Associated lexer (may be not used)
     QextScintillaLexer *lexer;       // NOTE: this should be used in instead of toSyntaxAnalyzer
     bool syntaxColoring;
+    /** Map of rows with errors and their error message.
+     */
+    std::map<int, QString> Errors;
+protected:
+    int debugMarker;
+    int errorMarker;
 
 public:
 
@@ -275,23 +288,17 @@ public:
     /** Set current line. Will be indicated with a different background.
      * @param current Current line.
      */
-    void setCurrent(int current)
-    {
-        setCursorPosition (current, 0);
-    }
+    void setCurrent(int current);
     
     /** Returns true if the editor has any errors.
      */
-    bool hasErrors()
-    {
-        return false;
-    }
+    bool hasErrors();
     
     /** Set the error list map.
      * @param errors A map of linenumbers to errorstrings. These will be displayed in the
      *               statusbar if the cursor is placed on the line.
      */
-    void setErrors(const std::map<int, QString> &errors) {}
+    void setErrors(const std::map<int, QString> &errors);
     
     /**
      * DEPRECATED: should use setLexer() instead!!!
@@ -341,10 +348,13 @@ public:
 public slots:
     /** Go to next error.
      */
-    void nextError(void) {}
+    void nextError(void);
     /** Go to previous error.
      */
-    void previousError(void) {}
+    void previousError(void);
+
+private slots:
+    void setStatusMessage(void);
 };
 
 #endif

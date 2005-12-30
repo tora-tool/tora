@@ -260,6 +260,7 @@ BUILT_SOURCES = \
 	todebug.moc \
 	todebugchangeui.moc \
 	todebugwatch.moc \
+	todebugtext.moc \
 	toeditextensiongotoui.moc \
 	toeditextensions.moc \
 	toeditextensionsetupui.moc \

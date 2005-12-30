@@ -41,6 +41,7 @@
 #include "todebug.h"
 #include "todebugtext.h"
 #include "tosql.h"
+#include "todebugtext.moc"
 
 #include <qapplication.h>
 #include <qpainter.h>
@@ -177,9 +178,6 @@ void toBreakpointItem::clearBreakpoint()
 
 #define DEBUG_INDENT 10
 
-static QPixmap *toBreakpointPixmap;
-static QPixmap *toDisBreakpointPixmap;
-
 static toSQL SQLReadSource("toDebug:ReadSource",
                            "SELECT Text FROM SYS.All_Source\n"
                            " WHERE OWNER = :f1<char[101]>\n"
@@ -266,16 +264,16 @@ toDebugText::toDebugText(QListView *breakpoints,
         Breakpoints(breakpoints)
 {
     //setLeftIgnore(DEBUG_INDENT);
-    setMarginWidth(0, DEBUG_INDENT + marginWidth(0));
-    setMouseTracking(true);
-    QRect view = childrenRect ();
-    LastX = DEBUG_INDENT + view.left();
+    setMarginWidth(0, 25);
+    setMarginWidth(1, 10);
+    setMarginSensitivity(0,true);
+    setMarginSensitivity(1,true);
     CurrentItem = FirstItem = NULL;
     NoBreakpoints = false;
-    if (!toBreakpointPixmap)
-        toBreakpointPixmap = new QPixmap(const_cast<const char**>(breakpoint_xpm));
-    if (!toDisBreakpointPixmap)
-        toDisBreakpointPixmap = new QPixmap(const_cast<const char**>(disbreakpoint_xpm));
+    connect(this,SIGNAL(marginClicked(int, int, Qt::ButtonState)),this, SLOT(toggleBreakpoint(int, int, Qt::ButtonState)));
+    breakMarker=markerDefine(new QPixmap(const_cast<const char**>(breakpoint_xpm)));
+    disabledBreakMarker=markerDefine(new QPixmap(const_cast<const char**>(disbreakpoint_xpm)));
+    setMarginMarkerMask(1,2^breakMarker|2^disabledBreakMarker);
 }
 
 bool toDebugText::checkItem(toBreakpointItem *item)
@@ -377,15 +375,22 @@ void toDebugText::toggleBreakpoint(int row, bool enable)
             {
                 if (enable)
                 {
-                    if (CurrentItem->text(4) == qApp->translate("toDebug", "DISABLED"))
+                    if (CurrentItem->text(4) == qApp->translate("toDebug", "DISABLED")){
                         CurrentItem->setText(4, qApp->translate("toDebug", "DEFERED"));
-                    else
+                        markerDelete(row,disabledBreakMarker);
+                        markerAdd(row,breakMarker);
+                    }else{
                         CurrentItem->clearBreakpoint();
+                        markerDelete(row,breakMarker);
+                        markerAdd(row,disabledBreakMarker);
+                    }
                 }
                 else
                 {
                     CurrentItem->clearBreakpoint();
                     delete CurrentItem;
+                    markerDelete(row,breakMarker);
+                    markerDelete(row,disabledBreakMarker);
                     if (FirstItem == CurrentItem)
                     {
                         NoBreakpoints = false;
@@ -400,6 +405,7 @@ void toDebugText::toggleBreakpoint(int row, bool enable)
         }
         else if (!enable)
         {
+            markerAdd(row,breakMarker);
             if (CurrentItem && CurrentItem->line() > row)
                 new toBreakpointItem(Breakpoints, NULL,
                                      Schema, Type, Object, row);
@@ -413,19 +419,12 @@ void toDebugText::toggleBreakpoint(int row, bool enable)
     }
 }
 
-void toDebugText::mouseDoubleClickEvent(QMouseEvent *me)
-{
-    toHighlightedText::mouseDoubleClickEvent(me);
-/*
-    if (me->x() + xOffset() > DEBUG_INDENT)
-        toHighlightedText::mouseDoubleClickEvent(me);
-    else
-    {
-        int row = findRow(me->y());
-        toggleBreakpoint(row);
-    }
-*/
+
+void toDebugText::toggleBreakpoint(int margin, int line, Qt::ButtonState   state){
+  if(margin<=1) 
+    toggleBreakpoint(line);
 }
+
 
 void toDebugText::exportData(std::map<QCString, QString> &data, const QCString &prefix)
 {
