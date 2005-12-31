@@ -594,24 +594,30 @@ bool toMarkedText::searchCanReplace(bool all)
 
 void toMarkedText::insert(const QString &str, bool select)
 {
-    // NOTE: this may need some modification in case of insertion when
-    //       there is active selection causes selection replacement
     int lineFrom;
     int indexFrom;
     int lineTo;
     int indexTo;
     
-    // get current position
-    if (select) {
-        getCursorPosition (&lineFrom, &indexFrom);
-    }
+    QextScintilla::removeSelectedText();
+
+    if(select)
+        getCursorPosition(&lineFrom, &indexFrom);
     
+    // insert() doesn't work as advertised.
+    // docs say: "The new current position if after the inserted text."
+
+    // I thought it would mean that the cursor would be at the end of
+    // the inserted text. Now I'm not really sure what the heck that
+    // means.
+
+    // That means the selection is broken for now.
     QextScintilla::insert(str);
     
     // get new position and select if requested
-    if (select) {
-        getCursorPosition (&lineTo, &indexTo);
-        setSelection (lineFrom, indexFrom, lineTo, indexTo);
+    if(select) {
+        getCursorPosition(&lineTo, &indexTo);
+        setSelection(lineFrom, indexFrom, lineTo, indexTo);
     }
 }
 
@@ -646,8 +652,8 @@ void toMarkedText::contextMenuEvent(QContextMenuEvent *e)
 
     if ( r == id[ IdClear ] )
 	    clear();
-    else if ( r == id[ IdSelectAll ] ) 
-	    selectAll();
+    else if ( r == id[ IdSelectAll ] )
+	    editSelectAll();
     else if ( r == id[ IdUndo ] )
 	    undo();
     else if ( r == id[ IdRedo ] )

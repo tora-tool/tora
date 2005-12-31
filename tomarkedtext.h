@@ -223,6 +223,18 @@ public:
         selectAll();
     }
 
+    /** QextScintilla's selectAll doesn't always work like we want.
+     *
+     */
+    virtual void selectAll (bool select = TRUE)
+    {
+        // selectAll(true) doesn't work if there's a selection already.
+        if(QextScintilla::hasSelectedText())
+            QextScintilla::selectAll(false);
+
+        QextScintilla::selectAll();
+    }
+
     /** Move to top of data
      */
     virtual void searchTop(void)
