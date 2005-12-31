@@ -6,6 +6,8 @@ QSscintilla port:
     search mechanism (regex support etc) - this needs to be integrated and the old 
     one got rid of.
 
+  - fix insert(str, select). see toMarkedText::insert
+
 * Finish implementation of syntax colouring editor component (toHighlightedText class)
     Code completion in SQL editor (using QextScintillaAPIs class), better integration 
     with lexer class (QextScintillaLexer). We also probably need to override 
