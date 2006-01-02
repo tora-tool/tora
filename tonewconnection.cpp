@@ -95,6 +95,7 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name, bool modal, 
     Previous->addColumn(tr("Database"));
     Previous->addColumn(tr("Username"));
     Previous->setSelectionMode(QListView::Single);
+    Previous->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding));
     menu->insertItem("Delete", TONEWCONNECTION_DELETE);
     connect(menu, SIGNAL(activated(int)), this, SLOT(menuCallback(int)));
     Previous->setDisplayMenu(menu);
@@ -182,6 +183,7 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name, bool modal, 
             last = new QListViewItem(Previous, last, provider, host, database, user, passstr, options);
         }
     }
+    adjustSize();
 }
 
 toNewConnection::~toNewConnection()
