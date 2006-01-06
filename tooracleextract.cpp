@@ -582,7 +582,7 @@ static toSQL SQLContextInfoDBA("toOracleExtract:ContextInfoDBA",
                                " ORDER BY\n"
                                "        ixv_object",
                                "Get information on context index preferences.",
-                               "8.1");
+                               "0801");
 
 static toSQL SQLContextInfoNoAttrDBA("toOracleExtract:ContextInfoNoAttrDBA",
                                      "SELECT\n"
@@ -596,7 +596,7 @@ static toSQL SQLContextInfoNoAttrDBA("toOracleExtract:ContextInfoNoAttrDBA",
                                      "    AND\n"
                                      "        ixo_class = :cls<char[100]>",
                                      "Get the context preferences w/o attributes.",
-                                     "8.1");
+                                     "0801");
 
 static toSQL SQLContextColumnDBA("toOracleExtract:ContextColumnDBA",
                                  "SELECT\n"
@@ -610,7 +610,7 @@ static toSQL SQLContextColumnDBA("toOracleExtract:ContextColumnDBA",
                                  "    AND\n"
                                  "        idx_name = :nam<char[100]>",
                                  "Get the context column designations.",
-                                 "8.1");
+                                 "0801");
 
 static toSQL SQLContextInfo("toOracleExtract:ContextInfo",
                             "SELECT\n"
@@ -627,7 +627,7 @@ static toSQL SQLContextInfo("toOracleExtract:ContextInfo",
                             " ORDER BY\n"
                             "        ixv_object",
                             "Get information on context index preferences.",
-                            "8.1");
+                            "0801");
 
 static toSQL SQLContextInfoNoAttr("toOracleExtract:ContextInfoNoAttr",
                                   "SELECT\n"
@@ -639,7 +639,7 @@ static toSQL SQLContextInfoNoAttr("toOracleExtract:ContextInfoNoAttr",
                                   "    AND\n"
                                   "        ixo_class = :cls<char[100]>",
                                   "Get the context preferences w/o attributes.",
-                                  "8.1");
+                                  "0801");
 
 static toSQL SQLContextColumn("toOracleExtract:ContextColumn",
                               "SELECT\n"
@@ -651,7 +651,7 @@ static toSQL SQLContextColumn("toOracleExtract:ContextColumn",
                               " WHERE\n"
                               "        idx_name = :nam<char[100]>",
                               "Get the context column designations.",
-                              "8.1");
+                              "0801");
 
 QString toOracleExtract::createContextPrefs(toExtract &ext,
         const QString &,
@@ -864,7 +864,7 @@ QString toOracleExtract::createContextPrefs(toExtract &ext,
 
     // Lets look up the language, format, and charset columns
     // only if Oracle 8.1.6 and above
-    if (CONNECTION.version() >= "8.1.6")
+    if (CONNECTION.version() >= "080106")
     {
         if (isDBA)
             resultset = toQuery::readQueryNull(CONNECTION, SQLContextColumnDBA,
@@ -1020,7 +1020,7 @@ static toSQL SQLOverflowInfo("toOracleExtract:OverflowInfo",
                              "        AND s.owner        = :own<char[100]>\n"
                              "        AND t.owner        = s.owner",
                              "Get information about overflow segment for table, must have same binds and columns",
-                             "8.0");
+                             "0800");
 
 QString toOracleExtract::createIOT(toExtract &ext, const QString &schema, const QString &owner,
                                    const QString &name) const
@@ -1081,13 +1081,13 @@ QString toOracleExtract::createTableText(toExtract &ext,
         ret += QString("      USING TABLESPACE %2\n").arg(QUOTE(tablespace));
     }
     ret += ")\n";
-    if (CONNECTION.version() >= "8.0" && ext.getStorage())
+    if (CONNECTION.version() >= "0800" && ext.getStorage())
     {
         ret += "ORGANIZATION        ";
         ret += organization;
         ret += "\n";
     }
-    if (CONNECTION.version() >= "8.1" && ext.getStorage())
+    if (CONNECTION.version() >= "0801" && ext.getStorage())
     {
         ret += monitoring;
         ret += "\n";
@@ -1488,7 +1488,7 @@ static toSQL SQLPartitionedIOTInfo("toOracleExtract:PartitionedIOTInfo",
                                    "        AND p.owner           = t.owner",
                                    "Get information about a partitioned indexed organized table, "
                                    "must have same columns and binds",
-                                   "8.1");
+                                   "0801");
 
 static toSQL SQLPartitionedIOTInfo8("toOracleExtract:PartitionedIOTInfo",
                                     "SELECT\n"
@@ -1565,7 +1565,7 @@ static toSQL SQLPartitionedIOTInfo8("toOracleExtract:PartitionedIOTInfo",
                                     "        AND t.owner           = :own<char[100]>\n"
                                     "        AND p.owner           = t.owner",
                                     "",
-                                    "8.0");
+                                    "0800");
 
 static toSQL SQLPartitionIndexNames("toOracleExtract:PartitionIndexNames",
                                     "SELECT index_name\n"
@@ -1707,7 +1707,7 @@ static toSQL SQLIndexPartition8("toOracleExtract:IndexPartition",
                                 "        AND t.owner           = i.owner",
                                 "Get information about index partitions, "
                                 "must have same columns and same columns",
-                                "8.0");
+                                "0800");
 
 static toSQL SQLIndexPartition("toOracleExtract:IndexPartition",
                                "SELECT\n"
@@ -1810,7 +1810,7 @@ static toSQL SQLIndexPartition("toOracleExtract:IndexPartition",
                                "        AND n.owner           = i.owner\n"
                                "        AND t.owner           = i.owner",
                                "",
-                               "8.1");
+                               "0801");
 
 QString toOracleExtract::createPartitionedIndex(toExtract &ext,
         const QString &,
@@ -1942,7 +1942,7 @@ static toSQL SQLPartitionTableInfo("toOracleExtract:PartitionTableInfo",
                                    "        AND p.owner           = t.owner",
                                    "Get storage information about a partitioned table, "
                                    "same binds and columns",
-                                   "8.1");
+                                   "0801");
 
 static toSQL SQLPartitionTableInfo8("toOracleExtract:PartitionTableInfo",
                                     "SELECT\n"
@@ -2023,7 +2023,7 @@ static toSQL SQLPartitionTableInfo8("toOracleExtract:PartitionTableInfo",
                                     "        AND t.owner           = :own<char[100]>\n"
                                     "        AND p.owner           = t.owner",
                                     "",
-                                    "8.0");
+                                    "0800");
 
 static toSQL SQLPartitionType("toOracleExtract:PartitionType",
                               "SELECT\n"
@@ -2037,7 +2037,7 @@ static toSQL SQLPartitionType("toOracleExtract:PartitionType",
                               "            table_name = :nam<char[100]>\n"
                               "        AND owner = :own<char[100]>",
                               "Get partition type, must have same binds and columns",
-                              "8.1");
+                              "0801");
 
 static toSQL SQLPartitionType8("toOracleExtract:PartitionType",
                                "SELECT\n"
@@ -2051,7 +2051,7 @@ static toSQL SQLPartitionType8("toOracleExtract:PartitionType",
                                "            table_name = :nam<char[100]>\n"
                                "        AND owner = :own<char[100]>",
                                "",
-                               "8.0");
+                               "0800");
 
 static toSQL SQLPartitionSegment("toOracleExtract:PartitionSegment",
                                  "SELECT\n"
@@ -2088,7 +2088,7 @@ static toSQL SQLPartitionSegment("toOracleExtract:PartitionSegment",
                                  " ORDER BY partition_name",
                                  "Information about segment storage for partitioned tables, "
                                  "must have same binds and columns",
-                                 "8.1");
+                                 "0801");
 
 static toSQL SQLPartitionSegment8("toOracleExtract:PartitionSegment",
                                   "SELECT\n"
@@ -2124,7 +2124,7 @@ static toSQL SQLPartitionSegment8("toOracleExtract:PartitionSegment",
                                   "   AND  table_owner = :own<char[100]>\n"
                                   " ORDER BY partition_name",
                                   "",
-                                  "8.0");
+                                  "0800");
 
 static toSQL SQLSubPartitionName("toOracleExtract:SubPartitionName",
                                  "SELECT subpartition_name,\n"
@@ -2382,7 +2382,7 @@ static toSQL SQLIndexColumns("toOracleExtract:IndexColumns",
                              "   AND index_owner = :own<char[100]>\n"
                              " ORDER BY column_position",
                              "Get column names from index, same binds and columns",
-                             "8.1");
+                             "0801");
 static toSQL SQLIndexColumns7("toOracleExtract:IndexColumns",
                               "SELECT column_name,\n"
                               "       'ASC'\n"
@@ -2391,7 +2391,7 @@ static toSQL SQLIndexColumns7("toOracleExtract:IndexColumns",
                               "   AND index_owner = :own<char[100]>\n"
                               " ORDER BY column_position",
                               "",
-                              "7");
+                              "07");
 static toSQL SQLIndexFunction("toOracleExtract:IndexFunction",
                               "SELECT c.default$\n"
                               "  FROM sys.col$ c,\n"
@@ -2491,7 +2491,7 @@ static toSQL SQLRangePartitions("toOracleExtract:RangePartitions",
                                 " ORDER BY partition_name",
                                 "Get information about partition ranges, must have same binds "
                                 "and columns",
-                                "8.1");
+                                "0801");
 
 static toSQL SQLRangePartitions8("toOracleExtract:RangePartitions",
                                  "SELECT  partition_name\n"
@@ -2525,7 +2525,7 @@ static toSQL SQLRangePartitions8("toOracleExtract:RangePartitions",
                                  "        AND index_owner =  :own<char[100]>\n"
                                  " ORDER BY partition_name",
                                  "",
-                                 "8.1");
+                                 "0801");
 
 static toSQL SQLIndexSubPartitionName("toOracleExtract:IndexSubPartitionName",
                                       "SELECT subpartition_name,\n"
@@ -2683,13 +2683,13 @@ QString toOracleExtract::segmentAttributes(toExtract &ext, toQList &result) cons
             ret += QString("%1  PCTINCREASE       %2\n").arg(indent).arg(pctIncrease);
         ret += QString("%1  FREELISTS         %2\n").arg(indent).arg(freelists);
         ret += QString("%1  FREELIST GROUPS   %2\n").arg(indent).arg(freelistGroups);
-        if (CONNECTION.version() >= "8.1")
+        if (CONNECTION.version() >= "0801")
         {
             ret += QString("%1  BUFFER_POOL       %2\n").arg(indent).arg(QUOTE(bufferPool));
         }
         ret += indent;
         ret += ")\n";
-        if (CONNECTION.version() >= "8.0")
+        if (CONNECTION.version() >= "0800")
             ret += QString("%1%2\n").arg(indent).arg(logging);
         ret += QString("%1TABLESPACE          %2\n").arg(indent).arg(QUOTE(tablespace));
     }
@@ -2788,7 +2788,7 @@ static toSQL SQLTableColumns9("toOracleExtract:TableColumns",
                               "   AND owner = :own<char[100]>\n"
                               " ORDER BY column_id",
                               "Extract column definitions from table",
-                              "9");
+                              "09");
 
 static toSQL SQLTableColumns("toOracleExtract:TableColumns",
                              "SELECT  column_name,\n"
@@ -2882,7 +2882,7 @@ static toSQL SQLTableColumns("toOracleExtract:TableColumns",
                              "   AND owner = :own<char[100]>\n"
                              " ORDER BY column_id",
                              "",
-                             "8.0");
+                             "0800");
 
 static toSQL SQLTableColumns7("toOracleExtract:TableColumns",
                               "       SELECT\n"
@@ -2971,7 +2971,7 @@ static toSQL SQLTableColumns7("toOracleExtract:TableColumns",
                               "   AND owner = :own<char[100]>\n"
                               " ORDER BY column_id",
                               "",
-                              "7.0");
+                              "0700");
 
 QString toOracleExtract::tableColumns(toExtract &ext,
                                       const QString &owner,
@@ -3080,11 +3080,11 @@ void toOracleExtract::describeAttributes(toExtract &ext,
     addDescription(dsp, ctx, "STORAGE", QString("PCTINCREASE %1").arg(pctIncrease));
     addDescription(dsp, ctx, "STORAGE", QString("FREELISTS %1").arg(freelists));
     addDescription(dsp, ctx, "STORAGE", QString("FREELIST GROUPS %1").arg(freelistGroups));
-    if (CONNECTION.version() >= "8.1")
+    if (CONNECTION.version() >= "0801")
     {
         addDescription(dsp, ctx, "STORAGE", QString("BUFFER_POOL %1").arg(QUOTE(bufferPool)));
     }
-    if (CONNECTION.version() >= "8.0")
+    if (CONNECTION.version() >= "0800")
         addDescription(dsp, ctx, "PARAMETERS", logging);
     addDescription(dsp, ctx, "PARAMETERS", QString("TABLESPACE %1").arg(QUOTE(tablespace)));
 }
@@ -3672,9 +3672,9 @@ void toOracleExtract::describeTableText(toExtract &ext,
     QString ret;
     addDescription(lst, ctx);
     describeTableColumns(ext, lst, ctx, owner, name);
-    if (CONNECTION.version() >= "8.0" && ext.getStorage())
+    if (CONNECTION.version() >= "0800" && ext.getStorage())
         addDescription(lst, ctx, "PARAMETERS", QString("ORGANIZATION %1").arg(organization));
-    if (CONNECTION.version() >= "8.1" && ext.getStorage())
+    if (CONNECTION.version() >= "0801" && ext.getStorage())
         addDescription(lst, ctx, "PARAMETERS", monitoring);
     if (ext.getParallel())
     {
@@ -3704,7 +3704,7 @@ static toSQL SQLListConstraint("toOracleExtract:ListConstraint",
                                " WHERE owner = :own<char[100]>\n"
                                "   AND constraint_name = :nam<char[100]>",
                                "Get information about a constraint, same binds and columns",
-                               "8.0");
+                               "0800");
 
 static toSQL SQLListConstraint7("toOracleExtract:ListConstraint",
                                 "SELECT table_name,\n"
@@ -3720,7 +3720,7 @@ static toSQL SQLListConstraint7("toOracleExtract:ListConstraint",
                                 " WHERE owner = :own<char[100]>\n"
                                 "   AND constraint_name = :nam<char[100]>",
                                 "",
-                                "7.0");
+                                "0700");
 
 static toSQL SQLConstraintTable("toOracleExtract:ConstraintTable",
                                 "SELECT table_name\n"
@@ -3788,7 +3788,7 @@ QString toOracleExtract::createConstraint(toExtract &ext,
                     ret += "ON DELETE CASCADE\n";
             }
         }
-        if (CONNECTION.version() < "8")
+        if (CONNECTION.version() < "08")
         {
             if (status != "ENABLED")
                 ret += status;
@@ -4071,7 +4071,7 @@ static toSQL SQLIndexInfo7("toOracleExtract:IndexInfo",
                            " WHERE index_name = :nam<char[100]>\n"
                            "   AND owner = :own<char[100]>",
                            "Initial information about an index, same binds and columns",
-                           "7.0");
+                           "0700");
 static toSQL SQLIndexInfo("toOracleExtract:IndexInfo",
                           "SELECT partitioned\n"
                           "      , table_name\n"
@@ -4099,7 +4099,7 @@ static toSQL SQLIndexInfo("toOracleExtract:IndexInfo",
                           " WHERE index_name = :nam<char[100]>\n"
                           "   AND owner = :own<char[100]>",
                           "",
-                          "8.0");
+                          "0800");
 
 static toSQL SQLIndexSegment("toOracleExtract:IndexSegment",
                              "SELECT  LTRIM(i.degree)\n"
@@ -4152,7 +4152,7 @@ static toSQL SQLIndexSegment("toOracleExtract:IndexSegment",
                              "   AND  i.owner        = :own<char[100]>\n"
                              "   AND  s.owner        = i.owner",
                              "Get information about how index is stored",
-                             "8.1");
+                             "0801");
 
 static toSQL SQLIndexSegment8("toOracleExtract:IndexSegment",
                               "SELECT  LTRIM(i.degree)\n"
@@ -4201,7 +4201,7 @@ static toSQL SQLIndexSegment8("toOracleExtract:IndexSegment",
                               "   AND  i.owner        = :own<char[100]>\n"
                               "   AND  s.owner        = i.owner",
                               "",
-                              "8.0");
+                              "0800");
 
 static toSQL SQLIndexSegment7("toOracleExtract:IndexSegment",
                               "SELECT  'N/A'                         AS degree\n"
@@ -4246,7 +4246,7 @@ static toSQL SQLIndexSegment7("toOracleExtract:IndexSegment",
                               "   AND  i.owner        = :own<char[100]>\n"
                               "   AND  s.owner        = i.owner",
                               "",
-                              "7.0");
+                              "0700");
 
 QString toOracleExtract::createIndex(toExtract &ext,
                                      const QString &schema,
@@ -4296,7 +4296,7 @@ QString toOracleExtract::createIndex(toExtract &ext,
     ret += indexColumns(ext, "", owner, name);
     if (domain == "DOMAIN")
     {
-        if (CONNECTION.version() >= "8.1" && domOwner == "CTXSYS" && domName == "CONTEXT")
+        if (CONNECTION.version() >= "0801" && domOwner == "CTXSYS" && domName == "CONTEXT")
         {
             ret = createContextPrefs(ext, schema, owner, name, ret);
             return ret;
@@ -4305,7 +4305,7 @@ QString toOracleExtract::createIndex(toExtract &ext,
                arg(QUOTE(domOwner)).arg(QUOTE(domName)).arg(prepareDB(domParam));
         return ret;
     }
-    if (CONNECTION.version() >= "8.0" && ext.getParallel())
+    if (CONNECTION.version() >= "0800" && ext.getParallel())
     {
         ret += QString("PARALLEL\n"
                        "(\n"
@@ -4659,7 +4659,7 @@ static toSQL SQLTableType("toOracleExtract:TableType",
                           "WHERE table_name = :nam<char[100]>\n"
                           "  AND owner = :own<char[100]>",
                           "Get table type, must have same columns and binds",
-                          "8.0");
+                          "0800");
 
 static toSQL SQLTableType7("toOracleExtract:TableType",
                            "SELECT 'NO',\n"
@@ -4668,7 +4668,7 @@ static toSQL SQLTableType7("toOracleExtract:TableType",
                            "WHERE table_name = :nam<char[100]>\n"
                            "  AND owner = :own<char[100]>",
                            "",
-                           "7.0");
+                           "0700");
 
 static toSQL SQLTableInfo("toOracleExtract:TableInfo",
                           "SELECT\n"
@@ -4733,7 +4733,7 @@ static toSQL SQLTableInfo("toOracleExtract:TableInfo",
                           "        AND s.owner        = :own<char[100]>\n"
                           "        AND t.owner        = s.owner",
                           "Get information about a vanilla table, must have same binds and columns",
-                          "8.1");
+                          "0801");
 
 static toSQL SQLTableInfo8("toOracleExtract:TableInfo",
                            "SELECT\n"
@@ -4794,7 +4794,7 @@ static toSQL SQLTableInfo8("toOracleExtract:TableInfo",
                            "        AND s.owner        = :own<char[100]>\n"
                            "        AND t.owner        = s.owner",
                            "",
-                           "8.0");
+                           "0800");
 
 static toSQL SQLTableInfo7("toOracleExtract:TableInfo",
                            "SELECT\n"
@@ -4847,7 +4847,7 @@ static toSQL SQLTableInfo7("toOracleExtract:TableInfo",
                            "        AND s.owner        = :own<char[100]>\n"
                            "        AND t.owner        = s.owner",
                            "",
-                           "7.0");
+                           "0700");
 
 QString toOracleExtract::createTable(toExtract &ext,
                                      const QString &schema,
@@ -4899,7 +4899,7 @@ static toSQL SQLTableConstraints("toOracleExtract:TableConstraints",
                                  "             )\n"
                                  "     , constraint_name",
                                  "Get constraints tied to a table except referential, same binds and columns",
-                                 "8.0");
+                                 "0800");
 static toSQL SQLTableConstraints7("toOracleExtract:TableConstraints",
                                   "SELECT\n"
                                   "        constraint_type,\n"
@@ -4920,7 +4920,7 @@ static toSQL SQLTableConstraints7("toOracleExtract:TableConstraints",
                                   "             )\n"
                                   "     , constraint_name",
                                   QString::null,
-                                  "7.3");
+                                  "0703");
 
 static toSQL SQLTableReferences("toOracleExtract:TableReferences",
                                 "SELECT\n"
@@ -4939,7 +4939,7 @@ static toSQL SQLTableReferences("toOracleExtract:TableReferences",
                                 "             )\n"
                                 "     , constraint_name",
                                 "Get foreign constraints from a table, same binds and columns",
-                                "8.0");
+                                "0800");
 
 static toSQL SQLTableReferences7("toOracleExtract:TableReferences",
                                  "SELECT\n"
@@ -4957,7 +4957,7 @@ static toSQL SQLTableReferences7("toOracleExtract:TableReferences",
                                  "             )\n"
                                  "     , constraint_name",
                                  QString::null,
-                                 "7.3");
+                                 "0703");
 
 static toSQL SQLTableTriggers("toOracleExtract:TableTriggers",
                               "SELECT  trigger_name\n"
@@ -5164,7 +5164,7 @@ static toSQL SQLTablespaceInfo("toOracleExtract:TablespaceInfo",
                                " WHERE\n"
                                "        tablespace_name = :nam<char[100]>",
                                "Get tablespace information, must have same columns and binds",
-                               "8.1");
+                               "0801");
 
 static toSQL SQLTablespaceInfo8("toOracleExtract:TablespaceInfo",
                                 "SELECT  initial_extent\n"
@@ -5200,7 +5200,7 @@ static toSQL SQLTablespaceInfo8("toOracleExtract:TablespaceInfo",
                                 " WHERE\n"
                                 "        tablespace_name = :nam<char[100]>",
                                 "",
-                                "8.0");
+                                "0800");
 
 static toSQL SQLTablespaceInfo7("toOracleExtract:TablespaceInfo",
                                 "SELECT  initial_extent\n"
@@ -5236,7 +5236,7 @@ static toSQL SQLTablespaceInfo7("toOracleExtract:TablespaceInfo",
                                 " WHERE\n"
                                 "        tablespace_name = :nam<char[100]>",
                                 "",
-                                "7.0");
+                                "0700");
 
 static toSQL SQLDatafileInfo("toOracleExtract:DatafileInfo",
                              "SELECT\n"
@@ -5256,7 +5256,7 @@ static toSQL SQLDatafileInfo("toOracleExtract:DatafileInfo",
                              " ORDER  BY file_name",
                              "Get information about datafiles in a tablespace, "
                              "same binds and columns",
-                             "8.0");
+                             "0800");
 
 static toSQL SQLDatafileInfo7("toOracleExtract:DatafileInfo",
                               "SELECT\n"
@@ -5272,7 +5272,7 @@ static toSQL SQLDatafileInfo7("toOracleExtract:DatafileInfo",
                               "        tablespace_name = :nam<char[100]>\n"
                               " ORDER  BY file_name",
                               "",
-                              "7.0");
+                              "0700");
 
 QString toOracleExtract::createTablespace(toExtract &ext,
         const QString &,
@@ -5335,7 +5335,7 @@ QString toOracleExtract::createTablespace(toExtract &ext,
                arg(comma).
                arg(prepareDB(fileName)).
                arg(bytes);
-        if (CONNECTION.version() >= "8.0" && ext.getStorage())
+        if (CONNECTION.version() >= "0800" && ext.getStorage())
         {
             ret += "       AUTOEXTEND ";
             if (autoExtensible == "YES")
@@ -5374,10 +5374,10 @@ QString toOracleExtract::createTablespace(toExtract &ext,
                    arg(pctIncrease);
             if (minExtlen.toInt() > 0)
                 ret += QString("MINIMUM EXTENT   %1\n").arg(minExtlen);
-            if (CONNECTION.version() >= "8.1")
+            if (CONNECTION.version() >= "0801")
                 ret += "EXTENT MANAGEMENT DICTIONARY\n";
         }
-        if (CONNECTION.version() >= "8.0" && (contents != "TEMPORARY" || extentManagement != "LOCAL"))
+        if (CONNECTION.version() >= "0800" && (contents != "TEMPORARY" || extentManagement != "LOCAL"))
         {
             ret += logging;
             ret += "\n";
@@ -5404,7 +5404,7 @@ static toSQL SQLTriggerInfo("toOracleExtract:TriggerInfo",
                             "            trigger_name = :nam<char[100]>\n"
                             "        AND owner        = :own<char[100]>",
                             "Get information about triggers, must have same binds and columns",
-                            "8.1");
+                            "0801");
 
 static toSQL SQLTriggerInfo8("toOracleExtract:TriggerInfo",
                              "SELECT\n"
@@ -5424,7 +5424,7 @@ static toSQL SQLTriggerInfo8("toOracleExtract:TriggerInfo",
                              "            trigger_name = :nam<char[100]>\n"
                              "        AND owner        = :own<char[100]>",
                              "",
-                             "8.0");
+                             "0800");
 
 QString toOracleExtract::createTrigger(toExtract &ext,
                                        const QString &schema,
@@ -5738,7 +5738,7 @@ void toOracleExtract::describeConstraint(toExtract &ext,
         if (status.startsWith("ENABLE"))
             status = "ENABLED";
 
-        if (CONNECTION.version() < "8")
+        if (CONNECTION.version() < "08")
             ret = status;
         else
         {
@@ -5912,7 +5912,7 @@ void toOracleExtract::describeIndex(toExtract &ext,
         addDescription(lst, ctx, "DOMAIN", QString("PARAMETERS %1").arg(domParam));
         return ;
     }
-    if (CONNECTION.version() >= "8.0" && ext.getParallel())
+    if (CONNECTION.version() >= "0800" && ext.getParallel())
     {
         addDescription(lst, ctx, "PARALLEL", QString("DEGREE %1").arg(degree));
         addDescription(lst, ctx, "PARALLEL", QString("INSTANCES %1").arg(instances));
@@ -6266,7 +6266,7 @@ void toOracleExtract::describeTablespace(toExtract &ext,
         addDescription(lst, cctx);
         addDescription(lst, cctx, QString("SIZE %3").arg(bytes));
 
-        if (CONNECTION.version() >= "8.0" && ext.getStorage())
+        if (CONNECTION.version() >= "0800" && ext.getStorage())
         {
             QString ret = "AUTOEXTEND ";
             if (autoExtensible == "YES")
@@ -6301,7 +6301,7 @@ void toOracleExtract::describeTablespace(toExtract &ext,
             addDescription(lst, ctx, QString("MINIMUM EXTENT %1").arg(minExtlen));
             addDescription(lst, ctx, "EXTENT MANAGEMENT DICTIONARY");
         }
-        if (CONNECTION.version() >= "8.0" && (contents != "TEMPORARY" || extentManagement != "LOCAL"))
+        if (CONNECTION.version() >= "0800" && (contents != "TEMPORARY" || extentManagement != "LOCAL"))
             addDescription(lst, ctx, logging);
     }
 }

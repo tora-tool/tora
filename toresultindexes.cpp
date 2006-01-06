@@ -89,13 +89,13 @@ static toSQL SQLColumns("toResultIndexes:Columns",
                         "   AND a.Index_Name = :nam<char[101]>\n"
                         " ORDER BY a.Column_Position",
                         "",
-                        "8.1");
+                        "0801");
 static toSQL SQLColumns8("toResultIndexes:Columns",
                          "SELECT Column_Name,NULL FROM sys.All_Ind_Columns\n"
                          " WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
                          " ORDER BY Column_Position",
                          "",
-                         "8.0");
+                         "0800");
 
 static toSQL SQLColumnsSapDB("toResultIndexes:Columns",
                              "SELECT columnname,datatype\n"
@@ -141,7 +141,7 @@ static toSQL SQLListIndex("toResultIndexes:ListIndex",
                           "   AND Table_Name = :f2<char[101]>\n"
                           " ORDER BY Index_Name",
                           "",
-                          "8.0");
+                          "0800");
 static toSQL SQLListIndex7("toResultIndexes:ListIndex",
                            "SELECT Owner,\n"
                            "       Index_Name,\n"
@@ -152,7 +152,7 @@ static toSQL SQLListIndex7("toResultIndexes:ListIndex",
                            "   AND Table_Name = :f2<char[101]>\n"
                            " ORDER BY Index_Name",
                            "",
-                           "7.3");
+                           "0703");
 
 static toSQL SQLListIndexPgSQL("toResultIndexes:ListIndex",
                                "SELECT u.usename as Owner,\n"

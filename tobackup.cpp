@@ -243,7 +243,7 @@ static toSQL SQLLogHistory("toBackup:LogHistory",
                            "FROM V$LOG_HISTORY\n"
                            "ORDER BY SEQUENCE# DESC",
                            "Redo Log History",
-                           "8.0");
+                           "0800");
 
 static toSQL SQLLogHistory7("toBackup:LogHistory",
                             "SELECT \n"
@@ -256,7 +256,7 @@ static toSQL SQLLogHistory7("toBackup:LogHistory",
                             "FROM V$LOG_HISTORY\n"
                             "ORDER BY SEQUENCE# DESC",
                             "",
-                            "7.3");
+                            "0703");
 
 static toSQL SQLOnlineBackup("toBackup:OnlineBackup",
                              "SELECT MIN(VBD.CHECKPOINT_CHANGE#)-MAX(VBD.CHECKPOINT_CHANGE#)\n"
@@ -270,12 +270,12 @@ static toSQL SQLOnlineBackup("toBackup:OnlineBackup",
                              "   AND VBD.CREATION_CHANGE# = QUERY1.CREATION_CHANGE#\n"
                              "   AND VBD.COMPLETION_TIME = QUERY1.COMPLETION_TIME",
                              "Check if online backup or not. Should return 0 if cold backup",
-                             "8.0");
+                             "0800");
 
 static toSQL SQLOnlineBackup7("toBackup:OnlineBackup",
                               "SELECT 0 FROM DUAL",
                               "",
-                              "7.3");
+                              "0703");
 
 static toSQL SQLLastBackup("toBackup:LastBackup",
                            "SELECT VDF.NAME \"Filename\",\n"
@@ -314,12 +314,12 @@ static toSQL SQLLastBackup("toBackup:LastBackup",
                            " WHERE CREATION_CHANGE# NOT IN (SELECT DISTINCT CREATION_CHANGE# FROM V$BACKUP_DATAFILE)\n"
                            " ORDER BY 2 DESC, 5 DESC, 6 DESC",
                            "Get datafiles in most recent backup",
-                           "8.0");
+                           "0800");
 
 static toSQL SQLLastBackup7("toBackup:LastBackup",
                             "SELECT 'Backup information not available in Oracle 7' \"Unsupported\" FROM DUAL",
                             "",
-                            "7.3");
+                            "0703");
 
 static toSQL SQLCurrentBackup("toBackup:CurrentBackup",
                               "SELECT SID \"Sid\",\n"
@@ -334,7 +334,7 @@ static toSQL SQLCurrentBackup("toBackup:CurrentBackup",
                               "   AND TOTALWORK != 0\n"
                               "   AND SOFAR <> TOTALWORK",
                               "Display current RMAN progress",
-                              "8.1");
+                              "0801");
 
 static toSQL SQLCurrentBackup8("toBackup:CurrentBackup",
                                "SELECT SID \"Sid\",\n"
@@ -348,12 +348,12 @@ static toSQL SQLCurrentBackup8("toBackup:CurrentBackup",
                                "   AND ROUND(SOFAR/TOTALWORK*100,2) < 100\n"
                                " ORDER BY 1 DESC",
                                "",
-                               "8.0");
+                               "0800");
 
 static toSQL SQLCurrentBackup7("toBackup:CurrentBackup",
                                "SELECT * FROM DUAL WHERE NULL = NULL",
                                "",
-                               "7.3");
+                               "0703");
 
 toBackup::toBackup(QWidget *main, toConnection &connection)
         : toToolWidget(BackupTool, "backup.html", main, connection)

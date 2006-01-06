@@ -101,7 +101,7 @@ static toSQL SQLObjectList("toScript:ExtractObject",
                            "   FROM sys.all_users)\n"
                            "  ORDER BY 1,2,3",
                            "",
-                           "8.1");
+                           "0801");
 
 static toSQL SQLUserObjectList("toScript:UserExtractObject",
                                "SELECT owner,object_type,object_name\n"
@@ -169,7 +169,7 @@ static toSQL SQLUserObjects7("toScript:UserObjects",
                              "         WHERE owner = :own<char[101]>)\n"
                              " ORDER BY 1,2",
                              "",
-                             "7.3");
+                             "0703");
 
 static toSQL SQLSchemasMySQL("toScript:ExtractSchema",
                              "SHOW DATABASES",

@@ -2,6 +2,7 @@
 
 2005-12-30: Applied patch #1393915 to return some Pl/SQL functionality w/ QScintilla
 2005-01-02: Applied patch #1393554 to resize connection dialog fields automatically
+2006-01-06: Applied patch #1398328 to better handle oracle version comparisons
 
 1.3.19:
 

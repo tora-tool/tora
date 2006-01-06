@@ -111,7 +111,7 @@ static toSQL SQLDependencies("toResultReferences:Dependencies",
                              "   AND referenced_name = :tab<char[101]>\n"
                              " ORDER BY owner,type,name",
                              "List the dependencies from other objects to this object, must return same number of columns",
-                             "8.0");
+                             "0800");
 static toSQL SQLDependencies7("toResultReferences:Dependencies",
                               "SELECT owner,name,type\n"
                               "  FROM sys.all_dependencies\n"
@@ -119,7 +119,7 @@ static toSQL SQLDependencies7("toResultReferences:Dependencies",
                               "   AND referenced_name = :tab<char[101]>\n"
                               " ORDER BY owner,type,name",
                               "",
-                              "7.3");
+                              "0703");
 
 void toResultReferences::query(const QString &, const toQList &param)
 {

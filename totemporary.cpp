@@ -87,7 +87,7 @@ static toSQL SQLListTemporaryObjects("toTemporary:ListTemporaryObjects",
                                      "   AND a.address ( + ) = s.sql_address\n"
                                      "   AND a.hash_value ( + ) = s.sql_hash_value\n"
                                      "   AND p.name = 'db_block_size'",
-                                     "Get temporary usage.", "8.0");
+                                     "Get temporary usage.", "0800");
 
 static toSQL SQLListTemporaryObjects9("toTemporary:ListTemporaryObjects",
                                       "SELECT s.sid || ',' || s.serial# \"Session\",\n"
@@ -106,7 +106,7 @@ static toSQL SQLListTemporaryObjects9("toTemporary:ListTemporaryObjects",
                                       "   AND a.hash_value ( + ) = s.sql_hash_value\n"
                                       "   AND p.name = 'db_block_size'",
                                       QString::null,
-                                      "9.0");
+                                      "0900");
 
 class toTemporaryTool : public toTool
 {
@@ -130,7 +130,7 @@ public:
     {
         if (!toIsOracle(conn))
             return false;
-        if (conn.version() < "8.0")
+        if (conn.version() < "0800")
             return false;
         return true;
     }

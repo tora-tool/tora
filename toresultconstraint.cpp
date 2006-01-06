@@ -109,7 +109,7 @@ static toSQL SQLConstraints("toResultConstraint:ListConstraints",
                             "   AND Table_Name = :f2<char[101]>\n"
                             " ORDER BY Constraint_Name",
                             "List constraints on a table. Must have same column order",
-                            "8.0");
+                            "0800");
 static toSQL SQLConstraints7("toResultConstraint:ListConstraints",
                              "SELECT Constraint_Name,\n"
                              "       Search_Condition,\n"
@@ -124,7 +124,7 @@ static toSQL SQLConstraints7("toResultConstraint:ListConstraints",
                              "   AND Table_Name = :f2<char[101]>\n"
                              " ORDER BY Constraint_Name",
                              "",
-                             "7.3");
+                             "0703");
 
 void toResultConstraint::addConstraint(const QString &name, const QString &definition, const QString &status)
 {

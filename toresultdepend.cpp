@@ -56,7 +56,7 @@ static toSQL SQLResultDepend("toResultDepend:Depends",
                              " ORDER BY referenced_owner,referenced_type,referenced_name",
                              "Display dependencies on an object, must have first two "
                              "columns same columns and same bindings",
-                             "8.0");
+                             "0800");
 static toSQL SQLResultDepend7("toResultDepend:Depends",
                               "SELECT DISTINCT\n"
                               "       referenced_owner \"Owner\",\n"
@@ -68,7 +68,7 @@ static toSQL SQLResultDepend7("toResultDepend:Depends",
                               "   AND name = :name<char[101]>\n"
                               " ORDER BY referenced_owner,referenced_type,referenced_name",
                               "",
-                              "7.3");
+                              "0703");
 
 bool toResultDepend::canHandle(toConnection &conn)
 {

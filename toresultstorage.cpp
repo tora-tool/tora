@@ -219,7 +219,7 @@ static toSQL SQLShowCoalesced("toResultStorage:ShowCoalesced",
                               "   AND d.contents = 'TEMPORARY'",
                               "Display storage usage of database. This includes the coalesced columns which may make the query sluggish on some DB:s. "
                               "All columns must be present in output (Should be 12)",
-                              "8.1");
+                              "0801");
 
 static toSQL SQLShowCoalesced8("toResultStorage:ShowCoalesced",
                                "SELECT d.tablespace_name, \n"
@@ -242,7 +242,7 @@ static toSQL SQLShowCoalesced8("toResultStorage:ShowCoalesced",
                                "   AND d.tablespace_name = f.tablespace_name(+)\n"
                                " ORDER BY d.tablespace_name",
                                "",
-                               "8.0");
+                               "0800");
 
 static toSQL SQLShowCoalesced7("toResultStorage:ShowCoalesced",
                                "SELECT d.tablespace_name, \n"
@@ -265,7 +265,7 @@ static toSQL SQLShowCoalesced7("toResultStorage:ShowCoalesced",
                                "   AND d.tablespace_name = f.tablespace_name(+)\n"
                                " ORDER BY d.tablespace_name",
                                "",
-                               "7.3");
+                               "0703");
 
 static toSQL SQLNoShowCoalesced("toResultStorage:NoCoalesced",
                                 "SELECT d.tablespace_name, \n"
@@ -310,7 +310,7 @@ static toSQL SQLNoShowCoalesced("toResultStorage:NoCoalesced",
                                 "   AND d.contents = 'TEMPORARY'",
                                 "Display storage usage of database. This does not include the coalesced columns which may make the query sluggish on some DB:s. "
                                 "All columns must be present in output (Should be 12)",
-                                "8.1");
+                                "0801");
 
 static toSQL SQLNoShowCoalesced8("toResultStorage:NoCoalesced",
                                  "SELECT d.tablespace_name, \n"
@@ -333,7 +333,7 @@ static toSQL SQLNoShowCoalesced8("toResultStorage:NoCoalesced",
                                  "   AND d.tablespace_name = f.tablespace_name(+)\n"
                                  " ORDER BY d.tablespace_name",
                                  "",
-                                 "8.0");
+                                 "0800");
 
 static toSQL SQLNoShowCoalesced7("toResultStorage:NoCoalesced",
                                  "SELECT d.tablespace_name, \n"
@@ -356,7 +356,7 @@ static toSQL SQLNoShowCoalesced7("toResultStorage:NoCoalesced",
                                  "   AND d.tablespace_name = f.tablespace_name(+)\n"
                                  " ORDER BY d.tablespace_name",
                                  "",
-                                 "7.3");
+                                 "0703");
 
 static toSQL SQLDatafile("toResultStorage:Datafile",
                          "SELECT d.tablespace_name,\n"
@@ -404,7 +404,7 @@ static toSQL SQLDatafile("toResultStorage:Datafile",
                          "   AND (d.file_id = v.file#)",
                          "Display information about a datafile in a tablespace. "
                          "All columns must be present in the output (Should be 14)",
-                         "8.1");
+                         "0801");
 
 static toSQL SQLDatafile8("toResultStorage:Datafile",
                           "SELECT d.tablespace_name,\n"
@@ -429,7 +429,7 @@ static toSQL SQLDatafile8("toResultStorage:Datafile",
                           " WHERE (s.file_id (+)= d.file_id)\n"
                           "   AND (d.file_name = v.name)",
                           "",
-                          "8.0");
+                          "0800");
 
 static toSQL SQLDatafile7("toResultStorage:Datafile",
                           "SELECT  d.tablespace_name,\n"
@@ -454,7 +454,7 @@ static toSQL SQLDatafile7("toResultStorage:Datafile",
                           " WHERE  (s.file_id (+)= d.file_id)\n"
                           "   AND  (d.file_name = v.name)",
                           "",
-                          "7.3");
+                          "0703");
 
 #define FILECOLUMNS 14
 #define COLUMNS (FILECOLUMNS-2)
@@ -738,7 +738,7 @@ static toSQL SQLObjectsFile("toStorageExtent:ObjectsFile",
                             " WHERE tablespace_name = :tab<char[101]>\n"
                             "   AND file_id = :fil<int>",
                             "Get objects in a datafile, must have same columns and binds",
-                            "8.0");
+                            "0800");
 
 static toSQL SQLObjectsFile7("toStorageExtent:ObjectsFile",
                              "SELECT owner,\n"
@@ -751,7 +751,7 @@ static toSQL SQLObjectsFile7("toStorageExtent:ObjectsFile",
                              " WHERE tablespace_name = :tab<char[101]>\n"
                              "   AND file_id = :fil<int>",
                              "",
-                             "7.3");
+                             "0703");
 
 static toSQL SQLObjectsTablespace("toStorageExtent:ObjectsTablespace",
                                   "SELECT owner,\n"
@@ -762,7 +762,7 @@ static toSQL SQLObjectsTablespace("toStorageExtent:ObjectsTablespace",
                                   "       blocks\n"
                                   "  FROM sys.dba_extents WHERE tablespace_name = :tab<char[101]>",
                                   "Get objects in a tablespace, must have same columns and binds",
-                                  "8.0");
+                                  "0800");
 
 static toSQL SQLObjectsTablespace7("toStorageExtent:ObjectsTablespace",
                                    "SELECT owner,\n"
@@ -773,7 +773,7 @@ static toSQL SQLObjectsTablespace7("toStorageExtent:ObjectsTablespace",
                                    "       blocks\n"
                                    "  FROM sys.dba_extents WHERE tablespace_name = :tab<char[101]>",
                                    "",
-                                   "7.3");
+                                   "0703");
 
 static toSQL SQLTableTablespace("toStorageExtent:TableTablespace",
                                 "SELECT MAX(tablespace_name)\n"
@@ -794,7 +794,7 @@ static toSQL SQLTableTablespace7("toStorageExtent:TableTablespace",
                                  "SELECT tablespace_name FROM sys.all_tables\n"
                                  " WHERE owner = :own<char[101]> AND table_name = :tab<char[101]>",
                                  "",
-                                 "7.3");
+                                 "0703");
 
 static toSQL SQLFileBlocks("toStorageExtent:FileSize",
                            "SELECT file_id,blocks FROM sys.dba_data_files\n"

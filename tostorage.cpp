@@ -169,7 +169,7 @@ void toStorageTablespace::permanentToggle(bool val)
 {
     try
     {
-        if (toCurrentConnection(this).version() >= "8")
+        if (toCurrentConnection(this).version() >= "08")
         {
             emit tempFile(!val && !Dictionary->isChecked());
             return ;
@@ -186,7 +186,7 @@ void toStorageTablespace::dictionaryToggle(bool val)
 {
     try
     {
-        if (toCurrentConnection(this).version() < "8")
+        if (toCurrentConnection(this).version() < "08")
             Permanent->setEnabled(val);
         else
             emit tempFile(!Permanent->isChecked() && !val);
@@ -539,7 +539,7 @@ static toSQL SQLDatafileInfo("toStorage:DatafileInfo",
                              "   AND file_name = :fil<char[1500]>",
                              "Get information about a datafile for the modify dialog, "
                              "must have same columns and bindings",
-                             "8.1");
+                             "0801");
 
 static toSQL SQLDatafileInfo8("toStorage:DatafileInfo",
                               "SELECT bytes/1024,\n"
@@ -550,7 +550,7 @@ static toSQL SQLDatafileInfo8("toStorage:DatafileInfo",
                               " WHERE tablespace_name = :nam<char[70]>"
                               "   AND file_name = :fil<char[1500]>",
                               "",
-                              "8.0");
+                              "0800");
 
 toStorageDialog::toStorageDialog(toConnection &conn, const QString &tablespace,
                                  const QString &filename, QWidget *parent)

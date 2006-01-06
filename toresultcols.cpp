@@ -174,7 +174,7 @@ static toSQL SQLInfo("toResultCols:Info",
                      "   AND Table_Name = :f2<char[100]>\n"
                      "   AND Column_Name = :f3<char[100]>",
                      "Display analyze statistics about a column",
-                     "8.1");
+                     "0801");
 static toSQL SQLInfo8("toResultCols:Info",
                       "SELECT Data_Default,\n"
                       "       Num_Distinct,\n"
@@ -191,7 +191,7 @@ static toSQL SQLInfo8("toResultCols:Info",
                       "   AND Table_Name = :f2<char[100]>\n"
                       "   AND Column_Name = :f3<char[100]>",
                       QString::null,
-                      "8.0");
+                      "0800");
 static toSQL SQLInfo7("toResultCols:Info",
                       "SELECT Data_Default,\n"
                       "       Num_Distinct,\n"
@@ -208,7 +208,7 @@ static toSQL SQLInfo7("toResultCols:Info",
                       "   AND Table_Name = :f2<char[100]>\n"
                       "   AND Column_Name = :f3<char[100]>",
                       "",
-                      "7.3");
+                      "0703");
 
 class toResultColsItem : public toResultViewMLine
 {

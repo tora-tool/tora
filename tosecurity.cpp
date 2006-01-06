@@ -103,7 +103,7 @@ static toSQL SQLUserInfo7("toSecurity:UserInfo",
                           "  FROM sys.DBA_Users\n"
                           " WHERE UserName = :f1<char[100]>",
                           "",
-                          "7.3");
+                          "0703");
 
 static toSQL SQLRoleInfo("toSecurity:RoleInfo",
                          "SELECT Role,Password_required FROM sys.DBA_Roles WHERE Role = :f1<char[101]>",

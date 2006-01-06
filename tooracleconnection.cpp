@@ -53,6 +53,7 @@
 #include "totool.h"
 
 #include <stdio.h>
+#include <iostream>
 
 #include <qcheckbox.h>
 #include <qfile.h>
@@ -184,7 +185,7 @@ class oracleSub : public toConnectionSub
         }
         virtual void throwExtendedException(toConnection &conn, const otl_exception &exc)
         {
-            if (conn.version() < "8.0" && exc.code == 0)
+            if (conn.version() < "0800" && exc.code == 0)
             {
                 // Serious OCI voodoo to get the Parse error location on Oracle7 servers
 
@@ -810,8 +811,24 @@ class oracleConnection : public toConnection::connectionImpl
                         int pos;
                         int len;
                         pos = verre.match(ver, 0, &len);
-                        if (pos >= 0)
-                            return ver.mid(pos, len).latin1();
+                        if (pos >= 0) {
+                            QCString verstr = ver.mid(pos, len).latin1();
+                            QStringList vl = QStringList::split('.',verstr);
+                            QString ve;
+                            QString verrj;
+                            for ( QStringList::iterator vi = vl.begin();
+                                  vi != vl.end();
+                                  ++vi ) {
+                                std::cout << *vi;
+                                std::cout << std::endl;
+                                ve = *vi;
+                                verrj += ve.rightJustify(2,'0');
+                            }
+                            std::cout << verrj;
+                            std::cout << std::endl;
+                            return QCString::QCString(verrj);
+                            // return verstr;
+                        }
                     }
                 }
             }

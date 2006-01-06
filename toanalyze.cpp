@@ -121,7 +121,7 @@ static toSQL SQLListTables("toAnalyze:ListTables",
                            " where iot_name is null\n"
                            "   and temporary != 'Y' and secondary = 'N'",
                            "",
-                           "8.0");
+                           "0800");
 static toSQL SQLListTables7("toAnalyze:ListTables",
                             "select 'TABLE' \"Type\",\n"
                             "       owner,\n"
@@ -137,7 +137,7 @@ static toSQL SQLListTables7("toAnalyze:ListTables",
                             "  from sys.all_tables\n"
                             " where temporary != 'Y' and secondary = 'N'",
                             "",
-                            "7.3");
+                            "0703");
 
 static toSQL SQLListIndex("toAnalyze:ListIndex",
                           "SELECT 'INDEX' \"Type\",\n"

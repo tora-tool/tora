@@ -600,14 +600,14 @@ static toSQL SQLListTables("toBrowser:ListTables",
                            "   AND UPPER(TABLE_NAME) LIKE :f2<char[101]>\n"
                            " ORDER BY Table_Name",
                            "",
-                           "8.0");
+                           "0800");
 static toSQL SQLListTables7("toBrowser:ListTables",
                             "SELECT Table_Name,NULL \" Ignore\",NULL \" Ignore2\",Tablespace_name \" Ignore2\"\n"
                             "  FROM SYS.ALL_TABLES WHERE OWNER = :f1<char[101]>\n"
                             "   AND UPPER(TABLE_NAME) LIKE :f2<char[101]>\n"
                             " ORDER BY Table_Name",
                             "",
-                            "7.3");
+                            "0703");
 static toSQL SQLListTablesPgSQL("toBrowser:ListTables",
                                 "SELECT c.relname AS \"Table Name\"\n"
                                 "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
@@ -662,13 +662,13 @@ static toSQL SQLTableTrigger("toBrowser:TableTrigger",
                              "  FROM SYS.ALL_TRIGGERS\n"
                              " WHERE Table_Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>",
                              "",
-                             "8.1");
+                             "0801");
 static toSQL SQLTableTrigger8("toBrowser:TableTrigger",
                               "SELECT Trigger_Name,Triggering_Event,Status,Description \n"
                               "  FROM SYS.ALL_TRIGGERS\n"
                               " WHERE Table_Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>",
                               "",
-                              "8.0");
+                              "0800");
 static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
                                "show table status from :own<noquote> like :tab",
                                "Display information about a table",
@@ -722,7 +722,7 @@ static toSQL SQLTablePartition("toBrowser:TablePartitions",
                                " order by p.partition_name\n"
                                " , s.subpartition_name\n",
                                "Table partitions",
-                               "8.1");
+                               "0801");
 
 static toSQL SQLListViewPgSQL("toBrowser:ListView",
                               "SELECT c.relname as View_Name\n"
@@ -809,21 +809,21 @@ static toSQL SQLIndexCols("toBrowser:IndexCols",
                           "   AND a.column_Position = b.Column_Position(+)\n"
                           " ORDER BY a.Column_Position",
                           "",
-                          "8.1");
+                          "0801");
 static toSQL SQLIndexCols8("toBrowser:IndexCols",
                            "SELECT Table_Name,Column_Name,Column_Length,Descend\n"
                            "  FROM SYS.ALL_IND_COLUMNS\n"
                            " WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
                            " ORDER BY Column_Position",
                            "",
-                           "8.0");
+                           "0800");
 static toSQL SQLIndexCols7("toBrowser:IndexCols",
                            "SELECT Table_Name,Column_Name,Column_Length\n"
                            "  FROM SYS.ALL_IND_COLUMNS\n"
                            " WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
                            " ORDER BY Column_Position",
                            "",
-                           "7.3");
+                           "0703");
 static toSQL SQLIndexColsPgSQL("toBrowser:IndexCols",
                                "SELECT a.attname,\n"
                                "       format_type(a.atttypid, a.atttypmod) as FORMAT,\n"
@@ -994,7 +994,7 @@ static toSQL SQLTriggerInfo("toBrowser:TriggerInfo",
                             "  FROM SYS.ALL_TRIGGERS\n"
                             "WHERE Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
                             "Display information about a trigger",
-                            "8.1");
+                            "0801");
 static toSQL SQLTriggerInfo8("toBrowser:TriggerInfo",
                              "SELECT Owner,Trigger_Name,\n"
                              "       Trigger_Type,Triggering_Event,\n"
@@ -1004,7 +1004,7 @@ static toSQL SQLTriggerInfo8("toBrowser:TriggerInfo",
                              "  FROM SYS.ALL_TRIGGERS\n"
                              "WHERE Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
                              "",
-                             "8.0");
+                             "0800");
 static toSQL SQLTriggerBody("toBrowser:TriggerBody",
                             "SELECT Trigger_Body FROM SYS.ALL_TRIGGERS\n"
                             " WHERE Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
