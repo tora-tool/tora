@@ -814,6 +814,9 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
                 upp == ("PACKAGE"))
             block = true;
 
+        if (upp == ("SELF"))
+            block = false;
+
         if (first != ("END") && ((first == ("IF") && upp == ("THEN")) ||
                                  upp == ("LOOP") ||
                                  upp == ("DO") ||
