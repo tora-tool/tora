@@ -322,21 +322,25 @@ void toStatusMessage(const QString &str, bool save, bool log)
     if (main)
     {
         int sec = toTool::globalConfig(CONF_STATUS_MESSAGE, DEFAULT_STATUS_MESSAGE).toInt();
-        if (save || sec == 0)
-            main->statusBar()->message(str.simplifyWhiteSpace());
-        else
-            main->statusBar()->message(str.simplifyWhiteSpace(), sec*1000);
-        if (!save && !str.isEmpty() && log)
+        if (!str.isEmpty())
         {
-            if (toTool::globalConfig(CONF_MESSAGE_STATUSBAR, "").isEmpty())
-                main->displayMessage(str);
-            toPush(LastMessages, str);
-            if (int(LastMessages.size()) > toTool::globalConfig(CONF_STATUS_SAVE,
-                    DEFAULT_STATUS_SAVE).toInt())
-                toShift(LastMessages);
+            if (save || sec == 0)
+                main->statusBar()->message(str.simplifyWhiteSpace());
+            else
+                main->statusBar()->message(str.simplifyWhiteSpace(), sec*1000);
+
+            if (!save && log)
+            {
+                if (toTool::globalConfig(CONF_MESSAGE_STATUSBAR, "").isEmpty())
+                    main->displayMessage(str);
+                toPush(LastMessages, str);
+                if (int(LastMessages.size()) > toTool::globalConfig(CONF_STATUS_SAVE,
+                        DEFAULT_STATUS_SAVE).toInt())
+                    toShift(LastMessages);
+            }
+            QToolTip::add
+                (main->statusBar(), str);
         }
-        QToolTip::add
-            (main->statusBar(), str);
     }
 }
 
