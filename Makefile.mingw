@@ -38,8 +38,8 @@
 
 # Locations of OCI Dll and home, QT and QScintilla
 #    paths below are just an example
-OCI_DLL=/c/Oracle9/bin/oci.dll
-OCI_HOME=/c/Oracle9/oci
+OCI_DLL=/c/oracle/ora81/bin/oci.dll
+OCI_HOME=/c/oracle/ora81/oci
 QTDIR=/c/qt-3
 
 # Perl executable - needed for key transalations generation
@@ -120,6 +120,7 @@ DEFINES+=-DQT_THREAD_SUPPORT
 DEFINES+=-DTOMONOLITHIC
 DEFINES+=-DWIN32 -D_WIN32
 DEFINES+=-D_int64="long long"
+DEFINES+=-DOTL_EXCEPTION_ENABLE_ERROR_OFFSET
 
 # Comment out this line if you want more output from compile
 .SILENT:
@@ -128,10 +129,10 @@ DEFINES+=-D_int64="long long"
 CPPFLAGS_GLOB=
 
 # Additional flags to set when linking.
-LFLAGS_GLOB=-O3
+LFLAGS_GLOB=-O2
 
 # Additional flags set when compiling.
-CFLAGS_GLOB=-O3 -W -Wall -c -mthreads -w
+CFLAGS_GLOB=-O2 -W -Wall -c -mthreads -w
 
 ############################################################################
 #

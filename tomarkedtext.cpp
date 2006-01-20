@@ -74,6 +74,7 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
     setFont(toStringToFont(toTool::globalConfig(CONF_TEXT, "")));
 
     connect(this, SIGNAL(textChanged()), this, SLOT(setTextChanged()));
+    connect(this,SIGNAL(copyAvailable(bool)),this,SLOT(setCopyAvailable(bool)));
 
     QPalette pal = palette();
     pal.setColor(QColorGroup::Base,
@@ -87,6 +88,10 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
     // sets default tab width
     setTabWidth(defaultTabWidth());
 }
+
+void toMarkedText::setCopyAvailable(bool yes){
+  setEdit();
+} 
 
 void toMarkedText::setEdit(void)
 {

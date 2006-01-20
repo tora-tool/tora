@@ -293,6 +293,7 @@ protected:
     
 private slots:
     void setTextChanged();
+    void setCopyAvailable(bool yes);
 
 private:
     enum {

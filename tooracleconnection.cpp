@@ -139,7 +139,7 @@ static void ThrowException(const otl_exception &exc)
             QString sql = QString::fromUtf8((const char *)exc.stm_text);
             if (exc.code >= 0)
             {
-                QString t = QString::fromUtf8((const char *)exc.stm_text, exc.code);
+                QString t = QString::fromUtf8((const char *)exc.stm_text, exc.error_offset);
                 ret.setOffset(t.length());
                 sql.insert(t.length(), QString::fromLatin1("<ERROR>"));
             }

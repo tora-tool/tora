@@ -218,6 +218,9 @@ AC_DEFUN(MRJ_CHECK_ORACLE,
         ora_cflags="-I$incdir"
         break
       done
+    else
+      ora_ldflags="-L$oracle_user_lib"
+      ora_cflags="-I$oracle_user_inc"
     fi
   elif test "x$ORACLE_HOME" != "x"; then
     AC_MSG_RESULT($ORACLE_HOME)
@@ -327,7 +330,7 @@ console when running TOra, this is probably why.])
       fi
     fi
   
-    ora_cflags="$ora_cflags -DOTL_ORA${otl_ver} -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP -DOTL_FUNC_THROW_SPEC_ON"
+    ora_cflags="$ora_cflags -DOTL_ORA${otl_ver} -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP -DOTL_FUNC_THROW_SPEC_ON -DOTL_EXCEPTION_ENABLE_ERROR_OFFSET"
   
     # don't change flags for all targets, just export ORA variables.
     CFLAGS=$cflags_ora_save

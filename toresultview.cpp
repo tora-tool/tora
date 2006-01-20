@@ -1178,9 +1178,9 @@ QString toListView::exportAsText(bool includeHeader, bool onlySelection, int typ
                         {
                             int csiz;
                             if (resItem)
-                                csiz = resItem->text(i).length();
+                                csiz = resItem->allText(i).length();
                             else if (chkItem)
-                                csiz = chkItem->text(i).length();
+                                csiz = chkItem->allText(i).length();
                             else
                                 csiz = item->text(i).length();
                             if (i == 0)
@@ -1309,9 +1309,9 @@ QString toListView::exportAsText(bool includeHeader, bool onlySelection, int typ
                     QString text;
 
                     if (resItem)
-                        text = resItem->text(i);
+                        text = resItem->allText(i);
                     else if (chkItem)
-                        text = chkItem->text(i);
+                        text = chkItem->allText(i);
                     else
                         text = item->text(i);
 
@@ -1349,8 +1349,9 @@ QString toListView::exportAsText(bool includeHeader, bool onlySelection, int typ
                         text.replace(QRegExp("<"), "&lt;");
                         text.replace(QRegExp(">"), "&gt");
 #endif
-
+                        line += QString::fromLatin1("<PRE>");
                         line += text;
+                        line += QString::fromLatin1("</PRE>");
                         line += QString::fromLatin1("</TD>");
                         break;
                     }

@@ -1869,19 +1869,13 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
     QSplitter *hsplitter = new QSplitter(Horizontal, splitter);
     DebugTabs = new QTabWidget(splitter);
     DebugTabs->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum));
+    DebugTabs->setMinimumHeight(1);
+    QValueList<int> sizes = splitter->sizes();
+    sizes[1] = 200;
+    splitter->setSizes(sizes);
     DebugTabs->hide();
 
-
-#if 0
-
-    {
-        QValueList<int> sizes = splitter->sizes();
-        sizes[0] += sizes[1] - 200;
-        sizes[1] = 200;
-        splitter->setSizes(sizes);
-    }
-#endif
-    splitter->setResizeMode(DebugTabs, QSplitter::KeepSize);
+    //splitter->setResizeMode(DebugTabs, QSplitter::KeepSize);
 
     QSplitter *objSplitter = new QSplitter(Vertical, hsplitter);
 
