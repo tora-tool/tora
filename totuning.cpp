@@ -410,27 +410,16 @@ static toSQL SQLChartsWait("toTuning:Charts:3BMWait events",
 
 static toSQL SQLChartsExecution("toTuning:Charts:6LNExecution",
                                 "select SYSDATE,\n"
-                                "       sum(decode(statistic#,181,value,0)) \"Execute\",\n"
-                                "       sum(decode(statistic#,180,value,0)) \"Hard parse\",\n"
-                                "       sum(decode(statistic#,179,value,0)) \"Parse\",\n"
-                                "       sum(decode(statistic#,6,value,0)) \"Calls\",\n"
-                                "       sum(decode(statistic#,4,value,0))  \"Commit\",\n"
-                                "       sum(decode(statistic#,5,value,0)) \"Rollbacks\"\n"
-                                "  from v$sysstat where statistic# in (181,180,179,4,5,6)",
+                                "       sum(decode(name,'execute count',value,0)) \"Execute\",\n"
+                                "       sum(decode(name,'parse count (hard)',value,0)) \"Hard parse\",\n"
+                                "       sum(decode(name,'parse count (total)',value,0)) \"Parse\",\n"
+                                "       sum(decode(name,'user calls',value,0)) \"Calls\",\n"
+                                "       sum(decode(name,'user commits',value,0))  \"Commit\",\n"
+                                "       sum(decode(name,'user rollbacks',value,0)) \"Rollbacks\"\n"
+                                "  from v$sysstat where name IN ('execute count','parse count (hard)','parse count (total)','user calls','user commits','user rollbacks')",
                                 "Used to generate chart for execution statistics.",
                                 "0800");
 
-static toSQL SQLChartsExecution9("toTuning:Charts:6LNExecution",
-                                 "select SYSDATE,\n"
-                                 "       sum(decode(statistic#,222,value,0)) \"Execute\",\n"
-                                 "       sum(decode(statistic#,220,value,0)) \"Hard parse\",\n"
-                                 "       sum(decode(statistic#,219,value,0)) \"Parse\",\n"
-                                 "       sum(decode(statistic#,6,value,0)) \"Calls\",\n"
-                                 "       sum(decode(statistic#,4,value,0))  \"Commit\",\n"
-                                 "       sum(decode(statistic#,5,value,0)) \"Rollbacks\"\n"
-                                 "  from v$sysstat where statistic# in (222,220,219,4,5,6)",
-                                 "",
-                                 "0900");
 
 static toSQL SQLChartsExecution7("toTuning:Charts:6LNExecution",
                                  "select SYSDATE,\n"
@@ -444,18 +433,12 @@ static toSQL SQLChartsExecution7("toTuning:Charts:6LNExecution",
                                  "0703");
 
 static toSQL SQLChartsExecutionPie("toTuning:Charts:8PNExecution Total",
-                                   "select value,decode(statistic#,181,'Execute',180,'Hard parse',179,'Parse',\n"
-                                   "                              6,'Calls',4,'Commit',5,'Rollbacks')\n"
-                                   "  from v$sysstat where statistic# in (180,179,181,6,4,5) order by name",
+                                   "select value,decode(name,'execute count','Execute','parse count (hard)','Hard parse','parse count (total)','Parse',\n"
+                                   "                              'user calls','Calls','user commits','Commit','user rollbacks','Rollbacks')\n"
+                                   "  from v$sysstat where name IN ('execute count','parse count (hard)','parse count (total)','user calls','user commits','user rollbacks') order by name",
                                    "Used to generate pie chart for execution statistics.",
                                    "0800");
 
-static toSQL SQLChartsExecutionPie9("toTuning:Charts:8PNExecution Total",
-                                    "select value,decode(statistic#,222,'Execute',220,'Hard parse',219,'Parse',\n"
-                                    "                              6,'Calls',4,'Commit',5,'Rollbacks')\n"
-                                    "  from v$sysstat where statistic# in (219,220,222,6,4,5) order by name",
-                                    "",
-                                    "0900");
 
 static toSQL SQLChartsExecutionPie7("toTuning:Charts:8PNExecution Total",
                                     "select value,decode(statistic#,132,'Execute',131,'Parse',\n"
