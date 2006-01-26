@@ -1,27 +1,27 @@
-dnl Process this file with autoconf to produce a configure script.
+# Process this file with autoconf to produce a configure script.
 
-AC_INIT(main.cpp)
-dnl Every other copy of the package version number gets its value from here
-AM_INIT_AUTOMAKE(tora, 1.3.19)
+AC_INIT([tora],[1.3.19],[tora-develop@lists.sourceforge.net])
+# Every other copy of the package version number gets its value from here
+AM_INIT_AUTOMAKE
 
-dnl create a config.h file (Automake will add -DHAVE_CONFIG_H)
-AM_CONFIG_HEADER(config.h)
+# create a config.h file (Automake will add -DHAVE_CONFIG_H)
+AC_CONFIG_SRCDIR([main.cpp])
+AC_CONFIG_HEADER([config.h])
 mrj_SET_PREFIX
 
-AC_SUBST(VERSION)
+AC_SUBST(PACKAGE_VERSION)
 
 ISODATE=`date +%Y-%m-%d`
 AC_SUBST(ISODATE)
 
 AC_CANONICAL_HOST
 
-dnl Checks for programs.
-LT_AC_PROG_SED
+# Checks for programs.
 AC_PROG_INSTALL
 AC_PROG_CC
 AC_PROG_CXX
 
-dnl Checks for header files.
+# Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS(unistd.h sys/param.h sys/time.h time.h sys/mkdev.h sys/sysmacros.h string.h memory.h fcntl.h dirent.h sys/ndir.h ndir.h alloca.h locale.h )
 
@@ -36,9 +36,9 @@ AC_STRUCT_ST_BLOCKS
 AC_FUNC_CLOSEDIR_VOID
 AC_TYPE_SIZE_T
 
-dnl for NLS support. Call them in this order!
-dnl WITH_NLS is for the po files
-dnl AM_KDE_WITH_NLS
+# for NLS support. Call them in this order!
+# WITH_NLS is for the po files
+# AM_KDE_WITH_NLS
 
 TORA_CHECK_PLUGIN
 TORA_CHECK_MONO
@@ -50,10 +50,10 @@ TORA_CHECK_QSCINTILLA
 AX_PATH_LIB_PCRE
 TORA_CHECK_PUTENV
 
-dnl Makefile.am uses these
+# Makefile.am uses these
 AM_CONDITIONAL(ENABLE_MONO, test "$enable_mono" = yes)
 AM_CONDITIONAL(HAVE_ORACLE, test "$enable_oracle" = yes)
 
 AC_CONFIG_FILES([Makefile])
-
-AC_OUTPUT([rpm/tora.spec])
+AC_CONFIG_FILES([rpm/tora.spec])
+AC_OUTPUT

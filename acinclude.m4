@@ -3,12 +3,12 @@
 m4_include([qtkde.m4])
 
 dnl mrj: set default prefix for tora
-AC_DEFUN(mrj_SET_PREFIX,
+AC_DEFUN([mrj_SET_PREFIX],
 [
     AC_PREFIX_DEFAULT(/usr/local/tora)
 ])
 
-AC_DEFUN(TORA_CHECK_PLUGIN,
+AC_DEFUN([TORA_CHECK_PLUGIN],
 [
   AC_MSG_CHECKING([enable plugin support])
   AC_ARG_ENABLE(plugin,
@@ -19,7 +19,7 @@ AC_DEFUN(TORA_CHECK_PLUGIN,
   AC_MSG_RESULT($enable_plugin)
 ])
 
-AC_DEFUN(TORA_CHECK_MONO,
+AC_DEFUN([TORA_CHECK_MONO],
 [
   AC_MSG_CHECKING([if monolithic build])
   AC_ARG_ENABLE(mono,
@@ -39,7 +39,7 @@ AC_DEFUN(TORA_CHECK_MONO,
 ])
 
 dnl check if we need to link against our libtool libraries
-AC_DEFUN(TORA_CHECK_LINK_LIBS,
+AC_DEFUN([TORA_CHECK_LINK_LIBS],
 [
   AC_MSG_CHECKING([whether to link plugins into binary])
 
@@ -54,7 +54,7 @@ AC_DEFUN(TORA_CHECK_LINK_LIBS,
   fi
 ])
 
-AC_DEFUN(TORA_LIBTOOL_ALL,
+AC_DEFUN([TORA_LIBTOOL_ALL],
 [
   AC_LIBTOOL_DLOPEN
   dnl AC_LIB_LTDL
@@ -63,19 +63,18 @@ AC_DEFUN(TORA_LIBTOOL_ALL,
   dnl AC_DEFINE(HAVE_LTDL, 1, [Always set when using autotools build.])
   dnl check for dlopen, must be called before AC_PROG_LIBTOOL
   AC_PROG_LIBTOOL
-  AC_SUBST(LIBTOOL_DEPS)
+  AC_SUBST([LIBTOOL_DEPS])
 ])
 
-AC_DEFUN(TORA_CHECK_PUTENV,
+AC_DEFUN([TORA_CHECK_PUTENV],
 [
   AC_CACHE_CHECK([for putenv], tora_cv_sys_putenv,
-    [AC_TRY_COMPILE(
-      [
+    [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #ifdef HAVE_STDLIB_H
 # include <stdlib.h>
 #endif
-      ],
-      [putenv("test=test");],
+      ]],
+      [[putenv("test=test");]])],
       tora_cv_sys_putenv=yes,
       tora_cv_sys_putenv=no)
     ])
@@ -93,13 +92,12 @@ dnl Define HAVE_STRUCT_UTIMBUF if `struct utimbuf' is declared --
 dnl usually in <utime.h>.
 dnl Some systems have utime.h but don't declare the struct anywhere.
 
-AC_DEFUN(jm_CHECK_TYPE_STRUCT_UTIMBUF,
+AC_DEFUN([jm_CHECK_TYPE_STRUCT_UTIMBUF],
 [
   AC_CHECK_HEADERS(utime.h)
   AC_REQUIRE([AC_HEADER_TIME])
   AC_CACHE_CHECK([for struct utimbuf], fu_cv_sys_struct_utimbuf,
-    [AC_TRY_COMPILE(
-      [
+    [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #ifdef TIME_WITH_SYS_TIME
 # include <sys/time.h>
 # include <time.h>
@@ -113,8 +111,8 @@ AC_DEFUN(jm_CHECK_TYPE_STRUCT_UTIMBUF,
 #ifdef HAVE_UTIME_H
 # include <utime.h>
 #endif
-      ],
-      [static struct utimbuf x; x.actime = x.modtime;],
+      ]],
+      [[static struct utimbuf x; x.actime = x.modtime;]])],
       fu_cv_sys_struct_utimbuf=yes,
       fu_cv_sys_struct_utimbuf=no)
     ])
@@ -129,7 +127,7 @@ AC_DEFUN(jm_CHECK_TYPE_STRUCT_UTIMBUF,
 
 dnl mrj
 dnl check if we have oracle then test it. otherwise, RESULT no.
-AC_DEFUN(MRJ_CHECK_ORACLE,
+AC_DEFUN([MRJ_CHECK_ORACLE],
 [
   AC_MSG_CHECKING([for oracle])
 

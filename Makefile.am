@@ -12,10 +12,10 @@ TRANSLATIONS= \
 	tora_it.ts \
 	tora_toad.ts
 
-INCLUDES = @KDE_INCLUDES@ @QT_INCLUDES@ $(LTDLINCL)
-AM_CPPFLAGS  = $(PCRE_CFLAGS) \
+AM_CPPFLAGS = @KDE_INCLUDES@ @QT_INCLUDES@ $(LTDLINCL)
+AM_CPPFLAGS += $(PCRE_CFLAGS) \
 	-DDEFAULT_PLUGIN_DIR=\"$(libdir)\" \
-	-DTOVERSION=\"@VERSION@\" \
+	-DTOVERSION=\"@PACKAGE_VERSION@\" \
 	$(ORACLE_CXXFLAGS) \
 	@QSCINTILLA_CXXFLAGS@
 
@@ -141,7 +141,7 @@ EXTRA_tora_SOURCES = toalert.cpp toalert.h \
     $(EXTRA_ORACLE_MONO_SOURCE)
 endif
 
-tora_SOURCES=main.cpp aclocal.m4 \
+tora_SOURCES=chex.pl main.cpp aclocal.m4 \
 	toabout.cpp toabout.h \
 	toaboutui.cpp toaboutui.h \
 	tobackground.cpp tobackground.h \
