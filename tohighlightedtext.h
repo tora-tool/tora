@@ -43,6 +43,7 @@
 #include "tomarkedtext.h"
 
 #include <qextscintillalexer.h>
+#include <qextscintillaapis.h>
 
 #include <list>
 #include <map>
@@ -229,6 +230,7 @@ private:
     /** Map of rows with errors and their error message.
      */
     std::map<int, QString> Errors;
+    QextScintillaAPIs* complAPI;
 protected:
     int debugMarker;
     int errorMarker;
@@ -342,6 +344,9 @@ public:
      */
     void tableAtCursor(QString &owner, QString &table, bool highlight = false);
 
+private:
+  bool invalidToken(int line, int col);
+
     
     // ------------------ END OF API used by TOra classes ----------------------
 
@@ -352,6 +357,10 @@ public slots:
     /** Go to previous error.
      */
     void previousError(void);
+
+    virtual void autoCompleteFromAPIs();
+
+    void positionChanged(int row, int col);
 
 private slots:
     void setStatusMessage(void);

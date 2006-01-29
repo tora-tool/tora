@@ -52,6 +52,9 @@
 #include <qsimplerichtext.h>
 #include <qstylesheet.h>
 #include <qtimer.h>
+#include <qkeysequence.h>
+#include <qextscintillaapis.h>
+#include <qnamespace.h>
 
 #include <qextscintillalexersql.h>
 
@@ -289,12 +292,135 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     setMarkerBackgroundColor(Qt::darkGreen,debugMarker);
     setMarkerBackgroundColor(Qt::red,errorMarker);
     setMarginMarkerMask(1,0);
+    setAutoIndent(true);
     connect(this,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(setStatusMessage(void )));
+    complAPI=new QextScintillaAPIs();
+    connect (this,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(positionChanged(int,int)));
+    this->SendScintilla(QextScintillaBase::SCI_AUTOCSETSEPARATOR,'!');
 }
 
 toHighlightedText::~toHighlightedText() 
 {
-    
+  if(complAPI)
+    delete complAPI;
+}
+
+void toHighlightedText::positionChanged(int row, int col){
+  if (col>0 && this->text(row)[col-1]=='.'){
+    this->autoCompleteFromAPIs();
+  }
+}
+
+static QString UpperIdent(const QString &str){
+  if (str.length() > 0 && str[0] == '\"')
+    return str;
+  else
+    return str.upper();
+}
+
+void toHighlightedText::autoCompleteFromAPIs(){
+  complAPI->clear();
+  int curline, curcol;
+  getCursorPosition (&curline, &curcol);
+
+  QString line = text(curline);
+
+  if (!isReadOnly() && curcol >= 0 && line[curcol-1] == '.'){
+    //if (!hasSelectedText())
+    //  return ;
+    if (toTool::globalConfig(CONF_CODE_COMPLETION, "Yes").isEmpty())
+      return ;
+
+    toSQLParse::editorTokenizer tokens(this, curcol, curline);
+    QString name = tokens.getToken(false);
+    QString owner;
+    if (name == ".")
+      name = tokens.getToken(false);
+
+    QString token = tokens.getToken(false);
+    if (token == ".")
+      owner = tokens.getToken(false);
+    else{
+      QString cmp = UpperIdent(name);
+      QString lastToken;
+      while ((invalidToken(tokens.line(), tokens.offset() + token.length()) || UpperIdent(token) != cmp || lastToken == ".") && token != ";" && !token.isEmpty()){
+        lastToken = token;
+        token = tokens.getToken(false);
+      }
+
+      if(token == ";" || token.isEmpty()){
+        tokens.setLine(curline);
+        tokens.setOffset(curcol);
+        token = tokens.getToken();
+        while ((invalidToken(tokens.line(), tokens.offset()) || UpperIdent(token) != cmp && lastToken != ".") && token != ";" && !token.isEmpty())
+          token = tokens.getToken();
+        lastToken = token;
+        tokens.getToken(false);
+      }
+      if(token != ";" && !token.isEmpty()){
+        token = tokens.getToken(false);
+        if (token != "TABLE" && token != "UPDATE" && token != "FROM" && token != "INTO" && (toIsIdent(token[0]) || token[0] == '\"')){
+          name = token;
+          token = tokens.getToken(false);
+          if (token == ".")
+            owner = tokens.getToken(false);
+        }else if (token == ")"){
+          return ;
+        }
+      }
+    }
+    if (!owner.isEmpty()){
+      name = owner + QString::fromLatin1(".") + name;
+    }
+    if (!name.isEmpty()){
+      try{
+        toConnection &conn = toCurrentConnection(this);
+        toQDescList &desc = conn.columns(conn.realName(name, false));
+        for (toQDescList::iterator i = desc.begin();i != desc.end();i++){
+          QString t;
+          int ind = (*i).Name.find("(");
+          if (ind < 0)
+            ind = (*i).Name.find("RETURNING") - 1; //it could be a function or procedure without parameters. -1 to remove the space
+          if (ind >= 0)
+            t = conn.quote((*i).Name.mid(0, ind)) + (*i).Name.mid(ind);
+          else
+            t = conn.quote((*i).Name);
+          /*if (!(*i).Comment.isEmpty()){
+            t += QString::fromLatin1(" - ");
+            t += (*i).Comment;
+          }
+          t+="!";*/
+          complAPI->add(t);
+        }
+        this->setAutoCompletionAPIs(complAPI);
+        this->setCallTipsAPIs(complAPI);
+        QextScintilla::autoCompleteFromAPIs();
+      }catch (...){}
+    }
+  }
+}
+
+bool toHighlightedText::invalidToken(int line, int col)
+{
+  bool ident = true;
+  if (line < 0){
+    line = 0;
+    col = 0;
+  }
+  while (line < lines()){
+    QString cl = text(line);
+    while (col < int(cl.length())){
+      QChar c = cl[col];
+      if (!toIsIdent(c))
+        ident = false;
+      if (!ident && !c.isSpace())
+        return c == '.';
+        col++;
+    }
+    line++;
+    col = 0;
+  }
+  return false;
 }
 
 /** 
