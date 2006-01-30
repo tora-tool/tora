@@ -6,7 +6,7 @@
 #export DH_VERBOSE=1
 
 # This is the debhelper compatability version to use.
-export DH_COMPAT=3
+export DH_COMPAT=4
 
 
 DB2MAN=/usr/share/sgml/docbook/stylesheet/xsl/nwalsh/manpages/docbook.xsl
@@ -17,7 +17,7 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
-	./configure --prefix=/usr --without-rpath --disable-new-check
+	./configure --prefix=/usr --without-oracle --without-rpath --disable-new-check --with-kde --enable-libsuffix=
 
 	touch configure-stamp
 
@@ -27,7 +27,7 @@ build-stamp: configure-stamp
 	dh_testdir
 
 	# Add here commands to compile the package.
-	$(MAKE) CFLAGS_GLOB="-O2 -W -g -fPIC -Wall -Wno-unused"
+	$(MAKE) CFLAGS_GLOB="-O2 -W -g -fPIC -Wall -Wno-unused" libdir=/usr/lib/tora
 	$(XP) $(DB2MAN) debian/tora.xml
 
 	touch build-stamp
@@ -51,15 +51,14 @@ install: build
 	dh_installdirs
 
 	# Add here commands to install the package into debian/tora.
-	$(MAKE) install ROOT=$(CURDIR)/debian/tora DESTDIR=$(CURDIR)/debian/tora
-	-mkdir -p $(CURDIR)/debian/tora/usr/lib/tora/help/images
-	-install --owner root --group root --mode=644 help/images/* $(CURDIR)/debian/tora/usr/lib/tora/help/images
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tora libdir=/usr/lib/tora
+	-install --owner root --group root --mode=644 $(CURDIR)/help/* $(CURDIR)/debian/tora/usr/share/tora/help
+	-install --owner root --group root --mode=644 $(CURDIR)/help/images/* $(CURDIR)/debian/tora/usr/share/tora/help/images
 	rm -f $(CURDIR)/debian/tora/usr/lib/tora/help/images/.cvsignore
-	-mv $(CURDIR)/debian/tora/usr/bin/tora $(CURDIR)/debian/tora/usr/lib/tora/tora.real
-	-install --owner root --group root --mode=755 debian/tora.wrapper $(CURDIR)/debian/tora/usr/bin/tora
-	-mv $(CURDIR)/debian/tora/usr/lib/tora/help $(CURDIR)/debian/tora/usr/share/tora
 	dh_link usr/share/tora/help usr/lib/tora/help
 	dh_link usr/share/tora/help usr/share/doc/tora/help
+	-install --owner root --group root --mode=644 $(CURDIR)/icons/tora.xpm $(CURDIR)/debian/tora/usr/share/icons/hicolor/32x32/apps
+	-install --owner root --group root --mode=644 $(CURDIR)/debian/tora16.xpm $(CURDIR)/debian/tora/usr/share/icons/hicolor/16x16/apps/tora.xpm
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -69,32 +68,18 @@ binary-indep: build install
 binary-arch: build install
 	dh_testdir
 	dh_testroot
-#	dh_installdebconf	
 	dh_installdocs
 	dh_installexamples
 	dh_installmenu
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installpam
-#	dh_installmime
-#	dh_installinit
-#	dh_installcron
 	dh_installman tora.1
 	dh_installinfo
 	dh_installchangelogs 
 	dh_link
 	dh_strip
-#
-#	since the shared libs are named .tso we have to strip them manually
-#
-	strip --strip-unneeded --remove-section=.comment --remove-section=.note `pwd`/debian/tora/usr/lib/tora/*.tso
-	cp -a ./templates/*.tpl `pwd`/debian/tora/usr/lib/tora/
-	chmod 644 `pwd`/debian/tora/usr/lib/tora/*.tpl
+	chmod 644 `pwd`/debian/tora/usr/lib/tora/libto*
 	dh_compress
 	dh_fixperms
-#	dh_makeshlibs
 	dh_installdeb
-#	dh_perl
 	dh_shlibdeps
 	dh_gencontrol
 	dh_md5sums

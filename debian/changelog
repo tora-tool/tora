@@ -1,3 +1,32 @@
+tora (1.3.18-4) unstable; urgency=low
+
+  * Changed QODBC to QODBC3 one more time, closes #347373
+
+ -- Michael Meskes <meskes@debian.org>  Thu, 12 Jan 2006 13:32:24 +0100
+
+tora (1.3.18-3) unstable; urgency=low
+
+  * Updated libtool so hopefully Debian GNU/k*BSD is supported now
+    closes: #342702
+  * Added 16x16 menu icon
+  * Updated debhelper to version 4
+
+ -- Michael Meskes <meskes@debian.org>  Sun, 11 Dec 2005 19:03:49 +0100
+
+tora (1.3.18-2) unstable; urgency=low
+
+  * Added --enable-libsuffix= to make sure kdelibs are found even on sparc,
+    closes: #328124
+
+ -- Michael Meskes <meskes@debian.org>  Fri, 16 Sep 2005 08:48:14 +0200
+ 
+tora (1.3.18-1) unstable; urgency=low
+
+  * New upstream version 
+  * Compiled against KDE 3.4.2, closes: #312432
+
+ -- Michael Meskes <meskes@debian.org>  Tue,  6 Sep 2005 13:32:17 +0200
+ 
 tora (1.3.16-1) unstable; urgency=low
 
   * New upstream version 
