@@ -188,6 +188,56 @@ tora_SOURCES=chex.pl main.cpp aclocal.m4 \
 	utils.cpp utils.h \
 	$(EXTRA_tora_SOURCES)
 
+UI_FILES =	toaboutui.ui \
+		tobrowserconstraintui.ui \
+		tobrowserfilterui.ui \
+		tobrowserindexui.ui \
+		tobrowsertableui.ui \
+		tooraclesettingui.ui \
+		tostoragetablespaceui.ui \
+		tochartalarmui.ui \
+		topreferencesui.ui \
+		tosyntaxsetupui.ui \
+		tochartsetupui.ui \
+		toresultcontentfilterui.ui \
+		totemplateaddfileui.ui \
+		todatabasesettingui.ui \
+		toresultlistformatui.ui \
+		totemplateeditui.ui \
+		todebugchangeui.ui \
+		torollbackdialogui.ui \
+		totemplatesetupui.ui \
+		todebugwatch.ui \
+		toscriptui.ui \
+		totoolsettingui.ui \
+		toeditextensiongotoui.ui \
+		tosearchreplaceui.ui \
+		totuningoverviewui.ui \
+		toeditextensionsetupui.ui \
+		tosecurityquotaui.ui \
+	      	totuningsettingui.ui \
+		toglobalsettingui.ui \
+		tosecurityroleui.ui \
+	        toworksheetsetupui.ui \
+		tohelpaddfileui.ui \
+	        tosecurityuserui.ui \
+		tohelpsetupui.ui \
+		tostoragedatafileui.ui \
+		tolinechartsetupui.ui \
+		tostoragedefinitionui.ui \
+		tomessageui.ui \
+		tostoragedialogui.ui \
+		tonewconnectionui.ui \
+		tostorageprefsui.ui
+
+READMES = README\
+	README.CODESTYLE \
+	README.CVS \
+	README.LICENSE \
+	README.OSX \
+	README.RELEASE \
+	README.WINDOWS 
+
 EXTRA_DIST = debian \
 	help \
 	icons \
@@ -195,11 +245,13 @@ EXTRA_DIST = debian \
 	rpm \
 	templates \
 	windows \
-	*.ui \
+	$(UI_FILES) \
 	BUGS \
 	COPYRIGHT \
-	Makefile.* \
-	README* \
+	Makefile.OSX \
+	Makefile.mingw \
+	Makefile.am \
+	$(READMES) \
 	LICENSE.h \
 	chex.pl \
 	qtkde.m4 \
@@ -655,9 +707,10 @@ libtoworksheet_la_LDFLAGS = $(PFLAGS)
 libtoworksheet_la_SOURCES = toworksheet.cpp toworksheet.h \
 	toworksheetsetupui.cpp toworksheetsetupui.h
 
-%.cpp %.h: %.ui
-	@UIC@ -o $(<:%.ui=%.h) $<
-	@UIC@ -i $(<:%.ui=%.h) -o  $(<:%.ui=%.cpp) $<
+%.h: %.ui
+	@UIC@ -o $@ $<
+%.cpp: %.h %.ui
+	@UIC@ -o $@ -i $^
 
 %.moc: %.h
 	@MOC@ -o $@ $<
@@ -665,7 +718,7 @@ libtoworksheet_la_SOURCES = toworksheet.cpp toworksheet.h \
 %.qm: %.ts
 	@LRELEASE@ $<
 
-clean:
+clean-local:
 	rm -f *.moc
 	for file in `ls *.ui`; do \
 		rm -f `echo $$file | sed 's/\.ui/\.cpp/g'`; \
