@@ -1,4 +1,3 @@
-
 # require version or better
 AUTOMAKE_OPTIONS = 1.6.1
 
@@ -12,30 +11,30 @@ TRANSLATIONS= \
 	tora_it.ts \
 	tora_toad.ts
 
-AM_CPPFLAGS = @KDE_INCLUDES@ @QT_INCLUDES@ $(LTDLINCL)
+AM_CPPFLAGS = $(KDE_INCLUDES) $(QT_INCLUDES) $(LTDLINCL)
 AM_CPPFLAGS += $(PCRE_CFLAGS) \
 	-DDEFAULT_PLUGIN_DIR=\"$(libdir)\" \
-	-DTOVERSION=\"@PACKAGE_VERSION@\" \
+	-DTOVERSION=\"$(PACKAGE_VERSION)\" \
 	$(ORACLE_CXXFLAGS) \
-	@QSCINTILLA_CXXFLAGS@
+	$(QSCINTILLA_CXXFLAGS)
 
 AM_LDFLAGS = $(PCRE_LIBS) \
-	@KDE_LDFLAGS@ \
-	@X_LDFLAGS@ \
-	@QT_LDFLAGS@ \
-	@LIB_KPARTS@ \
-	@LIB_KDEPRINT@ \
-	@LIB_KDECORE@ \
-	@LIB_KDEUI@ \
-	@LIB_KIO@ \
-	@LIB_KFILE@ \
-	@LIB_DCOP@ \
-	@LIB_KHTML@ \
+	$(KDE_LDFLAGS) \
+	$(X_LDFLAGS) \
+	$(QT_LDFLAGS) \
+	$(LIB_KPARTS) \
+	$(LIB_KDEPRINT) \
+	$(LIB_KDECORE) \
+	$(LIB_KDEUI) \
+	$(LIB_KIO) \
+	$(LIB_KFILE) \
+	$(LIB_DCOP) \
+	$(LIB_KHTML) \
 	-lqscintilla \
 	-lstdc++ \
-	@LIBPTHREAD@ \
+	$(LIBPTHREAD) \
 	$(ORACLE_LDFLAGS) \
-	@QSCINTILLA_LDFLAGS@
+	$(QSCINTILLA_LDFLAGS)
 
 # fix for annoying automake naming problems.
 tora_CXXFLAGS  = $(AM_CXXFLAGS)
@@ -708,15 +707,15 @@ libtoworksheet_la_SOURCES = toworksheet.cpp toworksheet.h \
 	toworksheetsetupui.cpp toworksheetsetupui.h
 
 %.h: %.ui
-	@UIC@ -o $@ $<
+	$(UIC) -o $@ $<
 %.cpp: %.h %.ui
-	@UIC@ -o $@ -i $^
+	$(UIC) -o $@ -i $^
 
 %.moc: %.h
-	@MOC@ -o $@ $<
+	$(MOC) -o $@ $<
 
 %.qm: %.ts
-	@LRELEASE@ $<
+	$(LRELEASE) $<
 
 clean-local:
 	rm -f *.moc
@@ -737,7 +736,7 @@ tora.pro: Makefile.am
 	echo 'TRANSLATIONS=$(TRANSLATIONS)' >> tora.pro
 
 lupdate: tora.pro
-	@LUPDATE@ tora.pro
+	$(LUPDATE) tora.pro
 
 lrelease: tora.pro $(TRANSLATIONS)
-	@LRELEASE@ tora.pro
+	$(LRELEASE) tora.pro
