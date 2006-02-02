@@ -41,8 +41,6 @@
 #include "config.h"
 #include "tolinechart.h"
 
-#include <list>
-
 /** A widget that displays a barchart. Each line is added onto the next one.
  */
 

@@ -35,15 +35,12 @@
 *
 *****/
 
-#include "utils.h"
-
-#include "tobarchart.h"
-#include "toconf.h"
-#include "tomain.h"
-#include "totool.h"
-
 #include <qpainter.h>
 #include <qworkspace.h>
+
+#include "tobarchart.h"
+#include "tomain.h"
+#include "utils.h"
 
 #include "tobarchart.moc"
 
