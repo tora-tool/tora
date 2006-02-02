@@ -35,20 +35,14 @@
 *
 *****/
 
-#include <stdio.h>
-
-#include <map>
 
 #include <qtextview.h>
 #include <qpushbutton.h>
-#include <qsizepolicy.h>
-#include <qpixmap.h>
 #include <qlabel.h>
 #include <qprogressbar.h>
 
 #include "toabout.h"
 #include "toconf.h"
-#include "totool.h"
 
 #include "toabout.moc"
 #include "toaboutui.moc"

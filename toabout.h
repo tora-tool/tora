@@ -43,8 +43,6 @@
 
 #include <qvbox.h>
 
-class QPushButton;
-class QTextView;
 class QProgressBar;
 class QLabel;
 
