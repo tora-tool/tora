@@ -1823,7 +1823,7 @@ QString toOracleExtract::createPartitionedIndex(toExtract &ext,
 
     QString ret = sql;
     toQList result = toQuery::readQueryNull(CONNECTION, SQLIndexPartition,
-                                            QString::number(ext.getBlockSize()), owner, name);
+                                            QString::number(ext.getBlockSize()), name, owner);
     QString partitionType = toShift(result);
     QString subPartitionType = toShift(result);
     QString locality = toShift(result);
