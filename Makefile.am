@@ -253,7 +253,7 @@ EXTRA_DIST = debian \
 	$(READMES) \
 	LICENSE.h \
 	chex.pl \
-	qtkde.m4 \
+	m4 \
 	toconf.h \
 	todefaultkeywords.h \
 	toextratranslations.cpp \
