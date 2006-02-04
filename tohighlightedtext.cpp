@@ -306,9 +306,9 @@ toHighlightedText::~toHighlightedText()
 }
 
 void toHighlightedText::positionChanged(int row, int col){
-  if (col>0 && this->text(row)[col-1]=='.'){
+  /*if (col>0 && this->text(row)[col-1]=='.'){
     this->autoCompleteFromAPIs();
-  }
+  }*/
 }
 
 static QString UpperIdent(const QString &str){

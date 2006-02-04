@@ -349,7 +349,7 @@ void toMarkedText::newLine(void)
 void toMarkedText::searchFound(int line, int col)
 {
     setSelection (line, col + SearchString.length(), line, col);
-    
+    ensureCursorVisible();
     toStatusMessage(tr("Incremental search") + QString::fromLatin1(":") + SearchString, false, false);
 }
 
@@ -575,7 +575,7 @@ bool toMarkedText::searchNext(toSearchReplace *search)
         findPosition(pos, line, col);
         findPosition(endPos, endLine, endCol);
         setSelection(line, col, endLine, endCol);
-
+        ensureCursorVisible();
         return true;
     }
 
