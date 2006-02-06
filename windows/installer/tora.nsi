@@ -73,7 +73,10 @@ Section "Uninstall"
   
   ; Remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Toolkit For Oracle"
-  DeleteRegKey HKCU "Software\Toolkit For Oracle"
+  
+  ; Currently uninstaller preserves all the settings
+  ; uncomment line below if you want otherwise
+  ; DeleteRegKey HKCU "Software\Toolkit For Oracle"
 
   ; Remove files from directories
   Delete $INSTDIR\*.*
