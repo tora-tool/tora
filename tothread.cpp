@@ -48,25 +48,6 @@
 
 #ifdef QT_THREAD_SUPPORT
 
-#ifdef WIN32
-bool toWaitCondition::wait(QMutex *mutex, unsigned long time)
-{
-    bool status = FALSE;
-
-    // this implementation relies on existing wait() method
-    if (mutex)
-    {
-        mutex->unlock();
-        status = QWaitCondition::wait(time);
-        mutex->lock ()
-        ;
-    }
-    else
-        status = QWaitCondition::wait(time);
-
-    return status;
-}
-#endif
 
 void toSemaphore::up(void)
 {
@@ -304,7 +285,7 @@ std::list<toThread *> *toThread::Threads;
 toLock *toThread::Lock;
 int toThread::LastID = 0;
 __declspec( thread ) int toThread::ThreadID = 0;
-int toThread::MainThread = 0;
+int toThread::MainThread = -1;
 
 bool toThread::mainThread(void)
 {
@@ -360,6 +341,8 @@ void toThread::taskRunner::run(void)
         StartSemaphore.up();
         toThread::LastID++;
         toThread::ThreadID = LastID;
+        if (toThread::MainThread==-1)
+          toThread::MainThread=LastID;
         Lock->unlock();
         Task->run();
         Lock->lock ()

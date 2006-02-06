@@ -77,23 +77,6 @@ public:
 
 #else
 
-#ifdef WIN32 
-/**
-* Implementing missing functionality from QWaitCondition for Win32
-*/
-class toWaitCondition : public QWaitCondition
-{
-public:
-    // create the wait condition
-    toWaitCondition(): QWaitCondition()
-    {}
-
-    // this method is not implemented in QT Free port
-    bool wait( QMutex *mutex, unsigned long time = ULONG_MAX );
-
-};
-
-#endif
 
 /** Encapsulation of pthread semaphores. A semaphore can be raise to any value
 * but will wait till raised above zero when lowered below 0. Can also be implemented
@@ -105,13 +88,7 @@ class toSemaphore
 {
 private:
     QMutex Mutex;
-#ifdef WIN32
-
-    toWaitCondition Condition;
-#else
-
-QWaitCondition Condition;
-#endif
+    QWaitCondition Condition;
 
     int Value;
 public:
