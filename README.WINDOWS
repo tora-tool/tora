@@ -51,7 +51,8 @@ Building with MINGW.
        (and optionally for INSTALLDIR). Optionally edit the TARGET to 
        set the desirable executable. Also check the CFLAGS_GLOB and 
        LFLAGS_GLOB for the debug option (-g) depending on whether you 
-       want debug executable or not.
+       want debug executable or not. You may also need to create default
+       version of config.h
     
     8. Run 'make' in MSYS environment from TOra directory.
     
@@ -59,6 +60,22 @@ Building with MINGW.
        and copy the necessary files (not yet all of them) to the install 
        directory (INSTALLDIR)
        
+       
+Building Windows installer.
+
+    1. Obtain and install NSIS installer software from 
+        http://nsis.sourceforge.net
+    
+    2. Copy all the distribution files with desired directory structure
+       to the windows/installer/files directory within your TOra directory 
+       structure (or use it as INSTALLDIR when building TOra and use step 9 
+       of above build instrucstions).
+       
+    3. Run NSIS compiler GUI and then drag and drop the tora.nsi file from
+        windows/installer directory in TOra to the compiler GUI window and 
+        wait till installer will finish the build.
+    
+    
 Please report any bugs should you find them as this port is still in the
 experimental stage.
 
