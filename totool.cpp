@@ -345,12 +345,8 @@ bool toTool::saveMap(const QString &file, std::map<QCString, QString> &pairs)
 }
 
 #ifdef WIN32
-#  ifdef TOAD
-#  define APPLICATION_NAME "SOFTWARE\\Quest Software\\Toad for MySQL\\"
-#  else
-#  define APPLICATION_NAME "SOFTWARE\\Quest Software\\tora\\"
+#  define APPLICATION_NAME "SOFTWARE\\Toolkit For Oracle\\"
 #  define FALLBACK_NAME    "SOFTWARE\\Underscore\\tora\\"
-#  endif
 
 static char *toKeyPath(const QString &str, CRegistry &registry)
 {
