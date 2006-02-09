@@ -5250,7 +5250,11 @@ static toSQL SQLDatafileInfo("toOracleExtract:DatafileInfo",
                              "              )                               AS maxbytes\n"
                              "      , increment_by * :bs<char[100]> * 1024     AS increment_by\n"
                              " FROM\n"
-                             "        (select * from sys.dba_temp_files union select * from sys.dba_data_files)\n"
+                             "        (select bytes,autoextensible,blocks,increment_by,maxbytes,file_name,tablespace_name\n"
+			     "         from sys.dba_temp_files\n"
+			     "          union\n"
+			     "         select bytes,autoextensible,blocks,increment_by,maxbytes,file_name,tablespace_name\n"
+			     "         from sys.dba_data_files)\n"
                              " WHERE\n"
                              "        tablespace_name = :nam<char[100]>\n"
                              " ORDER  BY file_name",

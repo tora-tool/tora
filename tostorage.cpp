@@ -534,7 +534,11 @@ static toSQL SQLDatafileInfo("toStorage:DatafileInfo",
                              "       autoextensible,\n"
                              "       bytes/blocks*increment_by/1024,\n"
                              "       maxbytes/1024\n"
-                             "  FROM (SELECT * FROM sys.dba_data_files UNION SELECT * FROM sys.dba_temp_files)\n"
+                             "  FROM (SELECT bytes,autoextensible,blocks,increment_by,maxbytes,file_name,tablespace_name\n"
+			     "        FROM sys.dba_data_files\n"
+			     "          UNION\n"
+			     "        SELECT bytes,autoextensible,blocks,increment_by,maxbytes,file_name,tablespace_name\n"
+			     "        FROM sys.dba_temp_files)\n"
                              " WHERE tablespace_name = :nam<char[70]>"
                              "   AND file_name = :fil<char[1500]>",
                              "Get information about a datafile for the modify dialog, "
