@@ -17,6 +17,7 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
+	./autogen.sh
 	./configure --prefix=/usr --without-oracle --without-rpath --disable-new-check --with-kde --enable-libsuffix=
 
 	touch configure-stamp
@@ -58,7 +59,7 @@ install: build
 	dh_link usr/share/tora/help usr/lib/tora/help
 	dh_link usr/share/tora/help usr/share/doc/tora/help
 	-install --owner root --group root --mode=644 $(CURDIR)/icons/tora.xpm $(CURDIR)/debian/tora/usr/share/icons/hicolor/32x32/apps
-	-install --owner root --group root --mode=644 $(CURDIR)/debian/tora16.xpm $(CURDIR)/debian/tora/usr/share/icons/hicolor/16x16/apps/tora.xpm
+	-install --owner root --group root --mode=644 $(CURDIR)/icons/toramini.xpm $(CURDIR)/debian/tora/usr/share/icons/hicolor/16x16/apps/tora.xpm
 
 # Build architecture-independent files here.
 binary-indep: build install

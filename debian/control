@@ -2,7 +2,7 @@ Source: tora
 Section: misc
 Priority: optional
 Maintainer: Michael Meskes <meskes@debian.org>
-Build-Depends: debhelper (>> 4.0.0), g++, libqt3-mt-dev (>= 3.1.1-1), libqt3-compat-headers, kdelibs4-dev, docbook-xml (>= 4.2), xsltproc, docbook-xsl, kdebase-bin
+Build-Depends: debhelper (>> 4.0.0), g++, libqt3-mt-dev (>= 3.1.1-1), libqt3-compat-headers, kdelibs4-dev, docbook-xml (>= 4.2), xsltproc, docbook-xsl, kdebase-bin, libqscintilla-dev
 Standards-Version: 3.6.2
 
 Package: tora
