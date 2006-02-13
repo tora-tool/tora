@@ -9,7 +9,7 @@
 
 %define _version	@VERSION@
 %define _release	1
-%define _prefix		/usr
+%define _prefix		/usr/X11R6
 
 Summary:		Toolkit for Oracle
 Name:			%{_name}
@@ -18,7 +18,7 @@ Release:		%{_release}
 Source:			%{_name}-%{_version}.tar.gz
 URL:			http://tora.sourceforge.net
 Group:			Development/Databases
-Packager:		Nathan Neulinger <nneul@umr.edu>
+Packager:		Raj Thukral (thukral at pobox dot com)
 License:		GPL
 BuildRoot:		%{_tmppath}/tora-root
 Prefix:			%{_prefix}
@@ -29,6 +29,7 @@ Prefix:			%{_prefix}
 #
 
 %description
+
 
 TOra - Toolkit for Oracle
 =========================
@@ -114,7 +115,6 @@ from this page.
 
 Oracle is copyright of Oracle Corporation.
 
-
 %package oracle
 Summary:		Oracle specific plugins for %{_name}
 Group:			Development/Databases
@@ -146,14 +146,18 @@ export CXXFLAGS="$RPM_OPT_FLAGS"
 	 --libdir="%{_prefix}/lib" \
 	--with-qt=$QTDIR \
 	--with-qt-libraries=$QTDIR/lib \
-	--with-qt-includes=$QTDIR/include 
+	--with-qt-includes=$QTDIR/include \
+	--without-kde
 
 %build
 
 %{__make}
+#%{__strip} \
+	 #plugins/*.tso \
+	 #tora
+
 %{__strip} \
-	 plugins/*.tso \
-	 tora
+	 .libs/*.so 
 
 # Ugly hack to remove version from libclntsh.so, if someone knows a better way please let me know
 perl -pi -e 's/libclntsh.so.\d\d.\d\d/libclntsh.so\0\0\0\0\0\0/g' plugins/tooracleconnection.tso
@@ -162,7 +166,8 @@ perl -pi -e 's/libclntsh.so.\d.\d/libclntsh.so\0\0\0\0/g' plugins/tooracleconnec
 
 
 %install
-%{__rm} -rf "${RPM_BUILD_ROOT}"
+
+%{__rm} -rf "${RPM_BUILD_ROOT}" 
 %{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/bin"
 %{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/lib"
 %{__make} ROOT="${RPM_BUILD_ROOT}" install
@@ -171,10 +176,8 @@ perl -pi -e 's/libclntsh.so.\d.\d/libclntsh.so\0\0\0\0/g' plugins/tooracleconnec
 
 %postun
 
-%clean
-%{__rm} -rf "${RPM_BUILD_ROOT}"
 
-%files -f rpmcommon
+%files 
 %defattr(-,root,root)
 %doc BUGS INSTALL LICENSE.txt NEWS README TODO
 %{_prefix}/bin/*
@@ -186,5 +189,8 @@ perl -pi -e 's/libclntsh.so.\d.\d/libclntsh.so\0\0\0\0/g' plugins/tooracleconnec
 %{_iconsdir}/hicolor/*/apps/tora.xpm
 %{_datadir}/applnk/Development/tora.desktop
 
-%files oracle -f rpmoracle
-%defattr(-,root,root)
+#%files oracle -f rpmoracle
+#%defattr(-,root,root)
+
+%clean
+%{__rm} -rf "${RPM_BUILD_ROOT}"
