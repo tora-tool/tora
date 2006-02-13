@@ -6,7 +6,7 @@ AM_INIT_AUTOMAKE
 
 # create a config.h file (Automake will add -DHAVE_CONFIG_H)
 AC_CONFIG_SRCDIR([main.cpp])
-AC_CONFIG_HEADER([config.h])
+AM_CONFIG_HEADER([config.h])
 mrj_SET_PREFIX
 
 AC_SUBST(PACKAGE_VERSION)
