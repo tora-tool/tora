@@ -17,7 +17,6 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
-	./autogen.sh
 	./configure --prefix=/usr --without-oracle --without-rpath --disable-new-check --with-kde --enable-libsuffix=
 
 	touch configure-stamp

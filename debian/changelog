@@ -1,6 +1,14 @@
+tora (1.3.21-1) unstable; urgency=low
+
+  * New upstream version, fixing the bug that urged me to call autogen.sh and
+    thus making the package build again without build-depending on automake et
+    al., closes #352513
+  
+ -- Michael Meskes <meskes@debian.org>  Mon, 13 Feb 2006 15:02:29 +0100
+
 tora (1.3.20-1) unstable; urgency=low
 
-  * New upstream vesion.
+  * New upstream version.
   * Use the 16x16 icon that is provided by upstream. 
   
  -- Michael Meskes <meskes@debian.org>  Sat, 11 Feb 2006 10:24:33 +0100
