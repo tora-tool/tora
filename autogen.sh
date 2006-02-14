@@ -1,5 +1,9 @@
 #!/bin/sh
 
+CURRENT_AUTOMAKE_VERSION="1.9.6"
+CURRENT_AUTOCONF_VERSION="2.59"
+CURRENT_LIBTOOLIZE_VERSION="1.5.22"
+
 me=$0
 
 err() {
@@ -7,63 +11,101 @@ err() {
     exit 1
 }
 
-# these programs don't always print their program names. does some
-# pretty output, finds version numbers.
-#
-# $1 - prog name
-# $2 - arguments
-# $3 - preferred version, optional, major
-# $4 - preferred version, optional, minor
-run() {
-    prog=$1
-    args=$2
-    major=$3
-    minor=$4
-
-    if test "${major}x" != "x"; then
-        if test "${minor}x" = "x"; then
-            minor=0
-        fi
-
-        while expr $major \< 10 >/dev/null; do
-            # find a version number greater than param
-            ${prog}-${major}.${minor} --version >/dev/null 2>&1
-            if test "$?" -eq "0"; then
-                prog=${prog}-${major}.${minor}
-                break
-            fi
-
-            minor=`expr $minor + 1`
-            if expr $minor \> 15 >/dev/null; then
-                minor=0
-                major=`expr $major + 1`
-            fi
-        done
-    fi
-
-    echo "$me: running $prog$ver $args..."
-    $prog $args
-    if test "$?" != "0"; then
-        err "$prog failed. exit."
-    fi
+check_libtoolize_version() {
+LIBTOOLIZE=libtoolize
+CUR_DIR=`pwd`
+TESTDIR="special_dir_$$"
+mkdir $TESTDIR && cd $TESTDIR
+LIBTOOLIZE_STRING=`$LIBTOOLIZE --version | head -n 1`
+case $LIBTOOLIZE_STRING in
+  libtoolize*${CURRENT_LIBTOOLIZE_VERSION}* )
+    echo "execute: $LIBTOOLIZE_STRING ..."
+    break;
+    ;;
+  libtoolize* ) 
+    echo "execute: $LIBTOOLIZE_STRING ..."
+    echo "*** TOra suggest ${CURRENT_LIBTOOLIZE_VERSION} !"
+    echo "*** http://www.gnu.org/software/libtool/libtool.html"
+    ;;
+esac
+cd $CUR_DIR 
+rmdir $TESTDIR
 }
 
-
-libtool() {
-    opts="'--automake --copy'"
-
-    if glibtoolize --version >/dev/null 2>&1; then
-        eval run glibtoolize $opts
-    elif libtoolize --version >/dev/null 2>&1; then
-        eval run libtoolize $opts
-    else
-        err "libtoolize not found"
-    fi
+check_automake_version() {
+AUTOMAKE=automake
+CUR_DIR=`pwd`
+TESTDIR="special_dir_$$"
+mkdir $TESTDIR && cd $TESTDIR
+AUTOMAKE_STRING=`$AUTOMAKE --version | head -n 1`
+case $AUTOMAKE_STRING in
+  automake*${CURRENT_AUTOMAKE_VERSION}* )
+    echo "execute: $AUTOMAKE_STRING ..."
+    break;
+    ;;
+  automake*1.6.* | automake*1.7* | automake*1.8* | automake*1.9* ) 
+    echo "execute: $AUTOMAKE_STRING ..."
+    echo "*** TOra suggest ${CURRENT_AUTOMAKE_VERSION} !"
+    echo "*** http://www.gnu.org/software/automake"
+    ;;
+esac
+cd $CUR_DIR 
+rmdir $TESTDIR
 }
 
+check_autoconf_version() {
+AUTOCONF=autoconf
+CUR_DIR=`pwd`
+TESTDIR="special_dir_$$"
+mkdir $TESTDIR && cd $TESTDIR
+AUTOCONF_STRING=`$AUTOCONF --version | head -n 1`
+case $AUTOCONF_STRING in
+  autoconf*${CURRENT_AUTOCONF_VERSION}* )
+    echo "execute: $AUTOCONF_STRING ..."
+    break;
+    ;;
+  autoconf*2.* )
+    echo "execute: $AUTOCONF_STRING ..."
+    echo "*** TOra suggest ${CURRENT_AUTOCONF_VERSION} !"
+    echo "*** http://www.gnu.org/software/autoconf "
+    ;;
+esac
+cd $CUR_DIR
+rmdir $TESTDIR
+}
 
-run aclocal '' 1 6
-run autoheader
-run autoconf
-libtool
-run automake -a 1 6
+rm -f config.cache
+rm -f config.log
+rm -f configure
+rm -f aclocal.m4
+rm -f config/*
+
+aclocal 
+if test "$?" != "0"; then
+   err "aclocal failed. exit."
+fi
+
+autoheader --force
+if test "$?" != "0"; then
+   err "autoheader failed. exit."
+fi
+
+check_libtoolize_version
+libtoolize --force --copy --automake
+if test "$?" != "0"; then
+   err "libtoolize failed. exit."
+fi
+
+check_automake_version
+automake --add-missing --copy --force-missing
+if test "$?" != "0"; then
+   err "automake failed. exit."
+fi
+
+check_autoconf_version
+autoconf --force
+if test "$?" != "0"; then
+   err "autoconf failed. exit."
+fi
+
+
