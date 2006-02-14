@@ -1,5 +1,5 @@
 # require version or better
-AUTOMAKE_OPTIONS = 1.6.1
+AUTOMAKE_OPTIONS = 1.7
 
 bin_PROGRAMS=tora
 
