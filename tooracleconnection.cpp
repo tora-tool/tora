@@ -819,13 +819,9 @@ class oracleConnection : public toConnection::connectionImpl
                             for ( QStringList::iterator vi = vl.begin();
                                   vi != vl.end();
                                   ++vi ) {
-                                std::cout << *vi;
-                                std::cout << std::endl;
                                 ve = *vi;
                                 verrj += ve.rightJustify(2,'0');
                             }
-                            std::cout << verrj;
-                            std::cout << std::endl;
                             return QCString::QCString(verrj);
                             // return verstr;
                         }
