@@ -1,5 +1,5 @@
 // ==============================================================
-// Oracle, ODBC and DB2/CLI Template Library, Version 4.0.127,
+// Oracle, ODBC and DB2/CLI Template Library, Version 4.0.129,
 // Copyright (C) Sergei Kuchin, 1996,2006
 // Author: Sergei Kuchin
 // This library is free software. Permission to use, copy,
@@ -15,7 +15,7 @@
 #include "otl_include_0.h"
 #endif
 
-#define OTL_VERSION_NUMBER (0x04007FL)
+#define OTL_VERSION_NUMBER (0x040081L)
 
 #if defined(_MSC_VER)
 #if (_MSC_VER >= 1400)
@@ -389,6 +389,20 @@ typedef int otl_stream_buffer_size_type;
   }
 #endif
 
+#if !defined(OTL_TRACE_SYNTAX_CHECK)
+#define OTL_TRACE_SYNTAX_CHECK                             \
+  if(OTL_TRACE_LEVEL & 0x2){                               \
+    OTL_TRACE_STREAM<<OTL_TRACE_LINE_PREFIX;               \
+    OTL_TRACE_STREAM<<"otl_cursor::syntax_check(connect="; \
+    OTL_TRACE_STREAM<<OTL_RCAST(void*,&connect);           \
+    OTL_TRACE_STREAM<<",sqlstm=\"";                        \
+    OTL_TRACE_STREAM<<sqlstm;                              \
+    OTL_TRACE_STREAM<<"\"";                                \
+    OTL_TRACE_STREAM<<");";                                \
+    OTL_TRACE_STREAM<<OTL_TRACE_LINE_SUFFIX;               \
+  }
+#endif
+
 #if !defined(OTL_TRACE_FUNC)
 #define OTL_TRACE_FUNC(level,class_name,func_name,args) \
   if(OTL_TRACE_LEVEL & level){                          \
@@ -635,6 +649,7 @@ typedef int otl_stream_buffer_size_type;
 #define OTL_TRACE_LINE_PREFIX
 #define OTL_TRACE_LINE_SUFFIX
 #define OTL_TRACE_DIRECT_EXEC
+#define OTL_TRACE_SYNTAX_CHECK
 #define OTL_TRACE_FUNC(level,class_name,func_name,args)
 #define OTL_TRACE_EXCEPTION(code,msg,stm_text,var_info)
 #define OTL_TRACE_RLOGON_ORA7(level,class_name,func_name, \
@@ -3909,31 +3924,46 @@ public:
   if(v.pos) bind(v.pos,v);
  }
 
- static long direct_exec
- (OTL_TMPL_CONNECT& connect,
-  const char* sqlstm,
-  const int exception_enabled=1)
+  
+  static long direct_exec
+  (OTL_TMPL_CONNECT& connect,
+   const char* sqlstm,
+   const int exception_enabled=1)
 #if defined(OTL_ANSI_CPP) && defined(OTL_FUNC_THROW_SPEC_ON)
-   throw(OTL_TMPL_EXCEPTION)
+    throw(OTL_TMPL_EXCEPTION)
 #endif
- {
-  connect.reset_throw_count();
-  OTL_TRACE_DIRECT_EXEC
-  try{
-   OTL_TMPL_CURSOR cur(connect);
-   cur.cursor_struct.set_direct_exec(1);
-   cur.parse(sqlstm);
-   cur.exec();
-   return cur.cursor_struct.get_rpc();
-  }catch(OTL_CONST_EXCEPTION OTL_TMPL_EXCEPTION&){
-   if(exception_enabled){
-    connect.throw_count++;
-    throw;
-   }
+  {
+    connect.reset_throw_count();
+    OTL_TRACE_DIRECT_EXEC
+      try{
+        OTL_TMPL_CURSOR cur(connect);
+        cur.cursor_struct.set_direct_exec(1);
+        cur.parse(sqlstm);
+        cur.exec();
+        return cur.cursor_struct.get_rpc();
+      }catch(OTL_CONST_EXCEPTION OTL_TMPL_EXCEPTION&){
+        if(exception_enabled){
+          connect.throw_count++;
+          throw;
+        }
+      }
+    return -1;
   }
-  return -1;
- }
 
+  static void syntax_check
+  (OTL_TMPL_CONNECT& connect,
+   const char* sqlstm)
+#if defined(OTL_ANSI_CPP) && defined(OTL_FUNC_THROW_SPEC_ON)
+    throw(OTL_TMPL_EXCEPTION)
+#endif
+  {
+    connect.reset_throw_count();
+    OTL_TRACE_SYNTAX_CHECK
+    OTL_TMPL_CURSOR cur(connect);
+    cur.cursor_struct.set_direct_exec(1);
+    cur.parse(sqlstm);
+  }
+  
  int eof(void){return eof_data;}
 
  int describe_column
@@ -11008,6 +11038,20 @@ public:
 
 #endif
 
+  long direct_exec
+  (const char* sqlstm,
+   const int exception_enabled=1)
+   OTL_THROWS_OTL_EXCEPTION
+  {
+    return otl_cursor::direct_exec(*this,sqlstm,exception_enabled);
+  }
+
+  void syntax_check(const char* sqlstm)
+   OTL_THROWS_OTL_EXCEPTION
+  {
+    otl_cursor::syntax_check(*this,sqlstm);
+  }
+
  otl_connect() OTL_NO_THROW
  :otl_odbc_connect()
   {
@@ -13389,7 +13433,7 @@ private:
   
 };
 
-otl_connect& operator>>(otl_connect& connect, otl_stream& s)
+inline otl_connect& operator>>(otl_connect& connect, otl_stream& s)
 {
   const char* cmd=connect.getCmd();
   const char* invalid_cmd="*** INVALID COMMAND ***";
@@ -14379,6 +14423,19 @@ public:
 
 #endif
 
+  long direct_exec
+  (const char* sqlstm,
+   const int exception_enabled=1)
+   OTL_THROWS_OTL_EXCEPTION
+  {
+    return otl_cursor::direct_exec(*this,sqlstm,exception_enabled);
+  }
+
+  void syntax_check(const char* sqlstm)
+   OTL_THROWS_OTL_EXCEPTION
+  {
+    otl_cursor::syntax_check(*this,sqlstm);
+  }
 
  otl_connect() OTL_NO_THROW
    :otl_ora7_connect()
@@ -17283,7 +17340,7 @@ private:
 
 };
 
-otl_connect& operator>>(otl_connect& connect, otl_stream& s)
+inline otl_connect& operator>>(otl_connect& connect, otl_stream& s)
 {
   const char* cmd=connect.getCmd();
   const char* invalid_cmd="*** INVALID COMMAND ***";
@@ -19111,19 +19168,21 @@ public:
 class otl_cur: public otl_cur0{
 public:
 
- OCIStmt* cda; // Statement handle
- OCIError* errhp; // Error handle
- bool extern_cda;
- int status;
- int eof_status;
- otl_conn* db;
- int straight_select;
- int pos_nbr;
- int commit_on_success;
- int last_param_data_token;
- int last_sql_param_data_status;
- int sql_param_data_count;
+  OCIStmt* cda; // Statement handle
+  OCIError* errhp; // Error handle
+  bool extern_cda;
+  int status;
+  int eof_status;
+  otl_conn* db;
+  int straight_select;
+  int pos_nbr;
+  int commit_on_success;
+  int last_param_data_token;
+  int last_sql_param_data_status;
+  int sql_param_data_count;
   bool canceled;
+  int direct_exec_flag;
+
 
  otl_cur()
  {
@@ -19138,24 +19197,29 @@ public:
   sql_param_data_count=0;
   extern_cda=false;
   canceled=false;
+  direct_exec_flag=0;
  }
 
  virtual ~otl_cur(){}
 
-  void set_direct_exec(const int /* flag */){}
+  void set_direct_exec(const int flag)
+  {
+    direct_exec_flag=flag;
+  }
 
- ub4 rpc(void)
- {sb4 arpc;
-  status=OCIAttrGet
-   (OTL_RCAST(dvoid *,cda),
-    OTL_SCAST(ub4,OCI_HTYPE_STMT),
-    OTL_RCAST(dvoid *,&arpc),
-    0,
-    OTL_SCAST(ub4,OCI_ATTR_ROW_COUNT),
-    errhp);
-  if(status)return 0;
-  return arpc;
- }
+  ub4 rpc(void)
+  {
+    sb4 arpc;
+    status=OCIAttrGet
+      (OTL_RCAST(dvoid *,cda),
+       OTL_SCAST(ub4,OCI_HTYPE_STMT),
+       OTL_RCAST(dvoid *,&arpc),
+       0,
+       OTL_SCAST(ub4,OCI_ATTR_ROW_COUNT),
+       errhp);
+    if(status)return 0;
+    return arpc;
+  }
 
  int open(otl_conn& connect,otl_var* var=0)
  {
@@ -19199,15 +19263,22 @@ public:
 
  int parse(const char* stm_text)
  {
-  status=OCIStmtPrepare
-   (cda,
-    errhp,
-    OTL_RCAST(text*,OTL_CCAST(char*,stm_text)),
-    OTL_SCAST(ub4,strlen(stm_text)),
-    OTL_SCAST(ub4,OCI_NTV_SYNTAX),
-    OTL_SCAST(ub4,OCI_DEFAULT));
-  if(status)return 0;
-  return 1;
+   status=OCIStmtPrepare
+     (cda,
+      errhp,
+      OTL_RCAST(text*,OTL_CCAST(char*,stm_text)),
+      OTL_SCAST(ub4,strlen(stm_text)),
+      OTL_SCAST(ub4,OCI_NTV_SYNTAX),
+        OTL_SCAST(ub4,OCI_DEFAULT));
+   if(status)return 0;
+   if(direct_exec_flag){
+     status=OCIStmtExecute
+       (db->svchp,cda,errhp,
+        OTL_SCAST(ub4,0),OTL_SCAST(ub4,0),
+        0,0,OCI_PARSE_ONLY);
+     if(status)return 0;
+   }
+   return 1;
  }
 
  int exec(const int iters, const int rowoff)
@@ -20201,6 +20272,20 @@ public:
 #endif
 
 public:
+
+  long direct_exec
+  (const char* sqlstm,
+   const int exception_enabled=1)
+   OTL_THROWS_OTL_EXCEPTION
+  {
+    return otl_cursor::direct_exec(*this,sqlstm,exception_enabled);
+  }
+
+  void syntax_check(const char* sqlstm)
+   OTL_THROWS_OTL_EXCEPTION
+  {
+    otl_cursor::syntax_check(*this,sqlstm);
+  }
 
  otl_connect() OTL_NO_THROW
    : otl_ora8_connect()
@@ -25631,7 +25716,7 @@ private:
 
 };
 
-otl_connect& operator>>(otl_connect& connect, otl_stream& s)
+inline otl_connect& operator>>(otl_connect& connect, otl_stream& s)
 {
   const char* cmd=connect.getCmd();
   const char* invalid_cmd="*** INVALID COMMAND ***";

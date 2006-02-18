@@ -859,16 +859,18 @@ class oracleConnection : public toConnection::connectionImpl
                 toQuery query(connection(), QString::fromUtf8(sql), params);
         }
 
-        //     todo
-        //     virtual void parse(toConnectionSub *sub,const QCString &sql)
-        //       {
-        //         oracleSub *conn=oracleConv(sub);
-        //         try {
-        //           otl_cursor::parse(*(conn->Connection), sql);
-        //         } catch (const otl_exception &exc) {
-        //           ThrowException(exc);
-        //         }
-        //       }
+             virtual void parse(toConnectionSub *sub,const QCString &sql)
+               {
+                 oracleSub *conn=oracleConv(sub);
+                 try{
+                     conn->Connection->reset_throw_count(); 
+                     conn->Connection->syntax_check(sql);
+
+                 } catch (const otl_exception &exc) {
+                   conn->Connection->throw_count++;
+                   ThrowException(exc);
+                 }
+               }
     };
 
     toOracleProvider(void)

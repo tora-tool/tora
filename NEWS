@@ -1,6 +1,9 @@
 1.3.21:
 
 2006-02-08: Applied patch from Pawe=B3 Kucharczyk to fix storage queries used against Ora 10gR2. 
+2006-02-18: Readded Check Syntax to SQL Worksheet (many thanks to Sergei Kuchin of otl)
+2006-02-18: minor changes to PL/SQL Debugger. Solved a bug where the debugger stops on every call of a stored function, now when compiling the current position of the cursor is mantained
+2006-02-18: Now when you open the search and replace dialog, the focus is always on the search field
 
 1.3.20:
 

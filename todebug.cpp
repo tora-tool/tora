@@ -1612,6 +1612,8 @@ bool toDebug::viewSource(const QString &schema, const QString &name, const QStri
     try
     {
         toDebugText *editor = NULL;
+        int row=line-1;
+        int col=0;
         for (int i = 0;i < Editors->count();i++)
         {
             QString tabname = editorName(schema, name, type);
@@ -1630,6 +1632,8 @@ bool toDebug::viewSource(const QString &schema, const QString &name, const QStri
             connect(editor, SIGNAL(insertedLines(int, int)),
                     this, SLOT(reorderContent(int, int)));
             Editors->addTab(editor, editorName(editor));
+        }else{
+          editor->getCursorPosition(&row,&col);
         }
         if (editor->lines() <= 1)
         {
@@ -1643,10 +1647,9 @@ bool toDebug::viewSource(const QString &schema, const QString &name, const QStri
                 Editors->setTabIconSet(editor, QIconSet());
         }
         Editors->showPage(editor);
+        editor->setCursorPosition(row, col);
         if (setCurrent)
-            editor->setCurrent(line - 1);
-        else
-            editor->setCursorPosition(line - 1, 0);
+          editor->setCurrent(line-1);
         editor->setFocus();
         return true;
     }
@@ -1694,21 +1697,26 @@ int toDebug::continueExecution(int stopon)
         {
             int ret, reason;
             setDeferedBreakpoints();
-            toQList args;
-            toPush(args, toQValue(stopon));
-            toQuery cont(connection(), SQLContinue, args);
-            ret = cont.readValue().toInt();
-            reason = cont.readValue().toInt();
-            if (reason == TO_REASON_TIMEOUT || ret == TO_ERROR_TIMEOUT)
-            {
+            while(1){
+              toQList args;
+              toPush(args, toQValue(stopon));
+              toQuery cont(connection(), SQLContinue, args);
+              ret = cont.readValue().toInt();
+              reason = cont.readValue().toInt();
+              if (reason == TO_REASON_TIMEOUT || ret == TO_ERROR_TIMEOUT)
+              {
                 reason = sync();
                 if (reason < 0)
-                    ret = -1;
+                  ret = -1;
                 else
-                    ret = TO_SUCCESS;
-            }
-            if (ret != TO_SUCCESS)
+                  ret = TO_SUCCESS;
+              }
+           
+              if(ret != TO_SUCCESS)
                 return -1;
+              if(reason!=TO_REASON_STARTING)
+                break;
+            }
             updateState(reason);
             return reason;
         }
@@ -2336,6 +2344,8 @@ void toDebug::compile(void)
     for (int i = 0;i < Editors->count();i++)
     {
         toDebugText *editor = dynamic_cast<toDebugText *>(Editors->page(i));
+        int row,col;
+        editor->getCursorPosition(&row,&col);
         if (editor->compile())
         {
             if (editor == currentEditor() &&
@@ -2353,12 +2363,14 @@ void toDebug::compile(void)
             else
                 Editors->setTabIconSet(editor, QIconSet());
             Editors->changeTab(editor, editorName(editor));
+            editor->setCursorPosition(row,col);
         }
         else
             return ;
 
     }
     refresh();
+    scanSource();
 }
 
 toDebug::~toDebug()

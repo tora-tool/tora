@@ -129,6 +129,7 @@ void toSearchReplace::replaceAll(void)
 
 void toSearchReplace::show()
 {
+    SearchText->setFocus();
     SearchText->selectAll();
     toSearchReplaceUI::show();
 }
