@@ -172,6 +172,8 @@ perl -pi -e 's/libclntsh.so.\d.\d/libclntsh.so\0\0\0\0/g' plugins/tooracleconnec
 %{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help"
 %{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/images"
 %{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/api"
+%{__mkdir_p} "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/16x16/apps"
+%{__mkdir_p} "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/32x32/apps"
 %{__make} DESTDIR="${RPM_BUILD_ROOT}" install
 
 %{__install} --owner root --group root --mode=644 help/*.html "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/"
@@ -190,6 +192,9 @@ perl -pi -e 's/libclntsh.so.\d.\d/libclntsh.so\0\0\0\0/g' plugins/tooracleconnec
 %defattr(-,root,root)
 %doc BUGS INSTALL LICENSE.txt NEWS README TODO
 %{_prefix}/bin/*
+%{_prefix}/lib/*.a
+%{_prefix}/lib/*.la
+%{_prefix}/lib/*.so
 %dir %{_prefix}/lib/tora
 #%{_prefix}/lib/tora/*.tpl
 #%{_prefix}/lib/tora/*.qm

@@ -252,6 +252,7 @@ EXTRA_DIST = debian \
 	Makefile.am \
 	$(READMES) \
 	LICENSE.h \
+	LICENSE.txt \
 	chex.pl \
 	m4 \
 	toconf.h \
