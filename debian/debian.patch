@@ -22,15 +22,4 @@ diff --exclude debian -ruN tora_1.3.20.orig/tomain.cpp tora-1.3.20/tomain.cpp
          showMaximized();
      else
          show();
-diff --exclude debian -ruN tora_1.3.20.orig/toqsqlconnection.cpp tora-1.3.20/toqsqlconnection.cpp
---- tora_1.3.20.orig/toqsqlconnection.cpp	2005-12-09 19:02:03.000000000 +0100
-+++ tora-1.3.20/toqsqlconnection.cpp	2006-02-11 13:22:33.000000000 +0100
-@@ -1045,7 +1045,7 @@
-         else if (driv == "SapDB")
-             return QString::fromLatin1("QSAPDB7");
-         else if (driv == "ODBC")
--            return QString::fromLatin1("QODBC");
-+            return QString::fromLatin1("QODBC3");
-         return QString::null;
-     }
  

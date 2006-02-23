@@ -1045,7 +1045,7 @@ class qSqlSetting : public QWidget, public toSettingTab
         else if (driv == "SapDB")
             return QString::fromLatin1("QSAPDB7");
         else if (driv == "ODBC")
-            return QString::fromLatin1("QODBC");
+            return QString::fromLatin1("QODBC3");
         return QString::null;
     }
 
