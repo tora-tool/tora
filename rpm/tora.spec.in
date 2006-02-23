@@ -170,7 +170,7 @@ perl -pi -e 's/libclntsh.so.\d.\d/libclntsh.so\0\0\0\0/g' plugins/tooracleconnec
 %{__rm} -rf "${RPM_BUILD_ROOT}" 
 %{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/bin"
 %{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/lib"
-%{__make} ROOT="${RPM_BUILD_ROOT}" install
+%{__make} DESTDIR="${RPM_BUILD_ROOT}" install
 
 %post
 
