@@ -11,6 +11,13 @@
 %define _release	1
 %define _prefix		/usr/X11R6
 
+# For the moment
+%define __find_requires %{nil}
+
+# preferred something like this
+#%define __find_requires  /usr/lib/rpm/find-requires | grep -v libclntsh
+
+
 Summary:		Toolkit for Oracle
 Name:			%{_name}
 Version:		%{_version}
