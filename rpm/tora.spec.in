@@ -169,8 +169,15 @@ perl -pi -e 's/libclntsh.so.\d.\d/libclntsh.so\0\0\0\0/g' plugins/tooracleconnec
 
 %{__rm} -rf "${RPM_BUILD_ROOT}" 
 %{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/bin"
-%{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/lib"
+%{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help"
+%{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/images"
 %{__make} DESTDIR="${RPM_BUILD_ROOT}" install
+
+%{__install} --owner root --group root --mode=644 help/* "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/"
+%{__install} --owner root --group root --mode=644 help/images/* "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/images/"
+
+%{__install} --owner root --group root --mode=644 icons/tora.xpm "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/32x32/apps/tora.xpm"
+%{__install} --owner root --group root --mode=644 icons/toramini.xpm "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/16x16/apps/tora.xpm"
 
 %post
 
@@ -182,12 +189,12 @@ perl -pi -e 's/libclntsh.so.\d.\d/libclntsh.so\0\0\0\0/g' plugins/tooracleconnec
 %doc BUGS INSTALL LICENSE.txt NEWS README TODO
 %{_prefix}/bin/*
 %dir %{_prefix}/lib/tora
-%{_prefix}/lib/tora/*.tpl
-%{_prefix}/lib/tora/*.qm
+#%{_prefix}/lib/tora/*.tpl
+#%{_prefix}/lib/tora/*.qm
 %{_prefix}/lib/tora/help
-%{_menudir}/tora
+#%{_menudir}/tora
 %{_iconsdir}/hicolor/*/apps/tora.xpm
-%{_datadir}/applnk/Development/tora.desktop
+#%{_datadir}/applnk/Development/tora.desktop
 
 #%files oracle -f rpmoracle
 #%defattr(-,root,root)
