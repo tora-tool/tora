@@ -1,6 +1,6 @@
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT([tora],[1.3.22],[tora-develop@lists.sourceforge.net])
+AC_INIT([tora],[1.3.22cvs],[tora-develop@lists.sourceforge.net])
 AC_PREREQ([2.59])
 # Every other copy of the package version number gets its value from here
 AM_INIT_AUTOMAKE
