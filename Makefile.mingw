@@ -120,7 +120,6 @@ DEFINES+=-DQT_THREAD_SUPPORT
 DEFINES+=-DTOMONOLITHIC
 DEFINES+=-DWIN32 -D_WIN32
 DEFINES+=-D_int64="long long"
-DEFINES+=-DOTL_EXCEPTION_ENABLE_ERROR_OFFSET
 
 # Comment out this line if you want more output from compile
 .SILENT:
