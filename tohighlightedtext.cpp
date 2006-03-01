@@ -57,6 +57,7 @@
 #include <qnamespace.h>
 
 #include <qextscintillalexersql.h>
+#include <qpoint.h>
 
 #include "todefaultkeywords.h"
 
@@ -290,25 +291,35 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     setMarkerBackgroundColor(Qt::red,errorMarker);
     debugMarker=markerDefine(Rectangle,8);
     setMarkerBackgroundColor(Qt::darkGreen,debugMarker);
-    setMarkerBackgroundColor(Qt::red,errorMarker);
     setMarginMarkerMask(1,0);
+    setAutoCompletionReplaceWord(true);
     setAutoIndent(true);
     connect(this,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(setStatusMessage(void )));
     complAPI=new QextScintillaAPIs();
     connect (this,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(positionChanged(int,int)));
-    this->SendScintilla(QextScintillaBase::SCI_AUTOCSETSEPARATOR,'!');
+    timer=new QTimer(this);
+    connect( timer, SIGNAL(timeout()), this, SLOT(autoCompleteFromAPIs()) );
+    popup=new QListBox(0,"popup",Qt::WType_Popup|Qt::WStyle_NoBorder|Qt::WStyle_Customize);
+    popup->hide();
+    connect(popup,SIGNAL(clicked(QListBoxItem*)),this,SLOT(completeFromAPI(QListBoxItem*)));
+    connect(popup,SIGNAL(returnPressed(QListBoxItem*)),this,SLOT(completeFromAPI(QListBoxItem*)));
 }
 
 toHighlightedText::~toHighlightedText() 
 {
   if(complAPI)
     delete complAPI;
+  if(popup)
+    delete popup;
 }
 
 void toHighlightedText::positionChanged(int row, int col){
-  /*if (col>0 && this->text(row)[col-1]=='.'){
-    this->autoCompleteFromAPIs();
-  }*/
+  if (col>0 && this->text(row)[col-1]=='.'){
+    timer->start(500,true);
+  }else{
+    if(timer->isActive())
+      timer->stop();
+  }
 }
 
 static QString UpperIdent(const QString &str){
@@ -319,84 +330,23 @@ static QString UpperIdent(const QString &str){
 }
 
 void toHighlightedText::autoCompleteFromAPIs(){
-  complAPI->clear();
-  int curline, curcol;
-  getCursorPosition (&curline, &curcol);
-
-  QString line = text(curline);
-
-  if (!isReadOnly() && curcol >= 0 && line[curcol-1] == '.'){
-    //if (!hasSelectedText())
-    //  return ;
-    if (toTool::globalConfig(CONF_CODE_COMPLETION, "Yes").isEmpty())
-      return ;
-
-    toSQLParse::editorTokenizer tokens(this, curcol, curline);
-    QString name = tokens.getToken(false);
-    QString owner;
-    if (name == ".")
-      name = tokens.getToken(false);
-
-    QString token = tokens.getToken(false);
-    if (token == ".")
-      owner = tokens.getToken(false);
-    else{
-      QString cmp = UpperIdent(name);
-      QString lastToken;
-      while ((invalidToken(tokens.line(), tokens.offset() + token.length()) || UpperIdent(token) != cmp || lastToken == ".") && token != ";" && !token.isEmpty()){
-        lastToken = token;
-        token = tokens.getToken(false);
-      }
-
-      if(token == ";" || token.isEmpty()){
-        tokens.setLine(curline);
-        tokens.setOffset(curcol);
-        token = tokens.getToken();
-        while ((invalidToken(tokens.line(), tokens.offset()) || UpperIdent(token) != cmp && lastToken != ".") && token != ";" && !token.isEmpty())
-          token = tokens.getToken();
-        lastToken = token;
-        tokens.getToken(false);
-      }
-      if(token != ";" && !token.isEmpty()){
-        token = tokens.getToken(false);
-        if (token != "TABLE" && token != "UPDATE" && token != "FROM" && token != "INTO" && (toIsIdent(token[0]) || token[0] == '\"')){
-          name = token;
-          token = tokens.getToken(false);
-          if (token == ".")
-            owner = tokens.getToken(false);
-        }else if (token == ")"){
-          return ;
-        }
-      }
-    }
-    if (!owner.isEmpty()){
-      name = owner + QString::fromLatin1(".") + name;
-    }
-    if (!name.isEmpty()){
-      try{
-        toConnection &conn = toCurrentConnection(this);
-        toQDescList &desc = conn.columns(conn.realName(name, false));
-        for (toQDescList::iterator i = desc.begin();i != desc.end();i++){
-          QString t;
-          int ind = (*i).Name.find("(");
-          if (ind < 0)
-            ind = (*i).Name.find("RETURNING") - 1; //it could be a function or procedure without parameters. -1 to remove the space
-          if (ind >= 0)
-            t = conn.quote((*i).Name.mid(0, ind)) + (*i).Name.mid(ind);
-          else
-            t = conn.quote((*i).Name);
-          /*if (!(*i).Comment.isEmpty()){
-            t += QString::fromLatin1(" - ");
-            t += (*i).Comment;
-          }
-          t+="!";*/
-          complAPI->add(t);
-        }
-        this->setAutoCompletionAPIs(complAPI);
-        this->setCallTipsAPIs(complAPI);
-        QextScintilla::autoCompleteFromAPIs();
-      }catch (...){}
-    }
+  QStringList compleList=this->getCompletionList();
+  if(!compleList.isEmpty()){
+    long position, posx, posy;
+    int curCol, curRow;
+    this->getCursorPosition(&curRow,&curCol);
+    position=this->SendScintilla(SCI_GETCURRENTPOS);
+    posx=this->SendScintilla(SCI_POINTXFROMPOSITION,0,position);
+    posy=this->SendScintilla(SCI_POINTYFROMPOSITION,0,position)+
+      this->SendScintilla(SCI_TEXTHEIGHT,curRow);
+    QPoint p(posx,posy);
+    p=this->mapToGlobal(p);
+    popup->move(p);
+    popup->clear();
+    popup->insertStringList(compleList);
+    popup->show();
+  }else{
+    popup->hide();
   }
 }
 
@@ -579,4 +529,111 @@ void toHighlightedText::setStatusMessage(void)
         toStatusMessage(QString::null);
     else
         toStatusMessage((*err).second, true);
+}
+
+QStringList toHighlightedText::getCompletionList(){
+  int curline, curcol;
+  QStringList toReturn;
+  getCursorPosition (&curline, &curcol);
+
+  QString line = text(curline);
+
+  if (!isReadOnly() && curcol >= 0){
+    if (toTool::globalConfig(CONF_CODE_COMPLETION, "Yes").isEmpty())
+      return toReturn;
+    
+    toSQLParse::editorTokenizer tokens(this, curcol, curline);
+    QString partial;
+    if (line[curcol-1]!='.'){
+      partial=tokens.getToken(false);
+    }else{
+      partial="";
+    } 
+
+    QString name = tokens.getToken(false);
+    QString owner;
+    if (name == "."){
+      name = tokens.getToken(false);
+    }  
+
+    QString token = tokens.getToken(false);
+    if (token == ".")
+      owner = tokens.getToken(false);
+    else{
+      QString cmp = UpperIdent(name);
+      QString lastToken;
+      while ((invalidToken(tokens.line(), tokens.offset() + token.length()) || UpperIdent(token) != cmp || lastToken == ".") && token != ";" && !token.isEmpty()){
+        lastToken = token;
+        token = tokens.getToken(false);
+      }
+
+      if(token == ";" || token.isEmpty()){
+        tokens.setLine(curline);
+        tokens.setOffset(curcol);
+        token = tokens.getToken();
+        while ((invalidToken(tokens.line(), tokens.offset()) || UpperIdent(token) != cmp && lastToken != ".") && token != ";" && !token.isEmpty())
+          token = tokens.getToken();
+        lastToken = token;
+        tokens.getToken(false);
+      }
+      if(token != ";" && !token.isEmpty()){
+        token = tokens.getToken(false);
+        if (token != "TABLE" && token != "UPDATE" && token != "FROM" && token != "INTO" && (toIsIdent(token[0]) || token[0] == '\"')){
+          name = token;
+          token = tokens.getToken(false);
+          if (token == ".")
+            owner = tokens.getToken(false);
+        }else if (token == ")"){
+          return toReturn;
+        }
+      }
+    }
+    if (!owner.isEmpty()){
+      name = owner + QString::fromLatin1(".") + name;
+    }
+    if (!name.isEmpty()){
+      try{
+        toConnection &conn = toCurrentConnection(this);
+        toQDescList &desc = conn.columns(conn.realName(name, false));
+        for (toQDescList::iterator i = desc.begin();i != desc.end();i++){
+          QString t;
+          int ind = (*i).Name.find("(");
+          if (ind < 0)
+            ind = (*i).Name.find("RETURNING") - 1; //it could be a function or procedure without parameters. -1 to remove the space
+          if (ind >= 0)
+            t = conn.quote((*i).Name.mid(0, ind)) + (*i).Name.mid(ind);
+          else
+            t = conn.quote((*i).Name);
+          if (t.find(partial)==0)
+            toReturn.append(t);
+        }
+      }catch (...){}
+    }
+  }
+  toReturn.sort();
+  return toReturn;
+}
+
+void toHighlightedText::completeFromAPI(QListBoxItem* item){
+  if(item){
+    int curline, curcol, start,end;
+    getCursorPosition (&curline, &curcol);
+    QString line = text(curline);
+    toSQLParse::editorTokenizer tokens(this, curcol, curline);
+    if (line[curcol-1]!='.'){
+      tokens.getToken(false);
+      start=tokens.offset();
+    }else{
+      start=curcol;
+    }
+    tokens.getToken(true);
+    end=tokens.offset();
+    disconnect(this,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(positionChanged(int,int)));
+    setSelection(curline,start,curline,end);
+    this->removeSelectedText();
+    this->insert(item->text()); 
+    this->setCursorPosition(curline,start+item->text().length());
+    connect (this,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(positionChanged(int,int))); 
+  }
+  popup->hide();
 }

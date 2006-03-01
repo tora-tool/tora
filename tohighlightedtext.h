@@ -47,8 +47,11 @@
 
 #include <list>
 #include <map>
+#include <qtimer.h>
+#include <qstringlist.h>
 
 class QListBox;
+class QListBoxItem;
 class QPainter;
 class toSyntaxSetup;
 
@@ -231,9 +234,11 @@ private:
      */
     std::map<int, QString> Errors;
     QextScintillaAPIs* complAPI;
+    QTimer* timer;
 protected:
     int debugMarker;
     int errorMarker;
+    QListBox* popup;
 
 public:
 
@@ -344,6 +349,10 @@ public:
      */
     void tableAtCursor(QString &owner, QString &table, bool highlight = false);
 
+protected:
+    QStringList getCompletionList();
+  
+
 private:
   bool invalidToken(int line, int col);
 
@@ -361,6 +370,8 @@ public slots:
     virtual void autoCompleteFromAPIs();
 
     void positionChanged(int row, int col);
+
+    virtual void completeFromAPI(QListBoxItem * item);
 
 private slots:
     void setStatusMessage(void);

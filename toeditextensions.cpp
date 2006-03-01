@@ -73,6 +73,7 @@ static int IncrementalSearch;
 static int UpperCase;
 static int LowerCase;
 static int GotoLine;
+static int AutoComplete;
 
 #define CONF_EXPAND_SPACES "ExpandSpaces"
 #define CONF_COMMA_BEFORE "CommaBefore"
@@ -114,6 +115,17 @@ void toEditExtensions::receivedFocus(toEditWidget *widget)
         IndentButton->setEnabled(enable);
     if (DeindentButton)
         DeindentButton->setEnabled(enable);
+    toHighlightedText * cur=dynamic_cast<toHighlightedText *>(widget);
+    toMainWidget()->editMenu()->setItemEnabled(AutoComplete, cur);
+}
+
+void toEditExtensions::autoComplete(){
+  toHighlightedText *cur=dynamic_cast<toHighlightedText *>(Current);
+  if(cur)
+    cur->autoCompleteFromAPIs();
+  else{
+    TO_DEBUGOUT("cur null");
+  }
 }
 
 void toEditExtensions::lostFocus(toEditWidget *widget)
@@ -527,6 +539,8 @@ public:
                         toKeySequence(qApp->translate("toEditExtensionTool", "Alt+Left", "Edit|De-indent block")));
         GotoLine = toMainWidget()->editMenu()->insertItem(qApp->translate("toEditExtensionTool", "Goto Line"), &EditExtensions,
                    SLOT(gotoLine()));
+
+        AutoComplete=toMainWidget()->editMenu()->insertItem(qApp->translate("toEditExtensionTool", "Complete"),&EditExtensions,SLOT(autoComplete()),toKeySequence(qApp->translate("toEditExtensionTool", "Ctrl+Space","Edit|Complete")));
 
         IndentButton = new QToolButton(QPixmap(const_cast<const char**>(indent_xpm)),
                                        qApp->translate("toEditExtensionTool", "Indent block in editor"),

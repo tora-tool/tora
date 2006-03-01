@@ -69,6 +69,15 @@
 #  endif
 #endif
 
+#define TO_DEBUG
+#ifdef TO_DEBUG
+#include <stdio.h>
+static FILE* toraLog=NULL;
+#define TO_DEBUGOUT(x) if(!toraLog) toraLog=fopen("C:\\Temp\\tora.log","a"); fprintf(toraLog,"%s\n",(const char *)x);fflush(toraLog);
+#else
+#define TO_DEBUGOUT(x)
+#endif
+
 #if 0
 /**
  * The class to use for a printer object.

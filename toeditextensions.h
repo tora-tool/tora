@@ -77,6 +77,8 @@ public slots:
     void lowerCase(void);
 
     void gotoLine(void);
+    
+    void autoComplete(void);
 };
 
 class toEditExtensionGoto : public toEditExtensionGotoUI
