@@ -742,3 +742,7 @@ lupdate: tora.pro
 
 lrelease: tora.pro $(TRANSLATIONS)
 	$(LRELEASE) tora.pro
+
+docdir = $(libdir)
+install-data-hook:
+	cp -dpR $(top_srcdir)/help $(docdir)
