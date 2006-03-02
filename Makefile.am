@@ -713,6 +713,7 @@ libtoworksheet_la_SOURCES = toworksheet.cpp toworksheet.h \
 	$(UIC) -o $@ -i $^
 
 %.moc: %.h
+	@if ! test -d qtlegacy; then mkdir qtlegacy; fi
 	$(MOC) -o $@ $<
 
 %.qm: %.ts
@@ -726,7 +727,7 @@ clean-local:
 	done
 
 tora_toad.h: tora_toad.qm
-	perl chex.pl < $< > $@
+	perl $(top_srcdir)/chex.pl < $< > $@
 
 tora.pro: Makefile.am
 	echo "# Not indended to be used for anything except lupdate" > tora.pro
