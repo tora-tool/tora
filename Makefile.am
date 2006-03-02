@@ -271,12 +271,12 @@ EXTRA_DIST = debian \
 	LICENSE.h
 
 # this is a hack (but it *is* mentioned in the automake manual, of all
-# places). EXTRA_DIST includes all files, even things like CVS
+# places). EXTRA_DIST includes all files, even things like SVN
 # folders. so we delete them here. but specifying all the files in
 # those subdirs would suck more because many of them are generated
 # (help api for one).
 dist-hook:
-	rm -rf `find $(distdir) -name CVS`
+	rm -rf `find $(distdir) -name .svn`
 
 # mrj: this sorta sucks. there's a lot of generated source files...
 # the old build system distributed the .depends folder in the source
