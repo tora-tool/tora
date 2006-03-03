@@ -46,7 +46,6 @@
 #include <ctype.h>
 
 #include <qapplication.h>
-#include <qlistbox.h>
 #include <qpainter.h>
 #include <qpalette.h>
 #include <qsimplerichtext.h>
@@ -65,8 +64,6 @@
 
 // Default SQL lexer
 static QextScintillaLexerSQL sqlLexer(0);
-
-
 
 toSyntaxAnalyzer::toSyntaxAnalyzer(const char **keywords)
 {
@@ -269,6 +266,35 @@ bool toSyntaxAnalyzer::reservedWord(const QString &str)
     return false;
 }
 
+toComplPopup::toComplPopup(toHighlightedText* edit)
+        :QListBox(0,"popup",Qt::WType_Popup|Qt::WStyle_NoBorder|Qt::WStyle_Customize){
+  this->editor=edit;
+}
+
+toComplPopup::~toComplPopup(){
+}
+
+
+void toComplPopup::keyPressEvent(QKeyEvent * e){
+  if ((e->text() && e->text().length()>0
+#ifdef WIN32
+    &&  e->text()!="\r"
+#else
+    && e->text()!="\n"
+#endif
+  ) || e->key()==Qt::Key_Backspace){
+    if ( e->key()==Qt::Key_Backspace){
+      TO_DEBUGOUT("Backspace");
+    }else{
+      TO_DEBUGOUT(e->text());
+    }
+    this->editor->keyPressEvent(e);
+    this->editor->autoCompleteFromAPIs();
+  }else
+    QListBox::keyPressEvent(e);
+  
+}
+
 
 toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
         : toMarkedText(parent, name), lexer(0), syntaxColoring(false)
@@ -299,7 +325,7 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     connect (this,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(positionChanged(int,int)));
     timer=new QTimer(this);
     connect( timer, SIGNAL(timeout()), this, SLOT(autoCompleteFromAPIs()) );
-    popup=new QListBox(0,"popup",Qt::WType_Popup|Qt::WStyle_NoBorder|Qt::WStyle_Customize);
+    popup=new toComplPopup(this);
     popup->hide();
     connect(popup,SIGNAL(clicked(QListBoxItem*)),this,SLOT(completeFromAPI(QListBoxItem*)));
     connect(popup,SIGNAL(returnPressed(QListBoxItem*)),this,SLOT(completeFromAPI(QListBoxItem*)));
@@ -330,8 +356,9 @@ static QString UpperIdent(const QString &str){
 }
 
 void toHighlightedText::autoCompleteFromAPIs(){
-  QStringList compleList=this->getCompletionList();
-  if(!compleList.isEmpty()){
+  QString partial;
+  QStringList compleList=this->getCompletionList(&partial);
+  if(!compleList.isEmpty() || popup->isVisible()){
     long position, posx, posy;
     int curCol, curRow;
     this->getCursorPosition(&curRow,&curCol);
@@ -344,6 +371,16 @@ void toHighlightedText::autoCompleteFromAPIs(){
     popup->move(p);
     popup->clear();
     popup->insertStringList(compleList);
+    if(partial && partial.length()>0){
+      int i;
+      for(i=0;i<popup->numRows();i++){
+        if(popup->item(i)->text().find(partial)==0){
+          popup->setSelected(i,true);
+          exit;
+        }
+      }
+ 
+    }
     popup->show();
   }else{
     popup->hide();
@@ -531,7 +568,7 @@ void toHighlightedText::setStatusMessage(void)
         toStatusMessage((*err).second, true);
 }
 
-QStringList toHighlightedText::getCompletionList(){
+QStringList toHighlightedText::getCompletionList(QString* partial){
   int curline, curcol;
   QStringList toReturn;
   getCursorPosition (&curline, &curcol);
@@ -543,11 +580,10 @@ QStringList toHighlightedText::getCompletionList(){
       return toReturn;
     
     toSQLParse::editorTokenizer tokens(this, curcol, curline);
-    QString partial;
     if (line[curcol-1]!='.'){
-      partial=tokens.getToken(false);
+      *partial=tokens.getToken(false);
     }else{
-      partial="";
+      *partial="";
     } 
 
     QString name = tokens.getToken(false);
@@ -604,7 +640,7 @@ QStringList toHighlightedText::getCompletionList(){
             t = conn.quote((*i).Name.mid(0, ind)) + (*i).Name.mid(ind);
           else
             t = conn.quote((*i).Name);
-          if (t.find(partial)==0)
+          if (t.find(*partial)==0)
             toReturn.append(t);
         }
       }catch (...){}

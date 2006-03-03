@@ -1,5 +1,5 @@
 // ==============================================================
-// Oracle, ODBC and DB2/CLI Template Library, Version 4.0.129,
+// Oracle, ODBC and DB2/CLI Template Library, Version 4.0.131,
 // Copyright (C) Sergei Kuchin, 1996,2006
 // Author: Sergei Kuchin
 // This library is free software. Permission to use, copy,
@@ -15,7 +15,7 @@
 #include "otl_include_0.h"
 #endif
 
-#define OTL_VERSION_NUMBER (0x040081L)
+#define OTL_VERSION_NUMBER (0x040083L)
 
 #if defined(_MSC_VER)
 #if (_MSC_VER >= 1400)
@@ -17468,6 +17468,8 @@ const int inBLOB=113;
 const int inTimestamp=SQLT_TIMESTAMP;
 const int inTimestamp_TZ=SQLT_TIMESTAMP_TZ;
 const int inTimestamp_LTZ=SQLT_TIMESTAMP_LTZ;
+const int inIntervalYM=SQLT_INTERVAL_YM;
+const int inIntervalDS=SQLT_INTERVAL_DS;
 #endif
 
 const int  extVarChar2=1;
@@ -19000,6 +19002,8 @@ public:
   case inTimestamp:return extTimestamp;
   case inTimestamp_TZ:return extTimestamp_TZ;
   case inTimestamp_LTZ:return extTimestamp_LTZ;
+  case inIntervalYM:return extCChar;
+  case inIntervalDS:return extCChar;
 #else
   case inDate:     return extDate;
 #endif
@@ -19022,6 +19026,12 @@ public:
   switch(aftype){
   case extCChar:
    switch(int_type){
+#if defined(OTL_ORA_TIMESTAMP)
+   case inIntervalYM:
+     return 30;
+   case inIntervalDS:
+     return 30;
+#endif
    case inRowId:
     return 30;
    case inDate:
@@ -19485,9 +19495,9 @@ public:
       if(ftype==otl_var_varchar_long)
         v.unicode_var_len=elem_size-sizeof(sb4);
       else{
-#if defined(OTL_ORA8I) || defined(OTL_ORA9I)
-        if(var_elem_size>4000)
-          v.unicode_var_len=4000;
+#if defined(OTL_ORA_MAX_UNICODE_VARCHAR_SIZE)
+        if(var_elem_size>OTL_ORA_MAX_UNICODE_VARCHAR_SIZE)
+          v.unicode_var_len=OTL_ORA_MAX_UNICODE_VARCHAR_SIZE;
         else
           v.unicode_var_len=var_elem_size;
 #else
@@ -20851,8 +20861,10 @@ public:
   virtual otl_read_stream_interface& 
   operator>>(otl_datetime& s) OTL_THROWS_OTL_EXCEPTION = 0;
 
+#if !defined(OTL_UNICODE)
   virtual otl_read_stream_interface& 
   operator>>(char& c) OTL_THROWS_OTL_EXCEPTION = 0;
+#endif
 
   virtual otl_read_stream_interface& 
   operator>>(unsigned char& c) OTL_THROWS_OTL_EXCEPTION = 0;
@@ -20867,8 +20879,10 @@ public:
   operator>>(OTL_UNICODE_STRING_TYPE& s) OTL_THROWS_OTL_EXCEPTION = 0;
 #endif
 
+#if !defined(OTL_UNICODE)
   virtual otl_read_stream_interface& 
   operator>>(char* s) OTL_THROWS_OTL_EXCEPTION = 0;
+#endif
 
   virtual otl_read_stream_interface& 
   operator>>(unsigned char* s) OTL_THROWS_OTL_EXCEPTION = 0;

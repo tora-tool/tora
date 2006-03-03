@@ -241,7 +241,7 @@
 /* #undef TO_NO_ORACLE */
 
 /* Version number of package */
-#define TOVERSION "1.3.18"
+#define TOVERSION "1.3.22svn"
 
 /* Define to 1 if the X Window System is missing or not being used. */
 /* #undef X_DISPLAY_MISSING */

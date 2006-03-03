@@ -49,11 +49,12 @@
 #include <map>
 #include <qtimer.h>
 #include <qstringlist.h>
+#include <qlistbox.h>
 
-class QListBox;
 class QListBoxItem;
 class QPainter;
 class toSyntaxSetup;
+class toHighlightedText;
 
 /** This class implements a syntax parser to provide information to
  * a syntax highlighted editor.
@@ -212,7 +213,15 @@ public:
     static toSyntaxAnalyzer &defaultAnalyzer();
 };
 
-
+class toComplPopup : public QListBox {
+  private:
+    toHighlightedText* editor;
+  public:
+    toComplPopup(toHighlightedText* high);
+    virtual ~toComplPopup();
+  protected:
+    virtual void keyPressEvent(QKeyEvent * e );
+};
 /** 
  * A simple editor which supports syntax highlighting.
  * 
@@ -238,9 +247,10 @@ private:
 protected:
     int debugMarker;
     int errorMarker;
-    QListBox* popup;
+    toComplPopup* popup;
 
 public:
+  friend class toComplPopup;
 
     /** Create a new editor.
      * @param parent Parent of widget.
@@ -350,7 +360,7 @@ public:
     void tableAtCursor(QString &owner, QString &table, bool highlight = false);
 
 protected:
-    QStringList getCompletionList();
+    QStringList getCompletionList(QString* partial);
   
 
 private:
