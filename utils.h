@@ -69,7 +69,7 @@
 #  endif
 #endif
 
-#define TO_DEBUG
+#undef TO_DEBUG
 #ifdef TO_DEBUG
 #include <stdio.h>
 static FILE* toraLog=NULL;
