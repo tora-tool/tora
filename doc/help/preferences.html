@@ -1,0 +1,140 @@
+<HTML><HEAD><TITLE>Options</TITLE></HEAD><BODY>
+<H1>Options</H1>
+To access the options of TOra you select the <B>Edit|Options</B> menu item, you will then be
+presented with the following dialog.<P>
+<IMG SRC=images/preferences.png><P>
+In windows preferences are stored in the registry, but in Linux it is stored in a file
+called <I>.torarc</I> in the users home directory. If this file doesn't exist a file called
+<I>/etc/torarc</I> is used if it exists.
+<H2>Selecting page</H2>
+To the left is a list containing the available option pages you can display.<P>
+<DL>
+<DD><A HREF=preferences.html#global>Global Settings</A> - General global settings.
+<DD><A HREF=database.html>Database Settings</A> - Global database settings.
+<DD><A HREF=fonts.html>Font Settings</A> - Font and color settings.
+<DD><A HREF=additionalhelp.html>Additional Help</A> - Additional manuals in help browser.
+<DD><A HREF=toolsetting.html>Tools</A> - Settings regarding enabled tools.</A>
+</DL><P>
+The rest of the settings are tool specific and covered under corresponding tool in the 
+<A HREF=tools.html>tools section</A>.<P>
+Selecting a page does not discard the changes of another page, and no changes are saved
+until <B>OK</B> is pressed. You can always discard any changes made by pressing the escape
+key or the <B>Cancel</B> button.<P>
+<A NAME=global><H2>Global Settings</H2>
+These may vary some depending on how your system was compiled and configured. Not all options
+are displayed in the screenshot since that was made on a KDE version of TOra.<P>
+<TABLE>
+<TR><TD VALIGN=top>
+<B>Custom SQL</B></TD>
+<TD VALIGN=top>
+The file in which to store your custom SQL. For more information about custom SQL and 
+the SQL dictionary see the <A HREF=sqledit.html>SQL Editor tool</A>. The string <B>$HOME</B>
+will be replaced by your home directory on UNIX or documents directory in Windows.</TD></TR>
+<TR><TD VALIGN=top>
+<B>Help directory</B></TD>
+<TD VALIGN=top>Should point to where the TOra help table of contents file is stored (toc.htm). This
+should be set up correctly if you made a normal install.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Plugin directory</B></TD>
+<TD VALIGN=top>This option is only available in a plugin based TOra installation. It should point
+to the directory where the plugins for TOra are located. It should be set up
+correctly on installation if needed.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Cache directory</B></TD>
+<TD VALIGN=top>Should point to where the TOra Disk Cache files are stored. There is one file for each 
+Connection. 
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Change current connection with active window</B></TD>
+<TD VALIGN=top>If this option is set, changing the current window will also change the current
+connection to that of the active window. The connection is only changed when you change window
+so if you want to change the connection to something else you can still do so as long as you
+don't change the window.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Save last password</B></TD>
+<TD VALIGN=top>Whether or not TOra should store the last password used to connect. <B>Be aware that the
+password is store in clear text in either the windows registry or a file.</B>
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Include DB in caption</B></TD>
+<TD VALIGN=top>If this is set the database name will be included in the caption of all your tool
+windows after the tool name. Observe that there often is no other way of knowing which
+database the window works on except for this.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Maximize window on start</B></TD>
+<TD VALIGN=top>If this is checked the TOra main window will open maximized on startup.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Desktop Aware</B></TD>
+<TD VALIGN=top>Set this if Qt should try to figure out and interact nicely with the desktop environment.
+The reason for this switch is that in some versions of KDE TOra doesn't look nice if this is
+checked. This switch is only available for Qt only applications.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>use Disk Cache</B></TD>
+<TD VALIGN=top>This option tells TOra to Cache the Object List in the Cache Directory. Default is No Caching. When
+Caching is activated, you have to refresh the object cache with the menu option File->Reread Object Cache, because,
+the default source for the Object List is the diskfile.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Antialias fonts</B></TD>
+<TD VALIGN=top>Check this if you want TOra to use antialiased fonts in X11 if available. This option
+may not be available (Regardless of if you have access to antialiased fonts or not).
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Docks use toolbars</B></TD>
+<TD VALIGN=top>This option tells TOra how to emulate docked windows when they are not available. Docked
+windows are not available if you do not use KDE and have a Qt version less than 3 (If you
+run in windows you're it). If this is checked docks will be emulated with a toolbar, this has the
+drawback that you can't resize them. If unchecked docks appear in normal windows.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Style</B></TD>
+<TD VALIGN=top>The GUI style to use for the TOra application. This switch is only available for Qt only applications.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Display alerts in statusbar only</B></TD>
+<TD VALIGN=top>Display errors only in the statusbar. This is really usefull since it doesn't interrupt you
+as much as a dialog window as long as you know to look for information in the statusbar when things doesn't
+work.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Connect history</B></TD>
+<TD VALIGN=top>How many connection entries to save in the new connection history list.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Table scale</B></TD>
+<TD VALIGN=top>This is the scale which to use when printing lists. Lists on paper can usually be a little
+smaller and still be readable. Given as a fraction where 0.5 means half the size on paper and 1.0
+the same size.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Status message</B></TD>
+<TD VALIGN=top>The number of seconds to display error messages in the status bar. If you specify 0
+they are kept until the next message is displayed.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Message history</B></TD>
+<TD VALIGN=top>The number of status messages to store in the status message history before
+the oldest are removed when new are added.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Chart samples</B></TD>
+<TD VALIGN=top>Number of samples to save by default in charts.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Size Unit</B></TD>
+<TD VALIGN=top>The unit to display sizes with in TOra.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Refresh</B></TD>
+<TD VALIGN=top>The default refresh time to use in TOra. Tools which refresh automatically use this setting as the
+default. It can also be changed on a per tool basis.
+</TD></TR>
+</TABLE>
+</BODY>
+</HTML>

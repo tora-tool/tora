@@ -1,0 +1,106 @@
+<HTML>
+<HEAD>
+<TITLE>class toTemplateSQL</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toTemplateSQL</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"> This class represent an item that when expanded will execute an SQL statement
+ and create child items which are the result of the query. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="totemplate_h.html">totemplate.h</A>&gt;</code></TD></TR>
+<TR><TH>Inherits</TH><TD><A HREF="toTemplateItem.html">toTemplateItem</A> <small>[public ]</small></TD></TR>
+<TR><TH><A HREF="full-list-toTemplateSQL.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref5">toTemplateSQL</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,
+		const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql) 
+</LI>
+<LI>virtual  <A HREF="toConnection.html">toConnection</A> &&nbsp;<b><A HREF="#ref6">connection</A></b> () 
+</LI>
+<LI>virtual  <A HREF="toTemplateItem.html">toTemplateItem</A> *&nbsp;<b><A HREF="#ref7">createChild</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name) 
+</LI>
+<LI>virtual  <A HREF="#toQList">toQList</A> &nbsp;<b><A HREF="#ref8">parameters</A></b> (void) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref9">expand</A></b> (void) 
+</LI>
+</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref10">toTemplateSQLObject</A></b></LI>
+</ul><h4>Protected Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref4">toTemplateSQL</A></b> (<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,
+		const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class represent an item that when expanded will execute an SQL statement
+ and create child items which are the result of the query.
+ </p>
+<A NAME="toTemplateSQL"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTemplateSQL</strong> (<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,
+		const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql)
+<br></td><td align="right"><h3><strong>toTemplateSQL</strong></h3></td></tr></table><p> <small>[protected]</small></p><p> Create an item.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to query.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent of this item.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Contents of the first column of the item.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL statement.
+   </TD></TR>
+</TABLE></P>
+<A NAME="toTemplateSQL"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTemplateSQL</strong> (<A HREF="toConnection.html">toConnection</A> &conn,<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,
+		const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql)
+<br></td><td align="right"><h3><strong>toTemplateSQL</strong></h3></td></tr></table><p></p><p> Create an item.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to query.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent of this item.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Contents of the first column of the item.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL statement.
+   </TD></TR>
+</TABLE></P>
+<A NAME="connection"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toConnection.html">toConnection</A> &&nbsp;<strong>connection</strong> ()
+<br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get connection of this item.
+</p>
+<p><b>Returns</b>: Reference to connection.
+   </p>
+<A NAME="createChild"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toTemplateItem.html">toTemplateItem</A> *&nbsp;<strong>createChild</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name)
+<br></td><td align="right"><h3><strong>createChild</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Create a child of this item.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of the child.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: A newly created item.
+   </p>
+<A NAME="parameters"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="#toQList">toQList</A> &nbsp;<strong>parameters</strong> (void)
+<br></td><td align="right"><h3><strong>parameters</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get parameters to pass to query.
+</p>
+<p><b>Returns</b>: List of strings to pass as input parameters to query
+   </p>
+<A NAME="expand"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>expand</strong> (void)
+<br></td><td align="right"><h3><strong>expand</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
+   </p>
+<p>Reimplemented from <A HREF="toTemplateItem.html#expand">toTemplateItem</A>.</p>
+<A NAME="toTemplateSQLObject"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toTemplateSQLObject</strong>
+</td><td align="right"><h3><strong>toTemplateSQLObject</strong></h3></td></tr></table><p></p><HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:49:58 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

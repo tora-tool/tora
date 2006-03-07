@@ -1,0 +1,66 @@
+<HTML><HEAD><TITLE>Storage Manager</TITLE></HEAD><BODY>
+<H1>Storage Manager</H1>
+This tool provides an easy interface to administrate tablespaces and datafiles.<P>
+<IMG SRC=images/storage.png><P>
+As you can see in the screenshot above the tool is a list of all the tablespaces available
+in the database. The tablespaces can be expanded to display the datafiles they consist of.
+There is also one option available to this tool, whether to collect information about how
+coalesced the tablespaces are, the coalesced fetching can be very slow on fragmented databases
+and if TOra seems to lock itself when you try to start this tool try resetting that option
+to not show coalesced info. Using the toolbar you can perform these commands.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Refresh</B></TD><TD VALIGN=top>
+Update the view.</TD></TR>
+<TR><TD VALIGN=top><B>
+Tablespace online</B></TD><TD VALIGN=top>
+Take the selected tablespace online.</TD></TR>
+<TR><TD VALIGN=top><B>
+Tablespace offline</B></TD><TD VALIGN=top>
+Take the selected tablespace off-line.</TD></TR>
+<TR><TD VALIGN=top><B>
+Enable tablespace logging</B></TD><TD VALIGN=top>
+Enable logging for the selected tablespace.</TD></TR>
+<TR><TD VALIGN=top><B>
+Disable tablespace logging</B></TD><TD VALIGN=top>
+Disable logging for the selected tablespace.</TD></TR>
+<TR><TD VALIGN=top><B>
+Read write tablespace</B></TD><TD VALIGN=top>
+Enable read and write access to the selected tablespace.</TD></TR>
+<TR><TD VALIGN=top><B>
+Read only tablespace</B></TD><TD VALIGN=top>
+Only allow read only access to the selected tablespace.</TD></TR>
+<TR><TD VALIGN=top><B>
+Modify tablespace</B></TD><TD VALIGN=top>
+Modify the selected tablespace settings. If you don't understand the settings in this dialog
+please refer to the Oracle Server Concepts manual.</TD></TR>
+<TR><TD VALIGN=top><B>
+Modify datafile</B></TD><TD VALIGN=top>
+Modify the current datafiles settings. If you don't understand the settings in this dialog
+please refer to the Oracle Server Concepts manual.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Add tablespace</B></TD><TD VALIGN=top>
+Create a new tablespace. If you don't understand the settings in this dialog
+please refer to the Oracle Server Concepts manual.</TD></TR>
+<TR><TD VALIGN=top><B>
+Add datafile</B></TD><TD VALIGN=top>
+Create a new datafile for the currently selected tablespace. If you don't understand the
+settings in this dialog please refer to the Oracle Server Concepts manual.</TD></TR>
+<TR><TD VALIGN=top><B>
+Coalesced tablespace</B></TD><TD VALIGN=top>
+Coalesced free data in the current tablespace.</TD></TR>
+<TR><TD VALIGN=top><B>
+Move datafile</B></TD><TD VALIGN=top>
+Move a datafile to another location.</TD></TR>
+<TR><TD VALIGN=top><B>
+Change connection</B></TD><TD VALIGN=top>
+Change the connection to administrate storage for.</TD></TR>
+</TABLE><P>
+When you select a tablespace or datafile the lower part of this tool displays the objects (to the left) and extents (to the right) in that tablespace or file.
+A used extent is displayed as green in the extent view if the object it belongs to is not selected in the list to the right. Selecting an item in the list to 
+the right will paint it's extents red in the right extent view. Unallocated space is colored whie. Some information about the number of files and extents
+are displayed at the top of the extents display. Several datafiles are separated by one line of black in the extent view if a tablespace containing several
+files are viewed.
+</BODY>
+</HTML>

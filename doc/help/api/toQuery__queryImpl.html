@@ -1,0 +1,106 @@
+<HTML>
+<HEAD>
+<TITLE>class queryImpl</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class queryImpl</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"> Abstract parent of implementations of a query for a database provider
+ (See <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> and <A HREF="toConnectionProvider.html">toConnectionProvider</A>)
+    <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH colspan="2">Contains pure virtuals</TH></TR><TR><TH>Full name</TH><TD><code><A HREF="toQuery.html">toQuery</A>::queryImpl</code></TD></TR>
+<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="toconnection_h.html">toconnection.h</A>&gt;</code></TD></TR>
+<TR><TH><A HREF="full-list-toQuery__queryImpl.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI><A HREF="toQuery.html">toQuery</A> *&nbsp;<b><A HREF="#ref2">query</A></b> () 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref3">queryImpl</A></b> (<A HREF="toQuery.html">toQuery</A> *query) 
+</LI>
+<LI>virtual  &nbsp;<b><A HREF="#ref4">~queryImpl</A></b> () 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref5">execute</A></i></b> (void) 
+</LI>
+<LI>virtual  <A HREF="toQValue.html">toQValue</A> &nbsp;<b><i><A HREF="#ref6">readValue</A></i></b> (void) 
+</LI>
+<LI>virtual  bool &nbsp;<b><i><A HREF="#ref7">eof</A></i></b> (void) 
+</LI>
+<LI>virtual  int &nbsp;<b><i><A HREF="#ref8">rowsProcessed</A></i></b> (void) 
+</LI>
+<LI>virtual  std::list<queryDescribe> &nbsp;<b><i><A HREF="#ref9">describe</A></i></b> (void) 
+</LI>
+<LI>virtual  int &nbsp;<b><i><A HREF="#ref10">columns</A></i></b> (void) 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref11">cancel</A></i></b> (void) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Abstract parent of implementations of a query for a database provider
+ (See <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> and <A HREF="toConnectionProvider.html">toConnectionProvider</A>)
+   </p>
+<A NAME="query"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toQuery.html">toQuery</A> *&nbsp;<strong>query</strong> ()
+<br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p></p><p> Get the parent query object. All the parameters of the query must be read from here.
+ nothing is passed to the functions.
+     </p>
+<A NAME="queryImpl"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>queryImpl</strong> (<A HREF="toQuery.html">toQuery</A> *query)
+<br></td><td align="right"><h3><strong>queryImpl</strong></h3></td></tr></table><p></p><p> Create a query implementation. The constructor must not perform any actions with the
+ database that could block for a noticable time (Like execute or parse a query). The
+ data for the query may not be available when this object created.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>query</i></TD><TD align="left" valign="top">Parent query object.
+     </TD></TR>
+</TABLE></P>
+<A NAME="~queryImpl"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~queryImpl</strong> ()
+<br></td><td align="right"><h3><strong>~queryImpl</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Destroy query implementation.
+     </p>
+<A NAME="execute"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>execute</strong></i> (void)
+<br></td><td align="right"><h3><i><strong>execute</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Execute a query. Parameters can be gotten from the <A HREF="toQuery.html#toQuery">toQuery</A> object.
+     </p>
+<A NAME="readValue"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toQValue.html">toQValue</A> &nbsp;<i><strong>readValue</strong></i> (void)
+<br></td><td align="right"><h3><i><strong>readValue</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Read the next value from the stream.
+</p>
+<p><b>Returns</b>: The value read from the query.
+     </p>
+<A NAME="eof"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<i><strong>eof</strong></i> (void)
+<br></td><td align="right"><h3><i><strong>eof</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Check if the end of the query has been reached.
+</p>
+<p><b>Returns</b>: True if all values have been read.
+     </p>
+<A NAME="rowsProcessed"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<i><strong>rowsProcessed</strong></i> (void)
+<br></td><td align="right"><h3><i><strong>rowsProcessed</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Get the number of rows processed in the last executed query.
+     </p>
+<A NAME="describe"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<queryDescribe> &nbsp;<i><strong>describe</strong></i> (void)
+<br></td><td align="right"><h3><i><strong>describe</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Describe the currently running query.
+</p>
+<p><b>Returns</b>: A list of column descriptions of the query.
+     </p>
+<A NAME="columns"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<i><strong>columns</strong></i> (void)
+<br></td><td align="right"><h3><i><strong>columns</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Get number of columns in the resultset.
+</p>
+<p><b>Returns</b>: Column number.
+     </p>
+<A NAME="cancel"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>cancel</strong></i> (void)
+<br></td><td align="right"><h3><i><strong>cancel</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Cancel the current execution of a query. This will usually be called from another
+ thread than is executing the query.
+     </p>
+<HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:49:58 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

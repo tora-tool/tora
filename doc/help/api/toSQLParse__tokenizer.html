@@ -1,0 +1,107 @@
+<HTML>
+<HEAD>
+<TITLE>class tokenizer</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class tokenizer</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"> Abstract class to define a source of tokens for the parser. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH colspan="2">Contains pure virtuals</TH></TR><TR><TH>Full name</TH><TD><code><A HREF="toSQLParse.html">toSQLParse</A>::tokenizer</code></TD></TR>
+<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="tosqlparse_h.html">tosqlparse.h</A>&gt;</code></TD></TR>
+<TR><TH>Inherited by</TH><TD><A HREF="toSQLParse__editorTokenizer.html">editorTokenizer</A>, <A HREF="toSQLParse__stringTokenizer.html">stringTokenizer</A></TD></TR>
+<TR><TH><A HREF="full-list-toSQLParse__tokenizer.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref4">tokenizer</A></b> (int offset=0,int line=0) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref5">tokenizer</A></b> (<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &analyzer,int offset=0,int line=0) 
+</LI>
+<LI>virtual  &nbsp;<b><A HREF="#ref6">~tokenizer</A></b> () 
+</LI>
+<LI>virtual  <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<b><i><A HREF="#ref7">getToken</A></i></b> (bool forward=true,bool comment=false) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref8">setAnalyzer</A></b> (<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &analyzer) 
+</LI>
+<LI>virtual  <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &&nbsp;<b><A HREF="#ref9">analyzer</A></b> () 
+</LI>
+<LI>virtual  int &nbsp;<b><A HREF="#ref10">line</A></b> (void) 
+</LI>
+<LI>virtual  int &nbsp;<b><A HREF="#ref11">offset</A></b> (void) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref12">setOffset</A></b> (int offset) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref13">setLine</A></b> (int line) 
+</LI>
+<LI>virtual  <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<b><i><A HREF="#ref14">remaining</A></i></b> (bool eol) 
+</LI>
+</ul><h4>Protected Members</h4><ul><LI>int <b><A HREF="#ref2">Offset</A></b></LI>
+<LI>int <b><A HREF="#ref3">Line</A></b></LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Abstract class to define a source of tokens for the parser.
+   </p>
+<A NAME="Offset"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int  <strong>Offset</strong>
+</td><td align="right"><h3><strong>Offset</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Line"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int  <strong>Line</strong>
+</td><td align="right"><h3><strong>Line</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="tokenizer"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>tokenizer</strong> (int offset=0,int line=0)
+<br></td><td align="right"><h3><strong>tokenizer</strong></h3></td></tr></table><p></p><p> Create a tokenizer. Optionally specify which line and offset to start at.
+     </p>
+<A NAME="tokenizer"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>tokenizer</strong> (<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &analyzer,int offset=0,int line=0)
+<br></td><td align="right"><h3><strong>tokenizer</strong></h3></td></tr></table><p></p><p> Create a tokenizer. Optionally specify which line and offset to start at.
+     </p>
+<A NAME="~tokenizer"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~tokenizer</strong> ()
+<br></td><td align="right"><h3><strong>~tokenizer</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="getToken"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<i><strong>getToken</strong></i> (bool forward=true,bool comment=false)
+<br></td><td align="right"><h3><i><strong>getToken</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Get a token from the string.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>forward</i></TD><TD align="left" valign="top">Go forward or backwards to get next token.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>comment</i></TD><TD align="left" valign="top">Include comments as tokens.
+     </TD></TR>
+</TABLE></P>
+<A NAME="setAnalyzer"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setAnalyzer</strong> (<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &analyzer)
+<br></td><td align="right"><h3><strong>setAnalyzer</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Specify the syntax analyzer to use for the tokanizer
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>analyzer</i></TD><TD align="left" valign="top">     </TD></TR>
+</TABLE></P>
+<A NAME="analyzer"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &&nbsp;<strong>analyzer</strong> ()
+<br></td><td align="right"><h3><strong>analyzer</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="line"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>line</strong> (void)
+<br></td><td align="right"><h3><strong>line</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get the current line of the tokenizer. A line is defined by a \n character
+     </p>
+<A NAME="offset"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>offset</strong> (void)
+<br></td><td align="right"><h3><strong>offset</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Current offset of the tokenizer (Should point to the character after the last token in the specified direction)
+     </p>
+<A NAME="setOffset"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setOffset</strong> (int offset)
+<br></td><td align="right"><h3><strong>setOffset</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Set a new offset of tokenzer.
+     </p>
+<A NAME="setLine"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setLine</strong> (int line)
+<br></td><td align="right"><h3><strong>setLine</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Set new current line of tokenizer.
+ This will not affect the current position of the tokenizer.
+     </p>
+<A NAME="remaining"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<i><strong>remaining</strong></i> (bool eol)
+<br></td><td align="right"><h3><i><strong>remaining</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Get the data remaining after the current position.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>eol</i></TD><TD align="left" valign="top">If true end of line, otherwise end of tokenizer.
+     </TD></TR>
+</TABLE></P>
+<HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:49:58 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

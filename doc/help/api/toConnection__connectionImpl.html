@@ -1,0 +1,179 @@
+<HTML>
+<HEAD>
+<TITLE>class connectionImpl</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class connectionImpl</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"> This class is an abstract baseclass to actually implement the comunication with the
+ database. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH colspan="2">Contains pure virtuals</TH></TR><TR><TH>Full name</TH><TD><code><A HREF="toConnection.html">toConnection</A>::connectionImpl</code></TD></TR>
+<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="toconnection_h.html">toconnection.h</A>&gt;</code></TD></TR>
+<TR><TH><A HREF="full-list-toConnection__connectionImpl.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI><A HREF="toConnection.html">toConnection</A> &&nbsp;<b><A HREF="#ref2">connection</A></b> (void) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref3">connectionImpl</A></b> (<A HREF="toConnection.html">toConnection</A> *conn) 
+</LI>
+<LI>virtual  &nbsp;<b><A HREF="#ref4">~connectionImpl</A></b> () 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref5">commit</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *) 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref6">rollback</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *) 
+</LI>
+<LI>virtual  bool &nbsp;<b><A HREF="#ref7">handleMultipleQueries</A></b> () 
+</LI>
+<LI>virtual  <A HREF="toConnectionSub.html">toConnectionSub</A> *&nbsp;<b><i><A HREF="#ref8">createConnection</A></i></b> (void) 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref9">closeConnection</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *) 
+</LI>
+<LI>virtual  <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &nbsp;<b><i><A HREF="#ref10">version</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *) 
+</LI>
+<LI>virtual  <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<b><A HREF="#ref11">quote</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name) 
+</LI>
+<LI>virtual  <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<b><A HREF="#ref12">unQuote</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name) 
+</LI>
+<LI>virtual  <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &&nbsp;<b><A HREF="#ref13">analyzer</A></b> () 
+</LI>
+<LI>virtual  std::list<objectName> &nbsp;<b><A HREF="#ref14">objectNames</A></b> (void) 
+</LI>
+<LI>virtual  std::map<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>,objectName> &nbsp;<b><A HREF="#ref15">synonymMap</A></b> (std::list<objectName> &objects) 
+</LI>
+<LI>virtual  <A HREF="#toQDescList">toQDescList</A> &nbsp;<b><A HREF="#ref16">columnDesc</A></b> (const objectName &table) 
+</LI>
+<LI>virtual  <A HREF="toQuery__queryImpl.html">toQuery::queryImpl</A> *&nbsp;<b><i><A HREF="#ref17">createQuery</A></i></b> (<A HREF="toQuery.html">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn) 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref18">execute</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &sql,<A HREF="#toQList">toQList</A> &params) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref19">parse</A></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &sql) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class is an abstract baseclass to actually implement the comunication with the
+ database. 
+ (See also toQuery::queryImpl and <A HREF="toConnectionProvider.html">toConnectionProvider</A>)
+   </p>
+<A NAME="connection"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &&nbsp;<strong>connection</strong> (void)
+<br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p></p><p> Get the parent connection object of this connection.
+     </p>
+<A NAME="connectionImpl"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>connectionImpl</strong> (<A HREF="toConnection.html">toConnection</A> *conn)
+<br></td><td align="right"><h3><strong>connectionImpl</strong></h3></td></tr></table><p></p><p> Create a new connection implementation for a connection.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to implement.
+     </TD></TR>
+</TABLE></P>
+<A NAME="~connectionImpl"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~connectionImpl</strong> ()
+<br></td><td align="right"><h3><strong>~connectionImpl</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Destructor.
+     </p>
+<A NAME="commit"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>commit</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
+<br></td><td align="right"><h3><i><strong>commit</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Commit the supplied actual database connection.
+     </p>
+<A NAME="rollback"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>rollback</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
+<br></td><td align="right"><h3><i><strong>rollback</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Rollback the supplied actual database connection.
+     </p>
+<A NAME="handleMultipleQueries"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>handleMultipleQueries</strong> ()
+<br></td><td align="right"><h3><strong>handleMultipleQueries</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> If not true can never run more than one query per connection sub and TOra will
+ work around this limitation by opening more connections if needed.
+     </p>
+<A NAME="createConnection"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toConnectionSub.html">toConnectionSub</A> *&nbsp;<i><strong>createConnection</strong></i> (void)
+<br></td><td align="right"><h3><i><strong>createConnection</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Create a new connection to the database.
+     </p>
+<A NAME="closeConnection"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>closeConnection</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
+<br></td><td align="right"><h3><i><strong>closeConnection</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Close a connection to the database.
+     </p>
+<A NAME="version"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &nbsp;<i><strong>version</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
+<br></td><td align="right"><h3><i><strong>version</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Get the version of the database connected to.
+     </p>
+<A NAME="quote"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<strong>quote</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name)
+<br></td><td align="right"><h3><strong>quote</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Return a string representation to address an object.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">The name to be quoted.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: String addressing table.
+     </p>
+<A NAME="unQuote"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<strong>unQuote</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name)
+<br></td><td align="right"><h3><strong>unQuote</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Perform the opposite of <A HREF="toConnection__connectionImpl.html#quote">quote</A>.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">The name to be un-quoted.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: String addressing table.
+     </p>
+<A NAME="analyzer"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &&nbsp;<strong>analyzer</strong> ()
+<br></td><td align="right"><h3><strong>analyzer</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p>
+ Get syntax analyzer for connection
+</p>
+<p><b>Returns</b>: A reference to the syntax analyzer to use for the connection.
+     </p>
+<A NAME="objectNames"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<objectName> &nbsp;<strong>objectNames</strong> (void)
+<br></td><td align="right"><h3><strong>objectNames</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Extract available objects to query for connection. Any access to the
+ database should always be run using a long running query. If something
+ goes wrong should throw exception.
+</p>
+<p><b>Returns</b>: List of available objects.
+     </p>
+<A NAME="synonymMap"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::map<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>,objectName> &nbsp;<strong>synonymMap</strong> (std::list<objectName> &objects)
+<br></td><td align="right"><h3><strong>synonymMap</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get synonyms available for connection. Any access to the
+ database should always be run using a long running query. If something
+ goes wrong should throw exception.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>objects</i></TD><TD align="left" valign="top">Available objects for the connection. Objects
+                are sorted in owner and name order. Don't modify
+                this list.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: Map of synonyms to objectnames.
+     </p>
+<A NAME="columnDesc"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="#toQDescList">toQDescList</A> &nbsp;<strong>columnDesc</strong> (const objectName &table)
+<br></td><td align="right"><h3><strong>columnDesc</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="createQuery"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toQuery__queryImpl.html">toQuery::queryImpl</A> *&nbsp;<i><strong>createQuery</strong></i> (<A HREF="toQuery.html">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn)
+<br></td><td align="right"><h3><i><strong>createQuery</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Create a new query implementation for this connection.
+</p>
+<p><b>Returns</b>: A query implementation, allocated with new.
+     </p>
+<A NAME="execute"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>execute</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &sql,<A HREF="#toQList">toQList</A> &params)
+<br></td><td align="right"><h3><i><strong>execute</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Execute a query on an actual connection without caring about the result.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to execute on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+     </TD></TR>
+</TABLE></P>
+<A NAME="parse"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>parse</strong> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &sql)
+<br></td><td align="right"><h3><strong>parse</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Parse a query on an actual connection and report any syntax problems encountered.
+ Defaults to not implemented.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to execute on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to parse
+     </TD></TR>
+</TABLE></P>
+<HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:49:58 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

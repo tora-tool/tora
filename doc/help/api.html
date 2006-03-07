@@ -1,0 +1,254 @@
+<HTML>
+<HEAD>
+<TITLE>TOra Tool Tutorial</TITLE>
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<H1>TOra Tool Tutorial</H1>
+This tutorial will create a simple tool that can execute an SQL statement and display it's
+content in a list. This tutorial assumes you have knowledge of C++ and Qt programming.<p>
+
+First of all we create an include file which defines the tool widget. This is the window
+that will be displayed when the a tool window is created. How that happens comes later.<p>
+
+<table width=100% border=0><tr><td bgcolor="#BEEAE0">
+<pre>
+#ifndef TOSIMPLEQUERY_H
+#define TOSIMPLEQUERY_H
+
+#include "totool.h"
+
+class <A HREF=api/toResultView.html>toResultView</A>;
+class QLineEdit;
+class <A HREF=api/toConnection.html>toConnection</A>;
+
+class toSimpleQuery : public <A HREF=api/toToolWidget.html>toToolWidget</A> {
+  Q_OBJECT
+
+  <A HREF=api/toResultView.html>toResultView</A> *Result;
+  QLineEdit *Statement;
+private slots:
+  void execute(void);
+public:
+  toSimpleQuery(QWidget *parent,<A HREF=api/toConnection.html>toConnection</A> &connection);
+};
+
+#endif
+</pre></td></tr><tr><td align=right>tosimplequery.h</td></tr></table>
+
+If this file is put in the main TOra source directory the configure script will generate the
+appropriate moc file which will be needed later. If you don't know what moc is, please go back
+to the Qt manual to read up on slots and signals.<p>
+The rest is pretty straight forward and will be much clearer after we start working our
+way through the implementation of this tool.<p>
+
+The first thing we need to do is create a tool description which is done by subclassing the
+<A HREF=api/toTool.html>toTool</A> class. This is how we implement this class for this function.
+<p>
+<table width=100% border=0><tr><td bgcolor="#BEEAE0">
+<pre>
+#include "totool.h"
+#include "tosimplequery.h"
+
+static char * tosimplequery_xpm[] = {
+"16 16 3 1",
+" 	c None",
+".	c #000000",
+"+	c #FFFFFF",
+"       ......   ",
+"      ..++++.   ",
+"     .+.++++.   ",
+"    .++.++++.   ",
+"   .....++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   ..........   "};
+
+class toSimpleQueryTool : public <A HREF=api/toTool.html>toTool</A> {
+protected:
+  virtual char **pictureXPM(void)
+  { return tosimplequery_xpm; }
+public:
+  toSimpleQueryTool()
+    : toTool(203,"Simple Query")
+  { }
+  virtual const char *menuItem()
+  { return "Simple Query"; }
+  virtual QWidget *toolWindow(QWidget *parent,<A HREF=api/toConnection.html>toConnection</A> &connection)
+  {
+    return new toSimpleQuery(parent,connection);
+  }
+};
+
+static toSimpleQueryTool SimpleQueryTool;
+</pre></td></tr><tr><td align=right>tosimplequery.cpp</td></tr></table>
+
+The first thing that happens is that we include the header file which defines the tool widget and
+the tool definition header files. Even if this is included in the <code>tosimplequery.h</code> it
+is good practice not to assume any extra files are included by header files.<p>
+
+Next comes a definition of an xpm pixmap. Normally these are placed in the <code>icons</code>
+directory and then included into the file as you can see in the TOra source. This is placed
+inline for clarity.<p>
+
+The next one is the big one. Here we define the tool class which has a few important
+virtual functions.<p>
+<table border=0 width=100%>
+<tr><td valign=top><code>pictureXPM</code></td>
+<td>This function should if defined return a pointer to a xpm definition.
+This will then be used for toolbar icon, menu icon and tool window icon.
+</td></tr>
+<tr><td valign=top><code>menuItem</code></td>
+<td>Should return a string containing the name of the menu item to add to the tools menu. This
+is also used for a tip for the toolbar icon by default.
+</td></tr>
+<tr><td valign=top><code>toolWindow</code></td>
+<td>This function will create a new tool widget and return a pointer to it. It doesn't need
+to create a widget, then it should then return NULL. Some tools there might only be one per
+connection for instance.
+</td></tr>
+</table><p>
+
+The number in the constructor is a priority indicator that denote where in the list of
+tools this tool should be inserted, between each 100 step a separator is inserted into
+the toolbar and menubar.<p>
+
+And last a not so obvious line where the an instance of the tool descriptor is instantiated.
+This is a feature that is used a lot in TOra. This will ensure that all tools are registered
+when the application is started. It also works when using modules, if this is compiled as
+a module the tool will be instantiated on loading without any hassle with functions with
+predefined names and such stuff.<p>
+
+Lastly comes the implementation of the tool widget which is not much longer. I have divided
+this into several parts to simplify explaining them<p>
+<table width=100% border=0><tr><td bgcolor="#BEEAE0">
+<pre>
+#include &lt;list&gt;
+
+#include &lt;qtoolbar.h&gt;
+#include &lt;qlabel.h&gt;
+#include &lt;qtoolbutton.h&gt;
+#include &lt;qlineedit.h&gt;
+
+#include "tosimplequery.h"
+#include "toresultview.h"
+#include "toparamget.h"
+#include "tochangeconnection.h"
+
+#include "tosimplequery.moc"
+
+static char * execute_xpm[] = {
+"16 16 3 1",
+" 	c None",
+".	c #000000",
+"+	c #0FFE14",
+"                ",
+"                ",
+"                ",
+"     .          ",
+"     ..         ",
+"     .+.        ",
+"     .++.       ",
+"     .+++.      ",
+"     .+++.      ",
+"     .++.       ",
+"     .+.        ",
+"     ..         ",
+"     .          ",
+"                ",
+"                ",
+"                "};
+
+toSimpleQuery::toSimpleQuery(QWidget *main,<A HREF=api/toConnection.html>toConnection</A> &connection)
+  : <A HREF=api/toConnection.html>toToolWidget</A>(SimpleQueryTool,"simplequery.html",main,connection)
+{
+  QToolBar *toolbar=toAllocBar(this,"Simple Query",connection.description());
+  QPixmap executePixmap((const char **)execute_xpm);
+  new QToolButton(executePixmap,
+                  "Execute current statement",
+                  "Execute current statement",
+		  this,SLOT(execute()),
+		  toolbar);
+  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  new <A HREF=api/toChangeConnection.html>toChangeConnection</A>(toolbar);
+</pre></td></tr><tr><td align=right>tosimplequery.cpp</td></tr></table><p>
+
+In this part the parent constructor is called and the toolbar is set up. Also note the inclusion
+of the moc file which by convention is called tosimplequery.moc.
+
+One thing worth noticing here is the <code>toAllocBar</code> which is used to be able to
+transparently support either using KToolBar or QToolBar depending on whether this is a Qt or
+KDE application. This is very important since TOra also supports windows to which KDE is not available.<p>
+
+The second part is the <code>setStretchableWidget</code> call which is used to indicate that
+an empty label should be stretch instead of the tool button which just looks really weird.<p>
+
+Also worth noting is that the <A HREF=api/toToolWidget.html>toToolWidget</A> class is derived
+from QVBox so any widgets constructed in this widget will be lined up vertically in the order
+of creation.<p>
+
+Next up is creating our widgets and connecting them.<p>
+<table width=100% border=0><tr><td bgcolor="#BEEAE0">
+<pre>
+  Statement=new QLineEdit(this);
+  Result=new <A HREF=api/toResultView.html>toResultView</A>(this);
+  connect(Statement,SIGNAL(returnPressed()),this,SLOT(execute()));
+}
+
+</pre></td></tr><tr><td align=right>tosimplequery.cpp</td></tr></table><p>
+
+This just adds two additional widgets and connect the <code>returnPressed</code> signal to
+the <code>execute</code> slot. One thing to realise here is that all the toResult children
+will use the connection of the closest parent of type
+<A HREF=api/toToolWidget.html>toToolWidget</A> in the widget hierarchy. And now the last
+thing to do is implement the execute method.<p>
+
+<table width=100% border=0><tr><td bgcolor="#BEEAE0">
+<pre>
+
+void toSimpleQuery::execute(void)
+{
+  try {
+    QString sql=Statement->text();
+    toQList params=<A HREF=api/toParamGet.html>toParamGet</A>::getParam(this,sql);
+    Result->query(sql,params);
+  } TOCATCH
+}
+
+</pre></td></tr><tr><td align=right>tosimplequery.cpp</td></tr></table><p>
+
+The toParamGet::getParam function is used to ask for bind values in the query string. To understand
+what I mean try executing the query "select :hello from dual" when you try the result. The toQList
+is simple a list of <A HREF=api/toQValue.html>toQValue</A> which can hold different datatypes and
+converting between them transparently.<P>
+
+Now finally to compile this module you need to add the <code>tosimplequery.cpp</code> file
+to <code>SOURCES</code> define in the file <code>Makefile</code>. To build a plugin you also
+need to add the following line.<p>
+
+<table width=100% border=0><tr><td bgcolor="#BEEAE0">
+<pre>
+plugins/tosimplequery.tso:objs/tosimplequery.o
+</pre></td></tr><tr><td align=right>Makefile</td></tr></table><p>
+
+This should go among the other plugin definitions and you also need to add the
+<code>plugins/tosimplequery.tso</code> to the dependencies of <code>tora-plugin</code>.<p>
+
+You must rerun configure for the tosimplequery.moc file to be generated the first time.
+Any subsequent changes should update the moc file automatically from the Makefile.<p>
+
+Here are the example files in their entire.<p>
+<A HREF=tosimplequery.h>tosimplequery.h</A><br>
+<A HREF=tosimplequery.cpp>tosimplequery.cpp</a><p>
+
+Hopefully this is a starting point to help you read the rest of the documentation and
+start cranking out those plugins.
+</BODY>
+</HTML>
