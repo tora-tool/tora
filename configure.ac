@@ -2,11 +2,12 @@
 
 AC_INIT([tora],[1.3.22svn],[tora-develop@lists.sourceforge.net])
 AC_PREREQ([2.59])
+AC_CONFIG_AUX_DIR(config)
 # Every other copy of the package version number gets its value from here
 AM_INIT_AUTOMAKE
 
 # create a config.h file (Automake will add -DHAVE_CONFIG_H)
-AC_CONFIG_SRCDIR([main.cpp])
+AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
 mrj_SET_PREFIX
 
@@ -56,5 +57,9 @@ AM_CONDITIONAL(ENABLE_MONO, test "$enable_mono" = yes)
 AM_CONDITIONAL(HAVE_ORACLE, test "$enable_oracle" = yes)
 
 AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([src/Makefile])
+AC_CONFIG_FILES([ext/Makefile])
+AC_CONFIG_FILES([doc/Makefile])
+AC_CONFIG_FILES([utils/Makefile])
 AC_CONFIG_FILES([rpm/tora.spec])
 AC_OUTPUT
