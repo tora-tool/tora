@@ -1,6 +1,5 @@
 ##   -*- mode: autoconf; tab-width: 2; -*-
 
-m4_include([m4/qtkde.m4])
 
 dnl mrj: set default prefix for tora
 AC_DEFUN([mrj_SET_PREFIX],
@@ -124,5 +123,3 @@ AC_DEFUN([jm_CHECK_TYPE_STRUCT_UTIMBUF],
   fi
 ])
 
-m4_include([m4/oracle.m4])
-m4_include([m4/pcre.m4])
