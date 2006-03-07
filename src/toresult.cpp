@@ -1,0 +1,299 @@
+/*****
+*
+* TOra - An Oracle Toolkit for DBA's and developers
+* Copyright (C) 2003-2005 Quest Software, Inc
+* Portions Copyright (C) 2005 Other Contributors
+* 
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation;  only version 2 of
+* the License is valid for this program.
+* 
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+*      As a special exception, you have permission to link this program
+*      with the Oracle Client libraries and distribute executables, as long
+*      as you follow the requirements of the GNU GPL in regard to all of the
+*      software in the executable aside from Oracle client libraries.
+*
+*      Specifically you are not permitted to link this program with the
+*      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+*      And you are not permitted to distribute binaries compiled against
+*      these libraries without written consent from Quest Software, Inc.
+*      Observe that this does not disallow linking to the Qt Free Edition.
+*
+*      You may link this product with any GPL'd Qt library such as Qt/Free
+*
+* All trademarks belong to their respective owners.
+*
+*****/
+
+#include "utils.h"
+
+#include "toconf.h"
+#include "toresult.h"
+#include "totabwidget.h"
+#include "totool.h"
+
+#include <qtabwidget.h>
+#include <qtimer.h>
+
+#include "toresult.moc"
+
+
+toResult::toResult()
+        : Slots(this)
+{
+    QTimer::singleShot(1, &Slots, SLOT(setup()));
+    Handled = true;
+    Tabs = NULL;
+    QueryReady = FromSQL = false;
+    TabWidget = NULL;
+    ForceRefresh = false;
+}
+
+void toResult::changeHandle(void)
+{
+    QWidget *widget = dynamic_cast<QWidget *>(this);
+    if (widget)
+    {
+        widget->setEnabled(handled());
+        if (handled())
+        {
+            if (TabWidget && Tabs && handled())
+            {
+                toTabWidget *tab = dynamic_cast<toTabWidget *>(Tabs);
+                if (tab)
+                    tab->showTab(TabWidget);
+                else
+                    Tabs->setTabEnabled(TabWidget, true);
+                TabWidget = NULL;
+            }
+        }
+        else
+        {
+            QWidget *par = widget->parentWidget();
+            QWidget *widgetInStack = widget;
+            while (par && (par->inherits("QVBox") || par->isA("QWidgetStack") || (Tabs && Tabs != par)))
+            {
+                if (!par->isA("QWidgetStack"))
+                {
+                    widgetInStack = par;
+                }
+                par = par->parentWidget();
+            }
+            if (par && par->inherits("QTabWidget"))
+            {
+                if (!Tabs)
+                    Tabs = (QTabWidget *)par;
+                toTabWidget *tab = dynamic_cast<toTabWidget *>(Tabs);
+                if (tab)
+                    tab->hideTab(widgetInStack);
+                else
+                    Tabs->setTabEnabled(widgetInStack, false);
+                TabWidget = widgetInStack;
+            }
+        }
+    }
+}
+
+void toResult::setHandle(bool ena)
+{
+    bool last = Handled;
+    try
+    {
+        if (!ena)
+            Handled = false;
+        else
+            Handled = canHandle(connection());
+    }
+    catch (...)
+    {
+        Handled = false;
+    }
+    if (last != Handled)
+        changeHandle();
+}
+
+void toResult::connectionChanged(void)
+{
+    ForceRefresh = true;
+    if (FromSQL)
+    {
+        try
+        {
+            if (QueryReady)
+                query(toSQL::string(sqlName().latin1(), connection()), (const toQList)Params);
+            else if (FromSQL)
+                SQL = toSQL::string(sqlName().latin1(), connection());
+            setHandle(true);
+        }
+        catch (...)
+        {
+            setHandle(false);
+        }
+    }
+    else
+        setHandle(true);
+
+}
+
+toTimer *toResult::timer(void)
+{
+    return toCurrentTool(dynamic_cast<QWidget *>(this))->timer();
+}
+
+toConnection &toResult::connection(void)
+{
+    return toCurrentConnection(dynamic_cast<QWidget *>(this));
+}
+
+void toResult::query(const QString &sql)
+{
+    toQList params;
+    query(sql, (const toQList)params);
+}
+
+void toResult::query(const toSQL &sql)
+{
+    setSQLName(sql.name());
+    FromSQL = true;
+    try
+    {
+        toQList params;
+        query((const QString)toSQL::string(sql, connection()), (const toQList)params);
+        setHandle(true);
+    }
+    catch (...)
+    {
+        setHandle(false);
+    }
+}
+
+void toResult::query(const toSQL &sql, toQList &par)
+{
+    setSQLName(sql.name());
+    FromSQL = true;
+    try
+    {
+        query((const QString)toSQL::string(sql, connection()), (const toQList)par);
+        setHandle(true);
+    }
+    catch (...)
+    {
+        setHandle(false);
+    }
+}
+
+void toResult::setSQL(const toSQL &sql)
+{
+    setSQLName(sql.name());
+    FromSQL = true;
+
+    try
+    {
+        Params.clear();
+        setSQL(toSQL::string(sql, connection()));
+        setHandle(true);
+    }
+    catch (...)
+    {
+        setHandle(false);
+    }
+}
+
+void toResult::changeParams(const QString &Param1, const QString &Param2, const QString &Param3)
+{
+    toQList params;
+    toPush(params, toQValue(Param1));
+    toPush(params, toQValue(Param2));
+    toPush(params, toQValue(Param3));
+    query((const QString)SQL, (const toQList)params);
+}
+
+void toResult::changeParams(const QString &Param1, const QString &Param2)
+{
+    toQList params;
+    toPush(params, toQValue(Param1));
+    toPush(params, toQValue(Param2));
+    query((const QString)SQL, (const toQList)params);
+}
+
+void toResult::changeParams(const QString &Param1)
+{
+    toQList params;
+    toPush(params, toQValue(Param1));
+    query((const QString)SQL, (const toQList)params);
+}
+
+void toResultObject::connectionChanged(void)
+{
+    Result->connectionChanged();
+}
+
+void toResultObject::setup(void)
+{
+    QObject *obj = dynamic_cast<QObject *>(Result);
+    if (!obj)
+    {
+        toStatusMessage(tr("Internal error, toResult is not a descendant of toResult"));
+        return ;
+    }
+    try
+    {
+        QObject::connect(toCurrentTool(obj), SIGNAL(connectionChange()), this, SLOT(connectionChanged()));
+    }
+    catch (...)
+    {}
+    try
+    {
+        if (Result->Handled)
+            Result->Handled = Result->canHandle(Result->connection());
+    }
+    catch (...)
+    {
+        Result->Handled = false;
+    }
+    if (!Result->Handled)
+        Result->changeHandle();
+}
+
+bool toResult::setSQLParams(const QString &sql, const toQList &par)
+{
+    bool force = ForceRefresh;
+    ForceRefresh = false;
+    if (!toTool::globalConfig(CONF_DONT_REREAD, "Yes").isEmpty())
+    {
+        if (SQL == sql && par.size() == Params.size())
+        {
+            toQList::iterator i = ((toQList &)par).begin();
+            toQList::iterator j = Params.begin();
+            while (i != ((toQList &)par).end() && j != Params.end())
+            {
+                if (QString(*i) != QString(*j))
+                    break;
+                i++;
+                j++;
+            }
+            if (i == ((toQList &)par).end() && j == Params.end())
+                return force;
+        }
+    }
+    SQL = sql;
+    Params = par;
+    QueryReady = true;
+    return true;
+}
+
+void toResult::refresh()
+{
+    ForceRefresh = true;
+    query((const QString &)SQL, (const toQList &)Params);
+}
