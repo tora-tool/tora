@@ -11,7 +11,7 @@ TRANSLATIONS= \
 	tora_it.ts \
 	tora_toad.ts
 
-AM_CPPFLAGS = $(KDE_INCLUDES) $(QT_INCLUDES) $(LTDLINCL)
+AM_CPPFLAGS = -I$(top_srcdir)/ext/otl $(KDE_INCLUDES) $(QT_INCLUDES) $(LTDLINCL)
 AM_CPPFLAGS += $(PCRE_CFLAGS) \
 	-DDEFAULT_PLUGIN_DIR=\"$(libdir)\" \
 	-DTOVERSION=\"$(PACKAGE_VERSION)\" \
@@ -140,7 +140,7 @@ EXTRA_tora_SOURCES = toalert.cpp toalert.h \
     $(EXTRA_ORACLE_MONO_SOURCE)
 endif
 
-tora_SOURCES=chex.pl main.cpp aclocal.m4 \
+tora_SOURCES=main.cpp \
 	toabout.cpp toabout.h \
 	toaboutui.cpp toaboutui.h \
 	tobackground.cpp tobackground.h \
@@ -229,32 +229,14 @@ UI_FILES =	toaboutui.ui \
 		tonewconnectionui.ui \
 		tostorageprefsui.ui
 
-READMES = README\
-	README.CODESTYLE \
-	README.CVS \
-	README.LICENSE \
-	README.OSX \
-	README.RELEASE \
-	README.WINDOWS 
 
-EXTRA_DIST = debian \
-	help \
-	icons \
+EXTRA_DIST = icons \
 	qtlegacy \
-	rpm \
 	templates \
 	windows \
 	$(UI_FILES) \
-	BUGS \
-	COPYRIGHT \
-	Makefile.OSX \
-	Makefile.mingw \
 	Makefile.am \
-	$(READMES) \
 	LICENSE.h \
-	LICENSE.txt \
-	chex.pl \
-	m4 \
 	toconf.h \
 	todefaultkeywords.h \
 	toextratranslations.cpp \
@@ -266,12 +248,10 @@ EXTRA_DIST = debian \
 	toqvalue.h \
 	toresultresources.h \
 	$(TRANSLATIONS) \
-	autogen.sh \
-	otlv4.h \
 	LICENSE.h
 
 # this is a hack (but it *is* mentioned in the automake manual, of all
-# places). EXTRA_DIST includes all files, even things like SVN
+# places). EXTRA_DIST includes all files, even things like CVS
 # folders. so we delete them here. but specifying all the files in
 # those subdirs would suck more because many of them are generated
 # (help api for one).
@@ -501,8 +481,8 @@ BUILT_SOURCES = \
 	totuningoverviewui.cpp \
 	totuningsettingui.cpp \
 	toworksheetsetupui.cpp \
-	tora_toad.h \
 	tora_toad.qm \
+	tora_toad.h \
 	$(filter %.qm,$(TRANSLATIONS:%.ts=%.qm))
 
 # have_oracle conditional. these libraries are not built if oracle is
@@ -713,7 +693,7 @@ libtoworksheet_la_SOURCES = toworksheet.cpp toworksheet.h \
 	$(UIC) -o $@ -i $^
 
 %.moc: %.h
-	@if ! test -d qtlegacy; then mkdir qtlegacy; fi
+	@if ! test -d qtlegacy; then mkdir qtlegacy; echo "create qtlegacy"; fi
 	$(MOC) -o $@ $<
 
 %.qm: %.ts
@@ -727,7 +707,7 @@ clean-local:
 	done
 
 tora_toad.h: tora_toad.qm
-	perl $(top_srcdir)/chex.pl < $< > $@
+	perl $(top_srcdir)/utils/chex.pl < $(top_srcdir)/src/$< > $@
 
 tora.pro: Makefile.am
 	echo "# Not indended to be used for anything except lupdate" > tora.pro
@@ -742,7 +722,3 @@ lupdate: tora.pro
 
 lrelease: tora.pro $(TRANSLATIONS)
 	$(LRELEASE) tora.pro
-
-docdir = $(libdir)
-install-data-hook:
-	cp -dpR $(top_srcdir)/help $(docdir)
