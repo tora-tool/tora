@@ -361,6 +361,7 @@ public:
 
 protected:
     QStringList getCompletionList(QString* partial);
+    void completeWithText(QString itemText);
   
 
 private:

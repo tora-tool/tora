@@ -282,7 +282,7 @@ void toComplPopup::keyPressEvent(QKeyEvent * e){
 #else
     && e->text()!="\n"
 #endif
-  ) || e->key()==Qt::Key_Backspace){
+  && e->text()!=" ") || e->key()==Qt::Key_Backspace){
     if ( e->key()==Qt::Key_Backspace){
       TO_DEBUGOUT("Backspace");
     }else{
@@ -290,6 +290,9 @@ void toComplPopup::keyPressEvent(QKeyEvent * e){
     }
     this->editor->keyPressEvent(e);
     this->editor->autoCompleteFromAPIs();
+  }else if (e->text() && e->text().length()>0 && e->text()==" "){
+    this->editor->keyPressEvent(e);
+    this->hide();
   }else
     QListBox::keyPressEvent(e);
   
@@ -318,7 +321,6 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     debugMarker=markerDefine(Rectangle,8);
     setMarkerBackgroundColor(Qt::darkGreen,debugMarker);
     setMarginMarkerMask(1,0);
-    setAutoCompletionReplaceWord(true);
     setAutoIndent(true);
     connect(this,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(setStatusMessage(void )));
     complAPI=new QextScintillaAPIs();
@@ -358,7 +360,11 @@ static QString UpperIdent(const QString &str){
 void toHighlightedText::autoCompleteFromAPIs(){
   QString partial;
   QStringList compleList=this->getCompletionList(&partial);
-  if(!compleList.isEmpty() || popup->isVisible()){
+  if(compleList.count()==1 && compleList.first()==partial){
+    this->completeWithText(compleList.first());
+    if(popup->isVisible())
+      popup->hide();
+  }else if(!compleList.isEmpty() || popup->isVisible()){
     long position, posx, posy;
     int curCol, curRow;
     this->getCursorPosition(&curRow,&curCol);
@@ -650,26 +656,38 @@ QStringList toHighlightedText::getCompletionList(QString* partial){
   return toReturn;
 }
 
+void toHighlightedText::completeWithText(QString itemText){
+  int curline, curcol, start,end;
+  getCursorPosition (&curline, &curcol);
+  QString line = text(curline);
+  toSQLParse::editorTokenizer tokens(this, curcol, curline);
+  if (line[curcol-1]!='.'){
+    tokens.getToken(false);
+    start=tokens.offset();
+  }else{
+    start=curcol;
+  }
+  if(line[curcol].isSpace()){
+    end=curcol;
+  }else{
+    tokens.getToken(true);
+    if(tokens.line()!=curline)
+      end=line.length();
+    else
+      end=tokens.offset();
+  }
+  disconnect(this,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(positionChanged(int,int)));
+  setSelection(curline,start,curline,end);
+  this->removeSelectedText();
+  this->insert(itemText);
+  this->setCursorPosition(curline,start+itemText.length());
+  connect (this,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(positionChanged(int,int)));
+}
+  
+
 void toHighlightedText::completeFromAPI(QListBoxItem* item){
   if(item){
-    int curline, curcol, start,end;
-    getCursorPosition (&curline, &curcol);
-    QString line = text(curline);
-    toSQLParse::editorTokenizer tokens(this, curcol, curline);
-    if (line[curcol-1]!='.'){
-      tokens.getToken(false);
-      start=tokens.offset();
-    }else{
-      start=curcol;
-    }
-    tokens.getToken(true);
-    end=tokens.offset();
-    disconnect(this,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(positionChanged(int,int)));
-    setSelection(curline,start,curline,end);
-    this->removeSelectedText();
-    this->insert(item->text()); 
-    this->setCursorPosition(curline,start+item->text().length());
-    connect (this,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(positionChanged(int,int))); 
+    this->completeWithText(item->text());
   }
   popup->hide();
 }
