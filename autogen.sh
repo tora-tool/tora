@@ -78,9 +78,8 @@ rm -f config.cache
 rm -f config.log
 rm -f configure
 rm -f aclocal.m4
-rm -f config/*
 
-aclocal 
+aclocal -I config/m4
 if test "$?" != "0"; then
    err "aclocal failed. exit."
 fi
