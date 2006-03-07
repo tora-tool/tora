@@ -1,0 +1,286 @@
+<!DOCTYPE UI><UI>
+<class>toOracleSettingUI</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>toOracleSettingUI</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>361</width>
+            <height>287</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Form1</string>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget row="1"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel6_2_2_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Default date format</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>DefaultDate</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>The default dateformat to use when querying the database.</string>
+            </property>
+        </widget>
+        <widget row="0"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel6_2_3</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Checkpoint name</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>CheckPoint</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>The name of the checkpoint used when needed to rollback work.</string>
+            </property>
+        </widget>
+        <widget row="1"  column="1"  rowspan="1"  colspan="2" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>DefaultDate</cstring>
+            </property>
+        </widget>
+        <widget row="0"  column="1"  rowspan="1"  colspan="2" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>CheckPoint</cstring>
+            </property>
+        </widget>
+        <widget row="3"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel6_3_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Max long and LOB data length</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>ExplainPlan</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Max length to read from LOB or LONG data fields. LONG:s can not be specified unlimited but will be defaulted to 33000 if unlimited.</string>
+            </property>
+        </widget>
+        <widget row="3"  column="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Unlimited</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Unlimited</string>
+            </property>
+            <property stdset="1">
+                <name>checked</name>
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget row="3"  column="1" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>MaxLong</cstring>
+            </property>
+            <property stdset="1">
+                <name>enabled</name>
+                <bool>false</bool>
+            </property>
+        </widget>
+        <spacer row="6"  column="2" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer6</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <spacer row="5"  column="0"  rowspan="1"  colspan="2" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer2_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Horizontal</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="5"  column="2" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>CreatePlanTable</cstring>
+            </property>
+            <property stdset="1">
+                <name>enabled</name>
+                <bool>false</bool>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>0</vsizetype>
+                </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Create Table</string>
+            </property>
+        </widget>
+        <widget row="4"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel6_3</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Explain plan table</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>ExplainPlan</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Name of the table to put explain plan output in.</string>
+            </property>
+        </widget>
+        <widget row="4"  column="1" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ExplainPlan</cstring>
+            </property>
+        </widget>
+        <widget row="4"  column="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>KeepPlans</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Keep plans</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Keep records for the plan explanations in the plan table.</string>
+            </property>
+        </widget>
+        <widget row="2"  column="2" >
+            <class>QSpinBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>OpenCursors</cstring>
+            </property>
+            <property stdset="1">
+                <name>minValue</name>
+                <number>1</number>
+            </property>
+        </widget>
+        <widget row="2"  column="0"  rowspan="1"  colspan="2" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel1</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Maximum cursors to keep open</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>OpenCursors</cstring>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>CreatePlanTable</sender>
+        <signal>clicked()</signal>
+        <receiver>toOracleSettingUI</receiver>
+        <slot>createPlanTable()</slot>
+    </connection>
+    <connection>
+        <sender>Unlimited</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>MaxLong</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <slot access="public">createPlanTable()</slot>
+</connections>
+<tabstops>
+    <tabstop>CheckPoint</tabstop>
+    <tabstop>DefaultDate</tabstop>
+    <tabstop>OpenCursors</tabstop>
+    <tabstop>MaxLong</tabstop>
+    <tabstop>Unlimited</tabstop>
+    <tabstop>ExplainPlan</tabstop>
+    <tabstop>KeepPlans</tabstop>
+    <tabstop>CreatePlanTable</tabstop>
+</tabstops>
+</UI>
