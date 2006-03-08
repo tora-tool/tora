@@ -67,12 +67,12 @@ Building Windows installer.
         http://nsis.sourceforge.net
     
     2. Copy all the distribution files with desired directory structure
-       to the windows/installer/files directory within your TOra directory 
+       to the src/windows/installer/files directory within your TOra directory 
        structure (or use it as INSTALLDIR when building TOra and use step 9 
        of above build instrucstions).
        
     3. Run NSIS compiler GUI and then drag and drop the tora.nsi file from
-        windows/installer directory in TOra to the compiler GUI window and 
+        src/windows/installer directory in TOra to the compiler GUI window and 
         wait till installer will finish the build.
     
     
