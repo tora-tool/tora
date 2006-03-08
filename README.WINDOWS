@@ -45,16 +45,16 @@ Building with MINGW.
     
     5. Build and install QScintilla by running qscintilla\build.cmd
     
-    6. Rename Makefile.migw to Makefile in your TOra directory
+    6. Copy Makefile.migw to src/Makefile in your TOra directory
     
-    7. Edit Makefile and change path for PERL, QTDIR, OCI_DLL and OCI_HOME
+    7. Edit src/Makefile and change path for PERL, QTDIR, OCI_DLL and OCI_HOME
        (and optionally for INSTALLDIR). Optionally edit the TARGET to 
        set the desirable executable. Also check the CFLAGS_GLOB and 
        LFLAGS_GLOB for the debug option (-g) depending on whether you 
        want debug executable or not. You may also need to create default
        version of config.h
     
-    8. Run 'make' in MSYS environment from TOra directory.
+    8. Run 'make' in MSYS environment from TOra src directory.
     
     9. Optionally run 'make install' - this will strip down the executable
        and copy the necessary files (not yet all of them) to the install 

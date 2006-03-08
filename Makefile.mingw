@@ -48,13 +48,17 @@ PERL=/c/Perl/bin/perl
 # Where to create installation bundle
 INSTALLDIR=/c/TOra
 
+# OTL is now in external directory
+OTL_DIR=../ext/otl
+
 # What to compile, can be tora for tora-mono for monolithic, tora-static for static version
 # (for Windows build these targets seems to have no difference so they better left default)
 TARGET=tora
 
 # Additional includes needed to compile program
 INCLUDES="-I$(OCI_HOME)/include" \
-	 "-I$(QTDIR)/include"
+	 "-I$(QTDIR)/include" \
+	 "-I$(OTL_DIR)"
 
 # C++ Compiler to use
 GCC=g++
@@ -200,7 +204,6 @@ API=	\
 
 SOURCES=\
 	toabout.cpp \
-	toaboutui.cpp \
 	toalert.cpp \
 	toanalyze.cpp \
 	tobackground.cpp \
@@ -208,58 +211,39 @@ SOURCES=\
 	tobarchart.cpp \
 	tobrowser.cpp \
 	tobrowserconstraint.cpp \
-	tobrowserconstraintui.cpp \
-	tobrowserfilterui.cpp \
 	tobrowserindex.cpp \
-	tobrowserindexui.cpp \
 	tobrowsertable.cpp \
-	tobrowsertableui.cpp \
 	tochangeconnection.cpp \
-	tochartalarmui.cpp \
 	tochartmanager.cpp \
-	tochartsetupui.cpp \
 	toconnection.cpp \
 	tocurrent.cpp \
-	todatabasesettingui.cpp \
 	todatatype.cpp \
 	todebug.cpp \
-	todebugchangeui.cpp \
 	todebugtext.cpp \
-	todebugwatch.cpp \
-	toeditextensiongotoui.cpp \
 	toeditextensions.cpp \
-	toeditextensionsetupui.cpp \
 	toeditwidget.cpp \
 	toextract.cpp \
 	tofilesize.cpp \
 	toglobalsetting.cpp \
-	toglobalsettingui.cpp \
 	tohelp.cpp \
-	tohelpaddfileui.cpp \
-	tohelpsetupui.cpp \
 	tohighlightedtext.cpp \
 	tohtml.cpp \
 	toinvalid.cpp \
 	tolegendchart.cpp \
 	tolinechart.cpp \
-	tolinechartsetupui.cpp \
 	tomain.cpp \
 	tomarkedtext.cpp \
 	tomemoeditor.cpp \
-	tomessageui.cpp \
 	tonewconnection.cpp \
-	tonewconnectionui.cpp \
 	tonoblockquery.cpp \
 	tooracleconnection.cpp \
 	tooracleextract.cpp \
 	tooraclepreload.cpp \
-	tooraclesettingui.cpp \
 	tooutput.cpp \
 	toparamget.cpp \
 	topassword.cpp \
 	topiechart.cpp \
 	topreferences.cpp \
-	topreferencesui.cpp \
 	toprofiler.cpp \
 	toproject.cpp \
 	toqsqlconnection.cpp \
@@ -270,7 +254,6 @@ SOURCES=\
 	toresultcombo.cpp \
 	toresultconstraint.cpp \
 	toresultcontent.cpp \
-	toresultcontentfilterui.cpp \
 	toresultdepend.cpp \
 	toresultextract.cpp \
 	toresultfield.cpp \
@@ -278,7 +261,6 @@ SOURCES=\
 	toresultitem.cpp \
 	toresultlabel.cpp \
 	toresultline.cpp \
-	toresultlistformatui.cpp \
 	toresultlock.cpp \
 	toresultlong.cpp \
 	toresultparam.cpp \
@@ -289,15 +271,9 @@ SOURCES=\
 	toresultstorage.cpp \
 	toresultview.cpp \
 	torollback.cpp \
-	torollbackdialogui.cpp \
 	toscript.cpp \
-	toscriptui.cpp \
 	tosearchreplace.cpp \
-	tosearchreplaceui.cpp \
 	tosecurity.cpp \
-	tosecurityquotaui.cpp \
-	tosecurityroleui.cpp \
-	tosecurityuserui.cpp \
 	tosession.cpp \
 	tosgastatement.cpp \
 	tosgatrace.cpp \
@@ -306,35 +282,67 @@ SOURCES=\
 	tosqledit.cpp \
 	tosqlparse.cpp \
 	tostorage.cpp \
-	tostoragedatafileui.cpp \
 	tostoragedefinition.cpp \
-	tostoragedefinitionui.cpp \
-	tostoragedialogui.cpp \
-	tostorageprefsui.cpp \
-	tostoragetablespaceui.cpp \
 	tosyntaxsetup.cpp \
-	tosyntaxsetupui.cpp \
 	totableselect.cpp \
 	totabwidget.cpp \
 	totemplate.cpp \
-	totemplateaddfileui.cpp \
-	totemplateeditui.cpp \
 	totemplateprovider.cpp \
-	totemplatesetupui.cpp \
 	totemporary.cpp \
 	totextview.cpp \
 	tothread.cpp \
 	totool.cpp \
-	totoolsettingui.cpp \
 	totuning.cpp \
-	totuningoverviewui.cpp \
-	totuningsettingui.cpp \
 	tovisualize.cpp \
 	towaitevents.cpp \
 	toworksheet.cpp \
-	toworksheetsetupui.cpp \
 	toworksheetstatistic.cpp \
 	utils.cpp
+
+UI_FILES = \
+	toaboutui.ui \
+	tobrowserconstraintui.ui \
+	tobrowserfilterui.ui \
+	tobrowserindexui.ui \
+	tobrowsertableui.ui \
+	tooraclesettingui.ui \
+	tostoragetablespaceui.ui \
+	tochartalarmui.ui \
+	topreferencesui.ui \
+	tosyntaxsetupui.ui \
+	tochartsetupui.ui \
+	toresultcontentfilterui.ui \
+	totemplateaddfileui.ui \
+	todatabasesettingui.ui \
+	toresultlistformatui.ui \
+	totemplateeditui.ui \
+	todebugchangeui.ui \
+	torollbackdialogui.ui \
+	totemplatesetupui.ui \
+	todebugwatch.ui \
+	toscriptui.ui \
+	totoolsettingui.ui \
+	toeditextensiongotoui.ui \
+	tosearchreplaceui.ui \
+	totuningoverviewui.ui \
+	toeditextensionsetupui.ui \
+	tosecurityquotaui.ui \
+	totuningsettingui.ui \
+	toglobalsettingui.ui \
+	tosecurityroleui.ui \
+	toworksheetsetupui.ui \
+	tohelpaddfileui.ui \
+	tosecurityuserui.ui \
+	tohelpsetupui.ui \
+	tostoragedatafileui.ui \
+	tolinechartsetupui.ui \
+	tostoragedefinitionui.ui \
+	tomessageui.ui \
+	tostoragedialogui.ui \
+	tonewconnectionui.ui \
+	tostorageprefsui.ui
+
+GENERATED_SOURCES=$(UI_FILES:%.ui=%.cpp)
 
 default: all
 
@@ -346,7 +354,7 @@ TRANSLATIONS=\
 CPPFLAGS=$(CPPFLAGS_GLOB) $(DEFINES) $(INCLUDES)
 CFLAGS=$(CFLAGS_GLOB) $(INCLUDES) $(DEFINES)
 
-OBJECTS=$(filter %.o,$(SOURCES:%.cpp=objs/%.o)) objs/main.o
+OBJECTS=$(filter %.o,$(SOURCES:%.cpp=objs/%.o) $(GENERATED_SOURCES:%.cpp=objs/%.o)) objs/main.o
 TRANSOBJ=$(filter %.qm,$(TRANSLATIONS:%.ts=%.qm))
 
 DEPENDS=$(filter %.d,$(SOURCES:%.cpp=.depends/%.d)) .depends/main.d
@@ -364,7 +372,7 @@ all: $(TARGET)
 %.cpp %.h: %.ui
 	@echo Generating $(<:%.ui=%.cpp) \& $(<:%.ui=%.h)
 	$(UIC) -o $(<:%.ui=%.h) $<
-	$(UIC) -i $(<:%.ui=%.h) -o  $(<:%.ui=%.cpp) $<
+	$(UIC) -i $(<:%.ui=%.h) -o $(<:%.ui=%.cpp) $<
 
 plugins/%.tso:
 	@echo Linking plugin $@
@@ -452,7 +460,7 @@ config.h: windows/config.h
 main.cpp: tora_toad.h
 
 tora_toad.h: tora_toad.qm
-	$(PERL) chex.pl < $< > $@
+	$(PERL) ../utils/chex.pl < $< > $@
 
 tora_toad.qm: tora_toad.ts
 	$(LRELEASE) $<
