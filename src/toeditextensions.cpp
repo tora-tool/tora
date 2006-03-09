@@ -136,6 +136,7 @@ void toEditExtensions::lostFocus(toEditWidget *widget)
         if (current && Current == current)
             receivedFocus(NULL);
     }
+
 }
 
 void toEditExtensions::gotoLine()
@@ -177,7 +178,7 @@ void toEditExtensions::intIndent(int delta)
                 res += t.mid(chars);
         }
 
-        Current->setSelection(line1, 0, line2, Current->text(line2).length());
+        Current->setSelection(line1, 0, line2, Current->text(line2).length()-1);
         Current->insert(res, true);
     }
 }

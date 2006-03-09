@@ -88,6 +88,8 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
     // sets default tab width
     setTabWidth(defaultTabWidth());
 }
+toMarkedText::~toMarkedText(){
+}
 
 void toMarkedText::setCopyAvailable(bool yes){
   setEdit();

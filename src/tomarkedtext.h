@@ -103,6 +103,8 @@ public:
      */
     toMarkedText(QWidget *parent, const char *name = NULL);
     
+    virtual ~toMarkedText();
+    
     /**
      * Returns the default tab width.
      */
