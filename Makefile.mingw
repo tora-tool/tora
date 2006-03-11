@@ -444,7 +444,7 @@ distclean: clean
 	-rm -rf .depends >/dev/null 2>&1
 	-rm -rf .xvpics >/dev/null 2>&1
 	-rm -rf icons/.xvpics >/dev/null 2>&1
-	-rm -f *.moc qtlegacy/*.moc >/dev/null 2>&1 
+	-rm -f *.moc >/dev/null 2>&1 
 	-rm -f rpmcommon rpmoracle rpmmysql >/dev/null 2>&1 
 	-rm -f \#*\# >/dev/null 2>&1
 	-rm -f Makefile >/dev/null 2>&1
