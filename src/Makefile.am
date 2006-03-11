@@ -231,7 +231,6 @@ UI_FILES =	toaboutui.ui \
 
 
 EXTRA_DIST = icons \
-	qtlegacy \
 	templates \
 	windows \
 	$(UI_FILES) \
@@ -266,8 +265,6 @@ dist-hook:
 
 # files listed in BUILT_SOURCES are built before anything else.
 BUILT_SOURCES = \
-	qtlegacy/qtmultilineedit.moc \
-	qtlegacy/qttableview.moc \
 	toabout.moc \
 	toaboutui.moc \
 	toalert.moc \
@@ -693,7 +690,6 @@ libtoworksheet_la_SOURCES = toworksheet.cpp toworksheet.h \
 	$(UIC) -o $@ -i $^
 
 %.moc: %.h
-	@if ! test -d qtlegacy; then mkdir qtlegacy; echo "create qtlegacy"; fi
 	$(MOC) -o $@ $<
 
 %.qm: %.ts
