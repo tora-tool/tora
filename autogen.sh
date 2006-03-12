@@ -79,11 +79,13 @@ rm -f config.log
 rm -f configure
 rm -f aclocal.m4
 
+echo "execute: aclocal ..."
 aclocal -I config/m4
 if test "$?" != "0"; then
    err "aclocal failed. exit."
 fi
 
+echo "execute: autoheader ..."
 autoheader --force
 if test "$?" != "0"; then
    err "autoheader failed. exit."
