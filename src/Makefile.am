@@ -703,7 +703,7 @@ clean-local:
 	done
 
 tora_toad.h: tora_toad.qm
-	perl $(top_srcdir)/utils/chex.pl < $< > $@
+	$(top_builddir)/utils/chex/chex $< > $@
 
 tora.pro: Makefile.am
 	echo "# Not indended to be used for anything except lupdate" > tora.pro
