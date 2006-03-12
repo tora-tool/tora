@@ -57,9 +57,10 @@ AM_CONDITIONAL(ENABLE_MONO, test "$enable_mono" = yes)
 AM_CONDITIONAL(HAVE_ORACLE, test "$enable_oracle" = yes)
 
 AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([utils/Makefile])
+AC_CONFIG_FILES([utils/chex/Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([ext/Makefile])
 AC_CONFIG_FILES([doc/Makefile])
-AC_CONFIG_FILES([utils/Makefile])
 AC_CONFIG_FILES([rpm/tora.spec])
 AC_OUTPUT

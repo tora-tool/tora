@@ -20,8 +20,7 @@ Building with MINGW.
 
     The makefiles were only tested in Mingw MSYS environment so it is 
     advised that you obtain and install full MINGW and MSYS packages
-    from http://www.mingw.org. It is also necessary to have Perl 
-    installed (ActiveState perl package will do).
+    from http://www.mingw.org. 
     
     This requires mingw compiled binaries of QT which could be obtained
     at http://qtwin.sourceforge.net/
@@ -47,7 +46,7 @@ Building with MINGW.
     
     6. Copy Makefile.migw to src/Makefile in your TOra directory
     
-    7. Edit src/Makefile and change path for PERL, QTDIR, OCI_DLL and OCI_HOME
+    7. Edit src/Makefile and change path for QTDIR, OCI_DLL and OCI_HOME
        (and optionally for INSTALLDIR). Optionally edit the TARGET to 
        set the desirable executable. Also check the CFLAGS_GLOB and 
        LFLAGS_GLOB for the debug option (-g) depending on whether you 
