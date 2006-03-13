@@ -39,6 +39,7 @@
 
 #ifdef WIN32
 #  include "windows/cregistry.h"
+#include <Windows.h>
 #endif
 
 #define OTL_STL
@@ -946,11 +947,16 @@ class oracleConnection : public toConnection::connectionImpl
                     {
                         str = buffer;
                         str += "\\network\\admin";
-                    }
-                }
+                    }else
+                     throw 0; 
+                }else
+                  throw 0;
             }
             catch (...)
-            {}
+            {
+             if(GetEnvironmentVariableA("TNS_ADMIN",buffer,siz)>0)
+               str=buffer;
+            }
         }
 #else
 
