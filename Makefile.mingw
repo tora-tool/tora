@@ -42,7 +42,7 @@ OCI_DLL=/c/oracle/ora81/bin/oci.dll
 OCI_HOME=/c/oracle/ora81/oci
 QTDIR=/c/qt-3
 
-# Perl executable - needed for key transalations generation
+##Perl
 PERL=/c/Perl/bin/perl
 
 # Where to create installation bundle
@@ -459,8 +459,11 @@ config.h: windows/config.h
 
 main.cpp: tora_toad.h
 
-tora_toad.h: tora_toad.qm
-	$(PERL) ../utils/chex.pl < $< > $@
+tora_toad.h: tora_toad.qm chex.exe
+	chex.exe $< > $@
+
+chex.exe: ../utils/chex/chex.cpp
+	$(GCC) $< -o $@
 
 tora_toad.qm: tora_toad.ts
 	$(LRELEASE) $<

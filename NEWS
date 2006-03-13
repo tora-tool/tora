@@ -4,6 +4,8 @@
 2006-03-03: Fixed bug #1437575
 2006-03-03: update to version 1.3.22svn the windows client too
 2006-03-07: fixed some bug with completion
+2006-03-09: fixed a bug with indentetion (inserted empty lines)
+2006-03-13: update Makefile.mingw to reflect chec.pl-> chex.cpp change
 
 1.3.21:
 
