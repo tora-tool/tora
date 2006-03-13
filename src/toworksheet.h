@@ -40,27 +40,19 @@
 
 #include "config.h"
 
+#include <map>
+
+#include <qdatetime.h>
+#include <qtimer.h>
+
 #include "toconnection.h"
 #include "tosqlparse.h"
 #include "totool.h"
 
-#include <map>
-
-#include <qdatetime.h>
-#include <qframe.h>
-#include <qmultilineedit.h>
-#include <qtimer.h>
-#include <qtoolbutton.h>
-
-class QCheckBox;
 class QComboBox;
-class QGroupBox;
 class QLabel;
-class QLineEdit;
 class QPopupMenu;
-class QPushButton;
 class QSplitter;
-class QTabWidget;
 class QToolButton;
 class toHighlightedText;
 class toListView;
@@ -71,8 +63,6 @@ class toResultItem;
 class toResultLong;
 class toResultPlan;
 class toResultStats;
-class toResultView;
-class toTool;
 class toVisualize;
 class toTabWidget;
 
