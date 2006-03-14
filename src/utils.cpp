@@ -749,11 +749,7 @@ QString toPluginPath(void)
     try
     {
         if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
-#  ifdef TOAD
-                                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TOAD for MySQL",
-#  else
                                     "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TOra",
-#  endif
                                     "UninstallString",
                                     buffer, siz))
         {

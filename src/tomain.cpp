@@ -115,16 +115,10 @@
 #include "icons/tora.xpm"
 #include "icons/undo.xpm"
 #include "icons/up.xpm"
-#ifdef TOAD
-#include "icons/options.xpm"
-#endif
-
-#ifndef OAS
 #include "icons/commit.xpm"
 #include "icons/rollback.xpm"
 #include "icons/stop.xpm"
 #include "icons/refresh.xpm"
-#endif
 
 #define DEFAULT_TITLE TOAPPNAME " %s"
 
@@ -144,7 +138,6 @@ toMain::toMain()
                          tr("&New Connection..."), TO_NEW_CONNECTION);
     FileMenu->insertItem(QPixmap(const_cast<const char**>(disconnect_xpm)),
                          tr("&Close Connection"), this, SLOT(delConnection()), 0, TO_CLOSE_CONNECTION);
-#ifndef OAS
 
     FileMenu->insertSeparator();
     FileMenu->insertItem(QPixmap(const_cast<const char**>(commit_xpm)), tr("&Commit Connection"), TO_FILE_COMMIT);
@@ -152,7 +145,6 @@ toMain::toMain()
     FileMenu->insertItem(tr("C&urrent Connection"), TO_FILE_CURRENT);
     FileMenu->insertItem(QPixmap(const_cast<const char**>(stop_xpm)), tr("Stop All Queries"), TO_STOP_ALL);
     FileMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("Reread Object Cache"), TO_FILE_CLEARCACHE);
-#endif
 
     FileMenu->insertSeparator();
     FileMenu->insertItem(QPixmap(const_cast<const char**>(fileopen_xpm)), tr("&Open File..."), TO_FILE_OPEN);
@@ -174,13 +166,11 @@ toMain::toMain()
     FileMenu->setAccel(toKeySequence(tr("Ctrl+O", "File|File open")), TO_FILE_OPEN);
     FileMenu->setAccel(toKeySequence(tr("Ctrl+W", "File|File save")), TO_FILE_SAVE);
     FileMenu->setAccel(toKeySequence(tr("Ctrl+Shift+W", "File|File save as")), TO_FILE_SAVE_AS);
-#ifndef OAS
 
     FileMenu->setAccel(toKeySequence(tr("Ctrl+Shift+C", "File|Commit")), TO_FILE_COMMIT);
     FileMenu->setAccel(toKeySequence(tr("Ctrl+J", "File|Stop all")), TO_STOP_ALL);
     FileMenu->setAccel(toKeySequence(tr("Ctrl+<", "File|Rollback")) | CTRL, TO_FILE_ROLLBACK);
     FileMenu->setAccel(toKeySequence(tr("Ctrl+Shift+U", "File|Current connection")), TO_FILE_CURRENT);
-#endif
 
     updateRecent();
 
@@ -202,11 +192,7 @@ toMain::toMain()
     EditMenu->insertItem(tr("Select &All"), TO_EDIT_SELECT_ALL);
     EditMenu->insertItem(tr("Read All &Items"), TO_EDIT_READ_ALL);
     EditMenu->insertSeparator();
-    EditMenu->insertItem(
-#ifdef TOAD
-        QPixmap(const_cast<const char**>(options_xpm)),
-#endif
-        tr("&Preferences..."), TO_EDIT_OPTIONS);
+    EditMenu->insertItem(tr("&Preferences..."), TO_EDIT_OPTIONS);
 
     QAccel *accel = new QAccel(this);
     accel->connectItem(accel->insertItem(toKeySequence(tr("Ctrl+Insert", "Edit|Copy"))), this, SLOT(copyButton()));
@@ -247,13 +233,6 @@ toMain::toMain()
     PrintButton->setEnabled(false);
     LoadButton->setEnabled(false);
     SaveButton->setEnabled(false);
-#ifdef TOAD
-
-    new QToolButton(QPixmap(const_cast<const char**>(options_xpm)),
-                    tr("Edit options"),
-                    tr("Edit options"),
-                    this, SLOT(optionButton()), EditToolbar);
-#endif
 
     EditToolbar->addSeparator();
     UndoButton = new QToolButton(QPixmap(const_cast<const char**>(undo_xpm)),
@@ -299,7 +278,6 @@ toMain::toMain()
                                        tr("Disconnect current connection"),
                                        this, SLOT(delConnection()), ConnectionToolbar);
     DisconnectButton->setEnabled(false);
-#ifndef OAS
 
     ConnectionToolbar->addSeparator();
     NeedConnection[new QToolButton(QPixmap(const_cast<const char**>(commit_xpm)),
@@ -315,10 +293,6 @@ toMain::toMain()
                                    tr("Stop all running queries on connection"),
                                    tr("Stop all running queries on connection"),
                                    this, SLOT(stopButton()), ConnectionToolbar)] = true;
-#else
-
-    ConnectionToolbar->hide();
-#endif
 
     ConnectionToolbar->addSeparator();
     ConnectionSelection = new QComboBox(ConnectionToolbar, TO_KDE_TOOLBAR_WIDGET);
@@ -329,19 +303,12 @@ toMain::toMain()
     ToolsMenu = new QPopupMenu(this);
 
     HelpMenu = new QPopupMenu(this);
-#ifndef TOAD
 
     HelpMenu->insertItem(tr("C&urrent Context..."), TO_HELP_CONTEXT);
-#endif
-
     HelpMenu->insertItem(tr("&Contents..."), TO_HELP_CONTENTS);
     HelpMenu->insertSeparator();
     HelpMenu->insertItem(tr("&About " TOAPPNAME "..."), TO_HELP_ABOUT);
     HelpMenu->insertItem(tr("&License..."), TO_HELP_LICENSE);
-#ifndef TOAD
-
-    HelpMenu->insertItem(tr("&Quotes..."), TO_HELP_QUOTES);
-#endif
 
     HelpMenu->setAccel(toKeySequence(tr("F1", "Help|Help")), TO_HELP_CONTEXT);
 

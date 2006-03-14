@@ -206,13 +206,8 @@ void toToolWidget::importData(std::map<QCString, QString> &data, const QCString 
 std::map<QCString, toTool *> *toTool::Tools;
 std::map<QCString, QString> *toTool::Configuration;
 
-#ifdef TOAD
-#define CONFIG_FILE "/.toadrc"
-#define DEF_CONFIG_FILE "/etc/toadrc"
-#else
 #define CONFIG_FILE "/.torarc"
 #define DEF_CONFIG_FILE "/etc/torarc"
-#endif
 
 const char **toTool::pictureXPM(void)
 {

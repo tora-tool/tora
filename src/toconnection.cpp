@@ -1679,16 +1679,8 @@ QString toConnection::cacheDir()
             dirname = QString(getenv("TEMP"));
         else
 #endif
-
             dirname = QString(home);
-#ifdef TOAD
-
-        dirname += "/.toad_cache";
-#else
-
         dirname += "/.tora_cache";
-#endif
-
     }
     return dirname;
 }

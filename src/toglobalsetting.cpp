@@ -158,13 +158,6 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, WFlags fl)
     DockToolbar->hide();
 #endif
 
-#ifdef TOAD
-
-    LocaleLabel->hide();
-    Locale->hide();
-    ToadBindings->hide();
-#endif
-
     if (toMonolithic())
     {
         PluginLabel->hide();

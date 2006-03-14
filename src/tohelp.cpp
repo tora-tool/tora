@@ -259,12 +259,7 @@ public:
 
 QWidget *toHelpTool::configurationTab(QWidget *parent)
 {
-#ifdef TOAD
-    return NULL;
-#else
-
     return new toHelpPrefs(this, parent);
-#endif
 }
 
 void toHelpTool::displayHelp(void)
@@ -499,13 +494,8 @@ void toHelp::displayHelp(const QString &context, QWidget *parent)
     else
         window = Window;
     QString file = path();
-#ifndef TOAD
 
     file += context;
-#else
-
-    file += "/toc.htm";
-#endif
 #ifdef TO_KDE
 
     window->Help->openURL(file);

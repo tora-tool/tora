@@ -73,8 +73,8 @@ static std::map<QCString, QString> DefaultText(void)
 {
     std::map<QCString, QString> def;
     QString file = toPluginPath();
-#if (!defined(OAS)) && (!defined(TO_NO_ORACLE))
 
+#if !defined(TO_NO_ORACLE)
     file += QString::fromLatin1("/sqlfunctions.tpl");
     def["PL/SQL Functions"] = file;
     file = toPluginPath();
