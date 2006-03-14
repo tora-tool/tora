@@ -41,29 +41,29 @@
 #include "config.h"
 #include "tobackground.h"
 #include "toresultline.h"
-#include "tothread.h"
+//#include "tothread.h"
 #include "totool.h"
 #include "totuningoverviewui.h"
 
 #include <list>
 #include <map>
 
-#include <qgrid.h>
+//#include <qgrid.h>
 #include <qscrollview.h>
 
 class QComboBox;
 class QGrid;
-class QGridLayout;
+//class QGridLayout;
 class QLabel;
 class QPopupMenu;
 class QTabWidget;
 class toBarChart;
 class toConnection;
-class toLegendChart;
+//class toLegendChart;
 class toListView;
 class toNoBlockQuery;
-class toPieChart;
-class toResultChart;
+//class toPieChart;
+//class toResultChart;
 class toResultItem;
 class toResultLock;
 class toResultLong;
