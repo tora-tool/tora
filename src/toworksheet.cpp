@@ -1277,7 +1277,19 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens, int line, int pos, exec
 {
     LastLine = line;
     LastOffset = pos;
-    Editor->setSelection(line, pos, tokens.line(), tokens.offset());
+    int endLine,endCol;
+    if(Editor->lines()<=tokens.line()){
+     endLine=Editor->lines()-1;
+     endCol=Editor->lineLength(Editor->lines()-1);
+    }else{
+      endLine=tokens.line();
+      if(Editor->lineLength(tokens.line())<=tokens.offset())
+        endCol=Editor->lineLength(tokens.line());
+      else{
+        endCol=tokens.offset();
+      }
+    }
+    Editor->setSelection(line, pos, endLine,endCol);
     QString t = Editor->selectedText();
 
     bool comment = false;
@@ -1328,7 +1340,7 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens, int line, int pos, exec
     {
         LastLine = line;
         LastOffset = pos;
-        Editor->setSelection(line, pos, tokens.line(), tokens.offset());
+        Editor->setSelection(line, pos, endLine, endCol);
         t = t.mid(i);
     }
     if (t.length())
