@@ -9,6 +9,8 @@
 2006-03-13: When searching for tnsnames.ora look to TNS_ADMIN on Windows too, to support Oracle Instant Client user
 2006-03-14: Remove references to TOAD and OAS and various conditional compiles for them
 2006-03-14: Remove Quotes part of about dialog.
+2006-03-14: Fix problem with last character of sql entry box
+2006-03-14: Apply patch #1438322 to regain some QT3.1 compatability for RHEL-3
 
 1.3.21:
 

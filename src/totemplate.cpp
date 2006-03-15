@@ -213,7 +213,9 @@ public:
         toHelp::connectDialog(this);
         LastTemplate = TemplateMap.end();
         updateFromMap();
+#if QT_VERSION >= 0x040000
         Description->setWrapMode(QextScintilla::WrapWord);
+#endif
     }
     virtual void remove
         (void)

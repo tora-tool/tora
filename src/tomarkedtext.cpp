@@ -619,7 +619,11 @@ void toMarkedText::insert(const QString &str, bool select)
     // means.
 
     // That means the selection is broken for now.
+#if QT_VERSION > 0x031000
     QextScintilla::insert(str);
+#else
+    insert(str);
+#endif
     
     // get new position and select if requested
     if(select) {
