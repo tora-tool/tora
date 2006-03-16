@@ -65,24 +65,6 @@ AC_DEFUN([TORA_LIBTOOL_ALL],
   AC_SUBST([LIBTOOL_DEPS])
 ])
 
-AC_DEFUN([TORA_CHECK_PUTENV],
-[
-  AC_CACHE_CHECK([for putenv], tora_cv_sys_putenv,
-    [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#ifdef HAVE_STDLIB_H
-# include <stdlib.h>
-#endif
-      ]],
-      [[putenv("test=test");]])],
-      tora_cv_sys_putenv=yes,
-      tora_cv_sys_putenv=no)
-    ])
-
-  if test $tora_cv_sys_putenv = yes; then
-    AC_DEFINE(TO_HAS_SETENV, 1, [Define if you have putenv])
-  fi
-])
-
 #serial 3
 
 dnl From Jim Meyering
