@@ -25,9 +25,7 @@ AC_PROG_CXX
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS(unistd.h sys/param.h sys/time.h time.h sys/mkdev.h sys/sysmacros.h string.h memory.h fcntl.h dirent.h sys/ndir.h ndir.h alloca.h locale.h )
-
-jm_CHECK_TYPE_STRUCT_UTIMBUF
+AC_CHECK_HEADERS(unistd.h sys/param.h sys/time.h time.h sys/mkdev.h sys/sysmacros.h string.h memory.h fcntl.h dirent.h sys/ndir.h ndir.h alloca.h locale.h utime.h)
 AC_HEADER_MAJOR
 AC_FUNC_ALLOCA
 AC_FUNC_MALLOC
