@@ -229,7 +229,7 @@
 #define TOMONOLITHIC 1
 
 /* Define if you have putenv */
-#define TO_HAS_SETENV 0
+#define HAVE_SETENV 0
 
 /* Define if compiled against Oracle Instant Client */
 /* #undef TO_INSTANT_CLIENT */
