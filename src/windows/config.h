@@ -115,10 +115,6 @@
 /* Define to 1 if `st_blocks' is member of `struct stat'. */
 #define HAVE_STRUCT_STAT_ST_BLOCKS 1
 
-/* Define if struct utimbuf is declared -- usually in <utime.h>. Some systems
-   have utime.h but don't declare the struct anywhere. */
-#define HAVE_STRUCT_UTIMBUF 1
-
 /* Define to 1 if your `struct stat' has `st_blocks'. Deprecated, use
    `HAVE_STRUCT_STAT_ST_BLOCKS' instead. */
 #define HAVE_ST_BLOCKS 1
