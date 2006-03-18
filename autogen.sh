@@ -98,7 +98,7 @@ if test "$?" != "0"; then
 fi
 
 check_automake_version
-automake --add-missing --copy --force-missing
+automake --copy --force-missing
 if test "$?" != "0"; then
    err "automake failed. exit."
 fi

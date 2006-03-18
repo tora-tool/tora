@@ -10,7 +10,7 @@ READMES = README\
 EXTRA_DIST = debian \
 	rpm \
 	BUGS \
-	COPYRIGHT \
+	COPYING \
 	Makefile.OSX \
 	Makefile.mingw \
 	$(READMES) \
