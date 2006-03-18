@@ -45,6 +45,7 @@
 
 #include <ctype.h>
 
+
 #include <qapplication.h>
 #include <qpainter.h>
 #include <qpalette.h>
@@ -280,14 +281,9 @@ void toComplPopup::keyPressEvent(QKeyEvent * e){
 #ifdef WIN32
     &&  e->text()!="\r"
 #else
-    && e->text()!="\n"
+    && e->key()!=Qt::Key_Return
 #endif
   && e->text()!=" ") || e->key()==Qt::Key_Backspace){
-    if ( e->key()==Qt::Key_Backspace){
-      TO_DEBUGOUT("Backspace");
-    }else{
-      TO_DEBUGOUT(e->text());
-    }
     this->editor->keyPressEvent(e);
     this->editor->autoCompleteFromAPIs();
   }else if (e->text() && e->text().length()>0 && e->text()==" "){
@@ -382,7 +378,7 @@ void toHighlightedText::autoCompleteFromAPIs(){
       for(i=0;i<popup->numRows();i++){
         if(popup->item(i)->text().find(partial)==0){
           popup->setSelected(i,true);
-          exit;
+          break;
         }
       }
  

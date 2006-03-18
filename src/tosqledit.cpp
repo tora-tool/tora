@@ -374,11 +374,8 @@ void toSQLEdit::commitChanges(bool changeSelected)
     TrashButton->setEnabled(true);
     CommitButton->setEnabled(true);
 
-#if QT_VERSION > 0x031000
     bool update = Name->isModified();
-#else
-    bool update = Name->edited();
-#endif
+
 
     Name->setEdited(false);
     Description->setModified(false);
@@ -391,11 +388,7 @@ void toSQLEdit::commitChanges(bool changeSelected)
 
 bool toSQLEdit::checkStore(bool justVer)
 {
-#if QT_VERSION > 0x031000
     if ((Name->isModified() ||
-#else
-    if ((Name->edited() ||
-#endif
             Editor->editor()->isModified() ||
             (!justVer && Version->currentText() != LastVersion) ||
             Description->isModified()) &&
