@@ -718,3 +718,6 @@ lupdate: tora.pro
 
 lrelease: tora.pro $(TRANSLATIONS)
 	$(LRELEASE) tora.pro
+
+install-data-hook:
+	cp -f $(top_builddir)/src/*.qm $(libdir)
