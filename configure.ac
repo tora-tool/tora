@@ -22,7 +22,10 @@ AC_CANONICAL_HOST
 AC_PROG_INSTALL
 AC_PROG_CC
 AC_PROG_CXX
-
+AC_CHECK_PROG([MAKEINFO], [makeinfo], [makeinfo], [no])
+if test "${MAKEINFO}" = no; then
+   AC_MSG_ERROR([makeinfo not found])
+fi
 # Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS(unistd.h sys/param.h sys/time.h time.h sys/mkdev.h sys/sysmacros.h string.h memory.h fcntl.h dirent.h sys/ndir.h ndir.h alloca.h locale.h utime.h)
@@ -59,5 +62,6 @@ AC_CONFIG_FILES([utils/chex/Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([ext/Makefile])
 AC_CONFIG_FILES([doc/Makefile])
+AC_CONFIG_FILES([doc/help/Makefile])
 AC_CONFIG_FILES([rpm/tora.spec])
 AC_OUTPUT
