@@ -277,12 +277,7 @@ toComplPopup::~toComplPopup(){
 
 
 void toComplPopup::keyPressEvent(QKeyEvent * e){
-  if ((e->text() && e->text().length()>0
-#ifdef WIN32
-    &&  e->text()!="\r"
-#else
-    && e->key()!=Qt::Key_Return
-#endif
+  if ((e->text() && e->text().length()>0 && e->key()!=Qt::Key_Return
   && e->text()!=" ") || e->key()==Qt::Key_Backspace){
     this->editor->keyPressEvent(e);
     this->editor->autoCompleteFromAPIs();
