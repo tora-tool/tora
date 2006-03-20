@@ -1,0 +1,31 @@
+@node trace
+@section SGA Trace
+@cindex SGA Trace
+
+This tool is used investigate the statements available in the SGA.
+
+@image{images/sgatrace}
+
+The session tool consists of a toolbar, a list of SGA statements ( @pxref{SGA Statement} ) and finally at the bottom a SGA statement view.
+
+@subheading Toolbar
+
+The toolbar contain the following controls.
+
+
+@table @asis
+
+@item @strong{Update}
+      Update the view from the database.	
+@item @strong{Schema}
+      The user schema to extract statements for.	
+@item @strong{Refresh time}
+      A list where you can select the interval between automatic updates.	
+@item @strong{Type}
+      What type of statements you want to examine. Can either be SGA to investigate all entries of the SGA or Long operations to check long operations in the database (Databases must have timed statistics enabled to generate entries for long operations).	
+@item @strong{Change connection}
+      Change the connection to administrate storage for.
+
+@end table
+
+Don't forget you can sort the view by selecting a column header in the SGA list.

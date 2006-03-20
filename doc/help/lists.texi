@@ -1,0 +1,40 @@
+@node lists
+@section Using lists
+@cindex lists
+
+A list is a very central element of the TOra user interface and is a standard way to display information in a grid. Here is an example of a list.
+
+@image{images/lists}
+
+@subheading Navigating a list
+
+If a list does not fit into it's designated area on the screen it will get scrollbars that can be used to navigate the entire contents of the list. There are also the usual key bindings @strong{left}, @strong{right}, @strong{up}, @strong{down}, @strong{page up}, @strong{page down} etc...
+
+Lists can be hierarchical as can be seen in the screenshot above. When there are child items that are not displayed a + is displayed to the left of the row. Clicking the + will expand the row and display the child items. 
+You can also use the @strong{right} key to expand child items and @strong{left} key to collapse them.
+
+@subheading Result lists
+
+Result lists are lists that display the result of a query from the database. Only a configured amount of rows are initially read (@pxref{preferences, Options} for more information), although enough items to fill the screen is always read if available. To read more items from the queries simply scroll down. If you want to scroll faster use @strong{page down} which will read an entire screen of data at a time from the query. If you want to read all the data available you can use the @strong{Edit|Read All} menu item.
+
+@subheading Manipulating lists
+
+In a list you can change the sort order by pressing the header of the list to sort on the column whose header you clicked. Clicking the same column again will reverse the sort order. Columns that contain numerical data (Regardless of database format) will be sorted as numbers (2 before 10). Observe that not all lists can be sorted in a different sort order.
+
+You can also rearrange the column order by dragging the heading of a column to another place.
+
+@subheading Accessing the contents of a field
+
+The contents of a field (Specific row and column of a list) can be copied either by double-clicking the field, or selecting copy from the context menu available by right-clicking on the field. You can also drag the contents of a field to an editor.
+
+If the contents is too long to be visible in the list you will get a tooltip with all of the contents if you place the mouse over the field for a short while (As seen in the screenshot). If this is not enough you can display the contents of a field in a separate window by accessing the context menu of the field and selecting @strong{display in editor}.
+
+You can also place a line in the bind parameter(@pxref{Getting bind parameters}) cache by double clicking on a line. The bind name will be the same as the column name in lowercase.
+
+@subheading Other list functionality
+
+Lists can always be printed by selecting the @strong{File|Print} menu item.
+
+You can also save a list as a text file by selecting @strong{File|Save} menu item. Any graphics in the list will be discarded and all fields will be left justified in the output.
+
+In the context menu for the list you can also select the entry @strong{edit SLQ} in which you can edit the SQL used to generated the list. If there is no single SQL used to generate the list you will not find any SQL, however you will usually be pointed in roughly the right direction in the sql editor (@pxref{sqledit,SQL Editor}, Where you can also find more information about the concept of SQL dictionary TOra uses).

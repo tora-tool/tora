@@ -1,0 +1,236 @@
+@node api
+@section TOra Tool Tutorial
+@cindex TOra Tool Tutorial
+
+This tutorial will create a simple tool that can execute an SQL statement and display it's content in a list. This tutorial assumes you have knowledge of C++ and Qt programming.
+
+First of all we create an include file which defines the tool widget. This is the window that will be displayed when the a tool window is created. How that happens comes later.
+
+@example 
+@verbatim
+
+#ifndef TOSIMPLEQUERY_H
+#define TOSIMPLEQUERY_H
+
+#include "totool.h"
+
+class toResultView;
+class QLineEdit;
+class toConnection;
+
+class toSimpleQuery : public toToolWidget {
+  Q_OBJECT
+
+  toResultView *Result;
+  QLineEdit *Statement;
+private slots:
+  void execute(void);
+public:
+  toSimpleQuery(QWidget *parent,toConnection &connection);
+};
+
+#endif
+
+@end verbatim
+@end example
+
+If this file is put in the main TOra source directory the configure script will generate the appropriate moc file which will be needed later. If you don't know what moc is, please go back to the Qt manual to read up on slots and signals.
+
+The rest is pretty straight forward and will be much clearer after we start working our way through the implementation of this tool.
+
+The first thing we need to do is create a tool description which is done by subclassing the toTool class. This is how we implement this class for this function.
+
+@example 
+@verbatim
+
+#include "totool.h"
+#include "tosimplequery.h"
+
+static char * tosimplequery_xpm[] = {
+"16 16 3 1",
+" c None",
+".c #000000",
+"+c #FFFFFF",
+"       ......   ",
+"      ..++++.   ",
+"     .+.++++.   ",
+"    .++.++++.   ",
+"   .....++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   .++++++++.   ",
+"   ..........   "};
+
+class toSimpleQueryTool : public toTool {
+protected:
+  virtual char **pictureXPM(void)
+  { return tosimplequery_xpm; }
+public:
+  toSimpleQueryTool()
+    : toTool(203,"Simple Query")
+  { }
+  virtual const char *menuItem()
+  { return "Simple Query"; }
+  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
+  {
+    return new toSimpleQuery(parent,connection);
+  }
+};
+
+static toSimpleQueryTool SimpleQueryTool;
+
+@end verbatim
+@end example
+
+The first thing that happens is that we include the header file which defines the tool widget and the tool definition header files. Even if this is included in the tosimplequery.h it is good practice not to assume any extra files are included by header files.
+
+Next comes a definition of an xpm pixmap. Normally these are placed in the icons directory and then included into the file as you can see in the TOra source. This is placed inline for clarity.
+
+The next one is the big one. Here we define the tool class which has a few important virtual functions.
+
+@table @samp
+@item pictureXPM	
+This function should if defined return a pointer to a xpm definition. This will then be used for toolbar icon, menu icon and tool window icon.
+@samp{pictureXPM}
+
+@item menuItem
+Should return a string containing the name of the menu item to add to the tools menu. This is also used for a tip for the toolbar icon by default.
+@samp{menuItem}
+
+@item toolWindow
+This function will create a new tool widget and return a pointer to it. It doesn't need to create a widget, then it should then return NULL. Some tools there might only be one per connection for instance.
+@samp{toolWindow}
+
+@end table
+
+The number in the constructor is a priority indicator that denote where in the list of tools this tool should be inserted, between each 100 step a separator is inserted into the toolbar and menubar.
+
+And last a not so obvious line where the an instance of the tool descriptor is instantiated. This is a feature that is used a lot in TOra. This will ensure that all tools are registered when the application is started. It also works when using modules, if this is compiled as a module the tool will be instantiated on loading without any hassle with functions with predefined names and such stuff.
+
+Lastly comes the implementation of the tool widget which is not much longer. I have divided this into several parts to simplify explaining them.
+
+@example 
+@verbatim
+
+#include <list>
+
+#include <qtoolbar.h>
+#include <qlabel.h>
+#include <qtoolbutton.h>
+#include <qlineedit.h>
+
+#include "tosimplequery.h"
+#include "toresultview.h"
+#include "toparamget.h"
+#include "tochangeconnection.h"
+
+#include "tosimplequery.moc"
+
+static char * execute_xpm[] = {
+"16 16 3 1",
+" c None",
+".c #000000",
+"+c #0FFE14",
+"                ",
+"                ",
+"                ",
+"     .          ",
+"     ..         ",
+"     .+.        ",
+"     .++.       ",
+"     .+++.      ",
+"     .+++.      ",
+"     .++.       ",
+"     .+.        ",
+"     ..         ",
+"     .          ",
+"                ",
+"                ",
+"                "};
+
+toSimpleQuery::toSimpleQuery(QWidget *main,toConnection &connection)
+  : toToolWidget(SimpleQueryTool,"simplequery.html",main,connection)
+{
+  QToolBar *toolbar=toAllocBar(this,"Simple Query",connection.description());
+  QPixmap executePixmap((const char **)execute_xpm);
+  new QToolButton(executePixmap,
+                  "Execute current statement",
+                  "Execute current statement",
+  this,SLOT(execute()),
+  toolbar);
+  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  new toChangeConnection(toolbar);
+
+@end verbatim
+@end example
+
+In this part the parent constructor is called and the toolbar is set up. Also note the inclusion of the moc file which by convention is called tosimplequery.moc. One thing worth noticing here is the toAllocBar which is used to be able to transparently support either using KToolBar or QToolBar depending on whether this is a Qt or KDE application. This is very important since TOra also supports windows to which KDE is not available.
+
+The second part is the setStretchableWidget call which is used to indicate that an empty label should be stretch instead of the tool button which just looks really weird.
+
+Also worth noting is that the toToolWidget class is derived from QVBox so any widgets constructed in this widget will be lined up vertically in the order of creation.
+
+Next up is creating our widgets and connecting them.
+
+@example 
+@verbatim
+
+  Statement=new QLineEdit(this);
+  Result=new toResultView(this);
+  connect(Statement,SIGNAL(returnPressed()),this,SLOT(execute()));
+}
+
+@end verbatim
+@end example
+
+This just adds two additional widgets and connect the returnPressed signal to the execute slot. One thing to realise here is that all the toResult children will use the connection of the closest parent of type toToolWidget in the widget hierarchy. And now the last thing to do is implement the execute method.
+
+@example 
+@verbatim
+
+void toSimpleQuery::execute(void)
+{
+  try {
+    QString sql=Statement->text();
+    toQList params=toParamGet::getParam(this,sql);
+    Result->query(sql,params);
+  } TOCATCH
+}
+
+@end verbatim
+@end example
+
+The toParamGet::getParam function is used to ask for bind values in the query string. To understand what I mean try executing the query "select :hello from dual" when you try the result. The toQList is simple a list of toQValue which can hold different datatypes and converting between them transparently.
+
+Now finally to compile this module you need to add the tosimplequery.cpp file to SOURCES define in the file Makefile. To build a plugin you also need to add the following line.
+
+@example 
+@verbatim
+
+plugins/tosimplequery.tso:objs/tosimplequery.o
+
+@end verbatim
+@end example
+
+This should go among the other plugin definitions and you also need to add the plugins/tosimplequery.tso to the dependencies of tora-plugin.
+
+You must rerun configure for the tosimplequery.moc file to be generated the first time. Any subsequent changes should update the moc file automatically from the Makefile.
+
+Here are the example files in their entire.
+
+@itemize @bullet
+
+@item
+@uref{tosimplequery.h}
+@item
+@uref{tosimplequery.cpp}
+@end itemize 
+
+Hopefully this is a starting point to help you read the rest of the documentation and start cranking out those plugins.

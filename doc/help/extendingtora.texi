@@ -1,0 +1,8 @@
+@node extendingtora
+@chapter Extending TOra
+@cindex Extending TOra
+
+@menu
+* TOra Tool Tutorial: api.
+* API Reference: externalapi.
+@end menu

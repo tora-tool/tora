@@ -1,0 +1,21 @@
+@node  searchreplace
+@section Search & Replace
+@cindex Search & Replace
+
+Ora has an advanced search and replace function that allows you to search result list and editors. Replace is only available for editors though. You can invoke the search & replace dialog by selecting the menu @strong{Edit|Search & Replace} or by pressing @strong{CTRL+F}. The search always operates on the last editor or list that had the focus @strong{when you invoked the dialog}. Not on the current widget of the next search etc. The dialog looks like this.
+
+@image{images/searchreplace}
+
+@subheading Specifying the search criteria
+
+You enter the text to search for, this can be either in the format of plain text or regular expressions as defined by the current version of Qt which TOra is compiled against (For more information check out @uref{http://doc.trolltech.com/qregexp.html}, if you are using Qt 3.0 or later you have a more advanced form of regular expressions).
+
+You can also specify if the search expression must match a whole word or if the match is to be case sensitive.
+
+After specifying what you are looking for you can execute your search by either pressing the @strong{Search Top} button which will start the search from the top of the contents of the target for the search or @strong{Search Next} which will continue searching for the next match from the current location.
+
+@subheading Replacing
+
+In the replace text field you can specify the text with which to replace a matched find that has been found. Note that regardless of if the search is case sensitive or not the replacement is the same case as specified in the text field.
+
+After finding the first occurrence by pressing @strong{Search Top} or @strong{Search Next} you can either replace it with the current substitution by pressing @strong{Replace}, or skip to the next by pressing @strong{Search Next} button again. At any time the @strong{Replace All} will replace all occurrences after the current location in the editor.

@@ -1,0 +1,16 @@
+@node externalapi
+
+@section API Reference
+
+@itemize @bullet
+
+@item
+@uref{api/index-long.html,Annotated Class List}
+@item
+@uref{api/header-list.html,Header Files}
+@item
+@uref{api/all-globals.html,Global Declarations}
+@item
+@uref{api/hier.html,Class Hierarchy}
+@end itemize 
+

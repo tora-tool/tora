@@ -1,0 +1,56 @@
+@node  preferences
+@section Options
+@cindex Options
+
+To access the options of TOra you select the @strong{Edit|Options} menu item, you will then be presented with the following dialog.
+
+@image{images/preferences}
+
+In windows preferences are stored in the registry, but in Linux it is stored in a file called @file{.torarc} in the users home directory. If this file doesn't exist a file called @file{/etc/torarc} is used if it exists.
+
+@subheading Selecting page
+
+To the left is a list containing the available option pages you can display.
+
+@menu
+* General global settings: Global Settings.
+* Global database settings: database.
+* Font and color settings: fonts.
+* Additional manuals in help browser: additionalhelp.
+* Settings regarding enabled tools: toolsetting.
+@end menu
+
+The rest of the settings are tool specific and covered under corresponding tool in the tools section(@pxref{tools, Available tools}).
+
+Selecting a page does not discard the changes of another page, and no changes are saved until @strong{OK} is pressed. You can always discard any changes made by pressing the escape key or the @strong{Cancel} button.
+
+
+@node Global Settings
+@subsection Global Settings
+
+These may vary some depending on how your system was compiled and configured. Not all options are displayed in the screenshot since that was made on a KDE version of TOra.
+
+@multitable @columnfractions .2 .8 
+@item @strong{Custom SQL} @tab The file in which to store your custom SQL. For more information about custom SQL and the SQL dictionary (@pxref{sqledit,SQL Editor tool}. The string @strong{@env{$HOME}} will be replaced by your home directory on UNIX or documents directory in Windows.
+@item @strong{Help directory} @tab Should point to where the TOra help table of contents file is stored (toc.htm). This should be set up correctly if you made a normal install. 	
+@item @strong{Plugin directory} @tab This option is only available in a plugin based TOra installation. It should point to the directory where the plugins for TOra are located. It should be set up correctly on installation if needed. 	
+@item @strong{Cache directory} @tab Should point to where the TOra Disk Cache files are stored. There is one file for each Connection. 	
+@item @strong{Change current connection with active window} @tab If this option is set, changing the current window will also change the current connection to that of the active window. The connection is only changed when you change window so if you want to change the connection to something else you can still do so as long as you don't change the window.
+@item @strong{Save last password} @tab 	Whether or not TOra should store the last password used to connect. @strong{Be aware that the password is store in clear text in either the windows registry or a file.} 	
+@item @strong{Include DB in caption} @tab	If this is set the database name will be included in the caption of all your tool windows after the tool name. Observe that there often is no other way of knowing which database the window works on except for this. 	
+@item @strong{Maximize window on start} @tab	If this is checked the TOra main window will open maximized on startup. 	
+@item @strong{Desktop Aware} @tab	Set this if Qt should try to figure out and interact nicely with the desktop environment. The reason for this switch is that in some versions of KDE TOra doesn't look nice if this is checked. This switch is only available for Qt only applications. 	
+@item @strong{use Disk Cache} @tab	This option tells TOra to Cache the Object List in the Cache Directory. Default is No Caching. When Caching is activated, you have to refresh the object cache with the menu option File->Reread Object Cache, because, the default source for the Object List is the diskfile. 	
+@item @strong{Antialias fonts}  @tab	Check this if you want TOra to use antialiased fonts in X11 if available. This option may not be available (Regardless of if you have access to antialiased fonts or not). 	
+@item @strong{Docks use toolbars}  @tab This option tells TOra how to emulate docked windows when they are not available. Docked windows are not available if you do not use KDE and have a Qt version less than 3 (If you run in windows you're it). If this is checked docks will be emulated with a toolbar, this has the drawback that you can't resize them. If unchecked docks appear in normal windows. 	
+@item @strong{Style}  @tab	The GUI style to use for the TOra application. This switch is only available for Qt only applications. 	
+@item @strong{Display alerts in statusbar only}	 @tab Display errors only in the statusbar. This is really usefull since it doesn't interrupt you as much as a dialog window as long as you know to look for information in the statusbar when things doesn't work. 	
+@item @strong{Connect history}	 @tab How many connection entries to save in the new connection history list. 	
+@item @strong{Table scale}  @tab	This is the scale which to use when printing lists. Lists on paper can usually be a little smaller and still be readable. Given as a fraction where 0.5 means half the size on paper and 1.0 the same size. 	
+@item @strong{Status message}  @tab	The number of seconds to display error messages in the status bar. If you specify 0 they are kept until the next message is displayed. 	
+@item @strong{Message history}	 @tab The number of status messages to store in the status message history before the oldest are removed when new are added. 	
+@item @strong{Chart samples}  @tab	Number of samples to save by default in charts. 	
+@item @strong{Size Unit}  @tab	The unit to display sizes with in TOra. 	
+@item @strong{Refresh}	 @tab The default refresh time to use in TOra. Tools which refresh automatically use this setting as the default. It can also be changed on a per tool basis.
+@end multitable
+

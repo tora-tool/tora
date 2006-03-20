@@ -1,0 +1,44 @@
+@node  fonts
+@subsection Font Settings
+@cindex Font Settings
+
+This page of the options about fonts and colors used in the user interface.
+
+@image{images/fonts}
+
+@table @asis
+
+@item @strong{Syntax components}
+      This list contains different parts of the SQL syntax. You can change the color used for the element by selecting the item in this list and then pressing the Pick button to select a color. The current color of the currently selected item in the list is displayed just to the left of the Pick button.
+
+The available elements are as follows.
+ @multitable @columnfractions .3 .7
+ @item @strong{Background} @tab The normal background color for text.
+ @item @strong{Comment}	@tab An SQL comment. Currently this only includes -- comments, not rem comments.
+ @item @strong{Current background}	@tab 	This is the background to use for the current line of execution in the PL/SQL debugger.	
+ @item @strong{Error background}	@tab 	This is the background to use for lines that have SQL errors in the in the PL/SQL debugger/editor.	
+ @item @strong{Keyword}	@tab 	This is the color to use for the text of an SQL keyword.	
+ @item @strong{Normal}	@tab 	Normal text color.	
+ @item @strong{String}	@tab 	Color to use for text in strings.	
+ @item @strong{Unfinished string} @tab Color to use for strings that miss their terminating ' or ".
+ @end multitable
+ At the bottom of this dialog is a text field that displays en example of the current setting.
+
+@item @strong{Syntax highlighting}
+      Use this to control whether you want syntax highlighting or not. Observe that without syntax highlighting you will not see the indications for errors and current lines in the PL/SQL editor.	
+@item @strong{Keyword upper}
+      Check this box to convert all keywords to uppercase before displaying them. The text itself is not changed so resetting this not changed and the text sent to the database still contain lowercase letters. This setting is disabled if you do not have a monospaced font selected.	
+@item @strong{Code completion}
+      Check this box to enable code completion in SQL editors.	
+@item @strong{Sort completion rows}
+      If checked the completion alternatives are sorted in alphabetical order, otherwise they are in the same order as in the source.	
+@item @strong{Indent same as previous row}
+      When inserting a new row indent it to the same level as the previous row. 	
+@item @strong{Text font}
+      This is the font to use for all editors in TOra that are not syntax highlighted. Choose the @strong{Choose} button immediately to the right of the label to select a new font.	
+@item @strong{Code font}
+      This is the font to use for all syntax highlighted SQL editors in TOra. Choose the @strong{Choose} button immediately to the right of the label to select a new font.	
+@item @strong{List font}
+      This is the font to use for all lists in TOra. Choose the @strong{Choose} button immediately to the right of the label to select a new font.
+
+@end table
