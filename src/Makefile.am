@@ -6,10 +6,10 @@ bin_PROGRAMS=tora
 METASOURCES = AUTO
 
 TRANSLATIONS= \
-	tora_se.ts \
-	tora_fr.ts \
-	tora_it.ts \
-	tora_toad.ts
+	i18n/tora_se.ts \
+	i18n/tora_fr.ts \
+	i18n/tora_it.ts \
+	i18n/tora_toad.ts
 
 AM_CPPFLAGS = -I$(top_srcdir)/ext/otl $(KDE_INCLUDES) $(QT_INCLUDES) $(LTDLINCL)
 AM_CPPFLAGS += $(PCRE_CFLAGS) \
@@ -478,9 +478,8 @@ BUILT_SOURCES = \
 	totuningoverviewui.cpp \
 	totuningsettingui.cpp \
 	toworksheetsetupui.cpp \
-	tora_toad.qm \
-	tora_toad.h \
-	$(filter %.qm,$(TRANSLATIONS:%.ts=%.qm))
+	$(filter %.qm,$(TRANSLATIONS:%.ts=%.qm)) \
+	tora_toad.h 
 
 # have_oracle conditional. these libraries are not built if oracle is
 # not present.
@@ -693,6 +692,7 @@ libtoworksheet_la_SOURCES = toworksheet.cpp toworksheet.h \
 	$(MOC) -o $@ $<
 
 %.qm: %.ts
+	@if ! test -d i18n; then mkdir i18n; echo "create i18n"; fi
 	$(LRELEASE) $< -qm $@ 
 
 clean-local:
@@ -702,7 +702,7 @@ clean-local:
 		rm -f `echo $$file | sed 's/\.ui/\.h/g'`; \
 	done
 
-tora_toad.h: tora_toad.qm
+tora_toad.h: i18n/tora_toad.qm
 	$(top_builddir)/utils/chex/chex $< > $@
 
 tora.pro: Makefile.am
@@ -720,4 +720,4 @@ lrelease: tora.pro $(TRANSLATIONS)
 	$(LRELEASE) tora.pro
 
 install-data-hook:
-	cp -f $(top_builddir)/src/*.qm $(libdir)
+	cp -f $(top_builddir)/src/i18n/*.qm $(libdir)
