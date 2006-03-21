@@ -18,6 +18,7 @@ tora/
    +--rpm/
    |
    +--src/
+   |    +--i18n/
    |    +--icons/
    |    +--templates/
    |    +--windows/
