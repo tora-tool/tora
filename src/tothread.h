@@ -148,6 +148,8 @@ public:
     }
 };
 
+void *toThreadStartWrapper(void*);
+
 class toThread
 {
 private:
