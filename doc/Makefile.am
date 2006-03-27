@@ -4,7 +4,6 @@ dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
 docdir = $(libdir)
-doc_DATA = help/toc.htm
 
 install-data-hook:
 	rm -rf $(docdir)/help
