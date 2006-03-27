@@ -51,6 +51,8 @@ TORA_HAVE_KDE
 MRJ_CHECK_ORACLE
 TORA_CHECK_QSCINTILLA
 AX_PATH_LIB_PCRE
+AM_PATH_CPPUNIT([1.10.2], found_cppunit=yes)
+AM_CONDITIONAL([CPPUNIT], [test "x$found_cppunit" = "xyes"])
 
 # Makefile.am uses these
 AM_CONDITIONAL(ENABLE_MONO, test "$enable_mono" = yes)
@@ -60,6 +62,8 @@ AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([utils/Makefile])
 AC_CONFIG_FILES([utils/chex/Makefile])
 AC_CONFIG_FILES([src/Makefile])
+AC_CONFIG_FILES([test/Makefile])
+AC_CONFIG_FILES([test/configuration/Makefile])
 AC_CONFIG_FILES([ext/Makefile])
 AC_CONFIG_FILES([doc/Makefile])
 AC_CONFIG_FILES([doc/help/Makefile])
