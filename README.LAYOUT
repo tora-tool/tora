@@ -23,6 +23,10 @@ tora/
    |    +--templates/
    |    +--windows/
    |
+   +--test/
+   |     +--configuration/
+   |     +--<other tests>/
+   |
    +--utils/
           +--qscintilla/
 
@@ -55,6 +59,9 @@ rpm:
 
 src:
 	- all source code goes there
+
+test:   
+        - for CppUnit tests
 
 utils:
 	- helper tools for the project goes there
