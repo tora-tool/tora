@@ -347,9 +347,9 @@ GENERATED_SOURCES=$(UI_FILES:%.ui=%.cpp)
 default: all
 
 TRANSLATIONS=\
-	tora_se.ts\
-	tora_fr.ts\
-	tora_it.ts\
+	i18n/tora_se.ts\
+	i18n/tora_fr.ts\
+	i18n/tora_it.ts\
 
 CPPFLAGS=$(CPPFLAGS_GLOB) $(DEFINES) $(INCLUDES)
 CFLAGS=$(CFLAGS_GLOB) $(INCLUDES) $(DEFINES)
@@ -465,7 +465,7 @@ tora_toad.h: tora_toad.qm chex.exe
 chex.exe: ../utils/chex/chex.cpp
 	$(GCC) $< -o $@
 
-tora_toad.qm: tora_toad.ts
+tora_toad.qm: i18n/tora_toad.ts
 	$(LRELEASE) $<
 
 
@@ -473,7 +473,7 @@ tora_toad.qm: tora_toad.ts
 
 tora-static: $(OCI_LIB) $(OBJECTS) windows/tora.o windows/cregistry.o
 	@echo Linking $@
-	$(GCC) $(LFLAGS) $(LFLAGS_GLOB) -mwindows -o $@ $(OBJECTS) windows/tora.o windows/cregistry.o \
+	$(GCC) $(LFLAGS) $(LFLAGS_GLOB) -o -mwindows $@ $(OBJECTS) windows/tora.o windows/cregistry.o \
 		$(LIBS_GLOB) $(QT_STATIC) $(ORACLE_SHARED) $(STDCPP_STATIC) $(MYSQL_STATIC) \
 		$(QT_SCINTILLA)
 
