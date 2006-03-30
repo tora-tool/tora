@@ -683,15 +683,16 @@ libtoworksheet_la_LDFLAGS = $(PFLAGS)
 libtoworksheet_la_SOURCES = toworksheet.cpp toworksheet.h \
 	toworksheetsetupui.cpp toworksheetsetupui.h
 
-%.h: %.ui
+.ui.h:
 	$(UIC) -o $@ $<
+
 %.cpp: %.h %.ui
 	$(UIC) -o $@ -i $^
 
-%.moc: %.h
+.h.moc:
 	$(MOC) -o $@ $<
 
-%.qm: %.ts
+.ts.qm:
 	@if ! test -d i18n; then mkdir i18n; echo "create i18n"; fi
 	$(LRELEASE) $< -qm $@ 
 
