@@ -35,21 +35,18 @@
 *
 *****/
 
+#include "toabout.h"
 
 #include <qtextview.h>
+#include <qmime.h>
 #include <qpushbutton.h>
-#include <qlabel.h>
-#include <qprogressbar.h>
 
-#include "toabout.h"
 #include "toconf.h"
+#include "LICENSE.h"
+#include "icons/largelogo.xpm"
 
 #include "toabout.moc"
 #include "toaboutui.moc"
-
-#include "LICENSE.h"
-
-#include "icons/largelogo.xpm"
 
 static const char *AboutText = "<IMG SRC=largelogo.xpm><BR>\n"
                                "Version %1 (<A HREF=http://tora.sourceforge.net>http://tora.sourceforge.net</A>)\n"
@@ -136,38 +133,12 @@ static const char *AboutText = "<IMG SRC=largelogo.xpm><BR>\n"
 
 #define ABOUT_CAPTION TOAPPNAME " %1"
 
-void toAllocLogo(void)
-{
-    static bool Alloced = false;
-    if (!Alloced)
-    {
-        Alloced = true;
-        QMimeSourceFactory::defaultFactory()->setPixmap(QString::fromLatin1("largelogo.xpm"),
-                QPixmap(const_cast<const char**>(largelogo_xpm)));
-    }
-}
-
-toSplash::toSplash(QWidget *parent, const char *name, WFlags f)
-        : QVBox(parent, name, f)
-{
-    toAllocLogo();
-
-    setBackgroundColor(white);
-    QLabel *logo = new QLabel(this, "Logo");
-    logo->setBackgroundColor(white);
-    logo->setPixmap(QPixmap(const_cast<const char**>(largelogo_xpm)));
-    Label = new QLabel(tr("Loading plugins"), this);
-    Label->setBackgroundColor(white);
-    Progress = new QProgressBar(this, "Progress");
-
-    QWidget *d = QApplication::desktop();
-    move((d->width() - width()) / 2, (d->height() - height()) / 2);
-}
 
 toAbout::toAbout(int page, QWidget* parent, const char* name, bool modal, WFlags fl)
         : toAboutUI(parent, name, modal, fl)
 {
-    toAllocLogo();
+    QMimeSourceFactory::defaultFactory()->setPixmap(QString::fromLatin1("largelogo.xpm"),
+						    QPixmap(const_cast<const char**>(largelogo_xpm)));
 
     switch (page)
     {
@@ -190,9 +161,7 @@ toAbout::toAbout(int page, QWidget* parent, const char* name, bool modal, WFlags
     }
 }
 
-const char *toAbout::aboutText(void)
+toAbout::~toAbout()
 {
-    toAllocLogo();
-
-    return AboutText;
+    QMimeSourceFactory::defaultFactory()->setPixmap(QString::fromLatin1("largelogo.xpm"),0);
 }

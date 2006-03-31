@@ -174,6 +174,7 @@ tora_SOURCES=main.cpp \
 	tosearchreplace.cpp tosearchreplace.h \
 	tosearchreplaceui.cpp tosearchreplaceui.h \
 	tosmtp.cpp tosmtp.h \
+	tosplash.cpp tosplash.h \
 	tosql.cpp tosql.h \
 	tosqlparse.cpp tosqlparse.h \
 	tosyntaxsetup.cpp tosyntaxsetup.h \

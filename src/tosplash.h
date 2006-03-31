@@ -35,19 +35,34 @@
 *
 *****/
 
-#ifndef TOABOUT_H
-#define TOABOUT_H
 
-#include "toaboutui.h"
+#ifndef TOSPLASH_H
+#define TOSPLASH_H
 
-class toAbout : public toAboutUI
+#include <qvbox.h>
+
+class QLabel;
+class QProgressBar;
+
+class toSplash : public QVBox
 {
-    Q_OBJECT
-
+    QProgressBar *Progress;
+    QLabel *Label;
 public:
-    toAbout(int page, QWidget* parent = 0, const char* name = 0, bool modal = false, WFlags fl = 0);
-    ~toAbout();
-
+    toSplash(QWidget *parent = 0, const char *name = 0, WFlags f = 0);
+    ~toSplash();
+    QLabel* label(void);
+    QProgressBar* progress(void);
 };
+
+inline QLabel* toSplash::label(void)
+{
+    return Label;
+}
+
+inline QProgressBar* toSplash::progress(void)
+{
+    return Progress;
+}
 
 #endif

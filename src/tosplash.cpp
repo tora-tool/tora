@@ -35,19 +35,34 @@
 *
 *****/
 
-#ifndef TOABOUT_H
-#define TOABOUT_H
+#include "tosplash.h"
 
-#include "toaboutui.h"
+#include <qpixmap.h>
+#include <qlabel.h>
+#include <qapplication.h>
+#include <qprogressbar.h>
 
-class toAbout : public toAboutUI
+#include "icons/largelogo.xpm"
+
+toSplash::toSplash(QWidget *parent, const char *name, WFlags f)
+        : QVBox(parent, name, f)
 {
-    Q_OBJECT
+    QMimeSourceFactory::defaultFactory()->setPixmap(QString::fromLatin1("largelogo.xpm"),
+            QPixmap(const_cast<const char**>(largelogo_xpm)));
 
-public:
-    toAbout(int page, QWidget* parent = 0, const char* name = 0, bool modal = false, WFlags fl = 0);
-    ~toAbout();
+    setBackgroundColor(white);
+    QLabel *logo = new QLabel(this, "Logo");
+    logo->setBackgroundColor(white);
+    logo->setPixmap(QPixmap(const_cast<const char**>(largelogo_xpm)));
+    Label = new QLabel(tr("Loading plugins"), this);
+    Label->setBackgroundColor(white);
+    Progress = new QProgressBar(this, "Progress");
 
-};
+    QWidget *d = QApplication::desktop();
+    move((d->width() - width()) / 2, (d->height() - height()) / 2);
+}
 
-#endif
+toSplash::~toSplash()
+{
+    QMimeSourceFactory::defaultFactory()->setPixmap(QString::fromLatin1("largelogo.xpm"), 0);
+}
