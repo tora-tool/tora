@@ -278,6 +278,7 @@ SOURCES=\
 	tosgastatement.cpp \
 	tosgatrace.cpp \
 	tosmtp.cpp \
+	tosplash.cpp \
 	tosql.cpp \
 	tosqledit.cpp \
 	tosqlparse.cpp \
