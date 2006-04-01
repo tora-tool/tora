@@ -38,14 +38,12 @@
 #ifndef TOALERT_H
 #define TOALERT_H
 
-#include "config.h"
-#include "toconnection.h"
-#include "tothread.h"
-#include "totool.h"
-
 #include <list>
 
 #include <qtimer.h>
+
+#include "toconnection.h"
+#include "totool.h"
 
 class QComboBox;
 class QLineEdit;

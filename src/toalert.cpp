@@ -35,18 +35,13 @@
 *
 *****/
 
-#include "utils.h"
-
 #include "toalert.h"
+
+#include "utils.h"
 #include "toconf.h"
-#include "toconnection.h"
 #include "tomain.h"
 #include "tomemoeditor.h"
-#include "tonoblockquery.h"
 #include "toresultview.h"
-#include "toresultview.h"
-#include "tosql.h"
-#include "totool.h"
 
 #ifndef WIN32
 #include <unistd.h>
@@ -55,7 +50,6 @@
 #endif
 
 #include <algorithm>
-
 #include <stdio.h>
 
 #include <qcombobox.h>
