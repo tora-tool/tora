@@ -1,19 +1,19 @@
-/*****
+ /*****
 *
 * TOra - An Oracle Toolkit for DBA's and developers
 * Copyright (C) 2003-2005 Quest Software, Inc
 * Portions Copyright (C) 2005 Other Contributors
-* 
+*
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
 * as published by the Free Software Foundation;  only version 2 of
 * the License is valid for this program.
-* 
+*
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
-* 
+*
 * You should have received a copy of the GNU General Public License
 * along with this program; if not, write to the Free Software
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -39,6 +39,7 @@
 #define TOTOOL_H
 
 #include "config.h"
+#include "toconfiguration.h"
 
 #include <map>
 
@@ -86,24 +87,11 @@ private:
      */
     static std::map<QCString, toTool *> *Tools;
     /**
-     * A map containing the available configuration settings. By convention the
-     * character ':' is used to separate parts of the path.
-     *
-     * @see globalConfig
-     * @see globalSetConfig
-     * @see config
-     * @see setConfig
-     */
-    static std::map<QCString, QString> *Configuration;
-    /**
      * Contain the pixmap of this tool if any. Used for the toolbar and menu entries.
      */
     QPixmap *ButtonPicture;
 
-    /**
-     * Load configuration from file.
-     */
-    static void loadConfig(void);
+
 protected:
     /**
      * Should return the xpm used to create the @ref ButtonPicture.
@@ -237,80 +225,32 @@ public:
      * @return A pointer to the tool or NULL if tool doesn't exist.
      */
     static toTool *tool(const QCString &key);
-    /**
-     * Save configuration to file.
-     */
-    static void saveConfig(void);
-    /**
-     * Get value of a setting.
-     *
-     * Setting names are hierachical separated by ':' instead of '/' usually used
-     * in filenames. As an example all settings for the tool 'Example' would be
-     * under the 'Example:{settingname}' name.
-     *
-     * @param tag The name of the configuration setting.
-     * @param def Default value of the setting, if it is not available.
-     */
-    static const QString &globalConfig(const QCString &tag, const QCString &def);
-    /**
-     * Change a setting. Depending on the implementation this can change the
-     * contents on disk or not.
-     *
-     * Setting names are hierachical separated by ':' instead of '/' usually used
-     * in filenames. As an example all settings for the tool 'Example' would be
-     * under the 'Example:{settingname}' name.
-     *
-     * @param tag The name of the configuration setting.
-     * @param def Contents of this setting.
-     */
-    static void globalSetConfig(const QCString &tag, const QString &value);
-    /**
-     * Remove a setting. Can be usefull for removing sensetive information.
-     * @param tag The name of the configuration setting to remove.
-     */
-    static void globalEraseConfig(const QCString &tag);
 
-    /**
-     * Get tool specific settings.
-     *
-     * Setting names are hierachical separated by ':' instead of '/' usually used
-     * in filenames. As an example all settings for the tool 'Example' would be
-     * under the 'Example:{settingname}' name.
-     *
-     * @param tag The name of the configuration setting.
-     * @param def Contents of this setting.
-     */
-    const QString &config(const QCString &tag, const QCString &def);
-    /**
-     * Change toolspecific setting. Depending on the implementation this can change the
-     * contents on disk or not.
-     *
-     * Setting names are hierachical separated by ':' instead of '/' usually used
-     * in filenames. As an example all settings for the tool 'Example' would be
-     * under the 'Example:{settingname}' name.
-     *
-     * @param tag The name of the configuration setting.
-     * @param def Default value of the setting, if it is not available.
-     */
-    void setConfig(const QCString &tag, const QString &value);
-    /**
-     * Remove a toolspecific setting. Can be usefull for removing sensetive information.
-     * @param tag The name of the configuration setting to remove.
-     */
-    void eraseConfig(const QCString &tag);
-    /**
-     * Load a string to string map from file saved by the @ref saveMap function.
-     * @param filename Filename to load
-     * @param map Reference to the map to fill with the new values.
-     */
-    static void loadMap(const QString &filename, std::map<QCString, QString> &map);
-    /**
-     * Save a string to string map to file.
-     * @see loadMap
-     * @param filename Filename to load
-     * @param map Reference to the map to fill with the new values.
-     */
-    static bool saveMap(const QString &filename, std::map<QCString, QString> &map);
+  /**
+   * Get tool specific settings.
+   *
+   * Setting names are hierachical separated by ':' instead of '/' usually used
+   * in filenames. As an example all settings for the tool 'Example' would be
+   * under the 'Example:{settingname}' name.
+   *
+   * @param tag The name of the configuration setting.
+   * @param def Contents of this setting.
+   */
+  const QString &config(const QCString &tag,const QCString &def);
+
+  /**
+   * Change toolspecific setting. Depending on the implementation this can change the
+   * contents on disk or not.
+   *
+   * Setting names are hierachical separated by ':' instead of '/' usually used
+   * in filenames. As an example all settings for the tool 'Example' would be
+   * under the 'Example:{settingname}' name.
+   *
+   * @param tag The name of the configuration setting.
+   * @param def Default value of the setting, if it is not available.
+   */
+  void setConfig(const QCString &tag,const QString &value);
+
 public slots:
     /**
      * Create a window of the current tool. This function sets up a toolwindow for

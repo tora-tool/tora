@@ -111,7 +111,7 @@ void toResultPlan::oracleNext(void)
     Parents.clear();
     Last.clear();
 
-    QString chkPoint = toTool::globalConfig(CONF_PLAN_CHECKPOINT, DEFAULT_PLAN_CHECKPOINT);
+    QString chkPoint = toConfigurationSingle::Instance().globalConfig(CONF_PLAN_CHECKPOINT, DEFAULT_PLAN_CHECKPOINT);
 
     toConnection &conn = connection();
 
@@ -119,7 +119,7 @@ void toResultPlan::oracleNext(void)
 
     Ident = QString::fromLatin1("TOra ") + QString::number((int)time(NULL) + rand());
 
-    QString planTable = toTool::globalConfig(CONF_PLAN_TABLE, DEFAULT_PLAN_TABLE);
+    QString planTable = toConfigurationSingle::Instance().globalConfig(CONF_PLAN_TABLE, DEFAULT_PLAN_TABLE);
 
     QString sql = toShift(Statements);
     if (sql.isNull())
@@ -158,7 +158,7 @@ void toResultPlan::oracleNext(void)
         toQList par;
         Query = new toNoBlockQuery(connection(), toQuery::Normal,
                                    toSQL::string(SQLViewPlan, connection()).
-                                   arg(toTool::globalConfig(CONF_PLAN_TABLE, DEFAULT_PLAN_TABLE)).
+                                   arg(toConfigurationSingle::Instance().globalConfig(CONF_PLAN_TABLE, DEFAULT_PLAN_TABLE)).
                                    arg(Ident), par);
         Reading = true;
     }
@@ -258,7 +258,7 @@ void toResultPlan::query(const QString &sql,
 
         oracleSetup();
 
-        QString planTable = toTool::globalConfig(CONF_PLAN_TABLE, DEFAULT_PLAN_TABLE);
+        QString planTable = toConfigurationSingle::Instance().globalConfig(CONF_PLAN_TABLE, DEFAULT_PLAN_TABLE);
 
         Statements.clear();
         if (sql.startsWith(QString::fromLatin1("SAVED:")))
@@ -305,7 +305,7 @@ void toResultPlan::poll(void)
                 Query = NULL;
                 Query = new toNoBlockQuery(connection(), toQuery::Normal,
                                            toSQL::string(SQLViewPlan, connection()).
-                                           arg(toTool::globalConfig(CONF_PLAN_TABLE, DEFAULT_PLAN_TABLE)).
+                                           arg(toConfigurationSingle::Instance().globalConfig(CONF_PLAN_TABLE, DEFAULT_PLAN_TABLE)).
                                            arg(Ident), par);
                 Reading = true;
             }
@@ -353,10 +353,10 @@ void toResultPlan::poll(void)
                 {
                     delete Query;
                     Query = NULL;
-                    QString chkPoint = toTool::globalConfig(CONF_PLAN_CHECKPOINT, DEFAULT_PLAN_CHECKPOINT);
+                    QString chkPoint = toConfigurationSingle::Instance().globalConfig(CONF_PLAN_CHECKPOINT, DEFAULT_PLAN_CHECKPOINT);
                     if (!sql().startsWith(QString::fromLatin1("SAVED:")))
                     {
-                        if (toTool::globalConfig(CONF_KEEP_PLANS, "").isEmpty())
+                        if (toConfigurationSingle::Instance().globalConfig(CONF_KEEP_PLANS, "").isEmpty())
                             connection().execute(QString::fromLatin1("ROLLBACK TO SAVEPOINT %1").arg(chkPoint));
                         else
                             toMainWidget()->setNeedCommit(connection());
@@ -381,7 +381,7 @@ void toResultPlan::checkException(const QString &str)
     {
         if (str.startsWith(QString::fromLatin1("ORA-02404")))
         {
-            QString planTable = toTool::globalConfig(CONF_PLAN_TABLE, DEFAULT_PLAN_TABLE);
+            QString planTable = toConfigurationSingle::Instance().globalConfig(CONF_PLAN_TABLE, DEFAULT_PLAN_TABLE);
             int ret = TOMessageBox::warning(this,
                                             tr("Plan table doesn't exist"),
                                             tr("Specified plan table %1 didn't exist.\n"

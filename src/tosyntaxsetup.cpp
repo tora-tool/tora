@@ -66,24 +66,24 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, WFlags fl)
         : toSyntaxSetupUI(parent, name, fl), toSettingTab("fonts.html"),
         Analyzer(toSyntaxAnalyzer::defaultAnalyzer())
 {
-    KeywordUpper->setChecked(!toTool::globalConfig(CONF_KEYWORD_UPPER, DEFAULT_KEYWORD_UPPER).isEmpty());
-    SyntaxHighlighting->setChecked(!toTool::globalConfig(CONF_HIGHLIGHT, "Yes").isEmpty());
-    CodeCompletion->setChecked(!toTool::globalConfig(CONF_CODE_COMPLETION, "Yes").isEmpty());
-    CompletionSort->setChecked(!toTool::globalConfig(CONF_COMPLETION_SORT, "Yes").isEmpty());
-    AutoIndent->setChecked(!toTool::globalConfig(CONF_AUTO_INDENT, "Yes").isEmpty());
-    Extensions->setText(toTool::globalConfig(CONF_EXTENSIONS, DEFAULT_EXTENSIONS));
+    KeywordUpper->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_KEYWORD_UPPER, DEFAULT_KEYWORD_UPPER).isEmpty());
+    SyntaxHighlighting->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_HIGHLIGHT, "Yes").isEmpty());
+    CodeCompletion->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_CODE_COMPLETION, "Yes").isEmpty());
+    CompletionSort->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_COMPLETION_SORT, "Yes").isEmpty());
+    AutoIndent->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_INDENT, "Yes").isEmpty());
+    Extensions->setText(toConfigurationSingle::Instance().globalConfig(CONF_EXTENSIONS, DEFAULT_EXTENSIONS));
     TabStop->setValue(toMarkedText::defaultTabWidth());
 
     {
-        QFont font(toStringToFont(toTool::globalConfig(CONF_CODE, "")));
+        QFont font(toStringToFont(toConfigurationSingle::Instance().globalConfig(CONF_CODE, "")));
         checkFixedWidth(font);
         CodeExample->setFont(font);
     }
 
-    TextExample->setFont(toStringToFont(toTool::globalConfig(CONF_TEXT, "")));
+    TextExample->setFont(toStringToFont(toConfigurationSingle::Instance().globalConfig(CONF_TEXT, "")));
 
     {
-        QString str = toTool::globalConfig(CONF_LIST, "");
+        QString str = toConfigurationSingle::Instance().globalConfig(CONF_LIST, "");
         QFont font;
         if (str.isEmpty())
         {
@@ -153,7 +153,7 @@ void toSyntaxAnalyzer::readColor(const QColor &def, infoType typ)
 {
     QCString conf(CONF_COLOR ":");
     conf += typeString(typ);
-    QString res = toTool::globalConfig(conf, "");
+    QString res = toConfigurationSingle::Instance().globalConfig(conf, "");
     if (res.isEmpty())
         Colors[typ] = def;
     else
@@ -333,17 +333,17 @@ void toSyntaxSetup::selectColor(void)
 
 void toSyntaxSetup::saveSetting(void)
 {
-    toTool::globalSetConfig(CONF_TEXT, toFontToString(TextExample->font()));
-    toTool::globalSetConfig(CONF_CODE, toFontToString(CodeExample->font()));
-    toTool::globalSetConfig(CONF_LIST, List);
+    toConfigurationSingle::Instance().globalSetConfig(CONF_TEXT, toFontToString(TextExample->font()));
+    toConfigurationSingle::Instance().globalSetConfig(CONF_CODE, toFontToString(CodeExample->font()));
+    toConfigurationSingle::Instance().globalSetConfig(CONF_LIST, List);
     bool highlight = SyntaxHighlighting->isChecked();
-    toTool::globalSetConfig(CONF_HIGHLIGHT, highlight ? "Yes" : "");
-    toTool::globalSetConfig(CONF_KEYWORD_UPPER, KeywordUpper->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_CODE_COMPLETION, highlight && CodeCompletion->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_COMPLETION_SORT, CompletionSort->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_AUTO_INDENT, AutoIndent->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_HIGHLIGHT, highlight ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_KEYWORD_UPPER, KeywordUpper->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_CODE_COMPLETION, highlight && CodeCompletion->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_COMPLETION_SORT, CompletionSort->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_AUTO_INDENT, AutoIndent->isChecked() ? "Yes" : "");
     toMarkedText::setDefaultTabWidth(TabStop->value());
-    toTool::globalSetConfig(CONF_TAB_STOP, QString::number(toMarkedText::defaultTabWidth()));
+    toConfigurationSingle::Instance().globalSetConfig(CONF_TAB_STOP, QString::number(toMarkedText::defaultTabWidth()));
     for (std::map<QCString, QColor>::iterator i = Colors.begin();i != Colors.end();i++)
     {
         QCString str(CONF_COLOR);
@@ -354,8 +354,8 @@ void toSyntaxSetup::saveSetting(void)
                     (*i).second.red(),
                     (*i).second.green(),
                     (*i).second.blue());
-        toTool::globalSetConfig(str, res);
+        toConfigurationSingle::Instance().globalSetConfig(str, res);
     }
     toSyntaxAnalyzer::defaultAnalyzer().updateSettings();
-    toTool::globalSetConfig(CONF_EXTENSIONS, Extensions->text());
+    toConfigurationSingle::Instance().globalSetConfig(CONF_EXTENSIONS, Extensions->text());
 }

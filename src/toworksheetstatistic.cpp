@@ -244,7 +244,7 @@ void toWorksheetStatistic::save(int selid)
                 stat["Description"] = (*i).Label->text();
                 try
                 {
-                    toTool::saveMap(fn, stat);
+                    toConfigurationSingle::Instance().saveMap(fn, stat);
                 }
                 TOCATCH
             }
@@ -283,7 +283,7 @@ void toWorksheetStatistic::load(void)
         try
         {
             std::map<QCString, QString> ret;
-            toTool::loadMap(filename, ret);
+            toConfigurationSingle::Instance().loadMap(filename, ret);
             addStatistics(ret);
         }
         TOCATCH

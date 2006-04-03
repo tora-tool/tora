@@ -269,7 +269,7 @@ bool toResult::setSQLParams(const QString &sql, const toQList &par)
 {
     bool force = ForceRefresh;
     ForceRefresh = false;
-    if (!toTool::globalConfig(CONF_DONT_REREAD, "Yes").isEmpty())
+    if (!toConfigurationSingle::Instance().globalConfig(CONF_DONT_REREAD, "Yes").isEmpty())
     {
         if (SQL == sql && par.size() == Params.size())
         {

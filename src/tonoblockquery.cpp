@@ -248,7 +248,7 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn, const QString &sql,
         Statistics = NULL;
     }
 
-    int val = toTool::globalConfig(CONF_AUTO_LONG, "0").toInt();
+    int val = toConfigurationSingle::Instance().globalConfig(CONF_AUTO_LONG, "0").toInt();
     if (val != 0)
         Started = time(NULL) + val;
     else
@@ -309,7 +309,7 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn, toQuery::queryMode mode,
         Statistics = NULL;
     }
 
-    int val = toTool::globalConfig(CONF_AUTO_LONG, "0").toInt();
+    int val = toConfigurationSingle::Instance().globalConfig(CONF_AUTO_LONG, "0").toInt();
     if (val != 0)
         Started = time(NULL) + val;
     else

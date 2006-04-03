@@ -89,7 +89,7 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name, bool modal, 
 #endif
 
     QPopupMenu *menu = new QPopupMenu(Previous);
-    Database->insertItem(toTool::globalConfig(CONF_DATABASE, DEFAULT_DATABASE));
+    Database->insertItem(toConfigurationSingle::Instance().globalConfig(CONF_DATABASE, DEFAULT_DATABASE));
     Previous->addColumn(tr("Provider"));
     Previous->addColumn(tr("Host"));
     Previous->addColumn(tr("Database"));
@@ -103,7 +103,7 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name, bool modal, 
     connect(Previous, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(historyConnect()));
     std::list<QCString> lst = toConnectionProvider::providers();
     int sel = 0, cur = 0;
-    QCString provider = toTool::globalConfig(CONF_PROVIDER, DEFAULT_PROVIDER).latin1();
+    QCString provider = toConfigurationSingle::Instance().globalConfig(CONF_PROVIDER, DEFAULT_PROVIDER).latin1();
     for (std::list<QCString>::iterator i = lst.begin();i != lst.end();i++)
     {
         Provider->insertItem(QString::fromLatin1(*i));
@@ -121,9 +121,9 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name, bool modal, 
     }
     Provider->setCurrentItem(sel);
     changeProvider();
-    processOptions(toTool::globalConfig(CONF_OPTIONS, DEFAULT_OPTIONS));
+    processOptions(toConfigurationSingle::Instance().globalConfig(CONF_OPTIONS, DEFAULT_OPTIONS));
 
-    QString host = toTool::globalConfig(CONF_HOST, DEFAULT_HOST);
+    QString host = toConfigurationSingle::Instance().globalConfig(CONF_HOST, DEFAULT_HOST);
 
     int portix = host.find(":");
     if (portix >= 0)
@@ -134,20 +134,20 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name, bool modal, 
     else
         Host->lineEdit()->setText(host);
 
-    Username->setText(toTool::globalConfig(CONF_USER, DEFAULT_USER));
+    Username->setText(toConfigurationSingle::Instance().globalConfig(CONF_USER, DEFAULT_USER));
     Username->setFocus();
 
-    bool pass = toTool::globalConfig(CONF_SAVE_PWD, DEFAULT_SAVE_PWD).isEmpty();
+    bool pass = toConfigurationSingle::Instance().globalConfig(CONF_SAVE_PWD, DEFAULT_SAVE_PWD).isEmpty();
     if (pass)
         Password->setText(QString::fromLatin1(DEFAULT_PASSWORD));
     else
-        Password->setText(toUnobfuscate(toTool::globalConfig(CONF_PASSWORD, DEFAULT_PASSWORD)));
+        Password->setText(toUnobfuscate(toConfigurationSingle::Instance().globalConfig(CONF_PASSWORD, DEFAULT_PASSWORD)));
 
-    QString defdb = toTool::globalConfig(CONF_DATABASE, DEFAULT_DATABASE);
+    QString defdb = toConfigurationSingle::Instance().globalConfig(CONF_DATABASE, DEFAULT_DATABASE);
     Database->setEditable(true);
 
     {
-        int maxHist = toTool::globalConfig(CONF_CONNECT_CURRENT, 0).toInt();
+        int maxHist = toConfigurationSingle::Instance().globalConfig(CONF_CONNECT_CURRENT, 0).toInt();
         Previous->setSorting( -1);
         QListViewItem *last = NULL;
         for (int i = 0;i < maxHist;i++)
@@ -157,28 +157,28 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name, bool modal, 
             path += QString::number(i).latin1();
             QCString tmp = path;
             tmp += CONF_USER;
-            QString user = toTool::globalConfig(tmp, "");
+            QString user = toConfigurationSingle::Instance().globalConfig(tmp, "");
 
             tmp = path;
             tmp += CONF_PASSWORD;
             QString passstr = (pass ? QString::fromLatin1(DEFAULT_PASSWORD) :
-                               (toUnobfuscate(toTool::globalConfig(tmp, DEFAULT_PASSWORD))));
+                               (toUnobfuscate(toConfigurationSingle::Instance().globalConfig(tmp, DEFAULT_PASSWORD))));
 
             tmp = path;
             tmp += CONF_HOST;
-            QString host = toTool::globalConfig(tmp, DEFAULT_HOST);
+            QString host = toConfigurationSingle::Instance().globalConfig(tmp, DEFAULT_HOST);
 
             tmp = path;
             tmp += CONF_DATABASE;
-            QString database = toTool::globalConfig(tmp, DEFAULT_DATABASE);
+            QString database = toConfigurationSingle::Instance().globalConfig(tmp, DEFAULT_DATABASE);
 
             tmp = path;
             tmp += CONF_PROVIDER;
-            QString provider = toTool::globalConfig(tmp, DEFAULT_PROVIDER);
+            QString provider = toConfigurationSingle::Instance().globalConfig(tmp, DEFAULT_PROVIDER);
 
             tmp = path;
             tmp += CONF_OPTIONS;
-            QString options = toTool::globalConfig(tmp, DEFAULT_OPTIONS);
+            QString options = toConfigurationSingle::Instance().globalConfig(tmp, DEFAULT_OPTIONS);
 
             last = new QListViewItem(Previous, last, provider, host, database, user, passstr, options);
         }
@@ -339,8 +339,8 @@ toConnection *toNewConnection::makeConnection(void)
 {
     try
     {
-        toTool::globalSetConfig(CONF_PROVIDER, Provider->currentText());
-        toTool::globalSetConfig(CONF_USER, Username->text());
+        toConfigurationSingle::Instance().globalSetConfig(CONF_PROVIDER, Provider->currentText());
+        toConfigurationSingle::Instance().globalSetConfig(CONF_USER, Username->text());
         QString pass;
         QString host;
         if (!Host->isHidden())
@@ -365,7 +365,7 @@ toConnection *toNewConnection::makeConnection(void)
                 optionstring += box->text();
             }
         }
-        toTool::globalSetConfig(CONF_OPTIONS, optionstring);
+        toConfigurationSingle::Instance().globalSetConfig(CONF_OPTIONS, optionstring);
 
         std::list<QString> con = toMainWidget()->connections();
         for (std::list<QString>::iterator i = con.begin();i != con.end();i++)
@@ -385,7 +385,7 @@ toConnection *toNewConnection::makeConnection(void)
         if (Port->value() != 0 && Port->value() != DefaultPort)
             host += ":" + QString::number(Port->value());
 
-        toTool::globalSetConfig(CONF_HOST, host);
+        toConfigurationSingle::Instance().globalSetConfig(CONF_HOST, host);
 
         toConnection *retCon = new toConnection(Provider->currentText().latin1(),
                                                 Username->text(),
@@ -407,12 +407,12 @@ toConnection *toNewConnection::makeConnection(void)
             }
         }
 
-        if (!toTool::globalConfig(CONF_SAVE_PWD, DEFAULT_SAVE_PWD).isEmpty())
+        if (!toConfigurationSingle::Instance().globalConfig(CONF_SAVE_PWD, DEFAULT_SAVE_PWD).isEmpty())
             pass = retCon->password();
         else
             pass = DEFAULT_PASSWORD;
-        toTool::globalSetConfig(CONF_PASSWORD, toObfuscate(pass));
-        toTool::globalSetConfig(CONF_DATABASE, Database->currentText());
+        toConfigurationSingle::Instance().globalSetConfig(CONF_PASSWORD, toObfuscate(pass));
+        toConfigurationSingle::Instance().globalSetConfig(CONF_DATABASE, Database->currentText());
 
         new QListViewItem(Previous, NULL,
                           Provider->currentText(),
@@ -437,7 +437,7 @@ toConnection *toNewConnection::makeConnection(void)
 
 void toNewConnection::historySave(void)
 {
-    int siz = toTool::globalConfig(CONF_CONNECT_SIZE, DEFAULT_CONNECT_SIZE).toInt();
+    int siz = toConfigurationSingle::Instance().globalConfig(CONF_CONNECT_SIZE, DEFAULT_CONNECT_SIZE).toInt();
     int i = 0;
     int j = 0;
 
@@ -450,51 +450,51 @@ void toNewConnection::historySave(void)
         QCString tmp = path;
         tmp += CONF_PROVIDER;
         if (i < siz && item)
-            toTool::globalSetConfig(tmp, item->text(0));
+            toConfigurationSingle::Instance().globalSetConfig(tmp, item->text(0));
         else
-            toTool::globalEraseConfig(tmp);
+            toConfigurationSingle::Instance().globalEraseConfig(tmp);
 
         tmp = path;
         tmp += CONF_HOST;
         if (i < siz && item)
-            toTool::globalSetConfig(tmp, item->text(1));
+            toConfigurationSingle::Instance().globalSetConfig(tmp, item->text(1));
         else
-            toTool::globalEraseConfig(tmp);
+            toConfigurationSingle::Instance().globalEraseConfig(tmp);
 
         tmp = path;
         tmp += CONF_DATABASE;
         if (i < siz && item)
-            toTool::globalSetConfig(tmp, item->text(2));
+            toConfigurationSingle::Instance().globalSetConfig(tmp, item->text(2));
         else
-            toTool::globalEraseConfig(tmp);
+            toConfigurationSingle::Instance().globalEraseConfig(tmp);
 
         tmp = path;
         tmp += CONF_USER;
         if (i < siz && item)
-            toTool::globalSetConfig(tmp, item->text(3));
+            toConfigurationSingle::Instance().globalSetConfig(tmp, item->text(3));
         else
-            toTool::globalEraseConfig(tmp);
+            toConfigurationSingle::Instance().globalEraseConfig(tmp);
 
         tmp = path;
         tmp += CONF_PASSWORD;
         if (i < siz && item)
-            toTool::globalSetConfig(tmp, toObfuscate(item->text(4)));
+            toConfigurationSingle::Instance().globalSetConfig(tmp, toObfuscate(item->text(4)));
         else
-            toTool::globalEraseConfig(tmp);
+            toConfigurationSingle::Instance().globalEraseConfig(tmp);
 
         tmp = path;
         tmp += CONF_OPTIONS;
         if (i < siz && item)
-            toTool::globalSetConfig(tmp, item->text(5));
+            toConfigurationSingle::Instance().globalSetConfig(tmp, item->text(5));
         else
-            toTool::globalEraseConfig(tmp);
+            toConfigurationSingle::Instance().globalEraseConfig(tmp);
 
         i++;
         if (i < siz && item)
             j++;
     }
-    toTool::globalSetConfig(CONF_CONNECT_CURRENT, QString::number(j));
-    toTool::saveConfig();
+    toConfigurationSingle::Instance().globalSetConfig(CONF_CONNECT_CURRENT, QString::number(j));
+    toConfigurationSingle::Instance().saveConfig();
 }
 
 void toNewConnection::historySelection(void)
@@ -535,7 +535,7 @@ void toNewConnection::historySelection(void)
 void toNewConnection::historyConnect(void)
 {
     bool ok = true;
-    if (toTool::globalConfig(CONF_SAVE_PWD, DEFAULT_SAVE_PWD).isEmpty())
+    if (toConfigurationSingle::Instance().globalConfig(CONF_SAVE_PWD, DEFAULT_SAVE_PWD).isEmpty())
     {
         ok = false;
         QString name = QInputDialog::getText(tr("Enter password"),

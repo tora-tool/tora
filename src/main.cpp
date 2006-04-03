@@ -91,7 +91,7 @@ void toUpdateIndicateEmpty(void);
 int main(int argc, char **argv)
 {
 #ifdef ENABLE_QT_XFT
-    toSetEnv("QT_XFT", toTool::globalConfig(CONF_QT_XFT, DEFAULT_QT_XFT).latin1());
+    toSetEnv("QT_XFT", toConfigurationSingle::Instance().globalConfig(CONF_QT_XFT, DEFAULT_QT_XFT).latin1());
 #endif
 
 #ifdef TO_KDE
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 #else
 #  ifndef WIN32
 
-    if (toTool::globalConfig(CONF_DESKTOP_AWARE, "Yes").isEmpty())
+    if (toConfigurationSingle::Instance().globalConfig(CONF_DESKTOP_AWARE, "Yes").isEmpty())
         QApplication::setDesktopSettingsAware(false);
 #  endif
 
@@ -115,10 +115,10 @@ int main(int argc, char **argv)
             qApp->setDefaultCodec(QTextCodec::codecForName(getenv("LANG")));
 
         QTranslator torats(0);
-        torats.load(toPluginPath() + "/" + QString("tora_") + toTool::globalConfig(CONF_LOCALE, QTextCodec::locale()), ".");
+        torats.load(toPluginPath() + "/" + QString("tora_") + toConfigurationSingle::Instance().globalConfig(CONF_LOCALE, QTextCodec::locale()), ".");
         qApp->installTranslator(&torats);
         QTranslator toadbindings(0);
-        if (!toTool::globalConfig(CONF_TOAD_BINDINGS, DEFAULT_TOAD_BINDINGS).isEmpty())
+        if (!toConfigurationSingle::Instance().globalConfig(CONF_TOAD_BINDINGS, DEFAULT_TOAD_BINDINGS).isEmpty())
         {
             if (!toadbindings.load(tora_toad, sizeof(tora_toad)))
                 printf("Internal error, couldn't load TOAD bindings");
@@ -126,7 +126,7 @@ int main(int argc, char **argv)
         }
 
 #ifdef ENABLE_STYLE
-        QString style = toTool::globalConfig(CONF_STYLE, "");
+        QString style = toConfigurationSingle::Instance().globalConfig(CONF_STYLE, "");
         if (!style.isEmpty())
             toSetSessionType(style);
 #endif
@@ -147,7 +147,7 @@ int main(int argc, char **argv)
                 dirPath = DEFAULT_PLUGIN_DIR;
                 d.cd(dirPath);
                 if (d.exists())
-                    toTool::globalSetConfig(CONF_PLUGIN_DIR, dirPath);
+                    toConfigurationSingle::Instance().globalSetConfig(CONF_PLUGIN_DIR, dirPath);
                 else
                     fprintf(stderr, "Invalid PluginDir.\n");
             }
@@ -194,7 +194,7 @@ int main(int argc, char **argv)
 
         try
         {
-            toSQL::loadSQL(toTool::globalConfig(CONF_SQL_FILE, DEFAULT_SQL_FILE));
+            toSQL::loadSQL(toConfigurationSingle::Instance().globalConfig(CONF_SQL_FILE, DEFAULT_SQL_FILE));
         }
         catch (...)
         {}
@@ -214,27 +214,27 @@ int main(int argc, char **argv)
             toSetEnv("NLS_LANG", nls);
         }
 
-        if (toTool::globalConfig("LastVersion", "") != TOVERSION)
+        if (toConfigurationSingle::Instance().globalConfig("LastVersion", "") != TOVERSION)
         {
             std::auto_ptr<toAbout> about ( new toAbout(0, NULL, "About " TOAPPNAME, true));
             if (!about->exec())
             {
                 exit (2);
             }
-            toTool::globalSetConfig("LastVersion", TOVERSION);
+            toConfigurationSingle::Instance().globalSetConfig("LastVersion", TOVERSION);
         }
 
 
-        if (toTool::globalConfig("FirstInstall", "").isEmpty())
+        if (toConfigurationSingle::Instance().globalConfig("FirstInstall", "").isEmpty())
         {
             time_t t;
             time(&t);
-            toTool::globalSetConfig("FirstInstall", ctime(&t));
+            toConfigurationSingle::Instance().globalSetConfig("FirstInstall", ctime(&t));
         }
 
         toQValue::setNumberFormat(
-            toTool::globalConfig(CONF_NUMBER_FORMAT, DEFAULT_NUMBER_FORMAT).toInt(),
-            toTool::globalConfig(CONF_NUMBER_DECIMALS, DEFAULT_NUMBER_DECIMALS).toInt());
+            toConfigurationSingle::Instance().globalConfig(CONF_NUMBER_FORMAT, DEFAULT_NUMBER_FORMAT).toInt(),
+            toConfigurationSingle::Instance().globalConfig(CONF_NUMBER_DECIMALS, DEFAULT_NUMBER_DECIMALS).toInt());
 
         if (qApp->argc() > 2 || (qApp->argc() == 2 && qApp->argv()[1][0] == '-'))
         {
@@ -258,19 +258,19 @@ int main(int argc, char **argv)
                     connect = QString::fromLatin1(getenv("ORACLE_SID"));
             }
             if (!connect.isEmpty())
-                toTool::globalSetConfig(CONF_DATABASE, connect);
+                toConfigurationSingle::Instance().globalSetConfig(CONF_DATABASE, connect);
             pos = user.find(QString::fromLatin1("/"));
             if (pos > -1)
             {
-                toTool::globalSetConfig(CONF_PASSWORD, user.right(user.length() - pos - 1));
+                toConfigurationSingle::Instance().globalSetConfig(CONF_PASSWORD, user.right(user.length() - pos - 1));
                 user = user.left(pos);
             }
             if (!user.isEmpty())
-                toTool::globalSetConfig(CONF_USER, user);
+                toConfigurationSingle::Instance().globalSetConfig(CONF_USER, user);
         }
 
         toMarkedText::setDefaultTabWidth(
-            toTool::globalConfig(CONF_TAB_STOP, DEFAULT_TAB_STOP).toInt());
+            toConfigurationSingle::Instance().globalConfig(CONF_TAB_STOP, DEFAULT_TAB_STOP).toInt());
 
         toUpdateIndicateEmpty();
 

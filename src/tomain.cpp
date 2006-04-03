@@ -315,7 +315,7 @@ toMain::toMain()
     int toolID = TO_TOOLS;
     SQLEditor = -1;
     DefaultTool = toolID;
-    QCString defName = toTool::globalConfig(CONF_DEFAULT_TOOL, "").latin1();
+    QCString defName = toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_TOOL, "").latin1();
 
     QPopupMenu *toolAbout = NULL;
 
@@ -326,7 +326,7 @@ toMain::toMain()
 
         QCString tmp = (*i).first;
         tmp += CONF_TOOL_ENABLE;
-        if (toTool::globalConfig(tmp, "Yes").isEmpty())
+        if (toConfigurationSingle::Instance().globalConfig(tmp, "Yes").isEmpty())
             continue;
 
         if (defName == (*i).first)
@@ -350,7 +350,7 @@ toMain::toMain()
         toolID++;
     }
 
-    if (!toTool::globalConfig(CONF_TOOLS_LEFT, "").isEmpty())
+    if (!toConfigurationSingle::Instance().globalConfig(CONF_TOOLS_LEFT, "").isEmpty())
         moveToolBar(ToolsToolbar, Left);
 
     menuBar()->insertItem(tr("&Tools"), ToolsMenu, TO_TOOLS_MENU);
@@ -440,18 +440,18 @@ toMain::toMain()
     connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),
             this, SLOT(windowActivated(QWidget *)));
 
-    if (!toTool::globalConfig(CONF_RESTORE_SESSION, "").isEmpty())
+    if (!toConfigurationSingle::Instance().globalConfig(CONF_RESTORE_SESSION, "").isEmpty())
     {
         try
         {
             std::map<QCString, QString> session;
-            toTool::loadMap(toTool::globalConfig(CONF_DEFAULT_SESSION, DEFAULT_SESSION), session);
+            toConfigurationSingle::Instance().loadMap(toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_SESSION, DEFAULT_SESSION), session);
             importData(session, "TOra");
         }
         TOCATCH
     }
 
-    if (!toTool::globalConfig(CONF_MAXIMIZE_MAIN, "Yes").isEmpty() && Connections.empty() )
+    if (!toConfigurationSingle::Instance().globalConfig(CONF_MAXIMIZE_MAIN, "Yes").isEmpty() && Connections.empty() )
         showMaximized();
     else
         show();
@@ -489,7 +489,7 @@ toMain::toMain()
 
 void toMain::windowActivated(QWidget *widget)
 {
-    if (toTool::globalConfig(CONF_CHANGE_CONNECTION, "Yes").isEmpty())
+    if (toConfigurationSingle::Instance().globalConfig(CONF_CHANGE_CONNECTION, "Yes").isEmpty())
         return ;
     toToolWidget *tool = dynamic_cast<toToolWidget *>(widget);
     if (tool)
@@ -529,7 +529,7 @@ void toMain::showFileMenu(void)
 void toMain::updateRecent()
 {
     static bool first = true;
-    int num = toTool::globalConfig(CONF_RECENT_FILES, "0").toInt();
+    int num = toConfigurationSingle::Instance().globalConfig(CONF_RECENT_FILES, "0").toInt();
     if (num > 0)
     {
         if (first)
@@ -539,7 +539,7 @@ void toMain::updateRecent()
         }
         for (int i = 0;i < num;i++)
         {
-            QString file = toTool::globalConfig(QCString(CONF_RECENT_FILES ":") + QString::number(i).latin1(), "");
+            QString file = toConfigurationSingle::Instance().globalConfig(QCString(CONF_RECENT_FILES ":") + QString::number(i).latin1(), "");
             if (!file.isEmpty())
             {
                 QFileInfo fi(file);
@@ -557,12 +557,12 @@ void toMain::updateRecent()
 
 void toMain::addRecentFile(const QString &file)
 {
-    int num = toTool::globalConfig(CONF_RECENT_FILES, "0").toInt();
-    int maxnum = toTool::globalConfig(CONF_RECENT_MAX, DEFAULT_RECENT_MAX).toInt();
+    int num = toConfigurationSingle::Instance().globalConfig(CONF_RECENT_FILES, "0").toInt();
+    int maxnum = toConfigurationSingle::Instance().globalConfig(CONF_RECENT_MAX, DEFAULT_RECENT_MAX).toInt();
     std::list<QString> files;
     for (int j = 0;j < num;j++)
     {
-        QString t = toTool::globalConfig(QCString(CONF_RECENT_FILES ":") + QString::number(j).latin1(), "");
+        QString t = toConfigurationSingle::Instance().globalConfig(QCString(CONF_RECENT_FILES ":") + QString::number(j).latin1(), "");
         if (t != file)
             toPush(files, t);
     }
@@ -571,13 +571,13 @@ void toMain::addRecentFile(const QString &file)
     num = 0;
     for (std::list<QString>::iterator i = files.begin();i != files.end();i++)
     {
-        toTool::globalSetConfig(QCString(CONF_RECENT_FILES ":") + QString::number(num).latin1(), *i);
+        toConfigurationSingle::Instance().globalSetConfig(QCString(CONF_RECENT_FILES ":") + QString::number(num).latin1(), *i);
         num++;
         if (num >= maxnum)
             break;
     }
-    toTool::globalSetConfig(CONF_RECENT_FILES, QString::number(num));
-    toTool::saveConfig();
+    toConfigurationSingle::Instance().globalSetConfig(CONF_RECENT_FILES, QString::number(num));
+    toConfigurationSingle::Instance().saveConfig();
 }
 
 void toMain::windowsMenu(void)
@@ -697,7 +697,7 @@ void toMain::commandCallback(int cmd)
         {
             if (cmd >= TO_LAST_FILE_ID && cmd <= TO_LAST_FILE_ID_END)
             {
-                edit->editOpen(toTool::globalConfig(QCString(CONF_RECENT_FILES ":") +
+                edit->editOpen(toConfigurationSingle::Instance().globalConfig(QCString(CONF_RECENT_FILES ":") +
                                                     QString::number(cmd - TO_LAST_FILE_ID).latin1(),
                                                     ""));
             }
@@ -853,7 +853,7 @@ void toMain::commandCallback(int cmd)
             try
             {
                 std::map<QCString, QString> session;
-                toTool::loadMap(toTool::globalConfig(CONF_DEFAULT_SESSION, DEFAULT_SESSION), session);
+                toConfigurationSingle::Instance().loadMap(toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_SESSION, DEFAULT_SESSION), session);
                 importData(session, "TOra");
             }
             TOCATCH
@@ -1207,7 +1207,7 @@ bool toMain::close(bool del)
     exportData(session, "TOra");
     try
     {
-        toTool::saveMap(toTool::globalConfig(CONF_DEFAULT_SESSION,
+        toConfigurationSingle::Instance().saveMap(toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_SESSION,
                                              DEFAULT_SESSION),
                         session);
     }
@@ -1224,7 +1224,7 @@ bool toMain::close(bool del)
             return false;
     }
     editDisable(Edit);
-    toTool::saveConfig();
+    toConfigurationSingle::Instance().saveConfig();
     return QMainWindow::close(del);
 }
 
@@ -1296,7 +1296,7 @@ void toMain::changeConnection(void)
 
             QCString tmp = (*i).first;
             tmp += CONF_TOOL_ENABLE;
-            if (toTool::globalConfig(tmp, "Yes").isEmpty())
+            if (toConfigurationSingle::Instance().globalConfig(tmp, "Yes").isEmpty())
                 continue;
 
             if ((*i).second->canHandle(conn))
@@ -1383,7 +1383,7 @@ void toMain::exportData(std::map<QCString, QString> &data, const QCString &prefi
             for (std::list<toConnection *>::iterator i = Connections.begin();i != Connections.end();i++)
             {
                 QCString key = prefix + ":Connection:" + QString::number(id).latin1();
-                if (toTool::globalConfig(CONF_SAVE_PWD, DEFAULT_SAVE_PWD) != DEFAULT_SAVE_PWD)
+                if (toConfigurationSingle::Instance().globalConfig(CONF_SAVE_PWD, DEFAULT_SAVE_PWD) != DEFAULT_SAVE_PWD)
                     data[key + ":Password"] = toObfuscate((*i)->password());
                 data[key + ":User"] = (*i)->user();
                 data[key + ":Host"] = (*i)->host();
@@ -1473,7 +1473,7 @@ void toMain::importData(std::map<QCString, QString> &data, const QCString &prefi
         QString password = toUnobfuscate(data[key + ":Password"]);
         QString provider = data[key + ":Provider"];
         bool ok = true;
-        if (toTool::globalConfig(CONF_SAVE_PWD, DEFAULT_SAVE_PWD) == password)
+        if (toConfigurationSingle::Instance().globalConfig(CONF_SAVE_PWD, DEFAULT_SAVE_PWD) == password)
         {
             password = QInputDialog::getText(tr("Input password"),
                                              tr("Enter password for %1").arg(database),
@@ -1542,7 +1542,7 @@ void toMain::saveSession(void)
         exportData(session, "TOra");
         try
         {
-            toTool::saveMap(fn, session);
+            toConfigurationSingle::Instance().saveMap(fn, session);
         }
         TOCATCH
     }
@@ -1556,7 +1556,7 @@ void toMain::loadSession(void)
         try
         {
             std::map<QCString, QString> session;
-            toTool::loadMap(filename, session);
+            toConfigurationSingle::Instance().loadMap(filename, session);
             importData(session, "TOra");
         }
         TOCATCH
@@ -1569,7 +1569,7 @@ void toMain::closeSession(void)
     exportData(session, "TOra");
     try
     {
-        toTool::saveMap(toTool::globalConfig(CONF_DEFAULT_SESSION,
+        toConfigurationSingle::Instance().saveMap(toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_SESSION,
                                              DEFAULT_SESSION),
                         session);
     }
@@ -1653,11 +1653,11 @@ void toMain::displayMessage(void)
         dialog.exec();
         if (dialog.Statusbar->isChecked())
         {
-            toTool::globalSetConfig(CONF_MESSAGE_STATUSBAR, "Yes");
+            toConfigurationSingle::Instance().globalSetConfig(CONF_MESSAGE_STATUSBAR, "Yes");
             TOMessageBox::information(toMainWidget(),
                                       tr("Information"),
                                       tr("You can enable this through the Global Settings in the Options (Edit menu)"));
-            toTool::saveConfig();
+            toConfigurationSingle::Instance().saveConfig();
         }
     }
     recursive = false;
@@ -1671,7 +1671,7 @@ void toMain::displayMessage(const QString &str)
 
 void toMain::updateKeepAlive(void)
 {
-    int keepAlive = toTool::globalConfig(CONF_KEEP_ALIVE, "0").toInt();
+    int keepAlive = toConfigurationSingle::Instance().globalConfig(CONF_KEEP_ALIVE, "0").toInt();
     if (KeepAlive.isActive())
         disconnect(&KeepAlive, SIGNAL(timeout()), this, SLOT(keepAlive()));
     if (keepAlive)

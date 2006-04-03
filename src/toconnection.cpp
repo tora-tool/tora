@@ -185,7 +185,7 @@ const QString &toConnectionProvider::config(const QCString &tag, const QCString 
     QCString str = Provider;
     str.append(":");
     str.append(tag);
-    return toTool::globalConfig(str, def);
+    return toConfigurationSingle::Instance().globalConfig(str, def);
 }
 
 void toConnectionProvider::setConfig(const QCString &tag, const QCString &def)
@@ -193,7 +193,7 @@ void toConnectionProvider::setConfig(const QCString &tag, const QCString &def)
     QCString str = Provider;
     str.append(":");
     str.append(tag);
-    toTool::globalSetConfig(str, def);
+    toConfigurationSingle::Instance().globalSetConfig(str, def);
 }
 
 QWidget *toConnectionProvider::providerConfigurationTab(const QCString &, QWidget *)
@@ -1082,7 +1082,7 @@ toConnection::toConnection(const QCString &provider,
     ReadingCache = false;
     if (cache)
     {
-        if (toTool::globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt() == 1)
+        if (toConfigurationSingle::Instance().globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt() == 1)
             readObjects();
     }
     else
@@ -1194,7 +1194,7 @@ toConnectionSub *toConnection::backgroundConnection()
 {
     if (!Connection->handleMultipleQueries())
         return longConnection();
-    if (toTool::globalConfig(CONF_BKGND_CONNECT, "").isEmpty())
+    if (toConfigurationSingle::Instance().globalConfig(CONF_BKGND_CONNECT, "").isEmpty())
         return mainConnection();
     Lock.lock();
     if (!BackgroundConnection)
@@ -1670,7 +1670,7 @@ const QCString &toConnection::provider(void) const
 QString toConnection::cacheDir()
 {
     QString home = QDir::homeDirPath();
-    QString dirname = toTool::globalConfig(CONF_CACHE_DIR, "");
+    QString dirname = toConfigurationSingle::Instance().globalConfig(CONF_CACHE_DIR, "");
 
     if (dirname.isEmpty())
     {
@@ -1694,7 +1694,7 @@ QString toConnection::cacheFile()
 
 bool toConnection::loadDiskCache()
 {
-    if (toTool::globalConfig(CONF_CACHE_DISK, DEFAULT_CACHE_DISK).isEmpty())
+    if (toConfigurationSingle::Instance().globalConfig(CONF_CACHE_DISK, DEFAULT_CACHE_DISK).isEmpty())
         return false;
 
     toConnection::objectName *cur = 0;
@@ -1710,7 +1710,7 @@ bool toConnection::loadDiskCache()
 
     QFileInfo fi(file);
     QDateTime today;
-    if (fi.lastModified().addDays(toTool::globalConfig(CONF_CACHE_TIMEOUT, DEFAULT_CACHE_TIMEOUT).toInt()) < today)
+    if (fi.lastModified().addDays(toConfigurationSingle::Instance().globalConfig(CONF_CACHE_TIMEOUT, DEFAULT_CACHE_TIMEOUT).toInt()) < today)
         return false;
 
     /** read in all data
@@ -1759,7 +1759,7 @@ void toConnection::writeDiskCache()
     long objCounter = 0;
     long synCounter = 0;
 
-    if (toTool::globalConfig(CONF_CACHE_DISK, DEFAULT_CACHE_DISK).isEmpty())
+    if (toConfigurationSingle::Instance().globalConfig(CONF_CACHE_DISK, DEFAULT_CACHE_DISK).isEmpty())
         return ;
 
 
@@ -1838,7 +1838,7 @@ void toConnection::cacheObjects::run()
 
 void toConnection::readObjects(void)
 {
-    if (toTool::globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt() == 3)
+    if (toConfigurationSingle::Instance().globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt() == 3)
     {
         ReadingCache = false;
         return ;
@@ -1861,7 +1861,7 @@ void toConnection::readObjects(void)
 void toConnection::rereadCache(void)
 {
 
-    if (toTool::globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt() == 3)
+    if (toConfigurationSingle::Instance().globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt() == 3)
     {
         ColumnCache.clear();
         return ;
@@ -1907,14 +1907,14 @@ QString toConnection::unQuote(const QString &name)
 
 bool toConnection::cacheAvailable(bool synonyms, bool block, bool need)
 {
-    if (toTool::globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt() == 3)
+    if (toConfigurationSingle::Instance().globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt() == 3)
         return true;
 
     if (!ReadingCache)
     {
         if (!need)
             return true;
-        if (toTool::globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt() == 2 && !block)
+        if (toConfigurationSingle::Instance().globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt() == 2 && !block)
             return true;
         readObjects();
         toMainWidget()->checkCaching();

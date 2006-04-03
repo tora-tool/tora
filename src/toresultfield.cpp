@@ -109,7 +109,7 @@ void toResultField::poll(void)
                 Poll.stop();
                 try
                 {
-                    if (!toTool::globalConfig(CONF_AUTO_INDENT_RO, "Yes").isEmpty())
+                    if (!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_INDENT_RO, "Yes").isEmpty())
                         setText(toSQLParse::indent(text() + Unapplied));
                     else
                         append(Unapplied);

@@ -74,23 +74,23 @@
 toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, WFlags fl)
         : toGlobalSettingUI(parent, name, fl), toSettingTab("preferences.html#global")
 {
-    SavePassword->setChecked(!toTool::globalConfig(CONF_SAVE_PWD, "").isEmpty());
-    DesktopAware->setChecked(!toTool::globalConfig(CONF_DESKTOP_AWARE, "Yes").isEmpty());
-    ToolsLeft->setChecked(!toTool::globalConfig(CONF_TOOLS_LEFT, "").isEmpty());
+    SavePassword->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_SAVE_PWD, "").isEmpty());
+    DesktopAware->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_DESKTOP_AWARE, "Yes").isEmpty());
+    ToolsLeft->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_TOOLS_LEFT, "").isEmpty());
     toRefreshCreate(OptionGroup, TO_KDE_TOOLBAR_WIDGET, QString::null, Refresh);
-    DefaultSession->setText(toTool::globalConfig(CONF_DEFAULT_SESSION, DEFAULT_SESSION));
-    Status->setValue(toTool::globalConfig(CONF_STATUS_MESSAGE,
+    DefaultSession->setText(toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_SESSION, DEFAULT_SESSION));
+    Status->setValue(toConfigurationSingle::Instance().globalConfig(CONF_STATUS_MESSAGE,
                                           DEFAULT_STATUS_MESSAGE).toInt());
-    HistorySize->setValue(toTool::globalConfig(CONF_STATUS_SAVE,
+    HistorySize->setValue(toConfigurationSingle::Instance().globalConfig(CONF_STATUS_SAVE,
                           DEFAULT_STATUS_SAVE).toInt());
-    IncludeDB->setChecked(!toTool::globalConfig(CONF_DB_TITLE, "Yes").isEmpty());
-    MaximizeMain->setChecked(!toTool::globalConfig(CONF_MAXIMIZE_MAIN, "Yes").isEmpty());
-    Statusbar->setChecked(!toTool::globalConfig(CONF_MESSAGE_STATUSBAR, "").isEmpty());
-    RestoreSession->setChecked(!toTool::globalConfig(CONF_RESTORE_SESSION, "").isEmpty());
+    IncludeDB->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_DB_TITLE, "Yes").isEmpty());
+    MaximizeMain->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_MAXIMIZE_MAIN, "Yes").isEmpty());
+    Statusbar->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_MESSAGE_STATUSBAR, "").isEmpty());
+    RestoreSession->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_RESTORE_SESSION, "").isEmpty());
     HelpDirectory->setText(toHelpPath());
-    ChangeConnection->setChecked(!toTool::globalConfig(CONF_CHANGE_CONNECTION, "Yes").isEmpty());
-    ConnectHistory->setValue(toTool::globalConfig(CONF_CONNECT_SIZE, DEFAULT_CONNECT_SIZE).toInt());
-    int samples = toTool::globalConfig(CONF_CHART_SAMPLES, DEFAULT_CHART_SAMPLES).toInt();
+    ChangeConnection->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_CHANGE_CONNECTION, "Yes").isEmpty());
+    ConnectHistory->setValue(toConfigurationSingle::Instance().globalConfig(CONF_CONNECT_SIZE, DEFAULT_CONNECT_SIZE).toInt());
+    int samples = toConfigurationSingle::Instance().globalConfig(CONF_CHART_SAMPLES, DEFAULT_CHART_SAMPLES).toInt();
     if (samples < 0)
     {
         UnlimitedSamples->setChecked(true);
@@ -98,7 +98,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, WFlags fl)
     }
     else
         ChartSamples->setValue(samples);
-    samples = toTool::globalConfig(CONF_DISPLAY_SAMPLES, DEFAULT_DISPLAY_SAMPLES).toInt();
+    samples = toConfigurationSingle::Instance().globalConfig(CONF_DISPLAY_SAMPLES, DEFAULT_DISPLAY_SAMPLES).toInt();
     if (samples < 0)
     {
         AllSamples->setChecked(true);
@@ -106,11 +106,11 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, WFlags fl)
     }
     else
         DisplaySamples->setValue(samples);
-    DefaultFormat->setCurrentItem(toTool::globalConfig(CONF_DEFAULT_FORMAT, "").toInt());
-    ToadBindings->setChecked(!toTool::globalConfig(CONF_TOAD_BINDINGS, DEFAULT_TOAD_BINDINGS).isEmpty());
-    DisplayGrid->setChecked(!toTool::globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty());
+    DefaultFormat->setCurrentItem(toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_FORMAT, "").toInt());
+    ToadBindings->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_TOAD_BINDINGS, DEFAULT_TOAD_BINDINGS).isEmpty());
+    DisplayGrid->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty());
 
-    QString typ = toTool::globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
+    QString typ = toConfigurationSingle::Instance().globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
     if (typ == "KB")
         SizeUnit->setCurrentItem(1);
     else if (typ == "MB")
@@ -118,7 +118,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, WFlags fl)
 
 #ifdef ENABLE_QT_XFT
 
-    AntialiaseFonts->setChecked(toTool::globalConfig(CONF_QT_XFT, DEFAULT_QT_XFT) == "true");
+    AntialiaseFonts->setChecked(toConfigurationSingle::Instance().globalConfig(CONF_QT_XFT, DEFAULT_QT_XFT) == "true");
 #else
 
     AntialiaseFonts->hide();
@@ -152,7 +152,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, WFlags fl)
 #endif
 #if QT_VERSION < 0x030000
 
-    DockToolbar->setChecked(toTool::globalConfig(CONF_DOCK_TOOLBAR, "Yes"));
+    DockToolbar->setChecked(toConfigurationSingle::Instance().globalConfig(CONF_DOCK_TOOLBAR, "Yes"));
 #else
 
     DockToolbar->hide();
@@ -166,7 +166,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, WFlags fl)
     }
     else
     {
-        PluginDirectory->setText(toTool::globalConfig(CONF_PLUGIN_DIR,
+        PluginDirectory->setText(toConfigurationSingle::Instance().globalConfig(CONF_PLUGIN_DIR,
                                  DEFAULT_PLUGIN_DIR));
     }
 
@@ -174,11 +174,11 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, WFlags fl)
      */
 
     CacheDirectory->setText(toConnection::cacheDir());
-    DiskCaching->setChecked(!toTool::globalConfig(CONF_CACHE_DISK, DEFAULT_CACHE_DISK).isEmpty());
+    DiskCaching->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_CACHE_DISK, DEFAULT_CACHE_DISK).isEmpty());
 
-    CustomSQL->setText(toTool::globalConfig(CONF_SQL_FILE,
+    CustomSQL->setText(toConfigurationSingle::Instance().globalConfig(CONF_SQL_FILE,
                                             DEFAULT_SQL_FILE));
-    Locale->setText(toTool::globalConfig(CONF_LOCALE, QTextCodec::locale()));
+    Locale->setText(toConfigurationSingle::Instance().globalConfig(CONF_LOCALE, QTextCodec::locale()));
 }
 
 void toGlobalSetting::pluginBrowse(void)
@@ -212,55 +212,55 @@ void toGlobalSetting::helpBrowse(void)
 void toGlobalSetting::saveSetting(void)
 {
     if (!toMonolithic())
-        toTool::globalSetConfig(CONF_PLUGIN_DIR, PluginDirectory->text());
-    toTool::globalSetConfig(CONF_CACHE_DISK, DiskCaching->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_CACHE_DIR, CacheDirectory->text());
-    toTool::globalSetConfig(CONF_SQL_FILE, CustomSQL->text());
-    toTool::globalSetConfig(CONF_DEFAULT_SESSION, DefaultSession->text());
-    toTool::globalSetConfig(CONF_REFRESH, Refresh->currentText());
-    toTool::globalSetConfig(CONF_SAVE_PWD, SavePassword->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_DESKTOP_AWARE, DesktopAware->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_STATUS_MESSAGE, QString::number(Status->value()));
-    toTool::globalSetConfig(CONF_STATUS_SAVE, QString::number(HistorySize->value()));
-    toTool::globalSetConfig(CONF_CHART_SAMPLES, QString::number(ChartSamples->value()));
-    toTool::globalSetConfig(CONF_CONNECT_SIZE, QString::number(ConnectHistory->value()));
-    toTool::globalSetConfig(CONF_MAXIMIZE_MAIN, MaximizeMain->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_MESSAGE_STATUSBAR, Statusbar->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_RESTORE_SESSION, RestoreSession->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_TOOLS_LEFT, ToolsLeft->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_DEFAULT_FORMAT,
+        toConfigurationSingle::Instance().globalSetConfig(CONF_PLUGIN_DIR, PluginDirectory->text());
+    toConfigurationSingle::Instance().globalSetConfig(CONF_CACHE_DISK, DiskCaching->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_CACHE_DIR, CacheDirectory->text());
+    toConfigurationSingle::Instance().globalSetConfig(CONF_SQL_FILE, CustomSQL->text());
+    toConfigurationSingle::Instance().globalSetConfig(CONF_DEFAULT_SESSION, DefaultSession->text());
+    toConfigurationSingle::Instance().globalSetConfig(CONF_REFRESH, Refresh->currentText());
+    toConfigurationSingle::Instance().globalSetConfig(CONF_SAVE_PWD, SavePassword->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_DESKTOP_AWARE, DesktopAware->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_STATUS_MESSAGE, QString::number(Status->value()));
+    toConfigurationSingle::Instance().globalSetConfig(CONF_STATUS_SAVE, QString::number(HistorySize->value()));
+    toConfigurationSingle::Instance().globalSetConfig(CONF_CHART_SAMPLES, QString::number(ChartSamples->value()));
+    toConfigurationSingle::Instance().globalSetConfig(CONF_CONNECT_SIZE, QString::number(ConnectHistory->value()));
+    toConfigurationSingle::Instance().globalSetConfig(CONF_MAXIMIZE_MAIN, MaximizeMain->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_MESSAGE_STATUSBAR, Statusbar->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_RESTORE_SESSION, RestoreSession->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_TOOLS_LEFT, ToolsLeft->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_DEFAULT_FORMAT,
                             QString::number(DefaultFormat->currentItem()));
-    toTool::globalSetConfig(CONF_TOAD_BINDINGS, ToadBindings->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_DISPLAY_GRIDLINES, DisplayGrid->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_TOAD_BINDINGS, ToadBindings->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_DISPLAY_GRIDLINES, DisplayGrid->isChecked() ? "Yes" : "");
 #if QT_VERSION < 0x030000
 
-    toTool::globalSetConfig(CONF_DOCK_TOOLBAR, DockToolbar->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_DOCK_TOOLBAR, DockToolbar->isChecked() ? "Yes" : "");
 #endif
 
-    toTool::globalSetConfig(CONF_CHANGE_CONNECTION, ChangeConnection->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_DB_TITLE, IncludeDB->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_SIZE_UNIT, SizeUnit->currentText());
-    toTool::globalSetConfig(CONF_HELP_PATH, HelpDirectory->text());
+    toConfigurationSingle::Instance().globalSetConfig(CONF_CHANGE_CONNECTION, ChangeConnection->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_DB_TITLE, IncludeDB->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_SIZE_UNIT, SizeUnit->currentText());
+    toConfigurationSingle::Instance().globalSetConfig(CONF_HELP_PATH, HelpDirectory->text());
 #ifdef ENABLE_STYLE
 
-    toTool::globalSetConfig(CONF_STYLE, Style->currentText());
+    toConfigurationSingle::Instance().globalSetConfig(CONF_STYLE, Style->currentText());
     toSetSessionType(Style->currentText());
 #endif
 #ifdef ENABLE_QT_XFT
 
-    toTool::globalSetConfig(CONF_QT_XFT, AntialiaseFonts->isChecked() ? "true" : "false");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_QT_XFT, AntialiaseFonts->isChecked() ? "true" : "false");
 #endif
 
     if (AllSamples->isChecked())
-        toTool::globalSetConfig(CONF_DISPLAY_SAMPLES, "-1");
+        toConfigurationSingle::Instance().globalSetConfig(CONF_DISPLAY_SAMPLES, "-1");
     else
-        toTool::globalSetConfig(CONF_DISPLAY_SAMPLES, QString::number(DisplaySamples->value()));
+        toConfigurationSingle::Instance().globalSetConfig(CONF_DISPLAY_SAMPLES, QString::number(DisplaySamples->value()));
     if (UnlimitedSamples->isChecked())
-        toTool::globalSetConfig(CONF_CHART_SAMPLES, "-1");
+        toConfigurationSingle::Instance().globalSetConfig(CONF_CHART_SAMPLES, "-1");
     else
-        toTool::globalSetConfig(CONF_CHART_SAMPLES, QString::number(ChartSamples->value()));
+        toConfigurationSingle::Instance().globalSetConfig(CONF_CHART_SAMPLES, QString::number(ChartSamples->value()));
 
-    toTool::globalSetConfig(CONF_LOCALE, Locale->text());
+    toConfigurationSingle::Instance().globalSetConfig(CONF_LOCALE, Locale->text());
 }
 
 void toDatabaseSetting::numberFormatChange()
@@ -271,15 +271,15 @@ void toDatabaseSetting::numberFormatChange()
 toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, WFlags fl)
         : toDatabaseSettingUI(parent, name, fl), toSettingTab("database.html")
 {
-    MaxColDisp->setText(toTool::globalConfig(CONF_MAX_COL_DISP,
+    MaxColDisp->setText(toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_DISP,
                         DEFAULT_MAX_COL_DISP));
-    QString str = toTool::globalConfig(CONF_MAX_NUMBER, DEFAULT_MAX_NUMBER);
+    QString str = toConfigurationSingle::Instance().globalConfig(CONF_MAX_NUMBER, DEFAULT_MAX_NUMBER);
     if (str.toInt() <= 0)
         ReadAll->setChecked(true);
     else
         InitialFetch->setText(str);
 
-    str = toTool::globalConfig(CONF_MAX_CONTENT, DEFAULT_MAX_CONTENT);
+    str = toConfigurationSingle::Instance().globalConfig(CONF_MAX_CONTENT, DEFAULT_MAX_CONTENT);
     if (str.toInt() <= 0)
     {
         MaxContent->setText(InitialFetch->text());
@@ -292,33 +292,33 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, WFlags f
     InitialFetch->setValidator(new QIntValidator(InitialFetch));
     MaxContent->setValidator(new QIntValidator(InitialFetch));
 
-    Decimals->setValue(toTool::globalConfig(CONF_NUMBER_DECIMALS, DEFAULT_NUMBER_DECIMALS).toInt());
-    NumberFormat->setCurrentItem(toTool::globalConfig(CONF_NUMBER_FORMAT, DEFAULT_NUMBER_FORMAT).toInt());
+    Decimals->setValue(toConfigurationSingle::Instance().globalConfig(CONF_NUMBER_DECIMALS, DEFAULT_NUMBER_DECIMALS).toInt());
+    NumberFormat->setCurrentItem(toConfigurationSingle::Instance().globalConfig(CONF_NUMBER_FORMAT, DEFAULT_NUMBER_FORMAT).toInt());
     if (NumberFormat->currentItem() == 2)
         Decimals->setEnabled(true);
 
-    AutoCommit->setChecked(!toTool::globalConfig(CONF_AUTO_COMMIT, "").isEmpty());
-    DontReread->setChecked(!toTool::globalConfig(CONF_DONT_REREAD, "Yes").isEmpty());
-    ObjectCache->setCurrentItem(toTool::globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt());
-    BkgndConnect->setChecked(!toTool::globalConfig(CONF_BKGND_CONNECT, "").isEmpty());
-    IndicateEmpty->setChecked(!toTool::globalConfig(CONF_INDICATE_EMPTY, "").isEmpty());
-    int val = toTool::globalConfig(CONF_AUTO_LONG, "0").toInt();
+    AutoCommit->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty());
+    DontReread->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_DONT_REREAD, "Yes").isEmpty());
+    ObjectCache->setCurrentItem(toConfigurationSingle::Instance().globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt());
+    BkgndConnect->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_BKGND_CONNECT, "").isEmpty());
+    IndicateEmpty->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_INDICATE_EMPTY, "").isEmpty());
+    int val = toConfigurationSingle::Instance().globalConfig(CONF_AUTO_LONG, "0").toInt();
     AutoLong->setChecked(val);
     MoveAfter->setValue(val);
-    KeepAlive->setChecked(!toTool::globalConfig(CONF_KEEP_ALIVE, "").isEmpty());
+    KeepAlive->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_KEEP_ALIVE, "").isEmpty());
 }
 
 void toUpdateIndicateEmpty(void);
 
 void toDatabaseSetting::saveSetting(void)
 {
-    toTool::globalSetConfig(CONF_MAX_COL_DISP, MaxColDisp->text());
+    toConfigurationSingle::Instance().globalSetConfig(CONF_MAX_COL_DISP, MaxColDisp->text());
     if (ReadAll->isChecked())
-        toTool::globalSetConfig(CONF_MAX_NUMBER, "-1");
+        toConfigurationSingle::Instance().globalSetConfig(CONF_MAX_NUMBER, "-1");
     else
-        toTool::globalSetConfig(CONF_MAX_NUMBER, InitialFetch->text());
+        toConfigurationSingle::Instance().globalSetConfig(CONF_MAX_NUMBER, InitialFetch->text());
     if (UnlimitedContent->isChecked())
-        toTool::globalSetConfig(CONF_MAX_CONTENT, "-1");
+        toConfigurationSingle::Instance().globalSetConfig(CONF_MAX_CONTENT, "-1");
     else
     {
         int num = InitialFetch->text().toInt();
@@ -332,19 +332,19 @@ void toDatabaseSetting::saveSetting(void)
                                       tr("Doesn't make sense to have max content less than initial\n"
                                          "fetch size. Will adjust value to be higher."),
                                       tr("&Ok"));
-        toTool::globalSetConfig(CONF_MAX_CONTENT, QString::number(maxnum));
+        toConfigurationSingle::Instance().globalSetConfig(CONF_MAX_CONTENT, QString::number(maxnum));
     }
-    toTool::globalSetConfig(CONF_AUTO_COMMIT, AutoCommit->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_DONT_REREAD, DontReread->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_OBJECT_CACHE, QString::number(ObjectCache->currentItem()));
-    toTool::globalSetConfig(CONF_BKGND_CONNECT, BkgndConnect->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_AUTO_LONG,
+    toConfigurationSingle::Instance().globalSetConfig(CONF_AUTO_COMMIT, AutoCommit->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_DONT_REREAD, DontReread->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_OBJECT_CACHE, QString::number(ObjectCache->currentItem()));
+    toConfigurationSingle::Instance().globalSetConfig(CONF_BKGND_CONNECT, BkgndConnect->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_AUTO_LONG,
                             AutoLong->isChecked() ? MoveAfter->cleanText() : QString::fromLatin1("0"));
-    toTool::globalSetConfig(CONF_INDICATE_EMPTY, IndicateEmpty->isChecked() ? "Yes" : "");
-    toTool::globalSetConfig(CONF_KEEP_ALIVE, KeepAlive->isChecked() ? DEFAULT_KEEP_ALIVE : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_INDICATE_EMPTY, IndicateEmpty->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_KEEP_ALIVE, KeepAlive->isChecked() ? DEFAULT_KEEP_ALIVE : "");
 
-    toTool::globalSetConfig(CONF_NUMBER_FORMAT, QString::number(NumberFormat->currentItem()));
-    toTool::globalSetConfig(CONF_NUMBER_DECIMALS, QString::number(Decimals->value()));
+    toConfigurationSingle::Instance().globalSetConfig(CONF_NUMBER_FORMAT, QString::number(NumberFormat->currentItem()));
+    toConfigurationSingle::Instance().globalSetConfig(CONF_NUMBER_DECIMALS, QString::number(Decimals->value()));
     toQValue::setNumberFormat(NumberFormat->currentItem(), Decimals->value());
 
     toMainWidget()->updateKeepAlive();
@@ -374,7 +374,7 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, WFlags fl)
     {
         QCString tmp = item->text(2).latin1();
         tmp += CONF_TOOL_ENABLE;
-        if (!toTool::globalConfig(tmp, "Yes").isEmpty())
+        if (!toConfigurationSingle::Instance().globalConfig(tmp, "Yes").isEmpty())
             item->setSelected(true);
     }
 
@@ -408,9 +408,9 @@ void toToolSetting::saveSetting(void)
     {
         QCString str = item->text(2).latin1();
         str += CONF_TOOL_ENABLE;
-        toTool::globalSetConfig(str, item->isSelected() ? "Yes" : "");
+        toConfigurationSingle::Instance().globalSetConfig(str, item->isSelected() ? "Yes" : "");
 
         if (DefaultTool->currentText() == item->text(0))
-            toTool::globalSetConfig(CONF_DEFAULT_TOOL, item->text(2));
+            toConfigurationSingle::Instance().globalSetConfig(CONF_DEFAULT_TOOL, item->text(2));
     }
 }

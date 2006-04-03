@@ -90,7 +90,7 @@ void toPreferences::saveSetting(void)
         if (tab)
             tab->saveSetting();
     }
-    toTool::saveConfig();
+    toConfigurationSingle::Instance().saveConfig();
 }
 
 toPreferences::toPreferences(QWidget* parent, const char* name, bool modal, WFlags fl)

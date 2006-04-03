@@ -131,7 +131,7 @@ void toWaitEvents::setup(int session)
     Types->setAllColumnsShowFocus(true);
     Types->setSelectionMode(QListView::Multi);
     Types->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-    QString str = toTool::globalConfig(CONF_LIST, "");
+    QString str = toConfigurationSingle::Instance().globalConfig(CONF_LIST, "");
     if (!str.isEmpty())
     {
         QFont font(toStringToFont(str));

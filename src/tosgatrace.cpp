@@ -201,7 +201,7 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
     try
     {
         connect(timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
-        toRefreshParse(timer(), toTool::globalConfig(CONF_REFRESH, DEFAULT_REFRESH));
+        toRefreshParse(timer(), toConfigurationSingle::Instance().globalConfig(CONF_REFRESH, DEFAULT_REFRESH));
     }
     TOCATCH
 

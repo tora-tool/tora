@@ -236,7 +236,7 @@ void toSQLEdit::connectList(bool conn)
 toSQLEdit::~toSQLEdit()
 {
     SQLEditTool.closeWindow();
-    toSQL::saveSQL(toTool::globalConfig(CONF_SQL_FILE, DEFAULT_SQL_FILE));
+    toSQL::saveSQL(toConfigurationSingle::Instance().globalConfig(CONF_SQL_FILE, DEFAULT_SQL_FILE));
 }
 
 void toSQLEdit::loadSQL(void)

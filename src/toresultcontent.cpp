@@ -296,7 +296,7 @@ toResultContentEditor::toResultContentEditor(QWidget *parent, const char *name)
     SearchStart = SearchEnd = 0;
     NoUseReturning = false;
     AllFilter = false;
-    MaxColDisp = toTool::globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
+    MaxColDisp = toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
     Query = NULL;
     SingleEdit = NULL;
     connect(this, SIGNAL(currentChanged(int, int)), this, SLOT(changePosition(int, int)));
@@ -336,7 +336,7 @@ toResultContentEditor::toResultContentEditor(QWidget *parent, const char *name)
     Menu->insertItem(tr("Read all"), TORESULT_READ_ALL);
     connect(Menu, SIGNAL(activated(int)), this, SLOT(menuCallback(int)));
 
-    QString str = toTool::globalConfig(CONF_LIST, "");
+    QString str = toConfigurationSingle::Instance().globalConfig(CONF_LIST, "");
     if (!str.isEmpty())
     {
         QFont font(toStringToFont(str));
@@ -395,7 +395,7 @@ void toResultContentEditor::query(const QString &, const toQList &params)
     setNumRows(0);
     setNumCols(0);
     NewRecordRow = -1;
-    MaxNumber = toTool::globalConfig(CONF_MAX_NUMBER, DEFAULT_MAX_NUMBER).toInt();
+    MaxNumber = toConfigurationSingle::Instance().globalConfig(CONF_MAX_NUMBER, DEFAULT_MAX_NUMBER).toInt();
 
     delete Query;
     Query = NULL;
@@ -425,7 +425,7 @@ void toResultContentEditor::query(const QString &, const toQList &params)
         }
 
         QString init = SQL;
-        SkipNumber = toTool::globalConfig(CONF_MAX_CONTENT, DEFAULT_MAX_CONTENT).toInt();
+        SkipNumber = toConfigurationSingle::Instance().globalConfig(CONF_MAX_CONTENT, DEFAULT_MAX_CONTENT).toInt();
 
         if (SkipNumber > 0)
         {
@@ -901,7 +901,7 @@ void toResultContentEditor::deleteCurrent()
                 di++;
             }
             conn.execute(sql, args);
-            if (!toTool::globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
+            if (!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
                 conn.commit();
             else
                 toMainWidget()->setNeedCommit(conn);
@@ -1024,7 +1024,7 @@ void toResultContentEditor::saveUnsaved(void)
                         rowid = q.readValueNull();
                     Row++;
                     setNumRows(Row + 1);
-                    if (!toTool::globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
+                    if (!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
                         conn.commit();
                     else
                         toMainWidget()->setNeedCommit(conn);
@@ -1150,7 +1150,7 @@ void toResultContentEditor::saveUnsaved(void)
                         toQuery q(conn, sql, args);
                         if (oracle && !NoUseReturning)
                             rowid = q.readValueNull();
-                        if (!toTool::globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
+                        if (!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
                             conn.commit();
                         else
                             toMainWidget()->setNeedCommit(conn);

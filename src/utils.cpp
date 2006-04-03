@@ -325,17 +325,17 @@ void toStatusMessage(const QString &str, bool save, bool log)
     toMain *main = dynamic_cast<toMain *>(qApp->mainWidget());
     if (main)
     {
-        int sec = toTool::globalConfig(CONF_STATUS_MESSAGE, DEFAULT_STATUS_MESSAGE).toInt();
+        int sec = toConfigurationSingle::Instance().globalConfig(CONF_STATUS_MESSAGE, DEFAULT_STATUS_MESSAGE).toInt();
         if (save || sec == 0)
             main->statusBar()->message(str.simplifyWhiteSpace());
         else
             main->statusBar()->message(str.simplifyWhiteSpace(), sec*1000);
         if (!save && !str.isEmpty() && log)
         {
-            if (toTool::globalConfig(CONF_MESSAGE_STATUSBAR, "").isEmpty())
+            if (toConfigurationSingle::Instance().globalConfig(CONF_MESSAGE_STATUSBAR, "").isEmpty())
                 main->displayMessage(str);
             toPush(LastMessages, str);
-            if (int(LastMessages.size()) > toTool::globalConfig(CONF_STATUS_SAVE,
+            if (int(LastMessages.size()) > toConfigurationSingle::Instance().globalConfig(CONF_STATUS_SAVE,
                     DEFAULT_STATUS_SAVE).toInt())
                 toShift(LastMessages);
         }
@@ -375,7 +375,7 @@ QComboBox *toRefreshCreate(QWidget *parent, const char *name, const QString &def
     if (def)
         str = def;
     else
-        str = toTool::globalConfig(CONF_REFRESH, DEFAULT_REFRESH);
+        str = toConfigurationSingle::Instance().globalConfig(CONF_REFRESH, DEFAULT_REFRESH);
     if (str == "2 seconds")
         refresh->setCurrentItem(1);
     else if (str == "5 seconds")
@@ -399,7 +399,7 @@ void toRefreshParse(toTimer *timer, const QString &str)
 {
     QString t = str;
     if (t.isEmpty())
-        t = toTool::globalConfig(CONF_REFRESH, DEFAULT_REFRESH);
+        t = toConfigurationSingle::Instance().globalConfig(CONF_REFRESH, DEFAULT_REFRESH);
 
     if (t == qApp->translate("toRefreshCreate", "None") || t == "None")
         timer->stop();
@@ -540,7 +540,7 @@ QToolBar *toAllocBar(QWidget *parent, const QString &str)
     catch (...)
     {}
     QString name = str;
-    if (!db.isEmpty() && !toTool::globalConfig(CONF_DB_TITLE, "Yes").isEmpty())
+    if (!db.isEmpty() && !toConfigurationSingle::Instance().globalConfig(CONF_DB_TITLE, "Yes").isEmpty())
     {
         name += QString::fromLatin1(" ");
         name += db;
@@ -581,7 +581,7 @@ TODock *toAllocDock(const QString &name,
                    )
 {
     QString str = name;
-    if (!db.isEmpty() && !toTool::globalConfig(CONF_DB_TITLE, "Yes").isEmpty())
+    if (!db.isEmpty() && !toConfigurationSingle::Instance().globalConfig(CONF_DB_TITLE, "Yes").isEmpty())
     {
         str += QString::fromLatin1(" ");
         str += db;
@@ -592,7 +592,7 @@ TODock *toAllocDock(const QString &name,
 #else
 #  if QT_VERSION < 0x030000
 
-    if (toTool::globalConfig(CONF_DOCK_TOOLBAR, "Yes").isEmpty())
+    if (toConfigurationSingle::Instance().globalConfig(CONF_DOCK_TOOLBAR, "Yes").isEmpty())
     {
         QVBox *frm = new QVBox(toMainWidget()->workspace());
         frm->setCaption(str);
@@ -657,7 +657,7 @@ void toAttachDock(TODock *dock, QWidget *container, QMainWindow::ToolBarDock pla
     }
 #else
 #  if QT_VERSION < 0x030000
-    if (!toTool::globalConfig(CONF_DOCK_TOOLBAR, "Yes").isEmpty())
+    if (!toConfigurationSingle::Instance().globalConfig(CONF_DOCK_TOOLBAR, "Yes").isEmpty())
     {
         QToolBar *bar = (QToolBar *)dock;
         if (bar)
@@ -806,7 +806,7 @@ QString toPluginPath(void)
         }
     } // MacOS
 #else
-    str = toTool::globalConfig(CONF_PLUGIN_DIR, DEFAULT_PLUGIN_DIR);
+    str = toConfigurationSingle::Instance().globalConfig(CONF_PLUGIN_DIR, DEFAULT_PLUGIN_DIR);
 #endif
 
     return str;
@@ -814,7 +814,7 @@ QString toPluginPath(void)
 
 QString toHelpPath(void)
 {
-    QString str = toTool::globalConfig(CONF_HELP_PATH, "");
+    QString str = toConfigurationSingle::Instance().globalConfig(CONF_HELP_PATH, "");
     if (str.isEmpty())
     {
         str = toPluginPath();
@@ -987,7 +987,7 @@ bool toCompareLists(QStringList &lst1, QStringList &lst2, unsigned int len)
 static QString GetExtensions(void)
 {
     static QRegExp repl(QString::fromLatin1("\\s*,\\s*"));
-    QString t = toTool::globalConfig(CONF_EXTENSIONS, DEFAULT_EXTENSIONS);
+    QString t = toConfigurationSingle::Instance().globalConfig(CONF_EXTENSIONS, DEFAULT_EXTENSIONS);
     t.replace(repl, QString::fromLatin1("\n"));
     return t;
 }
@@ -998,7 +998,7 @@ static QString AddExt(QString t, const QString &filter)
     if (t.isEmpty())
         return t;
 
-    toTool::globalSetConfig(CONF_LAST_DIR, t);
+    toConfigurationSingle::Instance().globalSetConfig(CONF_LAST_DIR, t);
 
     if (hasext.match(t) < 0)
     {
@@ -1025,7 +1025,7 @@ QString toOpenFilename(const QString &filename, const QString &filter, QWidget *
 
     QString dir = filename;
     if (dir.isNull())
-        dir = toTool::globalConfig(CONF_LAST_DIR, "");
+        dir = toConfigurationSingle::Instance().globalConfig(CONF_LAST_DIR, "");
 
 #ifdef TO_KDE
 
@@ -1049,7 +1049,7 @@ QString toSaveFilename(const QString &filename, const QString &filter, QWidget *
 
     QString dir = filename;
     if (dir.isNull())
-        dir = toTool::globalConfig(CONF_LAST_DIR, "");
+        dir = toConfigurationSingle::Instance().globalConfig(CONF_LAST_DIR, "");
 
 #ifdef TO_KDE
 
@@ -1302,7 +1302,7 @@ QListViewItem *toFindItem(QListView *lst, const QString &str)
 void toToolCaption(toToolWidget *widget, const QString &caption)
 {
     QString title;
-    if (!toTool::globalConfig(CONF_DB_TITLE, "Yes").isEmpty())
+    if (!toConfigurationSingle::Instance().globalConfig(CONF_DB_TITLE, "Yes").isEmpty())
     {
         try
         {
@@ -1375,7 +1375,7 @@ static bool IndicateEmpty = false;
 
 void toUpdateIndicateEmpty(void)
 {
-    IndicateEmpty = !toTool::globalConfig(CONF_INDICATE_EMPTY, "").isEmpty();
+    IndicateEmpty = !toConfigurationSingle::Instance().globalConfig(CONF_INDICATE_EMPTY, "").isEmpty();
 }
 
 toQValue toNull(const toQValue &str)

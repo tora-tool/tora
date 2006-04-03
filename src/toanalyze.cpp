@@ -299,7 +299,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
         try
         {
             Plans->query(toSQL::string(SQLListPlans,
-                                       connection).arg(toTool::globalConfig(CONF_PLAN_TABLE,
+                                       connection).arg(toConfigurationSingle::Instance().globalConfig(CONF_PLAN_TABLE,
                                                                             DEFAULT_PLAN_TABLE)));
         }
         TOCATCH

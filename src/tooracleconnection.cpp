@@ -735,7 +735,7 @@ class oracleConnection : public toConnection::connectionImpl
                 // Need to clear the stream cache first.
                 oracleSub *sub = dynamic_cast<oracleSub *>(query.connectionSub());
                 sub->Lock.down();
-                sub->Connection->set_stream_pool_size(std::max(toTool::globalConfig(CONF_OPEN_CURSORS,
+                sub->Connection->set_stream_pool_size(std::max(toConfigurationSingle::Instance().globalConfig(CONF_OPEN_CURSORS,
                                                       DEFAULT_OPEN_CURSORS).toInt(), 1));
                 sub->Lock.up();
 #endif
@@ -880,7 +880,7 @@ class oracleConnection : public toConnection::connectionImpl
 
     virtual void initialize(void)
     {
-        toMaxLong = toTool::globalConfig(CONF_MAX_LONG,
+        toMaxLong = toConfigurationSingle::Instance().globalConfig(CONF_MAX_LONG,
                                          QString::number(DEFAULT_MAX_LONG).latin1()).toInt();
         if (otl_connect::otl_initialize(1))
             addProvider("Oracle");
@@ -1198,7 +1198,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
             conn = new otl_connect;
 #ifdef OTL_STREAM_POOLING_ON
 
-            conn->set_stream_pool_size(std::max(toTool::globalConfig(CONF_OPEN_CURSORS,
+            conn->set_stream_pool_size(std::max(toConfigurationSingle::Instance().globalConfig(CONF_OPEN_CURSORS,
                                                 DEFAULT_OPEN_CURSORS).toInt(), 1));
 #endif
 
@@ -1285,7 +1285,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
     {
         {
             QString str = QString::fromLatin1("ALTER SESSION SET NLS_DATE_FORMAT = '");
-            str += toTool::globalConfig(CONF_DATE_FORMAT, DEFAULT_DATE_FORMAT);
+            str += toConfigurationSingle::Instance().globalConfig(CONF_DATE_FORMAT, DEFAULT_DATE_FORMAT);
             str += QString::fromLatin1("'");
             otl_stream date(1, str.utf8(), *conn);
         }
@@ -1342,16 +1342,16 @@ public:
     toOracleSetting(QWidget *parent)
             : toOracleSettingUI(parent), toSettingTab("database.html#oracle")
     {
-        DefaultDate->setText(toTool::globalConfig(CONF_DATE_FORMAT,
+        DefaultDate->setText(toConfigurationSingle::Instance().globalConfig(CONF_DATE_FORMAT,
                              DEFAULT_DATE_FORMAT));
-        CheckPoint->setText(toTool::globalConfig(CONF_PLAN_CHECKPOINT,
+        CheckPoint->setText(toConfigurationSingle::Instance().globalConfig(CONF_PLAN_CHECKPOINT,
                             DEFAULT_PLAN_CHECKPOINT));
-        ExplainPlan->setText(toTool::globalConfig(CONF_PLAN_TABLE,
+        ExplainPlan->setText(toConfigurationSingle::Instance().globalConfig(CONF_PLAN_TABLE,
                              DEFAULT_PLAN_TABLE));
-        OpenCursors->setValue(toTool::globalConfig(CONF_OPEN_CURSORS,
+        OpenCursors->setValue(toConfigurationSingle::Instance().globalConfig(CONF_OPEN_CURSORS,
                               DEFAULT_OPEN_CURSORS).toInt());
-        KeepPlans->setChecked(!toTool::globalConfig(CONF_KEEP_PLANS, "").isEmpty());
-        int len = toTool::globalConfig(CONF_MAX_LONG,
+        KeepPlans->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_KEEP_PLANS, "").isEmpty());
+        int len = toConfigurationSingle::Instance().globalConfig(CONF_MAX_LONG,
                                        QString::number(DEFAULT_MAX_LONG).latin1()).toInt();
         if (len >= 0)
         {
@@ -1370,19 +1370,19 @@ public:
     }
     virtual void saveSetting(void)
     {
-        toTool::globalSetConfig(CONF_KEEP_PLANS, KeepPlans->isChecked() ? "Yes" : "");
-        toTool::globalSetConfig(CONF_DATE_FORMAT, DefaultDate->text());
-        toTool::globalSetConfig(CONF_PLAN_CHECKPOINT, CheckPoint->text());
-        toTool::globalSetConfig(CONF_PLAN_TABLE, ExplainPlan->text());
-        toTool::globalSetConfig(CONF_OPEN_CURSORS, QString::number(OpenCursors->value()));
+        toConfigurationSingle::Instance().globalSetConfig(CONF_KEEP_PLANS, KeepPlans->isChecked() ? "Yes" : "");
+        toConfigurationSingle::Instance().globalSetConfig(CONF_DATE_FORMAT, DefaultDate->text());
+        toConfigurationSingle::Instance().globalSetConfig(CONF_PLAN_CHECKPOINT, CheckPoint->text());
+        toConfigurationSingle::Instance().globalSetConfig(CONF_PLAN_TABLE, ExplainPlan->text());
+        toConfigurationSingle::Instance().globalSetConfig(CONF_OPEN_CURSORS, QString::number(OpenCursors->value()));
         if (Unlimited->isChecked())
         {
             toMaxLong = -1;
-            toTool::globalSetConfig(CONF_MAX_LONG, QString::fromLatin1("-1"));
+            toConfigurationSingle::Instance().globalSetConfig(CONF_MAX_LONG, QString::fromLatin1("-1"));
         }
         else
         {
-            toTool::globalSetConfig(CONF_MAX_LONG, MaxLong->text());
+            toConfigurationSingle::Instance().globalSetConfig(CONF_MAX_LONG, MaxLong->text());
             toMaxLong = MaxLong->text().toInt();
         }
     }

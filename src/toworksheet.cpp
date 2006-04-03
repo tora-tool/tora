@@ -1263,7 +1263,7 @@ void toWorksheet::addLog(const QString &sql, const toConnection::exception &resu
     {
         if (result.contains(re))
         {
-            if (!toTool::globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
+            if (!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
                 connection().commit();
             else
                 toMainWidget()->setNeedCommit(connection());
@@ -1992,7 +1992,7 @@ void toWorksheet::saveLast(void)
                              tr("Undescribed"),
                              "Any",
                              connection().provider());
-            toSQL::saveSQL(toTool::globalConfig(CONF_SQL_FILE, DEFAULT_SQL_FILE));
+            toSQL::saveSQL(toConfigurationSingle::Instance().globalConfig(CONF_SQL_FILE, DEFAULT_SQL_FILE));
         }
         TOCATCH
     }

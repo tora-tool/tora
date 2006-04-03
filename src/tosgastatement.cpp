@@ -94,7 +94,7 @@ void toSGAStatement::changeTab(QWidget *widget)
         {
             if (CurrentTab == SQLText)
             {
-                if (!toTool::globalConfig(CONF_AUTO_INDENT_RO, "Yes").isEmpty())
+                if (!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_INDENT_RO, "Yes").isEmpty())
                     SQLText->setText(toSQLParse::indent(toSQLString(toCurrentConnection(this),
                                                         Address)));
                 else

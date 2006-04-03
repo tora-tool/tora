@@ -367,7 +367,7 @@ public:
         EndBlockNewline->setChecked(Current.EndBlockNewline);
         IndentLevel->setValue(Current.IndentLevel);
         CommentColumn->setValue(Current.CommentColumn);
-        AutoIndent->setChecked(!toTool::globalConfig(CONF_AUTO_INDENT_RO, "Yes").isEmpty());
+        AutoIndent->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_INDENT_RO, "Yes").isEmpty());
         Ok = false;
         try
         {
@@ -574,7 +574,7 @@ void toEditExtensionSetup::saveSetting(void)
     Tool->setConfig(CONF_END_BLOCK_NEWLINE, EndBlockNewline->isChecked() ? "Yes" : "");
     Tool->setConfig(CONF_INDENT_LEVEL, QString::number(IndentLevel->value()));
     Tool->setConfig(CONF_COMMENT_COLUMN, QString::number(CommentColumn->value()));
-    toTool::globalSetConfig(CONF_AUTO_INDENT_RO, AutoIndent->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_AUTO_INDENT_RO, AutoIndent->isChecked() ? "Yes" : "");
     saveCurrent();
 }
 

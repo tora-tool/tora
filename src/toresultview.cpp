@@ -143,8 +143,8 @@ int toResultViewMLine::realWidth(const QFontMetrics &fm, const QListView *top, i
 {
     if (!MaxColDisp)
     {
-        MaxColDisp = toTool::globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
-        Gridlines = !toTool::globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty();
+        MaxColDisp = toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
+        Gridlines = !toConfigurationSingle::Instance().globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty();
     }
     QString t = text(column);
     if (t.isNull())
@@ -176,8 +176,8 @@ int toResultViewItem::realWidth(const QFontMetrics &fm, const QListView *top, in
 {
     if (!MaxColDisp)
     {
-        MaxColDisp = toTool::globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
-        Gridlines = !toTool::globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty();
+        MaxColDisp = toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
+        Gridlines = !toConfigurationSingle::Instance().globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty();
     }
     QString t = text(column);
     if (t.isNull())
@@ -402,8 +402,8 @@ int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const QListView *top,
 {
     if (!MaxColDisp)
     {
-        MaxColDisp = toTool::globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
-        Gridlines = !toTool::globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty();
+        MaxColDisp = toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
+        Gridlines = !toConfigurationSingle::Instance().globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty();
     }
     QString t = text(column);
     if (t.isNull())
@@ -425,8 +425,8 @@ int toResultViewCheck::realWidth(const QFontMetrics &fm, const QListView *top, i
 {
     if (!MaxColDisp)
     {
-        MaxColDisp = toTool::globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
-        Gridlines = !toTool::globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty();
+        MaxColDisp = toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
+        Gridlines = !toConfigurationSingle::Instance().globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty();
     }
     QString t = text(column);
     if (t.isNull())
@@ -540,7 +540,7 @@ toListView::toListView(QWidget *parent, const char *name, WFlags f)
     Menu = NULL;
     connect(this, SIGNAL(rightButtonPressed(QListViewItem *, const QPoint &, int)),
             this, SLOT(displayMenu(QListViewItem *, const QPoint &, int)));
-    QString str = toTool::globalConfig(CONF_LIST, "");
+    QString str = toConfigurationSingle::Instance().globalConfig(CONF_LIST, "");
     if (!str.isEmpty())
     {
         QFont font(toStringToFont(str));
@@ -1567,8 +1567,8 @@ QListViewItem *toResultView::createItem(QListViewItem *last, const QString &str)
 
 void toResultView::addItem(void)
 {
-    MaxColDisp = toTool::globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
-    Gridlines = !toTool::globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty();
+    MaxColDisp = toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
+    Gridlines = !toConfigurationSingle::Instance().globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty();
 
     try
     {
@@ -1666,7 +1666,7 @@ void toResultView::query(const QString &sql, const toQList &param)
         else
             setSorting(Query->columns());
 
-        int MaxNumber = toTool::globalConfig(CONF_MAX_NUMBER, DEFAULT_MAX_NUMBER).toInt();
+        int MaxNumber = toConfigurationSingle::Instance().globalConfig(CONF_MAX_NUMBER, DEFAULT_MAX_NUMBER).toInt();
         for (int j = 0;j < MaxNumber && !Query->eof();j++)
             addItem();
         if (ReadAll || MaxNumber < 0)
@@ -1788,12 +1788,12 @@ toResultListFormat::toResultListFormat(QWidget *parent, const char *name)
     Format->insertItem(tr("Tab delimited"));
     Format->insertItem(tr("CSV"));
     Format->insertItem(tr("HTML"));
-    int num = toTool::globalConfig(CONF_DEFAULT_FORMAT, "").toInt();
+    int num = toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_FORMAT, "").toInt();
     Format->setCurrentItem(num);
     formatChanged(num);
 
-    Delimiter->setText(toTool::globalConfig(CONF_CSV_DELIMITER, DEFAULT_CSV_DELIMITER));
-    Separator->setText(toTool::globalConfig(CONF_CSV_SEPARATOR, DEFAULT_CSV_SEPARATOR));
+    Delimiter->setText(toConfigurationSingle::Instance().globalConfig(CONF_CSV_DELIMITER, DEFAULT_CSV_DELIMITER));
+    Separator->setText(toConfigurationSingle::Instance().globalConfig(CONF_CSV_SEPARATOR, DEFAULT_CSV_SEPARATOR));
 }
 
 void toResultListFormat::formatChanged(int pos)
@@ -1804,9 +1804,9 @@ void toResultListFormat::formatChanged(int pos)
 
 void toResultListFormat::saveDefault(void)
 {
-    toTool::globalSetConfig(CONF_CSV_DELIMITER, Delimiter->text());
-    toTool::globalSetConfig(CONF_CSV_SEPARATOR, Separator->text());
-    toTool::globalSetConfig(CONF_DEFAULT_FORMAT, QString::number(Format->currentItem()));
+    toConfigurationSingle::Instance().globalSetConfig(CONF_CSV_DELIMITER, Delimiter->text());
+    toConfigurationSingle::Instance().globalSetConfig(CONF_CSV_SEPARATOR, Separator->text());
+    toConfigurationSingle::Instance().globalSetConfig(CONF_DEFAULT_FORMAT, QString::number(Format->currentItem()));
 }
 
 void toResultFilter::exportData(std::map<QCString, QString> &, const QCString &)

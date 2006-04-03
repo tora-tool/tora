@@ -1006,7 +1006,7 @@ class qSqlSetting : public QWidget, public toSettingTab
             OnlyForward = new QCheckBox(qApp->translate("qSqlSetting", "Posibility to break MySQL queries (Can require more connections)"), box);
             layout->addMultiCellWidget(OnlyForward, 0, 0, 0, 0);
 
-            OnlyForward->setChecked(!toTool::globalConfig(CONF_ONLY_FORWARD, DEFAULT_ONLY_FORWARD).isEmpty());
+            OnlyForward->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_ONLY_FORWARD, DEFAULT_ONLY_FORWARD).isEmpty());
 
             QSpacerItem *spacer = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding);
             layout->addItem(spacer, 1, 0);
@@ -1015,7 +1015,7 @@ class qSqlSetting : public QWidget, public toSettingTab
         }
         virtual void saveSetting(void)
         {
-            toTool::globalSetConfig(CONF_ONLY_FORWARD, OnlyForward->isChecked() ? "Yes" : "");
+            toConfigurationSingle::Instance().globalSetConfig(CONF_ONLY_FORWARD, OnlyForward->isChecked() ? "Yes" : "");
             toQSqlProvider::OnlyForward = OnlyForward->isChecked();
         }
     };
@@ -1651,7 +1651,7 @@ class qSqlConnection : public toConnection::connectionImpl
     toQSqlProvider(void)
             : toConnectionProvider("QSql", false)
     {
-        OnlyForward = !toTool::globalConfig(CONF_ONLY_FORWARD, DEFAULT_ONLY_FORWARD).isEmpty();
+        OnlyForward = !toConfigurationSingle::Instance().globalConfig(CONF_ONLY_FORWARD, DEFAULT_ONLY_FORWARD).isEmpty();
     }
 
     virtual void initialize(void)

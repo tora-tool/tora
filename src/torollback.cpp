@@ -429,7 +429,7 @@ class rollbackItem : public toResultViewItem
     }
     virtual void query(const QString &sql, const toQList &)
     {
-        QString unit = toTool::globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
+        QString unit = toConfigurationSingle::Instance().globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
 
         toQList par;
         par.insert(par.end(), QString::number(toSizeDecode(unit)));
@@ -750,7 +750,7 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
     try
     {
         connect(timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
-        toRefreshParse(timer(), toTool::globalConfig(CONF_REFRESH, DEFAULT_REFRESH));
+        toRefreshParse(timer(), toConfigurationSingle::Instance().globalConfig(CONF_REFRESH, DEFAULT_REFRESH));
     }
     TOCATCH
 

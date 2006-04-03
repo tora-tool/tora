@@ -394,7 +394,7 @@ public:
                 std::map<QCString, QString> pairs;
                 try
                 {
-                    toTool::loadMap(file, pairs);
+                    toConfigurationSingle::Instance().loadMap(file, pairs);
                 }
                 catch (...)
                 {
@@ -409,7 +409,7 @@ public:
                 if (edit.exec())
                 {
                     edit.changeSelection();
-                    if (!toTool::saveMap(file, pairs))
+                    if (!toConfigurationSingle::Instance().saveMap(file, pairs))
                         throw qApp->translate("toTemplatePrefs", "Couldn't write file");
                 }
             }
@@ -757,7 +757,7 @@ void toTextTemplate::addFile(QListView *parent, const QString &root, const QStri
     std::map<QCString, QString> pairs;
     try
     {
-        toTool::loadMap(file, pairs);
+        toConfigurationSingle::Instance().loadMap(file, pairs);
         toTemplateItem *last = new toTemplateItem(*this, parent, root);
         int lastLevel = 0;
         QStringList lstCtx;

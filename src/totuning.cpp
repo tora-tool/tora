@@ -791,7 +791,7 @@ void toTuningOverview::setupChart(toResultLine *chart, const QString &title, con
     toQList val;
     if (postfix == QString::fromLatin1("b/s"))
     {
-        QString unitStr = toTool::globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
+        QString unitStr = toConfigurationSingle::Instance().globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
         val.insert(val.end(), toQValue(toSizeDecode(unitStr)));
         unitStr += QString::fromLatin1("/s");
         chart->setYPostfix(unitStr);
@@ -843,7 +843,7 @@ toTuningOverview::toTuningOverview(QWidget *parent, const char *name, WFlags fl)
     {
         toQList val;
         val.insert(val.end(),
-                   toQValue(toSizeDecode(toTool::globalConfig(CONF_SIZE_UNIT,
+                   toQValue(toSizeDecode(toConfigurationSingle::Instance().globalConfig(CONF_SIZE_UNIT,
                                          DEFAULT_SIZE_UNIT))));
         FileUsed->query(toSQL::string(SQLOverviewFilespace, toCurrentConnection(this)), (const toQList)val);
     }
@@ -1170,7 +1170,7 @@ void toTuningOverview::refresh(void)
             Done.down();
             Quit = false;
             Connection = &toCurrentConnection(this);
-            UnitString = toTool::globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
+            UnitString = toConfigurationSingle::Instance().globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
             toThread *thread = new toThread(new overviewQuery(*this));
             thread->start();
             Poll.start(500);
@@ -1339,7 +1339,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
         std::list<QCString> tabs = TabList();
         for (std::list<QCString>::iterator i = tabs.begin();i != tabs.end();i++)
             TuningTool.setConfig(*i, def);
-        toTool::saveConfig();
+        toConfigurationSingle::Instance().saveConfig();
     }
 
     QToolBar *toolbar = toAllocBar(this, tr("Server Tuning"));
@@ -1378,7 +1378,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     }
     TOCATCH
 
-    QString unitStr = toTool::globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
+    QString unitStr = toConfigurationSingle::Instance().globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
     toQList unit;
     unit.insert(unit.end(), toQValue(toSizeDecode(unitStr)));
     {
@@ -1731,7 +1731,7 @@ void toTuning::refresh(void)
         LibraryCache->refresh();
     else if (LastTab == ControlFiles)
     {
-        QString unit = toTool::globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
+        QString unit = toConfigurationSingle::Instance().globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
         ControlFiles->changeParams(QString::number(toSizeDecode(unit)), unit);
     }
     else if (LastTab == Options)

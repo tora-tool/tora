@@ -255,7 +255,7 @@ public:
         BrowserTool.setConfig(CONF_FILTER_TYPE, QString("%1").arg(Type));
         BrowserTool.setConfig(CONF_FILTER_TABLESPACE_TYPE, QString("%1").arg(TablespaceType));
         BrowserTool.setConfig(CONF_FILTER_TEXT, Text);
-        toTool::saveConfig();
+        toConfigurationSingle::Instance().saveConfig();
     }
 
     virtual void readFilterSettings(void)

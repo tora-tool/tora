@@ -95,7 +95,7 @@ toPieChart::toPieChart(QWidget *parent, const char *name, WFlags f)
 
     setMinimumSize(60, 60);
     // Use list font
-    QString str = toTool::globalConfig(CONF_LIST, "");
+    QString str = toConfigurationSingle::Instance().globalConfig(CONF_LIST, "");
     if (!str.isEmpty())
     {
         QFont font(toStringToFont(str));
@@ -172,7 +172,7 @@ toPieChart::toPieChart(toPieChart *pie, QWidget *parent, const char *name, WFlag
 
     setMinimumSize(60, 60);
     // Use list font
-    QString str = toTool::globalConfig(CONF_LIST, "");
+    QString str = toConfigurationSingle::Instance().globalConfig(CONF_LIST, "");
     if (!str.isEmpty())
     {
         QFont font(toStringToFont(str));

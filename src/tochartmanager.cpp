@@ -746,7 +746,7 @@ void toChartHandler::saveSettings(void)
         }
         ChartTool.setConfig("AlarmCount", QString::number(num));
     }
-    toTool::saveConfig();
+    toConfigurationSingle::Instance().saveConfig();
 }
 
 void toChartHandler::loadSettings(void)

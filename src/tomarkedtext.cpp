@@ -71,7 +71,7 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
 {
     setEdit();
     Search = false;
-    setFont(toStringToFont(toTool::globalConfig(CONF_TEXT, "")));
+    setFont(toStringToFont(toConfigurationSingle::Instance().globalConfig(CONF_TEXT, "")));
 
     connect(this, SIGNAL(textChanged()), this, SLOT(setTextChanged()));
     connect(this,SIGNAL(copyAvailable(bool)),this,SLOT(setCopyAvailable(bool)));
@@ -332,7 +332,7 @@ void toMarkedText::newLine(void)
             break;
     }
     
-    if (!toTool::globalConfig(CONF_AUTO_INDENT, "Yes").isEmpty())
+    if (!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_INDENT, "Yes").isEmpty())
     {
         int curline, curcol;
         getCursorPosition (&curline, &curcol);
