@@ -51,6 +51,9 @@ INSTALLDIR=/c/TOra
 # OTL is now in external directory
 OTL_DIR=../ext/otl
 
+#Loki
+LOKI_DIR=../ext/loki/loki-0.1.4/include
+
 # What to compile, can be tora for tora-mono for monolithic, tora-static for static version
 # (for Windows build these targets seems to have no difference so they better left default)
 TARGET=tora
@@ -58,7 +61,8 @@ TARGET=tora
 # Additional includes needed to compile program
 INCLUDES="-I$(OCI_HOME)/include" \
 	 "-I$(QTDIR)/include" \
-	 "-I$(OTL_DIR)"
+	"-I$(OTL_DIR)"
+	"-I$(LOKI_DIR)"
 
 # C++ Compiler to use
 GCC=g++
@@ -150,6 +154,7 @@ API=	\
 	tobackground.h		\
 	tobarchart.h		\
 	toconf.h		\
+	toconfiguration.h       \
 	toconnection.h		\
 	todatatype.h		\
 	todefaultkeywords.h	\
@@ -216,6 +221,7 @@ SOURCES=\
 	tochangeconnection.cpp \
 	tochartmanager.cpp \
 	toconnection.cpp \
+	toconfiguration.cpp \
 	tocurrent.cpp \
 	todatatype.cpp \
 	todebug.cpp \
