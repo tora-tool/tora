@@ -11,7 +11,9 @@ TRANSLATIONS= \
 	i18n/tora_it.ts \
 	i18n/tora_toad.ts
 
-AM_CPPFLAGS = -I$(top_srcdir)/ext/otl $(KDE_INCLUDES) $(QT_INCLUDES) $(LTDLINCL)
+LOKIDIR=$(top_srcdir)/ext/loki/loki-0.1.4/include
+
+AM_CPPFLAGS = -I$(top_srcdir)/ext/otl -I$(LOKIDIR) $(KDE_INCLUDES) $(QT_INCLUDES) $(LTDLINCL)
 AM_CPPFLAGS += $(PCRE_CFLAGS) \
 	-DDEFAULT_PLUGIN_DIR=\"$(libdir)\" \
 	-DTOVERSION=\"$(PACKAGE_VERSION)\" \
@@ -53,6 +55,7 @@ EXTRA_tora_SOURCES = toalert.cpp toalert.h \
     tobackup.cpp tobackup.h \
     tobrowser.cpp tobrowser.h  \
     tobarchart.cpp tobarchart.h  \
+    toconfiguration.cpp toconfiguration.h \
     tocurrent.cpp tocurrent.h \
     todebug.cpp todebug.h  \
     toeditextensions.cpp toeditextensions.h  \
