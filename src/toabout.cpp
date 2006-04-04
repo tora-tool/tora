@@ -41,6 +41,8 @@
 #include <qmime.h>
 #include <qpushbutton.h>
 
+#include "config.h"
+
 #include "toconf.h"
 #include "LICENSE.h"
 #include "icons/largelogo.xpm"
