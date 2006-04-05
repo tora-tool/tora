@@ -61,7 +61,7 @@ TARGET=tora
 # Additional includes needed to compile program
 INCLUDES="-I$(OCI_HOME)/include" \
 	 "-I$(QTDIR)/include" \
-	"-I$(OTL_DIR)"
+	"-I$(OTL_DIR)" \
 	"-I$(LOKI_DIR)"
 
 # C++ Compiler to use

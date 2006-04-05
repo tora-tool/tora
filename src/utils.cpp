@@ -325,12 +325,13 @@ void toStatusMessage(const QString &str, bool save, bool log)
     toMain *main = dynamic_cast<toMain *>(qApp->mainWidget());
     if (main)
     {
+      if(!str.isEmpty()){
         int sec = toConfigurationSingle::Instance().globalConfig(CONF_STATUS_MESSAGE, DEFAULT_STATUS_MESSAGE).toInt();
         if (save || sec == 0)
             main->statusBar()->message(str.simplifyWhiteSpace());
         else
             main->statusBar()->message(str.simplifyWhiteSpace(), sec*1000);
-        if (!save && !str.isEmpty() && log)
+        if (!save && log)
         {
             if (toConfigurationSingle::Instance().globalConfig(CONF_MESSAGE_STATUSBAR, "").isEmpty())
                 main->displayMessage(str);
@@ -341,6 +342,7 @@ void toStatusMessage(const QString &str, bool save, bool log)
         }
         QToolTip::add
             (main->statusBar(), str);
+      }
     }
     
 }

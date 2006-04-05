@@ -4,7 +4,49 @@
 #include <qregexp.h>
 
 #include "utils.h"
+#ifdef WIN32
+#include "windows/cregistry.h"
+#endif
 
+#ifdef WIN32
+#  ifdef TOAD
+#  define APPLICATION_NAME "SOFTWARE\\Quest Software\\Toad for MySQL\\"
+#  else
+#  define APPLICATION_NAME "SOFTWARE\\Quest Software\\tora\\"
+#  define FALLBACK_NAME    "SOFTWARE\\Underscore\\tora\\"
+#  endif
+
+static char *toKeyPath(const QString &str, CRegistry &registry)
+{
+    static char *buf = NULL;
+    int pos = str.length() - 1;
+    while (pos >= 0 && str.at(pos) != '\\')
+        pos--;
+    if (pos < 0)
+        throw QT_TRANSLATE_NOOP("toKeyPath", "Couldn't find \\ in path");
+    QString ret = str.mid(0, pos);
+    if (buf)
+        free(buf);
+    buf = strdup(ret);
+    registry.CreateKey(HKEY_CURRENT_USER, buf);
+    return buf;
+}
+
+static char *toKeyValue(const QString &str)
+{
+    static char *buf = NULL;
+    int pos = str.length() - 1;
+    while (pos >= 0 && str.at(pos) != '\\')
+        pos--;
+    if (pos < 0)
+        throw QT_TRANSLATE_NOOP("toKeyValue", "Couldn't find \\ in path");
+    if (buf)
+        free(buf);
+    buf = strdup(str.mid(pos + 1));
+    return buf;
+}
+
+#endif
 
 toConfiguration::toConfiguration()
 {
@@ -251,45 +293,6 @@ const QString &toConfiguration::globalConfig(const QCString &tag, const QCString
     return (*i).second;
 }
 
-#ifdef WIN32
-#  ifdef TOAD
-#  define APPLICATION_NAME "SOFTWARE\\Quest Software\\Toad for MySQL\\"
-#  else
-#  define APPLICATION_NAME "SOFTWARE\\Quest Software\\tora\\"
-#  define FALLBACK_NAME    "SOFTWARE\\Underscore\\tora\\"
-#  endif
-
-static char *toKeyPath(const QString &str, CRegistry &registry)
-{
-    static char *buf = NULL;
-    int pos = str.length() - 1;
-    while (pos >= 0 && str.at(pos) != '\\')
-        pos--;
-    if (pos < 0)
-        throw QT_TRANSLATE_NOOP("toKeyPath", "Couldn't find \\ in path");
-    QString ret = str.mid(0, pos);
-    if (buf)
-        free(buf);
-    buf = strdup(ret);
-    registry.CreateKey(HKEY_CURRENT_USER, buf);
-    return buf;
-}
-
-static char *toKeyValue(const QString &str)
-{
-    static char *buf = NULL;
-    int pos = str.length() - 1;
-    while (pos >= 0 && str.at(pos) != '\\')
-        pos--;
-    if (pos < 0)
-        throw QT_TRANSLATE_NOOP("toKeyValue", "Couldn't find \\ in path");
-    if (buf)
-        free(buf);
-    buf = strdup(str.mid(pos + 1));
-    return buf;
-}
-
-#endif
 
 
 const QString& toConfiguration::config(const QCString &tag, const QCString &def, const QCString &name)
