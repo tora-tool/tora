@@ -178,12 +178,12 @@ perl -pi -e 's/libclntsh.so.\d.\d/libclntsh.so\0\0\0\0/g' .libs/libtooracleconne
 %{__mkdir_p} "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/32x32/apps"
 %{__make} DESTDIR="${RPM_BUILD_ROOT}" install
 
-%{__install} --owner root --group root --mode=644 help/*.html "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/"
-%{__install} --owner root --group root --mode=644 help/images/*.png "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/images/"
-%{__install} --owner root --group root --mode=644 help/api/*.html "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/api/"
+%{__install} --mode=644 help/*.html "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/"
+%{__install} --mode=644 help/images/*.png "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/images/"
+%{__install} --mode=644 help/api/*.html "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/api/"
 
-%{__install} --owner root --group root --mode=644 icons/tora.xpm "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/32x32/apps/tora.xpm"
-%{__install} --owner root --group root --mode=644 icons/toramini.xpm "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/16x16/apps/tora.xpm"
+%{__install} --mode=644 icons/tora.xpm "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/32x32/apps/tora.xpm"
+%{__install} --mode=644 icons/toramini.xpm "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/16x16/apps/tora.xpm"
 
 %post
 
