@@ -147,6 +147,7 @@ tora_SOURCES=main.cpp \
 	toabout.cpp toabout.h \
 	toaboutui.cpp toaboutui.h \
 	tobackground.cpp tobackground.h \
+	toconfiguration.cpp toconfiguration.h \
 	toconnection.cpp toconnection.h \
 	todatabasesettingui.cpp todatabasesettingui.h \
 	toeditwidget.cpp toeditwidget.h \
