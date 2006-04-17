@@ -219,6 +219,8 @@ public:
 * thread and task objects so the calling thread must never delete a started thread.
 */
 
+void *toThreadStartWrapper(void*);
+
 class toThread
 {
 private:
