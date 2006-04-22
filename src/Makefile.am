@@ -55,7 +55,6 @@ EXTRA_tora_SOURCES = toalert.cpp toalert.h \
     tobackup.cpp tobackup.h \
     tobrowser.cpp tobrowser.h  \
     tobarchart.cpp tobarchart.h  \
-    toconfiguration.cpp toconfiguration.h \
     tocurrent.cpp tocurrent.h \
     todebug.cpp todebug.h  \
     toeditextensions.cpp toeditextensions.h  \
