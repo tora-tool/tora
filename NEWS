@@ -16,6 +16,7 @@
 2006-03-20: Linux autocompletion works on Windows too. Remove the ifdef
 2006-04-05: Fixed compilation on windows. Re-added missing patch from Michael Meskes
 2006-04-13: Apply patch from Andrew Gilmore to fix rpm spec builds as non-root user
+2006-04-24: Add drop tablespace functionality
 
 1.3.21:
 

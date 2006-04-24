@@ -81,9 +81,11 @@
 #include "tostoragedialogui.moc"
 #include "tostorageprefsui.moc"
 #include "tostoragetablespaceui.moc"
+#include "todroptablespaceui.moc"
 
 #include "icons/addfile.xpm"
 #include "icons/addtablespace.xpm"
+#include "icons/droptablespace.xpm"
 #include "icons/coalesce.xpm"
 #include "icons/eraselog.xpm"
 #include "icons/logging.xpm"
@@ -153,6 +155,28 @@ public:
         return new toStoragePrefs(this, parent);
     }
 };
+
+toDropTablespace::toDropTablespace(QWidget* parent, const char* name, WFlags fl)
+        : toDropTablespaceUI(parent, name, fl)
+{
+  if (!name)
+        setName("toDropTablespace");
+}
+
+std::list<QString> toDropTablespace::sql(){
+  std::list<QString> ret;
+  if(IncludingObjectsCheck->isChecked()){
+    toPush(ret, QString::fromLatin1("INCLUDING CONTENTS "));
+    if(dataFileCheck->isChecked())
+      toPush(ret, QString::fromLatin1("AND DATAFILES "));
+    if(CascadeCheck->isChecked())
+      toPush(ret, QString::fromLatin1("CASCADE CONSTRAINTS "));
+  }else
+    toPush(ret, QString::fromLatin1(""));
+  return ret;
+}
+
+
 
 toStorageTablespace::toStorageTablespace(QWidget* parent, const char* name, WFlags fl)
         : toStorageTablespaceUI(parent, name, fl)
@@ -426,7 +450,7 @@ static toSQL SQLTablespaceInfo("toStorage:TablespaceInfo",
                                "Get information about a tablespace for the modify dialog, "
                                "must have same columns and bindings");
 
-toStorageDialog::toStorageDialog(const QString &tablespace, QWidget *parent)
+toStorageDialog::toStorageDialog(const QString &tablespace, QWidget *parent, bool drop)
         : toStorageDialogUI(parent, "Storage Dialog", true)
 {
     Setup();
@@ -434,6 +458,8 @@ toStorageDialog::toStorageDialog(const QString &tablespace, QWidget *parent)
 
     if (!tablespace.isNull())
     {
+      TablespaceOrig = tablespace;
+      if(!drop){
         try
         {
             toQList result;
@@ -447,15 +473,27 @@ toStorageDialog::toStorageDialog(const QString &tablespace, QWidget *parent)
             QString temp = toShift(result);
 
             Mode = NewDatafile;
-            TablespaceOrig = tablespace;
             setCaption(tr("Add datafile"));
             Tablespace = NULL;
             Default = NULL;
+            Drop = NULL;
             Datafile = new toStorageDatafile(dict != QString::fromLatin1("DICTIONARY") &&
                                              temp != QString::fromLatin1("PERMANENT"), false, DialogTab);
             DialogTab->addTab(Datafile, tr("Datafile"));
+            connect(Datafile, SIGNAL(validContent(bool)), this, SLOT(validContent(bool)));
         }
         TOCATCH
+      }else{
+        Mode = DropTablespace;
+        Tablespace = NULL;
+        Default = NULL;
+        Datafile=NULL;
+        Drop=new toDropTablespace(DialogTab);
+        DialogTab->addTab(Datafile, tr("Drop Tablespace"));
+        setCaption(tr("Drop Tablespace"));
+        connect(Drop, SIGNAL(validContent(bool)), this, SLOT(validContent(bool)));
+        emit validContent(true);
+      }
     }
     else
     {
@@ -470,8 +508,9 @@ toStorageDialog::toStorageDialog(const QString &tablespace, QWidget *parent)
         Default->setEnabled(false);
         connect(Tablespace, SIGNAL(allowStorage(bool)), this, SLOT(allowStorage(bool)));
         connect(Tablespace, SIGNAL(tempFile(bool)), Datafile, SLOT(setTempFile(bool)));
+        connect(Datafile, SIGNAL(validContent(bool)), this, SLOT(validContent(bool)));
     }
-    connect(Datafile, SIGNAL(validContent(bool)), this, SLOT(validContent(bool)));
+    
 }
 
 toStorageDialog::toStorageDialog(toConnection &conn, const QString &tablespace, QWidget *parent)
@@ -659,6 +698,21 @@ std::list<QString> toStorageDialog::sql(void)
         std::list<QString> ret;
         switch (Mode)
         {
+        case DropTablespace:
+          {
+            QString start = QString::fromLatin1("DROP TABLESPACE \"");
+            start += TablespaceOrig;
+            start += QString::fromLatin1("\" ");
+            if(Drop){
+              std::list<QString> lst = Drop->sql();
+              for (std::list<QString>::iterator i = lst.begin();i != lst.end();i++){
+                start += QString::fromLatin1(" ");
+                start += *i;
+              }
+            }
+            toPush(ret, start);
+          }
+          break;
         case ModifyDatafile:
             {
                 QString start = QString::fromLatin1("ALTER DATABASE ");
@@ -825,6 +879,11 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
                                           tr("Modify tablespace"),
                                           this, SLOT(modifyTablespace(void)),
                                           toolbar);
+    DropTablespaceButton=new QToolButton(QPixmap(const_cast<const char**>(droptablespace_xpm)),
+                    tr("Drop tablespace"),
+                    tr("Drop tablespace"),
+                    this, SLOT(dropTablespace(void)),
+                    toolbar);
     ModFileButton = new QToolButton(QPixmap(const_cast<const char**>(modfile_xpm)),
                                     tr("Modify file"),
                                     tr("Modify file"),
@@ -836,6 +895,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
                     tr("Create new tablespace"),
                     this, SLOT(newTablespace(void)),
                     toolbar);
+    
     NewFileButton = new QToolButton(QPixmap(const_cast<const char**>(addfile_xpm)),
                                     tr("Add datafile to tablespace"),
                                     tr("Add datafile to tablespace"),
@@ -905,6 +965,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
 #define TO_ID_ADD_DATAFILE (toMain::TO_TOOL_MENU_ID+ 9)
 #define TO_ID_COALESCE  (toMain::TO_TOOL_MENU_ID+ 10)
 #define TO_ID_MOVE_FILE  (toMain::TO_TOOL_MENU_ID+ 11)
+#define TO_ID_DROP_TABLESPACE (toMain::TO_TOOL_MENU_ID+ 12)
 
 void toStorage::windowActivated(QWidget *widget)
 {
@@ -932,6 +993,8 @@ void toStorage::windowActivated(QWidget *widget)
             ToolMenu->insertItem(QPixmap(const_cast<const char**>(readtablespace_xpm)), tr("Read only access"),
                                  this, SLOT(readOnly()), 0, TO_ID_READ_ONLY);
             ToolMenu->insertSeparator();
+            ToolMenu->insertItem(QPixmap(const_cast<const char**>(droptablespace_xpm)), tr("Drop tablespace..."),
+                                 this, SLOT(dropTablespace()), 0, TO_ID_DROP_TABLESPACE);
             ToolMenu->insertItem(QPixmap(const_cast<const char**>(modtablespace_xpm)), tr("Modify tablespace..."),
                                  this, SLOT(modifyTablespace()), 0, TO_ID_MODIFY_TABLESPACE);
             ToolMenu->insertItem(QPixmap(const_cast<const char**>(modfile_xpm)), tr("Modify datafile..."),
@@ -957,6 +1020,8 @@ void toStorage::windowActivated(QWidget *widget)
             ToolMenu->setItemEnabled(TO_ID_READ_ONLY, ReadOnlyButton->isEnabled());
             ToolMenu->setItemEnabled(TO_ID_MODIFY_TABLESPACE,
                                      ModTablespaceButton->isEnabled());
+            ToolMenu->setItemEnabled(TO_ID_DROP_TABLESPACE,
+                                     DropTablespaceButton->isEnabled());
             ToolMenu->setItemEnabled(TO_ID_MODIFY_DATAFILE,
                                      ModFileButton->isEnabled());
             ToolMenu->setItemEnabled(TO_ID_ADD_DATAFILE, NewFileButton->isEnabled());
@@ -1101,6 +1166,7 @@ void toStorage::selectionChanged(void)
     LoggingButton->setEnabled(false);
     EraseLogButton->setEnabled(false);
     ModTablespaceButton->setEnabled(false);
+    DropTablespaceButton->setEnabled(false);
     NewFileButton->setEnabled(false);
     MoveFileButton->setEnabled(false);
     ModFileButton->setEnabled(false);
@@ -1169,6 +1235,7 @@ void toStorage::selectionChanged(void)
         }
         NewFileButton->setEnabled(true);
         ModTablespaceButton->setEnabled(true);
+        DropTablespaceButton->setEnabled(true);
     }
     if (ToolMenu)
     {
@@ -1180,6 +1247,8 @@ void toStorage::selectionChanged(void)
         ToolMenu->setItemEnabled(TO_ID_READ_ONLY, ReadOnlyButton->isEnabled());
         ToolMenu->setItemEnabled(TO_ID_MODIFY_TABLESPACE,
                                  ModTablespaceButton->isEnabled());
+        ToolMenu->setItemEnabled(TO_ID_DROP_TABLESPACE,
+                                 DropTablespaceButton->isEnabled());
         ToolMenu->setItemEnabled(TO_ID_MODIFY_DATAFILE,
                                  ModFileButton->isEnabled());
         ToolMenu->setItemEnabled(TO_ID_ADD_DATAFILE, NewFileButton->isEnabled());
@@ -1215,6 +1284,24 @@ void toStorage::newTablespace(void)
         if (newSpace.exec())
         {
             std::list<QString> lst = newSpace.sql();
+            for (std::list<QString>::iterator i = lst.begin();i != lst.end();i++)
+                connection().execute(*i);
+
+            refresh();
+        }
+    }
+    TOCATCH
+}
+
+void toStorage::dropTablespace(void)
+{
+    try
+    {
+        toStorageDialog dropSpace(Storage->currentTablespace(), this,true);
+
+        if (dropSpace.exec())
+        {
+            std::list<QString> lst = dropSpace.sql();
             for (std::list<QString>::iterator i = lst.begin();i != lst.end();i++)
                 connection().execute(*i);
 

@@ -187,8 +187,8 @@ tora_SOURCES=main.cpp \
 	totextview.cpp totextview.h \
 	tothread.cpp tothread.h \
 	totool.cpp totool.h \
-	totoolsettingui.cpp totoolsettingui.h \
-	utils.cpp utils.h \
+	totoolsettingui.cpp totoolsettingui.h todroptablespaceui.h \
+	todroptablespaceui.cpp utils.cpp utils.h \
 	$(EXTRA_tora_SOURCES)
 
 UI_FILES =	toaboutui.ui \
@@ -231,7 +231,8 @@ UI_FILES =	toaboutui.ui \
 		tomessageui.ui \
 		tostoragedialogui.ui \
 		tonewconnectionui.ui \
-		tostorageprefsui.ui
+		tostorageprefsui.ui \
+		todroptablespaceui.ui
 
 
 EXTRA_DIST = icons \
@@ -294,6 +295,7 @@ BUILT_SOURCES = \
 	todebugchangeui.moc \
 	todebugwatch.moc \
 	todebugtext.moc \
+	todroptablespaceui.moc \
 	toeditextensiongotoui.moc \
 	toeditextensions.moc \
 	toeditextensionsetupui.moc \
@@ -391,6 +393,7 @@ BUILT_SOURCES = \
 	toworksheetstatistic.moc \
 	utils.moc \
 	toaboutui.cpp \
+	todroptablespaceui.cpp \
 	tobrowserconstraintui.cpp \
 	tobrowserfilterui.cpp \
 	tobrowserindexui.cpp \
@@ -401,6 +404,7 @@ BUILT_SOURCES = \
 	todebugchangeui.cpp \
 	todebugwatch.cpp \
 	toaboutui.h \
+	todroptablespaceui.h \
 	tobrowserconstraintui.h \
 	tobrowserfilterui.h \
 	tobrowserindexui.h \

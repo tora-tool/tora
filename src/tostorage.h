@@ -42,6 +42,7 @@
 #include "tostoragedatafileui.h"
 #include "tostoragedialogui.h"
 #include "tostoragetablespaceui.h"
+#include "todroptablespaceui.h"
 #include "totool.h"
 
 #include <list>
@@ -92,6 +93,16 @@ public slots:
     virtual void allowDefault(bool);
 };
 
+class toDropTablespace : public toDropTablespaceUI
+{
+   Q_OBJECT
+public:
+  toDropTablespace(QWidget *parent = 0, const char *name = 0, WFlags fl = 0);
+  std::list<QString> sql(void);
+signals:
+    void validContent(bool);
+};
+
 class toStorageDatafile : public toStorageDatafileUI
 {
     Q_OBJECT
@@ -133,7 +144,8 @@ class toStorageDialog : public toStorageDialogUI
         NewTablespace,
         NewDatafile,
         ModifyTablespace,
-        ModifyDatafile
+        ModifyDatafile,
+        DropTablespace
     } Mode;
     QString TablespaceOrig;
     void Setup(void);
@@ -141,11 +153,12 @@ public:
     toStorageDatafile *Datafile;
     toStorageTablespace *Tablespace;
     toStorageDefinition *Default;
+    toDropTablespace *Drop;
 
     toStorageDialog(toConnection &conn, const QString &Tablespace, QWidget *parent);
     toStorageDialog(toConnection &conn, const QString &Tablespace,
                     const QString &file, QWidget *parent);
-    toStorageDialog(const QString &tablespace, QWidget *parent);
+    toStorageDialog(const QString &tablespace, QWidget *parent, bool drop = false);
 
     std::list<QString> sql(void);
 public slots:
@@ -178,6 +191,7 @@ class toStorage : public toToolWidget
     QToolButton *ModFileButton;
     QToolButton *ExtentButton;
     QToolButton *TablespaceButton;
+    QToolButton *DropTablespaceButton;
 public:
     toStorage(QWidget *parent, toConnection &connection);
 
@@ -200,6 +214,7 @@ public slots:
     void modifyTablespace(void);
     void modifyDatafile(void);
     void moveFile(void);
+    void dropTablespace(void);
 
     void showExtent(bool);
     void showTablespaces(bool);
