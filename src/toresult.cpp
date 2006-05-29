@@ -49,14 +49,9 @@
 
 
 toResult::toResult()
-        : Slots(this)
+        : Slots(this),Handled(true),Tabs(0),TabWidget(0),ForceRefresh(false),QueryReady(false), FromSQL(false)
 {
-    QTimer::singleShot(1, &Slots, SLOT(setup()));
-    Handled = true;
-    Tabs = NULL;
-    QueryReady = FromSQL = false;
-    TabWidget = NULL;
-    ForceRefresh = false;
+    QTimer::singleShot(1, &Slots, SLOT(setup()));                
 }
 
 void toResult::changeHandle(void)
