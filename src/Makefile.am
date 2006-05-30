@@ -11,9 +11,10 @@ TRANSLATIONS= \
 	i18n/tora_it.ts \
 	i18n/tora_toad.ts
 
-LOKIDIR=$(top_srcdir)/ext/loki/loki-0.1.4/include
+LOKIDIR_INC=$(top_srcdir)/ext/loki/loki-0.1.4/include
+LOKIDIR_SRC=$(top_srcdir)/ext/loki/loki-0.1.4/src
 
-AM_CPPFLAGS = -I$(top_srcdir)/ext/otl -I$(LOKIDIR) $(KDE_INCLUDES) $(QT_INCLUDES) $(LTDLINCL)
+AM_CPPFLAGS = -I$(top_srcdir)/ext/otl -I$(LOKIDIR_INC) $(KDE_INCLUDES) $(QT_INCLUDES) $(LTDLINCL)
 AM_CPPFLAGS += $(PCRE_CFLAGS) \
 	-DDEFAULT_PLUGIN_DIR=\"$(libdir)\" \
 	-DTOVERSION=\"$(PACKAGE_VERSION)\" \
@@ -189,6 +190,8 @@ tora_SOURCES=main.cpp \
 	totool.cpp totool.h \
 	totoolsettingui.cpp totoolsettingui.h todroptablespaceui.h \
 	todroptablespaceui.cpp utils.cpp utils.h \
+	$(LOKIDIR_SRC)/SmallObj.cpp \
+	$(LOKIDIR_SRC)/Singleton.cpp \
 	$(EXTRA_tora_SOURCES)
 
 UI_FILES =	toaboutui.ui \

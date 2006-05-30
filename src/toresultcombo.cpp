@@ -47,17 +47,15 @@
 #include "toresultcombo.moc"
 
 toResultCombo::toResultCombo(QWidget *parent, const char *name)
-        : QComboBox(parent, name)
+        : QComboBox(parent, name), Query(0)
 {
-    Query = NULL;
     connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
     connect(this, SIGNAL(activated(int)),
             this, SLOT(changeSelected(void)));
 }
 
 toResultCombo::~toResultCombo()
-{
-    delete Query;
+{    
 }
 
 void toResultCombo::query(const QString &sql, const toQList &param)
@@ -72,12 +70,6 @@ void toResultCombo::query(const QString &sql, const toQList &param)
         for (unsigned int i = 0;i < Additional.count();i++)
             if (Additional[i] == Selected)
                 setCurrentItem(i);
-
-        if (Query)
-        {
-            delete Query;
-            Query = NULL;
-        }
 
         Query = new toNoBlockQuery(connection(), toQuery::Background, sql, param);
         Poll.start(100);
@@ -108,8 +100,6 @@ void toResultCombo::poll(void)
 
             if (Query->eof())
             {
-                delete Query;
-                Query = NULL;
                 Poll.stop();
                 setFont(font()); // Small hack to invalidate size hint of combobox which should resize to needed size.
                 updateGeometry();
@@ -118,8 +108,6 @@ void toResultCombo::poll(void)
     }
     catch (const QString &exc)
     {
-        delete Query;
-        Query = NULL;
         Poll.stop();
         toStatusMessage(exc);
     }

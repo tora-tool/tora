@@ -38,15 +38,19 @@
 #ifndef TORESULTCOMBO_H
 #define TORESULTCOMBO_H
 
+#include <qcombobox.h>
+#include <qstringlist.h>
+
+#include <loki/SmartPtr.h>
+
 #include "config.h"
 #include "tobackground.h"
 #include "toresult.h"
 
-#include <qcombobox.h>
-#include <qstringlist.h>
-
 class toNoBlockQuery;
 class toSQL;
+
+using Loki::SmartPtr;
 
 /** This widget displays the result of a query where each field is added as an item
  * to a combobox.
@@ -56,7 +60,7 @@ class toResultCombo : public QComboBox, public toResult
 {
     Q_OBJECT
 
-    toNoBlockQuery *Query;
+    SmartPtr<toNoBlockQuery> Query;
     toBackground Poll;
 
     QString Selected;
