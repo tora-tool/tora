@@ -70,9 +70,12 @@ private:
     toPieChart *Chart;
 public:
     toPieTip(toPieChart *parent)
-            : QToolTip(parent)
+            : QToolTip(parent), Chart(parent)
     {
-        Chart = parent;
+    }
+
+    virtual ~toPieTip()
+    {
     }
 
     virtual void maybeTip(const QPoint &p)
