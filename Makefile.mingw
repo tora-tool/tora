@@ -52,7 +52,8 @@ INSTALLDIR=/c/TOra
 OTL_DIR=../ext/otl
 
 #Loki
-LOKI_DIR=../ext/loki/loki-0.1.4/include
+LOKIDIR_INC=../ext/loki/loki-0.1.4/include
+LOKIDIR_SRC=../ext/loki/loki-0.1.4/src
 
 # What to compile, can be tora for tora-mono for monolithic, tora-static for static version
 # (for Windows build these targets seems to have no difference so they better left default)
@@ -62,7 +63,7 @@ TARGET=tora
 INCLUDES="-I$(OCI_HOME)/include" \
 	 "-I$(QTDIR)/include" \
 	"-I$(OTL_DIR)" \
-	"-I$(LOKI_DIR)"
+	"-I$(LOKIDIR_INC)"
 
 # C++ Compiler to use
 GCC=g++
@@ -304,7 +305,9 @@ SOURCES=\
 	towaitevents.cpp \
 	toworksheet.cpp \
 	toworksheetstatistic.cpp \
-	utils.cpp
+	utils.cpp \
+	$(LOKIDIR_SRC)/SmallObj.cpp \
+	$(LOKIDIR_SRC)/Singleton.cpp
 
 UI_FILES = \
 	toaboutui.ui \
