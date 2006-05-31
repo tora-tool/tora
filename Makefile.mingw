@@ -52,8 +52,7 @@ INSTALLDIR=/c/TOra
 OTL_DIR=../ext/otl
 
 #Loki
-LOKIDIR_INC=../ext/loki/loki-0.1.4/include
-LOKIDIR_SRC=../ext/loki/loki-0.1.4/src
+LOKI_DIR=../ext/loki/loki-0.1.4
 
 # What to compile, can be tora for tora-mono for monolithic, tora-static for static version
 # (for Windows build these targets seems to have no difference so they better left default)
@@ -63,7 +62,7 @@ TARGET=tora
 INCLUDES="-I$(OCI_HOME)/include" \
 	 "-I$(QTDIR)/include" \
 	"-I$(OTL_DIR)" \
-	"-I$(LOKIDIR_INC)"
+	"-I$(LOKI_DIR)/include"
 
 # C++ Compiler to use
 GCC=g++
@@ -306,8 +305,11 @@ SOURCES=\
 	toworksheet.cpp \
 	toworksheetstatistic.cpp \
 	utils.cpp \
-	$(LOKIDIR_SRC)/SmallObj.cpp \
-	$(LOKIDIR_SRC)/Singleton.cpp
+	$(LOKI_DIR)/src/OrderedStatic.cpp \
+	$(LOKI_DIR)/src/SafeFormat.cpp \
+	$(LOKI_DIR)/src/Singleton.cpp \
+	$(LOKI_DIR)/src/SmallObj.cpp \
+	$(LOKI_DIR)/src/SmartPtr.cpp
 
 UI_FILES = \
 	toaboutui.ui \
@@ -315,6 +317,7 @@ UI_FILES = \
 	tobrowserfilterui.ui \
 	tobrowserindexui.ui \
 	tobrowsertableui.ui \
+	todroptablespaceui.ui \
 	tooraclesettingui.ui \
 	tostoragetablespaceui.ui \
 	tochartalarmui.ui \
@@ -406,7 +409,7 @@ $(OCI_LIB): $(OCI_DLL)
 
 .depends/%.d: %.cpp
 	@echo Making dependencies for $<
-	if [ ! -d .depends ] ; then mkdir -p .depends ; fi
+	if [ ! -d `dirname $@` ] ; then mkdir -p `dirname $@` ; fi
 	$(GCC) -MM -MG $(CPPFLAGS) $< > $@.tmp && \
 		( sed "s/^\(.*\.\)o\([ :]*\)/objs\/\1o \
 		$(subst /,\\/,$@)\2/g" < $@.tmp > $@ ; rm -f $@.tmp )
