@@ -50,29 +50,7 @@ class QCheckBox;
 class QLabel;
 class toResultColsItem;
 class toResultLong;
-
-/** This widget is used for single record view in the content editor. Only for internal use.
- * @internal
- */
-class toResultColsComment : public QLineEdit
-{
-    Q_OBJECT
-
-    bool Changed;
-    bool Table;
-    QString Name;
-    QString *Cached;
-private:
-    void saveUnchanged();
-protected:
-    virtual void focusOutEvent(QFocusEvent *);
-public:
-    toResultColsComment(QWidget *parent);
-    void setComment(bool table, const QString &name, const QString &comment);
-    void setCachedComment(bool table, const QString &name, QString &comment);
-public slots:
-    void commentChanged();
-};
+class toResultColsComment;
 
 /** This widget displays information about the returned columns of an object
  * specified by the first and second parameter in the query. The sql is not

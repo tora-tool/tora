@@ -107,6 +107,7 @@ EXTRA_tora_SOURCES = toalert.cpp toalert.h \
     toresultconstraint.cpp toresultconstraint.h  \
     toresultextract.cpp toresultextract.h \
     toresultcols.cpp toresultcols.h  \
+	toresultcolscomment.cpp toresultcolscomment.h \
     toresultcombo.cpp toresultcombo.h  \
     toresultcontent.cpp toresultcontent.h  \
     toresultcontentfilterui.cpp toresultcontentfilterui.h  \
@@ -333,6 +334,7 @@ BUILT_SOURCES = \
 	toresult.moc \
 	toresultbar.moc \
 	toresultcols.moc \
+	toresultcolscomment.moc \
 	toresultcombo.moc \
 	toresultconstraint.moc \
 	toresultcontent.moc \
@@ -621,6 +623,7 @@ libtoqsqlconnection_la_SOURCES = toqsqlconnection.cpp
 libtoresult_la_LDFLAGS = $(PFLAGS)
 libtoresult_la_SOURCES = \
 	toresultcols.cpp toresultcols.h \
+	toresultcolscomment.cpp toresultcolscomment.h \
 	toresultcombo.cpp toresultcombo.h \
 	toresultcontent.cpp toresultcontent.h \
 	toresultcontentfilterui.cpp toresultcontentfilterui.h \
