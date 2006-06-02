@@ -179,6 +179,7 @@ API=	\
 	toresult.h		\
 	toresultbar.h		\
 	toresultcols.h		\
+	toresultcolscomment.h		\
 	toresultcombo.h         \
 	toresultconstraint.h	\
 	toresultcontent.h	\
@@ -257,6 +258,7 @@ SOURCES=\
 	toresult.cpp \
 	toresultbar.cpp \
 	toresultcols.cpp \
+	toresultcolscomment.cpp \
 	toresultcombo.cpp \
 	toresultconstraint.cpp \
 	toresultcontent.cpp \
