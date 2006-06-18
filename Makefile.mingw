@@ -167,6 +167,14 @@ API=	\
 	tohtml.h		\
 	tolegendchart.h		\
 	tolinechart.h		\
+	tolistviewformatter.h \
+	tolistviewformattercsv.h \
+	tolistviewformatterfactory.h \
+	tolistviewformatterhtml.h \
+	tolistviewformatteridentifier.h \
+	tolistviewformattersql.h \
+	tolistviewformattertabdel.h \
+	tolistviewformattertext.h \
 	tomain.h		\
 	tomainwindow.kde.h	\
 	tomarkedtext.h		\
@@ -238,6 +246,12 @@ SOURCES=\
 	toinvalid.cpp \
 	tolegendchart.cpp \
 	tolinechart.cpp \
+	tolistviewformatter.cpp \ 
+	tolistviewformattercsv.cpp \
+	tolistviewformatterhtml.cpp \
+	tolistviewformattersql.cpp \
+	tolistviewformattertabdel.cpp \
+	tolistviewformattertext.cpp \
 	tomain.cpp \
 	tomarkedtext.cpp \
 	tomemoeditor.cpp \
