@@ -160,6 +160,14 @@ tora_SOURCES=main.cpp \
 	tohelpbrowser.h \
 	tohighlightedtext.cpp tohighlightedtext.h \
 	tohtml.cpp tohtml.h \
+	tolistviewformatter.cpp tolistviewformatter.h \
+	tolistviewformattercsv.cpp tolistviewformattercsv.h \
+	tolistviewformatterfactory.h \
+	tolistviewformatterhtml.cpp tolistviewformatterhtml.h \
+	tolistviewformatteridentifier.h \
+	tolistviewformattersql.cpp tolistviewformattersql.h \
+	tolistviewformattertabdel.cpp tolistviewformattertabdel.h \
+	tolistviewformattertext.cpp tolistviewformattertext.h \
 	tomain.cpp tomain.h \
 	tomarkedtext.cpp tomarkedtext.h \
 	tomemoeditor.cpp tomemoeditor.h \

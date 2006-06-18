@@ -485,7 +485,21 @@ class toListView : public QListView, public toEditWidget
     virtual QListViewItem *printPage(TOPrinter *printer, QPainter *painter, QListViewItem *top,
                                      int &column, int &level, int pageNo, bool paint = true);
     int exportType(QString &separator, QString &delimiter);
+
+    QString owner;
+    QString objectName;
+
+    bool includeHeader;
+    bool onlySelection;
+    QString sep;
+    QString del;
+
 public:
+     bool getIncludeHeader(){return includeHeader;};
+     bool getOnlySelection(){return onlySelection;};
+     QString getSep(){return sep;};
+     QString getDel(){return del;};
+
     /** Create new list view.
      * @param parent Parent of list.
      * @param name Name of list.
@@ -506,6 +520,41 @@ public:
     {
         Name = name;
     }
+
+    /** Set owner
+     * introduced to get type information for fields
+     */
+    virtual void setOwner(QString const & tOwner)
+    {
+        owner = tOwner;
+    }
+
+
+    /** Set object name 
+     * introduced to get type information for fields
+     */
+    virtual void setObjectName(QString const & tObjectName)
+    {
+        objectName = tObjectName;
+    }
+
+    /** Get owner
+     * introduced to get type information for fields
+     */
+    virtual QString getOwner()
+    {
+        return owner;
+    }
+
+
+    /** Get object name 
+     * introduced to get type information for fields
+     */
+    virtual QString getObjectName()
+    {
+        return objectName;
+    }
+
     /** Get the whole text for the item and column selected when menu was poped up.
      */
     QString menuText(void);

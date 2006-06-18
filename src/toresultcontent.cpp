@@ -1237,6 +1237,8 @@ bool toResultContentEditor::editSave(bool ask)
     list.hide();
     QString name = tr("Content of %1.%2").arg(Owner).arg(Table);
     list.setSQLName(name);
+    list.setObjectName(Table);
+    list.setOwner(Owner);
     list.query(SQL);
     list.editReadAll();
     return list.editSave(ask);
@@ -1319,6 +1321,8 @@ void toResultContentEditor::menuCallback(int cmd)
     case TORESULT_COPY_SEL:
         {
             toListView *lst = copySelection(false);
+            lst->setObjectName(Table);
+            lst->setOwner(Owner);
             if (lst)
             {
                 try
@@ -1334,6 +1338,8 @@ void toResultContentEditor::menuCallback(int cmd)
     case TORESULT_COPY_SEL_HEAD:
         {
             toListView *lst = copySelection(true);
+            lst->setObjectName(Table);
+            lst->setOwner(Owner);
             if (lst)
             {
                 try

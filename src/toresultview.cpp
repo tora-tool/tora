@@ -38,6 +38,9 @@
 #include "utils.h"
 
 #include "toconf.h"
+#include "tolistviewformatter.h"
+#include "tolistviewformatterfactory.h"
+#include "tolistviewformatteridentifier.h"
 #include "tomain.h"
 #include "tomemoeditor.h"
 #include "toparamget.h"
@@ -71,6 +74,7 @@
 #include <qstyle.h>
 #include <qtooltip.h>
 #include <qworkspace.h>
+
 
 #include "toresultlistformatui.moc"
 #include "toresultview.moc"
@@ -970,14 +974,6 @@ void toListView::focusInEvent (QFocusEvent *e)
     QListView::focusInEvent(e);
 }
 
-static QString QuoteString(const QString &str)
-{
-    static QRegExp quote(QString::fromLatin1("\""));
-    QString t = str;
-    t.replace(quote, QString::fromLatin1("\"\""));
-    return t;
-}
-
 bool toListView::searchNext(toSearchReplace *search)
 {
     QListViewItem *item = currentItem();
@@ -1107,6 +1103,9 @@ bool toListView::editSave(bool)
         case 3:
             nam = "*.html";
             break;
+        case 4:
+            nam = "*.sql";
+            break;
         }
 
         QString filename = toSaveFilename(QString::null, nam, this);
@@ -1142,273 +1141,26 @@ int toListView::exportType(QString &separator, QString &delimiter)
 
 }
 
-QString toListView::exportAsText(bool includeHeader, bool onlySelection, int type,
-                                 const QString &sep, const QString &del)
+
+QString toListView::exportAsText(bool tincludeHeader, bool tonlySelection, int type,
+                                 const QString &tsep, const QString &tdel)
 {
-    QString separator = sep;
-    QString delimiter = del;
+    QString result;
+
+    includeHeader = tincludeHeader;
+    onlySelection = tonlySelection;
+    sep = tsep;
+    del = tdel;
+
     if (type < 0)
-        type = exportType(separator, delimiter);
+        type = exportType(sep, del);
     if (type < 0)
         throw QString::null;
 
-    int *sizes = NULL;
-    try
-    {
-        if (type == 0)
-        {
-            sizes = new int[columns()];
-            int level = 0;
-            for (int i = 0;i < columns();i++)
-                if (includeHeader)
-                    sizes[i] = header()->label(i).length();
-                else
-                    sizes[i] = 0;
+    std::auto_ptr<toListViewFormatter> pFormatter ( toListViewFormatterFactory::Instance().CreateObject(type) );
+    result =  pFormatter->getFormattedString(*this);
 
-            {
-                QListViewItem *next = NULL;
-                for (QListViewItem *item = firstChild();item;item = next)
-                {
-                    toResultViewItem * resItem = dynamic_cast<toResultViewItem *>(item);
-                    toResultViewCheck *chkItem = dynamic_cast<toResultViewCheck *>(item);
-
-                    if (!onlySelection || item->isSelected())
-                    {
-                        for (int i = 0;i < columns();i++)
-                        {
-                            int csiz;
-                            if (resItem)
-                                csiz = resItem->allText(i).length();
-                            else if (chkItem)
-                                csiz = chkItem->allText(i).length();
-                            else
-                                csiz = item->text(i).length();
-                            if (i == 0)
-                                csiz += level;
-                            if (sizes[i] < csiz)
-                                sizes[i] = csiz;
-                        }
-                    }
-
-                    if (item->firstChild())
-                    {
-                        level++;
-                        next = item->firstChild();
-                    }
-                    else if (item->nextSibling())
-                        next = item->nextSibling();
-                    else
-                    {
-                        next = item;
-                        do
-                        {
-                            next = next->parent();
-                            level--;
-                        }
-                        while (next && !next->nextSibling());
-                        if (next)
-                            next = next->nextSibling();
-                    }
-                }
-            }
-        }
-
-        QString output;
-        if (type == 3)
-        {
-            output = QString::fromLatin1("<HTML><HEAD><TITLE>%1</TITLE></HEAD><BODY><TABLE CELLSPACING=0 BORDER=0>").
-                     arg(sqlName());
-        }
-
-        QString indent;
-
-        QString bgcolor;
-        if (includeHeader)
-        {
-            if (bgcolor.isEmpty())
-                bgcolor = QString::fromLatin1("nonull");
-            else
-                bgcolor = QString::null;
-            if (type == 3)
-                output += QString::fromLatin1("<TR BGCOLOR=#7f7f7f>");
-            for (int j = 0;j < columns();j++)
-                switch (type)
-                {
-                case 0:
-                    output += QString::fromLatin1("%1 ").arg(header()->label(j), -sizes[j]);
-                    break;
-                case 1:
-                    output += QString::fromLatin1("%1\t").arg(header()->label(j));
-                    break;
-                case 2:
-                    output += QString::fromLatin1("%1%2%3%4").
-                              arg(delimiter).
-                              arg(QuoteString(header()->label(j))).
-                              arg(delimiter).
-                              arg(separator);
-                    break;
-                case 3:
-                    output += QString::fromLatin1("<TH ALIGN=LEFT BGCOLOR=#cfcfcf>");
-                    output += header()->label(j);
-                    output += QString::fromLatin1("</TH>");
-                    break;
-                }
-            if (output.length() > 0 && type == 2)
-                output = output.left(output.length() - separator.length());
-            else if (output.length() > 0 && type != 3)
-                output = output.left(output.length() - 1);
-            else if (type == 3 && includeHeader)
-                output += QString::fromLatin1("</TR>");
-#ifdef WIN32
-
-            output += "\r\n";
-#else
-
-            output += "\n";
-#endif
-
-            if (type == 0)
-            {
-                for (int k = 0;k < columns();k++)
-                {
-                    for (int l = 0;l < sizes[k];l++)
-                        output += QString::fromLatin1("=");
-                    if (k != columns() - 1)
-                        output += QString::fromLatin1(" ");
-                }
-#ifdef WIN32
-                output += "\r\n";
-#else
-
-                output += "\n";
-#endif
-
-            }
-        }
-
-        QListViewItem *next = NULL;
-        for (QListViewItem *item = firstChild();item;item = next)
-        {
-
-            if (!onlySelection || item->isSelected())
-            {
-
-                toResultViewItem * resItem = dynamic_cast<toResultViewItem *>(item);
-                toResultViewCheck *chkItem = dynamic_cast<toResultViewCheck *>(item);
-
-                if (bgcolor.isEmpty())
-                    bgcolor = QString::fromLatin1(" BGCOLOR=#cfcfff");
-                else
-                    bgcolor = QString::null;
-                QString line;
-                if (type == 3)
-                    line = QString::fromLatin1("<TR%1>").arg(bgcolor);
-
-                for (int i = 0;i < columns();i++)
-                {
-                    QString text;
-
-                    if (resItem)
-                        text = resItem->allText(i);
-                    else if (chkItem)
-                        text = chkItem->allText(i);
-                    else
-                        text = item->text(i);
-
-                    switch (type)
-                    {
-                    case 0:
-                        line += indent;
-                        line += QString::fromLatin1("%1 ").arg(text, (i == 0 ? indent.length() : 0) - sizes[i]);
-                        break;
-                    case 1:
-                        line += indent;
-                        line += QString::fromLatin1("%1\t").arg(text);
-                        break;
-                    case 2:
-                        line += indent;
-                        line += QString::fromLatin1("%1%2%3%4").
-                                arg(delimiter).
-                                arg(QuoteString(text)).
-                                arg(delimiter).
-                                arg(separator);
-
-                        break;
-                    case 3:
-                        line += QString::fromLatin1("<TD%1>").arg(bgcolor);
-                        if (i == 0)
-                            line += indent;
-#if QT_VERSION >= 0x030100
-
-                        text.replace('&', "&amp;");
-                        text.replace('<', "&lt;");
-                        text.replace('>', "&gt");
-#else
-
-                        text.replace(QRegExp("&"), "&amp;");
-                        text.replace(QRegExp("<"), "&lt;");
-                        text.replace(QRegExp(">"), "&gt");
-#endif
-                        line += QString::fromLatin1("<PRE>");
-                        line += text;
-                        line += QString::fromLatin1("</PRE>");
-                        line += QString::fromLatin1("</TD>");
-                        break;
-                    }
-                }
-                if (type == 3)
-                    line += QString::fromLatin1("</TR>");
-                else if (type == 2)
-                    line = line.left(line.length() - separator.length());
-                else
-                    line = line.left(line.length() - 1);
-#ifdef WIN32
-
-                line += "\r\n";
-#else
-
-                line += "\n";
-#endif
-
-                output += line;
-            }
-
-            if (item->firstChild())
-            {
-                if (type != 3)
-                    indent += QString::fromLatin1(" ");
-                else
-                    indent += QString::fromLatin1("&nbsp;");
-                next = item->firstChild();
-            }
-            else if (item->nextSibling())
-                next = item->nextSibling();
-            else
-            {
-                next = item;
-                do
-                {
-                    next = next->parent();
-                    if (type == 3)
-                        indent.truncate(indent.length() - 5);
-                    else
-                        indent.truncate(indent.length() - 1);
-                }
-                while (next && !next->nextSibling());
-                if (next)
-                    next = next->nextSibling();
-            }
-        }
-        if (type == 3)
-            output += QString::fromLatin1("</TABLE></BODY></HTML>");
-        delete[] sizes;
-        return output;
-    }
-    catch (...)
-    {
-        delete[] sizes;
-        throw;
-    }
+    return result;
 }
 
 void toListView::exportData(std::map<QCString, QString> &ret, const QCString &prefix)
@@ -1628,7 +1380,8 @@ void toResultView::query(const QString &sql, const toQList &param)
     try
     {
         Query = new toQuery(connection(), sql, param);
-
+        
+        //printf("Query: %s \n", (const char*) Query->sql);
         toQDescList description = Query->describe();
 
         bool hidden = false;
@@ -1788,6 +1541,7 @@ toResultListFormat::toResultListFormat(QWidget *parent, const char *name)
     Format->insertItem(tr("Tab delimited"));
     Format->insertItem(tr("CSV"));
     Format->insertItem(tr("HTML"));
+    Format->insertItem(tr("SQL"));
     int num = toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_FORMAT, "").toInt();
     Format->setCurrentItem(num);
     formatChanged(num);
