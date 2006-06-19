@@ -1,4 +1,3 @@
-
 #####
 #
 # TOra - An Oracle Toolkit for DBA's and developers
@@ -246,7 +245,7 @@ SOURCES=\
 	toinvalid.cpp \
 	tolegendchart.cpp \
 	tolinechart.cpp \
-	tolistviewformatter.cpp \ 
+	tolistviewformatter.cpp \
 	tolistviewformattercsv.cpp \
 	tolistviewformatterhtml.cpp \
 	tolistviewformattersql.cpp \
