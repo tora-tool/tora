@@ -148,6 +148,7 @@ tora_SOURCES=main.cpp \
 	toabout.cpp toabout.h \
 	toaboutui.cpp toaboutui.h \
 	tobackground.cpp tobackground.h \
+	tobackgroundlabel.cpp tobackgroundlabel.h \
 	toconfiguration.cpp toconfiguration.h \
 	toconnection.cpp toconnection.h \
 	todatabasesettingui.cpp todatabasesettingui.h \
@@ -196,6 +197,7 @@ tora_SOURCES=main.cpp \
 	totemplateprovider.cpp \
 	totextview.cpp totextview.h \
 	tothread.cpp tothread.h \
+	totimer.cpp totimer.h \
 	totool.cpp totool.h \
 	totoolsettingui.cpp totoolsettingui.h todroptablespaceui.h \
 	todroptablespaceui.cpp utils.cpp utils.h \

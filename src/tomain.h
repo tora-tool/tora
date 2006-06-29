@@ -68,6 +68,7 @@ class QPopupMenu;
 class QToolBar;
 class QToolButton;
 class QWorkspace;
+class toBackgroundLabel;
 class toConnection;
 class toEditWidget;
 class toLineChart;
@@ -213,6 +214,8 @@ private:
      * Default tool id
      */
     int DefaultTool;
+
+    toBackgroundLabel* BackgroundLabel;
 
     QTimer KeepAlive;
 
@@ -396,6 +399,8 @@ public:
     {
         return HelpMenu;
     }
+ 
+    toBackgroundLabel* getBackgroundLabel();
 
     /* Update the keepalive from configuration
      */

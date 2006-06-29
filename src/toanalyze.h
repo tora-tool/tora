@@ -50,6 +50,7 @@ class QPopupMenu;
 class QSpinBox;
 class QTabWidget;
 class QTimer;
+class QLabel;
 class toResultCombo;
 class toResultPlan;
 class toResultView;
@@ -86,6 +87,7 @@ public:
     toWorksheetStatistic *worksheet(void);
 
     static void createTool(void);
+    
 public slots:
     virtual void displaySQL(void);
     virtual void changeOperation(int);

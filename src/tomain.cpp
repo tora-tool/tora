@@ -38,6 +38,7 @@
 #include "utils.h"
 
 #include "toabout.h"
+#include "tobackgroundlabel.h"
 #include "toconf.h"
 #include "toconnection.h"
 #include "toeditwidget.h"
@@ -82,6 +83,7 @@
 #include <qstatusbar.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
+#include <qtooltip.h>
 #include <qvbox.h>
 #include <qworkspace.h>
 
@@ -125,9 +127,10 @@
 #define TO_ABOUT_ID_OFFSET (toMain::TO_TOOL_ABOUT_ID-TO_TOOLS)
 
 toMain::toMain()
-        : toMainWindow()
+        : toMainWindow(), BackgroundLabel(new toBackgroundLabel(statusBar()))
 {
     qApp->setMainWidget(this);
+    
     setDockMenuEnabled(true);
 
     Edit = NULL;
@@ -456,8 +459,6 @@ toMain::toMain()
     else
         show();
 
-    toBackground::init();
-
     if (Connections.empty() )
     {
         try
@@ -485,7 +486,10 @@ toMain::toMain()
         }
         TOCATCH
     }
-}
+    statusBar()->addWidget(BackgroundLabel, 0, true);
+    BackgroundLabel->show();    
+    QToolTip::add(BackgroundLabel, tr("No background queries."));
+ }
 
 void toMain::windowActivated(QWidget *widget)
 {
@@ -1354,10 +1358,12 @@ void toMain::checkCaching(void)
         if (!(*i)->cacheAvailable(true, false, false))
             num++;
     }
-    if (num == 0)
+    if (num == 0){
         Poll.stop();
-    else
+    }
+    else{
         Poll.start(100);
+     }
 }
 
 void toMain::exportData(std::map<QCString, QString> &data, const QCString &prefix)
@@ -1718,3 +1724,9 @@ void toMain::toolWidgetRemoved(toToolWidget *tool)
 {
     emit removedToolWidget(tool);
 }
+
+toBackgroundLabel* toMain::getBackgroundLabel()
+{
+return BackgroundLabel;
+}
+
