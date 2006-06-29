@@ -151,6 +151,7 @@ TITLE=TOra
 API=	\
 	tochangeconnection.h	\
 	tobackground.h		\
+	tobackgroundlabel.h		\
 	tobarchart.h		\
 	toconf.h		\
 	toconfiguration.h       \
@@ -211,6 +212,7 @@ API=	\
 	totemplate.h		\
 	totextview.h            \
 	tothread.h		\
+	totimer.h		\
 	totool.h		\
 	tovisualize.h		\
 	utils.h
@@ -220,6 +222,7 @@ SOURCES=\
 	toalert.cpp \
 	toanalyze.cpp \
 	tobackground.cpp \
+	tobackgroundlabel.cpp \
 	tobackup.cpp \
 	tobarchart.cpp \
 	tobrowser.cpp \
@@ -313,6 +316,7 @@ SOURCES=\
 	totemporary.cpp \
 	totextview.cpp \
 	tothread.cpp \
+	totimer.cpp \
 	totool.cpp \
 	totuning.cpp \
 	tovisualize.cpp \
