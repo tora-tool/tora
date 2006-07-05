@@ -134,6 +134,7 @@ public:
             return false;
         return true;
     }
+    virtual void closeWindow(toConnection &connection){};
 };
 
 static toTemporaryTool TemporaryTool;

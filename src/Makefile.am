@@ -54,6 +54,7 @@ if ENABLE_MONO
 EXTRA_tora_SOURCES = toalert.cpp toalert.h \
     toanalyze.cpp toanalyze.h  \
     tobackup.cpp tobackup.h \
+    tobackuptool.cpp tobackuptool.h \
     tobrowser.cpp tobrowser.h  \
     tobarchart.cpp tobarchart.h  \
     tocurrent.cpp tocurrent.h \
@@ -557,7 +558,8 @@ libtoanalyze_la_SOURCES = toanalyze.cpp toanalyze.h \
 	toworksheetstatistic.cpp toworksheetstatistic.h
 
 libtobackup_la_LDFLAGS = $(PFLAGS)
-libtobackup_la_SOURCES = tobackup.cpp tobackup.h
+libtobackup_la_SOURCES = tobackup.cpp tobackup.h \
+			tobackuptool.cpp tobackuptool.h
 
 libtobrowser_la_LDFLAGS = $(PFLAGS)
 libtobrowser_la_SOURCES = tobrowser.cpp tobrowser.h \

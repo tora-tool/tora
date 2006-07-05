@@ -154,6 +154,7 @@ public:
     {
         return new toStoragePrefs(this, parent);
     }
+    virtual void closeWindow(toConnection &connection){};
 };
 
 toDropTablespace::toDropTablespace(QWidget* parent, const char* name, WFlags fl)

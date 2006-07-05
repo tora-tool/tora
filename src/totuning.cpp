@@ -168,6 +168,7 @@ public:
     {
         return new toTuningSetup(this, parent);
     }
+    virtual void closeWindow(toConnection &connection){};
 };
 
 static toTuningTool TuningTool;

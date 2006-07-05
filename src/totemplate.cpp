@@ -498,6 +498,7 @@ public:
     {
         return true;
     }
+    virtual void closeWindow(toConnection &connection){};
 };
 
 static toTemplateTool TemplateTool;

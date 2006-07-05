@@ -251,6 +251,8 @@ public:
    */
   void setConfig(const QCString &tag,const QString &value);
 
+  virtual void closeWindow(toConnection &connection) = 0;
+
 public slots:
     /**
      * Create a window of the current tool. This function sets up a toolwindow for
@@ -258,6 +260,8 @@ public slots:
      * up properly.
      */
     void createWindow(void);
+
+
 };
 
 #include "tohelp.h"

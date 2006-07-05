@@ -205,6 +205,7 @@ public:
     virtual QWidget *toolWindow(QWidget *parent, toConnection &connection);
     virtual bool canHandle(toConnection &conn);
     virtual void customSetup(int id);
+    virtual void closeWindow(toConnection &connection){};    
 public slots:
     void addTable(void);
     void addConstraint(void);

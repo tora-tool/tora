@@ -486,6 +486,7 @@ public:
     {
         return NULL; // Has no tool window
     }
+    virtual void closeWindow(toConnection &connection){};
     virtual void customSetup(int)
     {
         toMainWidget()->editMenu()->insertSeparator();

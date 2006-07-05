@@ -84,6 +84,9 @@ public:
     toAnalyzeTool()
             : toTool(320, "Statistics Manager")
     { }
+
+    virtual void closeWindow(toConnection &connection){};
+
     virtual const char *menuItem()
     {
         return "Statistics Manager";

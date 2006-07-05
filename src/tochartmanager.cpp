@@ -129,6 +129,7 @@ public:
     {
         return true;
     }
+    virtual void closeWindow(toConnection &connection){};
 };
 
 static toChartTool ChartTool;

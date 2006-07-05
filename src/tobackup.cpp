@@ -57,52 +57,14 @@
 #include <qtoolbutton.h>
 #include <qworkspace.h>
 
+#include <loki/Singleton.h>
+
 #include "tobackup.moc"
 
 #include "icons/refresh.xpm"
-#include "icons/tobackup.xpm"
 
-class toBackupTool : public toTool
-{
-protected:
-    std::map<toConnection *, QWidget *> Windows;
 
-    virtual const char **pictureXPM(void)
-    {
-        return const_cast<const char**>(tobackup_xpm);
-    }
-public:
-    toBackupTool()
-            : toTool(240, "Backup Manager")
-    { }
-    virtual const char *menuItem()
-    {
-        return "Backup Manager";
-    }
-    virtual QWidget *toolWindow(QWidget *parent, toConnection &connection)
-    {
-        std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
-        if (i != Windows.end())
-        {
-            (*i).second->setFocus();
-            return NULL;
-        }
-        else
-        {
-            QWidget *window = new toBackup(parent, connection);
-            Windows[&connection] = window;
-            return window;
-        }
-    }
-    void closeWindow(toConnection &connection)
-    {
-        std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
-        if (i != Windows.end())
-            Windows.erase(i);
-    }
-};
-
-static toBackupTool BackupTool;
+//static toBackupTool BackupTool;
 
 static toSQL SQLLogSwitches("toBackup:LogSwitches",
                             "SELECT trunc(first_time)\"Date\",\n"
@@ -355,8 +317,8 @@ static toSQL SQLCurrentBackup7("toBackup:CurrentBackup",
                                "",
                                "0703");
 
-toBackup::toBackup(QWidget *main, toConnection &connection)
-        : toToolWidget(BackupTool, "backup.html", main, connection)
+toBackup::toBackup(toTool* tool, QWidget *main, toConnection &connection)
+        : toToolWidget(*tool, "backup.html", main, connection) , tool_(tool)
 {
     QToolBar *toolbar = toAllocBar(this, tr("Backup Manager"));
 
@@ -422,7 +384,7 @@ toBackup::~toBackup()
 {
     try
     {
-        BackupTool.closeWindow(connection());
+        tool_->closeWindow(connection());
     }
     TOCATCH
 }

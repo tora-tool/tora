@@ -99,6 +99,7 @@ public:
         }
         return NULL;
     }
+    virtual void closeWindow(toConnection &connection){};
 };
 
 static toPasswordTool PasswordTool;

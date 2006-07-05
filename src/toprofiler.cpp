@@ -242,6 +242,7 @@ public:
     {
         return new toProfiler(parent, connection);
     }
+    virtual void closeWindow(toConnection &connection){};
 };
 
 static toProfilerTool ProfilerTool;

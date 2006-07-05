@@ -117,6 +117,7 @@ public:
 #endif
                ;
     }
+    virtual void closeWindow(toConnection &connection){};
 };
 
 static toSessionTool SessionTool;

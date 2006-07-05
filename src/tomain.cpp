@@ -127,7 +127,7 @@
 #define TO_ABOUT_ID_OFFSET (toMain::TO_TOOL_ABOUT_ID-TO_TOOLS)
 
 toMain::toMain()
-        : toMainWindow(), BackgroundLabel(new toBackgroundLabel(statusBar()))
+        : toMainWindow(), toBackupTool_(new toBackupTool), BackgroundLabel(new toBackgroundLabel(statusBar()))
 {
     qApp->setMainWidget(this);
     

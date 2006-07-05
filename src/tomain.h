@@ -40,6 +40,7 @@
 
 #include "config.h"
 #include "tobackground.h"
+#include "tobackuptool.h"
 
 #ifdef TO_KDE
 #include "tomainwindow.kde.h"
@@ -85,6 +86,7 @@ class toMain : public toMainWindow
 {
     Q_OBJECT
 private:
+    std::auto_ptr<toBackupTool> toBackupTool_;
     /**
      * The connections that have been opened in TOra.
      */

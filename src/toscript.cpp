@@ -215,6 +215,7 @@ public:
     {
         return new toScript(main, connection);
     }
+    virtual void closeWindow(toConnection &connection){};
 };
 
 static toScriptTool ScriptTool;

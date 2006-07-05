@@ -196,6 +196,7 @@ public:
     {
         return new toSecurity(parent, connection);
     }
+    virtual void closeWindow(toConnection &connection){};
 };
 
 static toSecurityTool SecurityTool;

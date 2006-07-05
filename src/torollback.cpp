@@ -197,6 +197,7 @@ public:
     {
         return new toRollbackPrefs(this, parent);
     }
+    virtual void closeWindow(toConnection &connection){};
 };
 
 static toRollbackTool RollbackTool;

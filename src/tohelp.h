@@ -105,6 +105,7 @@ public:
         return NULL;
     }
     virtual QWidget *configurationTab(QWidget *parent);
+    virtual void closeWindow(toConnection &connection){};
 public slots:
     void displayHelp(void);
 };

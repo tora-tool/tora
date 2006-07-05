@@ -127,6 +127,7 @@ public:
     {
         return new toSGATracePrefs(this, parent);
     }
+    virtual void closeWindow(toConnection &connection){};
 };
 
 static toSGATraceTool SGATraceTool;

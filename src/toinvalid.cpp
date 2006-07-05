@@ -108,6 +108,7 @@ public:
     {
         return new toInvalid(parent, connection);
     }
+    virtual void closeWindow(toConnection &connection){};
 };
 
 static toInvalidTool InvalidTool;

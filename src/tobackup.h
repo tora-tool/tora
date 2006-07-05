@@ -57,8 +57,9 @@ class toBackup : public toToolWidget
     toResultLong *LastBackup;
     toResultLong *CurrentBackup;
     QPopupMenu *ToolMenu;
+    toTool* tool_;
 public:
-    toBackup(QWidget *parent, toConnection &connection);
+    toBackup(toTool* tool, QWidget *parent, toConnection &connection);
     virtual ~toBackup();
 public slots:
     void refresh(void);
