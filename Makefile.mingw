@@ -152,6 +152,7 @@ API=	\
 	tochangeconnection.h	\
 	tobackground.h		\
 	tobackgroundlabel.h		\
+	tobackuptool.h          \
 	tobarchart.h		\
 	toconf.h		\
 	toconfiguration.h       \
@@ -224,6 +225,7 @@ SOURCES=\
 	tobackground.cpp \
 	tobackgroundlabel.cpp \
 	tobackup.cpp \
+	tobackuptool.cpp \
 	tobarchart.cpp \
 	tobrowser.cpp \
 	tobrowserconstraint.cpp \
