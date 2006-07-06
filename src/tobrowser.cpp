@@ -2062,9 +2062,9 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
                                  statements.size(),
                                  this, "progress", true);
             prog.setCaption(tr("Performing %1 changes").arg(tr(type)));
-            for (std::list<toSQLParse::statement>::iterator i = statements.begin();i != statements.end();i++)
+            for (std::list<toSQLParse::statement>::iterator j = statements.begin();j != statements.end();j++)
             {
-                QString sql = toSQLParse::indentStatement(*i, connection());
+                QString sql = toSQLParse::indentStatement(*j, connection());
                 int i = sql.length() - 1;
                 while (i >= 0 && (sql.at(i) == ';' || sql.at(i).isSpace()))
                     i--;

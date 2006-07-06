@@ -73,9 +73,9 @@ void toBrowserConstraint::modifyConstraint(toConnection &conn, const QString &ow
                                  statements.size(),
                                  &dialog, "progress", true);
             prog.setCaption(tr("Performing constraint changes"));
-            for (std::list<toSQLParse::statement>::iterator i = statements.begin();i != statements.end();i++)
+            for (std::list<toSQLParse::statement>::iterator j = statements.begin();j != statements.end();j++)
             {
-                QString sql = toSQLParse::indentStatement(*i, conn);
+                QString sql = toSQLParse::indentStatement(*j, conn);
                 int i = sql.length() - 1;
                 while (i >= 0 && (sql.at(i) == ';' || sql.at(i).isSpace()))
                     i--;
