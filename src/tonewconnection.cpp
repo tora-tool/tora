@@ -428,7 +428,7 @@ toConnection *toNewConnection::makeConnection(void)
     {
         QString str = tr("Unable to connect to the database.\n");
         str.append(exc);
-        TOMessageBox::information(this,
+        TOMessageBox::information(this->parentWidget(false),
                                   tr("Unable to connect to the database"),
                                   str);
         return NULL;
