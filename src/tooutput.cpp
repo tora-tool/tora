@@ -334,7 +334,7 @@ void toOutput::poll()
                 if (status == 0)
                 {
                     any = true;
-                    insertLine(line);
+                    if(line) insertLine(line);
                 }
             }
         }
