@@ -437,7 +437,11 @@ class oracleQuery : public toQuery::queryImpl
                 toQuery::queryDescribe desc;
                 desc.AlignRight = false;
                 desc.Name = QString::fromUtf8(description[i].name);
-
+/*
+ * http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10758/sqlqr06.htm
+ * include ocidfn.h
+ */
+#warning "Add more datatypes"
                 switch (description[i].dbtype)
                 {
                 case 1:
@@ -470,8 +474,10 @@ class oracleQuery : public toQuery::queryImpl
                     break;
                 case 15:
                 case 23:
-                case 24:
                     desc.Datatype = QString::fromLatin1("RAW");
+                    break;                
+                case 24:
+                    desc.Datatype = QString::fromLatin1("LONG RAW");
                     break;
                 case 96:
                 case 97:
@@ -487,12 +493,20 @@ class oracleQuery : public toQuery::queryImpl
                     desc.Datatype = QString::fromLatin1("CLOB");
                     break;
                 case 113:
-                case 114:
                     desc.Datatype = QString::fromLatin1("BLOB");
+                    break;                
+                case 114:
+                    desc.Datatype = QString::fromLatin1("BFILE");
                     break;
                 case 187:
                     desc.Datatype = QString::fromLatin1("TIMESTAMP");
                     break;
+                case 188: 
+                	desc.Datatype = QString::fromLatin1("TIMESTAMP WITH TIME ZONE");
+                    break;   
+                case 208:
+                    desc.Datatype = QString::fromLatin1("TIMESTAMP");
+                    break;                    
                 default:
                     desc.Datatype = QString::fromLatin1("UNKNOWN");
                     break;
@@ -500,7 +514,8 @@ class oracleQuery : public toQuery::queryImpl
 #ifdef OTL_ORA_UNICODE
                 if (description[i].charset_form == 2 &&
                         ((desc.Datatype == QString::fromLatin1("VARCHAR2")) ||
-                         (desc.Datatype == QString::fromLatin1("CHAR"))))
+                         (desc.Datatype == QString::fromLatin1("CHAR")) ||
+                         (desc.Datatype == QString::fromLatin1("CLOB"))))
                 {
                     desc.Datatype = QString::fromLatin1("N") + desc.Datatype;
                 }
