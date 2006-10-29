@@ -17463,6 +17463,7 @@ const int inUserDefinedType=108;
 const int inRef=111;
 const int inCLOB=112;
 const int inBLOB=113;
+const int inBFILE=114;
 
 #if (defined(OTL_ORA8I)||defined(OTL_ORA9I))&&defined(OTL_ORA_TIMESTAMP)
 const int inTimestamp=SQLT_TIMESTAMP;
@@ -19015,6 +19016,7 @@ public:
   case inBDouble:  return extFloat;
 #endif
   case inCLOB:     return extCLOB;
+  case inBFILE:		
   case inBLOB:     return extBLOB;
   default:
    return -1;
