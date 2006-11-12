@@ -328,6 +328,12 @@ AC_DEFUN([AC_PATH_QT],
          ac_qt_includes="$withval"
       ])
   
+  AC_ARG_WITH(qt-include,
+      [  --with-qt-include=DIR   same as above. ],
+      [
+         ac_qt_includes="$ac_qt_includes $withval"
+      ])
+
   kde_qt_libs_given=no
   
   AC_ARG_WITH(qt-libraries,
