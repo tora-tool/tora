@@ -92,6 +92,7 @@ QColor toSyntaxAnalyzer::getColor(toSyntaxAnalyzer::infoType typ)
     return Colors[typ];
 }
 
+/*
 #define ISIDENT(c) (isalnum(c)||(c)=='_'||(c)=='%'||(c)=='$'||(c)=='#')
 
 std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const QString &str,
@@ -159,14 +160,14 @@ std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const Q
         {
             highs.insert(highs.end(), highlightInfo(i, Comment));
             highs.insert(highs.end(), highlightInfo(str.length() + 1));
-            out = Normal;
+            out = Default;
             return highs;
         }
         else if (c == '/' && nc == '/')
         {
             highs.insert(highs.end(), highlightInfo(i, Comment));
             highs.insert(highs.end(), highlightInfo(str.length() + 1));
-            out = Normal;
+            out = Default;
             return highs;
         }
         else if (c == '/' && nc == '*')
@@ -231,8 +232,9 @@ std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const Q
         }
         else
         {
-            out = Normal;
-            highs.insert(highs.end(), highlightInfo(inString, Error));
+            out = Default;
+            //highs.insert(highs.end(), highlightInfo(inString, Error));
+            highs.insert(highs.end(), highlightInfo(inString, Comment));
         }
         highs.insert(highs.end(), highlightInfo(str.length() + 1));
     }
@@ -243,10 +245,11 @@ std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const Q
         out = Comment;
     }
     else
-        out = Normal;
+        out = Default;
 
     return highs;
 }
+*/
 
 static toSyntaxAnalyzer DefaultAnalyzer(DefaultKeywords);
 
@@ -308,9 +311,9 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     setFont(toStringToFont(toConfigurationSingle::Instance().globalConfig(CONF_CODE, "")));
 
     errorMarker=markerDefine(Circle,4);
-    setMarkerBackgroundColor(Qt::red,errorMarker);
     debugMarker=markerDefine(Rectangle,8);
-    setMarkerBackgroundColor(Qt::darkGreen,debugMarker);
+    updateSyntaxColor(toSyntaxAnalyzer::DebugBg);
+    updateSyntaxColor(toSyntaxAnalyzer::ErrorBg);
     setMarginMarkerMask(1,0);
     setAutoIndent(true);
     connect(this,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(setStatusMessage(void )));
@@ -415,10 +418,64 @@ void toHighlightedText::setSyntaxColoring(bool val)
     syntaxColoring = val;
     if (syntaxColoring) {
         QextScintilla::setLexer(lexer);
+	updateSyntaxColor(toSyntaxAnalyzer::Default);
+	updateSyntaxColor(toSyntaxAnalyzer::Comment);
+	updateSyntaxColor(toSyntaxAnalyzer::Number);
+	updateSyntaxColor(toSyntaxAnalyzer::Keyword);
+	updateSyntaxColor(toSyntaxAnalyzer::String);
+	updateSyntaxColor(toSyntaxAnalyzer::DefaultBg);
+
         update();
     }
     else {
         QextScintilla::setLexer(0);
+    }
+}
+
+/** 
+ * Sets the syntax colours for given type
+ */
+void toHighlightedText::updateSyntaxColor(toSyntaxAnalyzer::infoType t)
+{
+    QColor col = DefaultAnalyzer.getColor(t);
+    switch (t)
+    {
+    case toSyntaxAnalyzer::Default:
+	lexer->setColor(col, QextScintillaLexerSQL::Default);
+	//lexer->setColor(col, QextScintillaLexerSQL::CommentLineHash);
+	break;
+    case toSyntaxAnalyzer::Comment:
+	lexer->setColor(col, QextScintillaLexerSQL::Comment);
+	lexer->setColor(col, QextScintillaLexerSQL::CommentLine);
+	lexer->setColor(col, QextScintillaLexerSQL::PlusPrompt);
+	lexer->setColor(col, QextScintillaLexerSQL::PlusComment);
+	lexer->setColor(col, QextScintillaLexerSQL::CommentDoc);
+	lexer->setColor(col, QextScintillaLexerSQL::CommentDocKeyword);
+	break;
+    case toSyntaxAnalyzer::Number:
+	lexer->setColor(col, QextScintillaLexerSQL::Number);
+	break;
+    case toSyntaxAnalyzer::Keyword:
+	lexer->setColor(col, QextScintillaLexerSQL::Keyword);
+	lexer->setColor(col, QextScintillaLexerSQL::PlusKeyword);
+	lexer->setColor(col, QextScintillaLexerSQL::Operator);
+	break;
+    case toSyntaxAnalyzer::String:
+	lexer->setColor(col, QextScintillaLexerSQL::DoubleQuotedString);
+	lexer->setColor(col, QextScintillaLexerSQL::SingleQuotedString);
+	break;
+    case toSyntaxAnalyzer::DefaultBg:
+	lexer->setPaper(col);
+	//lexer->setPaper(col, QextScintillaLexerSQL::Default);
+	break;
+    case toSyntaxAnalyzer::ErrorBg:
+	setMarkerBackgroundColor(col, errorMarker);
+	break;
+    case toSyntaxAnalyzer::DebugBg:
+	setMarkerBackgroundColor(col, debugMarker);
+	break;
+    default:
+	break;
     }
 }
 
@@ -443,6 +500,18 @@ void toHighlightedText::setFont (const QFont & font)
     if (lexer) {
         lexer->setDefaultFont(font);
         lexer->setFont(font);
+
+/*	this is workaround against qscintilla 1.6 setFont(font) bug */
+        lexer->setFont(font, QextScintillaLexerSQL::Comment);
+        lexer->setFont(font, QextScintillaLexerSQL::CommentLine);
+        lexer->setFont(font, QextScintillaLexerSQL::PlusComment);
+        lexer->setFont(font, QextScintillaLexerSQL::CommentLineHash);
+        lexer->setFont(font, QextScintillaLexerSQL::CommentDocKeyword);
+        lexer->setFont(font, QextScintillaLexerSQL::CommentDocKeywordError);
+        lexer->setFont(font, QextScintillaLexerSQL::DoubleQuotedString);
+        lexer->setFont(font, QextScintillaLexerSQL::SingleQuotedString);
+        lexer->setFont(font, QextScintillaLexerSQL::PlusPrompt);
+
         update();
     }
 }

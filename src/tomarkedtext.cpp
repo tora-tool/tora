@@ -76,13 +76,14 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
     connect(this, SIGNAL(textChanged()), this, SLOT(setTextChanged()));
     connect(this,SIGNAL(copyAvailable(bool)),this,SLOT(setCopyAvailable(bool)));
 
+/*	is this still neccessary after switch to sqcintilla?!?
     QPalette pal = palette();
     pal.setColor(QColorGroup::Base,
-                 toSyntaxAnalyzer::defaultAnalyzer().getColor(toSyntaxAnalyzer::NormalBkg));
+                 toSyntaxAnalyzer::defaultAnalyzer().getColor(toSyntaxAnalyzer::DefaultBg));
     pal.setColor(QColorGroup::Foreground,
-                 toSyntaxAnalyzer::defaultAnalyzer().getColor(toSyntaxAnalyzer::Normal));
+                 toSyntaxAnalyzer::defaultAnalyzer().getColor(toSyntaxAnalyzer::Default));
     setPalette(pal);
-
+*/
     CursorTimerID = -1;
     
     // sets default tab width

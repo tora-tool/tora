@@ -63,36 +63,22 @@ class toHighlightedText;
 class toSyntaxAnalyzer
 {
 public:
-    /** Information about how highlighting has changed.
+    /** Highlighting categories (joins more categories in qscintilla into
+     * simplier ones
      */
     enum infoType {
-        /** Normal text
-         */
-        Normal = 0,
-        /** This is a keyword
-         */
-        Keyword = 1,
-        /** This is a string
-         */
-        String = 2,
-        /** Malformed syntax
-         */
-        Error = 3,
-        /** Comment
-         */
-        Comment = 4,
-        /** Error in SQL background. Not used by highlighter, but configured in the same way.
-         */
-        ErrorBkg = 5,
-        /** Normal background. Not used by highlighter, but configured in the same way.
-         */
-        NormalBkg = 6,
-        /** Current background. Not used by highlighter, but configured in the same way.
-         */
-        CurrentBkg = 7
+        Default = 0,
+        Comment = 1,
+        Number = 2,
+        Keyword = 3,
+        String = 4,
+	DefaultBg = 5,
+        ErrorBg = 6,
+        DebugBg = 7
     };
     /** Information about a change in highlighting.
      */
+#if 0	// is this still needed after switch to qscintilla?!?
     struct highlightInfo
     {
         /** New type of highlighting.
@@ -101,12 +87,13 @@ public:
         /** Start in line for this highlighting.
          */
         int Start;
-        highlightInfo(int start, infoType typ = Normal)
+        highlightInfo(int start, infoType typ = Default)
         {
             Start = start;
             Type = typ;
         }
     };
+#endif
 private:
     /** Indicate if colors are updated, can't do this in constructor since QApplication
      * isn't initialized yet.
@@ -187,6 +174,8 @@ public:
     { return true;
     }
 #endif
+
+#if 0	// is this still needed after switch to qscintilla?!?
     /** Analyze a line. There is no guarantee that lines will be called in any kind of order.
      * @param str Line to analyze.
      * @param in Type at start of line.
@@ -194,6 +183,7 @@ public:
      * @return A list of where highlighting should change. Start as normal.
      */
     virtual std::list<highlightInfo> analyzeLine(const QString &str, infoType in, infoType &out);
+#endif
     /** Get a colordefinition for a @ref infoType value.
      * @param typ @ref infoType to get color for.
      * @return Color of that type.
@@ -359,14 +349,14 @@ public:
      */
     void tableAtCursor(QString &owner, QString &table, bool highlight = false);
 
+    void updateSyntaxColor(toSyntaxAnalyzer::infoType t);
+
 protected:
     QStringList getCompletionList(QString* partial);
     void completeWithText(QString itemText);
   
-
 private:
-  bool invalidToken(int line, int col);
-
+    bool invalidToken(int line, int col);
     
     // ------------------ END OF API used by TOra classes ----------------------
 

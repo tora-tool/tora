@@ -19,6 +19,7 @@
 2006-04-24: Add drop tablespace functionality
 2006-11-21: Apply patch from Michael (m0m) for memo editor width and other size issues
 2006-11-21: Applied patch for postgres 8 schema browsing cleanup from Theo Schlossnagle
+2006-11-21: Applied patch from Michael for syntax highlighting font issues
 
 1.3.21:
 

@@ -99,23 +99,18 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, WFlags fl)
     }
     try
     {
-        Colors[Analyzer.typeString(toSyntaxAnalyzer::NormalBkg)] = Analyzer.getColor(toSyntaxAnalyzer::NormalBkg);
-        Colors[Analyzer.typeString(toSyntaxAnalyzer::ErrorBkg)] = Analyzer.getColor(toSyntaxAnalyzer::ErrorBkg);
-        Colors[Analyzer.typeString(toSyntaxAnalyzer::CurrentBkg)] = Analyzer.getColor(toSyntaxAnalyzer::CurrentBkg);
-        Colors[Analyzer.typeString(toSyntaxAnalyzer::Keyword)] = Analyzer.getColor(toSyntaxAnalyzer::Keyword);
-        Colors[Analyzer.typeString(toSyntaxAnalyzer::Comment)] = Analyzer.getColor(toSyntaxAnalyzer::Comment);
-        Colors[Analyzer.typeString(toSyntaxAnalyzer::Normal)] = Analyzer.getColor(toSyntaxAnalyzer::Normal);
-        Colors[Analyzer.typeString(toSyntaxAnalyzer::String)] = Analyzer.getColor(toSyntaxAnalyzer::String);
-        Colors[Analyzer.typeString(toSyntaxAnalyzer::Error)] = Analyzer.getColor(toSyntaxAnalyzer::Error);
-
-        SyntaxComponent->insertItem(tr(Analyzer.typeString(toSyntaxAnalyzer::NormalBkg)));
-        SyntaxComponent->insertItem(tr(Analyzer.typeString(toSyntaxAnalyzer::Comment)));
-        SyntaxComponent->insertItem(tr(Analyzer.typeString(toSyntaxAnalyzer::CurrentBkg)));
-        SyntaxComponent->insertItem(tr(Analyzer.typeString(toSyntaxAnalyzer::ErrorBkg)));
-        SyntaxComponent->insertItem(tr(Analyzer.typeString(toSyntaxAnalyzer::Keyword)));
-        SyntaxComponent->insertItem(tr(Analyzer.typeString(toSyntaxAnalyzer::Normal)));
-        SyntaxComponent->insertItem(tr(Analyzer.typeString(toSyntaxAnalyzer::String)));
-        SyntaxComponent->insertItem(tr(Analyzer.typeString(toSyntaxAnalyzer::Error)));
+#define INIT_COL(c)	{ \
+	Colors[Analyzer.typeString(c)] = Analyzer.getColor(c); \
+	SyntaxComponent->insertItem(tr(Analyzer.typeString(c))); \
+	}
+	INIT_COL(toSyntaxAnalyzer::Default);
+	INIT_COL(toSyntaxAnalyzer::Comment);
+	INIT_COL(toSyntaxAnalyzer::Number);
+	INIT_COL(toSyntaxAnalyzer::Keyword);
+	INIT_COL(toSyntaxAnalyzer::String);
+	INIT_COL(toSyntaxAnalyzer::DefaultBg);
+	INIT_COL(toSyntaxAnalyzer::ErrorBg);
+	INIT_COL(toSyntaxAnalyzer::DebugBg);
     }
     TOCATCH
 
@@ -138,6 +133,10 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, WFlags fl)
                                          "  if Quest = 'Great' then\n"
                                          "    Obvious(true);\n"
                                          "  end if;\n"
+                                         "  HugeNumber := -12345678.90;\n"
+					 "/*\n"
+					 " * multi line comment\n"
+					 " */\n"
                                          "end;"));
 #endif
 
@@ -168,22 +167,22 @@ void toSyntaxAnalyzer::readColor(const QColor &def, infoType typ)
 
 toSyntaxAnalyzer::infoType toSyntaxAnalyzer::typeString(const QCString &str)
 {
-    if (str == "Normal")
-        return Normal;
+    if (str == "Default")
+        return Default;
+    if (str == "Comment")
+        return Comment;
+    if (str == "Number")
+        return Number;
     if (str == "Keyword")
         return Keyword;
     if (str == "String")
         return String;
-    if (str == "Unfinished string")
-        return Error;
-    if (str == "Comment")
-        return Comment;
-    if (str == "Error background")
-        return ErrorBkg;
     if (str == "Background")
-        return NormalBkg;
-    if (str == "Current background")
-        return CurrentBkg;
+        return DefaultBg;
+    if (str == "Error background")
+        return ErrorBg;
+    if (str == "Debug background")
+        return DebugBg;
     throw qApp->translate("toSyntaxAnalyzer", "Unknown type");
 }
 
@@ -191,22 +190,22 @@ QCString toSyntaxAnalyzer::typeString(infoType typ)
 {
     switch (typ)
     {
-    case Normal:
-        return "Normal";
+    case Default:
+        return "Default";
+    case Comment:
+        return "Comment";
+    case Number:
+        return "Number";
     case Keyword:
         return "Keyword";
     case String:
         return "String";
-    case Error:
-        return "Unfinished string";
-    case Comment:
-        return "Comment";
-    case ErrorBkg:
-        return "Error background";
-    case NormalBkg:
+    case DefaultBg:
         return "Background";
-    case CurrentBkg:
-        return "Current background";
+    case ErrorBg:
+        return "Error background";
+    case DebugBg:
+        return "Debug background";
     }
     throw qApp->translate("toSyntaxAnalyzer", "Unknown type");
 }
@@ -216,14 +215,14 @@ void toSyntaxAnalyzer::updateSettings(void)
     try
     {
         const QColorGroup &cg = qApp->palette().active();
-        readColor(cg.base(), NormalBkg);
-        readColor(Qt::darkRed, ErrorBkg);
-        readColor(Qt::darkGreen, CurrentBkg);
-        readColor(Qt::blue, Keyword);
-        readColor(cg.text(), Normal);
-        readColor(Qt::red, String);
-        readColor(Qt::red, Error);
+        readColor(cg.text(), Default);
         readColor(Qt::green, Comment);
+        readColor(Qt::cyan, Number);
+        readColor(Qt::blue, Keyword);
+        readColor(Qt::red, String);
+        readColor(cg.base(), DefaultBg);
+        readColor(Qt::darkRed, ErrorBg);
+        readColor(Qt::darkGreen, DebugBg);
     }
     TOCATCH
 }
@@ -324,6 +323,7 @@ void toSyntaxSetup::selectColor(void)
                 Colors[coleng] = col;
                 ExampleColor->setBackgroundColor(col);
                 Example->analyzer().Colors[toSyntaxAnalyzer::typeString(coleng)] = col;
+                Example->updateSyntaxColor(toSyntaxAnalyzer::typeString(coleng));
                 Example->update();
             }
         }
