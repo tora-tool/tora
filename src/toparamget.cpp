@@ -275,11 +275,17 @@ toQList toParamGet::getParam(toConnection &conn, QWidget *parent, QString &str, 
                     }
                     toParamGetButton *btn = new toParamGetButton(num, widget->Container);
                     btn->setText(tr("Edit"));
-                    btn->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed));
+                    btn->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
                     connect(btn, SIGNAL(clicked(int)), widget, SLOT(showMemo(int)));
                     connect(box, SIGNAL(toggled(bool)), btn, SLOT(setDisabled(bool)));
                     widget->Value.insert(widget->Value.end(), edit);
                     names.insert(names.end(), fname);
+
+                    QDesktopWidget *paramDesktop = new QDesktopWidget;
+                    edit->setMaximumWidth(paramDesktop->availableGeometry(edit).width()*2/3);
+                    edit->setMinimumWidth(100);
+                    edit->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed));
+			
                     num++;
                 }
             }
