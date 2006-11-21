@@ -70,6 +70,7 @@
 #ifndef TOMONOLITHIC
 #include <dlfcn.h>
 
+#include <tosplash.h>
 #include <qdir.h>
 #include <qfileinfo.h>
 #include <qlabel.h>
