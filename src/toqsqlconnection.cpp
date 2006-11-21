@@ -107,9 +107,9 @@ static toSQL SQLListObjectsSapDb("toQSqlConnection:ListObjects",
 
 static toSQL SQLListObjectsPgSQL("toQSqlConnection:ListObjects",
                                  "SELECT c.relname AS \"Tablename\",\n"
-                                 "       u.usename AS \"Owner\",\n"
+                                 "       n.nspname AS \"Owner\",\n"
                                  "       c.relkind AS \"Type\"\n"
-                                 "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
+                                 "  FROM pg_class c LEFT OUTER JOIN pg_namespace n ON c.relnamespace=n.oid\n"
                                  " ORDER BY \"Tablename\"",
                                  "",
                                  "7.1",
@@ -125,9 +125,9 @@ static toSQL SQLListSynonymsSapDb("toQSqlConnection:ListSynonyms",
                                   "SapDb");
 
 static toSQL SQLListSynonyms("toQSqlConnection:ListSynonyms",
-                             "SELECT c.relname AS \"Synonym\", u.usename AS \"Schema\", c.relname AS \"Object\"\n"
-                             "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
-                             " ORDER BY u.usename, c.relname",
+                             "SELECT c.relname AS \"Synonym\", n.nspname AS \"Schema\", c.relname AS \"Object\"\n"
+                             "  FROM pg_class c LEFT OUTER JOIN pg_namespace n ON c.relnamespace=n.oid\n"
+                             " ORDER BY n.nspname, c.relname",
                              "",
                              "7.1",
                              "PostgreSQL");
@@ -137,11 +137,11 @@ static toSQL SQLColumnComments("toQSqlConnection:ColumnComments",
                                "from\n"
                                "  pg_attribute a,\n"
                                "  pg_description b,\n"
-                               "  pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
+                               "  pg_class c LEFT OUTER JOIN pg_namespace n ON c.relowner=n.oid\n"
                                "where\n"
                                "  a.oid=b.objoid\n"
                                "  and c.oid=a.attrelid\n"
-                               "  and (u.usename = :owner OR u.usesysid IS NULL)\n"
+                               "  and (u.nspname = :owner OR u.usesysid IS NULL)\n"
                                "  and c.relname=:table",
                                "Get the available comments on columns of a table, "
                                "must have same binds and columns",
@@ -153,12 +153,12 @@ static toSQL SQLColumnComments72("toQSqlConnection:ColumnComments",
                                  "from\n"
                                  "  pg_attribute a,\n"
                                  "  pg_description b,\n"
-                                 "  pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
+                                 "  pg_class c LEFT OUTER JOIN pg_namespace n ON c.relowner=n.oid\n"
                                  "where\n"
                                  "  a.attnum=b.objsubid\n"
                                  "  and b.objoid=a.attrelid\n"
                                  "  and c.oid=a.attrelid\n"
-                                 "  and (u.usename = :owner OR u.usesysid IS NULL)\n"
+                                 "  and (n.nspname = :owner OR u.usesysid IS NULL)\n"
                                  "  and c.relname=:table",
                                  "",
                                  "7.2",

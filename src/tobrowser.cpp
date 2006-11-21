@@ -610,8 +610,8 @@ static toSQL SQLListTables7("toBrowser:ListTables",
                             "0703");
 static toSQL SQLListTablesPgSQL("toBrowser:ListTables",
                                 "SELECT c.relname AS \"Table Name\"\n"
-                                "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
-                                " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                                "  FROM pg_class c LEFT OUTER JOIN pg_namespace n ON c.relnamespace=n.oid\n"
+                                " WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
                                 "   AND c.relkind = 'r'"
                                 " ORDER BY \"Table Name\"",
                                 "",
@@ -681,8 +681,8 @@ static toSQL SQLTableInfo("toBrowser:TableInformation",
                           "");
 static toSQL SQLTableInfoPgSQL("toBrowser:TableInformation",
                                "SELECT c.*\n"
-                               "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
-                               " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                               "  FROM pg_class c LEFT OUTER JOIN pg_namespace n ON c.relnamespace=n.oid\n"
+                               " WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
                                "   AND c.relkind = 'r'\n"
                                "   AND c.relname = :f2",
                                "",
@@ -726,8 +726,8 @@ static toSQL SQLTablePartition("toBrowser:TablePartitions",
 
 static toSQL SQLListViewPgSQL("toBrowser:ListView",
                               "SELECT c.relname as View_Name\n"
-                              "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
-                              " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                              "  FROM pg_class c LEFT OUTER JOIN pg_namespace n ON c.relnamespace=n.oid\n"
+                              " WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
                               "   AND c.relkind = 'v'"
                               " ORDER BY View_Name",
                               "List the available views in a schema",
@@ -748,8 +748,8 @@ static toSQL SQLListViewSapDb("toBrowser:ListView",
                               "SapDB");
 static toSQL SQLViewSQLPgSQL("toBrowser:ViewSQL",
                              "SELECT pg_get_viewdef(c.relname)\n"
-                             "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
-                             " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                             "  FROM pg_class c LEFT OUTER JOIN pg_namespace n ON c.relnamespace=n.oid\n"
+                             " WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
                              "   AND c.relkind = 'v' AND c.relname = :f2",
                              "Display SQL of a specified view",
                              "7.1",
@@ -781,8 +781,8 @@ static toSQL SQLListIndex("toBrowser:ListIndex",
                           "");
 static toSQL SQLListIndexPgSQL("toBrowser:ListIndex",
                                "SELECT c.relname AS \"Index Name\"\n"
-                               "FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
-                               "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                               "FROM pg_class c LEFT OUTER JOIN pg_namespace n ON c.relnamespace=n.oid\n"
+                               "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
                                "  AND c.relkind = 'i'\n"
                                "ORDER BY \"Index Name\"",
                                "",
@@ -829,9 +829,9 @@ static toSQL SQLIndexColsPgSQL("toBrowser:IndexCols",
                                "       format_type(a.atttypid, a.atttypmod) as FORMAT,\n"
                                "       a.attnotnull,\n"
                                "       a.atthasdef\n"
-                               "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid,\n"
+                               "  FROM pg_class c LEFT OUTER JOIN pg_namespace n ON c.relnamespace=n.oid,\n"
                                "       pg_attribute a\n"
-                               " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                               " WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
                                "   AND a.attrelid = c.oid AND c.relname = :f2\n"
                                "   AND a.attnum > 0\n"
                                " ORDER BY a.attnum\n",
@@ -868,8 +868,8 @@ static toSQL SQLIndexStatistic("toBrowser:IndexStatstics",
 
 static toSQL SQLListSequencePgSQL("toBrowser:ListSequence",
                                   "SELECT c.relname AS \"Sequence Name\"\n"
-                                  "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
-                                  " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                                  "  FROM pg_class c LEFT OUTER JOIN pg_namespace n ON c.relnamespace=n.oid\n"
+                                  " WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
                                   "   AND c.relkind = 'S'\n"
                                   " ORDER BY \"Sequence Name\"",
                                   "List the available sequences in a schema",
@@ -911,8 +911,8 @@ static toSQL SQLListSQLPgSQL("toBrowser:ListCode",
                              "  CASE WHEN p.prorettype = 0 THEN 'PROCEDURE'\n"
                              "       ELSE 'FUNCTION'\n"
                              "   END AS Object_Type\n"
-                             "FROM pg_proc p LEFT OUTER JOIN pg_user u ON p.proowner=u.usesysid\n"
-                             "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                             "FROM pg_proc p LEFT OUTER JOIN pg_namespace n ON p.pronamespace=n.oid\n"
+                             "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
                              "ORDER BY Object_Name",
                              "List the available Code objects in a schema",
                              "7.1",
@@ -927,8 +927,8 @@ static toSQL SQLListSQL("toBrowser:ListCode",
                         "");
 static toSQL SQLListSQLShortPgSQL("toBrowser:ListCodeShort",
                                   "SELECT p.proname AS Object_Name\n"
-                                  "FROM pg_proc p LEFT OUTER JOIN pg_user u ON p.proowner=u.usesysid\n"
-                                  "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                                  "FROM pg_proc p LEFT OUTER JOIN pg_namespace n ON p.pronamespace=n.oid\n"
+                                  "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
                                   "ORDER BY Object_Name",
                                   "List the available Code objects in a schema, one column version",
                                   "7.1",
@@ -952,8 +952,8 @@ static toSQL SQLSQLTemplate("toBrowser:CodeTemplate",
 // package code will be returnd for both Head and Body
 static toSQL SQLSQLHeadPgSQL("toBrowser:CodeHead",
                              "SELECT p.prosrc\n"
-                             "FROM pg_proc p LEFT OUTER JOIN pg_user u ON p.proowner=u.usesysid\n"
-                             "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                             "FROM pg_proc p LEFT OUTER JOIN pg_namespace n ON p.pronamespace=n.oid\n"
+                             "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
                              "  AND p.proname = :f2\n",
                              "Declaration of object",
                              "7.1",
@@ -966,8 +966,8 @@ static toSQL SQLSQLHead("toBrowser:CodeHead",
 
 static toSQL SQLSQLBodyPgSQL("toBrowser:CodeBody",
                              "SELECT p.prosrc\n"
-                             "FROM pg_proc p LEFT OUTER JOIN pg_user u ON p.proowner=u.usesysid\n"
-                             "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                             "FROM pg_proc p LEFT OUTER JOIN pg_namespace n ON p.pronamespace=n.oid\n"
+                             "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
                              "  AND p.proname = :f2\n",
                              "Implementation of object",
                              "7.1",

@@ -109,7 +109,7 @@ static toSQL SQLUserNames(toSQL::TOSQL_USERLIST,
                           "");
 
 static toSQL SQLUserNamesPgSQL(toSQL::TOSQL_USERLIST,
-                               "SELECT usename AS UserName FROM pg_user ORDER BY UserName",
+                               "SELECT nspname AS UserName FROM pg_namespace ORDER BY nspname",
                                "",
                                "7.1",
                                "PostgreSQL");
