@@ -121,6 +121,9 @@ toMemoEditor::toMemoEditor(QWidget *parent, const QString &str, int row, int col
         : QDialog(parent, NULL, modal, modal ? 0 : WDestructiveClose), Row(row), Col(col)
 {
     setMinimumSize(400, 300);
+    QDesktopWidget *paramDesktop = new QDesktopWidget;
+    setMaximumWidth(paramDesktop->availableGeometry(this).width()*2/3);
+
     setCaption("Memo Editor");
 
     QBoxLayout *l = new QVBoxLayout(this);
