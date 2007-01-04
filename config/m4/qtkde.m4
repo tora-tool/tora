@@ -3101,11 +3101,12 @@ AC_DEFUN([AM_KDE_WITH_NLS],
 # Search path for a program which passes the given test.
 # Ulrich Drepper <drepper@cygnus.com>, 1996.
 
-# serial 1
+
 # Stephan Kulow: I appended a _KDE against name conflicts
 
 dnl AM_PATH_PROG_WITH_TEST_KDE(VARIABLE, PROG-TO-CHECK-FOR,
 dnl   TEST-PERFORMED-ON-FOUND_PROGRAM [, VALUE-IF-NOT-FOUND [, PATH]])
+
 AC_DEFUN([AM_PATH_PROG_WITH_TEST_KDE],
 [# Extract the first word of "$2", so it can be a program name with args.
 set dummy $2; ac_word=[$]2
@@ -3145,8 +3146,6 @@ AC_SUBST($1)dnl
 
 # Check whether LC_MESSAGES is available in <locale.h>.
 # Ulrich Drepper <drepper@cygnus.com>, 1995.
-
-# serial 1
 
 AC_DEFUN([AM_LC_MESSAGES],
   [if test $ac_cv_header_locale_h = yes; then
@@ -3193,7 +3192,6 @@ AC_DEFUN([AM_FUNC_ERROR_AT_LINE],
 # Macro to add for using GNU gettext.
 # Ulrich Drepper <drepper@cygnus.com>, 1995.
 
-# serial 1
 # Stephan Kulow: I put a KDE in it to avoid name conflicts
 
 AC_DEFUN([AM_KDE_GNU_GETTEXT],
