@@ -28,7 +28,7 @@
             <name>spacing</name>
             <number>6</number>
         </property>
-        <widget row="4"  column="2" >
+        <widget row="4"  column="1" >
             <class>QPushButton</class>
             <property stdset="1">
                 <name>name</name>
@@ -43,7 +43,7 @@
                 <bool>true</bool>
             </property>
         </widget>
-        <widget row="4"  column="3" >
+        <widget row="4"  column="2" >
             <class>QPushButton</class>
             <property stdset="1">
                 <name>name</name>
@@ -157,7 +157,7 @@
                 <cstring>Columns</cstring>
             </property>
         </widget>
-        <spacer row="4"  column="1" >
+        <spacer row="4"  column="3" >
             <property>
                 <name>name</name>
                 <cstring>Spacer1</cstring>
