@@ -24,7 +24,7 @@ AC_DEFUN([TORA_CHECK_MONO],
   AC_ARG_ENABLE(mono,
   [  --enable-mono           build monolithic (default no)],
   [ enable_mono=yes ],
-  [ enable_mono=no ])
+  [ enable_mono=yes ])
 
   if test $enable_mono = no; then
     enable_plugin=no
