@@ -705,7 +705,7 @@ QString toFontToString(const QFont &fnt)
 QFont toStringToFont(const QString &str)
 {
     if (str.isEmpty())
-        return QFont(QString::fromLatin1("Courier"), 12);
+        return QFont(QString::fromLatin1("Courier New"), 12);
 #if QT_VERSION >= 0x030000
 
     QFont fnt;
