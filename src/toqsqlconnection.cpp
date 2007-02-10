@@ -284,8 +284,7 @@ static QString QueryParam(const QString &in, toQList &params, std::list<QString>
                     aggr.Type == toQSqlProviderAggregate::SpecifiedDatabase)
                 {
                     if (nam.isEmpty())
-                        throw QString::fromLatin1("No bind name, nc = " + QString(QChar(nc)) +
-                            " pc = " + QString(QChar(pc)));
+                        break;
 
                     if (binds.find(nam) != binds.end())
                     {
