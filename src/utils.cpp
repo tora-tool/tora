@@ -1530,3 +1530,15 @@ bool toCheckKeyEvent(QKeyEvent *event, const QKeySequence &key)
 
     return (event->state() == state && event->key() == val);
 }
+
+int countChars(const QString &source, const char find) {
+    int found = 0;
+    int i;
+
+    for(i = 0; i < source.length(); i++) {
+        if(source[i] == find)
+            found++;
+    }
+
+    return found;
+}

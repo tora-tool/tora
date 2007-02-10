@@ -468,6 +468,15 @@ void toToolCaption(toToolWidget *tool, const QString &caption);
  */
 QString toTranslateMayby(const QString &context, const QString &text);
 
+/**
+ * Count occurrences of char in source.
+ *
+ * @param source The string to search.
+ * @param find The char to find in string
+ * @return Occurrences.
+ */
+int countChars(const QString &source, const char find);
+
 /** Popup toolbutton that works like I think they should under Qt 3.0 as well.
  * this means they will pop up a tool menu when you click on the button as well.
  */
@@ -501,19 +510,19 @@ struct DeleteObject
 /* This can't be documented in KDoc, anyway it is an easy way to catch any exception that
  * might be sent by TOra or OTL and display the message in the statusbar of the main window.
  */
-#define TOCATCH \
-    catch (const QString &str) {\
-      toStatusMessage(str);\
+#define TOCATCH                                 \
+    catch (const QString &str) {                \
+      toStatusMessage(str);                     \
     } 
 /* This can't be documented in KDoc, anyway it is an easy way to catch any exception that
  * might be sent by TOra or OTL and display the message in the statusbar of the main window.
  */
-#define TOROLLBACK(x) \
-    catch (const QString &str) { \
-      toStatusMessage(str); \
-      try { \
-        x.rollback(); \
-      } catch(...) { } \
+#define TOROLLBACK(x)                           \
+    catch (const QString &str) {                \
+      toStatusMessage(str);                     \
+      try {                                     \
+        x.rollback();                           \
+      } catch(...) { }                          \
     }
 
 #define QTRANS(x,y) (qApp?qApp->translate(x,y):QString::fromLatin1(y))
