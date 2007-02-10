@@ -604,8 +604,6 @@ void toMarkedText::insert(const QString &str, bool select)
 {
     int lineFrom;
     int indexFrom;
-    int lineTo;
-    int indexTo;
 
     // Make this work as one undo so user doesn't see his code disappear first.
     QextScintilla::beginUndoAction();
@@ -626,8 +624,11 @@ void toMarkedText::insert(const QString &str, bool select)
     
     // get new position and select if requested
     if(select) {
-        getCursorPosition(&lineTo, &indexTo);
-        setSelection(lineFrom, indexFrom, lineTo, indexTo);
+        // Normally we'd find where the cursor is now.
+        // getCursorPosition(&lineTo, &indexTo);
+
+        int count = countChars(str, '\n');
+        setSelection(lineFrom, indexFrom, lineFrom + count + 1, 0);
     }
 
     QextScintilla::endUndoAction();
