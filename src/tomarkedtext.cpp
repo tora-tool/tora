@@ -622,9 +622,7 @@ void toMarkedText::insert(const QString &str, bool select)
     // the inserted text. Now I'm not really sure what the heck that
     // means.
 
-
     QextScintilla::insert(str);
-
     
     // get new position and select if requested
     if(select) {

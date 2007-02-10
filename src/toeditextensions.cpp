@@ -171,6 +171,11 @@ void toEditExtensions::intIndent(int delta)
             QString t = Current->text(i);
             int chars = 0;
             int level = toSQLParse::countIndent(t, chars);
+
+            // trim newline, if present.  we have to do this because
+            // qscintilla returns newlines, the old code didn't.
+            t.remove('\n');
+
             res += toSQLParse::indentString(std::max(0, level + delta));
             if (i < line2)
                 res += t.mid(chars) + "\n";
