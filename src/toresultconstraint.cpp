@@ -89,16 +89,12 @@ static toSQL PGSQLConsColumns("toResultConstraint:ForeignColumns",
                               "     AND lower ( constraint_name ) = lower ( :f2<char[101]> )\n"
                               "   ORDER BY constraint_name\n",
                               "Get columns of foreign constraint, must return same number of cols",
-                              "7.4",
+                              "7.1",
                               "PostgreSQL");
 
 QString toResultConstraint::constraintCols(const QString &conOwner, const QString &conName)
 {
     toSQL sql = SQLConsColumns;
-
-    if(toIsPostgreSQL(connection()))
-        sql = PGSQLConsColumns;
-
     toQuery query(connection(), SQLConsColumns, conOwner, conName);
 
     QString ret;
