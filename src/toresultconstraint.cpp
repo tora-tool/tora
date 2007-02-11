@@ -70,7 +70,9 @@ toResultConstraint::toResultConstraint(QWidget *parent, const char *name)
 
 bool toResultConstraint::canHandle(toConnection &conn)
 {
-    return toIsOracle(conn) || toExtract::canHandle(conn);
+    return toIsOracle(conn) ||
+        toIsPostgreSQL(conn) ||
+        toExtract::canHandle(conn);
 }
 
 static toSQL SQLConsColumns("toResultConstraint:ForeignColumns",
@@ -79,8 +81,24 @@ static toSQL SQLConsColumns("toResultConstraint:ForeignColumns",
                             " ORDER BY Position",
                             "Get columns of foreign constraint, must return same number of cols");
 
+static toSQL PGSQLConsColumns("toResultConstraint:ForeignColumns",
+                              " SELECT column_name,\n"
+                              "         table_name\n"
+                              "    FROM information_schema.constraint_column_usage\n"
+                              "   WHERE lower ( table_schema ) = lower ( :f1<char[101]> )\n"
+                              "     AND lower ( constraint_name ) = lower ( :f2<char[101]> )\n"
+                              "   ORDER BY constraint_name\n",
+                              "Get columns of foreign constraint, must return same number of cols",
+                              "7.4",
+                              "PostgreSQL");
+
 QString toResultConstraint::constraintCols(const QString &conOwner, const QString &conName)
 {
+    toSQL sql = SQLConsColumns;
+
+    if(toIsPostgreSQL(connection()))
+        sql = PGSQLConsColumns;
+
     toQuery query(connection(), SQLConsColumns, conOwner, conName);
 
     QString ret;
@@ -110,6 +128,7 @@ static toSQL SQLConstraints("toResultConstraint:ListConstraints",
                             " ORDER BY Constraint_Name",
                             "List constraints on a table. Must have same column order",
                             "0800");
+
 static toSQL SQLConstraints7("toResultConstraint:ListConstraints",
                              "SELECT Constraint_Name,\n"
                              "       Search_Condition,\n"
@@ -125,6 +144,26 @@ static toSQL SQLConstraints7("toResultConstraint:ListConstraints",
                              " ORDER BY Constraint_Name",
                              "",
                              "0703");
+
+static toSQL PGSQLConstraints("toResultConstraint:ListConstraints",
+                              " SELECT cu.constraint_name,\n"
+                              "        pg_get_constraintdef ( ct.OID ) AS Search_Condition,\n"
+                              "        NULL AS r_owner,\n"
+                              "        NULL AS r_constraint_name,\n"
+                              "        NOT ct.condeferred AS status,\n"
+                              "        ct.contype AS TYPE,\n"
+                              "        NULL AS Delete_rule,\n"
+                              "        NULL AS GENERATED\n"
+                              "   FROM information_schema.constraint_column_usage cu,\n"
+                              "        pg_constraint ct\n"
+                              "  WHERE lower ( cu.table_schema ) = lower ( :f1<char[101]> )\n"
+                              "    AND lower ( Table_Name ) = lower ( :f2<char[101]> )\n"
+                              "    AND cu.constraint_name = ct.conname\n"
+                              "  ORDER BY constraint_name\n",
+                              "",
+                              "7.4",
+                              "PostgreSQL");
+                              
 
 void toResultConstraint::addConstraint(const QString &name, const QString &definition, const QString &status)
 {
@@ -168,6 +207,25 @@ void toResultConstraint::query(const QString &sql, const toQList &param)
             Poll.start(100);
         }
         TOCATCH
+    }
+    else if(toIsPostgreSQL(connection())) {
+        if (Query)
+            delete Query;
+        Query = NULL;
+
+        try
+        {
+            toQList par;
+            par.insert(par.end(), Owner);
+            par.insert(par.end(), TableName);
+            Query = new toNoBlockQuery(connection(),
+                                       toQuery::Background,
+                                       toSQL::string(PGSQLConstraints,
+                                                     connection()),
+                                       par);
+            Poll.start(100);
+        }
+        TOCATCH;
     }
     else
     {
@@ -232,42 +290,49 @@ void toResultConstraint::poll()
                 QString rConsName = Query->readValue();
                 item->setText(2, Query->readValue());
                 QString type = Query->readValue();
-                QString Condition;
-                char t = (type.latin1())[0];
-                switch (t)
-                {
-                case 'U':
-                    Condition = QString::fromLatin1("unique (");
-                    Condition.append(colNames);
-                    Condition.append(QString::fromLatin1(")"));
-                    break;
-                case 'P':
-                    Condition = QString::fromLatin1("primary key (");
-                    Condition.append(colNames);
-                    Condition.append(QString::fromLatin1(")"));
-                    break;
-                case 'C':
-                case 'V':
-                case 'O':
-                    Condition = QString::fromLatin1("check (");
-                    Condition.append(check);
-                    Condition.append(QString::fromLatin1(")"));
-                    break;
-                case 'R':
-                    Condition = QString::fromLatin1("foreign key (");
-                    Condition.append(colNames);
-                    Condition.append(QString::fromLatin1(") references "));
-                    Condition.append(rConsOwner);
-                    Condition.append(QString::fromLatin1("."));
-                    QString cols(constraintCols(rConsOwner, rConsName));
 
-                    Condition.append(LastTable);
-                    Condition.append(QString::fromLatin1("("));
-                    Condition.append(cols);
-                    Condition.append(QString::fromLatin1(")"));
-                    break;
+                // for pg, the check string is already good
+                if(toIsPostgreSQL(connection()))
+                    item->setText(1, check);
+                else {
+                    QString Condition;
+                    char t = (type.latin1())[0];
+                    switch (t)
+                    {
+                    case 'U':
+                        Condition = QString::fromLatin1("unique (");
+                        Condition.append(colNames);
+                        Condition.append(QString::fromLatin1(")"));
+                        break;
+                    case 'P':
+                        Condition = QString::fromLatin1("primary key (");
+                        Condition.append(colNames);
+                        Condition.append(QString::fromLatin1(")"));
+                        break;
+                    case 'C':
+                    case 'V':
+                    case 'O':
+                        Condition = QString::fromLatin1("check (");
+                        Condition.append(check);
+                        Condition.append(QString::fromLatin1(")"));
+                        break;
+                    case 'R':
+                        Condition = QString::fromLatin1("foreign key (");
+                        Condition.append(colNames);
+                        Condition.append(QString::fromLatin1(") references "));
+                        Condition.append(rConsOwner);
+                        Condition.append(QString::fromLatin1("."));
+                        QString cols(constraintCols(rConsOwner, rConsName));
+
+                        Condition.append(LastTable);
+                        Condition.append(QString::fromLatin1("("));
+                        Condition.append(cols);
+                        Condition.append(QString::fromLatin1(")"));
+                        break;
+                    }
+                    item->setText(1, Condition);
                 }
-                item->setText(1, Condition);
+
                 item->setText(3, Query->readValueNull());
                 item->setText(4, Query->readValue());
             }
