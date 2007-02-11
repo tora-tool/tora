@@ -88,7 +88,7 @@ static toSQL PGSQLConsColumns("toResultConstraint:ForeignColumns",
                               "   WHERE lower ( table_schema ) = lower ( :f1<char[101]> )\n"
                               "     AND lower ( constraint_name ) = lower ( :f2<char[101]> )\n"
                               "   ORDER BY constraint_name\n",
-                              "Get columns of foreign constraint, must return same number of cols",
+                              "",
                               "7.1",
                               "PostgreSQL");
 
