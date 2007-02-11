@@ -121,6 +121,10 @@
 #include "icons/new.xpm"
 #endif
 
+// shutup compiler
+#ifdef TO_DEBUGOUT
+#  undef TO_DEBUGOUT
+#endif
 #define TO_DEBUGOUT(x) fprintf(stderr,(const char *)x);
 
 #define CONF_FILTER_IGNORE_CASE "FilterIgnoreCase"
@@ -666,9 +670,29 @@ static toSQL SQLTableTrigger("toBrowser:TableTrigger",
 static toSQL SQLTableTrigger8("toBrowser:TableTrigger",
                               "SELECT Trigger_Name,Triggering_Event,Status,Description \n"
                               "  FROM SYS.ALL_TRIGGERS\n"
-                              " WHERE Table_Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>",
-                              "",
-                              "0800");
+                              " WHERE Table_Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>");
+static toSQL SQLTableTriggerPG("toBrowser:TableTrigger",
+                               " SELECT t.tgname AS \"Trigger Name\",\n"
+                               "        pg_catalog.pg_get_triggerdef ( t.OID ) AS \"Condition\"\n"
+                               "   FROM pg_catalog.pg_trigger t,\n"
+                               "        pg_class c,\n"
+                               "        pg_tables tab\n"
+                               "  WHERE lower ( tab.schemaname ) = lower ( :f1<char[101]> )\n"
+                               "    AND c.relname = tab.tablename\n"
+                               "    AND lower ( c.relname ) = lower ( :f2<char[101]> )\n"
+                               "    AND c.OID = t.tgrelid\n"
+                               "    AND ( NOT tgisconstraint OR NOT EXISTS ( SELECT 1\n"
+                               "                                               FROM pg_catalog.pg_depend d\n"
+                               "                                               JOIN pg_catalog.pg_constraint c\n"
+                               "                                                 ON ( d.refclassid = c.tableoid AND d.refobjid = c.OID )\n"
+                               "                                              WHERE d.classid = t.tableoid\n"
+                               "                                                AND d.objid = t.OID\n"
+                               "                                                AND d.deptype = 'i'\n"
+                               "                                                AND c.contype = 'f' ) )\n"
+                               "  ORDER BY 1\n",
+                               "",
+                               "",
+                               "PostgreSQL");
 static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
                                "show table status from :own<noquote> like :tab",
                                "Display information about a table",
@@ -1931,7 +1955,9 @@ void toBrowser::defineFilter(void)
 
 bool toBrowser::canHandle(toConnection &conn)
 {
-    return toIsOracle(conn) || toIsMySQL(conn) || toIsSapDB(conn);
+    return toIsOracle(conn) ||
+        toIsMySQL(conn) ||
+        toIsSapDB(conn);
 }
 
 void toBrowser::modifyTable(void)
