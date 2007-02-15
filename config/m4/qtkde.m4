@@ -85,8 +85,7 @@ AC_DEFUN([TORA_CHECK_QSCINTILLA],
 
   qscintilla_user_lib=
   AC_ARG_WITH(qscintilla-libraries,
-  [
-     --with-qscintilla-libraries
+  [   --with-qscintilla-libraries
                           QScintilla library dir],
   [
     qscintilla_user_lib=$withval
