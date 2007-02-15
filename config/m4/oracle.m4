@@ -37,7 +37,7 @@ AC_DEFUN([MRJ_CHECK_ORACLE],
 
   oracle_user_otl_ver=
   AC_ARG_WITH(oci-version,
-  [[  --with-oci-version=[8, 8I, 9I, 10G]
+  [[  --with-oci-version=[8, 8I, 9I, 10G, 10G_R2]
                           this is the version of the client, not the database.]],
   [
     have_oracle=yes
