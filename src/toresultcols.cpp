@@ -321,6 +321,8 @@ void toResultCols::query(const QString &sql, const toQList &param, bool nocache)
     QString Name;
     QString object;
 
+    nocache = true;
+
     // Intentionally ignore returncode.
     if (!setSQLParams(sql, param) && !nocache)
         return ;
