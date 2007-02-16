@@ -288,6 +288,7 @@ class oracleQuery : public toQuery::queryImpl
                     }
                     break;
                 case otl_var_varchar_long:
+                case otl_var_raw:
                 case otl_var_raw_long:
                     {
                         int len = toMaxLong;
