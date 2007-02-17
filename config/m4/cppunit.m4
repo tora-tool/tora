@@ -1,3 +1,5 @@
+##   -*- mode: autoconf; tab-width: 2; -*-
+
 dnl
 dnl AM_PATH_CPPUNIT(MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl
@@ -29,6 +31,7 @@ AC_ARG_WITH(cppunit-exec-prefix,[  --with-cppunit-exec-prefix=PFX  Exec prefix w
   no_cppunit=""
   if test "$CPPUNIT_CONFIG" = "no" ; then
     no_cppunit=yes
+    AC_MSG_RESULT(no)
   else
     CPPUNIT_CFLAGS=`$CPPUNIT_CONFIG --cflags`
     CPPUNIT_LIBS=`$CPPUNIT_CONFIG --libs`
