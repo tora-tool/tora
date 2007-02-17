@@ -24,7 +24,7 @@ case $LIBTOOLIZE_STRING in
     ;;
   libtoolize* ) 
     echo "execute: $LIBTOOLIZE_STRING ..."
-    echo "*** TOra suggest ${CURRENT_LIBTOOLIZE_VERSION} !"
+    echo "*** TOra suggests ${CURRENT_LIBTOOLIZE_VERSION} !"
     echo "*** http://www.gnu.org/software/libtool/libtool.html"
     ;;
 esac
@@ -45,7 +45,7 @@ case $AUTOMAKE_STRING in
     ;;
   automake*1.6.* | automake*1.7* | automake*1.8* | automake*1.9* ) 
     echo "execute: $AUTOMAKE_STRING ..."
-    echo "*** TOra suggest ${CURRENT_AUTOMAKE_VERSION} !"
+    echo "*** TOra suggests ${CURRENT_AUTOMAKE_VERSION} !"
     echo "*** http://www.gnu.org/software/automake"
     ;;
 esac
@@ -66,7 +66,7 @@ case $AUTOCONF_STRING in
     ;;
   autoconf*2.* )
     echo "execute: $AUTOCONF_STRING ..."
-    echo "*** TOra suggest ${CURRENT_AUTOCONF_VERSION} !"
+    echo "*** TOra suggests ${CURRENT_AUTOCONF_VERSION} !"
     echo "*** http://www.gnu.org/software/autoconf "
     ;;
 esac
