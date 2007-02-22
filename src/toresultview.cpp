@@ -192,7 +192,17 @@ int toResultViewItem::realWidth(const QFontMetrics &fm, const QListView *top, in
 
 void toResultViewItem::paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align)
 {
-    QListViewItem::paintCell(p, cg, column, width, align);
+    // null related background handling
+    QColorGroup colNull(cg);
+    if ((toConfigurationSingle::Instance().globalConfig(CONF_INDICATE_EMPTY, "").isEmpty() && text(column) == "{null}")
+         || text(column).isNull())
+    {
+        QColor nullColor;
+        nullColor.setNamedColor(toConfigurationSingle::Instance().globalConfig(CONF_INDICATE_EMPTY_COLOR, "#f2ffbc"));
+        colNull.setColor(QColorGroup::Base, nullColor);
+    }
+
+    QListViewItem::paintCell(p, colNull, column, width, align);
     toResultView *view = dynamic_cast<toResultView *>(listView());
     if (view && (itemBelow() == NULL || itemBelow()->itemBelow() == NULL))
         view->addItem();

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>toDatabaseSettingUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>547</width>
-            <height>501</height>
+            <width>792</width>
+            <height>515</height>
         </rect>
     </property>
     <property name="caption">
@@ -33,6 +33,9 @@
             </property>
             <property name="text">
                 <string>&amp;Autocommit changes</string>
+            </property>
+            <property name="accel">
+                <string>Alt+A</string>
             </property>
             <property name="toolTip" stdset="0">
                 <string>Specify if changes should be automatically commited.</string>
@@ -125,6 +128,9 @@
                     </property>
                     <property name="text">
                         <string>&amp;All</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+A</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="0" column="0">
@@ -303,18 +309,7 @@
                         <string>The way numbers should be presented.</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="1" column="4">
-                    <property name="name">
-                        <cstring>TextLabel3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Decimals</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Number of decimals for fixed decimal format.</string>
-                    </property>
-                </widget>
-                <widget class="QSpinBox" row="1" column="5">
+                <widget class="QSpinBox" row="1" column="3">
                     <property name="name">
                         <cstring>Decimals</cstring>
                     </property>
@@ -326,6 +321,14 @@
                     </property>
                     <property name="value">
                         <number>2</number>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>IndicateEmpty</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Indicate empty values as '' instead of NULL as {null}.</string>
                     </property>
                 </widget>
                 <widget class="QComboBox" row="1" column="1">
@@ -348,12 +351,23 @@
                         <cstring>NumberFormat</cstring>
                     </property>
                 </widget>
-                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="6">
+                <widget class="QPushButton" row="0" column="2" rowspan="1" colspan="2">
                     <property name="name">
-                        <cstring>IndicateEmpty</cstring>
+                        <cstring>IndicateEmptyColor</cstring>
                     </property>
                     <property name="text">
-                        <string>Indicate empty values as '' instead of NULL as {null}.</string>
+                        <string>NULL background color</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="2">
+                    <property name="name">
+                        <cstring>TextLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Decimals</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Number of decimals for fixed decimal format.</string>
                     </property>
                 </widget>
             </grid>
@@ -385,6 +399,12 @@
         <receiver>toDatabaseSettingUI</receiver>
         <slot>numberFormatChange()</slot>
     </connection>
+    <connection>
+        <sender>IndicateEmptyColor</sender>
+        <signal>clicked()</signal>
+        <receiver>toDatabaseSettingUI</receiver>
+        <slot>IndicateEmptyColor_clicked()</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>AutoCommit</tabstop>
@@ -403,8 +423,13 @@
     <tabstop>MoveAfter</tabstop>
     <tabstop>KeepAlive</tabstop>
 </tabstops>
+<includes>
+    <include location="local" impldecl="in implementation">todatabasesettingui.ui.h</include>
+</includes>
 <slots>
     <slot>numberFormatChange()</slot>
+    <slot>IndicateEmpty_toggled( bool )</slot>
+    <slot>IndicateEmptyColor_clicked()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -65,6 +65,7 @@ public:
 
     virtual void saveSetting(void);
     virtual void numberFormatChange();
+    virtual void IndicateEmptyColor_clicked();
 };
 
 class toToolSetting : public toToolSettingUI, public toSettingTab

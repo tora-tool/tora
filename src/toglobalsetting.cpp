@@ -66,6 +66,7 @@
 #include <qvalidator.h>
 #include <qvariant.h>
 #include <qwhatsthis.h>
+#include <qcolordialog.h>
 
 #include "todatabasesettingui.moc"
 #include "toglobalsettingui.moc"
@@ -268,6 +269,13 @@ void toDatabaseSetting::numberFormatChange()
     Decimals->setEnabled(NumberFormat->currentItem() == 2);
 }
 
+void toDatabaseSetting::IndicateEmptyColor_clicked()
+{
+    QColor c = QColorDialog::getColor(IndicateEmptyColor->paletteBackgroundColor(), this, "IndicateEmptyColorDialog");
+    if (c.isValid())
+        IndicateEmptyColor->setPaletteBackgroundColor(c);
+}
+
 toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, WFlags fl)
         : toDatabaseSettingUI(parent, name, fl), toSettingTab("database.html")
 {
@@ -302,6 +310,11 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, WFlags f
     ObjectCache->setCurrentItem(toConfigurationSingle::Instance().globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt());
     BkgndConnect->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_BKGND_CONNECT, "").isEmpty());
     IndicateEmpty->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_INDICATE_EMPTY, "").isEmpty());
+
+    QColor nullColor;
+    nullColor.setNamedColor(toConfigurationSingle::Instance().globalConfig(CONF_INDICATE_EMPTY_COLOR, "#f2ffbc"));
+    IndicateEmptyColor->setPaletteBackgroundColor(nullColor);
+
     int val = toConfigurationSingle::Instance().globalConfig(CONF_AUTO_LONG, "0").toInt();
     AutoLong->setChecked(val);
     MoveAfter->setValue(val);
@@ -341,6 +354,7 @@ void toDatabaseSetting::saveSetting(void)
     toConfigurationSingle::Instance().globalSetConfig(CONF_AUTO_LONG,
                             AutoLong->isChecked() ? MoveAfter->cleanText() : QString::fromLatin1("0"));
     toConfigurationSingle::Instance().globalSetConfig(CONF_INDICATE_EMPTY, IndicateEmpty->isChecked() ? "Yes" : "");
+    toConfigurationSingle::Instance().globalSetConfig(CONF_INDICATE_EMPTY_COLOR, IndicateEmptyColor->paletteBackgroundColor().name());
     toConfigurationSingle::Instance().globalSetConfig(CONF_KEEP_ALIVE, KeepAlive->isChecked() ? DEFAULT_KEEP_ALIVE : "");
 
     toConfigurationSingle::Instance().globalSetConfig(CONF_NUMBER_FORMAT, QString::number(NumberFormat->currentItem()));

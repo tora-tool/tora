@@ -127,6 +127,7 @@
 #define DEFAULT_CSV_DELIMITER "\""
 #define CONF_AUTO_INDENT_RO "AutoIndent"
 #define CONF_INDICATE_EMPTY "IndicateEmpty"
+#define CONF_INDICATE_EMPTY_COLOR "IndicateEmptyColor"
 #define CONF_EXTENSIONS   "Extensions"
 #define CONF_RECENT_FILES "RecentFiles"
 #define CONF_RECENT_MAX  "RecentMax"
