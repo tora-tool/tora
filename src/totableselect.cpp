@@ -33,7 +33,8 @@ void toTableSelect::setup()
     Schema->additionalItem(mysql ? tr("Select database") : tr("Select schema"));
     Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
     Table->additionalItem(tr("Select table"));
-    Table->setSQL(toSQL::sql("toBrowser:ListTables"));
+    // petr vanek 03/01/07 bug #1180847 Error when creating referential constraint
+    Table->setSQL(toSQL::sql("toBrowser:ListTableNames"));
 
     Schema->refresh();
     if (!SelectedTable.isNull())

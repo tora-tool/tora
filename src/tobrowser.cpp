@@ -605,6 +605,13 @@ static toSQL SQLListTables("toBrowser:ListTables",
                            " ORDER BY Table_Name",
                            "",
                            "0800");
+// petr vanek 03/01/07 bug #1180847 Error when creating referential constraint
+static toSQL SQLListTableNames("toBrowser:ListTableNames",
+                           "SELECT Table_Name\n"
+                           "  FROM SYS.ALL_ALL_TABLES WHERE OWNER = :f1<char[101]> AND IOT_Name IS NULL\n"
+                           " ORDER BY Table_Name",
+                           "simplified version of the toBrowser:ListTables",
+                           "0800");
 static toSQL SQLListTables7("toBrowser:ListTables",
                             "SELECT Table_Name,NULL \" Ignore\",NULL \" Ignore2\",Tablespace_name \" Ignore2\"\n"
                             "  FROM SYS.ALL_TABLES WHERE OWNER = :f1<char[101]>\n"
