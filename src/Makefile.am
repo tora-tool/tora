@@ -747,4 +747,4 @@ lrelease: tora.pro $(TRANSLATIONS)
 	$(LRELEASE) tora.pro
 
 install-data-hook:
-	cp -f $(top_builddir)/src/i18n/*.qm $(libdir)
+	cp -f $(top_builddir)/src/i18n/*.qm $(DESTDIR)$(libdir)

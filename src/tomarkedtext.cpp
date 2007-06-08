@@ -88,6 +88,7 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
     
     // sets default tab width
     setTabWidth(defaultTabWidth());
+    this->setUtf8(true);
 }
 toMarkedText::~toMarkedText(){
 }

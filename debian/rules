@@ -54,11 +54,12 @@ install: build
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/tora libdir=/usr/lib/tora
 	-install --owner root --group root --mode=644 $(CURDIR)/help/* $(CURDIR)/debian/tora/usr/share/tora/help
 	-install --owner root --group root --mode=644 $(CURDIR)/help/images/* $(CURDIR)/debian/tora/usr/share/tora/help/images
-	rm -f $(CURDIR)/debian/tora/usr/lib/tora/help/images/.cvsignore
+	-mv $(CURDIR)/debian/tora/usr/lib/tora/help $(CURDIR)/debian/tora/usr/share/tora
 	dh_link usr/share/tora/help usr/lib/tora/help
 	dh_link usr/share/tora/help usr/share/doc/tora/help
 	-install --owner root --group root --mode=644 $(CURDIR)/icons/tora.xpm $(CURDIR)/debian/tora/usr/share/icons/hicolor/32x32/apps
 	-install --owner root --group root --mode=644 $(CURDIR)/icons/toramini.xpm $(CURDIR)/debian/tora/usr/share/icons/hicolor/16x16/apps/tora.xpm
+	-install --owner root --group root --mode=644 $(CURDIR)/debian/tora.desktop $(CURDIR)/debian/tora/usr/share/applications
 
 # Build architecture-independent files here.
 binary-indep: build install

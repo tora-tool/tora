@@ -3,7 +3,7 @@ EXTRA_DIST = help
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-tora_docdir = $(libdir)
+tora_docdir = $(DESTDIR)$(libdir)
 
 install-data-hook:
 	rm -rf $(tora_docdir)/help
