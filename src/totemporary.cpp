@@ -156,6 +156,11 @@ toTemporary::toTemporary(QWidget *main, toConnection &connection)
     QSplitter *splitter = new QSplitter(Vertical, this);
 
     Objects = new toResultLong(false, false, toQuery::Background, splitter);
+
+    QValueList<int> list;
+    list.append(75);
+    splitter->setSizes(list);
+
     QString unit = toConfigurationSingle::Instance().globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
     toQList args;
     toPush(args, toQValue(toSizeDecode(unit)));

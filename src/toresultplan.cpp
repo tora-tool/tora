@@ -130,31 +130,26 @@ void toResultPlan::oracleNext(void)
     if (sql.length() > 0 && sql.at(sql.length() - 1).latin1() == ';')
         sql = sql.mid(0, sql.length() - 1);
 
-    QString explain = QString::fromLatin1("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2 FOR %3").
-                      arg(Ident).arg(planTable).arg(toSQLStripSpecifier(sql));
+    QString explain = QString::fromLatin1("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2.%3 FOR %4").
+                      arg(Ident).arg(connection().user()).arg(planTable).arg(toSQLStripSpecifier(sql));
     if (!User.isNull() && User != conn.user().upper())
     {
         try
         {
             conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(User));
-        }
-        catch (...)
-        {}
-        try
-        {
             conn.execute(explain);
         }
         catch (...)
         {
             try
             {
-                conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %2").arg(connection().user()));
+                conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().user()));
             }
             catch (...)
             {}
             throw;
         }
-        conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %2").arg(connection().user()));
+        conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().user()));
         toQList par;
         Query = new toNoBlockQuery(connection(), toQuery::Normal,
                                    toSQL::string(SQLViewPlan, connection()).

@@ -185,6 +185,11 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
     QSplitter *splitter = new QSplitter(Vertical, this);
 
     Trace = new toResultLong(false, false, toQuery::Background, splitter);
+
+    QValueList<int> list;
+    list.append(75);
+    splitter->setSizes(list);
+
     Trace->setReadAll(true);
     Statement = new toSGAStatement(splitter);
 

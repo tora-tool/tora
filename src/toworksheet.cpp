@@ -442,6 +442,11 @@ void toWorksheet::setup(bool autoLoad)
         QSplitter *splitter = new QSplitter(Vertical, this);
 
         Editor = new toWorksheetText(this, splitter);
+
+	QValueList<int> list;
+	list.append(75);
+	splitter->setSizes(list);
+
 #ifdef TO_KDE_KACCELMANAGER
         KAcceleratorManager::setNoAccel( Editor );
 #endif

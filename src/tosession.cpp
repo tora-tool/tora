@@ -291,6 +291,11 @@ toSession::toSession(QWidget *main, toConnection &connection)
 
     QSplitter *splitter = new QSplitter(Vertical, this);
     Sessions = new toSessionList(splitter);
+
+    QValueList<int> list;
+    list.append(75);
+    splitter->setSizes(list);
+
     Sessions->setReadAll(true);
     connect(Sessions, SIGNAL(done()), this, SLOT(done()));
 
