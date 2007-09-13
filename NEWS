@@ -21,6 +21,10 @@
 2006-11-21: Applied patch for postgres 8 schema browsing cleanup from Theo Schlossnagle
 2006-11-21: Applied patch from Michael for syntax highlighting font issues
 2007-09-10: Applied patches from Andreas Piesk for explain plan handling and window splitter sizes.
+2007-09-13: Applied patches from Andreas Piesk for better data type decoding
+2007-09-13: Applied patches from Andreas Piesk for config build support for Ora 10gR2
+2007-09-13: Updated to latest OTL release 4.0.157
+2007-09-13: Fixed Makefile.am for building html in docs
 
 1.3.21:
 

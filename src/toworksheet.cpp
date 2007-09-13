@@ -2155,7 +2155,7 @@ void toWorksheet::displayMenu(QPopupMenu *menu)
     }
 }
 
-#define CHANGE_CURRENT_SCHEMA QString("ALTER SESSION SET CURRENT_SCHEMA = ")
+#define CHANGE_CURRENT_SCHEMA QString("ALTER SESSION SET CURRENT_SCHEMA = %1")
 
 void toWorksheet::changeSchema(void)
 {
@@ -2165,16 +2165,13 @@ void toWorksheet::changeSchema(void)
         toConnection &conn = connection();
         if (toIsOracle(conn))
         {
-            QString sql = CHANGE_CURRENT_SCHEMA + schema;
+            /* remove current schema initstring */
+            conn.delInit(QString::fromLatin1(CHANGE_CURRENT_SCHEMA).arg(conn.user()));
+
+            /* set the new one with selected schema */
+            QString sql = QString::fromLatin1(CHANGE_CURRENT_SCHEMA).arg(schema);
             conn.allExecute(sql);
-            for (std::list<QString>::const_iterator i = conn.initStrings().begin();i != conn.initStrings().end();i++)
-            {
-                if ((*i).startsWith(CHANGE_CURRENT_SCHEMA))
-                {
-                    conn.delInit(*i);
-                    break;
-                }
-            }
+
             conn.addInit(sql);
         }
         else if (toIsMySQL(conn))

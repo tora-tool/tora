@@ -52,5 +52,7 @@ $(html_docs): $(tora_TEXINFO)
 .texi.html:
 	$(MAKEINFO) --html $<
 
+all: html
+
 .PHONY: html
 html: $(html_docs)

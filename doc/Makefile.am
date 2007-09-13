@@ -17,3 +17,5 @@ manualdir = $(top_builddir)/doc/help
 all-local:
 	echo Making HTML in $(manualdir)
 	cd $(manualdir) && make html
+
+SUBDIRS = help

@@ -431,6 +431,8 @@ class oracleQuery : public toQuery::queryImpl
         {
             std::list<toQuery::queryDescribe> ret;
             int descriptionLen;
+            int datatypearg1 = 0;
+            int datatypearg2 = 0;
             otl_column_desc *description = Query->describe_select(descriptionLen);
 
             for (int i = 0;i < descriptionLen;i++)
@@ -445,120 +447,136 @@ class oracleQuery : public toQuery::queryImpl
 #warning "Add more datatypes"
                 switch (description[i].dbtype)
                 {
-                case 1:
-                case 5:
-                case 9:
-                case 155:
-                    desc.Datatype = QString::fromLatin1("VARCHAR2");
-                    break;
-                case 2:
-                case 3:
-                case 4:
-                case 6:
-                case 68:
-                    desc.AlignRight = true;
-                    desc.Datatype = QString::fromLatin1("NUMBER");
-                    break;
-                case 8:
-                case 94:
-                case 95:
-                    desc.Datatype = QString::fromLatin1("LONG");
-                    break;
-                case 11:
-                case 104:
-                    desc.Datatype = QString::fromLatin1("ROWID");
-                    break;
-                case 12:
-                case 156:
-                    desc.AlignRight = true;
-                    desc.Datatype = QString::fromLatin1("DATE");
-                    break;
-                case 15:
-                case 23:
-                    desc.Datatype = QString::fromLatin1("RAW");
-                    break;                
-                case 24:
-                    desc.Datatype = QString::fromLatin1("LONG RAW");
-                    break;
-                case 96:
-                case 97:
-                    desc.Datatype = QString::fromLatin1("CHAR");
-                    break;
-                case 108:
-                    desc.Datatype = QString::fromLatin1("NAMED DATA TYPE");
-                    break;
-                case 110:
-                    desc.Datatype = QString::fromLatin1("REF");
-                    break;
-                case 112:
-                    desc.Datatype = QString::fromLatin1("CLOB");
-                    break;
-                case 113:
-                    desc.Datatype = QString::fromLatin1("BLOB");
-                    break;                
-                case 114:
-                    desc.Datatype = QString::fromLatin1("BFILE");
-                    break;
-                case 187:
-                    desc.Datatype = QString::fromLatin1("TIMESTAMP");
-                    break;
-                case 188: 
-                	desc.Datatype = QString::fromLatin1("TIMESTAMP WITH TIME ZONE");
-                    break;   
-                case 208:
-                    desc.Datatype = QString::fromLatin1("TIMESTAMP");
-                    break;                    
-                default:
-                    desc.Datatype = QString::fromLatin1("UNKNOWN");
-                    break;
-                }
+                    case 1:	/* VARCHAR2, NVARCHAR2 */
+                        desc.Datatype = QString::fromLatin1("VARCHAR2(%i)");
+                        datatypearg1 = description[i].char_size;
 #ifdef OTL_ORA_UNICODE
-                if (description[i].charset_form == 2 &&
-                        ((desc.Datatype == QString::fromLatin1("VARCHAR2")) ||
-                         (desc.Datatype == QString::fromLatin1("CHAR")) ||
-                         (desc.Datatype == QString::fromLatin1("CLOB"))))
-                {
-                    desc.Datatype = QString::fromLatin1("N") + desc.Datatype;
-                }
-#endif
-
-                if (desc.Datatype == QString::fromLatin1("NUMBER"))
-                {
-                    if (description[i].prec)
-                    {
-                        desc.Datatype.append(QString::fromLatin1(" ("));
-                        desc.Datatype.append(QString::number(description[i].prec));
-                        if (description[i].scale != 0)
+                        if (description[i].charset_form == 2)
                         {
-                            desc.Datatype.append(QString::fromLatin1(","));
-                            desc.Datatype.append(QString::number(description[i].scale));
-                        }
-                        desc.Datatype.append(QString::fromLatin1(")"));
-                    }
-                }
-                else if (desc.Datatype == QString::fromLatin1("TIMESTAMP"))
-                {
-                    if (description[i].scale != 0)
-                    {
-                        desc.Datatype.append(QString::fromLatin1(" ("));
-                        desc.Datatype.append(QString::number(description[i].scale));
-                        desc.Datatype.append(QString::fromLatin1(")"));
-                    }
-                }
-#ifdef OTL_ORA_UNICODE
-                else if (desc.Datatype == QString::fromLatin1("NVARCHAR2") || desc.Datatype == QString::fromLatin1("NCHAR"))
-                {
-                    desc.Datatype.append(QString::fromLatin1(" ("));
-                    desc.Datatype.append(QString::number(description[i].char_size));
-                    desc.Datatype.append(QString::fromLatin1(")"));
-                }
+                    	    desc.Datatype = QString::fromLatin1("N") + desc.Datatype;
+		        }
 #endif
-                else
-                {
-                    desc.Datatype.append(QString::fromLatin1(" ("));
-                    desc.Datatype.append(QString::number(description[i].dbsize));
-                    desc.Datatype.append(QString::fromLatin1(")"));
-                }
+		        break;
+
+		    case 2:	/* NUMBER */
+                        desc.Datatype = QString::fromLatin1("NUMBER");
+                    
+                        if (description[i].prec)
+                        {
+                            desc.Datatype = QString::fromLatin1("NUMBER(%i)");
+                            datatypearg1 = description[i].prec;
+                            if (description[i].scale != 0)
+                            {
+                              desc.Datatype = QString::fromLatin1("NUMBER(%i,%i)");
+                              datatypearg2 = description[i].scale;
+                            }
+                        }
+                        desc.AlignRight = true;
+                        break;
+
+		    case 8:	/* LONG */
+                        desc.Datatype = QString::fromLatin1("LONG");
+                        break;
+
+		    case 12:	/* DATE */
+                        desc.Datatype = QString::fromLatin1("DATE");
+                        desc.AlignRight = true;
+                        break;
+
+		    case 23:	/* RAW */
+                        desc.Datatype = QString::fromLatin1("RAW(%i)");
+                        datatypearg1 = description[i].dbsize;
+                        break;
+
+		    case 24:	/* LONG RAW */
+                        desc.Datatype = QString::fromLatin1("LONG RAW");
+                    break;
+
+		    case 104:	/* ROWID, docu: 69, ocidfn.h: 104  */
+		    case 208:	/* UROWID */
+                        desc.Datatype = QString::fromLatin1("ROWID");
+                        break;
+
+		    case 96:	/* CHAR, NCHAR */
+                        desc.Datatype = QString::fromLatin1("CHAR(%i)");
+                        datatypearg1 = description[i].char_size;
+#ifdef OTL_ORA_UNICODE
+                        if (description[i].charset_form == 2)
+                        {
+                    	    desc.Datatype = QString::fromLatin1("N") + desc.Datatype;
+		        }
+#endif
+		        break;
+
+		    case 100:	/* BINARY_FLOAT */
+                        desc.Datatype = QString::fromLatin1("BINARY_FLOAT");
+                        break;
+
+		    case 101:	/* BINARY_DOUBLE */
+                        desc.Datatype = QString::fromLatin1("BINARY_DOUBLE");
+                        break;
+
+		    case 112:	/* CLOB, NCLOB */
+                        desc.Datatype = QString::fromLatin1("CLOB");
+#ifdef OTL_ORA_UNICODE
+                        if (description[i].charset_form == 2)
+                        {
+                    	    desc.Datatype = QString::fromLatin1("N") + desc.Datatype;
+		        }
+#endif
+                        break;
+
+		    case 113:	/* BLOB */
+                        desc.Datatype = QString::fromLatin1("BLOB");
+                        break;
+
+		    case 114:	/* BFILE */
+                        desc.Datatype = QString::fromLatin1("BFILE");
+                        break;
+
+		    case 187:	/* TIMESTAMP, docu: 180, ocidfn.h: 187 */
+                        desc.Datatype = QString::fromLatin1("TIMESTAMP(%i)");
+                        datatypearg1 = description[i].scale;
+                        break;
+
+		    case 188:	/* TIMESTAMP WITH TIME ZONE, docu: 181, ocidfn.h: 188 */
+                        desc.Datatype = QString::fromLatin1("TIMESTAMP(%i) WITH TIME ZONE");
+                        datatypearg1 = description[i].scale;
+                        break;
+
+		    case 189:	/* INTERVAL YEAR TO MONTH, docu: 182, ocidfn.h: 189 */
+                        desc.Datatype = QString::fromLatin1("INTERVAL YEAR(%i) TO MONTH");
+                        datatypearg1 = description[i].prec;
+                        break;
+
+		    case 190:	/* INTERVAL DAY TO SECOND, docu: 183, ocidfn.h: 190  */
+                        desc.Datatype = QString::fromLatin1("INTERVAL DAY(%i) TO SECOND(%i)");
+                        datatypearg1 = description[i].prec;
+                        datatypearg2 = description[i].scale;
+                        break;
+
+		    case 232:	/* TIMESTAMP WITH LOCAL TIME ZONE docu: 231, ocidfn.h: 232 */
+                        desc.Datatype = QString::fromLatin1("TIMESTAMP(%i) WITH LOCAL TIME ZONE");
+                        datatypearg1 = description[i].scale;
+                        break;
+
+                    default:
+                        desc.Datatype = QString::fromLatin1("UNKNOWN");
+
+                        /* report unmatched datatypes for adding later */
+                        printf("File a bug report and include the table layout and the following data:\n");
+                        printf("  type=%i, otl_type=%i, size=%i, nullok=%i, charset_form=%i, charset_size=%i, prec=%i, scale=%i\n",
+                               description[i].dbtype,
+                               description[i].otl_var_dbtype,
+                               description[i].dbsize,
+                               description[i].nullok,
+                               description[i].charset_form,
+                               description[i].char_size,
+                               description[i].prec,
+                               description[i].scale);
+		}
+                desc.Datatype.sprintf(desc.Datatype, datatypearg1, datatypearg2);
+
                 desc.Null = description[i].nullok;
 
                 ret.insert(ret.end(), desc);
