@@ -114,7 +114,7 @@ public slots:
  * Display a help browser. A help manual consists of HTML pages where at least
  * two pages are mandatory.
  *
- * The first one is toc.htm which is parsed for links which are added to the left
+ * The first one is toc.html which is parsed for links which are added to the left
  * pane tree view. Indentation is handled with the tag dl which open and close a
  * tree branch.
  *

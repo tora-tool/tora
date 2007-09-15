@@ -534,7 +534,7 @@ void toHelp::displayHelp(QWidget *parent)
         }
         cur = cur->parentWidget();
     }
-    toHelp::displayHelp(QString::fromLatin1("toc.htm"), parent);
+    toHelp::displayHelp(QString::fromLatin1("toc.html"), parent);
 }
 
 void toHelp::connectDialog(QDialog *dialog)
@@ -587,7 +587,7 @@ void toHelp::search(void)
         {
             QString path = toHelp::path(parent->text(2));
             QString filename = path;
-            filename += QString::fromLatin1("index.htm");
+            filename.append(QString::fromLatin1("index.html"));
             try
             {
                 toHtml file(toReadFile(filename));

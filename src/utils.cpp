@@ -820,7 +820,7 @@ QString toHelpPath(void)
     if (str.isEmpty())
     {
         str = toPluginPath();
-        str += QString::fromLatin1("/help/toc.htm");
+        str += QString::fromLatin1("/help/toc.html");
     }
     return str;
 }
@@ -1533,7 +1533,7 @@ bool toCheckKeyEvent(QKeyEvent *event, const QKeySequence &key)
 
 int countChars(const QString &source, const char find) {
     int found = 0;
-    int i;
+    unsigned int i;
 
     for(i = 0; i < source.length(); i++) {
         if(source[i] == find)

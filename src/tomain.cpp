@@ -812,7 +812,7 @@ void toMain::commandCallback(int cmd)
             contextHelp();
             break;
         case TO_HELP_CONTENTS:
-            toHelp::displayHelp(QString::fromLatin1("toc.htm"));
+            toHelp::displayHelp(QString::fromLatin1("toc.html"));
             break;
         case TO_HELP_ABOUT:
         case TO_HELP_LICENSE:

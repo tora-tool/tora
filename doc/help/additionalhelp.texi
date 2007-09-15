@@ -18,7 +18,7 @@ This is a quick way to add a collection of manuals. When you select this button 
 @samp{Oracle Manuals}
 
 @item Add path
-Add a manual to the list of manuals. This pop up a dialog asking for the name of the manual and the location of the manuals table of contents HTML file (toc.htm).
+Add a manual to the list of manuals. This pop up a dialog asking for the name of the manual and the location of the manuals table of contents HTML file (toc.html).
 @samp{Add path}
 
 @end table

@@ -32,7 +32,7 @@ These may vary some depending on how your system was compiled and configured. No
 
 @multitable @columnfractions .2 .8 
 @item @strong{Custom SQL} @tab The file in which to store your custom SQL. For more information about custom SQL and the SQL dictionary (@pxref{sqledit,SQL Editor tool}. The string @strong{@env{$HOME}} will be replaced by your home directory on UNIX or documents directory in Windows.
-@item @strong{Help directory} @tab Should point to where the TOra help table of contents file is stored (toc.htm). This should be set up correctly if you made a normal install. 	
+@item @strong{Help directory} @tab Should point to where the TOra help table of contents file is stored (toc.html). This should be set up correctly if you made a normal install. 	
 @item @strong{Plugin directory} @tab This option is only available in a plugin based TOra installation. It should point to the directory where the plugins for TOra are located. It should be set up correctly on installation if needed. 	
 @item @strong{Cache directory} @tab Should point to where the TOra Disk Cache files are stored. There is one file for each Connection. 	
 @item @strong{Change current connection with active window} @tab If this option is set, changing the current window will also change the current connection to that of the active window. The connection is only changed when you change window so if you want to change the connection to something else you can still do so as long as you don't change the window.

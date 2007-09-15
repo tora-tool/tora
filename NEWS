@@ -25,6 +25,7 @@
 2007-09-13: Applied patches from Andreas Piesk for config build support for Ora 10gR2
 2007-09-13: Updated to latest OTL release 4.0.157
 2007-09-13: Fixed Makefile.am for building html in docs
+2007-09-15: Change code to consistently use .html extension
 
 1.3.21:
 
