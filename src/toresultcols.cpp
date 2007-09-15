@@ -567,10 +567,7 @@ void toResultCols::resultCols::query(const QString &object,
         describe(desc);
         Edit->describe(desc, table, false);
     }
-    catch (...)
-    {
-        toStatusMessage(tr("Failed to describe %1").arg(object));
-    }
+    TOCATCH
 }
 
 void toResultCols::resultCols::query(const toConnection::objectName &name, bool nocache)
@@ -593,10 +590,7 @@ void toResultCols::resultCols::query(const toConnection::objectName &name, bool 
         describe(desc);
         Edit->describe(desc, wholename, true);
     }
-    catch (...)
-    {
-        toStatusMessage(tr("Failed to describe %1").arg(name.Owner + QString::fromLatin1(".") + name.Name));
-    }
+    TOCATCH
 }
 
 void toResultCols::editComment(bool val)

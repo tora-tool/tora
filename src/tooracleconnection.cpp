@@ -444,7 +444,6 @@ class oracleQuery : public toQuery::queryImpl
  * http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10758/sqlqr06.htm
  * include ocidfn.h
  */
-#warning "Add more datatypes"
                 switch (description[i].dbtype)
                 {
                     case 1:	/* VARCHAR2, NVARCHAR2 */
@@ -507,7 +506,7 @@ class oracleQuery : public toQuery::queryImpl
 		        }
 #endif
 		        break;
-
+#ifdef OTL_ORA_NATIVE_TYPES
 		    case 100:	/* BINARY_FLOAT */
                         desc.Datatype = QString::fromLatin1("BINARY_FLOAT");
                         break;
@@ -515,7 +514,7 @@ class oracleQuery : public toQuery::queryImpl
 		    case 101:	/* BINARY_DOUBLE */
                         desc.Datatype = QString::fromLatin1("BINARY_DOUBLE");
                         break;
-
+#endif
 		    case 112:	/* CLOB, NCLOB */
                         desc.Datatype = QString::fromLatin1("CLOB");
 #ifdef OTL_ORA_UNICODE
@@ -529,11 +528,7 @@ class oracleQuery : public toQuery::queryImpl
 		    case 113:	/* BLOB */
                         desc.Datatype = QString::fromLatin1("BLOB");
                         break;
-
-		    case 114:	/* BFILE */
-                        desc.Datatype = QString::fromLatin1("BFILE");
-                        break;
-
+#ifdef OTL_ORA_TIMESTAMP
 		    case 187:	/* TIMESTAMP, docu: 180, ocidfn.h: 187 */
                         desc.Datatype = QString::fromLatin1("TIMESTAMP(%i)");
                         datatypearg1 = description[i].scale;
@@ -559,7 +554,7 @@ class oracleQuery : public toQuery::queryImpl
                         desc.Datatype = QString::fromLatin1("TIMESTAMP(%i) WITH LOCAL TIME ZONE");
                         datatypearg1 = description[i].scale;
                         break;
-
+#endif
                     default:
                         desc.Datatype = QString::fromLatin1("UNKNOWN");
 
@@ -787,8 +782,10 @@ class oracleConnection : public toConnection::connectionImpl
 
                 return desc;
             }
-            catch (...)
-            {}
+            catch ( ... )
+            {
+                throw;
+            }
 
             toQDescList ret;
             return ret;
