@@ -189,8 +189,9 @@ console when running TOra, this is probably why.])
       sqlplus_ver=`$sqlplus -? | $AWK '/Release/ {print @S|@3}'`
       echo "sqlplus_ver: $sqlplus_ver" >&5
   
-      if expr $sqlplus_ver \> 10 >/dev/null; then
-        dnl our version of otl doesn't have 10g defined yet
+      if expr $sqlplus_ver \> 10.2 >/dev/null; then
+        otl_ver=10G_R2
+      elif expr $sqlplus_ver \> 10 >/dev/null; then
         otl_ver=10G
       elif expr $sqlplus_ver \> 9 >/dev/null; then
         otl_ver=9I
@@ -201,7 +202,7 @@ console when running TOra, this is probably why.])
       fi
     fi
   
-    ora_cflags="$ora_cflags -DOTL_ORA${otl_ver} -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP -DOTL_FUNC_THROW_SPEC_ON -DOTL_EXCEPTION_ENABLE_ERROR_OFFSET"
+    ora_cflags="$ora_cflags -DOTL_ORA${otl_ver} -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP -DOTL_FUNC_THROW_SPEC_ON -DOTL_EXCEPTION_ENABLE_ERROR_OFFSET -DOTL_ORA_UNICODE"
   
     # don't change flags for all targets, just export ORA variables.
     CFLAGS=$cflags_ora_save
