@@ -1,0 +1,37 @@
+<h1 align="center">
+YASLI
+</h1>
+
+<p>The legendary YASLI stands for "Yet Another Standard Library
+Implementation", and is meant to be an STL implementation that exploits
+type introspection and guarded platform assumptions at its best to
+yield lean and mean code.</p>
+
+<p>By definition, YASLI is the best
+implementation all around; however, it is also a non-existent one,
+because it was created in Yasland and we don't have full access to
+Yaslander technology yet. YASLI is often dreamed of by Andrei, but
+seldom worked on because Andrei's current main interest (and time sink)
+is his research. <\p>
+
+<p>This first component of the legendary YASLI is now available together 
+with a simple test suite that compares <tt>yasli::vector</tt>'s 
+behavior against <tt>std::vector</tt>.
+
+(Many thanks to Casper Edward Aethelric Cody Clemence, who submitted a
+largely fixed version on January 13th, 2005.)</p>
+<p> As of now, the implementation illustrates the definition and use 
+of a moving protocol, and has a number of known inefficiencies and a 
+yet-unknown number of bugs. You are welcome to improve the former 
+and report the latter.</p>
+
+<p>Some bugs in MSVC 7.1 prevent the data moving protocol to function properly for certain data types, such 
+as <tt>std::complex</tt>. That code has been commented out as of now.</p>
+
+<p>Unfortunately, the article that describes <tt>yasli::vector</tt>'s design and implementation ("<tt>yasli::vector</tt>
+Is On The Move") is not available online; it is published in C/C++
+Users Journal, June 2004. It will be available on this site 3 months
+after publication.</p>
+
+
+</p></body></html>

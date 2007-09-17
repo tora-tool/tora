@@ -1,0 +1,11 @@
+digraph G
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans.ttf",fontsize=10,labelfontname="FreeSans.ttf",labelfontsize=10];
+  node [fontname="FreeSans.ttf",fontsize=10,shape=record];
+  Node1 [label="Loki::Factory\< AbstractProduct, IdentifierType, CreatorParmTList, FactoryErrorPolicy \>",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir=back,color="darkorchid3",fontsize=10,style="dashed",label="associations_",fontname="FreeSans.ttf"];
+  Node2 [label="Loki::AssocVector\< K, V, C, A \>",height=0.2,width=0.4,color="black",URL="$a00025.html"];
+  Node3 -> Node2 [dir=back,color="firebrick4",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node3 [label="Loki::Private::AssocVectorCompare\< V, C \>",height=0.2,width=0.4,color="red",URL="$a00027.html"];
+}

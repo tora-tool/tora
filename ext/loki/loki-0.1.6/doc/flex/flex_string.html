@@ -1,0 +1,39 @@
+<h1 align="center">
+flex_string
+</h1>
+
+<p>This code accompanies the article 
+"Type-Safe Formatting" in C/C++ Users Journal, July 2005. 
+It implements a simple <tt>printf</tt> emulation framework,
+ which is typesafe at the price of a slightly modified invocation syntax.</p>
+
+<p><tt>flex_string</tt> is a drop-in replacement for the standard string 
+(<tt>std::basic_string</tt>, better known by its <tt>typedef</tt>ed name, 
+<tt>std::string</tt>.
+If you think that reimplementing a likely fine-tuned component of your
+standard library is not a very rewarding endeavor, think again. 
+<tt>flex_string</tt>
+has a policy-based design allowing unparalleled control over its
+behavior and optimizations, and also allows you to define new
+implementations in only a few dozens of lines of code. If you're
+looking for controllable performance and predictible behavior with
+multiple threads, then <tt>flex_string</tt> might be of interest to you.</p>
+
+<p>To find more about <tt>flex_string</tt>, you may want to read 
+<a href="http://erdani.org/publications/cuj-06-2001.html" target="_top"><i>
+"A Policy-Based <code>basic_string</code> Implementation,"</i></a> 
+C/C++ Users Journal, June 2001. </p>
+
+<p>The downloadable code consists of the <tt>flex_string</tt> header and 
+a test suite that compares its behavior against <tt>std::string</tt>. 
+Though no performance comparison suite is available at this time, 
+Harmut Kaizer reported that simply dropping in <tt>flex_string</tt> 
+in the Wave Boost Preprocessor improved its speed by 5-10%, 
+depending on input.</p>
+
+<p>Justin Matthews contributed with 
+<a href="http://erdani.org/code/flex_string_hash.h">flex_string_hash.h</a>, 
+an add-on for <tt>flex_string</tt>
+that allows using it with hash maps. Justin's code supports (and
+automatically recognizes) two implementations: STLPort and Microsoft
+Visual C++ 7.1.</p>

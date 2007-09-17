@@ -1,0 +1,9 @@
+digraph G
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans.ttf",fontsize=10,labelfontname="FreeSans.ttf",labelfontsize=10];
+  node [fontname="FreeSans.ttf",fontsize=10,shape=record];
+  Node1 [label="Loki::FactoryImpl\< AP, Id,::Loki::Typelist\< P1,::Loki::Typelist\< P2,::Loki::Typelist\< P3,::Loki::Typelist\< P4,::Loki::Typelist\< P5,::Loki::Typelist\< P6,::Loki::Typelist\< P7,::Loki::Typelist\< P8,::Loki::Typelist\< P9,::Loki::Typelist\< P10,::Loki::Typelist\< P11,::Loki::Typelist\< P12,::Loki::Typelist\< P13,::Loki::Typelist\< P14,::Loki::Typelist\< P15,::Loki::NullType \> \> \> \> \> \> \> \> \> \> \> \> \> \> \>\>",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node2 [label="Loki::FactoryImplBase",height=0.2,width=0.4,color="black",URL="$a00130.html"];
+}

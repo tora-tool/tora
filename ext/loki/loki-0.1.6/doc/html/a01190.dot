@@ -1,0 +1,9 @@
+digraph G
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans.ttf",fontsize=10,labelfontname="FreeSans.ttf",labelfontsize=10];
+  node [fontname="FreeSans.ttf",fontsize=10,shape=record];
+  Node1 [label="Loki::Private::AssocVectorCompare\< Value, C \>",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir=back,color="orange",fontsize=10,style="dashed",label="\< V, C \>",fontname="FreeSans.ttf"];
+  Node2 [label="Loki::Private::AssocVectorCompare\< V, C \>",height=0.2,width=0.4,color="red",URL="$a00027.html"];
+}

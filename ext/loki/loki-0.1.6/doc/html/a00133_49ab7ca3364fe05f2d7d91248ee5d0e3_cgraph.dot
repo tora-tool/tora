@@ -1,0 +1,16 @@
+digraph G
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans.ttf",fontsize=10,labelfontname="FreeSans.ttf",labelfontsize=10];
+  node [fontname="FreeSans.ttf",fontsize=10,shape=record];
+  rankdir=LR;
+  Node1 [label="Loki::FixedAllocator::Deallocate",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node2 [label="Loki::FixedAllocator::CountEmptyChunks",height=0.2,width=0.4,color="black",URL="$a00133.html#8b7b41cf6221c157face00dac8eeeac2"];
+  Node1 -> Node3 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node3 [label="Loki::Chunk::HasBlock",height=0.2,width=0.4,color="black",URL="$a00042.html#b4ce346a74a437dabe4748bfb8e8b950"];
+  Node1 -> Node4 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node4 [label="Loki::Chunk::IsBlockAvailable",height=0.2,width=0.4,color="black",URL="$a00042.html#e87aa605043ee3b33dc48a989189c2f2"];
+  Node1 -> Node5 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node5 [label="Loki::Chunk::IsCorrupt",height=0.2,width=0.4,color="black",URL="$a00042.html#245b6450d855d8ab65e9ca7add3e2071"];
+}

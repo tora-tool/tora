@@ -1,0 +1,14 @@
+digraph G
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans.ttf",fontsize=10,labelfontname="FreeSans.ttf",labelfontsize=10];
+  node [fontname="FreeSans.ttf",fontsize=10,shape=record];
+  rankdir=LR;
+  Node1 [label="Loki::FixedAllocator::TrimEmptyChunk",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node2 [label="Loki::FixedAllocator::CountEmptyChunks",height=0.2,width=0.4,color="black",URL="$a00133.html#8b7b41cf6221c157face00dac8eeeac2"];
+  Node1 -> Node3 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node3 [label="Loki::Chunk::HasAvailable",height=0.2,width=0.4,color="black",URL="$a00042.html#0874a711145788bd8c5265a9de2a4aac"];
+  Node1 -> Node4 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node4 [label="Loki::Chunk::Release",height=0.2,width=0.4,color="black",URL="$a00042.html#6b011a6b92135a9c5d636b104ffd71bd"];
+}

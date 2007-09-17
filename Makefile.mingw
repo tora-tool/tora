@@ -51,7 +51,7 @@ INSTALLDIR=/c/TOra
 OTL_DIR=../ext/otl
 
 #Loki
-LOKI_DIR=../ext/loki/loki-0.1.4
+LOKI_DIR=../ext/loki/loki-0.1.6
 
 # What to compile, can be tora for tora-mono for monolithic, tora-static for static version
 # (for Windows build these targets seems to have no difference so they better left default)

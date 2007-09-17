@@ -11,8 +11,8 @@ TRANSLATIONS= \
 	i18n/tora_it.ts \
 	i18n/tora_toad.ts
 
-LOKIDIR_INC=$(top_srcdir)/ext/loki/loki-0.1.4/include
-LOKIDIR_SRC=$(top_srcdir)/ext/loki/loki-0.1.4/src
+LOKIDIR_INC=$(top_srcdir)/ext/loki/loki-0.1.6/include
+LOKIDIR_SRC=$(top_srcdir)/ext/loki/loki-0.1.6/src
 
 AM_CPPFLAGS = -I$(top_srcdir)/ext/otl -I$(LOKIDIR_INC) $(KDE_INCLUDES) $(QT_INCLUDES) $(LTDLINCL)
 AM_CPPFLAGS += $(PCRE_CFLAGS) \

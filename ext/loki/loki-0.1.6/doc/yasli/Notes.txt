@@ -1,0 +1,30 @@
+  This carries an "aint nuffin clever in 'ere" warning: So far All I have done
+  is get yasvec compiling again, remove a few bugs and extend reallocate
+  for some cases where msize and expand are availible.
+  
+  enable_if removed, its function replaced with type_selector in the case
+  of namespace level functions and the use of dummy Int2Type arguments
+  in member functions. I don't like dummy arguments but they seemed better than
+  the other options (namely external, explicitly templated functions 'hidden' in
+  an implementation namespace).  
+
+  I should have kept a log of all of the bugs I pulled out and other modifications,
+  Indeed, I almost did but somehow it didn't quite happen - sorry. 
+  
+  uninitialised_copy I have defined for InputItr = const T* and InputItr = T* 
+  seperately, this is less than desireable but previously with only the 
+  const-data version defined any non const pointers were being eaten up by
+  the default templated function. This is fairly minor but I mentions 
+  because you may disagree with me.
+  
+To do:
+      Cut vector back vector to a buffer then decide whether it is sensible to 
+      re-implement vector using this buffer. 
+      
+      Implement valarray and related classes using yasli_nstd::buffer and other
+      yasli components. The structure of these classes will follow that found in 
+      Mingw32 - expressions are to be evaluated during assignment. 
+      
+      Add yasli_nstd::reference_valarray, a class which behaves like 
+      valarray and can be used in conjuction with it but which consists of an
+      array of pointers.

@@ -134,6 +134,35 @@ public:
         return QString(*this);
     }
 
+    QString toSIsize() const
+    {
+        if (this->isNull()) return NULL;
+
+        double size = toDouble();
+        QString s = "%1";
+        int i = 0;
+
+        while (size / 1024 >= 10) {
+            i++;
+            size = size / 1024;
+        }
+
+        switch (i) {
+            case 0: break;
+            case 1: s.append("K");
+                break;
+            case 2: s.append("M");
+                break;
+            case 3: s.append("G");
+                break;
+            case 4: s.append("T");
+                break;
+            default: s.append("E");
+        }
+
+        return s.arg(size, 0, 'f', 0);
+    }
+
     /** Set numberformat.
      * @param format 0 = Default, 1 = Scientific, 2 = Fixed Decimals
      * @param decimals Number on decimals for fixed decimals.

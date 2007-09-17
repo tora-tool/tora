@@ -1,0 +1,15 @@
+digraph G
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans.ttf",fontsize=10,labelfontname="FreeSans.ttf",labelfontsize=10];
+  node [fontname="FreeSans.ttf",fontsize=10,shape=record];
+  Node1 [label="Loki::Private::OrderedStaticBase\< T \>",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node2 [label="Loki::Private::OrderedStaticCreatorFunc",height=0.2,width=0.4,color="black",URL="$a00469.html"];
+  Node1 -> Node3 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node3 [label="Loki::OrderedStatic\< L, T, Loki::NullType \>",height=0.2,width=0.4,color="black",URL="$a00465.html"];
+  Node1 -> Node4 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node4 [label="Loki::OrderedStatic\< L, T, Loki::Seq\< P1 \> \>",height=0.2,width=0.4,color="black",URL="$a00466.html"];
+  Node1 -> Node5 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node5 [label="Loki::OrderedStatic\< L, T, P1(*)() \>",height=0.2,width=0.4,color="black",URL="$a00467.html"];
+}

@@ -1,0 +1,12 @@
+digraph G
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans.ttf",fontsize=10,labelfontname="FreeSans.ttf",labelfontsize=10];
+  node [fontname="FreeSans.ttf",fontsize=10,shape=record];
+  rankdir=LR;
+  Node1 [label="Loki::AllocatorSingleton::IsCorrupted",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node2 [label="Loki::AllocatorSingleton::Instance",height=0.2,width=0.4,color="red",URL="$a00013.html#0de7839b1e888e11ff44bc50b78ca7d7"];
+  Node1 -> Node3 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node3 [label="Loki::SmallObjAllocator::IsCorrupt",height=0.2,width=0.4,color="red",URL="$a00524.html#3199a817e272e76400cc7fc4d2d117a7"];
+}

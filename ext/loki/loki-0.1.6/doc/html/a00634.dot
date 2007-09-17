@@ -1,0 +1,22 @@
+digraph structs
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans.ttf",fontsize=8,labelfontname="FreeSans.ttf",labelfontsize=8];
+  node [fontname="FreeSans.ttf",fontsize=10,shape=record];
+rankdir=LR;
+  Node2 [label="Storage policies",height=0.2,width=0.4,color="black",URL="$a00636.html"];
+  Node7 [label="Reset policies",height=0.2,width=0.4,color="black",URL="$a00641.html"];
+  Node4 [label="Checking policies",height=0.2,width=0.4,color="black",URL="$a00638.html"];
+  Node5 [label="StrongPtr Ownership policies",height=0.2,width=0.4,color="black",URL="$a00639.html"];
+  Node0 [label="Smart pointers",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 [label="Ownership policies",height=0.2,width=0.4,color="black",URL="$a00635.html"];
+  Node6 [label="Delete policies",height=0.2,width=0.4,color="black",URL="$a00640.html"];
+  Node3 [label="Conversion policies",height=0.2,width=0.4,color="black",URL="$a00637.html"];
+  Node0->Node1 [shape=plaintext, color="midnightblue", dir="back", style="solid"];
+  Node0->Node2 [shape=plaintext, color="midnightblue", dir="back", style="solid"];
+  Node0->Node3 [shape=plaintext, color="midnightblue", dir="back", style="solid"];
+  Node0->Node4 [shape=plaintext, color="midnightblue", dir="back", style="solid"];
+  Node0->Node5 [shape=plaintext, color="midnightblue", dir="back", style="solid"];
+  Node0->Node6 [shape=plaintext, color="midnightblue", dir="back", style="solid"];
+  Node0->Node7 [shape=plaintext, color="midnightblue", dir="back", style="solid"];
+}

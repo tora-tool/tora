@@ -102,7 +102,7 @@ QString toListViewFormatterSQL::getFormattedString( toListView& tListView )
                     if ( i == startIndex )
                     {
                         line += "INSERT INTO " + tListView.getOwner() + "." + tListView.getObjectName() + "(";
-                        for ( int j = startIndex;j < column_count;j++ )
+                        for ( unsigned int j = startIndex;j < column_count;j++ )
                         {
                             line += ( tListView.header() ) ->label( j ) + ",";
                         }

@@ -1,0 +1,10 @@
+digraph structs
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans.ttf",fontsize=8,labelfontname="FreeSans.ttf",labelfontsize=8];
+  node [fontname="FreeSans.ttf",fontsize=10,shape=record];
+rankdir=LR;
+  Node1 [label="Smart pointers",height=0.2,width=0.4,color="black",URL="$a00634.html"];
+  Node0 [label="Delete policies",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1->Node0 [shape=plaintext, color="midnightblue", dir="back", style="solid"];
+}

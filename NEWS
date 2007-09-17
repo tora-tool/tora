@@ -27,6 +27,9 @@
 2007-09-13: Fixed Makefile.am for building html in docs
 2007-09-15: Change code to consistently use .html extension
 2007-09-15: Add decoding of more oracle data types and better handling of describe failure
+2007-09-17: Applied patches from Andreas Piesk for better explain plan handling, warning cleanup
+2007-09-17: Applied patches from Andreas Piesk for better oracle version detection
+2007-09-17: Applied patches from Andreas Piesk for update to loki-0.1.6
 
 1.3.21:
 

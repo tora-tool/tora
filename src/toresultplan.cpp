@@ -63,7 +63,9 @@ toResultPlan::toResultPlan(QWidget *parent, const char *name)
 }
 
 static toSQL SQLViewPlan("toResultPlan:ViewPlan",
-                         "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer, to_char(Cost), to_char(Bytes), to_char(Cardinality), partition_start, partition_stop\n"
+                         "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
+                         "  io_cost,Bytes,Cardinality,\n"
+                         "  partition_start,partition_stop,temp_space,time\n"
                          "  FROM %1 WHERE Statement_ID = '%2' ORDER BY NVL(Parent_ID,0),ID",
                          "Get the contents of a plan table. Observe the %1 and %2 which must be present. Must return same columns");
 
@@ -94,8 +96,11 @@ void toResultPlan::oracleSetup(void)
     addColumn(tr("Object name"));
     addColumn(tr("Mode"));
     addColumn(tr("Cost"));
+    addColumn(tr("%CPU"));
     addColumn(tr("Bytes"));
-    addColumn(tr("Cardinality"));
+    addColumn(tr("Rows"));
+    addColumn(tr("TEMP Space"));
+    addColumn(tr("Time"));
     addColumn(tr("Startpartition"));
     addColumn(tr("Endpartition"));
     setColumnAlignment(5, AlignRight);
@@ -103,6 +108,9 @@ void toResultPlan::oracleSetup(void)
     setColumnAlignment(7, AlignRight);
     setColumnAlignment(8, AlignRight);
     setColumnAlignment(9, AlignRight);
+    setColumnAlignment(10, AlignRight);
+    setColumnAlignment(11, AlignRight);
+    setColumnAlignment(12, AlignRight);
 }
 
 void toResultPlan::oracleNext(void)
@@ -315,33 +323,64 @@ void toResultPlan::poll(void)
                     QString object = Query->readValueNull();
                     QString optimizer = Query->readValueNull();
                     QString cost = Query->readValueNull();
-                    QString bytes = Query->readValueNull();
+                    QString iocost = Query->readValueNull();
+                    QString bytes = Query->readValueNull().toSIsize();
                     QString cardinality = Query->readValueNull();
                     QString startpartition = Query->readValueNull();
                     QString endpartition = Query->readValueNull();
+                    QString tempspace = Query->readValueNull().toSIsize();
+                    QString time = Query->readValueNull();
 
-                    QListViewItem *item;
+                    toResultViewItem *item;
                     if (parentid && Parents[parentid])
                     {
-                        item = new QListViewItem(Parents[parentid], Last[parentid]);
+                        item = new toResultViewItem(Parents[parentid], Last[parentid]);
                         setOpen(Parents[parentid], true);
                         Last[parentid] = item;
                     }
                     else
                     {
-                        item = new QListViewItem(TopItem, LastTop);
+                        item = new toResultViewItem(TopItem, LastTop);
                         LastTop = item;
                     }
+
+                    QString cpupct = NULL;
+
+                    if (!cost.isEmpty()) {
+
+                        double pct = 100;
+
+                        if (cost.toDouble() > 0) {
+                            pct = 100 - (iocost.toDouble() / cost.toDouble() * 100);
+                        }
+
+                        cpupct.setNum(pct, 'f', 2);
+                    }
+
+                    if (!time.isEmpty()) {
+
+                        double seconds = time.toDouble();
+
+                        int hours = (int) (seconds / 3600);
+                        int mins = (int) (( seconds - hours * 3600) / 60);
+                        int secs = (int) seconds - (hours * 3600 + mins * 60);
+
+                        time.sprintf("%d:%02d:%02d", hours, mins, secs);
+                    }
+
                     item->setText(0, id);
                     item->setText(1, operation);
                     item->setText(2, options);
                     item->setText(3, object);
                     item->setText(4, optimizer);
                     item->setText(5, cost);
-                    item->setText(6, bytes);
-                    item->setText(7, cardinality);
-                    item->setText(8, startpartition);
-                    item->setText(9, endpartition);
+                    item->setText(6, cpupct);
+                    item->setText(7, bytes);
+                    item->setText(8, cardinality);
+                    item->setText(9, tempspace);
+                    item->setText(10, time);
+                    item->setText(11, startpartition);
+                    item->setText(12, endpartition);
                     Parents[id] = item;
                 }
                 if (Query->eof())

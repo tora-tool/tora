@@ -1,0 +1,10 @@
+include ../../Makefile.common
+
+override CPPFLAGS += -I../../include -DNDEBUG
+LDLIBS := ../../lib/libloki.a
+
+ifeq ($(OS),Windows)
+BIN_SUFFIX := .exe
+else
+BIN_SUFFIX :=
+endif

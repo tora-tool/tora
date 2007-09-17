@@ -264,7 +264,7 @@ class oracleQuery : public toQuery::queryImpl
                 case otl_var_double:
                 case otl_var_float:
                     {
-                        double d;
+                        double d = 0;
                         (*Query) >> d;
                         Running = false;
                         conn->Lock.up();
@@ -278,7 +278,7 @@ class oracleQuery : public toQuery::queryImpl
                 case otl_var_short:
                 case otl_var_long_int:
                     {
-                        int i;
+                        int i = 0;
                         (*Query) >> i;
                         Running = false;
                         conn->Lock.up();
@@ -829,42 +829,27 @@ class oracleConnection : public toConnection::connectionImpl
             try
             {
                 otl_stream version(1,
-                                   "SELECT banner FROM v$version",
+                                   "SELECT version FROM product_component_version where product like 'Oracle Database %'",
                                    *(conn->Connection));
-                QRegExp verre(QString::fromLatin1("[0-9]+\\.[0-9\\.]+[0-9]"));
-                QRegExp orare(QString::fromLatin1("^(\\S+ )?oracle"), false);
-                while (!version.eof())
+                if (!version.eof())
                 {
                     char buffer[1024];
                     version >> buffer;
-                    QString ver = QString::fromUtf8(buffer);
-                    if (orare.match(ver) >= 0)
-                    {
-                        int pos;
-                        int len;
-                        pos = verre.match(ver, 0, &len);
-                        if (pos >= 0) {
-                            QCString verstr = ver.mid(pos, len).latin1();
-                            QStringList vl = QStringList::split('.',verstr);
-                            QString ve;
-                            QString verrj;
-                            for ( QStringList::iterator vi = vl.begin();
-                                  vi != vl.end();
-                                  ++vi ) {
-                                ve = *vi;
-                                verrj += ve.rightJustify(2,'0');
-                            }
-                            return QCString::QCString(verrj);
-                            // return verstr;
-                        }
+                    QStringList vl = QStringList::split('.', QString::fromUtf8(buffer));
+                    QString ve;
+                    QString verrj;
+                    for ( QStringList::iterator vi = vl.begin(); vi != vl.end(); ++vi ) {
+                        ve = *vi;
+                        verrj += ve.rightJustify(2,'0');
                     }
+                    return QCString::QCString(verrj);
                 }
             }
             catch (...)
             {
                 // Ignore any errors here
             }
-            return "";
+            return QCString::QCString();
         }
 
         virtual toQuery::queryImpl *createQuery(toQuery *query, toConnectionSub *sub)
@@ -1338,32 +1323,47 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
     return new oracleSub(conn);
 }
 
+/*
+** 11g version, see $ORACLE_HOME/rdbms/admin/utlxplan.sql
+*/
 static toSQL SQLCreatePlanTable(toSQL::TOSQL_CREATEPLAN,
                                 "CREATE TABLE %1 (\n"
-                                "    STATEMENT_ID    VARCHAR2(30),\n"
-                                "    TIMESTAMP       DATE,\n"
-                                "    REMARKS         VARCHAR2(80),\n"
-                                "    OPERATION       VARCHAR2(30),\n"
-                                "    OPTIONS         VARCHAR2(30),\n"
-                                "    OBJECT_NODE     VARCHAR2(128),\n"
-                                "    OBJECT_OWNER    VARCHAR2(30),\n"
-                                "    OBJECT_NAME     VARCHAR2(30),\n"
-                                "    OBJECT_INSTANCE NUMERIC,\n"
-                                "    OBJECT_TYPE     VARCHAR2(30),\n"
-                                "    OPTIMIZER       VARCHAR2(255),\n"
-                                "    SEARCH_COLUMNS  NUMBER,\n"
-                                "    ID              NUMERIC,\n"
-                                "    PARENT_ID       NUMERIC,\n"
-                                "    POSITION        NUMERIC,\n"
-                                "    COST            NUMERIC,\n"
-                                "    CARDINALITY     NUMERIC,\n"
-                                "    BYTES           NUMERIC,\n"
-                                "    OTHER_TAG       VARCHAR2(255),\n"
-                                "    PARTITION_START VARCHAR2(255),\n"
-                                "    PARTITION_STOP  VARCHAR2(255),\n"
-                                "    PARTITION_ID    NUMERIC,\n"
-                                "    OTHER           LONG,\n"
-                                "    DISTRIBUTION    VARCHAR2(30)\n"
+                                "STATEMENT_ID        VARCHAR2(30),\n"
+                                "PLAN_ID             NUMBER,\n"
+                                "TIMESTAMP           DATE,\n"
+                                "REMARKS             VARCHAR2(4000),\n"
+                                "OPERATION           VARCHAR2(30),\n"
+                                "OPTIONS             VARCHAR2(255),\n"
+                                "OBJECT_NODE         VARCHAR2(128),\n"
+                                "OBJECT_OWNER        VARCHAR2(30),\n"
+                                "OBJECT_NAME         VARCHAR2(30),\n"
+                                "OBJECT_ALIAS        VARCHAR2(65),\n"
+                                "OBJECT_INSTANCE     NUMERIC,\n"
+                                "OBJECT_TYPE         VARCHAR2(30),\n"
+                                "OPTIMIZER           VARCHAR2(255),\n"
+                                "SEARCH_COLUMNS      NUMBER,\n"
+                                "ID                  NUMERIC,\n"
+                                "PARENT_ID           NUMERIC,\n"
+                                "DEPTH               NUMERIC,\n"
+                                "POSITION            NUMERIC,\n"
+                                "COST                NUMERIC,\n"
+                                "CARDINALITY         NUMERIC,\n"
+                                "BYTES               NUMERIC,\n"
+                                "OTHER_TAG           VARCHAR2(255),\n"
+                                "PARTITION_START     VARCHAR2(255),\n"
+                                "PARTITION_STOP      VARCHAR2(255),\n"
+                                "PARTITION_ID        NUMERIC,\n"
+                                "OTHER               LONG,\n"
+                                "DISTRIBUTION        VARCHAR2(30),\n"
+                                "CPU_COST            NUMERIC,\n"
+                                "IO_COST             NUMERIC,\n"
+                                "TEMP_SPACE          NUMERIC,\n"
+                                "ACCESS_PREDICATES   VARCHAR2(4000),\n"
+                                "FILTER_PREDICATES   VARCHAR2(4000),\n"
+                                "PROJECTION          VARCHAR2(4000),\n"
+                                "TIME                NUMERIC,\n"
+                                "QBLOCK_NAME         VARCHAR2(30),\n"
+                                "OTHER_XML           CLOB\n"
                                 ")",
                                 "Create plan table, must have same % signs");
 

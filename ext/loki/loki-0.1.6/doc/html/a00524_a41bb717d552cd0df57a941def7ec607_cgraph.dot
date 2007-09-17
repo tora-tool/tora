@@ -1,0 +1,25 @@
+digraph G
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans.ttf",fontsize=10,labelfontname="FreeSans.ttf",labelfontsize=10];
+  node [fontname="FreeSans.ttf",fontsize=10,shape=record];
+  rankdir=LR;
+  Node1 [label="Loki::SmallObjAllocator::Allocate",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node2 [label="Loki::FixedAllocator::Allocate",height=0.2,width=0.4,color="red",URL="$a00133.html#c29973a11534fb1006fd28db97a17bed"];
+  Node1 -> Node3 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node3 [label="Loki::FixedAllocator::BlockSize",height=0.2,width=0.4,color="black",URL="$a00133.html#0a54a24faf387a24dbfb17ab957010c8"];
+  Node1 -> Node4 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node4 [label="Loki::DefaultAllocator",height=0.2,width=0.4,color="black",URL="$a00633.html#g2444c5bff0a61b6751fb5f57e0c7e8c7"];
+  Node1 -> Node5 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node5 [label="Loki::SmallObjAllocator::GetAlignment",height=0.2,width=0.4,color="black",URL="$a00524.html#2af86d8e6bdfe16047d2e586ec34b3b7"];
+  Node1 -> Node6 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node6 [label="Loki::SmallObjAllocator::GetMaxObjectSize",height=0.2,width=0.4,color="black",URL="$a00524.html#2d8f61afdfa600b9aacf7178aa167d93"];
+  Node1 -> Node7 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node7 [label="Loki::GetOffset",height=0.2,width=0.4,color="black",URL="$a00633.html#g2f0821e243f812a3ae2abfaea51895e8"];
+  Node1 -> Node8 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node8 [label="Loki::SmallObjAllocator::TrimExcessMemory",height=0.2,width=0.4,color="black",URL="$a00524.html#6b635664b20a6984303dabde86c8ac83"];
+  Node8 -> Node5 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node8 -> Node6 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node8 -> Node7 [color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+}
