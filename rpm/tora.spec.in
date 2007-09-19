@@ -159,7 +159,8 @@ export CXXFLAGS="$RPM_OPT_FLAGS"
 %build
 
 %{__make}
-%{__strip} .libs/*.so 
+# seemed to break build on mdk
+#%{__strip} .libs/*.so 
 
 # Ugly hack to remove version from libclntsh.so, if someone knows a better way please let me know
 perl -pi -e 's/libclntsh.so.\d\d.\d\d/libclntsh.so\0\0\0\0\0\0/g' .libs/libtooracleconnection.so
