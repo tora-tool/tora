@@ -46,10 +46,6 @@
 #include "totemplate.h"
 #include "totool.h"
 
-#ifdef TO_KDE
-#include <kfiledialog.h>
-#endif
-
 #include <qfiledialog.h>
 #include <qfileinfo.h>
 #include <qheader.h>
@@ -458,24 +454,12 @@ public:
         }
         else if (Dock->isHidden())
         {
-#ifdef TO_KDE
-            toAttachDock(Dock, Window, QMainWindow::Left);
-#else
-
             Dock->show();
-#endif
-
             Window->showResult(true);
         }
         else
         {
-#ifdef TO_KDE
-            toAttachDock(Dock, Window, QMainWindow::Minimized);
-#else
-
             Dock->hide();
-#endif
-
             Window->showResult(false);
         }
     }
@@ -588,7 +572,7 @@ toTemplate::toTemplate(TODock *parent)
                 i++)
             (*i)->insertItems(List, Toolbar);
 
-    Toolbar->setStretchableWidget(new QLabel(Toolbar, TO_KDE_TOOLBAR_WIDGET));
+    Toolbar->setStretchableWidget(new QLabel(Toolbar, TO_TOOLBAR_WIDGET_NAME));
 
     WidgetExtra = NULL;
     setWidget(NULL);
@@ -616,23 +600,11 @@ void toTemplate::showResult(bool show)
 
     if (show)
     {
-#ifdef TO_KDE
-        toAttachDock((TODock *)Result, Frame, QMainWindow::Bottom);
-#else
-
         Result->show();
-#endif
-
     }
     else
     {
-#ifdef TO_KDE
-        toAttachDock((TODock *)Result, Frame, QMainWindow::Minimized);
-#else
-
         Result->hide();
-#endif
-
     }
 }
 

@@ -148,38 +148,27 @@
 #define DEFAULT_TOAD_BINDINGS ""
 #define CONF_DISPLAY_GRIDLINES "Gridlines"
 #define DEFAULT_DISPLAY_GRIDLINES "Yes"
-
-#ifdef TO_KDE
-#define DEFAULT_EXTENSIONS "*.sql *.pkg *.pkb|SQL files\n*.txt|Text files\n*|All files"
-#else
 #define DEFAULT_EXTENSIONS "SQL (*.sql *.pkg *.pkb), Text (*.txt), All (*)"
-#endif
 
-#ifndef TO_KDE
 #  ifndef WIN32 
 // Undefining this will leave out the style selection option stuff from the program
 #    define ENABLE_STYLE 
 // Undefining this will enable choosing Qt_Xft support
 #    define ENABLE_QT_XFT
 #  endif
-#endif
+
 #define CONF_STYLE  "Style"
-#define DEFAULT_STYLE  "Windows"
 #ifdef WIN32 
-// Wether to build monolithic TOra or not (Without plugin support
+// Whether to build monolithic TOra or not (Without plugin support
 #  define TOMONOLITHIC
 #  define DEFAULT_PLUGIN_DIR ""
 #endif 
+
 // Version of TOra, must also change rpm files
 #ifndef TOAPPNAME
 #  define TOAPPNAME  "TOra"
 #endif
 
-#define TOHOMEPAGE  "http://tora.sourceforge.net"
-
-// Stable or development version of TOra
-#define TOTYPE   "DEVELOP"
-
-#define TO_KDE_TOOLBAR_WIDGET "kde toolbar widget"
+#define TO_TOOLBAR_WIDGET_NAME "kde toolbar widget"
 
 #endif

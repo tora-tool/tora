@@ -53,16 +53,6 @@
 #include "totemplate.h"
 #include "totool.h"
 
-#ifdef TO_KDE
-#include <kfiledialog.h>
-#include <kmenubar.h>
-#include <kstatusbar.h>
-#endif
-
-#ifdef TO_KDE_KACCELMANAGER
-#include <kaccelmanager.h>
-#endif
-
 #include <qaccel.h>
 #include <qapplication.h>
 #include <qcheckbox.h>
@@ -87,22 +77,13 @@
 #include <qvbox.h>
 #include <qworkspace.h>
 
-#if QT_VERSION >= 0x030000
 #include <qurloperator.h>
 #include <qnetwork.h>
 #include <qstyle.h>
-#endif
 
 #include "tomain.moc"
 #include "tomessageui.moc"
-#ifdef TO_KDE
-#include "tomainwindow.kde.moc"
-
-#include "icons/toramini.xpm"
-
-#else
 #include "tomainwindow.moc"
-#endif
 
 #include "icons/connect.xpm"
 #include "icons/copy.xpm"
@@ -298,7 +279,7 @@ toMain::toMain()
                                    this, SLOT(stopButton()), ConnectionToolbar)] = true;
 
     ConnectionToolbar->addSeparator();
-    ConnectionSelection = new QComboBox(ConnectionToolbar, TO_KDE_TOOLBAR_WIDGET);
+    ConnectionSelection = new QComboBox(ConnectionToolbar, TO_TOOLBAR_WIDGET_NAME);
     ConnectionSelection->setMinimumWidth(300);
     ConnectionSelection->setFocusPolicy(NoFocus);
     connect(ConnectionSelection, SIGNAL(activated(int)), this, SLOT(changeConnection()));
@@ -382,19 +363,8 @@ toMain::toMain()
     sprintf(buffer, DEFAULT_TITLE, TOVERSION);
     setCaption(tr(buffer));
 
-#ifdef TO_KDE
-
-    KDockWidget *mainDock = createDockWidget(tr(buffer), QPixmap(const_cast<const char**>(toramini_xpm)));
-    Workspace = new QWorkspace(mainDock);
-    mainDock->setWidget(Workspace);
-    setView(mainDock);
-    setMainDockWidget(mainDock);
-    mainDock->setEnableDocking(KDockWidget::DockNone);
-#else
-
     Workspace = new QWorkspace(this);
     setCentralWidget(Workspace);
-#endif
 
     setIcon(QPixmap(const_cast<const char**>(tora_xpm)));
 
@@ -592,17 +562,10 @@ void toMain::windowsMenu(void)
     QRegExp strip(QString::fromLatin1(" <[0-9]+>$"));
     int id = 0;
     unsigned int i;
-#if QT_VERSION < 0x030200
-
-    for (i = 0;i < workspace()->windowList().count();i++)
-    {
-        QWidget *widget = workspace()->windowList().at(i);
-#else
 
     for (i = 0;i < workspace()->windowList(QWorkspace::CreationOrder).count();i++)
     {
         QWidget *widget = workspace()->windowList(QWorkspace::CreationOrder).at(i);
-#endif
 
         if (widget && !widget->isHidden())
         {
@@ -614,15 +577,9 @@ void toMain::windowsMenu(void)
                 WindowsMenu->insertItem(caption, TO_WINDOWS_WINDOWS + i);
             else
                 WindowsMenu->changeItem(TO_WINDOWS_WINDOWS + i, caption);
-#if QT_VERSION < 0x030200
-
-            WindowsMenu->setItemChecked(TO_WINDOWS_WINDOWS + i,
-                                        workspace()->activeWindow() == workspace()->windowList().at(i));
-#else
 
             WindowsMenu->setItemChecked(TO_WINDOWS_WINDOWS + i,
                                         workspace()->activeWindow() == workspace()->windowList(QWorkspace::CreationOrder).at(i));
-#endif
 
             if (i < 9)
             {
@@ -668,16 +625,9 @@ void toMain::commandCallback(int cmd)
     }
     else if (cmd >= TO_WINDOWS_WINDOWS && cmd <= TO_WINDOWS_END)
     {
-#if QT_VERSION < 0x030200
-        if (cmd - TO_WINDOWS_WINDOWS < int(workspace()->windowList().count()))
-        {
-            QWidget *widget = workspace()->windowList().at(cmd - TO_WINDOWS_WINDOWS);
-#else
-
         if (cmd - TO_WINDOWS_WINDOWS < int(workspace()->windowList(QWorkspace::CreationOrder).count()))
         {
             QWidget *widget = workspace()->windowList(QWorkspace::CreationOrder).at(cmd - TO_WINDOWS_WINDOWS);
-#endif
 
             widget->raise();
             widget->setFocus();
@@ -826,17 +776,9 @@ void toMain::commandCallback(int cmd)
             toPreferences::displayPreferences(this);
             break;
         case TO_WINDOWS_CLOSE_ALL:
-#if QT_VERSION < 0x030200
-
-            while (workspace()->windowList().count() > 0 && workspace()->windowList().at(0))
-                if (workspace()->windowList().at(0) &&
-                        !workspace()->windowList().at(0)->close(true))
-#else
-
             while (workspace()->windowList(QWorkspace::CreationOrder).count() > 0 && workspace()->windowList(QWorkspace::CreationOrder).at(0))
                 if (workspace()->windowList(QWorkspace::CreationOrder).at(0) &&
                         !workspace()->windowList(QWorkspace::CreationOrder).at(0)->close(true))
-#endif
 
                     return ;
             break;
@@ -1130,12 +1072,10 @@ void toMain::editEnable(toEditWidget *edit)
                          edit->selectAllEnabled(),
                          edit->readAllEnabled());
 
-#if QT_VERSION >= 0x030000
     // Set Selection Mode on X11
     QClipboard *clip = qApp->clipboard();
     if (clip->supportsSelection())
         clip->setSelectionMode(true);
-#endif
 }
 
 void toMain::editDisable(toEditWidget *edit)
@@ -1328,10 +1268,6 @@ void toMain::changeConnection(void)
 
                 if (menuName)
                 {
-#ifdef TODEBUG_TRANSLATION
-                    printf("QT_TRANSLATE_NOOP(\"toTool\",\"%s\"),\n", (const char *)menuName);
-#endif
-
                     if (pixmap)
                         ToolsMenu->insertItem(*pixmap, qApp->translate("toTool", menuName), toolID);
                     else
@@ -1403,17 +1339,9 @@ void toMain::exportData(std::map<QCString, QString> &data, const QCString &prefi
         }
 
         id = 1;
-#if QT_VERSION < 0x030200
-
-        for (unsigned int i = 0;i < workspace()->windowList().count();i++)
-        {
-            toToolWidget *tool = dynamic_cast<toToolWidget *>(workspace()->windowList().at(i));
-#else
-
         for (unsigned int i = 0;i < workspace()->windowList(QWorkspace::CreationOrder).count();i++)
         {
             toToolWidget *tool = dynamic_cast<toToolWidget *>(workspace()->windowList(QWorkspace::CreationOrder).at(i));
-#endif
 
             if (tool)
             {
@@ -1576,19 +1504,10 @@ void toMain::closeSession(void)
     }
     TOCATCH
 
-    // Workaround in bug in Qt 3.0.0
-#if QT_VERSION < 0x030200
-    while (workspace()->windowList().count() > 0 && workspace()->windowList().at(0))
-        if (workspace()->windowList().at(0) &&
-                !workspace()->windowList().at(0)->close(true))
-            return ;
-#else
-
     while (workspace()->windowList(QWorkspace::CreationOrder).count() > 0 && workspace()->windowList(QWorkspace::CreationOrder).at(0))
         if (workspace()->windowList(QWorkspace::CreationOrder).at(0) &&
                 !workspace()->windowList(QWorkspace::CreationOrder).at(0)->close(true))
             return ;
-#endif
 
     while (Connections.end() != Connections.begin())
     {
@@ -1640,15 +1559,7 @@ void toMain::displayMessage(void)
         toMessageUI dialog(toMainWidget(), NULL, true);
         dialog.Message->setReadOnly(true);
 
-#ifdef TO_KDE_KACCELMANAGER
-
-        KAcceleratorManager::setNoAccel( dialog.Message );
-#endif
-
-#if QT_VERSION >= 0x030000
-
         dialog.Icon->setPixmap(QApplication::style().stylePixmap(QStyle::SP_MessageBoxWarning));
-#endif
 
         dialog.Message->setText(str);
         dialog.exec();

@@ -51,29 +51,18 @@
 #endif
 #include <stdio.h>
 
-#undef TO_DEBUG
-#ifdef TO_DEBUG
-#include <stdio.h>
-#define TO_DEBUGOUT(x) fprintf(stderr,(const char *)x);
-#else
-#define TO_DEBUGOUT(x)
-#endif
-
 #define PREFETCH_SIZE 5000
 
 void toNoBlockQuery::queryTask::run(void)
 {
-    TO_DEBUGOUT("Thread started\n");
     int Length = 0;
     try
     {
-        TO_DEBUGOUT("Open query\n");
         if (Parent.Query)
             Parent.Query->execute(Parent.SQL, Parent.Param);
 
         bool eof = true;
         {
-            TO_DEBUGOUT("Locking description\n");
             toLocker lock (Parent.Lock)
                 ;
             if (Parent.Query)
@@ -91,10 +80,8 @@ void toNoBlockQuery::queryTask::run(void)
             {
                 for (int i = 0;i < Length && Parent.Query;i++)
                 {
-                    TO_DEBUGOUT("Reading value\n");
                     toQValue value(Parent.Query->readValueNull());
                     {
-                        TO_DEBUGOUT("Locking parent\n");
                         toLocker lock (Parent.Lock)
                             ;
                         Parent.ReadingValues.insert(Parent.ReadingValues.end(), value);
@@ -103,17 +90,14 @@ void toNoBlockQuery::queryTask::run(void)
                             if (signaled)
                             {
                                 Parent.Lock.unlock();
-                                TO_DEBUGOUT("Pulling down continue\n");
                                 Parent.Continue.down();
                                 Parent.Lock.lock();
                             }
-                            TO_DEBUGOUT("Running up\n");
                             Parent.Running.up();
                             signaled = true;
                         }
                     }
                 }
-                TO_DEBUGOUT("Locking to check size\n");
                 toLocker lock (Parent.Lock)
                     ;
                 if (!Parent.Query || Parent.Query->eof())
@@ -123,9 +107,7 @@ void toNoBlockQuery::queryTask::run(void)
                     if (Parent.ReadingValues.size() > PREFETCH_SIZE)
                     {
                         Parent.Lock.unlock();
-                        TO_DEBUGOUT("Waiting for next\n");
                         Parent.Continue.down();
-                        TO_DEBUGOUT("Done waiting\n");
                         signaled = false;
                         Parent.Lock.lock();
                     }
@@ -134,7 +116,6 @@ void toNoBlockQuery::queryTask::run(void)
                     break;
             }
         }
-        TO_DEBUGOUT("EOQ\n");
         if (Parent.Query)
             Parent.Processed = Parent.Query->rowsProcessed();
         else
@@ -142,30 +123,25 @@ void toNoBlockQuery::queryTask::run(void)
     }
     catch (const toConnection::exception &str)
     {
-        TO_DEBUGOUT("Locking exception string\n");
         toLocker lock (Parent.Lock)
             ;
         Parent.Error = str;
     }
     catch (const QString &str)
     {
-        TO_DEBUGOUT("Locking exception string\n");
         toLocker lock (Parent.Lock)
             ;
         Parent.Error = str;
     }
     catch (...)
     {
-        TO_DEBUGOUT("Unknown exception\n");
         toLocker lock (Parent.Lock)
             ;
         Parent.Error = qApp->translate("toNoBlockQuery", "Unknown exception");
     }
 
-    TO_DEBUGOUT("Locking EOQ\n");
     toLocker lock (Parent.Lock)
         ;
-    TO_DEBUGOUT("Deleting query\n");
     if (!Parent.Error && !Parent.Query->eof())
         try
         {
@@ -175,29 +151,24 @@ void toNoBlockQuery::queryTask::run(void)
         {}
     delete Parent.Query;
     Parent.Query = NULL;
-    TO_DEBUGOUT("Running up\n");
     Parent.Running.up();
     Parent.EOQ = true;
-    TO_DEBUGOUT("Done\n");
 }
 
 toQValue toNoBlockQuery::readValueNull()
 {
     if (CurrentValue == Values.end())
     {
-        TO_DEBUGOUT("Waiting for running\n");
         Lock.lock();
         bool eoq = EOQ;
         Lock.unlock();
         if (!eoq)
             Running.down();
-        TO_DEBUGOUT("Locking reading\n");
         toLocker lock (Lock)
             ;
         Values = ReadingValues;
         CurrentValue = Values.begin();
         ReadingValues.clear();
-        TO_DEBUGOUT("Continue running\n");
         Continue.up();
         if (CurrentValue == Values.end())
             throw qApp->translate("toNoBlockQuery", "Reading past end of query");
@@ -236,7 +207,6 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn, const QString &sql,
         Error = qApp->translate("toNoBlockQuery", "Couldn't open query");
         return ;
     }
-    TO_DEBUGOUT("Created no block query\n");
 
     try
     {
@@ -256,13 +226,10 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn, const QString &sql,
 
     toLocker lock (Lock)
         ;
-    TO_DEBUGOUT("Creating thread\n");
     try
     {
         toThread *thread = new toThread(new queryTask(*this));
-        TO_DEBUGOUT("Created thread\n");
         thread->start();
-        TO_DEBUGOUT("Started thread\n");
     }
     catch (...)
     {
@@ -294,7 +261,6 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn, toQuery::queryMode mode,
         Error = qApp->translate("toNoBlockQuery", "Couldn't open query");
         return ;
     }
-    TO_DEBUGOUT("Created no block query\n");
     CurrentValue = Values.end();
     Quit = EOQ = false;
     Processed = 0;
@@ -317,13 +283,10 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn, toQuery::queryMode mode,
 
     toLocker lock (Lock)
         ;
-    TO_DEBUGOUT("Creating thread\n");
     try
     {
         toThread *thread = new toThread(new queryTask(*this));
-        TO_DEBUGOUT("Created thread\n");
         thread->start();
-        TO_DEBUGOUT("Started thread\n");
     }
     catch (...)
     {
@@ -338,7 +301,6 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn, toQuery::queryMode mode,
 
 toQDescList &toNoBlockQuery::describe(void)
 {
-    TO_DEBUGOUT("Locking describe\n");
     toLocker lock (Lock)
         ;
     checkError();
@@ -347,7 +309,6 @@ toQDescList &toNoBlockQuery::describe(void)
 
 bool toNoBlockQuery::eof(void)
 {
-    TO_DEBUGOUT("Locking eof\n");
     toLocker lock (Lock)
         ;
     checkError();
@@ -356,7 +317,6 @@ bool toNoBlockQuery::eof(void)
 
 int toNoBlockQuery::rowsProcessed(void)
 {
-    TO_DEBUGOUT("Locking processed\n");
     toLocker lock (Lock)
         ;
     checkError();
@@ -369,7 +329,6 @@ void toNoBlockQuery::stop(void)
     int sleep = 100;
     while (!EOQ)
     {
-        TO_DEBUGOUT("Locking clear values\n");
         Quit = true;
         ReadingValues.clear();
         Continue.up();
@@ -380,7 +339,6 @@ void toNoBlockQuery::stop(void)
         Lock.lock();
         if (Running.getValue() == 0)
         {
-            TO_DEBUGOUT("Query cancel\n");
             if (Query)
             {
                 Query->cancel();
@@ -392,7 +350,6 @@ void toNoBlockQuery::stop(void)
 
     if (Statistics)
     {
-        TO_DEBUGOUT("Get statistics\n");
         Statistics->refreshStats(false);
     }
     while (Query)
@@ -400,7 +357,6 @@ void toNoBlockQuery::stop(void)
         fprintf(stderr, "Internal error, query not deleted after stopping it.\n");
         toThread::msleep(100);
     }
-    TO_DEBUGOUT("Done deleting\n");
 }
 
 toNoBlockQuery::~toNoBlockQuery()
@@ -437,7 +393,6 @@ bool toNoBlockQuery::poll(void)
                 toStatusMessage(qApp->translate("toNoBlockQuery", "Restarting query in own connection"), false, false);
                 toConnection &conn = Query->connection();
                 Lock.unlock();
-                TO_DEBUGOUT("Stopping normal query\n");
                 stop();
                 toLocker lock (Lock)
                     ;
@@ -452,7 +407,6 @@ bool toNoBlockQuery::poll(void)
                 Quit = EOQ = false;
                 Processed = 0;
 
-                TO_DEBUGOUT("Creating new long query\n");
                 Query = new toQuery(conn, toQuery::Long);
 
                 try
@@ -466,9 +420,7 @@ bool toNoBlockQuery::poll(void)
                 }
 
                 toThread *thread = new toThread(new queryTask(*this));
-                TO_DEBUGOUT("Created thread\n");
                 thread->start();
-                TO_DEBUGOUT("Started thread\n");
             }
             catch (...)
             {
@@ -493,7 +445,6 @@ void toNoBlockQuery::checkError()
 {
     if (!Error.isNull())
     {
-        TO_DEBUGOUT("Throwing exception\n");
         throw Error;
     }
 }

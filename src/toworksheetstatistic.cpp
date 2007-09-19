@@ -113,7 +113,7 @@ toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
     ShowPlans->setOn(true);
     connect(ShowPlans, SIGNAL(toggled(bool)), this, SLOT(showPlans(bool)));
 
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
 
     Dummy = new QWidget(Splitter);
 

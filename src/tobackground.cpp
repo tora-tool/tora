@@ -9,11 +9,6 @@
 #include "tobackground.h"
 #include "toconnection.h"
 
-
-#ifdef TO_KDE
-#include <kstatusbar.h>
-#endif
-
 #include <qlabel.h>
 #include <qstatusbar.h>
 #include <qtooltip.h>

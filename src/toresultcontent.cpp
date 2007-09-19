@@ -516,10 +516,7 @@ void toResultContentEditor::poll(void)
                 setUpdatesEnabled(false);
                 setNumRows(rows);
 
-#if QT_VERSION >= 0x030000
-
                 int origRow = Row;
-#endif
 
                 while (dataSize > 0)
                 {
@@ -531,7 +528,6 @@ void toResultContentEditor::poll(void)
                     }
                     Row++;
                 }
-#if QT_VERSION >= 0x030000
                 if (numRows() < STOP_RESIZE_ROW)
                     for (int j = 0;j < numCols();j++)
                     {
@@ -546,7 +542,6 @@ void toResultContentEditor::poll(void)
                         if (width != columnWidth(j))
                             setColumnWidth(j, width);
                     }
-#endif
                 setUpdatesEnabled(true);
             }
             if (first && SingleEdit)
@@ -1415,12 +1410,9 @@ bool toResultContentEditor::searchNext(toSearchReplace *search)
         {
             setCurrentCell(row, col);
 
-#if QT_VERSION >= 0x030000
-
             editCell(row, col);
             if (CurrentEditor)
                 CurrentEditor->setSelection(pos, endPos - pos);
-#endif
 
             SearchEnd = endPos;
             SearchStart = pos;
@@ -1528,7 +1520,7 @@ toResultContent::toResultContent(QWidget *parent, const char *name)
     QToolTip::add
         (btn, tr("Toggle between table or single record editing"));
 
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
     connect(toMainWidget(), SIGNAL(willCommit(toConnection &, bool)),
             this, SLOT(saveUnsaved(toConnection &, bool)));
     connect(Editor, SIGNAL(changesSaved()), this, SIGNAL(changesSaved()));

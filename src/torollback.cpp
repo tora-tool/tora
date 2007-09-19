@@ -52,10 +52,6 @@
 #include "tostoragedefinition.h"
 #include "totool.h"
 
-#ifdef TO_KDE
-#  include <kmenubar.h>
-#endif
-
 #include <list>
 
 #include <qcheckbox.h>
@@ -721,12 +717,12 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
     DropButton->setEnabled(false);
     toolbar->addSeparator();
 
-    new QLabel(tr("Refresh") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
-    connect(Refresh = toRefreshCreate(toolbar, TO_KDE_TOOLBAR_WIDGET),
+    new QLabel(tr("Refresh") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+    connect(Refresh = toRefreshCreate(toolbar, TO_TOOLBAR_WIDGET_NAME),
             SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
 
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
-    new toChangeConnection(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
+    new toChangeConnection(toolbar, TO_TOOLBAR_WIDGET_NAME);
 
     QSplitter *splitter = new QSplitter(Vertical, this);
     Segments = new toRollbackView(splitter);

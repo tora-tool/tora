@@ -47,10 +47,6 @@
 #include "totool.h"
 #include "toworksheet.h"
 
-#ifdef TO_KDE
-#include <kfiledialog.h>
-#endif
-
 #include <qcombobox.h>
 #include <qfiledialog.h>
 #include <qfileinfo.h>
@@ -190,7 +186,7 @@ toSQLEdit::toSQLEdit(QWidget *main, toConnection &connection)
                     toolbar);
     CommitButton->setEnabled(true);
     TrashButton->setEnabled(false);
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
 
     QSplitter *splitter = new QSplitter(Horizontal, this);
     Statements = new toListView(splitter);

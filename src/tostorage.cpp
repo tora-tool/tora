@@ -49,11 +49,6 @@
 #include "tostorageprefsui.h"
 #include "totool.h"
 
-#ifdef TO_KDE
-#include <kfiledialog.h>
-#include <kmenubar.h>
-#endif
-
 #include <qcheckbox.h>
 #include <qfiledialog.h>
 #include <qgroupbox.h>
@@ -914,8 +909,8 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
                                      this, SLOT(moveFile(void)),
                                      toolbar);
 
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
-    new toChangeConnection(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
+    new toChangeConnection(toolbar, TO_TOOLBAR_WIDGET_NAME);
 
     QSplitter *splitter = new QSplitter(Vertical, this);
     Storage = new toResultStorage(!StorageTool.config(CONF_DISP_AVAILABLEGRAPH, "Yes").isEmpty(),

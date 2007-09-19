@@ -50,10 +50,6 @@
 #include "totool.h"
 #include "toworksheetstatistic.h"
 
-#ifdef TO_KDE
-#  include <kmenubar.h>
-#endif
-
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qmenubar.h>
@@ -185,7 +181,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
     toolbar->addSeparator();
     if (toIsOracle(connection))
     {
-        Analyzed = new QComboBox(toolbar, TO_KDE_TOOLBAR_WIDGET);
+        Analyzed = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
         Analyzed->insertItem(tr("All"));
         Analyzed->insertItem(tr("Not analyzed"));
         Analyzed->insertItem(tr("Analyzed"));
@@ -193,7 +189,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
     else
         Analyzed = NULL;
 
-    Schema = new toResultCombo(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    Schema = new toResultCombo(toolbar, TO_TOOLBAR_WIDGET_NAME);
     Schema->setSelected(tr("All"));
     Schema->additionalItem(tr("All"));
     try
@@ -205,13 +201,13 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
 
     if (toIsOracle(connection))
     {
-        Type = new QComboBox(toolbar, TO_KDE_TOOLBAR_WIDGET);
+        Type = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
         Type->insertItem(tr("Tables"));
         Type->insertItem(tr("Indexes"));
 
         toolbar->addSeparator();
 
-        Operation = new QComboBox(toolbar, TO_KDE_TOOLBAR_WIDGET);
+        Operation = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
         Operation->insertItem(tr("Compute statistics"));
         Operation->insertItem(tr("Estimate statistics"));
         Operation->insertItem(tr("Delete statistics"));
@@ -219,22 +215,22 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
         connect(Operation, SIGNAL(activated(int)),
                 this, SLOT(changeOperation(int)));
 
-        new QLabel(" " + tr("for") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
-        For = new QComboBox(toolbar, TO_KDE_TOOLBAR_WIDGET);
+        new QLabel(" " + tr("for") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+        For = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
         For->insertItem(tr("All"));
         For->insertItem(tr("Table"));
         For->insertItem(tr("Indexed columns"));
         For->insertItem(tr("Local indexes"));
         toolbar->addSeparator();
-        new QLabel(tr("Sample") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
-        Sample = new QSpinBox(1, 100, 1, toolbar, TO_KDE_TOOLBAR_WIDGET);
+        new QLabel(tr("Sample") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+        Sample = new QSpinBox(1, 100, 1, toolbar, TO_TOOLBAR_WIDGET_NAME);
         Sample->setValue(100);
         Sample->setSuffix(" " + tr("%"));
         Sample->setEnabled(false);
     }
     else
     {
-        Operation = new QComboBox(toolbar, TO_KDE_TOOLBAR_WIDGET);
+        Operation = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
         Operation->insertItem(tr("Analyze table"));
         Operation->insertItem(tr("Optimize table"));
         connect(Operation, SIGNAL(activated(int)),
@@ -246,8 +242,8 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
     }
 
     toolbar->addSeparator();
-    new QLabel(tr("Parallel") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
-    Parallel = new QSpinBox(1, 100, 1, toolbar, TO_KDE_TOOLBAR_WIDGET);
+    new QLabel(tr("Parallel") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+    Parallel = new QSpinBox(1, 100, 1, toolbar, TO_TOOLBAR_WIDGET_NAME);
     toolbar->addSeparator();
 
     new QToolButton(QPixmap(const_cast<const char**>(execute_xpm)),
@@ -261,7 +257,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
                     this, SLOT(displaySQL()),
                     toolbar);
 
-    Current = new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    Current = new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME);
     Current->setAlignment(AlignRight | AlignVCenter | ExpandTabs);
     toolbar->setStretchableWidget(Current);
 
@@ -314,7 +310,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
                         tr("Refresh"),
                         Plans, SLOT(refresh()),
                         toolbar);
-        toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+        toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
 
         CurrentPlan = new toResultPlan(splitter);
 

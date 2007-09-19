@@ -108,12 +108,12 @@ void toWaitEvents::setup(int session)
     Session = session;
 
     QToolBar *toolbar = toAllocBar(this, tr("Server Tuning"));
-    new QLabel(tr("Display") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
-    QComboBox *type = new QComboBox(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    new QLabel(tr("Display") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+    QComboBox *type = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
     type->insertItem(tr("Time"));
     type->insertItem(tr("Count"));
     connect(type, SIGNAL(activated(int)), this, SLOT(changeType(int)));
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
 
     QSplitter *splitter = new QSplitter(Horizontal, this);
 

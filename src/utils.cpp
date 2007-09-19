@@ -50,16 +50,6 @@
 
 #include <stdlib.h>
 
-#ifdef TO_KDE
-#include <kapp.h>
-#include <kfiledialog.h>
-#include <kio/netaccess.h>
-#include <kmenubar.h>
-#include <kstatusbar.h>
-#include <ktempfile.h>
-#include <kurl.h>
-#endif
-
 #include <qapplication.h>
 #include <qcombobox.h>
 #include <qcstring.h>
@@ -428,65 +418,8 @@ QString toDeepCopy(const QString &str)
     return str.copy();
 }
 
+// Why is this optional?
 #ifdef ENABLE_STYLE
-#  if QT_VERSION < 0x030000
-#    include <qmotifstyle.h>
-#    include <qmotifplusstyle.h>
-#    include <qsgistyle.h>
-#    include <qcdestyle.h>
-#    include <qwindowsstyle.h>
-#    include <qplatinumstyle.h>
-
-void toSetSessionType(const QString &str)
-{
-    if (str == "Motif")
-        qApp->setStyle(new QMotifStyle());
-    else if (str == "Motif Plus")
-        qApp->setStyle(new QMotifPlusStyle());
-    else if (str == "SGI")
-        qApp->setStyle(new QSGIStyle());
-    else if (str == "CDE")
-        qApp->setStyle(new QCDEStyle());
-    else if (str == "Windows")
-        qApp->setStyle(new QWindowsStyle());
-    else if (str == "Platinum")
-        qApp->setStyle(new QPlatinumStyle());
-    else
-        toStatusMessage(qApp->translate("toSetSessionType", "Failed to find style %1").arg(str));
-}
-
-QString toGetSessionType(void)
-{
-    QStyle *style = &qApp->style();
-    if (style->isA("QMotifPlusStyle"))
-        return "Motif Plus";
-    else if (style->isA("QSGIStyle"))
-        return "SGI";
-    else if (style->isA("QCDEStyle"))
-        return "CDE";
-    else if (style->isA("QMotifStyle"))
-        return "Motif";
-    else if (style->isA("QPlatinumStyle"))
-        return "Platinum";
-    else if (style->isA("QWindowsStyle"))
-        return "Windows";
-    toStatusMessage(qApp->translate("toGetSessionType", "Failed to find style match"));
-    return DEFAULT_STYLE;
-}
-
-QStringList toGetSessionTypes(void)
-{
-    QStringList ret;
-    ret << "Motif Plus";
-    ret << "SGI";
-    ret << "CDI";
-    ret << "Motif";
-    ret << "Platinum";
-    ret << "Windows";
-    return ret;
-}
-
-#  else
 #    include <qstylefactory.h>
 #    include <qstyle.h>
 
@@ -528,8 +461,6 @@ void toSetSessionType(const QString &str)
     else
         toStatusMessage(qApp->translate("toSetSessionType", "Failed to find style %1").arg(str));
 }
-
-#  endif
 #endif
 
 QToolBar *toAllocBar(QWidget *parent, const QString &str)
@@ -548,26 +479,10 @@ QToolBar *toAllocBar(QWidget *parent, const QString &str)
         name += db;
     }
     QToolBar *tool;
-#ifdef TO_KDE
-
-    if (parent == toMainWidget())
-        tool = new KToolBar(toMainWidget(), QMainWindow::Top);
-    else
-    {
-#if KDE_VERSION < 220
-        tool = new QToolBar(name, toMainWidget(), parent);
-#else
-
-        tool = new KToolBar(toMainWidget(), parent);
-#endif
-
-    }
-#else
     if (parent == toMainWidget())
         tool = new QToolBar(name, toMainWidget());
     else
         tool = new QToolBar(name, toMainWidget(), parent);
-#endif
 
     tool->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
     return tool;
@@ -575,11 +490,7 @@ QToolBar *toAllocBar(QWidget *parent, const QString &str)
 
 TODock *toAllocDock(const QString &name,
                     const QString &db,
-#ifdef TO_KDE
-                    const QPixmap &icon
-#else
                     const QPixmap &
-#endif
                    )
 {
     QString str = name;
@@ -588,87 +499,14 @@ TODock *toAllocDock(const QString &name,
         str += QString::fromLatin1(" ");
         str += db;
     }
-#ifdef TO_KDE
-    KDockMainWindow *main = (KDockMainWindow *)toMainWidget();
-    return main->createDockWidget(str, icon);
-#else
-#  if QT_VERSION < 0x030000
-
-    if (toConfigurationSingle::Instance().globalConfig(CONF_DOCK_TOOLBAR, "Yes").isEmpty())
-    {
-        QVBox *frm = new QVBox(toMainWidget()->workspace());
-        frm->setCaption(str);
-        return frm;
-    }
-    else
-    {
-        QToolBar *toolbar = toAllocBar(toMainWidget(), name);
-        return toolbar;
-    }
-#  else
     QDockWindow *dock = new QDockWindow(QDockWindow::InDock, toMainWidget());
     dock->setNewLine(true);
     dock->setCloseMode(QDockWindow::Always);
     return dock;
-#  endif
-#endif
 }
 
 void toAttachDock(TODock *dock, QWidget *container, QMainWindow::ToolBarDock place)
 {
-#ifdef TO_KDE
-    KDockMainWindow *main = dynamic_cast<KDockMainWindow *>(toMainWidget());
-    if (main)
-    {
-        KDockWidget::DockPosition pos = KDockWidget::DockLeft;
-        int pct = 20;
-        switch (place)
-        {
-        case QMainWindow::Top:
-            pos = KDockWidget::DockTop;
-            break;
-        case QMainWindow::Bottom:
-            pct = 80;
-            pos = KDockWidget::DockBottom;
-            break;
-        default:
-            toStatusMessage(qApp->translate("toAttachDock", "Unknown dock position"));
-            break;
-        case QMainWindow::Right:
-            pct = 80;
-            pos = KDockWidget::DockRight;
-            break;
-        case QMainWindow::Left:
-        case QMainWindow::Minimized:
-            break;
-        }
-        KDockWidget *dw = (KDockWidget *)(dock);
-        if (dw)
-        {
-            dw->setWidget(container);
-            if (place == QMainWindow::Minimized)
-                main->makeDockInvisible(dw);
-            else
-                dw->manualDock(main->getMainDockWidget(), pos, pct);
-        }
-    }
-    else
-    {
-        toStatusMessage(qApp->translate("toAttachDock", "Main widget not KDockMainWindow"));
-        return ;
-    }
-#else
-#  if QT_VERSION < 0x030000
-    if (!toConfigurationSingle::Instance().globalConfig(CONF_DOCK_TOOLBAR, "Yes").isEmpty())
-    {
-        QToolBar *bar = (QToolBar *)dock;
-        if (bar)
-        {
-            toMainWidget()->moveToolBar(bar, place);
-            bar->setStretchableWidget(container);
-        }
-    }
-#  else
     QDockWindow *d = (QDockWindow *)dock;
     if (d)
     {
@@ -677,29 +515,11 @@ void toAttachDock(TODock *dock, QWidget *container, QMainWindow::ToolBarDock pla
         d->setWidget(container);
         container->show();
     }
-#  endif
-#endif
 }
 
 QString toFontToString(const QFont &fnt)
 {
-#if QT_VERSION >= 0x030000
     return fnt.toString();
-#else
-#  ifdef TO_FONT_RAW_NAME
-
-    return fnt.rawName();
-#  else
-
-    QStringList lst;
-    lst.insert(lst.end(), fnt.family());
-    lst.insert(lst.end(), QString::number(fnt.pointSize()));
-    lst.insert(lst.end(), QString::number(int(fnt.weight())));
-    lst.insert(lst.end(), QString::number(int(fnt.italic())));
-    lst.insert(lst.end(), QString::number(int(fnt.charSet())));
-    return lst.join("/");
-#  endif
-#endif
 }
 
 QFont toStringToFont(const QString &str)
@@ -863,43 +683,6 @@ QString toExpandFile(const QString &file)
 QCString toReadFile(const QString &filename)
 {
     QString expanded = toExpandFile(filename);
-#ifdef TO_KDE
-
-    KURL url(expanded);
-    if (!url.isLocalFile())
-    {
-        QString tmpFile;
-        if (KIO::NetAccess::download(url, tmpFile
-#if KDE_VERSION >= 0x30200
-                                     , toMainWidget()
-#endif
-                                    ))
-        {
-            QFile file(tmpFile);
-            if (!file.open(IO_ReadOnly))
-            {
-                KIO::NetAccess::removeTempFile(tmpFile);
-                throw QT_TRANSLATE_NOOP("toReadFile", "Couldn't open file %1.").arg(filename);
-            }
-
-            int size = file.size();
-
-            char *buf = new char[size + 1];
-            if (file.readBlock(buf, size) == -1)
-            {
-                delete[] buf;
-                KIO::NetAccess::removeTempFile(tmpFile);
-                throw QT_TRANSLATE_NOOP("toReadFile", "Encountered problems read configuration");
-            }
-            buf[size] = 0;
-            QCString ret(buf, size + 1);
-            delete[] buf;
-            KIO::NetAccess::removeTempFile(tmpFile);
-            return ret;
-        }
-        throw QT_TRANSLATE_NOOP("toReadFile", "Couldn't download file");
-    }
-#endif
     QFile file(expanded);
     if (!file.open(IO_ReadOnly))
         throw QT_TRANSLATE_NOOP("toReadFile", "Couldn't open file %1.").arg(filename);
@@ -921,38 +704,6 @@ QCString toReadFile(const QString &filename)
 bool toWriteFile(const QString &filename, const QCString &data)
 {
     QString expanded = toExpandFile(filename);
-#ifdef TO_KDE
-
-    KURL url(expanded);
-    if (!url.isLocalFile())
-    {
-        KTempFile file;
-        file.file()->writeBlock(data, data.length());
-        if (file.status() != IO_Ok)
-        {
-            TOMessageBox::warning(toMainWidget(), QT_TRANSLATE_NOOP("toWriteFile", "File error"),
-                                  QT_TRANSLATE_NOOP("toWriteFile", "Couldn't write data to tempfile"));
-            file.unlink();
-            return false;
-        }
-        file.close();
-        if (!KIO::NetAccess::upload(file.name(), url
-#if KDE_VERSION >= 0x30200
-                                    , toMainWidget()
-#endif
-                                   ))
-        {
-            file.unlink();
-            TOMessageBox::warning(toMainWidget(), QT_TRANSLATE_NOOP("toWriteFile", "File error"),
-                                  QT_TRANSLATE_NOOP("toWriteFile", "Couldn't upload data to URL"));
-            return false;
-        }
-        file.unlink();
-        toStatusMessage(QT_TRANSLATE_NOOP("toWriteFile", "File saved successfully"), false, false);
-        return true;
-    }
-#endif
-
     QFile file(expanded);
     if (!file.open(IO_WriteOnly))
     {
@@ -1029,18 +780,7 @@ QString toOpenFilename(const QString &filename, const QString &filter, QWidget *
     if (dir.isNull())
         dir = toConfigurationSingle::Instance().globalConfig(CONF_LAST_DIR, "");
 
-#ifdef TO_KDE
-
-    KURL url = TOFileDialog::getOpenURL(dir, t, parent);
-    if (url.isEmpty())
-        return QString::null;
-    if (url.isLocalFile())
-        return AddExt(url.path(), t);
-    return AddExt(url.url(), t);
-#else
-
     return AddExt(TOFileDialog::getOpenFileName(dir, t, parent), t);
-#endif
 }
 
 QString toSaveFilename(const QString &filename, const QString &filter, QWidget *parent)
@@ -1053,20 +793,7 @@ QString toSaveFilename(const QString &filename, const QString &filter, QWidget *
     if (dir.isNull())
         dir = toConfigurationSingle::Instance().globalConfig(CONF_LAST_DIR, "");
 
-#ifdef TO_KDE
-
-    KURL url = TOFileDialog::getSaveURL(dir, t, parent);
-    if (url.hasPass())
-        TOMessageBox::warning(toMainWidget(), qApp->translate("toSaveFilename", "File open password"), url.pass());
-    if (url.isEmpty())
-        return QString::null;
-    if (url.isLocalFile())
-        return AddExt(url.path(), t);
-    return AddExt(url.url(), t);
-#else
-
     return AddExt(TOFileDialog::getSaveFileName(dir, t, parent), t);
-#endif
 }
 
 void toSetEnv(const QCString &var, const QCString &val)

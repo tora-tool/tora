@@ -7,10 +7,6 @@
 
 #include "utils.h"
 
-#ifdef TO_KDE 
-#include <kstatusbar.h>
-#endif
-
 #include <qtooltip.h>
 
 #include "tomain.h"
@@ -307,11 +303,7 @@ void toBackgroundLabel::mouseReleaseEvent(QMouseEvent *e)
                     }
                 }
                 toMainWidget()->displayMessage(str);
-#if QT_VERSION >= 0x030000
-
                 e->accept();
-#endif
-
             }
             else
                 QLabel::mouseReleaseEvent(e);

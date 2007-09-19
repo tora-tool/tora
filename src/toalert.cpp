@@ -61,10 +61,6 @@
 #include <qtoolbutton.h>
 #include <qworkspace.h>
 
-#ifdef TO_KDE
-#  include <kmenubar.h>
-#endif
-
 #include "toalert.moc"
 
 #include "icons/commit.xpm"
@@ -141,8 +137,8 @@ toAlert::toAlert(QWidget *main, toConnection &connection)
     {}
     def += connection.user();
 
-    new QLabel(tr("Registered") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
-    Registered = new QComboBox(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    new QLabel(tr("Registered") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+    Registered = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
     Registered->insertItem(def);
     Registered->setEditable(true);
     Registered->setDuplicatesEnabled(false);
@@ -168,12 +164,12 @@ toAlert::toAlert(QWidget *main, toConnection &connection)
 
     toolbar->addSeparator();
 
-    new QLabel(tr("Name") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
-    Name = new QLineEdit(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    new QLabel(tr("Name") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+    Name = new QLineEdit(toolbar, TO_TOOLBAR_WIDGET_NAME);
     Name->setText(def);
     connect(Name, SIGNAL(returnPressed()), this, SLOT(send()));
-    new QLabel(tr("Message") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
-    Message = new QLineEdit(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    new QLabel(tr("Message") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+    Message = new QLineEdit(toolbar, TO_TOOLBAR_WIDGET_NAME);
     connect(Message, SIGNAL(returnPressed()), this, SLOT(send()));
     new QToolButton(QPixmap(const_cast<const char**>(toworksheet_xpm)),
                     tr("Edit message in memo"),

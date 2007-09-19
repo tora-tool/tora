@@ -51,10 +51,6 @@
 #include "tosql.h"
 #include "totool.h"
 
-#ifdef TO_KDE
-#  include <kmenubar.h>
-#endif
-
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qmenubar.h>
@@ -150,8 +146,8 @@ toTemporary::toTemporary(QWidget *main, toConnection &connection)
                     this, SLOT(refresh()),
                     toolbar);
 
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
-    new toChangeConnection(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
+    new toChangeConnection(toolbar, TO_TOOLBAR_WIDGET_NAME);
 
     QSplitter *splitter = new QSplitter(Vertical, this);
 

@@ -48,10 +48,6 @@
 
 #include <ctype.h>
 
-#ifdef TO_KDE
-#  include <kmenubar.h>
-#endif
-
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qlabel.h>
@@ -297,7 +293,7 @@ toChartManager::toChartManager(QWidget *main)
                     this, SLOT(setupChart()),
                     toolbar);
 
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
 
     List = new toListView(this);
     List->addColumn(tr("Connection"));

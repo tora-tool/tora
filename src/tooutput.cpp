@@ -47,10 +47,6 @@
 
 #include <map>
 
-#ifdef TO_KDE
-#  include <kmenubar.h>
-#endif
-
 #include <qcombobox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
@@ -99,7 +95,7 @@ public:
         QToolTip::add
             (label, qApp->translate("toOutputPrefs", "Time between trying to poll for output."));
 
-        AutoPolling = toRefreshCreate(this, TO_KDE_TOOLBAR_WIDGET, Tool->config(CONF_POLLING, DEFAULT_POLLING));
+        AutoPolling = toRefreshCreate(this, TO_TOOLBAR_WIDGET_NAME, Tool->config(CONF_POLLING, DEFAULT_POLLING));
         label->setBuddy(AutoPolling);
 
         label = new QLabel(qApp->translate("toOutputPrefs", "Default &source"), this);
@@ -181,17 +177,11 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
     ToolBar->addSeparator();
     DisableButton = new QToolButton(ToolBar);
     DisableButton->setToggleButton(true);
-#if QT_VERSION >= 0x030000
 
     QIconSet iconset;
     iconset.setPixmap(QPixmap(const_cast<const char**>(online_xpm)), QIconSet::Automatic, QIconSet::Normal, QIconSet::Off);
     iconset.setPixmap(QPixmap(const_cast<const char**>(offline_xpm)), QIconSet::Automatic, QIconSet::Normal, QIconSet::On);
     DisableButton->setIconSet(iconset);
-#else
-
-    DisableButton->setIconSet(QIconSet(QPixmap(const_cast<const char**>(online_xpm))), false);
-    DisableButton->setIconSet(QIconSet(QPixmap(const_cast<const char**>(offline_xpm))), true);
-#endif
 
     DisableButton->setOn(!enabled);
     connect(DisableButton, SIGNAL(toggled(bool)), this, SLOT(disable(bool)));
@@ -204,10 +194,10 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
                     this, SLOT(clear()),
                     ToolBar);
     ToolBar->addSeparator();
-    new QLabel(tr("Refresh") + " ", ToolBar, TO_KDE_TOOLBAR_WIDGET);
-    connect(Refresh = toRefreshCreate(ToolBar, TO_KDE_TOOLBAR_WIDGET, OutputTool.config(CONF_POLLING, DEFAULT_POLLING)),
+    new QLabel(tr("Refresh") + " ", ToolBar, TO_TOOLBAR_WIDGET_NAME);
+    connect(Refresh = toRefreshCreate(ToolBar, TO_TOOLBAR_WIDGET_NAME, OutputTool.config(CONF_POLLING, DEFAULT_POLLING)),
             SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
-    ToolBar->setStretchableWidget(new QLabel(ToolBar, TO_KDE_TOOLBAR_WIDGET));
+    ToolBar->setStretchableWidget(new QLabel(ToolBar, TO_TOOLBAR_WIDGET_NAME));
 
     Output = new toMarkedText(this);
 
@@ -386,7 +376,7 @@ static toSQL SQLLog("toLogOutput:Poll",
 toLogOutput::toLogOutput(QWidget *parent, toConnection &connection)
         : toOutput(parent, connection)
 {
-    Type = new QComboBox(toolBar(), TO_KDE_TOOLBAR_WIDGET);
+    Type = new QComboBox(toolBar(), TO_TOOLBAR_WIDGET_NAME);
     Type->insertItem(tr("SQL Output"));
     Type->insertItem(tr("Log4PL/SQL"));
     Type->setCurrentItem(OutputTool.config(CONF_LOG_TYPE, DEFAULT_LOG_TYPE).toInt());

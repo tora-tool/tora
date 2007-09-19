@@ -52,10 +52,6 @@
 #include "tosqlparse.h"
 #include "totool.h"
 
-#ifdef TO_KDE
-#include <kmenubar.h>
-#endif
-
 #include <stack>
 
 #include <qbuttongroup.h>
@@ -1767,7 +1763,7 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
                     this, SLOT(refresh(void)),
                     toolbar);
     toolbar->addSeparator();
-    Schema = new QComboBox(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    Schema = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
     connect(Schema, SIGNAL(activated(int)),
             this, SLOT(changeSchema(int)));
 
@@ -1871,7 +1867,7 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
     DelWatchButton->setEnabled(false);
     ChangeWatchButton->setEnabled(false);
 
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
 
     QSplitter *splitter = new QSplitter(Vertical, this);
     QSplitter *hsplitter = new QSplitter(Horizontal, splitter);
@@ -1970,28 +1966,15 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
     Editors = new QTabWidget(hsplitter);
     Editors->setTabPosition(QTabWidget::Bottom);
 
-#if QT_VERSION >= 0x030200
-
     QToolButton *closeButton = new toPopupButton(Editors);
     closeButton->setIconSet(QPixmap(const_cast<const char**>(close_xpm)));
     closeButton->setFixedSize(20, 18);
 
     connect(closeButton, SIGNAL(clicked()), this, SLOT(closeEditor()));
     Editors->setCornerWidget(closeButton);
-#endif
 
     setFocusProxy(Editors);
     newSheet();
-
-#if 0
-
-    {
-        QValueList<int> sizes = hsplitter->sizes();
-        sizes[0] = 200;
-        hsplitter->setSizes(sizes);
-        hsplitter->setResizeMode(objSplitter, QSplitter::KeepSize);
-    }
-#endif
 
     ToolMenu = NULL;
     connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),

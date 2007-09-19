@@ -243,38 +243,6 @@ toLineChart *toBarChart::openCopy(QWidget *parent)
         newWin->setFocus();
 
         toMainWidget()->windowsMenu();
-
-#if QT_VERSION < 0x030100
-        // This is a really ugly workaround for a Qt layout bug
-        QWidget *tmp = NULL;
-        QWidget *tmp2 = NULL;
-
-#if QT_VERSION < 0x030200
-
-        for (unsigned int i = 0;i < toMainWidget()->workspace()->windowList().count();i++)
-        {
-            QWidget *widget = toMainWidget()->workspace()->windowList().at(i);
-#else
-
-        for (unsigned int i = 0;i < toMainWidget()->workspace()->windowList(QWorkspace::CreationOrder).count();i++)
-        {
-            QWidget *widget = toMainWidget()->workspace()->windowList(QWorkspace::CreationOrder).at(i);
-#endif
-
-            if (newWin != widget)
-                tmp2 = widget;
-            else
-                tmp = newWin;
-            if (tmp2 && tmp)
-                break;
-        }
-        if (tmp2 && tmp)
-        {
-            tmp2->setFocus();
-            tmp->setFocus();
-        }
-#endif
-
     }
     return newWin;
 }

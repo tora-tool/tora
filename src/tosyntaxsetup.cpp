@@ -43,11 +43,7 @@
 
 #include <stdio.h>
 
-#ifdef TO_KDE
-#  include <kfontdialog.h>
-#else
-#  include <qfontdialog.h>
-#endif
+#include <qfontdialog.h>
 
 #include <qapplication.h>
 #include <qcheckbox.h>
@@ -241,14 +237,8 @@ void toSyntaxSetup::checkFixedWidth(const QFont &fnt)
 
 void toSyntaxSetup::selectFont(void)
 {
-#ifdef TO_KDE
-    QFont font = CodeExample->font();
-    bool ok = KFontDialog::getFont(font, false, this);
-#else
-
     bool ok = true;
     QFont font = QFontDialog::getFont (&ok, CodeExample->font(), this);
-#endif
 
     if (ok)
     {
@@ -260,14 +250,8 @@ void toSyntaxSetup::selectFont(void)
 
 void toSyntaxSetup::selectText(void)
 {
-#ifdef TO_KDE
-    QFont font = TextExample->font();
-    bool ok = KFontDialog::getFont(font, false, this);
-#else
-
     bool ok = true;
     QFont font = QFontDialog::getFont (&ok, TextExample->font(), this);
-#endif
 
     if (ok)
         TextExample->setFont(font);
@@ -275,14 +259,8 @@ void toSyntaxSetup::selectText(void)
 
 void toSyntaxSetup::selectResultFont(void)
 {
-#ifdef TO_KDE
-    QFont font = toStringToFont(List);
-    bool ok = KFontDialog::getFont(font, false, this);
-#else
-
     bool ok = true;
     QFont font = QFontDialog::getFont (&ok, toStringToFont(List), this);
-#endif
 
     if (ok)
     {

@@ -65,11 +65,7 @@
 
 static toProjectTemplate ProjectTemplate;
 
-#ifdef TO_KDE
-#define PROJECT_EXTENSIONS "*.sql *.pkg *.pkb|SQL files\n*.tpr|Project files\n*.txt|Text files\n*|All files"
-#else
 #define PROJECT_EXTENSIONS "SQL (*.sql *.pkg *.pkb),Project files (*.tpr) ,Text (*.txt), All (*)"
-#endif
 
 bool toProjectTemplateItem::project(void)
 {
@@ -435,7 +431,7 @@ toProject::toProject(toProjectTemplateItem *top, QWidget *parent)
                     tr("Move down in project"),
                     this, SLOT(moveDown()),
                     toolbar);
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
     Project = new toListView(this);
     Project->addColumn(tr("File"));
     Project->addColumn(tr("Size"));

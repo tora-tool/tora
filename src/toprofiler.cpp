@@ -475,30 +475,19 @@ toProfiler::toProfiler(QWidget *parent, toConnection &connection)
 
     toolbar->addSeparator();
 
-    new QLabel(tr("Repeat run") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
+    new QLabel(tr("Repeat run") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
 
-    Repeat = new QSpinBox(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    Repeat = new QSpinBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
     Repeat->setValue(5);
     Repeat->setMaxValue(1000);
 
     toolbar->addSeparator();
 
     new QLabel(tr("Comment") + " ", toolbar);
-    Comment = new QLineEdit(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    Comment = new QLineEdit(toolbar, TO_TOOLBAR_WIDGET_NAME);
     Comment->setText(tr("Unknown"));
 
     toolbar->addSeparator();
-
-#if 0
-
-    Background = new QToolButton(toolbar);
-    Background->setToggleButton(true);
-    Background->setIconSet(QIconSet(QPixmap(const_cast<const char**>(background_xpm))));
-    QToolTip::add
-        (Background, tr("Run profiling in background"));
-
-    toolbar->addSeparator();
-#endif
 
     new QToolButton(QPixmap(const_cast<const char**>(execute_xpm)),
                     tr("Execute current profiling"),
@@ -506,9 +495,9 @@ toProfiler::toProfiler(QWidget *parent, toConnection &connection)
                     this, SLOT(execute()),
                     toolbar);
 
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
 
-    new toChangeConnection(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    new toChangeConnection(toolbar, TO_TOOLBAR_WIDGET_NAME);
 
     Tabs = new QTabWidget(this);
     Script = new toWorksheet(Tabs, NULL, connection);

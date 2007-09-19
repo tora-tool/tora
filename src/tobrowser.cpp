@@ -69,10 +69,6 @@
 #  include "tomysqluser.h"
 #endif
 
-#ifdef TO_KDE
-#  include <kmenubar.h>
-#endif
-
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
@@ -121,18 +117,11 @@
 #include "icons/new.xpm"
 #endif
 
-// shutup compiler
-#ifdef TO_DEBUGOUT
-#  undef TO_DEBUGOUT
-#endif
-#define TO_DEBUGOUT(x) fprintf(stderr,(const char *)x);
-
 #define CONF_FILTER_IGNORE_CASE "FilterIgnoreCase"
 #define CONF_FILTER_INVERT   "FilterInvert"
 #define CONF_FILTER_TYPE   "FilterType"
 #define CONF_FILTER_TABLESPACE_TYPE   "FilterTablespaceType"
 #define CONF_FILTER_TEXT   "FilterText"
-
 
 const char **toBrowserTool::pictureXPM(void)
 {
@@ -1144,7 +1133,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
                     tr("Remove any object filter"),
                     this, SLOT(clearFilter(void)),
                     toolbar);
-    Schema = new toResultCombo(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    Schema = new toResultCombo(toolbar, TO_TOOLBAR_WIDGET_NAME);
     connect(Schema, SIGNAL(activated(int)),
             this, SLOT(changeSchema(int)));
     Schema->setSQL(toSQL::sql(toSQL::TOSQL_USERLIST));
@@ -1154,8 +1143,8 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
         Schema->setSelected(connection.user().upper());
     else
         Schema->setSelected(connection.user());
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
-    new toChangeConnection(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
+    new toChangeConnection(toolbar, TO_TOOLBAR_WIDGET_NAME);
 
     TopTab = new toTabWidget(this);
     QSplitter *splitter = new QSplitter(Horizontal, TopTab, TAB_TABLES);
@@ -1207,7 +1196,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
                        toolbar);
 #endif
 
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
 
     toResultView *resultView = new toResultLong(true, false, toQuery::Background, box);
     resultView->setReadAll(true);
@@ -1357,7 +1346,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
                        tr("Drop index"),
                        this, SLOT(dropIndex()),
                        toolbar);
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
 
     resultView = new toResultLong(true, false, toQuery::Background, box);
     resultView->setReadAll(true);
@@ -1572,7 +1561,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
                        this, SLOT(testDBLink()),
                        toolbar);
     toolbar->addSeparator();
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
 
     resultView = new toResultLong(true, false, toQuery::Background, box);
     resultView->setReadAll(true);
@@ -1620,7 +1609,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
                        tr("Drop user"),
                        this, SLOT(dropUser()),
                        toolbar);
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
     resultView = new toResultLong(true, false, toQuery::Background, box);
 #else
 

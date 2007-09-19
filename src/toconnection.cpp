@@ -58,13 +58,6 @@
 #undef QT_TRANSLATE_NOOP
 #define QT_TRANSLATE_NOOP(x,y) QTRANS(x,y)
 
-// also defined in utils.h
-#ifdef TO_DEBUGOUT
-#  undef TO_DEBUGOUT
-#endif
-
-#define TO_DEBUGOUT(x) fprintf(stderr,(const char *)x);
-
 // Connection provider implementation
 
 std::map<QCString, toConnectionProvider *> *toConnectionProvider::Providers;

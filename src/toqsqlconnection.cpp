@@ -1700,8 +1700,6 @@ class qSqlConnection : public toConnection::connectionImpl
     virtual std::list<QString> providedOptions(const QCString &provider)
     {
         std::list<QString> ret;
-#if QT_VERSION >= 0x030200
-
         if (provider == "MySQL")
         {
             ret.insert(ret.end(), "*SSL");
@@ -1710,7 +1708,6 @@ class qSqlConnection : public toConnection::connectionImpl
             ret.insert(ret.end(), "Ignore Space");
             ret.insert(ret.end(), "No Schema");
         }
-#endif
         return ret;
     }
     virtual std::list<QString> providedDatabases(const QCString &, const QString &, const QString &, const QString &)
@@ -1848,7 +1845,6 @@ toQSqlProvider::qSqlSub *toQSqlProvider::createConnection(toConnection &conn)
         db->setPort(host.mid(pos + 1).toInt());
     }
 
-#if QT_VERSION >= 0x030200
     QString opt;
 
     std::set
@@ -1864,7 +1860,6 @@ toQSqlProvider::qSqlSub *toQSqlProvider::createConnection(toConnection &conn)
 
     if (!opt.isEmpty())
         db->setConnectOptions(opt.mid(1)); // Strip first ; character
-#endif
 
     db->open(conn.user(), conn.password());
     if (!db->isOpen())

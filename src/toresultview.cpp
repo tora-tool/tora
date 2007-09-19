@@ -50,13 +50,6 @@
 #include "tosql.h"
 #include "totool.h"
 
-#ifdef TO_KDE
-#include <kfiledialog.h>
-#endif
-#ifdef TO_HAS_KPRINT
-#include <kprinter.h>
-#endif
-
 #include <qapplication.h>
 #include <qclipboard.h>
 #include <qcombobox.h>
@@ -278,17 +271,9 @@ void toResultViewItem::setText (int col, const toQValue &text)
 }
 
 toResultViewCheck::toResultViewCheck(QListView *parent, QListViewItem *after, const QString &text, QCheckListItem::Type type)
-#if QT_VERSION >= 0x030100
         :
         QCheckListItem(parent, after, QString::null, type)
 {
-#else
-        :
-        QCheckListItem(parent, QString::null, type)
-{
-    moveItem(after);
-#endif
-
     ColumnData = NULL;
     ColumnCount = 0;
     if (!text.isNull())
@@ -296,17 +281,9 @@ toResultViewCheck::toResultViewCheck(QListView *parent, QListViewItem *after, co
 }
 
 toResultViewCheck::toResultViewCheck(QListViewItem *parent, QListViewItem *after, const QString &text, QCheckListItem::Type type)
-#if QT_VERSION >= 0x030100
         :
         QCheckListItem(parent, after, QString::null, type)
 {
-#else
-        :
-        QCheckListItem(parent, QString::null, type)
-{
-    moveItem(after);
-#endif
-
     ColumnData = NULL;
     ColumnCount = 0;
     if (!text.isNull())
@@ -424,13 +401,7 @@ int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const QListView *top,
         t = txt;
     int wx = top->itemMargin() * 2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
     if (column == 0)
-#if QT_VERSION >= 0x030100
-
         wx += top->style().pixelMetric(QStyle::PM_CheckListButtonSize) + 4 + top->itemMargin();
-#else
-
-        wx += 20;
-#endif
 
     return std::min(TextWidth(fm, t), MaxColDisp) + wx;
 }
@@ -448,13 +419,7 @@ int toResultViewCheck::realWidth(const QFontMetrics &fm, const QListView *top, i
     QRect bounds = fm.boundingRect(t);
     int wx = top->itemMargin() * 2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
     if (column == 0)
-#if QT_VERSION >= 0x030100
-
         wx += top->style().pixelMetric(QStyle::PM_CheckListButtonSize) + 4 + top->itemMargin();
-#else
-
-        wx += 20;
-#endif
 
     return std::min(bounds.width(), MaxColDisp) + wx;
 }
@@ -805,14 +770,9 @@ void toListView::editPrint(void)
     printer.setFromTo(1, page - 1);
     if (printer.setup())
     {
-#ifdef TO_KDE
-        QValueList<int> pages = printer.pageList();
-#else
-
         QValueList<int> pages;
         for (int i = printer.fromPage();i <= printer.toPage() || (printer.toPage() == 0 && i < page);i++)
             pages += i;
-#endif
 
         for (QValueList<int>::iterator pageit = pages.begin();pageit != pages.end();pageit++)
         {

@@ -46,10 +46,6 @@
 #include "tosqlparse.h"
 #include "totool.h"
 
-#ifdef TO_KDE
-#include <kmenubar.h>
-#endif
-
 #include <qcheckbox.h>
 #include <qmenubar.h>
 #include <qspinbox.h>
@@ -123,9 +119,6 @@ void toEditExtensions::autoComplete(){
   toHighlightedText *cur=dynamic_cast<toHighlightedText *>(Current);
   if(cur)
     cur->autoCompleteFromAPIs();
-  else{
-    TO_DEBUGOUT("cur null");
-  }
 }
 
 void toEditExtensions::lostFocus(toEditWidget *widget)

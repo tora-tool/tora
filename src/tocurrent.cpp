@@ -50,10 +50,6 @@
 #include "tosql.h"
 #include "totool.h"
 
-#ifdef TO_KDE
-#  include <kmenubar.h>
-#endif
-
 #include <qlabel.h>
 #include <qmenubar.h>
 #include <qpopupmenu.h>
@@ -128,8 +124,8 @@ toCurrent::toCurrent(QWidget *main, toConnection &connection)
                     tr("Update"),
                     this, SLOT(refresh(void)),
                     toolbar);
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
-    new toChangeConnection(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
+    new toChangeConnection(toolbar, TO_TOOLBAR_WIDGET_NAME);
 
     Tabs = new QTabWidget(this);
 

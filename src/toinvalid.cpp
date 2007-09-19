@@ -50,11 +50,6 @@
 #include "tosql.h"
 #include "totool.h"
 
-
-#ifdef TO_KDE
-#  include <kmenubar.h>
-#endif
-
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qmenubar.h>
@@ -130,8 +125,8 @@ toInvalid::toInvalid(QWidget *main, toConnection &connection)
                     this, SLOT(recompileSelected()),
                     toolbar);
 
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
-    new toChangeConnection(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
+    new toChangeConnection(toolbar, TO_TOOLBAR_WIDGET_NAME);
 
     QSplitter *splitter = new QSplitter(Horizontal, this);
 
@@ -145,16 +140,6 @@ toInvalid::toInvalid(QWidget *main, toConnection &connection)
     Source->setSQL(SQLListSource);
 
     connect(Source, SIGNAL(executed()), this, SLOT(refresh()));
-
-#if 0
-
-    {
-        QValueList<int> sizes = splitter->sizes();
-        sizes[0] = 300;
-        splitter->setSizes(sizes);
-        splitter->setResizeMode(Objects, QSplitter::KeepSize);
-    }
-#endif
 
     ToolMenu = NULL;
     connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),

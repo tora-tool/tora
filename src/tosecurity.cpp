@@ -48,10 +48,6 @@
 #include "tosql.h"
 #include "totool.h"
 
-#ifdef TO_KDE
-#  include <kmenubar.h>
-#endif
-
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qlabel.h>
@@ -1548,8 +1544,8 @@ toSecurity::toSecurity(QWidget *main, toConnection &connection)
                     tr("Display SQL needed to make current changes"),
                     this, SLOT(displaySQL(void)),
                     toolbar);
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
-    new toChangeConnection(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
+    new toChangeConnection(toolbar, TO_TOOLBAR_WIDGET_NAME);
 
     QSplitter *splitter = new QSplitter(Horizontal, this);
     UserList = new toListView(splitter);

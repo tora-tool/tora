@@ -47,63 +47,10 @@
 #include <qmainwindow.h>
 #include <qtoolbutton.h>
 
-#ifdef TO_KDE
-#include <kapp.h>
-#if KDE_VERSION < 220
-#define TOPrinter QPrinter
-#else
-#define TOPrinter KPrinter
-#define TO_HAS_KPRINT
-#endif
-#define TOFileDialog KFileDialog
-#else
 #define TOPrinter QPrinter
 #define TOFileDialog QFileDialog
-#endif
 #define TOMessageBox QMessageBox
 #define TODock QWidget
-
-#ifdef TO_KDE
-#  if KDE_VERSION >= 0x30400
-#    define TO_KDE_KACCELMANAGER
-#  endif
-#endif
-
-#undef TO_DEBUG
-#ifdef TO_DEBUG
-#include <stdio.h>
-static FILE* toraLog=NULL;
-#define TO_DEBUGOUT(x) if(!toraLog) toraLog=fopen("C:\\Temp\\tora.log","a"); fprintf(toraLog,"%s\n",(const char *)x);fflush(toraLog);
-#else
-#define TO_DEBUGOUT(x)
-#endif
-
-#if 0
-/**
- * The class to use for a printer object.
- */
-class TOPrinter : public QPrinter
-    {}
-;
-/**
- * The class to use for a dock widget.
- */
-class TODock : public QWidget
-    {}
-;
-/**
- * The class to use for a file dialog.
- */
-class TOFileDialog : public QFileDialog
-    {}
-;
-/**
- * The class to use for a messagebox.
- */
-class TOMessageBox : public QMessageBox
-    {}
-;
-#endif
 
 class QComboBox;
 class QListView;

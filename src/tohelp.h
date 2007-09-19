@@ -181,15 +181,7 @@ class toHelp : public QDialog
      * Manuals to include in search.
      */
     QComboBox *Manuals;
-#ifdef TO_KDE
-    /**
-     * Displays the actual help window.
-     */
-    toHelpBrowser *Help;
-#else
-
     QTextBrowser *Help;
-#endif
     /**
      * Display progress of current search.
      */

@@ -48,10 +48,6 @@
 #include "tosql.h"
 #include "totool.h"
 
-#ifdef TO_KDE
-#  include <kmenubar.h>
-#endif
-
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
@@ -143,7 +139,7 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
                     this, SLOT(refresh(void)),
                     toolbar);
     toolbar->addSeparator();
-    new QLabel(tr("Schema") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
+    new QLabel(tr("Schema") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
     Schema = new toResultCombo(toolbar);
     Schema->additionalItem(tr("Any"));
     Schema->setSelected(connection.user().upper());
@@ -152,19 +148,19 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
     connect(Schema, SIGNAL(activated(const QString &)), this, SLOT(changeSchema(const QString &)));
 
     toolbar->addSeparator();
-    new QLabel(tr("Refresh") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
-    connect(Refresh = toRefreshCreate(toolbar, TO_KDE_TOOLBAR_WIDGET),
+    new QLabel(tr("Refresh") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+    connect(Refresh = toRefreshCreate(toolbar, TO_TOOLBAR_WIDGET_NAME),
             SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
 
     toolbar->addSeparator();
-    new QLabel(tr("Type") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
-    Type = new QComboBox(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    new QLabel(tr("Type") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+    Type = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
     Type->insertItem(tr("SGA"));
     Type->insertItem(tr("Long operations"));
 
     toolbar->addSeparator();
-    new QLabel(tr("Selection") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
-    Limit = new QComboBox(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    new QLabel(tr("Selection") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+    Limit = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
     Limit->insertItem(tr("All"));
     Limit->insertItem(tr("Unfinished"));
     Limit->insertItem(tr("1 execution, 1 parse"));
@@ -179,8 +175,8 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
     Limit->insertItem(tr("Top rows/exec"));
     Limit->insertItem(tr("Top buffers/row"));
 
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
-    new toChangeConnection(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
+    new toChangeConnection(toolbar, TO_TOOLBAR_WIDGET_NAME);
 
     QSplitter *splitter = new QSplitter(Vertical, this);
 

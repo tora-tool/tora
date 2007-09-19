@@ -62,7 +62,7 @@ toVisualize::toVisualize(toListView *source, QWidget *parent, const char *name)
 {
     QToolBar *toolbar = toAllocBar(this, tr("Data visualization"));
 
-    Type = new QComboBox(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    Type = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
     Type->insertItem(tr("Bar chart"), 0);
     Type->insertItem(tr("Line chart"), 1);
     Type->insertItem(tr("Pie chart"), 2);
@@ -93,7 +93,7 @@ toVisualize::toVisualize(toListView *source, QWidget *parent, const char *name)
     QToolTip::add
         (new QLabel(" " + tr("Title columns") + " ", toolbar),
                 tr("Number of columns to use as title"));
-    Title = new QComboBox(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    Title = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
     Title->insertItem(QString::fromLatin1("1"));
     Title->insertItem(QString::fromLatin1("2"));
     Title->insertItem(QString::fromLatin1("3"));
@@ -109,7 +109,7 @@ toVisualize::toVisualize(toListView *source, QWidget *parent, const char *name)
                     this, SLOT(display(void)),
                     toolbar);
 
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
 
     Result = new QWidget(this);
     Result->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));

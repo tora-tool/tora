@@ -60,11 +60,6 @@
 #include "toworksheetsetupui.h"
 #include "toworksheetstatistic.h"
 
-#ifdef TO_KDE
-#include <kfiledialog.h>
-#include <kmenubar.h>
-#endif
-
 #include <qaccel.h>
 #include <qcheckbox.h>
 #include <qcheckbox.h>
@@ -112,10 +107,6 @@
 #include "icons/toworksheet.xpm"
 #include "icons/up.xpm"
 #include "icons/down.xpm"
-
-#ifdef TO_KDE_KACCELMANAGER
-#  include <kaccelmanager.h>
-#endif
 
 #define TO_ID_STATISTICS  (toMain::TO_TOOL_MENU_ID+ 0)
 #define TO_ID_STOP   (toMain::TO_TOOL_MENU_ID+ 1)
@@ -405,9 +396,6 @@ void toWorksheet::setup(bool autoLoad)
     if (Light)
     {
         Editor = new toWorksheetText(this, this);
-#ifdef TO_KDE_KACCELMANAGER
-        KAcceleratorManager::setNoAccel( Editor );
-#endif
         Current = Result = new toResultLong(this);
         Result->hide();
         connect(Result, SIGNAL(done(void)), this, SLOT(queryDone(void)));
@@ -434,7 +422,7 @@ void toWorksheet::setup(bool autoLoad)
                                      Result, SLOT(stop(void)),
                                      toolbar);
         StopButton->setEnabled(false);
-        toolbar->setStretchableWidget(Started = new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+        toolbar->setStretchableWidget(Started = new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
         Started->setAlignment(AlignRight | AlignVCenter | ExpandTabs);
     }
     else
@@ -447,9 +435,6 @@ void toWorksheet::setup(bool autoLoad)
 	list.append(75);
 	splitter->setSizes(list);
 
-#ifdef TO_KDE_KACCELMANAGER
-        KAcceleratorManager::setNoAccel( Editor );
-#endif
         ResultTab = new toTabWidget(splitter);
         QVBox *box = new QVBox(ResultTab);
         ResultTab->addTab(box, tr("&Result"));
@@ -566,8 +551,8 @@ void toWorksheet::setup(bool autoLoad)
 
         QLabel *label =
 #endif
-            new QLabel(tr("Refresh") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
-        Refresh = toRefreshCreate(toolbar, TO_KDE_TOOLBAR_WIDGET);
+            new QLabel(tr("Refresh") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+        Refresh = toRefreshCreate(toolbar, TO_TOOLBAR_WIDGET_NAME);
 #ifdef TO_NO_ORACLE
 
         label->hide();
@@ -618,7 +603,7 @@ void toWorksheet::setup(bool autoLoad)
                         this, SLOT(saveLast(void)),
                         toolbar);
 
-        toolbar->setStretchableWidget(Started = new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+        toolbar->setStretchableWidget(Started = new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
         Started->setAlignment(AlignRight | AlignVCenter | ExpandTabs);
 
         Schema = new toResultCombo(toolbar);
@@ -637,7 +622,7 @@ void toWorksheet::setup(bool autoLoad)
         catch (...)
         {}
 
-        new toChangeConnection(toolbar, TO_KDE_TOOLBAR_WIDGET);
+        new toChangeConnection(toolbar, TO_TOOLBAR_WIDGET_NAME);
 
         connect(ResultTab, SIGNAL(currentChanged(QWidget *)),
                 this, SLOT(changeResult(QWidget *)));

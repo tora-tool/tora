@@ -54,10 +54,6 @@
 #include "totool.h"
 #include "towaitevents.h"
 
-#ifdef TO_KDE
-#  include <kmenubar.h>
-#endif
-
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qmenubar.h>
@@ -236,7 +232,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
                     this, SLOT(refresh(void)),
                     toolbar);
     toolbar->addSeparator();
-    Select = new toResultCombo(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    Select = new toResultCombo(toolbar, TO_TOOLBAR_WIDGET_NAME);
     Select->setSelected(tr("Only active users"));
     Select->additionalItem(tr("Only active users"));
     Select->additionalItem(tr("All"));
@@ -264,8 +260,8 @@ toSession::toSession(QWidget *main, toConnection &connection)
                     this, SLOT(disconnectSession(void)),
                     toolbar);
     toolbar->addSeparator();
-    new QLabel(tr("Refresh") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
-    connect(Refresh = toRefreshCreate(toolbar, TO_KDE_TOOLBAR_WIDGET), SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
+    new QLabel(tr("Refresh") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+    connect(Refresh = toRefreshCreate(toolbar, TO_TOOLBAR_WIDGET_NAME), SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
     toolbar->addSeparator();
 
     QToolButton *btn = new QToolButton(toolbar);
@@ -285,9 +281,9 @@ toSession::toSession(QWidget *main, toConnection &connection)
                     this, SLOT(selectNone(void)),
                     toolbar);
 
-    toolbar->setStretchableWidget(Total = new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+    toolbar->setStretchableWidget(Total = new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
     Total->setAlignment(AlignRight | AlignVCenter | ExpandTabs);
-    new toChangeConnection(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    new toChangeConnection(toolbar, TO_TOOLBAR_WIDGET_NAME);
 
     QSplitter *splitter = new QSplitter(Vertical, this);
     Sessions = new toSessionList(splitter);

@@ -208,14 +208,14 @@ toMemoEditor::toMemoEditor(QWidget *parent, const QString &str, int row, int col
                         this, SLOT(lastColumn()), Toolbar);
     }
     Toolbar->addSeparator();
-    Null = new QCheckBox(tr("NULL"), Toolbar, TO_KDE_TOOLBAR_WIDGET);
+    Null = new QCheckBox(tr("NULL"), Toolbar, TO_TOOLBAR_WIDGET_NAME);
     connect(Null, SIGNAL(toggled(bool)), this, SLOT(null(bool)));
     Null->setEnabled(!Editor->isReadOnly());
     Null->setFocusPolicy(StrongFocus);
 
     setText(str);
 
-    Label = new QLabel(Toolbar, TO_KDE_TOOLBAR_WIDGET);
+    Label = new QLabel(Toolbar, TO_TOOLBAR_WIDGET_NAME);
     Label->setAlignment(AlignRight | AlignVCenter);
     Toolbar->setStretchableWidget(Label);
 

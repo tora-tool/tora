@@ -55,10 +55,6 @@
 #include "totuningsettingui.h"
 #include "towaitevents.h"
 
-#ifdef TO_KDE
-#  include <kmenubar.h>
-#endif
-
 #include <time.h>
 #include <stdio.h>
 
@@ -69,11 +65,7 @@
 #include <qlayout.h>
 #include <qmenubar.h>
 #include <qmessagebox.h>
-#if QT_VERSION > 0x030000
-#  include <qobjectlist.h>
-#else
-#  include <qobjcoll.h>
-#endif
+#include <qobjectlist.h>
 #include <qpainter.h>
 #include <qscrollview.h>
 #include <qsplitter.h>
@@ -1351,8 +1343,8 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
                     this, SLOT(refresh(void)),
                     toolbar);
     toolbar->addSeparator();
-    new QLabel(tr("Refresh") + " ", toolbar, TO_KDE_TOOLBAR_WIDGET);
-    Refresh = toRefreshCreate(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    new QLabel(tr("Refresh") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+    Refresh = toRefreshCreate(toolbar, TO_TOOLBAR_WIDGET_NAME);
     connect(Refresh, SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
     toolbar->addSeparator();
     TabButton = new toPopupButton(QPixmap(const_cast<const char**>(compile_xpm)),
@@ -1364,8 +1356,8 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     connect(TabMenu, SIGNAL(aboutToShow()), this, SLOT(showTabMenu()));
     connect(TabMenu, SIGNAL(activated(int)), this, SLOT(enableTabMenu(int)));
 
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
-    new toChangeConnection(toolbar, TO_KDE_TOOLBAR_WIDGET);
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
+    new toChangeConnection(toolbar, TO_TOOLBAR_WIDGET_NAME);
 
     Tabs = new QTabWidget(this);
 

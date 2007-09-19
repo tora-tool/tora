@@ -230,7 +230,7 @@ toScript::toScript(QWidget *parent, toConnection &connection)
                     tr("Perform defined extraction"),
                     this, SLOT(execute(void)),
                     toolbar);
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
 
     ScriptUI = new toScriptUI(this);
 

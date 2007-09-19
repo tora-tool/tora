@@ -45,10 +45,6 @@
 #include "tosql.h"
 #include "totool.h"
 
-#ifdef TO_KDE
-#include <kfiledialog.h>
-#endif
-
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qfiledialog.h>
@@ -78,7 +74,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, WFlags fl)
     SavePassword->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_SAVE_PWD, "").isEmpty());
     DesktopAware->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_DESKTOP_AWARE, "Yes").isEmpty());
     ToolsLeft->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_TOOLS_LEFT, "").isEmpty());
-    toRefreshCreate(OptionGroup, TO_KDE_TOOLBAR_WIDGET, QString::null, Refresh);
+    toRefreshCreate(OptionGroup, TO_TOOLBAR_WIDGET_NAME, QString::null, Refresh);
     DefaultSession->setText(toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_SESSION, DEFAULT_SESSION));
     Status->setValue(toConfigurationSingle::Instance().globalConfig(CONF_STATUS_MESSAGE,
                                           DEFAULT_STATUS_MESSAGE).toInt());
@@ -142,22 +138,11 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, WFlags fl)
     StyleLabel->hide();
 #endif
 
-#ifdef TO_KDE
-
-    DockToolbar->hide();
-    DesktopAware->hide();
-#endif
 #ifdef WIN32
-
     DesktopAware->hide();
 #endif
-#if QT_VERSION < 0x030000
-
-    DockToolbar->setChecked(toConfigurationSingle::Instance().globalConfig(CONF_DOCK_TOOLBAR, "Yes"));
-#else
 
     DockToolbar->hide();
-#endif
 
     if (toMonolithic())
     {
@@ -233,11 +218,6 @@ void toGlobalSetting::saveSetting(void)
                             QString::number(DefaultFormat->currentItem()));
     toConfigurationSingle::Instance().globalSetConfig(CONF_TOAD_BINDINGS, ToadBindings->isChecked() ? "Yes" : "");
     toConfigurationSingle::Instance().globalSetConfig(CONF_DISPLAY_GRIDLINES, DisplayGrid->isChecked() ? "Yes" : "");
-#if QT_VERSION < 0x030000
-
-    toConfigurationSingle::Instance().globalSetConfig(CONF_DOCK_TOOLBAR, DockToolbar->isChecked() ? "Yes" : "");
-#endif
-
     toConfigurationSingle::Instance().globalSetConfig(CONF_CHANGE_CONNECTION, ChangeConnection->isChecked() ? "Yes" : "");
     toConfigurationSingle::Instance().globalSetConfig(CONF_DB_TITLE, IncludeDB->isChecked() ? "Yes" : "");
     toConfigurationSingle::Instance().globalSetConfig(CONF_SIZE_UNIT, SizeUnit->currentText());

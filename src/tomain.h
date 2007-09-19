@@ -42,11 +42,7 @@
 #include "tobackground.h"
 #include "tobackuptool.h"
 
-#ifdef TO_KDE
-#include "tomainwindow.kde.h"
-#else
 #include "tomainwindow.h"
-#endif
 
 #include <list>
 #include <map>
@@ -54,9 +50,7 @@
 
 #include <qtimer.h>
 
-#if QT_VERSION >= 0x030000
 class QUrlOperator;
-#endif
 
 #define TOMessageBox QMessageBox
 

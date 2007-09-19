@@ -156,7 +156,7 @@ toResultParam::toResultParam(QWidget *parent, const char *name)
                         tr("Drop current changes"),
                         this, SLOT(dropChanges()), toolbar);
     }
-    toolbar->setStretchableWidget(new QLabel(toolbar, TO_KDE_TOOLBAR_WIDGET));
+    toolbar->setStretchableWidget(new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME));
 
     Params = new toResultLong(false, false, toQuery::Background, this);
     Params->setSQL(SQLParams);

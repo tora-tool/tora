@@ -58,11 +58,6 @@
 
 #include <memory>
 
-#ifdef TO_KDE
-#include <kcmdlineargs.h>
-#include <kapplication.h>
-#endif
-
 #include <qapplication.h>
 #include <qmessagebox.h>
 #include <qtextcodec.h>
@@ -95,11 +90,6 @@ int main(int argc, char **argv)
     toSetEnv("QT_XFT", toConfigurationSingle::Instance().globalConfig(CONF_QT_XFT, DEFAULT_QT_XFT).latin1());
 #endif
 
-#ifdef TO_KDE
-
-    KCmdLineArgs::init(argc, argv, "tora", "tora", "Toolkit for Oracle", TOVERSION);
-    new KApplication;
-#else
 #  ifndef WIN32
 
     if (toConfigurationSingle::Instance().globalConfig(CONF_DESKTOP_AWARE, "Yes").isEmpty())
@@ -107,7 +97,6 @@ int main(int argc, char **argv)
 #  endif
 
     new QApplication(argc, argv);
-#endif
 
     try
     {

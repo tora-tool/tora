@@ -134,17 +134,11 @@ QString toListViewFormatterHTML::getFormattedString(toListView& tListView)
                         line += QString::fromLatin1("<TD%1>").arg(bgcolor);
                         if (i == 0)
                             line += indent;
-#if QT_VERSION >= 0x030100
 
                         text.replace('&', "&amp;");
                         text.replace('<', "&lt;");
                         text.replace('>', "&gt");
-#else
 
-                        text.replace(QRegExp("&"), "&amp;");
-                        text.replace(QRegExp("<"), "&lt;");
-                        text.replace(QRegExp(">"), "&gt");
-#endif
                         line += QString::fromLatin1("<PRE>");
                         line += text;
                         line += QString::fromLatin1("</PRE>");
