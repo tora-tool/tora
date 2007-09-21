@@ -303,6 +303,7 @@ static toSQL SQLLines("toOutput:Poll",
                       "BEGIN\n"
                       "    SYS.DBMS_OUTPUT.GET_LINE(:lines<char[1000],out>,\n"
                       "                             :stat<int,out>);\n"
+                      "    :lines := :lines || chr(10);\n"
                       "END;",
                       "Get lines from SQL Output, must use same bindings");
 
