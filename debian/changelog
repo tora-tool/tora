@@ -1,8 +1,28 @@
+tora (1.3.22-1) unstable; urgency=low
+
+  * New upstream version.
+  * Added texinfo to Build-Depends, closes: #443296
+  * Build process now uses dpatch.
+
+ -- Michael Meskes <meskes@debian.org>  Fri, 21 Sep 2007 13:48:45 +0200
+
+tora (1.3.21pre22-3) unstable; urgency=low
+
+  * Do not remove files from the orig tarball in our clean target, closes: #442749
+  * Resynced with svn to prepare for upcoming 1.3.22 release.
+
+ -- Michael Meskes <meskes@debian.org>  Tue, 18 Sep 2007 11:15:46 +0200
+
+tora (1.3.21pre22-2) unstable; urgency=low
+
+  * Fixed incorrect display of UTF-8 characters, closes: #418524
+  
+ -- Michael Meskes <meskes@debian.org>  Fri, 08 Jun 2007 14:44:29 +0200
+
 tora (1.3.21pre22-1) unstable; urgency=low
 
   * Applied latest upstream pre1.3.22 patch.
   * Moved to qscintilla 1.7.
-  * Made tora work correctly with UTF8, closes: 418524
   
  -- Michael Meskes <meskes@debian.org>  Tue, 22 May 2007 15:35:55 +0200
 
@@ -74,7 +94,7 @@ tora (1.3.16-1) unstable; urgency=low
 tora (1.3.15-1) unstable; urgency=low
 
   * New upstream version 
-  * Changed QODBC to QODBC3, closes #285510
+  * Changed QODBC to QODBC3, closes: #285510
 
  -- Michael Meskes <meskes@debian.org>  Fri,  4 Mar 2005 11:26:34 +0100
  
