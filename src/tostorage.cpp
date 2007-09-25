@@ -585,9 +585,9 @@ static toSQL SQLDatafileInfo8("toStorage:DatafileInfo",
                               "       autoextensible,\n"
                               "       bytes/blocks*increment_by/1024,\n"
                               "       maxbytes/1024\n"
-                              "  FROM SELECT * sys.dba_data_files\n"
+                              "  FROM (SELECT * FROM sys.dba_data_files\n"
                               " WHERE tablespace_name = :nam<char[70]>"
-                              "   AND file_name = :fil<char[1500]>",
+                              "   AND file_name = :fil<char[1500]>)",
                               "",
                               "0800");
 
