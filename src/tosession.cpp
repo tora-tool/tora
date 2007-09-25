@@ -301,7 +301,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
     ResultTab->addTab(CurrentStatement, tr("Current Statement"));
 
     QString sql = toSQL::string(TOSQL_LONGOPS, connection);
-    sql += " AND b.sid = :sid<char[101]> AND b.serial# = :ser<char[101]>";
+    sql += " AND b.sid = :sid<char[101]> AND b.serial# = :ser<char[101]> order by b.start_time desc";
     LongOps = new toResultLong(true, false, toQuery::Background, ResultTab);
     LongOps->setSQL(sql);
     ResultTab->addTab(LongOps, tr("Long ops"));

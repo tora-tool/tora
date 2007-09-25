@@ -829,7 +829,7 @@ class oracleConnection : public toConnection::connectionImpl
             try
             {
                 otl_stream version(1,
-                                   "SELECT version FROM product_component_version where product like 'Oracle Database %'",
+                                   "SELECT version FROM product_component_version where product like 'Oracle%'",
                                    *(conn->Connection));
                 if (!version.eof())
                 {
