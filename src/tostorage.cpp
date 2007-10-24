@@ -571,11 +571,13 @@ static toSQL SQLDatafileInfo("toStorage:DatafileInfo",
                              "       maxbytes/1024\n"
                              "  FROM (SELECT bytes,autoextensible,blocks,increment_by,maxbytes,file_name,tablespace_name\n"
 			     "        FROM sys.dba_data_files\n"
+                             " WHERE tablespace_name = :nam<char[70]>"
+                             "   AND file_name = :fil<char[1500]>\n"
 			     "          UNION\n"
 			     "        SELECT bytes,autoextensible,blocks,increment_by,maxbytes,file_name,tablespace_name\n"
-			     "        FROM sys.dba_temp_files)\n"
+			     "        FROM sys.dba_temp_files\n"
                              " WHERE tablespace_name = :nam<char[70]>"
-                             "   AND file_name = :fil<char[1500]>",
+                             "   AND file_name = :fil<char[1500]>)",
                              "Get information about a datafile for the modify dialog, "
                              "must have same columns and bindings",
                              "0801");
