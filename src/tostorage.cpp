@@ -474,7 +474,8 @@ toStorageDialog::toStorageDialog(const QString &tablespace, QWidget *parent, boo
             Default = NULL;
             Drop = NULL;
             Datafile = new toStorageDatafile(dict != QString::fromLatin1("DICTIONARY") &&
-                                             temp != QString::fromLatin1("PERMANENT"), false, DialogTab);
+                                             temp != QString::fromLatin1("PERMANENT") &&
+                                             temp != QString::fromLatin1("UNDO"), false, DialogTab);
             DialogTab->addTab(Datafile, tr("Datafile"));
             connect(Datafile, SIGNAL(validContent(bool)), this, SLOT(validContent(bool)));
         }
