@@ -1,3 +1,28 @@
+tora (1.3.22-4) UNRELEASED; urgency=low
+
+  * Removed build dependency on g++, closes: #452976
+  * Also removed build dependency on libqt3-mt-dev because kdelibs4-dev
+    depends on it.
+  * Made menu file adhere new standard.
+  * Do not install sources for help files.
+
+ -- Michael Meskes <meskes@debian.org>  Mon, 26 Nov 2007 14:29:47 +0000
+
+tora (1.3.22-3) unstable; urgency=low
+
+  * Moved to team maintenance:
+    Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>.
+
+ -- Michael Meskes <meskes@debian.org>  Thu, 22 Nov 2007 11:12:43 +0100
+
+tora (1.3.22-2) unstable; urgency=low
+
+  * Fixed help system
+  * Moved translations to /usr/share, closes: #448950
+  * Remove deprecated debian.patch file.
+
+ -- Michael Meskes <meskes@debian.org>  Tue, 20 Nov 2007 13:05:47 +0100
+
 tora (1.3.22-1) unstable; urgency=low
 
   * New upstream version.
