@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
 Uploaders: Michael Meskes <meskes@debian.org>
 Build-Depends: debhelper (>> 4.0.0), libqt3-compat-headers, kdelibs4-dev, docbook-xml (>= 4.2), xsltproc, docbook-xsl, kdebase-bin, libqscintilla-dev, texinfo, dpatch
-Standards-Version: 3.7.2
+Standards-Version: 3.7.3
 
 Package: tora
 Architecture: any

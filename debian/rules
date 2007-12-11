@@ -5,9 +5,6 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-# This is the debhelper compatability version to use.
-export DH_COMPAT=4
-
 include /usr/share/dpatch/dpatch.make 
 
 DB2MAN=/usr/share/sgml/docbook/stylesheet/xsl/nwalsh/manpages/docbook.xsl
@@ -71,6 +68,7 @@ binary-arch: build install
 	dh_installman tora.1
 	dh_installinfo
 	dh_installchangelogs 
+	dh_desktop
 	dh_link
 	dh_strip
 	dh_compress

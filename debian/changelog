@@ -1,4 +1,13 @@
-tora (1.3.22-4) UNRELEASED; urgency=low
+tora (1.3.22-5) unstable; urgency=low
+
+  * Bumped standards version to 3.7.3.
+  * Bumped tora.dekstop to version 1.0, closes: #455588
+  * Added call to dh_desktop.
+  * Bumbed debhelper version to 5.
+
+ -- Michael Meskes <meskes@debian.org>  Tue, 11 Dec 2007 10:32:06 +0100
+
+tora (1.3.22-4) unstable; urgency=low
 
   * Removed build dependency on g++, closes: #452976
   * Also removed build dependency on libqt3-mt-dev because kdelibs4-dev
@@ -6,7 +15,7 @@ tora (1.3.22-4) UNRELEASED; urgency=low
   * Made menu file adhere new standard.
   * Do not install sources for help files.
 
- -- Michael Meskes <meskes@debian.org>  Mon, 26 Nov 2007 14:29:47 +0000
+ -- Michael Meskes <meskes@debian.org>  Thu, 06 Dec 2007 10:13:24 +0100
 
 tora (1.3.22-3) unstable; urgency=low
 
