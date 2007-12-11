@@ -36,9 +36,15 @@ clean: unpatch
 	rm -f build-stamp configure-stamp
 
 	# Add here commands to clean up after the build process.
-	-$(MAKE) distclean
+	[ ! -f Makefile ] || $(MAKE) distclean
 	rm -f *.qm tora.pro license/tolicenseui.h license/tolicenseui.cpp license/tolicense.moc license/tolicenseui.moc
 	rm -f tora.1
+ifneq "$(wildcard /usr/share/misc/config.sub)" ""
+	cp -f /usr/share/misc/config.sub config.sub
+endif
+ifneq "$(wildcard /usr/share/misc/config.guess)" ""
+	cp -f /usr/share/misc/config.guess config.guess
+endif
 
 	dh_clean
 

@@ -4,6 +4,8 @@ tora (1.3.22-5) unstable; urgency=low
   * Bumped tora.dekstop to version 1.0, closes: #455588
   * Added call to dh_desktop.
   * Bumbed debhelper version to 5.
+  * Build-depend on autotools-dev and cp up-to-date files to archive.
+  * Do not ignore errors in "make clean".
 
  -- Michael Meskes <meskes@debian.org>  Tue, 11 Dec 2007 10:32:06 +0100
 
