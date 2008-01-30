@@ -1,0 +1,167 @@
+<HTML>
+<HEAD>
+<TITLE>class toResultViewCheck</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toResultViewCheck</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"> An item to display in a toListView or toResultView. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="toresultview_h.html">toresultview.h</A>&gt;</code></TD></TR>
+<TR><TH>Inherits</TH><TD><A HREF="/usr/lib/qt3/doc/html/qchecklistitem.html">QCheckListItem</A> <small>(qt)</small> <small>[public ]</small></TD></TR>
+<TR><TH>Inherited by</TH><TD><A HREF="toResultViewMLCheck.html">toResultViewMLCheck</A></TD></TR>
+<TR><TH><A HREF="full-list-toResultViewCheck.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref6">toResultViewCheck</A></b> (<A HREF="/usr/lib/qt3/doc/html/qlistview.html">QListView</A> *parent,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &text,QCheckListItem::Type type=Controller) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref7">toResultViewCheck</A></b> (<A HREF="/usr/lib/qt3/doc/html/qlistviewitem.html">QListViewItem</A> *parent,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &text,QCheckListItem::Type type=Controller) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref8">toResultViewCheck</A></b> (<A HREF="/usr/lib/qt3/doc/html/qlistview.html">QListView</A> *parent,<A HREF="/usr/lib/qt3/doc/html/qlistviewitem.html">QListViewItem</A> *after,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &text,QCheckListItem::Type type=Controller) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref9">toResultViewCheck</A></b> (<A HREF="/usr/lib/qt3/doc/html/qlistviewitem.html">QListViewItem</A> *parent,<A HREF="/usr/lib/qt3/doc/html/qlistviewitem.html">QListViewItem</A> *after,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &text,QCheckListItem::Type type=Controller) 
+</LI>
+<LI>virtual  &nbsp;<b><A HREF="#ref10">~toResultViewCheck</A></b> () 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref11">setText</A></b> (int col,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &txt) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref12">setText</A></b> (int col,const <A HREF="toQValue.html">toQValue</A> &val) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref13">paintCell</A></b> (<A HREF="/usr/lib/qt3/doc/html/qpainter.html">QPainter</A> * p,const <A HREF="/usr/lib/qt3/doc/html/qcolorgroup.html">QColorGroup</A> & cg,int column,int width,int align) 
+</LI>
+<LI>virtual  <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<b><A HREF="#ref14">text</A></b> (int col)  const
+</LI>
+<LI>virtual  <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<b><A HREF="#ref15">key</A></b> (int col,bool asc)  const
+</LI>
+<LI>virtual  int &nbsp;<b><A HREF="#ref16">width</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qfontmetrics.html">QFontMetrics</A> &, const <A HREF="/usr/lib/qt3/doc/html/qlistview.html">QListView</A> *, int col)  const
+</LI>
+<LI>virtual  <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<b><A HREF="#ref17">allText</A></b> (int col)  const
+</LI>
+<LI>virtual  <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<b><A HREF="#ref18">tooltip</A></b> (int col)  const
+</LI>
+</ul><h4>Protected Methods</h4><ul><LI>virtual  int &nbsp;<b><A HREF="#ref4">realWidth</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qfontmetrics.html">QFontMetrics</A> &fm, const <A HREF="/usr/lib/qt3/doc/html/qlistview.html">QListView</A> *top, int column,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &txt)  const
+</LI>
+<LI><A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<b><A HREF="#ref5">firstText</A></b> (int col)  const
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> An item to display in a toListView or toResultView. They differ from normal
+ QListViewItems in that they can have a tooltip and actually contain more text
+ than is displayed in the cell of the listview.
+ </p>
+<A NAME="realWidth"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>realWidth</strong> (const <A HREF="/usr/lib/qt3/doc/html/qfontmetrics.html">QFontMetrics</A> &fm, const <A HREF="/usr/lib/qt3/doc/html/qlistview.html">QListView</A> *top, int column,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &txt)
+<br></td><td align="right"><h3><strong>realWidth</strong></h3></td></tr></table><p> <small>[protected const virtual]</small></p><A NAME="firstText"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<strong>firstText</strong> (int col)
+<br></td><td align="right"><h3><strong>firstText</strong></h3></td></tr></table><p> <small>[protected const]</small></p><A NAME="toResultViewCheck"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultViewCheck</strong> (<A HREF="/usr/lib/qt3/doc/html/qlistview.html">QListView</A> *parent,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &text,QCheckListItem::Type type=Controller)
+<br></td><td align="right"><h3><strong>toResultViewCheck</strong></h3></td></tr></table><p></p><p> Create a new item.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent list view.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>text</i></TD><TD align="left" valign="top">Text of first column.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>type</i></TD><TD align="left" valign="top">Type of check on this item.
+   </TD></TR>
+</TABLE></P>
+<A NAME="toResultViewCheck"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultViewCheck</strong> (<A HREF="/usr/lib/qt3/doc/html/qlistviewitem.html">QListViewItem</A> *parent,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &text,QCheckListItem::Type type=Controller)
+<br></td><td align="right"><h3><strong>toResultViewCheck</strong></h3></td></tr></table><p></p><p> Create a new item.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent item.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>text</i></TD><TD align="left" valign="top">Text of first column.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>type</i></TD><TD align="left" valign="top">Type of check on this item.
+   </TD></TR>
+</TABLE></P>
+<A NAME="toResultViewCheck"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultViewCheck</strong> (<A HREF="/usr/lib/qt3/doc/html/qlistview.html">QListView</A> *parent,<A HREF="/usr/lib/qt3/doc/html/qlistviewitem.html">QListViewItem</A> *after,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &text,QCheckListItem::Type type=Controller)
+<br></td><td align="right"><h3><strong>toResultViewCheck</strong></h3></td></tr></table><p></p><p> Create a new item.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent list view.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>after</i></TD><TD align="left" valign="top">After last item.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>text</i></TD><TD align="left" valign="top">Text of first column.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>type</i></TD><TD align="left" valign="top">Type of check on this item.
+   </TD></TR>
+</TABLE></P>
+<A NAME="toResultViewCheck"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultViewCheck</strong> (<A HREF="/usr/lib/qt3/doc/html/qlistviewitem.html">QListViewItem</A> *parent,<A HREF="/usr/lib/qt3/doc/html/qlistviewitem.html">QListViewItem</A> *after,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &text,QCheckListItem::Type type=Controller)
+<br></td><td align="right"><h3><strong>toResultViewCheck</strong></h3></td></tr></table><p></p><p> Create a new item.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent item.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>after</i></TD><TD align="left" valign="top">After last item.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>text</i></TD><TD align="left" valign="top">Text of first column.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>type</i></TD><TD align="left" valign="top">Type of check on this item.
+   </TD></TR>
+</TABLE></P>
+<A NAME="~toResultViewCheck"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toResultViewCheck</strong> ()
+<br></td><td align="right"><h3><strong>~toResultViewCheck</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
+   </p>
+<A NAME="setText"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setText</strong> (int col,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &txt)
+<br></td><td align="right"><h3><strong>setText</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
+   </p>
+<A NAME="setText"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setText</strong> (int col,const <A HREF="toQValue.html">toQValue</A> &val)
+<br></td><td align="right"><h3><strong>setText</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Set from database.
+   </p>
+<A NAME="paintCell"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintCell</strong> (<A HREF="/usr/lib/qt3/doc/html/qpainter.html">QPainter</A> * p,const <A HREF="/usr/lib/qt3/doc/html/qcolorgroup.html">QColorGroup</A> & cg,int column,int width,int align)
+<br></td><td align="right"><h3><strong>paintCell</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
+   </p>
+<p>Reimplemented from <A HREF="/usr/lib/qt3/doc/html/qchecklistitem.html#paintCell">QCheckListItem</A>.</p>
+<A NAME="text"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<strong>text</strong> (int col)
+<br></td><td align="right"><h3><strong>text</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Reimplemented for internal reasons.
+   </p>
+<A NAME="key"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<strong>key</strong> (int col,bool asc)
+<br></td><td align="right"><h3><strong>key</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> String to sort the data on. This is reimplemented so that numbers are sorted as numbers
+ and not as strings.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>col</i></TD><TD align="left" valign="top">Column
+</TD></TR>
+<TR><TD align="left" valign="top"><i>asc</i></TD><TD align="left" valign="top">Wether to sort ascending or not.
+   </TD></TR>
+</TABLE></P>
+<A NAME="width"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>width</strong> (const <A HREF="/usr/lib/qt3/doc/html/qfontmetrics.html">QFontMetrics</A> &, const <A HREF="/usr/lib/qt3/doc/html/qlistview.html">QListView</A> *, int col)
+<br></td><td align="right"><h3><strong>width</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Reimplemented for internal reasons.
+   </p>
+<A NAME="allText"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<strong>allText</strong> (int col)
+<br></td><td align="right"><h3><strong>allText</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Get all text for this item. This is used for copying, drag & drop and memo editing etc.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>col</i></TD><TD align="left" valign="top">Column.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: All of the text.
+   </p>
+<A NAME="tooltip"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<strong>tooltip</strong> (int col)
+<br></td><td align="right"><h3><strong>tooltip</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Get the text to be displayed as tooltip for this item.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>col</i></TD><TD align="left" valign="top">Column.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: The text to display as tooltip.
+   </p>
+<HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:49:58 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

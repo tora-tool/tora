@@ -1,0 +1,1122 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>toTuningOverviewUI</class>
+  <widget class="QWidget" name="toTuningOverviewUI" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>906</width>
+        <height>552</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Form1</string>
+    </property>
+    <layout class="QGridLayout" >
+      <property name="margin" >
+        <number>11</number>
+      </property>
+      <property name="spacing" >
+        <number>6</number>
+      </property>
+      <item row="4" column="3" >
+        <widget class="toResultLine" name="RedoEntries" />
+      </item>
+      <item row="0" column="1" >
+        <spacer name="Spacer1" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+      <item row="1" column="1" >
+        <widget class="toResultLine" name="ClientInput" />
+      </item>
+      <item row="2" column="5" >
+        <widget class="toResultLine" name="PhysicalWrite" />
+      </item>
+      <item row="1" column="3" >
+        <widget class="toResultLine" name="LogicalRead" />
+      </item>
+      <item row="2" column="3" >
+        <widget class="toResultLine" name="LogicalChange" />
+      </item>
+      <item row="1" column="5" >
+        <widget class="toResultLine" name="PhysicalRead" />
+      </item>
+      <item row="0" column="5" >
+        <spacer name="Spacer6" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+      <item row="0" column="3" >
+        <spacer name="Spacer4" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+      <item row="2" column="1" >
+        <widget class="toResultLine" name="ClientOutput" />
+      </item>
+      <item row="3" column="3" >
+        <spacer name="Spacer10" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+      <item rowspan="9" row="0" column="4" colspan="1" >
+        <widget class="Q3GroupBox" name="GroupBox1_42" >
+          <property name="title" >
+            <string>SGA</string>
+          </property>
+          <layout class="QGridLayout" >
+            <property name="margin" >
+              <number>11</number>
+            </property>
+            <property name="spacing" >
+              <number>6</number>
+            </property>
+            <item row="3" column="0" >
+              <spacer name="Spacer14_2" >
+                <property name="sizeHint" >
+                  <size>
+                    <width>20</width>
+                    <height>20</height>
+                  </size>
+                </property>
+                <property name="sizeType" >
+                  <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="orientation" >
+                  <enum>Qt::Vertical</enum>
+                </property>
+              </spacer>
+            </item>
+            <item row="2" column="0" >
+              <widget class="Q3GroupBox" name="GroupBox7" >
+                <property name="title" >
+                  <string>Buffer Cache</string>
+                </property>
+                <layout class="QGridLayout" >
+                  <property name="margin" >
+                    <number>11</number>
+                  </property>
+                  <property name="spacing" >
+                    <number>6</number>
+                  </property>
+                  <item row="1" column="0" >
+                    <widget class="toResultLine" name="BufferHit" />
+                  </item>
+                  <item row="0" column="0" >
+                    <widget class="QLabel" name="BufferSize" >
+                      <property name="font" >
+                        <font>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text" >
+                        <string>TextLabel3</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </widget>
+            </item>
+            <item row="0" column="0" >
+              <widget class="QLabel" name="TextLabel2_2_2_2" >
+                <property name="text" >
+                  <string>Total</string>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item row="1" column="0" >
+              <widget class="QLabel" name="SGATotal" >
+                <property name="font" >
+                  <font>
+                    <bold>true</bold>
+                  </font>
+                </property>
+                <property name="text" >
+                  <string>TextLabel3</string>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item row="4" column="0" >
+              <widget class="QLabel" name="TextLabel2_2_2_2_2" >
+                <property name="text" >
+                  <string>Redo Buffer</string>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item row="5" column="0" >
+              <widget class="QLabel" name="RedoBuffer" >
+                <property name="font" >
+                  <font>
+                    <bold>true</bold>
+                  </font>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item row="8" column="0" >
+              <spacer name="Spacer14" >
+                <property name="sizeHint" >
+                  <size>
+                    <width>20</width>
+                    <height>20</height>
+                  </size>
+                </property>
+                <property name="sizeType" >
+                  <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="orientation" >
+                  <enum>Qt::Vertical</enum>
+                </property>
+              </spacer>
+            </item>
+            <item row="7" column="0" >
+              <widget class="Q3GroupBox" name="GroupBox8" >
+                <property name="title" >
+                  <string>Shared Pool</string>
+                </property>
+                <layout class="QGridLayout" >
+                  <property name="margin" >
+                    <number>11</number>
+                  </property>
+                  <property name="spacing" >
+                    <number>6</number>
+                  </property>
+                  <item row="0" column="0" >
+                    <widget class="QLabel" name="SharedSize" >
+                      <property name="font" >
+                        <font>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text" >
+                        <string>TextLabel3</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="1" column="0" >
+                    <widget class="toResultBar" name="SharedUsed" />
+                  </item>
+                </layout>
+              </widget>
+            </item>
+            <item row="6" column="0" >
+              <spacer name="Spacer16" >
+                <property name="sizeHint" >
+                  <size>
+                    <width>20</width>
+                    <height>20</height>
+                  </size>
+                </property>
+                <property name="sizeType" >
+                  <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="orientation" >
+                  <enum>Qt::Vertical</enum>
+                </property>
+              </spacer>
+            </item>
+          </layout>
+        </widget>
+      </item>
+      <item row="5" column="3" >
+        <spacer name="Spacer9" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+      <item row="6" column="3" >
+        <widget class="toResultLine" name="ParseCount" />
+      </item>
+      <item row="7" column="3" >
+        <widget class="toResultLine" name="ExecuteCount" />
+      </item>
+      <item rowspan="2" row="9" column="4" colspan="1" >
+        <widget class="Q3GroupBox" name="GroupBox11" >
+          <property name="title" >
+            <string>Archive logs</string>
+          </property>
+          <layout class="QGridLayout" >
+            <property name="margin" >
+              <number>11</number>
+            </property>
+            <property name="spacing" >
+              <number>6</number>
+            </property>
+            <item row="1" column="0" >
+              <widget class="QLabel" name="ArchiveInfo" >
+                <property name="font" >
+                  <font>
+                    <bold>true</bold>
+                  </font>
+                </property>
+                <property name="text" >
+                  <string>TextLabel3</string>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item row="0" column="0" >
+              <widget class="QLabel" name="TextLabel2_2_2_2_3_2_2" >
+                <property name="text" >
+                  <string>Files/Size</string>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+          </layout>
+        </widget>
+      </item>
+      <item rowspan="11" row="0" column="6" colspan="1" >
+        <widget class="Q3GroupBox" name="GroupBox1_4" >
+          <property name="title" >
+            <string>Files</string>
+          </property>
+          <layout class="QGridLayout" >
+            <property name="margin" >
+              <number>11</number>
+            </property>
+            <property name="spacing" >
+              <number>6</number>
+            </property>
+            <item row="0" column="0" >
+              <widget class="Q3GroupBox" name="GroupBox9" >
+                <property name="title" >
+                  <string>Datafiles</string>
+                </property>
+                <layout class="QGridLayout" >
+                  <property name="margin" >
+                    <number>11</number>
+                  </property>
+                  <property name="spacing" >
+                    <number>6</number>
+                  </property>
+                  <item row="5" column="0" >
+                    <widget class="QLabel" name="Filesize" >
+                      <property name="font" >
+                        <font>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text" >
+                        <string>TextLabel3</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="3" column="0" >
+                    <widget class="QLabel" name="Files" >
+                      <property name="font" >
+                        <font>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text" >
+                        <string>TextLabel3</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="4" column="0" >
+                    <widget class="QLabel" name="TextLabel2_2_2_2_4" >
+                      <property name="text" >
+                        <string>Used/Total</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="1" column="0" >
+                    <widget class="QLabel" name="Tablespaces" >
+                      <property name="font" >
+                        <font>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text" >
+                        <string>TextLabel3</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="2" column="0" >
+                    <widget class="QLabel" name="TextLabel2_2_2_2_5" >
+                      <property name="text" >
+                        <string>Files</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="0" column="0" >
+                    <widget class="QLabel" name="TextLabel2_2_2_2_3" >
+                      <property name="text" >
+                        <string>Tablespaces</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="6" column="0" >
+                    <widget class="toResultPie" name="FileUsed" />
+                  </item>
+                </layout>
+              </widget>
+            </item>
+            <item row="1" column="0" >
+              <widget class="Q3GroupBox" name="GroupBox10" >
+                <property name="title" >
+                  <string>Redo Logs</string>
+                </property>
+                <layout class="QGridLayout" >
+                  <property name="margin" >
+                    <number>11</number>
+                  </property>
+                  <property name="spacing" >
+                    <number>6</number>
+                  </property>
+                  <item row="1" column="0" >
+                    <widget class="QLabel" name="RedoFiles" >
+                      <property name="font" >
+                        <font>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text" >
+                        <string>TextLabel3</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="2" column="0" >
+                    <widget class="QLabel" name="TextLabel2_2_2_2_5_2" >
+                      <property name="text" >
+                        <string>Active/Total</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="4" column="0" >
+                    <widget class="QLabel" name="TextLabel2_2_2_2_4_2" >
+                      <property name="text" >
+                        <string>Active group</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="0" column="0" >
+                    <widget class="QLabel" name="TextLabel2_2_2_2_3_2" >
+                      <property name="text" >
+                        <string>Files</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="3" column="0" >
+                    <widget class="QLabel" name="RedoSize" >
+                      <property name="font" >
+                        <font>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text" >
+                        <string>TextLabel3</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="5" column="0" >
+                    <widget class="QLabel" name="ActiveRedo" >
+                      <property name="font" >
+                        <font>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text" >
+                        <string>TextLabel3</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </widget>
+            </item>
+            <item row="2" column="0" >
+              <spacer name="Spacer21" >
+                <property name="sizeHint" >
+                  <size>
+                    <width>20</width>
+                    <height>20</height>
+                  </size>
+                </property>
+                <property name="sizeType" >
+                  <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="orientation" >
+                  <enum>Qt::Vertical</enum>
+                </property>
+              </spacer>
+            </item>
+          </layout>
+        </widget>
+      </item>
+      <item rowspan="11" row="0" column="2" colspan="1" >
+        <widget class="Q3GroupBox" name="ProcessGroup" >
+          <property name="title" >
+            <string>Processes</string>
+          </property>
+          <layout class="QGridLayout" >
+            <property name="margin" >
+              <number>11</number>
+            </property>
+            <property name="spacing" >
+              <number>6</number>
+            </property>
+            <item row="2" column="0" >
+              <widget class="Q3GroupBox" name="GroupBox5" >
+                <property name="title" >
+                  <string>Server</string>
+                </property>
+                <layout class="QGridLayout" >
+                  <property name="margin" >
+                    <number>11</number>
+                  </property>
+                  <property name="spacing" >
+                    <number>6</number>
+                  </property>
+                  <item row="2" column="0" >
+                    <widget class="QLabel" name="TextLabel2_5" >
+                      <property name="text" >
+                        <string>Shared</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="5" column="0" >
+                    <widget class="QLabel" name="ParallellServer" >
+                      <property name="font" >
+                        <font>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text" >
+                        <string>TextLabel3</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="7" column="0" >
+                    <widget class="QLabel" name="DispatcherServer" >
+                      <property name="font" >
+                        <font>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text" >
+                        <string>TextLabel3</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="6" column="0" >
+                    <widget class="QLabel" name="TextLabel2_3" >
+                      <property name="text" >
+                        <string>Dispatchers</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="3" column="0" >
+                    <widget class="QLabel" name="SharedServer" >
+                      <property name="font" >
+                        <font>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text" >
+                        <string>TextLabel3</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="4" column="0" >
+                    <widget class="QLabel" name="TextLabel2_4" >
+                      <property name="text" >
+                        <string>Parallel</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="0" column="0" >
+                    <widget class="QLabel" name="TextLabel2_2" >
+                      <property name="text" >
+                        <string>Dedicated</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="1" column="0" >
+                    <widget class="QLabel" name="DedicatedServer" >
+                      <property name="font" >
+                        <font>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text" >
+                        <string>TextLabel3</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="wordWrap" >
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </widget>
+            </item>
+            <item row="1" column="0" >
+              <widget class="QLabel" name="TotalProcess" >
+                <property name="font" >
+                  <font>
+                    <bold>true</bold>
+                  </font>
+                </property>
+                <property name="text" >
+                  <string>TextLabel3</string>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item row="0" column="0" >
+              <widget class="QLabel" name="TextLabel2_2_2" >
+                <property name="text" >
+                  <string>Total</string>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item row="3" column="0" >
+              <widget class="Q3GroupBox" name="BackgroundGroup" >
+                <property name="title" >
+                  <string>Background</string>
+                </property>
+              </widget>
+            </item>
+          </layout>
+        </widget>
+      </item>
+      <item row="10" column="5" >
+        <widget class="toResultLine" name="ArchiveWrite" />
+      </item>
+      <item rowspan="1" row="10" column="0" colspan="2" >
+        <widget class="toResultLine" name="Timescale" >
+          <property name="sizePolicy" >
+            <sizepolicy>
+              <hsizetype>5</hsizetype>
+              <vsizetype>7</vsizetype>
+            </sizepolicy>
+          </property>
+        </widget>
+      </item>
+      <item rowspan="7" row="3" column="1" colspan="1" >
+        <spacer name="Spacer2" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+      <item rowspan="10" row="0" column="0" colspan="1" >
+        <widget class="Q3GroupBox" name="GroupBox1" >
+          <property name="title" >
+            <string>Clients</string>
+          </property>
+          <layout class="QGridLayout" >
+            <property name="margin" >
+              <number>11</number>
+            </property>
+            <property name="spacing" >
+              <number>6</number>
+            </property>
+            <item row="9" column="0" >
+              <spacer name="Spacer12" >
+                <property name="sizeHint" >
+                  <size>
+                    <width>20</width>
+                    <height>20</height>
+                  </size>
+                </property>
+                <property name="sizeType" >
+                  <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="orientation" >
+                  <enum>Qt::Vertical</enum>
+                </property>
+              </spacer>
+            </item>
+            <item row="4" column="0" >
+              <spacer name="Spacer13" >
+                <property name="sizeHint" >
+                  <size>
+                    <width>20</width>
+                    <height>20</height>
+                  </size>
+                </property>
+                <property name="sizeType" >
+                  <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="orientation" >
+                  <enum>Qt::Vertical</enum>
+                </property>
+              </spacer>
+            </item>
+            <item row="5" column="0" >
+              <widget class="QLabel" name="TextLabel2" >
+                <property name="text" >
+                  <string>Total</string>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item row="6" column="0" >
+              <widget class="QLabel" name="TotalClient" >
+                <property name="font" >
+                  <font>
+                    <bold>true</bold>
+                  </font>
+                </property>
+                <property name="text" >
+                  <string>TextLabel3</string>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item row="7" column="0" >
+              <widget class="QLabel" name="TextLabel4" >
+                <property name="text" >
+                  <string>Active</string>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item row="8" column="0" >
+              <widget class="QLabel" name="ActiveClient" >
+                <property name="font" >
+                  <font>
+                    <bold>true</bold>
+                  </font>
+                </property>
+                <property name="text" >
+                  <string>TextLabel5</string>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item row="0" column="0" >
+              <widget class="QLabel" name="TextLabel2_6" >
+                <property name="text" >
+                  <string>Send to client</string>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item row="3" column="0" >
+              <widget class="QLabel" name="SendFromClient" >
+                <property name="font" >
+                  <font>
+                    <bold>true</bold>
+                  </font>
+                </property>
+                <property name="text" >
+                  <string>TextLabel5</string>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item row="1" column="0" >
+              <widget class="QLabel" name="SendToClient" >
+                <property name="font" >
+                  <font>
+                    <bold>true</bold>
+                  </font>
+                </property>
+                <property name="text" >
+                  <string>TextLabel3</string>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item row="2" column="0" >
+              <widget class="QLabel" name="TextLabel4_2" >
+                <property name="text" >
+                  <string>Send from client</string>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignCenter</set>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item row="10" column="0" >
+              <widget class="toResultBar" name="ClientChart" />
+            </item>
+          </layout>
+        </widget>
+      </item>
+      <item row="8" column="3" >
+        <spacer name="Spacer5" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+      <item rowspan="3" row="7" column="5" colspan="1" >
+        <spacer name="Spacer7" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+      <item row="6" column="5" >
+        <widget class="toResultLine" name="LogWrite" />
+      </item>
+      <item rowspan="3" row="3" column="5" colspan="1" >
+        <spacer name="Spacer11" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+    </layout>
+  </widget>
+  <customwidgets>
+    <customwidget>
+      <class>toResultPie</class>
+      <extends>QWidget</extends>
+      <header location="local" >toresultpie.h</header>
+      <sizehint>
+        <width>80</width>
+        <height>80</height>
+      </sizehint>
+      <container>0</container>
+      <sizepolicy>
+        <hordata>5</hordata>
+        <verdata>5</verdata>
+      </sizepolicy>
+      <pixmap>image0</pixmap>
+    </customwidget>
+    <customwidget>
+      <class>toResultLine</class>
+      <extends>QWidget</extends>
+      <header location="local" >toresultline.h</header>
+      <sizehint>
+        <width>80</width>
+        <height>40</height>
+      </sizehint>
+      <container>0</container>
+      <sizepolicy>
+        <hordata>5</hordata>
+        <verdata>5</verdata>
+      </sizepolicy>
+      <pixmap>image0</pixmap>
+    </customwidget>
+    <customwidget>
+      <class>toResultBar</class>
+      <extends>QWidget</extends>
+      <header location="local" >toresultbar.h</header>
+      <sizehint>
+        <width>80</width>
+        <height>40</height>
+      </sizehint>
+      <container>0</container>
+      <sizepolicy>
+        <hordata>5</hordata>
+        <verdata>5</verdata>
+      </sizepolicy>
+      <pixmap>image0</pixmap>
+    </customwidget>
+  </customwidgets>
+  <images>
+    <image name="image0" >
+      <data format="XPM.GZ" length="646" >789c6dd2c10ac2300c00d07bbf2234b7229d1be245fc04c5a3201e4615f430059d0711ff5ddb2e6bb236ec90eed134cb5a19d8ef36602af5ecdbfeeac05dda0798d3abebde87e3faa374d3807fa0d633a52d38d8de6f679fe33fc776e196f53cd010188256a3600a292882096246517815ca99884606e18044a3a40d91824820924265a7923a2e8bcd05f33db1173e002913175f2a6be6d3294871a2d95fa00e8a94ee017b69d339d90df1e77c57ea072ede6758</data>
+    </image>
+  </images>
+</ui>

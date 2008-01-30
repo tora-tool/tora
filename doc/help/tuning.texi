@@ -1,0 +1,54 @@
+@node tuning
+@section Server Tuning
+@cindex Server Tuning
+
+This tool provides easy access to important server indicators as well as server statistics and an editor for database parameters.
+
+@image{images/tuning}
+
+The interface for this tool is very simple. First there is a toolbar with the following controlls.
+
+
+@table @asis
+
+@item @strong{Refresh}
+      Refresh data from the database, will not read another value for charts.	
+@item @strong{Refresh rate}
+      The interval between which to auto update data, observe that setting this too low could put a high load on a database server. This is also the sample interval for charts.	
+@item @strong{Change connection}
+      Change the connection to monitor in the tuning tool.
+@end table
+
+There are several tabs in the window.
+
+@table @asis
+
+@item @strong{Overview}
+      Displays an overview of dtabase statistics, shows the flow of data through the server in an intuitive way.
+@item @strong{Charts}
+      Charts containing important performance information from the database.	
+@item @strong{File I/O}
+      Displays information about I/O separated by tablespace or datafile. You can select if you want to see average wait time, blocks for tablespace or datafile by using the combobox at the top of the charts.	
+@item @strong{Indicators}
+      Important performance indicators.	
+@item @strong{Statistics}
+      Raw statistic information from the server. The statistics is shown in two columns, the first one contain the actual value, the second show the change in the value since the last update.	
+@item @strong{parameters}
+      This tab displays the values of the parameters of the database. You can also use it to change the values by selecting a row and entering a new value at the bottom of the tab. After changes has been made you can apply or export these changes using the buttons in the toolbar at the top of the parameter editor.
+
+      @image{images/pfileeditor}
+      @table @asis    
+      @item @strong{Generate p-file}
+      	Generate a p-file with the current changes (And original changes as well) into a memo editor(@pxref{Memo editor}).	
+      @item @strong{Apply changes to system}
+      	Apply changes made to the system.	
+      @item @strong{Apply changes to current session}
+      	Apply changes to the current session. Will only apply changes to the main connection and not any child sessions TOra might open for instance when statements are executed in the worksheet.
+      @end table
+
+@item @strong{Drop changes}
+      Drop the changes currently made to the parameters and revert to the current session settings.	
+@item @strong{Options List}
+      List the options available in the database server. Licenses Display license information to the current database.
+
+@end table

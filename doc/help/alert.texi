@@ -1,0 +1,33 @@
+@node alert
+@section Alert Tool
+@cindex Alert Tool
+This tool is usefull for debugging database packages that send or depend on receiving dbms alerts.
+
+@image{images/alert}
+
+This tool is controled solely from it's toolbar which is followed by a list containing the alerts received so far on the watched alerts. The toolbar contains the following controls.
+
+@table @asis
+@item Registered
+This list contains the alerts that are registered for listening. To add a new alert simply write the name in this combo box and press return or the register current button immediately to the right. To remove an alert select it in the list and press the remove registered button.@samp{Registered}.
+
+@item @strong{Register current}
+Register the name currently entered in the registered combo box.
+
+@item @strong{Remove registered}
+Stop listening to the registered alert currently selected in the registered combo box. 	
+
+@item @strong{Name}	
+Name of the alert to send. 	
+
+@item @strong{Message}
+Message to send in an alert. Pressing return in this lineedit will send the alert. 	
+
+@item @strong{Edit message in memo}
+Edit the message in a memo editor, usefull for sending newlines and longer messages. 	
+
+@item @strong{Send alert}
+Send the currently defined alert. You can also send an alert by pressing return in the message line editor.
+
+@end table
+

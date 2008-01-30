@@ -1,0 +1,152 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>toResultListFormatUI</class>
+  <widget class="QDialog" name="toResultListFormatUI" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>356</width>
+        <height>199</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Choose format</string>
+    </property>
+    <layout class="QGridLayout" >
+      <property name="margin" >
+        <number>11</number>
+      </property>
+      <property name="spacing" >
+        <number>6</number>
+      </property>
+      <item row="5" column="2" >
+        <widget class="QPushButton" name="PushButton2" >
+          <property name="text" >
+            <string>Cancel</string>
+          </property>
+        </widget>
+      </item>
+      <item row="5" column="1" >
+        <widget class="QPushButton" name="PushButton1" >
+          <property name="text" >
+            <string>&amp;Ok</string>
+          </property>
+          <property name="default" >
+            <bool>true</bool>
+          </property>
+        </widget>
+      </item>
+      <item rowspan="1" row="1" column="0" colspan="3" >
+        <widget class="QComboBox" name="Format" />
+      </item>
+      <item rowspan="1" row="0" column="0" colspan="3" >
+        <widget class="QLabel" name="TextLabel1" >
+          <property name="sizePolicy" >
+            <sizepolicy>
+              <hsizetype>1</hsizetype>
+              <vsizetype>0</vsizetype>
+            </sizepolicy>
+          </property>
+          <property name="text" >
+            <string>&amp;Choose format of exported file.</string>
+          </property>
+          <property name="buddy" >
+            <cstring>Format</cstring>
+          </property>
+          <property name="wordWrap" >
+            <bool>false</bool>
+          </property>
+        </widget>
+      </item>
+      <item row="3" column="0" >
+        <widget class="QLineEdit" name="Separator" />
+      </item>
+      <item row="2" column="0" >
+        <widget class="QLabel" name="TextLabel1_2" >
+          <property name="text" >
+            <string>Separator</string>
+          </property>
+          <property name="wordWrap" >
+            <bool>false</bool>
+          </property>
+        </widget>
+      </item>
+      <item rowspan="1" row="2" column="1" colspan="2" >
+        <widget class="QLabel" name="TextLabel2" >
+          <property name="text" >
+            <string>Delimiter</string>
+          </property>
+          <property name="wordWrap" >
+            <bool>false</bool>
+          </property>
+        </widget>
+      </item>
+      <item rowspan="1" row="3" column="1" colspan="2" >
+        <widget class="QLineEdit" name="Delimiter" />
+      </item>
+      <item row="4" column="0" >
+        <spacer name="Spacer2" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+      <item row="5" column="0" >
+        <spacer name="Spacer1" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+          </property>
+        </spacer>
+      </item>
+    </layout>
+  </widget>
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <tabstops>
+    <tabstop>Format</tabstop>
+    <tabstop>Separator</tabstop>
+    <tabstop>Delimiter</tabstop>
+    <tabstop>PushButton1</tabstop>
+    <tabstop>PushButton2</tabstop>
+  </tabstops>
+  <connections>
+    <connection>
+      <sender>PushButton1</sender>
+      <signal>clicked()</signal>
+      <receiver>toResultListFormatUI</receiver>
+      <slot>accept()</slot>
+    </connection>
+    <connection>
+      <sender>PushButton2</sender>
+      <signal>clicked()</signal>
+      <receiver>toResultListFormatUI</receiver>
+      <slot>reject()</slot>
+    </connection>
+    <connection>
+      <sender>Format</sender>
+      <signal>activated(int)</signal>
+      <receiver>toResultListFormatUI</receiver>
+      <slot>formatChanged(int)</slot>
+    </connection>
+  </connections>
+</ui>

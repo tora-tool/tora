@@ -1,0 +1,138 @@
+<HTML>
+<HEAD>
+<TITLE>class toResultStats</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toResultStats</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"> This widget will displays information about statistics in either a database or a session. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="toresultstats_h.html">toresultstats.h</A>&gt;</code></TD></TR>
+<TR><TH>Inherits</TH><TD><A HREF="toResultView.html">toResultView</A> <small>[public ]</small></TD></TR>
+<TR><TH><A HREF="full-list-toResultStats.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref12">toResultStats</A></b> (bool OnlyChanged,int ses,<A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref13">toResultStats</A></b> (bool OnlyChanged,<A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref14">toResultStats</A></b> (<A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref15">~toResultStats</A></b> () 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref16">resetStats</A></b> (void) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref17">changeSession</A></b> (<A HREF="toQuery.html">toQuery</A> &conn) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref18">changeSession</A></b> (int ses) 
+</LI>
+<LI>virtual  bool &nbsp;<b><A HREF="#ref19">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &conn) 
+</LI>
+</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref22">refreshStats</A></b> (bool reset=true) 
+</LI>
+</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref20">sessionChanged</A></b> (int ses) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref21">sessionChanged</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This widget will displays information about statistics in either a database or a session.
+ </p>
+<A NAME="toResultStats"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultStats</strong> (bool OnlyChanged,int ses,<A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *parent,const char *name=NULL)
+<br></td><td align="right"><h3><strong>toResultStats</strong></h3></td></tr></table><p></p><p> Create statistics widget for session statistics.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>OnlyChanged</i></TD><TD align="left" valign="top">Only display changed items.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>ses</i></TD><TD align="left" valign="top">Session ID to display info about.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent widget.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
+   </TD></TR>
+</TABLE></P>
+<A NAME="toResultStats"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultStats</strong> (bool OnlyChanged,<A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *parent,const char *name=NULL)
+<br></td><td align="right"><h3><strong>toResultStats</strong></h3></td></tr></table><p></p><p> Create statistics widget for the current session statistics.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>OnlyChanged</i></TD><TD align="left" valign="top">Only display changed items.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent widget.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
+   </TD></TR>
+</TABLE></P>
+<A NAME="toResultStats"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultStats</strong> (<A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *parent,const char *name=NULL)
+<br></td><td align="right"><h3><strong>toResultStats</strong></h3></td></tr></table><p></p><p> Create statistics widget for the current database statistics.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent widget.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
+   </TD></TR>
+</TABLE></P>
+<A NAME="~toResultStats"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toResultStats</strong> ()
+<br></td><td align="right"><h3><strong>~toResultStats</strong></h3></td></tr></table><p></p><p> Destroy object.
+   </p>
+<A NAME="resetStats"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>resetStats</strong> (void)
+<br></td><td align="right"><h3><strong>resetStats</strong></h3></td></tr></table><p></p><p> Reset statistics. Read in last values without updating widget data.
+   </p>
+<A NAME="changeSession"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>changeSession</strong> (<A HREF="toQuery.html">toQuery</A> &conn)
+<br></td><td align="right"><h3><strong>changeSession</strong></h3></td></tr></table><p></p><p> Change the session that the current query will run on.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>query</i></TD><TD align="left" valign="top">Query to check connection for.
+   </TD></TR>
+</TABLE></P>
+<A NAME="changeSession"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>changeSession</strong> (int ses)
+<br></td><td align="right"><h3><strong>changeSession</strong></h3></td></tr></table><p></p><p> Change session to specified id.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>ses</i></TD><TD align="left" valign="top">Session ID to change to.
+   </TD></TR>
+</TABLE></P>
+<A NAME="canHandle"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &conn)
+<br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Support Oracle
+   </p>
+<p>Reimplemented from <A HREF="toResultView.html#canHandle">toResultView</A>.</p>
+<A NAME="sessionChanged"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>sessionChanged</strong> (int ses)
+<br></td><td align="right"><h3><strong>sessionChanged</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted when session is changed.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>ses</i></TD><TD align="left" valign="top">New session ID.
+   </TD></TR>
+</TABLE></P>
+<A NAME="sessionChanged"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>sessionChanged</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &)
+<br></td><td align="right"><h3><strong>sessionChanged</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted when session is changed.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>ses</i></TD><TD align="left" valign="top">New session ID as string.
+   </TD></TR>
+</TABLE></P>
+<A NAME="refreshStats"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>refreshStats</strong> (bool reset=true)
+<br></td><td align="right"><h3><strong>refreshStats</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Update the statistics.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>reset</i></TD><TD align="left" valign="top">Set delta to current values. This means that the next time this widget
+              is updated the delta will be from the new values.
+   </TD></TR>
+</TABLE></P>
+<HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:49:58 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

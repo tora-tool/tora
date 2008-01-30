@@ -1,0 +1,453 @@
+/*****
+*
+* TOra - An Oracle Toolkit for DBA's and developers
+* Copyright (C) 2003-2005 Quest Software, Inc
+* Portions Copyright (C) 2005 Other Contributors
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation;  only version 2 of
+* the License is valid for this program.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+*      As a special exception, you have permission to link this program
+*      with the Oracle Client libraries and distribute executables, as long
+*      as you follow the requirements of the GNU GPL in regard to all of the
+*      software in the executable aside from Oracle client libraries.
+*
+*      Specifically you are not permitted to link this program with the
+*      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+*      And you are not permitted to distribute binaries compiled against
+*      these libraries without written consent from Quest Software, Inc.
+*      Observe that this does not disallow linking to the Qt Free Edition.
+*
+*      You may link this product with any GPL'd Qt library such as Qt/Free
+*
+* All trademarks belong to their respective owners.
+*
+*****/
+
+#include "config.h"
+#include "toresulttableviewedit.h"
+#include "toresultmodel.h"
+#include "toconf.h"
+#include "utils.h"
+#include "toqvalue.h"
+#include "toconfiguration.h"
+#include "toconnection.h"
+#include "tomemoeditor.h"
+#include "tomain.h"
+
+#include <QClipboard>
+#include <QScrollBar>
+#include <QItemDelegate>
+#include <QSize>
+#include <QFont>
+#include <QFontMetrics>
+
+
+toResultTableViewEdit::toResultTableViewEdit(bool readable,
+                                             bool numberColumn,
+                                             QWidget *parent,
+                                             const char *name)
+    : toResultTableView(readable, numberColumn, parent, name, true) {
+
+    setSelectionBehavior(QAbstractItemView::SelectItems);
+    setSelectionMode(QAbstractItemView::SingleSelection);
+}
+
+
+toResultTableViewEdit::~toResultTableViewEdit() {
+}
+
+
+void toResultTableViewEdit::query(const QString &SQL, const toQList &params) {
+    revertChanges();
+
+    if(params.size() != 2)
+        ;                       // assume it's a refresh
+    else {
+        toQList::const_iterator par = params.begin();
+        Owner = *par;
+        par++;
+        Table = *par;
+    }
+
+    toQList empty;
+    toResultTableView::query(SQL, empty);
+
+    if(!Model)
+        return;                 // error
+
+    // must be reconnected after every query
+    connect(Model,
+            SIGNAL(columnChanged(const QModelIndex &,
+                                 const toQValue &,
+                                 const toResultModel::Row &)),
+            this,
+            SLOT(recordChange(const QModelIndex &,
+                              const toQValue &,
+                              const toResultModel::Row &)));
+
+    connect(Model,
+            SIGNAL(rowAdded(const toResultModel::Row &)),
+            this,
+            SLOT(recordAdd(const toResultModel::Row &)));
+
+    connect(Model,
+            SIGNAL(modelReset()),
+            this,
+            SLOT(revertChanges()));
+
+    connect(Model,
+            SIGNAL(rowDeleted(const toResultModel::Row &)),
+            this,
+            SLOT(recordDelete(const toResultModel::Row &)));
+
+    verticalHeader()->setVisible(true);
+}
+
+
+void toResultTableViewEdit::recordChange(const QModelIndex &index,
+                                         const toQValue &newValue,
+                                         const toResultModel::Row &row) {
+    // first, if it was an added row, find and update the ChangeSet so
+    // they all get inserted as one.
+    toQValue rowid = row[0];
+    for(int changeIndex = 0; changeIndex < Changes.size(); changeIndex++) {
+        if(Changes[changeIndex].added && Changes[changeIndex].row[0] == rowid) {
+            Changes[changeIndex].row[index.column()] = newValue;
+            return;
+        }
+    }
+
+    struct ChangeSet change;
+
+    change.columnName = model()->headerData(index.column(),
+                                            Qt::Horizontal,
+                                            Qt::DisplayRole).toString();
+    change.newValue = newValue;
+    change.row      = row;
+    change.column   = index.column();
+    change.added    = false;
+
+    Changes.append(change);
+}
+
+
+void toResultTableViewEdit::recordAdd(const toResultModel::Row &row) {
+    struct ChangeSet change;
+
+    change.row      = row;
+    change.added    = true;
+
+    Changes.append(change);
+}
+
+
+void toResultTableViewEdit::recordDelete(const toResultModel::Row &row) {
+    struct ChangeSet change;
+
+    change.row      = row;
+    change.deleted  = true;
+
+    Changes.append(change);
+}
+
+
+void toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &conn) {
+    const toResultModel::HeaderList Headers = Model->headers();
+    bool oracle = toIsOracle(conn);
+
+    QString sql = QString("DELETE FROM %1.%2 ").arg(Owner).arg(Table);
+    sql += (" WHERE ");
+
+    bool where = false;
+    for(int i = 1; i < change.row.size(); i++) {
+        if (!oracle || (!Headers[i].datatype.upper().startsWith(("LONG")) &&
+                        !Headers[i].datatype.upper().contains(("LOB")))) {
+            if(where)
+                sql += " AND ";
+            else
+                where = true;
+
+            sql += conn.quote(Headers[i].name);
+
+            if(change.row[i].isNull())
+                sql += " IS NULL";
+            else {
+                sql += "= :c";
+                sql += QString::number(i);
+                if(change.row[i].isBinary())
+                    sql += "<raw_long>";
+                else
+                    sql += "<char[4000]>";
+            }
+        }
+    }
+
+    if(!where) {
+        toStatusMessage(tr("This table contains only LOB/LONG columns and can not be edited"));
+        return;
+    }
+
+    toQList args;
+    for(int i = 1; i < change.row.size(); i++) {
+        if(!change.row[i].isNull() && (!oracle || (!Headers[i].datatype.startsWith(("LONG")) &&
+                                                   !Headers[i].datatype.upper().contains(("LOB"))))) {
+            toPush(args, change.row[i]);
+        }
+    }
+
+    conn.execute(sql, args);
+    if (!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
+        conn.commit();
+    else
+        toMainWidget()->setNeedCommit(conn);
+}
+
+
+void toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn) {
+    const toResultModel::HeaderList Headers = Model->headers();
+
+    QString sql = QString("INSERT INTO %1.%2 (").arg(Owner).arg(Table);
+
+    int num = 0;
+    for(int i = 1; i < change.row.size(); i++) {
+        if(num > 0)
+            sql += ",";
+        sql += conn.quote(Model->headerData(
+                              i - 1,
+                              Qt::Horizontal,
+                              Qt::DisplayRole).toString());
+        num++;
+    }
+
+    sql += ") VALUES (";
+
+    num = 0;
+    for(int i = 1; i < change.row.size(); i++, num++) {
+        if(num > 0)
+            sql += (",");
+        sql += (":f");
+        sql += QString::number(num + 1);
+
+        if(change.row[i].isBinary()) {
+            if(Headers[i].datatype.upper().contains("LOB"))
+                sql += ("<blob>");
+            else
+                sql += ("<raw_long,in>");
+        }
+        else {
+            if(Headers[i].datatype.upper().contains("LOB"))
+                sql += ("<clob>");
+            else
+                sql += ("<char[4000],in>");
+        }
+    }
+
+    sql += (")");
+
+    toQList args;
+    for(int i = 1; i < change.row.size(); i++) 
+        toPush(args, change.row[i]);
+
+    toQuery q(conn, sql, args);
+
+    if (!toConfigurationSingle::Instance().globalConfig(
+            CONF_AUTO_COMMIT, "").isEmpty())
+        conn.commit();
+    else
+        toMainWidget()->setNeedCommit(conn);
+}
+
+
+void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn) {
+    const toResultModel::HeaderList Headers = Model->headers();
+    bool oracle = toIsOracle(conn);
+
+    QString sql = QString("UPDATE %1.%2 SET ").arg(Owner).arg(Table);
+    sql += conn.quote(change.columnName);
+
+    if(change.newValue.isNull())
+        sql += (" = NULL");
+    else {
+        sql += ("= :f0");
+
+        if(change.row[change.column].isBinary()) {
+            if(Headers[change.column].datatype.upper().contains("LOB"))
+                sql += ("<blob>");
+            else
+                sql += ("<raw_long,in>");
+        }
+        else {
+            if(Headers[change.column].datatype.upper().contains("LOB"))
+                sql += ("<clob>");
+            else
+                sql += ("<char[4000],in>");
+        }
+    }
+
+    sql += (" WHERE (");
+    int col = 1;
+    bool where = false;
+
+    for(toResultModel::Row::iterator j = change.row.begin() + 1;
+        j != change.row.end();
+        j++, col++) {
+
+        QString columnName = conn.quote(Model->headerData(
+                                            col,
+                                            Qt::Horizontal,
+                                            Qt::DisplayRole).toString());
+
+        if(!oracle || (!Headers[change.column].datatype.upper().startsWith(("LONG")) &&
+                       !Headers[change.column].datatype.upper().contains(("LOB")))) {
+            if(where)
+                sql += (" AND (");
+            else
+                where = true;
+
+            sql += columnName;
+
+            if((*j).isNull()) {
+                sql += " IS NULL ";
+
+                if((*j).isNumber())
+                    sql += ")";
+                else {
+                    sql += " OR " + columnName + " = :c";
+                    sql += QString::number(col);
+                    if((*j).isBinary())
+                        sql += ("<raw_long,in>)");
+                    else
+                        sql += ("<char[4000],in>)");
+                }
+            }
+            else {
+                sql += " = :c";
+                sql += QString::number(col);
+                if((*j).isBinary())
+                    sql += ("<raw_long,in>)");
+                else
+                    sql += ("<char[4000],in>)");
+            }
+        }
+    }
+
+    if(!where) {
+        toStatusMessage(tr("This table contains only LOB/LONG "
+                           "columns and can not be edited"));
+        return;
+    }
+
+    toQList args;
+
+    // the "SET = " value
+    if(!change.newValue.isNull())
+        toPush(args, change.newValue);
+
+    col = 1;
+    for(toResultModel::Row::iterator j = change.row.begin() + 1;
+        j != change.row.end();
+        j++, col++) {
+        if (!oracle || (!Headers[col].datatype.upper().startsWith(("LONG")) &&
+                        !Headers[col].datatype.upper().contains(("LOB")))) {
+            if((*j).isNull()) {
+                if(!(*j).isNumber())
+                    toPush(args, toQValue(QString("")));
+                // else don't push null for numbers
+            }
+            else
+                toPush(args, (*j));
+        }
+    }
+
+    toQuery q(conn, sql, args);
+    if(!toConfigurationSingle::Instance().globalConfig(
+           CONF_AUTO_COMMIT, "").isEmpty())
+        conn.commit();
+    else
+        toMainWidget()->setNeedCommit(conn);
+}
+
+
+bool toResultTableViewEdit::commitChanges(void) {
+    // Check to make sure some changes were actually made
+    if(Changes.size() < 1) {
+        toStatusMessage(tr("No changes made"), false, false);
+        return false;
+    }
+
+    toConnection &conn = connection();
+
+    bool error = false;
+    for(int changeIndex = 0; changeIndex < Changes.size(); changeIndex++) {
+        try {
+            struct ChangeSet change = Changes[changeIndex];
+
+            if(change.deleted)
+                commitDelete(change, conn);
+            else if(change.added)
+                commitAdd(change, conn);
+            else
+                commitUpdate(change, conn);
+
+            toStatusMessage(tr("Saved"), false, false);
+        }
+        catch(const QString &str) {
+            toStatusMessage(str);
+            error = true;
+            break;
+        }
+    }
+
+    if(error)
+        refresh();
+    else
+        Changes.clear();
+
+    return !error;
+}
+
+
+void toResultTableViewEdit::revertChanges() {
+    Changes.clear();
+}
+
+
+void toResultTableViewEdit::addRecord(void) {
+    int row = Model->addRow() - 1; // selection starts at 0
+    if(row >= 0) {
+        QModelIndex left  = Model->createIndex(row, 0);
+        selectionModel()->select(QItemSelection(left, left),
+                                 QItemSelectionModel::ClearAndSelect);
+        setCurrentIndex(left);
+    }
+}
+
+
+void toResultTableViewEdit::duplicateRecord(void) {
+    int row = Model->addRow(selectionModel()->currentIndex()) - 1;
+    if(row >= 0) {
+        QModelIndex left  = Model->createIndex(row, 0);
+        selectionModel()->select(QItemSelection(left, left),
+                                 QItemSelectionModel::ClearAndSelect);
+        setCurrentIndex(left);
+    }
+}
+
+
+void toResultTableViewEdit::deleteRecord(void) {
+    QModelIndex ind = selectionModel()->currentIndex();
+    if(ind.isValid())
+    Model->deleteRow(ind);
+}

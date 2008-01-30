@@ -1,0 +1,5 @@
+?package(tora): needs="X11" icon="tora.xpm" \
+section="Applications/Development/Tools" \
+title="TOra" longtitle="Toolkit for Oracle" \
+command="/usr/bin/tora"
+

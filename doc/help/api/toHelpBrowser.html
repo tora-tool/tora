@@ -1,0 +1,101 @@
+<HTML>
+<HEAD>
+<TITLE>class toHelpBrowser</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toHelpBrowser</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1">
+ Widget used to display HTML of help pages. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="tohelpbrowser_h.html">tohelpbrowser.h</A>&gt;</code></TD></TR>
+<TR><TH>Inherits</TH><TD>KHTMLPart <small>(unknown)</small> <small>[public ]</small></TD></TR>
+<TR><TH><A HREF="full-list-toHelpBrowser.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref4">toHelpBrowser</A></b> (<A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
+</LI>
+<LI>virtual  bool &nbsp;<b><A HREF="#ref5">openURL</A></b> (const <A HREF="#KURL">KURL</A> &url) 
+</LI>
+<LI><A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<b><A HREF="#ref6">source</A></b> (void) 
+</LI>
+</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref7">forward</A></b> (void) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref8">backward</A></b> (void) 
+</LI>
+</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref9">backwardAvailable</A></b> (bool avail) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref10">forwardAvailable</A></b> (bool avail) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref11">textChanged</A></b> (void) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
+ Widget used to display HTML of help pages.
+ </p>
+<A NAME="toHelpBrowser"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toHelpBrowser</strong> (<A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *parent,const char *name=NULL)
+<br></td><td align="right"><h3><strong>toHelpBrowser</strong></h3></td></tr></table><p></p><p> Create a help browser.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent widget.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
+   </TD></TR>
+</TABLE></P>
+<A NAME="openURL"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>openURL</strong> (const <A HREF="#KURL">KURL</A> &url)
+<br></td><td align="right"><h3><strong>openURL</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Open an URL in this widget.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>url</i></TD><TD align="left" valign="top">URL to open.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: Success of operator.
+   </p>
+<A NAME="source"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<strong>source</strong> (void)
+<br></td><td align="right"><h3><strong>source</strong></h3></td></tr></table><p></p><p> Get source of URL.
+</p>
+<p><b>Returns</b>: String containing the current localtion.
+   </p>
+<A NAME="forward"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>forward</strong> (void)
+<br></td><td align="right"><h3><strong>forward</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Go forward if available.
+   </p>
+<A NAME="backward"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>backward</strong> (void)
+<br></td><td align="right"><h3><strong>backward</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Go backward if available.
+   </p>
+<A NAME="backwardAvailable"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>backwardAvailable</strong> (bool avail)
+<br></td><td align="right"><h3><strong>backwardAvailable</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Change availability of backward history.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>avail</i></TD><TD align="left" valign="top">Wether history is available.
+   </TD></TR>
+</TABLE></P>
+<A NAME="forwardAvailable"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>forwardAvailable</strong> (bool avail)
+<br></td><td align="right"><h3><strong>forwardAvailable</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Change availability of forward history.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>avail</i></TD><TD align="left" valign="top">Wether history is available.
+   </TD></TR>
+</TABLE></P>
+<A NAME="textChanged"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>textChanged</strong> (void)
+<br></td><td align="right"><h3><strong>textChanged</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> The contents of the browser changed.
+   </p>
+<HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:49:58 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

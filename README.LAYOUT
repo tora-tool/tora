@@ -1,0 +1,68 @@
+This is draft version until accepted by TOra developers
+
+directory layout for TOra
+=========================
+
+tora/
+   +--config/
+   |       +--m4/
+   | 
+   +--debian/
+   |
+   +--doc/
+   |    +--help/
+   |
+   +--ext/      
+   |    +--otl/
+   |    +--loki/
+   |
+   +--rpm/
+   |
+   +--src/
+   |    +--i18n/
+   |    +--icons/
+   |    +--templates/
+   |    +--windows/
+   |
+   +--test/
+   |     +--configuration/
+   |     +--<other tests>/
+   |
+   +--utils/
+          +--qscintilla/
+
+
+What goes in which directory ?
+===============================
+
+project-root:
+	- READMEs/NEWS ...
+	- autogen.sh / configure.ac
+
+config:
+	- place to keep some auxiliary scripts from autotools (e.g. missing
+          config.guess, config.sub ...)
+          the purpose is to keep the project root uncluttered from such files
+	- a subdirectory m4, this directory contains all local m4 macros 
+
+debian:
+	- debian specific files
+
+doc:
+	- for documentation
+
+ext:
+	- directory for external libraries which are part of the 
+	  TOra distribution
+
+rpm:
+	- for building RPMs
+
+src:
+	- all source code goes there
+
+test:   
+        - for CppUnit tests
+
+utils:
+	- helper tools for the project goes there

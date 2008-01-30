@@ -1,0 +1,14 @@
+@node toolsetting
+@subsection Tool Settings
+@cindex Tool Settings
+
+This page of the options contain settings on which tools should be enabled in TOra.
+
+@image{images/tools}
+
+The first list contains all the available tools in TOra. If an item is selected in the list it is enabled. If unselected it is not enabled.
+
+There is also a combobox at the bottom called @strong{Default tool}. Using this setting you can specify which tool to start by default when opening a new connection. Many people are for instance more interested in the database browser than a worksheet and could start that instead of a worksheet by default on opening a connection.
+
+Be aware that you need to restart TOra for changes to these settings take affect.
+

@@ -1,0 +1,54 @@
+@node  database
+@subsection Database Settings
+@cindex Database Settings
+
+This page of the options contain settings on how to interact with the database.
+
+@image{images/database}
+
+@table @asis
+@item @strong{Autocommit changes}	
+      If this is set any changes made to the database will be automatically committed as soon as you make them. Use this with care, 
+      the transaction handling is there for a reason you know.
+@item @strong{Read object cache on connect}
+      If this checkbox is set TOra will start reading the object cache when you start a connection to a database. 
+      If unchecked it will start reading it when it is first used. Reading this is quite a costly query so you probably shouldn't have this 
+      checked if you are in a production environment, on a slow connection or not using the object cache. 
+      The object cache is mostly used for describing tables, the PL/SQL debugger and code completion.
+@item @strong{Initial rows to fetch in query}
+      This setting indicates how many rows to always fetch from a query when executing it. Observe that you can always read more from the individual query just by scrolling down. Check the @strong{All} checkbox to always read all available records. Be aware that TOra will interact sluggishly or not at all while reading many lines. It will also keep the entire result in memory so checking the @strong{All} box and reading a really large table could bring your machine to it's knees.
+@item @strong{Initially read in content editor}
+                If set to something other than @strong{All} a query will be placed only this number of rows initially from Oracle when browsing 
+                the content. 
+                The reason for this is that Oracle will be under high load if a content list is started on a large table. 
+                When this value is reached the query will be reread to fetch the rest of the values so you as a user will not see any difference.      
+@item @strong{Maximum size display}
+                         The maximum width a list column will get automatically regardless of how large the content is. This is so you can still see the rest of the columns even if one of the first can contain very large values. You can always resize the column by hand afterwards.
+
+@item @strong{Run UI blocking threads exclusively in main thread.}
+      Let queries normally running in the background use their own connection to the database. This is so that when a query that would block the user interface needs to be run the main connection is more likely to be free. Background queries include many parts of the database browser and all charts.
+@item @strong{Don't reread data if query is exactly same.}
+      If checked TOra will not refresh a query if it is reexecuted exactly the same two times in a row. 
+      This is mainly usefull in the schema browser when you have a slow connection and need to switch between tabs a lot. 
+@item @strong{Abort long running queries and reexecute in own connection.}
+      If checked TOra will abort any queries running in the main connection of the database in the background and reexecute them in their own connection to make you able to continue to work in other parts of TOra until the query gives a reply. 
+      Only queries that have not given any response at all will be aborted and moved. 
+@item @strong{Move to own connection after}
+      The number of seconds to wait before moving the query from the main connection (See Abort long running queries and reexecute in own connection above for more info).
+@end table
+There may also be pages under this for each individual database provider. Currently onlye Oracle uses this feature. That setup looks like this.
+
+@image{images/oracle}
+
+@table @asis
+@item @strong{Checkpoint name}
+      This is a checkpoint TOra should use when it is making changes that need to be rolled back. One place where this is used is to perform explain plans without filling up the plan table. The name doesn't matter, just make sure you don't use this checkpoint name yourself.
+@item @strong{Default date format}
+      The format that you prefer dates to be displayed. Changing this will require a reconnect to the database before it starts to operate. The string should be a standard Oracle date to string conversion specification. For more information see the Oracle SQL Reference.
+@item @strong{Explain plan table}
+      The table to use to temporarily store explained execution plans. Use the @strong{Create Table} button to create the table if you don't have it.
+@item @strong{Keep plans}
+      If this is check explained plans are left in the explain plan table. The normal behaviour is to rollback the explanation after it is initially read to keep the explain plan table from filling up with old plans.
+@item @strong{Max LONG and LOB data length}
+      The amount of data to read from LONG, BLOB or CLOB data fields. If you always want all the data to be read check the @strong{Unlimited} checkbox to the right. LONG datafields can not be specified as @strong{Unlimited}, if this is specified 33000 characters are read by default.
+@end table

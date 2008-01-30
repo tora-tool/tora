@@ -1,0 +1,9 @@
+@node invalid
+@section Invalid Objects
+@cindex Invalid Objects
+
+This tool is usefull to recompile invalid objects in the database.
+
+@image{images/invalid}
+
+To the left you see a list of invalid objects. Select an object and the left editor will be filled with code to recreate the code objects, you can then fix whatever problem may be with it. Rows with errors will have red background and you can see the error in the statusbar by putting the cursor on the row. You can also refresh the list or change the active connection by the buttons in the toolbar.

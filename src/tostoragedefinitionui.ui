@@ -1,0 +1,273 @@
+<ui version="4.0" >
+ <class>toStorageDefinitionUI</class>
+ <widget class="QWidget" name="toStorageDefinitionUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>596</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form1</string>
+  </property>
+  <property name="toolTip" >
+   <string>Optimal allocation of extents. Will free unused extents down to specified value</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>11</number>
+   </property>
+   <property name="topMargin" >
+    <number>11</number>
+   </property>
+   <property name="rightMargin" >
+    <number>11</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>11</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>6</number>
+   </property>
+   <item row="0" column="0" colspan="2" >
+    <widget class="toFilesize" native="1" name="InitialSize" />
+   </item>
+   <item row="2" column="0" colspan="2" >
+    <widget class="QGroupBox" name="GroupBox1" >
+     <property name="title" >
+      <string>&amp;Extents</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>11</number>
+      </property>
+      <property name="topMargin" >
+       <number>11</number>
+      </property>
+      <property name="rightMargin" >
+       <number>11</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>11</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>6</number>
+      </property>
+      <item rowspan="3" row="0" column="1" >
+       <widget class="Line" name="Line1" />
+      </item>
+      <item row="2" column="0" >
+       <widget class="QSpinBox" name="InitialExtent" >
+        <property name="minimum" >
+         <number>1</number>
+        </property>
+        <property name="maximum" >
+         <number>2147483647</number>
+        </property>
+        <property name="value" >
+         <number>1</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2" >
+       <widget class="QSpinBox" name="MaximumExtent" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="minimum" >
+         <number>1</number>
+        </property>
+        <property name="maximum" >
+         <number>2147483647</number>
+        </property>
+        <property name="value" >
+         <number>1</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" >
+       <widget class="QLabel" name="TextLabel1" >
+        <property name="toolTip" >
+         <string>Maximum number of extents to allocate for an object</string>
+        </property>
+        <property name="text" >
+         <string>&amp;Maximum extents</string>
+        </property>
+        <property name="wordWrap" >
+         <bool>false</bool>
+        </property>
+        <property name="buddy" >
+         <cstring>MaximumExtent</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="TextLabel2" >
+        <property name="toolTip" >
+         <string>Number of extents to initially allocate</string>
+        </property>
+        <property name="text" >
+         <string>&amp;Initial size</string>
+        </property>
+        <property name="wordWrap" >
+         <bool>false</bool>
+        </property>
+        <property name="buddy" >
+         <cstring>InitialSize</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" >
+       <widget class="QCheckBox" name="UnlimitedExtent" >
+        <property name="toolTip" >
+         <string>No limit to the number of extents to allocate if needed</string>
+        </property>
+        <property name="text" >
+         <string>&amp;Unlimited extents</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2" >
+    <widget class="toFilesize" native="1" name="NextSize" />
+   </item>
+   <item row="3" column="0" colspan="2" >
+    <widget class="QGroupBox" name="Optimal" >
+     <property name="title" >
+      <string>&amp;Optimal size</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>11</number>
+      </property>
+      <property name="topMargin" >
+       <number>11</number>
+      </property>
+      <property name="rightMargin" >
+       <number>11</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>11</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>6</number>
+      </property>
+      <item row="0" column="0" >
+       <widget class="QCheckBox" name="OptimalNull" >
+        <property name="text" >
+         <string>&amp;No optimal size</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="toFilesize" native="1" name="OptimalSize" />
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0" >
+    <widget class="QLabel" name="TextLabel3" >
+     <property name="toolTip" >
+      <string>Default increase in size of next allocated extent. A size of 0 will prevent background coalesce of free space</string>
+     </property>
+     <property name="text" >
+      <string>&amp;Default PCT increase</string>
+     </property>
+     <property name="wordWrap" >
+      <bool>false</bool>
+     </property>
+     <property name="buddy" >
+      <cstring>PCTIncrease</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" >
+    <widget class="QSpinBox" name="PCTIncrease" >
+     <property name="maximum" >
+      <number>1000</number>
+     </property>
+     <property name="singleStep" >
+      <number>10</number>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="2" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>toFilesize</class>
+   <extends>QWidget</extends>
+   <header>tofilesize.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>UnlimitedExtent</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MaximumExtent</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>OptimalNull</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>OptimalSize</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

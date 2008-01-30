@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+  <!ENTITY dhfirstname "<firstname>Peter</firstname>">
+  <!ENTITY dhsurname   "<surname>Eisentraut</surname>">
+  <!-- Please adjust the date whenever revising the manpage. -->
+  <!ENTITY dhdate      "<date>March 22, 2004</date>">
+  <!ENTITY dhsection   "<manvolnum>1</manvolnum>">
+  <!ENTITY dhemail     "<email>peter_e@gmx.net</email>">
+  <!ENTITY dhusername  "Peter Eisentraut">
+  <!ENTITY dhucpackage "<refentrytitle>TORA</refentrytitle>">
+
+  <!ENTITY debian      "<productname>Debian</productname>">
+  <!ENTITY gnu         "<acronym>GNU</acronym>">
+  <!ENTITY gpl         "&gnu; <acronym>GPL</acronym>">
+]>
+
+<refentry>
+  <refentryinfo>
+    <address>&dhemail;</address>
+
+    <author>
+      &dhfirstname;
+      &dhsurname;
+    </author>
+
+    <copyright>
+      <year>2004</year>
+      <holder>&dhusername;</holder>
+    </copyright>
+
+    &dhdate;
+  </refentryinfo>
+
+  <refmeta>
+    &dhucpackage;
+    &dhsection;
+  </refmeta>
+
+  <refnamediv>
+    <refname>tora</refname>
+    <refpurpose>A graphical toolkit for database developers and administrators</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>tora</command>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>This manual page documents briefly the program
+      <command>tora</command>.</para>
+
+    <para>This manual page was written for the &debian; distribution
+      because the original program does not have a manual page.</para>
+
+    <para><application>Tora</application> is a graphical toolkit for
+    database developers and administrators.  It features a schema browser,
+    SQL worksheet, PL/SQL editor and debugger, storage manager, rollback
+    segment monitor, instance manager, and SQL output viewer.  Via QT3 it
+    can access PostgreSQL and MySQL directly.  Any other database systems
+    can be accessed via ODBC.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para><command>tora</command> has an integrated online help
+    system.</para>
+  </refsect1>
+
+  <refsect1>
+    <title>AUTHOR</title>
+
+    <para>This manual page was written by &dhusername; &dhemail; for
+      the &debian; system (but may be used by others).  Permission is
+      granted to copy, distribute and/or modify this document under
+      the terms of the &gnu; General Public License, Version 2 any 
+      later version published by the Free Software Foundation.</para>
+
+    <para>On Debian systems, the complete text of the GNU General Public
+     License can be found in <filename>/usr/share/common-licenses/GPL</filename>.</para>
+  </refsect1>
+</refentry>

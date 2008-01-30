@@ -1,0 +1,59 @@
+@node rollback
+@section Rollback Segments
+@cindex Rollback Segments
+
+This tool is used to manage rollback segments in the database.
+
+@image{images/rollback}
+
+The window consist of three part. 
+The top one displays the available rollback segments and you can also see running transaction that use segment in the transactions column of the view, the length of the @strong{transactions} show up as bars in this column. One bar for each running transaction using the segment.
+
+The last part is a unique tool to detect snapshot too old problems in your database. This is discussed more later.
+
+@subheading Toolbar
+
+The toolbar contains the following commands.
+
+@table @asis
+
+@item @strong{Update}
+      	Update the view from the database.	
+@item @strong{Online}
+      	Take currently selected segment online.	
+@item @strong{Offline}
+      	Take currently selected segment off-line.	
+@item @strong{New rollback segment}
+      	Create new rollback segment. If you are confused about what the items in the dialog mean refer to the Oracle Server Concepts manual as well as the Oracle SQL Reference.	
+@item @strong{Drop segment}
+                  Drop the currently selected segment.	
+@item @strong{Refresh time}
+      	A list where you can select the interval between automatic updates.	
+@item @strong{Change connection}
+      	Change the connection to administrate storage for.
+
+@end table
+
+@subheading Snapshot too old detection
+
+The lower part of this view is used to heuristically detect snapshot too old problems. The operation of this is that whenever the view is updated all SGA statements are cataloged and the corresponding current position in all the rollback segments are also stored the first time a new statement is detected. Since the information about the current location of the rollback when a statement was executed is not available in the SGA you have to keep the tool window open during the entire duration of the execution for this to work.
+
+In the view you can see when the statement was first detected and who is running it. You also see the snapshot info which will display how far each of the available rollback segments have moved since this statement was executed. This is represented by one bar for each rollback segment. If any of these bars goes all the way through this column you are likely to encounter a snapshot too old statement.
+
+Finally you can see the SQL for the row. Selecting a line will also let you investigate the statement using the normal SGA statement(@pxref{SGA Statement}) view.
+
+There are a few options to configure how the snapshot too old detection is to work.
+
+@image{images/rollbacksetup}
+
+@table @asis
+
+@item @strong{Restart reexecuted statements}
+      If the execution count is changed for a statement reset the location of the rollback segments to the current location.	
+@item @strong{Must read buffers}
+      To display a statement it must be reading buffers, it is still kept in memory if no buffers are read, but not displayed in the list until buffers are read again. Check this to remove any statements that you execute and simply kept open even though you will not be reading from them any more.	
+@item @strong{Exclude first appearance}
+      Exclude the first update that would show the statement. Without this checked any statement with execution changed and buffers read will show up.	
+@item @strong{Disregard start extent}
+      If you check this the bars will always start from the left of the column. Otherwise the bars will start corresponding to the current extent of the tablespace and then wrap around as they grow.
+@end table

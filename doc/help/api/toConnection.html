@@ -1,0 +1,568 @@
+<HTML>
+<HEAD>
+<TITLE>class toConnection</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toConnection</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1">
+ <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="toconnection_h.html">toconnection.h</A>&gt;</code></TD></TR>
+<TR><TH><A HREF="full-list-toConnection.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Types</h4><ul><LI>class <A HREF="toConnection__exception.html">exception</A>
+</LI>
+<LI>struct <A HREF="toConnection__objectName.html">objectName</A>
+</LI>
+<LI>class <i><A HREF="toConnection__connectionImpl.html">connectionImpl</A></i>
+</LI>
+</ul><h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref36">toConnection</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &user,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &password,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &host,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &database,const std::set<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &options,
+	       bool cache=true) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref37">toConnection</A></b> (const <A HREF="toConnection.html">toConnection</A> &conn) 
+</LI>
+<LI>virtual  &nbsp;<b><A HREF="#ref38">~toConnection</A></b> () 
+</LI>
+<LI>const std::set<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &&nbsp;<b><A HREF="#ref39">options</A></b> ()  const
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref40">closeWidgets</A></b> (void) 
+</LI>
+<LI>const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &&nbsp;<b><A HREF="#ref41">user</A></b> ()  const
+</LI>
+<LI>const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &&nbsp;<b><A HREF="#ref42">password</A></b> ()  const
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref43">setPassword</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &pwd) 
+</LI>
+<LI>const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &&nbsp;<b><A HREF="#ref44">host</A></b> ()  const
+</LI>
+<LI>const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &&nbsp;<b><A HREF="#ref45">database</A></b> ()  const
+</LI>
+<LI>const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &&nbsp;<b><A HREF="#ref46">version</A></b> ()  const
+</LI>
+<LI>const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &&nbsp;<b><A HREF="#ref47">provider</A></b> ()  const
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref48">setDatabase</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &database) 
+</LI>
+<LI>virtual  <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<b><A HREF="#ref49">description</A></b> (bool version=true)  const
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref50">setNeedCommit</A></b> (bool needCommit=true) 
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref51">needCommit</A></b> (void)  const
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref52">commit</A></b> (void) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref53">rollback</A></b> (void) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref54">parse</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref55">parse</A></b> (const <A HREF="toSQL.html">toSQL</A> &sql) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref56">execute</A></b> (const <A HREF="toSQL.html">toSQL</A> &sql,
+	       <A HREF="#toQList">toQList</A> &params) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref57">execute</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql,
+	       <A HREF="#toQList">toQList</A> &params) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref58">execute</A></b> (const <A HREF="toSQL.html">toSQL</A> &sql,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg1=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg2=QString::null,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg3=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg4=QString::null,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg5=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg6=QString::null,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg7=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg8=QString::null,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg9=QString::null) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref59">execute</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg1=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg2=QString::null,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg3=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg4=QString::null,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg5=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg6=QString::null,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg7=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg8=QString::null,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg9=QString::null) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref60">allExecute</A></b> (const <A HREF="toSQL.html">toSQL</A> &sql,
+		  <A HREF="#toQList">toQList</A> &params) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref61">allExecute</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql,
+		  <A HREF="#toQList">toQList</A> &params) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref62">allExecute</A></b> (const <A HREF="toSQL.html">toSQL</A> &sql,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg1=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg2=QString::null,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg3=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg4=QString::null,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg5=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg6=QString::null,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg7=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg8=QString::null,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg9=QString::null) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref63">allExecute</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg1=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg2=QString::null,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg3=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg4=QString::null,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg5=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg6=QString::null,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg7=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg8=QString::null,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg9=QString::null) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref64">addWidget</A></b> (<A HREF="/usr/lib/qt3/doc/html/qobject.html">QObject</A> *widget) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref65">delWidget</A></b> (<A HREF="/usr/lib/qt3/doc/html/qobject.html">QObject</A> *widget) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref66">addInit</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref67">delInit</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql) 
+</LI>
+<LI>const std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &&nbsp;<b><A HREF="#ref68">initStrings</A></b> ()  const
+</LI>
+<LI><A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<b><A HREF="#ref69">quote</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name) 
+</LI>
+<LI><A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<b><A HREF="#ref70">unQuote</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name) 
+</LI>
+<LI>std::list<objectName> &&nbsp;<b><A HREF="#ref71">objects</A></b> (bool block) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref72">addIfNotExists</A></b> (objectName &object) 
+</LI>
+<LI>virtual  <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &&nbsp;<b><A HREF="#ref73">analyzer</A></b> () 
+</LI>
+<LI>std::map<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>,objectName> &&nbsp;<b><A HREF="#ref74">synonyms</A></b> (bool block) 
+</LI>
+<LI><A HREF="#toQDescList">toQDescList</A> &&nbsp;<b><A HREF="#ref75">columns</A></b> (const objectName &table,bool nocache=false) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref76">rereadCache</A></b> (void) 
+</LI>
+<LI>const objectName &&nbsp;<b><A HREF="#ref77">realName</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &object,bool block) 
+</LI>
+<LI>const objectName &&nbsp;<b><A HREF="#ref78">realName</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &object,<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &synonym,bool block) 
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref79">cacheAvailable</A></b> (bool synonyms,bool block=false,bool need=true) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref80">cancelAll</A></b> (void) 
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref81">loadDiskCache</A></b> (void) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref82">writeDiskCache</A></b> (void) 
+</LI>
+<LI>std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &nbsp;<b><A HREF="#ref83">running</A></b> (void) 
+</LI>
+</ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<b><A HREF="#ref84">cacheDir</A></b> () 
+</LI>
+</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref85">toQuery</A></b></LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
+</p>
+<p> TOra - An Oracle Toolkit for DBA's and developers
+ Copyright (C) 2003-2005 Quest Software, Inc
+ Portions Copyright (C) 2005 Other Contributors
+</p>
+<p> This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation;  only version 2 of
+ the License is valid for this program.
+</p>
+<p> This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+</p>
+<p> You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+</p>
+<p>      As a special exception, you have permission to link this program
+      with the Oracle Client libraries and distribute executables, as long
+      as you follow the requirements of the GNU GPL in regard to all of the
+      software in the executable aside from Oracle client libraries.
+</p>
+<p>      Specifically you are not permitted to link this program with the
+      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+      And you are not permitted to distribute binaries compiled against
+      these libraries without written consent from Quest Software, Inc.
+      Observe that this does not disallow linking to the Qt Free Edition.
+</p>
+<p>      You may link this product with any GPL'd Qt library such as Qt/Free
+</p>
+<p> All trademarks belong to their respective owners.
+</p>
+<p>***</p>
+<A NAME="toConnection__exception.html"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>exception</strong> <small>(class)</small></td><td align="right"><h3><strong>exception</strong></h3></td></tr></table><p></p><p> Class that could be used to throw exceptions in connection errors. Must use if you
+ want to indicate error offset.
+   </p>
+<A NAME="toConnection__objectName.html"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>objectName</strong> <small>(struct)</small></td><td align="right"><h3><strong>objectName</strong></h3></td></tr></table><p></p><p> Contain information about a tablename.
+   </p>
+<A NAME="toConnection__connectionImpl.html"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>connectionImpl</strong> <small>(class)</small></td><td align="right"><h3><strong>connectionImpl</strong></h3></td></tr></table><p></p><p> This class is an abstract baseclass to actually implement the comunication with the
+ database. 
+ (See also toQuery::queryImpl and <A HREF="toConnectionProvider.html">toConnectionProvider</A>)
+   </p>
+<A NAME="toConnection"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toConnection</strong> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &user,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &password,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &host,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &database,const std::set<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &options,
+	       bool cache=true)
+<br></td><td align="right"><h3><strong>toConnection</strong></h3></td></tr></table><p></p><p> Create a new connection.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>provider</i></TD><TD align="left" valign="top">Which database provider to use for this connection.
+ (See to toDatabaseConnection)
+</TD></TR>
+<TR><TD align="left" valign="top"><i>user</i></TD><TD align="left" valign="top">User to connect to the database with.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>password</i></TD><TD align="left" valign="top">Password to connect with.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>host</i></TD><TD align="left" valign="top">Host to connect to the database with.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>database</i></TD><TD align="left" valign="top">Database to connect to.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>options</i></TD><TD align="left" valign="top">Options used to connect to the database with.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>cache</i></TD><TD align="left" valign="top">Enable object cache for this connection.
+   </TD></TR>
+</TABLE></P>
+<A NAME="toConnection"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toConnection</strong> (const <A HREF="toConnection.html">toConnection</A> &conn)
+<br></td><td align="right"><h3><strong>toConnection</strong></h3></td></tr></table><p></p><p> Create a copy of a connection. Will not cache objects, so objects will never be available
+  in a subconnection.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to copy.
+   </TD></TR>
+</TABLE></P>
+<A NAME="~toConnection"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toConnection</strong> ()
+<br></td><td align="right"><h3><strong>~toConnection</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Destroy connection.
+   </p>
+<A NAME="options"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const std::set<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &&nbsp;<strong>options</strong> ()
+<br></td><td align="right"><h3><strong>options</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="closeWidgets"></A><A NAME="ref40"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>closeWidgets</strong> (void)
+<br></td><td align="right"><h3><strong>closeWidgets</strong></h3></td></tr></table><p></p><p> Try to close all the widgets associated with this connection.
+</p>
+<p><b>Returns</b>: True if all widgets agreed to close.
+   </p>
+<A NAME="user"></A><A NAME="ref41"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &&nbsp;<strong>user</strong> ()
+<br></td><td align="right"><h3><strong>user</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get username of connection.
+   </p>
+<A NAME="password"></A><A NAME="ref42"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &&nbsp;<strong>password</strong> ()
+<br></td><td align="right"><h3><strong>password</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get password of connection.
+   </p>
+<A NAME="setPassword"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setPassword</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &pwd)
+<br></td><td align="right"><h3><strong>setPassword</strong></h3></td></tr></table><p></p><p> Change password of connection.
+   </p>
+<A NAME="host"></A><A NAME="ref44"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &&nbsp;<strong>host</strong> ()
+<br></td><td align="right"><h3><strong>host</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get host of connection.
+   </p>
+<A NAME="database"></A><A NAME="ref45"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &&nbsp;<strong>database</strong> ()
+<br></td><td align="right"><h3><strong>database</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get database of connection.
+   </p>
+<A NAME="version"></A><A NAME="ref46"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &&nbsp;<strong>version</strong> ()
+<br></td><td align="right"><h3><strong>version</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get version of connection.
+   </p>
+<A NAME="provider"></A><A NAME="ref47"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &&nbsp;<strong>provider</strong> ()
+<br></td><td align="right"><h3><strong>provider</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get provider of connection.
+   </p>
+<A NAME="setDatabase"></A><A NAME="ref48"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setDatabase</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &database)
+<br></td><td align="right"><h3><strong>setDatabase</strong></h3></td></tr></table><p></p><p> Change the current database. Observe that this only changes the record of what is the current database. You will still need
+ to change the database oppinion on what database is the current one.
+   </p>
+<A NAME="description"></A><A NAME="ref49"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<strong>description</strong> (bool version=true)
+<br></td><td align="right"><h3><strong>description</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Get a description of this connection.
+</p>
+<A NAME="setNeedCommit"></A><A NAME="ref50"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setNeedCommit</strong> (bool needCommit=true)
+<br></td><td align="right"><h3><strong>setNeedCommit</strong></h3></td></tr></table><p></p><p> Set if this connection needs to be commited.
+   </p>
+<A NAME="needCommit"></A><A NAME="ref51"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>needCommit</strong> (void)
+<br></td><td align="right"><h3><strong>needCommit</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+ Get information about if the connection has uncommited data.
+</p>
+<p></p>
+<p><b>Returns</b>: Whether uncommited data is available.
+   </p>
+<A NAME="commit"></A><A NAME="ref52"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>commit</strong> (void)
+<br></td><td align="right"><h3><strong>commit</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p>
+ Commit connection. This will also close all extra connections except one.
+   </p>
+<A NAME="rollback"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>rollback</strong> (void)
+<br></td><td align="right"><h3><strong>rollback</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p>
+ Rollback connection. This will also close all extra connections except one.
+   </p>
+<A NAME="parse"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>parse</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql)
+<br></td><td align="right"><h3><strong>parse</strong></h3></td></tr></table><p></p><p> Parse a query on an actual connection and report any syntax problems encountered.
+ Defaults to not implemented.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to execute on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to parse
+   </TD></TR>
+</TABLE></P>
+<A NAME="parse"></A><A NAME="ref55"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>parse</strong> (const <A HREF="toSQL.html">toSQL</A> &sql)
+<br></td><td align="right"><h3><strong>parse</strong></h3></td></tr></table><p></p><p> Parse a query on an actual connection and report any syntax problems encountered.
+ Defaults to not implemented.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to execute on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to parse
+   </TD></TR>
+</TABLE></P>
+<A NAME="execute"></A><A NAME="ref56"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>execute</strong> (const <A HREF="toSQL.html">toSQL</A> &sql,
+	       <A HREF="#toQList">toQList</A> &params)
+<br></td><td align="right"><h3><strong>execute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+   </TD></TR>
+</TABLE></P>
+<A NAME="execute"></A><A NAME="ref57"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>execute</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql,
+	       <A HREF="#toQList">toQList</A> &params)
+<br></td><td align="right"><h3><strong>execute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+   </TD></TR>
+</TABLE></P>
+<A NAME="execute"></A><A NAME="ref58"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>execute</strong> (const <A HREF="toSQL.html">toSQL</A> &sql,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg1=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg2=QString::null,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg3=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg4=QString::null,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg5=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg6=QString::null,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg7=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg8=QString::null,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg9=QString::null)
+<br></td><td align="right"><h3><strong>execute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
+</TD></TR>
+<TR><TD align="left" valign="top"><i>arg1</i></TD><TD align="left" valign="top">Parameters to pass to query.
+   </TD></TR>
+</TABLE></P>
+<A NAME="execute"></A><A NAME="ref59"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>execute</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg1=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg2=QString::null,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg3=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg4=QString::null,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg5=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg6=QString::null,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg7=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg8=QString::null,
+	       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg9=QString::null)
+<br></td><td align="right"><h3><strong>execute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
+</TD></TR>
+<TR><TD align="left" valign="top"><i>arg1</i></TD><TD align="left" valign="top">Parameters to pass to query.
+   </TD></TR>
+</TABLE></P>
+<A NAME="allExecute"></A><A NAME="ref60"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>allExecute</strong> (const <A HREF="toSQL.html">toSQL</A> &sql,
+		  <A HREF="#toQList">toQList</A> &params)
+<br></td><td align="right"><h3><strong>allExecute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result on all open database connections.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+   </TD></TR>
+</TABLE></P>
+<A NAME="allExecute"></A><A NAME="ref61"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>allExecute</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql,
+		  <A HREF="#toQList">toQList</A> &params)
+<br></td><td align="right"><h3><strong>allExecute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result on all open database connections.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+   </TD></TR>
+</TABLE></P>
+<A NAME="allExecute"></A><A NAME="ref62"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>allExecute</strong> (const <A HREF="toSQL.html">toSQL</A> &sql,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg1=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg2=QString::null,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg3=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg4=QString::null,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg5=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg6=QString::null,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg7=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg8=QString::null,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg9=QString::null)
+<br></td><td align="right"><h3><strong>allExecute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result on all open database connections.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
+</TD></TR>
+<TR><TD align="left" valign="top"><i>arg1</i></TD><TD align="left" valign="top">Parameters to pass to query.
+   </TD></TR>
+</TABLE></P>
+<A NAME="allExecute"></A><A NAME="ref63"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>allExecute</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg1=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg2=QString::null,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg3=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg4=QString::null,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg5=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg6=QString::null,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg7=QString::null,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg8=QString::null,
+		  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &arg9=QString::null)
+<br></td><td align="right"><h3><strong>allExecute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result on all open database connections.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
+</TD></TR>
+<TR><TD align="left" valign="top"><i>arg1</i></TD><TD align="left" valign="top">Parameters to pass to query.
+   </TD></TR>
+</TABLE></P>
+<A NAME="addWidget"></A><A NAME="ref64"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addWidget</strong> (<A HREF="/usr/lib/qt3/doc/html/qobject.html">QObject</A> *widget)
+<br></td><td align="right"><h3><strong>addWidget</strong></h3></td></tr></table><p></p><p>
+ Add a object that uses this connection. This is needed to ensure that all widgets
+ that make use of a connection are destroyed when the connection is closed. Usually
+ tool windows need to call this function.
+</p>
+<p></p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>widget</i></TD><TD align="left" valign="top">The widget to add to the connection.
+   </TD></TR>
+</TABLE></P>
+<A NAME="delWidget"></A><A NAME="ref65"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>delWidget</strong> (<A HREF="/usr/lib/qt3/doc/html/qobject.html">QObject</A> *widget)
+<br></td><td align="right"><h3><strong>delWidget</strong></h3></td></tr></table><p></p><p>
+ Remove a widget from this connection. Should be called by the destructor of the
+ widget that has called addWidget.
+</p>
+<p></p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>widget</i></TD><TD align="left" valign="top">Widget to remove from the widget list.
+   </TD></TR>
+</TABLE></P>
+<p><b>See also</b>: addWidget</p>
+<A NAME="addInit"></A><A NAME="ref66"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addInit</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql)
+<br></td><td align="right"><h3><strong>addInit</strong></h3></td></tr></table><p></p><p>
+ Add a statement to be run uppon making new connections.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">Statement to run.
+   </TD></TR>
+</TABLE></P>
+<A NAME="delInit"></A><A NAME="ref67"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>delInit</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &sql)
+<br></td><td align="right"><h3><strong>delInit</strong></h3></td></tr></table><p></p><p>
+ Remove a statement that was added using <A HREF="toConnection.html#addInit">addInit</A>.
+   </p>
+<A NAME="initStrings"></A><A NAME="ref68"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &&nbsp;<strong>initStrings</strong> ()
+<br></td><td align="right"><h3><strong>initStrings</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+ Get a list of the current init strings.
+   </p>
+<A NAME="quote"></A><A NAME="ref69"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<strong>quote</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name)
+<br></td><td align="right"><h3><strong>quote</strong></h3></td></tr></table><p></p><p> Return a string representation to address an object.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">The name to be quoted.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: String addressing table.
+   </p>
+<A NAME="unQuote"></A><A NAME="ref70"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<strong>unQuote</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name)
+<br></td><td align="right"><h3><strong>unQuote</strong></h3></td></tr></table><p></p><p> Perform the opposite of <A HREF="toConnection.html#quote">quote</A>.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">The name to be un-quoted.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: String addressing table.
+   </p>
+<A NAME="objects"></A><A NAME="ref71"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<objectName> &&nbsp;<strong>objects</strong> (bool block)
+<br></td><td align="right"><h3><strong>objects</strong></h3></td></tr></table><p></p><p>
+ Get the objects available for the current user. Do not modify the returned list.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>block</i></TD><TD align="left" valign="top">Indicate wether or not to block until cached objects are available.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: A list of object available for the current user. The list is sorted in
+         owner and name order.
+   </p>
+<A NAME="addIfNotExists"></A><A NAME="ref72"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addIfNotExists</strong> (objectName &object)
+<br></td><td align="right"><h3><strong>addIfNotExists</strong></h3></td></tr></table><p></p><p> Add a new object to the objectlist if it doesn't exist already.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>object</i></TD><TD align="left" valign="top">The object to add
+   </TD></TR>
+</TABLE></P>
+<A NAME="analyzer"></A><A NAME="ref73"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &&nbsp;<strong>analyzer</strong> ()
+<br></td><td align="right"><h3><strong>analyzer</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p>
+ Get syntax analyzer for connection
+</p>
+<p><b>Returns</b>: A reference to the syntax analyzer to use for the connection.
+   </p>
+<A NAME="synonyms"></A><A NAME="ref74"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::map<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>,objectName> &&nbsp;<strong>synonyms</strong> (bool block)
+<br></td><td align="right"><h3><strong>synonyms</strong></h3></td></tr></table><p></p><p>
+ Get the synonyms available for objects. Do not modify the returned list.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>block</i></TD><TD align="left" valign="top">Indicate wether or not to block until cached objects are available.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: A list of synonyms to objects available for the current user.
+   </p>
+<A NAME="columns"></A><A NAME="ref75"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#toQDescList">toQDescList</A> &&nbsp;<strong>columns</strong> (const objectName &table,bool nocache=false)
+<br></td><td align="right"><h3><strong>columns</strong></h3></td></tr></table><p></p><p>
+ Get a list of the available columns for a table. This function caches the responses
+ and should be fairly fast after the first call. Do not modify the returned list.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>table</i></TD><TD align="left" valign="top">The table to describe.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>nocache</i></TD><TD align="left" valign="top">Don't use cached values even if they are available.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: A list of the columns for a table.
+   </p>
+<A NAME="rereadCache"></A><A NAME="ref76"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>rereadCache</strong> (void)
+<br></td><td align="right"><h3><strong>rereadCache</strong></h3></td></tr></table><p></p><p>
+ Reread the object and column cache.
+   </p>
+<A NAME="realName"></A><A NAME="ref77"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const objectName &&nbsp;<strong>realName</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &object,bool block)
+<br></td><td align="right"><h3><strong>realName</strong></h3></td></tr></table><p></p><p>
+ Get the real object name of an object.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>object</i></TD><TD align="left" valign="top">Object name
+</TD></TR>
+<TR><TD align="left" valign="top"><i>block</i></TD><TD align="left" valign="top">Block if not done caching object.
+   </TD></TR>
+</TABLE></P>
+<A NAME="realName"></A><A NAME="ref78"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const objectName &&nbsp;<strong>realName</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &object,<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &synonym,bool block)
+<br></td><td align="right"><h3><strong>realName</strong></h3></td></tr></table><p></p><p>
+ Get the real object name of a synonym.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>object</i></TD><TD align="left" valign="top">Object name
+</TD></TR>
+<TR><TD align="left" valign="top"><i>synonym</i></TD><TD align="left" valign="top">Filled with the synonym used to access the object returned or empty.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>block</i></TD><TD align="left" valign="top">Block if not done caching object.
+   </TD></TR>
+</TABLE></P>
+<A NAME="cacheAvailable"></A><A NAME="ref79"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>cacheAvailable</strong> (bool synonyms,bool block=false,bool need=true)
+<br></td><td align="right"><h3><strong>cacheAvailable</strong></h3></td></tr></table><p></p><p> Check if cache is available or not.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>synonyms</i></TD><TD align="left" valign="top">If synonyms are needed or not.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>block</i></TD><TD align="left" valign="top">Block until cache is done.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>true</i></TD><TD align="left" valign="top">True if you need the cache, or just checking.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: True if cache is available.
+   </p>
+<A NAME="cancelAll"></A><A NAME="ref80"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>cancelAll</strong> (void)
+<br></td><td align="right"><h3><strong>cancelAll</strong></h3></td></tr></table><p></p><p> Try to stop all running queries.
+   </p>
+<A NAME="loadDiskCache"></A><A NAME="ref81"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>loadDiskCache</strong> (void)
+<br></td><td align="right"><h3><strong>loadDiskCache</strong></h3></td></tr></table><p></p><p> load disk cache
+   </p>
+<A NAME="writeDiskCache"></A><A NAME="ref82"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>writeDiskCache</strong> (void)
+<br></td><td align="right"><h3><strong>writeDiskCache</strong></h3></td></tr></table><p></p><p> write disk cache
+   </p>
+<A NAME="running"></A><A NAME="ref83"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &nbsp;<strong>running</strong> (void)
+<br></td><td align="right"><h3><strong>running</strong></h3></td></tr></table><p></p><p> Get a list of currently running SQL.
+   </p>
+<A NAME="cacheDir"></A><A NAME="ref84"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &nbsp;<strong>cacheDir</strong> ()
+<br></td><td align="right"><h3><strong>cacheDir</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="toQuery"></A><A NAME="ref85"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toQuery</strong>
+</td><td align="right"><h3><strong>toQuery</strong></h3></td></tr></table><p></p><HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:49:58 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

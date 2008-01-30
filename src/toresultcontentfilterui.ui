@@ -1,0 +1,232 @@
+<ui version="4.0" >
+ <class>toResultContentFilterUI</class>
+ <widget class="QDialog" name="toResultContentFilterUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>750</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Content editor filter settings</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>11</number>
+   </property>
+   <property name="topMargin" >
+    <number>11</number>
+   </property>
+   <property name="rightMargin" >
+    <number>11</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>11</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>6</number>
+   </property>
+   <item row="4" column="1" >
+    <widget class="QPushButton" name="PushButton1" >
+     <property name="text" >
+      <string>Ok</string>
+     </property>
+     <property name="default" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2" >
+    <widget class="QPushButton" name="PushButton3" >
+     <property name="text" >
+      <string>Cancel</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLineEdit" name="Order" />
+   </item>
+   <item row="0" column="0" >
+    <widget class="QLabel" name="TextLabel1" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip" >
+      <string>Selection criteria to use getting items to edit. Same as after where in a select clause.</string>
+     </property>
+     <property name="text" >
+      <string>Selection &amp;criteria</string>
+     </property>
+     <property name="wordWrap" >
+      <bool>false</bool>
+     </property>
+     <property name="buddy" >
+      <cstring>Criteria</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="toHighlightedText" native="1" name="Criteria" >
+     <property name="focusPolicy" >
+      <enum>Qt::StrongFocus</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="TextLabel1_2" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip" >
+      <string>The sort order to use when retreiving data from the database.</string>
+     </property>
+     <property name="text" >
+      <string>Sort &amp;order. Separate columns with comma.</string>
+     </property>
+     <property name="wordWrap" >
+      <bool>false</bool>
+     </property>
+     <property name="buddy" >
+      <cstring>Order</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="3" >
+    <widget class="QLabel" name="TextLabel2" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip" >
+      <string>Available column names in table.</string>
+     </property>
+     <property name="text" >
+      <string>Table &amp;columns</string>
+     </property>
+     <property name="wordWrap" >
+      <bool>false</bool>
+     </property>
+     <property name="buddy" >
+      <cstring>Columns</cstring>
+     </property>
+    </widget>
+   </item>
+   <item rowspan="3" row="1" column="1" colspan="3" >
+    <widget class="toResultCols" native="1" name="Columns" />
+   </item>
+   <item row="4" column="3" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="0" >
+    <widget class="QCheckBox" name="AllTables" >
+     <property name="text" >
+      <string>Use for all tables</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+  <action name="actionCancel" >
+   <property name="text" >
+    <string>cancel</string>
+   </property>
+   <property name="shortcut" >
+    <string>Esc</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>toHighlightedText</class>
+   <extends>QWidget</extends>
+   <header>tohighlightedtext.h</header>
+  </customwidget>
+  <customwidget>
+   <class>toResultCols</class>
+   <extends>QWidget</extends>
+   <header>toresultcols.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>Criteria</tabstop>
+  <tabstop>Order</tabstop>
+  <tabstop>PushButton1</tabstop>
+  <tabstop>PushButton3</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>PushButton1</sender>
+   <signal>clicked()</signal>
+   <receiver>toResultContentFilterUI</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PushButton3</sender>
+   <signal>clicked()</signal>
+   <receiver>toResultContentFilterUI</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCancel</sender>
+   <signal>triggered()</signal>
+   <receiver>toResultContentFilterUI</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>374</x>
+     <y>239</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

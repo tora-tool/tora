@@ -1,0 +1,74 @@
+<HTML>
+<HEAD>
+<TITLE>class toParamGet</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toParamGet</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"> A help class to parse SQL for input/output bindings and if available also pop up a 
+ dialog and ask for values. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="toparamget_h.html">toparamget.h</A>&gt;</code></TD></TR>
+<TR><TH>Inherits</TH><TD><A HREF="/usr/lib/qt3/doc/html/qdialog.html">QDialog</A> <small>(qt)</small> <small>[public ]</small>, <A HREF="toHelpContext.html">toHelpContext</A> <small>[public ]</small></TD></TR>
+<TR><TH><A HREF="full-list-toParamGet.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Static Methods</h4><ul><LI>static  <A HREF="#toQList">toQList</A> &nbsp;<b><A HREF="#ref8">getParam</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,<A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *parent,<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &str,bool interactive=true) 
+</LI>
+<LI>static  void &nbsp;<b><A HREF="#ref9">setDefault</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &val) 
+</LI>
+</ul><h4>Protected Methods</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref7">resizeEvent</A></b> (<A HREF="/usr/lib/qt3/doc/html/qresizeevent.html">QResizeEvent</A> *e) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A help class to parse SQL for input/output bindings and if available also pop up a 
+ dialog and ask for values. Also maintains an internal cache of old values.
+ </p>
+<A NAME="resizeEvent"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>resizeEvent</strong> (<A HREF="/usr/lib/qt3/doc/html/qresizeevent.html">QResizeEvent</A> *e)
+<br></td><td align="right"><h3><strong>resizeEvent</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><A NAME="getParam"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="#toQList">toQList</A> &nbsp;<strong>getParam</strong> (<A HREF="toConnection.html">toConnection</A> &conn,<A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *parent,<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &str,bool interactive=true)
+<br></td><td align="right"><h3><strong>getParam</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get parameters for specified SQL string.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to get binds for.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent widget if dialog is needed.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">SQL to parse for bindings. Observe that this string can be changed to further
+            declare the binds.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>interactive</i></TD><TD align="left" valign="top">If not interactive simply rewrite the query and pass on the defaults.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: Returns a list of values to feed into the query.
+   </p>
+<A NAME="setDefault"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setDefault</strong> (<A HREF="toConnection.html">toConnection</A> &conn,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &val)
+<br></td><td align="right"><h3><strong>setDefault</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Specify a default value for the cache. This can not overwrite a manually
+ specified value by the user.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to get binds for.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of the bind variable.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>val</i></TD><TD align="left" valign="top">Value of the bind variable.
+   </TD></TR>
+</TABLE></P>
+<HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:49:58 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

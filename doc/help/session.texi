@@ -1,0 +1,52 @@
+@node session
+@section Session Manager
+@cindex Session Manager
+
+This tool is used to manage the connections made to the database.
+
+@image{images/session}
+
+The session tool consists of a toolbar, a list displaying the connections currently open to the database and at the bottom a tabbed pane where you can investigate a specific connection to the database.
+
+@subheading Toolbar
+
+The toolbar contain the following commands.
+
+@table @asis
+
+@item @strong{Refresh}
+      Refresh the view from the database.	
+@item @strong{Enable timed statistics}
+      Enable timed statistics for the currently selected session.	
+@item @strong{Disable timed statistics}
+      Disable timed statistics for the currently selected session.	
+@item @strong{Disconnect session}
+      Disconnect the currently selected session. You will be asked if you allow the current transaction to finish before kicking the session out or not.
+@item @strong{Refresh time}
+      A list where you can select the interval between automatic updates.	
+@item @strong{Change connection}
+      Change the connection to administrate storage for.
+
+@end table
+
+@subheading Inspecting a session
+
+When you select a session the following information is available in the tabbed pane at the bottom of the window.
+
+@table @asis
+
+@item @strong{Statistics}
+        The session statistics available for the session. You will get more statistics if you enable timed statistics through the toolbar. There are also two charts displaying waitstates and I/O for the selected session.	
+@item @strong{Connection info}
+      Information about the connection and versions of the components used.	
+@item @strong{Pending locks}
+      	What locks this session is currently waiting for.	
+Locked objects	The objects currently locked by this session.	
+@item @strong{Current statement}
+      The statement that is currently being executed (@pxref{SGA Statement} for information about the statement). 	
+@item @strong{Previous statement}
+      The next to last statement being executed by the session (@pxref{SGA Statement} for information about the statement).	
+@item @strong{Open cursors}
+      	This contains a list of all the cursors currently held open by the session. When a statement is selected in the list you can investigate it using the normal SGA statement view.
+
+@end table

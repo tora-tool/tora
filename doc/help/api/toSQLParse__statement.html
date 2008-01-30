@@ -1,0 +1,87 @@
+<HTML>
+<HEAD>
+<TITLE>class statement</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class statement</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"> Structure the statement is parsed into. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Full name</TH><TD><code><A HREF="toSQLParse.html">toSQLParse</A>::statement</code></TD></TR>
+<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="tosqlparse_h.html">tosqlparse.h</A>&gt;</code></TD></TR>
+<TR><TH><A HREF="full-list-toSQLParse__statement.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Types</h4><ul><LI>enum <A HREF="#ref2">type</A> {      Block,
+      /** Start of statement.
+}
+</LI>
+</ul><h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref6">statement</A></b> (type ntype=Token,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &token=QString::null,int cline=-1) 
+</LI>
+<LI>std::list<statement> &&nbsp;<b><A HREF="#ref7">subTokens</A></b> () 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref8">statement</A></b> (const statement &) 
+</LI>
+<LI>const statement &&nbsp;<b><A HREF="#ref9">operator = </A></b> (const statement &) 
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref10">operator == </A></b> (const statement &)  const
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref11">operator != </A></b> (const statement &stat)  const
+</LI>
+<LI>&nbsp;<b><A HREF="#ref12">~statement</A></b> () 
+</LI>
+</ul><h4>Public Members</h4><ul><LI>QString <b><A HREF="#ref3">Comment</A></b></LI>
+<LI>QString <b><A HREF="#ref4">String</A></b></LI>
+<LI>int <b><A HREF="#ref5">Line</A></b></LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Structure the statement is parsed into.
+   </p>
+<A NAME="type"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>enum <strong>type</strong> {      Block,
+      /** Start of statement.
+}
+</td><td align="right"><h3><strong>type</strong></h3></td></tr></table><p></p><p> Start of block.
+       </p>
+<A NAME="Comment"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>  <strong>Comment</strong>
+</td><td align="right"><h3><strong>Comment</strong></h3></td></tr></table><p></p><A NAME="String"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>  <strong>String</strong>
+</td><td align="right"><h3><strong>String</strong></h3></td></tr></table><p></p><A NAME="Line"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int  <strong>Line</strong>
+</td><td align="right"><h3><strong>Line</strong></h3></td></tr></table><p></p><A NAME="statement"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>statement</strong> (type ntype=Token,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &token=QString::null,int cline=-1)
+<br></td><td align="right"><h3><strong>statement</strong></h3></td></tr></table><p></p><p> Create statement
+     </p>
+<A NAME="subTokens"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<statement> &&nbsp;<strong>subTokens</strong> ()
+<br></td><td align="right"><h3><strong>subTokens</strong></h3></td></tr></table><p></p><p> Allocate subtokens if not available and return reference to subtokens
+     </p>
+<A NAME="statement"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>statement</strong> (const statement &)
+<br></td><td align="right"><h3><strong>statement</strong></h3></td></tr></table><p></p><p> Copy constructor
+     </p>
+<A NAME="operator%20=%20"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const statement &&nbsp;<strong>operator = </strong> (const statement &)
+<br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><p> Copy operator
+     </p>
+<A NAME="operator%20==%20"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>operator == </strong> (const statement &)
+<br></td><td align="right"><h3><strong>operator == </strong></h3></td></tr></table><p> <small>[const]</small></p><p> Equality operator. Does not include the line for comparison.
+     </p>
+<A NAME="operator%20!=%20"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>operator != </strong> (const statement &stat)
+<br></td><td align="right"><h3><strong>operator != </strong></h3></td></tr></table><p> <small>[const]</small></p><p> Non rquality operator. Does not include the line for comparison.
+     </p>
+<A NAME="~statement"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~statement</strong> ()
+<br></td><td align="right"><h3><strong>~statement</strong></h3></td></tr></table><p></p><p> Destroy statement
+     </p>
+<HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:49:58 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

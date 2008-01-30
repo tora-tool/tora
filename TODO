@@ -1,0 +1,135 @@
+QSscintilla port:
+
+* More integrated QScintilla features (toMarkedText class)
+    The toMarkedText class is still using its own version of the search/replace 
+    functionality from the pre-QScintilla times. Since QextScintilla has powerful 
+    search mechanism (regex support etc) - this needs to be integrated and the old 
+    one got rid of.
+
+  - fix insert(str, select). see toMarkedText::insert
+
+* Finish implementation of syntax colouring editor component (toHighlightedText class)
+    Code completion in SQL editor (using QextScintillaAPIs class), better integration 
+    with lexer class (QextScintillaLexer). We also probably need to override 
+    QextScintillaLexerSQL to better suit TOra purposes.
+    
+* Subtask from previous - integrate toSyntaxAnalyzer with QextScintillaLexer (or our 
+    subclass of it). This is needed to because toSyntaxAnalyzer used all over TOra to 
+    do validity checks of SQL, parameter parsing and other related things (not just 
+    syntax colouring). Hence it would make much more sense to integrate it with 
+    QextScintillaLexer where the latter can take keyword lists out of toSyntaxAnalyzer.
+    
+* Syntax colouring configuration options (toSyntaxSetup class and UI dialog) 
+    This has to be reimplemented to use QextScintillaLexer class instead of toSyntaxAnalyzer. 
+    
+* PL/SQL debugging (toDebugText class)
+    This has to be updated to use marker facilities provided by QextScintilla 
+    
+    
+Previous TODO:
+
+
+Extended functionality:
+
+* SQL Browser
+	Add information about partitions.
+	Modify tables
+		Caching/Nocaching
+			ALTER TABLE ... CACHE/NOCACHE
+		Deallocate Unused Space
+			ALTER TABLE ... DEALLOCATE UNUSED
+		Add columns
+		Remove columns
+		Add constraints
+		Remove constraints
+	Rename table (And everything else)
+		ALTER TABLE ... RENAME TO ...
+	DB Links
+	Libraries
+	Materialized Views
+	Dimensions
+	Partitions
+* toResultContent improvements
+	Make it possible to reorder columns in toResultContent.
+	Add tooltips like in result lists.
+* Editor improvements
+	CVS support (Or whatever this is called in windows).
+	PL/SQL doc (Like JavaDoc).
+	Synchonize editors that edit the same file.
+* Debugger
+	Don't lock during execution
+	Support for Oracle 7
+	Support for multiple open editors
+	Attaching to remote debugging session
+	Support for one referential cursor output variable
+* Full support for Oracle 9i.
+	Support for undo tablespaces.
+	Support for list partitions in extractor
+* Add consumer group settings to security manager.
+* Extract grants from objects.
+* Implement extract of temporary tables.
+* Implement migration, resize and report in toExtract.
+* Lots of more template texts including SQL syntax.
+* Ability to change/move redofiles.
+* Go through changes in DDL::Oracle and incorporate in toExtract.
+* Printing of toResultItems.
+* Different highlighter depending on connection.
+* Default names to listen to in alert.
+* Make menues and toolbuttons work for QLineEdit & QComboBox.
+* Use object cache in script object lists.
+* Optionaly drop before create in toExtract.
+* Ability to modify rollback segment.
+* Ability to drop tablespaces.
+* Information about controlfiles in tuning.
+* Use object cache in browser if possible.
+* Add support to run profiling in background.
+* Track session statistics while profiling.
+* Proxy connection provider.
+* Store worksheet statistic on save session.
+* Configure key bindings.
+* Use QTable to display the result in the worksheet.
+* Improved visualisation of any list and any columns.
+* Session:Long operations(v$session_longops)
+* Archive log info
+* Rollback:Shrink rollback segment(ALTER ROLLBACK SEGMENT TO {value})
+* Separate refresh of session info and session list.
+* Add auto extend information to the storage manager.
+* Add copy datafile/tablespace in storage manager.
+* Add warning when changing to Default Storage when disabled in modify tablespace in storage.
+* Enable copy in main window on lists.
+* Explain plan without execute in worksheet.
+* Option to select newline format on saved text.
+* Make legacy CTRL+Shift etc keyboard bindings available.
+* Don't display statements not in the SGA in the SGA trace.
+* Include public objects in script tool.
+* Option wether tool button open new window or an already open tool.
+* Include status of code objects in browsertool.
+* Implement printing of text view.
+* Plugin interface to alerttypes.
+* Handle AQ_ priviledges correctly in security manager (Using DBMS_AQADM package).
+* Easier to grant all priviledges to a user.
+* Save column order of open tools when saving/restoring session.
+* Remember settings in print dialog.
+* Make it posible to configure CSV separator/delimiter in chartmanager.
+* Save state of SQL output window.
+* Make session waitstate analyzer also keep track of what SQL is executed.
+* Don't update tabs which never can be updated in session manager.
+* Add tooltips in waitstate charts to display waitstate name and value.
+* Make default schema any an option.
+* Initially sort descending on columns in SGA trace.
+
+New tools:
+
+* SQL Builder?
+* Visual reverse engineering of DB.
+* Change impact analyzing tool.
+* Alert log viewer.
+* Recent events:
+	* Number of redo switches
+	* Users added withing 30 days
+	* Roles added withing 30 days
+	* Datafiles added within 30 days
+	* Objects added within 30 days
+	* Objects edited within 30 days
+* SQL*Loader controlfile generator.
+* Replication manager.

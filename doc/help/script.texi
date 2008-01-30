@@ -1,0 +1,82 @@
+@node script
+@section Schema extraction, compare and search
+@cindex Schema extraction, compare and search
+
+This tool is used to either extract a script to recreate database objects, compare database objects or search database objects.
+
+@image{images/script}
+
+@subheading Defining the operation
+
+The first thing to select is if you want to @strong{extract} script to recreate an object, @strong{compare} or @strong{search}. 
+You choose this by selecting one of the radio buttons to the left of the screen.
+
+Next you should indicate what kind of information you want included in the extract or compare. This is selected with the checkboxes just to the right of the mode selection. Depending on the mode some options may be disabled.
+
+@table @asis
+
+@item @strong{Include DDL}
+      Include any database definition.
+@item @strong{Include constraints}
+      Extract constraint definitions from tables	
+@item @strong{Include indexes}
+      Extract indexes for tables.	
+@item @strong{Include grants}
+      Extract grants for database objects.	
+@item @strong{Include storage specification}
+      Extract storage specifications for database objects.	
+@item @strong{Include parallel specification}
+      Extract parallel specification for tables.	
+@item @strong{Include partition specification}
+      Extract partition specification for tables.	
+@item @strong{Include code specification}
+      Extract code for packages, procedures and functions.	
+@item @strong{Include comments}
+      Extract comments for database objects.	
+@item @strong{Include content of tables}
+      Extract the content of tables as well.	
+@item @strong{Generate prompts}
+      Generate prompts in the extracted result indicating what the script is doing.	
+@item @strong{Generate header}
+      Generate header of the script.	
+@item @strong{Generated schema}
+      This specifies the schema to be used when extracting. If you select Same, the same schema as the source database is used. If you select None, no schema is generated. Specifying anything else will replace the source schema with the one entered here.
+
+@end table
+
+If you are searching you also need to indicate what you are searching for in the bottom left of the front page.
+
+@table @asis
+@item @strong{Containing any words}
+      The object should contain at least one of the words in the line editor.
+@item @strong{Containing all words}
+      The object should contain all of the words in the line editor. 	
+@item @strong{Exact match}
+      The object should contain the exact string as in the line editor include whitespaces. 	
+@item @strong{RegExp}
+      The object should contain at least one of the words in the line editor. The dialect of RegExp:s is the ones in the version of Qt that TOra is compiled against. For more information on regular expressions check out @uref{http://doc.trolltech.com/qregexp.html}, if you are using Qt 3.0 or later you have a more advanced form of regular expressions.
+@end table
+
+The next thing you need to do is to specify which objects you want to extract or compare. If you extract you only need to specify the source, if comparing destination objects are also needed.
+
+Selecting or deselecting an item in this list will select all it's child items.
+
+If you specify the @strong{extract} mode you can also indicate a way to resize generated storage specifications. This could be useful to make a database have only a few standard storage specifications making the database less prone to fragmentation.
+
+@image{images/resize}
+
+You have three modes to specify how resizing should work. First there is @strong{Don't resize} which means leave the same as the original. 
+Then there is @strong{Auto resize} which should work for pretty much everyone. In this a resize specification for each order of magnitude of size is given a specific storage specification. And last is the @strong{Custom resize} mode in which you specify how to transform the storage specifications to new values.
+
+When you specify a custom resize you add items to the list with a @strong{limit} size, @strong{initial} size and @strong{next} size. The sizes are used in the following way. When TOra is to determine the storage clause of an object it will take the @strong{initial} and @strong{next} sizes of the row in this list with the lowest @strong{limit} size still higher than the current size of the object. If no row is found the one with the highest @strong{limit} is used.
+
+@subheading Reading the result
+
+If you @strong{extract} the result is available under the @strong{Result} tag of the dialog in the form of a worksheet tool where you can either start executing it or save it to a file. 
+If you are comparing objects you will get the result under the @strong{Difference} tab. The tab will look something like this.
+
+@image{images/difference}
+
+On the left is a pane containing objects only available in the source database. On the right is a pane containing the objects only available in the destination database.
+
+Only the items in the lists that have checks on them are actually dropped or created, the other items only need to be added to lead the list tree to the items that are actually dropped or created.

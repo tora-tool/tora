@@ -1,0 +1,21 @@
+@node help
+@chapter Using the help browser
+@cindex Using the help browser
+
+You can always bring up help on the current dialog etc. by pressing the @strong{F1} key. You can also select it from the application menu bar under Help (dooh).
+
+When you open the help browser which you obviously have done. You are presented with a screen similar to the following.
+
+@image{images/help}
+
+On the top of the screen is a toolbar with back and forward buttons that you can use to go back and forward in the history of viewed pages that you have previously looked at. This list kept during the duration of running TOra, however when you display help in dialogs that help is not added to the main application help history.
+
+To the right is a large area which displays the documentation. This is essentially a web browser (If you run the KDE version it is actually an embedded konqueror) and works as such. Clicking on blue text will go to the referenced section.
+
+To the left is a pane that can either display the contents of the manuals available for browsing or search result. Note that the TOra help is compatible with Oracle manuals which can be browsed in the help viewer if you add them in the options dialog 
+(@pxref{additionalhelp, Additional help}). 
+
+You can also display a different pane where you can search the manuals. In this version of TOra you can only search external Oracle manuals and not the TOra user manual. This will be fixed in a future version of TOra.
+
+Just enter the words you want to find and the sections containing @strong{all} the words entered will be displayed in the list below it. Selecting a row in either the search result or contents list will bring up that page in the right part of the screen.
+

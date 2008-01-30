@@ -1,0 +1,22 @@
+@node output
+@section SQL Output
+@cindex SQL Output
+
+This tool display the output from the DBMS_OUTPUT package (For more information see the Oracle PL/SQL Supplied Packages manual).
+
+@image{images/output}
+
+Use this if you are running PL/SQL from the worksheet(@pxref{worksheet,SQL Worksheet}) and want to check the output. It is also used in the debugger (@pxref{debugger,PL/SQL Debugger}) but as a pane in the debugger information.
+
+The toolbar contain the following controls.
+
+@table @asis
+@item @strong{Update}
+        Poll for more output immediately.	
+@item @strong{Enable}
+        Enable or disable output collecting. Collecting is enabled if light bulb is lit.	
+@item @strong{Clear output}
+      	Clear the currently collected output.	
+@item @strong{Refresh}
+      	The time-out to update automatically. The default value of this is configurable though the options.
+@end table

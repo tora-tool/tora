@@ -1,0 +1,215 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>toRollbackDialogUI</class>
+  <widget class="QDialog" name="toRollbackDialogUI" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>556</width>
+        <height>480</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Modify tablespace</string>
+    </property>
+    <layout class="QGridLayout" >
+      <property name="margin" >
+        <number>11</number>
+      </property>
+      <property name="spacing" >
+        <number>6</number>
+      </property>
+      <item row="3" column="2" >
+        <widget class="QToolButton" name="ToolButton1" >
+          <property name="text" >
+            <string/>
+          </property>
+          <property name="icon" >
+            <pixmap>image0</pixmap>
+          </property>
+          <property name="toolTip" >
+            <string>Display the SQL used to generate the specified object</string>
+          </property>
+        </widget>
+      </item>
+      <item rowspan="4" row="0" column="0" colspan="1" >
+        <widget class="QTabWidget" name="DialogTabs" >
+          <widget class="QWidget" name="DefaultPage" >
+            <attribute name="title" >
+              <string>Rollback Segment</string>
+            </attribute>
+            <layout class="QGridLayout" >
+              <property name="margin" >
+                <number>11</number>
+              </property>
+              <property name="spacing" >
+                <number>6</number>
+              </property>
+              <item row="4" column="0" >
+                <widget class="QCheckBox" name="Public" >
+                  <property name="text" >
+                    <string>&amp;Public</string>
+                  </property>
+                  <property name="checked" >
+                    <bool>true</bool>
+                  </property>
+                  <property name="toolTip" >
+                    <string>If this should be a publicly available rollback segment</string>
+                  </property>
+                </widget>
+              </item>
+              <item row="0" column="0" >
+                <widget class="QLabel" name="TextLabel1" >
+                  <property name="text" >
+                    <string>&amp;Name</string>
+                  </property>
+                  <property name="buddy" >
+                    <cstring>Name</cstring>
+                  </property>
+                  <property name="wordWrap" >
+                    <bool>false</bool>
+                  </property>
+                </widget>
+              </item>
+              <item row="3" column="0" >
+                <widget class="QComboBox" name="Tablespace" />
+              </item>
+              <item row="1" column="0" >
+                <widget class="QLineEdit" name="Name" />
+              </item>
+              <item row="2" column="0" >
+                <widget class="QLabel" name="TextLabel2" >
+                  <property name="text" >
+                    <string>&amp;Tablespace</string>
+                  </property>
+                  <property name="buddy" >
+                    <cstring>Tablespace</cstring>
+                  </property>
+                  <property name="wordWrap" >
+                    <bool>false</bool>
+                  </property>
+                </widget>
+              </item>
+              <item row="5" column="0" >
+                <spacer name="Spacer3" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>20</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>QSizePolicy::Expanding</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Qt::Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </widget>
+        </widget>
+      </item>
+      <item rowspan="1" row="0" column="1" colspan="2" >
+        <widget class="QPushButton" name="OkButton" >
+          <property name="sizePolicy" >
+            <sizepolicy>
+              <hsizetype>4</hsizetype>
+              <vsizetype>0</vsizetype>
+            </sizepolicy>
+          </property>
+          <property name="text" >
+            <string>&amp;Ok</string>
+          </property>
+          <property name="default" >
+            <bool>true</bool>
+          </property>
+        </widget>
+      </item>
+      <item rowspan="1" row="1" column="1" colspan="2" >
+        <widget class="QPushButton" name="PushButton2" >
+          <property name="sizePolicy" >
+            <sizepolicy>
+              <hsizetype>4</hsizetype>
+              <vsizetype>0</vsizetype>
+            </sizepolicy>
+          </property>
+          <property name="text" >
+            <string>Cancel</string>
+          </property>
+        </widget>
+      </item>
+      <item row="3" column="1" >
+        <spacer name="Spacer2" >
+          <property name="sizeHint" >
+            <size>
+              <width>71</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Maximum</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+          </property>
+        </spacer>
+      </item>
+      <item row="2" column="2" >
+        <spacer name="Spacer1" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+    </layout>
+  </widget>
+  <tabstops>
+    <tabstop>DialogTabs</tabstop>
+    <tabstop>OkButton</tabstop>
+    <tabstop>PushButton2</tabstop>
+  </tabstops>
+  <images>
+    <image name="image0" >
+      <data format="XPM.GZ" length="575" >789c6d90cf6e83300c87ef3c45446e684a13081434f51136ed3869dac11828f4cf2a6ddd619af6eeebcf848ab25921f2f7c5d88455a29e9f1e54b28a3ece741e58714fef2a693e8fc7af97d7cd7714bb426179e5e2bb28368ad5e3e9ad45ae2fb9b612c001e84a577aa96c81a94d6d4ec07d405fa44016acd2729d010f01795d037b60e6325bca692d58654c0c6c80de795b7b6027489eb901ee8039e5555700b7019b11e98a9d5c6711e2b4d666da82436e64c30a0ed9f85cdd5881983b5410d5332755dc50dbc99869aed1db7ee8696c307ddfe5d5ddfea0cdac9f48d2e6d685c1b7ce84ab2c5c908b7ff09ffbdb6f723ff7d12f66576feb</data>
+    </image>
+  </images>
+  <connections>
+    <connection>
+      <sender>OkButton</sender>
+      <signal>clicked()</signal>
+      <receiver>toRollbackDialogUI</receiver>
+      <slot>accept()</slot>
+    </connection>
+    <connection>
+      <sender>PushButton2</sender>
+      <signal>clicked()</signal>
+      <receiver>toRollbackDialogUI</receiver>
+      <slot>reject()</slot>
+    </connection>
+    <connection>
+      <sender>ToolButton1</sender>
+      <signal>clicked()</signal>
+      <receiver>toRollbackDialogUI</receiver>
+      <slot>displaySQL()</slot>
+    </connection>
+    <connection>
+      <sender>Name</sender>
+      <signal>textChanged(QString)</signal>
+      <receiver>toRollbackDialogUI</receiver>
+      <slot>valueChanged(QString)</slot>
+    </connection>
+  </connections>
+</ui>

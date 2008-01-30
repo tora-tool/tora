@@ -1,0 +1,433 @@
+<ui version="4.0" >
+ <class>toSearchReplaceUI</class>
+ <widget class="QDialog" name="toSearchReplaceUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>570</width>
+    <height>228</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Search &amp; Replace</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>11</number>
+   </property>
+   <property name="topMargin" >
+    <number>11</number>
+   </property>
+   <property name="rightMargin" >
+    <number>11</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>11</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>6</number>
+   </property>
+   <item row="0" column="2" >
+    <widget class="QPushButton" name="Search" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>&amp;Search Top</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="2" >
+    <widget class="QPushButton" name="SearchNext" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>Search &amp;Next</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" >
+    <widget class="QPushButton" name="Replace" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>&amp;Replace</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2" >
+    <widget class="QPushButton" name="ReplaceAll" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>Replace &amp;All</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2" >
+    <widget class="QPushButton" name="Close" >
+     <property name="enabled" >
+      <bool>true</bool>
+     </property>
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>Close</string>
+     </property>
+    </widget>
+   </item>
+   <item rowspan="6" row="0" column="1" >
+    <widget class="Line" name="Line1" >
+     <property name="frameShape" >
+      <enum>QFrame::VLine</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Sunken</enum>
+     </property>
+    </widget>
+   </item>
+   <item rowspan="6" row="0" column="0" >
+    <widget class="QFrame" name="Frame3" >
+     <property name="frameShape" >
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Plain</enum>
+     </property>
+     <layout class="QVBoxLayout" >
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <property name="leftMargin" >
+       <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="Q3ButtonGroup" name="ButtonGroup1" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="title" >
+         <string>Search</string>
+        </property>
+        <layout class="QGridLayout" >
+         <property name="leftMargin" >
+          <number>11</number>
+         </property>
+         <property name="topMargin" >
+          <number>11</number>
+         </property>
+         <property name="rightMargin" >
+          <number>11</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>11</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" colspan="3" >
+          <widget class="Q3MultiLineEdit" native="1" name="SearchText" />
+         </item>
+         <item row="1" column="0" >
+          <widget class="QRadioButton" name="Exact" >
+           <property name="toolTip" >
+            <string>Match text exactly as written</string>
+           </property>
+           <property name="text" >
+            <string>Exact</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" >
+          <widget class="QCheckBox" name="WholeWord" >
+           <property name="toolTip" >
+            <string>Only match whole words</string>
+           </property>
+           <property name="text" >
+            <string>Match Word</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="QCheckBox" name="IgnoreCase" >
+           <property name="toolTip" >
+            <string>Only match whole words</string>
+           </property>
+           <property name="text" >
+            <string>Ignore Case</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QRadioButton" name="RegExp" >
+           <property name="toolTip" >
+            <string>Use RegExp semantics for matching (See Qt documentation)</string>
+           </property>
+           <property name="text" >
+            <string>RegExp</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="Q3GroupBox" name="GroupBox1" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="title" >
+         <string>Replace</string>
+        </property>
+        <layout class="QGridLayout" >
+         <property name="leftMargin" >
+          <number>11</number>
+         </property>
+         <property name="topMargin" >
+          <number>11</number>
+         </property>
+         <property name="rightMargin" >
+          <number>11</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>11</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="Q3MultiLineEdit" native="1" name="ReplaceText" />
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>Q3GroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>Qt3Support/Q3GroupBox</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Q3ButtonGroup</class>
+   <extends>Q3GroupBox</extends>
+   <header>Qt3Support/Q3ButtonGroup</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Q3MultiLineEdit</class>
+   <extends>QWidget</extends>
+   <header>q3multilineedit.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>SearchText</tabstop>
+  <tabstop>Exact</tabstop>
+  <tabstop>RegExp</tabstop>
+  <tabstop>WholeWord</tabstop>
+  <tabstop>IgnoreCase</tabstop>
+  <tabstop>ReplaceText</tabstop>
+  <tabstop>Search</tabstop>
+  <tabstop>SearchNext</tabstop>
+  <tabstop>Replace</tabstop>
+  <tabstop>ReplaceAll</tabstop>
+  <tabstop>Close</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>Close</sender>
+   <signal>clicked()</signal>
+   <receiver>toSearchReplaceUI</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Search</sender>
+   <signal>clicked()</signal>
+   <receiver>toSearchReplaceUI</receiver>
+   <slot>search()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>SearchNext</sender>
+   <signal>clicked()</signal>
+   <receiver>toSearchReplaceUI</receiver>
+   <slot>searchNext()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ReplaceAll</sender>
+   <signal>clicked()</signal>
+   <receiver>toSearchReplaceUI</receiver>
+   <slot>replaceAll()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>SearchText</sender>
+   <signal>textChanged()</signal>
+   <receiver>toSearchReplaceUI</receiver>
+   <slot>searchChanged()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Replace</sender>
+   <signal>clicked()</signal>
+   <receiver>toSearchReplaceUI</receiver>
+   <slot>replace()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

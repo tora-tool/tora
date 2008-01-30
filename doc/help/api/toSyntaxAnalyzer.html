@@ -1,0 +1,124 @@
+<HTML>
+<HEAD>
+<TITLE>class toSyntaxAnalyzer</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toSyntaxAnalyzer</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"> This class implements a syntax parser to provide information to
+ a syntax highlighted editor. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="tohighlightedtext_h.html">tohighlightedtext.h</A>&gt;</code></TD></TR>
+<TR><TH><A HREF="full-list-toSyntaxAnalyzer.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Types</h4><ul><LI>enum <A HREF="#ref1">infoType</A> {    Normal=0,
+    /** This is a keyword
+}
+</LI>
+<LI>struct <A HREF="toSyntaxAnalyzer__highlightInfo.html">highlightInfo</A>
+</LI>
+</ul><h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref12">toSyntaxAnalyzer</A></b> (const char **keywords) 
+</LI>
+<LI>virtual  &nbsp;<b><A HREF="#ref13">~toSyntaxAnalyzer</A></b> () 
+</LI>
+<LI>virtual  <A HREF="/usr/lib/qt3/doc/html/qchar.html">QChar</A> &nbsp;<b><A HREF="#ref14">quoteCharacter</A></b> () 
+</LI>
+<LI>virtual  bool &nbsp;<b><A HREF="#ref15">declareBlock</A></b> () 
+</LI>
+<LI>virtual  std::list<highlightInfo> &nbsp;<b><A HREF="#ref16">analyzeLine</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &str,infoType in,infoType &out) 
+</LI>
+<LI><A HREF="/usr/lib/qt3/doc/html/qcolor.html">QColor</A> &nbsp;<b><A HREF="#ref17">getColor</A></b> (infoType typ) 
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref18">reservedWord</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &word) 
+</LI>
+</ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &&nbsp;<b><A HREF="#ref20">defaultAnalyzer</A></b> () 
+</LI>
+</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref19">toSyntaxSetup</A></b></LI>
+</ul><h4>Protected Methods</h4><ul><LI>bool &nbsp;<b><A HREF="#ref7">isSymbol</A></b> (<A HREF="/usr/lib/qt3/doc/html/qchar.html">QChar</A> c) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class implements a syntax parser to provide information to
+ a syntax highlighted editor.
+ </p>
+<A NAME="infoType"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>enum <strong>infoType</strong> {    Normal=0,
+    /** This is a keyword
+}
+</td><td align="right"><h3><strong>infoType</strong></h3></td></tr></table><p></p><p> Normal text
+     </p>
+<A NAME="toSyntaxAnalyzer__highlightInfo.html"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>highlightInfo</strong> <small>(struct)</small></td><td align="right"><h3><strong>highlightInfo</strong></h3></td></tr></table><p></p><p> Information about a change in highlighting.
+   </p>
+<A NAME="isSymbol"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isSymbol</strong> (<A HREF="/usr/lib/qt3/doc/html/qchar.html">QChar</A> c)
+<br></td><td align="right"><h3><strong>isSymbol</strong></h3></td></tr></table><p> <small>[protected]</small></p><p> Check if this is part of a symbol or not.
+   </p>
+<A NAME="toSyntaxAnalyzer"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toSyntaxAnalyzer</strong> (const char **keywords)
+<br></td><td align="right"><h3><strong>toSyntaxAnalyzer</strong></h3></td></tr></table><p></p><p> Create a syntax analysed
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>keywords</i></TD><TD align="left" valign="top">A list of keywords.
+   </TD></TR>
+</TABLE></P>
+<A NAME="~toSyntaxAnalyzer"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toSyntaxAnalyzer</strong> ()
+<br></td><td align="right"><h3><strong>~toSyntaxAnalyzer</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="quoteCharacter"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="/usr/lib/qt3/doc/html/qchar.html">QChar</A> &nbsp;<strong>quoteCharacter</strong> ()
+<br></td><td align="right"><h3><strong>quoteCharacter</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get the character used to quote names of functions etc for the database
+   </p>
+<A NAME="declareBlock"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>declareBlock</strong> ()
+<br></td><td align="right"><h3><strong>declareBlock</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> True if declare keyword starts block.
+   </p>
+<A NAME="analyzeLine"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<highlightInfo> &nbsp;<strong>analyzeLine</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &str,infoType in,infoType &out)
+<br></td><td align="right"><h3><strong>analyzeLine</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Analyze a line. There is no guarantee that lines will be called in any kind of order.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">Line to analyze.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>in</i></TD><TD align="left" valign="top">Type at start of line.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>out</i></TD><TD align="left" valign="top">Type at start of next line.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: A list of where highlighting should change. Start as normal.
+   </p>
+<A NAME="getColor"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="/usr/lib/qt3/doc/html/qcolor.html">QColor</A> &nbsp;<strong>getColor</strong> (infoType typ)
+<br></td><td align="right"><h3><strong>getColor</strong></h3></td></tr></table><p></p><p> Get a colordefinition for a <A HREF="toSyntaxAnalyzer.html#infoType">infoType</A> value.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>typ</i></TD><TD align="left" valign="top"><A HREF="toSyntaxAnalyzer.html#infoType">infoType</A> to get color for.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: Color of that type.
+   </p>
+<A NAME="reservedWord"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>reservedWord</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &word)
+<br></td><td align="right"><h3><strong>reservedWord</strong></h3></td></tr></table><p></p><p> Check if a word is reserved.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>word</i></TD><TD align="left" valign="top">Word to check.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: True if word is reserved.
+   </p>
+<A NAME="toSyntaxSetup"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toSyntaxSetup</strong>
+</td><td align="right"><h3><strong>toSyntaxSetup</strong></h3></td></tr></table><p></p><A NAME="defaultAnalyzer"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &&nbsp;<strong>defaultAnalyzer</strong> ()
+<br></td><td align="right"><h3><strong>defaultAnalyzer</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get the default syntax analyzer.
+</p>
+<p><b>Returns</b>: Reference to the default analyzer.
+   </p>
+<HR>
+	<table>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:49:58 2005, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

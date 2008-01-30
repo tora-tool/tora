@@ -1,0 +1,28 @@
+Release Procedures:
+===================
+
+Source tarball:
+---------------
+Check out the tora module from CVS
+Edit the configure.in file to set the version number
+Edit the NEWS file to set a release date
+Commit, and then tag the release "cvs tag TORA_1_3_XX"
+
+configure
+make dist
+
+upload to upload.sf.net:/incoming/
+
+	curl -T tora-1.3.xx.tar.gz ftp://upload.sf.net/incoming/
+
+add new release to the 'tora' package
+
+RPM binaries:
+-------------
+No set procedure yet, still deciding on a standardized RPM to use.
+
+Static binary tarball:
+----------------------
+No longer producing this, too specific to particular builds and difficult to resolve some
+Qt dependencies with static only.
+

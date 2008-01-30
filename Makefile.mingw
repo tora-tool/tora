@@ -1,0 +1,521 @@
+#####
+#
+# TOra - An Oracle Toolkit for DBA's and developers
+# Copyright (C) 2003-2005 Quest Software, Inc
+# Portions Copyright (C) 2005 Other Contributors
+# 
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation;  only version 2 of
+# the License is valid for this program.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+#      As a special exception, you have permission to link this program
+#      with the Oracle Client libraries and distribute executables, as long
+#      as you follow the requirements of the GNU GPL in regard to all of the
+#      software in the executable aside from Oracle client libraries.
+#
+#      Specifically you are not permitted to link this program with the
+#      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+#      And you are not permitted to distribute binaries compiled against
+#      these libraries without written consent from Quest Software, Inc.
+#      Observe that this does not disallow linking to the Qt Free Edition.
+#
+#      You may link this product with any GPL'd Qt library such as Qt/Free
+#
+# All trademarks belong to their respective owners.
+#
+#####
+
+# Locations of OCI Dll and home, QT and QScintilla
+#    paths below are just an example
+OCI_DLL=/c/oracle/ora81/bin/oci.dll
+OCI_HOME=/c/oracle/ora81/oci
+QTDIR=/c/qt-3
+
+##Perl
+PERL=/c/Perl/bin/perl
+
+# Where to create installation bundle
+INSTALLDIR=/c/TOra
+
+# OTL is now in external directory
+OTL_DIR=../ext/otl
+
+#Loki
+LOKI_DIR=../ext/loki/loki-0.1.6
+
+# What to compile, can be tora for tora-mono for monolithic, tora-static for static version
+# (for Windows build these targets seems to have no difference so they better left default)
+TARGET=tora
+
+# Additional includes needed to compile program
+INCLUDES="-I$(OCI_HOME)/include" \
+	 "-I$(QTDIR)/include" \
+	"-I$(OTL_DIR)" \
+	"-I$(LOKI_DIR)/include"
+
+# C++ Compiler to use
+GCC=g++
+
+# Additional libraries to link with
+LIBS_GLOB=-lwsock32
+
+# Standard C++ library
+STDCPP_SHARED=-lstdc++
+
+# Static version of C++ library (Only needed when linking statically
+STDCPP_STATIC=
+
+# Qt and QScintilla libraries (QScintilla is only shared on Windows)
+QT_SHARED=-lqt-mt
+QT_SCINTILLA=-lqscintilla
+
+# Static Qt library
+QT_STATIC=
+
+# Path to Qt meta compiler
+MOC="$(QTDIR)/bin/moc"
+
+# Path to Qt interface compiler
+UIC="$(QTDIR)/bin/uic"
+
+# Path to Qt translation compiler
+LRELEASE="$(QTDIR)/bin/lrelease"
+
+# Path to Qt translation update
+LUPDATE="$(QTDIR)/bin/lupdate"
+
+# Additional paths to find libraries
+LFLAGS="-L$(QTDIR)/lib" "-Llib"
+
+# Oracle OCI export library
+OCI_LIB=lib/liboci.a
+
+# Oracle library
+ORACLE_SHARED=-loci
+
+# Static Oracle libraries
+ORACLE_STATIC=$(STATIC_ORACLETTLIBS)
+
+# MySQL found
+MYSQL_FOUND=0
+
+# MySQL library
+MYSQL_SHARED=
+
+# Static MySQL libraries
+MYSQL_STATIC=
+
+# Additional defines to use while compiling, except for the normal these are available
+#   OTL_ORA9I          - Compile for Oracle 9.x
+#   OTL_ORA8I          - Compile for Oracle 8.1.x
+#   OTL_ORA8           - Compile for Oracle 8.0.x
+#   OTL_ORA_TIMESTAMP  - Include support for timestamps
+#   TO_NEW_CHECK       - Disable new version check globally
+DEFINES+=-DOTL_ORA8I -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP -DOTL_EXCEPTION_ENABLE_ERROR_OFFSET
+DEFINES+=-D_REENTRANT
+DEFINES+=-DQT_THREAD_SUPPORT
+DEFINES+=-DTOMONOLITHIC
+DEFINES+=-DWIN32 -D_WIN32
+DEFINES+=-D_int64="long long"
+
+# Comment out this line if you want more output from compile
+.SILENT:
+
+# Additional flags set when using only the precompiler.
+CPPFLAGS_GLOB=
+
+# Additional flags to set when linking.
+LFLAGS_GLOB=-O2
+
+# Additional flags set when compiling.
+CFLAGS_GLOB=-O2 -W -Wall -c -mthreads -w
+
+############################################################################
+#
+# End of configuration part of Makefile
+#
+############################################################################
+
+TITLE=TOra
+
+API=	\
+	tochangeconnection.h	\
+	tobackground.h		\
+	tobackgroundlabel.h		\
+	tobackuptool.h          \
+	tobarchart.h		\
+	toconf.h		\
+	toconfiguration.h       \
+	toconnection.h		\
+	todatatype.h		\
+	todefaultkeywords.h	\
+	toeditwidget.h		\
+	toextract.h		\
+	tofilesize.h		\
+	tohelp.h		\
+	tohelpbrowser.h		\
+	tohighlightedtext.h	\
+	tohtml.h		\
+	tolegendchart.h		\
+	tolinechart.h		\
+	tolistviewformatter.h \
+	tolistviewformattercsv.h \
+	tolistviewformatterfactory.h \
+	tolistviewformatterhtml.h \
+	tolistviewformatteridentifier.h \
+	tolistviewformattersql.h \
+	tolistviewformattertabdel.h \
+	tolistviewformattertext.h \
+	tomain.h		\
+	tomainwindow.kde.h	\
+	tomarkedtext.h		\
+	tomemoeditor.h		\
+	tonoblockquery.h	\
+	toparamget.h		\
+	topiechart.h		\
+	toqvalue.h		\
+	toreport.h              \
+	toresult.h		\
+	toresultbar.h		\
+	toresultcols.h		\
+	toresultcolscomment.h		\
+	toresultcombo.h         \
+	toresultconstraint.h	\
+	toresultcontent.h	\
+	toresultdepend.h	\
+	toresultfield.h		\
+	toresultindexes.h	\
+	toresultitem.h		\
+	toresultlabel.h		\
+	toresultline.h		\
+	toresultlong.h		\
+	toresultpie.h		\
+	toresultplan.h		\
+	toresultreferences.h	\
+	toresultresources.h	\
+	toresultstats.h		\
+	toresultview.h		\
+	tosgastatement.h	\
+	tosmtp.h                \
+	tosql.h			\
+	tosqlparse.h		\
+	totabwidget.h		\
+	totemplate.h		\
+	totextview.h            \
+	tothread.h		\
+	totimer.h		\
+	totool.h		\
+	tovisualize.h		\
+	utils.h
+
+SOURCES=\
+	toabout.cpp \
+	toalert.cpp \
+	toanalyze.cpp \
+	tobackground.cpp \
+	tobackgroundlabel.cpp \
+	tobackup.cpp \
+	tobackuptool.cpp \
+	tobarchart.cpp \
+	tobrowser.cpp \
+	tobrowserconstraint.cpp \
+	tobrowserindex.cpp \
+	tobrowsertable.cpp \
+	tochangeconnection.cpp \
+	tochartmanager.cpp \
+	toconnection.cpp \
+	toconfiguration.cpp \
+	tocurrent.cpp \
+	todatatype.cpp \
+	todebug.cpp \
+	todebugtext.cpp \
+	toeditextensions.cpp \
+	toeditwidget.cpp \
+	toextract.cpp \
+	tofilesize.cpp \
+	toglobalsetting.cpp \
+	tohelp.cpp \
+	tohighlightedtext.cpp \
+	tohtml.cpp \
+	toinvalid.cpp \
+	tolegendchart.cpp \
+	tolinechart.cpp \
+	tolistviewformatter.cpp \
+	tolistviewformattercsv.cpp \
+	tolistviewformatterhtml.cpp \
+	tolistviewformattersql.cpp \
+	tolistviewformattertabdel.cpp \
+	tolistviewformattertext.cpp \
+	tomain.cpp \
+	tomarkedtext.cpp \
+	tomemoeditor.cpp \
+	tonewconnection.cpp \
+	tonoblockquery.cpp \
+	tooracleconnection.cpp \
+	tooracleextract.cpp \
+	tooraclepreload.cpp \
+	tooutput.cpp \
+	toparamget.cpp \
+	topassword.cpp \
+	topiechart.cpp \
+	topreferences.cpp \
+	toprofiler.cpp \
+	toproject.cpp \
+	toqsqlconnection.cpp \
+	toreport.cpp \
+	toresult.cpp \
+	toresultbar.cpp \
+	toresultcols.cpp \
+	toresultcolscomment.cpp \
+	toresultcombo.cpp \
+	toresultconstraint.cpp \
+	toresultcontent.cpp \
+	toresultdepend.cpp \
+	toresultextract.cpp \
+	toresultfield.cpp \
+	toresultindexes.cpp \
+	toresultitem.cpp \
+	toresultlabel.cpp \
+	toresultline.cpp \
+	toresultlock.cpp \
+	toresultlong.cpp \
+	toresultparam.cpp \
+	toresultpie.cpp \
+	toresultplan.cpp \
+	toresultreferences.cpp \
+	toresultstats.cpp \
+	toresultstorage.cpp \
+	toresultview.cpp \
+	torollback.cpp \
+	toscript.cpp \
+	tosearchreplace.cpp \
+	tosecurity.cpp \
+	tosession.cpp \
+	tosgastatement.cpp \
+	tosgatrace.cpp \
+	tosmtp.cpp \
+	tosplash.cpp \
+	tosql.cpp \
+	tosqledit.cpp \
+	tosqlparse.cpp \
+	tostorage.cpp \
+	tostoragedefinition.cpp \
+	tosyntaxsetup.cpp \
+	totableselect.cpp \
+	totabwidget.cpp \
+	totemplate.cpp \
+	totemplateprovider.cpp \
+	totemporary.cpp \
+	totextview.cpp \
+	tothread.cpp \
+	totimer.cpp \
+	totool.cpp \
+	totuning.cpp \
+	tovisualize.cpp \
+	towaitevents.cpp \
+	toworksheet.cpp \
+	toworksheetstatistic.cpp \
+	utils.cpp \
+	$(LOKI_DIR)/src/OrderedStatic.cpp \
+	$(LOKI_DIR)/src/SafeFormat.cpp \
+	$(LOKI_DIR)/src/Singleton.cpp \
+	$(LOKI_DIR)/src/SmallObj.cpp \
+	$(LOKI_DIR)/src/SmartPtr.cpp
+
+UI_FILES = \
+	toaboutui.ui \
+	tobrowserconstraintui.ui \
+	tobrowserfilterui.ui \
+	tobrowserindexui.ui \
+	tobrowsertableui.ui \
+	todroptablespaceui.ui \
+	tooraclesettingui.ui \
+	tostoragetablespaceui.ui \
+	tochartalarmui.ui \
+	topreferencesui.ui \
+	tosyntaxsetupui.ui \
+	tochartsetupui.ui \
+	toresultcontentfilterui.ui \
+	totemplateaddfileui.ui \
+	todatabasesettingui.ui \
+	toresultlistformatui.ui \
+	totemplateeditui.ui \
+	todebugchangeui.ui \
+	torollbackdialogui.ui \
+	totemplatesetupui.ui \
+	todebugwatch.ui \
+	toscriptui.ui \
+	totoolsettingui.ui \
+	toeditextensiongotoui.ui \
+	tosearchreplaceui.ui \
+	totuningoverviewui.ui \
+	toeditextensionsetupui.ui \
+	tosecurityquotaui.ui \
+	totuningsettingui.ui \
+	toglobalsettingui.ui \
+	tosecurityroleui.ui \
+	toworksheetsetupui.ui \
+	tohelpaddfileui.ui \
+	tosecurityuserui.ui \
+	tohelpsetupui.ui \
+	tostoragedatafileui.ui \
+	tolinechartsetupui.ui \
+	tostoragedefinitionui.ui \
+	tomessageui.ui \
+	tostoragedialogui.ui \
+	tonewconnectionui.ui \
+	tostorageprefsui.ui
+
+GENERATED_SOURCES=$(UI_FILES:%.ui=%.cpp)
+
+default: all
+
+TRANSLATIONS=\
+	i18n/tora_se.ts\
+	i18n/tora_fr.ts\
+	i18n/tora_it.ts\
+
+CPPFLAGS=$(CPPFLAGS_GLOB) $(DEFINES) $(INCLUDES)
+CFLAGS=$(CFLAGS_GLOB) $(INCLUDES) $(DEFINES)
+
+OBJECTS=$(filter %.o,$(SOURCES:%.cpp=objs/%.o) $(GENERATED_SOURCES:%.cpp=objs/%.o)) objs/main.o
+TRANSOBJ=$(filter %.qm,$(TRANSLATIONS:%.ts=%.qm))
+
+DEPENDS=$(filter %.d,$(SOURCES:%.cpp=.depends/%.d)) .depends/main.d
+
+vpath %.h $(INCLUDE)
+
+.PHONY: all clean fixmod install distclean oraclelib
+
+all: $(TARGET)
+
+%.moc: %.h
+	@echo Metacompiling $<
+	$(MOC) -o $@ $<
+
+%.cpp %.h: %.ui
+	@echo Generating $(<:%.ui=%.cpp) \& $(<:%.ui=%.h)
+	$(UIC) -o $(<:%.ui=%.h) $<
+	$(UIC) -i $(<:%.ui=%.h) -o $(<:%.ui=%.cpp) $<
+
+plugins/%.tso:
+	@echo Linking plugin $@
+	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
+	$(GCC) -shared $(LFLAGS) $(LFLAGS_GLOB) $(CFLAGS) $(QT_SHARED) -o $@ $^
+
+objs/%.o: %.cpp
+	@echo Compiling $<
+	if [ ! -d objs ] ; then mkdir -p objs ; fi
+	$(GCC) $(CFLAGS) -o $@ -c $<
+
+%.o : objs/%.o
+	@echo Faulty dependency, forgot the objs/ part
+	
+$(OCI_LIB): $(OCI_DLL)
+	@echo Preparing OCI library $@
+	if [ ! -d lib ] ; then mkdir -p lib ; fi
+	pexports -o $< > lib/oci.def
+	dlltool --def lib/oci.def --output-lib $@
+	-rm -f lib/oci.def
+
+.depends/%.d: %.cpp
+	@echo Making dependencies for $<
+	if [ ! -d `dirname $@` ] ; then mkdir -p `dirname $@` ; fi
+	$(GCC) -MM -MG $(CPPFLAGS) $< > $@.tmp && \
+		( sed "s/^\(.*\.\)o\([ :]*\)/objs\/\1o \
+		$(subst /,\\/,$@)\2/g" < $@.tmp > $@ ; rm -f $@.tmp )
+
+include $(DEPENDS)
+
+windows/%.o:
+	@echo Making $<
+	$(MAKE) -C windows
+	
+install-common: 
+	if [ \! -f $(TARGET) ] ; then cp tora $(TARGET) ; fi
+	mkdir -p $(INSTALLDIR)
+	mkdir -p $(INSTALLDIR)/help
+	-cp templates/*.tpl $(INSTALLDIR) >/dev/null 2>&1
+	-cp -r help/* $(INSTALLDIR)/help >/dev/null 2>&1
+	-cp  *.qm $(INSTALLDIR) >/dev/null 2>&1
+
+install: $(TARGET) install-common
+	@echo Install $(TARGET) to $(INSTALLDIR)
+	cp $(TARGET).exe $(INSTALLDIR)
+	-strip -s $(INSTALLDIR)/$(TARGET).exe >/dev/null 2>&1
+
+install-debug: tora install-common
+	@echo Install tora with debugging symbols to $(INSTALLDIR)
+	cp tora.exe $(INSTALLDIR)
+
+uninstall:
+	@echo Uninstalling from $(INSTALLDIR)
+	-rm -rf $(INSTALLDIR)
+
+clean:
+	@echo Cleaning $(TITLE)
+	-rm -rf objs tora tora-static tora-mono >/dev/null 2>&1
+	-rm -f *~ >/dev/null 2>&1
+	-rm -f *~ */*~ >/dev/null 2>&1
+	-rm -f *.bak >/dev/null 2>&1
+	-rm -rf plugins >/dev/null 2>&1
+	-rm -rf lib >/dev/null 2>&1
+	-for a in *.ui ; \
+            do rm -f `$(PERL) -e '$$_=shift(@ARGV); s/\.[^\.]*$$//; print "$$_.h\n$$_.cpp";' $$a`; \
+         done
+
+distclean: clean
+	-rm -rf .depends >/dev/null 2>&1
+	-rm -rf .xvpics >/dev/null 2>&1
+	-rm -rf icons/.xvpics >/dev/null 2>&1
+	-rm -f *.moc >/dev/null 2>&1 
+	-rm -f rpmcommon rpmoracle rpmmysql >/dev/null 2>&1 
+	-rm -f \#*\# >/dev/null 2>&1
+	-rm -f Makefile >/dev/null 2>&1
+	-rm -f configure.setup >/dev/null 2>&1
+
+# Specific rule for generation of LICENSE.h file
+config.h: windows/config.h
+	@echo Creating default config.h
+	@cp $< $@
+	
+# Keyboard shortcuts
+
+main.cpp: tora_toad.h
+
+tora_toad.h: tora_toad.qm chex.exe
+	chex.exe $< > $@
+
+chex.exe: ../utils/chex/chex.cpp
+	$(GCC) $< -o $@
+
+tora_toad.qm: i18n/tora_toad.ts
+	$(LRELEASE) $<
+
+
+# Static target, easier to distribute (oracle is always shared on Windows)
+
+tora-static: $(OCI_LIB) $(OBJECTS) windows/tora.o windows/cregistry.o
+	@echo Linking $@
+	$(GCC) $(LFLAGS) $(LFLAGS_GLOB) -o -mwindows $@ $(OBJECTS) windows/tora.o windows/cregistry.o \
+		$(LIBS_GLOB) $(QT_STATIC) $(ORACLE_SHARED) $(STDCPP_STATIC) $(MYSQL_STATIC) \
+		$(QT_SCINTILLA)
+
+
+# The binary for the tora
+
+tora:   $(OCI_LIB) $(OBJECTS) windows/tora.o windows/cregistry.o
+	@echo Linking $@
+	$(GCC) $(LFLAGS) $(LFLAGS_GLOB) -mwindows -o $@ $(OBJECTS) windows/tora.o windows/cregistry.o \
+		$(LIBS_GLOB) $(QT_SHARED) $(ORACLE_SHARED) $(STDCPP_SHARED) \
+		$(QT_SCINTILLA)

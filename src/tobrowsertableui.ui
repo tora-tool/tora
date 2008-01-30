@@ -1,0 +1,422 @@
+<ui version="4.0" >
+ <class>toBrowserTableUI</class>
+ <widget class="QDialog" name="toBrowserTableUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>651</width>
+    <height>561</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Table columns</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>11</number>
+   </property>
+   <property name="topMargin" >
+    <number>11</number>
+   </property>
+   <property name="rightMargin" >
+    <number>11</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>11</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>6</number>
+   </property>
+   <item row="1" column="2" >
+    <widget class="QPushButton" name="PushButton1" >
+     <property name="text" >
+      <string>&amp;Ok</string>
+     </property>
+     <property name="default" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3" >
+    <widget class="QPushButton" name="PushButton2" >
+     <property name="text" >
+      <string>Cancel</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QToolButton" name="ToolButton1" >
+     <property name="focusPolicy" >
+      <enum>Qt::StrongFocus</enum>
+     </property>
+     <property name="toolTip" >
+      <string>Display SQL to create this constraint</string>
+     </property>
+     <property name="text" >
+      <string/>
+     </property>
+     <property name="icon" >
+      <iconset>icons/sql.xpm</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="0" colspan="4" >
+    <widget class="QTabWidget" name="Tabs" >
+     <property name="currentIndex" >
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>&amp;General</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <item>
+        <widget class="QLabel" name="SchemaLabel" >
+         <property name="text" >
+          <string>&amp;Schema</string>
+         </property>
+         <property name="wordWrap" >
+          <bool>false</bool>
+         </property>
+         <property name="buddy" >
+          <cstring>Name</cstring>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="toResultCombo" native="1" name="Schema" />
+       </item>
+       <item>
+        <widget class="QLabel" name="TextLabel1" >
+         <property name="text" >
+          <string>&amp;Name</string>
+         </property>
+         <property name="wordWrap" >
+          <bool>false</bool>
+         </property>
+         <property name="buddy" >
+          <cstring>Name</cstring>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="Name" />
+       </item>
+       <item>
+        <widget class="QLabel" name="TextLabel1_3" >
+         <property name="text" >
+          <string>C&amp;omment</string>
+         </property>
+         <property name="wordWrap" >
+          <bool>false</bool>
+         </property>
+         <property name="buddy" >
+          <cstring>Comment</cstring>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="Comment" />
+       </item>
+       <item>
+        <widget class="QLabel" name="TablespaceLabel" >
+         <property name="text" >
+          <string>&amp;Tablespace</string>
+         </property>
+         <property name="wordWrap" >
+          <bool>false</bool>
+         </property>
+         <property name="buddy" >
+          <cstring>Tablespace</cstring>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="Tablespace" />
+       </item>
+       <item>
+        <widget class="QLabel" name="TextLabel1_3_2" >
+         <property name="text" >
+          <string>&amp;Extra declarations</string>
+         </property>
+         <property name="wordWrap" >
+          <bool>false</bool>
+         </property>
+         <property name="buddy" >
+          <cstring>ExtraDeclarations</cstring>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="toHighlightedText" native="1" name="ExtraDeclarations" >
+         <property name="focusPolicy" >
+          <enum>Qt::WheelFocus</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="TextLabel1_3_2_2" >
+         <property name="text" >
+          <string>&amp;Storage declarations</string>
+         </property>
+         <property name="wordWrap" >
+          <bool>false</bool>
+         </property>
+         <property name="buddy" >
+          <cstring>StorageDeclarations</cstring>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="toHighlightedText" native="1" name="StorageDeclarations" >
+         <property name="focusPolicy" >
+          <enum>Qt::WheelFocus</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="ParallelLabel" >
+         <property name="text" >
+          <string>&amp;Parallel declarations</string>
+         </property>
+         <property name="wordWrap" >
+          <bool>false</bool>
+         </property>
+         <property name="buddy" >
+          <cstring>ParallelDeclarations</cstring>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="toHighlightedText" native="1" name="ParallelDeclarations" >
+         <property name="focusPolicy" >
+          <enum>Qt::WheelFocus</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="ColumnTab" >
+      <attribute name="title" >
+       <string>&amp;Columns</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <item row="1" column="0" colspan="4" >
+        <widget class="QScrollArea" native="1" name="ColumnList" >
+         <property name="focusPolicy" >
+          <enum>Qt::StrongFocus</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2" >
+        <widget class="QToolButton" name="AddColumn" >
+         <property name="focusPolicy" >
+          <enum>Qt::TabFocus</enum>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+         <property name="icon" >
+          <iconset>icons/add.xpm</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3" >
+        <widget class="QToolButton" name="RemoveColumn" >
+         <property name="focusPolicy" >
+          <enum>Qt::TabFocus</enum>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+         <property name="icon" >
+          <iconset>icons/minus.xpm</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>340</width>
+           <height>21</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="0" >
+        <widget class="QCheckBox" name="CustomDeclarations" >
+         <property name="text" >
+          <string>Custom column declarations</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <customwidgets>
+  <customwidget>
+   <class>toResultCombo</class>
+   <extends>QWidget</extends>
+   <header>toresultcombo.h</header>
+  </customwidget>
+  <customwidget>
+   <class>toHighlightedText</class>
+   <extends>QWidget</extends>
+   <header>tohighlightedtext.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QScrollArea</class>
+   <extends>QWidget</extends>
+   <header>qscrollarea.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>Tabs</tabstop>
+  <tabstop>Name</tabstop>
+  <tabstop>Comment</tabstop>
+  <tabstop>Tablespace</tabstop>
+  <tabstop>ExtraDeclarations</tabstop>
+  <tabstop>ToolButton1</tabstop>
+  <tabstop>PushButton1</tabstop>
+  <tabstop>PushButton2</tabstop>
+  <tabstop>AddColumn</tabstop>
+  <tabstop>RemoveColumn</tabstop>
+  <tabstop>ColumnList</tabstop>
+ </tabstops>
+ <includes>
+  <include location="local" >toresultcombo.h</include>
+  <include location="local" >tohighlightedtext.h</include>
+  <include location="local" >tohighlightedtext.h</include>
+  <include location="local" >tohighlightedtext.h</include>
+ </includes>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>PushButton1</sender>
+   <signal>clicked()</signal>
+   <receiver>toBrowserTableUI</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PushButton2</sender>
+   <signal>clicked()</signal>
+   <receiver>toBrowserTableUI</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ToolButton1</sender>
+   <signal>clicked()</signal>
+   <receiver>toBrowserTableUI</receiver>
+   <slot>displaySQL()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>AddColumn</sender>
+   <signal>clicked()</signal>
+   <receiver>toBrowserTableUI</receiver>
+   <slot>addColumn()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>RemoveColumn</sender>
+   <signal>clicked()</signal>
+   <receiver>toBrowserTableUI</receiver>
+   <slot>removeColumn()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>CustomDeclarations</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>toBrowserTableUI</receiver>
+   <slot>toggleCustom(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

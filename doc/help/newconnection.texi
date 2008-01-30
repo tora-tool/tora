@@ -1,0 +1,41 @@
+@node newconnection
+@section Connecting to a database
+@cindex Connecting to a database
+
+You can connect to a database by selecting the @strong{File|New Connection} menu entry or the toolbar button. For more information about the menu and toolbar @pxref{window,Elements of the main window}.
+
+After selecting the menu you will be presented with the following dialog.
+
+@image{images/newconnection}
+
+The filling out of this dialog is pretty straight forward.
+
+@table @asis
+
+@item @strong{Previous}
+      This list contains the previous connection made, selecting an entry from this list will set all the values to the right to the correct
+@item @strong{connections}
+      values to connect to this database again.
+@item @strong{Connection provider}
+      The type of connection to create. Usually Oracle, but MySQL is also supported on some platforms.
+@item @strong{Username}
+      The username with which to connect to the database
+@item @strong{Password}
+      The password to use for the connection, this defaults to manager. You can also configure TOra to remember your last used password(@pxref{preferences,Options})
+@item @strong{Use SQL*Net}
+      This is perhaps the most difficult setting. This indicates whether to connect locally to the database or use SQL*Net. If you check this box the connection is made through the Oracle listener, otherwise a local connection usually using shared memory or named pipes is made. This is only available for Oracle connections.
+@item @strong{Hostname}
+      The host on which the database resides. This is only available for non Oracle connections.
+@item @strong{Database}
+      What database to connect to, the listbox is filled with the values available in your tnsnames.ora file.
+@item @strong{Connection Mode}
+      The type of connection to make, usually @strong{normal} always suffices here. But sometimes during database administration @strong{SYS_DBA} or @strong{SYS_OPER} is needed. If you don't know what these mean you probably shouldn't be using them.
+@end table
+Upon establishing a successful connection all the settings of the dialog will be saved and remembered when the next connection is made with the exception of the password.
+
+@node  What privileges do you need to run TOra
+@section What privileges do you need to run TOra
+
+TOra should be able to run as any user, although off course you can never do anything in TOra that aren't allowed from that Oracle account. You will be able to use pretty much any tool in TOra for read only purposes if you are granted the @strong{SELECT_CATALOG_ROLE}, also some parts of TOra will have limited functionality if you do not have the @strong{ALTER SESSION} privilege.
+
+Also you need to be able to create the plan table if that is not done for you. The plan table (@pxref{database,Database Settings} for how to select plan table name) must also be available with @strong{INSERT} and @strong{SELECT} access. TOra will function without the plan table but off course you will not be able to display any execution plans.

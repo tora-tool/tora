@@ -1,0 +1,63 @@
+@node template
+@section Template Help
+@cindex Template Help
+
+This tool provides help for writing PL/SQL and SQL queries by allowing a non obtrusive database browser and help lookup.
+
+The template help is implemented as a docked window if these are available. They are available in Qt 3.0 (Released only as beta as of 2001-07-11) and KDE.
+
+The help browser are divided into two panes. The top pane displays a tree view of the available documentation. The lower is used to display more information about the selected item in the top pane and it's content may differ depending on what is selected.
+
+The top pane is in the default distribution divided into two parts as well. The DB Browser (@pxref{browser,Database Browser}) which lets you explore your connected databases through a tree structure. The second part is a plain tree list of available text documentation. By default only one manual is supplied which contain PL/SQL functions, but an editor is supplied to write more help.
+
+Items in the second part is simply items with a descriptive text associated with them. Selecting the item will bring up the description of it in the information.
+
+@image{images/template}
+
+@subheading DB Browser
+
+The database browser allows you to browse the schema objects in the open databases. All the open databases will have an item under which the following information is available. Under each table is a list of the visible schemas for the database. Under the schema the following items are available.
+
+
+@table @asis
+
+@item @strong{Code}
+      Under this item all the code objects are displayed. The information in the child objects will bring up the source of the object. There are also child items to this that contain information about @strong{grants} and @strong{dependencies}.	
+@item @strong{Indexes}
+      Contains all the indexes of the schema. The information in the child objects will bring up the columns on which the index is defined.	
+@item @strong{Sequences}
+      The sequences of the schema. The information in the child objects will bring up information about the sequence. There are also child item to this that contain information about @strong{grants}.	
+@item @strong{Synonyms}
+      The synonyms of the schema. The information in the child objects will bring up information about the sequence. There are also child item to this that contain information about @strong{grants}	
+@item @strong{Tables}
+      The tables available in the schema. Selecting the table will bring up the columns of the table. There are also three child items to this that contain information about @strong{constraints}, @strong{grants} and @strong{references}.	
+@item @strong{Triggers}
+      Triggers in the schema. Selecting the item will bring up the source for the trigger. There are also child items to this that contain information about @strong{grants} and @strong{dependencies}.	
+@item @strong{Views}
+      The views available in the schema. Selecting the view name will bring up the columns of the table. There are also child items to this that contain information about @strong{grants} and @strong{dependencies}.
+@end table
+
+Don't forget that more database browsing functionality is available in the database browser tool (@pxref{browser, Database Browser}).
+
+@subheading Setup help templates
+
+You set up additional help files by selecting the SQL Template page in the options dialog (@pxref{preferences, Options}).
+
+@image{images/templatesetup}
+
+To add an existing or start a new template help collection select the @strong{add file} button and enter the filename under 
+which to store the help collection and the name of the root item under which the collection should be displayed in the template help tree.
+
+To edit a collection select the collection in the list and press the @strong{edit file} button to bring up the template editor. If the name doesn't exist you are asked to start a new file or cancel.
+
+To remove a template press the @strong{remove file}, this will not remove the actual file.
+
+@subheading Template editor
+
+The template editor is used to edit and create new text template help collections.
+
+@image{images/templateeditor}
+
+The editor are separated into a few different parts. On the left is a list of available items. To the top right are two buttons @strong{add new template} and @strong{remove current template}. Then comes a line editor where the name of template is. If a ':' character is in the name it will split into a tree in the template collection tree. Then comes a text editor where the actual description of the title is written. You can specify simple HTML in this editor. Finally there is a button called @strong{preview} which will give you a preview of the editor result of HTML.
+
+The result is not saved until you press OK in the dialog. Pressing cancel will discard any changes made.

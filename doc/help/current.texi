@@ -1,0 +1,11 @@
+@node current
+@section Current Session
+@cindex Current Session
+
+This tool provides information about the current session.
+
+@image{images/current}
+
+The interface for this tool is very simple. There are four tabs in the window. The first one present the @strong{privileges} currently granted to the your session. 
+Roles can be expanded to display what privileges are available through those groups. The second one present the @strong{version} of the different components in the connection. 
+The @strong{parameters} tab displays the parameters of the current session (for more information of parameter editors @pxref{tuning}). The fourth and last tab display the @strong{statistics} of the session. The statistics is shown in two columns, the first one contain the actual value, the second show the change in the value since the last update. To update press the @strong{refresh} button in the toolbar. You can also change the connection for the tool using the change connection button to the right on the toolbar.
