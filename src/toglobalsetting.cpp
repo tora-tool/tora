@@ -362,7 +362,6 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
     setupUi(this);
 
     std::map<QString, toTool *> &tools = toTool::tools();
-
     Enabled->setSorting(0);
     for (std::map<QString, toTool *>::iterator i = tools.begin();i != tools.end();i++)
     {
@@ -383,10 +382,14 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
 
     // set the default tool to prevent overvritting when
     // user does not change this combo box
-    toTool *def = tools[toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_TOOL, "")];
-    int currIx = DefaultTool->findText(def->name());
+    QString defName(toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_TOOL, ""));
+    int currIx = -1;
+    if (!defName.isEmpty())
+    {
+        toTool *def = tools[toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_TOOL, "")];
+        currIx = DefaultTool->findText(def->name());
+    }
     DefaultTool->setCurrentIndex( (currIx == -1) ? 0 : currIx );
-
     changeEnable();
 }
 
