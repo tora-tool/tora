@@ -49,18 +49,19 @@
 
 #include <qapplication.h>
 #include <qcheckbox.h>
-#include <q3groupbox.h>
 #include <qlayout.h>
 #include <qsqldatabase.h>
 #include <qsqlerror.h>
 #include <qsqlfield.h>
 #include <qsqlrecord.h>
 #include <qsqlresult.h>
-//Added by qt3to4:
+
+#include <QVBoxLayout>
+#include <QGroupBox>
 #include <QtSql>
-#include <Q3GridLayout>
+#include <QGridLayout>
 #include <QString>
-#include <Q3SqlRecordInfo>
+
 
 static toSQL SQLVersion("toQSqlConnection:Version",
                         "SHOW VARIABLES LIKE 'version'",
@@ -491,10 +492,9 @@ enum enum_field_types { FIELD_TYPE_DECIMAL, FIELD_TYPE_TINY,
 
 
 
-static std::list<toQuery::queryDescribe> Describe(const QString &type, Q3SqlRecordInfo recInfo, int *order, unsigned int orderSize)
+static std::list<toQuery::queryDescribe> Describe(const QString &type, QSqlRecord record, int *order, unsigned int orderSize)
 {
     std::list<toQuery::queryDescribe> ret;
-    QSqlRecord record = recInfo.toRecord();
     unsigned int count = record.count();
     if (order)
     {
@@ -521,7 +521,7 @@ static std::list<toQuery::queryDescribe> Describe(const QString &type, Q3SqlReco
 
         int size = 1;
 
-        Q3SqlFieldInfo info(recInfo.find(desc.Name));
+        QSqlField info = record.field(desc.Name);
         if (type == "MySQL")
         {
             switch (info.typeID())
@@ -865,10 +865,7 @@ static std::list<toQuery::queryDescribe> Describe(const QString &type, Q3SqlReco
                 desc.Datatype = QString::fromLatin1("MAP");
                 break;
             case QVariant::String:
-                if (info.isTrim())
-                    desc.Datatype = QString::fromLatin1("CHAR");
-                else
-                    desc.Datatype = QString::fromLatin1("VARCHAR");
+                desc.Datatype = QString::fromLatin1("VARCHAR");
                 break;
             case QVariant::StringList:
                 desc.Datatype = QString::fromLatin1("STRINGLIST");
@@ -921,12 +918,6 @@ static std::list<toQuery::queryDescribe> Describe(const QString &type, Q3SqlReco
                 desc.Datatype = QString::fromLatin1("DOUBLE");
                 desc.AlignRight = true;
                 break;
-            case QVariant::CString:
-                if (info.isTrim())
-                    desc.Datatype = QString::fromLatin1("CHAR");
-                else
-                    desc.Datatype = QString::fromLatin1("VARCHAR");
-                break;
             case QVariant::PointArray:
                 desc.Datatype = QString::fromLatin1("POINTARRAY");
                 break;
@@ -948,10 +939,10 @@ static std::list<toQuery::queryDescribe> Describe(const QString &type, Q3SqlReco
             case QVariant::DateTime:
                 desc.Datatype = QString::fromLatin1("DATETIME");
                 break;
+            case QVariant::ByteArray:
                 // qt4 ByteArray == CString
-//             case QVariant::ByteArray:
-//                 desc.Datatype = QString::fromLatin1("BLOB");
-//                 break;
+                desc.Datatype = QString::fromLatin1("BLOB");
+                break;
             case QVariant::BitArray:
                 desc.Datatype = QString::fromLatin1("BITARRAY");
                 break;
@@ -978,7 +969,7 @@ static std::list<toQuery::queryDescribe> Describe(const QString &type, Q3SqlReco
             }
             desc.Datatype += QString::fromLatin1(")");
         }
-        desc.Null = !info.isRequired();
+        desc.Null = !info.requiredStatus();
 
         ret.insert(ret.end(), desc);
     }
@@ -996,26 +987,40 @@ class qSqlSetting : public QWidget, public toSettingTab
         QCheckBox *OnlyForward;
     public:
         qSqlSetting(QWidget *parent)
-                : QWidget(parent), toSettingTab("database.html#qsql")
-        {
-            Q3GridLayout *baseLayout = new Q3GridLayout(this, 1, 1, 0, 6);
+            : QWidget(parent), toSettingTab("database.html#qsql") {
 
-            Q3GroupBox *box = new Q3GroupBox(this);
-            box->setColumnLayout(0, Qt::Vertical);
-            box->layout()->setSpacing(6);
-            box->layout()->setMargin(11);
-            Q3GridLayout *layout = new Q3GridLayout(box->layout());
-            layout->setAlignment(Qt::AlignTop);
+            QVBoxLayout *vbox = new QVBoxLayout;
+            this->setLayout(vbox);
+            vbox->setSpacing(0);
+            vbox->setContentsMargins(0, 0, 0, 0);
 
-            OnlyForward = new QCheckBox(qApp->translate("qSqlSetting", "Posibility to break MySQL queries (Can require more connections)"), box);
-            layout->addMultiCellWidget(OnlyForward, 0, 0, 0, 0);
+            QGroupBox *box = new QGroupBox(this);
+            box->setSizePolicy(QSizePolicy::Expanding,
+                               QSizePolicy::Expanding);
+            vbox->addWidget(box);
 
-            OnlyForward->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_ONLY_FORWARD, DEFAULT_ONLY_FORWARD).isEmpty());
+            vbox = new QVBoxLayout;
+            vbox->setSpacing(6);
+            vbox->setContentsMargins(11, 11, 11, 11);
 
-            QSpacerItem *spacer = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding);
-            layout->addItem(spacer, 1, 0);
+            OnlyForward = new QCheckBox(
+                qApp->translate(
+                    "qSqlSetting",
+                    "Posibility to break MySQL queries (Can require more connections)"),
+                box);
+            OnlyForward->setChecked(!toConfigurationSingle::Instance().globalConfig(
+                                        CONF_ONLY_FORWARD,
+                                        DEFAULT_ONLY_FORWARD).isEmpty());
+            vbox->addWidget(OnlyForward);
 
-            baseLayout->addWidget(box, 0, 0);
+            QSpacerItem *spacer = new QSpacerItem(
+                20,
+                20,
+                QSizePolicy::Minimum,
+                QSizePolicy::Expanding);
+            vbox->addItem(spacer);
+
+            box->setLayout(vbox);
         }
         virtual void saveSetting(void)
         {
@@ -1355,8 +1360,8 @@ class qSqlQuery : public toQuery::queryImpl
             {
                 QString provider = query()->connection().provider();
                 Connection->lockDown();
-                Q3SqlRecordInfo recInfo = Connection->Connection.recordInfo(*Query);
-                ret = Describe(provider, recInfo, ColumnOrder, ColumnOrderSize);
+                QSqlRecord rec = Connection->Connection.record(*Query);
+                ret = Describe(provider, rec, ColumnOrder, ColumnOrderSize);
                 Connection->lockUp();
             }
             return ret;
