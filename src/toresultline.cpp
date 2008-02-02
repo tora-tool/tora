@@ -45,7 +45,7 @@
 #include "tosql.h"
 #include "totool.h"
 
-#include <q3popupmenu.h>
+#include <QMenu>
 
 
 toResultLine::toResultLine(QWidget *parent, const char *name)
@@ -203,13 +203,14 @@ void toResultLine::connectionChanged(void)
     clear();
 }
 
-void toResultLine::addMenues(Q3PopupMenu *popup)
+void toResultLine::addMenues(QMenu *popup)
 {
     if (sqlName().length())
     {
-        popup->insertSeparator();
-        popup->insertItem(tr("Edit SQL..."),
-                          this, SLOT(editSQL()));
+        popup->addSeparator();
+        popup->addAction(tr("Edit SQL..."),
+                         this,
+                         SLOT(editSQL()));
     }
 }
 

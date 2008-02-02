@@ -46,11 +46,11 @@
 #include <time.h>
 
 #include <list>
-//Added by qt3to4:
-#include <Q3PopupMenu>
 
+class QMenu;
 class toNoBlockQuery;
 class toSQL;
+
 
 /** Display the result of a query in a piechart. The first column of the query should
  * contain the x value and the rest of the columns should be values of the diagram. The
@@ -207,7 +207,7 @@ protected slots:
     virtual void connectionChanged(void);
     /** Reimplemented for internal reasons.
      */
-    virtual void addMenues(Q3PopupMenu *);
+    virtual void addMenues(QMenu *);
 private slots:
     void poll(void);
     void editSQL(void);
