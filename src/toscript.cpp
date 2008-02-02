@@ -53,7 +53,6 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qdir.h>
-#include <q3filedialog.h>
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qmessagebox.h>
@@ -62,11 +61,10 @@
 #include <qregexp.h>
 #include <qsplitter.h>
 #include <qtabwidget.h>
-#include <q3textview.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 
-#include <Q3GridLayout>
+#include <QGridLayout>
 #include <QGridLayout>
 #include <QPixmap>
 #include <QFileDialog>
@@ -281,9 +279,9 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     connect(DropList, SIGNAL(clicked(toTreeWidgetItem *)), this, SLOT(keepOn(toTreeWidgetItem *)));
     connect(CreateList, SIGNAL(clicked(toTreeWidgetItem *)), this, SLOT(keepOn(toTreeWidgetItem *)));
 
-    Q3GridLayout *layout = new Q3GridLayout(ScriptUI->ResultTab);
+    QGridLayout *layout = new QGridLayout(ScriptUI->ResultTab);
     layout->addWidget(box, 0, 0);
-    layout = new Q3GridLayout(ScriptUI->DifferenceTab);
+    layout = new QGridLayout(ScriptUI->DifferenceTab);
     layout->addWidget(hsplitter, 0, 0);
 
     ScriptUI->Initial->setTitle(tr("&Initial"));
