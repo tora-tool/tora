@@ -56,8 +56,6 @@
 
 #include <qcheckbox.h>
 #include <qcombobox.h>
-#include <q3groupbox.h>
-#include <q3header.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlayout.h>
@@ -75,10 +73,11 @@
 #include <qtoolbutton.h>
 #include <qtooltip.h>
 #include <qvariant.h>
-#include <q3whatsthis.h>
 #include <qwidget.h>
 #include <qworkspace.h>
 
+#include <QGroupBox>
+#include <QVBoxLayout>
 #include <QPixmap>
 #include <QMenu>
 
@@ -95,7 +94,7 @@
 #define CONF_ALIGN_LEFT "AlignLeft"
 #define CONF_OLD_ENABLE "OldEnable"
 
-class toRollbackPrefs : public Q3GroupBox, public toSettingTab
+class toRollbackPrefs : public QGroupBox, public toSettingTab
 {
     QCheckBox *OldEnable;
     QCheckBox *NoExec;
@@ -111,42 +110,78 @@ public:
 };
 
 toRollbackPrefs::toRollbackPrefs(toTool *tool, QWidget* parent, const char* name)
-        : Q3GroupBox(1, Qt::Horizontal, parent, name), toSettingTab("rollback.html#options"), Tool(tool)
+    : QGroupBox(parent), toSettingTab("rollback.html#options"), Tool(tool)
 {
+    if(name)
+        setObjectName(name);
+
+    QVBoxLayout *vbox = new QVBoxLayout;
+    vbox->setSpacing(6);
+    vbox->setContentsMargins(11, 11, 11, 11);
+
+    setLayout(vbox);
+
     setTitle(qApp->translate("toRollbackPrefs", "Rollback Tool" ));
 
     OldEnable = new QCheckBox(this, "OldEnable");
-    OldEnable->setText(qApp->translate("toRollbackPrefs", "&Enable snapshot too old detection." ));
+    OldEnable->setText(qApp->translate("toRollbackPrefs",
+                                       "&Enable snapshot too old detection." ));
     QToolTip::add
-    (OldEnable, qApp->translate("toRollbackPrefs", "Enable snapshot too old detection, will put load on large databases."));
+    (OldEnable, qApp->translate(
+        "toRollbackPrefs",
+        "Enable snapshot too old detection, will put load on large databases."));
+    vbox->addWidget(OldEnable);
 
     AlignLeft = new QCheckBox(this, "AlignLeft");
-    AlignLeft->setText(qApp->translate("toRollbackPrefs", "&Disregard start extent." ));
+    AlignLeft->setText(qApp->translate("toRollbackPrefs",
+                                       "&Disregard start extent." ));
     AlignLeft->setEnabled(false);
     connect(OldEnable, SIGNAL(toggled(bool)), AlignLeft, SLOT(setEnabled(bool)));
     QToolTip::add
-    (AlignLeft, qApp->translate("toRollbackPrefs", "Always start from the left border when displaying extent usage."));
+    (AlignLeft, qApp->translate(
+        "toRollbackPrefs",
+        "Always start from the left border when displaying extent usage."));
+    vbox->addWidget(AlignLeft);
 
     NoExec = new QCheckBox(this, "NoCopy");
-    NoExec->setText(qApp->translate("toRollbackPrefs", "&Restart reexecuted statements" ));
+    NoExec->setText(qApp->translate("toRollbackPrefs",
+                                    "&Restart reexecuted statements" ));
     NoExec->setEnabled(false);
     connect(OldEnable, SIGNAL(toggled(bool)), NoExec, SLOT(setEnabled(bool)));
     QToolTip::add
-    (NoExec, qApp->translate("toRollbackPrefs", "Start statements again that have been reexecuted."));
+    (NoExec, qApp->translate(
+        "toRollbackPrefs",
+        "Start statements again that have been reexecuted."));
+    vbox->addWidget(NoExec);
 
     NeedRead = new QCheckBox(this, "Needread");
-    NeedRead->setText(qApp->translate("toRollbackPrefs", "&Must read buffers" ));
+    NeedRead->setText(qApp->translate("toRollbackPrefs",
+                                      "&Must read buffers" ));
     NeedRead->setEnabled(false);
     connect(OldEnable, SIGNAL(toggled(bool)), NeedRead, SLOT(setEnabled(bool)));
     QToolTip::add
-    (NeedRead, qApp->translate("toRollbackPrefs", "Don't display statements that have not read buffers."));
+    (NeedRead, qApp->translate(
+        "toRollbackPrefs",
+        "Don't display statements that have not read buffers."));
+    vbox->addWidget(NeedRead);
 
     NeedTwo = new QCheckBox(this, "NeedTwo");
-    NeedTwo->setText(qApp->translate("toRollbackPrefs", "&Exclude first appearance" ));
+    NeedTwo->setText(qApp->translate("toRollbackPrefs",
+                                     "&Exclude first appearance" ));
     NeedTwo->setEnabled(false);
     connect(OldEnable, SIGNAL(toggled(bool)), NeedTwo, SLOT(setEnabled(bool)));
     QToolTip::add
-    (NeedTwo, qApp->translate("toRollbackPrefs", "A statement must be visible at least two consecutive polls to be displayed."));
+        (NeedTwo, qApp->translate(
+            "toRollbackPrefs",
+            "A statement must be visible at least two consecutive polls to be displayed."));
+    vbox->addWidget(NeedTwo);
+
+    QSpacerItem *spacer = new QSpacerItem(
+        20,
+        20,
+        QSizePolicy::Minimum,
+        QSizePolicy::Expanding);
+    vbox->addItem(spacer);
 
     if (!tool->config(CONF_OLD_ENABLE, "").isEmpty())
         OldEnable->setChecked(true);
