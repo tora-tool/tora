@@ -54,7 +54,7 @@
 #include <qlineedit.h>
 #include <qmenubar.h>
 #include <qmessagebox.h>
-#include <q3popupmenu.h>
+#include <QMenu>
 #include <qradiobutton.h>
 #include <qsplitter.h>
 #include <qstringlist.h>
@@ -1518,6 +1518,7 @@ toSecurity::toSecurity(QWidget *main, toConnection &connection)
     UpdateListAct = new QAction(QPixmap(const_cast<const char**>(refresh_xpm)),
                                 tr("Update user and role list"), this);
     connect(UpdateListAct, SIGNAL(triggered()), this, SLOT(refresh(void)));
+    UpdateListAct->setShortcut(QKeySequence::Refresh);
     toolbar->addAction(UpdateListAct);
 
     toolbar->addSeparator();
@@ -1525,6 +1526,7 @@ toSecurity::toSecurity(QWidget *main, toConnection &connection)
     SaveAct = new QAction(QPixmap(const_cast<const char**>(commit_xpm)),
                           tr("Save changes"), this);
     connect(SaveAct, SIGNAL(triggered()), this, SLOT(saveChanges(void)));
+    SaveAct->setShortcut(Qt::CTRL | Qt::Key_Return);
     toolbar->addAction(SaveAct);
 
     DropAct = new QAction(QPixmap(const_cast<const char**>(trash_xpm)),
@@ -1538,16 +1540,19 @@ toSecurity::toSecurity(QWidget *main, toConnection &connection)
     AddUserAct = new QAction(QPixmap(const_cast<const char**>(adduser_xpm)),
                              tr("Add new user"), this);
     connect(AddUserAct, SIGNAL(triggered()), this, SLOT(addUser(void)));
+    AddUserAct->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_U);
     toolbar->addAction(AddUserAct);
 
     AddRoleAct = new QAction(QPixmap(const_cast<const char**>(addrole_xpm)),
                              tr("Add new role"), this);
     connect(AddRoleAct, SIGNAL(triggered()), this, SLOT(addRole(void)));
+    AddRoleAct->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_R);
     toolbar->addAction(AddRoleAct);
 
     CopyAct = new QAction(QPixmap(const_cast<const char**>(copyuser_xpm)),
                           tr("Copy current user or role"), this);
     connect(CopyAct, SIGNAL(triggered()), this, SLOT(copy(void)));
+    CopyAct->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_O);
     toolbar->addAction(CopyAct);
     CopyAct->setEnabled(false);
 
@@ -1556,6 +1561,7 @@ toSecurity::toSecurity(QWidget *main, toConnection &connection)
     DisplaySQLAct = new QAction(QPixmap(const_cast<const char**>(sql_xpm)),
                                 tr("Display SQL needed to make current changes"), this);
     connect(DisplaySQLAct, SIGNAL(triggered()), this, SLOT(displaySQL(void)));
+    DisplaySQLAct->setShortcut(Qt::Key_F4);
     toolbar->addAction(DisplaySQLAct);
 
     toolbar->addWidget(new toSpacer());
@@ -1592,50 +1598,32 @@ toSecurity::toSecurity(QWidget *main, toConnection &connection)
     setFocusProxy(Tabs);
 }
 
-#if 0
-#define TO_ID_COPY  (toMain::TO_TOOL_MENU_ID+ 0)
-#define TO_ID_DROP  (toMain::TO_TOOL_MENU_ID+ 1)
-#endif
+void toSecurity::windowActivated(QWidget *widget) {
+    if(widget == this) {
+        if(!ToolMenu) {
+            ToolMenu = new QMenu(tr("&Security"), this);
 
-void toSecurity::windowActivated(QWidget *widget)
-{
-    if (widget == this)
-    {
-        if (!ToolMenu)
-        {
-#if 0                           // todo
-            ToolMenu = new Q3PopupMenu(this);
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("&Refresh"),
-                                 this, SLOT(refresh(void)),
-                                 toKeySequence(tr("F5", "Security|Refresh")));
-            ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(commit_xpm)), tr("&Save changes"),
-                                 this, SLOT(saveChanges()),
-                                 toKeySequence(tr("Ctrl+Return", "Security|Save changes")));
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(trash_xpm)), tr("&Remove user/role"),
-                                 this, SLOT(drop()), 0, TO_ID_DROP);
-            ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(adduser_xpm)), tr("Add &user"),
-                                 this, SLOT(addUser()),
-                                 toKeySequence(tr("Ctrl+Shift+U", "Security|Add user")));
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(addrole_xpm)), tr("Add &role"),
-                                 this, SLOT(addRole()),
-                                 toKeySequence(tr("Ctrl+Shift+R", "Security|Add role")));
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(copyuser_xpm)), tr("&Copy current"),
-                                 this, SLOT(copy()),
-                                 toKeySequence(tr("Ctrl+Shift+O", "Security|Copy current")), TO_ID_COPY);
-            ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(sql_xpm)), tr("Display SQL..."),
-                                 this, SLOT(displaySQL()),
-                                 toKeySequence(tr("F4", "Security|Display SQL")));
-            toMainWidget()->menuBar()->insertItem(tr("&Security"), ToolMenu, -1, toToolMenuIndex());
-            ToolMenu->setItemEnabled(TO_ID_DROP, DropButton->isEnabled());
-            ToolMenu->setItemEnabled(TO_ID_COPY, CopyButton->isEnabled());
-#endif
+            ToolMenu->addAction(UpdateListAct);
+
+            ToolMenu->addSeparator();
+
+            ToolMenu->addAction(SaveAct);
+            ToolMenu->addAction(DropAct);
+
+            ToolMenu->addSeparator();
+
+            ToolMenu->addAction(AddUserAct);
+            ToolMenu->addAction(AddRoleAct);
+            ToolMenu->addAction(CopyAct);
+
+            ToolMenu->addSeparator();
+
+            ToolMenu->addAction(DisplaySQLAct);
+
+            toMainWidget()->addCustomMenu(ToolMenu);
         }
     }
-    else
-    {
+    else {
         delete ToolMenu;
         ToolMenu = NULL;
     }
@@ -1723,13 +1711,6 @@ void toSecurity::changeUser(bool ask)
             UserID = item->text(1);
             DropAct->setEnabled(item->parent());
             CopyAct->setEnabled(item->parent());
-            if (ToolMenu)
-            {
-#if 0                           // todo
-                ToolMenu->setItemEnabled(TO_ID_DROP, DropButton->isEnabled());
-                ToolMenu->setItemEnabled(TO_ID_COPY, CopyButton->isEnabled());
-#endif
-            }
 
             if (UserID[4].latin1() != ':')
                 throw tr("Invalid security ID");

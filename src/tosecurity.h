@@ -45,10 +45,8 @@
 #include "ui_tosecurityquotaui.h"
 
 #include <list>
-//Added by qt3to4:
-#include <Q3PopupMenu>
 
-class Q3PopupMenu;
+class QMenu;
 class QTabWidget;
 class QToolButton;
 class toConnection;
@@ -115,26 +113,25 @@ class toSecurity : public toToolWidget
                   const QString &value, bool admin)
                 : Owner(owner), Object(object), Access(access), Value(value), Admin(admin)
         { }
-    }
-    ;
+    };
 
     QString UserID;
 
-    Q3PopupMenu *ToolMenu;
-    toListView *UserList;
-    toSecuritySystem *SystemGrant;
+    QMenu               *ToolMenu;
+    toListView          *UserList;
+    toSecuritySystem    *SystemGrant;
     toSecurityRoleGrant *RoleGrant;
-    toSecurityObject *ObjectGrant;
-    toSecurityPage *General;
-    toSecurityQuota *Quota;
+    toSecurityObject    *ObjectGrant;
+    toSecurityPage      *General;
+    toSecurityQuota     *Quota;
 
-    QAction * DropAct;
-    QAction * CopyAct;
-    QAction * UpdateListAct;
-    QAction * SaveAct;
-    QAction * AddUserAct;
-    QAction * AddRoleAct;
-    QAction * DisplaySQLAct;
+    QAction *DropAct;
+    QAction *CopyAct;
+    QAction *UpdateListAct;
+    QAction *SaveAct;
+    QAction *AddUserAct;
+    QAction *AddRoleAct;
+    QAction *DisplaySQLAct;
 
     QTabWidget *Tabs;
     std::list<QString> sql(void);
