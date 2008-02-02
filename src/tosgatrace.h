@@ -42,7 +42,6 @@
 #include "totool.h"
 
 #include <qstring.h>
-#include <Q3PopupMenu>
 
 #define TOSQL_LONGOPS "toSGATrace:LongOps"
 

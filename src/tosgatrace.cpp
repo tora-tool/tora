@@ -50,7 +50,7 @@
 
 #include <qcheckbox.h>
 #include <qcombobox.h>
-#include <q3groupbox.h>
+#include <QGroupBox>
 #include <qlabel.h>
 #include <qmenubar.h>
 #include <qmessagebox.h>
@@ -72,19 +72,36 @@
 
 #define CONF_AUTO_UPDATE    "AutoUpdate"
 
-class toSGATracePrefs : public Q3GroupBox, public toSettingTab {
+class toSGATracePrefs : public QGroupBox, public toSettingTab {
     QCheckBox* AutoUpdate;
     toTool *Tool;
 
 public:
     toSGATracePrefs(toTool *tool, QWidget* parent = 0, const char* name = 0)
-            : Q3GroupBox(1, Qt::Horizontal, parent, name), toSettingTab("trace.html"), Tool(tool) {
+            : QGroupBox(parent), toSettingTab("trace.html"), Tool(tool) {
+        if(name)
+            setObjectName(name);
+
+        QVBoxLayout *vbox = new QVBoxLayout;
+        vbox->setSpacing(6);
+        vbox->setContentsMargins(11, 11, 11, 11);
+
+        setLayout(vbox);
+
         setTitle(qApp->translate("toSGATracePrefs", "SGA Trace"));
 
         AutoUpdate = new QCheckBox(this, "AutoRefresh");
         AutoUpdate->setText(qApp->translate("toSGATracePrefs", "&Auto update"));
         QToolTip::add
         (AutoUpdate, qApp->translate("toSGATracePrefs", "Update automatically after change of schema."));
+        vbox->addWidget(AutoUpdate);
+
+        QSpacerItem *spacer = new QSpacerItem(
+            20,
+            20,
+            QSizePolicy::Minimum,
+            QSizePolicy::Expanding);
+        vbox->addItem(spacer);
 
         if (!Tool->config(CONF_AUTO_UPDATE, "Yes").isEmpty())
             AutoUpdate->setChecked(true);
