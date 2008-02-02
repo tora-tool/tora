@@ -42,24 +42,26 @@
 #include "tomarkedtext.h"
 #include "tosearchreplace.h"
 
-#include <q3accel.h>
 #include <qcheckbox.h>
-#include <q3multilineedit.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qregexp.h>
+#include <QAction>
 
 
 toSearchReplace::toSearchReplace(QWidget *parent)
-        : QDialog(parent/*, "SearchReplace"*/), toHelpContext(QString::fromLatin1("searchreplace.html"))
+    : QDialog(parent), toHelpContext(QString::fromLatin1("searchreplace.html"))
 {
     setupUi(this);
 
-    Q3Accel *a = new Q3Accel(this);
-    a->connectItem(a->insertItem(toKeySequence(tr("F1", "Search|Help"))),
-                   this,
-                   SLOT(displayHelp()));
-    Replace->setAccel( QKeySequence(tr("Ctrl+Shift+R", "Edit|Replace")) );
+    QAction *action = new QAction(this);
+    action->setShortcut(QKeySequence::HelpContents);
+    connect(action, SIGNAL(triggered()), this, SLOT(displayHelp()));
+
+    action = new QAction(Replace);
+    action->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_R);
+    Replace->addAction(action);
+
     toEditWidget::addHandler(this);
     receivedFocus(toMainWidget()->editWidget());
 }
