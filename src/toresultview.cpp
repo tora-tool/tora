@@ -52,12 +52,8 @@
 #include <qapplication.h>
 #include <qclipboard.h>
 #include <qcombobox.h>
-#include <q3dragobject.h>
-#include <q3filedialog.h>
-#include <q3header.h>
 #include <qlineedit.h>
 #include <qmessagebox.h>
-#include <q3paintdevicemetrics.h>
 #include <qpainter.h>
 #include <qpalette.h>
 #include <qprinter.h>
@@ -72,6 +68,7 @@
 #include <QMouseEvent>
 #include <QMenu>
 #include <QAction>
+#include <QMimeData>
 
 static int MaxColDisp;
 static bool Gridlines;
@@ -758,9 +755,9 @@ void toListView::menuCallback(QAction *action) {
             QString str = exportAsText(false, true);
             if(!str.isNull()) {
                 QClipboard *clip = qApp->clipboard();
-                Q3TextDrag *drag = new Q3TextDrag(str);
-                drag->setSubtype("html");
-                clip->setData(drag);
+                QMimeData drag;
+                drag.setHtml(str);
+                clip->setMimeData(&drag);
             }
         }
         TOCATCH;
@@ -776,9 +773,9 @@ void toListView::menuCallback(QAction *action) {
             QString str = exportAsText(true, true);
             if(!str.isNull()) {
                 QClipboard *clip = qApp->clipboard();
-                Q3TextDrag *drag = new Q3TextDrag(str);
-                drag->setSubtype("html");
-                clip->setData(drag);
+                QMimeData drag;
+                drag.setHtml(str);
+                clip->setMimeData(&drag);
             }
         }
         TOCATCH;
