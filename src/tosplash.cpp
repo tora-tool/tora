@@ -40,7 +40,6 @@
 #include <qpixmap.h>
 #include <qlabel.h>
 #include <qapplication.h>
-#include <Q3MimeSourceFactory>
 #include <QDesktopWidget>
 #include <QProgressBar>
 #include <QVBoxLayout>
