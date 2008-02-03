@@ -46,7 +46,6 @@
 #include <qtimer.h>
 #include <QString>
 #include <QLabel>
-#include <Q3PopupMenu>
 #include <QAction>
 #include <QToolBar>
 
@@ -60,7 +59,6 @@
 
 class QComboBox;
 class QLabel;
-class Q3PopupMenu;
 class QSplitter;
 
 class toHighlightedText;
