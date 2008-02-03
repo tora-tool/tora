@@ -51,7 +51,6 @@
 #include <qtimer.h>
 
 #include <QLabel>
-#include <Q3PopupMenu>
 
 class Q3UrlOperator;
 
@@ -62,7 +61,6 @@ class QLabel;
 class toTreeWidget;
 class toTreeWidgetItem;
 class Q3NetworkOperation;
-class Q3PopupMenu;
 class QToolBar;
 class QToolButton;
 class QWorkspace;
