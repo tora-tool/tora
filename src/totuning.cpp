@@ -59,8 +59,6 @@
 #include <stdio.h>
 
 #include <qcombobox.h>
-#include <q3grid.h>
-#include <q3groupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qmenubar.h>
@@ -78,6 +76,7 @@
 #include <QString>
 #include <QAction>
 #include <QVBoxLayout>
+#include <QGridLayout>
 
 #include "icons/refresh.xpm"
 #include "icons/totuning.xpm"
@@ -1557,16 +1556,23 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
                 parts.append(parts[2]);
                 parts[2] = QString::fromLatin1("Charts");
             }
-            std::map<QString, Q3Grid *>::iterator j = Charts.find(QString(CONF_CHART) + parts[2].latin1());
-            Q3Grid *cchart;
-            if (j == Charts.end())
-                Charts[QString(CONF_CHART) + parts[2].latin1()] = cchart = new Q3Grid(2, Tabs, QString(CONF_CHART) + parts[2].latin1());
+            std::map<QString, QWidget *>::iterator j = Charts.find(QString(CONF_CHART) + parts[2].latin1());
+            QWidget *cchart;
+            if (j == Charts.end()) {
+                cchart = new QWidget(Tabs);
+                cchart->setObjectName(QString(CONF_CHART) + parts[2]);
+                cchart->setLayout(new QGridLayout);
+                Charts[QString(CONF_CHART) + parts[2].latin1()] = cchart;
+            }
             else
                 cchart = (*j).second;
+
+            QGridLayout *grid = dynamic_cast<QGridLayout *>(cchart->layout());
 
             if (parts[3].mid(1, 1) == QString::fromLatin1("B"))
             {
                 toResultBar *chart = new toResultBar(cchart);
+                grid->addWidget(chart);
                 chart->setTitle(parts[3].mid(3));
                 toQList par;
                 if (parts[3].mid(2, 1) == QString::fromLatin1("B"))
@@ -1593,6 +1599,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
                     chart = new toTuningMiss(cchart);
                 else
                     chart = new toResultLine(cchart);
+                grid->addWidget(chart);
                 chart->setTitle(parts[3].mid(3));
                 toQList par;
                 if (parts[3].mid(2, 1) == QString::fromLatin1("B"))
@@ -1617,6 +1624,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
             {
                 toResultPie *chart = new toResultPie(cchart);
                 chart->setTitle(parts[3].mid(3));
+                grid->addWidget(chart);
                 if (parts[3].mid(2, 1) == QString::fromLatin1("S"))
                 {
                     chart->query(toSQL::sql(*i), unit);
@@ -1630,7 +1638,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
         }
     }
 
-    for (std::map<QString, Q3Grid *>::iterator k = Charts.begin();
+    for (std::map<QString, QWidget *>::iterator k = Charts.begin();
          k != Charts.end();
          k++)
         Tabs->addTab((*k).second, tr((*k).first.mid(strlen(CONF_CHART))));
@@ -1752,7 +1760,7 @@ void toTuning::enableTab(const QString &name, bool enable)
     }
     else if (Charts.find(QString(CONF_CHART) + name) != Charts.end())
     {
-        Q3Grid *chart = Charts[QString(CONF_CHART) + name];
+        QWidget *chart = Charts[QString(CONF_CHART) + name];
         QObjectList childs = chart->children();
         for (int i = 0;i < childs.count();i++)
         {
@@ -1963,9 +1971,6 @@ toTuningFileIO::toTuningFileIO(QWidget *parent)
         h->setSpacing(0);
         h->setContentsMargins(0, 0, 0, 0);
 
-//         setAutoFillBackground(true);
-//         setPalette(QPalette(Qt::red));
-
         QScrollArea *sa = new QScrollArea(this);
         h->addWidget(sa);
         setLayout(h);
@@ -1983,10 +1988,15 @@ toTuningFileIO::toTuningFileIO(QWidget *parent)
         vbox->addWidget(combo);
         connect(combo, SIGNAL(activated(int)), this, SLOT(changeCharts(int)));
 
-        FileReads = new Q3Grid(2, Box);
-        FileTime = new Q3Grid(2, Box);
-        TablespaceReads = new Q3Grid(2, Box);
-        TablespaceTime = new Q3Grid(2, Box);
+        FileReads       = new QWidget(Box);
+        FileTime        = new QWidget(Box);
+        TablespaceReads = new QWidget(Box);
+        TablespaceTime  = new QWidget(Box);
+
+        FileReads->setLayout(new QGridLayout);
+        FileTime->setLayout(new QGridLayout);
+        TablespaceReads->setLayout(new QGridLayout);
+        TablespaceTime->setLayout(new QGridLayout);
 
         vbox->addWidget(FileReads);
         vbox->addWidget(FileTime);
@@ -2048,10 +2058,14 @@ void toTuningFileIO::allocCharts(const QString &name)
     labelTime.insert(labelTime.end(), tr("Maximum Write"));
 
     toResultBar *barchart;
-    if (name.startsWith(QString::fromLatin1("tspc:")))
+    if (name.startsWith(QString::fromLatin1("tspc:"))) {
         barchart = new toResultBar(TablespaceReads);
-    else
+        TablespaceReads->layout()->addWidget(barchart);
+    }
+    else {
         barchart = new toResultBar(FileReads);
+        FileReads->layout()->addWidget(barchart);
+    }
     ReadsCharts[name] = barchart;
     barchart->setTitle(name.mid(5));
     barchart->setMinimumSize(200, 170);
@@ -2061,10 +2075,14 @@ void toTuningFileIO::allocCharts(const QString &name)
     barchart->show();
 
     toResultLine *linechart;
-    if (name.startsWith(QString::fromLatin1("tspc:")))
+    if (name.startsWith(QString::fromLatin1("tspc:"))) {
         linechart = new toResultLine(TablespaceTime);
-    else
+        TablespaceTime->layout()->addWidget(linechart);
+    }
+    else {
         linechart = new toResultLine(FileTime);
+        FileTime->layout()->addWidget(linechart);
+    }
     TimeCharts[name] = linechart;
     linechart->setTitle(name.mid(5));
     linechart->setMinimumSize(200, 170);

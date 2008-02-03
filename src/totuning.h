@@ -56,7 +56,7 @@
 class QAction;
 class QMenu;
 class QComboBox;
-class Q3Grid;
+class QWidget;
 class QLabel;
 class QTabWidget;
 class toBarChart;
@@ -81,10 +81,10 @@ class toTuningFileIO : public QWidget
 {
     Q_OBJECT
 
-    Q3Grid *TablespaceTime;
-    Q3Grid *TablespaceReads;
-    Q3Grid *FileTime;
-    Q3Grid *FileReads;
+    QWidget *TablespaceTime;
+    QWidget *TablespaceReads;
+    QWidget *FileTime;
+    QWidget *FileReads;
 
     QString LastTablespace;
     double TblReads;
@@ -179,7 +179,7 @@ class toTuning : public toToolWidget
     toResultTableView *ControlFiles;
     toWaitEvents *Waits;
 
-    std::map<QString, Q3Grid *> Charts;
+    std::map<QString, QWidget *> Charts;
 
     QComboBox *Refresh;
     toTuningOverview *Overview;
