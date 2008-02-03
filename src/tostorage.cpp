@@ -50,15 +50,12 @@
 #include "totool.h"
 
 #include <qcheckbox.h>
-#include <q3filedialog.h>
-#include <q3groupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
 #include <qmenubar.h>
 #include <qmessagebox.h>
 #include <qpainter.h>
-#include <q3popupmenu.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qregexp.h>
@@ -68,11 +65,11 @@
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qtooltip.h>
-#include <q3whatsthis.h>
 #include <qworkspace.h>
-//Added by qt3to4:
+
 #include <QPixmap>
 #include <QFileDialog>
+#include <QMenu>
 
 #include "icons/addfile.xpm"
 #include "icons/addtablespace.xpm"
@@ -833,6 +830,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     UpdateAct = new QAction(QPixmap(const_cast<const char**>(refresh_xpm)),
                             tr("Update"), this);
     connect(UpdateAct, SIGNAL(triggered()), this, SLOT(refresh()));
+    UpdateAct->setShortcut(QKeySequence::Refresh);
     toolbar->addAction(UpdateAct);
 
     toolbar->addSeparator();
@@ -977,88 +975,45 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     setFocusProxy(Storage);
 }
 
-#if 0                           // todo
-#define TO_ID_ONLINE  (toMain::TO_TOOL_MENU_ID+ 0)
-#define TO_ID_OFFLINE  (toMain::TO_TOOL_MENU_ID+ 1)
-#define TO_ID_LOGGING  (toMain::TO_TOOL_MENU_ID+ 2)
-#define TO_ID_NOLOGGING  (toMain::TO_TOOL_MENU_ID+ 3)
-#define TO_ID_READ_WRITE (toMain::TO_TOOL_MENU_ID+ 4)
-#define TO_ID_READ_ONLY  (toMain::TO_TOOL_MENU_ID+ 5)
-#define TO_ID_MODIFY_TABLESPACE (toMain::TO_TOOL_MENU_ID+ 6)
-#define TO_ID_MODIFY_DATAFILE (toMain::TO_TOOL_MENU_ID+ 7)
-#define TO_ID_NEW_TABLESPACE (toMain::TO_TOOL_MENU_ID+ 8)
-#define TO_ID_ADD_DATAFILE (toMain::TO_TOOL_MENU_ID+ 9)
-#define TO_ID_COALESCE  (toMain::TO_TOOL_MENU_ID+ 10)
-#define TO_ID_MOVE_FILE  (toMain::TO_TOOL_MENU_ID+ 11)
-#define TO_ID_DROP_TABLESPACE (toMain::TO_TOOL_MENU_ID+ 12)
-#endif
 
-void toStorage::windowActivated(QWidget *widget)
-{
-    if (widget == this)
-    {
-        if (!ToolMenu)
-        {
-#if 0                           // todo
-            ToolMenu = new Q3PopupMenu(this);
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("&Refresh"),
-                                 this, SLOT(refresh(void)),
-                                 toKeySequence(tr("F5", "Storage|Refresh")));
-            ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(online_xpm)), tr("Tablespace online"),
-                                 this, SLOT(online()), 0, TO_ID_ONLINE);
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(offline_xpm)), tr("Tablespace offline"),
-                                 this, SLOT(offline()), 0, TO_ID_OFFLINE);
-            ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(logging_xpm)), tr("Default logging"),
-                                 this, SLOT(logging()), 0, TO_ID_LOGGING);
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(eraselog_xpm)), tr("Default not logging"),
-                                 this, SLOT(noLogging()), 0, TO_ID_NOLOGGING);
-            ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(writetablespace_xpm)), tr("Read write access"),
-                                 this, SLOT(readWrite()), 0, TO_ID_READ_WRITE);
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(readtablespace_xpm)), tr("Read only access"),
-                                 this, SLOT(readOnly()), 0, TO_ID_READ_ONLY);
-            ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(droptablespace_xpm)), tr("Drop tablespace..."),
-                                 this, SLOT(dropTablespace()), 0, TO_ID_DROP_TABLESPACE);
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(modtablespace_xpm)), tr("Modify tablespace..."),
-                                 this, SLOT(modifyTablespace()), 0, TO_ID_MODIFY_TABLESPACE);
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(modfile_xpm)), tr("Modify datafile..."),
-                                 this, SLOT(modifyDatafile()), 0, TO_ID_MODIFY_DATAFILE);
-            ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(addtablespace_xpm)), tr("New tablespace..."),
-                                 this, SLOT(newTablespace()), 0, TO_ID_NEW_TABLESPACE);
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(addfile_xpm)), tr("Add datafile..."),
-                                 this, SLOT(newDatafile()), 0, TO_ID_ADD_DATAFILE);
-            ToolMenu->insertSeparator();
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(coalesce_xpm)), tr("Coalesce tablespace"),
-                                 this, SLOT(coalesce()), 0, TO_ID_COALESCE);
-            ToolMenu->insertItem(QPixmap(const_cast<const char**>(movefile_xpm)), tr("Move datafile..."),
-                                 this, SLOT(moveFile()), 0, TO_ID_MOVE_FILE);
+void toStorage::windowActivated(QWidget *widget) {
+    if (widget == this) {
+        if (!ToolMenu) {
+            ToolMenu = new QMenu(tr("&Storage"), this);
 
-            toMainWidget()->menuBar()->insertItem(tr("&Storage"), ToolMenu, -1, toToolMenuIndex());
+            ToolMenu->addAction(UpdateAct);
 
-            ToolMenu->setItemEnabled(TO_ID_ONLINE, OnlineButton->isEnabled());
-            ToolMenu->setItemEnabled(TO_ID_OFFLINE, OfflineButton->isEnabled());
-            ToolMenu->setItemEnabled(TO_ID_LOGGING, LoggingButton->isEnabled());
-            ToolMenu->setItemEnabled(TO_ID_NOLOGGING, EraseLogButton->isEnabled());
-            ToolMenu->setItemEnabled(TO_ID_READ_WRITE, ReadWriteButton->isEnabled());
-            ToolMenu->setItemEnabled(TO_ID_READ_ONLY, ReadOnlyButton->isEnabled());
-            ToolMenu->setItemEnabled(TO_ID_MODIFY_TABLESPACE,
-                                     ModTablespaceButton->isEnabled());
-            ToolMenu->setItemEnabled(TO_ID_DROP_TABLESPACE,
-                                     DropTablespaceButton->isEnabled());
-            ToolMenu->setItemEnabled(TO_ID_MODIFY_DATAFILE,
-                                     ModFileButton->isEnabled());
-            ToolMenu->setItemEnabled(TO_ID_ADD_DATAFILE, NewFileButton->isEnabled());
-            ToolMenu->setItemEnabled(TO_ID_COALESCE, CoalesceButton->isEnabled());
-            ToolMenu->setItemEnabled(TO_ID_MOVE_FILE, MoveFileButton->isEnabled());
-#endif
+            ToolMenu->addSeparator();
+
+            ToolMenu->addAction(OnlineAct);
+            ToolMenu->addAction(OfflineAct);
+
+            ToolMenu->addSeparator();
+
+            ToolMenu->addAction(LoggingAct);
+            ToolMenu->addAction(EraseLogAct);
+
+            ToolMenu->addSeparator();
+
+            ToolMenu->addAction(ReadWriteAct);
+            ToolMenu->addAction(ReadOnlyAct);
+
+            ToolMenu->addSeparator();
+
+            ToolMenu->addAction(DropTablespaceAct);
+            ToolMenu->addAction(ModTablespaceAct);
+            ToolMenu->addAction(ModFileAct);
+            ToolMenu->addAction(NewFileAct);
+
+            ToolMenu->addSeparator();
+
+            ToolMenu->addAction(CoalesceAct);
+            ToolMenu->addAction(MoveFileAct);
+
+            toMainWidget()->addCustomMenu(ToolMenu);
         }
     }
-    else
-    {
+    else {
         delete ToolMenu;
         ToolMenu = NULL;
     }

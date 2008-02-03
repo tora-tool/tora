@@ -49,15 +49,12 @@
 #include <list>
 
 #include <qdialog.h>
-//Added by qt3to4:
 #include <QLabel>
-#include <Q3PopupMenu>
 
 class QCheckBox;
-class Q3GroupBox;
 class QLabel;
 class QLineEdit;
-class Q3PopupMenu;
+class QMenu;
 class QPushButton;
 class QRadioButton;
 class QSpinBox;
@@ -183,7 +180,7 @@ class toStorage : public toToolWidget
     toStorageExtent *Extents;
     QSplitter *ExtentParent;
 
-    Q3PopupMenu *ToolMenu;
+    QMenu *ToolMenu;
 
     QAction * UpdateAct;
     QAction *OnlineAct;
