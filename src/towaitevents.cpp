@@ -55,7 +55,7 @@
 #include <qtoolbar.h>
 
 #include <QString>
-#include <Q3GridLayout>
+#include <QGridLayout>
 #include <QFrame>
 #include <QList>
 #include <QVBoxLayout>
@@ -166,7 +166,7 @@ void toWaitEvents::setup(int session)
     }
 
     QFrame *frame = new QFrame(splitter);
-    Q3GridLayout *layout = new Q3GridLayout(frame);
+    QGridLayout *layout = new QGridLayout(frame);
 
     Delta = new toResultBar(frame);
     Delta->setTitle(tr("System wait events"));
