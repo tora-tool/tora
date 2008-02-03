@@ -51,16 +51,20 @@
 #include <qfont.h>
 #include <qlabel.h>
 #include <qlineedit.h>
-#include <q3listbox.h>
 #include <totreewidget.h>
 #include <qspinbox.h>
-//Added by qt3to4:
+
 #include <QString>
+#include <QListWidget>
+
 
 toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
-        : QWidget(parent), toSettingTab("fonts.html"),
-        Analyzer(toSyntaxAnalyzer::defaultAnalyzer())
-{
+    : QWidget(parent), toSettingTab("fonts.html"),
+      Analyzer(toSyntaxAnalyzer::defaultAnalyzer()) {
+
+    if(name)
+        setObjectName(name);
+
     setupUi(this);
     KeywordUpper->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_KEYWORD_UPPER, DEFAULT_KEYWORD_UPPER).isEmpty());
     SyntaxHighlighting->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_HIGHLIGHT, "Yes").isEmpty());
@@ -81,24 +85,23 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     {
         QString str = toConfigurationSingle::Instance().globalConfig(CONF_LIST, "");
         QFont font;
-        if (str.isEmpty())
-        {
+        if (str.isEmpty()) {
             QWidget *wid = new toTreeWidget;
             font = qApp->font(wid);
         }
-        else
-        {
+        else {
             font = toStringToFont(str);
         }
         List = toFontToString(font);
         ResultExample->setFont(font);
     }
-    try
-    {
-#define INIT_COL(c) { \
- Colors[Analyzer.typeString(c)] = Analyzer.getColor(c); \
- SyntaxComponent->insertItem(tr(Analyzer.typeString(c))); \
- }
+
+    try {
+#define INIT_COL(c) {                                                   \
+            Colors[Analyzer.typeString(c)] = Analyzer.getColor(c);      \
+            SyntaxComponent->addItem(tr(Analyzer.typeString(c)));       \
+        }
+
         INIT_COL(toSyntaxAnalyzer::Default);
         INIT_COL(toSyntaxAnalyzer::Comment);
         INIT_COL(toSyntaxAnalyzer::Number);
@@ -108,12 +111,12 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
         INIT_COL(toSyntaxAnalyzer::ErrorBg);
         INIT_COL(toSyntaxAnalyzer::DebugBg);
     }
-    TOCATCH
+    TOCATCH;
 
     Example->setAnalyzer(Analyzer);
     Example->setReadOnly(true);
-#ifdef TO_NO_ORACLE
 
+#ifdef TO_NO_ORACLE
     Example->setText(QString::fromLatin1("create procedure CheckObvious\n"
                                          "begin\n"
                                          "  set Quest = 'Great'; -- This variable doesn't exist\n"
@@ -122,7 +125,6 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
                                          "  end if;\n"
                                          "end"));
 #else
-
     Example->setText(QString::fromLatin1("create procedure CheckObvious as\n"
                                          "begin\n"
                                          "  Quest:='Great'; -- This variable doesn't exist\n"
@@ -144,16 +146,14 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     Current = NULL;
 }
 
-void toSyntaxAnalyzer::readColor(const QColor &def, infoType typ)
-{
+void toSyntaxAnalyzer::readColor(const QColor &def, infoType typ) {
     QString conf(CONF_COLOR ":");
     conf += typeString(typ);
     QString res = toConfigurationSingle::Instance().globalConfig(conf, "");
 
     if (res.isEmpty())
         Colors[typ] = def;
-    else
-    {
+    else {
         int r, g, b;
         if (sscanf(res, "%d,%d,%d", &r, &g, &b) != 3)
             throw qApp->translate("toSyntaxAnalyzer", "Wrong format of color in setings");
@@ -162,8 +162,7 @@ void toSyntaxAnalyzer::readColor(const QColor &def, infoType typ)
     }
 }
 
-toSyntaxAnalyzer::infoType toSyntaxAnalyzer::typeString(const QString &str)
-{
+toSyntaxAnalyzer::infoType toSyntaxAnalyzer::typeString(const QString &str) {
     if (str == "Default")
         return Default;
     if (str == "Comment")
@@ -183,10 +182,8 @@ toSyntaxAnalyzer::infoType toSyntaxAnalyzer::typeString(const QString &str)
     throw qApp->translate("toSyntaxAnalyzer", "Unknown type");
 }
 
-QString toSyntaxAnalyzer::typeString(infoType typ)
-{
-    switch (typ)
-    {
+QString toSyntaxAnalyzer::typeString(infoType typ) {
+    switch (typ) {
     case Default:
         return "Default";
     case Comment:
@@ -207,18 +204,16 @@ QString toSyntaxAnalyzer::typeString(infoType typ)
     throw qApp->translate("toSyntaxAnalyzer", "Unknown type");
 }
 
-void toSyntaxAnalyzer::updateSettings(void)
-{
-    try
-    {
+void toSyntaxAnalyzer::updateSettings(void) {
+    try {
         const QColorGroup &cg = qApp->palette().active();
         readColor(cg.text(), Default);
 //         readColor(Qt::green, Comment);
-		readColor(QColor(160, 160, 160), Comment);
+        readColor(QColor(160, 160, 160), Comment);
 //         readColor(Qt::cyan, Number);
-		readColor(QColor(0, 160, 13), Number);
+        readColor(QColor(0, 160, 13), Number);
 //         readColor(Qt::blue, Keyword);
-		readColor(QColor(13, 0, 160), Keyword);
+        readColor(QColor(13, 0, 160), Keyword);
         readColor(Qt::red, String);
         readColor(cg.base(), DefaultBg);
         readColor(Qt::darkRed, ErrorBg);
@@ -227,54 +222,46 @@ void toSyntaxAnalyzer::updateSettings(void)
     TOCATCH
 }
 
-void toSyntaxSetup::checkFixedWidth(const QFont &fnt)
-{
+void toSyntaxSetup::checkFixedWidth(const QFont &fnt) {
     QFontMetrics mtr(fnt);
     if (mtr.width(QString::fromLatin1("iiiiiiii")) == mtr.width(QString::fromLatin1("MMMMMMMM")))
         KeywordUpper->setEnabled(true);
-    else
-    {
+    else {
         KeywordUpper->setChecked(false);
         KeywordUpper->setEnabled(false);
     }
 }
 
-void toSyntaxSetup::selectFont(void)
-{
+void toSyntaxSetup::selectFont(void) {
     bool ok = true;
-    QFont font = QFontDialog::getFont (&ok, CodeExample->font(), this);
+    QFont font = QFontDialog::getFont(&ok, CodeExample->font(), this);
 
-    if (ok)
-    {
+    if (ok) {
         CodeExample->setFont(font);
         Example->setFont(font);
         checkFixedWidth(font);
     }
 }
 
-void toSyntaxSetup::selectText(void)
-{
+void toSyntaxSetup::selectText(void) {
     bool ok = true;
-    QFont font = QFontDialog::getFont (&ok, TextExample->font(), this);
+    QFont font = QFontDialog::getFont(&ok, TextExample->font(), this);
 
     if (ok)
         TextExample->setFont(font);
 }
 
-void toSyntaxSetup::selectResultFont(void)
-{
+void toSyntaxSetup::selectResultFont(void) {
     bool ok = true;
-    QFont font = QFontDialog::getFont (&ok, toStringToFont(List), this);
+    QFont font = QFontDialog::getFont(&ok, toStringToFont(List), this);
 
-    if (ok)
-    {
+    if (ok) {
         List = toFontToString(font);
         ResultExample->setFont(font);
     }
 }
 
-QString toSyntaxSetup::color()
-{
+QString toSyntaxSetup::color() {
     QString t = Current->text();
     for (std::map<QString, QColor>::iterator i = Colors.begin();i != Colors.end();i++)
         if (qApp->translate("toSyntaxSetup", (*i).first) == t)
@@ -282,26 +269,20 @@ QString toSyntaxSetup::color()
     throw tr("Unknown color name %1").arg(t);
 }
 
-void toSyntaxSetup::changeLine(Q3ListBoxItem *item)
-{
+void toSyntaxSetup::changeLine(QListWidgetItem *item) {
     Current = item;
-    if (Current)
-    {
+    if (Current) {
         QColor col = Colors[color()];
         ExampleColor->setBackgroundColor(col);
     }
 }
 
-void toSyntaxSetup::selectColor(void)
-{
-    try
-    {
-        if (Current)
-        {
+void toSyntaxSetup::selectColor(void) {
+    try {
+        if (Current) {
             QString coleng = color();
             QColor col = QColorDialog::getColor(Colors[coleng]);
-            if (col.isValid())
-            {
+            if (col.isValid()) {
                 Colors[coleng] = col;
                 ExampleColor->setBackgroundColor(col);
                 Example->analyzer().Colors[toSyntaxAnalyzer::typeString(coleng)] = col;
@@ -313,8 +294,7 @@ void toSyntaxSetup::selectColor(void)
     TOCATCH
 }
 
-void toSyntaxSetup::saveSetting(void)
-{
+void toSyntaxSetup::saveSetting(void) {
     toConfigurationSingle::Instance().globalSetConfig(CONF_TEXT, toFontToString(TextExample->font()));
     toConfigurationSingle::Instance().globalSetConfig(CONF_CODE, toFontToString(CodeExample->font()));
     toConfigurationSingle::Instance().globalSetConfig(CONF_LIST, List);
@@ -326,8 +306,7 @@ void toSyntaxSetup::saveSetting(void)
     toConfigurationSingle::Instance().globalSetConfig(CONF_AUTO_INDENT, AutoIndent->isChecked() ? "Yes" : "");
     toMarkedText::setDefaultTabWidth(TabStop->value());
     toConfigurationSingle::Instance().globalSetConfig(CONF_TAB_STOP, QString::number(toMarkedText::defaultTabWidth()));
-    for (std::map<QString, QColor>::iterator i = Colors.begin();i != Colors.end();i++)
-    {
+    for (std::map<QString, QColor>::iterator i = Colors.begin();i != Colors.end();i++) {
         QString str(CONF_COLOR);
         str += ":";
         str += (*i).first;

@@ -45,37 +45,39 @@
 #include "totool.h"
 
 #include <map>
-//Added by qt3to4:
+
 #include <QString>
 
 class QFont;
 
-class toSyntaxSetup : public QWidget, public Ui::toSyntaxSetupUI, public toSettingTab
-{
-    Q_OBJECT
+class toSyntaxSetup : public QWidget,
+    public Ui::toSyntaxSetupUI,
+    public toSettingTab {
+
+    Q_OBJECT;
 
     QString List;
-    Q3ListBoxItem *Current;
+    QListWidgetItem *Current;
     std::map<QString, QColor> Colors;
     toSyntaxAnalyzer Analyzer;
     QString color();
+
 public:
     toSyntaxSetup(QWidget *parent = 0, const char *name = 0, Qt::WFlags fl = 0);
     virtual void saveSetting(void);
     void checkFixedWidth(const QFont &fnt);
+
 public slots:
-    virtual void changeLine(Q3ListBoxItem *);
+    virtual void changeLine(QListWidgetItem *);
     virtual void selectColor(void);
     virtual void selectFont(void);
     virtual void selectText(void);
     virtual void selectResultFont(void);
-    virtual void changeUpper(bool val)
-    {
+    virtual void changeUpper(bool val) {
         Example->setKeywordUpper(val);
         Example->update();
     }
-    virtual void changeHighlight(bool val)
-    {
+    virtual void changeHighlight(bool val) {
         Example->setSyntaxColoring(val);
         Example->update();
     }
