@@ -4,12 +4,12 @@
 #include "config.h"
 #include "totool.h"
 
-#include <q3groupbox.h>
+#include <QGroupBox>
 
 class toConnection;
 class toResultCombo;
 
-class toTableSelect : public Q3GroupBox
+class toTableSelect : public QGroupBox
 {
     Q_OBJECT
 

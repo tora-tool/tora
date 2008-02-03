@@ -5,11 +5,15 @@
 #include "totableselect.h"
 
 #include <qlabel.h>
+#include <QVBoxLayout>
 
-void toTableSelect::setup()
-{
+void toTableSelect::setup() {
+    QVBoxLayout *vbox = new QVBoxLayout;
+    vbox->setSpacing(0);
+    vbox->setContentsMargins(0, 0, 0, 0);
+    setLayout(vbox);
+
     setTitle(tr("Table selection"));
-    setColumnLayout(1, Qt::Vertical);
     bool mysql = false;
     try
     {
@@ -19,14 +23,21 @@ void toTableSelect::setup()
         {}
     QLabel *label = new QLabel(mysql ? tr("Database") : tr("Schema"), this);
     label->show();
+    vbox->addWidget(label);
+
     Schema = new toResultCombo(this);
     Schema->show();
     Schema->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
+    vbox->addWidget(Schema);
+
     label = new QLabel(tr("Table"), this);
     label->show();
+    vbox->addWidget(label);
+
     Table = new toResultCombo(this);
     Table->show();
     Table->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
+    vbox->addWidget(Table);
 
     Schema->additionalItem(mysql ? tr("Select database") : tr("Select schema"));
     Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
@@ -42,7 +53,7 @@ void toTableSelect::setup()
 }
 
 toTableSelect::toTableSelect(QWidget *parent, const char *name)
-        : Q3GroupBox(parent, name)
+        : QGroupBox(parent, name)
 {
     Schema = Table = NULL;
     QTimer::singleShot(1, this, SLOT(setup()));
