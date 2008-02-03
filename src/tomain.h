@@ -52,15 +52,12 @@
 
 #include <QLabel>
 
-class Q3UrlOperator;
-
 #define TOMessageBox QMessageBox
 
 class QComboBox;
 class QLabel;
 class toTreeWidget;
 class toTreeWidgetItem;
-class Q3NetworkOperation;
 class QToolBar;
 class QToolButton;
 class QWorkspace;
