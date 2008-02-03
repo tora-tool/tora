@@ -60,7 +60,6 @@
 class toTreeWidget;
 class toTreeWidgetItem;
 class QSplitter;
-class Q3TextView;
 class QToolBar;
 class toConnection;
 class toListView;

@@ -46,21 +46,19 @@
 #include "totemplate.h"
 #include "totool.h"
 
-#include <q3filedialog.h>
 #include <qfileinfo.h>
-#include <q3header.h>
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qmessagebox.h>
 #include <qpushbutton.h>
 #include <qsplitter.h>
-#include <q3textview.h>
 #include <qtimer.h>
 #include <QToolBar>
-//Added by qt3to4:
+
 #include <QString>
 #include <QHideEvent>
 #include <QShowEvent>
+#include <QTextEdit>
 
 #include "icons/totemplate.xpm"
 
@@ -701,7 +699,7 @@ void toTemplateItem::setSelected(bool sel)
 
 QWidget *toTemplateText::selectedWidget(QWidget *parent)
 {
-    QWidget *ret = new Q3TextView(Note, QString::null, parent);
+    QWidget *ret = new QTextEdit(Note, parent);
     if(parent->layout())
         parent->layout()->addWidget(ret);
     return ret;
@@ -710,7 +708,7 @@ QWidget *toTemplateText::selectedWidget(QWidget *parent)
 void toTemplate::setWidget(QWidget *widget)
 {
     if (!widget) {
-        widget = new Q3TextView(frame());
+        widget = new QTextEdit(frame());
         frame()->layout()->addWidget(widget);
     }
 
