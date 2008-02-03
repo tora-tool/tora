@@ -43,19 +43,18 @@
 #include <qobject.h>
 #include <qstring.h>
 
-class Q3Dns;
-class Q3Socket;
+class QTcpSocket;
 class QTextStream;
+
 
 // Adapted from Qt smtp example.
 
-/** Used to send mail asyncronously. Just create an instance and forget it.
- * It will delete itself when done.
+/**
+ * Used to send mail asyncronously. Just create an instance and forget
+ * it.  It will delete itself when done.
  */
-
-class toSMTP : public QObject
-{
-    Q_OBJECT
+class toSMTP : public QObject {
+    Q_OBJECT;
 
 public:
     /** Send an email.
@@ -64,18 +63,18 @@ public:
      * @param subject Subject of mail.
      * @param body Body of email message.
      */
-    toSMTP(const QString &from, const QString &to,
-           const QString &subject, const QString &body);
+    toSMTP(const QString &from,
+           const QString &to,
+           const QString &subject,
+           const QString &body);
     ~toSMTP();
 
 private slots:
-    void dnsLookupHelper();
     void readyRead();
     void connected();
 
 private:
-    enum state
-    {
+    enum state {
         Init,
         Mail,
         Rcpt,
@@ -85,14 +84,13 @@ private:
         Close
     };
 
-    QString Message;
-    QString From;
-    QString Recipient;
-    Q3Socket *Socket;
+    QString      Message;
+    QString      From;
+    QString      Recipient;
+    QTcpSocket  *Socket;
     QTextStream *Stream;
-    int State;
-    QString Response;
-    Q3Dns * MXLookup;
+    int          State;
+    QString      Response;
 };
 
 #endif

@@ -149,6 +149,10 @@
 #define CONF_DISPLAY_GRIDLINES "Gridlines"
 #define DEFAULT_DISPLAY_GRIDLINES "Yes"
 #define DEFAULT_EXTENSIONS "SQL (*.sql *.pkg *.pkb), Text (*.txt), All (*)"
+#define CONF_SMTP "SmtpServer"
+#define DEFAULT_SMTP "localhost"
+#define CONF_SMTP_PORT "SmtpServerPort"
+#define DEFAULT_SMTP_PORT "25"
 
 #  ifndef Q_OS_WIN32
 // Undefining this will leave out the style selection option stuff from the program

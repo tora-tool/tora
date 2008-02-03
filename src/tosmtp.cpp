@@ -1,162 +1,146 @@
 /*****
-*
-* TOra - An Oracle Toolkit for DBA's and developers
-* Copyright (C) 2003-2005 Quest Software, Inc
-* Portions Copyright (C) 2005 Other Contributors
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation;  only version 2 of
-* the License is valid for this program.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*
-*      As a special exception, you have permission to link this program
-*      with the Oracle Client libraries and distribute executables, as long
-*      as you follow the requirements of the GNU GPL in regard to all of the
-*      software in the executable aside from Oracle client libraries.
-*
-*      Specifically you are not permitted to link this program with the
-*      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
-*      And you are not permitted to distribute binaries compiled against
-*      these libraries without written consent from Quest Software, Inc.
-*      Observe that this does not disallow linking to the Qt Free Edition.
-*
-*      You may link this product with any GPL'd Qt library such as Qt/Free
-*
-* All trademarks belong to their respective owners.
-*
-*****/
+ *
+ * TOra - An Oracle Toolkit for DBA's and developers
+ * Copyright (C) 2003-2005 Quest Software, Inc
+ * Portions Copyright (C) 2005 Other Contributors
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation;  only version 2 of
+ * the License is valid for this program.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *      As a special exception, you have permission to link this program
+ *      with the Oracle Client libraries and distribute executables, as long
+ *      as you follow the requirements of the GNU GPL in regard to all of the
+ *      software in the executable aside from Oracle client libraries.
+ *
+ *      Specifically you are not permitted to link this program with the
+ *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+ *      And you are not permitted to distribute binaries compiled against
+ *      these libraries without written consent from Quest Software, Inc.
+ *      Observe that this does not disallow linking to the Qt Free Edition.
+ *
+ *      You may link this product with any GPL'd Qt library such as Qt/Free
+ *
+ * All trademarks belong to their respective owners.
+ *
+ *****/
 
 #include "utils.h"
 
 #include "tosmtp.h"
+#include "toconf.h"
+#include "toconfiguration.h"
 
 #include <qapplication.h>
-#include <q3dns.h>
 #include <qmessagebox.h>
 #include <qregexp.h>
-#include <q3socket.h>
 #include <QTextStream>
 #include <qtimer.h>
-//Added by qt3to4:
-#include <Q3ValueList>
+
+#include <QTcpSocket>
 
 
-toSMTP::toSMTP(const QString &from, const QString &to,
-               const QString &subject, const QString &body)
-{
-    Socket = new Q3Socket( this );
+toSMTP::toSMTP(const QString &from,
+               const QString &to,
+               const QString &subject,
+               const QString &body) {
+    From      = from;
+    Recipient = to;
+    State     = Init;
+    Stream    = 0;
+
+    Socket = new QTcpSocket(this);
     connect(Socket, SIGNAL(readyRead()),
-            this, SLOT( readyRead()));
+            this, SLOT(readyRead()));
     connect(Socket, SIGNAL(connected()),
             this, SLOT(connected()));
 
-    Stream = 0;
-    MXLookup = new Q3Dns(to.mid(to.find('@') + 1), Q3Dns::Mx);
-    connect(MXLookup, SIGNAL(resultsReady()),
-            this, SLOT(dnsLookupHelper()) );
-
     Message = QString::fromLatin1("From: ") + from +
-              QString::fromLatin1("\nTo: ") + to +
-              QString::fromLatin1("\nSubject: ") + subject +
-              QString::fromLatin1("\n\n") + body + "\n";
+        QString::fromLatin1("\nTo: ") + to +
+        QString::fromLatin1("\nSubject: ") + subject +
+        QString::fromLatin1("\n\n") + body + "\n";
     Message.replace(QRegExp(QString::fromLatin1("\n")),
                     QString::fromLatin1("\r\n"));
     Message.replace(QRegExp(QString::fromLatin1("\r\n.\r\n")),
                     QString::fromLatin1("\r\n..\r\n"));
 
-    From = from;
-    Recipient = to;
+    QString server = toConfigurationSingle::Instance().globalConfig(
+        CONF_SMTP, DEFAULT_SMTP);
+    int port = toConfigurationSingle::Instance().globalConfig(
+        CONF_SMTP_PORT, DEFAULT_SMTP_PORT).toInt();
 
-    State = Init;
+    if(server.isNull() || server.isEmpty())
+        toStatusMessage("No SMTP Server configured. Please check the preferences dialog.");
+    else {
+        Socket->connectToHost(server, port);
+        Stream = new QTextStream(Socket);
+    }
 }
 
-toSMTP::~toSMTP()
-{
+toSMTP::~toSMTP() {
     delete Stream;
     delete Socket;
 }
 
-void toSMTP::dnsLookupHelper()
-{
-    Q3ValueList<Q3Dns::MailServer> s = MXLookup->mailServers();
-    if (s.isEmpty() && MXLookup->isWorking())
-        return ;
-
-    toStatusMessage(tr("Connecting to %1").arg(s.first().name), false, false);
-
-    Socket->connectToHost(s.first().name, 25);
-    Stream = new QTextStream(Socket);
+void toSMTP::connected() {
+    toStatusMessage(tr("Connected to %1").arg(Socket->peerName()), false, false);
 }
 
-void toSMTP::connected()
-{
-    toStatusMessage(tr("Connected to %1" ).arg(Socket->peerName()), false, false);
-}
-
-void toSMTP::readyRead()
-{
+void toSMTP::readyRead() {
     // SMTP is line-oriented
-    if (!Socket->canReadLine())
+    if(!Socket->canReadLine())
         return ;
 
     QString responseLine;
-    do
-    {
+    do {
         responseLine = Socket->readLine();
         Response += responseLine;
     }
-    while (Socket->canReadLine() && responseLine[3] != ' ');
+    while(Socket->canReadLine() && responseLine[3] != ' ');
     responseLine.truncate(3);
 
-    if (State == Init && responseLine[0] == '2')
-    {
+    if (State == Init && responseLine[0] == '2') {
         // banner was okay, let's go on
         *Stream << "HELO there\r\n";
         State = Mail;
     }
-    else if (State == Mail && responseLine[0] == '2')
-    {
+    else if (State == Mail && responseLine[0] == '2') {
         // HELO response was okay (well, it has to be)
         *Stream << "MAIL FROM: <" << From << ">\r\n";
         State = Rcpt;
     }
-    else if (State == Rcpt && responseLine[0] == '2')
-    {
+    else if (State == Rcpt && responseLine[0] == '2') {
         *Stream << "RCPT TO: <" << Recipient << ">\r\n";
         State = Data;
     }
-    else if (State == Data && responseLine[0] == '2')
-    {
+    else if (State == Data && responseLine[0] == '2') {
         *Stream << "DATA\r\n";
         State = Body;
     }
-    else if (State == Body && responseLine[0] == '3')
-    {
+    else if (State == Body && responseLine[0] == '3') {
         *Stream << Message << ".\r\n";
         State = Quit;
     }
-    else if (State == Quit && responseLine[0] == '2')
-    {
+    else if (State == Quit && responseLine[0] == '2') {
         *Stream << "QUIT\r\n";
         // here, we just close.
         State = Close;
         toStatusMessage(tr("Message sent"), false, false);
     }
-    else if (State == Close)
-    {
+    else if (State == Close) {
         delete this;
     }
-    else
-    {
+    else {
         toStatusMessage(tr("Unexpected reply from SMTP server:\n\n") +
                         Response);
         State = Close;

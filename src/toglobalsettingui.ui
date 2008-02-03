@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>729</width>
-    <height>553</height>
+    <width>733</width>
+    <height>629</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -32,7 +32,7 @@
     <number>6</number>
    </property>
    <item row="0" column="0" >
-    <widget class="Q3GroupBox" name="GroupBox2" >
+    <widget class="QGroupBox" name="GroupBox2" >
      <property name="title" >
       <string>Paths</string>
      </property>
@@ -186,7 +186,7 @@
     </widget>
    </item>
    <item row="1" column="0" >
-    <widget class="Q3GroupBox" name="OptionGroup" >
+    <widget class="QGroupBox" name="OptionGroup" >
      <property name="title" >
       <string>Options</string>
      </property>
@@ -620,6 +620,37 @@ Will leave the password unencryptet in the config file.</string>
         </property>
        </widget>
       </item>
+      <item row="9" column="0" colspan="6" >
+       <layout class="QHBoxLayout" >
+        <item>
+         <widget class="QLabel" name="label" >
+          <property name="text" >
+           <string>SMTP Server</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="SmtpServer" />
+        </item>
+        <item>
+         <widget class="QLabel" name="label_2" >
+          <property name="text" >
+           <string>:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="SmtpPort" >
+          <property name="minimum" >
+           <number>1</number>
+          </property>
+          <property name="maximum" >
+           <number>65536</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
      </layout>
     </widget>
    </item>
@@ -627,14 +658,6 @@ Will leave the password unencryptet in the config file.</string>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <customwidgets>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>CustomSQL</tabstop>
   <tabstop>SQLBrowse</tabstop>

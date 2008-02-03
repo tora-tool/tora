@@ -47,9 +47,7 @@
 
 #include <qcheckbox.h>
 #include <qcombobox.h>
-#include <q3filedialog.h>
 #include <qfontdialog.h>
-#include <q3groupbox.h>
 #include <qlabel.h>
 #include <qdir.h>
 #include <qlayout.h>
@@ -61,16 +59,18 @@
 #include <qtooltip.h>
 #include <qvalidator.h>
 #include <qvariant.h>
-#include <q3whatsthis.h>
 #include <qcolordialog.h>
-//Added by qt3to4:
+
 #include <QString>
 #include <QFileDialog>
 
 
 toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags fl)
-        : QWidget(parent/*, name, fl*/), toSettingTab("preferences.html#global")
+    : QWidget(parent, fl), toSettingTab("preferences.html#global")
 {
+    if(name)
+        setObjectName(name);
+
     setupUi(this);
 
     SavePassword->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_SAVE_PWD, "").isEmpty());
@@ -167,6 +167,11 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     CustomSQL->setText(toConfigurationSingle::Instance().globalConfig(CONF_SQL_FILE,
                        DEFAULT_SQL_FILE));
     Locale->setText(toConfigurationSingle::Instance().globalConfig(CONF_LOCALE, QTextCodec::locale()));
+
+    SmtpServer->setText(toConfigurationSingle::Instance().globalConfig(
+                            CONF_SMTP, DEFAULT_SMTP));
+    SmtpPort->setValue(toConfigurationSingle::Instance().globalConfig(
+                           CONF_SMTP_PORT, DEFAULT_SMTP_PORT).toInt());
 }
 
 void toGlobalSetting::pluginBrowse(void)
@@ -251,6 +256,9 @@ void toGlobalSetting::saveSetting(void)
         toConfigurationSingle::Instance().globalSetConfig(CONF_CHART_SAMPLES, QString::number(ChartSamples->value()));
 
     toConfigurationSingle::Instance().globalSetConfig(CONF_LOCALE, Locale->text());
+
+    toConfigurationSingle::Instance().globalSetConfig(CONF_SMTP, SmtpServer->text());
+    toConfigurationSingle::Instance().globalSetConfig(CONF_SMTP_PORT, QString::number(SmtpPort->value()));
 }
 
 void toDatabaseSetting::numberFormatChange()
