@@ -45,7 +45,7 @@
 #include <list>
 #include <algorithm>
 
-class Q3TextView;
+class QTextBrowser;
 class toConnection;
 class toExtract;
 class toListView;
@@ -60,7 +60,7 @@ class toScript : public toToolWidget {
     toListView *DropList;
     toListView *CreateList;
     toListView *SearchList;
-    Q3TextView *Report;
+	QTextBrowser *Report;
 
     void setupExtract(toExtract &);
     void changeConnection(int, bool source);

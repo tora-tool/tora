@@ -42,20 +42,19 @@
 
 #include "toeditwidget.h"
 
-#include <q3textview.h>
-//Added by qt3to4:
-#include <QFocusEvent>
+#include <QTextBrowser>
+
 
 /** A tora editwidget version of the @ref QTextView widget.
  */
 
-class toTextView : public Q3TextView, public toEditWidget
+class toTextView : public QTextBrowser, public toEditWidget
 {
 public:
     /** See @ref QTextView
      */
     toTextView(QWidget *parent = 0, const char *name = 0)
-            : Q3TextView(parent, name)
+            : QTextBrowser(parent)//, name)
             , toEditWidget(false, true, false,
                            false, false,
                            false, true, false,
@@ -63,36 +62,26 @@ public:
     { }
     /** See @ref QTextView
      */
-    toTextView(const QString&text, const QString &context = QString::null,
-               QWidget *parent = 0, const char *name = 0)
-            : Q3TextView(text, context, parent, name)
-            , toEditWidget(false, true, false,
-                           false, false,
-                           false, true, false,
-                           false, true, false)
-    { }
+//     toTextView(const QString&text, const QString &context = QString::null,
+//                QWidget *parent = 0, const char *name = 0)
+//             : Q3TextView(text, context, parent, name)
+//             , toEditWidget(false, true, false,
+//                            false, false,
+//                            false, true, false,
+//                            false, true, false)
+//     { }
     /** Reimplemented for internal reasons.
      */
-    virtual void editCopy(void)
-    {
-        copy();
-    }
+    virtual void editCopy(void);
     /** Reimplemented for internal reasons.
      */
-    virtual void editSelectAll(void)
-    {
-        selectAll();
-    }
+    virtual void editSelectAll(void);
     /** Reimplemented for internal reasons.
      */
     virtual bool editSave(bool);
     /** Reimplemented for internal reasons.
      */
-    virtual void focusInEvent (QFocusEvent *e)
-    {
-        receivedFocus();
-        Q3TextView::focusInEvent(e);
-    }
+    virtual void focusInEvent (QFocusEvent *e);
 };
 
 #endif
