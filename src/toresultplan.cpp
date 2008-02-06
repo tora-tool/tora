@@ -66,7 +66,16 @@ static toSQL SQLViewPlan("toResultPlan:ViewPlan",
                          "  io_cost,Bytes,Cardinality,\n"
                          "  partition_start,partition_stop,temp_space,time\n"
                          "  FROM %1 WHERE Statement_ID = '%2' ORDER BY NVL(Parent_ID,0),ID",
-                         "Get the contents of a plan table. Observe the %1 and %2 which must be present. Must return same columns");
+                         "Get the contents of a plan table. Observe the %1 and %2 which must be present. Must return same columns",
+                         "1000");
+
+static toSQL SQLViewPlan8("toResultPlan:ViewPlan",
+                         "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
+                         "  io_cost,Bytes,Cardinality,\n"
+                         "  partition_start,partition_stop,' ',' '\n"
+                         "  FROM %1 WHERE Statement_ID = '%2' ORDER BY NVL(Parent_ID,0),ID",
+                         "",
+                         "0800");
 
 bool toResultPlan::canHandle(toConnection &conn)
 {
