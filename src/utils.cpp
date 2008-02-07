@@ -53,7 +53,6 @@
 #include <qcombobox.h>
 #include <qcursor.h>
 #include <qfile.h>
-#include <q3filedialog.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <totreewidget.h>
@@ -72,6 +71,7 @@
 #include <QColor>
 #include <QFileDialog>
 #include <QDockWidget>
+#include <QTextStream>
 
 #ifdef Q_OS_WIN32
 # include "windows.h"
@@ -170,7 +170,7 @@ QString toSQLStripSpecifier(const QString &sql)
     for (int i = 0;i < sql.length();i++)
     {
         QChar rc = sql.at(i);
-        char c = rc.latin1();
+        char c = rc.toLatin1();
         if (inString)
         {
             if (c == inString)
@@ -196,7 +196,7 @@ QString toSQLStripSpecifier(const QString &sql)
                 for (i++;i < sql.length();i++)
                 {
                     rc = sql.at(i);
-                    c = rc.latin1();
+                    c = rc.toLatin1();
                     if (!rc.isLetterOrNumber())
                         break;
                     ret += rc;
@@ -207,7 +207,7 @@ QString toSQLStripSpecifier(const QString &sql)
                     for (i++;i < sql.length();i++)
                     {
                         rc = sql.at(i);
-                        c = rc.latin1();
+                        c = rc.toLatin1();
                         ret += QString::fromLatin1(" ");
                         if (c == '>')
                         {
@@ -232,10 +232,10 @@ QString toSQLStripBind(const QString &sql)
     char inString = 0;
     for (int i = 0;i < sql.length();i++) {
         QChar rc = sql.at(i);
-        char  c  = rc.latin1(); // current
+        char  c  = rc.toLatin1(); // current
         char  n  = 0;           // next
         if(i + 1 < sql.length())
-            n = sql.at(i + 1).latin1();
+            n = sql.at(i + 1).toLatin1();
 
         if (inString)
         {
@@ -270,7 +270,7 @@ QString toSQLStripBind(const QString &sql)
                 for (i++;i < sql.length();i++)
                 {
                     rc = sql.at(i);
-                    c = rc.latin1();
+                    c = rc.toLatin1();
                     if (!rc.isLetterOrNumber())
                         break;
                 }
@@ -279,7 +279,7 @@ QString toSQLStripBind(const QString &sql)
                     for (i++;i < sql.length();i++)
                     {
                         rc = sql.at(i);
-                        c = rc.latin1();
+                        c = rc.toLatin1();
                         if (c == '>')
                         {
                             i++;
@@ -329,16 +329,16 @@ void toStatusMessage(const QString &str, bool save, bool log) {
 //     }
 // #endif
 
-    toMain *main = dynamic_cast<toMain *>(qApp->mainWidget());
+    toMain *main = toMainWidget();
     if (main)
     {
         if (!str.isEmpty())
         {
             int sec = toConfigurationSingle::Instance().globalConfig(CONF_STATUS_MESSAGE, DEFAULT_STATUS_MESSAGE).toInt();
             if (save || sec == 0)
-                main->statusBar()->message(str.simplifyWhiteSpace());
+                main->statusBar()->showMessage(str.simplified());
             else
-                main->statusBar()->message(str.simplifyWhiteSpace(), sec*1000);
+                main->statusBar()->showMessage(str.simplified(), sec*1000);
             if (!save && log)
             {
                 if (toConfigurationSingle::Instance().globalConfig(CONF_MESSAGE_STATUSBAR, "").isEmpty())
@@ -359,48 +359,46 @@ std::list<QString> toStatusMessages(void)
     return LastMessages;
 }
 
-toMain *toMainWidget(void)
-{
-    return dynamic_cast<toMain *>(qApp->mainWidget());
-}
-
 QComboBox *toRefreshCreate(QWidget *parent, const char *name, const QString &def, QComboBox *item)
 {
     QComboBox *refresh;
     if (item)
         refresh = item;
-    else
-        refresh = new QComboBox(false, parent, name);
+    else {
+        refresh = new QComboBox(parent);
+        refresh->setObjectName(name);
+        refresh->setEditable(false);
+    }
 
-    refresh->insertItem(qApp->translate("toRefreshCreate", "None"));
-    refresh->insertItem(qApp->translate("toRefreshCreate", "2 seconds"));
-    refresh->insertItem(qApp->translate("toRefreshCreate", "5 seconds"));
-    refresh->insertItem(qApp->translate("toRefreshCreate", "10 seconds"));
-    refresh->insertItem(qApp->translate("toRefreshCreate", "30 seconds"));
-    refresh->insertItem(qApp->translate("toRefreshCreate", "1 min"));
-    refresh->insertItem(qApp->translate("toRefreshCreate", "5 min"));
-    refresh->insertItem(qApp->translate("toRefreshCreate", "10 min"));
+    refresh->addItem(qApp->translate("toRefreshCreate", "None"));
+    refresh->addItem(qApp->translate("toRefreshCreate", "2 seconds"));
+    refresh->addItem(qApp->translate("toRefreshCreate", "5 seconds"));
+    refresh->addItem(qApp->translate("toRefreshCreate", "10 seconds"));
+    refresh->addItem(qApp->translate("toRefreshCreate", "30 seconds"));
+    refresh->addItem(qApp->translate("toRefreshCreate", "1 min"));
+    refresh->addItem(qApp->translate("toRefreshCreate", "5 min"));
+    refresh->addItem(qApp->translate("toRefreshCreate", "10 min"));
     QString str;
     if (!def.isNull())
         str = def;
     else
         str = toConfigurationSingle::Instance().globalConfig(CONF_REFRESH, DEFAULT_REFRESH);
     if (str == "2 seconds")
-        refresh->setCurrentItem(1);
+        refresh->setCurrentIndex(1);
     else if (str == "5 seconds")
-        refresh->setCurrentItem(2);
+        refresh->setCurrentIndex(2);
     else if (str == "10 seconds")
-        refresh->setCurrentItem(3);
+        refresh->setCurrentIndex(3);
     else if (str == "30 seconds")
-        refresh->setCurrentItem(4);
+        refresh->setCurrentIndex(4);
     else if (str == "1 min")
-        refresh->setCurrentItem(5);
+        refresh->setCurrentIndex(5);
     else if (str == "5 min")
-        refresh->setCurrentItem(6);
+        refresh->setCurrentIndex(6);
     else if (str == "10 min")
-        refresh->setCurrentItem(7);
+        refresh->setCurrentIndex(7);
     else
-        refresh->setCurrentItem(0);
+        refresh->setCurrentIndex(0);
     return refresh;
 }
 
@@ -430,9 +428,8 @@ void toRefreshParse(toTimer *timer, const QString &str)
         throw qApp->translate("toRefreshParse", "Unknown timer value");
 }
 
-QString toDeepCopy(const QString &str)
-{
-    return str.copy();
+QString toDeepCopy(const QString &str) {
+    return QString(str.data(), str.length());
 }
 
 // Why is this optional?
@@ -458,7 +455,7 @@ QString toGetSessionType(void)
         QStyle *t = QStyleFactory::create(name);
         if (!t)
             continue;
-        if (t->className() == style->className())
+        if (t->metaObject()->className() == style->metaObject()->className())
         {
             delete t;
             return name;
@@ -467,7 +464,7 @@ QString toGetSessionType(void)
     }
 
     // Weird should never get here.
-    return style->className();
+    return style->metaObject()->className();
 }
 
 void toSetSessionType(const QString &str)
@@ -589,7 +586,7 @@ QString toPluginPath(void)
                     static QRegExp findQuotes("\"([^\"]*)\"");
                     if (findQuotes.search(str) >= 0)
                         str = findQuotes.cap(1);
-                    int ind = str.findRev('\\');
+                    int ind = str.lastIndexOf('\\');
                     if (ind >= 0)
                         str = str.mid(0, ind);
                 }
@@ -656,21 +653,11 @@ QByteArray toReadFile(const QString &filename)
 {
     QString expanded = toExpandFile(filename);
     QFile file(expanded);
-    if (!file.open(QIODevice::ReadOnly))
+    if(!file.open(QIODevice::ReadOnly))
         throw QT_TRANSLATE_NOOP("toReadFile", "Couldn't open file %1.").arg(filename);
 
-    int size = file.size();
-
-    char *buf = new char[size + 1];
-    if (file.readBlock(buf, size) == -1)
-    {
-        delete[] buf;
-        throw QT_TRANSLATE_NOOP("toReadFile", "Encountered problems read configuration");
-    }
-    buf[size] = 0;
-    QByteArray ret(buf, size + 1);
-    delete[] buf;
-    return ret;
+    QTextStream in(&file);
+    return in.readAll().toUtf8();
 }
 
 QString toExpandFile(const QString &file)
@@ -722,11 +709,12 @@ bool toWriteFile(const QString &filename, const QByteArray &data)
         TOMessageBox::warning(
             toMainWidget(),
             QT_TRANSLATE_NOOP("toWriteFile", "File error"),
-            QT_TRANSLATE_NOOP("toWriteFile",
-                              QString::fromLatin1("Couldn't open %1 for writing").arg(filename)));
+            QT_TRANSLATE_NOOP(
+                "toWriteFile",
+                QString("Couldn't open %1 for writing").arg(filename).toAscii().constData()));
         return false;
     }
-    file.writeBlock(data, data.length());
+    file.write(data);
     if (file.error() != QFile::NoError)
     {
         TOMessageBox::warning(
@@ -741,7 +729,7 @@ bool toWriteFile(const QString &filename, const QByteArray &data)
 
 bool toWriteFile(const QString &filename, const QString &data)
 {
-    return toWriteFile(filename, data.local8Bit());
+    return toWriteFile(filename, data.toUtf8());
 }
 
 bool toCompareLists(QStringList &lsta, QStringList &lstb, int len)
@@ -817,7 +805,7 @@ QString toSaveFilename(const QString &filename, const QString &filter, QWidget *
 void toSetEnv(const QString &var, const QString &val)
 {
 #if HAVE_SETENV && !defined(Q_OS_WIN32)
-    setenv(var, val, 1);
+    setenv(var.toAscii().constData(), val.toAscii().constData(), 1);
 #else
     // Has a memory leak, but just a minor one.
 
@@ -832,9 +820,9 @@ void toSetEnv(const QString &var, const QString &val)
 void toUnSetEnv(const QString &var)
 {
 #if HAVE_SETENV && !defined(Q_OS_WIN32)
-    unsetenv(var);
+    unsetenv(var.toAscii().constData());
 #else
-    toSetEnv(var, "");
+    toSetEnv(var.toAscii().constData(), "");
 #endif
 }
 
@@ -951,7 +939,7 @@ toBusy::toBusy()
     if (toThread::mainThread())
     {
         if (!Count)
-            qApp->setOverrideCursor(Qt::waitCursor);
+            qApp->setOverrideCursor(Qt::WaitCursor);
         Count++;
     }
     BusyLock.unlock();
@@ -977,7 +965,7 @@ void toReadableColumn(QString &name)
     {
         if (name.at(i) == '_')
         {
-            name.ref(i) = ' ';
+            name[i] = ' ';
             inWord = false;
         }
         else if (name.at(i).isSpace())
@@ -987,9 +975,9 @@ void toReadableColumn(QString &name)
         else if (name.at(i).isLetter())
         {
             if (inWord)
-                name.ref(i) = name.at(i).lower();
+                name[i] = name.at(i).toLower();
             else
-                name.ref(i) = name.at(i).upper();
+                name[i] = name.at(i).toUpper();
             inWord = true;
         }
     }
@@ -1057,7 +1045,7 @@ void toToolCaption(toToolWidget *widget, const QString &caption)
     }
     title += caption;
 
-    widget->setCaption(title);
+    widget->setWindowTitle(title);
     toMainWidget()->updateWindowsMenu();
 }
 
@@ -1067,7 +1055,7 @@ void toMapExport(std::map<QString, QString> &data, const QString &prefix,
     std::map<QString, QString>::iterator i = src.begin();
     if (i != src.end())
     {
-        data[prefix + ":First"] = QString::fromLatin1((*i).first);
+        data[prefix + ":First"] = QString((*i).first);
         QString key = prefix + ":d:";
         do
         {
@@ -1086,7 +1074,7 @@ void toMapImport(std::map<QString, QString> &data, const QString &prefix,
     if (i != data.end())
     {
         QString key = prefix + ":d:";
-        i = data.find(key + (*i).second.latin1());
+        i = data.find(key + (*i).second.toLatin1());
         while (i != data.end() && (*i).first.mid(0, key.length()) == key)
         {
             QString t = (*i).first.mid(key.length());
@@ -1146,29 +1134,28 @@ toQValue toUnnull(const toQValue &str)
 
 QString toTranslateMayby(const QString &ctx, const QString &text)
 {
-    if (ctx.contains(QString::fromLatin1(" ")) || ctx.latin1() != ctx.utf8() || text.latin1() != text.utf8() || ctx.isEmpty() || text.isEmpty())
+    if (ctx.contains(QString::fromLatin1(" ")) || ctx.toLatin1() != ctx.toUtf8() || text.toLatin1() != text.toUtf8() || ctx.isEmpty() || text.isEmpty())
         return text;
-    return QT_TRANSLATE_NOOP(ctx.latin1(), text.latin1());
+    return QT_TRANSLATE_NOOP(ctx.toLatin1(), text.toLatin1());
 }
 
-toPopupButton::toPopupButton(const QIcon &iconSet, const QString &textLabel,
-                             const QString &grouptext, QToolBar *parent, const char *name)
-        : QToolButton(iconSet, textLabel, grouptext, NULL, NULL, parent, name)
-{
-    connect(this, SIGNAL(clicked()), this, SLOT(click()));
-    setPopupDelay(0);
+toPopupButton::toPopupButton(const QIcon &iconSet,
+                             const QString &textLabel,
+                             const QString &grouptext,
+                             QToolBar *parent,
+                             const char *name)
+    : QToolButton(parent) {
+
+    setObjectName(name);
+    setIcon(iconSet);
+    setText(textLabel);
+    setToolTip(grouptext);
 }
 
 toPopupButton::toPopupButton(QWidget *parent, const char *name)
-        : QToolButton(parent, name)
-{
-    connect(this, SIGNAL(clicked()), this, SLOT(click()));
-    setPopupDelay(0);
-}
+    : QToolButton(parent) {
 
-void toPopupButton::click(void)
-{
-    openPopup();
+    setObjectName(name);
 }
 
 QString toObfuscate(const QString &str)
@@ -1176,7 +1163,7 @@ QString toObfuscate(const QString &str)
     if (str.isEmpty())
         return str;
 
-    QByteArray arr = qCompress(str.utf8());
+    QByteArray arr = qCompress(str.toUtf8());
     QString ret = "\002";
 
     char buf[100]; // Just to be on the safe side
@@ -1196,7 +1183,7 @@ QString toUnobfuscate(const QString &str)
     if (str.at(0) != '\001' && str.at(0) != '\002')
         return str;
 
-    QByteArray arr(int(str.length() / 2));
+    QByteArray arr;
     for (int i = 1;i < str.length();i += 2)
 // qt4        arr.at(i / 2) = str.mid(i, 2).toInt(0, 16);
         arr[i / 2] = str.mid(i, 2).toInt(0, 16);
@@ -1213,7 +1200,7 @@ QKeySequence toKeySequence(const QString &key)
 {
     QKeySequence ret = key;
     if (key.isEmpty() && ret.isEmpty())
-        printf("Key sequence %s is not valid\n", (const char *)key);
+        printf("Key sequence %s is not valid\n", key.toAscii().constData());
     return ret;
 }
 
@@ -1224,17 +1211,17 @@ bool toCheckKeyEvent(QKeyEvent *event, const QKeySequence &key)
         return false;
     int val = key[0];
     if ((val&Qt::META) == Qt::META)
-        state |= Qt::MetaButton;
+        state |= Qt::META;
     if ((val&Qt::SHIFT) == Qt::SHIFT)
-        state |= Qt::ShiftButton;
+        state |= Qt::SHIFT;
     if ((val&Qt::CTRL) == Qt::CTRL)
-        state |= Qt::ControlButton;
+        state |= Qt::CTRL;
     if ((val&Qt::ALT) == Qt::ALT)
-        state |= Qt::AltButton;
+        state |= Qt::ALT;
 
     val &= 0xfffff;
 
-    return (event->state() == state && event->key() == val);
+    return (event->modifiers() == Qt::NoModifier && event->key() == val);
 }
 
 int countChars(const QString &source, const char find)
