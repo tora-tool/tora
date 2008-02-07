@@ -179,10 +179,10 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
 
     Analyzed = NULL;
     if(toIsOracle(connection)) {
-        Analyzed = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
-        Analyzed->insertItem(tr("All"));
-        Analyzed->insertItem(tr("Not analyzed"));
-        Analyzed->insertItem(tr("Analyzed"));
+        Analyzed = new QComboBox(toolbar);
+        Analyzed->addItem(tr("All"));
+        Analyzed->addItem(tr("Not analyzed"));
+        Analyzed->addItem(tr("Analyzed"));
         toolbar->addWidget(Analyzed);
     }
 
@@ -196,18 +196,18 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
     TOCATCH;
 
     if (toIsOracle(connection)) {
-        Type = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
-        Type->insertItem(tr("Tables"));
-        Type->insertItem(tr("Indexes"));
+        Type = new QComboBox(toolbar);
+        Type->addItem(tr("Tables"));
+        Type->addItem(tr("Indexes"));
         toolbar->addWidget(Type);
 
         toolbar->addSeparator();
 
-        Operation = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
-        Operation->insertItem(tr("Compute statistics"));
-        Operation->insertItem(tr("Estimate statistics"));
-        Operation->insertItem(tr("Delete statistics"));
-        Operation->insertItem(tr("Validate references"));
+        Operation = new QComboBox(toolbar);
+        Operation->addItem(tr("Compute statistics"));
+        Operation->addItem(tr("Estimate statistics"));
+        Operation->addItem(tr("Delete statistics"));
+        Operation->addItem(tr("Validate references"));
         toolbar->addWidget(Operation);
         connect(Operation,
                 SIGNAL(activated(int)),
@@ -215,31 +215,32 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
                 SLOT(changeOperation(int)));
 
         toolbar->addWidget(
-            new QLabel(" " + tr("for") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME));
+            new QLabel(" " + tr("for") + " ", toolbar));
 
-        For = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
-        For->insertItem(tr("All"));
-        For->insertItem(tr("Table"));
-        For->insertItem(tr("Indexed columns"));
-        For->insertItem(tr("Local indexes"));
+        For = new QComboBox(toolbar);
+        For->addItem(tr("All"));
+        For->addItem(tr("Table"));
+        For->addItem(tr("Indexed columns"));
+        For->addItem(tr("Local indexes"));
         toolbar->addWidget(For);
 
         toolbar->addSeparator();
 
         toolbar->addWidget(new QLabel(tr("Sample") + " ",
-                                      toolbar,
-                                      TO_TOOLBAR_WIDGET_NAME));
+                                      toolbar));
 
-        Sample = new QSpinBox(1, 100, 1, toolbar, TO_TOOLBAR_WIDGET_NAME);
+        Sample = new QSpinBox(toolbar);
+        Sample->setMinimum(1);
+        Sample->setMaximum(100);
         Sample->setValue(100);
         Sample->setSuffix(" " + tr("%"));
         Sample->setEnabled(false);
         toolbar->addWidget(Sample);
     }
     else {
-        Operation = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
-        Operation->insertItem(tr("Analyze table"));
-        Operation->insertItem(tr("Optimize table"));
+        Operation = new QComboBox(toolbar);
+        Operation->addItem(tr("Analyze table"));
+        Operation->addItem(tr("Optimize table"));
         toolbar->addWidget(Operation);
         connect(Operation,
                 SIGNAL(activated(int)),
@@ -254,9 +255,10 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
     toolbar->addSeparator();
 
     toolbar->addWidget(new QLabel(tr("Parallel") + " ",
-                                  toolbar,
-                                  TO_TOOLBAR_WIDGET_NAME));
-    Parallel = new QSpinBox(1, 100, 1, toolbar, TO_TOOLBAR_WIDGET_NAME);
+                                  toolbar));
+    Parallel = new QSpinBox(toolbar);
+    Parallel->setMinimum(1);
+    Parallel->setMaximum(100);
     toolbar->addWidget(Parallel);
 
     toolbar->addSeparator();
@@ -271,18 +273,17 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
                        this,
                        SLOT(displaySQL()));
 
-    Current = new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME);
-    Current->setAlignment(Qt::AlignRight | Qt::AlignVCenter | Qt::ExpandTabs);
+    Current = new QLabel(toolbar);
+    Current->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     toolbar->addWidget(Current);
     Current->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                        QSizePolicy::Minimum));
 
-    Stop = new QToolButton(QPixmap(const_cast<const char**>(stop_xpm)),
-                           tr("Stop current run"),
-                           tr("Stop current run"),
-                           this, SLOT(stop()),
-                           toolbar);
+    Stop = new QToolButton(this);
+    Stop->setIcon(QIcon(stop_xpm));
+    Stop->setText(tr("Stop current run"));
     Stop->setEnabled(false);
+    connect(Stop, SIGNAL(triggered(QAction *)), this, SLOT(stop()));
     toolbar->addWidget(Stop);
 
     Statistics = new toResultTableView(true, false, container);
@@ -335,8 +336,8 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
                            Plans,
                            SLOT(refresh()));
 
-        QLabel *s = new QLabel(toolbar, TO_TOOLBAR_WIDGET_NAME);
-        s->setAlignment(Qt::AlignRight | Qt::AlignVCenter | Qt::ExpandTabs);
+        QLabel *s = new QLabel(toolbar);
+        s->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
         s->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                      QSizePolicy::Minimum));
         toolbar->addWidget(s);
@@ -378,7 +379,7 @@ void toAnalyze::selectPlan(void) {
 }
 
 toWorksheetStatistic *toAnalyze::worksheet(void) {
-    Tabs->showPage(Worksheet);
+    Tabs->setCurrentIndex(Tabs->indexOf(Worksheet));
     return Worksheet;
 }
 
@@ -394,7 +395,7 @@ void toAnalyze::refresh(void) {
         Statistics->setSQL(QString::null);
         toQList par;
         QString sql;
-        if (!Type || Type->currentItem() == 0)
+        if (!Type || Type->currentIndex() == 0)
             sql = toSQL::string(SQLListTables, connection());
         else
             sql = toSQL::string(SQLListIndex, connection());
@@ -408,7 +409,7 @@ void toAnalyze::refresh(void) {
         else if (toIsMySQL(connection()))
             sql += " FROM :f1<alldatabases>";
         if (Analyzed) {
-            switch (Analyzed->currentItem()) {
+            switch (Analyzed->currentIndex()) {
             default:
                 break;
             case 1:
@@ -480,7 +481,7 @@ std::list<QString> toAnalyze::getSQL(void) {
                 QString sql = QString::fromLatin1("ANALYZE %3 %1.%2 ");
                 QString forc;
                 if ((*it).data(Qt::EditRole) == QString::fromLatin1("TABLE")) {
-                    switch (For->currentItem()) {
+                    switch (For->currentIndex()) {
                     case 0:
                         forc = QString::null;
                         break;
@@ -496,7 +497,7 @@ std::list<QString> toAnalyze::getSQL(void) {
                     }
                 }
 
-                switch (Operation->currentItem()) {
+                switch (Operation->currentIndex()) {
                 case 0:
                     sql += QString::fromLatin1("COMPUTE STATISTICS");
                     sql += forc;
@@ -521,7 +522,7 @@ std::list<QString> toAnalyze::getSQL(void) {
             }
             else {
                 QString sql;
-                switch (Operation->currentItem()) {
+                switch (Operation->currentIndex()) {
                 case 0:
                     sql = QString::fromLatin1("ANALYZE TABLE %1.%2 ");
                     break;
