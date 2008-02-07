@@ -261,22 +261,22 @@ toBackgroundLabel::toBackgroundLabel(QWidget *parent) : QLabel(parent)
 //         arr.assign(data, sizeof(data));
     Animation = new QMovie(arr);
     setMovie(Animation);
-    Animation->unpause();
+//     Animation->unpause();
 }
 
 void toBackgroundLabel::unpause()
 {
-    Animation->unpause();
+//     Animation->unpause();
 }
 
 void toBackgroundLabel::pause()
 {
-    Animation->pause();
+//     Animation->pause();
 }
 
 void toBackgroundLabel::setTip(QString tip)
 {
-    QToolTip::add(this, tip);
+    setToolTip(tip);
 }
 
 void toBackgroundLabel::setSpeed(int Running)
