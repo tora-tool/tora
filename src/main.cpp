@@ -92,7 +92,7 @@ void toUpdateIndicateEmpty(void);
 int main(int argc, char **argv)
 {
 #ifdef ENABLE_QT_XFT
-    toSetEnv("QT_XFT", toConfigurationSingle::Instance().globalConfig(CONF_QT_XFT, DEFAULT_QT_XFT).latin1());
+    toSetEnv("QT_XFT", toConfigurationSingle::Instance().globalConfig(CONF_QT_XFT, DEFAULT_QT_XFT).toLatin1());
 #endif
 
 #  ifndef Q_OS_WIN32
@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 //             qApp->setDefaultCodec(QTextCodec::codecForName(getenv("LANG")));
 
         QTranslator torats(0);
-        torats.load(toPluginPath() + "/" + QString("tora_") + toConfigurationSingle::Instance().globalConfig(CONF_LOCALE, QTextCodec::locale()), ".");
+        torats.load(toPluginPath() + "/" + QString("tora_") + toConfigurationSingle::Instance().globalConfig(CONF_LOCALE, QLocale().name()), ".");
         qApp->installTranslator(&torats);
         QTranslator toadbindings(0);
         if (!toConfigurationSingle::Instance().globalConfig(CONF_TOAD_BINDINGS, DEFAULT_TOAD_BINDINGS).isEmpty())
@@ -203,7 +203,7 @@ int main(int argc, char **argv)
                 nls = "american_america.UTF8";
             else
             {
-                int pos = nls.findRev('.');
+                int pos = nls.lastIndexOf('.');
                 if (pos > 0)
                     nls = nls.left(pos);
                 nls += ".UTF8";
@@ -242,7 +242,7 @@ int main(int argc, char **argv)
         {
             QString connect = QString::fromLatin1(qApp->argv()[1]);
             QString user;
-            int pos = connect.find(QString::fromLatin1("@"));
+            int pos = connect.indexOf(QString::fromLatin1("@"));
             if (pos > -1)
             {
                 user = connect.left(pos);
@@ -256,7 +256,7 @@ int main(int argc, char **argv)
             }
             if (!connect.isEmpty())
                 toConfigurationSingle::Instance().globalSetConfig(CONF_DATABASE, connect);
-            pos = user.find(QString::fromLatin1("/"));
+            pos = user.indexOf(QString::fromLatin1("/"));
             if (pos > -1)
             {
                 toConfigurationSingle::Instance().globalSetConfig(CONF_PASSWORD, user.right(user.length() - pos - 1));
@@ -280,8 +280,9 @@ int main(int argc, char **argv)
     }
     catch (const QString &str)
     {
-        fprintf(stderr, "Unhandled exception:\n\n%s\n",
-                (const char *)str);
+        fprintf(stderr,
+                "Unhandled exception:\n\n%s\n",
+                (const char *) str.toLatin1());
         TOMessageBox::critical(NULL,
                                qApp->translate("main", "Unhandled exception"),
                                str,
