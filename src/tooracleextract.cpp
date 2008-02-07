@@ -368,7 +368,7 @@ QString toOracleExtract::displaySource(toExtract &ext,
     QString re("^\\s*");
     re += type;
     re += "\\s+";
-    QRegExp StripType(re, false);
+    QRegExp StripType(re, Qt::CaseInsensitive);
 
     toQuery inf(CONNECTION, SQLDisplaySource, type, name, owner);
     if (inf.eof())
@@ -813,9 +813,9 @@ QString toOracleExtract::createContextPrefs(toExtract &ext,
         QString pre_obj = toShift(resultset);
         QString pre_attr = toShift(resultset);
         QString pre_val = toShift(resultset);
-        QString pre_val1 = pre_val.left(pre_val.find(':', 0, false));
+        QString pre_val1 = pre_val.left(pre_val.indexOf(':', 0, Qt::CaseInsensitive));
         pre_val = pre_val.right(pre_val.length() - pre_val1.length() - 1);
-        QString pre_val2 = pre_val.left(pre_val.find(':', 0, false));
+        QString pre_val2 = pre_val.left(pre_val.indexOf(':', 0, Qt::CaseInsensitive));
         QString pre_val4 = pre_val.right(1);
         if (pre_val4 == "Y")
             pre_val4 = "TRUE";
@@ -1251,7 +1251,7 @@ QString toOracleExtract::createMViewIndex(toExtract &ext,
     bool done = false;
 
     QString initial = createIndex(ext, schema, owner, name);
-    QStringList linesIn = QStringList::split("\n", initial, true);
+    QStringList linesIn = initial.split("\n");
     QString ret;
 
     for (QStringList::Iterator i = linesIn.begin();i != linesIn.end() && !done;i++)
@@ -1382,7 +1382,7 @@ QString toOracleExtract::createMViewTable(toExtract &ext,
     bool done = false;
 
     QString initial = createTable(ext, schema, owner, name);
-    QStringList linesIn = QStringList::split("\n", initial, true);
+    QStringList linesIn = initial.split("\n");
     QString ret;
 
     for (QStringList::Iterator i = linesIn.begin();i != linesIn.end() && !done;i++)
@@ -2311,7 +2311,7 @@ QString toOracleExtract::grantedPrivs(toExtract &ext,
         toQList result = toQuery::readQueryNull(CONNECTION, SQLSystemPrivs, name);
         while (!result.empty())
         {
-            QString priv = QString(toShift(result)).lower();
+            QString priv = QString(toShift(result)).toLower();
             QString sql = QString("GRANT %1 TO %2 %3").
                           arg(priv).
                           arg(dest).
@@ -2332,7 +2332,7 @@ QString toOracleExtract::grantedPrivs(toExtract &ext,
         toQList result = toQuery::readQueryNull(CONNECTION, SQLRolePrivs, name);
         while (!result.empty())
         {
-            QString priv = QString(toShift(result)).lower();
+            QString priv = QString(toShift(result)).toLower();
             QString sql = QString("GRANT %1 TO %2 %3").
                           arg(priv).
                           arg(dest).
@@ -2353,11 +2353,11 @@ QString toOracleExtract::grantedPrivs(toExtract &ext,
         toQList result = toQuery::readQueryNull(CONNECTION, SQLObjectPrivs, name);
         while (!result.empty())
         {
-            QString priv = QString(toShift(result)).lower();
+            QString priv = QString(toShift(result)).toLower();
             QString schema = ext.intSchema(toShift(result), false);
             QString object = QUOTE(toShift(result));
             QString sql = QString("GRANT %1 ON %2%3 TO %4 %5").
-                          arg(priv.lower()).
+                          arg(priv.toLower()).
                           arg(schema).
                           arg(object).
                           arg(dest).
@@ -2412,7 +2412,7 @@ QString toOracleExtract::indexColumns(toExtract &ext,
                                       const QString &name) const
 {
     static QRegExp quote("\"");
-    static QRegExp func("^sys_nc[0-9]+", false);
+    static QRegExp func("^sys_nc[0-9]+", Qt::CaseInsensitive);
     toQuery inf(CONNECTION, SQLIndexColumns, name, owner);
     QString ret = indent;
     ret += "(\n";
@@ -2987,7 +2987,7 @@ QString toOracleExtract::tableColumns(toExtract &ext,
             first = false;
         else
             ret += "\n  , ";
-        ret += QString(QUOTE(toShift(cols))).leftJustify(32);
+        ret += QString(QUOTE(toShift(cols))).leftJustified(32);
         ret += " ";
         ret += toShift(cols);
         QString def = toShift(cols);
@@ -2995,7 +2995,7 @@ QString toOracleExtract::tableColumns(toExtract &ext,
         if (!def.isEmpty())
         {
             ret += "DEFAULT ";
-            ret += def.stripWhiteSpace();
+            ret += def.trimmed();
             ret += " ";
         }
         ret += notNull;
@@ -3130,7 +3130,7 @@ void toOracleExtract::describePrivs(toExtract &ext,
     result = toQuery::readQueryNull(CONNECTION, SQLSystemPrivs, name);
     while (!result.empty())
     {
-        QString priv = QString(toShift(result)).lower();
+        QString priv = QString(toShift(result)).toLower();
         addDescription(lst, ctx, "GRANT", priv, toShift(result));
     }
 
@@ -3141,7 +3141,7 @@ void toOracleExtract::describePrivs(toExtract &ext,
         QString schema = ext.intSchema(toShift(result), false);
         QString res = schema;
         res += QUOTE(toShift(result));
-        addDescription(lst, ctx, "GRANT", priv.lower(), "ON", res, toShift(result));
+        addDescription(lst, ctx, "GRANT", priv.toLower(), "ON", res, toShift(result));
     }
 }
 
@@ -3253,7 +3253,7 @@ void toOracleExtract::describeMView(toExtract &ext, std::list<QString> &lst,
 
 static QString ReContext(std::list<QString> &ctx, int strip, const QString &str)
 {
-    QStringList lst = QStringList::split("\01", str);
+    QStringList lst = str.split("\01");
     QString ret;
     QString sep = "";
     for (std::list<QString>::iterator i = ctx.begin();i != ctx.end();i++)
@@ -3840,8 +3840,8 @@ QString toOracleExtract::createDBLink(toExtract &ext,
     }
     ret += sql;
     ret += QString("\nCONNECT TO %1 IDENTIFIED BY %2 USING '%3';\n\n").
-           arg(user.lower()).
-           arg(password.lower()).
+           arg(user.toLower()).
+           arg(password.toLower()).
            arg(prepareDB(host));
     return ret;
 }
@@ -3922,7 +3922,7 @@ QString toOracleExtract::createExchangeIndex(toExtract &ext,
         const QString &owner,
         const QString &name) const
 {
-    QStringList str = QStringList::split(":", name);
+    QStringList str = name.split(":");
     if (str.count() != 2)
         throw ("When calling createExchangeIndex name should contain :");
     QString segment = str.first();
@@ -4026,7 +4026,7 @@ QString toOracleExtract::createExchangeTable(toExtract &ext,
         const QString &owner,
         const QString &name) const
 {
-    QStringList str = QStringList::split(":", name);
+    QStringList str = name.split(":");
     if (str.count() != 2)
         throw ("When calling createExchangeTable name should contain :");
     QString segment = str.first();
@@ -5453,24 +5453,24 @@ QString toOracleExtract::createTrigger(toExtract &ext,
     QString status = toShift(result);
 
     QString trgType;
-    if (triggerType.find("BEFORE") >= 0)
+    if (triggerType.indexOf("BEFORE") >= 0)
         trgType = "BEFORE";
-    else if (triggerType.find("AFTER") >= 0)
+    else if (triggerType.indexOf("AFTER") >= 0)
         trgType = "AFTER";
-    else if (triggerType.find("INSTEAD OF") >= 0)
+    else if (triggerType.indexOf("INSTEAD OF") >= 0)
         trgType = "INSTEAD OF";
 
 
     QString trgPart = trgType + " " + event;
-    QRegExp src("\\s" + trgPart + "\\s", false);
+    QRegExp src("\\s" + trgPart + "\\s", Qt::CaseInsensitive);
     description.replace(QRegExp("\nON"), QString("\n ON"));
-    int pos = description.find(src);
+    int pos = description.indexOf(src);
     //QString columns=description;
     QString columns;
     if (pos >= 0)
     {
         pos += trgPart.length() + 2;
-        int endPos = description.find(" ON ", pos, false);
+        int endPos = description.indexOf(" ON ", pos);
         if (endPos >= 0)
         {
             columns = description.right(description.length() - pos);
@@ -5503,12 +5503,12 @@ QString toOracleExtract::createTrigger(toExtract &ext,
     }
     ret += sql;
     ret += QString("%1 %2 %3 ON %4\n").arg(trgType).arg(event).arg(columns).arg(object);
-    if (baseType.find("TABLE") >= 0 || baseType.find("VIEW") >= 0)
+    if (baseType.indexOf("TABLE") >= 0 || baseType.indexOf("VIEW") >= 0)
     {
         ret += refNames;
         ret += "\n";
     }
-    if (triggerType.find("EACH ROW") >= 0)
+    if (triggerType.indexOf("EACH ROW") >= 0)
         ret += "FOR EACH ROW\n";
     if (!when.isEmpty())
     {
@@ -5586,7 +5586,7 @@ QString toOracleExtract::createUser(toExtract &ext,
     QString ret;
     QString nam;
     if (ext.getSchema() != "1" && !ext.getSchema().isEmpty())
-        nam = ext.getSchema().lower();
+        nam = ext.getSchema().toLower();
     else
         nam = QUOTE(name);
     if (PROMPT)
@@ -5724,7 +5724,7 @@ void toOracleExtract::describeConstraint(toExtract &ext,
         else
         {
             ret += " ";
-            ret += constraintColumns(ext, owner, name).simplifyWhiteSpace();
+            ret += constraintColumns(ext, owner, name).simplified();
 
             if (tchr == "R")
             {
@@ -5778,8 +5778,8 @@ void toOracleExtract::describeDBLink(toExtract &ext,
     ctx.insert(ctx.end(), QUOTE(name));
 
     addDescription(lst, ctx, publ, QString("%1 IDENTIFIED BY %2 USING '%3'").
-                   arg(user.lower()).
-                   arg(password.lower()).
+                   arg(user.toLower()).
+                   arg(password.toLower()).
                    arg(prepareDB(host)));
 }
 
@@ -5789,7 +5789,7 @@ void toOracleExtract::describeExchangeIndex(toExtract &ext,
         const QString &owner,
         const QString &name) const
 {
-    QStringList str = QStringList::split(":", name);
+    QStringList str = name.split(":");
     if (str.count() != 2)
         throw ("When calling createExchangeIndex name should contain :");
     QString segment = str.first();
@@ -5836,7 +5836,7 @@ void toOracleExtract::describeExchangeTable(toExtract &ext,
         const QString &owner,
         const QString &name) const
 {
-    QStringList str = QStringList::split(":", name);
+    QStringList str = name.split(":");
     if (str.count() != 2)
         throw ("When calling createExchangeTable name should contain :");
     QString segment = str.first();
@@ -6335,23 +6335,23 @@ void toOracleExtract::describeTrigger(toExtract &ext,
     QString status = toShift(result);
 
     QString trgType;
-    if (triggerType.find("BEFORE") >= 0)
+    if (triggerType.indexOf("BEFORE") >= 0)
         trgType = "BEFORE";
-    else if (triggerType.find("AFTER") >= 0)
+    else if (triggerType.indexOf("AFTER") >= 0)
         trgType = "AFTER";
-    else if (triggerType.find("INSTEAD OF") >= 0)
+    else if (triggerType.indexOf("INSTEAD OF") >= 0)
         trgType = "INSTEAD OF";
 
     QString src = trgType;
     src += " ";
     src += event;
     description.replace(QRegExp("\nON"), QString("\n ON"));
-    int pos = description.find(src);
+    int pos = description.indexOf(src);
     QString columns;
     if (pos >= 0)
     {
         pos += src.length();
-        int endPos = description.find(" ON ", pos, false);
+        int endPos = description.indexOf(" ON ", pos);
         if (endPos >= 0)
         {
             columns = description.right(description.length() - pos);
@@ -6434,7 +6434,7 @@ void toOracleExtract::describeUser(toExtract &ext,
     ctx.insert(ctx.end(), "USER");
     QString nam;
     if (ext.getSchema() != "1" && !ext.getSchema().isEmpty())
-        nam = ext.getSchema().lower();
+        nam = ext.getSchema().toLower();
     else
         nam = QUOTE(name);
     ctx.insert(ctx.end(), nam);
@@ -8037,7 +8037,7 @@ void toOracleExtract::initialize(toExtract &ext) const
     catch (...)
     {
         DbaSegments = QString("(select '%1' owner,user_segments.* from sys.user_segments)").
-                      arg(CONNECTION.user().upper());
+                      arg(CONNECTION.user().toUpper());
     }
     ext.setState("Segments", DbaSegments);
 
@@ -8122,7 +8122,7 @@ void toOracleExtract::create(toExtract &ext,
     {
         QString nam;
         if (ext.getSchema() != "1" && !ext.getSchema().isEmpty())
-            nam = ext.getSchema().lower();
+            nam = ext.getSchema().toLower();
         else
             nam = QUOTE(name);
         stream << grantedPrivs(ext, nam, name, 4);
