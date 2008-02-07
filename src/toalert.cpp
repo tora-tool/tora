@@ -137,13 +137,13 @@ toAlert::toAlert(QWidget *main, toConnection &connection)
     def += connection.user();
 
     toolbar->addWidget(
-        new QLabel(tr("Registered") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME));
+        new QLabel(tr("Registered") + " ", toolbar));
 
-    Registered = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
-    Registered->insertItem(def);
+    Registered = new QComboBox(toolbar);
+    Registered->addItem(def);
     Registered->setEditable(true);
     Registered->setDuplicatesEnabled(false);
-    Registered->setCurrentItem(0);
+    Registered->setCurrentIndex(0);
     connect(Registered, SIGNAL(activated(int)), this, SLOT(add()));
     toolbar->addWidget(Registered);
 
@@ -166,17 +166,17 @@ toAlert::toAlert(QWidget *main, toConnection &connection)
     toolbar->addSeparator();
 
     toolbar->addWidget(
-        new QLabel(tr("Name") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME));
+        new QLabel(tr("Name") + " ", toolbar));
 
     toolbar->addWidget(
-        Name = new QLineEdit(toolbar, TO_TOOLBAR_WIDGET_NAME));
+        Name = new QLineEdit(toolbar));
     Name->setText(def);
     connect(Name, SIGNAL(returnPressed()), this, SLOT(send()));
 
     toolbar->addWidget(
-        new QLabel(tr("Message") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME));
+        new QLabel(tr("Message") + " ", toolbar));
 
-    Message = new QLineEdit(toolbar, TO_TOOLBAR_WIDGET_NAME);
+    Message = new QLineEdit(toolbar);
     connect(Message, SIGNAL(returnPressed()), this, SLOT(send()));
     Message->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                        QSizePolicy::Minimum));
@@ -369,15 +369,15 @@ void toAlert::pollTask::run(void)
         catch (const QString &str)
         {
             Parent.Lock.lock();
-            Parent.Error.sprintf("Exception in alert polling:\n%s", (const char *)str.latin1());
-            fprintf(stderr, "%s\n", (const char *)Parent.Error);
+            Parent.Error.sprintf("Exception in alert polling:\n%s", (const char *)str.toLatin1());
+            fprintf(stderr, "%s\n", Parent.Error.toAscii().constData());
             Parent.Lock.unlock();
         }
         catch (...)
         {
             Parent.Lock.lock();
             Parent.Error.sprintf("Unexpected exception in alert in polling.");
-            fprintf(stderr, "%s\n", (const char *)Parent.Error);
+            fprintf(stderr, "%s\n", Parent.Error.toAscii().constData());
             Parent.Lock.unlock();
         }
 
@@ -466,9 +466,9 @@ void toAlert::remove
     }
 
     if (Registered->count() > 0)
-        Registered->removeItem(Registered->currentItem());
+        Registered->removeItem(Registered->currentIndex());
     if (Registered->count() > 0)
-        Registered->setCurrentItem(0);
+        Registered->setCurrentIndex(0);
 }
 
 void toAlert::add
@@ -498,9 +498,9 @@ void toAlert::add
     }
 
     for (int i = 0;i < Registered->count();i++)
-        if (Registered->text(i) == name)
+        if (Registered->itemText(i) == name)
             return ;
 
-    Registered->insertItem(name);
+    Registered->addItem(name);
     Name->setText(name);
 }
