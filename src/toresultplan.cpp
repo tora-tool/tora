@@ -263,7 +263,7 @@ void toResultPlan::query(const QString &sql,
         else
             User = QString::null;
 
-        oracleSetup();
+        clear();
 
         QString planTable = toConfigurationSingle::Instance().globalConfig(CONF_PLAN_TABLE, DEFAULT_PLAN_TABLE);
 
