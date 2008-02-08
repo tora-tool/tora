@@ -165,7 +165,7 @@
          <string>Remove the current template</string>
         </property>
         <property name="text" >
-         <string/>
+         <string>Remove</string>
         </property>
         <property name="icon" >
          <iconset/>
@@ -184,7 +184,7 @@
          <string>Add new template</string>
         </property>
         <property name="text" >
-         <string/>
+         <string>Add</string>
         </property>
         <property name="icon" >
          <iconset/>
