@@ -117,6 +117,10 @@ toResultTableView::toResultTableView(bool readable,
             SIGNAL(sectionResized(int, int, int)),
             this,
             SLOT(columnWasResized(int, int, int)));
+    connect(this,
+            SIGNAL(doubleClicked(const QModelIndex &)),
+            this,
+            SLOT(handleDoubleClick(const QModelIndex &)));
 }
 
 
@@ -356,6 +360,16 @@ void toResultTableView::handleFirst(const QString &sql,
                                     const toConnection::exception &res,
                                     bool error) {
     emit firstResult(sql, res, error);
+}
+
+
+void toResultTableView::handleDoubleClick(const QModelIndex &index) {
+    if(Editable)
+        return;
+
+    QVariant data = model()->data(index, Qt::EditRole);
+    toMemoEditor *ed = new toMemoEditor(this, data.toString());
+    ed->exec();
 }
 
 

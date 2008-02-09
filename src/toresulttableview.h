@@ -119,6 +119,7 @@ protected slots:
     void handleFirst(const QString &sql,
                      const toConnection::exception &res,
                      bool error);
+    void handleDoubleClick(const QModelIndex &);
     // override parent
     virtual void selectionChanged(const QItemSelection &selected,
                                   const QItemSelection &deselected);
