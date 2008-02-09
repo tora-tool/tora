@@ -74,8 +74,8 @@
 #include <QTextStream>
 
 #ifdef Q_OS_WIN32
+#  include "windows/cregistry.h"
 # include "windows.h"
-# include "winreg.h"
 #endif
 
 #if defined(Q_OS_MACX)
@@ -566,33 +566,30 @@ QString toPluginPath(void)
     QString str;
 
 #ifdef Q_OS_WIN32
-    LONG siz = 1024;
+
+    CRegistry registry;
+	DWORD siz = 1024;
     char buffer[1024];
 
     try
     {
-        HKEY key = NULL;
-        if (RegOpenKeyA(HKEY_LOCAL_MACHINE,
-                        "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TOra",
-                        &key) == ERROR_SUCCESS)
-        {
-            if (RegQueryValueA(key,
-                               "UninstallString",
-                               buffer,
-                               &siz) == ERROR_SUCCESS)
-            {
-                if (siz > 0)
-                {
-                    str = buffer;
-                    static QRegExp findQuotes("\"([^\"]*)\"");
-                    if (findQuotes.search(str) >= 0)
-                        str = findQuotes.cap(1);
-                    int ind = str.lastIndexOf('\\');
-                    if (ind >= 0)
-                        str = str.mid(0, ind);
-                }
-            }
-        }
+        if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
+						"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TOra",
+						"UninstallString",
+						buffer, siz))
+		{
+			if (siz> 0)
+			{
+				str = buffer;
+				static QRegExp findQuotes("\"([^\"]*)\"");
+				if (findQuotes.search(str) >= 0)
+				str = findQuotes.cap(1);
+				int ind = str.lastIndexOf('\\');
+				if (ind >= 0)
+				str = str.mid(0, ind);
+				str += "\\templates";
+			}
+		}
     }
     catch (...)
         {}
@@ -667,24 +664,20 @@ QString toExpandFile(const QString &file)
     QString home;
 
 #ifdef Q_OS_WIN32
-    LONG siz = 1024;
+
+	CRegistry registry;
+    DWORD siz = 1024;
     char buffer[1024];
     try
     {
-        HKEY key = NULL;
-        if (RegOpenKeyA(HKEY_CURRENT_USER,
-                        "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
-                        &key) == ERROR_SUCCESS)
-        {
-            if (RegQueryValueA(key,
-                               "Personal",
-                               buffer,
-                               &siz) == ERROR_SUCCESS)
-            {
-                if (siz > 0)
-                    home = buffer;
-            }
-        }
+		if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
+						"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
+						"Personal",
+						buffer, siz))
+		{
+			if (siz> 0)
+			home = buffer;
+		}
     }
     catch (...)
         {}
