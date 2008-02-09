@@ -74,9 +74,9 @@ class toToolWidget;
  * depending on if TOra is a Qt or KDE application. In the case of Qt this will be a
  * QMainWindow descendant.
  */
-class toMain : public toMainWindow
-{
-    Q_OBJECT
+class toMain : public toMainWindow {
+    Q_OBJECT;
+
 private:
     std::auto_ptr<toBackupTool> toBackupTool_;
     /**

@@ -58,7 +58,6 @@
 #include <qlabel.h>
 #include <qmenubar.h>
 #include <qmessagebox.h>
-#include <q3popupmenu.h>
 #include <qsplitter.h>
 #include <qtimer.h>
 #include <qtoolbar.h>
@@ -66,7 +65,7 @@
 #include <qtooltip.h>
 #include <qworkspace.h>
 #include <qworkspace.h>
-//Added by qt3to4:
+
 #include <QList>
 #include <QPixmap>
 
@@ -271,7 +270,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
     toolbar->addSeparator();
 
     toolbar->addWidget(
-        new QLabel(tr("Refresh") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME));
+        new QLabel(tr("Refresh") + " ", toolbar));
 
     Refresh = toRefreshCreate(toolbar, TO_TOOLBAR_WIDGET_NAME);
     connect(Refresh,
@@ -283,7 +282,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
 
     QToolButton *btn = new QToolButton(toolbar);
     btn->setCheckable(true);
-    btn->setIconSet(QPixmap(const_cast<const char**>(filter_xpm)));
+    btn->setIcon(QIcon(filter_xpm));
     connect(btn, SIGNAL(toggled(bool)), this, SLOT(excludeSelection(bool)));
     btn->setToolTip(tr("Exclude selected sessions"));
     toolbar->addWidget(btn);
@@ -482,16 +481,16 @@ void toSession::windowActivated(QWidget *widget) {
 
             ToolMenu->addAction(refreshAct);
 
-            ToolMenu->insertSeparator();
+            ToolMenu->addSeparator();
 
             ToolMenu->addAction(enableTimedAct);
             ToolMenu->addAction(disableTimedAct);
 
-            ToolMenu->insertSeparator();
+            ToolMenu->addSeparator();
 
             ToolMenu->addAction(disconnectAct);
 
-            ToolMenu->insertSeparator();
+            ToolMenu->addSeparator();
 
             toMainWidget()->addCustomMenu(ToolMenu);
         }
@@ -513,13 +512,13 @@ void toSession::refresh(void) {
             Session = Serial = QString::null;
         QString sql = toSQL::string(SQLSessions, connection());
         QString extra;
-        if (Select->currentItem() == 0)
+        if (Select->currentIndex() == 0)
             extra = "   AND a.Type != 'BACKGROUND' AND a.Status != 'INACTIVE'\n";
-        else if (Select->currentItem() == 1)
+        else if (Select->currentIndex() == 1)
             ; // Do nothing
-        else if (Select->currentItem() == 2)
+        else if (Select->currentIndex() == 2)
             extra = "   AND a.Type != 'BACKGROUND'\n";
-        else if (Select->currentItem() == 3)
+        else if (Select->currentIndex() == 3)
             extra = "   AND a.SchemaName NOT IN ('SYS','SYSTEM')\n";
         else
             extra = "   AND a.SchemaName = '" + Select->currentText() + "'\n";

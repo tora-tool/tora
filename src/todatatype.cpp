@@ -85,7 +85,7 @@ void toDatatype::setup(toConnection &conn) {
     for(std::list<toExtract::datatype>::iterator i = Datatypes.begin();
         i != Datatypes.end();
         i++)
-        Type->insertItem((*i).name());
+        Type->addItem((*i).name());
 
     LeftParenthesis = new QLabel(tr("<B>(</B>"), this);
     LeftParenthesis->setSizePolicy(QSizePolicy(QSizePolicy::Fixed,
@@ -93,7 +93,7 @@ void toDatatype::setup(toConnection &conn) {
     hbox->addWidget(LeftParenthesis);
 
     Size = new QSpinBox(this);
-    Size->setMinValue(0);
+    Size->setMinimum(0);
     hbox->addWidget(Size);
 
     Comma = new QLabel(tr("<B>,</B>"), this);
@@ -102,7 +102,7 @@ void toDatatype::setup(toConnection &conn) {
     hbox->addWidget(Comma);
 
     Precision = new QSpinBox(this);
-    Precision->setMinValue(0);
+    Precision->setMinimum(0);
     hbox->addWidget(Precision);
 
     RightParenthesis = new QLabel(tr("<B>)</B>"), this);
@@ -123,7 +123,7 @@ void toDatatype::setup(toConnection &conn) {
 
 QString toDatatype::type() const {
     QString type;
-    if (Custom->isShown())
+    if (Custom->isVisible())
     {
         type = Custom->text();
     }
@@ -131,13 +131,13 @@ QString toDatatype::type() const {
     {
         type = Type->currentText();
         bool par = false;
-        if (Size->isShown())
+        if (Size->isVisible())
         {
             type += "(";
             par = true;
             type += Size->text();
         }
-        if (Precision->isShown())
+        if (Precision->isVisible())
         {
             if (!par)
             {
@@ -260,14 +260,14 @@ void toDatatype::setType(const QString &type)
                 endType = type.length();
             if (startType >= 0)
             {
-                QString actualtype = type.mid(startType, endType - startType + 1).upper();
+                QString actualtype = type.mid(startType, endType - startType + 1).toUpper();
                 valid = false;
                 for (int i = 0;i < Type->count();i++)
                 {
-                    if (actualtype == Type->text(i))
+                    if (actualtype == Type->itemText(i))
                     {
                         Type->show();
-                        Type->setCurrentItem(i);
+                        Type->setCurrentIndex(i);
                         valid = true;
                         break;
                     }
@@ -287,7 +287,7 @@ void toDatatype::setType(const QString &type)
                                 else
                                 {
                                     Size->show();
-                                    Size->setMaxValue((*i).maxLength());
+                                    Size->setMaximum((*i).maxLength());
                                     if (size != -1)
                                         Size->setValue(size);
                                     else
@@ -305,7 +305,7 @@ void toDatatype::setType(const QString &type)
                                 else
                                 {
                                     Precision->show();
-                                    Precision->setMaxValue((*i).maxPrecision());
+                                    Precision->setMaximum((*i).maxPrecision());
                                     if (precision != -1)
                                         Precision->setValue(precision);
                                     else
@@ -340,10 +340,10 @@ void toDatatype::setType(const QString &type)
 
 void toDatatype::setupLabels()
 {
-    bool show = Size->isShown() || Precision->isShown();
+    bool show = Size->isVisible() || Precision->isVisible();
     RightParenthesis->setShown(show);
     LeftParenthesis->setShown(show);
-    Comma->setShown(Size->isShown() && Precision->isShown());
+    Comma->setShown(Size->isVisible() && Precision->isVisible());
 }
 
 void toDatatype::setCustom(bool prefer)
@@ -354,7 +354,7 @@ void toDatatype::setCustom(bool prefer)
 
 void toDatatype::changeType(int id)
 {
-    QString type = Type->text(id);
+    QString type = Type->itemText(id);
     for (std::list<toExtract::datatype>::iterator i = Datatypes.begin();i != Datatypes.end();i++)
     {
         if ((*i).name() == type)
@@ -362,14 +362,14 @@ void toDatatype::changeType(int id)
             if ((*i).hasLength())
             {
                 Size->setShown(true);
-                Size->setMaxValue((*i).maxLength());
+                Size->setMaximum((*i).maxLength());
             }
             else
                 Size->setShown(false);
             if ((*i).hasPrecision())
             {
                 Precision->setShown(true);
-                Precision->setMaxValue((*i).maxPrecision());
+                Precision->setMaximum((*i).maxPrecision());
             }
             else
                 Precision->setShown(false);

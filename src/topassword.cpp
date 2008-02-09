@@ -63,20 +63,20 @@ public:
     }
     virtual QWidget *toolWindow(QWidget *, toConnection &connection)
     {
-        QString np = QInputDialog::getText(qApp->translate("toPasswordTool", "Enter new password"),
+        QString np = QInputDialog::getText(toMainWidget(),
+                                           qApp->translate("toPasswordTool", "Enter new password"),
                                            qApp->translate("toPasswordTool", "Enter new password"),
                                            QLineEdit::Password,
                                            QString::null,
-                                           NULL,
-                                           toMainWidget());
+                                           NULL);
         if (!np.isNull())
         {
-            QString np2 = QInputDialog::getText(qApp->translate("toPasswordTool", "Enter new password again for confirmation"),
+            QString np2 = QInputDialog::getText(toMainWidget(),
+                                                qApp->translate("toPasswordTool", "Enter new password again for confirmation"),
                                                 qApp->translate("toPasswordTool", "Enter new password again for confirmation"),
                                                 QLineEdit::Password,
                                                 QString::null,
-                                                NULL,
-                                                toMainWidget());
+                                                NULL);
             if (!np2.isNull())
             {
                 if (np != np2)

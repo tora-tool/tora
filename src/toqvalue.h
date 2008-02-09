@@ -137,9 +137,9 @@ public:
      */
     bool isBinary(void) const;
 
-    /** Get utf8 format of this value.
+    /** Get toUtf8 format of this value.
      */
-    QString utf8(void) const;
+    QString toUtf8(void) const;
     /** Get integer representation of this value.
      */
     int toInt(void) const;

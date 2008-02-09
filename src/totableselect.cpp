@@ -53,8 +53,9 @@ void toTableSelect::setup() {
 }
 
 toTableSelect::toTableSelect(QWidget *parent, const char *name)
-        : QGroupBox(parent, name)
+    : QGroupBox(parent)
 {
+    setObjectName(name);
     Schema = Table = NULL;
     QTimer::singleShot(1, this, SLOT(setup()));
 }
@@ -65,7 +66,7 @@ void toTableSelect::setTable(const QString &table)
         SelectedTable = table;
     else
     {
-        QStringList parts = QStringList::split(".", table);
+        QStringList parts = table.split(".");
         toConnection &conn = toCurrentConnection(this);
         if (parts.size() > 1)
         {
@@ -80,13 +81,13 @@ void toTableSelect::setTable(const QString &table)
 
 void toTableSelect::changeSchema(void)
 {
-    if (Schema->currentItem() != 0)
+    if (Schema->currentIndex() != 0)
         Table->changeParams(Schema->selected());
 }
 
 void toTableSelect::changeTable(void)
 {
-    if (Table->currentItem() != 0)
+    if (Table->currentIndex() != 0)
     {
         toConnection &conn = toCurrentConnection(this);
         QString table = conn.quote(Schema->selected());

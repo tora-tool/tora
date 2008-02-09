@@ -375,7 +375,7 @@ public:
     { }
     virtual State validate(QString &str, int &) const
     {
-        str = str.upper();
+        str = str.toUpper();
         return Acceptable;
     }
 };
@@ -413,7 +413,7 @@ public:
 QString toSecurityUser::sql(void)
 {
     QString extra;
-    if (Authentication->currentPage() == PasswordTab)
+    if (Authentication->currentWidget() == PasswordTab)
     {
         if (Password->text() != Password2->text())
         {
@@ -441,7 +441,7 @@ QString toSecurityUser::sql(void)
                 extra += QString::fromLatin1(" PASSWORD EXPIRE");
         }
     }
-    else if (Authentication->currentPage() == GlobalTab)
+    else if (Authentication->currentWidget() == GlobalTab)
     {
         if (OrgGlobal != GlobalName->text())
         {
@@ -450,7 +450,7 @@ QString toSecurityUser::sql(void)
             extra += QString::fromLatin1("'");
         }
     }
-    else if ((AuthType != external) && (Authentication->currentPage() == ExternalTab))
+    else if ((AuthType != external) && (Authentication->currentWidget() == ExternalTab))
         extra = QString::fromLatin1(" IDENTIFIED EXTERNALLY");
 
     if (OrgProfile != Profile->currentText())
@@ -511,15 +511,15 @@ toSecurityUser::toSecurityUser(toSecurityQuota *quota, toConnection &conn, QWidg
     {
         toQuery profiles(Connection, SQLProfiles);
         while (!profiles.eof())
-            Profile->insertItem(profiles.readValue());
+            Profile->addItem(profiles.readValue());
 
         toQuery tablespaces(Connection,
                             SQLTablespace);
         while (!tablespaces.eof())
         {
             QString buf = tablespaces.readValue();
-            DefaultSpace->insertItem(buf);
-            TempSpace->insertItem(buf);
+            DefaultSpace->addItem(buf);
+            TempSpace->addItem(buf);
         }
     }
     TOCATCH
@@ -533,12 +533,12 @@ void toSecurityUser::clear(bool all)
     GlobalName->setText(QString::null);
     if (all)
     {
-        Profile->setCurrentItem(0);
-        Authentication->showPage(PasswordTab);
+        Profile->setCurrentIndex(0);
+        Authentication->setCurrentIndex(Authentication->indexOf(PasswordTab));
         ExpirePassword->setChecked(false);
         ExpirePassword->setEnabled(true);
-        TempSpace->setCurrentItem(0);
-        DefaultSpace->setCurrentItem(0);
+        TempSpace->setCurrentIndex(0);
+        DefaultSpace->setCurrentIndex(0);
         Locked->setChecked(false);
     }
 
@@ -577,7 +577,7 @@ void toSecurityUser::changeUser(const QString &user)
             if (OrgPassword == QString::fromLatin1("GLOBAL"))
             {
                 OrgPassword = QString::null;
-                Authentication->showPage(GlobalTab);
+                Authentication->setCurrentIndex(Authentication->indexOf(GlobalTab));
                 OrgGlobal = pass;
                 GlobalName->setText(OrgGlobal);
                 AuthType = global;
@@ -585,7 +585,7 @@ void toSecurityUser::changeUser(const QString &user)
             else if (OrgPassword == QString::fromLatin1("EXTERNAL"))
             {
                 OrgPassword = QString::null;
-                Authentication->showPage(ExternalTab);
+                Authentication->setCurrentIndex(Authentication->indexOf(ExternalTab));
                 AuthType = external;
             }
             else
@@ -599,9 +599,9 @@ void toSecurityUser::changeUser(const QString &user)
                 str = query.readValue();
                 for (int i = 0;i < Profile->count();i++)
                 {
-                    if (Profile->text(i) == str)
+                    if (Profile->itemText(i) == str)
                     {
-                        Profile->setCurrentItem(i);
+                        Profile->setCurrentIndex(i);
                         OrgProfile = str;
                         break;
                     }
@@ -612,9 +612,9 @@ void toSecurityUser::changeUser(const QString &user)
                 str = query.readValue();
                 for (int i = 0;i < DefaultSpace->count();i++)
                 {
-                    if (DefaultSpace->text(i) == str)
+                    if (DefaultSpace->itemText(i) == str)
                     {
-                        DefaultSpace->setCurrentItem(i);
+                        DefaultSpace->setCurrentIndex(i);
                         OrgDefault = str;
                         break;
                     }
@@ -625,9 +625,9 @@ void toSecurityUser::changeUser(const QString &user)
                 str = query.readValue();
                 for (int i = 0;i < TempSpace->count();i++)
                 {
-                    if (TempSpace->text(i) == str)
+                    if (TempSpace->itemText(i) == str)
                     {
-                        TempSpace->setCurrentItem(i);
+                        TempSpace->setCurrentIndex(i);
                         OrgTemp = str;
                         break;
                     }
@@ -669,7 +669,7 @@ public:
 QString toSecurityRole::sql(void)
 {
     QString extra;
-    if (Authentication->currentPage() == PasswordTab)
+    if (Authentication->currentWidget() == PasswordTab)
     {
         if (Password->text() != Password2->text())
         {
@@ -692,11 +692,11 @@ QString toSecurityRole::sql(void)
             extra += QString::fromLatin1("\"");
         }
     }
-    else if ((AuthType != global) && (Authentication->currentPage() == GlobalTab))
+    else if ((AuthType != global) && (Authentication->currentWidget() == GlobalTab))
         extra = QString::fromLatin1(" IDENTIFIED GLOBALLY");
-    else if ((AuthType != external) && (Authentication->currentPage() == ExternalTab))
+    else if ((AuthType != external) && (Authentication->currentWidget() == ExternalTab))
         extra = QString::fromLatin1(" IDENTIFIED EXTERNALLY");
-    else if ((AuthType != none) && (Authentication->currentPage() == NoneTab))
+    else if ((AuthType != none) && (Authentication->currentWidget() == NoneTab))
         extra = QString::fromLatin1(" NOT IDENTIFIED");
     extra += Quota->sql();
     QString sql;
@@ -741,22 +741,22 @@ void toSecurityRole::changeRole(const QString &role)
             if (str == QString::fromLatin1("YES"))
             {
                 AuthType = password;
-                Authentication->showPage(PasswordTab);
+                Authentication->setCurrentIndex(Authentication->indexOf(PasswordTab));
             }
             else if (str == QString::fromLatin1("GLOBAL"))
             {
                 AuthType = global;
-                Authentication->showPage(GlobalTab);
+                Authentication->setCurrentIndex(Authentication->indexOf(GlobalTab));
             }
             else if (str == QString::fromLatin1("EXTERNAL"))
             {
                 AuthType = external;
-                Authentication->showPage(ExternalTab);
+                Authentication->setCurrentIndex(Authentication->indexOf(ExternalTab));
             }
             else
             {
                 AuthType = none;
-                Authentication->showPage(NoneTab);
+                Authentication->setCurrentIndex(Authentication->indexOf(NoneTab));
             }
         }
         else
@@ -764,7 +764,7 @@ void toSecurityRole::changeRole(const QString &role)
             Name->setText(QString::null);
             Name->setEnabled(true);
             AuthType = none;
-            Authentication->showPage(NoneTab);
+            Authentication->setCurrentIndex(Authentication->indexOf(NoneTab));
         }
     }
     TOCATCH
@@ -884,7 +884,7 @@ void toSecurityObject::update(void)
                     toQList args;
                     toPush(args, toQValue(type));
                     typelst.execute(SQLObjectPrivs, args);
-                    Options = QStringList::split(QString::fromLatin1(","), typelst.readValue());
+                    Options = typelst.readValue().toString().split(QString(","));
                     TypeOptions[type] = Options;
                 }
                 else
@@ -1712,7 +1712,7 @@ void toSecurity::changeUser(bool ask)
             DropAct->setEnabled(item->parent());
             CopyAct->setEnabled(item->parent());
 
-            if (UserID[4].latin1() != ':')
+            if (UserID[4].toLatin1() != ':')
                 throw tr("Invalid security ID");
             bool user = false;
             if (UserID.startsWith(QString::fromLatin1("USER")))
@@ -1720,7 +1720,7 @@ void toSecurity::changeUser(bool ask)
             QString username = UserID.right(UserID.length() - 5);
             General->changePage(username, user);
             Quota->changeUser(username);
-            Tabs->setTabEnabled(Quota, user);
+            Tabs->setTabEnabled(Tabs->indexOf(Quota), user);
             RoleGrant->changeUser(user, username);
             SystemGrant->changeUser(username);
             ObjectGrant->changeUser(username);
@@ -1846,7 +1846,7 @@ void toSecurity::addUser(void)
         {
             UserList->clearSelection();
             UserList->setCurrentItem(item);
-            Tabs->showPage(General);
+            Tabs->setCurrentIndex(Tabs->indexOf(General));
             General->setFocus();
             break;
         }
@@ -1859,7 +1859,7 @@ void toSecurity::addRole(void)
         {
             UserList->clearSelection();
             UserList->setCurrentItem(item);
-            Tabs->showPage(General);
+            Tabs->setCurrentIndex(Tabs->indexOf(General));
             General->setFocus();
             break;
         }

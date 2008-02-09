@@ -138,7 +138,7 @@ public:
         }
 #if 1
         QString version = conn.version();
-        if (version.left(version.find('.')).toInt() < 8)
+        if (version.left(version.indexOf('.')).toInt() < 8)
         {
             return false;
         }
@@ -182,7 +182,7 @@ void toDebugWatch::changeScope(int num)
     {
     default:
         Name->clear();
-        Name->insertItem(Default);
+        Name->addItem(Default);
         break;
     case 4:
     {
@@ -195,7 +195,7 @@ void toDebugWatch::changeScope(int num)
             str += QString::fromLatin1(".");
         }
         str += Default;
-        Name->insertItem(str);
+        Name->addItem(str);
     }
     break;
     }
@@ -232,7 +232,7 @@ toTreeWidgetItem *toDebugWatch::createWatch(toTreeWidget *watches)
     QString schema;
     QString object;
     QString name;
-    int pos = str.find(QString::fromLatin1("."));
+    int pos = str.indexOf(QString::fromLatin1("."));
     if (pos > 0)
     {
         schema = str.left(pos);
@@ -243,7 +243,7 @@ toTreeWidgetItem *toDebugWatch::createWatch(toTreeWidget *watches)
         toStatusMessage(tr("Can't parse location"));
         return NULL;
     }
-    pos = str.find(QString::fromLatin1("."));
+    pos = str.indexOf(QString::fromLatin1("."));
     if (pos > 0)
     {
         object = str.left(pos);
@@ -579,7 +579,7 @@ toTreeWidgetItem *toDebug::contents(void)
 
 void toDebug::reorderContent(int start, int diff)
 {
-    QString name = currentEditor()->name();
+    QString name = currentEditor()->objectName();
     for (toTreeWidgetItem *item = Contents->firstChild();item;item = item->nextSibling())
     {
         if (item->text(1) == name)
@@ -607,7 +607,7 @@ void toDebug::execute(void)
     if (!checkCompile())
         return ;
 
-    QString curName = currentEditor()->name();
+    QString curName = currentEditor()->objectName();
     toHighlightedText *current = currentEditor();
     int curline, curcol;
     current->getCursorPosition (&curline, &curcol);
@@ -618,7 +618,7 @@ void toDebug::execute(void)
     {
         for (toTreeWidgetItem *parent = Contents->firstChild();parent;parent = parent->nextSibling())
         {
-            printf("%s\n", (const char *)parent->text(1));
+            printf("%s\n", parent->text(1).toAscii().constData());
             if (parent->text(1) == curName)
             {
                 for (parent = parent->firstChild();parent;parent = parent->nextSibling())
@@ -679,10 +679,10 @@ void toDebug::execute(void)
             {
                 token = tokens.getToken();
             }
-            while (token.upper() == QString::fromLatin1("CREATE") || token.upper() == QString::fromLatin1("OR") ||
-                    token.upper() == QString::fromLatin1("REPLACE"));
+            while (token.toUpper() == QString::fromLatin1("CREATE") || token.toUpper() == QString::fromLatin1("OR") ||
+                    token.toUpper() == QString::fromLatin1("REPLACE"));
 
-            if (token.upper() != QString::fromLatin1("FUNCTION") && token.upper() != QString::fromLatin1("PROCEDURE"))
+            if (token.toUpper() != QString::fromLatin1("FUNCTION") && token.toUpper() != QString::fromLatin1("PROCEDURE"))
             {
                 toStatusMessage(tr("Expected function or procedure, internal error"));
                 return ;
@@ -702,7 +702,7 @@ void toDebug::execute(void)
                     else
                         state = done;
                 }
-                else if (token.upper() == QString::fromLatin1("RETURN") && level == 0)
+                else if (token.toUpper() == QString::fromLatin1("RETURN") && level == 0)
                 {
                     state = returnType;
                 }
@@ -726,17 +726,17 @@ void toDebug::execute(void)
                         break;
                     }
                     case inOut:
-                        if (token.upper() == QString::fromLatin1("IN"))
+                        if (token.toUpper() == QString::fromLatin1("IN"))
                         {
                             (*cp).In = true;
                             break;
                         }
-                        else if (token.upper() == QString::fromLatin1("OUT"))
+                        else if (token.toUpper() == QString::fromLatin1("OUT"))
                         {
                             (*cp).Out = true;
                             break;
                         }
-                        else if (token.upper() == QString::fromLatin1("NOCOPY"))
+                        else if (token.toUpper() == QString::fromLatin1("NOCOPY"))
                             break;
                         if (!(*cp).In && !(*cp).Out)
                             (*cp).In = true;
@@ -747,7 +747,7 @@ void toDebug::execute(void)
                             state = name;
                             break;
                         }
-                        else if (token.upper() == QString::fromLatin1("DEFAULT") || token == QString::fromLatin1(":="))
+                        else if (token.toUpper() == QString::fromLatin1("DEFAULT") || token == QString::fromLatin1(":="))
                         {
                             state = waitingEnd;
                             break;
@@ -764,7 +764,7 @@ void toDebug::execute(void)
                         {
                             if (token[0] == '\'' && token.length() >= 2)
                                 token = token.mid(1, token.length() - 2);
-                            if (token.upper() == QString::fromLatin1("NULL"))
+                            if (token.toUpper() == QString::fromLatin1("NULL"))
                                 toParamGet::setDefault(connection(), (*cp).Name, QString::null);
                             else
                                 toParamGet::setDefault(connection(), (*cp).Name, token);
@@ -782,7 +782,7 @@ void toDebug::execute(void)
                     state = name;
                 }
             }
-            while (state != done && token.upper() != "IS" && token.upper() != "AS" && token != ";");
+            while (state != done && token.toUpper() != "IS" && token.toUpper() != "AS" && token != ";");
 
             QChar sep = '(';
             QString sql;
@@ -955,7 +955,7 @@ static bool FindKeyword(toSQLParse::statement &statements, bool onlyNames, bool 
         line = statements.Line;
         if (name.isEmpty())
         {
-            name = statements.String.upper();
+            name = statements.String.toUpper();
 
             int j;
             for (j = 0;TypeMap[j].Type && TypeMap[j].Type != name;j++)
@@ -975,7 +975,7 @@ static bool FindKeyword(toSQLParse::statement &statements, bool onlyNames, bool 
 
             return !TypeMap[j].WantName;
         }
-        else if (statements.String.upper() != "BODY")
+        else if (statements.String.toUpper() != "BODY")
         {
             name += " " + statements.String;
             return true;
@@ -1068,9 +1068,9 @@ void toDebug::updateContent(toSQLParse::statement &statements, toTreeWidgetItem 
             {
                 std::list<toSQLParse::statement>::iterator j = (*i).subTokens().begin();
                 if (j != (*i).subTokens().end())
-                    if ((*j).String.upper() == "BEGIN")
+                    if ((*j).String.toUpper() == "BEGIN")
                         declaration = false;
-                    else if ((*j).Type == toSQLParse::statement::Token && (*j).String.upper() != "END")
+                    else if ((*j).Type == toSQLParse::statement::Token && (*j).String.toUpper() != "END")
                         new toContentsItem(item, "Variable " + (*j).String, (*j).Line);
             }
             updateContent(*i, item);
@@ -1089,11 +1089,11 @@ void toDebug::updateContent(toDebugText *current)
     toTreeWidgetItem *item;
 
     for (item = Contents->firstChild();item;item = item->nextSibling())
-        if (item->text(1) == current->name())
+        if (item->text(1) == current->objectName())
             item->setText(2, "DELETE");
 
     for (std::list<toSQLParse::statement>::iterator i = statements.begin();i != statements.end();i++)
-        updateContent(*i, NULL, current->name());
+        updateContent(*i, NULL, current->objectName());
 
     toTreeWidgetItem *ni;
     for (item = Contents->firstChild();item;item = ni)
@@ -1238,7 +1238,7 @@ void toDebug::updateState(int reason)
         {
             for (int i = 0;i < Editors->count();i++)
             {
-                toDebugText *editor = dynamic_cast<toDebugText *>(Editors->page(i));
+                toDebugText *editor = dynamic_cast<toDebugText *>(Editors->widget(i));
                 editor->setCurrent( -1);
             }
             StackTrace->clear();
@@ -1590,13 +1590,13 @@ bool toDebug::viewSource(const QString &schema, const QString &name, const QStri
         for (int i = 0;i < Editors->count();i++)
         {
             QString tabname = editorName(schema, name, type);
-            toDebugText *te = dynamic_cast<toDebugText *>(Editors->page(i));
-            if (Editors->tabLabel(te) == tabname)
+            toDebugText *te = dynamic_cast<toDebugText *>(Editors->widget(i));
+            if (Editors->tabText(Editors->indexOf(te)) == tabname)
             {
                 editor = te;
                 break;
             }
-            if (Editors->tabLabel(te) == tr("Unknown") && !te->isModified())
+            if (Editors->tabText(Editors->indexOf(te)) == tr("Unknown") && !te->isModified())
                 editor = te;
         }
         if (!editor)
@@ -1616,13 +1616,14 @@ bool toDebug::viewSource(const QString &schema, const QString &name, const QStri
             editor->setData(schema, type, name);
             editor->readData(connection(), StackTrace);
             updateContent(editor);
-            Editors->changeTab(editor, editorName(editor));
+            Editors->setTabText(Editors->indexOf(editor), editorName(editor));
             if (editor->hasErrors())
-                Editors->setTabIconSet(editor, QIcon(QPixmap(const_cast<const char**>(nextbug_xpm))));
+                Editors->setTabIcon(Editors->indexOf(editor),
+                                    QIcon(QPixmap(const_cast<const char**>(nextbug_xpm))));
             else
-                Editors->setTabIconSet(editor, QIcon());
+                Editors->setTabIcon(Editors->indexOf(editor), QIcon());
         }
-        Editors->showPage(editor);
+        Editors->setCurrentIndex(Editors->indexOf(editor));
         editor->setCursorPosition(row, col);
         if (setCurrent)
             editor->setCurrent(line - 1);
@@ -1745,7 +1746,8 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
 
     toolbar->addSeparator();
 
-    Schema = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
+    Schema = new QComboBox(toolbar);
+    Schema->setObjectName(TO_TOOLBAR_WIDGET_NAME);
     toolbar->addWidget(Schema);
     connect(Schema,
             SIGNAL(activated(int)),
@@ -1889,10 +1891,10 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
     DebugTabs->addTab(RuntimeLog, tr("&Runtime Log"));
 
     Editors = new QTabWidget(hsplitter);
-    Editors->setTabPosition(QTabWidget::Bottom);
+    Editors->setTabPosition(QTabWidget::South);
 
     QToolButton *closeButton = new toPopupButton(Editors);
-    closeButton->setIconSet(QPixmap(const_cast<const char**>(close_xpm)));
+    closeButton->setIcon(QPixmap(const_cast<const char**>(close_xpm)));
     closeButton->setFixedSize(20, 18);
 
     connect(closeButton, SIGNAL(clicked()), this, SLOT(closeEditor()));
@@ -2019,7 +2021,7 @@ void toDebug::createActions(void) {
     returnAct->setShortcut(Qt::Key_F6);
 
     debugPaneAct = new QAction(tr("&Debug Pane"), this);
-    debugPaneAct->setIconSet(QIcon(QPixmap(const_cast<const char**>(todebug_xpm))));
+    debugPaneAct->setIcon(QIcon(QPixmap(const_cast<const char**>(todebug_xpm))));
     debugPaneAct->setCheckable(true);
     connect(debugPaneAct,
             SIGNAL(toggled(bool)),
@@ -2157,7 +2159,7 @@ void toDebug::startTarget(void)
 
 toDebugText *toDebug::currentEditor(void)
 {
-    return dynamic_cast<toDebugText *>(Editors->currentPage());
+    return dynamic_cast<toDebugText *>(Editors->currentWidget());
 }
 
 void toDebug::changeSchema(int)
@@ -2181,20 +2183,20 @@ void toDebug::refresh(void)
         QString currentSchema;
         if (selected.isEmpty())
         {
-            selected = connection().user().upper();
+            selected = connection().user().toUpper();
             Schema->clear();
             toQList users = toQuery::readQuery(connection(),
                                                toSQL::string(toSQL::TOSQL_USERLIST, connection()));
             for (toQList::iterator i = users.begin();i != users.end();i++)
-                Schema->insertItem(*i);
+                Schema->addItem(*i);
         }
         if (!selected.isEmpty())
         {
             {
                 for (int i = 0;i < Schema->count();i++)
-                    if (Schema->text(i) == selected)
+                    if (Schema->itemText(i) == selected)
                     {
-                        Schema->setCurrentItem(i);
+                        Schema->setCurrentIndex(i);
                         break;
                     }
             }
@@ -2301,7 +2303,7 @@ bool toDebug::checkCompile(void)
 {
     for (int i = 0;i < Editors->count();i++)
     {
-        toDebugText *editor = dynamic_cast<toDebugText *>(Editors->page(i));
+        toDebugText *editor = dynamic_cast<toDebugText *>(Editors->widget(i));
         if (!checkCompile(editor))
             return false;
     }
@@ -2399,18 +2401,18 @@ bool toDebugText::compile(void)
 
         QString token = tokens.getToken();
 
-        if (token.upper() == "CREATE")
+        if (token.toUpper() == "CREATE")
         {
             token = tokens.getToken();
-            if (token.upper() == "OR")
+            if (token.toUpper() == "OR")
             {
                 token = tokens.getToken();
-                if (token.upper() == "REPLACE")
+                if (token.toUpper() == "REPLACE")
                     token = tokens.getToken();
             }
         }
 
-        QString type = token.upper();
+        QString type = token.toUpper();
         if (type != QString::fromLatin1("PROCEDURE") &&
                 type != QString::fromLatin1("TYPE") &&
                 type != QString::fromLatin1("FUNCTION") &&
@@ -2421,7 +2423,7 @@ bool toDebugText::compile(void)
         }
 
         token = tokens.getToken();
-        if (token.upper() == "BODY")
+        if (token.toUpper() == "BODY")
         {
             body = true;
             token = tokens.getToken();
@@ -2454,9 +2456,9 @@ bool toDebugText::compile(void)
         {
             toQList nopar;
             Debugger->executeInTarget(sql, nopar);
-            Schema = schema.upper();
-            Object = Debugger->connection().unQuote(object.upper());
-            Type = type.upper();
+            Schema = schema.toUpper();
+            Object = Debugger->connection().unQuote(object.toUpper());
+            Type = type.toUpper();
             if (body)
                 Type += QString::fromLatin1(" BODY");
             readErrors(Debugger->connection());
@@ -2484,7 +2486,7 @@ void toDebug::compile(void)
     QString lastSchema = currentEditor()->schema();
     for (int i = 0;i < Editors->count();i++)
     {
-        toDebugText *editor = dynamic_cast<toDebugText *>(Editors->page(i));
+        toDebugText *editor = dynamic_cast<toDebugText *>(Editors->widget(i));
         int row, col;
         editor->getCursorPosition(&row, &col);
         if (editor->compile())
@@ -2493,17 +2495,18 @@ void toDebug::compile(void)
                     lastSchema != currentEditor()->schema())
             {
                 for (int i = 0;i < Schema->count();i++)
-                    if (Schema->text(i) == lastSchema)
+                    if (Schema->itemText(i) == lastSchema)
                     {
-                        Schema->setCurrentItem(i);
+                        Schema->setCurrentIndex(i);
                         break;
                     }
             }
             if (editor->hasErrors())
-                Editors->setTabIconSet(editor, QIcon(QPixmap(const_cast<const char**>(nextbug_xpm))));
+                Editors->setTabIcon(Editors->indexOf(editor),
+                                    QIcon(QPixmap(const_cast<const char**>(nextbug_xpm))));
             else
-                Editors->setTabIconSet(editor, QIcon());
-            Editors->changeTab(editor, editorName(editor));
+                Editors->setTabIcon(Editors->indexOf(editor), QIcon());
+            Editors->setTabText(Editors->indexOf(editor), editorName(editor));
             editor->setCursorPosition(row, col);
         }
         else
@@ -2538,16 +2541,16 @@ void toDebug::changeContent(toTreeWidgetItem *ci)
 
         for (int i = 0;i < Editors->count();i++)
         {
-            if (Editors->page(i)->name() == ci->text(1))
+            if (Editors->widget(i)->objectName() == ci->text(1))
             {
-                current = dynamic_cast<toDebugText *>(Editors->page(i));
+                current = dynamic_cast<toDebugText *>(Editors->widget(i));
                 break;
             }
         }
         if (current)
         {
             current->setCursorPosition(item->Line, 0);
-            Editors->showPage(current);
+            Editors->setCurrentIndex(Editors->indexOf(current));
             current->setFocus();
         }
     }
@@ -2571,9 +2574,9 @@ void toDebug::newSheet(void)
     if (!Schema->currentText().isEmpty())
         text->setSchema(Schema->currentText());
     else
-        text->setSchema(connection().user().upper());
+        text->setSchema(connection().user().toUpper());
     Editors->addTab(text, tr("Unknown"));
-    Editors->showPage(text);
+    Editors->setCurrentIndex(Editors->indexOf(text));
 }
 
 void toDebug::showSource(toTreeWidgetItem *item)
@@ -2808,7 +2811,7 @@ void toDebug::exportData(std::map<QString, QString> &data, const QString &prefix
     data[prefix + ":Editors"] = Editors->count();
     for (int i = 0;i < Editors->count();i++)
     {
-        toHighlightedText *editor = dynamic_cast<toHighlightedText *>(Editors->page(i));
+        toHighlightedText *editor = dynamic_cast<toHighlightedText *>(Editors->widget(i));
         QString num;
         num.setNum(i);
         editor->exportData(data, prefix + ":Editor:" + num);
@@ -2822,7 +2825,7 @@ void toDebug::exportData(std::map<QString, QString> &data, const QString &prefix
 
         if (point)
         {
-            QString key = prefix + ":Breaks:" + QString::number(id).latin1();
+            QString key = prefix + ":Breaks:" + QString::number(id).toLatin1();
 
             data[key + ":Schema"] = point->text(2);
             data[key + ":Object"] = point->text(0);
@@ -2840,7 +2843,7 @@ void toDebug::exportData(std::map<QString, QString> &data, const QString &prefix
         toResultViewItem * item = dynamic_cast<toResultViewItem *>(qitem);
         if (item)
         {
-            QString key = prefix + ":Watch:" + QString::number(id).latin1();
+            QString key = prefix + ":Watch:" + QString::number(id).toLatin1();
             data[key + ":Schema"] = item->allText(0);
             data[key + ":Object"] = item->allText(1);
             data[key + ":Item"] = item->allText(2);
@@ -2859,9 +2862,9 @@ void toDebug::importData(std::map<QString, QString> &data, const QString &prefix
     QString str = data[prefix + ":Schema"];
     {
         for (int i = 0;i < Schema->count();i++)
-            if (Schema->text(i) == str)
+            if (Schema->itemText(i) == str)
             {
-                Schema->setCurrentItem(i);
+                Schema->setCurrentIndex(i);
                 changeSchema(i);
                 break;
             }
@@ -2883,9 +2886,9 @@ void toDebug::importData(std::map<QString, QString> &data, const QString &prefix
     int id = 1;
     std::map<QString, QString>::iterator i;
     toBreakpointItem *debug = NULL;
-    while ((i = data.find(prefix + ":Breaks:" + QString::number(id).latin1() + ":Line")) != data.end())
+    while ((i = data.find(prefix + ":Breaks:" + QString::number(id).toLatin1() + ":Line")) != data.end())
     {
-        QString key = prefix + ":Breaks:" + QString::number(id).latin1();
+        QString key = prefix + ":Breaks:" + QString::number(id).toLatin1();
         int line = (*i).second.toInt();
         debug = new toBreakpointItem(Breakpoints, debug,
                                      data[key + ":Schema"],
@@ -2898,9 +2901,9 @@ void toDebug::importData(std::map<QString, QString> &data, const QString &prefix
     }
     id = 1;
     toResultViewItem *item = NULL;
-    while ((i = data.find(prefix + ":Watch:" + QString::number(id).latin1() + ":Item")) != data.end())
+    while ((i = data.find(prefix + ":Watch:" + QString::number(id).toLatin1() + ":Item")) != data.end())
     {
-        QString key = prefix + ":Watch:" + QString::number(id).latin1();
+        QString key = prefix + ":Watch:" + QString::number(id).toLatin1();
         item = new toResultViewItem(Watch, NULL, data[key + ":Schema"]);
         item->setText(1, data[key + ":Object"]);
         item->setText(2, data[key + ":Item"]);
@@ -2928,7 +2931,7 @@ void toDebug::closeAllEditor()
     while (editorCount > 0)
     {
         editorCount--;
-        toDebugText *editor = dynamic_cast<toDebugText *>(Editors->page(editorCount));
+        toDebugText *editor = dynamic_cast<toDebugText *>(Editors->widget(editorCount));
         if (editor)
             closeEditor(editor);
     }
@@ -2940,7 +2943,7 @@ void toDebug::closeEditor(toDebugText* &editor)
 
     if (editor && checkCompile(editor))
     {
-        QString name = editor->name();
+        QString name = editor->objectName();
         for (toTreeWidgetItem *item = Contents->firstChild();item;item = item->nextSibling())
         {
             if (item->text(1) == name)
@@ -2955,7 +2958,7 @@ void toDebug::closeEditor(toDebugText* &editor)
                 Schema->currentText() == editor->schema())
             Objects->clearSelection();
 
-        Editors->removePage(editor);
+        Editors->removeTab(Editors->indexOf(editor));
         delete editor;
         if (Editors->count() == 0)
             newSheet();

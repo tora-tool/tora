@@ -99,7 +99,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     try {
 #define INIT_COL(c) {                                                   \
             Colors[Analyzer.typeString(c)] = Analyzer.getColor(c);      \
-            SyntaxComponent->addItem(tr(Analyzer.typeString(c)));       \
+            SyntaxComponent->addItem(tr(Analyzer.typeString(c).toAscii().constData())); \
         }
 
         INIT_COL(toSyntaxAnalyzer::Default);
@@ -155,7 +155,7 @@ void toSyntaxAnalyzer::readColor(const QColor &def, infoType typ) {
         Colors[typ] = def;
     else {
         int r, g, b;
-        if (sscanf(res, "%d,%d,%d", &r, &g, &b) != 3)
+        if (sscanf(res.toAscii().constData(), "%d,%d,%d", &r, &g, &b) != 3)
             throw qApp->translate("toSyntaxAnalyzer", "Wrong format of color in setings");
         QColor col(r, g, b);
         Colors[typ] = col;
@@ -206,8 +206,8 @@ QString toSyntaxAnalyzer::typeString(infoType typ) {
 
 void toSyntaxAnalyzer::updateSettings(void) {
     try {
-        const QColorGroup &cg = qApp->palette().active();
-        readColor(cg.text(), Default);
+        const QPalette cg = qApp->palette();
+        readColor(cg.color(QPalette::Text), Default);
 //         readColor(Qt::green, Comment);
         readColor(QColor(160, 160, 160), Comment);
 //         readColor(Qt::cyan, Number);
@@ -215,7 +215,7 @@ void toSyntaxAnalyzer::updateSettings(void) {
 //         readColor(Qt::blue, Keyword);
         readColor(QColor(13, 0, 160), Keyword);
         readColor(Qt::red, String);
-        readColor(cg.base(), DefaultBg);
+        readColor(cg.color(QPalette::Background), DefaultBg);
         readColor(Qt::darkRed, ErrorBg);
         readColor(Qt::darkGreen, DebugBg);
     }
@@ -264,7 +264,7 @@ void toSyntaxSetup::selectResultFont(void) {
 QString toSyntaxSetup::color() {
     QString t = Current->text();
     for (std::map<QString, QColor>::iterator i = Colors.begin();i != Colors.end();i++)
-        if (qApp->translate("toSyntaxSetup", (*i).first) == t)
+        if (qApp->translate("toSyntaxSetup", (*i).first.toAscii().constData()) == t)
             return (*i).first;
     throw tr("Unknown color name %1").arg(t);
 }
@@ -273,7 +273,9 @@ void toSyntaxSetup::changeLine(QListWidgetItem *item) {
     Current = item;
     if (Current) {
         QColor col = Colors[color()];
-        ExampleColor->setBackgroundColor(col);
+        QPalette palette = ExampleColor->palette();
+        palette.setColor(QPalette::Background, col);
+        ExampleColor->setPalette(palette);
     }
 }
 
@@ -284,7 +286,11 @@ void toSyntaxSetup::selectColor(void) {
             QColor col = QColorDialog::getColor(Colors[coleng]);
             if (col.isValid()) {
                 Colors[coleng] = col;
-                ExampleColor->setBackgroundColor(col);
+
+                QPalette palette = ExampleColor->palette();
+                palette.setColor(QPalette::Background, col);
+                ExampleColor->setPalette(palette);
+
                 Example->analyzer().Colors[toSyntaxAnalyzer::typeString(coleng)] = col;
                 Example->updateSyntaxColor(toSyntaxAnalyzer::typeString(coleng));
                 Example->update();

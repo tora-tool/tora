@@ -109,7 +109,7 @@ void toWorksheetWidget::setup(bool autoLoad) {
     stopAct->setEnabled(false);
 
     workToolbar->addWidget(Started = new QLabel(workToolbar));
-    Started->setAlignment(Qt::AlignRight | Qt::AlignVCenter | Qt::ExpandTabs);
+    Started->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
     context = NULL;
     Editor->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -157,9 +157,9 @@ void toWorksheetWidget::createPopupMenu(const QPoint &pos) {
 bool toWorksheetWidget::describe(const QString &query) {
     try {
         QRegExp white(QString::fromLatin1("[ \r\n\t.]+"));
-        QStringList part = QStringList::split(white, query);
-        if(part[0].upper() == QString::fromLatin1("DESC") ||
-                part[0].upper() == QString::fromLatin1("DESCRIBE")) {
+        QStringList part = query.split(white);
+        if(part[0].toUpper() == QString::fromLatin1("DESC") ||
+                part[0].toUpper() == QString::fromLatin1("DESCRIBE")) {
             return true;
         }
         else

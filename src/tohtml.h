@@ -63,35 +63,35 @@ while(!count.eof()) {
 </pre>
  */
 
-class toHtml
-{
+class QChar;
+
+class toHtml {
     /** Actual data of file.
      */
-    char *Data;
+    QString Data;
     /** Length of the data.
      */
-    size_t Length;
+    int Length;
     /** Current position in data.
      */
-    size_t Position;
+    int Position;
 
     /** Last character that was at the end of text written over by call to @ref mid.
      * This is a real cludge, but what don't you do for performance.
      */
-    char LastChar;
+    QChar LastChar;
 
     /** List of qualifiers for tab. This is not a list because of performance as well.
      * Not really a lot of memory wasted this way, in fact it is probably more efficient
      * than a dynamic list.
      */
-    struct
-    {
+    struct {
         /** Name of qualifier. Always lowercase, points into @ref Data.
          */
-        const char *Name;
+        QString Name;
         /** Value of qualifier. Points into @ref Data.
          */
-        const char *Value;
+        QString Value;
     }
     Qualifiers[TO_HTML_MAX_QUAL];
 
@@ -106,10 +106,10 @@ class toHtml
     bool Open;
     /** Name of tag. NULL terminated, points into @ref Data.
      */
-    const char *Tag;
+    QString Tag;
     /** Text if not tag. NULL terminated, points into @ref Data.
      */
-    const char *Text;
+    QString Text;
 
     /** Walk forward in @ref Data until not whitespace.
      */
@@ -120,7 +120,7 @@ class toHtml
      * @param size Size of string to extract.
      * @return Pointer to string (Points into @ref Data)
      */
-    const char *mid(size_t start, size_t size);
+    QString mid(int start, int size);
 public:
     /** Create a HTML parser.
      * @param data Data to parse.
@@ -141,19 +141,17 @@ public:
      * @param name Name of qualifier in lowercase.
      * @return Value of qualifier or NULL.
      */
-    const char *value(const QString &name);
+    QString value(const QString &name);
     /** Return true if current token is a tag.
      * @return True if tag.
      */
-    bool isTag(void)
-    {
+    bool isTag(void) {
         return IsTag;
     }
     /** Return true if open tag. Only valid if @ref isTag is true.
      * @return True if open tag.
      */
-    bool open(void)
-    {
+    bool open(void) {
         return Open;
     }
 
@@ -167,8 +165,7 @@ public:
     /** Get name of tag in lowercase. Only valid if @ref isTag returns true.
      * @return Name of tag (Excluding / if close tag).
      */
-    const char *tag(void)
-    {
+    QString tag(void) {
         return Tag;
     }
 

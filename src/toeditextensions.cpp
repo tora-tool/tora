@@ -293,7 +293,7 @@ void toEditExtensions::unquoteBlock(void) {
 
 void toEditExtensions::upperCase(void) {
     if (Current) {
-        QString text = Current->selectedText().upper();
+        QString text = Current->selectedText().toUpper();
         if (!text.isEmpty())
             Current->insert(text, true);
     }
@@ -301,14 +301,14 @@ void toEditExtensions::upperCase(void) {
 
 void toEditExtensions::lowerCase(void) {
     if (Current) {
-        QString text = Current->selectedText().lower();
+        QString text = Current->selectedText().toLower();
         if (!text.isEmpty())
             Current->insert(text, true);
     }
 }
 
 static int CountLine(const QString &str) {
-    int found = str.findRev(QString::fromLatin1("\n"));
+    int found = str.lastIndexOf(QString::fromLatin1("\n"));
     if (found < 0)
         return str.length();
     else
@@ -652,8 +652,8 @@ toEditExtensionGoto::toEditExtensionGoto(toMarkedText *editor)
     setupUi(this);
 
     toHelp::connectDialog(this);
-    Line->setMaxValue(Editor->lines());
-    Line->setMinValue(1);
+    Line->setMaximum(Editor->lines());
+    Line->setMinimum(1);
     {
         int curline, curcol;
         Editor->getCursorPosition(&curline, &curcol);

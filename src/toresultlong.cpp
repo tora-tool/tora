@@ -152,7 +152,7 @@ void toResultLong::addItem(void)
                 QString buffer;
                 if (First)
                 {
-                    QString tmp = sql().simplifyWhiteSpace().mid(0, 10).lower();
+                    QString tmp = sql().simplified().mid(0, 10).toLower();
                     if (tmp.startsWith(QString::fromLatin1("update")) ||
                             tmp.startsWith(QString::fromLatin1("delete")) ||
                             tmp.startsWith(QString::fromLatin1("insert")))
@@ -173,11 +173,11 @@ void toResultLong::addItem(void)
                         QString name = (*i).Name;
                         if (ReadableColumns)
                             toReadableColumn(name);
-                        if (name.length() > 0 && name[0].latin1() != ' ')
+                        if (name.length() > 0 && name[0].toLatin1() != ' ')
                         {
                             if (hidden)
                                 throw tr("Can only hide last column in query");
-                            if (name[0].latin1() == '-')
+                            if (name[0].toLatin1() == '-')
                             {
                                 addColumn(toTranslateMayby(sqlName(), name.right(name.length() - 1)));
                                 setColumnAlignment(columns() - 1, Qt::AlignRight);

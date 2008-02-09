@@ -109,9 +109,9 @@ toHelpPrefs::toHelpPrefs(toTool *tool, QWidget *parent, const char *name)
         for (int i = 0;i < tot;i++)
         {
             QString num = QString::number(i);
-            QString root = Tool->config(num.latin1(), "");
+            QString root = Tool->config(num.toLatin1(), "");
             num += QString::fromLatin1("file");
-            QString file = Tool->config(num.latin1(), "");
+            QString file = Tool->config(num.toLatin1(), "");
             new toTreeWidgetItem(FileList, root, file);
         }
     }
@@ -123,9 +123,9 @@ void toHelpPrefs::saveSetting() {
     for (toTreeWidgetItem *item = FileList->firstChild();item;item = item->nextSibling())
     {
         QString nam = QString::number(i);
-        Tool->setConfig(nam.latin1(), item->text(0));
+        Tool->setConfig(nam.toLatin1(), item->text(0));
         nam += QString::fromLatin1("file");
-        Tool->setConfig(nam.latin1(), item->text(1));
+        Tool->setConfig(nam.toLatin1(), item->text(1));
         i++;
     }
     Tool->setConfig("Number", QString::number(i));
@@ -158,28 +158,28 @@ void toHelpPrefs::oracleManuals() {
             file.nextToken();
             if (file.isTag())
             {
-                if (file.open() && !strcmp(file.tag(), "a"))
+                if (file.open() && file.tag() == "a")
                 {
                     QString href = toHelp::path(filename);
-                    href += QString::fromLatin1(file.value("href"));
+                    href += file.value("href");
                     if (!href.isEmpty() &&
                         !dsc.isEmpty() &&
-                        href.find(isToc) >= 0 &&
-                        file.value("title"))
+                        href.indexOf(isToc) >= 0 &&
+                        !file.value("title").isNull())
                     {
-                        new toTreeWidgetItem(FileList, dsc.simplifyWhiteSpace(), href);
+                        new toTreeWidgetItem(FileList, dsc.simplified(), href);
                         inDsc = false;
                         dsc = QString::null;
                     }
                 }
-                else if (file.open() && (!strcmp(file.tag(), "dd") || !strcmp(file.tag(), "book")))
+                else if (file.open() && file.tag() == "dd" || file.tag() == "book")
                 {
                     dsc = QString::null;
                     inDsc = true;
                 }
             }
             else if (inDsc)
-                dsc += QString::fromLatin1(file.text());
+                dsc += file.text();
         }
     }
     catch (const QString &str)
@@ -213,12 +213,13 @@ void toHelpTool::displayHelp(void)
 
 static toHelpTool HelpTool;
 
-toHelp::toHelp(QWidget *parent, const char *name, bool modal)
-        : QDialog(parent/*, name, modal*/,
-                  Qt::WStyle_Customize | Qt::WStyle_NormalBorder |
-                  Qt::WStyle_Title | Qt::WStyle_SysMenu |
-                  Qt::WStyle_Minimize | Qt::WStyle_Maximize)
-{
+toHelp::toHelp(QWidget *parent, QString name, bool modal)
+        : QDialog(parent,
+                  Qt::Window |
+                  Qt::WindowTitleHint |
+                  Qt::WindowSystemMenuHint |
+                  Qt::WindowMinimizeButtonHint |
+                  Qt::WindowMaximizeButtonHint) {
     setupUi(this);
     setModal(modal);
 
@@ -250,14 +251,14 @@ toHelp::toHelp(QWidget *parent, const char *name, bool modal)
         for (int i = 0;i < tot;i++)
         {
             QString num = QString::number(i);
-            QString dsc = HelpTool.config(num.latin1(), "");
+            QString dsc = HelpTool.config(num.toLatin1(), "");
             num += QString::fromLatin1("file");
-            QString file = HelpTool.config(num.latin1(), "");
+            QString file = HelpTool.config(num.toLatin1(), "");
             Dsc[dsc] = file;
         }
     }
 
-    splitter->setResizeMode(tabs, QSplitter::KeepSize);
+    splitter->setStretchFactor(splitter->indexOf(tabs), 0);
     setGeometry(x(), y(), std::max(width(), 640), std::max(height(), 480));
 
     QTreeWidgetItem * lastParent = NULL;
@@ -290,14 +291,14 @@ toHelp::toHelp(QWidget *parent, const char *name, bool modal)
                 {
                     if (inA)
                     {
-                        dsc += QString::fromLatin1(file.text());
-                        dsc = dsc.simplifyWhiteSpace();
+                        dsc += file.text();
+                        dsc = dsc.simplified();
                     }
                 }
                 else
                 {
-                    const char *c = file.tag();
-                    if (!strcmp(c, "a"))
+                    QString c = file.tag();
+                    if (c == "a")
                     {
                         if (file.open())
                         {
@@ -311,12 +312,12 @@ toHelp::toHelp(QWidget *parent, const char *name, bool modal)
                                     !dsc.isEmpty() &&
                                     !href.isEmpty())
                             {
-                                if (href.find("//") < 0 &&
-                                        href.find("..") < 0)
+                                if (href.indexOf("//") < 0 &&
+                                        href.indexOf("..") < 0)
                                 {
                                     last = new QTreeWidgetItem(parent, QStringList() << dsc);
                                     filename = path;
-                                    filename += QString::fromLatin1(href);
+                                    filename += href;
                                     last->setText(2, filename);
                                 }
                                 dsc = "";
@@ -324,7 +325,7 @@ toHelp::toHelp(QWidget *parent, const char *name, bool modal)
                             inA = false;
                         }
                     }
-                    else if (!strcmp(c, "dl"))
+                    else if (c == "dl")
                     {
                         if (file.open())
                         {
@@ -348,7 +349,7 @@ toHelp::toHelp(QWidget *parent, const char *name, bool modal)
     }
 
     for (int i = 0; i < Sections->topLevelItemCount(); ++i)
-        Manuals->insertItem(Sections->topLevelItem(i)->text(0));
+        Manuals->addItem(Sections->topLevelItem(i)->text(0));
 
     Progress = new QProgressBar(tabs);
     Progress->setMaximum(Dsc.size());
@@ -377,17 +378,17 @@ void toHelp::displayHelp(const QString &context, QWidget *parent)
 {
     toHelp *window;
     if (!Window || parent)
-        window = new toHelp(NULL, tr("Help window"), parent);
+        window = new toHelp(parent, tr("Help window"), false);
     else
         window = Window;
     QString file = path();
 
     file += context;
 
-    if (context.find("htm") >= 0)
-        window->Help->setTextFormat(Qt::RichText);
-    else
-        window->Help->setTextFormat(Qt::AutoText);
+//     if (context.indexOf("htm") >= 0)
+//         window->Help->setTextFormat(Qt::RichText);
+//     else
+//         window->Help->setTextFormat(Qt::AutoText);
     window->Help->setSource(file);
 
     if (parent)
@@ -430,10 +431,10 @@ void toHelp::changeContent(QTreeWidgetItem * item, QTreeWidgetItem *)
     disconnect(Help, SIGNAL(textChanged(void)),
                this, SLOT(removeSelection(void)));
 
-    if (item->text(2).find("htm") >= 0)
-        Help->setTextFormat(Qt::RichText);
-    else
-        Help->setTextFormat(Qt::AutoText);
+//     if (item->text(2).indexOf("htm") >= 0)
+//         Help->setTextFormat(Qt::RichText);
+//     else
+//         Help->setTextFormat(Qt::AutoText);
     if (!item->text(2).isEmpty())
         Help->setSource(item->text(2));
 
@@ -446,7 +447,7 @@ void toHelp::search(void)
     if (Searching)
         return ;
     Result->clear();
-    QStringList words = QStringList::split(QRegExp(QString::fromLatin1("\\s+")), SearchLine->text().lower());
+    QStringList words = SearchLine->text().toLower().split(QRegExp(QString::fromLatin1("\\s+")));
     if (words.count() == 0)
         return ;
     QRegExp strip(QString::fromLatin1("\\d+-\\d+\\s*,\\s+"));
@@ -461,7 +462,7 @@ void toHelp::search(void)
     for (int i = 0; i < Sections->topLevelItemCount(); ++i)
     {
         parent = Sections->topLevelItem(i);
-        if (Manuals->currentItem() == 0 || parent->text(0) == Manuals->currentText())
+        if (Manuals->currentIndex() == 0 || parent->text(0) == Manuals->currentText())
         {
             QString path = toHelp::path(parent->text(2));
             QString filename = path;
@@ -482,28 +483,28 @@ void toHelp::search(void)
                     {
                         if (file.open())
                         {
-                            if (!strcmp(file.tag(), "a"))
+                            if (file.tag() == "a")
                             {
                                 href = file.value("href");
                                 if (href[0] == '#')
                                     href = "";
-                                else if (href.find("..") >= 0)
+                                else if (href.indexOf("..") >= 0)
                                     href = "";
                             }
-                            else if (!strcmp(file.tag(), "dd"))
+                            else if (file.tag() == "dd")
                             {
                                 inDsc = true;
                                 aRestart = false;
                                 href = dsc = "";
                             }
-                            else if (!strcmp(file.tag(), "dl"))
+                            else if (file.tag() == "dl")
                             {
-                                toPush(Context, QString::fromLatin1(dsc.simplifyWhiteSpace()));
+                                toPush(Context, dsc.simplified());
                                 href = dsc = "";
                                 inDsc = true;
                             }
                         }
-                        else if (!strcmp(file.tag(), "a"))
+                        else if (file.tag() == "a")
                         {
                             if (!dsc.isEmpty() &&
                                     !href.isEmpty())
@@ -515,15 +516,15 @@ void toHelp::search(void)
                                         tmp += *i;
                                         tmp += QString::fromLatin1(", ");
                                     }
-                                tmp += QString::fromLatin1(dsc.simplifyWhiteSpace());
+                                tmp += dsc.simplified();
                                 QString url = path;
-                                url += QString::fromLatin1(href);
+                                url += href;
                                 aRestart = true;
 
                                 bool incl = true;
                                 {
                                     for (int i = 0;i < words.count();i++)
-                                        if (!tmp.contains(words[i], false))
+                                        if (!tmp.contains(words[i], Qt::CaseInsensitive))
                                         {
                                             incl = false;
                                             break;
@@ -534,14 +535,16 @@ void toHelp::search(void)
                                 {
                                     tmp.replace(strip, QString::fromLatin1(" "));
                                     tmp.replace(stripend, QString::fromLatin1(" "));
-                                    QTreeWidgetItem *item = new QTreeWidgetItem(Result, QStringList() << tmp.simplifyWhiteSpace());
+                                    QTreeWidgetItem *item = new QTreeWidgetItem(
+                                        Result,
+                                        QStringList() << tmp.simplified());
                                     item->setText(1, parent->text(0));
                                     item->setText(2, url);
                                 }
                                 href = "";
                             }
                         }
-                        else if (!strcmp(file.tag(), "dl"))
+                        else if (file.tag() == "dl")
                         {
                             toPop(Context);
                         }
@@ -624,6 +627,6 @@ void toHelp::setSelection(QTreeWidget *lst, const QString &source)
 
 void toHelp::removeSelection(void)
 {
-    setSelection(Sections, Help->source());
-    setSelection(Result, Help->source());
+    setSelection(Sections, Help->source().toString());
+    setSelection(Result, Help->source().toString());
 }

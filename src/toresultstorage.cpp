@@ -65,6 +65,7 @@ public:
     { }
     virtual void paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align)
     {
+#if 0                           // disabled, wrong override
         if (column == 8)
         {
             QString ct = text(column);
@@ -123,6 +124,7 @@ public:
         {
             toTreeWidgetItem::paintCell(p, cg, column, width, align);
         }
+#endif
     }
 };
 
@@ -732,9 +734,12 @@ bool toStorageExtent::extent::operator == (const toStorageExtent::extent &ext) c
 }
 
 toStorageExtent::toStorageExtent(QWidget *parent, const char *name)
-        : QWidget(parent, name)
+    : QWidget(parent)
 {
-    setBackgroundColor(Qt::white);
+    setObjectName(name);
+    QPalette pal = palette();
+    pal.setColor(backgroundRole(), Qt::white);
+    setPalette(pal);
 }
 
 void toStorageExtent::highlight(const QString &owner, const QString &table,
@@ -899,6 +904,7 @@ void toStorageExtent::setFile(const QString &tablespace, int file)
 
 void toStorageExtent::paintEvent(QPaintEvent *)
 {
+#if 0                           // disabled, wrong override
     QPainter paint(this);
     if ( FileOffset.empty() )
         return ;
@@ -957,6 +963,7 @@ void toStorageExtent::paintEvent(QPaintEvent *)
         j++;
         fileo++;
     }
+#endif
 }
 
 
@@ -995,8 +1002,8 @@ static toSQL SQLListExtents("toResultStorage:ListExtents",
                             "Oracle");
 
 toResultExtent::toResultExtent(QWidget *parent, const char *name)
-        : QSplitter(Qt::Vertical, parent, name)
-{
+    : QSplitter(Qt::Vertical, parent) {
+    setObjectName(name);
     Graph = new toStorageExtent(this);
     List = new toResultTableView(true, false, this);
     List->setSQL(SQLListExtents);

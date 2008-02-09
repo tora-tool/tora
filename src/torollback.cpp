@@ -123,57 +123,52 @@ toRollbackPrefs::toRollbackPrefs(toTool *tool, QWidget* parent, const char* name
 
     setTitle(qApp->translate("toRollbackPrefs", "Rollback Tool" ));
 
-    OldEnable = new QCheckBox(this, "OldEnable");
+    OldEnable = new QCheckBox(this);
     OldEnable->setText(qApp->translate("toRollbackPrefs",
                                        "&Enable snapshot too old detection." ));
-    QToolTip::add
-    (OldEnable, qApp->translate(
-        "toRollbackPrefs",
-        "Enable snapshot too old detection, will put load on large databases."));
+    OldEnable->setToolTip(qApp->translate(
+                              "toRollbackPrefs",
+                              "Enable snapshot too old detection, will put load on large databases."));
     vbox->addWidget(OldEnable);
 
-    AlignLeft = new QCheckBox(this, "AlignLeft");
+    AlignLeft = new QCheckBox(this);
     AlignLeft->setText(qApp->translate("toRollbackPrefs",
                                        "&Disregard start extent." ));
     AlignLeft->setEnabled(false);
     connect(OldEnable, SIGNAL(toggled(bool)), AlignLeft, SLOT(setEnabled(bool)));
-    QToolTip::add
-    (AlignLeft, qApp->translate(
-        "toRollbackPrefs",
-        "Always start from the left border when displaying extent usage."));
+    AlignLeft->setToolTip(qApp->translate(
+                              "toRollbackPrefs",
+                              "Always start from the left border when displaying extent usage."));
     vbox->addWidget(AlignLeft);
 
-    NoExec = new QCheckBox(this, "NoCopy");
+    NoExec = new QCheckBox(this);
     NoExec->setText(qApp->translate("toRollbackPrefs",
                                     "&Restart reexecuted statements" ));
     NoExec->setEnabled(false);
     connect(OldEnable, SIGNAL(toggled(bool)), NoExec, SLOT(setEnabled(bool)));
-    QToolTip::add
-    (NoExec, qApp->translate(
-        "toRollbackPrefs",
-        "Start statements again that have been reexecuted."));
+    NoExec->setToolTip(qApp->translate(
+                           "toRollbackPrefs",
+                           "Start statements again that have been reexecuted."));
     vbox->addWidget(NoExec);
 
-    NeedRead = new QCheckBox(this, "Needread");
+    NeedRead = new QCheckBox(this);
     NeedRead->setText(qApp->translate("toRollbackPrefs",
                                       "&Must read buffers" ));
     NeedRead->setEnabled(false);
     connect(OldEnable, SIGNAL(toggled(bool)), NeedRead, SLOT(setEnabled(bool)));
-    QToolTip::add
-    (NeedRead, qApp->translate(
-        "toRollbackPrefs",
-        "Don't display statements that have not read buffers."));
+    NeedRead->setToolTip(qApp->translate(
+                             "toRollbackPrefs",
+                             "Don't display statements that have not read buffers."));
     vbox->addWidget(NeedRead);
 
-    NeedTwo = new QCheckBox(this, "NeedTwo");
+    NeedTwo = new QCheckBox(this);
     NeedTwo->setText(qApp->translate("toRollbackPrefs",
                                      "&Exclude first appearance" ));
     NeedTwo->setEnabled(false);
     connect(OldEnable, SIGNAL(toggled(bool)), NeedTwo, SLOT(setEnabled(bool)));
-    QToolTip::add
-        (NeedTwo, qApp->translate(
-            "toRollbackPrefs",
-            "A statement must be visible at least two consecutive polls to be displayed."));
+    NeedTwo->setToolTip(qApp->translate(
+                            "toRollbackPrefs",
+                            "A statement must be visible at least two consecutive polls to be displayed."));
     vbox->addWidget(NeedTwo);
 
     QSpacerItem *spacer = new QSpacerItem(
@@ -247,7 +242,7 @@ toRollbackDialog::toRollbackDialog(toConnection &Connection, QWidget* parent, co
     {
         toQuery q(Connection, SQLTablespace);
         while (!q.eof())
-            Tablespace->insertItem(q.readValue());
+            Tablespace->addItem(q.readValue());
     }
     catch (...)
         {}
@@ -317,6 +312,7 @@ static bool BarsAlignLeft = true;
 static void PaintBars(toTreeWidgetItem *item, QPainter *p, const QColorGroup & cg,
                       int width, std::list<double> &val, std::list<double> &maxExt, std::list<double> &curExt)
 {
+#if 0                           // disabled, wrong override
     if ( val.empty() )
     {
         p->fillRect(0, 0, width, item->height(),
@@ -368,6 +364,7 @@ static void PaintBars(toTreeWidgetItem *item, QPainter *p, const QColorGroup & c
             lastHeight = height;
         }
     }
+#endif
 }
 
 static toSQL SQLRollback("toRollback:Information",
@@ -418,6 +415,7 @@ class rollbackItem : public toResultViewItem
         virtual void paintCell (QPainter *pnt, const QColorGroup & cg,
                                 int column, int width, int alignment)
         {
+#if 0                           // disabled, wrong override
             if (column == 4)
             {
                 std::list<double> items;
@@ -437,6 +435,7 @@ class rollbackItem : public toResultViewItem
             }
             else
                 toResultViewItem::paintCell(pnt, cg, column, width, alignment);
+#endif
         }
 
         virtual void setup(void)
@@ -756,7 +755,7 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
 
     toolbar->addSeparator();
 
-    QLabel * lab1 = new QLabel(tr("Refresh") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+    QLabel * lab1 = new QLabel(tr("Refresh") + " ", toolbar);
     toolbar->addWidget(lab1);
     connect(Refresh = toRefreshCreate(toolbar, TO_TOOLBAR_WIDGET_NAME),
             SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
@@ -774,7 +773,7 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
     connect(Segments, SIGNAL(selectionChanged(toTreeWidgetItem *)),
             this, SLOT(changeItem(toTreeWidgetItem *)));
 
-    QTabWidget *tab = new QTabWidget(splitter, "TabWidget");
+    QTabWidget *tab = new QTabWidget(splitter);
     TransactionUsers = new toResultTableView(false, false, tab);
     tab->addTab(TransactionUsers, tr("Transaction Users"));
     TransactionUsers->setSQL(SQLTransactionUsers);

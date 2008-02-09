@@ -261,7 +261,7 @@ void toDebugText::setData(const QString &schema, const QString &type, const QStr
 toDebugText::toDebugText(toTreeWidget *breakpoints,
                          QWidget *parent,
                          toDebug *debugger)
-        : toHighlightedText(parent, QString::number(++ID).latin1()),
+        : toHighlightedText(parent, QString::number(++ID).toLatin1()),
         Debugger(debugger),
         Breakpoints(breakpoints)
 {
@@ -351,15 +351,15 @@ void toDebugText::mouseMoveEvent(QMouseEvent *me)
     if (me->x() > DEBUG_INDENT + view.left())
     {
         if (LastX <= DEBUG_INDENT + view.left())
-            setCursor(Qt::ibeamCursor);
-        if (me->state() != 0)
+            setCursor(Qt::IBeamCursor);
+        if (me->buttons() != 0)
             toHighlightedText::mouseMoveEvent(me);
     }
     else
     {
         if (LastX > DEBUG_INDENT + view.left())
-            setCursor(Qt::ibeamCursor);
-        setCursor(Qt::arrowCursor);
+            setCursor(Qt::IBeamCursor);
+        setCursor(Qt::ArrowCursor);
     }
     LastX = me->x();
 }

@@ -57,6 +57,7 @@
 #include <QPixmap>
 #include <QMouseEvent>
 #include <QMenu>
+#include <QPrintDialog>
 
 #include "icons/chart.xpm"
 #include "icons/print.xpm"
@@ -71,7 +72,7 @@ toPieChart::toPieChart(QWidget *parent, const char *name, Qt::WFlags f)
     Legend = true;
     DisplayPercent = false;
 
-    setIcon(QPixmap(const_cast<const char**>(chart_xpm)));
+    setWindowIcon(QPixmap(const_cast<const char**>(chart_xpm)));
     setMinimumSize(60, 60);
     Menu = NULL;
 
@@ -142,10 +143,10 @@ toPieChart::toPieChart(toPieChart *pie,
     if(name)
         setObjectName(name);
 
-    setIcon(QPixmap(const_cast<const char**>(chart_xpm)));
+    setWindowIcon(QPixmap(const_cast<const char**>(chart_xpm)));
     Menu = NULL;
 
-    setCaption(Title);
+    setWindowTitle(Title);
 
     setMinimumSize(60, 60);
     // Use list font
@@ -208,7 +209,7 @@ void toPieChart::paintChart(QPainter *p, QRect rect)
         f.setBold(true);
         p->setFont(f);
         QRect bounds = fm.boundingRect(0, 0, rect.width(), rect.height(), FONT_ALIGN, Title);
-        p->drawText(0, 2, rect.width(), bounds.height(), Qt::AlignHCenter | Qt::AlignTop | Qt::ExpandTabs, Title);
+        p->drawText(0, 2, rect.width(), bounds.height(), Qt::AlignHCenter | Qt::AlignTop, Title);
         p->restore();
         p->translate(0, bounds.height() + 2);
         bottom -= bounds.height() + 2;
@@ -310,14 +311,15 @@ void toPieChart::paintChart(QPainter *p, QRect rect)
     if (tot == 0)
     {
         p->drawText(QRect(2, 2, right - 4, bottom - 4),
-                    Qt::AlignCenter | Qt::WordBreak, tr("All values are 0 in this chart"));
+                    Qt::AlignCenter//  | Qt::WordBreak
+                    , tr("All values are 0 in this chart"));
         return ;
     }
 
     int cp = 0;
     int pos = 0;
     unsigned int count = 0;
-    ChartRect = p->xForm(QRect(2, 2, right - 4, bottom - 4));
+    ChartRect = p->combinedTransform().mapRect(QRect(2, 2, right - 4, bottom - 4));
     Angels.clear();
     for (std::list<double>::iterator i = Values.begin();i != Values.end();i++)
     {
@@ -392,8 +394,9 @@ void toPieChart::paintEvent(QPaintEvent *)
 void toPieChart::editPrint(void)
 {
     TOPrinter printer;
-    printer.setMinMax(1, 1);
-    if (printer.setup())
+    QPrintDialog dialog(&printer, this);
+    dialog.setMinMax(1, 1);
+    if(dialog.exec())
     {
         printer.setCreator(tr(TOAPPNAME));
         QPainter painter(&printer);

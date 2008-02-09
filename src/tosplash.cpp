@@ -43,6 +43,7 @@
 #include <QDesktopWidget>
 #include <QProgressBar>
 #include <QVBoxLayout>
+#include <QPalette>
 
 #include "icons/largelogo.xpm"
 
@@ -57,14 +58,17 @@ toSplash::toSplash(QWidget *parent, const char *name, Qt::WFlags f)
     vbox->setContentsMargins(0, 0, 0, 0);
     setLayout(vbox);
 
-    setBackgroundColor(Qt::white);
-    QLabel *logo = new QLabel(this, "Logo");
+    QPalette palette = this->palette();
+    palette.setColor(backgroundRole(), Qt::white);
+    setPalette(palette);
+
+    QLabel *logo = new QLabel("Logo", this);
     vbox->addWidget(logo);
-    logo->setBackgroundColor(Qt::white);
+    logo->setPalette(palette);
 	logo->setPixmap(QPixmap(QString::fromLatin1(":/icons/largelogo.xpm")));
     Label = new QLabel(tr("Loading plugins"), this);
     vbox->addWidget(Label);
-    Label->setBackgroundColor(Qt::white);
+    Label->setPalette(palette);
     Progress = new QProgressBar(this);
     vbox->addWidget(Progress);
 

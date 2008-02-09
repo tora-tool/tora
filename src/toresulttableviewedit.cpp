@@ -172,8 +172,8 @@ void toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &conn) 
 
     bool where = false;
     for(int i = 1; i < change.row.size(); i++) {
-        if (!oracle || (!Headers[i].datatype.upper().startsWith(("LONG")) &&
-                        !Headers[i].datatype.upper().contains(("LOB")))) {
+        if (!oracle || (!Headers[i].datatype.toUpper().startsWith(("LONG")) &&
+                        !Headers[i].datatype.toUpper().contains(("LOB")))) {
             if(where)
                 sql += " AND ";
             else
@@ -202,7 +202,7 @@ void toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &conn) 
     toQList args;
     for(int i = 1; i < change.row.size(); i++) {
         if(!change.row[i].isNull() && (!oracle || (!Headers[i].datatype.startsWith(("LONG")) &&
-                                                   !Headers[i].datatype.upper().contains(("LOB"))))) {
+                                                   !Headers[i].datatype.toUpper().contains(("LOB"))))) {
             toPush(args, change.row[i]);
         }
     }
@@ -241,13 +241,13 @@ void toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn) {
         sql += QString::number(num + 1);
 
         if(change.row[i].isBinary()) {
-            if(Headers[i].datatype.upper().contains("LOB"))
+            if(Headers[i].datatype.toUpper().contains("LOB"))
                 sql += ("<blob>");
             else
                 sql += ("<raw_long,in>");
         }
         else {
-            if(Headers[i].datatype.upper().contains("LOB"))
+            if(Headers[i].datatype.toUpper().contains("LOB"))
                 sql += ("<clob>");
             else
                 sql += ("<char[4000],in>");
@@ -283,13 +283,13 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn) 
         sql += ("= :f0");
 
         if(change.row[change.column].isBinary()) {
-            if(Headers[change.column].datatype.upper().contains("LOB"))
+            if(Headers[change.column].datatype.toUpper().contains("LOB"))
                 sql += ("<blob>");
             else
                 sql += ("<raw_long,in>");
         }
         else {
-            if(Headers[change.column].datatype.upper().contains("LOB"))
+            if(Headers[change.column].datatype.toUpper().contains("LOB"))
                 sql += ("<clob>");
             else
                 sql += ("<char[4000],in>");
@@ -309,8 +309,8 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn) 
                                             Qt::Horizontal,
                                             Qt::DisplayRole).toString());
 
-        if(!oracle || (!Headers[change.column].datatype.upper().startsWith(("LONG")) &&
-                       !Headers[change.column].datatype.upper().contains(("LOB")))) {
+        if(!oracle || (!Headers[change.column].datatype.toUpper().startsWith(("LONG")) &&
+                       !Headers[change.column].datatype.toUpper().contains(("LOB")))) {
             if(where)
                 sql += (" AND (");
             else
@@ -359,8 +359,8 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn) 
     for(toResultModel::Row::iterator j = change.row.begin() + 1;
         j != change.row.end();
         j++, col++) {
-        if (!oracle || (!Headers[col].datatype.upper().startsWith(("LONG")) &&
-                        !Headers[col].datatype.upper().contains(("LOB")))) {
+        if (!oracle || (!Headers[col].datatype.toUpper().startsWith(("LONG")) &&
+                        !Headers[col].datatype.toUpper().contains(("LOB")))) {
             if((*j).isNull()) {
                 if(!(*j).isNumber())
                     toPush(args, toQValue(QString("")));

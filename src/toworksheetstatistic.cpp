@@ -302,8 +302,8 @@ void toWorksheetStatistic::displayMenu(void) {
     RemoveMenu->clear();
     int id = 1;
     for (std::list<data>::iterator i = Open.begin();i != Open.end();i++) {
-        SaveMenu->insertItem((*i).Label->text(), id);
-        RemoveMenu->insertItem((*i).Label->text(), id);
+        SaveMenu->addAction((*i).Label->text());
+        RemoveMenu->addAction((*i).Label->text());
         id++;
     }
 }

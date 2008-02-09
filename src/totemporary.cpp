@@ -54,14 +54,11 @@
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qmenubar.h>
-#include <q3header.h>
-#include <q3popupmenu.h>
-#include <q3progressdialog.h>
 #include <qsplitter.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qworkspace.h>
-//Added by qt3to4:
+
 #include <QPixmap>
 #include <QList>
 

@@ -179,7 +179,7 @@ class toBrowseTemplate : public QObject, public toTemplateProvider {
 
 public:
     toBrowseTemplate(void)
-        : QObject(NULL, "browsertemplate"), toTemplateProvider("Browser") {
+        : QObject(NULL), toTemplateProvider("Browser") {
         Registered = false;
         Filter = NULL;
     }

@@ -46,8 +46,9 @@
 
 
 toResultCombo::toResultCombo(QWidget *parent, const char *name)
-        : QComboBox(parent, name), Query(0)
+        : QComboBox(parent), Query(0)
 {
+    setObjectName(name);
     connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
     connect(this, SIGNAL(activated(int)),
             this, SLOT(changeSelected(void)));
@@ -66,10 +67,10 @@ void toResultCombo::query(const QString &sql, const toQList &param)
     try
     {
         clear();
-        insertStringList(Additional);
+        addItems(Additional);
         for (int i = 0;i < Additional.count();i++)
             if (Additional[i] == Selected)
-                setCurrentItem(i);
+                setCurrentIndex(i);
 
         Query = new toNoBlockQuery(connection(), toQuery::Background, sql, param);
         Poll.start(100);
@@ -93,9 +94,9 @@ void toResultCombo::poll(void)
             while (Query->poll() && !Query->eof())
             {
                 QString t = Query->readValue();
-                insertItem(t);
+                addItem(t);
                 if (t == Selected)
-                    setCurrentItem(count() - 1);
+                    setCurrentIndex(count() - 1);
             }
 
             if (Query->eof())

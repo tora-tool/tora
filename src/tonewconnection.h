@@ -61,7 +61,7 @@ class toNewConnection : public QDialog,
 
 public:
     toNewConnection(QWidget* parent = 0,
-                    const char* name = 0,
+                    QString name = QString(),
                     bool modal = false,
                     Qt::WFlags fl = 0);
     ~toNewConnection();

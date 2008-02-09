@@ -90,10 +90,10 @@ public:
 
         setTitle(qApp->translate("toSGATracePrefs", "SGA Trace"));
 
-        AutoUpdate = new QCheckBox(this, "AutoRefresh");
+        AutoUpdate = new QCheckBox(this);
         AutoUpdate->setText(qApp->translate("toSGATracePrefs", "&Auto update"));
-        QToolTip::add
-        (AutoUpdate, qApp->translate("toSGATracePrefs", "Update automatically after change of schema."));
+        AutoUpdate->setToolTip(qApp->translate("toSGATracePrefs",
+                                               "Update automatically after change of schema."));
         vbox->addWidget(AutoUpdate);
 
         QSpacerItem *spacer = new QSpacerItem(
@@ -149,12 +149,12 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
 
     toolbar->addSeparator();
 
-    QLabel * labSchema = new QLabel(tr("Schema") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+    QLabel * labSchema = new QLabel(tr("Schema") + " ", toolbar);
     toolbar->addWidget(labSchema);
 
     Schema = new toResultCombo(toolbar);
     Schema->additionalItem(tr("Any"));
-    Schema->setSelected(connection.user().upper());
+    Schema->setSelected(connection.user().toUpper());
     Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
     toolbar->addWidget(Schema);
 
@@ -162,7 +162,7 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
 
     toolbar->addSeparator();
 
-    QLabel * labRef = new QLabel(tr("Refresh") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+    QLabel * labRef = new QLabel(tr("Refresh") + " ", toolbar);
     toolbar->addWidget(labRef);
     connect(Refresh = toRefreshCreate(toolbar, TO_TOOLBAR_WIDGET_NAME),
             SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
@@ -170,33 +170,33 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
 
     toolbar->addSeparator();
 
-    QLabel * labType = new QLabel(tr("Type") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+    QLabel * labType = new QLabel(tr("Type") + " ", toolbar);
     toolbar->addWidget(labType);
 
-    Type = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
-    Type->insertItem(tr("SGA"));
-    Type->insertItem(tr("Long operations"));
+    Type = new QComboBox(toolbar);
+    Type->addItem(tr("SGA"));
+    Type->addItem(tr("Long operations"));
     toolbar->addWidget(Type);
 
     toolbar->addSeparator();
 
-    QLabel * labSelect = new QLabel(tr("Selection") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME);
+    QLabel * labSelect = new QLabel(tr("Selection") + " ", toolbar);
     toolbar->addWidget(labSelect);
 
-    Limit = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
-    Limit->insertItem(tr("All"));
-    Limit->insertItem(tr("Unfinished"));
-    Limit->insertItem(tr("1 execution, 1 parse"));
-    Limit->insertItem(tr("Top executions"));
-    Limit->insertItem(tr("Top sorts"));
-    Limit->insertItem(tr("Top diskreads"));
-    Limit->insertItem(tr("Top buffergets"));
-    Limit->insertItem(tr("Top rows"));
-    Limit->insertItem(tr("Top sorts/exec"));
-    Limit->insertItem(tr("Top diskreads/exec"));
-    Limit->insertItem(tr("Top buffergets/exec"));
-    Limit->insertItem(tr("Top rows/exec"));
-    Limit->insertItem(tr("Top buffers/row"));
+    Limit = new QComboBox(toolbar);
+    Limit->addItem(tr("All"));
+    Limit->addItem(tr("Unfinished"));
+    Limit->addItem(tr("1 execution, 1 parse"));
+    Limit->addItem(tr("Top executions"));
+    Limit->addItem(tr("Top sorts"));
+    Limit->addItem(tr("Top diskreads"));
+    Limit->addItem(tr("Top buffergets"));
+    Limit->addItem(tr("Top rows"));
+    Limit->addItem(tr("Top sorts/exec"));
+    Limit->addItem(tr("Top diskreads/exec"));
+    Limit->addItem(tr("Top buffergets/exec"));
+    Limit->addItem(tr("Top rows/exec"));
+    Limit->addItem(tr("Top buffers/row"));
     toolbar->addWidget(Limit);
 
     toolbar->addWidget(new toSpacer());
@@ -217,7 +217,7 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
 
     connect(Trace, SIGNAL(selectionChanged()),
             this, SLOT(changeItem()));
-    CurrentSchema = connection.user().upper();
+    CurrentSchema = connection.user().toUpper();
     updateSchemas();
 
     try {
@@ -306,7 +306,7 @@ void toSGATrace::refresh(void) {
         updateSchemas();
 
         QString select;
-        switch (Type->currentItem()) {
+        switch (Type->currentIndex()) {
         case 0:
             select = toSQL::string(SQLSGATrace, connection());
             break;
@@ -321,11 +321,11 @@ void toSGATrace::refresh(void) {
             select.append(QString::fromLatin1("\n   and b.username = :f1<char[101]>"));
 
         QString order;
-        switch (Limit->currentItem()) {
+        switch (Limit->currentIndex()) {
         case 0:
             break;
         case 1:
-            if (Type->currentItem() == 1)
+            if (Type->currentIndex() == 1)
                 select += QString::fromLatin1("\n   and b.sofar != b.totalwork");
             else
                 toStatusMessage(tr("Unfinished is only available for long operations"));
@@ -369,8 +369,8 @@ void toSGATrace::refresh(void) {
         }
 
         if (!order.isEmpty())
-            select = QString::fromLatin1("SELECT * FROM (\n") + select +
-                     QString::fromLatin1("\n ORDER BY " + order + " DESC)\n WHERE ROWNUM < 20");
+            select = QString("SELECT * FROM (\n") + select +
+                QString("\n ORDER BY " + order + " DESC)\n WHERE ROWNUM < 20");
 
         Trace->setSQL(QString::null);
         if (!CurrentSchema.isEmpty()) {

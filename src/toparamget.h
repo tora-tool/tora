@@ -60,7 +60,7 @@ class toParamGetButton : public QPushButton {
 
 public:
     toParamGetButton(int row, QWidget *parent = 0, const char *name = 0)
-        : QPushButton(parent, name), Row(row) {
+        : QPushButton(name, parent), Row(row) {
         
         connect(this, SIGNAL(clicked()), this, SLOT(internalClicked()));
     }

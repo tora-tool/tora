@@ -118,15 +118,23 @@ void toMemoEditor::saveFile(void)
     Editor->editSave(true);
 }
 
-toMemoEditor::toMemoEditor(QWidget *parent, const QString &str, int row, int col,
-                           bool sql, bool modal, bool navigation)
-        : QDialog(parent, NULL, modal, (Qt::WindowFlags) (modal ? 0 : Qt::WDestructiveClose)), Row(row), Col(col)
-{
+toMemoEditor::toMemoEditor(QWidget *parent,
+                           const QString &str,
+                           int row,
+                           int col,
+                           bool sql,
+                           bool modal,
+                           bool navigation)
+    : QDialog(parent),
+      Row(row),
+      Col(col) {
+
+    setModal(modal);
     setMinimumSize(400, 300);
     QDesktopWidget *paramDesktop = new QDesktopWidget;
     setMaximumWidth(paramDesktop->availableGeometry(this).width()*2 / 3);
 
-    setCaption("Memo Editor");
+    setWindowTitle("Memo Editor");
 
     QVBoxLayout *vbox = new QVBoxLayout;
     vbox->setSpacing(0);
@@ -229,7 +237,8 @@ toMemoEditor::toMemoEditor(QWidget *parent, const QString &str, int row, int col
 
     Toolbar->addSeparator();
 
-    Null = new QCheckBox(tr("NULL"), Toolbar, TO_TOOLBAR_WIDGET_NAME);
+    Null = new QCheckBox(tr("NULL"), Toolbar);
+    Null->setObjectName(TO_TOOLBAR_WIDGET_NAME);
     Toolbar->addWidget(Null);
     connect(Null, SIGNAL(toggled(bool)), this, SLOT(null(bool)));
     Null->setEnabled(!Editor->isReadOnly());
@@ -237,7 +246,8 @@ toMemoEditor::toMemoEditor(QWidget *parent, const QString &str, int row, int col
 
     setText(str);
 
-    Label = new QLabel(Toolbar, TO_TOOLBAR_WIDGET_NAME);
+    Label = new QLabel(Toolbar);
+    Label->setObjectName(TO_TOOLBAR_WIDGET_NAME);
     Label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     Label->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                      QSizePolicy::Minimum));

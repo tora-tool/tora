@@ -210,18 +210,18 @@ static QString QueryParam(const QString &in, toQList &params, std::list<QString>
     QString ret;
     bool inString = false;
     toQList::iterator cpar = params.begin();
-    QString query = QString::fromUtf8(in);
+    QString query = QString(in);
 
     std::map<QString, QString> binds;
 
     for (int i = 0;i < query.length();i++)
     {
         QChar rc = query.at(i);
-        char  c  = rc.latin1();
+        char  c  = rc.toLatin1();
 
         char nc = 0;
         if (i + 1 < query.length())
-            nc = query.at(i + 1).latin1();
+            nc = query.at(i + 1).toLatin1();
 
         switch (c)
         {
@@ -252,14 +252,14 @@ static QString QueryParam(const QString &in, toQList &params, std::list<QString>
                         break;
                     nam += rc;
                 }
-                c = rc.latin1();
+                c = rc.toLatin1();
                 QString in;
                 if (c == '<')
                 {
                     for (i++;i < query.length();i++)
                     {
                         rc = query.at(i);
-                        c = rc.latin1();
+                        c = rc.toLatin1();
                         if (c == '>')
                         {
                             i++;
@@ -333,7 +333,7 @@ static QString QueryParam(const QString &in, toQList &params, std::list<QString>
                     for (int j = 0;j < tmp.length();j++)
                     {
                         QChar d = tmp.at(j);
-                        switch (d.latin1())
+                        switch (d.toLatin1())
                         {
                         case 0:
                             str += QString::fromLatin1("\\0");
@@ -891,11 +891,8 @@ static std::list<toQuery::queryDescribe> Describe(const QString &type, QSqlRecor
             case QVariant::Palette:
                 desc.Datatype = QString::fromLatin1("PALETTE");
                 break;
-            case QVariant::ColorGroup:
-                desc.Datatype = QString::fromLatin1("COLORGROUP");
-                break;
-            case QVariant::IconSet:
-                desc.Datatype = QString::fromLatin1("ICONSET");
+            case QVariant::Icon:
+                desc.Datatype = QString::fromLatin1("ICON");
                 break;
             case QVariant::Point:
                 desc.Datatype = QString::fromLatin1("POINT");
@@ -917,9 +914,6 @@ static std::list<toQuery::queryDescribe> Describe(const QString &type, QSqlRecor
             case QVariant::Double:
                 desc.Datatype = QString::fromLatin1("DOUBLE");
                 desc.AlignRight = true;
-                break;
-            case QVariant::PointArray:
-                desc.Datatype = QString::fromLatin1("POINTARRAY");
                 break;
             case QVariant::Region:
                 desc.Datatype = QString::fromLatin1("REGION");
@@ -1192,7 +1186,7 @@ class qSqlQuery : public toQuery::queryImpl
 
         QString parseReorder(const QString &str)
         {
-            if (str.upper().startsWith("TOAD"))
+            if (str.toUpper().startsWith("TOAD"))
             {
                 std::list<int> order;
                 int num = -1;
@@ -1360,7 +1354,7 @@ class qSqlQuery : public toQuery::queryImpl
             {
                 QString provider = query()->connection().provider();
                 Connection->lockDown();
-                QSqlRecord rec = Connection->Connection.record(*Query);
+                QSqlRecord rec = Query->record();
                 ret = Describe(provider, rec, ColumnOrder, ColumnOrderSize);
                 Connection->lockUp();
             }
@@ -1415,7 +1409,7 @@ class qSqlConnection : public toConnection::connectionImpl
                 bool ok = true;
                 for (int i = 0;i < name.length();i++)
                 {
-                    if (name.at(i).lower() != name.at(i) || !toIsIdent(name.at(i)))
+                    if (name.at(i).toLower() != name.at(i) || !toIsIdent(name.at(i)))
                         ok = false;
                 }
                 if (!ok)
@@ -1428,12 +1422,12 @@ class qSqlConnection : public toConnection::connectionImpl
         {
             if (connection().provider() == "PostgreSQL")
             {
-                if (name.at(0).latin1() == '\"' && name.at(name.length() - 1).latin1() == '\"')
+                if (name.at(0).toLatin1() == '\"' && name.at(name.length() - 1).toLatin1() == '\"')
                     return name.left(name.length() - 1).right(name.length() - 2);
             }
             else if (connection().provider() == "MySQL")
             {
-                if (name.at(0).latin1() == '`' && name.at(name.length() - 1).latin1() == '`')
+                if (name.at(0).toLatin1() == '`' && name.at(name.length() - 1).toLatin1() == '`')
                     return name.left(name.length() - 1).right(name.length() - 2);
             }
             return name;
@@ -1553,7 +1547,7 @@ class qSqlConnection : public toConnection::connectionImpl
                     if (sub)
                     {
                         sub->lockDown();
-                        desc = Describe(connection().provider(), sub->Connection.recordInfo(quote(table.Name)), NULL, 0);
+                        desc = Describe(connection().provider(), sub->Connection.record(quote(table.Name)), NULL, 0);
                         sub->lockUp();
                     }
                 }
@@ -1617,9 +1611,9 @@ class qSqlConnection : public toConnection::connectionImpl
                 {
                     if (query.isValid())
                     {
-                        QSqlRecord record = conn->Connection.record(query);
+                        QSqlRecord record = query.record();
                         QVariant val = query.value(record.count() - 1);
-                        ret = val.toString().latin1();
+                        ret = val.toString().toLatin1();
                     }
                 }
             }
@@ -1795,7 +1789,7 @@ void toQSqlProvider::qSqlQuery::checkQuery(void) // Must call with lockDown!!!!
 
         if (Query->isSelect())
         {
-            Record = Connection->Connection.record(*Query);
+            Record = Query->record();
             if (ColumnOrder && ColumnOrder[ColumnOrderSize - 1] == -1)
             {
                 unsigned int newsize = ColumnOrderSize + Record.count() - 1;
@@ -1845,7 +1839,7 @@ toQSqlProvider::qSqlSub *toQSqlProvider::createConnection(toConnection &conn)
     QSqlDatabase db = QSqlDatabase::addDatabase(toQSqlName(conn.provider()), dbName);
     db.setDatabaseName(conn.database());
     QString host = conn.host();
-    int pos = host.find(QString::fromLatin1(":"));
+    int pos = host.indexOf(QString(":"));
     if (pos < 0)
         db.setHostName(host);
     else

@@ -335,8 +335,7 @@ void toWorksheet::setup(bool autoLoad) {
     workToolbar->addAction(statisticAct);
 
     workToolbar->addWidget(new QLabel(tr("Refresh") + " ",
-                                      workToolbar,
-                                      TO_TOOLBAR_WIDGET_NAME));
+                                      workToolbar));
     Refresh = toRefreshCreate(workToolbar, TO_TOOLBAR_WIDGET_NAME);
     workToolbar->addWidget(Refresh);
     connect(Refresh,
@@ -384,7 +383,7 @@ void toWorksheet::setup(bool autoLoad) {
     workToolbar->addAction(saveLastAct);
 
     workToolbar->addWidget(Started = new QLabel(workToolbar));
-    Started->setAlignment(Qt::AlignRight | Qt::AlignVCenter | Qt::ExpandTabs);
+    Started->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     Started->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                        QSizePolicy::Minimum));
 
@@ -394,7 +393,7 @@ void toWorksheet::setup(bool autoLoad) {
     if (toIsMySQL(connection()))
         Schema->setSelected(connection().database());
     else if (toIsOracle(connection()) || toIsSapDB(connection()))
-        Schema->setSelected(connection().user().upper());
+        Schema->setSelected(connection().user().toUpper());
     else
         Schema->setSelected(connection().user());
     connect(Schema, SIGNAL(activated(int)), this, SLOT(changeSchema()));
@@ -440,7 +439,7 @@ void toWorksheet::setup(bool autoLoad) {
     box->setContentsMargins(0, 0, 0, 0);
     container->setLayout(box);
 
-    ResultTab->setTabEnabled(Columns, false);
+    ResultTab->setTabEnabled(ResultTab->indexOf(Columns), false);
     Plan = new toResultPlan(ResultTab);
     ResultTab->addTab(Plan, tr("E&xecution plan"));
     explainAct->setEnabled(Plan->handled());
@@ -502,7 +501,7 @@ void toWorksheet::setup(bool autoLoad) {
     StatTab->setLayout(box);
 
     ResultTab->addTab(StatTab, tr("&Statistics"));
-    ResultTab->setTabEnabled(StatTab, false);
+    ResultTab->setTabEnabled(ResultTab->indexOf(StatTab), false);
 
     Logging = new toListView(ResultTab);
     ResultTab->addTab(Logging, tr("&Logging"));
@@ -523,7 +522,7 @@ void toWorksheet::setup(bool autoLoad) {
         if (!Editor->filename().isEmpty()) {
             try {
                 QString data = toReadFile(Editor->filename());
-                Editor->setText(QString::fromLocal8Bit(data));
+                Editor->setText(QString(data));
                 Editor->setModified(false);
             }
             TOCATCH
@@ -752,22 +751,24 @@ void toWorksheet::changeResult(QWidget *widget) {
 void toWorksheet::refresh(void) {
     if (!QueryString.isEmpty())
         query(QueryString, Normal);
-    if (RefreshSeconds > 0)
-        RefreshTimer.start(RefreshSeconds*1000, true);
+    if (RefreshSeconds > 0) {
+        RefreshTimer.setSingleShot(true);
+        RefreshTimer.start(RefreshSeconds * 1000);
+    }
 }
 
 static QString unQuote(const QString &str) {
-    if (str.at(0).latin1() == '\"' && str.at(str.length() - 1).latin1() == '\"')
+    if (str.at(0).toLatin1() == '\"' && str.at(str.length() - 1).toLatin1() == '\"')
         return str.left(str.length() - 1).right(str.length() - 2);
-    return str.upper();
+    return str.toUpper();
 }
 
 bool toWorksheet::describe(const QString &query) {
     try {
         QRegExp white(QString::fromLatin1("[ \r\n\t.]+"));
-        QStringList part = QStringList::split(white, query);
-        if (part[0].upper() == QString::fromLatin1("DESC") ||
-                part[0].upper() == QString::fromLatin1("DESCRIBE")) {
+        QStringList part = query.split(white);
+        if (part[0].toUpper() == QString("DESC") ||
+                part[0].toUpper() == QString("DESCRIBE")) {
             if (toIsOracle(connection())) {
                 if (part.count() == 2) {
                     Columns->changeParams(unQuote(part[1]));
@@ -791,12 +792,12 @@ bool toWorksheet::describe(const QString &query) {
             return true;
         }
         else {
-            QWidget *curr = ResultTab->currentPage();
+            QWidget *curr = ResultTab->currentWidget();
             Current->hide();
             Result->show();
             Current = Result;
             if (curr == Columns)
-                ResultTab->showPage(Result);
+                ResultTab->setCurrentIndex(ResultTab->indexOf(Result));
             return false;
         }
     }
@@ -809,11 +810,11 @@ void toWorksheet::query(const QString &str, execType type) {
     RefreshTimer.stop();
 
     QRegExp strq(QString::fromLatin1("'[^']*'"));
-    QString chk = str.lower();
+    QString chk = str.toLower();
     chk.replace(strq, QString::fromLatin1(" "));
     bool code = false;
-    static QRegExp codere(QString::fromLatin1("[^a-z0-9]end\\s+[a-z0-9_-]*;$"), true);
-    static QRegExp codere2(QString::fromLatin1("[^a-z0-9]end;"), true);
+    static QRegExp codere(QString::fromLatin1("[^a-z0-9]end\\s+[a-z0-9_-]*;$"), Qt::CaseSensitive);
+    static QRegExp codere2(QString::fromLatin1("[^a-z0-9]end;"), Qt::CaseSensitive);
 
     if (codere.indexIn(chk) >= 0 || codere2.indexIn(chk) >= 0)
         code = true;
@@ -823,21 +824,21 @@ void toWorksheet::query(const QString &str, execType type) {
         QueryString.truncate(QueryString.length() - 1);
 
     bool nobinds = false;
-    chk = str.lower();
+    chk = str.toLower();
     chk.replace(strq, QString::fromLatin1(" "));
-    chk = chk.simplifyWhiteSpace();
+    chk = chk.simplified();
     chk.replace(QRegExp(QString::fromLatin1(" or replace ")), QString::fromLatin1(" "));
     if (chk.startsWith(QString::fromLatin1("create trigger ")))
         nobinds = true;
 
     if (type == OnlyPlan) {
-        ResultTab->showPage(Plan);
+        ResultTab->setCurrentIndex(ResultTab->indexOf(Plan));
         Plan->query(str);
     }
     else if (!describe(QueryString)) {
 
         toSQLParse::stringTokenizer tokens(str);
-        QString first = tokens.getToken(true).upper();
+        QString first = tokens.getToken(true).toUpper();
         if (first == QString::fromLatin1("REM") ||
             first == QString::fromLatin1("ASSIGN") ||
             first == QString::fromLatin1("PROMPT") ||
@@ -943,7 +944,7 @@ void toWorksheet::query(const QString &str, execType type) {
                     toRefreshParse(timer(), Refresh->currentText());
             }
             TOCATCH
-            Result->setSQLName(QueryString.simplifyWhiteSpace().left(40));
+            Result->setSQLName(QueryString.simplified().left(40));
         }
     }
 }
@@ -1124,29 +1125,29 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens, int line, int pos, exec
 
     for (i = 0;i < t.length() - 1;i++) {
         if (comment) {
-            if (t.at(i).latin1() == '\n')
+            if (t.at(i).toLatin1() == '\n')
                 comment = false;
         }
         else if (multiComment) {
-            if (t.at(i).latin1() == '*' &&
-                    t.at(i + 1).latin1() == '/') {
+            if (t.at(i).toLatin1() == '*' &&
+                    t.at(i + 1).toLatin1() == '/') {
                 multiComment = false;
                 i++;
             }
         }
-        else if (t.at(i).latin1() == '-' &&
-                 t.at(i + 1).latin1() == '-')
+        else if (t.at(i).toLatin1() == '-' &&
+                 t.at(i + 1).toLatin1() == '-')
             comment = true;
-        else if (t.at(i).latin1() == '/' &&
-                 t.at(i + 1).latin1() == '/')
+        else if (t.at(i).toLatin1() == '/' &&
+                 t.at(i + 1).toLatin1() == '/')
             comment = true;
-        else if (t.at(i).latin1() == '/' &&
-                 t.at(i + 1).latin1() == '*')
+        else if (t.at(i).toLatin1() == '/' &&
+                 t.at(i + 1).toLatin1() == '*')
             multiComment = true;
         else if (!t.at(i).isSpace() && t.at(i) != '/')
             break;
 
-        if (t.at(i).latin1() == '\n') {
+        if (t.at(i).toLatin1() == '\n') {
             line++;
             pos = 0;
         }
@@ -1387,7 +1388,7 @@ void toWorksheet::saveDefaults(void) {
 void toWorksheet::enableStatistic(bool ena) {
     if (ena) {
         Result->setStatistics(Statistics);
-        ResultTab->setTabEnabled(StatTab, true);
+        ResultTab->setTabEnabled(ResultTab->indexOf(StatTab), true);
         statisticAct->setChecked(true);
         Statistics->clear();
         if (!WorksheetTool.config(CONF_TIMED_STATS, "Yes").isEmpty()) {
@@ -1404,7 +1405,7 @@ void toWorksheet::enableStatistic(bool ena) {
         }
         catch (...) {}
         Result->setStatistics(NULL);
-        ResultTab->setTabEnabled(StatTab, false);
+        ResultTab->setTabEnabled(ResultTab->indexOf(StatTab), false);
         statisticAct->setChecked(false);
     }
 }
@@ -1417,7 +1418,7 @@ void toWorksheet::executeNewline(void) {
     if (cline > 0)
         cline--;
     while (cline > 0) {
-        QString data = Editor->text(cline).simplifyWhiteSpace();
+        QString data = Editor->text(cline).simplified();
         if (data.length() == 0 || data == QString::fromLatin1(" ")) {
             cline++;
             break;
@@ -1426,7 +1427,7 @@ void toWorksheet::executeNewline(void) {
     }
 
     while (cline < Editor->lines()) {
-        QString data = Editor->text(cline).simplifyWhiteSpace();
+        QString data = Editor->text(cline).simplified();
         if (data.length() != 0 && data != QString::fromLatin1(" "))
             break;
         cline++;
@@ -1435,7 +1436,7 @@ void toWorksheet::executeNewline(void) {
     int eline = cline;
 
     while (eline < Editor->lines()) {
-        QString data = Editor->text(eline).simplifyWhiteSpace();
+        QString data = Editor->text(eline).simplified();
         if (data.length() == 0 || data == QString::fromLatin1(" ")) {
             eline--;
             break;
@@ -1524,12 +1525,12 @@ void toWorksheet::showSaved(void) {
 
         id++;
 
-        QStringList spl = QStringList::split(colon, QString::fromLatin1(*sql));
-        spl.remove(spl.begin());
+        QStringList spl = (*sql).split(colon);
+        spl.erase(spl.begin());
 
         if (spl.count() > 0) {
             QString name = spl.last();
-            spl.remove(spl.fromLast());
+            spl.erase(spl.end());
 
             QMenu *menu;
             if (spl.count() == 0)
@@ -1537,7 +1538,7 @@ void toWorksheet::showSaved(void) {
             else {
                 QStringList exs = spl;
                 while (exs.count() > 0 && menues.find(exs.join(QString::fromLatin1(":"))) == menues.end())
-                    exs.remove(exs.fromLast());
+                    exs.erase(exs.end());
                 if (exs.count() == 0)
                     menu = SavedMenu;
                 else
@@ -1549,12 +1550,13 @@ void toWorksheet::showSaved(void) {
                     if (i != 0)
                         subname += QString::fromLatin1(":");
                     subname += spl[i];
-                    menu->insertItem(spl[i], next);
+                    menu->addMenu(next);
+                    menu->setTitle(spl[i]);
                     menu = next;
                     menues[subname] = menu;
                 }
             }
-            menu->insertItem(name, id);
+            menu->addAction(name);
         }
     }
 }
@@ -1569,12 +1571,12 @@ void toWorksheet::showInsertSaved(void) {
 
         id++;
 
-        QStringList spl = QStringList::split(colon, QString::fromLatin1(*sql));
-        spl.remove(spl.begin());
+        QStringList spl = (*sql).split(colon);
+        spl.erase(spl.begin());
 
         if (spl.count() > 0) {
             QString name = spl.last();
-            spl.remove(spl.fromLast());
+            spl.erase(spl.end());
 
             QMenu *menu;
             if (spl.count() == 0)
@@ -1582,7 +1584,7 @@ void toWorksheet::showInsertSaved(void) {
             else {
                 QStringList exs = spl;
                 while (exs.count() > 0 && menues.find(exs.join(QString::fromLatin1(":"))) == menues.end())
-                    exs.remove(exs.fromLast());
+                    exs.erase(exs.end());
                 if (exs.count() == 0)
                     menu = InsertSavedMenu;
                 else
@@ -1594,12 +1596,13 @@ void toWorksheet::showInsertSaved(void) {
                     if (i != 0)
                         subname += QString::fromLatin1(":");
                     subname += spl[i];
-                    menu->insertItem(spl[i], next);
+                    menu->addMenu(next);
+                    menu->setTitle(spl[i]);
                     menu = next;
                     menues[subname] = menu;
                 }
             }
-            menu->insertItem(name, id);
+            menu->addAction(name);
         }
     }
 }
@@ -1608,13 +1611,13 @@ void toWorksheet::showInsertSaved(void) {
 void toWorksheet::editSaved(void) {
     QString sql = TOWORKSHEET;
     sql += "Untitled";
-    toMainWidget()->editSQL(QString::fromLatin1(sql));
+    toMainWidget()->editSQL(sql);
 }
 
 void toWorksheet::insertStatement(const QString &str) {
     QString txt = Editor->text();
 
-    int i = txt.find(str);
+    int i = txt.indexOf(str);
 
     if (i >= 0) {
         int startCol, endCol;
@@ -1674,7 +1677,7 @@ void toWorksheet::executeLog(void) {
         else {
             std::map<int, QWidget *>::iterator i = History.find(item->text(4).toInt());
             QueryString = item->allText(0);
-            changeResult(ResultTab->currentPage());
+            changeResult(ResultTab->currentWidget());
             if (i != History.end() && (*i).second) {
                 Current->hide();
                 Current = (*i).second;
@@ -1710,10 +1713,13 @@ void toWorksheet::saveLast(void) {
         return ;
     }
     bool ok = false;
-    QString name = QInputDialog::getText(tr("Enter title"),
-                                           tr("Enter the title in the menu of the saved SQL,\n"
-                                              "submenues are separated by a ':' character."),
-                                           QLineEdit::Normal, QString::null, &ok, this).latin1();
+    QString name = QInputDialog::getText(this,
+                                         tr("Enter title"),
+                                         tr("Enter the title in the menu of the saved SQL,\n"
+                                            "submenues are separated by a ':' character."),
+                                         QLineEdit::Normal,
+                                         QString::null,
+                                         &ok);
     if (ok && !name.isEmpty()) {
         try {
             toSQL::updateSQL(TOWORKSHEET + name,
@@ -1754,8 +1760,8 @@ void toWorksheet::importData(std::map<QString, QString> &data, const QString &pr
     QString stat = data[prefix + ":Stats"];
     if (!stat.isNull()) {
         for (int i = 0;i < Refresh->count();i++) {
-            if (Refresh->text(i) == stat) {
-                Refresh->setCurrentItem(i);
+            if (Refresh->itemText(i) == stat) {
+                Refresh->setCurrentIndex(i);
                 break;
             }
         }
@@ -1790,9 +1796,14 @@ toWorksheet *toWorksheet::fileWorksheet(const QString &file) {
 
 void toWorksheet::refreshSetup(void) {
     bool ok = false;
-    int num = QInputDialog::getInteger(tr("Enter refreshrate"),
+    int num = QInputDialog::getInteger(this,
+                                       tr("Enter refreshrate"),
                                        tr("Refresh rate of query in seconds"),
-                                       RefreshSeconds, 0, 1000000, 1, &ok, this);
+                                       RefreshSeconds,
+                                       0,
+                                       1000000,
+                                       1,
+                                       &ok);
     if (ok) {
         RefreshSeconds = num;
         RefreshTimer.start(num*1000);
@@ -1857,7 +1868,7 @@ void toWorksheet::changeConnection(void) {
     if (toIsMySQL(connection()))
         Schema->setSelected(connection().database());
     else if (toIsOracle(connection()) || toIsSapDB(connection()))
-        Schema->setSelected(connection().user().upper());
+        Schema->setSelected(connection().user().toUpper());
     else
         Schema->setSelected(connection().user());
 }
@@ -1872,10 +1883,10 @@ void toWorksheet::changeSchema(void) {
         toConnection &conn = connection();
         if (toIsOracle(conn)) {
             /* remove current schema initstring */
-            conn.delInit(QString::fromLatin1(CHANGE_CURRENT_SCHEMA).arg(conn.user()));
+            conn.delInit(QString(CHANGE_CURRENT_SCHEMA).arg(conn.user()));
 
             /* set the new one with selected schema */
-            QString sql = QString::fromLatin1(CHANGE_CURRENT_SCHEMA).arg(schema);
+            QString sql = QString(CHANGE_CURRENT_SCHEMA).arg(schema);
             conn.allExecute(sql);
 
             conn.addInit(sql);
@@ -1885,7 +1896,7 @@ void toWorksheet::changeSchema(void) {
             conn.setDatabase(schema);
         }
         else if (toIsPostgreSQL(conn)) {
-            QString sql = QString::fromLatin1(CHANGE_CURRENT_SCHEMA_PG).arg(schema);
+            QString sql = QString(CHANGE_CURRENT_SCHEMA_PG).arg(schema);
             conn.allExecute(sql);
         }
         else

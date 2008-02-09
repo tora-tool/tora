@@ -63,6 +63,7 @@
 #include <QDropEvent>
 #include <QFocusEvent>
 #include <QMouseEvent>
+#include <QDir>
 
 #include "icons/undo.xpm"
 #include "icons/redo.xpm"
@@ -274,7 +275,7 @@ int toMarkedText::printPage(TOPrinter *printer, QPainter *painter, int line, int
 void toMarkedText::openFilename(const QString &file)
 {
     QString data = toReadFile(file);
-    setText(QString::fromLocal8Bit(data));
+    setText(data);
     setFilename(file);
     setModified(false);
     toMainWidget()->addRecentFile(file);
@@ -303,7 +304,7 @@ bool toMarkedText::editOpen(QString suggestedFile)
     else
     {
         QFileInfo file(filename());
-        fname = toOpenFilename(file.dirPath(), QString::null, this);
+        fname = toOpenFilename(file.dir().path(), QString::null, this);
     }
     if (!fname.isEmpty())
     {
@@ -322,7 +323,7 @@ bool toMarkedText::editSave(bool askfile)
     QFileInfo file(filename());
     QString fn = filename();
     if (askfile || fn.isEmpty())
-        fn = toSaveFilename(file.dirPath(), QString::null, this);
+        fn = toSaveFilename(file.dir().path(), QString::null, this);
     if (!fn.isEmpty())
     {
         if (!toWriteFile(fn, text()))
@@ -408,7 +409,7 @@ void toMarkedText::incrementalSearch(bool forward, bool next)
             curcol++;
         if (curcol + SearchString.length() <= line.length())
         {
-            int pos = line.find(SearchString, curcol, false);
+            int pos = line.indexOf(SearchString, curcol, Qt::CaseInsensitive);
             if (pos >= 0)
             {
                 searchFound(curline, pos);
@@ -417,7 +418,7 @@ void toMarkedText::incrementalSearch(bool forward, bool next)
         }
         for (curline++;curline < lines();curline++)
         {
-            int pos = text(curline).find(SearchString, 0, false);
+            int pos = text(curline).indexOf(SearchString, 0, Qt::CaseInsensitive);
             if (pos >= 0)
             {
                 searchFound(curline, pos);
@@ -431,7 +432,7 @@ void toMarkedText::incrementalSearch(bool forward, bool next)
             curcol--;
         if (curcol >= 0)
         {
-            int pos = line.findRev(SearchString, curcol, false);
+            int pos = line.lastIndexOf(SearchString, curcol, Qt::CaseInsensitive);
             if (pos >= 0)
             {
                 searchFound(curline, pos);
@@ -440,7 +441,7 @@ void toMarkedText::incrementalSearch(bool forward, bool next)
         }
         for (curline--;curline >= 0;curline--)
         {
-            int pos = text(curline).findRev(SearchString, -1, false);
+            int pos = text(curline).lastIndexOf(SearchString, -1, Qt::CaseInsensitive);
             if (pos >= 0)
             {
                 searchFound(curline, pos);
@@ -487,7 +488,7 @@ void toMarkedText::keyPressEvent(QKeyEvent *e)
     if (Search)
     {
         bool ok = false;
-        if (e->state() == Qt::NoButton && e->key() == Qt::Key_Backspace)
+        if (e->modifiers() == Qt::NoModifier && e->key() == Qt::Key_Backspace)
         {
             int len = SearchString.length();
             if (len > 0)
@@ -555,7 +556,7 @@ static int FindIndex(const QString &str, int line, int col)
     int pos = 0;
     for (int i = 0;i < line;i++)
     {
-        pos = str.find(QString::fromLatin1("\n"), pos);
+        pos = str.indexOf('\n', pos);
         if (pos < 0)
             return pos;
         pos++;

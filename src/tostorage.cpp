@@ -148,11 +148,12 @@ public:
 };
 
 toDropTablespace::toDropTablespace(QWidget* parent, const char* name, Qt::WFlags fl)
-        : QWidget(parent)//, name, fl)
-{
+    : QWidget(parent, fl) {
     setupUi(this);
     if (!name)
-        setName("toDropTablespace");
+        setObjectName("toDropTablespace");
+    else
+        setObjectName(name);
 }
 
 std::list<QString> toDropTablespace::sql()
@@ -174,12 +175,15 @@ std::list<QString> toDropTablespace::sql()
 
 
 toStorageTablespace::toStorageTablespace(QWidget* parent, const char* name, Qt::WFlags fl)
-        : QWidget(parent)//, name, fl)
-{
+    : QWidget(parent, fl) {
     setupUi(this);
     Modify = false;
-    if (!name)
-        setName("toStorageTablespace");
+
+    if(!name)
+        setObjectName("toStorageTablespace");
+    else
+        setObjectName(name);
+
     MinimumExtent->setTitle(tr("&Minimum Extent"));
     LocalUniform->setTitle(tr("Extent &Size"));
     LocalUniform->setValue(1024);
@@ -286,17 +290,20 @@ std::list<QString> toStorageTablespace::sql()
 }
 
 toStorageDatafile::toStorageDatafile(bool temp, bool dispName, QWidget* parent, const char* name, Qt::WFlags fl)
-        : QWidget(parent),//, name, fl),
-        Tempfile(temp)
-{
+    : QWidget(parent, fl),
+      Tempfile(temp) {
+
     setupUi(this);
 
     Modify = false;
     InitialSizeOrig = NextSizeOrig = MaximumSizeOrig = 0;
 
-    if (!name)
-        setName("DataFile");
-    setCaption(tr("Create datafile"));
+    if(!name)
+        setObjectName("DataFile");
+    else
+        setObjectName(name);
+
+    setWindowTitle(tr("Create datafile"));
 
     if (!dispName)
     {
@@ -429,7 +436,7 @@ void toStorageDatafile::valueChanged(const QString &)
 
 void toStorageDialog::Setup(void)
 {
-    DialogTab->removePage(DefaultPage);
+    DialogTab->removeTab(DialogTab->indexOf(DefaultPage));
     toHelp::connectDialog(this);
 }
 
@@ -475,7 +482,7 @@ toStorageDialog::toStorageDialog(const QString &tablespace, QWidget *parent, boo
                 QString temp = toShift(result);
 
                 Mode = NewDatafile;
-                setCaption(tr("Add datafile"));
+                setWindowTitle(tr("Add datafile"));
                 Tablespace = NULL;
                 Default = NULL;
                 Drop = NULL;
@@ -495,7 +502,7 @@ toStorageDialog::toStorageDialog(const QString &tablespace, QWidget *parent, boo
             Datafile = NULL;
             Drop = new toDropTablespace(DialogTab);
             DialogTab->addTab(Datafile, tr("Drop Tablespace"));
-            setCaption(tr("Drop Tablespace"));
+            setWindowTitle(tr("Drop Tablespace"));
             connect(Drop, SIGNAL(validContent(bool)), this, SLOT(validContent(bool)));
             emit validContent(true);
         }
@@ -503,7 +510,7 @@ toStorageDialog::toStorageDialog(const QString &tablespace, QWidget *parent, boo
     else
     {
         Mode = NewTablespace;
-        setCaption(tr("Add tablespace"));
+        setWindowTitle(tr("Add tablespace"));
         Datafile = new toStorageDatafile(false, true, DialogTab);
         DialogTab->addTab(Datafile, tr("Datafile"));
         Tablespace = new toStorageTablespace(DialogTab);
@@ -629,7 +636,7 @@ toStorageDialog::toStorageDialog(toConnection &conn, const QString &tablespace,
                                          temp != QString::fromLatin1("PERMANENT") &&
                                          temp != QString::fromLatin1("UNDO"), true, DialogTab);
         DialogTab->addTab(Datafile, tr("Datafile"));
-        setCaption(tr("Modify datafile"));
+        setWindowTitle(tr("Modify datafile"));
         Tablespace = NULL;
         Default = NULL;
 
@@ -780,7 +787,7 @@ std::list<QString> toStorageDialog::sql(void)
         case NewTablespace:
         {
             QString start = QString::fromLatin1("CREATE TABLESPACE \"");
-            start += Datafile->getName().upper();
+            start += Datafile->getName().toUpper();
             start += QString::fromLatin1("\" ");
             std::list<QString> lst = Datafile->sql();
             {

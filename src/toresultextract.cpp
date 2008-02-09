@@ -83,7 +83,7 @@ void toResultExtract::query(const QString &sql, const toQList &param)
         {
             name = owner;
             if (toIsOracle(conn))
-                owner = conn.user().upper();
+                owner = conn.user().toUpper();
             else
                 owner = conn.user();
         }

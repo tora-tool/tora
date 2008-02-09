@@ -86,8 +86,8 @@ public:
         {
             Window = new toChartManager(toMainWidget()->workspace());
             toMainWidget()->workspace()->addWindow(Window);
-            Window->setCaption(qApp->translate("toChartTool", "Chart Manager"));
-            Window->setIcon(QPixmap(const_cast<const char**>(chart_xpm)));
+            Window->setWindowTitle(qApp->translate("toChartTool", "Chart Manager"));
+            Window->setWindowIcon(QPixmap(const_cast<const char**>(chart_xpm)));
         }
         Window->refresh();
         Window->show();
@@ -175,9 +175,9 @@ void toChartSetup::browseFile() {
 QString toChartSetup::modifyAlarm(const QString &str, bool &persistent) {
     toChartManager::chartAlarm alarm(str, persistent);
     toChartAlarm diag(this, NULL, true);
-    diag.Operation->setCurrentItem((int)alarm.Operation);
-    diag.Comparison->setCurrentItem((int)alarm.Comparison);
-    diag.Action->setCurrentItem((int)alarm.Action);
+    diag.Operation->setCurrentIndex((int)alarm.Operation);
+    diag.Comparison->setCurrentIndex((int)alarm.Comparison);
+    diag.Action->setCurrentIndex((int)alarm.Action);
     diag.Value->setText(QString::number(alarm.Value));
     diag.changeValue((int)alarm.Action);
     diag.Value->setValidator(new QDoubleValidator(diag.Value));
@@ -208,9 +208,9 @@ QString toChartSetup::modifyAlarm(const QString &str, bool &persistent) {
                 alarm.Columns.insert(alarm.Columns.end(), i);
             i++;
         }
-        alarm.Action = (toChartManager::action)diag.Action->currentItem();
-        alarm.Operation = (toChartManager::chartAlarm::operation)diag.Operation->currentItem();
-        alarm.Comparison = (toChartManager::chartAlarm::comparison)diag.Comparison->currentItem();
+        alarm.Action = (toChartManager::action)diag.Action->currentIndex();
+        alarm.Operation = (toChartManager::chartAlarm::operation)diag.Operation->currentIndex();
+        alarm.Comparison = (toChartManager::chartAlarm::comparison)diag.Comparison->currentIndex();
         alarm.Value = diag.Value->text().toDouble();
         alarm.Extra = diag.Extra->text();
         return alarm.toString();
@@ -266,7 +266,7 @@ QString toChartReceiver::name(void)
         return QString::null;
     try
     {
-        LastName = Result->connection().description(false) + QString::fromLatin1(":") + QString::fromLatin1(Result->sqlName());
+        LastName = Result->connection().description(false) + QString(":") + QString(Result->sqlName());
     }
     catch (...)
         {}
@@ -332,8 +332,10 @@ void toChartHandler::addChart(toLineChart *chart)
 {
     Charts.insert(Charts.end(), new toChartReceiver(this, chart));
     toChartManager *manager = ChartTool.manager();
-    if (manager)
-        manager->Refresh.start(1, true);
+    if (manager) {
+        manager->Refresh.setSingleShot(true);
+        manager->Refresh.start(1);
+    }
 }
 
 void toChartHandler::removeChart(toLineChart *chart)
@@ -377,8 +379,10 @@ void toChartHandler::removeChart(toLineChart *chart)
             delete *i;
             Charts.erase(i);
             toChartManager *manager = ChartTool.manager();
-            if (manager)
-                manager->Refresh.start(1, true);
+            if (manager) {
+                manager->Refresh.setSingleShot(true);
+                manager->Refresh.start(1);
+            }
             return ;
         }
     }
@@ -400,7 +404,7 @@ toChartManager::chartAlarm::chartAlarm(const QString &inp, bool pers)
     Persistent = pers;
 
     // The \01 is just one character unlikely to be in an email address
-    int ret = sscanf(inp.utf8(), "%s %s %s %lf %s %[^\01]", oper, cols, comp, &Value, act, extra);
+    int ret = sscanf(inp.toUtf8(), "%s %s %s %lf %s %[^\01]", oper, cols, comp, &Value, act, extra);
     if (ret != 5 && ret != 6)
     {
         Operation = Any;
@@ -427,7 +431,7 @@ toChartManager::chartAlarm::chartAlarm(const QString &inp, bool pers)
     t = QString::fromUtf8(cols);
     if (t.length() > 2)
     {
-        QStringList lst = QStringList::split(QString::fromLatin1(","), t.mid(1, t.length() - 2));
+        QStringList lst = t.mid(1, t.length() - 2).split(",");
         for (int i = 0;i < lst.count();i++)
             Columns.insert(Columns.end(), lst[i].toInt());
         Columns.sort();
@@ -692,7 +696,8 @@ void toChartManager::chartAlarm::valueAdded(toChartHandler *handler,
             return ;
         handler->SignalAlarms.insert(handler->SignalAlarms.end(),
                                      alarmSignal(Action, xValue, str, toString(), Extra));
-        handler->Timer.start(1, true);
+        handler->Timer.setSingleShot(true);
+        handler->Timer.start(1);
         Signal = true;
     }
     else
@@ -708,9 +713,9 @@ void toChartHandler::saveSettings(void)
             if ((*i).second.Persistent)
             {
                 num++;
-                QString name = QString("Files:") + QString::number(num).latin1();
+                QString name = QString("Files:") + QString::number(num).toLatin1();
                 ChartTool.setConfig(name + ":Name", (*i).first);
-                ChartTool.setConfig(name + ":Spec", (*i).second.File.name());
+                ChartTool.setConfig(name + ":Spec", (*i).second.File.fileName());
             }
         }
         ChartTool.setConfig("FilesCount", QString::number(num));
@@ -725,7 +730,7 @@ void toChartHandler::saveSettings(void)
                 if ((*j).Persistent)
                 {
                     num++;
-                    QString name = QString("Alarms:") + QString::number(num).latin1();
+                    QString name = QString("Alarms:") + QString::number(num).toLatin1();
                     ChartTool.setConfig(name + ":Name", (*i).first);
                     ChartTool.setConfig(name + ":Spec", (*j).toString());
                 }
@@ -741,7 +746,7 @@ void toChartHandler::loadSettings(void)
     {
         for (int num = ChartTool.config("FilesCount", "0").toInt();num > 0;num--)
         {
-            QString name = QString("Files:") + QString::number(num).latin1();
+            QString name = QString("Files:") + QString::number(num).toLatin1();
             QString t = ChartTool.config(name + ":Name", "");
             QString s = ChartTool.config(name + ":Spec", "");
             if (!t.isEmpty() && !s.isEmpty())
@@ -751,7 +756,7 @@ void toChartHandler::loadSettings(void)
     {
         for (int num = ChartTool.config("AlarmCount", "0").toInt();num > 0;num--)
         {
-            QString name = QString("Alarms:") + QString::number(num).latin1();
+            QString name = QString("Alarms:") + QString::number(num).toLatin1();
             QString t = ChartTool.config(name + ":Name", "");
             QString s = ChartTool.config(name + ":Spec", "");
             if (!t.isEmpty() && !s.isEmpty())
@@ -807,27 +812,27 @@ void toChartHandler::valueAdded(toLineChart *chart,
             {
                 QString t = chart->title();
                 t.replace(quote, QString::fromLatin1("\"\""));
-                out += t.utf8();
+                out += t.toUtf8();
                 std::list<QString> labels = chart->labels();
                 for (std::list<QString>::iterator i = labels.begin();i != labels.end();i++)
                 {
                     out += "\";\"";
                     QString t = (*i);
                     t.replace(quote, QString::fromLatin1("\"\""));
-                    out += t.utf8();
+                    out += t.toUtf8();
                 }
                 out += "\"\n\"";
             }
             QString t = xValue;
             t.replace(quote, QString::fromLatin1("\"\""));
-            out += t.utf8();
+            out += t.toUtf8();
             for (std::list<double>::iterator i = value.begin();i != value.end();i++)
             {
                 out += "\";\"";
                 out += QString::number(*i);
             }
             out += "\"\n";
-            file.writeBlock(out, out.length());
+            file.write(out.toUtf8());
         }
     }
 }
@@ -879,12 +884,12 @@ void toChartManager::openChart(void)
                                               tr("Cancel")))
             {
             case 0:
-                chart = new toBarChart(toMainWidget()->workspace(), NULL,
-                                       Qt::WDestructiveClose);
+                chart = new toBarChart(toMainWidget()->workspace(), NULL);
+                chart->setAttribute(Qt::WA_DeleteOnClose);
                 break;
             case 1:
-                chart = new toLineChart(toMainWidget()->workspace(), NULL,
-                                        Qt::WDestructiveClose);
+                chart = new toLineChart(toMainWidget()->workspace(), NULL);
+                chart->setAttribute(Qt::WA_DeleteOnClose);
                 break;
             default:
                 return ;
@@ -965,7 +970,7 @@ void toChartHandler::setupChart(toLineChart *chart)
                 setup.Alarms->setSorting(0);
                 setup.Alarms->setSelectionMode(toTreeWidget::Single);
                 setup.Persistent->setChecked(file.Persistent);
-                setup.Filename->setText(file.File.name());
+                setup.Filename->setText(file.File.fileName());
                 if (!setup.Filename->text().isEmpty())
                     setup.Enabled->setChecked(true);
                 setup.ChartFrame->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
@@ -1048,7 +1053,7 @@ void toChartManager::refresh(void)
 
                     std::map<QString, chartTrack>::iterator fndt = ChartTool.handler()->Files.find(name);
                     if (fndt != ChartTool.handler()->Files.end())
-                        item->setText(3, (*fndt).second.File.name());
+                        item->setText(3, (*fndt).second.File.fileName());
                 }
             }
         }

@@ -59,6 +59,7 @@
 #include <QHideEvent>
 #include <QShowEvent>
 #include <QTextEdit>
+#include <QDir>
 
 #include "icons/totemplate.xpm"
 
@@ -99,7 +100,7 @@ class toTemplateEdit : public QDialog, public Ui::toTemplateEditUI, public toHel
     }
     void allocateItem(void)
     {
-        QStringList lst = QStringList::split(QString::fromLatin1(":"), Name->text());
+        QStringList lst = Name->text().split(QString::fromLatin1(":"));
         int li = 0;
         toTreeWidgetItem *parent = NULL;
         for (toTreeWidgetItem *item = Templates->firstChild();item && li < lst.count();)
@@ -131,7 +132,7 @@ class toTemplateEdit : public QDialog, public Ui::toTemplateEditUI, public toHel
             QString str = pre;
             if (!str.isEmpty())
                 str += ":";
-            str += first->text(0).latin1();
+            str += first->text(0).toLatin1();
             if (first->firstChild() && clearUnused(first->firstChild(), str))
                 delitem = NULL;
             if (delitem && TemplateMap.find(str) != TemplateMap.end())
@@ -156,7 +157,7 @@ public:
             QStringList lstCtx;
             for (std::map<QString, QString>::iterator i = TemplateMap.begin();i != TemplateMap.end();i++)
             {
-                QStringList ctx = QStringList::split(QString::fromLatin1(":"), QString::fromLatin1((*i).first));
+                QStringList ctx = (*i).first.split(":");
                 if (last)
                 {
                     while (last && lastLevel >= int(ctx.count()))
@@ -233,11 +234,11 @@ public:
     }
     QString name(toTreeWidgetItem *item)
     {
-        QString str = item->text(0).latin1();
+        QString str = item->text(0).toLatin1();
         for (item = item->parent();item;item = item->parent())
         {
             str.prepend(":");
-            str.prepend(item->text(0).latin1());
+            str.prepend(item->text(0).toLatin1());
         }
         return str;
     }
@@ -267,18 +268,18 @@ public:
         bool update = false;
         if (LastTemplate != TemplateMap.end())
         {
-            if (Name->text().latin1() != (*LastTemplate).first ||
+            if (Name->text().toLatin1() != (*LastTemplate).first ||
                     Description->text() != (*LastTemplate).second)
             {
                 TemplateMap.erase(LastTemplate);
-                TemplateMap[Name->text().latin1()] = Description->text();
+                TemplateMap[Name->text().toLatin1()] = Description->text();
                 allocateItem();
                 update = true;
             }
         }
         else if (!Name->text().isEmpty())
         {
-            TemplateMap[Name->text().latin1()] = Description->text();
+            TemplateMap[Name->text().toLatin1()] = Description->text();
             allocateItem();
             update = true;
         }
@@ -291,7 +292,7 @@ public:
             LastTemplate = TemplateMap.find(str);
             if (LastTemplate != TemplateMap.end())
             {
-                Name->setText(QString::fromLatin1((*LastTemplate).first));
+                Name->setText(QString((*LastTemplate).first));
                 Description->setText((*LastTemplate).second);
                 Preview->setText((*LastTemplate).second);
             }
@@ -323,7 +324,7 @@ toTemplateAddFile::toTemplateAddFile(QWidget *parent, const char *name)
 
 void toTemplateAddFile::browse() {
     QFileInfo file(Filename->text());
-    QString filename = toOpenFilename(file.dirPath(), QString::fromLatin1("*.tpl"), this);
+    QString filename = toOpenFilename(file.dir().path(), QString("*.tpl"), this);
     if (!filename.isEmpty())
         Filename->setText(filename);
 }
@@ -347,8 +348,8 @@ toTemplatePrefs::toTemplatePrefs(toTool *tool, QWidget *parent, const char *name
     {
         for (int i = 0;i < tot;i++)
         {
-            QString num = QString::number(i).latin1();
-            QString root = Tool->config(num, "").latin1();
+            QString num = QString::number(i).toLatin1();
+            QString root = Tool->config(num, "").toLatin1();
             num += "file";
             QString file = Tool->config(num, "");
             new toTreeWidgetItem(FileList, root, file);
@@ -365,7 +366,7 @@ void toTemplatePrefs::saveSetting(void) {
     int i = 0;
     for (toTreeWidgetItem *item = FileList->firstChild();item;item = item->nextSibling())
     {
-        QString nam = QString::number(i).latin1();
+        QString nam = QString::number(i).toLatin1();
         Tool->setConfig(nam, item->text(0));
         nam += "file";
         Tool->setConfig(nam, item->text(1));
@@ -739,8 +740,8 @@ void toTextTemplate::insertItems(toTreeWidget *parent, QToolBar *)
     {
         for (int i = 0; i < tot; i++)
         {
-            QString num = QString::number(i).latin1();
-            QString root = TemplateTool.config(num, "").latin1();
+            QString num = QString::number(i).toLatin1();
+            QString root = TemplateTool.config(num, "").toLatin1();
             num += "file";
             QString file = TemplateTool.config(num, "");
             addFile(parent, root, file);
@@ -763,7 +764,7 @@ void toTextTemplate::addFile(toTreeWidget *parent, const QString &root, const QS
         QStringList lstCtx;
         for (std::map<QString, QString>::iterator i = pairs.begin();i != pairs.end();i++)
         {
-            QStringList ctx = QStringList::split(QString::fromLatin1(":"), (*i).first);
+            QStringList ctx = (*i).first.split(QString::fromLatin1(":"));
             if (last)
             {
                 while (last && lastLevel >= int(ctx.count()))

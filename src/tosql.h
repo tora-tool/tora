@@ -218,7 +218,7 @@ public:
      */
     static QString sql(const QString &name, const toConnection &conn)
     {
-        return string(name, conn).utf8();
+        return string(name, conn).toUtf8();
     }
     /** Get the statement of an SQL.
      * @param sqlDef SQL to get name of statement from.

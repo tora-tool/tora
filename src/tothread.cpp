@@ -147,7 +147,7 @@ void taskRunner::run(void)
     }
     catch (const QString &exc)
     {
-        fprintf(stderr, "Unhandled exception in thread:\n%s\n", (const char *)exc);
+        fprintf(stderr, "Unhandled exception in thread:\n%s\n", exc.toAscii().constData());
     }
     catch (...)
     {

@@ -1,39 +1,39 @@
 /*****
-*
-* TOra - An Oracle Toolkit for DBA's and developers
-* Copyright (C) 2003-2005 Quest Software, Inc
-* Portions Copyright (C) 2005 Other Contributors
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation;  only version 2 of
-* the License is valid for this program.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*
-*      As a special exception, you have permission to link this program
-*      with the Oracle Client libraries and distribute executables, as long
-*      as you follow the requirements of the GNU GPL in regard to all of the
-*      software in the executable aside from Oracle client libraries.
-*
-*      Specifically you are not permitted to link this program with the
-*      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
-*      And you are not permitted to distribute binaries compiled against
-*      these libraries without written consent from Quest Software, Inc.
-*      Observe that this does not disallow linking to the Qt Free Edition.
-*
-*      You may link this product with any GPL'd Qt library such as Qt/Free
-*
-* All trademarks belong to their respective owners.
-*
-*****/
+ *
+ * TOra - An Oracle Toolkit for DBA's and developers
+ * Copyright (C) 2003-2005 Quest Software, Inc
+ * Portions Copyright (C) 2005 Other Contributors
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation;  only version 2 of
+ * the License is valid for this program.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *      As a special exception, you have permission to link this program
+ *      with the Oracle Client libraries and distribute executables, as long
+ *      as you follow the requirements of the GNU GPL in regard to all of the
+ *      software in the executable aside from Oracle client libraries.
+ *
+ *      Specifically you are not permitted to link this program with the
+ *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+ *      And you are not permitted to distribute binaries compiled against
+ *      these libraries without written consent from Quest Software, Inc.
+ *      Observe that this does not disallow linking to the Qt Free Edition.
+ *
+ *      You may link this product with any GPL'd Qt library such as Qt/Free
+ *
+ * All trademarks belong to their respective owners.
+ *
+ *****/
 
 #ifndef TOCONNECTION_H
 #define TOCONNECTION_H
@@ -165,8 +165,8 @@ public:
          * data for the query may not be available when this object created.
          * @param query Parent query object.
          */
-        queryImpl(toQuery *query)
-                : Parent(query)
+    queryImpl(toQuery *query)
+        : Parent(query)
         { }
         /** Destroy query implementation.
          */
@@ -418,8 +418,8 @@ public:
      * @return A list of @ref toQValues:s read from the query.
      */
     static std::list<toQValue> readQueryNull(toConnection &conn,
-            const toSQL &sql,
-            std::list<toQValue> &params);
+                                             const toSQL &sql,
+                                             std::list<toQValue> &params);
     /** Execute a query and return all the values returned by it.
      * @param conn Connection to run query on.
      * @param sql SQL to run.
@@ -427,8 +427,8 @@ public:
      * @return A list of @ref toQValues:s read from the query.
      */
     static std::list<toQValue> readQueryNull(toConnection &conn,
-            const QString &sql,
-            std::list<toQValue> &params);
+                                             const QString &sql,
+                                             std::list<toQValue> &params);
     /** Execute a query and return all the values returned by it.
      * @param conn Connection to run query on.
      * @param sql SQL to run.
@@ -436,11 +436,11 @@ public:
      * @return A list of @ref toQValues:s read from the query.
      */
     static std::list<toQValue> readQueryNull(toConnection &conn, const toSQL &sql,
-            const QString &arg1 = QString::null, const QString &arg2 = QString::null,
-            const QString &arg3 = QString::null, const QString &arg4 = QString::null,
-            const QString &arg5 = QString::null, const QString &arg6 = QString::null,
-            const QString &arg7 = QString::null, const QString &arg8 = QString::null,
-            const QString &arg9 = QString::null);
+                                             const QString &arg1 = QString::null, const QString &arg2 = QString::null,
+                                             const QString &arg3 = QString::null, const QString &arg4 = QString::null,
+                                             const QString &arg5 = QString::null, const QString &arg6 = QString::null,
+                                             const QString &arg7 = QString::null, const QString &arg8 = QString::null,
+                                             const QString &arg9 = QString::null);
     /** Execute a query and return all the values returned by it.
      * @param conn Connection to run query on.
      * @param sql SQL to run.
@@ -448,11 +448,11 @@ public:
      * @return A list of @ref toQValues:s read from the query.
      */
     static std::list<toQValue> readQueryNull(toConnection &conn, const QString &sql,
-            const QString &arg1 = QString::null, const QString &arg2 = QString::null,
-            const QString &arg3 = QString::null, const QString &arg4 = QString::null,
-            const QString &arg5 = QString::null, const QString &arg6 = QString::null,
-            const QString &arg7 = QString::null, const QString &arg8 = QString::null,
-            const QString &arg9 = QString::null);
+                                             const QString &arg1 = QString::null, const QString &arg2 = QString::null,
+                                             const QString &arg3 = QString::null, const QString &arg4 = QString::null,
+                                             const QString &arg5 = QString::null, const QString &arg6 = QString::null,
+                                             const QString &arg7 = QString::null, const QString &arg8 = QString::null,
+                                             const QString &arg9 = QString::null);
     /** Cancel the current execution of a query.
      */
     void cancel(void);
@@ -481,7 +481,7 @@ class toConnection : public QObject {
     std::list<QPointer<QWidget> > Widgets;
     std::list<QString> InitStrings;
     std::set
-    <QString> Options;
+        <QString> Options;
     toLock Lock;
     std::list<toConnectionSub *> Connections;
     std::list<toConnectionSub *> Running;
@@ -495,14 +495,14 @@ public:
      * want to indicate error offset.
      */
 
-class exception : public QString
+    class exception : public QString
     {
         int Offset;
     public:
         /** Create an exception with a string description.
          */
-        exception(const QString &str, int offset = -1)
-                : QString(str)
+    exception(const QString &str, int offset = -1)
+        : QString(str)
         {
             Offset = offset;
         }
@@ -537,19 +537,19 @@ class exception : public QString
          */
         QString Comment;
         /** synonyms (used for faster disk caching...)
-        */
+         */
         std::list <QString> Synonyms;
 
         /** Create an object name with filled in values.
          */
-        objectName(const QString &owner, const QString &name, const QString &type = QString("TABLE"), const QString &comment = QString::null)
-                : Name(name), Owner(owner), Type(type), Comment(comment)
-        { }
+    objectName(const QString &owner, const QString &name, const QString &type = QString("TABLE"), const QString &comment = QString::null)
+    : Name(name), Owner(owner), Type(type), Comment(comment)
+            { }
 
         /** Create an empty object name.
          */
         objectName()
-        { }
+            { }
         bool operator < (const objectName &) const;
         bool operator == (const objectName &) const;
     };
@@ -729,7 +729,7 @@ public:
 
     //* Get the options for the connection.
     const std::set
-    <QString> &options() const
+        <QString> &options() const
     {
         return Options;
     }
@@ -1055,7 +1055,7 @@ public:
      * @return A connection implementation created with new.
      */
     virtual toConnection::connectionImpl *provideConnection(const QString &provider,
-            toConnection *conn) = 0;
+                                                            toConnection *conn) = 0;
     /** List the available hosts this database provider knows about.
      * @return A list of hosts.
      */
@@ -1067,9 +1067,9 @@ public:
      * @return A list of databases available for a given host.
      */
     virtual std::list<QString> providedDatabases(const QString &provider,
-            const QString &host,
-            const QString &user,
-            const QString &pwd) = 0;
+                                                 const QString &host,
+                                                 const QString &user,
+                                                 const QString &pwd) = 0;
     /** Will be called after program has been started and before connections have been opened.
      *  Use for initialization.
      */

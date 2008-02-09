@@ -75,6 +75,7 @@
 #include <qvalidator.h>
 
 #include <QString>
+#include <QTextStream>
 
 #define CONF_OPEN_CURSORS "OpenCursors"
 #define DEFAULT_OPEN_CURSORS "40"  // Defined to be able to update tuning view
@@ -578,7 +579,7 @@ class oracleQuery : public toQuery::queryImpl
                            description[i].prec,
                            description[i].scale);
                 }
-                desc.Datatype.sprintf(desc.Datatype, datatypearg1, datatypearg2);
+                desc.Datatype.sprintf(desc.Datatype.toAscii().constData(), datatypearg1, datatypearg2);
 
                 desc.Null = description[i].nullok;
 
@@ -593,13 +594,13 @@ class oracleConnection : public toConnection::connectionImpl
         QString connectString(void)
         {
             QString ret;
-            ret = connection().user().utf8();
+            ret = connection().user().toUtf8();
             ret += QString::fromLatin1("/");
-            ret += connection().password().utf8();
+            ret += connection().password().toUtf8();
             if (!connection().host().isEmpty())
             {
                 ret += QString::fromLatin1("@");
-                ret += connection().database().utf8();
+                ret += connection().database().toUtf8();
             }
             return ret;
         }
@@ -624,19 +625,19 @@ class oracleConnection : public toConnection::connectionImpl
             bool ok = true;
             for (int i = 0;i < name.length();i++)
             {
-                if (name.at(i).upper() != name.at(i) || !toIsIdent(name.at(i)))
+                if (name.at(i).toUpper() != name.at(i) || !toIsIdent(name.at(i)))
                     ok = false;
             }
             if (ok)
-                return name.lower();
+                return name.toLower();
             else
                 return QString::fromLatin1("\"") + name + QString::fromLatin1("\"");
         }
         virtual QString unQuote(const QString &str)
         {
-            if (str.at(0).latin1() == '\"' && str.at(str.length() - 1).latin1() == '\"')
+            if (str.at(0).toLatin1() == '\"' && str.at(str.length() - 1).toLatin1() == '\"')
                 return str.left(str.length() - 1).right(str.length() - 2);
-            return str.upper();
+            return str.toUpper();
         }
 
         virtual std::list<toConnection::objectName> objectNames(void)
@@ -665,7 +666,7 @@ class oracleConnection : public toConnection::connectionImpl
             toConnection::objectName cur;
             cur.Type = QString::fromLatin1("A");
             std::list<toQValue> par;
-            par.insert(par.end(), toQValue(connection().user().upper()));
+            par.insert(par.end(), toQValue(connection().user().toUpper()));
             toQuery synonyms(connection(), toQuery::Long,
                              SQLListSynonyms, par);
             std::list<toConnection::objectName>::iterator i = objects.begin();
@@ -843,15 +844,15 @@ class oracleConnection : public toConnection::connectionImpl
                 {
                     char buffer[1024];
                     version >> buffer;
-                    QStringList vl = QStringList::split('.', QString::fromUtf8(buffer));
+                    QStringList vl = QString(buffer).split('.');
                     QString ve;
                     QString verrj;
                     for ( QStringList::iterator vi = vl.begin(); vi != vl.end(); ++vi )
                     {
                         ve = *vi;
-                        verrj += ve.rightJustify(2, '0');
+                        verrj += ve.rightJustified(2, '0');
                     }
-                    return verrj.toUtf8(); // FIXME!
+                    return verrj;
                 }
             }
             catch (...)
@@ -874,7 +875,7 @@ class oracleConnection : public toConnection::connectionImpl
             {
                 try
                 {
-                    otl_cursor::direct_exec(*(conn->Connection), sql);
+                    otl_cursor::direct_exec(*(conn->Connection), sql.toAscii().constData());
                 }
                 catch (const otl_exception &exc)
                 {
@@ -882,7 +883,7 @@ class oracleConnection : public toConnection::connectionImpl
                 }
             }
             else
-                toQuery query(connection(), QString::fromUtf8(sql), params);
+                toQuery query(connection(), sql, params);
         }
 
         virtual void parse(toConnectionSub *sub, const QString &sql)
@@ -891,7 +892,7 @@ class oracleConnection : public toConnection::connectionImpl
             try
             {
                 conn->Connection->reset_throw_count();
-                conn->Connection->syntax_check(sql);
+                conn->Connection->syntax_check(sql.toAscii().constData());
 
             }
             catch (const otl_exception &exc)
@@ -909,7 +910,7 @@ class oracleConnection : public toConnection::connectionImpl
     virtual void initialize(void)
     {
         toMaxLong = toConfigurationSingle::Instance().globalConfig(CONF_MAX_LONG,
-                    QString::number(DEFAULT_MAX_LONG).latin1()).toInt();
+                    QString::number(DEFAULT_MAX_LONG).toLatin1()).toInt();
         if (otl_connect::otl_initialize(1))
             addProvider("Oracle");
         else
@@ -1011,26 +1012,19 @@ class oracleConnection : public toConnection::connectionImpl
         if (!file.open(QIODevice::ReadOnly))
             return ret;
 
-        int size = file.size();
-
-        char *buf = new char[size + 1];
-        if (file.readBlock(buf, size) == -1)
-        {
-            delete[] buf;
-            return ret;
-        }
-
-        buf[size] = 0;
+        QTextStream in(&file);
+        QByteArray barray = in.readAll().toUtf8();
+        const char *buf = barray.constData();
 
         int begname = -1;
         int parambeg = -1;
         int pos = 0;
         int param = 0;
-        while (pos < size)
+        while (pos < barray.size())
         {
             if (buf[pos] == '#')
             {
-                while (pos < size && buf[pos] != '\n')
+                while (pos < barray.size() && buf[pos] != '\n')
                     pos++;
             }
             else if (buf[pos] == '=')
@@ -1053,7 +1047,7 @@ class oracleConnection : public toConnection::connectionImpl
                 {
                     QString tmp = QString::fromLatin1(buf + parambeg, pos - parambeg);
                     tmp.replace(QRegExp(QString::fromLatin1("\\s+")), QString::null);
-                    if (tmp.lower().startsWith(QString::fromLatin1("sid=")))
+                    if (tmp.toLower().startsWith(QString::fromLatin1("sid=")))
                         ret.insert(ret.end(), tmp.mid(4));
                 }
                 begname = -1;
@@ -1066,7 +1060,6 @@ class oracleConnection : public toConnection::connectionImpl
             }
             pos++;
         }
-        delete[] buf;
         return ret;
     }
     virtual QWidget *providerConfigurationTab(const QString &provider, QWidget *parent);
@@ -1074,6 +1067,7 @@ class oracleConnection : public toConnection::connectionImpl
 
 static toOracleProvider OracleProvider;
 
+#include <QDebug>
 void toOracleProvider::oracleQuery::execute(void)
 {
     oracleSub *conn = dynamic_cast<oracleSub *>(query()->connectionSub());
@@ -1108,7 +1102,7 @@ void toOracleProvider::oracleQuery::execute(void)
             QString sql = query()->sql();
             sql.replace(stripnl, "");
             Query->open(1,
-                        sql,
+                        sql.toAscii().constData(),
                         *(conn->Connection));
         }
         catch (...)
@@ -1162,14 +1156,13 @@ void toOracleProvider::oracleQuery::execute(void)
                     case otl_var_varchar_long:
                     case otl_var_clob:
                     {
-                        QString buf = (*i).utf8();
-                        otl_long_string str(buf, buf.length(), buf.length());
+                        QString buf = (*i).toUtf8();
+                        otl_long_string str(buf.toAscii().constData(), buf.length(), buf.length());
                         (*Query) << str;
                     }
                     break;
                     default:
-                        // FIXME! quick hack for Qt4 - PV
-                        (*Query) << (const char*)(*i).utf8();
+                        (*Query) << (*i).toUtf8().toAscii().constData();
                         break;
                     }
                 }
@@ -1221,7 +1214,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
     if (!sqlNet)
     {
         oldSid = getenv("ORACLE_SID");
-        toSetEnv("ORACLE_SID", connection().database().utf8());
+        toSetEnv("ORACLE_SID", connection().database());
     }
     otl_connect *conn = NULL;
     try
@@ -1234,21 +1227,25 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
         do
         {
             conn = new otl_connect;
-#ifdef OTL_STREAM_POOLING_ON
 
-            conn->set_stream_pool_size(std::max(toConfigurationSingle::Instance().globalConfig(CONF_OPEN_CURSORS,
-                                                DEFAULT_OPEN_CURSORS).toInt(), 1));
+#ifdef OTL_STREAM_POOLING_ON
+            conn->set_stream_pool_size(std::max(toConfigurationSingle::Instance().globalConfig(
+                                                    CONF_OPEN_CURSORS,
+                                                    DEFAULT_OPEN_CURSORS).toInt(), 1));
 #endif
 
             if (!sqlNet)
                 conn->server_attach();
             else
-                conn->server_attach(connection().database().utf8());
-            QString user = connection().user().utf8();
-            QString pass = connection().password().utf8();
+                conn->server_attach(connection().database().toUtf8().constData());
+            QString user = connection().user();
+            QString pass = connection().password();
             try
             {
-                conn->session_begin(user.isEmpty() ? "" : (const char *)user, pass.isEmpty() ? "" : (const char *)pass, 0, session_mode);
+                conn->session_begin(user.isEmpty() ? "" : user.toAscii().constData(),
+                                    pass.isEmpty() ? "" : pass.toAscii().constData(),
+                                    0,
+                                    session_mode);
             }
             catch (const otl_exception &exc)
             {
@@ -1256,29 +1253,29 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
                 {
                     bool ok = false;
                     QString newpass = QInputDialog::getText(
-                                          qApp->translate("toOracleConnection", "Password expired"),
-                                          qApp->translate("toOracleConnection", "Enter new password"),
-                                          QLineEdit::Password,
-                                          QString::null,
-                                          &ok,
-                                          toMainWidget());
+                        toMainWidget(),
+                        qApp->translate("toOracleConnection", "Password expired"),
+                        qApp->translate("toOracleConnection", "Enter new password"),
+                        QLineEdit::Password,
+                        QString::null,
+                        &ok);
                     if (ok)
                     {
                         QString newpass2 = QInputDialog::getText(
-                                               qApp->translate("toOracleConnection", "Password expired"),
-                                               qApp->translate("toOracleConnection", "Enter password again for confirmation"),
-                                               QLineEdit::Password,
-                                               QString::null,
-                                               &ok,
-                                               toMainWidget());
+                            toMainWidget(),
+                            qApp->translate("toOracleConnection", "Password expired"),
+                            qApp->translate("toOracleConnection", "Enter password again for confirmation"),
+                            QLineEdit::Password,
+                            QString::null,
+                            &ok);
                         if (ok)
                         {
                             if (newpass2 != newpass)
                                 throw qApp->translate("toOracleConnection", "The two passwords doesn't match");
-                            QString nputf = newpass.utf8();
-                            conn->change_password(user.isEmpty() ? "" : (const char *)user,
-                                                  pass.isEmpty() ? "" : (const char *)pass,
-                                                  newpass.isEmpty() ? "" : (const char *)nputf);
+                            QString nputf = newpass.toUtf8();
+                            conn->change_password(user.isEmpty() ? "" : user.toAscii().constData(),
+                                                  pass.isEmpty() ? "" : pass.toAscii().constData(),
+                                                  newpass.isEmpty() ? "" : nputf.toAscii().constData());
                             connection().setPassword(newpass);
                             delete conn;
                             conn = NULL;
@@ -1304,7 +1301,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
             if (oldSid.isNull())
                 toUnSetEnv("ORACLE_SID");
             else
-                toSetEnv("ORACLE_SID", oldSid.latin1());
+                toSetEnv("ORACLE_SID", oldSid.toLatin1());
         }
         delete conn;
         ThrowException(exc);
@@ -1315,7 +1312,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
             toUnSetEnv("ORACLE_SID");
         else
         {
-            toSetEnv("ORACLE_SID", oldSid.latin1());
+            toSetEnv("ORACLE_SID", oldSid.toLatin1());
         }
     }
 
@@ -1325,7 +1322,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
             QString str = QString::fromLatin1("ALTER SESSION SET NLS_DATE_FORMAT = '");
             str += toConfigurationSingle::Instance().globalConfig(CONF_DATE_FORMAT, DEFAULT_DATE_FORMAT);
             str += QString::fromLatin1("'");
-            otl_stream date(1, str.utf8(), *conn);
+            otl_stream date(1, str.toUtf8(), *conn);
         }
         {
             otl_stream info(1,
@@ -1404,7 +1401,7 @@ toOracleSetting::toOracleSetting(QWidget *parent)
                                                                          DEFAULT_OPEN_CURSORS).toInt());
     KeepPlans->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_KEEP_PLANS, "").isEmpty());
     int len = toConfigurationSingle::Instance().globalConfig(CONF_MAX_LONG,
-                                                             QString::number(DEFAULT_MAX_LONG).latin1()).toInt();
+                                                             QString::number(DEFAULT_MAX_LONG).toLatin1()).toInt();
     if (len >= 0)
     {
         MaxLong->setText(QString::number(len));

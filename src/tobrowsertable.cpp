@@ -76,7 +76,7 @@ void toBrowserTable::editTable(toConnection &conn, const QString &owner, const Q
                                  0,
                                  statements.size(),
                                  &dialog);
-            prog.setCaption(tr("Performing table changes"));
+            prog.setWindowTitle(tr("Performing table changes"));
             for (std::list<toSQLParse::statement>::iterator i = statements.begin();i != statements.end();i++) {
                 QString sql = toSQLParse::indentStatement(*i, conn);
                 int l = sql.length() - 1;
@@ -191,7 +191,7 @@ toBrowserTable::toBrowserTable(toConnection &conn,
                 else if (type == "PARAMETERS") {
                     QString t = toShift(row);
                     if (t.startsWith("TABLESPACE")) {
-                        tablespace = connection().unQuote(t.mid(10).stripWhiteSpace());
+                        tablespace = connection().unQuote(t.mid(10).trimmed());
                     }
                     else
                         declarations += t + " ";
@@ -202,9 +202,9 @@ toBrowserTable::toBrowserTable(toConnection &conn,
 
             Columns = toExtract::parseColumnDescription(OriginalDescription);
 
-            ExtraDeclarations->setText(declarations.stripWhiteSpace());
-            StorageDeclarations->setText(storage.stripWhiteSpace());
-            ParallelDeclarations->setText(parallel.stripWhiteSpace());
+            ExtraDeclarations->setText(declarations.trimmed());
+            StorageDeclarations->setText(storage.trimmed());
+            ParallelDeclarations->setText(parallel.trimmed());
             {
                 for (unsigned int i = 0;i < Columns.size();i++)
                     addColumn();
@@ -243,9 +243,9 @@ toBrowserTable::toBrowserTable(toConnection &conn,
             toQuery query(connection(), SQLListTablespaces);
             while (!query.eof()) {
                 QString t = query.readValueNull();
-                Tablespace->insertItem(t);
+                Tablespace->addItem(t);
                 if (t == tablespace)
-                    Tablespace->setCurrentItem(Tablespace->count() - 1);
+                    Tablespace->setCurrentIndex(Tablespace->count() - 1);
             }
         }
         catch (...) {
@@ -287,7 +287,7 @@ void toBrowserTable::addParameters(std::list<QString> &migrateTable,
             end++;
     }
     if (beg != end)
-        toExtract::addDescription(migrateTable, ctx, type, Extractor.createFromParse(beg, end).stripWhiteSpace());
+        toExtract::addDescription(migrateTable, ctx, type, Extractor.createFromParse(beg, end).trimmed());
 }
 
 QString toBrowserTable::sql() {

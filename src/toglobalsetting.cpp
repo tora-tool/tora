@@ -105,15 +105,15 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     }
     else
         DisplaySamples->setValue(samples);
-    DefaultFormat->setCurrentItem(toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_FORMAT, "").toInt());
+    DefaultFormat->setCurrentIndex(toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_FORMAT, "").toInt());
     ToadBindings->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_TOAD_BINDINGS, DEFAULT_TOAD_BINDINGS).isEmpty());
     DisplayGrid->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty());
 
     QString typ = toConfigurationSingle::Instance().globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
     if (typ == "KB")
-        SizeUnit->setCurrentItem(1);
+        SizeUnit->setCurrentIndex(1);
     else if (typ == "MB")
-        SizeUnit->setCurrentItem(2);
+        SizeUnit->setCurrentIndex(2);
 
 #ifdef ENABLE_QT_XFT
 
@@ -125,13 +125,13 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
 
 #ifdef ENABLE_STYLE
 
-    Style->insertStringList(toGetSessionTypes());
+    Style->addItems(toGetSessionTypes());
     QString str = toGetSessionType();
     for (int i = 0;i < Style->count();i++)
     {
-        if (str == Style->text(i))
+        if (str == Style->itemText(i))
         {
-            Style->setCurrentItem(i);
+            Style->setCurrentIndex(i);
             break;
         }
     }
@@ -166,7 +166,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
 
     CustomSQL->setText(toConfigurationSingle::Instance().globalConfig(CONF_SQL_FILE,
                        DEFAULT_SQL_FILE));
-    Locale->setText(toConfigurationSingle::Instance().globalConfig(CONF_LOCALE, QTextCodec::locale()));
+    Locale->setText(toConfigurationSingle::Instance().globalConfig(CONF_LOCALE, QLocale().name()));
 
     SmtpServer->setText(toConfigurationSingle::Instance().globalConfig(
                             CONF_SMTP, DEFAULT_SMTP));
@@ -229,7 +229,7 @@ void toGlobalSetting::saveSetting(void)
     toConfigurationSingle::Instance().globalSetConfig(CONF_RESTORE_SESSION, RestoreSession->isChecked() ? "Yes" : "");
     toConfigurationSingle::Instance().globalSetConfig(CONF_TOOLS_LEFT, ToolsLeft->isChecked() ? "Yes" : "");
     toConfigurationSingle::Instance().globalSetConfig(CONF_DEFAULT_FORMAT,
-            QString::number(DefaultFormat->currentItem()));
+            QString::number(DefaultFormat->currentIndex()));
     toConfigurationSingle::Instance().globalSetConfig(CONF_TOAD_BINDINGS, ToadBindings->isChecked() ? "Yes" : "");
     toConfigurationSingle::Instance().globalSetConfig(CONF_DISPLAY_GRIDLINES, DisplayGrid->isChecked() ? "Yes" : "");
     toConfigurationSingle::Instance().globalSetConfig(CONF_CHANGE_CONNECTION, ChangeConnection->isChecked() ? "Yes" : "");
@@ -263,19 +263,27 @@ void toGlobalSetting::saveSetting(void)
 
 void toDatabaseSetting::numberFormatChange()
 {
-    Decimals->setEnabled(NumberFormat->currentItem() == 2);
+    Decimals->setEnabled(NumberFormat->currentIndex() == 2);
 }
 
 void toDatabaseSetting::IndicateEmptyColor_clicked()
 {
-    QColor c = QColorDialog::getColor(IndicateEmptyColor->paletteBackgroundColor(), this, "IndicateEmptyColorDialog");
-    if (c.isValid())
-        IndicateEmptyColor->setPaletteBackgroundColor(c);
+    QPalette palette = IndicateEmptyColor->palette();
+    QColor c = QColorDialog::getColor(
+        palette.color(IndicateEmptyColor->backgroundRole()),
+        this);
+
+    if(c.isValid()) {
+        palette.setColor(IndicateEmptyColor->backgroundRole(), c);
+        IndicateEmptyColor->setPalette(palette);
+    }
 }
 
 toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFlags fl)
-        : QWidget(parent/*, name, fl*/), toSettingTab("database.html")
+    : QWidget(parent, fl), toSettingTab("database.html")
 {
+    if(name)
+        setObjectName(name);
     setupUi(this);
 
     MaxColDisp->setText(toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_DISP,
@@ -300,19 +308,21 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
     MaxContent->setValidator(new QIntValidator(InitialFetch));
 
     Decimals->setValue(toConfigurationSingle::Instance().globalConfig(CONF_NUMBER_DECIMALS, DEFAULT_NUMBER_DECIMALS).toInt());
-    NumberFormat->setCurrentItem(toConfigurationSingle::Instance().globalConfig(CONF_NUMBER_FORMAT, DEFAULT_NUMBER_FORMAT).toInt());
-    if (NumberFormat->currentItem() == 2)
+    NumberFormat->setCurrentIndex(toConfigurationSingle::Instance().globalConfig(CONF_NUMBER_FORMAT, DEFAULT_NUMBER_FORMAT).toInt());
+    if (NumberFormat->currentIndex() == 2)
         Decimals->setEnabled(true);
 
     AutoCommit->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty());
     DontReread->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_DONT_REREAD, "Yes").isEmpty());
-    ObjectCache->setCurrentItem(toConfigurationSingle::Instance().globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt());
+    ObjectCache->setCurrentIndex(toConfigurationSingle::Instance().globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt());
     BkgndConnect->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_BKGND_CONNECT, "").isEmpty());
     IndicateEmpty->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_INDICATE_EMPTY, "").isEmpty());
 
     QColor nullColor;
     nullColor.setNamedColor(toConfigurationSingle::Instance().globalConfig(CONF_INDICATE_EMPTY_COLOR, "#f2ffbc"));
-    IndicateEmptyColor->setPaletteBackgroundColor(nullColor);
+    QPalette palette = IndicateEmptyColor->palette();
+    palette.setColor(IndicateEmptyColor->backgroundRole(), nullColor);
+    IndicateEmptyColor->setPalette(palette);
 
     int val = toConfigurationSingle::Instance().globalConfig(CONF_AUTO_LONG, "0").toInt();
     AutoLong->setChecked(val);
@@ -348,17 +358,17 @@ void toDatabaseSetting::saveSetting(void)
     }
     toConfigurationSingle::Instance().globalSetConfig(CONF_AUTO_COMMIT, AutoCommit->isChecked() ? "Yes" : "");
     toConfigurationSingle::Instance().globalSetConfig(CONF_DONT_REREAD, DontReread->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_OBJECT_CACHE, QString::number(ObjectCache->currentItem()));
+    toConfigurationSingle::Instance().globalSetConfig(CONF_OBJECT_CACHE, QString::number(ObjectCache->currentIndex()));
     toConfigurationSingle::Instance().globalSetConfig(CONF_BKGND_CONNECT, BkgndConnect->isChecked() ? "Yes" : "");
     toConfigurationSingle::Instance().globalSetConfig(CONF_AUTO_LONG,
             AutoLong->isChecked() ? MoveAfter->cleanText() : QString::fromLatin1("0"));
     toConfigurationSingle::Instance().globalSetConfig(CONF_INDICATE_EMPTY, IndicateEmpty->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_INDICATE_EMPTY_COLOR, IndicateEmptyColor->paletteBackgroundColor().name());
+    toConfigurationSingle::Instance().globalSetConfig(CONF_INDICATE_EMPTY_COLOR, IndicateEmptyColor->palette().color(IndicateEmptyColor->backgroundRole()).name());
     toConfigurationSingle::Instance().globalSetConfig(CONF_KEEP_ALIVE, KeepAlive->isChecked() ? DEFAULT_KEEP_ALIVE : "");
 
-    toConfigurationSingle::Instance().globalSetConfig(CONF_NUMBER_FORMAT, QString::number(NumberFormat->currentItem()));
+    toConfigurationSingle::Instance().globalSetConfig(CONF_NUMBER_FORMAT, QString::number(NumberFormat->currentIndex()));
     toConfigurationSingle::Instance().globalSetConfig(CONF_NUMBER_DECIMALS, QString::number(Decimals->value()));
-    toQValue::setNumberFormat(NumberFormat->currentItem(), Decimals->value());
+    toQValue::setNumberFormat(NumberFormat->currentIndex(), Decimals->value());
 
     toMainWidget()->updateKeepAlive();
     toUpdateIndicateEmpty();
@@ -376,13 +386,13 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
         if ((*i).second->menuItem())
         {
             QString menuName = qApp->translate("toTool", (*i).second->menuItem());
-			DefaultTool->insertItem(menuName);
+			DefaultTool->addItem(menuName);
             new toTreeWidgetItem(Enabled, menuName, (*i).second->name(), (*i).first);
         }
     }
 
     for(QTreeWidgetItemIterator it(Enabled); (*it); it++) {
-        QString tmp = (*it)->text(2).latin1();
+        QString tmp = (*it)->text(2).toLatin1();
         tmp += CONF_TOOL_ENABLE;
         if (!toConfigurationSingle::Instance().globalConfig(tmp, "Yes").isEmpty())
             (*it)->setSelected(true);
@@ -411,19 +421,19 @@ void toToolSetting::changeEnable(void)
     for(QTreeWidgetItemIterator it(Enabled); (*it); it++) {
         if ((*it)->isSelected())
         {
-            DefaultTool->insertItem((*it)->text(0), id);
+            DefaultTool->insertItem(id, (*it)->text(0));
             if ((*it)->text(0) == str)
                 sel = id;
             id++;
         }
     }
-    DefaultTool->setCurrentItem(sel);
+    DefaultTool->setCurrentIndex(sel);
 }
 
 void toToolSetting::saveSetting(void)
 {
     for(QTreeWidgetItemIterator it(Enabled); (*it); it++) {
-        QString str = (*it)->text(2).latin1();
+        QString str = (*it)->text(2).toLatin1();
         str += CONF_TOOL_ENABLE;
         toConfigurationSingle::Instance().globalSetConfig(str, (*it)->isSelected() ? "Yes" : "");
 

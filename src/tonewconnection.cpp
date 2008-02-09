@@ -44,7 +44,6 @@
 #include "toresultview.h"
 #include "totool.h"
 
-#include <q3buttongroup.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qfile.h>
@@ -59,7 +58,6 @@
 #include <qtooltip.h>
 #include <qtooltip.h>
 #include <qvariant.h>
-#include <q3whatsthis.h>
 
 #include <QString>
 #include <QFrame>
@@ -67,7 +65,7 @@
 
 
 toNewConnection::toNewConnection(QWidget* parent,
-                                 const char* name,
+                                 QString name,
                                  bool modal,
                                  Qt::WFlags fl)
     : QDialog(parent, fl),
@@ -75,14 +73,14 @@ toNewConnection::toNewConnection(QWidget* parent,
 {
     setupUi(this);
 
-    if(name)
+    if(!name.isNull())
         setObjectName(name);
     setModal(modal);
 
     toHelp::connectDialog(this);
 
-    Database->insertItem(toConfigurationSingle::Instance().globalConfig(
-                             CONF_DATABASE, DEFAULT_DATABASE));
+    Database->addItem(toConfigurationSingle::Instance().globalConfig(
+                          CONF_DATABASE, DEFAULT_DATABASE));
     Previous->addColumn(tr("Provider"));
     Previous->addColumn(tr("Host"));
     Previous->addColumn(tr("Database"));
@@ -113,9 +111,9 @@ toNewConnection::toNewConnection(QWidget* parent,
     std::list<QString> lst = toConnectionProvider::providers();
     int sel = 0, cur = 0;
     QString provider = toConfigurationSingle::Instance().globalConfig(
-        CONF_PROVIDER, DEFAULT_PROVIDER).latin1();
+        CONF_PROVIDER, DEFAULT_PROVIDER).toLatin1();
     for(std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++) {
-        Provider->insertItem(QString::fromLatin1(*i));
+        Provider->addItem((*i));
         if(*i == provider)
             sel = cur;
         cur++;
@@ -130,7 +128,7 @@ toNewConnection::toNewConnection(QWidget* parent,
         return ;
     }
 
-    Provider->setCurrentItem(sel);
+    Provider->setCurrentIndex(sel);
     changeProvider();
     processOptions(toConfigurationSingle::Instance().globalConfig(
                        CONF_OPTIONS, DEFAULT_OPTIONS));
@@ -138,7 +136,7 @@ toNewConnection::toNewConnection(QWidget* parent,
     QString host = toConfigurationSingle::Instance().globalConfig(
         CONF_HOST, DEFAULT_HOST);
 
-    int portix = host.find(":");
+    int portix = host.indexOf(":");
     if(portix >= 0) {
         Host->lineEdit()->setText(host.mid(0, portix));
         Port->setValue(host.mid(portix + 1).toInt());
@@ -171,7 +169,7 @@ toNewConnection::toNewConnection(QWidget* parent,
         for(int i = 0;i < maxHist;i++) {
             QString path = CONF_CONNECT_HISTORY;
             path += ":";
-            path += QString::number(i).latin1();
+            path += QString::number(i).toLatin1();
             QString tmp = path;
             tmp += CONF_USER;
             QString user = toConfigurationSingle::Instance().globalConfig(tmp, "");
@@ -221,7 +219,7 @@ toNewConnection::~toNewConnection()
 void toNewConnection::changeProvider(void)
 {
     try {
-        std::list<QString> hosts = toConnectionProvider::hosts(Provider->currentText().latin1());
+        std::list<QString> hosts = toConnectionProvider::hosts(Provider->currentText().toLatin1());
         QString current = Host->currentText();
 
         bool sqlNet = false;
@@ -235,7 +233,7 @@ void toNewConnection::changeProvider(void)
                 DefaultPort = (*i).mid(1).toInt();
             }
             else
-                Host->insertItem(*i);
+                Host->addItem(*i);
         }
         Port->setValue(DefaultPort);
         if(sqlNet) {
@@ -253,7 +251,7 @@ void toNewConnection::changeProvider(void)
         Host->lineEdit()->setText(current);
 
         for(std::list<QWidget *>::iterator k = OptionWidgets.begin();k != OptionWidgets.end();k++) {
-            if((*k)->isA("QCheckBox")) {
+            if((*k)->metaObject()->className() == "QCheckBox") {
                 QCheckBox *box = (QCheckBox *)(*k);
                 Options[box->text()] = box->isChecked();
             }
@@ -261,7 +259,7 @@ void toNewConnection::changeProvider(void)
         }
         OptionWidgets.clear();
 
-        std::list<QString> options = toConnectionProvider::options(Provider->currentText().latin1());
+        std::list<QString> options = toConnectionProvider::options(Provider->currentText().toLatin1());
         for(std::list<QString>::iterator j = options.begin();j != options.end();j++) {
             if((*j) == "-") {
                 QFrame *frame = new QFrame(OptionGroup);
@@ -308,7 +306,7 @@ void toNewConnection::changeHost(void)
         if(!Host->isHidden()) {
             QString host;
             host = Host->currentText();
-            std::list<QString> databases = toConnectionProvider::databases(Provider->currentText().latin1(),
+            std::list<QString> databases = toConnectionProvider::databases(Provider->currentText().toLatin1(),
                                                                            host,
                                                                            Username->text(),
                                                                            Password->text());
@@ -316,7 +314,7 @@ void toNewConnection::changeHost(void)
 
             Database->clear();
             for(std::list<QString>::iterator i = databases.begin();i != databases.end();i++)
-                Database->insertItem(*i);
+                Database->addItem(*i);
             Database->lineEdit()->setText(current);
         }
     }
@@ -328,7 +326,7 @@ void toNewConnection::changeHost(void)
 
 void toNewConnection::processOptions(const QString &str)
 {
-    QStringList options = QStringList::split(",", str);
+    QStringList options = str.split(",");
     std::map<QString, bool> values;
     for(int i = 0;i < options.count();i++) {
         QString val = options[i];
@@ -338,7 +336,7 @@ void toNewConnection::processOptions(const QString &str)
             values[val] = false;
     }
     for(std::list<QWidget *>::iterator k = OptionWidgets.begin();k != OptionWidgets.end();k++) {
-        if((*k)->isA("QCheckBox")) {
+        if((*k)->metaObject()->className() == "QCheckBox") {
             QCheckBox *box = (QCheckBox *)(*k);
             if(values.find(box->text()) != values.end())
                 box->setChecked(values[box->text()]);
@@ -371,10 +369,10 @@ toConnection *toNewConnection::makeConnection(void) {
             k != OptionWidgets.end();
             k++)
         {
-            if((*k)->isA("QCheckBox")) {
+            QCheckBox *box = dynamic_cast<QCheckBox *>(*k);
+            if(box) {
                 if(!optionstring.isEmpty())
                     optionstring += ",";
-                QCheckBox *box = (QCheckBox *)(*k);
                 if(box->isChecked()) {
                     optionstring += "*";
                     options.insert(box->text());
@@ -389,7 +387,7 @@ toConnection *toNewConnection::makeConnection(void) {
             try {
                 toConnection &conn = toMainWidget()->connection(*i);
                 if(conn.user() == Username->text() &&
-                    conn.provider() == Provider->currentText().latin1() &&
+                    conn.provider() == Provider->currentText().toLatin1() &&
                     conn.host() == host &&
                     conn.database() == Database->currentText())
                     return &conn;
@@ -402,7 +400,7 @@ toConnection *toNewConnection::makeConnection(void) {
         toConfigurationSingle::Instance().globalSetConfig(CONF_HOST, host);
 
         toConnection *retCon = new toConnection(
-            Provider->currentText().latin1(),
+            Provider->currentText().toLatin1(),
             Username->text(),
             Password->text(),
             host,
@@ -446,7 +444,7 @@ toConnection *toNewConnection::makeConnection(void) {
     catch(const QString &exc) {
         QString str = tr("Unable to connect to the database.\n");
         str.append(exc);
-        TOMessageBox::information(this->parentWidget(false),
+        TOMessageBox::information(this->parentWidget(),
                                   tr("Unable to connect to the database"),
                                   str);
         return NULL;
@@ -466,7 +464,7 @@ void toNewConnection::historySave(void)
     for(; i < siz; it++, i++) {
         QString path = CONF_CONNECT_HISTORY;
         path += ":";
-        path += QString::number(i).latin1();
+        path += QString::number(i).toLatin1();
 
         QString tmp = path;
         tmp += CONF_PROVIDER;
@@ -523,14 +521,14 @@ void toNewConnection::historySelection(void)
     toTreeWidgetItem *item = Previous->selectedItem();
     if(item) {
         for(int i = 0;i < Provider->count();i++)
-            if(Provider->text(i) == item->text(0)) {
-                Provider->setCurrentItem(i);
+            if(Provider->itemText(i) == item->text(0)) {
+                Provider->setCurrentIndex(i);
                 break;
             }
         changeProvider();
 
         QString host = item->text(1);
-        int portix = host.find(":");
+        int portix = host.indexOf(":");
         if(portix >= 0) {
             Host->lineEdit()->setText(host.mid(0, portix));
             Port->setValue(host.mid(portix + 1).toInt());
@@ -554,9 +552,11 @@ void toNewConnection::historyConnect(void)
     bool ok = true;
     if(toConfigurationSingle::Instance().globalConfig(CONF_SAVE_PWD, DEFAULT_SAVE_PWD).isEmpty()) {
         ok = false;
-        QString name = QInputDialog::getText(tr("Enter password"),
+        QString name = QInputDialog::getText(this,
+                                             tr("Enter password"),
                                              tr("Enter password to use for connection."),
-                                             QLineEdit::Password, QString::null, &ok, this);
+                                             QLineEdit::Password,
+                                             QString::null, &ok);
         if(ok)
             Password->setText(name);
     }

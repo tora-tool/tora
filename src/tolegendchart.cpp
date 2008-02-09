@@ -46,8 +46,9 @@
 
 
 toLegendChart::toLegendChart(int columns, QWidget *parent, const char *name, Qt::WFlags f)
-        : QWidget(parent, name, f)
+        : QWidget(parent, f)
 {
+    setObjectName(name);
     Columns = columns < 1 ? 1 : columns;
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred));
 }
@@ -166,7 +167,7 @@ void toLegendChart::paintEvent(QPaintEvent *)
                                        toLegendChart::height(), FONT_ALIGN, Title);
         p.drawText(0, 2,
                    toLegendChart::width() - 4,
-                   toLegendChart::height(), Qt::AlignHCenter | Qt::AlignTop | Qt::ExpandTabs, Title);
+                   toLegendChart::height(), Qt::AlignHCenter | Qt::AlignTop, Title);
         p.restore();
         p.translate(0, bounds.height() + 2);
     }

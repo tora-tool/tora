@@ -69,6 +69,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QMimeData>
+#include <QColorGroup>
 
 static int MaxColDisp;
 static bool Gridlines;
@@ -78,7 +79,7 @@ void toResultViewMLine::setText(int col, const QString &text) {
     int pos = 0;
     int lines = 0;
     do {
-        pos = text.find(QString::fromLatin1("\n"), pos);
+        pos = text.indexOf("\n", pos);
         lines++;
         pos++;
     }
@@ -116,7 +117,7 @@ static int TextWidth(const QFontMetrics &fm, const QString &str) {
     int pos = 0;
     int maxWidth = 0;
     do {
-        pos = str.find(QString::fromLatin1("\n"), lpos);
+        pos = str.indexOf("\n", lpos);
         QRect bounds = fm.boundingRect(str.mid(lpos, pos - lpos));
         if (bounds.width() > maxWidth)
             maxWidth = bounds.width();
@@ -141,7 +142,7 @@ QString toResultViewItem::firstText(int col) const {
     if (col >= ColumnCount)
         return QString::null;
     QString txt = ColumnData[col].Data;
-    int pos = txt.find('\n');
+    int pos = txt.indexOf('\n');
     if (pos != -1)
         return txt.mid(0, pos) + "...";
     return txt;
@@ -168,6 +169,7 @@ int toResultViewItem::realWidth(const QFontMetrics &fm, const toTreeWidget *top,
 }
 
 void toResultViewItem::paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align) {
+#if 0                           // disabled, not overriding correct function anyhow
     // null related background handling
     QColorGroup colNull(cg);
     if ((toConfigurationSingle::Instance().globalConfig(CONF_INDICATE_EMPTY, "").isEmpty() && text(column) == "{null}")
@@ -186,6 +188,7 @@ void toResultViewItem::paintCell(QPainter * p, const QColorGroup & cg, int colum
         p->drawLine(width - 1, 0, width - 1, height());
         p->drawLine(0, height() - 1, width - 1, height() - 1);
     }
+#endif
 }
 
 #define ALLOC_SIZE 10
@@ -320,7 +323,7 @@ void toResultViewMLCheck::setText(int col, const QString &text) {
     int pos = 0;
     int lines = 0;
     do {
-        pos = text.find(QString::fromLatin1("\n"), pos);
+        pos = text.indexOf("\n", pos);
         lines++;
         pos++;
     }
@@ -399,7 +402,7 @@ QString toResultViewCheck::firstText(int col) const {
     if (col >= ColumnCount)
         return QString::null;
     QString txt = ColumnData[col].Data;
-    int pos = txt.find('\n');
+    int pos = txt.indexOf('\n');
     if (pos != -1)
         return txt.mid(0, pos) + "...";
     return txt;
@@ -718,7 +721,7 @@ void toListView::displayMenu(const QPoint &pos) {
             selectAllAct = Menu->addAction(tr("Select all"));
         }
 
-        Menu->insertSeparator();
+        Menu->addSeparator();
 
         exportAct = Menu->addAction(tr("Export to file..."));
         if(!Name.isEmpty()) {
@@ -902,7 +905,7 @@ toListView *toListView::copyTransposed(void) {
         }
         col++;
     }
-    lst->setCaption(Name);
+    lst->setWindowTitle(Name);
     lst->show();
     toMainWidget()->updateWindowsMenu();
     return lst;
@@ -958,7 +961,7 @@ int toListView::exportType(QString &separator, QString &delimiter) {
     separator = format.Separator->text();
     delimiter = format.Delimiter->text();
 
-    return format.Format->currentItem();
+    return format.Format->currentIndex();
 
 }
 
@@ -987,7 +990,7 @@ void toListView::exportData(std::map<QString, QString> &ret, const QString &pref
     int id = 0;
     for (int i = 0;i < columns();i++) {
         id++;
-        ret[prefix + ":Labels:" + QString::number(id).latin1()] = headerItem()->text(i);
+        ret[prefix + ":Labels:" + QString::number(id).toLatin1()] = headerItem()->text(i);
     }
     std::map<toTreeWidgetItem *, int> itemMap;
     toTreeWidgetItem *next = NULL;
@@ -998,7 +1001,7 @@ void toListView::exportData(std::map<QString, QString> &ret, const QString &pref
         id++;
         QString nam = prefix;
         nam += ":Items:";
-        nam += QString::number(id).latin1();
+        nam += QString::number(id).toLatin1();
         nam += ":";
         itemMap[item] = id;
         if (item->parent())
@@ -1017,7 +1020,7 @@ void toListView::exportData(std::map<QString, QString> &ret, const QString &pref
                 val = resItem->allText(i);
             else
                 val = item->text(i);
-            ret[nam + QString::number(i).latin1()] = val;
+            ret[nam + QString::number(i).toLatin1()] = val;
         }
 
         if (item->firstChild())
@@ -1042,7 +1045,7 @@ void toListView::importData(std::map<QString, QString> &ret, const QString &pref
     clear();
 
     id = 1;
-    while ((i = ret.find(prefix + ":Labels:" + QString::number(id).latin1())) != ret.end()) {
+    while ((i = ret.find(prefix + ":Labels:" + QString::number(id).toLatin1())) != ret.end()) {
         addColumn((*i).second);
         id++;
     }
@@ -1053,8 +1056,8 @@ void toListView::importData(std::map<QString, QString> &ret, const QString &pref
     std::map<int, toTreeWidgetItem *> itemMap;
 
     id = 1;
-    while ((i = ret.find(prefix + ":Items:" + QString::number(id).latin1() + ":Parent")) != ret.end()) {
-        QString nam = prefix + ":Items:" + QString::number(id).latin1() + ":";
+    while ((i = ret.find(prefix + ":Items:" + QString::number(id).toLatin1() + ":Parent")) != ret.end()) {
+        QString nam = prefix + ":Items:" + QString::number(id).toLatin1() + ":";
         int parent = (*i).second.toInt();
         toResultViewItem *item;
         if (parent)
@@ -1065,7 +1068,7 @@ void toListView::importData(std::map<QString, QString> &ret, const QString &pref
             item->setOpen(true);
         itemMap[id] = item;
         for (int j = 0;j < columns();j++)
-            item->setText(j, ret[nam + QString::number(j).latin1()]);
+            item->setText(j, ret[nam + QString::number(j).toLatin1()]);
         id++;
     }
 }
@@ -1305,15 +1308,16 @@ void toResultView::refresh(void) {
 }
 
 toResultListFormat::toResultListFormat(QWidget *parent, const char *name)
-        : QDialog(parent, name, true) {
+        : QDialog(parent) {
     setupUi(this);
-    Format->insertItem(tr("Text"));
-    Format->insertItem(tr("Tab delimited"));
-    Format->insertItem(tr("CSV"));
-    Format->insertItem(tr("HTML"));
-    Format->insertItem(tr("SQL"));
+    setModal(true);
+    Format->addItem(tr("Text"));
+    Format->addItem(tr("Tab delimited"));
+    Format->addItem(tr("CSV"));
+    Format->addItem(tr("HTML"));
+    Format->addItem(tr("SQL"));
     int num = toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_FORMAT, "").toInt();
-    Format->setCurrentItem(num);
+    Format->setCurrentIndex(num);
     formatChanged(num);
 
     Delimiter->setText(toConfigurationSingle::Instance().globalConfig(CONF_CSV_DELIMITER, DEFAULT_CSV_DELIMITER));
@@ -1328,7 +1332,7 @@ void toResultListFormat::formatChanged(int pos) {
 void toResultListFormat::saveDefault(void) {
     toConfigurationSingle::Instance().globalSetConfig(CONF_CSV_DELIMITER, Delimiter->text());
     toConfigurationSingle::Instance().globalSetConfig(CONF_CSV_SEPARATOR, Separator->text());
-    toConfigurationSingle::Instance().globalSetConfig(CONF_DEFAULT_FORMAT, QString::number(Format->currentItem()));
+    toConfigurationSingle::Instance().globalSetConfig(CONF_DEFAULT_FORMAT, QString::number(Format->currentIndex()));
 }
 
 void toResultFilter::exportData(std::map<QString, QString> &, const QString &) {}

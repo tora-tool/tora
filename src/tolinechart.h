@@ -164,7 +164,7 @@ public:
     void setTitle(const QString &title = QString::null)
     {
         Title = title;
-        setCaption(title);
+        setWindowTitle(title);
         update();
     }
     /** Get title of chart.

@@ -116,14 +116,14 @@ std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const Q
     }
 
     char c;
-    char nc = str[0].latin1();
+    char nc = str[0].toLatin1();
     for (int i = 0;i < int(str.length());i++)
     {
         std::list<posibleHit>::iterator j = search.begin();
 
         c = nc;
         if (int(str.length()) > i)
-            nc = str[i + 1].latin1();
+            nc = str[i + 1].toLatin1();
         else
             nc = ' ';
 
@@ -259,8 +259,8 @@ bool toSyntaxAnalyzer::reservedWord(const QString &str)
 {
     if (str.length() == 0)
         return false;
-    QString t = str.upper();
-    std::list<const char *> &curKey = Keywords[(unsigned char)char(str[0].latin1())];
+    QString t = str.toUpper();
+    std::list<const char *> &curKey = Keywords[(unsigned char)char(str[0].toLatin1())];
     for (std::list<const char *>::iterator i = curKey.begin();i != curKey.end();i++)
         if (t == (*i))
             return true;
@@ -361,7 +361,7 @@ void toHighlightedText::positionChanged(int row, int col)
 {
     if (col > 0 && this->text(row)[col-1] == '.')
     {
-        timer->start(500, true);
+        timer->setSingleShot(500);
     }
     else
     {
@@ -375,7 +375,7 @@ static QString UpperIdent(const QString &str)
     if (str.length() > 0 && str[0] == '\"')
         return str;
     else
-        return str.upper();
+        return str.toUpper();
 }
 
 void toHighlightedText::autoCompleteFromAPIs()
@@ -406,7 +406,7 @@ void toHighlightedText::autoCompleteFromAPIs()
             int i;
             for (i = 0;i < popup->model()->rowCount();i++)
             {
-                if (popup->item(i)->text().find(partial) == 0)
+                if (popup->item(i)->text().indexOf(partial) == 0)
                 {
                     popup->item(i)->setSelected(true);
                     popup->setCurrentItem(popup->item(i));
@@ -771,14 +771,14 @@ QStringList toHighlightedText::getCompletionList(QString* partial)
                 for (toQDescList::iterator i = desc.begin();i != desc.end();i++)
                 {
                     QString t;
-                    int ind = (*i).Name.find("(");
+                    int ind = (*i).Name.indexOf("(");
                     if (ind < 0)
-                        ind = (*i).Name.find("RETURNING") - 1; //it could be a function or procedure without parameters. -1 to remove the space
+                        ind = (*i).Name.indexOf("RETURNING") - 1; //it could be a function or procedure without parameters. -1 to remove the space
                     if (ind >= 0)
                         t = conn.quote((*i).Name.mid(0, ind)) + (*i).Name.mid(ind);
                     else
                         t = conn.quote((*i).Name);
-                    if (t.find(*partial) == 0)
+                    if (t.indexOf(*partial) == 0)
                         toReturn.append(t);
                 }
             }

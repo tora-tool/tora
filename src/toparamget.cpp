@@ -65,12 +65,13 @@ std::map<QString, std::list<QString> > toParamGet::DefaultCache;
 std::map<QString, std::list<QString> > toParamGet::Cache;
 
 toParamGet::toParamGet(QWidget *parent, const char *name)
-    : QDialog(parent, name, true),
+    : QDialog(parent),
       toHelpContext(QString::fromLatin1("common.html#param")) {
 
+    setModal(true);
     toHelp::connectDialog(this);
     resize(500, 480);
-    setCaption(tr("Define binding variables"));
+    setWindowTitle(tr("Define binding variables"));
 
     QHBoxLayout *hlayout = new QHBoxLayout;
 
@@ -92,12 +93,12 @@ toParamGet::toParamGet(QWidget *parent, const char *name)
     Container->setSpacing(10);
     ext->setLayout(Container);
 
-    QPushButton *OkButton = new QPushButton(this, "OkButton");
+    QPushButton *OkButton = new QPushButton("OkButton", this);
     OkButton->setText(tr("&Ok"));
     OkButton->setDefault(true);
     vlayout->addWidget(OkButton);
 
-    QPushButton *CancelButton = new QPushButton(this, "CancelButton");
+    QPushButton *CancelButton = new QPushButton("CancelButton", this);
     CancelButton->setText(tr("Cancel"));
     CancelButton->setDefault(false);
     vlayout->addWidget(CancelButton);
@@ -181,7 +182,7 @@ toQList toParamGet::getParam(toConnection &conn,
                     state = normal;
                 break;
             case normal:
-                switch (c.latin1()) {
+                switch (c.toLatin1()) {
                 case '\'':
                 case '\"':
                     endString = c;
@@ -256,9 +257,9 @@ toQList toParamGet::getParam(toConnection &conn,
                     QLabel *id = new QLabel(fname, widget);
                     widget->Container->addWidget(id, num, 0);
 
+                    QComboBox *edit = new QComboBox(widget);
                     // to memo finds child by widget name (row)
-                    QComboBox *edit = new QComboBox(widget,
-                                                    QString::number(num));
+                    edit->setObjectName(QString::number(num));
                     edit->setEditable(true);
                     edit->setSizePolicy(QSizePolicy::MinimumExpanding,
                                         QSizePolicy::MinimumExpanding);
@@ -274,7 +275,7 @@ toQList toParamGet::getParam(toConnection &conn,
 
                             if (edit->count() == 0)
                                 defval = *i;
-                            edit->insertItem(*i);
+                            edit->addItem(*i);
                         }
                     }
 
@@ -286,7 +287,7 @@ toQList toParamGet::getParam(toConnection &conn,
 
                             if (edit->count() == 0)
                                 defval = *i;
-                            edit->insertItem(*i);
+                            edit->addItem(*i);
                         }
                     }
 
@@ -404,15 +405,15 @@ void toParamGet::setDefault(toConnection &, const QString &name, const QString &
 
 void toParamGet::showMemo(int row)
 {
-    QObject *obj = child(QString::number(row));
+    QComboBox *obj = findChild<QComboBox *>(QString::number(row));
     if (obj) {
         toMemoEditor *memo = new toMemoEditor(this,
-                                              ((QComboBox *) obj)->currentText(),
+                                              obj->currentText(),
                                               row,
                                               0,
                                               false,
                                               true);
         if (memo->exec())
-            ((QComboBox *)obj)->setCurrentText(memo->text());
+            obj->setItemText(obj->currentIndex(), memo->text());
     }
 }

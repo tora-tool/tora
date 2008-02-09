@@ -71,7 +71,7 @@ void toBrowserConstraint::modifyConstraint(toConnection &conn, const QString &ow
                                  0,
                                  statements.size(),
                                  &dialog);
-            prog.setCaption(tr("Performing constraint changes"));
+            prog.setWindowTitle(tr("Performing constraint changes"));
             for (std::list<toSQLParse::statement>::iterator j = statements.begin();j != statements.end();j++)
             {
                 QString sql = toSQLParse::indentStatement(*j, conn);
@@ -90,8 +90,11 @@ void toBrowserConstraint::modifyConstraint(toConnection &conn, const QString &ow
 }
 
 toBrowserConstraint::toBrowserConstraint(toConnection &conn, const QString &owner, const QString &table, QWidget *parent, const char *name)
-        : QDialog(parent, name, true), toConnectionWidget(conn, this), Extractor(conn, NULL)
+    : QDialog(parent), toConnectionWidget(conn, this), Extractor(conn, NULL)
 {
+    setObjectName(name);
+    setModal(true);
+
     setupUi(this);
     Extractor.setIndexes(false);
     Extractor.setConstraints(true);
@@ -122,7 +125,7 @@ void toBrowserConstraint::describeTable(const QString &table)
 {
     try
     {
-        QStringList parts = QStringList::split(".", table);
+        QStringList parts = table.split(".");
         if (parts.size() > 1)
         {
             Owner = connection().unQuote(parts[0]);
@@ -173,7 +176,7 @@ void toBrowserConstraint::describeTable(const QString &table)
         }
         Name->clear();
         for (std::map<QString, QString>::iterator i = Constraints.begin();i != Constraints.end();i++)
-            Name->insertItem((*i).first);
+            Name->addItem((*i).first);
 
         SourceColList->changeParams(Owner, Table);
         UniqueColList->changeParams(Owner, Table);
@@ -185,7 +188,7 @@ void toBrowserConstraint::describeTable(const QString &table)
             for (std::list<toConnection::objectName>::iterator i = objects.begin();i != objects.end();i++)
             {
                 if ((*i).Type == "TABLE" && (*i).Owner == Owner)
-                    ReferTable->insertItem((*i).Name);
+                    ReferTable->addItem((*i).Name);
             }
         }
 
@@ -267,13 +270,16 @@ void toBrowserConstraint::addConstraint()
     if (Table.isEmpty())
         return ;
     bool ok = false;
-    QString name = QInputDialog::getText(tr("Enter new constraint name"),
+    QString name = QInputDialog::getText(this,
+                                         tr("Enter new constraint name"),
                                          tr("Enter name of new constraint."),
-                                         QLineEdit::Normal, QString::null, &ok, this);
+                                         QLineEdit::Normal,
+                                         QString::null,
+                                         &ok);
     if (ok)
     {
-        Name->insertItem(name);
-        Name->setCurrentItem(Name->count() - 1);
+        Name->addItem(name);
+        Name->setCurrentIndex(Name->count() - 1);
         changeConstraint();
     }
 }
@@ -284,7 +290,7 @@ void toBrowserConstraint::delConstraint()
     {
         Constraints.erase(Current);
         Current = QString::null;
-        Name->removeItem(Name->currentItem());
+        Name->removeItem(Name->currentIndex());
         changeConstraint();
     }
 }
@@ -307,12 +313,12 @@ void toBrowserConstraint::parseConstraint(const QString &definition)
         return ;
     Type->setEnabled(false);
 
-    QString type = (*i).String.upper();
+    QString type = (*i).String.toUpper();
     i++;
     if (type == "FOREIGN")
     {
         WidgetStack->setCurrentIndex(WidgetStack->indexOf(ReferentialPage));
-        Type->setCurrentItem(0);
+        Type->setCurrentIndex(0);
         if (i == statement.subTokens().end())
             return ;
 
@@ -332,7 +338,7 @@ void toBrowserConstraint::parseConstraint(const QString &definition)
         i++;  // Refered table finally
         if (i == statement.subTokens().end())
             return ;
-        ReferTable->setCurrentText((*i).String);
+        ReferTable->setItemText(ReferTable->currentIndex(), (*i).String);
         changeRefered();
         while (i != statement.subTokens().end() && (*i).Type != toSQLParse::statement::List)
             i++;
@@ -342,7 +348,7 @@ void toBrowserConstraint::parseConstraint(const QString &definition)
     else if (type == "PRIMARY" || type == "UNIQUE")
     {
         WidgetStack->setCurrentIndex(WidgetStack->indexOf(PrimaryPage));
-        Type->setCurrentItem(2);
+        Type->setCurrentIndex(2);
         Primary->setChecked(type == "PRIMARY");
         Unique->setChecked(type == "UNIQUE");
         while (i != statement.subTokens().end() && (*i).Type != toSQLParse::statement::List)
@@ -353,7 +359,7 @@ void toBrowserConstraint::parseConstraint(const QString &definition)
     else if (type == "CHECK")
     {
         WidgetStack->setCurrentIndex(WidgetStack->indexOf(CheckPage));
-        Type->setCurrentItem(1);
+        Type->setCurrentIndex(1);
         while (i != statement.subTokens().end() && (*i).Type != toSQLParse::statement::List)
             i++;
         if (i != statement.subTokens().end())
@@ -402,7 +408,7 @@ void toBrowserConstraint::changeConstraint()
 
 void toBrowserConstraint::changeRefered(void)
 {
-    QStringList parts = QStringList::split(".", ReferTable->currentText());
+    QStringList parts = ReferTable->currentText().split(".");
     if (parts.size() > 1)
         ReferColList->changeParams(parts[0], parts[1]);
     else

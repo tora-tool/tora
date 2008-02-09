@@ -66,7 +66,7 @@ void toExtract::extractor::registerExtract(const QString &db,
     QString name = toExtract::extractorName(db, oper, type);
 
     if ((*toExtract::Extractors).find(name) != (*toExtract::Extractors).end())
-        fprintf(stderr, "Extractor %s multiply defined\n", (const char *)name);
+        fprintf(stderr, "Extractor %s multiply defined\n", name.toAscii().constData());
 
     (*toExtract::Extractors)[name] = this;
 }
@@ -80,7 +80,7 @@ void toExtract::extractor::unregisterExtract(const QString &db,
     QString name = toExtract::extractorName(db, oper, type);
     std::map<QString, extractor *>::iterator i = (*toExtract::Extractors).find(name);
     if (i == (*toExtract::Extractors).end())
-        fprintf(stderr, "Extractor %s not defined on unregistering\n", (const char *)name);
+        fprintf(stderr, "Extractor %s not defined on unregistering\n", name.toAscii().constData());
     else
         (*toExtract::Extractors).erase(i);
 }
@@ -247,7 +247,7 @@ void toExtract::parseObject(const QString &object,
         unsigned int search = 0;
         if (object[0] == '\"')
         {
-            int pos = object.find('\"', 1);
+            int pos = object.indexOf('\"', 1);
             if (pos < 0)
                 throw 1;
             owner = object.left(pos);
@@ -256,7 +256,7 @@ void toExtract::parseObject(const QString &object,
         }
         else
         {
-            int pos = object.find('.');
+            int pos = object.indexOf('.');
             if (pos < 0)
                 pos = object.length();
             owner = object.left(pos);
@@ -273,7 +273,7 @@ void toExtract::parseObject(const QString &object,
         search++;
         if (object.at(search) == '\"')
         {
-            int pos = object.find('\"', search + 1);
+            int pos = object.indexOf('\"', search + 1);
             if (pos < 0)
                 throw 3;
             name = object.left(pos);
@@ -326,7 +326,7 @@ void toExtract::create(QTextStream &ret, std::list<QString> &objects)
             0,
             objects.size(),
             Parent);
-        progress->setCaption(qApp->translate("toExtract", "Creating script"));
+        progress->setWindowTitle(qApp->translate("toExtract", "Creating script"));
         label = new QLabel(progress);
         progress->setLabel(label);
     }
@@ -351,12 +351,12 @@ void toExtract::create(QTextStream &ret, std::list<QString> &objects)
             QString type = *i;
             QString owner;
             QString name;
-            int pos = type.find(QString::fromLatin1(":"));
+            int pos = type.indexOf(QString::fromLatin1(":"));
             if (pos < 0)
                 throw qApp->translate("toExtract", "Internal error, missing : in object description");
             parseObject(type.right(type.length() - pos - 1), owner, name);
             type.truncate(pos);
-            QString utype = type.upper();
+            QString utype = type.toUpper();
             QString schema = intSchema(owner, false);
             try
             {
@@ -406,7 +406,7 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
             0,
             objects.size(),
             Parent);
-        progress->setCaption(qApp->translate("toExtract", "Creating description"));
+        progress->setWindowTitle(qApp->translate("toExtract", "Creating description"));
         label = new QLabel(progress);
         progress->setLabel(label);
     }
@@ -431,12 +431,12 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
             QString type = *i;
             QString owner;
             QString name;
-            int pos = type.find(QString::fromLatin1(":"));
+            int pos = type.indexOf(QString::fromLatin1(":"));
             if (pos < 0)
                 throw qApp->translate("toExtract", "Internal error, missing : in object description");
             parseObject(type.right(type.length() - pos - 1), owner, name);
             type.truncate(pos);
-            QString utype = type.upper();
+            QString utype = type.toUpper();
             QString schema = intSchema(owner, true);
 
             std::list<QString> cur;
@@ -493,7 +493,7 @@ void toExtract::drop(QTextStream &ret, std::list<QString> &objects)
             qApp->translate("toExtract", "Cancel"),
             0,
             objects.size());
-        progress->setCaption(qApp->translate("toExtract", "Creating drop script"));
+        progress->setWindowTitle(qApp->translate("toExtract", "Creating drop script"));
         label = new QLabel(progress);
         progress->setLabel(label);
     }
@@ -515,12 +515,12 @@ void toExtract::drop(QTextStream &ret, std::list<QString> &objects)
             QString type = *i;
             QString owner;
             QString name;
-            int pos = type.find(QString::fromLatin1(":"));
+            int pos = type.indexOf(QString::fromLatin1(":"));
             if (pos < 0)
                 throw qApp->translate("toExtract", "Internal error, missing : in object description");
             parseObject(type.right(type.length() - pos - 1), owner, name);
             type.truncate(pos);
-            QString utype = type.upper();
+            QString utype = type.toUpper();
             QString schema = intSchema(owner, false);
 
             try
@@ -606,7 +606,7 @@ void toExtract::migrate(QTextStream &ret, std::list<QString> &drpLst, std::list<
             qApp->translate("toExtract", "Cancel"),
             0,
             objDrp.size());
-        progress->setCaption(qApp->translate("toExtract", "Creating migration script"));
+        progress->setWindowTitle(qApp->translate("toExtract", "Creating migration script"));
         label = new QLabel(progress);
         progress->setLabel(label);
     }
@@ -637,7 +637,7 @@ void toExtract::migrate(QTextStream &ret, std::list<QString> &drpLst, std::list<
             drp.sort();
             std::list<QString> ctx = splitDescribe(t);
             QString schema = toShift(ctx);
-            QString utype = toShift(ctx).upper();
+            QString utype = toShift(ctx).toUpper();
             QString name = toShift(ctx);
 
             try
@@ -761,7 +761,7 @@ void toExtract::setSizes(void)
     }
     else if (!Resize.isEmpty())
     {
-        QStringList lst = QStringList::split(QString::fromLatin1(":"), Resize);
+        QStringList lst = Resize.split(":");
         if (lst.count() % 3 != 0)
             throw qApp->translate("toExtract", "Malformed resize string (Should contain multiple of 3 number of ':')");
         for (int i = 0;i < lst.count();i += 3)
@@ -778,20 +778,20 @@ void toExtract::setSizes(void)
 
 QString toExtract::intSchema(const QString &owner, bool desc)
 {
-    if (owner.upper() == QString::fromLatin1("PUBLIC"))
-        return QString::fromLatin1("PUBLIC");
-    if (Schema == QString::fromLatin1("1"))
+    if (owner.toUpper() == "PUBLIC")
+        return QString("PUBLIC");
+    if (Schema == "1")
     {
         QString ret = Connection.quote(owner);
         if (!desc)
-            ret += QString::fromLatin1(".");
+            ret += ".";
         return ret;
     }
     else if (Schema.isEmpty())
         return QString::null;
     QString ret = Connection.quote(Schema);
     if (!desc)
-        ret += QString::fromLatin1(".");
+        ret += ".";
     return ret;
 }
 
@@ -880,7 +880,7 @@ void toExtract::addDescription(std::list<QString> &ret, const std::list<QString>
 
 std::list<QString> toExtract::splitDescribe(const QString &str)
 {
-    QStringList ctx = QStringList::split(QString::fromLatin1("\01"), str);
+    QStringList ctx = str.split("\01");
     std::list<QString> ret;
     for (int i = 0;i < ctx.count();i++)
         ret.insert(ret.end(), ctx[i]);
@@ -889,7 +889,7 @@ std::list<QString> toExtract::splitDescribe(const QString &str)
 
 QString toExtract::partDescribe(const QString &str, int level)
 {
-    QStringList ctx = QStringList::split(QString::fromLatin1("\01"), str);
+    QStringList ctx = str.split("\01");
     if (ctx.count() <= level)
         return QString::null;
     return ctx[level];
@@ -901,7 +901,7 @@ QString toExtract::contextDescribe(const QString &str, int level)
     do
     {
         level--;
-        str.find(QString::fromLatin1("\01"), pos + 1);
+        str.indexOf("\01", pos + 1);
     }
     while (pos >= 0 && level > 0);
 
@@ -923,7 +923,7 @@ QString toExtract::createFromParse(std::list<toSQLParse::statement>::iterator st
         newstat.subTokens().insert(newstat.subTokens().end(), *start);
         start++;
     }
-    return toSQLParse::indentStatement(newstat, connection()).stripWhiteSpace();
+    return toSQLParse::indentStatement(newstat, connection()).trimmed();
 }
 
 std::list<toExtract::columnInfo> toExtract::parseColumnDescription(std::list<QString>::const_iterator begin,

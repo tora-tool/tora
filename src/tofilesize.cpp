@@ -54,28 +54,29 @@ void toFilesize::setup() {
 
     QWidget *hcontainer = new QWidget(this);
     vlayout->addWidget(hcontainer);
-    QHBoxLayout *layout = new QHBoxLayout(vlayout);
+    QHBoxLayout *layout = new QHBoxLayout(hcontainer);
     layout->setMargin(10);
     layout->setSpacing(10);
     vlayout->addSpacing(2);
     hcontainer->setLayout(layout);
+    vlayout->addWidget(hcontainer);
 
-    Value = new QSpinBox(this, "Value");
-    Value->setLineStep(1024);
-    Value->setMaxValue(2097151);
-    Value->setMinValue(1);
+    Value = new QSpinBox(this);
+    Value->setSingleStep(1024);
+    Value->setMaximum(2097151);
+    Value->setMinimum(1);
     Value->setValue(1024);
     layout->addWidget(Value);
     layout->setStretchFactor(Value, 100);
 
-    MBSize = new QRadioButton(this, "MBSize");
+    MBSize = new QRadioButton(this);
     MBSize->setText(QString::fromLatin1("MB"));
     MBSize->setChecked(true);
     layout->addWidget(MBSize);
     layout->setStretchFactor(MBSize, 1);
     connect(MBSize, SIGNAL(toggled(bool)), this, SLOT(changeType(bool)));
 
-    KBSize = new QRadioButton(this, "MBSize" );
+    KBSize = new QRadioButton(this);
     KBSize->setText(QString::fromLatin1("KB"));
     KBSize->setChecked(false);
     layout->addWidget(KBSize);
@@ -109,11 +110,11 @@ void toFilesize::changeType(bool)
 {
     if (MBSize->isChecked())
     {
-        Value->setMaxValue(2097151);
+        Value->setMaximum(2097151);
     }
     else
     {
-        Value->setMaxValue(2147483647);
+        Value->setMaximum(2147483647);
     }
 }
 
@@ -124,13 +125,13 @@ void toFilesize::setValue(int sizeInKB)
         MBSize->setChecked(true);
         KBSize->setChecked(false);
         Value->setValue(sizeInKB / 1024);
-        Value->setMaxValue(2097151);
+        Value->setMaximum(2097151);
     }
     else
     {
         MBSize->setChecked(false);
         KBSize->setChecked(true);
-        Value->setMaxValue(2147483647);
+        Value->setMaximum(2147483647);
         Value->setValue(sizeInKB);
     }
 }

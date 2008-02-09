@@ -97,7 +97,8 @@ void toResultDataSingle::changeSource(toResultModel *model, int _row) {
         QLabel *name = new QLabel(Headers[row].name, this);
         grid->addWidget(name, row, col++);
 
-        QLineEdit *edit = new QLineEdit(this, QString::number(row));
+        QLineEdit *edit = new QLineEdit(this);
+        edit->setObjectName(QString::number(row));
         edit->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                         QSizePolicy::Minimum));
         grid->addWidget(edit, row, col);
@@ -173,17 +174,17 @@ void toResultDataSingle::saveRow() {
 
 
 void toResultDataSingle::showMemo(int row) {
-    QObject *obj = child(QString::number(row));
+    QLineEdit *obj = findChild<QLineEdit *>(QString::number(row));
     if(obj) {
         toMemoEditor *memo = new toMemoEditor(
             this,
-            ((QLineEdit *) obj)->text(),
+            obj->text(),
             row,
             0,
             false,
             true);
 
         if(memo->exec())
-            ((QLineEdit *) obj)->setText(memo->text());
+            obj->setText(memo->text());
     }
 }

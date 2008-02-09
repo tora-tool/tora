@@ -119,10 +119,10 @@ public:
         vbox->addWidget(label);
 
         Type = new QComboBox(this);
-        Type->insertItem(qApp->translate("toLogOutput", "SQL Output"));
-        Type->insertItem(qApp->translate("toLogOutput", "Log4PL/SQL"));
-        Type->setCurrentItem(Tool->config(CONF_LOG_TYPE,
-                                          DEFAULT_LOG_TYPE).toInt());
+        Type->addItem(qApp->translate("toLogOutput", "SQL Output"));
+        Type->addItem(qApp->translate("toLogOutput", "Log4PL/SQL"));
+        Type->setCurrentIndex(Tool->config(CONF_LOG_TYPE,
+                                           DEFAULT_LOG_TYPE).toInt());
         label->setBuddy(Type);
         vbox->addWidget(Type);
 
@@ -141,7 +141,7 @@ public:
     }
     virtual void saveSetting(void) {
         Tool->setConfig(CONF_POLLING, AutoPolling->currentText());
-        Tool->setConfig(CONF_LOG_TYPE, QString::number(Type->currentItem()));
+        Tool->setConfig(CONF_LOG_TYPE, QString::number(Type->currentIndex()));
         Tool->setConfig(CONF_LOG_USER, User->text());
     }
 };
@@ -209,15 +209,13 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
     enableAct->setShortcut(Qt::Key_F4);
     enableAct->setCheckable(true);
     QIcon iconset;
-    iconset.setPixmap(QPixmap(const_cast<const char**>(online_xpm)),
-                      QIcon::Automatic,
+    iconset.addPixmap(QPixmap(const_cast<const char**>(online_xpm)),
                       QIcon::Normal,
                       QIcon::Off);
-    iconset.setPixmap(QPixmap(const_cast<const char**>(offline_xpm)),
-                      QIcon::Automatic,
+    iconset.addPixmap(QPixmap(const_cast<const char**>(offline_xpm)),
                       QIcon::Normal,
                       QIcon::On);
-    enableAct->setIconSet(iconset);
+    enableAct->setIcon(iconset);
     connect(enableAct, SIGNAL(triggered()), this, SLOT(toggleMenu(void)));
 
     clearAct = new QAction(QIcon(QPixmap(const_cast<const char**>(eraselog_xpm))),
@@ -230,7 +228,7 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
     Toolbar->addSeparator();
 
     Toolbar->addWidget(
-        new QLabel(tr("Refresh") + " ", Toolbar, TO_TOOLBAR_WIDGET_NAME));
+        new QLabel(tr("Refresh") + " ", Toolbar));
 
 
     Refresh = toRefreshCreate(Toolbar,
@@ -403,10 +401,10 @@ static toSQL SQLLog("toLogOutput:Poll",
 
 toLogOutput::toLogOutput(QWidget *parent, toConnection &connection)
     : toOutput(parent, connection) {
-    Type = new QComboBox(toolBar(), TO_TOOLBAR_WIDGET_NAME);
-    Type->insertItem(tr("SQL Output"));
-    Type->insertItem(tr("Log4PL/SQL"));
-    Type->setCurrentItem(OutputTool.config(CONF_LOG_TYPE, DEFAULT_LOG_TYPE).toInt());
+    Type = new QComboBox(toolBar());
+    Type->addItem(tr("SQL Output"));
+    Type->addItem(tr("Log4PL/SQL"));
+    Type->setCurrentIndex(OutputTool.config(CONF_LOG_TYPE, DEFAULT_LOG_TYPE).toInt());
     toolBar()->addWidget(Type);
     connect(Type, SIGNAL(activated(int)), this, SLOT(changeType()));
 
@@ -415,7 +413,7 @@ toLogOutput::toLogOutput(QWidget *parent, toConnection &connection)
 }
 
 void toLogOutput::refresh(void) {
-    if (Type->currentItem() == 1) {
+    if (Type->currentIndex() == 1) {
         Log->setSQL(QString::null);
         Log->query(SQLLog(connection()).arg(OutputTool.config(
                                                 CONF_LOG_USER,
@@ -425,7 +423,7 @@ void toLogOutput::refresh(void) {
 }
 
 void toLogOutput::changeType(void) {
-    if (Type->currentItem() == 1) {
+    if (Type->currentIndex() == 1) {
         output()->hide();
         Log->show();
         refresh();

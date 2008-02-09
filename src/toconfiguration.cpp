@@ -103,7 +103,7 @@ void toConfiguration::loadMap(const QString &filename, std::map<QString, QString
             {
                 QString tag = ((const char *)data) + bol;
                 QString val = ((const char *)data) + endtag + 1;
-                pairs[tag] = QString::fromUtf8(val);
+                pairs[tag] = val;
             }
             bol = pos + 1;
             endtag = -1;
@@ -183,7 +183,7 @@ void toConfiguration::saveConfig()
             }
             else
             {
-                char *t = strdup(value.utf8());
+                char *t = strdup(value.toUtf8());
                 if (RegSetValueA(key,
                                  toKeyValue(path),
                                  REG_SZ,
@@ -232,7 +232,7 @@ bool toConfiguration::saveMap(const QString &file, std::map<QString, QString> &p
             QString line = (*i).second;
             line.replace(backslash, QString::fromLatin1("\\\\"));
             line.replace(newline, QString::fromLatin1("\\n"));
-            str += line.utf8();
+            str += line.toUtf8();
             str += QString::fromLatin1("\n");
             data += str;
         }
@@ -294,7 +294,7 @@ const QString &toConfiguration::globalConfig(const QString &tag, const QString &
         }
 #endif
 
-        (Configuration)[tag] = QString::fromLatin1(def);
+        (Configuration)[tag] = QString(def);
         return (Configuration)[tag];
     }
 

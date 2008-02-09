@@ -215,7 +215,7 @@ public:
      * @param name Name of widget.
      * @param modal If dialog is for a modal dialog or not
      */
-    toHelp(QWidget *parent, const char *name, bool modal = true);
+    toHelp(QWidget *parent, QString name, bool modal = true);
     /** Help function to get a clean path from a path string. Strips trailing / etc.
      * @param path Path to strip.
      * @return Stripped path in string.

@@ -6190,7 +6190,7 @@ void toOracleExtract::describeTableFamily(toExtract &ext,
     toQList constraints = toQuery::readQueryNull(CONNECTION, SQLTableConstraints, name, owner);
     while (!constraints.empty())
     {
-        if (toShift(constraints).utf8() != "P" || iotType != "IOT")
+        if (toShift(constraints).toUtf8() != "P" || iotType != "IOT")
             describeConstraint(ext, lst, schema, owner, toShift(constraints));
         else
             toShift(constraints);

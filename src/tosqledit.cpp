@@ -93,7 +93,7 @@ public:
 
         Window->raise();
         Window->setFocus();
-        Window->setIcon(QPixmap(const_cast<const char**>(tosqledit_xpm)));
+        Window->setWindowIcon(QPixmap(const_cast<const char**>(tosqledit_xpm)));
         return Window;
     }
 
@@ -128,7 +128,7 @@ void toSQLEdit::updateStatements(const QString &sel) {
 
     for (toSQL::sqlMap::iterator pos = sql.begin();pos != sql.end();pos++) {
         QString str = (*pos).first;
-        int i = str.find(QString::fromLatin1(":"));
+        int i = str.indexOf(QString::fromLatin1(":"));
         if (i >= 0) {
             if (!head || head->text(0) != str.left(i)) {
                 head = new toTreeWidgetItem(Statements, str.left(i));
@@ -167,18 +167,16 @@ toSQLEdit::toSQLEdit(QWidget *main, toConnection &connection)
                        SLOT(saveSQL()));
     toolbar->addSeparator();
 
-    CommitButton = new QToolButton(QPixmap(const_cast<const char**>(commit_xpm)),
-                                   tr("Save this entry in the dictionary"),
-                                   tr("Save this entry in the dictionary"),
-                                   this, SLOT(commitChanges()),
-                                   toolbar);
+    CommitButton = new QToolButton(toolbar);
+    CommitButton->setText(tr("Save this entry in the dictionary"));
+    CommitButton->setIcon(QIcon(commit_xpm));
+    connect(CommitButton, SLOT(triggered()), this, SLOT(commitChanges()));
     toolbar->addWidget(CommitButton);
 
-    TrashButton = new QToolButton(QPixmap(const_cast<const char**>(trash_xpm)),
-                                  tr("Delete this version from the SQL dictionary"),
-                                  tr("Delete this version from the SQL dictionary"),
-                                  this, SLOT(deleteVersion()),
-                                  toolbar);
+    TrashButton = new QToolButton(toolbar);
+    TrashButton->setIcon(QIcon(trash_xpm));
+    TrashButton->setText(tr("Delete this version from the SQL dictionary"));
+    connect(CommitButton, SLOT(triggered()), this, SLOT(deleteVersion()));
     toolbar->addWidget(TrashButton);
 
     toolbar->addAction(QIcon(add_xpm),
@@ -220,7 +218,7 @@ toSQLEdit::toSQLEdit(QWidget *main, toConnection &connection)
     hlay->addWidget(Version);
 
     LastVersion = connection.provider() + ":Any";
-    Version->insertItem(LastVersion);
+    Version->addItem(LastVersion);
 
     QFrame *line = new QFrame(vbox);
     vlay->addWidget(line);
@@ -294,8 +292,8 @@ void toSQLEdit::deleteVersion(void) {
         return ;
 
     try {
-        toSQL::deleteSQL(Name->text().latin1(), version, provider);
-        Version->removeItem(Version->currentItem());
+        toSQL::deleteSQL(Name->text().toLatin1(), version, provider);
+        Version->removeItem(Version->currentIndex());
 
         if (Version->count() == 0) {
             toTreeWidgetItem *item = toFindItem(Statements, Name->text());
@@ -307,7 +305,7 @@ void toSQLEdit::deleteVersion(void) {
             newSQL();
         }
         else
-            selectionChanged(QString::fromLatin1(connection().provider() + ":" + connection().version()));
+            selectionChanged(QString(connection().provider() + ":" + connection().version()));
     }
     TOCATCH;
 }
@@ -319,21 +317,21 @@ bool toSQLEdit::close(bool del) {
 }
 
 bool toSQLEdit::splitVersion(const QString &split, QString &provider, QString &version) {
-    int found = split.find(QString::fromLatin1(":"));
+    int found = split.indexOf(QString::fromLatin1(":"));
     if (found < 0) {
         TOMessageBox::warning(this, tr("Wrong format of version"),
                               tr("Should be database provider:version."),
                               tr("&Ok"));
         return false;
     }
-    provider = split.mid(0, found).latin1();
+    provider = split.mid(0, found).toLatin1();
     if (provider.length() == 0) {
         TOMessageBox::warning(this, tr("Wrong format of version"),
                               tr("Should be database provider:version. Can't start with :."),
                               tr("&Ok"));
         return false;
     }
-    version = split.mid(found + 1).latin1();
+    version = split.mid(found + 1).toLatin1();
     if (version.length() == 0) {
         TOMessageBox::warning(this, tr("Wrong format of version"),
                               tr("Should be database provider:version. Can't end with the first :."),
@@ -351,7 +349,7 @@ void toSQLEdit::commitChanges(bool changeSelected) {
     QString name = Name->text();
     toTreeWidgetItem *item = toFindItem(Statements, name);
     if (!item) {
-        int i = name.find(QString::fromLatin1(":"));
+        int i = name.indexOf(QString::fromLatin1(":"));
         if (i >= 0) {
             item = toFindItem(Statements, name.mid(0, i));
             if (!item)
@@ -376,7 +374,7 @@ void toSQLEdit::commitChanges(bool changeSelected) {
                               tr("&Ok"));
         Description->setText(tr("Undescribed"));
     }
-    toSQL::updateSQL(name.latin1(),
+    toSQL::updateSQL(name.toLatin1(),
                      Editor->editor()->text(),
                      Description->text(),
                      version,
@@ -387,7 +385,7 @@ void toSQLEdit::commitChanges(bool changeSelected) {
     bool update = Name->isModified();
 
 
-    Name->setEdited(false);
+    Name->setModified(false);
     Description->setModified(false);
     Editor->editor()->setModified(false);
     LastVersion = Version->currentText();
@@ -409,7 +407,7 @@ bool toSQLEdit::checkStore(bool justVer) {
             commitChanges(false);
             break;
         case 1:
-            Name->setEdited(false);
+            Name->setModified(false);
             Description->setModified(false);
             Editor->editor()->setModified(false);
             LastVersion = Version->currentText();
@@ -425,7 +423,7 @@ void toSQLEdit::changeVersion(const QString &ver) {
     if (!Editor->editor()->isModified() || checkStore(true)) {
         selectionChanged(ver);
         if (Version->currentText() != ver) {
-            Version->insertItem(ver);
+            Version->addItem(ver);
             Version->lineEdit()->setText(ver);
         }
     }
@@ -434,7 +432,7 @@ void toSQLEdit::changeVersion(const QString &ver) {
 void toSQLEdit::selectionChanged(void) {
     try {
         if (checkStore(false))
-            selectionChanged(QString::fromLatin1(connection().provider() + ":" + connection().version()));
+            selectionChanged(QString(connection().provider() + ":" + connection().version()));
     }
     TOCATCH;
 }
@@ -442,7 +440,7 @@ void toSQLEdit::selectionChanged(void) {
 void toSQLEdit::changeSQL(const QString &name, const QString &maxver) {
     toSQL::sqlMap sql = toSQL::definitions();
     Name->setText(name);
-    Name->setEdited(false);
+    Name->setModified(false);
 
     toTreeWidgetItem *item = toFindItem(Statements, name);
     if (item) {
@@ -456,8 +454,8 @@ void toSQLEdit::changeSQL(const QString &name, const QString &maxver) {
 
     Version->clear();
     LastVersion = "";
-    if (sql.find(name.latin1()) != sql.end()) {
-        toSQL::definition &def = sql[name.latin1()];
+    if (sql.find(name.toLatin1()) != sql.end()) {
+        toSQL::definition &def = sql[name.toLatin1()];
         std::list<toSQL::version> &ver = def.Versions;
 
         Description->setText(def.Description);
@@ -469,7 +467,7 @@ void toSQLEdit::changeSQL(const QString &name, const QString &maxver) {
             QString str = (*i).Provider;
             str += QString::fromLatin1(":");
             str += (*i).Version;
-            Version->insertItem(str);
+            Version->addItem(str);
             if (str <= maxver || j == ver.end()) {
                 j = i;
                 LastVersion = str;
@@ -480,7 +478,7 @@ void toSQLEdit::changeSQL(const QString &name, const QString &maxver) {
             Editor->editor()->setText((*j).SQL);
             TrashButton->setEnabled(true);
             CommitButton->setEnabled(true);
-            Version->setCurrentItem(ind);
+            Version->setCurrentIndex(ind);
         }
     }
     else {
@@ -491,7 +489,7 @@ void toSQLEdit::changeSQL(const QString &name, const QString &maxver) {
     }
     if (LastVersion.isEmpty()) {
         LastVersion = QString::fromLatin1("Any:Any");
-        Version->insertItem(LastVersion);
+        Version->addItem(LastVersion);
     }
     Editor->editor()->setModified(false);
 }
@@ -515,7 +513,7 @@ void toSQLEdit::selectionChanged(const QString &maxver) {
 void toSQLEdit::editSQL(const QString &nam) {
     try {
         if (checkStore(false))
-            changeSQL(nam, QString::fromLatin1(connection().provider() + ":" + connection().version()));
+            changeSQL(nam, QString(connection().provider() + ":" + connection().version()));
     }
     TOCATCH;
 }
@@ -523,13 +521,13 @@ void toSQLEdit::editSQL(const QString &nam) {
 void toSQLEdit::newSQL(void) {
     if (checkStore(false)) {
         QString name = Name->text();
-        int found = name.find(QString::fromLatin1(":"));
+        int found = name.indexOf(QString::fromLatin1(":"));
         if (found < 0)
             name = QString::null;
         else
             name = name.mid(0, found + 1);
         try {
-            changeSQL(name, QString::fromLatin1(connection().provider() + ":Any"));
+            changeSQL(name, QString(connection().provider() + ":Any"));
         }
         TOCATCH;
     }
@@ -543,10 +541,10 @@ toSQLTemplateItem::toSQLTemplateItem(toTreeWidget *parent)
 }
 
 static QString JustLast(const QString &str) {
-    int pos = str.findRev(":");
+    int pos = str.lastIndexOf(":");
     if (pos >= 0)
-        return QString::fromLatin1(str.mid(pos + 1));
-    return QString::fromLatin1(str);
+        return QString(str.mid(pos + 1));
+    return QString(str);
 }
 
 toSQLTemplateItem::toSQLTemplateItem(toSQLTemplateItem *parent,
@@ -569,8 +567,8 @@ void toSQLTemplateItem::expand(void) {
         QString name = *sql;
         if (!Name.isEmpty())
             name = name.mid(Name.length() + 1);
-        if (name.find(":") != -1)
-            name = name.mid(0, name.find(":"));
+        if (name.indexOf(":") != -1)
+            name = name.mid(0, name.indexOf(":"));
         if (name != last) {
             if (Name.isEmpty())
                 new toSQLTemplateItem(this, name);

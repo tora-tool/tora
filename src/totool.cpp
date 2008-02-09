@@ -62,13 +62,14 @@ toConnection &toConnectionWidget::connection()
 }
 
 toToolWidget::toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, toConnection &conn, const char *name)
-        : QWidget(parent, Qt::WDestructiveClose),
-          toHelpContext(ctx),
-          toConnectionWidget(conn, this),
-          Tool(tool) {
+    : QWidget(parent),
+      toHelpContext(ctx),
+      toConnectionWidget(conn, this),
+      Tool(tool) {
 
     if(name)
         setObjectName(name);
+    setAttribute(Qt::WA_DeleteOnClose);
 
     QVBoxLayout *vbox = new QVBoxLayout;
     vbox->setSpacing(0);
@@ -116,7 +117,7 @@ void toToolWidget::setConnection(toConnection &conn)
 {
     bool connCap = false;
     QString name = connection().description();
-    QString capt = caption();
+    QString capt = windowTitle();
     if (capt.startsWith(name))
     {
         connCap = true;
@@ -126,7 +127,7 @@ void toToolWidget::setConnection(toConnection &conn)
     if (connCap)
     {
         capt.prepend(connection().description());
-        setCaption(capt);
+        setWindowTitle(capt);
     }
     emit connectionChange();
 }
@@ -220,7 +221,7 @@ const QPixmap *toTool::toolbarImage()
 
 void toTool::createWindow(void)
 {
-    toMain *main = (toMain *)qApp->mainWidget();
+    toMain *main = toMainWidget();
     try
     {
         if (!canHandle(main->currentConnection()))
@@ -234,7 +235,7 @@ void toTool::createWindow(void)
 
             const QPixmap *icon = toolbarImage();
             if (icon)
-                newWin->setIcon(*icon);
+                newWin->setWindowIcon(*icon);
             toToolWidget *tool = dynamic_cast<toToolWidget *>(newWin);
             if (tool)
                 toToolCaption(tool, name());

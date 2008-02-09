@@ -55,6 +55,7 @@
 #include <QString>
 #include <QPixmap>
 #include <QVBoxLayout>
+#include <QDir>
 
 #include "icons/addproject.xpm"
 #include "icons/filesave.xpm"
@@ -82,7 +83,7 @@ void toProjectTemplateItem::setup(const QString &name, bool open) {
     if (project() && !Filename.isEmpty() && open) {
         try {
             QString data = QString::fromUtf8(toReadFile(Filename));
-            QStringList files = QStringList::split(QRegExp(QString::fromLatin1("\n")), data);
+            QStringList files = data.split(QRegExp(QString::fromLatin1("\n")));
             toProjectTemplateItem *last = NULL;
             for (int i = 0;i < files.count();i++)
                 last = new toProjectTemplateItem(this, last, files[i]);
@@ -95,9 +96,9 @@ void toProjectTemplateItem::setup(const QString &name, bool open) {
 
 void toProjectTemplateItem::setFilename(const QString &name) {
     if (parent()) {
-        int pos = name.findRev(QString::fromLatin1("/"));
+        int pos = name.lastIndexOf(QString::fromLatin1("/"));
         if (pos < 0)
-            pos = name.findRev(QString::fromLatin1("\\"));
+            pos = name.lastIndexOf(QString::fromLatin1("\\"));
         if (pos >= 0)
             setText(0, name.mid(pos + 1));
         else
@@ -211,7 +212,7 @@ void toProjectTemplate::exportData(std::map<QString, QString> &data, const QStri
         id++;
         QString nam = prefix;
         nam += ":Items:";
-        nam += QString::number(id).latin1();
+        nam += QString::number(id).toLatin1();
         nam += ":";
         itemMap[item] = id;
         if (item->parent())
@@ -253,8 +254,8 @@ void toProjectTemplate::insertItems(toTreeWidget *parent, QToolBar *toolbar) {
 
     toProjectTemplateItem *last = NULL;
 
-    while ((i = Import.find(QString("Items:") + QString::number(id).latin1() + ":Parent")) != Import.end()) {
-        QString nam = QString("Items:") + QString::number(id).latin1() + ":";
+    while ((i = Import.find(QString("Items:") + QString::number(id).toLatin1() + ":Parent")) != Import.end()) {
+        QString nam = QString("Items:") + QString::number(id).toLatin1() + ":";
         int parent = (*i).second.toInt();
         if (parent)
             last = new toProjectTemplateItem(itemMap[parent], last, Import[nam + "0"], false);
@@ -503,14 +504,14 @@ void toProject::saveProject(void) {
             if (oi) {
                 QFileInfo file(oi->filename());
                 QString fn = oi->filename();
-                fn = toSaveFilename(file.dirPath(), QString::fromLatin1("*.tpr"), this);
+                fn = toSaveFilename(file.dir().path(), QString::fromLatin1("*.tpr"), this);
                 if (!fn.isEmpty()) {
                     QString data;
                     for (toTreeWidgetItem *item = oi->firstChild();item;item = item->nextSibling()) {
                         toProjectTemplateItem * projitem = dynamic_cast<toProjectTemplateItem *>(item);
                         data += projitem->filename() + QString::fromLatin1("\n");
                     }
-                    if (toWriteFile(fn, data.utf8()))
+                    if (toWriteFile(fn, data.toUtf8()))
                         oi->setFilename(fn);
                 }
             }

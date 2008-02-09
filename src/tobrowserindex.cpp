@@ -86,7 +86,7 @@ void toBrowserIndex::execute()
                              0,
                              statements.size(),
                              this);
-        prog.setCaption(tr("Performing index changes"));
+        prog.setWindowTitle(tr("Performing index changes"));
         for (std::list<toSQLParse::statement>::iterator i = statements.begin();i != statements.end();i++)
         {
             QString sql = toSQLParse::indentStatement(*i, connection());
@@ -128,7 +128,7 @@ toBrowserIndex::toBrowserIndex(toConnection &conn, const QString &owner, const Q
     Extractor.setHeading(false);
 
     if (toIsMySQL(connection()))
-        Type->insertItem("Fulltext Index");
+        Type->addItem("Fulltext Index");
 
     if (!owner.isEmpty() && !table.isEmpty())
     {
@@ -142,9 +142,9 @@ toBrowserIndex::toBrowserIndex(toConnection &conn, const QString &owner, const Q
     connect(TableSelect, SIGNAL(selectTable(const QString &)), this, SLOT(changeTable(const QString &)));
 
     for (int i = 0;i < Name->count();i++)
-        if (connection().unQuote(Name->text(i)) == index)
+        if (connection().unQuote(Name->itemText(i)) == index)
         {
-            Name->setCurrentItem(Name->count() - 1);
+            Name->setCurrentIndex(Name->count() - 1);
             break;
         }
 }
@@ -160,7 +160,7 @@ void toBrowserIndex::describeTable(const QString &table)
 {
     try
     {
-        QStringList parts = QStringList::split(".", table);
+        QStringList parts = table.split(".");
         if (parts.size() > 1)
         {
             Owner = connection().unQuote(parts[0]);
@@ -232,7 +232,7 @@ void toBrowserIndex::describeTable(const QString &table)
 
         Name->clear();
         for (std::map<QString, QString>::iterator i = IndexType.begin();i != IndexType.end();i++)
-            Name->insertItem((*i).first);
+            Name->addItem((*i).first);
 
         ColList->displayHeader(false);
         ColList->changeParams(Owner, Table);
@@ -263,7 +263,7 @@ void toBrowserIndex::saveChanges(void)
         toPush(ctx, QString("INDEX"));
         toPush(ctx, (*i).first);
 
-        QStringList lst = QStringList::split(",", IndexCols[(*i).first]);
+        QStringList lst = IndexCols[(*i).first].split(",");
         for (int j = 0;j < lst.count();j++)
         {
             toExtract::addDescription(migrateTable, ctx, "COLUMN", lst[j]);
@@ -317,13 +317,16 @@ void toBrowserIndex::addIndex()
     if (Table.isEmpty())
         return ;
     bool ok = false;
-    QString name = QInputDialog::getText(tr("Enter new index name"),
+    QString name = QInputDialog::getText(this,
+                                         tr("Enter new index name"),
                                          tr("Enter name of new index."),
-                                         QLineEdit::Normal, QString::null, &ok, this);
+                                         QLineEdit::Normal,
+                                         QString::null,
+                                         &ok);
     if (ok)
     {
-        Name->insertItem(name);
-        Name->setCurrentItem(Name->count() - 1);
+        Name->addItem(name);
+        Name->setCurrentIndex(Name->count() - 1);
         IndexType[name] = "Normal Index";
         changeIndex();
     }
@@ -336,7 +339,7 @@ void toBrowserIndex::delIndex()
         IndexType.erase(Current);
         IndexCols.erase(Current);
         Current = QString::null;
-        Name->removeItem(Name->currentItem());
+        Name->removeItem(Name->currentIndex());
         changeIndex();
     }
 }
@@ -345,7 +348,7 @@ void toBrowserIndex::changeIndex()
 {
     if (!Current.isEmpty())
     {
-        QString type = Type->currentText().upper();
+        QString type = Type->currentText().toUpper();
         if (type == "NORMAL INDEX")
             type = "INDEX";
         IndexType[Current] = type;
@@ -368,16 +371,16 @@ void toBrowserIndex::changeIndex()
             type = "NORMAL INDEX";
         for (i = 0;i < Type->count();i++)
         {
-            if (Type->text(i).upper() == type)
+            if (Type->itemText(i).toUpper() == type)
             {
-                Type->setCurrentItem(i);
+                Type->setCurrentIndex(i);
                 break;
             }
         }
         if (i == Type->count())
         {
-            Type->insertItem(IndexType[Current]);
-            Type->setCurrentItem(Type->count() - 1);
+            Type->addItem(IndexType[Current]);
+            Type->setCurrentIndex(Type->count() - 1);
         }
     }
 }

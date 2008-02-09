@@ -94,6 +94,6 @@ void toStorageDefinition::forRollback(bool val)
 {
     Optimal->setEnabled(val);
     PCTIncrease->setEnabled(!val);
-    InitialExtent->setMinValue(2);
+    InitialExtent->setMinimum(2);
     InitialExtent->setValue(4);
 }

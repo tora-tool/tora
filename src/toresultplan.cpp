@@ -139,12 +139,12 @@ void toResultPlan::oracleNext(void)
         Poll.stop();
         return ;
     }
-    if (sql.length() > 0 && sql.at(sql.length() - 1).latin1() == ';')
+    if (sql.length() > 0 && sql.at(sql.length() - 1).toLatin1() == ';')
         sql = sql.mid(0, sql.length() - 1);
 
     QString explain = QString::fromLatin1("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2.%3 FOR %4").
                       arg(Ident).arg(connection().user()).arg(planTable).arg(toSQLStripSpecifier(sql));
-    if (!User.isNull() && User != conn.user().upper())
+    if (!User.isNull() && User != conn.user().toUpper())
     {
         try
         {
@@ -191,11 +191,11 @@ static void StripInto(std::list<toSQLParse::statement> &stats)
         if (into)
         {
             if (!add
-                    && (*i).String.upper() == QString::fromLatin1("FROM"))
+                    && (*i).String.toUpper() == QString::fromLatin1("FROM"))
                 add
                 = true;
         }
-        else if ((*i).String.upper() == QString::fromLatin1("INTO"))
+        else if ((*i).String.toUpper() == QString::fromLatin1("INTO"))
         {
             add
             = false;
@@ -218,7 +218,7 @@ void toResultPlan::addStatements(std::list<toSQLParse::statement> &stats)
         {
             if ((*i).subTokens().begin() != (*i).subTokens().end())
             {
-                QString t = (*((*i).subTokens().begin())).String.upper();
+                QString t = (*((*i).subTokens().begin())).String.toUpper();
                 if (t == QString::fromLatin1("SELECT"))
                     StripInto((*i).subTokens());
 
@@ -227,7 +227,7 @@ void toResultPlan::addStatements(std::list<toSQLParse::statement> &stats)
                         t == QString::fromLatin1("UPDATE") ||
                         t == QString::fromLatin1("DELETE"))
                     Statements.insert(Statements.end(),
-                                      toSQLParse::indentStatement(*i).stripWhiteSpace());
+                                      toSQLParse::indentStatement(*i).trimmed());
             }
         }
     }

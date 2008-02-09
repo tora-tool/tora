@@ -42,11 +42,11 @@ SQLTypeMap toListViewFormatterSQL::getSQLTypes( toListView& tListView )
     {
         if ( std::find( headerFields.begin(), headerFields.end(), ( ( *i ).Name ) ) != headerFields.end() )
         {
-            if ( ( ( *i ).Datatype ).find( "NUMBER" ) != -1 )
+            if ( ( ( *i ).Datatype ).indexOf( "NUMBER" ) != -1 )
                 m.insert( std::make_pair( ( *i ).Name, static_cast<int>( SQL_NUMBER ) ) );
-            else if ( ( ( *i ).Datatype ).find( "VARCHAR" ) != -1 )
+            else if ( ( ( *i ).Datatype ).indexOf( "VARCHAR" ) != -1 )
                 m.insert( std::make_pair( ( *i ).Name, static_cast<int>( SQL_STRING ) ) );
-            else if ( ( ( *i ).Datatype ).find( "DATE" ) != -1 )
+            else if ( ( ( *i ).Datatype ).indexOf( "DATE" ) != -1 )
                 m.insert( std::make_pair( ( *i ).Name, static_cast<int>( SQL_DATE ) ) );
         }
     }

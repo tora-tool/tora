@@ -126,16 +126,16 @@ class toChartManager : public QWidget, public toHelpContext
             Persistent = pers;
         }
         chartTrack(const chartTrack &fil)
-                : File(fil.File.name())
+                : File(fil.File.fileName())
         {
             Persistent = fil.Persistent;
         }
         const chartTrack &operator =(const chartTrack &fil)
         {
-            if (fil.File.name() != File.name())
+            if (fil.File.fileName() != File.fileName())
             {
                 File.close();
-                File.setName(fil.File.name());
+                File.setFileName(fil.File.fileName());
             }
             Persistent = fil.Persistent;
             return *this;

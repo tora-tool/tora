@@ -149,7 +149,7 @@ void toInvalid::recompileSelected(void) {
                              0,
                              Objects->model()->rowCount(),
                              this);
-    progress.setCaption("Recompiling");
+    progress.setWindowTitle("Recompiling");
     progress.show();
 
     for(toResultTableView::iterator it(Objects); (*it).isValid(); it++) {

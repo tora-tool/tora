@@ -106,9 +106,9 @@ void toResult::connectionChanged(void)
         try
         {
             if (QueryReady)
-                query(toSQL::string(sqlName().latin1(), connection()), (const toQList)Params);
+                query(toSQL::string(sqlName().toLatin1(), connection()), (const toQList)Params);
             else if (FromSQL)
-                SQL = toSQL::string(sqlName().latin1(), connection());
+                SQL = toSQL::string(sqlName().toLatin1(), connection());
             setHandle(true);
         }
         catch (...)

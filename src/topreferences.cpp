@@ -121,7 +121,7 @@ toPreferences::toPreferences(QWidget* parent, const char* name, bool modal, Qt::
             if (tab)
             {
                 QString str(QString::fromLatin1(" "));
-                str.append(QString::fromLatin1(*i));
+                str.append((*i));
                 addWidget(new QListWidgetItem(str, TabSelection), tab);
             }
         }

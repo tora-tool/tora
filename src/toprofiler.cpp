@@ -281,6 +281,7 @@ class unitsItem : public toResultViewItem
         virtual void paintCell(QPainter *p, const QColorGroup &cg,
                                int column, int width, int alignment)
         {
+#if 0                           // disabled - not overriding correct method
             if (column == 2)
             {
                 toProfilerUnits *units = dynamic_cast<toProfilerUnits *>(listView());
@@ -305,6 +306,7 @@ class unitsItem : public toResultViewItem
             {
                 toTreeWidgetItem::paintCell(p, cg, column, width, alignment);
             }
+#endif
         }
     };
 
@@ -372,6 +374,7 @@ class listItem : public toResultViewItem
         virtual void paintCell(QPainter *p, const QColorGroup &cg,
                                int column, int width, int alignment)
         {
+#if 0                           // disabled - not overriding correct class
             if (column == 1 || column == 2 || column == 3 || column == 4)
             {
                 toProfilerSource *source = dynamic_cast<toProfilerSource *>(listView());
@@ -412,6 +415,7 @@ class listItem : public toResultViewItem
             {
                 toTreeWidgetItem::paintCell(p, cg, column, width, alignment);
             }
+#endif
         }
     };
 
@@ -470,18 +474,18 @@ toProfiler::toProfiler(QWidget *parent, toConnection &connection)
     toolbar->addSeparator();
 
     toolbar->addWidget(
-        new QLabel(tr("Repeat run") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME));
+        new QLabel(tr("Repeat run") + " ", toolbar));
 
-    Repeat = new QSpinBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
+    Repeat = new QSpinBox(toolbar);
     Repeat->setValue(5);
-    Repeat->setMaxValue(1000);
+    Repeat->setMaximum(1000);
     toolbar->addWidget(Repeat);
 
     toolbar->addSeparator();
 
     toolbar->addWidget(new QLabel(tr("Comment") + " ", toolbar));
 
-    Comment = new QLineEdit(toolbar, TO_TOOLBAR_WIDGET_NAME);
+    Comment = new QLineEdit(toolbar);
     Comment->setText(tr("Unknown"));
     toolbar->addWidget(Comment);
 
@@ -578,7 +582,7 @@ toProfiler::toProfiler(QWidget *parent, toConnection &connection)
 void toProfiler::refresh(void)
 {
     Run->clear();
-    Run->insertItem(tr("Select run"));
+    Run->addItem(tr("Select run"));
     try
     {
         toQuery query(connection(), SQLListRuns);
@@ -592,10 +596,10 @@ void toProfiler::refresh(void)
             if (!owner.isEmpty())
                 owner = QString::fromLatin1("(") + owner + QString::fromLatin1(")");
             QString timstr = QString::fromLatin1(" [") + FormatTime(total) + QString::fromLatin1("]");
-            Run->insertItem(runid + owner + QString::fromLatin1(": ") + comment + timstr);
+            Run->addItem(runid + owner + QString::fromLatin1(": ") + comment + timstr);
             if (runid.toInt() == CurrentRun)
             {
-                Run->setCurrentItem(id);
+                Run->setCurrentIndex(id);
                 changeRun();
             }
             id++;
@@ -624,7 +628,7 @@ void toProfiler::execute(void)
         CurrentRun = query.readValue().toInt();
         if (CurrentRun > 0)
         {
-            Tabs->showPage(Result);
+            Tabs->setCurrentIndex(Tabs->indexOf(Result));
             refresh();
         }
         else
@@ -636,9 +640,9 @@ void toProfiler::execute(void)
 void toProfiler::changeRun(void)
 {
     QString t = Run->currentText();
-    int pos = t.find(QString::fromLatin1("("));
+    int pos = t.indexOf(QString::fromLatin1("("));
     if (pos < 0)
-        pos = t.find(QString::fromLatin1(":"));
+        pos = t.indexOf(QString::fromLatin1(":"));
     if (pos >= 0)
         CurrentRun = t.mid(0, pos).toInt();
     QString run = QString::number(CurrentRun);

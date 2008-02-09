@@ -167,14 +167,14 @@ toResultItem::toResultItem(int num,
                            bool readable,
                            QWidget *parent,
                            const char *name)
-    : QScrollArea(parent), DataFont(QFont::defaultFont()) {
+    : QScrollArea(parent), DataFont(QFont()) {
 
     setObjectName(name);
     setup(num, readable);
 }
 
 toResultItem::toResultItem(int num, QWidget *parent, const char *name)
-    : QScrollArea(parent), DataFont(QFont::defaultFont()) {
+    : QScrollArea(parent), DataFont(QFont()) {
 
     setObjectName(name);
     setup(num, false);
@@ -193,10 +193,8 @@ void toResultItem::start(void) {
 
 QWidget *toResultItem::createTitle(QWidget *parent) {
     QLabel *widget = new QLabel(parent);
-    widget->setAlignment(Qt::AlignRight |
-                         Qt::AlignVCenter |
-                         Qt::ExpandTabs |
-                         Qt::WordBreak);
+    widget->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    widget->setWordWrap(true);
     return widget;
 }
 
@@ -233,16 +231,14 @@ void toResultItem::setValue(QWidget *widget,
 
         label->setText(value);
 
-        if (Right)
-            label->setAlignment(Qt::AlignRight |
-                                Qt::AlignVCenter |
-                                Qt::ExpandTabs |
-                                Qt::WordBreak);
-        else
-            label->setAlignment(Qt::AlignLeft |
-                                Qt::AlignVCenter |
-                                Qt::ExpandTabs |
-                                Qt::WordBreak);
+        if (Right) {
+            label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            label->setWordWrap(true);
+        }
+        else {
+            label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+            label->setWordWrap(true);
+        }
     }
 
     Result->addWidget(widget,

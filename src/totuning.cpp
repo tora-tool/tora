@@ -95,14 +95,14 @@ static std::list<QString> TabList(void)
     QString last;
     for (std::list<QString>::iterator i = val.begin();i != val.end();i++)
     {
-        QStringList parts = QStringList::split(QString::fromLatin1(":"), QString::fromLatin1(*i));
+        QStringList parts = (*i).split(":");
         if (parts.count() == 3)
         {
             parts.append(parts[2]);
             parts[2] = QString::fromLatin1("Charts");
         }
         if (last != parts[2])
-            ret.insert(ret.end(), parts[2].latin1());
+            ret.insert(ret.end(), parts[2].toLatin1());
         last = parts[2];
     }
     ret.insert(ret.end(), CONF_WAITS);
@@ -121,7 +121,7 @@ public:
         std::list<QString> tabs = TabList();
         for (std::list<QString>::iterator i = tabs.begin();i != tabs.end();i++)
         {
-            toTreeWidgetItem *item = new toTreeWidgetItem(EnabledTabs, QString::fromLatin1(*i));
+            toTreeWidgetItem *item = new toTreeWidgetItem(EnabledTabs, (*i));
             if (!tool->config(*i, "").isEmpty())
                 item->setSelected(true);
         }
@@ -131,8 +131,8 @@ public:
     {
         for (toTreeWidgetItem *item = EnabledTabs->firstChild();item;item = item->nextSibling())
         {
-            if (item->isSelected() || Tool->config(item->text(0).latin1(), "Undefined") != "Undefined")
-                Tool->setConfig(item->text(0).latin1(), QString::fromLatin1((item->isSelected() ? "Yes" : "")));
+            if (item->isSelected() || Tool->config(item->text(0).toLatin1(), "Undefined") != "Undefined")
+                Tool->setConfig(item->text(0).toLatin1(), QString::fromLatin1((item->isSelected() ? "Yes" : "")));
         }
     }
 };
@@ -1264,7 +1264,7 @@ void toTuningOverview::overviewQuery::run(void)
             QString nam = toShift(res);
             tmp = toShift(res);
             if (nam == "Database Buffers" || nam == "Redo Buffers")
-                setValue(nam.latin1(), tmp + Parent.UnitString);
+                setValue(nam.toLatin1(), tmp + Parent.UnitString);
             else if (nam == "Fixed Size" || nam == "Variable Size")
                 sql += tmp.toDouble();
             tot += tmp.toDouble();
@@ -1293,7 +1293,7 @@ void toTuningOverview::overviewQuery::run(void)
     }
     catch (const QString &str)
     {
-        fprintf(stderr, "Exception occured:\n\n%s\n", (const char *)str.latin1());
+        fprintf(stderr, "Exception occured:\n\n%s\n", (const char *)str.toLatin1());
     }
     catch (int)
         {}
@@ -1352,7 +1352,7 @@ void toTuningOverview::poll(void)
             {
                 std::list<QLabel *>::iterator labIt = Backgrounds.begin();
 
-                QStringList lst = QStringList::split(QString::fromLatin1(","), (*i).second);
+                QStringList lst = (*i).second.split(",");
                 for (int j = 0;j < lst.count();j++)
                 {
                     QLabel *label;
@@ -1498,7 +1498,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     toolbar->addSeparator();
 
     toolbar->addWidget(
-        new QLabel(tr("Refresh") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME));
+        new QLabel(tr("Refresh") + " ", toolbar));
 
     Refresh = toRefreshCreate(toolbar, TO_TOOLBAR_WIDGET_NAME);
     connect(Refresh, SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
@@ -1524,7 +1524,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
 
     QLabel *stretch = new QLabel(toolbar);
     toolbar->addWidget(stretch);
-    stretch->setAlignment(Qt::AlignRight | Qt::AlignVCenter | Qt::ExpandTabs);
+    stretch->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     stretch->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                        QSizePolicy::Minimum));
 
@@ -1550,19 +1550,19 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
         std::list<QString> val = toSQL::range("toTuning:Charts");
         for (std::list<QString>::iterator i = val.begin();i != val.end();i++)
         {
-            QStringList parts = QStringList::split(QString::fromLatin1(":"), QString::fromLatin1(*i));
+            QStringList parts = (*i).split(":");
             if (parts.count() == 3)
             {
                 parts.append(parts[2]);
                 parts[2] = QString::fromLatin1("Charts");
             }
-            std::map<QString, QWidget *>::iterator j = Charts.find(QString(CONF_CHART) + parts[2].latin1());
+            std::map<QString, QWidget *>::iterator j = Charts.find(QString(CONF_CHART) + parts[2].toLatin1());
             QWidget *cchart;
             if (j == Charts.end()) {
                 cchart = new QWidget(Tabs);
                 cchart->setObjectName(QString(CONF_CHART) + parts[2]);
                 cchart->setLayout(new QGridLayout);
-                Charts[QString(CONF_CHART) + parts[2].latin1()] = cchart;
+                Charts[QString(CONF_CHART) + parts[2].toLatin1()] = cchart;
             }
             else
                 cchart = (*j).second;
@@ -1641,7 +1641,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     for (std::map<QString, QWidget *>::iterator k = Charts.begin();
          k != Charts.end();
          k++)
-        Tabs->addTab((*k).second, tr((*k).first.mid(strlen(CONF_CHART))));
+        Tabs->addTab((*k).second, tr((*k).first.mid(strlen(CONF_CHART)).toAscii().constData()));
 
     Waits = new toWaitEvents(this, "waits");
     Tabs->addTab(Waits, tr("Wait events"));
@@ -1682,7 +1682,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     Licenses->setSQL(SQLLicense);
     Tabs->addTab(Licenses, tr("&Licenses"));
 
-    Tabs->setCurrentPage(0);
+    Tabs->setCurrentIndex(0);
 
     LastTab = NULL;
 
@@ -1726,11 +1726,11 @@ void toTuning::showTabMenu(void) {
     tabMenu->clear();
     std::list<QString> tab = TabList();
     for (std::list<QString>::iterator i = tab.begin(); i != tab.end(); i++) {
-        QAction *act = new QAction(tr(*i), tabMenu);
+        QAction *act = new QAction(tr((*i).toAscii().constData()), tabMenu);
         QWidget *widget = tabWidget(*i);
 
         act->setCheckable(true);
-        if (widget && Tabs->isTabEnabled(widget))
+        if (widget && Tabs->isTabEnabled(Tabs->indexOf(widget)))
             act->setChecked(true);
 
         tabMenu->addAction(act);
@@ -1744,7 +1744,7 @@ void toTuning::enableTabMenu(QAction *act) {
     QString text(act->text().toAscii());
     QWidget *widget = tabWidget(text);
     if(widget)
-        enableTab(text, !Tabs->isTabEnabled(widget));
+        enableTab(text, !Tabs->isTabEnabled(Tabs->indexOf(widget)));
 }
 
 void toTuning::enableTab(const QString &name, bool enable)
@@ -1808,7 +1808,7 @@ void toTuning::enableTab(const QString &name, bool enable)
         widget = FileIO;
     }
     if (widget)
-        Tabs->setTabEnabled(widget, enable);
+        Tabs->setTabEnabled(Tabs->indexOf(widget), enable);
 }
 
 void toTuning::changeTab(QWidget *widget)
@@ -1846,7 +1846,7 @@ void toTuning::changeRefresh(const QString &str)
 
 void toTuning::refresh(void)
 {
-    LastTab = Tabs->currentPage();
+    LastTab = Tabs->currentWidget();
     if (LastTab == Overview)
     {
         Overview->refresh();
@@ -1862,14 +1862,14 @@ void toTuning::refresh(void)
             try
             {
                 toQList val = toQuery::readQuery(connection(), toSQL::string(*i, connection()));
-                QStringList parts = QStringList::split(QString::fromLatin1(":"), *i);
+                QStringList parts = (*i).split(":");
                 if (!parent || parent->text(0) != parts[2])
                 {
                     parent = new toResultViewItem(Indicators, NULL, parts[2]);
                     parent->setOpen(true);
                     last = NULL;
                 }
-                QStringList dsc = QStringList::split(QString::fromLatin1("."), toSQL::description(*i));
+                QStringList dsc = toSQL::description(*i).split(".");
                 QString first = dsc[0];
                 first += QString::fromLatin1(".");
                 last = new toResultViewItem(parent, last, first);
@@ -1913,11 +1913,11 @@ void toTuning::exportData(std::map<QString, QString> &data, const QString &prefi
         QWidget *widget = tabWidget(*i);
         if (widget)
         {
-            if (!Tabs->isTabEnabled(widget))
+            if (!Tabs->isTabEnabled(Tabs->indexOf(widget)))
                 data[prefix + ":" + *i] = QString::fromLatin1("Disabled");
         }
     }
-    data[prefix + ":Current"] = Tabs->currentPage()->name();
+    data[prefix + ":Current"] = Tabs->currentWidget()->objectName();
 
     Waits->exportData(data, prefix + ":Waits");
 }
@@ -1928,9 +1928,9 @@ void toTuning::importData(std::map<QString, QString> &data, const QString &prefi
     std::list<QString> ret = TabList();
     for (std::list<QString>::iterator i = ret.begin();i != ret.end();i++)
         enableTab(*i, data[prefix + ":" + (*i)].isEmpty());
-    QWidget *chld = (QWidget *)child(data[prefix + ":Current"]);
+    QWidget *chld = findChild<QWidget *>(data[prefix + ":Current"]);
     if (chld)
-        Tabs->showPage(chld);
+        Tabs->setCurrentIndex(Tabs->indexOf(chld));
     Waits->importData(data, prefix + ":Waits");
 }
 
@@ -1979,11 +1979,11 @@ toTuningFileIO::toTuningFileIO(QWidget *parent)
         QVBoxLayout *vbox = new QVBoxLayout;
 
         QComboBox *combo = new QComboBox(Box);
-        combo->insertItem(tr("File I/O"));
-        combo->insertItem(tr("File timing"));
+        combo->addItem(tr("File I/O"));
+        combo->addItem(tr("File timing"));
         if(toCurrentConnection(this).version() >= "0800") {
-            combo->insertItem(tr("Tablespace I/O"));
-            combo->insertItem(tr("Tablespace timing"));
+            combo->addItem(tr("Tablespace I/O"));
+            combo->addItem(tr("Tablespace timing"));
         }
         vbox->addWidget(combo);
         connect(combo, SIGNAL(activated(int)), this, SLOT(changeCharts(int)));
@@ -2071,7 +2071,7 @@ void toTuningFileIO::allocCharts(const QString &name)
     barchart->setMinimumSize(200, 170);
     barchart->setYPostfix(tr("blocks/s"));
     barchart->setLabels(labels);
-    barchart->setSQLName(QString::fromLatin1("toTuning:FileIO:Reads:" + name));
+    barchart->setSQLName(QString("toTuning:FileIO:Reads:" + name));
     barchart->show();
 
     toResultLine *linechart;
@@ -2088,7 +2088,7 @@ void toTuningFileIO::allocCharts(const QString &name)
     linechart->setMinimumSize(200, 170);
     linechart->setYPostfix(QString::fromLatin1("ms"));
     linechart->setLabels(labelTime);
-    linechart->setSQLName(QString::fromLatin1("toTuning:FileIO:Time:" + name));
+    linechart->setSQLName(QString("toTuning:FileIO:Time:" + name));
     linechart->show();
 }
 

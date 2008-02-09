@@ -174,7 +174,7 @@ static QString QueryParam(const QString &query, toQList &params)
     }
     // More complex conversion here later
     //  printf("Parsed: %s\n",(const char *)ret);
-    return ret.latin1();
+    return ret.toLatin1();
 }
 
 //
@@ -548,13 +548,13 @@ toConnectionSub *toFyracleProvider::fyracleConnection::createConnection(void)
     QString path;
     if ( connection().host().isEmpty() )
     {
-        path = connection().database().utf8();
+        path = connection().database().toUtf8();
     }
     else
     {
         path  = connection().host();
         path += ":";
-        path += connection().database().utf8();
+        path += connection().database().toUtf8();
     }
 
     // attach to database
@@ -678,7 +678,7 @@ void toFyracleProvider::fyracleQuery::execute(void)
         (*Query)<<(*i).toInt();
         break;
        default:
-        (*Query)<<QString(*i).utf8();
+        (*Query)<<QString(*i).toUtf8();
         break;
        }
       }

@@ -79,6 +79,7 @@ public:
     {
         Color = color;
     }
+#if 0                           // disabled, wrong override
     virtual void paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align)
     {
         if (column == 0)
@@ -94,6 +95,7 @@ public:
         else
             toTreeWidgetItem::paintCell(p, cg, column, width, align);
     }
+#endif
 };
 
 toWaitEvents::toWaitEvents(QWidget *parent, const char *name)
@@ -127,17 +129,17 @@ void toWaitEvents::setup(int session)
     vbox->addWidget(toolbar);
 
     toolbar->addWidget(
-        new QLabel(tr("Display") + " ", toolbar, TO_TOOLBAR_WIDGET_NAME));
+        new QLabel(tr("Display") + " ", toolbar));
 
-    QComboBox *type = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
-    type->insertItem(tr("Time"));
-    type->insertItem(tr("Count"));
+    QComboBox *type = new QComboBox(toolbar);
+    type->addItem(tr("Time"));
+    type->addItem(tr("Count"));
     toolbar->addWidget(type);
     connect(type, SIGNAL(activated(int)), this, SLOT(changeType(int)));
 
     QLabel *stretch = new QLabel(toolbar);
     toolbar->addWidget(stretch);
-    stretch->setAlignment(Qt::AlignRight | Qt::AlignVCenter | Qt::ExpandTabs);
+    stretch->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     stretch->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                        QSizePolicy::Minimum));
 
@@ -175,7 +177,7 @@ void toWaitEvents::setup(int session)
     Delta->setYPostfix(" " + tr("ms/s"));
     Delta->setYPostfix(" " + tr("ms/s"));
     Delta->setSQLName(QString::fromLatin1("toTuning:WaitEvents"));
-    layout->addMultiCellWidget(Delta, 0, 0, 0, 1);
+    layout->addWidget(Delta, 0, 0, 0, 1);
 
     DeltaTimes = new toResultBar(frame);
     DeltaTimes->setTitle(tr("System wait events count"));
@@ -185,7 +187,7 @@ void toWaitEvents::setup(int session)
     DeltaTimes->hide();
     DeltaTimes->setYPostfix(" " + tr("waits/s"));
     DeltaTimes->setSQLName(QString::fromLatin1("toTuning:WaitEventsCount"));
-    layout->addMultiCellWidget(DeltaTimes, 0, 0, 0, 1);
+    layout->addWidget(DeltaTimes, 0, 0, 0, 1);
 
     connect(Types, SIGNAL(selectionChanged()), this, SLOT(changeSelection()));
     DeltaPie = new toPieChart(frame);
@@ -630,7 +632,7 @@ void toWaitEvents::importData(std::map<QString, QString> &data, const QString &p
 {
     std::map<QString, QString>::iterator i;
     int id = 1;
-    while ((i = data.find(prefix + ":" + QString::number(id).latin1())) != data.end())
+    while ((i = data.find(prefix + ":" + QString::number(id).toLatin1())) != data.end())
     {
         HideMap[(*i).second] = true;
         id++;
@@ -645,7 +647,7 @@ void toWaitEvents::exportData(std::map<QString, QString> &data, const QString &p
         toWaitEventsItem * item = dynamic_cast<toWaitEventsItem *>(ci);
         if (!item->isSelected())
         {
-            data[prefix + ":" + QString::number(id).latin1()] = item->allText(1);
+            data[prefix + ":" + QString::number(id).toLatin1()] = item->allText(1);
             id++;
         }
     }

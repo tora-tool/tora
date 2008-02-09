@@ -358,7 +358,7 @@ QVariant toQValue::toQVariant(void) const {
     if(isNull())
         return QVariant();
     if(isString())
-        return QVariant(utf8());
+        return QVariant(toUtf8());
     if(isBinary())
         return QVariant(toString());
     if(isLong())
@@ -408,7 +408,7 @@ const QByteArray &toQValue::toByteArray() const {
 
 static char HexString[] = "0123456789ABCDEF";
 
-QString toQValue::utf8(void) const {
+QString toQValue::toUtf8(void) const {
     switch (Type) {
     case nullType: {
         QString ret;
@@ -452,7 +452,7 @@ QString toQValue::utf8(void) const {
         return ret;
     }
     case stringType:
-        return Value.String->utf8();
+        return Value.String->toUtf8();
     case binaryType: {
         QString ret(Value.Array->size()*2 + 1);
         for (int i = 0;i < Value.Array->size();i++) {
@@ -613,7 +613,7 @@ toQValue toQValue::createBinary(const QByteArray &arr) {
 }
 
 toQValue toQValue::createFromHex(const QByteArray &hex) {
-    QByteArray arr((hex.length() + 1) / 2);
+    QByteArray arr;
     for (int i = 0;i < hex.length();i += 2) {
         int num;
         char c = hex.at(i);
@@ -638,7 +638,7 @@ toQValue toQValue::createFromHex(const QByteArray &hex) {
 }
 
 toQValue toQValue::createFromHex(const QString &hex) {
-    QByteArray arr((hex.length() + 1) / 2);
+    QByteArray arr;
     for (int i = 0;i < hex.length();i += 2) {
         int num;
 // qt4        char c = hex.at(i);
@@ -777,7 +777,7 @@ toQuery::toQuery(toConnection &conn,
                  const QString &arg9)
     : Connection(QPointer<toConnection>(&conn)),
       ConnectionSub(conn.mainConnection()),
-      SQL(sql.utf8())
+      SQL(sql.toUtf8())
 {
     Mode = Normal;
     int numArgs;
@@ -862,7 +862,7 @@ toQuery::toQuery(toConnection &conn, const QString &sql, const toQList &params)
         : Connection(QPointer<toConnection>(&conn)),
           ConnectionSub(conn.mainConnection()),
           Params(params),
-          SQL(sql.utf8())
+          SQL(sql.toUtf8())
 {
     Mode = Normal;
     toBusy busy;
@@ -923,7 +923,7 @@ toQuery::toQuery(toConnection &conn,
                  const toQList &params)
     : Connection(QPointer<toConnection>(&conn)),
       Params(params),
-      SQL(sql.utf8())
+      SQL(sql.toUtf8())
 {
     Mode = mode;
 
@@ -995,7 +995,7 @@ void toQuery::execute(const toSQL &sql, const toQList &params) {
 
 void toQuery::execute(const QString &sql, const toQList &params) {
     toBusy busy;
-    SQL = sql.utf8();
+    SQL = sql.toUtf8();
     Params = params;
     Query->execute();
 }
@@ -1168,7 +1168,7 @@ void toConnection::addConnection(void) {
     toQList params;
     for (std::list<QString>::iterator i = InitStrings.begin();i != InitStrings.end();i++) {
         try {
-            Connection->execute(sub, (*i).utf8(), params);
+            Connection->execute(sub, (*i).toUtf8(), params);
         }
         TOCATCH
     }
@@ -1426,7 +1426,7 @@ QString toConnection::description(bool version) const {
     if (version) {
         if (!Version.isEmpty()) {
             ret += QString::fromLatin1(" [");
-            ret += QString::fromLatin1(Version);
+            ret += Version;
             ret += QString::fromLatin1("]");
         }
     }
@@ -1454,7 +1454,7 @@ const std::list<QString> toConnection::initStrings() const {
 
 void toConnection::parse(const QString &sql) {
     toBusy busy;
-    Connection->parse(mainConnection(), sql.utf8());
+    Connection->parse(mainConnection(), sql.toUtf8());
 }
 
 void toConnection::parse(const toSQL &sql) {
@@ -1469,7 +1469,7 @@ void toConnection::execute(const toSQL &sql, toQList &params) {
 
 void toConnection::execute(const QString &sql, toQList &params) {
     toBusy busy;
-    Connection->execute(mainConnection(), sql.utf8(), params);
+    Connection->execute(mainConnection(), sql.toUtf8(), params);
 }
 
 void toConnection::execute(const toSQL &sql,
@@ -1573,7 +1573,7 @@ void toConnection::execute(const QString &sql,
         args.insert(args.end(), arg9);
 
     toBusy busy;
-    Connection->execute(mainConnection(), sql.utf8(), args);
+    Connection->execute(mainConnection(), sql.toUtf8(), args);
 }
 
 void toConnection::allExecute(const toSQL &sql, toQList &params) {
@@ -1594,7 +1594,7 @@ void toConnection::allExecute(const QString &sql, toQList &params) {
     ;
     for (std::list<toConnectionSub *>::iterator i = Connections.begin();i != Connections.end();i++) {
         try {
-            Connection->execute(*i, sql.utf8(), params);
+            Connection->execute(*i, sql.toUtf8(), params);
         }
         TOCATCH
     }
@@ -1712,7 +1712,7 @@ void toConnection::allExecute(const QString &sql,
     ;
     for (std::list<toConnectionSub *>::iterator i = Connections.begin();i != Connections.end();i++) {
         try {
-            Connection->execute(*i, sql.utf8(), args);
+            Connection->execute(*i, sql.toUtf8(), args);
         }
         TOCATCH
     }
@@ -1723,7 +1723,7 @@ const QString &toConnection::provider(void) const {
 }
 
 QString toConnection::cacheDir() {
-    QString home = QDir::homeDirPath();
+    QString home = QDir::homePath();
     QString dirname = toConfigurationSingle::Instance().globalConfig(CONF_CACHE_DIR, "");
 
     if (dirname.isEmpty()) {
@@ -1739,9 +1739,9 @@ QString toConnection::cacheDir() {
 }
 
 QString toConnection::cacheFile() {
-    QString dbname(description(false).stripWhiteSpace());
+    QString dbname(description(false).trimmed());
 
-    return (cacheDir() + "/" + dbname).simplifyWhiteSpace();
+    return (cacheDir() + "/" + dbname).trimmed();
 }
 
 bool toConnection::loadDiskCache() {
@@ -1775,10 +1775,10 @@ bool toConnection::loadDiskCache() {
     /** build cache lists
      */
 
-    QStringList records = QStringList::split("\x1D", data, true);
+    QStringList records = data.split("\x1D", QString::KeepEmptyParts);
     for (QStringList::Iterator i = records.begin(); i != records.end(); i++) {
         objCounter++;
-        QStringList record = QStringList::split("\x1E", (*i), true);
+        QStringList record = (*i).split("\x1E", QString::KeepEmptyParts);
         QStringList::Iterator rec = record.begin();
         cur = new objectName;
         (*cur).Owner = (*rec);
@@ -1789,7 +1789,7 @@ bool toConnection::loadDiskCache() {
         rec++;
         (*cur).Comment = (*rec);
         rec++;
-        QStringList slist = QStringList::split("\x1F", (*rec), false);
+        QStringList slist = (*rec).split("\x1F", QString::SkipEmptyParts);
         for (QStringList::Iterator s = slist.begin(); s != slist.end(); s++) {
             SynonymMap[(*s)] = (*cur);
             (*cur).Synonyms.insert((*cur).Synonyms.end(), (*s));
@@ -1964,7 +1964,7 @@ bool toConnection::cacheAvailable(bool synonyms, bool block, bool need) {
                                         0,
                                         10,
                                         toMainWidget());
-                waiting.setCaption(qApp->translate("toConnection", "Waiting for object cache"));
+                waiting.setWindowTitle(qApp->translate("toConnection", "Waiting for object cache"));
                 int num = 1;
 
                 int waitVal = (synonyms ? 2 : 1);
@@ -2051,14 +2051,14 @@ const toConnection::objectName &toConnection::realName(const QString &object,
         }
     }
 
-    QString uo = owner.upper();
-    QString un = name.upper();
+    QString uo = owner.toUpper();
+    QString un = name.toUpper();
 
     synonym = QString::null;
     for (std::list<objectName>::iterator i = ObjectNames.begin();i != ObjectNames.end();i++) {
         if (owner.isEmpty()) {
             if (((*i).Name == un || (*i).Name == name) &&
-                    ((*i).Owner == user().upper() || (*i).Owner == database()))
+                    ((*i).Owner == user().toUpper() || (*i).Owner == database()))
                 return *i;
         }
         else if (((*i).Name == un || (*i).Name == name) &&

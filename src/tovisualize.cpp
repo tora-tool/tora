@@ -72,46 +72,48 @@ toVisualize::toVisualize(toResultTableView *source, QWidget *parent, const char 
     QToolBar *toolbar = toAllocBar(this, tr("Data visualization"));
     vbox->addWidget(toolbar);
 
-    Type = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
-    Type->insertItem(tr("Bar chart"), 0);
-    Type->insertItem(tr("Line chart"), 1);
-    Type->insertItem(tr("Pie chart"), 2);
+    Type = new QComboBox(toolbar);
+    Type->setObjectName(TO_TOOLBAR_WIDGET_NAME);
+    Type->addItem(tr("Bar chart"), 0);
+    Type->addItem(tr("Line chart"), 1);
+    Type->addItem(tr("Pie chart"), 2);
     toolbar->addWidget(Type);
 
     toolbar->addSeparator();
 
     Legend = new QToolButton(toolbar);
-    Legend->setToggleButton(true);
-    Legend->setIconSet(QIcon(QPixmap(const_cast<const char**>(legend_xpm))));
+    Legend->setCheckable(true);
+    Legend->setIcon(QIcon(QPixmap(const_cast<const char**>(legend_xpm))));
     Legend->setToolTip(tr("Display legend"));
-    Legend->setOn(true);
+    Legend->setChecked(true);
     toolbar->addWidget(Legend);
 
     Grid = new QToolButton(toolbar);
-    Grid->setToggleButton(true);
-    Grid->setIconSet(QIcon(QPixmap(const_cast<const char**>(grid_xpm))));
+    Grid->setCheckable(true);
+    Grid->setIcon(QIcon(QPixmap(const_cast<const char**>(grid_xpm))));
     Grid->setToolTip(tr("Display grid"));
-    Grid->setOn(true);
+    Grid->setChecked(true);
     toolbar->addWidget(Grid);
 
     Axis = new QToolButton(toolbar);
-    Axis->setToggleButton(true);
-    Axis->setIconSet(QIcon(QPixmap(const_cast<const char**>(axis_xpm))));
+    Axis->setCheckable(true);
+    Axis->setIcon(QIcon(QPixmap(const_cast<const char**>(axis_xpm))));
     Axis->setToolTip(tr("Display axis legend"));
-    Axis->setOn(true);
+    Axis->setChecked(true);
     toolbar->addWidget(Axis);
 
     QLabel *title = new QLabel(tr("Title columns"));
     title->setToolTip(tr("Number of columns to use as title"));
     toolbar->addWidget(title);
 
-    Title = new QComboBox(toolbar, TO_TOOLBAR_WIDGET_NAME);
-    Title->insertItem(QString::fromLatin1("1"));
-    Title->insertItem(QString::fromLatin1("2"));
-    Title->insertItem(QString::fromLatin1("3"));
-    Title->insertItem(QString::fromLatin1("4"));
-    Title->insertItem(QString::fromLatin1("5"));
-    Title->insertItem(QString::fromLatin1("6"));
+    Title = new QComboBox(toolbar);
+    setObjectName(TO_TOOLBAR_WIDGET_NAME);
+    Title->addItem(QString::fromLatin1("1"));
+    Title->addItem(QString::fromLatin1("2"));
+    Title->addItem(QString::fromLatin1("3"));
+    Title->addItem(QString::fromLatin1("4"));
+    Title->addItem(QString::fromLatin1("5"));
+    Title->addItem(QString::fromLatin1("6"));
     toolbar->addWidget(Title);
 
     toolbar->addSeparator();
@@ -136,19 +138,19 @@ void toVisualize::display(void) {
     QWidget *last = Result;
     toResultModel *model = Source->model();
 
-    switch (Type->currentItem()) {
+    switch (Type->currentIndex()) {
 
     case 0: {
         toBarChart *chart = new toBarChart(this);
         layout()->addWidget(chart);
-        chart->showLegend(Legend->isOn());
+        chart->showLegend(Legend->isChecked());
         int tit = std::max(1, Title->currentText().toInt()) +
             Source->numberColumn();
         chart->setTitle(
             model->headerData(Source->numberColumn(),
                               Qt::Horizontal, Qt::DisplayRole).toString());
-        chart->showGrid(Grid->isOn() ? 5 : 0);
-        chart->showAxisLegend(Axis->isOn());
+        chart->showGrid(Grid->isChecked() ? 5 : 0);
+        chart->showAxisLegend(Axis->isChecked());
         chart->setSamples();
 
         std::list<QString> lst;
@@ -185,14 +187,14 @@ void toVisualize::display(void) {
     case 1: {
         toLineChart *chart = new toLineChart(this);
         layout()->addWidget(chart);
-        chart->showLegend(Legend->isOn());
+        chart->showLegend(Legend->isChecked());
         int tit = std::max(1, Title->currentText().toInt()) +
             Source->numberColumn();
         chart->setTitle(
             model->headerData(Source->numberColumn(),
                               Qt::Horizontal, Qt::DisplayRole).toString());
-        chart->showGrid(Grid->isOn() ? 5 : 0);
-        chart->showAxisLegend(Axis->isOn());
+        chart->showGrid(Grid->isChecked() ? 5 : 0);
+        chart->showAxisLegend(Axis->isChecked());
         chart->setSamples();
 
         std::list<QString> lst;
@@ -230,7 +232,7 @@ void toVisualize::display(void) {
     case 2: {
         toPieChart *chart = new toPieChart(this);
         layout()->addWidget(chart);
-        chart->showLegend(Legend->isOn());
+        chart->showLegend(Legend->isChecked());
         int tit = std::max(1, Title->currentText().toInt()) +
             Source->numberColumn();
         chart->setTitle(

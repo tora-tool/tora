@@ -44,6 +44,7 @@
 
 #include <QMessageBox>
 #include <QFileInfo>
+#include <QDir>
 
 
 toWorksheetText::toWorksheetText(toWorksheet *worksheet,
@@ -86,7 +87,7 @@ bool toWorksheetText::editOpen(QString suggestedFile) {
         fname = suggestedFile;
     else {
         QFileInfo file(filename());
-        fname = toOpenFilename(file.dirPath(), QString::null, this);
+        fname = toOpenFilename(file.dir().path(), QString::null, this);
     }
     if(fname.isEmpty())
         return false;

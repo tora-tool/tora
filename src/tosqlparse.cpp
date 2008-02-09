@@ -642,7 +642,7 @@ QString toSQLParse::stringTokenizer::remaining(bool eol)
     QString ret;
     if (eol)
     {
-        int pos = String.find('\n', Offset);
+        int pos = String.indexOf('\n', Offset);
         if (pos < 0)
             pos = Offset;
         ret = String.mid(Offset, pos - Offset);
@@ -705,7 +705,7 @@ QString toSQLParse::editorTokenizer::getToken(bool forward, bool comments)
                 if (!end.isNull())
                 {
                     for (Line++;
-                            Line < int(Editor->lines()) && (Offset = Editor->text(Line).find(end)) < 0;
+                            Line < int(Editor->lines()) && (Offset = Editor->text(Line).indexOf(end)) < 0;
                             Line++)
                         ret += ("\n") + Editor->text(Line);
                     if (Line < int(Editor->lines()))
@@ -738,7 +738,7 @@ QString toSQLParse::editorTokenizer::getToken(bool forward, bool comments)
                 if (!end.isNull())
                 {
                     for (Line--;
-                            Line >= 0 && (Offset = Editor->text(Line).findRev(end)) < 0;
+                            Line >= 0 && (Offset = Editor->text(Line).lastIndexOf(end)) < 0;
                             Line--)
                         ret.prepend(Editor->text(Line) + ("\n"));
                     if (Line >= 0)
@@ -799,7 +799,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
             !token.isNull();
             token = tokens.getToken(true, true))
     {
-        QString upp = token.upper();
+        QString upp = token.toUpper();
 #ifdef TOPARSE_DEBUG
 
         printf("%s (%d)\n", (const char*)token, tokens.line());
@@ -837,11 +837,11 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
                     toStatusMessage(qApp->translate("toSQLparse", "Unbalanced parenthesis (Too many ')')"));
                 blk.subTokens().insert(blk.subTokens().end(), cur);
                 if (cur.subTokens().begin() != cur.subTokens().end() &&
-                        (*(cur.subTokens().begin())).String.upper() == ("BEGIN"))
+                        (*(cur.subTokens().begin())).String.toUpper() == ("BEGIN"))
                     dcl = false;
             }
             while (cur.subTokens().begin() != cur.subTokens().end() &&
-                    (*cur.subTokens().begin()).String.upper() != ("END"));
+                    (*cur.subTokens().begin()).String.toUpper() != ("END"));
             return blk;
         }
         else if (((first == "IF" && upp == "THEN") ||
@@ -931,7 +931,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
             if (com.startsWith(("--+")))
                 com = ("/*+ ") + com.mid(3) + (" */");
             ret.subTokens().insert(ret.subTokens().end(), statement(statement::Token,
-                                   com.simplifyWhiteSpace(), tokens.line()));
+                                   com.simplified(), tokens.line()));
         }
         else if (upp.startsWith(("/*")) || upp.startsWith(("--")) || upp.startsWith("//"))
         {
@@ -997,7 +997,7 @@ int toSQLParse::countIndent(const QString &txt, int &chars)
     int level = 0;
     while (chars < int(txt.length()) && txt[chars].isSpace())
     {
-        char c = txt[chars].latin1();
+        char c = txt[chars].toLatin1();
         if (c == '\n')
             level = 0;
         else if (c == ' ')
@@ -1038,7 +1038,7 @@ QString toSQLParse::indentString(int level)
 
 static int CurrentColumn(const QString &txt)
 {
-    int pos = txt.findRev(("\n"));
+    int pos = txt.lastIndexOf(("\n"));
     if (pos < 0)
         pos = 0;
     else
@@ -1047,7 +1047,7 @@ static int CurrentColumn(const QString &txt)
     int level = 0;
     while (pos < int(txt.length()))
     {
-        char c = txt[pos].latin1();
+        char c = txt[pos].toLatin1();
         if (c == '\n')
             level = 0;
         else if (c == '\t')
@@ -1163,7 +1163,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
             QString t;
             if ((*i).subTokens().begin() != (*i).subTokens().
                     end())
-                t = (*(*i).subTokens().begin()).String.upper();
+                t = (*(*i).subTokens().begin()).String.toUpper();
             if (t == ("BEGIN") || t == ("WHEN") || t == ("ELSE") || t == ("ELSIF"))
                 add
                 = 0;
@@ -1229,7 +1229,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
             {
                 if (any)
                 {
-                    QString upp = (*i).String.upper();
+                    QString upp = (*i).String.toUpper();
                     if ((*i).Type == statement::Keyword &&
                             upp != ("LOOP") &&
                             upp != ("DO") &&
@@ -1264,10 +1264,10 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                 i++)
         {
             comment = AddComment(comment, (*i).Comment);
-            QString upp = (*i).String.upper();
+            QString upp = (*i).String.toUpper();
 
 #ifdef TOPARSE_DEBUG
-            printf("%s\n", (const char*)(*i).String.latin1());
+            printf("%s\n", (const char*)(*i).String.toLatin1());
 #endif
 
             if ((*i).Type == statement::List)
@@ -1278,7 +1278,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                     current++;
                 }
                 QString t = indentStatement(*i, current, syntax);
-                if (t.find(("\n")) >= 0)
+                if (t.indexOf(("\n")) >= 0)
                     current = CurrentColumn(t);
                 else
                     current += CurrentColumn(t);
@@ -1328,7 +1328,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                             current++;
                         }
                     }
-                    ret += Settings.KeywordUpper ? (*i).String.upper() : (*i).String;
+                    ret += Settings.KeywordUpper ? (*i).String.toUpper() : (*i).String;
                     current += (*i).String.length();
                 }
                 else
@@ -1336,7 +1336,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                     ret += IndentComment(Settings.CommentColumn, current, comment, true);
                     comment = QString::null;
                     ret += indentString(level);
-                    ret += Settings.KeywordUpper ? (*i).String.upper() : (*i).String;
+                    ret += Settings.KeywordUpper ? (*i).String.toUpper() : (*i).String;
                     current = level + (*i).String.length();
                 }
                 any = false;
@@ -1363,7 +1363,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                         current++;
                     }
                 maxlev = maxlevorig;
-                QString word = Settings.KeywordUpper ? (*i).String.upper() : (*i).String;
+                QString word = Settings.KeywordUpper ? (*i).String.toUpper() : (*i).String;
                 if (ret.length())
                 {
                     ret += QString("%1").arg(word,

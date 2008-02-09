@@ -400,8 +400,7 @@ bool toNoBlockQuery::poll(void)
                     Running.down();
                 while (Continue.getValue() > 0)
                     Continue.down();
-                // qt4 + new compiler = pain in the ass
-                Error.setAscii((const char *) 0);
+                Error = QString();
                 ReadingValues.clear();
                 Values.clear();
                 CurrentValue = Values.end();

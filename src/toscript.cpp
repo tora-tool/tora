@@ -272,8 +272,8 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     CreateList->addColumn(tr("Created"));
     CreateList->setRootIsDecorated(true);
     CreateList->setSorting(0);
-    ScriptUI->Tabs->setTabEnabled(ScriptUI->ResultTab, false);
-    ScriptUI->Tabs->setTabEnabled(ScriptUI->DifferenceTab, false);
+    ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResultTab), false);
+    ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->DifferenceTab), false);
 
     connect(SearchList, SIGNAL(clicked(toTreeWidgetItem *)), this, SLOT(keepOn(toTreeWidgetItem *)));
     connect(DropList, SIGNAL(clicked(toTreeWidgetItem *)), this, SLOT(keepOn(toTreeWidgetItem *)));
@@ -288,7 +288,7 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     ScriptUI->Limit->setTitle(tr("&Limit"));
     ScriptUI->Next->setTitle(tr("&Next"));
     connect(ScriptUI->ModeGroup, SIGNAL(clicked(int)), this, SLOT(changeMode(int)));
-    ScriptUI->Tabs->setTabEnabled(ScriptUI->ResizeTab, false);
+    ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResizeTab), false);
     ScriptUI->SourceObjects->setSorting(0);
     ScriptUI->SourceObjects->setResizeMode(toTreeWidget::AllColumns);
     ScriptUI->DestinationObjects->setSorting(0);
@@ -309,13 +309,13 @@ toScript::toScript(QWidget *parent, toConnection &connection)
         if (str == connection.description() && def == 0)
             def = i;
         i++;
-        ScriptUI->SourceConnection->insertItem(str);
-        ScriptUI->DestinationConnection->insertItem(str);
+        ScriptUI->SourceConnection->addItem(str);
+        ScriptUI->DestinationConnection->addItem(str);
     }
-    ScriptUI->SourceConnection->setCurrentItem(def);
+    ScriptUI->SourceConnection->setCurrentIndex(def);
     changeSource(def);
     changeDestination(def);
-    ScriptUI->DestinationConnection->setCurrentItem(def);
+    ScriptUI->DestinationConnection->setCurrentIndex(def);
 
     connect(ScriptUI->AddButton, SIGNAL(clicked()), this, SLOT(newSize()));
     connect(ScriptUI->Remove, SIGNAL(clicked()), this, SLOT(removeSize()));
@@ -356,7 +356,7 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     connect(toMainWidget(), SIGNAL(removedConnection(const QString &)),
             this, SLOT(delConnection(const QString &)));
 
-    ScriptUI->Schema->setCurrentItem(0);
+    ScriptUI->Schema->setCurrentIndex(0);
     setFocusProxy(ScriptUI->Tabs);
 }
 
@@ -364,7 +364,7 @@ void toScript::delConnection(const QString &name)
 {
     for (int i = 0;i < ScriptUI->SourceConnection->count();i++)
     {
-        if (ScriptUI->SourceConnection->text(i) == name)
+        if (ScriptUI->SourceConnection->itemText(i) == name)
         {
             ScriptUI->SourceConnection->removeItem(i);
             break;
@@ -372,7 +372,7 @@ void toScript::delConnection(const QString &name)
     }
     for (int j = 0;j < ScriptUI->DestinationConnection->count();j++)
     {
-        if (ScriptUI->DestinationConnection->text(j) == name)
+        if (ScriptUI->DestinationConnection->itemText(j) == name)
         {
             ScriptUI->DestinationConnection->removeItem(j);
             break;
@@ -382,8 +382,8 @@ void toScript::delConnection(const QString &name)
 
 void toScript::addConnection(const QString &name)
 {
-    ScriptUI->SourceConnection->insertItem(name);
-    ScriptUI->DestinationConnection->insertItem(name);
+    ScriptUI->SourceConnection->addItem(name);
+    ScriptUI->DestinationConnection->addItem(name);
 }
 
 toScript::~toScript()
@@ -541,14 +541,14 @@ void toScript::execute(void)
                 }
                 file.open(QIODevice::WriteOnly);
 
-                if (file.status() != (int) IO_Ok)
-                    throw tr("Couldn't open file %1").arg(file.name());
+                if(file.error() != QFile::NoError)
+                    throw tr("Couldn't open file %1").arg(file.fileName());
 
                 QTextStream stream(&file);
                 source.create(stream, sourceObjects);
 
-                if (file.status() != (int) IO_Ok)
-                    throw tr("Error writing to file %1").arg(file.name());
+                if(file.error() != QFile::NoError)
+                    throw tr("Error writing to file %1").arg(file.fileName());
 
                 script = tr("-- Script generated to file %1 successfully").arg(ScriptUI->Filename->text());
             }
@@ -560,8 +560,8 @@ void toScript::execute(void)
                 QFile file(ScriptUI->Filename->text() + QDir::separator() + "script.sql");
                 file.open(QIODevice::WriteOnly);
 
-                if (file.status() != (int) IO_Ok)
-                    throw QString(tr("Couldn't open file %1")).arg(file.name());
+                if(file.error() != QFile::NoError)
+                    throw QString(tr("Couldn't open file %1")).arg(file.fileName());
 
                 QTextStream stream(&file);
 
@@ -571,8 +571,8 @@ void toScript::execute(void)
                 QFile pfile(ScriptUI->Filename->text() + QDir::separator() + "script.tpr");
                 pfile.open(QIODevice::WriteOnly);
 
-                if (pfile.status() != (int) IO_Ok)
-                    throw QString(tr("Couldn't open file %1")).arg(pfile.name());
+                if(pfile.error() != QFile::NoError)
+                    throw QString(tr("Couldn't open file %1")).arg(pfile.fileName());
 
                 QTextStream pstream(&pfile);
 
@@ -588,26 +588,26 @@ void toScript::execute(void)
 
                     QFile tf(ScriptUI->Filename->text() + QDir::separator() + fn);
                     tf.open(QIODevice::WriteOnly);
-                    pstream << tf.name() << "\n";
+                    pstream << tf.fileName() << "\n";
 
-                    if (tf.status() != (int) IO_Ok)
-                        throw QString(tr("Couldn't open file %1")).arg(tf.name());
+                    if(tf.error() != QFile::NoError)
+                        throw QString(tr("Couldn't open file %1")).arg(tf.fileName());
 
                     QTextStream ts(&tf);
                     source.create(ts, t);
 
-                    if (tf.status() != (int) IO_Ok)
-                        throw QString(tr("Error writing to file %1")).arg(tf.name());
+                    if(tf.error() != QFile::NoError)
+                        throw QString(tr("Error writing to file %1")).arg(tf.fileName());
 
 
                     script = tr("-- Scripts generate to directory %1 successfully").arg(ScriptUI->Filename->text());
                     ;
                 }
 
-                if (file.status() != (int) IO_Ok)
-                    throw QString(tr("Error writing to file %1")).arg(file.name());
-                if (pfile.status() != (int) IO_Ok)
-                    throw QString(tr("Error writing to file %1")).arg(pfile.name());
+                if(file.error() != QFile::NoError)
+                    throw QString(tr("Error writing to file %1")).arg(file.fileName());
+                if(pfile.error() != QFile::NoError)
+                    throw QString(tr("Error writing to file %1")).arg(pfile.fileName());
             }
             break;
         case 0:
@@ -644,8 +644,8 @@ void toScript::execute(void)
             sourceDescription = drop;
             destinationDescription = create;
         }
-        ScriptUI->Tabs->setTabEnabled(ScriptUI->ResultTab, mode == 1 || mode == 2 || mode == 3 || mode == 4);
-        ScriptUI->Tabs->setTabEnabled(ScriptUI->DifferenceTab, mode == 0 || mode == 2);
+        ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResultTab), mode == 1 || mode == 2 || mode == 3 || mode == 4);
+        ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->DifferenceTab), mode == 0 || mode == 2);
         if (!script.isEmpty())
         {
             Worksheet->editor()->setText(script);
@@ -657,11 +657,9 @@ void toScript::execute(void)
             Worksheet->hide();
             Report->hide();
             SearchList->show();
-            QRegExp re(ScriptUI->SearchWord->text(), false);
-            QStringList words(QStringList::split(QRegExp(QString::fromLatin1(" ")),
-                                                 ScriptUI->SearchWord->text().
-                                                 upper().simplifyWhiteSpace()));
-            QString word = ScriptUI->SearchWord->text().upper();
+            QRegExp re(ScriptUI->SearchWord->text(), Qt::CaseInsensitive);
+            QStringList words(ScriptUI->SearchWord->text().toUpper().simplified().split(QRegExp(QString::fromLatin1(" "))));
+            QString word = ScriptUI->SearchWord->text().toUpper();
             int searchMode = 0;
             if (ScriptUI->AllWords->isChecked())
                 searchMode = 1;
@@ -676,7 +674,7 @@ void toScript::execute(void)
                     i != sourceDescription.end();
                     i++)
             {
-                QStringList ctx = QStringList::split(QString::fromLatin1("\01"), (*i).upper());
+                QStringList ctx = (*i).toUpper().split(QString("\01"));
                 switch (searchMode)
                 {
                 case 1:
@@ -721,15 +719,15 @@ void toScript::execute(void)
                     QFile file(ScriptUI->Filename->text());
                     file.open(QIODevice::WriteOnly);
 
-                    if (file.status() != (int) IO_Ok)
-                        toStatusMessage(tr("Couldn't open file %1").arg(file.name()));
+                    if (file.error() != QFile::NoError)
+                        toStatusMessage(tr("Couldn't open file %1").arg(file.fileName()));
                     else
                     {
                         QTextStream stream(&file);
                         stream << res;
 
-                        if (file.status() != (int) IO_Ok)
-                            toStatusMessage(tr("Error writing to file %1").arg(file.name()));
+                        if (file.error() != QFile::NoError)
+                            toStatusMessage(tr("Error writing to file %1").arg(file.fileName()));
                     }
                 }
             }
@@ -743,9 +741,9 @@ void toScript::execute(void)
             fillDifference(destinationDescription, CreateList);
         }
         if (mode == 0)
-            ScriptUI->Tabs->showPage(ScriptUI->DifferenceTab);
+            ScriptUI->Tabs->setCurrentIndex(ScriptUI->Tabs->indexOf(ScriptUI->DifferenceTab));
         else
-            ScriptUI->Tabs->showPage(ScriptUI->ResultTab);
+            ScriptUI->Tabs->setCurrentIndex(ScriptUI->Tabs->indexOf(ScriptUI->ResultTab));
     }
     TOCATCH
 }
@@ -759,7 +757,7 @@ void toScript::fillDifference(std::list<QString> &objects, toTreeWidget *view)
     for (std::list<QString>::iterator i = objects.begin();i != objects.end();i++)
     {
         //    printf("Adding %s\n",(const char *)*i);
-        QStringList ctx = QStringList::split(QString::fromLatin1("\01"), *i);
+        QStringList ctx = (*i).split(QString("\01"));
         if (last)
         {
             while (last && lastLevel >= int(ctx.count()))
@@ -862,7 +860,7 @@ void toScript::changeConnection(int, bool source)
         }
         (source ? ScriptUI->SourceObjects : ScriptUI->DestinationObjects)->clear();
         (source ? ScriptUI->SourceSchema : ScriptUI->DestinationSchema)->clear();
-        (source ? ScriptUI->SourceSchema : ScriptUI->DestinationSchema)->insertItem(tr("All"));
+        (source ? ScriptUI->SourceSchema : ScriptUI->DestinationSchema)->addItem(tr("All"));
         toConnection &conn = toMainWidget()->connection((source ?
                              ScriptUI->SourceConnection :
                              ScriptUI->DestinationConnection)
@@ -880,7 +878,7 @@ void toScript::changeConnection(int, bool source)
         while (schema.size() > 0)
         {
             QString str = toShift(schema);
-            (source ? ScriptUI->SourceSchema : ScriptUI->DestinationSchema)->insertItem(str);
+            (source ? ScriptUI->SourceSchema : ScriptUI->DestinationSchema)->addItem(str);
         }
         toTreeWidgetItem *lastTop = NULL;
         toTreeWidgetItem *lastFirst = NULL;
@@ -982,9 +980,9 @@ void toScript::changeMode(int mode)
         ScriptUI->Destination->setEnabled(false);
 
     if (mode == 1 || mode == 2)
-        ScriptUI->Tabs->setTabEnabled(ScriptUI->ResizeTab, true);
+        ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResizeTab), true);
     else if (mode == 0 || mode == 3 || mode == 4)
-        ScriptUI->Tabs->setTabEnabled(ScriptUI->ResizeTab, false);
+        ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResizeTab), false);
 
     ScriptUI->IncludeContent->setEnabled(mode == 1);
     ScriptUI->CommitDistance->setEnabled(mode == 1);

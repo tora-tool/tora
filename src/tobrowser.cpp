@@ -221,7 +221,7 @@ public:
         : Type(type),
           IgnoreCase(cas),
           Invert(invert),
-          Text(cas ? str.upper() : str),
+          Text(cas ? str.toUpper() : str),
           TablespaceType(tablespace),
           Tablespaces(tablespaces),
           OnlyOwnSchema(onlyOwnSchema),
@@ -229,7 +229,7 @@ public:
 
         if (!str.isEmpty()) {
             Match.setPattern(str);
-            Match.setCaseSensitive(cas);
+            Match.setCaseSensitivity(cas ? Qt::CaseSensitive : Qt::CaseInsensitive);
         }
 
         storeFilterSettings();
@@ -289,7 +289,7 @@ public:
         data[prefix + ":Text"] = Text;
         int id = 1;
         for (std::list<QString>::iterator i = Tablespaces.begin();i != Tablespaces.end();i++, id++)
-            data[prefix + ":Space:" + QString::number(id).latin1()] = *i;
+            data[prefix + ":Space:" + QString::number(id).toLatin1()] = *i;
         if (OnlyOwnSchema)
             data[prefix + ":OwnlyOwnSchema"] = "Yes";
     }
@@ -303,12 +303,12 @@ public:
         Text = data[prefix + ":Text"];
         if (!Text.isEmpty()) {
             Match.setPattern(Text);
-            Match.setCaseSensitive(IgnoreCase);
+            Match.setCaseSensitivity(IgnoreCase ? Qt::CaseSensitive : Qt::CaseInsensitive);
         }
         int id = 1;
         std::map<QString, QString>::iterator i;
         Tablespaces.clear();
-        while ((i = data.find(prefix + ":Space:" + QString::number(id).latin1())) != data.end()) {
+        while ((i = data.find(prefix + ":Space:" + QString::number(id).toLatin1())) != data.end()) {
             Tablespaces.insert(Tablespaces.end(), (*i).second);
             i++;
             id++;
@@ -324,11 +324,11 @@ public:
         default:
             return QString::fromLatin1("%");
         case 1:
-            return Text.upper() + QString::fromLatin1("%");
+            return Text.toUpper() + QString::fromLatin1("%");
         case 2:
-            return QString::fromLatin1("%") + Text.upper();
+            return QString::fromLatin1("%") + Text.toUpper();
         case 3:
-            return QString::fromLatin1("%") + Text.upper() + QString::fromLatin1("%");
+            return QString::fromLatin1("%") + Text.toUpper() + QString::fromLatin1("%");
         }
     }
 
@@ -385,7 +385,7 @@ public:
             return true;
         case 1:
             if (IgnoreCase) {
-                if (str.upper().startsWith(Text))
+                if (str.toUpper().startsWith(Text))
                     return !Invert;
             }
             else if (str.startsWith(Text))
@@ -393,21 +393,21 @@ public:
             break;
         case 2:
             if (IgnoreCase) {
-                if (str.right(Text.length()).upper() == Text)
+                if (str.right(Text.length()).toUpper() == Text)
                     return !Invert;
             }
             else if (str.right(Text.length()) == Text)
                 return !Invert;
             break;
         case 3:
-            if (str.contains(Text, !IgnoreCase))
+            if (str.contains(Text, IgnoreCase ? Qt::CaseSensitive : Qt::CaseInsensitive))
                 return !Invert;
             break;
         case 4: {
-            QStringList lst = QStringList::split(QRegExp(QString::fromLatin1("\\s*,\\s*")), Text);
+            QStringList lst = Text.split(QRegExp(QString("\\s*,\\s*")));
             for (int i = 0;i < lst.count();i++)
                 if (IgnoreCase) {
-                    if (str.upper() == lst[i])
+                    if (str.toUpper() == lst[i])
                         return !Invert;
                 }
                 else if (str == lst[i])
@@ -504,8 +504,14 @@ toBrowseButton::toBrowseButton(const QIcon &iconSet,
                                const char * slot,
                                QToolBar * parent,
                                const char * name)
-        : QToolButton(iconSet, textLabel, grouptext, receiver, slot, parent, name)
-{
+    : QToolButton(parent) {
+
+    setIcon(iconSet);
+    setText(textLabel);
+    connect(this, SIGNAL(triggered(QAction *)), receiver, slot);
+    setObjectName(name);
+    setToolTip(grouptext);
+
     try {
         connect(toCurrentTool(this), SIGNAL(connectionChange()), this, SLOT(connectionChanged()));
     }
@@ -1281,7 +1287,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     QLabel *strech;
     toolbar->addWidget(strech = new QLabel(toolbar));
-    strech->setAlignment(Qt::AlignRight | Qt::AlignVCenter | Qt::ExpandTabs);
+    strech->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     strech->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                       QSizePolicy::Minimum));
 
@@ -1292,7 +1298,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     if (toIsMySQL(connection))
         Schema->setSelected(connection.database());
     else if (toIsOracle(connection) || toIsSapDB(connection))
-        Schema->setSelected(connection.user().upper());
+        Schema->setSelected(connection.user().toUpper());
     else
         Schema->setSelected(connection.user());
     toolbar->addWidget(Schema);
@@ -1302,7 +1308,8 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     TopTab = new toTabWidget(this);
     layout()->addWidget(TopTab);
-    QSplitter *splitter = new QSplitter(Qt::Horizontal, TopTab, TAB_TABLES);
+    QSplitter *splitter = new QSplitter(Qt::Horizontal, TopTab);
+    splitter->setObjectName(TAB_TABLES);
     TopTab->addTab(splitter, tr("T&ables"));
     CurrentTop = splitter;
 
@@ -1375,7 +1382,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     tableView->setSQL(SQLListTables);
     setFocusProxy(tableView);
     box->resize(FIRST_WIDTH, tableView->height());
-    splitter->setResizeMode(box, QSplitter::KeepSize);
+    splitter->setStretchFactor(splitter->indexOf(box), 0);
     connect(tableView, SIGNAL(done()), this, SLOT(firstDone()));
     FirstTab = tableView;
     Map[TAB_TABLES] = tableView;
@@ -1389,7 +1396,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
 
     toTabWidget *curr = new toTabWidget(splitter);
-    splitter->setResizeMode(curr, QSplitter::Stretch);
+    splitter->setStretchFactor(splitter->indexOf(curr), 1);
 
     toResultCols *resultCols = new toResultCols(curr, TAB_TABLE_COLUMNS);
     curr->addTab(resultCols, tr("&Columns"));
@@ -1455,7 +1462,8 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     connect(curr, SIGNAL(currentChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
 
-    splitter = new QSplitter(Qt::Horizontal, TopTab, TAB_VIEWS);
+    splitter = new QSplitter(Qt::Horizontal, TopTab);
+    splitter->setObjectName(TAB_VIEWS);
     TopTab->addTab(splitter, tr("&Views"));
     tableView = new toResultTableView(true, false, splitter);
     tableView->setReadAll(true);
@@ -1466,10 +1474,10 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     tableView->resize(FIRST_WIDTH, tableView->height());
     connect(tableView, SIGNAL(selectionChanged()),
             this, SLOT(changeItem()));
-    splitter->setResizeMode(tableView, QSplitter::KeepSize);
+    splitter->setStretchFactor(splitter->indexOf(tableView), 0);
 
     curr = new toTabWidget(splitter);
-    splitter->setResizeMode(curr, QSplitter::Stretch);
+    splitter->setStretchFactor(splitter->indexOf(curr), 1);
     resultCols = new toResultCols(curr, TAB_VIEW_COLUMNS);
     curr->addTab(resultCols, tr("&Columns"));
     SecondMap[TAB_VIEWS] = resultCols;
@@ -1499,7 +1507,8 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     SecondMap[TAB_VIEW_EXTRACT] = resultExtract;
     connect(curr, SIGNAL(currentChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
 
-    splitter = new QSplitter(Qt::Horizontal, TopTab, TAB_INDEX);
+    splitter = new QSplitter(Qt::Horizontal, TopTab);
+    splitter->setObjectName(TAB_INDEX);
 
     TopTab->addTab(splitter, tr("Inde&xes"));
 
@@ -1549,9 +1558,9 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     connect(tableView, SIGNAL(displayMenu(QMenu *)), this, SLOT(displayIndexMenu(QMenu *)));
 
     box->resize(FIRST_WIDTH, tableView->height());
-    splitter->setResizeMode(box, QSplitter::KeepSize);
+    splitter->setStretchFactor(splitter->indexOf(box), 0);
     curr = new toTabWidget(splitter);
-    splitter->setResizeMode(curr, QSplitter::Stretch);
+    splitter->setStretchFactor(splitter->indexOf(curr), 1);
 
     tableView = new toResultTableView(true, false, curr, TAB_INDEX_COLS);
     tableView->setSQL(SQLIndexCols);
@@ -1582,7 +1591,8 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     SecondMap[TAB_INDEX_EXTRACT] = resultExtract;
     connect(curr, SIGNAL(currentChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
 
-    splitter = new QSplitter(Qt::Horizontal, TopTab, TAB_SEQUENCES);
+    splitter = new QSplitter(Qt::Horizontal, TopTab);
+    splitter->setObjectName(TAB_SEQUENCES);
     TopTab->addTab(splitter, tr("Se&quences"));
     tableView = new toResultTableView(true, false, splitter);
     tableView->setReadAll(true);
@@ -1594,10 +1604,10 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     tableView->resize(FIRST_WIDTH, tableView->height());
     connect(tableView, SIGNAL(selectionChanged()),
             this, SLOT(changeItem()));
-    splitter->setResizeMode(tableView, QSplitter::KeepSize);
+    splitter->setStretchFactor(splitter->indexOf(tableView), 0);
 
     curr = new toTabWidget(splitter);
-    splitter->setResizeMode(curr, QSplitter::Stretch);
+    splitter->setStretchFactor(splitter->indexOf(curr), 1);
     toResultItem *resultSequences = new toResultItem(2, true, curr, TAB_SEQUENCES_INFO);
     resultSequences->setSQL(SQLSequenceInfo);
     curr->addTab(resultSequences, tr("Info"));
@@ -1615,7 +1625,8 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     SecondMap[TAB_SEQUENCES_EXTRACT] = resultExtract;
     connect(curr, SIGNAL(currentChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
 
-    splitter = new QSplitter(Qt::Horizontal, TopTab, TAB_SYNONYM);
+    splitter = new QSplitter(Qt::Horizontal, TopTab);
+    splitter->setObjectName(TAB_SYNONYM);
     TopTab->addTab(splitter, tr("S&ynonyms"));
     tableView = new toResultTableView(true, false, splitter);
     tableView->setReadAll(true);
@@ -1626,10 +1637,10 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     tableView->resize(FIRST_WIDTH, tableView->height());
     connect(tableView, SIGNAL(selectionChanged()),
             this, SLOT(changeItem()));
-    splitter->setResizeMode(tableView, QSplitter::KeepSize);
+    splitter->setStretchFactor(splitter->indexOf(tableView), 0);
 
     curr = new toTabWidget(splitter);
-    splitter->setResizeMode(curr, QSplitter::Stretch);
+    splitter->setStretchFactor(splitter->indexOf(curr), 1);
     toResultItem *resultSynonym = new toResultItem(2, true, curr, TAB_SYNONYM_INFO);
     resultSynonym->setSQL(SQLSynonymInfo);
     curr->addTab(resultSynonym, tr("Info"));
@@ -1648,7 +1659,8 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     connect(curr, SIGNAL(currentChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
 
-    splitter = new QSplitter(Qt::Horizontal, TopTab, TAB_PLSQL);
+    splitter = new QSplitter(Qt::Horizontal, TopTab);
+    splitter->setObjectName(TAB_PLSQL);
     TopTab->addTab(splitter, tr("Cod&e"));
     tableView = new toResultTableView(true, false, splitter);
     tableView->setReadAll(true);
@@ -1659,10 +1671,10 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     tableView->resize(FIRST_WIDTH*2, tableView->height());
     connect(tableView, SIGNAL(selectionChanged()),
             this, SLOT(changeItem()));
-    splitter->setResizeMode(tableView, QSplitter::KeepSize);
+    splitter->setStretchFactor(splitter->indexOf(tableView), 0);
 
     curr = new toTabWidget(splitter);
-    splitter->setResizeMode(curr, QSplitter::Stretch);
+    splitter->setStretchFactor(splitter->indexOf(curr), 1);
     resultField = new toResultField(curr, TAB_PLSQL_SOURCE);
     resultField->setSQL(SQLSQLHead);
     curr->addTab(resultField, tr("&Declaration"));
@@ -1689,7 +1701,8 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     SecondMap[TAB_PLSQL_EXTRACT] = resultExtract;
     connect(curr, SIGNAL(currentChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
 
-    splitter = new QSplitter(Qt::Horizontal, TopTab, TAB_TRIGGER);
+    splitter = new QSplitter(Qt::Horizontal, TopTab);
+    splitter->setObjectName(TAB_TRIGGER);
     TopTab->addTab(splitter, tr("Tri&ggers"));
     tableView = new toResultTableView(true, false, splitter);
     tableView->setReadAll(true);
@@ -1700,10 +1713,10 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     tableView->resize(FIRST_WIDTH, tableView->height());
     connect(tableView, SIGNAL(selectionChanged()),
             this, SLOT(changeItem()));
-    splitter->setResizeMode(tableView, QSplitter::KeepSize);
+    splitter->setStretchFactor(splitter->indexOf(tableView), 0);
 
     curr = new toTabWidget(splitter);
-    splitter->setResizeMode(curr, QSplitter::Stretch);
+    splitter->setStretchFactor(splitter->indexOf(curr), 1);
     toResultItem *resultTrigger = new toResultItem(2, true, curr, TAB_TRIGGER_INFO);
     resultTrigger->setSQL(SQLTriggerInfo);
     curr->addTab(resultTrigger, tr("Info"));
@@ -1808,7 +1821,8 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
             SLOT(changeSecondTab(QWidget *)));
 #endif
 
-    splitter = new QSplitter(Qt::Horizontal, TopTab, TAB_ACCESS);
+    splitter = new QSplitter(Qt::Horizontal, TopTab);
+    splitter->setObjectName(TAB_ACCESS);
     TopTab->addTab(splitter, tr("Access"));
 
 #ifdef TOEXTENDED_MYSQL
@@ -1848,7 +1862,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
             this, SLOT(changeItem()));
 
     curr = new toTabWidget(splitter);
-    splitter->setResizeMode(curr, QSplitter::Stretch);
+    splitter->setStretchFactor(splitter->indexOf(curr), 1);
 
 #ifdef TOEXTENDED_MYSQL
     splitter->setResizeMode(box, QSplitter::KeepSize);
@@ -1882,7 +1896,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     curr->addTab(AccessContent, tr("&Hosts"));
     SecondMap[TAB_ACCESS_CONTENT] = AccessContent;
 #else
-    splitter->setResizeMode(tableView, QSplitter::KeepSize);
+    splitter->setStretchFactor(splitter->indexOf(tableView), 1);
     tableView->setSQL(SQLMySQLAccess);
 
     AccessContent = new toResultData(curr, TAB_ACCESS_CONTENT);
@@ -2013,7 +2027,7 @@ void toBrowser::changeConnection(void)
     if (toIsMySQL(connection()))
         Schema->setSelected(connection().database());
     else if (toIsOracle(connection()) || toIsSapDB(connection()))
-        Schema->setSelected(connection().user().upper());
+        Schema->setSelected(connection().user().toUpper());
     else
         Schema->setSelected(connection().user());
     SecondText = QString::null;
@@ -2061,19 +2075,21 @@ void toBrowser::changeItem()
     QModelIndex item = selectedItem();
     if(item.isValid()) {
         SecondText = item.data(Qt::EditRole).toString();
-        if(SecondTab && !SecondText.isEmpty())
-            Poll.start(250, true);
+        if(SecondTab && !SecondText.isEmpty()) {
+            Poll.setSingleShot(true);
+            Poll.start(250);
+        }
     }
 }
 
 void toBrowser::changeSecond(void) {
-    QWidget *tab = TopTab->currentPage();
+    QWidget *tab = TopTab->currentWidget();
     QWidget *tab2 = dynamic_cast<QWidget *>(SecondTab);
 
-    if (tab && !strcmp(tab->name(), TAB_SYNONYM)) {
+    if (tab && tab->objectName() == TAB_SYNONYM) {
         QString owner;
         QString name;
-        int pos = SecondText.find(QString::fromLatin1("."));
+        int pos = SecondText.indexOf(QString("."));
 
         if (pos >= 0) {
             owner = SecondText.mid(0, pos);
@@ -2088,19 +2104,19 @@ void toBrowser::changeSecond(void) {
 
 #ifdef TOEXTENDED_MYSQL
     }
-    else if (tab && !strcmp(tab->name(), TAB_ACCESS) &&
-             !strcmp(tab2->name(), TAB_ACCESS_CONTENT)) {
+    else if (tab && tab->objectName() == TAB_ACCESS &&
+             tab2->objectName() == TAB_ACCESS_CONTENT) {
         SecondTab->changeParams("mysql", "host");
 #else
 
     }
-    else if (tab && !strcmp(tab->name(), TAB_ACCESS)) {
+    else if (tab && tab->objectName() == TAB_ACCESS) {
         SecondTab->changeParams("mysql", SecondText);
 #endif
 
     }
-    else if (tab && !strcmp(tab->name(), TAB_INDEX) &&
-             !strcmp(tab2->name(), TAB_INDEX_EXTRACT)) {
+    else if (tab && tab->objectName() == TAB_INDEX &&
+             tab2->objectName() == TAB_INDEX_EXTRACT) {
         QModelIndex item = selectedItem();
         if(item.isValid())
             SecondTab->changeParams(schema(),
@@ -2112,12 +2128,12 @@ void toBrowser::changeSecond(void) {
 
 void toBrowser::changeSecondTab(QWidget *tab)
 {
-    for (QWidget *t = tab->parentWidget();t != TopTab->currentPage();t = t->parentWidget())
+    for (QWidget *t = tab->parentWidget();t != TopTab->currentWidget();t = t->parentWidget())
         if (!t)
             return;
 
     if (tab) {
-        toResult *newtab = SecondMap[tab->name()];
+        toResult *newtab = SecondMap[tab->objectName()];
         if (newtab == SecondTab)
             return;
 
@@ -2130,7 +2146,7 @@ void toBrowser::changeSecondTab(QWidget *tab)
             return;
 
         SecondTab = newtab;
-        SecondMap[TopTab->currentPage()->name()] = SecondTab;
+        SecondMap[TopTab->currentWidget()->objectName()] = SecondTab;
         if (SecondTab && !SecondText.isEmpty())
             changeSecond();
     }
@@ -2139,13 +2155,13 @@ void toBrowser::changeSecondTab(QWidget *tab)
 void toBrowser::changeTab(QWidget *tab)
 {
     if (tab && this == toMainWidget()->workspace()->activeWindow()) {
-        toResultTableView *newtab = Map[tab->name()];
+        toResultTableView *newtab = Map[tab->objectName()];
         if(newtab == FirstTab)
             return ;
         CurrentTop = tab;
         setFocusProxy(newtab);
         FirstTab = newtab;
-        SecondTab = SecondMap[tab->name()];
+        SecondTab = SecondMap[tab->objectName()];
         SecondText = "";
 
         if (FirstTab && SecondTab)
@@ -2236,46 +2252,56 @@ void toBrowser::addIndex(void)
 }
 
 void toBrowser::displayTableMenu(QMenu *menu) {
-    menu->insertSeparator(0);
-    menu->insertItem(QPixmap(const_cast<const char**>(trash_xpm)), tr("Drop table"), this, SLOT(dropTable()), 0, 0, 0);
-    menu->insertItem(tr("Truncate table"), this, SLOT(truncateTable()), 0, 0, 0);
-    menu->insertSeparator(0);
-    if (toIsMySQL(connection())) {
-        menu->insertItem(tr("Check table"), this, SLOT(checkTable()), 0, 0, 0);
-        menu->insertItem(tr("Optimize table"), this, SLOT(optimizeTable()), 0, 0, 0);
-        menu->insertItem(tr("Analyze table"), this, SLOT(analyzeTable()), 0, 0, 0);
-        menu->insertItem(tr("Change type"), this, SLOT(changeType()), 0, 0, 0);
-        menu->insertSeparator(0);
+    menu->addSeparator();
+
+    menu->addAction(dropTableAct);
+    menu->addAction(tr("Truncate table"), this, SLOT(truncateTable()));
+
+    menu->addSeparator();
+
+    if(toIsMySQL(connection())) {
+        menu->addAction(tr("Check table"), this, SLOT(checkTable()));
+        menu->addAction(tr("Optimize table"), this, SLOT(optimizeTable()));
+        menu->addAction(tr("Analyze table"), this, SLOT(analyzeTable()));
+        menu->addAction(tr("Change type"), this, SLOT(changeType()));
+
+        menu->addSeparator();
     }
-    menu->insertItem(QPixmap(const_cast<const char**>(modconstraint_xpm)), tr("Modify constraints"), this, SLOT(modifyConstraint()), 0, 0, 0);
-    menu->insertItem(QPixmap(const_cast<const char**>(modindex_xpm)), tr("Modify indexes"), this, SLOT(modifyIndex()), 0, 0, 0);
-    menu->insertItem(QPixmap(const_cast<const char**>(addtable_xpm)), tr("Create table"), this, SLOT(addTable()), 0, 0, 0);
-    menu->insertSeparator(0);
-    menu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("Refresh"), this, SLOT(refresh()), 0, 0, 0);
+
+    menu->addAction(modConstraintAct);
+    menu->addAction(modIndexAct);
+    menu->addAction(addTableAct);
+
+    menu->addSeparator();
+
+    menu->addAction(refreshAct);
 }
 
-void toBrowser::displayIndexMenu(QMenu *menu)
-{
-    menu->insertSeparator(0);
-    menu->insertItem(QPixmap(const_cast<const char**>(trash_xpm)), tr("Drop index"), this, SLOT(dropIndex()), 0, 0, 0);
-    menu->insertItem(QPixmap(const_cast<const char**>(modindex_xpm)), tr("Modify index"), this, SLOT(modifyIndex()), 0, 0, 0);
-    menu->insertItem(QPixmap(const_cast<const char**>(addindex_xpm)), tr("Create index"), this, SLOT(addIndex()), 0, 0, 0);
-    menu->insertSeparator(0);
-    menu->insertItem(QPixmap(const_cast<const char**>(refresh_xpm)), tr("Refresh"), this, SLOT(refresh()), 0, 0, 0);
+void toBrowser::displayIndexMenu(QMenu *menu) {
+    menu->addSeparator();
+
+    menu->addAction(QIcon(trash_xpm), tr("Drop index"), this, SLOT(dropIndex()));
+    menu->addAction(QIcon(modindex_xpm), tr("Modify index"), this, SLOT(modifyIndex()));
+    menu->addAction(QIcon(addindex_xpm), tr("Create index"), this, SLOT(addIndex()));
+
+    menu->addSeparator();
+
+    menu->addAction(QIcon(refresh_xpm), tr("Refresh"), this, SLOT(refresh()));
 }
 
 void toBrowser::dropSomething(const QString &type, const QString &what)
 {
     if (what.isEmpty())
         return ;
-    if (TOMessageBox::warning(this, tr("Dropping %1?").arg(tr(type)),
+    if (TOMessageBox::warning(this, tr("Dropping %1?").arg(tr(type.toAscii().constData())),
                               tr("Are you sure you want to drop the %1 %2.%3,\n"
-                                 "this action can not be undone?").arg(tr(type)).arg(Schema->selected()).arg(what),
+                                 "this action can not be undone?").arg(tr(type.toAscii().constData())).arg(
+                                     Schema->selected()).arg(what),
                               tr("&Yes"), tr("&Cancel"), QString::null, 0) == 0) {
         std::list<QString> ctx;
         toPush(ctx, Schema->selected());
-        toPush(ctx, QString(type.upper()));
-        QStringList parts = QStringList::split(".", what);
+        toPush(ctx, QString(type.toUpper()));
+        QStringList parts = what.split(".");
         if (parts.count() > 1) {
             toPush(ctx, parts[1]);
             toPush(ctx, QString("ON"));
@@ -2299,12 +2325,12 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
             QString sql = extractor.migrate(drop, empty);
 
             std::list<toSQLParse::statement> statements = toSQLParse::parse(sql, connection());
-            QProgressDialog prog(tr("Executing %1 change script").arg(tr(type)),
+            QProgressDialog prog(tr("Executing %1 change script").arg(tr(type.toAscii().constData())),
                                  tr("Stop"),
                                  0,
                                  statements.size(),
                                  this);
-            prog.setCaption(tr("Performing %1 changes").arg(tr(type)));
+            prog.setWindowTitle(tr("Performing %1 changes").arg(tr(type.toAscii().constData())));
             for (std::list<toSQLParse::statement>::iterator j = statements.begin();j != statements.end();j++) {
                 QString sql = toSQLParse::indentStatement(*j, connection());
                 int i = sql.length() - 1;
@@ -2314,7 +2340,7 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
                     connection().execute(sql.mid(0, i + 1));
                 qApp->processEvents();
                 if (prog.wasCanceled())
-                    throw tr("Canceled ongoing %1 modification, %2 might be corrupt").arg(tr(type)).arg(tr(type));
+                    throw tr("Canceled ongoing %1 modification, %2 might be corrupt").arg(tr(type.toAscii().constData())).arg(tr(type.toAscii().constData()));
             }
         }
         TOCATCH
@@ -2378,7 +2404,8 @@ void toBrowser::checkTable(void)
 
     if (!sql.isEmpty()) {
         toResultTableView *result = new toResultTableView(true, false, this);
-        result->setWindowFlags(Qt::WType_TopLevel | Qt::WDestructiveClose);
+        result->setWindowFlags(Qt::Window);
+        result->setAttribute(Qt::WA_DeleteOnClose);
         result->query(sql);
         result->show();
     }
@@ -2401,7 +2428,8 @@ void toBrowser::optimizeTable(void) {
 
     if (!sql.isEmpty()) {
         toResultTableView *result = new toResultTableView(true, false, this);
-        result->setWindowFlags(Qt::WType_TopLevel | Qt::WDestructiveClose);
+        result->setWindowFlags(Qt::Window);
+        result->setAttribute(Qt::WA_DeleteOnClose);
         result->query(sql);
         result->show();
     }
@@ -2410,8 +2438,12 @@ void toBrowser::optimizeTable(void) {
 void toBrowser::changeType(void)
 {
     bool ok;
-    QString text = QInputDialog::getText("Change table type", "Enter new table type", QLineEdit::Normal,
-                                         "MyISAM", &ok, this);
+    QString text = QInputDialog::getText(this,
+                                         "Change table type",
+                                         "Enter new table type",
+                                         QLineEdit::Normal,
+                                         "MyISAM",
+                                         &ok);
     if (ok && !text.isEmpty()) {
         for(toResultTableView::iterator it(FirstTab); (*it).isValid(); it++) {
             if (FirstTab->isRowSelected(*it)) {
@@ -2444,7 +2476,8 @@ void toBrowser::analyzeTable(void) {
 
     if (!sql.isEmpty()) {
         toResultTableView *result = new toResultTableView(true, false, this);
-        result->setWindowFlags(Qt::WType_TopLevel | Qt::WDestructiveClose);
+        result->setWindowFlags(Qt::Window);
+        result->setAttribute(Qt::WA_DeleteOnClose);
         result->query(sql);
         result->show();
     }
@@ -2490,7 +2523,7 @@ bool toBrowser::close()
 void toBrowser::exportData(std::map<QString, QString> &data, const QString &prefix)
 {
     data[prefix + ":Schema"] = Schema->selected();
-    data[prefix + ":FirstTab"] = TopTab->currentPage()->name();
+    data[prefix + ":FirstTab"] = TopTab->currentWidget()->objectName();
     data[prefix + ":SecondText"] = SecondText;
     for (std::map<QString, toResult *>::iterator i = SecondMap.begin();i != SecondMap.end();i++) {
         if ((*i).second == SecondTab && Map.find((*i).first) == Map.end()) {
@@ -2530,16 +2563,16 @@ void toBrowser::importData(std::map<QString, QString> &data, const QString &pref
     QString str = data[prefix + ":Schema"];
     Schema->setSelected(str);
     for (int i = 0;i < Schema->count();i++)
-        if (Schema->text(i) == str)
-            Schema->setCurrentItem(i);
+        if (Schema->itemText(i) == str)
+            Schema->setCurrentIndex(i);
 
     str = data[prefix + ":FirstTab"];
-    QWidget *chld = (QWidget *)child(str);
+    QWidget *chld = findChild<QWidget *>(str);
     if (chld && str.length()) {
         SecondText = QString::null;
-        TopTab->showPage(chld);
+        TopTab->setCurrentIndex(TopTab->indexOf(chld));
 
-        toResultTableView *newtab = Map[chld->name()];
+        toResultTableView *newtab = Map[chld->objectName()];
         if(newtab != FirstTab && newtab) {
             CurrentTop = chld;
             setFocusProxy(newtab);
@@ -2547,13 +2580,16 @@ void toBrowser::importData(std::map<QString, QString> &data, const QString &pref
         }
 
         str = data[prefix + ":SecondTab"];
-        chld = (QWidget *)child(str);
+        chld = findChild<QWidget *>(str);
         if (chld && str.length()) {
             QWidget *par = chld->parentWidget();
             while (par && !par->inherits("toTabWidget"))
                 par = par->parentWidget();
-            if (par)
-                ((toTabWidget *)par)->showPage(chld);
+            if(par) {
+                toTabWidget *tab = dynamic_cast<toTabWidget *>(par);
+                if(tab)
+                    tab->setCurrentIndex(tab->indexOf(chld));
+            }
             changeSecondTab(chld);
         }
         SecondText = data[prefix + ":SecondText"];
@@ -2628,7 +2664,7 @@ void toBrowseTemplate::defineFilter(void)
     }
     if (Filter) {
         disconnect(FilterButton, SIGNAL(toggled(bool)), this, SLOT(defineFilter()));
-        FilterButton->setOn(true);
+        FilterButton->setChecked(true);
         connect(FilterButton, SIGNAL(toggled(bool)), this, SLOT(defineFilter()));
     }
 }
@@ -2638,7 +2674,7 @@ void toBrowseTemplate::clearFilter(void)
     delete Filter;
     Filter = new toBrowserFilter;
     disconnect(FilterButton, SIGNAL(toggled(bool)), this, SLOT(defineFilter()));
-    FilterButton->setOn(false);
+    FilterButton->setChecked(false);
     connect(FilterButton, SIGNAL(toggled(bool)), this, SLOT(defineFilter()));
 }
 
@@ -2664,7 +2700,7 @@ public:
         QString typ = text(0);
         QString schema = parent()->parent()->parent()->text(0);
         if (ptyp == "Synonyms") {
-            int pos = object.find(QString::fromLatin1("."));
+            int pos = object.indexOf(QString::fromLatin1("."));
             if (pos >= 0) {
                 schema = object.mid(0, pos);
                 object = object.mid(pos + 1);
@@ -2886,7 +2922,7 @@ public:
             toResultItem *resultItem = new toResultItem(2, true, tool);
             if (typ == qApp->translate("toBrowser", "Synonyms")) {
                 resultItem->setSQL(SQLSynonymInfo);
-                int pos = object.find(QString::fromLatin1("."));
+                int pos = object.indexOf(QString::fromLatin1("."));
                 if (pos >= 0) {
                     schema = object.mid(0, pos);
                     object = object.mid(pos + 1);
@@ -2964,7 +3000,7 @@ public:
 
             toBrowserFilter *filter = BrowseTemplate.filter();
             if (filter && filter->onlyOwnSchema() &&
-                    name.upper() != connection().user().upper()) {
+                    name.toUpper() != connection().user().toUpper()) {
                 delete item;
                 return NULL;
             }
@@ -3051,8 +3087,8 @@ void toBrowseTemplate::insertItems(toTreeWidget *parent, QToolBar *toolbar) {
     Parents.insert(Parents.end(), dbitem);
 
     FilterButton = new QToolButton(toolbar);
-    FilterButton->setToggleButton(true);
-    FilterButton->setIconSet(QIcon(QPixmap(const_cast<const char**>(filter_xpm))));
+    FilterButton->setCheckable(true);
+    FilterButton->setIcon(QIcon(QPixmap(const_cast<const char**>(filter_xpm))));
     FilterButton->setToolTip(tr("Define the object filter for database browser"));
     toolbar->addWidget(FilterButton);
     connect(FilterButton, SIGNAL(toggled(bool)), this, SLOT(defineFilter()));

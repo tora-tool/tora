@@ -47,6 +47,7 @@
 #include <qradiobutton.h>
 #include <qregexp.h>
 #include <QAction>
+#include <QTextEdit>
 
 
 toSearchReplace::toSearchReplace(QWidget *parent)
@@ -112,7 +113,7 @@ void toSearchReplace::replace(void)
 {
     if (Target && Target->searchCanReplace(false))
     {
-        Target->searchReplace(ReplaceText->text());
+        Target->searchReplace(ReplaceText->toPlainText());
         searchNext();
     }
 }
@@ -123,7 +124,7 @@ void toSearchReplace::replaceAll(void)
     {
         while (Target->searchCanReplace(false))
         {
-            Target->searchReplace(ReplaceText->text());
+            Target->searchReplace(ReplaceText->toPlainText());
             searchNext();
         }
     }
@@ -142,18 +143,23 @@ bool toSearchReplace::findString(const QString &text, int &pos, int &endPos)
     bool ok;
     int found;
     int foundLen;
-    QString searchText = SearchText->text();
+    QString searchText = SearchText->toPlainText();
     do
     {
         ok = true;
-        if (Exact->isOn())
+        if (Exact->isChecked())
         {
-            found = text.find(searchText, pos, !IgnoreCase->isOn());
+            found = text.indexOf(searchText, pos, IgnoreCase->isChecked() ?
+                                 Qt::CaseInsensitive :
+                                 Qt::CaseSensitive);
             foundLen = searchText.length();
         }
         else
         {
-            QRegExp re(searchText, !IgnoreCase->isOn(), false);
+            QRegExp re(searchText,
+                       IgnoreCase->isChecked() ?
+                       Qt::CaseInsensitive :
+                       Qt::CaseSensitive);
             found = re.indexIn(text, pos);
             foundLen = re.matchedLength();
         }
@@ -161,7 +167,7 @@ bool toSearchReplace::findString(const QString &text, int &pos, int &endPos)
         {
             return false;
         }
-        if (WholeWord->isOn())
+        if (WholeWord->isChecked())
         {
             if (found != 0 && !text[found].isSpace())
                 ok = false;
@@ -179,7 +185,7 @@ bool toSearchReplace::findString(const QString &text, int &pos, int &endPos)
 
 void toSearchReplace::searchChanged(void)
 {
-    bool ena = SearchText->text().length() > 0;
+    bool ena = SearchText->toPlainText().length() > 0;
     SearchNext->setEnabled(ena);
     Search->setEnabled(ena);
 }

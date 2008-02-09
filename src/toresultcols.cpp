@@ -468,7 +468,7 @@ void toResultCols::query(const QString &sql, const toQList &param) {
             if(toIsMySQL(conn))
                 Owner = connection().database();
             else
-                Owner = connection().user().upper();
+                Owner = connection().user().toUpper();
         }
 
         TableName = conn.quote(Owner) + "." + conn.quote(Name);

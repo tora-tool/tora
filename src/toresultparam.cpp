@@ -117,10 +117,10 @@ toResultParam::toResultParam(QWidget *parent, const char *name)
     vbox->addWidget(toolbar);
 
     Toggle = new QToolButton(toolbar);
-    Toggle->setToggleButton(true);
+    Toggle->setCheckable(true);
 
     if (toIsOracle(connection())) {
-        Toggle->setIconSet(QIcon(QPixmap(const_cast<const char**>(scansource_xpm))));
+        Toggle->setIcon(QIcon(QPixmap(const_cast<const char**>(scansource_xpm))));
         connect(Toggle, SIGNAL(toggled(bool)), this, SLOT(showHidden(bool)));
         Toggle->setToolTip(
             tr("Display hidden parameters. This will only work if you are "
@@ -128,11 +128,10 @@ toResultParam::toResultParam(QWidget *parent, const char *name)
     }
     else {
         QIcon iconset(QPixmap(const_cast<const char**>(tocurrent_xpm)));
-        iconset.setPixmap(QPixmap(const_cast<const char**>(database_xpm)),
-                          QIcon::Automatic,
+        iconset.addPixmap(QPixmap(const_cast<const char**>(database_xpm)),
                           QIcon::Normal,
                           QIcon::On);
-        Toggle->setIconSet(iconset);
+        Toggle->setIcon(iconset);
         connect(Toggle, SIGNAL(toggled(bool)), this, SLOT(showGlobal(bool)));
         Toggle->setToolTip(
             tr("Switch between global and session variables to show."));
@@ -272,7 +271,7 @@ void toResultParam::generateFile(void)
                 str += QString::fromLatin1(" = ");
                 if (item->text(5) == QString::fromLatin1("2"))
                 {
-                    QStringList lst = QStringList::split(comma, item->text(1));
+                    QStringList lst = item->text(1).split(comma);
                     if (lst.count() > 1)
                         str += QString::fromLatin1("( ");
                     for (int i = 0;i < lst.count();i++)
@@ -391,7 +390,7 @@ void toResultParam::applyChanges(void)
                 try
                 {
                     QString str = "SET ";
-                    if (!Toggle->isOn())
+                    if (!Toggle->isChecked())
                         str += "GLOBAL ";
                     else
                         str += "SESSION ";

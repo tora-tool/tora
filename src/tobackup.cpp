@@ -47,7 +47,6 @@
 
 #include <qlabel.h>
 #include <qmenubar.h>
-#include <q3popupmenu.h>
 #include <qtabwidget.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
@@ -333,7 +332,7 @@ toBackup::toBackup(toTool* tool, QWidget *main, toConnection &connection)
     Tabs = new QTabWidget(this);
     layout()->addWidget(Tabs);
 
-    QWidget *box = new QWidget(Tabs, "history");
+    QWidget *box = new QWidget(Tabs);
     QVBoxLayout *vbox = new QVBoxLayout;
     vbox->setSpacing(0);
     vbox->setContentsMargins(0, 0, 0, 0);

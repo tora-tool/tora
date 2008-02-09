@@ -58,6 +58,7 @@
 #include <QPaintEvent>
 #include <QScrollBar>
 #include <QMenu>
+#include <QPrintDialog>
 
 #include "icons/print.xpm"
 #include "icons/chart.xpm"
@@ -118,7 +119,7 @@ toLineChart::toLineChart(QWidget *parent, const char *name, Qt::WFlags f)
     if(name)
         setObjectName(name);
 
-    setIcon(QPixmap((const char**)chart_xpm));
+    setWindowIcon(QPixmap((const char**)chart_xpm));
     Menu = NULL;
     MinAuto = MaxAuto = true;
     MinValue = MaxValue = 0;
@@ -221,7 +222,7 @@ void toLineChart::paintTitle(QPainter *p, QRect &rect)
         p->setFont(f);
         QFontMetrics fm = p->fontMetrics();
         QRect bounds = fm.boundingRect(0, 0, rect.width(), rect.width(), FONT_ALIGN, Title);
-        p->drawText(0, 2, rect.width(), bounds.height(), Qt::AlignHCenter | Qt::AlignTop | Qt::ExpandTabs, Title);
+        p->drawText(0, 2, rect.width(), bounds.height(), Qt::AlignHCenter | Qt::AlignTop, Title);
         p->restore();
         p->translate(0, bounds.height() + 2);
         rect.setTop(rect.top() + bounds.height() + 2);
@@ -243,7 +244,7 @@ void toLineChart::paintTitle(QPainter *p, QRect &rect)
         {
             QFontMetrics fm = p->fontMetrics();
             QRect bounds = fm.boundingRect(0, 0, rect.width(), rect.height(), FONT_ALIGN, str);
-            p->drawText(0, 2, rect.width(), bounds.height(), Qt::AlignHCenter | Qt::AlignTop | Qt::ExpandTabs, str);
+            p->drawText(0, 2, rect.width(), bounds.height(), Qt::AlignHCenter | Qt::AlignTop, str);
             p->translate(0, bounds.height());
             rect.setTop(rect.top() + bounds.height());
         }
@@ -397,12 +398,12 @@ void toLineChart::paintAxis(QPainter *p, QRect &rect)
                         rect.height() - xoffset - 2 + (xscroll ? Horizontal->sizeHint().height() : 0),
                         rect.width() - 4 - yoffset,
                         xoffset - (xscroll ? Horizontal->sizeHint().height() : 0),
-                        Qt::AlignLeft | Qt::AlignTop | Qt::ExpandTabs, minXstr);
+                        Qt::AlignLeft | Qt::AlignTop, minXstr);
             p->drawText(yoffset + 2,
                         rect.height() - xoffset - 2 + (xscroll ? Horizontal->sizeHint().height() : 0),
                         rect.width() - 4 - yoffset,
                         xoffset - (xscroll ? Horizontal->sizeHint().height() : 0),
-                        Qt::AlignRight | Qt::AlignTop | Qt::ExpandTabs, maxXstr);
+                        Qt::AlignRight | Qt::AlignTop, maxXstr);
             p->translate(yoffset, 0);
 
             rect.setLeft(yoffset);
@@ -415,11 +416,11 @@ void toLineChart::paintAxis(QPainter *p, QRect &rect)
                                         rect.width() - 3,
                                         Horizontal->sizeHint().height());
                 disconnect(Horizontal, SIGNAL(valueChanged(int)), this, SLOT(horizontalChange(int)));
-                Horizontal->setMinValue(0);
-                Horizontal->setMaxValue(count - UseSamples);
+                Horizontal->setMinimum(0);
+                Horizontal->setMaximum(count - UseSamples);
                 Horizontal->setValue(count - UseSamples - SkipSamples);
                 connect(Horizontal, SIGNAL(valueChanged(int)), this, SLOT(horizontalChange(int)));
-                Horizontal->setSteps(1, UseSamples);
+//                 Horizontal->setSteps(1, UseSamples); - qt4 no equivalent found
                 Horizontal->show();
             }
             else
@@ -433,13 +434,13 @@ void toLineChart::paintAxis(QPainter *p, QRect &rect)
                                       Vertical->sizeHint().width(),
                                       rect.height() - 3);
                 disconnect(Vertical, SIGNAL(valueChanged(int)), this, SLOT(verticalChange(int)));
-                Vertical->setMinValue(0);
-                Vertical->setMaxValue(part - 100);
+                Vertical->setMinimum(0);
+                Vertical->setMaximum(part - 100);
 
                 Vertical->setValue(int(100*(MaxValue - zMaxValue) / (zMaxValue - zMinValue)));
 
                 connect(Vertical, SIGNAL(valueChanged(int)), this, SLOT(verticalChange(int)));
-                Vertical->setSteps(10, 100);
+//                 Vertical->setSteps(10, 100);
                 Vertical->show();
             }
             else
@@ -791,8 +792,9 @@ void toLineChart::setup(void)
 void toLineChart::editPrint(void)
 {
     TOPrinter printer;
-    printer.setMinMax(1, 1);
-    if (printer.setup())
+    QPrintDialog dialog(&printer, this);
+    dialog.setMinMax(1, 1);
+    if(dialog.exec())
     {
         printer.setCreator(tr(TOAPPNAME));
         QPainter painter(&printer);
@@ -875,8 +877,8 @@ toLineChart::toLineChart (toLineChart *chart, QWidget *parent, const char *name,
     DisplaySamples = chart->DisplaySamples;
     Enabled = chart->Enabled;
 
-    setCaption(Title);
-    setIcon(QPixmap((const char**)chart_xpm));
+    setWindowTitle(Title);
+    setWindowIcon(QPixmap((const char**)chart_xpm));
 
     clearZoom();
 
@@ -907,7 +909,7 @@ void toLineChart::exportData(std::map<QString, QString> &ret, const QString &pre
         for (std::list<QString>::iterator i = Labels.begin();i != Labels.end();i++)
         {
             id++;
-            ret[prefix + ":Labels:" + QString::number(id).latin1()] = *i;
+            ret[prefix + ":Labels:" + QString::number(id).toLatin1()] = *i;
         }
     }
     id = 0;
@@ -915,7 +917,7 @@ void toLineChart::exportData(std::map<QString, QString> &ret, const QString &pre
         for (std::list<QString>::iterator i = XValues.begin();i != XValues.end();i++)
         {
             id++;
-            ret[prefix + ":XValues:" + QString::number(id).latin1()] = *i;
+            ret[prefix + ":XValues:" + QString::number(id).toLatin1()] = *i;
         }
     }
     id = 0;
@@ -930,7 +932,7 @@ void toLineChart::exportData(std::map<QString, QString> &ret, const QString &pre
             value += QString::number(*j);
         }
         id++;
-        ret[prefix + ":Values:" + QString::number(id).latin1()] = value;
+        ret[prefix + ":Values:" + QString::number(id).toLatin1()] = value;
     }
     ret[prefix + ":Title"] = Title;
 }
@@ -942,7 +944,7 @@ void toLineChart::importData(std::map<QString, QString> &ret, const QString &pre
 
     id = 1;
     Labels.clear();
-    while ((i = ret.find(prefix + ":Labels:" + QString::number(id).latin1())) != ret.end())
+    while ((i = ret.find(prefix + ":Labels:" + QString::number(id).toLatin1())) != ret.end())
     {
         Labels.insert(Labels.end(), (*i).second);
         id++;
@@ -950,7 +952,7 @@ void toLineChart::importData(std::map<QString, QString> &ret, const QString &pre
 
     id = 1;
     XValues.clear();
-    while ((i = ret.find(prefix + ":XValues:" + QString::number(id).latin1())) != ret.end())
+    while ((i = ret.find(prefix + ":XValues:" + QString::number(id).toLatin1())) != ret.end())
     {
         XValues.insert(XValues.end(), (*i).second);
         id++;
@@ -959,9 +961,9 @@ void toLineChart::importData(std::map<QString, QString> &ret, const QString &pre
     id = 1;
     Values.clear();
     QRegExp comma(QString::fromLatin1(","));
-    while ((i = ret.find(prefix + ":Values:" + QString::number(id).latin1())) != ret.end())
+    while ((i = ret.find(prefix + ":Values:" + QString::number(id).toLatin1())) != ret.end())
     {
-        QStringList lst = QStringList::split(comma, (*i).second);
+        QStringList lst = (*i).second.split(comma);
         std::list<double> vals;
         for (int j = 0;j < lst.count();j++)
             vals.insert(vals.end(), lst[j].toDouble());
@@ -984,7 +986,7 @@ void toLineChart::verticalChange(int val)
 {
     double size = (zMaxValue - zMinValue);
     zMaxValue = MaxValue - size / 100 * val;
-    if (val == Vertical->maxValue())
+    if (val == Vertical->maximum())
         zMinValue = MinValue;
     else
         zMinValue = MaxValue - size / 100 * (val + 100);
