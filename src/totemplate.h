@@ -363,4 +363,29 @@ public slots:
     virtual void valid(void);
 };
 
+class toTemplateEdit : public QDialog, 
+	public Ui::toTemplateEditUI, 
+	public toHelpContext {
+    Q_OBJECT;
+
+	std::map<QString, QString> &TemplateMap;
+    std::map<QString, QString>::iterator LastTemplate;
+
+public:
+    void connectList(bool conn);
+    toTreeWidgetItem *findLast(void);
+    void allocateItem(void);
+    bool clearUnused(toTreeWidgetItem *first, const QString &pre);
+    toTemplateEdit(std::map<QString, QString> &pairs, QWidget *parent, const char *name = 0);
+    QString name(toTreeWidgetItem *item);
+
+public slots:
+	virtual void updateFromMap(void);
+    virtual void remove(void);
+    virtual void preview(void);
+    virtual void newTemplate(void);
+    virtual void changeSelection(void);
+	
+};
+
 #endif

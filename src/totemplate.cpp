@@ -69,8 +69,8 @@ static std::map<QString, QString> DefaultText(void)
     QString file = toPluginPath();
 
 #if !defined(TO_NO_ORACLE)
-    file += QString::fromLatin1("/sqlfunctions.tpl");
-    def["PL/SQL Functions"] = file;
+	file += QString::fromLatin1("/sqlfunctions.tpl");
+	def["PL/SQL Functions"] = file;
     file = toPluginPath();
     file += QString::fromLatin1("/hints.tpl");
     def["Optimizer Hints"] = file;
@@ -82,232 +82,213 @@ static std::map<QString, QString> DefaultText(void)
     return def;
 }
 
-class toTemplateEdit : public QDialog, public Ui::toTemplateEditUI, public toHelpContext
-{
-    std::map<QString, QString> &TemplateMap;
-    std::map<QString, QString>::iterator LastTemplate;
-    void connectList(bool conn)
-    {
-        if (conn)
-            connect(Templates, SIGNAL(selectionChanged()), this, SLOT(changeSelection()));
-        else
-            disconnect(Templates, SIGNAL(selectionChanged()), this, SLOT(changeSelection()));
-    }
-    toTreeWidgetItem *findLast(void)
-    {
-        QString name = (*LastTemplate).first;
-        return toFindItem(Templates, name);
-    }
-    void allocateItem(void)
-    {
-        QStringList lst = Name->text().split(QString::fromLatin1(":"));
-        int li = 0;
-        toTreeWidgetItem *parent = NULL;
-        for (toTreeWidgetItem *item = Templates->firstChild();item && li < lst.count();)
-        {
-            if (item->text(0) == lst[li])
-            {
-                li++;
-                parent = item;
-                item = item->firstChild();
-            }
-            else
-                item = item->nextSibling();
-        }
-        while (li < lst.count())
-        {
-            if (parent)
-                parent = new toTreeWidgetItem(parent, lst[li]);
-            else
-                parent = new toTreeWidgetItem(Templates, lst[li]);
-            li++;
-        }
-    }
-    bool clearUnused(toTreeWidgetItem *first, const QString &pre)
-    {
-        bool ret = false;
-        while (first)
-        {
-            toTreeWidgetItem *delitem = first;
-            QString str = pre;
-            if (!str.isEmpty())
-                str += ":";
-            str += first->text(0).toLatin1();
-            if (first->firstChild() && clearUnused(first->firstChild(), str))
-                delitem = NULL;
-            if (delitem && TemplateMap.find(str) != TemplateMap.end())
-                delitem = NULL;
-            first = first->nextSibling();
-            if (!delitem)
-                ret = true;
-            else
-                delete delitem;
-        }
-        return ret;
-    }
-public:
-    virtual void updateFromMap(void)
-    {
-        try
-        {
-            while (Templates->firstChild())
-                delete Templates->firstChild();
-            toTreeWidgetItem *last = NULL;
-            int lastLevel = 0;
-            QStringList lstCtx;
-            for (std::map<QString, QString>::iterator i = TemplateMap.begin();i != TemplateMap.end();i++)
-            {
-                QStringList ctx = (*i).first.split(":");
-                if (last)
-                {
-                    while (last && lastLevel >= int(ctx.count()))
-                    {
-                        last = last->parent();
-                        lastLevel--;
-                    }
-                    while (last && lastLevel >= 0 && !toCompareLists(lstCtx, ctx, (unsigned int)lastLevel))
-                    {
-                        last = last->parent();
-                        lastLevel--;
-                    }
-                }
-                if (lastLevel < 0)
-                    throw qApp->translate("toTemplateEdit", "Internal error, lastLevel < 0");
-                while (lastLevel < int(ctx.count()) - 1)
-                {
-                    if (last)
-                        last = new toTreeWidgetItem(last, ctx[lastLevel]);
-                    else
-                        last = new toTreeWidgetItem(Templates, ctx[lastLevel]);
-                    last->setOpen(true);
-                    lastLevel++;
-                }
-                if (last)
-                    last = new toTreeWidgetItem(last, ctx[lastLevel]);
-                else
-                    last = new toTreeWidgetItem(Templates, ctx[lastLevel]);
-                last->setOpen(true);
-                if (i == LastTemplate)
-                    last->setSelected(true);
-                lstCtx = ctx;
-                lastLevel++;
-            }
-        }
-        catch (const QString &str)
-        {
-            toStatusMessage(str);
-            reject();
-        }
-    }
-    toTemplateEdit(std::map<QString, QString> &pairs, QWidget *parent, const char *name = 0)
-            : QDialog(parent),//, name, true, Qt::WStyle_Maximize),
-            toHelpContext(QString::fromLatin1("template.html#editor")),
-            TemplateMap(pairs)
-    {
-        setupUi(this);
-        toHelp::connectDialog(this);
-        LastTemplate = TemplateMap.end();
-        updateFromMap();
-        Description->setWrapMode(QsciScintilla::WrapWord);
-    }
-    virtual void remove
-    (void)
-    {
-        if (LastTemplate != TemplateMap.end())
-        {
-            toTreeWidgetItem *item = findLast();
-            TemplateMap.erase(LastTemplate);
-            LastTemplate = TemplateMap.end();
-            Name->setText(QString::null);
-            Description->setText(QString::null);
-            if (item)
-            {
-                connectList(false);
-                clearUnused(Templates->firstChild(), "");
-                connectList(true);
-            }
-        }
-    }
-    virtual void preview(void)
-    {
-        Preview->setText(Description->text());
-    }
-    QString name(toTreeWidgetItem *item)
-    {
-        QString str = item->text(0).toLatin1();
-        for (item = item->parent();item;item = item->parent())
-        {
-            str.prepend(":");
-            str.prepend(item->text(0).toLatin1());
-        }
-        return str;
-    }
-    virtual void newTemplate(void)
-    {
-        changeSelection();
-        LastTemplate = TemplateMap.end();
-        Description->setText(QString::null);
-        toTreeWidgetItem *item = Templates->selectedItem();
-        if (item)
-        {
-            connectList(false);
-            Templates->setSelected(item, false);
-            connectList(true);
-            item = item->parent();
-        }
-        QString str;
-        if (item)
-        {
-            str = name(item);
-            str += ":";
-        }
-        Name->setText(str);
-    }
-    virtual void changeSelection(void)
-    {
-        bool update = false;
-        if (LastTemplate != TemplateMap.end())
-        {
-            if (Name->text().toLatin1() != (*LastTemplate).first ||
-                    Description->text() != (*LastTemplate).second)
-            {
-                TemplateMap.erase(LastTemplate);
-                TemplateMap[Name->text().toLatin1()] = Description->text();
-                allocateItem();
-                update = true;
-            }
-        }
-        else if (!Name->text().isEmpty())
-        {
-            TemplateMap[Name->text().toLatin1()] = Description->text();
-            allocateItem();
-            update = true;
-        }
-        LastTemplate = TemplateMap.end();
+toTemplateEdit::toTemplateEdit(std::map<QString, QString> &pairs,
+		QWidget *parent, const char *name) :
+			QDialog(parent),//, name, true, Qt::WStyle_Maximize),
+			toHelpContext(QString::fromLatin1("template.html#editor")),
+			TemplateMap(pairs) {
+	setupUi(this);
+	toHelp::connectDialog(this);
+	LastTemplate = TemplateMap.end();
+	updateFromMap();
+	Description->setWrapMode(QsciScintilla::WrapWord);
+}
 
-        toTreeWidgetItem *item = Templates->selectedItem();
-        if (item)
-        {
-            QString str = name(item);
-            LastTemplate = TemplateMap.find(str);
-            if (LastTemplate != TemplateMap.end())
-            {
-                Name->setText(QString((*LastTemplate).first));
-                Description->setText((*LastTemplate).second);
-                Preview->setText((*LastTemplate).second);
-            }
-            else
-            {
-                Name->setText(QString::null);
-                Description->clear();
-                Preview->setText(QString::null);
-            }
-        }
-        else
-            LastTemplate = TemplateMap.end();
-        clearUnused(Templates->firstChild(), "");
-    }
-};
+void toTemplateEdit::connectList(bool conn) {
+	if (conn)
+		connect(Templates, SIGNAL(selectionChanged()), this,
+				SLOT(changeSelection()));
+	else
+		disconnect(Templates, SIGNAL(selectionChanged()), this,
+				SLOT(changeSelection()));
+}
+
+toTreeWidgetItem *toTemplateEdit::findLast(void)
+{
+    QString name = (*LastTemplate).first;
+    return toFindItem(Templates, name);
+}
+void toTemplateEdit::allocateItem(void) {
+	QStringList lst =
+			QStringList::split(QString::fromLatin1(":"), Name->text());
+	int li = 0;
+	toTreeWidgetItem *parent = NULL;
+	for (toTreeWidgetItem *item = Templates->firstChild(); item && li
+			< lst.count();) {
+		if (item->text(0) == lst[li]) {
+			li++;
+			parent = item;
+			item = item->firstChild();
+		} else
+			item = item->nextSibling();
+	}
+	while (li < lst.count()) {
+		if (parent)
+			parent = new toTreeWidgetItem(parent, lst[li]);
+		else
+			parent = new toTreeWidgetItem(Templates, lst[li]);
+		li++;
+	}
+}
+
+bool toTemplateEdit::clearUnused(toTreeWidgetItem *first, const QString &pre) {
+	bool ret = false;
+	while (first) {
+		toTreeWidgetItem *delitem = first;
+		QString str = pre;
+		if (!str.isEmpty())
+			str += ":";
+		str += first->text(0).latin1();
+		if (first->firstChild() && clearUnused(first->firstChild(), str))
+			delitem = NULL;
+		if (delitem && TemplateMap.find(str) != TemplateMap.end())
+			delitem = NULL;
+		first = first->nextSibling();
+		if (!delitem)
+			ret = true;
+		else
+			delete delitem;
+	}
+	return ret;
+}
+
+void toTemplateEdit::updateFromMap(void) {
+	try
+	{
+		while (Templates->firstChild())
+		delete Templates->firstChild();
+		toTreeWidgetItem *last = NULL;
+		int lastLevel = 0;
+		QStringList lstCtx;
+		for (std::map<QString, QString>::iterator i = TemplateMap.begin();i != TemplateMap.end();i++)
+		{
+			QStringList ctx = QStringList::split(QString::fromLatin1(":"), QString::fromLatin1((*i).first));
+			if (last)
+			{
+				while (last && lastLevel >= int(ctx.count()))
+				{
+					last = last->parent();
+					lastLevel--;
+				}
+				while (last && lastLevel >= 0 && !toCompareLists(lstCtx, ctx, (unsigned int)lastLevel))
+				{
+					last = last->parent();
+					lastLevel--;
+				}
+			}
+			if (lastLevel < 0)
+			throw qApp->translate("toTemplateEdit", "Internal error, lastLevel < 0");
+			while (lastLevel < int(ctx.count()) - 1)
+			{
+				if (last)
+				last = new toTreeWidgetItem(last, ctx[lastLevel]);
+				else
+				last = new toTreeWidgetItem(Templates, ctx[lastLevel]);
+				last->setOpen(true);
+				lastLevel++;
+			}
+			if (last)
+			last = new toTreeWidgetItem(last, ctx[lastLevel]);
+			else
+			last = new toTreeWidgetItem(Templates, ctx[lastLevel]);
+			last->setOpen(true);
+			if (i == LastTemplate)
+			last->setSelected(true);
+			lstCtx = ctx;
+			lastLevel++;
+		}
+	}
+	catch (const QString &str)
+	{
+		toStatusMessage(str);
+		reject();
+	}
+}
+
+void toTemplateEdit::remove(void) {
+	if (LastTemplate != TemplateMap.end()) {
+		toTreeWidgetItem *item = findLast();
+		TemplateMap.erase(LastTemplate);
+		LastTemplate = TemplateMap.end();
+		Name->setText(QString::null);
+		Description->setText(QString::null);
+		if (item)
+		{
+			connectList(false);
+			clearUnused(Templates->firstChild(), "");
+			connectList(true);
+		}
+	}
+}
+
+void toTemplateEdit::preview(void) {
+	Preview->setText(Description->text());
+}
+
+QString toTemplateEdit::name(toTreeWidgetItem *item) {
+	QString str = item->text(0).latin1();
+	for (item = item->parent(); item; item = item->parent()) {
+		str.prepend(":");
+		str.prepend(item->text(0).latin1());
+	}
+	return str;
+}
+
+void toTemplateEdit::newTemplate(void) {
+	changeSelection();
+	LastTemplate = TemplateMap.end();
+	Description->setText(QString::null);
+	toTreeWidgetItem *item = Templates->selectedItem();
+	if (item)
+	{
+		connectList(false);
+		Templates->setSelected(item, false);
+		connectList(true);
+		item = item->parent();
+	}
+	QString str;
+	if (item)
+	{
+		str = name(item);
+		str += ":";
+	}
+	Name->setText(str);
+}
+
+void toTemplateEdit::changeSelection(void) {
+	bool update = false;
+	if (LastTemplate != TemplateMap.end()) {
+		if (Name->text().latin1() != (*LastTemplate).first || Description->text() != (*LastTemplate).second) {
+			TemplateMap.erase(LastTemplate);
+			TemplateMap[Name->text().latin1()] = Description->text();
+			allocateItem();
+			update = true;
+		}
+	} else if (!Name->text().isEmpty()) {
+		TemplateMap[Name->text().latin1()] = Description->text();
+		allocateItem();
+		update = true;
+	}
+	LastTemplate = TemplateMap.end();
+
+	toTreeWidgetItem *item = Templates->selectedItem();
+	if (item) {
+		QString str = name(item);
+		LastTemplate = TemplateMap.find(str);
+		if (LastTemplate != TemplateMap.end()) {
+			Name->setText(QString::fromLatin1((*LastTemplate).first));
+			Description->setText((*LastTemplate).second);
+			Preview->setText((*LastTemplate).second);
+		} else {
+			Name->setText(QString::null);
+			Description->clear();
+			Preview->setText(QString::null);
+		}
+	}
+	else
+	LastTemplate = TemplateMap.end();
+	clearUnused(Templates->firstChild(), "");
+}
 
 
 toTemplateAddFile::toTemplateAddFile(QWidget *parent, const char *name)
