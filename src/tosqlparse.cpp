@@ -637,6 +637,15 @@ QString toSQLParse::stringTokenizer::getToken(bool forward, bool comments)
     return token;
 }
 
+bool toSQLParse::isOperator(QString tok) {
+    for(int i = 0; Operators[i]; i++) {
+        if(tok == Operators[i] || tok == "<" || tok == ">")
+            return true;
+    }
+
+    return false;
+}
+
 QString toSQLParse::stringTokenizer::remaining(bool eol)
 {
     QString ret;
@@ -1259,6 +1268,8 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
             any = true;
         }
 
+        // set true if previous token was an operator
+        bool afterOperator = false;
         for (std::list<toSQLParse::statement>::iterator i = stat.subTokens().begin();
                 i != stat.subTokens().end();
                 i++)
@@ -1267,7 +1278,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
             QString upp = (*i).String.toUpper();
 
 #ifdef TOPARSE_DEBUG
-            printf("%s\n", (const char*)(*i).String.toLatin1());
+            printf("%s\n", (*i).String.toAscii().constData());
 #endif
 
             if ((*i).Type == statement::List)
@@ -1341,7 +1352,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                 }
                 any = false;
             }
-            else if (any && (*i).Type == statement::Keyword && !noKeyBreak)
+            else if (any && (*i).Type == statement::Keyword && !noKeyBreak && !afterOperator)
             {
                 if (first)
                     first = false;
@@ -1460,6 +1471,8 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                    )
                     maxlev += t.length() + 1;
             }
+
+            afterOperator = isOperator((*i).String);
         }
         if (stat.Type == statement::Statement)
         {
