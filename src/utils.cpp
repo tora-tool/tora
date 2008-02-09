@@ -444,7 +444,8 @@ QStringList toGetSessionTypes(void)
 
 QString toGetSessionType(void)
 {
-    QStyle *style = qApp->style();
+    QStyle  *style = qApp->style();
+    QString  sname = style->metaObject()->className();
 
     // This is probably really slow, but who cares.
 
@@ -455,7 +456,7 @@ QString toGetSessionType(void)
         QStyle *t = QStyleFactory::create(name);
         if (!t)
             continue;
-        if (t->metaObject()->className() == style->metaObject()->className())
+        if (sname == t->metaObject()->className())
         {
             delete t;
             return name;
@@ -464,7 +465,7 @@ QString toGetSessionType(void)
     }
 
     // Weird should never get here.
-    return style->metaObject()->className();
+    return sname;
 }
 
 void toSetSessionType(const QString &str)
