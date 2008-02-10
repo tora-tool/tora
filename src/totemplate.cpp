@@ -109,8 +109,7 @@ toTreeWidgetItem *toTemplateEdit::findLast(void)
     return toFindItem(Templates, name);
 }
 void toTemplateEdit::allocateItem(void) {
-	QStringList lst =
-			QStringList::split(QString::fromLatin1(":"), Name->text());
+	QStringList lst = Name->text().split(QString(":"));
 	int li = 0;
 	toTreeWidgetItem *parent = NULL;
 	for (toTreeWidgetItem *item = Templates->firstChild(); item && li
@@ -138,7 +137,7 @@ bool toTemplateEdit::clearUnused(toTreeWidgetItem *first, const QString &pre) {
 		QString str = pre;
 		if (!str.isEmpty())
 			str += ":";
-		str += first->text(0).latin1();
+		str += first->text(0).toLatin1();
 		if (first->firstChild() && clearUnused(first->firstChild(), str))
 			delitem = NULL;
 		if (delitem && TemplateMap.find(str) != TemplateMap.end())
@@ -162,7 +161,7 @@ void toTemplateEdit::updateFromMap(void) {
 		QStringList lstCtx;
 		for (std::map<QString, QString>::iterator i = TemplateMap.begin();i != TemplateMap.end();i++)
 		{
-			QStringList ctx = QStringList::split(QString::fromLatin1(":"), QString::fromLatin1((*i).first));
+			QStringList ctx = (*i).first.split(":");
 			if (last)
 			{
 				while (last && lastLevel >= int(ctx.count()))
@@ -226,10 +225,10 @@ void toTemplateEdit::preview(void) {
 }
 
 QString toTemplateEdit::name(toTreeWidgetItem *item) {
-	QString str = item->text(0).latin1();
+	QString str = item->text(0);
 	for (item = item->parent(); item; item = item->parent()) {
 		str.prepend(":");
-		str.prepend(item->text(0).latin1());
+		str.prepend(item->text(0));
 	}
 	return str;
 }
@@ -258,14 +257,14 @@ void toTemplateEdit::newTemplate(void) {
 void toTemplateEdit::changeSelection(void) {
 	bool update = false;
 	if (LastTemplate != TemplateMap.end()) {
-		if (Name->text().latin1() != (*LastTemplate).first || Description->text() != (*LastTemplate).second) {
+		if (Name->text() != (*LastTemplate).first || Description->text() != (*LastTemplate).second) {
 			TemplateMap.erase(LastTemplate);
-			TemplateMap[Name->text().latin1()] = Description->text();
+			TemplateMap[Name->text()] = Description->text();
 			allocateItem();
 			update = true;
 		}
 	} else if (!Name->text().isEmpty()) {
-		TemplateMap[Name->text().latin1()] = Description->text();
+		TemplateMap[Name->text()] = Description->text();
 		allocateItem();
 		update = true;
 	}
@@ -276,7 +275,7 @@ void toTemplateEdit::changeSelection(void) {
 		QString str = name(item);
 		LastTemplate = TemplateMap.find(str);
 		if (LastTemplate != TemplateMap.end()) {
-			Name->setText(QString::fromLatin1((*LastTemplate).first));
+			Name->setText((*LastTemplate).first);
 			Description->setText((*LastTemplate).second);
 			Preview->setText((*LastTemplate).second);
 		} else {

@@ -45,7 +45,6 @@
 #include "tosql.h"
 #include "totool.h"
 
-#include <q3header.h>
 #include <qpainter.h>
 //Added by qt3to4:
 #include <QList>

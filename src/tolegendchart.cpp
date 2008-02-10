@@ -40,7 +40,6 @@
 #include "tolegendchart.h"
 
 #include <qpainter.h>
-#include <q3paintdevicemetrics.h>
 //Added by qt3to4:
 #include <QPaintEvent>
 

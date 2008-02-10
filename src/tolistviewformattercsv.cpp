@@ -40,7 +40,6 @@
 #include "tolistviewformatteridentifier.h"
 #include "toresultview.h"
 
-#include <q3header.h>
 #include <qregexp.h>
 #include <iostream>
 

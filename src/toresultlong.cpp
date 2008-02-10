@@ -46,7 +46,6 @@
 
 #include <qregexp.h>
 #include <qclipboard.h>
-#include <q3header.h>
 #include <qtooltip.h>
 
 toResultLong::toResultLong(bool readable, bool dispCol, toQuery::queryMode mode,

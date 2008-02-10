@@ -37,7 +37,6 @@
 
 #include "toabout.h"
 
-#include <q3textview.h>
 #include <qmime.h>
 #include <qpushbutton.h>
 //Added by qt3to4:

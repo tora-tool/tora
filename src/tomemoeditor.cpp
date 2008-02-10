@@ -44,7 +44,6 @@
 #include "toresultview.h"
 
 #include <qcheckbox.h>
-#include <q3header.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpixmap.h>

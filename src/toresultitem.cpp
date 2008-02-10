@@ -45,8 +45,6 @@
 #include "tosql.h"
 #include "totool.h"
 
-#include <q3grid.h>
-#include <q3header.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qtooltip.h>
