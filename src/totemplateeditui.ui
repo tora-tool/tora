@@ -115,12 +115,15 @@
        </widget>
       </item>
       <item row="5" column="0" colspan="3" >
-       <widget class="Q3TextView" native="1" name="Preview" >
+       <widget class="QTextEdit" name="Preview" >
         <property name="sizePolicy" >
          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="readOnly" >
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -261,11 +264,6 @@
    <class>toMarkedText</class>
    <extends>QWidget</extends>
    <header>tomarkedtext.h</header>
-  </customwidget>
-  <customwidget>
-   <class>Q3TextView</class>
-   <extends>QWidget</extends>
-   <header>q3textview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
