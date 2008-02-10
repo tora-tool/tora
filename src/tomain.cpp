@@ -91,14 +91,10 @@
 
 #define DEFAULT_TITLE TOAPPNAME " %s"
 
-#define TO_ABOUT_ID_OFFSET (toMain::TO_TOOL_ABOUT_ID-TO_TOOLS)
-
 toMain::toMain()
         : toMainWindow(),
           toBackupTool_(new toBackupTool),
           BackgroundLabel(new toBackgroundLabel(statusBar())) {
-
-    qApp->setMainWidget(this);
 
     Edit = NULL;
 
@@ -128,9 +124,9 @@ toMain::toMain()
 
     char buffer[100];
     sprintf(buffer, DEFAULT_TITLE, TOVERSION);
-    setCaption(tr(buffer));
+    setWindowTitle(tr(buffer));
 
-    setIcon(QPixmap(const_cast<const char**>(tora_xpm)));
+    setWindowIcon(QPixmap(const_cast<const char**>(tora_xpm)));
 
     // disable widgets related to an editor
     editDisable(NULL);
@@ -140,7 +136,7 @@ toMain::toMain()
     std::map<QString, toTool *> &tools = toTool::tools();
 
     QString defName = toConfigurationSingle::Instance().globalConfig(
-        CONF_DEFAULT_TOOL, "").latin1();
+        CONF_DEFAULT_TOOL, "");
 
     DefaultTool = NULL;
     for (std::map<QString, toTool *>::iterator k = tools.begin();
@@ -205,9 +201,9 @@ toMain::toMain()
         TOCATCH;
     }
 
-    statusBar()->addWidget(BackgroundLabel, 0, true);
+    statusBar()->addPermanentWidget(BackgroundLabel, 0);
     BackgroundLabel->show();
-    QToolTip::add(BackgroundLabel, tr("No background queries."));
+    BackgroundLabel->setToolTip(tr("No background queries."));
 }
 
 
@@ -437,7 +433,6 @@ void toMain::createMenus() {
 
     // windows menu handled separately by update function
     windowsMenu = menuBar()->addMenu(tr("&Window"));
-    windowsMenu->setCheckable(true);
     updateWindowsMenu();
     connect(windowsMenu,
             SIGNAL(triggered(QAction *)),
@@ -501,8 +496,7 @@ void toMain::createToolbars() {
     connectionToolbar->addAction(stopAct);
     connectionToolbar->addSeparator();
 
-    ConnectionSelection = new QComboBox(connectionToolbar,
-                                        TO_TOOLBAR_WIDGET_NAME);
+    ConnectionSelection = new QComboBox(connectionToolbar);
     ConnectionSelection->setMinimumWidth(300);
     ConnectionSelection->setFocusPolicy(Qt::NoFocus);
     connectionToolbar->addWidget(ConnectionSelection);
@@ -528,26 +522,33 @@ void toMain::createStatusbar() {
     statusBar()->message(QString::null);
 
     RowLabel = new QLabel(statusBar());
-    statusBar()->addWidget(RowLabel, 0, true);
+    statusBar()->addPermanentWidget(RowLabel, 0);
     RowLabel->setMinimumWidth(60);
     //  RowLabel->hide();
 
     ColumnLabel = new QLabel(statusBar());
-    statusBar()->addWidget(ColumnLabel, 0, true);
+    statusBar()->addPermanentWidget(ColumnLabel, 0);
     ColumnLabel->setMinimumWidth(60);
     //  ColumnLabel->hide();
 
     QToolButton *dispStatus = new toPopupButton(statusBar());
-    dispStatus->setIconSet(QPixmap(const_cast<const char**>(up_xpm)));
-    statusBar()->addWidget(dispStatus, 0, true);
+    dispStatus->setIcon(QPixmap(const_cast<const char**>(up_xpm)));
+    statusBar()->addPermanentWidget(dispStatus, 0);
     statusMenu = new QMenu(dispStatus);
-    dispStatus->setPopup(statusMenu);
-    connect(statusMenu, SIGNAL(aboutToShow()),
-            this, SLOT(updateStatusMenu()));
+    dispStatus->setMenu(statusMenu);
+    dispStatus->setPopupMode(QToolButton::MenuButtonPopup);
+    connect(statusMenu,
+            SIGNAL(aboutToShow()),
+            this,
+            SLOT(updateStatusMenu()));
     connect(statusMenu,
             SIGNAL(triggered(QAction*)),
             this,
             SLOT(statusCallback(QAction*)));
+    connect(dispStatus,
+            SIGNAL(pressed()),
+            dispStatus,
+            SLOT(showMenu()));
 }
 
 
@@ -609,7 +610,7 @@ void toMain::windowActivated(QWidget *widget)
             {
                 if (&conn == *i)
                 {
-                    ConnectionSelection->setCurrentItem(pos);
+                    ConnectionSelection->setCurrentIndex(pos);
                     changeConnection();
                     break;
                 }
@@ -642,14 +643,14 @@ void toMain::updateRecent() {
 
     if(num > 0) {
         if(first) {
-            fileMenu->insertSeparator();
+            fileMenu->addSeparator();
             first = false;
         }
 
         for(int i = 0; i < num; i++) {
             QString file = toConfigurationSingle::Instance().globalConfig(
                 QString(CONF_RECENT_FILES ":") +
-                QString::number(i).latin1(), "");
+                QString::number(i), "");
 
             if(!file.isEmpty()) {
                 QFileInfo fi(file);
@@ -674,7 +675,8 @@ void toMain::addRecentFile(const QString &file)
     std::list<QString> files;
     for (int j = 0;j < num;j++)
     {
-        QString t = toConfigurationSingle::Instance().globalConfig(QString(CONF_RECENT_FILES ":") + QString::number(j).latin1(), "");
+        QString t = toConfigurationSingle::Instance().globalConfig(
+            QString(CONF_RECENT_FILES ":") + QString::number(j), "");
         if (t != file)
             toPush(files, t);
     }
@@ -683,7 +685,8 @@ void toMain::addRecentFile(const QString &file)
     num = 0;
     for (std::list<QString>::iterator i = files.begin();i != files.end();i++)
     {
-        toConfigurationSingle::Instance().globalSetConfig(QString(CONF_RECENT_FILES ":") + QString::number(num).latin1(), *i);
+        toConfigurationSingle::Instance().globalSetConfig(
+            QString(CONF_RECENT_FILES ":") + QString::number(num), *i);
         num++;
         if (num >= maxnum)
             break;
@@ -715,7 +718,7 @@ void toMain::updateWindowsMenu(void) {
 
     for(QWidgetList::iterator it = list.begin(); it != list.end(); it++, index++) {
         if(!(*it)->isHidden()) {
-            QString caption = (*it)->caption().trimmed();
+            QString caption = (*it)->windowTitle().trimmed();
 
             QAction *action = new QAction(caption, (*it));
             if(index < 9)
@@ -767,7 +770,7 @@ void toMain::commandCallback(QAction *action) {
         if (edit && edit != Edit)
             setEditWidget(edit);
         else if (focus->inherits("QLineEdit") ||
-                 focus->isA("QSpinBox"))
+                 QString(focus->metaObject()->className()) == QString("QSpinBox"))
             editEnable(edit);
     }
 
@@ -870,13 +873,13 @@ void toMain::commandCallback(QAction *action) {
         while(workspace()->windowList(QWorkspace::CreationOrder).count() > 0 &&
               workspace()->windowList(QWorkspace::CreationOrder).at(0))
             if (workspace()->windowList(QWorkspace::CreationOrder).at(0) &&
-                !workspace()->windowList(QWorkspace::CreationOrder).at(0)->close(true))
+                !workspace()->windowList(QWorkspace::CreationOrder).at(0)->close())
                 return;
     }
     else if(action == windowCloseAct) {
         QWidget *widget = workspace()->activeWindow();
         if(widget)
-            widget->close(true);
+            widget->close();
     }
     else if(action == openSessionAct)
         loadSession();
@@ -932,7 +935,7 @@ toConnection *toMain::addConnection(toConnection *conn, bool def)
     {
         if ((*i)->description() == conn->description())
         {
-            ConnectionSelection->setCurrentItem(j);
+            ConnectionSelection->setCurrentIndex(j);
             if (def)
                 createDefault();
             return *i;
@@ -940,8 +943,8 @@ toConnection *toMain::addConnection(toConnection *conn, bool def)
     }
 
     Connections.insert(Connections.end(), conn);
-    ConnectionSelection->insertItem(conn->description());
-    ConnectionSelection->setCurrentItem(ConnectionSelection->count() - 1);
+    ConnectionSelection->addItem(conn->description());
+    ConnectionSelection->setCurrentIndex(ConnectionSelection->count() - 1);
 
     if(ConnectionSelection->count() == 1)
         enableConnectionActions(true);
@@ -967,7 +970,8 @@ void toMain::setNeedCommit(toConnection &conn, bool needCommit)
             QString dsc = conn.description();
             if (needCommit)
                 dsc += QString::fromLatin1(" *");
-            ConnectionSelection->changeItem(dsc, pos);
+            ConnectionSelection->setCurrentIndex(pos);
+            ConnectionSelection->setItemText(pos, dsc);
             break;
         }
         pos++;
@@ -1014,7 +1018,7 @@ bool toMain::delConnection(void)
             Connections.erase(i);
             ConnectionSelection->removeItem(pos);
             if (ConnectionSelection->count())
-                ConnectionSelection->setCurrentItem(std::max(pos - 1, 0));
+                ConnectionSelection->setCurrentIndex(std::max(pos - 1, 0));
             delete conn;
             break;
         }
@@ -1047,7 +1051,7 @@ toConnection &toMain::connection(const QString &str)
 
 void toMain::setEditWidget(toEditWidget *edit)
 {
-    toMain *main = (toMain *)qApp->mainWidget();
+    toMain *main = toMainWidget();
     if (main && edit)
     {
         if (main->Edit)
@@ -1066,7 +1070,7 @@ void toMain::editEnable(toEditWidget *edit)
     if(!edit)
         return;
 
-    toMain *main = (toMain *)qApp->mainWidget();
+    toMain *main = toMainWidget();
     if (main)
         main->editEnable(edit,
                          edit->openEnabled(),
@@ -1091,7 +1095,7 @@ void toMain::editEnable(toEditWidget *edit)
 }
 
 void toMain::editDisable(toEditWidget *edit) {
-    toMain *main = (toMain *)qApp->mainWidget();
+    toMain *main = toMainWidget();
 
     if(main) {
         main->editEnable(edit,
@@ -1280,7 +1284,7 @@ void toMain::updateStatusMenu(void)
     std::list<QString> status = toStatusMessages();
     statusMenu->clear();
     for(std::list<QString>::iterator i = status.begin(); i != status.end(); i++)
-        statusMenu->addAction(new QAction(*i, this));
+        statusMenu->addAction(new QAction(*i, statusMenu));
 }
 
 void toMain::changeConnection(void) {
@@ -1327,7 +1331,7 @@ void toMain::exportData(std::map<QString, QString> &data, const QString &prefix)
         {
             for (std::list<toConnection *>::iterator i = Connections.begin();i != Connections.end();i++)
             {
-                QString key = prefix + ":Connection:" + QString::number(id).latin1();
+                QString key = prefix + ":Connection:" + QString::number(id);
                 if (toConfigurationSingle::Instance().globalConfig(CONF_SAVE_PWD, DEFAULT_SAVE_PWD) != DEFAULT_SAVE_PWD)
                     data[key + ":Password"] = toObfuscate((*i)->password());
                 data[key + ":User"] = (*i)->user();
@@ -1393,14 +1397,14 @@ void toMain::importData(std::map<QString, QString> &data, const QString &prefix)
 
     int id = 1;
     std::map<QString, QString>::iterator i;
-    while ((i = data.find(prefix + ":Connection:" + QString::number(id).latin1() + ":Database")) != data.end())
+    while ((i = data.find(prefix + ":Connection:" + QString::number(id) + ":Database")) != data.end())
     {
-        QString key = prefix + ":Connection:" + QString::number(id).latin1();
+        QString key = prefix + ":Connection:" + QString::number(id);
         QString database = (*i).second;
         QString user = data[key + ":User"];
         QString host = data[key + ":Host"];
 
-        QStringList optionlist = QStringList::split(",", data[key + ":Options"]);
+        QStringList optionlist = data[key + ":Options"].split(",");
         std::set
         <QString> options;
         for (int j = 0;j < optionlist.count();j++)
@@ -1412,18 +1416,18 @@ void toMain::importData(std::map<QString, QString> &data, const QString &prefix)
         bool ok = true;
         if (toConfigurationSingle::Instance().globalConfig(CONF_SAVE_PWD, DEFAULT_SAVE_PWD) == password)
         {
-            password = QInputDialog::getText(tr("Input password"),
+            password = QInputDialog::getText(this,
+                                             tr("Input password"),
                                              tr("Enter password for %1").arg(database),
                                              QLineEdit::Password,
                                              QString::fromLatin1(DEFAULT_SAVE_PWD),
-                                             &ok,
-                                             this);
+                                             &ok);
         }
         if (ok)
         {
             try
             {
-                toConnection *conn = new toConnection(provider.latin1(), user, password, host, database, options);
+                toConnection *conn = new toConnection(provider.toLatin1(), user, password, host, database, options);
                 if (conn)
                 {
                     conn = addConnection(conn, false);
@@ -1436,10 +1440,10 @@ void toMain::importData(std::map<QString, QString> &data, const QString &prefix)
     }
 
     id = 1;
-    while ((i = data.find(prefix + ":Tools:" + QString::number(id).latin1() + ":Type")) != data.end())
+    while ((i = data.find(prefix + ":Tools:" + QString::number(id).toLatin1() + ":Type")) != data.end())
     {
-        QString key = (*i).second.latin1();
-        int connid = data[prefix + ":Tools:" + QString::number(id).latin1() + ":Connection"].toInt();
+        QString key = (*i).second.toLatin1();
+        int connid = data[prefix + ":Tools:" + QString::number(id).toLatin1() + ":Connection"].toInt();
         std::map<int, toConnection *>::iterator j = connMap.find(connid);
         if (j != connMap.end())
         {
@@ -1449,7 +1453,7 @@ void toMain::importData(std::map<QString, QString> &data, const QString &prefix)
                 QWidget *widget = tool->toolWindow(workspace(), *((*j).second));
                 const QPixmap *icon = tool->toolbarImage();
                 if (icon)
-                    widget->setIcon(*icon);
+                    widget->setWindowIcon(*icon);
                 widget->show();
                 if (widget)
                 {
@@ -1457,7 +1461,7 @@ void toMain::importData(std::map<QString, QString> &data, const QString &prefix)
                     if (tw)
                     {
                         toToolCaption(tw, tool->name());
-                        tw->importData(data, prefix + ":Tools:" + QString::number(id).latin1());
+                        tw->importData(data, prefix + ":Tools:" + QString::number(id));
                         toolWidgetAdded(tw);
                     }
                 }
@@ -1514,7 +1518,7 @@ void toMain::closeSession(void)
 
     while (workspace()->windowList(QWorkspace::CreationOrder).count() > 0 && workspace()->windowList(QWorkspace::CreationOrder).at(0))
         if (workspace()->windowList(QWorkspace::CreationOrder).at(0) &&
-                !workspace()->windowList(QWorkspace::CreationOrder).at(0)->close(true))
+                !workspace()->windowList(QWorkspace::CreationOrder).at(0)->close())
             return ;
 
     while (Connections.end() != Connections.begin())
