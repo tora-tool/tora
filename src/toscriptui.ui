@@ -55,7 +55,7 @@
          <x>0</x>
          <y>0</y>
          <width>607</width>
-         <height>723</height>
+         <height>735</height>
         </rect>
        </property>
        <layout class="QGridLayout" >
@@ -180,7 +180,7 @@
          </widget>
         </item>
         <item row="0" column="0" >
-         <widget class="Q3ButtonGroup" name="ModeGroup" >
+         <widget class="QGroupBox" name="ModeGroup" >
           <property name="title" >
            <string>&amp;Options</string>
           </property>
@@ -561,7 +561,7 @@
          </widget>
         </item>
         <item row="2" column="0" >
-         <widget class="Q3ButtonGroup" name="SearchGroup" >
+         <widget class="QGroupBox" name="SearchGroup" >
           <property name="enabled" >
            <bool>false</bool>
           </property>
@@ -754,7 +754,7 @@
          </widget>
         </item>
         <item row="1" column="0" >
-         <widget class="Q3ButtonGroup" name="OutputGroup" >
+         <widget class="QGroupBox" name="OutputGroup" >
           <property name="enabled" >
            <bool>false</bool>
           </property>
@@ -885,7 +885,7 @@
         <number>6</number>
        </property>
        <item row="0" column="0" >
-        <widget class="Q3ButtonGroup" name="ButtonGroup2_2" >
+        <widget class="QGroupBox" name="ButtonGroup2_2" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
            <horstretch>0</horstretch>
@@ -1111,12 +1111,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>Q3ButtonGroup</class>
-   <extends>Q3GroupBox</extends>
-   <header>Qt3Support/Q3ButtonGroup</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>toTreeWidget</class>
    <extends>QTreeWidget</extends>

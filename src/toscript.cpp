@@ -70,7 +70,7 @@
 #include <QFileDialog>
 #include <QScrollArea>
 #include <QVBoxLayout>
-
+#include <QButtonGroup>
 
 #include "icons/execute.xpm"
 #include "icons/toscript.xpm"
@@ -284,10 +284,17 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     layout = new QGridLayout(ScriptUI->DifferenceTab);
     layout->addWidget(hsplitter, 0, 0);
 
+    QButtonGroup *group = new QButtonGroup(ScriptUI->ModeGroup);
+    group->addButton(ScriptUI->Compare, 1);
+    group->addButton(ScriptUI->Extract, 2);
+    group->addButton(ScriptUI->Search, 3);
+    group->addButton(ScriptUI->Migrate, 4);
+    group->addButton(ScriptUI->Report, 5);
+
     ScriptUI->Initial->setTitle(tr("&Initial"));
     ScriptUI->Limit->setTitle(tr("&Limit"));
     ScriptUI->Next->setTitle(tr("&Next"));
-    connect(ScriptUI->ModeGroup, SIGNAL(clicked(int)), this, SLOT(changeMode(int)));
+    connect(group, SIGNAL(buttonClicked(int)), this, SLOT(changeMode(int)));
     ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResizeTab), false);
     ScriptUI->SourceObjects->setSorting(0);
     ScriptUI->SourceObjects->setResizeMode(toTreeWidget::AllColumns);
