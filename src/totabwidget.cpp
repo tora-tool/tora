@@ -42,6 +42,17 @@
 #include <qobject.h>
 #include <QTabWidget>
 
+
+toTabWidget::toTabWidget(QWidget *parent)
+    : QTabWidget(parent) {
+
+    connect(this,
+            SIGNAL(currentChanged(int)),
+            this,
+            SLOT(tabChanged(int)));
+}
+
+
 void toTabWidget::setTabShown(QWidget *w, bool show) {
     int      pos;
     QWidget *parent = w;
@@ -84,6 +95,13 @@ int toTabWidget::addTab(QWidget *widget, const QIcon& icon, const QString &label
     p.index = QTabWidget::addTab(widget, icon, label);
     tabs[widget] = p;
     return p.index;
+}
+
+
+void toTabWidget::tabChanged(int index) {
+    QWidget *widget = QTabWidget::widget(index);
+    if(widget)
+        emit currentTabChanged(widget);
 }
 
 

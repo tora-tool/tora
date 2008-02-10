@@ -63,9 +63,7 @@ class toTabWidget: public QTabWidget {
 public:
     /** Constructor.
      */
-    toTabWidget(QWidget *parent = 0)
-        : QTabWidget(parent) {
-    }
+    toTabWidget(QWidget *parent = 0);
 
     /** Specify if a tab is shown.
      * @param w Widget to change visibility.
@@ -102,6 +100,12 @@ private:
                   const QString &label);
 
     void removeTab(int index);
+
+private slots:
+    void tabChanged(int index);
+
+signals:
+    void currentTabChanged(QWidget *);
 };
 
 #endif
