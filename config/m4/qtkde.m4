@@ -306,7 +306,7 @@ AC_DEFUN([AC_PATH_QT],
   fi
 
   dnl all qt libary names needed for tora:
-  pv_qt_libs="QtCore QtGui Qt3Support QtGui QtSql QtNetwork"
+  pv_qt_libs="QtCore QtGui QtGui QtSql QtNetwork"
   all_qt_libs=
 
   dnl loop through libs and append type
@@ -380,9 +380,9 @@ AC_DEFUN([AC_PATH_QT],
       headers:   $ac_qt_includes])
   fi
   
-  QT_DEFINES="-DQT3_SUPPORT"
+  QT_DEFINES=""
   dnl mrj - TODO this is just a hack for now, should test each -I
-  QT_INCLUDES="-I$qt_includes -I$qt_incdir/Qt -I$qt_incdir/Qt3Support -I$qt_incdir/QtCore -I$qt_incdir/QtGui -I$qt_incdir/QtSql -I$qt_incdir/QtNetwork"
+  QT_INCLUDES="-I$qt_includes -I$qt_incdir/Qt -I$qt_incdir/QtCore -I$qt_incdir/QtGui -I$qt_incdir/QtSql -I$qt_incdir/QtNetwork"
   all_includes="$QT_INCLUDES $all_includes"
   
   QT_LDFLAGS="$all_qt_libs -L$ac_qt_libdir"
