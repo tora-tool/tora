@@ -205,7 +205,7 @@ public slots:
     void executeNewline();
     void describe();
     void eraseLogButton();
-    void changeResult(QWidget *widget);
+    void changeResult(int);
     void windowActivated(QWidget *w);
     void queryDone(void);
     void enableStatistic(bool);

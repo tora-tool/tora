@@ -514,8 +514,8 @@ void toWorksheet::setup(bool autoLoad) {
     connect(Logging, SIGNAL(selectionChanged(toTreeWidgetItem *)), this, SLOT(executeLog()));
     LastLogItem = NULL;
 
-    connect(ResultTab, SIGNAL(currentChanged(QWidget *)),
-            this, SLOT(changeResult(QWidget *)));
+    connect(ResultTab, SIGNAL(currentChanged(int)),
+            this, SLOT(changeResult(int)));
 
     if (autoLoad) {
         Editor->setFilename(WorksheetTool.config(CONF_AUTO_LOAD, ""));
@@ -733,7 +733,8 @@ toWorksheet::~toWorksheet() {
 
 #define LARGE_BUFFER 4096
 
-void toWorksheet::changeResult(QWidget *widget) {
+void toWorksheet::changeResult(int index) {
+    QWidget *widget = ResultTab->widget(index);
     if(!widget)
         return;
 
@@ -1082,7 +1083,7 @@ void toWorksheet::addLog(const QString &sql,
     }
 
     if(!error)
-        changeResult(CurrentTab);
+        changeResult(ResultTab->indexOf(CurrentTab));
 
     static QRegExp re(QString::fromLatin1("^[1-9]\\d* rows processed$"));
     try {
@@ -1677,7 +1678,7 @@ void toWorksheet::executeLog(void) {
         else {
             std::map<int, QWidget *>::iterator i = History.find(item->text(4).toInt());
             QueryString = item->allText(0);
-            changeResult(ResultTab->currentWidget());
+            changeResult(ResultTab->currentIndex());
             if (i != History.end() && (*i).second) {
                 Current->hide();
                 Current = (*i).second;

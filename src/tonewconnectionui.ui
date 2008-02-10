@@ -363,7 +363,7 @@
   </connection>
   <connection>
    <sender>Host</sender>
-   <signal>textChanged(QString)</signal>
+   <signal>editTextChanged(QString)</signal>
    <receiver>toNewConnectionUI</receiver>
    <slot>changeHost()</slot>
    <hints>
