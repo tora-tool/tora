@@ -85,6 +85,7 @@
 #include <QPixmap>
 #include <QString>
 #include <QVBoxLayout>
+#include <QButtonGroup>
 
 #include "icons/addindex.xpm"
 #include "icons/addtable.xpm"
@@ -431,9 +432,29 @@ public:
 };
 
 class toBrowserFilterSetup : public QDialog, public Ui::toBrowserFilterUI {
+private:
+    QButtonGroup *ButtonsGroup;
+    QButtonGroup *TypeGroup;
+
 public:
     void setup(bool temp) {
         toHelp::connectDialog(this);
+
+        // qbuttongroup is not a widget. awesome. guess they'll fix
+        // that in qt5.
+        ButtonsGroup = new QButtonGroup(ButtonsBox);
+        ButtonsGroup->addButton(None, 0);
+        ButtonsGroup->addButton(StartWith, 1);
+        ButtonsGroup->addButton(EndWith, 2);
+        ButtonsGroup->addButton(Contains, 3);
+        ButtonsGroup->addButton(CommaSeparate, 4);
+        ButtonsGroup->addButton(RegExp, 5);
+
+        TypeGroup = new QButtonGroup(TablespaceType);
+        TypeGroup->addButton(IncludeAll, 0);
+        TypeGroup->addButton(Include, 1);
+        TypeGroup->addButton(Exclude, 2);
+
         if (!temp) {
             OnlyOwnSchema->hide();
             Tablespaces->setNumberColumn(false);
@@ -460,9 +481,15 @@ public:
         setupUi(this);
         setup(temp);
 
-        Buttons->setButton(cur.Type);
+        QAbstractButton *b = ButtonsGroup->button(cur.Type);
+        if(b)
+            b->setChecked(true);
+
         if (!TablespaceType->isHidden()) {
-            TablespaceType->setButton(cur.TablespaceType);
+            b = TypeGroup->button(cur.TablespaceType);
+            if(b)
+                b->setChecked(true);
+
             for(std::list<QString>::iterator i = cur.Tablespaces.begin();
                 i != cur.Tablespaces.end();
                 i++) {
@@ -487,11 +514,11 @@ public:
                 tablespaces.insert(tablespaces.end(), (*it)->text(0));
         }
 
-        return new toBrowserFilter(Buttons->id(Buttons->selected()),
+        return new toBrowserFilter(ButtonsGroup->id(ButtonsGroup->checkedButton()),
                                    IgnoreCase->isChecked(),
                                    Invert->isChecked(),
                                    String->text(),
-                                   TablespaceType->id(TablespaceType->selected()),
+                                   TypeGroup->id(TypeGroup->checkedButton()),
                                    tablespaces,
                                    OnlyOwnSchema->isChecked());
     }
