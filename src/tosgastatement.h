@@ -78,7 +78,7 @@ class toSGAStatement : public QTabWidget
 private slots:
     /** Change the displayed tab.
      */
-    void changeTab(QWidget *widget);
+    void changeTab(int);
 public:
     /** Create widget.
      * @param parent Parent widget.
@@ -93,7 +93,7 @@ public slots:
      */
     void refresh(void)
     {
-        changeTab(CurrentTab);
+        changeTab(QTabWidget::indexOf(CurrentTab));
     }
 };
 

@@ -79,13 +79,14 @@ toSGAStatement::toSGAStatement(QWidget *parent)
     addTab(Plan, tr("Execution plan"));
     Resources = new toResultResources(this);
     addTab(Resources, tr("Information"));
-    connect(this, SIGNAL(currentChanged(QWidget *)),
-            this, SLOT(changeTab(QWidget *)));
+    connect(this, SIGNAL(currentChanged(int)),
+            this, SLOT(changeTab(int)));
     CurrentTab = SQLText;
 }
 
-void toSGAStatement::changeTab(QWidget *widget)
+void toSGAStatement::changeTab(int index)
 {
+    QWidget *widget = QTabWidget::widget(index);
     try
     {
         CurrentTab = widget;
@@ -115,5 +116,5 @@ void toSGAStatement::changeTab(QWidget *widget)
 void toSGAStatement::changeAddress(const QString &str)
 {
     Address = str;
-    changeTab(CurrentTab);
+    changeTab(QTabWidget::indexOf(CurrentTab));
 }

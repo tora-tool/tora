@@ -1685,7 +1685,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
 
     LastTab = NULL;
 
-    connect(Tabs, SIGNAL(currentChanged(QWidget *)), this, SLOT(changeTab(QWidget *)));
+    connect(Tabs, SIGNAL(currentChanged(int)), this, SLOT(changeTab(int)));
     ToolMenu = NULL;
     connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),
             this, SLOT(windowActivated(QWidget *)));
@@ -1810,10 +1810,11 @@ void toTuning::enableTab(const QString &name, bool enable)
         Tabs->setTabEnabled(Tabs->indexOf(widget), enable);
 }
 
-void toTuning::changeTab(QWidget *widget)
+void toTuning::changeTab(int index)
 {
-    if (LastTab == widget)
-        return ;
+    QWidget *widget = Tabs->widget(index);
+    if(!widget || LastTab == widget)
+        return;
     refresh();
 }
 

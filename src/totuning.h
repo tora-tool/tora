@@ -202,7 +202,7 @@ public:
 
 public slots:
     virtual void refresh(void);
-    virtual void changeTab(QWidget *widget);
+    virtual void changeTab(int);
     virtual void changeRefresh(const QString &str);
     virtual void windowActivated(QWidget *widget);
 
