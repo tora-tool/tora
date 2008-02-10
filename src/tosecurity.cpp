@@ -66,6 +66,7 @@
 
 #include <QPixmap>
 #include <QVBoxLayout>
+#include <QButtonGroup>
 
 #include "ui_tosecurityuserui.h"
 #include "ui_tosecurityroleui.h"
@@ -229,9 +230,14 @@ toSecurityQuota::toSecurityQuota(QWidget *parent)
     CurrentItem = NULL;
     update();
 
+    QButtonGroup *group = new QButtonGroup(SizeGroup);
+    group->addButton(Value, 1);
+    group->addButton(None, 2);
+    group->addButton(Unlimited, 3);
+
     connect(Tablespaces, SIGNAL(selectionChanged()),
             this, SLOT(changeTablespace()));
-    connect(SizeGroup, SIGNAL(clicked(int)),
+    connect(group, SIGNAL(buttonClicked(int)),
             this, SLOT(changeSize()));
     connect(Size, SIGNAL(valueChanged()),
             this, SLOT(changeSize()));

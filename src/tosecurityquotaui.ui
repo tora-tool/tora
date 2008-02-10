@@ -51,14 +51,14 @@
     </widget>
    </item>
    <item row="2" column="0" >
-    <widget class="Q3ButtonGroup" name="SizeGroup" >
+    <widget class="QGroupBox" name="SizeGroup" >
      <property name="enabled" >
       <bool>false</bool>
      </property>
      <property name="title" >
       <string/>
      </property>
-     <property name="lineWidth" >
+     <property name="lineWidth" stdset="0" >
       <number>0</number>
      </property>
      <layout class="QGridLayout" >
@@ -130,12 +130,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>Q3ButtonGroup</class>
-   <extends>Q3GroupBox</extends>
-   <header>Qt3Support/Q3ButtonGroup</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>toTreeWidget</class>
    <extends>QTreeWidget</extends>
