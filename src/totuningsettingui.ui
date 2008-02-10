@@ -32,7 +32,7 @@
     <number>6</number>
    </property>
    <item row="0" column="0" >
-    <widget class="Q3GroupBox" name="ServerTuning" >
+    <widget class="QGroupBox" name="ServerTuning" >
      <property name="title" >
       <string>Server tuning</string>
      </property>
@@ -93,12 +93,6 @@
  </widget>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>toTreeWidget</class>
    <extends>QTreeWidget</extends>

@@ -943,7 +943,6 @@ toTuningOverview::toTuningOverview(QWidget *parent, const char *name, Qt::WFlags
         : QWidget(parent)
 {
     setupUi(this);
-    BackgroundGroup->setColumnLayout(1, Qt::Horizontal);
 
     setupChart(ArchiveWrite, tr("< Archive write"), " " + tr("blocks/s"), SQLOverviewArchiveWrite);
     setupChart(BufferHit, tr("Hitrate"), QString::fromLatin1("%"), SQLOverviewBufferHit);

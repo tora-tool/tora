@@ -78,7 +78,7 @@
          <number>6</number>
         </property>
         <item rowspan="3" row="0" column="2" >
-         <widget class="Q3GroupBox" name="Destination" >
+         <widget class="QGroupBox" name="Destination" >
           <property name="sizePolicy" >
            <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
             <horstretch>0</horstretch>
@@ -652,7 +652,7 @@
          </widget>
         </item>
         <item rowspan="3" row="0" column="1" >
-         <widget class="Q3GroupBox" name="GroupBox2" >
+         <widget class="QGroupBox" name="GroupBox2" >
           <property name="sizePolicy" >
            <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
             <horstretch>0</horstretch>
@@ -1111,12 +1111,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>Q3ButtonGroup</class>
    <extends>Q3GroupBox</extends>

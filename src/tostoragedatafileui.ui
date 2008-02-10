@@ -1,179 +1,226 @@
-<ui version="4.0" stdsetdef="1" >
-  <author></author>
-  <comment></comment>
-  <exportmacro></exportmacro>
-  <class>toStorageDatafileUI</class>
-  <widget class="QWidget" name="toStorageDatafileUI" >
-    <property name="geometry" >
-      <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>580</width>
-        <height>480</height>
-      </rect>
-    </property>
-    <property name="windowTitle" >
-      <string>Form1</string>
-    </property>
-    <layout class="QGridLayout" >
-      <property name="margin" >
-        <number>11</number>
+<ui version="4.0" >
+ <class>toStorageDatafileUI</class>
+ <widget class="QWidget" name="toStorageDatafileUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>580</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form1</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>11</number>
+   </property>
+   <property name="topMargin" >
+    <number>11</number>
+   </property>
+   <property name="rightMargin" >
+    <number>11</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>11</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>6</number>
+   </property>
+   <item row="0" column="0" colspan="3" >
+    <widget class="QLabel" name="NameLabel" >
+     <property name="text" >
+      <string>&amp;Tablespace name</string>
+     </property>
+     <property name="wordWrap" >
+      <bool>false</bool>
+     </property>
+     <property name="buddy" >
+      <cstring>Name</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="3" >
+    <widget class="QLineEdit" name="Name" />
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="TextLabel1_2" >
+     <property name="text" >
+      <string>&amp;Filename</string>
+     </property>
+     <property name="wordWrap" >
+      <bool>false</bool>
+     </property>
+     <property name="buddy" >
+      <cstring>Name</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2" >
+    <widget class="QPushButton" name="PushButton1" >
+     <property name="text" >
+      <string>&amp;Browse</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLineEdit" name="Filename" />
+   </item>
+   <item row="4" column="0" colspan="3" >
+    <widget class="toFilesize" native="1" name="InitialSize" />
+   </item>
+   <item row="7" column="1" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="0" colspan="3" >
+    <widget class="QGroupBox" name="AutoExtendGroup" >
+     <property name="title" >
+      <string>Auto extend</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>11</number>
       </property>
-      <property name="spacing" >
-        <number>6</number>
+      <property name="topMargin" >
+       <number>11</number>
       </property>
-      <item rowspan="1" row="0" column="0" colspan="3" >
-        <widget class="QLabel" name="NameLabel" >
-          <property name="text" >
-            <string>&amp;Tablespace name</string>
-          </property>
-          <property name="buddy" >
-            <cstring>Name</cstring>
-          </property>
-          <property name="wordWrap" >
-            <bool>false</bool>
-          </property>
-        </widget>
-      </item>
-      <item rowspan="1" row="1" column="0" colspan="3" >
-        <widget class="QLineEdit" name="Name" />
+      <property name="rightMargin" >
+       <number>11</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>11</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>6</number>
+      </property>
+      <item row="0" column="0" >
+       <widget class="QCheckBox" name="AutoExtend" >
+        <property name="text" >
+         <string>&amp;Auto extend datafile</string>
+        </property>
+       </widget>
       </item>
       <item row="2" column="0" >
-        <widget class="QLabel" name="TextLabel1_2" >
-          <property name="text" >
-            <string>&amp;Filename</string>
-          </property>
-          <property name="buddy" >
-            <cstring>Name</cstring>
-          </property>
-          <property name="wordWrap" >
-            <bool>false</bool>
-          </property>
-        </widget>
-      </item>
-      <item row="3" column="2" >
-        <widget class="QPushButton" name="PushButton1" >
-          <property name="text" >
-            <string>&amp;Browse</string>
-          </property>
-        </widget>
+       <widget class="QCheckBox" name="UnlimitedMax" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="text" >
+         <string>&amp;Unlimited max size</string>
+        </property>
+       </widget>
       </item>
       <item row="3" column="0" >
-        <widget class="QLineEdit" name="Filename" />
+       <widget class="toFilesize" native="1" name="MaximumSize" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
-      <item rowspan="1" row="4" column="0" colspan="3" >
-        <widget class="toFilesize" name="InitialSize" />
+      <item row="1" column="0" >
+       <widget class="toFilesize" native="1" name="NextSize" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
-      <item row="7" column="1" >
-        <spacer name="Spacer1" >
-          <property name="sizeHint" >
-            <size>
-              <width>20</width>
-              <height>20</height>
-            </size>
-          </property>
-          <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-          </property>
-        </spacer>
-      </item>
-      <item rowspan="1" row="6" column="0" colspan="3" >
-        <widget class="Q3GroupBox" name="AutoExtendGroup" >
-          <property name="title" >
-            <string>Auto extend</string>
-          </property>
-          <layout class="QGridLayout" >
-            <property name="margin" >
-              <number>11</number>
-            </property>
-            <property name="spacing" >
-              <number>6</number>
-            </property>
-            <item row="0" column="0" >
-              <widget class="QCheckBox" name="AutoExtend" >
-                <property name="text" >
-                  <string>&amp;Auto extend datafile</string>
-                </property>
-              </widget>
-            </item>
-            <item row="2" column="0" >
-              <widget class="QCheckBox" name="UnlimitedMax" >
-                <property name="enabled" >
-                  <bool>false</bool>
-                </property>
-                <property name="text" >
-                  <string>&amp;Unlimited max size</string>
-                </property>
-              </widget>
-            </item>
-            <item row="3" column="0" >
-              <widget class="toFilesize" name="MaximumSize" >
-                <property name="enabled" >
-                  <bool>false</bool>
-                </property>
-              </widget>
-            </item>
-            <item row="1" column="0" >
-              <widget class="toFilesize" name="NextSize" >
-                <property name="enabled" >
-                  <bool>false</bool>
-                </property>
-              </widget>
-            </item>
-          </layout>
-        </widget>
-      </item>
-    </layout>
-  </widget>
-  <customwidgets>
-    <customwidget>
-      <class>toFilesize</class>
-      <extends>QWidget</extends>
-      <header location="local" >tofilesize.h</header>
-      <sizehint>
-        <width>200</width>
-        <height>40</height>
-      </sizehint>
-      <container>0</container>
-      <sizepolicy>
-        <hordata>5</hordata>
-        <verdata>1</verdata>
-      </sizepolicy>
-      <pixmap>image0</pixmap>
-    </customwidget>
-  </customwidgets>
-  <images>
-    <image name="image0" >
-      <data format="XPM.GZ" length="646" >789c6dd2c10ac2300c00d07bbf2234b7229d1be245fc04c5a3201e4615f430059d0711ff5ddb2e6bb236ec90eed134cb5a19d8ef36602af5ecdbfeeac05dda0798d3abebde87e3faa374d3807fa0d633a52d38d8de6f679fe33fc776e196f53cd010188256a3600a292882096246517815ca99884606e18044a3a40d91824820924265a7923a2e8bcd05f33db1173e002913175f2a6be6d3294871a2d95fa00e8a94ee017b69d339d90df1e77c57ea072ede6758</data>
-    </image>
-  </images>
-  <connections>
-    <connection>
-      <sender>AutoExtend</sender>
-      <signal>toggled(bool)</signal>
-      <receiver>toStorageDatafileUI</receiver>
-      <slot>autoExtend(bool)</slot>
-    </connection>
-    <connection>
-      <sender>UnlimitedMax</sender>
-      <signal>toggled(bool)</signal>
-      <receiver>toStorageDatafileUI</receiver>
-      <slot>maximumSize(bool)</slot>
-    </connection>
-    <connection>
-      <sender>PushButton1</sender>
-      <signal>clicked()</signal>
-      <receiver>toStorageDatafileUI</receiver>
-      <slot>browseFile()</slot>
-    </connection>
-    <connection>
-      <sender>Filename</sender>
-      <signal>textChanged(QString)</signal>
-      <receiver>toStorageDatafileUI</receiver>
-      <slot>valueChanged(QString)</slot>
-    </connection>
-  </connections>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>toFilesize</class>
+   <extends>QWidget</extends>
+   <header>tofilesize.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>AutoExtend</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>toStorageDatafileUI</receiver>
+   <slot>autoExtend(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>UnlimitedMax</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>toStorageDatafileUI</receiver>
+   <slot>maximumSize(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PushButton1</sender>
+   <signal>clicked()</signal>
+   <receiver>toStorageDatafileUI</receiver>
+   <slot>browseFile()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Filename</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>toStorageDatafileUI</receiver>
+   <slot>valueChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
