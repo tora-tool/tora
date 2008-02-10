@@ -43,8 +43,14 @@
 #include <Windows.h>
 #endif
 
+/**
+ * mrj: disabled stream pooling. it doesn't seem to be fully thread
+ * safe. if you're hitting the database hard, say the tuning overview
+ * tab with a refresh of 2 seconds, you get consistent crashes.
+ */
+//#define OTL_STREAM_POOLING_ON
+
 #define OTL_STL
-#define OTL_STREAM_POOLING_ON
 #define OTL_EXCEPTION_ENABLE_ERROR_OFFSET
 #define OTL_ORA_UTF8
 #define OTL_ORA_UNICODE
@@ -241,11 +247,10 @@ class oracleQuery : public toQuery::queryImpl
         }
         virtual ~oracleQuery()
         {
-#ifdef OTL_STREAM_POOLING_ON
-            if (!SaveInPool && Query)
-                Query->close(false);
-#endif
+            if(!Query)
+                return;
 
+            Query->close();
             delete Query;
         }
         virtual void execute(void);
