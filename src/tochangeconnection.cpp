@@ -55,6 +55,7 @@ toChangeConnection::toChangeConnection(QToolBar *parent, const char *name)
                         parent, name)
 {
     setMenu(new QMenu(this));
+    setPopupMode(QToolButton::MenuButtonPopup);
     connect(menu(), SIGNAL(aboutToShow()), this, SLOT(popupMenu()));
     connect(menu(),
             SIGNAL(triggered(QAction *)),
