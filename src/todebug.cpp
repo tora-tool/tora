@@ -71,6 +71,7 @@
 #include <QAction>
 #include <QWorkspace>
 #include <QMessageBox>
+#include <QButtonGroup>
 
 #include "icons/addwatch.xpm"
 #include "icons/changewatch.xpm"
@@ -150,9 +151,10 @@ public:
 static toDebugTool DebugTool;
 
 toDebugWatch::toDebugWatch(toDebug *parent)
-        : QDialog(parent/*, "AddWatch", true*/), Debugger(parent)
+    : QDialog(parent), Debugger(parent)
 {
     setupUi(this);
+    setModal(true);
 
     toHelp::connectDialog(this);
     {
@@ -172,7 +174,16 @@ toDebugWatch::toDebugWatch(toDebug *parent)
 
     Object = Debugger->currentEditor()->object();
 
-    connect(Scope, SIGNAL(clicked(int)), this, SLOT(changeScope(int)));
+    ScopeGroup = new QButtonGroup(Scope);
+    ScopeGroup->addButton(LocalScope_2, 1);
+    ScopeGroup->addButton(LocalScope, 2);
+    ScopeGroup->addButton(Package, 3);
+    ScopeGroup->addButton(GlobalScope, 4);
+
+    connect(ScopeGroup,
+            SIGNAL(buttonClicked(int)),
+            this,
+            SLOT(changeScope(int)));
     changeScope(1);
 }
 
@@ -204,7 +215,7 @@ void toDebugWatch::changeScope(int num)
 toTreeWidgetItem *toDebugWatch::createWatch(toTreeWidget *watches)
 {
     QString str;
-    switch (Scope->id(Scope->selected()))
+    switch (ScopeGroup->checkedId())
     {
     case 1:
     case 5:
@@ -215,7 +226,7 @@ toTreeWidgetItem *toDebugWatch::createWatch(toTreeWidget *watches)
         item->setText(2, Name->currentText());
         item->setText(3, QString::null);
         item->setText(4, QString::fromLatin1("NOCHANGE"));
-        item->setText(6, Scope->id(Scope->selected()) == 5 ? "AUTO" : "");
+        item->setText(6, ScopeGroup->checkedId() == 5 ? "AUTO" : "");
         return item;
     }
     case 3:

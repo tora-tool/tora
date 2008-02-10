@@ -93,6 +93,7 @@ class toConnection;
 class toDebugText;
 class toMarkedText;
 class toOutput;
+class QButtonGroup;
 
 class toDebug : public toToolWidget
 {
@@ -292,18 +293,22 @@ public slots:
 
 class toDebugWatch : public QDialog, public Ui::toDebugWatchUI
 {
-    Q_OBJECT
+    Q_OBJECT;
 
     toTreeWidgetItem *HeadItems;
     toTreeWidgetItem *BodyItems;
-    toDebug *Debugger;
-    QString Object;
-    QString Default;
+    toDebug          *Debugger;
+    QString           Object;
+    QString           Default;
+    QButtonGroup     *ScopeGroup;
+
     toTreeWidgetItem *findMisc(const QString &str, toTreeWidgetItem *);
+
 public:
     toDebugWatch(toDebug *parent);
 
     toTreeWidgetItem *createWatch(toTreeWidget *watches);
+
 public slots:
     void changeScope(int num);
 };
