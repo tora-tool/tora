@@ -1487,7 +1487,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     curr->addTab(resultExtract, tr("Script"));
     SecondMap[TAB_TABLE_EXTRACT] = resultExtract;
 
-    connect(curr, SIGNAL(currentChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
+    connect(curr, SIGNAL(currentTabChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
 
     splitter = new QSplitter(Qt::Horizontal, TopTab);
     splitter->setObjectName(TAB_VIEWS);
@@ -1532,7 +1532,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     resultExtract = new toResultExtract(true, this, TAB_VIEW_EXTRACT);
     curr->addTab(resultExtract, tr("Script"));
     SecondMap[TAB_VIEW_EXTRACT] = resultExtract;
-    connect(curr, SIGNAL(currentChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
+    connect(curr, SIGNAL(currentTabChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
 
     splitter = new QSplitter(Qt::Horizontal, TopTab);
     splitter->setObjectName(TAB_INDEX);
@@ -1616,7 +1616,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     resultExtract = new toResultExtract(true, this, TAB_INDEX_EXTRACT);
     curr->addTab(resultExtract, tr("Script"));
     SecondMap[TAB_INDEX_EXTRACT] = resultExtract;
-    connect(curr, SIGNAL(currentChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
+    connect(curr, SIGNAL(currentTabChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
 
     splitter = new QSplitter(Qt::Horizontal, TopTab);
     splitter->setObjectName(TAB_SEQUENCES);
@@ -1650,7 +1650,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     resultExtract = new toResultExtract(true, this, TAB_SEQUENCES_EXTRACT);
     curr->addTab(resultExtract, tr("Script"));
     SecondMap[TAB_SEQUENCES_EXTRACT] = resultExtract;
-    connect(curr, SIGNAL(currentChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
+    connect(curr, SIGNAL(currentTabChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
 
     splitter = new QSplitter(Qt::Horizontal, TopTab);
     splitter->setObjectName(TAB_SYNONYM);
@@ -1684,7 +1684,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     curr->addTab(resultExtract, tr("Script"));
     SecondMap[TAB_SYNONYM_EXTRACT] = resultExtract;
 
-    connect(curr, SIGNAL(currentChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
+    connect(curr, SIGNAL(currentTabChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
 
     splitter = new QSplitter(Qt::Horizontal, TopTab);
     splitter->setObjectName(TAB_PLSQL);
@@ -1726,7 +1726,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     resultExtract = new toResultExtract(true, this, TAB_PLSQL_EXTRACT);
     curr->addTab(resultExtract, tr("Script"));
     SecondMap[TAB_PLSQL_EXTRACT] = resultExtract;
-    connect(curr, SIGNAL(currentChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
+    connect(curr, SIGNAL(currentTabChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
 
     splitter = new QSplitter(Qt::Horizontal, TopTab);
     splitter->setObjectName(TAB_TRIGGER);
@@ -1775,7 +1775,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     SecondMap[TAB_TRIGGER_EXTRACT] = resultExtract;
 
     connect(curr,
-            SIGNAL(currentChanged(QWidget *)),
+            SIGNAL(currentTabChanged(QWidget *)),
             this,
             SLOT(changeSecondTab(QWidget *)));
 
@@ -1843,7 +1843,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     SecondMap[TAB_DBLINK_SYNONYMS] = tableView;
 
     connect(curr,
-            SIGNAL(currentChanged(QWidget *)),
+            SIGNAL(currentTabChanged(QWidget *)),
             this,
             SLOT(changeSecondTab(QWidget *)));
 #endif
@@ -1935,7 +1935,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     connect(AccessContent, SIGNAL(changesSaved()), this, SLOT(flushPrivs()));
 
     connect(curr,
-            SIGNAL(currentChanged(QWidget *)),
+            SIGNAL(currentTabChanged(QWidget *)),
             this,
             SLOT(changeSecondTab(QWidget *)));
 
@@ -1948,7 +1948,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     refresh();
 
     connect(TopTab,
-            SIGNAL(currentChanged(QWidget *)),
+            SIGNAL(currentTabChanged(QWidget *)),
             this,
             SLOT(changeTab(QWidget *)));
     connect(this, SIGNAL(connectionChange()), this, SLOT(changeConnection()));
@@ -2571,7 +2571,7 @@ void toBrowser::importData(std::map<QString, QString> &data, const QString &pref
 {
     disconnect(Schema, SIGNAL(activated(int)),
                this, SLOT(changeSchema(int)));
-    disconnect(TopTab, SIGNAL(currentChanged(QWidget *)), this, SLOT(changeTab(QWidget *)));
+    disconnect(TopTab, SIGNAL(currentTabChanged(QWidget *)), this, SLOT(changeTab(QWidget *)));
 
     ViewContent->importData(data, prefix + ":View");
     TableContent->importData(data, prefix + ":Table");
@@ -2624,7 +2624,7 @@ void toBrowser::importData(std::map<QString, QString> &data, const QString &pref
 
     connect(Schema, SIGNAL(activated(int)),
             this, SLOT(changeSchema(int)));
-    connect(TopTab, SIGNAL(currentChanged(QWidget *)), this, SLOT(changeTab(QWidget *)));
+    connect(TopTab, SIGNAL(currentTabChanged(QWidget *)), this, SLOT(changeTab(QWidget *)));
     refresh();
 }
 
