@@ -519,7 +519,7 @@ void toMain::addButtonApplication(QAction *act) {
 
 
 void toMain::createStatusbar() {
-    statusBar()->message(QString::null);
+    statusBar()->showMessage(QString::null);
 
     RowLabel = new QLabel(statusBar());
     statusBar()->addPermanentWidget(RowLabel, 0);
@@ -1357,7 +1357,7 @@ void toMain::exportData(std::map<QString, QString> &data, const QString &prefix)
 
             if (tool)
             {
-                QString key = prefix + ":Tools:" + QString::number(id).latin1();
+                QString key = prefix + ":Tools:" + QString::number(id);
                 tool->exportData(data, key);
                 data[key + ":Type"] = tool->tool().key();
                 data[key + ":Connection"] = QString::number(connMap[&tool->connection()]);
