@@ -21,6 +21,7 @@
 #include <cassert>
 #include <vector>
 #include <bitset>
+#include <limits.h>
 
 //#define DO_EXTRA_LOKI_TESTS
 //#define USE_NEW_TO_ALLOCATE
