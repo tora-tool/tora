@@ -145,6 +145,7 @@ SET(TORA_MOC_CLASSES
     toresultdata.h
     toresultdatasingle.h
     toresultview.h
+    toresultlistformat.h
     torollback.h
     toscript.h
     tosearchreplace.h
@@ -263,6 +264,7 @@ SET(TORA_SOURCES
     toresultdata.cpp
     toresultdatasingle.cpp
     toresultview.cpp
+    toresultlistformat.cpp
     torollback.cpp
     toscript.cpp
     tosearchreplace.cpp

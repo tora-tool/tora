@@ -85,6 +85,7 @@ tora_SOURCES=main.cpp \
 	toresultitem.cpp toresultitem.h \
 	toresultstats.cpp toresultstats.h \
 	toresultview.cpp toresultview.h \
+	toresultlistformat.cpp toresultlistformat.h \
 	toresultmodel.cpp toresultmodel.h \
 	toresulttableview.cpp toresulttableview.h \
 	toresulttableviewedit.cpp toresulttableviewedit.h \
@@ -306,6 +307,7 @@ BUILT_SOURCES = \
 	moc_toresultstats.cpp \
 	moc_toresultstorage.cpp \
 	moc_toresultview.cpp \
+	moc_toresultlistformat.cpp \
 	moc_toresultmodel.cpp \
 	moc_toresulttableview.cpp \
 	moc_toresulttableviewedit.cpp \

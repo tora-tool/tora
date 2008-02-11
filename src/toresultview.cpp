@@ -48,6 +48,7 @@
 #include "tosearchreplace.h"
 #include "tosql.h"
 #include "totool.h"
+#include "toresultlistformat.h"
 
 #include <qapplication.h>
 #include <qclipboard.h>
@@ -1305,34 +1306,6 @@ void toResultView::refresh(void) {
     toResult::refresh();
     if (lastSort >= 0)
         setSorting(lastSort, lastAsc);
-}
-
-toResultListFormat::toResultListFormat(QWidget *parent, const char *name)
-        : QDialog(parent) {
-    setupUi(this);
-    setModal(true);
-    Format->addItem(tr("Text"));
-    Format->addItem(tr("Tab delimited"));
-    Format->addItem(tr("CSV"));
-    Format->addItem(tr("HTML"));
-    Format->addItem(tr("SQL"));
-    int num = toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_FORMAT, "").toInt();
-    Format->setCurrentIndex(num);
-    formatChanged(num);
-
-    Delimiter->setText(toConfigurationSingle::Instance().globalConfig(CONF_CSV_DELIMITER, DEFAULT_CSV_DELIMITER));
-    Separator->setText(toConfigurationSingle::Instance().globalConfig(CONF_CSV_SEPARATOR, DEFAULT_CSV_SEPARATOR));
-}
-
-void toResultListFormat::formatChanged(int pos) {
-    Separator->setEnabled(pos == 2);
-    Delimiter->setEnabled(pos == 2);
-}
-
-void toResultListFormat::saveDefault(void) {
-    toConfigurationSingle::Instance().globalSetConfig(CONF_CSV_DELIMITER, Delimiter->text());
-    toConfigurationSingle::Instance().globalSetConfig(CONF_CSV_SEPARATOR, Separator->text());
-    toConfigurationSingle::Instance().globalSetConfig(CONF_DEFAULT_FORMAT, QString::number(Format->currentIndex()));
 }
 
 void toResultFilter::exportData(std::map<QString, QString> &, const QString &) {}
