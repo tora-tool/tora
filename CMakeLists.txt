@@ -132,17 +132,19 @@ SET (QT_MT_REQUIRED true)
 SET (QT_MIN_VERSION "4.2.0")
 SET (QT_USE_QTSQL TRUE)
 SET (QT_USE_QTNETWORK TRUE)
-IF (NOT WANT_NOQT3SUPPORT)
+# this is a legacy option. You can use this for early stages of development
+# and it will be removed later
+IF (WANT_QT3SUPPORT)
   SET (QT_USE_QT3SUPPORT TRUE)
-ENDIF (NOT WANT_NOQT3SUPPORT)
+  MESSAGE("Qt3 legacy support has been requested.")
+ELSE (WANT_QT3SUPPORT)
+  MESSAGE("No Qt3 legacy support. And it's good.")
+ENDIF (WANT_QT3SUPPORT)
 
 FIND_PACKAGE(Qt4 REQUIRED)
 INCLUDE( ${QT_USE_FILE} )
 IF (QT_FOUND)
     MESSAGE("Qt4 Found OK")
-    IF (WANT_NOQT3SUPPORT)
-        MESSAGE(STATUS "Building without Qt3 Support")
-    ENDIF (WANT_NOQT3SUPPORT)
     #Add our Qt definitions
     ADD_DEFINITIONS(
         ${QT_DEFINITIONS}
