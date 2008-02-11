@@ -12,10 +12,10 @@ ADD_DEFINITIONS("-DSCI_LEXER")
 
 SET(TORA_QSCINTILLA2_MOC_CLASSES
 Qt4/Qsci/qsciapis.h
-Qt4/Qsci/qscicommand.h
-Qt4/Qsci/qscicommandset.h
-Qt4/Qsci/qscidocument.h
-Qt4/Qsci/qsciglobal.h
+#Qt4/Qsci/qscicommand.h
+#Qt4/Qsci/qscicommandset.h
+#Qt4/Qsci/qscidocument.h
+#Qt4/Qsci/qsciglobal.h
 Qt4/Qsci/qscilexer.h
 Qt4/Qsci/qscilexerbash.h
 Qt4/Qsci/qscilexerbatch.h
@@ -40,12 +40,12 @@ Qt4/Qsci/qscilexersql.h
 Qt4/Qsci/qscilexertex.h
 Qt4/Qsci/qscilexervhdl.h
 Qt4/Qsci/qscimacro.h
-Qt4/Qsci/qsciprinter.h
+#Qt4/Qsci/qsciprinter.h
 Qt4/Qsci/qsciscintilla.h
 Qt4/Qsci/qsciscintillabase.h
-Qt4/ListBoxQt.h
+#Qt4/ListBoxQt.h
 Qt4/SciClasses.h
-Qt4/ScintillaQt.h
+#Qt4/ScintillaQt.h
 )
 
 SET(TORA_QSCINTILLA2_LIB_SOURCES
