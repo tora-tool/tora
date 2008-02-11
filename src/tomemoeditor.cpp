@@ -42,6 +42,7 @@
 #include "tomarkedtext.h"
 #include "tomemoeditor.h"
 #include "toresultview.h"
+#include "tomain.h"
 
 #include <qcheckbox.h>
 #include <qlabel.h>
