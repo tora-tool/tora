@@ -56,12 +56,14 @@ class toAnalyze;
 class toBarChart;
 class toListView;
 class toWorksheetStatistic;
+class QAction;
 
 
 class toWorksheetStatistic : public QWidget {
     Q_OBJECT;
 
     struct data {
+        QAction    *Action;
         QWidget    *Top;
         QLabel     *Label;
         QSplitter  *Charts;
@@ -97,8 +99,8 @@ public:
     virtual void showPlans(bool);
     virtual void showCharts(bool);
 
-    virtual void save(int);
-    virtual void remove(int);
+    virtual void save(QAction *);
+    virtual void remove(QAction *);
     virtual void load(void);
     virtual void displayMenu(void);
 };

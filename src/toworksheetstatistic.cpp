@@ -55,6 +55,7 @@
 #include <QPixmap>
 #include <QMenu>
 #include <QVBoxLayout>
+#include <QAction>
 
 #include "icons/fileopen.xpm"
 #include "icons/filesave.xpm"
@@ -84,7 +85,7 @@ toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
     SaveMenu->setTitle(tr("Save statistics to file"));
     toolbar->addAction(SaveMenu->menuAction());
     connect(SaveMenu, SIGNAL(aboutToShow()), this, SLOT(displayMenu()));
-    connect(SaveMenu, SIGNAL(activated(int)), this, SLOT(save(int)));
+    connect(SaveMenu, SIGNAL(triggered(QAction *)), this, SLOT(save(QAction *)));
 
     toolbar->addSeparator();
 
@@ -93,7 +94,7 @@ toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
     RemoveMenu->setTitle(tr("Remove statistics"));
     toolbar->addAction(RemoveMenu->menuAction());
     connect(RemoveMenu, SIGNAL(aboutToShow()), this, SLOT(displayMenu()));
-    connect(RemoveMenu, SIGNAL(activated(int)), this, SLOT(remove(int)));
+    connect(RemoveMenu, SIGNAL(triggered(QAction *)), this, SLOT(remove(QAction *)));
 
     Splitter = new QSplitter(Qt::Vertical, this);
     vlayout->addWidget(Splitter);
@@ -159,6 +160,8 @@ void toWorksheetStatistic::addStatistics(std::map<QString, QString> &stats) {
     hcontainer->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
                                           QSizePolicy::Fixed));
     vbox->addWidget(hcontainer);
+
+    cur.Action = new QAction(stats["Description"], cur.Top);
 
     cur.Label = new QLabel(stats["Description"], hcontainer);
     cur.Label->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred));
@@ -245,10 +248,9 @@ void toWorksheetStatistic::showCharts(bool show) {
     }
 }
 
-void toWorksheetStatistic::save(int selid) {
-    int id = 1;
+void toWorksheetStatistic::save(QAction *action) {
     for (std::list<data>::iterator i = Open.begin();i != Open.end();i++) {
-        if (selid == id) {
+        if((*i).Action == action) {
             QString fn = toSaveFilename(QString::null, QString::fromLatin1("*.stat"), this);
             if (!fn.isEmpty()) {
                 std::map<QString, QString> stat;
@@ -261,18 +263,16 @@ void toWorksheetStatistic::save(int selid) {
                 try {
                     toConfigurationSingle::Instance().saveMap(fn, stat);
                 }
-                TOCATCH
+                TOCATCH;
             }
             break;
         }
-        id++;
     }
 }
 
-void toWorksheetStatistic::remove(int selid) {
-    int id = 1;
+void toWorksheetStatistic::remove(QAction *action) {
     for (std::list<data>::iterator i = Open.begin();i != Open.end();i++) {
-        if (selid == id) {
+        if ((*i).Action == action) {
             delete(*i).Top;
             if (Open.size() == 1) {
                 Dummy = new QWidget(Splitter);
@@ -281,7 +281,6 @@ void toWorksheetStatistic::remove(int selid) {
             Open.erase(i);
             break;
         }
-        id++;
     }
 }
 
@@ -300,10 +299,8 @@ void toWorksheetStatistic::load(void) {
 void toWorksheetStatistic::displayMenu(void) {
     SaveMenu->clear();
     RemoveMenu->clear();
-    int id = 1;
-    for (std::list<data>::iterator i = Open.begin();i != Open.end();i++) {
-        SaveMenu->addAction((*i).Label->text());
-        RemoveMenu->addAction((*i).Label->text());
-        id++;
+    for (std::list<data>::iterator i = Open.begin(); i != Open.end(); i++) {
+        SaveMenu->addAction((*i).Action);
+        RemoveMenu->addAction((*i).Action);
     }
 }
