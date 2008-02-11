@@ -804,9 +804,9 @@ void toSetEnv(const QString &var, const QString &val)
     // Has a memory leak, but just a minor one.
 
     char *env = new char[var.length() + val.length() + 2];
-    strcpy(env, var);
+    strcpy(env, var.toUtf8());
     strcat(env, "=");
-    strcat(env, val);
+    strcat(env, val.toUtf8());
     putenv(env);
 #endif
 }
