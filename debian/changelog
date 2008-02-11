@@ -1,3 +1,17 @@
+tora (1.3.22-7) unstable; urgency=low
+
+  * Removed build dependency on libqt3-compat-headers, closes: #464914
+  * Added include directives needed by gcc-4.3, closes: #462239
+
+ -- Michael Meskes <meskes@debian.org>  Mon, 11 Feb 2008 10:57:12 +0100
+
+tora (1.3.22-6) unstable; urgency=low
+
+  * Fixed clean target yet again so building twice in a row is possible.
+  * Bumped up build dependency on debhelper to correct version.
+
+ -- Michael Meskes <meskes@debian.org>  Thu, 10 Jan 2008 11:55:07 +0100
+
 tora (1.3.22-5) unstable; urgency=low
 
   * Bumped standards version to 3.7.3.
