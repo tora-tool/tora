@@ -44,6 +44,10 @@
 #include "toconnection.h"
 #include "tomemoeditor.h"
 #include "tomain.h"
+#include "toresultlistformat.h"
+#include "tolistviewformatter.h"
+#include "tolistviewformatterfactory.h"
+#include "tolistviewformatteridentifier.h"
 
 #include <QClipboard>
 #include <QScrollBar>
@@ -86,6 +90,17 @@ toResultTableView::toResultTableView(bool readable,
                                      bool editable)
     : QTableView(parent),
       toResult(),
+      toEditWidget(false,       // open
+                   true,        // save
+                   true,        // print
+                   false,       // undo
+                   false,       // redo
+                   false,       // cut
+                   false,       // copy
+                   false,       // past
+                   true,        // search
+                   true,        // selectall
+                   false),      // readall
       Model(NULL) {
 
     if(name)
@@ -303,9 +318,8 @@ void toResultTableView::menuCallback(QAction *action) {
     if(!index.isValid())
         return;
 
-    QVariant data = model()->data(index, Qt::EditRole);
-
     if(action == displayAct) {
+        QVariant data = model()->data(index, Qt::EditRole);
         toMemoEditor *ed = new toMemoEditor(this, data.toString());
         ed->exec();
     }
@@ -315,18 +329,12 @@ void toResultTableView::menuCallback(QAction *action) {
         Model->setAlignment(index.column(), Qt::AlignRight);
     else if(action == centerAct)
         Model->setAlignment(index.column(), Qt::AlignHCenter);
-    else if(action == copyAct) {
-        QClipboard *clip = qApp->clipboard();
-
-        if(data.canConvert<QString>())
-            clip->setText(data.toString());
-    }
-    else if(action == selectAllAct) {
-        selectAll();
-    }
-    else if(action == editAct) {
+    else if(action == copyAct)
+        editCopy();
+    else if(action == selectAllAct)
+        editSelectAll();
+    else if(action == editAct)
         toMainWidget()->editSQL(sqlName());
-    }
     else if(action == readAllAct) {
         QModelIndex index;
         while(Model->canFetchMore(index))
@@ -334,6 +342,8 @@ void toResultTableView::menuCallback(QAction *action) {
     }
     else if(action == refreshAct)
         refresh();
+    else if(action == exportAct)
+        editSave(false);
 }
 
 
@@ -413,6 +423,107 @@ QModelIndex toResultTableView::selectedIndex(int col) {
     if(sel.size() < 1)
         return QModelIndex();
     return model()->index(sel[0].row(), col);
+}
+
+
+int toResultTableView::exportType(QString &separator, QString &delimiter) {
+    toResultListFormat format(this, NULL);
+    if(!format.exec())
+        return -1;
+
+    format.saveDefault();
+
+    separator = format.Separator->text();
+    delimiter = format.Delimiter->text();
+
+    return format.Format->currentIndex();
+}
+
+
+QString toResultTableView::exportAsText(bool includeHeader,
+                                        bool onlySelection,
+                                        int type,
+                                        QString &separator,
+                                        QString &delimiter) {
+    QString result;
+
+    if(type < 0)
+        type = exportType(separator, delimiter);
+    if(type < 0)
+        return QString::null;
+
+    toExportSettings settings(includeHeader,
+                              onlySelection,
+                              type,
+                              separator,
+                              delimiter);
+
+    std::auto_ptr<toListViewFormatter> pFormatter(
+        toListViewFormatterFactory::Instance().CreateObject(type));
+    result = pFormatter->getFormattedString(settings, model());
+
+    return result;
+}
+
+
+// ---------------------------------------- overrides toEditWidget
+
+bool toResultTableView::editSave(bool askfile) {
+    try {
+        QString delimiter;
+        QString separator;
+        int type = exportType(separator, delimiter);
+
+        QString nam;
+        switch(type) {
+        case - 1:
+            return false;
+        default:
+            nam = "*.txt";
+            break;
+        case 2:
+            nam = "*.csv";
+            break;
+        case 3:
+            nam = "*.html";
+            break;
+        case 4:
+            nam = "*.sql";
+            break;
+        }
+
+        QString filename = toSaveFilename(QString::null, nam, this);
+        if(filename.isEmpty())
+            return false;
+
+        return toWriteFile(filename, exportAsText(true,
+                                                  false,
+                                                  type,
+                                                  separator,
+                                                  delimiter));
+    }
+    TOCATCH;
+
+    return false;
+}
+
+
+void toResultTableView::editPrint() {
+}
+
+
+void toResultTableView::editCopy() {
+    QClipboard *clip = qApp->clipboard();
+
+    QModelIndex index = currentIndex();
+    QVariant data = model()->data(index, Qt::EditRole);
+    if(data.canConvert<QString>())
+        clip->setText(data.toString());
+}
+
+
+void toResultTableView::editSelectAll() {
+    selectAll();
 }
 
 

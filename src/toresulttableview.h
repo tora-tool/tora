@@ -44,6 +44,7 @@
 #include "toresult.h"
 #include "toconnection.h"
 #include "toresultmodel.h"
+#include "toeditwidget.h"
 
 #include <QObject>
 #include <QAbstractTableModel>
@@ -58,7 +59,10 @@ class toViewFilter;
 class toTableViewIterator;
 
 
-class toResultTableView : public QTableView, public toResult {
+class toResultTableView : public QTableView,
+    public toResult,
+    public toEditWidget {
+
     Q_OBJECT;
 
     // Widget to store query statistics to.
@@ -303,6 +307,63 @@ public:
             return 1;
         return 0;
     }
+
+
+    /**
+     * Helper function to display a toResultListFormat.
+     *
+     * @param separator
+     * @param delimiter
+     */
+    virtual int exportType(QString &separator, QString &delimiter);
+
+
+    /**
+     * Export list as a string.
+     *
+     * @param includeHeader Include header.
+     * @param onlySelection Only include selection.
+     * @param type Format of exported list.
+     * @param separator Separator for CSV format.
+     * @param delimiter Delimiter for CSV format.
+     */
+    QString exportAsText(bool includeHeader,
+                         bool onlySelection,
+                         int type,
+                         QString &separator,
+                         QString &delimiter);
+
+
+    // ---------------------------------------- overrides toEditWidget
+
+    /**
+     * Perform a save on this widget.
+     *
+     * @param askfile Ask filename even if default filename is available.
+     */
+    virtual bool editSave(bool askfile);
+
+
+    /**
+     * Print this widgets contents.
+     *
+     */
+    virtual void editPrint(void);
+
+
+    /**
+     * Perform copy.
+     *
+     */
+    virtual void editCopy(void);
+
+
+    /**
+     * Select all contents.
+     *
+     */
+    virtual void editSelectAll(void);
+
 
 
 public slots:
