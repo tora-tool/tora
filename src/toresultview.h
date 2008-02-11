@@ -41,7 +41,6 @@
 #include "config.h"
 #include "toeditwidget.h"
 #include "toresult.h"
-#include "ui_toresultlistformatui.h"
 
 #include <totreewidget.h>
 
@@ -1001,20 +1000,6 @@ protected slots:
     /** Reimplemented for internal reasons.
      */
     virtual void menuCallback(QAction *);
-};
-
-/***
- * Used internally by toListView.
- * @internal
- */
-
-class toResultListFormat : public QDialog, public Ui::toResultListFormatUI {
-    Q_OBJECT;
-public:
-    toResultListFormat(QWidget *parent, const char *name);
-    void saveDefault(void);
-public slots:
-    virtual void formatChanged(int pos);
 };
 
 #endif
