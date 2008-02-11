@@ -251,7 +251,9 @@ void toNewConnection::changeProvider(void)
         Host->lineEdit()->setText(current);
 
         for(std::list<QWidget *>::iterator k = OptionWidgets.begin();k != OptionWidgets.end();k++) {
-            if((*k)->metaObject()->className() == "QCheckBox") {
+            // char* are QString-ized here due the correct warning:
+            // "comparison with string literal results in unspecified behaviour"
+            if(QString((*k)->metaObject()->className()) == QString("QCheckBox")) {
                 QCheckBox *box = (QCheckBox *)(*k);
                 Options[box->text()] = box->isChecked();
             }
@@ -336,7 +338,9 @@ void toNewConnection::processOptions(const QString &str)
             values[val] = false;
     }
     for(std::list<QWidget *>::iterator k = OptionWidgets.begin();k != OptionWidgets.end();k++) {
-        if((*k)->metaObject()->className() == "QCheckBox") {
+        // char* are QString-ized here due the correct warning:
+        // "comparison with string literal results in unspecified behaviour"
+        if(QString((*k)->metaObject()->className()) == QString("QCheckBox")) {
             QCheckBox *box = (QCheckBox *)(*k);
             if(values.find(box->text()) != values.end())
                 box->setChecked(values[box->text()]);
