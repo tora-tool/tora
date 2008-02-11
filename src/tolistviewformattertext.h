@@ -46,6 +46,8 @@ public:
     toListViewFormatterText();
     virtual ~toListViewFormatterText();
     virtual QString getFormattedString(toListView& tListView);
+    virtual QString getFormattedString(toExportSettings &settings,
+                                       const toResultModel *model);
 };
 
 #endif

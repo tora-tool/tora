@@ -167,3 +167,9 @@ QString toListViewFormatterTabDel::getFormattedString(toListView& tListView)
     }
 
 }
+
+
+QString toListViewFormatterTabDel::getFormattedString(toExportSettings &settings,
+                                                      const toResultModel *model) {
+    return QString::null;
+}

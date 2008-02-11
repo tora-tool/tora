@@ -170,3 +170,9 @@ QString toListViewFormatterSQL::getFormattedString( toListView& tListView )
         throw;
     }
 }
+
+
+QString toListViewFormatterSQL::getFormattedString(toExportSettings &settings,
+                                                   const toResultModel *model) {
+    return QString::null;
+}

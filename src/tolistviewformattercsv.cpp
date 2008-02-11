@@ -182,3 +182,9 @@ QString toListViewFormatterCSV::getFormattedString(toListView& tListView)
     }
 
 }
+
+
+QString toListViewFormatterCSV::getFormattedString(toExportSettings &settings,
+                                                   const toResultModel *model) {
+    return QString::null;
+}

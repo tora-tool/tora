@@ -40,14 +40,43 @@
 #include <qstring.h>
 
 class toListView;
+class toResultModel;
 
 
-class toListViewFormatter
-{
+/**
+ * Class for storing settings for export.
+ *
+ */
+class toExportSettings {
+public:
+    bool    IncludeHeader;
+    bool    OnlySelection;
+    int     Type;
+    QString Separator;
+    QString Delimiter;
+
+
+    toExportSettings(bool _header,
+                     bool _selection,
+                     int _type,
+                     const QString &_sep,
+                     const QString &_del) {
+        IncludeHeader = _header;
+        OnlySelection = _selection;
+        Type          = _type;
+        Separator     = _sep;
+        Delimiter     = _del;
+    }
+};
+
+
+class toListViewFormatter {
 public:
     toListViewFormatter();
     virtual ~toListViewFormatter();
     virtual QString getFormattedString(toListView& tListView) = 0;
+    virtual QString getFormattedString(toExportSettings &settings,
+                                       const toResultModel *model) = 0;
 };
 
 #endif

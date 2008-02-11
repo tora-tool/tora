@@ -48,6 +48,8 @@ public:
     toListViewFormatterCSV();
     virtual ~toListViewFormatterCSV();
     virtual QString getFormattedString(toListView& tListView);
+    virtual QString getFormattedString(toExportSettings &settings,
+                                       const toResultModel *model);
 };
 
 #endif

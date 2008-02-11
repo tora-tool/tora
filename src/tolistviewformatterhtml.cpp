@@ -187,3 +187,9 @@ QString toListViewFormatterHTML::getFormattedString(toListView& tListView)
         throw;
     }
 }
+
+
+QString toListViewFormatterHTML::getFormattedString(toExportSettings &settings,
+                                                    const toResultModel *model) {
+    return QString::null;
+}
