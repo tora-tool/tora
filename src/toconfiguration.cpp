@@ -23,7 +23,7 @@ static char *toKeyPath(const QString &str)
     QString ret = str.mid(0, pos);
     if (buf)
         free(buf);
-    buf = strdup(ret);
+    buf = strdup(ret.toLatin1());
     RegCreateKey(HKEY_CURRENT_USER, buf, &key);
     RegCloseKey(key);
     return buf;
@@ -40,7 +40,7 @@ static char* toKeyValue(const QString &str)
         throw QT_TRANSLATE_NOOP("toKeyValue", "Couldn't find \\ in path");
     if (buf)
         free(buf);
-    buf = strdup(str.mid(pos + 1));
+    buf = strdup(str.mid(pos + 1).toLatin1());
     return buf;
 }
 
@@ -164,7 +164,7 @@ void toConfiguration::saveConfig()
             {
                 toStatusMessage(QT_TRANSLATE_NOOP(
                                     "toTool",
-                                    "Couldn't open key %1").arg((const char *) path));
+                                    "Couldn't open key %1").arg(path));
                 break;
             }
 
@@ -178,7 +178,7 @@ void toConfiguration::saveConfig()
                 {
                     toStatusMessage(QT_TRANSLATE_NOOP(
                                         "toTool",
-                                        "Couldn't save empty value at key %1").arg((const char *) path));
+                                        "Couldn't save empty value at key %1").arg(path));
                 }
             }
             else
@@ -192,7 +192,7 @@ void toConfiguration::saveConfig()
                 {
                     toStatusMessage(QT_TRANSLATE_NOOP(
                                         "toTool",
-                                        "Couldn't save %1 value at key %2").arg((const char *) value).arg((const char *) path));
+                                        "Couldn't save %1 value at key %2").arg(value).arg(path));
                 }
                 free(t);
             }
@@ -263,7 +263,7 @@ const QString &toConfiguration::globalConfig(const QString &tag, const QString &
             {
                 toStatusMessage(QT_TRANSLATE_NOOP(
                                     "toTool",
-                                    "Couldn't open key %1").arg((const char *) path));
+                                    "Couldn't open key %1").arg(path));
             }
             else
             {
@@ -290,7 +290,7 @@ const QString &toConfiguration::globalConfig(const QString &tag, const QString &
         {
             toStatusMessage(QT_TRANSLATE_NOOP(
                                 "toTool",
-                                "Couldn't get value at key %1").arg((const char *) path));
+                                "Couldn't get value at key %1").arg(path));
         }
 #endif
 
@@ -341,7 +341,7 @@ void toConfiguration::globalEraseConfig(const QString &tag)
         QString path = tag;
         path.prepend(APPLICATION_NAME);
         path.replace(':', '\\');
-        RegDeleteKeyA(HKEY_CURRENT_USER, path); // Don't really care if it works.
+        RegDeleteKeyA(HKEY_CURRENT_USER, path.toLatin1()); // Don't really care if it works.
 #endif
 
     }

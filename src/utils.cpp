@@ -582,7 +582,7 @@ QString toPluginPath(void)
 			{
 				str = buffer;
 				static QRegExp findQuotes("\"([^\"]*)\"");
-				if (findQuotes.search(str) >= 0)
+				if (findQuotes.indexIn(str) >= 0)
 				str = findQuotes.cap(1);
 				int ind = str.lastIndexOf('\\');
 				if (ind >= 0)
