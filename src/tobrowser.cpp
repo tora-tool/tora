@@ -1781,24 +1781,24 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
 #ifdef DBLINK
 
-    splitter = new QSplitter(Qt::Horizontal, TopTab, TAB_DBLINK);
+    splitter = new QSplitter(Qt::Horizontal, TopTab);
+    splitter->setObjectName(TAB_DBLINK);
     TopTab->addTab(splitter, tr("DBLinks"));
 
     box = new QWidget(splitter);
-    QVBoxLayout *vbox = new QVBoxLayout;
+
+    vbox = new QVBoxLayout;
     vbox->setSpacing(0);
     vbox->setContentsMargins(0, 0, 0, 0);
     box->setLayout(vbox);
 
     toolbar = toAllocBar(box, tr("Database browser"));
-    vbox->addWidget(box);
+    vbox->addWidget(toolbar);
 
-    toolbar->addWidget(
-        new toBrowseButton(QPixmap(const_cast<const char**>(modconstraint_xpm)),
-                           tr("Test DBLink"),
-                           tr("Test DBLink"),
-                           this, SLOT(testDBLink()),
-                           toolbar));
+    testDBLinkAct = new QAction(QPixmap(const_cast<const char**>(modconstraint_xpm)),
+                                tr("Test DBLink"), this);
+    connect(testDBLinkAct, SIGNAL(triggered()), this, SLOT(testDBLink()));
+    toolbar->addAction(testDBLinkAct);
     toolbar->addSeparator();
 
     tableView = new toResultTableView(true, false, box);
@@ -1809,7 +1809,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     tableView->setTabWidget(TopTab);
     tableView->setSQL(SQLListDBLink);
     tableView->resize(FIRST_WIDTH, tableView->height());
-    tableView->setResizeMode(toTreeWidget::AllColumns);
+
     connect(tableView,
             SIGNAL(selectionChanged()),
             this,
@@ -1818,10 +1818,12 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
             SIGNAL(displayMenu(QMenu *)),
             this,
             SLOT(displayIndexMenu(QMenu *)));
-    box->resize(FIRST_WIDTH, tableView->height());
-    splitter->setResizeMode(box, QSplitter::KeepSize);
+
     curr = new toTabWidget(splitter);
-    splitter->setResizeMode(curr, QSplitter::Stretch);
+
+    box->resize(FIRST_WIDTH, tableView->height());
+    splitter->setStretchFactor(splitter->indexOf(tableView), 0);
+    splitter->setStretchFactor(splitter->indexOf(curr), 1);
 
     toResultItem *resultDBLink = new toResultItem(
         2,
@@ -3221,6 +3223,7 @@ void toBrowser::testDBLink(void)
 {
     if (SecondText.isEmpty())
         return ;
+
     toQList resultset;
     try {
         resultset = toQuery::readQueryNull(toCurrentConnection(this),
@@ -3230,6 +3233,6 @@ void toBrowser::testDBLink(void)
     //   } catch (...) {
     //     TOMessageBox::information(this, "Database link", SecondText);
     //   }
-    if (!resultset.empty())
-        TOMessageBox::information(this, "Database link", SecondText);
+    QString status(resultset.empty() ? tr("status: FAILED") : tr("status: OK"));
+    TOMessageBox::information(this, "Database link", SecondText + " " + status);
 }

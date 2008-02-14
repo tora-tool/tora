@@ -100,6 +100,7 @@ class toBrowser : public toToolWidget {
     QAction *dropTableAct;
     QAction *enableConstraintAct;
     QAction *disableConstraintAct;
+    QAction *testDBLinkAct;
 
 #ifdef TOEXTENDED_MYSQL
     toMySQLUser *UserPanel;
