@@ -56,6 +56,9 @@ toResultModel::toResultModel(toNoBlockQuery *query,
     First           = true;
     Editable        = edit;
 
+    MaxRead = MaxNumber = toConfigurationSingle::Instance().globalConfig(
+        CONF_MAX_NUMBER, DEFAULT_MAX_NUMBER).toInt();
+
     CurrentRow = 0;
 
     Query = QPointer<toNoBlockQuery>(query);
@@ -90,10 +93,6 @@ void toResultModel::readData() {
         cleanup();
         return;
     }
-
-    int MaxNumber = toConfigurationSingle::Instance().globalConfig(
-        CONF_MAX_NUMBER, DEFAULT_MAX_NUMBER).toInt();
-    MaxNumber += CurrentRow;
 
     try {
         if(!Query->poll()) {
@@ -135,19 +134,20 @@ void toResultModel::readData() {
             Rows << tmp;
             CurrentRow = current;
             endInsertRows();
-
         }
 
         // not really first, but just be sure to emit before done()
         // must be emitted even if there's no data....
         if(First) {
-            First = !First;
-            emit firstResult(Query->sql(),
-                             tr("Statement executed"), // todo
-                             false);
+            if(tmp.size() > 0 || !Query || Query->eof()) {
+                First = !First;
+                emit firstResult(Query->sql(),
+                                 tr("Statement executed"), // todo
+                                 false);
 
-            // need to reset view(s) since we have to poll for data
-            reset();
+                // need to reset view(s) since we have to poll for data
+                reset();
+            }
         }
 
         if(!Query)
@@ -412,6 +412,11 @@ bool toResultModel::canFetchMore(const QModelIndex &parent) const {
 
 
 void toResultModel::fetchMore(const QModelIndex &parent) {
+    // sometimes the view calls this before the query has even
+    // run. don't actually increase max until we've hit it.
+    if(MaxNumber < 0 || MaxNumber <= CurrentRow)
+       MaxNumber += MaxRead;
+
     readData();
 }
 

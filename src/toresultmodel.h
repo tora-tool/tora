@@ -75,6 +75,12 @@ private:
     RowList Rows;
     HeaderList Headers;
 
+    // max rows to read until
+    int MaxNumber;
+
+    // how much to read at a time
+    int MaxRead;
+
     int CurrentRow;
 
     // Timer to poll for new data.
@@ -313,8 +319,8 @@ signals:
      */
     void rowDeleted(const toResultModel::Row &row);
 
-public slots:
-    
+protected slots:
+
     /**
      * reads ands sets up Rows and Columns
      *
