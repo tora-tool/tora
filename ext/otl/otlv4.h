@@ -1,6 +1,6 @@
 // ==============================================================
-// Oracle, ODBC and DB2/CLI Template Library, Version 4.0.157,
-// Copyright (C) Sergei Kuchin, 1996,2007
+// ORACLE, ODBC and DB2/CLI Template Library, Version 4.0.162,
+// Copyright (C) Sergei Kuchin, 1996,2008
 // Author: Sergei Kuchin
 // This library is free software. Permission to use, copy,
 // modify and redistribute it for any purpose is hereby granted
@@ -11,7 +11,7 @@
 #ifndef __OTL_H__
 #define __OTL_H__
 
-#define OTL_VERSION_NUMBER (0x04009DL)
+#define OTL_VERSION_NUMBER (0x0400A2L)
 
 #if defined(_MSC_VER)
 #if (_MSC_VER >= 1400)
@@ -76,6 +76,15 @@
 // option, e.g.: -DOTL_ODBC, -DOTL_ORA7, -DOTL_ORA8, -DOTL_ORA8I, -DOTL_ODBC_UNIX
 // -DOTL_ODBC_MYSQL, -DOTL_DB2_CLI
 
+// this becomes the default from version 4.0.162 and on.
+#if !defined(OTL_UNCAUGHT_EXCEPTION_ON)
+#define OTL_UNCAUGHT_EXCEPTION_ON
+#endif
+
+#if defined(OTL_ORA11G)
+#define OTL_ORA10G_R2
+#endif
+
 #if defined(OTL_STREAM_LEGACY_BUFFER_SIZE_TYPE)
 typedef short int otl_stream_buffer_size_type;
 #else
@@ -106,6 +115,10 @@ typedef int otl_stream_buffer_size_type;
 #define OTL_ODBC_UNIX
 #define OTL_ODBC_SQL_EXTENDED_FETCH_ON
 #include <timesten.h>
+#endif
+
+#if defined(OTL_ODBC_ENTERPRISEDB)
+#define OTL_ODBC_POSTGRESQL
 #endif
 
 #if defined(OTL_ODBC_POSTGRESQL)
@@ -567,7 +580,7 @@ typedef int otl_stream_buffer_size_type;
   if(OTL_TRACE_LEVEL & level){                                                  \
     char temp_connect_str2[2048];                                               \
     OTL_STRCPY_S(temp_connect_str2,sizeof(temp_connect_str2),userid);           \
-    OTL_STRCPY_S(temp_connect_str2,sizeof(temp_connect_str2),"/");              \
+    OTL_STRCAT_S(temp_connect_str2,sizeof(temp_connect_str2),"/");              \
     size_t sz=strlen(passwd);                                                   \
     for(size_t i=0;i<sz;++i)                                                    \
       OTL_STRCAT_S(temp_connect_str2,sizeof(temp_connect_str2),"*");            \
@@ -1197,7 +1210,11 @@ const int otl_error_code_30=32031;
 
 const int otl_error_code_31=32032;
 #define otl_error_msg_31 \
-"SELECT otl_stream buffer size for TimesTen should be in [1..128] range" 
+"SELECT otl_stream buffer size for TimesTen should be in [0..128] range" 
+
+const int otl_error_code_32=32033;
+#define otl_error_msg_32 \
+"otl_connect object needs to be connected to DB before using otl_subscriber" 
 
 
 const int otl_oracle_date_size=7;
@@ -1822,8 +1839,18 @@ inline const char* otl_var_type_name(const int ftype)
   const char* const_LONG_STRING="otl_long_string()";
   const char* const_LOB_STREAM="otl_lob_stream*&";
   const char* const_USER_DEFINED="User-defined type (object type, VARRAY, Nested Table)";
+#if defined(OTL_ORA_UNICODE)||defined(OTL_ORA_UTF8)
+  const char* const_NCHAR="NCHAR"; 
+  const char* const_NCLOB="NCLOB";
+#endif
   
   switch(ftype){
+#if defined(OTL_ORA_UNICODE)||defined(OTL_ORA_UTF8)
+  case otl_var_nchar:
+    return const_NCHAR; 
+  case otl_var_nclob:
+    return const_NCLOB; 
+#endif
   case otl_var_char:
     return const_CHAR;
   case otl_var_double:
@@ -5270,13 +5297,10 @@ public:
      this->stm_label=new char[len];
      OTL_STRCPY_S(this->stm_label,len,sqlstm_label);
    }
-#if defined(OTL_ODBC_TIMESTEN)
-   array_size=1;
-   prefetch_array_size=arr_size;
-#else
-   array_size=arr_size;
-   prefetch_array_size=0;
-#endif
+   select_cursor_struct.set_arr_size
+     (arr_size,
+      array_size,
+      prefetch_array_size);
    select_cursor_struct.init(array_size);
  }
 
@@ -5424,12 +5448,14 @@ public:
 #endif
 
 #if defined(__GNUC__) || defined(__SUNPRO_CC) || \
-    (defined(_MSC_VER) && (_MSC_VER <= 1300)) || \
-  defined(__HP_aCC)
+    (defined(_MSC_VER) && (_MSC_VER <= 1300)) ||          \
+     defined(__HP_aCC) || defined(__BORLANDC__)
   // Enable the kludge for compilers that do not support template
   // member functions at all, or have bugs: g++, Forte C++ (Solaris),
   // Visual C++ 6.0, Visual C++ 7.0, etc.
+#if !defined(OTL_NO_TMPL_MEMBER_FUNC_SUPPORT)
 #define OTL_NO_TMPL_MEMBER_FUNC_SUPPORT
+#endif
 #endif
 
 template <OTL_TYPE_NAME TExceptionStruct,
@@ -9771,7 +9797,7 @@ public:
      temp_connect_str2,
      OTL_SCAST(short,len),
      out_str,
-     sizeof(out_str),
+     sizeof(out_str)/sizeof(SQLWCHAR),
      &out_len,
      SQL_DRIVER_NOPROMPT);
     delete[] temp_connect_str2;
@@ -11457,8 +11483,20 @@ public:
   case otl_var_float:
    return SQL_C_FLOAT;
   case otl_var_int:
+    return SQL_C_SLONG;
   case otl_var_long_int:
-   return SQL_C_SLONG;
+#if defined(OTL_MAP_LONG_TO_SQL_C_SBIGINT) && \
+    ((ODBCVER >= 0x0300) || defined(OTL_ODBC_TIMESTEN))
+  {
+    static bool long_is_8_bytes=sizeof(long)==8;
+    if(long_is_8_bytes)
+      return SQL_C_SBIGINT;
+    else
+      return SQL_C_SLONG;
+  }
+#else
+  return SQL_C_SLONG;
+#endif
   case otl_var_unsigned_int:
    return SQL_C_ULONG;
   case otl_var_short:
@@ -11878,6 +11916,21 @@ public:
   OTL_SQLUSMALLINT* row_status;
   int row_status_arr_size;
 #endif
+
+ void set_arr_size
+ (const int input_arr_size,
+  int& out_array_size,
+  int& out_prefetch_array_size)
+ {
+#if defined(OTL_ODBC_TIMESTEN)
+   out_array_size=1;
+   out_prefetch_array_size=input_arr_size;
+#else
+   out_array_size=input_arr_size;
+   out_prefetch_array_size=0;
+#endif
+ }
+
  
  int close_select(otl_cur& cur)
  {
@@ -13482,7 +13535,7 @@ public:
        strncmp(tmp,"WITH",4)==0)&&
       !implicit_select){
 #if defined(OTL_ODBC_TIMESTEN)
-   if(temp_arr_size>128||temp_arr_size<1){
+   if(temp_arr_size>128||temp_arr_size<0){
      const char* temp_stm_text=assign_stream_type(sqlstm,sqlstm_label);
      throw otl_exception
        (otl_error_msg_31,
@@ -13505,7 +13558,7 @@ public:
    }else{
      if(implicit_select){
 #if defined(OTL_ODBC_TIMESTEN)
-   if(temp_arr_size>128||temp_arr_size<1){
+   if(temp_arr_size>128||temp_arr_size<0){
      const char* temp_stm_text=assign_stream_type(sqlstm,sqlstm_label);
      throw otl_exception
        (otl_error_msg_31,
@@ -14214,7 +14267,11 @@ public:
 #endif
            OTL_STR_TO_BIGINT(temp_val,l);
          }else
-         (*io)->operator>>(l);
+#if defined(OTL_NO_TMPL_MEMBER_FUNC_SUPPORT)
+           (*io)->operator>>(l);
+#else
+           (*io)->operator>><OTL_BIGINT,otl_var_bigint>(l);
+#endif
        }
      }
 #else
@@ -14236,7 +14293,11 @@ public:
            (*ss)->operator>>(temp_val);
            OTL_STR_TO_BIGINT(temp_val,l);
          }else
+#if defined(OTL_NO_TMPL_MEMBER_FUNC_SUPPORT)
            (*ss)->operator>>(l);
+#else
+           (*ss)->operator>><OTL_BIGINT,otl_var_bigint>(l);
+#endif
        }
      }
 #else
@@ -14627,7 +14688,11 @@ public:
            OTL_BIGINT_TO_STR(n,temp_val);
            (*ss)->operator<<(temp_val);
          }else
+#if defined(OTL_NO_TMPL_MEMBER_FUNC_SUPPORT)
            (*ss)->operator<<(n);
+#else
+           (*ss)->operator<<<OTL_BIGINT,otl_var_bigint>(n);
+#endif
        }
      }
 #else
@@ -15551,7 +15616,6 @@ public:
  int sql_param_data_count;
  bool canceled;
 
-
  otl_cur& operator=(const otl_cur& cur)
  {
   *rpc=*cur.rpc;
@@ -15790,6 +15854,15 @@ class otl_sel{
 public:
 
  int implicit_cursor;
+
+ void set_arr_size
+ (const int input_arr_size,
+  int& out_array_size,
+  int& out_prefetch_array_size)
+ {
+   out_array_size=input_arr_size;
+   out_prefetch_array_size=0;
+ }
 
   void set_prefetch_size(const int /*aprefetch_array_size*/)
   {
@@ -19272,7 +19345,7 @@ const int  extMslabel=105;
 const int  extCLOB=inCLOB;
 const int  extBLOB=inBLOB;
 
-#if defined(OTL_ORA10G)||defined(OTL_ORA10G_R2)
+#if (defined(OTL_ORA10G)||defined(OTL_ORA10G_R2))&&!defined(OTL_ORA_LEGACY_NUMERIC_TYPES)
 const int extBFloat=SQLT_BFLOAT;
 const int extBDouble=SQLT_BDOUBLE;
 #endif
@@ -20694,7 +20767,6 @@ public:
   otl_cur0& /* cur */)
  {
   if(!lob_stream_flag)return 1;
-  if(alob_len==0)return 1;
   int rc;
   int byte_s_length=s.length;
 #if defined(OTL_UNICODE)
@@ -20733,6 +20805,7 @@ public:
     if(rc!=OCI_SUCCESS)
       return 0;
   }
+  if(alob_len==0)return 1;
   rc=OCILobWrite
    (connect->svchp,
     connect->errhp,
@@ -20935,7 +21008,7 @@ public:
   case inLongRaw:  return extLongVarRaw;
   case inChar:     return extCChar;
 #if defined(OTL_ORA10G)||defined(OTL_ORA10G_R2)
-#if defined(OTL_ORA_NATIVE_TYPES)
+#if defined(OTL_ORA_NATIVE_TYPES) && !defined(OTL_ORA_LEGACY_NUMERIC_TYPES)
   case inBFloat:   return extBFloat;
   case inBDouble:  return extBDouble;
 #else
@@ -20970,7 +21043,8 @@ public:
    default:
     return maxsz+1;
    }
-#if (defined(OTL_ORA10G)||defined(OTL_ORA10G_R2)) && defined(OTL_ORA_NATIVE_TYPES)
+#if (defined(OTL_ORA10G)||defined(OTL_ORA10G_R2)) && defined(OTL_ORA_NATIVE_TYPES) \
+    && !defined(OTL_ORA_LEGACY_NUMERIC_TYPES)
   case extBFloat:
   case extBDouble:
     return sizeof(double);
@@ -21020,7 +21094,8 @@ public:
       desc.dbtype,
       max_long_size);
    switch(aftype){
-#if (defined(OTL_ORA10G)||defined(OTL_ORA10G_R2))&&defined(OTL_ORA_NATIVE_TYPES)
+#if (defined(OTL_ORA10G)||defined(OTL_ORA10G_R2))&&defined(OTL_ORA_NATIVE_TYPES)\
+    &&!defined(OTL_ORA_LEGACY_NUMERIC_TYPES)
   case extBFloat:
   case extBDouble:
     if(override.all_mask&otl_all_num2str){
@@ -21367,7 +21442,8 @@ public:
   switch(ftype){
   case otl_var_char:
    return extCChar;
-#if (defined(OTL_ORA10G)||defined(OTL_ORA10G_R2))&&defined(OTL_ORA_NATIVE_TYPES)
+#if (defined(OTL_ORA10G)||defined(OTL_ORA10G_R2))&&defined(OTL_ORA_NATIVE_TYPES)\
+    &&!defined(OTL_ORA_LEGACY_NUMERIC_TYPES)
   case otl_var_double:
     return extBDouble;
   case otl_var_float:
@@ -21979,6 +22055,16 @@ class otl_sel{
 public:
 
  int implicit_cursor;
+
+
+ void set_arr_size
+ (const int input_arr_size,
+  int& out_array_size,
+  int& out_prefetch_array_size)
+ {
+   out_array_size=input_arr_size;
+   out_prefetch_array_size=0;
+ }
 
   void set_prefetch_size(const int /*aprefetch_array_size*/)
   {
@@ -23676,6 +23762,11 @@ public:
     s.assign(temp_s+1,*temp_s);
 #endif
 
+#if defined(OTL_DEFAULT_STRING_NULL_TO_VAL)
+   if((*this).is_null())
+    s=OTL_RCAST(OTL_UNICODE_CHAR_TYPE*,OTL_DEFAULT_STRING_NULL_TO_VAL);
+#endif
+
     look_ahead();
   }
   inc_next_ov();
@@ -23697,6 +23788,12 @@ public:
                OTL_RCAST(unsigned char*,sl[cur_col].val(cur_row)),
                sl[cur_col].get_len(cur_row)
              );
+#if defined(OTL_DEFAULT_STRING_NULL_TO_VAL)
+   if((*this).is_null())
+     otl_strcpy(OTL_RCAST(unsigned char*,s),
+                OTL_RCAST(const unsigned char*,OTL_DEFAULT_STRING_NULL_TO_VAL)
+               );
+#endif
    look_ahead();
   }
   inc_next_ov();
@@ -23716,6 +23813,12 @@ public:
                OTL_RCAST(unsigned char*,sl[cur_col].val(cur_row)),
                sl[cur_col].get_len(cur_row)
              );
+#if defined(OTL_DEFAULT_STRING_NULL_TO_VAL)
+   if((*this).is_null())
+     otl_strcpy(OTL_RCAST(unsigned char*,s),
+                OTL_RCAST(const unsigned char*,OTL_DEFAULT_STRING_NULL_TO_VAL)
+               );
+#endif
    look_ahead();
   }
   inc_next_ov();
@@ -27201,6 +27304,7 @@ public:
        break;
      case otl_select_stream_type:
        temp_stm_text=(*ss)->stm_label?(*ss)->stm_label:(*ss)->stm_text;
+       break;
      case otl_refcur_stream_type:
        temp_stm_text=(*ref_ss)->stm_label?(*ref_ss)->stm_label:(*ref_ss)->stm_text;
        break;
@@ -28732,6 +28836,369 @@ private:
 
 };
 
+#if defined(OTL_ORA_SUBSCRIBE)
+#if !defined(OTL_ORA_OCI_ENV_CREATE)
+#error OTL_ORA_SUBSCRIBE requires #define OTL_ORA_OCI_ENV_CREATE to be enabled
+#endif
+#if !defined(OTL_ORA_OCI_ENV_CREATE_MODE)
+#error OTL_ORA_SUBSCRIBE requires #define OTL_ORA_OCI_ENV_CREATE_MODE to be \
+enabled and to have OCI_THREADED|OCI_OBJECT|OCI_EVENTS
+#endif
+
+class otl_subscriber{
+public:
+
+  otl_subscriber(otl_connect* adb=0)
+  {
+    subscrhp=0;
+    db=adb;
+  }
+
+  virtual ~otl_subscriber(void)
+  {
+    unsubscribe();
+  }
+
+  void subscribe(const char *name=0,int port=0,int timeout=1800)
+  {
+    if(subscrhp) unsubscribe();
+    if(!db||db&&!db->connected) 
+      throw otl_exception
+        (otl_error_msg_32,
+         otl_error_code_32);
+    
+    OCIEnv *envhp=db->connect_struct.envhp;
+    OCIError *errhp=db->connect_struct.errhp;
+    OCISvcCtx *svchp=db->connect_struct.svchp;
+    
+    if(port)
+      check(OCIAttrSet(OTL_RCAST(dvoid*,envhp), 
+                       OTL_SCAST(ub4,OCI_HTYPE_ENV), 
+                       OTL_RCAST(dvoid*,&port),
+                       0, 
+                       OCI_ATTR_SUBSCR_PORTNO, 
+                       errhp));
+
+    OCISubscription** temp_subscrhp=&subscrhp;
+    check(OCIHandleAlloc(OTL_RCAST(dvoid*,envhp), 
+                         OTL_RCAST(dvoid**,temp_subscrhp),
+                         OCI_HTYPE_SUBSCRIPTION, 
+                         OTL_SCAST(size_t,0),
+                         OTL_RCAST(dvoid**,0)));
+    
+    if(name && *name)
+      check(OCIAttrSet(subscrhp, 
+                       OCI_HTYPE_SUBSCRIPTION, 
+                       OTL_RCAST(void*,OTL_CCAST(char*,name)), 
+                       OTL_SCAST(ub4,strlen(name)), 
+                       OCI_ATTR_SUBSCR_NAME, 
+                       errhp));
+    
+    ub4 nspace = OCI_SUBSCR_NAMESPACE_DBCHANGE;
+    check(OCIAttrSet(subscrhp, 
+                     OCI_HTYPE_SUBSCRIPTION, 
+                     OTL_RCAST(dvoid*,&nspace), 
+                     sizeof(ub4), 
+                     OCI_ATTR_SUBSCR_NAMESPACE, 
+                     errhp));
+    
+    check(OCIAttrSet(subscrhp, 
+                     OCI_HTYPE_SUBSCRIPTION, 
+#if defined(__GNUC__) && (__GNUC__<4)
+                     (void*)common_notification_callback,
+#else
+                     OTL_RCAST(void*,common_notification_callback),
+#endif
+                     0, 
+                     OCI_ATTR_SUBSCR_CALLBACK, 
+                     errhp));
+    
+    int rowids_needed=1;
+    check(OCIAttrSet(subscrhp, 
+                     OCI_HTYPE_SUBSCRIPTION, 
+                     OTL_RCAST(dvoid*,&rowids_needed),
+                     sizeof(ub4), 
+                     OCI_ATTR_CHNF_ROWIDS, 
+                     errhp));
+    
+    check(OCIAttrSet(subscrhp, 
+                     OTL_SCAST(ub4,OCI_HTYPE_SUBSCRIPTION),
+                     OTL_RCAST(dvoid*,this),
+                     0, 
+                     OCI_ATTR_SUBSCR_CTX, 
+                     errhp));
+    
+    if(timeout)
+      check(OCIAttrSet(subscrhp, 
+                       OCI_HTYPE_SUBSCRIPTION, 
+                       OTL_RCAST(dvoid*,&timeout),
+                       0, 
+                       OCI_ATTR_SUBSCR_TIMEOUT, 
+                       errhp));
+    
+    check(OCISubscriptionRegister(svchp,&subscrhp,1,errhp,OCI_DEFAULT));
+    
+  }
+
+  void unsubscribe(void)
+  {
+    if(!subscrhp) return;
+    if(!db||db&&!db->connected) 
+      throw otl_exception
+        (otl_error_msg_32,
+         otl_error_code_32);
+    OCIError *errhp=db->connect_struct.errhp;
+    OCISvcCtx *svchp=db->connect_struct.svchp;
+    OCISubscriptionUnRegister(svchp,subscrhp,errhp,OCI_DEFAULT);
+    OCIHandleFree(OTL_RCAST(dvoid*,subscrhp),OCI_HTYPE_SUBSCRIPTION);
+    subscrhp=0;
+  }
+
+  void associate_table(const char *table_name)
+  {
+    if(!db||db&&!db->connected) 
+      throw otl_exception
+        (otl_error_msg_32,
+         otl_error_code_32);
+    char sql_stmt[1024];
+    OTL_STRCPY_S(sql_stmt,sizeof(sql_stmt),"select :i<int> from ");
+    OTL_STRCAT_S(sql_stmt,sizeof(sql_stmt),table_name);
+    int arg=0;
+    otl_stream s(1,sql_stmt,*db);
+    if(!s.shell || !s.shell->ss)
+      throw otl_exception(db->connect_struct,sql_stmt);
+    OCIError *errhp=db->connect_struct.errhp;
+    OCIStmt *stmthp=s.shell->ss->cursor_struct.cda;
+    check(OCIAttrSet(stmthp, 
+                     OCI_HTYPE_STMT, 
+                     subscrhp, 
+                     0, 
+                     OCI_ATTR_CHNF_REGHANDLE, 
+                   errhp));
+    s<<arg;
+  }
+
+  void associate_query(const char *stmt)
+  {
+    if(!db||db&&!db->connected) 
+      throw otl_exception
+        (otl_error_msg_32,
+         otl_error_code_32);
+    otl_stream s(1,stmt,*db);
+    if(!s.shell || !s.shell->ss)
+      throw otl_exception(db->connect_struct,stmt);
+    OCIError *errhp=db->connect_struct.errhp;
+    OCIStmt *stmthp=s.shell->ss->cursor_struct.cda;
+    check(OCIAttrSet(stmthp, 
+                     OCI_HTYPE_STMT, 
+                     subscrhp, 
+                     0, 
+                     OCI_ATTR_CHNF_REGHANDLE, 
+                   errhp));
+    s<<0;
+  }
+
+protected:
+
+  void check(ub4 ret_code)
+  {
+    if(ret_code!=OCI_SUCCESS) 
+      throw otl_exception(db->connect_struct);
+  }
+
+  virtual void OnException(otl_exception& e) = 0;
+  virtual void OnDeRegistration(void) = 0;
+
+  //--- DB events:
+  virtual void OnStartup(void) = 0;
+  virtual void OnInstanceShutdown(void) = 0;
+  virtual void OnAnyInstanceShutdown(void) = 0;
+
+  //--- Table events:
+  virtual void OnTableInvalidate(text *table_name) = 0;
+  virtual void OnTableAlter(text *table_name) = 0;
+  virtual void OnTableDrop(text *table_name) = 0;
+  virtual void OnTableChange(text *table_name) = 0;
+
+  //--- Row events:
+  virtual void OnRowInsert( text *table_name, text *row_id ) = 0;
+  virtual void OnRowUpdate( text *table_name, text *row_id ) = 0;
+  virtual void OnRowDelete( text *table_name, text *row_id ) = 0;
+
+protected:  
+  otl_connect* db;
+private:
+  OCISubscription *subscrhp;
+
+  void notification_callback
+  (dvoid* /*payload*/, ub4 /*paylen*/, dvoid *desc, ub4 /*mode*/)
+  {
+    if(!db||db&&!db->connected) 
+      return;
+    ub4 num_rows = 0;
+    OCIColl *row_changes=0;
+    dvoid *row_desc, **row_descp;
+    dvoid*** temp_row_descp=&row_descp;
+    text *row_id;
+    ub4 rowid_size;
+    unsigned int j;
+    try{
+      OCIEnv *envhp=db->connect_struct.envhp;
+      OCIError *errhp=db->connect_struct.errhp;
+      
+      //----------------
+      ub4 notify_type;
+      check(OCIAttrGet(desc, 
+                       OCI_DTYPE_CHDES, 
+                       &notify_type, 
+                       0,
+                       OCI_ATTR_CHDES_NFYTYPE, 
+                       errhp));
+      
+      switch(notify_type){
+      case OCI_EVENT_STARTUP: 
+        OnStartup(); 
+        return;
+      case OCI_EVENT_SHUTDOWN: 
+        OnInstanceShutdown(); 
+        return;
+      case OCI_EVENT_SHUTDOWN_ANY: 
+        OnAnyInstanceShutdown(); 
+        return;
+      case OCI_EVENT_DEREG: 
+        OnDeRegistration(); 
+        return;
+      case OCI_EVENT_OBJCHANGE: 
+        break;
+      default: 
+        return;
+      }
+
+      OCIColl *table_changes=0;
+      check(OCIAttrGet(desc, 
+                       OCI_DTYPE_CHDES, 
+                       &table_changes, 
+                       0, 
+                       OCI_ATTR_CHDES_TABLE_CHANGES, 
+                       errhp));
+      if(!table_changes)return;
+      
+      ub4 num_tables=0;
+      check(OCICollSize(envhp, 
+                        errhp, 
+                        OTL_RCAST(CONST OCIColl*,table_changes),
+                        OTL_RCAST(sb4*,&num_tables)));
+      if(!num_tables)return;
+      
+      for(unsigned int i=0;i<num_tables;i++){
+        int exist;
+        dvoid *elemind=0, *table_desc, **table_descp;
+        dvoid*** temp_table_descp=&table_descp;
+        check(OCICollGetElem(envhp, 
+                             errhp, 
+                             table_changes, 
+                             i, 
+                             &exist, 
+                             OTL_RCAST(dvoid**,temp_table_descp),
+                             &elemind));
+        table_desc=*table_descp;
+        text *table_name;
+        check(OCIAttrGet(table_desc, 
+                         OCI_DTYPE_TABLE_CHDES, 
+                         &table_name, 
+                         0, 
+                         OCI_ATTR_CHDES_TABLE_NAME, 
+                         errhp));
+        
+        ub4 table_op;
+        check(OCIAttrGet(table_desc, 
+                         OCI_DTYPE_TABLE_CHDES, 
+                         OTL_RCAST(dvoid*,&table_op),
+                         0, 
+                         OCI_ATTR_CHDES_TABLE_OPFLAGS, 
+                         errhp));
+        switch(table_op){
+        case OCI_OPCODE_ALLROWS: 
+          OnTableInvalidate(table_name); 
+          continue;
+        case OCI_OPCODE_ALTER: 
+          OnTableAlter(table_name); 
+          continue;
+        case OCI_OPCODE_DROP: 
+          OnTableDrop(table_name); 
+          continue;
+        case OCI_OPCODE_INSERT:
+        case OCI_OPCODE_UPDATE:
+        case OCI_OPCODE_DELETE: 
+          OnTableChange(table_name); 
+          break;
+        }
+        
+        row_changes=0;
+        check(OCIAttrGet(table_desc,
+                         OCI_DTYPE_TABLE_CHDES, 
+                         &row_changes, 
+                         0, 
+                         OCI_ATTR_CHDES_TABLE_ROW_CHANGES, 
+                         errhp));
+        if(!row_changes)continue;
+        num_rows=0;
+        check(OCICollSize(envhp,errhp,row_changes,OTL_RCAST(sb4*,&num_rows)));
+        for(j=0;j<num_rows;j++){
+          elemind=0;
+          check(OCICollGetElem(envhp, 
+                               errhp, 
+                               row_changes, 
+                               j, 
+                               &exist, 
+                               OTL_RCAST(dvoid**,temp_row_descp), 
+                               &elemind));
+          row_desc=*row_descp;
+          
+          check(OCIAttrGet(row_desc, 
+                           OCI_DTYPE_ROW_CHDES, 
+                           OTL_RCAST(dvoid*,&row_id),
+                           &rowid_size, 
+                           OCI_ATTR_CHDES_ROW_ROWID, 
+                           errhp));
+          
+          switch(table_op){
+          case OCI_OPCODE_INSERT: 
+            OnRowInsert( table_name, row_id ); 
+            continue;
+          case OCI_OPCODE_UPDATE: 
+            OnRowUpdate( table_name, row_id ); 
+            continue;
+          case OCI_OPCODE_DELETE: 
+            OnRowDelete( table_name, row_id ); 
+            continue;
+          }
+        }
+      }
+    }catch( otl_exception &e ){
+      OnException(e);
+    }
+  }
+
+  static void common_notification_callback
+  (dvoid *ctx, 
+   OCISubscription* /*subscrhp*/, 
+   dvoid *payload, 
+   ub4 paylen, 
+   dvoid *desc, 
+   ub4 mode)
+  {
+    if(!ctx) return;
+    (OTL_RCAST(otl_subscriber*,ctx))->notification_callback(payload,paylen,desc,mode);
+  }
+
+public:
+  bool is_online(void){ return subscrhp!=0; }
+
+};
+
+#endif
+
 inline otl_connect& operator>>(otl_connect& connect, otl_stream& s)
 {
   const char* cmd=connect.getCmd();
@@ -29046,7 +29513,15 @@ public:
 #if defined(__BORLANDC__) || defined(_MSC_VER)
    return stricmp(s1,s2)<0;
 #else
+#if defined(__STRICT_ANSI__)
+   while(otl_to_upper(*s1)==otl_to_upper(*s2)&&*s1){
+     ++s1; 
+     ++s2;
+   }
+   return *s1 < *s2;
+#else
   return strcasecmp(s1,s2)<0;
+#endif
 #endif
  }
 };
@@ -29294,7 +29769,7 @@ public:
     check_pos(pos);
     check_type(pos,otl_var_char);
     unsigned char* curr_ptr=out_vars_arr_[pos-1];
-    otl_strcpy(OTL_RCAST(char*,s),OTL_RCAST(const char*,curr_ptr));
+    otl_strcpy(OTL_RCAST(unsigned char*,s),OTL_RCAST(const unsigned char*,curr_ptr));
   }
 
 #if defined(OTL_STL)
