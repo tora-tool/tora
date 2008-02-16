@@ -559,7 +559,7 @@ void toAnalyze::execute(void) {
 
     try {
         toQList par;
-        for (int i = 0; i < Parallel->value() + 1; i++) {
+        for (int i = 0; i < Parallel->value(); i++) {
             QString sql = toShift(Pending);
             if (!sql.isEmpty())
                 toPush(Running, new toNoBlockQuery(connection(), sql, par));
