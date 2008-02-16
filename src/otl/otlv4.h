@@ -1,6 +1,6 @@
 // ==============================================================
-// Oracle, ODBC and DB2/CLI Template Library, Version 4.0.159,
-// Copyright (C) Sergei Kuchin, 1996,2007
+// ORACLE, ODBC and DB2/CLI Template Library, Version 4.0.162,
+// Copyright (C) Sergei Kuchin, 1996,2008
 // Author: Sergei Kuchin
 // This library is free software. Permission to use, copy,
 // modify and redistribute it for any purpose is hereby granted
@@ -11,7 +11,7 @@
 #ifndef __OTL_H__
 #define __OTL_H__
 
-#define OTL_VERSION_NUMBER (0x04009FL)
+#define OTL_VERSION_NUMBER (0x0400A2L)
 
 #if defined(_MSC_VER)
 #if (_MSC_VER >= 1400)
@@ -76,6 +76,15 @@
 // option, e.g.: -DOTL_ODBC, -DOTL_ORA7, -DOTL_ORA8, -DOTL_ORA8I, -DOTL_ODBC_UNIX
 // -DOTL_ODBC_MYSQL, -DOTL_DB2_CLI
 
+// this becomes the default from version 4.0.162 and on.
+#if !defined(OTL_UNCAUGHT_EXCEPTION_ON)
+#define OTL_UNCAUGHT_EXCEPTION_ON
+#endif
+
+#if defined(OTL_ORA11G)
+#define OTL_ORA10G_R2
+#endif
+
 #if defined(OTL_STREAM_LEGACY_BUFFER_SIZE_TYPE)
 typedef short int otl_stream_buffer_size_type;
 #else
@@ -106,6 +115,10 @@ typedef int otl_stream_buffer_size_type;
 #define OTL_ODBC_UNIX
 #define OTL_ODBC_SQL_EXTENDED_FETCH_ON
 #include <timesten.h>
+#endif
+
+#if defined(OTL_ODBC_ENTERPRISEDB)
+#define OTL_ODBC_POSTGRESQL
 #endif
 
 #if defined(OTL_ODBC_POSTGRESQL)
@@ -567,7 +580,7 @@ typedef int otl_stream_buffer_size_type;
   if(OTL_TRACE_LEVEL & level){                                                  \
     char temp_connect_str2[2048];                                               \
     OTL_STRCPY_S(temp_connect_str2,sizeof(temp_connect_str2),userid);           \
-    OTL_STRCPY_S(temp_connect_str2,sizeof(temp_connect_str2),"/");              \
+    OTL_STRCAT_S(temp_connect_str2,sizeof(temp_connect_str2),"/");              \
     size_t sz=strlen(passwd);                                                   \
     for(size_t i=0;i<sz;++i)                                                    \
       OTL_STRCAT_S(temp_connect_str2,sizeof(temp_connect_str2),"*");            \
@@ -1197,7 +1210,7 @@ const int otl_error_code_30=32031;
 
 const int otl_error_code_31=32032;
 #define otl_error_msg_31 \
-"SELECT otl_stream buffer size for TimesTen should be in [1..128] range" 
+"SELECT otl_stream buffer size for TimesTen should be in [0..128] range" 
 
 const int otl_error_code_32=32033;
 #define otl_error_msg_32 \
@@ -1826,8 +1839,18 @@ inline const char* otl_var_type_name(const int ftype)
   const char* const_LONG_STRING="otl_long_string()";
   const char* const_LOB_STREAM="otl_lob_stream*&";
   const char* const_USER_DEFINED="User-defined type (object type, VARRAY, Nested Table)";
+#if defined(OTL_ORA_UNICODE)||defined(OTL_ORA_UTF8)
+  const char* const_NCHAR="NCHAR"; 
+  const char* const_NCLOB="NCLOB";
+#endif
   
   switch(ftype){
+#if defined(OTL_ORA_UNICODE)||defined(OTL_ORA_UTF8)
+  case otl_var_nchar:
+    return const_NCHAR; 
+  case otl_var_nclob:
+    return const_NCLOB; 
+#endif
   case otl_var_char:
     return const_CHAR;
   case otl_var_double:
@@ -5274,13 +5297,10 @@ public:
      this->stm_label=new char[len];
      OTL_STRCPY_S(this->stm_label,len,sqlstm_label);
    }
-#if defined(OTL_ODBC_TIMESTEN)
-   array_size=1;
-   prefetch_array_size=arr_size;
-#else
-   array_size=arr_size;
-   prefetch_array_size=0;
-#endif
+   select_cursor_struct.set_arr_size
+     (arr_size,
+      array_size,
+      prefetch_array_size);
    select_cursor_struct.init(array_size);
  }
 
@@ -5428,8 +5448,8 @@ public:
 #endif
 
 #if defined(__GNUC__) || defined(__SUNPRO_CC) || \
-    (defined(_MSC_VER) && (_MSC_VER <= 1300)) || \
-  defined(__HP_aCC) || defined(__BORLANDC__)
+    (defined(_MSC_VER) && (_MSC_VER <= 1300)) ||          \
+     defined(__HP_aCC) || defined(__BORLANDC__)
   // Enable the kludge for compilers that do not support template
   // member functions at all, or have bugs: g++, Forte C++ (Solaris),
   // Visual C++ 6.0, Visual C++ 7.0, etc.
@@ -11896,6 +11916,21 @@ public:
   OTL_SQLUSMALLINT* row_status;
   int row_status_arr_size;
 #endif
+
+ void set_arr_size
+ (const int input_arr_size,
+  int& out_array_size,
+  int& out_prefetch_array_size)
+ {
+#if defined(OTL_ODBC_TIMESTEN)
+   out_array_size=1;
+   out_prefetch_array_size=input_arr_size;
+#else
+   out_array_size=input_arr_size;
+   out_prefetch_array_size=0;
+#endif
+ }
+
  
  int close_select(otl_cur& cur)
  {
@@ -13500,7 +13535,7 @@ public:
        strncmp(tmp,"WITH",4)==0)&&
       !implicit_select){
 #if defined(OTL_ODBC_TIMESTEN)
-   if(temp_arr_size>128||temp_arr_size<1){
+   if(temp_arr_size>128||temp_arr_size<0){
      const char* temp_stm_text=assign_stream_type(sqlstm,sqlstm_label);
      throw otl_exception
        (otl_error_msg_31,
@@ -13523,7 +13558,7 @@ public:
    }else{
      if(implicit_select){
 #if defined(OTL_ODBC_TIMESTEN)
-   if(temp_arr_size>128||temp_arr_size<1){
+   if(temp_arr_size>128||temp_arr_size<0){
      const char* temp_stm_text=assign_stream_type(sqlstm,sqlstm_label);
      throw otl_exception
        (otl_error_msg_31,
@@ -14232,7 +14267,11 @@ public:
 #endif
            OTL_STR_TO_BIGINT(temp_val,l);
          }else
-         (*io)->operator>>(l);
+#if defined(OTL_NO_TMPL_MEMBER_FUNC_SUPPORT)
+           (*io)->operator>>(l);
+#else
+           (*io)->operator>><OTL_BIGINT,otl_var_bigint>(l);
+#endif
        }
      }
 #else
@@ -14254,7 +14293,11 @@ public:
            (*ss)->operator>>(temp_val);
            OTL_STR_TO_BIGINT(temp_val,l);
          }else
+#if defined(OTL_NO_TMPL_MEMBER_FUNC_SUPPORT)
            (*ss)->operator>>(l);
+#else
+           (*ss)->operator>><OTL_BIGINT,otl_var_bigint>(l);
+#endif
        }
      }
 #else
@@ -14645,7 +14688,11 @@ public:
            OTL_BIGINT_TO_STR(n,temp_val);
            (*ss)->operator<<(temp_val);
          }else
+#if defined(OTL_NO_TMPL_MEMBER_FUNC_SUPPORT)
            (*ss)->operator<<(n);
+#else
+           (*ss)->operator<<<OTL_BIGINT,otl_var_bigint>(n);
+#endif
        }
      }
 #else
@@ -15569,7 +15616,6 @@ public:
  int sql_param_data_count;
  bool canceled;
 
-
  otl_cur& operator=(const otl_cur& cur)
  {
   *rpc=*cur.rpc;
@@ -15808,6 +15854,15 @@ class otl_sel{
 public:
 
  int implicit_cursor;
+
+ void set_arr_size
+ (const int input_arr_size,
+  int& out_array_size,
+  int& out_prefetch_array_size)
+ {
+   out_array_size=input_arr_size;
+   out_prefetch_array_size=0;
+ }
 
   void set_prefetch_size(const int /*aprefetch_array_size*/)
   {
@@ -19290,7 +19345,7 @@ const int  extMslabel=105;
 const int  extCLOB=inCLOB;
 const int  extBLOB=inBLOB;
 
-#if defined(OTL_ORA10G)||defined(OTL_ORA10G_R2)
+#if (defined(OTL_ORA10G)||defined(OTL_ORA10G_R2))&&!defined(OTL_ORA_LEGACY_NUMERIC_TYPES)
 const int extBFloat=SQLT_BFLOAT;
 const int extBDouble=SQLT_BDOUBLE;
 #endif
@@ -20712,7 +20767,6 @@ public:
   otl_cur0& /* cur */)
  {
   if(!lob_stream_flag)return 1;
-  if(alob_len==0)return 1;
   int rc;
   int byte_s_length=s.length;
 #if defined(OTL_UNICODE)
@@ -20751,6 +20805,7 @@ public:
     if(rc!=OCI_SUCCESS)
       return 0;
   }
+  if(alob_len==0)return 1;
   rc=OCILobWrite
    (connect->svchp,
     connect->errhp,
@@ -20953,7 +21008,7 @@ public:
   case inLongRaw:  return extLongVarRaw;
   case inChar:     return extCChar;
 #if defined(OTL_ORA10G)||defined(OTL_ORA10G_R2)
-#if defined(OTL_ORA_NATIVE_TYPES)
+#if defined(OTL_ORA_NATIVE_TYPES) && !defined(OTL_ORA_LEGACY_NUMERIC_TYPES)
   case inBFloat:   return extBFloat;
   case inBDouble:  return extBDouble;
 #else
@@ -20988,7 +21043,8 @@ public:
    default:
     return maxsz+1;
    }
-#if (defined(OTL_ORA10G)||defined(OTL_ORA10G_R2)) && defined(OTL_ORA_NATIVE_TYPES)
+#if (defined(OTL_ORA10G)||defined(OTL_ORA10G_R2)) && defined(OTL_ORA_NATIVE_TYPES) \
+    && !defined(OTL_ORA_LEGACY_NUMERIC_TYPES)
   case extBFloat:
   case extBDouble:
     return sizeof(double);
@@ -21038,7 +21094,8 @@ public:
       desc.dbtype,
       max_long_size);
    switch(aftype){
-#if (defined(OTL_ORA10G)||defined(OTL_ORA10G_R2))&&defined(OTL_ORA_NATIVE_TYPES)
+#if (defined(OTL_ORA10G)||defined(OTL_ORA10G_R2))&&defined(OTL_ORA_NATIVE_TYPES)\
+    &&!defined(OTL_ORA_LEGACY_NUMERIC_TYPES)
   case extBFloat:
   case extBDouble:
     if(override.all_mask&otl_all_num2str){
@@ -21385,7 +21442,8 @@ public:
   switch(ftype){
   case otl_var_char:
    return extCChar;
-#if (defined(OTL_ORA10G)||defined(OTL_ORA10G_R2))&&defined(OTL_ORA_NATIVE_TYPES)
+#if (defined(OTL_ORA10G)||defined(OTL_ORA10G_R2))&&defined(OTL_ORA_NATIVE_TYPES)\
+    &&!defined(OTL_ORA_LEGACY_NUMERIC_TYPES)
   case otl_var_double:
     return extBDouble;
   case otl_var_float:
@@ -21997,6 +22055,16 @@ class otl_sel{
 public:
 
  int implicit_cursor;
+
+
+ void set_arr_size
+ (const int input_arr_size,
+  int& out_array_size,
+  int& out_prefetch_array_size)
+ {
+   out_array_size=input_arr_size;
+   out_prefetch_array_size=0;
+ }
 
   void set_prefetch_size(const int /*aprefetch_array_size*/)
   {
@@ -23694,6 +23762,11 @@ public:
     s.assign(temp_s+1,*temp_s);
 #endif
 
+#if defined(OTL_DEFAULT_STRING_NULL_TO_VAL)
+   if((*this).is_null())
+    s=OTL_RCAST(OTL_UNICODE_CHAR_TYPE*,OTL_DEFAULT_STRING_NULL_TO_VAL);
+#endif
+
     look_ahead();
   }
   inc_next_ov();
@@ -23715,6 +23788,12 @@ public:
                OTL_RCAST(unsigned char*,sl[cur_col].val(cur_row)),
                sl[cur_col].get_len(cur_row)
              );
+#if defined(OTL_DEFAULT_STRING_NULL_TO_VAL)
+   if((*this).is_null())
+     otl_strcpy(OTL_RCAST(unsigned char*,s),
+                OTL_RCAST(const unsigned char*,OTL_DEFAULT_STRING_NULL_TO_VAL)
+               );
+#endif
    look_ahead();
   }
   inc_next_ov();
@@ -23734,6 +23813,12 @@ public:
                OTL_RCAST(unsigned char*,sl[cur_col].val(cur_row)),
                sl[cur_col].get_len(cur_row)
              );
+#if defined(OTL_DEFAULT_STRING_NULL_TO_VAL)
+   if((*this).is_null())
+     otl_strcpy(OTL_RCAST(unsigned char*,s),
+                OTL_RCAST(const unsigned char*,OTL_DEFAULT_STRING_NULL_TO_VAL)
+               );
+#endif
    look_ahead();
   }
   inc_next_ov();
@@ -29428,7 +29513,15 @@ public:
 #if defined(__BORLANDC__) || defined(_MSC_VER)
    return stricmp(s1,s2)<0;
 #else
+#if defined(__STRICT_ANSI__)
+   while(otl_to_upper(*s1)==otl_to_upper(*s2)&&*s1){
+     ++s1; 
+     ++s2;
+   }
+   return *s1 < *s2;
+#else
   return strcasecmp(s1,s2)<0;
+#endif
 #endif
  }
 };
@@ -29676,7 +29769,7 @@ public:
     check_pos(pos);
     check_type(pos,otl_var_char);
     unsigned char* curr_ptr=out_vars_arr_[pos-1];
-    otl_strcpy(OTL_RCAST(char*,s),OTL_RCAST(const char*,curr_ptr));
+    otl_strcpy(OTL_RCAST(unsigned char*,s),OTL_RCAST(const unsigned char*,curr_ptr));
   }
 
 #if defined(OTL_STL)
