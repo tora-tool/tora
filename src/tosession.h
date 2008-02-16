@@ -59,6 +59,7 @@ class toResultLock;
 class toResultStats;
 class toSGAStatement;
 class toWaitEvents;
+class toResultTableView;
 
 #define TO_SESSION_WAIT "toSession:SessionWait"
 #define TO_SESSION_IO   "toSession:SessionIO"
@@ -129,25 +130,25 @@ class toSession : public toToolWidget
 
     toResultCombo *Select;
 
-    toSGAStatement *CurrentStatement;
-    toSGAStatement *PreviousStatement;
-    toResultStats  *SessionStatistics;
-    toResultLong   *LongOps;
-    toResultLong   *ConnectInfo;
-    toResultLong   *LockedObjects;
-    toResultLock   *PendingLocks;
-    toResultLong   *AccessedObjects;
-    toResultBar    *WaitBar;
-    toResultBar    *IOBar;
-    toWaitEvents   *Waits;
-    QSplitter      *OpenSplitter;
-    QSplitter      *StatisticSplitter;
-    toSGAStatement *OpenStatement;
-    toResultLong   *OpenCursors;
-    QString         LastSession;
-    QMenu          *ToolMenu;
-    QComboBox      *Refresh;
-    QLabel         *Total;
+    toSGAStatement    *CurrentStatement;
+    toSGAStatement    *PreviousStatement;
+    toResultStats     *SessionStatistics;
+    toResultLong      *LongOps;
+    toResultLong      *ConnectInfo;
+    toResultTableView *LockedObjects;
+    toResultLock      *PendingLocks;
+    toResultLong      *AccessedObjects;
+    toResultBar       *WaitBar;
+    toResultBar       *IOBar;
+    toWaitEvents      *Waits;
+    QSplitter         *OpenSplitter;
+    QSplitter         *StatisticSplitter;
+    toSGAStatement    *OpenStatement;
+    toResultLong      *OpenCursors;
+    QString            LastSession;
+    QMenu             *ToolMenu;
+    QComboBox         *Refresh;
+    QLabel            *Total;
 
     QAction *refreshAct;
     QAction *enableTimedAct;
@@ -177,6 +178,7 @@ public slots:
     void disableStatistics(void) {
         enableStatistics(false);
     }
+    void cancelBackend(void);
     void disconnectSession(void);
     void windowActivated(QWidget *widget);
     void done(void);

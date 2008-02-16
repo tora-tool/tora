@@ -53,6 +53,7 @@
 #include "tosql.h"
 #include "totool.h"
 #include "towaitevents.h"
+#include "toresulttableview.h"
 
 #include <qcombobox.h>
 #include <qlabel.h>
@@ -66,6 +67,7 @@
 #include <qworkspace.h>
 #include <qworkspace.h>
 
+#include <QTabWidget>
 #include <QList>
 #include <QPixmap>
 
@@ -84,28 +86,19 @@ protected:
         return const_cast<const char**>(tosession_xpm);
     }
 public:
-    toSessionTool()
-        : toTool(210, "Sessions") { }
+    toSessionTool() : toTool(210, "Sessions")
+        { }
     virtual const char *menuItem() {
         return "Sessions";
     }
     virtual QWidget *toolWindow(QWidget *parent, toConnection &connection) {
-        if (toIsOracle(connection))
+        if(toIsOracle(connection) || toIsPostgreSQL(connection))
             return new toSession(parent, connection);
-#ifdef TOSESSIONMYSQL_H
-
-        else if (toIsMySQL(connection))
-            return new toSessionMySQL(*this, parent, connection);
-#endif
 
         return NULL;
     }
     virtual bool canHandle(toConnection &conn) {
-        return toIsOracle(conn)
-#ifdef TOSESSIONMYSQL_H
-            || toIsMySQL(conn)
-#endif
-            ;
+        return toIsOracle(conn) || toIsPostgreSQL(conn);
     }
     virtual void closeWindow(toConnection &connection) {};
 };
@@ -116,6 +109,7 @@ static toSQL SQLConnectInfo("toSession:ConnectInfo",
                             "select authentication_type,osuser,network_service_banner\n"
                             "  from v$session_connect_info where sid = :f1<char[101]>",
                             "Get connection info for a session");
+
 static toSQL SQLLockedObject("toSession:LockedObject",
                              "select b.Object_Name \"Object Name\",\n"
                              "       b.Object_Type \"Type\",\n"
@@ -126,6 +120,26 @@ static toSQL SQLLockedObject("toSession:LockedObject",
                              " where a.object_id = b.object_id\n"
                              "   and a.session_id = :f1<char[101]>",
                              "Display info about objects locked by this session");
+
+static toSQL SQLLockedObjectPg(
+    "toSession:LockedObject",
+    "SELECT c.relname AS \"Name\",\n"
+    "       l.locktype,\n"
+    "       n.nspname,\n"
+    "       l.TRANSACTION,\n"
+    "       l.MODE,\n"
+    "       l.granted,\n"
+    "       l.pid\n"
+    "  FROM pg_catalog.pg_locks l,\n"
+    "       pg_class c,\n"
+    "       pg_namespace n\n"
+    " WHERE l.relation = c.OID\n"
+    "   AND c.relnamespace = n.OID\n"
+    "   AND l.pid = :f1<int>",
+    "",
+    "",
+    "PostgreSQL");
+
 static toSQL SQLOpenCursors("toSession:OpenCursor",
                             "select SQL_Text \"SQL\", Address||':'||Hash_Value \" Address\"\n"
                             "  from v$open_cursor where sid = :f1<char[101]>",
@@ -213,7 +227,23 @@ static toSQL SQLSessions("toSession:ListSession",
                          "   AND (d.child_number = 0 OR d.child_number IS NULL)\n"
                          "   AND a.paddr = e.addr(+)\n"
                          "%1 ORDER BY a.Sid",
-                         "List sessions, must have same number of culumns and the first and last 2 must be the same");
+                         "List sessions, must have same number of columns and the first and last 2 must be the same");
+
+static toSQL SQLSessionsPg(
+    "toSession:ListSession",
+    "SELECT pg_stat_get_backend_pid ( s.backendid ) AS \"Backend ID\",\n"
+    "       ( SELECT u.usename\n"
+    "           FROM pg_user u\n"
+    "          WHERE u.usesysid = pg_stat_get_backend_userid ( s.backendid ) ) AS \"User\",\n"
+    "       pg_stat_get_backend_client_addr ( s.backendid ) AS \"From\",\n"
+    "       pg_stat_get_backend_client_port ( s.backendid ) AS \"Port\",\n"
+    "       pg_stat_get_backend_activity_start ( s.backendid ) AS \"Started\",\n"
+    "       pg_stat_get_backend_waiting ( s.backendid ) AS \"Waiting\",\n"
+    "       pg_stat_get_backend_activity ( s.backendid ) AS \"Current Query\"\n"
+    "  FROM ( SELECT pg_stat_get_backend_idset ( ) AS backendid ) AS s",
+    "",
+    "",
+    "PostgreSQL");
 
 toSession::toSession(QWidget *main, toConnection &connection)
     : toToolWidget(SessionTool, "session.html", main, connection)
@@ -229,45 +259,58 @@ toSession::toSession(QWidget *main, toConnection &connection)
             SLOT(refresh(void)));
     refreshAct->setShortcut(QKeySequence::Refresh);
 
-    toolbar->addSeparator();
+    if(toIsOracle(connection)) {
+        toolbar->addSeparator();
 
-    Select = new toResultCombo(toolbar, TO_TOOLBAR_WIDGET_NAME);
-    Select->setSelected(tr("Only active users"));
-    Select->additionalItem(tr("Only active users"));
-    Select->additionalItem(tr("All"));
-    Select->additionalItem(tr("No background"));
-    Select->additionalItem(tr("No system"));
-    Select->query(toSQL::sql(toSQL::TOSQL_USERLIST));
-    toolbar->addWidget(Select);
+        Select = new toResultCombo(toolbar, TO_TOOLBAR_WIDGET_NAME);
+        Select->setSelected(tr("Only active users"));
+        Select->additionalItem(tr("Only active users"));
+        Select->additionalItem(tr("All"));
+        Select->additionalItem(tr("No background"));
+        Select->additionalItem(tr("No system"));
+        Select->query(toSQL::sql(toSQL::TOSQL_USERLIST));
+        toolbar->addWidget(Select);
 
-    connect(Select, SIGNAL(activated(int)), this, SLOT(refresh()));
+        connect(Select, SIGNAL(activated(int)), this, SLOT(refresh()));
 
-    toolbar->addSeparator();
+        toolbar->addSeparator();
 
-    enableTimedAct =
-        toolbar->addAction(
-            QIcon(QPixmap(const_cast<const char**>(clock_xpm))),
-            tr("Enable timed statistics"),
-            this,
-            SLOT(enableStatistics(void)));
+        enableTimedAct =
+            toolbar->addAction(
+                QIcon(QPixmap(const_cast<const char**>(clock_xpm))),
+                tr("Enable timed statistics"),
+                this,
+                SLOT(enableStatistics(void)));
 
-    disableTimedAct =
-        toolbar->addAction(
-            QIcon(QPixmap(const_cast<const char**>(noclock_xpm))),
-            tr("Disable timed statistics"),
-            this,
-            SLOT(disableStatistics(void)));
+        disableTimedAct =
+            toolbar->addAction(
+                QIcon(QPixmap(const_cast<const char**>(noclock_xpm))),
+                tr("Disable timed statistics"),
+                this,
+                SLOT(disableStatistics(void)));
 
-    toolbar->addSeparator();
+        toolbar->addSeparator();
 
-    disconnectAct =
-        toolbar->addAction(
-            QIcon(QPixmap(const_cast<const char**>(kill_xpm))),
-            tr("Disconnect selected session"),
-            this,
-            SLOT(disconnectSession(void)));
+        disconnectAct =
+            toolbar->addAction(
+                QIcon(QPixmap(const_cast<const char**>(kill_xpm))),
+                tr("Disconnect selected session"),
+                this,
+                SLOT(disconnectSession(void)));
 
-    toolbar->addSeparator();
+        toolbar->addSeparator();
+    }
+    else {
+        enableTimedAct  = NULL;
+        disableTimedAct = NULL;
+
+        disconnectAct =
+            toolbar->addAction(
+                QIcon(QPixmap(const_cast<const char**>(kill_xpm))),
+                tr("Cancel selected backend"),
+                this,
+                SLOT(cancelBackend(void)));
+    }
 
     toolbar->addWidget(
         new QLabel(tr("Refresh") + " ", toolbar));
@@ -278,24 +321,26 @@ toSession::toSession(QWidget *main, toConnection &connection)
             this, SLOT(changeRefresh(const QString &)));
     toolbar->addWidget(Refresh);
 
-    toolbar->addSeparator();
+    if(toIsOracle(connection)) {
+        toolbar->addSeparator();
 
-    QToolButton *btn = new QToolButton(toolbar);
-    btn->setCheckable(true);
-    btn->setIcon(QIcon(filter_xpm));
-    connect(btn, SIGNAL(toggled(bool)), this, SLOT(excludeSelection(bool)));
-    btn->setToolTip(tr("Exclude selected sessions"));
-    toolbar->addWidget(btn);
+        QToolButton *btn = new QToolButton(toolbar);
+        btn->setCheckable(true);
+        btn->setIcon(QIcon(filter_xpm));
+        connect(btn, SIGNAL(toggled(bool)), this, SLOT(excludeSelection(bool)));
+        btn->setToolTip(tr("Exclude selected sessions"));
+        toolbar->addWidget(btn);
 
-    toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(add_xpm))),
-                       tr("Select all sessions"),
-                       this,
-                       SLOT(selectAll(void)));
+        toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(add_xpm))),
+                           tr("Select all sessions"),
+                           this,
+                           SLOT(selectAll(void)));
 
-    toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(minus_xpm))),
-                       tr("Deselect all sessions"),
-                       this,
-                       SLOT(selectNone(void)));
+        toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(minus_xpm))),
+                           tr("Deselect all sessions"),
+                           this,
+                           SLOT(selectNone(void)));
+    }
 
     toolbar->addWidget(new toSpacer());
 
@@ -322,54 +367,79 @@ toSession::toSession(QWidget *main, toConnection &connection)
     CurrentStatement = new toSGAStatement(ResultTab);
     ResultTab->addTab(CurrentStatement, tr("Current Statement"));
 
-    QString sql = toSQL::string(TOSQL_LONGOPS, connection);
-    sql += " AND b.sid = :sid<char[101]> AND b.serial# = :ser<char[101]> order by b.start_time desc";
-    LongOps = new toResultLong(true, false, toQuery::Background, ResultTab);
-    LongOps->setSQL(sql);
-    ResultTab->addTab(LongOps, tr("Long ops"));
+    if(toIsOracle(connection)) {
+        QString sql = toSQL::string(TOSQL_LONGOPS, connection);
+        sql += " AND b.sid = :sid<char[101]> AND b.serial# = :ser<char[101]> order by b.start_time desc";
+        LongOps = new toResultLong(true, false, toQuery::Background, ResultTab);
+        LongOps->setSQL(sql);
+        ResultTab->addTab(LongOps, tr("Long ops"));
 
-    StatisticSplitter = new QSplitter(Qt::Horizontal, ResultTab);
-    SessionStatistics = new toResultStats(false, 0, StatisticSplitter);
-    WaitBar = new toResultBar(StatisticSplitter);
-    WaitBar->setSQL(SQLSessionWait);
-    WaitBar->setTitle(tr("Session wait states"));
-    WaitBar->setYPostfix(QString::fromLatin1("ms/s"));
-    IOBar = new toResultBar(StatisticSplitter);
-    IOBar->setSQL(SQLSessionIO);
-    IOBar->setTitle(tr("Session I/O"));
-    IOBar->setYPostfix(QString::fromLatin1("blocks/s"));
-    ResultTab->addTab(StatisticSplitter, tr("Statistics"));
+        StatisticSplitter = new QSplitter(Qt::Horizontal, ResultTab);
+        SessionStatistics = new toResultStats(false, 0, StatisticSplitter);
+        WaitBar = new toResultBar(StatisticSplitter);
+        WaitBar->setSQL(SQLSessionWait);
+        WaitBar->setTitle(tr("Session wait states"));
+        WaitBar->setYPostfix(QString::fromLatin1("ms/s"));
+        IOBar = new toResultBar(StatisticSplitter);
+        IOBar->setSQL(SQLSessionIO);
+        IOBar->setTitle(tr("Session I/O"));
+        IOBar->setYPostfix(QString::fromLatin1("blocks/s"));
+        ResultTab->addTab(StatisticSplitter, tr("Statistics"));
 
-    Waits = new toWaitEvents(0, ResultTab, "waits");
-    ResultTab->addTab(Waits, tr("Wait events"));
+        Waits = new toWaitEvents(0, ResultTab, "waits");
+        ResultTab->addTab(Waits, tr("Wait events"));
 
-    ConnectInfo = new toResultLong(true, false, toQuery::Background, ResultTab);
-    ConnectInfo->setSQL(SQLConnectInfo);
-    ResultTab->addTab(ConnectInfo, tr("Connect Info"));
-    PendingLocks = new toResultLock(ResultTab);
-    ResultTab->addTab(PendingLocks, tr("Pending Locks"));
-    LockedObjects = new toResultLong(false, false, toQuery::Background, ResultTab);
-    ResultTab->addTab(LockedObjects, tr("Locked Objects"));
-    LockedObjects->setSQL(SQLLockedObject);
-    AccessedObjects = new toResultLong(false, false, toQuery::Background, ResultTab);
-    AccessedObjects->setSQL(SQLAccessedObjects);
-    ResultTab->addTab(AccessedObjects, tr("Accessing"));
+        ConnectInfo = new toResultLong(true, false, toQuery::Background, ResultTab);
+        ConnectInfo->setSQL(SQLConnectInfo);
+        ResultTab->addTab(ConnectInfo, tr("Connect Info"));
 
-    PreviousStatement = new toSGAStatement(ResultTab);
-    ResultTab->addTab(PreviousStatement, tr("Previous Statement"));
+        PendingLocks = new toResultLock(ResultTab);
+        ResultTab->addTab(PendingLocks, tr("Pending Locks"));
 
-    OpenSplitter = new QSplitter(Qt::Horizontal, ResultTab);
-    ResultTab->addTab(OpenSplitter, tr("Open Cursors"));
-    OpenCursors = new toResultLong(false, true, toQuery::Background, OpenSplitter);
-    OpenCursors->setSQL(SQLOpenCursors);
-    OpenStatement = new toSGAStatement(OpenSplitter);
+        LockedObjects = new toResultTableView(false, false, ResultTab);
+        ResultTab->addTab(LockedObjects, tr("Locked Objects"));
+        LockedObjects->setSQL(SQLLockedObject);
+
+        AccessedObjects = new toResultLong(false, false, toQuery::Background, ResultTab);
+        AccessedObjects->setSQL(SQLAccessedObjects);
+        ResultTab->addTab(AccessedObjects, tr("Accessing"));
+
+        PreviousStatement = new toSGAStatement(ResultTab);
+        ResultTab->addTab(PreviousStatement, tr("Previous Statement"));
+
+        OpenSplitter = new QSplitter(Qt::Horizontal, ResultTab);
+        ResultTab->addTab(OpenSplitter, tr("Open Cursors"));
+        OpenCursors = new toResultLong(false, true, toQuery::Background, OpenSplitter);
+        OpenCursors->setSQL(SQLOpenCursors);
+        OpenStatement = new toSGAStatement(OpenSplitter);
+
+        OpenCursors->setSelectionMode(toTreeWidget::Single);
+        connect(OpenCursors, SIGNAL(selectionChanged(toTreeWidgetItem *)),
+                this, SLOT(changeCursor(toTreeWidgetItem *)));
+    }
+    else {
+        LongOps           = NULL;
+        StatisticSplitter = NULL;
+        SessionStatistics = NULL;
+        WaitBar           = NULL;
+        IOBar             = NULL;
+        Waits             = NULL;
+        ConnectInfo       = NULL;
+        PendingLocks      = NULL;
+        AccessedObjects   = NULL;
+        PreviousStatement = NULL;
+        OpenSplitter      = NULL;
+        OpenCursors       = NULL;
+        OpenStatement     = NULL;
+
+        LockedObjects = new toResultTableView(false, false, ResultTab);
+        ResultTab->addTab(LockedObjects, tr("Locked Objects"));
+        LockedObjects->setSQL(SQLLockedObject);
+    }
 
     Sessions->setSelectionMode(toTreeWidget::Single);
-    OpenCursors->setSelectionMode(toTreeWidget::Single);
     connect(Sessions, SIGNAL(selectionChanged(toTreeWidgetItem *)),
             this, SLOT(changeItem(toTreeWidgetItem *)));
-    connect(OpenCursors, SIGNAL(selectionChanged(toTreeWidgetItem *)),
-            this, SLOT(changeCursor(toTreeWidgetItem *)));
     connect(ResultTab, SIGNAL(currentChanged(QWidget *)),
             this, SLOT(changeTab(QWidget *)));
 
@@ -379,7 +449,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
     }
     TOCATCH;
 
-    CurrentTab = StatisticSplitter;
+    CurrentTab = CurrentStatement;
 
     ToolMenu = NULL;
     connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),
@@ -390,7 +460,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
 }
 
 bool toSession::canHandle(toConnection &conn) {
-    return toIsOracle(conn);
+    return toIsOracle(conn) || toIsPostgreSQL(conn);
 }
 
 void toSession::excludeSelection(bool tgl) {
@@ -422,7 +492,7 @@ void toSession::selectNone(void) {
 
 toTreeWidgetItem *toSessionList::createItem(toTreeWidgetItem *last, const QString &str) {
     sessionFilter *filt = dynamic_cast<sessionFilter *>(filter());
-    if (filt && filt->show())
+    if (filt && filt->show() && toIsOracle(connection()))
         return new toResultViewCheck(this, last, str, toTreeWidgetCheck::CheckBox);
     else
         return new toResultViewItem(this, last, str);
@@ -479,18 +549,26 @@ void toSession::windowActivated(QWidget *widget) {
         if (!ToolMenu) {
             ToolMenu = new QMenu(tr("&Session"), this);
 
-            ToolMenu->addAction(refreshAct);
+            // don't use toIs<connection type> here. causes crash on
+            // shutdown when windows are closed/changed.
+
+            if(refreshAct)
+                ToolMenu->addAction(refreshAct);
 
             ToolMenu->addSeparator();
 
-            ToolMenu->addAction(enableTimedAct);
-            ToolMenu->addAction(disableTimedAct);
+            if(enableTimedAct)
+                ToolMenu->addAction(enableTimedAct);
+            if(disableTimedAct)
+                ToolMenu->addAction(disableTimedAct);
 
-            ToolMenu->addSeparator();
+            if(enableTimedAct || disableTimedAct)
+                ToolMenu->addSeparator();
 
-            ToolMenu->addAction(disconnectAct);
-
-            ToolMenu->addSeparator();
+            if(disconnectAct) {
+                ToolMenu->addAction(disconnectAct);
+                ToolMenu->addSeparator();
+            }
 
             toMainWidget()->addCustomMenu(ToolMenu);
         }
@@ -511,18 +589,24 @@ void toSession::refresh(void) {
         else
             Session = Serial = QString::null;
         QString sql = toSQL::string(SQLSessions, connection());
-        QString extra;
-        if (Select->currentIndex() == 0)
-            extra = "   AND a.Type != 'BACKGROUND' AND a.Status != 'INACTIVE'\n";
-        else if (Select->currentIndex() == 1)
-            ; // Do nothing
-        else if (Select->currentIndex() == 2)
-            extra = "   AND a.Type != 'BACKGROUND'\n";
-        else if (Select->currentIndex() == 3)
-            extra = "   AND a.SchemaName NOT IN ('SYS','SYSTEM')\n";
-        else
-            extra = "   AND a.SchemaName = '" + Select->currentText() + "'\n";
-        Sessions->setSQL(sql.arg(extra));
+
+        if(toIsOracle(connection())) {
+            QString extra;
+            if (Select->currentIndex() == 0)
+                extra = "   AND a.Type != 'BACKGROUND' AND a.Status != 'INACTIVE'\n";
+            else if (Select->currentIndex() == 1)
+                ; // Do nothing
+            else if (Select->currentIndex() == 2)
+                extra = "   AND a.Type != 'BACKGROUND'\n";
+            else if (Select->currentIndex() == 3)
+                extra = "   AND a.SchemaName NOT IN ('SYS','SYSTEM')\n";
+            else
+                extra = "   AND a.SchemaName = '" + Select->currentText() + "'\n";
+
+            sql = sql.arg(extra);
+        }
+
+        Sessions->setSQL(sql);
         Sessions->refresh();
     }
     TOCATCH;
@@ -624,7 +708,18 @@ void toSession::changeCursor(toTreeWidgetItem *item) {
         OpenStatement->changeAddress(item->text(2));
 }
 
-void toSession::disconnectSession(void) {
+void toSession::cancelBackend() {
+    toTreeWidgetItem *item = Sessions->selectedItem();
+    if (item) {
+        try {
+            connection().execute(
+                QString("SELECT pg_cancel_backend ( %1 )").arg(item->text(0)));
+        }
+        TOCATCH;
+    }
+}
+
+void toSession::disconnectSession() {
     toTreeWidgetItem *item = Sessions->selectedItem();
     if (item) {
         QString sess = QString::fromLatin1("'");
@@ -670,9 +765,12 @@ void toSession::changeRefresh(const QString &str) {
 void toSession::changeItem(toTreeWidgetItem *item) {
     if (item && LastSession != item->text(0)) {
         if (!item->text(0).isEmpty()) {
-            WaitBar->changeParams(item->text(0));
-            IOBar->changeParams(item->text(0));
-            Waits->setSession(item->text(0).toInt());
+            if(WaitBar)
+                WaitBar->changeParams(item->text(0));
+            if(IOBar)
+                IOBar->changeParams(item->text(0));
+            if(Waits)
+                Waits->setSession(item->text(0).toInt());
         }
         LastSession = item->text(0);
     }
