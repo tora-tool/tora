@@ -85,7 +85,7 @@ public:
         return new toAnalyze(parent, connection);
     }
     virtual bool canHandle(toConnection &conn) {
-        return toIsOracle(conn) || toIsMySQL(conn);
+        return toIsOracle(conn) || toIsMySQL(conn) || toIsPostgreSQL(conn);
     }
 };
 
@@ -131,6 +131,27 @@ static toSQL SQLListTables7("toAnalyze:ListTables",
                             "",
                             "0703");
 
+static toSQL SQLListTablesPg(
+    "toAnalyze:ListTables",
+    "SELECT 'TABLE' AS \"Type\",\n"
+    "       st.schemaname,\n"
+    "       st.relname AS \"table\",\n"
+    "       c.relfrozenxid AS \"Frozen XID\",\n"
+    "       c.relpages AS \"8KB Pages\",\n"
+    "       c.reltuples AS \"Tuples\",\n"
+    "       st.last_analyze AS \"Last Analyze\",\n"
+    "       st.last_autoanalyze AS \"Last Auto Analyze\",\n"
+    "       st.last_vacuum AS \"Last Vacuum\",\n"
+    "       st.last_autovacuum AS \"Last Auto Vacuum\"\n"
+    "  FROM pg_stat_all_tables st,\n"
+    "       pg_class c\n"
+    " WHERE st.relid = c.OID\n"
+    " ORDER BY 1,\n"
+    "          2",
+    "",
+    "7.2",
+    "PostgreSQL");
+
 static toSQL SQLListIndex("toAnalyze:ListIndex",
                           "SELECT 'INDEX' \"Type\",\n"
                           "       Owner,\n"
@@ -146,6 +167,26 @@ static toSQL SQLListIndex("toAnalyze:ListIndex",
                           "  FROM SYS.ALL_INDEXES\n"
                           " WHERE 1 = 1",
                           "List the available indexes, first three column and binds must be same");
+
+static toSQL SQLListIndexPg(
+    "toAnalyze:ListIndex",
+    "SELECT 'INDEX' AS \"Type\",\n"
+    "       st.schemaname,\n"
+    "       st.relname AS \"table\",\n"
+    "       st.indexrelname,\n"
+    "       c.relpages AS \"8KB Pages\",\n"
+    "       c.reltuples AS \"Tuples\",\n"
+    "       st.idx_scan,\n"
+    "       st.idx_tup_read,\n"
+    "       st.idx_tup_fetch\n"
+    "  FROM pg_stat_all_indexes st,\n"
+    "       pg_class c\n"
+    " WHERE st.indexrelid = c.OID\n"
+    " ORDER BY 1,\n"
+    "          2",
+    "",
+    "7.2",
+    "PostgreSQL");
 
 static toSQL SQLListPlans("toAnalyze:ListPlans",
                           "SELECT DISTINCT\n"
@@ -236,6 +277,26 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
         Sample->setSuffix(" " + tr("%"));
         Sample->setEnabled(false);
         toolbar->addWidget(Sample);
+    }
+    else if(toIsPostgreSQL(connection)) {
+        Type = new QComboBox(toolbar);
+        Type->addItem(tr("Tables"));
+        Type->addItem(tr("Indexes"));
+        toolbar->addWidget(Type);
+
+        toolbar->addSeparator();
+
+        Operation = new QComboBox(toolbar);
+        Operation->addItem(tr("Vacuum table"));
+        Operation->addItem(tr("Analyze table"));
+        toolbar->addWidget(Operation);
+        connect(Operation,
+                SIGNAL(activated(int)),
+                this,
+                SLOT(changeOperation(int)));
+
+        Sample = NULL;
+        For    = NULL;
     }
     else {
         Operation = new QComboBox(toolbar);
@@ -403,6 +464,11 @@ void toAnalyze::refresh(void) {
             par.insert(par.end(), Schema->selected());
             if (toIsOracle(connection()))
                 sql += "\n   AND owner = :own<char[100]>";
+            else if(toIsPostgreSQL(connection())) {
+                sql =
+                    QString(" SELECT * FROM ( %1 ) sub\n"
+                            "  WHERE schemaname = :own<char[100]>").arg(sql);
+            }
             else
                 sql += " FROM :f1<noquote>";
         }
@@ -519,6 +585,25 @@ std::list<QString> toAnalyze::getSQL(void) {
                        .arg(Statistics->model()->data((*it).row(), 3).toString())
                        .arg(Statistics->model()->data((*it).row(), 1).toString()));
 
+            }
+            else if(toIsPostgreSQL(connection())) {
+                QString sql;
+
+                switch (Operation->currentIndex()) {
+                case 0:
+                    sql += QString("VACUUM FULL VERBOSE %1.%2");
+                    break;
+                case 1:
+                    sql += QString("ANALYZE VERBOSE %1.%2");
+                    break;
+                default:
+                    toStatusMessage(tr("Internal Error"));
+                    continue;
+                }
+
+                QString table = Statistics->model()->data((*it).row(), 3).toString();
+                QString schema = Statistics->model()->data((*it).row(), 2).toString();
+                toPush(ret, sql.arg(schema).arg(table));
             }
             else {
                 QString sql;
