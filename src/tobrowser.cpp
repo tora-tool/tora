@@ -691,13 +691,11 @@ static toSQL SQLTableIndexSapDB("toBrowser:TableIndex",
                                 "",
                                 "",
                                 "SapDB");
+
 static toSQL SQLTableIndexPG("toBrowser:TableIndex",
                              "SELECT u.usename AS \"Owner\",\n"
                              "       c2.relname AS \"Index Name\",\n"
-                             "       CASE WHEN i.indisprimary =\n"
-                             "  TRUE THEN 'PRIMARY' ELSE 'NORMAL' END AS \"Index Type\",\n"
-                             "       CASE WHEN i.indisunique =\n"
-                             "  TRUE THEN 'UNIQUE' ELSE 'NON UNIQUE' END AS \"Unique\"\n"
+                             "       pg_get_indexdef(i.indexrelid) as \"Definition\"\n"
                              "  FROM pg_class c,\n"
                              "       pg_class c2,\n"
                              "       pg_index i,\n"
@@ -713,6 +711,7 @@ static toSQL SQLTableIndexPG("toBrowser:TableIndex",
                              "",
                              "",
                              "PostgreSQL");
+
 static toSQL SQLTableIndexMySQL("toBrowser:TableIndex",
                                 "SHOW INDEX FROM :f1<noquote>.:tab<noquote>",
                                 "",
