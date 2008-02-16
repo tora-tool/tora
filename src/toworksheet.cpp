@@ -414,6 +414,8 @@ void toWorksheet::setup(bool autoLoad) {
     layout()->addWidget(EditSplitter);
 
     Editor = new toWorksheetText(this, EditSplitter);
+    // stop any running query when a file is loaded
+    connect(Editor, SIGNAL(fileOpened()), this, SLOT(stop()));
 
     ResultTab = new toTabWidget(EditSplitter);
     QWidget *container = new QWidget(ResultTab);
