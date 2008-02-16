@@ -98,6 +98,8 @@ bool toWorksheetText::editOpen(QString suggestedFile) {
             openFilename(fname);
             Worksheet->setCaption();
         }
+
+        emit fileOpened();
         return true;
     }
     TOCATCH;

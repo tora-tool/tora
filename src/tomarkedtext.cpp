@@ -311,6 +311,7 @@ bool toMarkedText::editOpen(QString suggestedFile)
         try
         {
             openFilename(fname);
+            emit fileOpened();
             return true;
         }
         TOCATCH

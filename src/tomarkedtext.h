@@ -242,6 +242,8 @@ public:
 
 signals:
     void displayMenu(QMenu *);
+    // emitted when a new file is opened
+    void fileOpened(void);
 
 protected:
     virtual void newLine(void);
