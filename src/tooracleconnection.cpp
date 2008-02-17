@@ -58,6 +58,12 @@
 #define OTL_ANSI_CPP
 #define OTL_FUNC_THROW_SPEC_ON
 
+#if 1
+#if defined(OTL_ORA10G) || defined(OTL_ORA10G_R2) || defined(OTL_ORA11G)
+#define OTL_ORA_OCI_ENV_CREATE
+#endif
+#endif
+
 #if 0 /* OTL tracing */
 #define OTL_TRACE_LEVEL 0xff
 #define OTL_TRACE_STREAM cerr
