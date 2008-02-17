@@ -1,39 +1,39 @@
 /*****
-*
-* TOra - An Oracle Toolkit for DBA's and developers
-* Copyright (C) 2003-2005 Quest Software, Inc
-* Portions Copyright (C) 2005 Other Contributors
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation;  only version 2 of
-* the License is valid for this program.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*
-*      As a special exception, you have permission to link this program
-*      with the Oracle Client libraries and distribute executables, as long
-*      as you follow the requirements of the GNU GPL in regard to all of the
-*      software in the executable aside from Oracle client libraries.
-*
-*      Specifically you are not permitted to link this program with the
-*      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
-*      And you are not permitted to distribute binaries compiled against
-*      these libraries without written consent from Quest Software, Inc.
-*      Observe that this does not disallow linking to the Qt Free Edition.
-*
-*      You may link this product with any GPL'd Qt library such as Qt/Free
-*
-* All trademarks belong to their respective owners.
-*
-*****/
+ *
+ * TOra - An Oracle Toolkit for DBA's and developers
+ * Copyright (C) 2003-2005 Quest Software, Inc
+ * Portions Copyright (C) 2005 Other Contributors
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation;  only version 2 of
+ * the License is valid for this program.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *      As a special exception, you have permission to link this program
+ *      with the Oracle Client libraries and distribute executables, as long
+ *      as you follow the requirements of the GNU GPL in regard to all of the
+ *      software in the executable aside from Oracle client libraries.
+ *
+ *      Specifically you are not permitted to link this program with the
+ *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+ *      And you are not permitted to distribute binaries compiled against
+ *      these libraries without written consent from Quest Software, Inc.
+ *      Observe that this does not disallow linking to the Qt Free Edition.
+ *
+ *      You may link this product with any GPL'd Qt library such as Qt/Free
+ *
+ * All trademarks belong to their respective owners.
+ *
+ *****/
 
 #include "config.h"
 #include "toresulttableviewedit.h"
@@ -112,6 +112,11 @@ void toResultTableViewEdit::query(const QString &SQL, const toQList &params) {
             this,
             SLOT(recordDelete(const toResultModel::Row &)));
 
+    connect(toMainWidget(),
+            SIGNAL(willCommit(toConnection &, bool)),
+            this,
+            SLOT(commitChanges(toConnection &, bool)));
+
     verticalHeader()->setVisible(true);
 }
 
@@ -123,7 +128,7 @@ void toResultTableViewEdit::recordChange(const QModelIndex &index,
     // they all get inserted as one.
     toQValue rowid = row[0];
     for(int changeIndex = 0; changeIndex < Changes.size(); changeIndex++) {
-        if(Changes[changeIndex].added && Changes[changeIndex].row[0] == rowid) {
+        if(Changes[changeIndex].kind == Add && Changes[changeIndex].row[0] == rowid) {
             Changes[changeIndex].row[index.column()] = newValue;
             return;
         }
@@ -137,7 +142,7 @@ void toResultTableViewEdit::recordChange(const QModelIndex &index,
     change.newValue = newValue;
     change.row      = row;
     change.column   = index.column();
-    change.added    = false;
+    change.kind     = Update;
 
     Changes.append(change);
 }
@@ -147,7 +152,7 @@ void toResultTableViewEdit::recordAdd(const toResultModel::Row &row) {
     struct ChangeSet change;
 
     change.row      = row;
-    change.added    = true;
+    change.kind     = Add;
 
     Changes.append(change);
 }
@@ -157,7 +162,7 @@ void toResultTableViewEdit::recordDelete(const toResultModel::Row &row) {
     struct ChangeSet change;
 
     change.row      = row;
-    change.deleted  = true;
+    change.kind     = Delete;
 
     Changes.append(change);
 }
@@ -208,7 +213,11 @@ void toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &conn) 
     }
 
     conn.execute(sql, args);
-    conn.commit();
+
+    if(!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
+        conn.commit();
+    else
+        toMainWidget()->setNeedCommit(conn);
 }
 
 
@@ -259,7 +268,10 @@ void toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn) {
 
     toQuery q(conn, sql, args);
 
-    conn.commit();
+    if(!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
+        conn.commit();
+    else
+        toMainWidget()->setNeedCommit(conn);
 }
 
 
@@ -365,14 +377,19 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn) 
     }
 
     toQuery q(conn, sql, args);
-    conn.commit();
+
+    if(!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
+        conn.commit();
+    else
+        toMainWidget()->setNeedCommit(conn);
 }
 
 
-bool toResultTableViewEdit::commitChanges(void) {
+bool toResultTableViewEdit::commitChanges(bool status) {
     // Check to make sure some changes were actually made
     if(Changes.size() < 1) {
-        toStatusMessage(tr("No changes made"), false, false);
+        if(status)
+            toStatusMessage(tr("No changes made"), false, false);
         return false;
     }
 
@@ -381,14 +398,21 @@ bool toResultTableViewEdit::commitChanges(void) {
     bool error = false;
     for(int changeIndex = 0; changeIndex < Changes.size(); changeIndex++) {
         try {
-            struct ChangeSet change = Changes[changeIndex];
+            struct ChangeSet &change = Changes[changeIndex];
 
-            if(change.deleted)
+            switch(change.kind) {
+            case Delete:
                 commitDelete(change, conn);
-            else if(change.added)
+                break;
+            case Add:
                 commitAdd(change, conn);
-            else
+                break;
+            case Update:
                 commitUpdate(change, conn);
+                break;
+            default:
+                toStatusMessage(tr("Internal error."));
+            }
 
             toStatusMessage(tr("Saved"), false, false);
         }
@@ -405,6 +429,23 @@ bool toResultTableViewEdit::commitChanges(void) {
         Changes.clear();
 
     return !error;
+}
+
+
+void toResultTableViewEdit::commitChanges(toConnection &conn, bool cmt) {
+    // make sure this is the same connection, we don't want to commit
+    // this connection when somebody clicked 'commit' when in another
+    // tool and another database.
+    if(&conn != &connection())
+        return;
+
+    if(cmt) {
+        commitChanges(false);
+        connection().commit();  // make sure to commit connection
+                                // where our changes are.
+    }
+    else
+        refresh();
 }
 
 
@@ -438,5 +479,5 @@ void toResultTableViewEdit::duplicateRecord(void) {
 void toResultTableViewEdit::deleteRecord(void) {
     QModelIndex ind = selectionModel()->currentIndex();
     if(ind.isValid())
-    Model->deleteRow(ind);
+        Model->deleteRow(ind);
 }

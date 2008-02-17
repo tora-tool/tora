@@ -58,9 +58,14 @@
 class toResultTableViewEdit : public toResultTableView {
     Q_OBJECT;
 
+    enum ChangeKind {
+        Add,
+        Delete,
+        Update
+    };
+
     struct ChangeSet {
-        bool               added;        /* is row new */
-        bool               deleted;      /* row removed */
+        ChangeKind         kind;         /* sql change mode */
         QString            columnName;   /* column name */
         int                column;       /* the real column number
                                           * after adjusting for
@@ -75,7 +80,6 @@ class toResultTableViewEdit : public toResultTableView {
 
     QString Owner;
     QString Table;
-
 
     void commitDelete(ChangeSet &change, toConnection &conn);
     void commitAdd(ChangeSet &change, toConnection &conn);
@@ -171,9 +175,19 @@ public slots:
     /**
      * Writes cached changes to database.
      *
+     * @param status Should display a status message.
      * @return success
      */
-    bool commitChanges(void);
+    bool commitChanges(bool status = true);
+
+
+    /**
+     * Handle connection toolbar's commit and rollback.
+     *
+     * @param conn Connection that is commited.
+     * @param cmt true for commit, false for rollback
+     */
+    void commitChanges(toConnection &conn, bool cmt);
 
 
     /**
