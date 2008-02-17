@@ -1282,6 +1282,9 @@ void toBrowser::setNewFilter(toBrowserFilter *filter)
 toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     : toToolWidget(BrowserTool, "browser.html", parent, connection) {
 
+    SecondTab  = NULL;
+    SecondText = QString::null;
+
     Filter = new toBrowserFilter(false);
 
     QToolBar *toolbar = toAllocBar(this, tr("DB Browser"));
@@ -1426,7 +1429,6 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     toResultCols *resultCols = new toResultCols(curr, TAB_TABLE_COLUMNS);
     curr->addTab(resultCols, tr("&Columns"));
-    SecondTab = resultCols;
     SecondMap[TAB_TABLES] = resultCols;
     SecondMap[TAB_TABLE_COLUMNS] = resultCols;
 
@@ -1486,6 +1488,9 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     curr->addTab(resultExtract, tr("Script"));
     SecondMap[TAB_TABLE_EXTRACT] = resultExtract;
 
+    // make sure this gets setup as SecondTab
+    //curr->setCurrentWidget(resultCols);
+    changeSecondTab(resultCols);
     connect(curr, SIGNAL(currentTabChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
 
     splitter = new QSplitter(Qt::Horizontal, TopTab);
@@ -1946,15 +1951,12 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
             this,
             SLOT(windowActivated(QWidget *)));
 
-    refresh();
-
     connect(TopTab,
             SIGNAL(currentTabChanged(QWidget *)),
             this,
             SLOT(changeTab(QWidget *)));
     connect(this, SIGNAL(connectionChange()), this, SLOT(changeConnection()));
     Schema->setFocus();
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(changeSecond()));
 
     setNewFilter(NULL);
 }
@@ -2103,14 +2105,12 @@ void toBrowser::changeItem()
     QModelIndex item = selectedItem();
     if(item.isValid()) {
         SecondText = item.data(Qt::EditRole).toString();
-        if(SecondTab && !SecondText.isEmpty()) {
-            Poll.setSingleShot(true);
-            Poll.start(250);
-        }
+        if(SecondTab && !SecondText.isEmpty())
+            changeSecond();
     }
 }
 
-void toBrowser::changeSecond(void) {
+void toBrowser::changeSecond() {
     QWidget *tab = TopTab->currentWidget();
     QWidget *tab2 = dynamic_cast<QWidget *>(SecondTab);
 
@@ -2156,28 +2156,17 @@ void toBrowser::changeSecond(void) {
 
 void toBrowser::changeSecondTab(QWidget *tab)
 {
-    for (QWidget *t = tab->parentWidget();t != TopTab->currentWidget();t = t->parentWidget())
-        if (!t)
-            return;
+    if(!tab)
+        return;
 
-    if (tab) {
-        toResult *newtab = SecondMap[tab->objectName()];
-        if (newtab == SecondTab)
-            return;
+    toResult *result = dynamic_cast<toResult *>(tab);
+    if(!result)
+        return;
 
-        // The change second tab can get called for other tabs than
-        // the current one. Ignore those calls.
-        QWidget *t = dynamic_cast<QWidget *>(newtab);
-        while (t && t != CurrentTop)
-            t = t->parentWidget();
-        if (!t)
-            return;
-
-        SecondTab = newtab;
-        SecondMap[TopTab->currentWidget()->objectName()] = SecondTab;
-        if (SecondTab && !SecondText.isEmpty())
-            changeSecond();
-    }
+    SecondTab = result;
+    SecondMap[TopTab->currentWidget()->objectName()] = SecondTab;
+    if (SecondTab && !SecondText.isEmpty())
+        changeSecond();
 }
 
 void toBrowser::changeTab(QWidget *tab)
@@ -2532,8 +2521,12 @@ void toBrowser::dropIndex(void) {
 void toBrowser::closeEvent(QCloseEvent *event) {
     if(ViewContent->maybeSave() &&
        TableContent->maybeSave() &&
-       AccessContent->maybeSave())
+       AccessContent->maybeSave()) {
+
+        // prevent further queries after close
+        SecondText = QString::null;
         event->accept();
+    }
     else
         event->ignore();
 }

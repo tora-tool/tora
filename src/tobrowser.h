@@ -82,7 +82,6 @@ class toBrowser : public toToolWidget {
     std::map<QString, toResultTableView *> Map;
     std::map<QString, toResult *> SecondMap;
     void setNewFilter(toBrowserFilter *filter);
-    QTimer Poll;
 
     QString schema(void);
     void enableDisableConstraints(const QString &);
