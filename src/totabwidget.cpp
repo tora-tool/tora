@@ -42,14 +42,22 @@
 #include <qobject.h>
 #include <QTabWidget>
 
+#define CONNECT_CHANGED                         \
+    connect(this,                               \
+            SIGNAL(currentChanged(int)),        \
+            this,                               \
+            SLOT(tabChanged(int)));
+
+#define DISCONNECT_CHANGED                      \
+    disconnect(this,                            \
+               SIGNAL(currentChanged(int)),     \
+               this,                            \
+               SLOT(tabChanged(int)));
 
 toTabWidget::toTabWidget(QWidget *parent)
     : QTabWidget(parent) {
 
-    connect(this,
-            SIGNAL(currentChanged(int)),
-            this,
-            SLOT(tabChanged(int)));
+    CONNECT_CHANGED;
 }
 
 
@@ -64,7 +72,9 @@ void toTabWidget::setTabShown(QWidget *w, bool show) {
         if(pos < 0 || parent == this)
             return;                 // not found
 
+        DISCONNECT_CHANGED;
         QTabWidget::removeTab(pos);
+        CONNECT_CHANGED;
     }
     else {
         while(!tabs.contains(parent) && parent && parent != this)
@@ -75,7 +85,9 @@ void toTabWidget::setTabShown(QWidget *w, bool show) {
 
         struct page r = tabs[parent];
 
+        DISCONNECT_CHANGED;
         QTabWidget::insertTab(r.index, parent, r.label);
+        CONNECT_CHANGED;
     }
 }
 
