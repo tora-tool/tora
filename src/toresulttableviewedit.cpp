@@ -225,7 +225,7 @@ void toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn) {
         if(num > 0)
             sql += ",";
         sql += conn.quote(Model->headerData(
-                              i - 1,
+                              i,
                               Qt::Horizontal,
                               Qt::DisplayRole).toString());
         num++;
