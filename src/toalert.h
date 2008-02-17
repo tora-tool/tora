@@ -71,7 +71,7 @@ class toAlert : public toToolWidget {
     QLineEdit    *Name;
     QLineEdit    *Message;
     QTimer        Timer;
-    toConnection  Connection;
+    toConnection &Connection;
     toConnection *SendConnection;
 
     QMenu        *ToolMenu;

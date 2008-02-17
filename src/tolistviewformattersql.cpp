@@ -34,7 +34,7 @@ toListViewFormatterSQL::~toListViewFormatterSQL()
 SQLTypeMap toListViewFormatterSQL::getSQLTypes( toListView& tListView )
 {
     SQLTypeMap m;
-    toConnection conn = toCurrentConnection( &tListView );
+    toConnection &conn = toCurrentConnection( &tListView );
     toConnection::objectName on = toConnection::objectName( tListView.getOwner(), tListView.getObjectName() );
     toQDescList desc = conn.columns( on );
     for ( toQDescList::iterator i = desc.begin();i != desc.end(); ++i )
