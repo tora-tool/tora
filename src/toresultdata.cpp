@@ -119,7 +119,7 @@ toResultData::toResultData(QWidget *parent,
     addAct = toolbar->addAction(
         QIcon(QPixmap(const_cast<const char**>(addrecord_xpm))),
         tr("Add a new record"));
-    connect(addAct, SIGNAL(triggered()), Edit, SLOT(addRecord()));
+    connect(addAct, SIGNAL(triggered()), this, SLOT(addRecord()));
 
     duplicateAct = toolbar->addAction(
         QIcon(QPixmap(const_cast<const char**>(duplicaterecord_xpm))),
@@ -234,8 +234,13 @@ void toResultData::closeEvent(QCloseEvent *event) {
 
 
 void toResultData::navigate(QAction *action) {
+    Edit->setFocus();
     QModelIndex current = Edit->selectionModel()->currentIndex();
     int row = current.row();
+    int col = current.column();
+
+    if(col < 1)
+        col = 1;                // can't select hidden first column
 
     if(action == firstAct)
         row = 0;
@@ -253,7 +258,7 @@ void toResultData::navigate(QAction *action) {
     if(row >= Edit->model()->rowCount())
         row = Edit->model()->rowCount() - 1;
 
-    QModelIndex left = Edit->model()->createIndex(row, current.column());
+    QModelIndex left = Edit->model()->createIndex(row, col);
     Edit->selectionModel()->select(QItemSelection(left, left),
                                    QItemSelectionModel::ClearAndSelect);
     Edit->setCurrentIndex(left);
@@ -395,4 +400,10 @@ void toResultData::save() {
     Form->saveRow();
     if(Edit->commitChanges())
         emit changesSaved();
+}
+
+
+void toResultData::addRecord() {
+    Edit->addRecord();
+    navigate(lastAct);
 }
