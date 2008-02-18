@@ -172,6 +172,7 @@ public slots:
     void updateForm(void);
     void save(void);
     void addRecord(void);
+    void refreshWarn(void);
 };
 
 

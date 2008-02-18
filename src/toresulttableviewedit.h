@@ -127,6 +127,14 @@ public:
     }
 
 
+signals:
+    /**
+     * Parameter is true after changes, false after save or load.
+     *
+     */
+    void changed(bool edit);
+
+
 public slots:
     /**
      * Append change to Changes

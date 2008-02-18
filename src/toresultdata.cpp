@@ -60,9 +60,10 @@
 #include "icons/nofilter.xpm"
 #include "icons/previous.xpm"
 #include "icons/rewind.xpm"
-#include "icons/saverecord.xpm"
+#include "icons/filesave.xpm"
 #include "icons/single.xpm"
 #include "icons/trash.xpm"
+#include "icons/stop.xpm"
 
 
 toResultData::toResultData(QWidget *parent,
@@ -109,12 +110,13 @@ toResultData::toResultData(QWidget *parent,
         tr("Remove filters"));
     connect(removeAct, SIGNAL(triggered(bool)), this, SLOT(removeFilter(bool)));
 
-    refreshAct = toolbar->addAction(
-        QIcon(QPixmap(const_cast<const char**>(refresh_xpm))),
-        tr("Refresh data"));
-    connect(refreshAct, SIGNAL(triggered()), Edit, SLOT(refresh()));
-
     toolbar->addSeparator();
+
+    saveAct = toolbar->addAction(
+        QIcon(QPixmap(const_cast<const char**>(filesave_xpm))),
+        tr("Save changes"));
+    connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
+    connect(Edit, SIGNAL(changed(bool)), saveAct, SLOT(setEnabled(bool)));
 
     addAct = toolbar->addAction(
         QIcon(QPixmap(const_cast<const char**>(addrecord_xpm))),
@@ -126,20 +128,17 @@ toResultData::toResultData(QWidget *parent,
         tr("Duplicate an existing record"));
     connect(duplicateAct, SIGNAL(triggered()), Edit, SLOT(duplicateRecord()));
 
-    saveAct = toolbar->addAction(
-        QIcon(QPixmap(const_cast<const char**>(saverecord_xpm))),
-        tr("Save changes"));
-    connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
-
-    discardAct = toolbar->addAction(
-        QIcon(QPixmap(const_cast<const char**>(canceledit_xpm))),
-        tr("Discard changes"));
-    connect(discardAct, SIGNAL(triggered()), Edit, SLOT(refresh()));
-
     deleteAct = toolbar->addAction(
         QIcon(QPixmap(const_cast<const char**>(trash_xpm))),
         tr("Delete current record from table"));
     connect(deleteAct, SIGNAL(triggered()), Edit, SLOT(deleteRecord()));
+
+    toolbar->addSeparator();
+
+    refreshAct = toolbar->addAction(
+        QIcon(QPixmap(const_cast<const char**>(refresh_xpm))),
+        tr("Refresh data"));
+    connect(refreshAct, SIGNAL(triggered()), this, SLOT(refreshWarn()));
 
     toolbar->addSeparator();
 
@@ -406,4 +405,25 @@ void toResultData::save() {
 void toResultData::addRecord() {
     Edit->addRecord();
     navigate(lastAct);
+}
+
+
+void toResultData::refreshWarn() {
+    if(Edit->changed()) {
+        switch(TOMessageBox(
+                   QMessageBox::Warning,
+                   tr("Warning"),
+                   tr("Refreshing from the database will lose current changes."),
+                   QMessageBox::Ok | QMessageBox::Cancel,
+                   this).exec()) {
+        case QMessageBox::Ok:
+            break;
+        case QMessageBox::Cancel:
+            return;
+        default:
+            return;
+        }
+    }
+
+    Edit->refresh();
 }

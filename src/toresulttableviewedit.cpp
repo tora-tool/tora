@@ -84,6 +84,8 @@ void toResultTableViewEdit::query(const QString &SQL, const toQList &params) {
     toQList empty;
     toResultTableView::query(SQL, empty);
 
+    emit changed(false);
+
     if(!Model)
         return;                 // error
 
@@ -145,6 +147,7 @@ void toResultTableViewEdit::recordChange(const QModelIndex &index,
     change.kind     = Update;
 
     Changes.append(change);
+    emit changed(changed());
 }
 
 
@@ -155,6 +158,7 @@ void toResultTableViewEdit::recordAdd(const toResultModel::Row &row) {
     change.kind     = Add;
 
     Changes.append(change);
+    emit changed(changed());
 }
 
 
@@ -165,6 +169,7 @@ void toResultTableViewEdit::recordDelete(const toResultModel::Row &row) {
     change.kind     = Delete;
 
     Changes.append(change);
+    emit changed(changed());
 }
 
 
@@ -428,6 +433,7 @@ bool toResultTableViewEdit::commitChanges(bool status) {
     else
         Changes.clear();
 
+    emit changed(changed());
     return !error;
 }
 
@@ -451,6 +457,7 @@ void toResultTableViewEdit::commitChanges(toConnection &conn, bool cmt) {
 
 void toResultTableViewEdit::revertChanges() {
     Changes.clear();
+    emit changed(changed());
 }
 
 
