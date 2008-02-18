@@ -63,7 +63,6 @@
 #include "icons/filesave.xpm"
 #include "icons/single.xpm"
 #include "icons/trash.xpm"
-#include "icons/stop.xpm"
 
 
 toResultData::toResultData(QWidget *parent,
