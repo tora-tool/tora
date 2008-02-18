@@ -1099,8 +1099,7 @@ class qSqlSub : public toConnectionSub
 
         ~qSqlSub()
         {
-            if (!Name.isEmpty())
-                QSqlDatabase::removeDatabase(Name);
+            Connection.close();
         }
         void throwError(const QString &sql)
         {
