@@ -262,6 +262,8 @@ protected:
 private slots:
     void setTextChanged();
     void setCopyAvailable(bool yes);
+    //! \brief Handle line numbers in the editor on text change
+    void linesChanged();
 
 public slots:
     /**

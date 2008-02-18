@@ -85,9 +85,11 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
     setEdit();
     Search = false;
     setFont(toStringToFont(toConfigurationSingle::Instance().globalConfig(CONF_TEXT, "")));
+    setMarginLineNumbers(0, true);
 
     connect(this, SIGNAL(textChanged()), this, SLOT(setTextChanged()));
     connect(this, SIGNAL(copyAvailable(bool)), this, SLOT(setCopyAvailable(bool)));
+	connect(this, SIGNAL(linesChanged()), this, SLOT(linesChanged()));
 
     /* is this still neccessary after switch to sqcintilla?!?
         QPalette pal = palette();
@@ -111,6 +113,12 @@ toMarkedText::~toMarkedText()
 void toMarkedText::setCopyAvailable(bool yes)
 {
     setEdit();
+}
+
+void toMarkedText::linesChanged()
+{
+    int x = QString::number(lines()).length() + 1;
+    setMarginWidth(0, QString().fill('0', x));
 }
 
 void toMarkedText::setEdit(void)
