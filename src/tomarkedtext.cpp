@@ -80,25 +80,20 @@ int toMarkedText::defTabWidth = 8;
 
 
 toMarkedText::toMarkedText(QWidget *parent, const char *name)
-        : QsciScintilla(parent/*, name*/), toEditWidget()
+        : QsciScintilla(parent), toEditWidget()
 {
+    if(name)
+        setObjectName(name);
     setEdit();
     Search = false;
     setFont(toStringToFont(toConfigurationSingle::Instance().globalConfig(CONF_TEXT, "")));
     setMarginLineNumbers(0, true);
+    setCallTipsStyle(CallTipsNone);
 
     connect(this, SIGNAL(textChanged()), this, SLOT(setTextChanged()));
     connect(this, SIGNAL(copyAvailable(bool)), this, SLOT(setCopyAvailable(bool)));
 	connect(this, SIGNAL(linesChanged()), this, SLOT(linesChanged()));
 
-    /* is this still neccessary after switch to sqcintilla?!?
-        QPalette pal = palette();
-        pal.setColor(QColorGroup::Base,
-                     toSyntaxAnalyzer::defaultAnalyzer().getColor(toSyntaxAnalyzer::DefaultBg));
-        pal.setColor(QColorGroup::Foreground,
-                     toSyntaxAnalyzer::defaultAnalyzer().getColor(toSyntaxAnalyzer::Default));
-        setPalette(pal);
-    */
     CursorTimerID = -1;
 
     // sets default tab width
