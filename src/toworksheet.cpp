@@ -1480,9 +1480,8 @@ void toWorksheet::describe(void) {
     }
 
     if(owner.isNull())
-        columns->changeParams(table);
-    else
-        columns->changeParams(owner, table);
+        owner = Schema->currentText();
+    columns->changeParams(owner, table);
     columns->show();
 }
 
