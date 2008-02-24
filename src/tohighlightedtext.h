@@ -52,8 +52,9 @@
 #include <map>
 #include <qtimer.h>
 #include <qstringlist.h>
-#include <QListWidget>
+#include <QWidget>
 
+class QListWidget;
 class QListWidgetItem;
 class QPainter;
 class toSyntaxSetup;
@@ -180,22 +181,26 @@ public:
     static toSyntaxAnalyzer &defaultAnalyzer();
 };
 
-class toComplPopup : public QListWidget {
+class toComplPopup : public QWidget {
     Q_OBJECT;
 
 private:
-    toHighlightedText* editor;
+    toHighlightedText *Editor;
+    QListWidget       *List;
 
 public:
     toComplPopup(toHighlightedText* high);
     virtual ~toComplPopup();
+
+    QListWidget* list(void) {
+        return this->List;
+    }
 
 public slots:
     void hide(void);
 
 protected:
     virtual void keyPressEvent(QKeyEvent * e);
-    virtual void focusOutEvent(QFocusEvent *e);
 };
 /**
  * A simple editor which supports syntax highlighting.

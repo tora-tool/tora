@@ -45,7 +45,6 @@
 
 #include <ctype.h>
 
-
 #include <qapplication.h>
 #include <qpainter.h>
 #include <qpalette.h>
@@ -53,10 +52,12 @@
 #include <qkeysequence.h>
 #include <Qsci/qsciapis.h>
 #include <qnamespace.h>
+#include <QListWidget>
 
 #include <Qsci/qscilexersql.h>
 #include <qpoint.h>
 #include <QKeyEvent>
+#include <QVBoxLayout>
 
 #include "todefaultkeywords.h"
 
@@ -268,9 +269,17 @@ bool toSyntaxAnalyzer::reservedWord(const QString &str)
 }
 
 toComplPopup::toComplPopup(toHighlightedText* edit)
-    : QListWidget(edit) // 0, "popup", Qt::WType_Popup | Qt::WStyle_NoBorder | Qt::WStyle_Customize
-{
-    this->editor = edit;
+    : QWidget(edit, Qt::Popup) {
+    List   = new QListWidget(this);
+    Editor = edit;
+
+    QVBoxLayout *vbox = new QVBoxLayout;
+    vbox->setSpacing(0);
+    vbox->setContentsMargins(0, 0, 0, 0);
+
+    vbox->addWidget(List);
+    setLayout(vbox);
+    setFocusProxy(List);
 }
 
 toComplPopup::~toComplPopup()
@@ -295,23 +304,17 @@ void toComplPopup::keyPressEvent(QKeyEvent * e)
     if ((!e->text().isNull() && e->text().length() > 0 && e->key() != Qt::Key_Return
             && e->text() != " ") || e->key() == Qt::Key_Backspace)
     {
-        this->editor->keyPressEvent(e);
-        this->editor->autoCompleteFromAPIs();
+        this->Editor->keyPressEvent(e);
+        this->Editor->autoCompleteFromAPIs();
     }
     else if (!e->text().isNull() && e->text().length() > 0 && e->text() == " ")
     {
-        this->editor->keyPressEvent(e);
+        this->Editor->keyPressEvent(e);
         this->hide();
     }
     else
-        QListWidget::keyPressEvent(e);
+        QWidget::keyPressEvent(e);
 
-}
-
-
-void toComplPopup::focusOutEvent(QFocusEvent *e) {
-    hide();
-    QListWidget::focusOutEvent(e);
 }
 
 
@@ -345,8 +348,14 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     connect( timer, SIGNAL(timeout()), this, SLOT(autoCompleteFromAPIs()) );
     popup = new toComplPopup(this);
     popup->hide();
-    connect(popup, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(completeFromAPI(QListWidgetItem*)));
-    connect(popup, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(completeFromAPI(QListWidgetItem*)));
+    connect(popup->list(),
+            SIGNAL(itemClicked(QListWidgetItem*)),
+            this,
+            SLOT(completeFromAPI(QListWidgetItem*)));
+    connect(popup->list(),
+            SIGNAL(itemActivated(QListWidgetItem*)),
+            this,
+            SLOT(completeFromAPI(QListWidgetItem*)));
 }
 
 toHighlightedText::~toHighlightedText()
@@ -380,15 +389,13 @@ static QString UpperIdent(const QString &str)
 
 void toHighlightedText::autoCompleteFromAPIs()
 {
+    QListWidget *list = popup->list();
     QString partial;
     QStringList compleList = this->getCompletionList(&partial);
+
     if (compleList.count() == 1 && compleList.first() == partial)
-    {
         this->completeWithText(compleList.first());
-        if (popup->isVisible())
-            popup->hide();
-    }
-    else if (!compleList.isEmpty() || popup->isVisible())
+    else
     {
         long position, posx, posy;
         int curCol, curRow;
@@ -398,29 +405,34 @@ void toHighlightedText::autoCompleteFromAPIs()
         posy = this->SendScintilla(SCI_POINTYFROMPOSITION, 0, position) +
                this->SendScintilla(SCI_TEXTHEIGHT, curRow);
         QPoint p(posx, posy);
+        p = mapToGlobal(p);
         popup->move(p);
-        popup->clear();
-        popup->addItems(compleList);
+        list->clear();
+        list->addItems(compleList);
         if (!partial.isNull() && partial.length() > 0)
         {
             int i;
-            for (i = 0;i < popup->model()->rowCount();i++)
+            for (i = 0;i < list->model()->rowCount();i++)
             {
-                if (popup->item(i)->text().indexOf(partial) == 0)
+                if (list->item(i)->text().indexOf(partial) == 0)
                 {
-                    popup->item(i)->setSelected(true);
-                    popup->setCurrentItem(popup->item(i));
+                    list->item(i)->setSelected(true);
+                    list->setCurrentItem(list->item(i));
                     break;
                 }
             }
-
         }
+
+        // if there's no current selection, select the first
+        // item. that way arrow keys work as intended.
+        QList<QListWidgetItem *> selected = list->selectedItems();
+        if(selected.size() < 1 && list->count() > 0) {
+            list->item(0)->setSelected(true);
+            list->setCurrentItem(list->item(0));
+        }
+
         popup->show();
         popup->setFocus();
-    }
-    else
-    {
-        popup->hide();
     }
 }
 
@@ -828,8 +840,6 @@ void toHighlightedText::completeWithText(QString itemText)
 void toHighlightedText::completeFromAPI(QListWidgetItem* item)
 {
     if (item)
-    {
         this->completeWithText(item->text());
-    }
     popup->hide();
 }
