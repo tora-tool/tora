@@ -1040,7 +1040,7 @@ void toWorksheet::addLog(const QString &sql,
         QChar cmp = '\n';
         int lastnl = 0;
         int lines = 0;
-        for (int i = 0;i < result.offset();i++) {
+        for (int i = 0;i < result.offset() && i < sql.length();i++) {
             if (sql.at(i) == cmp) {
                 LastOffset = 0;
                 lastnl = i + 1;
