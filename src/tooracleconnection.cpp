@@ -61,6 +61,7 @@
 #if 1
 #if defined(OTL_ORA10G) || defined(OTL_ORA10G_R2) || defined(OTL_ORA11G)
 #define OTL_ORA_OCI_ENV_CREATE
+#define OTL_ORA_OCI_ENV_CREATE_MODE OCI_THREADED|OCI_OBJECT|OCI_EVENTS
 #endif
 #endif
 
@@ -1006,9 +1007,6 @@ class oracleConnection : public toConnection::connectionImpl
             }
         }
 #else
-
-        if (!getenv("ORACLE_HOME"))
-            throw QString::fromLatin1("ORACLE_HOME environment variable not set");
         if (getenv("TNS_ADMIN"))
         {
             str = getenv("TNS_ADMIN");
