@@ -104,6 +104,7 @@ class toResultTableView : public QTableView,
     QAction *selectAllAct;
     QAction *exportAct;
     QAction *editAct;
+    QAction *rowCountAct;
     QAction *readAllAct;
 
     void createActions(void);

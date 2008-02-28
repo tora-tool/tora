@@ -55,6 +55,7 @@
 #include <QSize>
 #include <QFont>
 #include <QFontMetrics>
+#include <QMessageBox>
 
 
 /**
@@ -214,6 +215,7 @@ void toResultTableView::createActions() {
     selectAllAct = new QAction(tr("Select &all"), this);
     exportAct    = new QAction(tr("E&xport to file..."), this);
     editAct      = new QAction(tr("&Edit SQL..."), this);
+    rowCountAct  = new QAction(tr("C&ount Rows"), this);
     readAllAct   = new QAction(tr("&Read All"), this);
 }
 
@@ -299,6 +301,7 @@ void toResultTableView::displayMenu(const QPoint &pos) {
 
         Menu->addSeparator();
 
+        Menu->addAction(rowCountAct);
         Menu->addAction(readAllAct);
 
         connect(Menu,
@@ -335,10 +338,18 @@ void toResultTableView::menuCallback(QAction *action) {
         editSelectAll();
     else if(action == editAct)
         toMainWidget()->editSQL(sqlName());
-    else if(action == readAllAct) {
+    else if(action == readAllAct || action == rowCountAct) {
         QModelIndex index;
         while(Model->canFetchMore(index))
             Model->fetchMore(index);
+
+        if(action == rowCountAct) {
+            int count = Model->rowCount();
+            TOMessageBox::information(
+                this,
+                tr("Row Count"),
+                tr("%1 row%2.").arg(count).arg(count > 1 ? "s" : 0));
+        }
     }
     else if(action == refreshAct)
         refresh();
