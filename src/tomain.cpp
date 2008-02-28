@@ -264,7 +264,7 @@ void toMain::createActions() {
                           this);
     saveAct->setShortcut(QKeySequence::Save);
 
-    saveAsAct = new QAction(tr("Save A&s..."), this);
+    saveAsAct = new QAction(tr("Save &As..."), this);
     saveAsAct->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_W);
 
     openSessionAct = new QAction(QPixmap(const_cast<const char**>(fileopen_xpm)),
