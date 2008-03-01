@@ -713,7 +713,13 @@ bool toWorksheet::checkSave(bool input) {
 }
 
 bool toWorksheet::close() {
-    if (checkSave(true)) {
+    if(Statistics) {
+        Statistics->close();
+        delete Statistics;
+        Statistics = NULL;
+    }
+
+    if(checkSave(true)) {
         Result->stop();
         return toToolWidget::close();
     }

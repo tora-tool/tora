@@ -104,6 +104,11 @@ public:
      */
     ~toResultStats();
 
+    /**
+     * close this object
+     */
+    bool close(void);
+
     /** Reset statistics. Read in last values without updating widget data.
      */
     void resetStats(void);

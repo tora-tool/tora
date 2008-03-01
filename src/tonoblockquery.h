@@ -106,7 +106,7 @@ private:
     toQList Param;
     /** Statistics to be used if any.
      */
-    toResultStats *Statistics;
+    QPointer<toResultStats> Statistics;
     /** Description of result
      */
     toQDescList Description;

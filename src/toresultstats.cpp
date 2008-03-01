@@ -61,10 +61,15 @@ bool toResultStats::canHandle(toConnection &conn)
     return toIsOracle(conn);
 }
 
-toResultStats::~toResultStats()
-{
+bool toResultStats::close() {
     delete Query;
     delete SessionIO;
+
+    return true;
+}
+
+toResultStats::~toResultStats() {
+    close();
 }
 
 static toSQL SQLSession("toResultStats:Session",
