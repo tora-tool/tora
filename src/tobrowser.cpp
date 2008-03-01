@@ -666,6 +666,7 @@ static toSQL SQLListTablesSapDB("toBrowser:ListTables",
 static toSQL SQLTableIndex("toBrowser:TableIndex",
                            "SELECT IND.index_name AS \"Index Name\",\n"
                            "       ind.column_name AS \"Column Name\",\n"
+                           "       al.uniqueness AS \"Unique\",\n"
                            "       AL.index_type AS \"Type\",\n"
                            "       EX.column_expression AS \"Column Expression\"\n"
                            "  FROM SYS.ALL_IND_COLUMNS IND,\n"
@@ -676,8 +677,7 @@ static toSQL SQLTableIndex("toBrowser:TableIndex",
                            "   AND EX.index_owner ( + ) = IND.index_owner\n"
                            "   AND EX.index_name ( + ) = IND.index_name\n"
                            "   AND IND.index_name = AL.index_name ( + )\n"
-                           "   AND IND.index_owner = AL.owner ( + )\n"
-                           "   AND AL.dropped = 'NO'",
+                           "   AND IND.index_owner = AL.owner ( + )",
                            "List the indexes on a table",
                            "");
 static toSQL SQLTableIndexSapDB("toBrowser:TableIndex",
