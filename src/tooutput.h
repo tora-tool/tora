@@ -74,6 +74,7 @@ public:
 
     void insertLine(const QString &str) {
         Output->append(str);
+        Output->setCursorPosition(Output->lines(), 0);
     }
 
     toMarkedText *output(void) {
