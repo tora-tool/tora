@@ -74,10 +74,9 @@
 
 #define ACCEL_KEY(k) "\t" + QString("Ctrl+" #k)
 
-
-// static value for default tab width
-int toMarkedText::defTabWidth = 8;
-
+// static value for default tabs
+int defTabWidth = 8;
+bool defTabSpaces = false;
 
 toMarkedText::toMarkedText(QWidget *parent, const char *name)
         : QsciScintilla(parent), toEditWidget()
@@ -98,11 +97,29 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
 
     // sets default tab width
     setTabWidth(defaultTabWidth());
+    setIndentationsUseTabs(!defaultTabSpaces());
     this->setUtf8(true);
 }
 
 toMarkedText::~toMarkedText()
 {
+}
+
+int toMarkedText::defaultTabWidth() {
+    return defTabWidth;
+}
+
+void toMarkedText::setDefaultTabWidth(int width) {
+    if(width > 0)
+        defTabWidth = width;
+}
+
+bool toMarkedText::defaultTabSpaces(void) {
+    return defTabSpaces;
+}
+
+void toMarkedText::setDefaultTabSpaces(bool on) {
+    defTabSpaces = on;
 }
 
 void toMarkedText::setCopyAvailable(bool yes)

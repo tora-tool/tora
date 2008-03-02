@@ -73,6 +73,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     AutoIndent->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_INDENT, "Yes").isEmpty());
     Extensions->setText(toConfigurationSingle::Instance().globalConfig(CONF_EXTENSIONS, DEFAULT_EXTENSIONS));
     TabStop->setValue(toMarkedText::defaultTabWidth());
+    TabSpaces->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_TAB_SPACES, DEFAULT_TAB_SPACES).isEmpty());
 
     {
         QFont font(toStringToFont(toConfigurationSingle::Instance().globalConfig(CONF_CODE, "")));
@@ -312,6 +313,8 @@ void toSyntaxSetup::saveSetting(void) {
     toConfigurationSingle::Instance().globalSetConfig(CONF_AUTO_INDENT, AutoIndent->isChecked() ? "Yes" : "");
     toMarkedText::setDefaultTabWidth(TabStop->value());
     toConfigurationSingle::Instance().globalSetConfig(CONF_TAB_STOP, QString::number(toMarkedText::defaultTabWidth()));
+    toMarkedText::setDefaultTabSpaces(TabSpaces->isChecked());
+    toConfigurationSingle::Instance().globalSetConfig(CONF_TAB_SPACES, TabSpaces->isChecked() ? "Yes" : "");
     for (std::map<QString, QColor>::iterator i = Colors.begin();i != Colors.end();i++) {
         QString str(CONF_COLOR);
         str += ":";

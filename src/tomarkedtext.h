@@ -83,8 +83,6 @@ class toMarkedText : public QsciScintilla, public toEditWidget
 
     int CursorTimerID;
 
-    static int defTabWidth;
-
 #if 0
     /** Print one page to printer.
      * @param printer Printer to print to.
@@ -119,22 +117,25 @@ public:
     /**
      * Returns the default tab width.
      */
-    static int defaultTabWidth()
-    {
-        return defTabWidth;
-    }
+    static int defaultTabWidth();
 
     /**
      * Sets the default tab width.
      * @param width the new default tab width;
      */
-    static void setDefaultTabWidth(int width)
-    {
-        if (width > 0)
-        {
-            defTabWidth = width;
-        }
-    }
+    static void setDefaultTabWidth(int width);
+
+    /**
+     * Returns default setting for tabs.
+     *
+     */
+    static bool defaultTabSpaces(void);
+
+    /**
+     * If true, editor will use spaces not tabs.
+     *
+     */
+    static void setDefaultTabSpaces(bool on);
 
     /** Insert text and optionallly mark inserted text.
      * @param str String to insert.

@@ -144,6 +144,8 @@
 #define DEFAULT_CACHE_TIMEOUT "7"
 #define CONF_TAB_STOP  "TabStop"
 #define DEFAULT_TAB_STOP "8"
+#define CONF_TAB_SPACES "TabSpaces"
+#define DEFAULT_TAB_SPACES ""
 #define CONF_TOAD_BINDINGS "ToadBindings"
 #define DEFAULT_TOAD_BINDINGS ""
 #define CONF_DISPLAY_GRIDLINES "Gridlines"

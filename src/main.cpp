@@ -268,6 +268,8 @@ int main(int argc, char **argv)
 
         toMarkedText::setDefaultTabWidth(
             toConfigurationSingle::Instance().globalConfig(CONF_TAB_STOP, DEFAULT_TAB_STOP).toInt());
+        toMarkedText::setDefaultTabSpaces(
+            !toConfigurationSingle::Instance().globalConfig(CONF_TAB_SPACES, DEFAULT_TAB_SPACES).isEmpty());
 
         toUpdateIndicateEmpty();
 

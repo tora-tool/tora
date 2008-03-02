@@ -57,15 +57,12 @@
 #include "icons/deindent.xpm"
 #include "icons/indent.xpm"
 
-#define CONF_EXPAND_SPACES "ExpandSpaces"
 #define CONF_COMMA_BEFORE "CommaBefore"
 #define CONF_BLOCK_OPEN_LINE "BlockOpenLine"
 #define CONF_OPERATOR_SPACE "OperatorSpace"
 #define CONF_KEYWORD_UPPER "KeywordUpper"
 #define CONF_RIGHT_SEPARATOR "RightSeparator"
 #define CONF_END_BLOCK_NEWLINE "EndBlockNewline"
-#define CONF_INDENT_LEVEL "IndentLevel"
-#define DEFAULT_INDENT_LEVEL "4"
 #define CONF_COMMENT_COLUMN "CommentColumn"
 #define DEFAULT_COMMENT_COLUMN "60"
 
@@ -188,7 +185,7 @@ void toEditExtensions::intIndent(int delta) {
 }
 
 void toEditExtensions::deindentBlock(void) {
-    intIndent(-toSQLParse::getSetting().IndentLevel);
+    intIndent(toSQLParse::getSetting().IndentLevel);
 }
 
 void toEditExtensions::indentBlock(void) {
@@ -377,14 +374,12 @@ toEditExtensionSetup::toEditExtensionSetup(
 
     Current = toSQLParse::getSetting();
     Started = false;
-    ExpandSpaces->setChecked(Current.ExpandSpaces);
     CommaBefore->setChecked(Current.CommaBefore);
     BlockOpenLine->setChecked(Current.BlockOpenLine);
     OperatorSpace->setChecked(Current.OperatorSpace);
     KeywordUpper->setChecked(Current.KeywordUpper);
     RightSeparator->setChecked(Current.RightSeparator);
     EndBlockNewline->setChecked(Current.EndBlockNewline);
-    IndentLevel->setValue(Current.IndentLevel);
     CommentColumn->setValue(Current.CommentColumn);
     AutoIndent->setChecked(
         !toConfigurationSingle::Instance().globalConfig(
@@ -447,14 +442,14 @@ toEditExtensionSetup::~toEditExtensionSetup() {
 
 
 void toEditExtensionSetup::saveCurrent(void) {
-    Current.ExpandSpaces = ExpandSpaces->isChecked();
+    Current.ExpandSpaces = toMarkedText::defaultTabSpaces();
     Current.CommaBefore = CommaBefore->isChecked();
     Current.BlockOpenLine = BlockOpenLine->isChecked();
     Current.OperatorSpace = OperatorSpace->isChecked();
     Current.KeywordUpper = KeywordUpper->isChecked();
     Current.RightSeparator = RightSeparator->isChecked();
     Current.EndBlockNewline = EndBlockNewline->isChecked();
-    Current.IndentLevel = IndentLevel->value();
+    Current.IndentLevel = toMarkedText::defaultTabWidth();
     Current.CommentColumn = CommentColumn->value();
     toSQLParse::setSetting(Current);
 }
@@ -486,14 +481,14 @@ class toEditExtensionTool : public toTool {
 public:
     toEditExtensionTool() : toTool(910, "Editor Extensions") {
         toSQLParse::settings cur;
-        cur.ExpandSpaces = !config(CONF_EXPAND_SPACES, "Yes").isEmpty();
+        cur.ExpandSpaces = toMarkedText::defaultTabSpaces();
         cur.CommaBefore = !config(CONF_COMMA_BEFORE, "").isEmpty();
         cur.BlockOpenLine = !config(CONF_BLOCK_OPEN_LINE, "").isEmpty();
         cur.OperatorSpace = !config(CONF_OPERATOR_SPACE, "Yes").isEmpty();
         cur.KeywordUpper = !config(CONF_KEYWORD_UPPER, "Yes").isEmpty();
         cur.RightSeparator = !config(CONF_RIGHT_SEPARATOR, "Yes").isEmpty();
         cur.EndBlockNewline = !config(CONF_END_BLOCK_NEWLINE, "Yes").isEmpty();
-        cur.IndentLevel = config(CONF_INDENT_LEVEL, DEFAULT_INDENT_LEVEL).toInt();
+        cur.IndentLevel = toMarkedText::defaultTabWidth();
         cur.CommentColumn = config(CONF_COMMENT_COLUMN, DEFAULT_COMMENT_COLUMN).toInt();
         toSQLParse::setSetting(cur);
     }
@@ -630,14 +625,12 @@ public:
 
 void toEditExtensionSetup::saveSetting(void) {
     Ok = true;
-    Tool->setConfig(CONF_EXPAND_SPACES, ExpandSpaces->isChecked() ? "Yes" : "");
     Tool->setConfig(CONF_COMMA_BEFORE, CommaBefore->isChecked() ? "Yes" : "");
     Tool->setConfig(CONF_BLOCK_OPEN_LINE, BlockOpenLine->isChecked() ? "Yes" : "");
     Tool->setConfig(CONF_OPERATOR_SPACE, OperatorSpace->isChecked() ? "Yes" : "");
     Tool->setConfig(CONF_KEYWORD_UPPER, KeywordUpper->isChecked() ? "Yes" : "");
     Tool->setConfig(CONF_RIGHT_SEPARATOR, RightSeparator->isChecked() ? "Yes" : "");
     Tool->setConfig(CONF_END_BLOCK_NEWLINE, EndBlockNewline->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_INDENT_LEVEL, QString::number(IndentLevel->value()));
     Tool->setConfig(CONF_COMMENT_COLUMN, QString::number(CommentColumn->value()));
     toConfigurationSingle::Instance().globalSetConfig(CONF_AUTO_INDENT_RO, AutoIndent->isChecked() ? "Yes" : "");
     saveCurrent();
