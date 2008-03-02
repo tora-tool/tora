@@ -166,7 +166,7 @@ public:
 
     virtual bool canHandle(toConnection &conn);
 public slots:
-    void changeTab(QWidget *tab);
+    void changeTab(int);
     void changeItem(toTreeWidgetItem *item);
     void changeCursor(toTreeWidgetItem *item);
     void changeRefresh(const QString &str);

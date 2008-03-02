@@ -440,8 +440,8 @@ toSession::toSession(QWidget *main, toConnection &connection)
     Sessions->setSelectionMode(toTreeWidget::Single);
     connect(Sessions, SIGNAL(selectionChanged(toTreeWidgetItem *)),
             this, SLOT(changeItem(toTreeWidgetItem *)));
-    connect(ResultTab, SIGNAL(currentChanged(QWidget *)),
-            this, SLOT(changeTab(QWidget *)));
+    connect(ResultTab, SIGNAL(currentChanged(int)),
+            this, SLOT(changeTab(int)));
 
     try {
         connect(timer(), SIGNAL(timeout(void)), this, SLOT(refreshTabs(void)));
@@ -646,7 +646,9 @@ void toSession::enableStatistics(bool enable) {
     }
 }
 
-void toSession::changeTab(QWidget *tab) {
+void toSession::changeTab(int index) {
+    QWidget *tab = ResultTab->widget(index);
+
     if (tab != CurrentTab) {
         CurrentTab = tab;
         toTreeWidgetItem *item = Sessions->selectedItem();
@@ -776,7 +778,7 @@ void toSession::changeItem(toTreeWidgetItem *item) {
     }
     QWidget *t = CurrentTab;
     CurrentTab = NULL;
-    changeTab(t);
+    changeTab(ResultTab->indexOf(t));
 }
 
 void toSession::refreshTabs(void) {
