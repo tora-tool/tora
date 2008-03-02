@@ -433,6 +433,14 @@ void toWorksheet::setup(bool autoLoad) {
             SLOT(addLog(const QString &,
                         const toConnection::exception &,
                         bool)));
+    connect(Result,
+            SIGNAL(firstResult(const QString &,
+                               const toConnection::exception &,
+                               bool)),
+            this,
+            SLOT(unhideResults(const QString &,
+                               const toConnection::exception &,
+                               bool)));
 
     Columns = new toResultCols(container, "description");
     box->addWidget(Columns);
@@ -862,6 +870,10 @@ void toWorksheet::query(const QString &str, execType type) {
             return ;
         }
 
+        // unhide the results pane if there's something to show
+        if(first == "SELECT" || ResultTab->currentIndex() != 0)
+            unhideResults();
+
         toQList param;
         if (!nobinds)
             try {
@@ -1172,23 +1184,31 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens, int line, int pos, exec
         t = t.mid(i);
     }
 
-    if (t.trimmed().length() && EditSplitter) {
-        // move splitter if currently hidden
-        QList<int> list = EditSplitter->sizes();
-        if(list[1] == 0) {
-            list[0] =  1;
-            list[1] =  1;
-            EditSplitter->setSizes(list);
-        }
-
+    if (t.trimmed().length() && EditSplitter)
         query(t, type);
+}
+
+void toWorksheet::unhideResults(const QString &,
+                                const toConnection::exception &,
+                                bool error) {
+    if(!error && Result->model()->rowCount() > 0)
+        unhideResults();
+}
+
+void toWorksheet::unhideResults() {
+    // move splitter if currently hidden
+    QList<int> list = EditSplitter->sizes();
+    if(list[1] == 0) {
+        list[0] =  1;
+        list[1] =  1;
+        EditSplitter->setSizes(list);
     }
 }
 
 void toWorksheet::execute() {
-    if (Editor->hasSelectedText()) {
+    if(Editor->hasSelectedText()) {
         query(Editor->selectedText(), Normal);
-        return ;
+        return;
     }
 
     toSQLParse::editorTokenizer tokens(Editor);

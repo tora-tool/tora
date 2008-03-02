@@ -235,9 +235,13 @@ public slots:
      *
      */
     void createPopupMenu(const QPoint &pos);
+
 private slots:
     void poll(void);
     void changeConnection(void);
+
+    void unhideResults(const QString &, const toConnection::exception &, bool);
+    void unhideResults(void);
 };
 
 
