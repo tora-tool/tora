@@ -184,7 +184,7 @@
   </connection>
   <connection>
    <sender>TabSelection</sender>
-   <signal>itemClicked(QListWidgetItem*)</signal>
+   <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
    <receiver>toPreferencesUI</receiver>
    <slot>selectTab(QListWidgetItem*)</slot>
    <hints>
