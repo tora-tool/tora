@@ -582,7 +582,7 @@ toTableViewIterator::toTableViewIterator(toTableViewIterator &other) {
 
 
 void toTableViewIterator::updateIndex(void) {
-    if(_row < _view->model()->rowCount())
+    if(_view && _row < _view->model()->rowCount())
         _index = _view->model()->index(_row, 1); // skip numbercolumn
     else
         _index = QModelIndex();

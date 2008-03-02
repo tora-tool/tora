@@ -420,9 +420,9 @@ signals:
  *
  */
 class toTableViewIterator {
-    int                _row;
-    toResultTableView *_view;
-    QModelIndex        _index;
+    int                         _row;
+    QPointer<toResultTableView> _view;
+    QModelIndex                 _index;
 
     friend class toTableViewIteratorItem;
 
