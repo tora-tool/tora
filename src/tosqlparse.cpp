@@ -1034,9 +1034,9 @@ QString toSQLParse::indentString(int level)
     QString ret;
     if (Settings.ExpandSpaces)
     {
-        for (int i = 0;i < level / 8;i++)
+        for (int i = 0;i < level / Settings.IndentLevel;i++)
             ret += ("\t");
-        for (int j = 0;j < level % 8;j++)
+        for (int j = 0;j < level % Settings.IndentLevel;j++)
             ret += (" ");
     }
     else
