@@ -96,7 +96,7 @@ void toResultModel::readData() {
 
     try {
         if(!Query->poll()) {
-            if(!Timer.isActive())
+            if(!Timer.isActive() && First)
                 Timer.start(TO_POLL_CHECK);
             return;
         }
@@ -141,12 +141,10 @@ void toResultModel::readData() {
         if(First) {
             if(tmp.size() > 0 || !Query || Query->eof()) {
                 First = !First;
-                emit firstResult(Query->sql(),
-                                 tr("Statement executed"), // todo
-                                 false);
 
                 // need to reset view(s) since we have to poll for data
                 reset();
+                emit firstResult(tr("Statement executed"), false);
             }
         }
 
@@ -160,10 +158,7 @@ void toResultModel::readData() {
     catch(const toConnection::exception &str) {
         if(First) {
             First = !First;
-            emit firstResult(
-                Query != NULL ? Query->sql() : (const QString) NULL,
-                str,
-                true);
+            emit firstResult(str, true);
         }
         cleanup();
         return;
@@ -171,10 +166,7 @@ void toResultModel::readData() {
     catch(const QString &str) {
         if(First) {
             First = !First;
-            emit firstResult(
-                Query != NULL ? Query->sql() : (const QString) NULL,
-                str,
-                true);
+            emit firstResult(str, true);
         }
         cleanup();
         return;
@@ -399,6 +391,11 @@ int toResultModel::columnCount(const QModelIndex &parent) const {
 
 
 bool toResultModel::canFetchMore(const QModelIndex &parent) const {
+    // sometimes the view calls this before the query has even
+    // run.
+    if(First)
+        return false;
+
     try {
         return Query && Query->poll();
     }

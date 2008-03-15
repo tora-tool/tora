@@ -121,8 +121,7 @@ protected slots:
     void menuCallback(QAction *action);
     void handleDone(void);
     void handleReset(void);
-    void handleFirst(const QString &sql,
-                     const toConnection::exception &res,
+    void handleFirst(const toConnection::exception &res,
                      bool error);
     void handleDoubleClick(const QModelIndex &);
     // override parent

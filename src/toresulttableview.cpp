@@ -60,8 +60,7 @@
 
 /**
  * This is a simple class for providing sensible size hints to the
- * view. This will probably be extended to support editing and moved
- * to it's own class.
+ * view.
  *
  */
 class toResultTableViewDelegate : public QItemDelegate {
@@ -173,13 +172,9 @@ void toResultTableView::query(const QString &sql, const toQList &param) {
         connect(Model, SIGNAL(done()), this, SLOT(handleDone()));
         connect(Model, SIGNAL(modelReset()), this, SLOT(handleReset()));
         connect(Model,
-                SIGNAL(firstResult(const QString &,
-                                   const toConnection::exception &,
-                                   bool)),
+                SIGNAL(firstResult(const toConnection::exception &, bool)),
                 this,
-                SLOT(handleFirst(const QString &,
-                                 const toConnection::exception &,
-                                 bool)));
+                SLOT(handleFirst(const toConnection::exception &, bool)));
 
         setSortingEnabled(true);
     }
@@ -220,7 +215,7 @@ void toResultTableView::createActions() {
 }
 
 
-void toResultTableView::applyFilter(void) {
+void toResultTableView::applyFilter() {
     if(!Filter)
         return;
 
@@ -372,15 +367,13 @@ void toResultTableView::handleReset(void) {
         while(Model->canFetchMore(index))
             Model->fetchMore(index);
     }
-
-    applyColumnRules();
 }
 
 
-void toResultTableView::handleFirst(const QString &sql,
-                                    const toConnection::exception &res,
+void toResultTableView::handleFirst(const toConnection::exception &res,
                                     bool error) {
-    emit firstResult(sql, res, error);
+    applyColumnRules();
+    emit firstResult(sql(), res, error);
 }
 
 
