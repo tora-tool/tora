@@ -1105,10 +1105,15 @@ void toWorksheet::addLog(const QString &sql,
     if(!error)
         changeResult(ResultTab->indexOf(CurrentTab));
 
-    static QRegExp re(QString::fromLatin1("^[1-9]\\d* rows processed$"));
+    // the sql string will be trimmed but case will be same as the
+    // original.  the code originally compared the result return, but
+    // that class doesn't know if a commit is needed either.
+
+    static QRegExp re(QString::fromLatin1("^SELECT"));
+    re.setCaseSensitivity(Qt::CaseInsensitive);
     try {
-        if (result.contains(re)) {
-            if (!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
+        if(!sql.contains(re)) {
+            if(!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
                 connection().commit();
             else
                 toMainWidget()->setNeedCommit(connection());
