@@ -189,7 +189,6 @@ public:
     virtual void importData(std::map<QString, QString> &data, const QString &prefix);
 
     static toWorksheet *fileWorksheet(const QString &file);
-    void setCaption(void);
 
 signals:
     void executed(void);
@@ -235,6 +234,12 @@ public slots:
      *
      */
     void createPopupMenu(const QPoint &pos);
+
+    /**
+     * Updates tool caption.
+     *
+     */
+    void setCaption(void);
 
 private slots:
     void poll(void);

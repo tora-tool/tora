@@ -416,6 +416,7 @@ void toWorksheet::setup(bool autoLoad) {
     Editor = new toWorksheetText(this, EditSplitter);
     // stop any running query when a file is loaded
     connect(Editor, SIGNAL(fileOpened()), this, SLOT(stop()));
+    connect(Editor, SIGNAL(modificationChanged(bool)), this, SLOT(setCaption()));
 
     ResultTab = new toTabWidget(EditSplitter);
     QWidget *container = new QWidget(ResultTab);
@@ -1811,7 +1812,10 @@ void toWorksheet::setCaption(void) {
     QString name = WorksheetTool.name();
     if (! Editor->filename().isEmpty()) {
         QFileInfo file(Editor->filename());
-        name += QString::fromLatin1(" ") + file.fileName();
+        name += (Editor->isModified() ?
+                 QString(" *") :
+                 QString(" ")) +
+            file.fileName();
     }
     toToolCaption(this, name);
 }
