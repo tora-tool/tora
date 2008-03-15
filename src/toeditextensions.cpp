@@ -185,7 +185,7 @@ void toEditExtensions::intIndent(int delta) {
 }
 
 void toEditExtensions::deindentBlock(void) {
-    intIndent(toSQLParse::getSetting().IndentLevel);
+    intIndent(-toSQLParse::getSetting().IndentLevel);
 }
 
 void toEditExtensions::indentBlock(void) {
@@ -442,14 +442,16 @@ toEditExtensionSetup::~toEditExtensionSetup() {
 
 
 void toEditExtensionSetup::saveCurrent(void) {
-    Current.ExpandSpaces = toMarkedText::defaultTabSpaces();
+    Current.ExpandSpaces = toConfigurationSingle::Instance().globalConfig(
+        CONF_TAB_SPACES, DEFAULT_TAB_SPACES).isEmpty();
     Current.CommaBefore = CommaBefore->isChecked();
     Current.BlockOpenLine = BlockOpenLine->isChecked();
     Current.OperatorSpace = OperatorSpace->isChecked();
     Current.KeywordUpper = KeywordUpper->isChecked();
     Current.RightSeparator = RightSeparator->isChecked();
     Current.EndBlockNewline = EndBlockNewline->isChecked();
-    Current.IndentLevel = toMarkedText::defaultTabWidth();
+    Current.IndentLevel = toConfigurationSingle::Instance().globalConfig(
+        CONF_TAB_STOP, DEFAULT_TAB_STOP).toInt();
     Current.CommentColumn = CommentColumn->value();
     toSQLParse::setSetting(Current);
 }
@@ -481,14 +483,16 @@ class toEditExtensionTool : public toTool {
 public:
     toEditExtensionTool() : toTool(910, "Editor Extensions") {
         toSQLParse::settings cur;
-        cur.ExpandSpaces = toMarkedText::defaultTabSpaces();
+        cur.ExpandSpaces = toConfigurationSingle::Instance().globalConfig(
+            CONF_TAB_SPACES, DEFAULT_TAB_SPACES).isEmpty();
         cur.CommaBefore = !config(CONF_COMMA_BEFORE, "").isEmpty();
         cur.BlockOpenLine = !config(CONF_BLOCK_OPEN_LINE, "").isEmpty();
         cur.OperatorSpace = !config(CONF_OPERATOR_SPACE, "Yes").isEmpty();
         cur.KeywordUpper = !config(CONF_KEYWORD_UPPER, "Yes").isEmpty();
         cur.RightSeparator = !config(CONF_RIGHT_SEPARATOR, "Yes").isEmpty();
         cur.EndBlockNewline = !config(CONF_END_BLOCK_NEWLINE, "Yes").isEmpty();
-        cur.IndentLevel = toMarkedText::defaultTabWidth();
+        cur.IndentLevel = toConfigurationSingle::Instance().globalConfig(
+            CONF_TAB_STOP, DEFAULT_TAB_STOP).toInt();
         cur.CommentColumn = config(CONF_COMMENT_COLUMN, DEFAULT_COMMENT_COLUMN).toInt();
         toSQLParse::setSetting(cur);
     }
