@@ -462,9 +462,10 @@ void toResultTableViewEdit::revertChanges() {
 
 
 void toResultTableViewEdit::addRecord(void) {
+    int col = selectionModel()->currentIndex().column();
     int row = Model->addRow() - 1; // selection starts at 0
     if(row >= 0) {
-        QModelIndex left  = Model->createIndex(row, 0);
+        QModelIndex left  = Model->createIndex(row, col);
         selectionModel()->select(QItemSelection(left, left),
                                  QItemSelectionModel::ClearAndSelect);
         setCurrentIndex(left);
@@ -473,9 +474,10 @@ void toResultTableViewEdit::addRecord(void) {
 
 
 void toResultTableViewEdit::duplicateRecord(void) {
+    int col = selectionModel()->currentIndex().column();
     int row = Model->addRow(selectionModel()->currentIndex()) - 1;
     if(row >= 0) {
-        QModelIndex left  = Model->createIndex(row, 0);
+        QModelIndex left  = Model->createIndex(row, col);
         selectionModel()->select(QItemSelection(left, left),
                                  QItemSelectionModel::ClearAndSelect);
         setCurrentIndex(left);
