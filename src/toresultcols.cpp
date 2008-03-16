@@ -386,6 +386,7 @@ toResultCols::toResultCols(QWidget *parent, const char *name, Qt::WFlags f)
                                      QSizePolicy::Maximum));
 
     Comment = new QLabel(box);
+    Comment->setWordWrap(true);
     hbox->addWidget(Comment);
     Comment->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
                                        QSizePolicy::Maximum));
@@ -403,7 +404,7 @@ toResultCols::toResultCols(QWidget *parent, const char *name, Qt::WFlags f)
     connect(Edit, SIGNAL(toggled(bool)), this, SLOT(editComment(bool)));
 
     hbox->setContentsMargins(2, 2, 2, 2);
-    hbox->setSpacing(0);
+    hbox->setSpacing(5);
     box->setLayout(hbox);
     vbox->addWidget(box);
 
@@ -512,7 +513,7 @@ void toResultCols::query(const QString &sql, const toQList &param) {
 
         label += QString::fromLatin1("</B>");
         if (!name.Comment.isNull()) {
-            Comment->setText(QString::fromLatin1(" - ") + name.Comment);
+            Comment->setText(name.Comment);
             EditComment->setComment(
                 true,
                 conn.quote(name.Owner) + "." + conn.quote(name.Name),
@@ -546,10 +547,8 @@ void toResultCols::query(const QString &sql, const toQList &param) {
             toQuery query(conn, SQLTableComment, Owner, Name);
             QString t;
             if(!query.eof()) {
-                t += QString::fromLatin1(" - ");
-                QString comment = query.readValueNull();
-                EditComment->setComment(true, TableName, comment);
-                t += comment;
+                t = query.readValueNull();
+                EditComment->setComment(true, TableName, t);
             }
             Comment->setText(t);
             editComment(Edit->isChecked());
@@ -621,6 +620,11 @@ void toResultCols::done() {
 
 
 void toResultCols::editComment(bool val) {
+    // copy text from on to the other so i don't have to refresh to
+    // see my comments... i would think they were lost.
+    if(EditComment->isVisible())
+        Comment->setText(EditComment->text());
+
     if(!toIsMySQL(connection())) {
         Columns->setVisible(!val);
         MySQLColumns->setVisible(false);
