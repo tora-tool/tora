@@ -758,7 +758,7 @@ void toMain::recentCallback(QAction *action) {
 
 
 void toMain::statusCallback(QAction *action) {
-    new toMemoEditor(this, action->text());
+    new toMemoEditor(this, action->toolTip());
 }
 
 
@@ -1283,8 +1283,16 @@ void toMain::updateStatusMenu(void)
 {
     std::list<QString> status = toStatusMessages();
     statusMenu->clear();
-    for(std::list<QString>::iterator i = status.begin(); i != status.end(); i++)
-        statusMenu->addAction(new QAction(*i, statusMenu));
+    for(std::list<QString>::iterator i = status.begin(); i != status.end(); i++) {
+        QAction *s = new QAction(statusMenu);
+        if((*i).size() > 75)
+            s->setText((*i).left(75) + "...");
+        else
+            s->setText(*i);
+
+        s->setToolTip(*i);
+        statusMenu->addAction(s);
+    }
 }
 
 void toMain::changeConnection(void) {
