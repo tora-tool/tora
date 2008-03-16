@@ -1652,7 +1652,7 @@ toBackgroundLabel* toMain::getBackgroundLabel()
     return BackgroundLabel;
 }
 
-toMain* toMainWidget() {
+toMain* getMainWidget() {
     QWidgetList widgets = qApp->topLevelWidgets();
     for(QWidgetList::iterator it = widgets.begin(); it != widgets.end(); it++) {
         toMain *main = dynamic_cast<toMain *>((*it));
@@ -1661,4 +1661,9 @@ toMain* toMainWidget() {
     }
 
     return NULL;
+}
+
+toMain* toMainWidget() {
+    static toMain *main = getMainWidget();
+    return main;
 }
