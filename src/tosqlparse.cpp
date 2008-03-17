@@ -79,12 +79,12 @@ void printStatement(toSQLParse::statement &stat, int level)
         printf("Raw:");
         break;
     }
-    printf("%s (%d)\n", (const char *)stat.String, stat.Line);
+    printf("%s (%d)\n", (const char *)stat.String.toUtf8(), stat.Line);
     if (!stat.Comment.isNull())
     {
         for (int i = 0;i < level;i++)
             printf(" ");
-        printf("Comment:%s\n", (const char *)stat.Comment);
+		printf("Comment:%s\n", (const char *)stat.Comment.toUtf8());
     }
     for (std::list<toSQLParse::statement>::iterator i = stat.subTokens().begin();
             i != stat.subTokens().end();
@@ -365,12 +365,12 @@ int main(int argc, char **argv)
     QString firstparse = toSQLParse::indent(res);
     QString secondparse = toSQLParse::indent(firstparse);
 
-    printf("First\n\n%s\n", (const char *)firstparse);
+	printf("First\n\n%s\n", (const char *)firstparse.toUtf8());
 
     if (firstparse != secondparse)
     {
         printf("Reparse doesn't match\n");
-        printf("Second\n\n%s\n", (const char *)secondparse);
+		printf("Second\n\n%s\n", (const char *)secondparse.toUtf8());
     }
 
     return 0;
@@ -811,7 +811,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
         QString upp = token.toUpper();
 #ifdef TOPARSE_DEBUG
 
-        printf("%s (%d)\n", (const char*)token, tokens.line());
+		printf("%s (%d)\n", (const char*)token.toUtf8(), tokens.line());
 #endif
 
         if (first.isNull() && !token.startsWith(("/*")) && !token.startsWith("--") && !token.startsWith("//"))
