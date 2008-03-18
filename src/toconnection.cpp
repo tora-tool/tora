@@ -1136,6 +1136,9 @@ toQList toQuery::readQueryNull(toConnection &conn, const QString &sql,
 }
 
 toQValue toQuery::readValue(void) {
+    if(!Connection)
+        return toQValue(0);
+
     toBusy busy;
     if (Connection->Abort)
         throw qApp->translate("toQuery", "Query aborted");
@@ -1145,6 +1148,9 @@ toQValue toQuery::readValue(void) {
 }
 
 toQValue toQuery::readValueNull(void) {
+    if(!Connection)
+        return toQValue(0);
+
     toBusy busy;
     if (Connection->Abort)
         throw qApp->translate("toQuery", "Query aborted");
