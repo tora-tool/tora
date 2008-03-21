@@ -185,11 +185,11 @@ toMain::toMain()
             toConnection *conn;
 
             do {
-                toNewConnection newConnection(this, tr("First connection"), true);
+                toNewConnection newConnection(this);
 
                 conn = NULL;
                 if(newConnection.exec())
-                    conn = newConnection.makeConnection();
+                    conn = newConnection.connection();
                 else
                     break;
             }
@@ -903,12 +903,12 @@ void toMain::addConnection(void)
 {
     try
     {
-        toNewConnection newConnection(this, "New connection", true);
+        toNewConnection newConnection(this);
 
         toConnection *conn = NULL;
 
         if (newConnection.exec())
-            conn = newConnection.makeConnection();
+            conn = newConnection.connection();
 
         if (conn)
             addConnection(conn);

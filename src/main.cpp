@@ -96,10 +96,14 @@ int main(int argc, char **argv)
 #endif
 
 #  ifndef Q_OS_WIN32
-
     if (toConfigurationSingle::Instance().globalConfig(CONF_DESKTOP_AWARE, "Yes").isEmpty())
         QApplication::setDesktopSettingsAware(false);
 #  endif
+
+    // QSettings uses these.
+    QCoreApplication::setOrganizationName("TOra");
+    QCoreApplication::setOrganizationDomain("tora.sourceforge.net");
+    QCoreApplication::setApplicationName("TOra");
 
     new QApplication(argc, argv);
 
