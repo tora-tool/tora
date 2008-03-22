@@ -381,12 +381,16 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn) 
         }
     }
 
-    toQuery q(conn, sql, args);
+    try {
+        toQuery q(conn, sql, args);
 
-    if(!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
-        conn.commit();
-    else
-        toMainWidget()->setNeedCommit(conn);
+        if(!toConfigurationSingle::Instance().globalConfig(
+               CONF_AUTO_COMMIT, "").isEmpty())
+            conn.commit();
+        else
+            toMainWidget()->setNeedCommit(conn);
+    }
+    TOCATCH;
 }
 
 
