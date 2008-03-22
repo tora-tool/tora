@@ -53,6 +53,9 @@
 
 #define MAX_HISTORY 50
 
+static const QString ORACLE_INSTANT = "Oracle (Instant Client)";
+static const QString ORACLE_TNS     = "Oracle (TNS)";
+
 
 toNewConnection::toNewConnection(
     QWidget* parent,
@@ -63,8 +66,15 @@ toNewConnection::toNewConnection(
 
     std::list<QString> lst = toConnectionProvider::providers();
 
-    Q_FOREACH(QString s, lst)
-        Provider->addItem(s);
+    Q_FOREACH(QString s, lst) {
+        if(s == "Oracle") {
+            Provider->addItem(ORACLE_INSTANT);
+            if(getenv("ORACLE_HOME"))
+                Provider->addItem(ORACLE_TNS);
+        }
+        else
+            Provider->addItem(s);
+    }
 
     if(Provider->count() < 1) {
         TOMessageBox::information(
@@ -75,16 +85,6 @@ toNewConnection::toNewConnection(
         reject();
         return;
     }
-#if !defined(TO_INSTANT_CLIENT) && !defined(TO_NO_ORACLE)
-    else if(!getenv("ORACLE_HOME") && Provider->findText("Oracle") > -1) {
-        QMessageBox::warning(
-            this,
-            tr("Warning"),
-            tr("No ORACLE_HOME defined. If you're using an instant client "
-               "you should recompile with --with-instant-client or "
-               "TO_INSTANT_CLIENT defined."));
-    }
-#endif
 
     NewConnection = 0;
 
@@ -143,6 +143,15 @@ toNewConnection::toNewConnection(
     loadPrevious(0);
 
     Password->setFocus(Qt::OtherFocusReason);
+}
+
+
+QString toNewConnection::realProvider() {
+    QString p = Provider->currentText();
+    if(p.startsWith("Oracle"))
+        return "Oracle";
+
+    return p;
 }
 
 
@@ -320,15 +329,16 @@ void toNewConnection::previousCellChanged(int currentRow,
 
 void toNewConnection::changeProvider(int current) {
     try {
-        std::list<QString> hosts = toConnectionProvider::hosts(
-            Provider->currentText());
+        QString provider = realProvider();
+        if(provider.isNull() || provider.isEmpty())
+            return;
 
-        bool sqlNet = false;
+        std::list<QString> hosts = toConnectionProvider::hosts(provider);
 
         DefaultPort = 0;
         for(std::list<QString>::iterator i = hosts.begin(); i != hosts.end(); i++) {
             if((*i).isEmpty())
-                sqlNet = true;
+                continue;
             else if((*i).startsWith(":"))
                 DefaultPort = (*i).mid(1).toInt();
             else
@@ -337,15 +347,13 @@ void toNewConnection::changeProvider(int current) {
 
         // seems i broke this for oracle
         if(!DefaultPort) {
-            QString prov = Provider->currentText();
-            if(prov == "Oracle")
+            if(provider.startsWith("Oracle"))
                 DefaultPort = 1521;
         }
 
         Port->setValue(DefaultPort);
 
-#ifndef TO_INSTANT_CLIENT
-        if(sqlNet) {
+        if(Provider->currentText() == ORACLE_TNS) {
             HostLabel->hide();
             Host->hide();
             PortLabel->hide();
@@ -357,14 +365,12 @@ void toNewConnection::changeProvider(int current) {
             PortLabel->show();
             Port->show();
         }
-#endif
 
         QList<QWidget *> widgets = OptionGroup->findChildren<QWidget *>();
         Q_FOREACH(QWidget *w, widgets)
             delete w;
 
-        std::list<QString> options = toConnectionProvider::options(
-            Provider->currentText());
+        std::list<QString> options = toConnectionProvider::options(provider);
         for(std::list<QString>::iterator j = options.begin();
             j != options.end();
             j++) {
@@ -430,7 +436,7 @@ toConnection* toNewConnection::makeConnection(void) {
             try {
                 toConnection &conn = toMainWidget()->connection(*i);
                 if(conn.user() == Username->text() &&
-                   conn.provider() == Provider->currentText().toLatin1() &&
+                   conn.provider() == realProvider() &&
                    conn.host() == host &&
                    conn.database() == Database->currentText())
                     return &conn;
@@ -438,15 +444,14 @@ toConnection* toNewConnection::makeConnection(void) {
             catch(...) {}
         }
 
-        QString provider = Provider->currentText();
+        QString provider = realProvider();
 
         if(Port->value() != 0 && Port->value())
             host += ":" + QString::number(Port->value());
 
         QString database = Database->currentText();
 
-#ifdef TO_INSTANT_CLIENT
-        if(provider == "Oracle") {
+        if(Provider->currentText() == ORACLE_INSTANT) {
             // create the rest of the connect string. this will work
             // without an ORACLE_HOME.
 
@@ -456,7 +461,6 @@ toConnection* toNewConnection::makeConnection(void) {
                 "/" + database;
             host = "";
         }
-#endif
 
         toConnection *retCon = new toConnection(
             provider,

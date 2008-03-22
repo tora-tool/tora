@@ -129,6 +129,7 @@ private:
     // connection created by dialog
     toConnection *NewConnection;
 
+    QString realProvider(void);
     void readSettings(void);
     void writeSettings(void);
     int findHistory(const QString &provider,
