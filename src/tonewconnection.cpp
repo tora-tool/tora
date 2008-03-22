@@ -75,6 +75,16 @@ toNewConnection::toNewConnection(
         reject();
         return;
     }
+#if !defined(TO_INSTANT_CLIENT) && !defined(TO_NO_ORACLE)
+    else if(!getenv("ORACLE_HOME") && Provider->findText("Oracle") > -1) {
+        QMessageBox::warning(
+            this,
+            tr("Warning"),
+            tr("No ORACLE_HOME defined. If you're using an instant client "
+               "you should recompile with --with-instant-client or "
+               "TO_INSTANT_CLIENT defined."));
+    }
+#endif
 
     NewConnection = 0;
 
@@ -325,7 +335,7 @@ void toNewConnection::changeProvider(int current) {
                 Host->addItem(*i);
         }
 
-        // seems broke this
+        // seems i broke this for oracle
         if(!DefaultPort) {
             QString prov = Provider->currentText();
             if(prov == "Oracle")
@@ -333,6 +343,21 @@ void toNewConnection::changeProvider(int current) {
         }
 
         Port->setValue(DefaultPort);
+
+#ifndef TO_INSTANT_CLIENT
+        if(sqlNet) {
+            HostLabel->hide();
+            Host->hide();
+            PortLabel->hide();
+            Port->hide();
+        }
+        else {
+            HostLabel->show();
+            Host->show();
+            PortLabel->show();
+            Port->show();
+        }
+#endif
 
         QList<QWidget *> widgets = OptionGroup->findChildren<QWidget *>();
         Q_FOREACH(QWidget *w, widgets)
@@ -419,6 +444,8 @@ toConnection* toNewConnection::makeConnection(void) {
             host += ":" + QString::number(Port->value());
 
         QString database = Database->currentText();
+
+#ifdef TO_INSTANT_CLIENT
         if(provider == "Oracle") {
             // create the rest of the connect string. this will work
             // without an ORACLE_HOME.
@@ -429,6 +456,7 @@ toConnection* toNewConnection::makeConnection(void) {
                 "/" + database;
             host = "";
         }
+#endif
 
         toConnection *retCon = new toConnection(
             provider,
