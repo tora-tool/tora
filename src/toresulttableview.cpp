@@ -334,9 +334,7 @@ void toResultTableView::menuCallback(QAction *action) {
     else if(action == editAct)
         toMainWidget()->editSQL(sqlName());
     else if(action == readAllAct || action == rowCountAct) {
-        QModelIndex index;
-        while(Model->canFetchMore(index))
-            Model->fetchMore(index);
+        Model->readAll();
 
         if(action == rowCountAct) {
             int count = Model->rowCount();
@@ -362,11 +360,8 @@ void toResultTableView::handleDone(void) {
 
 
 void toResultTableView::handleReset(void) {
-    if(ReadAll) {
-        QModelIndex index;
-        while(Model->canFetchMore(index))
-            Model->fetchMore(index);
-    }
+    if(ReadAll)
+        Model->readAll();
 }
 
 

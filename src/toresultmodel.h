@@ -194,7 +194,7 @@ public:
      * otherwise false.
      *
      */
-    virtual bool canFetchMore(const QModelIndex &parent) const;
+    virtual bool canFetchMore(const QModelIndex &parent = QModelIndex()) const;
 
 
     /**
@@ -316,6 +316,15 @@ signals:
      *
      */
     void rowDeleted(const toResultModel::Row &row);
+
+
+public slots:
+    /**
+     * Load all data into model until end of query
+     *
+     */
+    void readAll(void);
+
 
 protected slots:
 

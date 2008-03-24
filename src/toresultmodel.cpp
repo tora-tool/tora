@@ -88,6 +88,16 @@ void toResultModel::cleanup() {
 }
 
 
+void toResultModel::readAll() {
+    QModelIndex index;
+
+    while(canFetchMore(index)) {
+        fetchMore(index);
+        qApp->processEvents();
+    }
+}
+
+
 void toResultModel::readData() {
     if(!Query) {
         cleanup();
@@ -386,11 +396,14 @@ void toResultModel::readHeaders() {
  * returning the number of children of parent.
  */
 int toResultModel::columnCount(const QModelIndex &parent) const {
+    Q_UNUSED(parent);
     return Headers.size();
 }
 
 
 bool toResultModel::canFetchMore(const QModelIndex &parent) const {
+    Q_UNUSED(parent);
+
     // sometimes the view calls this before the query has even
     // run.
     if(First)
@@ -409,6 +422,8 @@ bool toResultModel::canFetchMore(const QModelIndex &parent) const {
 
 
 void toResultModel::fetchMore(const QModelIndex &parent) {
+    Q_UNUSED(parent);
+
     // sometimes the view calls this before the query has even
     // run. don't actually increase max until we've hit it.
     if(MaxNumber < 0 || MaxNumber <= CurrentRow)
