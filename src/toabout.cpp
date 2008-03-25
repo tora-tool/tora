@@ -74,15 +74,15 @@ static const char *AboutText = "<html><body bgcolor='#E3B836'>"
                                "<LI><B>Oliver Jehle</B>\n"
                                "<LI><B>Raj Thukral</B>\n"
                                "<LI><B>Thomas Porschberg</B>\n"
-                               "<LI><B>Volker Gï¿½tz</B>\n"
+                               "<LI><B>Volker G&ouml;tz</B>\n"
                                "<LI><B>Henrik Johnson</B>\n"
                                "</UL>\n"
                                "Contributors (In alphabetical order):<P>\n"
                                "<UL>\n"
                                "<LI><B>Alexander (Leo) Bergolth</B> - Access to Oracle 7 database.\n"
-                               "<LI><B>Volker Gï¿½tz</B> - Improved PostgreSQL support.\n"
+                               "<LI><B>Volker G&ouml;tz</B> - Improved PostgreSQL support.\n"
                                "<LI><B>Oliver Jehle</B> - Object caching to disc, SAP and much more.\n"
-                               "<LI><B>Christoph Kümmel-Schulte</B> - Various work on qt4 port and windows support.\n"
+                               "<LI><B>Christoph K&uuml;mmel-Schulte</B> - Various work on qt4 port and windows support.\n"
                                "<LI><B>Sergei Kuchin</B> - Oracle Template Library.\n"
                                "<LI><B>Michael Meskes</B> - Debian maintainer (<A HREF=http://www.debian.org>http://www.debian.org/</A>).\n"
                                "<LI><B>Selcuk Ozturk</B> - Improved content editor.\n"
@@ -106,7 +106,7 @@ static const char *AboutText = "<html><body bgcolor='#E3B836'>"
                                "<B>Frits Hoogland</B>,\n"
                                "<B>Mihai Ibanescu</B>,\n"
                                "<B>Bo Johansson</B>,\n"
-                               "<B>Olof Jï¿½nsson</B>,\n"
+                               "<B>Olof J&ouml;nsson</B>,\n"
                                "<B>Michael Kaes</B>,\n"
                                "<B>Norbert Kiesel</B>,\n"
                                "<B>Pawe=B3 Kucharczyk</B>,\n"
@@ -147,7 +147,7 @@ toAbout::toAbout(AboutType page, QWidget* parent, const char* name, bool modal, 
 
     if(page == License) {
         setWindowTitle(tr("GNU General Public License"));
-		TextView->setPlainText(tr(LicenseText));
+		TextView->setHtml(tr(LicenseText));
         if (parent)
             CancelButton->hide();
     }
