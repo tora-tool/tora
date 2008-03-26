@@ -720,6 +720,9 @@ void toMain::updateWindowsMenu(void) {
         if(!(*it)->isHidden()) {
             QString caption = (*it)->windowTitle().trimmed();
 
+            if(index < 9)
+                caption = "&" + QString::number(index + 1) + " " + caption;
+
             QAction *action = new QAction(caption, (*it));
             if(index < 9)
                 action->setShortcut(Qt::CTRL + Qt::Key_1 + index);
