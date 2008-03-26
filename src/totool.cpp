@@ -237,7 +237,7 @@ void toTool::createWindow(void)
             if (icon)
                 newWin->setWindowIcon(*icon);
             toToolWidget *tool = dynamic_cast<toToolWidget *>(newWin);
-            if (tool)
+            if(tool && tool->windowTitle().isEmpty())
                 toToolCaption(tool, name());
 
             newWin->show();

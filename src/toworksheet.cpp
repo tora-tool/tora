@@ -577,6 +577,8 @@ void toWorksheet::setup(bool autoLoad) {
     list.append(1);
     list.append(0);
     EditSplitter->setSizes(list);
+
+    setCaption();
 }
 
 toWorksheet::toWorksheet(QWidget *main, toConnection &connection, bool autoLoad)
@@ -1810,13 +1812,18 @@ void toWorksheet::importData(std::map<QString, QString> &data, const QString &pr
 
 void toWorksheet::setCaption(void) {
     QString name = WorksheetTool.name();
-    if (! Editor->filename().isEmpty()) {
+
+    QString filename;
+    if(!Editor->filename().isNull() && !Editor->filename().isEmpty()) {
         QFileInfo file(Editor->filename());
-        name += (Editor->isModified() ?
-                 QString(" *") :
-                 QString(" ")) +
-            file.fileName();
+        filename = file.fileName();
     }
+    else
+        filename = "Untitled";
+
+    name += (Editor->isModified() ?
+             QString(" - *") :
+             QString(" - ")) + filename;
     toToolCaption(this, name);
 }
 
