@@ -739,7 +739,22 @@ void toMain::updateWindowsMenu(void) {
 void toMain::windowCallback(QAction *action) {
     // action's parent is the window widget. get parent and raise it.
 
-    if(action != NULL && action->parentWidget() != NULL)
+    if(action == NULL || action->parentWidget() == NULL)
+        return;
+
+    if(action == windowCloseAllAct) {
+        while(workspace()->windowList(QWorkspace::CreationOrder).count() > 0 &&
+              workspace()->windowList(QWorkspace::CreationOrder).at(0))
+            if (workspace()->windowList(QWorkspace::CreationOrder).at(0) &&
+                !workspace()->windowList(QWorkspace::CreationOrder).at(0)->close())
+                return;
+    }
+    else if(action == windowCloseAct) {
+        QWidget *widget = workspace()->activeWindow();
+        if(widget)
+            widget->close();
+    }
+    else
         workspace()->setActiveWindow(action->parentWidget());
 }
 
@@ -872,18 +887,6 @@ void toMain::commandCallback(QAction *action) {
     }
     else if(action == prefsAct)
         toPreferences::displayPreferences(this);
-    else if(action == windowCloseAllAct) {
-        while(workspace()->windowList(QWorkspace::CreationOrder).count() > 0 &&
-              workspace()->windowList(QWorkspace::CreationOrder).at(0))
-            if (workspace()->windowList(QWorkspace::CreationOrder).at(0) &&
-                !workspace()->windowList(QWorkspace::CreationOrder).at(0)->close())
-                return;
-    }
-    else if(action == windowCloseAct) {
-        QWidget *widget = workspace()->activeWindow();
-        if(widget)
-            widget->close();
-    }
     else if(action == openSessionAct)
         loadSession();
     else if(action == saveSessionAct)
