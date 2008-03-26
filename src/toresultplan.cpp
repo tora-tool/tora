@@ -176,7 +176,7 @@ void toResultPlan::oracleNext(void)
         Query = new toNoBlockQuery(conn, toQuery::Normal, explain, par);
     }
     TopItem = new toResultViewItem(this, TopItem, QString::fromLatin1("DML"));
-    TopItem->setText(1, sql);
+    TopItem->setText(1, sql.left(50).trimmed());
     Poll.start(100);
 }
 
