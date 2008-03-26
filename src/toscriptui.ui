@@ -16,7 +16,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle" >
-   <string>Form1</string>
+   <string/>
   </property>
   <layout class="QGridLayout" >
    <property name="leftMargin" >
