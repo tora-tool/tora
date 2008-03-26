@@ -594,8 +594,6 @@ void toResultStorage::updateList(void)
             {
                 if (Files)
                     break;
-                else
-                    throw tr("Couldn't find tablespace parent %1 for datafile").arg(name);
             }
             file = new toResultStorageItem(AvailableGraph, tablespace, NULL);
         }
