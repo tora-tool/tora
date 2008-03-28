@@ -347,6 +347,26 @@ public:
      */
     QString columnText(int column) const;
 
+
+    /**
+     * Returns the QModelIndex assocated with the given item in the
+     * given column.
+     *
+     * Not virtual, but if you call the wrong one, it's protected.
+     *
+     */
+    QModelIndex indexFromItem(QTreeWidgetItem *item, int column = 0) const;
+
+
+    /**
+     * Returns a pointer to the QTreeWidgetItem assocated with the given index.
+     *
+     * Not virtual, but if you call the wrong one, it's protected.
+     *
+     */
+    QTreeWidgetItem* itemFromIndex(const QModelIndex &index) const;
+
+
 signals:
     /**
      * This signal is emitted whenever the set of selected items has

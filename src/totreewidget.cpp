@@ -311,6 +311,17 @@ QString toTreeWidget::columnText(int column) const {
 }
 
 
+QModelIndex toTreeWidget::indexFromItem(QTreeWidgetItem *item,
+                                        int column) const {
+    return QTreeWidget::indexFromItem(item, column);
+}
+
+
+QTreeWidgetItem* toTreeWidget::itemFromIndex(const QModelIndex &index) const {
+    return QTreeWidget::itemFromIndex(index);
+}
+
+
 void toTreeWidget::selectAll(bool s) {
     if(!s)
         QTreeWidget::clearSelection();
@@ -501,22 +512,25 @@ toTreeWidgetItem::toTreeWidgetItem(toTreeWidgetItem *parent,
 
 
 toTreeWidgetItem* toTreeWidgetItem::nextSibling() const {
-    QTreeWidgetItem *parent = QTreeWidgetItem::parent();
-    if(!parent)
-        return (toTreeWidgetItem *) NULL;
+    toTreeWidget *tree = dynamic_cast<toTreeWidget *>(
+        QTreeWidgetItem::treeWidget());
+    if(!tree)
+        return 0;
 
-    int pos = parent->indexOfChild(const_cast<toTreeWidgetItem *>(this));
-    if(pos < 0 || pos >= parent->childCount())
-        return (toTreeWidgetItem *) NULL;
+    QModelIndex index = tree->indexFromItem(const_cast<toTreeWidgetItem *>(this));
+    QModelIndex sibling = index.sibling(index.row() + 1, index.column());
 
-    return dynamic_cast<toTreeWidgetItem *>(parent->child(pos + 1));
+    if(sibling.isValid())
+        return dynamic_cast<toTreeWidgetItem *>(tree->itemFromIndex(sibling));
+
+    return 0;
 }
 
 
 toTreeWidgetItem* toTreeWidgetItem::firstChild() const {
     if(QTreeWidgetItem::childCount() > 0)
         return dynamic_cast<toTreeWidgetItem *>(QTreeWidgetItem::child(0));
-    return NULL;
+    return 0;
 }
 
 
@@ -524,7 +538,7 @@ toTreeWidgetItem* toTreeWidgetItem::parent() const {
     QTreeWidgetItem *p = QTreeWidgetItem::parent();
     if(p)
         return dynamic_cast<toTreeWidgetItem *>(p);
-    return NULL;
+    return 0;
 }
 
 
