@@ -9,3 +9,5 @@ Minor Issues that would be nice to fix before release
 -----------------------------------------------------
 
 [Mike] Storage manager functionality
+
+[Nathan] Proper encoding of author names in about dialog.
