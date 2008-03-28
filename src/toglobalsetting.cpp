@@ -429,9 +429,9 @@ void toToolSetting::saveSetting(void)
 /*        QString str = (*it)->text(2).toLatin1();
         str += CONF_TOOL_ENABLE;
         toConfigurationSingle::Instance().globalSetConfig(str, (*it)->isSelected() ? "Yes" : "");
-
+*/
         if (DefaultTool->currentText() == (*it)->text(0))
-			toConfigurationSingle::Instance().setDefaultTool((*it)->text(2));*/
+			toConfigurationSingle::Instance().setDefaultTool((*it)->text(2));
 		
     }
 	toConfigurationSingle::Instance().setTools(tMap);

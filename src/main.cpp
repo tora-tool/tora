@@ -91,19 +91,18 @@ void toUpdateIndicateEmpty(void);
 
 int main(int argc, char **argv)
 {
+    // QSettings uses these.
+	QCoreApplication::setOrganizationName("TOra");
+	QCoreApplication::setOrganizationDomain("tora.sourceforge.net");
+	QCoreApplication::setApplicationName("TOra");
+
 #ifdef ENABLE_QT_XFT
 	toSetEnv("QT_XFT", toConfigurationSingle::Instance().QtXft());
 #endif
 
 #  ifndef Q_OS_WIN32
-    if (toConfigurationSingle::Instance().desktopAware())
-        QApplication::setDesktopSettingsAware(false);
+	QApplication::setDesktopSettingsAware(toConfigurationSingle::Instance().desktopAware());
 #  endif
-
-    // QSettings uses these.
-    QCoreApplication::setOrganizationName("TOra");
-    QCoreApplication::setOrganizationDomain("tora.sourceforge.net");
-    QCoreApplication::setApplicationName("TOra");
 
     new QApplication(argc, argv);
 

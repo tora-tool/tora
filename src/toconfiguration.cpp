@@ -363,10 +363,12 @@
 #include <QLocale>
 #include <QSettings>
 #include "toconf.h"
+#include <QtDebug>
+
 toConfiguration::toConfiguration()
 {
 	int cnt; // tmp count holder for setting arrays
-	QSettings s;
+	QSettings s("TOra", "TOra"); // FIXME: WTF it does not use QCoreApp settings?!
 	s.beginGroup("preferences");
 	m_provider = s.value(CONF_PROVIDER, DEFAULT_PROVIDER).toString();
 	m_savePassword = s.value(CONF_SAVE_PWD, DEFAULT_SAVE_PWD).toBool();
@@ -413,8 +415,7 @@ toConfiguration::toConfiguration()
 	m_connectSize = s.value(CONF_CONNECT_SIZE, DEFAULT_CONNECT_SIZE).toInt();
 
 // #define CONF_CONNECT_CURRENT "ConnectCurrent"
-	m_defaultTool = s.value(CONF_DEFAULT_TOOL, "").toString();
-
+	m_defaultTool = s.value(CONF_DEFAULT_TOOL).toString();
 // #define CONF_TOOL_ENABLE "Enabled"
 	m_chartSamples = s.value(CONF_CHART_SAMPLES, DEFAULT_CHART_SAMPLES).toInt();
 	m_displaySamples = s.value(CONF_DISPLAY_SAMPLES, DEFAULT_DISPLAY_SAMPLES).toInt();
@@ -564,6 +565,7 @@ toConfiguration::toConfiguration()
 	m_syntaxDebugBg = s.value("SyntaxDebugBg", "darkgreen").toString();
 
 	s.endGroup();
+	qDebug() << "err: " << s.status();
 }
 
 toConfiguration::~toConfiguration()

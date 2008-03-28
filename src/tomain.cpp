@@ -135,14 +135,16 @@ toMain::toMain()
     std::map<QString, toTool *> &tools = toTool::tools();
 
     QString defName(toConfigurationSingle::Instance().defaultTool());
-
     DefaultTool = NULL;
     for (std::map<QString, toTool *>::iterator k = tools.begin();
          k != tools.end();
          k++) {
 
-        if(defName == (*k).first)
+        if (defName == (*k).first)
+		{
             DefaultTool = (*k).second;
+			break;
+		}
 
         // if there is no default tool, set the first one
         if(defName.isEmpty() && !DefaultTool)
