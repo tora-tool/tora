@@ -14,8 +14,15 @@ XP=xsltproc -''-nonet
 configure: patch configure-stamp
 configure-stamp:
 	dh_testdir
+ifneq "$(wildcard /usr/share/misc/config.sub)" ""
+	cp -f /usr/share/misc/config.sub config.sub
+endif
+ifneq "$(wildcard /usr/share/misc/config.guess)" ""
+	cp -f /usr/share/misc/config.guess config.guess
+endif
+
 	# Add here commands to configure the package.
-	./configure --prefix=/usr --without-oracle --without-rpath --disable-new-check --with-kde --enable-libsuffix=
+	./configure --prefix=/usr --without-oracle --without-rpath --disable-new-check --with-kde --enable-libsuffix= --infodir=/usr/share/info
 
 	touch configure-stamp
 
@@ -40,12 +47,6 @@ clean: unpatch
 	find . -name "*.qm" -exec rm {} \;
 	rm -f tora.pro license/tolicenseui.h license/tolicenseui.cpp license/tolicense.moc license/tolicenseui.moc
 	rm -f tora.1
-ifneq "$(wildcard /usr/share/misc/config.sub)" ""
-	cp -f /usr/share/misc/config.sub config.sub
-endif
-ifneq "$(wildcard /usr/share/misc/config.guess)" ""
-	cp -f /usr/share/misc/config.guess config.guess
-endif
 
 	dh_clean
 

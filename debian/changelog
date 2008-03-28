@@ -1,3 +1,10 @@
+tora (1.3.23-1) unstable; urgency=low
+
+  * New upstream version
+  * Moved config.* handling from clean target to configure target.
+
+ -- Michael Meskes <meskes@debian.org>  Wed, 26 Mar 2008 09:55:07 +0100
+
 tora (1.3.22-7) unstable; urgency=low
 
   * Removed build dependency on libqt3-compat-headers, closes: #464914
