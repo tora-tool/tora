@@ -88,10 +88,10 @@
 #include "icons/tostorage.xpm"
 #include "icons/writetablespace.xpm"
 
-#define CONF_DISP_TABLESPACES "DispTablespaces"
-#define CONF_DISP_COALESCED "DispCoalesced"
-#define CONF_DISP_EXTENTS "DispExtents"
-#define CONF_DISP_AVAILABLEGRAPH "AvailableGraph"
+// #define CONF_DISP_TABLESPACES "DispTablespaces"
+// #define CONF_DISP_COALESCED "DispCoalesced"
+// #define CONF_DISP_EXTENTS "DispExtents"
+// #define CONF_DISP_AVAILABLEGRAPH "AvailableGraph"
 
 class toStoragePrefs : public QWidget, public Ui::toStoragePrefsUI, public toSettingTab
 {
@@ -107,18 +107,18 @@ toStoragePrefs::toStoragePrefs(toTool *tool, QWidget* parent, const char* name)
 {
     setupUi(this);
 
-    DispCoalesced->setChecked(!tool->config(CONF_DISP_COALESCED, "").isEmpty());
-    DispExtents->setChecked(!tool->config(CONF_DISP_EXTENTS, "").isEmpty());
-    DispTablespaces->setChecked(!tool->config(CONF_DISP_TABLESPACES, "Yes").isEmpty());
-    DispAvailableGraph->setChecked(!tool->config(CONF_DISP_AVAILABLEGRAPH, "Yes").isEmpty());
+    DispCoalesced->setChecked(toConfigurationSingle::Instance().dispCoalesced());
+	DispExtents->setChecked(toConfigurationSingle::Instance().dispExtents());
+	DispTablespaces->setChecked(toConfigurationSingle::Instance().dispTablespaces());
+	DispAvailableGraph->setChecked(toConfigurationSingle::Instance().dispAvailableGraph());
 }
 
 void toStoragePrefs::saveSetting(void)
 {
-    Tool->setConfig(CONF_DISP_COALESCED, DispCoalesced->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_DISP_EXTENTS, DispExtents->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_DISP_TABLESPACES, DispTablespaces->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_DISP_AVAILABLEGRAPH, DispAvailableGraph->isChecked() ? "Yes" : "");
+	toConfigurationSingle::Instance().setDispCoalesced(DispCoalesced->isChecked());
+	toConfigurationSingle::Instance().setDispExtents(DispExtents->isChecked());
+	toConfigurationSingle::Instance().setDispTablespaces(DispTablespaces->isChecked());
+	toConfigurationSingle::Instance().setDispAvailableGraph(DispAvailableGraph->isChecked());
 }
 
 class toStorageTool : public toTool
@@ -845,7 +845,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     ExtentAct = new QAction(QPixmap(const_cast<const char**>(storageextents_xpm)),
                             tr("Show extent view."), this);
     ExtentAct->setCheckable(true);
-    bool extents = !StorageTool.config(CONF_DISP_EXTENTS, "").isEmpty();
+	bool extents = toConfigurationSingle::Instance().dispExtents();
     if (extents)
         ExtentAct->setChecked(true);
     toolbar->addAction(ExtentAct);
@@ -855,7 +855,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     TablespaceAct = new QAction(QPixmap(const_cast<const char**>(tostorage_xpm)),
                                 tr("Show tablespaces or just datafiles."), this);
     TablespaceAct->setCheckable(true);
-    bool tablespaces = !StorageTool.config(CONF_DISP_TABLESPACES, "Yes").isEmpty();
+	bool tablespaces = toConfigurationSingle::Instance().dispTablespaces();
     if (tablespaces)
         TablespaceAct->setChecked(true);
     toolbar->addAction(TablespaceAct);
@@ -946,7 +946,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     QSplitter *splitter = new QSplitter(Qt::Vertical, this);
     layout()->addWidget(splitter);
 
-    Storage = new toResultStorage(!StorageTool.config(CONF_DISP_AVAILABLEGRAPH, "Yes").isEmpty(),
+	Storage = new toResultStorage(toConfigurationSingle::Instance().dispAvailableGraph(),
                                   splitter);
     ExtentParent = new QSplitter(Qt::Horizontal, splitter);
     Objects = new toListView(ExtentParent);
@@ -1028,7 +1028,7 @@ void toStorage::windowActivated(QWidget *widget) {
 
 void toStorage::refresh(void)
 {
-    Storage->showCoalesced(!StorageTool.config(CONF_DISP_COALESCED, "").isEmpty());
+	Storage->showCoalesced(toConfigurationSingle::Instance().dispCoalesced());
     Storage->query();
 }
 

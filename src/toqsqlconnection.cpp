@@ -182,8 +182,6 @@ static toSQL SQLCancel("toQSqlConnection:Cancel",
                        "3.23",
                        "MySQL");
 
-#define CONF_ONLY_FORWARD "OnlyForward"
-#define DEFAULT_ONLY_FORWARD "Yes"
 
 struct toQSqlProviderAggregate
 {
@@ -1002,9 +1000,7 @@ class qSqlSetting : public QWidget, public toSettingTab
                     "qSqlSetting",
                     "Posibility to break MySQL queries (Can require more connections)"),
                 box);
-            OnlyForward->setChecked(!toConfigurationSingle::Instance().globalConfig(
-                                        CONF_ONLY_FORWARD,
-                                        DEFAULT_ONLY_FORWARD).isEmpty());
+            OnlyForward->setChecked(toConfigurationSingle::Instance().onlyForward());
             vbox->addWidget(OnlyForward);
 
             QSpacerItem *spacer = new QSpacerItem(
@@ -1018,7 +1014,7 @@ class qSqlSetting : public QWidget, public toSettingTab
         }
         virtual void saveSetting(void)
         {
-            toConfigurationSingle::Instance().globalSetConfig(CONF_ONLY_FORWARD, OnlyForward->isChecked() ? "Yes" : "");
+			toConfigurationSingle::Instance().setOnlyForward(OnlyForward->isChecked());
             toQSqlProvider::OnlyForward = OnlyForward->isChecked();
         }
     };
@@ -1654,7 +1650,7 @@ class qSqlConnection : public toConnection::connectionImpl
     toQSqlProvider(void)
             : toConnectionProvider("QSql", false)
     {
-        OnlyForward = !toConfigurationSingle::Instance().globalConfig(CONF_ONLY_FORWARD, DEFAULT_ONLY_FORWARD).isEmpty();
+        OnlyForward = toConfigurationSingle::Instance().onlyForward();
     }
 
     virtual void initialize(void)

@@ -707,21 +707,25 @@ void toChartManager::chartAlarm::valueAdded(toChartHandler *handler,
 void toChartHandler::saveSettings(void)
 {
     {
-        int num = 0;
+//         int num = 0;
+		ChartsMap c;
         for (std::map<QString, toChartManager::chartTrack>::iterator i = Files.begin();i != Files.end();i++)
         {
             if ((*i).second.Persistent)
             {
-                num++;
-                QString name = QString("Files:") + QString::number(num).toLatin1();
-                ChartTool.setConfig(name + ":Name", (*i).first);
-                ChartTool.setConfig(name + ":Spec", (*i).second.File.fileName());
+//                 num++;
+//                 QString name = QString("Files:") + QString::number(num).toLatin1();
+//                 ChartTool.setConfig(name + ":Name", (*i).first);
+//                 ChartTool.setConfig(name + ":Spec", (*i).second.File.fileName());
+				c[(*i).first] = (*i).second.File.fileName();
             }
         }
-        ChartTool.setConfig("FilesCount", QString::number(num));
+//         ChartTool.setConfig("FilesCount", QString::number(num));
+		toConfigurationSingle::Instance().setChartFiles(c);
     }
     {
-        int num = 0;
+		ChartsMap c;
+//         int num = 0;
         for (std::map<QString, std::list<toChartManager::chartAlarm> >::iterator i = Alarms.begin();
                 i != Alarms.end();i++)
         {
@@ -729,40 +733,56 @@ void toChartHandler::saveSettings(void)
             {
                 if ((*j).Persistent)
                 {
-                    num++;
-                    QString name = QString("Alarms:") + QString::number(num).toLatin1();
-                    ChartTool.setConfig(name + ":Name", (*i).first);
-                    ChartTool.setConfig(name + ":Spec", (*j).toString());
+//                     num++;
+//                     QString name = QString("Alarms:") + QString::number(num).toLatin1();
+//                     ChartTool.setConfig(name + ":Name", (*i).first);
+//                     ChartTool.setConfig(name + ":Spec", (*j).toString());
+					c[(*i).first] = (*j).toString();
                 }
             }
         }
-        ChartTool.setConfig("AlarmCount", QString::number(num));
+//         ChartTool.setConfig("AlarmCount", QString::number(num));
+		toConfigurationSingle::Instance().setChartAlarms(c);
     }
     toConfigurationSingle::Instance().saveConfig();
 }
 
 void toChartHandler::loadSettings(void)
 {
-    {
-        for (int num = ChartTool.config("FilesCount", "0").toInt();num > 0;num--)
-        {
-            QString name = QString("Files:") + QString::number(num).toLatin1();
-            QString t = ChartTool.config(name + ":Name", "");
-            QString s = ChartTool.config(name + ":Spec", "");
-            if (!t.isEmpty() && !s.isEmpty())
-                Files[t] = toChartManager::chartTrack(s, true);
-        }
-    }
-    {
-        for (int num = ChartTool.config("AlarmCount", "0").toInt();num > 0;num--)
-        {
-            QString name = QString("Alarms:") + QString::number(num).toLatin1();
-            QString t = ChartTool.config(name + ":Name", "");
-            QString s = ChartTool.config(name + ":Spec", "");
-            if (!t.isEmpty() && !s.isEmpty())
-                Alarms[t].insert(Alarms[t].end(), toChartManager::chartAlarm(s, true));
-        }
-    }
+//     {
+//         for (int num = ChartTool.config("FilesCount", "0").toInt();num > 0;num--)
+//         {
+//             QString name = QString("Files:") + QString::number(num).toLatin1();
+//             QString t = ChartTool.config(name + ":Name", "");
+//             QString s = ChartTool.config(name + ":Spec", "");
+//             if (!t.isEmpty() && !s.isEmpty())
+//                 Files[t] = toChartManager::chartTrack(s, true);
+//         }
+//     }
+	ChartsMapIterator i(toConfigurationSingle::Instance().chartFiles());
+	while (i.hasNext())
+	{
+		i.next();
+		if (!i.key().isEmpty() && !i.value().isEmpty())
+			Files[i.key()] = toChartManager::chartTrack(i.value(), true);
+	}
+//     {
+//         for (int num = ChartTool.config("AlarmCount", "0").toInt();num > 0;num--)
+//         {
+//             QString name = QString("Alarms:") + QString::number(num).toLatin1();
+//             QString t = ChartTool.config(name + ":Name", "");
+//             QString s = ChartTool.config(name + ":Spec", "");
+//             if (!t.isEmpty() && !s.isEmpty())
+//                 Alarms[t].insert(Alarms[t].end(), toChartManager::chartAlarm(s, true));
+//         }
+//     }
+	ChartsMapIterator i1(toConfigurationSingle::Instance().chartAlarms());
+	while (i1.hasNext())
+	{
+		i1.next();
+		if (!i1.key().isEmpty() && !i1.value().isEmpty())
+			Alarms[i1.key()].insert(Alarms[i1.key()].end(), toChartManager::chartAlarm(i1.value(), true));
+	}
 }
 
 void toChartHandler::alarm(void)

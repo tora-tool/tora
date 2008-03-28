@@ -85,7 +85,7 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
         setObjectName(name);
     setEdit();
     Search = false;
-    setFont(toStringToFont(toConfigurationSingle::Instance().globalConfig(CONF_TEXT, "")));
+    setFont(toStringToFont(toConfigurationSingle::Instance().textFont()));
     setMarginLineNumbers(0, true);
     setCallTipsStyle(CallTipsNone);
 
@@ -376,7 +376,7 @@ void toMarkedText::newLine(void)
         break;
     }
 
-    if (!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_INDENT, "Yes").isEmpty())
+    if (toConfigurationSingle::Instance().autoIndent())
     {
         int curline, curcol;
         getCursorPosition (&curline, &curcol);

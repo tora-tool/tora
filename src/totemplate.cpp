@@ -324,35 +324,46 @@ toTemplatePrefs::toTemplatePrefs(toTool *tool, QWidget *parent, const char *name
     setupUi(this);
     std::map<QString, QString> def = DefaultText();
 
-    int tot = Tool->config("Number", "-1").toInt();
-    {
-        for (int i = 0;i < tot;i++)
-        {
-            QString num = QString::number(i).toLatin1();
-            QString root = Tool->config(num, "").toLatin1();
-            num += "file";
-            QString file = Tool->config(num, "");
-            new toTreeWidgetItem(FileList, root, file);
-            if (def.find(root) != def.end())
-                def.erase(def.find(root));
-        }
-    }
+//     int tot = Tool->config("Number", "-1").toInt();
+//     {
+//         for (int i = 0;i < tot;i++)
+//         {
+//             QString num = QString::number(i).toLatin1();
+//             QString root = Tool->config(num, "").toLatin1();
+//             num += "file";
+//             QString file = Tool->config(num, "");
+//             new toTreeWidgetItem(FileList, root, file);
+//             if (def.find(root) != def.end())
+//                 def.erase(def.find(root));
+//         }
+//     }
+	TemplatesMapIterator i(toConfigurationSingle::Instance().templates());
+	while (i.hasNext())
+	{
+		i.next();
+		new toTreeWidgetItem(FileList, i.key(), i.value());
+		if (def.find(i.key()) != def.end())
+			def.erase(def.find(i.key()));
+	}
     for (std::map<QString, QString>::iterator i = def.begin();i != def.end();i++)
         new toTreeWidgetItem(FileList, (*i).first, (*i).second);
 }
 
 
 void toTemplatePrefs::saveSetting(void) {
-    int i = 0;
+//     int i = 0;
+	TemplatesMap m;
     for (toTreeWidgetItem *item = FileList->firstChild();item;item = item->nextSibling())
     {
-        QString nam = QString::number(i).toLatin1();
-        Tool->setConfig(nam, item->text(0));
-        nam += "file";
-        Tool->setConfig(nam, item->text(1));
-        i++;
+//         QString nam = QString::number(i).toLatin1();
+//         Tool->setConfig(nam, item->text(0));
+//         nam += "file";
+//         Tool->setConfig(nam, item->text(1));
+//         i++;
+		m[item->text(0)] = item->text(1);
     }
-    Tool->setConfig("Number", QString::number(i));
+//     Tool->setConfig("Number", QString::number(i));
+	toConfigurationSingle::Instance().setTemplates(m);
 }
 
 
@@ -715,20 +726,28 @@ public:
 
 void toTextTemplate::insertItems(toTreeWidget *parent, QToolBar *)
 {
-    int tot = TemplateTool.config("Number", "-1").toInt();
+//     int tot = TemplateTool.config("Number", "-1").toInt();
     std::map<QString, QString> def = DefaultText();
-    {
-        for (int i = 0; i < tot; i++)
-        {
-            QString num = QString::number(i).toLatin1();
-            QString root = TemplateTool.config(num, "").toLatin1();
-            num += "file";
-            QString file = TemplateTool.config(num, "");
-            addFile(parent, root, file);
-            if (def.find(root) != def.end())
-                def.erase(def.find(root));
-        }
-    }
+//     {
+//         for (int i = 0; i < tot; i++)
+//         {
+//             QString num = QString::number(i).toLatin1();
+//             QString root = TemplateTool.config(num, "").toLatin1();
+//             num += "file";
+//             QString file = TemplateTool.config(num, "");
+//             addFile(parent, root, file);
+//             if (def.find(root) != def.end())
+//                 def.erase(def.find(root));
+//         }
+//     }
+	TemplatesMapIterator i(toConfigurationSingle::Instance().templates());
+	while (i.hasNext())
+	{
+		i.next();
+		addFile(parent, i.key(), i.value());
+		if (def.find(i.key()) != def.end())
+			def.erase(def.find(i.key()));
+	}
     for (std::map<QString, QString>::iterator i = def.begin();i != def.end();i++)
         addFile(parent, (*i).first, (*i).second);
 }

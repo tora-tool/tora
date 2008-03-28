@@ -112,11 +112,11 @@
 #include "icons/new.xpm"
 #endif
 
-#define CONF_FILTER_IGNORE_CASE "FilterIgnoreCase"
-#define CONF_FILTER_INVERT   "FilterInvert"
-#define CONF_FILTER_TYPE   "FilterType"
-#define CONF_FILTER_TABLESPACE_TYPE   "FilterTablespaceType"
-#define CONF_FILTER_TEXT   "FilterText"
+// #define CONF_FILTER_IGNORE_CASE "FilterIgnoreCase"
+// #define CONF_FILTER_INVERT   "FilterInvert"
+// #define CONF_FILTER_TYPE   "FilterType"
+// #define CONF_FILTER_TABLESPACE_TYPE   "FilterTablespaceType"
+// #define CONF_FILTER_TEXT   "FilterText"
 
 const char **toBrowserTool::pictureXPM(void)
 {
@@ -246,7 +246,7 @@ public:
         if (!empty)
             readFilterSettings();
         else
-            BrowserTool.setConfig(CONF_FILTER_TYPE, "0");  // No filter type
+			toConfigurationSingle::Instance().setFilterType(0);  // No filter type
     }
 
     virtual bool isEmpty(void) {
@@ -254,30 +254,22 @@ public:
     }
 
     virtual void storeFilterSettings(void) {
-        BrowserTool.setConfig(CONF_FILTER_IGNORE_CASE, IgnoreCase ? "Yes" : "No");
-        BrowserTool.setConfig(CONF_FILTER_INVERT, Invert ? "Yes" : "No");
-        BrowserTool.setConfig(CONF_FILTER_TYPE, QString("%1").arg(Type));
-        BrowserTool.setConfig(CONF_FILTER_TABLESPACE_TYPE, QString("%1").arg(TablespaceType));
-        BrowserTool.setConfig(CONF_FILTER_TEXT, Text);
+		toConfigurationSingle::Instance().setFilterIgnoreCase(IgnoreCase);
+		toConfigurationSingle::Instance().setFilterInvert(Invert);
+		toConfigurationSingle::Instance().setFilterType(Type);
+		toConfigurationSingle::Instance().setFilterTablespaceType(TablespaceType);
+		toConfigurationSingle::Instance().setFilterText(Text);
         toConfigurationSingle::Instance().saveConfig();
     }
 
     virtual void readFilterSettings(void) {
         QString t;
-        Text = BrowserTool.config(CONF_FILTER_TEXT, "");
-
-        if (BrowserTool.config(CONF_FILTER_IGNORE_CASE, "No") == "Yes")
-            IgnoreCase = true;
-        else
-            IgnoreCase = false;
-
-        if (BrowserTool.config(CONF_FILTER_INVERT, "No") == "Yes")
-            Invert = true;
-        else
-            Invert = false;
+		Text = toConfigurationSingle::Instance().filterText();
+		IgnoreCase = toConfigurationSingle::Instance().filterIgnoreCase();
+		Invert = toConfigurationSingle::Instance().filterInvert();
         OnlyOwnSchema = false;
-        Type = QString(BrowserTool.config(CONF_FILTER_TYPE, "0")).toInt();
-        TablespaceType = QString(BrowserTool.config(CONF_FILTER_TABLESPACE_TYPE, "0")).toInt();
+		Type = toConfigurationSingle::Instance().filterType();
+		TablespaceType = toConfigurationSingle::Instance().filterTablespaceType();
     }
 
     virtual void exportData(std::map<QString, QString> &data, const QString &prefix) {

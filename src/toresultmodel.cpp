@@ -56,8 +56,7 @@ toResultModel::toResultModel(toNoBlockQuery *query,
     First           = true;
     Editable        = edit;
 
-    MaxRead = MaxNumber = toConfigurationSingle::Instance().globalConfig(
-        CONF_MAX_NUMBER, DEFAULT_MAX_NUMBER).toInt();
+    MaxRead = MaxNumber = toConfigurationSingle::Instance().maxNumber();
 
     CurrentRow = 0;
 

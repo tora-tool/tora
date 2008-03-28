@@ -219,7 +219,7 @@ void toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &conn) 
 
     conn.execute(sql, args);
 
-    if(!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
+    if(toConfigurationSingle::Instance().autoCommit())
         conn.commit();
     else
         toMainWidget()->setNeedCommit(conn);
@@ -273,7 +273,7 @@ void toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn) {
 
     toQuery q(conn, sql, args);
 
-    if(!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
+    if(toConfigurationSingle::Instance().autoCommit())
         conn.commit();
     else
         toMainWidget()->setNeedCommit(conn);
@@ -384,8 +384,7 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn) 
     try {
         toQuery q(conn, sql, args);
 
-        if(!toConfigurationSingle::Instance().globalConfig(
-               CONF_AUTO_COMMIT, "").isEmpty())
+        if(toConfigurationSingle::Instance().autoCommit())
             conn.commit();
         else
             toMainWidget()->setNeedCommit(conn);

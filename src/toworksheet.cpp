@@ -105,42 +105,35 @@
 #include "icons/up.xpm"
 #include "icons/down.xpm"
 
-#define CONF_AUTO_SAVE    "AutoSave"
-#define CONF_CHECK_SAVE   "CheckSave"
-#define CONF_AUTO_LOAD    "AutoLoad"
-#define CONF_LOG_AT_END   "LogAtEnd"
-#define CONF_LOG_MULTI    "LogMulti"
-#define CONF_STATISTICS   "Statistics"
-#define CONF_TIMED_STATS  "TimedStats"
-#define CONF_NUMBER   "Number"
-#define CONF_MOVE_TO_ERR  "MoveToError"
-#define CONF_HISTORY   "History"
-#define CONF_EXEC_LOG     "ExecLog"
-#define CONF_TOPLEVEL_DESCRIBE "ToplevelDescribe"
+// #define CONF_AUTO_SAVE    "AutoSave"
+// #define CONF_CHECK_SAVE   "CheckSave"
+// #define CONF_AUTO_LOAD    "AutoLoad"
+// #define CONF_LOG_AT_END   "LogAtEnd"
+// #define CONF_LOG_MULTI    "LogMulti"
+// #define CONF_STATISTICS   "Statistics"
+// #define CONF_TIMED_STATS  "TimedStats"
+// #define CONF_NUMBER   "Number"
+// #define CONF_MOVE_TO_ERR  "MoveToError"
+// #define CONF_HISTORY   "History"
+// #define CONF_EXEC_LOG     "ExecLog"
+// #define CONF_TOPLEVEL_DESCRIBE "ToplevelDescribe"
 
 toWorksheetSetup::toWorksheetSetup(toTool *tool, QWidget* parent, const char* name)
     : QWidget(parent), toSettingTab("worksheet.html#preferences"), Tool(tool) {
 
     setupUi(this);
-    if (!tool->config(CONF_AUTO_SAVE, "").isEmpty())
-        AutoSave->setChecked(true);
-    if (!tool->config(CONF_CHECK_SAVE, "Yes").isEmpty())
-        CheckSave->setChecked(true);
-    if (!tool->config(CONF_LOG_AT_END, "Yes").isEmpty())
-        LogAtEnd->setChecked(true);
-    if (!tool->config(CONF_LOG_MULTI, "Yes").isEmpty())
-        LogMulti->setChecked(true);
-    MoveToError->setChecked(!tool->config(CONF_MOVE_TO_ERR, "Yes").isEmpty());
-    if (!tool->config(CONF_STATISTICS, "").isEmpty())
-        Statistics->setChecked(true);
-    TimedStatistics->setChecked(!tool->config(CONF_TIMED_STATS, "Yes").isEmpty());
-    History->setChecked(!tool->config(CONF_HISTORY, "").isEmpty());
-    if (!tool->config(CONF_NUMBER, "Yes").isEmpty())
-        DisplayNumber->setChecked(true);
-    if (!tool->config(CONF_TOPLEVEL_DESCRIBE, "Yes").isEmpty())
-        ToplevelDescribe->setChecked(true);
-    DefaultFile->setText(tool->config(CONF_AUTO_LOAD, ""));
-    ExecLog->setChecked(!tool->config(CONF_EXEC_LOG, "").isEmpty());
+    AutoSave->setChecked(toConfigurationSingle::Instance().wsAutoSave());
+	CheckSave->setChecked(toConfigurationSingle::Instance().wsCheckSave());
+	LogAtEnd->setChecked(toConfigurationSingle::Instance().wsLogAtEnd());
+	LogMulti->setChecked(toConfigurationSingle::Instance().wsLogMulti());
+	MoveToError->setChecked(toConfigurationSingle::Instance().wsMoveToErr());
+	Statistics->setChecked(toConfigurationSingle::Instance().wsStatistics());
+	TimedStatistics->setChecked(toConfigurationSingle::Instance().wsTimedStats());
+	History->setChecked(toConfigurationSingle::Instance().wsHistory());
+	DisplayNumber->setChecked(toConfigurationSingle::Instance().wsNumber());
+	ToplevelDescribe->setChecked(toConfigurationSingle::Instance().wsToplevelDescribe());
+	DefaultFile->setText(toConfigurationSingle::Instance().wsAutoLoad());
+	ExecLog->setChecked(toConfigurationSingle::Instance().wsExecLog());
 
 #ifdef TO_NO_ORACLE
     TimedStatistics->hide();
@@ -151,30 +144,18 @@ toWorksheetSetup::toWorksheetSetup(toTool *tool, QWidget* parent, const char* na
 
 
 void toWorksheetSetup::saveSetting(void) {
-    if (AutoSave->isChecked())
-        Tool->setConfig(CONF_AUTO_SAVE, "Yes");
-    else
-        Tool->setConfig(CONF_AUTO_SAVE, "");
-    if (CheckSave->isChecked())
-        Tool->setConfig(CONF_CHECK_SAVE, "Yes");
-    else
-        Tool->setConfig(CONF_CHECK_SAVE, "");
-    if (LogAtEnd->isChecked())
-        Tool->setConfig(CONF_LOG_AT_END, "Yes");
-    else
-        Tool->setConfig(CONF_LOG_AT_END, "");
-    if (LogMulti->isChecked())
-        Tool->setConfig(CONF_LOG_MULTI, "Yes");
-    else
-        Tool->setConfig(CONF_LOG_MULTI, "");
-    Tool->setConfig(CONF_TOPLEVEL_DESCRIBE, ToplevelDescribe->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_MOVE_TO_ERR, MoveToError->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_STATISTICS, Statistics->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_HISTORY, History->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_TIMED_STATS, TimedStatistics->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_NUMBER, DisplayNumber->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_EXEC_LOG, ExecLog->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_AUTO_LOAD, DefaultFile->text());
+	toConfigurationSingle::Instance().setWsAutoSave(AutoSave->isChecked());
+	toConfigurationSingle::Instance().setWsCheckSave(CheckSave->isChecked());
+	toConfigurationSingle::Instance().setWsLogAtEnd(LogAtEnd->isChecked());
+	toConfigurationSingle::Instance().setWsLogMulti(LogMulti->isChecked());
+	toConfigurationSingle::Instance().setWsToplevelDescribe(ToplevelDescribe->isChecked());
+	toConfigurationSingle::Instance().setWsMoveToErr(MoveToError->isChecked());
+	toConfigurationSingle::Instance().setWsStatistics(Statistics->isChecked());
+	toConfigurationSingle::Instance().setWsHistory(History->isChecked());
+	toConfigurationSingle::Instance().setWsTimedStats(TimedStatistics->isChecked());
+	toConfigurationSingle::Instance().setWsNumber(DisplayNumber->isChecked());
+	toConfigurationSingle::Instance().setWsExecLog(ExecLog->isChecked());
+	toConfigurationSingle::Instance().setWsAutoLoad(DefaultFile->text());
 }
 
 
@@ -529,7 +510,7 @@ void toWorksheet::setup(bool autoLoad) {
             this, SLOT(changeResult(int)));
 
     if (autoLoad) {
-        Editor->setFilename(WorksheetTool.config(CONF_AUTO_LOAD, ""));
+		Editor->setFilename(toConfigurationSingle::Instance().wsAutoLoad());
         if (!Editor->filename().isEmpty()) {
             try {
                 QString data = toReadFile(Editor->filename());
@@ -546,7 +527,7 @@ void toWorksheet::setup(bool autoLoad) {
 
     try {
         if (connection().provider() == "Oracle") {
-            if (!WorksheetTool.config(CONF_STATISTICS, "").isEmpty()) {
+			if (toConfigurationSingle::Instance().wsStatistics()) {
                 show();
                 statisticAct->setChecked(true);
             }
@@ -667,10 +648,12 @@ bool toWorksheet::checkSave(bool input) {
     if(!Editor->isModified())
         return true;
 
-    if(WorksheetTool.config(CONF_AUTO_SAVE, "").isEmpty() ||
+	if (!toConfigurationSingle::Instance().wsAutoSave() ||
         Editor->filename().isEmpty()) {
 
-        if(!WorksheetTool.config(CONF_CHECK_SAVE, "Yes").isEmpty()) {
+//         if (!WorksheetTool.config(CONF_CHECK_SAVE, "Yes").isEmpty()) {
+		if (toConfigurationSingle::Instance().wsCheckSave())
+		{
             if(!input)
                 return true;
 
@@ -902,7 +885,7 @@ void toWorksheet::query(const QString &str, execType type) {
                 First = false;
                 Timer.start();
                 QString buffer;
-                if (WorksheetTool.config(CONF_HISTORY, "").isEmpty()) {
+				if (!toConfigurationSingle::Instance().wsHistory()) {
                     toQuery query(connection(), toQuery::Long, QueryString, param);
                     if (query.rowsProcessed() > 0)
                         buffer = tr("%1 rows processed").arg((int)query.rowsProcessed());
@@ -941,7 +924,7 @@ void toWorksheet::query(const QString &str, execType type) {
             Poll.start(1000);
             Started->setToolTip(tr("Duration while query has been running\n\n") + QueryString);
             stopAct->setEnabled(true);
-            Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER, "Yes").isEmpty());
+			Result->setNumberColumn(toConfigurationSingle::Instance().wsNumber());
             try {
                 saveHistory();
                 Result->setSQL(QString::null);
@@ -1036,13 +1019,13 @@ void toWorksheet::addLog(const QString &sql,
     First = true;
 
     if(Logging) {
-        if (WorksheetTool.config(CONF_LOG_MULTI, "Yes").isEmpty()) {
-            if (WorksheetTool.config(CONF_LOG_AT_END, "Yes").isEmpty())
+        if (!toConfigurationSingle::Instance().wsLogMulti()) {
+			if (!toConfigurationSingle::Instance().wsLogAtEnd())
                 item = new toResultViewItem(Logging, NULL);
             else
                 item = new toResultViewItem(Logging, LastLogItem);
         }
-        else if (WorksheetTool.config(CONF_LOG_AT_END, "Yes").isEmpty())
+		else if (!toConfigurationSingle::Instance().wsLogAtEnd())
             item = new toResultViewMLine(Logging, NULL);
         else
             item = new toResultViewMLine(Logging, LastLogItem);
@@ -1051,13 +1034,14 @@ void toWorksheet::addLog(const QString &sql,
         LastLogItem = item;
         item->setText(1, result);
         item->setText(2, now);
-        if (!WorksheetTool.config(CONF_HISTORY, "").isEmpty())
+		if (toConfigurationSingle::Instance().wsHistory())
             item->setText(4, QString::number(LastID));
         item->setText(5, QString::number(result.offset()));
     }
 
-    if (result.offset() >= 0 && LastLine >= 0 && LastOffset >= 0 &&
-            !WorksheetTool.config(CONF_MOVE_TO_ERR, "Yes").isEmpty()) {
+    if (result.offset() >= 0 && LastLine >= 0 && LastOffset >= 0 && 
+		toConfigurationSingle::Instance().wsMoveToErr())
+	{
         QChar cmp = '\n';
         int lastnl = 0;
         int lines = 0;
@@ -1116,7 +1100,7 @@ void toWorksheet::addLog(const QString &sql,
     re.setCaseSensitivity(Qt::CaseInsensitive);
     try {
         if(!sql.contains(re)) {
-            if(!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty())
+            if(toConfigurationSingle::Instance().autoCommit())
                 connection().commit();
             else
                 toMainWidget()->setNeedCommit(connection());
@@ -1315,7 +1299,7 @@ void toWorksheet::executeAll() {
             execute(tokens, line, pos, Direct);
             if (Current) {
                 toResultView *last = dynamic_cast<toResultView *>(Current);
-                if (!WorksheetTool.config(CONF_HISTORY, "").isEmpty() &&
+				if (toConfigurationSingle::Instance().wsHistory() &&
                         last && last->firstChild())
                     History[LastID] = last;
             }
@@ -1361,7 +1345,7 @@ void toWorksheet::parseAll() {
             execute(tokens, line, pos, Parse);
             if (Current) {
                 toResultView *last = dynamic_cast<toResultView *>(Current);
-                if (!WorksheetTool.config(CONF_HISTORY, "").isEmpty() &&
+				if (toConfigurationSingle::Instance().wsHistory() &&
                         last && last->firstChild())
                     History[LastID] = last;
             }
@@ -1428,7 +1412,7 @@ void toWorksheet::enableStatistic(bool ena) {
         ResultTab->setTabEnabled(ResultTab->indexOf(StatTab), true);
         statisticAct->setChecked(true);
         Statistics->clear();
-        if (!WorksheetTool.config(CONF_TIMED_STATS, "Yes").isEmpty()) {
+		if (toConfigurationSingle::Instance().wsTimedStats()) {
             try {
                 connection().allExecute(QString::fromLatin1(ENABLETIMED));
                 connection().addInit(QString::fromLatin1(ENABLETIMED));
@@ -1492,8 +1476,7 @@ void toWorksheet::describe(void) {
     QString owner, table;
     Editor->tableAtCursor(owner, table);
 
-    bool toplevel = !WorksheetTool.config(
-        CONF_TOPLEVEL_DESCRIBE, "Yes").isEmpty();
+	bool toplevel = toConfigurationSingle::Instance().wsToplevelDescribe();
 
     toResultCols *columns;
     if(toplevel) {
@@ -1707,7 +1690,7 @@ void toWorksheet::executeLog(void) {
         insertStatement(item->allText(0));
 
         if (item->text(4).isEmpty()) {
-            if (!WorksheetTool.config(CONF_EXEC_LOG, "").isEmpty())
+            if (toConfigurationSingle::Instance().wsExecLog())
                 query(item->allText(0), Normal);
         }
         else {
@@ -1763,7 +1746,7 @@ void toWorksheet::saveLast(void) {
                              tr("Undescribed"),
                              "Any",
                              connection().provider());
-            toSQL::saveSQL(toConfigurationSingle::Instance().globalConfig(CONF_SQL_FILE, DEFAULT_SQL_FILE));
+            toSQL::saveSQL(toConfigurationSingle::Instance().sqlFile());
         }
         TOCATCH
     }

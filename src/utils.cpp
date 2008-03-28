@@ -334,18 +334,17 @@ void toStatusMessage(const QString &str, bool save, bool log) {
     {
         if (!str.isEmpty())
         {
-            int sec = toConfigurationSingle::Instance().globalConfig(CONF_STATUS_MESSAGE, DEFAULT_STATUS_MESSAGE).toInt();
+            int sec = toConfigurationSingle::Instance().statusMessage();
             if (save || sec == 0)
                 main->statusBar()->showMessage(str.simplified());
             else
                 main->statusBar()->showMessage(str.simplified(), sec*1000);
             if (!save && log)
             {
-                if (toConfigurationSingle::Instance().globalConfig(CONF_MESSAGE_STATUSBAR, "").isEmpty())
+				if (toConfigurationSingle::Instance().messageStatusbar())
                     main->displayMessage(str);
                 toPush(LastMessages, str);
-                if (int(LastMessages.size()) > toConfigurationSingle::Instance().globalConfig(CONF_STATUS_SAVE,
-                        DEFAULT_STATUS_SAVE).toInt())
+                if (int(LastMessages.size()) > toConfigurationSingle::Instance().statusSave())
                     toShift(LastMessages);
             }
             main->statusBar()->setToolTip(str);
@@ -382,7 +381,7 @@ QComboBox *toRefreshCreate(QWidget *parent, const char *name, const QString &def
     if (!def.isNull())
         str = def;
     else
-        str = toConfigurationSingle::Instance().globalConfig(CONF_REFRESH, DEFAULT_REFRESH);
+        str = toConfigurationSingle::Instance().refresh();
     if (str == "2 seconds")
         refresh->setCurrentIndex(1);
     else if (str == "5 seconds")
@@ -406,7 +405,7 @@ void toRefreshParse(toTimer *timer, const QString &str)
 {
     QString t = str;
     if (t.isEmpty())
-        t = toConfigurationSingle::Instance().globalConfig(CONF_REFRESH, DEFAULT_REFRESH);
+        t = toConfigurationSingle::Instance().refresh();
 
     if (t == qApp->translate("toRefreshCreate", "None") || t == "None")
         timer->stop();
@@ -488,8 +487,7 @@ QToolBar *toAllocBar(QWidget *parent, const QString &str)
     {}
 
     QString name = str;
-    if (!db.isEmpty() && !toConfigurationSingle::Instance().globalConfig(
-            CONF_DB_TITLE, "Yes").isEmpty()) {
+    if (!db.isEmpty() && toConfigurationSingle::Instance().dbTitle()) {
         name += QString::fromLatin1(" ");
         name += db;
     }
@@ -511,9 +509,7 @@ TODock *toAllocDock(const QString &name,
                     const QString &db,
                     const QPixmap &pix) {
     QString str = name;
-    if (!db.isEmpty() &&
-        !toConfigurationSingle::Instance().globalConfig(
-            CONF_DB_TITLE, "Yes").isEmpty()) {
+    if (!db.isEmpty() && toConfigurationSingle::Instance().dbTitle()) {
         str += QString::fromLatin1(" ");
         str += db;
     }
@@ -630,7 +626,7 @@ QString toPluginPath(void)
     } // MacOS
 
 #else
-    str = toConfigurationSingle::Instance().globalConfig(CONF_PLUGIN_DIR, DEFAULT_PLUGIN_DIR);
+    str = toConfigurationSingle::Instance().pluginDir();
 #endif
 
     return str;
@@ -638,7 +634,7 @@ QString toPluginPath(void)
 
 QString toHelpPath(void)
 {
-    QString str = toConfigurationSingle::Instance().globalConfig(CONF_HELP_PATH, "");
+    QString str = toConfigurationSingle::Instance().helpPath();
     if (str.isEmpty())
     {
         str = toPluginPath();
@@ -739,7 +735,7 @@ bool toCompareLists(QStringList &lsta, QStringList &lstb, int len)
 static QString GetExtensions(void)
 {
     static QRegExp repl(QString::fromLatin1("\\s*,\\s*"));
-    QString t = toConfigurationSingle::Instance().globalConfig(CONF_EXTENSIONS, DEFAULT_EXTENSIONS);
+    QString t(toConfigurationSingle::Instance().extensions());
     t.replace(repl, QString::fromLatin1("\n"));
     return t;
 }
@@ -750,7 +746,7 @@ static QString AddExt(QString t, const QString &filter)
     if (t.isEmpty())
         return t;
 
-    toConfigurationSingle::Instance().globalSetConfig(CONF_LAST_DIR, t);
+    toConfigurationSingle::Instance().setLastDir(t);
 
     if (hasext.indexIn(t) < 0)
     {
@@ -778,7 +774,7 @@ QString toOpenFilename(const QString &filename, const QString &filter, QWidget *
 
     QString dir = filename;
     if (dir.isNull())
-        dir = toConfigurationSingle::Instance().globalConfig(CONF_LAST_DIR, "");
+        dir = toConfigurationSingle::Instance().lastDir();
 
 	return AddExt(TOFileDialog::getOpenFileName(parent, QObject::tr("Open File", "utils/toOpenFilename"), dir, t), t);
 }
@@ -791,7 +787,7 @@ QString toSaveFilename(const QString &filename, const QString &filter, QWidget *
 
     QString dir = filename;
     if (dir.isNull())
-        dir = toConfigurationSingle::Instance().globalConfig(CONF_LAST_DIR, "");
+        dir = toConfigurationSingle::Instance().lastDir();
 
 	return AddExt(TOFileDialog::getSaveFileName(parent, QObject::tr("Save File", "utils/toSaveFilename"), dir, t), t);
 }
@@ -1027,7 +1023,7 @@ toTreeWidgetItem *toFindItem(toTreeWidget *lst, const QString &str)
 void toToolCaption(toToolWidget *widget, const QString &caption)
 {
     QString title;
-    if (!toConfigurationSingle::Instance().globalConfig(CONF_DB_TITLE, "Yes").isEmpty())
+    if (toConfigurationSingle::Instance().dbTitle())
     {
         try
         {
@@ -1096,7 +1092,7 @@ static bool IndicateEmpty = false;
 
 void toUpdateIndicateEmpty(void)
 {
-    IndicateEmpty = !toConfigurationSingle::Instance().globalConfig(CONF_INDICATE_EMPTY, "").isEmpty();
+    IndicateEmpty = toConfigurationSingle::Instance().indicateEmpty();
 }
 
 

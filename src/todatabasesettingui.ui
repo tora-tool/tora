@@ -13,22 +13,10 @@
    <string>toDatabaseSettingUI</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
+   <property name="margin" >
     <number>11</number>
    </property>
-   <property name="topMargin" >
-    <number>11</number>
-   </property>
-   <property name="rightMargin" >
-    <number>11</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>11</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>6</number>
-   </property>
-   <property name="verticalSpacing" >
+   <property name="spacing" >
     <number>6</number>
    </property>
    <item row="0" column="0" >
@@ -74,22 +62,10 @@
       <string>Query settings</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>11</number>
       </property>
-      <property name="topMargin" >
-       <number>11</number>
-      </property>
-      <property name="rightMargin" >
-       <number>11</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>11</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
+      <property name="spacing" >
        <number>6</number>
       </property>
       <item row="2" column="0" >
@@ -102,19 +78,6 @@
         </property>
         <property name="wordWrap" >
          <bool>false</bool>
-        </property>
-        <property name="buddy" >
-         <cstring>MaxColDisp</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" colspan="2" >
-       <widget class="QLineEdit" name="MaxColDisp" />
-      </item>
-      <item row="0" column="1" >
-       <widget class="QLineEdit" name="InitialFetch" >
-        <property name="enabled" >
-         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -139,9 +102,6 @@
         <property name="wordWrap" >
          <bool>false</bool>
         </property>
-        <property name="buddy" >
-         <cstring>InitialFetch</cstring>
-        </property>
        </widget>
       </item>
       <item row="1" column="0" >
@@ -155,22 +115,29 @@
         <property name="wordWrap" >
          <bool>false</bool>
         </property>
-        <property name="buddy" >
-         <cstring>InitialFetch</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" >
-       <widget class="QLineEdit" name="MaxContent" >
-        <property name="enabled" >
-         <bool>true</bool>
-        </property>
        </widget>
       </item>
       <item row="1" column="2" >
        <widget class="QCheckBox" name="UnlimitedContent" >
         <property name="text" >
          <string>&amp;All</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="2" >
+       <widget class="QSpinBox" name="MaxColDisp" >
+        <property name="maximum" >
+         <number>999999999</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QSpinBox" name="InitialFetch" />
+      </item>
+      <item row="1" column="1" >
+       <widget class="QSpinBox" name="MaxContent" >
+        <property name="maximum" >
+         <number>999999999</number>
         </property>
        </widget>
       </item>
@@ -193,22 +160,10 @@
       <string>UI feedback settings</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>11</number>
       </property>
-      <property name="topMargin" >
-       <number>11</number>
-      </property>
-      <property name="rightMargin" >
-       <number>11</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>11</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
+      <property name="spacing" >
        <number>6</number>
       </property>
       <item row="2" column="0" colspan="2" >
@@ -289,22 +244,10 @@
       <string>Dataformat</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>11</number>
       </property>
-      <property name="topMargin" >
-       <number>11</number>
-      </property>
-      <property name="rightMargin" >
-       <number>11</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>11</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
+      <property name="spacing" >
        <number>6</number>
       </property>
       <item row="1" column="0" >
@@ -389,11 +332,8 @@
  <tabstops>
   <tabstop>AutoCommit</tabstop>
   <tabstop>ObjectCache</tabstop>
-  <tabstop>InitialFetch</tabstop>
   <tabstop>ReadAll</tabstop>
-  <tabstop>MaxContent</tabstop>
   <tabstop>UnlimitedContent</tabstop>
-  <tabstop>MaxColDisp</tabstop>
   <tabstop>IndicateEmpty</tabstop>
   <tabstop>NumberFormat</tabstop>
   <tabstop>Decimals</tabstop>
@@ -406,42 +346,10 @@
  <resources/>
  <connections>
   <connection>
-   <sender>ReadAll</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>InitialFetch</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>AutoLong</sender>
    <signal>toggled(bool)</signal>
    <receiver>MoveAfter</receiver>
    <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>UnlimitedContent</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>MaxContent</receiver>
-   <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>20</x>

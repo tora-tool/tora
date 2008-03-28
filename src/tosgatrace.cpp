@@ -70,7 +70,7 @@
 #include "icons/refresh.xpm"
 #include "icons/tosgatrace.xpm"
 
-#define CONF_AUTO_UPDATE    "AutoUpdate"
+// #define CONF_AUTO_UPDATE    "AutoUpdate"
 
 class toSGATracePrefs : public QGroupBox, public toSettingTab {
     QCheckBox* AutoUpdate;
@@ -103,14 +103,16 @@ public:
             QSizePolicy::Expanding);
         vbox->addItem(spacer);
 
-        if (!Tool->config(CONF_AUTO_UPDATE, "Yes").isEmpty())
-            AutoUpdate->setChecked(true);
+//         if (!Tool->config(CONF_AUTO_UPDATE, "Yes").isEmpty())
+//             AutoUpdate->setChecked(true);
+		AutoUpdate->setChecked(toConfigurationSingle::Instance().autoUpdate());
     }
     virtual void saveSetting(void) {
-        if (AutoUpdate->isChecked())
-            Tool->setConfig(CONF_AUTO_UPDATE, "Yes");
-        else
-            Tool->setConfig(CONF_AUTO_UPDATE, "");
+//         if (AutoUpdate->isChecked())
+//             Tool->setConfig(CONF_AUTO_UPDATE, "Yes");
+//         else
+//             Tool->setConfig(CONF_AUTO_UPDATE, "");
+		toConfigurationSingle::Instance().setAutoUpdate(AutoUpdate->isChecked());
     }
 };
 
@@ -222,7 +224,7 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
 
     try {
         connect(timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
-        toRefreshParse(timer(), toConfigurationSingle::Instance().globalConfig(CONF_REFRESH, DEFAULT_REFRESH));
+        toRefreshParse(timer(), toConfigurationSingle::Instance().refresh());
     }
     TOCATCH;
 
@@ -243,7 +245,7 @@ void toSGATrace::changeSchema(const QString &str) {
         CurrentSchema = str;
     else
         CurrentSchema = QString::null;
-    if (!SGATraceTool.config(CONF_AUTO_UPDATE, "Yes").isEmpty())
+	if (toConfigurationSingle::Instance().autoUpdate())
         refresh();
 }
 

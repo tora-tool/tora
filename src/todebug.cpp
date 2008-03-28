@@ -826,7 +826,7 @@ void toDebug::execute(void)
                 nam.replace(QRegExp(QString::fromLatin1("[^a-zA-Z0-9]+")), QString::fromLatin1("_"));
                 sql += nam;
                 sql += QString::fromLatin1("<char[");
-                sql += toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_SIZE, DEFAULT_MAX_COL_SIZE);
+                sql += toConfigurationSingle::Instance().maxColSize();
                 sql += QString::fromLatin1("],");
                 if ((*i).In)
                     sql += QString::fromLatin1("in");
@@ -840,7 +840,7 @@ void toDebug::execute(void)
             if (!retType.isEmpty())
             {
                 sql += QString::fromLatin1(";\n  SELECT ret INTO :tora_int_return<char[");
-                sql += toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_SIZE, DEFAULT_MAX_COL_SIZE);
+                sql += toConfigurationSingle::Instance().maxColSize();
                 sql += QString::fromLatin1("],out> FROM sys.DUAL");
             }
             sql += QString::fromLatin1(";\nEND;\n");
@@ -870,7 +870,7 @@ void toDebug::execute(void)
                     }
                 else
                     delete head;
-                ColumnSize = toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_SIZE, DEFAULT_MAX_COL_SIZE).toInt();
+                ColumnSize = toConfigurationSingle::Instance().maxColSize();
                 TargetSQL = toDeepCopy(sql); // Deep copy of SQL
                 TargetSemaphore.up(); // Go go power rangers!
             }
@@ -1416,7 +1416,7 @@ void toDebug::updateState(int reason)
                         item->setText(3, value);
                     else if (ret == TO_ERROR_NULLVALUE)
                     {
-                        if (toConfigurationSingle::Instance().globalConfig(CONF_INDICATE_EMPTY, "").isEmpty())
+                        if (toConfigurationSingle::Instance().indicateEmpty())
                             item->setText(3, QString::fromLatin1("{null}"));
                         else
                             item->setText(3, QString::null);

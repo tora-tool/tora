@@ -1129,7 +1129,7 @@ public:
      * @param tag The name of the configuration setting.
      * @param def Contents of this setting.
      */
-    const QString &config(const QString &tag, const QString &def);
+//     const QString &config(const QString &tag, const QString &def);
     /**
      * Change connectionspecific setting. Depending on the implementation this can change the
      * contents on disk or not.
@@ -1142,7 +1142,7 @@ public:
      * @param tag The name of the configuration setting.
      * @param def Default value of the setting, if it is not available.
      */
-    void setConfig(const QString &tag, const QString &value);
+//     void setConfig(const QString &tag, const QString &value);
 
     /** Call all initializers
      */

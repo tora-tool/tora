@@ -95,17 +95,7 @@
 #include <QString>
 #include <QTextStream>
 
-#define CONF_OPEN_CURSORS "OpenCursors"
-#define DEFAULT_OPEN_CURSORS "40"  // Defined to be able to update tuning view
-#define CONF_MAX_LONG  "MaxLong"
-
-// Must be larger than max long size in otl.
-
-#ifndef DEFAULT_MAX_LONG
-#define DEFAULT_MAX_LONG 30000
-#endif
-
-static int toMaxLong = DEFAULT_MAX_LONG;
+static int toMaxLong = toConfigurationSingle::Instance().maxLong();;
 
 static toSQL SQLComment("toOracleConnection:Comments",
                         "SELECT /*+ RULE */ Column_name,Comments FROM sys.All_Col_Comments\n"
@@ -790,8 +780,7 @@ class oracleConnection : public toConnection::connectionImpl
                 // Need to clear the stream cache first.
                 oracleSub *sub = dynamic_cast<oracleSub *>(query.connectionSub());
                 sub->Lock.down();
-                sub->Connection->set_stream_pool_size(std::max(toConfigurationSingle::Instance().globalConfig(CONF_OPEN_CURSORS,
-                                                      DEFAULT_OPEN_CURSORS).toInt(), 1));
+                sub->Connection->set_stream_pool_size(std::max(toConfigurationSingle::Instance().openCursors(), 1));
                 sub->Lock.up();
 #endif
 
@@ -926,8 +915,7 @@ class oracleConnection : public toConnection::connectionImpl
 
     virtual void initialize(void)
     {
-        toMaxLong = toConfigurationSingle::Instance().globalConfig(CONF_MAX_LONG,
-                    QString::number(DEFAULT_MAX_LONG).toLatin1()).toInt();
+        toMaxLong = toConfigurationSingle::Instance().maxLong();
         if (otl_connect::otl_initialize(1))
             addProvider("Oracle");
         else
@@ -1243,9 +1231,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
             conn = new otl_connect;
 
 #ifdef OTL_STREAM_POOLING_ON
-            conn->set_stream_pool_size(std::max(toConfigurationSingle::Instance().globalConfig(
-                                                    CONF_OPEN_CURSORS,
-                                                    DEFAULT_OPEN_CURSORS).toInt(), 1));
+            conn->set_stream_pool_size(std::max(toConfigurationSingle::Instance().openCursors(), 1));
 #endif
 
             if (!sqlNet)
@@ -1334,7 +1320,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
     {
         {
             QString str = QString::fromLatin1("ALTER SESSION SET NLS_DATE_FORMAT = '");
-            str += toConfigurationSingle::Instance().globalConfig(CONF_DATE_FORMAT, DEFAULT_DATE_FORMAT);
+            str += toConfigurationSingle::Instance().dateFormat();
             str += QString::fromLatin1("'");
             otl_stream date(1, str.toUtf8(), *conn);
         }
@@ -1405,17 +1391,12 @@ toOracleSetting::toOracleSetting(QWidget *parent)
     : QWidget(parent), toSettingTab("database.html#oracle") {
 
     setupUi(this);
-    DefaultDate->setText(toConfigurationSingle::Instance().globalConfig(CONF_DATE_FORMAT,
-                                                                        DEFAULT_DATE_FORMAT));
-    CheckPoint->setText(toConfigurationSingle::Instance().globalConfig(CONF_PLAN_CHECKPOINT,
-                                                                       DEFAULT_PLAN_CHECKPOINT));
-    ExplainPlan->setText(toConfigurationSingle::Instance().globalConfig(CONF_PLAN_TABLE,
-                                                                        DEFAULT_PLAN_TABLE));
-    OpenCursors->setValue(toConfigurationSingle::Instance().globalConfig(CONF_OPEN_CURSORS,
-                                                                         DEFAULT_OPEN_CURSORS).toInt());
-    KeepPlans->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_KEEP_PLANS, "").isEmpty());
-    int len = toConfigurationSingle::Instance().globalConfig(CONF_MAX_LONG,
-                                                             QString::number(DEFAULT_MAX_LONG).toLatin1()).toInt();
+    DefaultDate->setText(toConfigurationSingle::Instance().dateFormat());
+    CheckPoint->setText(toConfigurationSingle::Instance().planCheckpoint());
+    ExplainPlan->setText(toConfigurationSingle::Instance().planTable());
+    OpenCursors->setValue(toConfigurationSingle::Instance().openCursors());
+    KeepPlans->setChecked(toConfigurationSingle::Instance().keepPlans());
+    int len = toConfigurationSingle::Instance().maxLong();
     if (len >= 0)
     {
         MaxLong->setText(QString::number(len));
@@ -1434,19 +1415,19 @@ toOracleSetting::toOracleSetting(QWidget *parent)
 
 
 void toOracleSetting::saveSetting() {
-    toConfigurationSingle::Instance().globalSetConfig(CONF_KEEP_PLANS, KeepPlans->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_DATE_FORMAT, DefaultDate->text());
-    toConfigurationSingle::Instance().globalSetConfig(CONF_PLAN_CHECKPOINT, CheckPoint->text());
-    toConfigurationSingle::Instance().globalSetConfig(CONF_PLAN_TABLE, ExplainPlan->text());
-    toConfigurationSingle::Instance().globalSetConfig(CONF_OPEN_CURSORS, QString::number(OpenCursors->value()));
+    toConfigurationSingle::Instance().setKeepPlans(KeepPlans->isChecked());
+    toConfigurationSingle::Instance().setDateFormat(DefaultDate->text());
+    toConfigurationSingle::Instance().setPlanCheckpoint(CheckPoint->text());
+    toConfigurationSingle::Instance().setPlanTable(ExplainPlan->text());
+	toConfigurationSingle::Instance().setOpenCursors(OpenCursors->value());
     if (Unlimited->isChecked())
     {
         toMaxLong = -1;
-        toConfigurationSingle::Instance().globalSetConfig(CONF_MAX_LONG, QString::fromLatin1("-1"));
+		toConfigurationSingle::Instance().setMaxLong(-1);
     }
     else
     {
-        toConfigurationSingle::Instance().globalSetConfig(CONF_MAX_LONG, MaxLong->text());
+		toConfigurationSingle::Instance().setMaxLong(MaxLong->text().toInt());
         toMaxLong = MaxLong->text().toInt();
     }
 }

@@ -130,8 +130,8 @@ static int TextWidth(const QFontMetrics &fm, const QString &str) {
 
 int toResultViewMLine::realWidth(const QFontMetrics &fm, const toTreeWidget *top, int column, const QString &txt) const {
     if (!MaxColDisp) {
-        MaxColDisp = toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
-        Gridlines = !toConfigurationSingle::Instance().globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty();
+		MaxColDisp = toConfigurationSingle::Instance().maxColDisp();
+		Gridlines = toConfigurationSingle::Instance().displayGridlines();
     }
     QString t = text(column);
     if (t.isNull())
@@ -159,8 +159,8 @@ QString toResultViewItem::text(int col) const {
 
 int toResultViewItem::realWidth(const QFontMetrics &fm, const toTreeWidget *top, int column, const QString &txt) const {
     if (!MaxColDisp) {
-        MaxColDisp = toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
-        Gridlines = !toConfigurationSingle::Instance().globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty();
+        MaxColDisp = toConfigurationSingle::Instance().maxColDisp();
+        Gridlines = toConfigurationSingle::Instance().displayGridlines();
     }
     QString t = text(column);
     if (t.isNull())
@@ -173,10 +173,10 @@ void toResultViewItem::paintCell(QPainter * p, const QColorGroup & cg, int colum
 #if 0                           // disabled, not overriding correct function anyhow
     // null related background handling
     QColorGroup colNull(cg);
-    if ((toConfigurationSingle::Instance().globalConfig(CONF_INDICATE_EMPTY, "").isEmpty() && text(column) == "{null}")
+    if ((toConfigurationSingle::Instance().indicateEmpty() && text(column) == "{null}")
             || text(column).isNull()) {
         QColor nullColor;
-        nullColor.setNamedColor(toConfigurationSingle::Instance().globalConfig(CONF_INDICATE_EMPTY_COLOR, "#f2ffbc"));
+        nullColor.setNamedColor(toConfigurationSingle::Instance().indicateEmptyColor());
         colNull.setColor(QColorGroup::Base, nullColor);
     }
 
@@ -354,8 +354,8 @@ void toResultViewMLCheck::paintCell(QPainter *pnt, const QColorGroup & cg,
 
 int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *top, int column, const QString &txt) const {
     if (!MaxColDisp) {
-        MaxColDisp = toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
-        Gridlines = !toConfigurationSingle::Instance().globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty();
+        MaxColDisp = toConfigurationSingle::Instance().maxColDisp();
+        Gridlines = toConfigurationSingle::Instance().displayGridlines();
     }
     QString t = text(column);
     if (t.isNull())
@@ -369,8 +369,8 @@ int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *t
 
 int toResultViewCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *top, int column, const QString &txt) const {
     if (!MaxColDisp) {
-        MaxColDisp = toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
-        Gridlines = !toConfigurationSingle::Instance().globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty();
+        MaxColDisp = toConfigurationSingle::Instance().maxColDisp();
+        Gridlines = toConfigurationSingle::Instance().displayGridlines();
     }
     QString t = text(column);
     if (t.isNull())
@@ -427,7 +427,7 @@ toListView::toListView(QWidget *parent, const char *name, Qt::WFlags f)
             SIGNAL(customContextMenuRequested(const QPoint &)),
             this,
             SLOT(displayMenu(const QPoint &)));
-    QString str = toConfigurationSingle::Instance().globalConfig(CONF_LIST, "");
+    QString str(toConfigurationSingle::Instance().listFont());
     if (!str.isEmpty()) {
         QFont font(toStringToFont(str));
         setFont(font);
@@ -1124,8 +1124,8 @@ toTreeWidgetItem *toResultView::createItem(toTreeWidgetItem *last, const QString
 }
 
 void toResultView::addItem(void) {
-    MaxColDisp = toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
-    Gridlines = !toConfigurationSingle::Instance().globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty();
+    MaxColDisp = toConfigurationSingle::Instance().maxColDisp();
+    Gridlines = toConfigurationSingle::Instance().displayGridlines();
 
     try {
         if (Query && !Query->eof()) {
@@ -1209,7 +1209,7 @@ void toResultView::query(const QString &sql, const toQList &param) {
         else
             setSorting(Query->columns());
 
-        int MaxNumber = toConfigurationSingle::Instance().globalConfig(CONF_MAX_NUMBER, DEFAULT_MAX_NUMBER).toInt();
+        int MaxNumber = toConfigurationSingle::Instance().maxNumber();
         for (int j = 0;j < MaxNumber && !Query->eof();j++)
             addItem();
         if (ReadAll || MaxNumber < 0)

@@ -69,14 +69,14 @@
 #include "icons/refresh.xpm"
 #include "icons/tooutput.xpm"
 
-#define CONF_POLLING     "Refresh"
-#define DEFAULT_POLLING  "10 seconds"
-
-#define CONF_LOG_TYPE  "Type"
-#define DEFAULT_LOG_TYPE "0"
-
-#define CONF_LOG_USER  "LogUser"
-#define DEFAULT_LOG_USER "ULOG"
+// #define CONF_POLLING     "Refresh"
+// #define DEFAULT_POLLING  "10 seconds"
+// 
+// #define CONF_LOG_TYPE  "Type"
+// #define DEFAULT_LOG_TYPE "0"
+// 
+// #define CONF_LOG_USER  "LogUser"
+// #define DEFAULT_LOG_USER "ULOG"
 
 class toOutputPrefs : public QGroupBox, public toSettingTab {
     QComboBox *AutoPolling;
@@ -109,7 +109,7 @@ public:
         AutoPolling = toRefreshCreate(
             this,
             TO_TOOLBAR_WIDGET_NAME,
-            Tool->config(CONF_POLLING, DEFAULT_POLLING));
+            toConfigurationSingle::Instance().polling());
         label->setBuddy(AutoPolling);
         vbox->addWidget(AutoPolling);
 
@@ -121,8 +121,7 @@ public:
         Type = new QComboBox(this);
         Type->addItem(qApp->translate("toLogOutput", "SQL Output"));
         Type->addItem(qApp->translate("toLogOutput", "Log4PL/SQL"));
-        Type->setCurrentIndex(Tool->config(CONF_LOG_TYPE,
-                                           DEFAULT_LOG_TYPE).toInt());
+        Type->setCurrentIndex(toConfigurationSingle::Instance().logType());
         label->setBuddy(Type);
         vbox->addWidget(Type);
 
@@ -131,8 +130,7 @@ public:
                            this);
         vbox->addWidget(label);
 
-        User = new QLineEdit(Tool->config(CONF_LOG_USER,
-                                          DEFAULT_LOG_USER),
+		User = new QLineEdit(toConfigurationSingle::Instance().logUser(),
                              this);
         label->setBuddy(User);
         vbox->addWidget(User);
@@ -140,9 +138,9 @@ public:
         vbox->addStretch();
     }
     virtual void saveSetting(void) {
-        Tool->setConfig(CONF_POLLING, AutoPolling->currentText());
-        Tool->setConfig(CONF_LOG_TYPE, QString::number(Type->currentIndex()));
-        Tool->setConfig(CONF_LOG_USER, User->text());
+		toConfigurationSingle::Instance().setPolling(AutoPolling->currentText());
+		toConfigurationSingle::Instance().setLogType(Type->currentIndex());
+		toConfigurationSingle::Instance().setLogUser(User->text());
     }
 };
 
@@ -233,8 +231,7 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
 
     Refresh = toRefreshCreate(Toolbar,
                               TO_TOOLBAR_WIDGET_NAME,
-                              OutputTool.config(CONF_POLLING,
-                                                DEFAULT_POLLING));
+                              toConfigurationSingle::Instance().polling());
     Toolbar->addWidget(Refresh);
     connect(Refresh,
             SIGNAL(activated(const QString &)),
@@ -254,8 +251,7 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
 
     try {
         connect(timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
-        toRefreshParse(timer(), OutputTool.config(CONF_POLLING,
-                                                  DEFAULT_POLLING));
+		toRefreshParse(timer(), toConfigurationSingle::Instance().polling());
     }
     TOCATCH;
 
@@ -404,7 +400,7 @@ toLogOutput::toLogOutput(QWidget *parent, toConnection &connection)
     Type = new QComboBox(toolBar());
     Type->addItem(tr("SQL Output"));
     Type->addItem(tr("Log4PL/SQL"));
-    Type->setCurrentIndex(OutputTool.config(CONF_LOG_TYPE, DEFAULT_LOG_TYPE).toInt());
+	Type->setCurrentIndex(toConfigurationSingle::Instance().logType());
     toolBar()->addWidget(Type);
     connect(Type, SIGNAL(activated(int)), this, SLOT(changeType()));
 
@@ -415,9 +411,7 @@ toLogOutput::toLogOutput(QWidget *parent, toConnection &connection)
 void toLogOutput::refresh(void) {
     if (Type->currentIndex() == 1) {
         Log->setSQL(QString::null);
-        Log->query(SQLLog(connection()).arg(OutputTool.config(
-                                                CONF_LOG_USER,
-                                                DEFAULT_LOG_USER)));
+		Log->query(SQLLog(connection()).arg(toConfigurationSingle::Instance().logUser()));
     }
     toOutput::refresh();
 }

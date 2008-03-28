@@ -104,7 +104,7 @@ void toResultLong::query(const QString &sql, const toQList &param)
         if (ReadAll)
             MaxNumber = -1;
         else
-            MaxNumber = toConfigurationSingle::Instance().globalConfig(CONF_MAX_NUMBER, DEFAULT_MAX_NUMBER).toInt();
+            MaxNumber = toConfigurationSingle::Instance().maxNumber();
         addItem();
     }
     catch (const toConnection::exception &str)

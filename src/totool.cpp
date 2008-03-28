@@ -313,10 +313,10 @@ toTool *toTool::tool(const QString &key)
 void toTool::about(QWidget *)
 {}
 
-const QString& toTool::config(const QString &tag, const QString &def) {
-    return toConfigurationSingle::Instance().config(tag, def, Name);
-}
-
-void toTool::setConfig(const QString &tag, const QString &value) {
-    toConfigurationSingle::Instance().setConfig(tag, value, Name);
-}
+// const QString& toTool::config(const QString &tag, const QString &def) {
+//     return toConfigurationSingle::Instance().config(tag, def, Name);
+// }
+// 
+// void toTool::setConfig(const QString &tag, const QString &value) {
+//     toConfigurationSingle::Instance().setConfig(tag, value, Name);
+// }

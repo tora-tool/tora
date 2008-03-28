@@ -66,25 +66,25 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
         setObjectName(name);
 
     setupUi(this);
-    KeywordUpper->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_KEYWORD_UPPER, DEFAULT_KEYWORD_UPPER).isEmpty());
-    SyntaxHighlighting->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_HIGHLIGHT, "Yes").isEmpty());
-    CodeCompletion->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_CODE_COMPLETION, "Yes").isEmpty());
-    CompletionSort->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_COMPLETION_SORT, "Yes").isEmpty());
-    AutoIndent->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_INDENT, "Yes").isEmpty());
-    Extensions->setText(toConfigurationSingle::Instance().globalConfig(CONF_EXTENSIONS, DEFAULT_EXTENSIONS));
+    KeywordUpper->setChecked(toConfigurationSingle::Instance().keywordUpper());
+    SyntaxHighlighting->setChecked(toConfigurationSingle::Instance().highlight());
+    CodeCompletion->setChecked(toConfigurationSingle::Instance().codeCompletion());
+    CompletionSort->setChecked(toConfigurationSingle::Instance().completionSort());
+    AutoIndent->setChecked(toConfigurationSingle::Instance().autoIndent());
+    Extensions->setText(toConfigurationSingle::Instance().extensions());
     TabStop->setValue(toMarkedText::defaultTabWidth());
-    TabSpaces->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_TAB_SPACES, DEFAULT_TAB_SPACES).isEmpty());
+    TabSpaces->setChecked(toConfigurationSingle::Instance().tabSpaces());
 
     {
-        QFont font(toStringToFont(toConfigurationSingle::Instance().globalConfig(CONF_CODE, "")));
+        QFont font(toStringToFont(toConfigurationSingle::Instance().codeFont()));
         checkFixedWidth(font);
         CodeExample->setFont(font);
     }
 
-    TextExample->setFont(toStringToFont(toConfigurationSingle::Instance().globalConfig(CONF_TEXT, "")));
+    TextExample->setFont(toStringToFont(toConfigurationSingle::Instance().textFont()));
 
     {
-        QString str = toConfigurationSingle::Instance().globalConfig(CONF_LIST, "");
+        QString str(toConfigurationSingle::Instance().listFont());
         QFont font;
         if (str.isEmpty()) {
             QWidget *wid = new toTreeWidget;
@@ -147,21 +147,21 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     Current = NULL;
 }
 
-void toSyntaxAnalyzer::readColor(const QColor &def, infoType typ) {
-    QString conf(CONF_COLOR ":");
-    conf += typeString(typ);
-    QString res = toConfigurationSingle::Instance().globalConfig(conf, "");
-
-    if (res.isEmpty())
-        Colors[typ] = def;
-    else {
-        int r, g, b;
-        if (sscanf(res.toAscii().constData(), "%d,%d,%d", &r, &g, &b) != 3)
-            throw qApp->translate("toSyntaxAnalyzer", "Wrong format of color in setings");
-        QColor col(r, g, b);
-        Colors[typ] = col;
-    }
-}
+// void toSyntaxAnalyzer::readColor(const QColor &def, infoType typ) {
+//     QString conf(CONF_COLOR ":");
+//     conf += typeString(typ);
+//     QString res = toConfigurationSingle::Instance().globalConfig(conf, "");
+// 
+//     if (res.isEmpty())
+//         Colors[typ] = def;
+//     else {
+//         int r, g, b;
+//         if (sscanf(res.toAscii().constData(), "%d,%d,%d", &r, &g, &b) != 3)
+//             throw qApp->translate("toSyntaxAnalyzer", "Wrong format of color in setings");
+//         QColor col(r, g, b);
+//         Colors[typ] = col;
+//     }
+// }
 
 toSyntaxAnalyzer::infoType toSyntaxAnalyzer::typeString(const QString &str) {
     if (str == "Default")
@@ -207,18 +207,14 @@ QString toSyntaxAnalyzer::typeString(infoType typ) {
 
 void toSyntaxAnalyzer::updateSettings(void) {
     try {
-        const QPalette cg = qApp->palette();
-        readColor(cg.color(QPalette::Text), Default);
-//         readColor(Qt::green, Comment);
-        readColor(QColor(160, 160, 160), Comment);
-//         readColor(Qt::cyan, Number);
-        readColor(QColor(0, 160, 13), Number);
-//         readColor(Qt::blue, Keyword);
-        readColor(QColor(13, 0, 160), Keyword);
-        readColor(Qt::red, String);
-        readColor(cg.color(QPalette::Background), DefaultBg);
-        readColor(Qt::darkRed, ErrorBg);
-        readColor(Qt::darkGreen, DebugBg);
+		Colors[Default] = toConfigurationSingle::Instance().syntaxDefault();
+		Colors[Comment] = toConfigurationSingle::Instance().syntaxComment();
+		Colors[Number] = toConfigurationSingle::Instance().syntaxNumber();
+		Colors[Keyword] = toConfigurationSingle::Instance().syntaxKeyword();
+		Colors[String] = toConfigurationSingle::Instance().syntaxString();
+		Colors[DefaultBg] = toConfigurationSingle::Instance().syntaxDefaultBg();
+		Colors[ErrorBg] = toConfigurationSingle::Instance().syntaxErrorBg();
+		Colors[DebugBg] = toConfigurationSingle::Instance().syntaxDebugBg();
     }
     TOCATCH
 }
@@ -302,30 +298,40 @@ void toSyntaxSetup::selectColor(void) {
 }
 
 void toSyntaxSetup::saveSetting(void) {
-    toConfigurationSingle::Instance().globalSetConfig(CONF_TEXT, toFontToString(TextExample->font()));
-    toConfigurationSingle::Instance().globalSetConfig(CONF_CODE, toFontToString(CodeExample->font()));
-    toConfigurationSingle::Instance().globalSetConfig(CONF_LIST, List);
+	toConfigurationSingle::Instance().setTextFont(toFontToString(TextExample->font()));
+	toConfigurationSingle::Instance().setCodeFont(toFontToString(CodeExample->font()));
+	toConfigurationSingle::Instance().setListFont(List);
     bool highlight = SyntaxHighlighting->isChecked();
-    toConfigurationSingle::Instance().globalSetConfig(CONF_HIGHLIGHT, highlight ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_KEYWORD_UPPER, KeywordUpper->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_CODE_COMPLETION, highlight && CodeCompletion->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_COMPLETION_SORT, CompletionSort->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_AUTO_INDENT, AutoIndent->isChecked() ? "Yes" : "");
+	toConfigurationSingle::Instance().setHighlight(highlight);
+	toConfigurationSingle::Instance().setKeywordUpper(KeywordUpper->isChecked());
+	toConfigurationSingle::Instance().setCodeCompletion(highlight && CodeCompletion->isChecked());
+	toConfigurationSingle::Instance().setCodeCompletionSort(CompletionSort->isChecked());
+	toConfigurationSingle::Instance().setAutoIndent(AutoIndent->isChecked());
     toMarkedText::setDefaultTabWidth(TabStop->value());
-    toConfigurationSingle::Instance().globalSetConfig(CONF_TAB_STOP, QString::number(toMarkedText::defaultTabWidth()));
+	toConfigurationSingle::Instance().setTabStop(toMarkedText::defaultTabWidth());
     toMarkedText::setDefaultTabSpaces(TabSpaces->isChecked());
-    toConfigurationSingle::Instance().globalSetConfig(CONF_TAB_SPACES, TabSpaces->isChecked() ? "Yes" : "");
-    for (std::map<QString, QColor>::iterator i = Colors.begin();i != Colors.end();i++) {
-        QString str(CONF_COLOR);
-        str += ":";
-        str += (*i).first;
-        QString res;
-        res.sprintf("%d,%d,%d",
-                    (*i).second.red(),
-                    (*i).second.green(),
-                    (*i).second.blue());
-        toConfigurationSingle::Instance().globalSetConfig(str, res);
-    }
+	toConfigurationSingle::Instance().setTabSpaces(TabSpaces->isChecked());
+//     for (std::map<QString, QColor>::iterator i = Colors.begin();i != Colors.end();i++) {
+//         QString str(CONF_COLOR);
+//         str += ":";
+//         str += (*i).first;
+//         QString res;
+//         res.sprintf("%d,%d,%d",
+//                     (*i).second.red(),
+//                     (*i).second.green(),
+//                     (*i).second.blue());
+//         toConfigurationSingle::Instance().globalSetConfig(str, res);
+//     }
+#define C2T(c) (Colors[Analyzer.typeString((c))])
+	toConfigurationSingle::Instance().setSyntaxDefault(C2T(toSyntaxAnalyzer::Default));
+	toConfigurationSingle::Instance().setSyntaxComment(C2T(toSyntaxAnalyzer::Comment));
+	toConfigurationSingle::Instance().setSyntaxNumber(C2T(toSyntaxAnalyzer::Number));
+	toConfigurationSingle::Instance().setSyntaxKeyword(C2T(toSyntaxAnalyzer::Keyword));
+	toConfigurationSingle::Instance().setSyntaxString(C2T(toSyntaxAnalyzer::String));
+	toConfigurationSingle::Instance().setSyntaxDefaultBg(C2T(toSyntaxAnalyzer::DefaultBg));
+	toConfigurationSingle::Instance().setSyntaxDebugBg(C2T(toSyntaxAnalyzer::DebugBg));
+	toConfigurationSingle::Instance().setSyntaxErrorBg(C2T(toSyntaxAnalyzer::ErrorBg));
+
     toSyntaxAnalyzer::defaultAnalyzer().updateSettings();
-    toConfigurationSingle::Instance().globalSetConfig(CONF_EXTENSIONS, Extensions->text());
+	toConfigurationSingle::Instance().setExtensions(Extensions->text());
 }

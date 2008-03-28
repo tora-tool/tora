@@ -165,19 +165,19 @@ std::list<QString> toConnectionProvider::databases(const QString &provider, cons
     return fetchProvider(provider).providedDatabases(provider, host, user, pwd);
 }
 
-const QString &toConnectionProvider::config(const QString &tag, const QString &def) {
-    QString str = Provider;
-    str.append(":");
-    str.append(tag);
-    return toConfigurationSingle::Instance().globalConfig(str, def);
-}
-
-void toConnectionProvider::setConfig(const QString &tag, const QString &def) {
-    QString str = Provider;
-    str.append(":");
-    str.append(tag);
-    toConfigurationSingle::Instance().globalSetConfig(str, def);
-}
+// const QString &toConnectionProvider::config(const QString &tag, const QString &def) {
+//     QString str = Provider;
+//     str.append(":");
+//     str.append(tag);
+//     return toConfigurationSingle::Instance().globalConfig(str, def);
+// }
+// 
+// void toConnectionProvider::setConfig(const QString &tag, const QString &def) {
+//     QString str = Provider;
+//     str.append(":");
+//     str.append(tag);
+//     toConfigurationSingle::Instance().globalSetConfig(str, def);
+// }
 
 QWidget *toConnectionProvider::providerConfigurationTab(const QString &, QWidget *) {
     return NULL;
@@ -1193,7 +1193,7 @@ toConnection::toConnection(const QString &provider,
     NeedCommit = Abort = false;
     ReadingCache = false;
     if (cache) {
-        if (toConfigurationSingle::Instance().globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt() == 1)
+        if (toConfigurationSingle::Instance().objectCache() == 1)
             readObjects();
     }
     else {
@@ -1291,7 +1291,7 @@ toConnectionSub *toConnection::mainConnection() {
 toConnectionSub *toConnection::backgroundConnection() {
     if (!Connection->handleMultipleQueries())
         return longConnection();
-    if (toConfigurationSingle::Instance().globalConfig(CONF_BKGND_CONNECT, "").isEmpty())
+	if (toConfigurationSingle::Instance().bkgndConnect())
         return mainConnection();
     Lock.lock();
     if (!BackgroundConnection) {
@@ -1729,8 +1729,8 @@ const QString &toConnection::provider(void) const {
 }
 
 QString toConnection::cacheDir() {
-    QString home = QDir::homePath();
-    QString dirname = toConfigurationSingle::Instance().globalConfig(CONF_CACHE_DIR, "");
+    QString home(QDir::homePath());
+    QString dirname(toConfigurationSingle::Instance().cacheDir());
 
     if (dirname.isEmpty()) {
 #ifdef Q_OS_WIN32
@@ -1751,7 +1751,7 @@ QString toConnection::cacheFile() {
 }
 
 bool toConnection::loadDiskCache() {
-    if (toConfigurationSingle::Instance().globalConfig(CONF_CACHE_DISK, DEFAULT_CACHE_DISK).isEmpty())
+    if (!toConfigurationSingle::Instance().cacheDisk())
         return false;
 
     toConnection::objectName *cur = 0;
@@ -1767,7 +1767,7 @@ bool toConnection::loadDiskCache() {
 
     QFileInfo fi(file);
     QDateTime today;
-    if (fi.lastModified().addDays(toConfigurationSingle::Instance().globalConfig(CONF_CACHE_TIMEOUT, DEFAULT_CACHE_TIMEOUT).toInt()) < today)
+    if (fi.lastModified().addDays(toConfigurationSingle::Instance().cacheTimeout()) < today)
         return false;
 
     /** read in all data
@@ -1813,7 +1813,7 @@ void toConnection::writeDiskCache() {
     long objCounter = 0;
     long synCounter = 0;
 
-    if (toConfigurationSingle::Instance().globalConfig(CONF_CACHE_DISK, DEFAULT_CACHE_DISK).isEmpty())
+    if (!toConfigurationSingle::Instance().cacheDisk())
         return ;
 
 
@@ -1884,7 +1884,7 @@ void toConnection::cacheObjects::run() {
 
 
 void toConnection::readObjects(void) {
-    if (toConfigurationSingle::Instance().globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt() == 3) {
+    if (toConfigurationSingle::Instance().objectCache() == 3) {
         ReadingCache = false;
         return ;
     }
@@ -1902,7 +1902,7 @@ void toConnection::readObjects(void) {
 
 void toConnection::rereadCache(void) {
 
-    if (toConfigurationSingle::Instance().globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt() == 3) {
+    if (toConfigurationSingle::Instance().objectCache() == 3) {
         ColumnCache.clear();
         return ;
     }
@@ -1947,13 +1947,13 @@ QString toConnection::unQuote(const QString &name) {
 }
 
 bool toConnection::cacheAvailable(bool synonyms, bool block, bool need) {
-    if (toConfigurationSingle::Instance().globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt() == 3)
+    if (toConfigurationSingle::Instance().objectCache() == 3)
         return true;
 
     if (!ReadingCache) {
         if (!need)
             return true;
-        if (toConfigurationSingle::Instance().globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt() == 2 && !block)
+        if (toConfigurationSingle::Instance().objectCache() == 2 && !block)
             return true;
         readObjects();
         toMainWidget()->checkCaching();

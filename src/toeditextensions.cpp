@@ -57,14 +57,14 @@
 #include "icons/deindent.xpm"
 #include "icons/indent.xpm"
 
-#define CONF_COMMA_BEFORE "CommaBefore"
-#define CONF_BLOCK_OPEN_LINE "BlockOpenLine"
-#define CONF_OPERATOR_SPACE "OperatorSpace"
-#define CONF_KEYWORD_UPPER "KeywordUpper"
-#define CONF_RIGHT_SEPARATOR "RightSeparator"
-#define CONF_END_BLOCK_NEWLINE "EndBlockNewline"
-#define CONF_COMMENT_COLUMN "CommentColumn"
-#define DEFAULT_COMMENT_COLUMN "60"
+// #define CONF_COMMA_BEFORE "CommaBefore"
+// #define CONF_BLOCK_OPEN_LINE "BlockOpenLine"
+// #define CONF_OPERATOR_SPACE "OperatorSpace"
+// #define CONF_KEYWORD_UPPER "KeywordUpper"
+// #define CONF_RIGHT_SEPARATOR "RightSeparator"
+// #define CONF_END_BLOCK_NEWLINE "EndBlockNewline"
+// #define CONF_COMMENT_COLUMN "CommentColumn"
+// #define DEFAULT_COMMENT_COLUMN "60"
 
 
 QMenu   *IncMenu           = NULL;
@@ -381,9 +381,7 @@ toEditExtensionSetup::toEditExtensionSetup(
     RightSeparator->setChecked(Current.RightSeparator);
     EndBlockNewline->setChecked(Current.EndBlockNewline);
     CommentColumn->setValue(Current.CommentColumn);
-    AutoIndent->setChecked(
-        !toConfigurationSingle::Instance().globalConfig(
-            CONF_AUTO_INDENT_RO, "Yes").isEmpty());
+    AutoIndent->setChecked(toConfigurationSingle::Instance().autoIndentRo());
     Ok = false;
     try {
         Example->setAnalyzer(toMainWidget()->currentConnection().analyzer());
@@ -442,16 +440,14 @@ toEditExtensionSetup::~toEditExtensionSetup() {
 
 
 void toEditExtensionSetup::saveCurrent(void) {
-    Current.ExpandSpaces = toConfigurationSingle::Instance().globalConfig(
-        CONF_TAB_SPACES, DEFAULT_TAB_SPACES).isEmpty();
+    Current.ExpandSpaces = toConfigurationSingle::Instance().tabSpaces();
     Current.CommaBefore = CommaBefore->isChecked();
     Current.BlockOpenLine = BlockOpenLine->isChecked();
     Current.OperatorSpace = OperatorSpace->isChecked();
     Current.KeywordUpper = KeywordUpper->isChecked();
     Current.RightSeparator = RightSeparator->isChecked();
     Current.EndBlockNewline = EndBlockNewline->isChecked();
-    Current.IndentLevel = toConfigurationSingle::Instance().globalConfig(
-        CONF_TAB_STOP, DEFAULT_TAB_STOP).toInt();
+    Current.IndentLevel = toConfigurationSingle::Instance().tabStop();
     Current.CommentColumn = CommentColumn->value();
     toSQLParse::setSetting(Current);
 }
@@ -483,17 +479,15 @@ class toEditExtensionTool : public toTool {
 public:
     toEditExtensionTool() : toTool(910, "Editor Extensions") {
         toSQLParse::settings cur;
-        cur.ExpandSpaces = toConfigurationSingle::Instance().globalConfig(
-            CONF_TAB_SPACES, DEFAULT_TAB_SPACES).isEmpty();
-        cur.CommaBefore = !config(CONF_COMMA_BEFORE, "").isEmpty();
-        cur.BlockOpenLine = !config(CONF_BLOCK_OPEN_LINE, "").isEmpty();
-        cur.OperatorSpace = !config(CONF_OPERATOR_SPACE, "Yes").isEmpty();
-        cur.KeywordUpper = !config(CONF_KEYWORD_UPPER, "Yes").isEmpty();
-        cur.RightSeparator = !config(CONF_RIGHT_SEPARATOR, "Yes").isEmpty();
-        cur.EndBlockNewline = !config(CONF_END_BLOCK_NEWLINE, "Yes").isEmpty();
-        cur.IndentLevel = toConfigurationSingle::Instance().globalConfig(
-            CONF_TAB_STOP, DEFAULT_TAB_STOP).toInt();
-        cur.CommentColumn = config(CONF_COMMENT_COLUMN, DEFAULT_COMMENT_COLUMN).toInt();
+        cur.ExpandSpaces = toConfigurationSingle::Instance().tabSpaces();
+		cur.CommaBefore = toConfigurationSingle::Instance().commaBefore();
+		cur.BlockOpenLine = toConfigurationSingle::Instance().blockOpenLine();
+		cur.OperatorSpace = toConfigurationSingle::Instance().operatorSpace();
+		cur.KeywordUpper = toConfigurationSingle::Instance().keywordUpper();
+		cur.RightSeparator = toConfigurationSingle::Instance().rightSeparator();
+		cur.EndBlockNewline = toConfigurationSingle::Instance().endBlockNewline();
+        cur.IndentLevel = toConfigurationSingle::Instance().tabStop();
+		cur.CommentColumn = toConfigurationSingle::Instance().commentColumn();
         toSQLParse::setSetting(cur);
     }
 
@@ -629,14 +623,14 @@ public:
 
 void toEditExtensionSetup::saveSetting(void) {
     Ok = true;
-    Tool->setConfig(CONF_COMMA_BEFORE, CommaBefore->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_BLOCK_OPEN_LINE, BlockOpenLine->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_OPERATOR_SPACE, OperatorSpace->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_KEYWORD_UPPER, KeywordUpper->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_RIGHT_SEPARATOR, RightSeparator->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_END_BLOCK_NEWLINE, EndBlockNewline->isChecked() ? "Yes" : "");
-    Tool->setConfig(CONF_COMMENT_COLUMN, QString::number(CommentColumn->value()));
-    toConfigurationSingle::Instance().globalSetConfig(CONF_AUTO_INDENT_RO, AutoIndent->isChecked() ? "Yes" : "");
+	toConfigurationSingle::Instance().setCommaBefore(CommaBefore->isChecked());
+	toConfigurationSingle::Instance().setBlockOpenLine(BlockOpenLine->isChecked());
+	toConfigurationSingle::Instance().setOperatorSpace(OperatorSpace->isChecked());
+	toConfigurationSingle::Instance().setKeywordUpper(KeywordUpper->isChecked());
+	toConfigurationSingle::Instance().setRightSeparator(RightSeparator->isChecked());
+	toConfigurationSingle::Instance().setEndBlockNewline(EndBlockNewline->isChecked());
+	toConfigurationSingle::Instance().setCommentColumn(CommentColumn->value());
+	toConfigurationSingle::Instance().setAutoIndentRo(AutoIndent->isChecked());
     saveCurrent();
 }
 

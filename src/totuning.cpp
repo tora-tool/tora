@@ -82,10 +82,11 @@
 #include "icons/totuning.xpm"
 #include "icons/compile.xpm"
 
-#define CONF_OVERVIEW "Overview"
-#define CONF_FILEIO   "File I/O"
-#define CONF_WAITS    "Wait events"
-#define CONF_CHART    "chart"
+// #define CONF_OVERVIEW "Overview"
+// #define CONF_FILEIO   "File I/O"
+// #define CONF_WAITS    "Wait events"
+// #define CONF_CHART    "chart"
+
 
 static std::list<QString> TabList(void)
 {
@@ -118,21 +119,40 @@ public:
             : QWidget(parent), toSettingTab("tuning.html#preferences"), Tool(tool)
     {
         setupUi(this);
-        std::list<QString> tabs = TabList();
-        for (std::list<QString>::iterator i = tabs.begin();i != tabs.end();i++)
-        {
-            toTreeWidgetItem *item = new toTreeWidgetItem(EnabledTabs, (*i));
-            if (!tool->config(*i, "").isEmpty())
-                item->setSelected(true);
-        }
+//         std::list<QString> tabs = TabList();
+//         for (std::list<QString>::iterator i = tabs.begin();i != tabs.end();i++)
+//         {
+//             toTreeWidgetItem *item = new toTreeWidgetItem(EnabledTabs, (*i));
+//             if (!tool->config(*i, "").isEmpty())
+//                 item->setSelected(true);
+//         }
+		toTreeWidgetItem *item = new toTreeWidgetItem(EnabledTabs, CONF_OVERVIEW);
+		item->setSelected(toConfigurationSingle::Instance().tuningOverview());
+		toTreeWidgetItem *item1 = new toTreeWidgetItem(EnabledTabs, CONF_FILEIO);
+		item1->setSelected(toConfigurationSingle::Instance().tuningFileIO());
+		toTreeWidgetItem *item2 = new toTreeWidgetItem(EnabledTabs, CONF_WAITS);
+		item2->setSelected(toConfigurationSingle::Instance().tuningWaits());
+		toTreeWidgetItem *item3 = new toTreeWidgetItem(EnabledTabs, CONF_CHART);
+		item3->setSelected(toConfigurationSingle::Instance().tuningCharts());
+
         EnabledTabs->setSorting(0);
     }
     virtual void saveSetting(void)
     {
         for (toTreeWidgetItem *item = EnabledTabs->firstChild();item;item = item->nextSibling())
         {
-            if (item->isSelected() || Tool->config(item->text(0).toLatin1(), "Undefined") != "Undefined")
-                Tool->setConfig(item->text(0).toLatin1(), QString::fromLatin1((item->isSelected() ? "Yes" : "")));
+			// NOTE: OK, it's ugly, but this is the only place where new QSettings fails
+			if (item->text(0) == CONF_OVERVIEW)
+				toConfigurationSingle::Instance().setTuningOverview(item->isSelected());
+			else if (item->text(0) == CONF_FILEIO)
+				toConfigurationSingle::Instance().setTuningFileIO(item->isSelected());
+			else if (item->text(0) == CONF_WAITS)
+				toConfigurationSingle::Instance().setTuningWaits(item->isSelected());
+			else if (item->text(0) == CONF_CHART)
+				toConfigurationSingle::Instance().setTuningCharts(item->isSelected());
+
+//             if (item->isSelected() || Tool->config(item->text(0).toLatin1(), "Undefined") != "Undefined")
+//                 Tool->setConfig(item->text(0).toLatin1(), QString::fromLatin1((item->isSelected() ? "Yes" : "")));
         }
     }
 };
@@ -929,7 +949,7 @@ void toTuningOverview::setupChart(toResultLine *chart, const QString &title, con
     toQList val;
     if (postfix == QString::fromLatin1("b/s"))
     {
-        QString unitStr = toConfigurationSingle::Instance().globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
+        QString unitStr(toConfigurationSingle::Instance().sizeUnit());
         val.insert(val.end(), toQValue(toSizeDecode(unitStr)));
         unitStr += QString::fromLatin1("/s");
         chart->setYPostfix(unitStr);
@@ -980,9 +1000,7 @@ toTuningOverview::toTuningOverview(QWidget *parent, const char *name, Qt::WFlags
     try
     {
         toQList val;
-        val.insert(val.end(),
-                   toQValue(toSizeDecode(toConfigurationSingle::Instance().globalConfig(CONF_SIZE_UNIT,
-                                         DEFAULT_SIZE_UNIT))));
+        val.insert(val.end(), toQValue(toSizeDecode(toConfigurationSingle::Instance().sizeUnit())));
         FileUsed->query(toSQL::string(SQLOverviewFilespace, toCurrentConnection(this)), (const toQList)val);
     }
     TOCATCH
@@ -1308,7 +1326,7 @@ void toTuningOverview::refresh(void)
             Done.down();
             Quit = false;
             Connection = &toCurrentConnection(this);
-            UnitString = toConfigurationSingle::Instance().globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
+            UnitString = toConfigurationSingle::Instance().sizeUnit();
             toThread *thread = new toThread(new overviewQuery(*this));
             thread->start();
             Poll.start(500);
@@ -1460,9 +1478,25 @@ static toSQL SQLControlFiles("toTuning:ControlFileRecords",
 toTuning::toTuning(QWidget *main, toConnection &connection)
         : toToolWidget(TuningTool, "tuning.html", main, connection)
 {
-    if (TuningTool.config(CONF_OVERVIEW, "Undefined") == "Undefined")
+//     if (TuningTool.config(CONF_OVERVIEW, "Undefined") == "Undefined")
+	if (toConfigurationSingle::Instance().tuningFirstRun())
     {
-        QString def = QString::null;
+        bool def = false; //QString def = QString::null;
+//         if (TOMessageBox::warning(
+//                 toMainWidget(),
+//                 tr("Enable all tuning statistics"),
+//                 tr("Are you sure you want to enable all tuning features.\n"
+//                    "This can put heavy strain on a database and unless you\n"
+//                    "are the DBA you probably don't want this. Selecting\n"
+//                    "no here will give you the option to enable or disable\n"
+//                    "tabs individually as they are needed."),
+//                 tr("Yes"),
+//                 tr("&No"),
+//                 QString::null,
+//                 1) == 0)
+//         {
+//             def = "Yes";
+//         }
         if (TOMessageBox::warning(
                 toMainWidget(),
                 tr("Enable all tuning statistics"),
@@ -1476,11 +1510,15 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
                 QString::null,
                 1) == 0)
         {
-            def = "Yes";
+            def = true;
         }
-        std::list<QString> tabs = TabList();
-        for (std::list<QString>::iterator i = tabs.begin();i != tabs.end();i++)
-            TuningTool.setConfig(*i, def);
+//         std::list<QString> tabs = TabList();
+//         for (std::list<QString>::iterator i = tabs.begin();i != tabs.end();i++)
+//             TuningTool.setConfig(*i, def);
+		toConfigurationSingle::Instance().setTuningOverview(def);
+		toConfigurationSingle::Instance().setTuningFileIO(def);
+		toConfigurationSingle::Instance().setTuningWaits(def);
+		toConfigurationSingle::Instance().setTuningCharts(def);
         toConfigurationSingle::Instance().saveConfig();
     }
 
@@ -1542,7 +1580,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     }
     TOCATCH
 
-    QString unitStr = toConfigurationSingle::Instance().globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
+    QString unitStr = toConfigurationSingle::Instance().sizeUnit();
     toQList unit;
     unit.insert(unit.end(), toQValue(toSizeDecode(unitStr)));
     {
@@ -1690,11 +1728,18 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),
             this, SLOT(windowActivated(QWidget *)));
 
-    std::list<QString> tabs = TabList();
-    for (std::list<QString>::iterator i = tabs.begin();i != tabs.end();i++)
-        if (TuningTool.config(*i, "").isEmpty())
-            enableTab(*i, false);
-
+//     std::list<QString> tabs = TabList();
+//     for (std::list<QString>::iterator i = tabs.begin();i != tabs.end();i++)
+//         if (TuningTool.config(*i, "").isEmpty())
+//             enableTab(*i, false);
+	if (!toConfigurationSingle::Instance().tuningOverview())
+		enableTab(CONF_OVERVIEW, false);
+	if (!toConfigurationSingle::Instance().tuningFileIO())
+		enableTab(CONF_FILEIO, false);
+	if (!toConfigurationSingle::Instance().tuningWaits())
+		enableTab(CONF_WAITS, false);
+	if (!toConfigurationSingle::Instance().tuningCharts())
+		enableTab(CONF_CHART, false);
     refresh();
     setFocusProxy(Tabs);
 }
@@ -1895,7 +1940,7 @@ void toTuning::refresh(void)
         LibraryCache->refresh();
     else if (LastTab == ControlFiles)
     {
-        QString unit = toConfigurationSingle::Instance().globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
+        QString unit = toConfigurationSingle::Instance().sizeUnit();
         ControlFiles->changeParams(QString::number(toSizeDecode(unit)), unit);
     }
     else if (LastTab == Options)

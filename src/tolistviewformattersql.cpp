@@ -124,7 +124,7 @@ QString toListViewFormatterSQL::getFormattedString( toListView& tListView )
                         }
                         else
                         {
-                            line += "TO_DATE(" + QString::fromLatin1( "\'%1\'" ).arg( text ) + ",\'" + toConfigurationSingle::Instance().globalConfig( CONF_DATE_FORMAT, DEFAULT_DATE_FORMAT ) + "\')" + ",";
+                            line += "TO_DATE(" + QString::fromLatin1( "\'%1\'" ).arg( text ) + ",\'" + toConfigurationSingle::Instance().dateFormat() + "\')" + ",";
                         }
                         break;
                     }

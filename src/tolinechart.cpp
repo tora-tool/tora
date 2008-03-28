@@ -128,16 +128,16 @@ toLineChart::toLineChart(QWidget *parent, const char *name, Qt::WFlags f)
     Grid = 5;
     AxisText = true;
     MousePoint[0] = MousePoint[1] = QPoint( -1, -1);
-    DisplaySamples = toConfigurationSingle::Instance().globalConfig(CONF_DISPLAY_SAMPLES, DEFAULT_DISPLAY_SAMPLES).toInt();
+    DisplaySamples = toConfigurationSingle::Instance().displaySamples();
 
     clearZoom();
 
-    setSamples(toConfigurationSingle::Instance().globalConfig(CONF_CHART_SAMPLES, DEFAULT_CHART_SAMPLES).toInt());
+    setSamples(toConfigurationSingle::Instance().chartSamples());
 
     setMinimumSize(80, 50);
 
     // Use list font
-    QString str = toConfigurationSingle::Instance().globalConfig(CONF_LIST, "");
+    QString str(toConfigurationSingle::Instance().listFont());
     if (!str.isEmpty())
     {
         QFont font(toStringToFont(str));
@@ -892,7 +892,7 @@ toLineChart::toLineChart (toLineChart *chart, QWidget *parent, const char *name,
     connect(Horizontal, SIGNAL(valueChanged(int)), this, SLOT(horizontalChange(int)));
 
     // Use list font
-    QString str = toConfigurationSingle::Instance().globalConfig(CONF_LIST, "");
+    QString str(toConfigurationSingle::Instance().listFont());
     if (!str.isEmpty())
     {
         QFont font(toStringToFont(str));

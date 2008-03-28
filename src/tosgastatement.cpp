@@ -113,8 +113,7 @@ void toSGAStatement::changeTab(int index) {
                         sql.append(*i);
                 }
 
-                if(!toConfigurationSingle::Instance().globalConfig(
-                       CONF_AUTO_INDENT_RO, "Yes").isEmpty())
+                if (toConfigurationSingle::Instance().autoIndent())
                     sql = toSQLParse::indent(sql);
                 SQLText->setText(sql);
             }

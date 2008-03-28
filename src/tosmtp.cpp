@@ -74,10 +74,8 @@ toSMTP::toSMTP(const QString &from,
     Message.replace(QRegExp(QString::fromLatin1("\r\n.\r\n")),
                     QString::fromLatin1("\r\n..\r\n"));
 
-    QString server = toConfigurationSingle::Instance().globalConfig(
-        CONF_SMTP, DEFAULT_SMTP);
-    int port = toConfigurationSingle::Instance().globalConfig(
-        CONF_SMTP_PORT, DEFAULT_SMTP_PORT).toInt();
+    QString server(toConfigurationSingle::Instance().smtp());
+    int port = toConfigurationSingle::Instance().smtpPort();
 
     if(server.isNull() || server.isEmpty())
         toStatusMessage("No SMTP Server configured. Please check the preferences dialog.");

@@ -108,7 +108,7 @@ void toResultField::poll(void)
                 Poll.stop();
                 try
                 {
-                    if (!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_INDENT_RO, "Yes").isEmpty())
+                    if (toConfigurationSingle::Instance().autoIndentRo())
                         setText(toSQLParse::indent(text() + Unapplied));
                     else
                         append(Unapplied);

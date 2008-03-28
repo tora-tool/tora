@@ -53,17 +53,12 @@ toResultListFormat::toResultListFormat(QWidget *parent, const char *name)
     Format->addItem(tr("CSV"));
     Format->addItem(tr("HTML"));
     Format->addItem(tr("SQL"));
-    int num = toConfigurationSingle::Instance().globalConfig(
-        CONF_DEFAULT_FORMAT, "").toInt();
+    int num = toConfigurationSingle::Instance().defaultFormat();
     Format->setCurrentIndex(num);
     formatChanged(num);
 
-    Delimiter->setText(toConfigurationSingle::Instance().globalConfig(
-                           CONF_CSV_DELIMITER,
-                           DEFAULT_CSV_DELIMITER));
-    Separator->setText(toConfigurationSingle::Instance().globalConfig(
-                           CONF_CSV_SEPARATOR,
-                           DEFAULT_CSV_SEPARATOR));
+    Delimiter->setText(toConfigurationSingle::Instance().csvDelimiter());
+    Separator->setText(toConfigurationSingle::Instance().csvSeparator());
 }
 
 
@@ -74,13 +69,12 @@ void toResultListFormat::formatChanged(int pos) {
 
 
 void toResultListFormat::saveDefault(void) {
-    toConfigurationSingle::Instance().globalSetConfig(
-        CONF_CSV_DELIMITER,
-        Delimiter->text());
-    toConfigurationSingle::Instance().globalSetConfig(
-        CONF_CSV_SEPARATOR,
-        Separator->text());
-    toConfigurationSingle::Instance().globalSetConfig(
-        CONF_DEFAULT_FORMAT,
-        QString::number(Format->currentIndex()));
+// NOTE: unused in the whole app at all
+//     toConfigurationSingle::Instance().globalSetConfig(
+//         CONF_CSV_DELIMITER,
+//         Delimiter->text());
+//     toConfigurationSingle::Instance().globalSetConfig(
+//         CONF_CSV_SEPARATOR,
+//         Separator->text());
+	toConfigurationSingle::Instance().setDefaultFormat(Format->currentIndex());
 }

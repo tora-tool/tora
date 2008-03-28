@@ -135,7 +135,7 @@ bool toResultStorage::canHandle(toConnection &conn)
 toResultStorage::toResultStorage(bool available, QWidget *parent, const char *name)
         : toResultView(false, false, parent, name), AvailableGraph(available)
 {
-    Unit = toConfigurationSingle::Instance().globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
+    Unit = toConfigurationSingle::Instance().sizeUnit();
     setAllColumnsShowFocus(true);
     setSorting(0);
     setRootIsDecorated(true);

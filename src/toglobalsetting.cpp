@@ -73,31 +73,29 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
 
     setupUi(this);
 
-    SavePassword->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_SAVE_PWD, "").isEmpty());
-    DesktopAware->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_DESKTOP_AWARE, "Yes").isEmpty());
-    ToolsLeft->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_TOOLS_LEFT, "").isEmpty());
+    SavePassword->setChecked(toConfigurationSingle::Instance().savePassword());
+    DesktopAware->setChecked(toConfigurationSingle::Instance().desktopAware());
+    ToolsLeft->setChecked(toConfigurationSingle::Instance().toolsLeft());
     toRefreshCreate(OptionGroup, TO_TOOLBAR_WIDGET_NAME, QString::null, Refresh);
-    DefaultSession->setText(toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_SESSION, DEFAULT_SESSION));
-    Status->setValue(toConfigurationSingle::Instance().globalConfig(CONF_STATUS_MESSAGE,
-                     DEFAULT_STATUS_MESSAGE).toInt());
-    HistorySize->setValue(toConfigurationSingle::Instance().globalConfig(CONF_STATUS_SAVE,
-                          DEFAULT_STATUS_SAVE).toInt());
-    IncludeDB->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_DB_TITLE, "Yes").isEmpty());
-    MaximizeMain->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_MAXIMIZE_MAIN, "Yes").isEmpty());
-    Statusbar->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_MESSAGE_STATUSBAR, "").isEmpty());
-    RestoreSession->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_RESTORE_SESSION, "").isEmpty());
+    DefaultSession->setText(toConfigurationSingle::Instance().defaultSession());
+    Status->setValue(toConfigurationSingle::Instance().statusMessage());
+    HistorySize->setValue(toConfigurationSingle::Instance().statusSave());
+    IncludeDB->setChecked(toConfigurationSingle::Instance().dbTitle());
+    MaximizeMain->setChecked(toConfigurationSingle::Instance().maximizeMain());
+    Statusbar->setChecked(toConfigurationSingle::Instance().messageStatusbar());
+    RestoreSession->setChecked(toConfigurationSingle::Instance().restoreSession());
     HelpDirectory->setText(toHelpPath());
-    ChangeConnection->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_CHANGE_CONNECTION, "Yes").isEmpty());
-    ConnectHistory->setValue(toConfigurationSingle::Instance().globalConfig(CONF_CONNECT_SIZE, DEFAULT_CONNECT_SIZE).toInt());
-    int samples = toConfigurationSingle::Instance().globalConfig(CONF_CHART_SAMPLES, DEFAULT_CHART_SAMPLES).toInt();
+    ChangeConnection->setChecked(toConfigurationSingle::Instance().changeConnection());
+    ConnectHistory->setValue(toConfigurationSingle::Instance().connectSize());
+    int samples = toConfigurationSingle::Instance().chartSamples();
     if (samples < 0)
     {
         UnlimitedSamples->setChecked(true);
-        ChartSamples->setValue(QString::fromLatin1(DEFAULT_CHART_SAMPLES).toInt());
+        ChartSamples->setValue(DEFAULT_CHART_SAMPLES);
     }
     else
         ChartSamples->setValue(samples);
-    samples = toConfigurationSingle::Instance().globalConfig(CONF_DISPLAY_SAMPLES, DEFAULT_DISPLAY_SAMPLES).toInt();
+    samples = toConfigurationSingle::Instance().displaySamples();
     if (samples < 0)
     {
         AllSamples->setChecked(true);
@@ -105,11 +103,11 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     }
     else
         DisplaySamples->setValue(samples);
-    DefaultFormat->setCurrentIndex(toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_FORMAT, "").toInt());
-    ToadBindings->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_TOAD_BINDINGS, DEFAULT_TOAD_BINDINGS).isEmpty());
-    DisplayGrid->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).isEmpty());
+    DefaultFormat->setCurrentIndex(toConfigurationSingle::Instance().defaultFormat());
+    ToadBindings->setChecked(toConfigurationSingle::Instance().toadBindings());
+    DisplayGrid->setChecked(toConfigurationSingle::Instance().displayGridlines());
 
-    QString typ = toConfigurationSingle::Instance().globalConfig(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT);
+    QString typ(toConfigurationSingle::Instance().sizeUnit());
     if (typ == "KB")
         SizeUnit->setCurrentIndex(1);
     else if (typ == "MB")
@@ -117,7 +115,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
 
 #ifdef ENABLE_QT_XFT
 
-    AntialiaseFonts->setChecked(toConfigurationSingle::Instance().globalConfig(CONF_QT_XFT, DEFAULT_QT_XFT) == "true");
+	AntialiaseFonts->setChecked(toConfigurationSingle::Instance().QtXft() != "false");
 #else
 
     AntialiaseFonts->hide();
@@ -154,24 +152,20 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     }
     else
     {
-        PluginDirectory->setText(toConfigurationSingle::Instance().globalConfig(CONF_PLUGIN_DIR,
-                                 DEFAULT_PLUGIN_DIR));
+        PluginDirectory->setText(toConfigurationSingle::Instance().pluginDir());
     }
 
     /** disk caching options
      */
 
     CacheDirectory->setText(toConnection::cacheDir());
-    DiskCaching->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_CACHE_DISK, DEFAULT_CACHE_DISK).isEmpty());
+    DiskCaching->setChecked(toConfigurationSingle::Instance().cacheDisk());
 
-    CustomSQL->setText(toConfigurationSingle::Instance().globalConfig(CONF_SQL_FILE,
-                       DEFAULT_SQL_FILE));
-    Locale->setText(toConfigurationSingle::Instance().globalConfig(CONF_LOCALE, QLocale().name()));
+    CustomSQL->setText(toConfigurationSingle::Instance().sqlFile());
+    Locale->setText(toConfigurationSingle::Instance().locale());
 
-    SmtpServer->setText(toConfigurationSingle::Instance().globalConfig(
-                            CONF_SMTP, DEFAULT_SMTP));
-    SmtpPort->setValue(toConfigurationSingle::Instance().globalConfig(
-                           CONF_SMTP_PORT, DEFAULT_SMTP_PORT).toInt());
+    SmtpServer->setText(toConfigurationSingle::Instance().smtp());
+    SmtpPort->setValue(toConfigurationSingle::Instance().smtpPort());
 }
 
 void toGlobalSetting::pluginBrowse(void)
@@ -212,53 +206,51 @@ void toGlobalSetting::cacheBrowse(void)
 void toGlobalSetting::saveSetting(void)
 {
     if (!toMonolithic())
-        toConfigurationSingle::Instance().globalSetConfig(CONF_PLUGIN_DIR, PluginDirectory->text());
-    toConfigurationSingle::Instance().globalSetConfig(CONF_CACHE_DISK, DiskCaching->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_CACHE_DIR, CacheDirectory->text());
-    toConfigurationSingle::Instance().globalSetConfig(CONF_SQL_FILE, CustomSQL->text());
-    toConfigurationSingle::Instance().globalSetConfig(CONF_DEFAULT_SESSION, DefaultSession->text());
-    toConfigurationSingle::Instance().globalSetConfig(CONF_REFRESH, Refresh->currentText());
-    toConfigurationSingle::Instance().globalSetConfig(CONF_SAVE_PWD, SavePassword->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_DESKTOP_AWARE, DesktopAware->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_STATUS_MESSAGE, QString::number(Status->value()));
-    toConfigurationSingle::Instance().globalSetConfig(CONF_STATUS_SAVE, QString::number(HistorySize->value()));
-    toConfigurationSingle::Instance().globalSetConfig(CONF_CHART_SAMPLES, QString::number(ChartSamples->value()));
-    toConfigurationSingle::Instance().globalSetConfig(CONF_CONNECT_SIZE, QString::number(ConnectHistory->value()));
-    toConfigurationSingle::Instance().globalSetConfig(CONF_MAXIMIZE_MAIN, MaximizeMain->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_MESSAGE_STATUSBAR, Statusbar->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_RESTORE_SESSION, RestoreSession->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_TOOLS_LEFT, ToolsLeft->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_DEFAULT_FORMAT,
-            QString::number(DefaultFormat->currentIndex()));
-    toConfigurationSingle::Instance().globalSetConfig(CONF_TOAD_BINDINGS, ToadBindings->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_DISPLAY_GRIDLINES, DisplayGrid->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_CHANGE_CONNECTION, ChangeConnection->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_DB_TITLE, IncludeDB->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_SIZE_UNIT, SizeUnit->currentText());
-    toConfigurationSingle::Instance().globalSetConfig(CONF_HELP_PATH, HelpDirectory->text());
-#ifdef ENABLE_STYLE
+		toConfigurationSingle::Instance().setPluginDir(PluginDirectory->text());
+	toConfigurationSingle::Instance().setCacheDisk(DiskCaching->isChecked());
+	toConfigurationSingle::Instance().setCacheDir(CacheDirectory->text());
+	toConfigurationSingle::Instance().setSqlFile(CustomSQL->text());
+	toConfigurationSingle::Instance().setDefaultSession(DefaultSession->text());
+	toConfigurationSingle::Instance().setRefresh(Refresh->currentText());
+	toConfigurationSingle::Instance().setSavePassword(SavePassword->isChecked());
+	toConfigurationSingle::Instance().setDesktopAware(DesktopAware->isChecked());
+	toConfigurationSingle::Instance().setStatusMessage(Status->value());
+	toConfigurationSingle::Instance().setStatusSave(HistorySize->value());
+	toConfigurationSingle::Instance().setChartSamples(ChartSamples->value());
+	toConfigurationSingle::Instance().setConnectSize(ConnectHistory->value());
+	toConfigurationSingle::Instance().setMaximizeMain(MaximizeMain->isChecked());
+	toConfigurationSingle::Instance().setMessageStatusbar(Statusbar->isChecked());
+    toConfigurationSingle::Instance().setRestoreSession(RestoreSession->isChecked());
+	toConfigurationSingle::Instance().setToolsLeft(ToolsLeft->isChecked());
+	toConfigurationSingle::Instance().setDefaultFormat(DefaultFormat->currentIndex());
+	toConfigurationSingle::Instance().setToadBindings(ToadBindings->isChecked());
+	toConfigurationSingle::Instance().setDisplayGridlines(DisplayGrid->isChecked());
+	toConfigurationSingle::Instance().setChangeConnection(ChangeConnection->isChecked());
+	toConfigurationSingle::Instance().setDbTitle(IncludeDB->isChecked());
+	toConfigurationSingle::Instance().setSizeUnit(SizeUnit->currentText());
+	toConfigurationSingle::Instance().setHelpPath(HelpDirectory->text());
 
-    toConfigurationSingle::Instance().globalSetConfig(CONF_STYLE, Style->currentText());
+#ifdef ENABLE_STYLE
+	toConfigurationSingle::Instance().setStyle(Style->currentText());
     toSetSessionType(Style->currentText());
 #endif
 #ifdef ENABLE_QT_XFT
-
-    toConfigurationSingle::Instance().globalSetConfig(CONF_QT_XFT, AntialiaseFonts->isChecked() ? "true" : "false");
+	toConfigurationSingle::Instance().setQtXft(AntialiaseFonts->isChecked() ? "true" : "false");
 #endif
 
     if (AllSamples->isChecked())
-        toConfigurationSingle::Instance().globalSetConfig(CONF_DISPLAY_SAMPLES, "-1");
+		toConfigurationSingle::Instance().setDisplaySamples(-1);
     else
-        toConfigurationSingle::Instance().globalSetConfig(CONF_DISPLAY_SAMPLES, QString::number(DisplaySamples->value()));
+		toConfigurationSingle::Instance().setDisplaySamples(DisplaySamples->value());
     if (UnlimitedSamples->isChecked())
-        toConfigurationSingle::Instance().globalSetConfig(CONF_CHART_SAMPLES, "-1");
+		toConfigurationSingle::Instance().setChartSamples(-1);
     else
-        toConfigurationSingle::Instance().globalSetConfig(CONF_CHART_SAMPLES, QString::number(ChartSamples->value()));
+		toConfigurationSingle::Instance().setChartSamples(ChartSamples->value());
 
-    toConfigurationSingle::Instance().globalSetConfig(CONF_LOCALE, Locale->text());
+	toConfigurationSingle::Instance().setLocale(Locale->text());
 
-    toConfigurationSingle::Instance().globalSetConfig(CONF_SMTP, SmtpServer->text());
-    toConfigurationSingle::Instance().globalSetConfig(CONF_SMTP_PORT, QString::number(SmtpPort->value()));
+    toConfigurationSingle::Instance().setSmtp(SmtpServer->text());
+    toConfigurationSingle::Instance().setSmtpPort(SmtpPort->value());
 }
 
 void toDatabaseSetting::numberFormatChange()
@@ -286,65 +278,63 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
         setObjectName(name);
     setupUi(this);
 
-    MaxColDisp->setText(toConfigurationSingle::Instance().globalConfig(CONF_MAX_COL_DISP,
-                        DEFAULT_MAX_COL_DISP));
-    QString str = toConfigurationSingle::Instance().globalConfig(CONF_MAX_NUMBER, DEFAULT_MAX_NUMBER);
-    if (str.toInt() <= 0)
+    MaxColDisp->setValue(toConfigurationSingle::Instance().maxColDisp());
+    int mxNumber = toConfigurationSingle::Instance().maxNumber();
+    if (mxNumber <= 0)
         ReadAll->setChecked(true);
     else
-        InitialFetch->setText(str);
+        InitialFetch->setValue(mxNumber);
 
-    str = toConfigurationSingle::Instance().globalConfig(CONF_MAX_CONTENT, DEFAULT_MAX_CONTENT);
-    if (str.toInt() <= 0)
+    int mxContent = toConfigurationSingle::Instance().maxContent();
+    if (mxContent <= 0)
     {
-        MaxContent->setText(InitialFetch->text());
+        MaxContent->setValue(InitialFetch->value());
         UnlimitedContent->setChecked(true);
     }
     else
-        MaxContent->setText(str);
+        MaxContent->setValue(mxContent);
 
-    MaxColDisp->setValidator(new QIntValidator(MaxColDisp));
-    InitialFetch->setValidator(new QIntValidator(InitialFetch));
-    MaxContent->setValidator(new QIntValidator(InitialFetch));
+//     MaxColDisp->setValidator(new QIntValidator(MaxColDisp));
+//     InitialFetch->setValidator(new QIntValidator(InitialFetch));
+//     MaxContent->setValidator(new QIntValidator(InitialFetch));
 
-    Decimals->setValue(toConfigurationSingle::Instance().globalConfig(CONF_NUMBER_DECIMALS, DEFAULT_NUMBER_DECIMALS).toInt());
-    NumberFormat->setCurrentIndex(toConfigurationSingle::Instance().globalConfig(CONF_NUMBER_FORMAT, DEFAULT_NUMBER_FORMAT).toInt());
+    Decimals->setValue(toConfigurationSingle::Instance().numberDecimals());
     if (NumberFormat->currentIndex() == 2)
         Decimals->setEnabled(true);
 
-    AutoCommit->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_AUTO_COMMIT, "").isEmpty());
-    DontReread->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_DONT_REREAD, "Yes").isEmpty());
-    ObjectCache->setCurrentIndex(toConfigurationSingle::Instance().globalConfig(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt());
-    BkgndConnect->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_BKGND_CONNECT, "").isEmpty());
-    IndicateEmpty->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_INDICATE_EMPTY, "").isEmpty());
+    AutoCommit->setChecked(toConfigurationSingle::Instance().autoCommit());
+    DontReread->setChecked(toConfigurationSingle::Instance().dontReread());
+    ObjectCache->setCurrentIndex(toConfigurationSingle::Instance().objectCache());
+	BkgndConnect->setChecked(toConfigurationSingle::Instance().bkgndConnect());
+    IndicateEmpty->setChecked(toConfigurationSingle::Instance().indicateEmpty());
 
     QColor nullColor;
-    nullColor.setNamedColor(toConfigurationSingle::Instance().globalConfig(CONF_INDICATE_EMPTY_COLOR, "#f2ffbc"));
+    nullColor.setNamedColor(toConfigurationSingle::Instance().indicateEmptyColor());
     QPalette palette = IndicateEmptyColor->palette();
     palette.setColor(IndicateEmptyColor->backgroundRole(), nullColor);
     IndicateEmptyColor->setPalette(palette);
 
-    int val = toConfigurationSingle::Instance().globalConfig(CONF_AUTO_LONG, "0").toInt();
+    int val = toConfigurationSingle::Instance().autoLong();
     AutoLong->setChecked(val);
     MoveAfter->setValue(val);
-    KeepAlive->setChecked(!toConfigurationSingle::Instance().globalConfig(CONF_KEEP_ALIVE, "").isEmpty());
+    KeepAlive->setChecked(toConfigurationSingle::Instance().keepAlive());
 }
 
 void toUpdateIndicateEmpty(void);
 
 void toDatabaseSetting::saveSetting(void)
 {
-    toConfigurationSingle::Instance().globalSetConfig(CONF_MAX_COL_DISP, MaxColDisp->text());
+	toConfigurationSingle::Instance().setMaxColDisp(MaxColDisp->value());
     if (ReadAll->isChecked())
-        toConfigurationSingle::Instance().globalSetConfig(CONF_MAX_NUMBER, "-1");
+		toConfigurationSingle::Instance().setMaxNumber(-1);
     else
-        toConfigurationSingle::Instance().globalSetConfig(CONF_MAX_NUMBER, InitialFetch->text());
+		toConfigurationSingle::Instance().setMaxNumber(InitialFetch->value());
     if (UnlimitedContent->isChecked())
-        toConfigurationSingle::Instance().globalSetConfig(CONF_MAX_CONTENT, "-1");
+		toConfigurationSingle::Instance().setMaxContent(-1);
     else
     {
-        int num = InitialFetch->text().toInt();
-        int maxnum = MaxContent->text().toInt();
+        int num = InitialFetch->value();
+        int maxnum = MaxContent->value();
         if (num < 0)
             maxnum = num;
         else if (num >= maxnum)
@@ -354,20 +344,19 @@ void toDatabaseSetting::saveSetting(void)
                                       tr("Doesn't make sense to have max content less than initial\n"
                                          "fetch size. Will adjust value to be higher."),
                                       tr("&Ok"));
-        toConfigurationSingle::Instance().globalSetConfig(CONF_MAX_CONTENT, QString::number(maxnum));
+		toConfigurationSingle::Instance().setMaxContent(maxnum);
     }
-    toConfigurationSingle::Instance().globalSetConfig(CONF_AUTO_COMMIT, AutoCommit->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_DONT_REREAD, DontReread->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_OBJECT_CACHE, QString::number(ObjectCache->currentIndex()));
-    toConfigurationSingle::Instance().globalSetConfig(CONF_BKGND_CONNECT, BkgndConnect->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_AUTO_LONG,
-            AutoLong->isChecked() ? MoveAfter->cleanText() : QString::fromLatin1("0"));
-    toConfigurationSingle::Instance().globalSetConfig(CONF_INDICATE_EMPTY, IndicateEmpty->isChecked() ? "Yes" : "");
-    toConfigurationSingle::Instance().globalSetConfig(CONF_INDICATE_EMPTY_COLOR, IndicateEmptyColor->palette().color(IndicateEmptyColor->backgroundRole()).name());
-    toConfigurationSingle::Instance().globalSetConfig(CONF_KEEP_ALIVE, KeepAlive->isChecked() ? DEFAULT_KEEP_ALIVE : "");
+	toConfigurationSingle::Instance().setAutoCommit(AutoCommit->isChecked());
+	toConfigurationSingle::Instance().setDontReread(DontReread->isChecked());
+	toConfigurationSingle::Instance().setObjectCache(ObjectCache->currentIndex());
+	toConfigurationSingle::Instance().setBkgndConnect(BkgndConnect->isChecked());
+	toConfigurationSingle::Instance().setAutoLong(AutoLong->isChecked() ? MoveAfter->value() : 0);
+	toConfigurationSingle::Instance().setIndicateEmpty(IndicateEmpty->isChecked());
+	toConfigurationSingle::Instance().setIndicateEmptyColor(IndicateEmptyColor->palette().color(IndicateEmptyColor->backgroundRole()).name());
+	toConfigurationSingle::Instance().setKeepAlive(KeepAlive->isChecked() ? DEFAULT_KEEP_ALIVE : -1); //FIXME: there was ""
 
-    toConfigurationSingle::Instance().globalSetConfig(CONF_NUMBER_FORMAT, QString::number(NumberFormat->currentIndex()));
-    toConfigurationSingle::Instance().globalSetConfig(CONF_NUMBER_DECIMALS, QString::number(Decimals->value()));
+	toConfigurationSingle::Instance().setNumberFormat(NumberFormat->currentIndex());
+	toConfigurationSingle::Instance().setNumberDecimals(Decimals->value());
     toQValue::setNumberFormat(NumberFormat->currentIndex(), Decimals->value());
 
     toMainWidget()->updateKeepAlive();
@@ -391,20 +380,22 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
         }
     }
 
+	ToolsMap tMap(toConfigurationSingle::Instance().tools());
     for(QTreeWidgetItemIterator it(Enabled); (*it); it++) {
-        QString tmp = (*it)->text(2).toLatin1();
-        tmp += CONF_TOOL_ENABLE;
-        if (!toConfigurationSingle::Instance().globalConfig(tmp, "Yes").isEmpty())
-            (*it)->setSelected(true);
+//         QString tmp = (*it)->text(2).toLatin1();
+//         tmp += CONF_TOOL_ENABLE;
+		(*it)->setSelected(tMap[(*it)->text(2)]);
+//         if (!toConfigurationSingle::Instance().globalConfig(tmp, "Yes").isEmpty())
+//             (*it)->setSelected(true);
     }
 
     // set the default tool to prevent overvritting when
     // user does not change this combo box
-    QString defName(toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_TOOL, ""));
+    QString defName(toConfigurationSingle::Instance().defaultTool());
     int currIx = -1;
     if (!defName.isEmpty())
     {
-        toTool *def = tools[toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_TOOL, "")];
+        toTool *def = tools[toConfigurationSingle::Instance().defaultTool()];
         currIx = DefaultTool->findText(def->name());
     }
     DefaultTool->setCurrentIndex( (currIx == -1) ? 0 : currIx );
@@ -432,12 +423,16 @@ void toToolSetting::changeEnable(void)
 
 void toToolSetting::saveSetting(void)
 {
+	ToolsMap tMap(toConfigurationSingle::Instance().tools());
     for(QTreeWidgetItemIterator it(Enabled); (*it); it++) {
-        QString str = (*it)->text(2).toLatin1();
+		tMap[(*it)->text(2)] = (*it)->isSelected();
+/*        QString str = (*it)->text(2).toLatin1();
         str += CONF_TOOL_ENABLE;
         toConfigurationSingle::Instance().globalSetConfig(str, (*it)->isSelected() ? "Yes" : "");
 
         if (DefaultTool->currentText() == (*it)->text(0))
-            toConfigurationSingle::Instance().globalSetConfig(CONF_DEFAULT_TOOL, (*it)->text(2));
+			toConfigurationSingle::Instance().setDefaultTool((*it)->text(2));*/
+		
     }
+	toConfigurationSingle::Instance().setTools(tMap);
 }

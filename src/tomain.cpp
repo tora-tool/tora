@@ -117,8 +117,7 @@ toMain::toMain()
     updateRecent();
 
 #if 0                           // todo
-    if(!toConfigurationSingle::Instance().globalConfig(
-           CONF_TOOLS_LEFT, "").isEmpty())
+    if (toConfigurationSingle::Instance().toolsLeft())
         moveToolBar(toolsToolbar, Qt::Left);
 #endif
 
@@ -135,8 +134,7 @@ toMain::toMain()
 
     std::map<QString, toTool *> &tools = toTool::tools();
 
-    QString defName = toConfigurationSingle::Instance().globalConfig(
-        CONF_DEFAULT_TOOL, "");
+    QString defName(toConfigurationSingle::Instance().defaultTool());
 
     DefaultTool = NULL;
     for (std::map<QString, toTool *>::iterator k = tools.begin();
@@ -162,20 +160,17 @@ toMain::toMain()
             this,
             SLOT(windowActivated(QWidget *)));
 
-    if (!toConfigurationSingle::Instance().globalConfig(
-            CONF_RESTORE_SESSION, "").isEmpty()) {
+	if (toConfigurationSingle::Instance().restoreSession()) {
         try {
             std::map<QString, QString> session;
             toConfigurationSingle::Instance().loadMap(
-                toConfigurationSingle::Instance().globalConfig(
-                    CONF_DEFAULT_SESSION, DEFAULT_SESSION), session);
+                toConfigurationSingle::Instance().defaultSession(), session);
             importData(session, "TOra");
         }
         TOCATCH;
     }
 
-    if (!toConfigurationSingle::Instance().globalConfig(
-            CONF_MAXIMIZE_MAIN, "Yes").isEmpty() && Connections.empty())
+    if (toConfigurationSingle::Instance().maximizeMain() && Connections.empty())
         showMaximized();
     else
         show();
@@ -558,6 +553,8 @@ void toMain::createToolMenus() {
         int lastPriorityMenu = 0;
 
         std::map<QString, toTool *> &tools = toTool::tools();
+		ToolsMap cfgTools(toConfigurationSingle::Instance().tools());
+
         for (std::map<QString, toTool *>::iterator i = tools.begin();
              i != tools.end();
              i++) {
@@ -566,12 +563,18 @@ void toMain::createToolMenus() {
             const QPixmap *pixmap = (*i).second->toolbarImage();
             const char *menuName = (*i).second->menuItem();
 
-            QString tmp = (*i).first;
-            tmp += CONF_TOOL_ENABLE;
-            if(toConfigurationSingle::Instance().globalConfig(
-                   tmp, "Yes").isEmpty()) {
-                continue;
-            }
+//             QString tmp = (*i).first;
+//             tmp += CONF_TOOL_ENABLE;
+//             if(toConfigurationSingle::Instance().globalConfig(
+//                    tmp, "Yes").isEmpty()) {
+//                 continue;
+//             }
+			// set the tools for the first run
+			if (!cfgTools.contains((*i).first))
+				cfgTools[(*i).first] = true;
+			// only enabled tools are set
+			if (cfgTools[(*i).first] == false)
+				continue;
 
             int priority = (*i).second->priority();
             if(priority / 100 != lastPriorityPix / 100 && pixmap) {
@@ -590,6 +593,7 @@ void toMain::createToolMenus() {
             if(menuName)
                 toolsMenu->addAction(toolAct);
         } // for tools
+		toConfigurationSingle::Instance().setTools(cfgTools);
     }
     TOCATCH;
 }
@@ -597,7 +601,7 @@ void toMain::createToolMenus() {
 
 void toMain::windowActivated(QWidget *widget)
 {
-    if (toConfigurationSingle::Instance().globalConfig(CONF_CHANGE_CONNECTION, "Yes").isEmpty())
+    if (!toConfigurationSingle::Instance().changeConnection())
         return ;
     toToolWidget *tool = dynamic_cast<toToolWidget *>(widget);
     if (tool)
@@ -635,64 +639,90 @@ void toMain::showFileMenu(void) {
 }
 
 void toMain::updateRecent() {
-    static bool first = true;
-    int num = toConfigurationSingle::Instance().globalConfig(
-        CONF_RECENT_FILES, "0").toInt();
-
-    recentMenu->clear();
-
-    if(num > 0) {
-        if(first) {
-            fileMenu->addSeparator();
-            first = false;
-        }
-
-        for(int i = 0; i < num; i++) {
-            QString file = toConfigurationSingle::Instance().globalConfig(
-                QString(CONF_RECENT_FILES ":") +
-                QString::number(i), "");
-
-            if(!file.isEmpty()) {
-                QFileInfo fi(file);
-
-                // store file name in tooltip. this is used later to
-                // open the file, and is handy to know what file tora
-                // is opening.
-
-                QAction *r = new QAction(fi.fileName(), this);
-                r->setToolTip(file);
-                recentMenu->addAction(r);
-            }
-        }
-    }
+//     static bool first = true;
+//     int num = toConfigurationSingle::Instance().recentFiles();
+// 
+//     recentMenu->clear();
+// 
+//     if (num > 0) {
+//         if(first) {
+//             fileMenu->addSeparator();
+//             first = false;
+//         }
+// 
+//         for(int i = 0; i < num; i++) {
+//             QString file = toConfigurationSingle::Instance().globalConfig(
+//                 QString(CONF_RECENT_FILES ":") +
+//                 QString::number(i), "");
+// 
+//             if(!file.isEmpty()) {
+//                 QFileInfo fi(file);
+// 
+//                 // store file name in tooltip. this is used later to
+//                 // open the file, and is handy to know what file tora
+//                 // is opening.
+// 
+//                 QAction *r = new QAction(fi.fileName(), this);
+//                 r->setToolTip(file);
+//                 recentMenu->addAction(r);
+//             }
+//         }
+//     }
+	QStringList files(toConfigurationSingle::Instance().recentFiles());
+	recentMenu->clear();
+	if (files.count() > 0)
+		recentMenu->addSeparator();
+	foreach (QString s, files)
+	{
+		QFileInfo fi(s);
+		if (!fi.exists())
+		{
+			files.removeAt(files.indexOf(s));
+			continue;
+		}
+        // store file name in tooltip. this is used later to
+        // open the file, and is handy to know what file tora
+        // is opening.
+        QAction *r = new QAction(fi.fileName(), this);
+        r->setToolTip(s);
+        recentMenu->addAction(r);
+	}
+	toConfigurationSingle::Instance().setRecentFiles(files);
 }
 
 
 void toMain::addRecentFile(const QString &file)
 {
-    int num = toConfigurationSingle::Instance().globalConfig(CONF_RECENT_FILES, "0").toInt();
-    int maxnum = toConfigurationSingle::Instance().globalConfig(CONF_RECENT_MAX, DEFAULT_RECENT_MAX).toInt();
-    std::list<QString> files;
-    for (int j = 0;j < num;j++)
-    {
-        QString t = toConfigurationSingle::Instance().globalConfig(
-            QString(CONF_RECENT_FILES ":") + QString::number(j), "");
-        if (t != file)
-            toPush(files, t);
-    }
-    toUnShift(files, file);
+	QStringList files(toConfigurationSingle::Instance().recentFiles());
+    int maxnum = toConfigurationSingle::Instance().recentMax();
 
-    num = 0;
-    for (std::list<QString>::iterator i = files.begin();i != files.end();i++)
-    {
-        toConfigurationSingle::Instance().globalSetConfig(
-            QString(CONF_RECENT_FILES ":") + QString::number(num), *i);
-        num++;
-        if (num >= maxnum)
-            break;
-    }
-    toConfigurationSingle::Instance().globalSetConfig(CONF_RECENT_FILES, QString::number(num));
-    toConfigurationSingle::Instance().saveConfig();
+	if (files.contains(file))
+		return;
+	if (files.count() > maxnum)
+		files.removeAt(0);
+	files.append(file);
+	toConfigurationSingle::Instance().setRecentFiles(files);
+//     std::list<QString> files;
+//     for (int j = 0;j < num;j++)
+//     {
+//         QString t = toConfigurationSingle::Instance().globalConfig(
+//             QString(CONF_RECENT_FILES ":") + QString::number(j), "");
+//         if (t != file)
+//             toPush(files, t);
+//     }
+//     toUnShift(files, file);
+
+//     num = 0;
+//     for (std::list<QString>::iterator i = files.begin();i != files.end();i++)
+//     {
+//         toConfigurationSingle::Instance().globalSetConfig(
+//             QString(CONF_RECENT_FILES ":") + QString::number(num), *i);
+//         num++;
+//         if (num >= maxnum)
+//             break;
+//     }
+//     toConfigurationSingle::Instance().globalSetConfig(CONF_RECENT_FILES, QString::number(num));
+//     toConfigurationSingle::Instance().saveConfig();
 }
 
 void toMain::updateWindowsMenu(void) {
@@ -895,8 +925,7 @@ void toMain::commandCallback(QAction *action) {
         try {
             std::map<QString, QString> session;
             toConfigurationSingle::Instance().loadMap(
-                toConfigurationSingle::Instance().globalConfig(
-                    CONF_DEFAULT_SESSION, DEFAULT_SESSION), session);
+                toConfigurationSingle::Instance().defaultSession(), session);
             importData(session, "TOra");
         }
         TOCATCH;
@@ -1244,9 +1273,7 @@ void toMain::closeEvent(QCloseEvent *event) {
     exportData(session, "TOra");
     try {
         toConfigurationSingle::Instance().saveMap(
-            toConfigurationSingle::Instance().globalConfig(
-                CONF_DEFAULT_SESSION,
-                DEFAULT_SESSION),
+            toConfigurationSingle::Instance().defaultSession(),
             session);
     }
     TOCATCH;
@@ -1346,7 +1373,7 @@ void toMain::exportData(std::map<QString, QString> &data, const QString &prefix)
             for (std::list<toConnection *>::iterator i = Connections.begin();i != Connections.end();i++)
             {
                 QString key = prefix + ":Connection:" + QString::number(id);
-                if (toConfigurationSingle::Instance().globalConfig(CONF_SAVE_PWD, DEFAULT_SAVE_PWD) != DEFAULT_SAVE_PWD)
+                if (toConfigurationSingle::Instance().savePassword())
                     data[key + ":Password"] = toObfuscate((*i)->password());
                 data[key + ":User"] = (*i)->user();
                 data[key + ":Host"] = (*i)->host();
@@ -1428,7 +1455,10 @@ void toMain::importData(std::map<QString, QString> &data, const QString &prefix)
         QString password = toUnobfuscate(data[key + ":Password"]);
         QString provider = data[key + ":Provider"];
         bool ok = true;
-        if (toConfigurationSingle::Instance().globalConfig(CONF_SAVE_PWD, DEFAULT_SAVE_PWD) == password)
+        // NOTE: it looks like there was a CONF_SAVE_PWD mismatch for ages.
+        // Sometimes it's used for "should I store passwords for sessions (bool),
+        // here it's taken as a string. WTF?
+        if (toConfigurationSingle::Instance().defaultPassword() == password)
         {
             password = QInputDialog::getText(this,
                                              tr("Input password"),
@@ -1524,9 +1554,7 @@ void toMain::closeSession(void)
     exportData(session, "TOra");
     try
     {
-        toConfigurationSingle::Instance().saveMap(toConfigurationSingle::Instance().globalConfig(CONF_DEFAULT_SESSION,
-                DEFAULT_SESSION),
-                session);
+        toConfigurationSingle::Instance().saveMap(toConfigurationSingle::Instance().defaultSession(), session);
     }
     TOCATCH
 
@@ -1595,7 +1623,7 @@ void toMain::displayMessage(void)
 
         if (uidialog.Statusbar->isChecked())
         {
-            toConfigurationSingle::Instance().globalSetConfig(CONF_MESSAGE_STATUSBAR, "Yes");
+			toConfigurationSingle::Instance().setMessageStatusbar(true);
             TOMessageBox::information(toMainWidget(),
                                       tr("Information"),
                                       tr("You can enable this through the Global Settings in the Options (Edit menu)"));
@@ -1613,7 +1641,7 @@ void toMain::displayMessage(const QString &str)
 
 void toMain::updateKeepAlive(void)
 {
-    int keepAlive = toConfigurationSingle::Instance().globalConfig(CONF_KEEP_ALIVE, "0").toInt();
+    int keepAlive = toConfigurationSingle::Instance().keepAlive();
     if (KeepAlive.isActive())
         disconnect(&KeepAlive, SIGNAL(timeout()), this, SLOT(keepAlive()));
     if (keepAlive)

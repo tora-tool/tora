@@ -321,7 +321,7 @@ void toComplPopup::keyPressEvent(QKeyEvent * e)
 toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
         : toMarkedText(parent, name), lexer(0), syntaxColoring(false)
 {
-    sqlLexer.setDefaultFont(toStringToFont(toConfigurationSingle::Instance().globalConfig(CONF_CODE, "")));
+    sqlLexer.setDefaultFont(toStringToFont(toConfigurationSingle::Instance().codeFont()));
 
     // set default SQL lexer (syntax colouring as well)
     setLexer (&sqlLexer);
@@ -333,7 +333,7 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     setSyntaxColoring (true);
 
     // set the font
-    setFont(toStringToFont(toConfigurationSingle::Instance().globalConfig(CONF_CODE, "")));
+    setFont(toStringToFont(toConfigurationSingle::Instance().codeFont()));
 
     errorMarker = markerDefine(Circle, 4);
     debugMarker = markerDefine(Rectangle, 8);
@@ -711,7 +711,7 @@ QStringList toHighlightedText::getCompletionList(QString* partial)
 
     if (!isReadOnly() && curcol >= 0)
     {
-        if (toConfigurationSingle::Instance().globalConfig(CONF_CODE_COMPLETION, "Yes").isEmpty())
+        if (toConfigurationSingle::Instance().codeCompletion())
             return toReturn;
 
         toSQLParse::editorTokenizer tokens(this, curcol, curline);

@@ -381,9 +381,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
         Plans = new toResultTableView(false, false, splitter);
         try {
             Plans->query(toSQL::string(SQLListPlans, connection).arg(
-                             toConfigurationSingle::Instance().globalConfig(
-                                 CONF_PLAN_TABLE,
-                                 DEFAULT_PLAN_TABLE)));
+                             toConfigurationSingle::Instance().planTable()));
         }
         TOCATCH;
 

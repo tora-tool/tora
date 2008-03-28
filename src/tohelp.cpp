@@ -103,32 +103,41 @@ toHelpPrefs::toHelpPrefs(toTool *tool, QWidget *parent, const char *name)
 
     setupUi(this);
 
-    int tot = Tool->config("Number", "-1").toInt();
-    if (tot != -1)
-    {
-        for (int i = 0;i < tot;i++)
-        {
-            QString num = QString::number(i);
-            QString root = Tool->config(num.toLatin1(), "");
-            num += QString::fromLatin1("file");
-            QString file = Tool->config(num.toLatin1(), "");
-            new toTreeWidgetItem(FileList, root, file);
-        }
-    }
+//     int tot = Tool->config("Number", "-1").toInt();
+//     if (tot != -1)
+//     {
+//         for (int i = 0;i < tot;i++)
+//         {
+//             QString num = QString::number(i);
+//             QString root = Tool->config(num.toLatin1(), "");
+//             num += QString::fromLatin1("file");
+//             QString file = Tool->config(num.toLatin1(), "");
+//             new toTreeWidgetItem(FileList, root, file);
+//         }
+//     }
+	HelpsMapIterator i(toConfigurationSingle::Instance().additionalHelp());
+	while (i.hasNext())
+	{
+		i.next();
+		new toTreeWidgetItem(FileList, i.key(), i.value());
+	}
 }
 
 
 void toHelpPrefs::saveSetting() {
-    int i = 0;
+//     int i = 0;
+	HelpsMap h;
     for (toTreeWidgetItem *item = FileList->firstChild();item;item = item->nextSibling())
     {
-        QString nam = QString::number(i);
-        Tool->setConfig(nam.toLatin1(), item->text(0));
-        nam += QString::fromLatin1("file");
-        Tool->setConfig(nam.toLatin1(), item->text(1));
-        i++;
+//         QString nam = QString::number(i);
+//         Tool->setConfig(nam.toLatin1(), item->text(0));
+//         nam += QString::fromLatin1("file");
+//         Tool->setConfig(nam.toLatin1(), item->text(1));
+//         i++;
+		h[item->text(0)] = item->text(1);
     }
-    Tool->setConfig("Number", QString::number(i));
+//     Tool->setConfig("Number", QString::number(i));
+	toConfigurationSingle::Instance().setAdditionalHelp(h);
     delete toHelp::Window;
 }
 
@@ -244,19 +253,25 @@ toHelp::toHelp(QWidget *parent, QString name, bool modal)
 
     std::map<QString, QString> Dsc;
     Dsc[tr(TOAPPNAME " manual")] = toHelpPath();
-    int tot = HelpTool.config("Number", "-1").toInt();
+//     int tot = HelpTool.config("Number", "-1").toInt();
 
-    if (tot != -1)
-    {
-        for (int i = 0;i < tot;i++)
-        {
-            QString num = QString::number(i);
-            QString dsc = HelpTool.config(num.toLatin1(), "");
-            num += QString::fromLatin1("file");
-            QString file = HelpTool.config(num.toLatin1(), "");
-            Dsc[dsc] = file;
-        }
-    }
+//     if (tot != -1)
+//     {
+//         for (int i = 0;i < tot;i++)
+//         {
+//             QString num = QString::number(i);
+//             QString dsc = HelpTool.config(num.toLatin1(), "");
+//             num += QString::fromLatin1("file");
+//             QString file = HelpTool.config(num.toLatin1(), "");
+//             Dsc[dsc] = file;
+//         }
+//     }
+	HelpsMapIterator i(toConfigurationSingle::Instance().additionalHelp());
+	while (i.hasNext())
+	{
+		i.next();
+		Dsc[i.key()] = i.value();
+	}
 
     splitter->setStretchFactor(splitter->indexOf(tabs), 0);
     setGeometry(x(), y(), std::max(width(), 640), std::max(height(), 480));
