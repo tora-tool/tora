@@ -125,9 +125,9 @@ public:
      * @param after Insert after this item.
      * @param buffer String to set as first column
      */
-toResultViewItem(toTreeWidget *parent,
-                 toTreeWidgetItem *after,
-                 const QString &buf = QString::null)
+    toResultViewItem(toTreeWidget *parent,
+                     toTreeWidgetItem *after,
+                     const QString &buf = QString::null)
     : toTreeWidgetItem(parent, after, QString::null) {
         ColumnData = NULL;
         ColumnCount = 0;
@@ -139,9 +139,9 @@ toResultViewItem(toTreeWidget *parent,
      * @param after Insert after this item.
      * @param buffer String to set as first column
      */
-toResultViewItem(toTreeWidgetItem *parent,
-                 toTreeWidgetItem *after,
-                 const QString &buf = QString::null)
+    toResultViewItem(toTreeWidgetItem *parent,
+                     toTreeWidgetItem *after,
+                     const QString &buf = QString::null)
     : toTreeWidgetItem(parent, after, QString::null) {
         ColumnData = NULL;
         ColumnCount = 0;
@@ -192,9 +192,7 @@ toResultViewItem(toTreeWidgetItem *parent,
      * @return All of the text.
      */
     virtual QString allText(int col) const {
-        if (col >= ColumnCount)
-            return QString::null;
-        return ColumnData[col].Data;
+        return toTreeWidgetItem::text(col);
     }
     /** Get the text to be displayed as tooltip for this item.
      * @param col Column.
@@ -397,9 +395,7 @@ toResultViewCheck(toTreeWidgetItem *parent,
      * @return All of the text.
      */
     virtual QString allText(int col) const {
-        if (col >= ColumnCount)
-            return QString::null;
-        return ColumnData[col].Data;
+        return text(col);
     }
     /** Get the text to be displayed as tooltip for this item.
      * @param col Column.
