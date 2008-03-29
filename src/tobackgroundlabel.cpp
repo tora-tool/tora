@@ -307,7 +307,7 @@ void toBackgroundLabel::mouseReleaseEvent(QMouseEvent *e)
                     num++;
                 }
             }
-            toMainWidget()->displayMessage(str);
+//             toMainWidget()->displayMessage(str);
             e->accept();
         }
         else
