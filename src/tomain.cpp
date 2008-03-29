@@ -140,14 +140,7 @@ toMain::toMain()
          k != tools.end();
          k++) {
 
-        if (defName == (*k).first)
-		{
-            DefaultTool = (*k).second;
-			break;
-		}
-
-        // if there is no default tool, set the first one
-        if(defName.isEmpty() && !DefaultTool)
+        if(defName.isNull() || defName == (*k).first)
             DefaultTool = (*k).second;
 
         (*k).second->customSetup();
@@ -161,6 +154,11 @@ toMain::toMain()
             SIGNAL(windowActivated(QWidget *)),
             this,
             SLOT(windowActivated(QWidget *)));
+    connect(this,
+            SIGNAL(messageRequested(const QString &, bool, bool)),
+            this,
+            SLOT(showMessageImpl(const QString &, bool, bool)),
+            Qt::QueuedConnection);
 
 	if (toConfigurationSingle::Instance().restoreSession()) {
         try {
@@ -1316,9 +1314,11 @@ void toMain::editSQL(const QString &str) {
 
 void toMain::updateStatusMenu(void)
 {
-    std::list<QString> status = toStatusMessages();
     statusMenu->clear();
-    for(std::list<QString>::iterator i = status.begin(); i != status.end(); i++) {
+    for(std::list<QString>::iterator i = StatusMessages.begin();
+        i != StatusMessages.end();
+        i++) {
+
         QAction *s = new QAction(statusMenu);
         if((*i).size() > 75)
             s->setText((*i).left(75) + "...");
@@ -1333,6 +1333,37 @@ void toMain::updateStatusMenu(void)
 void toMain::changeConnection(void) {
     enableConnectionActions(true);
 }
+
+
+void toMain::showMessage(const QString &str, bool save, bool log) {
+    // this function can be called from any thread.
+    // this tomain class is in the main (gui) thread, so emitting
+    // a signal with a queued flag will be picked up in the main
+    // thread. otherwise tora crashes.
+    emit messageRequested(str, save, log);
+}
+
+
+void toMain::showMessageImpl(const QString &str, bool save, bool log) {
+    if(!str.isEmpty()) {
+        int sec = toConfigurationSingle::Instance().statusMessage();
+        if(save || sec == 0)
+            statusBar()->showMessage(str.simplified());
+        else
+            statusBar()->showMessage(str.simplified(), sec * 1000);
+
+        if(!save && log) {
+            toPush(StatusMessages, str);
+            if((int) StatusMessages.size() > toConfigurationSingle::Instance().statusSave())
+                toShift(StatusMessages);
+            statusBar()->setToolTip(str);
+
+            if(!toConfigurationSingle::Instance().messageStatusbar())
+                displayMessage();
+        }
+    }
+}
+
 
 void toMain::checkCaching(void)
 {
@@ -1587,58 +1618,29 @@ void toMain::removeChart(toLineChart *chart)
     emit chartRemoved(chart);
 }
 
-void toMain::displayMessage(void)
-{
-    static bool recursive = false;
-    static bool disabled = false;
-    if (disabled)
-    {
-        while (StatusMessages.size() > 1) // Clear everything but the first one.
-            toPop(StatusMessages);
-        return ;
+void toMain::displayMessage(void) {
+    if(StatusMessages.size() < 1)
+        return;
+
+    QDialog dialog;
+    Ui::toMessageUI uidialog;
+    uidialog.setupUi(&dialog);
+    uidialog.Message->setReadOnly(true);
+    QIcon warning = style()->standardIcon(QStyle::SP_MessageBoxWarning);
+    uidialog.Icon->setPixmap(warning.pixmap(uidialog.Icon->size()));
+    dialog.setWindowIcon(warning);
+
+    uidialog.Message->setText(*(--StatusMessages.end()));
+    dialog.exec();
+
+    if (uidialog.Statusbar->isChecked()) {
+        toConfigurationSingle::Instance().setMessageStatusbar(true);
+        TOMessageBox::information(
+            toMainWidget(),
+            tr("Information"),
+            tr("You can enable this through the Global Settings in the Options (Edit menu)"));
+        toConfigurationSingle::Instance().saveConfig();
     }
-
-    if (StatusMessages.size() >= 50)
-    {
-        disabled = true;
-        toUnShift(StatusMessages,
-                  tr("Message flood, temporary disabling of message box error reporting from now on.\n"
-                     "Restart to reenable. You probably have a too high refresh rate in a running tool."));
-    }
-
-    if (recursive)
-        return ;
-    recursive = true;
-
-    for (QString str = toShift(StatusMessages);!str.isEmpty();str = toShift(StatusMessages))
-    {
-        QDialog dialog;
-        Ui::toMessageUI uidialog;
-        uidialog.setupUi(&dialog);
-        uidialog.Message->setReadOnly(true);
-
-        // qt4
-//         dialog.Icon->setPixmap(QApplication::style().stylePixmap(QStyle::SP_MessageBoxWarning));
-
-        uidialog.Message->setText(str);
-        dialog.exec();
-
-        if (uidialog.Statusbar->isChecked())
-        {
-			toConfigurationSingle::Instance().setMessageStatusbar(true);
-            TOMessageBox::information(toMainWidget(),
-                                      tr("Information"),
-                                      tr("You can enable this through the Global Settings in the Options (Edit menu)"));
-            toConfigurationSingle::Instance().saveConfig();
-        }
-    }
-    recursive = false;
-}
-
-void toMain::displayMessage(const QString &str)
-{
-    toPush(StatusMessages, str);
-    QTimer::singleShot(1, this, SLOT(displayMessage()));
 }
 
 void toMain::updateKeepAlive(void)

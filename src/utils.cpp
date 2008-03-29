@@ -317,45 +317,8 @@ QString toSQLToAddress(toConnection &conn, const QString &sql)
     throw qApp->translate("toSQLToAddress", "SQL Query not found in SGA");
 }
 
-static std::list<QString> LastMessages;
-
 void toStatusMessage(const QString &str, bool save, bool log) {
-
-    // causes no errors to display.  if we need to we may have to post
-    // a message to the statusbar with the queued flag instead.
-// #ifndef Q_OS_WIN32
-//     if (!toThread::mainThread()) {
-//         return;
-//     }
-// #endif
-
-    toMain *main = toMainWidget();
-    if (main)
-    {
-        if (!str.isEmpty())
-        {
-            int sec = toConfigurationSingle::Instance().statusMessage();
-            if (save || sec == 0)
-                main->statusBar()->showMessage(str.simplified());
-            else
-                main->statusBar()->showMessage(str.simplified(), sec*1000);
-            if (!save && log)
-            {
-				if (toConfigurationSingle::Instance().messageStatusbar())
-                    main->displayMessage(str);
-                toPush(LastMessages, str);
-                if (int(LastMessages.size()) > toConfigurationSingle::Instance().statusSave())
-                    toShift(LastMessages);
-            }
-            main->statusBar()->setToolTip(str);
-        }
-    }
-
-}
-
-std::list<QString> toStatusMessages(void)
-{
-    return LastMessages;
+    toMainWidget()->showMessage(str, save, log);
 }
 
 QComboBox *toRefreshCreate(QWidget *parent, const char *name, const QString &def, QComboBox *item)

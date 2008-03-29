@@ -302,9 +302,6 @@ inline bool toIsIdent(QChar c)
  * @return String containing directory
  */
 QString toPluginPath(void);
-/** Get a list of the latest status messages that have been shown.
- */
-std::list<QString> toStatusMessages(void);
 /** Get a brush for a chart item.
  * @param index Indicating which chart item to get color for.
  */

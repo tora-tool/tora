@@ -101,7 +101,8 @@ private:
      */
     QString SQLEditor;
 
-    /** Status messages to display
+    /**
+     * Status message storage for status bar
      */
     std::list<QString> StatusMessages;
 
@@ -363,9 +364,6 @@ public:
     /** Setup chart.
      */
     void setupChart(toLineChart *chart);
-    /** Display status message in dialog.
-     */
-    void displayMessage(const QString &str);
     /** Add recent file
      */
     void addRecentFile(const QString &filename);
@@ -450,6 +448,10 @@ signals:
      * emitted when widgets related to editing.
      */
     void editEnabled(bool en);
+    /**
+     * emitted to internally handle status bar messages
+     */
+    void messageRequested(const QString &str, bool save, bool log);
 
 public slots:
     /**
@@ -482,6 +484,14 @@ public slots:
     /** Change current connection
      */
     void changeConnection(void);
+    /**
+     * Show a statusbar message.
+     *
+     * @param str message to show
+     * @param save save to messages menu
+     * @param log
+     */
+    void showMessage(const QString &str, bool save, bool log);
 
 protected:
     /** intercept close event from parent
@@ -525,6 +535,12 @@ private slots:
     void displayMessage(void);
 
     void keepAlive();
+
+    /**
+     * Internal slot for handling status bar messages
+     *
+     */
+    void showMessageImpl(const QString &str, bool save, bool log);
 };
 
 /** Get a pointer to the main window
