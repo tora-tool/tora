@@ -1069,7 +1069,6 @@ class oracleConnection : public toConnection::connectionImpl
 
 static toOracleProvider OracleProvider;
 
-#include <QDebug>
 void toOracleProvider::oracleQuery::execute(void)
 {
     oracleSub *conn = dynamic_cast<oracleSub *>(query()->connectionSub());
