@@ -40,10 +40,10 @@
 #include "config.h"
 #include "tolistviewformatter.h"
 
-class toListViewFormatterCSV : public toListViewFormatter
-{
+class toListViewFormatterCSV : public toListViewFormatter {
 private:
     QString QuoteString(const QString &str);
+
 public:
     toListViewFormatterCSV();
     virtual ~toListViewFormatterCSV();
