@@ -88,11 +88,13 @@ QAction *UnQuote      = NULL;
 QAction *GotoLine     = NULL;
 QAction *AutoComplete = NULL;
 
-toEditExtensions::toEditExtensions() : toEditWidget::editHandler() {
+toEditExtensions::toEditExtensions() : toEditWidget::editHandler()
+{
 }
 
-void toEditExtensions::receivedFocus(toEditWidget *widget) {
-    if(widget)
+void toEditExtensions::receivedFocus(toEditWidget *widget)
+{
+    if (widget)
         Current = dynamic_cast<toMarkedText *>(widget);
     else
         Current = NULL;
@@ -113,14 +115,17 @@ void toEditExtensions::receivedFocus(toEditWidget *widget) {
     AutoComplete->setEnabled(cur);
 }
 
-void toEditExtensions::autoComplete() {
+void toEditExtensions::autoComplete()
+{
     toHighlightedText *cur = dynamic_cast<toHighlightedText *>(Current);
     if (cur)
         cur->autoCompleteFromAPIs();
 }
 
-void toEditExtensions::lostFocus(toEditWidget *widget) {
-    if (widget) {
+void toEditExtensions::lostFocus(toEditWidget *widget)
+{
+    if (widget)
+    {
         toMarkedText *current = dynamic_cast<toMarkedText *>(widget);
         if (current && Current == current)
             receivedFocus(NULL);
@@ -128,11 +133,12 @@ void toEditExtensions::lostFocus(toEditWidget *widget) {
 
 }
 
-void toEditExtensions::editEnabled(bool enable) {
+void toEditExtensions::editEnabled(bool enable)
+{
     IncMenu->setEnabled(enable);
     IndentMenu->setEnabled(enable);
     CaseMenu->setEnabled(enable);
-    
+
     Indent->setEnabled(enable);
     Deindent->setEnabled(enable);
     Quote->setEnabled(enable);
@@ -142,28 +148,35 @@ void toEditExtensions::editEnabled(bool enable) {
     AutoComplete->setEnabled(enable);
 }
 
-void toEditExtensions::gotoLine() {
-    if (Current) {
+void toEditExtensions::gotoLine()
+{
+    if (Current)
+    {
         toEditExtensionGoto dialog(Current);
         if (dialog.exec())
             dialog.gotoLine();
     }
 }
 
-void toEditExtensions::intIndent(int delta) {
+void toEditExtensions::intIndent(int delta)
+{
     int line1, col1, line2, col2;
 
-    if (Current) {
-        if (!Current->getSelection(&line1, &col1, &line2, &col2)) {
+    if (Current)
+    {
+        if (!Current->getSelection(&line1, &col1, &line2, &col2))
+        {
             Current->getCursorPosition(&line1, &col1);
             line2 = line1;
         }
-        else if (col2 == 0) {
+        else if (col2 == 0)
+        {
             line2--;
         }
 
         QString res;
-        for (int i = line1;i <= line2;i++) {
+        for (int i = line1;i <= line2;i++)
+        {
             QString t = Current->text(i);
             int chars = 0;
             int level = toSQLParse::countIndent(t, chars);
@@ -184,29 +197,37 @@ void toEditExtensions::intIndent(int delta) {
     }
 }
 
-void toEditExtensions::deindentBlock(void) {
+void toEditExtensions::deindentBlock(void)
+{
     intIndent(-toSQLParse::getSetting().IndentLevel);
 }
 
-void toEditExtensions::indentBlock(void) {
+void toEditExtensions::indentBlock(void)
+{
     intIndent(toSQLParse::getSetting().IndentLevel);
 }
 
-void toEditExtensions::autoIndentBlock(void) {
-    if (Current) {
-        try {
+void toEditExtensions::autoIndentBlock(void)
+{
+    if (Current)
+    {
+        try
+        {
             int line1, col1, line2, col2;
-            if (Current->getSelection(&line1, &col1, &line2, &col2)) {
+            if (Current->getSelection(&line1, &col1, &line2, &col2))
+            {
                 QString t = Current->text(line1).mid(0, col1);
                 t += QString::fromLatin1("a");
                 int chars = 0;
                 QString ind = toSQLParse::indentString(toSQLParse::countIndent(t, chars));
                 QString mrk = Current->selectedText();
                 QString res;
-                try {
+                try
+                {
                     res = toSQLParse::indent(ind + mrk, toCurrentConnection(Current));
                 }
-                catch (...) {
+                catch (...)
+                {
                     res = toSQLParse::indent(ind + mrk);
                 }
                 t = Current->text(line2);
@@ -221,19 +242,25 @@ void toEditExtensions::autoIndentBlock(void) {
     }
 }
 
-void toEditExtensions::autoIndentBuffer(void) {
-    if (Current) {
+void toEditExtensions::autoIndentBuffer(void)
+{
+    if (Current)
+    {
         QString text = Current->text();
         int pos = 0;
-        while (pos < text.length() && text.at(pos).isSpace()) {
+        while (pos < text.length() && text.at(pos).isSpace())
+        {
             pos++;
         }
         Current->selectAll();
-        try {
-            try {
+        try
+        {
+            try
+            {
                 Current->insert(toSQLParse::indent(text.mid(pos), toCurrentConnection(Current)));
             }
-            catch (...) {
+            catch (...)
+            {
                 Current->insert(toSQLParse::indent(text.mid(pos)));
             }
         }
@@ -242,17 +269,19 @@ void toEditExtensions::autoIndentBuffer(void) {
 }
 
 
-void toEditExtensions::quoteBlock(void) {
-    if(!Current)
+void toEditExtensions::quoteBlock(void)
+{
+    if (!Current)
         return;
 
     QString text = Current->selectedText();
-    if(!text.isEmpty()) {
+    if (!text.isEmpty())
+    {
         bool ends = text.right(1) == "\n";
         text = text.replace("\"", "\\\"");
         text = text.replace("\n", "\\n\"\n\"");
 
-        if(ends)
+        if (ends)
             text = text.left(text.length() - 5) + "\"\n";
         else
             text += "\"";
@@ -262,12 +291,14 @@ void toEditExtensions::quoteBlock(void) {
 }
 
 
-void toEditExtensions::unquoteBlock(void) {
-    if(!Current)
+void toEditExtensions::unquoteBlock(void)
+{
+    if (!Current)
         return;
 
     QString text = Current->selectedText();
-    if(!text.isEmpty()) {
+    if (!text.isEmpty())
+    {
         // this is to replace quoting at the end of the line
         text = text.replace("\\n\"\n", "\n");
         // er... text could start with whitespace. a regex would be good here.
@@ -275,12 +306,12 @@ void toEditExtensions::unquoteBlock(void) {
 
         text = text.replace("\\\"", "\"");
 
-        if(text.left(1) == "\"")
+        if (text.left(1) == "\"")
             text = text.right(text.length() - 1);
 
-        if(text.right(1) == "\"")
+        if (text.right(1) == "\"")
             text = text.left(text.length() - 1);
-        else if(text.right(1) == "\"\n")
+        else if (text.right(1) == "\"\n")
             text = text.left(text.length() - 2) + "\n";
 
         Current->insert(text, true);
@@ -288,23 +319,28 @@ void toEditExtensions::unquoteBlock(void) {
 }
 
 
-void toEditExtensions::upperCase(void) {
-    if (Current) {
+void toEditExtensions::upperCase(void)
+{
+    if (Current)
+    {
         QString text = Current->selectedText().toUpper();
         if (!text.isEmpty())
             Current->insert(text, true);
     }
 }
 
-void toEditExtensions::lowerCase(void) {
-    if (Current) {
+void toEditExtensions::lowerCase(void)
+{
+    if (Current)
+    {
         QString text = Current->selectedText().toLower();
         if (!text.isEmpty())
             Current->insert(text, true);
     }
 }
 
-static int CountLine(const QString &str) {
+static int CountLine(const QString &str)
+{
     int found = str.lastIndexOf(QString::fromLatin1("\n"));
     if (found < 0)
         return str.length();
@@ -312,32 +348,39 @@ static int CountLine(const QString &str) {
         return str.length() - found + 1;
 }
 
-static void ObfuscateStat(toSQLParse::statement &stat, QString &ret) {
+static void ObfuscateStat(toSQLParse::statement &stat, QString &ret)
+{
     if (ret.length() > 0 &&
             stat.String.length() > 0 &&
             toIsIdent(ret.at(ret.length() - 1)) &&
-            toIsIdent(stat.String.at(0))) {
+            toIsIdent(stat.String.at(0)))
+    {
         if (CountLine(ret) < 60)
             ret += QString::fromLatin1(" ");
         else
             ret += QString::fromLatin1("\n");
     }
     ret += stat.String;
-    if (!stat.Comment.isEmpty()) {
+    if (!stat.Comment.isEmpty())
+    {
         ret += stat.Comment;
         ret += QString::fromLatin1("\n");
     }
     for (std::list<toSQLParse::statement>::iterator i = stat.subTokens().begin();
             i != stat.subTokens().end();
-            i++) {
+            i++)
+    {
         ObfuscateStat(*i, ret);
     }
 }
 
-void toEditExtensions::obfuscateBlock(void) {
-    if (Current) {
+void toEditExtensions::obfuscateBlock(void)
+{
+    if (Current)
+    {
         QString str = Current->selectedText();
-        if (!str.isEmpty()) {
+        if (!str.isEmpty())
+        {
             toSQLParse::statement stat;
             stat.subTokens() = toSQLParse::parse(str);
             QString res;
@@ -347,10 +390,13 @@ void toEditExtensions::obfuscateBlock(void) {
     }
 }
 
-void toEditExtensions::obfuscateBuffer(void) {
-    if (Current) {
+void toEditExtensions::obfuscateBuffer(void)
+{
+    if (Current)
+    {
         QString str = Current->text();
-        if (!str.isEmpty()) {
+        if (!str.isEmpty())
+        {
             toSQLParse::statement stat;
             stat.subTokens() = toSQLParse::parse(str);
             Current->selectAll();
@@ -368,8 +414,9 @@ toEditExtensionSetup::toEditExtensionSetup(
     toEditExtensionTool *tool,
     QWidget *parent,
     const char *name) : QWidget(parent),
-                        toSettingTab("editextension.html"),
-                        Tool(tool) {
+        toSettingTab("editextension.html"),
+        Tool(tool)
+{
     setupUi(this);
 
     Current = toSQLParse::getSetting();
@@ -383,12 +430,14 @@ toEditExtensionSetup::toEditExtensionSetup(
     CommentColumn->setValue(Current.CommentColumn);
     AutoIndent->setChecked(toConfigurationSingle::Instance().autoIndentRo());
     Ok = false;
-    try {
+    try
+    {
         Example->setAnalyzer(toMainWidget()->currentConnection().analyzer());
     }
     TOCATCH;
 
-    try {
+    try
+    {
 #ifdef TO_NO_ORACLE
         Example->setText(toSQLParse::indent(
                              "CREATE PROCEDURE COUNT_EMPS_IN_DEPTS (OUT V_TOTAL INT)\n"
@@ -433,13 +482,15 @@ toEditExtensionSetup::toEditExtensionSetup(
     Started = true;
 }
 
-toEditExtensionSetup::~toEditExtensionSetup() {
+toEditExtensionSetup::~toEditExtensionSetup()
+{
     if (!Ok)
         toSQLParse::setSetting(Current);
 }
 
 
-void toEditExtensionSetup::saveCurrent(void) {
+void toEditExtensionSetup::saveCurrent(void)
+{
     Current.ExpandSpaces = toConfigurationSingle::Instance().tabSpaces();
     Current.CommaBefore = CommaBefore->isChecked();
     Current.BlockOpenLine = BlockOpenLine->isChecked();
@@ -453,10 +504,13 @@ void toEditExtensionSetup::saveCurrent(void) {
 }
 
 
-void toEditExtensionSetup::changed(void) {
-    if (Started) {
+void toEditExtensionSetup::changed(void)
+{
+    if (Started)
+    {
         saveCurrent();
-        try {
+        try
+        {
             Example->setText(toSQLParse::indent(Example->text(), Example->analyzer()));
         }
         TOCATCH;
@@ -464,55 +518,61 @@ void toEditExtensionSetup::changed(void) {
 }
 
 
-void toEditExtensions::searchForward(void) {
+void toEditExtensions::searchForward(void)
+{
     if (Current)
         Current->incrementalSearch(true);
 }
 
-void toEditExtensions::searchBackward(void) {
+void toEditExtensions::searchBackward(void)
+{
     if (Current)
         Current->incrementalSearch(false);
 }
 
-class toEditExtensionTool : public toTool {
+class toEditExtensionTool : public toTool
+{
 
 public:
-    toEditExtensionTool() : toTool(910, "Editor Extensions") {
+    toEditExtensionTool() : toTool(910, "Editor Extensions")
+    {
         toSQLParse::settings cur;
         cur.ExpandSpaces = toConfigurationSingle::Instance().tabSpaces();
-		cur.CommaBefore = toConfigurationSingle::Instance().commaBefore();
-		cur.BlockOpenLine = toConfigurationSingle::Instance().blockOpenLine();
-		cur.OperatorSpace = toConfigurationSingle::Instance().operatorSpace();
-		cur.KeywordUpper = toConfigurationSingle::Instance().keywordUpper();
-		cur.RightSeparator = toConfigurationSingle::Instance().rightSeparator();
-		cur.EndBlockNewline = toConfigurationSingle::Instance().endBlockNewline();
+        cur.CommaBefore = toConfigurationSingle::Instance().commaBefore();
+        cur.BlockOpenLine = toConfigurationSingle::Instance().blockOpenLine();
+        cur.OperatorSpace = toConfigurationSingle::Instance().operatorSpace();
+        cur.KeywordUpper = toConfigurationSingle::Instance().keywordUpper();
+        cur.RightSeparator = toConfigurationSingle::Instance().rightSeparator();
+        cur.EndBlockNewline = toConfigurationSingle::Instance().endBlockNewline();
         cur.IndentLevel = toConfigurationSingle::Instance().tabStop();
-		cur.CommentColumn = toConfigurationSingle::Instance().commentColumn();
+        cur.CommentColumn = toConfigurationSingle::Instance().commentColumn();
         toSQLParse::setSetting(cur);
     }
 
-    virtual QWidget *toolWindow(QWidget *, toConnection &) {
+    virtual QWidget *toolWindow(QWidget *, toConnection &)
+    {
         return NULL; // Has no tool window
     }
 
     virtual void closeWindow(toConnection &connection) {};
 
-    virtual void customSetup(void) {
+    virtual void customSetup(void)
+    {
         QMenu *edit = toMainWidget()->getEditMenu();
 
         edit->addSeparator();
 
         IncMenu = edit->addMenu(
-            qApp->translate("toEditExtensionTool", "Incremental Search"));
-        
+                      qApp->translate("toEditExtensionTool", "Incremental Search"));
+
         IncrementalSearch = IncMenu->addAction(qApp->translate("toEditExtensionTool",
-                                                               "Forward"),
+                                               "Forward"),
                                                &EditExtensions,
                                                SLOT(searchForward()));
         IncrementalSearch->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_S);
 
         ReverseSearch = IncMenu->addAction(qApp->translate("toEditExtensionTool",
-                                                           "Backward"),
+                                           "Backward"),
                                            &EditExtensions,
                                            SLOT(searchBackward()));
         ReverseSearch->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_R);
@@ -520,7 +580,7 @@ public:
         // ------------------------------ indentation menu
 
         IndentMenu = edit->addMenu(
-            qApp->translate("toEditExtensionTool", "Auto Indent"));
+                         qApp->translate("toEditExtensionTool", "Auto Indent"));
 
         IndentBlock = IndentMenu->addAction(qApp->translate(
                                                 "toEditExtensionTool",
@@ -545,23 +605,23 @@ public:
                                          SLOT(obfuscateBlock()));
 
         ObsBuffer = IndentMenu->addAction(qApp->translate("toEditExtensionTool",
-                                                          "Obfuscate Editor"),
+                                          "Obfuscate Editor"),
                                           &EditExtensions,
                                           SLOT(obfuscateBuffer()));
 
         // ------------------------------ case menu
 
         CaseMenu = edit->addMenu(
-            qApp->translate("toEditExtensionTool", "Modify Case"));
+                       qApp->translate("toEditExtensionTool", "Modify Case"));
 
         UpperCase = CaseMenu->addAction(qApp->translate("toEditExtensionTool",
-                                                        "Upper"),
+                                        "Upper"),
                                         &EditExtensions,
                                         SLOT(upperCase()));
         UpperCase->setShortcut(Qt::CTRL + Qt::Key_U);
 
         LowerCase = CaseMenu->addAction(qApp->translate("toEditExtensionTool",
-                                                        "Lower"),
+                                        "Lower"),
                                         &EditExtensions,
                                         SLOT(lowerCase()));
         LowerCase->setShortcut(Qt::CTRL + Qt::Key_L);
@@ -569,17 +629,17 @@ public:
         // ------------------------------ etc
 
         Indent = edit->addAction(
-            QIcon(QPixmap(const_cast<const char**>(indent_xpm))),
-            qApp->translate("toEditExtensionTool", "Indent Block"),
-            &EditExtensions,
-            SLOT(indentBlock()));
+                     QIcon(QPixmap(const_cast<const char**>(indent_xpm))),
+                     qApp->translate("toEditExtensionTool", "Indent Block"),
+                     &EditExtensions,
+                     SLOT(indentBlock()));
         Indent->setShortcut(Qt::ALT + Qt::Key_Right);
 
         Deindent = edit->addAction(
-            QIcon(QPixmap(const_cast<const char**>(deindent_xpm))),
-            qApp->translate("toEditExtensionTool", "De-indent Block"),
-            &EditExtensions,
-            SLOT(deindentBlock()));
+                       QIcon(QPixmap(const_cast<const char**>(deindent_xpm))),
+                       qApp->translate("toEditExtensionTool", "De-indent Block"),
+                       &EditExtensions,
+                       SLOT(deindentBlock()));
         Deindent->setShortcut(Qt::ALT + Qt::Key_Left);
 
         Quote = edit->addAction(qApp->translate("toEditExtensionTool",
@@ -588,20 +648,20 @@ public:
                                 SLOT(quoteBlock()));
 
         UnQuote = edit->addAction(qApp->translate("toEditExtensionTool",
-                                                  "UnQuote Selection"),
+                                  "UnQuote Selection"),
                                   &EditExtensions,
                                   SLOT(unquoteBlock()));
 
         GotoLine = edit->addAction(qApp->translate("toEditExtensionTool",
-                                                   "Goto Line"),
+                                   "Goto Line"),
                                    &EditExtensions,
                                    SLOT(gotoLine()));
 
         AutoComplete = edit->addAction(
-            qApp->translate("toEditExtensionTool",
-                            "Complete"),
-            &EditExtensions,
-            SLOT(autoComplete()));
+                           qApp->translate("toEditExtensionTool",
+                                           "Complete"),
+                           &EditExtensions,
+                           SLOT(autoComplete()));
         AutoComplete->setShortcut(Qt::CTRL + Qt::Key_Space);
 
         // add buttons to main window
@@ -616,29 +676,32 @@ public:
                 SLOT(editEnabled(bool)));
     }
 
-    virtual QWidget *configurationTab(QWidget *parent) {
+    virtual QWidget *configurationTab(QWidget *parent)
+    {
         return new toEditExtensionSetup(this, parent);
     }
 };
 
-void toEditExtensionSetup::saveSetting(void) {
+void toEditExtensionSetup::saveSetting(void)
+{
     Ok = true;
-	toConfigurationSingle::Instance().setCommaBefore(CommaBefore->isChecked());
-	toConfigurationSingle::Instance().setBlockOpenLine(BlockOpenLine->isChecked());
-	toConfigurationSingle::Instance().setOperatorSpace(OperatorSpace->isChecked());
-	toConfigurationSingle::Instance().setKeywordUpper(KeywordUpper->isChecked());
-	toConfigurationSingle::Instance().setRightSeparator(RightSeparator->isChecked());
-	toConfigurationSingle::Instance().setEndBlockNewline(EndBlockNewline->isChecked());
-	toConfigurationSingle::Instance().setCommentColumn(CommentColumn->value());
-	toConfigurationSingle::Instance().setAutoIndentRo(AutoIndent->isChecked());
+    toConfigurationSingle::Instance().setCommaBefore(CommaBefore->isChecked());
+    toConfigurationSingle::Instance().setBlockOpenLine(BlockOpenLine->isChecked());
+    toConfigurationSingle::Instance().setOperatorSpace(OperatorSpace->isChecked());
+    toConfigurationSingle::Instance().setKeywordUpper(KeywordUpper->isChecked());
+    toConfigurationSingle::Instance().setRightSeparator(RightSeparator->isChecked());
+    toConfigurationSingle::Instance().setEndBlockNewline(EndBlockNewline->isChecked());
+    toConfigurationSingle::Instance().setCommentColumn(CommentColumn->value());
+    toConfigurationSingle::Instance().setAutoIndentRo(AutoIndent->isChecked());
     saveCurrent();
 }
 
 static toEditExtensionTool EditExtensionTool;
 
 toEditExtensionGoto::toEditExtensionGoto(toMarkedText *editor)
-    : QDialog(editor),
-      Editor(editor) {
+        : QDialog(editor),
+        Editor(editor)
+{
 
     setupUi(this);
 
@@ -652,6 +715,7 @@ toEditExtensionGoto::toEditExtensionGoto(toMarkedText *editor)
     }
 }
 
-void toEditExtensionGoto::gotoLine() {
+void toEditExtensionGoto::gotoLine()
+{
     Editor->setCursorPosition(Line->value() - 1, 0);
 }

@@ -54,11 +54,13 @@
 class toQValue;
 
 
-class toResultModel : public QAbstractTableModel {
+class toResultModel : public QAbstractTableModel
+{
     Q_OBJECT;
 
 public:
-    struct HeaderDesc {
+    struct HeaderDesc
+    {
         QString           name;        /* column name */
         QString           datatype;    /* data type from queryDescribe */
         bool              nullAllowed; /* data can be null */
@@ -145,7 +147,7 @@ public:
      *
      * The dataChanged() signal should be emitted if the data was
      * successfully set.
-     * 
+     *
      * The base class implementation returns false. This function and
      * data() must be reimplemented for editable models. Note that the
      * dataChanged() signal must be emitted explicitly when
@@ -230,7 +232,8 @@ public:
      * override parent to make public
      *
      */
-    QModelIndex createIndex(int row, int column, void *ptr = 0) const {
+    QModelIndex createIndex(int row, int column, void *ptr = 0) const
+    {
         return QAbstractTableModel::createIndex(row, column, ptr);
     }
 
@@ -239,7 +242,8 @@ public:
      * stop running query
      *
      */
-    void stop(void) {
+    void stop(void)
+    {
         cleanup();
     }
 
@@ -248,7 +252,8 @@ public:
      * Return the headers used for this query
      *
      */
-    const HeaderList& headers(void) const {
+    const HeaderList& headers(void) const
+    {
         return Headers;
     }
 

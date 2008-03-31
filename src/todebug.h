@@ -177,12 +177,12 @@ class toDebug : public toToolWidget
     // End of lock stuff
     toTimer StartTimer;
 
-    class targetTask : public toTask
+class targetTask : public toTask
     {
         toDebug &Parent;
     public:
-    targetTask(toDebug &parent)
-        : Parent(parent)
+        targetTask(toDebug &parent)
+                : Parent(parent)
         { }
         virtual void run(void);
     };
@@ -245,11 +245,11 @@ public:
 
     QString checkWatch(const QString &name);
 
-    virtual void exportData(std::map<QString,
-                            QString> &data,
+    virtual void exportData(std::map < QString,
+                            QString > &data,
                             const QString &prefix);
-    virtual void importData(std::map<QString,
-                            QString> &data,
+    virtual void importData(std::map < QString,
+                            QString > &data,
                             const QString &prefix);
 public slots:
     void stop(void);

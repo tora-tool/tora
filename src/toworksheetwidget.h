@@ -43,7 +43,8 @@
 #include "toworksheet.h"
 
 
-class toWorksheetWidget : public toWorksheet {
+class toWorksheetWidget : public toWorksheet
+{
     Q_OBJECT
 
 public:

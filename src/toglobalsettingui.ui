@@ -13,22 +13,10 @@
    <string>toGlobalSettingUI</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
+   <property name="margin" >
     <number>11</number>
    </property>
-   <property name="topMargin" >
-    <number>11</number>
-   </property>
-   <property name="rightMargin" >
-    <number>11</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>11</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>6</number>
-   </property>
-   <property name="verticalSpacing" >
+   <property name="spacing" >
     <number>6</number>
    </property>
    <item row="0" column="0" >
@@ -37,22 +25,10 @@
       <string>Paths</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>11</number>
       </property>
-      <property name="topMargin" >
-       <number>11</number>
-      </property>
-      <property name="rightMargin" >
-       <number>11</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>11</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
+      <property name="spacing" >
        <number>6</number>
       </property>
       <item row="0" column="0" >
@@ -191,22 +167,10 @@
       <string>Options</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
+      <property name="margin" >
        <number>11</number>
       </property>
-      <property name="topMargin" >
-       <number>11</number>
-      </property>
-      <property name="rightMargin" >
-       <number>11</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>11</number>
-      </property>
-      <property name="horizontalSpacing" >
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing" >
+      <property name="spacing" >
        <number>6</number>
       </property>
       <item row="1" column="0" >
@@ -335,13 +299,6 @@ Will leave the password unencryptet in the config file.</string>
         </property>
         <property name="text" >
          <string>Tools toolbar on left</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" colspan="2" >
-       <widget class="QCheckBox" name="MaximizeMain" >
-        <property name="text" >
-         <string>Maximize window on start</string>
         </property>
        </widget>
       </item>
@@ -574,7 +531,9 @@ Will leave the password unencryptet in the config file.</string>
       <item row="8" column="1" >
        <widget class="QLabel" name="LocaleLabel" >
         <property name="sizePolicy" >
-         <sizepolicy vsizetype="Minimum" hsizetype="Expanding" >
+         <sizepolicy>
+          <hsizetype>0</hsizetype>
+          <vsizetype>0</vsizetype>
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -593,7 +552,9 @@ Will leave the password unencryptet in the config file.</string>
       <item row="8" column="2" >
        <widget class="QLineEdit" name="Locale" >
         <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+         <sizepolicy>
+          <hsizetype>0</hsizetype>
+          <vsizetype>0</vsizetype>
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -622,6 +583,12 @@ Will leave the password unencryptet in the config file.</string>
       </item>
       <item row="9" column="0" colspan="6" >
        <layout class="QHBoxLayout" >
+        <property name="margin" >
+         <number>11</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
         <item>
          <widget class="QLabel" name="label" >
           <property name="text" >
@@ -641,11 +608,11 @@ Will leave the password unencryptet in the config file.</string>
         </item>
         <item>
          <widget class="QSpinBox" name="SmtpPort" >
-          <property name="minimum" >
-           <number>1</number>
-          </property>
           <property name="maximum" >
            <number>65536</number>
+          </property>
+          <property name="minimum" >
+           <number>1</number>
           </property>
          </widget>
         </item>
@@ -675,7 +642,6 @@ Will leave the password unencryptet in the config file.</string>
   <tabstop>AntialiaseFonts</tabstop>
   <tabstop>DockToolbar</tabstop>
   <tabstop>Statusbar</tabstop>
-  <tabstop>MaximizeMain</tabstop>
   <tabstop>ToolsLeft</tabstop>
   <tabstop>Locale</tabstop>
   <tabstop>ConnectHistory</tabstop>

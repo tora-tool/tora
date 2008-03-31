@@ -52,7 +52,8 @@
 #include <QListWidget>
 
 
-void toPreferences::addWidget(QListWidgetItem *item, QWidget *widget) {
+void toPreferences::addWidget(QListWidgetItem *item, QWidget *widget)
+{
     Parent->layout()->addWidget(widget);
     Tabs[item] = widget;
     if (!Shown)
@@ -61,7 +62,8 @@ void toPreferences::addWidget(QListWidgetItem *item, QWidget *widget) {
         widget->hide();
 }
 
-void toPreferences::selectTab(QListWidgetItem *item) {
+void toPreferences::selectTab(QListWidgetItem *item)
+{
     QWidget *tab = Tabs[item];
     if (tab)
     {
@@ -72,13 +74,15 @@ void toPreferences::selectTab(QListWidgetItem *item) {
     }
 }
 
-void toPreferences::displayPreferences(QWidget *parent) {
+void toPreferences::displayPreferences(QWidget *parent)
+{
     toPreferences dialog(parent, "Options", true);
     if (dialog.exec())
         dialog.saveSetting();
 }
 
-void toPreferences::saveSetting(void) {
+void toPreferences::saveSetting(void)
+{
 
     for (std::map<QListWidgetItem *, QWidget *>::iterator i = Tabs.begin();i != Tabs.end();i++)
     {
@@ -90,7 +94,8 @@ void toPreferences::saveSetting(void) {
 }
 
 toPreferences::toPreferences(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : QDialog(parent), toHelpContext(QString::fromLatin1("preferences.html")) {
+        : QDialog(parent), toHelpContext(QString::fromLatin1("preferences.html"))
+{
 
     setupUi(this);
 
@@ -154,7 +159,8 @@ toPreferences::toPreferences(QWidget* parent, const char* name, bool modal, Qt::
     TOCATCH;
 }
 
-void toPreferences::help(void) {
+void toPreferences::help(void)
+{
     if (Shown)
         Shown->setFocus();
     toHelp::displayHelp(this);

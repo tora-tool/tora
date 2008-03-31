@@ -62,12 +62,13 @@ toConnection &toConnectionWidget::connection()
 }
 
 toToolWidget::toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, toConnection &conn, const char *name)
-    : QWidget(parent),
-      toHelpContext(ctx),
-      toConnectionWidget(conn, this),
-      Tool(tool) {
+        : QWidget(parent),
+        toHelpContext(ctx),
+        toConnectionWidget(conn, this),
+        Tool(tool)
+{
 
-    if(name)
+    if (name)
         setObjectName(name);
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -96,7 +97,8 @@ toToolWidget::toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, to
     }
 }
 
-toConnectionWidget::~toConnectionWidget() {
+toConnectionWidget::~toConnectionWidget()
+{
 }
 
 void toToolWidget::parentConnection(void)
@@ -191,10 +193,10 @@ const char **toTool::pictureXPM(void)
 }
 
 toTool::toTool(int priority, const char *name)
-    : Name(name),
-      Priority(priority),
-      ButtonPicture(0),
-      toolAction(0)
+        : Name(name),
+        Priority(priority),
+        ButtonPicture(0),
+        toolAction(0)
 {
     if (!Tools)
         Tools = new std::map<QString, toTool *>;
@@ -237,7 +239,7 @@ void toTool::createWindow(void)
             if (icon)
                 newWin->setWindowIcon(*icon);
             toToolWidget *tool = dynamic_cast<toToolWidget *>(newWin);
-            if(tool && tool->windowTitle().isEmpty())
+            if (tool && tool->windowTitle().isEmpty())
                 toToolCaption(tool, name());
 
             newWin->show();
@@ -273,16 +275,17 @@ bool toTool::canHandle(toConnection &conn)
     return (toIsOracle(conn));
 }
 
-QAction* toTool::getAction(void) {
-    if(toolAction)
+QAction* toTool::getAction(void)
+{
+    if (toolAction)
         return toolAction;
 
     toolAction = new QAction(toMainWidget());
-    if(toolbarImage())
+    if (toolbarImage())
         toolAction->setIcon(QIcon(QPixmap(pictureXPM())));
-    if(menuItem())
+    if (menuItem())
         toolAction->setText(menuItem());
-    if(toolbarTip())
+    if (toolbarTip())
         toolAction->setToolTip(toolbarTip());
 
     connect(toolAction, SIGNAL(triggered()), this, SLOT(createWindow()));
@@ -316,7 +319,7 @@ void toTool::about(QWidget *)
 // const QString& toTool::config(const QString &tag, const QString &def) {
 //     return toConfigurationSingle::Instance().config(tag, def, Name);
 // }
-// 
+//
 // void toTool::setConfig(const QString &tag, const QString &value) {
 //     toConfigurationSingle::Instance().setConfig(tag, value, Name);
 // }

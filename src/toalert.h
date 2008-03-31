@@ -52,17 +52,18 @@ class QComboBox;
 class QLineEdit;
 class toListView;
 
-class toAlert : public toToolWidget {
+class toAlert : public toToolWidget
+{
     Q_OBJECT;
 
-    class pollTask : public toTask
+class pollTask : public toTask
     {
         toAlert &Parent;
 
     public:
-    pollTask(toAlert &parent) : Parent(parent)
+        pollTask(toAlert &parent) : Parent(parent)
         { }
-        
+
         virtual void run(void);
     };
 
@@ -93,7 +94,8 @@ class toAlert : public toToolWidget {
     std::list<QString> SendAlerts;
     std::list<QString> SendMessages;
 
-    enum {
+    enum
+    {
         Started,
         Quit,
         Done

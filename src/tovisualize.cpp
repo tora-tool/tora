@@ -59,9 +59,10 @@
 #include "icons/legend.xpm"
 
 toVisualize::toVisualize(toResultTableView *source, QWidget *parent, const char *name)
-    : QWidget(parent), Source(source) {
+        : QWidget(parent), Source(source)
+{
 
-    if(name)
+    if (name)
         setObjectName(name);
 
     QVBoxLayout *vbox = new QVBoxLayout;
@@ -134,18 +135,21 @@ toVisualize::toVisualize(toResultTableView *source, QWidget *parent, const char 
     vbox->addWidget(Result);
 }
 
-void toVisualize::display(void) {
+void toVisualize::display(void)
+{
     QWidget *last = Result;
     toResultModel *model = Source->model();
 
-    switch (Type->currentIndex()) {
+    switch (Type->currentIndex())
+    {
 
-    case 0: {
+    case 0:
+    {
         toBarChart *chart = new toBarChart(this);
         layout()->addWidget(chart);
         chart->showLegend(Legend->isChecked());
         int tit = std::max(1, Title->currentText().toInt()) +
-            Source->numberColumn();
+                  Source->numberColumn();
         chart->setTitle(
             model->headerData(Source->numberColumn(),
                               Qt::Horizontal, Qt::DisplayRole).toString());
@@ -154,17 +158,20 @@ void toVisualize::display(void) {
         chart->setSamples();
 
         std::list<QString> lst;
-        for(int i = tit; i < model->columnCount(); i++) {
+        for (int i = tit; i < model->columnCount(); i++)
+        {
             toPush(lst,
                    model->headerData(i, Qt::Horizontal, Qt::DisplayRole)
                    .toString());
         }
         chart->setLabels(lst);
 
-        for(int row = 0; row < model->rowCount(); row++) {
+        for (int row = 0; row < model->rowCount(); row++)
+        {
             QModelIndex index = model->createIndex(row, Source->numberColumn());
             QString label = model->data(index, Qt::EditRole).toString();
-            for(int j = 1; j < tit; j++) {
+            for (int j = 1; j < tit; j++)
+            {
                 QModelIndex index = model->createIndex(row, j);
                 label += QString::fromLatin1(", ");
                 label += model->data(index, Qt::EditRole).toString();
@@ -172,7 +179,8 @@ void toVisualize::display(void) {
 
             std::list<double> val;
 
-            for(int i = tit; i < model->columnCount(); i++) {
+            for (int i = tit; i < model->columnCount(); i++)
+            {
                 QModelIndex index = model->createIndex(row, i);
                 toPush(val, model->data(index, Qt::EditRole).toDouble());
             }
@@ -184,12 +192,13 @@ void toVisualize::display(void) {
     }
     break;
 
-    case 1: {
+    case 1:
+    {
         toLineChart *chart = new toLineChart(this);
         layout()->addWidget(chart);
         chart->showLegend(Legend->isChecked());
         int tit = std::max(1, Title->currentText().toInt()) +
-            Source->numberColumn();
+                  Source->numberColumn();
         chart->setTitle(
             model->headerData(Source->numberColumn(),
                               Qt::Horizontal, Qt::DisplayRole).toString());
@@ -198,7 +207,8 @@ void toVisualize::display(void) {
         chart->setSamples();
 
         std::list<QString> lst;
-        for(int i = tit; i < model->columnCount(); i++) {
+        for (int i = tit; i < model->columnCount(); i++)
+        {
             toPush(lst, model->headerData(
                        i,
                        Qt::Horizontal,
@@ -206,10 +216,12 @@ void toVisualize::display(void) {
         }
         chart->setLabels(lst);
 
-        for(int row = 0; row < model->rowCount(); row++) {
+        for (int row = 0; row < model->rowCount(); row++)
+        {
             QModelIndex index = model->createIndex(row, Source->numberColumn());
             QString label = model->data(index, Qt::EditRole).toString();
-            for(int j = 1; j < tit; j++) {
+            for (int j = 1; j < tit; j++)
+            {
                 QModelIndex index = model->createIndex(row, j);
                 label += QString::fromLatin1(", ");
                 label += model->data(index, Qt::EditRole).toString();
@@ -217,7 +229,8 @@ void toVisualize::display(void) {
 
             std::list<double> val;
 
-            for(int i = tit; i < model->columnCount(); i++) {
+            for (int i = tit; i < model->columnCount(); i++)
+            {
                 QModelIndex index = model->createIndex(row, i);
                 toPush(val, model->data(index, Qt::EditRole).toDouble());
             }
@@ -229,20 +242,23 @@ void toVisualize::display(void) {
     }
     break;
 
-    case 2: {
+    case 2:
+    {
         toPieChart *chart = new toPieChart(this);
         layout()->addWidget(chart);
         chart->showLegend(Legend->isChecked());
         int tit = std::max(1, Title->currentText().toInt()) +
-            Source->numberColumn();
+                  Source->numberColumn();
         chart->setTitle(
             model->headerData(Source->numberColumn(),
                               Qt::Horizontal, Qt::DisplayRole).toString());
 
-        for(int row = 0; row < model->rowCount(); row++) {
+        for (int row = 0; row < model->rowCount(); row++)
+        {
             QModelIndex index = model->createIndex(row, Source->numberColumn());
             QString label = model->data(index, Qt::EditRole).toString();
-            for(int j = 1; j < tit; j++) {
+            for (int j = 1; j < tit; j++)
+            {
                 QModelIndex index = model->createIndex(row, j);
                 label += QString::fromLatin1(", ");
                 label += model->data(index, Qt::EditRole).toString();

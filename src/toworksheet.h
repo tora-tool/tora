@@ -74,7 +74,8 @@ class toTabWidget;
 class toWorksheetWidget;
 
 
-class toWorksheet : public toToolWidget {
+class toWorksheet : public toToolWidget
+{
     Q_OBJECT;
 
     friend class toWorksheetWidget;
@@ -209,7 +210,8 @@ public slots:
     void queryDone(void);
     void enableStatistic(bool);
     void explainPlan(void);
-    void toggleStatistic(void) {
+    void toggleStatistic(void)
+    {
         statisticAct->toggle();
     }
     void showInsertSaved(void);
@@ -251,8 +253,9 @@ private slots:
 
 
 class toWorksheetSetup : public QWidget,
-    public Ui::toWorksheetSetupUI,
-    public toSettingTab {
+            public Ui::toWorksheetSetupUI,
+            public toSettingTab
+{
 
     Q_OBJECT;
 

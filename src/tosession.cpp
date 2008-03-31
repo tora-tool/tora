@@ -80,24 +80,29 @@
 #include "icons/tosession.xpm"
 #include "icons/filter.xpm"
 
-class toSessionTool : public toTool {
+class toSessionTool : public toTool
+{
 protected:
-    virtual const char **pictureXPM(void) {
+    virtual const char **pictureXPM(void)
+    {
         return const_cast<const char**>(tosession_xpm);
     }
 public:
     toSessionTool() : toTool(210, "Sessions")
-        { }
-    virtual const char *menuItem() {
+    { }
+    virtual const char *menuItem()
+    {
         return "Sessions";
     }
-    virtual QWidget *toolWindow(QWidget *parent, toConnection &connection) {
-        if(toIsOracle(connection) || toIsPostgreSQL(connection))
+    virtual QWidget *toolWindow(QWidget *parent, toConnection &connection)
+    {
+        if (toIsOracle(connection) || toIsPostgreSQL(connection))
             return new toSession(parent, connection);
 
         return NULL;
     }
-    virtual bool canHandle(toConnection &conn) {
+    virtual bool canHandle(toConnection &conn)
+    {
         return toIsOracle(conn) || toIsPostgreSQL(conn);
     }
     virtual void closeWindow(toConnection &connection) {};
@@ -246,7 +251,7 @@ static toSQL SQLSessionsPg(
     "PostgreSQL");
 
 toSession::toSession(QWidget *main, toConnection &connection)
-    : toToolWidget(SessionTool, "session.html", main, connection)
+        : toToolWidget(SessionTool, "session.html", main, connection)
 {
     QToolBar *toolbar = toAllocBar(this, tr("Session manager"));
     layout()->addWidget(toolbar);
@@ -259,7 +264,8 @@ toSession::toSession(QWidget *main, toConnection &connection)
             SLOT(refresh(void)));
     refreshAct->setShortcut(QKeySequence::Refresh);
 
-    if(toIsOracle(connection)) {
+    if (toIsOracle(connection))
+    {
         toolbar->addSeparator();
 
         Select = new toResultCombo(toolbar, TO_TOOLBAR_WIDGET_NAME);
@@ -300,7 +306,8 @@ toSession::toSession(QWidget *main, toConnection &connection)
 
         toolbar->addSeparator();
     }
-    else {
+    else
+    {
         enableTimedAct  = NULL;
         disableTimedAct = NULL;
 
@@ -321,7 +328,8 @@ toSession::toSession(QWidget *main, toConnection &connection)
             this, SLOT(changeRefresh(const QString &)));
     toolbar->addWidget(Refresh);
 
-    if(toIsOracle(connection)) {
+    if (toIsOracle(connection))
+    {
         toolbar->addSeparator();
 
         QToolButton *btn = new QToolButton(toolbar);
@@ -367,7 +375,8 @@ toSession::toSession(QWidget *main, toConnection &connection)
     CurrentStatement = new toSGAStatement(ResultTab);
     ResultTab->addTab(CurrentStatement, tr("Current Statement"));
 
-    if(toIsOracle(connection)) {
+    if (toIsOracle(connection))
+    {
         QString sql = toSQL::string(TOSQL_LONGOPS, connection);
         sql += " AND b.sid = :sid<char[101]> AND b.serial# = :ser<char[101]> order by b.start_time desc";
         LongOps = new toResultLong(true, false, toQuery::Background, ResultTab);
@@ -417,7 +426,8 @@ toSession::toSession(QWidget *main, toConnection &connection)
         connect(OpenCursors, SIGNAL(selectionChanged(toTreeWidgetItem *)),
                 this, SLOT(changeCursor(toTreeWidgetItem *)));
     }
-    else {
+    else
+    {
         LongOps           = NULL;
         StatisticSplitter = NULL;
         SessionStatistics = NULL;
@@ -443,7 +453,8 @@ toSession::toSession(QWidget *main, toConnection &connection)
     connect(ResultTab, SIGNAL(currentChanged(int)),
             this, SLOT(changeTab(int)));
 
-    try {
+    try
+    {
         connect(timer(), SIGNAL(timeout(void)), this, SLOT(refreshTabs(void)));
         toRefreshParse(timer());
     }
@@ -459,38 +470,46 @@ toSession::toSession(QWidget *main, toConnection &connection)
     setFocusProxy(Sessions);
 }
 
-bool toSession::canHandle(toConnection &conn) {
+bool toSession::canHandle(toConnection &conn)
+{
     return toIsOracle(conn) || toIsPostgreSQL(conn);
 }
 
-void toSession::excludeSelection(bool tgl) {
+void toSession::excludeSelection(bool tgl)
+{
     toSessionList::sessionFilter *filt =
         dynamic_cast<toSessionList::sessionFilter *>(Sessions->filter());
-    if (filt) {
+    if (filt)
+    {
         filt->setShow(!tgl);
         refresh();
     }
 }
 
-void toSession::selectAll(void) {
+void toSession::selectAll(void)
+{
     for (toTreeWidgetItem *item = Sessions->firstChild();
-         item;
-         item = item->nextSibling()) {
+            item;
+            item = item->nextSibling())
+    {
         toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>(item);
         if (chk)
             chk->setOn(true);
     }
 }
 
-void toSession::selectNone(void) {
-    for (toTreeWidgetItem *item = Sessions->firstChild();item;item = item->nextSibling()) {
+void toSession::selectNone(void)
+{
+    for (toTreeWidgetItem *item = Sessions->firstChild();item;item = item->nextSibling())
+    {
         toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>(item);
         if (chk)
             chk->setOn(false);
     }
 }
 
-toTreeWidgetItem *toSessionList::createItem(toTreeWidgetItem *last, const QString &str) {
+toTreeWidgetItem *toSessionList::createItem(toTreeWidgetItem *last, const QString &str)
+{
     sessionFilter *filt = dynamic_cast<sessionFilter *>(filter());
     if (filt && filt->show() && toIsOracle(connection()))
         return new toResultViewCheck(this, last, str, toTreeWidgetCheck::CheckBox);
@@ -498,15 +517,19 @@ toTreeWidgetItem *toSessionList::createItem(toTreeWidgetItem *last, const QStrin
         return new toResultViewItem(this, last, str);
 }
 
-void toSessionList::updateFilter() {
+void toSessionList::updateFilter()
+{
     sessionFilter *filt = dynamic_cast<sessionFilter *>(filter());
     if (filt)
         filt->updateList(this);
 }
 
-bool toSessionList::sessionFilter::check(const toTreeWidgetItem *item) {
-    if (!OnlyDatabase.isEmpty()) {
-        if (OnlyDatabase == "/") {
+bool toSessionList::sessionFilter::check(const toTreeWidgetItem *item)
+{
+    if (!OnlyDatabase.isEmpty())
+    {
+        if (OnlyDatabase == "/")
+        {
             if (item->text(4) == "Sleep")
                 return false;
         }
@@ -517,24 +540,30 @@ bool toSessionList::sessionFilter::check(const toTreeWidgetItem *item) {
     sessionID serial(item->text(0).toInt(), item->text(1).toInt());
     bool checked = false;
     for (std::list<sessionID>::iterator i = Serials.begin();i != Serials.end();i++)
-        if ((*i) == serial) {
+        if ((*i) == serial)
+        {
             checked = true;
             break;
         }
     const toResultViewCheck *chk = dynamic_cast<const toResultViewCheck *>(item);
-    if (chk) {
+    if (chk)
+    {
         const_cast<toResultViewCheck *>(chk)->setOn(checked);
         return true;
     }
     return !checked;
 }
 
-void toSessionList::sessionFilter::updateList(toResultLong *lst) {
+void toSessionList::sessionFilter::updateList(toResultLong *lst)
+{
     bool first = true;
-    for (toTreeWidgetItem *item = lst->firstChild();item;item = item->nextSibling()) {
+    for (toTreeWidgetItem *item = lst->firstChild();item;item = item->nextSibling())
+    {
         toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>(item);
-        if (chk) {
-            if (first) {
+        if (chk)
+        {
+            if (first)
+            {
                 Serials.clear();
                 first = false;
             }
@@ -544,28 +573,32 @@ void toSessionList::sessionFilter::updateList(toResultLong *lst) {
     }
 }
 
-void toSession::windowActivated(QWidget *widget) {
-    if (widget == this) {
-        if (!ToolMenu) {
+void toSession::windowActivated(QWidget *widget)
+{
+    if (widget == this)
+    {
+        if (!ToolMenu)
+        {
             ToolMenu = new QMenu(tr("&Session"), this);
 
             // don't use toIs<connection type> here. causes crash on
             // shutdown when windows are closed/changed.
 
-            if(refreshAct)
+            if (refreshAct)
                 ToolMenu->addAction(refreshAct);
 
             ToolMenu->addSeparator();
 
-            if(enableTimedAct)
+            if (enableTimedAct)
                 ToolMenu->addAction(enableTimedAct);
-            if(disableTimedAct)
+            if (disableTimedAct)
                 ToolMenu->addAction(disableTimedAct);
 
-            if(enableTimedAct || disableTimedAct)
+            if (enableTimedAct || disableTimedAct)
                 ToolMenu->addSeparator();
 
-            if(disconnectAct) {
+            if (disconnectAct)
+            {
                 ToolMenu->addAction(disconnectAct);
                 ToolMenu->addSeparator();
             }
@@ -573,16 +606,20 @@ void toSession::windowActivated(QWidget *widget) {
             toMainWidget()->addCustomMenu(ToolMenu);
         }
     }
-    else {
+    else
+    {
         delete ToolMenu;
         ToolMenu = NULL;
     }
 }
 
-void toSession::refresh(void) {
-    try {
+void toSession::refresh(void)
+{
+    try
+    {
         toTreeWidgetItem *item = Sessions->selectedItem();
-        if (item) {
+        if (item)
+        {
             Session = item->text(0);
             Serial = item->text(1);
         }
@@ -590,7 +627,8 @@ void toSession::refresh(void) {
             Session = Serial = QString::null;
         QString sql = toSQL::string(SQLSessions, connection());
 
-        if(toIsOracle(connection())) {
+        if (toIsOracle(connection()))
+        {
             QString extra;
             if (Select->currentIndex() == 0)
                 extra = "   AND a.Type != 'BACKGROUND' AND a.Status != 'INACTIVE'\n";
@@ -612,14 +650,16 @@ void toSession::refresh(void) {
     TOCATCH;
 }
 
-void toSession::done(void) {
+void toSession::done(void)
+{
     int system = 0, total = 0, active = 0;
     for (toTreeWidgetItem *item = Sessions->firstChild();
-         item;
-         item = item->nextSibling())
+            item;
+            item = item->nextSibling())
     {
         if (item->text(0) == Session &&
-            item->text(1) == Serial) {
+                item->text(1) == Serial)
+        {
             Sessions->setSelected(item, true);
         }
         total++;
@@ -632,47 +672,59 @@ void toSession::done(void) {
                    .arg(total).arg(system).arg(active));
 }
 
-void toSession::enableStatistics(bool enable) {
+void toSession::enableStatistics(bool enable)
+{
     QString sql;
     if (enable)
         sql = QString::fromLatin1("ALTER SYSTEM SET TIMED_STATISTICS = TRUE");
     else
         sql = QString::fromLatin1("ALTER SYSTEM SET TIMED_STATISTICS = FALSE");
-    try {
+    try
+    {
         connection().execute(sql);
     }
-    catch (...) {
+    catch (...)
+    {
         toStatusMessage(tr("No access to timed statistics flags"));
     }
 }
 
-void toSession::changeTab(int index) {
+void toSession::changeTab(int index)
+{
     QWidget *tab = ResultTab->widget(index);
 
-    if (tab != CurrentTab) {
+    if (tab != CurrentTab)
+    {
         CurrentTab = tab;
         toTreeWidgetItem *item = Sessions->selectedItem();
-        if (item) {
-            if (CurrentTab == StatisticSplitter) {
+        if (item)
+        {
+            if (CurrentTab == StatisticSplitter)
+            {
                 int ses = item->text(0).toInt();
-                try {
+                try
+                {
                     SessionStatistics->changeSession(ses);
                 }
                 TOCATCH;
             }
-            else if (CurrentTab == ConnectInfo) {
+            else if (CurrentTab == ConnectInfo)
+            {
                 ConnectInfo->clearParams();
                 ConnectInfo->changeParams(item->text(0));
             }
-            else if (CurrentTab == LongOps) {
+            else if (CurrentTab == LongOps)
+            {
                 LongOps->clearParams();
                 LongOps->changeParams(item->text(0), item->text(1));
             }
-            else if (CurrentTab == PendingLocks) {
+            else if (CurrentTab == PendingLocks)
+            {
                 PendingLocks->clearParams();
                 PendingLocks->query(item->text(0));
             }
-            else if (CurrentTab == OpenSplitter) {
+            else if (CurrentTab == OpenSplitter)
+            {
                 toTreeWidgetItem *openitem = OpenCursors->currentItem();
                 QString address;
                 if (openitem)
@@ -681,39 +733,48 @@ void toSession::changeTab(int index) {
                 OpenCursors->changeParams(item->text(0));
                 if (!address.isEmpty())
                     for (openitem = OpenCursors->firstChild();
-                         openitem;openitem = openitem->nextSibling())
-                        if (address == openitem->text(2)) {
+                            openitem;openitem = openitem->nextSibling())
+                        if (address == openitem->text(2))
+                        {
                             OpenCursors->setSelected(item, true);
                             break;
                         }
             }
-            else if (CurrentTab == CurrentStatement) {
+            else if (CurrentTab == CurrentStatement)
+            {
                 CurrentStatement->changeAddress(item->text(Sessions->columns() + 0));
             }
-            else if (CurrentTab == AccessedObjects) {
+            else if (CurrentTab == AccessedObjects)
+            {
                 AccessedObjects->clearParams();
                 AccessedObjects->changeParams(item->text(0));
             }
-            else if (CurrentTab == LockedObjects) {
+            else if (CurrentTab == LockedObjects)
+            {
                 LockedObjects->clearParams();
                 LockedObjects->changeParams(item->text(0));
             }
-            else if (CurrentTab == PreviousStatement) {
+            else if (CurrentTab == PreviousStatement)
+            {
                 PreviousStatement->changeAddress(item->text(Sessions->columns() + 1));
             }
         }
     }
 }
 
-void toSession::changeCursor(toTreeWidgetItem *item) {
+void toSession::changeCursor(toTreeWidgetItem *item)
+{
     if (item)
         OpenStatement->changeAddress(item->text(2));
 }
 
-void toSession::cancelBackend() {
+void toSession::cancelBackend()
+{
     toTreeWidgetItem *item = Sessions->selectedItem();
-    if (item) {
-        try {
+    if (item)
+    {
+        try
+        {
             connection().execute(
                 QString("SELECT pg_cancel_backend ( %1 )").arg(item->text(0)));
         }
@@ -721,9 +782,11 @@ void toSession::cancelBackend() {
     }
 }
 
-void toSession::disconnectSession() {
+void toSession::disconnectSession()
+{
     toTreeWidgetItem *item = Sessions->selectedItem();
-    if (item) {
+    if (item)
+    {
         QString sess = QString::fromLatin1("'");
         sess.append(item->text(0));
         sess.append(QString::fromLatin1(","));
@@ -732,12 +795,13 @@ void toSession::disconnectSession() {
         QString str(tr("Let current transaction finish before "
                        "disconnecting this session?"));
         QString sql;
-        switch(TOMessageBox::warning(this, 
-                                     tr("Commit work?"), 
-                                     str, 
-                                     tr("&Yes"), 
-                                     tr("&No"), 
-                                     tr("Cancel"))) {
+        switch (TOMessageBox::warning(this,
+                                      tr("Commit work?"),
+                                      str,
+                                      tr("&Yes"),
+                                      tr("&No"),
+                                      tr("Cancel")))
+        {
         case 0:
             sql = QString::fromLatin1("ALTER SYSTEM DISCONNECT SESSION ");
             sql.append(sess);
@@ -750,28 +814,34 @@ void toSession::disconnectSession() {
         case 2:
             return ;
         }
-        try {
+        try
+        {
             connection().execute(sql);
         }
         TOCATCH;
     }
 }
 
-void toSession::changeRefresh(const QString &str) {
-    try {
+void toSession::changeRefresh(const QString &str)
+{
+    try
+    {
         toRefreshParse(timer(), str);
     }
     TOCATCH;
 }
 
-void toSession::changeItem(toTreeWidgetItem *item) {
-    if (item && LastSession != item->text(0)) {
-        if (!item->text(0).isEmpty()) {
-            if(WaitBar)
+void toSession::changeItem(toTreeWidgetItem *item)
+{
+    if (item && LastSession != item->text(0))
+    {
+        if (!item->text(0).isEmpty())
+        {
+            if (WaitBar)
                 WaitBar->changeParams(item->text(0));
-            if(IOBar)
+            if (IOBar)
                 IOBar->changeParams(item->text(0));
-            if(Waits)
+            if (Waits)
                 Waits->setSession(item->text(0).toInt());
         }
         LastSession = item->text(0);
@@ -781,7 +851,8 @@ void toSession::changeItem(toTreeWidgetItem *item) {
     changeTab(ResultTab->indexOf(t));
 }
 
-void toSession::refreshTabs(void) {
+void toSession::refreshTabs(void)
+{
     toTreeWidgetItem *item = Sessions->selectedItem();
     if (item)
         changeItem(item);

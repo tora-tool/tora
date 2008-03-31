@@ -48,7 +48,8 @@ class QAction;
  * This button will allow you to change the connection for the nearest
  * toToolWidget parent.
  */
-class toChangeConnection : public toPopupButton {
+class toChangeConnection : public toPopupButton
+{
     Q_OBJECT;
 
 private slots:

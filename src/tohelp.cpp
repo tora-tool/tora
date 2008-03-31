@@ -69,9 +69,10 @@
 toHelp *toHelp::Window;
 
 toHelpAddFile::toHelpAddFile(QWidget *parent, const char *name)
-    : QDialog(parent) {
+        : QDialog(parent)
+{
 
-    if(name)
+    if (name)
         setObjectName(name);
 
     setupUi(this);
@@ -80,14 +81,16 @@ toHelpAddFile::toHelpAddFile(QWidget *parent, const char *name)
 }
 
 
-void toHelpAddFile::browse() {
+void toHelpAddFile::browse()
+{
     QString filename = toOpenFilename(Filename->text(), QString::fromLatin1("toc.htm*"), this);
     if (!filename.isEmpty())
         Filename->setText(filename);
 }
 
 
-void toHelpAddFile::valid() {
+void toHelpAddFile::valid()
+{
     if (Filename->text().isEmpty() || Root->text().isEmpty())
         OkButton->setEnabled(false);
     else
@@ -96,9 +99,10 @@ void toHelpAddFile::valid() {
 
 
 toHelpPrefs::toHelpPrefs(toTool *tool, QWidget *parent, const char *name)
-    : QWidget(parent), toSettingTab("additionalhelp.html"), Tool(tool) {
+        : QWidget(parent), toSettingTab("additionalhelp.html"), Tool(tool)
+{
 
-    if(name)
+    if (name)
         setObjectName(name);
 
     setupUi(this);
@@ -115,18 +119,19 @@ toHelpPrefs::toHelpPrefs(toTool *tool, QWidget *parent, const char *name)
 //             new toTreeWidgetItem(FileList, root, file);
 //         }
 //     }
-	HelpsMapIterator i(toConfigurationSingle::Instance().additionalHelp());
-	while (i.hasNext())
-	{
-		i.next();
-		new toTreeWidgetItem(FileList, i.key(), i.value());
-	}
+    HelpsMapIterator i(toConfigurationSingle::Instance().additionalHelp());
+    while (i.hasNext())
+    {
+        i.next();
+        new toTreeWidgetItem(FileList, i.key(), i.value());
+    }
 }
 
 
-void toHelpPrefs::saveSetting() {
+void toHelpPrefs::saveSetting()
+{
 //     int i = 0;
-	HelpsMap h;
+    HelpsMap h;
     for (toTreeWidgetItem *item = FileList->firstChild();item;item = item->nextSibling())
     {
 //         QString nam = QString::number(i);
@@ -134,27 +139,30 @@ void toHelpPrefs::saveSetting() {
 //         nam += QString::fromLatin1("file");
 //         Tool->setConfig(nam.toLatin1(), item->text(1));
 //         i++;
-		h[item->text(0)] = item->text(1);
+        h[item->text(0)] = item->text(1);
     }
 //     Tool->setConfig("Number", QString::number(i));
-	toConfigurationSingle::Instance().setAdditionalHelp(h);
+    toConfigurationSingle::Instance().setAdditionalHelp(h);
     delete toHelp::Window;
 }
 
 
-void toHelpPrefs::addFile() {
+void toHelpPrefs::addFile()
+{
     toHelpAddFile file(this);
     if (file.exec())
         new toTreeWidgetItem(FileList, file.Root->text(), file.Filename->text());
 }
 
 
-void toHelpPrefs::delFile() {
+void toHelpPrefs::delFile()
+{
     delete FileList->selectedItem();
 }
 
 
-void toHelpPrefs::oracleManuals() {
+void toHelpPrefs::oracleManuals()
+{
     QString filename = toOpenFilename(QString::null, QString::fromLatin1("*index.htm*"), this);
     try
     {
@@ -172,9 +180,9 @@ void toHelpPrefs::oracleManuals() {
                     QString href = toHelp::path(filename);
                     href += file.value("href");
                     if (!href.isEmpty() &&
-                        !dsc.isEmpty() &&
-                        href.indexOf(isToc) >= 0 &&
-                        !file.value("title").isNull())
+                            !dsc.isEmpty() &&
+                            href.indexOf(isToc) >= 0 &&
+                            !file.value("title").isNull())
                     {
                         new toTreeWidgetItem(FileList, dsc.simplified(), href);
                         inDsc = false;
@@ -228,7 +236,8 @@ toHelp::toHelp(QWidget *parent, QString name, bool modal)
                   Qt::WindowTitleHint |
                   Qt::WindowSystemMenuHint |
                   Qt::WindowMinimizeButtonHint |
-                  Qt::WindowMaximizeButtonHint) {
+                  Qt::WindowMaximizeButtonHint)
+{
     setupUi(this);
     setModal(modal);
 
@@ -266,12 +275,12 @@ toHelp::toHelp(QWidget *parent, QString name, bool modal)
 //             Dsc[dsc] = file;
 //         }
 //     }
-	HelpsMapIterator i(toConfigurationSingle::Instance().additionalHelp());
-	while (i.hasNext())
-	{
-		i.next();
-		Dsc[i.key()] = i.value();
-	}
+    HelpsMapIterator i(toConfigurationSingle::Instance().additionalHelp());
+    while (i.hasNext())
+    {
+        i.next();
+        Dsc[i.key()] = i.value();
+    }
 
     splitter->setStretchFactor(splitter->indexOf(tabs), 0);
     setGeometry(x(), y(), std::max(width(), 640), std::max(height(), 480));
@@ -345,7 +354,7 @@ toHelp::toHelp(QWidget *parent, QString name, bool modal)
                         if (file.open())
                         {
                             if (!last)
-                                last = new QTreeWidgetItem(parent, QStringList()<<"--------");
+                                last = new QTreeWidgetItem(parent, QStringList() << "--------");
                             parent = last;
                             last = NULL;
                         }
@@ -582,62 +591,62 @@ void toHelp::search(void)
 
 void toHelp::setSelection(QTreeWidget *lst, const QString &source)
 {
-/*    disconnect(lst, SIGNAL(selectionChanged(toTreeWidgetItem *)),
-               this, SLOT(changeContent(toTreeWidgetItem *)));
+    /*    disconnect(lst, SIGNAL(selectionChanged(toTreeWidgetItem *)),
+                   this, SLOT(changeContent(toTreeWidgetItem *)));
 
-    bool any = false;
+        bool any = false;
 
-    QString t = source;
-    t.replace(QRegExp(QString::fromLatin1("^file:")), QString::fromLatin1(""));
+        QString t = source;
+        t.replace(QRegExp(QString::fromLatin1("^file:")), QString::fromLatin1(""));
 
-    toTreeWidgetItem *next = NULL;
-    for (toTreeWidgetItem *item = lst->firstChild();item;item = next)
-    {
-
-        if ((item->text(2) == t) != bool(item->isSelected()))
+        toTreeWidgetItem *next = NULL;
+        for (toTreeWidgetItem *item = lst->firstChild();item;item = next)
         {
-            if (item->text(2) == t)
+
+            if ((item->text(2) == t) != bool(item->isSelected()))
             {
-                any = true;
-                lst->setSelected(item, true);
-                lst->ensureItemVisible(item);
-                for (toTreeWidgetItem *parent = item->parent();parent;parent = parent->parent())
-                    lst->setOpen(parent, true);
-                break;
+                if (item->text(2) == t)
+                {
+                    any = true;
+                    lst->setSelected(item, true);
+                    lst->ensureItemVisible(item);
+                    for (toTreeWidgetItem *parent = item->parent();parent;parent = parent->parent())
+                        lst->setOpen(parent, true);
+                    break;
+                }
+                else
+                    lst->setSelected(item, false);
+            }
+
+            if (item->firstChild())
+                next = item->firstChild();
+            else if (item->nextSibling())
+            {
+                next = item->nextSibling();
             }
             else
-                lst->setSelected(item, false);
-        }
-
-        if (item->firstChild())
-            next = item->firstChild();
-        else if (item->nextSibling())
-        {
-            next = item->nextSibling();
-        }
-        else
-        {
-            next = item;
-            do
             {
-                next = next->parent();
+                next = item;
+                do
+                {
+                    next = next->parent();
+                }
+                while (next && !next->nextSibling());
+                if (next)
+                    next = next->nextSibling();
             }
-            while (next && !next->nextSibling());
-            if (next)
-                next = next->nextSibling();
         }
-    }
 
-    connect(lst, SIGNAL(selectionChanged(toTreeWidgetItem *)),
-            this, SLOT(changeContent(toTreeWidgetItem *)));
+        connect(lst, SIGNAL(selectionChanged(toTreeWidgetItem *)),
+                this, SLOT(changeContent(toTreeWidgetItem *)));
 
-    if (!any)
-    {
-        QString t = source;
-        t.replace(QRegExp(QString::fromLatin1("#[^#]*$")), QString::null);
-        if (t != source)
-            setSelection(lst, t);
-    }*/
+        if (!any)
+        {
+            QString t = source;
+            t.replace(QRegExp(QString::fromLatin1("#[^#]*$")), QString::null);
+            if (t != source)
+                setSelection(lst, t);
+        }*/
 }
 
 void toHelp::removeSelection(void)

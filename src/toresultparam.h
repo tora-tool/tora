@@ -53,7 +53,8 @@ class toResultView;
  * This widget displays the parameters of a session and lets you edit
  * them.
  */
-class toResultParam : public QWidget, public toResult {
+class toResultParam : public QWidget, public toResult
+{
     Q_OBJECT;
 
     QString LastItem;

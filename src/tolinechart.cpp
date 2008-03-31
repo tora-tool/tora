@@ -115,8 +115,9 @@ void toLineChart::setSamples(int samples)
 }
 
 toLineChart::toLineChart(QWidget *parent, const char *name, Qt::WFlags f)
-        : QWidget(parent, f) {
-    if(name)
+        : QWidget(parent, f)
+{
+    if (name)
         setObjectName(name);
 
     setWindowIcon(QPixmap((const char**)chart_xpm));
@@ -794,7 +795,7 @@ void toLineChart::editPrint(void)
     TOPrinter printer;
     QPrintDialog dialog(&printer, this);
     dialog.setMinMax(1, 1);
-    if(dialog.exec())
+    if (dialog.exec())
     {
         printer.setCreator(tr(TOAPPNAME));
         QPainter painter(&printer);
@@ -854,9 +855,10 @@ toLineChart::~toLineChart()
 }
 
 toLineChart::toLineChart (toLineChart *chart, QWidget *parent, const char *name, Qt::WFlags f)
-    : QWidget(parent, f) {
+        : QWidget(parent, f)
+{
 
-    if(name)
+    if (name)
         setObjectName(name);
 
     Menu = NULL;

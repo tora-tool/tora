@@ -46,7 +46,8 @@ class toAbout : public QDialog, public Ui::toAboutUI
     Q_OBJECT
 
 public:
-    enum AboutType {
+    enum AboutType
+    {
         About,
         License
     };

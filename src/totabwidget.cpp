@@ -55,32 +55,36 @@
                SLOT(tabChanged(int)));
 
 toTabWidget::toTabWidget(QWidget *parent)
-    : QTabWidget(parent) {
+        : QTabWidget(parent)
+{
 
     CONNECT_CHANGED;
 }
 
 
-void toTabWidget::setTabShown(QWidget *w, bool show) {
+void toTabWidget::setTabShown(QWidget *w, bool show)
+{
     int      pos;
     QWidget *parent = w;
 
-    if(!show) {
-        while((pos = indexOf(parent)) < 0 && parent && parent != this)
+    if (!show)
+    {
+        while ((pos = indexOf(parent)) < 0 && parent && parent != this)
             parent = parent->parentWidget();
 
-        if(pos < 0 || parent == this)
+        if (pos < 0 || parent == this)
             return;                 // not found
 
         DISCONNECT_CHANGED;
         QTabWidget::removeTab(pos);
         CONNECT_CHANGED;
     }
-    else {
-        while(!tabs.contains(parent) && parent && parent != this)
+    else
+    {
+        while (!tabs.contains(parent) && parent && parent != this)
             parent = parent->parentWidget();
 
-        if(!tabs.contains(parent) || parent == this || !parent)
+        if (!tabs.contains(parent) || parent == this || !parent)
             return;                 // not found
 
         struct page r = tabs[parent];
@@ -92,7 +96,8 @@ void toTabWidget::setTabShown(QWidget *w, bool show) {
 }
 
 
-int toTabWidget::addTab(QWidget *widget, const QString &label) {
+int toTabWidget::addTab(QWidget *widget, const QString &label)
+{
     struct page p;
     p.label = label;
     p.index = QTabWidget::addTab(widget, label);
@@ -101,7 +106,8 @@ int toTabWidget::addTab(QWidget *widget, const QString &label) {
 }
 
 
-int toTabWidget::addTab(QWidget *widget, const QIcon& icon, const QString &label) {
+int toTabWidget::addTab(QWidget *widget, const QIcon& icon, const QString &label)
+{
     struct page p;
     p.label = label;
     p.index = QTabWidget::addTab(widget, icon, label);
@@ -110,16 +116,18 @@ int toTabWidget::addTab(QWidget *widget, const QIcon& icon, const QString &label
 }
 
 
-void toTabWidget::tabChanged(int index) {
+void toTabWidget::tabChanged(int index)
+{
     QWidget *widget = QTabWidget::widget(index);
-    if(widget)
+    if (widget)
         emit currentTabChanged(widget);
 }
 
 
 // ---------------------------------------- unused
 
-int toTabWidget::insertTab(int index, QWidget *widget, const QString &label) {
+int toTabWidget::insertTab(int index, QWidget *widget, const QString &label)
+{
     return QTabWidget::insertTab(index, widget, label);
 }
 
@@ -127,11 +135,13 @@ int toTabWidget::insertTab(int index, QWidget *widget, const QString &label) {
 int toTabWidget::insertTab(int index,
                            QWidget *widget,
                            const QIcon& icon,
-                           const QString &label) {
+                           const QString &label)
+{
     return QTabWidget::insertTab(index, widget, icon, label);
 }
 
 
-void toTabWidget::removeTab(int index) {
+void toTabWidget::removeTab(int index)
+{
     QTabWidget::removeTab(index);
 }

@@ -47,75 +47,87 @@
 #include <QString>
 #include <QChar>
 
-toHtml::toHtml(const QString &data) {
+toHtml::toHtml(const QString &data)
+{
     Length = data.length();
     Data = data;
     Position = 0;
     LastChar = 0;
 }
 
-toHtml::~toHtml() {
+toHtml::~toHtml()
+{
 }
 
-void toHtml::skipSpace(void) {
-    if(Position >= Length)
+void toHtml::skipSpace(void)
+{
+    if (Position >= Length)
         return;
     QChar c = LastChar;
-    if(c == 0)
+    if (c == 0)
         c = Data[Position];
-    if(c.isSpace()) {
+    if (c.isSpace())
+    {
         Position++;
         LastChar = 0;
-        while(Position < Length && Data[Position].isSpace())
+        while (Position < Length && Data[Position].isSpace())
             Position++;
     }
 }
 
-bool toHtml::eof(void) {
-    if(Position > Length)
+bool toHtml::eof(void)
+{
+    if (Position > Length)
         throw qApp->translate("toHtml", "Invalidly went beyond end of file");
     return Position == Length;
 }
 
-void toHtml::nextToken(void) {
-    if(eof())
+void toHtml::nextToken(void)
+{
+    if (eof())
         throw qApp->translate("toHtml", "Reading HTML after eof");
     QualifierNum = 0;
     QChar c = LastChar;
-    if(c == 0)
+    if (c == 0)
         c = Data[Position];
-    if(c == '<') {
+    if (c == '<')
+    {
         IsTag = true;
         Position++;
         LastChar = 0;
         skipSpace();
         if (Position >= Length)
             throw qApp->translate("toHtml", "Lone < at end");
-        if (Data[Position] != '/') {
+        if (Data[Position] != '/')
+        {
             Open = true;
         }
-        else {
+        else
+        {
             Open = false;
             Position++;
         }
         skipSpace();
         {
             int start = Position;
-            while (Position < Length && !(Data[Position].isSpace()) && Data[Position] != '>') {
+            while (Position < Length && !(Data[Position].isSpace()) && Data[Position] != '>')
+            {
                 Data[Position] = Data[Position].toLower();
                 Position++;
             }
             Tag = mid(start, Position - start);
         }
-        for (;;) {
+        for (;;)
+        {
             skipSpace();
             if (Position >= Length)
                 throw qApp->translate("toHtml", "Unended tag at end");
 
             c = LastChar;
-            if(c == 0)
+            if (c == 0)
                 c = Data[Position];
-            if(c == '>') {
+            if (c == '>')
+            {
                 LastChar = 0;
                 Position++;
                 break;
@@ -127,9 +139,10 @@ void toHtml::nextToken(void) {
                 int start = Position;
 
                 while (Position < Length &&
-                       !(Data[Position].isSpace()) &&
+                        !(Data[Position].isSpace()) &&
                         Data[Position] != '=' &&
-                        Data[Position] != '>') {
+                        Data[Position] != '>')
+                {
                     Data[Position] = Data[Position].toLower();
                     Position++;
                 }
@@ -139,19 +152,22 @@ void toHtml::nextToken(void) {
             if (Position >= Length)
                 throw qApp->translate("toHtml", "Unended tag qualifier at end");
             c = LastChar;
-            if(c == 0)
+            if (c == 0)
                 c = Data[Position];
-            if(c == '=') {
+            if (c == '=')
+            {
                 LastChar = 0;
                 Position++;
                 skipSpace();
                 if (Position >= Length)
                     throw qApp->translate("toHtml", "Unended tag qualifier data at end");
                 c = Data[Position];
-                if (c == '\'' || c == '\"') {
+                if (c == '\'' || c == '\"')
+                {
                     Position++;
                     int start = Position;
-                    while(Data[Position] != c) {
+                    while (Data[Position] != c)
+                    {
                         Position++;
                         if (Position >= Length)
                             throw qApp->translate("toHtml", "Unended quoted string at end");
@@ -160,9 +176,11 @@ void toHtml::nextToken(void) {
                     Position++;
                     LastChar = 0;
                 }
-                else {
+                else
+                {
                     int start = Position;
-                    while (!(Data[Position].isSpace()) && Data[Position] != '>') {
+                    while (!(Data[Position].isSpace()) && Data[Position] != '>')
+                    {
                         Position++;
                         if (Position >= Length)
                             throw qApp->translate("toHtml", "Unended qualifier data at end");
@@ -175,13 +193,15 @@ void toHtml::nextToken(void) {
                 throw qApp->translate("toHtml", "Exceded qualifier max in toHtml");
         }
     }
-    else {
+    else
+    {
         IsTag = false;
         int start = Position;
         Position++;
         LastChar = 0;
-        while(Position < Length) {
-            if(Data[Position] == '<')
+        while (Position < Length)
+        {
+            if (Data[Position] == '<')
                 break;
             Position++;
         }
@@ -189,23 +209,29 @@ void toHtml::nextToken(void) {
     }
 }
 
-QString toHtml::value(const QString &q) {
-    for (int i = 0;i < QualifierNum;i++) {
+QString toHtml::value(const QString &q)
+{
+    for (int i = 0;i < QualifierNum;i++)
+    {
         if (q == Qualifiers[i].Name)
             return Qualifiers[i].Value;
     }
     return NULL;
 }
 
-QString toHtml::text() {
+QString toHtml::text()
+{
     QString ret;
-    for(int pos = 0; pos < Text.length(); pos++) {
-        if(Text[pos] == '&') {
+    for (int pos = 0; pos < Text.length(); pos++)
+    {
+        if (Text[pos] == '&')
+        {
             int start = pos + 1;
             while (Text[pos] != 0 && Text[pos] != ';')
                 pos++;
             QString tmp(QByteArray(start, pos - start));
-            if (tmp[0] == '#') {
+            if (tmp[0] == '#')
+            {
                 tmp = tmp.right(tmp.length() - 1);
                 ret += char(tmp.toInt());
             }
@@ -219,7 +245,8 @@ QString toHtml::text() {
     return ret;
 }
 
-QString toHtml::mid(int start, int size) {
+QString toHtml::mid(int start, int size)
+{
     if (size == 0)
         return "";
     if (start >= Length)
@@ -237,9 +264,11 @@ QString toHtml::mid(int start, int size) {
     return Data.mid(start, size);
 }
 
-bool toHtml::search(const QString &all, const QString &str) {
+bool toHtml::search(const QString &all, const QString &str)
+{
     QString data(str.toLower().toLatin1());
-    enum {
+    enum
+    {
         beginning,
         inTag,
         inString,
@@ -247,29 +276,37 @@ bool toHtml::search(const QString &all, const QString &str) {
     } lastState = beginning, state = beginning;
     int pos = 0;
     QChar endString = 0;
-    for (int i = 0;i < all.length();i++) {
+    for (int i = 0;i < all.length();i++)
+    {
         QChar c = all.at(i).toLower();
-        if (c == '\'' || c == '\"') {
+        if (c == '\'' || c == '\"')
+        {
             endString = c;
             state = inString;
         }
-        else if (c == '<') {
+        else if (c == '<')
+        {
             state = inTag;
         }
-        else {
-            switch (state) {
+        else
+        {
+            switch (state)
+            {
             case inString:
                 if (c == endString)
                     state = lastState;
                 break;
             case beginning:
-                if (data.at(pos) != c) {
+                if (data.at(pos) != c)
+                {
                     pos = 0;
                     state = inWord;
                 }
-                else {
+                else
+                {
                     pos++;
-                    if (pos >= data.length()) {
+                    if (pos >= data.length())
+                    {
                         if (i + 1 >= all.length() || !all.at(i + 1).isLetterOrNumber())
                             return true;
                         pos = 0;
@@ -291,7 +328,8 @@ bool toHtml::search(const QString &all, const QString &str) {
     return false;
 }
 
-QString toHtml::escape(const QString &html) {
+QString toHtml::escape(const QString &html)
+{
     QString ret = html;
 
     static QRegExp amp(QString::fromLatin1("\\&"));

@@ -126,14 +126,14 @@ public:
 //             if (!tool->config(*i, "").isEmpty())
 //                 item->setSelected(true);
 //         }
-		toTreeWidgetItem *item = new toTreeWidgetItem(EnabledTabs, CONF_OVERVIEW);
-		item->setSelected(toConfigurationSingle::Instance().tuningOverview());
-		toTreeWidgetItem *item1 = new toTreeWidgetItem(EnabledTabs, CONF_FILEIO);
-		item1->setSelected(toConfigurationSingle::Instance().tuningFileIO());
-		toTreeWidgetItem *item2 = new toTreeWidgetItem(EnabledTabs, CONF_WAITS);
-		item2->setSelected(toConfigurationSingle::Instance().tuningWaits());
-		toTreeWidgetItem *item3 = new toTreeWidgetItem(EnabledTabs, CONF_CHART);
-		item3->setSelected(toConfigurationSingle::Instance().tuningCharts());
+        toTreeWidgetItem *item = new toTreeWidgetItem(EnabledTabs, CONF_OVERVIEW);
+        item->setSelected(toConfigurationSingle::Instance().tuningOverview());
+        toTreeWidgetItem *item1 = new toTreeWidgetItem(EnabledTabs, CONF_FILEIO);
+        item1->setSelected(toConfigurationSingle::Instance().tuningFileIO());
+        toTreeWidgetItem *item2 = new toTreeWidgetItem(EnabledTabs, CONF_WAITS);
+        item2->setSelected(toConfigurationSingle::Instance().tuningWaits());
+        toTreeWidgetItem *item3 = new toTreeWidgetItem(EnabledTabs, CONF_CHART);
+        item3->setSelected(toConfigurationSingle::Instance().tuningCharts());
 
         EnabledTabs->setSorting(0);
     }
@@ -141,15 +141,15 @@ public:
     {
         for (toTreeWidgetItem *item = EnabledTabs->firstChild();item;item = item->nextSibling())
         {
-			// NOTE: OK, it's ugly, but this is the only place where new QSettings fails
-			if (item->text(0) == CONF_OVERVIEW)
-				toConfigurationSingle::Instance().setTuningOverview(item->isSelected());
-			else if (item->text(0) == CONF_FILEIO)
-				toConfigurationSingle::Instance().setTuningFileIO(item->isSelected());
-			else if (item->text(0) == CONF_WAITS)
-				toConfigurationSingle::Instance().setTuningWaits(item->isSelected());
-			else if (item->text(0) == CONF_CHART)
-				toConfigurationSingle::Instance().setTuningCharts(item->isSelected());
+            // NOTE: OK, it's ugly, but this is the only place where new QSettings fails
+            if (item->text(0) == CONF_OVERVIEW)
+                toConfigurationSingle::Instance().setTuningOverview(item->isSelected());
+            else if (item->text(0) == CONF_FILEIO)
+                toConfigurationSingle::Instance().setTuningFileIO(item->isSelected());
+            else if (item->text(0) == CONF_WAITS)
+                toConfigurationSingle::Instance().setTuningWaits(item->isSelected());
+            else if (item->text(0) == CONF_CHART)
+                toConfigurationSingle::Instance().setTuningCharts(item->isSelected());
 
 //             if (item->isSelected() || Tool->config(item->text(0).toLatin1(), "Undefined") != "Undefined")
 //                 Tool->setConfig(item->text(0).toLatin1(), QString::fromLatin1((item->isSelected() ? "Yes" : "")));
@@ -201,11 +201,11 @@ static toSQL SQLDataCache("toTuning:Indicators:Important ratios:3DataCache",
                           "0800");
 
 static toSQL SQLDataCache10("toTuning:Indicators:Important ratios:3DataCache",
-                           "SELECT (1-SUM(DECODE(statistic#,54,value,0))/SUM(DECODE(statistic#,47,value,50,value,0)))*100,' %'\n"
-                           "  FROM v$sysstat\n"
-                           " WHERE statistic# IN (47,50,54)",
-                           "",
-                           "1000");
+                            "SELECT (1-SUM(DECODE(statistic#,54,value,0))/SUM(DECODE(statistic#,47,value,50,value,0)))*100,' %'\n"
+                            "  FROM v$sysstat\n"
+                            " WHERE statistic# IN (47,50,54)",
+                            "",
+                            "1000");
 
 static toSQL SQLDataCache9("toTuning:Indicators:Important ratios:3DataCache",
                            "SELECT (1-SUM(DECODE(statistic#,42,value,0))/SUM(DECODE(statistic#,40,value,41,value,0)))*100,' %'\n"
@@ -227,9 +227,9 @@ static toSQL SQLLogRedo("toTuning:Indicators:Redo log contention:1LogSpace",
                         "0800");
 
 static toSQL SQLLogRedo10("toTuning:Indicators:Redo log contention:1LogSpace",
-                         "select value from v$sysstat where statistic# = 141",
-                         "",
-                         "1000");
+                          "select value from v$sysstat where statistic# = 141",
+                          "",
+                          "1000");
 
 static toSQL SQLLogRedo9("toTuning:Indicators:Redo log contention:1LogSpace",
                          "select value from v$sysstat where statistic# = 122",
@@ -249,11 +249,11 @@ static toSQL SQLSystemHeadUndo("toTuning:Indicators:RBS contention:1SystemHeadUn
                                "0800");
 
 static toSQL SQLSystemHeadUndo10("toTuning:Indicators:RBS contention:1SystemHeadUndo",
-                                "SELECT count/blocks*100,' %'\n"
-                                "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo header') a,\n"
-                                "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (47,50)) b",
-                                "",
-                                "1000");
+                                 "SELECT count/blocks*100,' %'\n"
+                                 "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo header') a,\n"
+                                 "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (47,50)) b",
+                                 "",
+                                 "1000");
 
 static toSQL SQLSystemHeadUndo9("toTuning:Indicators:RBS contention:1SystemHeadUndo",
                                 "SELECT count/blocks*100,' %'\n"
@@ -277,11 +277,11 @@ static toSQL SQLSystemBlockUndo("toTuning:Indicators:RBS contention:2SystemBlock
                                 "0800");
 
 static toSQL SQLSystemBlockUndo10("toTuning:Indicators:RBS contention:2SystemBlockUndo",
-                                 "SELECT count/blocks*100,' %'\n"
-                                 "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo block') a,\n"
-                                 "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (47,50)) b",
-                                 "",
-                                 "1000");
+                                  "SELECT count/blocks*100,' %'\n"
+                                  "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo block') a,\n"
+                                  "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (47,50)) b",
+                                  "",
+                                  "1000");
 
 static toSQL SQLSystemBlockUndo9("toTuning:Indicators:RBS contention:2SystemBlockUndo",
                                  "SELECT count/blocks*100,' %'\n"
@@ -305,11 +305,11 @@ static toSQL SQLHeadUndo("toTuning:Indicators:RBS contention:3HeadUndo",
                          "0800");
 
 static toSQL SQLHeadUndo10("toTuning:Indicators:RBS contention:3HeadUndo",
-                          "SELECT count/blocks*100,' %'\n"
-                          "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo header') a,\n"
-                          "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (47,50)) b",
-                          "",
-                          "1000");
+                           "SELECT count/blocks*100,' %'\n"
+                           "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo header') a,\n"
+                           "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (47,50)) b",
+                           "",
+                           "1000");
 
 static toSQL SQLHeadUndo9("toTuning:Indicators:RBS contention:3HeadUndo",
                           "SELECT count/blocks*100,' %'\n"
@@ -333,11 +333,11 @@ static toSQL SQLBlockUndo("toTuning:Indicators:RBS contention:4BlockUndo",
                           "0800");
 
 static toSQL SQLBlockUndo10("toTuning:Indicators:RBS contention:4BlockUndo",
-                           "SELECT count/blocks*100,' %'\n"
-                           "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo block') a,\n"
-                           "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (47,50)) b",
-                           "",
-                           "1000");
+                            "SELECT count/blocks*100,' %'\n"
+                            "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo block') a,\n"
+                            "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (47,50)) b",
+                            "",
+                            "1000");
 
 static toSQL SQLBlockUndo9("toTuning:Indicators:RBS contention:4BlockUndo",
                            "SELECT count/blocks*100,' %'\n"
@@ -389,13 +389,13 @@ static toSQL SQLChartsPhysical("toTuning:Charts:1BBPhysical I/O",
                                "0800");
 
 static toSQL SQLChartsPhysical10("toTuning:Charts:1BBPhysical I/O",
-                                "select SYSDATE,\n"
-                                "       sum(decode(statistic#,42,value,0)) \"Physical reads\",\n"
-                                "       sum(decode(statistic#,46,value,0)) \"Physical writes\",\n"
-                                "       sum(decode(statistic#,119,value,0)) \"Redo writes\"\n"
-                                "  from v$sysstat where statistic# in (54,62,138)",
-                                "",
-                                "1000");
+                                 "select SYSDATE,\n"
+                                 "       sum(decode(statistic#,42,value,0)) \"Physical reads\",\n"
+                                 "       sum(decode(statistic#,46,value,0)) \"Physical writes\",\n"
+                                 "       sum(decode(statistic#,119,value,0)) \"Redo writes\"\n"
+                                 "  from v$sysstat where statistic# in (54,62,138)",
+                                 "",
+                                 "1000");
 
 static toSQL SQLChartsPhysical9("toTuning:Charts:1BBPhysical I/O",
                                 "select SYSDATE,\n"
@@ -426,14 +426,14 @@ static toSQL SQLChartsLogical("toTuning:Charts:2BBLogical I/O",
                               "0800");
 
 static toSQL SQLChartsLogical10("toTuning:Charts:2BBLogical I/O",
-                               "select SYSDATE,\n"
-                               "       sum(decode(statistic#,47,value,0)) \"Block gets\",\n"
-                               "       sum(decode(statistic#,50,value,0)) \"Consistent gets\",\n"
-                               "       sum(decode(statistic#,59,value,0)) \"Block changes\",\n"
-                               "       sum(decode(statistic#,60,value,0)) \"Consistent changes\"\n"
-                               "  from v$sysstat where statistic# in (47,50,59,60)",
-                               "",
-                               "1000");
+                                "select SYSDATE,\n"
+                                "       sum(decode(statistic#,47,value,0)) \"Block gets\",\n"
+                                "       sum(decode(statistic#,50,value,0)) \"Consistent gets\",\n"
+                                "       sum(decode(statistic#,59,value,0)) \"Block changes\",\n"
+                                "       sum(decode(statistic#,60,value,0)) \"Consistent changes\"\n"
+                                "  from v$sysstat where statistic# in (47,50,59,60)",
+                                "",
+                                "1000");
 
 static toSQL SQLChartsLogical9("toTuning:Charts:2BBLogical I/O",
                                "select SYSDATE,\n"
@@ -550,16 +550,16 @@ static toSQL SQLChartsCacheMisses("toTuning:Charts:5CPCache misses",
                                   "0800");
 
 static toSQL SQLChartsCacheMisses10("toTuning:Charts:5CPCache misses",
-                                   "select sysdate,\n"
-                                   "       pread \"Data buffer cache\",read \"Dictionary row cache\",\n"
-                                   "       getmiss \"Library cache\",gets \" \",\n"
-                                   "       reloads \" \",pins \" \"\n"
-                                   "  from (select 100*SUM(DECODE(statistic#,54,value,0)) pread,SUM(DECODE(statistic#,47,value,50,value,0)) read\n"
-                                   "          from v$sysstat where statistic# IN (47,50,54)) \"Data buffer cache\",\n"
-                                   "       (select 100*sum(getmisses) getmiss,sum(gets) gets from v$rowcache) \"Dictionary row cache\",\n"
-                                   "       (select 100*sum(reloads) reloads,sum(pins) pins from v$librarycache) \"Library cache\"\n",
-                                   "",
-                                   "1000");
+                                    "select sysdate,\n"
+                                    "       pread \"Data buffer cache\",read \"Dictionary row cache\",\n"
+                                    "       getmiss \"Library cache\",gets \" \",\n"
+                                    "       reloads \" \",pins \" \"\n"
+                                    "  from (select 100*SUM(DECODE(statistic#,54,value,0)) pread,SUM(DECODE(statistic#,47,value,50,value,0)) read\n"
+                                    "          from v$sysstat where statistic# IN (47,50,54)) \"Data buffer cache\",\n"
+                                    "       (select 100*sum(getmisses) getmiss,sum(gets) gets from v$rowcache) \"Dictionary row cache\",\n"
+                                    "       (select 100*sum(reloads) reloads,sum(pins) pins from v$librarycache) \"Library cache\"\n",
+                                    "",
+                                    "1000");
 
 static toSQL SQLChartsCacheMisses9("toTuning:Charts:5CPCache misses",
                                    "select sysdate,\n"
@@ -594,12 +594,12 @@ static toSQL SQLChartsRedo("toTuning:Charts:7BSRedo log I/O",
                            "0800");
 
 static toSQL SQLChartsRedo10("toTuning:Charts:7BSRedo log I/O",
-                            "select SYSDATE,\n"
-                            "       sum(decode(statistic#,134,value,0))/:unit<int> \"Redo size\",\n"
-                            "       sum(decode(statistic#,136,value,0))/:unit<int> \"Redo wastage\"\n"
-                            "  from v$sysstat where statistic# in (134,136)",
-                            "",
-                            "1000");
+                             "select SYSDATE,\n"
+                             "       sum(decode(statistic#,134,value,0))/:unit<int> \"Redo size\",\n"
+                             "       sum(decode(statistic#,136,value,0))/:unit<int> \"Redo wastage\"\n"
+                             "  from v$sysstat where statistic# in (134,136)",
+                             "",
+                             "1000");
 
 static toSQL SQLChartsRedo9("toTuning:Charts:7BSRedo log I/O",
                             "select SYSDATE,\n"
@@ -634,11 +634,11 @@ static toSQL SQLOverviewBufferHit("toTuning:Overview:BufferHit",
                                   "0800");
 
 static toSQL SQLOverviewBufferHit10("toTuning:Overview:BufferHit",
-                                   "SELECT SYSDATE,(1-SUM(DECODE(statistic#,54,value,0))/SUM(DECODE(statistic#,47,value,50,value,0)))*100\n"
-                                   "  FROM v$sysstat\n"
-                                   " WHERE statistic# IN (47,50,54)",
-                                   "",
-                                   "1000");
+                                    "SELECT SYSDATE,(1-SUM(DECODE(statistic#,54,value,0))/SUM(DECODE(statistic#,47,value,50,value,0)))*100\n"
+                                    "  FROM v$sysstat\n"
+                                    " WHERE statistic# IN (47,50,54)",
+                                    "",
+                                    "1000");
 
 static toSQL SQLOverviewBufferHit9("toTuning:Overview:BufferHit",
                                    "SELECT SYSDATE,(1-SUM(DECODE(statistic#,42,value,0))/SUM(DECODE(statistic#,40,value,41,value,0)))*100\n"
@@ -661,10 +661,10 @@ static toSQL SQLOverviewClientInput("toTuning:Overview:ClientInput",
                                     "0800");
 
 static toSQL SQLOverviewClientInput10("toTuning:Overview:ClientInput",
-                                     "select sysdate,value/:f1<int>\n"
-                                     "  from v$sysstat where statistic# = 338",
-                                     "",
-                                     "1000");
+                                      "select sysdate,value/:f1<int>\n"
+                                      "  from v$sysstat where statistic# = 338",
+                                      "",
+                                      "1000");
 
 static toSQL SQLOverviewClientInput9("toTuning:Overview:ClientInput",
                                      "select sysdate,value/:f1<int>\n"
@@ -685,10 +685,10 @@ static toSQL SQLOverviewClientOutput("toTuning:Overview:ClientOutput",
                                      "0800");
 
 static toSQL SQLOverviewClientOutput10("toTuning:Overview:ClientOutput",
-                                      "select sysdate,value/:f1<int>\n"
-                                      "  from v$sysstat where statistic# = 339",
-                                      "",
-                                      "1000");
+                                       "select sysdate,value/:f1<int>\n"
+                                       "  from v$sysstat where statistic# = 339",
+                                       "",
+                                       "1000");
 
 static toSQL SQLOverviewClientOutput9("toTuning:Overview:ClientOutput",
                                       "select sysdate,value/:f1<int>\n"
@@ -709,10 +709,10 @@ static toSQL SQLOverviewExecute("toTuning:Overview:Execute",
                                 "0800");
 
 static toSQL SQLOverviewExecute10("toTuning:Overview:Execute",
-                                 "select sysdate,value\n"
-                                 "  from v$sysstat where statistic# = 337",
-                                 "",
-                                 "1000");
+                                  "select sysdate,value\n"
+                                  "  from v$sysstat where statistic# = 337",
+                                  "",
+                                  "1000");
 
 static toSQL SQLOverviewExecute9("toTuning:Overview:Execute",
                                  "select sysdate,value\n"
@@ -733,10 +733,10 @@ static toSQL SQLOverviewParse("toTuning:Overview:Parse",
                               "0800");
 
 static toSQL SQLOverviewParse10("toTuning:Overview:Parse",
-                               "select sysdate,value\n"
-                               "  from v$sysstat where statistic# = 333",
-                               "",
-                               "1000");
+                                "select sysdate,value\n"
+                                "  from v$sysstat where statistic# = 333",
+                                "",
+                                "1000");
 
 static toSQL SQLOverviewParse9("toTuning:Overview:Parse",
                                "select sysdate,value\n"
@@ -757,10 +757,10 @@ static toSQL SQLOverviewRedoEntries("toTuning:Overview:RedoEntries",
                                     "0800");
 
 static toSQL SQLOverviewRedoEntries10("toTuning:Overview:RedoEntries",
-                                     "select sysdate,value\n"
-                                     "  from v$sysstat where statistic# = 133",
-                                     "",
-                                     "1000");
+                                      "select sysdate,value\n"
+                                      "  from v$sysstat where statistic# = 133",
+                                      "",
+                                      "1000");
 
 static toSQL SQLOverviewRedoEntries9("toTuning:Overview:RedoEntries",
                                      "select sysdate,value\n"
@@ -781,10 +781,10 @@ static toSQL SQLOverviewRedoBlocks("toTuning:Overview:RedoBlocks",
                                    "0800");
 
 static toSQL SQLOverviewRedoBlocks10("toTuning:Overview:RedoBlocks",
-                                    "select sysdate,value\n"
-                                    "  from v$sysstat where statistic# = 139",
-                                    "",
-                                    "1000");
+                                     "select sysdate,value\n"
+                                     "  from v$sysstat where statistic# = 139",
+                                     "",
+                                     "1000");
 
 static toSQL SQLOverviewRedoBlocks9("toTuning:Overview:RedoBlocks",
                                     "select sysdate,value\n"
@@ -805,10 +805,10 @@ static toSQL SQLOverviewLogicalRead("toTuning:Overview:LogicalRead",
                                     "0800");
 
 static toSQL SQLOverviewLogicalRead10("toTuning:Overview:LogicalRead",
-                                     "select sysdate,sum(value)\n"
-                                     "  from v$sysstat where statistic# in (47,50)",
-                                     "",
-                                     "1000");
+                                      "select sysdate,sum(value)\n"
+                                      "  from v$sysstat where statistic# in (47,50)",
+                                      "",
+                                      "1000");
 
 static toSQL SQLOverviewLogicalRead9("toTuning:Overview:LogicalRead",
                                      "select sysdate,sum(value)\n"
@@ -829,10 +829,10 @@ static toSQL SQLOverviewLogicalWrite("toTuning:Overview:LogicalWrite",
                                      "0800");
 
 static toSQL SQLOverviewLogicalWrite10("toTuning:Overview:LogicalWrite",
-                                      "select sysdate,sum(value)\n"
-                                      "  from v$sysstat where statistic# in (59,60)",
-                                      "",
-                                      "1000");
+                                       "select sysdate,sum(value)\n"
+                                       "  from v$sysstat where statistic# in (59,60)",
+                                       "",
+                                       "1000");
 
 static toSQL SQLOverviewLogicalWrite9("toTuning:Overview:LogicalWrite",
                                       "select sysdate,sum(value)\n"
@@ -853,10 +853,10 @@ static toSQL SQLOverviewPhysicalRead("toTuning:Overview:PhysicalRead",
                                      "0800");
 
 static toSQL SQLOverviewPhysicalRead10("toTuning:Overview:PhysicalRead",
-                                      "select sysdate,value\n"
-                                      "  from v$sysstat where statistic# = 54",
-                                      "",
-                                      "1000");
+                                       "select sysdate,value\n"
+                                       "  from v$sysstat where statistic# = 54",
+                                       "",
+                                       "1000");
 
 static toSQL SQLOverviewPhysicalRead9("toTuning:Overview:PhysicalRead",
                                       "select sysdate,value\n"
@@ -877,10 +877,10 @@ static toSQL SQLOverviewPhysicalWrite("toTuning:Overview:PhysicalWrite",
                                       "0800");
 
 static toSQL SQLOverviewPhysicalWrite10("toTuning:Overview:PhysicalWrite",
-                                       "select sysdate,value\n"
-                                       "  from v$sysstat where statistic# = 62",
-                                       "",
-                                       "1000");
+                                        "select sysdate,value\n"
+                                        "  from v$sysstat where statistic# = 62",
+                                        "",
+                                        "1000");
 
 static toSQL SQLOverviewPhysicalWrite9("toTuning:Overview:PhysicalWrite",
                                        "select sysdate,value\n"
@@ -1479,7 +1479,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
         : toToolWidget(TuningTool, "tuning.html", main, connection)
 {
 //     if (TuningTool.config(CONF_OVERVIEW, "Undefined") == "Undefined")
-	if (toConfigurationSingle::Instance().tuningFirstRun())
+    if (toConfigurationSingle::Instance().tuningFirstRun())
     {
         bool def = false; //QString def = QString::null;
 //         if (TOMessageBox::warning(
@@ -1498,27 +1498,27 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
 //             def = "Yes";
 //         }
         if (TOMessageBox::warning(
-                toMainWidget(),
-                tr("Enable all tuning statistics"),
-                tr("Are you sure you want to enable all tuning features.\n"
-                   "This can put heavy strain on a database and unless you\n"
-                   "are the DBA you probably don't want this. Selecting\n"
-                   "no here will give you the option to enable or disable\n"
-                   "tabs individually as they are needed."),
-                tr("Yes"),
-                tr("&No"),
-                QString::null,
-                1) == 0)
+                    toMainWidget(),
+                    tr("Enable all tuning statistics"),
+                    tr("Are you sure you want to enable all tuning features.\n"
+                       "This can put heavy strain on a database and unless you\n"
+                       "are the DBA you probably don't want this. Selecting\n"
+                       "no here will give you the option to enable or disable\n"
+                       "tabs individually as they are needed."),
+                    tr("Yes"),
+                    tr("&No"),
+                    QString::null,
+                    1) == 0)
         {
             def = true;
         }
 //         std::list<QString> tabs = TabList();
 //         for (std::list<QString>::iterator i = tabs.begin();i != tabs.end();i++)
 //             TuningTool.setConfig(*i, def);
-		toConfigurationSingle::Instance().setTuningOverview(def);
-		toConfigurationSingle::Instance().setTuningFileIO(def);
-		toConfigurationSingle::Instance().setTuningWaits(def);
-		toConfigurationSingle::Instance().setTuningCharts(def);
+        toConfigurationSingle::Instance().setTuningOverview(def);
+        toConfigurationSingle::Instance().setTuningFileIO(def);
+        toConfigurationSingle::Instance().setTuningWaits(def);
+        toConfigurationSingle::Instance().setTuningCharts(def);
         toConfigurationSingle::Instance().saveConfig();
     }
 
@@ -1526,10 +1526,10 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     layout()->addWidget(toolbar);
 
     refreshAct = toolbar->addAction(
-        QIcon(QPixmap(const_cast<const char**>(refresh_xpm))),
-        tr("Refresh"),
-        this,
-        SLOT(refresh(void)));
+                     QIcon(QPixmap(const_cast<const char**>(refresh_xpm))),
+                     tr("Refresh"),
+                     this,
+                     SLOT(refresh(void)));
     refreshAct->setShortcut(QKeySequence::Refresh);
 
     toolbar->addSeparator();
@@ -1595,7 +1595,8 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
             }
             std::map<QString, QWidget *>::iterator j = Charts.find(QString(CONF_CHART) + parts[2].toLatin1());
             QWidget *cchart;
-            if (j == Charts.end()) {
+            if (j == Charts.end())
+            {
                 cchart = new QWidget(Tabs);
                 cchart->setObjectName(QString(CONF_CHART) + parts[2]);
                 cchart->setLayout(new QGridLayout);
@@ -1676,8 +1677,8 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     }
 
     for (std::map<QString, QWidget *>::iterator k = Charts.begin();
-         k != Charts.end();
-         k++)
+            k != Charts.end();
+            k++)
         Tabs->addTab((*k).second, tr((*k).first.mid(strlen(CONF_CHART)).toAscii().constData()));
 
     Waits = new toWaitEvents(this, "waits");
@@ -1732,14 +1733,14 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
 //     for (std::list<QString>::iterator i = tabs.begin();i != tabs.end();i++)
 //         if (TuningTool.config(*i, "").isEmpty())
 //             enableTab(*i, false);
-	if (!toConfigurationSingle::Instance().tuningOverview())
-		enableTab(CONF_OVERVIEW, false);
-	if (!toConfigurationSingle::Instance().tuningFileIO())
-		enableTab(CONF_FILEIO, false);
-	if (!toConfigurationSingle::Instance().tuningWaits())
-		enableTab(CONF_WAITS, false);
-	if (!toConfigurationSingle::Instance().tuningCharts())
-		enableTab(CONF_CHART, false);
+    if (!toConfigurationSingle::Instance().tuningOverview())
+        enableTab(CONF_OVERVIEW, false);
+    if (!toConfigurationSingle::Instance().tuningFileIO())
+        enableTab(CONF_FILEIO, false);
+    if (!toConfigurationSingle::Instance().tuningWaits())
+        enableTab(CONF_WAITS, false);
+    if (!toConfigurationSingle::Instance().tuningCharts())
+        enableTab(CONF_CHART, false);
     refresh();
     setFocusProxy(Tabs);
 }
@@ -1766,10 +1767,12 @@ QWidget *toTuning::tabWidget(const QString &name)
     return widget;
 }
 
-void toTuning::showTabMenu(void) {
+void toTuning::showTabMenu(void)
+{
     tabMenu->clear();
     std::list<QString> tab = TabList();
-    for (std::list<QString>::iterator i = tab.begin(); i != tab.end(); i++) {
+    for (std::list<QString>::iterator i = tab.begin(); i != tab.end(); i++)
+    {
         QAction *act = new QAction(tr((*i).toAscii().constData()), tabMenu);
         QWidget *widget = tabWidget(*i);
 
@@ -1781,13 +1784,14 @@ void toTuning::showTabMenu(void) {
     }
 }
 
-void toTuning::enableTabMenu(QAction *act) {
-    if(!act)
+void toTuning::enableTabMenu(QAction *act)
+{
+    if (!act)
         return;
 
     QString text(act->text().toAscii());
     QWidget *widget = tabWidget(text);
-    if(widget)
+    if (widget)
         enableTab(text, !Tabs->isTabEnabled(Tabs->indexOf(widget)));
 }
 
@@ -1858,14 +1862,17 @@ void toTuning::enableTab(const QString &name, bool enable)
 void toTuning::changeTab(int index)
 {
     QWidget *widget = Tabs->widget(index);
-    if(!widget || LastTab == widget)
+    if (!widget || LastTab == widget)
         return;
     refresh();
 }
 
-void toTuning::windowActivated(QWidget *widget) {
-    if (widget == this) {
-        if (!ToolMenu) {
+void toTuning::windowActivated(QWidget *widget)
+{
+    if (widget == this)
+    {
+        if (!ToolMenu)
+        {
             ToolMenu = new QMenu(tr("&Tuning"), this);
 
             ToolMenu->addAction(refreshAct);
@@ -1874,7 +1881,8 @@ void toTuning::windowActivated(QWidget *widget) {
             toMainWidget()->addCustomMenu(ToolMenu);
         }
     }
-    else {
+    else
+    {
         delete ToolMenu;
         ToolMenu = NULL;
     }
@@ -2006,9 +2014,10 @@ static toSQL SQLFileIO8("toTuning:FileIO",
                         "0800");
 
 toTuningFileIO::toTuningFileIO(QWidget *parent)
-    : QWidget(parent)
+        : QWidget(parent)
 {
-    try {
+    try
+    {
         connect(toCurrentTool(this)->timer(), SIGNAL(timeout()), this, SLOT(refresh()));
 
         // fscking qscrollarea won't resize unless this is added
@@ -2026,7 +2035,8 @@ toTuningFileIO::toTuningFileIO(QWidget *parent)
         QComboBox *combo = new QComboBox(Box);
         combo->addItem(tr("File I/O"));
         combo->addItem(tr("File timing"));
-        if(toCurrentConnection(this).version() >= "0800") {
+        if (toCurrentConnection(this).version() >= "0800")
+        {
             combo->addItem(tr("Tablespace I/O"));
             combo->addItem(tr("Tablespace timing"));
         }
@@ -2103,11 +2113,13 @@ void toTuningFileIO::allocCharts(const QString &name)
     labelTime.insert(labelTime.end(), tr("Maximum Write"));
 
     toResultBar *barchart;
-    if (name.startsWith(QString::fromLatin1("tspc:"))) {
+    if (name.startsWith(QString::fromLatin1("tspc:")))
+    {
         barchart = new toResultBar(TablespaceReads);
         TablespaceReads->layout()->addWidget(barchart);
     }
-    else {
+    else
+    {
         barchart = new toResultBar(FileReads);
         FileReads->layout()->addWidget(barchart);
     }
@@ -2120,11 +2132,13 @@ void toTuningFileIO::allocCharts(const QString &name)
     barchart->show();
 
     toResultLine *linechart;
-    if (name.startsWith(QString::fromLatin1("tspc:"))) {
+    if (name.startsWith(QString::fromLatin1("tspc:")))
+    {
         linechart = new toResultLine(TablespaceTime);
         TablespaceTime->layout()->addWidget(linechart);
     }
-    else {
+    else
+    {
         linechart = new toResultLine(FileTime);
         FileTime->layout()->addWidget(linechart);
     }

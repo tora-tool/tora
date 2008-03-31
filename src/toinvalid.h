@@ -44,7 +44,8 @@
 class toResultExtract;
 class toResultTableView;
 
-class toInvalid : public toToolWidget {
+class toInvalid : public toToolWidget
+{
     Q_OBJECT;
 
     toResultTableView *Objects;

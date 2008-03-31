@@ -68,11 +68,12 @@
 toResultData::toResultData(QWidget *parent,
                            const char *name,
                            Qt::WindowFlags f)
-    : QWidget(parent, f) {
+        : QWidget(parent, f)
+{
 
     AllFilter = false;
 
-    if(name)
+    if (name)
         setObjectName(name);
 
     QVBoxLayout *vbox = new QVBoxLayout;
@@ -99,69 +100,69 @@ toResultData::toResultData(QWidget *parent,
     singleRecordForm(false);
 
     filterAct = toolbar->addAction(
-        QIcon(QPixmap(const_cast<const char**>(filter_xpm))),
-        tr("Define filter for editor"));
+                    QIcon(QPixmap(const_cast<const char**>(filter_xpm))),
+                    tr("Define filter for editor"));
     filterAct->setCheckable(true);
     connect(filterAct, SIGNAL(triggered(bool)), this, SLOT(changeFilter(bool)));
 
     removeAct = toolbar->addAction(
-        QIcon(QPixmap(const_cast<const char**>(nofilter_xpm))),
-        tr("Remove filters"));
+                    QIcon(QPixmap(const_cast<const char**>(nofilter_xpm))),
+                    tr("Remove filters"));
     connect(removeAct, SIGNAL(triggered(bool)), this, SLOT(removeFilter(bool)));
 
     toolbar->addSeparator();
 
     saveAct = toolbar->addAction(
-        QIcon(QPixmap(const_cast<const char**>(filesave_xpm))),
-        tr("Save changes"));
+                  QIcon(QPixmap(const_cast<const char**>(filesave_xpm))),
+                  tr("Save changes"));
     connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
     connect(Edit, SIGNAL(changed(bool)), saveAct, SLOT(setEnabled(bool)));
 
     addAct = toolbar->addAction(
-        QIcon(QPixmap(const_cast<const char**>(addrecord_xpm))),
-        tr("Add a new record"));
+                 QIcon(QPixmap(const_cast<const char**>(addrecord_xpm))),
+                 tr("Add a new record"));
     connect(addAct, SIGNAL(triggered()), this, SLOT(addRecord()));
 
     duplicateAct = toolbar->addAction(
-        QIcon(QPixmap(const_cast<const char**>(duplicaterecord_xpm))),
-        tr("Duplicate an existing record"));
+                       QIcon(QPixmap(const_cast<const char**>(duplicaterecord_xpm))),
+                       tr("Duplicate an existing record"));
     connect(duplicateAct, SIGNAL(triggered()), Edit, SLOT(duplicateRecord()));
 
     deleteAct = toolbar->addAction(
-        QIcon(QPixmap(const_cast<const char**>(trash_xpm))),
-        tr("Delete current record from table"));
+                    QIcon(QPixmap(const_cast<const char**>(trash_xpm))),
+                    tr("Delete current record from table"));
     connect(deleteAct, SIGNAL(triggered()), Edit, SLOT(deleteRecord()));
 
     toolbar->addSeparator();
 
     refreshAct = toolbar->addAction(
-        QIcon(QPixmap(const_cast<const char**>(refresh_xpm))),
-        tr("Refresh data"));
+                     QIcon(QPixmap(const_cast<const char**>(refresh_xpm))),
+                     tr("Refresh data"));
     connect(refreshAct, SIGNAL(triggered()), this, SLOT(refreshWarn()));
 
     toolbar->addSeparator();
 
     firstAct = toolbar->addAction(
-        QIcon(QPixmap(const_cast<const char**>(rewind_xpm))),
-        tr("Go to first row"));
+                   QIcon(QPixmap(const_cast<const char**>(rewind_xpm))),
+                   tr("Go to first row"));
 
     previousAct = toolbar->addAction(
-        QIcon(QPixmap(const_cast<const char**>(previous_xpm))),
-        tr("Go to previous row"));
+                      QIcon(QPixmap(const_cast<const char**>(previous_xpm))),
+                      tr("Go to previous row"));
 
     nextAct = toolbar->addAction(
-        QIcon(QPixmap(const_cast<const char**>(next_xpm))),
-        tr("Go to next row"));
+                  QIcon(QPixmap(const_cast<const char**>(next_xpm))),
+                  tr("Go to next row"));
 
     lastAct = toolbar->addAction(
-        QIcon(QPixmap(const_cast<const char**>(forward_xpm))),
-        tr("Go to last row"));
+                  QIcon(QPixmap(const_cast<const char**>(forward_xpm))),
+                  tr("Go to last row"));
 
     toolbar->addSeparator();
 
     singleAct = toolbar->addAction(
-        QIcon(QPixmap(const_cast<const char**>(single_xpm))),
-        tr("Toggle between table or single record editing"));
+                    QIcon(QPixmap(const_cast<const char**>(single_xpm))),
+                    tr("Toggle between table or single record editing"));
     singleAct->setCheckable(true);
     connect(singleAct, SIGNAL(toggled(bool)), this, SLOT(singleRecordForm(bool)));
 
@@ -174,17 +175,19 @@ toResultData::toResultData(QWidget *parent,
 }
 
 
-void toResultData::query(const QString &, const toQList &params) {
-    if(!maybeSave())
+void toResultData::query(const QString &, const toQList &params)
+{
+    if (!maybeSave())
         return;
 
-    if(params.size() == 2) {
+    if (params.size() == 2)
+    {
         toQList::const_iterator par = params.begin();
         Owner = *par;
         par++;
         Table = *par;
     }
-    else if(Owner.isNull() || Table.isNull())
+    else if (Owner.isNull() || Table.isNull())
         throw tr("toResultData requires owner and table names.");
 
     FilterName = filterName();
@@ -195,14 +198,16 @@ void toResultData::query(const QString &, const toQList &params) {
     SQL = SQL.arg(conn.quote(Owner)).arg(conn.quote(Table));
 
     bool where = false;
-    if(!Criteria[FilterName].isEmpty()) {
+    if (!Criteria[FilterName].isEmpty())
+    {
         SQL += " WHERE ";
         SQL += Criteria[FilterName];
         SQL += " ";
         where = true;
     }
 
-    if(!Order[FilterName].isEmpty()) {
+    if (!Order[FilterName].isEmpty())
+    {
         SQL += " ORDER BY ";
         SQL += Order[FilterName];
     }
@@ -212,48 +217,52 @@ void toResultData::query(const QString &, const toQList &params) {
 
 
 void toResultData::exportData(std::map<QString, QString> &data,
-                              const QString &prefix) {
+                              const QString &prefix)
+{
     ;                           // stub
 }
 
 
 void toResultData::importData(std::map<QString, QString> &data,
-                              const QString &prefix) {
+                              const QString &prefix)
+{
     ;                           // stub
 }
 
 
-void toResultData::closeEvent(QCloseEvent *event) {
-    if(maybeSave())
+void toResultData::closeEvent(QCloseEvent *event)
+{
+    if (maybeSave())
         event->accept();
     else
         event->ignore();
 }
 
 
-void toResultData::navigate(QAction *action) {
+void toResultData::navigate(QAction *action)
+{
     Edit->setFocus();
     QModelIndex current = Edit->selectionModel()->currentIndex();
     int row = current.row();
     int col = current.column();
 
-    if(col < 1)
+    if (col < 1)
         col = 1;                // can't select hidden first column
 
-    if(action == firstAct)
+    if (action == firstAct)
         row = 0;
-    else if(action == previousAct)
+    else if (action == previousAct)
         row--;
-    else if(action == nextAct)
+    else if (action == nextAct)
         row++;
-    else if(action == lastAct)
+    else if (action == lastAct)
         row = Edit->model()->rowCount() - 1;
     else
         return;                 // not a nav action
 
-    if(row < 0)
+    if (row < 0)
         row = 0;
-    if(row >= Edit->model()->rowCount())
+    if (row >= Edit->model()->rowCount())
         row = Edit->model()->rowCount() - 1;
 
     QModelIndex left = Edit->model()->createIndex(row, col);
@@ -266,11 +275,13 @@ void toResultData::navigate(QAction *action) {
 }
 
 
-QString toResultData::filterName() {
+QString toResultData::filterName()
+{
     QString nam;
-    if(AllFilter)
+    if (AllFilter)
         nam = "";
-    else {
+    else
+    {
         nam = Owner;
         nam += ".";
         nam += Table;
@@ -280,13 +291,16 @@ QString toResultData::filterName() {
 }
 
 
-void toResultData::removeFilter(bool) {
-    if(!AllFilter) {
+void toResultData::removeFilter(bool)
+{
+    if (!AllFilter)
+    {
         switch (TOMessageBox::information(
                     this,
                     tr("Remove filter"),
                     tr("Remove the filter for this table only or for all tables?"),
-                    tr("&All"), tr("&This"), tr("Cancel"), 0)) {
+                    tr("&All"), tr("&This"), tr("Cancel"), 0))
+        {
         case 0:
             Criteria.clear();
             Order.clear();
@@ -300,7 +314,8 @@ void toResultData::removeFilter(bool) {
             return;
         }
     }
-    else {
+    else
+    {
         QString nam = "";
         Criteria.remove(nam);
         Order.remove(nam);
@@ -313,7 +328,8 @@ void toResultData::removeFilter(bool) {
 }
 
 
-void toResultData::changeFilter(bool checked) {
+void toResultData::changeFilter(bool checked)
+{
     QDialog dialog(this);
     Ui::toResultContentFilterUI filter;
     filter.setupUi(&dialog);
@@ -326,7 +342,8 @@ void toResultData::changeFilter(bool checked) {
 
     filter.Columns->changeParams(Owner, Table);
 
-    if(dialog.exec()) {
+    if (dialog.exec())
+    {
         AllFilter = filter.AllTables->isChecked();
 
         FilterName = filterName();
@@ -337,40 +354,45 @@ void toResultData::changeFilter(bool checked) {
         refresh();
     }
 
-    if(Criteria[FilterName].isEmpty() && Order[FilterName].isEmpty())
+    if (Criteria[FilterName].isEmpty() && Order[FilterName].isEmpty())
         filterAct->setChecked(false);
     else
         filterAct->setChecked(true);
 }
 
 
-bool toResultData::maybeSave(void) {
-    if(!Edit->changed())
+bool toResultData::maybeSave(void)
+{
+    if (!Edit->changed())
         return true;
 
     int ret = TOMessageBox::information(
-        this,
-        "Save changes",
-        QString("Save changes to %1.%2?").arg(Owner).arg(Table),
-        QMessageBox::Save |
-        QMessageBox::Discard |
-        QMessageBox::Cancel);
+                  this,
+                  "Save changes",
+                  QString("Save changes to %1.%2?").arg(Owner).arg(Table),
+                  QMessageBox::Save |
+                  QMessageBox::Discard |
+                  QMessageBox::Cancel);
 
-    if(ret == QMessageBox::Save) {
-        if(Edit->commitChanges())
+    if (ret == QMessageBox::Save)
+    {
+        if (Edit->commitChanges())
             emit changesSaved();
         return true;
     }
-    else if(ret == QMessageBox::Discard)
+    else if (ret == QMessageBox::Discard)
         return true;
     else
         return false;
 }
 
 
-void toResultData::singleRecordForm(bool display) {
-    if(display) {
-        if(!Edit->selectionModel()->currentIndex().isValid()) {
+void toResultData::singleRecordForm(bool display)
+{
+    if (display)
+    {
+        if (!Edit->selectionModel()->currentIndex().isValid())
+        {
             QModelIndex left = Edit->model()->createIndex(0, 0);
             Edit->selectionModel()->select(QItemSelection(left, left),
                                            QItemSelectionModel::ClearAndSelect);
@@ -385,36 +407,43 @@ void toResultData::singleRecordForm(bool display) {
 }
 
 
-void toResultData::updateForm() {
+void toResultData::updateForm()
+{
     // update single edit form
-    if(Edit->model()) {
+    if (Edit->model())
+    {
         Form->changeSource(Edit->model(),
                            Edit->selectionModel()->currentIndex().row());
     }
 }
 
 
-void toResultData::save() {
+void toResultData::save()
+{
     Form->saveRow();
-    if(Edit->commitChanges())
+    if (Edit->commitChanges())
         emit changesSaved();
 }
 
 
-void toResultData::addRecord() {
+void toResultData::addRecord()
+{
     Edit->addRecord();
     navigate(lastAct);
 }
 
 
-void toResultData::refreshWarn() {
-    if(Edit->changed()) {
-        switch(TOMessageBox(
-                   QMessageBox::Warning,
-                   tr("Warning"),
-                   tr("Refreshing from the database will lose current changes."),
-                   QMessageBox::Ok | QMessageBox::Cancel,
-                   this).exec()) {
+void toResultData::refreshWarn()
+{
+    if (Edit->changed())
+    {
+        switch (TOMessageBox(
+                    QMessageBox::Warning,
+                    tr("Warning"),
+                    tr("Refreshing from the database will lose current changes."),
+                    QMessageBox::Ok | QMessageBox::Cancel,
+                    this).exec())
+        {
         case QMessageBox::Ok:
             break;
         case QMessageBox::Cancel:

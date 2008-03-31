@@ -74,7 +74,8 @@ class toToolWidget;
  * depending on if TOra is a Qt or KDE application. In the case of Qt this will be a
  * QMainWindow descendant.
  */
-class toMain : public toMainWindow {
+class toMain : public toMainWindow
+{
     Q_OBJECT;
 
 private:
@@ -277,7 +278,8 @@ public:
 
     /** Get current edit widget
      */
-    toEditWidget *editWidget() {
+    toEditWidget *editWidget()
+    {
         return Edit;
     }
 
@@ -345,15 +347,15 @@ public:
      * @param data A map that can be used to recreate the session.
      * @param prefix Prefix to add to the map.
      */
-    virtual void exportData(std::map<QString,
-                            QString> &data,
+    virtual void exportData(std::map < QString,
+                            QString > &data,
                             const QString &prefix);
     /** Import data
      * @param data Data to read from a map.
      * @param prefix Prefix to read data from.
      */
-    virtual void importData(std::map<QString,
-                            QString> &data,
+    virtual void importData(std::map < QString,
+                            QString > &data,
                             const QString &prefix);
     /** Added chart.
      */
@@ -376,31 +378,38 @@ public:
     void addCustomMenu(QMenu *);
 
     // access needed to some QActions for creating popup menus
-    QAction* getUndoAction() {
+    QAction* getUndoAction()
+    {
         return undoAct;
     }
 
-    QAction* getRedoAction() {
+    QAction* getRedoAction()
+    {
         return redoAct;
     }
 
-    QAction* getCutAction() {
+    QAction* getCutAction()
+    {
         return cutAct;
     }
 
-    QAction* getCopyAction() {
+    QAction* getCopyAction()
+    {
         return copyAct;
     }
 
-    QAction* getPasteAction() {
+    QAction* getPasteAction()
+    {
         return pasteAct;
     }
 
-    QAction* getSelectAllAction() {
+    QAction* getSelectAllAction()
+    {
         return selectAllAct;
     }
 
-    QMenu* getEditMenu() {
+    QMenu* getEditMenu()
+    {
         return editMenu;
     }
 

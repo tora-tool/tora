@@ -51,8 +51,9 @@
 class QFont;
 
 class toSyntaxSetup : public QWidget,
-    public Ui::toSyntaxSetupUI,
-    public toSettingTab {
+            public Ui::toSyntaxSetupUI,
+            public toSettingTab
+{
 
     Q_OBJECT;
 
@@ -73,11 +74,13 @@ public slots:
     virtual void selectFont(void);
     virtual void selectText(void);
     virtual void selectResultFont(void);
-    virtual void changeUpper(bool val) {
+    virtual void changeUpper(bool val)
+    {
         Example->setKeywordUpper(val);
         Example->update();
     }
-    virtual void changeHighlight(bool val) {
+    virtual void changeHighlight(bool val)
+    {
         Example->setSyntaxColoring(val);
         Example->update();
     }

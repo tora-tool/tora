@@ -269,7 +269,8 @@ bool toSyntaxAnalyzer::reservedWord(const QString &str)
 }
 
 toComplPopup::toComplPopup(toHighlightedText* edit)
-    : QWidget(edit, Qt::Popup) {
+        : QWidget(edit, Qt::Popup)
+{
     List   = new QListWidget(this);
     Editor = edit;
 
@@ -287,8 +288,9 @@ toComplPopup::~toComplPopup()
 }
 
 
-void toComplPopup::hide() {
-    if(parentWidget())
+void toComplPopup::hide()
+{
+    if (parentWidget())
         parentWidget()->setFocus();
     QWidget::hide();
 }
@@ -296,7 +298,8 @@ void toComplPopup::hide() {
 
 void toComplPopup::keyPressEvent(QKeyEvent * e)
 {
-    if(e->key() == Qt::Key_Escape) {
+    if (e->key() == Qt::Key_Escape)
+    {
         hide();
         return;
     }
@@ -426,7 +429,8 @@ void toHighlightedText::autoCompleteFromAPIs()
         // if there's no current selection, select the first
         // item. that way arrow keys work as intended.
         QList<QListWidgetItem *> selected = list->selectedItems();
-        if(selected.size() < 1 && list->count() > 0) {
+        if (selected.size() < 1 && list->count() > 0)
+        {
             list->item(0)->setSelected(true);
             list->setCurrentItem(list->item(0));
         }

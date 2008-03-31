@@ -181,7 +181,8 @@ public:
     static toSyntaxAnalyzer &defaultAnalyzer();
 };
 
-class toComplPopup : public QWidget {
+class toComplPopup : public QWidget
+{
     Q_OBJECT;
 
 private:
@@ -192,7 +193,8 @@ public:
     toComplPopup(toHighlightedText* high);
     virtual ~toComplPopup();
 
-    QListWidget* list(void) {
+    QListWidget* list(void)
+    {
         return this->List;
     }
 

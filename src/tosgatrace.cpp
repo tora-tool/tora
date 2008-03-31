@@ -72,14 +72,16 @@
 
 // #define CONF_AUTO_UPDATE    "AutoUpdate"
 
-class toSGATracePrefs : public QGroupBox, public toSettingTab {
+class toSGATracePrefs : public QGroupBox, public toSettingTab
+{
     QCheckBox* AutoUpdate;
     toTool *Tool;
 
 public:
     toSGATracePrefs(toTool *tool, QWidget* parent = 0, const char* name = 0)
-            : QGroupBox(parent), toSettingTab("trace.html"), Tool(tool) {
-        if(name)
+            : QGroupBox(parent), toSettingTab("trace.html"), Tool(tool)
+    {
+        if (name)
             setObjectName(name);
 
         QVBoxLayout *vbox = new QVBoxLayout;
@@ -105,32 +107,38 @@ public:
 
 //         if (!Tool->config(CONF_AUTO_UPDATE, "Yes").isEmpty())
 //             AutoUpdate->setChecked(true);
-		AutoUpdate->setChecked(toConfigurationSingle::Instance().autoUpdate());
+        AutoUpdate->setChecked(toConfigurationSingle::Instance().autoUpdate());
     }
-    virtual void saveSetting(void) {
+    virtual void saveSetting(void)
+    {
 //         if (AutoUpdate->isChecked())
 //             Tool->setConfig(CONF_AUTO_UPDATE, "Yes");
 //         else
 //             Tool->setConfig(CONF_AUTO_UPDATE, "");
-		toConfigurationSingle::Instance().setAutoUpdate(AutoUpdate->isChecked());
+        toConfigurationSingle::Instance().setAutoUpdate(AutoUpdate->isChecked());
     }
 };
 
-class toSGATraceTool : public toTool {
+class toSGATraceTool : public toTool
+{
 protected:
-    virtual const char **pictureXPM(void) {
+    virtual const char **pictureXPM(void)
+    {
         return const_cast<const char**>(tosgatrace_xpm);
     }
 public:
     toSGATraceTool()
             : toTool(230, "SGA Trace") { }
-    virtual const char *menuItem() {
+    virtual const char *menuItem()
+    {
         return "SGA Trace";
     }
-    virtual QWidget *toolWindow(QWidget *parent, toConnection &connection) {
+    virtual QWidget *toolWindow(QWidget *parent, toConnection &connection)
+    {
         return new toSGATrace(parent, connection);
     }
-    virtual QWidget *configurationTab(QWidget *parent) {
+    virtual QWidget *configurationTab(QWidget *parent)
+    {
         return new toSGATracePrefs(this, parent);
     }
     virtual void closeWindow(toConnection &connection) {};
@@ -139,7 +147,8 @@ public:
 static toSGATraceTool SGATraceTool;
 
 toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
-        : toToolWidget(SGATraceTool, "trace.html", main, connection) {
+        : toToolWidget(SGATraceTool, "trace.html", main, connection)
+{
     QToolBar *toolbar = toAllocBar(this, tr("SGA trace"));
     layout()->addWidget(toolbar);
 
@@ -222,7 +231,8 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
     CurrentSchema = connection.user().toUpper();
     updateSchemas();
 
-    try {
+    try
+    {
         connect(timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
         toRefreshParse(timer(), toConfigurationSingle::Instance().refresh());
     }
@@ -231,8 +241,10 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
     setFocusProxy(Trace);
 }
 
-void toSGATrace::changeRefresh(const QString &str) {
-    try {
+void toSGATrace::changeRefresh(const QString &str)
+{
+    try
+    {
         toRefreshParse(timer(), str);
     }
     TOCATCH;
@@ -240,12 +252,13 @@ void toSGATrace::changeRefresh(const QString &str) {
 
 #define LARGE_BUFFER 4096
 
-void toSGATrace::changeSchema(const QString &str) {
+void toSGATrace::changeSchema(const QString &str)
+{
     if (str != tr("Any"))
         CurrentSchema = str;
     else
         CurrentSchema = QString::null;
-	if (toConfigurationSingle::Instance().autoUpdate())
+    if (toConfigurationSingle::Instance().autoUpdate())
         refresh();
 }
 
@@ -303,12 +316,15 @@ static toSQL SQLLongOps(TOSQL_LONGOPS,
                         "with SGA address at the end and a table name 'b' with a column username and sid "
                         "and must accept \"and ...\" clauses at end.");
 
-void toSGATrace::refresh(void) {
-    try {
+void toSGATrace::refresh(void)
+{
+    try
+    {
         updateSchemas();
 
         QString select;
-        switch (Type->currentIndex()) {
+        switch (Type->currentIndex())
+        {
         case 0:
             select = toSQL::string(SQLSGATrace, connection());
             break;
@@ -323,7 +339,8 @@ void toSGATrace::refresh(void) {
             select.append(QString::fromLatin1("\n   and b.username = :f1<char[101]>"));
 
         QString order;
-        switch (Limit->currentIndex()) {
+        switch (Limit->currentIndex())
+        {
         case 0:
             break;
         case 1:
@@ -372,10 +389,11 @@ void toSGATrace::refresh(void) {
 
         if (!order.isEmpty())
             select = QString("SELECT * FROM (\n") + select +
-                QString("\n ORDER BY " + order + " DESC)\n WHERE ROWNUM < 20");
+                     QString("\n ORDER BY " + order + " DESC)\n WHERE ROWNUM < 20");
 
         Trace->setSQL(QString::null);
-        if (!CurrentSchema.isEmpty()) {
+        if (!CurrentSchema.isEmpty())
+        {
             toQList p;
             p.insert(p.end(), CurrentSchema);
             Trace->query(select, p);
@@ -388,15 +406,18 @@ void toSGATrace::refresh(void) {
     TOCATCH;
 }
 
-void toSGATrace::updateSchemas(void) {
-    try {
+void toSGATrace::updateSchemas(void)
+{
+    try
+    {
         Schema->refresh();
     }
     TOCATCH;
 }
 
-void toSGATrace::changeItem() {
+void toSGATrace::changeItem()
+{
     QModelIndex s = Trace->selectedIndex(Trace->model()->columnCount() - 1);
-    if(s.isValid())
+    if (s.isValid())
         Statement->changeAddress(s.data(Qt::EditRole).toString());
 }

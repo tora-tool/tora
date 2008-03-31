@@ -183,7 +183,8 @@ public:
     /** disable hiding of the tab this result object lives in.
      *
      */
-    void setDisableTab(bool en) {
+    void setDisableTab(bool en)
+    {
         DisableTab = en;
     }
 

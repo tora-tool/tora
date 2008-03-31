@@ -50,7 +50,8 @@
  *
  * @internal
  */
-class toResultListFormat : public QDialog, public Ui::toResultListFormatUI {
+class toResultListFormat : public QDialog, public Ui::toResultListFormatUI
+{
     Q_OBJECT;
 
 public:

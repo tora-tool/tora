@@ -227,105 +227,105 @@ static toSQL SQLTableColumns8(
     "toResultCols:ListCols",
     "SELECT column_name AS \"Column Name\",\n"
     "       RPAD ( DECODE ( data_type,\n"
-    "		       'NUMBER',\n"
-    "		       DECODE ( data_precision,\n"
-    "				NULL,\n"
-    "				DECODE ( data_scale,\n"
-    "					 0,\n"
-    "					 'INTEGER',\n"
-    "					 'NUMBER   ' ),\n"
-    "				'NUMBER   ' ),\n"
-    "		       'RAW',\n"
-    "		       'RAW      ',\n"
-    "		       'CHAR',\n"
-    "		       'CHAR     ',\n"
-    "		       'NCHAR',\n"
-    "		       'NCHAR    ',\n"
-    "		       'UROWID',\n"
-    "		       'UROWID   ',\n"
-    "		       'VARCHAR2',\n"
-    "		       'VARCHAR2 ',\n"
-    "		       data_type ) ||\n"
-    "	      DECODE ( data_type,\n"
-    "		       'DATE',\n"
-    "		       NULL,\n"
-    "		       'LONG',\n"
-    "		       NULL,\n"
-    "		       'NUMBER',\n"
-    "		       DECODE ( data_precision,\n"
-    "				NULL,\n"
-    "				NULL,\n"
-    "				'(' ),\n"
-    "		       'RAW',\n"
-    "		       '(',\n"
-    "		       'CHAR',\n"
-    "		       '(',\n"
-    "		       'NCHAR',\n"
-    "		       '(',\n"
-    "		       'UROWID',\n"
-    "		       '(',\n"
-    "		       'VARCHAR2',\n"
-    "		       '(',\n"
-    "		       'NVARCHAR2',\n"
-    "		       '(',\n"
-    "		       NULL ) ||\n"
-    "	      DECODE ( data_type,\n"
-    "		       'RAW',\n"
-    "		       data_length,\n"
-    "		       'CHAR',\n"
-    "		       data_length,\n"
-    "		       'UROWID',\n"
-    "		       data_length,\n"
-    "		       'VARCHAR2',\n"
-    "		       data_length,\n"
-    "		       'NUMBER',\n"
-    "		       data_precision,\n"
-    "		       NULL ) ||\n"
-    "	      DECODE ( data_type,\n"
-    "		       'NUMBER',\n"
-    "		       DECODE ( TO_CHAR ( data_precision ),\n"
-    "				NULL,\n"
-    "				NULL,\n"
-    "				DECODE ( TO_CHAR ( data_scale ),\n"
-    "					 NULL,\n"
-    "					 NULL,\n"
-    "					 0,\n"
-    "					 NULL,\n"
-    "					 ',' || data_scale ) ) ) ||\n"
-    "	      DECODE ( data_type,\n"
-    "		       'DATE',\n"
-    "		       NULL,\n"
-    "		       'LONG',\n"
-    "		       NULL,\n"
-    "		       'NUMBER',\n"
-    "		       DECODE ( data_precision,\n"
-    "				NULL,\n"
-    "				NULL,\n"
-    "				')' ),\n"
-    "		       'RAW',\n"
-    "		       ')',\n"
-    "		       'CHAR',\n"
-    "		       ')',\n"
-    "		       'NCHAR',\n"
-    "		       ')',\n"
-    "		       'UROWID',\n"
-    "		       ')',\n"
-    "		       'VARCHAR2',\n"
-    "		       ')',\n"
-    "		       'NVARCHAR2',\n"
-    "		       ')',\n"
-    "		       NULL ),\n"
-    "		     32 ) AS \"Data Type\",\n"
+    "         'NUMBER',\n"
+    "         DECODE ( data_precision,\n"
+    "    NULL,\n"
+    "    DECODE ( data_scale,\n"
+    "      0,\n"
+    "      'INTEGER',\n"
+    "      'NUMBER   ' ),\n"
+    "    'NUMBER   ' ),\n"
+    "         'RAW',\n"
+    "         'RAW      ',\n"
+    "         'CHAR',\n"
+    "         'CHAR     ',\n"
+    "         'NCHAR',\n"
+    "         'NCHAR    ',\n"
+    "         'UROWID',\n"
+    "         'UROWID   ',\n"
+    "         'VARCHAR2',\n"
+    "         'VARCHAR2 ',\n"
+    "         data_type ) ||\n"
+    "       DECODE ( data_type,\n"
+    "         'DATE',\n"
+    "         NULL,\n"
+    "         'LONG',\n"
+    "         NULL,\n"
+    "         'NUMBER',\n"
+    "         DECODE ( data_precision,\n"
+    "    NULL,\n"
+    "    NULL,\n"
+    "    '(' ),\n"
+    "         'RAW',\n"
+    "         '(',\n"
+    "         'CHAR',\n"
+    "         '(',\n"
+    "         'NCHAR',\n"
+    "         '(',\n"
+    "         'UROWID',\n"
+    "         '(',\n"
+    "         'VARCHAR2',\n"
+    "         '(',\n"
+    "         'NVARCHAR2',\n"
+    "         '(',\n"
+    "         NULL ) ||\n"
+    "       DECODE ( data_type,\n"
+    "         'RAW',\n"
+    "         data_length,\n"
+    "         'CHAR',\n"
+    "         data_length,\n"
+    "         'UROWID',\n"
+    "         data_length,\n"
+    "         'VARCHAR2',\n"
+    "         data_length,\n"
+    "         'NUMBER',\n"
+    "         data_precision,\n"
+    "         NULL ) ||\n"
+    "       DECODE ( data_type,\n"
+    "         'NUMBER',\n"
+    "         DECODE ( TO_CHAR ( data_precision ),\n"
+    "    NULL,\n"
+    "    NULL,\n"
+    "    DECODE ( TO_CHAR ( data_scale ),\n"
+    "      NULL,\n"
+    "      NULL,\n"
+    "      0,\n"
+    "      NULL,\n"
+    "      ',' || data_scale ) ) ) ||\n"
+    "       DECODE ( data_type,\n"
+    "         'DATE',\n"
+    "         NULL,\n"
+    "         'LONG',\n"
+    "         NULL,\n"
+    "         'NUMBER',\n"
+    "         DECODE ( data_precision,\n"
+    "    NULL,\n"
+    "    NULL,\n"
+    "    ')' ),\n"
+    "         'RAW',\n"
+    "         ')',\n"
+    "         'CHAR',\n"
+    "         ')',\n"
+    "         'NCHAR',\n"
+    "         ')',\n"
+    "         'UROWID',\n"
+    "         ')',\n"
+    "         'VARCHAR2',\n"
+    "         ')',\n"
+    "         'NVARCHAR2',\n"
+    "         ')',\n"
+    "         NULL ),\n"
+    "       32 ) AS \"Data Type\",\n"
     "       data_default AS \"Default\",\n"
     "       DECODE ( nullable,\n"
-    "		'N',\n"
-    "		'NOT NULL',\n"
-    "		NULL ) AS \"NULL\",\n"
+    "  'N',\n"
+    "  'NOT NULL',\n"
+    "  NULL ) AS \"NULL\",\n"
     "       ( SELECT comments\n"
-    "	   FROM sys.All_Col_Comments c\n"
-    "	  WHERE c.owner = tc.owner\n"
-    "	    AND c.table_name = tc.table_name\n"
-    "	    AND c.column_name = tc.column_name ) AS \"Comment\"\n"
+    "    FROM sys.All_Col_Comments c\n"
+    "   WHERE c.owner = tc.owner\n"
+    "     AND c.table_name = tc.table_name\n"
+    "     AND c.column_name = tc.column_name ) AS \"Comment\"\n"
     "  FROM sys.all_tab_columns tc\n"
     " WHERE owner = :f1<char[100]>\n"
     "   AND table_name = :f2<char[100]>\n"
@@ -371,9 +371,10 @@ static toSQL SQLTableColumnsMySql(
 
 
 toResultCols::toResultCols(QWidget *parent, const char *name, Qt::WFlags f)
-    : QWidget(parent, f) {
+        : QWidget(parent, f)
+{
 
-    if(name)
+    if (name)
         setObjectName(name);
 
     QVBoxLayout *vbox = new QVBoxLayout;
@@ -433,7 +434,8 @@ toResultCols::toResultCols(QWidget *parent, const char *name, Qt::WFlags f)
 }
 
 
-void toResultCols::displayHeader(bool display) {
+void toResultCols::displayHeader(bool display)
+{
     Header = display;
 
     Title->setVisible(display);
@@ -443,30 +445,35 @@ void toResultCols::displayHeader(bool display) {
 }
 
 
-void toResultCols::query(const QString &sql, const toQList &param) {
+void toResultCols::query(const QString &sql, const toQList &param)
+{
     QString Owner;
     QString Name;
     QString object;
 
     toConnection &conn = connection();
 
-    try {
+    try
+    {
         toQList subp;
 
         toQList::iterator cp = ((toQList &) param).begin();
-        if(cp != ((toQList &) param).end()) {
+        if (cp != ((toQList &) param).end())
+        {
             object = conn.quote(*cp);
             Owner = *cp;
         }
         cp++;
-        if(cp != ((toQList &) param).end()) {
+        if (cp != ((toQList &) param).end())
+        {
             object += QString::fromLatin1(".");
             object += conn.quote(*cp);
             Name = *cp;
         }
-        else {
+        else
+        {
             Name = Owner;
-            if(toIsMySQL(conn))
+            if (toIsMySQL(conn))
                 Owner = connection().database();
             else
                 Owner = connection().user().toUpper();
@@ -474,18 +481,20 @@ void toResultCols::query(const QString &sql, const toQList &param) {
 
         TableName = conn.quote(Owner) + "." + conn.quote(Name);
 
-        if(toIsMySQL(conn)) {
+        if (toIsMySQL(conn))
+        {
             MySQLColumns->query(sql, param);
             MySQLColumns->show();
             Columns->hide();
             MySQLColumns->setSQL(SQLTableColumns);
 
-            if(Owner.isEmpty())
+            if (Owner.isEmpty())
                 MySQLColumns->changeParams(Name);
             else
                 MySQLColumns->changeParams(Owner + "." + Name);
         }
-        else {
+        else
+        {
             Columns->setSQL(SQLTableColumns);
             Columns->changeParams(Owner, Name);
             Columns->show();
@@ -494,15 +503,17 @@ void toResultCols::query(const QString &sql, const toQList &param) {
     }
     TOCATCH;
 
-    try {
+    try
+    {
         QString synonym;
         const toConnection::objectName &name = conn.realName(
-            object,
-            synonym,
-            false);
+                                                   object,
+                                                   synonym,
+                                                   false);
 
         QString label = QString::fromLatin1("<B>");
-        if(!synonym.isEmpty()) {
+        if (!synonym.isEmpty())
+        {
             label += conn.quote(synonym);
             label += tr("</B> synonym for <B>");
         }
@@ -512,14 +523,16 @@ void toResultCols::query(const QString &sql, const toQList &param) {
         label += conn.quote(name.Name);
 
         label += QString::fromLatin1("</B>");
-        if (!name.Comment.isNull()) {
+        if (!name.Comment.isNull())
+        {
             Comment->setText(name.Comment);
             EditComment->setComment(
                 true,
                 conn.quote(name.Owner) + "." + conn.quote(name.Name),
                 const_cast<QString &>(name.Comment));
         }
-        else {
+        else
+        {
             Comment->setText(QString::null);
             EditComment->setComment(
                 true,
@@ -529,24 +542,27 @@ void toResultCols::query(const QString &sql, const toQList &param) {
 
         Title->setText(label);
     }
-    catch(const QString &) {
+    catch (const QString &)
+    {
         // expected for databases that don't support synonyms
         ;
     }
 
-    try {
+    try
+    {
         QString label = QString::fromLatin1("<B>");
         label += object;
         label += QString::fromLatin1("</B>");
 
-        if(connection().provider() == "Oracle" ||
-           connection().provider() == "MySQL" ||
-           connection().provider() == "PostgreSQL")
+        if (connection().provider() == "Oracle" ||
+                connection().provider() == "MySQL" ||
+                connection().provider() == "PostgreSQL")
         {
             toConnection &conn = connection();
             toQuery query(conn, SQLTableComment, Owner, Name);
             QString t;
-            if(!query.eof()) {
+            if (!query.eof())
+            {
                 t = query.readValueNull();
                 EditComment->setComment(true, TableName, t);
             }
@@ -554,26 +570,30 @@ void toResultCols::query(const QString &sql, const toQList &param) {
             editComment(Edit->isChecked());
             Edit->setEnabled(true);
         }
-        else {
+        else
+        {
             editComment(false);
             Edit->setEnabled(false);
         }
 
         Title->setText(label);
     }
-    catch(const QString &str) {
+    catch (const QString &str)
+    {
         Title->setText(str);
         toStatusMessage(str);
     }
 }
 
 
-void toResultCols::done() {
+void toResultCols::done()
+{
     setUpdatesEnabled(false);
 
     // setup the comments
     bool visible = false;
-    if(ColumnComments) {
+    if (ColumnComments)
+    {
         visible = ColumnComments->isVisible();
         delete ColumnComments;
     }
@@ -587,7 +607,7 @@ void toResultCols::done() {
     scroll->setWidgetResizable(true);
 
     toResultTableView *tv;
-    if(!toIsMySQL(connection()))
+    if (!toIsMySQL(connection()))
         tv = Columns;
     else
         tv = MySQLColumns;
@@ -598,7 +618,8 @@ void toResultCols::done() {
     grid->setSpacing(5);
 
     int row;
-    for(row = 0; (*it).isValid(); row++, it++) {
+    for (row = 0; (*it).isValid(); row++, it++)
+    {
         QString column  = tv->model()->data(row, 1).toString();
         QString comment = tv->model()->data(row, "Comment").toString();
 
@@ -619,22 +640,25 @@ void toResultCols::done() {
 }
 
 
-void toResultCols::editComment(bool val) {
+void toResultCols::editComment(bool val)
+{
     // copy text from on to the other so i don't have to refresh to
     // see my comments... i would think they were lost.
-    if(EditComment->isVisible())
+    if (EditComment->isVisible())
         Comment->setText(EditComment->text());
 
-    if(!toIsMySQL(connection())) {
+    if (!toIsMySQL(connection()))
+    {
         Columns->setVisible(!val);
         MySQLColumns->setVisible(false);
     }
-    else {
+    else
+    {
         Columns->setVisible(false);
         MySQLColumns->setVisible(!val);
     }
 
-    if(ColumnComments)
+    if (ColumnComments)
         ColumnComments->setVisible(val);
     EditComment->setVisible(val);
     Comment->setVisible(!val);

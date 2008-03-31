@@ -43,42 +43,50 @@
 
 #include <iostream>
 
-namespace {
-    toListViewFormatter* createHTML() {
-        return new toListViewFormatterHTML();
-    }
-    const bool registered = toListViewFormatterFactory::Instance().Register(
-        toListViewFormatterIdentifier::HTML, createHTML);
+namespace
+{
+toListViewFormatter* createHTML()
+{
+    return new toListViewFormatterHTML();
+}
+const bool registered = toListViewFormatterFactory::Instance().Register(
+                            toListViewFormatterIdentifier::HTML, createHTML);
 }
 
 
-toListViewFormatterHTML::toListViewFormatterHTML() : toListViewFormatter() {
+toListViewFormatterHTML::toListViewFormatterHTML() : toListViewFormatter()
+{
 }
 
-toListViewFormatterHTML::~toListViewFormatterHTML() {
+toListViewFormatterHTML::~toListViewFormatterHTML()
+{
 }
 
-QString toListViewFormatterHTML::getFormattedString(toListView& tListView) {
+QString toListViewFormatterHTML::getFormattedString(toListView& tListView)
+{
     int column_count = tListView.columns();
     QString separator = tListView.getSep();
     QString delimiter = tListView.getDel();
 
     int *sizes = NULL;
-    try {
+    try
+    {
         QString output;
         output = QString::fromLatin1("<HTML><HEAD><TITLE>%1</TITLE></HEAD><BODY><TABLE CELLSPACING=0 BORDER=0>").
-            arg(tListView.sqlName());
+                 arg(tListView.sqlName());
 
         QString indent;
 
         QString bgcolor;
-        if (tListView.getIncludeHeader()) {
+        if (tListView.getIncludeHeader())
+        {
             if (bgcolor.isEmpty())
                 bgcolor = QString::fromLatin1("nonull");
             else
                 bgcolor = QString::null;
             output += QString::fromLatin1("<TR BGCOLOR=#7f7f7f>");
-            for (int j = 0; j < column_count; j++) {
+            for (int j = 0; j < column_count; j++)
+            {
                 output += QString::fromLatin1("<TH ALIGN=LEFT BGCOLOR=#cfcfcf>");
                 output += (tListView.headerItem())->text(j);
                 output += QString::fromLatin1("</TH>");
@@ -92,8 +100,10 @@ QString toListViewFormatterHTML::getFormattedString(toListView& tListView) {
 
         toTreeWidgetItem *next = NULL;
 
-        for (toTreeWidgetItem *item = tListView.firstChild();item;item = next) {
-            if (!tListView.getOnlySelection() || item->isSelected()) {
+        for (toTreeWidgetItem *item = tListView.firstChild();item;item = next)
+        {
+            if (!tListView.getOnlySelection() || item->isSelected())
+            {
 
                 toResultViewItem * resItem = dynamic_cast<toResultViewItem *>(item);
                 toResultViewCheck *chkItem = dynamic_cast<toResultViewCheck *>(item);
@@ -105,7 +115,8 @@ QString toListViewFormatterHTML::getFormattedString(toListView& tListView) {
                 QString line;
                 line = QString::fromLatin1("<TR%1>").arg(bgcolor);
 
-                for (int i = 0;i < column_count;i++) {
+                for (int i = 0;i < column_count;i++)
+                {
                     QString text;
 
                     if (resItem)
@@ -134,15 +145,18 @@ QString toListViewFormatterHTML::getFormattedString(toListView& tListView) {
                 output += line;
             }
 
-            if (item->firstChild()) {
+            if (item->firstChild())
+            {
                 indent += QString::fromLatin1("&nbsp;");
                 next = item->firstChild();
             }
             else if (item->nextSibling())
                 next = item->nextSibling();
-            else {
+            else
+            {
                 next = item;
-                do {
+                do
+                {
                     next = next->parent();
                     indent.truncate(indent.length() - 5);
                 }
@@ -155,7 +169,8 @@ QString toListViewFormatterHTML::getFormattedString(toListView& tListView) {
         delete[] sizes;
         return output;
     }
-    catch (...) {
+    catch (...)
+    {
         delete[] sizes;
         throw;
     }
@@ -163,7 +178,8 @@ QString toListViewFormatterHTML::getFormattedString(toListView& tListView) {
 
 
 QString toListViewFormatterHTML::getFormattedString(toExportSettings &settings,
-                                                    const toResultModel *model) {
+        const toResultModel *model)
+{
     int     columns   = model->columnCount();
     int     rows      = model->rowCount();
     QString separator = settings.Separator;
@@ -176,11 +192,13 @@ QString toListViewFormatterHTML::getFormattedString(toExportSettings &settings,
     endLine(output);
 
     QString bgcolor;
-    if(settings.IncludeHeader) {
+    if (settings.IncludeHeader)
+    {
         output += QString("<TR>");
         endLine(output);
 
-        for (int j = 0; j < columns; j++) {
+        for (int j = 0; j < columns; j++)
+        {
             output += QString("\t<TH>");
             endLine(output);
 
@@ -203,14 +221,16 @@ QString toListViewFormatterHTML::getFormattedString(toExportSettings &settings,
     }
 
     QVector<int> slist = selectedList(settings.selected);
-    for(int row = 0; row < rows; row++) {
-        if(settings.OnlySelection && !slist.contains(row))
+    for (int row = 0; row < rows; row++)
+    {
+        if (settings.OnlySelection && !slist.contains(row))
             continue;
 
         output += "<TR>";
         endLine(output);
 
-        for(int i = 0; i < columns; i++) {
+        for (int i = 0; i < columns; i++)
+        {
             output += QString("\t<TD>");
             endLine(output);
 

@@ -51,13 +51,15 @@
 toWorksheetWidget::toWorksheetWidget(QWidget *main,
                                      const char *name,
                                      toConnection &connection)
-    : toWorksheet(main, name, connection) {
+        : toWorksheet(main, name, connection)
+{
 
     setup(false);
 }
 
 
-void toWorksheetWidget::setup(bool autoLoad) {
+void toWorksheetWidget::setup(bool autoLoad)
+{
     QToolBar *workToolbar = toAllocBar(this, tr("Worksheet Widget"));
     layout()->addWidget(workToolbar);
 
@@ -120,8 +122,10 @@ void toWorksheetWidget::setup(bool autoLoad) {
 }
 
 
-void toWorksheetWidget::createPopupMenu(const QPoint &pos) {
-    if(!context) {
+void toWorksheetWidget::createPopupMenu(const QPoint &pos)
+{
+    if (!context)
+    {
         context = new QMenu;
 
         context->addAction(executeAct);
@@ -154,12 +158,15 @@ void toWorksheetWidget::createPopupMenu(const QPoint &pos) {
 }
 
 
-bool toWorksheetWidget::describe(const QString &query) {
-    try {
+bool toWorksheetWidget::describe(const QString &query)
+{
+    try
+    {
         QRegExp white(QString::fromLatin1("[ \r\n\t.]+"));
         QStringList part = query.split(white);
-        if(part[0].toUpper() == QString::fromLatin1("DESC") ||
-                part[0].toUpper() == QString::fromLatin1("DESCRIBE")) {
+        if (part[0].toUpper() == QString::fromLatin1("DESC") ||
+                part[0].toUpper() == QString::fromLatin1("DESCRIBE"))
+        {
             return true;
         }
         else
@@ -172,6 +179,7 @@ bool toWorksheetWidget::describe(const QString &query) {
 
 
 // override parent.
-void toWorksheetWidget::windowActivated(QWidget *widget) {
+void toWorksheetWidget::windowActivated(QWidget *widget)
+{
     return;
 }

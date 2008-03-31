@@ -59,7 +59,8 @@ class toResultPlan;
 class toResultTableView;
 class toWorksheetStatistic;
 
-class toAnalyze : public toToolWidget {
+class toAnalyze : public toToolWidget
+{
     Q_OBJECT;
 
     QTabWidget           *Tabs;

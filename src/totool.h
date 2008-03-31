@@ -270,7 +270,8 @@ public:
      * Enable/disable tool's QAction
      *
      */
-    void enableAction(bool en) {
+    void enableAction(bool en)
+    {
         getAction()->setEnabled(en);
     }
 
@@ -278,7 +279,8 @@ public:
      * Enable/disable tool's QAction if tool can support conn.
      *
      */
-    void enableAction(toConnection &conn) {
+    void enableAction(toConnection &conn)
+    {
         enableAction(canHandle(conn));
     }
 

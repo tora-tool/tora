@@ -51,7 +51,7 @@
 
 
 toSearchReplace::toSearchReplace(QWidget *parent)
-    : QDialog(parent), toHelpContext(QString::fromLatin1("searchreplace.html"))
+        : QDialog(parent), toHelpContext(QString::fromLatin1("searchreplace.html"))
 {
     setupUi(this);
 

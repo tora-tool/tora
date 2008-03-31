@@ -55,26 +55,30 @@
 
 
 toResultTableViewEdit::toResultTableViewEdit(bool readable,
-                                             bool numberColumn,
-                                             QWidget *parent,
-                                             const char *name)
-    : toResultTableView(readable, numberColumn, parent, name, true) {
+        bool numberColumn,
+        QWidget *parent,
+        const char *name)
+        : toResultTableView(readable, numberColumn, parent, name, true)
+{
 
     setSelectionBehavior(QAbstractItemView::SelectItems);
     setSelectionMode(QAbstractItemView::SingleSelection);
 }
 
 
-toResultTableViewEdit::~toResultTableViewEdit() {
+toResultTableViewEdit::~toResultTableViewEdit()
+{
 }
 
 
-void toResultTableViewEdit::query(const QString &SQL, const toQList &params) {
+void toResultTableViewEdit::query(const QString &SQL, const toQList &params)
+{
     revertChanges();
 
-    if(params.size() != 2)
+    if (params.size() != 2)
         ;                       // assume it's a refresh
-    else {
+    else
+    {
         toQList::const_iterator par = params.begin();
         Owner = *par;
         par++;
@@ -86,7 +90,7 @@ void toResultTableViewEdit::query(const QString &SQL, const toQList &params) {
 
     emit changed(false);
 
-    if(!Model)
+    if (!Model)
         return;                 // error
 
     // must be reconnected after every query
@@ -124,13 +128,16 @@ void toResultTableViewEdit::query(const QString &SQL, const toQList &params) {
 
 
 void toResultTableViewEdit::recordChange(const QModelIndex &index,
-                                         const toQValue &newValue,
-                                         const toResultModel::Row &row) {
+        const toQValue &newValue,
+        const toResultModel::Row &row)
+{
     // first, if it was an added row, find and update the ChangeSet so
     // they all get inserted as one.
     toQValue rowid = row[0];
-    for(int changeIndex = 0; changeIndex < Changes.size(); changeIndex++) {
-        if(Changes[changeIndex].kind == Add && Changes[changeIndex].row[0] == rowid) {
+    for (int changeIndex = 0; changeIndex < Changes.size(); changeIndex++)
+    {
+        if (Changes[changeIndex].kind == Add && Changes[changeIndex].row[0] == rowid)
+        {
             Changes[changeIndex].row[index.column()] = newValue;
             return;
         }
@@ -151,7 +158,8 @@ void toResultTableViewEdit::recordChange(const QModelIndex &index,
 }
 
 
-void toResultTableViewEdit::recordAdd(const toResultModel::Row &row) {
+void toResultTableViewEdit::recordAdd(const toResultModel::Row &row)
+{
     struct ChangeSet change;
 
     change.row      = row;
@@ -162,7 +170,8 @@ void toResultTableViewEdit::recordAdd(const toResultModel::Row &row) {
 }
 
 
-void toResultTableViewEdit::recordDelete(const toResultModel::Row &row) {
+void toResultTableViewEdit::recordDelete(const toResultModel::Row &row)
+{
     struct ChangeSet change;
 
     change.row      = row;
@@ -173,7 +182,8 @@ void toResultTableViewEdit::recordDelete(const toResultModel::Row &row) {
 }
 
 
-void toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &conn) {
+void toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &conn)
+{
     const toResultModel::HeaderList Headers = Model->headers();
     bool oracle = toIsOracle(conn);
 
@@ -181,22 +191,25 @@ void toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &conn) 
     sql += (" WHERE ");
 
     bool where = false;
-    for(int i = 1; i < change.row.size(); i++) {
+    for (int i = 1; i < change.row.size(); i++)
+    {
         if (!oracle || (!Headers[i].datatype.toUpper().startsWith(("LONG")) &&
-                        !Headers[i].datatype.toUpper().contains(("LOB")))) {
-            if(where)
+                        !Headers[i].datatype.toUpper().contains(("LOB"))))
+        {
+            if (where)
                 sql += " AND ";
             else
                 where = true;
 
             sql += conn.quote(Headers[i].name);
 
-            if(change.row[i].isNull())
+            if (change.row[i].isNull())
                 sql += " IS NULL";
-            else {
+            else
+            {
                 sql += "= :c";
                 sql += QString::number(i);
-                if(change.row[i].isBinary())
+                if (change.row[i].isBinary())
                     sql += "<raw_long>";
                 else
                     sql += "<char[4000]>";
@@ -204,36 +217,41 @@ void toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &conn) 
         }
     }
 
-    if(!where) {
+    if (!where)
+    {
         toStatusMessage(tr("This table contains only LOB/LONG columns and can not be edited"));
         return;
     }
 
     toQList args;
-    for(int i = 1; i < change.row.size(); i++) {
-        if(!change.row[i].isNull() && (!oracle || (!Headers[i].datatype.startsWith(("LONG")) &&
-                                                   !Headers[i].datatype.toUpper().contains(("LOB"))))) {
+    for (int i = 1; i < change.row.size(); i++)
+    {
+        if (!change.row[i].isNull() && (!oracle || (!Headers[i].datatype.startsWith(("LONG")) &&
+                                        !Headers[i].datatype.toUpper().contains(("LOB")))))
+        {
             toPush(args, change.row[i]);
         }
     }
 
     conn.execute(sql, args);
 
-    if(toConfigurationSingle::Instance().autoCommit())
+    if (toConfigurationSingle::Instance().autoCommit())
         conn.commit();
     else
         toMainWidget()->setNeedCommit(conn);
 }
 
 
-void toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn) {
+void toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn)
+{
     const toResultModel::HeaderList Headers = Model->headers();
 
     QString sql = QString("INSERT INTO %1.%2 (").arg(Owner).arg(Table);
 
     int num = 0;
-    for(int i = 1; i < change.row.size(); i++) {
-        if(num > 0)
+    for (int i = 1; i < change.row.size(); i++)
+    {
+        if (num > 0)
             sql += ",";
         sql += conn.quote(Model->headerData(
                               i,
@@ -245,20 +263,23 @@ void toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn) {
     sql += ") VALUES (";
 
     num = 0;
-    for(int i = 1; i < change.row.size(); i++, num++) {
-        if(num > 0)
+    for (int i = 1; i < change.row.size(); i++, num++)
+    {
+        if (num > 0)
             sql += (",");
         sql += (":f");
         sql += QString::number(num + 1);
 
-        if(change.row[i].isBinary()) {
-            if(Headers[i].datatype.toUpper().contains("LOB"))
+        if (change.row[i].isBinary())
+        {
+            if (Headers[i].datatype.toUpper().contains("LOB"))
                 sql += ("<blob>");
             else
                 sql += ("<raw_long,in>");
         }
-        else {
-            if(Headers[i].datatype.toUpper().contains("LOB"))
+        else
+        {
+            if (Headers[i].datatype.toUpper().contains("LOB"))
                 sql += ("<clob>");
             else
                 sql += ("<char[4000],in>");
@@ -268,38 +289,42 @@ void toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn) {
     sql += (")");
 
     toQList args;
-    for(int i = 1; i < change.row.size(); i++) 
+    for (int i = 1; i < change.row.size(); i++)
         toPush(args, change.row[i]);
 
     toQuery q(conn, sql, args);
 
-    if(toConfigurationSingle::Instance().autoCommit())
+    if (toConfigurationSingle::Instance().autoCommit())
         conn.commit();
     else
         toMainWidget()->setNeedCommit(conn);
 }
 
 
-void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn) {
+void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn)
+{
     const toResultModel::HeaderList Headers = Model->headers();
     bool oracle = toIsOracle(conn);
 
     QString sql = QString("UPDATE %1.%2 SET ").arg(Owner).arg(Table);
     sql += conn.quote(change.columnName);
 
-    if(change.newValue.isNull())
+    if (change.newValue.isNull())
         sql += (" = NULL");
-    else {
+    else
+    {
         sql += ("= :f0");
 
-        if(change.row[change.column].isBinary()) {
-            if(Headers[change.column].datatype.toUpper().contains("LOB"))
+        if (change.row[change.column].isBinary())
+        {
+            if (Headers[change.column].datatype.toUpper().contains("LOB"))
                 sql += ("<blob>");
             else
                 sql += ("<raw_long,in>");
         }
-        else {
-            if(Headers[change.column].datatype.toUpper().contains("LOB"))
+        else
+        {
+            if (Headers[change.column].datatype.toUpper().contains("LOB"))
                 sql += ("<clob>");
             else
                 sql += ("<char[4000],in>");
@@ -310,42 +335,47 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn) 
     int col = 1;
     bool where = false;
 
-    for(toResultModel::Row::iterator j = change.row.begin() + 1;
-        j != change.row.end();
-        j++, col++) {
+    for (toResultModel::Row::iterator j = change.row.begin() + 1;
+            j != change.row.end();
+            j++, col++)
+    {
 
         QString columnName = conn.quote(Model->headerData(
                                             col,
                                             Qt::Horizontal,
                                             Qt::DisplayRole).toString());
 
-        if(!oracle || (!Headers[change.column].datatype.toUpper().startsWith(("LONG")) &&
-                       !Headers[change.column].datatype.toUpper().contains(("LOB")))) {
-            if(where)
+        if (!oracle || (!Headers[change.column].datatype.toUpper().startsWith(("LONG")) &&
+                        !Headers[change.column].datatype.toUpper().contains(("LOB"))))
+        {
+            if (where)
                 sql += (" AND (");
             else
                 where = true;
 
             sql += columnName;
 
-            if((*j).isNull()) {
+            if ((*j).isNull())
+            {
                 sql += " IS NULL ";
 
-                if((*j).isNumber())
+                if ((*j).isNumber())
                     sql += ")";
-                else {
+                else
+                {
                     sql += " OR " + columnName + " = :c";
                     sql += QString::number(col);
-                    if((*j).isBinary())
+                    if ((*j).isBinary())
                         sql += ("<raw_long,in>)");
                     else
                         sql += ("<char[4000],in>)");
                 }
             }
-            else {
+            else
+            {
                 sql += " = :c";
                 sql += QString::number(col);
-                if((*j).isBinary())
+                if ((*j).isBinary())
                     sql += ("<raw_long,in>)");
                 else
                     sql += ("<char[4000],in>)");
@@ -353,7 +383,8 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn) 
         }
     }
 
-    if(!where) {
+    if (!where)
+    {
         toStatusMessage(tr("This table contains only LOB/LONG "
                            "columns and can not be edited"));
         return;
@@ -362,17 +393,20 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn) 
     toQList args;
 
     // the "SET = " value
-    if(!change.newValue.isNull())
+    if (!change.newValue.isNull())
         toPush(args, change.newValue);
 
     col = 1;
-    for(toResultModel::Row::iterator j = change.row.begin() + 1;
-        j != change.row.end();
-        j++, col++) {
+    for (toResultModel::Row::iterator j = change.row.begin() + 1;
+            j != change.row.end();
+            j++, col++)
+    {
         if (!oracle || (!Headers[col].datatype.toUpper().startsWith(("LONG")) &&
-                        !Headers[col].datatype.toUpper().contains(("LOB")))) {
-            if((*j).isNull()) {
-                if(!(*j).isNumber())
+                        !Headers[col].datatype.toUpper().contains(("LOB"))))
+        {
+            if ((*j).isNull())
+            {
+                if (!(*j).isNumber())
                     toPush(args, toQValue(QString("")));
                 // else don't push null for numbers
             }
@@ -381,10 +415,11 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn) 
         }
     }
 
-    try {
+    try
+    {
         toQuery q(conn, sql, args);
 
-        if(toConfigurationSingle::Instance().autoCommit())
+        if (toConfigurationSingle::Instance().autoCommit())
             conn.commit();
         else
             toMainWidget()->setNeedCommit(conn);
@@ -393,10 +428,12 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn) 
 }
 
 
-bool toResultTableViewEdit::commitChanges(bool status) {
+bool toResultTableViewEdit::commitChanges(bool status)
+{
     // Check to make sure some changes were actually made
-    if(Changes.size() < 1) {
-        if(status)
+    if (Changes.size() < 1)
+    {
+        if (status)
             toStatusMessage(tr("No changes made"), false, false);
         return false;
     }
@@ -404,11 +441,14 @@ bool toResultTableViewEdit::commitChanges(bool status) {
     toConnection &conn = connection();
 
     bool error = false;
-    for(int changeIndex = 0; changeIndex < Changes.size(); changeIndex++) {
-        try {
+    for (int changeIndex = 0; changeIndex < Changes.size(); changeIndex++)
+    {
+        try
+        {
             struct ChangeSet &change = Changes[changeIndex];
 
-            switch(change.kind) {
+            switch (change.kind)
+            {
             case Delete:
                 commitDelete(change, conn);
                 break;
@@ -424,14 +464,15 @@ bool toResultTableViewEdit::commitChanges(bool status) {
 
             toStatusMessage(tr("Saved"), false, false);
         }
-        catch(const QString &str) {
+        catch (const QString &str)
+        {
             toStatusMessage(str);
             error = true;
             break;
         }
     }
 
-    if(error)
+    if (error)
         refresh();
     else
         Changes.clear();
@@ -441,33 +482,38 @@ bool toResultTableViewEdit::commitChanges(bool status) {
 }
 
 
-void toResultTableViewEdit::commitChanges(toConnection &conn, bool cmt) {
+void toResultTableViewEdit::commitChanges(toConnection &conn, bool cmt)
+{
     // make sure this is the same connection, we don't want to commit
     // this connection when somebody clicked 'commit' when in another
     // tool and another database.
-    if(&conn != &connection())
+    if (&conn != &connection())
         return;
 
-    if(cmt) {
+    if (cmt)
+    {
         commitChanges(false);
         connection().commit();  // make sure to commit connection
-                                // where our changes are.
+        // where our changes are.
     }
     else
         refresh();
 }
 
 
-void toResultTableViewEdit::revertChanges() {
+void toResultTableViewEdit::revertChanges()
+{
     Changes.clear();
     emit changed(changed());
 }
 
 
-void toResultTableViewEdit::addRecord(void) {
+void toResultTableViewEdit::addRecord(void)
+{
     int col = selectionModel()->currentIndex().column();
     int row = Model->addRow() - 1; // selection starts at 0
-    if(row >= 0) {
+    if (row >= 0)
+    {
         QModelIndex left  = Model->createIndex(row, col);
         selectionModel()->select(QItemSelection(left, left),
                                  QItemSelectionModel::ClearAndSelect);
@@ -476,10 +522,12 @@ void toResultTableViewEdit::addRecord(void) {
 }
 
 
-void toResultTableViewEdit::duplicateRecord(void) {
+void toResultTableViewEdit::duplicateRecord(void)
+{
     int col = selectionModel()->currentIndex().column();
     int row = Model->addRow(selectionModel()->currentIndex()) - 1;
-    if(row >= 0) {
+    if (row >= 0)
+    {
         QModelIndex left  = Model->createIndex(row, col);
         selectionModel()->select(QItemSelection(left, left),
                                  QItemSelectionModel::ClearAndSelect);
@@ -488,8 +536,9 @@ void toResultTableViewEdit::duplicateRecord(void) {
 }
 
 
-void toResultTableViewEdit::deleteRecord(void) {
+void toResultTableViewEdit::deleteRecord(void)
+{
     QModelIndex ind = selectionModel()->currentIndex();
-    if(ind.isValid())
+    if (ind.isValid())
         Model->deleteRow(ind);
 }

@@ -48,7 +48,8 @@ class QMenu;
 class QTabWidget;
 class toResultTableView;
 
-class toBackup : public toToolWidget {
+class toBackup : public toToolWidget
+{
     Q_OBJECT;
 
     QAction      *updateAct;

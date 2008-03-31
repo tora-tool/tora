@@ -249,7 +249,7 @@ class oracleQuery : public toQuery::queryImpl
         }
         virtual ~oracleQuery()
         {
-            if(!Query)
+            if (!Query)
                 return;
 
             Query->close();
@@ -1252,21 +1252,21 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
                 {
                     bool ok = false;
                     QString newpass = QInputDialog::getText(
-                        toMainWidget(),
-                        qApp->translate("toOracleConnection", "Password expired"),
-                        qApp->translate("toOracleConnection", "Enter new password"),
-                        QLineEdit::Password,
-                        QString::null,
-                        &ok);
+                                          toMainWidget(),
+                                          qApp->translate("toOracleConnection", "Password expired"),
+                                          qApp->translate("toOracleConnection", "Enter new password"),
+                                          QLineEdit::Password,
+                                          QString::null,
+                                          &ok);
                     if (ok)
                     {
                         QString newpass2 = QInputDialog::getText(
-                            toMainWidget(),
-                            qApp->translate("toOracleConnection", "Password expired"),
-                            qApp->translate("toOracleConnection", "Enter password again for confirmation"),
-                            QLineEdit::Password,
-                            QString::null,
-                            &ok);
+                                               toMainWidget(),
+                                               qApp->translate("toOracleConnection", "Password expired"),
+                                               qApp->translate("toOracleConnection", "Enter password again for confirmation"),
+                                               QLineEdit::Password,
+                                               QString::null,
+                                               &ok);
                         if (ok)
                         {
                             if (newpass2 != newpass)
@@ -1387,7 +1387,8 @@ static toSQL SQLCreatePlanTable(toSQL::TOSQL_CREATEPLAN,
 
 
 toOracleSetting::toOracleSetting(QWidget *parent)
-    : QWidget(parent), toSettingTab("database.html#oracle") {
+        : QWidget(parent), toSettingTab("database.html#oracle")
+{
 
     setupUi(this);
     DefaultDate->setText(toConfigurationSingle::Instance().dateFormat());
@@ -1409,31 +1410,34 @@ toOracleSetting::toOracleSetting(QWidget *parent)
         CreatePlanTable->setEnabled(true);
     }
     catch (...)
-    {}
+        {}
 }
 
 
-void toOracleSetting::saveSetting() {
+void toOracleSetting::saveSetting()
+{
     toConfigurationSingle::Instance().setKeepPlans(KeepPlans->isChecked());
     toConfigurationSingle::Instance().setDateFormat(DefaultDate->text());
     toConfigurationSingle::Instance().setPlanCheckpoint(CheckPoint->text());
     toConfigurationSingle::Instance().setPlanTable(ExplainPlan->text());
-	toConfigurationSingle::Instance().setOpenCursors(OpenCursors->value());
+    toConfigurationSingle::Instance().setOpenCursors(OpenCursors->value());
     if (Unlimited->isChecked())
     {
         toMaxLong = -1;
-		toConfigurationSingle::Instance().setMaxLong(-1);
+        toConfigurationSingle::Instance().setMaxLong(-1);
     }
     else
     {
-		toConfigurationSingle::Instance().setMaxLong(MaxLong->text().toInt());
+        toConfigurationSingle::Instance().setMaxLong(MaxLong->text().toInt());
         toMaxLong = MaxLong->text().toInt();
     }
 }
 
 
-void toOracleSetting::createPlanTable() {
-    try {
+void toOracleSetting::createPlanTable()
+{
+    try
+    {
         toConnection &conn = toMainWidget()->currentConnection();
         conn.execute(toSQL::string(SQLCreatePlanTable, conn).
                      arg(ExplainPlan->text()));

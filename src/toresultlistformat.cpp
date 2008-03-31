@@ -44,7 +44,8 @@
 
 
 toResultListFormat::toResultListFormat(QWidget *parent, const char *name)
-    : QDialog(parent) {
+        : QDialog(parent)
+{
 
     setupUi(this);
     setModal(true);
@@ -62,13 +63,15 @@ toResultListFormat::toResultListFormat(QWidget *parent, const char *name)
 }
 
 
-void toResultListFormat::formatChanged(int pos) {
+void toResultListFormat::formatChanged(int pos)
+{
     Separator->setEnabled(pos == 2);
     Delimiter->setEnabled(pos == 2);
 }
 
 
-void toResultListFormat::saveDefault(void) {
+void toResultListFormat::saveDefault(void)
+{
 // NOTE: unused in the whole app at all
 //     toConfigurationSingle::Instance().globalSetConfig(
 //         CONF_CSV_DELIMITER,
@@ -76,5 +79,5 @@ void toResultListFormat::saveDefault(void) {
 //     toConfigurationSingle::Instance().globalSetConfig(
 //         CONF_CSV_SEPARATOR,
 //         Separator->text());
-	toConfigurationSingle::Instance().setDefaultFormat(Format->currentIndex());
+    toConfigurationSingle::Instance().setDefaultFormat(Format->currentIndex());
 }

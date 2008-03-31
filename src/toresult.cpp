@@ -47,36 +47,37 @@
 
 
 toResult::toResult()
-    : Slots(this),
-      Handled(true),
-      Tabs(0),
-      TabWidget(0),
-      ForceRefresh(false),
-      QueryReady(false),
-      FromSQL(false),
-      DisableTab(true)
+        : Slots(this),
+        Handled(true),
+        Tabs(0),
+        TabWidget(0),
+        ForceRefresh(false),
+        QueryReady(false),
+        FromSQL(false),
+        DisableTab(true)
 {
     QTimer::singleShot(1, &Slots, SLOT(setup()));
 }
 
-void toResult::changeHandle(void) {
-    if(!DisableTab)
+void toResult::changeHandle(void)
+{
+    if (!DisableTab)
         return;
 
     QWidget *widget = dynamic_cast<QWidget *>(this);
 
-    if(!widget)
+    if (!widget)
         return;
 
     widget->setEnabled(handled());
 
     // find totabwidget
     QWidget *parent = widget;
-    while(parent && parent->metaObject()->className() != QString("toTabWidget"))
+    while (parent && parent->metaObject()->className() != QString("toTabWidget"))
         parent = parent->parentWidget();
     toTabWidget *tw = dynamic_cast<toTabWidget *>(parent);
 
-    if(tw)
+    if (tw)
         tw->setTabShown(widget, handled());
 }
 

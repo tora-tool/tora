@@ -149,7 +149,7 @@ toAlert::toAlert(QWidget *main, toConnection &connection)
 
     AddNames.insert(AddNames.end(), def);
 
-    addAct = 
+    addAct =
         toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(commit_xpm))),
                            tr("Register current"),
                            this,
@@ -211,11 +211,13 @@ toAlert::toAlert(QWidget *main, toConnection &connection)
             this, SLOT(windowActivated(QWidget *)));
 
     State = Started;
-    try {
+    try
+    {
         toThread *thread = new toThread(new pollTask(*this));
         thread->start();
     }
-    catch(...) {
+    catch (...)
+    {
         toStatusMessage(tr("Failed to start polling thread, try closing "
                            "some other tools and restart Alert Messenger"));
     }
@@ -223,9 +225,12 @@ toAlert::toAlert(QWidget *main, toConnection &connection)
     setFocusProxy(Message);
 }
 
-void toAlert::windowActivated(QWidget *widget) {
-    if(widget == this) {
-        if(!ToolMenu) {
+void toAlert::windowActivated(QWidget *widget)
+{
+    if (widget == this)
+    {
+        if (!ToolMenu)
+        {
             ToolMenu = new QMenu(tr("&Alert"), this);
 
             ToolMenu->addAction(addAct);
@@ -239,20 +244,25 @@ void toAlert::windowActivated(QWidget *widget) {
             toMainWidget()->addCustomMenu(ToolMenu);
         }
     }
-    else {
+    else
+    {
         delete ToolMenu;
         ToolMenu = NULL;
     }
 }
 
-toAlert::~toAlert() {
+toAlert::~toAlert()
+{
 }
 
-void toAlert::closeEvent(QCloseEvent *event) {
-    try {
+void toAlert::closeEvent(QCloseEvent *event)
+{
+    try
+    {
         Lock.lock();
         State = Quit;
-        while(State != Done) {
+        while (State != Done)
+        {
             Lock.unlock();
             Semaphore.down();
             Lock.lock();

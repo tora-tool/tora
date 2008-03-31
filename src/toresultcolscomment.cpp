@@ -82,7 +82,8 @@ static toSQL SQLChangeColumnCommentPG(
 
 
 toResultColsComment::toResultColsComment(QWidget *parent)
-    : QLineEdit(parent), Changed(false) {
+        : QLineEdit(parent), Changed(false)
+{
     connect(this,
             SIGNAL(textChanged(const QString &)),
             this,
@@ -92,7 +93,8 @@ toResultColsComment::toResultColsComment(QWidget *parent)
 
 void toResultColsComment::setComment(bool table,
                                      const QString &name,
-                                     const QString &comment) {
+                                     const QString &comment)
+{
     saveUnchanged();
     disconnect(this,
                SIGNAL(textChanged(const QString &)),
@@ -109,20 +111,25 @@ void toResultColsComment::setComment(bool table,
 }
 
 
-void toResultColsComment::commentChanged() {
+void toResultColsComment::commentChanged()
+{
     Changed = true;
 }
 
 
-void toResultColsComment::focusOutEvent(QFocusEvent *e) {
+void toResultColsComment::focusOutEvent(QFocusEvent *e)
+{
     saveUnchanged();
     QLineEdit::focusOutEvent(e);
 }
 
 
-void toResultColsComment::saveUnchanged() {
-    try {
-        if(!Name.isEmpty() && Changed) {
+void toResultColsComment::saveUnchanged()
+{
+    try
+    {
+        if (!Name.isEmpty() && Changed)
+        {
             Changed = false;
             toConnection &conn = toCurrentConnection(this);
             QString sql;

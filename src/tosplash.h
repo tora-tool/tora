@@ -45,7 +45,8 @@
 class QLabel;
 class QProgressBar;
 
-class toSplash : public QWidget {
+class toSplash : public QWidget
+{
     QProgressBar *Progress;
     QLabel       *Label;
 
@@ -56,11 +57,13 @@ public:
     QProgressBar* progress(void);
 };
 
-inline QLabel* toSplash::label(void) {
+inline QLabel* toSplash::label(void)
+{
     return Label;
 }
 
-inline QProgressBar* toSplash::progress(void) {
+inline QProgressBar* toSplash::progress(void)
+{
     return Progress;
 }
 

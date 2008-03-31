@@ -396,8 +396,9 @@ void toScript::addConnection(const QString &name)
 toScript::~toScript()
 {}
 
-void toScript::closeEvent(QCloseEvent *event) {
-    if(Worksheet && Worksheet->close())
+void toScript::closeEvent(QCloseEvent *event)
+{
+    if (Worksheet && Worksheet->close())
         event->accept();
     else
         event->ignore();
@@ -416,7 +417,8 @@ std::list<QString> toScript::createObjectList(toTreeWidget *source)
     std::list<QString> userViews;
     std::list<QString> users;
 
-    for(toTreeWidgetItemIterator it(source); (*it); it++) {
+    for (toTreeWidgetItemIterator it(source); (*it); it++)
+    {
         toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>((*it));
 
         if (chk && chk->isEnabled())
@@ -536,25 +538,25 @@ void toScript::execute(void)
                 if (file.exists())
                 {
                     if (TOMessageBox::warning(
-                            this,
-                            tr("Overwrite file?"),
-                            tr("The file %1 already exists,\n"
-                               "are you sure you want to continue and write over it?")
-                            .arg(ScriptUI->Filename->text()),
-                            tr("&Yes"), tr("&Cancel"), QString::null, 0) != 0)
+                                this,
+                                tr("Overwrite file?"),
+                                tr("The file %1 already exists,\n"
+                                   "are you sure you want to continue and write over it?")
+                                .arg(ScriptUI->Filename->text()),
+                                tr("&Yes"), tr("&Cancel"), QString::null, 0) != 0)
                     {
                         return ;
                     }
                 }
                 file.open(QIODevice::WriteOnly);
 
-                if(file.error() != QFile::NoError)
+                if (file.error() != QFile::NoError)
                     throw tr("Couldn't open file %1").arg(file.fileName());
 
                 QTextStream stream(&file);
                 source.create(stream, sourceObjects);
 
-                if(file.error() != QFile::NoError)
+                if (file.error() != QFile::NoError)
                     throw tr("Error writing to file %1").arg(file.fileName());
 
                 script = tr("-- Script generated to file %1 successfully").arg(ScriptUI->Filename->text());
@@ -567,7 +569,7 @@ void toScript::execute(void)
                 QFile file(ScriptUI->Filename->text() + QDir::separator() + "script.sql");
                 file.open(QIODevice::WriteOnly);
 
-                if(file.error() != QFile::NoError)
+                if (file.error() != QFile::NoError)
                     throw QString(tr("Couldn't open file %1")).arg(file.fileName());
 
                 QTextStream stream(&file);
@@ -578,7 +580,7 @@ void toScript::execute(void)
                 QFile pfile(ScriptUI->Filename->text() + QDir::separator() + "script.tpr");
                 pfile.open(QIODevice::WriteOnly);
 
-                if(pfile.error() != QFile::NoError)
+                if (pfile.error() != QFile::NoError)
                     throw QString(tr("Couldn't open file %1")).arg(pfile.fileName());
 
                 QTextStream pstream(&pfile);
@@ -597,13 +599,13 @@ void toScript::execute(void)
                     tf.open(QIODevice::WriteOnly);
                     pstream << tf.fileName() << "\n";
 
-                    if(tf.error() != QFile::NoError)
+                    if (tf.error() != QFile::NoError)
                         throw QString(tr("Couldn't open file %1")).arg(tf.fileName());
 
                     QTextStream ts(&tf);
                     source.create(ts, t);
 
-                    if(tf.error() != QFile::NoError)
+                    if (tf.error() != QFile::NoError)
                         throw QString(tr("Error writing to file %1")).arg(tf.fileName());
 
 
@@ -611,9 +613,9 @@ void toScript::execute(void)
                     ;
                 }
 
-                if(file.error() != QFile::NoError)
+                if (file.error() != QFile::NoError)
                     throw QString(tr("Error writing to file %1")).arg(file.fileName());
-                if(pfile.error() != QFile::NoError)
+                if (pfile.error() != QFile::NoError)
                     throw QString(tr("Error writing to file %1")).arg(pfile.fileName());
             }
             break;
@@ -1051,7 +1053,8 @@ void toScript::objectClicked(toTreeWidgetItem *parent)
     }
     bool on = pchk->isOn();
 
-    for(toTreeWidgetItemIterator it(parent); (*it); it++) {
+    for (toTreeWidgetItemIterator it(parent); (*it); it++)
+    {
         toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>((*it));
         if (chk)
             chk->setOn(on);
@@ -1062,8 +1065,8 @@ void toScript::changeSchema(int, bool source)
 {
     QString src = (source ? ScriptUI->SourceSchema : ScriptUI->DestinationSchema)->currentText();
     for (toTreeWidgetItem *parent = (source ?
-                                   ScriptUI->SourceObjects :
-                                   ScriptUI->DestinationObjects)->firstChild();
+                                     ScriptUI->SourceObjects :
+                                     ScriptUI->DestinationObjects)->firstChild();
             parent;
             parent = parent->nextSibling())
     {

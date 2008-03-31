@@ -58,7 +58,8 @@ class QMenu;
  * Simple class for storing connection options and comparisons.
  *
  */
-class toConnectionOptions {
+class toConnectionOptions
+{
 public:
     QString           provider;
     QString           host;
@@ -69,7 +70,8 @@ public:
     std::set<QString> options;
 
     // must have for qmap
-    toConnectionOptions() {
+    toConnectionOptions()
+    {
     }
 
     toConnectionOptions(const QString &_prov,
@@ -78,7 +80,8 @@ public:
                         const QString &_user,
                         const QString &_pass,
                         int _port,
-                        std::set<QString> _options) {
+                        std::set<QString> _options)
+    {
         provider = _prov;
         host     = _host;
         database = _data;
@@ -88,22 +91,25 @@ public:
         options  = _options;
     }
 
-    bool operator==(const toConnectionOptions &other) {
+    bool operator==(const toConnectionOptions &other)
+    {
         return provider == other.provider &&
-            host == other.host &&
-            database == other.database &&
-            username == other.username;
+               host == other.host &&
+               database == other.database &&
+               username == other.username;
     }
 
-    bool operator!=(const toConnectionOptions &other) {
+    bool operator!=(const toConnectionOptions &other)
+    {
         return !operator==(other);
     }
 };
 
 
 class toNewConnection : public QDialog,
-                        public Ui::toNewConnectionUI,
-                        public toHelpContext {
+            public Ui::toNewConnectionUI,
+            public toHelpContext
+{
     Q_OBJECT;
 
 private:
@@ -114,7 +120,8 @@ private:
     QMenu *PreviousContext;
 
     // an enum to keep the columns in qtablewidget straight
-    enum PreviousColumns {
+    enum PreviousColumns
+    {
         IndexColumn = 0,
         ProviderColumn,
         HostColumn,
@@ -148,7 +155,8 @@ public:
     toNewConnection(QWidget* parent = 0,
                     Qt::WFlags fl = 0);
 
-    toConnection* connection() {
+    toConnection* connection()
+    {
         return NewConnection;
     }
 

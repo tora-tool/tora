@@ -45,7 +45,8 @@
 #include "totool.h"
 #include "ui_totoolsettingui.h"
 
-class toGlobalSetting : public QWidget, public Ui::toGlobalSettingUI, public toSettingTab {
+class toGlobalSetting : public QWidget, public Ui::toGlobalSettingUI, public toSettingTab
+{
     Q_OBJECT;
 
 public:
@@ -61,7 +62,8 @@ public slots:
     virtual void cacheBrowse(void);
 };
 
-class toDatabaseSetting : public QWidget, public Ui::toDatabaseSettingUI, public toSettingTab {
+class toDatabaseSetting : public QWidget, public Ui::toDatabaseSettingUI, public toSettingTab
+{
     Q_OBJECT;
 
 public:
@@ -73,7 +75,8 @@ public slots:
     virtual void IndicateEmptyColor_clicked();
 };
 
-class toToolSetting : public QWidget, public Ui::toToolSettingUI, public toSettingTab {
+class toToolSetting : public QWidget, public Ui::toToolSettingUI, public toSettingTab
+{
     Q_OBJECT;
 
 public:

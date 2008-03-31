@@ -71,7 +71,8 @@ class toNoBlockQuery;
  * @internal
  */
 
-class toTemplate : public QWidget, public toHelpContext {
+class toTemplate : public QWidget, public toHelpContext
+{
     Q_OBJECT;
 
     QToolBar   *Toolbar;
@@ -84,7 +85,8 @@ public:
     toTemplate(TODock *parent);
     virtual ~toTemplate();
     void setWidget(QWidget *widget);
-    QWidget *widget(void) {
+    QWidget *widget(void)
+    {
         return WidgetExtra;
     }
     QWidget *frame(void);
@@ -94,7 +96,8 @@ public:
     static toTemplate *templateWidget(toTreeWidget *obj);
     static bool templateShown();
 
-    virtual bool canHandle(toConnection &) {
+    virtual bool canHandle(toConnection &)
+    {
         return true;
     }
 
@@ -117,7 +120,8 @@ public slots:
  * template window will be opened.
  */
 
-class toTemplateProvider {
+class toTemplateProvider
+{
     /** List of currently available template providers.
      */
     static std::list<toTemplateProvider *> *Providers;
@@ -134,7 +138,8 @@ public:
 
     /** Get name of this template provider.
      */
-    const QString name() {
+    const QString name()
+    {
         return Name;
     }
 
@@ -179,7 +184,8 @@ public:
  * collapse methods that are called when this item is expanded or collapsed from the
  * template widget.
  */
-class toTemplateItem : public toResultViewItem {
+class toTemplateItem : public toResultViewItem
+{
     /** The provider responsible for this item.
      */
     toTemplateProvider &Provider;
@@ -189,16 +195,16 @@ public:
      * @param parent Parent of this item.
      * @param name Contents of the first column of the item.
      */
-toTemplateItem(toTemplateProvider &prov, toTreeWidget *parent, const QString &name)
-    : toResultViewItem(parent, NULL, name), Provider(prov)
+    toTemplateItem(toTemplateProvider &prov, toTreeWidget *parent, const QString &name)
+            : toResultViewItem(parent, NULL, name), Provider(prov)
     { }
     /** Create an item.
      * @param parent Parent of this item.
      * @param name Contents of the first column of the item.
      * @param after The item to put this item after.
      */
-toTemplateItem(toTemplateItem *parent, const QString &name, toTreeWidgetItem *after = NULL)
-    : toResultViewItem(parent, after, name), Provider(parent->provider())
+    toTemplateItem(toTemplateItem *parent, const QString &name, toTreeWidgetItem *after = NULL)
+            : toResultViewItem(parent, after, name), Provider(parent->provider())
     { }
     /** Get a reference to the provider of this item.
      * @return Reference to provider.
@@ -234,7 +240,8 @@ toTemplateItem(toTemplateItem *parent, const QString &name, toTreeWidgetItem *af
  * selected.
  */
 
-class toTemplateText : public toTemplateItem {
+class toTemplateText : public toTemplateItem
+{
     /** The note to display.
      */
     const QString Note;
@@ -244,8 +251,8 @@ public:
      * @param name Contents of the first column of the item.
      * @param note Extra text to display if item is selected.
      */
-toTemplateText(toTemplateItem *parent, const QString &name, const QString &note)
-    : toTemplateItem(parent, name), Note(note)
+    toTemplateText(toTemplateItem *parent, const QString &name, const QString &note)
+            : toTemplateItem(parent, name), Note(note)
     { }
     /** Reimplemented for internal reasons.
      */
@@ -258,7 +265,8 @@ class toTemplateSQL;
  * @internal
  */
 
-class toTemplateSQLObject : public QObject {
+class toTemplateSQLObject : public QObject
+{
     Q_OBJECT;
 
     toNoBlockQuery *Query;
@@ -269,7 +277,7 @@ class toTemplateSQLObject : public QObject {
     void expand(void);
 
     friend class toTemplateSQL;
-    private slots:
+private slots:
     void poll(void);
 };
 
@@ -277,7 +285,8 @@ class toTemplateSQLObject : public QObject {
  * and create child items which are the result of the query.
  */
 
-class toTemplateSQL : public toTemplateItem {
+class toTemplateSQL : public toTemplateItem
+{
     toTemplateSQLObject Object;
 
     /** Connection to run statement in
@@ -309,20 +318,23 @@ public:
     /** Get connection of this item.
      * @return Reference to connection.
      */
-    virtual toConnection &connection() {
+    virtual toConnection &connection()
+    {
         return *Connection;
     }
     /** Create a child of this item.
      * @param name Name of the child.
      * @return A newly created item.
      */
-    virtual toTemplateItem *createChild(const QString &name) {
+    virtual toTemplateItem *createChild(const QString &name)
+    {
         return new toTemplateItem(this, name);
     }
     /** Get parameters to pass to query.
      * @return List of strings to pass as input parameters to query
      */
-    virtual toQList parameters(void) {
+    virtual toQList parameters(void)
+    {
         toQList ret;
         return ret;
     }
@@ -334,8 +346,9 @@ public:
 
 
 class toTemplatePrefs : public QWidget,
-    public Ui::toTemplateSetupUI,
-    public toSettingTab {
+            public Ui::toTemplateSetupUI,
+            public toSettingTab
+{
 
     Q_OBJECT;
 
@@ -352,7 +365,8 @@ public slots:
 };
 
 
-class toTemplateAddFile : public QDialog, public Ui::toTemplateAddFileUI {
+class toTemplateAddFile : public QDialog, public Ui::toTemplateAddFileUI
+{
     Q_OBJECT;
 
 public:
@@ -363,12 +377,13 @@ public slots:
     virtual void valid(void);
 };
 
-class toTemplateEdit : public QDialog, 
-	public Ui::toTemplateEditUI, 
-	public toHelpContext {
+class toTemplateEdit : public QDialog,
+            public Ui::toTemplateEditUI,
+            public toHelpContext
+{
     Q_OBJECT;
 
-	std::map<QString, QString> &TemplateMap;
+    std::map<QString, QString> &TemplateMap;
     std::map<QString, QString>::iterator LastTemplate;
 
 public:
@@ -380,12 +395,12 @@ public:
     QString name(toTreeWidgetItem *item);
 
 public slots:
-	virtual void updateFromMap(void);
+    virtual void updateFromMap(void);
     virtual void remove(void);
     virtual void preview(void);
     virtual void newTemplate(void);
     virtual void changeSelection(void);
-	
+
 };
 
 #endif

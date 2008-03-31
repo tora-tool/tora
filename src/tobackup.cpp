@@ -320,7 +320,7 @@ toBackup::toBackup(toTool* tool, QWidget *main, toConnection &connection)
     layout()->addWidget(toolbar);
 
     updateAct = new QAction(QPixmap(const_cast<const char**>(refresh_xpm)),
-                    tr("Update"), this);
+                            tr("Update"), this);
     updateAct->setShortcut(QKeySequence::Refresh);
     connect(updateAct, SIGNAL(triggered()), this, SLOT(refresh(void)));
     toolbar->addAction(updateAct);
@@ -374,9 +374,12 @@ toBackup::toBackup(toTool* tool, QWidget *main, toConnection &connection)
     setFocusProxy(Tabs);
 }
 
-void toBackup::windowActivated(QWidget *widget) {
-    if (widget == this) {
-        if (!ToolMenu) {
+void toBackup::windowActivated(QWidget *widget)
+{
+    if (widget == this)
+    {
+        if (!ToolMenu)
+        {
             ToolMenu = new QMenu(tr("&Backup Manager"), this);
 
             ToolMenu->addAction(updateAct);
@@ -384,7 +387,8 @@ void toBackup::windowActivated(QWidget *widget) {
             toMainWidget()->addCustomMenu(ToolMenu);
         }
     }
-    else {
+    else
+    {
         delete ToolMenu;
         ToolMenu = NULL;
     }

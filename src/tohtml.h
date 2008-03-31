@@ -65,7 +65,8 @@ while(!count.eof()) {
 
 class QChar;
 
-class toHtml {
+class toHtml
+{
     /** Actual data of file.
      */
     QString Data;
@@ -85,7 +86,8 @@ class toHtml {
      * Not really a lot of memory wasted this way, in fact it is probably more efficient
      * than a dynamic list.
      */
-    struct {
+    struct
+    {
         /** Name of qualifier. Always lowercase, points into @ref Data.
          */
         QString Name;
@@ -145,13 +147,15 @@ public:
     /** Return true if current token is a tag.
      * @return True if tag.
      */
-    bool isTag(void) {
+    bool isTag(void)
+    {
         return IsTag;
     }
     /** Return true if open tag. Only valid if @ref isTag is true.
      * @return True if open tag.
      */
-    bool open(void) {
+    bool open(void)
+    {
         return Open;
     }
 
@@ -165,7 +169,8 @@ public:
     /** Get name of tag in lowercase. Only valid if @ref isTag returns true.
      * @return Name of tag (Excluding / if close tag).
      */
-    QString tag(void) {
+    QString tag(void)
+    {
         return Tag;
     }
 

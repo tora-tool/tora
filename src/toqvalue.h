@@ -51,8 +51,10 @@ class QVariant;
 
 /** This function is used to represent values that are passed to and from queries
  */
-class toQValue {
-    enum queryType {
+class toQValue
+{
+    enum queryType
+    {
         intType,
         doubleType,
         longType,
@@ -62,7 +64,8 @@ class toQValue {
         nullType
     } Type;
 
-    union queryValue {
+    union queryValue
+    {
         int         Int;
         double      Double;
         qlonglong   Long;
@@ -238,8 +241,8 @@ public:
     /** Create a binary value from it's hex representation.
      */
     static toQValue createFromHex(const QByteArray &hex);
-     /** Create a binary value from it's hex representation.
-      */
+    /** Create a binary value from it's hex representation.
+     */
     static toQValue createFromHex(const QString &hex);
     /** Create value from qvariant
      */

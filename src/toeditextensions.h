@@ -52,7 +52,8 @@
 class toMarkedText;
 class toEditExtensionTool;
 
-class toEditExtensions : public QObject, public toEditWidget::editHandler {
+class toEditExtensions : public QObject, public toEditWidget::editHandler
+{
     Q_OBJECT;
 
     toMarkedText *Current;
@@ -91,7 +92,8 @@ public slots:
 };
 
 
-class toEditExtensionGoto : public QDialog, public Ui::toEditExtensionGotoUI {
+class toEditExtensionGoto : public QDialog, public Ui::toEditExtensionGotoUI
+{
     Q_OBJECT;
 
     toMarkedText *Editor;
@@ -103,8 +105,9 @@ public:
 
 
 class toEditExtensionSetup : public QWidget,
-                             public Ui::toEditExtensionSetupUI,
-                             public toSettingTab {
+            public Ui::toEditExtensionSetupUI,
+            public toSettingTab
+{
     Q_OBJECT;
 
     toEditExtensionTool *Tool;

@@ -69,14 +69,17 @@ class toSessionList : public toResultLong
 public:
 class sessionFilter : public toResultFilter
     {
-        struct sessionID {
+        struct sessionID
+        {
             int Session;
             int Serial;
-            sessionID(int session, int serial) {
+            sessionID(int session, int serial)
+            {
                 Session = session;
                 Serial = serial;
             }
-            bool operator == (const sessionID &ses) const {
+            bool operator == (const sessionID &ses) const
+            {
                 return Session == ses.Session && Serial == ses.Serial;
             }
         };
@@ -85,35 +88,43 @@ class sessionFilter : public toResultFilter
         QString OnlyDatabase;
     public:
 
-        sessionFilter() {
+        sessionFilter()
+        {
             Show = true;
         }
-        sessionFilter(const std::list<sessionID> &serials, bool show) {
+        sessionFilter(const std::list<sessionID> &serials, bool show)
+        {
             Serials = serials;
             Show = show;
         }
         virtual bool check(const toTreeWidgetItem *item);
-        virtual toResultFilter *clone(void) {
+        virtual toResultFilter *clone(void)
+        {
             return new sessionFilter(Serials, Show);
         }
-        void setShow(bool show) {
+        void setShow(bool show)
+        {
             Show = show;
         }
-        bool show() {
+        bool show()
+        {
             return Show;
         }
-        void onlyDatabase(const QString &db) {
+        void onlyDatabase(const QString &db)
+        {
             OnlyDatabase = db;
         }
         void updateList(toResultLong *lst);
     };
     toSessionList(QWidget *parent)
-            : toResultLong(false, false, toQuery::Background, parent) {
+            : toResultLong(false, false, toQuery::Background, parent)
+    {
         setFilter(new sessionFilter);
     }
     virtual toTreeWidgetItem *createItem(toTreeWidgetItem *last, const QString &str);
     void updateFilter(void);
-    virtual void refresh(void) {
+    virtual void refresh(void)
+    {
         updateFilter();
         toResultLong::refresh();
     }
@@ -172,10 +183,12 @@ public slots:
     void changeRefresh(const QString &str);
     void refresh(void);
     void refreshTabs(void);
-    void enableStatistics(void) {
+    void enableStatistics(void)
+    {
         enableStatistics(true);
     }
-    void disableStatistics(void) {
+    void disableStatistics(void)
+    {
         enableStatistics(false);
     }
     void cancelBackend(void);

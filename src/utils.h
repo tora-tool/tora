@@ -477,12 +477,14 @@ struct DeleteObject
 /**
  * simple class to provide an empty widget that will resize horizontally
  */
-class toSpacer : public QWidget {
+class toSpacer : public QWidget
+{
     Q_OBJECT;
 
 public:
     toSpacer(QWidget *parent = NULL);
-    ~toSpacer(void) {
+    ~toSpacer(void)
+    {
     }
 };
 

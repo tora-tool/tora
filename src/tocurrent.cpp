@@ -159,11 +159,14 @@ toCurrent::toCurrent(QWidget *main, toConnection &connection)
     setFocusProxy(Tabs);
 }
 
-toCurrent::~toCurrent() {
+toCurrent::~toCurrent()
+{
 }
 
-void toCurrent::closeEvent(QCloseEvent *event) {
-    try {
+void toCurrent::closeEvent(QCloseEvent *event)
+{
+    try
+    {
         CurrentTool.closeWindow(connection());
     }
     TOCATCH;

@@ -49,7 +49,8 @@ class toResultView;
 class toTask;
 class toSGAStatement;
 
-class toTemporary : public toToolWidget {
+class toTemporary : public toToolWidget
+{
     Q_OBJECT;
 
     toResultView   *Objects;

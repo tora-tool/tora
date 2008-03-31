@@ -54,19 +54,22 @@
 
 class QComboBox;
 
-class toParamGetButton : public QPushButton {
+class toParamGetButton : public QPushButton
+{
     Q_OBJECT
     int Row;
 
 public:
     toParamGetButton(int row, QWidget *parent = 0, const char *name = 0)
-        : QPushButton(name, parent), Row(row) {
-        
+            : QPushButton(name, parent), Row(row)
+    {
+
         connect(this, SIGNAL(clicked()), this, SLOT(internalClicked()));
     }
 
 private slots:
-    void internalClicked(void) {
+    void internalClicked(void)
+    {
         emit clicked(Row);
     }
 
@@ -79,7 +82,8 @@ signals:
  * available also pop up a dialog and ask for values. Also maintains
  * an internal cache of old values.
  */
-class toParamGet : public QDialog, public toHelpContext {
+class toParamGet : public QDialog, public toHelpContext
+{
     Q_OBJECT;
 
     /** Default values cache

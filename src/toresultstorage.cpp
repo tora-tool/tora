@@ -85,7 +85,7 @@ public:
             user /= total;
             free /= total;
             if (AvailableGraph)
-                t.sprintf("%0.1f / %0.1f / %0.1f %%", (user-free)*100, free*100, (1 - user)*100);
+                t.sprintf("%0.1f / %0.1f / %0.1f %%", (user - free)*100, free*100, (1 - user)*100);
             else
                 t.sprintf("%0.1f %%", free*100);
             p->fillRect(0, 0, int((user - free)*width), height(),
@@ -195,9 +195,9 @@ static toSQL SQLShowCoalesced("toResultStorage:ShowCoalesced",
                               "       sys.dba_tablespaces d\n"
                               "  LEFT JOIN (SELECT tablespace_name,\n"
                               "                    SUM(bytes) tbs_size,\n"
-                              "		     SUM(DECODE(autoextensible,'YES',maxbytes,bytes)) autoextend_size\n"
+                              "       SUM(DECODE(autoextensible,'YES',maxbytes,bytes)) autoextend_size\n"
                               "               FROM sys.dba_data_files\n"
-                              "	       GROUP BY tablespace_name) a\n"
+                              "        GROUP BY tablespace_name) a\n"
                               "       ON d.tablespace_name = a.tablespace_name\n"
                               "  LEFT JOIN (SELECT tablespace_name,\n"
                               "                    total_bytes free_size,\n"
@@ -761,7 +761,7 @@ bool toStorageExtent::extent::operator == (const toStorageExtent::extent &ext) c
 }
 
 toStorageExtent::toStorageExtent(QWidget *parent, const char *name)
-    : QWidget(parent)
+        : QWidget(parent)
 {
     setObjectName(name);
     QPalette pal = palette();
@@ -1029,7 +1029,8 @@ static toSQL SQLListExtents("toResultStorage:ListExtents",
                             "Oracle");
 
 toResultExtent::toResultExtent(QWidget *parent, const char *name)
-    : QSplitter(Qt::Vertical, parent) {
+        : QSplitter(Qt::Vertical, parent)
+{
     setObjectName(name);
     Graph = new toStorageExtent(this);
     List = new toResultTableView(true, false, this);

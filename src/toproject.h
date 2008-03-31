@@ -47,7 +47,8 @@
 #include <QAction>
 
 
-class toProjectTemplateItem : public toTemplateItem {
+class toProjectTemplateItem : public toTemplateItem
+{
     QString Filename;
     int Order;
     void setup(const QString &name, bool open);
@@ -64,7 +65,8 @@ public:
 
     virtual QString key(int col, bool asc) const;
 
-    const QString &filename(void) const {
+    const QString &filename(void) const
+    {
         return Filename;
     }
     void setFilename(const QString &file);
@@ -75,7 +77,8 @@ public:
     virtual QWidget *selectedWidget(QWidget *parent);
 };
 
-class toProject : public QWidget{
+class toProject : public QWidget
+{
     Q_OBJECT;
 
     toProjectTemplateItem *Root;
@@ -93,7 +96,7 @@ public:
 
     void selectItem(toProjectTemplateItem *);
 
-    public slots:
+public slots:
     void update(void);
     void addFile(void);
     void delFile(void);
@@ -106,7 +109,8 @@ public:
 };
 
 
-class toProjectTemplate : public QObject, public toTemplateProvider {
+class toProjectTemplate : public QObject, public toTemplateProvider
+{
     Q_OBJECT;
 
     toProjectTemplateItem *Root;
@@ -119,7 +123,7 @@ class toProjectTemplate : public QObject, public toTemplateProvider {
 
 public:
     toProjectTemplate(void)
-    : QObject(0), toTemplateProvider("project")
+            : QObject(0), toTemplateProvider("project")
     {
         setObjectName("projecttemplate");
         Details = NULL;
@@ -133,13 +137,14 @@ public:
 
     virtual toProject *selectedWidget(QWidget *parent);
 
-    virtual toProjectTemplateItem *root(void) {
+    virtual toProjectTemplateItem *root(void)
+    {
         return Root;
     }
 
     friend class toProject;
 
-    public slots:
+public slots:
     void addFile();
     void delFile();
     void changeItem(toTreeWidgetItem *item);

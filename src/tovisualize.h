@@ -49,7 +49,8 @@ class toResultTableView;
 
 /** This widget is used to visualize the data in a toListView into charts.
  */
-class toVisualize : public QWidget {
+class toVisualize : public QWidget
+{
     Q_OBJECT;
 
     QComboBox *Type;

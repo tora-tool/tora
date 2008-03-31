@@ -75,11 +75,13 @@
 static int MaxColDisp;
 static bool Gridlines;
 
-void toResultViewMLine::setText(int col, const QString &text) {
+void toResultViewMLine::setText(int col, const QString &text)
+{
     toResultViewItem::setText(col, text);
     int pos = 0;
     int lines = 0;
-    do {
+    do
+    {
         pos = text.indexOf("\n", pos);
         lines++;
         pos++;
@@ -89,35 +91,41 @@ void toResultViewMLine::setText(int col, const QString &text) {
         Lines = lines;
 }
 
-void toResultViewMLine::setText(int col, const toQValue &text) {
+void toResultViewMLine::setText(int col, const toQValue &text)
+{
     if (text.isDouble())
         toResultViewItem::setText(col, text);
     setText(col, QString(text));
 }
 
-void toResultViewMLine::setup(void) {
+void toResultViewMLine::setup(void)
+{
     toResultViewItem::setup();
     int margin = listView()->itemMargin() * 2 + 1;
     setHeight((listView()->fontMetrics().height() + 1)*Lines + margin);
 }
 
 void toResultViewMLine::paintCell(QPainter *pnt, const QColorGroup & cg,
-                                  int column, int width, int alignment) {
+                                  int column, int width, int alignment)
+{
     toResultViewItem::paintCell(pnt, cg, column,
                                 std::max(toTreeWidgetItem::width(pnt->fontMetrics(), listView(), column), width),
                                 alignment);
-    if (Gridlines) {
+    if (Gridlines)
+    {
         pnt->setPen(Qt::gray);
         pnt->drawLine(width - 1, 0, width - 1, height());
         pnt->drawLine(0, height() - 1, width - 1, height() - 1);
     }
 }
 
-static int TextWidth(const QFontMetrics &fm, const QString &str) {
+static int TextWidth(const QFontMetrics &fm, const QString &str)
+{
     int lpos = 0;
     int pos = 0;
     int maxWidth = 0;
-    do {
+    do
+    {
         pos = str.indexOf("\n", lpos);
         QRect bounds = fm.boundingRect(str.mid(lpos, pos - lpos));
         if (bounds.width() > maxWidth)
@@ -128,10 +136,12 @@ static int TextWidth(const QFontMetrics &fm, const QString &str) {
     return maxWidth;
 }
 
-int toResultViewMLine::realWidth(const QFontMetrics &fm, const toTreeWidget *top, int column, const QString &txt) const {
-    if (!MaxColDisp) {
-		MaxColDisp = toConfigurationSingle::Instance().maxColDisp();
-		Gridlines = toConfigurationSingle::Instance().displayGridlines();
+int toResultViewMLine::realWidth(const QFontMetrics &fm, const toTreeWidget *top, int column, const QString &txt) const
+{
+    if (!MaxColDisp)
+    {
+        MaxColDisp = toConfigurationSingle::Instance().maxColDisp();
+        Gridlines = toConfigurationSingle::Instance().displayGridlines();
     }
     QString t = text(column);
     if (t.isNull())
@@ -139,7 +149,8 @@ int toResultViewMLine::realWidth(const QFontMetrics &fm, const toTreeWidget *top
     return std::min(TextWidth(fm, t), MaxColDisp) + top->itemMargin()*2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
 }
 
-QString toResultViewItem::firstText(int col) const {
+QString toResultViewItem::firstText(int col) const
+{
     if (col >= ColumnCount)
         return QString::null;
     QString txt = ColumnData[col].Data;
@@ -149,7 +160,8 @@ QString toResultViewItem::firstText(int col) const {
     return txt;
 }
 
-QString toResultViewItem::text(int col) const {
+QString toResultViewItem::text(int col) const
+{
     if (col >= ColumnCount)
         return QString::null;
     if (ColumnData[col].Type == keyData::Number)
@@ -157,8 +169,10 @@ QString toResultViewItem::text(int col) const {
     return firstText(col);
 }
 
-int toResultViewItem::realWidth(const QFontMetrics &fm, const toTreeWidget *top, int column, const QString &txt) const {
-    if (!MaxColDisp) {
+int toResultViewItem::realWidth(const QFontMetrics &fm, const toTreeWidget *top, int column, const QString &txt) const
+{
+    if (!MaxColDisp)
+    {
         MaxColDisp = toConfigurationSingle::Instance().maxColDisp();
         Gridlines = toConfigurationSingle::Instance().displayGridlines();
     }
@@ -169,12 +183,14 @@ int toResultViewItem::realWidth(const QFontMetrics &fm, const toTreeWidget *top,
     return std::min(bounds.width(), MaxColDisp) + top->itemMargin()*2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
 }
 
-void toResultViewItem::paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align) {
+void toResultViewItem::paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align)
+{
 #if 0                           // disabled, not overriding correct function anyhow
     // null related background handling
     QColorGroup colNull(cg);
     if ((toConfigurationSingle::Instance().indicateEmpty() && text(column) == "{null}")
-            || text(column).isNull()) {
+            || text(column).isNull())
+    {
         QColor nullColor;
         nullColor.setNamedColor(toConfigurationSingle::Instance().indicateEmptyColor());
         colNull.setColor(QColorGroup::Base, nullColor);
@@ -184,7 +200,8 @@ void toResultViewItem::paintCell(QPainter * p, const QColorGroup & cg, int colum
     toResultView *view = dynamic_cast<toResultView *>(listView());
     if (view && (itemBelow() == NULL || itemBelow()->itemBelow() == NULL))
         view->addItem();
-    if (Gridlines) {
+    if (Gridlines)
+    {
         p->setPen(Qt::gray);
         p->drawLine(width - 1, 0, width - 1, height());
         p->drawLine(0, height() - 1, width - 1, height() - 1);
@@ -194,15 +211,19 @@ void toResultViewItem::paintCell(QPainter * p, const QColorGroup & cg, int colum
 
 #define ALLOC_SIZE 10
 
-void toResultViewItem::setText(int col, const QString &txt) {
-    if (txt != text(col)) {
-        if (col >= ColumnCount || !ColumnData) {
+void toResultViewItem::setText(int col, const QString &txt)
+{
+    if (txt != text(col))
+    {
+        if (col >= ColumnCount || !ColumnData)
+        {
             int ns = (col + ALLOC_SIZE) / ALLOC_SIZE * ALLOC_SIZE;
             keyData *nd = new keyData[ns];
             int i;
             for (i = 0;i < ColumnCount;i++)
                 nd[i] = ColumnData[i];
-            while (i < ns) {
+            while (i < ns)
+            {
                 nd[i].Width = 0;
                 nd[i].Type = keyData::String;
                 i++;
@@ -216,12 +237,14 @@ void toResultViewItem::setText(int col, const QString &txt) {
 
         ColumnData[col].Data = txt;
 
-        if (txt == "N/A") {
+        if (txt == "N/A")
+        {
             ColumnData[col].Type = keyData::String;
             ColumnData[col].KeyAsc = "\xff";
             ColumnData[col].KeyDesc = "\x00";
         }
-        else if (number.indexIn(txt) >= 0) { // qt4 match()
+        else if (number.indexIn(txt) >= 0)   // qt4 match()
+        {
             ColumnData[col].Type = keyData::Number;
 
             static char buf[100];
@@ -232,7 +255,8 @@ void toResultViewItem::setText(int col, const QString &txt) {
                 sprintf(buf, "%015.5f", val);
             ColumnData[col].KeyAsc = ColumnData[col].KeyDesc = QString::fromLatin1(buf);
         }
-        else {
+        else
+        {
             ColumnData[col].Type = keyData::String;
             ColumnData[col].KeyAsc = ColumnData[col].KeyDesc = ColumnData[col].Data;
         }
@@ -241,7 +265,8 @@ void toResultViewItem::setText(int col, const QString &txt) {
     toTreeWidgetItem::setText(col, firstText(col));
 }
 
-void toResultViewItem::setText(int col, const toQValue &text) {
+void toResultViewItem::setText(int col, const toQValue &text)
+{
     setText(col, QString(text));
     if (text.isDouble())
         ColumnData[col].Data = QString::number(text.toDouble());
@@ -249,7 +274,8 @@ void toResultViewItem::setText(int col, const toQValue &text) {
 
 toResultViewCheck::toResultViewCheck(toTreeWidget *parent, toTreeWidgetItem *after, const QString &text, toTreeWidgetCheck::Type type)
         :
-        toTreeWidgetCheck(parent, after, QString::null, type) {
+        toTreeWidgetCheck(parent, after, QString::null, type)
+{
     ColumnData = NULL;
     ColumnCount = 0;
     if (!text.isNull())
@@ -258,22 +284,27 @@ toResultViewCheck::toResultViewCheck(toTreeWidget *parent, toTreeWidgetItem *aft
 
 toResultViewCheck::toResultViewCheck(toTreeWidgetItem *parent, toTreeWidgetItem *after, const QString &text, toTreeWidgetCheck::Type type)
         :
-        toTreeWidgetCheck(parent, after, QString::null, type) {
+        toTreeWidgetCheck(parent, after, QString::null, type)
+{
     ColumnData = NULL;
     ColumnCount = 0;
     if (!text.isNull())
         setText(0, text);
 }
 
-void toResultViewCheck::setText(int col, const QString &txt) {
-    if (txt != text(col)) {
-        if (col >= ColumnCount || !ColumnData) {
+void toResultViewCheck::setText(int col, const QString &txt)
+{
+    if (txt != text(col))
+    {
+        if (col >= ColumnCount || !ColumnData)
+        {
             int ns = (col + ALLOC_SIZE) / ALLOC_SIZE * ALLOC_SIZE;
             keyData *nd = new keyData[ns];
             int i;
             for (i = 0;i < ColumnCount;i++)
                 nd[i] = ColumnData[i];
-            while (i < ns) {
+            while (i < ns)
+            {
                 nd[i].Width = 0;
                 nd[i].Type = keyData::String;
                 i++;
@@ -287,13 +318,15 @@ void toResultViewCheck::setText(int col, const QString &txt) {
 
         ColumnData[col].Data = txt;
 
-        if (txt == "N/A") {
+        if (txt == "N/A")
+        {
             ColumnData[col].Type = keyData::String;
             ColumnData[col].KeyAsc = "\xff";
             ColumnData[col].KeyDesc = "\x00";
         }
 // qt4        else if (number.match(txt) >= 0)
-        else if (number.indexIn(txt) >= 0) {
+        else if (number.indexIn(txt) >= 0)
+        {
             ColumnData[col].Type = keyData::Number;
 
             static char buf[100];
@@ -304,7 +337,8 @@ void toResultViewCheck::setText(int col, const QString &txt) {
                 sprintf(buf, "%015.5f", val);
             ColumnData[col].KeyAsc = ColumnData[col].KeyDesc = QString::fromLatin1(buf);
         }
-        else {
+        else
+        {
             ColumnData[col].Type = keyData::String;
             ColumnData[col].KeyAsc = ColumnData[col].KeyDesc = ColumnData[col].Data;
         }
@@ -313,17 +347,20 @@ void toResultViewCheck::setText(int col, const QString &txt) {
     toTreeWidgetCheck::setText(col, firstText(col));
 }
 
-void toResultViewCheck::setText(int col, const toQValue &text) {
+void toResultViewCheck::setText(int col, const toQValue &text)
+{
     setText(col, QString(text));
     if (text.isDouble())
         ColumnData[col].Data = QString::number(text.toDouble());
 }
 
-void toResultViewMLCheck::setText(int col, const QString &text) {
+void toResultViewMLCheck::setText(int col, const QString &text)
+{
     toResultViewCheck::setText(col, text);
     int pos = 0;
     int lines = 0;
-    do {
+    do
+    {
         pos = text.indexOf("\n", pos);
         lines++;
         pos++;
@@ -333,27 +370,32 @@ void toResultViewMLCheck::setText(int col, const QString &text) {
         Lines = lines;
 }
 
-void toResultViewMLCheck::setText(int col, const toQValue &text) {
+void toResultViewMLCheck::setText(int col, const toQValue &text)
+{
     if (text.isDouble())
         toResultViewCheck::setText(col, text);
     setText(col, QString(text));
 }
 
-void toResultViewMLCheck::setup(void) {
+void toResultViewMLCheck::setup(void)
+{
     toResultViewCheck::setup();
     int margin = listView()->itemMargin() * 2;
     setHeight((listView()->fontMetrics().height() + 1)*Lines + margin);
 }
 
 void toResultViewMLCheck::paintCell(QPainter *pnt, const QColorGroup & cg,
-                                    int column, int width, int alignment) {
+                                    int column, int width, int alignment)
+{
     toResultViewCheck::paintCell(pnt, cg, column,
                                  std::max(toTreeWidgetCheck::width(pnt->fontMetrics(), listView(), column), width),
                                  alignment);
 }
 
-int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *top, int column, const QString &txt) const {
-    if (!MaxColDisp) {
+int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *top, int column, const QString &txt) const
+{
+    if (!MaxColDisp)
+    {
         MaxColDisp = toConfigurationSingle::Instance().maxColDisp();
         Gridlines = toConfigurationSingle::Instance().displayGridlines();
     }
@@ -367,8 +409,10 @@ int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *t
     return std::min(TextWidth(fm, t), MaxColDisp) + wx;
 }
 
-int toResultViewCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *top, int column, const QString &txt) const {
-    if (!MaxColDisp) {
+int toResultViewCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *top, int column, const QString &txt) const
+{
+    if (!MaxColDisp)
+    {
         MaxColDisp = toConfigurationSingle::Instance().maxColDisp();
         Gridlines = toConfigurationSingle::Instance().displayGridlines();
     }
@@ -384,14 +428,16 @@ int toResultViewCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *top
 }
 
 
-void toResultViewCheck::paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align) {
+void toResultViewCheck::paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align)
+{
     toTreeWidgetCheck::paintCell(p, cg, column, width, align);
     toResultView *view = dynamic_cast<toResultView *>(listView());
     if (view && (itemBelow() == NULL || itemBelow()->itemBelow() == NULL))
         view->addItem();
 }
 
-QString toResultViewCheck::text(int col) const {
+QString toResultViewCheck::text(int col) const
+{
     if (col >= ColumnCount)
         return QString::null;
     if (ColumnData[col].Type == keyData::Number)
@@ -399,7 +445,8 @@ QString toResultViewCheck::text(int col) const {
     return firstText(col);
 }
 
-QString toResultViewCheck::firstText(int col) const {
+QString toResultViewCheck::firstText(int col) const
+{
     if (col >= ColumnCount)
         return QString::null;
     QString txt = ColumnData[col].Data;
@@ -414,7 +461,8 @@ toListView::toListView(QWidget *parent, const char *name, Qt::WFlags f)
         toEditWidget(false, true, true,
                      false, false,
                      false, false, false,
-                     true, true, false) {
+                     true, true, false)
+{
     FirstSearch = false;
     setTreeStepSize(15);
     setSelectionMode(Extended);
@@ -428,17 +476,20 @@ toListView::toListView(QWidget *parent, const char *name, Qt::WFlags f)
             this,
             SLOT(displayMenu(const QPoint &)));
     QString str(toConfigurationSingle::Instance().listFont());
-    if (!str.isEmpty()) {
+    if (!str.isEmpty())
+    {
         QFont font(toStringToFont(str));
         setFont(font);
     }
     LastMove = QPoint(-1, -1);
 }
 
-toListView::~toListView() {
+toListView::~toListView()
+{
 }
 
-void toListView::contentsMouseDoubleClickEvent(QMouseEvent *e) {
+void toListView::contentsMouseDoubleClickEvent(QMouseEvent *e)
+{
 #if 0                           // todo
     QPoint p = e->pos();
     int col = headerItem()->sectionAt(p.x());
@@ -454,7 +505,8 @@ void toListView::contentsMouseDoubleClickEvent(QMouseEvent *e) {
         clip->setText(item->text(col));
 
     Q3Header *head = header();
-    for (int i = 0;i < columns();i++) {
+    for (int i = 0;i < columns();i++)
+    {
         QString str;
         if (resItem)
             str = resItem->allText(i);
@@ -463,7 +515,8 @@ void toListView::contentsMouseDoubleClickEvent(QMouseEvent *e) {
         else if (item)
             str = item->text(i);
 
-        try {
+        try
+        {
             toParamGet::setDefault(toCurrentConnection(this),
                                    head->label(i).lower(), toUnnull(str));
         }
@@ -473,12 +526,14 @@ void toListView::contentsMouseDoubleClickEvent(QMouseEvent *e) {
 #endif
 }
 
-void toListView::contentsMouseMoveEvent(QMouseEvent *e) {
+void toListView::contentsMouseMoveEvent(QMouseEvent *e)
+{
 #if 0
     if (e->state() == Qt::LeftButton &&
             e->stateAfter() == Qt::LeftButton &&
             LastMove.x() > 0 &&
-            LastMove != e->pos()) {
+            LastMove != e->pos())
+    {
         QPoint p = e->pos();
         int col = header()->sectionAt(p.x());
         toTreeWidgetItem *item = itemAt(contentsToViewport(p));
@@ -491,26 +546,30 @@ void toListView::contentsMouseMoveEvent(QMouseEvent *e) {
             str = chkItem->allText(col);
         else if (item)
             str = item->text(col);
-        if (str.length()) {
+        if (str.length())
+        {
             Q3DragObject *d = new Q3TextDrag(str, this);
             d->dragCopy();
         }
     }
-    else {
+    else
+    {
         LastMove = e->pos();
         toTreeWidget::contentsMouseMoveEvent(e);
     }
 #endif
 }
 
-void toListView::contentsMousePressEvent(QMouseEvent *e) {
+void toListView::contentsMousePressEvent(QMouseEvent *e)
+{
 #if 0                           // todo
     LastMove = QPoint(-1, -1);
     toTreeWidget::contentsMousePressEvent(e);
 #endif
 }
 
-void toListView::contentsMouseReleaseEvent(QMouseEvent *e) {
+void toListView::contentsMouseReleaseEvent(QMouseEvent *e)
+{
 #if 0                           // todo
     LastMove = QPoint(-1, -1);
     toTreeWidget::contentsMouseReleaseEvent(e);
@@ -518,7 +577,8 @@ void toListView::contentsMouseReleaseEvent(QMouseEvent *e) {
 }
 
 #if 0
-toTreeWidgetItem *toListView::printPage(TOPrinter *printer, QPainter *painter, toTreeWidgetItem *top, int &column, int &level, int pageNo, bool paint) {
+toTreeWidgetItem *toListView::printPage(TOPrinter *printer, QPainter *painter, toTreeWidgetItem *top, int &column, int &level, int pageNo, bool paint)
+{
     Q3PaintDeviceMetrics wmetr(this);
     Q3PaintDeviceMetrics metrics(printer);
 
@@ -535,7 +595,8 @@ toTreeWidgetItem *toListView::printPage(TOPrinter *printer, QPainter *painter, t
     double mwidth = metrics.width() / wpscalex;
     double mheight = metrics.height() / wpscaley;
     double x = 0;
-    if (paint) {
+    if (paint)
+    {
         QString numPage(tr("Page: %1").arg(pageNo));
         painter->drawText(0, int(metrics.height() / wpscaley) - header()->height(), int(metrics.width() / wpscalex),
                           header()->height(),
@@ -555,9 +616,11 @@ toTreeWidgetItem *toListView::printPage(TOPrinter *printer, QPainter *painter, t
     font.setPointSizeFloat(font.pointSizeFloat() / std::max(wpscalex, wpscaley));
     painter->setFont(font);
 
-    for (int i = column;i < columns();i++) {
+    for (int i = column;i < columns();i++)
+    {
         double width = columnWidth(i);
-        if (width + x >= mwidth) {
+        if (width + x >= mwidth)
+        {
             if (i == column)
                 width = mwidth - x - 1;
             else
@@ -577,25 +640,30 @@ toTreeWidgetItem *toListView::printPage(TOPrinter *printer, QPainter *painter, t
     int tree = rootIsDecorated() ? treeStepSize() : 0;
     int newCol = -1;
     toTreeWidgetItem *item = top;
-    while (item && (y < mheight || item == top)) {
+    while (item && (y < mheight || item == top))
+    {
         if (column == 0)
             x = curLevel;
         else
             x = 0;
         painter->translate(x, 0);
-        for (int i = column;i < columns();i++) {
+        for (int i = column;i < columns();i++)
+        {
             double width = columnWidth(i);
-            if (width + x >= mwidth) {
+            if (width + x >= mwidth)
+            {
                 if (i == column)
                     width = mwidth - x - 1;
-                else {
+                else
+                {
                     newCol = i;
                     break;
                 }
             }
             if (i == 0)
                 width -= curLevel;
-            if (paint) {
+            if (paint)
+            {
                 item->setSelected(false);
                 item->paintCell(painter, qApp->palette().active(), i, int(width), columnAlignment(i));
                 painter->translate(width, 0);
@@ -605,14 +673,17 @@ toTreeWidgetItem *toListView::printPage(TOPrinter *printer, QPainter *painter, t
         if (paint)
             painter->translate(-x, item->height());
         y += item->height();
-        if (item->firstChild()) {
+        if (item->firstChild())
+        {
             item = item->firstChild();
             curLevel += tree;
         }
         else if (item->nextSibling())
             item = item->nextSibling();
-        else {
-            do {
+        else
+        {
+            do
+            {
                 item = item->parent();
                 curLevel -= tree;
             }
@@ -624,7 +695,8 @@ toTreeWidgetItem *toListView::printPage(TOPrinter *printer, QPainter *painter, t
     if (paint)
         painter->drawLine(0, 0, int(mwidth), 0);
     painter->restore();
-    if (newCol >= 0) {
+    if (newCol >= 0)
+    {
         column = newCol;
         return top;
     }
@@ -634,7 +706,8 @@ toTreeWidgetItem *toListView::printPage(TOPrinter *printer, QPainter *painter, t
 }
 #endif
 
-void toListView::editPrint(void) {
+void toListView::editPrint(void)
+{
 #if 0
     TOPrinter printer;
 
@@ -650,19 +723,22 @@ void toListView::editPrint(void) {
     printer.setCreator(tr(TOAPPNAME));
     QPainter painter(&printer);
 
-    while ((item = printPage(&printer, &painter, item, column, tree, page++, false))) {
+    while ((item = printPage(&printer, &painter, item, column, tree, page++, false)))
+    {
         PageColumns[page] = column;
         PageItems[page] = item;
     }
 
     printer.setMinMax(1, page - 1);
     printer.setFromTo(1, page - 1);
-    if (printer.setup()) {
+    if (printer.setup())
+    {
         QList<int> pages;
         for (int i = printer.fromPage();i <= printer.toPage() || (printer.toPage() == 0 && i < page);i++)
             pages += i;
 
-        for (QList<int>::iterator pageit = pages.begin();pageit != pages.end();pageit++) {
+        for (QList<int>::iterator pageit = pages.begin();pageit != pages.end();pageit++)
+        {
             page = *pageit;
             item = PageItems[page];
             column = PageColumns[page];
@@ -680,8 +756,10 @@ void toListView::editPrint(void) {
 #endif
 }
 
-void toListView::setDisplayMenu(QMenu *m) {
-    if (Menu) {
+void toListView::setDisplayMenu(QMenu *m)
+{
+    if (Menu)
+    {
         delete Menu;
         Menu = NULL;
     }
@@ -690,13 +768,15 @@ void toListView::setDisplayMenu(QMenu *m) {
 }
 
 
-void toListView::displayMenu(const QPoint &pos) {
+void toListView::displayMenu(const QPoint &pos)
+{
     toTreeWidgetItem *item = itemAt(pos);
 
-    if(!item)
+    if (!item)
         return;
 
-    if(!Menu) {
+    if (!Menu)
+    {
         Menu = new QMenu(this);
         displayAct = Menu->addAction(tr("Display in editor..."));
 
@@ -712,12 +792,14 @@ void toListView::displayMenu(const QPoint &pos) {
         Menu->addSeparator();
 
         copyAct = Menu->addAction(tr("&Copy field"));
-        if(selectionMode() == Multi || selectionMode() == Extended) {
+        if (selectionMode() == Multi || selectionMode() == Extended)
+        {
             copySelAct  = Menu->addAction(tr("Copy selection"));
             copyHeadAct = Menu->addAction(tr("Copy selection with header"));
         }
         copyTransAct = Menu->addAction(tr("Copy transposed"));
-        if(selectionMode() == Multi || selectionMode() == Extended) {
+        if (selectionMode() == Multi || selectionMode() == Extended)
+        {
             Menu->addSeparator();
             selectAllAct = Menu->addAction(tr("Select all"));
         }
@@ -725,7 +807,8 @@ void toListView::displayMenu(const QPoint &pos) {
         Menu->addSeparator();
 
         exportAct = Menu->addAction(tr("Export to file..."));
-        if(!Name.isEmpty()) {
+        if (!Name.isEmpty())
+        {
             Menu->addSeparator();
             editAct = Menu->addAction(tr("Edit SQL..."));
         }
@@ -743,21 +826,27 @@ void toListView::displayMenu(const QPoint &pos) {
     Menu->exec(QCursor::pos());
 }
 
-void toListView::displayMemo(void) {
+void toListView::displayMemo(void)
+{
     QString str = menuText();
     if (!str.isEmpty())
         new toMemoEditor(this, str, 0, MenuColumn);
 }
 
-void toListView::menuCallback(QAction *action) {
-    if(action == copyAct) {
+void toListView::menuCallback(QAction *action)
+{
+    if (action == copyAct)
+    {
         QClipboard *clip = qApp->clipboard();
         clip->setText(menuText());
     }
-    else if(action == copySelAct) {
-        try {
+    else if (action == copySelAct)
+    {
+        try
+        {
             QString str = exportAsText(false, true);
-            if(!str.isNull()) {
+            if (!str.isNull())
+            {
                 QClipboard *clip = qApp->clipboard();
                 QMimeData drag;
                 drag.setHtml(str);
@@ -766,16 +855,19 @@ void toListView::menuCallback(QAction *action) {
         }
         TOCATCH;
     }
-    else if(action == leftAct)
+    else if (action == leftAct)
         setColumnAlignment(MenuColumn, Qt::AlignLeft);
-    else if(action == centerAct)
+    else if (action == centerAct)
         setColumnAlignment(MenuColumn, Qt::AlignCenter);
-    else if(action == rightAct)
+    else if (action == rightAct)
         setColumnAlignment(MenuColumn, Qt::AlignRight);
-    else if(action == copyHeadAct) {
-        try {
+    else if (action == copyHeadAct)
+    {
+        try
+        {
             QString str = exportAsText(true, true);
-            if(!str.isNull()) {
+            if (!str.isNull())
+            {
                 QClipboard *clip = qApp->clipboard();
                 QMimeData drag;
                 drag.setHtml(str);
@@ -784,23 +876,24 @@ void toListView::menuCallback(QAction *action) {
         }
         TOCATCH;
     }
-    else if(action == selectAllAct)
+    else if (action == selectAllAct)
         selectAll(true);
-//     else if(act == 
+//     else if(act ==
 //     case TORESULT_MEMO:
 //         displayMemo();
 //         break;
-    else if(action == copyTransAct)
+    else if (action == copyTransAct)
         copyTransposed();
-    else if(action == editAct)
+    else if (action == editAct)
         toMainWidget()->editSQL(Name);
-    else if(action == exportAct)
+    else if (action == exportAct)
         editSave(false);
     else
         toStatusMessage("Not yet implemented.");
 }
 
-QString toListView::menuText(void) {
+QString toListView::menuText(void)
+{
     toResultViewItem *resItem = dynamic_cast<toResultViewItem *>(MenuItem);
     toResultViewCheck *chkItem = dynamic_cast<toResultViewCheck *>(MenuItem);
     QString str;
@@ -813,22 +906,27 @@ QString toListView::menuText(void) {
     return str;
 }
 
-void toListView::focusInEvent(QFocusEvent *e) {
+void toListView::focusInEvent(QFocusEvent *e)
+{
     receivedFocus();
     toTreeWidget::focusInEvent(e);
 }
 
-bool toListView::searchNext(toSearchReplace *search) {
+bool toListView::searchNext(toSearchReplace *search)
+{
     toTreeWidgetItem *item = currentItem();
 
     bool first = FirstSearch;
     FirstSearch = false;
 
-    for (toTreeWidgetItem *next = NULL;item;item = next) {
+    for (toTreeWidgetItem *next = NULL;item;item = next)
+    {
         if (!first)
             first = true;
-        else {
-            for (int i = 0;i < columns();i++) {
+        else
+        {
+            for (int i = 0;i < columns();i++)
+            {
                 int pos = 0;
                 int endPos = 0;
 
@@ -842,7 +940,8 @@ bool toListView::searchNext(toSearchReplace *search) {
                 else if (item)
                     txt = item->text(i);
 
-                if (search->findString(item->text(0), pos, endPos)) {
+                if (search->findString(item->text(0), pos, endPos))
+                {
                     setCurrentItem(item);
                     return true;
                 }
@@ -853,9 +952,11 @@ bool toListView::searchNext(toSearchReplace *search) {
             next = item->firstChild();
         else if (item->nextSibling())
             next = item->nextSibling();
-        else {
+        else
+        {
             next = item;
-            do {
+            do
+            {
                 next = next->parent();
             }
             while (next && !next->nextSibling());
@@ -866,14 +967,16 @@ bool toListView::searchNext(toSearchReplace *search) {
     return false;
 }
 
-toListView *toListView::copyTransposed(void) {
+toListView *toListView::copyTransposed(void)
+{
     toListView *lst = new toListView(toMainWidget()->workspace());
     // qt4
 //     lst->setWFlags(lst->getWFlags() | Qt::WDestructiveClose);
     lst->Name = Name;
 
     toTreeWidgetItem *next = NULL;
-    for (int i = 1;i < columns();i++) {
+    for (int i = 1;i < columns();i++)
+    {
         next = new toResultViewItem(lst, next);
         next->setText(0, headerItem()->text(i));
     }
@@ -881,23 +984,28 @@ toListView *toListView::copyTransposed(void) {
     next = NULL;
     int col = 1;
     lst->addColumn(headerItem()->text(0));
-    for (toTreeWidgetItem *item = firstChild();item;item = next) {
+    for (toTreeWidgetItem *item = firstChild();item;item = next)
+    {
 
         lst->addColumn(item->text(0));
         toTreeWidgetItem *ci = lst->firstChild();
-        for (int i = 1;i < columns() && ci;i++) {
+        for (int i = 1;i < columns() && ci;i++)
+        {
             ci->setText(col, item->text(i));
             ci = ci->nextSibling();
         }
 
-        if (item->firstChild()) {
+        if (item->firstChild())
+        {
             next = item->firstChild();
         }
         else if (item->nextSibling())
             next = item->nextSibling();
-        else {
+        else
+        {
             next = item;
-            do {
+            do
+            {
                 next = next->parent();
             }
             while (next && !next->nextSibling());
@@ -912,14 +1020,17 @@ toListView *toListView::copyTransposed(void) {
     return lst;
 }
 
-bool toListView::editSave(bool) {
-    try {
+bool toListView::editSave(bool)
+{
+    try
+    {
         QString delimiter;
         QString separator;
         int type = exportType(separator, delimiter);
 
         QString nam;
-        switch (type) {
+        switch (type)
+        {
         case - 1:
             return false;
         default:
@@ -948,11 +1059,13 @@ bool toListView::editSave(bool) {
 
 void toListView::addMenues(QMenu *) {}
 
-bool toListView::searchCanReplace(bool) {
+bool toListView::searchCanReplace(bool)
+{
     return false;
 }
 
-int toListView::exportType(QString &separator, QString &delimiter) {
+int toListView::exportType(QString &separator, QString &delimiter)
+{
     toResultListFormat format(this, NULL);
     if (!format.exec())
         return -1;
@@ -968,7 +1081,8 @@ int toListView::exportType(QString &separator, QString &delimiter) {
 
 
 QString toListView::exportAsText(bool tincludeHeader, bool tonlySelection, int type,
-                                 const QString &tsep, const QString &tdel) {
+                                 const QString &tsep, const QString &tdel)
+{
     QString result;
 
     includeHeader = tincludeHeader;
@@ -987,9 +1101,11 @@ QString toListView::exportAsText(bool tincludeHeader, bool tonlySelection, int t
     return result;
 }
 
-void toListView::exportData(std::map<QString, QString> &ret, const QString &prefix) {
+void toListView::exportData(std::map<QString, QString> &ret, const QString &prefix)
+{
     int id = 0;
-    for (int i = 0;i < columns();i++) {
+    for (int i = 0;i < columns();i++)
+    {
         id++;
         ret[prefix + ":Labels:" + QString::number(id).toLatin1()] = headerItem()->text(i);
     }
@@ -998,7 +1114,8 @@ void toListView::exportData(std::map<QString, QString> &ret, const QString &pref
     id = 0;
     if (rootIsDecorated())
         ret[prefix + ":Decorated"] = QString::fromLatin1("Yes");
-    for (toTreeWidgetItem *item = firstChild();item;item = next) {
+    for (toTreeWidgetItem *item = firstChild();item;item = next)
+    {
         id++;
         QString nam = prefix;
         nam += ":Items:";
@@ -1011,7 +1128,8 @@ void toListView::exportData(std::map<QString, QString> &ret, const QString &pref
             ret[nam + "Parent"] = QString::fromLatin1("0");
         if (item->isOpen())
             ret[nam + "Open"] = QString::fromLatin1("Yes");
-        for (int i = 0;i < columns();i++) {
+        for (int i = 0;i < columns();i++)
+        {
             toResultViewItem *resItem = dynamic_cast<toResultViewItem *>(item);
             toResultViewCheck *chkItem = dynamic_cast<toResultViewCheck *>(item);
             QString val;
@@ -1028,9 +1146,11 @@ void toListView::exportData(std::map<QString, QString> &ret, const QString &pref
             next = item->firstChild();
         else if (item->nextSibling())
             next = item->nextSibling();
-        else {
+        else
+        {
             next = item;
-            do {
+            do
+            {
                 next = next->parent();
             }
             while (next && !next->nextSibling());
@@ -1040,13 +1160,15 @@ void toListView::exportData(std::map<QString, QString> &ret, const QString &pref
     }
 }
 
-void toListView::importData(std::map<QString, QString> &ret, const QString &prefix) {
+void toListView::importData(std::map<QString, QString> &ret, const QString &prefix)
+{
     int id;
     std::map<QString, QString>::iterator i;
     clear();
 
     id = 1;
-    while ((i = ret.find(prefix + ":Labels:" + QString::number(id).toLatin1())) != ret.end()) {
+    while ((i = ret.find(prefix + ":Labels:" + QString::number(id).toLatin1())) != ret.end())
+    {
         addColumn((*i).second);
         id++;
     }
@@ -1057,7 +1179,8 @@ void toListView::importData(std::map<QString, QString> &ret, const QString &pref
     std::map<int, toTreeWidgetItem *> itemMap;
 
     id = 1;
-    while ((i = ret.find(prefix + ":Items:" + QString::number(id).toLatin1() + ":Parent")) != ret.end()) {
+    while ((i = ret.find(prefix + ":Items:" + QString::number(id).toLatin1() + ":Parent")) != ret.end())
+    {
         QString nam = prefix + ":Items:" + QString::number(id).toLatin1() + ":";
         int parent = (*i).second.toInt();
         toResultViewItem *item;
@@ -1074,25 +1197,31 @@ void toListView::importData(std::map<QString, QString> &ret, const QString &pref
     }
 }
 
-bool toResultView::eof(void) {
+bool toResultView::eof(void)
+{
     return !Query || Query->eof();
 }
 
-QString toResultView::middleString() {
-    try {
+QString toResultView::middleString()
+{
+    try
+    {
         return connection().description();
     }
-    catch (...) {
+    catch (...)
+    {
         return QString::null;
     }
 }
 
-void toResultView::setup(bool readable, bool dispCol) {
+void toResultView::setup(bool readable, bool dispCol)
+{
     Query = NULL;
     ReadableColumns = readable;
     NumberColumn = dispCol;
     SortConnected = false;
-    if (NumberColumn) {
+    if (NumberColumn)
+    {
         addColumn(QString::fromLatin1("#"));
         setColumnAlignment(0, Qt::AlignRight);
     }
@@ -1104,18 +1233,21 @@ void toResultView::setup(bool readable, bool dispCol) {
 }
 
 toResultView::toResultView(bool readable, bool dispCol, QWidget *parent, const char *name, Qt::WFlags f)
-        : toListView(parent, name, f) {
+        : toListView(parent, name, f)
+{
     setup(readable, dispCol);
 }
 
 toResultView::toResultView(QWidget *parent, const char *name, Qt::WFlags f)
-        : toListView(parent, name, f) {
+        : toListView(parent, name, f)
+{
     setup(false, true);
 }
 
 #define STOP_RESIZE_ROW 500
 
-toTreeWidgetItem *toResultView::createItem(toTreeWidgetItem *last, const QString &str) {
+toTreeWidgetItem *toResultView::createItem(toTreeWidgetItem *last, const QString &str)
+{
     if (childCount() == STOP_RESIZE_ROW && resizeMode() == toTreeWidget::NoColumn)
         for (int i = 0;i < columns();i++)
             setColumnWidthMode(i, toTreeWidget::Manual);
@@ -1123,17 +1255,21 @@ toTreeWidgetItem *toResultView::createItem(toTreeWidgetItem *last, const QString
     return new toResultViewItem(this, last, str);
 }
 
-void toResultView::addItem(void) {
+void toResultView::addItem(void)
+{
     MaxColDisp = toConfigurationSingle::Instance().maxColDisp();
     Gridlines = toConfigurationSingle::Instance().displayGridlines();
 
-    try {
-        if (Query && !Query->eof()) {
+    try
+    {
+        if (Query && !Query->eof())
+        {
             RowNumber++;
             int disp = 0;
             toTreeWidgetItem *last = LastItem;
             LastItem = createItem(LastItem, QString::null);
-            if (NumberColumn) {
+            if (NumberColumn)
+            {
                 LastItem->setText(0, QString::number(RowNumber));
                 disp = 1;
             }
@@ -1141,7 +1277,8 @@ void toResultView::addItem(void) {
                 LastItem->setText(columns(), QString::number(RowNumber));
             for (int j = 0;(j < Query->columns() || j == 0) && !Query->eof();j++)
                 LastItem->setText(j + disp, Query->readValue());
-            if (Filter && !Filter->check(LastItem)) {
+            if (Filter && !Filter->check(LastItem))
+            {
                 delete LastItem;
                 LastItem = last;
                 RowNumber--;
@@ -1151,7 +1288,8 @@ void toResultView::addItem(void) {
     TOCATCH
 }
 
-void toResultView::query(const QString &sql, const toQList &param) {
+void toResultView::query(const QString &sql, const toQList &param)
+{
     if (!handled())
         return ;
 
@@ -1165,7 +1303,8 @@ void toResultView::query(const QString &sql, const toQList &param) {
 
     clear();
 
-    if (NumberColumn) {
+    if (NumberColumn)
+    {
         addColumn(QString::fromLatin1("#"));
         setColumnAlignment(0, Qt::AlignRight);
     }
@@ -1173,7 +1312,8 @@ void toResultView::query(const QString &sql, const toQList &param) {
     if (Filter)
         Filter->startingQuery();
 
-    try {
+    try
+    {
         Query = new toQuery(connection(), sql, param);
 
         //printf("Query: %s \n", (const char*) Query->sql);
@@ -1181,19 +1321,23 @@ void toResultView::query(const QString &sql, const toQList &param) {
 
         bool hidden = false;
 
-        for (toQDescList::iterator i = description.begin();i != description.end();i++) {
+        for (toQDescList::iterator i = description.begin();i != description.end();i++)
+        {
             QString name = (*i).Name;
             if (ReadableColumns)
                 toReadableColumn(name);
 
-            if (name.length() > 0 && name.at(0) != ' ') {
+            if (name.length() > 0 && name.at(0) != ' ')
+            {
                 if (hidden)
                     throw tr("Can only hide last column in query");
-                if (name.at(0) == '-') {
+                if (name.at(0) == '-')
+                {
                     addColumn(toTranslateMayby(sqlName(), name.right(name.length() - 1)));
                     setColumnAlignment(columns() - 1, Qt::AlignRight);
                 }
-                else {
+                else
+                {
                     addColumn(toTranslateMayby(sqlName(), name));
                     if ((*i).AlignRight)
                         setColumnAlignment(columns() - 1, Qt::AlignRight);
@@ -1219,11 +1363,13 @@ void toResultView::query(const QString &sql, const toQList &param) {
     updateContents();
 }
 
-void toResultView::editReadAll(void) {
+void toResultView::editReadAll(void)
+{
     if (!ReadAll)
         toStatusMessage(tr("Reading all entries"), false, false);
     int i = 0;
-    while (!eof()) {
+    while (!eof())
+    {
         addItem();
         i++;
         if (i % 100 == 0)
@@ -1231,18 +1377,23 @@ void toResultView::editReadAll(void) {
     }
 }
 
-toResultView::~toResultView() {
-    if(Query)
+toResultView::~toResultView()
+{
+    if (Query)
         Query->deleteLater();
     delete Filter;
 }
 
-void toResultView::keyPressEvent(QKeyEvent *e) {
-    if (e->key() == Qt::Key_PageDown) {
+void toResultView::keyPressEvent(QKeyEvent *e)
+{
+    if (e->key() == Qt::Key_PageDown)
+    {
         toTreeWidgetItem *item = firstChild();
-        if (item && !eof() && item->height()) {
+        if (item && !eof() && item->height())
+        {
             int num = visibleHeight() / item->height();
-            while (num > 0) {
+            while (num > 0)
+            {
                 addItem();
                 num--;
             }
@@ -1251,56 +1402,66 @@ void toResultView::keyPressEvent(QKeyEvent *e) {
     toTreeWidget::keyPressEvent(e);
 }
 
-void toResultView::addMenues(QMenu *menu) {
+void toResultView::addMenues(QMenu *menu)
+{
     menu->addSeparator();
     ReadAllAct = menu->addAction(tr("Read All"));
 }
 
-void toResultView::menuCallback(QAction *cmd) {
+void toResultView::menuCallback(QAction *cmd)
+{
     if (cmd == ReadAllAct)
         editReadAll();
-    else {
-        if(cmd == toListView::exportAct)
+    else
+    {
+        if (cmd == toListView::exportAct)
             editReadAll();
         toListView::menuCallback(cmd);
     }
 }
 
-int toResultView::queryColumns(void) const {
+int toResultView::queryColumns(void) const
+{
     return Query ? Query->columns() : 0;
 }
 
-void toResultView::setSorting(int col, bool asc) {
+void toResultView::setSorting(int col, bool asc)
+{
     if (col == SortColumn && asc == SortAscending)
         return ;
     SortColumn = col;
     SortAscending = asc;
-    if (((col == 0 && NumberColumn) || (col == columns() && !NumberColumn)) && asc == true) {
+    if (((col == 0 && NumberColumn) || (col == columns() && !NumberColumn)) && asc == true)
+    {
         col = -1;
         toListView::setSorting(0, true);
         sort();
         QTimer::singleShot(1, this, SLOT(checkHeading()));
     }
-    else if (SortConnected) {
+    else if (SortConnected)
+    {
         SortConnected = false;
 //         disconnect(headerItem(), SIGNAL(clicked(int)), this, SLOT(headingClicked(int))); todo
     }
     toListView::setSorting(col, asc);
 }
 
-void toResultView::headingClicked(int col) {
+void toResultView::headingClicked(int col)
+{
     if (col == SortColumn)
         setSorting(col, !SortAscending);
     else
         setSorting(col, true);
 }
 
-void toResultView::checkHeading(void) {
+void toResultView::checkHeading(void)
+{
     SortConnected = true;
 //     connect(headerItem(), SIGNAL(clicked(int)), this, SLOT(headingClicked(int))); todo
 }
 
-void toResultView::refresh(void) {
+void toResultView::refresh(void)
+{
     int lastSort = SortColumn;
     bool lastAsc = SortAscending;
     toResult::refresh();

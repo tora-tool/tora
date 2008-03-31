@@ -99,18 +99,20 @@ public:
 };
 
 toWaitEvents::toWaitEvents(QWidget *parent, const char *name)
-    : QWidget(parent) {
+        : QWidget(parent)
+{
 
-    if(name)
+    if (name)
         setObjectName(name);
 
     setup( -1);
 }
 
 toWaitEvents::toWaitEvents(int session, QWidget *parent, const char *name)
-    : QWidget(parent) {
+        : QWidget(parent)
+{
 
-    if(name)
+    if (name)
         setObjectName(name);
 
     setup(session);

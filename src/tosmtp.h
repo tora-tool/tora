@@ -53,7 +53,8 @@ class QTextStream;
  * Used to send mail asyncronously. Just create an instance and forget
  * it.  It will delete itself when done.
  */
-class toSMTP : public QObject {
+class toSMTP : public QObject
+{
     Q_OBJECT;
 
 public:
@@ -74,7 +75,8 @@ private slots:
     void connected();
 
 private:
-    enum state {
+    enum state
+    {
         Init,
         Mail,
         Rcpt,

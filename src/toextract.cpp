@@ -242,8 +242,10 @@ void toExtract::srcDst2DropCreate(std::list<QString> &source, std::list<QString>
 
 void toExtract::parseObject(const QString &object,
                             QString &owner,
-                            QString &name) {
-    try {
+                            QString &name)
+{
+    try
+    {
         unsigned int search = 0;
         if (object[0] == '\"')
         {
@@ -318,7 +320,8 @@ void toExtract::create(QTextStream &ret, std::list<QString> &objects)
 
     QProgressDialog *progress = NULL;
     QLabel *label = NULL;
-    if (Parent) {
+    if (Parent)
+    {
         progress = new QProgressDialog(
             qApp->translate("toExtract",
                             "Creating create script"),

@@ -48,7 +48,8 @@
 #include <QLabel>
 
 toResultLabel::toResultLabel(QWidget *parent, const char *name)
-    : QLabel(parent) {
+        : QLabel(parent)
+{
     setObjectName(name);
     Query = NULL;
     connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));

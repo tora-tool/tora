@@ -54,7 +54,8 @@ class toResultDataSingle;
 class QCloseEvent;
 
 
-class toResultData : public QWidget, public toResult {
+class toResultData : public QWidget, public toResult
+{
     Q_OBJECT;
 
     // toolbar actions
@@ -121,7 +122,8 @@ public:
      * Reimplemented from toResult. Can handle all connections.
      *
      */
-    virtual bool canHandle(toConnection &) {
+    virtual bool canHandle(toConnection &)
+    {
         return true;
     }
 

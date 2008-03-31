@@ -52,10 +52,12 @@ class toResultStats;
 class toResultView;
 class toResultTableView;
 
-class toCurrent : public toToolWidget {
+class toCurrent : public toToolWidget
+{
     Q_OBJECT;
 
-    struct update {
+    struct update
+    {
         bool IsRole;
 
         toTreeWidgetItem *Parent;
@@ -63,7 +65,8 @@ class toCurrent : public toToolWidget {
         QString SQL;
         QString Role;
 
-        update() {
+        update()
+        {
             IsRole = false;
             Parent = NULL;
         }
@@ -73,11 +76,12 @@ class toCurrent : public toToolWidget {
                const QString &type,
                const QString &sql,
                const QString &role)
-        : IsRole(isrole),
-            Parent(parent),
-            Type(type),
-            SQL(sql),
-            Role(role) {
+                : IsRole(isrole),
+                Parent(parent),
+                Type(type),
+                SQL(sql),
+                Role(role)
+        {
         }
     };
 

@@ -45,8 +45,9 @@
 
 
 class toOracleSetting : public QWidget,
-    public Ui::toOracleSettingUI,
-    public toSettingTab {
+            public Ui::toOracleSettingUI,
+            public toSettingTab
+{
 
     Q_OBJECT;
 

@@ -43,22 +43,27 @@
 
 #include <iostream>
 
-namespace {
-    toListViewFormatter* createTabDel() {
-        return new toListViewFormatterTabDel();
-    }
-    const bool registered = toListViewFormatterFactory::Instance().Register(
-        toListViewFormatterIdentifier::TAB_DELIMITED, createTabDel);
+namespace
+{
+toListViewFormatter* createTabDel()
+{
+    return new toListViewFormatterTabDel();
+}
+const bool registered = toListViewFormatterFactory::Instance().Register(
+                            toListViewFormatterIdentifier::TAB_DELIMITED, createTabDel);
 }
 
 
-toListViewFormatterTabDel::toListViewFormatterTabDel() : toListViewFormatter() {
+toListViewFormatterTabDel::toListViewFormatterTabDel() : toListViewFormatter()
+{
 }
 
-toListViewFormatterTabDel::~toListViewFormatterTabDel() {
+toListViewFormatterTabDel::~toListViewFormatterTabDel()
+{
 }
 
-QString toListViewFormatterTabDel::getFormattedString(toListView& tListView) {
+QString toListViewFormatterTabDel::getFormattedString(toListView& tListView)
+{
     int column_count = tListView.columns();
     QString separator = tListView.getSep();
     QString delimiter = tListView.getDel();
@@ -68,7 +73,8 @@ QString toListViewFormatterTabDel::getFormattedString(toListView& tListView) {
     QString indent;
     QString bgcolor;
 
-    if (tListView.getIncludeHeader()) {
+    if (tListView.getIncludeHeader())
+    {
         if (bgcolor.isEmpty())
             bgcolor = QString::fromLatin1("nonull");
         else
@@ -81,8 +87,10 @@ QString toListViewFormatterTabDel::getFormattedString(toListView& tListView) {
 
     toTreeWidgetItem *next = NULL;
 
-    for (toTreeWidgetItem *item = tListView.firstChild();item;item = next) {
-        if (!tListView.getOnlySelection() || item->isSelected()) {
+    for (toTreeWidgetItem *item = tListView.firstChild();item;item = next)
+    {
+        if (!tListView.getOnlySelection() || item->isSelected())
+        {
 
             toResultViewItem * resItem = dynamic_cast<toResultViewItem *>(item);
             toResultViewCheck *chkItem = dynamic_cast<toResultViewCheck *>(item);
@@ -92,7 +100,8 @@ QString toListViewFormatterTabDel::getFormattedString(toListView& tListView) {
             else
                 bgcolor = QString::null;
             QString line;
-            for (int i = 0;i < column_count;i++) {
+            for (int i = 0;i < column_count;i++)
+            {
                 QString text;
 
                 if (resItem)
@@ -110,15 +119,18 @@ QString toListViewFormatterTabDel::getFormattedString(toListView& tListView) {
             output += line;
         }
 
-        if (item->firstChild()) {
+        if (item->firstChild())
+        {
             indent += QString::fromLatin1(" ");
             next = item->firstChild();
         }
         else if (item->nextSibling())
             next = item->nextSibling();
-        else {
+        else
+        {
             next = item;
-            do {
+            do
+            {
                 next = next->parent();
                 indent.truncate(indent.length() - 1);
             }
@@ -133,7 +145,8 @@ QString toListViewFormatterTabDel::getFormattedString(toListView& tListView) {
 
 
 QString toListViewFormatterTabDel::getFormattedString(toExportSettings &settings,
-                                                      const toResultModel *model) {
+        const toResultModel *model)
+{
     int     columns   = model->columnCount();
     int     rows      = model->rowCount();
     QString separator = settings.Separator;
@@ -142,25 +155,28 @@ QString toListViewFormatterTabDel::getFormattedString(toExportSettings &settings
     QString output;
     QString indent;
 
-    if(settings.IncludeHeader) {
-        for(int j = 0; j < columns; j++)
+    if (settings.IncludeHeader)
+    {
+        for (int j = 0; j < columns; j++)
             output += QString("%1\t").arg(model->headerData(
                                               j,
                                               Qt::Horizontal,
                                               Qt::DisplayRole).toString());
-        if(output.length() > 0)
+        if (output.length() > 0)
             output = output.left(output.length() - separator.length());
 
         endLine(output);
     }
 
     QVector<int> slist = selectedList(settings.selected);
-    for(int row = 0; row < rows; row++) {
-        if(settings.OnlySelection && !slist.contains(row))
+    for (int row = 0; row < rows; row++)
+    {
+        if (settings.OnlySelection && !slist.contains(row))
             continue;
 
         QString line;
-        for(int i = 0; i < columns; i++) {
+        for (int i = 0; i < columns; i++)
+        {
             QString text = model->data(row, i).toString();
             line += indent;
             line += QString::fromLatin1("%1\t").arg(text);

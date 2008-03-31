@@ -132,7 +132,7 @@ private:
     /** Not part of the API.
      */
 
-	taskRunner *Thread;
+    taskRunner *Thread;
     static std::list<toThread *> *Threads;
     static toLock *Lock;
     static QThread *MainThread;

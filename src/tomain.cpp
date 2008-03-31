@@ -93,8 +93,9 @@
 
 toMain::toMain()
         : toMainWindow(),
-          toBackupTool_(new toBackupTool),
-          BackgroundLabel(new toBackgroundLabel(statusBar())) {
+        toBackupTool_(new toBackupTool),
+        BackgroundLabel(new toBackgroundLabel(statusBar()))
+{
 
     Edit = NULL;
 
@@ -127,6 +128,8 @@ toMain::toMain()
 
     setWindowIcon(QPixmap(const_cast<const char**>(tora_xpm)));
 
+    restoreGeometry(toConfigurationSingle::Instance().mainWindowGeometry());
+
     // disable widgets related to an editor
     editDisable(NULL);
 
@@ -137,10 +140,11 @@ toMain::toMain()
     QString defName(toConfigurationSingle::Instance().defaultTool());
     DefaultTool = NULL;
     for (std::map<QString, toTool *>::iterator k = tools.begin();
-         k != tools.end();
-         k++) {
+            k != tools.end();
+            k++)
+    {
 
-        if(defName.isNull() || defName == (*k).first)
+        if (defName.isNull() || defName == (*k).first)
             DefaultTool = (*k).second;
 
         (*k).second->customSetup();
@@ -160,8 +164,10 @@ toMain::toMain()
             SLOT(showMessageImpl(const QString &, bool, bool)),
             Qt::QueuedConnection);
 
-	if (toConfigurationSingle::Instance().restoreSession()) {
-        try {
+    if (toConfigurationSingle::Instance().restoreSession())
+    {
+        try
+        {
             std::map<QString, QString> session;
             toConfigurationSingle::Instance().loadMap(
                 toConfigurationSingle::Instance().defaultSession(), session);
@@ -170,27 +176,31 @@ toMain::toMain()
         TOCATCH;
     }
 
-    if (toConfigurationSingle::Instance().maximizeMain() && Connections.empty())
-        showMaximized();
-    else
-        show();
+//     if (toConfigurationSingle::Instance().maximizeMain() && Connections.empty())
+//         showMaximized();
+//     else
+//         show();
+    show();
 
-    if(Connections.empty()) {
-        try {
+    if (Connections.empty())
+    {
+        try
+        {
             toConnection *conn;
 
-            do {
+            do
+            {
                 toNewConnection newConnection(this);
 
                 conn = NULL;
-                if(newConnection.exec())
+                if (newConnection.exec())
                     conn = newConnection.connection();
                 else
                     break;
             }
-            while(!conn);
+            while (!conn);
 
-            if(conn)
+            if (conn)
                 addConnection(conn);
         }
         TOCATCH;
@@ -201,8 +211,8 @@ toMain::toMain()
     BackgroundLabel->setToolTip(tr("No background queries."));
 }
 
-
-void toMain::createActions() {
+void toMain::createActions()
+{
     newConnAct = new QAction(QPixmap(const_cast<const char**>(connect_xpm)),
                              tr("&New Connection..."),
                              this);
@@ -215,8 +225,8 @@ void toMain::createActions() {
             Qt::QueuedConnection);
 
     closeConn = new QAction(QPixmap(const_cast<const char**>(disconnect_xpm)),
-                                    tr("&Close Connection"),
-                                    this);
+                            tr("&Close Connection"),
+                            this);
     closeConn->setToolTip(tr("Disconnect"));
     connect(closeConn,
             SIGNAL(triggered()),
@@ -225,14 +235,14 @@ void toMain::createActions() {
             Qt::QueuedConnection);
 
     commitAct = new QAction(QPixmap(const_cast<const char**>(commit_xpm)),
-                             tr("&Commit Connection"),
-                             this);
+                            tr("&Commit Connection"),
+                            this);
     commitAct->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_C);
     commitAct->setToolTip(tr("Commit transaction"));
 
     rollbackAct = new QAction(QPixmap(const_cast<const char**>(rollback_xpm)),
-                             tr("&Rollback Connection"),
-                             this);
+                              tr("&Rollback Connection"),
+                              this);
     rollbackAct->setShortcut(Qt::CTRL + Qt::Key_Less);
     rollbackAct->setToolTip(tr("Rollback transaction"));
 
@@ -350,7 +360,8 @@ void toMain::createActions() {
 }
 
 
-void toMain::createMenus() {
+void toMain::createMenus()
+{
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(newConnAct);
     fileMenu->addAction(closeConn);
@@ -443,7 +454,7 @@ void toMain::createMenus() {
             Qt::QueuedConnection);
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
-    
+
     helpMenu->addAction(helpCurrentAct);
     helpMenu->addAction(helpContentsAct);
     windowsMenu->addSeparator();
@@ -458,14 +469,16 @@ void toMain::createMenus() {
 }
 
 
-void toMain::addCustomMenu(QMenu *menu) {
+void toMain::addCustomMenu(QMenu *menu)
+{
     this->menuBar()->insertMenu(windowsMenu->menuAction(), menu);
 }
 
 
-void toMain::createToolbars() {
+void toMain::createToolbars()
+{
     editToolbar = toAllocBar(this, tr("Application"));
-    
+
     editToolbar->addAction(openAct);
     editToolbar->addAction(saveAct);
     editToolbar->addAction(printAct);
@@ -508,12 +521,14 @@ void toMain::createToolbars() {
 }
 
 
-void toMain::addButtonApplication(QAction *act) {
+void toMain::addButtonApplication(QAction *act)
+{
     editToolbar->addAction(act);
 }
 
 
-void toMain::createStatusbar() {
+void toMain::createStatusbar()
+{
     statusBar()->showMessage(QString::null);
 
     RowLabel = new QLabel(statusBar());
@@ -547,17 +562,20 @@ void toMain::createStatusbar() {
 }
 
 
-void toMain::createToolMenus() {
-    try {
+void toMain::createToolMenus()
+{
+    try
+    {
         int lastPriorityPix = 0;
         int lastPriorityMenu = 0;
 
         std::map<QString, toTool *> &tools = toTool::tools();
-		ToolsMap cfgTools(toConfigurationSingle::Instance().tools());
+        ToolsMap cfgTools(toConfigurationSingle::Instance().tools());
 
         for (std::map<QString, toTool *>::iterator i = tools.begin();
-             i != tools.end();
-             i++) {
+                i != tools.end();
+                i++)
+        {
 
             QAction *toolAct = (*i).second->getAction();
             const QPixmap *pixmap = (*i).second->toolbarImage();
@@ -569,31 +587,33 @@ void toMain::createToolMenus() {
 //                    tmp, "Yes").isEmpty()) {
 //                 continue;
 //             }
-			// set the tools for the first run
-			if (!cfgTools.contains((*i).first))
-				cfgTools[(*i).first] = true;
-			// only enabled tools are set
-			if (cfgTools[(*i).first] == false)
-				continue;
+            // set the tools for the first run
+            if (!cfgTools.contains((*i).first))
+                cfgTools[(*i).first] = true;
+            // only enabled tools are set
+            if (cfgTools[(*i).first] == false)
+                continue;
 
             int priority = (*i).second->priority();
-            if(priority / 100 != lastPriorityPix / 100 && pixmap) {
+            if (priority / 100 != lastPriorityPix / 100 && pixmap)
+            {
                 toolsToolbar->addSeparator();
                 lastPriorityPix = priority;
             }
 
-            if(priority / 100 != lastPriorityMenu / 100 && menuName) {
+            if (priority / 100 != lastPriorityMenu / 100 && menuName)
+            {
                 toolsMenu->addSeparator();
                 lastPriorityMenu = priority;
             }
 
-            if(pixmap)
+            if (pixmap)
                 toolsToolbar->addAction(toolAct);
 
-            if(menuName)
+            if (menuName)
                 toolsMenu->addAction(toolAct);
         } // for tools
-		toConfigurationSingle::Instance().setTools(cfgTools);
+        toConfigurationSingle::Instance().setTools(cfgTools);
     }
     TOCATCH;
 }
@@ -626,7 +646,8 @@ void toMain::windowActivated(QWidget *widget)
 }
 
 
-void toMain::showFileMenu(void) {
+void toMain::showFileMenu(void)
+{
     bool hascon = (ConnectionSelection->count() > 0);
 
     commitAct->setEnabled(hascon);
@@ -638,70 +659,71 @@ void toMain::showFileMenu(void) {
     updateRecent();
 }
 
-void toMain::updateRecent() {
+void toMain::updateRecent()
+{
 //     static bool first = true;
 //     int num = toConfigurationSingle::Instance().recentFiles();
-// 
+//
 //     recentMenu->clear();
-// 
+//
 //     if (num > 0) {
 //         if(first) {
 //             fileMenu->addSeparator();
 //             first = false;
 //         }
-// 
+//
 //         for(int i = 0; i < num; i++) {
 //             QString file = toConfigurationSingle::Instance().globalConfig(
 //                 QString(CONF_RECENT_FILES ":") +
 //                 QString::number(i), "");
-// 
+//
 //             if(!file.isEmpty()) {
 //                 QFileInfo fi(file);
-// 
+//
 //                 // store file name in tooltip. this is used later to
 //                 // open the file, and is handy to know what file tora
 //                 // is opening.
-// 
+//
 //                 QAction *r = new QAction(fi.fileName(), this);
 //                 r->setToolTip(file);
 //                 recentMenu->addAction(r);
 //             }
 //         }
 //     }
-	QStringList files(toConfigurationSingle::Instance().recentFiles());
-	recentMenu->clear();
-	if (files.count() > 0)
-		recentMenu->addSeparator();
-	foreach (QString s, files)
-	{
-		QFileInfo fi(s);
-		if (!fi.exists())
-		{
-			files.removeAt(files.indexOf(s));
-			continue;
-		}
+    QStringList files(toConfigurationSingle::Instance().recentFiles());
+    recentMenu->clear();
+    if (files.count() > 0)
+        recentMenu->addSeparator();
+    foreach (QString s, files)
+    {
+        QFileInfo fi(s);
+        if (!fi.exists())
+        {
+            files.removeAt(files.indexOf(s));
+            continue;
+        }
         // store file name in tooltip. this is used later to
         // open the file, and is handy to know what file tora
         // is opening.
         QAction *r = new QAction(fi.fileName(), this);
         r->setToolTip(s);
         recentMenu->addAction(r);
-	}
-	toConfigurationSingle::Instance().setRecentFiles(files);
+    }
+    toConfigurationSingle::Instance().setRecentFiles(files);
 }
 
 
 void toMain::addRecentFile(const QString &file)
 {
-	QStringList files(toConfigurationSingle::Instance().recentFiles());
+    QStringList files(toConfigurationSingle::Instance().recentFiles());
     int maxnum = toConfigurationSingle::Instance().recentMax();
 
-	if (files.contains(file))
-		return;
-	if (files.count() > maxnum)
-		files.removeAt(0);
-	files.append(file);
-	toConfigurationSingle::Instance().setRecentFiles(files);
+    if (files.contains(file))
+        return;
+    if (files.count() > maxnum)
+        files.removeAt(0);
+    files.append(file);
+    toConfigurationSingle::Instance().setRecentFiles(files);
 //     std::list<QString> files;
 //     for (int j = 0;j < num;j++)
 //     {
@@ -725,7 +747,8 @@ void toMain::addRecentFile(const QString &file)
 //     toConfigurationSingle::Instance().saveConfig();
 }
 
-void toMain::updateWindowsMenu(void) {
+void toMain::updateWindowsMenu(void)
+{
     // i'm lazy and this beats the hell out of tracking all the
     // windowsMenu actions and adding/removing each.
     windowsMenu->clear();
@@ -746,42 +769,47 @@ void toMain::updateWindowsMenu(void) {
     int index = 0;
     QWidgetList list = workspace()->windowList();
 
-    for(QWidgetList::iterator it = list.begin(); it != list.end(); it++, index++) {
-        if(!(*it)->isHidden()) {
+    for (QWidgetList::iterator it = list.begin(); it != list.end(); it++, index++)
+    {
+        if (!(*it)->isHidden())
+        {
             QString caption = (*it)->windowTitle().trimmed();
 
-            if(index < 9)
+            if (index < 9)
                 caption = "&" + QString::number(index + 1) + " " + caption;
 
             QAction *action = new QAction(caption, (*it));
-            if(index < 9)
+            if (index < 9)
                 action->setShortcut(Qt::CTRL + Qt::Key_1 + index);
 
             windowsMenu->addAction(action);
             action->setCheckable(true);
-            if((*it) == active)
+            if ((*it) == active)
                 action->setChecked(true);
         }
     }
 }
 
 
-void toMain::windowCallback(QAction *action) {
+void toMain::windowCallback(QAction *action)
+{
     // action's parent is the window widget. get parent and raise it.
 
-    if(action == NULL || action->parentWidget() == NULL)
+    if (action == NULL || action->parentWidget() == NULL)
         return;
 
-    if(action == windowCloseAllAct) {
-        while(workspace()->windowList(QWorkspace::CreationOrder).count() > 0 &&
-              workspace()->windowList(QWorkspace::CreationOrder).at(0))
+    if (action == windowCloseAllAct)
+    {
+        while (workspace()->windowList(QWorkspace::CreationOrder).count() > 0 &&
+                workspace()->windowList(QWorkspace::CreationOrder).at(0))
             if (workspace()->windowList(QWorkspace::CreationOrder).at(0) &&
-                !workspace()->windowList(QWorkspace::CreationOrder).at(0)->close())
+                    !workspace()->windowList(QWorkspace::CreationOrder).at(0)->close())
                 return;
     }
-    else if(action == windowCloseAct) {
+    else if (action == windowCloseAct)
+    {
         QWidget *widget = workspace()->activeWindow();
-        if(widget)
+        if (widget)
             widget->close();
     }
     else
@@ -789,31 +817,36 @@ void toMain::windowCallback(QAction *action) {
 }
 
 
-void toMain::recentCallback(QAction *action) {
-    if(!action)
+void toMain::recentCallback(QAction *action)
+{
+    if (!action)
         return;
 
     toEditWidget *edit = NULL;
     QWidget *currWidget = qApp->focusWidget();
-    while(currWidget && !edit) {
+    while (currWidget && !edit)
+    {
         edit = dynamic_cast<toEditWidget *>(currWidget);
         currWidget = currWidget->parentWidget();
     }
 
-    if(edit)
+    if (edit)
         edit->editOpen(action->toolTip());
 }
 
 
-void toMain::statusCallback(QAction *action) {
+void toMain::statusCallback(QAction *action)
+{
     new toMemoEditor(this, action->toolTip());
 }
 
 
-void toMain::commandCallback(QAction *action) {
+void toMain::commandCallback(QAction *action)
+{
     QWidget *focus = qApp->focusWidget();
 
-    if (focus) {
+    if (focus)
+    {
         toEditWidget *edit = findEdit(focus);
         if (edit && edit != Edit)
             setEditWidget(edit);
@@ -824,43 +857,48 @@ void toMain::commandCallback(QAction *action) {
 
     QWidget *currWidget = qApp->focusWidget();
     toEditWidget *edit = NULL;
-    while(currWidget && !edit) {
+    while (currWidget && !edit)
+    {
         edit = dynamic_cast<toEditWidget *>(currWidget);
         currWidget = currWidget->parentWidget();
     }
 
-    if(edit) {
-        if(action == redoAct)
+    if (edit)
+    {
+        if (action == redoAct)
             edit->editRedo();
-        else if(action == undoAct)
+        else if (action == undoAct)
             edit->editUndo();
-        else if(action == copyAct)
+        else if (action == copyAct)
             edit->editCopy();
-        else if(action == pasteAct)
+        else if (action == pasteAct)
             edit->editPaste();
-        else if(action == cutAct)
+        else if (action == cutAct)
             edit->editCut();
-        else if(action == selectAllAct)
+        else if (action == selectAllAct)
             edit->editSelectAll();
-        else if(action == refreshAct)
+        else if (action == refreshAct)
             edit->editReadAll();
-        else if(action == searchReplaceAct) {
+        else if (action == searchReplaceAct)
+        {
             if (!Search)
                 Search = new toSearchReplace(this);
             Search->show();
         }
-        else if(action == openAct)
+        else if (action == openAct)
             edit->editOpen();
-        else if(action == saveAsAct)
+        else if (action == saveAsAct)
             edit->editSave(true);
-        else if(action == saveAct)
+        else if (action == saveAct)
             edit->editSave(false);
-        else if(action == printAct)
+        else if (action == printAct)
             edit->editPrint();
     } // if edit
 
-    if(action == commitAct) {
-        try {
+    if (action == commitAct)
+    {
+        try
+        {
             toConnection &conn = currentConnection();
             emit willCommit(conn, true);
             conn.commit();
@@ -868,22 +906,28 @@ void toMain::commandCallback(QAction *action) {
         }
         TOCATCH;
     }
-    else if(action == stopAct) {
-        try {
+    else if (action == stopAct)
+    {
+        try
+        {
             toConnection &conn = currentConnection();
             conn.cancelAll();
         }
         TOCATCH;
     }
-    else if(action == refreshAct) {
-        try {
+    else if (action == refreshAct)
+    {
+        try
+        {
             currentConnection().rereadCache();
         }
         TOCATCH;
         toMainWidget()->checkCaching();
     }
-    else if(action == rollbackAct) {
-        try {
+    else if (action == rollbackAct)
+    {
+        try
+        {
             toConnection &conn = currentConnection();
             emit willCommit(conn, false);
             conn.rollback();
@@ -891,38 +935,43 @@ void toMain::commandCallback(QAction *action) {
         }
         TOCATCH;
     }
-    else if(action == currentAct)
+    else if (action == currentAct)
         ConnectionSelection->setFocus();
-    else if(action == quitAct)
+    else if (action == quitAct)
         close();
-    else if(action == searchReplaceAct) {
-        if(Search)
+    else if (action == searchReplaceAct)
+    {
+        if (Search)
             Search->searchNext();
     }
-    else if(action == cascadeAct)
+    else if (action == cascadeAct)
         workspace()->cascade();
-    else if(action == tileAct)
+    else if (action == tileAct)
         workspace()->tile();
-    else if(action == helpCurrentAct)
+    else if (action == helpCurrentAct)
         toHelp::displayHelp();
-    else if(action == helpContentsAct)
+    else if (action == helpContentsAct)
         toHelp::displayHelp(QString::fromLatin1("toc.html"));
-    else if(action == aboutAct) {
+    else if (action == aboutAct)
+    {
         toAbout about(toAbout::About, this, "About " TOAPPNAME, true);
         about.exec();
     }
-    else if(action == licenseAct) {
+    else if (action == licenseAct)
+    {
         toAbout about(toAbout::License, this, "About " TOAPPNAME, true);
         about.exec();
     }
-    else if(action == prefsAct)
+    else if (action == prefsAct)
         toPreferences::displayPreferences(this);
-    else if(action == openSessionAct)
+    else if (action == openSessionAct)
         loadSession();
-    else if(action == saveSessionAct)
+    else if (action == saveSessionAct)
         saveSession();
-    else if(action == restoreSessionAct) {
-        try {
+    else if (action == restoreSessionAct)
+    {
+        try
+        {
             std::map<QString, QString> session;
             toConfigurationSingle::Instance().loadMap(
                 toConfigurationSingle::Instance().defaultSession(), session);
@@ -930,7 +979,7 @@ void toMain::commandCallback(QAction *action) {
         }
         TOCATCH;
     }
-    else if(action == closeSessionAct)
+    else if (action == closeSessionAct)
         closeSession();
 }
 
@@ -981,7 +1030,7 @@ toConnection *toMain::addConnection(toConnection *conn, bool def)
     ConnectionSelection->addItem(conn->description());
     ConnectionSelection->setCurrentIndex(ConnectionSelection->count() - 1);
 
-    if(ConnectionSelection->count() == 1)
+    if (ConnectionSelection->count() == 1)
         enableConnectionActions(true);
 
     checkCaching();
@@ -1019,22 +1068,26 @@ bool toMain::delConnection(void)
     toConnection *conn = NULL;
     int pos = 0;
 
-    for(std::list<toConnection *>::iterator i = Connections.begin();
-         i != Connections.end();
-         i++) {
+    for (std::list<toConnection *>::iterator i = Connections.begin();
+            i != Connections.end();
+            i++)
+    {
 
-        if(ConnectionSelection->currentText().startsWith((*i)->description())) {
+        if (ConnectionSelection->currentText().startsWith((*i)->description()))
+        {
             conn = (*i);
 
-            if(conn->needCommit()) {
+            if (conn->needCommit())
+            {
                 QString str = tr("Commit work in session to %1 before "
                                  "closing it?").arg(conn->description());
-                switch(TOMessageBox::warning(this,
-                                             tr("Commit work?"),
-                                             str,
-                                             tr("&Yes"),
-                                             tr("&No"),
-                                             tr("Cancel"))) {
+                switch (TOMessageBox::warning(this,
+                                              tr("Commit work?"),
+                                              str,
+                                              tr("&Yes"),
+                                              tr("&No"),
+                                              tr("Cancel")))
+                {
                 case 0:
                     conn->commit();
                     break;
@@ -1046,7 +1099,7 @@ bool toMain::delConnection(void)
                 }
             }
 
-            if(!conn->closeWidgets())
+            if (!conn->closeWidgets())
                 return false;
 
             emit removedConnection(conn->description());
@@ -1060,7 +1113,7 @@ bool toMain::delConnection(void)
         pos++;
     }
 
-    if(ConnectionSelection->count() == 0)
+    if (ConnectionSelection->count() == 0)
         enableConnectionActions(false);
     else
         changeConnection();
@@ -1102,7 +1155,7 @@ void toMain::setEditWidget(toEditWidget *edit)
 
 void toMain::editEnable(toEditWidget *edit)
 {
-    if(!edit)
+    if (!edit)
         return;
 
     toMain *main = toMainWidget();
@@ -1119,7 +1172,7 @@ void toMain::editEnable(toEditWidget *edit)
                          edit->searchEnabled(),
                          edit->selectAllEnabled(),
                          edit->readAllEnabled()
-            );
+                        );
 
     // Set Selection Mode on X11
     // qt4 TODO
@@ -1129,10 +1182,12 @@ void toMain::editEnable(toEditWidget *edit)
 //         clip->setSelectionMode(true);
 }
 
-void toMain::editDisable(toEditWidget *edit) {
+void toMain::editDisable(toEditWidget *edit)
+{
     toMain *main = toMainWidget();
 
-    if(main) {
+    if (main)
+    {
         main->editEnable(edit,
                          false,
                          false,
@@ -1146,7 +1201,8 @@ void toMain::editDisable(toEditWidget *edit) {
                          false,
                          false);
 
-        if(edit && edit == main->Edit) {
+        if (edit && edit == main->Edit)
+        {
             main->Edit->lostFocus();
             main->Edit = NULL;
         }
@@ -1178,9 +1234,11 @@ void toMain::editEnable(toEditWidget *edit,
                         bool paste,
                         bool search,
                         bool selectAll,
-                        bool readAll) {
+                        bool readAll)
+{
 
-    if(!edit) {
+    if (!edit)
+    {
         openAct->setEnabled(false);
         recentMenu->setEnabled(false);
         saveAct->setEnabled(false);
@@ -1200,7 +1258,8 @@ void toMain::editEnable(toEditWidget *edit,
 
         emit editEnabled(false);
     }
-    else if(edit && edit == Edit) {
+    else if (edit && edit == Edit)
+    {
         openAct->setEnabled(open);
         recentMenu->setEnabled(open);
         saveAct->setEnabled(save);
@@ -1223,7 +1282,8 @@ void toMain::editEnable(toEditWidget *edit,
 }
 
 
-void toMain::enableConnectionActions(bool enabled) {
+void toMain::enableConnectionActions(bool enabled)
+{
     commitAct->setEnabled(enabled);
     rollbackAct->setEnabled(enabled);
     stopAct->setEnabled(enabled);
@@ -1234,15 +1294,17 @@ void toMain::enableConnectionActions(bool enabled) {
 
     std::map<QString, toTool *> &tools = toTool::tools();
     for (std::map<QString, toTool *>::iterator i = tools.begin();
-         i != tools.end();
-         i++) {
+            i != tools.end();
+            i++)
+    {
 
-        if(!(*i).second)
+        if (!(*i).second)
             continue;
 
-        if(!enabled)
+        if (!enabled)
             (*i).second->enableAction(false);
-        else {
+        else
+        {
             toConnection &conn = currentConnection();
             (*i).second->enableAction(conn);
         }
@@ -1250,46 +1312,55 @@ void toMain::enableConnectionActions(bool enabled) {
 }
 
 
-void toMain::registerSQLEditor(const QString &name) {
+void toMain::registerSQLEditor(const QString &name)
+{
     SQLEditor = name;
 }
 
 
-void toMain::closeEvent(QCloseEvent *event) {
-    while(Connections.end() != Connections.begin()) {
-        if(!delConnection()) {
+void toMain::closeEvent(QCloseEvent *event)
+{
+    while (Connections.end() != Connections.begin())
+    {
+        if (!delConnection())
+        {
             event->ignore();
             return;
         }
     }
 
     Workspace->closeAllWindows();
-    if(Workspace->activeWindow() != NULL) {
+    if (Workspace->activeWindow() != NULL)
+    {
         event->ignore();        // stop widget refused
         return;
     }
 
     std::map<QString, QString> session;
     exportData(session, "TOra");
-    try {
+    try
+    {
         toConfigurationSingle::Instance().saveMap(
             toConfigurationSingle::Instance().defaultSession(),
             session);
     }
     TOCATCH;
 
+    toConfigurationSingle::Instance().setMainWindowGeometry(saveGeometry());
+
     toConfigurationSingle::Instance().saveConfig();
     event->accept();
 }
 
 
-bool toMain::close() {
+bool toMain::close()
+{
     return QMainWindow::close();
 }
 
 void toMain::createDefault(void)
 {
-    if(DefaultTool)
+    if (DefaultTool)
         DefaultTool->createWindow();
 }
 
@@ -1303,10 +1374,12 @@ void toMain::setCoordinates(int line, int col)
     ColumnLabel->setText(str);
 }
 
-void toMain::editSQL(const QString &str) {
+void toMain::editSQL(const QString &str)
+{
     std::map<QString, toTool *> &tools = toTool::tools();
 
-    if(!SQLEditor.isNull() && tools[SQLEditor]) {
+    if (!SQLEditor.isNull() && tools[SQLEditor])
+    {
         tools[SQLEditor]->createWindow();
         emit sqlEditor(str);
     }
@@ -1315,12 +1388,13 @@ void toMain::editSQL(const QString &str) {
 void toMain::updateStatusMenu(void)
 {
     statusMenu->clear();
-    for(std::list<QString>::iterator i = StatusMessages.begin();
-        i != StatusMessages.end();
-        i++) {
+    for (std::list<QString>::iterator i = StatusMessages.begin();
+            i != StatusMessages.end();
+            i++)
+    {
 
         QAction *s = new QAction(statusMenu);
-        if((*i).size() > 75)
+        if ((*i).size() > 75)
             s->setText((*i).left(75) + "...");
         else
             s->setText(*i);
@@ -1330,12 +1404,14 @@ void toMain::updateStatusMenu(void)
     }
 }
 
-void toMain::changeConnection(void) {
+void toMain::changeConnection(void)
+{
     enableConnectionActions(true);
 }
 
 
-void toMain::showMessage(const QString &str, bool save, bool log) {
+void toMain::showMessage(const QString &str, bool save, bool log)
+{
     // this function can be called from any thread.
     // this tomain class is in the main (gui) thread, so emitting
     // a signal with a queued flag will be picked up in the main
@@ -1344,21 +1420,24 @@ void toMain::showMessage(const QString &str, bool save, bool log) {
 }
 
 
-void toMain::showMessageImpl(const QString &str, bool save, bool log) {
-    if(!str.isEmpty()) {
+void toMain::showMessageImpl(const QString &str, bool save, bool log)
+{
+    if (!str.isEmpty())
+    {
         int sec = toConfigurationSingle::Instance().statusMessage();
-        if(save || sec == 0)
+        if (save || sec == 0)
             statusBar()->showMessage(str.simplified());
         else
             statusBar()->showMessage(str.simplified(), sec * 1000);
 
-        if(!save && log) {
+        if (!save && log)
+        {
             toPush(StatusMessages, str);
-            if((int) StatusMessages.size() > toConfigurationSingle::Instance().statusSave())
+            if ((int) StatusMessages.size() > toConfigurationSingle::Instance().statusSave())
                 toShift(StatusMessages);
             statusBar()->setToolTip(str);
 
-            if(!toConfigurationSingle::Instance().messageStatusbar())
+            if (!toConfigurationSingle::Instance().messageStatusbar())
                 displayMessage();
         }
     }
@@ -1618,8 +1697,9 @@ void toMain::removeChart(toLineChart *chart)
     emit chartRemoved(chart);
 }
 
-void toMain::displayMessage(void) {
-    if(StatusMessages.size() < 1)
+void toMain::displayMessage(void)
+{
+    if (StatusMessages.size() < 1)
         return;
 
     QDialog dialog;
@@ -1633,7 +1713,8 @@ void toMain::displayMessage(void) {
     uidialog.Message->setText(*(--StatusMessages.end()));
     dialog.exec();
 
-    if (uidialog.Statusbar->isChecked()) {
+    if (uidialog.Statusbar->isChecked())
+    {
         toConfigurationSingle::Instance().setMessageStatusbar(true);
         TOMessageBox::information(
             toMainWidget(),
@@ -1698,18 +1779,21 @@ toBackgroundLabel* toMain::getBackgroundLabel()
     return BackgroundLabel;
 }
 
-toMain* getMainWidget() {
+toMain* getMainWidget()
+{
     QWidgetList widgets = qApp->topLevelWidgets();
-    for(QWidgetList::iterator it = widgets.begin(); it != widgets.end(); it++) {
+    for (QWidgetList::iterator it = widgets.begin(); it != widgets.end(); it++)
+    {
         toMain *main = dynamic_cast<toMain *>((*it));
-        if(main)
+        if (main)
             return main;
     }
 
     return NULL;
 }
 
-toMain* toMainWidget() {
+toMain* toMainWidget()
+{
     static toMain *main = getMainWidget();
     return main;
 }

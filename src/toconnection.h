@@ -100,7 +100,8 @@ public:
 /** This class is used to perform a query on a database connection.
  */
 
-class toQuery : public QObject {
+class toQuery : public QObject
+{
     Q_OBJECT;
 
 public:
@@ -165,8 +166,8 @@ public:
          * data for the query may not be available when this object created.
          * @param query Parent query object.
          */
-    queryImpl(toQuery *query)
-        : Parent(query)
+        queryImpl(toQuery *query)
+                : Parent(query)
         { }
         /** Destroy query implementation.
          */
@@ -418,8 +419,8 @@ public:
      * @return A list of @ref toQValues:s read from the query.
      */
     static std::list<toQValue> readQueryNull(toConnection &conn,
-                                             const toSQL &sql,
-                                             std::list<toQValue> &params);
+            const toSQL &sql,
+            std::list<toQValue> &params);
     /** Execute a query and return all the values returned by it.
      * @param conn Connection to run query on.
      * @param sql SQL to run.
@@ -427,8 +428,8 @@ public:
      * @return A list of @ref toQValues:s read from the query.
      */
     static std::list<toQValue> readQueryNull(toConnection &conn,
-                                             const QString &sql,
-                                             std::list<toQValue> &params);
+            const QString &sql,
+            std::list<toQValue> &params);
     /** Execute a query and return all the values returned by it.
      * @param conn Connection to run query on.
      * @param sql SQL to run.
@@ -436,11 +437,11 @@ public:
      * @return A list of @ref toQValues:s read from the query.
      */
     static std::list<toQValue> readQueryNull(toConnection &conn, const toSQL &sql,
-                                             const QString &arg1 = QString::null, const QString &arg2 = QString::null,
-                                             const QString &arg3 = QString::null, const QString &arg4 = QString::null,
-                                             const QString &arg5 = QString::null, const QString &arg6 = QString::null,
-                                             const QString &arg7 = QString::null, const QString &arg8 = QString::null,
-                                             const QString &arg9 = QString::null);
+            const QString &arg1 = QString::null, const QString &arg2 = QString::null,
+            const QString &arg3 = QString::null, const QString &arg4 = QString::null,
+            const QString &arg5 = QString::null, const QString &arg6 = QString::null,
+            const QString &arg7 = QString::null, const QString &arg8 = QString::null,
+            const QString &arg9 = QString::null);
     /** Execute a query and return all the values returned by it.
      * @param conn Connection to run query on.
      * @param sql SQL to run.
@@ -448,11 +449,11 @@ public:
      * @return A list of @ref toQValues:s read from the query.
      */
     static std::list<toQValue> readQueryNull(toConnection &conn, const QString &sql,
-                                             const QString &arg1 = QString::null, const QString &arg2 = QString::null,
-                                             const QString &arg3 = QString::null, const QString &arg4 = QString::null,
-                                             const QString &arg5 = QString::null, const QString &arg6 = QString::null,
-                                             const QString &arg7 = QString::null, const QString &arg8 = QString::null,
-                                             const QString &arg9 = QString::null);
+            const QString &arg1 = QString::null, const QString &arg2 = QString::null,
+            const QString &arg3 = QString::null, const QString &arg4 = QString::null,
+            const QString &arg5 = QString::null, const QString &arg6 = QString::null,
+            const QString &arg7 = QString::null, const QString &arg8 = QString::null,
+            const QString &arg9 = QString::null);
     /** Cancel the current execution of a query.
      */
     void cancel(void);
@@ -469,7 +470,8 @@ typedef std::list<toQDescribe> toQDescList;
  * connections to the database as queries that ae expected to run a long time are sometimes
  * executed in their own connection to make sure the interface doesn't lock up for a long time.
  */
-class toConnection : public QObject {
+class toConnection : public QObject
+{
     Q_OBJECT;
 
     QString Provider;
@@ -481,7 +483,7 @@ class toConnection : public QObject {
     std::list<QPointer<QWidget> > Widgets;
     std::list<QString> InitStrings;
     std::set
-        <QString> Options;
+    <QString> Options;
     toLock Lock;
     std::list<toConnectionSub *> Connections;
     std::list<toConnectionSub *> Running;
@@ -495,14 +497,14 @@ public:
      * want to indicate error offset.
      */
 
-    class exception : public QString
+class exception : public QString
     {
         int Offset;
     public:
         /** Create an exception with a string description.
          */
-    exception(const QString &str, int offset = -1)
-        : QString(str)
+        exception(const QString &str, int offset = -1)
+                : QString(str)
         {
             Offset = offset;
         }
@@ -542,14 +544,14 @@ public:
 
         /** Create an object name with filled in values.
          */
-    objectName(const QString &owner, const QString &name, const QString &type = QString("TABLE"), const QString &comment = QString::null)
-    : Name(name), Owner(owner), Type(type), Comment(comment)
-            { }
+        objectName(const QString &owner, const QString &name, const QString &type = QString("TABLE"), const QString &comment = QString::null)
+                : Name(name), Owner(owner), Type(type), Comment(comment)
+        { }
 
         /** Create an empty object name.
          */
         objectName()
-            { }
+        { }
         bool operator < (const objectName &) const;
         bool operator == (const objectName &) const;
     };
@@ -678,17 +680,17 @@ private:
 
     connectionImpl *Connection;
 
-    class cacheObjects : public toTask
+class cacheObjects : public toTask
     {
         toConnection &Connection;
     public:
-    cacheObjects(toConnection &conn)
-        : Connection(conn)
+        cacheObjects(toConnection &conn)
+                : Connection(conn)
         { }
         virtual void run(void);
     };
     friend class cacheObjects;
-    
+
     bool ReadingCache;
     toSemaphore ReadingValues;
     bool Abort;
@@ -729,7 +731,7 @@ public:
 
     //* Get the options for the connection.
     const std::set
-        <QString> &options() const
+    <QString> &options() const
     {
         return Options;
     }
@@ -1055,7 +1057,7 @@ public:
      * @return A connection implementation created with new.
      */
     virtual toConnection::connectionImpl *provideConnection(const QString &provider,
-                                                            toConnection *conn) = 0;
+            toConnection *conn) = 0;
     /** List the available hosts this database provider knows about.
      * @return A list of hosts.
      */
@@ -1067,9 +1069,9 @@ public:
      * @return A list of databases available for a given host.
      */
     virtual std::list<QString> providedDatabases(const QString &provider,
-                                                 const QString &host,
-                                                 const QString &user,
-                                                 const QString &pwd) = 0;
+            const QString &host,
+            const QString &user,
+            const QString &pwd) = 0;
     /** Will be called after program has been started and before connections have been opened.
      *  Use for initialization.
      */

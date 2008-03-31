@@ -66,16 +66,20 @@ toChangeConnection::toChangeConnection(QToolBar *parent, const char *name)
     parent->addWidget(this);
 }
 
-void toChangeConnection::popupMenu(void) {
-    try {
+void toChangeConnection::popupMenu(void)
+{
+    try
+    {
         menu()->clear();
         toConnection &conn = toCurrentConnection(this);
         std::list<QString> cons = toMainWidget()->connections();
-        for(std::list<QString>::iterator i = cons.begin(); i != cons.end(); i++) {
-            if(toCurrentTool(this)->canHandle(toMainWidget()->connection(*i))) {
+        for (std::list<QString>::iterator i = cons.begin(); i != cons.end(); i++)
+        {
+            if (toCurrentTool(this)->canHandle(toMainWidget()->connection(*i)))
+            {
                 QAction *act = menu()->addAction(*i);
                 act->setCheckable(true);
-                if(conn.description() == *i)
+                if (conn.description() == *i)
                     act->setChecked(true);
                 else
                     act->setChecked(false);
@@ -86,22 +90,28 @@ void toChangeConnection::popupMenu(void) {
 }
 
 
-void toChangeConnection::changeConnection(QAction *act) {
+void toChangeConnection::changeConnection(QAction *act)
+{
     // the act of clicking the menu will invert the checked flag
-    if(!act->isChecked())
+    if (!act->isChecked())
         return;
 
     std::list<QString> cons = toMainWidget()->connections();
 
-    try {
-        for(std::list<QString>::iterator i = cons.begin(); i != cons.end(); i++) {
-            if(act->text() == (*i)) {
+    try
+    {
+        for (std::list<QString>::iterator i = cons.begin(); i != cons.end(); i++)
+        {
+            if (act->text() == (*i))
+            {
 
                 QWidget *cur = parentWidget();
-                while(cur) {
+                while (cur)
+                {
                     toToolWidget *tool = dynamic_cast<toToolWidget *>(cur);
 
-                    if(tool) {
+                    if (tool)
+                    {
                         tool->setConnection(toMainWidget()->connection(*i));
                         toMainWidget()->windowActivated(tool);
                         toMainWidget()->changeConnection();

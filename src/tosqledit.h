@@ -51,7 +51,8 @@ class QToolButton;
 class toMarkedText;
 class toWorksheet;
 
-class toSQLEdit : public toToolWidget {
+class toSQLEdit : public toToolWidget
+{
     Q_OBJECT;
 
     toTreeWidget *Statements;
@@ -83,13 +84,14 @@ public:
     virtual ~toSQLEdit();
     void commitChanges(bool);
 
-    public slots:
+public slots:
     void loadSQL(void);
     void saveSQL(void);
     void deleteVersion(void);
     void selectionChanged(void);
     void changeVersion(const QString &);
-    void commitChanges(void) {
+    void commitChanges(void)
+    {
         commitChanges(true);
     }
     void editSQL(const QString &);
@@ -97,7 +99,8 @@ public:
 };
 
 
-class toSQLTemplateItem : public toTemplateItem {
+class toSQLTemplateItem : public toTemplateItem
+{
     QString Name;
 
 public:
@@ -112,12 +115,14 @@ public:
 };
 
 
-class toSQLTemplate : public toTemplateProvider {
+class toSQLTemplate : public toTemplateProvider
+{
 
 public:
-toSQLTemplate()
-    : toTemplateProvider("SQL Dictionary") { }
-    virtual void insertItems(toTreeWidget *parent, QToolBar *) {
+    toSQLTemplate()
+            : toTemplateProvider("SQL Dictionary") { }
+    virtual void insertItems(toTreeWidget *parent, QToolBar *)
+    {
         new toSQLTemplateItem(parent);
     }
 };

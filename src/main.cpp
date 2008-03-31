@@ -92,17 +92,17 @@ void toUpdateIndicateEmpty(void);
 int main(int argc, char **argv)
 {
     // QSettings uses these.
-	QCoreApplication::setOrganizationName("TOra");
-	QCoreApplication::setOrganizationDomain("tora.sourceforge.net");
-	QCoreApplication::setApplicationName("TOra");
+    QCoreApplication::setOrganizationName("TOra");
+    QCoreApplication::setOrganizationDomain("tora.sourceforge.net");
+    QCoreApplication::setApplicationName("TOra");
 
-#ifdef ENABLE_QT_XFT
-	toSetEnv("QT_XFT", toConfigurationSingle::Instance().QtXft());
-#endif
-
-#  ifndef Q_OS_WIN32
-	QApplication::setDesktopSettingsAware(toConfigurationSingle::Instance().desktopAware());
-#  endif
+// These vars are not useful for Qt4 anymore
+// #ifdef ENABLE_QT_XFT
+//  toSetEnv("QT_XFT", toConfigurationSingle::Instance().QtXft());
+// #endif
+// #  ifndef Q_OS_WIN32
+//  QApplication::setDesktopSettingsAware(toConfigurationSingle::Instance().desktopAware());
+// #  endif
 
     new QApplication(argc, argv);
 
@@ -147,7 +147,7 @@ int main(int argc, char **argv)
                 dirPath = DEFAULT_PLUGIN_DIR;
                 d.cd(dirPath);
                 if (d.exists())
-					toConfigurationSingle::Instance().setPluginDir(dirPath);
+                    toConfigurationSingle::Instance().setPluginDir(dirPath);
                 else
                     fprintf(stderr, "Invalid PluginDir.\n");
             }
@@ -221,17 +221,14 @@ int main(int argc, char **argv)
             {
                 exit (2);
             }
-			toConfigurationSingle::Instance().setLastVersion(TOVERSION);
+            toConfigurationSingle::Instance().setLastVersion(TOVERSION);
         }
 
 
         if (toConfigurationSingle::Instance().firstInstall().isEmpty())
         {
-//             time_t t;
-//             time(&t);
-//             toConfigurationSingle::Instance().globalSetConfig("FirstInstall", ctime(&t));
-			toConfigurationSingle::Instance().setFirstInstall(
-                                            QDateTime::currentDateTime().toString());
+            toConfigurationSingle::Instance().setFirstInstall(
+                QDateTime::currentDateTime().toString());
         }
 
         toQValue::setNumberFormat(
@@ -260,7 +257,7 @@ int main(int argc, char **argv)
                     connect = QString::fromLatin1(getenv("ORACLE_SID"));
             }
             if (!connect.isEmpty())
-				toConfigurationSingle::Instance().setDefaultDatabase(connect);
+                toConfigurationSingle::Instance().setDefaultDatabase(connect);
             pos = user.indexOf(QString::fromLatin1("/"));
             if (pos > -1)
             {
@@ -275,8 +272,6 @@ int main(int argc, char **argv)
         toMarkedText::setDefaultTabSpaces(toConfigurationSingle::Instance().tabSpaces());
 
         toUpdateIndicateEmpty();
-
-
 
         new toMain;
 

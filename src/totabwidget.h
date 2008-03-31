@@ -49,10 +49,12 @@
 /** An extension of the regular tab widget with posibility to hide
  * tabs.
  */
-class toTabWidget: public QTabWidget {
+class toTabWidget: public QTabWidget
+{
     Q_OBJECT;
 
-    struct page {
+    struct page
+    {
         QString label;
         int     index;
     };
@@ -74,13 +76,15 @@ public:
     /** Specify that a tab is shown.
      * @param w Tab to show.
      */
-    virtual void showTab(QWidget *w) {
+    virtual void showTab(QWidget *w)
+    {
         setTabShown(w, true);
     }
     /** Specify that a tab is hidden.
      * @param w Tab to hide.
      */
-    virtual void hideTab(QWidget *w) {
+    virtual void hideTab(QWidget *w)
+    {
         setTabShown(w, false);
     }
 

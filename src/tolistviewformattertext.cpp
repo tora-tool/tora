@@ -44,20 +44,25 @@
 #include <iostream>
 #include <QVector>
 
-namespace {
-toListViewFormatter* createText() {
+namespace
+{
+toListViewFormatter* createText()
+{
     return new toListViewFormatterText();
 }
 const bool registered = toListViewFormatterFactory::Instance().Register(toListViewFormatterIdentifier::TEXT, createText);
 }
 
-toListViewFormatterText::toListViewFormatterText() : toListViewFormatter() {
+toListViewFormatterText::toListViewFormatterText() : toListViewFormatter()
+{
 }
 
-toListViewFormatterText::~toListViewFormatterText() {
+toListViewFormatterText::~toListViewFormatterText()
+{
 }
 
-QString toListViewFormatterText::getFormattedString(toListView& tListView) {
+QString toListViewFormatterText::getFormattedString(toListView& tListView)
+{
     int column_count = tListView.columns();
     QString separator = tListView.getSep();
     QString delimiter = tListView.getDel();
@@ -72,12 +77,15 @@ QString toListViewFormatterText::getFormattedString(toListView& tListView) {
 
     {
         toTreeWidgetItem *next = NULL;
-        for (toTreeWidgetItem *item = tListView.firstChild();item;item = next) {
+        for (toTreeWidgetItem *item = tListView.firstChild();item;item = next)
+        {
             toResultViewItem * resItem = dynamic_cast<toResultViewItem *>(item);
             toResultViewCheck *chkItem = dynamic_cast<toResultViewCheck *>(item);
 
-            if (!tListView.getOnlySelection() || item->isSelected()) {
-                for (int i = 0;i < column_count;i++) {
+            if (!tListView.getOnlySelection() || item->isSelected())
+            {
+                for (int i = 0;i < column_count;i++)
+                {
                     int csiz;
                     if (resItem)
                         csiz = resItem->allText(i).length();
@@ -92,15 +100,18 @@ QString toListViewFormatterText::getFormattedString(toListView& tListView) {
                 }
             }
 
-            if (item->firstChild()) {
+            if (item->firstChild())
+            {
                 level++;
                 next = item->firstChild();
             }
             else if (item->nextSibling())
                 next = item->nextSibling();
-            else {
+            else
+            {
                 next = item;
-                do {
+                do
+                {
                     next = next->parent();
                     level--;
                 }
@@ -117,7 +128,8 @@ QString toListViewFormatterText::getFormattedString(toListView& tListView) {
     QString indent;
 
     QString bgcolor;
-    if (tListView.getIncludeHeader()) {
+    if (tListView.getIncludeHeader())
+    {
         if (bgcolor.isEmpty())
             bgcolor = QString::fromLatin1("nonull");
         else
@@ -130,7 +142,8 @@ QString toListViewFormatterText::getFormattedString(toListView& tListView) {
 
         endLine(output);
 
-        for (int k = 0;k < column_count;k++) {
+        for (int k = 0;k < column_count;k++)
+        {
             for (int l = 0;l < sizes[k];l++)
                 output += QString::fromLatin1("=");
             if (k != column_count - 1)
@@ -143,8 +156,10 @@ QString toListViewFormatterText::getFormattedString(toListView& tListView) {
 
     toTreeWidgetItem *next = NULL;
 
-    for (toTreeWidgetItem *item = tListView.firstChild();item;item = next) {
-        if (!tListView.getOnlySelection() || item->isSelected()) {
+    for (toTreeWidgetItem *item = tListView.firstChild();item;item = next)
+    {
+        if (!tListView.getOnlySelection() || item->isSelected())
+        {
 
             toResultViewItem * resItem = dynamic_cast<toResultViewItem *>(item);
             toResultViewCheck *chkItem = dynamic_cast<toResultViewCheck *>(item);
@@ -155,7 +170,8 @@ QString toListViewFormatterText::getFormattedString(toListView& tListView) {
                 bgcolor = QString::null;
             QString line;
 
-            for (int i = 0;i < column_count;i++) {
+            for (int i = 0;i < column_count;i++)
+            {
                 QString text;
 
                 if (resItem)
@@ -174,16 +190,19 @@ QString toListViewFormatterText::getFormattedString(toListView& tListView) {
             output += line;
         }
 
-        if (item->firstChild()) {
+        if (item->firstChild())
+        {
 
             indent += QString::fromLatin1(" ");
             next = item->firstChild();
         }
         else if (item->nextSibling())
             next = item->nextSibling();
-        else {
+        else
+        {
             next = item;
-            do {
+            do
+            {
                 next = next->parent();
                 indent.truncate(indent.length() - 1);
             }
@@ -197,7 +216,8 @@ QString toListViewFormatterText::getFormattedString(toListView& tListView) {
 
 
 QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
-                                                    const toResultModel *model) {
+        const toResultModel *model)
+{
     int     columns   = model->columnCount();
     int     rows      = model->rowCount();
     QString separator = settings.Separator;
@@ -209,51 +229,58 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
     // must get widest length for each column
 
     // zero array or (if writing headers, set their size)
-    for(int i = 0; i < columns; i++) {
-        if(settings.IncludeHeader) {
+    for (int i = 0; i < columns; i++)
+    {
+        if (settings.IncludeHeader)
+        {
             sizes[i] = model->headerData(
-                i,
-                Qt::Horizontal,
-                Qt::DisplayRole).toString().length();
+                           i,
+                           Qt::Horizontal,
+                           Qt::DisplayRole).toString().length();
         }
         else
             sizes[i] = 0;
     }
 
     // loop through model and get column widths
-    for(int row = 0; row < rows; row++) {
-        for(int column = 0; column < columns; column++) {
+    for (int row = 0; row < rows; row++)
+    {
+        for (int column = 0; column < columns; column++)
+        {
             QVariant data = model->data(row, column);
             QString v;
-            if(data.isNull())
+            if (data.isNull())
                 v = "{null}";
             else
                 v = data.toString();
 
             int len = v.length();
-            if(len > sizes[column])
+            if (len > sizes[column])
                 sizes[column] = len;
         }
     }
 
     // write header data to fixed widths
-    if(settings.IncludeHeader) {
-        for(int column = 0; column < columns; column++) {
+    if (settings.IncludeHeader)
+    {
+        for (int column = 0; column < columns; column++)
+        {
             QString value = model->headerData(
-                column,
-                Qt::Horizontal,
-                Qt::DisplayRole).toString();
+                                column,
+                                Qt::Horizontal,
+                                Qt::DisplayRole).toString();
 
             output += value;
-            for(int left = value.length(); left <= sizes[column]; left++)
+            for (int left = value.length(); left <= sizes[column]; left++)
                 output += ' ';
         }
 
         endLine(output);
 
         // write ==== border
-        for(int column = 0; column < columns; column++) {
-            for(int left = 0; left < sizes[column]; left++)
+        for (int column = 0; column < columns; column++)
+        {
+            for (int left = 0; left < sizes[column]; left++)
                 output += '=';
             output += ' ';
         }
@@ -263,20 +290,22 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
 
     // write data
     QVector<int> slist = selectedList(settings.selected);
-    for(int row = 0; row < rows; row++) {
-        if(settings.OnlySelection && !slist.contains(row))
+    for (int row = 0; row < rows; row++)
+    {
+        if (settings.OnlySelection && !slist.contains(row))
             continue;
 
-        for(int column = 0; column < columns; column++) {
+        for (int column = 0; column < columns; column++)
+        {
             QVariant data = model->data(row, column);
             QString value;
-            if(data.isNull())
+            if (data.isNull())
                 value = "{null}";
             else
                 value = data.toString();
 
             output += value;
-            for(int left = value.length(); left <= sizes[column]; left++)
+            for (int left = value.length(); left <= sizes[column]; left++)
                 output += ' ';
         }
 

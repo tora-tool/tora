@@ -50,7 +50,8 @@ toResultModel::toResultModel(toNoBlockQuery *query,
                              QObject *parent,
                              bool edit,
                              bool read)
-    : QAbstractTableModel(parent) {
+        : QAbstractTableModel(parent)
+{
     ReadableColumns = read;
     HeadersRead     = false;
     First           = true;
@@ -68,15 +69,18 @@ toResultModel::toResultModel(toNoBlockQuery *query,
 }
 
 
-toResultModel::~toResultModel() {
-    if(Query)
+toResultModel::~toResultModel()
+{
+    if (Query)
         delete Query;
     Query = NULL;
 }
 
 
-void toResultModel::cleanup() {
-    if(Query) {
+void toResultModel::cleanup()
+{
+    if (Query)
+    {
         delete Query;
         Timer.stop();
 
@@ -87,25 +91,31 @@ void toResultModel::cleanup() {
 }
 
 
-void toResultModel::readAll() {
+void toResultModel::readAll()
+{
     QModelIndex index;
 
-    while(canFetchMore(index)) {
+    while (canFetchMore(index))
+    {
         fetchMore(index);
         qApp->processEvents();
     }
 }
 
 
-void toResultModel::readData() {
-    if(!Query) {
+void toResultModel::readData()
+{
+    if (!Query)
+    {
         cleanup();
         return;
     }
 
-    try {
-        if(!Query->poll()) {
-            if(!Timer.isActive() && First)
+    try
+    {
+        if (!Query->poll())
+        {
+            if (!Timer.isActive() && First)
                 Timer.start(TO_POLL_CHECK);
             return;
         }
@@ -120,25 +130,28 @@ void toResultModel::readData() {
         RowList tmp;
         int     current = CurrentRow;
 
-        if(!Query->eof()) {
-            do {
+        if (!Query->eof())
+        {
+            do
+            {
                 Row row;
 
                 // the number column. should never change
                 row.append(toQValue(current + 1));
 
-                for(int j = 1; (j < cols || j == 0) && !Query->eof(); j++)
+                for (int j = 1; (j < cols || j == 0) && !Query->eof(); j++)
                     row.append(Query->readValueNull());
 
                 tmp.append(row);
                 current++;
             }
-            while(!Query->eof() && Query->poll() &&
-                  (MaxNumber < 0 || MaxNumber > current));
+            while (!Query->eof() && Query->poll() &&
+                    (MaxNumber < 0 || MaxNumber > current));
         }
 
         // if we read some data, then go ahead and insert them now.
-        if(tmp.size() > 0) {
+        if (tmp.size() > 0)
+        {
             beginInsertRows(QModelIndex(), CurrentRow, current - 1);
             Rows << tmp;
             CurrentRow = current;
@@ -147,8 +160,10 @@ void toResultModel::readData() {
 
         // not really first, but just be sure to emit before done()
         // must be emitted even if there's no data....
-        if(First) {
-            if(tmp.size() > 0 || !Query || Query->eof()) {
+        if (First)
+        {
+            if (tmp.size() > 0 || !Query || Query->eof())
+            {
                 First = !First;
 
                 // need to reset view(s) since we have to poll for data
@@ -157,23 +172,28 @@ void toResultModel::readData() {
             }
         }
 
-        if(!Query)
+        if (!Query)
             return;
-        if(Query->eof()) {
+        if (Query->eof())
+        {
             cleanup();
             return;
         }
     }
-    catch(const toConnection::exception &str) {
-        if(First) {
+    catch (const toConnection::exception &str)
+    {
+        if (First)
+        {
             First = !First;
             emit firstResult(str, true);
         }
         cleanup();
         return;
     }
-    catch(const QString &str) {
-        if(First) {
+    catch (const QString &str)
+    {
+        if (First)
+        {
             First = !First;
             emit firstResult(str, true);
         }
@@ -182,31 +202,34 @@ void toResultModel::readData() {
     }
 
     // reset timer if needed
-    if(MaxNumber < 0 || MaxNumber > CurrentRow)
+    if (MaxNumber < 0 || MaxNumber > CurrentRow)
         Timer.start(TO_POLL_CHECK);
     else
         Timer.stop();
 }
 
 
-int toResultModel::addRow(QModelIndex ind) {
-    if(!Editable)
+int toResultModel::addRow(QModelIndex ind)
+{
+    if (!Editable)
         return -1;
 
     CurrentRow++;
     beginInsertRows(QModelIndex(), CurrentRow, CurrentRow);
 
     Row row;
-    if(ind.isValid()) {
+    if (ind.isValid())
+    {
         row = Rows[ind.row()];
         row[0] = CurrentRow;
     }
-    else {
+    else
+    {
         row.append(toQValue(CurrentRow));
 
         // null out the rest of the row
         int cols = Headers.size();
-        for(int j = 1; j < cols; j++)
+        for (int j = 1; j < cols; j++)
             row.append(toQValue());
     }
 
@@ -217,11 +240,12 @@ int toResultModel::addRow(QModelIndex ind) {
 }
 
 
-void toResultModel::deleteRow(QModelIndex index) {
-    if(!Editable)
+void toResultModel::deleteRow(QModelIndex index)
+{
+    if (!Editable)
         return;
 
-    if(!index.isValid() && index.row() >= Rows.size())
+    if (!index.isValid() && index.row() >= Rows.size())
         return;
 
     beginRemoveRows(QModelIndex(), index.row(), index.row());
@@ -232,8 +256,9 @@ void toResultModel::deleteRow(QModelIndex index) {
 }
 
 
-int toResultModel::rowCount(const QModelIndex &parent) const {
-    if(parent.isValid())
+int toResultModel::rowCount(const QModelIndex &parent) const
+{
+    if (parent.isValid())
         return 0;
 
     return CurrentRow;
@@ -244,31 +269,34 @@ int toResultModel::rowCount(const QModelIndex &parent) const {
  * Returns the data stored under the given role for the item
  * referred to by the index.
  */
-QVariant toResultModel::data(const QModelIndex &index, int role) const {
-    if(!index.isValid())
+QVariant toResultModel::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid())
         return QVariant();
 
-    if(index.row() > Rows.size() - 1 || index.column() > Headers.size() - 1)
+    if (index.row() > Rows.size() - 1 || index.column() > Headers.size() - 1)
         return QVariant();
 
     toQValue data = Rows.at(index.row()).at(index.column());
 
-    if(role == Qt::DisplayRole) {
-        if(data.isNull())
+    if (role == Qt::DisplayRole)
+    {
+        if (data.isNull())
             return toNull(data).toQVariant();
 
         return data.toQVariant();
     }
-    if(role == Qt::EditRole)
+    if (role == Qt::EditRole)
         return data.toQVariant();
-    if(role == Qt::ToolTipRole)
+    if (role == Qt::ToolTipRole)
         return data.toQVariant();
-    if(role == Qt::BackgroundRole) {
-        if(data.isNull())
+    if (role == Qt::BackgroundRole)
+    {
+        if (data.isNull())
             return QVariant(QColor("#f2ffbc"));
         return QVariant();
     }
-    if(role == Qt::TextAlignmentRole)
+    if (role == Qt::TextAlignmentRole)
         return (int) Headers.at(index.column()).align;
 
     return QVariant();
@@ -277,17 +305,18 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const {
 
 bool toResultModel::setData(const QModelIndex &index,
                             const QVariant &_value,
-                            int role) {
-    if(!Editable)
+                            int role)
+{
+    if (!Editable)
         return false;
 
-    if(role != Qt::EditRole)
+    if (role != Qt::EditRole)
         return false;
 
-    if(index.column() == 0)
+    if (index.column() == 0)
         return false;           // can't change number column
 
-    if(index.row() > Rows.size() - 1 || index.column() > Headers.size() - 1)
+    if (index.row() > Rows.size() - 1 || index.column() > Headers.size() - 1)
         return false;
 
     Row &row = Rows[index.row()];
@@ -305,20 +334,23 @@ bool toResultModel::setData(const QModelIndex &index,
 }
 
 
-QVariant toResultModel::data(int row, int column) const {
+QVariant toResultModel::data(int row, int column) const
+{
     QModelIndex ind = index(row, column);
     return data(ind, Qt::EditRole);
 }
 
 
-QVariant toResultModel::data(int row, QString column) const {
+QVariant toResultModel::data(int row, QString column) const
+{
     int c;
-    for(c = 0; c < Headers.size(); c++) {
-        if(Headers[c].name == column)
+    for (c = 0; c < Headers.size(); c++)
+    {
+        if (Headers[c].name == column)
             break;
     }
 
-    if(c < Headers.size())
+    if (c < Headers.size())
         return data(row, c);
     return QVariant();
 }
@@ -331,21 +363,23 @@ QVariant toResultModel::data(int row, QString column) const {
  */
 QVariant toResultModel::headerData(int section,
                                    Qt::Orientation orientation,
-                                   int role) const {
-    if(role != Qt::DisplayRole)
+                                   int role) const
+{
+    if (role != Qt::DisplayRole)
         return QVariant();
 
-    if(orientation == Qt::Horizontal) {
-        if(!HeadersRead)
+    if (orientation == Qt::Horizontal)
+    {
+        if (!HeadersRead)
             return QVariant();
 
-        if(section > Headers.size() - 1)
+        if (section > Headers.size() - 1)
             return QVariant();
 
         return Headers[section].name;
     }
 
-    if(orientation == Qt::Vertical)
+    if (orientation == Qt::Vertical)
         return section;
 
     return QVariant();
@@ -353,8 +387,9 @@ QVariant toResultModel::headerData(int section,
 
 
 
-void toResultModel::readHeaders() {
-    if(HeadersRead)
+void toResultModel::readHeaders()
+{
+    if (HeadersRead)
         return;
 
     // always add the number column. this makes adjusting for it in
@@ -366,18 +401,19 @@ void toResultModel::readHeaders() {
     Headers.append(d);
 
     toQDescList desc = Query->describe();
-    for(toQDescList::iterator i = desc.begin(); i != desc.end(); i++) {
+    for (toQDescList::iterator i = desc.begin(); i != desc.end(); i++)
+    {
         struct HeaderDesc d;
 
         d.name = (*i).Name;
-        if(ReadableColumns)
+        if (ReadableColumns)
             toReadableColumn(d.name);
 
         d.datatype = (*i).Datatype;
 
         d.nullAllowed = (*i).Null;
 
-        if((*i).AlignRight)
+        if ((*i).AlignRight)
             d.align = Qt::AlignRight | Qt::AlignVCenter;
         else
             d.align = Qt::AlignLeft | Qt::AlignVCenter;
@@ -394,24 +430,28 @@ void toResultModel::readHeaders() {
  * parent. When the parent is valid it means that rowCount is
  * returning the number of children of parent.
  */
-int toResultModel::columnCount(const QModelIndex &parent) const {
+int toResultModel::columnCount(const QModelIndex &parent) const
+{
     Q_UNUSED(parent);
     return Headers.size();
 }
 
 
-bool toResultModel::canFetchMore(const QModelIndex &parent) const {
+bool toResultModel::canFetchMore(const QModelIndex &parent) const
+{
     Q_UNUSED(parent);
 
     // sometimes the view calls this before the query has even
     // run.
-    if(First)
+    if (First)
         return false;
 
-    try {
+    try
+    {
         return Query && Query->poll();
     }
-    catch(...) {
+    catch (...)
+    {
         // will catch later
         ;
     }
@@ -420,27 +460,30 @@ bool toResultModel::canFetchMore(const QModelIndex &parent) const {
 }
 
 
-void toResultModel::fetchMore(const QModelIndex &parent) {
+void toResultModel::fetchMore(const QModelIndex &parent)
+{
     Q_UNUSED(parent);
 
     // sometimes the view calls this before the query has even
     // run. don't actually increase max until we've hit it.
-    if(MaxNumber < 0 || MaxNumber <= CurrentRow)
-       MaxNumber += MaxRead;
+    if (MaxNumber < 0 || MaxNumber <= CurrentRow)
+        MaxNumber += MaxRead;
 
     readData();
 }
 
 
-Qt::ItemFlags toResultModel::flags(const QModelIndex &index) const {
+Qt::ItemFlags toResultModel::flags(const QModelIndex &index) const
+{
     Qt::ItemFlags fl = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    if(Editable)
+    if (Editable)
         fl = fl | Qt::ItemIsEditable;
     return fl;
 }
 
 
-void toResultModel::setAlignment(int col, Qt::AlignmentFlag fl) {
+void toResultModel::setAlignment(int col, Qt::AlignmentFlag fl)
+{
     Headers[col].align = fl;
 }
 
@@ -449,16 +492,18 @@ int toResultModel::partition(int left,
                              int right,
                              int pivot,
                              int column,
-                             Qt::SortOrder order) {
+                             Qt::SortOrder order)
+{
     Rows.move(pivot, right);        // move to end
 
     int store = left;
     toQValue key = Rows.at(right).at(column); // pivot value for
-                                              // comparisons
+    // comparisons
 
-    for(int i = left; i < right; i++) {
-        if(order == Qt::AscendingOrder && (Rows.at(i).at(column) < key) ||
-           order == Qt::DescendingOrder && (Rows.at(i).at(column) > key))
+    for (int i = left; i < right; i++)
+    {
+        if (order == Qt::AscendingOrder && (Rows.at(i).at(column) < key) ||
+                order == Qt::DescendingOrder && (Rows.at(i).at(column) > key))
             Rows.swap(i, store++);
     }
 
@@ -470,7 +515,8 @@ int toResultModel::partition(int left,
 void toResultModel::qsort(int left,
                           int right,
                           int column,
-                          Qt::SortOrder order) {
+                          Qt::SortOrder order)
+{
     // quick sort
 
     // mrj: i'm not an algorithm guy and i don't really want to do
@@ -479,7 +525,7 @@ void toResultModel::qsort(int left,
     // i did a quick 'n dirty implementation following
     // http://en.wikipedia.org/wiki/Quicksort
 
-    if(right <= left)
+    if (right <= left)
         return;
 
     int pivotIndex = left;
@@ -489,8 +535,9 @@ void toResultModel::qsort(int left,
 }
 
 
-void toResultModel::sort(int column, Qt::SortOrder order) {
-    if(column > Headers.size() - 1)
+void toResultModel::sort(int column, Qt::SortOrder order)
+{
+    if (column > Headers.size() - 1)
         return;
 
     qsort(0, Rows.size() - 1, column, order);

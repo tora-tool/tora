@@ -65,7 +65,8 @@ class toSearchReplace;
 /** Baseclass for filters to apply to the @ref toResultView to filter
  * out rows that you don't want to add as items to the list.
  */
-class toResultFilter {
+class toResultFilter
+{
 public:
     toResultFilter() { }
     virtual ~toResultFilter() { }
@@ -100,8 +101,10 @@ public:
  * actually contain more text than is displayed in the cell of the
  * listview.
  */
-class toResultViewItem : public toTreeWidgetItem {
-    struct keyData {
+class toResultViewItem : public toTreeWidgetItem
+{
+    struct keyData
+    {
         QString Data;
         QString KeyAsc;
         QString KeyDesc;
@@ -128,7 +131,8 @@ public:
     toResultViewItem(toTreeWidget *parent,
                      toTreeWidgetItem *after,
                      const QString &buf = QString::null)
-    : toTreeWidgetItem(parent, after, QString::null) {
+            : toTreeWidgetItem(parent, after, QString::null)
+    {
         ColumnData = NULL;
         ColumnCount = 0;
         if (!buf.isNull())
@@ -142,7 +146,8 @@ public:
     toResultViewItem(toTreeWidgetItem *parent,
                      toTreeWidgetItem *after,
                      const QString &buf = QString::null)
-    : toTreeWidgetItem(parent, after, QString::null) {
+            : toTreeWidgetItem(parent, after, QString::null)
+    {
         ColumnData = NULL;
         ColumnCount = 0;
         if (!buf.isNull())
@@ -150,7 +155,8 @@ public:
     }
     /** Reimplemented for internal reasons.
      */
-    virtual ~toResultViewItem() {
+    virtual ~toResultViewItem()
+    {
         delete[] ColumnData;
     }
     /** Reimplemented for internal reasons.
@@ -174,14 +180,16 @@ public:
      * @param col Column
      * @param asc Wether to sort ascending or not.
      */
-    virtual QString key(int col, bool asc) const {
+    virtual QString key(int col, bool asc) const
+    {
         if (col >= ColumnCount)
             return QString::null;
         return asc ? ColumnData[col].KeyAsc : ColumnData[col].KeyDesc;
     }
     /** Reimplemented for internal reasons.
      */
-    virtual int width(const QFontMetrics &, const toTreeWidget *, int col) const {
+    virtual int width(const QFontMetrics &, const toTreeWidget *, int col) const
+    {
         if (col >= ColumnCount)
             return 0;
         return ColumnData[col].Width;
@@ -191,14 +199,16 @@ public:
      * @param col Column.
      * @return All of the text.
      */
-    virtual QString allText(int col) const {
+    virtual QString allText(int col) const
+    {
         return toTreeWidgetItem::text(col);
     }
     /** Get the text to be displayed as tooltip for this item.
      * @param col Column.
      * @return The text to display as tooltip.
      */
-    virtual QString tooltip(int col) const {
+    virtual QString tooltip(int col) const
+    {
         return allText(col);
     }
 };
@@ -207,7 +217,8 @@ public:
 /** This item expands the height to commodate all lines in the input
  * buffer.
  */
-class toResultViewMLine : public toResultViewItem {
+class toResultViewMLine : public toResultViewItem
+{
 private:
     /** Number of lines in the largest row.
      */
@@ -225,10 +236,11 @@ public:
      * @param after Insert after this item.
      * @param buffer String to set as first column
      */
-toResultViewMLine(toTreeWidget *parent,
-                  toTreeWidgetItem *after,
-                  const QString &buf = QString::null)
-    : toResultViewItem(parent, after, QString::null) {
+    toResultViewMLine(toTreeWidget *parent,
+                      toTreeWidgetItem *after,
+                      const QString &buf = QString::null)
+            : toResultViewItem(parent, after, QString::null)
+    {
         Lines = 1;
         if (!buf.isNull())
             setText(0, buf);
@@ -238,10 +250,11 @@ toResultViewMLine(toTreeWidget *parent,
      * @param after Insert after this item.
      * @param buffer String to set as first column
      */
-toResultViewMLine(toTreeWidgetItem *parent,
-                  toTreeWidgetItem *after,
-                  const QString &buf = QString::null)
-    : toResultViewItem(parent, after, QString::null) {
+    toResultViewMLine(toTreeWidgetItem *parent,
+                      toTreeWidgetItem *after,
+                      const QString &buf = QString::null)
+            : toResultViewItem(parent, after, QString::null)
+    {
         Lines = 1;
         if (!buf.isNull())
             setText(0, buf);
@@ -257,7 +270,8 @@ toResultViewMLine(toTreeWidgetItem *parent,
     virtual void setup(void);
     /** Reimplemented for internal reasons.
      */
-    virtual QString text(int col) const {
+    virtual QString text(int col) const
+    {
         return toResultViewItem::allText(col);
     }
     /** Reimplemented for internal reasons.
@@ -275,8 +289,10 @@ toResultViewMLine(toTreeWidgetItem *parent,
  * actually contain more text than is displayed in the cell of the
  * listview.
  */
-class toResultViewCheck : public toTreeWidgetCheck {
-    struct keyData {
+class toResultViewCheck : public toTreeWidgetCheck
+{
+    struct keyData
+    {
         QString Data;
         QString KeyAsc;
         QString KeyDesc;
@@ -301,10 +317,11 @@ public:
      * @param text Text of first column.
      * @param type Type of check on this item.
      */
-toResultViewCheck(toTreeWidget *parent,
-                  const QString &text,
-                  toTreeWidgetCheck::Type type = Controller)
-    : toTreeWidgetCheck(parent, QString::null, type) {
+    toResultViewCheck(toTreeWidget *parent,
+                      const QString &text,
+                      toTreeWidgetCheck::Type type = Controller)
+            : toTreeWidgetCheck(parent, QString::null, type)
+    {
         ColumnData = NULL;
         ColumnCount = 0;
         if (!text.isNull())
@@ -315,10 +332,11 @@ toResultViewCheck(toTreeWidget *parent,
      * @param text Text of first column.
      * @param type Type of check on this item.
      */
-toResultViewCheck(toTreeWidgetItem *parent,
-                  const QString &text,
-                  toTreeWidgetCheck::Type type = Controller)
-    : toTreeWidgetCheck(parent, QString::null, type) {
+    toResultViewCheck(toTreeWidgetItem *parent,
+                      const QString &text,
+                      toTreeWidgetCheck::Type type = Controller)
+            : toTreeWidgetCheck(parent, QString::null, type)
+    {
         ColumnData = NULL;
         ColumnCount = 0;
         if (!text.isNull())
@@ -346,7 +364,8 @@ toResultViewCheck(toTreeWidgetItem *parent,
                       toTreeWidgetCheck::Type type = Controller);
     /** Reimplemented for internal reasons.
      */
-    virtual ~toResultViewCheck() {
+    virtual ~toResultViewCheck()
+    {
         delete[] ColumnData;
     }
     /** Reimplemented for internal reasons.
@@ -375,7 +394,8 @@ toResultViewCheck(toTreeWidgetItem *parent,
      * @param col Column
      * @param asc Wether to sort ascending or not.
      */
-    virtual QString key(int col, bool asc) const {
+    virtual QString key(int col, bool asc) const
+    {
         if (col >= ColumnCount)
             return QString::null;
         return asc ? ColumnData[col].KeyAsc : ColumnData[col].KeyDesc;
@@ -384,7 +404,8 @@ toResultViewCheck(toTreeWidgetItem *parent,
      */
     virtual int width(const QFontMetrics &,
                       const toTreeWidget *,
-                      int col) const {
+                      int col) const
+    {
         if (col >= ColumnCount)
             return 0;
         return ColumnData[col].Width;
@@ -394,14 +415,16 @@ toResultViewCheck(toTreeWidgetItem *parent,
      * @param col Column.
      * @return All of the text.
      */
-    virtual QString allText(int col) const {
+    virtual QString allText(int col) const
+    {
         return text(col);
     }
     /** Get the text to be displayed as tooltip for this item.
      * @param col Column.
      * @return The text to display as tooltip.
      */
-    virtual QString tooltip(int col) const {
+    virtual QString tooltip(int col) const
+    {
         return allText(col);
     }
 };
@@ -426,9 +449,10 @@ public:
      * @param type Type of check on this item.
      */
     toResultViewMLCheck(toTreeWidget *parent,
-                    const QString &text,
-                    toTreeWidgetCheck::Type type = Controller)
-        : toResultViewCheck(parent, QString::null, type) {
+                        const QString &text,
+                        toTreeWidgetCheck::Type type = Controller)
+            : toResultViewCheck(parent, QString::null, type)
+    {
         Lines = 1;
         if (!text.isNull())
             setText(0, text);
@@ -441,7 +465,8 @@ public:
     toResultViewMLCheck(toTreeWidgetItem *parent,
                         const QString &text,
                         toTreeWidgetCheck::Type type = Controller)
-        : toResultViewCheck(parent, QString::null, type) {
+            : toResultViewCheck(parent, QString::null, type)
+    {
         Lines = 1;
         if (!text.isNull())
             setText(0, text);
@@ -457,7 +482,8 @@ public:
     virtual void setText(int col, const toQValue &val);
     /** Reimplemented for internal reasons.
      */
-    virtual QString text(int col) const {
+    virtual QString text(int col) const
+    {
         return toResultViewCheck::allText(col);
     }
     /** Reimplemented for internal reasons.
@@ -472,7 +498,8 @@ public:
  * toMain with Edit menu etc, drag & drop, export as file, display
  * item as memo and context menu.
  */
-class toListView : public toTreeWidget, public toEditWidget {
+class toListView : public toTreeWidget, public toEditWidget
+{
     Q_OBJECT;
 
     bool FirstSearch;
@@ -560,16 +587,20 @@ protected:
     QAction *editAct;
 
 public:
-    bool getIncludeHeader() {
+    bool getIncludeHeader()
+    {
         return includeHeader;
     }
-    bool getOnlySelection() {
+    bool getOnlySelection()
+    {
         return onlySelection;
     }
-    QString getSep() {
+    QString getSep()
+    {
         return sep;
     }
-    QString getDel() {
+    QString getDel()
+    {
         return del;
     }
 
@@ -583,19 +614,22 @@ public:
 
     /** Get SQL name of list.
      */
-    virtual QString sqlName(void) {
+    virtual QString sqlName(void)
+    {
         return Name;
     }
     /** Set SQL name of list.
      */
-    virtual void setSQLName(const QString &name) {
+    virtual void setSQLName(const QString &name)
+    {
         Name = name;
     }
 
     /** Set owner
      * introduced to get type information for fields
      */
-    virtual void setOwner(QString const & tOwner) {
+    virtual void setOwner(QString const & tOwner)
+    {
         owner = tOwner;
     }
 
@@ -603,14 +637,16 @@ public:
     /** Set object name
      * introduced to get type information for fields
      */
-    virtual void setObjectName(QString const & tObjectName) {
+    virtual void setObjectName(QString const & tObjectName)
+    {
         objectName = tObjectName;
     }
 
     /** Get owner
      * introduced to get type information for fields
      */
-    virtual QString getOwner() {
+    virtual QString getOwner()
+    {
         return owner;
     }
 
@@ -618,7 +654,8 @@ public:
     /** Get object name
      * introduced to get type information for fields
      */
-    virtual QString getObjectName() {
+    virtual QString getObjectName()
+    {
         return objectName;
     }
 
@@ -636,7 +673,8 @@ public:
     /** The string to be displayed in the middle of the footer when printing.
      * @return String to be placed in middle.
      */
-    virtual QString middleString() {
+    virtual QString middleString()
+    {
         return QString::null;
     }
     /** Adds option to add menues to the popup menu before it is displayed.
@@ -662,13 +700,15 @@ public:
 
     /** Select all contents.
      */
-    virtual void editSelectAll(void) {
+    virtual void editSelectAll(void)
+    {
         selectAll(true);
     }
 
     /** Move to top of data
      */
-    virtual void searchTop(void) {
+    virtual void searchTop(void)
+    {
         if (firstChild())
             setCurrentItem(firstChild());
         FirstSearch = true;
@@ -735,7 +775,8 @@ protected slots:
  * displayed.
  */
 
-class toResultView : public toListView, public toResult {
+class toResultView : public toListView, public toResult
+{
     Q_OBJECT;
 
     int  SortColumn;
@@ -814,7 +855,8 @@ public:
     /** Set the read all flag.
      * @param all New value of flag.
      */
-    void setReadAll(bool all) {
+    void setReadAll(bool all)
+    {
         ReadAll = all;
     }
 
@@ -830,27 +872,31 @@ public:
 
     /** Get the query used to execute this.
      */
-    toQuery *query() {
+    toQuery *query()
+    {
         return Query;
     }
 
     /** Set a filter to this list.
      * @param filter The new filter or NULL if no filter is to be used.
      */
-    void setFilter(toResultFilter *filter) {
+    void setFilter(toResultFilter *filter)
+    {
         Filter = filter;
     }
     /** Get the current filter.
      * @return Current filter or NULL if no filter.
      */
-    toResultFilter *filter(void) {
+    toResultFilter *filter(void)
+    {
         return Filter;
     }
 
     /** Get number column flag.
      * @return Wether or not the numbercolumn is displayed.
      */
-    bool numberColumn() const {
+    bool numberColumn() const
+    {
         return NumberColumn;
     }
     /** Set number column flag. Don't change this while a query is
@@ -859,19 +905,22 @@ public:
      * class and @ref toResultTableView does though.
      * @param val New value of number column.
      */
-    void setNumberColumn(bool val) {
+    void setNumberColumn(bool val)
+    {
         NumberColumn = val;
     }
 
     /** Get readable column flag.
      * @return Wether or not the readable column names.
      */
-    bool readableColumn() const {
+    bool readableColumn() const
+    {
         return ReadableColumns;
     }
     /** Set readable column flag.
      */
-    void setReadableColumns(bool val) {
+    void setReadableColumns(bool val)
+    {
         ReadableColumns = val;
     }
 
@@ -891,12 +940,14 @@ public:
 
     /** Get SQL name of list.
      */
-    virtual QString sqlName(void) {
+    virtual QString sqlName(void)
+    {
         return toListView::sqlName();
     }
     /** Set SQL name of list.
      */
-    virtual void setSQLName(const QString &name) {
+    virtual void setSQLName(const QString &name)
+    {
         toListView::setSQLName(name);
     }
 
@@ -905,41 +956,47 @@ public:
     /** Set the SQL statement of this list
      * @param sql String containing statement.
      */
-    void setSQL(const QString &sql) {
+    void setSQL(const QString &sql)
+    {
         toResult::setSQL(sql);
     }
     /** Set the SQL statement of this list. This will also affect @ref Name.
      * @param sql SQL containing statement.
      */
-    void setSQL(const toSQL &sql) {
+    void setSQL(const toSQL &sql)
+    {
         toResult::setSQL(sql);
     }
     /** Set new SQL and run query.
      * @param sql New sql.
      * @see setSQL
      */
-    void query(const QString &sql) {
+    void query(const QString &sql)
+    {
         toResult::query(sql);
     }
     /** Set new SQL and run query.
      * @param sql New sql.
      * @see setSQL
      */
-    void query(const toSQL &sql) {
+    void query(const toSQL &sql)
+    {
         toResult::query(sql);
     }
     /** Set new SQL and run query.
      * @param sql New sql.
      * @see setSQL
      */
-    void query(const toSQL &sql, toQList &par) {
+    void query(const toSQL &sql, toQList &par)
+    {
         toResult::query(sql, par);
     }
 #endif
 
     /** Reimplemented for internal reasons.
      */
-    virtual void editPrint(void) {
+    virtual void editPrint(void)
+    {
         editReadAll();
         toListView::editPrint();
     }
@@ -955,7 +1012,8 @@ public:
     virtual void setSorting(int col, bool asc = true);
     /** Reimplemented for internal reasons.
      */
-    virtual int sortColumn() const {
+    virtual int sortColumn() const
+    {
         return SortColumn;
     }
 
@@ -965,20 +1023,23 @@ public slots:
     virtual void refresh(void);
     /** Reimplemented for internal reasons.
      */
-    virtual void changeParams(const QString &Param1) {
+    virtual void changeParams(const QString &Param1)
+    {
         toResult::changeParams(Param1);
     }
     /** Reimplemented For internal reasons.
      */
     virtual void changeParams(const QString &Param1,
-                              const QString &Param2) {
+                              const QString &Param2)
+    {
         toResult::changeParams(Param1, Param2);
     }
     /** Reimplemented for internal reasons.
      */
     virtual void changeParams(const QString &Param1,
                               const QString &Param2,
-                              const QString &Param3) {
+                              const QString &Param3)
+    {
         toResult::changeParams(Param1, Param2, Param3);
     }
     /** Try to add an item to the list if available.
@@ -986,7 +1047,8 @@ public slots:
     virtual void addItem(void);
     /** Handle any connection by default
      */
-    virtual bool canHandle(toConnection &) {
+    virtual bool canHandle(toConnection &)
+    {
         return true;
     }
 private slots:

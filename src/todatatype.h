@@ -55,7 +55,8 @@ class toConnection;
  * Widget used to represent a datatype selection for a column.
  *
  */
-class toDatatype : public QWidget {
+class toDatatype : public QWidget
+{
     Q_OBJECT;
 
     std::list<toExtract::datatype> Datatypes;

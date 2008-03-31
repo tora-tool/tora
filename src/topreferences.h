@@ -50,8 +50,9 @@
 
 
 class toPreferences : public QDialog,
-    public Ui::toPreferencesUI,
-    public toHelpContext {
+            public Ui::toPreferencesUI,
+            public toHelpContext
+{
 
     Q_OBJECT;
 

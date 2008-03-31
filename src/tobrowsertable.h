@@ -53,8 +53,9 @@ class QGridLayout;
 class QLineEdit;
 
 class toBrowserTable : public QDialog,
-    public Ui::toBrowserTableUI,
-    public toConnectionWidget {
+            public Ui::toBrowserTableUI,
+            public toConnectionWidget
+{
 
 private:
     Q_OBJECT;
@@ -98,7 +99,8 @@ public:
                           QWidget *parent);
     static void newTable(toConnection &conn,
                          const QString &owner,
-                         QWidget *parent) {
+                         QWidget *parent)
+    {
         editTable(conn, owner, QString::null, parent);
     }
 

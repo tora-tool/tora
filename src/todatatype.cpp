@@ -52,8 +52,9 @@ toDatatype::toDatatype(toConnection &conn,
                        const QString &def,
                        QWidget *parent,
                        const char *name)
-    : QWidget(parent) {
-    if(name)
+        : QWidget(parent)
+{
+    if (name)
         setObjectName(name);
 
     setup(conn);
@@ -63,15 +64,17 @@ toDatatype::toDatatype(toConnection &conn,
 toDatatype::toDatatype(toConnection &conn,
                        QWidget *parent,
                        const char *name)
-    : QWidget(parent) {
-    if(name)
+        : QWidget(parent)
+{
+    if (name)
         setObjectName(name);
 
     setup(conn);
     setType("VARCHAR(32)");
 }
 
-void toDatatype::setup(toConnection &conn) {
+void toDatatype::setup(toConnection &conn)
+{
     toExtract extractor(conn, this);
     Datatypes = extractor.datatypes();
 
@@ -82,14 +85,14 @@ void toDatatype::setup(toConnection &conn) {
     Type = new QComboBox(this);
     hbox->addWidget(Type);
 
-    for(std::list<toExtract::datatype>::iterator i = Datatypes.begin();
-        i != Datatypes.end();
-        i++)
+    for (std::list<toExtract::datatype>::iterator i = Datatypes.begin();
+            i != Datatypes.end();
+            i++)
         Type->addItem((*i).name());
 
     LeftParenthesis = new QLabel(tr("<B>(</B>"), this);
     LeftParenthesis->setSizePolicy(QSizePolicy(QSizePolicy::Fixed,
-                                               QSizePolicy::Preferred));
+                                   QSizePolicy::Preferred));
     hbox->addWidget(LeftParenthesis);
 
     Size = new QSpinBox(this);
@@ -107,7 +110,7 @@ void toDatatype::setup(toConnection &conn) {
 
     RightParenthesis = new QLabel(tr("<B>)</B>"), this);
     RightParenthesis->setSizePolicy(QSizePolicy(QSizePolicy::Fixed,
-                                                QSizePolicy::Preferred));
+                                    QSizePolicy::Preferred));
     hbox->addWidget(RightParenthesis);
 
     Custom = new QLineEdit(this);
@@ -121,7 +124,8 @@ void toDatatype::setup(toConnection &conn) {
 }
 
 
-QString toDatatype::type() const {
+QString toDatatype::type() const
+{
     QString type;
     if (Custom->isVisible())
     {

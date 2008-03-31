@@ -49,7 +49,8 @@ class toResultModel;
  * Class for storing settings for export.
  *
  */
-class toExportSettings {
+class toExportSettings
+{
 public:
     bool    IncludeHeader;
     bool    OnlySelection;
@@ -63,7 +64,8 @@ public:
                      bool _selection,
                      int _type,
                      const QString &_sep,
-                     const QString &_del) {
+                     const QString &_del)
+    {
         IncludeHeader = _header;
         OnlySelection = _selection;
         Type          = _type;
@@ -73,7 +75,8 @@ public:
 };
 
 
-class toListViewFormatter {
+class toListViewFormatter
+{
 public:
     toListViewFormatter();
     virtual ~toListViewFormatter();

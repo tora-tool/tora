@@ -54,7 +54,8 @@ class toHelpPrefs;
  * find a widget that also inherits this class which specify the
  * context of all underlying widgets.
  */
-class toHelpContext {
+class toHelpContext
+{
 
     /**
      * The current context.
@@ -87,7 +88,8 @@ public:
  * for modal dialogs. Only to be used internally.
  * @internal
  */
-class toHelpTool : public toTool {
+class toHelpTool : public toTool
+{
     Q_OBJECT;
 
 public:
@@ -142,7 +144,8 @@ public slots:
  * this help viewer.
  */
 
-class toHelp : public QDialog, public Ui::toHelp {
+class toHelp : public QDialog, public Ui::toHelp
+{
     Q_OBJECT;
 
     /** @internal

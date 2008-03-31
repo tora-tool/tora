@@ -60,23 +60,27 @@ static const QString ORACLE_TNS     = "Oracle (TNS)";
 toNewConnection::toNewConnection(
     QWidget* parent,
     Qt::WFlags fl) : QDialog(parent, fl),
-                     toHelpContext(QString::fromLatin1("newconnection.html")) {
+        toHelpContext(QString::fromLatin1("newconnection.html"))
+{
     setupUi(this);
     toHelp::connectDialog(this);
 
     std::list<QString> lst = toConnectionProvider::providers();
 
-    Q_FOREACH(QString s, lst) {
-        if(s == "Oracle") {
+    Q_FOREACH(QString s, lst)
+    {
+        if (s == "Oracle")
+        {
             Provider->addItem(ORACLE_INSTANT);
-            if(getenv("ORACLE_HOME"))
+            if (getenv("ORACLE_HOME"))
                 Provider->addItem(ORACLE_TNS);
         }
         else
             Provider->addItem(s);
     }
 
-    if(Provider->count() < 1) {
+    if (Provider->count() < 1)
+    {
         TOMessageBox::information(
             this,
             tr("No connection provider"),
@@ -92,8 +96,8 @@ toNewConnection::toNewConnection(
 
     PreviousContext = new QMenu(this);
     QAction *delact = PreviousContext->addAction(
-        QIcon(trash_xpm),
-        tr("&Delete"));
+                          QIcon(trash_xpm),
+                          tr("&Delete"));
     connect(delact,
             SIGNAL(triggered()),
             this,
@@ -146,22 +150,26 @@ toNewConnection::toNewConnection(
 }
 
 
-QString toNewConnection::realProvider() {
+QString toNewConnection::realProvider()
+{
     QString p = Provider->currentText();
-    if(p.startsWith("Oracle"))
+    if (p.startsWith("Oracle"))
         return "Oracle";
 
     return p;
 }
 
 
-void toNewConnection::readSettings() {
+void toNewConnection::readSettings()
+{
     resize(Settings.value("size", QSize(657, 550)).toSize());
 
     Previous->setSortingEnabled(false);
-    for(int pos = 0; pos < MAX_HISTORY; pos++) {
+    for (int pos = 0; pos < MAX_HISTORY; pos++)
+    {
         Settings.beginGroup("history/" + QString::number(pos));
-        if(!Settings.contains("provider")) {
+        if (!Settings.contains("provider"))
+        {
             Settings.endGroup();
             break;
         }
@@ -177,8 +185,9 @@ void toNewConnection::readSettings() {
         Settings.beginGroup("options");
         std::set<QString> options;
         QStringList keys = Settings.allKeys();
-        Q_FOREACH(QString s, keys) {
-            if(Settings.value(s, false).toBool())
+        Q_FOREACH(QString s, keys)
+        {
+            if (Settings.value(s, false).toBool())
                 options.insert(s);
         }
         Settings.endGroup();
@@ -206,7 +215,8 @@ void toNewConnection::readSettings() {
 }
 
 
-void toNewConnection::writeSettings() {
+void toNewConnection::writeSettings()
+{
     Settings.setValue("size", size());
 
     Settings.remove("history");
@@ -222,7 +232,7 @@ void toNewConnection::writeSettings() {
     Settings.beginGroup("options");
     QList<QCheckBox *> widgets = OptionGroup->findChildren<QCheckBox *>();
     Q_FOREACH(QCheckBox *box, widgets)
-        Settings.setValue(box->text(), box->isChecked());
+    Settings.setValue(box->text(), box->isChecked());
     Settings.endGroup();
     Settings.endGroup();
 
@@ -233,8 +243,9 @@ void toNewConnection::writeSettings() {
                            Database->currentText());
 
     int skipped = 0;
-    for(int row = 0; row < Previous->rowCount() && row < MAX_HISTORY; row++) {
-        if(row == skip && ++skipped)
+    for (int row = 0; row < Previous->rowCount() && row < MAX_HISTORY; row++)
+    {
+        if (row == skip && ++skipped)
             continue;
 
         toConnectionOptions &opt =
@@ -251,7 +262,7 @@ void toNewConnection::writeSettings() {
 
         Settings.beginGroup("options");
         Q_FOREACH(QString s, opt.options)
-            Settings.setValue(s, true);
+        Settings.setValue(s, true);
         Settings.endGroup();
 
         Settings.endGroup();
@@ -260,14 +271,16 @@ void toNewConnection::writeSettings() {
 
 
 int toNewConnection::findHistory(const QString &provider,
-                                  const QString &username,
-                                  const QString &host,
-                                  const QString &database) {
-    for(int row = 0; row < Previous->rowCount(); row++) {
-        if(provider == Previous->item(row, ProviderColumn)->text() &&
-           username == Previous->item(row, UsernameColumn)->text() &&
-           host == Previous->item(row, HostColumn)->text() &&
-           database == Previous->item(row, DatabaseColumn)->text())
+                                 const QString &username,
+                                 const QString &host,
+                                 const QString &database)
+{
+    for (int row = 0; row < Previous->rowCount(); row++)
+    {
+        if (provider == Previous->item(row, ProviderColumn)->text() &&
+                username == Previous->item(row, UsernameColumn)->text() &&
+                host == Previous->item(row, HostColumn)->text() &&
+                database == Previous->item(row, DatabaseColumn)->text())
             return row;
     }
 
@@ -275,14 +288,15 @@ int toNewConnection::findHistory(const QString &provider,
 }
 
 
-void toNewConnection::loadPrevious(int row) {
+void toNewConnection::loadPrevious(int row)
+{
     QTableWidgetItem *item = Previous->item(row, IndexColumn);
-    if(!item)
+    if (!item)
         return;
 
     bool ok;
     int index = item->text().toInt(&ok);
-    if(!ok)
+    if (!ok)
         return;
 
     toConnectionOptions &opt = OptionMap[index];
@@ -296,18 +310,20 @@ void toNewConnection::loadPrevious(int row) {
 
     QList<QCheckBox *> widgets = OptionGroup->findChildren<QCheckBox *>();
     Q_FOREACH(QCheckBox *box, widgets)
-        box->setChecked(opt.options.find(box->text()) != opt.options.end());
+    box->setChecked(opt.options.find(box->text()) != opt.options.end());
 }
 
 
-void toNewConnection::done(int r) {
-    if(!r) {
+void toNewConnection::done(int r)
+{
+    if (!r)
+    {
         QDialog::done(r);
         return;
     }
 
     NewConnection = makeConnection();
-    if(!NewConnection)
+    if (!NewConnection)
         return;
 
     writeSettings();
@@ -316,50 +332,57 @@ void toNewConnection::done(int r) {
 
 
 void toNewConnection::previousCellChanged(int currentRow,
-                                          int currentColumn,
-                                          int previousRow,
-                                          int previousColumn) {
+        int currentColumn,
+        int previousRow,
+        int previousColumn)
+{
     Q_UNUSED(currentColumn);
     Q_UNUSED(previousColumn);
 
-    if(currentRow != previousRow)
+    if (currentRow != previousRow)
         loadPrevious(currentRow);
 }
 
 
-void toNewConnection::changeProvider(int current) {
-    try {
+void toNewConnection::changeProvider(int current)
+{
+    try
+    {
         QString provider = realProvider();
-        if(provider.isNull() || provider.isEmpty())
+        if (provider.isNull() || provider.isEmpty())
             return;
 
         std::list<QString> hosts = toConnectionProvider::hosts(provider);
 
         DefaultPort = 0;
-        for(std::list<QString>::iterator i = hosts.begin(); i != hosts.end(); i++) {
-            if((*i).isEmpty())
+        for (std::list<QString>::iterator i = hosts.begin(); i != hosts.end(); i++)
+        {
+            if ((*i).isEmpty())
                 continue;
-            else if((*i).startsWith(":"))
+            else if ((*i).startsWith(":"))
                 DefaultPort = (*i).mid(1).toInt();
             else
                 Host->addItem(*i);
         }
 
         // seems i broke this for oracle
-        if(!DefaultPort) {
-            if(provider.startsWith("Oracle"))
+        if (!DefaultPort)
+        {
+            if (provider.startsWith("Oracle"))
                 DefaultPort = 1521;
         }
 
         Port->setValue(DefaultPort);
 
-        if(Provider->currentText() == ORACLE_TNS) {
+        if (Provider->currentText() == ORACLE_TNS)
+        {
             HostLabel->hide();
             Host->hide();
             PortLabel->hide();
             Port->hide();
         }
-        else {
+        else
+        {
             HostLabel->show();
             Host->show();
             PortLabel->show();
@@ -368,19 +391,21 @@ void toNewConnection::changeProvider(int current) {
 
         QList<QWidget *> widgets = OptionGroup->findChildren<QWidget *>();
         Q_FOREACH(QWidget *w, widgets)
-            delete w;
+        delete w;
 
         std::list<QString> options = toConnectionProvider::options(provider);
-        for(std::list<QString>::iterator j = options.begin();
-            j != options.end();
-            j++) {
+        for (std::list<QString>::iterator j = options.begin();
+                j != options.end();
+                j++)
+        {
 
-            if(*j == "-")
+            if (*j == "-")
                 continue;
 
             QString option = *j;
             bool defOn = false;
-            if(option.startsWith("*")) {
+            if (option.startsWith("*"))
+            {
                 defOn = true;
                 option = option.mid(1);
             }
@@ -392,33 +417,38 @@ void toNewConnection::changeProvider(int current) {
             ow->show();
         }
 
-        if(options.empty())
+        if (options.empty())
             OptionGroup->hide();
         else
             OptionGroup->show();
     }
-    catch(const QString &str) {
+    catch (const QString &str)
+    {
         toStatusMessage(str);
     }
 }
 
 
-toConnection* toNewConnection::makeConnection(void) {
-    try {
+toConnection* toNewConnection::makeConnection(void)
+{
+    try
+    {
         QString pass;
         QString host;
-        if(!Host->isHidden())
+        if (!Host->isHidden())
             host = Host->currentText();
 
         QString optionstring;
         std::set<QString> options;
 
         QList<QCheckBox *> widgets = OptionGroup->findChildren<QCheckBox *>();
-        Q_FOREACH(QCheckBox *box, widgets) {
-            if(!optionstring.isEmpty())
+        Q_FOREACH(QCheckBox *box, widgets)
+        {
+            if (!optionstring.isEmpty())
                 optionstring += ",";
 
-            if(box->isChecked()) {
+            if (box->isChecked())
+            {
                 optionstring += "*";
 
                 // ug. this is awesome. i broke it when i added
@@ -428,37 +458,40 @@ toConnection* toNewConnection::makeConnection(void) {
 
             optionstring += box->text();
         }
-        
+
 
         // checks for existing connection
         std::list<QString> con = toMainWidget()->connections();
-        for(std::list<QString>::iterator i = con.begin();i != con.end();i++) {
-            try {
+        for (std::list<QString>::iterator i = con.begin();i != con.end();i++)
+        {
+            try
+            {
                 toConnection &conn = toMainWidget()->connection(*i);
-                if(conn.user() == Username->text() &&
-                   conn.provider() == realProvider() &&
-                   conn.host() == host &&
-                   conn.database() == Database->currentText())
+                if (conn.user() == Username->text() &&
+                        conn.provider() == realProvider() &&
+                        conn.host() == host &&
+                        conn.database() == Database->currentText())
                     return &conn;
             }
-            catch(...) {}
+            catch (...) {}
         }
 
         QString provider = realProvider();
 
-        if(Port->value() != 0 && Port->value())
+        if (Port->value() != 0 && Port->value())
             host += ":" + QString::number(Port->value());
 
         QString database = Database->currentText();
 
-        if(Provider->currentText() == ORACLE_INSTANT) {
+        if (Provider->currentText() == ORACLE_INSTANT)
+        {
             // create the rest of the connect string. this will work
             // without an ORACLE_HOME.
 
             int port = Port->value();
             database = "//" + Host->currentText() +
-                ":" + QString::number(port) +
-                "/" + database;
+                       ":" + QString::number(port) +
+                       "/" + database;
             host = "";
         }
 
@@ -472,7 +505,8 @@ toConnection* toNewConnection::makeConnection(void) {
 
         return retCon;
     }
-    catch(const QString &exc) {
+    catch (const QString &exc)
+    {
         QString str = tr("Unable to connect to the database.\n");
         str.append(exc);
         TOMessageBox::information(this->parentWidget(),
@@ -483,14 +517,16 @@ toConnection* toNewConnection::makeConnection(void) {
 }
 
 
-void toNewConnection::previousMenu(const QPoint &pos) {
+void toNewConnection::previousMenu(const QPoint &pos)
+{
     Q_UNUSED(pos);
     PreviousContext->exec(QCursor::pos());
 }
 
 
-void toNewConnection::historyDelete() {
+void toNewConnection::historyDelete()
+{
     QModelIndexList list = Previous->selectionModel()->selectedIndexes();
-    if(list.size() > 0)
+    if (list.size() > 0)
         Previous->removeRow(list.at(0).row());
 }

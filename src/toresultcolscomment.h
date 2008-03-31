@@ -52,7 +52,8 @@ class QWidget;
  *
  * @internal
  */
-class toResultColsComment : public QLineEdit {
+class toResultColsComment : public QLineEdit
+{
     Q_OBJECT;
 
     bool    Changed;

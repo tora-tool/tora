@@ -81,7 +81,7 @@ bool defTabSpaces = false;
 toMarkedText::toMarkedText(QWidget *parent, const char *name)
         : QsciScintilla(parent), toEditWidget()
 {
-    if(name)
+    if (name)
         setObjectName(name);
     setEdit();
     Search = false;
@@ -91,7 +91,7 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
 
     connect(this, SIGNAL(textChanged()), this, SLOT(setTextChanged()));
     connect(this, SIGNAL(copyAvailable(bool)), this, SLOT(setCopyAvailable(bool)));
-	connect(this, SIGNAL(linesChanged()), this, SLOT(linesChanged()));
+    connect(this, SIGNAL(linesChanged()), this, SLOT(linesChanged()));
 
     CursorTimerID = -1;
 
@@ -105,20 +105,24 @@ toMarkedText::~toMarkedText()
 {
 }
 
-int toMarkedText::defaultTabWidth() {
+int toMarkedText::defaultTabWidth()
+{
     return defTabWidth;
 }
 
-void toMarkedText::setDefaultTabWidth(int width) {
-    if(width > 0)
+void toMarkedText::setDefaultTabWidth(int width)
+{
+    if (width > 0)
         defTabWidth = width;
 }
 
-bool toMarkedText::defaultTabSpaces(void) {
+bool toMarkedText::defaultTabSpaces(void)
+{
     return defTabSpaces;
 }
 
-void toMarkedText::setDefaultTabSpaces(bool on) {
+void toMarkedText::setDefaultTabSpaces(bool on)
+{
     defTabSpaces = on;
 }
 
@@ -712,7 +716,8 @@ void toMarkedText::contextMenuEvent(QContextMenuEvent *e)
  * reimplement this function and return the created popup menu. Ownership
  * of the popup menu is transferred to the caller.
  */
-QMenu *toMarkedText::createPopupMenu(const QPoint& pos) {
+QMenu *toMarkedText::createPopupMenu(const QPoint& pos)
+{
     Q_UNUSED(pos);
 
     const bool isEmptyDocument = (lines() == 0);
@@ -721,7 +726,8 @@ QMenu *toMarkedText::createPopupMenu(const QPoint& pos) {
     QMenu   *popup = new QMenu(this);
     QAction *action;
 
-    if(!isReadOnly()) {
+    if (!isReadOnly())
+    {
         action = popup->addAction(QIcon(undo_xpm),
                                   tr("&Undo"),
                                   this,

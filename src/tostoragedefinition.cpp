@@ -47,7 +47,8 @@
 
 
 toStorageDefinition::toStorageDefinition(QWidget* parent, const char* name, Qt::WFlags fl)
-    : QWidget(parent) {
+        : QWidget(parent)
+{
     setupUi(this);
 
     InitialSize->setTitle(tr("&Initial size"));

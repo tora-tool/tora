@@ -233,7 +233,8 @@ static QString QueryParam(const QString &in, toQList &params, std::list<QString>
             break;
         case ':':
             // mostly for postgres-style casts, ignore ::
-            if (nc == ':') {
+            if (nc == ':')
+            {
                 ret += rc;
                 ret += nc;
                 i++;
@@ -979,7 +980,8 @@ class qSqlSetting : public QWidget, public toSettingTab
         QCheckBox *OnlyForward;
     public:
         qSqlSetting(QWidget *parent)
-            : QWidget(parent), toSettingTab("database.html#qsql") {
+                : QWidget(parent), toSettingTab("database.html#qsql")
+        {
 
             QVBoxLayout *vbox = new QVBoxLayout;
             this->setLayout(vbox);
@@ -1014,7 +1016,7 @@ class qSqlSetting : public QWidget, public toSettingTab
         }
         virtual void saveSetting(void)
         {
-			toConfigurationSingle::Instance().setOnlyForward(OnlyForward->isChecked());
+            toConfigurationSingle::Instance().setOnlyForward(OnlyForward->isChecked());
             toQSqlProvider::OnlyForward = OnlyForward->isChecked();
         }
     };

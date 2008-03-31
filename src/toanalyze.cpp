@@ -68,23 +68,28 @@
 #include "icons/stop.xpm"
 #include "icons/toanalyze.xpm"
 
-class toAnalyzeTool : public toTool {
-    virtual const char **pictureXPM(void) {
+class toAnalyzeTool : public toTool
+{
+    virtual const char **pictureXPM(void)
+    {
         return const_cast<const char**>(toanalyze_xpm);
     }
 public:
     toAnalyzeTool()
-        : toTool(320, "Statistics Manager") { }
+            : toTool(320, "Statistics Manager") { }
 
     virtual void closeWindow(toConnection &connection) {};
 
-    virtual const char *menuItem() {
+    virtual const char *menuItem()
+    {
         return "Statistics Manager";
     }
-    virtual QWidget *toolWindow(QWidget *parent, toConnection &connection) {
+    virtual QWidget *toolWindow(QWidget *parent, toConnection &connection)
+    {
         return new toAnalyze(parent, connection);
     }
-    virtual bool canHandle(toConnection &conn) {
+    virtual bool canHandle(toConnection &conn)
+    {
         return toIsOracle(conn) || toIsMySQL(conn) || toIsPostgreSQL(conn);
     }
 };
@@ -199,7 +204,8 @@ static toSQL SQLListPlans("toAnalyze:ListPlans",
 
 
 toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
-    : toToolWidget(AnalyzeTool, "analyze.html", main, connection) {
+        : toToolWidget(AnalyzeTool, "analyze.html", main, connection)
+{
 
     Tabs = new QTabWidget(this);
     layout()->addWidget(Tabs);
@@ -219,7 +225,8 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
     toolbar->addSeparator();
 
     Analyzed = NULL;
-    if(toIsOracle(connection)) {
+    if (toIsOracle(connection))
+    {
         Analyzed = new QComboBox(toolbar);
         Analyzed->addItem(tr("All"));
         Analyzed->addItem(tr("Not analyzed"));
@@ -231,12 +238,14 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
     Schema->setSelected(tr("All"));
     Schema->additionalItem(tr("All"));
     toolbar->addWidget(Schema);
-    try {
+    try
+    {
         Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
     }
     TOCATCH;
 
-    if (toIsOracle(connection)) {
+    if (toIsOracle(connection))
+    {
         Type = new QComboBox(toolbar);
         Type->addItem(tr("Tables"));
         Type->addItem(tr("Indexes"));
@@ -278,7 +287,8 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
         Sample->setEnabled(false);
         toolbar->addWidget(Sample);
     }
-    else if(toIsPostgreSQL(connection)) {
+    else if (toIsPostgreSQL(connection))
+    {
         Type = new QComboBox(toolbar);
         Type->addItem(tr("Tables"));
         Type->addItem(tr("Indexes"));
@@ -298,7 +308,8 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
         Sample = NULL;
         For    = NULL;
     }
-    else {
+    else
+    {
         Operation = new QComboBox(toolbar);
         Operation->addItem(tr("Analyze table"));
         Operation->addItem(tr("Optimize table"));
@@ -369,7 +380,8 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
     box->setContentsMargins(0, 0, 0, 0);
     container->setLayout(box);
 
-    if (toIsOracle(connection)) {
+    if (toIsOracle(connection))
+    {
         container = new QWidget(Tabs);
         box = new QVBoxLayout;
         toolbar = toAllocBar(container, tr("Explain plans"));
@@ -379,7 +391,8 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
         QSplitter *splitter = new QSplitter(Qt::Horizontal, container);
         box->addWidget(splitter);
         Plans = new toResultTableView(false, false, splitter);
-        try {
+        try
+        {
             Plans->query(toSQL::string(SQLListPlans, connection).arg(
                              toConfigurationSingle::Instance().planTable()));
         }
@@ -410,7 +423,8 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
         box->setContentsMargins(0, 0, 0, 0);
         container->setLayout(box);
     }
-    else {
+    else
+    {
         Plans       = NULL;
         CurrentPlan = NULL;
         Worksheet   = NULL;
@@ -420,9 +434,12 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
     setFocusProxy(Tabs);
 }
 
-void toAnalyze::fillOwner(void) {
-    for(toResultTableView::iterator it(Statistics); (*it).isValid(); it++) {
-        if((*it).data(Qt::EditRole).isNull()) {
+void toAnalyze::fillOwner(void)
+{
+    for (toResultTableView::iterator it(Statistics); (*it).isValid(); it++)
+    {
+        if ((*it).data(Qt::EditRole).isNull())
+        {
             Statistics->model()->setData(
                 (*it),
                 Schema->selected(),
@@ -431,26 +448,31 @@ void toAnalyze::fillOwner(void) {
     }
 }
 
-void toAnalyze::selectPlan(void) {
+void toAnalyze::selectPlan(void)
+{
     QModelIndex index = Plans->selectedIndex();
-    if(index.isValid())
+    if (index.isValid())
         CurrentPlan->query("SAVED:" + index.data(Qt::EditRole).toString());
 }
 
-toWorksheetStatistic *toAnalyze::worksheet(void) {
+toWorksheetStatistic *toAnalyze::worksheet(void)
+{
     Tabs->setCurrentIndex(Tabs->indexOf(Worksheet));
     return Worksheet;
 }
 
-void toAnalyze::changeOperation(int op) {
+void toAnalyze::changeOperation(int op)
+{
     if (Sample)
         Sample->setEnabled(op == 1);
     if (For)
         For->setEnabled(op == 0 || op == 1);
 }
 
-void toAnalyze::refresh(void) {
-    try {
+void toAnalyze::refresh(void)
+{
+    try
+    {
         Statistics->setSQL(QString::null);
         toQList par;
         QString sql;
@@ -458,11 +480,13 @@ void toAnalyze::refresh(void) {
             sql = toSQL::string(SQLListTables, connection());
         else
             sql = toSQL::string(SQLListIndex, connection());
-        if (Schema->selected() != tr("All")) {
+        if (Schema->selected() != tr("All"))
+        {
             par.insert(par.end(), Schema->selected());
             if (toIsOracle(connection()))
                 sql += "\n   AND owner = :own<char[100]>";
-            else if(toIsPostgreSQL(connection())) {
+            else if (toIsPostgreSQL(connection()))
+            {
                 sql =
                     QString(" SELECT * FROM ( %1 ) sub\n"
                             "  WHERE schemaname = :own<char[100]>").arg(sql);
@@ -472,8 +496,10 @@ void toAnalyze::refresh(void) {
         }
         else if (toIsMySQL(connection()))
             sql += " FROM :f1<alldatabases>";
-        if (Analyzed) {
-            switch (Analyzed->currentIndex()) {
+        if (Analyzed)
+        {
+            switch (Analyzed->currentIndex())
+            {
             default:
                 break;
             case 1:
@@ -490,33 +516,43 @@ void toAnalyze::refresh(void) {
     TOCATCH;
 }
 
-void toAnalyze::poll(void) {
-    try {
+void toAnalyze::poll(void)
+{
+    try
+    {
         int running = 0;
-        for (std::list<toNoBlockQuery *>::iterator i = Running.begin();i != Running.end();i++) {
+        for (std::list<toNoBlockQuery *>::iterator i = Running.begin();i != Running.end();i++)
+        {
             bool eof = false;
 
-            try {
-                if ((*i)->poll()) {
+            try
+            {
+                if ((*i)->poll())
+                {
                     int cols = (*i)->describe().size();
                     for (int j = 0;j < cols;j++)
                         (*i)->readValueNull();  // Eat the output if any.
                 }
 
-                try {
+                try
+                {
                     eof = (*i)->eof();
                 }
-                catch (const QString &) {
+                catch (const QString &)
+                {
                     eof = true;
                 }
             }
-            catch (const QString &err) {
+            catch (const QString &err)
+            {
                 toStatusMessage(err);
                 eof = true;
             }
-            if (eof) {
+            if (eof)
+            {
                 QString sql = toShift(Pending);
-                if (!sql.isEmpty()) {
+                if (!sql.isEmpty())
+                {
                     delete(*i);
                     toQList par;
                     (*i) = new toNoBlockQuery(connection(), sql, par);
@@ -526,7 +562,8 @@ void toAnalyze::poll(void) {
             else
                 running++;
         }
-        if (!running) {
+        if (!running)
+        {
             Poll.stop();
             refresh();
             stop();
@@ -537,15 +574,21 @@ void toAnalyze::poll(void) {
     TOCATCH;
 }
 
-std::list<QString> toAnalyze::getSQL(void) {
+std::list<QString> toAnalyze::getSQL(void)
+{
     std::list<QString> ret;
-    for(toResultTableView::iterator it(Statistics); (*it).isValid(); it++) {
-        if(Statistics->isRowSelected((*it))) {
-            if (toIsOracle(connection())) {
+    for (toResultTableView::iterator it(Statistics); (*it).isValid(); it++)
+    {
+        if (Statistics->isRowSelected((*it)))
+        {
+            if (toIsOracle(connection()))
+            {
                 QString sql = QString::fromLatin1("ANALYZE %3 %1.%2 ");
                 QString forc;
-                if ((*it).data(Qt::EditRole) == QString::fromLatin1("TABLE")) {
-                    switch (For->currentIndex()) {
+                if ((*it).data(Qt::EditRole) == QString::fromLatin1("TABLE"))
+                {
+                    switch (For->currentIndex())
+                    {
                     case 0:
                         forc = QString::null;
                         break;
@@ -561,7 +604,8 @@ std::list<QString> toAnalyze::getSQL(void) {
                     }
                 }
 
-                switch (Operation->currentIndex()) {
+                switch (Operation->currentIndex())
+                {
                 case 0:
                     sql += QString::fromLatin1("COMPUTE STATISTICS");
                     sql += forc;
@@ -584,10 +628,12 @@ std::list<QString> toAnalyze::getSQL(void) {
                        .arg(Statistics->model()->data((*it).row(), 1).toString()));
 
             }
-            else if(toIsPostgreSQL(connection())) {
+            else if (toIsPostgreSQL(connection()))
+            {
                 QString sql;
 
-                switch (Operation->currentIndex()) {
+                switch (Operation->currentIndex())
+                {
                 case 0:
                     sql += QString("VACUUM FULL VERBOSE %1.%2");
                     break;
@@ -603,9 +649,11 @@ std::list<QString> toAnalyze::getSQL(void) {
                 QString schema = Statistics->model()->data((*it).row(), 2).toString();
                 toPush(ret, sql.arg(schema).arg(table));
             }
-            else {
+            else
+            {
                 QString sql;
-                switch (Operation->currentIndex()) {
+                switch (Operation->currentIndex())
+                {
                 case 0:
                     sql = QString::fromLatin1("ANALYZE TABLE %1.%2 ");
                     break;
@@ -625,7 +673,8 @@ std::list<QString> toAnalyze::getSQL(void) {
     return ret;
 }
 
-void toAnalyze::displaySQL(void) {
+void toAnalyze::displaySQL(void)
+{
     QString txt;
     std::list<QString> sql = getSQL();
     for (std::list<QString>::iterator i = sql.begin();i != sql.end();i++)
@@ -633,16 +682,19 @@ void toAnalyze::displaySQL(void) {
     new toMemoEditor(this, txt, -1, -1, true);
 }
 
-void toAnalyze::execute(void) {
+void toAnalyze::execute(void)
+{
     stop();
 
     std::list<QString> sql = getSQL();
     for (std::list<QString>::iterator i = sql.begin();i != sql.end();i++)
         toPush(Pending, *i);
 
-    try {
+    try
+    {
         toQList par;
-        for (int i = 0; i < Parallel->value(); i++) {
+        for (int i = 0; i < Parallel->value(); i++)
+        {
             QString sql = toShift(Pending);
             if (!sql.isEmpty())
                 toPush(Running, new toNoBlockQuery(connection(), sql, par));
@@ -654,15 +706,19 @@ void toAnalyze::execute(void) {
     TOCATCH;
 }
 
-void toAnalyze::stop(void) {
-    try {
+void toAnalyze::stop(void)
+{
+    try
+    {
         for_each(Running.begin(), Running.end(), DeleteObject());
         Running.clear();
         Pending.clear();
         Stop->setEnabled(false);
         Current->setText(QString::null);
-        if (!connection().needCommit()) {
-            try {
+        if (!connection().needCommit())
+        {
+            try
+            {
                 connection().rollback();
             }
             catch (...) { }
@@ -671,11 +727,13 @@ void toAnalyze::stop(void) {
     TOCATCH;
 }
 
-void toAnalyze::createTool(void) {
+void toAnalyze::createTool(void)
+{
     AnalyzeTool.createWindow();
 }
 
-void toAnalyze::displayMenu(QMenu *menu) {
+void toAnalyze::displayMenu(QMenu *menu)
+{
     QAction *before = menu->actions()[0];
 
     menu->insertSeparator(before);

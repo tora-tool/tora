@@ -50,11 +50,14 @@
 #include "totool.h"
 
 
-void toSGAStatement::viewResources(void) {
-    try {
+void toSGAStatement::viewResources(void)
+{
+    try
+    {
         Resources->changeParams(Address);
     }
-    catch (...) {
+    catch (...)
+    {
         toStatusMessage(tr("Couldn't find SQL statement in SGA"), false, false);
     }
 }
@@ -76,12 +79,14 @@ static toSQL SQLBackendSql(
     "PostgreSQL");
 
 toSGAStatement::toSGAStatement(QWidget *parent)
-    : QTabWidget(parent) {
+        : QTabWidget(parent)
+{
 
     SQLText = new toResultField(this);
     addTab(SQLText, tr("SQL"));
 
-    if (toIsOracle(toCurrentConnection(this))) {
+    if (toIsOracle(toCurrentConnection(this)))
+    {
         Plan = new toResultPlan(this);
         addTab(Plan, tr("Execution plan"));
         Resources = new toResultResources(this);
@@ -95,21 +100,26 @@ toSGAStatement::toSGAStatement(QWidget *parent)
     CurrentTab = SQLText;
 }
 
-void toSGAStatement::changeTab(int index) {
+void toSGAStatement::changeTab(int index)
+{
     QWidget *widget = QTabWidget::widget(index);
-    try {
+    try
+    {
         CurrentTab = widget;
-        if (!Address.isEmpty()) {
-            if (CurrentTab == SQLText) {
+        if (!Address.isEmpty())
+        {
+            if (CurrentTab == SQLText)
+            {
                 QString sql;
                 toConnection &conn = toCurrentConnection(this);
 
-                if(toIsOracle(conn))
+                if (toIsOracle(conn))
                     sql = toSQLString(conn, Address);
-                else if(toIsPostgreSQL(conn)) {
+                else if (toIsPostgreSQL(conn))
+                {
                     toQList vals = toQuery::readQuery(conn, SQLBackendSql, Address);
 
-                    for(toQList::iterator i = vals.begin(); i != vals.end(); i++)
+                    for (toQList::iterator i = vals.begin(); i != vals.end(); i++)
                         sql.append(*i);
                 }
 
@@ -117,7 +127,8 @@ void toSGAStatement::changeTab(int index) {
                     sql = toSQLParse::indent(sql);
                 SQLText->setText(sql);
             }
-            else if (CurrentTab == Plan) {
+            else if (CurrentTab == Plan)
+            {
                 Plan->query(toSQLString(toCurrentConnection(this), Address),
                             toQuery::readQuery(toCurrentConnection(this),
                                                SQLParsingSchema, Address));
@@ -129,7 +140,8 @@ void toSGAStatement::changeTab(int index) {
     TOCATCH;
 }
 
-void toSGAStatement::changeAddress(const QString &str) {
+void toSGAStatement::changeAddress(const QString &str)
+{
     Address = str;
     changeTab(QTabWidget::indexOf(CurrentTab));
 }

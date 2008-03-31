@@ -48,9 +48,10 @@
 #include "icons/largelogo.xpm"
 
 toSplash::toSplash(QWidget *parent, const char *name, Qt::WFlags f)
-    : QWidget(parent, f) {
+        : QWidget(parent, f)
+{
 
-    if(name)
+    if (name)
         setObjectName(name);
 
     QVBoxLayout *vbox = new QVBoxLayout;
@@ -65,7 +66,7 @@ toSplash::toSplash(QWidget *parent, const char *name, Qt::WFlags f)
     QLabel *logo = new QLabel("Logo", this);
     vbox->addWidget(logo);
     logo->setPalette(palette);
-	logo->setPixmap(QPixmap(QString::fromLatin1(":/icons/largelogo.xpm")));
+    logo->setPixmap(QPixmap(QString::fromLatin1(":/icons/largelogo.xpm")));
     Label = new QLabel(tr("Loading plugins"), this);
     vbox->addWidget(Label);
     Label->setPalette(palette);
@@ -76,5 +77,6 @@ toSplash::toSplash(QWidget *parent, const char *name, Qt::WFlags f)
     move((d->width() - width()) / 2, (d->height() - height()) / 2);
 }
 
-toSplash::~toSplash() {
+toSplash::~toSplash()
+{
 }

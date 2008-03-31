@@ -270,42 +270,48 @@ public slots:
     /**
      * Reimplemented for internal reasons.
      */
-    virtual void editUndo(void) {
+    virtual void editUndo(void)
+    {
         undo();
     }
 
     /**
      * Reimplemented for internal reasons.
      */
-    virtual void editRedo(void) {
+    virtual void editRedo(void)
+    {
         redo();
     }
 
     /**
      * Reimplemented for internal reasons.
      */
-    virtual void editCut(void) {
+    virtual void editCut(void)
+    {
         cut();
     }
 
     /**
      * Reimplemented for internal reasons.
      */
-    virtual void editCopy(void) {
+    virtual void editCopy(void)
+    {
         copy();
     }
 
     /**
      * Reimplemented for internal reasons.
      */
-    virtual void editPaste(void) {
+    virtual void editPaste(void)
+    {
         paste();
     }
 
     /**
      * Reimplemented for internal reasons.
      */
-    virtual void editSelectAll(void) {
+    virtual void editSelectAll(void)
+    {
         selectAll();
     }
 
@@ -313,9 +319,10 @@ public slots:
      * QsciScintilla's selectAll doesn't always work like we want.
      *
      */
-    virtual void selectAll(bool select = TRUE) {
+    virtual void selectAll(bool select = TRUE)
+    {
         // selectAll(true) doesn't work if there's a selection already.
-        if(QsciScintilla::hasSelectedText())
+        if (QsciScintilla::hasSelectedText())
             QsciScintilla::selectAll(false);
 
         QsciScintilla::selectAll();

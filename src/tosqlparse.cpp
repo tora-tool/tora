@@ -84,7 +84,7 @@ void printStatement(toSQLParse::statement &stat, int level)
     {
         for (int i = 0;i < level;i++)
             printf(" ");
-		printf("Comment:%s\n", (const char *)stat.Comment.toUtf8());
+        printf("Comment:%s\n", (const char *)stat.Comment.toUtf8());
     }
     for (std::list<toSQLParse::statement>::iterator i = stat.subTokens().begin();
             i != stat.subTokens().end();
@@ -365,12 +365,12 @@ int main(int argc, char **argv)
     QString firstparse = toSQLParse::indent(res);
     QString secondparse = toSQLParse::indent(firstparse);
 
-	printf("First\n\n%s\n", (const char *)firstparse.toUtf8());
+    printf("First\n\n%s\n", (const char *)firstparse.toUtf8());
 
     if (firstparse != secondparse)
     {
         printf("Reparse doesn't match\n");
-		printf("Second\n\n%s\n", (const char *)secondparse.toUtf8());
+        printf("Second\n\n%s\n", (const char *)secondparse.toUtf8());
     }
 
     return 0;
@@ -637,9 +637,11 @@ QString toSQLParse::stringTokenizer::getToken(bool forward, bool comments)
     return token;
 }
 
-bool toSQLParse::isOperator(QString tok) {
-    for(int i = 0; Operators[i]; i++) {
-        if(tok == Operators[i] || tok == "<" || tok == ">")
+bool toSQLParse::isOperator(QString tok)
+{
+    for (int i = 0; Operators[i]; i++)
+    {
+        if (tok == Operators[i] || tok == "<" || tok == ">")
             return true;
     }
 
@@ -811,7 +813,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
         QString upp = token.toUpper();
 #ifdef TOPARSE_DEBUG
 
-		printf("%s (%d)\n", (const char*)token.toUtf8(), tokens.line());
+        printf("%s (%d)\n", (const char*)token.toUtf8(), tokens.line());
 #endif
 
         if (first.isNull() && !token.startsWith(("/*")) && !token.startsWith("--") && !token.startsWith("//"))
@@ -1296,7 +1298,8 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                 ret += t;
                 any = true;
             }
-            else if ((*i).String == ("::")) {
+            else if ((*i).String == ("::"))
+            {
                 ret += (*i).String;
                 current += 2;
             }
@@ -1421,18 +1424,18 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                 else
                 {
                     if (ret.length() > 0 &&
-                        !ret.at(ret.length() - 1).isSpace() &&
-                        !(ret.at(ret.length() - 1) == ':') &&
-                        (Settings.OperatorSpace || ((toIsIdent(t[0]) ||
-                                                     t[0] == syntax.quoteCharacter() || t[0] == '\'') &&
-                                                    (toIsIdent(ret.at(ret.length() - 1)) ||
-                                                     ret.at(ret.length() - 1) == syntax.quoteCharacter() ||
-                                                     ret.at(ret.length() - 1) == '\''))))
+                            !ret.at(ret.length() - 1).isSpace() &&
+                            !(ret.at(ret.length() - 1) == ':') &&
+                            (Settings.OperatorSpace || ((toIsIdent(t[0]) ||
+                                                         t[0] == syntax.quoteCharacter() || t[0] == '\'') &&
+                                                        (toIsIdent(ret.at(ret.length() - 1)) ||
+                                                         ret.at(ret.length() - 1) == syntax.quoteCharacter() ||
+                                                         ret.at(ret.length() - 1) == '\''))))
                     {
                         if (t != (";") &&
-                            t != (".") &&
-                            ret.at(ret.length() - 1) != '.' &&
-                            current != 0)
+                                t != (".") &&
+                                ret.at(ret.length() - 1) != '.' &&
+                                current != 0)
                         {
                             current++;
                             ret += (" ");

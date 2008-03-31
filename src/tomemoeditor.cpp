@@ -125,9 +125,10 @@ toMemoEditor::toMemoEditor(QWidget *parent,
                            bool sql,
                            bool modal,
                            bool navigation)
-    : QDialog(parent),
-      Row(row),
-      Col(col) {
+        : QDialog(parent),
+        Row(row),
+        Col(col)
+{
 
     setModal(modal);
     setMinimumSize(400, 300);
@@ -152,7 +153,8 @@ toMemoEditor::toMemoEditor(QWidget *parent,
     Editor->setReadOnly(Row < 0 || Col < 0 || listView());
     Editor->setFocus();
 
-    if (Row >= 0 && Col >= 0 && !listView()) {
+    if (Row >= 0 && Col >= 0 && !listView())
+    {
         Toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(commit_xpm))),
                            tr("Save changes"),
                            this,
@@ -184,7 +186,8 @@ toMemoEditor::toMemoEditor(QWidget *parent,
                 SLOT(setEnabled(bool)));
         act->setEnabled(false);
     }
-    else {
+    else
+    {
         Toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(filesave_xpm))),
                            tr("Save changes"),
                            this,
@@ -203,7 +206,8 @@ toMemoEditor::toMemoEditor(QWidget *parent,
             SLOT(setEnabled(bool)));
     act->setEnabled(false);
 
-    if (Row >= 0 && Col >= 0 && !listView()) {
+    if (Row >= 0 && Col >= 0 && !listView())
+    {
         Toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(paste_xpm))),
                            tr("Paste from clipboard"),
                            Editor,
@@ -211,7 +215,8 @@ toMemoEditor::toMemoEditor(QWidget *parent,
     }
 
     toListView *lst = listView();
-    if (lst || navigation) {
+    if (lst || navigation)
+    {
         Toolbar->addSeparator();
 
         Toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(rewind_xpm))),
@@ -252,7 +257,8 @@ toMemoEditor::toMemoEditor(QWidget *parent,
     Label->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                      QSizePolicy::Minimum));
 
-    if (lst) {
+    if (lst)
+    {
         connect(parent,
                 SIGNAL(currentChanged(toTreeWidgetItem *)),
                 this,

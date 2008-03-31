@@ -83,17 +83,21 @@ static toSQL SQLReadErrors("toInvalid:ReadErrors",
                            "Get lines with errors in object (Observe first line 0)");
 
 
-class toInvalidTool : public toTool {
-    virtual const char **pictureXPM(void) {
+class toInvalidTool : public toTool
+{
+    virtual const char **pictureXPM(void)
+    {
         return const_cast<const char**>(toinvalid_xpm);
     }
 public:
     toInvalidTool()
-        : toTool(130, "Invalid Objects") { }
-    virtual const char *menuItem() {
+            : toTool(130, "Invalid Objects") { }
+    virtual const char *menuItem()
+    {
         return "Invalid Objects";
     }
-    virtual QWidget *toolWindow(QWidget *parent, toConnection &connection) {
+    virtual QWidget *toolWindow(QWidget *parent, toConnection &connection)
+    {
         return new toInvalid(parent, connection);
     }
     virtual void closeWindow(toConnection &connection) {};
@@ -104,12 +108,13 @@ static toInvalidTool InvalidTool;
 
 
 toInvalid::toInvalid(QWidget *main, toConnection &connection)
-    : toToolWidget(InvalidTool, "invalid.html", main, connection) {
+        : toToolWidget(InvalidTool, "invalid.html", main, connection)
+{
 
     QToolBar *toolbar = toAllocBar(this, tr("Invalid Objects"));
     layout()->addWidget(toolbar);
 
-    QAction *refreshAct = 
+    QAction *refreshAct =
         toolbar->addAction(
             QIcon(QPixmap(const_cast<const char**>(refresh_xpm))),
             tr("Refresh list"),
@@ -143,7 +148,8 @@ toInvalid::toInvalid(QWidget *main, toConnection &connection)
     setFocusProxy(Objects);
 }
 
-void toInvalid::recompileSelected(void) {
+void toInvalid::recompileSelected(void)
+{
     QProgressDialog progress(tr("Recompiling all invalid"),
                              tr("Cancel"),
                              0,
@@ -152,7 +158,8 @@ void toInvalid::recompileSelected(void) {
     progress.setWindowTitle("Recompiling");
     progress.show();
 
-    for(toResultTableView::iterator it(Objects); (*it).isValid(); it++) {
+    for (toResultTableView::iterator it(Objects); (*it).isValid(); it++)
+    {
         toConnection &conn = connection();
         progress.setLabelText("Recompiling " +
                               Objects->model()->data((*it).row(), 2).toString() +
@@ -162,44 +169,47 @@ void toInvalid::recompileSelected(void) {
 
         qApp->processEvents();
 
-        if(progress.wasCanceled())
+        if (progress.wasCanceled())
             break;
 
         QString type = Objects->model()->data((*it).row(), 3).toString();
         QString sql;
         if (type == "INDEX")
             sql = "ALTER " + Objects->model()->data((*it).row(), 3).toString() + " " +
-                conn.quote(Objects->model()->data((*it).row(), 1).toString()) + "." +
-                conn.quote(Objects->model()->data((*it).row(), 2).toString()) + " REBUILD";
+                  conn.quote(Objects->model()->data((*it).row(), 1).toString()) + "." +
+                  conn.quote(Objects->model()->data((*it).row(), 2).toString()) + " REBUILD";
         else if (type == "PACKAGE BODY")
             sql = "ALTER PACKAGE " + conn.quote(Objects->model()->data((*it).row(), 1).toString()) + "." +
-                conn.quote(Objects->model()->data((*it).row(), 2).toString()) + " COMPILE BODY";
+                  conn.quote(Objects->model()->data((*it).row(), 2).toString()) + " COMPILE BODY";
         else
             sql = "ALTER " + Objects->model()->data((*it).row(), 3).toString() + " " +
-                conn.quote(Objects->model()->data((*it).row(), 1).toString()) + "." +
-                conn.quote(Objects->model()->data((*it).row(), 2).toString()) + " COMPILE";
+                  conn.quote(Objects->model()->data((*it).row(), 1).toString()) + "." +
+                  conn.quote(Objects->model()->data((*it).row(), 2).toString()) + " COMPILE";
 
-        try {
+        try
+        {
             conn.execute(sql);
         }
-        catch(...)
-        {}
+        catch (...)
+            {}
     }
 
-    if(progress.isVisible())
+    if (progress.isVisible())
         progress.close();
 
     qApp->processEvents();
     this->refresh();
 }
 
-void toInvalid::refresh(void) {
+void toInvalid::refresh(void)
+{
     QModelIndex item = Objects->selectedIndex();
 
     QString owner;
     QString object;
     QString type;
-    if(item.isValid()) {
+    if (item.isValid())
+    {
         owner = Objects->model()->data(item.row(), 1).toString();
         object = Objects->model()->data(item.row(), 2).toString();
         type = Objects->model()->data(item.row(), 3).toString();
@@ -207,11 +217,14 @@ void toInvalid::refresh(void) {
 
     Objects->refresh();
 
-    if(item.isValid()) {
-        for(toResultTableView::iterator it(Objects); (*it).isValid(); it++) {
-            if(Objects->model()->data(item.row(), 1).toString() == owner &&
-               Objects->model()->data(item.row(), 2).toString() == object &&
-               Objects->model()->data(item.row(), 3).toString() == type) {
+    if (item.isValid())
+    {
+        for (toResultTableView::iterator it(Objects); (*it).isValid(); it++)
+        {
+            if (Objects->model()->data(item.row(), 1).toString() == owner &&
+                    Objects->model()->data(item.row(), 2).toString() == object &&
+                    Objects->model()->data(item.row(), 3).toString() == type)
+            {
 
                 Objects->selectionModel()->select(QItemSelection((*it), (*it)),
                                                   QItemSelectionModel::ClearAndSelect);
@@ -224,10 +237,13 @@ void toInvalid::refresh(void) {
     }
 }
 
-void toInvalid::changeSelection(void) {
-    try {
+void toInvalid::changeSelection(void)
+{
+    try
+    {
         QModelIndex item = Objects->selectedIndex();
-        if(item.isValid()) {
+        if (item.isValid())
+        {
             Source->changeParams(Objects->model()->data(item.row(), 1).toString(),
                                  Objects->model()->data(item.row(), 2).toString(),
                                  Objects->model()->data(item.row(), 3).toString());
@@ -239,7 +255,8 @@ void toInvalid::changeSelection(void) {
                            Objects->model()->data(item.row(), 2).toString(),
                            Objects->model()->data(item.row(), 3).toString());
 
-            while(!errors.eof()) {
+            while (!errors.eof())
+            {
                 int line = errors.readValue().toInt();
                 Errors[line] += QString::fromLatin1(" ");
                 Errors[line] += errors.readValue();

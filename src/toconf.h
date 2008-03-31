@@ -105,7 +105,6 @@
 #define DEFAULT_DISPLAY_SAMPLES -1
 #define CONF_CODE_COMPLETION "CodeComplete"
 #define CONF_COMPLETION_SORT "CompleteSort"
-#define CONF_MAXIMIZE_MAIN "MaximizeMain"
 #define CONF_AUTO_INDENT "AutoIndent"
 #define CONF_DONT_REREAD "DontReread"
 #define CONF_AUTO_LONG  "AutoLong"

@@ -60,8 +60,9 @@ class toTableViewIterator;
 
 
 class toResultTableView : public QTableView,
-    public toResult,
-    public toEditWidget {
+            public toResult,
+            public toEditWidget
+{
 
     Q_OBJECT;
 
@@ -194,7 +195,8 @@ public:
      * Reimplemented to create query and new model.
      *
      */
-    void query(const QString &sql) {
+    void query(const QString &sql)
+    {
         toQList p;
         query(sql, p);
     }
@@ -204,7 +206,8 @@ public:
      * Set statistics widget.
      * @param stats Statistics widget.
      */
-    void setStatistics(toResultStats *stats) {
+    void setStatistics(toResultStats *stats)
+    {
         Statistics = stats;
     }
 
@@ -213,7 +216,8 @@ public:
      * override parent to return toResultModel pointer.
      *
      */
-    toResultModel* model(void) const {
+    toResultModel* model(void) const
+    {
         return Model;
     }
 
@@ -222,8 +226,9 @@ public:
      * Stop running query.
      *
      */
-    void stop(void) {
-        if(Model)
+    void stop(void)
+    {
+        if (Model)
             Model->stop();
     }
 
@@ -239,7 +244,8 @@ public:
      * Enable or disable vertical header
      *
      */
-    void setNumberColumn(bool b) {
+    void setNumberColumn(bool b)
+    {
         NumberColumn = b;
         verticalHeader()->setVisible(b);
     }
@@ -249,7 +255,8 @@ public:
      * True by default
      *
      */
-    virtual bool canHandle(toConnection &) {
+    virtual bool canHandle(toConnection &)
+    {
         return true;
     }
 
@@ -259,7 +266,8 @@ public:
      *
      * @param filter The new filter or NULL if no filter is to be used.
      */
-    void setFilter(toViewFilter *filter) {
+    void setFilter(toViewFilter *filter)
+    {
         Filter = filter;
     }
 
@@ -276,7 +284,8 @@ public:
      * Should view read all data.
      *
      */
-    virtual void setReadAll(bool b) {
+    virtual void setReadAll(bool b)
+    {
         ReadAll = b;
     }
 
@@ -302,8 +311,9 @@ public:
      * Returns 1 if number column is displayed or 0 if not.
      *
      */
-    virtual int numberColumn(void) {
-        if(NumberColumn)
+    virtual int numberColumn(void)
+    {
+        if (NumberColumn)
             return 1;
         return 0;
     }
@@ -418,7 +428,8 @@ signals:
  * A simple iterator to walk the rows of a QTableView.
  *
  */
-class toTableViewIterator {
+class toTableViewIterator
+{
     int                         _row;
     QPointer<toResultTableView> _view;
     QModelIndex                 _index;
@@ -507,16 +518,20 @@ public:
  * you don't want.
  *
  */
-class toViewFilter {
+class toViewFilter
+{
 
 public:
-    toViewFilter() {
+    toViewFilter()
+    {
     }
 
-    virtual ~toViewFilter() {
+    virtual ~toViewFilter()
+    {
     }
 
-    virtual void startingQuery(void) {
+    virtual void startingQuery(void)
+    {
     }
 
     /**
@@ -545,7 +560,8 @@ public:
      * @param prefix Prefix to add to the map.
      */
     virtual void exportData(std::map<QString, QString> &data,
-                            const QString &prefix) {
+                            const QString &prefix)
+    {
     }
 
 
@@ -556,7 +572,8 @@ public:
      * @param prefix Prefix to read data from.
      */
     virtual void importData(std::map<QString, QString> &data,
-                            const QString &prefix) {
+                            const QString &prefix)
+    {
     }
 };
 

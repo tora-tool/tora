@@ -70,12 +70,12 @@ static toSQL SQLViewPlan("toResultPlan:ViewPlan",
                          "1000");
 
 static toSQL SQLViewPlan8("toResultPlan:ViewPlan",
-                         "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
-                         "  io_cost,Bytes,Cardinality,\n"
-                         "  partition_start,partition_stop,' ',' '\n"
-                         "  FROM %1 WHERE Statement_ID = '%2' ORDER BY NVL(Parent_ID,0),ID",
-                         "",
-                         "0800");
+                          "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
+                          "  io_cost,Bytes,Cardinality,\n"
+                          "  partition_start,partition_stop,' ',' '\n"
+                          "  FROM %1 WHERE Statement_ID = '%2' ORDER BY NVL(Parent_ID,0),ID",
+                          "",
+                          "0800");
 
 bool toResultPlan::canHandle(toConnection &conn)
 {

@@ -136,22 +136,24 @@ static const char *AboutText = "<html><body bgcolor='#E3B836'>"
 
 
 toAbout::toAbout(AboutType page, QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : QDialog(parent, fl)
+        : QDialog(parent, fl)
 {
-    if(name)
+    if (name)
         setObjectName(name);
-    if(modal)
+    if (modal)
         setWindowModality(Qt::WindowModal);
 
     setupUi(this);
 
-    if(page == License) {
+    if (page == License)
+    {
         setWindowTitle(tr("GNU General Public License"));
-		TextView->setHtml(tr(LicenseText));
+        TextView->setHtml(tr(LicenseText));
         if (parent)
             CancelButton->hide();
     }
-    else {
+    else
+    {
         setWindowTitle(tr(ABOUT_CAPTION).arg(QString::fromLatin1(TOVERSION)));
         QString buffer = tr(AboutText).arg(QString::fromLatin1(TOVERSION));
         TextView->setHtml(buffer);

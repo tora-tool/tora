@@ -53,7 +53,8 @@
 
 
 toResultDataSingle::toResultDataSingle(QWidget *parent)
-    : QWidget(parent) {
+        : QWidget(parent)
+{
 
     Row       = -1;
     Container = NULL;
@@ -71,7 +72,8 @@ toResultDataSingle::toResultDataSingle(QWidget *parent)
 }
 
 
-void toResultDataSingle::changeSource(toResultModel *model, int _row) {
+void toResultDataSingle::changeSource(toResultModel *model, int _row)
+{
     delete Container;
     Container = new QScrollArea(this);
     layout()->addWidget(Container);
@@ -93,7 +95,8 @@ void toResultDataSingle::changeSource(toResultModel *model, int _row) {
     int row = 1;
     int col = 0;
 
-    for(; row < Headers.size(); row++, col = 0) {
+    for (; row < Headers.size(); row++, col = 0)
+    {
         QLabel *name = new QLabel(Headers[row].name, this);
         grid->addWidget(name, row, col++);
 
@@ -128,25 +131,28 @@ void toResultDataSingle::changeSource(toResultModel *model, int _row) {
     changeRow(Row);
 }
 
-void toResultDataSingle::changeRow(int row) {
+void toResultDataSingle::changeRow(int row)
+{
     bool any = false;
 
     QList<QCheckBox *>::iterator chk = Null.begin();
     QList<QLineEdit *>::iterator val = Value.begin();
 
-    for(int i = 1;
-        i < Model->columnCount() && chk != Null.end() && val != Value.end();
-        i++, chk++, val++) {
+    for (int i = 1;
+            i < Model->columnCount() && chk != Null.end() && val != Value.end();
+            i++, chk++, val++)
+    {
 
         QVariant str = Model->data(row, i);
-        if(!str.isNull())
+        if (!str.isNull())
             any = true;
         (*chk)->setChecked(str.isNull());
         (*val)->setText(str.toString());
     }
 
-    if(!any) {
-        for(chk = Null.begin(); chk != Null.end(); chk++)
+    if (!any)
+    {
+        for (chk = Null.begin(); chk != Null.end(); chk++)
             (*chk)->setChecked(false);
     }
 
@@ -154,28 +160,32 @@ void toResultDataSingle::changeRow(int row) {
 }
 
 
-void toResultDataSingle::saveRow() {
-    if(Row < 0)
+void toResultDataSingle::saveRow()
+{
+    if (Row < 0)
         return;
 
     QList<QLineEdit *>::iterator val = Value.begin();
-    for(int i = 1; i < Model->columnCount() && val != Value.end(); i++, val++) {
+    for (int i = 1; i < Model->columnCount() && val != Value.end(); i++, val++)
+    {
         QString v = QString::null;
-        if((*val)->isEnabled())
+        if ((*val)->isEnabled())
             v = (*val)->text();
 
         QModelIndex index = Model->createIndex(Row, i);
         QVariant orig = Model->data(Row, i).toString();
 
-        if(!((v.isNull() && orig.isNull()) || v == orig))
+        if (!((v.isNull() && orig.isNull()) || v == orig))
             Model->setData(index, v);
     }
 }
 
 
-void toResultDataSingle::showMemo(int row) {
+void toResultDataSingle::showMemo(int row)
+{
     QLineEdit *obj = findChild<QLineEdit *>(QString::number(row));
-    if(obj) {
+    if (obj)
+    {
         toMemoEditor *memo = new toMemoEditor(
             this,
             obj->text(),
@@ -184,7 +194,7 @@ void toResultDataSingle::showMemo(int row) {
             false,
             true);
 
-        if(memo->exec())
+        if (memo->exec())
             obj->setText(memo->text());
     }
 }

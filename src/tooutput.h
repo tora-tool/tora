@@ -51,7 +51,8 @@ class QComboBox;
 class toConnection;
 class toResultView;
 
-class toOutput : public toToolWidget {
+class toOutput : public toToolWidget
+{
     Q_OBJECT;
 
     toMarkedText *Output;
@@ -72,16 +73,19 @@ public:
     virtual ~toOutput();
     bool enabled(void);
 
-    void insertLine(const QString &str) {
+    void insertLine(const QString &str)
+    {
         Output->append(str);
         Output->setCursorPosition(Output->lines(), 0);
     }
 
-    toMarkedText *output(void) {
+    toMarkedText *output(void)
+    {
         return Output;
     }
 
-    QToolBar *toolBar(void) {
+    QToolBar *toolBar(void)
+    {
         return Toolbar;
     }
 
@@ -94,7 +98,8 @@ public slots:
     void toggleMenu();
 };
 
-class toLogOutput : public toOutput {
+class toLogOutput : public toOutput
+{
     Q_OBJECT;
 
     QComboBox *Type;

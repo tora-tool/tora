@@ -43,7 +43,8 @@
 #include "tohighlightedtext.h"
 #include "toworksheet.h"
 
-class toWorksheetText : public toHighlightedText {
+class toWorksheetText : public toHighlightedText
+{
     toWorksheet *Worksheet;
 
 public:

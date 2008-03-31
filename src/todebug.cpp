@@ -151,7 +151,7 @@ public:
 static toDebugTool DebugTool;
 
 toDebugWatch::toDebugWatch(toDebug *parent)
-    : QDialog(parent), Debugger(parent)
+        : QDialog(parent), Debugger(parent)
 {
     setupUi(this);
     setModal(true);
@@ -379,7 +379,8 @@ public:
         }
     }
 
-    virtual void closeEvent(QCloseEvent *event) {
+    virtual void closeEvent(QCloseEvent *event)
+    {
         toOutput::closeEvent(event);
     }
 };
@@ -1746,8 +1747,9 @@ void toDebug::stop(void)
 }
 
 toDebug::toDebug(QWidget *main, toConnection &connection)
-    : toToolWidget(DebugTool, "debugger.html", main, connection),
-      TargetThread() {
+        : toToolWidget(DebugTool, "debugger.html", main, connection),
+        TargetThread()
+{
 
     createActions();
     QToolBar *toolbar = toAllocBar(this, tr("Debugger"));
@@ -1924,7 +1926,8 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
 }
 
 
-void toDebug::createActions(void) {
+void toDebug::createActions(void)
+{
     refreshAct = new QAction(QIcon(QPixmap(const_cast<const char**>(refresh_xpm))),
                              tr("Refresh"),
                              this);
@@ -1954,9 +1957,9 @@ void toDebug::createActions(void) {
             Qt::QueuedConnection);
     scanSourceAct->setShortcut(Qt::CTRL + Qt::Key_F9);
 
-    compileAct= new QAction(QIcon(QPixmap(const_cast<const char**>(compile_xpm))),
-                            tr("&Compile"),
-                            this);
+    compileAct = new QAction(QIcon(QPixmap(const_cast<const char**>(compile_xpm))),
+                             tr("&Compile"),
+                             this);
     connect(compileAct,
             SIGNAL(triggered()),
             this,
@@ -2052,8 +2055,8 @@ void toDebug::createActions(void) {
     nextErrorAct->setShortcut(Qt::CTRL + Qt::Key_N);
 
     previousErrorAct = new QAction(QIcon(QPixmap(const_cast<const char**>(prevbug_xpm))),
-                                tr("Pre&vious Error"),
-                                this);
+                                   tr("Pre&vious Error"),
+                                   this);
     connect(previousErrorAct,
             SIGNAL(triggered()),
             this,
@@ -2103,8 +2106,8 @@ void toDebug::createActions(void) {
     deleteWatchAct->setShortcut(Qt::CTRL + Qt::Key_Delete);
 
     changeWatchAct = new QAction(QIcon(QPixmap(const_cast<const char**>(changewatch_xpm))),
-                                tr("Chan&ge Watch..."),
-                                this);
+                                 tr("Chan&ge Watch..."),
+                                 this);
     changeWatchAct->setEnabled(false);
     connect(changeWatchAct,
             SIGNAL(triggered()),
@@ -2323,22 +2326,28 @@ bool toDebug::checkCompile(void)
 
 bool toDebug::close()
 {
-    if (checkCompile()) {
+    if (checkCompile())
+    {
         bool ret = toToolWidget::close();
-        if(ret && Output)
+        if (ret && Output)
             Output->close();
         return ret;
     }
     return false;
 }
 
-void toDebug::closeEvent(QCloseEvent *e) {
-    if(close()) {
-        try {
+void toDebug::closeEvent(QCloseEvent *e)
+{
+    if (close())
+    {
+        try
+        {
             Lock.lock();
-            if (DebuggerStarted) {
+            if (DebuggerStarted)
+            {
                 Lock.unlock();
-                stop(); {
+                stop();
+                {
                     toLocker lock (Lock);
                     TargetSQL = "";
                     TargetSemaphore.up();
@@ -2351,7 +2360,8 @@ void toDebug::closeEvent(QCloseEvent *e) {
         }
         TOCATCH;
 
-        try {
+        try
+        {
             DebugTool.closeWindow(connection());
         }
         TOCATCH;
@@ -2528,7 +2538,8 @@ void toDebug::compile(void)
     scanSource();
 }
 
-toDebug::~toDebug() {
+toDebug::~toDebug()
+{
 }
 
 void toDebug::prevError(void)
@@ -2619,9 +2630,12 @@ void toDebug::addWatch(void)
     }
 }
 
-void toDebug::windowActivated(QWidget *widget) {
-    if (widget == this) {
-        if (!ToolMenu) {
+void toDebug::windowActivated(QWidget *widget)
+{
+    if (widget == this)
+    {
+        if (!ToolMenu)
+        {
             ToolMenu = new QMenu(tr("&Debug"), this);
 
             ToolMenu->addAction(newSheetAct);
@@ -2662,18 +2676,21 @@ void toDebug::windowActivated(QWidget *widget) {
             toMainWidget()->addCustomMenu(ToolMenu);
         }
     }
-    else {
+    else
+    {
         delete ToolMenu;
         ToolMenu = NULL;
     }
 }
 
-void toDebug::selectedWatch() {
+void toDebug::selectedWatch()
+{
     toTreeWidgetItem *item = Watch->selectedItem();
-    if(item) {
+    if (item)
+    {
         if (!item->text(5).isEmpty() &&
-            item->text(5) != QString::fromLatin1("LIST") &&
-            item->text(5) != QString::fromLatin1("NULL"))
+                item->text(5) != QString::fromLatin1("LIST") &&
+                item->text(5) != QString::fromLatin1("NULL"))
         {
             deleteWatchAct->setEnabled(false);
         }
@@ -2682,7 +2699,8 @@ void toDebug::selectedWatch() {
 
         changeWatchAct->setEnabled(item->text(4).isEmpty());
     }
-    else {
+    else
+    {
         deleteWatchAct->setEnabled(false);
         changeWatchAct->setEnabled(false);
     }

@@ -65,8 +65,9 @@ std::map<QString, std::list<QString> > toParamGet::DefaultCache;
 std::map<QString, std::list<QString> > toParamGet::Cache;
 
 toParamGet::toParamGet(QWidget *parent, const char *name)
-    : QDialog(parent),
-      toHelpContext(QString::fromLatin1("common.html#param")) {
+        : QDialog(parent),
+        toHelpContext(QString::fromLatin1("common.html#param"))
+{
 
     setModal(true);
     toHelp::connectDialog(this);
@@ -120,12 +121,14 @@ toParamGet::toParamGet(QWidget *parent, const char *name)
 toQList toParamGet::getParam(toConnection &conn,
                              QWidget *parent,
                              QString &str,
-                             bool interactive) {
+                             bool interactive)
+{
     std::map<QString, bool> parameters;
     std::list<QString> names;
     toParamGet *widget = NULL;
 
-    enum {
+    enum
+    {
         afterName,
         inString,
         normal,
@@ -147,7 +150,8 @@ toQList toParamGet::getParam(toConnection &conn,
     int colon = 1;
 
     int num = 0;
-    for (int i = 0; i < str.length() + 1; i++) {
+    for (int i = 0; i < str.length() + 1; i++)
+    {
         QChar c;
         QChar nc;
         QChar pc;
@@ -167,8 +171,10 @@ toQList toParamGet::getParam(toConnection &conn,
             state = comment;
         else if (state == normal && c == '/' && nc == '*')
             state = multiComment;
-        else {
-            switch (state) {
+        else
+        {
+            switch (state)
+            {
             case inString:
                 if (c == endString)
                     state = normal;
@@ -182,7 +188,8 @@ toQList toParamGet::getParam(toConnection &conn,
                     state = normal;
                 break;
             case normal:
-                switch (c.toLatin1()) {
+                switch (c.toLatin1())
+                {
                 case '\'':
                 case '\"':
                     endString = c;
@@ -211,11 +218,13 @@ toQList toParamGet::getParam(toConnection &conn,
                 }
                 break;
             case name:
-                if (c.isLetterOrNumber() || c == '_') {
+                if (c.isLetterOrNumber() || c == '_')
+                {
                     fname += c;
                     break;
                 }
-                if (fname.isEmpty() && !toIsMySQL(conn)) {
+                if (fname.isEmpty() && !toIsMySQL(conn))
+                {
                     toStatusMessage(tr("Missing field name"));
                     throw tr("Missing field name");
                 }
@@ -223,7 +232,8 @@ toQList toParamGet::getParam(toConnection &conn,
             case afterName:
                 if (c == '<')
                     state = specification;
-                else {
+                else
+                {
                     state = normal;
                     res += def;
                 }
@@ -243,12 +253,15 @@ toQList toParamGet::getParam(toConnection &conn,
             }
         }
 
-        if (state == normal && !fname.isEmpty()) {
+        if (state == normal && !fname.isEmpty())
+        {
             if (direction.isEmpty() ||
                     direction == "in" ||
-                    direction == "inout") {
+                    direction == "inout")
+            {
 
-                if (!parameters[fname]) {
+                if (!parameters[fname])
+                {
                     parameters[fname] = true;
 
                     if (!widget)
@@ -268,10 +281,12 @@ toQList toParamGet::getParam(toConnection &conn,
 
                     QString defval;
                     std::map<QString, std::list<QString> >::iterator fnd = Cache.find(fname);
-                    if (fnd != Cache.end()) {
+                    if (fnd != Cache.end())
+                    {
                         for (std::list<QString>::iterator i = (*fnd).second.begin();
                                 i != (*fnd).second.end();
-                                i++) {
+                                i++)
+                        {
 
                             if (edit->count() == 0)
                                 defval = *i;
@@ -280,10 +295,12 @@ toQList toParamGet::getParam(toConnection &conn,
                     }
 
                     fnd = DefaultCache.find(fname);
-                    if (fnd != DefaultCache.end()) {
+                    if (fnd != DefaultCache.end())
+                    {
                         for (std::list<QString>::iterator i = (*fnd).second.begin();
                                 i != (*fnd).second.end();
-                                i++) {
+                                i++)
+                        {
 
                             if (edit->count() == 0)
                                 defval = *i;
@@ -296,7 +313,8 @@ toQList toParamGet::getParam(toConnection &conn,
                             SIGNAL(toggled(bool)),
                             edit,
                             SLOT(setDisabled(bool)));
-                    if (edit->count() > 0) {
+                    if (edit->count() > 0)
+                    {
                         if (defval.isNull())
                             box->setChecked(true);
                     }
@@ -330,7 +348,8 @@ toQList toParamGet::getParam(toConnection &conn,
             res += c;
     } // for
 
-    if(widget && num > 0) {
+    if (widget && num > 0)
+    {
         // set edit column to stretch
         widget->Container->setColumnStretch(1, 1);
 
@@ -340,23 +359,29 @@ toQList toParamGet::getParam(toConnection &conn,
     }
 
     toQList ret;
-    if (widget) {
+    if (widget)
+    {
         (*widget->Value.begin())->setFocus();
-        if (!interactive || widget->exec()) {
+        if (!interactive || widget->exec())
+        {
             std::list<QString>::iterator cn = names.begin();
-            for (std::list<QComboBox *>::iterator i = widget->Value.begin();i != widget->Value.end();i++) {
+            for (std::list<QComboBox *>::iterator i = widget->Value.begin();i != widget->Value.end();i++)
+            {
                 QComboBox *current = *i;
                 QString val;
-                if (current) {
+                if (current)
+                {
                     if (current->isEnabled())
                         val = current->currentText();
                     else
                         val = QString::null;
                 }
-                if (cn != names.end()) {
+                if (cn != names.end())
+                {
                     std::list<QString> &lst = Cache[*cn];
                     for (std::list<QString>::iterator i = lst.begin();i != lst.end();i++)
-                        if ((*i) == val) {
+                        if ((*i) == val)
+                        {
                             lst.erase(i);
                             break;
                         }
@@ -365,7 +390,8 @@ toQList toParamGet::getParam(toConnection &conn,
                     std::map<QString, std::list<QString> >::iterator fnd = DefaultCache.find(*cn);
                     if (fnd != DefaultCache.find(*cn))
                         for (std::list<QString>::iterator i = (*fnd).second.begin();i != (*fnd).second.end();i++)
-                            if ((*i) == val) {
+                            if ((*i) == val)
+                            {
                                 (*fnd).second.erase(i);
                                 break;
                             }
@@ -376,7 +402,8 @@ toQList toParamGet::getParam(toConnection &conn,
             }
             delete widget;
         }
-        else {
+        else
+        {
             delete widget;
             toStatusMessage(tr("Aborted execution"), false, false);
             throw tr("Aborted execution");
@@ -396,7 +423,8 @@ void toParamGet::setDefault(toConnection &, const QString &name, const QString &
 
     std::list<QString> &lst = DefaultCache[name];
     for (std::list<QString>::iterator i = lst.begin();i != lst.end();i++)
-        if ((*i) == val) {
+        if ((*i) == val)
+        {
             lst.erase(i);
             break;
         }
@@ -406,7 +434,8 @@ void toParamGet::setDefault(toConnection &, const QString &name, const QString &
 void toParamGet::showMemo(int row)
 {
     QComboBox *obj = findChild<QComboBox *>(QString::number(row));
-    if (obj) {
+    if (obj)
+    {
         toMemoEditor *memo = new toMemoEditor(this,
                                               obj->currentText(),
                                               row,

@@ -53,7 +53,8 @@ class QColorGroup;
 class toTreeWidgetItem;
 
 
-class toTreeWidget : public QTreeWidget {
+class toTreeWidget : public QTreeWidget
+{
     Q_OBJECT;
 
 public:
@@ -156,7 +157,8 @@ public:
 
 
     // overrode parent namespace. this is a qt4 function.
-    void setSelectionMode(QAbstractItemView::SelectionMode mode) {
+    void setSelectionMode(QAbstractItemView::SelectionMode mode)
+    {
         QTreeWidget::setSelectionMode(mode);
     }
 
@@ -504,7 +506,8 @@ public slots:
 };
 
 
-class toTreeWidgetItem : public QTreeWidgetItem {
+class toTreeWidgetItem : public QTreeWidgetItem
+{
 
 public:
 
@@ -541,7 +544,7 @@ public:
                      const QString &label5 = QString(),
                      const QString &label6 = QString(),
                      const QString &label7 = QString());
-                             
+
 
     /**
      * Constructs a new list view item as a child of the
@@ -669,7 +672,8 @@ public:
 
 
     // child widgets expect this
-    virtual void setup(void) {
+    virtual void setup(void)
+    {
         ;
     }
 
@@ -702,7 +706,8 @@ public:
                    const QColorGroup & cg,
                    int column,
                    int width,
-                   int alignment) {
+                   int alignment)
+    {
         ;                       /* stub todo */
     }
 
@@ -810,20 +815,23 @@ protected:
      * number of pixels.
      *
      */
-    virtual void setHeight(int height) {
+    virtual void setHeight(int height)
+    {
         ;                       /* stub */
     }
 };
 
 
-class toTreeWidgetCheck : public toTreeWidgetItem {
+class toTreeWidgetCheck : public toTreeWidgetItem
+{
 
 public:
     enum Type { RadioButton,
                 CheckBox,
                 Controller,
                 RadioButtonController = Controller,
-                CheckBoxController };
+                CheckBoxController
+              };
 
     enum ToggleState { Off, NoChange, On };
 
@@ -862,7 +870,7 @@ public:
                       const QString &text,
                       Type = RadioButtonController);
 
-    
+
     /**
      * Constructs a checkable item with parent parent, which is after
      * after in the parent's list of children, with text text and of
@@ -895,19 +903,23 @@ public:
 };
 
 
-class toTreeWidgetItemIterator : public QTreeWidgetItemIterator {
+class toTreeWidgetItemIterator : public QTreeWidgetItemIterator
+{
 public:
     toTreeWidgetItemIterator(toTreeWidget *widget, IteratorFlags flags = All)
-        : QTreeWidgetItemIterator(widget, flags) {
+            : QTreeWidgetItemIterator(widget, flags)
+    {
     }
 
 
     toTreeWidgetItemIterator(toTreeWidgetItem *widget, IteratorFlags flags = All)
-        : QTreeWidgetItemIterator(widget, flags) {
+            : QTreeWidgetItemIterator(widget, flags)
+    {
     }
 
 
-    toTreeWidgetItem* operator*() const {
+    toTreeWidgetItem* operator*() const
+    {
         return dynamic_cast<toTreeWidgetItem *>(QTreeWidgetItemIterator::operator*());
     }
 };

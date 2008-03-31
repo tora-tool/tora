@@ -53,7 +53,8 @@ class toNoBlockQuery;
 class toPieChart;
 class toResultBar;
 
-class toWaitEvents : public QWidget {
+class toWaitEvents : public QWidget
+{
     Q_OBJECT;
 
     toResultBar *Delta;

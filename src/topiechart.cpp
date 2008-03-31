@@ -64,9 +64,10 @@
 
 
 toPieChart::toPieChart(QWidget *parent, const char *name, Qt::WFlags f)
-    : QWidget(parent, f) {
+        : QWidget(parent, f)
+{
 
-    if(name)
+    if (name)
         setObjectName(name);
 
     Legend = true;
@@ -132,15 +133,16 @@ toPieChart::toPieChart(toPieChart *pie,
                        QWidget *parent,
                        const char *name,
                        Qt::WFlags f)
-    : QWidget(parent, f | Qt::Window),
-      Values(pie->Values),
-      Labels(pie->Labels),
-      Postfix(pie->Postfix),
-      Legend(pie->Legend),
-      DisplayPercent(pie->DisplayPercent),
-      Title(pie->Title) {
+        : QWidget(parent, f | Qt::Window),
+        Values(pie->Values),
+        Labels(pie->Labels),
+        Postfix(pie->Postfix),
+        Legend(pie->Legend),
+        DisplayPercent(pie->DisplayPercent),
+        Title(pie->Title)
+{
 
-    if(name)
+    if (name)
         setObjectName(name);
 
     setWindowIcon(QPixmap(const_cast<const char**>(chart_xpm)));
@@ -158,8 +160,10 @@ toPieChart::toPieChart(toPieChart *pie,
     }
 }
 
-void toPieChart::createPopupMenu(const QPoint &pos) {
-    if(!Menu) {
+void toPieChart::createPopupMenu(const QPoint &pos)
+{
+    if (!Menu)
+    {
         Menu = new QMenu(this);
 
         Menu->addAction(QIcon(print_xpm),
@@ -396,7 +400,7 @@ void toPieChart::editPrint(void)
     TOPrinter printer;
     QPrintDialog dialog(&printer, this);
     dialog.setMinMax(1, 1);
-    if(dialog.exec())
+    if (dialog.exec())
     {
         printer.setCreator(tr(TOAPPNAME));
         QPainter painter(&printer);

@@ -136,11 +136,13 @@ toChartAlarm::toChartAlarm(QWidget *parent,
                            const char *name,
                            bool modal,
                            Qt::WFlags fl)
-    : QDialog(parent) {
+        : QDialog(parent)
+{
     setupUi(this);
 }
 
-void toChartAlarm::changeValue(int val) {
+void toChartAlarm::changeValue(int val)
+{
     if (val == 1)
         ExtraLabel->setText(qApp->translate("toChartAlarm", "Email"));
     else
@@ -153,7 +155,8 @@ toChartSetup::toChartSetup(toLineChart *chart,
                            QWidget* parent,
                            const char* name,
                            bool modal)
-    : QDialog(parent) {
+        : QDialog(parent)
+{
 
     setupUi(this);
     Chart = chart;
@@ -165,14 +168,16 @@ toChartSetup::toChartSetup(toLineChart *chart,
 }
 
 
-void toChartSetup::browseFile() {
+void toChartSetup::browseFile()
+{
     QString str = toOpenFilename(Filename->text(), QString::fromLatin1("*.csv"), this);
     if (!str.isEmpty())
         Filename->setText(str);
 }
 
 
-QString toChartSetup::modifyAlarm(const QString &str, bool &persistent) {
+QString toChartSetup::modifyAlarm(const QString &str, bool &persistent)
+{
     toChartManager::chartAlarm alarm(str, persistent);
     toChartAlarm diag(this, NULL, true);
     diag.Operation->setCurrentIndex((int)alarm.Operation);
@@ -218,14 +223,16 @@ QString toChartSetup::modifyAlarm(const QString &str, bool &persistent) {
     return QString::null;
 }
 
-void toChartSetup::addAlarm() {
-        toChartManager::chartAlarm alarm;
-        QString str = modifyAlarm(alarm.toString(), alarm.Persistent);
-        if (!str.isEmpty())
-            new toTreeWidgetItem(Alarms, str, alarm.Persistent ? qApp->translate("toChartSetup", "Persistent") : qApp->translate("toChartSetup", "Temporary"));
-    }
+void toChartSetup::addAlarm()
+{
+    toChartManager::chartAlarm alarm;
+    QString str = modifyAlarm(alarm.toString(), alarm.Persistent);
+    if (!str.isEmpty())
+        new toTreeWidgetItem(Alarms, str, alarm.Persistent ? qApp->translate("toChartSetup", "Persistent") : qApp->translate("toChartSetup", "Temporary"));
+}
 
-void toChartSetup::modifyAlarm() {
+void toChartSetup::modifyAlarm()
+{
     toTreeWidgetItem *item = Alarms->selectedItem();
     if (item)
     {
@@ -239,7 +246,8 @@ void toChartSetup::modifyAlarm() {
     }
 }
 
-void toChartSetup::removeAlarm() {
+void toChartSetup::removeAlarm()
+{
     delete Alarms->selectedItem();
 }
 
@@ -279,7 +287,8 @@ void toChartReceiver::valueAdded(std::list<double> &value, const QString &xValue
 }
 
 toChartManager::toChartManager(QWidget *main)
-    : QWidget(main), toHelpContext(QString::fromLatin1("chartmanager.html")) {
+        : QWidget(main), toHelpContext(QString::fromLatin1("chartmanager.html"))
+{
 
     QVBoxLayout *vbox = new QVBoxLayout;
 
@@ -332,7 +341,8 @@ void toChartHandler::addChart(toLineChart *chart)
 {
     Charts.insert(Charts.end(), new toChartReceiver(this, chart));
     toChartManager *manager = ChartTool.manager();
-    if (manager) {
+    if (manager)
+    {
         manager->Refresh.setSingleShot(true);
         manager->Refresh.start(1);
     }
@@ -379,7 +389,8 @@ void toChartHandler::removeChart(toLineChart *chart)
             delete *i;
             Charts.erase(i);
             toChartManager *manager = ChartTool.manager();
-            if (manager) {
+            if (manager)
+            {
                 manager->Refresh.setSingleShot(true);
                 manager->Refresh.start(1);
             }
@@ -708,7 +719,7 @@ void toChartHandler::saveSettings(void)
 {
     {
 //         int num = 0;
-		ChartsMap c;
+        ChartsMap c;
         for (std::map<QString, toChartManager::chartTrack>::iterator i = Files.begin();i != Files.end();i++)
         {
             if ((*i).second.Persistent)
@@ -717,14 +728,14 @@ void toChartHandler::saveSettings(void)
 //                 QString name = QString("Files:") + QString::number(num).toLatin1();
 //                 ChartTool.setConfig(name + ":Name", (*i).first);
 //                 ChartTool.setConfig(name + ":Spec", (*i).second.File.fileName());
-				c[(*i).first] = (*i).second.File.fileName();
+                c[(*i).first] = (*i).second.File.fileName();
             }
         }
 //         ChartTool.setConfig("FilesCount", QString::number(num));
-		toConfigurationSingle::Instance().setChartFiles(c);
+        toConfigurationSingle::Instance().setChartFiles(c);
     }
     {
-		ChartsMap c;
+        ChartsMap c;
 //         int num = 0;
         for (std::map<QString, std::list<toChartManager::chartAlarm> >::iterator i = Alarms.begin();
                 i != Alarms.end();i++)
@@ -737,12 +748,12 @@ void toChartHandler::saveSettings(void)
 //                     QString name = QString("Alarms:") + QString::number(num).toLatin1();
 //                     ChartTool.setConfig(name + ":Name", (*i).first);
 //                     ChartTool.setConfig(name + ":Spec", (*j).toString());
-					c[(*i).first] = (*j).toString();
+                    c[(*i).first] = (*j).toString();
                 }
             }
         }
 //         ChartTool.setConfig("AlarmCount", QString::number(num));
-		toConfigurationSingle::Instance().setChartAlarms(c);
+        toConfigurationSingle::Instance().setChartAlarms(c);
     }
     toConfigurationSingle::Instance().saveConfig();
 }
@@ -759,13 +770,13 @@ void toChartHandler::loadSettings(void)
 //                 Files[t] = toChartManager::chartTrack(s, true);
 //         }
 //     }
-	ChartsMapIterator i(toConfigurationSingle::Instance().chartFiles());
-	while (i.hasNext())
-	{
-		i.next();
-		if (!i.key().isEmpty() && !i.value().isEmpty())
-			Files[i.key()] = toChartManager::chartTrack(i.value(), true);
-	}
+    ChartsMapIterator i(toConfigurationSingle::Instance().chartFiles());
+    while (i.hasNext())
+    {
+        i.next();
+        if (!i.key().isEmpty() && !i.value().isEmpty())
+            Files[i.key()] = toChartManager::chartTrack(i.value(), true);
+    }
 //     {
 //         for (int num = ChartTool.config("AlarmCount", "0").toInt();num > 0;num--)
 //         {
@@ -776,13 +787,13 @@ void toChartHandler::loadSettings(void)
 //                 Alarms[t].insert(Alarms[t].end(), toChartManager::chartAlarm(s, true));
 //         }
 //     }
-	ChartsMapIterator i1(toConfigurationSingle::Instance().chartAlarms());
-	while (i1.hasNext())
-	{
-		i1.next();
-		if (!i1.key().isEmpty() && !i1.value().isEmpty())
-			Alarms[i1.key()].insert(Alarms[i1.key()].end(), toChartManager::chartAlarm(i1.value(), true));
-	}
+    ChartsMapIterator i1(toConfigurationSingle::Instance().chartAlarms());
+    while (i1.hasNext())
+    {
+        i1.next();
+        if (!i1.key().isEmpty() && !i1.value().isEmpty())
+            Alarms[i1.key()].insert(Alarms[i1.key()].end(), toChartManager::chartAlarm(i1.value(), true));
+    }
 }
 
 void toChartHandler::alarm(void)
@@ -1004,8 +1015,8 @@ void toChartHandler::setupChart(toLineChart *chart)
                 setup.ChartFrame->layout()->addWidget(t);
                 for (std::list<toChartManager::chartAlarm>::iterator j = alarm.begin();j != alarm.end();j++)
                     new toTreeWidgetItem(setup.Alarms,
-                                       (*j).toString(),
-                                       (*j).Persistent ? tr("Persistent") : tr("Temporary"));
+                                         (*j).toString(),
+                                         (*j).Persistent ? tr("Persistent") : tr("Temporary"));
 
                 if (setup.exec())
                 {

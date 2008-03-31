@@ -209,17 +209,17 @@ public:
 
     /** Tokenizer class which gets tokens from a string.
      */
-    class stringTokenizer : public tokenizer
+class stringTokenizer : public tokenizer
     {
         QString String;
     public:
-    stringTokenizer(const QString &str, int offset = 0, int line = 0)
-        : tokenizer(offset, line)
+        stringTokenizer(const QString &str, int offset = 0, int line = 0)
+                : tokenizer(offset, line)
         {
             String = str;
         }
-    stringTokenizer(const QString &str, toSyntaxAnalyzer &analyzer, int offset = 0, int line = 0)
-        : tokenizer(analyzer, offset, line)
+        stringTokenizer(const QString &str, toSyntaxAnalyzer &analyzer, int offset = 0, int line = 0)
+                : tokenizer(analyzer, offset, line)
         {
             String = str;
         }
@@ -236,7 +236,7 @@ public:
 
     /** Tokenizer class which gets tokens from an editor.
      */
-    class editorTokenizer : public tokenizer
+class editorTokenizer : public tokenizer
     {
         toMarkedText *Editor;
     public:

@@ -66,18 +66,22 @@ static toSQL SQLListTablespaces("toBrowserTable:ListTablespaces",
                                 " ORDER BY Tablespace_Name",
                                 "List the available tablespaces in a database.");
 
-void toBrowserTable::editTable(toConnection &conn, const QString &owner, const QString &table, QWidget *parent) {
+void toBrowserTable::editTable(toConnection &conn, const QString &owner, const QString &table, QWidget *parent)
+{
     toBrowserTable dialog(conn, owner, table, parent);
-    if (dialog.exec()) {
+    if (dialog.exec())
+    {
         std::list<toSQLParse::statement> statements = toSQLParse::parse(dialog.sql(), conn);
-        try {
+        try
+        {
             QProgressDialog prog(tr("Performing table changes"),
                                  tr("Stop"),
                                  0,
                                  statements.size(),
                                  &dialog);
             prog.setWindowTitle(tr("Performing table changes"));
-            for (std::list<toSQLParse::statement>::iterator i = statements.begin();i != statements.end();i++) {
+            for (std::list<toSQLParse::statement>::iterator i = statements.begin();i != statements.end();i++)
+            {
                 QString sql = toSQLParse::indentStatement(*i, conn);
                 int l = sql.length() - 1;
                 while (l >= 0 && (sql.at(l) == ';' || sql.at(l).isSpace()))
@@ -98,7 +102,8 @@ toBrowserTable::toBrowserTable(toConnection &conn,
                                const QString &table,
                                QWidget *parent,
                                const char *name)
-    : QDialog(parent), toConnectionWidget(conn, this), Extractor(conn, NULL) {
+        : QDialog(parent), toConnectionWidget(conn, this), Extractor(conn, NULL)
+{
     setupUi(this);
 
     // the central widget to the scrollarea is a widget with a vbox
@@ -141,9 +146,10 @@ toBrowserTable::toBrowserTable(toConnection &conn,
     Extractor.setHeading(false);
 
     UglyFlag = false; // Indicates wether the correct size has been
-                      // retreived at least once.
+    // retreived at least once.
 
-    try {
+    try
+    {
         Owner = owner;
         Table = table;
 
@@ -151,7 +157,8 @@ toBrowserTable::toBrowserTable(toConnection &conn,
         Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
         Schema->setSelected(Owner);
 
-        if (!Table.isEmpty()) {
+        if (!Table.isEmpty())
+        {
             std::list<QString> Objects;
             Objects.insert(Objects.end(), "TABLE:" + Owner + "." + Table);
 
@@ -166,20 +173,24 @@ toBrowserTable::toBrowserTable(toConnection &conn,
             QString storage;
             QString parallel;
 
-            for (std::list<QString>::iterator i = OriginalDescription.begin();i != OriginalDescription.end();i++) {
+            for (std::list<QString>::iterator i = OriginalDescription.begin();i != OriginalDescription.end();i++)
+            {
                 std::list<QString> row = toExtract::splitDescribe(*i);
-                if (toShift(row) != connection().quote(owner)) {
+                if (toShift(row) != connection().quote(owner))
+                {
                     invalid = true;
                     break;
                 }
                 if (toShift(row) != "TABLE")
                     continue;
-                if (toShift(row) != connection().quote(table)) {
+                if (toShift(row) != connection().quote(table))
+                {
                     invalid = true;
                     break;
                 }
                 QString type = toShift(row);
-                if (type == "COLUMN") {
+                if (type == "COLUMN")
+                {
                     // Nop, handled by the parseColumnDescription call below
                 }
                 else if (type == "COMMENT")
@@ -188,9 +199,11 @@ toBrowserTable::toBrowserTable(toConnection &conn,
                     storage += toShift(row) + " ";
                 else if (type == "PARALLEL")
                     parallel += toShift(row) + " ";
-                else if (type == "PARAMETERS") {
+                else if (type == "PARAMETERS")
+                {
                     QString t = toShift(row);
-                    if (t.startsWith("TABLESPACE")) {
+                    if (t.startsWith("TABLESPACE"))
+                    {
                         tablespace = connection().unQuote(t.mid(10).trimmed());
                     }
                     else
@@ -213,11 +226,12 @@ toBrowserTable::toBrowserTable(toConnection &conn,
             std::list<toDatatype *>::iterator datatype = Datatypes.begin();
             std::list<QLineEdit *>::iterator extra = Extra.begin();
             for (std::list<toExtract::columnInfo>::iterator column = Columns.begin();
-                 name != ColumnNames.end() &&
-                     datatype != Datatypes.end() &&
-                     extra != Extra.end() &&
-                     column != Columns.end();
-                 name++, datatype++, extra++, column++) {
+                    name != ColumnNames.end() &&
+                    datatype != Datatypes.end() &&
+                    extra != Extra.end() &&
+                    column != Columns.end();
+                    name++, datatype++, extra++, column++)
+            {
 
                 if ((*column).Order == 0)
                     invalid = true;
@@ -225,7 +239,8 @@ toBrowserTable::toBrowserTable(toConnection &conn,
                 (*datatype)->setType((*column).Definition);
                 (*extra)->setText((*column).Data["EXTRA"]);
             }
-            if (invalid) {
+            if (invalid)
+            {
                 reject();
                 toStatusMessage("Invalid output from extraction layer prevents "
                                 "this dialog from being properly filled in.");
@@ -234,26 +249,31 @@ toBrowserTable::toBrowserTable(toConnection &conn,
         }
         else
             addColumn();
-        if (toIsMySQL(connection())) {
+        if (toIsMySQL(connection()))
+        {
             ParallelLabel->hide();
             ParallelDeclarations->hide();
             SchemaLabel->setText(tr("&Database"));
         }
-        try {
+        try
+        {
             toQuery query(connection(), SQLListTablespaces);
-            while (!query.eof()) {
+            while (!query.eof())
+            {
                 QString t = query.readValueNull();
                 Tablespace->addItem(t);
                 if (t == tablespace)
                     Tablespace->setCurrentIndex(Tablespace->count() - 1);
             }
         }
-        catch (...) {
+        catch (...)
+        {
             TablespaceLabel->hide();
             Tablespace->hide();
         }
     }
-    catch (const QString &exc) {
+    catch (const QString &exc)
+    {
         toStatusMessage(exc);
         reject();
     }
@@ -263,15 +283,21 @@ toBrowserTable::toBrowserTable(toConnection &conn,
 void toBrowserTable::addParameters(std::list<QString> &migrateTable,
                                    const std::list<QString> &ctx,
                                    const QString &type,
-                                   const QString &data) {
+                                   const QString &data)
+{
     toSQLParse::statement statement = toSQLParse::parseStatement(data, connection());
     std::list<toSQLParse::statement>::iterator beg = statement.subTokens().begin();
     std::list<toSQLParse::statement>::iterator end = beg;
-    while (end != statement.subTokens().end()) {
-        if (beg != end) {
-            if ((*end).String != "=") {
-                if ((*end).String == "(") {
-                    do {
+    while (end != statement.subTokens().end())
+    {
+        if (beg != end)
+        {
+            if ((*end).String != "=")
+            {
+                if ((*end).String == "(")
+                {
+                    do
+                    {
                         end++;
                     }
                     while (end != statement.subTokens().end() && (*end).String != ")");
@@ -290,7 +316,8 @@ void toBrowserTable::addParameters(std::list<QString> &migrateTable,
         toExtract::addDescription(migrateTable, ctx, type, Extractor.createFromParse(beg, end).trimmed());
 }
 
-QString toBrowserTable::sql() {
+QString toBrowserTable::sql()
+{
     std::list<QString> migrateTable;
 
     std::list<QString> ctx;
@@ -309,9 +336,11 @@ QString toBrowserTable::sql() {
     std::list<toDatatype *>::const_iterator datatype = Datatypes.begin();
     std::list<QLineEdit *>::const_iterator extra = Extra.begin();
     int num = 1;
-    while (name != ColumnNames.end() && datatype != Datatypes.end() && extra != Extra.end()) {
+    while (name != ColumnNames.end() && datatype != Datatypes.end() && extra != Extra.end())
+    {
         QString cname;
-        if (column != Columns.end()) {
+        if (column != Columns.end())
+        {
             cname = (*column).Name;
             if ((*name)->text() != (*column).Name)
                 toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, "RENAME", (*name)->text());
@@ -341,12 +370,14 @@ QString toBrowserTable::sql() {
     return Extractor.migrate(OriginalDescription, migrateTable);
 }
 
-void toBrowserTable::displaySQL() {
+void toBrowserTable::displaySQL()
+{
     toMemoEditor memo(this, sql(), -1, -1, true, true);
     memo.exec();
 }
 
-void toBrowserTable::addColumn() {
+void toBrowserTable::addColumn()
+{
     ColumnNumber++;
     QLineEdit *tl;
     toDatatype *td;
@@ -368,19 +399,23 @@ void toBrowserTable::addColumn() {
     Extra.insert(Extra.end(), tl);
 }
 
-void toBrowserTable::removeColumn() {
+void toBrowserTable::removeColumn()
+{
     // Not implemented yet
 }
 
-void toBrowserTable::toggleCustom(bool val) {
+void toBrowserTable::toggleCustom(bool val)
+{
     for (std::list<toDatatype *>::iterator i = Datatypes.begin();i != Datatypes.end();i++)
         (*i)->setCustom(val);
 }
 
-void toBrowserTable::uglyWorkaround() {
+void toBrowserTable::uglyWorkaround()
+{
     // Somehome the size doesn't get updated until way later so just
     // keep calling until it gets set.
-    if (ColumnList->width() > 220 || UglyFlag) {
+    if (ColumnList->width() > 220 || UglyFlag)
+    {
         ColumnGrid->setFixedWidth(ColumnList->width() - 30);
         UglyFlag = true;
     }
@@ -388,7 +423,8 @@ void toBrowserTable::uglyWorkaround() {
         QTimer::singleShot(100, this, SLOT(uglyWorkaround()));
 }
 
-void toBrowserTable::resizeEvent(QResizeEvent *e) {
+void toBrowserTable::resizeEvent(QResizeEvent *e)
+{
     QDialog::resizeEvent(e);
     uglyWorkaround();
 }

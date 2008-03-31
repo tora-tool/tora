@@ -58,7 +58,8 @@ class QScrollBar;
  * throbber (Not implemented yet).
  *
  */
-class toLineChart : public QWidget {
+class toLineChart : public QWidget
+{
     Q_OBJECT;
 
     QMenu *Menu;

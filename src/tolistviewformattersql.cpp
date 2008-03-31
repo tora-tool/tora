@@ -21,7 +21,7 @@ toListViewFormatter* createSQL()
 {
     return new toListViewFormatterSQL();
 }
-    const bool registered = toListViewFormatterFactory::Instance().Register( toListViewFormatterIdentifier::SQL, createSQL );
+const bool registered = toListViewFormatterFactory::Instance().Register( toListViewFormatterIdentifier::SQL, createSQL );
 }
 
 
@@ -173,6 +173,7 @@ QString toListViewFormatterSQL::getFormattedString( toListView& tListView )
 
 
 QString toListViewFormatterSQL::getFormattedString(toExportSettings &settings,
-                                                   const toResultModel *model) {
+        const toResultModel *model)
+{
     return QString::null;
 }

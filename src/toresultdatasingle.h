@@ -54,7 +54,8 @@ class QLineEdit;
  * This widget is used for single record view in the content editor.
  *
  */
-class toResultDataSingle : public QWidget {
+class toResultDataSingle : public QWidget
+{
     Q_OBJECT;
 
     int Row;

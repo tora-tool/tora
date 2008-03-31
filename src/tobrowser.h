@@ -62,7 +62,8 @@ class toMySQLUserAccess;
 class toResultTableView;
 
 
-class toBrowser : public toToolWidget {
+class toBrowser : public toToolWidget
+{
     Q_OBJECT;
 
     toResultCombo *Schema;
@@ -169,7 +170,8 @@ protected:
     virtual void closeEvent(QCloseEvent *);
 };
 
-class toBrowseTemplate : public QObject, public toTemplateProvider {
+class toBrowseTemplate : public QObject, public toTemplateProvider
+{
     Q_OBJECT;
 
     QToolButton                 *FilterButton;
@@ -179,14 +181,16 @@ class toBrowseTemplate : public QObject, public toTemplateProvider {
 
 public:
     toBrowseTemplate(void)
-        : QObject(NULL), toTemplateProvider("Browser") {
+            : QObject(NULL), toTemplateProvider("Browser")
+    {
         Registered = false;
         Filter = NULL;
     }
 
     virtual void insertItems(toTreeWidget *parent, QToolBar *toolbar);
     virtual void removeItem(toTreeWidgetItem *item);
-    toBrowserFilter *filter(void) {
+    toBrowserFilter *filter(void)
+    {
         return Filter;
     }
     virtual void exportData(std::map<QString, QString> &data,
@@ -202,7 +206,8 @@ public slots:
 };
 
 
-class toBrowseButton : public QToolButton {
+class toBrowseButton : public QToolButton
+{
     Q_OBJECT;
 
 public:
@@ -218,7 +223,8 @@ private slots:
     void connectionChanged(void);
 };
 
-class toBrowserTool : public toTool {
+class toBrowserTool : public toTool
+{
     Q_OBJECT;
 
 protected:

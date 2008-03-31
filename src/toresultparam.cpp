@@ -103,9 +103,10 @@ bool toResultParam::canHandle(toConnection &conn)
 }
 
 toResultParam::toResultParam(QWidget *parent, const char *name)
-    : QWidget(parent) {
+        : QWidget(parent)
+{
 
-    if(name)
+    if (name)
         setObjectName(name);
 
     QVBoxLayout *vbox = new QVBoxLayout;
@@ -119,14 +120,16 @@ toResultParam::toResultParam(QWidget *parent, const char *name)
     Toggle = new QToolButton(toolbar);
     Toggle->setCheckable(true);
 
-    if (toIsOracle(connection())) {
+    if (toIsOracle(connection()))
+    {
         Toggle->setIcon(QIcon(QPixmap(const_cast<const char**>(scansource_xpm))));
         connect(Toggle, SIGNAL(toggled(bool)), this, SLOT(showHidden(bool)));
         Toggle->setToolTip(
             tr("Display hidden parameters. This will only work if you are "
                "logged in as the sys user."));
     }
-    else {
+    else
+    {
         QIcon iconset(QPixmap(const_cast<const char**>(tocurrent_xpm)));
         iconset.addPixmap(QPixmap(const_cast<const char**>(database_xpm)),
                           QIcon::Normal,
@@ -147,7 +150,8 @@ toResultParam::toResultParam(QWidget *parent, const char *name)
 
     toolbar->addSeparator();
 
-    if (toIsOracle(connection())) {
+    if (toIsOracle(connection()))
+    {
         toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(database_xpm))),
                            tr("Apply changes to system"),
                            this,
@@ -158,14 +162,16 @@ toResultParam::toResultParam(QWidget *parent, const char *name)
                            this,
                            SLOT(applySession()));
     }
-    else {
+    else
+    {
         toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(commit_xpm))),
                            tr("Apply changes"),
                            this,
                            SLOT(applyChanges()));
     }
 
-    if (toIsOracle(connection())) {
+    if (toIsOracle(connection()))
+    {
         toolbar->addSeparator();
 
         toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(trash_xpm))),

@@ -49,7 +49,8 @@
 #include "totool.h"
 
 
-class toHelpAddFile : public QDialog, public Ui::toHelpAddFileUI {
+class toHelpAddFile : public QDialog, public Ui::toHelpAddFileUI
+{
     Q_OBJECT;
 
 public:
@@ -62,8 +63,9 @@ public slots:
 
 
 class toHelpPrefs : public QWidget,
-    public Ui::toHelpSetupUI,
-    public toSettingTab {
+            public Ui::toHelpSetupUI,
+            public toSettingTab
+{
 
     Q_OBJECT;
 

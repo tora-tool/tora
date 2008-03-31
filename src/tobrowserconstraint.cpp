@@ -81,7 +81,7 @@ void toBrowserConstraint::modifyConstraint(toConnection &conn, const QString &ow
                 if (i >= 0)
                     conn.execute(sql.mid(0, i + 1));
                 qApp->processEvents();
-                if(prog.wasCanceled())
+                if (prog.wasCanceled())
                     throw tr("Canceled ongoing constraint modification, constraints might be corrupt");
             }
         }
@@ -90,7 +90,7 @@ void toBrowserConstraint::modifyConstraint(toConnection &conn, const QString &ow
 }
 
 toBrowserConstraint::toBrowserConstraint(toConnection &conn, const QString &owner, const QString &table, QWidget *parent, const char *name)
-    : QDialog(parent), toConnectionWidget(conn, this), Extractor(conn, NULL)
+        : QDialog(parent), toConnectionWidget(conn, this), Extractor(conn, NULL)
 {
     setObjectName(name);
     setModal(true);

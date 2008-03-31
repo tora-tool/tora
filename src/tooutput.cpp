@@ -71,14 +71,15 @@
 
 // #define CONF_POLLING     "Refresh"
 // #define DEFAULT_POLLING  "10 seconds"
-// 
+//
 // #define CONF_LOG_TYPE  "Type"
 // #define DEFAULT_LOG_TYPE "0"
-// 
+//
 // #define CONF_LOG_USER  "LogUser"
 // #define DEFAULT_LOG_USER "ULOG"
 
-class toOutputPrefs : public QGroupBox, public toSettingTab {
+class toOutputPrefs : public QGroupBox, public toSettingTab
+{
     QComboBox *AutoPolling;
     QComboBox *Type;
     QLineEdit *User;
@@ -86,10 +87,11 @@ class toOutputPrefs : public QGroupBox, public toSettingTab {
 
 public:
     toOutputPrefs(toTool *tool, QWidget* parent = 0, const char* name = 0)
-        : QGroupBox(parent),
-          toSettingTab("output.html"), Tool(tool) {
+            : QGroupBox(parent),
+            toSettingTab("output.html"), Tool(tool)
+    {
 
-        if(name)
+        if (name)
             setObjectName(name);
 
         QVBoxLayout *vbox = new QVBoxLayout;
@@ -99,7 +101,7 @@ public:
         setTitle(qApp->translate("toOutputPrefs", "SQL Output"));
 
         QLabel *label = new QLabel(qApp->translate("toOutputPrefs",
-                                                   "&Polling timeout"),
+                                   "&Polling timeout"),
                                    this);
         label->setGeometry(QRect(20, 30, 100, 20));
         label->setToolTip(qApp->translate("toOutputPrefs",
@@ -107,9 +109,9 @@ public:
         vbox->addWidget(label);
 
         AutoPolling = toRefreshCreate(
-            this,
-            TO_TOOLBAR_WIDGET_NAME,
-            toConfigurationSingle::Instance().polling());
+                          this,
+                          TO_TOOLBAR_WIDGET_NAME,
+                          toConfigurationSingle::Instance().polling());
         label->setBuddy(AutoPolling);
         vbox->addWidget(AutoPolling);
 
@@ -130,58 +132,68 @@ public:
                            this);
         vbox->addWidget(label);
 
-		User = new QLineEdit(toConfigurationSingle::Instance().logUser(),
+        User = new QLineEdit(toConfigurationSingle::Instance().logUser(),
                              this);
         label->setBuddy(User);
         vbox->addWidget(User);
 
         vbox->addStretch();
     }
-    virtual void saveSetting(void) {
-		toConfigurationSingle::Instance().setPolling(AutoPolling->currentText());
-		toConfigurationSingle::Instance().setLogType(Type->currentIndex());
-		toConfigurationSingle::Instance().setLogUser(User->text());
+    virtual void saveSetting(void)
+    {
+        toConfigurationSingle::Instance().setPolling(AutoPolling->currentText());
+        toConfigurationSingle::Instance().setLogType(Type->currentIndex());
+        toConfigurationSingle::Instance().setLogUser(User->text());
     }
 };
 
-class toOutputTool : public toTool {
+class toOutputTool : public toTool
+{
 protected:
     std::map<toConnection *, QWidget *> Windows;
 
-    virtual const char **pictureXPM(void) {
+    virtual const char **pictureXPM(void)
+    {
         return const_cast<const char**>(tooutput_xpm);
     }
 
 public:
     toOutputTool()
-        : toTool(340, "SQL Output") {
+            : toTool(340, "SQL Output")
+    {
     }
 
-    virtual const char *menuItem() {
+    virtual const char *menuItem()
+    {
         return "SQL Output";
     }
 
-    virtual QWidget *toolWindow(QWidget *parent, toConnection &connection) {
+    virtual QWidget *toolWindow(QWidget *parent, toConnection &connection)
+    {
         std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
-        if (i != Windows.end()) {
+        if (i != Windows.end())
+        {
             (*i).second->raise();
             (*i).second->setFocus();
             return NULL;
         }
-        else {
+        else
+        {
             QWidget *window = new toLogOutput(parent, connection);
             Windows[&connection] = window;
             return window;
         }
     }
 
-    void closeWindow(toConnection &connection) {
+    void closeWindow(toConnection &connection)
+    {
         std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
         if (i != Windows.end())
             Windows.erase(i);
     }
 
-    virtual QWidget *configurationTab(QWidget *parent) {
+    virtual QWidget *configurationTab(QWidget *parent)
+    {
         return new toOutputPrefs(this, parent);
     }
 };
@@ -189,7 +201,8 @@ public:
 static toOutputTool OutputTool;
 
 toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
-    : toToolWidget(OutputTool, "output.html", main, connection) {
+        : toToolWidget(OutputTool, "output.html", main, connection)
+{
 
     Toolbar = toAllocBar(this, tr("SQL Output"));
     layout()->addWidget(Toolbar);
@@ -249,22 +262,26 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
             this,
             SLOT(windowActivated(QWidget *)));
 
-    try {
+    try
+    {
         connect(timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
-		toRefreshParse(timer(), toConfigurationSingle::Instance().polling());
+        toRefreshParse(timer(), toConfigurationSingle::Instance().polling());
     }
     TOCATCH;
 
-    if(enabled)
+    if (enabled)
         disable(false);
 
     setFocusProxy(Output);
 }
 
 
-void toOutput::windowActivated(QWidget *widget) {
-    if(widget == this) {
-        if(!ToolMenu) {
+void toOutput::windowActivated(QWidget *widget)
+{
+    if (widget == this)
+    {
+        if (!ToolMenu)
+        {
             ToolMenu = new QMenu(tr("&Output"), this);
 
             ToolMenu->addAction(refreshAct);
@@ -277,7 +294,8 @@ void toOutput::windowActivated(QWidget *widget) {
             toMainWidget()->addCustomMenu(ToolMenu);
         }
     }
-    else {
+    else
+    {
         delete ToolMenu;
         ToolMenu = NULL;
     }
@@ -294,12 +312,15 @@ static toSQL SQLDisable("toOutput:Disable",
                         "END;",
                         "Disable output collection");
 
-void toOutput::toggleMenu() {
+void toOutput::toggleMenu()
+{
     enableAct->setChecked(!enableAct->isChecked());
 }
 
-void toOutput::disable(bool dis) {
-    try {
+void toOutput::disable(bool dis)
+{
+    try
+    {
         if (dis)
             connection().allExecute(SQLDisable);
         else
@@ -310,17 +331,21 @@ void toOutput::disable(bool dis) {
         else
             connection().addInit(str);
     }
-    catch (...) {
+    catch (...)
+    {
         toStatusMessage(tr("Couldn't enable/disable output for session"));
     }
 }
 
-toOutput::~toOutput() {
+toOutput::~toOutput()
+{
 }
 
 
-void toOutput::closeEvent(QCloseEvent *event) {
-    try {
+void toOutput::closeEvent(QCloseEvent *event)
+{
+    try
+    {
         disable(true);
         OutputTool.closeWindow(connection());
     }
@@ -338,18 +363,23 @@ static toSQL SQLLines("toOutput:Poll",
                       "END;",
                       "Get lines from SQL Output, must use same bindings");
 
-void toOutput::poll() {
-    try {
+void toOutput::poll()
+{
+    try
+    {
         bool any;
-        do {
+        do
+        {
             toQList params;
             toQuery query(connection(), toQuery::All, SQLLines, params);
 
             any = false;
-            while (!query.eof()) {
+            while (!query.eof())
+            {
                 QString line = query.readValueNull();
                 int status = query.readValueNull().toInt();
-                if (status == 0) {
+                if (status == 0)
+                {
                     any = true;
                     if (!line.isNull()) insertLine(line);
                 }
@@ -360,22 +390,27 @@ void toOutput::poll() {
     TOCATCH;
 }
 
-void toOutput::refresh(void) {
+void toOutput::refresh(void)
+{
     poll();
 }
 
-void toOutput::clear(void) {
+void toOutput::clear(void)
+{
     Output->clear();
 }
 
-void toOutput::changeRefresh(const QString &str) {
-    try {
+void toOutput::changeRefresh(const QString &str)
+{
+    try
+    {
         toRefreshParse(timer(), str);
     }
     TOCATCH;
 }
 
-bool toOutput::enabled(void) {
+bool toOutput::enabled(void)
+{
     return !enableAct->isChecked();
 }
 
@@ -396,11 +431,12 @@ static toSQL SQLLog("toLogOutput:Poll",
                     "Poll data from PL/SQL log table");
 
 toLogOutput::toLogOutput(QWidget *parent, toConnection &connection)
-    : toOutput(parent, connection) {
+        : toOutput(parent, connection)
+{
     Type = new QComboBox(toolBar());
     Type->addItem(tr("SQL Output"));
     Type->addItem(tr("Log4PL/SQL"));
-	Type->setCurrentIndex(toConfigurationSingle::Instance().logType());
+    Type->setCurrentIndex(toConfigurationSingle::Instance().logType());
     toolBar()->addWidget(Type);
     connect(Type, SIGNAL(activated(int)), this, SLOT(changeType()));
 
@@ -408,21 +444,26 @@ toLogOutput::toLogOutput(QWidget *parent, toConnection &connection)
     changeType();
 }
 
-void toLogOutput::refresh(void) {
-    if (Type->currentIndex() == 1) {
+void toLogOutput::refresh(void)
+{
+    if (Type->currentIndex() == 1)
+    {
         Log->setSQL(QString::null);
-		Log->query(SQLLog(connection()).arg(toConfigurationSingle::Instance().logUser()));
+        Log->query(SQLLog(connection()).arg(toConfigurationSingle::Instance().logUser()));
     }
     toOutput::refresh();
 }
 
-void toLogOutput::changeType(void) {
-    if (Type->currentIndex() == 1) {
+void toLogOutput::changeType(void)
+{
+    if (Type->currentIndex() == 1)
+    {
         output()->hide();
         Log->show();
         refresh();
     }
-    else {
+    else
+    {
         output()->show();
         Log->hide();
     }

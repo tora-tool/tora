@@ -66,9 +66,9 @@
 
 
 toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags fl)
-    : QWidget(parent, fl), toSettingTab("preferences.html#global")
+        : QWidget(parent, fl), toSettingTab("preferences.html#global")
 {
-    if(name)
+    if (name)
         setObjectName(name);
 
     setupUi(this);
@@ -81,7 +81,6 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     Status->setValue(toConfigurationSingle::Instance().statusMessage());
     HistorySize->setValue(toConfigurationSingle::Instance().statusSave());
     IncludeDB->setChecked(toConfigurationSingle::Instance().dbTitle());
-    MaximizeMain->setChecked(toConfigurationSingle::Instance().maximizeMain());
     Statusbar->setChecked(toConfigurationSingle::Instance().messageStatusbar());
     RestoreSession->setChecked(toConfigurationSingle::Instance().restoreSession());
     HelpDirectory->setText(toHelpPath());
@@ -115,7 +114,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
 
 #ifdef ENABLE_QT_XFT
 
-	AntialiaseFonts->setChecked(toConfigurationSingle::Instance().QtXft() != "false");
+    AntialiaseFonts->setChecked(toConfigurationSingle::Instance().QtXft() != "false");
 #else
 
     AntialiaseFonts->hide();
@@ -170,7 +169,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
 
 void toGlobalSetting::pluginBrowse(void)
 {
-	QString str = TOFileDialog::getExistingDirectory(this, tr("Open Plugin Directory"), PluginDirectory->text());
+    QString str = TOFileDialog::getExistingDirectory(this, tr("Open Plugin Directory"), PluginDirectory->text());
     if (!str.isEmpty())
         PluginDirectory->setText(str);
 }
@@ -206,48 +205,47 @@ void toGlobalSetting::cacheBrowse(void)
 void toGlobalSetting::saveSetting(void)
 {
     if (!toMonolithic())
-		toConfigurationSingle::Instance().setPluginDir(PluginDirectory->text());
-	toConfigurationSingle::Instance().setCacheDisk(DiskCaching->isChecked());
-	toConfigurationSingle::Instance().setCacheDir(CacheDirectory->text());
-	toConfigurationSingle::Instance().setSqlFile(CustomSQL->text());
-	toConfigurationSingle::Instance().setDefaultSession(DefaultSession->text());
-	toConfigurationSingle::Instance().setRefresh(Refresh->currentText());
-	toConfigurationSingle::Instance().setSavePassword(SavePassword->isChecked());
-	toConfigurationSingle::Instance().setDesktopAware(DesktopAware->isChecked());
-	toConfigurationSingle::Instance().setStatusMessage(Status->value());
-	toConfigurationSingle::Instance().setStatusSave(HistorySize->value());
-	toConfigurationSingle::Instance().setChartSamples(ChartSamples->value());
-	toConfigurationSingle::Instance().setConnectSize(ConnectHistory->value());
-	toConfigurationSingle::Instance().setMaximizeMain(MaximizeMain->isChecked());
-	toConfigurationSingle::Instance().setMessageStatusbar(Statusbar->isChecked());
+        toConfigurationSingle::Instance().setPluginDir(PluginDirectory->text());
+    toConfigurationSingle::Instance().setCacheDisk(DiskCaching->isChecked());
+    toConfigurationSingle::Instance().setCacheDir(CacheDirectory->text());
+    toConfigurationSingle::Instance().setSqlFile(CustomSQL->text());
+    toConfigurationSingle::Instance().setDefaultSession(DefaultSession->text());
+    toConfigurationSingle::Instance().setRefresh(Refresh->currentText());
+    toConfigurationSingle::Instance().setSavePassword(SavePassword->isChecked());
+    toConfigurationSingle::Instance().setDesktopAware(DesktopAware->isChecked());
+    toConfigurationSingle::Instance().setStatusMessage(Status->value());
+    toConfigurationSingle::Instance().setStatusSave(HistorySize->value());
+    toConfigurationSingle::Instance().setChartSamples(ChartSamples->value());
+    toConfigurationSingle::Instance().setConnectSize(ConnectHistory->value());
+    toConfigurationSingle::Instance().setMessageStatusbar(Statusbar->isChecked());
     toConfigurationSingle::Instance().setRestoreSession(RestoreSession->isChecked());
-	toConfigurationSingle::Instance().setToolsLeft(ToolsLeft->isChecked());
-	toConfigurationSingle::Instance().setDefaultFormat(DefaultFormat->currentIndex());
-	toConfigurationSingle::Instance().setToadBindings(ToadBindings->isChecked());
-	toConfigurationSingle::Instance().setDisplayGridlines(DisplayGrid->isChecked());
-	toConfigurationSingle::Instance().setChangeConnection(ChangeConnection->isChecked());
-	toConfigurationSingle::Instance().setDbTitle(IncludeDB->isChecked());
-	toConfigurationSingle::Instance().setSizeUnit(SizeUnit->currentText());
-	toConfigurationSingle::Instance().setHelpPath(HelpDirectory->text());
+    toConfigurationSingle::Instance().setToolsLeft(ToolsLeft->isChecked());
+    toConfigurationSingle::Instance().setDefaultFormat(DefaultFormat->currentIndex());
+    toConfigurationSingle::Instance().setToadBindings(ToadBindings->isChecked());
+    toConfigurationSingle::Instance().setDisplayGridlines(DisplayGrid->isChecked());
+    toConfigurationSingle::Instance().setChangeConnection(ChangeConnection->isChecked());
+    toConfigurationSingle::Instance().setDbTitle(IncludeDB->isChecked());
+    toConfigurationSingle::Instance().setSizeUnit(SizeUnit->currentText());
+    toConfigurationSingle::Instance().setHelpPath(HelpDirectory->text());
 
 #ifdef ENABLE_STYLE
-	toConfigurationSingle::Instance().setStyle(Style->currentText());
+    toConfigurationSingle::Instance().setStyle(Style->currentText());
     toSetSessionType(Style->currentText());
 #endif
 #ifdef ENABLE_QT_XFT
-	toConfigurationSingle::Instance().setQtXft(AntialiaseFonts->isChecked() ? "true" : "false");
+    toConfigurationSingle::Instance().setQtXft(AntialiaseFonts->isChecked() ? "true" : "false");
 #endif
 
     if (AllSamples->isChecked())
-		toConfigurationSingle::Instance().setDisplaySamples(-1);
+        toConfigurationSingle::Instance().setDisplaySamples(-1);
     else
-		toConfigurationSingle::Instance().setDisplaySamples(DisplaySamples->value());
+        toConfigurationSingle::Instance().setDisplaySamples(DisplaySamples->value());
     if (UnlimitedSamples->isChecked())
-		toConfigurationSingle::Instance().setChartSamples(-1);
+        toConfigurationSingle::Instance().setChartSamples(-1);
     else
-		toConfigurationSingle::Instance().setChartSamples(ChartSamples->value());
+        toConfigurationSingle::Instance().setChartSamples(ChartSamples->value());
 
-	toConfigurationSingle::Instance().setLocale(Locale->text());
+    toConfigurationSingle::Instance().setLocale(Locale->text());
 
     toConfigurationSingle::Instance().setSmtp(SmtpServer->text());
     toConfigurationSingle::Instance().setSmtpPort(SmtpPort->value());
@@ -262,19 +260,20 @@ void toDatabaseSetting::IndicateEmptyColor_clicked()
 {
     QPalette palette = IndicateEmptyColor->palette();
     QColor c = QColorDialog::getColor(
-        palette.color(IndicateEmptyColor->backgroundRole()),
-        this);
+                   palette.color(IndicateEmptyColor->backgroundRole()),
+                   this);
 
-    if(c.isValid()) {
+    if (c.isValid())
+    {
         palette.setColor(IndicateEmptyColor->backgroundRole(), c);
         IndicateEmptyColor->setPalette(palette);
     }
 }
 
 toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFlags fl)
-    : QWidget(parent, fl), toSettingTab("database.html")
+        : QWidget(parent, fl), toSettingTab("database.html")
 {
-    if(name)
+    if (name)
         setObjectName(name);
     setupUi(this);
 
@@ -305,7 +304,7 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
     AutoCommit->setChecked(toConfigurationSingle::Instance().autoCommit());
     DontReread->setChecked(toConfigurationSingle::Instance().dontReread());
     ObjectCache->setCurrentIndex(toConfigurationSingle::Instance().objectCache());
-	BkgndConnect->setChecked(toConfigurationSingle::Instance().bkgndConnect());
+    BkgndConnect->setChecked(toConfigurationSingle::Instance().bkgndConnect());
     IndicateEmpty->setChecked(toConfigurationSingle::Instance().indicateEmpty());
 
     QColor nullColor;
@@ -324,13 +323,13 @@ void toUpdateIndicateEmpty(void);
 
 void toDatabaseSetting::saveSetting(void)
 {
-	toConfigurationSingle::Instance().setMaxColDisp(MaxColDisp->value());
+    toConfigurationSingle::Instance().setMaxColDisp(MaxColDisp->value());
     if (ReadAll->isChecked())
-		toConfigurationSingle::Instance().setMaxNumber(-1);
+        toConfigurationSingle::Instance().setMaxNumber(-1);
     else
-		toConfigurationSingle::Instance().setMaxNumber(InitialFetch->value());
+        toConfigurationSingle::Instance().setMaxNumber(InitialFetch->value());
     if (UnlimitedContent->isChecked())
-		toConfigurationSingle::Instance().setMaxContent(-1);
+        toConfigurationSingle::Instance().setMaxContent(-1);
     else
     {
         int num = InitialFetch->value();
@@ -344,19 +343,19 @@ void toDatabaseSetting::saveSetting(void)
                                       tr("Doesn't make sense to have max content less than initial\n"
                                          "fetch size. Will adjust value to be higher."),
                                       tr("&Ok"));
-		toConfigurationSingle::Instance().setMaxContent(maxnum);
+        toConfigurationSingle::Instance().setMaxContent(maxnum);
     }
-	toConfigurationSingle::Instance().setAutoCommit(AutoCommit->isChecked());
-	toConfigurationSingle::Instance().setDontReread(DontReread->isChecked());
-	toConfigurationSingle::Instance().setObjectCache(ObjectCache->currentIndex());
-	toConfigurationSingle::Instance().setBkgndConnect(BkgndConnect->isChecked());
-	toConfigurationSingle::Instance().setAutoLong(AutoLong->isChecked() ? MoveAfter->value() : 0);
-	toConfigurationSingle::Instance().setIndicateEmpty(IndicateEmpty->isChecked());
-	toConfigurationSingle::Instance().setIndicateEmptyColor(IndicateEmptyColor->palette().color(IndicateEmptyColor->backgroundRole()).name());
-	toConfigurationSingle::Instance().setKeepAlive(KeepAlive->isChecked() ? DEFAULT_KEEP_ALIVE : -1); //FIXME: there was ""
+    toConfigurationSingle::Instance().setAutoCommit(AutoCommit->isChecked());
+    toConfigurationSingle::Instance().setDontReread(DontReread->isChecked());
+    toConfigurationSingle::Instance().setObjectCache(ObjectCache->currentIndex());
+    toConfigurationSingle::Instance().setBkgndConnect(BkgndConnect->isChecked());
+    toConfigurationSingle::Instance().setAutoLong(AutoLong->isChecked() ? MoveAfter->value() : 0);
+    toConfigurationSingle::Instance().setIndicateEmpty(IndicateEmpty->isChecked());
+    toConfigurationSingle::Instance().setIndicateEmptyColor(IndicateEmptyColor->palette().color(IndicateEmptyColor->backgroundRole()).name());
+    toConfigurationSingle::Instance().setKeepAlive(KeepAlive->isChecked() ? DEFAULT_KEEP_ALIVE : -1); //FIXME: there was ""
 
-	toConfigurationSingle::Instance().setNumberFormat(NumberFormat->currentIndex());
-	toConfigurationSingle::Instance().setNumberDecimals(Decimals->value());
+    toConfigurationSingle::Instance().setNumberFormat(NumberFormat->currentIndex());
+    toConfigurationSingle::Instance().setNumberDecimals(Decimals->value());
     toQValue::setNumberFormat(NumberFormat->currentIndex(), Decimals->value());
 
     toMainWidget()->updateKeepAlive();
@@ -375,16 +374,17 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
         if ((*i).second->menuItem())
         {
             QString menuName = qApp->translate("toTool", (*i).second->menuItem());
-			DefaultTool->addItem(menuName);
+            DefaultTool->addItem(menuName);
             new toTreeWidgetItem(Enabled, menuName, (*i).second->name(), (*i).first);
         }
     }
 
-	ToolsMap tMap(toConfigurationSingle::Instance().tools());
-    for(QTreeWidgetItemIterator it(Enabled); (*it); it++) {
+    ToolsMap tMap(toConfigurationSingle::Instance().tools());
+    for (QTreeWidgetItemIterator it(Enabled); (*it); it++)
+    {
 //         QString tmp = (*it)->text(2).toLatin1();
 //         tmp += CONF_TOOL_ENABLE;
-		(*it)->setSelected(tMap[(*it)->text(2)]);
+        (*it)->setSelected(tMap[(*it)->text(2)]);
 //         if (!toConfigurationSingle::Instance().globalConfig(tmp, "Yes").isEmpty())
 //             (*it)->setSelected(true);
     }
@@ -409,7 +409,8 @@ void toToolSetting::changeEnable(void)
     DefaultTool->clear();
     int id = 0;
     int sel = 0;
-    for(QTreeWidgetItemIterator it(Enabled); (*it); it++) {
+    for (QTreeWidgetItemIterator it(Enabled); (*it); it++)
+    {
         if ((*it)->isSelected())
         {
             DefaultTool->insertItem(id, (*it)->text(0));
@@ -423,16 +424,17 @@ void toToolSetting::changeEnable(void)
 
 void toToolSetting::saveSetting(void)
 {
-	ToolsMap tMap(toConfigurationSingle::Instance().tools());
-    for(QTreeWidgetItemIterator it(Enabled); (*it); it++) {
-		tMap[(*it)->text(2)] = (*it)->isSelected();
-/*        QString str = (*it)->text(2).toLatin1();
-        str += CONF_TOOL_ENABLE;
-        toConfigurationSingle::Instance().globalSetConfig(str, (*it)->isSelected() ? "Yes" : "");
-*/
+    ToolsMap tMap(toConfigurationSingle::Instance().tools());
+    for (QTreeWidgetItemIterator it(Enabled); (*it); it++)
+    {
+        tMap[(*it)->text(2)] = (*it)->isSelected();
+        /*        QString str = (*it)->text(2).toLatin1();
+                str += CONF_TOOL_ENABLE;
+                toConfigurationSingle::Instance().globalSetConfig(str, (*it)->isSelected() ? "Yes" : "");
+        */
         if (DefaultTool->currentText() == (*it)->text(0))
-			toConfigurationSingle::Instance().setDefaultTool((*it)->text(2));
-		
+            toConfigurationSingle::Instance().setDefaultTool((*it)->text(2));
+
     }
-	toConfigurationSingle::Instance().setTools(tMap);
+    toConfigurationSingle::Instance().setTools(tMap);
 }

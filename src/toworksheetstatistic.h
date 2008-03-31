@@ -59,10 +59,12 @@ class toWorksheetStatistic;
 class QAction;
 
 
-class toWorksheetStatistic : public QWidget {
+class toWorksheetStatistic : public QWidget
+{
     Q_OBJECT;
 
-    struct data {
+    struct data
+    {
         QAction    *Action;
         QWidget    *Top;
         QLabel     *Label;
@@ -94,7 +96,7 @@ public:
 
     void addStatistics(std::map<QString, QString> &stats);
 
-    public slots:
+public slots:
 
     virtual void showPlans(bool);
     virtual void showCharts(bool);

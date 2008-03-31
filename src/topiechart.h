@@ -53,7 +53,8 @@ class toPieTip;
 /**
  * A widget that displays a piechart.
  */
-class toPieChart : public QWidget {
+class toPieChart : public QWidget
+{
     Q_OBJECT;
 
     std::list<double>  Values;

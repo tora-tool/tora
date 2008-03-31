@@ -776,13 +776,14 @@ void toSecurityRole::changeRole(const QString &role)
     TOCATCH
 }
 
-class toSecurityPage : public QWidget {
+class toSecurityPage : public QWidget
+{
     toSecurityRole *Role;
     toSecurityUser *User;
 
 public:
     toSecurityPage(toSecurityQuota *quota, toConnection &conn, QWidget *parent)
-        : QWidget(parent)
+            : QWidget(parent)
     {
         QVBoxLayout *vbox = new QVBoxLayout;
         vbox->setSpacing(0);
@@ -1604,9 +1605,12 @@ toSecurity::toSecurity(QWidget *main, toConnection &connection)
     setFocusProxy(Tabs);
 }
 
-void toSecurity::windowActivated(QWidget *widget) {
-    if(widget == this) {
-        if(!ToolMenu) {
+void toSecurity::windowActivated(QWidget *widget)
+{
+    if (widget == this)
+    {
+        if (!ToolMenu)
+        {
             ToolMenu = new QMenu(tr("&Security"), this);
 
             ToolMenu->addAction(UpdateListAct);
@@ -1629,7 +1633,8 @@ void toSecurity::windowActivated(QWidget *widget) {
             toMainWidget()->addCustomMenu(ToolMenu);
         }
     }
-    else {
+    else
+    {
         delete ToolMenu;
         ToolMenu = NULL;
     }

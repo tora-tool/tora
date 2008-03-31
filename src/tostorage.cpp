@@ -108,17 +108,17 @@ toStoragePrefs::toStoragePrefs(toTool *tool, QWidget* parent, const char* name)
     setupUi(this);
 
     DispCoalesced->setChecked(toConfigurationSingle::Instance().dispCoalesced());
-	DispExtents->setChecked(toConfigurationSingle::Instance().dispExtents());
-	DispTablespaces->setChecked(toConfigurationSingle::Instance().dispTablespaces());
-	DispAvailableGraph->setChecked(toConfigurationSingle::Instance().dispAvailableGraph());
+    DispExtents->setChecked(toConfigurationSingle::Instance().dispExtents());
+    DispTablespaces->setChecked(toConfigurationSingle::Instance().dispTablespaces());
+    DispAvailableGraph->setChecked(toConfigurationSingle::Instance().dispAvailableGraph());
 }
 
 void toStoragePrefs::saveSetting(void)
 {
-	toConfigurationSingle::Instance().setDispCoalesced(DispCoalesced->isChecked());
-	toConfigurationSingle::Instance().setDispExtents(DispExtents->isChecked());
-	toConfigurationSingle::Instance().setDispTablespaces(DispTablespaces->isChecked());
-	toConfigurationSingle::Instance().setDispAvailableGraph(DispAvailableGraph->isChecked());
+    toConfigurationSingle::Instance().setDispCoalesced(DispCoalesced->isChecked());
+    toConfigurationSingle::Instance().setDispExtents(DispExtents->isChecked());
+    toConfigurationSingle::Instance().setDispTablespaces(DispTablespaces->isChecked());
+    toConfigurationSingle::Instance().setDispAvailableGraph(DispAvailableGraph->isChecked());
 }
 
 class toStorageTool : public toTool
@@ -148,7 +148,8 @@ public:
 };
 
 toDropTablespace::toDropTablespace(QWidget* parent, const char* name, Qt::WFlags fl)
-    : QWidget(parent, fl) {
+        : QWidget(parent, fl)
+{
     setupUi(this);
     if (!name)
         setObjectName("toDropTablespace");
@@ -175,11 +176,12 @@ std::list<QString> toDropTablespace::sql()
 
 
 toStorageTablespace::toStorageTablespace(QWidget* parent, const char* name, Qt::WFlags fl)
-    : QWidget(parent, fl) {
+        : QWidget(parent, fl)
+{
     setupUi(this);
     Modify = false;
 
-    if(!name)
+    if (!name)
         setObjectName("toStorageTablespace");
     else
         setObjectName(name);
@@ -290,15 +292,16 @@ std::list<QString> toStorageTablespace::sql()
 }
 
 toStorageDatafile::toStorageDatafile(bool temp, bool dispName, QWidget* parent, const char* name, Qt::WFlags fl)
-    : QWidget(parent, fl),
-      Tempfile(temp) {
+        : QWidget(parent, fl),
+        Tempfile(temp)
+{
 
     setupUi(this);
 
     Modify = false;
     InitialSizeOrig = NextSizeOrig = MaximumSizeOrig = 0;
 
-    if(!name)
+    if (!name)
         setObjectName("DataFile");
     else
         setObjectName(name);
@@ -845,7 +848,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     ExtentAct = new QAction(QPixmap(const_cast<const char**>(storageextents_xpm)),
                             tr("Show extent view."), this);
     ExtentAct->setCheckable(true);
-	bool extents = toConfigurationSingle::Instance().dispExtents();
+    bool extents = toConfigurationSingle::Instance().dispExtents();
     if (extents)
         ExtentAct->setChecked(true);
     toolbar->addAction(ExtentAct);
@@ -855,7 +858,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     TablespaceAct = new QAction(QPixmap(const_cast<const char**>(tostorage_xpm)),
                                 tr("Show tablespaces or just datafiles."), this);
     TablespaceAct->setCheckable(true);
-	bool tablespaces = toConfigurationSingle::Instance().dispTablespaces();
+    bool tablespaces = toConfigurationSingle::Instance().dispTablespaces();
     if (tablespaces)
         TablespaceAct->setChecked(true);
     toolbar->addAction(TablespaceAct);
@@ -946,7 +949,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     QSplitter *splitter = new QSplitter(Qt::Vertical, this);
     layout()->addWidget(splitter);
 
-	Storage = new toResultStorage(toConfigurationSingle::Instance().dispAvailableGraph(),
+    Storage = new toResultStorage(toConfigurationSingle::Instance().dispAvailableGraph(),
                                   splitter);
     ExtentParent = new QSplitter(Qt::Horizontal, splitter);
     Objects = new toListView(ExtentParent);
@@ -983,9 +986,12 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
 }
 
 
-void toStorage::windowActivated(QWidget *widget) {
-    if (widget == this) {
-        if (!ToolMenu) {
+void toStorage::windowActivated(QWidget *widget)
+{
+    if (widget == this)
+    {
+        if (!ToolMenu)
+        {
             ToolMenu = new QMenu(tr("&Storage"), this);
 
             ToolMenu->addAction(UpdateAct);
@@ -1020,7 +1026,8 @@ void toStorage::windowActivated(QWidget *widget) {
             toMainWidget()->addCustomMenu(ToolMenu);
         }
     }
-    else {
+    else
+    {
         delete ToolMenu;
         ToolMenu = NULL;
     }
@@ -1028,7 +1035,7 @@ void toStorage::windowActivated(QWidget *widget) {
 
 void toStorage::refresh(void)
 {
-	Storage->showCoalesced(toConfigurationSingle::Instance().dispCoalesced());
+    Storage->showCoalesced(toConfigurationSingle::Instance().dispCoalesced());
     Storage->query();
 }
 

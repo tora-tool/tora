@@ -66,7 +66,8 @@
 toAnalyze *toWorksheetStatistic::Widget;
 
 toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
-    : QWidget(parent) {
+        : QWidget(parent)
+{
 
     QVBoxLayout *vlayout = new QVBoxLayout;
     vlayout->setSpacing(0);
@@ -124,7 +125,8 @@ toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
 
     Dummy = new QWidget(Splitter);
 
-    try {
+    try
+    {
         Tool = dynamic_cast<toAnalyze *>(toCurrentTool(this));
         if (!Widget)
             Widget = Tool;
@@ -134,19 +136,22 @@ toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
     setLayout(vlayout);
 }
 
-toWorksheetStatistic::~toWorksheetStatistic() {
+toWorksheetStatistic::~toWorksheetStatistic()
+{
     if (Widget == Tool)
         Widget = NULL;
 }
 
-void toWorksheetStatistic::saveStatistics(std::map<QString, QString> &stats) {
+void toWorksheetStatistic::saveStatistics(std::map<QString, QString> &stats)
+{
     if (!Widget)
         toAnalyze::createTool();
     if (Widget)
         Widget->worksheet()->addStatistics(stats);
 }
 
-void toWorksheetStatistic::addStatistics(std::map<QString, QString> &stats) {
+void toWorksheetStatistic::addStatistics(std::map<QString, QString> &stats)
+{
     data cur;
     cur.Top = new QWidget(Splitter);
     QVBoxLayout *vbox = new QVBoxLayout;
@@ -194,14 +199,16 @@ void toWorksheetStatistic::addStatistics(std::map<QString, QString> &stats) {
     QList<int> sizes;
     sizes << 1 << 1 << 1 << 1;
     cur.Charts->setSizes(sizes);
-    if (!cur.Plan->firstChild()) {
+    if (!cur.Plan->firstChild())
+    {
         delete cur.Plan;
         cur.Plan = NULL;
     }
     else if (!ShowPlans->isChecked())
         cur.Plan->hide();
 
-    if (!ShowCharts->isChecked()) {
+    if (!ShowCharts->isChecked())
+    {
         cur.Statistics->hide();
         cur.Wait->hide();
         cur.IO->hide();
@@ -214,33 +221,43 @@ void toWorksheetStatistic::addStatistics(std::map<QString, QString> &stats) {
 
     Open.insert(Open.end(), cur);
 
-    if (Dummy) {
+    if (Dummy)
+    {
         delete Dummy;
         Dummy = NULL;
     }
 }
 
-void toWorksheetStatistic::showPlans(bool show) {
-    for (std::list<data>::iterator i = Open.begin();i != Open.end();i++) {
-        if ((*i).Plan) {
-            if (show) {
+void toWorksheetStatistic::showPlans(bool show)
+{
+    for (std::list<data>::iterator i = Open.begin();i != Open.end();i++)
+    {
+        if ((*i).Plan)
+        {
+            if (show)
+            {
                 (*i).Plan->show();
             }
-            else {
+            else
+            {
                 (*i).Plan->hide();
             }
         }
     }
 }
 
-void toWorksheetStatistic::showCharts(bool show) {
-    for (std::list<data>::iterator i = Open.begin();i != Open.end();i++) {
-        if (show) {
+void toWorksheetStatistic::showCharts(bool show)
+{
+    for (std::list<data>::iterator i = Open.begin();i != Open.end();i++)
+    {
+        if (show)
+        {
             (*i).Statistics->show();
             (*i).Wait->show();
             (*i).IO->show();
         }
-        else {
+        else
+        {
             (*i).Statistics->hide();
             (*i).Wait->hide();
             (*i).IO->hide();
@@ -248,11 +265,15 @@ void toWorksheetStatistic::showCharts(bool show) {
     }
 }
 
-void toWorksheetStatistic::save(QAction *action) {
-    for (std::list<data>::iterator i = Open.begin();i != Open.end();i++) {
-        if((*i).Action == action) {
+void toWorksheetStatistic::save(QAction *action)
+{
+    for (std::list<data>::iterator i = Open.begin();i != Open.end();i++)
+    {
+        if ((*i).Action == action)
+        {
             QString fn = toSaveFilename(QString::null, QString::fromLatin1("*.stat"), this);
-            if (!fn.isEmpty()) {
+            if (!fn.isEmpty())
+            {
                 std::map<QString, QString> stat;
                 (*i).Statistics->exportData(stat, "Stat");
                 (*i).IO->exportData(stat, "IO");
@@ -260,7 +281,8 @@ void toWorksheetStatistic::save(QAction *action) {
                 if ((*i).Plan)
                     (*i).Plan->exportData(stat, "Plan");
                 stat["Description"] = (*i).Label->text();
-                try {
+                try
+                {
                     toConfigurationSingle::Instance().saveMap(fn, stat);
                 }
                 TOCATCH;
@@ -270,11 +292,15 @@ void toWorksheetStatistic::save(QAction *action) {
     }
 }
 
-void toWorksheetStatistic::remove(QAction *action) {
-    for (std::list<data>::iterator i = Open.begin();i != Open.end();i++) {
-        if ((*i).Action == action) {
+void toWorksheetStatistic::remove(QAction *action)
+{
+    for (std::list<data>::iterator i = Open.begin();i != Open.end();i++)
+    {
+        if ((*i).Action == action)
+        {
             delete(*i).Top;
-            if (Open.size() == 1) {
+            if (Open.size() == 1)
+            {
                 Dummy = new QWidget(Splitter);
                 Dummy->show();
             }
@@ -284,10 +310,13 @@ void toWorksheetStatistic::remove(QAction *action) {
     }
 }
 
-void toWorksheetStatistic::load(void) {
+void toWorksheetStatistic::load(void)
+{
     QString filename = toOpenFilename(QString::null, QString::fromLatin1("*.stat"), this);
-    if (!filename.isEmpty()) {
-        try {
+    if (!filename.isEmpty())
+    {
+        try
+        {
             std::map<QString, QString> ret;
             toConfigurationSingle::Instance().loadMap(filename, ret);
             addStatistics(ret);
@@ -296,10 +325,12 @@ void toWorksheetStatistic::load(void) {
     }
 }
 
-void toWorksheetStatistic::displayMenu(void) {
+void toWorksheetStatistic::displayMenu(void)
+{
     SaveMenu->clear();
     RemoveMenu->clear();
-    for (std::list<data>::iterator i = Open.begin(); i != Open.end(); i++) {
+    for (std::list<data>::iterator i = Open.begin(); i != Open.end(); i++)
+    {
         SaveMenu->addAction((*i).Action);
         RemoveMenu->addAction((*i).Action);
     }

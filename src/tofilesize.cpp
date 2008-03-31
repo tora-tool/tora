@@ -47,7 +47,8 @@
 #include "tofilesize.h"
 
 
-void toFilesize::setup() {
+void toFilesize::setup()
+{
     QVBoxLayout *vlayout = new QVBoxLayout(this);
     vlayout->addSpacing(15);
     setLayout(vlayout);
@@ -85,15 +86,17 @@ void toFilesize::setup() {
 }
 
 toFilesize::toFilesize(QWidget* parent, const char* name)
-    : QGroupBox(parent) {
-    if(name)
+        : QGroupBox(parent)
+{
+    if (name)
         setObjectName(name);
     setup();
 }
 
 toFilesize::toFilesize(const QString &title, QWidget* parent, const char* name)
-    : QGroupBox(parent) {
-    if(name)
+        : QGroupBox(parent)
+{
+    if (name)
         setObjectName(name);
     setup();
 }

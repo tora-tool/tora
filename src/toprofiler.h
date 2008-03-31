@@ -79,7 +79,8 @@ public slots:
     void execute(void);
     void changeObject(void);
     void calcTotals(void);
-    void noTables(void) {
+    void noTables(void)
+    {
         close();
     }
 };

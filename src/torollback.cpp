@@ -110,9 +110,9 @@ public:
 };
 
 toRollbackPrefs::toRollbackPrefs(toTool *tool, QWidget* parent, const char* name)
-    : QGroupBox(parent), toSettingTab("rollback.html#options"), Tool(tool)
+        : QGroupBox(parent), toSettingTab("rollback.html#options"), Tool(tool)
 {
-    if(name)
+    if (name)
         setObjectName(name);
 
     QVBoxLayout *vbox = new QVBoxLayout;
@@ -189,19 +189,19 @@ toRollbackPrefs::toRollbackPrefs(toTool *tool, QWidget* parent, const char* name
 //     if (!tool->config(CONF_ALIGN_LEFT, "Yes").isEmpty())
 //         AlignLeft->setChecked(true);
     OldEnable->setChecked(toConfigurationSingle::Instance().oldEnable());
-	NoExec->setChecked(toConfigurationSingle::Instance().noExec());
-	NeedRead->setChecked(toConfigurationSingle::Instance().needRead());
-	NeedTwo->setChecked(toConfigurationSingle::Instance().needTwo());
-	AlignLeft->setChecked(toConfigurationSingle::Instance().alignLeft());
+    NoExec->setChecked(toConfigurationSingle::Instance().noExec());
+    NeedRead->setChecked(toConfigurationSingle::Instance().needRead());
+    NeedTwo->setChecked(toConfigurationSingle::Instance().needTwo());
+    AlignLeft->setChecked(toConfigurationSingle::Instance().alignLeft());
 }
 
 void toRollbackPrefs::saveSetting(void)
 {
-	toConfigurationSingle::Instance().setNoExec(NoExec->isChecked());
-	toConfigurationSingle::Instance().setNeedRead(NeedRead->isChecked());
-	toConfigurationSingle::Instance().setNeedTwo(NeedTwo->isChecked());
-	toConfigurationSingle::Instance().setAlignLeft(AlignLeft->isChecked());
-	toConfigurationSingle::Instance().setOldEnable(OldEnable->isChecked());
+    toConfigurationSingle::Instance().setNoExec(NoExec->isChecked());
+    toConfigurationSingle::Instance().setNeedRead(NeedRead->isChecked());
+    toConfigurationSingle::Instance().setNeedTwo(NeedTwo->isChecked());
+    toConfigurationSingle::Instance().setAlignLeft(AlignLeft->isChecked());
+    toConfigurationSingle::Instance().setOldEnable(OldEnable->isChecked());
 }
 
 class toRollbackTool : public toTool
@@ -639,9 +639,9 @@ class openItem : public toResultViewItem
                 NumExtents = num;
             }
 
-			bool noExec = toConfigurationSingle::Instance().noExec();
-			bool needRead = toConfigurationSingle::Instance().needRead();
-			bool needTwo = toConfigurationSingle::Instance().needTwo();
+            bool noExec = toConfigurationSingle::Instance().noExec();
+            bool needRead = toConfigurationSingle::Instance().needRead();
+            bool needTwo = toConfigurationSingle::Instance().needTwo();
 //             if (RollbackTool.config(CONF_NO_EXEC, "Yes").isEmpty())
 //                 noExec = false;
 //             if (RollbackTool.config(CONF_NEED_READ, "Yes").isEmpty())
@@ -803,7 +803,7 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
     connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),
             this, SLOT(windowActivated(QWidget *)));
 
-	if (toConfigurationSingle::Instance().oldEnable())
+    if (toConfigurationSingle::Instance().oldEnable())
         enableOldAct->setChecked(true);
     else
         Statements->setEnabled(false);
@@ -813,9 +813,12 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
     setFocusProxy(Segments);
 }
 
-void toRollback::windowActivated(QWidget *widget) {
-    if (widget == this) {
-        if (!ToolMenu) {
+void toRollback::windowActivated(QWidget *widget)
+{
+    if (widget == this)
+    {
+        if (!ToolMenu)
+        {
             ToolMenu = new QMenu(tr("&Rollback"), this);
 
             ToolMenu->addAction(UpdateSegmentsAct);
@@ -835,7 +838,8 @@ void toRollback::windowActivated(QWidget *widget) {
             toMainWidget()->addCustomMenu(ToolMenu);
         }
     }
-    else {
+    else
+    {
         delete ToolMenu;
         ToolMenu = NULL;
     }
@@ -843,7 +847,7 @@ void toRollback::windowActivated(QWidget *widget) {
 
 void toRollback::refresh(void)
 {
-	BarsAlignLeft = toConfigurationSingle::Instance().alignLeft();
+    BarsAlignLeft = toConfigurationSingle::Instance().alignLeft();
 
     toTreeWidgetItem *item = Segments->selectedItem();
     QString current;

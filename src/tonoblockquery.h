@@ -51,17 +51,19 @@ class toResultStats;
  * blocking until a response is available from OCI.
  */
 
-class toNoBlockQuery : public QObject {
+class toNoBlockQuery : public QObject
+{
     Q_OBJECT;
 
 private:
     /** A task to implement running the query.
      */
-    class queryTask : public toTask {
+class queryTask : public toTask
+    {
         toNoBlockQuery &Parent;
     public:
-    queryTask(toNoBlockQuery &parent)
-        : Parent(parent)
+        queryTask(toNoBlockQuery &parent)
+                : Parent(parent)
         { }
         virtual void run(void);
     };
@@ -180,7 +182,8 @@ public:
      * return query's sql command
      *
      */
-    const QString sql(void) {
+    const QString sql(void)
+    {
         return SQL;
     }
 };

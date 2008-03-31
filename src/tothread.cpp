@@ -79,17 +79,19 @@ std::list<toThread *> *toThread::Threads;
 toLock *toThread::Lock;
 QThread *toThread::MainThread = NULL;
 
-void toThread::setMainThread(QThread *main) {
+void toThread::setMainThread(QThread *main)
+{
     toThread::MainThread = main;
 }
 
-bool toThread::mainThread(void) {
+bool toThread::mainThread(void)
+{
     return toThread::MainThread == QThread::currentThread();
 }
 
 toThread::toThread(toTask *task)
 {
-	Thread = new taskRunner(task);
+    Thread = new taskRunner(task);
     if (!Threads)
         Threads = new std::list<toThread *>;
     if (!Lock)
@@ -98,7 +100,7 @@ toThread::toThread(toTask *task)
 
 toThread::~toThread()
 {
-	delete Thread;
+    delete Thread;
 }
 
 void toThread::start(void)
@@ -133,17 +135,17 @@ void taskRunner::run(void)
 {
     try
     {
-		toThread::Lock->lock ()
+        toThread::Lock->lock ()
         ;
         StartSemaphore.up();
         toThread::mainThread();
-		toThread::Lock->unlock();
+        toThread::Lock->unlock();
         Task->run();
-		toThread::Lock->lock ()
+        toThread::Lock->lock ()
         ;
         delete Task;
         Task = NULL;
-		toThread::Lock->unlock();
+        toThread::Lock->unlock();
     }
     catch (const QString &exc)
     {
@@ -157,7 +159,7 @@ void taskRunner::run(void)
 
     // This is a cludge to clean up finnished threads, there won't be many hanging at least
 
-	toThread::Lock->lock ()
+    toThread::Lock->lock ()
     ;
     for (std::list<toThread *>::iterator i = toThread::Threads->begin();
             i != toThread::Threads->end();)
@@ -165,11 +167,11 @@ void taskRunner::run(void)
         if ((*i)->Thread->isFinished())
         {
             delete (*i);
-			toThread::Threads->erase(i);
-			i = toThread::Threads->begin();
+            toThread::Threads->erase(i);
+            i = toThread::Threads->begin();
         }
         else
             i++;
     }
-	toThread::Lock->unlock();
+    toThread::Lock->unlock();
 }

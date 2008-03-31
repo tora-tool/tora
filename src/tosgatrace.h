@@ -55,7 +55,8 @@ class toResultTableView;
 class toSGAStatement;
 class toTool;
 
-class toSGATrace : public toToolWidget {
+class toSGATrace : public toToolWidget
+{
     Q_OBJECT;
 
     toResultTableView *Trace;

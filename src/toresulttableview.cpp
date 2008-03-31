@@ -63,19 +63,22 @@
  * view.
  *
  */
-class toResultTableViewDelegate : public QItemDelegate {
+class toResultTableViewDelegate : public QItemDelegate
+{
     static const int maxWidth = 200; // the maximum size to grow a column
 
 public:
     toResultTableViewDelegate(QObject *parent = 0)
-        : QItemDelegate(parent) {
+            : QItemDelegate(parent)
+    {
     }
 
 
     virtual QSize sizeHint(const QStyleOptionViewItem &option,
-                           const QModelIndex &index) const {
+                           const QModelIndex &index) const
+    {
         QSize size = QItemDelegate::sizeHint(option, index);
-        if(size.width() > maxWidth)
+        if (size.width() > maxWidth)
             size.setWidth(maxWidth);
 
         return size;
@@ -88,22 +91,23 @@ toResultTableView::toResultTableView(bool readable,
                                      QWidget *parent,
                                      const char *name,
                                      bool editable)
-    : QTableView(parent),
-      toResult(),
-      toEditWidget(false,       // open
-                   true,        // save
-                   true,        // print
-                   false,       // undo
-                   false,       // redo
-                   false,       // cut
-                   false,       // copy
-                   false,       // past
-                   true,        // search
-                   true,        // selectall
-                   false),      // readall
-      Model(NULL) {
+        : QTableView(parent),
+        toResult(),
+        toEditWidget(false,       // open
+                     true,        // save
+                     true,        // print
+                     false,       // undo
+                     false,       // redo
+                     false,       // cut
+                     false,       // copy
+                     false,       // past
+                     true,        // search
+                     true,        // selectall
+                     false),      // readall
+        Model(NULL)
+{
 
-    if(name)
+    if (name)
         setObjectName(name);
 
     Statistics      = NULL;
@@ -139,19 +143,22 @@ toResultTableView::toResultTableView(bool readable,
 }
 
 
-toResultTableView::~toResultTableView() {
-    if(Model)
+toResultTableView::~toResultTableView()
+{
+    if (Model)
         delete Model;
     Model = NULL;
 }
 
 
-void toResultTableView::query(const QString &sql, const toQList &param) {
+void toResultTableView::query(const QString &sql, const toQList &param)
+{
     setSQLParams(sql, param);
 
     toNoBlockQuery *query = NULL;
-    try {
-        if(running())
+    try
+    {
+        if (running())
             Model->stop();
         delete Model;
         Model = NULL;
@@ -178,11 +185,13 @@ void toResultTableView::query(const QString &sql, const toQList &param) {
 
         setSortingEnabled(true);
     }
-    catch(const toConnection::exception &str) {
+    catch (const toConnection::exception &str)
+    {
         emit firstResult(toResult::sql(), str, true);
         emit done();
     }
-    catch(const QString &str) {
+    catch (const QString &str)
+    {
         emit firstResult(toResult::sql(), str, true);
         emit done();
     }
@@ -197,7 +206,8 @@ void toResultTableView::query(const QString &sql, const toQList &param) {
 }
 
 
-void toResultTableView::createActions() {
+void toResultTableView::createActions()
+{
     displayAct   = new QAction(tr("&Display in editor..."), this);
     refreshAct   = new QAction(tr("&Refresh"), this);
     leftAct      = new QAction(tr("&Left"), this);
@@ -215,36 +225,43 @@ void toResultTableView::createActions() {
 }
 
 
-void toResultTableView::applyFilter() {
-    if(!Filter)
+void toResultTableView::applyFilter()
+{
+    if (!Filter)
         return;
 
     Filter->startingQuery();
 
-    for(int row = 0; row < Model->rowCount(); row++) {
-        if(!Filter->check(Model, row))
+    for (int row = 0; row < Model->rowCount(); row++)
+    {
+        if (!Filter->check(Model, row))
             hideRow(row);
     }
 }
 
 
-int toResultTableView::sizeHintForRow(int row) const {
+int toResultTableView::sizeHintForRow(int row) const
+{
     return 5;
 }
 
 
-void toResultTableView::applyColumnRules(void) {
-    if(!NumberColumn)
+void toResultTableView::applyColumnRules(void)
+{
+    if (!NumberColumn)
         hideColumn(0);
 
     int visible = 0;
-    if(ReadableColumns) {
+    if (ReadableColumns)
+    {
         // loop through columns and hide anything starting with a ' '
-        for(int col = 1; col < model()->columnCount(); col++) {
-            if(model()->headerData(
-                   col,
-                   Qt::Horizontal,
-                   Qt::DisplayRole).toString().startsWith(" ")) {
+        for (int col = 1; col < model()->columnCount(); col++)
+        {
+            if (model()->headerData(
+                        col,
+                        Qt::Horizontal,
+                        Qt::DisplayRole).toString().startsWith(" "))
+            {
                 hideColumn(col);
             }
             else
@@ -254,13 +271,15 @@ void toResultTableView::applyColumnRules(void) {
 
     resizeColumnsToContents();
 
-    if(visible == 1 && ReadableColumns)
+    if (visible == 1 && ReadableColumns)
         setColumnWidth(1, maximumViewportSize().width());
 }
 
 
-void toResultTableView::displayMenu(const QPoint &pos) {
-    if(!Menu) {
+void toResultTableView::displayMenu(const QPoint &pos)
+{
+    if (!Menu)
+    {
         Menu = new QMenu(this);
         Menu->addAction(displayAct);
         Menu->addAction(refreshAct);
@@ -311,32 +330,36 @@ void toResultTableView::displayMenu(const QPoint &pos) {
 }
 
 
-void toResultTableView::menuCallback(QAction *action) {
+void toResultTableView::menuCallback(QAction *action)
+{
     QModelIndex index = currentIndex();
-    if(!index.isValid())
+    if (!index.isValid())
         return;
 
-    if(action == displayAct) {
+    if (action == displayAct)
+    {
         QVariant data = model()->data(index, Qt::EditRole);
         toMemoEditor *ed = new toMemoEditor(this, data.toString());
         ed->exec();
     }
-    else if(action == leftAct)
+    else if (action == leftAct)
         Model->setAlignment(index.column(), Qt::AlignLeft);
-    else if(action == rightAct)
+    else if (action == rightAct)
         Model->setAlignment(index.column(), Qt::AlignRight);
-    else if(action == centerAct)
+    else if (action == centerAct)
         Model->setAlignment(index.column(), Qt::AlignHCenter);
-    else if(action == copyAct)
+    else if (action == copyAct)
         editCopy();
-    else if(action == selectAllAct)
+    else if (action == selectAllAct)
         editSelectAll();
-    else if(action == editAct)
+    else if (action == editAct)
         toMainWidget()->editSQL(sqlName());
-    else if(action == readAllAct || action == rowCountAct) {
+    else if (action == readAllAct || action == rowCountAct)
+    {
         Model->readAll();
 
-        if(action == rowCountAct) {
+        if (action == rowCountAct)
+        {
             int count = Model->rowCount();
             TOMessageBox::information(
                 this,
@@ -344,14 +367,15 @@ void toResultTableView::menuCallback(QAction *action) {
                 tr("%1 row%2.").arg(count).arg(count > 1 ? "s" : 0));
         }
     }
-    else if(action == refreshAct)
+    else if (action == refreshAct)
         refresh();
-    else if(action == exportAct)
+    else if (action == exportAct)
         editSave(false);
 }
 
 
-void toResultTableView::handleDone(void) {
+void toResultTableView::handleDone(void)
+{
     readAllAct->setEnabled(false);
 
     applyFilter();
@@ -359,21 +383,24 @@ void toResultTableView::handleDone(void) {
 }
 
 
-void toResultTableView::handleReset(void) {
-    if(ReadAll)
+void toResultTableView::handleReset(void)
+{
+    if (ReadAll)
         Model->readAll();
 }
 
 
 void toResultTableView::handleFirst(const toConnection::exception &res,
-                                    bool error) {
+                                    bool error)
+{
     applyColumnRules();
     emit firstResult(sql(), res, error);
 }
 
 
-void toResultTableView::handleDoubleClick(const QModelIndex &index) {
-    if(Editable)
+void toResultTableView::handleDoubleClick(const QModelIndex &index)
+{
+    if (Editable)
         return;
 
     QVariant data = model()->data(index, Qt::EditRole);
@@ -383,21 +410,24 @@ void toResultTableView::handleDoubleClick(const QModelIndex &index) {
 
 
 void toResultTableView::selectionChanged(const QItemSelection &selected,
-                                         const QItemSelection &deselected) {
+        const QItemSelection &deselected)
+{
     QTableView::selectionChanged(selected, deselected);
     emit selectionChanged();
 }
 
 
-bool toResultTableView::running(void) {
-    if(!Model)
+bool toResultTableView::running(void)
+{
+    if (!Model)
         return false;
     QModelIndex index = currentIndex();
     return Model->canFetchMore(index);
 }
 
 
-void toResultTableView::setModel(toResultModel *model) {
+void toResultTableView::setModel(toResultModel *model)
+{
 //     if(running())
 //         throw tr("Cannot change model while query is running.");
     Model = QPointer<toResultModel>(model);
@@ -405,10 +435,12 @@ void toResultTableView::setModel(toResultModel *model) {
 }
 
 
-bool toResultTableView::isRowSelected(QModelIndex index) {
+bool toResultTableView::isRowSelected(QModelIndex index)
+{
     QModelIndexList sel = selectedIndexes();
-    for(QModelIndexList::iterator it = sel.begin(); it != sel.end(); it++) {
-        if((*it).row() == index.row())
+    for (QModelIndexList::iterator it = sel.begin(); it != sel.end(); it++)
+    {
+        if ((*it).row() == index.row())
             return true;
     }
 
@@ -416,18 +448,20 @@ bool toResultTableView::isRowSelected(QModelIndex index) {
 }
 
 
-QModelIndex toResultTableView::selectedIndex(int col) {
+QModelIndex toResultTableView::selectedIndex(int col)
+{
     // should only have one anyhow. just take first.
     QModelIndexList sel = selectedIndexes();
-    if(sel.size() < 1)
+    if (sel.size() < 1)
         return QModelIndex();
     return model()->index(sel[0].row(), col);
 }
 
 
-int toResultTableView::exportType(QString &separator, QString &delimiter) {
+int toResultTableView::exportType(QString &separator, QString &delimiter)
+{
     toResultListFormat format(this, NULL);
-    if(!format.exec())
+    if (!format.exec())
         return -1;
 
     format.saveDefault();
@@ -443,12 +477,13 @@ QString toResultTableView::exportAsText(bool includeHeader,
                                         bool onlySelection,
                                         int type,
                                         QString &separator,
-                                        QString &delimiter) {
+                                        QString &delimiter)
+{
     QString result;
 
-    if(type < 0)
+    if (type < 0)
         type = exportType(separator, delimiter);
-    if(type < 0)
+    if (type < 0)
         return QString::null;
 
     toExportSettings settings(includeHeader,
@@ -467,14 +502,17 @@ QString toResultTableView::exportAsText(bool includeHeader,
 
 // ---------------------------------------- overrides toEditWidget
 
-bool toResultTableView::editSave(bool askfile) {
-    try {
+bool toResultTableView::editSave(bool askfile)
+{
+    try
+    {
         QString delimiter;
         QString separator;
         int type = exportType(separator, delimiter);
 
         QString nam;
-        switch(type) {
+        switch (type)
+        {
         case - 1:
             return false;
         default:
@@ -492,14 +530,14 @@ bool toResultTableView::editSave(bool askfile) {
         }
 
         QString filename = toSaveFilename(QString::null, nam, this);
-        if(filename.isEmpty())
+        if (filename.isEmpty())
             return false;
 
         return toWriteFile(filename, exportAsText(true,
-                                                  false,
-                                                  type,
-                                                  separator,
-                                                  delimiter));
+                           false,
+                           type,
+                           separator,
+                           delimiter));
     }
     TOCATCH;
 
@@ -507,37 +545,43 @@ bool toResultTableView::editSave(bool askfile) {
 }
 
 
-void toResultTableView::editPrint() {
+void toResultTableView::editPrint()
+{
 }
 
 
-void toResultTableView::editCopy() {
+void toResultTableView::editCopy()
+{
     QClipboard *clip = qApp->clipboard();
 
     QModelIndex index = currentIndex();
     QVariant data = model()->data(index, Qt::EditRole);
-    if(data.canConvert<QString>())
+    if (data.canConvert<QString>())
         clip->setText(data.toString());
 }
 
 
-void toResultTableView::editSelectAll() {
+void toResultTableView::editSelectAll()
+{
     selectAll();
 }
 
 
-void toResultTableView::resizeColumnsToContents() {
-    if(!ColumnsResized)
+void toResultTableView::resizeColumnsToContents()
+{
+    if (!ColumnsResized)
         QTableView::resizeColumnsToContents();
 }
 
 
-void toResultTableView::columnWasResized(int, int, int) {
+void toResultTableView::columnWasResized(int, int, int)
+{
     ColumnsResized = true;
 }
 
 
-void toResultTableView::refresh() {
+void toResultTableView::refresh()
+{
     // todo. save column sizes. horizontalHeader()->restoreState(st);
     // didn't work.
     toResult::refresh();
@@ -551,7 +595,8 @@ void toResultTableView::refresh() {
  * Create an iterator starting at 0 on a view
  *
  */
-toTableViewIterator::toTableViewIterator(toResultTableView *view) {
+toTableViewIterator::toTableViewIterator(toResultTableView *view)
+{
     _row  = 0;
     _view = view;
     updateIndex();
@@ -562,15 +607,17 @@ toTableViewIterator::toTableViewIterator(toResultTableView *view) {
  * Create a copy of other
  *
  */
-toTableViewIterator::toTableViewIterator(toTableViewIterator &other) {
+toTableViewIterator::toTableViewIterator(toTableViewIterator &other)
+{
     _row  = other._row;
     _view = other._view;
     updateIndex();
 }
 
 
-void toTableViewIterator::updateIndex(void) {
-    if(_view && _row < _view->model()->rowCount())
+void toTableViewIterator::updateIndex(void)
+{
+    if (_view && _row < _view->model()->rowCount())
         _index = _view->model()->index(_row, 1); // skip numbercolumn
     else
         _index = QModelIndex();
@@ -582,7 +629,8 @@ void toTableViewIterator::updateIndex(void) {
  * too far. Check with QModelIndex.isValid()
  *
  */
-QModelIndex toTableViewIterator::operator*() const {
+QModelIndex toTableViewIterator::operator*() const
+{
     return _index;
 }
 
@@ -591,7 +639,8 @@ QModelIndex toTableViewIterator::operator*() const {
  * Increment by one
  *
  */
-toTableViewIterator& toTableViewIterator::operator++() {
+toTableViewIterator& toTableViewIterator::operator++()
+{
     _row++;
     updateIndex();
     return *this;
@@ -602,7 +651,8 @@ toTableViewIterator& toTableViewIterator::operator++() {
  * Postfix operator
  *
  */
-const toTableViewIterator toTableViewIterator::operator++(int) {
+const toTableViewIterator toTableViewIterator::operator++(int)
+{
     toTableViewIterator tmp(*this);
     ++(*this);
     updateIndex();
@@ -614,7 +664,8 @@ const toTableViewIterator toTableViewIterator::operator++(int) {
  * Go forward by n
  *
  */
-toTableViewIterator& toTableViewIterator::operator+=(int n) {
+toTableViewIterator& toTableViewIterator::operator+=(int n)
+{
     _row += n;
     updateIndex();
     return *this;
@@ -625,7 +676,8 @@ toTableViewIterator& toTableViewIterator::operator+=(int n) {
  * Decrement by one
  *
  */
-toTableViewIterator& toTableViewIterator::operator--() {
+toTableViewIterator& toTableViewIterator::operator--()
+{
     _row--;
     updateIndex();
     return *this;
@@ -636,7 +688,8 @@ toTableViewIterator& toTableViewIterator::operator--() {
  * Postfix operator
  *
  */
-const toTableViewIterator toTableViewIterator::operator--(int) {
+const toTableViewIterator toTableViewIterator::operator--(int)
+{
     toTableViewIterator tmp(*this);
     --(*this);
     updateIndex();
@@ -648,7 +701,8 @@ const toTableViewIterator toTableViewIterator::operator--(int) {
  * Go back by n
  *
  */
-toTableViewIterator& toTableViewIterator::operator-=(int n) {
+toTableViewIterator& toTableViewIterator::operator-=(int n)
+{
     _row -= n;
     updateIndex();
     return *this;
@@ -659,7 +713,8 @@ toTableViewIterator& toTableViewIterator::operator-=(int n) {
  * Make a copy of it and return a reference
  *
  */
-toTableViewIterator& toTableViewIterator::operator=(const toTableViewIterator &it) {
+toTableViewIterator& toTableViewIterator::operator=(const toTableViewIterator & it)
+{
     _row  = it._row;
     _view = it._view;
     updateIndex();

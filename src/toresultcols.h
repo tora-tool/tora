@@ -53,7 +53,8 @@ class toResultColsComment;
  * query. The sql is not used in the query.
  *
  */
-class toResultCols : public QWidget, public toResult {
+class toResultCols : public QWidget, public toResult
+{
     Q_OBJECT;
 
     QLabel              *Title;
@@ -88,7 +89,8 @@ public:
      * Handle any connection by default
      *
      */
-    virtual bool canHandle(toConnection &) {
+    virtual bool canHandle(toConnection &)
+    {
         return true;
     }
 

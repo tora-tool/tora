@@ -48,17 +48,20 @@
 
 class toNoBlockQuery;
 
-class toStorageExtent : public QWidget {
+class toStorageExtent : public QWidget
+{
     Q_OBJECT;
 
 public:
-    struct extentName {
+    struct extentName
+    {
         QString Owner;
         QString Table;
         QString Partition;
         int Size;
 
-        extentName(void) {
+        extentName(void)
+        {
             Size = 0;
         }
         extentName(const QString &owner, const QString &table, const QString &partition, int size);
@@ -66,20 +69,23 @@ public:
         bool operator == (const extentName &) const;
     };
 
-    struct extentTotal : public extentName {
+struct extentTotal : public extentName
+    {
         int Extents;
-    extentTotal(const QString &owner, const QString &table, const QString &partition, int size)
-        : extentName(owner, table, partition, size)
+        extentTotal(const QString &owner, const QString &table, const QString &partition, int size)
+                : extentName(owner, table, partition, size)
         {
             Extents = 1;
         }
     };
 
-    struct extent : public extentName {
+struct extent : public extentName
+    {
         int File;
         int Block;
 
-        extent(void) {
+        extent(void)
+        {
             File = Block = 0;
         }
         extent(const QString &owner, const QString &table, const QString &partition,
@@ -109,7 +115,8 @@ protected:
 
 class toResultTableView;
 
-class toResultExtent : public QSplitter, public toResult {
+class toResultExtent : public QSplitter, public toResult
+{
     Q_OBJECT;
 
     toStorageExtent   *Graph;
@@ -120,7 +127,7 @@ public:
     /** Support Oracle
      */
     virtual bool canHandle(toConnection &conn);
-    public slots:
+public slots:
     /** Perform a query.
      * @param sql Execute an SQL statement.
      * @param params Parameters needed as input to execute statement.
@@ -128,7 +135,8 @@ public:
     virtual void query(const QString &sql, const toQList &params);
 };
 
-class toResultStorage : public toResultView {
+class toResultStorage : public toResultView
+{
     Q_OBJECT;
 
     bool ShowCoalesced;
@@ -168,9 +176,9 @@ public:
     /** Support Oracle
      */
     virtual bool canHandle(toConnection &conn);
-    public slots:
+public slots:
     virtual void query(void);
-    private slots:
+private slots:
     void poll(void);
 };
 

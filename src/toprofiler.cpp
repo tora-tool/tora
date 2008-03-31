@@ -352,15 +352,18 @@ class listItem : public toResultViewItem
                 return toResultViewItem::text(col);
         }
 
-        bool operator<(const toTreeWidgetItem &other) {
+        bool operator<(const toTreeWidgetItem &other)
+        {
 #if 0                           // todo tree
             int col = treeWidget()->sortColumn();
-            if(col == 2 || col == 3 || col == 4) {
+            if (col == 2 || col == 3 || col == 4)
+            {
                 toProfilerSource::listItem *item =
                     dynamic_cast<toProfilerSource::listItem>(&other);
-                if(!i)
+                if (!i)
                     return toTreeWidgetItem::operator<(other);
-                else {
+                else
+                {
                     double val_in = allText(col).toDouble();
                     double val_out = item->allText(col).toDouble();
                     return val_in < val_out;

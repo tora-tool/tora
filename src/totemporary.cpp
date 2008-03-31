@@ -178,16 +178,20 @@ toTemporary::toTemporary(QWidget *main, toConnection &connection)
 }
 
 
-void toTemporary::windowActivated(QWidget *widget) {
-    if (widget == this) {
-        if (!ToolMenu) {
+void toTemporary::windowActivated(QWidget *widget)
+{
+    if (widget == this)
+    {
+        if (!ToolMenu)
+        {
             ToolMenu = new QMenu(tr("&Temporary"), this);
             ToolMenu->addAction(refreshAct);
 
             toMainWidget()->addCustomMenu(ToolMenu);
         }
     }
-    else {
+    else
+    {
         delete ToolMenu;
         ToolMenu = NULL;
     }

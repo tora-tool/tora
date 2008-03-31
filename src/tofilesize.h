@@ -48,7 +48,8 @@ class QSpinBox;
 /**
  * A widget to get a size value for Oracle objects.
  */
-class toFilesize : public QGroupBox {
+class toFilesize : public QGroupBox
+{
     Q_OBJECT
 
     /**

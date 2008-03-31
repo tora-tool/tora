@@ -52,7 +52,8 @@ class toListView;
 class toScriptUI;
 class toWorksheet;
 
-class toScript : public toToolWidget {
+class toScript : public toToolWidget
+{
     Q_OBJECT;
 
     Ui::toScriptUI *ScriptUI;
@@ -60,7 +61,7 @@ class toScript : public toToolWidget {
     toListView *DropList;
     toListView *CreateList;
     toListView *SearchList;
-	QTextBrowser *Report;
+    QTextBrowser *Report;
 
     void setupExtract(toExtract &);
     void changeConnection(int, bool source);

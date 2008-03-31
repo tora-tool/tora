@@ -133,12 +133,14 @@ static toSQL SQLResource(
     "Display information about an SQL statement");
 
 toResultResources::toResultResources(QWidget *parent, const char *name)
-    : toResultItem(3, true, parent, name) {
+        : toResultItem(3, true, parent, name)
+{
 
     setSQL(SQLResource);
 }
 
-void toResultItem::setup(int num, bool readable) {
+void toResultItem::setup(int num, bool readable)
+{
     ReadableColumns = readable;
     NumWidgets      = 0;
     WidgetPos       = 0;
@@ -165,47 +167,54 @@ toResultItem::toResultItem(int num,
                            bool readable,
                            QWidget *parent,
                            const char *name)
-    : QScrollArea(parent), DataFont(QFont()) {
+        : QScrollArea(parent), DataFont(QFont())
+{
 
     setObjectName(name);
     setup(num, readable);
 }
 
 toResultItem::toResultItem(int num, QWidget *parent, const char *name)
-    : QScrollArea(parent), DataFont(QFont()) {
+        : QScrollArea(parent), DataFont(QFont())
+{
 
     setObjectName(name);
     setup(num, false);
 }
 
-toResultItem::~toResultItem() {
+toResultItem::~toResultItem()
+{
     delete Query;
 }
 
-void toResultItem::start(void) {
+void toResultItem::start(void)
+{
     WidgetPos = 0;
 }
 
 // Must be alloced in multiples of 2
 #define ALLOC_SIZE 1000
 
-QWidget *toResultItem::createTitle(QWidget *parent) {
+QWidget *toResultItem::createTitle(QWidget *parent)
+{
     QLabel *widget = new QLabel(parent);
     widget->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     widget->setWordWrap(true);
     return widget;
 }
 
-QWidget *toResultItem::createValue(QWidget *parent) {
+QWidget *toResultItem::createValue(QWidget *parent)
+{
     QLabel *widget = new QLabel(parent);
     return widget;
 }
 
 void toResultItem::setTitle(QWidget *widget,
                             const QString &title,
-                            const QString &) {
+                            const QString &)
+{
     QLabel *label = dynamic_cast<QLabel *>(widget);
-    if(label)
+    if (label)
         label->setText(title);
 
     Result->addWidget(widget,
@@ -215,25 +224,31 @@ void toResultItem::setTitle(QWidget *widget,
 
 void toResultItem::setValue(QWidget *widget,
                             const QString &title,
-                            const QString &value) {
+                            const QString &value)
+{
     QLabel *label = dynamic_cast<QLabel *>(widget);
-    if (label) {
-        if (title != "-") {
+    if (label)
+    {
+        if (title != "-")
+        {
             label->setFrameStyle(StyledPanel | Sunken);
             label->setFont(DataFont);
         }
-        else {
+        else
+        {
             label->setFrameStyle(NoFrame);
             label->setFont(qApp->font());
         }
 
         label->setText(value);
 
-        if (Right) {
+        if (Right)
+        {
             label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
             label->setWordWrap(true);
         }
-        else {
+        else
+        {
             label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
             label->setWordWrap(true);
         }
@@ -244,8 +259,10 @@ void toResultItem::setValue(QWidget *widget,
                       WidgetPos % (Columns * 2));      // column
 }
 
-void toResultItem::addItem(const QString &title, const QString &value) {
-    if (WidgetPos >= NumWidgets) {
+void toResultItem::addItem(const QString &title, const QString &value)
+{
+    if (WidgetPos >= NumWidgets)
+    {
         NumWidgets += ALLOC_SIZE;
         Widgets.resize(NumWidgets, 0);
     }
@@ -253,7 +270,8 @@ void toResultItem::addItem(const QString &title, const QString &value) {
     if (title != "-")
         t = toTranslateMayby(sqlName(), title);
     QWidget *widget;
-    if (!Widgets[WidgetPos]) {
+    if (!Widgets[WidgetPos])
+    {
         widget = createTitle(this);
         Widgets[WidgetPos] = widget;
     }
@@ -267,7 +285,8 @@ void toResultItem::addItem(const QString &title, const QString &value) {
         widget->hide();
 
     WidgetPos++;
-    if (!Widgets[WidgetPos]) {
+    if (!Widgets[WidgetPos])
+    {
         widget = createValue(this);
         Widgets[WidgetPos] = widget;
     }
@@ -279,8 +298,10 @@ void toResultItem::addItem(const QString &title, const QString &value) {
     WidgetPos++;
 }
 
-void toResultItem::done(void) {
-    for(int i = WidgetPos; i < NumWidgets; i++) {
+void toResultItem::done(void)
+{
+    for (int i = WidgetPos; i < NumWidgets; i++)
+    {
         if (Widgets[i])
             Widgets[i]->hide();
     }
@@ -298,19 +319,23 @@ void toResultItem::done(void) {
     Result->layout();
 }
 
-void toResultItem::query(const QString &sql, const toQList &param) {
+void toResultItem::query(const QString &sql, const toQList &param)
+{
     if (!setSQLParams(sql, param))
         return ;
 
     start();
-    if (!handled() || Query) {
+    if (!handled() || Query)
+    {
         if (!Query)
             done();
         return ;
     }
 
-    try {
-        if (Query) {
+    try
+    {
+        if (Query)
+        {
             delete Query;
             Query = NULL;
         }
@@ -320,23 +345,29 @@ void toResultItem::query(const QString &sql, const toQList &param) {
         Poll.start(100);
 
     }
-    catch (const QString &str) {
+    catch (const QString &str)
+    {
         done();
         toStatusMessage(str);
     }
 }
 
-void toResultItem::poll(void) {
-    try {
+void toResultItem::poll(void)
+{
+    try
+    {
         if (!toCheckModal(this))
             return ;
-        if (Query && Query->poll()) {
+        if (Query && Query->poll())
+        {
             toQDescList desc = Query->describe();
 
-            if (!Query->eof()) {
+            if (!Query->eof())
+            {
                 for (toQDescList::iterator i = desc.begin();
-                     i != desc.end();
-                     i++) {
+                        i != desc.end();
+                        i++)
+                {
 
                     QString name = (*i).Name;
                     if (ReadableColumns)
@@ -351,7 +382,8 @@ void toResultItem::poll(void) {
             Poll.stop();
         }
     }
-    catch (const QString &str) {
+    catch (const QString &str)
+    {
         delete Query;
         Query = NULL;
         done();

@@ -7,7 +7,8 @@
 #include <qlabel.h>
 #include <QVBoxLayout>
 
-void toTableSelect::setup() {
+void toTableSelect::setup()
+{
     QVBoxLayout *vbox = new QVBoxLayout;
     vbox->setSpacing(0);
     vbox->setContentsMargins(0, 0, 0, 0);
@@ -53,7 +54,7 @@ void toTableSelect::setup() {
 }
 
 toTableSelect::toTableSelect(QWidget *parent, const char *name)
-    : QGroupBox(parent)
+        : QGroupBox(parent)
 {
     setObjectName(name);
     Schema = Table = NULL;

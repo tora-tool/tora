@@ -233,7 +233,8 @@ public slots:
 };
 
 
-class toChartSetup : public QDialog, public Ui::toChartSetupUI {
+class toChartSetup : public QDialog, public Ui::toChartSetupUI
+{
     Q_OBJECT;
 
     toLineChart *Chart;
@@ -251,7 +252,8 @@ public slots:
 };
 
 
-class toChartAlarm : public QDialog, public Ui::toChartAlarmUI {
+class toChartAlarm : public QDialog, public Ui::toChartAlarmUI
+{
     Q_OBJECT;
 
 public:

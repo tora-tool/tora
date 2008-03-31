@@ -35,8 +35,11 @@
 *
 *****/
 
+#include <QSettings>
+
 #include "tomainwindow.h"
 
 toMainWindow::toMainWindow()
         : QMainWindow()//0, "Main Window")
-{ }
+{
+}

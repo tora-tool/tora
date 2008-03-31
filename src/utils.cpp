@@ -230,11 +230,12 @@ QString toSQLStripBind(const QString &sql)
 {
     QString ret;
     char inString = 0;
-    for (int i = 0;i < sql.length();i++) {
+    for (int i = 0;i < sql.length();i++)
+    {
         QChar rc = sql.at(i);
         char  c  = rc.toLatin1(); // current
         char  n  = 0;           // next
-        if(i + 1 < sql.length())
+        if (i + 1 < sql.length())
             n = sql.at(i + 1).toLatin1();
 
         if (inString)
@@ -259,7 +260,8 @@ QString toSQLStripBind(const QString &sql)
                 break;
             case ':':
                 // don't nuke my postgres-style casts
-                if(n == ':') {
+                if (n == ':')
+                {
                     ret += rc;
                     ret += n;
                     i++;
@@ -317,7 +319,8 @@ QString toSQLToAddress(toConnection &conn, const QString &sql)
     throw qApp->translate("toSQLToAddress", "SQL Query not found in SGA");
 }
 
-void toStatusMessage(const QString &str, bool save, bool log) {
+void toStatusMessage(const QString &str, bool save, bool log)
+{
     toMainWidget()->showMessage(str, save, log);
 }
 
@@ -326,7 +329,8 @@ QComboBox *toRefreshCreate(QWidget *parent, const char *name, const QString &def
     QComboBox *refresh;
     if (item)
         refresh = item;
-    else {
+    else
+    {
         refresh = new QComboBox(parent);
         refresh->setObjectName(name);
         refresh->setEditable(false);
@@ -390,7 +394,8 @@ void toRefreshParse(toTimer *timer, const QString &str)
         throw qApp->translate("toRefreshParse", "Unknown timer value");
 }
 
-QString toDeepCopy(const QString &str) {
+QString toDeepCopy(const QString &str)
+{
     return QString(str.data(), str.length());
 }
 
@@ -443,14 +448,16 @@ void toSetSessionType(const QString &str)
 QToolBar *toAllocBar(QWidget *parent, const QString &str)
 {
     QString db;
-    try {
+    try
+    {
         db = toCurrentConnection(parent).description(false);
     }
     catch (...)
-    {}
+        {}
 
     QString name = str;
-    if (!db.isEmpty() && toConfigurationSingle::Instance().dbTitle()) {
+    if (!db.isEmpty() && toConfigurationSingle::Instance().dbTitle())
+    {
         name += QString::fromLatin1(" ");
         name += db;
     }
@@ -458,7 +465,7 @@ QToolBar *toAllocBar(QWidget *parent, const QString &str)
     QToolBar *tool;
 
     QMainWindow *main = dynamic_cast<QMainWindow *>(parent);
-    if(main)
+    if (main)
         tool = toMainWidget()->addToolBar(name);
     else
         tool = new QToolBar(parent);
@@ -470,9 +477,11 @@ QToolBar *toAllocBar(QWidget *parent, const QString &str)
 
 TODock *toAllocDock(const QString &name,
                     const QString &db,
-                    const QPixmap &pix) {
+                    const QPixmap &pix)
+{
     QString str = name;
-    if (!db.isEmpty() && toConfigurationSingle::Instance().dbTitle()) {
+    if (!db.isEmpty() && toConfigurationSingle::Instance().dbTitle())
+    {
         str += QString::fromLatin1(" ");
         str += db;
     }
@@ -480,7 +489,7 @@ TODock *toAllocDock(const QString &name,
     dock->setFeatures(QDockWidget::DockWidgetClosable |
                       QDockWidget::DockWidgetMovable |
                       QDockWidget::DockWidgetFloatable);
-    if(!pix.isNull())
+    if (!pix.isNull())
         dock->setWindowIcon(QIcon(pix));
     return dock;
 }
@@ -488,7 +497,8 @@ TODock *toAllocDock(const QString &name,
 void toAttachDock(TODock *dock, QWidget *container, Qt::DockWidgetArea area)
 {
     QDockWidget *d = dynamic_cast<QDockWidget *>(dock);
-    if (d) {
+    if (d)
+    {
         toMainWidget()->addDockWidget(area, d);
         d->setWidget(container);
         container->show();
@@ -527,28 +537,28 @@ QString toPluginPath(void)
 #ifdef Q_OS_WIN32
 
     CRegistry registry;
-	DWORD siz = 1024;
+    DWORD siz = 1024;
     char buffer[1024];
 
     try
     {
         if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
-						"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TOra",
-						"UninstallString",
-						buffer, siz))
-		{
-			if (siz> 0)
-			{
-				str = buffer;
-				static QRegExp findQuotes("\"([^\"]*)\"");
-				if (findQuotes.indexIn(str) >= 0)
-				str = findQuotes.cap(1);
-				int ind = str.lastIndexOf('\\');
-				if (ind >= 0)
-				str = str.mid(0, ind);
-				str += "\\templates";
-			}
-		}
+                                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TOra",
+                                    "UninstallString",
+                                    buffer, siz))
+        {
+            if (siz > 0)
+            {
+                str = buffer;
+                static QRegExp findQuotes("\"([^\"]*)\"");
+                if (findQuotes.indexIn(str) >= 0)
+                    str = findQuotes.cap(1);
+                int ind = str.lastIndexOf('\\');
+                if (ind >= 0)
+                    str = str.mid(0, ind);
+                str += "\\templates";
+            }
+        }
     }
     catch (...)
         {}
@@ -610,7 +620,7 @@ QByteArray toReadFile(const QString &filename)
 {
     QString expanded = toExpandFile(filename);
     QFile file(expanded);
-    if(!file.open(QIODevice::ReadOnly))
+    if (!file.open(QIODevice::ReadOnly))
         throw QT_TRANSLATE_NOOP("toReadFile", "Couldn't open file %1.").arg(filename);
 
     QTextStream in(&file);
@@ -624,19 +634,19 @@ QString toExpandFile(const QString &file)
 
 #ifdef Q_OS_WIN32
 
-	CRegistry registry;
+    CRegistry registry;
     DWORD siz = 1024;
     char buffer[1024];
     try
     {
-		if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
-						"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
-						"Personal",
-						buffer, siz))
-		{
-			if (siz> 0)
-			home = buffer;
-		}
+        if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
+                                    "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
+                                    "Personal",
+                                    buffer, siz))
+        {
+            if (siz > 0)
+                home = buffer;
+        }
     }
     catch (...)
         {}
@@ -739,7 +749,7 @@ QString toOpenFilename(const QString &filename, const QString &filter, QWidget *
     if (dir.isNull())
         dir = toConfigurationSingle::Instance().lastDir();
 
-	return AddExt(TOFileDialog::getOpenFileName(parent, QObject::tr("Open File", "utils/toOpenFilename"), dir, t), t);
+    return AddExt(TOFileDialog::getOpenFileName(parent, QObject::tr("Open File", "utils/toOpenFilename"), dir, t), t);
 }
 
 QString toSaveFilename(const QString &filename, const QString &filter, QWidget *parent)
@@ -752,7 +762,7 @@ QString toSaveFilename(const QString &filename, const QString &filter, QWidget *
     if (dir.isNull())
         dir = toConfigurationSingle::Instance().lastDir();
 
-	return AddExt(TOFileDialog::getSaveFileName(parent, QObject::tr("Save File", "utils/toSaveFilename"), dir, t), t);
+    return AddExt(TOFileDialog::getSaveFileName(parent, QObject::tr("Save File", "utils/toSaveFilename"), dir, t), t);
 }
 
 void toSetEnv(const QString &var, const QString &val)
@@ -1097,7 +1107,8 @@ toPopupButton::toPopupButton(const QIcon &iconSet,
                              const QString &grouptext,
                              QToolBar *parent,
                              const char *name)
-    : QToolButton(parent) {
+        : QToolButton(parent)
+{
 
     setObjectName(name);
     setIcon(iconSet);
@@ -1106,7 +1117,8 @@ toPopupButton::toPopupButton(const QIcon &iconSet,
 }
 
 toPopupButton::toPopupButton(QWidget *parent, const char *name)
-    : QToolButton(parent) {
+        : QToolButton(parent)
+{
 
     setObjectName(name);
 }
@@ -1190,7 +1202,8 @@ int countChars(const QString &source, const char find)
     return found;
 }
 
-toSpacer::toSpacer(QWidget *parent) : QWidget(parent) {
+toSpacer::toSpacer(QWidget *parent) : QWidget(parent)
+{
     setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                               QSizePolicy::Minimum));
 }

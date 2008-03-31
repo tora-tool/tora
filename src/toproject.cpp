@@ -69,7 +69,8 @@ static toProjectTemplate ProjectTemplate;
 
 #define PROJECT_EXTENSIONS "SQL (*.sql *.pkg *.pkb),Project files (*.tpr) ,Text (*.txt), All (*)"
 
-bool toProjectTemplateItem::project(void) {
+bool toProjectTemplateItem::project(void)
+{
     if (!parent())
         return true;
     if (Filename.length() > 4 && Filename.mid(Filename.length() - 4, 4) == ".tpr")
@@ -77,25 +78,31 @@ bool toProjectTemplateItem::project(void) {
     return false;
 }
 
-void toProjectTemplateItem::setup(const QString &name, bool open) {
+void toProjectTemplateItem::setup(const QString &name, bool open)
+{
     Order = -1;
     setFilename(name);
-    if (project() && !Filename.isEmpty() && open) {
-        try {
+    if (project() && !Filename.isEmpty() && open)
+    {
+        try
+        {
             QString data = QString::fromUtf8(toReadFile(Filename));
             QStringList files = data.split(QRegExp(QString::fromLatin1("\n")));
             toProjectTemplateItem *last = NULL;
             for (int i = 0;i < files.count();i++)
                 last = new toProjectTemplateItem(this, last, files[i]);
         }
-        catch (const QString &exc) {
+        catch (const QString &exc)
+        {
             toStatusMessage(exc);
         }
     }
 }
 
-void toProjectTemplateItem::setFilename(const QString &name) {
-    if (parent()) {
+void toProjectTemplateItem::setFilename(const QString &name)
+{
+    if (parent())
+    {
         int pos = name.lastIndexOf(QString::fromLatin1("/"));
         if (pos < 0)
             pos = name.lastIndexOf(QString::fromLatin1("\\"));
@@ -108,21 +115,26 @@ void toProjectTemplateItem::setFilename(const QString &name) {
 }
 
 toProjectTemplateItem::toProjectTemplateItem(toTemplateItem *item,
-                                             toTreeWidgetItem *after,
-                                             QString name, bool open)
-    : toTemplateItem(item, QString::null, after) {
+        toTreeWidgetItem *after,
+        QString name, bool open)
+        : toTemplateItem(item, QString::null, after)
+{
     setup(name, open);
 }
 
 toProjectTemplateItem::toProjectTemplateItem(toTreeWidget *item, QString name, bool open)
-    : toTemplateItem(ProjectTemplate, item, qApp->translate("toProject", "SQL Project")) {
+        : toTemplateItem(ProjectTemplate, item, qApp->translate("toProject", "SQL Project"))
+{
     setup(name, open);
 }
 
-int toProjectTemplateItem::order(bool asc) {
-    if (asc) {
+int toProjectTemplateItem::order(bool asc)
+{
+    if (asc)
+    {
         toProjectTemplateItem *item = previousSibling();
-        if (item) {
+        if (item)
+        {
             int attemptOrder = item->Order + 1;
             if (attemptOrder != Order)
                 Order = item->order(asc) + 1;
@@ -130,9 +142,11 @@ int toProjectTemplateItem::order(bool asc) {
         else
             Order = 1;
     }
-    else {
+    else
+    {
         toProjectTemplateItem *item = dynamic_cast<toProjectTemplateItem *>(nextSibling());
-        if (item) {
+        if (item)
+        {
             int attemptOrder = item->Order + 1;
             if (attemptOrder != Order)
                 Order = item->order(asc) + 1;
@@ -143,7 +157,8 @@ int toProjectTemplateItem::order(bool asc) {
     return Order;
 }
 
-toProjectTemplateItem *toProjectTemplateItem::previousSibling() {
+toProjectTemplateItem *toProjectTemplateItem::previousSibling()
+{
     toTreeWidgetItem *item = itemAbove();
     if (!item)
         return NULL;
@@ -157,7 +172,8 @@ toProjectTemplateItem *toProjectTemplateItem::previousSibling() {
 // Here be dragons! Basically all the order stuff will retain whatever order the
 // items were created in.
 
-QString toProjectTemplateItem::key(int col, bool asc) const {
+QString toProjectTemplateItem::key(int col, bool asc) const
+{
     if (!parent())
         return text(col);
     int no = ((toProjectTemplateItem *)this)->order(asc);
@@ -166,32 +182,39 @@ QString toProjectTemplateItem::key(int col, bool asc) const {
     return ret;
 }
 
-void toProjectTemplateItem::selected(void) {
+void toProjectTemplateItem::selected(void)
+{
     if (project())
         return ;
-    try {
+    try
+    {
         toWorksheet::fileWorksheet(Filename);
     }
     TOCATCH;
 }
 
-QWidget *toProjectTemplateItem::selectedWidget(QWidget *parent) {
+QWidget *toProjectTemplateItem::selectedWidget(QWidget *parent)
+{
     toProject *proj = ProjectTemplate.selectedWidget(parent);
     proj->selectItem(this);
     return proj;
 }
 
-toProject *toProjectTemplate::selectedWidget(QWidget *parent) {
+toProject *toProjectTemplate::selectedWidget(QWidget *parent)
+{
     if (!Details)
         Details = new toProject(ProjectTemplate.root(), parent);
     return Details;
 }
 
-void toProjectTemplate::importData(std::map<QString, QString> &data, const QString &prefix) {
+void toProjectTemplate::importData(std::map<QString, QString> &data, const QString &prefix)
+{
     bool any = false;
     std::map<QString, QString>::iterator i = data.find(prefix + ":");
-    while (i != data.end()) {
-        if ((*i).first.mid(0, prefix.length()) == prefix) {
+    while (i != data.end())
+    {
+        if ((*i).first.mid(0, prefix.length()) == prefix)
+        {
             Import[(*i).first.mid(prefix.length() + 1)] = (*i).second;
             any = true;
         }
@@ -201,14 +224,16 @@ void toProjectTemplate::importData(std::map<QString, QString> &data, const QStri
     }
 }
 
-void toProjectTemplate::exportData(std::map<QString, QString> &data, const QString &prefix) {
+void toProjectTemplate::exportData(std::map<QString, QString> &data, const QString &prefix)
+{
     if (!Root)
         return ;
     std::map<toTreeWidgetItem *, int> itemMap;
     toTreeWidgetItem *next;
     int id = 0;
     data[prefix + ":"] = Root->filename();
-    for (toTreeWidgetItem *item = Root->firstChild();item;item = next) {
+    for (toTreeWidgetItem *item = Root->firstChild();item;item = next)
+    {
         id++;
         QString nam = prefix;
         nam += ":Items:";
@@ -230,9 +255,11 @@ void toProjectTemplate::exportData(std::map<QString, QString> &data, const QStri
             next = item->firstChild();
         else if (item->nextSibling())
             next = item->nextSibling();
-        else {
+        else
+        {
             next = item;
-            do {
+            do
+            {
                 next = next->parent();
             }
             while (next && !next->nextSibling());
@@ -244,7 +271,8 @@ void toProjectTemplate::exportData(std::map<QString, QString> &data, const QStri
     }
 }
 
-void toProjectTemplate::insertItems(toTreeWidget *parent, QToolBar *toolbar) {
+void toProjectTemplate::insertItems(toTreeWidget *parent, QToolBar *toolbar)
+{
     Root = new toProjectTemplateItem(parent, Import[""], false);
     Root->setOpen(true);
 
@@ -254,7 +282,8 @@ void toProjectTemplate::insertItems(toTreeWidget *parent, QToolBar *toolbar) {
 
     toProjectTemplateItem *last = NULL;
 
-    while ((i = Import.find(QString("Items:") + QString::number(id).toLatin1() + ":Parent")) != Import.end()) {
+    while ((i = Import.find(QString("Items:") + QString::number(id).toLatin1() + ":Parent")) != Import.end())
+    {
         QString nam = QString("Items:") + QString::number(id).toLatin1() + ":";
         int parent = (*i).second.toInt();
         if (parent)
@@ -280,31 +309,37 @@ void toProjectTemplate::insertItems(toTreeWidget *parent, QToolBar *toolbar) {
     DelFile->setEnabled(false);
 }
 
-void toProjectTemplate::changeItem(toTreeWidgetItem *item) {
+void toProjectTemplate::changeItem(toTreeWidgetItem *item)
+{
     bool ena = dynamic_cast<toProjectTemplateItem *>(item);
     AddFile->setEnabled(ena);
     DelFile->setEnabled(ena && item->parent());
 }
 
-void toProjectTemplate::removeItems(toTreeWidgetItem *item) {
+void toProjectTemplate::removeItems(toTreeWidgetItem *item)
+{
     delete item;
 }
 
-void toProjectTemplate::addFile(void) {
+void toProjectTemplate::addFile(void)
+{
     QString file = toOpenFilename(QString::null,
                                   QString::fromLatin1(PROJECT_EXTENSIONS),
                                   toMainWidget());
-    if (!file.isNull()) {
+    if (!file.isNull())
+    {
         toTreeWidget *view = Root->listView();
         toProjectTemplateItem *item = dynamic_cast<toProjectTemplateItem *>(view->currentItem());
-        if (item) {
+        if (item)
+        {
             item->setOpen(true);
             toTreeWidgetItem *last = item->firstChild();
             while (last && last->nextSibling())
                 last = last->nextSibling();
             if (item->project())
                 new toProjectTemplateItem(item, last, file);
-            else {
+            else
+            {
                 item = dynamic_cast<toProjectTemplateItem *>(item->parent());
                 if (item)
                     new toProjectTemplateItem(item, last, file);
@@ -315,7 +350,8 @@ void toProjectTemplate::addFile(void) {
     }
 }
 
-void toProjectTemplate::delFile(void) {
+void toProjectTemplate::delFile(void)
+{
     toTreeWidget *view = Root->listView();
     toProjectTemplateItem *item = dynamic_cast<toProjectTemplateItem *>(view->currentItem());
     delete item;
@@ -323,15 +359,19 @@ void toProjectTemplate::delFile(void) {
         Details->update();
 }
 
-void toProject::update(toProjectTemplateItem *sourceparent, toResultViewItem *parent) {
-    if (parent == NULL) {
+void toProject::update(toProjectTemplateItem *sourceparent, toResultViewItem *parent)
+{
+    if (parent == NULL)
+    {
         parent = new toResultViewItem(Project, NULL, tr("SQL Project"));
         parent->setOpen(true);
         ItemMap[parent] = sourceparent;
     }
-    for (toTreeWidgetItem *item = sourceparent->firstChild();item;item = item->nextSibling()) {
+    for (toTreeWidgetItem *item = sourceparent->firstChild();item;item = item->nextSibling())
+    {
         toProjectTemplateItem * projitem = dynamic_cast<toProjectTemplateItem *>(item);
-        if (projitem) {
+        if (projitem)
+        {
             QFile file(projitem->filename());
             unsigned int size = file.size();
             toResultViewItem *nitem;
@@ -349,7 +389,8 @@ void toProject::update(toProjectTemplateItem *sourceparent, toResultViewItem *pa
 }
 
 toProject::toProject(toProjectTemplateItem *top, QWidget *parent)
-    : QWidget(parent) {
+        : QWidget(parent)
+{
     Root = top;
 
     QVBoxLayout *vbox = new QVBoxLayout;
@@ -416,41 +457,51 @@ toProject::toProject(toProjectTemplateItem *top, QWidget *parent)
     update();
 }
 
-void toProject::update(void) {
+void toProject::update(void)
+{
     ItemMap.clear();
     Project->clear();
     update(Root, NULL);
 }
 
-void toProject::selectionChanged(void) {
+void toProject::selectionChanged(void)
+{
     toTreeWidgetItem *item = Project->selectedItem();
-    if (item) {
+    if (item)
+    {
         DelFile->setEnabled(item->parent());
         toProjectTemplateItem *oi = ItemMap[item];
-        if (oi) {
+        if (oi)
+        {
             oi->listView()->setSelected(oi, true);
         }
     }
 }
 
-void toProject::addFile(void) {
+void toProject::addFile(void)
+{
     selectionChanged();
     ProjectTemplate.addFile();
 }
 
-void toProject::delFile(void) {
+void toProject::delFile(void)
+{
     selectionChanged();
     ProjectTemplate.delFile();
 }
 
-void toProject::moveDown(void) {
+void toProject::moveDown(void)
+{
     toTreeWidgetItem *item = Project->selectedItem();
-    if (item) {
+    if (item)
+    {
         toProjectTemplateItem *oi = ItemMap[item];
-        if (oi) {
+        if (oi)
+        {
             toTreeWidgetItem *item = oi->nextSibling();
             toTreeWidgetItem *parent = oi->parent();
-            if (item && parent) {
+            if (item && parent)
+            {
                 oi->moveItem(item);
                 update();
             }
@@ -458,14 +509,18 @@ void toProject::moveDown(void) {
     }
 }
 
-void toProject::moveUp(void) {
+void toProject::moveUp(void)
+{
     toTreeWidgetItem *item = Project->selectedItem();
-    if (item) {
+    if (item)
+    {
         toProjectTemplateItem *oi = ItemMap[item];
-        if (oi) {
+        if (oi)
+        {
             toTreeWidgetItem *item = oi->previousSibling();
             toTreeWidgetItem *parent = oi->parent();
-            if (item && parent) {
+            if (item && parent)
+            {
                 item->moveItem(oi);
                 update();
             }
@@ -473,20 +528,25 @@ void toProject::moveUp(void) {
     }
 }
 
-void toProject::newProject(void) {
+void toProject::newProject(void)
+{
     toTreeWidgetItem *item = Project->selectedItem();
-    if (item) {
+    if (item)
+    {
         toProjectTemplateItem *oi = ItemMap[item];
-        if (oi) {
+        if (oi)
+        {
             toTreeWidgetItem *last = oi;
             if (!oi->project())
                 oi = dynamic_cast<toProjectTemplateItem *>(oi->parent());
-            else {
+            else
+            {
                 last = last->firstChild();
                 while (last && last->nextSibling())
                     last = last->nextSibling();
             }
-            if (oi) {
+            if (oi)
+            {
                 new toProjectTemplateItem(oi, last, tr("untitled.tpr"));
                 Project->update();
             }
@@ -494,20 +554,26 @@ void toProject::newProject(void) {
     }
 }
 
-void toProject::saveProject(void) {
+void toProject::saveProject(void)
+{
     toTreeWidgetItem *item = Project->selectedItem();
-    if (item) {
+    if (item)
+    {
         toProjectTemplateItem *oi = ItemMap[item];
-        if (oi) {
+        if (oi)
+        {
             if (!oi->project())
                 oi = dynamic_cast<toProjectTemplateItem *>(oi->parent());
-            if (oi) {
+            if (oi)
+            {
                 QFileInfo file(oi->filename());
                 QString fn = oi->filename();
                 fn = toSaveFilename(file.dir().path(), QString::fromLatin1("*.tpr"), this);
-                if (!fn.isEmpty()) {
+                if (!fn.isEmpty())
+                {
                     QString data;
-                    for (toTreeWidgetItem *item = oi->firstChild();item;item = item->nextSibling()) {
+                    for (toTreeWidgetItem *item = oi->firstChild();item;item = item->nextSibling())
+                    {
                         toProjectTemplateItem * projitem = dynamic_cast<toProjectTemplateItem *>(item);
                         data += projitem->filename() + QString::fromLatin1("\n");
                     }
@@ -519,16 +585,20 @@ void toProject::saveProject(void) {
     }
 }
 
-QString toProject::generateSQL(toProjectTemplateItem *parent) {
+QString toProject::generateSQL(toProjectTemplateItem *parent)
+{
     QString data;
     for (toProjectTemplateItem *item = dynamic_cast<toProjectTemplateItem *>(parent->firstChild());
-         item;
-         item = dynamic_cast<toProjectTemplateItem *>(item->nextSibling())) {
-        if (item->project()) {
+            item;
+            item = dynamic_cast<toProjectTemplateItem *>(item->nextSibling()))
+    {
+        if (item->project())
+        {
             data += tr("\n\n-- Start of project %1\n\n").arg(item->filename());
             data += generateSQL(item);
         }
-        else {
+        else
+        {
             data += tr("\n\n-- Start of file %1\n\n").arg(item->filename());
             data += QString::fromLocal8Bit(toReadFile(item->filename()));
         }
@@ -536,14 +606,18 @@ QString toProject::generateSQL(toProjectTemplateItem *parent) {
     return data;
 }
 
-void toProject::generateSQL(void) {
+void toProject::generateSQL(void)
+{
     toTreeWidgetItem *item = Project->selectedItem();
-    if (item) {
+    if (item)
+    {
         toProjectTemplateItem *oi = ItemMap[item];
-        if (oi) {
+        if (oi)
+        {
             if (!oi->project())
                 oi = dynamic_cast<toProjectTemplateItem *>(oi->parent());
-            if (oi) {
+            if (oi)
+            {
                 QString data = generateSQL(oi);
                 new toMemoEditor(toMainWidget(), data);
             }
@@ -551,16 +625,20 @@ void toProject::generateSQL(void) {
     }
 }
 
-toProject::~toProject() {
+toProject::~toProject()
+{
     if (ProjectTemplate.Details == this)
         ProjectTemplate.Details = NULL;
 }
 
-void toProject::selectItem(toProjectTemplateItem *item) {
+void toProject::selectItem(toProjectTemplateItem *item)
+{
     for (std::map<toTreeWidgetItem *, toProjectTemplateItem *>::iterator i = ItemMap.begin();
-         i != ItemMap.end();
-         i++) {
-        if ((*i).second == item) {
+            i != ItemMap.end();
+            i++)
+    {
+        if ((*i).second == item)
+        {
             disconnect(Project, SIGNAL(selectionChanged()),
                        this, SLOT(selectionChanged()));
             Project->setSelected((*i).first, true);

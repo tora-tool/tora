@@ -303,7 +303,8 @@ void toResultLong::addItem(void)
 
 void toResultLong::cleanup(void)
 {
-    if(Query) {
+    if (Query)
+    {
         // delete causes crash on short running queries.
 //         delete Query;
 //         Query = NULL;

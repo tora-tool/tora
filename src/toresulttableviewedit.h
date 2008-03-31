@@ -55,16 +55,19 @@
 #include <QMenu>
 
 
-class toResultTableViewEdit : public toResultTableView {
+class toResultTableViewEdit : public toResultTableView
+{
     Q_OBJECT;
 
-    enum ChangeKind {
+    enum ChangeKind
+    {
         Add,
         Delete,
         Update
     };
 
-    struct ChangeSet {
+    struct ChangeSet
+    {
         ChangeKind         kind;         /* sql change mode */
         QString            columnName;   /* column name */
         int                column;       /* the real column number
@@ -112,7 +115,8 @@ public:
      * Reimplemented to create query and new model.
      *
      */
-    void query(const QString &sql) {
+    void query(const QString &sql)
+    {
         toQList p;
         query(sql, p);
     }
@@ -122,7 +126,8 @@ public:
      * True if data has been modified.
      *
      */
-    bool changed(void) {
+    bool changed(void)
+    {
         return Changes.size() > 0;
     }
 
