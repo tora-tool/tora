@@ -18,3 +18,11 @@ Minor Issues that would be nice to fix before release
 
 Seems like there is an extra column in the connection dialog, looks
 weird.
+
+
+Enhancements
+------------
+Would love it if the Schema Browser/connection would remember the
+last schema that was being browsed. In our environment, the user you connect
+as never owns any objects, so if I connect as 'swconf', I'll almost always 
+be browing 'swconf_owner' schema.
