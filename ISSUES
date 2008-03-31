@@ -3,6 +3,10 @@ Showstopper Issues before Next Release
 
 [Petr] Completion of conversion to use QSettings
 
+Crash if you click trashcan/delete-row on empty table in schema browser
+
+New prefs code not saving anything? Showing dialog every time TOra opens
+and not retaining default tool.
 
 
 Minor Issues that would be nice to fix before release
@@ -11,3 +15,6 @@ Minor Issues that would be nice to fix before release
 [Mike] Storage manager functionality
 
 [Nathan] Proper encoding of author names in about dialog.
+
+Seems like there is an extra column in the connection dialog, looks
+weird.
