@@ -10,6 +10,9 @@ and not retaining default tool.
 
 Drag and drop in schema browser to copy table cells.
 
+Double click in schema browser causes it to interpret as 'changed' even
+if no changes are made.
+
 
 
 Minor Issues that would be nice to fix before release
