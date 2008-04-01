@@ -96,14 +96,6 @@ int main(int argc, char **argv)
     QCoreApplication::setOrganizationDomain("tora.sourceforge.net");
     QCoreApplication::setApplicationName("TOra");
 
-// These vars are not useful for Qt4 anymore
-// #ifdef ENABLE_QT_XFT
-//  toSetEnv("QT_XFT", toConfigurationSingle::Instance().QtXft());
-// #endif
-// #  ifndef Q_OS_WIN32
-//  QApplication::setDesktopSettingsAware(toConfigurationSingle::Instance().desktopAware());
-// #  endif
-
     new QApplication(argc, argv);
 
     try
@@ -125,14 +117,11 @@ int main(int argc, char **argv)
             qApp->installTranslator(&toadbindings);
         }
 
-#ifdef ENABLE_STYLE
         QString style(toConfigurationSingle::Instance().style());
         if (!style.isEmpty())
             toSetSessionType(style);
-#endif
 
 #ifndef TOMONOLITHIC
-
         {
             toSplash splash(NULL, "About " TOAPPNAME, false);
             splash.show();

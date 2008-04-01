@@ -338,15 +338,6 @@ public:
         m_sqlFile = v;
     };
 
-    bool desktopAware()
-    {
-        return m_desktopAware;
-    };
-    void setDesktopAware(bool v)
-    {
-        m_desktopAware = v;
-    };
-
     int statusMessage()
     {
         return m_statusMessage;
@@ -354,17 +345,6 @@ public:
     void setStatusMessage(int v)
     {
         m_statusMessage = v;
-    };
-
-    /*! \brief This property is handled as string "true"/"false" values
-    due the ENV settings (set env = "foo") */
-    QString QtXft()
-    {
-        return m_QtXft;
-    };
-    void setQtXft(const QString & v)
-    {
-        m_QtXft = v;
     };
 
     bool dbTitle()
@@ -1272,9 +1252,7 @@ private:
     QString m_cacheDir;
     bool m_cacheDisk;
     QString m_sqlFile;
-    bool m_desktopAware;
     int m_statusMessage;
-    QString m_QtXft;
     bool m_dbTitle;
     QString m_sizeUnit;
     QString m_helpPath;

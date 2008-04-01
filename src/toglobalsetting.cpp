@@ -74,7 +74,6 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     setupUi(this);
 
     SavePassword->setChecked(toConfigurationSingle::Instance().savePassword());
-    DesktopAware->setChecked(toConfigurationSingle::Instance().desktopAware());
     ToolsLeft->setChecked(toConfigurationSingle::Instance().toolsLeft());
     toRefreshCreate(OptionGroup, TO_TOOLBAR_WIDGET_NAME, QString::null, Refresh);
     DefaultSession->setText(toConfigurationSingle::Instance().defaultSession());
@@ -112,16 +111,6 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     else if (typ == "MB")
         SizeUnit->setCurrentIndex(2);
 
-#ifdef ENABLE_QT_XFT
-
-    AntialiaseFonts->setChecked(toConfigurationSingle::Instance().QtXft() != "false");
-#else
-
-    AntialiaseFonts->hide();
-#endif
-
-#ifdef ENABLE_STYLE
-
     Style->addItems(toGetSessionTypes());
     QString str = toGetSessionType();
     for (int i = 0;i < Style->count();i++)
@@ -132,10 +121,6 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
             break;
         }
     }
-#else
-    Style->hide();
-    StyleLabel->hide();
-#endif
 
 #ifdef Q_OS_WIN32
     DesktopAware->hide();
@@ -212,7 +197,6 @@ void toGlobalSetting::saveSetting(void)
     toConfigurationSingle::Instance().setDefaultSession(DefaultSession->text());
     toConfigurationSingle::Instance().setRefresh(Refresh->currentText());
     toConfigurationSingle::Instance().setSavePassword(SavePassword->isChecked());
-    toConfigurationSingle::Instance().setDesktopAware(DesktopAware->isChecked());
     toConfigurationSingle::Instance().setStatusMessage(Status->value());
     toConfigurationSingle::Instance().setStatusSave(HistorySize->value());
     toConfigurationSingle::Instance().setChartSamples(ChartSamples->value());
@@ -228,13 +212,8 @@ void toGlobalSetting::saveSetting(void)
     toConfigurationSingle::Instance().setSizeUnit(SizeUnit->currentText());
     toConfigurationSingle::Instance().setHelpPath(HelpDirectory->text());
 
-#ifdef ENABLE_STYLE
     toConfigurationSingle::Instance().setStyle(Style->currentText());
     toSetSessionType(Style->currentText());
-#endif
-#ifdef ENABLE_QT_XFT
-    toConfigurationSingle::Instance().setQtXft(AntialiaseFonts->isChecked() ? "true" : "false");
-#endif
 
     if (AllSamples->isChecked())
         toConfigurationSingle::Instance().setDisplaySamples(-1);

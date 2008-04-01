@@ -40,15 +40,11 @@ toConfiguration::toConfiguration()
     m_highlight = s.value(CONF_HIGHLIGHT, true).toBool();
     m_keywordUpper = s.value(CONF_KEYWORD_UPPER, DEFAULT_KEYWORD_UPPER).toBool();
 
-// #define CONF_COLOR  "KeywordColor"
-
     m_pluginDir = s.value(CONF_PLUGIN_DIR, DEFAULT_PLUGIN_DIR).toString();
     m_cacheDir = s.value(CONF_CACHE_DIR, "").toString();
     m_cacheDisk = s.value(CONF_CACHE_DISK, DEFAULT_CACHE_DISK).toBool();
     m_sqlFile = s.value(CONF_SQL_FILE, DEFAULT_SQL_FILE).toString();
-    m_desktopAware = s.value(CONF_DESKTOP_AWARE, true).toBool();
     m_statusMessage = s.value(CONF_STATUS_MESSAGE, DEFAULT_STATUS_MESSAGE).toInt();
-    m_QtXft = s.value(CONF_QT_XFT, DEFAULT_QT_XFT).toString();
 
 // #define CONF_DOCK_TOOLBAR "DockToolbar"
 
@@ -250,9 +246,7 @@ void toConfiguration::saveConfig()
     s.setValue(CONF_CACHE_DIR, m_cacheDir);
     s.setValue(CONF_CACHE_DISK, m_cacheDisk);
     s.setValue(CONF_SQL_FILE, m_sqlFile);
-    s.setValue(CONF_DESKTOP_AWARE, m_desktopAware);
     s.setValue(CONF_STATUS_MESSAGE, m_statusMessage);
-    s.setValue(CONF_QT_XFT, m_QtXft);
     s.setValue(CONF_DB_TITLE, m_dbTitle);
     s.setValue(CONF_SIZE_UNIT, m_sizeUnit);
     s.setValue(CONF_HELP_PATH, m_helpPath);

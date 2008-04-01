@@ -79,11 +79,8 @@
 #define DEFAULT_CACHE_DISK true
 #define CONF_SQL_FILE  "SQLDictionary"
 #define DEFAULT_SQL_FILE "$HOME/.torasql"
-#define CONF_DESKTOP_AWARE "DesktopAware"
 #define CONF_STATUS_MESSAGE     "StatusMessage"
 #define DEFAULT_STATUS_MESSAGE  "5"
-#define CONF_QT_XFT             "Xft"
-#define DEFAULT_QT_XFT          "false"
 #define CONF_DOCK_TOOLBAR "DockToolbar"
 #define CONF_DB_TITLE  "DBTitle"
 #define CONF_SIZE_UNIT  "SizeUnit"
@@ -223,14 +220,6 @@
 #define CONF_HISTORY   "History"
 #define CONF_EXEC_LOG     "ExecLog"
 #define CONF_TOPLEVEL_DESCRIBE "ToplevelDescribe"
-
-
-#  ifndef Q_OS_WIN32
-// Undefining this will leave out the style selection option stuff from the program
-#    define ENABLE_STYLE
-// Undefining this will enable choosing Qt_Xft support
-#    define ENABLE_QT_XFT
-#  endif
 
 
 // Version of TOra, must also change rpm files

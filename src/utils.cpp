@@ -72,6 +72,9 @@
 #include <QFileDialog>
 #include <QDockWidget>
 #include <QTextStream>
+#include <QStyleFactory>
+#include <QStyle>
+
 
 #ifdef Q_OS_WIN32
 #  include "windows/cregistry.h"
@@ -399,11 +402,6 @@ QString toDeepCopy(const QString &str)
     return QString(str.data(), str.length());
 }
 
-// Why is this optional?
-#ifdef ENABLE_STYLE
-#    include <qstylefactory.h>
-#    include <qstyle.h>
-
 QStringList toGetSessionTypes(void)
 {
     return QStyleFactory::keys();
@@ -443,7 +441,6 @@ void toSetSessionType(const QString &str)
     else
         toStatusMessage(qApp->translate("toSetSessionType", "Failed to find style %1").arg(str));
 }
-#endif
 
 QToolBar *toAllocBar(QWidget *parent, const QString &str)
 {

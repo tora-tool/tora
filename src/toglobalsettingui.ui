@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>733</width>
-    <height>629</height>
+    <width>785</width>
+    <height>652</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -14,7 +14,7 @@
   </property>
   <layout class="QGridLayout" >
    <property name="margin" >
-    <number>11</number>
+    <number>9</number>
    </property>
    <property name="spacing" >
     <number>6</number>
@@ -168,11 +168,61 @@
      </property>
      <layout class="QGridLayout" >
       <property name="margin" >
-       <number>11</number>
+       <number>9</number>
       </property>
       <property name="spacing" >
        <number>6</number>
       </property>
+      <item row="3" column="1" colspan="2" >
+       <widget class="QCheckBox" name="DiskCaching" >
+        <property name="toolTip" >
+         <string>Use Disk Caching of ObjectLists and Synonyms</string>
+        </property>
+        <property name="text" >
+         <string>Use Disk Caching</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" >
+       <widget class="QCheckBox" name="DockToolbar" >
+        <property name="toolTip" >
+         <string>Check this if docks are to use toolbars instead of normal frames.</string>
+        </property>
+        <property name="text" >
+         <string>Docks use toolbars</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="5" >
+       <widget class="QCheckBox" name="AllSamples" >
+        <property name="toolTip" >
+         <string>Display all available samples</string>
+        </property>
+        <property name="text" >
+         <string>All</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" colspan="2" >
+       <widget class="QCheckBox" name="DisplayGrid" >
+        <property name="toolTip" >
+         <string>Show grid lines in output results table.</string>
+        </property>
+        <property name="text" >
+         <string>Display gridlines in results</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="2" >
+       <widget class="QCheckBox" name="ToolsLeft" >
+        <property name="toolTip" >
+         <string>Start using the tools toolbar on the left of the main window instead of at the top.</string>
+        </property>
+        <property name="text" >
+         <string>Tools toolbar on left</string>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="0" >
        <widget class="QCheckBox" name="SavePassword" >
         <property name="toolTip" >
@@ -292,50 +342,10 @@ Will leave the password unencryptet in the config file.</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1" colspan="2" >
-       <widget class="QCheckBox" name="ToolsLeft" >
-        <property name="toolTip" >
-         <string>Start using the tools toolbar on the left of the main window instead of at the top.</string>
-        </property>
-        <property name="text" >
-         <string>Tools toolbar on left</string>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="0" >
        <widget class="QCheckBox" name="RestoreSession" >
         <property name="text" >
          <string>Restore session on startup</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0" >
-       <widget class="QCheckBox" name="DesktopAware" >
-        <property name="toolTip" >
-         <string>Colors get really weird in KDE if you select this.</string>
-        </property>
-        <property name="text" >
-         <string>&amp;Desktop aware</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0" >
-       <widget class="QCheckBox" name="AntialiaseFonts" >
-        <property name="toolTip" >
-         <string>Use antialiase fonts if Qt supports this. You need to restart for this to take affect.</string>
-        </property>
-        <property name="text" >
-         <string>&amp;Antialiase fonts</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0" >
-       <widget class="QCheckBox" name="DockToolbar" >
-        <property name="toolTip" >
-         <string>Check this if docks are to use toolbars instead of normal frames.</string>
-        </property>
-        <property name="text" >
-         <string>Docks use toolbars</string>
         </property>
        </widget>
       </item>
@@ -508,26 +518,6 @@ Will leave the password unencryptet in the config file.</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="5" >
-       <widget class="QCheckBox" name="AllSamples" >
-        <property name="toolTip" >
-         <string>Display all available samples</string>
-        </property>
-        <property name="text" >
-         <string>All</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1" colspan="2" >
-       <widget class="QCheckBox" name="DiskCaching" >
-        <property name="toolTip" >
-         <string>Use Disk Caching of ObjectLists and Synonyms</string>
-        </property>
-        <property name="text" >
-         <string>Use Disk Caching</string>
-        </property>
-       </widget>
-      </item>
       <item row="8" column="1" >
        <widget class="QLabel" name="LocaleLabel" >
         <property name="sizePolicy" >
@@ -558,26 +548,6 @@ Will leave the password unencryptet in the config file.</string>
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="1" colspan="2" >
-       <widget class="QCheckBox" name="DisplayGrid" >
-        <property name="toolTip" >
-         <string>Show grid lines in output results table.</string>
-        </property>
-        <property name="text" >
-         <string>Display gridlines in results</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="1" colspan="2" >
-       <widget class="QCheckBox" name="ToadBindings" >
-        <property name="toolTip" >
-         <string>Use TOAD keybindings instead of classic TOra.</string>
-        </property>
-        <property name="text" >
-         <string>Prefer TOAD key bindings</string>
         </property>
        </widget>
       </item>
@@ -618,6 +588,16 @@ Will leave the password unencryptet in the config file.</string>
         </item>
        </layout>
       </item>
+      <item row="5" column="0" colspan="2" >
+       <widget class="QCheckBox" name="ToadBindings" >
+        <property name="toolTip" >
+         <string>Use TOAD keybindings instead of classic TOra.</string>
+        </property>
+        <property name="text" >
+         <string>Prefer TOAD key bindings</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -638,8 +618,6 @@ Will leave the password unencryptet in the config file.</string>
   <tabstop>SavePassword</tabstop>
   <tabstop>IncludeDB</tabstop>
   <tabstop>RestoreSession</tabstop>
-  <tabstop>DesktopAware</tabstop>
-  <tabstop>AntialiaseFonts</tabstop>
   <tabstop>DockToolbar</tabstop>
   <tabstop>Statusbar</tabstop>
   <tabstop>ToolsLeft</tabstop>

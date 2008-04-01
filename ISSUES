@@ -5,7 +5,7 @@ Showstopper Issues before Next Release
 
 Crash if you click trashcan/delete-row on empty table in schema browser
 
-New prefs code not saving anything? Showing dialog every time TOra opens
+[FIXED] New prefs code not saving anything? Showing dialog every time TOra opens
 and not retaining default tool.
 
 Drag and drop in schema browser to copy table cells.
