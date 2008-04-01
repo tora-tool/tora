@@ -23,6 +23,7 @@ the selected text to be pasted at the end of the entry area as if you
 middle-clicked. Picture normal behavior of selecting it all to copy it, then
 single clicking to unselect it and move to something else... 
 
+Clicking on either of the "sql bookmark" toolbar icons instantly crashes tora.
 
 
 Minor Issues that would be nice to fix before release
