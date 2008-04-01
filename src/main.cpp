@@ -91,11 +91,7 @@ void toUpdateIndicateEmpty(void);
 
 int main(int argc, char **argv)
 {
-    // QSettings uses these.
-    QCoreApplication::setOrganizationName("TOra");
-    QCoreApplication::setOrganizationDomain("tora.sourceforge.net");
-    QCoreApplication::setApplicationName("TOra");
-
+    toConfiguration::setQSettingsEnv();
     new QApplication(argc, argv);
 
     try

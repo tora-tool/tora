@@ -226,6 +226,13 @@
 #ifndef TOAPPNAME
 #  define TOAPPNAME  "TOra"
 #endif
+// defines for QSettings
+#ifndef TOORGDOMAIN
+#define TOORGDOMAIN "tora.sourceforge.net"
+#endif
+#ifndef TOORGNAME
+#define TOORGNAME "TOra"
+#endif
 
 #define TO_TOOLBAR_WIDGET_NAME "kde toolbar widget"
 

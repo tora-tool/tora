@@ -13,10 +13,23 @@
 #include <QSettings>
 #include "toconf.h"
 
+
+// static one
+void toConfiguration::setQSettingsEnv()
+{
+    if (QCoreApplication::organizationName().isEmpty())
+        QCoreApplication::setOrganizationName(TOORGNAME);
+    if (QCoreApplication::organizationDomain().isEmpty())
+        QCoreApplication::setOrganizationDomain(TOORGDOMAIN);
+    if (QCoreApplication::applicationName().isEmpty())
+        QCoreApplication::setApplicationName(TOAPPNAME);
+}
+
 toConfiguration::toConfiguration()
 {
     int cnt; // tmp count holder for setting arrays
-    QSettings s("TOra", "TOra");
+    setQSettingsEnv();
+    QSettings s;
     s.beginGroup("preferences");
     m_provider = s.value(CONF_PROVIDER, DEFAULT_PROVIDER).toString();
     m_savePassword = s.value(CONF_SAVE_PWD, DEFAULT_SAVE_PWD).toBool();
