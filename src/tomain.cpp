@@ -143,9 +143,10 @@ toMain::toMain()
             k != tools.end();
             k++)
     {
-
-        if (defName.isNull() || defName == (*k).first)
+        if(defName.isEmpty() || defName == (*k).first) {
             DefaultTool = (*k).second;
+            defName = (*k).first;
+        }
 
         (*k).second->customSetup();
     }
