@@ -120,6 +120,7 @@ toNewConnection::toNewConnection(
     readSettings();
 
     Previous->verticalHeader()->setVisible(false);
+	Previous->horizontalHeader()->setStretchLastSection(true);
     Previous->resizeRowsToContents();
     Previous->resizeColumnsToContents();
     Previous->horizontalHeader()->setHighlightSections(false);
