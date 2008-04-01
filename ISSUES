@@ -10,6 +10,11 @@ Drag and drop in schema browser to copy table cells.
 Double click in schema browser causes it to interpret as 'changed' even
 if no changes are made.
 
+Regulary raising warning/error dialog with:
+    ORA-24374: define not done before fetch or execute and fetch
+    <ERROR>SELECT TO_CHAR(SYSDATE) FROM sys.DUAL
+  propably used as "keep session alive" (?)
+
 
 
 Minor Issues that would be nice to fix before release
