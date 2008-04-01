@@ -16,7 +16,7 @@
 toConfiguration::toConfiguration()
 {
     int cnt; // tmp count holder for setting arrays
-    QSettings s; //("TOra", "TOra");
+    QSettings s("TOra", "TOra");
     s.beginGroup("preferences");
     m_provider = s.value(CONF_PROVIDER, DEFAULT_PROVIDER).toString();
     m_savePassword = s.value(CONF_SAVE_PWD, DEFAULT_SAVE_PWD).toBool();
