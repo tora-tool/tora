@@ -5,9 +5,6 @@ Showstopper Issues before Next Release
 
 Crash if you click trashcan/delete-row on empty table in schema browser
 
-[FIXED] New prefs code not saving anything? Showing dialog every time TOra opens
-and not retaining default tool.
-
 Drag and drop in schema browser to copy table cells.
 
 Double click in schema browser causes it to interpret as 'changed' even
@@ -22,9 +19,6 @@ Minor Issues that would be nice to fix before release
 
 [Nathan] Proper encoding of author names in about dialog.
 
-Seems like there is an extra column in the connection dialog, looks
-weird.
-
 Drag and drop/doubleclick in filter dialog for schema browser no longer works.
 
 
@@ -35,3 +29,13 @@ Would love it if the Schema Browser/connection would remember the
 last schema that was being browsed. In our environment, the user you connect
 as never owns any objects, so if I connect as 'swconf', I'll almost always 
 be browing 'swconf_owner' schema.
+
+
+Resolved Issues
+---------------
+[FIXED] Seems like there is an extra column in the connection dialog, looks
+weird.
+
+[FIXED] New prefs code not saving anything? Showing dialog every time TOra opens
+and not retaining default tool.
+
