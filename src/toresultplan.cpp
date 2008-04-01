@@ -57,6 +57,7 @@ toResultPlan::toResultPlan(QWidget *parent, const char *name)
 {
     setSQLName(QString::fromLatin1("toResultPlan"));
     connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
+    setAlternatingRowColors(true);
     Query = NULL;
     oracleSetup();
 }
@@ -339,7 +340,7 @@ void toResultPlan::poll(void)
                     if (!parentid.isNull() && Parents[parentid])
                     {
                         item = new toResultViewItem(Parents[parentid], Last[parentid]);
-                        setOpen(Parents[parentid], true);
+//                         setOpen(Parents[parentid], true);
                         Last[parentid] = item;
                     }
                     else
@@ -406,6 +407,8 @@ void toResultPlan::poll(void)
                 }
             }
         }
+        expandAll();
+        resizeColumnsToContents();
     }
     catch (const QString &str)
     {
