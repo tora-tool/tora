@@ -136,7 +136,7 @@ will require to download the entire server distribution to install the client, b
 it is available as a choice in the installer.
 
 %changelog
-* Mon Jun 29 2005 Nathan Neulinger <nneul@umr.edu>
+* Mon Jun 29 2005 Nathan Neulinger <nneul@neulinger.org>
 - standardize on a single tora spec file
 
 %prep
