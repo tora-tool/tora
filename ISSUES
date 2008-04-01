@@ -18,6 +18,11 @@ Regulary raising warning/error dialog with:
 Explain Plan shortcut prints to stdout:
 QAction::eventFilter: Ambiguous shortcut overload: F3
 
+Single clicking in sql editor entry area if entire text is selected causes
+the selected text to be pasted at the end of the entry area as if you
+middle-clicked. Picture normal behavior of selecting it all to copy it, then
+single clicking to unselect it and move to something else... 
+
 
 
 Minor Issues that would be nice to fix before release
