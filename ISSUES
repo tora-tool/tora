@@ -15,6 +15,9 @@ Regulary raising warning/error dialog with:
     <ERROR>SELECT TO_CHAR(SYSDATE) FROM sys.DUAL
   propably used as "keep session alive" (?)
 
+Explain Plan shortcut prints to stdout:
+QAction::eventFilter: Ambiguous shortcut overload: F3
+
 
 
 Minor Issues that would be nice to fix before release
