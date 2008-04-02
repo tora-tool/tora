@@ -4,6 +4,8 @@ Showstopper Issues before Next Release
 [Petr] Completion of conversion to use QSettings
 
 Crash if you click trashcan/delete-row on empty table in schema browser
+[mrj: can't reproduce this, can you send me a stacktrace? the code
+does the right thing it appears.]
 
 Drag and drop in schema browser to copy table cells.
 
@@ -22,6 +24,11 @@ Single clicking in sql editor entry area if entire text is selected causes
 the selected text to be pasted at the end of the entry area as if you
 middle-clicked. Picture normal behavior of selecting it all to copy it, then
 single clicking to unselect it and move to something else... 
+
+[mrj: yeah, that's been bothering me for a while. i added an option to
+disable it and am researching a qscintilla threshold setting. i may
+end up doing it manually. my personal preference is that drag and drop
+should not be used when coding -- but i'm sure some find it useful.]
 
 Clicking on either of the "sql bookmark" toolbar icons instantly crashes tora.
 
