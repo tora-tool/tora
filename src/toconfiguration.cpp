@@ -105,6 +105,7 @@ toConfiguration::toConfiguration()
     m_cacheTimeout = s.value(CONF_CACHE_TIMEOUT, DEFAULT_CACHE_TIMEOUT).toInt();
     m_tabStop = s.value(CONF_TAB_STOP, DEFAULT_TAB_STOP).toInt();
     m_tabSpaces = s.value(CONF_TAB_SPACES, DEFAULT_TAB_SPACES).toBool();
+    m_editDragDrop = s.value(CONF_EDIT_DRAG_DROP, DEFAULT_EDIT_DRAG_DROP).toBool();
     m_toadBindings = s.value(CONF_TOAD_BINDINGS, DEFAULT_TOAD_BINDINGS).toBool();
     m_displayGridlines = s.value(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).toBool();
     m_smtp = s.value(CONF_SMTP, DEFAULT_SMTP).toString();
@@ -298,6 +299,7 @@ void toConfiguration::saveConfig()
     s.setValue(CONF_CACHE_TIMEOUT, m_cacheTimeout);
     s.setValue(CONF_TAB_STOP, m_tabStop);
     s.setValue(CONF_TAB_SPACES, m_tabSpaces);
+    s.setValue(CONF_EDIT_DRAG_DROP, m_editDragDrop);
     s.setValue(CONF_TOAD_BINDINGS, m_toadBindings);
     s.setValue(CONF_DISPLAY_GRIDLINES, m_displayGridlines);
     s.setValue(CONF_SMTP, m_smtp);

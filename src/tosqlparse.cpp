@@ -1034,7 +1034,7 @@ toSQLParse::settings toSQLParse::Settings = {true,
 QString toSQLParse::indentString(int level)
 {
     QString ret;
-    if (Settings.ExpandSpaces)
+    if (!Settings.ExpandSpaces)
     {
         for (int i = 0;i < level / Settings.IndentLevel;i++)
             ret += ("\t");

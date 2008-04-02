@@ -429,6 +429,7 @@ toEditExtensionSetup::toEditExtensionSetup(
     EndBlockNewline->setChecked(Current.EndBlockNewline);
     CommentColumn->setValue(Current.CommentColumn);
     AutoIndent->setChecked(toConfigurationSingle::Instance().autoIndentRo());
+    DragDrop->setChecked(toConfigurationSingle::Instance().editDragDrop());
     Ok = false;
     try
     {
@@ -693,6 +694,7 @@ void toEditExtensionSetup::saveSetting(void)
     toConfigurationSingle::Instance().setEndBlockNewline(EndBlockNewline->isChecked());
     toConfigurationSingle::Instance().setCommentColumn(CommentColumn->value());
     toConfigurationSingle::Instance().setAutoIndentRo(AutoIndent->isChecked());
+    toConfigurationSingle::Instance().setEditDragDrop(DragDrop->isChecked());
     saveCurrent();
 }
 

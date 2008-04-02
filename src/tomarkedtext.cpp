@@ -74,9 +74,6 @@
 
 #define ACCEL_KEY(k) "\t" + QString("Ctrl+" #k)
 
-// static value for default tabs
-int defTabWidth = 8;
-bool defTabSpaces = false;
 
 toMarkedText::toMarkedText(QWidget *parent, const char *name)
         : QsciScintilla(parent), toEditWidget()
@@ -98,6 +95,7 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
     // sets default tab width
     setTabWidth(defaultTabWidth());
     setIndentationsUseTabs(!defaultTabSpaces());
+
     this->setUtf8(true);
 }
 
@@ -107,23 +105,24 @@ toMarkedText::~toMarkedText()
 
 int toMarkedText::defaultTabWidth()
 {
-    return defTabWidth;
+    return toConfigurationSingle::Instance().tabStop();
 }
 
 void toMarkedText::setDefaultTabWidth(int width)
 {
-    if (width > 0)
-        defTabWidth = width;
+    toConfigurationSingle::Instance().setTabStop(width);
+    toConfigurationSingle::Instance().saveConfig();
 }
 
 bool toMarkedText::defaultTabSpaces(void)
 {
-    return defTabSpaces;
+    return toConfigurationSingle::Instance().tabSpaces();
 }
 
 void toMarkedText::setDefaultTabSpaces(bool on)
 {
-    defTabSpaces = on;
+    toConfigurationSingle::Instance().setTabSpaces(on);
+    toConfigurationSingle::Instance().saveConfig();
 }
 
 void toMarkedText::setCopyAvailable(bool yes)
@@ -486,6 +485,19 @@ void toMarkedText::mousePressEvent(QMouseEvent *e)
         LastSearch = SearchString;
         toStatusMessage(QString::null);
     }
+
+    if(!toConfigurationSingle::Instance().editDragDrop() &&
+       e->button() == Qt::LeftButton &&
+       geometry().contains(e->pos()))
+    {
+        // would normally be a drag request. clear selection.
+        if(QsciScintilla::hasSelectedText())
+            QsciScintilla::selectAll(false);
+    }
+
+    // set on mouse press to apply any preference changes
+    setAcceptDrops(toConfigurationSingle::Instance().editDragDrop());
+
     QsciScintilla::mousePressEvent(e);
 }
 

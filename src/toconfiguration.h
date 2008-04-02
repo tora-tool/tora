@@ -576,6 +576,15 @@ public:
         m_tabSpaces = v;
     };
 
+    bool editDragDrop()
+    {
+        return m_editDragDrop;
+    };
+    void setEditDragDrop(bool v)
+    {
+        m_editDragDrop = v;
+    };
+
     bool toadBindings()
     {
         return m_toadBindings;
@@ -1194,6 +1203,7 @@ private:
     int m_cacheTimeout;
     int m_tabStop;
     bool m_tabSpaces;
+    bool m_editDragDrop;
     bool m_toadBindings;
     bool m_displayGridlines;
     QString m_smtp;

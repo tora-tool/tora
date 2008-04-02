@@ -142,6 +142,8 @@
 #define DEFAULT_TAB_STOP 8
 #define CONF_TAB_SPACES "TabSpaces"
 #define DEFAULT_TAB_SPACES false
+#define CONF_EDIT_DRAG_DROP "EditDragDrop"
+#define DEFAULT_EDIT_DRAG_DROP false
 #define CONF_TOAD_BINDINGS "ToadBindings"
 #define DEFAULT_TOAD_BINDINGS false
 #define CONF_DISPLAY_GRIDLINES "Gridlines"
