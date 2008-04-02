@@ -5,7 +5,8 @@ Showstopper Issues before Next Release
 
 Crash if you click trashcan/delete-row on empty table in schema browser
 [mrj: can't reproduce this, can you send me a stacktrace? the code
-does the right thing it appears.]
+does the right thing it appears.] [nneul: nor can I now... weird... will
+leave this in for a little bit, if it returns, I'll get you a trace]
 
 Drag and drop in schema browser to copy table cells.
 
