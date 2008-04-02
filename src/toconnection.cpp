@@ -1764,7 +1764,8 @@ void toConnection::allExecute(const toSQL &sql, toQList &params)
     {
         try
         {
-            Connection->execute(*i, toSQL::sql(sql, *this), params);
+           if(*i)
+              Connection->execute(*i, toSQL::sql(sql, *this), params);
         }
         TOCATCH
     }
