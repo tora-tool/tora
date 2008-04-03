@@ -122,10 +122,6 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
         }
     }
 
-#ifdef Q_OS_WIN32
-    DesktopAware->hide();
-#endif
-
     DockToolbar->hide();
 
     if (toMonolithic())
