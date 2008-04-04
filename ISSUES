@@ -1,8 +1,6 @@
 Showstopper Issues before Next Release
 --------------------------------------
 
-[Petr] Completion of conversion to use QSettings
-
 Crash if you click trashcan/delete-row on empty table in schema browser
 [mrj: can't reproduce this, can you send me a stacktrace? the code
 does the right thing it appears.] [nneul: nor can I now... weird... will
@@ -33,6 +31,9 @@ should not be used when coding -- but i'm sure some find it useful.]
 
 Clicking on either of the "sql bookmark" toolbar icons instantly crashes tora.
 
+Batch(script) run in SQL Editor. See:
+http://sourceforge.net/mailarchive/forum.php?thread_name=e50db5a5f5be244c6ad03556ffd7fa76%40office.scribus.info&forum_name=tora-develop
+
 
 Minor Issues that would be nice to fix before release
 -----------------------------------------------------
@@ -55,6 +56,9 @@ be browing 'swconf_owner' schema.
 
 Resolved Issues
 ---------------
+
+[DONE - some issues can be found by testing of course] [Petr] Completion of conversion to use QSettings
+
 [FIXED] Seems like there is an extra column in the connection dialog, looks
 weird.
 
