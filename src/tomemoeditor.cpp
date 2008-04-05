@@ -54,6 +54,7 @@
 #include <QKeyEvent>
 #include <QVBoxLayout>
 #include <QDesktopWidget>
+#include <QSettings>
 
 #include "icons/commit.xpm"
 #include "icons/copy.xpm"
@@ -269,8 +270,29 @@ toMemoEditor::toMemoEditor(QWidget *parent,
     }
     Toolbar->addWidget(Label);
 
+    readSettings();
+
+    connect(this,
+            SIGNAL(finished(int)),
+            this,
+            SLOT(writeSettings()));
+
     if (!modal)
         show();
+}
+
+void toMemoEditor::readSettings()
+{
+    QSettings settings;
+    settings.beginGroup("memoEditor");
+    resize(settings.value("size", QSize(400, 300)).toSize());
+}
+
+void toMemoEditor::writeSettings() const
+{
+    QSettings settings;
+    settings.beginGroup("memoEditor");
+    settings.setValue("size", size());
 }
 
 void toMemoEditor::setText(const QString &str)

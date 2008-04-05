@@ -76,6 +76,8 @@ class toMemoEditor : public QDialog
 private slots:
     void openFile(void);
     void saveFile(void);
+    void readSettings(void);
+    void writeSettings(void) const;
 protected:
     QToolBar *toolbar()
     {
