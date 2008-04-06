@@ -33,7 +33,6 @@ SET(TORA_UI_SRC
     tolinechartsetupui.ui
     tomessageui.ui
     tonewconnectionui.ui
-    tooraclesettingui.ui
     topreferencesui.ui
     toresultcontentfilterui.ui
     toresultlistformatui.ui
@@ -57,6 +56,10 @@ SET(TORA_UI_SRC
     totuningsettingui.ui
     toworksheetsetupui.ui
 )
+IF (ORACLE_FOUND)
+    LIST (APPEND TORA_UI_SRC tooraclesettingui.ui)
+ENDIF (ORACLE_FOUND)
+
 
 SET(TORA_MOC_CLASSES
     toabout.h
@@ -111,7 +114,6 @@ SET(TORA_MOC_CLASSES
 #     tomysqlkeywords.h
     tonewconnection.h
 #     tonoblockquery.h
-    tooraclesetting.h
     tooutput.h
     toparamget.h
     topiechart.h
@@ -179,6 +181,10 @@ SET(TORA_MOC_CLASSES
     toworksheetwidget.h
     utils.h
 )
+IF (ORACLE_FOUND)
+    LIST(APPEND TORA_MOC_CLASSES tooraclesetting.h)
+ENDIF (ORACLE_FOUND)
+
 
 SET(TORA_SOURCES
     main.cpp
