@@ -95,16 +95,16 @@
 #include <QString>
 #include <QTextStream>
 
-static int toMaxLong = toConfigurationSingle::Instance().maxLong();;
+static int toMaxLong = toConfigurationSingle::Instance().maxLong();
 
 static toSQL SQLComment("toOracleConnection:Comments",
-                        "SELECT /*+ RULE */ Column_name,Comments FROM sys.All_Col_Comments\n"
+                        "SELECT Column_name,Comments FROM sys.All_Col_Comments\n"
                         " WHERE Owner = :f1<char[100]>\n"
                         "   AND Table_Name = :f2<char[100]>",
                         "Display column comments");
 
 static toSQL SQLMembers("toOracleConnection:Members",
-                        "SELECT /*+ RULE */ object_name,overload,argument_name,data_type\n"
+                        "SELECT object_name,overload,argument_name,data_type\n"
                         "  FROM sys.All_Arguments\n"
                         " WHERE Owner = :f1<char[100]>\n"
                         "   AND Package_Name = :f2<char[100]>\n"
@@ -112,7 +112,7 @@ static toSQL SQLMembers("toOracleConnection:Members",
                         "Get list of package members");
 
 static toSQL SQLListObjects("toOracleConnection:ListObjects",
-                            "select /*+ RULE */ a.owner,a.object_name,a.object_type,b.comments\n"
+                            "select a.owner,a.object_name,a.object_type,b.comments\n"
                             "  from sys.all_objects a,\n"
                             "       sys.all_tab_comments b\n"
                             " where a.owner = b.owner(+) and a.object_name = b.table_name(+)\n"
@@ -121,7 +121,7 @@ static toSQL SQLListObjects("toOracleConnection:ListObjects",
                             "columns and binds");
 
 static toSQL SQLListSynonyms("toOracleConnection:ListSynonyms",
-                             "select /*+ RULE */ synonym_name,table_owner,table_name\n"
+                             "select synonym_name,table_owner,table_name\n"
                              "  from sys.all_synonyms\n"
                              " where owner = :usr<char[101]> or owner = 'PUBLIC'\n"
                              " order by table_owner,table_name",
