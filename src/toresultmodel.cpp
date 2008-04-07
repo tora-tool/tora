@@ -41,12 +41,10 @@
 #include "utils.h"
 #include "toconfiguration.h"
 #include "toqvalue.h"
+#include "toeventquery.h"
 
 
-#define TO_POLL_CHECK 100
-
-
-toResultModel::toResultModel(toNoBlockQuery *query,
+toResultModel::toResultModel(toEventQuery *query,
                              QObject *parent,
                              bool edit,
                              bool read)
@@ -61,18 +59,26 @@ toResultModel::toResultModel(toNoBlockQuery *query,
 
     CurrentRow = 0;
 
-    Query = QPointer<toNoBlockQuery>(query);
+    Query = query;
     Query->setParent(this);
 
-    connect(&Timer, SIGNAL(timeout(void)), this, SLOT(readData(void)));
-    Timer.start(TO_POLL_CHECK);
+    connect(query,
+            SIGNAL(descriptionAvailable()),
+            this,
+            SLOT(readHeaders()));
+    connect(query,
+            SIGNAL(dataAvailable()),
+            this,
+            SLOT(readData()));
+
+    query->start();
 }
 
 
 toResultModel::~toResultModel()
 {
     if (Query)
-        delete Query;
+        Query->deleteLater();
     Query = NULL;
 }
 
@@ -81,9 +87,7 @@ void toResultModel::cleanup()
 {
     if (Query)
     {
-        delete Query;
-        Timer.stop();
-
+        Query->stop();
         emit done();
     }
 
@@ -95,9 +99,10 @@ void toResultModel::readAll()
 {
     QModelIndex index;
 
-    while (canFetchMore(index))
-    {
-        fetchMore(index);
+    while (Query && !Query->eof()) {
+        if (canFetchMore(index))
+            fetchMore(index);
+
         qApp->processEvents();
     }
 }
@@ -113,16 +118,9 @@ void toResultModel::readData()
 
     try
     {
-        if (!Query->poll())
-        {
-            if (!Timer.isActive() && First)
-                Timer.start(TO_POLL_CHECK);
-            return;
-        }
-
-        readHeaders();
-
         int cols = Headers.size();
+        if(cols < 1)
+            return;
 
         // don't actually modify any data until we can call
         // beginInsertRows(). but to do that, we have to know how many
@@ -130,23 +128,19 @@ void toResultModel::readData()
         RowList tmp;
         int     current = CurrentRow;
 
-        if (!Query->eof())
+        while(Query->hasMore() &&
+              (MaxNumber < 0 || MaxNumber > current))
         {
-            do
-            {
-                Row row;
+            Row row;
 
-                // the number column. should never change
-                row.append(toQValue(current + 1));
+            // the number column. should never change
+            row.append(toQValue(current + 1));
 
-                for (int j = 1; (j < cols || j == 0) && !Query->eof(); j++)
-                    row.append(Query->readValueNull());
+            for (int j = 1; (j < cols || j == 0) && Query->hasMore(); j++)
+                row.append(Query->readValueNull());
 
-                tmp.append(row);
-                current++;
-            }
-            while (!Query->eof() && Query->poll() &&
-                    (MaxNumber < 0 || MaxNumber > current));
+            tmp.append(row);
+            current++;
         }
 
         // if we read some data, then go ahead and insert them now.
@@ -174,7 +168,7 @@ void toResultModel::readData()
 
         if (!Query)
             return;
-        if (Query->eof())
+        if (!Query->hasMore() && Query->eof())
         {
             cleanup();
             return;
@@ -200,12 +194,6 @@ void toResultModel::readData()
         cleanup();
         return;
     }
-
-    // reset timer if needed
-    if (MaxNumber < 0 || MaxNumber > CurrentRow)
-        Timer.start(TO_POLL_CHECK);
-    else
-        Timer.stop();
 }
 
 
@@ -448,7 +436,7 @@ bool toResultModel::canFetchMore(const QModelIndex &parent) const
 
     try
     {
-        return Query && Query->poll();
+        return Query && Query->hasMore();
     }
     catch (...)
     {

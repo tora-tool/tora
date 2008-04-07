@@ -42,7 +42,6 @@
 #include "tosql.h"
 #include "toresult.h"
 #include "toconnection.h"
-#include "tonoblockquery.h"
 #include "tobackground.h"
 
 #include <QObject>
@@ -52,6 +51,7 @@
 #include <QMap>
 
 class toQValue;
+class toEventQuery;
 
 
 class toResultModel : public QAbstractTableModel
@@ -72,7 +72,7 @@ public:
     typedef QList<HeaderDesc> HeaderList;
 
 private:
-    QPointer<toNoBlockQuery> Query;
+    QPointer<toEventQuery> Query;
 
     RowList Rows;
     HeaderList Headers;
@@ -84,9 +84,6 @@ private:
     int MaxRead;
 
     int CurrentRow;
-
-    // Timer to poll for new data.
-    toBackground Timer;
 
     // If column names are to be made more readable.
     bool ReadableColumns;
@@ -100,9 +97,6 @@ private:
     // headers read already?
     bool HeadersRead;
 
-    // reads and sets up Headers
-    void readHeaders(void);
-
     // destroys query, stops timer, good things.
     // emits done()
     void cleanup(void);
@@ -111,9 +105,8 @@ private:
     int partition(int, int, int, int, Qt::SortOrder);
     void qsort(int, int, int, Qt::SortOrder);
 
-
 public:
-    toResultModel(toNoBlockQuery *query,
+    toResultModel(toEventQuery *query,
                   QObject *parent = 0,
                   bool edit = false,
                   bool read = false);
@@ -338,6 +331,12 @@ protected slots:
      *
      */
     void readData(void);
+
+    /**
+     * reads and sets up Headers
+     *
+     */
+    void readHeaders(void);
 };
 
 

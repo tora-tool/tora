@@ -49,6 +49,7 @@
 #include <QString>
 #include <QString>
 #include <QPointer>
+#include <QMetaType>
 
 class QWidget;
 class toConnection;
@@ -465,6 +466,8 @@ typedef toQuery::queryDescribe toQDescribe;
 /** A short representation of list<toQuery::queryDescribe>
  */
 typedef std::list<toQDescribe> toQDescList;
+Q_DECLARE_METATYPE(toQDescList);
+
 
 /** Represent a database connection in TOra. Observe that this can mean several actual
  * connections to the database as queries that ae expected to run a long time are sometimes

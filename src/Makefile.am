@@ -78,6 +78,8 @@ tora_SOURCES=main.cpp \
 	tomemoeditor.cpp tomemoeditor.h \
 	tonewconnection.cpp tonewconnection.h \
 	tonoblockquery.cpp tonoblockquery.h \
+	toeventquery.cpp toeventquery.h \
+	toeventquerytask.cpp toeventquerytask.h \
 	toparamget.cpp toparamget.h \
 	topreferences.cpp topreferences.h \
 	toresult.cpp toresult.h \
@@ -264,6 +266,8 @@ BUILT_SOURCES = \
 	moc_tochartmanager.cpp \
 	moc_toconnection.cpp \
 	moc_tonoblockquery.cpp \
+	moc_toeventquery.cpp \
+	moc_toeventquerytask.cpp \
 	moc_tocurrent.cpp \
 	moc_todatatype.cpp \
 	moc_todebug.cpp \

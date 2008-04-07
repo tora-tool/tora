@@ -38,6 +38,7 @@
 #include "config.h"
 #include "toresulttableview.h"
 #include "toresultmodel.h"
+#include "toeventquery.h"
 #include "toconf.h"
 #include "utils.h"
 #include "toconfiguration.h"
@@ -155,7 +156,7 @@ void toResultTableView::query(const QString &sql, const toQList &param)
 {
     setSQLParams(sql, param);
 
-    toNoBlockQuery *query = NULL;
+    toEventQuery *query = NULL;
     try
     {
         if (running())
@@ -163,12 +164,13 @@ void toResultTableView::query(const QString &sql, const toQList &param)
         delete Model;
         Model = NULL;
 
-        query = new toNoBlockQuery(connection(),
-                                   toQuery::Long,
-                                   sql,
-                                   param,
-                                   Statistics);
-        query->eof();           // checks for error and throws
+        readAllAct->setEnabled(true);
+
+        query = new toEventQuery(connection(),
+                                 toQuery::Long,
+                                 sql,
+                                 param,
+                                 Statistics);
 
         Model = new toResultModel(query,
                                   this,
