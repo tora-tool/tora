@@ -86,6 +86,8 @@ SET(TORA_MOC_CLASSES
     toeditextensions.h
 #     toeditwidget.h
 #     toextract.h
+    toeventquery.h
+    toeventquerytask.h
     tofilesize.h
     toglobalsetting.h
 #     tohelpbrowser.h
@@ -210,6 +212,8 @@ SET(TORA_SOURCES
     toeditwidget.cpp
     toextract.cpp
     toextratranslations.cpp
+    toeventquery.cpp
+    toeventquerytask.cpp
     tofilesize.cpp
 # temporarily disabled due the lack of firebird here    tofyracleconnection.cpp
     toglobalsetting.cpp
