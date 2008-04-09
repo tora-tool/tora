@@ -77,7 +77,7 @@ toEventQueryTask::toEventQueryTask(QObject *parent,
 
 void toEventQueryTask::run(void) {
     try {
-        Query = new toQuery(*Connection, toQuery::Background);
+        Query = new toQuery(*Connection, toQuery::Normal);
 
         if(Statistics)
             Statistics->changeSession(*Query);
