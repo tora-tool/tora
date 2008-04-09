@@ -69,36 +69,25 @@ toEventQueryTask::toEventQueryTask(QObject *parent,
       SQL(sql),
       Params(param),
       Statistics(stats) {
-    Query = 0;
-    Columns = 0;
-
-    try {
-        Query = new toQuery(conn, toQuery::Long);
-        Query->setParent(this);
-
-        if(Statistics)
-            Statistics->changeSession(*Query);
-    }
-    catch(const QString &str) {
-        Query = 0;
-        throw;
-    }
-
-    connect(this,
-            SIGNAL(readRequested()),
-            this,
-            SLOT(pread()),
-            Qt::QueuedConnection);
+    Query      = 0;
+    Columns    = 0;
+    Connection = &conn;
 }
 
 
 void toEventQueryTask::run(void) {
-    if(!Query) {
-        emit error(tr("Internal error: Query is NULL."));
-        return;
-    }
-
     try {
+        Query = new toQuery(*Connection, toQuery::Background);
+
+        if(Statistics)
+            Statistics->changeSession(*Query);
+
+        connect(this,
+                SIGNAL(readRequested()),
+                this,
+                SLOT(pread()),
+                Qt::QueuedConnection);
+
         Query->execute(SQL, Params);
 
         toQDescList desc = Query->describe();
@@ -118,11 +107,9 @@ void toEventQueryTask::run(void) {
         exec();
     }
     CATCH_ALL;
-}
 
-
-toEventQueryTask::~toEventQueryTask() {
-    close();
+    if(Query)
+        delete Query;
 }
 
 

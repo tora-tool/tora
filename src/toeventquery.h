@@ -123,6 +123,13 @@ public:
                    const toQList &param,
                    toResultStats *statistics = NULL);
 
+    /**
+     * Undefined copy contructor. Don't copy me.
+     *
+     */
+    toEventQuery(toEventQuery &other);
+
+
     virtual ~toEventQuery();
 
 

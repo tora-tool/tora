@@ -113,10 +113,6 @@ class toResultTableView : public QTableView,
     // use Filter to hide rows
     void applyFilter(void);
 
-    // apply column rules, numbercolumn, readable columns
-    void applyColumnRules(void);
-
-
 protected slots:
     void displayMenu(const QPoint &pos);
     void menuCallback(QAction *action);
@@ -129,6 +125,8 @@ protected slots:
     virtual void selectionChanged(const QItemSelection &selected,
                                   const QItemSelection &deselected);
 
+    // apply column rules, numbercolumn, readable columns
+    void applyColumnRules(void);
 
 protected:
     // pointer to model

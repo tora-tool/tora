@@ -191,11 +191,13 @@ void toResultTableView::query(const QString &sql, const toQList &param)
     {
         emit firstResult(toResult::sql(), str, true);
         emit done();
+        toStatusMessage(str);
     }
     catch (const QString &str)
     {
         emit firstResult(toResult::sql(), str, true);
         emit done();
+        toStatusMessage(str);
     }
 
     verticalHeader()->setVisible(false);
@@ -619,7 +621,7 @@ toTableViewIterator::toTableViewIterator(toTableViewIterator &other)
 
 void toTableViewIterator::updateIndex(void)
 {
-    if (_view && _row < _view->model()->rowCount())
+    if (_view && _view->model() && _row < _view->model()->rowCount())
         _index = _view->model()->index(_row, 1); // skip numbercolumn
     else
         _index = QModelIndex();

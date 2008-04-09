@@ -118,6 +118,9 @@ void toResultModel::readData()
 
     try
     {
+        // must check for errors
+        Query->eof();
+
         int cols = Headers.size();
         if(cols < 1)
             return;
@@ -181,6 +184,7 @@ void toResultModel::readData()
             First = !First;
             emit firstResult(str, true);
         }
+        toStatusMessage(str);
         cleanup();
         return;
     }
@@ -191,6 +195,7 @@ void toResultModel::readData()
             First = !First;
             emit firstResult(str, true);
         }
+        toStatusMessage(str);
         cleanup();
         return;
     }

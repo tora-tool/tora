@@ -74,6 +74,9 @@ class toEventQueryTask : public QThread {
     // Statistics to be used if any.
     QPointer<toResultStats> Statistics;
 
+    toConnection *Connection;
+
+
 public:
 
     toEventQueryTask(QObject *parent,
@@ -81,8 +84,6 @@ public:
                      const QString &sql,
                      const toQList &param,
                      toResultStats *stats = NULL);
-    ~toEventQueryTask();
-
 
 protected:
 
