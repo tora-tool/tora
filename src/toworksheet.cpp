@@ -1179,26 +1179,27 @@ void toWorksheet::addLog(const QString &sql,
             toStatusMessage(str, false, false);
     }
 
-    if (!error)
+    if (!error) {
         changeResult(ResultTab->indexOf(CurrentTab));
 
-    // the sql string will be trimmed but case will be same as the
-    // original.  the code originally compared the result return, but
-    // that class doesn't know if a commit is needed either.
+        // the sql string will be trimmed but case will be same as the
+        // original.  the code originally compared the result return, but
+        // that class doesn't know if a commit is needed either.
 
-    static QRegExp re(QString::fromLatin1("^SELECT"));
-    re.setCaseSensitivity(Qt::CaseInsensitive);
-    try
-    {
-        if (!sql.contains(re))
+        static QRegExp re(QString::fromLatin1("^SELECT"));
+        re.setCaseSensitivity(Qt::CaseInsensitive);
+        try
         {
-            if (toConfigurationSingle::Instance().autoCommit())
-                connection().commit();
-            else
-                toMainWidget()->setNeedCommit(connection());
+            if (!sql.contains(re))
+            {
+                if (toConfigurationSingle::Instance().autoCommit())
+                    connection().commit();
+                else
+                    toMainWidget()->setNeedCommit(connection());
+            }
         }
+        TOCATCH;
     }
-    TOCATCH;
 
     saveDefaults();
 }
