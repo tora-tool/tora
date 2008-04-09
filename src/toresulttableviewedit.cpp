@@ -345,8 +345,8 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn)
                                             Qt::Horizontal,
                                             Qt::DisplayRole).toString());
 
-        if (!oracle || (!Headers[change.column].datatype.toUpper().startsWith(("LONG")) &&
-                        !Headers[change.column].datatype.toUpper().contains(("LOB"))))
+        if (!oracle || (!Headers[col].datatype.toUpper().startsWith(("LONG")) &&
+                        !Headers[col].datatype.toUpper().contains(("LOB"))))
         {
             if (where)
                 sql += (" AND (");
