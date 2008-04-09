@@ -1175,10 +1175,7 @@ void toWorksheet::addLog(const QString &sql,
     {
         QString str = result;
         str += "\n" + tr("(Duration %1)").arg(buf);
-        if (error)
-
-            toStatusMessage(str);
-        else
+        if (!error)
             toStatusMessage(str, false, false);
     }
 
