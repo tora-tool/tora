@@ -384,6 +384,8 @@ void toResultModel::readHeaders()
 {
     if (HeadersRead)
         return;
+    if (!Query)
+        return;
 
     // always add the number column. this makes adjusting for it in
     // the row data easier. it is not always displayed.
