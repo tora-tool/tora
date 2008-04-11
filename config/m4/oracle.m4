@@ -37,7 +37,7 @@ AC_DEFUN([TORA_CHECK_ORACLE],
 
   oracle_user_otl_ver=
   AC_ARG_WITH(oci-version,
-  [[  --with-oci-version=[8, 8I, 9I, 10G, 10G_R2]
+  [[  --with-oci-version=[8, 8I, 9I, 10G, 10G_R2, 11G]
                           this is the version of the client, not the database.]],
   [
     have_oracle=yes
@@ -191,7 +191,9 @@ console when running TOra, this is probably why.])
       sqlplus_ver=`$sqlplus -? | $AWK '/Release/ {print @S|@3}'`
       echo "sqlplus_ver: $sqlplus_ver" >&5
   
-      if expr $sqlplus_ver \> 10.2 >/dev/null; then
+      if expr $sqlplus_ver \> 11 >/dev/null; then
+        otl_ver=11G
+      elif expr $sqlplus_ver \> 10.2 >/dev/null; then
         otl_ver=10G_R2
       elif expr $sqlplus_ver \> 10 >/dev/null; then
         otl_ver=10G
