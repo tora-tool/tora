@@ -385,7 +385,10 @@ AC_DEFUN([AC_PATH_QT],
   QT_INCLUDES="-I$qt_includes -I$qt_incdir/Qt -I$qt_incdir/QtCore -I$qt_incdir/QtGui -I$qt_incdir/QtSql -I$qt_incdir/QtNetwork"
   all_includes="$QT_INCLUDES $all_includes"
   
-  QT_LDFLAGS="$all_qt_libs -L$ac_qt_libdir"
+  QT_LDFLAGS="$all_qt_libs"
+  if test "x$ac_qt_libdir" != "xNO"; then
+    QT_LDFLAGS="$QT_LDFLAGS -L$ac_qt_libdir"
+  fi
   
   AC_SUBST(QT_DEFINES)
   AC_SUBST(QT_INCLUDES)
