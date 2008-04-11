@@ -1,15 +1,11 @@
 Showstopper Issues before Next Release
 --------------------------------------
 
-Crash if you click trashcan/delete-row on empty table in schema browser
-[mrj: can't reproduce this, can you send me a stacktrace? the code
-does the right thing it appears.] [nneul: nor can I now... weird... will
-leave this in for a little bit, if it returns, I'll get you a trace]
-
 Drag and drop in schema browser to copy table cells.
 
 Double click in schema browser causes it to interpret as 'changed' even
 if no changes are made.
+[hit escape?]
 
 Regulary raising warning/error dialog with:
     ORA-24374: define not done before fetch or execute and fetch
@@ -33,11 +29,6 @@ Clicking on either of the "sql bookmark" toolbar icons instantly crashes tora.
 
 Batch(script) run in SQL Editor. See:
 http://sourceforge.net/mailarchive/forum.php?thread_name=e50db5a5f5be244c6ad03556ffd7fa76%40office.scribus.info&forum_name=tora-develop
-
-11g compatibility
-- mostly works fine but should have a compile option
-(not use 10g). several sql queries need to be tweeked, tora locks up
-when cache runs.
 
 
 Minor Issues that would be nice to fix before release
@@ -70,3 +61,13 @@ weird.
 [FIXED] New prefs code not saving anything? Showing dialog every time TOra opens
 and not retaining default tool.
 
+[good enough] 11g compatibility
+- mostly works fine but should have a compile option
+(not use 10g). several sql queries need to be tweeked, tora locks up
+when cache runs.
+
+[probably unrelated noblock crash that should be fixed by toeventquery]
+Crash if you click trashcan/delete-row on empty table in schema browser
+[mrj: can't reproduce this, can you send me a stacktrace? the code
+does the right thing it appears.] [nneul: nor can I now... weird... will
+leave this in for a little bit, if it returns, I'll get you a trace]
