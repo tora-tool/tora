@@ -715,7 +715,7 @@ QStringList toHighlightedText::getCompletionList(QString* partial)
 
     if (!isReadOnly() && curcol >= 0)
     {
-        if (toConfigurationSingle::Instance().codeCompletion())
+        if (!toConfigurationSingle::Instance().codeCompletion())
             return toReturn;
 
         toSQLParse::editorTokenizer tokens(this, curcol, curline);
