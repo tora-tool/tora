@@ -207,6 +207,8 @@ void toResultTableView::query(const QString &sql, const toQList &param)
 
     // when a new model is created the column sizes are lost
     ColumnsResized = false;
+
+    setUpdatesEnabled(false);
 }
 
 
@@ -380,6 +382,7 @@ void toResultTableView::menuCallback(QAction *action)
 
 void toResultTableView::handleDone(void)
 {
+    setUpdatesEnabled(true);
     readAllAct->setEnabled(false);
 
     applyFilter();
@@ -398,6 +401,7 @@ void toResultTableView::handleFirst(const toConnection::exception &res,
                                     bool error)
 {
     applyColumnRules();
+    setUpdatesEnabled(true);
     emit firstResult(sql(), res, error);
 }
 
