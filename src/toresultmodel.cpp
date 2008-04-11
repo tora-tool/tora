@@ -65,11 +65,13 @@ toResultModel::toResultModel(toEventQuery *query,
     connect(query,
             SIGNAL(descriptionAvailable()),
             this,
-            SLOT(readHeaders()));
+            SLOT(readHeaders()),
+            Qt::QueuedConnection);
     connect(query,
             SIGNAL(dataAvailable()),
             this,
-            SLOT(readData()));
+            SLOT(readData()),
+            Qt::QueuedConnection);
 
     query->start();
 }
@@ -99,12 +101,15 @@ void toResultModel::readAll()
 {
     QModelIndex index;
 
-    while (Query && !Query->eof()) {
-        if (canFetchMore(index))
-            fetchMore(index);
+    try {
+        while (Query && !Query->eof()) {
+            if (canFetchMore(index))
+                fetchMore(index);
 
-        qApp->processEvents();
+            qApp->processEvents();
+        }
     }
+    TOCATCH;
 }
 
 
