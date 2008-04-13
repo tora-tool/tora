@@ -156,6 +156,7 @@ tora_SOURCES=main.cpp \
     toresultcols.cpp toresultcols.h  \
 	toresultcolscomment.cpp toresultcolscomment.h \
     toresultcombo.cpp toresultcombo.h  \
+    toresultschema.cpp toresultschema.h  \
     toresultdepend.cpp toresultdepend.h  \
     toresultlabel.cpp toresultlabel.h  \
     toresultlock.cpp toresultlock.h  \
@@ -297,6 +298,7 @@ BUILT_SOURCES = \
 	moc_toresultcols.cpp \
 	moc_toresultcolscomment.cpp \
 	moc_toresultcombo.cpp \
+	moc_toresultschema.cpp \
 	moc_toresultdepend.cpp \
 	moc_toresultextract.cpp \
 	moc_toresultfield.cpp \

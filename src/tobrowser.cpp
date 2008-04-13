@@ -49,7 +49,7 @@
 #include "tohelp.h"
 #include "tomain.h"
 #include "toresultcols.h"
-#include "toresultcombo.h"
+#include "toresultschema.h"
 #include "toresultdata.h"
 #include "toresultdepend.h"
 #include "toresultextract.h"
@@ -1364,16 +1364,9 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     strech->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                       QSizePolicy::Minimum));
 
-    Schema = new toResultCombo(toolbar, TO_TOOLBAR_WIDGET_NAME);
+    Schema = new toResultSchema(connection, toolbar, TO_TOOLBAR_WIDGET_NAME);
     connect(Schema, SIGNAL(activated(int)),
             this, SLOT(changeSchema(int)));
-    Schema->setSQL(toSQL::sql(toSQL::TOSQL_USERLIST));
-    if (toIsMySQL(connection))
-        Schema->setSelected(connection.database());
-    else if (toIsOracle(connection) || toIsSapDB(connection))
-        Schema->setSelected(connection.user().toUpper());
-    else
-        Schema->setSelected(connection.user());
     toolbar->addWidget(Schema);
 
     toolbar->addWidget(new QLabel(toolbar));

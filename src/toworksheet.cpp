@@ -44,7 +44,7 @@
 #include "toparamget.h"
 #include "toresultbar.h"
 #include "toresultcols.h"
-#include "toresultcombo.h"
+#include "toresultschema.h"
 #include "toresultplan.h"
 #include "toresultresources.h"
 #include "toresultstats.h"
@@ -381,15 +381,8 @@ void toWorksheet::setup(bool autoLoad)
     Started->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                        QSizePolicy::Minimum));
 
-    Schema = new toResultCombo(workToolbar);
+    Schema = new toResultSchema(connection(), workToolbar);
     workToolbar->addWidget(Schema);
-    Schema->setSQL(toSQL::sql(toSQL::TOSQL_USERLIST));
-    if (toIsMySQL(connection()))
-        Schema->setSelected(connection().database());
-    else if (toIsOracle(connection()) || toIsSapDB(connection()))
-        Schema->setSelected(connection().user().toUpper());
-    else
-        Schema->setSelected(connection().user());
     connect(Schema, SIGNAL(activated(int)), this, SLOT(changeSchema()));
     try
     {

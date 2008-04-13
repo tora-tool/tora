@@ -128,6 +128,7 @@ SET(TORA_MOC_CLASSES
     toresultcolscomment.h
     toresultcols.h
     toresultcombo.h
+    toresultschema.h
     toresultdepend.h
     toresultextract.h
     toresultfield.h
@@ -253,6 +254,7 @@ SET(TORA_SOURCES
     toresultbar.cpp
     toresultcolscomment.cpp
     toresultcols.cpp
+    toresultschema.cpp
     toresultcombo.cpp
     toresult.cpp
     toresultdepend.cpp
