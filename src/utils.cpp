@@ -74,6 +74,7 @@
 #include <QTextStream>
 #include <QStyleFactory>
 #include <QStyle>
+#include <QDateTime>
 
 
 #ifdef Q_OS_WIN32
@@ -155,15 +156,7 @@ static toSQL SQLNowPgSQL("Global:Now",
 
 QString toNow(toConnection &conn)
 {
-    try
-    {
-        toQList vals = toQuery::readQuery(conn, SQLNow);
-        return toPop(vals);
-    }
-    catch (...)
-    {
-        return qApp->translate("toNow", "Unexpected error");
-    }
+    return QDateTime::currentDateTime().toString(Qt::SystemLocaleDate);
 }
 
 QString toSQLStripSpecifier(const QString &sql)
