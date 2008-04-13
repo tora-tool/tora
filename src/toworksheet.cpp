@@ -87,6 +87,7 @@
 #include <QString>
 #include <QVBoxLayout>
 #include <QProgressDialog>
+#include <QDateTime>
 
 #include "icons/clock.xpm"
 #include "icons/recall.xpm"
@@ -1080,15 +1081,7 @@ void toWorksheet::addLog(const QString &sql,
                          const toConnection::exception &result,
                          bool error)
 {
-    QString now;
-    try
-    {
-        now = toNow(connection());
-    }
-    catch (...)
-    {
-        now = QString::fromLatin1("Unknown");
-    }
+    QString now = QDateTime::currentDateTime().toString(Qt::SystemLocaleDate);
     toResultViewItem *item = NULL;
 
     LastID++;
