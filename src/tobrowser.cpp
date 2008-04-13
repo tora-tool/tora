@@ -2235,8 +2235,13 @@ void toBrowser::changeTab(QWidget *tab)
     if (tab && this == toMainWidget()->workspace()->activeWindow())
     {
         toResultTableView *newtab = Map[tab->objectName()];
+
         if (newtab == FirstTab)
-            return ;
+            return;
+
+        if (newtab->model() && newtab->model()->rowCount() > 0)
+            return;
+
         CurrentTop = tab;
         setFocusProxy(newtab);
         FirstTab = newtab;
