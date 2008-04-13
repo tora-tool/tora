@@ -81,7 +81,6 @@ toResultModel::~toResultModel()
 {
     if (Query)
         Query->deleteLater();
-    Query = NULL;
 }
 
 

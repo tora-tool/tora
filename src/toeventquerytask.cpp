@@ -116,6 +116,14 @@ void toEventQueryTask::run(void) {
 void toEventQueryTask::close() {
     // exit thread event loop. safe to call before event loop starts.
     exit();
+
+    try {
+        if(Query)
+            Query->cancel();
+    }
+    catch(...) {
+        // noop
+    }
 }
 
 

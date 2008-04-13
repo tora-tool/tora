@@ -141,7 +141,6 @@ bool toEventQuery::eof(void) const {
 void toEventQuery::stop(void) {
     if(Task)
         Task->close();
-    Task = 0;
 }
 
 
