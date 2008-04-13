@@ -437,6 +437,7 @@ lrelease: tora.pro $(TRANSLATIONS)
 	$(LRELEASE) tora.pro
 
 install-data-hook:
+	mkdir -p $(DESTDIR)$(libdir)
 	cp -f $(top_builddir)/src/i18n/*.qm $(DESTDIR)$(libdir)
 	$(INSTALL_DATA) $(top_builddir)/src/templates/log4plsql.tpl $(libdir)
 	$(INSTALL_DATA) $(top_builddir)/src/templates/hints.tpl $(libdir)
