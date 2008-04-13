@@ -44,7 +44,7 @@ Drag and drop/doubleclick in filter dialog for schema browser no longer works.
 
 Enhancements
 ------------
-Would love it if the Schema Browser/connection would remember the
+[done] Would love it if the Schema Browser/connection would remember the
 last schema that was being browsed. In our environment, the user you connect
 as never owns any objects, so if I connect as 'swconf', I'll almost always 
 be browing 'swconf_owner' schema.
