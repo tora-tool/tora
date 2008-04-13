@@ -173,11 +173,8 @@ public slots:
                              int previousColumn);
     void previousMenu(const QPoint &pos);
     void historyDelete(void);
-//     virtual void historySelection(void);
     void changeProvider(int current);
-//     virtual void changeHost(void);
-//     virtual void historyConnect(void);
-//     virtual void historySave(void);
+    void changeHost(void);
 };
 
 

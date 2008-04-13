@@ -142,6 +142,11 @@ toNewConnection::toNewConnection(
             this,
             SLOT(accept()));
 
+    connect(Host,
+            SIGNAL(editTextChanged(QString)),
+            this,
+            SLOT(changeHost()));
+
     // must make sure this gets called manually.
     changeProvider(Provider->currentIndex());
     // must call after connecting signals
@@ -425,6 +430,36 @@ void toNewConnection::changeProvider(int current)
     }
     catch (const QString &str)
     {
+        toStatusMessage(str);
+    }
+}
+
+
+void toNewConnection::changeHost(void)
+{
+    try {
+        if(!Host->isHidden()) {
+            QString host = Host->currentText();
+            QString prov = Provider->currentText();
+
+            if(prov == ORACLE_INSTANT || prov == ORACLE_TNS)
+                prov = "Oracle";
+
+            std::list<QString> databases = toConnectionProvider::databases(
+                prov,
+                host,
+                Username->text(),
+                Password->text());
+            QString current = Database->currentText();
+
+            Database->clear();
+            Q_FOREACH(QString s, databases)
+                Database->addItem(s);
+            Database->lineEdit()->setText(current);
+        }
+    }
+    catch(const QString &str) {
+        Database->clear();
         toStatusMessage(str);
     }
 }
