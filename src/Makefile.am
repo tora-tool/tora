@@ -340,7 +340,6 @@ BUILT_SOURCES = \
 	moc_towaitevents.cpp \
 	moc_toworksheet.cpp \
 	moc_toworksheetwidget.cpp \
-	moc_toworksheettext.cpp \
 	moc_toworksheetstatistic.cpp \
 	moc_utils.cpp \
 	ui_toaboutui.h \
