@@ -714,7 +714,7 @@ toTreeWidgetCheck::toTreeWidgetCheck(toTreeWidget *parent,
                                      Type)
         : toTreeWidgetItem(parent, text)
 {
-    setFlags(flags() | Qt::ItemIsUserCheckable);
+    setOn(false);
 }
 
 
@@ -723,7 +723,7 @@ toTreeWidgetCheck::toTreeWidgetCheck(toTreeWidgetItem *parent,
                                      Type)
         : toTreeWidgetItem(parent, text)
 {
-    setFlags(flags() | Qt::ItemIsUserCheckable);
+    setOn(false);
 }
 
 
@@ -733,7 +733,7 @@ toTreeWidgetCheck::toTreeWidgetCheck(toTreeWidget *parent,
                                      Type)
         : toTreeWidgetItem(parent, after, text)
 {
-    setFlags(flags() | Qt::ItemIsUserCheckable);
+    setOn(false);
 }
 
 
@@ -743,7 +743,7 @@ toTreeWidgetCheck::toTreeWidgetCheck(toTreeWidgetItem *parent,
                                      Type)
         : toTreeWidgetItem(parent, after, text)
 {
-    setFlags(flags() | Qt::ItemIsUserCheckable);
+    setOn(false);
 }
 
 
@@ -755,5 +755,5 @@ bool toTreeWidgetCheck::isOn() const
 
 void toTreeWidgetCheck::setOn(bool b)
 {
-    setCheckState(0, Qt::Checked);
+    setCheckState(0, b ? Qt::Checked : Qt::Unchecked);
 }
