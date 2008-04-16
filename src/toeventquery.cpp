@@ -85,9 +85,6 @@ toEventQuery::toEventQuery(toConnection &conn,
     Connection = &conn;
     Processed  = 0;
     Columns    = 0;
-
-
-//     int val = toConfigurationSingle::Instance().autoLong();
 }
 
 
@@ -130,8 +127,6 @@ toEventQuery::~toEventQuery() {
 
 
 bool toEventQuery::eof(void) const {
-    checkError();
-
     if(!Task)
         return true;
     return !Task->isRunning();
@@ -141,12 +136,6 @@ bool toEventQuery::eof(void) const {
 void toEventQuery::stop(void) {
     if(Task)
         Task->close();
-}
-
-
-void toEventQuery::checkError() const {
-    if(!Error.isNull())
-        throw Error;
 }
 
 
@@ -164,8 +153,5 @@ void toEventQuery::taskDesc(toQDescList &desc, int column) {
 
 
 void toEventQuery::taskError(const QString &msg) {
-    Error = msg;
-
-    // emit signal or caller may never check
-    emit dataAvailable();
+    emit error(msg);
 }

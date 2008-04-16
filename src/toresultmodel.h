@@ -97,13 +97,17 @@ private:
     // headers read already?
     bool HeadersRead;
 
+    // helpers for sort implementation
+    int partition(int, int, int, int, Qt::SortOrder);
+    void qsort(int, int, int, Qt::SortOrder);
+
+private slots:
+
     // destroys query, stops timer, good things.
     // emits done()
     void cleanup(void);
 
-    // helpers for sort implementation
-    int partition(int, int, int, int, Qt::SortOrder);
-    void qsort(int, int, int, Qt::SortOrder);
+    void queryError(const QString &);
 
 public:
     toResultModel(toEventQuery *query,

@@ -79,17 +79,11 @@ private:
     // Number of columns in Description
     int Columns;
 
-    // any error encountered by toEventQueryTask
-    QString Error;
-
     // QThread instance that will do actual reading
     QPointer<toEventQueryTask> Task;
 
     // connection for this query
     toConnection *Connection;
-
-    // check if there were errors during query
-    void checkError(void) const;
 
 public:
 
@@ -207,7 +201,6 @@ public:
      *
      */
     bool hasMore(void) const {
-        checkError();
         return !Values.isEmpty();
     }
 
@@ -247,6 +240,13 @@ signals:
      * @param rows Number of rows to be read
      */
     void dataAvailable();
+
+
+    /**
+     * Emitted with error string
+     *
+     */
+    void error(const QString &);
 };
 
 #endif

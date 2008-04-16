@@ -76,6 +76,9 @@ class toEventQueryTask : public QThread {
 
     toConnection *Connection;
 
+    // object was closed
+    bool Closed;
+
 
 public:
 

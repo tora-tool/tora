@@ -44,18 +44,24 @@
 #include "toresultstats.h"
 
 
-#define CATCH_ALL                               \
-    catch(const toConnection::exception &str) { \
-        emit error(str);                        \
-        close();                                \
-    }                                           \
-    catch(const QString &str) {                 \
-        emit error(str);                        \
-        close();                                \
-    }                                           \
-    catch(...) {                                \
-        emit error(tr("Unknown exception"));    \
-        close();                                \
+#define CATCH_ALL                                   \
+    catch(const toConnection::exception &str) {     \
+        if(!Closed) {                               \
+            close();                                \
+            emit error(str);                        \
+        }                                           \
+    }                                               \
+    catch(const QString &str) {                     \
+        if(!Closed) {                               \
+            close();                                \
+            emit error(str);                        \
+        }                                           \
+    }                                               \
+    catch(...) {                                    \
+        if(!Closed) {                               \
+            close();                                \
+            emit error(tr("Unknown exception"));    \
+        }                                           \
     }
 
 
@@ -72,6 +78,7 @@ toEventQueryTask::toEventQueryTask(QObject *parent,
     Query      = 0;
     Columns    = 0;
     Connection = &conn;
+    Closed     = false;
 }
 
 
@@ -114,8 +121,7 @@ void toEventQueryTask::run(void) {
 
 
 void toEventQueryTask::close() {
-    // exit thread event loop. safe to call before event loop starts.
-    exit();
+    Closed = true;
 
     try {
         if(Query)
@@ -124,6 +130,9 @@ void toEventQueryTask::close() {
     catch(...) {
         // noop
     }
+
+    // exit thread event loop. safe to call before event loop starts.
+    exit();
 }
 
 

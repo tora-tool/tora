@@ -72,6 +72,11 @@ toResultModel::toResultModel(toEventQuery *query,
             this,
             SLOT(readData()),
             Qt::QueuedConnection);
+    connect(query,
+            SIGNAL(error(const QString &)),
+            this,
+            SLOT(queryError(const QString &)),
+            Qt::QueuedConnection);
 
     query->start();
 }
@@ -93,6 +98,16 @@ void toResultModel::cleanup()
     }
 
     Query = NULL;
+}
+
+
+void toResultModel::queryError(const QString &err) {
+    if(First) {
+        emit firstResult(err, true);
+        First = !First;
+        toStatusMessage(err);
+        cleanup();
+    }
 }
 
 
