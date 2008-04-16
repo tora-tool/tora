@@ -69,7 +69,7 @@ public:
 
 public slots:
 
-    void updateLast(const QString &str);
+    void updateLast(const QString &schema);
 };
 
 #endif

@@ -384,7 +384,6 @@ void toWorksheet::setup(bool autoLoad)
 
     Schema = new toResultSchema(connection(), workToolbar);
     workToolbar->addWidget(Schema);
-    connect(Schema, SIGNAL(activated(int)), this, SLOT(changeSchema()));
     try
     {
         Schema->refresh();
@@ -2083,41 +2082,4 @@ void toWorksheet::changeConnection(void)
         Schema->setSelected(connection().user().toUpper());
     else
         Schema->setSelected(connection().user());
-}
-
-
-#define CHANGE_CURRENT_SCHEMA QString("ALTER SESSION SET CURRENT_SCHEMA = %1")
-#define CHANGE_CURRENT_SCHEMA_PG QString("SET search_path TO %1,\"$user\",public")
-
-void toWorksheet::changeSchema(void)
-{
-    try
-    {
-        QString schema = Schema->selected();
-        toConnection &conn = connection();
-        if (toIsOracle(conn))
-        {
-            /* remove current schema initstring */
-            conn.delInit(QString(CHANGE_CURRENT_SCHEMA).arg(conn.user()));
-
-            /* set the new one with selected schema */
-            QString sql = QString(CHANGE_CURRENT_SCHEMA).arg(schema);
-            conn.allExecute(sql);
-
-            conn.addInit(sql);
-        }
-        else if (toIsMySQL(conn))
-        {
-            conn.allExecute(QString("USE %1").arg(schema));
-            conn.setDatabase(schema);
-        }
-        else if (toIsPostgreSQL(conn))
-        {
-            QString sql = QString(CHANGE_CURRENT_SCHEMA_PG).arg(schema);
-            conn.allExecute(sql);
-        }
-        else
-            throw QString("No support for changing schema for this database");
-    }
-    TOCATCH;
 }

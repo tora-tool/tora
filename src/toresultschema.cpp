@@ -49,7 +49,8 @@ toResultSchema::toResultSchema(toConnection &conn,
 {
     setSQL(toSQL::sql(toSQL::TOSQL_USERLIST));
 
-    ConnectionKey = conn.provider() + "-" +
+    ConnectionKey =
+        conn.provider() + "-" +
         conn.host() + "-" +
         conn.database();
 
@@ -66,6 +67,7 @@ toResultSchema::toResultSchema(toConnection &conn,
     }
 
     setSelected(sel);
+    updateLast(sel);
 
     connect(this,
             SIGNAL(currentIndexChanged(const QString &)),
@@ -74,7 +76,35 @@ toResultSchema::toResultSchema(toConnection &conn,
 }
 
 
-void toResultSchema::updateLast(const QString &str) {
-    QSettings s;
-    s.setValue("schema/" + ConnectionKey, str);
+#define CHANGE_CURRENT_SCHEMA QString("ALTER SESSION SET CURRENT_SCHEMA = %1")
+#define CHANGE_CURRENT_SCHEMA_PG QString("SET search_path TO %1,\"$user\",public")
+
+void toResultSchema::updateLast(const QString &schema) {
+    try {
+        toConnection &conn = connection();
+
+        if (toIsOracle(conn)) {
+            /* remove current schema initstring */
+            conn.delInit(CHANGE_CURRENT_SCHEMA.arg(conn.user()));
+
+            /* set the new one with selected schema */
+            QString sql = CHANGE_CURRENT_SCHEMA.arg(schema);
+            conn.allExecute(sql);
+
+            conn.addInit(sql);
+        }
+        else if (toIsMySQL(conn)) {
+            conn.allExecute(QString("USE %1").arg(schema));
+            conn.setDatabase(schema);
+        }
+        else if (toIsPostgreSQL(conn))
+            conn.allExecute(CHANGE_CURRENT_SCHEMA_PG.arg(schema));
+        else
+            throw QString("No support for changing schema for this database");
+
+        QSettings s;
+        s.setValue("schema/" + ConnectionKey, schema);
+    }
+    TOCATCH;
+
 }

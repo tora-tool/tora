@@ -195,7 +195,6 @@ signals:
     void executed(void);
 public slots:
     bool close();
-    void changeSchema(void);
     void connectionChanged(void);
     void refresh();
     void execute();
