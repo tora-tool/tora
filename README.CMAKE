@@ -14,6 +14,8 @@ Options:
 Cmake installs TOra into /usr/local as default. You can change it
 for your location:
 -DCMAKE_INSTALL_PREFIX:PATH=/home/username/toradevelopment
+If you want to set special paths for help files or whatever see
+"Paths for installation" below.
 
 Note for Windows: if you don't specify install prefix, you can get
 compile-time errorrs in some cases. It looks like some MSVC
@@ -46,3 +48,22 @@ cmake -DORACLE_OCI_VERSION=10G_R2
 Search following for more info:
 http://cmake.org
 http://docs.scribus.net/index.php?lang=en&page=install4
+
+
+Paths for installation
+The base install prefix is set with -DCMAKE_INSTALL_PREFIX (see above).
+You can specify installation of additional files with some variables.
+Changing these variables will affects TOra compilation too.
+List of the settings:
+-DTORA_PLUGIN_DIR=path
+    It sets the path for functionality addons (binary plugins (if it's
+    used) or template description files etc.)
+    The default value is CMAKE_INSTALL_PREFIX/share/tora
+-DTORA_DOC_DIR=path
+    It sets the path for basic system-wide documentation fles (README,
+    AUTHORS, LICENSE etc.). It is not read by anybody propably but it's
+    pretty standard for Linux packages ;)
+    The default value is CMAKE_INSTALL_PREFIX/share/doc/tora
+-DTORA_HELP_DIR=path
+    It sets the location of help files (manual and API docs).
+    The default value is TORA_PLUGIN_DIR/help

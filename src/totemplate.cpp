@@ -66,17 +66,13 @@
 static std::map<QString, QString> DefaultText(void)
 {
     std::map<QString, QString> def;
-    QString file = toPluginPath();
+    QString file(toConfigurationSingle::Instance().pluginDir()); //toPluginPath();
 
 #if !defined(TO_NO_ORACLE)
     file += QString::fromLatin1("/sqlfunctions.tpl");
-    def["PL/SQL Functions"] = file;
-    file = toPluginPath();
-    file += QString::fromLatin1("/hints.tpl");
-    def["Optimizer Hints"] = file;
-    file = toPluginPath();
-    file += QString::fromLatin1("/log4plsql.tpl");
-    def["Log4PL/SQL"] = file;
+    def["PL/SQL Functions"] = file + "/sqlfunctions.tpl";
+    def["Optimizer Hints"] = file + "/hints.tpl";
+    def["Log4PL/SQL"] = file + "/log4plsql.tpl";
 #endif
 
     return def;

@@ -527,80 +527,80 @@ int toSizeDecode(const QString &str)
     return 1;
 }
 
-QString toPluginPath(void)
-{
-    QString str;
-
-#ifdef Q_OS_WIN32
-
-    CRegistry registry;
-    DWORD siz = 1024;
-    char buffer[1024];
-
-    try
-    {
-        if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
-                                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TOra",
-                                    "UninstallString",
-                                    buffer, siz))
-        {
-            if (siz > 0)
-            {
-                str = buffer;
-                static QRegExp findQuotes("\"([^\"]*)\"");
-                if (findQuotes.indexIn(str) >= 0)
-                    str = findQuotes.cap(1);
-                int ind = str.lastIndexOf('\\');
-                if (ind >= 0)
-                    str = str.mid(0, ind);
-                str += "\\templates";
-            }
-        }
-    }
-    catch (...)
-        {}
-
-#elif defined( Q_OS_MACX )
-    {
-        // MacOS
-        char resourcePath[MAXPATHLEN];
-        memset( &resourcePath[0], 0, MAXPATHLEN );
-        CFBundleRef appBundle = ::CFBundleGetMainBundle();
-        if ( appBundle )
-        {
-            CFURLRef urlRef = CFBundleCopyResourcesDirectoryURL( appBundle );
-            if ( urlRef )
-            {
-                UInt8* _p = (UInt8*) & resourcePath[0];
-                bool isOK = CFURLGetFileSystemRepresentation(
-                                urlRef, TRUE, _p, MAXPATHLEN );
-                if ( !isOK )
-                {
-                    // QMessageBox::warning( 0, "File error",
-                    //     QString( "Unexpected: no file system representation") );
-                }
-            }
-            else
-            {
-                // QMessageBox::warning( 0, "File error",
-                //     QString( "Unexpected: unable to get resource directory") );
-            }
-            CFRelease( urlRef );
-            str = &resourcePath[0];
-        }
-        else
-        {
-            // QMessageBox::warning( 0, "File error",
-            //     QString( "Unexpected: unable to get main bundle") );
-        }
-    } // MacOS
-
-#else
-    str = toConfigurationSingle::Instance().pluginDir();
-#endif
-
-    return str;
-}
+// QString toPluginPath(void)
+// {
+//     QString str;
+// 
+// #ifdef Q_OS_WIN32
+// 
+//     CRegistry registry;
+//     DWORD siz = 1024;
+//     char buffer[1024];
+// 
+//     try
+//     {
+//         if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
+//                                     "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TOra",
+//                                     "UninstallString",
+//                                     buffer, siz))
+//         {
+//             if (siz > 0)
+//             {
+//                 str = buffer;
+//                 static QRegExp findQuotes("\"([^\"]*)\"");
+//                 if (findQuotes.indexIn(str) >= 0)
+//                     str = findQuotes.cap(1);
+//                 int ind = str.lastIndexOf('\\');
+//                 if (ind >= 0)
+//                     str = str.mid(0, ind);
+//                 str += "\\templates";
+//             }
+//         }
+//     }
+//     catch (...)
+//         {}
+// 
+// #elif defined( Q_OS_MACX )
+//     {
+//         // MacOS
+//         char resourcePath[MAXPATHLEN];
+//         memset( &resourcePath[0], 0, MAXPATHLEN );
+//         CFBundleRef appBundle = ::CFBundleGetMainBundle();
+//         if ( appBundle )
+//         {
+//             CFURLRef urlRef = CFBundleCopyResourcesDirectoryURL( appBundle );
+//             if ( urlRef )
+//             {
+//                 UInt8* _p = (UInt8*) & resourcePath[0];
+//                 bool isOK = CFURLGetFileSystemRepresentation(
+//                                 urlRef, TRUE, _p, MAXPATHLEN );
+//                 if ( !isOK )
+//                 {
+//                     // QMessageBox::warning( 0, "File error",
+//                     //     QString( "Unexpected: no file system representation") );
+//                 }
+//             }
+//             else
+//             {
+//                 // QMessageBox::warning( 0, "File error",
+//                 //     QString( "Unexpected: unable to get resource directory") );
+//             }
+//             CFRelease( urlRef );
+//             str = &resourcePath[0];
+//         }
+//         else
+//         {
+//             // QMessageBox::warning( 0, "File error",
+//             //     QString( "Unexpected: unable to get main bundle") );
+//         }
+//     } // MacOS
+// 
+// #else
+//     str = toConfigurationSingle::Instance().pluginDir();
+// #endif
+// 
+//     return str;
+// }
 
 // QString toHelpPath(void)
 // {

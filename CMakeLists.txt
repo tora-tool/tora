@@ -41,10 +41,20 @@ ADD_DEFINITIONS("-DTOVERSION=\\\"${VERSION}\\\"")
 
 #Set the permissions to be used when installing plugins
 SET(PLUGIN_PERMISSIONS WORLD_EXECUTE GROUP_EXECUTE OWNER_EXECUTE WORLD_READ GROUP_READ OWNER_READ OWNER_WRITE)
-SET (DEFAULT_PLUGIN_DIR "${CMAKE_INSTALL_PREFIX}/lib/tora")
-ADD_DEFINITIONS("-DDEFAULT_PLUGIN_DIR=\\\"${DEFAULT_PLUGIN_DIR}\\\"")
 
+if (NOT TORA_PLUGIN_DIR)
+    SET (TORA_PLUGIN_DIR "${CMAKE_INSTALL_PREFIX}/share/tora/")
+endif (NOT TORA_PLUGIN_DIR)
+ADD_DEFINITIONS("-DDEFAULT_PLUGIN_DIR=\\\"${TORA_PLUGIN_DIR}\\\"")
 
+if (NOT TORA_DOC_DIR)
+    SET (TORA_DOC_DIR "${CMAKE_INSTALL_PREFIX}/share/doc/tora/") # it would be pain for upgrade configs -${VERSION}/")
+endif (NOT TORA_DOC_DIR)
+
+if (NOT TORA_HELP_DIR)
+    SET (TORA_HELP_DIR "${TORA_PLUGIN_DIR}/help/")
+endif (NOT TORA_HELP_DIR)
+ADD_DEFINITIONS("-DTORA_HELP_DIR=\\\"${TORA_HELP_DIR}\\\"")
 
 ##############################################################################################################
 ########## check for the CPU we build for                                                           ##########
@@ -268,5 +278,5 @@ INSTALL(FILES
     README.SVN
     README.WINDOWS
     TODO
-    DESTINATION ${DEFAULT_PLUGIN_DIR}
+    DESTINATION ${TORA_DOC_DIR}
 )

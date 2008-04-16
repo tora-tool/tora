@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 //             qApp->setDefaultCodec(QTextCodec::codecForName(getenv("LANG")));
 
         QTranslator torats(0);
-        torats.load(toPluginPath() + "/" + QString("tora_") + toConfigurationSingle::Instance().locale(), ".");
+        torats.load(toConfigurationSingle::Instance().pluginDir()/*toPluginPath()*/ + "/" + QString("tora_") + toConfigurationSingle::Instance().locale(), ".");
         qApp->installTranslator(&torats);
         QTranslator toadbindings(0);
         if (toConfigurationSingle::Instance().toadBindings())
@@ -109,7 +109,7 @@ int main(int argc, char **argv)
             // qt4 - hot candidate for a builtin resource
 //             if (!toadbindings.load(tora_toad, sizeof(tora_toad)))
 //                 printf("Internal error, couldn't load TOAD bindings");
-            toadbindings.load(toPluginPath() + "/" + "tora_toad.qm");
+            toadbindings.load(toConfigurationSingle::Instance().pluginDir()/*toPluginPath()*/ + "/" + "tora_toad.qm");
             qApp->installTranslator(&toadbindings);
         }
 
@@ -122,7 +122,7 @@ int main(int argc, char **argv)
             toSplash splash(NULL, "About " TOAPPNAME, false);
             splash.show();
             std::list<QString> failed;
-            QString dirPath = toPluginPath();
+            QString dirPath = toConfigurationSingle::Instance().pluginDir();/*toPluginPath()*/;
             QDir d(dirPath, QString::fromLatin1("*.tso"), QDir::Name, QDir::Files);
             if (!d.exists())
             {

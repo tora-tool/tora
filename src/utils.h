@@ -301,7 +301,7 @@ inline bool toIsIdent(QChar c)
  * target on windows).
  * @return String containing directory
  */
-QString toPluginPath(void);
+// QString toPluginPath(void);
 /** Get a brush for a chart item.
  * @param index Indicating which chart item to get color for.
  */
