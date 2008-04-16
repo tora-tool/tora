@@ -241,7 +241,7 @@ QString toFontToString(const QFont &fnt);
 /** Get the path to the help directory.
  * @return Path to the help directory.
  */
-QString toHelpPath(void);
+// QString toHelpPath(void);
 /** Read file from filename.
  * @param filename Filename to read file from.
  * @return Contents of file.

@@ -82,7 +82,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     IncludeDB->setChecked(toConfigurationSingle::Instance().dbTitle());
     Statusbar->setChecked(toConfigurationSingle::Instance().messageStatusbar());
     RestoreSession->setChecked(toConfigurationSingle::Instance().restoreSession());
-    HelpDirectory->setText(toHelpPath());
+    HelpDirectory->setText(toConfigurationSingle::Instance().helpPath()/*toHelpPath()*/);
     ChangeConnection->setChecked(toConfigurationSingle::Instance().changeConnection());
     ConnectHistory->setValue(toConfigurationSingle::Instance().connectSize());
     int samples = toConfigurationSingle::Instance().chartSamples();

@@ -261,7 +261,7 @@ toHelp::toHelp(QWidget *parent, QString name, bool modal)
             Help, SLOT(forward(void)));
 
     std::map<QString, QString> Dsc;
-    Dsc[tr(TOAPPNAME " manual")] = toHelpPath();
+    Dsc[tr(TOAPPNAME " manual")] = toConfigurationSingle::Instance().helpPath(); //toHelpPath();
 //     int tot = HelpTool.config("Number", "-1").toInt();
 
 //     if (tot != -1)
@@ -391,7 +391,7 @@ QString toHelp::path(const QString &path)
 {
     QString cur;
     if (path.isNull())
-        cur = toHelpPath();
+        cur = toConfigurationSingle::Instance().helpPath();/*toHelpPath();*/
     else
         cur = path;
     cur.replace(QRegExp(QString::fromLatin1("[^/]+$")), QString::null);

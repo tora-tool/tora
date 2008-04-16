@@ -602,16 +602,16 @@ QString toPluginPath(void)
     return str;
 }
 
-QString toHelpPath(void)
-{
-    QString str = toConfigurationSingle::Instance().helpPath();
-    if (str.isEmpty())
-    {
-        str = toPluginPath();
-        str += QString::fromLatin1("/help/toc.html");
-    }
-    return str;
-}
+// QString toHelpPath(void)
+// {
+//     QString str = toConfigurationSingle::Instance().helpPath();
+//     if (str.isEmpty())
+//     {
+//         str = toPluginPath();
+//         str += QString::fromLatin1("/help/toc.html");
+//     }
+//     return str;
+// }
 
 QByteArray toReadFile(const QString &filename)
 {

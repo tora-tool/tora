@@ -3,6 +3,7 @@ ADD_SUBDIRECTORY(loki)
 IF (WIN32)
     ADD_SUBDIRECTORY(windows)
 ENDIF (WIN32)
+ADD_SUBDIRECTORY(templates)
 
 
 # Default: qsci2 as 3rd party lib!
