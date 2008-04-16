@@ -2239,14 +2239,14 @@ void toBrowser::changeTab(QWidget *tab)
         if (newtab == FirstTab)
             return;
 
-        if (newtab->model() && newtab->model()->rowCount() > 0)
-            return;
-
         CurrentTop = tab;
         setFocusProxy(newtab);
         FirstTab = newtab;
         SecondTab = SecondMap[tab->objectName()];
         SecondText = "";
+
+        if (newtab->model() && newtab->model()->rowCount() > 0)
+            return;
 
         if (FirstTab && SecondTab)
             updateTabs();
