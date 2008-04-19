@@ -57,6 +57,10 @@
 #include <QFont>
 #include <QFontMetrics>
 #include <QMessageBox>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+
+#include "icons/stop.xpm"
 
 
 /**
@@ -119,6 +123,40 @@ toResultTableView::toResultTableView(bool readable,
     ReadableColumns = readable;
     NumberColumn    = numberColumn;
     ColumnsResized  = false;
+    Ready           = false;
+
+    Working = new QWidget(this);
+    Working->setAutoFillBackground(true);
+    Working->setPalette(QPalette(Qt::white));
+
+    QVBoxLayout *vbox = new QVBoxLayout;
+    vbox->setSpacing(0);
+    vbox->setContentsMargins(0, 0, 0, 0);
+
+    HWorking = new QWidget(Working);
+    HWorking->setAutoFillBackground(true);
+    HWorking->setPalette(QPalette(QColor(241, 241, 169)));
+    QHBoxLayout *hbox = new QHBoxLayout;
+
+    WorkingLabel = new QLabel(tr("Waiting..."), Working);
+    WorkingLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    hbox->addWidget(WorkingLabel);
+
+    WorkingStop = new QPushButton(QIcon(stop_xpm), tr("Stop"), HWorking);
+    WorkingStop->setAutoFillBackground(true);
+    WorkingStop->setBackgroundRole(QPalette::Window);
+    WorkingStop->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    WorkingStop->setEnabled(false);
+    connect(WorkingStop,
+            SIGNAL(clicked()),
+            this,
+            SLOT(stop()));
+    hbox->addWidget(WorkingStop);
+
+    HWorking->setLayout(hbox);
+    vbox->addWidget(HWorking);
+    vbox->addStretch(1);
+    Working->setLayout(vbox);
 
     toResultTableViewDelegate *del = new toResultTableViewDelegate(this);
     setItemDelegate(del);
@@ -165,6 +203,14 @@ void toResultTableView::query(const QString &sql, const toQList &param)
         Model = NULL;
 
         readAllAct->setEnabled(true);
+        Ready = false;
+        WorkingLabel->setText(tr("Please wait..."));
+        WorkingStop->setEnabled(true);
+        HWorking->hide();           // hide until timer requests
+
+        // sets visible true but won't show if parent is hidden
+        QTimer t(this);
+        t.singleShot(300, HWorking, SLOT(show()));
 
         query = new toEventQuery(connection(),
                                  toQuery::Long,
@@ -207,8 +253,6 @@ void toResultTableView::query(const QString &sql, const toQList &param)
 
     // when a new model is created the column sizes are lost
     ColumnsResized = false;
-
-    setUpdatesEnabled(false);
 }
 
 
@@ -249,6 +293,20 @@ void toResultTableView::applyFilter()
 int toResultTableView::sizeHintForRow(int row) const
 {
     return 5;
+}
+
+
+void toResultTableView::paintEvent(QPaintEvent *event)
+{
+    if(!Ready) {
+        Working->setGeometry(this->viewport()->frameGeometry());
+        Working->show();
+        event->ignore();
+    }
+    else {
+        Working->hide();
+        QTableView::paintEvent(event);
+    }
 }
 
 
@@ -382,10 +440,11 @@ void toResultTableView::menuCallback(QAction *action)
 
 void toResultTableView::handleDone(void)
 {
-    setUpdatesEnabled(true);
     readAllAct->setEnabled(false);
 
     applyFilter();
+    Ready = true;
+    Working->hide();
     emit done();
 }
 
@@ -401,7 +460,8 @@ void toResultTableView::handleFirst(const toConnection::exception &res,
                                     bool error)
 {
     applyColumnRules();
-    setUpdatesEnabled(true);
+    Ready = true;
+    Working->hide();
     emit firstResult(sql(), res, error);
 }
 

@@ -53,6 +53,8 @@
 #include <QList>
 #include <QHeaderView>
 #include <QMenu>
+#include <QLabel>
+#include <QPushButton>
 
 class toResultStats;
 class toViewFilter;
@@ -63,7 +65,6 @@ class toResultTableView : public QTableView,
             public toResult,
             public toEditWidget
 {
-
     Q_OBJECT;
 
     // Widget to store query statistics to.
@@ -86,6 +87,21 @@ class toResultTableView : public QTableView,
 
     // filter object if set
     toViewFilter *Filter;
+
+    // superimposed until model is ready
+    QWidget *Working;
+
+    // horizontal container for WorkingLabel and WorkingStop
+    QWidget *HWorking;
+
+    // label displayed by Working
+    QLabel *WorkingLabel;
+
+    // stop button displayed by Working
+    QPushButton *WorkingStop;
+
+    // set true when model has signaled
+    bool Ready;
 
 
     /**
@@ -141,6 +157,13 @@ protected:
      */
     virtual int sizeHintForRow(int row) const;
 
+
+    /**
+     * overrides parent to overlay working working message until model
+     * is ready.
+     *
+     */
+    virtual void paintEvent(QPaintEvent *event);
 
 signals:
 
@@ -217,17 +240,6 @@ public:
     toResultModel* model(void) const
     {
         return Model;
-    }
-
-
-    /**
-     * Stop running query.
-     *
-     */
-    void stop(void)
-    {
-        if (Model)
-            Model->stop();
     }
 
 
@@ -398,6 +410,17 @@ public slots:
      *
      */
     virtual void refresh(void);
+
+
+    /**
+     * Stop running query.
+     *
+     */
+    void stop(void)
+    {
+        if (Model)
+            Model->stop();
+    }
 
 signals:
 
