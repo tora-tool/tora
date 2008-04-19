@@ -14,7 +14,7 @@ TRANSLATIONS= \
 LOKIDIR_INC=$(top_srcdir)/src/loki/include
 LOKIDIR_SRC=$(top_srcdir)/src/loki/src
 
-AM_CPPFLAGS = -I$(top_srcdir)/ext/otl -I$(LOKIDIR_INC) $(KDE_INCLUDES) $(QT_INCLUDES) $(LTDLINCL)
+AM_CPPFLAGS = -I./otl -I$(LOKIDIR_INC) $(KDE_INCLUDES) $(QT_INCLUDES) $(LTDLINCL)
 AM_CPPFLAGS += $(PCRE_CFLAGS) \
 	-DDEFAULT_PLUGIN_DIR=\"$(libdir)\" \
 	-DTOVERSION=\"$(PACKAGE_VERSION)\" \
@@ -48,7 +48,7 @@ tora_LDADD = $(ORACLE_LIBS) $(@TORA_LINK_OTHERS@)
 
 if HAVE_ORACLE
 EXTRA_ORACLE_MONO_SOURCE = tooracleconnection.cpp tooraclesetting.h \
-	tooracleextract.cpp
+	tooracleextract.cpp otl/otlv4.h
 EXTRA_ORACLE_MONO_SOURCE_MOC = moc_tooraclesetting.cpp
 endif
 

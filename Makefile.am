@@ -20,4 +20,4 @@ EXTRA_DIST = debian \
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-SUBDIRS = utils src ext test doc
+SUBDIRS = utils src test doc
