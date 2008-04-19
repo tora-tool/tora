@@ -185,10 +185,8 @@ class connectionDeleter : public toTask
 class oracleSub : public toConnectionSub
     {
     public:
-        toSemaphore Lock;
         otl_connect *Connection;
         oracleSub(otl_connect *conn)
-                : Lock(1)
         {
             Connection = conn;
         }
@@ -267,7 +265,6 @@ class oracleQuery : public toQuery::queryImpl
             oracleSub *conn = dynamic_cast<oracleSub *>(query()->connectionSub());
             if (!conn)
                 throw QString::fromLatin1("Internal error, not oracle sub connection");
-            conn->Lock.down();
             if (Cancel)
                 throw QString::fromLatin1("Cancelled while waiting to read value");
             Running = true;
@@ -283,7 +280,6 @@ class oracleQuery : public toQuery::queryImpl
                     double d = 0;
                     (*Query) >> d;
                     Running = false;
-                    conn->Lock.up();
                     if (Query->is_null())
                         return null;
                     return toQValue(d);
@@ -297,7 +293,6 @@ class oracleQuery : public toQuery::queryImpl
                     int i = 0;
                     (*Query) >> i;
                     Running = false;
-                    conn->Lock.up();
                     if (Query->is_null())
                         return null;
                     return toQValue(i);
@@ -315,7 +310,6 @@ class oracleQuery : public toQuery::queryImpl
                     otl_long_string str(buffer, len);
                     (*Query) >> str;
                     Running = false;
-                    conn->Lock.up();
                     if (!str.len())
                         return null;
                     QString buf;
@@ -340,7 +334,6 @@ class oracleQuery : public toQuery::queryImpl
                     if (lob.len() == 0)
                     {
                         Running = false;
-                        conn->Lock.up();
                         return null;
                     }
                     int len = lob.len();
@@ -369,7 +362,6 @@ class oracleQuery : public toQuery::queryImpl
                     }
                     buffer[data.len()] = 0;
                     Running = false;
-                    conn->Lock.up();
 
                     if (dsc->ftype == otl_var_clob)
                     {
@@ -394,7 +386,6 @@ class oracleQuery : public toQuery::queryImpl
                     buffer[0] = 0;
                     (*Query) >> buffer;
                     Running = false;
-                    conn->Lock.up();
                     if (Query->is_null())
                     {
                         delete[] buffer;
@@ -410,14 +401,12 @@ class oracleQuery : public toQuery::queryImpl
             catch (const otl_exception &exc)
             {
                 Running = false;
-                conn->Lock.up();
                 delete[] buffer;
                 conn->throwExtendedException(query()->connection(), exc);
             }
             catch (...)
             {
                 Running = false;
-                conn->Lock.up();
                 delete[] buffer;
                 throw;
             }
@@ -1079,38 +1068,21 @@ void toOracleProvider::oracleQuery::execute(void)
         delete Query;
         Query = NULL;
 
-        while (conn->Lock.getValue() > 1)
-        {
-            conn->Lock.down();
-            // can't use status bar from this thread
-            printf("Too high value on connection lock semaphore\n");
-        }
-
-        conn->Lock.down();
         if (Cancel)
             throw QString::fromLatin1("Query aborted before started");
         Running = true;
-        try
-        {
-            static QRegExp stripnl("\r");
-            Query = new otl_stream;
-            Query->set_commit(0);
-            if (toQValue::numberFormat() == 0)
-                Query->set_all_column_types(otl_all_num2str | otl_all_date2str);
-            else
-                Query->set_all_column_types(otl_all_date2str);
 
-            QString sql = query()->sql();
-            sql.replace(stripnl, "");
-            Query->open(1,
-                        sql.toAscii().constData(),
-                        *(conn->Connection));
-        }
-        catch (...)
-        {
-            conn->Lock.up();
-            throw;
-        }
+        static QRegExp stripnl("\r");
+        Query = new otl_stream;
+        Query->set_commit(0);
+        if (toQValue::numberFormat() == 0)
+            Query->set_all_column_types(otl_all_num2str | otl_all_date2str);
+        else
+            Query->set_all_column_types(otl_all_date2str);
+
+        QString sql = query()->sql();
+        sql.replace(stripnl, "");
+        Query->open(1, sql.toAscii().constData(), *(conn->Connection));
     }
     catch (const otl_exception &exc)
     {
@@ -1174,7 +1146,6 @@ void toOracleProvider::oracleQuery::execute(void)
             }
         }
         Running = false;
-        conn->Lock.up();
     }
     catch (const otl_exception &exc)
     {
@@ -1182,7 +1153,6 @@ void toOracleProvider::oracleQuery::execute(void)
         Query = NULL;
 
         Running = false;
-        conn->Lock.up();
         conn->throwExtendedException(query()->connection(), exc);
     }
 }
@@ -1198,10 +1168,7 @@ void toOracleProvider::oracleQuery::cancel(void)
         Cancel = true;
     }
     else
-    {
         Cancel = true;
-        conn->Lock.up();
-    }
 }
 
 toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
