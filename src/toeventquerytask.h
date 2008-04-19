@@ -131,7 +131,7 @@ signals:
      * Error message
      *
      */
-    void error(const QString &msg);
+    void error(const toConnection::exception &msg);
 
 
     /**

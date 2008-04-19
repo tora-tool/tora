@@ -504,6 +504,13 @@ class exception : public QString
     {
         int Offset;
     public:
+        /** Create an empty exception
+         */
+        exception() :QString()
+        {
+            Offset = -1;
+        }
+
         /** Create an exception with a string description.
          */
         exception(const QString &str, int offset = -1)
@@ -1021,6 +1028,8 @@ public:
 
     friend class toQuery;
 };
+
+Q_DECLARE_METATYPE(toConnection::exception);
 
 /** This class is used to implement new database providers.
  */

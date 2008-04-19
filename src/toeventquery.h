@@ -214,7 +214,10 @@ private slots:
     void taskDesc(toQDescList &desc, int columns);
 
     // handle tasks's error() signal
-    void taskError(const QString &msg);
+    void taskError(const toConnection::exception &msg);
+
+    // handle task finished
+    void taskFinished(void);
 
 public slots:
 
@@ -246,7 +249,14 @@ signals:
      * Emitted with error string
      *
      */
-    void error(const QString &);
+    void error(const toConnection::exception &);
+
+
+    /**
+     * Emitted when done
+     *
+     */
+    void done();
 };
 
 #endif

@@ -62,6 +62,8 @@ toResultModel::toResultModel(toEventQuery *query,
     Query = query;
     Query->setParent(this);
 
+    qRegisterMetaType<toConnection::exception>("toConnection::exception");
+
     connect(query,
             SIGNAL(descriptionAvailable()),
             this,
@@ -73,9 +75,14 @@ toResultModel::toResultModel(toEventQuery *query,
             SLOT(readData()),
             Qt::QueuedConnection);
     connect(query,
-            SIGNAL(error(const QString &)),
+            SIGNAL(error(const toConnection::exception &)),
             this,
-            SLOT(queryError(const QString &)),
+            SLOT(queryError(const toConnection::exception &)),
+            Qt::QueuedConnection);
+    connect(query,
+            SIGNAL(done()),
+            this,
+            SLOT(cleanup()),
             Qt::QueuedConnection);
 
     query->start();
@@ -84,6 +91,7 @@ toResultModel::toResultModel(toEventQuery *query,
 
 toResultModel::~toResultModel()
 {
+    cleanup();
     if (Query)
         Query->deleteLater();
 }
@@ -101,7 +109,7 @@ void toResultModel::cleanup()
 }
 
 
-void toResultModel::queryError(const QString &err) {
+void toResultModel::queryError(const toConnection::exception &err) {
     if(First) {
         emit firstResult(err, true);
         First = !First;

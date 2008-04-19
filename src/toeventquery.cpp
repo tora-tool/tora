@@ -107,9 +107,15 @@ void toEventQuery::start() {
             Qt::QueuedConnection);
 
     connect(Task,
-            SIGNAL(error(const QString &)),
+            SIGNAL(error(const toConnection::exception &)),
             this,
-            SLOT(taskError(const QString &)),
+            SLOT(taskError(const toConnection::exception &)),
+            Qt::QueuedConnection);
+
+    connect(Task,
+            SIGNAL(finished()),
+            this,
+            SLOT(taskFinished()),
             Qt::QueuedConnection);
 
     Task->start();
@@ -152,6 +158,11 @@ void toEventQuery::taskDesc(toQDescList &desc, int column) {
 }
 
 
-void toEventQuery::taskError(const QString &msg) {
+void toEventQuery::taskError(const toConnection::exception &msg) {
     emit error(msg);
+}
+
+
+void toEventQuery::taskFinished() {
+    emit done();
 }

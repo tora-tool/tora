@@ -107,7 +107,7 @@ private slots:
     // emits done()
     void cleanup(void);
 
-    void queryError(const QString &);
+    void queryError(const toConnection::exception &);
 
 public:
     toResultModel(toEventQuery *query,
