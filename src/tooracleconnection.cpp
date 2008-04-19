@@ -1159,7 +1159,7 @@ void toOracleProvider::oracleQuery::execute(void)
 
 void toOracleProvider::oracleQuery::cancel(void)
 {
-    if(!Running)
+    if(!Running || Cancel)
         return;
 
     oracleSub *conn = dynamic_cast<oracleSub *>(query()->connectionSub());
