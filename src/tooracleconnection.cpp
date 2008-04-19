@@ -1159,16 +1159,15 @@ void toOracleProvider::oracleQuery::execute(void)
 
 void toOracleProvider::oracleQuery::cancel(void)
 {
+    if(!Running)
+        return;
+
     oracleSub *conn = dynamic_cast<oracleSub *>(query()->connectionSub());
     if (!conn)
         throw QString::fromLatin1("Internal error, not oracle sub connection");
-    if (Running)
-    {
-        conn->Connection->cancel();
-        Cancel = true;
-    }
-    else
-        Cancel = true;
+
+    conn->Connection->cancel();
+    Cancel = true;
 }
 
 toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
