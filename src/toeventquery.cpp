@@ -66,7 +66,9 @@ toEventQuery::toEventQuery(toConnection &conn,
                            toResultStats *stats)
     : SQL(sql),
       Param(param),
-      Statistics(stats) {
+      Statistics(stats),
+      Task(0)
+{
 
     Connection = &conn;
     Processed  = 0;
