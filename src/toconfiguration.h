@@ -1141,6 +1141,9 @@ public:
     // main window size
     QByteArray mainWindowGeometry() { return m_mainWindowGeometry; };
     void setMainWindowGeometry(QByteArray v) { m_mainWindowGeometry = v; };
+    // mainwindow's toolbars etc
+    QByteArray mainWindowState() { return m_mainWindowState; };
+    void setMainWindowState(QByteArray v) { m_mainWindowState = v; };
 
 private:
     QString m_provider;
@@ -1306,6 +1309,7 @@ private:
 
     // mainwindow size
     QByteArray m_mainWindowGeometry;
+    QByteArray m_mainWindowState;
 };
 
 typedef Loki::SingletonHolder<toConfiguration> toConfigurationSingle;

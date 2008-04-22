@@ -231,6 +231,8 @@ toConfiguration::toConfiguration()
     // main window
     s.beginGroup("toMainWindow");
     m_mainWindowGeometry = s.value("geometry").toByteArray();
+    // mainwindow's toolbars etc
+    m_mainWindowState = s.value("state").toByteArray();
     s.endGroup();
 }
 
@@ -433,6 +435,8 @@ void toConfiguration::saveConfig()
     // main window
     s.beginGroup("toMainWindow");
     s.setValue("geometry", m_mainWindowGeometry);
+    // mainwindow's toolbars etc
+    s.setValue("state", m_mainWindowState);
     s.endGroup();
 }
 

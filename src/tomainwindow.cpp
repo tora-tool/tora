@@ -35,8 +35,6 @@
 *
 *****/
 
-#include <QSettings>
-
 #include "tomainwindow.h"
 
 toMainWindow::toMainWindow()

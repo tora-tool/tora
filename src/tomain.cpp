@@ -129,6 +129,7 @@ toMain::toMain()
     setWindowIcon(QPixmap(const_cast<const char**>(tora_xpm)));
 
     restoreGeometry(toConfigurationSingle::Instance().mainWindowGeometry());
+    restoreState(toConfigurationSingle::Instance().mainWindowState());
 
     // disable widgets related to an editor
     editDisable(NULL);
@@ -479,6 +480,7 @@ void toMain::addCustomMenu(QMenu *menu)
 void toMain::createToolbars()
 {
     editToolbar = toAllocBar(this, tr("Application"));
+    editToolbar->setObjectName("editToolbar");
 
     editToolbar->addAction(openAct);
     editToolbar->addAction(saveAct);
@@ -495,6 +497,7 @@ void toMain::createToolbars()
     editToolbar->addAction(searchReplaceAct);
 
     connectionToolbar = toAllocBar(this, tr("Connections"));
+    connectionToolbar->setObjectName("connectionToolbar");
 
     connectionToolbar->addAction(newConnAct);
     connectionToolbar->addAction(closeConn);
@@ -517,6 +520,7 @@ void toMain::createToolbars()
     addToolBarBreak();
 
     toolsToolbar = toAllocBar(this, tr("Tools"));
+    toolsToolbar->setObjectName("toolsToolbar");
 
     addToolBarBreak();
 }
@@ -1348,6 +1352,7 @@ void toMain::closeEvent(QCloseEvent *event)
     TOCATCH;
 
     toConfigurationSingle::Instance().setMainWindowGeometry(saveGeometry());
+    toConfigurationSingle::Instance().setMainWindowState(saveState());
 
     toConfigurationSingle::Instance().saveConfig();
     event->accept();
