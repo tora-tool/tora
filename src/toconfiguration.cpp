@@ -197,7 +197,7 @@ toConfiguration::toConfiguration()
     }
     s.endArray();
     // totuning
-    m_tuningFirstRun = (s.value(CONF_OVERVIEW) != QVariant());
+    m_tuningFirstRun = (s.value(CONF_OVERVIEW) == QVariant());
     m_tuningOverview = s.value(CONF_OVERVIEW, false).toBool();
     m_tuningFileIO = s.value(CONF_FILEIO, false).toBool();
     m_tuningWaits = s.value(CONF_WAITS, false).toBool();

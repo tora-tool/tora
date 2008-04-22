@@ -1583,6 +1583,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     QString unitStr = toConfigurationSingle::Instance().sizeUnit();
     toQList unit;
     unit.insert(unit.end(), toQValue(toSizeDecode(unitStr)));
+
     {
         std::list<QString> val = toSQL::range("toTuning:Charts");
         for (std::list<QString>::iterator i = val.begin();i != val.end();i++)
@@ -1679,7 +1680,14 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     for (std::map<QString, QWidget *>::iterator k = Charts.begin();
             k != Charts.end();
             k++)
-        Tabs->addTab((*k).second, tr((*k).first.mid(strlen(CONF_CHART)).toAscii().constData()));
+    {
+        QScrollArea *sc = new QScrollArea(Tabs);
+        sc->setWidgetResizable(true);
+        sc->setWidget((*k).second);
+        // HACK: it's ugly but I cannot find any way how to setup it dynamically
+        (*k).second->setMinimumHeight(1800);
+        Tabs->addTab(sc, tr((*k).first.mid(strlen(CONF_CHART)).toAscii().constData()));
+    }
 
     Waits = new toWaitEvents(this, "waits");
     Tabs->addTab(Waits, tr("Wait events"));
