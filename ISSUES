@@ -30,6 +30,10 @@ Clicking on either of the "sql bookmark" toolbar icons instantly crashes tora.
 Batch(script) run in SQL Editor. See:
 http://sourceforge.net/mailarchive/forum.php?thread_name=e50db5a5f5be244c6ad03556ffd7fa76%40office.scribus.info&forum_name=tora-develop
 
+Minimize sf.net error backlog - bugtracker.
+
+Walk through basic tasks and dialogs and test its functionality. (create table, drop, alter etc.)
+
 
 Minor Issues that would be nice to fix before release
 -----------------------------------------------------
