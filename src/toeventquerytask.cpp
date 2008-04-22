@@ -84,8 +84,14 @@ toEventQueryTask::toEventQueryTask(QObject *parent,
 
 void toEventQueryTask::run(void) {
     try {
-        Query = new toQuery(*Connection, toQuery::Normal);
+        Query = new toQuery(*Connection, SQL, Params);
+    }
+    CATCH_ALL;
 
+    if(!Query)
+        return;
+
+    try {
         if(Statistics)
             Statistics->changeSession(*Query);
 
@@ -94,8 +100,6 @@ void toEventQueryTask::run(void) {
                 this,
                 SLOT(pread()),
                 Qt::QueuedConnection);
-
-        Query->execute(SQL, Params);
 
         toQDescList desc = Query->describe();
         Columns = Query->columns();
@@ -108,15 +112,23 @@ void toEventQueryTask::run(void) {
             return;
         }
 
-        pread();
+        read();
 
         // begin thread's event loop
         exec();
     }
     CATCH_ALL;
 
-    if(Query)
-        delete Query;
+    try {
+        if(Query)
+            Query->cancel();
+    }
+    catch(...) {
+        // ignored
+    }
+
+    delete Query;
+    Query = 0;
 }
 
 
@@ -161,8 +173,11 @@ void toEventQueryTask::pread() {
 
         if(values.size() > 0)
             emit data(values);    // must not access after this line
+    }
+    CATCH_ALL;
 
-        if(Query->eof())
+    try {
+        if(!Query || Query->eof())
             close();
     }
     CATCH_ALL;
