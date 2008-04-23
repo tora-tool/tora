@@ -73,6 +73,7 @@ toEventQuery::toEventQuery(toConnection &conn,
     Connection = &conn;
     Processed  = 0;
     Columns    = 0;
+    TaskDone   = false;
 }
 
 toEventQuery::toEventQuery(toConnection &conn,
@@ -87,6 +88,7 @@ toEventQuery::toEventQuery(toConnection &conn,
     Connection = &conn;
     Processed  = 0;
     Columns    = 0;
+    TaskDone   = false;
 }
 
 
@@ -135,9 +137,9 @@ toEventQuery::~toEventQuery() {
 
 
 bool toEventQuery::eof(void) const {
-    if(!Task)
-        return true;
-    return !Task->isRunning();
+    if(hasMore())
+        return false;
+    return TaskDone;
 }
 
 
@@ -166,5 +168,6 @@ void toEventQuery::taskError(const toConnection::exception &msg) {
 
 
 void toEventQuery::taskFinished() {
+    TaskDone = true;
     emit done();
 }

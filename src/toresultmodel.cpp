@@ -79,11 +79,6 @@ toResultModel::toResultModel(toEventQuery *query,
             this,
             SLOT(queryError(const toConnection::exception &)),
             Qt::QueuedConnection);
-    connect(query,
-            SIGNAL(done()),
-            this,
-            SLOT(cleanup()),
-            Qt::QueuedConnection);
 
     query->start();
 }
@@ -92,8 +87,6 @@ toResultModel::toResultModel(toEventQuery *query,
 toResultModel::~toResultModel()
 {
     cleanup();
-    if (Query)
-        Query->deleteLater();
 }
 
 
@@ -101,6 +94,8 @@ void toResultModel::cleanup()
 {
     if (Query)
     {
+        disconnect(Query, 0, this, 0);
+
         Query->stop();
         emit done();
     }

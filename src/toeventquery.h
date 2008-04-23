@@ -82,6 +82,13 @@ private:
     // QThread instance that will do actual reading
     QPointer<toEventQueryTask> Task;
 
+    // true when task finishes. this set from a slot called by a
+    // queued message. the problem is that sometimes the thread can
+    // finish before it's messages have all been processed, making
+    // Task->isRunning() useless for detecting if there's data
+    // waiting.
+    bool TaskDone;
+
     // connection for this query
     toConnection *Connection;
 
