@@ -97,6 +97,9 @@ private:
     // headers read already?
     bool HeadersRead;
 
+    // should read all data
+    bool ReadAll;
+
     // helpers for sort implementation
     int partition(int, int, int, int, Qt::SortOrder);
     void qsort(int, int, int, Qt::SortOrder);
@@ -326,6 +329,13 @@ public slots:
      *
      */
     void readAll(void);
+
+
+    /**
+     * Overloaded method. Called when query has data available. 
+     *
+     */
+    void fetchMore(void);
 
 
 protected slots:

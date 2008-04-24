@@ -234,6 +234,17 @@ public slots:
      */
     void stop(void);
 
+
+    /**
+     * Read all data
+     *
+     */
+    void readAll(void) {
+        if(Task)
+            Task->read(true);
+    }
+
+
 signals:
 
 

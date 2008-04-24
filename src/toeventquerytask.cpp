@@ -84,21 +84,16 @@ toEventQueryTask::toEventQueryTask(QObject *parent,
 
 void toEventQueryTask::run(void) {
     try {
-        Query = new toQuery(*Connection, SQL, Params);
-    }
-    CATCH_ALL;
+        Query = new toQuery(*Connection);
+        Query->execute(SQL, Params);
 
-    if(!Query)
-        return;
-
-    try {
         if(Statistics)
             Statistics->changeSession(*Query);
 
         connect(this,
-                SIGNAL(readRequested()),
+                SIGNAL(readRequested(bool)),
                 this,
-                SLOT(pread()),
+                SLOT(pread(bool)),
                 Qt::QueuedConnection);
 
         toQDescList desc = Query->describe();
@@ -119,22 +114,17 @@ void toEventQueryTask::run(void) {
     }
     CATCH_ALL;
 
-    try {
-        if(Query)
-            Query->cancel();
-    }
-    catch(...) {
-        // ignored
-    }
+    close();
+}
 
+
+toEventQueryTask::~toEventQueryTask() {
     delete Query;
     Query = 0;
 }
 
 
 void toEventQueryTask::close() {
-    Closed = true;
-
     try {
         if(Query)
             Query->cancel();
@@ -143,36 +133,41 @@ void toEventQueryTask::close() {
         // noop
     }
 
+    Closed = true;
+
     // exit thread event loop. safe to call before event loop starts.
     exit();
 }
 
 
-void toEventQueryTask::read() {
-    emit readRequested();
+void toEventQueryTask::read(bool all) {
+    emit readRequested(all);
 }
 
 
-void toEventQueryTask::pread() {
+void toEventQueryTask::pread(bool all) {
     if(!Query || Columns < 1) {
         close();
         return;
     }
 
-    ValuesList values;
     int maxRead = toConfigurationSingle::Instance().maxNumber();
 
     try {
-        for(int row = 0; row < maxRead; row++) {
-            for(int i = 0; i < Columns && Query && !Query->eof(); i++)
-                values.append(Query->readValueNull());
-        }
+        do {
+            ValuesList values;
 
-        if(Statistics)
-            Statistics->refreshStats(false);
+            for(int row = 0; row < maxRead; row++) {
+                for(int i = 0; i < Columns && !Query->eof(); i++)
+                    values.append(Query->readValueNull());
+            }
 
-        if(values.size() > 0)
-            emit data(values);    // must not access after this line
+            if(Statistics)
+                Statistics->refreshStats(false);
+
+            if(values.size() > 0)
+                emit data(values);    // must not access after this line
+        } while(all && !Query->eof());
     }
     CATCH_ALL;
 

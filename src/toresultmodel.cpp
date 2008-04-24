@@ -54,6 +54,7 @@ toResultModel::toResultModel(toEventQuery *query,
     HeadersRead     = false;
     First           = true;
     Editable        = edit;
+    ReadAll         = false;
 
     MaxRead = MaxNumber = toConfigurationSingle::Instance().maxNumber();
 
@@ -67,18 +68,15 @@ toResultModel::toResultModel(toEventQuery *query,
     connect(query,
             SIGNAL(descriptionAvailable()),
             this,
-            SLOT(readHeaders()),
-            Qt::QueuedConnection);
+            SLOT(readHeaders()));
     connect(query,
             SIGNAL(dataAvailable()),
             this,
-            SLOT(readData()),
-            Qt::QueuedConnection);
+            SLOT(fetchMore()));
     connect(query,
             SIGNAL(error(const toConnection::exception &)),
             this,
-            SLOT(queryError(const toConnection::exception &)),
-            Qt::QueuedConnection);
+            SLOT(queryError(const toConnection::exception &)));
 
     query->start();
 }
@@ -116,17 +114,9 @@ void toResultModel::queryError(const toConnection::exception &err) {
 
 void toResultModel::readAll()
 {
-    QModelIndex index;
-
-    try {
-        while (Query && !Query->eof()) {
-            if (canFetchMore(index))
-                fetchMore(index);
-
-            qApp->processEvents();
-        }
-    }
-    TOCATCH;
+    ReadAll = true;
+    if(Query)
+        Query->readAll();
 }
 
 
@@ -474,6 +464,19 @@ bool toResultModel::canFetchMore(const QModelIndex &parent) const
     }
 
     return false;
+}
+
+
+void toResultModel::fetchMore()
+{
+    if(ReadAll) {
+        MaxNumber = -1;
+        readData();
+    }
+    else if(CurrentRow < MaxNumber) {
+        QModelIndex ind;
+        fetchMore(ind);
+    }
 }
 
 

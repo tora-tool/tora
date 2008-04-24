@@ -129,10 +129,14 @@ void toEventQuery::start() {
 toEventQuery::~toEventQuery() {
     try {
         stop();
+        if(Task)
+            Task->wait();
     }
     catch(...) {
         ; // ignored
     }
+
+    delete Task;
 }
 
 
@@ -144,7 +148,7 @@ bool toEventQuery::eof(void) const {
 
 
 void toEventQuery::stop(void) {
-    if(Task)
+    if(!TaskDone && Task)
         Task->close();
 }
 

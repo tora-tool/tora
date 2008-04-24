@@ -87,6 +87,8 @@ public:
                      const QString &sql,
                      const toQList &param,
                      toResultStats *stats = NULL);
+    ~toEventQueryTask();
+
 
 protected:
 
@@ -98,7 +100,7 @@ protected:
 
 
 private slots:
-    void pread(void);
+    void pread(bool all);
 
 
 public slots:
@@ -106,7 +108,7 @@ public slots:
      * Queues a read request. Emits readRequested()
      *
      */
-    void read(void);
+    void read(bool all = false);
 
     /**
      * Closes this class. Good idea to call this.
@@ -124,7 +126,7 @@ signals:
      * A read was requested
      *
      */
-    void readRequested(void);
+    void readRequested(bool all);
 
 
     /**
