@@ -87,7 +87,8 @@ toResultStats::toResultStats(bool onlyChanged, QWidget *parent,
 
     try
     {
-        toQuery query(connection(), SQLSession);
+        toQList params;
+        toQuery query(connection(), toQuery::Background, SQLSession, params);
         SessionID = query.readValue().toInt();
     }
     catch (...)
@@ -125,6 +126,12 @@ void toResultStats::setup(void)
 
     Query = SessionIO = NULL;
     connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
+
+    connect(this,
+            SIGNAL(sessionChanged(int)),
+            this,
+            SLOT(refreshStats()),
+            Qt::QueuedConnection);
 }
 
 static toSQL SQLStatistics("toResultStats:Statistics",
@@ -195,7 +202,6 @@ void toResultStats::changeSession(toQuery &query)
         emit sessionChanged(SessionID);
         emit sessionChanged(QString::number(SessionID));
         resetStats();
-        refreshStats(true);
     }
     TOCATCH
 }
@@ -214,7 +220,6 @@ void toResultStats::changeSession(int ses)
         emit sessionChanged(QString::number(SessionID));
         resetStats();
     }
-    refreshStats();
 }
 
 static toSQL SQLStatisticName("toResultStats:StatisticName",

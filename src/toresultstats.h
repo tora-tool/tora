@@ -112,14 +112,6 @@ public:
     /** Reset statistics. Read in last values without updating widget data.
      */
     void resetStats(void);
-    /** Change the session that the current query will run on.
-     * @param query Query to check connection for.
-     */
-    void changeSession(toQuery &conn);
-    /** Change session to specified id.
-     * @param ses Session ID to change to.
-     */
-    void changeSession(int ses);
     /** Support Oracle
      */
     virtual bool canHandle(toConnection &conn);
@@ -133,6 +125,14 @@ signals:
      */
     void sessionChanged(const QString &);
 public slots:
+    /** Change the session that the current query will run on.
+     * @param query Query to check connection for.
+     */
+    void changeSession(toQuery &conn);
+    /** Change session to specified id.
+     * @param ses Session ID to change to.
+     */
+    void changeSession(int ses);
     /** Update the statistics.
      * @param reset Set delta to current values. This means that the next time this widget
      *              is updated the delta will be from the new values.

@@ -87,9 +87,6 @@ void toEventQueryTask::run(void) {
         Query = new toQuery(*Connection);
         Query->execute(SQL, Params);
 
-        if(Statistics)
-            Statistics->changeSession(*Query);
-
         connect(this,
                 SIGNAL(readRequested(bool)),
                 this,
@@ -115,6 +112,14 @@ void toEventQueryTask::run(void) {
     CATCH_ALL;
 
     close();
+
+    try {
+        if(Statistics)
+            Statistics->changeSession(*Query);
+    }
+    catch(...) {
+        // ignored
+    }
 }
 
 
@@ -161,9 +166,6 @@ void toEventQueryTask::pread(bool all) {
                 for(int i = 0; i < Columns && !Query->eof(); i++)
                     values.append(Query->readValueNull());
             }
-
-            if(Statistics)
-                Statistics->refreshStats(false);
 
             if(values.size() > 0)
                 emit data(values);    // must not access after this line

@@ -93,7 +93,7 @@ toEventQuery::toEventQuery(toConnection &conn,
 
 
 void toEventQuery::start() {
-    Task = new toEventQueryTask(this, *Connection, SQL, Param);
+    Task = new toEventQueryTask(this, *Connection, SQL, Param, Statistics);
 
     qRegisterMetaType<toQDescList>("toQDescList&");
     qRegisterMetaType<ValuesList>("ValuesList&");
@@ -128,15 +128,16 @@ void toEventQuery::start() {
 
 toEventQuery::~toEventQuery() {
     try {
+        disconnect(Task, 0, 0, 0);
+
         stop();
-        if(Task)
-            Task->wait();
+
+        if(Task->wait(1000))
+            delete Task;
     }
     catch(...) {
         ; // ignored
     }
-
-    delete Task;
 }
 
 
@@ -156,6 +157,14 @@ void toEventQuery::stop(void) {
 void toEventQuery::taskData(ValuesList &values) {
     Values += values;
     emit dataAvailable();
+
+    try {
+        if(Statistics)
+            Statistics->refreshStats(false);
+    }
+    catch(...) {
+        // ignored
+    }
 }
 
 

@@ -77,6 +77,10 @@ toResultModel::toResultModel(toEventQuery *query,
             SIGNAL(error(const toConnection::exception &)),
             this,
             SLOT(queryError(const toConnection::exception &)));
+    connect(query,
+            SIGNAL(done()),
+            this,
+            SLOT(fetchMore()));
 
     query->start();
 }
