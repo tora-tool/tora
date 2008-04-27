@@ -15,16 +15,6 @@ Regulary raising warning/error dialog with:
 Explain Plan shortcut prints to stdout:
 QAction::eventFilter: Ambiguous shortcut overload: F3
 
-Single clicking in sql editor entry area if entire text is selected causes
-the selected text to be pasted at the end of the entry area as if you
-middle-clicked. Picture normal behavior of selecting it all to copy it, then
-single clicking to unselect it and move to something else... 
-
-[mrj: yeah, that's been bothering me for a while. i added an option to
-disable it and am researching a qscintilla threshold setting. i may
-end up doing it manually. my personal preference is that drag and drop
-should not be used when coding -- but i'm sure some find it useful.]
-
 Clicking on either of the "sql bookmark" toolbar icons instantly crashes tora.
 
 Batch(script) run in SQL Editor. See:
@@ -38,17 +28,14 @@ Walk through basic tasks and dialogs and test its functionality. (create table, 
 Minor Issues that would be nice to fix before release
 -----------------------------------------------------
 
-[Mike] Storage manager functionality
-
 [Nathan] Proper encoding of author names in about dialog.
 
 Drag and drop/doubleclick in filter dialog for schema browser no longer works.
 
 
-
 Enhancements
 ------------
-[done] Would love it if the Schema Browser/connection would remember the
+[needs work] Would love it if the Schema Browser/connection would remember the
 last schema that was being browsed. In our environment, the user you connect
 as never owns any objects, so if I connect as 'swconf', I'll almost always 
 be browing 'swconf_owner' schema.
@@ -56,6 +43,8 @@ be browing 'swconf_owner' schema.
 
 Resolved Issues
 ---------------
+
+[Mike] Storage manager functionality
 
 [DONE - some issues can be found by testing of course] [Petr] Completion of conversion to use QSettings
 
@@ -75,3 +64,8 @@ Crash if you click trashcan/delete-row on empty table in schema browser
 [mrj: can't reproduce this, can you send me a stacktrace? the code
 does the right thing it appears.] [nneul: nor can I now... weird... will
 leave this in for a little bit, if it returns, I'll get you a trace]
+
+[RESOLVED] Single clicking in sql editor entry area if entire text is selected causes
+the selected text to be pasted at the end of the entry area as if you
+middle-clicked. Picture normal behavior of selecting it all to copy it, then
+single clicking to unselect it and move to something else... 
