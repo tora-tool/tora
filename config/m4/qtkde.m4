@@ -46,6 +46,14 @@ AC_DEFUN([TORA_CHECK_QSCINTILLA],
   scin_cflags=
   scin_ldflags=
 
+  qscintilla_user_dir=
+  AC_ARG_WITH(qscintilla,
+  [  --with-qscintilla=DIR
+                          Directory containing QScintilla 2 ],
+  [
+     qscintilla_user_dir=$withval
+  ], )
+
   qscintilla_user_inc=
   AC_ARG_WITH(qscintilla-includes,
   [  --with-qscintilla-includes=DIR
@@ -56,26 +64,30 @@ AC_DEFUN([TORA_CHECK_QSCINTILLA],
 
   qscintilla_user_lib=
   AC_ARG_WITH(qscintilla-libraries,
-  [   --with-qscintilla-libraries
+  [  --with-qscintilla-libraries=DIR
                           QScintilla library dir],
   [
     qscintilla_user_lib=$withval
   ], )
 
   scin_check_inc="
+    $qscintilla_user_dir/Qt4
     $qscintilla_user_inc
     /usr/include/qscintilla"
 
   for dir in $scin_check_inc; do
+    echo "looking for headers $dir" >&AS_MESSAGE_LOG_FD()
     if test -d $dir; then
       scin_cflags="$scin_cflags -I$dir"
     fi
   done
 
   scin_check_lib="
+    $qscintilla_user_dir/Qt4
     $qscintilla_user_lib"
 
   for dir in $scin_check_lib; do
+    echo "looking for lib folder $dir" >&AS_MESSAGE_LOG_FD()
     if test -d $dir; then
       scin_ldflags="$scin_ldflags -L$dir"
     fi
@@ -114,7 +126,13 @@ AC_DEFUN([TORA_CHECK_QSCINTILLA],
   AC_LANG_POP([C++])
 
   if test $scin_works = no; then
-    AC_MSG_ERROR([Couldn't compile a simple QScintilla application. See config.log or specify its location with --with-qscintilla-includes])
+    AC_MSG_ERROR([Couldn't compile a simple QScintilla application.
+See config.log or specify its location with --with-qscintilla=/path/to/qscintilla
+
+You can download qscintilla here:
+http://www.riverbankcomputing.co.uk/software/qscintilla/
+
+Or alternatively see if your OS offers a QScintilla 2 package with development headers.])
   fi
 
   CXXFLAGS=$cflags_scin_save
