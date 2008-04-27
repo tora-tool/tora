@@ -715,13 +715,7 @@ void toMarkedText::insert(const QString &str, bool select)
 
     // get new position and select if requested
     if (select)
-    {
-        // Normally we'd find where the cursor is now.
-        // getCursorPosition(&lineTo, &indexTo);
-
-        int count = countChars(str, '\n');
-        setSelection(lineFrom, indexFrom, lineFrom + count + 1, 0);
-    }
+        setSelection(lineFrom, indexFrom, lineFrom, indexFrom + str.length());
 
     QsciScintilla::endUndoAction();
 }
