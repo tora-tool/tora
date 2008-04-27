@@ -64,6 +64,7 @@
 #include <QFocusEvent>
 #include <QMouseEvent>
 #include <QDir>
+#include <QApplication>
 
 #include "icons/undo.xpm"
 #include "icons/redo.xpm"
@@ -97,6 +98,7 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
     setIndentationsUseTabs(!defaultTabSpaces());
 
     this->setUtf8(true);
+    setAcceptDrops(true);
 }
 
 toMarkedText::~toMarkedText()
@@ -192,12 +194,6 @@ void toMarkedText::focusOutEvent (QFocusEvent *e)
         CursorTimerID = -1;
     }
     QsciScintilla::focusOutEvent(e);
-}
-
-void toMarkedText::dropEvent(QDropEvent *e)
-{
-    QsciScintilla::dropEvent(e);
-    setFocus();
 }
 
 void toMarkedText::editPrint(void)
@@ -477,6 +473,42 @@ void toMarkedText::incrementalSearch(bool forward, bool next)
     SearchFailed = true;
 }
 
+void toMarkedText::dropEvent(QDropEvent *e)
+{
+    if(e->source() == this || e->source() == viewport())
+    {
+        QPoint point = e->pos() - DragStart;
+        // forces a reasonable drag distance
+        if (point.manhattanLength() < QApplication::startDragDistance())
+        {
+            e->ignore();
+            return;
+        }
+
+        e->acceptProposedAction();
+        beginUndoAction();
+
+        QString selection = selectedText();
+        removeSelectedText();
+
+        long position = SendScintilla(SCI_POSITIONFROMPOINT,
+                                      e->pos().x(),
+                                      e->pos().y());
+        SendScintilla(SCI_SETCURRENTPOS, position);
+
+        int line, index;
+        getCursorPosition(&line, &index);
+        insertAt(selection, line, index);
+        setSelection(line, index, line, index + selection.length());
+
+        endUndoAction();
+    }
+    else
+        QsciScintilla::dropEvent(e);
+
+    setFocus();
+}
+
 void toMarkedText::mousePressEvent(QMouseEvent *e)
 {
     if (Search)
@@ -486,17 +518,17 @@ void toMarkedText::mousePressEvent(QMouseEvent *e)
         toStatusMessage(QString::null);
     }
 
-    if(!toConfigurationSingle::Instance().editDragDrop() &&
-       e->button() == Qt::LeftButton &&
-       geometry().contains(e->pos()))
-    {
-        // would normally be a drag request. clear selection.
-        if(QsciScintilla::hasSelectedText())
-            QsciScintilla::selectAll(false);
+    DragStart = QPoint();
+    if(e->button() == Qt::LeftButton && geometry().contains(e->pos())) {
+        if(!toConfigurationSingle::Instance().editDragDrop())
+        {
+            // would normally be a drag request. clear selection.
+            if(QsciScintilla::hasSelectedText())
+                QsciScintilla::selectAll(false);
+        }
+        else if(QsciScintilla::hasSelectedText())
+            DragStart = e->pos();
     }
-
-    // set on mouse press to apply any preference changes
-    setAcceptDrops(toConfigurationSingle::Instance().editDragDrop());
 
     QsciScintilla::mousePressEvent(e);
 }

@@ -56,6 +56,7 @@
 #include <QFocusEvent>
 #include <QMouseEvent>
 #include <QKeyEvent>
+#include <QPoint>
 
 class TOPrinter;
 class QMenu;
@@ -83,6 +84,8 @@ class toMarkedText : public QsciScintilla, public toEditWidget
 
     int CursorTimerID;
 
+    QPoint DragStart;
+
 #if 0
     /** Print one page to printer.
      * @param printer Printer to print to.
@@ -102,6 +105,7 @@ protected:
     /** Reimplemented for internal reasons.
      */
     virtual void mousePressEvent(QMouseEvent *e);
+
     /** Reimplemented for internal reasons.
      */
     virtual void keyPressEvent(QKeyEvent *e);
