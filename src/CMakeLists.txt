@@ -177,6 +177,7 @@ SET(TORA_MOC_CLASSES
 #     totimer.h
     totool.h
     totuning.h
+    tounittest.h
     tovisualize.h
     towaitevents.h
     toworksheet.h
@@ -304,6 +305,7 @@ SET(TORA_SOURCES
     totool.cpp
     totreewidget.cpp
     totuning.cpp
+    tounittest.cpp
     tovisualize.cpp
     towaitevents.cpp
     toworksheet.cpp

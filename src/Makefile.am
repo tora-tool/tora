@@ -134,6 +134,7 @@ tora_SOURCES=main.cpp \
     totemplate.cpp totemplate.h  \
     totemporary.cpp totemporary.h \
     totuning.cpp totuning.h  \
+    tounittest.cpp tounittest.h \
     tochangeconnection.cpp tochangeconnection.h  \
     toworksheet.cpp toworksheet.h  \
     toworksheetwidget.cpp toworksheetwidget.h  \
@@ -338,6 +339,7 @@ BUILT_SOURCES = \
 	moc_tothread_p.cpp \
 	moc_totool.cpp \
 	moc_totuning.cpp \
+	moc_tounittest.cpp \
 	moc_tovisualize.cpp \
 	moc_towaitevents.cpp \
 	moc_toworksheet.cpp \
