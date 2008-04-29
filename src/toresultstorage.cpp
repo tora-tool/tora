@@ -931,16 +931,18 @@ void toStorageExtent::setFile(const QString &tablespace, int file)
 
 void toStorageExtent::paintEvent(QPaintEvent *)
 {
-#if 0                           // disabled, wrong override
     QPainter paint(this);
     if ( FileOffset.empty() )
         return ;
     QFontMetrics fm = paint.fontMetrics();
 
     int offset = 2 * fm.lineSpacing();
+    // prevent the crash when user wants it smaller (by splitter)
+    setMinimumHeight(offset + 20);
+
     double lineblocks = Total / (height() - offset - FileOffset.size() + 1);
 
-    paint.fillRect(0, 0, width(), offset, colorGroup().background());
+    paint.fillRect(0, 0, width(), offset, palette().window());
     paint.drawText(0, 0, width(), offset, Qt::AlignLeft | Qt::AlignTop, tr("Files: %1").arg(FileOffset.size()));
     paint.drawText(0, 0, width(), offset, Qt::AlignRight | Qt::AlignTop, tr("Extents: %1").arg(Extents.size()));
     if (!Tablespace.isNull())
@@ -950,7 +952,7 @@ void toStorageExtent::paintEvent(QPaintEvent *)
 
     for (std::list<extent>::iterator i = Extents.begin();i != Extents.end();i++)
     {
-        QColor col = Qt::green;
+        QColor col("#469446"); //= Qt::darkGreen;
         if (extentName(*i) == Highlight)
             col = Qt::red;
         int fileo = 0;
@@ -990,7 +992,6 @@ void toStorageExtent::paintEvent(QPaintEvent *)
         j++;
         fileo++;
     }
-#endif
 }
 
 

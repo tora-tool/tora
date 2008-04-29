@@ -42,8 +42,7 @@
 #include "tobackground.h"
 #include "toresultview.h"
 
-#include <qsplitter.h>
-//Added by qt3to4:
+#include <QSplitter>
 #include <QPaintEvent>
 
 class toNoBlockQuery;

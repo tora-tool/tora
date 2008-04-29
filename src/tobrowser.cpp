@@ -1523,6 +1523,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     toResultExtent *resultExtent = new toResultExtent(curr, TAB_TABLE_EXTENT);
     curr->addTab(resultExtent, tr("Extents"));
     SecondMap[TAB_TABLE_EXTENT] = resultExtent;
+
     toResultExtract *resultExtract = new toResultExtract(true, this, TAB_TABLE_EXTRACT);
     curr->addTab(resultExtract, tr("Script"));
     SecondMap[TAB_TABLE_EXTRACT] = resultExtract;
