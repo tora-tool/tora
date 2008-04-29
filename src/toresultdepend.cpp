@@ -210,6 +210,7 @@ void toResultDepend::poll(void)
                     Poll.stop();
             }
         }
+        resizeColumnsToContents();
     }
     catch (const QString &exc)
     {
