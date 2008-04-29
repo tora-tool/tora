@@ -266,7 +266,7 @@ void toWorksheet::createActions()
     explainAct = new QAction(QPixmap(const_cast<const char**>(explainplan_xpm)),
                              tr("Explain plan of current statement"),
                              this);
-    explainAct->setShortcut(Qt::Key_F3);
+    explainAct->setShortcut(Qt::Key_F6);
     connect(explainAct, SIGNAL(triggered()), this, SLOT(explainPlan(void)));
 
     stopAct = new QAction(QPixmap(const_cast<const char**>(stop_xpm)),

@@ -890,6 +890,13 @@ void toMain::commandCallback(QAction *action)
                 Search = new toSearchReplace(this);
             Search->show();
         }
+        else if (action == searchNextAct)
+        {
+            if (Search)
+                Search->searchNext();
+            else
+                searchReplaceAct->activate(QAction::Trigger);
+        }
         else if (action == openAct)
             edit->editOpen();
         else if (action == saveAsAct)

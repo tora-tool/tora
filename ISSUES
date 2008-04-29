@@ -12,9 +12,6 @@ Regulary raising warning/error dialog with:
     <ERROR>SELECT TO_CHAR(SYSDATE) FROM sys.DUAL
   propably used as "keep session alive" (?)
 
-Explain Plan shortcut prints to stdout:
-QAction::eventFilter: Ambiguous shortcut overload: F3
-
 Clicking on either of the "sql bookmark" toolbar icons instantly crashes tora.
 
 Batch(script) run in SQL Editor. See:
@@ -43,6 +40,10 @@ be browing 'swconf_owner' schema.
 
 Resolved Issues
 ---------------
+
+[FIXED] Explain Plan shortcut prints to stdout:
+QAction::eventFilter: Ambiguous shortcut overload: F3
+    - explain plan mode uses F6 now. F3 (search next) is working again.
 
 [Mike] Storage manager functionality
 
