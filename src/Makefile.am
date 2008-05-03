@@ -237,7 +237,8 @@ EXTRA_DIST = icons \
 	toqvalue.h \
 	toresultresources.h \
 	$(TRANSLATIONS) \
-	LICENSE.h
+	LICENSE.h \
+	tora.qrc
 
 # this is a hack (but it *is* mentioned in the automake manual, of all
 # places). EXTRA_DIST includes all files, even things like CVS
@@ -391,7 +392,8 @@ BUILT_SOURCES = \
 	ui_tohelpui.h \
 	$(EXTRA_ORACLE_MONO_SOURCE_MOC) \
 	$(filter %.qm,$(TRANSLATIONS:%.ts=%.qm)) \
-	tora_toad.h
+	tora_toad.h \
+	qrc_tora.cpp
 
 #.ui.h:
 #	$(UIC) -o $@ $<

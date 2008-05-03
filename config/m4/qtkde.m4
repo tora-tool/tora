@@ -856,6 +856,18 @@ configure.
 ])
 ])
 
+AC_DEFUN([KDE_RCC_ERROR_MESSAGE],
+[
+    AC_MSG_ERROR([No Qt resource compiler (rcc) found!
+Please check whether you installed Qt correctly.
+You need to have a running rcc binary.
+configure tried to run $ac_cv_path_rcc and the test didn't
+succeed. If configure shouldn't have tried this one, set
+the environment variable RCC to the right one before running
+configure.
+])
+])
+
 AC_DEFUN([KDE_UIC_ERROR_MESSAGE],
 [
     AC_MSG_WARN([No Qt ui compiler (uic) found!
@@ -944,6 +956,7 @@ AC_DEFUN([AC_PATH_QT_MOC_UIC],
 
    KDE_FIND_PATH(lrelease, LRELEASE, [$qt_bindirs], [KDE_LRELEASE_ERROR_MESSAGE])
    KDE_FIND_PATH(lupdate, LUPDATE, [$qt_bindirs], [KDE_LUPDATE_ERROR_MESSAGE])
+   KDE_FIND_PATH(rcc, RCC, [$qt_bindirs], [KDE_RCC_ERROR_MESSAGE])
 
    KDE_FIND_PATH(moc, MOC, [$qt_bindirs], [KDE_MOC_ERROR_MESSAGE])
    if test -z "$UIC_NOT_NEEDED"; then
@@ -971,6 +984,7 @@ AC_DEFUN([AC_PATH_QT_MOC_UIC],
    AC_SUBST(LUPDATE)
    AC_SUBST(MOC)
    AC_SUBST(UIC)
+   AC_SUBST(RCC)
 ])
 
 AC_DEFUN([KDE_MISC_TESTS],
@@ -1202,32 +1216,45 @@ AC_DEFUN([KDE_FIND_PATH],
         AC_CACHE_VAL(kde_cv_path_$kde_cache,
         [
         kde_cv_path="NONE"
-	dirs="$3"
-	kde_save_IFS=$IFS
-	IFS=':'
-	for dir in $PATH; do
-	  dirs="$dirs $dir"
+	      dirs="$3"
+        kde_save_IFS=$IFS
+        IFS=':'
+        for dir in $PATH; do
+          dirs="$dirs $dir"
         done
 
-  dnl add qtdir/bin, because not everybody will have this in PATH
-  dnl also, set it to be checked first. if the user has qtdir, then we
-  dnl should try that binary first
-  dirs="$QTDIR/bin $dirs"
+        dnl add qtdir/bin, because not everybody will have this in PATH
+        dnl also, set it to be checked first. if the user has qtdir, then we
+        dnl should try that binary first
+        dirs="$QTDIR/bin $dirs"
 
-	IFS=$kde_save_IFS
+        IFS=$kde_save_IFS
 
-        for dir in $dirs; do
-          if test -x "$dir/$1${EXEEXT}"; then
-            if test -n "$5"; then
-              evalstr="$dir/$1 $5 2>&1 "
-              if eval $evalstr; then
-                kde_cv_path="$dir/$1"
+        dnl look for qt4 binaries
+        exts="-4
+              -qt4"
+
+        found=no
+        for ext in $exts ""; do
+          for dir in $dirs; do
+            if test -x "$dir/$1${ext}${EXEEXT}"; then
+              if test -n "$5"; then
+                evalstr="$dir/$1${ext} $5 2>&1 "
+                if eval $evalstr; then
+                  kde_cv_path="$dir/$1${ext}"
+                  found=yes
+                  break
+                fi
+              else
+                kde_cv_path="$dir/$1${ext}"
+                found=yes
                 break
               fi
-            else
-              kde_cv_path="$dir/$1"
-              break
             fi
+          done
+
+          if test $found = yes; then
+            break
           fi
         done
 
