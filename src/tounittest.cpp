@@ -35,12 +35,23 @@
 *
 *****/
 
+#include <QSettings>
+
 #include "tounittest.h"
+#include "toresultmodel.h"
+#include "toresulttableview.h"
 #include "utils.h"
 #include "tohighlightedtext.h"
 #include "toworksheetwidget.h"
-#include "toresultview.h"
 #include "toeventquery.h"
+#include "toresultcombo.h"
+#include "toresultschema.h"
+#include "toconf.h"
+#include "tochangeconnection.h"
+#include "tooutput.h"
+
+#include "icons/unittest.xpm"
+#include "icons/refresh.xpm"
 
 // helper definitons for SQLPackageParams and SQLUnitParams columns
 #define ARGUMENT_NAME 1
@@ -72,83 +83,206 @@ static toSQL SQLUnitParams("toUnitTest:UnitParams",
                             "0800");
 
 static toSQL SQLListPackage("toUnitTest:ListPackageMethods",
-                           "select distinct object_name\n"
+                           "select distinct object_name as \"Package Members\"\n"
                                    "   from all_arguments\n"
                                    "   where owner = upper(:f1<char[101]>)\n"
                                    "   and package_name = upper(:f2<char[101]>)",
                                    "List package procedures and functions",
                             "0800");
 
-static toSQL SQLListUnits("toUnitTest:ListUnitMethods",
-                            "select distinct object_name\n"
-                                    "   from all_arguments\n"
-                                    "   where owner = upper(:f1<char[101]>)\n"
-                                    "   and object_name = upper(:f2<char[101]>)",
-                            "List package procedures and functions",
-                            "0800");
+static toSQL UnitListCode("toUnitTest:ListCode",
+                          "SELECT Object_Name,Object_Type FROM SYS.ALL_OBJECTS\n"
+                                  " WHERE OWNER = upper(:f1<char[101]>)\n"
+                                  "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
+                                  "                       'PROCEDURE')\n"
+                                  " ORDER BY Object_Name",
+          "List all PL/SQL codes.", "0800");
 
 
-toUnitTest::toUnitTest(QWidget * parent, const char *name)
-    : QWidget(parent),
+class toUnitTestTool : public toTool
+{
+    protected:
+        virtual const char **pictureXPM(void)
+        {
+            return const_cast<const char**>(unittest_xpm);
+        }
+    public:
+        toUnitTestTool()
+        : toTool(120, "PL/SQL Unit Tester") { }
+        virtual const char *menuItem()
+        {
+            return "PL/SQL Unit Tester";
+        }
+        virtual QWidget *toolWindow(QWidget *parent, toConnection &connection)
+        {
+            return new toUnitTest(parent, connection);
+        }
+//         virtual QWidget *configurationTab(QWidget *parent)
+//         {
+//             return new toSGATracePrefs(this, parent);
+//         }
+        virtual bool canHandle(toConnection &conn)
+        {
+            return toIsOracle(conn);
+        }
+        virtual void closeWindow(toConnection &connection) {};
+};
+
+
+static toUnitTestTool UnitTestTool;
+
+
+//TODO: helpfile for this tool!
+toUnitTest::toUnitTest(QWidget * parent, toConnection &connection)
+    : toToolWidget(UnitTestTool, "todo!!!html", parent, connection),
     m_model(0)
 {
-    setObjectName(name);
+    setObjectName("unitTest");
 
-    QGridLayout *gridLayout = new QGridLayout(this);
-    QSplitter *splitter = new QSplitter(this);
+    m_owner = connection.user();
+
+    QToolBar *toolbar = toAllocBar(this, tr("UTbrowser"));
+    layout()->addWidget(toolbar);
+
+    QAction *refreshAct =
+            toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(refresh_xpm))),
+                               tr("Refresh list"),
+                               this, SLOT(refreshCodeList()));
+    refreshAct->setShortcut(QKeySequence::Refresh);
+
+    toolbar->addWidget(new toSpacer());
+
+    QLabel * labSchema = new QLabel(tr("Schema") + " ", toolbar);
+    toolbar->addWidget(labSchema);
+    Schema = new toResultSchema(connection, toolbar,
+                                TO_TOOLBAR_WIDGET_NAME);
+    try
+    {
+        Schema->refresh();
+    }
+    catch (...) {}
+    connect(Schema, SIGNAL(activated(const QString &)),
+            this, SLOT(changeSchema(const QString &)));
+    toolbar->addWidget(Schema);
+
+    new toChangeConnection(toolbar, TO_TOOLBAR_WIDGET_NAME);
+
+    splitter = new QSplitter(this);
     splitter->setOrientation(Qt::Horizontal);
 
-    worksheet = new toWorksheetWidget(splitter, name, toCurrentConnection(parent));
-    packageList = new toResultView(false, false, splitter, "packageList");
-    packageList->setReadAll(true);
+    codeSplitter = new QSplitter(this);
+    codeSplitter->setOrientation(Qt::Horizontal);
 
-    splitter->addWidget(packageList);
-    splitter->addWidget(worksheet);
-    gridLayout->addWidget(splitter, 0, 0, 1, 1);
+    codeList = new toResultTableView(true, false,
+                                     codeSplitter, "codeList");
+    codeList->setSQL(UnitListCode);
+    refreshCodeList();
 
-    connect(packageList, SIGNAL(activated(const QModelIndex &)),
-            this, SLOT(packageList_activated(const QModelIndex &)));
+    packageList = new toResultTableView(true, false,
+                                        codeSplitter, "packageList");
+    packageList->setSQL(SQLListPackage);
+    packageList->setVisible(false);
+
+    codeSplitter->addWidget(codeList);
+    codeSplitter->addWidget(packageList);
+
+    editorSplitter = new QSplitter(this);
+    editorSplitter->setOrientation(Qt::Vertical);
+
+    worksheet = new toWorksheetWidget(editorSplitter,
+                                      "UTworksheet", connection);
+    output = new toOutput(editorSplitter, connection, true);
+
+    editorSplitter->addWidget(worksheet);
+    editorSplitter->addWidget(output);
+
+    splitter->addWidget(codeSplitter);
+    splitter->addWidget(editorSplitter);
+
+    layout()->addWidget(splitter);
+
+    splitter->setChildrenCollapsible(false);
+    codeSplitter->setChildrenCollapsible(false);
+    editorSplitter->setChildrenCollapsible(false);
+    codeList->setMinimumWidth(200);
+    packageList->setMinimumWidth(200);
+    worksheet->setMinimumHeight(200);
+    output->setMinimumHeight(200);
+
+    QSettings s;
+    s.beginGroup("toUnitTest");
+    splitter->restoreState(s.value("splitter", QByteArray()).toByteArray());
+    codeSplitter->restoreState(s.value("codeSplitter", QByteArray()).toByteArray());
+    editorSplitter->restoreState(s.value("editorSplitter", QByteArray()).toByteArray());
+    s.endGroup();
+
+    connect(packageList, SIGNAL(selectionChanged()),
+            this, SLOT(packageList_selectionChanged()));
+    connect(codeList, SIGNAL(selectionChanged()),
+            this, SLOT(codeList_selectionChanged()));
 }
 
-void toUnitTest::query(const QString &sql, const toQList &param)
+toUnitTest::~toUnitTest()
 {
-    if (!setSQLParams(sql, param))
-        return;
-
-    toQList::iterator i = params().begin();
-    m_owner = *i;
-    ++i;
-    m_name = *i;
-    ++i;
-    m_type = *i;
-
-    // set temp params for members list
-    toQList p;
-    p.push_back(m_owner);
-    p.push_back(m_name);
-
-    packageList->query((m_type == "PACKAGE" ? SQLListPackage : SQLListUnits), p);
-
-    worksheet->editor()->setText("");
+    QSettings s;
+    s.beginGroup("toUnitTest");
+    s.setValue("splitter", splitter->saveState());
+    s.setValue("codeSplitter", codeSplitter->saveState());
+    s.setValue("editorSplitter", editorSplitter->saveState());
+    s.endGroup();
 }
 
 bool toUnitTest::canHandle(toConnection &conn)
 {
     try
     {
-        return toIsOracle(worksheet->toToolWidget::connection());
+        return toIsOracle(conn);
     }
     TOCATCH
     return false;
 }
 
-void toUnitTest::packageList_activated(const QModelIndex &ix)
+void toUnitTest::refreshCodeList()
+{
+    codeList->clearParams();
+    codeList->changeParams(m_owner);
+    codeList->setReadAll(true);
+    codeList->resizeColumnsToContents();
+}
+
+void toUnitTest::changeSchema(const QString & name)
+{
+    m_name = name;
+    refreshCodeList();
+}
+
+void toUnitTest::codeList_selectionChanged()
+{
+    m_name = codeList->selectedIndex(1).data(Qt::EditRole).toString();
+    m_type = codeList->selectedIndex(2).data(Qt::EditRole).toString();
+    worksheet->editor()->setText("-- select PL/SQL unit, please.");
+
+    if (m_type == "PACKAGE")
+    {
+        packageList->setVisible(true);
+        packageList->clearParams();
+        packageList->changeParams(m_owner, m_name);
+        packageList->setReadAll(true);
+    }
+    else
+    {
+        packageList->setVisible(false);
+        packageList_selectionChanged();
+    }
+}
+
+void toUnitTest::packageList_selectionChanged()
 {
     toQList p;
     if (m_type == "PACKAGE")
     {
         p.push_back(m_owner);
-        p.push_back(ix.data(Qt::EditRole).toString());
+        p.push_back(packageList->selectedIndex(1).data(Qt::EditRole).toString());
         p.push_back(m_name);
     }
     else
@@ -157,6 +291,7 @@ void toUnitTest::packageList_activated(const QModelIndex &ix)
         p.push_back(m_name);
     }
     worksheet->editor()->setText("-- getting the script...");
+    output->disable(false);
     try
     {
         toQuery q(worksheet->toToolWidget::connection(),

@@ -61,7 +61,6 @@
 #include "tosql.h"
 #include "totabwidget.h"
 #include "totool.h"
-#include "tounittest.h"
 
 #ifdef TOEXTENDED_MYSQL
 #  include "tomysqluser.h"
@@ -113,11 +112,6 @@
 #include "icons/new.xpm"
 #endif
 
-// #define CONF_FILTER_IGNORE_CASE "FilterIgnoreCase"
-// #define CONF_FILTER_INVERT   "FilterInvert"
-// #define CONF_FILTER_TYPE   "FilterType"
-// #define CONF_FILTER_TABLESPACE_TYPE   "FilterTablespaceType"
-// #define CONF_FILTER_TEXT   "FilterText"
 
 const char **toBrowserTool::pictureXPM(void)
 {
@@ -642,7 +636,6 @@ void toBrowseButton::connectionChanged()
 #define TAB_PLSQL_GRANTS "PLSQLGrants"
 #define TAB_PLSQL_DEPEND "PLSQLDepend"
 #define TAB_PLSQL_EXTRACT "PLSQLExtract"
-#define TAB_PLSQL_UNITTEST "PLSQLUnitTest"
 
 #define TAB_TRIGGER  "Trigger"
 #define TAB_TRIGGER_INFO "TriggerInfo"
@@ -1771,10 +1764,6 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     curr->addTab(resultExtract, tr("Script"));
     SecondMap[TAB_PLSQL_EXTRACT] = resultExtract;
 
-    toUnitTest * unitTest = new toUnitTest(curr, TAB_PLSQL_UNITTEST);
-    curr->addTab(unitTest, tr("&Unit Test"));
-    SecondMap[TAB_PLSQL_UNITTEST] = unitTest;
-
     connect(curr, SIGNAL(currentTabChanged(QWidget *)), this, SLOT(changeSecondTab(QWidget *)));
 
     splitter = new QSplitter(Qt::Horizontal, TopTab);
@@ -2218,18 +2207,6 @@ void toBrowser::changeSecond()
         if (item.isValid())
             SecondTab->changeParams(schema(),
                                     item.data(Qt::EditRole).toString());
-    }
-    else if (tab && tab->objectName() == TAB_PLSQL &&
-                tab2->objectName() == TAB_PLSQL_UNITTEST)
-    {
-        QModelIndex item = selectedItem();
-        if (item.isValid())
-        {
-            SecondTab->changeParams(schema(),
-                                    selectedItem(1).data(Qt::EditRole).toString(),
-                                    selectedItem(2).data(Qt::EditRole).toString()
-                                   );
-        }
     }
     else
         SecondTab->changeParams(schema(), SecondText);

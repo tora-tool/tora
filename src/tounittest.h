@@ -38,12 +38,12 @@
 #ifndef TOUNITTEST_H
 #define TOUNITTEST_H
 
-#include <QWidget>
-#include "toresult.h"
+#include "totool.h"
 
 class toWorksheetWidget;
-class toResultView;
-class QModelIndex;
+class toResultTableView;
+class toOutput;
+class toResultCombo;
 class toResultModel;
 
 
@@ -83,16 +83,13 @@ No PLSQLdata (record of etc.) supported yet.
 
 \author Petr Vanek <petr@scribus.info>
 */
-class toUnitTest : public QWidget, public toResult
+class toUnitTest : public toToolWidget
 {
     Q_OBJECT
 
     public:
-        toUnitTest(QWidget * parent = 0, const char *name = 0);
-
-        /** \brief Set the package/block content subtree.
-        */
-        virtual void query(const QString &sql, const toQList &param);
+        toUnitTest(QWidget * parent, toConnection &connection);
+        ~toUnitTest();
 
         /** \brief Inform upstream parent object for what platform
         is this tool available. It's Oracle only this time.
@@ -113,12 +110,29 @@ class toUnitTest : public QWidget, public toResult
 
         //! SQL editor (worksheet) where is shown the test script.
         toWorksheetWidget * worksheet;
+        //! A "result table" for displaying all callable PL/SQL blocks
+        toResultTableView * codeList;
         //! A "result table" for displaying the package methods
-        toResultView * packageList;
+        toResultTableView * packageList;
+
+        toResultCombo *Schema;
+
+        //! Spool output
+        toOutput * output;
+
+        QSplitter * splitter;
+        QSplitter * codeSplitter;
+        QSplitter * editorSplitter;
 
     private slots:
         //! Prepare for SQL test script creation. It's finished in the handleDone().
-        void packageList_activated(const QModelIndex & ix);
+        void packageList_selectionChanged();
+        //! Allow user to chose one of PL/SQL code unit.
+        void codeList_selectionChanged();
+        //! Setup and/or update the codeList
+        void refreshCodeList();
+        //! Set m_owner on schema change
+        void changeSchema(const QString &);
         //! Finish the test script and show it in the worksheet instance.
         void handleDone();
 };
