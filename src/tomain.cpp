@@ -1719,22 +1719,8 @@ void toMain::displayMessage(void)
     Ui::toMessageUI uidialog;
     uidialog.setupUi(&dialog);
     uidialog.Message->setReadOnly(true);
-    QIcon warning = style()->standardIcon(QStyle::SP_MessageBoxWarning);
-    uidialog.Icon->setPixmap(warning.pixmap(uidialog.Icon->size()));
-    dialog.setWindowIcon(warning);
-
     uidialog.Message->setText(*(--StatusMessages.end()));
     dialog.exec();
-
-    if (uidialog.Statusbar->isChecked())
-    {
-        toConfigurationSingle::Instance().setMessageStatusbar(true);
-        TOMessageBox::information(
-            toMainWidget(),
-            tr("Information"),
-            tr("You can enable this through the Global Settings in the Options (Edit menu)"));
-        toConfigurationSingle::Instance().saveConfig();
-    }
 }
 
 void toMain::updateKeepAlive(void)
