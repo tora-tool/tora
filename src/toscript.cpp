@@ -35,45 +35,26 @@
 *
 *****/
 
-#include "utils.h"
+#include <QToolBar>
+#include <QScrollArea>
+#include <QMessageBox>
+#include <QDir>
+#include <QFileDialog>
 
-#include "toconf.h"
+#include "toscript.h"
+#include "utils.h"
 #include "toextract.h"
-#include "tofilesize.h"
 #include "tohighlightedtext.h"
 #include "tomain.h"
 #include "toreport.h"
 #include "toresultview.h"
-#include "toscript.h"
 #include "tosql.h"
 #include "totextview.h"
-#include "totool.h"
 #include "toworksheet.h"
-
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qdir.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qmessagebox.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qregexp.h>
-#include <qsplitter.h>
-#include <qtabwidget.h>
-#include <qtoolbar.h>
-#include <qtoolbutton.h>
-
-#include <QGridLayout>
-#include <QGridLayout>
-#include <QPixmap>
-#include <QFileDialog>
-#include <QScrollArea>
-#include <QVBoxLayout>
-#include <QButtonGroup>
 
 #include "icons/execute.xpm"
 #include "icons/toscript.xpm"
+
 
 static toSQL SQLObjectListMySQL("toScript:ExtractObject",
                                 "TOAD 1,0,0 SHOW DATABASES",
@@ -217,6 +198,14 @@ public:
 static toScriptTool ScriptTool;
 
 
+// aliases for basic tool modes
+#define MODE_COMPARE 0
+#define MODE_EXTRACT 1
+#define MODE_SEARCH 2
+#define MODE_MIGRATE 3
+#define MODE_REPORT 4
+
+
 toScript::toScript(QWidget *parent, toConnection &connection)
         : toToolWidget(ScriptTool, "script.html", parent, connection)
 {
@@ -285,11 +274,11 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     layout->addWidget(hsplitter, 0, 0);
 
     QButtonGroup *group = new QButtonGroup(ScriptUI->ModeGroup);
-    group->addButton(ScriptUI->Compare, 1);
-    group->addButton(ScriptUI->Extract, 2);
-    group->addButton(ScriptUI->Search, 3);
-    group->addButton(ScriptUI->Migrate, 4);
-    group->addButton(ScriptUI->Report, 5);
+    group->addButton(ScriptUI->Compare, MODE_COMPARE);
+    group->addButton(ScriptUI->Extract, MODE_EXTRACT);
+    group->addButton(ScriptUI->Search, MODE_SEARCH);
+    group->addButton(ScriptUI->Migrate, MODE_MIGRATE);
+    group->addButton(ScriptUI->Report, MODE_REPORT);
 
     ScriptUI->Initial->setTitle(tr("&Initial"));
     ScriptUI->Limit->setTitle(tr("&Limit"));
@@ -420,12 +409,12 @@ std::list<QString> toScript::createObjectList(toTreeWidget *source)
     for (toTreeWidgetItemIterator it(source); (*it); it++)
     {
         toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>((*it));
-
         if (chk && chk->isEnabled())
         {
-            QString name = chk->text(0);
-            QString type = chk->text(1);
-            QString user = chk->text(2);
+            // the text(1) and 2 is not displayed when accessing via "chk". WTF!?
+            QString name((*it)->text(0));
+            QString type((*it)->text(1));
+            QString user((*it)->text(2));
             if (!user.isEmpty())
             {
                 if (chk->isOn() && chk->isEnabled())
@@ -501,23 +490,21 @@ void toScript::execute(void)
     {
         int mode;
         if (ScriptUI->Compare->isChecked())
-            mode = 0;
+            mode = MODE_COMPARE;
         else if (ScriptUI->Extract->isChecked())
-            mode = 1;
+            mode = MODE_EXTRACT;
         else if (ScriptUI->Migrate->isChecked())
-            mode = 2;
+            mode = MODE_SEARCH;
         else if (ScriptUI->Search->isChecked())
-            mode = 3;
+            mode = MODE_SEARCH;
         else if (ScriptUI->Report->isChecked())
-            mode = 4;
+            mode = MODE_REPORT;
         else
         {
             toStatusMessage(tr("No mode selected"));
             return ;
         }
-
         std::list<QString> sourceObjects = createObjectList(ScriptUI->SourceObjects);
-
         std::list<QString> sourceDescription;
         std::list<QString> destinationDescription;
         QString script;
@@ -526,7 +513,7 @@ void toScript::execute(void)
         setupExtract(source);
         switch (mode)
         {
-        case 1:
+        case MODE_EXTRACT:
             if (ScriptUI->OutputTab->isChecked())
                 script += source.create(sourceObjects);
             else if (ScriptUI->OutputFile->isChecked())
@@ -619,10 +606,10 @@ void toScript::execute(void)
                     throw QString(tr("Error writing to file %1")).arg(pfile.fileName());
             }
             break;
-        case 0:
-        case 2:
-        case 3:
-        case 4:
+        case MODE_COMPARE:
+        case MODE_SEARCH:
+        case MODE_MIGRATE:
+        case MODE_REPORT:
             sourceDescription = source.describe(sourceObjects);
             break;
         }
@@ -636,12 +623,12 @@ void toScript::execute(void)
             setupExtract(destination);
             switch (mode)
             {
-            case 0:
-            case 2:
+            case MODE_COMPARE:
+            case MODE_SEARCH:
                 destinationDescription = destination.describe(destinationObjects);
                 break;
-            case 1:
-            case 3:
+            case MODE_EXTRACT:
+            case MODE_MIGRATE:
                 throw tr("Destination shouldn't be enabled now, internal error");
             }
 
@@ -661,7 +648,7 @@ void toScript::execute(void)
             Worksheet->editor()->setFilename(QString::null);
             Worksheet->editor()->setModified(true);
         }
-        if (mode == 3)
+        if (mode == MODE_MIGRATE)
         {
             Worksheet->hide();
             Report->hide();
@@ -712,7 +699,7 @@ void toScript::execute(void)
             }
             fillDifference(result, SearchList);
         }
-        else if (mode == 4)
+        else if (mode == MODE_REPORT)
         {
             Worksheet->hide();
             SearchList->hide();
@@ -980,49 +967,50 @@ void toScript::readOwnerObjects(toTreeWidgetItem *item, toConnection &conn)
 
 void toScript::changeMode(int mode)
 {
-    if (mode < 0 || mode > 4)
+    if (mode < MODE_COMPARE || mode > MODE_REPORT)
         return ;
 
-    if (mode == 0 || mode == 2)
+    if (mode == MODE_COMPARE || mode == MODE_SEARCH)
         ScriptUI->Destination->setEnabled(true);
-    else if (mode == 1 || mode == 3 || mode == 4)
+    else if (mode == MODE_EXTRACT || mode == MODE_MIGRATE || mode == MODE_REPORT)
         ScriptUI->Destination->setEnabled(false);
 
-    if (mode == 1 || mode == 2)
+    if (mode == MODE_EXTRACT || mode == MODE_SEARCH)
         ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResizeTab), true);
-    else if (mode == 0 || mode == 3 || mode == 4)
+    else if (mode == MODE_COMPARE || mode == MODE_MIGRATE || mode == MODE_REPORT)
         ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResizeTab), false);
 
-    ScriptUI->IncludeContent->setEnabled(mode == 1);
-    ScriptUI->CommitDistance->setEnabled(mode == 1);
+    ScriptUI->IncludeContent->setEnabled(mode == MODE_EXTRACT);
+    ScriptUI->CommitDistance->setEnabled(mode == MODE_EXTRACT);
 
-    if (mode == 1 || mode == 2)
+    if (mode == MODE_EXTRACT || mode == MODE_SEARCH)
     {
         ScriptUI->IncludeHeader->setEnabled(true);
         ScriptUI->IncludePrompt->setEnabled(true);
     }
-    else if (mode == 0 || mode == 3 || mode == 4)
+    else if (mode == MODE_COMPARE || mode == MODE_MIGRATE || mode == MODE_REPORT)
     {
         ScriptUI->IncludeHeader->setEnabled(false);
         ScriptUI->IncludePrompt->setEnabled(false);
     }
 
-    if (mode == 0 || mode == 2 || mode == 3 || mode == 4)
+    if (mode == MODE_COMPARE || mode == MODE_SEARCH
+        || mode == MODE_MIGRATE || mode == MODE_REPORT)
     {
         ScriptUI->IncludeDDL->setEnabled(false);
         ScriptUI->IncludeDDL->setChecked(true);
     }
-    else if (mode == 1)
+    else if (mode == MODE_EXTRACT)
         ScriptUI->IncludeDDL->setEnabled(true);
 
-    ScriptUI->OutputGroup->setEnabled(mode == 1 || mode == 2 || mode == 4);
+    ScriptUI->OutputGroup->setEnabled(mode == MODE_EXTRACT || mode == MODE_SEARCH || mode == MODE_REPORT);
 
     ScriptUI->IncludeConstraints->setEnabled(ScriptUI->IncludeDDL->isChecked());
     ScriptUI->IncludeIndexes->setEnabled(ScriptUI->IncludeDDL->isChecked());
     ScriptUI->IncludeGrants->setEnabled(ScriptUI->IncludeDDL->isChecked());
-    ScriptUI->IncludeStorage->setEnabled(ScriptUI->IncludeDDL->isChecked() && mode != 3);
-    ScriptUI->IncludeParallell->setEnabled(ScriptUI->IncludeDDL->isChecked() && mode != 3);
-    ScriptUI->IncludePartition->setEnabled(ScriptUI->IncludeDDL->isChecked() && mode != 3);
+    ScriptUI->IncludeStorage->setEnabled(ScriptUI->IncludeDDL->isChecked() && mode != MODE_MIGRATE);
+    ScriptUI->IncludeParallell->setEnabled(ScriptUI->IncludeDDL->isChecked() && mode != MODE_MIGRATE);
+    ScriptUI->IncludePartition->setEnabled(ScriptUI->IncludeDDL->isChecked() && mode != MODE_MIGRATE);
     ScriptUI->IncludeCode->setEnabled(ScriptUI->IncludeDDL->isChecked());
     ScriptUI->IncludeComment->setEnabled(ScriptUI->IncludeDDL->isChecked());
 }
@@ -1099,6 +1087,7 @@ void toScript::changeSchema(int, bool source)
                             break;
                     }
                     while (next && !next->nextSibling());
+
                     if (next == parent)
                         break;
                     if (next)
