@@ -1,6 +1,16 @@
 Showstopper Issues before Next Release
 --------------------------------------
 
+CRASH - fix crash in the DB Extract tool on "Search" and/or "Compare" feature.
+It looks like there is an infinite loop somewhere.
+...
+#100 0x0844d4c1 in toResultViewCheck::allText (this=0x8cb34f8, col=0)
+    at /home/subzero/tora/trunk/src/toresultview.h:420
+#101 0x0844d526 in toResultViewMLCheck::text (this=0x8cb34f8, col=0) at /home/subzero/tora/trunk/src/toresultview.h:487
+#102 0x0844d4c1 in toResultViewCheck::allText (this=0x8cb34f8, col=0)
+    at /home/subzero/tora/trunk/src/toresultview.h:420
+etc. etc.
+
 Drag and drop in schema browser to copy table cells.
 
 Double click in schema browser causes it to interpret as 'changed' even
