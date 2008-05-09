@@ -358,22 +358,26 @@ toScript::toScript(QWidget *parent, toConnection &connection)
 
 void toScript::delConnection(const QString &name)
 {
-    for (int i = 0;i < ScriptUI->SourceConnection->count();i++)
-    {
-        if (ScriptUI->SourceConnection->itemText(i) == name)
-        {
-            ScriptUI->SourceConnection->removeItem(i);
-            break;
-        }
-    }
-    for (int j = 0;j < ScriptUI->DestinationConnection->count();j++)
-    {
-        if (ScriptUI->DestinationConnection->itemText(j) == name)
-        {
-            ScriptUI->DestinationConnection->removeItem(j);
-            break;
-        }
-    }
+//     for (int i = 0;i < ScriptUI->SourceConnection->count();i++)
+//     {
+//         if (ScriptUI->SourceConnection->itemText(i) == name)
+//         {
+//             ScriptUI->SourceConnection->removeItem(i);
+//             break;
+//         }
+//     }
+    QComboBox * b = ScriptUI->SourceConnection;
+    b->removeItem(b->findText(name));
+//     for (int j = 0;j < ScriptUI->DestinationConnection->count();j++)
+//     {
+//         if (ScriptUI->DestinationConnection->itemText(j) == name)
+//         {
+//             ScriptUI->DestinationConnection->removeItem(j);
+//             break;
+//         }
+//     }
+    b = ScriptUI->DestinationConnection;
+    b->removeItem(b->findText(name));
 }
 
 void toScript::addConnection(const QString &name)
