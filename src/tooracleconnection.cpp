@@ -146,8 +146,8 @@ static void ThrowException(const otl_exception &exc)
             else if (ret.isEmpty())
             {
                 ret = QString::fromLatin1(
-                          "Missing error description, could occur if you have several ORACLE_HOME and the binary directory\n"
-                          "of the one which is not active is before the active ORACLE_HOME in your path");
+                    "Missing error description. This may be caused by a library "
+                    "version mismatch. Check that your ORACLE_HOME and library path is correct.");
             }
         }
 
