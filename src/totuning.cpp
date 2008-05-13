@@ -1943,6 +1943,7 @@ void toTuning::refresh(void)
             }
             TOCATCH
         }
+        Indicators->resizeColumnsToContents();
     }
     else if (LastTab == Waits)
         Waits->refresh();

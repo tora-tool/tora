@@ -342,6 +342,7 @@ void toResultStats::poll(void)
 
         if (done)
             Poll.stop();
+		resizeColumnsToContents();
     }
     catch (const QString &exc)
     {
