@@ -67,19 +67,13 @@ toResultSchema::toResultSchema(toConnection &conn,
     }
 
     setSelected(sel);
-    updateLast(sel);
-
-    connect(this,
-            SIGNAL(currentIndexChanged(const QString &)),
-            this,
-            SLOT(updateLast(const QString &)));
 }
 
 
 #define CHANGE_CURRENT_SCHEMA QString("ALTER SESSION SET CURRENT_SCHEMA = %1")
 #define CHANGE_CURRENT_SCHEMA_PG QString("SET search_path TO %1,\"$user\",public")
 
-void toResultSchema::updateLast(const QString &schema) {
+void toResultSchema::update(const QString &schema) {
     try {
         toConnection &conn = connection();
 

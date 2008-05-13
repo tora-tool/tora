@@ -69,7 +69,11 @@ public:
 
 public slots:
 
-    void updateLast(const QString &schema);
+    /**
+     * Updates connections to use schema
+     *
+     */
+    void update(const QString &schema);
 };
 
 #endif

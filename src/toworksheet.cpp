@@ -389,6 +389,10 @@ void toWorksheet::setup(bool autoLoad)
         Schema->refresh();
     }
     catch (...) {}
+    connect(Schema,
+            SIGNAL(currentIndexChanged(const QString &)),
+            Schema,
+            SLOT(update(const QString &)));
 
     new toChangeConnection(workToolbar, TO_TOOLBAR_WIDGET_NAME);
 
