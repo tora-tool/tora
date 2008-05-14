@@ -103,9 +103,9 @@ public:
      * @param statistics Optional statistics widget to update with values from query.
      */
     toEventQuery(toConnection &conn,
-                   const QString &sql,
-                   const toQList &param,
-                   toResultStats *statistics = NULL);
+                 const QString &sql,
+                 const toQList &param,
+                 toResultStats *statistics = NULL);
 
 
     /**

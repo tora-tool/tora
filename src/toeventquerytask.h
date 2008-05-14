@@ -45,6 +45,7 @@
 #include <QThread>
 #include <QPointer>
 #include <QMetaType>
+#include <QEvent>
 
 typedef QList<toQValue> ValuesList;
 Q_DECLARE_METATYPE(ValuesList);
@@ -52,11 +53,26 @@ Q_DECLARE_METATYPE(ValuesList);
 class toResultStats;
 
 
+class FinishedEvent : public QEvent {
+    QPointer<QThread> Thread;
+
+public:
+    FinishedEvent(QThread *t) : QEvent(QEvent::User) {
+        Thread = t;
+    }
+
+
+    QThread* thread() {
+        return Thread;
+    }
+};
+
+
 /**
  * Threaded class used by toEventQuery. Internal to toEventQuery only.
  *
  * All signals and calls to slots should be created with
- * Qt::QueuedConnection except to read()
+ * Qt::QueuedConnection except to read() and stop()
  *
  */
 class toEventQueryTask : public QThread {
@@ -87,16 +103,19 @@ public:
                      const QString &sql,
                      const toQList &param,
                      toResultStats *stats = NULL);
-    ~toEventQueryTask();
-
+    virtual ~toEventQueryTask();
 
 protected:
+
 
     /**
      * Overrides QThread::run. Call start() to execute thread.
      *
      */
     virtual void run(void);
+
+
+    virtual void customEvent(QEvent *event);
 
 
 private slots:

@@ -43,6 +43,8 @@
 #include "totool.h"
 #include "toresultstats.h"
 
+#include <QApplication>
+
 
 #define CATCH_ALL                                   \
     catch(const toConnection::exception &str) {     \
@@ -120,12 +122,32 @@ void toEventQueryTask::run(void) {
     catch(...) {
         // ignored
     }
+
+    try {
+        delete Query;
+        Query = 0;
+    }
+    catch(...) {
+        // ignored
+    }
+
+    QCoreApplication::postEvent(this, new FinishedEvent(this));
 }
 
 
 toEventQueryTask::~toEventQueryTask() {
-    delete Query;
-    Query = 0;
+}
+
+
+void toEventQueryTask::customEvent(QEvent *event) {
+    FinishedEvent *e = dynamic_cast<FinishedEvent *>(event);
+    if(e) {
+        QThread *t = e->thread();
+        if(t) {
+            t->wait();
+            delete t;
+        }
+    }
 }
 
 

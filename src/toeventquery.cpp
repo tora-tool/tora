@@ -128,12 +128,10 @@ void toEventQuery::start() {
 
 toEventQuery::~toEventQuery() {
     try {
-        disconnect(Task, 0, 0, 0);
-
-        stop();
-
-        if(Task->wait(1000))
-            delete Task;
+        if(Task) {
+            disconnect(Task, 0, 0, 0);
+            stop();
+        }
     }
     catch(...) {
         ; // ignored
