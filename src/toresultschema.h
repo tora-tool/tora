@@ -67,6 +67,11 @@ public:
                    QWidget *parent,
                    const char *name = NULL);
 
+private slots:
+
+    // stores last schema selected in qsettings
+    void updateLastSchema(const QString &schema);
+
 public slots:
 
     /**

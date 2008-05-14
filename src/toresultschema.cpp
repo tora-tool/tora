@@ -67,6 +67,10 @@ toResultSchema::toResultSchema(toConnection &conn,
     }
 
     setSelected(sel);
+    connect(this,
+            SIGNAL(currentIndexChanged(const QString &)),
+            this,
+            SLOT(updateLastSchema(const QString &)));
 }
 
 
@@ -95,10 +99,12 @@ void toResultSchema::update(const QString &schema) {
             conn.allExecute(CHANGE_CURRENT_SCHEMA_PG.arg(schema));
         else
             throw QString("No support for changing schema for this database");
-
-        QSettings s;
-        s.setValue("schema/" + ConnectionKey, schema);
     }
     TOCATCH;
+}
 
+
+void toResultSchema::updateLastSchema(const QString &schema) {
+    QSettings s;
+    s.setValue("schema/" + ConnectionKey, schema);
 }
