@@ -45,6 +45,7 @@
 class QCheckBox;
 class QLabel;
 class toResultColsComment;
+class toEventQuery;
 
 
 /**
@@ -67,6 +68,8 @@ class toResultCols : public QWidget, public toResult
     QWidget             *ColumnComments; /* container for column
                                           * comment widgets */
     QString              TableName;      /* quoted owner and table */
+
+    toEventQuery        *Query;
 
 public:
     /**
@@ -105,6 +108,8 @@ public:
 private slots:
     void done(void);
     void editComment(bool val);
+    void readComment(void);
+    void commentError(const toConnection::exception &msg);
 };
 
 #endif
