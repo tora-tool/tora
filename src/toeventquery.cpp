@@ -48,8 +48,10 @@ toQValue toEventQuery::readValueNull() {
     if(Values.isEmpty())
         throw tr("Read past end of query");
 
-    if((Values.size() == 15 || Values.size() == 1) && !eof())
-        Task->read();           // getting close to end, request read
+    if((Values.size() == 15 || Values.size() == 1) && !eof()) {
+        if(Task)
+            Task->read();           // getting close to end, request read
+    }
 
     return Values.takeFirst();
 }
