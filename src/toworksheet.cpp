@@ -915,7 +915,7 @@ void toWorksheet::query(const QString &str, execType type)
         }
 
         // unhide the results pane if there's something to show
-        if (first == "SELECT" || ResultTab->currentIndex() != 0)
+        if (first == "SELECT" || (ResultTab && ResultTab->currentIndex() != 0))
             unhideResults();
 
         toQList param;
@@ -1169,7 +1169,8 @@ void toWorksheet::addLog(const QString &sql,
     }
 
     if (!error) {
-        changeResult(ResultTab->indexOf(CurrentTab));
+        if(ResultTab)
+            changeResult(ResultTab->indexOf(CurrentTab));
 
         // the sql string will be trimmed but case will be same as the
         // original.  the code originally compared the result return, but
