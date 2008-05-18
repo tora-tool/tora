@@ -57,6 +57,7 @@ class toConnectionProvider;
 class toSQL;
 class toQuery;
 class toSyntaxAnalyzer;
+class toConnectionPool;
 
 /** This class is an abstract definition of an actual connection to a database.
  * Each @ref toConnection object can have one or more actual connections to the
@@ -123,7 +124,10 @@ public:
         Long,
         /** Run the query on all non occupied connections of the @ref toConnection object.
          */
-        All
+        All,
+        /** For internal use, doesn't close resources
+         */
+        Test
     };
 
     /** This structure is used to describe the resultset of a query.
@@ -272,6 +276,19 @@ public:
     toQuery(toConnection &conn,
             queryMode mode,
             const toSQL &sql,
+            const std::list<toQValue> &params);
+
+    /** Internal use. Create a query object to test a
+     * toConnectionSub. Does not close sub.
+     *
+     * @param conn Connection to create query on.
+     * @param mode Mode to run query in.
+     * @param sql SQL to run.
+     * @param params Arguments to pass to query.
+     */
+    toQuery(toConnection &conn,
+            toConnectionSub *sub,
+            const QString &sql,
             const std::list<toQValue> &params);
 
     /** Create a query.
@@ -485,22 +502,18 @@ class toConnection : public QObject
     QString Version;
     std::list<QPointer<QWidget> > Widgets;
     std::list<QString> InitStrings;
-    std::set
-    <QString> Options;
+    std::set<QString> Options;
     toLock Lock;
-    std::list<toConnectionSub *> Connections;
-    std::list<toConnectionSub *> Running;
-    int BackgroundCount;
-    toConnectionSub *BackgroundConnection;
     bool NeedCommit;
+
+    toConnectionPool *ConnectionPool;
 
 public:
 
     /** Class that could be used to throw exceptions in connection errors. Must use if you
      * want to indicate error offset.
      */
-
-class exception : public QString
+    class exception : public QString
     {
         int Offset;
     public:
@@ -682,19 +695,16 @@ class exception : public QString
 
 private:
 
-    void addConnection(void);
-    std::list<toConnectionSub *> &connections(void)
-    {
-        return Connections;
-    }
+    toConnectionSub* addConnection(void);
+    void closeConnection(toConnectionSub *sub);
 
     connectionImpl *Connection;
 
 class cacheObjects : public toTask
     {
-        toConnection &Connection;
+        QPointer<toConnection> Connection;
     public:
-        cacheObjects(toConnection &conn)
+        cacheObjects(toConnection *conn)
                 : Connection(conn)
         { }
         virtual void run(void);
@@ -708,10 +718,7 @@ class cacheObjects : public toTask
     std::list<objectName> ObjectNames;
     std::map<QString, objectName> SynonymMap;
 
-    toConnectionSub *mainConnection(void);
-    toConnectionSub *longConnection(void);
-    toConnectionSub *backgroundConnection(void);
-    void freeConnection(toConnectionSub *);
+    toConnectionSub* pooledConnection(void);
     void readObjects(void);
 
     QString cacheFile();
@@ -817,12 +824,23 @@ public:
     {
         return NeedCommit;
     }
+
     /**
-     * Commit connection. This will also close all extra connections except one.
+     * Commit connection implementation
+     */
+    void commit(toConnectionSub *sub);
+
+    /**
+     * Rollback connection implementation
+     */
+    void rollback(toConnectionSub *rollback);
+
+    /**
+     * Commit all connections.
      */
     virtual void commit(void);
     /**
-     * Rollback connection. This will also close all extra connections except one.
+     * Rollback all connections.
      */
     virtual void rollback(void);
 
@@ -1027,6 +1045,7 @@ public:
     static QString cacheDir();
 
     friend class toQuery;
+    friend class toConnectionPool;
 };
 
 Q_DECLARE_METATYPE(toConnection::exception);

@@ -59,6 +59,7 @@ tora_SOURCES=main.cpp \
 	tobackgroundlabel.cpp tobackgroundlabel.h \
 	toconfiguration.cpp toconfiguration.h \
 	toconnection.cpp toconnection.h \
+	toconnectionpool.cpp toconnectionpool.h \
 	toeditwidget.cpp toeditwidget.h \
 	toglobalsetting.cpp toglobalsetting.h \
 	tohelp.cpp tohelp.h tohelpsetup.h \
@@ -268,6 +269,7 @@ BUILT_SOURCES = \
 	moc_tochangeconnection.cpp \
 	moc_tochartmanager.cpp \
 	moc_toconnection.cpp \
+	moc_toconnectionpool.cpp \
 	moc_tonoblockquery.cpp \
 	moc_toeventquery.cpp \
 	moc_toeventquerytask.cpp \

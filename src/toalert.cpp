@@ -42,6 +42,7 @@
 #include "tomain.h"
 #include "tomemoeditor.h"
 #include "toresultview.h"
+#include "toconnection.h"
 
 #ifndef Q_OS_WIN32
 #include <unistd.h>

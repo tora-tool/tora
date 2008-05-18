@@ -333,7 +333,6 @@ void toDatabaseSetting::saveSetting(void)
     toConfigurationSingle::Instance().setNumberDecimals(Decimals->value());
     toQValue::setNumberFormat(NumberFormat->currentIndex(), Decimals->value());
 
-    toMainWidget()->updateKeepAlive();
     toUpdateIndicateEmpty();
 }
 

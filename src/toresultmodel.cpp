@@ -99,10 +99,11 @@ void toResultModel::cleanup()
         disconnect(Query, 0, this, 0);
 
         Query->stop();
+        delete Query;
         emit done();
     }
 
-    Query = NULL;
+    Query = 0;
 }
 
 

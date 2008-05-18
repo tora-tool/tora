@@ -87,7 +87,7 @@ private:
     // finish before it's messages have all been processed, making
     // Task->isRunning() useless for detecting if there's data
     // waiting.
-    bool TaskDone;
+    volatile bool TaskDone;
 
     // connection for this query
     toConnection *Connection;

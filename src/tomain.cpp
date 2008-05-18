@@ -1723,46 +1723,6 @@ void toMain::displayMessage(void)
     dialog.exec();
 }
 
-void toMain::updateKeepAlive(void)
-{
-    int keepAlive = toConfigurationSingle::Instance().keepAlive();
-    if (KeepAlive.isActive())
-        disconnect(&KeepAlive, SIGNAL(timeout()), this, SLOT(keepAlive()));
-    if (keepAlive)
-    {
-        connect(&KeepAlive, SIGNAL(timeout()), this, SLOT(keepAlive()));
-        KeepAlive.start(keepAlive*1000);
-    }
-}
-
-class toMainNopExecutor : public toTask
-{
-private:
-    toConnection &Connection;
-    QString SQL;
-public:
-    toMainNopExecutor(toConnection &conn, const QString &sql)
-            : Connection(conn), SQL(sql)
-    { }
-    virtual void run(void)
-    {
-        try
-        {
-            Connection.allExecute(SQL);
-        }
-        TOCATCH
-    }
-};
-
-void toMain::keepAlive(void)
-{
-    for (std::list<toConnection *>::iterator i = Connections.begin();i != Connections.end();i++)
-    {
-        toThread *thread = new toThread(new toMainNopExecutor(*(*i), toSQL::string("Global:Now", *(*i))));
-        thread->start();
-    }
-}
-
 void toMain::toolWidgetAdded(toToolWidget *tool)
 {
     emit addedToolWidget(tool);

@@ -45,12 +45,13 @@
 #include <qtimer.h>
 #include <QMenu>
 
-#include "toconnection.h"
 #include "totool.h"
+#include "tothread.h"
 
 class QComboBox;
 class QLineEdit;
 class toListView;
+class toConnection;
 
 class toAlert : public toToolWidget
 {

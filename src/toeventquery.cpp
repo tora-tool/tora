@@ -96,6 +96,7 @@ toEventQuery::toEventQuery(toConnection &conn,
 
 void toEventQuery::start() {
     Task = new toEventQueryTask(this, *Connection, SQL, Param, Statistics);
+    Task->ThreadAlive.lock();
 
     qRegisterMetaType<toQDescList>("toQDescList&");
     qRegisterMetaType<ValuesList>("ValuesList&");
@@ -124,6 +125,12 @@ void toEventQuery::start() {
             SLOT(taskFinished()),
             Qt::QueuedConnection);
 
+    connect(Task,
+            SIGNAL(done()),
+            this,
+            SLOT(taskFinished()),
+            Qt::QueuedConnection);
+
     Task->start();
 }
 
@@ -132,7 +139,8 @@ toEventQuery::~toEventQuery() {
     try {
         if(Task) {
             disconnect(Task, 0, 0, 0);
-            stop();
+            Task->exit();
+            Task->ThreadAlive.unlock();
         }
     }
     catch(...) {

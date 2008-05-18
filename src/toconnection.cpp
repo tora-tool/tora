@@ -43,6 +43,7 @@
 #include "tomain.h"
 #include "tosql.h"
 #include "totool.h"
+#include "toconnectionpool.h"
 
 #include <string>
 #include <time.h>
@@ -785,8 +786,8 @@ toQuery::toQuery(toConnection &conn,
                  const QString &arg8,
                  const QString &arg9)
         : Connection(QPointer<toConnection>(&conn)),
-        ConnectionSub(conn.mainConnection()),
-        SQL(sql(*Connection).toAscii())
+          ConnectionSub(conn.pooledConnection()),
+          SQL(sql(*Connection).toAscii())
 {
     Mode = Normal;
     int numArgs;
@@ -841,7 +842,7 @@ toQuery::toQuery(toConnection &conn,
     {
         delete Query;
         Query = NULL;
-        Connection->freeConnection(ConnectionSub);
+        Connection->ConnectionPool->release(ConnectionSub);
         throw;
     }
     ConnectionSub->setQuery(this);
@@ -859,7 +860,7 @@ toQuery::toQuery(toConnection &conn,
                  const QString &arg8,
                  const QString &arg9)
         : Connection(QPointer<toConnection>(&conn)),
-        ConnectionSub(conn.mainConnection()),
+        ConnectionSub(conn.pooledConnection()),
         SQL(sql.toUtf8())
 {
     Mode = Normal;
@@ -915,7 +916,7 @@ toQuery::toQuery(toConnection &conn,
     {
         delete Query;
         Query = NULL;
-        Connection->freeConnection(ConnectionSub);
+        Connection->ConnectionPool->release(ConnectionSub);
         throw;
     }
     ConnectionSub->setQuery(this);
@@ -923,7 +924,7 @@ toQuery::toQuery(toConnection &conn,
 
 toQuery::toQuery(toConnection &conn, const toSQL &sql, const toQList &params)
         : Connection(QPointer<toConnection>(&conn)),
-        ConnectionSub(conn.mainConnection()),
+        ConnectionSub(conn.pooledConnection()),
         Params(params),
         SQL(sql(conn).toAscii())
 {
@@ -939,7 +940,34 @@ toQuery::toQuery(toConnection &conn, const toSQL &sql, const toQList &params)
     {
         delete Query;
         Query = NULL;
-        Connection->freeConnection(ConnectionSub);
+        Connection->ConnectionPool->release(ConnectionSub);
+        throw;
+    }
+    ConnectionSub->setQuery(this);
+}
+
+// for testing sub
+toQuery::toQuery(toConnection &conn,
+                 toConnectionSub *sub,
+                 const QString &sql,
+                 const toQList &params)
+    : Connection(QPointer<toConnection>(&conn)),
+      ConnectionSub(sub),
+      Params(params),
+      SQL(sql)
+{
+    Mode = Test;
+    toBusy busy;
+    try
+    {
+        Query = NULL;
+        Query = conn.Connection->createQuery(this, ConnectionSub);
+        Query->execute();
+    }
+    catch (...)
+    {
+        delete Query;
+        Query = NULL;
         throw;
     }
     ConnectionSub->setQuery(this);
@@ -947,7 +975,7 @@ toQuery::toQuery(toConnection &conn, const toSQL &sql, const toQList &params)
 
 toQuery::toQuery(toConnection &conn, const QString &sql, const toQList &params)
         : Connection(QPointer<toConnection>(&conn)),
-        ConnectionSub(conn.mainConnection()),
+        ConnectionSub(conn.pooledConnection()),
         Params(params),
         SQL(sql.toUtf8())
 {
@@ -963,7 +991,7 @@ toQuery::toQuery(toConnection &conn, const QString &sql, const toQList &params)
     {
         delete Query;
         Query = NULL;
-        Connection->freeConnection(ConnectionSub);
+        Connection->ConnectionPool->release(ConnectionSub);
         throw;
     }
     ConnectionSub->setQuery(this);
@@ -979,19 +1007,7 @@ toQuery::toQuery(toConnection &conn,
 {
     Mode = mode;
 
-    switch (Mode)
-    {
-    case Normal:
-    case All:
-        ConnectionSub = conn.mainConnection();
-        break;
-    case Background:
-        ConnectionSub = conn.backgroundConnection();
-        break;
-    case Long:
-        ConnectionSub = conn.longConnection();
-        break;
-    }
+    ConnectionSub = conn.pooledConnection();
 
     toBusy busy;
     try
@@ -1004,7 +1020,7 @@ toQuery::toQuery(toConnection &conn,
     {
         delete Query;
         Query = NULL;
-        Connection->freeConnection(ConnectionSub);
+        Connection->ConnectionPool->release(ConnectionSub);
         throw;
     }
     ConnectionSub->setQuery(this);
@@ -1020,19 +1036,7 @@ toQuery::toQuery(toConnection &conn,
 {
     Mode = mode;
 
-    switch (Mode)
-    {
-    case Normal:
-    case All:
-        ConnectionSub = conn.mainConnection();
-        break;
-    case Background:
-        ConnectionSub = conn.backgroundConnection();
-        break;
-    case Long:
-        ConnectionSub = conn.longConnection();
-        break;
-    }
+    ConnectionSub = conn.pooledConnection();
 
     toBusy busy;
     try
@@ -1045,7 +1049,7 @@ toQuery::toQuery(toConnection &conn,
     {
         delete Query;
         Query = NULL;
-        Connection->freeConnection(ConnectionSub);
+        Connection->ConnectionPool->release(ConnectionSub);
         throw;
     }
     ConnectionSub->setQuery(this);
@@ -1056,19 +1060,7 @@ toQuery::toQuery(toConnection &conn, queryMode mode)
 {
     Mode = mode;
 
-    switch (Mode)
-    {
-    case Normal:
-    case All:
-        ConnectionSub = conn.mainConnection();
-        break;
-    case Background:
-        ConnectionSub = conn.backgroundConnection();
-        break;
-    case Long:
-        ConnectionSub = conn.longConnection();
-        break;
-    }
+    ConnectionSub = conn.pooledConnection();
 
     toBusy busy;
     try
@@ -1109,47 +1101,14 @@ toQuery::~toQuery()
     {
         if (ConnectionSub->query() == this)
             ConnectionSub->setQuery(NULL);
-        if (Connection)
-            Connection->freeConnection(ConnectionSub);
+        if (Mode != Test && Connection && Connection->ConnectionPool)
+            Connection->ConnectionPool->release(ConnectionSub);
     }
     catch (...) {}
 }
 
 bool toQuery::eof(void)
 {
-    if (Mode == All)
-    {
-        if (Query->eof())
-        {
-            Connection->Lock.lock();
-            bool found = false;
-            try
-            {
-                std::list<toConnectionSub *> &cons = Connection->connections();
-                for (std::list<toConnectionSub *>::iterator i = cons.begin();i != cons.end();i++)
-                {
-                    if (*i == ConnectionSub)
-                    {
-                        i++;
-                        if (i != cons.end())
-                        {
-                            ConnectionSub = *i;
-                            Connection->Lock.unlock();
-                            found = true;
-                            delete Query;
-                            Query = NULL;
-                            Query = connection().Connection->createQuery(this, ConnectionSub);
-                            Query->execute();
-                            Connection->Lock.lock();
-                        }
-                        break;
-                    }
-                }
-                Connection->Lock.unlock();
-            }
-            catch (...) {}
-        }
-    }
     return Query->eof();
 }
 
@@ -1261,8 +1220,6 @@ toQValue toQuery::readValue(void)
     toBusy busy;
     if (Connection->Abort)
         throw qApp->translate("toQuery", "Query aborted");
-    if (Mode == All)
-        eof();
     return toNull(Query->readValue());
 }
 
@@ -1274,8 +1231,6 @@ toQValue toQuery::readValueNull(void)
     toBusy busy;
     if (Connection->Abort)
         throw qApp->translate("toQuery", "Query aborted");
-    if (Mode == All)
-        eof();
     return Query->readValue();
 }
 
@@ -1286,13 +1241,12 @@ void toQuery::cancel(void)
 
 // toConnection implementation
 
-void toConnection::addConnection(void)
+toConnectionSub* toConnection::addConnection()
 {
     toBusy busy;
     toConnectionSub *sub = Connection->createConnection();
     toLocker lock(Lock)
     ;
-    Connections.insert(Connections.end(), sub);
     toQList params;
     for (std::list<QString>::iterator i = InitStrings.begin();i != InitStrings.end();i++)
     {
@@ -1302,7 +1256,16 @@ void toConnection::addConnection(void)
         }
         TOCATCH
     }
+
+    return sub;
 }
+
+
+void toConnection::closeConnection(toConnectionSub *sub) {
+    if(Connection)
+        Connection->closeConnection(sub);
+}
+
 
 toConnection::toConnection(const QString &provider,
                            const QString &user, const QString &password,
@@ -1310,13 +1273,14 @@ toConnection::toConnection(const QString &provider,
                            const std::set<QString> &options, bool cache)
         : Provider(provider), User(user), Password(password), Host(host), Database(database), Options(options)
 {
-    BackgroundConnection = NULL;
-    BackgroundCount = 0;
     Connection = toConnectionProvider::connection(Provider, this);
-    addConnection();
-    Version = Connection->version(mainConnection());
     NeedCommit = Abort = false;
     ReadingCache = false;
+    ConnectionPool = new toConnectionPool(this);
+
+    PoolPtr sub(ConnectionPool);
+    Version = Connection->version(*sub);
+
     if (cache)
     {
         if (toConfigurationSingle::Instance().objectCache() == 1)
@@ -1337,15 +1301,15 @@ toConnection::toConnection(const toConnection &conn)
         Database(conn.Database),
         Options(conn.Options)
 {
-    BackgroundConnection = NULL;
-    BackgroundCount = 0;
     Connection = toConnectionProvider::connection(Provider, this);
-    addConnection();
-    Version = Connection->version(mainConnection());
     ReadingValues.up();
     ReadingValues.up();
     ReadingCache = false;
     NeedCommit = Abort = false;
+    ConnectionPool = new toConnectionPool(this);
+
+    PoolPtr sub(ConnectionPool);
+    Version = Connection->version(*sub);
 }
 
 std::list<QString> toConnection::running(void)
@@ -1354,187 +1318,69 @@ std::list<QString> toConnection::running(void)
     toLocker lock(Lock)
     ;
     std::list<QString> ret;
-    toConnectionSub *sub = (*(Connections.begin()));
-    if (sub && sub->query())
-        ret.insert(ret.end(), sub->query()->sql());
-    if (BackgroundConnection && BackgroundConnection->query())
-        ret.insert(ret.end(), BackgroundConnection->query()->sql());
-    for (std::list<toConnectionSub *>::const_iterator i = Running.begin();i != Running.end();i++)
-    {
-        sub = *i;
-        if (sub && sub->query())
-            ret.insert(ret.end(), sub->query()->sql());
-    }
+    // this is insane. disabled code that tried to get sql from
+    // running queries
     return ret;
 }
 
 void toConnection::cancelAll(void)
 {
-    toBusy busy;
-    toLocker lock(Lock)
-    ;
-    for (std::list<toConnectionSub *>::iterator i = Running.begin();i != Running.end();i++)
-        (*i)->cancel();
+    ConnectionPool->cancelAll();
 }
 
 toConnection::~toConnection()
 {
     toBusy busy;
+    Abort = true;
 
     {
+        cancelAll();
+
         toLocker lock(Lock);
 
-        // widgets is a std::list of qpointers. we don't own those
-        // pointers, so don't delete them. they are qobjects and will
-        // be deleted with their parents.
-        closeWidgets();
+        delete ConnectionPool;
+        ConnectionPool = 0;
 
-        for (std::list<toConnectionSub *>::iterator i = Running.begin();i != Running.end();i++)
-            try
-            {
-                (*i)->cancel();
-            }
-            catch (...) {}
+        closeWidgets();
     }
-    Abort = true;
     if (ReadingCache)
     {
         ReadingValues.down();
         ReadingValues.down();
     }
-    for (std::list<toConnectionSub *>::iterator i = Connections.begin();i != Connections.end();i++)
-    {
-        try
-        {
-            Connection->closeConnection(*i);
-        }
-        catch (...) {}
-    }
     delete Connection;
 }
 
-toConnectionSub *toConnection::mainConnection()
+toConnectionSub* toConnection::pooledConnection(void)
 {
-    if (Connection->handleMultipleQueries())
-    {
-        toLocker lock(Lock)
-        ;
-        return (*(Connections.begin()));
-    }
-    else
-    {
-        return longConnection();
-    }
+    return ConnectionPool->borrow();
 }
 
-toConnectionSub *toConnection::backgroundConnection()
+void toConnection::commit(toConnectionSub *sub)
 {
-    if (!Connection->handleMultipleQueries())
-        return longConnection();
-    if (toConfigurationSingle::Instance().bkgndConnect())
-        return mainConnection();
-    Lock.lock();
-    if (!BackgroundConnection)
-    {
-        Lock.unlock();
-        toConnectionSub *tmp = longConnection();
-        Lock.lock();
+    toBusy busy;
+    toLocker lock(Lock);
 
-        BackgroundConnection = tmp;
-        BackgroundCount = 0;
-    }
-    BackgroundCount++;
-    Lock.unlock();
-    return BackgroundConnection;
-}
-
-toConnectionSub *toConnection::longConnection()
-{
-    Lock.lock();
-    bool multiple = Connection->handleMultipleQueries();
-    if ((multiple && Connections.size() == 1) ||
-            (!multiple && Connections.empty()))
-    {
-        Lock.unlock();
-        addConnection();
-    }
-    else
-        Lock.unlock();
-    toLocker lock(Lock)
-    ;
-    std::list<toConnectionSub *>::iterator i = Connections.begin();
-    if (multiple)
-        i++;
-    toConnectionSub *ret = (*i);
-    Connections.erase(i);
-    Running.insert(Running.end(), ret);
-    return ret;
-}
-
-void toConnection::freeConnection(toConnectionSub *sub)
-{
-    toLocker lock(Lock)
-    ;
-    if (sub == BackgroundConnection)
-    {
-        BackgroundCount--;
-        if (BackgroundCount > 0)
-            return ;
-        BackgroundConnection = NULL;
-    }
-    {
-        for (std::list<toConnectionSub *>::iterator i = Running.begin();i != Running.end();i++)
-        {
-            if (*i == sub)
-            {
-                Running.erase(i);
-                break;
-            }
-        }
-    }
-    {
-        for (std::list<toConnectionSub *>::iterator i = Connections.begin();i != Connections.end();i++)
-        {
-            if (*i == sub)
-                return ;
-        }
-    }
-    Connections.insert(Connections.end(), sub);
+    Connection->commit(sub);
 }
 
 void toConnection::commit(void)
 {
-    toBusy busy;
-    toLocker lock(Lock)
-    ;
-    for (std::list<toConnectionSub *>::iterator i = Connections.begin();i != Connections.end();i++)
-        Connection->commit(*i);
-    while (Connections.size() > 2)
-    {
-        std::list<toConnectionSub *>::iterator i = Connections.begin();
-        i++;
-        delete(*i);
-        Connections.erase(i);
-    }
+    ConnectionPool->commit();
     setNeedCommit(false);
+}
+
+void toConnection::rollback(toConnectionSub *sub)
+{
+    toBusy busy;
+    toLocker lock(Lock);
+
+    Connection->rollback(sub);
 }
 
 void toConnection::rollback(void)
 {
-    toBusy busy;
-    toLocker lock(Lock)
-    ;
-    for (std::list<toConnectionSub *>::iterator i = Connections.begin();i != Connections.end();i++)
-    {
-        Connection->rollback(*i);
-    }
-    while (Connections.size() > 2)
-    {
-        std::list<toConnectionSub *>::iterator i = Connections.begin();
-        i++;
-        delete(*i);
-        Connections.erase(i);
-    }
+    ConnectionPool->rollback();
     setNeedCommit(false);
 }
 
@@ -1628,25 +1474,41 @@ const std::list<QString> toConnection::initStrings() const
 void toConnection::parse(const QString &sql)
 {
     toBusy busy;
-    Connection->parse(mainConnection(), sql.toUtf8());
+
+    PoolPtr sub(ConnectionPool);
+    Version = Connection->version(*sub);
+
+    Connection->parse(*sub, sql.toUtf8());
 }
 
 void toConnection::parse(const toSQL &sql)
 {
     toBusy busy;
-    Connection->parse(mainConnection(), toSQL::sql(sql, *this));
+
+    PoolPtr sub(ConnectionPool);
+    Version = Connection->version(*sub);
+
+    Connection->parse(*sub, toSQL::sql(sql, *this));
 }
 
 void toConnection::execute(const toSQL &sql, toQList &params)
 {
     toBusy busy;
-    Connection->execute(mainConnection(), toSQL::sql(sql, *this), params);
+
+    PoolPtr sub(ConnectionPool);
+    Version = Connection->version(*sub);
+
+    Connection->execute(*sub, toSQL::sql(sql, *this), params);
 }
 
 void toConnection::execute(const QString &sql, toQList &params)
 {
     toBusy busy;
-    Connection->execute(mainConnection(), sql.toUtf8(), params);
+
+    PoolPtr sub(ConnectionPool);
+    Version = Connection->version(*sub);
+
+    Connection->execute(*sub, sql.toUtf8(), params);
 }
 
 void toConnection::execute(const toSQL &sql,
@@ -1699,7 +1561,11 @@ void toConnection::execute(const toSQL &sql,
         args.insert(args.end(), arg9);
 
     toBusy busy;
-    Connection->execute(mainConnection(), toSQL::sql(sql, *this), args);
+
+    PoolPtr sub(ConnectionPool);
+    Version = Connection->version(*sub);
+
+    Connection->execute(*sub, toSQL::sql(sql, *this), args);
 }
 
 void toConnection::execute(const QString &sql,
@@ -1752,38 +1618,21 @@ void toConnection::execute(const QString &sql,
         args.insert(args.end(), arg9);
 
     toBusy busy;
-    Connection->execute(mainConnection(), sql.toUtf8(), args);
+
+    PoolPtr sub(ConnectionPool);
+    Version = Connection->version(*sub);
+
+    Connection->execute(*sub, sql.toUtf8(), args);
 }
 
 void toConnection::allExecute(const toSQL &sql, toQList &params)
 {
-    toBusy busy;
-    toLocker lock(Lock)
-    ;
-    for (std::list<toConnectionSub *>::iterator i = Connections.begin();i != Connections.end();i++)
-    {
-        try
-        {
-           if(*i)
-              Connection->execute(*i, toSQL::sql(sql, *this), params);
-        }
-        TOCATCH
-    }
+    ConnectionPool->executeAll(toSQL::sql(sql, *this), params);
 }
 
 void toConnection::allExecute(const QString &sql, toQList &params)
 {
-    toBusy busy;
-    toLocker lock(Lock)
-    ;
-    for (std::list<toConnectionSub *>::iterator i = Connections.begin();i != Connections.end();i++)
-    {
-        try
-        {
-            Connection->execute(*i, sql.toUtf8(), params);
-        }
-        TOCATCH
-    }
+    ConnectionPool->executeAll(sql, params);
 }
 
 void toConnection::allExecute(const toSQL &sql,
@@ -1835,17 +1684,7 @@ void toConnection::allExecute(const toSQL &sql,
     if (numArgs > 8)
         args.insert(args.end(), arg9);
 
-    toBusy busy;
-    toLocker lock(Lock)
-    ;
-    for (std::list<toConnectionSub *>::iterator i = Connections.begin();i != Connections.end();i++)
-    {
-        try
-        {
-            Connection->execute(*i, toSQL::sql(sql, *this), args);
-        }
-        TOCATCH
-    }
+    ConnectionPool->executeAll(toSQL::sql(sql, *this), args);
 }
 
 void toConnection::allExecute(const QString &sql,
@@ -1897,17 +1736,7 @@ void toConnection::allExecute(const QString &sql,
     if (numArgs > 8)
         args.insert(args.end(), arg9);
 
-    toBusy busy;
-    toLocker lock(Lock)
-    ;
-    for (std::list<toConnectionSub *>::iterator i = Connections.begin();i != Connections.end();i++)
-    {
-        try
-        {
-            Connection->execute(*i, sql.toUtf8(), args);
-        }
-        TOCATCH
-    }
+    ConnectionPool->executeAll(sql, args);
 }
 
 const QString &toConnection::provider(void) const
@@ -2062,25 +1891,38 @@ void toConnection::cacheObjects::run()
     bool diskloaded = false;
     try
     {
-        diskloaded = Connection.loadDiskCache();
+        diskloaded = Connection->loadDiskCache();
         if (!diskloaded)
         {
-            Connection.ObjectNames = Connection.Connection->objectNames();
+            std::list<objectName> objs;
+            objs = Connection->Connection->objectNames();
+            if(Connection && !Connection->Abort) {
+                toLocker lock(Connection->Lock);
+                Connection->ObjectNames = objs;
+            }
+            else
+                return;
         }
-        Connection.ObjectNames.sort();
-        Connection.ReadingValues.up();
+        Connection->ObjectNames.sort();
+        Connection->ReadingValues.up();
         if (!diskloaded)
         {
-            Connection.SynonymMap = Connection.Connection->synonymMap(Connection.ObjectNames);
-            Connection.writeDiskCache();
+            std::map<QString, objectName> syn;
+            syn = Connection->Connection->synonymMap(Connection->ObjectNames);
+            if(Connection && !Connection->Abort) {
+                toLocker lock(Connection->Lock);
+                Connection->SynonymMap = syn;
+                Connection->writeDiskCache();
+            }
         }
     }
     catch (...)
     {
-        if (Connection.ReadingValues.getValue() == 0)
-            Connection.ReadingValues.up();
+        if (Connection && Connection->ReadingValues.getValue() == 0)
+            Connection->ReadingValues.up();
     }
-    Connection.ReadingValues.up();
+    if(Connection)
+        Connection->ReadingValues.up();
 }
 
 
@@ -2097,7 +1939,7 @@ void toConnection::readObjects(void)
         ReadingCache = true;
         try
         {
-            (new toThread(new cacheObjects(*this)))->start();
+            (new toThread(new cacheObjects(this)))->start();
         }
         catch (...)
         {

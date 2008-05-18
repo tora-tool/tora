@@ -168,8 +168,6 @@ private:
 
     toBackgroundLabel* BackgroundLabel;
 
-    QTimer KeepAlive;
-
     toEditWidget *Edit;
 
     toEditWidget *findEdit(QWidget *edit);
@@ -298,10 +296,6 @@ public:
     void setCoordinates(int, int);
 
     toBackgroundLabel* getBackgroundLabel();
-
-    /* Update the keepalive from configuration
-     */
-    void updateKeepAlive();
 
     /**
      * Get a list of currently open connections.
@@ -542,8 +536,6 @@ private slots:
     /** Display status message
      */
     void displayMessage(void);
-
-    void keepAlive();
 
     /**
      * Internal slot for handling status bar messages

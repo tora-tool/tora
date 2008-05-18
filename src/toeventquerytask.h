@@ -46,6 +46,7 @@
 #include <QPointer>
 #include <QMetaType>
 #include <QEvent>
+#include <QMutex>
 
 typedef QList<toQValue> ValuesList;
 Q_DECLARE_METATYPE(ValuesList);
@@ -93,10 +94,15 @@ class toEventQueryTask : public QThread {
     toConnection *Connection;
 
     // object was closed
-    bool Closed;
+    volatile bool Closed;
 
 
 public:
+
+    // keeps thread from exiting until toEventQuery exits. this
+    // prevents many race conditions and the caller can always assume
+    // task is alive.
+    QMutex ThreadAlive;
 
     toEventQueryTask(QObject *parent,
                      toConnection &conn,
@@ -169,6 +175,13 @@ signals:
      *
      */
     void data(ValuesList &values);
+
+
+    /**
+     * Emitted when sql query is done
+     *
+     */
+    void done();
 };
 
 #endif

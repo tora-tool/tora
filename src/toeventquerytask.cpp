@@ -49,20 +49,20 @@
 #define CATCH_ALL                                   \
     catch(const toConnection::exception &str) {     \
         if(!Closed) {                               \
-            close();                                \
             emit error(str);                        \
+            close();                                \
         }                                           \
     }                                               \
     catch(const QString &str) {                     \
         if(!Closed) {                               \
-            close();                                \
             emit error(str);                        \
+            close();                                \
         }                                           \
     }                                               \
     catch(...) {                                    \
         if(!Closed) {                               \
-            close();                                \
             emit error(tr("Unknown exception"));    \
+            close();                                \
         }                                           \
     }
 
@@ -103,13 +103,13 @@ void toEventQueryTask::run(void) {
             // emit empty result
             ValuesList values;
             emit data(values);
-            return;
         }
+        else {
+            read();
 
-        read();
-
-        // begin thread's event loop
-        exec();
+            // begin thread's event loop
+            exec();
+        }
     }
     CATCH_ALL;
 
@@ -131,6 +131,7 @@ void toEventQueryTask::run(void) {
         // ignored
     }
 
+    ThreadAlive.lock();
     QCoreApplication::postEvent(this, new FinishedEvent(this));
 }
 
@@ -144,6 +145,7 @@ void toEventQueryTask::customEvent(QEvent *event) {
     if(e) {
         QThread *t = e->thread();
         if(t) {
+            t->exit();
             t->wait();
             delete t;
         }
@@ -153,7 +155,11 @@ void toEventQueryTask::customEvent(QEvent *event) {
 
 void toEventQueryTask::close() {
     try {
-        if(Query)
+        if(isRunning())
+            emit done();
+
+        disconnect(this, 0, 0, 0);
+        if(Query && !Closed)
             Query->cancel();
     }
     catch(...) {
@@ -168,11 +174,14 @@ void toEventQueryTask::close() {
 
 
 void toEventQueryTask::read(bool all) {
-    emit readRequested(all);
+    if(isRunning())
+        emit readRequested(all);
 }
 
 
 void toEventQueryTask::pread(bool all) {
+    if(!isRunning())
+        return;
     if(!Query || Columns < 1) {
         close();
         return;
