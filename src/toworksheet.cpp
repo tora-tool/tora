@@ -820,6 +820,8 @@ bool toWorksheet::describe(const QString &query)
         if (part[0].toUpper() == QString("DESC") ||
                 part[0].toUpper() == QString("DESCRIBE"))
         {
+            unhideResults();
+
             if (toIsOracle(connection()))
             {
                 if (part.count() == 2)
