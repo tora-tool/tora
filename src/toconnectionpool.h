@@ -47,6 +47,7 @@
 #include <QWaitCondition>
 #include <QThread>
 #include <QEvent>
+#include <QTimer>
 
 class toConnectionPool;
 
@@ -73,6 +74,7 @@ class toConnectionPoolTest : public QThread {
     Q_OBJECT;
 
     QPointer<toConnectionPool> Pool;
+    QTimer *timer;
 
 public:
     toConnectionPoolTest(toConnectionPool *pool);

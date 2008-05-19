@@ -50,15 +50,21 @@ static const int TEST_MSEC = 5000;
 
 
 toConnectionPoolTest::toConnectionPoolTest(toConnectionPool *pool)
-    : QThread(0) {
+    : QThread(0), timer(0) {
     setObjectName("toConnectionPoolTest");
     Pool = pool;
 }
 
 
 void toConnectionPoolTest::run() {
-    QTimer::singleShot(TEST_MSEC, this, SLOT(test()));
+    timer = new QTimer();
+    timer->setInterval(TEST_MSEC);
+    connect(timer, SIGNAL(timeout()), this, SLOT(test()), Qt::DirectConnection);
+    timer->start();
+
     exec();
+
+    delete timer;
 }
 
 
@@ -71,8 +77,6 @@ void toConnectionPoolTest::test() {
         if(state == toConnectionPool::Broken)
             Pool->fix(i);
     }
-
-    QTimer::singleShot(TEST_MSEC, this, SLOT(test()));
 }
 
 
@@ -118,6 +122,7 @@ void toConnectionPoolExec::run() {
 
             case Execute: {
                 toQuery q(*(Pool->Connection), sub, Sql, Params);
+//                 Pool->Connection->commit(sub);
                 break;
             }
 
@@ -337,7 +342,6 @@ void toConnectionPool::cancelAll(bool wait) {
     toConnectionPoolExec *ex = new toConnectionPoolExec(
         this,
         toConnectionPoolExec::Cancel);
-    printf("cancel all %i\n", wait);
     if(!wait)
         ex->start();
     else
