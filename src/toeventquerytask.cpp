@@ -81,6 +81,7 @@ toEventQueryTask::toEventQueryTask(QObject *parent,
     Columns    = 0;
     Connection = &conn;
     Closed     = false;
+    setObjectName("toEventQueryTask");
 }
 
 

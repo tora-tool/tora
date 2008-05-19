@@ -51,6 +51,7 @@ static const int TEST_MSEC = 5000;
 
 toConnectionPoolTest::toConnectionPoolTest(toConnectionPool *pool)
     : QThread(0) {
+    setObjectName("toConnectionPoolTest");
     Pool = pool;
 }
 
@@ -78,6 +79,7 @@ void toConnectionPoolTest::test() {
 toConnectionPoolExec::toConnectionPoolExec(toConnectionPool *pool, Action act) {
     action = act;
     Pool   = pool;
+    setObjectName("toConnectionPoolExec");
 }
 
 
