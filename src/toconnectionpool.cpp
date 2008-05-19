@@ -331,8 +331,15 @@ void toConnectionPool::rollback() {
 }
 
 
-void toConnectionPool::cancelAll(void) {
-    (new toConnectionPoolExec(this, toConnectionPoolExec::Cancel))->start();
+void toConnectionPool::cancelAll(bool wait) {
+    toConnectionPoolExec *ex = new toConnectionPoolExec(
+        this,
+        toConnectionPoolExec::Cancel);
+    printf("cancel all %i\n", wait);
+    if(!wait)
+        ex->start();
+    else
+        ex->run();
 }
 
 

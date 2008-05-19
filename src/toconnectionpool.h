@@ -231,7 +231,7 @@ public:
      * Cancels all running queries
      *
      */
-    void cancelAll(void);
+    void cancelAll(bool wait = false);
 
 
     /**

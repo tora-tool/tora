@@ -503,8 +503,11 @@ class toConnection : public QObject
     std::list<QPointer<QWidget> > Widgets;
     std::list<QString> InitStrings;
     std::set<QString> Options;
-    toLock Lock;
     bool NeedCommit;
+
+    toLock Lock;
+    // held while cacheObjects is running
+    toLock CacheLock;
 
     toConnectionPool *ConnectionPool;
 

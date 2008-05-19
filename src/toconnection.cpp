@@ -1334,14 +1334,17 @@ toConnection::~toConnection()
     Abort = true;
 
     {
-        cancelAll();
+        closeWidgets();
+
+        ConnectionPool->cancelAll(true);
+
+        // wait for cacheObjects to finish
+        toLocker clock(CacheLock);
 
         toLocker lock(Lock);
 
         delete ConnectionPool;
         ConnectionPool = 0;
-
-        closeWidgets();
     }
     if (ReadingCache)
     {
@@ -1889,38 +1892,31 @@ void toConnection::writeDiskCache()
 void toConnection::cacheObjects::run()
 {
     bool diskloaded = false;
+
+    // hold while running
+    toLocker clock(Connection->CacheLock);
+
     try
     {
         diskloaded = Connection->loadDiskCache();
-        if (!diskloaded)
-        {
-            std::list<objectName> objs;
-            objs = Connection->Connection->objectNames();
-            if(Connection && !Connection->Abort) {
-                toLocker lock(Connection->Lock);
-                Connection->ObjectNames = objs;
-            }
-            else
-                return;
-        }
+        if (!diskloaded && !Connection->Abort)
+            Connection->ObjectNames = Connection->Connection->objectNames();
+
         Connection->ObjectNames.sort();
         Connection->ReadingValues.up();
-        if (!diskloaded)
+
+        if (!diskloaded && !Connection->Abort)
         {
-            std::map<QString, objectName> syn;
-            syn = Connection->Connection->synonymMap(Connection->ObjectNames);
-            if(Connection && !Connection->Abort) {
-                toLocker lock(Connection->Lock);
-                Connection->SynonymMap = syn;
-                Connection->writeDiskCache();
-            }
+            Connection->SynonymMap = Connection->Connection->synonymMap(Connection->ObjectNames);
+            Connection->writeDiskCache();
         }
     }
     catch (...)
     {
-        if (Connection && Connection->ReadingValues.getValue() == 0)
+        if (Connection->ReadingValues.getValue() == 0)
             Connection->ReadingValues.up();
     }
+
     if(Connection)
         Connection->ReadingValues.up();
 }
