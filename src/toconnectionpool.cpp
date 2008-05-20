@@ -155,13 +155,8 @@ toConnectionPool::toConnectionPool(toConnection *conn) : QObject(conn) {
 
     for(int i = 0; i < PreferredSize; i++) {
         PooledSub *psub = new PooledSub;
-        try {
-            psub->Sub = Connection->addConnection();
-            psub->State = Free;
-        }
-        catch(...) {
-            psub->State = Broken;
-        }
+        psub->Sub = Connection->addConnection();
+        psub->State = Free;
 
         Pool.append(psub);
     }
@@ -184,12 +179,14 @@ toConnectionPool::~toConnectionPool() {
     for(int mem = 0; mem < Pool.size(); mem++) {
         PooledSub *psub = Pool[mem];
         try {
-            psub->Sub->cancel();
+            if(psub->Sub)
+                psub->Sub->cancel();
         }
         catch(...) {
         }
 
-        conn->closeConnection(psub->Sub);
+        if(psub->Sub)
+            conn->closeConnection(psub->Sub);
     }
 
     while(!Pool.isEmpty())

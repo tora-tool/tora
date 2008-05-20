@@ -1271,7 +1271,13 @@ toConnection::toConnection(const QString &provider,
                            const QString &user, const QString &password,
                            const QString &host, const QString &database,
                            const std::set<QString> &options, bool cache)
-        : Provider(provider), User(user), Password(password), Host(host), Database(database), Options(options)
+    : Provider(provider),
+      User(user),
+      Password(password),
+      Host(host),
+      Database(database),
+      Options(options),
+      Connection(0)
 {
     Connection = toConnectionProvider::connection(Provider, this);
     NeedCommit = Abort = false;
@@ -1294,12 +1300,13 @@ toConnection::toConnection(const QString &provider,
 }
 
 toConnection::toConnection(const toConnection &conn)
-        : Provider(conn.Provider),
-        User(conn.User),
-        Password(conn.Password),
-        Host(conn.Host),
-        Database(conn.Database),
-        Options(conn.Options)
+    : Provider(conn.Provider),
+      User(conn.User),
+      Password(conn.Password),
+      Host(conn.Host),
+      Database(conn.Database),
+      Options(conn.Options),
+      Connection(0)
 {
     Connection = toConnectionProvider::connection(Provider, this);
     ReadingValues.up();
