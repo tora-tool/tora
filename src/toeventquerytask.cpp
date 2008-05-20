@@ -72,8 +72,7 @@ toEventQueryTask::toEventQueryTask(QObject *parent,
                                    const QString &sql,
                                    const toQList &param,
                                    toResultStats *stats)
-    : QThread(0),               // don't set or thread will delete
-                                // with parent and possibly crash
+    : toRunnable(),
       SQL(sql),
       Params(param),
       Statistics(stats) {
@@ -109,7 +108,7 @@ void toEventQueryTask::run(void) {
             read();
 
             // begin thread's event loop
-            exec();
+            thread()->exec();
         }
     }
     CATCH_ALL;
@@ -133,7 +132,6 @@ void toEventQueryTask::run(void) {
     }
 
     ThreadAlive.lock();
-    QCoreApplication::postEvent(this, new FinishedEvent(this));
 }
 
 
@@ -141,23 +139,9 @@ toEventQueryTask::~toEventQueryTask() {
 }
 
 
-void toEventQueryTask::customEvent(QEvent *event) {
-    FinishedEvent *e = dynamic_cast<FinishedEvent *>(event);
-    if(e) {
-        QThread *t = e->thread();
-        if(t) {
-            t->exit();
-            t->wait();
-            delete t;
-        }
-    }
-}
-
-
 void toEventQueryTask::close() {
     try {
-        if(isRunning())
-            emit done();
+        emit done();
 
         disconnect(this, 0, 0, 0);
         if(Query && !Closed)
@@ -170,19 +154,16 @@ void toEventQueryTask::close() {
     Closed = true;
 
     // exit thread event loop. safe to call before event loop starts.
-    exit();
+    thread()->exit();
 }
 
 
 void toEventQueryTask::read(bool all) {
-    if(isRunning())
-        emit readRequested(all);
+    emit readRequested(all);
 }
 
 
 void toEventQueryTask::pread(bool all) {
-    if(!isRunning())
-        return;
     if(!Query || Columns < 1) {
         close();
         return;

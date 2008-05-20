@@ -79,6 +79,7 @@ SET(TORA_MOC_CLASSES
 #     toconfiguration.h
     toconnection.h
     toconnectionpool.h
+    torunnable.h
     tonoblockquery.h
     tocurrent.h
     todatatype.h
@@ -209,6 +210,7 @@ SET(TORA_SOURCES
     toconfiguration.cpp
     toconnection.cpp
     toconnectionpool.cpp
+    torunnable.cpp
     tocurrent.cpp
     todatatype.cpp
     todebug.cpp

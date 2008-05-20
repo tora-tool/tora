@@ -60,6 +60,7 @@ tora_SOURCES=main.cpp \
 	toconfiguration.cpp toconfiguration.h \
 	toconnection.cpp toconnection.h \
 	toconnectionpool.cpp toconnectionpool.h \
+	torunnable.cpp torunnable.h \
 	toeditwidget.cpp toeditwidget.h \
 	toglobalsetting.cpp toglobalsetting.h \
 	tohelp.cpp tohelp.h tohelpsetup.h \
@@ -270,6 +271,7 @@ BUILT_SOURCES = \
 	moc_tochartmanager.cpp \
 	moc_toconnection.cpp \
 	moc_toconnectionpool.cpp \
+	moc_torunnable.cpp \
 	moc_tonoblockquery.cpp \
 	moc_toeventquery.cpp \
 	moc_toeventquerytask.cpp \

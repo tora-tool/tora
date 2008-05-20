@@ -42,6 +42,7 @@
 #include "toeventquerytask.h"
 #include "toresultstats.h"
 #include "totool.h"
+#include "torunnable.h"
 
 
 toQValue toEventQuery::readValueNull() {
@@ -120,18 +121,12 @@ void toEventQuery::start() {
             Qt::QueuedConnection);
 
     connect(Task,
-            SIGNAL(finished()),
-            this,
-            SLOT(taskFinished()),
-            Qt::QueuedConnection);
-
-    connect(Task,
             SIGNAL(done()),
             this,
             SLOT(taskFinished()),
             Qt::QueuedConnection);
 
-    Task->start();
+    (new toRunnableThread(Task))->start();
 }
 
 
@@ -139,7 +134,7 @@ toEventQuery::~toEventQuery() {
     try {
         if(Task) {
             disconnect(Task, 0, 0, 0);
-            Task->exit();
+            Task->thread()->exit();
             Task->ThreadAlive.unlock();
         }
     }

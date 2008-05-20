@@ -41,6 +41,7 @@
 #include "config.h"
 #include "toconnection.h"
 #include "tothread.h"
+#include "torunnable.h"
 
 #include <QThread>
 #include <QPointer>
@@ -54,21 +55,6 @@ Q_DECLARE_METATYPE(ValuesList);
 class toResultStats;
 
 
-class FinishedEvent : public QEvent {
-    QPointer<QThread> Thread;
-
-public:
-    FinishedEvent(QThread *t) : QEvent(QEvent::User) {
-        Thread = t;
-    }
-
-
-    QThread* thread() {
-        return Thread;
-    }
-};
-
-
 /**
  * Threaded class used by toEventQuery. Internal to toEventQuery only.
  *
@@ -76,7 +62,7 @@ public:
  * Qt::QueuedConnection except to read() and stop()
  *
  */
-class toEventQueryTask : public QThread {
+class toEventQueryTask : public toRunnable {
     Q_OBJECT;
 
     // the real query object
@@ -115,13 +101,10 @@ protected:
 
 
     /**
-     * Overrides QThread::run. Call start() to execute thread.
+     * Overrides toRunnable::run. Create toRunnableThread to start
      *
      */
     virtual void run(void);
-
-
-    virtual void customEvent(QEvent *event);
 
 
 private slots:

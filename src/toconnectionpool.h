@@ -187,9 +187,6 @@ class toConnectionPool : public QObject {
     // get a specific connection.
     toConnectionSub* steal(int member);
 
-    // remove a connection from pool
-    void remove(int member);
-
     // create new connection at position
     void fix(int member);
 
