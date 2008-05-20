@@ -1,8 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
-
-    <file>icons/unittest.xpm</file>
-
     <file>icons/addfile.xpm</file>
     <file>icons/addindex.xpm</file>
     <file>icons/addproject.xpm</file>
@@ -126,8 +123,14 @@
     <file>icons/tree.xpm</file>
     <file>icons/twirl.mng</file>
     <file>icons/undo.xpm</file>
+    <file>icons/unittest.xpm</file>
     <file>icons/up.xpm</file>
     <file>icons/view.xpm</file>
     <file>icons/writetablespace.xpm</file>
+
+    <file>templates/hints.tpl</file>
+    <file>templates/log4plsql.tpl</file>
+    <file>templates/sqlfunctions.tpl</file>
+
   </qresource>
 </RCC>

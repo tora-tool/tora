@@ -63,15 +63,15 @@
 
 #include "icons/totemplate.xpm"
 
-static std::map<QString, QString> DefaultText(void)
+
+static TemplatesMap DefaultText(void)
 {
-    std::map<QString, QString> def;
-    QString file(toConfigurationSingle::Instance().pluginDir()); //toPluginPath();
+    TemplatesMap def;
 
 #if !defined(TO_NO_ORACLE)
-    def["PL/SQL Functions"] = file + "sqlfunctions.tpl";
-    def["Optimizer Hints"] = file + "hints.tpl";
-    def["Log4PL/SQL"] = file + "log4plsql.tpl";
+    def["PL/SQL Functions"] = ":/templates/sqlfunctions.tpl";
+    def["Optimizer Hints"] = ":/templates/hints.tpl";
+    def["Log4PL/SQL"] = ":/templates/log4plsql.tpl";
 #endif
 
     return def;
@@ -346,21 +346,8 @@ toTemplatePrefs::toTemplatePrefs(toTool *tool, QWidget *parent, const char *name
 {
 
     setupUi(this);
-    std::map<QString, QString> def = DefaultText();
+    TemplatesMap def = DefaultText();
 
-//     int tot = Tool->config("Number", "-1").toInt();
-//     {
-//         for (int i = 0;i < tot;i++)
-//         {
-//             QString num = QString::number(i).toLatin1();
-//             QString root = Tool->config(num, "").toLatin1();
-//             num += "file";
-//             QString file = Tool->config(num, "");
-//             new toTreeWidgetItem(FileList, root, file);
-//             if (def.find(root) != def.end())
-//                 def.erase(def.find(root));
-//         }
-//     }
     TemplatesMapIterator i(toConfigurationSingle::Instance().templates());
     while (i.hasNext())
     {
@@ -369,25 +356,26 @@ toTemplatePrefs::toTemplatePrefs(toTool *tool, QWidget *parent, const char *name
         if (def.find(i.key()) != def.end())
             def.erase(def.find(i.key()));
     }
-    for (std::map<QString, QString>::iterator i = def.begin();i != def.end();i++)
-        new toTreeWidgetItem(FileList, (*i).first, (*i).second);
+    TemplatesMapIterator j(def);
+    while (j.hasNext())
+    {
+        j.next();
+        new toTreeWidgetItem(FileList, j.key(), j.value());
+    }
 }
 
 
 void toTemplatePrefs::saveSetting(void)
 {
-//     int i = 0;
     TemplatesMap m;
+    TemplatesMap def = DefaultText();
     for (toTreeWidgetItem *item = FileList->firstChild();item;item = item->nextSibling())
     {
-//         QString nam = QString::number(i).toLatin1();
-//         Tool->setConfig(nam, item->text(0));
-//         nam += "file";
-//         Tool->setConfig(nam, item->text(1));
-//         i++;
-        m[item->text(0)] = item->text(1);
+        // save only user addons
+        if (!DefaultText().contains(item->text(0)))
+            m[item->text(0)] = item->text(1);
     }
-//     Tool->setConfig("Number", QString::number(i));
+
     toConfigurationSingle::Instance().setTemplates(m);
 }
 
@@ -758,20 +746,8 @@ public:
 
 void toTextTemplate::insertItems(toTreeWidget *parent, QToolBar *)
 {
-//     int tot = TemplateTool.config("Number", "-1").toInt();
-    std::map<QString, QString> def = DefaultText();
-//     {
-//         for (int i = 0; i < tot; i++)
-//         {
-//             QString num = QString::number(i).toLatin1();
-//             QString root = TemplateTool.config(num, "").toLatin1();
-//             num += "file";
-//             QString file = TemplateTool.config(num, "");
-//             addFile(parent, root, file);
-//             if (def.find(root) != def.end())
-//                 def.erase(def.find(root));
-//         }
-//     }
+    TemplatesMap def = DefaultText();
+
     TemplatesMapIterator i(toConfigurationSingle::Instance().templates());
     while (i.hasNext())
     {
@@ -780,8 +756,12 @@ void toTextTemplate::insertItems(toTreeWidget *parent, QToolBar *)
         if (def.find(i.key()) != def.end())
             def.erase(def.find(i.key()));
     }
-    for (std::map<QString, QString>::iterator i = def.begin();i != def.end();i++)
-        addFile(parent, (*i).first, (*i).second);
+    TemplatesMapIterator j(def);
+    while (j.hasNext())
+    {
+        j.next();
+        addFile(parent, j.key(), j.value());
+    }
 }
 
 void toTextTemplate::addFile(toTreeWidget *parent, const QString &root, const QString &file)

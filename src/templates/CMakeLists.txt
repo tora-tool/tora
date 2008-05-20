@@ -1,7 +1,0 @@
-FILE( GLOB TORA_TEMPLATES *.tpl )
-INSTALL(
-    FILES
-        ${TORA_TEMPLATES}
-    DESTINATION
-        ${TORA_PLUGIN_DIR}/
-)
