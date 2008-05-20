@@ -255,9 +255,11 @@ toConnectionSub* toConnectionPool::steal(int member) {
 
 
 toConnectionSub* toConnectionPool::borrow() {
-    QMutexLocker lock(&PoolLock);
+    {
+        // keep lock here so adding connection below can be sure
+        // there's no current lock in case of exception
+        QMutexLocker lock(&PoolLock);
 
-    try {
         for(int mem = 0; mem < Pool.size(); mem++) {
             PooledSub *psub = Pool[mem];
 
@@ -278,22 +280,11 @@ toConnectionSub* toConnectionPool::borrow() {
             }
         }
     }
-    catch(...) {
-        throw;
-    }
 
+    QMutexLocker lock(&PoolLock);
     PooledSub *psub = new PooledSub(Connection->addConnection(), Busy);
     Pool.append(psub);
     return psub->Sub;
-}
-
-
-void toConnectionPool::remove(int member) {
-    QMutexLocker lock(&PoolLock);
-
-    PooledSub *psub = Pool.takeAt(member);
-    Connection->closeConnection(psub->Sub);
-    delete psub;
 }
 
 
@@ -310,8 +301,9 @@ void toConnectionPool::release(toConnectionSub *sub) {
                Connection &&
                !Connection->needCommit()) {
 
-                lock.unlock();
-                remove(mem);
+                PooledSub *psub = Pool.takeAt(mem);
+                Connection->closeConnection(psub->Sub);
+                delete psub;
             }
             else
                 psub->State = Free;
