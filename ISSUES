@@ -38,9 +38,9 @@ Walk through basic tasks and dialogs and test its functionality. (create table, 
 Error warning dialogs are modal, and have to be closed in the right order. Ideally - would like to see the error popups
 be a single window, something in the style of the javascript error console in firefox perhaps?
 
-MySQL: numerous crashes in schema browser
+MySQL: numerous crashes in schema browser - running under gdb hides a lot of these unfortunately... has been stable
 
-MySQL: Lots of "database not open" warning msgs 
+Oracle: error "result should be 18 in segment attributes was 2" in toExtract on Script tab
 
 
 Minor Issues that would be nice to fix before release
@@ -49,6 +49,11 @@ Minor Issues that would be nice to fix before release
 [Nathan] Proper encoding of author names in about dialog.
 
 Drag and drop/doubleclick in filter dialog for schema browser no longer works.
+
+MySQL: Lots of "database not open" warning msgs 
+
+Oracle: better handling on extents tab if no access to dba_extents view. 
+
 
 
 Enhancements
