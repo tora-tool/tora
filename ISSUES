@@ -31,6 +31,15 @@ Minimize sf.net error backlog - bugtracker.
 
 Walk through basic tasks and dialogs and test its functionality. (create table, drop, alter etc.)
 
+"Waiting..." shows up in right pane in schema browser until you click on a table name also stays up if no tables in schema.
+
+">|" arrow on schema browser view just scrolls to bottom of display instead of reading all rows as it used to.
+
+Error warning dialogs are modal, and have to be closed in the right order. Ideally - would like to see the error popups
+be a single window, something in the style of the javascript error console in firefox perhaps?
+
+MySQL: numerous crashes in schema browser
+
 
 Minor Issues that would be nice to fix before release
 -----------------------------------------------------
