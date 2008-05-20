@@ -69,7 +69,7 @@ void toConnectionPoolTest::run() {
 
 
 void toConnectionPoolTest::test() {
-    for(int i = 0; Pool && i < Pool->Pool.size(); i++) {
+    for(int i = 0; Pool && i < Pool->size(); i++) {
         toConnectionPool::PooledState state = Pool->test(i);
         if(state == toConnectionPool::Busy)
             continue;
@@ -99,7 +99,7 @@ toConnectionPoolExec::toConnectionPoolExec(toConnectionPool *pool,
 
 
 void toConnectionPoolExec::run() {
-    for(int mem = 0; mem < Pool->Pool.size(); mem++) {
+    for(int mem = 0; mem < Pool->size(); mem++) {
         toConnectionSub *sub = Pool->steal(mem);
         if(!sub)
             continue;
@@ -245,6 +245,12 @@ toConnectionPool::PooledState toConnectionPool::test(PooledSub *sub) {
     }
 
     return state;
+}
+
+
+int toConnectionPool::size() {
+    QMutexLocker lock(&PoolLock);
+    return Pool.size();
 }
 
 

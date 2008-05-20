@@ -183,6 +183,7 @@ class toConnectionPool : public QObject {
     // this is used internally to test
     PooledState test(PooledSub *sub);
     PooledState test(int member);
+    int size(void);
 
     // get a specific connection.
     toConnectionSub* steal(int member);
