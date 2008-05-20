@@ -42,6 +42,7 @@ MySQL: numerous crashes in schema browser - running under gdb hides a lot of the
 
 Oracle: error "result should be 18 in segment attributes was 2" in toExtract on Script tab
 
+Row number in first column of schema browser for 'Data' tab - needs to resize to fit contents - right now, it truncates.
 
 Minor Issues that would be nice to fix before release
 -----------------------------------------------------
