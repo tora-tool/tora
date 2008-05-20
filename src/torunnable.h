@@ -139,7 +139,7 @@ public:
      *
      */
     int exec() {
-        QThread::exec();
+        return QThread::exec();
     }
 
 protected:
