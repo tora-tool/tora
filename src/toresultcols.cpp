@@ -42,7 +42,6 @@
 #include "toresultcolscomment.h"
 #include "toresulttableview.h"
 #include "tosql.h"
-#include "toeventquery.h"
 
 #include <QCheckBox>
 #include <QLabel>
@@ -372,7 +371,7 @@ static toSQL SQLTableColumnsMySql(
 
 
 toResultCols::toResultCols(QWidget *parent, const char *name, Qt::WFlags f)
-    : QWidget(parent, f), Query(0)
+        : QWidget(parent, f)
 {
 
     if (name)
@@ -448,11 +447,6 @@ void toResultCols::displayHeader(bool display)
 
 void toResultCols::query(const QString &sql, const toQList &param)
 {
-    if(Query) {
-        delete Query;
-        Query = 0;
-    }
-
     QString Owner;
     QString Name;
     QString object;
@@ -513,9 +507,9 @@ void toResultCols::query(const QString &sql, const toQList &param)
     {
         QString synonym;
         const toConnection::objectName &name = conn.realName(
-            object,
-            synonym,
-            false);
+                                                   object,
+                                                   synonym,
+                                                   false);
 
         QString label = QString::fromLatin1("<B>");
         if (!synonym.isEmpty())
@@ -564,24 +558,17 @@ void toResultCols::query(const QString &sql, const toQList &param)
                 connection().provider() == "MySQL" ||
                 connection().provider() == "PostgreSQL")
         {
-            toQList cp;
-            cp.push_back(Owner);
-            cp.push_back(Name);
-
             toConnection &conn = connection();
-            Query = new toEventQuery(conn, SQLTableComment(conn), cp);
-            Query->setParent(this);
-
-            connect(Query,
-                    SIGNAL(dataAvailable()),
-                    this,
-                    SLOT(readComment()));
-            connect(Query,
-                    SIGNAL(error(const toConnection::exception &)),
-                    this,
-                    SLOT(commentError(const toConnection::exception &)));
-
-            Query->start();
+            toQuery query(conn, SQLTableComment, Owner, Name);
+            QString t;
+            if (!query.eof())
+            {
+                t = query.readValueNull();
+                EditComment->setComment(true, TableName, t);
+            }
+            Comment->setText(t);
+            editComment(Edit->isChecked());
+            Edit->setEnabled(true);
         }
         else
         {
@@ -596,27 +583,6 @@ void toResultCols::query(const QString &sql, const toQList &param)
         Title->setText(str);
         toStatusMessage(str);
     }
-}
-
-
-void toResultCols::readComment()
-{
-    QString t;
-    if (Query && Query->hasMore())
-    {
-        t = Query->readValueNull();
-        EditComment->setComment(true, TableName, t);
-    }
-
-    Comment->setText(t);
-    editComment(Edit->isChecked());
-    Edit->setEnabled(true);
-}
-
-
-void toResultCols::commentError(const toConnection::exception &msg)
-{
-    toStatusMessage(msg);
 }
 
 
