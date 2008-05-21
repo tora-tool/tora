@@ -1348,10 +1348,10 @@ toConnection::~toConnection()
         // wait for cacheObjects to finish
         toLocker clock(CacheLock);
 
-        toLocker lock(Lock);
-
         delete ConnectionPool;
         ConnectionPool = 0;
+
+        toLocker lock(Lock);
     }
     if (ReadingCache)
     {
