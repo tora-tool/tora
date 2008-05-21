@@ -188,6 +188,9 @@ void toNewConnection::readSettings()
         QString username = Settings.value("username", "").toString();
         QString password = toUnobfuscate(Settings.value("password", "").toString());
 
+        if ( provider == ORACLE_TNS )
+            host = "";
+
         Settings.beginGroup("options");
         std::set<QString> options;
         QStringList keys = Settings.allKeys();
