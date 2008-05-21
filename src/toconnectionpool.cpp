@@ -98,7 +98,7 @@ toConnectionPoolExec::toConnectionPoolExec(toConnectionPool *pool,
 
 
 void toConnectionPoolExec::run() {
-    for(int mem = 0; mem < Pool->size(); mem++) {
+    for(int mem = 0; Pool && mem < Pool->size(); mem++) {
         toConnectionSub *sub = Pool->steal(mem);
         if(!sub)
             continue;
