@@ -39,13 +39,16 @@
 
 #include <QCoreApplication>
 
-void toRunnableThread::customEvent(QEvent *event) {
+static toRunnableDeleter *Deleter = new toRunnableDeleter();
+
+void toRunnableDeleter::customEvent(QEvent *event) {
     FinishedEvent *e = dynamic_cast<FinishedEvent *>(event);
     if(e) {
         toRunnableThread *t = e->thread();
         if(t) {
             t->exit();
             t->wait();
+            printf("delete thread\n");
             delete t;
         }
     }
@@ -57,5 +60,5 @@ void toRunnableThread::run() {
     Runner->run();
 
     delete Runner;
-    QCoreApplication::postEvent(this, new FinishedEvent(this));
+    QCoreApplication::postEvent(Deleter, new FinishedEvent(this));
 }

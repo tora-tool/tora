@@ -39,6 +39,7 @@
 #define TOCONNECTIONPOOL_H
 
 #include "toconnection.h"
+#include "torunnable.h"
 
 #include <QMutex>
 #include <QList>
@@ -50,21 +51,6 @@
 #include <QTimer>
 
 class toConnectionPool;
-
-class ExecFinished : public QEvent {
-    QPointer<QThread> Thread;
-
-public:
-    ExecFinished(QThread *t) : QEvent(QEvent::User) {
-        Thread = t;
-    }
-
-
-    QThread* thread() {
-        return Thread;
-    }
-};
-
 
 /**
  * Tests connections in pool
@@ -80,7 +66,7 @@ public:
     toConnectionPoolTest(toConnectionPool *pool);
 
     /**
-     * Overrides QThread::run. Call start() to execute thread.
+     * Overrides. Call start() to execute thread.
      *
      */
     virtual void run(void);
@@ -95,7 +81,7 @@ private slots:
  * Executes sql on pool connections
  *
  */
-class toConnectionPoolExec : public QThread {
+class toConnectionPoolExec : public toRunnable {
     Q_OBJECT;
 
 public:
@@ -125,13 +111,10 @@ public:
 
 
     /**
-     * Overrides QThread::run. Call start() to execute thread.
+     * Overrides. Call start() to execute thread.
      *
      */
     virtual void run(void);
-
-protected:
-    virtual void customEvent(QEvent *event);
 };
 
 

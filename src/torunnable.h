@@ -141,6 +141,20 @@ public:
     int exec() {
         return QThread::exec();
     }
+};
+
+
+/**
+ * Can't delete thread from event handler
+ *
+ */
+class toRunnableDeleter : public QObject {
+    Q_OBJECT;
+
+public:
+    toRunnableDeleter() {
+    }
+
 
 protected:
 

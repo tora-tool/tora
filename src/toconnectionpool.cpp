@@ -129,22 +129,6 @@ void toConnectionPoolExec::run() {
         }
         TOCATCH; // show errors to user
     }
-
-    // thread deletes self
-    QCoreApplication::postEvent(this, new ExecFinished(this));
-}
-
-
-void toConnectionPoolExec::customEvent(QEvent *event) {
-    ExecFinished *e = dynamic_cast<ExecFinished *>(event);
-    if(e) {
-        QThread *t = e->thread();
-        if(t) {
-            t->exit();
-            t->wait();
-            delete t;
-        }
-    }
 }
 
 
@@ -334,12 +318,12 @@ void toConnectionPool::release(toConnectionSub *sub) {
 
 
 void toConnectionPool::commit() {
-    (new toConnectionPoolExec(this, toConnectionPoolExec::Commit))->start();
+    (new toRunnableThread(new toConnectionPoolExec(this, toConnectionPoolExec::Commit)))->start();
 }
 
 
 void toConnectionPool::rollback() {
-    (new toConnectionPoolExec(this, toConnectionPoolExec::Rollback))->start();
+    (new toRunnableThread(new toConnectionPoolExec(this, toConnectionPoolExec::Rollback)))->start();
 }
 
 
@@ -348,12 +332,16 @@ void toConnectionPool::cancelAll(bool wait) {
         this,
         toConnectionPoolExec::Cancel);
     if(!wait)
-        ex->start();
+        (new toRunnableThread(ex))->start();
     else
         ex->run();
 }
 
 
 void toConnectionPool::executeAll(const QString &sql, toQList &params) {
-    (new toConnectionPoolExec(this, toConnectionPoolExec::Execute, sql, params))->start();
+    (new toRunnableThread(new toConnectionPoolExec(
+                              this,
+                              toConnectionPoolExec::Execute,
+                              sql,
+                              params)))->start();
 }
