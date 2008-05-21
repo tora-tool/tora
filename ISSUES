@@ -33,7 +33,10 @@ Walk through basic tasks and dialogs and test its functionality. (create table, 
  - Create table/create index isn't working in the Schema Browser.
  - MIGRATE extraction doesn't work (and I suppose it never did)
 
-"Waiting..." shows up in right pane in schema browser until you click on a table name also stays up if no tables in schema.
+[FIXED - is it suitable?] "Waiting..." shows up in right pane in schema browser until you click on a table name also stays up if no tables in schema.
+
+When switching in schema browser from looking at columns of a table to a schema with no tables, the column list never gets
+cleared. It stays as the column list from the original table.
 
 ">|" arrow on schema browser view just scrolls to bottom of display instead of reading all rows as it used to.
 
