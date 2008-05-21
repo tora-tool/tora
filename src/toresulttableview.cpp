@@ -154,6 +154,7 @@ toResultTableView::toResultTableView(bool readable,
     hbox->addWidget(WorkingStop);
 
     HWorking->setLayout(hbox);
+    HWorking->hide();           // hide by default
     vbox->addWidget(HWorking);
     vbox->addStretch(1);
     Working->setLayout(vbox);
