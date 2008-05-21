@@ -30,6 +30,8 @@ http://sourceforge.net/mailarchive/forum.php?thread_name=e50db5a5f5be244c6ad0355
 Minimize sf.net error backlog - bugtracker.
 
 Walk through basic tasks and dialogs and test its functionality. (create table, drop, alter etc.)
+ - Create table/create index isn't working in the Schema Browser.
+ - MIGRATE extraction doesn't work (and I suppose it never did)
 
 "Waiting..." shows up in right pane in schema browser until you click on a table name also stays up if no tables in schema.
 
