@@ -197,10 +197,13 @@ void toResultTableView::query(const QString &sql, const toQList &param)
     toEventQuery *query = NULL;
     try
     {
-        if (running())
+        if (Model && running())
             Model->stop();
-        delete Model;
-        Model = NULL;
+        if(Model)
+        {
+            delete Model;
+            Model = NULL;
+        }
 
         readAllAct->setEnabled(true);
         Ready = false;

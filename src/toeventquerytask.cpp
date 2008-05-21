@@ -154,7 +154,8 @@ void toEventQueryTask::close() {
     Closed = true;
 
     // exit thread event loop. safe to call before event loop starts.
-    thread()->exit();
+    if(thread())
+        thread()->exit();
 }
 
 

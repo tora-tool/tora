@@ -83,7 +83,7 @@ public:
      * this class will be deleted by toRunnableThread.
      *
      */
-    toRunnable() : QObject(0) {
+    toRunnable() : QObject(0), Thread(0) {
     }
 
     virtual ~toRunnable() {

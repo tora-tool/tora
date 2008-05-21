@@ -86,7 +86,8 @@ toEventQuery::toEventQuery(toConnection &conn,
                            toResultStats *stats)
     : SQL(sql),
       Param(param),
-      Statistics(stats) {
+      Statistics(stats),
+      Task(0) {
 
     Connection = &conn;
     Processed  = 0;
@@ -134,7 +135,8 @@ toEventQuery::~toEventQuery() {
     try {
         if(Task) {
             disconnect(Task, 0, 0, 0);
-            Task->thread()->exit();
+            if(Task->thread())
+                Task->thread()->exit();
             Task->ThreadAlive.unlock();
         }
     }
