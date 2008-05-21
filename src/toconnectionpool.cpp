@@ -41,7 +41,6 @@
 #include "toconnectionpool.h"
 #include "tosql.h"
 
-#include <QMutexLocker>
 #include <QTimer>
 #include <QCoreApplication>
 
@@ -151,14 +150,14 @@ void toConnectionPoolExec::customEvent(QEvent *event) {
 
 toConnectionPool::toConnectionPool(toConnection *conn) : QObject(conn) {
     Connection = conn;
-    QMutexLocker lock(&PoolLock);
+    LockingPtr ptr(Pool, PoolLock);
 
     for(int i = 0; i < PreferredSize; i++) {
         PooledSub *psub = new PooledSub;
         psub->Sub = Connection->addConnection();
         psub->State = Free;
 
-        Pool.append(psub);
+        ptr->append(psub);
     }
 
     TestThread = new toConnectionPoolTest(this);
@@ -174,10 +173,10 @@ toConnectionPool::~toConnectionPool() {
     toConnection *conn = Connection;
     Connection = 0;
 
-    QMutexLocker lock(&PoolLock);
+    LockingPtr ptr(Pool, PoolLock);
 
-    for(int mem = 0; mem < Pool.size(); mem++) {
-        PooledSub *psub = Pool[mem];
+    for(int mem = 0; mem < ptr->size(); mem++) {
+        PooledSub *psub = (*ptr)[mem];
         try {
             if(psub->Sub)
                 psub->Sub->cancel();
@@ -189,8 +188,8 @@ toConnectionPool::~toConnectionPool() {
             conn->closeConnection(psub->Sub);
     }
 
-    while(!Pool.isEmpty())
-        delete Pool.takeFirst();
+    while(!ptr->isEmpty())
+        delete ptr->takeFirst();
 }
 
 
@@ -198,19 +197,25 @@ void toConnectionPool::fix(int member) {
     if(!Connection)
         return;
 
-    QMutexLocker lock(&PoolLock);
-    PooledSub *psub = Pool[member];
+    LockingPtr ptr(Pool, PoolLock);
+    PooledSub *psub = (*ptr)[member];
     psub->State = Broken;
-    lock.unlock();
+    ptr.unlock();
 
     Connection->closeConnection(psub->Sub);
+    PooledState state = Broken;
+    toConnectionSub *sub = 0;
     try {
-        psub->Sub = Connection->addConnection();
-        psub->State = Free;
+        sub = Connection->addConnection();
+        state = Free;
     }
     catch(...) {
-        psub->State = Broken;
+        state = Broken;
     }
+
+    ptr.lock();
+    psub->State = state;
+    psub->Sub = sub;
 }
 
 
@@ -218,15 +223,18 @@ toConnectionPool::PooledState toConnectionPool::test(int member) {
     if(!Connection)
         return Broken;
 
-    QMutexLocker lock(&PoolLock);
-    PooledSub *psub = Pool[member];
+    LockingPtr ptr(Pool, PoolLock);
+    PooledSub *psub = (*ptr)[member];
     if(psub->State != Free)
         return psub->State;
 
     psub->State = Busy;
-    lock.unlock();
+    ptr.unlock();
 
-    psub->State = test(psub);
+    PooledState state = test(psub);
+
+    ptr.lock();
+    psub->State = state;
     return psub->State;
 }
 
@@ -249,14 +257,14 @@ toConnectionPool::PooledState toConnectionPool::test(PooledSub *sub) {
 
 
 int toConnectionPool::size() {
-    QMutexLocker lock(&PoolLock);
-    return Pool.size();
+    LockingPtr ptr(Pool, PoolLock);
+    return ptr->size();
 }
 
 
 toConnectionSub* toConnectionPool::steal(int member) {
-    QMutexLocker lock(&PoolLock);
-    return Pool[member]->Sub;
+    LockingPtr ptr(Pool, PoolLock);
+    return (*ptr)[member]->Sub;
 }
 
 
@@ -264,22 +272,22 @@ toConnectionSub* toConnectionPool::borrow() {
     {
         // keep lock here so adding connection below can be sure
         // there's no current lock in case of exception
-        QMutexLocker lock(&PoolLock);
+        LockingPtr ptr(Pool, PoolLock);
 
-        for(int mem = 0; mem < Pool.size(); mem++) {
-            PooledSub *psub = Pool[mem];
+        for(int mem = 0; mem < ptr->size(); mem++) {
+            PooledSub *psub = (*ptr)[mem];
 
             if(psub->State == Free) {
                 psub->State = Busy;
-                lock.unlock();
+                ptr.unlock();
 
                 PooledState state = test(psub);
                 if(state == Free)
                     return psub->Sub;
-                else
+                else {
+                    ptr.lock();
                     psub->State = state;
-
-                lock.relock();
+                }
 
                 // be careful adding code after this, as the pool size
                 // might have changed since lock was last acquired.
@@ -287,27 +295,29 @@ toConnectionSub* toConnectionPool::borrow() {
         }
     }
 
-    QMutexLocker lock(&PoolLock);
-    PooledSub *psub = new PooledSub(Connection->addConnection(), Busy);
-    Pool.append(psub);
+    toConnectionSub *sub = Connection->addConnection();
+    PooledSub *psub = new PooledSub(sub, Busy);
+
+    LockingPtr ptr(Pool, PoolLock);
+    ptr->append(psub);
     return psub->Sub;
 }
 
 
 void toConnectionPool::release(toConnectionSub *sub) {
-    QMutexLocker lock(&PoolLock);
+    LockingPtr ptr(Pool, PoolLock);
 
-    for(int mem = 0; mem < Pool.size(); mem++) {
-        PooledSub *psub = Pool[mem];
+    for(int mem = 0; mem < ptr->size(); mem++) {
+        PooledSub *psub = (*ptr)[mem];
         if(psub->Sub == sub) {
 
             // if needscommit is false, we can eliminate extra
             // connections here.
-            if(Pool.size() > PreferredSize &&
+            if(ptr->size() > PreferredSize &&
                Connection &&
                !Connection->needCommit()) {
 
-                PooledSub *psub = Pool.takeAt(mem);
+                PooledSub *psub = ptr->takeAt(mem);
                 Connection->closeConnection(psub->Sub);
                 delete psub;
             }
