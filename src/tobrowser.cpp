@@ -2390,7 +2390,7 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
     {
         std::list<QString> ctx;
         toPush(ctx, Schema->selected());
-        toPush(ctx, QString(type.toUpper()));
+        toPush(ctx, type.toUpper());
         QStringList parts = what.split(".");
         if (parts.count() > 1)
         {
@@ -2415,7 +2415,11 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
             extractor.setConstraints(false);
             extractor.setPrompt(false);
             extractor.setHeading(false);
-            QString sql = extractor.migrate(drop, empty);
+
+            std::list<QString> objToDrop;
+            QString o = type.toUpper()+ ":" + Schema->selected() + "." + what;
+            objToDrop.push_back(o);
+            QString sql = extractor.drop(objToDrop);
 
             std::list<toSQLParse::statement> statements = toSQLParse::parse(sql, connection());
             QProgressDialog prog(tr("Executing %1 change script").arg(tr(type.toAscii().constData())),
@@ -2424,6 +2428,7 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
                                  statements.size(),
                                  this);
             prog.setWindowTitle(tr("Performing %1 changes").arg(tr(type.toAscii().constData())));
+
             for (std::list<toSQLParse::statement>::iterator j = statements.begin();j != statements.end();j++)
             {
                 QString sql = toSQLParse::indentStatement(*j, connection());
@@ -2439,12 +2444,13 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
         }
         TOCATCH
     }
+    updateTabs();
     refresh();
 }
 
 void toBrowser::dropTable(void)
 {
-    dropSomething("table", SecondText);
+    dropSomething("TABLE", SecondText);
 }
 
 void toBrowser::truncateTable(void)
@@ -2468,6 +2474,7 @@ void toBrowser::truncateTable(void)
                     toSQL::string(SQLTruncateTable, connection()).
                     arg(connection().quote(Schema->selected())).
                     arg(connection().quote((*it).data(Qt::EditRole).toString())));
+                updateTabs();
                 break;
             case 2:
                 return;
@@ -2603,18 +2610,20 @@ QModelIndex toBrowser::selectedItem(int col)
 
 void toBrowser::dropIndex(void)
 {
-    for (toResultTableView::iterator it(FirstTab); (*it).isValid(); it++)
-    {
-        if (FirstTab->isRowSelected(*it))
-        {
-            QModelIndex sec = FirstTab->model()->index((*it).row(), 2);
-            QString index = sec.data(Qt::EditRole).toString();
-            if (index != "PRIMARY" && !(*it).data(Qt::EditRole).toString().isEmpty())
-                dropSomething("index", (*it).data(Qt::EditRole).toString() + "." + index);
-            else
-                dropSomething("index", (*it).data(Qt::EditRole).toString());
-        }
-    }
+    dropSomething("INDEX", SecondText);
+    // Why there was this?
+//     for (toResultTableView::iterator it(FirstTab); (*it).isValid(); it++)
+//     {
+//         if (FirstTab->isRowSelected(*it))
+//         {
+//             QModelIndex sec = FirstTab->model()->index((*it).row(), 2);
+//             QString index = sec.data(Qt::EditRole).toString();
+//             if (index != "PRIMARY" && !(*it).data(Qt::EditRole).toString().isEmpty())
+//                 dropSomething("INDEX", (*it).data(Qt::EditRole).toString() + "." + index);
+//             else
+//                 dropSomething("INDEX", (*it).data(Qt::EditRole).toString());
+//         }
+//     }
 }
 
 

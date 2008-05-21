@@ -319,7 +319,7 @@ void toExtract::create(QTextStream &ret, std::list<QString> &objects)
     ret << generateHeading(qApp->translate("toExtract", "CREATE"), objects);
 
     QProgressDialog *progress = NULL;
-    QLabel *label = NULL;
+
     if (Parent)
     {
         progress = new QProgressDialog(
@@ -330,8 +330,6 @@ void toExtract::create(QTextStream &ret, std::list<QString> &objects)
             objects.size(),
             Parent);
         progress->setWindowTitle(qApp->translate("toExtract", "Creating script"));
-        label = new QLabel(progress);
-        progress->setLabel(label);
     }
     initialize();
 
@@ -344,7 +342,7 @@ void toExtract::create(QTextStream &ret, std::list<QString> &objects)
             if (progress)
             {
                 progress->setValue(num);
-                label->setText(*i);
+                progress->setLabelText(*i);
                 qApp->processEvents();
                 if (progress->wasCanceled())
                     throw qApp->translate("toExtract", "Creating script was canceled");
@@ -400,7 +398,7 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
     std::list<QString> ret;
 
     QProgressDialog *progress = NULL;
-    QLabel *label = NULL;
+
     if (Parent)
     {
         progress = new QProgressDialog(
@@ -410,8 +408,6 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
             objects.size(),
             Parent);
         progress->setWindowTitle(qApp->translate("toExtract", "Creating description"));
-        label = new QLabel(progress);
-        progress->setLabel(label);
     }
     initialize();
 
@@ -424,7 +420,7 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
             if (progress)
             {
                 progress->setValue(num);
-                label->setText(*i);
+                progress->setLabelText(*i);
                 qApp->processEvents();
                 if (progress->wasCanceled())
                     throw qApp->translate("toExtract", "Describe was canceled");
@@ -488,17 +484,14 @@ void toExtract::drop(QTextStream &ret, std::list<QString> &objects)
     ret << generateHeading(qApp->translate("toExtract", "DROP"), objects);
 
     QProgressDialog *progress = NULL;
-    QLabel *label = NULL;
     if (Parent)
     {
         progress = new QProgressDialog(
             qApp->translate("toExtract", "Creating drop script"),
             qApp->translate("toExtract", "Cancel"),
             0,
-            objects.size());
+            objects.size(), Parent);
         progress->setWindowTitle(qApp->translate("toExtract", "Creating drop script"));
-        label = new QLabel(progress);
-        progress->setLabel(label);
     }
     initialize();
 
@@ -508,12 +501,15 @@ void toExtract::drop(QTextStream &ret, std::list<QString> &objects)
         int num = 1;
         for (std::list<QString>::iterator i = objects.begin();i != objects.end();i++)
         {
-            progress->setValue(num);
-            label->setText(*i);
-            qApp->processEvents();
-            if (progress->wasCanceled())
-                throw qApp->translate("toExtract", "Creating drop script was canceled");
-            num++;
+            if (progress)
+            {
+                progress->setValue(num);
+                progress->setLabelText(*i);
+                qApp->processEvents();
+                if (progress->wasCanceled())
+                    throw qApp->translate("toExtract", "Creating drop script was canceled");
+                num++;
+            }
 
             QString type = *i;
             QString owner;
@@ -591,7 +587,6 @@ void toExtract::migrate(QTextStream &ret, std::list<QString> &drpLst, std::list<
     ret << generateHeading(qApp->translate("toExtract", "MIGRATE"), t);
 
     QProgressDialog *progress = NULL;
-    QLabel *label = NULL;
 
     std::map<QString, std::list<QString> > objDrp;
     std::map<QString, std::list<QString> > objCrt;
@@ -610,8 +605,6 @@ void toExtract::migrate(QTextStream &ret, std::list<QString> &drpLst, std::list<
             0,
             objDrp.size());
         progress->setWindowTitle(qApp->translate("toExtract", "Creating migration script"));
-        label = new QLabel(progress);
-        progress->setLabel(label);
     }
     initialize();
 
@@ -627,7 +620,7 @@ void toExtract::migrate(QTextStream &ret, std::list<QString> &drpLst, std::list<
             if (progress)
             {
                 progress->setValue(num);
-                label->setText(t);
+                progress->setLabelText(t);
                 qApp->processEvents();
                 if (progress->wasCanceled())
                     throw qApp->translate("toExtract", "Creating drop script was canceled");
