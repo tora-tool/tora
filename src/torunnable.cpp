@@ -48,7 +48,6 @@ void toRunnableDeleter::customEvent(QEvent *event) {
         if(t) {
             t->exit();
             t->wait();
-            printf("delete thread\n");
             delete t;
         }
     }
