@@ -52,8 +52,6 @@ Minor Issues that would be nice to fix before release
 
 [Nathan] Proper encoding of author names in about dialog.
 
-Would be nice to be able to specify/store a default schema with the db
-connection. 
 
 Drag and drop/doubleclick in filter dialog for schema browser no longer works.
 
@@ -68,7 +66,10 @@ Enhancements
 [needs work] Would love it if the Schema Browser/connection would remember the
 last schema that was being browsed. In our environment, the user you connect
 as never owns any objects, so if I connect as 'swconf', I'll almost always 
-be browing 'swconf_owner' schema.
+be browing 'swconf_owner' schema. - This has some overlap with the next suggestion.
+
+Would be nice to be able to specify/store a default schema with the db
+connection. 
 
 
 Resolved Issues
