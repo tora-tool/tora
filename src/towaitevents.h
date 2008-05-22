@@ -52,11 +52,14 @@ class toTreeWidget;
 class toNoBlockQuery;
 class toPieChart;
 class toResultBar;
+class QSplitter;
+
 
 class toWaitEvents : public QWidget
 {
     Q_OBJECT;
 
+    QSplitter * splitter;
     toResultBar *Delta;
     toResultBar *DeltaTimes;
     toPieChart *AbsolutePie;
@@ -86,6 +89,7 @@ class toWaitEvents : public QWidget
 public:
     toWaitEvents(QWidget *parent, const char *name);
     toWaitEvents(int session, QWidget *parent, const char *name);
+    ~toWaitEvents();
 
     void setSession(int session);
 

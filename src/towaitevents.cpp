@@ -53,7 +53,7 @@
 #include <qpainter.h>
 #include <qsplitter.h>
 #include <qtoolbar.h>
-
+#include <QSettings>
 #include <QString>
 #include <QGridLayout>
 #include <QFrame>
@@ -118,6 +118,14 @@ toWaitEvents::toWaitEvents(int session, QWidget *parent, const char *name)
     setup(session);
 }
 
+toWaitEvents::~toWaitEvents()
+{
+    QSettings s;
+    s.beginGroup("toWaitEvents");
+    s.setValue("splitter", splitter->saveState());
+    s.endGroup();
+}
+
 void toWaitEvents::setup(int session)
 {
     Session = session;
@@ -145,7 +153,7 @@ void toWaitEvents::setup(int session)
     stretch->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                        QSizePolicy::Minimum));
 
-    QSplitter *splitter = new QSplitter(Qt::Horizontal, this);
+    splitter = new QSplitter(Qt::Horizontal, this);
     vbox->addWidget(splitter);
 
     Types = new toTreeWidget(splitter);
@@ -179,7 +187,7 @@ void toWaitEvents::setup(int session)
     Delta->setYPostfix(" " + tr("ms/s"));
     Delta->setYPostfix(" " + tr("ms/s"));
     Delta->setSQLName(QString::fromLatin1("toTuning:WaitEvents"));
-    layout->addWidget(Delta, 0, 0, 0, 1);
+    layout->addWidget(Delta, 0, 0, 1, 0);
 
     DeltaTimes = new toResultBar(frame);
     DeltaTimes->setTitle(tr("System wait events count"));
@@ -189,7 +197,7 @@ void toWaitEvents::setup(int session)
     DeltaTimes->hide();
     DeltaTimes->setYPostfix(" " + tr("waits/s"));
     DeltaTimes->setSQLName(QString::fromLatin1("toTuning:WaitEventsCount"));
-    layout->addWidget(DeltaTimes, 0, 0, 0, 1);
+    layout->addWidget(DeltaTimes, 0, 0, 1, 0);
 
     connect(Types, SIGNAL(selectionChanged()), this, SLOT(changeSelection()));
     DeltaPie = new toPieChart(frame);
@@ -209,10 +217,23 @@ void toWaitEvents::setup(int session)
     }
     TOCATCH
 
-    QList<int> siz;
-    siz << 1 << 2;
-    splitter->setSizes(siz);
+    QSettings s;
+    s.beginGroup("toWaitEvents");
+    QByteArray ba = s.value("splitter", QByteArray()).toByteArray();
+    s.endGroup();
+    if (ba.isNull())
+    {
+        // first run
+        QList<int> siz;
+        siz << 1 << 2;
+        splitter->setSizes(siz);
+    }
+    else
+        splitter->restoreState(ba);
+
     LastTime = 0;
+    
+
 
     First = true;
     ShowTimes = false;
