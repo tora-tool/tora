@@ -13,6 +13,8 @@ etc. etc.
 
 Drag and drop in schema browser to copy table cells.
 
+DB Export doesn't work... Not as concerned about the compare part.
+
 Double click in schema browser causes it to interpret as 'changed' even
 if no changes are made.
 [hit escape?]
