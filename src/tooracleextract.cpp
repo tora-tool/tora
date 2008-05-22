@@ -1082,18 +1082,18 @@ QString toOracleExtract::createTableText(toExtract &ext,
         ret += QString("      USING TABLESPACE %2\n").arg(QUOTE(tablespace));
     }
     ret += ")\n";
-    if (CONNECTION.version() >= "0800" && ext.getStorage())
+    if (CONNECTION.version() >= "0800" && ext.getStorage() && ! organization.isEmpty() )
     {
         ret += "ORGANIZATION        ";
         ret += organization;
         ret += "\n";
     }
-    if (CONNECTION.version() >= "0801" && ext.getStorage())
+    if (CONNECTION.version() >= "0801" && ext.getStorage() && ! monitoring.isEmpty() )
     {
         ret += monitoring;
         ret += "\n";
     }
-    if (ext.getParallel())
+    if (ext.getParallel() && ! degree.isEmpty() && ! instances.isEmpty() )
         ret += QString("PARALLEL\n"
                        "(\n"
                        "  DEGREE            %1\n"
@@ -2608,9 +2608,13 @@ QString toOracleExtract::segmentAttributes(toExtract &ext, toQList &result) cons
     QString ret;
     if (ext.getStorage())
     {
+#if 0
         if (result.size() != 18)
             throw qApp->translate("toOracleExtract", "Internal error, result should be 18 in segment attributes (Was %1)").
             arg(result.size());
+#endif
+        if (result.size() != 18)
+            return ret;
 
         toQList::iterator i = result.begin();
 
@@ -3014,8 +3018,12 @@ void toOracleExtract::describeAttributes(toExtract &ext,
     if (!ext.getStorage())
         return ;
 
+#if 0
     if (result.size() != 18)
         throw qApp->translate("toOracleExtract", "Internal error, result should be 18 in segment attributes");
+#endif
+    if (result.size() != 18)
+        return;
 
     toQList::iterator i = result.begin();
 
@@ -3673,11 +3681,11 @@ void toOracleExtract::describeTableText(toExtract &ext,
     QString ret;
     addDescription(lst, ctx);
     describeTableColumns(ext, lst, ctx, owner, name);
-    if (CONNECTION.version() >= "0800" && ext.getStorage())
+    if (CONNECTION.version() >= "0800" && ext.getStorage() && !organization.isEmpty() )
         addDescription(lst, ctx, "PARAMETERS", QString("ORGANIZATION %1").arg(organization));
-    if (CONNECTION.version() >= "0801" && ext.getStorage())
+    if (CONNECTION.version() >= "0801" && ext.getStorage() && ! monitoring.isEmpty()  )
         addDescription(lst, ctx, "PARAMETERS", monitoring);
-    if (ext.getParallel())
+    if (ext.getParallel() && ! degree.isEmpty() && ! instances.isEmpty() )
     {
         addDescription(lst, ctx, "PARALLEL", QString("DEGREE %1").arg(degree));
         addDescription(lst, ctx, "PARALLEL", QString("INSTANCES %1").arg(instances));
@@ -3957,7 +3965,7 @@ QString toOracleExtract::createExchangeIndex(toExtract &ext,
     }
     ret += sql;
     ret += indexColumns(ext, "", owner, segment);
-    if (ext.getParallel())
+    if (ext.getParallel() && ! degree.isEmpty() && ! instances.isEmpty() )
     {
         ret += "PARALLEL\n(\n  DEGREE            ";
         ret += degree;
@@ -4306,7 +4314,7 @@ QString toOracleExtract::createIndex(toExtract &ext,
                arg(QUOTE(domOwner)).arg(QUOTE(domName)).arg(prepareDB(domParam));
         return ret;
     }
-    if (CONNECTION.version() >= "0800" && ext.getParallel())
+    if (CONNECTION.version() >= "0800" && ext.getParallel() && ! degree.isEmpty() && ! instances.isEmpty() )
     {
         ret += QString("PARALLEL\n"
                        "(\n"
@@ -5822,7 +5830,7 @@ void toOracleExtract::describeExchangeIndex(toExtract &ext,
     describeIndexColumns(ext, lst, ctx, owner, segment);
     addDescription(lst, ctx, QString("%1%2").arg(unique).arg(bitmap));
     addDescription(lst, ctx, QString("%1%2").arg(segment).arg(table));
-    if (ext.getParallel())
+    if (ext.getParallel() && ! degree.isEmpty() && ! instances.isEmpty())
     {
         addDescription(lst, ctx, "PARALLEL", "DEGREE", degree);
         addDescription(lst, ctx, "PARALLEL", "INSTANCES", instances);
@@ -5917,7 +5925,7 @@ void toOracleExtract::describeIndex(toExtract &ext,
         addDescription(lst, ctx, "DOMAIN", QString("PARAMETERS %1").arg(domParam));
         return ;
     }
-    if (CONNECTION.version() >= "0800" && ext.getParallel())
+    if (CONNECTION.version() >= "0800" && ext.getParallel() && ! degree.isEmpty() && ! instances.isEmpty())
     {
         addDescription(lst, ctx, "PARALLEL", QString("DEGREE %1").arg(degree));
         addDescription(lst, ctx, "PARALLEL", QString("INSTANCES %1").arg(instances));
