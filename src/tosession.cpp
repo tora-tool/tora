@@ -362,6 +362,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
     layout()->addWidget(splitter);
 
     Sessions = new toSessionList(splitter);
+    Sessions->setAlternatingRowColors(true);
 
     QList<int> list;
     list.append(75);
@@ -670,6 +671,7 @@ void toSession::done(void)
     }
     Total->setText(QString("Total <B>%1</B> (Active <B>%3</B>, System <B>%2</B>)")
                    .arg(total).arg(system).arg(active));
+    Sessions->resizeColumnsToContents();
 }
 
 void toSession::enableStatistics(bool enable)
