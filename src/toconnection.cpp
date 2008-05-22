@@ -840,7 +840,8 @@ toQuery::toQuery(toConnection &conn,
     }
     catch (...)
     {
-        delete Query;
+        if(Query)
+            delete Query;
         Query = NULL;
         Connection->ConnectionPool->release(ConnectionSub);
         throw;
@@ -914,7 +915,8 @@ toQuery::toQuery(toConnection &conn,
     }
     catch (...)
     {
-        delete Query;
+        if(Query)
+            delete Query;
         Query = NULL;
         Connection->ConnectionPool->release(ConnectionSub);
         throw;
@@ -938,7 +940,8 @@ toQuery::toQuery(toConnection &conn, const toSQL &sql, const toQList &params)
     }
     catch (...)
     {
-        delete Query;
+        if(Query)
+            delete Query;
         Query = NULL;
         Connection->ConnectionPool->release(ConnectionSub);
         throw;
@@ -966,7 +969,8 @@ toQuery::toQuery(toConnection &conn,
     }
     catch (...)
     {
-        delete Query;
+        if(Query)
+            delete Query;
         Query = NULL;
         throw;
     }
@@ -989,7 +993,8 @@ toQuery::toQuery(toConnection &conn, const QString &sql, const toQList &params)
     }
     catch (...)
     {
-        delete Query;
+        if(Query)
+            delete Query;
         Query = NULL;
         Connection->ConnectionPool->release(ConnectionSub);
         throw;
@@ -1018,7 +1023,8 @@ toQuery::toQuery(toConnection &conn,
     }
     catch (...)
     {
-        delete Query;
+        if(Query)
+            delete Query;
         Query = NULL;
         Connection->ConnectionPool->release(ConnectionSub);
         throw;
@@ -1047,7 +1053,8 @@ toQuery::toQuery(toConnection &conn,
     }
     catch (...)
     {
-        delete Query;
+        if(Query)
+            delete Query;
         Query = NULL;
         Connection->ConnectionPool->release(ConnectionSub);
         throw;
@@ -1070,7 +1077,8 @@ toQuery::toQuery(toConnection &conn, queryMode mode)
     }
     catch (...)
     {
-        delete Query;
+        if(Query)
+            delete Query;
         Query = NULL;
         throw;
     }
@@ -1096,7 +1104,8 @@ void toQuery::execute(const QString &sql, const toQList &params)
 toQuery::~toQuery()
 {
     toBusy busy;
-    delete Query;
+    if(Query)
+        delete Query;
     try
     {
         if (ConnectionSub->query() == this)
