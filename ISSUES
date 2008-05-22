@@ -46,10 +46,6 @@ Oracle: error "result should be 18 in segment attributes was 2" in toExtract on 
 
 Row number in first column of schema browser for 'Data' tab - needs to resize to fit contents - right now, it truncates.
 
-Goofy "hostname" field in new connection dialog. With a mix of mysql and
-oracle, get some strange values populating the oracle hostname field. Would
-prefer something like just forcing hostname to "TNS" for Oracle TNS entries.
-
 
 Minor Issues that would be nice to fix before release
 -----------------------------------------------------
