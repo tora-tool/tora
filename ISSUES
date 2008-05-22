@@ -59,6 +59,8 @@ MySQL: Lots of "database not open" warning msgs
 
 Oracle: better handling on extents tab if no access to dba_extents view. 
 
+Stray/unecessary "save changes to editor" dialogs that don't make much sense or no modified data.
+
 
 
 Enhancements
