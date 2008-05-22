@@ -176,11 +176,29 @@ static toSQL SQLConnectionID("toQSqlConnection:ConnectionID",
                              "3.23",
                              "MySQL");
 
+static toSQL SQLConnectionIDPg("toQSqlConnection:ConnectionID",
+                               "SELECT pg_backend_pid()",
+                               "",
+                               "",
+                               "PostgreSQL");
+
 static toSQL SQLCancel("toQSqlConnection:Cancel",
                        "KILL :f1",
                        "Cancel a connection given it's connection ID",
                        "3.23",
                        "MySQL");
+
+static toSQL SQLCancelM5("toQSqlConnection:Cancel",
+                       "KILL QUERY :f1",
+                       "",
+                       "5.0",
+                       "MySQL");
+
+static toSQL SQLCancelPg("toQSqlConnection:Cancel",
+                         "SELECT pg_cancel_backend(:pid)",
+                         "",
+                         "",
+                         "PostgreSQL");
 
 
 struct toQSqlProviderAggregate
@@ -1174,10 +1192,14 @@ class qSqlQuery : public toQuery::queryImpl
                     toQList pars;
                     pars.insert(pars.end(), Connection->ConnectionID);
                     conn.execute(SQLCancel, pars);
-                    Connection->reconnect(conn);
+                    // don't reconnect. causes lots of problems, if
+                    // this doesn't work may need to emulate by adding
+                    // Canceled bool member and manually throwing
+                    // exceptions
+//                     Connection->reconnect(conn);
                 }
                 catch (...)
-                    {}
+                {}
             }
         }
 
@@ -1602,8 +1624,8 @@ class qSqlConnection : public toConnection::connectionImpl
             conn->lockDown();
             try
             {
-                QSqlQuery query = conn->Connection.exec(// toSQL::string(SQLVersion, connection())
-                                  );
+                QSqlQuery query = conn->Connection.exec(
+                    toSQL::string(SQLVersion, connection()));
                 if (query.next())
                 {
                     if (query.isValid())
@@ -1881,7 +1903,7 @@ toQSqlProvider::qSqlSub *toQSqlProvider::createConnection(toConnection &conn)
             ret->ConnectionID = query.value(0).toString();
     }
     catch (...)
-        {}
+    {}
     return ret;
 }
 
