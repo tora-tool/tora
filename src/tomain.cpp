@@ -52,6 +52,7 @@
 #include "tosearchreplace.h"
 #include "totemplate.h"
 #include "totool.h"
+#include "tomessage.h"
 
 #include <qapplication.h>
 #include <qcombobox.h>
@@ -102,6 +103,8 @@ toMain::toMain()
     // todo QWorkspace is obsolete
     Workspace = new QWorkspace(this);
     setCentralWidget(Workspace);
+
+    Message = new toMessage(this);
 
     // setup all QAction objects
     createActions();
@@ -1715,12 +1718,7 @@ void toMain::displayMessage(void)
     if (StatusMessages.size() < 1)
         return;
 
-    QDialog dialog;
-    Ui::toMessageUI uidialog;
-    uidialog.setupUi(&dialog);
-    uidialog.Message->setReadOnly(true);
-    uidialog.Message->setText(*(--StatusMessages.end()));
-    dialog.exec();
+    Message->appendText(*(--StatusMessages.end()));
 }
 
 void toMain::toolWidgetAdded(toToolWidget *tool)

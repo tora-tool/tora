@@ -78,6 +78,7 @@ tora_SOURCES=main.cpp \
 	tomain.cpp tomain.h \
 	tomarkedtext.cpp tomarkedtext.h \
 	tomemoeditor.cpp tomemoeditor.h \
+	tomessage.cpp tomessage.h \
 	tonewconnection.cpp tonewconnection.h \
 	tonoblockquery.cpp tonoblockquery.h \
 	toeventquery.cpp toeventquery.h \
@@ -292,6 +293,7 @@ BUILT_SOURCES = \
 	moc_tomainwindow.cpp \
 	moc_tomarkedtext.cpp \
 	moc_tomemoeditor.cpp \
+	moc_tomessage.cpp \
 	moc_tonewconnection.cpp \
 	moc_tooutput.cpp \
 	moc_toparamget.cpp \

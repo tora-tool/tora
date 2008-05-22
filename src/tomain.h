@@ -69,6 +69,8 @@ class toMarkedText;
 class toSearchReplace;
 class toTool;
 class toToolWidget;
+class toMessage;
+
 
 /** This class defines the main window. Observe that this class will have different baseclass
  * depending on if TOra is a Qt or KDE application. In the case of Qt this will be a
@@ -101,6 +103,11 @@ private:
      * The ID of the tool providing the SQL editor.
      */
     QString SQLEditor;
+
+    /**
+     * A reference to the error dialog.
+     */
+    toMessage * Message;
 
     /**
      * Status message storage for status bar

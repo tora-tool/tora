@@ -115,6 +115,7 @@ SET(TORA_MOC_CLASSES
 #     tomainwindow.kde.h
     tomarkedtext.h
     tomemoeditor.h
+    tomessage.h
 #     tomysqlkeywords.h
     tonewconnection.h
 #     tonoblockquery.h
@@ -241,6 +242,7 @@ SET(TORA_SOURCES
     tomainwindow.cpp
     tomarkedtext.cpp
     tomemoeditor.cpp
+    tomessage.cpp
     tonewconnection.cpp
     tonoblockquery.cpp
 #win only?    toocistub.cpp

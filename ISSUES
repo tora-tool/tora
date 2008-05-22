@@ -33,15 +33,10 @@ Walk through basic tasks and dialogs and test its functionality. (create table, 
  - Create table/create index isn't working in the Schema Browser.
  - MIGRATE extraction doesn't work (and I suppose it never did)
 
-[FIXED - is it suitable?] "Waiting..." shows up in right pane in schema browser until you click on a table name also stays up if no tables in schema.
-
 When switching in schema browser from looking at columns of a table to a schema with no tables, the column list never gets
 cleared. It stays as the column list from the original table.
 
 ">|" arrow on schema browser view just scrolls to bottom of display instead of reading all rows as it used to.
-
-Error warning dialogs are modal, and have to be closed in the right order. Ideally - would like to see the error popups
-be a single window, something in the style of the javascript error console in firefox perhaps?
 
 MySQL: numerous crashes in schema browser - running under gdb hides a lot of these unfortunately... has been stable
 
@@ -110,3 +105,10 @@ leave this in for a little bit, if it returns, I'll get you a trace]
 the selected text to be pasted at the end of the entry area as if you
 middle-clicked. Picture normal behavior of selecting it all to copy it, then
 single clicking to unselect it and move to something else... 
+
+[FIXED - is it suitable?] "Waiting..." shows up in right pane in schema browser
+until you click on a table name also stays up if no tables in schema.
+
+[RESOLVED - see toMessage class and its comments - I faced a real DoS flooding by this dialog today - Petr]
+Error warning dialogs are modal, and have to be closed in the right order. Ideally - would like to see the error popups
+be a single window, something in the style of the javascript error console in firefox perhaps?
