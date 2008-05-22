@@ -75,7 +75,7 @@ void toMessage::appendText(const QString & text)
 
     if (Message->lines() != 1)
         Message->append("\n\n");
-    Message->append(QDateTime::currentDateTime().toString(Qt::DefaultLocaleShortDate) + "\n");
+	Message->append(QDateTime::currentDateTime().toString(Qt::TextDate) + "\n");
     Message->append(text);
     Message->ensureLineVisible(Message->lines());
 }
