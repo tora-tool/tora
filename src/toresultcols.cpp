@@ -483,15 +483,15 @@ void toResultCols::query(const QString &sql, const toQList &param)
 
         if (toIsMySQL(conn))
         {
-            MySQLColumns->query(sql, param);
-            MySQLColumns->show();
-            Columns->hide();
             MySQLColumns->setSQL(SQLTableColumns);
 
             if (Owner.isEmpty())
                 MySQLColumns->changeParams(Name);
             else
                 MySQLColumns->changeParams(Owner + "." + Name);
+
+            MySQLColumns->show();
+            Columns->hide();
         }
         else
         {
