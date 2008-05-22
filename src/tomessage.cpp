@@ -60,14 +60,6 @@ toMessage::toMessage(QWidget * parent, Qt::WindowFlags f)
             SIGNAL(clicked()), Message, SLOT(clear()));
 }
 
-toMessage::~toMessage()
-{
-    QSettings s;
-    s.beginGroup("toMessage");
-    s.setValue("geometry", saveGeometry());
-    s.endGroup();
-}
-
 void toMessage::appendText(const QString & text)
 {
     if (!isVisible())
@@ -75,7 +67,16 @@ void toMessage::appendText(const QString & text)
 
     if (Message->lines() != 1)
         Message->append("\n\n");
-	Message->append(QDateTime::currentDateTime().toString(Qt::TextDate) + "\n");
+    Message->append(QDateTime::currentDateTime().toString(Qt::TextDate) + "\n");
     Message->append(text);
     Message->ensureLineVisible(Message->lines());
+}
+
+void toMessage::hideEvent(QHideEvent * event)
+{
+    QSettings s;
+    s.beginGroup("toMessage");
+    s.setValue("geometry", saveGeometry());
+    s.endGroup();
+    event->accept();
 }

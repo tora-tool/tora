@@ -64,13 +64,17 @@ class toMessage : public QDialog, public Ui::toMessageUI
 
     public:
         toMessage(QWidget * parent = 0, Qt::WindowFlags f = 0);
-        ~toMessage();
 
     public slots:
         /*! \brief Appends text to the log widget.
         The dialog is shown too when it's hidden.
         */
         void appendText(const QString & text);
+
+    protected:
+        //! Save the prefs
+        void hideEvent(QHideEvent * event);
+
 };
 
 #endif
