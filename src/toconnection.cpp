@@ -1915,16 +1915,24 @@ void toConnection::cacheObjects::run()
     try
     {
         diskloaded = Connection->loadDiskCache();
-        if (!diskloaded && !Connection->Abort)
-            Connection->ObjectNames = Connection->Connection->objectNames();
+        if (!diskloaded && !Connection->Abort) {
+            std::list<objectName> n = Connection->Connection->objectNames();
+            if(!Connection->Abort)
+                Connection->ObjectNames = n;
+        }
 
         Connection->ObjectNames.sort();
         Connection->ReadingValues.up();
 
         if (!diskloaded && !Connection->Abort)
         {
-            Connection->SynonymMap = Connection->Connection->synonymMap(Connection->ObjectNames);
-            Connection->writeDiskCache();
+            std::map<QString, objectName> m =
+                Connection->Connection->synonymMap(Connection->ObjectNames);
+            if(!Connection->Abort)
+            {
+                Connection->SynonymMap = m;
+                Connection->writeDiskCache();
+            }
         }
     }
     catch (...)
