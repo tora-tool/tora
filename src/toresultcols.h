@@ -62,7 +62,6 @@ class toResultCols : public QWidget, public toResult
     toResultColsComment *EditComment;
     QCheckBox           *Edit;
     toResultTableView   *Columns;
-    toResultTableView   *MySQLColumns;
     bool                 Header;
     QWidget             *ColumnComments; /* container for column
                                           * comment widgets */

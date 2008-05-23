@@ -415,14 +415,6 @@ toResultCols::toResultCols(QWidget *parent, const char *name, Qt::WFlags f)
     vbox->addWidget(Columns);
     connect(Columns, SIGNAL(done()), this, SLOT(done()));
 
-    MySQLColumns = new toResultTableView(true, true, this);
-    MySQLColumns->hide();
-    MySQLColumns->setDisableTab(false);
-    MySQLColumns->setReadAll(true);
-    MySQLColumns->setSQL(SQLTableColumns);
-    vbox->addWidget(MySQLColumns);
-    connect(MySQLColumns, SIGNAL(done()), this, SLOT(done()));
-
     ColumnComments = NULL;
 
     vbox->setContentsMargins(0, 0, 0, 0);
@@ -481,24 +473,17 @@ void toResultCols::query(const QString &sql, const toQList &param)
 
         TableName = conn.quote(Owner) + "." + conn.quote(Name);
 
+        Columns->setSQL(SQLTableColumns);
         if (toIsMySQL(conn))
         {
-            MySQLColumns->setSQL(SQLTableColumns);
-
             if (Owner.isEmpty())
-                MySQLColumns->changeParams(Name);
+                Columns->changeParams(Name);
             else
-                MySQLColumns->changeParams(Owner + "." + Name);
-
-            MySQLColumns->show();
-            Columns->hide();
+                Columns->changeParams(Owner + "." + Name);
         }
         else
         {
-            Columns->setSQL(SQLTableColumns);
             Columns->changeParams(Owner, Name);
-            Columns->show();
-            MySQLColumns->hide();
         }
     }
     TOCATCH;
@@ -606,12 +591,7 @@ void toResultCols::done()
     scroll->setWidget(container);
     scroll->setWidgetResizable(true);
 
-    toResultTableView *tv;
-    if (!toIsMySQL(connection()))
-        tv = Columns;
-    else
-        tv = MySQLColumns;
-    toResultTableView::iterator it(tv);
+    toResultTableView::iterator it(Columns);
 
     QGridLayout *grid = new QGridLayout;
     grid->setContentsMargins(2, 2, 2, 2);
@@ -620,8 +600,8 @@ void toResultCols::done()
     int row;
     for (row = 0; (*it).isValid(); row++, it++)
     {
-        QString column  = tv->model()->data(row, 1).toString();
-        QString comment = tv->model()->data(row, "Comment").toString();
+        QString column  = Columns->model()->data(row, 1).toString();
+        QString comment = Columns->model()->data(row, "Comment").toString();
 
         toResultColsComment *com = new toResultColsComment(container);
         com->setComment(false,
@@ -646,17 +626,6 @@ void toResultCols::editComment(bool val)
     // see my comments... i would think they were lost.
     if (EditComment->isVisible())
         Comment->setText(EditComment->text());
-
-    if (!toIsMySQL(connection()))
-    {
-        Columns->setVisible(!val);
-        MySQLColumns->setVisible(false);
-    }
-    else
-    {
-        Columns->setVisible(false);
-        MySQLColumns->setVisible(!val);
-    }
 
     if (ColumnComments)
         ColumnComments->setVisible(val);
