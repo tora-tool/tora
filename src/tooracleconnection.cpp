@@ -402,7 +402,8 @@ class oracleQuery : public toQuery::queryImpl
             {
                 Running = false;
                 delete[] buffer;
-                conn->throwExtendedException(query()->connection(), exc);
+                if(conn && query())
+                    conn->throwExtendedException(query()->connection(), exc);
             }
             catch (...)
             {
