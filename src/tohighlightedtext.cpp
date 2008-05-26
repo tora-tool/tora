@@ -58,6 +58,8 @@
 #include <qpoint.h>
 #include <QKeyEvent>
 #include <QVBoxLayout>
+#include <QFile>
+#include <QMessageBox>
 
 #include "todefaultkeywords.h"
 
@@ -326,6 +328,21 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
 {
     sqlLexer.setDefaultFont(toStringToFont(toConfigurationSingle::Instance().codeFont()));
 
+    // set default keywords for code completion
+    QFile api(":/templates/completion.api");
+    defaultCompletion.clear();
+    if (!api.open(QIODevice::ReadOnly | QIODevice::Text))
+        QMessageBox::warning(this, tr("Init error"),
+                             tr("Cannot read code completion API from %1").arg(api.fileName()));
+    else
+    {
+        while (!api.atEnd())
+        {
+            QString s(api.readLine());
+            defaultCompletion.append(s.trimmed());
+        }
+    }
+
     // set default SQL lexer (syntax colouring as well)
     setLexer (&sqlLexer);
 
@@ -373,7 +390,7 @@ void toHighlightedText::positionChanged(int row, int col)
 {
     if (col > 0 && this->text(row)[col-1] == '.')
     {
-        timer->setSingleShot(500);
+        timer->start(500);
     }
     else
     {
@@ -392,9 +409,14 @@ static QString UpperIdent(const QString &str)
 
 void toHighlightedText::autoCompleteFromAPIs()
 {
+    timer->stop(); // it's a must to prevent infinite reopening
+
     QListWidget *list = popup->list();
     QString partial;
     QStringList compleList = this->getCompletionList(&partial);
+
+    if (compleList.count() == 0)
+        return;
 
     if (compleList.count() == 1 && compleList.first() == partial)
         this->completeWithText(compleList.first());
@@ -713,94 +735,107 @@ QStringList toHighlightedText::getCompletionList(QString* partial)
 
     QString line = text(curline);
 
-    if (!isReadOnly() && curcol >= 0)
+    if (isReadOnly() || curcol == 0 || !toConfigurationSingle::Instance().codeCompletion())
+        return toReturn;
+
+    toSQLParse::editorTokenizer tokens(this, curcol, curline);
+    if (curcol > 0 && line[curcol-1] != '.')
     {
-        if (!toConfigurationSingle::Instance().codeCompletion())
-            return toReturn;
+        *partial = tokens.getToken(false);
+    }
+    else
+    {
+        *partial = "";
+    }
 
-        toSQLParse::editorTokenizer tokens(this, curcol, curline);
-        if (curcol > 0 && line[curcol-1] != '.')
+    QString name = tokens.getToken(false);
+    QString owner;
+    if (name == ".")
+    {
+        name = tokens.getToken(false);
+    }
+
+    QString token = tokens.getToken(false);
+    if (token == ".")
+        owner = tokens.getToken(false);
+    else
+    {
+        QString cmp = UpperIdent(name);
+        QString lastToken;
+        while ((invalidToken(tokens.line(), tokens.offset() + token.length()) || UpperIdent(token) != cmp || lastToken == ".") && token != ";" && !token.isEmpty())
         {
-            *partial = tokens.getToken(false);
+            lastToken = token;
+            token = tokens.getToken(false);
         }
-        else
-        {
-            *partial = "";
-        }
 
-        QString name = tokens.getToken(false);
-        QString owner;
-        if (name == ".")
+        if (token == ";" || token.isEmpty())
         {
-            name = tokens.getToken(false);
-        }
-
-        QString token = tokens.getToken(false);
-        if (token == ".")
-            owner = tokens.getToken(false);
-        else
-        {
-            QString cmp = UpperIdent(name);
-            QString lastToken;
-            while ((invalidToken(tokens.line(), tokens.offset() + token.length()) || UpperIdent(token) != cmp || lastToken == ".") && token != ";" && !token.isEmpty())
-            {
-                lastToken = token;
-                token = tokens.getToken(false);
-            }
-
-            if (token == ";" || token.isEmpty())
-            {
-                tokens.setLine(curline);
-                tokens.setOffset(curcol);
+            tokens.setLine(curline);
+            tokens.setOffset(curcol);
+            token = tokens.getToken();
+            while ((invalidToken(tokens.line(), tokens.offset()) || UpperIdent(token) != cmp && lastToken != ".") && token != ";" && !token.isEmpty())
                 token = tokens.getToken();
-                while ((invalidToken(tokens.line(), tokens.offset()) || UpperIdent(token) != cmp && lastToken != ".") && token != ";" && !token.isEmpty())
-                    token = tokens.getToken();
-                lastToken = token;
-                tokens.getToken(false);
-            }
-            if (token != ";" && !token.isEmpty())
+            lastToken = token;
+            tokens.getToken(false);
+        }
+        if (token != ";" && !token.isEmpty())
+        {
+            token = tokens.getToken(false);
+            if (token != "TABLE" && token != "UPDATE" && token != "FROM" && token != "INTO" && (toIsIdent(token[0]) || token[0] == '\"'))
             {
+                name = token;
                 token = tokens.getToken(false);
-                if (token != "TABLE" && token != "UPDATE" && token != "FROM" && token != "INTO" && (toIsIdent(token[0]) || token[0] == '\"'))
-                {
-                    name = token;
-                    token = tokens.getToken(false);
-                    if (token == ".")
-                        owner = tokens.getToken(false);
-                }
-                else if (token == ")")
-                {
-                    return toReturn;
-                }
+                if (token == ".")
+                    owner = tokens.getToken(false);
             }
-        }
-        if (!owner.isEmpty())
-        {
-            name = owner + QString::fromLatin1(".") + name;
-        }
-        if (!name.isEmpty())
-        {
-            try
-            {
-                toConnection &conn = toCurrentConnection(this);
-                toQDescList &desc = conn.columns(conn.realName(name, false));
-                for (toQDescList::iterator i = desc.begin();i != desc.end();i++)
-                {
-                    QString t;
-                    int ind = (*i).Name.indexOf("(");
-                    if (ind < 0)
-                        ind = (*i).Name.indexOf("RETURNING") - 1; //it could be a function or procedure without parameters. -1 to remove the space
-                    if (ind >= 0)
-                        t = conn.quote((*i).Name.mid(0, ind)) + (*i).Name.mid(ind);
-                    else
-                        t = conn.quote((*i).Name);
-                    if (t.indexOf(*partial) == 0)
-                        toReturn.append(t);
-                }
-            }
-            catch (...){}
+            else if (token == ")")
+                return toReturn;
         }
     }
+    if (!owner.isEmpty())
+    {
+        name = owner + QString::fromLatin1(".") + name;
+    }
+    if (!name.isEmpty())
+    {
+        try
+        {
+            toConnection &conn = toCurrentConnection(this);
+            toQDescList &desc = conn.columns(conn.realName(name, false));
+            for (toQDescList::iterator i = desc.begin();i != desc.end();i++)
+            {
+                QString t;
+                int ind = (*i).Name.indexOf("(");
+                if (ind < 0)
+                    ind = (*i).Name.indexOf("RETURNING") - 1; //it could be a function or procedure without parameters. -1 to remove the space
+                if (ind >= 0)
+                    t = conn.quote((*i).Name.mid(0, ind)) + (*i).Name.mid(ind);
+                else
+                    t = conn.quote((*i).Name);
+                if (t.indexOf(*partial) == 0)
+                    toReturn.append(t);
+            }
+        }
+        catch (...){}
+    }
+    // if is toReturn empty fill it with keywords...
+    if (toReturn.count() == 0)
+    {
+//         QFile api(":/templates/completion.api");
+//         api.open(QIODevice::ReadOnly | QIODevice::Text);
+//         while (!api.atEnd())
+//         {
+//             QString s(api.readLine());
+//             if (s.startsWith(*partial, Qt::CaseInsensitive))
+//                 toReturn.append(s.trimmed());
+//         }
+        for (int i = 0; i < defaultCompletion.size(); ++i)
+        {
+            if (defaultCompletion.at(i).startsWith(*partial, Qt::CaseInsensitive))
+                toReturn.append(defaultCompletion.at(i));
+        }
+    }
+
     toReturn.sort();
     return toReturn;
 }

@@ -132,5 +132,7 @@
     <file>templates/log4plsql.tpl</file>
     <file>templates/sqlfunctions.tpl</file>
 
+    <file>templates/completion.api</file>
+
   </qresource>
 </RCC>

@@ -226,6 +226,13 @@ private:
     std::map<int, QString> Errors;
     QsciAPIs* complAPI;
     QTimer* timer;
+
+    /*! List of default keywords/functions/whatever to use in
+    the code completion when the SQL parser doesn't find any
+    table/view structure to use.
+    See getCompletionList() */
+    QStringList defaultCompletion;
+
 protected:
     int debugMarker;
     int errorMarker;
@@ -344,7 +351,16 @@ public:
     void updateSyntaxColor(toSyntaxAnalyzer::infoType t);
 
 protected:
+    /*! \brief Guess what should be used for code completion
+    in this time.
+    When SQL parser can decide the editor is in FOO.bar state
+    it will suggest "bar" related columns etc.
+    When SQL parser couldn't find any suggestion it will list
+    keywords/functions from templates/completion.api list.
+    \param partial a QString reference with starting char sequence
+    */
     QStringList getCompletionList(QString* partial);
+
     void completeWithText(QString itemText);
 
 private:
