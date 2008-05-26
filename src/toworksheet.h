@@ -125,9 +125,13 @@ class toWorksheet : public toToolWidget
 
     enum execType
     {
+        //! Display results in result tab
         Normal,
+        //! Don't display results, just send statements to the DB
         Direct,
+        //! Don't run query, just parse it. (Check syntax etc.)
         Parse,
+        //! Call explain plan
         OnlyPlan
     };
 

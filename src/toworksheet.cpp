@@ -820,8 +820,6 @@ bool toWorksheet::describe(const QString &query)
         if (part[0].toUpper() == QString("DESC") ||
                 part[0].toUpper() == QString("DESCRIBE"))
         {
-            unhideResults();
-
             if (toIsOracle(connection()))
             {
                 if (part.count() == 2)
@@ -891,6 +889,8 @@ void toWorksheet::query(const QString &str, execType type)
     if (chk.startsWith(QString::fromLatin1("create trigger ")))
         nobinds = true;
 
+    unhideResults();
+
     if (type == OnlyPlan)
     {
         ResultTab->setCurrentIndex(ResultTab->indexOf(Plan));
@@ -915,10 +915,6 @@ void toWorksheet::query(const QString &str, execType type)
             toStatusMessage(t, true);
             return ;
         }
-
-        // unhide the results pane if there's something to show
-        if (first == "SELECT" || (ResultTab && ResultTab->currentIndex() != 0))
-            unhideResults();
 
         toQList param;
         if (!nobinds)
@@ -998,22 +994,26 @@ void toWorksheet::query(const QString &str, execType type)
             Started->setToolTip(tr("Duration while query has been running\n\n") + QueryString);
             stopAct->setEnabled(true);
             Result->setNumberColumn(toConfigurationSingle::Instance().wsNumber());
+            ResultTab->setCurrentIndex(0);
             try
             {
                 saveHistory();
                 Result->setSQL(QString::null);
                 Result->query(QueryString, param);
-                if (CurrentTab)
-                {
+//                 if (CurrentTab)
+//                 {
                     // todo
                     // if(CurrentTab == Visualize)
 //                         Visualize->display();
+// PV - let's open really required tab for called action
+// e.g. Plan for explainplan, Result for run statement action etc.
+// It stops to really run a statement when I expect explain plan
 //                     else
-                    if (CurrentTab == Plan)
-                        Plan->query(QueryString);
-                    else if (CurrentTab == ResourceSplitter)
-                        viewResources();
-                }
+//                     if (CurrentTab == Plan)
+//                         Plan->query(QueryString);
+//                     else if (CurrentTab == ResourceSplitter)
+//                         viewResources();
+//                 }
             }
             catch (const toConnection::exception &exc)
             {
