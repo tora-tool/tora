@@ -120,11 +120,6 @@ toMain::toMain()
 
     updateRecent();
 
-#if 0                           // todo
-    if (toConfigurationSingle::Instance().toolsLeft())
-        moveToolBar(toolsToolbar, Qt::Left);
-#endif
-
     char buffer[100];
     sprintf(buffer, DEFAULT_TITLE, TOVERSION);
     setWindowTitle(tr(buffer));

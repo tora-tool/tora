@@ -449,15 +449,6 @@ public:
         m_defaultSession = v;
     };
 
-    bool toolsLeft()
-    {
-        return m_toolsLeft;
-    };
-    void setToolsLeft(bool v)
-    {
-        m_toolsLeft = v;
-    };
-
     int defaultFormat()
     {
         return m_defaultFormat;
@@ -1191,7 +1182,6 @@ private:
     bool m_keepPlans;
     bool m_restoreSession;
     QString m_defaultSession;
-    bool m_toolsLeft;
     int m_defaultFormat;
     bool m_autoIndentRo;
     bool m_indicateEmpty;

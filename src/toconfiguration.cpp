@@ -64,8 +64,6 @@ toConfiguration::toConfiguration()
     m_sqlFile = s.value(CONF_SQL_FILE, DEFAULT_SQL_FILE).toString();
     m_statusMessage = s.value(CONF_STATUS_MESSAGE, DEFAULT_STATUS_MESSAGE).toInt();
 
-// #define CONF_DOCK_TOOLBAR "DockToolbar"
-
     m_dbTitle = s.value(CONF_DB_TITLE, true).toBool();
     m_sizeUnit = s.value(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT).toString();
     m_helpPath = s.value(CONF_HELP_PATH, TORA_HELP_DIR + QString("/toc.html")).toString();
@@ -93,7 +91,6 @@ toConfiguration::toConfiguration()
     m_keepPlans = s.value(CONF_KEEP_PLANS, false).toBool();
     m_restoreSession = s.value(CONF_RESTORE_SESSION, false).toBool();
     m_defaultSession = s.value(CONF_DEFAULT_SESSION, DEFAULT_SESSION).toString();
-    m_toolsLeft = s.value(CONF_TOOLS_LEFT, false).toBool();
     // FIXME!
     m_defaultFormat = s.value(CONF_DEFAULT_FORMAT, "").toInt();
     m_autoIndentRo = s.value(CONF_AUTO_INDENT_RO, true).toBool();
@@ -290,7 +287,6 @@ void toConfiguration::saveConfig()
     s.setValue(CONF_KEEP_PLANS, m_keepPlans);
     s.setValue(CONF_RESTORE_SESSION, m_restoreSession);
     s.setValue(CONF_DEFAULT_SESSION, m_defaultSession);
-    s.setValue(CONF_TOOLS_LEFT, m_toolsLeft);
     s.setValue(CONF_DEFAULT_FORMAT, m_defaultFormat);
     s.setValue(CONF_AUTO_INDENT_RO, m_autoIndentRo);
     s.setValue(CONF_INDICATE_EMPTY, m_indicateEmpty);

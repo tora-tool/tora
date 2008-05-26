@@ -74,7 +74,6 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     setupUi(this);
 
     SavePassword->setChecked(toConfigurationSingle::Instance().savePassword());
-    ToolsLeft->setChecked(toConfigurationSingle::Instance().toolsLeft());
     toRefreshCreate(OptionGroup, TO_TOOLBAR_WIDGET_NAME, QString::null, Refresh);
     DefaultSession->setText(toConfigurationSingle::Instance().defaultSession());
     Status->setValue(toConfigurationSingle::Instance().statusMessage());
@@ -121,8 +120,6 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
             break;
         }
     }
-
-    DockToolbar->hide();
 
     if (toMonolithic())
     {
@@ -199,7 +196,6 @@ void toGlobalSetting::saveSetting(void)
     toConfigurationSingle::Instance().setConnectSize(ConnectHistory->value());
     toConfigurationSingle::Instance().setMessageStatusbar(Statusbar->isChecked());
     toConfigurationSingle::Instance().setRestoreSession(RestoreSession->isChecked());
-    toConfigurationSingle::Instance().setToolsLeft(ToolsLeft->isChecked());
     toConfigurationSingle::Instance().setDefaultFormat(DefaultFormat->currentIndex());
     toConfigurationSingle::Instance().setToadBindings(ToadBindings->isChecked());
     toConfigurationSingle::Instance().setDisplayGridlines(DisplayGrid->isChecked());
