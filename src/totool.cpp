@@ -72,10 +72,8 @@ toToolWidget::toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, to
         setObjectName(name);
     setAttribute(Qt::WA_DeleteOnClose);
 
-    QVBoxLayout *vbox = new QVBoxLayout;
-    vbox->setSpacing(0);
-    vbox->setContentsMargins(0, 0, 0, 0);
-    setLayout(vbox);
+    layout()->setSpacing(0);
+    layout()->setContentsMargins(0, 0, 0, 0);
 
     Timer = NULL;
 
