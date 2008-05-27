@@ -67,7 +67,8 @@
 #include <QToolBar>
 #include <qtoolbutton.h>
 #include <qtooltip.h>
-#include <qworkspace.h>
+#include <QMdiArea>
+#include <QMdiSubWindow>
 
 #include <qstyle.h>
 #include <QPixmap>
@@ -100,8 +101,7 @@ toMain::toMain()
 
     Edit = NULL;
 
-    // todo QWorkspace is obsolete
-    Workspace = new QWorkspace(this);
+    Workspace = new QMdiArea(this);
     setCentralWidget(Workspace);
 
     Message = new toMessage(this);
@@ -155,9 +155,9 @@ toMain::toMain()
 
     connect(&Poll, SIGNAL(timeout()), this, SLOT(checkCaching()));
     connect(toMainWidget()->workspace(),
-            SIGNAL(windowActivated(QWidget *)),
+            SIGNAL(subWindowActivated(QMdiSubWindow *)),
             this,
-            SLOT(windowActivated(QWidget *)));
+            SLOT(windowActivated(QMdiSubWindow *)));
     connect(this,
             SIGNAL(messageRequested(const QString &, bool, bool)),
             this,
@@ -622,7 +622,7 @@ void toMain::createToolMenus()
 }
 
 
-void toMain::windowActivated(QWidget *widget)
+void toMain::windowActivated(QMdiSubWindow *widget)
 {
     if (!toConfigurationSingle::Instance().changeConnection())
         return ;
@@ -756,11 +756,11 @@ void toMain::updateWindowsMenu(void)
     // windowsMenu actions and adding/removing each.
     windowsMenu->clear();
 
-    QWidget *active = workspace()->activeWindow();
-    windowCloseAct->setEnabled(active != NULL);
-    windowCloseAllAct->setEnabled(active != NULL);
-    cascadeAct->setEnabled(active != NULL);
-    tileAct->setEnabled(active != NULL);
+    QWidget *active = workspace()->activeSubWindow();
+    windowCloseAct->setEnabled(active != 0);
+    windowCloseAllAct->setEnabled(active != 0);
+    cascadeAct->setEnabled(active != 0);
+    tileAct->setEnabled(active != 0);
 
     windowsMenu->addAction(windowCloseAct);
     windowsMenu->addAction(windowCloseAllAct);
@@ -770,9 +770,9 @@ void toMain::updateWindowsMenu(void)
     windowsMenu->addSeparator();
 
     int index = 0;
-    QWidgetList list = workspace()->windowList();
+    QList<QMdiSubWindow *> list = workspace()->subWindowList();
 
-    for (QWidgetList::iterator it = list.begin(); it != list.end(); it++, index++)
+    for (QList<QMdiSubWindow *>::iterator it = list.begin(); it != list.end(); it++, index++)
     {
         if (!(*it)->isHidden())
         {
@@ -803,20 +803,21 @@ void toMain::windowCallback(QAction *action)
 
     if (action == windowCloseAllAct)
     {
-        while (workspace()->windowList(QWorkspace::CreationOrder).count() > 0 &&
-                workspace()->windowList(QWorkspace::CreationOrder).at(0))
-            if (workspace()->windowList(QWorkspace::CreationOrder).at(0) &&
-                    !workspace()->windowList(QWorkspace::CreationOrder).at(0)->close())
+        while (workspace()->subWindowList().count() > 0 &&
+               workspace()->subWindowList().at(0))
+            if (workspace()->subWindowList().at(0) &&
+                !workspace()->subWindowList().at(0)->close())
                 return;
     }
     else if (action == windowCloseAct)
     {
-        QWidget *widget = workspace()->activeWindow();
+        QWidget *widget = workspace()->activeSubWindow();
         if (widget)
             widget->close();
     }
     else
-        workspace()->setActiveWindow(action->parentWidget());
+        // FIXME: check (QMdiSubWindow*) potential bullshit
+        workspace()->setActiveSubWindow((QMdiSubWindow*)action->parentWidget());
 }
 
 
@@ -955,9 +956,9 @@ void toMain::commandCallback(QAction *action)
             Search->searchNext();
     }
     else if (action == cascadeAct)
-        workspace()->cascade();
+        workspace()->cascadeSubWindows();
     else if (action == tileAct)
-        workspace()->tile();
+        workspace()->tileSubWindows();
     else if (action == helpCurrentAct)
         toHelp::displayHelp();
     else if (action == helpContentsAct)
@@ -1339,8 +1340,8 @@ void toMain::closeEvent(QCloseEvent *event)
         }
     }
 
-    Workspace->closeAllWindows();
-    if (Workspace->activeWindow() != NULL)
+    Workspace->closeAllSubWindows();
+    if (Workspace->activeSubWindow() != 0)
     {
         event->ignore();        // stop widget refused
         return;
@@ -1515,9 +1516,9 @@ void toMain::exportData(std::map<QString, QString> &data, const QString &prefix)
         }
 
         id = 1;
-        for (int i = 0;i < workspace()->windowList(QWorkspace::CreationOrder).count();i++)
+        for (int i = 0;i < workspace()->subWindowList().count();i++)
         {
-            toToolWidget *tool = dynamic_cast<toToolWidget *>(workspace()->windowList(QWorkspace::CreationOrder).at(i));
+            toToolWidget *tool = dynamic_cast<toToolWidget *>(workspace()->subWindowList().at(i));
 
             if (tool)
             {
@@ -1681,9 +1682,9 @@ void toMain::closeSession(void)
     }
     TOCATCH
 
-    while (workspace()->windowList(QWorkspace::CreationOrder).count() > 0 && workspace()->windowList(QWorkspace::CreationOrder).at(0))
-        if (workspace()->windowList(QWorkspace::CreationOrder).at(0) &&
-                !workspace()->windowList(QWorkspace::CreationOrder).at(0)->close())
+    while (workspace()->subWindowList().count() > 0 && workspace()->subWindowList().at(0))
+        if (workspace()->subWindowList().at(0) &&
+                !workspace()->subWindowList().at(0)->close())
             return ;
 
     while (Connections.end() != Connections.begin())

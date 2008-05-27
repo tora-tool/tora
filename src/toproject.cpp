@@ -51,7 +51,7 @@
 #include <qtimer.h>
 #include <qtoolbar.h>
 
-#include <qworkspace.h>
+#include <QMdiArea>
 #include <QString>
 #include <QPixmap>
 #include <QVBoxLayout>

@@ -63,7 +63,7 @@ public:
 
 public slots:
     virtual void refresh(void);
-    virtual void windowActivated(QWidget *widget);
+    virtual void windowActivated(QMdiSubWindow *widget);
     virtual void changeItem(toTreeWidgetItem *item);
 };
 

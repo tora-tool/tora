@@ -64,8 +64,7 @@
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qtooltip.h>
-#include <qworkspace.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QTabWidget>
 #include <QList>
@@ -251,7 +250,7 @@ static toSQL SQLSessionsPg(
     "PostgreSQL");
 
 toSession::toSession(QWidget *main, toConnection &connection)
-        : toToolWidget(SessionTool, "session.html", main, connection)
+        : toToolWidget(SessionTool, "session.html", main, connection, "toSession")
 {
     QToolBar *toolbar = toAllocBar(this, tr("Session manager"));
     layout()->addWidget(toolbar);
@@ -464,8 +463,8 @@ toSession::toSession(QWidget *main, toConnection &connection)
     CurrentTab = CurrentStatement;
 
     ToolMenu = NULL;
-    connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),
-            this, SLOT(windowActivated(QWidget *)));
+    connect(toMainWidget()->workspace(), SIGNAL(subWindowActivated(QMdiSubWindow *)),
+            this, SLOT(windowActivated(QMdiSubWindow *)));
     refresh();
 
     setFocusProxy(Sessions);
@@ -574,7 +573,7 @@ void toSessionList::sessionFilter::updateList(toResultLong *lst)
     }
 }
 
-void toSession::windowActivated(QWidget *widget)
+void toSession::windowActivated(QMdiSubWindow *widget)
 {
     if (widget == this)
     {

@@ -53,7 +53,7 @@
 #include <qsplitter.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QPixmap>
 #include <QProgressDialog>
@@ -108,7 +108,7 @@ static toInvalidTool InvalidTool;
 
 
 toInvalid::toInvalid(QWidget *main, toConnection &connection)
-        : toToolWidget(InvalidTool, "invalid.html", main, connection)
+        : toToolWidget(InvalidTool, "invalid.html", main, connection, "toInvalid")
 {
 
     QToolBar *toolbar = toAllocBar(this, tr("Invalid Objects"));

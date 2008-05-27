@@ -94,7 +94,7 @@ public slots:
     virtual void refresh(void);
     virtual void disable(bool);
     void changeRefresh(const QString &str);
-    void windowActivated(QWidget *widget);
+    void windowActivated(QMdiSubWindow *widget);
     void toggleMenu();
 };
 

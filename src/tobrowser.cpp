@@ -80,7 +80,8 @@
 #include <qtoolbutton.h>
 #include <qtooltip.h>
 #include <QList>
-#include <qworkspace.h>
+#include <QMdiArea>
+#include <QMdiSubWindow>
 
 #include <QPixmap>
 #include <QString>
@@ -1318,9 +1319,8 @@ void toBrowser::setNewFilter(toBrowserFilter *filter)
 }
 
 toBrowser::toBrowser(QWidget *parent, toConnection &connection)
-        : toToolWidget(BrowserTool, "browser.html", parent, connection)
+        : toToolWidget(BrowserTool, "browser.html", parent, connection, "toBrowser")
 {
-
     SecondTab  = NULL;
     SecondText = QString::null;
 
@@ -1981,9 +1981,9 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     ToolMenu = NULL;
     connect(toMainWidget()->workspace(),
-            SIGNAL(windowActivated(QWidget *)),
+            SIGNAL(subWindowActivated(QMdiSubWindow *)),
             this,
-            SLOT(windowActivated(QWidget *)));
+            SLOT(windowActivated(QMdiSubWindow *)));
 
     connect(TopTab,
             SIGNAL(currentTabChanged(QWidget *)),
@@ -1995,7 +1995,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     setNewFilter(NULL);
 }
 
-void toBrowser::windowActivated(QWidget *widget)
+void toBrowser::windowActivated(QMdiSubWindow *widget)
 {
     if (widget == this)
     {
@@ -2229,7 +2229,7 @@ void toBrowser::changeSecondTab(QWidget *tab)
 
 void toBrowser::changeTab(QWidget *tab)
 {
-    if (tab && this == toMainWidget()->workspace()->activeWindow())
+    if (tab && this == toMainWidget()->workspace()->activeSubWindow())
     {
         toResultTableView *newtab = Map[tab->objectName()];
 

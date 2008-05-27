@@ -68,7 +68,7 @@ public:
 
 public slots:
     void refresh(void);
-    void windowActivated(QWidget *widget);
+    void windowActivated(QMdiSubWindow *widget);
 };
 
 #endif

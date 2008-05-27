@@ -112,7 +112,7 @@ static toSQL SQLResourceLimit("toCurrent:ResourceLimit",
                               "List resource limits");
 
 toCurrent::toCurrent(QWidget *main, toConnection &connection)
-        : toToolWidget(CurrentTool, "current.html", main, connection)
+        : toToolWidget(CurrentTool, "current.html", main, connection, "toCurrent")
 {
     QToolBar *toolbar = toAllocBar(this, tr("Current Session"));
     layout()->addWidget(toolbar);

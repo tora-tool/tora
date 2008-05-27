@@ -151,7 +151,7 @@ public slots:
     virtual void drop(void);
     virtual void copy(void);
     virtual void displaySQL(void);
-    virtual void windowActivated(QWidget *widget);
+    virtual void windowActivated(QMdiSubWindow *widget);
 };
 
 

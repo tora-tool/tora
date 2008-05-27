@@ -64,7 +64,7 @@
 #include <QApplication>
 #include <QToolBar>
 #include <QStatusBar>
-#include <qworkspace.h>         // todo, obsolete
+#include <QMdiArea>
 #include <QKeyEvent>
 #include <QPixmap>
 #include <QBrush>

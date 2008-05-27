@@ -60,6 +60,7 @@ class toResultFilter;
 class toMySQLUser;
 class toMySQLUserAccess;
 class toResultTableView;
+class QMdiSubWindow;
 
 
 class toBrowser : public toToolWidget
@@ -130,7 +131,7 @@ public slots:
     void changeItem();
     void clearFilter(void);
     void defineFilter(void);
-    void windowActivated(QWidget *widget);
+    void windowActivated(QMdiSubWindow *widget);
     void firstDone(void);
     void focusObject(void);
 

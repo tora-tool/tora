@@ -58,7 +58,7 @@
 #include <qstring.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QString>
 #include <QFrame>
@@ -92,7 +92,7 @@ public:
         else
         {
             Window = new toSQLEdit(toMainWidget()->workspace(), connection);
-            toMainWidget()->workspace()->addWindow(Window);
+            toMainWidget()->workspace()->addSubWindow(Window);
         }
 
         Window->raise();
@@ -166,7 +166,7 @@ void toSQLEdit::updateStatements(const QString &sel)
 }
 
 toSQLEdit::toSQLEdit(QWidget *main, toConnection &connection)
-        : toToolWidget(SQLEditTool, "sqledit.html", main, connection)
+        : toToolWidget(SQLEditTool, "sqledit.html", main, connection, "toSQLEdit")
 {
 
     QToolBar *toolbar = toAllocBar(this, tr("SQL editor"));

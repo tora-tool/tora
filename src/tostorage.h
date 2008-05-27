@@ -227,7 +227,7 @@ public slots:
     void showTablespaces(bool);
     void selectionChanged(void);
     void selectObject(void);
-    void windowActivated(QWidget *widget);
+    void windowActivated(QMdiSubWindow *widget);
 };
 
 #endif

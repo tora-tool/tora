@@ -62,7 +62,7 @@
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qtooltip.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QList>
 #include <QMenu>
@@ -147,7 +147,7 @@ public:
 static toSGATraceTool SGATraceTool;
 
 toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
-        : toToolWidget(SGATraceTool, "trace.html", main, connection)
+        : toToolWidget(SGATraceTool, "trace.html", main, connection, "toSGATrace")
 {
     QToolBar *toolbar = toAllocBar(this, tr("SGA trace"));
     layout()->addWidget(toolbar);

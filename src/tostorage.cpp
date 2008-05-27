@@ -65,7 +65,7 @@
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qtooltip.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QPixmap>
 #include <QFileDialog>
@@ -832,7 +832,7 @@ std::list<QString> toStorageDialog::sql(void)
 static toStorageTool StorageTool;
 
 toStorage::toStorage(QWidget *main, toConnection &connection)
-        : toToolWidget(StorageTool, "storage.html", main, connection)
+        : toToolWidget(StorageTool, "storage.html", main, connection, "toStorage")
 {
     QToolBar *toolbar = toAllocBar(this, tr("Storage manager"));
     layout()->addWidget(toolbar);
@@ -977,8 +977,8 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     connect(Storage, SIGNAL(selectionChanged(void)), this, SLOT(selectionChanged(void)));
 
     ToolMenu = NULL;
-    connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),
-            this, SLOT(windowActivated(QWidget *)));
+    connect(toMainWidget()->workspace(), SIGNAL(subWindowActivated(QMdiSubWindow *)),
+            this, SLOT(windowActivated(QMdiSubWindow *)));
 
     refresh();
     selectionChanged();
@@ -986,7 +986,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
 }
 
 
-void toStorage::windowActivated(QWidget *widget)
+void toStorage::windowActivated(QMdiSubWindow *widget)
 {
     if (widget == this)
     {

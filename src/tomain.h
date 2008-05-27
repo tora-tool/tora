@@ -60,7 +60,7 @@ class toTreeWidget;
 class toTreeWidgetItem;
 class QToolBar;
 class QToolButton;
-class QWorkspace;
+class QMdiArea;
 class toBackgroundLabel;
 class toConnection;
 class toEditWidget;
@@ -89,7 +89,7 @@ private:
     /**
      * Workspace of main window.
      */
-    QWorkspace *Workspace;
+    QMdiArea *Workspace;
     /**
      * Handles available connections list in toolbar.
      */
@@ -252,7 +252,7 @@ public:
      * Get the workspace widget of the main window.
      * @return Workspace widget.
      */
-    QWorkspace *workspace()
+    QMdiArea *workspace()
     {
         return Workspace;
     }
@@ -475,7 +475,7 @@ public slots:
     void updateWindowsMenu();
     /** Called when active window is changed.
      */
-    void windowActivated(QWidget *);
+    void windowActivated(QMdiSubWindow *);
     /** Used to enable/disable entries in the file menu
      */
     void showFileMenu(void);

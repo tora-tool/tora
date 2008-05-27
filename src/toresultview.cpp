@@ -60,7 +60,7 @@
 #include <qprinter.h>
 #include <qregexp.h>
 #include <qstyle.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QKeyEvent>
 #include <QList>

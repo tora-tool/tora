@@ -58,7 +58,7 @@
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qvalidator.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QString>
 #include <QPixmap>
@@ -85,7 +85,7 @@ public:
         if (!Window)
         {
             Window = new toChartManager(toMainWidget()->workspace());
-            toMainWidget()->workspace()->addWindow(Window);
+            toMainWidget()->workspace()->addSubWindow(Window);
             Window->setWindowTitle(qApp->translate("toChartTool", "Chart Manager"));
             Window->setWindowIcon(QPixmap(const_cast<const char**>(chart_xpm)));
         }

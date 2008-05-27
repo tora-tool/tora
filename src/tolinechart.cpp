@@ -50,7 +50,7 @@
 #include <qprinter.h>
 #include <qspinbox.h>
 #include <qvalidator.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QString>
 #include <QPixmap>

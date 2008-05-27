@@ -57,7 +57,7 @@
 #include <qsplitter.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QPixmap>
 #include <QList>
@@ -134,7 +134,7 @@ public:
 static toTemporaryTool TemporaryTool;
 
 toTemporary::toTemporary(QWidget *main, toConnection &connection)
-        : toToolWidget(TemporaryTool, "temporary.html", main, connection)
+        : toToolWidget(TemporaryTool, "temporary.html", main, connection, "toTemporary")
 {
     QToolBar *toolbar = toAllocBar(this, tr("Temporary Objects"));
     layout()->addWidget(toolbar);
@@ -171,14 +171,14 @@ toTemporary::toTemporary(QWidget *main, toConnection &connection)
     Statement = new toSGAStatement(splitter);
 
     ToolMenu = NULL;
-    connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),
-            this, SLOT(windowActivated(QWidget *)));
+    connect(toMainWidget()->workspace(), SIGNAL(subWindowActivated(QMdiSubWindow *)),
+            this, SLOT(windowActivated(QMdiSubWindow *)));
 
     setFocusProxy(Objects);
 }
 
 
-void toTemporary::windowActivated(QWidget *widget)
+void toTemporary::windowActivated(QMdiSubWindow *widget)
 {
     if (widget == this)
     {

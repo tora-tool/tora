@@ -38,7 +38,7 @@
 #include "config.h"
 
 #include <qpainter.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QPolygon>
 

@@ -48,6 +48,7 @@
 
 #include <QPixmap>
 #include <QAction>
+#include <QMdiSubWindow>
 
 class toConnection;
 class toTimer;
@@ -350,7 +351,7 @@ public:
 /** Simple baseclass for widgets defining the main tool widget. It is in
  * no way mandatory and all it does is register the widget in the connetion.
  */
-class toToolWidget : public QWidget, public toHelpContext, public toConnectionWidget
+class toToolWidget : public QMdiSubWindow, public toHelpContext, public toConnectionWidget
 {
     Q_OBJECT
     toTimer *Timer;

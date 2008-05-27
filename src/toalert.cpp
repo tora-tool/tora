@@ -58,7 +58,7 @@
 #include <qlineedit.h>
 #include <qmenubar.h>
 #include <qtoolbutton.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QPixmap>
 
@@ -120,7 +120,8 @@ static toSQL SQLHost("toAlert:Hostname",
                      "Get hostname of current connection");
 
 toAlert::toAlert(QWidget *main, toConnection &connection)
-        : toToolWidget(AlertTool, "alert.html", main, connection), Connection(connection)
+        : toToolWidget(AlertTool, "alert.html", main, connection, "toAlert")
+        , Connection(connection)
 {
     QToolBar *toolbar = toAllocBar(this, tr("Alert Messenger"));
     layout()->addWidget(toolbar);
@@ -208,8 +209,8 @@ toAlert::toAlert(QWidget *main, toConnection &connection)
     layout()->addWidget(Alerts);
 
     ToolMenu = NULL;
-    connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),
-            this, SLOT(windowActivated(QWidget *)));
+    connect(toMainWidget()->workspace(), SIGNAL(subWindowActivated(QMdiSubWindow *)),
+            this, SLOT(windowActivated(QMdiSubWindow *)));
 
     State = Started;
     try
@@ -226,7 +227,7 @@ toAlert::toAlert(QWidget *main, toConnection &connection)
     setFocusProxy(Message);
 }
 
-void toAlert::windowActivated(QWidget *widget)
+void toAlert::windowActivated(QMdiSubWindow *widget)
 {
     if (widget == this)
     {

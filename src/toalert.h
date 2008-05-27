@@ -118,7 +118,7 @@ public slots:
     virtual void changeMessage(int, int, const QString &str);
     virtual void add(void);
     virtual void remove(void);
-    virtual void windowActivated(QWidget *widget);
+    virtual void windowActivated(QMdiSubWindow *widget);
 };
 
 #endif

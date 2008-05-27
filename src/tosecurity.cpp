@@ -62,7 +62,7 @@
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qvalidator.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QPixmap>
 #include <QVBoxLayout>
@@ -1514,7 +1514,7 @@ void toSecurityRoleGrant::changeUser(bool user, const QString &username)
 }
 
 toSecurity::toSecurity(QWidget *main, toConnection &connection)
-        : toToolWidget(SecurityTool, "security.html", main, connection)
+        : toToolWidget(SecurityTool, "security.html", main, connection, "toSecurity")
 {
     toBusy busy;
 
@@ -1597,15 +1597,15 @@ toSecurity::toSecurity(QWidget *main, toConnection &connection)
     connect(UserList, SIGNAL(selectionChanged(toTreeWidgetItem *)),
             this, SLOT(changeUser(toTreeWidgetItem *)));
     ToolMenu = NULL;
-    connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),
-            this, SLOT(windowActivated(QWidget *)));
+    connect(toMainWidget()->workspace(), SIGNAL(subWindowActivated(QMdiSubWindow *)),
+            this, SLOT(windowActivated(QMdiSubWindow *)));
     refresh();
     connect(this, SIGNAL(connectionChange()),
             this, SLOT(refresh()));
     setFocusProxy(Tabs);
 }
 
-void toSecurity::windowActivated(QWidget *widget)
+void toSecurity::windowActivated(QMdiSubWindow *widget)
 {
     if (widget == this)
     {

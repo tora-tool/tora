@@ -281,7 +281,7 @@ public slots:
     {
         continueExecution(TO_BREAK_ANY_RETURN);
     }
-    void windowActivated(QWidget *w);
+    void windowActivated(QMdiSubWindow *w);
     void selectedWatch(void);
     void deleteWatch(void);
     void clearLog(void);

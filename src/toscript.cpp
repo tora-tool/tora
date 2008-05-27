@@ -207,7 +207,7 @@ static toScriptTool ScriptTool;
 
 
 toScript::toScript(QWidget *parent, toConnection &connection)
-        : toToolWidget(ScriptTool, "script.html", parent, connection)
+        : toToolWidget(ScriptTool, "script.html", parent, connection, "toScript")
 {
     QToolBar *toolbar = toAllocBar(this, tr("Extraction and Compare"));
     layout()->addWidget(toolbar);

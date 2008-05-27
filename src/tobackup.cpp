@@ -50,7 +50,7 @@
 #include <qtabwidget.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QPixmap>
 #include <QVBoxLayout>
@@ -314,7 +314,8 @@ static toSQL SQLCurrentBackup7("toBackup:CurrentBackup",
                                "0703");
 
 toBackup::toBackup(toTool* tool, QWidget *main, toConnection &connection)
-        : toToolWidget(*tool, "backup.html", main, connection) , tool_(tool)
+        : toToolWidget(*tool, "backup.html", main, connection, "toBackup")
+        , tool_(tool)
 {
     QToolBar *toolbar = toAllocBar(this, tr("Backup Manager"));
     layout()->addWidget(toolbar);
@@ -366,15 +367,15 @@ toBackup::toBackup(toTool* tool, QWidget *main, toConnection &connection)
     Tabs->addTab(CurrentBackup, tr("Backup Progress"));
 
     ToolMenu = NULL;
-    connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),
-            this, SLOT(windowActivated(QWidget *)));
+    connect(toMainWidget()->workspace(), SIGNAL(subWindowActivated(QMdiSubWindow *)),
+            this, SLOT(windowActivated(QMdiSubWindow *)));
 
     refresh();
 
     setFocusProxy(Tabs);
 }
 
-void toBackup::windowActivated(QWidget *widget)
+void toBackup::windowActivated(QMdiSubWindow *widget)
 {
     if (widget == this)
     {

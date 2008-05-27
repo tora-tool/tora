@@ -69,7 +69,7 @@
 #include <QString>
 #include <QMenu>
 #include <QAction>
-#include <QWorkspace>
+#include <QMdiArea>
 #include <QMessageBox>
 #include <QButtonGroup>
 
@@ -1747,7 +1747,7 @@ void toDebug::stop(void)
 }
 
 toDebug::toDebug(QWidget *main, toConnection &connection)
-        : toToolWidget(DebugTool, "debugger.html", main, connection),
+        : toToolWidget(DebugTool, "debugger.html", main, connection, "toDebug"),
         TargetThread()
 {
 
@@ -1917,8 +1917,8 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
     newSheet();
 
     ToolMenu = NULL;
-    connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),
-            this, SLOT(windowActivated(QWidget *)));
+    connect(toMainWidget()->workspace(), SIGNAL(subWindowActivated(QMdiSubWindow *)),
+            this, SLOT(windowActivated(QMdiSubWindow *)));
 
     refresh();
     connect(&StartTimer, SIGNAL(timeout(void)), this, SLOT(startTarget(void)));
@@ -2630,7 +2630,7 @@ void toDebug::addWatch(void)
     }
 }
 
-void toDebug::windowActivated(QWidget *widget)
+void toDebug::windowActivated(QMdiSubWindow *widget)
 {
     if (widget == this)
     {

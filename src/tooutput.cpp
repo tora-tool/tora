@@ -55,7 +55,7 @@
 #include <qtimer.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QPixmap>
 #include <QGroupBox>
@@ -201,7 +201,7 @@ public:
 static toOutputTool OutputTool;
 
 toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
-        : toToolWidget(OutputTool, "output.html", main, connection)
+        : toToolWidget(OutputTool, "output.html", main, connection, "toOutput")
 {
 
     Toolbar = toAllocBar(this, tr("SQL Output"));
@@ -258,9 +258,9 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
 
     ToolMenu = NULL;
     connect(toMainWidget()->workspace(),
-            SIGNAL(windowActivated(QWidget *)),
+            SIGNAL(subWindowActivated(QMdiSubWindow *)),
             this,
-            SLOT(windowActivated(QWidget *)));
+            SLOT(windowActivated(QMdiSubWindow *)));
 
     try
     {
@@ -276,7 +276,7 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
 }
 
 
-void toOutput::windowActivated(QWidget *widget)
+void toOutput::windowActivated(QMdiSubWindow *widget)
 {
     if (widget == this)
     {

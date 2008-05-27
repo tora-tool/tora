@@ -69,7 +69,7 @@
 #include <qtabwidget.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QResizeEvent>
 #include <QPixmap>
@@ -1476,7 +1476,7 @@ static toSQL SQLControlFiles("toTuning:ControlFileRecords",
                              "Control file record info");
 
 toTuning::toTuning(QWidget *main, toConnection &connection)
-        : toToolWidget(TuningTool, "tuning.html", main, connection)
+        : toToolWidget(TuningTool, "tuning.html", main, connection, "toTuning")
 {
 //     if (TuningTool.config(CONF_OVERVIEW, "Undefined") == "Undefined")
     if (toConfigurationSingle::Instance().tuningFirstRun())
@@ -1734,8 +1734,8 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
 
     connect(Tabs, SIGNAL(currentChanged(int)), this, SLOT(changeTab(int)));
     ToolMenu = NULL;
-    connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),
-            this, SLOT(windowActivated(QWidget *)));
+    connect(toMainWidget()->workspace(), SIGNAL(subWindowActivated(QMdiSubWindow *)),
+            this, SLOT(windowActivated(QMdiSubWindow *)));
 
 //     std::list<QString> tabs = TabList();
 //     for (std::list<QString>::iterator i = tabs.begin();i != tabs.end();i++)
@@ -1875,7 +1875,7 @@ void toTuning::changeTab(int index)
     refresh();
 }
 
-void toTuning::windowActivated(QWidget *widget)
+void toTuning::windowActivated(QMdiSubWindow *widget)
 {
     if (widget == this)
     {

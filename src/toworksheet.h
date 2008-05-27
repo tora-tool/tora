@@ -60,6 +60,7 @@
 class QComboBox;
 class QLabel;
 class QSplitter;
+class QMdiSubWindow;
 
 class toHighlightedText;
 class toListView;
@@ -209,7 +210,7 @@ public slots:
     void describe();
     void eraseLogButton();
     void changeResult(int);
-    void windowActivated(QWidget *w);
+    void windowActivated(QMdiSubWindow *w);
     void queryDone(void);
     void enableStatistic(bool);
     void explainPlan(void);

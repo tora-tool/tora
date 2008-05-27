@@ -51,7 +51,7 @@
 #include <qpainter.h>
 #include <qprinter.h>
 #include <qtooltip.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QPaintEvent>
 #include <QPixmap>

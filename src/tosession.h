@@ -193,7 +193,7 @@ public slots:
     }
     void cancelBackend(void);
     void disconnectSession(void);
-    void windowActivated(QWidget *widget);
+    void windowActivated(QMdiSubWindow *widget);
     void done(void);
     void excludeSelection(bool);
     void selectAll(void);

@@ -80,7 +80,7 @@
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qtooltip.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QList>
 #include <QKeyEvent>
@@ -538,8 +538,8 @@ void toWorksheet::setup(bool autoLoad)
     }
 
     ToolMenu = NULL;
-    connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),
-            this, SLOT(windowActivated(QWidget *)));
+    connect(toMainWidget()->workspace(), SIGNAL(subWindowActivated(QMdiSubWindow *)),
+            this, SLOT(windowActivated(QMdiSubWindow *)));
 
     try
     {
@@ -582,9 +582,8 @@ void toWorksheet::setup(bool autoLoad)
 }
 
 toWorksheet::toWorksheet(QWidget *main, toConnection &connection, bool autoLoad)
-        : toToolWidget(WorksheetTool, "worksheet.html", main, connection)
+        : toToolWidget(WorksheetTool, "worksheet.html", main, connection, "toWorksheet")
 {
-
     createActions();
     setup(autoLoad);
 }
@@ -609,7 +608,7 @@ void toWorksheet::changeRefresh(const QString &str)
     TOCATCH;
 }
 
-void toWorksheet::windowActivated(QWidget *widget)
+void toWorksheet::windowActivated(QMdiSubWindow *widget)
 {
     QWidget *w = this;
     while (w && w != widget)

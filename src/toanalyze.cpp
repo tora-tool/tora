@@ -204,7 +204,7 @@ static toSQL SQLListPlans("toAnalyze:ListPlans",
 
 
 toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
-        : toToolWidget(AnalyzeTool, "analyze.html", main, connection)
+        : toToolWidget(AnalyzeTool, "analyze.html", main, connection, "toAnalyze")
 {
 
     Tabs = new QTabWidget(this);

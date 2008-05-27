@@ -464,7 +464,7 @@ class listItem : public toResultViewItem
 };
 
 toProfiler::toProfiler(QWidget *parent, toConnection &connection)
-        : toToolWidget(ProfilerTool, "toprofiler.html", parent, connection)
+        : toToolWidget(ProfilerTool, "toprofiler.html", parent, connection, "toProfiler")
 {
     QToolBar *toolbar = toAllocBar(this, tr("PL/SQL Profiler"));
     layout()->addWidget(toolbar);

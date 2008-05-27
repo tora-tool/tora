@@ -204,7 +204,7 @@ public slots:
     virtual void refresh(void);
     virtual void changeTab(int);
     virtual void changeRefresh(const QString &str);
-    virtual void windowActivated(QWidget *widget);
+    virtual void windowActivated(QMdiSubWindow *widget);
 
     virtual void showTabMenu(void);
     virtual void enableTabMenu(QAction *);

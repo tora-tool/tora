@@ -110,7 +110,7 @@ public slots:
     void offline(void);
     void addSegment(void);
     void dropSegment(void);
-    void windowActivated(QWidget *widget);
+    void windowActivated(QMdiSubWindow *widget);
 };
 
 #endif

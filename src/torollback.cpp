@@ -74,7 +74,7 @@
 #include <qtooltip.h>
 #include <qvariant.h>
 #include <qwidget.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 
 #include <QGroupBox>
 #include <QVBoxLayout>
@@ -712,7 +712,7 @@ toSQL SQLTransactionUsers("toRollback:TransactionUsers",
                           "Get users currently having open transactions");
 
 toRollback::toRollback(QWidget *main, toConnection &connection)
-        : toToolWidget(RollbackTool, "rollback.html", main, connection)
+        : toToolWidget(RollbackTool, "rollback.html", main, connection, "toRollback")
 {
     QToolBar *toolbar = toAllocBar(this, tr("Rollback analyzer"));
     layout()->addWidget(toolbar);
@@ -800,8 +800,8 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
     TOCATCH
 
     ToolMenu = NULL;
-    connect(toMainWidget()->workspace(), SIGNAL(windowActivated(QWidget *)),
-            this, SLOT(windowActivated(QWidget *)));
+    connect(toMainWidget()->workspace(), SIGNAL(subWindowActivated(QMdiSubWindow *)),
+            this, SLOT(windowActivated(QMdiSubWindow *)));
 
     if (toConfigurationSingle::Instance().oldEnable())
         enableOldAct->setChecked(true);
@@ -813,7 +813,7 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
     setFocusProxy(Segments);
 }
 
-void toRollback::windowActivated(QWidget *widget)
+void toRollback::windowActivated(QMdiSubWindow *widget)
 {
     if (widget == this)
     {

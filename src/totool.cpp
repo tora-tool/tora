@@ -22,7 +22,7 @@
 #include <qregexp.h>
 #include <qstring.h>
 #include <qtimer.h>
-#include <qworkspace.h>
+#include <QMdiArea>
 #include <QVBoxLayout>
 
 
@@ -62,7 +62,7 @@ toConnection &toConnectionWidget::connection()
 }
 
 toToolWidget::toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, toConnection &conn, const char *name)
-        : QWidget(parent),
+    : QMdiSubWindow(parent),
         toHelpContext(ctx),
         toConnectionWidget(conn, this),
         Tool(tool)
@@ -81,9 +81,9 @@ toToolWidget::toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, to
 
     if (parent)
     {
-        QWorkspace *wspace = dynamic_cast<QWorkspace *>(parent);
+        QMdiArea *wspace = dynamic_cast<QMdiArea *>(parent);
         if (wspace)
-            wspace->addWindow(this, Qt::Window);
+            wspace->addSubWindow(this, Qt::Window);
 
         // Voodoo for making connection changing cascade to sub tools.
         try
@@ -220,7 +220,7 @@ const QPixmap *toTool::toolbarImage()
     }
     return ButtonPicture;
 }
-
+#include <QMdiSubWindow>
 void toTool::createWindow(void)
 {
     toMain *main = toMainWidget();
@@ -254,9 +254,9 @@ void toTool::createWindow(void)
             // Maximize window if only window
             {
                 bool max = true;
-                for (int i = 0;i < toMainWidget()->workspace()->windowList(QWorkspace::CreationOrder).count();i++)
+                for (int i = 0;i < toMainWidget()->workspace()->subWindowList().count();i++)
                 {
-                    QWidget *widget = toMainWidget()->workspace()->windowList(QWorkspace::CreationOrder).at(i);
+                    QWidget *widget = toMainWidget()->workspace()->subWindowList().at(i);
 
                     if (widget && widget != newWin && !widget->isHidden())
                         max = false;
