@@ -819,6 +819,8 @@ bool toWorksheet::describe(const QString &query)
         if (part[0].toUpper() == QString("DESC") ||
                 part[0].toUpper() == QString("DESCRIBE"))
         {
+            unhideResults();
+
             if (toIsOracle(connection()))
             {
                 if (part.count() == 2)
@@ -888,8 +890,6 @@ void toWorksheet::query(const QString &str, execType type)
     if (chk.startsWith(QString::fromLatin1("create trigger ")))
         nobinds = true;
 
-    unhideResults();
-
     if (type == OnlyPlan)
     {
         ResultTab->setCurrentIndex(ResultTab->indexOf(Plan));
@@ -914,6 +914,10 @@ void toWorksheet::query(const QString &str, execType type)
             toStatusMessage(t, true);
             return ;
         }
+
+        // unhide the results pane if there's something to show
+        if (first == "SELECT" || (ResultTab && ResultTab->currentIndex() != 0))
+            unhideResults();
 
         toQList param;
         if (!nobinds)
