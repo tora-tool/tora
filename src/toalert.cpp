@@ -229,7 +229,9 @@ toAlert::toAlert(QWidget *main, toConnection &connection)
 
 void toAlert::windowActivated(QMdiSubWindow *widget)
 {
-    if (widget == this)
+    if (!widget)
+        return;
+    if (widget->widget() == this)
     {
         if (!ToolMenu)
         {

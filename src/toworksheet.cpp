@@ -610,11 +610,14 @@ void toWorksheet::changeRefresh(const QString &str)
 
 void toWorksheet::windowActivated(QMdiSubWindow *widget)
 {
+    if (!widget)
+        return;
+
     QWidget *w = this;
-    while (w && w != widget)
+    while (w && w != widget->widget())
         w = w->parentWidget();
 
-    if (widget == w)
+    if (widget->widget() == w)
     {
         if (!ToolMenu)
         {
@@ -667,7 +670,7 @@ void toWorksheet::connectionChanged(void)
         explainAct->setEnabled(Plan->handled());
         delete ToolMenu;
         ToolMenu = NULL;
-        windowActivated(this);
+        windowActivated(qobject_cast<QMdiSubWindow*>(this->parent()));
     }
     TOCATCH;
 }

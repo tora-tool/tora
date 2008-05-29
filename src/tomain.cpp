@@ -621,12 +621,16 @@ void toMain::createToolMenus()
     TOCATCH;
 }
 
-
 void toMain::windowActivated(QMdiSubWindow *widget)
 {
     if (!toConfigurationSingle::Instance().changeConnection())
         return ;
-    toToolWidget *tool = dynamic_cast<toToolWidget *>(widget);
+
+    if (!widget)
+        return;
+
+    toToolWidget *tool = dynamic_cast<toToolWidget *>(widget->widget());
+
     if (tool)
     {
         try

@@ -89,7 +89,6 @@ void toChangeConnection::popupMenu(void)
     TOCATCH;
 }
 
-
 void toChangeConnection::changeConnection(QAction *act)
 {
     // the act of clicking the menu will invert the checked flag
@@ -113,7 +112,7 @@ void toChangeConnection::changeConnection(QAction *act)
                     if (tool)
                     {
                         tool->setConnection(toMainWidget()->connection(*i));
-                        toMainWidget()->windowActivated(tool);
+                        toMainWidget()->windowActivated(qobject_cast<QMdiSubWindow*>(tool->parent()));
                         toMainWidget()->changeConnection();
                         return;
                     }

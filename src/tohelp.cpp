@@ -465,7 +465,7 @@ void toHelp::changeContent(QTreeWidgetItem * item, QTreeWidgetItem *)
     connect(Help, SIGNAL(textChanged(void)),
             this, SLOT(removeSelection(void)));
 }
-#include <QtDebug>
+
 void toHelp::search(void)
 {
     if (Searching)

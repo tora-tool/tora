@@ -377,7 +377,9 @@ toBackup::toBackup(toTool* tool, QWidget *main, toConnection &connection)
 
 void toBackup::windowActivated(QMdiSubWindow *widget)
 {
-    if (widget == this)
+    if (!widget)
+        return;
+    if (widget->widget() == this)
     {
         if (!ToolMenu)
         {

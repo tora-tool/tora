@@ -1997,7 +1997,9 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
 void toBrowser::windowActivated(QMdiSubWindow *widget)
 {
-    if (widget == this)
+    if (!widget)
+        return;
+    if (widget->widget() == this)
     {
         if (!ToolMenu)
         {
@@ -2229,7 +2231,7 @@ void toBrowser::changeSecondTab(QWidget *tab)
 
 void toBrowser::changeTab(QWidget *tab)
 {
-    if (tab && this == toMainWidget()->workspace()->activeSubWindow())
+    if (tab && this == toMainWidget()->workspace()->activeSubWindow()->widget())
     {
         toResultTableView *newtab = Map[tab->objectName()];
 

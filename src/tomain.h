@@ -87,7 +87,7 @@ private:
      */
     std::list<toConnection *> Connections;
     /**
-     * Workspace of main window.
+     * Workspace of main window - MDI area.
      */
     QMdiArea *Workspace;
     /**

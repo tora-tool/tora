@@ -1877,7 +1877,9 @@ void toTuning::changeTab(int index)
 
 void toTuning::windowActivated(QMdiSubWindow *widget)
 {
-    if (widget == this)
+    if (!widget)
+        return;
+    if (widget->widget() == this)
     {
         if (!ToolMenu)
         {

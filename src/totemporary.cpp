@@ -180,7 +180,9 @@ toTemporary::toTemporary(QWidget *main, toConnection &connection)
 
 void toTemporary::windowActivated(QMdiSubWindow *widget)
 {
-    if (widget == this)
+    if (!widget)
+        return;
+    if (widget->widget() == this)
     {
         if (!ToolMenu)
         {

@@ -23,6 +23,7 @@
 #include <qstring.h>
 #include <qtimer.h>
 #include <QMdiArea>
+#include <QMdiSubWindow>
 #include <QVBoxLayout>
 
 
@@ -62,18 +63,20 @@ toConnection &toConnectionWidget::connection()
 }
 
 toToolWidget::toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, toConnection &conn, const char *name)
-    : QMdiSubWindow(parent),
+    : QWidget(parent),
         toHelpContext(ctx),
         toConnectionWidget(conn, this),
         Tool(tool)
 {
-
     if (name)
         setObjectName(name);
+    // make sure widget gets deleted
     setAttribute(Qt::WA_DeleteOnClose);
-
-    layout()->setSpacing(0);
-    layout()->setContentsMargins(0, 0, 0, 0);
+    // have to set the basic layout for widgets. It's requested later
+    QVBoxLayout *vbox = new QVBoxLayout;
+    vbox->setSpacing(0);
+    vbox->setContentsMargins(0, 0, 0, 0);
+    setLayout(vbox);
 
     Timer = NULL;
 
@@ -81,7 +84,12 @@ toToolWidget::toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, to
     {
         QMdiArea *wspace = dynamic_cast<QMdiArea *>(parent);
         if (wspace)
-            wspace->addSubWindow(this, Qt::Window);
+        {
+            QMdiSubWindow * mdi = new QMdiSubWindow(wspace);
+            mdi->setWidget(this);
+            mdi->setAttribute(Qt::WA_DeleteOnClose);
+            wspace->addSubWindow(mdi);
+        }
 
         // Voodoo for making connection changing cascade to sub tools.
         try
@@ -218,7 +226,7 @@ const QPixmap *toTool::toolbarImage()
     }
     return ButtonPicture;
 }
-#include <QMdiSubWindow>
+
 void toTool::createWindow(void)
 {
     toMain *main = toMainWidget();
@@ -231,7 +239,7 @@ void toTool::createWindow(void)
         if (newWin)
         {
             // make sure widget gets deleted
-            newWin->setAttribute(Qt::WA_DeleteOnClose);
+//             newWin->setAttribute(Qt::WA_DeleteOnClose);
 
             const QPixmap *icon = toolbarImage();
             if (icon)
@@ -254,7 +262,7 @@ void toTool::createWindow(void)
                 bool max = true;
                 for (int i = 0;i < toMainWidget()->workspace()->subWindowList().count();i++)
                 {
-                    QWidget *widget = toMainWidget()->workspace()->subWindowList().at(i);
+                    QWidget *widget = toMainWidget()->workspace()->subWindowList().at(i)->widget();
 
                     if (widget && widget != newWin && !widget->isHidden())
                         max = false;

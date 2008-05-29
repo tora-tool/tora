@@ -575,7 +575,9 @@ void toSessionList::sessionFilter::updateList(toResultLong *lst)
 
 void toSession::windowActivated(QMdiSubWindow *widget)
 {
-    if (widget == this)
+    if (!widget)
+        return;
+    if (widget->widget() == this)
     {
         if (!ToolMenu)
         {

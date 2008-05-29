@@ -2632,7 +2632,9 @@ void toDebug::addWatch(void)
 
 void toDebug::windowActivated(QMdiSubWindow *widget)
 {
-    if (widget == this)
+    if (!widget)
+        return;
+    if (widget->widget() == this)
     {
         if (!ToolMenu)
         {

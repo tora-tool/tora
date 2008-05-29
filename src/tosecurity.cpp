@@ -1607,7 +1607,9 @@ toSecurity::toSecurity(QWidget *main, toConnection &connection)
 
 void toSecurity::windowActivated(QMdiSubWindow *widget)
 {
-    if (widget == this)
+    if (!widget)
+        return;
+    if (widget->widget() == this)
     {
         if (!ToolMenu)
         {

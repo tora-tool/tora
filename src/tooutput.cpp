@@ -278,7 +278,9 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
 
 void toOutput::windowActivated(QMdiSubWindow *widget)
 {
-    if (widget == this)
+    if (!widget)
+        return;
+    if (widget->widget() == this)
     {
         if (!ToolMenu)
         {

@@ -186,7 +186,8 @@ public:
      */
     virtual void customSetup();
     /**
-     * Create a new tool window.
+     * Create a new tool window. See toToolWidget documentation for
+     * exact tool vs. MDI windows handling.
      *
      * @param parent Parent window, which is the worksheet of the main window.
      * @param connection The database connection that this tool should operate on.
@@ -350,8 +351,19 @@ public:
 
 /** Simple baseclass for widgets defining the main tool widget. It is in
  * no way mandatory and all it does is register the widget in the connetion.
+ *
+ * Tools are common QWidget based objects. The main window - the MDI area -
+ * requires them wrapped as QMdiSubWindows. So the tool widget is set as widget()
+ * in the toToolWidget constructor.
+ *
+ * \note: Note that all access to tool widget is done via QMdiSubWindow::widget() in
+ * the code. See all available tools' windowActivated() slots for examples.
+ *
+ * \warning Remember that windowActivated() slot called by toMainWidget()->workspace(),
+ * SIGNAL(subWindowActivated(QMdiSubWindow *) has to handle "0" as input parameter
+ * so an appropriate test is mandatory.
  */
-class toToolWidget : public QMdiSubWindow, public toHelpContext, public toConnectionWidget
+class toToolWidget : public QWidget, public toHelpContext, public toConnectionWidget
 {
     Q_OBJECT
     toTimer *Timer;
@@ -363,7 +375,7 @@ signals:
      */
     void connectionChange(void);
 public:
-    /** Create widget.
+    /** Create widget and its QMdiSubWindow.
      * @param ctx Help context for this tool.
      * @param parent Parent widget.
      * @param conn Connection of widget.

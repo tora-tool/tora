@@ -815,7 +815,9 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
 
 void toRollback::windowActivated(QMdiSubWindow *widget)
 {
-    if (widget == this)
+    if (!widget)
+        return;
+    if (widget->widget() == this)
     {
         if (!ToolMenu)
         {
