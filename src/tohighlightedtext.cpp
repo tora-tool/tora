@@ -730,6 +730,9 @@ void toHighlightedText::setStatusMessage(void)
 QStringList toHighlightedText::getCompletionList(QString* partial)
 {
     int curline, curcol;
+    // used as a flag to prevent completion popup when there is
+    // an orphan comma. In short - be less agressive on popup.
+    bool showDefault = false;
     QStringList toReturn;
     getCursorPosition (&curline, &curcol);
 
@@ -742,6 +745,7 @@ QStringList toHighlightedText::getCompletionList(QString* partial)
     if (curcol > 0 && line[curcol-1] != '.')
     {
         *partial = tokens.getToken(false);
+        showDefault = true;
     }
     else
     {
@@ -756,6 +760,7 @@ QStringList toHighlightedText::getCompletionList(QString* partial)
     }
 
     QString token = tokens.getToken(false);
+
     if (token == ".")
         owner = tokens.getToken(false);
     else
@@ -819,16 +824,8 @@ QStringList toHighlightedText::getCompletionList(QString* partial)
         catch (...){}
     }
     // if is toReturn empty fill it with keywords...
-    if (toReturn.count() == 0)
+    if (showDefault && toReturn.count() == 0)
     {
-//         QFile api(":/templates/completion.api");
-//         api.open(QIODevice::ReadOnly | QIODevice::Text);
-//         while (!api.atEnd())
-//         {
-//             QString s(api.readLine());
-//             if (s.startsWith(*partial, Qt::CaseInsensitive))
-//                 toReturn.append(s.trimmed());
-//         }
         for (int i = 0; i < defaultCompletion.size(); ++i)
         {
             if (defaultCompletion.at(i).startsWith(*partial, Qt::CaseInsensitive))
