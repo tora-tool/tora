@@ -48,6 +48,7 @@ toMessage::toMessage(QWidget * parent, Qt::WindowFlags f)
     setupUi(this);
     setModal(false);
     Message->setReadOnly(true);
+    buttonBox->button(QDialogButtonBox::Close)->setFocus(Qt::OtherFocusReason);
 
     QSettings s;
     s.beginGroup("toMessage");
