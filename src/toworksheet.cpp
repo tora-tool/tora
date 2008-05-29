@@ -894,6 +894,7 @@ void toWorksheet::query(const QString &str, execType type)
     {
         ResultTab->setCurrentIndex(ResultTab->indexOf(Plan));
         Plan->query(str);
+        unhideResults();
     }
     else if (!describe(QueryString))
     {
