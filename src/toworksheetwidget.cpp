@@ -177,6 +177,11 @@ bool toWorksheetWidget::describe(const QString &query)
     return false;
 }
 
+bool toWorksheetWidget::checkSave(bool input)
+{
+    return false;
+}
+
 
 // override parent.
 void toWorksheetWidget::windowActivated(QWidget *widget)

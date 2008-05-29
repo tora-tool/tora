@@ -56,6 +56,14 @@ public:
     void windowActivated(QWidget *widget);
     virtual bool describe(const QString &query);
 
+    /*! \brief Prevent unecessary "save changes to editor"
+    that don't make much sense.
+    toWorksheetWidget objects are used for diplaying data
+    only - so no saving is required at all.
+    This method cuts off toWorksheet::checkSave()s
+    */
+    bool checkSave(bool input);
+
 public slots:
     /**
      * create context menus

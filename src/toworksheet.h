@@ -160,7 +160,7 @@ class toWorksheet : public toToolWidget
     void saveHistory(void);
     void viewResources(void);
     void query(const QString &str, execType type);
-    bool checkSave(bool input);
+    virtual bool checkSave(bool input);
     void saveDefaults(void);
     void setup(bool autoLoad);
 
