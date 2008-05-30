@@ -1436,6 +1436,13 @@ bool toConnection::closeWidgets(void)
         // make double sure destroy flag is set
         (*i)->setAttribute(Qt::WA_DeleteOnClose);
 
+        // black magic to close widget's MDI subwindow too
+        if ((*i)->parent()
+              && (*i)->parent()->metaObject()->className() == QMdiSubWindow::staticMetaObject.className())
+        {
+            qobject_cast<QMdiSubWindow*>((*i)->parent())->close();
+        }
+
         if (!(*i)->close())
             return false;
     }
