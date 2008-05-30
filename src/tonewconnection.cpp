@@ -498,23 +498,6 @@ toConnection* toNewConnection::makeConnection(void)
             optionstring += box->text();
         }
 
-
-        // checks for existing connection
-        std::list<QString> con = toMainWidget()->connections();
-        for (std::list<QString>::iterator i = con.begin();i != con.end();i++)
-        {
-            try
-            {
-                toConnection &conn = toMainWidget()->connection(*i);
-                if (conn.user() == Username->text() &&
-                        conn.provider() == realProvider() &&
-                        conn.host() == host &&
-                        conn.database() == Database->currentText())
-                    return &conn;
-            }
-            catch (...) {}
-        }
-
         QString provider = realProvider();
 
         if (Port->value() != 0 && Port->value())
@@ -532,6 +515,22 @@ toConnection* toNewConnection::makeConnection(void)
                        ":" + QString::number(port) +
                        "/" + database;
             host = "";
+        }
+
+        // checks for existing connection
+        std::list<QString> con = toMainWidget()->connections();
+        for (std::list<QString>::iterator i = con.begin();i != con.end();i++)
+        {
+            try
+            {
+                toConnection &conn = toMainWidget()->connection(*i);
+                if (conn.user() == Username->text() &&
+                        conn.provider() == realProvider() &&
+                        conn.host() == host &&
+                        conn.database() == database)
+                    return &conn;
+            }
+            catch (...) {}
         }
 
         toConnection *retCon = new toConnection(
