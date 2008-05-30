@@ -1723,6 +1723,7 @@ void toMain::displayMessage(void)
 
 void toMain::toolWidgetAdded(toToolWidget *tool)
 {
+    workspace()->addSubWindow(tool);
     emit addedToolWidget(tool);
 }
 

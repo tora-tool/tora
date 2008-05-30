@@ -82,15 +82,6 @@ toToolWidget::toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, to
 
     if (parent)
     {
-        QMdiArea *wspace = dynamic_cast<QMdiArea *>(parent);
-        if (wspace)
-        {
-            QMdiSubWindow * mdi = new QMdiSubWindow(wspace);
-            mdi->setWidget(this);
-            mdi->setAttribute(Qt::WA_DeleteOnClose);
-            wspace->addSubWindow(mdi);
-        }
-
         // Voodoo for making connection changing cascade to sub tools.
         try
         {
@@ -245,17 +236,19 @@ void toTool::createWindow(void)
             if (icon)
                 newWin->setWindowIcon(*icon);
             toToolWidget *tool = dynamic_cast<toToolWidget *>(newWin);
-            if (tool && tool->windowTitle().isEmpty())
+
+            if(tool)
+                main->toolWidgetAdded(tool);
+
+            if (tool && tool->windowTitle().isEmpty()) {
                 toToolCaption(tool, name());
+            }
 
             newWin->show();
             newWin->raise();
             newWin->setFocus();
 
             main->updateWindowsMenu();
-
-            if (tool)
-                main->toolWidgetAdded(tool);
 
             // Maximize window if only window
             {
