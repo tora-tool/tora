@@ -17,9 +17,6 @@ DB Export doesn't work... Not as concerned about the compare part.
 
 Clicking on either of the "sql bookmark" toolbar icons instantly crashes tora.
 
-Batch(script) run in SQL Editor. See:
-http://sourceforge.net/mailarchive/forum.php?thread_name=e50db5a5f5be244c6ad03556ffd7fa76%40office.scribus.info&forum_name=tora-develop
-
 Minimize sf.net error backlog - bugtracker.
 
 Walk through basic tasks and dialogs and test its functionality. (create table, drop, alter etc.)
@@ -61,6 +58,16 @@ connection.
 
 Resolved Issues
 ---------------
+
+[not fixing. i think you mean:
+create table foo (bar varchar2(10));
+begin
+insert into foo values ('sasa');
+end;
+select * from foo;
+]
+Batch(script) run in SQL Editor. See:
+http://sourceforge.net/mailarchive/forum.php?thread_name=e50db5a5f5be244c6ad03556ffd7fa76%40office.scribus.info&forum_name=tora-develop
 
 Regulary raising warning/error dialog with:
     ORA-24374: define not done before fetch or execute and fetch
