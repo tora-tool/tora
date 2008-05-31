@@ -44,13 +44,6 @@
 
 toEditableMenu::toEditableMenu(QWidget *parent) : QMenu(parent),
                                                   Context(0) {
-    QAction *a = new QAction(this);
-    a->setShortcut(QKeySequence::Delete);
-    connect(a,
-            SIGNAL(triggered()),
-            this,
-            SLOT(remove()));
-    addAction(a);
 }
 
 
