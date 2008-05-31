@@ -1296,7 +1296,7 @@ void toWorksheet::unhideResults()
     QList<int> list = EditSplitter->sizes();
     if (list[1] == 0)
     {
-        list[0] =  1;
+        list[0] =  10000;
         list[1] =  1;
         EditSplitter->setSizes(list);
     }
