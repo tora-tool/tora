@@ -15,10 +15,6 @@ Drag and drop in schema browser to copy table cells.
 
 DB Export doesn't work... Not as concerned about the compare part.
 
-Double click in schema browser causes it to interpret as 'changed' even
-if no changes are made.
-[hit escape?]
-
 Regulary raising warning/error dialog with:
     ORA-24374: define not done before fetch or execute and fetch
     <ERROR>SELECT TO_CHAR(SYSDATE) FROM sys.DUAL
@@ -40,8 +36,6 @@ cleared. It stays as the column list from the original table.
 
 ">|" arrow on schema browser view just scrolls to bottom of display instead of reading all rows as it used to.
 
-MySQL: numerous crashes in schema browser - running under gdb hides a lot of these unfortunately... has been stable
-
 Oracle: error "result should be 18 in segment attributes was 2" in toExtract on Script tab
 
 Row number in first column of schema browser for 'Data' tab - needs to resize to fit contents - right now, it truncates.
@@ -55,11 +49,7 @@ Minor Issues that would be nice to fix before release
 
 Drag and drop/doubleclick in filter dialog for schema browser no longer works.
 
-MySQL: Lots of "database not open" warning msgs 
-
 Oracle: better handling on extents tab if no access to dba_extents view. 
-
-[DONE in revision #2812?] Stray/unecessary "save changes to editor" dialogs that don't make much sense or no modified data.
 
 
 
@@ -76,6 +66,17 @@ connection.
 
 Resolved Issues
 ---------------
+
+MySQL: Lots of "database not open" warning msgs 
+
+MySQL: numerous crashes in schema browser - running under gdb hides a lot of these unfortunately... has been stable
+
+[DONE in revision #2812?] Stray/unecessary "save changes to editor" dialogs that don't make much sense or no modified data.
+
+Double click in schema browser causes it to interpret as 'changed' even
+if no changes are made.
+[hit escape?]
+
 
 [FIXED] Explain Plan shortcut prints to stdout:
 QAction::eventFilter: Ambiguous shortcut overload: F3
