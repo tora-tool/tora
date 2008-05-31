@@ -15,8 +15,6 @@ Drag and drop in schema browser to copy table cells.
 
 DB Export doesn't work... Not as concerned about the compare part.
 
-Clicking on either of the "sql bookmark" toolbar icons instantly crashes tora.
-
 Minimize sf.net error backlog - bugtracker.
 
 Walk through basic tasks and dialogs and test its functionality. (create table, drop, alter etc.)
@@ -59,6 +57,8 @@ connection.
 
 Resolved Issues
 ---------------
+
+Clicking on either of the "sql bookmark" toolbar icons instantly crashes tora.
 
 [not fixing. i think you mean:
 create table foo (bar varchar2(10));
