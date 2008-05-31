@@ -143,6 +143,10 @@ void toResultTableViewEdit::recordChange(const QModelIndex &index,
         }
     }
 
+    // don't record if not changed
+    if(newValue == row[index.column()])
+        return;
+
     struct ChangeSet change;
 
     change.columnName = model()->headerData(index.column(),
