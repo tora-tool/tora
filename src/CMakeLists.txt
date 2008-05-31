@@ -183,6 +183,7 @@ SET(TORA_MOC_CLASSES
     tovisualize.h
     towaitevents.h
     toworksheet.h
+    toeditablemenu.h
     toworksheetstatistic.h
 #     toworksheettext.h
     toworksheetwidget.h
@@ -314,6 +315,7 @@ SET(TORA_SOURCES
     tovisualize.cpp
     towaitevents.cpp
     toworksheet.cpp
+    toeditablemenu.cpp
     toworksheetstatistic.cpp
     toworksheettext.cpp
     toworksheetwidget.cpp

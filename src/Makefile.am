@@ -140,6 +140,7 @@ tora_SOURCES=main.cpp \
     tounittest.cpp tounittest.h \
     tochangeconnection.cpp tochangeconnection.h  \
     toworksheet.cpp toworksheet.h  \
+    toeditablemenu.cpp toeditablemenu.h  \
     toworksheetwidget.cpp toworksheetwidget.h  \
     toworksheettext.cpp toworksheettext.h  \
     toworksheetstatistic.cpp toworksheetstatistic.h \
@@ -350,6 +351,7 @@ BUILT_SOURCES = \
 	moc_tovisualize.cpp \
 	moc_towaitevents.cpp \
 	moc_toworksheet.cpp \
+	moc_toeditablemenu.cpp \
 	moc_toworksheetwidget.cpp \
 	moc_toworksheetstatistic.cpp \
 	moc_utils.cpp \

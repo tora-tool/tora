@@ -73,6 +73,7 @@ class toResultStats;
 class toVisualize;
 class toTabWidget;
 class toWorksheetWidget;
+class toEditableMenu;
 
 
 class toWorksheet : public toToolWidget
@@ -107,11 +108,8 @@ class toWorksheet : public toToolWidget
     int RefreshSeconds;
     QTimer RefreshTimer;
 
-    QMenu *SavedMenu;
-    QString SavedLast;
-
-    QMenu *InsertSavedMenu;
-    QString InsertSavedLast;
+    toEditableMenu *SavedMenu;
+    toEditableMenu *InsertSavedMenu;
 
     bool First;
     QTime Timer;
@@ -141,7 +139,6 @@ class toWorksheet : public toToolWidget
 
     QAction *executeNewlineAct;
     QAction *parseAct;
-    QAction *editSavedAct;
 
     QAction *executeAct;
     QAction *executeStepAct;
@@ -221,10 +218,8 @@ public slots:
     void showInsertSaved(void);
     void showSaved(void);
     void insertSaved(QAction *);
-    void insertSaved(void);
     void executeSaved(QAction *);
-    void executeSaved(void);
-    void editSaved(void);
+    void removeSaved(QAction *);
     void executePreviousLog(void);
     void executeNextLog(void);
     void executeLog(void);

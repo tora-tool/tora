@@ -60,6 +60,7 @@
 #include "ui_toworksheetsetupui.h"
 #include "toworksheetstatistic.h"
 #include "toworksheettext.h"
+#include "toeditablemenu.h"
 
 #include <qcheckbox.h>
 #include <qcheckbox.h>
@@ -88,6 +89,7 @@
 #include <QVBoxLayout>
 #include <QProgressDialog>
 #include <QDateTime>
+#include <QSettings>
 
 #include "icons/clock.xpm"
 #include "icons/recall.xpm"
@@ -106,18 +108,8 @@
 #include "icons/up.xpm"
 #include "icons/down.xpm"
 
-// #define CONF_AUTO_SAVE    "AutoSave"
-// #define CONF_CHECK_SAVE   "CheckSave"
-// #define CONF_AUTO_LOAD    "AutoLoad"
-// #define CONF_LOG_AT_END   "LogAtEnd"
-// #define CONF_LOG_MULTI    "LogMulti"
-// #define CONF_STATISTICS   "Statistics"
-// #define CONF_TIMED_STATS  "TimedStats"
-// #define CONF_NUMBER   "Number"
-// #define CONF_MOVE_TO_ERR  "MoveToError"
-// #define CONF_HISTORY   "History"
-// #define CONF_EXEC_LOG     "ExecLog"
-// #define CONF_TOPLEVEL_DESCRIBE "ToplevelDescribe"
+// for qsettings
+static const QString SETTINGS = "toWorksheet";
 
 toWorksheetSetup::toWorksheetSetup(toTool *tool, QWidget* parent, const char* name)
         : QWidget(parent), toSettingTab("worksheet.html#preferences"), Tool(tool)
@@ -229,9 +221,6 @@ void toWorksheet::createActions()
     parseAct = new QAction(tr("Check syntax of buffer"), this);
     parseAct->setShortcut(Qt::CTRL + Qt::Key_F9);
     connect(parseAct, SIGNAL(triggered()), this, SLOT(parseAll(void)));
-
-    editSavedAct = new QAction(tr("Edit Saved SQL..."), this);
-    connect(editSavedAct, SIGNAL(triggered()), this, SLOT(editSaved(void)));
 
     executeAct = new QAction(QPixmap(const_cast<const char**>(execute_xpm)),
                              tr("Execute current statement"),
@@ -351,7 +340,7 @@ void toWorksheet::setup(bool autoLoad)
 
     workToolbar->addSeparator();
 
-    InsertSavedMenu = new QMenu(workToolbar);
+    InsertSavedMenu = new toEditableMenu(workToolbar);
     InsertSavedMenu->setIcon(
         QPixmap(const_cast<const char**>(insertsaved_xpm)));
     InsertSavedMenu->setTitle(tr("Insert current saved SQL"));
@@ -364,8 +353,12 @@ void toWorksheet::setup(bool autoLoad)
             SIGNAL(triggered(QAction *)),
             this,
             SLOT(insertSaved(QAction *)));
+    connect(InsertSavedMenu,
+            SIGNAL(actionRemoved(QAction *)),
+            this,
+            SLOT(removeSaved(QAction *)));
 
-    SavedMenu = new QMenu(workToolbar);
+    SavedMenu = new toEditableMenu(workToolbar);
     SavedMenu->setIcon(QPixmap(const_cast<const char**>(recall_xpm)));
     SavedMenu->setTitle(tr("Run current saved SQL"));
     workToolbar->addAction(SavedMenu->menuAction());
@@ -374,6 +367,10 @@ void toWorksheet::setup(bool autoLoad)
             SIGNAL(triggered(QAction *)),
             this,
             SLOT(executeSaved(QAction *)));
+    connect(SavedMenu,
+            SIGNAL(actionRemoved(QAction *)),
+            this,
+            SLOT(removeSaved(QAction *)));
 
     workToolbar->addAction(saveLastAct);
 
@@ -642,7 +639,6 @@ void toWorksheet::windowActivated(QMdiSubWindow *widget)
             ToolMenu->addAction(SavedMenu->menuAction());
 
             ToolMenu->addAction(saveLastAct);
-            ToolMenu->addAction(editSavedAct);
 
             ToolMenu->addSeparator();
 
@@ -1647,154 +1643,98 @@ void toWorksheet::describe(void)
     columns->show();
 }
 
-void toWorksheet::executeSaved(void)
+void toWorksheet::executeSaved(QAction *act)
 {
-    LastLine = LastOffset = -1;
-
-    if (SavedLast.length() > 0)
+    QString sql = act->data().toString();
+    if(!sql.isEmpty())
     {
         try
         {
-            query(toSQL::string(SavedLast, connection()), Normal);
-        }
-        TOCATCH
-    }
-}
-
-void toWorksheet::insertSaved(void)
-{
-    LastLine = LastOffset = -1;
-
-    if (InsertSavedLast.length() > 0)
-    {
-        try
-        {
-            Editor->setText(toSQL::string(InsertSavedLast, connection()));
+            query(sql, Normal);
         }
         TOCATCH;
     }
 }
 
-void toWorksheet::executeSaved(QAction *act)
-{
-    SavedLast = act->toolTip();
-    executeSaved();
-}
-
 void toWorksheet::insertSaved(QAction *act)
 {
-    InsertSavedLast = act->toolTip();
-    insertSaved();
+    QString sql = act->data().toString();
+    if(!sql.isEmpty())
+    {
+        Editor->setFocus();
+        Editor->insert(sql);
+    }
 }
 
-void toWorksheet::showSaved(void)
+void toWorksheet::showSaved()
 {
-    static QRegExp colon(QString::fromLatin1(":"));
-    std::list<QString> def = toSQL::range(TOWORKSHEET);
     SavedMenu->clear();
-    std::map<QString, QMenu *> menues;
-    int id = 0;
-    for (std::list<QString>::iterator sql = def.begin();sql != def.end();sql++)
-    {
 
-        id++;
+    QSettings settings;
+    settings.beginGroup(SETTINGS);
 
-        QStringList spl = (*sql).split(colon);
-        spl.erase(spl.begin());
-
-        if (spl.count() > 0)
-        {
-            QString name = spl.last();
-            spl.erase(spl.end());
-
-            QMenu *menu;
-            if (spl.count() == 0)
-                menu = SavedMenu;
-            else
-            {
-                QStringList exs = spl;
-                while (exs.count() > 0 && menues.find(exs.join(QString::fromLatin1(":"))) == menues.end())
-                    exs.erase(exs.end());
-                if (exs.count() == 0)
-                    menu = SavedMenu;
-                else
-                    menu = menues[exs.join(QString::fromLatin1(":"))];
-                QString subname = exs.join(QString::fromLatin1(":"));
-                for (int i = exs.count();i < spl.count();i++)
-                {
-                    QMenu *next = new QMenu(this);
-                    connect(next, SIGNAL(activated(int)), this, SLOT(executeSaved(int)));
-                    if (i != 0)
-                        subname += QString::fromLatin1(":");
-                    subname += spl[i];
-                    menu->addMenu(next);
-                    menu->setTitle(spl[i]);
-                    menu = next;
-                    menues[subname] = menu;
-                }
-            }
-            menu->addAction(name);
-        }
+    QList<QVariant> statements = settings.value("sql").toList();
+    QAction *last = 0;
+    foreach(QVariant v, statements) {
+        QAction *a = new QAction(v.toString().left(50), SavedMenu);
+        a->setData(v.toString());
+        SavedMenu->insertAction(last, a);
+        last = a;
     }
 }
 
-void toWorksheet::showInsertSaved(void)
+void toWorksheet::showInsertSaved()
 {
-    static QRegExp colon(QString::fromLatin1(":"));
-    std::list<QString> def = toSQL::range(TOWORKSHEET);
     InsertSavedMenu->clear();
-    std::map<QString, QMenu *> menues;
-    int id = 0;
-    for (std::list<QString>::iterator sql = def.begin();sql != def.end();sql++)
-    {
 
-        id++;
+    QSettings settings;
+    settings.beginGroup(SETTINGS);
 
-        QStringList spl = (*sql).split(colon);
-        spl.erase(spl.begin());
-
-        if (spl.count() > 0)
-        {
-            QString name = spl.last();
-            spl.erase(spl.end());
-
-            QMenu *menu;
-            if (spl.count() == 0)
-                menu = InsertSavedMenu;
-            else
-            {
-                QStringList exs = spl;
-                while (exs.count() > 0 && menues.find(exs.join(QString::fromLatin1(":"))) == menues.end())
-                    exs.erase(exs.end());
-                if (exs.count() == 0)
-                    menu = InsertSavedMenu;
-                else
-                    menu = menues[exs.join(QString::fromLatin1(":"))];
-                QString subname = exs.join(QString::fromLatin1(":"));
-                for (int i = exs.count();i < spl.count();i++)
-                {
-                    QMenu *next = new QMenu(this);
-                    connect(next, SIGNAL(activated(int)), this, SLOT(insertSaved(int)));
-                    if (i != 0)
-                        subname += QString::fromLatin1(":");
-                    subname += spl[i];
-                    menu->addMenu(next);
-                    menu->setTitle(spl[i]);
-                    menu = next;
-                    menues[subname] = menu;
-                }
-            }
-            menu->addAction(name);
-        }
+    QList<QVariant> statements = settings.value("sql").toList();
+    QAction *last = 0;
+    foreach(QVariant v, statements) {
+        QAction *a = new QAction(v.toString().left(50), InsertSavedMenu);
+        a->setData(v.toString());
+        InsertSavedMenu->insertAction(last, a);
+        last = a;
     }
 }
 
 
-void toWorksheet::editSaved(void)
+void toWorksheet::removeSaved(QAction *action)
 {
-    QString sql = TOWORKSHEET;
-    sql += "Untitled";
-    toMainWidget()->editSQL(sql);
+    QSettings settings;
+    settings.beginGroup(SETTINGS);
+
+    QList<QVariant> statements = settings.value("sql").toList();
+    statements.removeAll(action->data().toString());
+    settings.setValue("sql", statements);
+}
+
+
+void toWorksheet::saveLast()
+{
+    if (QueryString.isEmpty())
+    {
+        TOMessageBox::warning(this, tr("No SQL to save"),
+                              tr("You haven't executed any SQL yet"),
+                              tr("&Ok"));
+        return;
+    }
+
+    QSettings settings;
+    settings.beginGroup(SETTINGS);
+
+    QString sql = QueryString.trimmed();
+    if(!sql.endsWith(";"))
+        sql += ";";
+
+    QList<QVariant> statements = settings.value("sql").toList();
+    if(statements.indexOf(sql) > -1)
+        return;                 // already in list
+
+    statements.append(sql);
+    settings.setValue("sql", statements);
 }
 
 void toWorksheet::insertStatement(const QString &str)
@@ -1901,38 +1841,6 @@ void toWorksheet::executeNextLog(void)
 void toWorksheet::poll(void)
 {
     Started->setText(duration(Timer.elapsed(), false));
-}
-
-void toWorksheet::saveLast(void)
-{
-    if (QueryString.isEmpty())
-    {
-        TOMessageBox::warning(this, tr("No SQL to save"),
-                              tr("You haven't executed any SQL yet"),
-                              tr("&Ok"));
-        return ;
-    }
-    bool ok = false;
-    QString name = QInputDialog::getText(this,
-                                         tr("Enter title"),
-                                         tr("Enter the title in the menu of the saved SQL,\n"
-                                            "submenues are separated by a ':' character."),
-                                         QLineEdit::Normal,
-                                         QString::null,
-                                         &ok);
-    if (ok && !name.isEmpty())
-    {
-        try
-        {
-            toSQL::updateSQL(TOWORKSHEET + name,
-                             QueryString,
-                             tr("Undescribed"),
-                             "Any",
-                             connection().provider());
-            toSQL::saveSQL(toConfigurationSingle::Instance().sqlFile());
-        }
-        TOCATCH
-    }
 }
 
 void toWorksheet::saveStatistics(void)
