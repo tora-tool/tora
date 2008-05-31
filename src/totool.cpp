@@ -229,40 +229,57 @@ void toTool::createWindow(void)
 
         if (newWin)
         {
-            // make sure widget gets deleted
-//             newWin->setAttribute(Qt::WA_DeleteOnClose);
-
             const QPixmap *icon = toolbarImage();
             if (icon)
                 newWin->setWindowIcon(*icon);
             toToolWidget *tool = dynamic_cast<toToolWidget *>(newWin);
 
-            if(tool)
-                main->toolWidgetAdded(tool);
-
             if (tool && tool->windowTitle().isEmpty()) {
                 toToolCaption(tool, name());
             }
 
-            newWin->show();
-            newWin->raise();
-            newWin->setFocus();
+            // save previous window
+            QMdiSubWindow *previous = main->lastActiveWindow();
+            QMdiSubWindow *newsub = main->workspace()->addSubWindow(newWin);
 
-            main->updateWindowsMenu();
+            // workaround bug in mdi. deactivate subwindow first, then
+            // set active
+            main->workspace()->setActiveSubWindow(0);
+
+            if(tool)
+                main->toolWidgetAdded(tool);
 
             // Maximize window if only window
+            bool max = true;
+            foreach(QMdiSubWindow *window, main->workspace()->subWindowList())
             {
-                bool max = true;
-                for (int i = 0;i < toMainWidget()->workspace()->subWindowList().count();i++)
-                {
-                    QWidget *widget = toMainWidget()->workspace()->subWindowList().at(i)->widget();
-
-                    if (widget && widget != newWin && !widget->isHidden())
-                        max = false;
-                }
-                if (max)
-                    newWin->showMaximized();
+                QWidget *widget = window->widget();
+                if (widget && widget != newWin && !widget->isHidden())
+                    max = false;
             }
+
+            if(!max && previous)
+            {
+                // if not max, check previous window. if it's
+                // maximized then show this window max
+                if(previous->windowState() & Qt::WindowMaximized)
+                    max = true;
+            }
+
+            if (max)
+                newWin->showMaximized();
+
+            main->workspace()->setActiveSubWindow(newsub);
+
+            // piece of shit mdi doesn't always send window activated
+            // signal
+            main->windowActivated(newsub);
+
+            newsub->show();
+            newsub->raise();
+            newsub->setFocus();
+
+            main->updateWindowsMenu();
         }
     }
     TOCATCH

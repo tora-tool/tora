@@ -1438,13 +1438,17 @@ bool toConnection::closeWidgets(void)
 
         // black magic to close widget's MDI subwindow too
         if ((*i)->parent()
-              && (*i)->parent()->metaObject()->className() == QMdiSubWindow::staticMetaObject.className())
+            && (*i)->parent()->metaObject()->className() == QMdiSubWindow::staticMetaObject.className())
         {
             qobject_cast<QMdiSubWindow*>((*i)->parent())->close();
         }
 
-        if (!(*i)->close())
-            return false;
+        if (!(*i)->close()) {
+            // close will fail if parent already closed.
+            // closing parent will hide children though
+            if((*i)->isVisible())
+                return false;
+        }
     }
 
     Widgets.clear();

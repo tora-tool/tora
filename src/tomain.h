@@ -51,6 +51,7 @@
 #include <qtimer.h>
 
 #include <QLabel>
+#include <QPointer>
 
 #define TOMessageBox QMessageBox
 
@@ -61,6 +62,7 @@ class toTreeWidgetItem;
 class QToolBar;
 class QToolButton;
 class QMdiArea;
+class QMdiSubWindow;
 class toBackgroundLabel;
 class toConnection;
 class toEditWidget;
@@ -90,6 +92,10 @@ private:
      * Workspace of main window - MDI area.
      */
     QMdiArea *Workspace;
+    /**
+     * The last active sub window in workspace
+     */
+    QPointer<QMdiSubWindow> LastActiveWindow;
     /**
      * Handles available connections list in toolbar.
      */
@@ -252,9 +258,22 @@ public:
      * Get the workspace widget of the main window.
      * @return Workspace widget.
      */
-    QMdiArea *workspace()
+    QMdiArea *workspace() const
     {
         return Workspace;
+    }
+
+    /**
+     * The last active sub window in workspace. MDI area is buggy as
+     * hell and currentSubWindow will not tell you the correct window
+     * if a menu is open, or if a tool has a custom widget (sql
+     * editor), somebody sneezes, etc.
+     *
+     * Use this to find the last active sub window.
+     */
+    QMdiSubWindow* lastActiveWindow() const
+    {
+        return LastActiveWindow;
     }
 
     /**

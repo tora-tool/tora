@@ -102,7 +102,7 @@ toMain::toMain()
     Edit = NULL;
 
     Workspace = new QMdiArea(this);
-    setCentralWidget(Workspace);
+    LastActiveWindow = 0;
 
     Message = new toMessage(this);
 
@@ -180,6 +180,8 @@ toMain::toMain()
 //         showMaximized();
 //     else
 //         show();
+    setCentralWidget(Workspace);
+
     show();
 
     if (Connections.empty())
@@ -623,6 +625,9 @@ void toMain::createToolMenus()
 
 void toMain::windowActivated(QMdiSubWindow *widget)
 {
+    if(widget)
+        LastActiveWindow = widget;
+
     if (!toConfigurationSingle::Instance().changeConnection())
         return ;
 
@@ -760,11 +765,10 @@ void toMain::updateWindowsMenu(void)
     // windowsMenu actions and adding/removing each.
     windowsMenu->clear();
 
-    QWidget *active = workspace()->activeSubWindow();
-    windowCloseAct->setEnabled(active != 0);
-    windowCloseAllAct->setEnabled(active != 0);
-    cascadeAct->setEnabled(active != 0);
-    tileAct->setEnabled(active != 0);
+    windowCloseAct->setEnabled(LastActiveWindow != 0);
+    windowCloseAllAct->setEnabled(LastActiveWindow != 0);
+    cascadeAct->setEnabled(LastActiveWindow != 0);
+    tileAct->setEnabled(LastActiveWindow != 0);
 
     windowsMenu->addAction(windowCloseAct);
     windowsMenu->addAction(windowCloseAllAct);
@@ -791,7 +795,7 @@ void toMain::updateWindowsMenu(void)
 
             windowsMenu->addAction(action);
             action->setCheckable(true);
-            if ((*it) == active)
+            if ((*it) == LastActiveWindow)
                 action->setChecked(true);
         }
     }
@@ -815,13 +819,20 @@ void toMain::windowCallback(QAction *action)
     }
     else if (action == windowCloseAct)
     {
-        QWidget *widget = workspace()->activeSubWindow();
+        QWidget *widget = LastActiveWindow;
         if (widget)
             widget->close();
     }
-    else
-        // FIXME: check (QMdiSubWindow*) potential bullshit
-        workspace()->setActiveSubWindow((QMdiSubWindow*)action->parentWidget());
+    else {
+        QMdiSubWindow *w = dynamic_cast<QMdiSubWindow *>(action->parentWidget());
+        if(w) {
+            workspace()->setActiveSubWindow(w);
+            w->raise();
+            // piece of shit mdi doesn't always send window activated
+            // signal
+            windowActivated(w);
+        }
+    }
 }
 
 
@@ -1345,7 +1356,7 @@ void toMain::closeEvent(QCloseEvent *event)
     }
 
     Workspace->closeAllSubWindows();
-    if (Workspace->activeSubWindow() != 0)
+    if (Workspace->currentSubWindow() != 0)
     {
         event->ignore();        // stop widget refused
         return;
@@ -1723,7 +1734,6 @@ void toMain::displayMessage(void)
 
 void toMain::toolWidgetAdded(toToolWidget *tool)
 {
-    workspace()->addSubWindow(tool);
     emit addedToolWidget(tool);
 }
 
