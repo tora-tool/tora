@@ -29,6 +29,7 @@ cleared. It stays as the column list from the original table.
 ">|" arrow on schema browser view just scrolls to bottom of display instead of reading all rows as it used to.
 
 Oracle: error "result should be 18 in segment attributes was 2" in toExtract on Script tab
+[i don't get this error, can you send a table create script that'll reproduce?]
 
 Row number in first column of schema browser for 'Data' tab - needs to resize to fit contents - right now, it truncates.
 
