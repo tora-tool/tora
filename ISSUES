@@ -15,11 +15,6 @@ Drag and drop in schema browser to copy table cells.
 
 DB Export doesn't work... Not as concerned about the compare part.
 
-Regulary raising warning/error dialog with:
-    ORA-24374: define not done before fetch or execute and fetch
-    <ERROR>SELECT TO_CHAR(SYSDATE) FROM sys.DUAL
-  propably used as "keep session alive" (?)
-
 Clicking on either of the "sql bookmark" toolbar icons instantly crashes tora.
 
 Batch(script) run in SQL Editor. See:
@@ -66,6 +61,11 @@ connection.
 
 Resolved Issues
 ---------------
+
+Regulary raising warning/error dialog with:
+    ORA-24374: define not done before fetch or execute and fetch
+    <ERROR>SELECT TO_CHAR(SYSDATE) FROM sys.DUAL
+  propably used as "keep session alive" (?)
 
 MySQL: Lots of "database not open" warning msgs 
 
