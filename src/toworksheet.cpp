@@ -900,6 +900,13 @@ void toWorksheet::query(const QString &str, execType type)
 
         toSQLParse::stringTokenizer tokens(str);
         QString first = tokens.getToken(true).toUpper();
+
+        if (toIsOracle(connection()) && first == "EXEC") {
+            // put exec in anonymous plsql block or they won't work
+            QueryString = QueryString.trimmed().right(QueryString.length() - 4);
+            QueryString = QString("BEGIN\n%1;\nEND;").arg(QueryString);
+        }
+
         if (first == QString::fromLatin1("REM") ||
                 first == QString::fromLatin1("ASSIGN") ||
                 first == QString::fromLatin1("PROMPT") ||
