@@ -648,6 +648,8 @@ void toWorksheet::windowActivated(QMdiSubWindow *widget)
 
             toMainWidget()->addCustomMenu(ToolMenu);
         }
+
+        Editor->setFocus();
     }
     else
     {
