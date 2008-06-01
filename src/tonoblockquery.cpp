@@ -205,7 +205,7 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn, const QString &sql,
         delete Query;
         Query = NULL;
         Error = qApp->translate("toNoBlockQuery", "Couldn't open query");
-        return ;
+        throw;
     }
 
     try
@@ -249,6 +249,10 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn, toQuery::queryMode mode,
         Param(param),
         Statistics(stats)
 {
+    CurrentValue = Values.end();
+    Quit = EOQ = false;
+    Processed = 0;
+
     try
     {
         Query = NULL;
@@ -259,11 +263,8 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn, toQuery::queryMode mode,
         delete Query;
         Query = NULL;
         Error = qApp->translate("toNoBlockQuery", "Couldn't open query");
-        return ;
+        throw;
     }
-    CurrentValue = Values.end();
-    Quit = EOQ = false;
-    Processed = 0;
 
     try
     {
