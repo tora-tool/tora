@@ -118,6 +118,8 @@ toMain::toMain()
 
     createToolMenus();
 
+    handleToolsDisplay();
+
     updateRecent();
 
     char buffer[100];
@@ -623,6 +625,14 @@ void toMain::createToolMenus()
     TOCATCH;
 }
 
+void toMain::handleToolsDisplay()
+{
+    if (toConfigurationSingle::Instance().tabbedTools())
+        Workspace->setViewMode(QMdiArea::TabbedView);
+    else
+        Workspace->setViewMode(QMdiArea::SubWindowView);
+}
+
 void toMain::windowActivated(QMdiSubWindow *widget)
 {
     if(widget)
@@ -990,7 +1000,10 @@ void toMain::commandCallback(QAction *action)
         about.exec();
     }
     else if (action == prefsAct)
+    {
         toPreferences::displayPreferences(this);
+        handleToolsDisplay();
+    }
     else if (action == openSessionAct)
         loadSession();
     else if (action == saveSessionAct)

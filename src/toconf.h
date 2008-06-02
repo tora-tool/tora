@@ -105,6 +105,7 @@
 #define CONF_DONT_REREAD "DontReread"
 #define CONF_AUTO_LONG  "AutoLong"
 #define CONF_MESSAGE_STATUSBAR "MessageStatusbar"
+#define CONF_TABBED_TOOLS "TabbedTools"
 #define CONF_OBJECT_CACHE "ObjectCache"
 #define DEFAULT_OBJECT_CACHE 1
 #define CONF_BKGND_CONNECT "BackgroundConnect"

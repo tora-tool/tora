@@ -246,6 +246,8 @@ private:
     void createToolbars();
     void createStatusbar();
     void createToolMenus();
+    //! \brief Sets tools displaying depending on preferences (tabs/windows)
+    void handleToolsDisplay();
 
 public:
 

@@ -562,6 +562,13 @@ Will leave the password unencryptet in the config file.</string>
         </property>
        </widget>
       </item>
+      <item row="8" column="0" >
+       <widget class="QCheckBox" name="TabbedTools" >
+        <property name="text" >
+         <string>Arrange Tools in Tabs</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -588,6 +595,7 @@ Will leave the password unencryptet in the config file.</string>
   <tabstop>DiskCaching</tabstop>
   <tabstop>DisplayGrid</tabstop>
   <tabstop>Statusbar</tabstop>
+  <tabstop>TabbedTools</tabstop>
   <tabstop>ConnectHistory</tabstop>
   <tabstop>Status</tabstop>
   <tabstop>HistorySize</tabstop>

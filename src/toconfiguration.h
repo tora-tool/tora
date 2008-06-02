@@ -395,6 +395,15 @@ public:
         m_messageStatusbar = v;
     };
 
+    bool tabbedTools()
+    {
+        return m_tabbedTools;
+    };
+    void setTabbedTools(bool v)
+    {
+        m_tabbedTools = v;
+    };
+
     int objectCache()
     {
         return m_objectCache;
@@ -1176,6 +1185,7 @@ private:
     bool m_dontReread;
     int m_autoLong;
     bool m_messageStatusbar;
+    bool m_tabbedTools;
     int m_objectCache;
     bool m_bkgndConnect;
     int m_maxContent;

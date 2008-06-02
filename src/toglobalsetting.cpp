@@ -80,6 +80,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     HistorySize->setValue(toConfigurationSingle::Instance().statusSave());
     IncludeDB->setChecked(toConfigurationSingle::Instance().dbTitle());
     Statusbar->setChecked(toConfigurationSingle::Instance().messageStatusbar());
+    TabbedTools->setChecked(toConfigurationSingle::Instance().tabbedTools());
     RestoreSession->setChecked(toConfigurationSingle::Instance().restoreSession());
     HelpDirectory->setText(toConfigurationSingle::Instance().helpPath()/*toHelpPath()*/);
     ChangeConnection->setChecked(toConfigurationSingle::Instance().changeConnection());
@@ -195,6 +196,7 @@ void toGlobalSetting::saveSetting(void)
     toConfigurationSingle::Instance().setChartSamples(ChartSamples->value());
     toConfigurationSingle::Instance().setConnectSize(ConnectHistory->value());
     toConfigurationSingle::Instance().setMessageStatusbar(Statusbar->isChecked());
+    toConfigurationSingle::Instance().setTabbedTools(TabbedTools->isChecked());
     toConfigurationSingle::Instance().setRestoreSession(RestoreSession->isChecked());
     toConfigurationSingle::Instance().setDefaultFormat(DefaultFormat->currentIndex());
     toConfigurationSingle::Instance().setToadBindings(ToadBindings->isChecked());

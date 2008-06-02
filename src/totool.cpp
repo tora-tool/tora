@@ -229,9 +229,6 @@ void toTool::createWindow(void)
 
         if (newWin)
         {
-            const QPixmap *icon = toolbarImage();
-            if (icon)
-                newWin->setWindowIcon(*icon);
             toToolWidget *tool = dynamic_cast<toToolWidget *>(newWin);
 
             if (tool && tool->windowTitle().isEmpty()) {
@@ -241,6 +238,12 @@ void toTool::createWindow(void)
             // save previous window
             QMdiSubWindow *previous = main->lastActiveWindow();
             QMdiSubWindow *newsub = main->workspace()->addSubWindow(newWin);
+            const QPixmap *icon = toolbarImage();
+            if (icon)
+            {
+                newWin->setWindowIcon(*icon); // is this really required?
+                newsub->setWindowIcon(*icon);
+            }
 
             // workaround bug in mdi. deactivate subwindow first, then
             // set active

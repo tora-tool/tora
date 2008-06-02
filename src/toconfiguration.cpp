@@ -85,6 +85,7 @@ toConfiguration::toConfiguration()
     m_dontReread = s.value(CONF_DONT_REREAD, true).toBool();
     m_autoLong = s.value(CONF_AUTO_LONG, 0).toInt();
     m_messageStatusbar = s.value(CONF_MESSAGE_STATUSBAR, false).toBool();
+    m_tabbedTools = s.value(CONF_TABBED_TOOLS, false).toBool();
     m_objectCache = s.value(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt();
     m_bkgndConnect = s.value(CONF_BKGND_CONNECT, false).toBool();
     m_maxContent = s.value(CONF_MAX_CONTENT, DEFAULT_MAX_CONTENT).toInt();
@@ -281,6 +282,7 @@ void toConfiguration::saveConfig()
     s.setValue(CONF_DONT_REREAD, m_dontReread);
     s.setValue(CONF_AUTO_LONG, m_autoLong);
     s.setValue(CONF_MESSAGE_STATUSBAR, m_messageStatusbar);
+    s.setValue(CONF_TABBED_TOOLS, m_tabbedTools);
     s.setValue(CONF_OBJECT_CACHE, m_objectCache);
     s.setValue(CONF_BKGND_CONNECT, m_bkgndConnect);
     s.setValue(CONF_MAX_CONTENT, m_maxContent);
