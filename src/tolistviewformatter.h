@@ -58,7 +58,7 @@ public:
     QString Separator;
     QString Delimiter;
 
-    const QModelIndexList selected;
+    QModelIndexList selected;
 
     toExportSettings(bool _header,
                      bool _selection,

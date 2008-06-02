@@ -104,7 +104,7 @@ toResultTableView::toResultTableView(bool readable,
                      false,       // undo
                      false,       // redo
                      false,       // cut
-                     false,       // copy
+                     true,        // copy
                      false,       // past
                      true,        // search
                      true,        // selectall
@@ -165,7 +165,7 @@ toResultTableView::toResultTableView(bool readable,
     createActions();
 
     setSelectionBehavior(QAbstractItemView::SelectRows);
-    setSelectionMode(QAbstractItemView::SingleSelection);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this,
@@ -367,7 +367,8 @@ void toResultTableView::displayMenu(const QPoint &pos)
         Menu->addAction(copyAct);
         Menu->addAction(copySelAct);
         Menu->addAction(copyHeadAct);
-        Menu->addAction(copyTransAct);
+        // not implemented
+        // Menu->addAction(copyTransAct);
 
         Menu->addSeparator();
 
@@ -439,6 +440,22 @@ void toResultTableView::menuCallback(QAction *action)
         refresh();
     else if (action == exportAct)
         editSave(false);
+    else if (action == copySelAct || action == copyHeadAct)
+    {
+        QString sep, del;
+        int type = exportType(sep, del);
+
+        if(type > -1)
+        {
+            QString t = exportAsText(action == copyHeadAct,
+                                     true,
+                                     type,         // as text
+                                     sep,
+                                     del);
+            QClipboard *clip = qApp->clipboard();
+            clip->setText(t);
+        }
+    }
 }
 
 
@@ -563,6 +580,8 @@ QString toResultTableView::exportAsText(bool includeHeader,
                               type,
                               separator,
                               delimiter);
+    if(onlySelection)
+        settings.selected = selectedIndexes();
 
     std::auto_ptr<toListViewFormatter> pFormatter(
         toListViewFormatterFactory::Instance().CreateObject(type));
@@ -626,10 +645,25 @@ void toResultTableView::editCopy()
 {
     QClipboard *clip = qApp->clipboard();
 
-    QModelIndex index = currentIndex();
-    QVariant data = model()->data(index, Qt::EditRole);
-    if (data.canConvert<QString>())
-        clip->setText(data.toString());
+    // if there's a selection, then export as text to clipboard
+    QModelIndexList sel = selectedIndexes();
+    if(sel.size() > 1)
+    {
+        QString sep, del;
+        QString t = exportAsText(true,
+                                 true,
+                                 0,         // as text
+                                 sep,
+                                 del);
+        clip->setText(t);
+    }
+    else
+    {
+        QModelIndex index = currentIndex();
+        QVariant data = model()->data(index, Qt::EditRole);
+        if (data.canConvert<QString>())
+            clip->setText(data.toString());
+    }
 }
 
 
