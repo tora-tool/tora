@@ -2052,6 +2052,7 @@ void toBrowser::dropUser()
 void toBrowser::changeSchema(int)
 {
     SecondText = QString::fromLatin1("");
+    changeSecond();
     refresh();
     updateTabs();
 }

@@ -21,6 +21,7 @@ Walk through basic tasks and dialogs and test its functionality. (create table, 
  - Create table/create index isn't working in the Schema Browser.
  - MIGRATE extraction doesn't work (and I suppose it never did)
 
+[PARTIALLY FIXED - Petr - there is no clear() method for toResult(). So you can get an error message "foo doesn't exist" in some schema changes (Data tab). All other tabs should work fine. Content is cleared in all cases. ]
 When switching in schema browser from looking at columns of a table to a schema with no tables, the column list never gets
 cleared. It stays as the column list from the original table.
 
