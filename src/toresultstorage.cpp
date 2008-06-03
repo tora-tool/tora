@@ -1076,10 +1076,7 @@ toResultExtent::toResultExtent(QWidget *parent, const char *name)
     List = new toResultTableView(true, false, this);
     List->setSQL(SQLListExtents);
 
-    QList<int> sizes = QSplitter::sizes();
-    sizes[0] = 400;
-    sizes[1] = 200;
-    setSizes(sizes);
+    setChildrenCollapsible(false);
 }
 
 bool toResultExtent::canHandle(toConnection &conn)

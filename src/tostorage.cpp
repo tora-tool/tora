@@ -947,6 +947,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     new toChangeConnection(toolbar, TO_TOOLBAR_WIDGET_NAME);
 
     QSplitter *splitter = new QSplitter(Qt::Vertical, this);
+    splitter->setChildrenCollapsible(false);
     layout()->addWidget(splitter);
 
     Storage = new toResultStorage(toConfigurationSingle::Instance().dispAvailableGraph(),
