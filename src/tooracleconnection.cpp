@@ -1284,27 +1284,32 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
 
     try
     {
-        {
-            QString str = QString::fromLatin1("ALTER SESSION SET NLS_DATE_FORMAT = '");
-            str += toConfigurationSingle::Instance().dateFormat();
-            str += QString::fromLatin1("'");
-            otl_stream date(1, str.toUtf8(), *conn);
-        }
-        {
-            otl_stream info(1,
-                            "BEGIN\n"
-                            "  SYS.DBMS_APPLICATION_INFO.SET_CLIENT_INFO('" TOAPPNAME
-                            " (http://tora.sf.net)"
-                            "');\n"
-                            "  SYS.DBMS_APPLICATION_INFO.SET_MODULE('" TOAPPNAME "','Access Database');\n"
-                            "END;",
-                            *conn);
-        }
+        QString str = QString::fromLatin1("ALTER SESSION SET NLS_DATE_FORMAT = '");
+        str += toConfigurationSingle::Instance().dateFormat();
+        str += QString::fromLatin1("'");
+        otl_stream date(1, str.toUtf8(), *conn);
     }
     catch (...)
     {
         printf("Failed to set new default date format for session\n");
     }
+
+    try
+    {
+        otl_stream info(1,
+                        "BEGIN\n"
+                        "  SYS.DBMS_APPLICATION_INFO.SET_CLIENT_INFO('" TOAPPNAME
+                        " (http://tora.sf.net)"
+                        "');\n"
+                        "  SYS.DBMS_APPLICATION_INFO.SET_MODULE('" TOAPPNAME "','Access Database');\n"
+                        "END;",
+                        *conn);
+    }
+    catch (...)
+    {
+        printf("Failed to set client info for session\n");
+    }
+
     return new oracleSub(conn);
 }
 
