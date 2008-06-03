@@ -72,6 +72,9 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
         setObjectName(name);
 
     setupUi(this);
+#if QT_VERSION < 0x040400
+    TabbedTools->setVisible(false);
+#endif
 
     SavePassword->setChecked(toConfigurationSingle::Instance().savePassword());
     toRefreshCreate(OptionGroup, TO_TOOLBAR_WIDGET_NAME, QString::null, Refresh);

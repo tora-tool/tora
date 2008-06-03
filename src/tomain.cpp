@@ -627,10 +627,14 @@ void toMain::createToolMenus()
 
 void toMain::handleToolsDisplay()
 {
+#if QT_VERSION >= 0x040400
     if (toConfigurationSingle::Instance().tabbedTools())
         Workspace->setViewMode(QMdiArea::TabbedView);
     else
         Workspace->setViewMode(QMdiArea::SubWindowView);
+#else
+#warning "Use Qt 4.4.x if you want to use cool stuff."
+#endif
 }
 
 void toMain::windowActivated(QMdiSubWindow *widget)
