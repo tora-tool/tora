@@ -53,6 +53,7 @@
 #include <Qsci/qsciapis.h>
 #include <qnamespace.h>
 #include <QListWidget>
+#include <QtDebug>
 
 #include <Qsci/qscilexersql.h>
 #include <qpoint.h>
@@ -821,7 +822,14 @@ QStringList toHighlightedText::getCompletionList(QString* partial)
                     toReturn.append(t);
             }
         }
-        catch (...){}
+        catch (QString e)
+        {
+            qDebug() << "toHighlightedText::getCompletionList:" << e;
+        }
+        catch (...)
+        {
+            qDebug() << "toHighlightedText::getCompletionList: Unknown error.";
+        }
     }
     // if is toReturn empty fill it with keywords...
     if (showDefault && toReturn.count() == 0)

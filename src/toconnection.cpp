@@ -2010,8 +2010,7 @@ void toConnection::rereadCache(void)
     QString filename(cacheFile());
 
     if (QFile::exists(filename))
-        QFile::remove
-        (filename);
+        QFile::remove(filename);
 
     readObjects();
 }
