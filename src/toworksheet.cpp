@@ -1920,12 +1920,19 @@ void toWorksheet::setCaption(void)
 
 toWorksheet *toWorksheet::fileWorksheet(const QString &file)
 {
-    toWorksheet *worksheet = new toWorksheet(toMainWidget()->workspace(),
+    QMdiSubWindow * w = new QMdiSubWindow(toMainWidget()->workspace());
+
+    toWorksheet *worksheet = new toWorksheet(w,
             toMainWidget()->currentConnection(),
             false);
     worksheet->editor()->openFilename(file);
     worksheet->setCaption();
-    worksheet->show();
+
+    w->setAttribute(Qt::WA_DeleteOnClose);
+    w->setWidget(worksheet);
+    w->setWindowIcon(QIcon(*WorksheetTool.toolbarImage()));
+    toMainWidget()->workspace()->addSubWindow(w);
+    w->show();
     toMainWidget()->updateWindowsMenu();
     return worksheet;
 }
