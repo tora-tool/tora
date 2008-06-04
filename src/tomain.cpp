@@ -1782,5 +1782,8 @@ toMain* getMainWidget()
 toMain* toMainWidget()
 {
     static toMain *main = getMainWidget();
+    // if there is no main widget yet, try to refresh it
+    if (!main)
+        main = getMainWidget();
     return main;
 }

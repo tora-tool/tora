@@ -324,7 +324,17 @@ QString toSQLToAddress(toConnection &conn, const QString &sql)
 
 void toStatusMessage(const QString &str, bool save, bool log)
 {
-    toMainWidget()->showMessage(str, save, log);
+    // If there is no main widget yet (e.g. style init error)
+    // display error message in standard dialog.
+    if (toMainWidget())
+        toMainWidget()->showMessage(str, save, log);
+    else
+    {
+        QMessageBox::warning(0,
+                             qApp->translate("toStatusMessage", "TOra Message"),
+                             str
+                            );
+    }
 }
 
 QComboBox *toRefreshCreate(QWidget *parent, const char *name, const QString &def, QComboBox *item)
