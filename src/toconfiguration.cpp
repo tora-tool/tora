@@ -113,7 +113,7 @@ toConfiguration::toConfiguration()
     m_displayGridlines = s.value(CONF_DISPLAY_GRIDLINES, DEFAULT_DISPLAY_GRIDLINES).toBool();
     m_smtp = s.value(CONF_SMTP, DEFAULT_SMTP).toString();
     m_smtpPort = s.value(CONF_SMTP_PORT, DEFAULT_SMTP_PORT).toInt();
-    m_style = s.value(CONF_STYLE, "").toString();
+    m_style = s.value(CONF_STYLE, DEFAULT_STYLE).toString();
     // tooracleconnection.cpp
     m_openCursors = s.value(CONF_OPEN_CURSORS, DEFAULT_OPEN_CURSORS).toInt();
     m_maxLong = s.value(CONF_MAX_LONG, DEFAULT_MAX_LONG).toInt();

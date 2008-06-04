@@ -62,9 +62,11 @@
 #include <qapplication.h>
 #include <qmessagebox.h>
 #include <qtextcodec.h>
-//Added by qt3to4:
+
 #include <QString>
 #include <QTranslator>
+#include <QStyleFactory>
+#include <QFont>
 
 #ifndef TOMONOLITHIC
 #include <dlfcn.h>
@@ -92,7 +94,12 @@ void toUpdateIndicateEmpty(void);
 int main(int argc, char **argv)
 {
     toConfiguration::setQSettingsEnv();
-    new QApplication(argc, argv);
+
+    QString style(toConfigurationSingle::Instance().style());
+    if (!style.isEmpty())
+        QApplication::setStyle(QStyleFactory::create(style));
+
+    QApplication app(argc, argv);
 
     try
     {
@@ -112,10 +119,6 @@ int main(int argc, char **argv)
             toadbindings.load(toConfigurationSingle::Instance().pluginDir()/*toPluginPath()*/ + "/" + "tora_toad.qm");
             qApp->installTranslator(&toadbindings);
         }
-
-        QString style(toConfigurationSingle::Instance().style());
-        if (!style.isEmpty())
-            toSetSessionType(style);
 
 #ifndef TOMONOLITHIC
         {
