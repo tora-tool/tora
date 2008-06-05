@@ -279,7 +279,7 @@ bool toSQL::saveSQL(const QString &filename, bool all)
 void toSQL::loadSQL(const QString &filename)
 {
     allocCheck();
-    QByteArray data = toReadFile(filename);
+    QByteArray data = toReadFile(filename).toUtf8();
 
     int size = data.length();
     int pos = 0;

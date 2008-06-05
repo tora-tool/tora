@@ -440,7 +440,7 @@ void toConfiguration::saveConfig()
 
 void toConfiguration::loadMap(const QString &filename, std::map<QString, QString> &pairs)
 {
-    QByteArray data = toReadFile(filename);
+    QByteArray data = toReadFile(filename).toUtf8();
 
     int pos = 0;
     int bol = 0;

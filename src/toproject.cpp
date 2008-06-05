@@ -86,7 +86,7 @@ void toProjectTemplateItem::setup(const QString &name, bool open)
     {
         try
         {
-            QString data = QString::fromUtf8(toReadFile(Filename));
+            QString data = toReadFile(Filename);
             QStringList files = data.split(QRegExp(QString::fromLatin1("\n")));
             toProjectTemplateItem *last = NULL;
             for (int i = 0;i < files.count();i++)
@@ -600,7 +600,7 @@ QString toProject::generateSQL(toProjectTemplateItem *parent)
         else
         {
             data += tr("\n\n-- Start of file %1\n\n").arg(item->filename());
-            data += QString::fromLocal8Bit(toReadFile(item->filename()));
+            data += toReadFile(item->filename());
         }
     }
     return data;

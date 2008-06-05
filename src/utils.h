@@ -247,7 +247,7 @@ QString toFontToString(const QFont &fnt);
  * @return Contents of file.
  * @exception QString describing I/O problem.
  */
-QByteArray toReadFile(const QString &filename);
+QString toReadFile(const QString &filename);
 /** Write file to filename.
  * @param filename Filename to write file to.
  * @param data Data to write to file.

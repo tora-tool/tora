@@ -623,7 +623,7 @@ int toSizeDecode(const QString &str)
 //     return str;
 // }
 
-QByteArray toReadFile(const QString &filename)
+QString toReadFile(const QString &filename)
 {
     QString expanded = toExpandFile(filename);
     QFile file(expanded);
@@ -631,7 +631,7 @@ QByteArray toReadFile(const QString &filename)
         throw QT_TRANSLATE_NOOP("toReadFile", "Couldn't open file %1.").arg(filename);
 
     QTextStream in(&file);
-    return in.readAll().toUtf8();
+    return in.readAll();
 }
 
 QString toExpandFile(const QString &file)
