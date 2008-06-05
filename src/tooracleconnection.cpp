@@ -576,7 +576,7 @@ class oracleQuery : public toQuery::queryImpl
                            description[i].prec,
                            description[i].scale);
                 }
-                desc.Datatype.sprintf(desc.Datatype.toAscii().constData(), datatypearg1, datatypearg2);
+                desc.Datatype.sprintf(desc.Datatype.toUtf8().constData(), datatypearg1, datatypearg2);
 
                 desc.Null = description[i].nullok;
 
@@ -871,7 +871,7 @@ class oracleConnection : public toConnection::connectionImpl
             {
                 try
                 {
-                    otl_cursor::direct_exec(*(conn->Connection), sql.toAscii().constData());
+                    otl_cursor::direct_exec(*(conn->Connection), sql.toUtf8().constData());
                 }
                 catch (const otl_exception &exc)
                 {
@@ -888,7 +888,7 @@ class oracleConnection : public toConnection::connectionImpl
             try
             {
                 conn->Connection->reset_throw_count();
-                conn->Connection->syntax_check(sql.toAscii().constData());
+                conn->Connection->syntax_check(sql.toUtf8().constData());
 
             }
             catch (const otl_exception &exc)
@@ -1083,7 +1083,7 @@ void toOracleProvider::oracleQuery::execute(void)
 
         QString sql = query()->sql();
         sql.replace(stripnl, "");
-        Query->open(1, sql.toAscii().constData(), *(conn->Connection));
+        Query->open(1, sql.toUtf8().constData(), *(conn->Connection));
     }
     catch (const otl_exception &exc)
     {
@@ -1131,12 +1131,12 @@ void toOracleProvider::oracleQuery::execute(void)
                     case otl_var_clob:
                     {
                         QString buf = (*i).toUtf8();
-                        otl_long_string str(buf.toAscii().constData(), buf.length(), buf.length());
+                        otl_long_string str(buf.toUtf8().constData(), buf.length(), buf.length());
                         (*Query) << str;
                     }
                     break;
                     default:
-                        (*Query) << (*i).toUtf8().toAscii().constData();
+                        (*Query) << (*i).toUtf8().toUtf8().constData();
                         break;
                     }
                 }
@@ -1208,8 +1208,8 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
             QString pass = connection().password();
             try
             {
-                conn->session_begin(user.isEmpty() ? "" : user.toAscii().constData(),
-                                    pass.isEmpty() ? "" : pass.toAscii().constData(),
+                conn->session_begin(user.isEmpty() ? "" : user.toUtf8().constData(),
+                                    pass.isEmpty() ? "" : pass.toUtf8().constData(),
                                     0,
                                     session_mode);
             }
@@ -1238,10 +1238,10 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
                         {
                             if (newpass2 != newpass)
                                 throw qApp->translate("toOracleConnection", "The two passwords doesn't match");
-                            QString nputf = newpass.toUtf8();
-                            conn->change_password(user.isEmpty() ? "" : user.toAscii().constData(),
-                                                  pass.isEmpty() ? "" : pass.toAscii().constData(),
-                                                  newpass.isEmpty() ? "" : nputf.toAscii().constData());
+                            QString nputf = newpass;
+                            conn->change_password(user.isEmpty() ? "" : user.toUtf8().constData(),
+                                                  pass.isEmpty() ? "" : pass.toUtf8().constData(),
+                                                  newpass.isEmpty() ? "" : nputf.toUtf8().constData());
                             connection().setPassword(newpass);
                             delete conn;
                             conn = NULL;
