@@ -506,7 +506,7 @@ QString toQValue::toUtf8(void) const
         return ret;
     }
     case stringType:
-        return Value.String->toUtf8();
+        return *(Value.String);
     case binaryType:
     {
         QString ret(Value.Array->size()*2 + 1);
@@ -862,7 +862,7 @@ toQuery::toQuery(toConnection &conn,
                  const QString &arg9)
         : Connection(QPointer<toConnection>(&conn)),
         ConnectionSub(conn.pooledConnection()),
-        SQL(sql.toUtf8())
+        SQL(sql)
 {
     Mode = Normal;
     int numArgs;
@@ -981,7 +981,7 @@ toQuery::toQuery(toConnection &conn, const QString &sql, const toQList &params)
         : Connection(QPointer<toConnection>(&conn)),
         ConnectionSub(conn.pooledConnection()),
         Params(params),
-        SQL(sql.toUtf8())
+        SQL(sql)
 {
     Mode = Normal;
     toBusy busy;
@@ -1038,7 +1038,7 @@ toQuery::toQuery(toConnection &conn,
                  const toQList &params)
         : Connection(QPointer<toConnection>(&conn)),
         Params(params),
-        SQL(sql.toUtf8())
+        SQL(sql)
 {
     Mode = mode;
 
@@ -1096,7 +1096,7 @@ void toQuery::execute(const toSQL &sql, const toQList &params)
 void toQuery::execute(const QString &sql, const toQList &params)
 {
     toBusy busy;
-    SQL = sql.toUtf8();
+    SQL = sql;
     Params = params;
     Query->execute();
 }
@@ -1261,7 +1261,7 @@ toConnectionSub* toConnection::addConnection()
     {
         try
         {
-            Connection->execute(sub, (*i).toUtf8(), params);
+            Connection->execute(sub, *i, params);
         }
         TOCATCH
     }
@@ -1508,7 +1508,7 @@ void toConnection::parse(const QString &sql)
     PoolPtr sub(ConnectionPool);
     Version = Connection->version(*sub);
 
-    Connection->parse(*sub, sql.toUtf8());
+    Connection->parse(*sub, sql);
 }
 
 void toConnection::parse(const toSQL &sql)
@@ -1538,7 +1538,7 @@ void toConnection::execute(const QString &sql, toQList &params)
     PoolPtr sub(ConnectionPool);
     Version = Connection->version(*sub);
 
-    Connection->execute(*sub, sql.toUtf8(), params);
+    Connection->execute(*sub, sql, params);
 }
 
 void toConnection::execute(const toSQL &sql,
@@ -1652,7 +1652,7 @@ void toConnection::execute(const QString &sql,
     PoolPtr sub(ConnectionPool);
     Version = Connection->version(*sub);
 
-    Connection->execute(*sub, sql.toUtf8(), args);
+    Connection->execute(*sub, sql, args);
 }
 
 void toConnection::allExecute(const toSQL &sql, toQList &params)
