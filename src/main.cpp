@@ -67,6 +67,7 @@
 #include <QTranslator>
 #include <QStyleFactory>
 #include <QFont>
+#include <QTextCodec>
 
 #ifndef TOMONOLITHIC
 #include <dlfcn.h>
@@ -98,6 +99,9 @@ int main(int argc, char **argv)
     QString style(toConfigurationSingle::Instance().style());
     if (!style.isEmpty())
         QApplication::setStyle(QStyleFactory::create(style));
+
+    // Set the default codec to use for QString
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")); 
 
     QApplication app(argc, argv);
 
