@@ -187,8 +187,8 @@ void toResultData::query(const QString &, const toQList &params)
         par++;
         Table = *par;
     }
-    else if (Owner.isNull() || Table.isNull())
-        throw tr("toResultData requires owner and table names.");
+    else if (Owner.isEmpty() || Table.isEmpty())
+        return;
 
     FilterName = filterName();
 
