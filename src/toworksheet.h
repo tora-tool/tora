@@ -67,6 +67,7 @@ class toListView;
 class toResultBar;
 class toResultCols;
 class toResultCombo;
+class toResultSchema;
 class toResultItem;
 class toResultPlan;
 class toResultStats;
@@ -103,7 +104,7 @@ class toWorksheet : public toToolWidget
     toResultCols      *Columns;
     QComboBox         *Refresh;
     QLabel            *Started;
-    toResultCombo     *Schema;
+    toResultSchema    *Schema;
 
     int RefreshSeconds;
     QTimer RefreshTimer;

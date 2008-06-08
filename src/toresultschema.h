@@ -79,6 +79,13 @@ public slots:
      *
      */
     void update(const QString &schema);
+
+
+    /**
+     * Update to currently selected schema
+     *
+     */
+    void update(void);
 };
 
 #endif

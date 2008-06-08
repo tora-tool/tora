@@ -650,6 +650,11 @@ void toWorksheet::windowActivated(QMdiSubWindow *widget)
         }
 
         Editor->setFocus();
+
+        // must set correct schema every time so having two worksheets
+        // on different schemas works properly.
+        if(Schema)
+            Schema->update();
     }
     else
     {
