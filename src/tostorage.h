@@ -66,6 +66,7 @@ class toResultStorage;
 class toResultView;
 class toStorageDefinition;
 class toStorageDialog;
+class QTableView;
 
 
 class toStorageTablespace : public QWidget, public Ui::toStorageTablespaceUI
@@ -170,13 +171,61 @@ public slots:
     virtual void displaySQL(void);
 };
 
+
+/*! \brief Display Tablespace content.
+This class is used in Qt4 MVC architecture as a replacement
+for too much slow toListView item based widget - it's about
+70% faster.
+toStorageObjectModel is read only model - there are no user
+iteractions required.
+See toStorage Objects and ObjectsModel.
+See Qt4 docs to understand its MVC architecture.
+\author Petr Vanek <petr@scribus.info>
+*/
+class toStorageObjectModel : public QAbstractTableModel
+{
+    Q_OBJECT
+
+    public:
+        toStorageObjectModel(QObject * parent = 0);
+        ~toStorageObjectModel();
+
+        /*! Set new data to display. Model is re-validated too.
+        Values are converted from std::list to QList due the faster
+        access with at() */
+        void setValues(std::list<toStorageExtent::extentTotal> values);
+        //! Current values
+        QList<toStorageExtent::extentTotal> values() { return m_values; };
+
+        int rowCount(const QModelIndex & parent = QModelIndex()) const;
+        int columnCount(const QModelIndex & parent = QModelIndex()) const;
+
+        //! Handle DisplayRole and AlignRole.
+        QVariant data(const QModelIndex & index,
+                      int role = Qt::DisplayRole) const;
+        //! Readonly flags are set here.
+        Qt::ItemFlags flags(const QModelIndex & index) const;
+        //! Heading for horizontal and verticals labels. See HeaderData.
+        QVariant headerData(int section,
+                            Qt::Orientation orientation,
+                            int role = Qt::DisplayRole) const;
+
+    private:
+        //! Summary of extents etc.
+        QList<toStorageExtent::extentTotal> m_values;
+        //! Strings to display as horizontal headers.
+        QStringList HeaderData;
+};
+
+
 class toStorage : public toToolWidget
 {
     Q_OBJECT
 
     toResultStorage *Storage;
 
-    toListView *Objects;
+    QTableView *Objects;
+    toStorageObjectModel * ObjectsModel;
     toStorageExtent *Extents;
     QSplitter *ExtentParent;
 
@@ -226,7 +275,7 @@ public slots:
     void showExtent(bool);
     void showTablespaces(bool);
     void selectionChanged(void);
-    void selectObject(void);
+    void selectObject(const QModelIndex & current, const QModelIndex &);
     void windowActivated(QMdiSubWindow *widget);
 };
 

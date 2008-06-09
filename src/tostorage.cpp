@@ -66,10 +66,13 @@
 #include <qtoolbutton.h>
 #include <qtooltip.h>
 #include <QMdiArea>
+#include <QTableView>
+#include <QHeaderView>
 
 #include <QPixmap>
 #include <QFileDialog>
 #include <QMenu>
+#include <QSortFilterProxyModel>
 
 #include "icons/addfile.xpm"
 #include "icons/addtablespace.xpm"
@@ -953,21 +956,22 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     Storage = new toResultStorage(toConfigurationSingle::Instance().dispAvailableGraph(),
                                   splitter);
     ExtentParent = new QSplitter(Qt::Horizontal, splitter);
-    Objects = new toListView(ExtentParent);
-    Objects->addColumn(tr("Owner"));
-    Objects->addColumn(tr("Object"));
-    Objects->addColumn(tr("Partition"));
-    Objects->addColumn(tr("Extents"));
-    Objects->addColumn(tr("Blocks"));
-    Objects->setColumnAlignment(3, Qt::AlignRight);
-    Objects->setColumnAlignment(4, Qt::AlignRight);
-    Objects->setSorting(0);
-    Objects->setShowSortIndicator(TRUE);
+    Objects = new QTableView(ExtentParent);
+    ObjectsModel = new toStorageObjectModel(this);
+    QSortFilterProxyModel * proxyModel = new QSortFilterProxyModel(this);
+    proxyModel->setSourceModel(ObjectsModel);
+    Objects->setModel(proxyModel);
+    Objects->setSortingEnabled(true);
+    Objects->setSelectionBehavior(QAbstractItemView::SelectRows);
+    Objects->setSelectionMode(QAbstractItemView::SingleSelection);
 
     Extents = new toStorageExtent(ExtentParent);
-    Objects->setSelectionMode(toTreeWidget::Single);
     Storage->setSelectionMode(toTreeWidget::Single);
-    connect(Objects, SIGNAL(selectionChanged(void)), this, SLOT(selectObject(void)));
+
+    connect(Objects->selectionModel(),
+            SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),
+            this,
+            SLOT(selectObject(const QModelIndex &, const QModelIndex &)));
 
     if (!extents)
         ExtentParent->hide();
@@ -1189,17 +1193,9 @@ void toStorage::selectionChanged(void)
 
         if (!ExtentParent->isHidden())
         {
-            std::list<toStorageExtent::extentTotal> obj = Extents->objects();
-            toTreeWidgetItem *objItem = NULL;
-            Objects->clear();
-            for (std::list<toStorageExtent::extentTotal>::iterator i = obj.begin();i != obj.end();i++)
-            {
-                objItem = new toResultViewItem(Objects, objItem, (*i).Owner);
-                objItem->setText(1, (*i).Table);
-                objItem->setText(2, (*i).Partition);
-                objItem->setText(3, QString::number((*i).Extents));
-                objItem->setText(4, QString::number((*i).Size));
-            }
+            ObjectsModel->setValues(Extents->objects());
+            Objects->resizeColumnsToContents();
+            Objects->resizeRowsToContents();
         }
 
         if (item)
@@ -1375,14 +1371,13 @@ void toStorage::moveFile(void)
     TOCATCH
 }
 
-void toStorage::selectObject(void)
+void toStorage::selectObject(const QModelIndex & current, const QModelIndex &)
 {
-    toTreeWidgetItem *item = Objects->selectedItem();
-    if (item)
+    QModelIndex ix = current;
+    if (ix.isValid())
     {
-        toResultViewItem *res = dynamic_cast<toResultViewItem *>(item);
-        if (res)
-            Extents->highlight(res->allText(0), res->allText(1), res->allText(2));
+        toStorageExtent::extentTotal ce = ObjectsModel->values().at(ix.row());
+        Extents->highlight(ce.Owner, ce.Table, ce.Partition);
     }
 }
 
@@ -1402,4 +1397,79 @@ void toStorage::showExtent(bool ena)
 void toStorage::showTablespaces(bool tab)
 {
     Storage->setOnlyFiles(!tab);
+}
+
+
+toStorageObjectModel::toStorageObjectModel(QObject * parent)
+    : QAbstractTableModel(parent)
+{
+    m_values.clear();
+    HeaderData << tr("Owner") << tr("Object") << tr("Partition") << tr("Extents") << tr("Blocks");
+}
+
+toStorageObjectModel::~toStorageObjectModel()
+{
+}
+
+void toStorageObjectModel::setValues(std::list<toStorageExtent::extentTotal> values)
+{
+    m_values.clear();
+    for (std::list<toStorageExtent::extentTotal>::iterator i = values.begin();i != values.end(); ++i)
+        m_values.append((*i));
+    reset();
+}
+
+int toStorageObjectModel::rowCount(const QModelIndex & parent) const
+{
+    return m_values.size();
+}
+
+int toStorageObjectModel::columnCount(const QModelIndex & parent)  const
+{
+    return 5;
+}
+
+QVariant toStorageObjectModel::data(const QModelIndex & index, int role) const
+{
+    if (!index.isValid())
+        return QVariant();
+
+    if (role == Qt::TextAlignmentRole)
+    {
+        if (index.column() == 3 || index.column() == 4)
+            return Qt::AlignRight;
+        else
+            return Qt::AlignLeft;
+    }
+
+    if (role == Qt::DisplayRole)
+    {
+        toStorageExtent::extentTotal e = m_values.at(index.row());
+        switch (index.column())
+        {
+            case 0: return e.Owner; break;
+            case 1: return e.Table; break;
+            case 2: return e.Partition; break;
+            case 3: return e.Extents; break;
+            case 4: return e.Size; break;
+            default: return "Never should go here";
+        };
+    };
+    // safe return
+    return QVariant();
+}
+
+Qt::ItemFlags toStorageObjectModel::flags(const QModelIndex & index) const
+{
+    return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+}
+
+QVariant toStorageObjectModel::headerData(int section, Qt::Orientation orientation, int role)  const
+{
+    if (role != Qt::DisplayRole)
+         return QVariant();
+    if (orientation == Qt::Horizontal)
+        return HeaderData.at(section);
+    else
+        return QString("%1").arg(section + 1);
 }

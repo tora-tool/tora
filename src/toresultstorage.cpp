@@ -49,6 +49,7 @@
 //Added by qt3to4:
 #include <QList>
 #include <QPaintEvent>
+#include <QProgressDialog>
 
 class toResultStorageItem : public toResultViewItem
 {
@@ -457,66 +458,66 @@ static toSQL SQLDatafile(
     "0900");
 
 static toSQL SQLDatafile8(
-		"toResultStorage:Datafile",
-	    "SELECT d.tablespace_name,\n"
-	    "       v.name,\n"
-	    "       v.status,\n"
-	    "       v.enabled,\n"
-	    "       ' ',\n"
-	    "       ' ',\n"
-	    "       to_char ( round ( d.bytes / b.unit,\n"
-	    "                         2 ) ),\n"
-	    "       to_char ( round ( s.bytes / b.unit,\n"
-	    "                         2 ) ),\n"
-	    "       to_char ( round ( d.maxbytes / b.unit,\n"
-	    "                         2 ) ),\n"
-	    "       '-',\n"
-	    "       ' ',\n"
-	    "       to_char ( round ( s.maxbytes / b.unit,\n"
-	    "                         2 ) ),\n"
-	    "       to_char ( s.num ),\n"
-	    "       NULL,\n"            // Used to fill in tablespace name
-	    "       v.file#\n"          // Needed by toStorage to work
-	    "  FROM ( SELECT :unt<int> unit\n"
-	    "           FROM sys.dual ) b,\n"
-	    "       sys.dba_data_files d,\n"
-	    "       v$datafile v,\n"
-	    "       ( SELECT file_id,\n"
-	    "                NVL ( SUM ( bytes ),\n"
-	    "                      0 ) bytes,\n"
-	    "                COUNT ( 1 ) num,\n"
-	    "                NVL ( MAX ( bytes ),\n"
-	    "                      0 ) maxbytes\n"
-	    "           FROM sys.dba_free_space\n"
-	    "          GROUP BY file_id ) s\n"
-	    " WHERE d.file_id = v.file#\n"
-	    "   AND s.file_id = d.file_id ( + )\n"
-	    " UNION ALL SELECT d.tablespace_name,\n"
-	    "       v.name,\n"
-	    "       v.status,\n"
-	    "       v.enabled,\n"
-	    "       ' ',\n"
-	    "       ' ',\n"
-	    "       to_char ( round ( d.bytes / b.unit,\n"
-	    "                         2 ) ),\n"
-	    "       to_char ( round ( ( d.user_bytes - t.bytes_cached ) / b.unit,\n"
-	    "                         2 ) ),\n"
-	    "       to_char ( round ( d.maxbytes / b.unit,\n"
-	    "                         2 ) ),\n"
-	    "       '-',\n"
-	    "       ' ',\n"
-	    "       ' ',\n"
-	    "       '1',\n"
-	    "       NULL,\n"
-	    "       v.file#\n"
-	    "  FROM ( SELECT :unt<int> unit\n"
-	    "           FROM sys.dual ) b,\n"
-	    "       sys.dba_temp_files d,\n"
-	    "       v$tempfile v,\n"
-	    "       v$temp_extent_pool t\n"
-	    " WHERE d.file_id = v.file#\n"
-	    "   AND t.file_id = d.file_id ( + )",
-	    "",
+"toResultStorage:Datafile",
+    "SELECT d.tablespace_name,\n"
+    "       v.name,\n"
+    "       v.status,\n"
+    "       v.enabled,\n"
+    "       ' ',\n"
+    "       ' ',\n"
+    "       to_char ( round ( d.bytes / b.unit,\n"
+    "                         2 ) ),\n"
+    "       to_char ( round ( s.bytes / b.unit,\n"
+    "                         2 ) ),\n"
+    "       to_char ( round ( d.maxbytes / b.unit,\n"
+    "                         2 ) ),\n"
+    "       '-',\n"
+    "       ' ',\n"
+    "       to_char ( round ( s.maxbytes / b.unit,\n"
+    "                         2 ) ),\n"
+    "       to_char ( s.num ),\n"
+    "       NULL,\n"            // Used to fill in tablespace name
+    "       v.file#\n"          // Needed by toStorage to work
+    "  FROM ( SELECT :unt<int> unit\n"
+    "           FROM sys.dual ) b,\n"
+    "       sys.dba_data_files d,\n"
+    "       v$datafile v,\n"
+    "       ( SELECT file_id,\n"
+    "                NVL ( SUM ( bytes ),\n"
+    "                      0 ) bytes,\n"
+    "                COUNT ( 1 ) num,\n"
+    "                NVL ( MAX ( bytes ),\n"
+    "                      0 ) maxbytes\n"
+    "           FROM sys.dba_free_space\n"
+    "          GROUP BY file_id ) s\n"
+    " WHERE d.file_id = v.file#\n"
+    "   AND s.file_id = d.file_id ( + )\n"
+    " UNION ALL SELECT d.tablespace_name,\n"
+    "       v.name,\n"
+    "       v.status,\n"
+    "       v.enabled,\n"
+    "       ' ',\n"
+    "       ' ',\n"
+    "       to_char ( round ( d.bytes / b.unit,\n"
+    "                         2 ) ),\n"
+    "       to_char ( round ( ( d.user_bytes - t.bytes_cached ) / b.unit,\n"
+    "                         2 ) ),\n"
+    "       to_char ( round ( d.maxbytes / b.unit,\n"
+    "                         2 ) ),\n"
+    "       '-',\n"
+    "       ' ',\n"
+    "       ' ',\n"
+    "       '1',\n"
+    "       NULL,\n"
+    "       v.file#\n"
+    "  FROM ( SELECT :unt<int> unit\n"
+    "           FROM sys.dual ) b,\n"
+    "       sys.dba_temp_files d,\n"
+    "       v$tempfile v,\n"
+    "       v$temp_extent_pool t\n"
+    " WHERE d.file_id = v.file#\n"
+    "   AND t.file_id = d.file_id ( + )",
+    "",
         "0800");
 
 static toSQL SQLDatafile7("toResultStorage:Datafile",
@@ -910,9 +911,31 @@ void toStorageExtent::setTablespace(const QString &tablespace)
         Extents.clear();
         FileOffset.clear();
         toQuery query(toCurrentConnection(this), SQLObjectsTablespace, tablespace);
+
+        // It's used to keep UI "non-freezed".
+        // OK, there are better query classes for it but it's enough for now.
+        // TODO: rewrite data fetching for this tool
+        int progressMax = 1000;
+        int progressCurr = 1;
+        QProgressDialog progress("Reading Objects...", "Abort", 0, progressMax, this);
+
         extent cur;
         while (!query.eof())
         {
+            if (progressCurr > (progressMax-1))
+                progressCurr = 0;
+            if (progressCurr % 200 == 0)
+            {
+                progress.setValue(progressCurr);
+                QCoreApplication::processEvents();
+            }
+            if (progress.wasCanceled())
+            {
+                Extents.clear();
+                break;
+            }
+            ++progressCurr;
+
             cur.Owner = query.readValueNull();
             cur.Table = query.readValueNull();
             cur.Partition = query.readValueNull();
@@ -944,8 +967,27 @@ void toStorageExtent::setFile(const QString &tablespace, int file)
         FileOffset.clear();
         toQuery query(toCurrentConnection(this), SQLObjectsFile, tablespace, QString::number(file));
         extent cur;
+
+        int progressMax = 1000;
+        int progressCurr = 1;
+        QProgressDialog progress("Reading Objects...", "Abort", 0, progressMax, this);
+
         while (!query.eof())
         {
+            if (progressCurr > (progressMax-1))
+                progressCurr = 0;
+            if (progressCurr % 200 == 0)
+            {
+                progress.setValue(progressCurr);
+                QCoreApplication::processEvents();
+            }
+            if (progress.wasCanceled())
+            {
+                Extents.clear();
+                break;
+            }
+            ++progressCurr;
+
             cur.Owner = query.readValueNull();
             cur.Table = query.readValueNull();
             cur.Partition = query.readValueNull();
