@@ -83,6 +83,9 @@ void toResultSchema::update() {
 
 
 void toResultSchema::update(const QString &schema) {
+    if(schema.isEmpty())
+        return;
+
     try {
         toConnection &conn = connection();
 
