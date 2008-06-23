@@ -226,10 +226,14 @@ toConnectionPool::PooledState toConnectionPool::test(int member) {
 toConnectionPool::PooledState toConnectionPool::test(PooledSub *sub) {
     PooledState state = Free;
     try {
+        QString sql = toSQL::string("Global:Now", *Connection);
+        if(sql.isEmpty())
+            return state;
+
         toQList params;
         toQuery q(*Connection,
                   sub->Sub,
-                  toSQL::string("Global:Now", *Connection),
+                  sql,
                   params);
     }
     catch(...) {
