@@ -18,815 +18,821 @@
   <property name="windowTitle" >
    <string/>
   </property>
-  <layout class="QGridLayout" >
-   <property name="margin" >
+  <widget class="QTabWidget" name="Tabs" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>918</width>
+     <height>881</height>
+    </rect>
+   </property>
+   <property name="currentIndex" >
     <number>0</number>
    </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
-   <item row="0" column="0" >
-    <widget class="QTabWidget" name="Tabs" >
-     <property name="currentIndex" >
-      <number>0</number>
+   <widget class="QWidget" name="tab" >
+    <property name="geometry" >
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>906</width>
+      <height>837</height>
+     </rect>
+    </property>
+    <property name="sizePolicy" >
+     <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <attribute name="title" >
+     <string>Configuration</string>
+    </attribute>
+    <widget class="QWidget" native="1" name="confContainer" >
+     <property name="geometry" >
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>453</width>
+       <height>827</height>
+      </rect>
      </property>
-     <widget class="QWidget" name="tab" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>906</width>
-        <height>837</height>
-       </rect>
-      </property>
-      <property name="sizePolicy" >
-       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <attribute name="title" >
-       <string>Configuration</string>
-      </attribute>
-        <widget class="QWidget" native="1" name="confContainer" >
-         <layout class="QGridLayout" name="gridLayout" >
-          <item row="0" column="0" >
-           <widget class="QGroupBox" name="ModeGroup" >
-            <property name="title" >
-             <string>&amp;Options</string>
-            </property>
-            <layout class="QGridLayout" >
-             <property name="margin" >
-              <number>11</number>
-             </property>
-             <property name="spacing" >
-              <number>6</number>
-             </property>
-             <item row="0" column="0" >
-              <widget class="QRadioButton" name="Compare" >
-               <property name="toolTip" >
-                <string>Compare two databases or schemas</string>
-               </property>
-               <property name="text" >
-                <string>Compare</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>0</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0" >
-              <widget class="QRadioButton" name="Extract" >
-               <property name="toolTip" >
-                <string>Extract script to recreate database objects.</string>
-               </property>
-               <property name="text" >
-                <string>Extract</string>
-               </property>
-               <property name="checked" >
-                <bool>false</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>1</number>
-               </property>
-              </widget>
-             </item>
-             <item row="7" column="2" colspan="2" >
-              <widget class="QCheckBox" name="IncludeCode" >
-               <property name="text" >
-                <string>Include code specification</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="2" colspan="2" >
-              <widget class="QCheckBox" name="IncludeStorage" >
-               <property name="text" >
-                <string>Include storage specification</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="2" colspan="2" >
-              <widget class="QCheckBox" name="IncludeParallell" >
-               <property name="text" >
-                <string>Include parallel specification</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="2" colspan="2" >
-              <widget class="QCheckBox" name="IncludePartition" >
-               <property name="text" >
-                <string>Include partition specification</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="2" colspan="2" >
-              <widget class="QCheckBox" name="IncludeIndexes" >
-               <property name="text" >
-                <string>Include indexes</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item row="8" column="2" colspan="2" >
-              <widget class="QCheckBox" name="IncludeComment" >
-               <property name="enabled" >
-                <bool>true</bool>
-               </property>
-               <property name="text" >
-                <string>Include comments</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="2" colspan="2" >
-              <widget class="QCheckBox" name="IncludeGrants" >
-               <property name="text" >
-                <string>Include grants</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="2" colspan="2" >
-              <widget class="QCheckBox" name="IncludeConstraints" >
-               <property name="text" >
-                <string>Include constraints</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2" colspan="2" >
-              <widget class="QCheckBox" name="IncludeDDL" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="text" >
-                <string>Include DDL</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0" >
-              <widget class="QRadioButton" name="Search" >
-               <property name="text" >
-                <string>Search</string>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>3</number>
-               </property>
-              </widget>
-             </item>
-             <item rowspan="15" row="0" column="1" >
-              <widget class="Line" name="Line3" />
-             </item>
-             <item rowspan="10" row="5" column="0" >
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeType" >
-                <enum>QSizePolicy::Expanding</enum>
-               </property>
-               <property name="sizeHint" stdset="0" >
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="3" column="0" >
-              <widget class="QRadioButton" name="Migrate" >
-               <property name="enabled" >
-                <bool>true</bool>
-               </property>
-               <property name="toolTip" >
-                <string>Create database scripts to convert schema or database from source to destination</string>
-               </property>
-               <property name="text" >
-                <string>Migrate</string>
-               </property>
-               <property name="checked" >
-                <bool>false</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>2</number>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0" >
-              <widget class="QRadioButton" name="Report" >
-               <property name="enabled" >
-                <bool>true</bool>
-               </property>
-               <property name="toolTip" >
-                <string>Create database scripts to convert schema or database from source to destination</string>
-               </property>
-               <property name="text" >
-                <string>Report</string>
-               </property>
-               <property name="checked" >
-                <bool>false</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>4</number>
-               </property>
-              </widget>
-             </item>
-             <item row="9" column="2" colspan="2" >
-              <widget class="QCheckBox" name="IncludePrompt" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="focusPolicy" >
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="toolTip" >
-                <string>Generate prompts to display progress in SQLPlus</string>
-               </property>
-               <property name="text" >
-                <string>Generate prompts</string>
-               </property>
-               <property name="checked" >
-                <bool>false</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item row="14" column="2" >
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeType" >
-                <enum>QSizePolicy::Expanding</enum>
-               </property>
-               <property name="sizeHint" stdset="0" >
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="10" column="2" colspan="2" >
-              <widget class="QCheckBox" name="IncludeHeader" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="toolTip" >
-                <string>Generate header at the top of the script</string>
-               </property>
-               <property name="text" >
-                <string>Generate header</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item row="13" column="3" >
-              <widget class="QComboBox" name="Schema" >
-               <property name="editable" >
-                <bool>true</bool>
-               </property>
-               <property name="duplicatesEnabled" >
-                <bool>false</bool>
-               </property>
-               <item>
-                <property name="text" >
-                 <string>Same</string>
-                </property>
-               </item>
-               <item>
-                <property name="text" >
-                 <string>None</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="13" column="2" >
-              <widget class="QLabel" name="TextLabel3" >
-               <property name="toolTip" >
-                <string>Select the schema to generate in script</string>
-               </property>
-               <property name="text" >
-                <string>Generated schema</string>
-               </property>
-               <property name="wordWrap" >
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="11" column="2" colspan="2" >
-              <widget class="QCheckBox" name="IncludeContent" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="focusPolicy" >
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="text" >
-                <string>Include content of tables</string>
-               </property>
-               <property name="checked" >
-                <bool>false</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item row="12" column="2" >
-              <widget class="QLabel" name="TextLabel1_3" >
-               <property name="toolTip" >
-                <string>The number of insertstatements to make between each commit (0 means whole table)</string>
-               </property>
-               <property name="text" >
-                <string>Commit distance</string>
-               </property>
-               <property name="wordWrap" >
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="12" column="3" >
-              <widget class="QSpinBox" name="CommitDistance" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="maximum" >
-                <number>1000000</number>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item rowspan="3" row="0" column="1" >
-           <widget class="toScriptSchemaWidget" native="1" name="Source" />
-          </item>
-          <item rowspan="3" row="0" column="2" >
-           <widget class="toScriptSchemaWidget" native="1" name="Destination" />
-          </item>
-          <item row="1" column="0" >
-           <widget class="QGroupBox" name="OutputGroup" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="title" >
-             <string>Output</string>
-            </property>
-            <layout class="QGridLayout" >
-             <property name="margin" >
-              <number>11</number>
-             </property>
-             <property name="spacing" >
-              <number>6</number>
-             </property>
-             <item row="0" column="0" >
-              <widget class="QRadioButton" name="OutputTab" >
-               <property name="text" >
-                <string>Output tab</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>1</number>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2" >
-              <widget class="QRadioButton" name="OutputDir" >
-               <property name="focusPolicy" >
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="toolTip" >
-                <string>Output to directory so that each object is placed in a different file.</string>
-               </property>
-               <property name="text" >
-                <string>Output dir</string>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>3</number>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1" >
-              <widget class="QRadioButton" name="OutputFile" >
-               <property name="focusPolicy" >
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="text" >
-                <string>Output file</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0" colspan="3" >
-              <layout class="QHBoxLayout" >
-               <property name="spacing" >
-                <number>6</number>
-               </property>
-               <property name="margin" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QLineEdit" name="Filename" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="Browse" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>Browse</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="2" column="0" >
-           <widget class="QGroupBox" name="SearchGroup" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="title" >
-             <string>&amp;Search</string>
-            </property>
-            <layout class="QGridLayout" >
-             <property name="margin" >
-              <number>11</number>
-             </property>
-             <property name="spacing" >
-              <number>6</number>
-             </property>
-             <item row="2" column="0" colspan="2" >
-              <widget class="QLineEdit" name="SearchWord" />
-             </item>
-             <item row="0" column="0" >
-              <widget class="QRadioButton" name="AnyWords" >
-               <property name="text" >
-                <string>Contain any words</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>2</number>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1" >
-              <widget class="QRadioButton" name="AllWords" >
-               <property name="focusPolicy" >
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="text" >
-                <string>Contain all words</string>
-               </property>
-               <property name="checked" >
-                <bool>false</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>1</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1" >
-              <widget class="QRadioButton" name="RegExp" >
-               <property name="focusPolicy" >
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="text" >
-                <string>RegExp</string>
-               </property>
-               <property name="checked" >
-                <bool>false</bool>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>3</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0" >
-              <widget class="QRadioButton" name="ExactMatch" >
-               <property name="focusPolicy" >
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="text" >
-                <string>Exact match</string>
-               </property>
-               <property name="buttonGroupId" stdset="0" >
-                <number>4</number>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-     </widget>
-     <widget class="QWidget" name="ResizeTab" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>906</width>
-        <height>837</height>
-       </rect>
-      </property>
-      <attribute name="title" >
-       <string>Resize</string>
-      </attribute>
-      <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>11</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item row="0" column="0" >
-        <widget class="QGroupBox" name="ButtonGroup2_2" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+     <layout class="QGridLayout" name="gridLayout" >
+      <item row="0" column="0" >
+       <widget class="QGroupBox" name="ModeGroup" >
+        <property name="title" >
+         <string>&amp;Options</string>
+        </property>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>11</number>
          </property>
-         <property name="title" >
-          <string>Script Resize</string>
+         <property name="spacing" >
+          <number>6</number>
          </property>
-         <layout class="QGridLayout" >
-          <property name="margin" >
-           <number>11</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item row="0" column="0" >
-           <widget class="QRadioButton" name="DontResize" >
+         <item row="0" column="0" >
+          <widget class="QRadioButton" name="Compare" >
+           <property name="toolTip" >
+            <string>Compare two databases or schemas</string>
+           </property>
+           <property name="text" >
+            <string>Compare</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QRadioButton" name="Extract" >
+           <property name="toolTip" >
+            <string>Extract script to recreate database objects.</string>
+           </property>
+           <property name="text" >
+            <string>Extract</string>
+           </property>
+           <property name="checked" >
+            <bool>false</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="2" colspan="2" >
+          <widget class="QCheckBox" name="IncludeCode" >
+           <property name="text" >
+            <string>Include code specification</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="2" colspan="2" >
+          <widget class="QCheckBox" name="IncludeStorage" >
+           <property name="text" >
+            <string>Include storage specification</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="2" colspan="2" >
+          <widget class="QCheckBox" name="IncludeParallell" >
+           <property name="text" >
+            <string>Include parallel specification</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="2" colspan="2" >
+          <widget class="QCheckBox" name="IncludePartition" >
+           <property name="text" >
+            <string>Include partition specification</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2" colspan="2" >
+          <widget class="QCheckBox" name="IncludeIndexes" >
+           <property name="text" >
+            <string>Include indexes</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="2" colspan="2" >
+          <widget class="QCheckBox" name="IncludeComment" >
+           <property name="enabled" >
+            <bool>true</bool>
+           </property>
+           <property name="text" >
+            <string>Include comments</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="2" colspan="2" >
+          <widget class="QCheckBox" name="IncludeGrants" >
+           <property name="text" >
+            <string>Include grants</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2" colspan="2" >
+          <widget class="QCheckBox" name="IncludeConstraints" >
+           <property name="text" >
+            <string>Include constraints</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2" colspan="2" >
+          <widget class="QCheckBox" name="IncludeDDL" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>Include DDL</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" >
+          <widget class="QRadioButton" name="Search" >
+           <property name="text" >
+            <string>Search</string>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>3</number>
+           </property>
+          </widget>
+         </item>
+         <item rowspan="15" row="0" column="1" >
+          <widget class="Line" name="Line3" />
+         </item>
+         <item rowspan="10" row="5" column="0" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="3" column="0" >
+          <widget class="QRadioButton" name="Migrate" >
+           <property name="enabled" >
+            <bool>true</bool>
+           </property>
+           <property name="toolTip" >
+            <string>Create database scripts to convert schema or database from source to destination</string>
+           </property>
+           <property name="text" >
+            <string>Migrate</string>
+           </property>
+           <property name="checked" >
+            <bool>false</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>2</number>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" >
+          <widget class="QRadioButton" name="Report" >
+           <property name="enabled" >
+            <bool>true</bool>
+           </property>
+           <property name="toolTip" >
+            <string>Create database scripts to convert schema or database from source to destination</string>
+           </property>
+           <property name="text" >
+            <string>Report</string>
+           </property>
+           <property name="checked" >
+            <bool>false</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>4</number>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="2" colspan="2" >
+          <widget class="QCheckBox" name="IncludePrompt" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="focusPolicy" >
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip" >
+            <string>Generate prompts to display progress in SQLPlus</string>
+           </property>
+           <property name="text" >
+            <string>Generate prompts</string>
+           </property>
+           <property name="checked" >
+            <bool>false</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="2" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="10" column="2" colspan="2" >
+          <widget class="QCheckBox" name="IncludeHeader" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="toolTip" >
+            <string>Generate header at the top of the script</string>
+           </property>
+           <property name="text" >
+            <string>Generate header</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="3" >
+          <widget class="QComboBox" name="Schema" >
+           <property name="editable" >
+            <bool>true</bool>
+           </property>
+           <property name="duplicatesEnabled" >
+            <bool>false</bool>
+           </property>
+           <item>
             <property name="text" >
-             <string>Don't resize</string>
+             <string>Same</string>
             </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" >
-           <widget class="QRadioButton" name="AutoResize" >
+           </item>
+           <item>
             <property name="text" >
-             <string>Auto resize</string>
+             <string>None</string>
             </property>
-           </widget>
-          </item>
-          <item row="0" column="2" >
-           <widget class="QRadioButton" name="CustomResize" >
-            <property name="text" >
-             <string>Custom resize</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="0" >
-        <widget class="QFrame" name="Frame4" >
-         <property name="enabled" >
-          <bool>false</bool>
+           </item>
+          </widget>
+         </item>
+         <item row="13" column="2" >
+          <widget class="QLabel" name="TextLabel3" >
+           <property name="toolTip" >
+            <string>Select the schema to generate in script</string>
+           </property>
+           <property name="text" >
+            <string>Generated schema</string>
+           </property>
+           <property name="wordWrap" >
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="2" colspan="2" >
+          <widget class="QCheckBox" name="IncludeContent" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="focusPolicy" >
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text" >
+            <string>Include content of tables</string>
+           </property>
+           <property name="checked" >
+            <bool>false</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="2" >
+          <widget class="QLabel" name="TextLabel1_3" >
+           <property name="toolTip" >
+            <string>The number of insertstatements to make between each commit (0 means whole table)</string>
+           </property>
+           <property name="text" >
+            <string>Commit distance</string>
+           </property>
+           <property name="wordWrap" >
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="3" >
+          <widget class="QSpinBox" name="CommitDistance" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="maximum" >
+            <number>1000000</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item rowspan="3" row="0" column="1" >
+       <widget class="toScriptSchemaWidget" native="1" name="Source" />
+      </item>
+      <item rowspan="3" row="0" column="2" >
+       <widget class="toScriptSchemaWidget" native="1" name="Destination" />
+      </item>
+      <item row="1" column="0" >
+       <widget class="QGroupBox" name="OutputGroup" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="title" >
+         <string>Output</string>
+        </property>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>11</number>
          </property>
-         <property name="frameShape" >
-          <enum>QFrame::NoFrame</enum>
+         <property name="spacing" >
+          <number>6</number>
          </property>
-         <property name="frameShadow" >
-          <enum>QFrame::Plain</enum>
-         </property>
-         <layout class="QGridLayout" >
-          <property name="margin" >
-           <number>11</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item row="3" column="0" >
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" stdset="0" >
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item rowspan="4" row="0" column="2" colspan="2" >
-           <widget class="toTreeWidget" name="Sizes" >
-            <property name="allColumnsShowFocus" >
-             <bool>true</bool>
-            </property>
-            <column>
+         <item row="0" column="0" >
+          <widget class="QRadioButton" name="OutputTab" >
+           <property name="text" >
+            <string>Output tab</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2" >
+          <widget class="QRadioButton" name="OutputDir" >
+           <property name="focusPolicy" >
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip" >
+            <string>Output to directory so that each object is placed in a different file.</string>
+           </property>
+           <property name="text" >
+            <string>Output dir</string>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>3</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QRadioButton" name="OutputFile" >
+           <property name="focusPolicy" >
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text" >
+            <string>Output file</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="3" >
+          <layout class="QHBoxLayout" >
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <property name="margin" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="Filename" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="Browse" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
              <property name="text" >
-              <string>Limit</string>
+              <string>Browse</string>
              </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>Initial</string>
-             </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>Next</string>
-             </property>
-            </column>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="2" >
-           <widget class="toFilesize" native="1" name="Limit" >
-            <property name="focusPolicy" >
-             <enum>Qt::TabFocus</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="2" >
-           <widget class="toFilesize" native="1" name="Initial" >
-            <property name="focusPolicy" >
-             <enum>Qt::TabFocus</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" colspan="2" >
-           <widget class="toFilesize" native="1" name="Next" >
-            <property name="focusPolicy" >
-             <enum>Qt::TabFocus</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1" >
-           <widget class="QPushButton" name="AddButton" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text" >
-             <string>&amp;Add</string>
-            </property>
-            <property name="default" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="3" >
-           <widget class="QPushButton" name="Remove" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text" >
-             <string>&amp;Remove</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0" >
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Minimum</enum>
-            </property>
-            <property name="sizeHint" stdset="0" >
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="4" column="2" >
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" stdset="0" >
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="ResultTab" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>906</width>
-        <height>837</height>
-       </rect>
-      </property>
-      <attribute name="title" >
-       <string>Result</string>
-      </attribute>
-     </widget>
-     <widget class="QWidget" name="DifferenceTab" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>906</width>
-        <height>837</height>
-       </rect>
-      </property>
-      <attribute name="title" >
-       <string>Difference</string>
-      </attribute>
-     </widget>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QGroupBox" name="SearchGroup" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="title" >
+         <string>&amp;Search</string>
+        </property>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>11</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="2" column="0" colspan="2" >
+          <widget class="QLineEdit" name="SearchWord" />
+         </item>
+         <item row="0" column="0" >
+          <widget class="QRadioButton" name="AnyWords" >
+           <property name="text" >
+            <string>Contain any words</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>2</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QRadioButton" name="AllWords" >
+           <property name="focusPolicy" >
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text" >
+            <string>Contain all words</string>
+           </property>
+           <property name="checked" >
+            <bool>false</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QRadioButton" name="RegExp" >
+           <property name="focusPolicy" >
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text" >
+            <string>RegExp</string>
+           </property>
+           <property name="checked" >
+            <bool>false</bool>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>3</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QRadioButton" name="ExactMatch" >
+           <property name="focusPolicy" >
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text" >
+            <string>Exact match</string>
+           </property>
+           <property name="buttonGroupId" stdset="0" >
+            <number>4</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
     </widget>
-   </item>
-  </layout>
+   </widget>
+   <widget class="QWidget" name="ResizeTab" >
+    <property name="geometry" >
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>906</width>
+      <height>837</height>
+     </rect>
+    </property>
+    <attribute name="title" >
+     <string>Resize</string>
+    </attribute>
+    <layout class="QGridLayout" >
+     <property name="margin" >
+      <number>11</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item row="0" column="0" >
+      <widget class="QGroupBox" name="ButtonGroup2_2" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title" >
+        <string>Script Resize</string>
+       </property>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>11</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="0" column="0" >
+         <widget class="QRadioButton" name="DontResize" >
+          <property name="text" >
+           <string>Don't resize</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="QRadioButton" name="AutoResize" >
+          <property name="text" >
+           <string>Auto resize</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2" >
+         <widget class="QRadioButton" name="CustomResize" >
+          <property name="text" >
+           <string>Custom resize</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QFrame" name="Frame4" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="frameShape" >
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow" >
+        <enum>QFrame::Plain</enum>
+       </property>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>11</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="3" column="0" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item rowspan="4" row="0" column="2" colspan="2" >
+         <widget class="toTreeWidget" name="Sizes" >
+          <property name="allColumnsShowFocus" >
+           <bool>true</bool>
+          </property>
+          <column>
+           <property name="text" >
+            <string>Limit</string>
+           </property>
+          </column>
+          <column>
+           <property name="text" >
+            <string>Initial</string>
+           </property>
+          </column>
+          <column>
+           <property name="text" >
+            <string>Next</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="2" >
+         <widget class="toFilesize" native="1" name="Limit" >
+          <property name="focusPolicy" >
+           <enum>Qt::TabFocus</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2" >
+         <widget class="toFilesize" native="1" name="Initial" >
+          <property name="focusPolicy" >
+           <enum>Qt::TabFocus</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="2" >
+         <widget class="toFilesize" native="1" name="Next" >
+          <property name="focusPolicy" >
+           <enum>Qt::TabFocus</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1" >
+         <widget class="QPushButton" name="AddButton" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text" >
+           <string>&amp;Add</string>
+          </property>
+          <property name="default" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="3" >
+         <widget class="QPushButton" name="Remove" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text" >
+           <string>&amp;Remove</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Minimum</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="4" column="2" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="ResultTab" >
+    <property name="geometry" >
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>906</width>
+      <height>837</height>
+     </rect>
+    </property>
+    <attribute name="title" >
+     <string>Result</string>
+    </attribute>
+   </widget>
+   <widget class="QWidget" name="DifferenceTab" >
+    <property name="geometry" >
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>906</width>
+      <height>837</height>
+     </rect>
+    </property>
+    <attribute name="title" >
+     <string>Difference</string>
+    </attribute>
+   </widget>
+  </widget>
  </widget>
  <customwidgets>
   <customwidget>
