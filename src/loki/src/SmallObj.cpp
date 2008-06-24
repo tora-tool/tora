@@ -24,6 +24,7 @@
 // patch to compile with gcc4.3 - petr
 #include <climits>
 
+
 //#define DO_EXTRA_LOKI_TESTS
 //#define USE_NEW_TO_ALLOCATE
 

@@ -35,12 +35,12 @@
 *
 *****/
 
-#include <QToolBar>
 #include <QScrollArea>
 #include <QMessageBox>
+#include <QFile>
 #include <QDir>
 #include <QFileDialog>
-
+// 
 #include "toscript.h"
 #include "utils.h"
 #include "toextract.h"
@@ -48,115 +48,13 @@
 #include "tomain.h"
 #include "toreport.h"
 #include "toresultview.h"
-#include "tosql.h"
 #include "totextview.h"
 #include "toworksheet.h"
+#include "toscripttreeitem.h"
 
 #include "icons/execute.xpm"
 #include "icons/toscript.xpm"
 
-
-static toSQL SQLObjectListMySQL("toScript:ExtractObject",
-                                "TOAD 1,0,0 SHOW DATABASES",
-                                "Extract objects available to extract from the database, "
-                                "should have same columns",
-                                "3.23",
-                                "MySQL");
-
-static toSQL SQLObjectList("toScript:ExtractObject",
-                           "SELECT *\n"
-                           "  FROM (SELECT 'TABLESPACE',tablespace_name,NULL\n"
-                           "   FROM sys.dba_tablespaces\n"
-                           " UNION\n"
-                           " SELECT 'ROLE',role,NULL\n"
-                           "   FROM sys.dba_roles\n"
-                           " UNION\n"
-                           " SELECT 'PUBLIC',NULL,NULL\n"
-                           "   FROM dual\n"
-                           " UNION\n"
-                           " SELECT username,NULL,NULL\n"
-                           "   FROM sys.all_users)\n"
-                           "  ORDER BY 1,2,3",
-                           "",
-                           "0801");
-
-static toSQL SQLUserObjectList("toScript:UserExtractObject",
-                               "SELECT owner,object_type,object_name\n"
-                               "  FROM sys.all_objects\n"
-                               " WHERE object_type IN ('VIEW','TABLE','TYPE','SEQUENCE','PACKAGE',\n"
-                               "                'PACKAGE BODY','FUNCTION','PROCEDURE')\n"
-                               " ORDER BY 1,2,3",
-                               "Extract objects available to extract from the database if you "
-                               "don't have admin access, should have same columns");
-
-static toSQL SQLPublicSynonymList("toScript:PublicSynonyms",
-                                  "SELECT synonym_name\n"
-                                  "  FROM sys.all_synonyms WHERE owner = 'PUBLIC'\n"
-                                  " ORDER BY 1",
-                                  "Extract all public synonyms from database");
-
-static toSQL SQLUserObjectsMySQL("toScript:UserObjects",
-                                 "SHOW TABLES FROM :own<noquote>",
-                                 "Get the objects available for a user, must have same columns and binds",
-                                 "3.23",
-                                 "MySQL");
-
-static toSQL SQLUserObjects("toScript:UserObjects",
-                            "SELECT *\n"
-                            "  FROM (SELECT 'DATABASE LINK',db_link\n"
-                            "          FROM sys.all_db_links\n"
-                            "         WHERE owner = :own<char[101]>\n"
-                            "        UNION\n"
-                            "        SELECT object_type,object_name\n"
-                            "          FROM sys.all_objects\n"
-                            "         WHERE object_type IN ('VIEW','TYPE','SEQUENCE','PACKAGE',\n"
-                            "                               'PACKAGE BODY','FUNCTION','PROCEDURE','TRIGGER')\n"
-                            "           AND owner = :own<char[101]>\n"
-                            "         UNION\n"
-                            "        SELECT 'TABLE',table_name\n"
-                            "          FROM sys.all_tables\n"
-                            "         WHERE temporary != 'Y' AND secondary = 'N' AND iot_name IS NULL\n"
-                            "           AND owner = :own<char[101]>\n"
-                            "        UNION\n"
-                            "        SELECT 'MATERIALIZED TABLE',mview_name AS object\n"
-                            "          FROM sys.all_mviews\n"
-                            "         WHERE owner = :own<char[101]>)\n"
-                            " ORDER BY 1,2",
-                            "");
-
-static toSQL SQLUserObjects7("toScript:UserObjects",
-                             "SELECT *\n"
-                             "  FROM (SELECT 'DATABASE LINK',db_link\n"
-                             "          FROM sys.all_db_links\n"
-                             "         WHERE owner = :own<char[101]>\n"
-                             "        UNION\n"
-                             "        SELECT object_type,object_name\n"
-                             "          FROM sys.all_objects\n"
-                             "         WHERE object_type IN ('VIEW','TYPE','SEQUENCE','PACKAGE',\n"
-                             "                               'PACKAGE BODY','FUNCTION','PROCEDURE','TRIGGER')\n"
-                             "           AND owner = :own<char[101]>\n"
-                             "         UNION\n"
-                             "        SELECT 'TABLE',table_name\n"
-                             "          FROM sys.all_tables\n"
-                             "         WHERE temporary != 'Y' AND secondary = 'N'\n"
-                             "           AND owner = :own<char[101]>\n"
-                             "        UNION\n"
-                             "        SELECT 'MATERIALIZED TABLE',mview_name AS object\n"
-                             "          FROM sys.all_mviews\n"
-                             "         WHERE owner = :own<char[101]>)\n"
-                             " ORDER BY 1,2",
-                             "",
-                             "0703");
-
-static toSQL SQLSchemasMySQL("toScript:ExtractSchema",
-                             "SHOW DATABASES",
-                             "Get usernames available in database, must have same columns",
-                             "3.23",
-                             "MySQL");
-
-static toSQL SQLSchemas("toScript:ExtractSchema",
-                        "SELECT username FROM sys.all_users ORDER BY username",
-                        "");
 
 class toScriptTool : public toTool
 {
@@ -181,7 +79,7 @@ public:
     {
         try
         {
-            return toExtract::canHandle(conn) && !toSQL::string(SQLObjectList, conn).isEmpty();
+            return toExtract::canHandle(conn) && toIsOracle(conn); //TODO&& !toSQL::string(SQLObjectList, conn).isEmpty();
         }
         catch (...)
         {
@@ -222,6 +120,9 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     ScriptUI = new Ui::toScriptUI();
     ScriptUI->setupUi(this);
     layout()->addWidget(ScriptUI->Tabs);
+
+    ScriptUI->Source->setTitle(tr("Source"));
+    ScriptUI->Destination->setTitle(tr("Destination"));
 
     QHBoxLayout *hbox = new QHBoxLayout;
     hbox->setSpacing(0);
@@ -285,10 +186,6 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     ScriptUI->Next->setTitle(tr("&Next"));
     connect(group, SIGNAL(buttonClicked(int)), this, SLOT(changeMode(int)));
     ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResizeTab), false);
-    ScriptUI->SourceObjects->setSorting(0);
-    ScriptUI->SourceObjects->setResizeMode(toTreeWidget::AllColumns);
-    ScriptUI->DestinationObjects->setSorting(0);
-    ScriptUI->DestinationObjects->setResizeMode(toTreeWidget::AllColumns);
 
     // Remove when migrate and resize is implemented
 #if 1
@@ -296,94 +193,18 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     ScriptUI->Migrate->hide();
 #endif
 
-    int def = 0;
-    std::list<QString> cons = toMainWidget()->connections();
-    int i = 0;
-    while (cons.size() > 0)
-    {
-        QString str = toShift(cons);
-        if (str == connection.description() && def == 0)
-            def = i;
-        i++;
-        ScriptUI->SourceConnection->addItem(str);
-        ScriptUI->DestinationConnection->addItem(str);
-    }
-    ScriptUI->SourceConnection->setCurrentIndex(def);
-    changeSource(def);
-    changeDestination(def);
-    ScriptUI->DestinationConnection->setCurrentIndex(def);
+    ScriptUI->Source->setConnectionString(connection.description());
+    ScriptUI->Destination->setConnectionString(connection.description());
 
+
+    connect(ScriptUI->Browse, SIGNAL(clicked()), this, SLOT(browseFile()));
     connect(ScriptUI->AddButton, SIGNAL(clicked()), this, SLOT(newSize()));
     connect(ScriptUI->Remove, SIGNAL(clicked()), this, SLOT(removeSize()));
 
-    connect(ScriptUI->SourceConnection,
-            SIGNAL(activated(int)),
-            this,
-            SLOT(changeSource(int)));
-    connect(ScriptUI->DestinationConnection,
-            SIGNAL(activated(int)),
-            this,
-            SLOT(changeDestination(int)));
-    connect(ScriptUI->SourceSchema,
-            SIGNAL(activated(int)),
-            this,
-            SLOT(changeSourceSchema(int)));
-    connect(ScriptUI->DestinationSchema,
-            SIGNAL(activated(int)),
-            this,
-            SLOT(changeDestinationSchema(int)));
-    connect(ScriptUI->SourceObjects,
-            SIGNAL(clicked(toTreeWidgetItem *)),
-            this,
-            SLOT(objectClicked(toTreeWidgetItem *)));
-    connect(ScriptUI->DestinationObjects,
-            SIGNAL(clicked(toTreeWidgetItem *)),
-            this,
-            SLOT(objectClicked(toTreeWidgetItem *)));
-    connect(ScriptUI->Browse, SIGNAL(clicked()), this, SLOT(browseFile()));
-
-    connect(ScriptUI->SourceObjects, SIGNAL(expanded(toTreeWidgetItem *)),
-            this, SLOT(expandSource(toTreeWidgetItem *)));
-    connect(ScriptUI->DestinationObjects, SIGNAL(expanded(toTreeWidgetItem *)),
-            this, SLOT(expandDestination(toTreeWidgetItem *)));
-
-    connect(toMainWidget(), SIGNAL(addedConnection(const QString &)),
-            this, SLOT(addConnection(const QString &)));
-    connect(toMainWidget(), SIGNAL(removedConnection(const QString &)),
-            this, SLOT(delConnection(const QString &)));
-
     ScriptUI->Schema->setCurrentIndex(0);
     setFocusProxy(ScriptUI->Tabs);
-}
 
-void toScript::delConnection(const QString &name)
-{
-//     for (int i = 0;i < ScriptUI->SourceConnection->count();i++)
-//     {
-//         if (ScriptUI->SourceConnection->itemText(i) == name)
-//         {
-//             ScriptUI->SourceConnection->removeItem(i);
-//             break;
-//         }
-//     }
-    QComboBox * b = ScriptUI->SourceConnection;
-    b->removeItem(b->findText(name));
-//     for (int j = 0;j < ScriptUI->DestinationConnection->count();j++)
-//     {
-//         if (ScriptUI->DestinationConnection->itemText(j) == name)
-//         {
-//             ScriptUI->DestinationConnection->removeItem(j);
-//             break;
-//         }
-//     }
-    b = ScriptUI->DestinationConnection;
-    b->removeItem(b->findText(name));
-}
-
-void toScript::addConnection(const QString &name)
-{
-    ScriptUI->SourceConnection->addItem(name);
-    ScriptUI->DestinationConnection->addItem(name);
+    changeMode(MODE_COMPARE);
 }
 
 toScript::~toScript()
@@ -397,7 +218,7 @@ void toScript::closeEvent(QCloseEvent *event)
         event->ignore();
 }
 
-std::list<QString> toScript::createObjectList(toTreeWidget *source)
+std::list<QString> toScript::createObjectList(QItemSelectionModel * selections)
 {
     std::list<QString> lst;
 
@@ -410,61 +231,37 @@ std::list<QString> toScript::createObjectList(toTreeWidget *source)
     std::list<QString> userViews;
     std::list<QString> users;
 
-    for (toTreeWidgetItemIterator it(source); (*it); it++)
+    if (!selections->hasSelection())
+        return lst;
+
+    toScriptTreeItem * item;
+    foreach (QModelIndex i, selections->selectedIndexes())
     {
-        toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>((*it));
-        if (chk && chk->isEnabled())
+        item = static_cast<toScriptTreeItem*>(i.internalPointer());
+        Q_ASSERT_X(item, "toScript::createObjectList()",
+                    "fatal logic error - never shoudl go there");
+
+//         qDebug() << "selected: "<< item << item->schema() << item->data() << item->type();
+
+        if (item->type().isNull())
         {
-            // the text(1) and 2 is not displayed when accessing via "chk". WTF!?
-            QString name((*it)->text(0));
-            QString type((*it)->text(1));
-            QString user((*it)->text(2));
-            if (!user.isEmpty())
-            {
-                if (chk->isOn() && chk->isEnabled())
-                {
-                    QString line;
-                    if (type == QString::fromLatin1("TABLE"))
-                    {
-                        line = user;
-                        line += QString::fromLatin1(".");
-                        line += name;
-                        toPush(tables, line);
-                    }
-                    else
-                    {
-                        line = type;
-                        line += QString::fromLatin1(":");
-                        line += user;
-                        line += QString::fromLatin1(".");
-                        line += name;
-                        if (type == QString::fromLatin1("VIEW"))
-                            toPush(userViews, line);
-                        else
-                            toPush(userOther, line);
-                    }
-                }
-            }
-            else if (!type.isEmpty())
-            {
-                if (chk->isOn() && chk->isEnabled())
-                {
-                    QString line = type;
-                    line += QString::fromLatin1(":");
-                    line += name;
-                    if (type == QString::fromLatin1("TABLESPACE"))
-                        toPush(tableSpace, line);
-                    else if (type == QString::fromLatin1("PROFILE"))
-                        toPush(profiles, line);
-                    else if (type == QString::fromLatin1("ROLE"))
-                        toPush(roles, name);
-                    else if (type == QString::fromLatin1("USER"))
-                        toPush(users, name);
-                    else
-                        toPush(otherGlobal, line);
-                }
-            }
+            continue;
         }
+        if (item->type() == "TABLESPACE")
+            toPush(tableSpace, item->type() + ":" + item->data());
+        else if (item->type() == "PROFILE")
+            toPush(profiles, item->type() + ":" + item->data());
+        else if (item->type() == "ROLE")
+            toPush(roles, item->data());
+        else if (item->type() == "USER")
+            toPush(users, item->data());
+        else if (item->type() == "TABLE")
+            toPush(tables, item->schema() + "." + item->data());
+        else if (item->type() == "VIEW") // just to get it *after* tables
+            toPush(userViews, "VIEW:" + item->schema() + "." + item->data());
+        else
+            // the rest goes last (pkgs etc.)
+            toPush(userOther, item->type() + ":" + item->schema() + "." + item->data());
     }
 
     if (ScriptUI->IncludeDDL->isChecked())
@@ -508,12 +305,12 @@ void toScript::execute(void)
             toStatusMessage(tr("No mode selected"));
             return ;
         }
-        std::list<QString> sourceObjects = createObjectList(ScriptUI->SourceObjects);
+        std::list<QString> sourceObjects = createObjectList(ScriptUI->Source->objectList());
         std::list<QString> sourceDescription;
         std::list<QString> destinationDescription;
         QString script;
 
-        toExtract source(toMainWidget()->connection(ScriptUI->SourceConnection->currentText()), this);
+        toExtract source(toMainWidget()->connection(ScriptUI->Source->connectionString()), this);
         setupExtract(source);
         switch (mode)
         {
@@ -620,10 +417,8 @@ void toScript::execute(void)
 
         if (ScriptUI->Destination->isEnabled())
         {
-            std::list<QString> destinationObjects = createObjectList(ScriptUI->DestinationObjects);
-            toExtract destination(toMainWidget()->connection(ScriptUI->
-                                  DestinationConnection->
-                                  currentText()), this);
+            std::list<QString> destinationObjects  = createObjectList(ScriptUI->Destination->objectList());
+            toExtract destination(toMainWidget()->connection(ScriptUI->Destination->connectionString()), this);
             setupExtract(destination);
             switch (mode)
             {
@@ -631,6 +426,7 @@ void toScript::execute(void)
             case MODE_SEARCH:
                 destinationDescription = destination.describe(destinationObjects);
                 break;
+            case MODE_REPORT:
             case MODE_EXTRACT:
             case MODE_MIGRATE:
                 throw tr("Destination shouldn't be enabled now, internal error");
@@ -644,15 +440,17 @@ void toScript::execute(void)
             sourceDescription = drop;
             destinationDescription = create;
         }
-        ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResultTab), mode == 1 || mode == 2 || mode == 3 || mode == 4);
-        ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->DifferenceTab), mode == 0 || mode == 2);
+        ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResultTab),
+                                       mode == MODE_EXTRACT || mode == MODE_SEARCH || mode == MODE_MIGRATE || mode == MODE_REPORT);
+        ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->DifferenceTab),
+                                       mode == MODE_COMPARE || mode == MODE_SEARCH);
         if (!script.isEmpty())
         {
             Worksheet->editor()->setText(script);
             Worksheet->editor()->setFilename(QString::null);
             Worksheet->editor()->setModified(true);
         }
-        if (mode == MODE_MIGRATE)
+        if (mode == MODE_SEARCH)
         {
             Worksheet->hide();
             Report->hide();
@@ -732,7 +530,7 @@ void toScript::execute(void)
                 }
             }
         }
-        else
+        else // TODO migrate
         {
             Worksheet->show();
             SearchList->hide();
@@ -740,7 +538,7 @@ void toScript::execute(void)
             fillDifference(sourceDescription, DropList);
             fillDifference(destinationDescription, CreateList);
         }
-        if (mode == 0)
+        if (mode == MODE_COMPARE)
             ScriptUI->Tabs->setCurrentIndex(ScriptUI->Tabs->indexOf(ScriptUI->DifferenceTab));
         else
             ScriptUI->Tabs->setCurrentIndex(ScriptUI->Tabs->indexOf(ScriptUI->ResultTab));
@@ -750,13 +548,14 @@ void toScript::execute(void)
 
 void toScript::fillDifference(std::list<QString> &objects, toTreeWidget *view)
 {
+//     qDebug() << "toScript::fillDifference" << view;
     view->clear();
     toTreeWidgetItem *last = NULL;
     int lastLevel = 0;
     QStringList lstCtx;
     for (std::list<QString>::iterator i = objects.begin();i != objects.end();i++)
     {
-        //    printf("Adding %s\n",(const char *)*i);
+//         qDebug() << "fillDifference add: " << (*i);
         QStringList ctx = (*i).split(QString("\01"));
         if (last)
         {
@@ -765,6 +564,7 @@ void toScript::fillDifference(std::list<QString> &objects, toTreeWidget *view)
                 last = last->parent();
                 lastLevel--;
             }
+
             while (last && lastLevel >= 0 && !toCompareLists(lstCtx, ctx, (unsigned int)lastLevel))
             {
                 last = last->parent();
@@ -781,191 +581,16 @@ void toScript::fillDifference(std::list<QString> &objects, toTreeWidget *view)
                 last = new toResultViewMLine(view, NULL, ctx[lastLevel]);
             lastLevel++;
         }
-        toTreeWidgetCheck *item;
+        toResultViewMLCheck *item;
         if (last)
             item = new toResultViewMLCheck(last, ctx[lastLevel], toTreeWidgetCheck::CheckBox);
         else
             item = new toResultViewMLCheck(view, ctx[lastLevel], toTreeWidgetCheck::CheckBox);
+
         last = item;
         item->setOn(true);
         lstCtx = ctx;
         lastLevel++;
-    }
-}
-
-void toScript::changeConnection(int, bool source)
-{
-    try
-    {
-        toTreeWidget *sourceL = NULL;
-        toTreeWidget *destinationL = NULL;
-        if (ScriptUI->SourceConnection->currentText() ==
-                ScriptUI->DestinationConnection->currentText())
-        {
-            if (source)
-            {
-                destinationL = ScriptUI->SourceObjects;
-                sourceL = ScriptUI->DestinationObjects;
-            }
-            else
-            {
-                sourceL = ScriptUI->SourceObjects;
-                destinationL = ScriptUI->DestinationObjects;
-            }
-        }
-        if (sourceL && destinationL && sourceL->firstChild())
-        {
-            destinationL->clear();
-            toTreeWidgetItem *next = NULL;
-            toTreeWidgetItem *parent = NULL;
-            for (toTreeWidgetItem *item = sourceL->firstChild();item;item = next)
-            {
-                toTreeWidgetItem * lastParent = parent;
-                if (!parent)
-                {
-                    parent = new toResultViewCheck(destinationL, item->text(0),
-                                                   toTreeWidgetCheck::CheckBox);
-                    parent->setExpandable(true);
-                }
-                else
-                    parent = new toResultViewCheck(parent, item->text(0),
-                                                   toTreeWidgetCheck::CheckBox);
-                parent->setText(1, item->text(1));
-                parent->setText(2, item->text(2));
-
-                if (item->firstChild())
-                    next = item->firstChild();
-                else if (item->nextSibling())
-                {
-                    next = item->nextSibling();
-                    parent = lastParent;
-                }
-                else
-                {
-                    next = item;
-                    parent = lastParent;
-                    do
-                    {
-                        next = next->parent();
-                        if (parent)
-                            parent = parent->parent();
-                    }
-                    while (next && !next->nextSibling());
-                    if (next)
-                        next = next->nextSibling();
-                }
-            }
-
-            return;
-        }
-        (source ? ScriptUI->SourceObjects : ScriptUI->DestinationObjects)->clear();
-        (source ? ScriptUI->SourceSchema : ScriptUI->DestinationSchema)->clear();
-        (source ? ScriptUI->SourceSchema : ScriptUI->DestinationSchema)->addItem(tr("All"));
-        toConnection &conn = toMainWidget()->connection((source ?
-                             ScriptUI->SourceConnection :
-                             ScriptUI->DestinationConnection)
-                             ->currentText());
-        toQList object;
-        try
-        {
-            object = toQuery::readQueryNull(conn, SQLObjectList);
-        }
-        catch (...)
-        {
-            object = toQuery::readQueryNull(conn, SQLUserObjectList);
-        }
-        toQList schema = toQuery::readQuery(conn, SQLSchemas);
-        while (schema.size() > 0)
-        {
-            QString str = toShift(schema);
-            (source ? ScriptUI->SourceSchema : ScriptUI->DestinationSchema)->addItem(str);
-        }
-        toTreeWidgetItem *lastTop = NULL;
-        toTreeWidgetItem *lastFirst = NULL;
-        while (object.size() > 0)
-        {
-            QString top = toShift(object);
-            QString first = toShift(object);
-            QString second = toShift(object);
-
-            if (top != (lastTop ? lastTop->text(0) : QString::null))
-            {
-                lastFirst = NULL;
-                lastTop = new toResultViewCheck((source ?
-                                                 ScriptUI->SourceObjects :
-                                                 ScriptUI->DestinationObjects),
-                                                top, toTreeWidgetCheck::CheckBox);
-                lastTop->setExpandable(true);
-                if (!second.isEmpty() || first.isEmpty())
-                    lastTop->setText(1, QString::fromLatin1("DATABASE"));
-            }
-            if (first != (lastFirst ? lastFirst->text(0) : QString::null) && !first.isEmpty())
-            {
-                lastFirst = new toResultViewCheck(lastTop, first, toTreeWidgetCheck::CheckBox);
-                if (second.isEmpty())
-                    lastFirst->setText(1, top);
-            }
-            if (!second.isEmpty() && lastFirst)
-            {
-                toTreeWidgetItem *item = new toResultViewCheck(lastFirst, second, toTreeWidgetCheck::CheckBox);
-                item->setText(1, first);
-                item->setText(2, top);
-            }
-        }
-    }
-    TOCATCH
-}
-
-void toScript::readOwnerObjects(toTreeWidgetItem *item, toConnection &conn)
-{
-    if (!item->parent() && !item->firstChild())
-    {
-        try
-        {
-            toTreeWidgetItem *lastFirst = NULL;
-            QString top = item->text(0);
-            toQuery object(conn, SQLUserObjects, top);
-
-            while (!object.eof())
-            {
-                QString first = object.readValueNull();
-                QString second;
-                if (object.columns() > 1)
-                    second = object.readValueNull();
-                else
-                {
-                    second = first;
-                    first = "TABLE";
-                }
-
-                if (first != (lastFirst ? lastFirst->text(0) : QString::null) && !first.isEmpty())
-                {
-                    lastFirst = new toResultViewCheck(item, first, toTreeWidgetCheck::CheckBox);
-                    if (second.isEmpty())
-                        lastFirst->setText(1, top);
-                }
-                if (!second.isEmpty() && lastFirst)
-                {
-                    toTreeWidgetItem *item = new toResultViewCheck(lastFirst, second, toTreeWidgetCheck::CheckBox);
-                    item->setText(1, first);
-                    item->setText(2, top);
-                }
-            }
-
-            if (top == QString::fromLatin1("PUBLIC"))
-            {
-                toQList object = toQuery::readQueryNull(conn, SQLPublicSynonymList);
-                toTreeWidgetItem *topItem = new toResultViewCheck(item, QString::fromLatin1("SYNONYM"), toTreeWidgetCheck::CheckBox);
-                while (object.size() > 0)
-                {
-                    toTreeWidgetItem *item = new toResultViewCheck(topItem, toShift(object),
-                            toTreeWidgetCheck::CheckBox);
-                    item->setText(1, QString::fromLatin1("SYNONYM"));
-                    item->setText(2, top);
-                }
-            }
-        }
-        TOCATCH
     }
 }
 
@@ -974,25 +599,25 @@ void toScript::changeMode(int mode)
     if (mode < MODE_COMPARE || mode > MODE_REPORT)
         return ;
 
-    if (mode == MODE_COMPARE || mode == MODE_SEARCH)
+    if (mode == MODE_COMPARE)
         ScriptUI->Destination->setEnabled(true);
-    else if (mode == MODE_EXTRACT || mode == MODE_MIGRATE || mode == MODE_REPORT)
+    else if (mode == MODE_EXTRACT || mode == MODE_MIGRATE || mode == MODE_REPORT || mode == MODE_SEARCH)
         ScriptUI->Destination->setEnabled(false);
 
-    if (mode == MODE_EXTRACT || mode == MODE_SEARCH)
+    if (mode == MODE_EXTRACT)
         ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResizeTab), true);
-    else if (mode == MODE_COMPARE || mode == MODE_MIGRATE || mode == MODE_REPORT)
+    else if (mode == MODE_COMPARE || mode == MODE_MIGRATE || mode == MODE_REPORT || mode == MODE_SEARCH)
         ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResizeTab), false);
 
     ScriptUI->IncludeContent->setEnabled(mode == MODE_EXTRACT);
     ScriptUI->CommitDistance->setEnabled(mode == MODE_EXTRACT);
 
-    if (mode == MODE_EXTRACT || mode == MODE_SEARCH)
+    if (mode == MODE_EXTRACT)
     {
         ScriptUI->IncludeHeader->setEnabled(true);
         ScriptUI->IncludePrompt->setEnabled(true);
     }
-    else if (mode == MODE_COMPARE || mode == MODE_MIGRATE || mode == MODE_REPORT)
+    else if (mode == MODE_COMPARE || mode == MODE_MIGRATE || mode == MODE_REPORT || mode == MODE_SEARCH)
     {
         ScriptUI->IncludeHeader->setEnabled(false);
         ScriptUI->IncludePrompt->setEnabled(false);
@@ -1009,6 +634,8 @@ void toScript::changeMode(int mode)
 
     ScriptUI->OutputGroup->setEnabled(mode == MODE_EXTRACT || mode == MODE_SEARCH || mode == MODE_REPORT);
 
+    ScriptUI->SearchGroup->setVisible(mode == MODE_SEARCH);
+
     ScriptUI->IncludeConstraints->setEnabled(ScriptUI->IncludeDDL->isChecked());
     ScriptUI->IncludeIndexes->setEnabled(ScriptUI->IncludeDDL->isChecked());
     ScriptUI->IncludeGrants->setEnabled(ScriptUI->IncludeDDL->isChecked());
@@ -1021,86 +648,13 @@ void toScript::changeMode(int mode)
 
 void toScript::keepOn(toTreeWidgetItem *parent)
 {
+//     qDebug() << "void toScript::keepOn(toTreeWidgetItem *parent)";
     if (!parent)
         return ;
     toResultViewCheck *pchk = dynamic_cast<toResultViewCheck *>(parent);
     if (!pchk)
         return ;
     pchk->setOn(true);
-}
-
-void toScript::objectClicked(toTreeWidgetItem *parent)
-{
-    if (!parent)
-        return ;
-    toResultViewCheck *pchk = dynamic_cast<toResultViewCheck *>(parent);
-    if (!pchk)
-        return ;
-    if (!parent->parent() && !parent->firstChild())
-    {
-        if (parent->listView() == ScriptUI->SourceObjects)
-            expandSource(parent);
-        else if (parent->listView() == ScriptUI->DestinationObjects)
-            expandDestination(parent);
-    }
-    bool on = pchk->isOn();
-
-    for (toTreeWidgetItemIterator it(parent); (*it); it++)
-    {
-        toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>((*it));
-        if (chk)
-            chk->setOn(on);
-    }
-}
-
-void toScript::changeSchema(int, bool source)
-{
-    QString src = (source ? ScriptUI->SourceSchema : ScriptUI->DestinationSchema)->currentText();
-    for (toTreeWidgetItem *parent = (source ?
-                                     ScriptUI->SourceObjects :
-                                     ScriptUI->DestinationObjects)->firstChild();
-            parent;
-            parent = parent->nextSibling())
-    {
-        toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>(parent);
-        if (chk)
-        {
-            bool ena = ((src == chk->text(0)) || (src == QString::fromLatin1("All")));
-
-            toTreeWidgetItem *next = NULL;
-            for (toTreeWidgetItem *item = parent;item;item = next)
-            {
-                chk = dynamic_cast<toResultViewCheck *>(item);
-                if (chk)
-                {
-                    chk->setEnabled(ena);
-                    (source ? ScriptUI->SourceObjects : ScriptUI->DestinationObjects)->repaintItem(chk);
-                }
-
-                if (item->firstChild())
-                    next = item->firstChild();
-                else if (item->nextSibling() && item->nextSibling()->depth())
-                    next = item->nextSibling();
-                else
-                {
-                    next = item;
-                    do
-                    {
-                        next = next->parent();
-                        if (next == parent)
-                            break;
-                    }
-                    while (next && !next->nextSibling());
-
-                    if (next == parent)
-                        break;
-                    if (next)
-                        next = next->nextSibling();
-                }
-            }
-
-        }
-    }
 }
 
 void toScript::newSize(void)
@@ -1182,28 +736,6 @@ void toScript::setupExtract(toExtract &extr)
         }
         extr.setResize(siz);
     }
-}
-
-void toScript::expandSource(toTreeWidgetItem *item)
-{
-    try
-    {
-        if (item)
-            readOwnerObjects(item,
-                             toMainWidget()->connection(ScriptUI->SourceConnection->currentText()));
-    }
-    TOCATCH
-}
-
-void toScript::expandDestination(toTreeWidgetItem *item)
-{
-    try
-    {
-        if (item)
-            readOwnerObjects(item,
-                             toMainWidget()->connection(ScriptUI->DestinationConnection->currentText()));
-    }
-    TOCATCH
 }
 
 void toScript::browseFile(void)

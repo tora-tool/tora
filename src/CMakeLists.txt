@@ -38,6 +38,7 @@ SET(TORA_UI_SRC
     toresultlistformatui.ui
     torollbackdialogui.ui
     toscriptui.ui
+    toscriptschemawidgetui.ui
     tosearchreplaceui.ui
     tosecurityquotaui.ui
     tosecurityroleui.ui
@@ -156,6 +157,9 @@ SET(TORA_MOC_CLASSES
     toresultlistformat.h
     torollback.h
     toscript.h
+    toscriptschemawidget.h
+#     toscripttreeitem.h
+    toscripttreemodel.h
     tosearchreplace.h
     tosecurity.h
     tosession.h
@@ -183,6 +187,7 @@ SET(TORA_MOC_CLASSES
     tovisualize.h
     towaitevents.h
     toworksheet.h
+    toworkingwidget.h
     toeditablemenu.h
     toworksheetstatistic.h
 #     toworksheettext.h
@@ -287,6 +292,9 @@ SET(TORA_SOURCES
     toresultlistformat.cpp
     torollback.cpp
     toscript.cpp
+    toscriptschemawidget.cpp
+    toscripttreeitem.cpp
+    toscripttreemodel.cpp
     tosearchreplace.cpp
     tosecurity.cpp
     tosession.cpp
@@ -315,6 +323,7 @@ SET(TORA_SOURCES
     tovisualize.cpp
     towaitevents.cpp
     toworksheet.cpp
+    toworkingwidget.cpp
     toeditablemenu.cpp
     toworksheetstatistic.cpp
     toworksheettext.cpp

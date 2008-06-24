@@ -484,7 +484,10 @@ public:
      */
     virtual QString text(int col) const
     {
-        return toResultViewCheck::allText(col);
+        // ladies and gentlemen, welcome to the Infinite Recursion.
+        // And now... KABOOM!
+//         return toResultViewCheck::allText(col);
+        return toResultViewCheck::text(col);
     }
     /** Reimplemented for internal reasons.
      */

@@ -128,6 +128,9 @@ tora_SOURCES=main.cpp \
     toqsqlconnection.cpp \
     torollback.cpp torollback.h  \
     toscript.cpp toscript.h  \
+    toscriptschemawidget.cpp toscriptschemawidget.h \
+    toscripttreeitem.cpp toscripttreeitem.h \
+    toscripttreemodel.cpp toscripttreemodel.h \
     tosecurity.cpp tosecurity.h  \
     tosession.cpp tosession.h \
     tosgatrace.cpp tosgatrace.h \
@@ -139,6 +142,7 @@ tora_SOURCES=main.cpp \
     totuning.cpp totuning.h  \
     tounittest.cpp tounittest.h \
     tochangeconnection.cpp tochangeconnection.h  \
+    toworkingwidget.cpp toworkingwidget.h \
     toworksheet.cpp toworksheet.h  \
     toeditablemenu.cpp toeditablemenu.h  \
     toworksheetwidget.cpp toworksheetwidget.h  \
@@ -201,6 +205,7 @@ UI_FILES =	toaboutui.ui \
 		totemplatesetupui.ui \
 		todebugwatch.ui \
 		toscriptui.ui \
+        toscriptschemawidgetui.ui \
 		totoolsettingui.ui \
 		toeditextensiongotoui.ui \
 		tosearchreplaceui.ui \

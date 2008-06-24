@@ -59,6 +59,7 @@
 class toResultStats;
 class toViewFilter;
 class toTableViewIterator;
+class toWorkingWidget;
 
 
 class toResultTableView : public QTableView,
@@ -89,16 +90,7 @@ class toResultTableView : public QTableView,
     toViewFilter *Filter;
 
     // superimposed until model is ready
-    QWidget *Working;
-
-    // horizontal container for WorkingLabel and WorkingStop
-    QWidget *HWorking;
-
-    // label displayed by Working
-    QLabel *WorkingLabel;
-
-    // stop button displayed by Working
-    QPushButton *WorkingStop;
+    toWorkingWidget *Working;
 
     // set true when model has signaled
     bool Ready;

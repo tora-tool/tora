@@ -969,7 +969,14 @@ bool toListView::searchNext(toSearchReplace *search)
 
 toListView *toListView::copyTransposed(void)
 {
+    QMdiSubWindow * w = new QMdiSubWindow(toMainWidget()->workspace());
+
     toListView *lst = new toListView(toMainWidget()->workspace());
+
+    w->setAttribute(Qt::WA_DeleteOnClose);
+    w->setWidget(lst);
+    toMainWidget()->workspace()->addSubWindow(w);
+
     // qt4
 //     lst->setWFlags(lst->getWFlags() | Qt::WDestructiveClose);
     lst->Name = Name;
@@ -1014,8 +1021,8 @@ toListView *toListView::copyTransposed(void)
         }
         col++;
     }
-    lst->setWindowTitle(Name);
-    lst->show();
+    w->setWindowTitle(Name);
+    w->show();
     toMainWidget()->updateWindowsMenu();
     return lst;
 }

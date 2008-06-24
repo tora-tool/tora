@@ -45,39 +45,52 @@
 #include <list>
 #include <algorithm>
 
-class QTextBrowser;
-class toConnection;
 class toExtract;
 class toListView;
-class toScriptUI;
 class toWorksheet;
 
+
+/*! \brief DB objects exporter/comparator.
+It's using toscriptui.ui layout.
+\warning Beware of removing confContainer widget in toscriptui.ui file.
+It's mandatory for compilation and it can be lost very easily during
+designer's editations.
+*/
 class toScript : public toToolWidget
 {
     Q_OBJECT;
 
     Ui::toScriptUI *ScriptUI;
+    //! Additional widget/Tab widget. DDL scripts container.
     toWorksheet *Worksheet;
+    //! Result lists for its action
     toListView *DropList;
     toListView *CreateList;
     toListView *SearchList;
+    //! Text report summary widget/Tab
     QTextBrowser *Report;
 
+    /*! Setup the selected (referenced) toExtract depending
+    on GUI widgets. Including Resize tab.
+    */
     void setupExtract(toExtract &);
-    void changeConnection(int, bool source);
-    void changeSchema(int, bool source);
-    std::list<QString> createObjectList(toTreeWidget *);
-    void fillDifference(std::list<QString> &objects, toTreeWidget *list);
-    void readOwnerObjects(toTreeWidgetItem *item, toConnection &conn);
 
+    /*! Create commin string list with all selected objects
+    for given objects selection
+    */
+    std::list<QString> createObjectList(QItemSelectionModel * selections);
+
+    void fillDifference(std::list<QString> &objects, toTreeWidget *list);
+
+    //! \brief Create separated strings for exporter
     struct PrefixString
     {
-public:
-        PrefixString(std::list<QString> & l, QString s);
-        void operator()(QString& tmp);
-private:
-        std::list<QString> & _l;
-        QString _s;
+        public:
+            PrefixString(std::list<QString> & l, QString s);
+            void operator()(QString& tmp);
+        private:
+            std::list<QString> & _l;
+            QString _s;
     };
 
 protected:
@@ -88,34 +101,23 @@ public:
     virtual ~toScript();
 
 public slots:
+    //! Perform requested action (depending on the mode)
     void execute(void);
-    void changeMode(int);
-    void changeSource(int val)
-    {
-        changeConnection(val, true);
-    }
-    void changeDestination(int val)
-    {
-        changeConnection(val, false);
-    }
-    void keepOn(toTreeWidgetItem *item);
-    void objectClicked(toTreeWidgetItem *item);
-    void changeSourceSchema(int val)
-    {
-        changeSchema(val, true);
-    }
-    void changeDestinationSchema(int val)
-    {
-        changeSchema(val, false);
-    }
-    void newSize(void);
-    void removeSize(void);
-    void browseFile(void);
 
-    void expandSource(toTreeWidgetItem *item);
-    void expandDestination(toTreeWidgetItem *item);
-    void addConnection(const QString &name);
-    void delConnection(const QString &name);
+    //! Enable/disable GUI widgets depending on mode specified
+    void changeMode(int);
+
+    void keepOn(toTreeWidgetItem *item);
+
+    //! Size tab - add new item
+    void newSize(void);
+    //! Size tab - remove current item
+    void removeSize(void);
+
+    /*! Ask user for output location. A file or a directory.
+    It's stored in ScriptUI->Filename then
+    */
+    void browseFile(void);
 };
 
 inline void toScript::PrefixString::operator()(QString& txt)

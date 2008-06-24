@@ -49,6 +49,7 @@
 #include "tolistviewformatter.h"
 #include "tolistviewformatterfactory.h"
 #include "tolistviewformatteridentifier.h"
+#include "toworkingwidget.h"
 
 #include <QClipboard>
 #include <QScrollBar>
@@ -59,8 +60,6 @@
 #include <QMessageBox>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-
-#include "icons/stop.xpm"
 
 
 /**
@@ -125,39 +124,9 @@ toResultTableView::toResultTableView(bool readable,
     ColumnsResized  = false;
     Ready           = false;
 
-    Working = new QWidget(this);
-    Working->setAutoFillBackground(true);
-    Working->setPalette(QPalette(Qt::white));
-
-    QVBoxLayout *vbox = new QVBoxLayout;
-    vbox->setSpacing(0);
-    vbox->setContentsMargins(0, 0, 0, 0);
-
-    HWorking = new QWidget(Working);
-    HWorking->setAutoFillBackground(true);
-    HWorking->setPalette(QPalette(QColor(241, 241, 169)));
-    QHBoxLayout *hbox = new QHBoxLayout;
-
-    WorkingLabel = new QLabel(tr("Waiting..."), Working);
-    WorkingLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    hbox->addWidget(WorkingLabel);
-
-    WorkingStop = new QPushButton(QIcon(stop_xpm), tr("Stop"), HWorking);
-    WorkingStop->setAutoFillBackground(true);
-    WorkingStop->setBackgroundRole(QPalette::Window);
-    WorkingStop->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    WorkingStop->setEnabled(false);
-    connect(WorkingStop,
-            SIGNAL(clicked()),
-            this,
-            SLOT(stop()));
-    hbox->addWidget(WorkingStop);
-
-    HWorking->setLayout(hbox);
-    HWorking->hide();           // hide by default
-    vbox->addWidget(HWorking);
-    vbox->addStretch(1);
-    Working->setLayout(vbox);
+    Working = new toWorkingWidget(this);
+    connect(Working, SIGNAL(stop()), this, SLOT(stop()));
+    Working->hide(); // hide by default
 
     toResultTableViewDelegate *del = new toResultTableViewDelegate(this);
     setItemDelegate(del);
@@ -208,13 +177,12 @@ void toResultTableView::query(const QString &sql, const toQList &param)
 
         readAllAct->setEnabled(true);
         Ready = false;
-        WorkingLabel->setText(tr("Please wait..."));
-        WorkingStop->setEnabled(true);
-        HWorking->hide();           // hide until timer requests
+        Working->setText(tr("Please wait..."));
+        Working->hide();
 
         // sets visible true but won't show if parent is hidden
         QTimer t(this);
-        t.singleShot(300, HWorking, SLOT(show()));
+        t.singleShot(300, Working, SLOT(forceShow()));
 
         query = new toEventQuery(connection(),
                                  toQuery::Long,
