@@ -5,6 +5,14 @@
 #Require 2.4.2 for Qt finding
 #Require 2.4.3 for moc change detection and rpath updates for custom cairo install
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
+# FIXME: dont't forget to change CMP0005 policy to NEW after 2.6.0 minimum required!
+
+# handle new cmake versions correctly
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+  cmake_policy(SET CMP0005 OLD) # FIXME change it to new when there will be cmake 2.6.x in most distros
+endif(COMMAND cmake_policy)
+
 
 #Pretty colors
 SET(CMAKE_COLOR_MAKEFILE ON)
@@ -241,19 +249,6 @@ CONFIGURE_FILE(
 
 ADD_CUSTOM_TARGET(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
-  
-  
-##############################################################################################################
-########## Add our subdirs                                                                          ##########
-
-# tora_toad.h build
-# ADD_SUBDIRECTORY(utils/chex)
-# MESSAGE(STATUS "Creating src/tora_toad.h")
-# MESSAGE("./utils/chex/chex src/i18n/tora_toad.qm > src/tora_toad.h")
-# EXECUTE_PROCESS(COMMAND ./utils/chex/chex src/i18n/tora_toad.qm > src/tora_toad.h
-#                   RESULT_VARIABLE chex_var
-#                   OUTPUT_VARIABLE chex_out)
-# MESSAGE(STATUS "Result: ${chex_var}")
 
 #Add our source subdirs
 ADD_SUBDIRECTORY(src)
