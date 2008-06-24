@@ -10,13 +10,11 @@ Walk through basic tasks and dialogs and test its functionality. (create table, 
  - MIGRATE extraction doesn't work (and I suppose it never did)
 
 [PARTIALLY FIXED - Petr - there is no clear() method for toResult(). So you can get an error message "foo doesn't exist" in some schema changes (Data tab). All other tabs should work fine. Content is cleared in all cases. ]
+[PARTIALLY FIXED - resolved the error message, but column list still doesn't get cleared]
 When switching in schema browser from looking at columns of a table to a schema with no tables, the column list never gets
 cleared. It stays as the column list from the original table.
 
 ">|" arrow on schema browser view just scrolls to bottom of display instead of reading all rows as it used to.
-
-Oracle: error "result should be 18 in segment attributes was 2" in toExtract on Script tab
-[i don't get this error, can you send a table create script that'll reproduce?]
 
 Row number in first column of schema browser for 'Data' tab - needs to resize to fit contents - right now, it truncates.
 
@@ -46,6 +44,9 @@ connection.
 
 Resolved Issues
 ---------------
+
+[MOSTLY WORKED AROUND - no perms to tables] Oracle: error "result should be 18 in segment attributes was 2" in toExtract on Script tab
+[i don't get this error, can you send a table create script that'll reproduce?]
 
 [FIXED] - petr
 CRASH - fix crash in the DB Extract tool on "Search" and/or "Compare" feature.

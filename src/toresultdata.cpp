@@ -187,8 +187,13 @@ void toResultData::query(const QString &, const toQList &params)
         par++;
         Table = *par;
     }
-    else if (Owner.isEmpty() || Table.isEmpty())
+
+    /* Always check, if either is empty, query will fail */
+    if (Owner.isEmpty() || Table.isEmpty())
+    {
+        /* Need to clear columns here */
         return;
+    }
 
     FilterName = filterName();
 
