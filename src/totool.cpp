@@ -245,10 +245,6 @@ void toTool::createWindow(void)
                 newsub->setWindowIcon(*icon);
             }
 
-            // workaround bug in mdi. deactivate subwindow first, then
-            // set active
-            main->workspace()->setActiveSubWindow(0);
-
             if(tool)
                 main->toolWidgetAdded(tool);
 
@@ -272,6 +268,14 @@ void toTool::createWindow(void)
             if (max)
                 newWin->showMaximized();
 
+            // workaround bug in mdi. deactivate subwindow first, then
+            // set active
+            // WARNING: don't change this call order unles you know what
+            // are you doing ;) It's working now. When there is missing
+            // "previous" call, the toWorksheet tool do not get focus.
+            // Dunno why... it makes me mad.
+            main->workspace()->setActiveSubWindow(0);
+            main->workspace()->setActiveSubWindow(previous);
             main->workspace()->setActiveSubWindow(newsub);
 
             // piece of shit mdi doesn't always send window activated
