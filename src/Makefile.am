@@ -205,7 +205,7 @@ UI_FILES =	toaboutui.ui \
 		totemplatesetupui.ui \
 		todebugwatch.ui \
 		toscriptui.ui \
-        toscriptschemawidgetui.ui \
+		toscriptschemawidgetui.ui \
 		totoolsettingui.ui \
 		toeditextensiongotoui.ui \
 		tosearchreplaceui.ui \
@@ -227,7 +227,8 @@ UI_FILES =	toaboutui.ui \
 		tostoragedialogui.ui \
 		tonewconnectionui.ui \
 		tostorageprefsui.ui \
-		todroptablespaceui.ui
+		todroptablespaceui.ui \
+		toscriptschemawidgetui.ui
 
 
 EXTRA_DIST = icons \
@@ -360,6 +361,9 @@ BUILT_SOURCES = \
 	moc_toworksheetwidget.cpp \
 	moc_toworksheetstatistic.cpp \
 	moc_utils.cpp \
+	moc_toscriptschemawidget.cpp \
+	moc_toscripttreemodel.cpp \
+	moc_toworkingwidget.cpp \
 	ui_toaboutui.h \
 	ui_todroptablespaceui.h \
 	ui_tobrowserconstraintui.h \
@@ -403,6 +407,7 @@ BUILT_SOURCES = \
 	ui_totuningsettingui.h \
 	ui_toworksheetsetupui.h \
 	ui_tohelpui.h \
+	ui_toscriptschemawidgetui.h \
 	$(EXTRA_ORACLE_MONO_SOURCE_MOC) \
 	$(filter %.qm,$(TRANSLATIONS:%.ts=%.qm)) \
 	tora_toad.h \
