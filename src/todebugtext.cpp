@@ -280,7 +280,7 @@ toDebugText::toDebugText(toTreeWidget *breakpoints,
 //     disabledBreakMarker=markerDefine(new QPixmap(const_cast<const char**>(disbreakpoint_xpm)));
     breakMarker = markerDefine(QPixmap(breakpoint_xpm));
     disabledBreakMarker = markerDefine(QPixmap(disbreakpoint_xpm));
-    setMarginMarkerMask(1, 2 ^ breakMarker | 2 ^ disabledBreakMarker);
+    setMarginMarkerMask(1, (2 ^ breakMarker) | (2 ^ disabledBreakMarker));
 }
 
 bool toDebugText::checkItem(toBreakpointItem *item)

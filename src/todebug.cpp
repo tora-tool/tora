@@ -1080,10 +1080,12 @@ void toDebug::updateContent(toSQLParse::statement &statements, toTreeWidgetItem 
             {
                 std::list<toSQLParse::statement>::iterator j = (*i).subTokens().begin();
                 if (j != (*i).subTokens().end())
+                {
                     if ((*j).String.toUpper() == "BEGIN")
                         declaration = false;
                     else if ((*j).Type == toSQLParse::statement::Token && (*j).String.toUpper() != "END")
                         new toContentsItem(item, "Variable " + (*j).String, (*j).Line);
+                }
             }
             updateContent(*i, item);
         }
