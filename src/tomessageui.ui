@@ -12,7 +12,7 @@
   <property name="windowTitle" >
    <string>Warning message</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
+  <layout class="QGridLayout" >
    <item row="0" column="0" >
     <widget class="toMarkedText" native="1" name="Message" >
      <property name="sizePolicy" >

@@ -57,7 +57,7 @@
        <height>827</height>
       </rect>
      </property>
-     <layout class="QGridLayout" name="gridLayout" >
+     <layout class="QGridLayout" >
       <item row="0" column="0" >
        <widget class="QGroupBox" name="ModeGroup" >
         <property name="title" >

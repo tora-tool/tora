@@ -12,7 +12,7 @@
   <property name="windowTitle" >
    <string>toGlobalSettingUI</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2" >
+  <layout class="QGridLayout" >
    <item row="0" column="0" >
     <widget class="QGroupBox" name="GroupBox2" >
      <property name="title" >
@@ -160,7 +160,7 @@
      <property name="title" >
       <string>Options</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout" >
+     <layout class="QGridLayout" >
       <item row="0" column="0" >
        <widget class="QCheckBox" name="ChangeConnection" >
         <property name="toolTip" >
