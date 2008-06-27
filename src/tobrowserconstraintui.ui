@@ -112,18 +112,12 @@
        <property name="text" >
         <string/>
        </property>
-       <property name="icon" >
-        <iconset/>
-       </property>
       </widget>
      </item>
      <item>
       <widget class="QToolButton" name="DeleteButton" >
        <property name="text" >
         <string/>
-       </property>
-       <property name="icon" >
-        <iconset/>
        </property>
       </widget>
      </item>
@@ -421,9 +415,6 @@
      </property>
      <property name="text" >
       <string/>
-     </property>
-     <property name="icon" >
-      <iconset/>
      </property>
     </widget>
    </item>
