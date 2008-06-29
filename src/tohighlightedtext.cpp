@@ -64,8 +64,20 @@
 
 #include "todefaultkeywords.h"
 
+
 // Default SQL lexer
-static QsciLexerSQL sqlLexer(0);
+// static QsciLexerSQL sqlLexer;
+// this definition (via function) fixes the font screwing
+// in the GUI. It's stronlgy suggested to handle Qt stuff
+// *after* QApplication initialization.
+QsciLexerSQL * sqlLexer()
+{
+    static QsciLexerSQL * _sqlLexer;
+    if (!_sqlLexer)
+        _sqlLexer = new QsciLexerSQL();
+    return _sqlLexer;
+}
+
 
 toSyntaxAnalyzer::toSyntaxAnalyzer(const char **keywords)
 {
@@ -327,7 +339,7 @@ void toComplPopup::keyPressEvent(QKeyEvent * e)
 toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
         : toMarkedText(parent, name), lexer(0), syntaxColoring(false)
 {
-    sqlLexer.setDefaultFont(toStringToFont(toConfigurationSingle::Instance().codeFont()));
+    sqlLexer()->setDefaultFont(toStringToFont(toConfigurationSingle::Instance().codeFont()));
 
     // set default keywords for code completion
     QFile api(":/templates/completion.api");
@@ -345,7 +357,7 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     }
 
     // set default SQL lexer (syntax colouring as well)
-    setLexer (&sqlLexer);
+    setLexer (sqlLexer());
 
     // enable line numbers
     setMarginLineNumbers (0, true);
