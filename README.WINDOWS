@@ -79,4 +79,33 @@ Please report any bugs should you find them as this port is still in the
 experimental stage.
 
 
-    
+
+Building with MSVC
+
+	0. All related steps are done in the "Visual Studio Command Prompt"
+
+	1. Downaload Qt4 source version for Windows - Trolltech doesn't provide
+	   MSVC binaries at all.
+
+	2. Install Oracle client - instant or standard one.
+
+	3. Download and install Postgresql development packages. It's a part
+	   of default installer - just check its component.
+	   NOTE: Install it to the path *without* space in its name - Qt has
+	         problems with compilation in the case of space.
+
+	4. Download and install Mysql development packages. It's a part
+	   of default installer - just check its component.
+	   NOTE: Install it to the path *without* space in its name - Qt has
+	         problems with compilation in the case of space.
+
+	5. Update system environment paths in variables: INCLUDE and LIB to
+	   fit Postgresql and Mysql includes and libraries.
+	   Note: Mysql uses subdirectories in its lib directory.
+
+	6. Compile Qt4 with MSVC. Don't forget to specify -qt-sql-mysql
+	   -qt-sql-psql -qt-sql-odbc -plugin-sql-mysql -plugin-sql-psql
+	   -plugin-sql-odbc parameters for configure script.
+
+	7. Compile Tora - read README.CMAKE
+
