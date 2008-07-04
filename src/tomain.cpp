@@ -351,6 +351,8 @@ void toMain::createActions()
 
     aboutAct = new QAction(tr("&About " TOAPPNAME "..."), this);
 
+    aboutQtAct = new QAction(tr("About &Qt..."), this);
+
     licenseAct = new QAction(tr("&License..."), this);
 
     // ---------------------------------------- windows menu
@@ -465,6 +467,7 @@ void toMain::createMenus()
     windowsMenu->addSeparator();
     helpMenu->addAction(aboutAct);
     helpMenu->addAction(licenseAct);
+	helpMenu->addAction(aboutQtAct);
 
     connect(helpMenu,
             SIGNAL(triggered(QAction *)),
@@ -1001,6 +1004,8 @@ void toMain::commandCallback(QAction *action)
         toAbout about(toAbout::About, this, "About " TOAPPNAME, true);
         about.exec();
     }
+	else if (action == aboutQtAct)
+        QApplication::aboutQt();
     else if (action == licenseAct)
     {
         toAbout about(toAbout::License, this, "About " TOAPPNAME, true);

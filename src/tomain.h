@@ -235,6 +235,7 @@ private:
     QAction *helpCurrentAct;
     QAction *helpContentsAct;
     QAction *aboutAct;
+    QAction *aboutQtAct;
     QAction *licenseAct;
     QAction *windowCloseAct;
     QAction *windowCloseAllAct;
