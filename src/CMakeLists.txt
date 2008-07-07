@@ -1,4 +1,5 @@
 #Subdirectories
+# ADD_SUBDIRECTORY(i18n)
 ADD_SUBDIRECTORY(loki)
 IF (WIN32)
     ADD_SUBDIRECTORY(windows)
@@ -9,6 +10,12 @@ ENDIF (WIN32)
 IF (WANT_INTERNAL_QSCINTILLA)
     ADD_SUBDIRECTORY(qscintilla2)
 ENDIF(WANT_INTERNAL_QSCINTILLA)
+
+
+# only toad bindings are here. All others qm files will blow the binary too much
+set (TORA_I18N_TS
+    i18n/tora_toad.ts
+)
 
 SET(TORA_RCC_FILES tora.qrc)
 
@@ -331,6 +338,7 @@ SET(TORA_SOURCES
     utils.cpp
 )
 
+QT4_ADD_TRANSLATION(TORA_I18N_QM ${TORA_I18N_TS})
 QT4_WRAP_UI(TORA_UI_SOURCES ${TORA_UI_SRC} )
 QT4_WRAP_CPP(TORA_MOC_SOURCES ${TORA_MOC_CLASSES})
 QT4_ADD_RESOURCES(TORA_RCC_SRCS ${TORA_RCC_FILES})
@@ -380,13 +388,14 @@ IF(WIN32)
         # this is a must to switch off subsystem:console (console window poping up)
         # WinMain wrapper from QT_QTMAIN_LIBRARY is used and liner must be modified
         LINK_LIBRARIES(${QT_QTMAIN_LIBRARY})
-	    SET (WIN32_SUBSYSTEM WIN32)
-		SET (CMAKE_EXE_LINKER_FLAGS "/NODEFAULTLIB:msvcrt.lib ${CMAKE_EXE_LINKER_FLAGS}")
-	ENDIF (MSVC)
+        SET (WIN32_SUBSYSTEM WIN32)
+        SET (CMAKE_EXE_LINKER_FLAGS "/NODEFAULTLIB:msvcrt.lib ${CMAKE_EXE_LINKER_FLAGS}")
+    ENDIF (MSVC)
 ENDIF(WIN32)
 
 
 ADD_EXECUTABLE(${EXE_NAME} ${WIN32_SUBSYSTEM}
+  ${TORA_I18N_QM}
   ${TORA_MOC_SOURCES}
   ${TORA_SOURCES}
   ${TORA_UI_SOURCES}
