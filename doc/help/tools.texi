@@ -8,6 +8,7 @@ These are the available tools in a standard TOra installation. Individual instal
 * SQL Worksheet: worksheet.
 * Schema Browser: browser.
 * PL/SQL Debugger: debugger.
+* PL/SQL Unit Tester: unittest.
 * Server Tuning: tuning.
 * Security Manager:security.
 * Storage Manager: storage.

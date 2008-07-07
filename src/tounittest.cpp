@@ -132,9 +132,8 @@ class toUnitTestTool : public toTool
 static toUnitTestTool UnitTestTool;
 
 
-//TODO: helpfile for this tool!
 toUnitTest::toUnitTest(QWidget * parent, toConnection &connection)
-    : toToolWidget(UnitTestTool, "todo!!!html", parent, connection, "toUnitTest"),
+    : toToolWidget(UnitTestTool, "unittest.html", parent, connection, "toUnitTest"),
     m_model(0)
 {
     setObjectName("unitTest");
