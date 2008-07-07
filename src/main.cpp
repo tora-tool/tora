@@ -96,14 +96,20 @@ int main(int argc, char **argv)
 {
     toConfiguration::setQSettingsEnv();
 
+    /*! \warning: Keep the code before QApplication init as small
+        as possible. There could be serious display issues when
+        you construct some Qt classes before QApplication.
+        It's the same for global static stuff - some instances can
+        break it (e.g. qscintilla lexers etc.).
+     */
+    QApplication app(argc, argv);
+
     QString style(toConfigurationSingle::Instance().style());
     if (!style.isEmpty())
         QApplication::setStyle(QStyleFactory::create(style));
 
     // Set the default codec to use for QString
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")); 
-
-    QApplication app(argc, argv);
 
     try
     {
