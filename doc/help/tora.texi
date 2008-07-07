@@ -57,6 +57,7 @@ This manual is for TOra, version 1.3.22.
 @include worksheet.texi
 @include browser.texi
 @include debugger.texi
+@include unittest.texi
 @include tuning.texi
 @include security.texi
 @include storage.texi

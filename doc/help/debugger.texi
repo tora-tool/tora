@@ -23,7 +23,7 @@ The last part of the screen is not always visible and contain information about 
 The toolbar and menu contain pretty much the same commands with a few exceptions.
 
 
-@table @asis
+@table
 @item @strong{Refresh object list}	
       Update the @strong{Object} list to the left of the screen. This is first on the toolbar and close to the end in the menu. 
       The keyboard shortcut for this is @strong{F5}. 
@@ -96,8 +96,7 @@ Which brings us to the last special thing in this editor which is the current li
 
 Information about the current state of execution is shown in the pane at the bottom of the debugger window which you can be hidden. You hide or show this by selecting the command @strong{debug pane} command or by pressing the @strong{F11} key. The debug pane consist of several tabs containing the following information.
 
-@table @asis
-
+@table
 @item @strong{Stack trace}
       Contains the current stack trace. This means the list of called objects that have lead to the current line of execution. Selecting a line will bring up the object and line where the the call to the next object was made except for the last line which is the current line of execution.
 @item @strong{Watches}
@@ -112,6 +111,7 @@ Information about the current state of execution is shown in the pane at the bot
       Any DBMS_OUTPUT output from your debugging session will end up in this window. For more information about using this see the output tool.
 @item @strong{Runtime log}
       This is simply a log displaying what is happening in the target debugging thread and probably not of much interest to anybody except TOra developers. One exception is that if you somehow get an SQL error when you function or procedure of choice is executed those errors will end up here.
+@end table
 
 @subheading Watches
 Watches are a way to inspect the contents of variables in a running program. 
@@ -135,4 +135,3 @@ You can also change the content of a watch. First you select the watch you want 
 
 If you have selected the parent of an array watch you will be able to select the index you want to assign a new value with the @strong{index} indicator to right. Then you enter the new value in the text field or check the @strong{NULL} indicator to set the value to NULL.
 
-@end table

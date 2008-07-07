@@ -37,5 +37,3 @@ END;
 
 It can handle only basic data types currently.
 No PLSQLdata (record of etc.) supported yet.
-
-@bye
