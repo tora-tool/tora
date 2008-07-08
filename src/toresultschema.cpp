@@ -100,7 +100,7 @@ void toResultSchema::update(const QString &schema) {
             conn.addInit(sql);
         }
         else if (toIsMySQL(conn)) {
-            conn.allExecute(QString("USE %1").arg(schema));
+            conn.allExecute(QString("USE `%1`").arg(schema));
             conn.setDatabase(schema);
         }
         else if (toIsPostgreSQL(conn))

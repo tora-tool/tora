@@ -63,13 +63,13 @@
 #include "icons/commit.xpm"
 
 static toSQL SQLParamsMySQL("toResultParam:ListParam",
-                            "TOAD 1,2 show variables",
+                            "show variables",
                             "List parameters available in the session",
                             "4.0",
                             "MySQL");
 
 static toSQL SQLParamsGlobal("toResultParam:ListGlobal",
-                             "TOAD 1,2 show global variables",
+                             "show global variables",
                              "List parameters available in the database",
                              "4.0",
                              "MySQL");

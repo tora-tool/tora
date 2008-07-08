@@ -656,7 +656,7 @@ void toBrowseButton::connectionChanged()
 #define TAB_ACCESS_OBJECTS "AccessObjects"
 
 static toSQL SQLListTablesMysql("toBrowser:ListTables",
-                                "SHOW TABLES FROM :f1<noquote>",
+                                "SHOW TABLES FROM `:f1<noquote>`",
                                 "List the available tables in a schema.",
                                 "3.0",
                                 "MySQL");
@@ -749,7 +749,7 @@ static toSQL SQLTableIndexPG("toBrowser:TableIndex",
                              "PostgreSQL");
 
 static toSQL SQLTableIndexMySQL("toBrowser:TableIndex",
-                                "SHOW INDEX FROM :f1<noquote>.:tab<noquote>",
+                                "SHOW INDEX FROM `:f1<noquote>`.`:tab<noquote>`",
                                 "",
                                 "",
                                 "MySQL");
@@ -902,7 +902,7 @@ static toSQL SQLTableTriggerPG("toBrowser:TableTrigger",
                                "",
                                "PostgreSQL");
 static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
-                               "show table status from :own<noquote> like :tab",
+                               "show table status from `:own<noquote>` like :tab",
                                "Display information about a table",
                                "3.0",
                                "MySQL");
@@ -1000,7 +1000,7 @@ static toSQL SQLViewSQLSapDb("toBrowser:ViewSQL",
                              "SapDB");
 
 static toSQL SQLListIndexMySQL("toBrowser:ListIndex",
-                               "TOAD 1,3 SHOW INDEX FROM :f1<database>",
+                               "SHOW INDEX FROM `:f1<database>`",
                                "List the available indexes in a schema",
                                "3.23",
                                "MySQL");
@@ -1029,7 +1029,7 @@ static toSQL SQLListIndexSapDb("toBrowser:ListIndex",
                                "SapDB");
 
 static toSQL SQLIndexColsMySQL("toBrowser:IndexCols",
-                               "SHOW INDEX FROM :f1<noquote>.:f2<noquote>",
+                               "SHOW INDEX FROM `:f1<noquote>`.`:f2<noquote>`",
                                "Display columns on which an index is built",
                                "3.23",
                                "MySQL");

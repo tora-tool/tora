@@ -80,7 +80,7 @@ static toSQL SQLCommentPG(
 
 static toSQL SQLTableCommentMySQL(
     "toResultCols:TableComment",
-    "TOAD 15 SHOW TABLE STATUS FROM :f1<noquote> LIKE :f2<char[100]>",
+    "SHOW TABLE STATUS FROM `:f1<noquote>` LIKE :f2<char[100]>",
     "Display Table comment",
     "4.1",
     "MySQL");
@@ -479,7 +479,7 @@ void toResultCols::query(const QString &sql, const toQList &param)
             if (Owner.isEmpty())
                 Columns->changeParams(Name);
             else
-                Columns->changeParams(Owner + "." + Name);
+                Columns->changeParams("`" + Owner + "`." + Name);
         }
         else
         {
