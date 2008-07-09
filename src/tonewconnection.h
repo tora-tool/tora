@@ -175,6 +175,7 @@ public slots:
     void historyDelete(void);
     void changeProvider(int current);
     void changeHost(void);
+    void importButton_clicked(void);
 };
 
 

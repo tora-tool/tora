@@ -59,6 +59,7 @@ tora_SOURCES=main.cpp \
 	tobackgroundlabel.cpp tobackgroundlabel.h \
 	toconfiguration.cpp toconfiguration.h \
 	toconnection.cpp toconnection.h \
+    toconnectionimport.cpp toconnectionimport.h \
 	toconnectionpool.cpp toconnectionpool.h \
 	torunnable.cpp torunnable.h \
 	toeditwidget.cpp toeditwidget.h \
@@ -178,6 +179,8 @@ tora_SOURCES=main.cpp \
     totableselect.cpp totableselect.h  \
     tovisualize.cpp tovisualize.h  \
     towaitevents.cpp towaitevents.h \
+    migratetool/connectionmodel.cpp migratetool/connectionmodel.h \
+    migratetool/sqldeveloper.cpp migratetool/sqldeveloper.h \
     $(EXTRA_ORACLE_MONO_SOURCE) \
 	$(LOKIDIR_SRC)/SmallObj.cpp \
 	$(LOKIDIR_SRC)/Singleton.cpp \
@@ -189,6 +192,7 @@ UI_FILES =	toaboutui.ui \
 		tobrowserfilterui.ui \
 		tobrowserindexui.ui \
 		tobrowsertableui.ui \
+        toconnectionimportui.ui \
 		tooraclesettingui.ui \
 		tostoragetablespaceui.ui \
 		tochartalarmui.ui \

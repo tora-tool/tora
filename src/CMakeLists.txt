@@ -25,6 +25,7 @@ SET(TORA_UI_SRC
     tobrowserfilterui.ui
     tobrowserindexui.ui
     tobrowsertableui.ui
+    toconnectionimportui.ui
     todatabasesettingui.ui
     todebugchangeui.ui
     todebugwatch.ui
@@ -85,6 +86,7 @@ SET(TORA_MOC_CLASSES
 #     toconf.h
 #     toconfiguration.h
     toconnection.h
+    toconnectionimport.h
     toconnectionpool.h
     torunnable.h
     tonoblockquery.h
@@ -200,6 +202,8 @@ SET(TORA_MOC_CLASSES
 #     toworksheettext.h
     toworksheetwidget.h
     utils.h
+    #
+    migratetool/connectionmodel.h
 )
 IF (ORACLE_FOUND)
     LIST(APPEND TORA_MOC_CLASSES tooraclesetting.h)
@@ -222,6 +226,7 @@ SET(TORA_SOURCES
     tobrowsertable.cpp
     toconfiguration.cpp
     toconnection.cpp
+    toconnectionimport.cpp
     toconnectionpool.cpp
     torunnable.cpp
     tocurrent.cpp
@@ -336,6 +341,9 @@ SET(TORA_SOURCES
     toworksheettext.cpp
     toworksheetwidget.cpp
     utils.cpp
+    #
+    migratetool/connectionmodel.cpp
+    migratetool/sqldeveloper.cpp
 )
 
 QT4_ADD_TRANSLATION(TORA_I18N_QM ${TORA_I18N_TS})

@@ -40,6 +40,7 @@
 #include "toconf.h"
 #include "toconnection.h"
 #include "tonewconnection.h"
+#include "toconnectionimport.h"
 #include "tomain.h"
 #include "totool.h"
 
@@ -146,6 +147,9 @@ toNewConnection::toNewConnection(
             SIGNAL(editTextChanged(QString)),
             this,
             SLOT(changeHost()));
+
+    connect(ImportButton, SIGNAL(clicked()),
+             this, SLOT(importButton_clicked()));
 
     // must make sure this gets called manually.
     changeProvider(Provider->currentIndex());
@@ -465,6 +469,42 @@ void toNewConnection::changeHost(void)
         Database->clear();
         toStatusMessage(str);
     }
+}
+
+
+void toNewConnection::importButton_clicked()
+{
+    toConnectionImport dia;
+    if (!dia.exec())
+        return;
+
+    Previous->setSortingEnabled(false);
+
+    // rows in gui
+    int pos = Previous->rowCount();
+    // find latest id (max+1)
+    QList<int> keys = OptionMap.keys();
+    qSort(keys);
+    int max = keys.at(keys.count()-1) + 1;
+
+    foreach (toConnectionOptions opt, dia.availableConnections())
+    {
+        if (findHistory(opt.provider, opt.username, opt.host, opt.database) != -1)
+            continue;
+
+        Previous->setRowCount(pos + 1);
+        OptionMap[max] = opt;
+
+        Previous->setItem(pos, IndexColumn, new QTableWidgetItem(QString::number(max)));
+        Previous->setItem(pos, ProviderColumn, new QTableWidgetItem(opt.provider));
+        Previous->setItem(pos, HostColumn, new QTableWidgetItem(opt.host));
+        Previous->setItem(pos, DatabaseColumn, new QTableWidgetItem(opt.database));
+        Previous->setItem(pos, UsernameColumn, new QTableWidgetItem(opt.username));
+        ++pos;
+        ++max;
+    }
+
+    Previous->setSortingEnabled(true);
 }
 
 

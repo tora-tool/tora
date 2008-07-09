@@ -1,0 +1,155 @@
+/*****
+ *
+ * TOra - An Oracle Toolkit for DBA's and developers
+ * Copyright (C) 2003-2005 Quest Software, Inc
+ * Portions Copyright (C) 2005 Other Contributors
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation;  only version 2 of
+ * the License is valid for this program.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *      As a special exception, you have permission to link this program
+ *      with the Oracle Client libraries and distribute executables, as long
+ *      as you follow the requirements of the GNU GPL in regard to all of the
+ *      software in the executable aside from Oracle client libraries.
+ *
+ *      Specifically you are not permitted to link this program with the
+ *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+ *      And you are not permitted to distribute binaries compiled against
+ *      these libraries without written consent from Quest Software, Inc.
+ *      Observe that this does not disallow linking to the Qt Free Edition.
+ *
+ *      You may link this product with any GPL'd Qt library such as Qt/Free
+ *
+ * All trademarks belong to their respective owners.
+ *
+ *****/
+
+#include "sqldeveloper.h"
+
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QXmlStreamReader>
+
+#include <QtDebug>
+
+
+namespace MigrateTool
+{
+
+QList<toConnectionOptions> sqlDeveloper(QWidget * parent)
+{
+    
+    QString fileName = QFileDialog::getOpenFileName(parent,
+                                                    "SQL Developer Connections",
+                                                    QDir::homePath(),
+                                                    "XML Files (*.xml);;All Files (*.*)");
+    QList<toConnectionOptions> ret;
+    if (fileName.isNull())
+        return ret;
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QMessageBox::warning(parent, "Load Error", QString("Cannot open file %1 for reading.").arg(fileName));
+        return ret;
+    }
+
+    QXmlStreamReader xml(&file);
+    bool isXML = false;
+    toConnectionOptions opt;
+    QString attr;
+
+    while (!xml.atEnd())
+    {
+        xml.readNext();
+        if (xml.isStartElement())
+        {
+//             qDebug() << "debug" <<xml.name().toString();
+            if (xml.name() == "References")
+            {
+                isXML = true;
+//                 qDebug() << "connections";
+            }
+            if (isXML && xml.name() == "RefAddresses")
+            {
+//                 qDebug() << "connection -----";
+                if (!opt.username.isEmpty())
+                {
+                    if (opt.provider == "Oracle")
+                    {
+                        if (opt.host.isEmpty())
+                            opt.provider = "Oracle (TNS)";
+                        else
+                            opt.provider = "Oracle (Instant Client)";
+                    }
+                    ret.append(opt);
+                    opt.username = "";
+                    opt.database = "";
+                    opt.host = "";
+                    opt.provider = "";
+                }
+                attr = "";
+            }
+            if (isXML && xml.name() == "StringRefAddr")
+            {
+                attr = xml.attributes().value("addrType").toString();
+            }
+            if (isXML && xml.name() == "Contents")
+            {
+//                 qDebug() << "StringRefAddr" << attr;//.toString();
+                QString val(xml.readElementText());
+                // "oraDriverType"
+                if (attr == "sid")
+                    opt.database = val;
+//                     qDebug() << "sid" << val;
+                else if (attr == "port")
+                    opt.port = val.toInt();
+//                     qDebug() << "port" << val;
+                else if (attr == "subtype")
+                {
+                    val = val.toLower();
+                    if (val == "mysql")
+                        opt.provider = "MySQL";
+                    else if (val == "posgtresql")
+                        opt.provider = "PostgreSQL";
+                    else
+                        opt.provider = "Oracle";
+//                     qDebug() << "subtype" << val;
+                }
+                // "DeployPassword"
+                else if (attr == "user")
+                    opt.username = val;
+//                     qDebug() << "user" << val;
+                else if (attr == "hostname")
+                    opt.host  = val;
+//                     qDebug() << "hostname" << val;
+                // "password"
+                // "SavePassword"
+//                 else if (attr == "customUrl")
+//                     qDebug() << "customUrl" << val;
+//                 else
+//                     qDebug() << "Skipped" << attr << val;
+            }
+        }
+    }
+    if (xml.error() && xml.error() != QXmlStreamReader::PrematureEndOfDocumentError)
+    {
+        qWarning() << "XML ERROR:" << xml.lineNumber() << ": " << xml.errorString();
+    }
+
+    file.close();
+    return ret;
+}
+
+} // namespace
