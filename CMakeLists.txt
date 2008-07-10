@@ -147,18 +147,10 @@ ADD_DEFINITIONS(-DTOMONOLITHIC)
 
 
 SET (QT_MT_REQUIRED true)
-SET (QT_MIN_VERSION "4.2.0")
+SET (QT_MIN_VERSION "4.3.0")
 SET (QT_USE_QTSQL TRUE)
 SET (QT_USE_QTNETWORK TRUE)
-# this is a legacy option. You can use this for early stages of development
-# and it will be removed later
-IF (WANT_QT3SUPPORT)
-  SET (QT_USE_QT3SUPPORT TRUE)
-  MESSAGE("Qt3 legacy support has been requested.")
-ELSE (WANT_QT3SUPPORT)
-  MESSAGE("No Qt3 legacy support. And it's good.")
-ENDIF (WANT_QT3SUPPORT)
-
+SET (QT_USE_QTXML TRUE)
 FIND_PACKAGE(Qt4 REQUIRED)
 INCLUDE( ${QT_USE_FILE} )
 IF (QT_FOUND)
