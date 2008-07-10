@@ -35,47 +35,23 @@
  *
  *****/
 
-#ifndef TOCONNECTIONIMPORT_H
-#define TOCONNECTIONIMPORT_H
+#ifndef SQURRELSQL_H
+#define SQURRELSQL_H
 
-#include "ui_toconnectionimportui.h"
-#include "migratetool/connectionmodel.h"
+#include <QList>
 
+#include "tonewconnection.h"
 
-/*! \brief GUI to load conections from the others tools.
+namespace MigrateTool
+{
+
+/*! \brief Parse SquirrelSQL connection files.
+Version 2.6.x or later is supported only.
+OK, this code looks ugly but it's enough for "one time runners".
 \author Petr Vanek <petr@scribus.info>
 */
-class toConnectionImport : public QDialog, public Ui::toConnectionImport
-{
-    Q_OBJECT
+QList<toConnectionOptions> squirrelSql(QWidget * parent = 0);
 
-    public:
-        toConnectionImport(QWidget * parent = 0);
-
-        //! \brief Supported loaders
-        enum ToolUsed {
-            None = 0,
-            OracleSQLDeveloper = 1,
-            SquirrelSQL = 2
-        };
-
-        //! \brief Send all imported connections to the caller
-        QList<toConnectionOptions> availableConnections()
-        {
-            return availableModel->availableConnections();
-        };
-
-    private:
-        MigrateTool::ConnectionModel * availableModel;
-
-        ToolUsed m_tool;
-
-    private slots:
-        //! Change m_tool
-        void toolComboBox_changed(int);
-        //! Read new connections from the outside
-        void refreshAvailable();
-
-};
+} // namespace
 
 #endif

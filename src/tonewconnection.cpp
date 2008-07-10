@@ -503,6 +503,7 @@ void toNewConnection::importButton_clicked()
         ++pos;
         ++max;
     }
+    writeSettings();
 
     Previous->setSortingEnabled(true);
 }

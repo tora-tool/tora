@@ -181,6 +181,7 @@ tora_SOURCES=main.cpp \
     towaitevents.cpp towaitevents.h \
     migratetool/connectionmodel.cpp migratetool/connectionmodel.h \
     migratetool/sqldeveloper.cpp migratetool/sqldeveloper.h \
+    migratetool/squirrelsql.cpp migratetool/squirrelsql.h \
     $(EXTRA_ORACLE_MONO_SOURCE) \
 	$(LOKIDIR_SRC)/SmallObj.cpp \
 	$(LOKIDIR_SRC)/Singleton.cpp \

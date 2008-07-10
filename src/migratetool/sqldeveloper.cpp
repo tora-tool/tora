@@ -49,7 +49,7 @@ namespace MigrateTool
 
 QList<toConnectionOptions> sqlDeveloper(QWidget * parent)
 {
-    
+
     QString fileName = QFileDialog::getOpenFileName(parent,
                                                     "SQL Developer Connections",
                                                     QDir::homePath(),
@@ -73,6 +73,26 @@ QList<toConnectionOptions> sqlDeveloper(QWidget * parent)
     while (!xml.atEnd())
     {
         xml.readNext();
+        if (isXML && xml.isEndElement() && xml.name() == "RefAddresses")
+        {
+//             qDebug() << "connection -----";
+            if (!opt.username.isEmpty() && !opt.provider.isEmpty())
+            {
+                if (opt.provider == "Oracle")
+                {
+                    if (opt.host.isEmpty())
+                        opt.provider = "Oracle (TNS)";
+                    else
+                        opt.provider = "Oracle (Instant Client)";
+                }
+                ret.append(opt);
+                opt.username = "";
+                opt.database = "";
+                opt.host = "";
+                opt.provider = "";
+            }
+            attr = "";
+        }
         if (xml.isStartElement())
         {
 //             qDebug() << "debug" <<xml.name().toString();
@@ -80,26 +100,6 @@ QList<toConnectionOptions> sqlDeveloper(QWidget * parent)
             {
                 isXML = true;
 //                 qDebug() << "connections";
-            }
-            if (isXML && xml.name() == "RefAddresses")
-            {
-//                 qDebug() << "connection -----";
-                if (!opt.username.isEmpty())
-                {
-                    if (opt.provider == "Oracle")
-                    {
-                        if (opt.host.isEmpty())
-                            opt.provider = "Oracle (TNS)";
-                        else
-                            opt.provider = "Oracle (Instant Client)";
-                    }
-                    ret.append(opt);
-                    opt.username = "";
-                    opt.database = "";
-                    opt.host = "";
-                    opt.provider = "";
-                }
-                attr = "";
             }
             if (isXML && xml.name() == "StringRefAddr")
             {

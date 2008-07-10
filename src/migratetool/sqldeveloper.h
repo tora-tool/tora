@@ -47,6 +47,7 @@ namespace MigrateTool
 
 /*! \brief Parse Oracle SQL Developer connection export file.
 Version 1.5 or later ("new" format) is supported only.
+OK, this code looks ugly but it's enough for "one time runners".
 \author Petr Vanek <petr@scribus.info>
 */
 QList<toConnectionOptions> sqlDeveloper(QWidget * parent = 0);

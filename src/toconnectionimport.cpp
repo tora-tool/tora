@@ -38,6 +38,7 @@
 #include <QMessageBox>
 
 #include "migratetool/sqldeveloper.h"
+#include "migratetool/squirrelsql.h"
 #include "toconnectionimport.h"
 
 
@@ -48,7 +49,10 @@ toConnectionImport::toConnectionImport(QWidget * parent)
     setupUi(this);
     m_tool = toConnectionImport::None;
     toolComboBox->addItem("None", toConnectionImport::None);
-    toolComboBox->addItem("Oracle SQL Developer (1.5)", toConnectionImport::OracleSQLDeveloper);
+    toolComboBox->addItem("Oracle SQL Developer (1.5)",
+                           toConnectionImport::OracleSQLDeveloper);
+    toolComboBox->addItem("SquirrelSQL (2.6.x)",
+                           toConnectionImport::SquirrelSQL);
 
     toolComboBox_changed(0);
 
@@ -66,20 +70,27 @@ void toConnectionImport::toolComboBox_changed(int ix)
 {
     m_tool = (ToolUsed)toolComboBox->itemData(ix).toInt();
     if (m_tool == toConnectionImport::OracleSQLDeveloper)
-        notificationLabel->setText(tr("Handle exported connections XML file. No passwords and options are imported."));
+        notificationLabel->setText(tr("Handle exported connections XML file."
+                                      "No passwords and options are imported."));
+    else if (m_tool == toConnectionImport::SquirrelSQL)
+        notificationLabel->setText(tr("Handle connections from tool config directory."));
     else
-        notificationLabel->setText(tr("Select one of tools available..."));
+        notificationLabel->setText(tr("Select one of tools available.\n"
+                                      "Connections could require manual handling after import."));
 }
 
 void toConnectionImport::refreshAvailable()
 {
     if (m_tool == toConnectionImport::None)
     {
-        QMessageBox::information(this, "TOra", "Select Import application first, please.");
+        QMessageBox::information(this, "TOra",
+                                  "Select Import application first, please.");
         return;
     }
     if (m_tool == toConnectionImport::OracleSQLDeveloper)
         availableModel->setupData(MigrateTool::sqlDeveloper(this));
+    else if (m_tool == toConnectionImport::SquirrelSQL)
+        availableModel->setupData(MigrateTool::squirrelSql(this));
 
     tableView->resizeColumnsToContents();
 }
