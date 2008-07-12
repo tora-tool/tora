@@ -14,7 +14,7 @@ TRANSLATIONS= \
 LOKIDIR_INC=$(top_srcdir)/src/loki/include
 LOKIDIR_SRC=$(top_srcdir)/src/loki/src
 
-AM_CPPFLAGS = -I./otl -I$(LOKIDIR_INC) $(KDE_INCLUDES) $(QT_INCLUDES) $(LTDLINCL)
+AM_CPPFLAGS = -I./otl -I$(LOKIDIR_INC) $(QT_INCLUDES) $(LTDLINCL)
 AM_CPPFLAGS += $(PCRE_CFLAGS) \
 	-DDEFAULT_PLUGIN_DIR=\"$(libdir)\" \
 	-DTOVERSION=\"$(PACKAGE_VERSION)\" \
@@ -24,17 +24,8 @@ AM_CPPFLAGS += $(PCRE_CFLAGS) \
 	$(QSCINTILLA_CXXFLAGS)
 
 AM_LDFLAGS = $(PCRE_LIBS) \
-	$(KDE_LDFLAGS) \
-	$(X_LDFLAGS) \
 	$(QT_LDFLAGS) \
-	$(LIB_KPARTS) \
-	$(LIB_KDEPRINT) \
-	$(LIB_KDECORE) \
-	$(LIB_KDEUI) \
-	$(LIB_KIO) \
-	$(LIB_KFILE) \
 	$(LIB_DCOP) \
-	$(LIB_KHTML) \
 	-lstdc++ \
 	$(LIBPTHREAD) \
 	$(ORACLE_LDFLAGS) \
@@ -112,88 +103,88 @@ tora_SOURCES=main.cpp \
 	totool.cpp totool.h \
 	utils.cpp utils.h \
 	toalert.cpp toalert.h \
-    toanalyze.cpp toanalyze.h  \
-    tobackup.cpp tobackup.h \
-    tobackuptool.cpp tobackuptool.h \
-    tobrowser.cpp tobrowser.h  \
-    tobarchart.cpp tobarchart.h  \
-    tocurrent.cpp tocurrent.h \
-    todebug.cpp todebug.h  \
-    toeditextensions.cpp toeditextensions.h  \
-    todatatype.cpp todatatype.h  \
-    toinvalid.cpp toinvalid.h \
-    tooutput.cpp tooutput.h \
-    topassword.cpp \
-    toprofiler.cpp toprofiler.h \
-    toproject.cpp toproject.h \
-    toqsqlconnection.cpp \
-    torollback.cpp torollback.h  \
-    toscript.cpp toscript.h  \
-    toscriptschemawidget.cpp toscriptschemawidget.h \
-    toscripttreeitem.cpp toscripttreeitem.h \
-    toscripttreemodel.cpp toscripttreemodel.h \
-    tosecurity.cpp tosecurity.h  \
-    tosession.cpp tosession.h \
-    tosgatrace.cpp tosgatrace.h \
-    tosqledit.cpp tosqledit.h \
-    tostorage.cpp tostorage.h  \
-    tostoragedefinition.cpp tostoragedefinition.h  \
-    totemplate.cpp totemplate.h  \
-    totemporary.cpp totemporary.h \
-    totuning.cpp totuning.h  \
-    tounittest.cpp tounittest.h \
-    tochangeconnection.cpp tochangeconnection.h  \
-    toworkingwidget.cpp toworkingwidget.h \
-    toworksheet.cpp toworksheet.h  \
-    toeditablemenu.cpp toeditablemenu.h  \
-    toworksheetwidget.cpp toworksheetwidget.h  \
-    toworksheettext.cpp toworksheettext.h  \
-    toworksheetstatistic.cpp toworksheetstatistic.h \
-    tobrowserconstraint.cpp tobrowserconstraint.h  \
-    tobrowserindex.cpp tobrowserindex.h  \
-    tobrowsertable.cpp tobrowsertable.h  \
-    tochartmanager.cpp tochartmanager.h  \
-    tolegendchart.cpp tolegendchart.h  \
-    tolinechart.cpp tolinechart.h  \
-    topiechart.cpp topiechart.h  \
-    toresultbar.cpp toresultbar.h  \
-    toresultline.cpp toresultline.h  \
-    toresultpie.cpp toresultpie.h \
-    todebugtext.cpp todebugtext.h  \
-    toextract.cpp toextract.h  \
-    toreport.cpp toreport.h  \
-    toresultextract.cpp toresultextract.h \
-    toresultcols.cpp toresultcols.h  \
+	toanalyze.cpp toanalyze.h  \
+	tobackup.cpp tobackup.h \
+	tobackuptool.cpp tobackuptool.h \
+	tobrowser.cpp tobrowser.h  \
+	tobarchart.cpp tobarchart.h  \
+	tocurrent.cpp tocurrent.h \
+	todebug.cpp todebug.h  \
+	toeditextensions.cpp toeditextensions.h  \
+	todatatype.cpp todatatype.h  \
+	toinvalid.cpp toinvalid.h \
+	tooutput.cpp tooutput.h \
+	topassword.cpp \
+	toprofiler.cpp toprofiler.h \
+	toproject.cpp toproject.h \
+	toqsqlconnection.cpp \
+	torollback.cpp torollback.h  \
+	toscript.cpp toscript.h  \
+	toscriptschemawidget.cpp toscriptschemawidget.h \
+	toscripttreeitem.cpp toscripttreeitem.h \
+	toscripttreemodel.cpp toscripttreemodel.h \
+	tosecurity.cpp tosecurity.h  \
+	tosession.cpp tosession.h \
+	tosgatrace.cpp tosgatrace.h \
+	tosqledit.cpp tosqledit.h \
+	tostorage.cpp tostorage.h  \
+	tostoragedefinition.cpp tostoragedefinition.h  \
+	totemplate.cpp totemplate.h  \
+	totemporary.cpp totemporary.h \
+	totuning.cpp totuning.h  \
+	tounittest.cpp tounittest.h \
+	tochangeconnection.cpp tochangeconnection.h  \
+	toworkingwidget.cpp toworkingwidget.h \
+	toworksheet.cpp toworksheet.h  \
+	toeditablemenu.cpp toeditablemenu.h  \
+	toworksheetwidget.cpp toworksheetwidget.h  \
+	toworksheettext.cpp toworksheettext.h  \
+	toworksheetstatistic.cpp toworksheetstatistic.h \
+	tobrowserconstraint.cpp tobrowserconstraint.h  \
+	tobrowserindex.cpp tobrowserindex.h  \
+	tobrowsertable.cpp tobrowsertable.h  \
+	tochartmanager.cpp tochartmanager.h  \
+	tolegendchart.cpp tolegendchart.h  \
+	tolinechart.cpp tolinechart.h  \
+	topiechart.cpp topiechart.h  \
+	toresultbar.cpp toresultbar.h  \
+	toresultline.cpp toresultline.h  \
+	toresultpie.cpp toresultpie.h \
+	todebugtext.cpp todebugtext.h  \
+	toextract.cpp toextract.h  \
+	toreport.cpp toreport.h  \
+	toresultextract.cpp toresultextract.h \
+	toresultcols.cpp toresultcols.h  \
 	toresultcolscomment.cpp toresultcolscomment.h \
-    toresultcombo.cpp toresultcombo.h  \
-    toresultschema.cpp toresultschema.h  \
-    toresultdepend.cpp toresultdepend.h  \
-    toresultlabel.cpp toresultlabel.h  \
-    toresultlock.cpp toresultlock.h  \
-    toresultlong.cpp toresultlong.h  \
-    toresultplan.cpp toresultplan.h  \
-    toresultparam.cpp toresultparam.h  \
-    toresultstorage.cpp toresultstorage.h \
-    tofilesize.cpp tofilesize.h  \
-    tosgastatement.cpp tosgastatement.h  \
-    totableselect.cpp totableselect.h  \
-    tovisualize.cpp tovisualize.h  \
-    towaitevents.cpp towaitevents.h \
-    migratetool/connectionmodel.cpp migratetool/connectionmodel.h \
-    migratetool/sqldeveloper.cpp migratetool/sqldeveloper.h \
-    migratetool/squirrelsql.cpp migratetool/squirrelsql.h \
-    $(EXTRA_ORACLE_MONO_SOURCE) \
+	toresultcombo.cpp toresultcombo.h  \
+	toresultschema.cpp toresultschema.h  \
+	toresultdepend.cpp toresultdepend.h  \
+	toresultlabel.cpp toresultlabel.h  \
+	toresultlock.cpp toresultlock.h  \
+	toresultlong.cpp toresultlong.h  \
+	toresultplan.cpp toresultplan.h  \
+	toresultparam.cpp toresultparam.h  \
+	toresultstorage.cpp toresultstorage.h \
+	tofilesize.cpp tofilesize.h  \
+	tosgastatement.cpp tosgastatement.h  \
+	totableselect.cpp totableselect.h  \
+	tovisualize.cpp tovisualize.h  \
+	towaitevents.cpp towaitevents.h \
+	migratetool/connectionmodel.cpp migratetool/connectionmodel.h \
+	migratetool/sqldeveloper.cpp migratetool/sqldeveloper.h \
+	migratetool/squirrelsql.cpp migratetool/squirrelsql.h \
+	$(EXTRA_ORACLE_MONO_SOURCE) \
 	$(LOKIDIR_SRC)/SmallObj.cpp \
 	$(LOKIDIR_SRC)/Singleton.cpp \
 	$(EXTRA_tora_SOURCES) \
 	$(BUILT_SOURCES)
 
-UI_FILES =	toaboutui.ui \
+UI_FILES = toaboutui.ui \
 		tobrowserconstraintui.ui \
 		tobrowserfilterui.ui \
 		tobrowserindexui.ui \
 		tobrowsertableui.ui \
-        toconnectionimportui.ui \
+		toconnectionimportui.ui \
 		tooraclesettingui.ui \
 		tostoragetablespaceui.ui \
 		tochartalarmui.ui \
