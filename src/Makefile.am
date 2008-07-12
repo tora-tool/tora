@@ -59,7 +59,7 @@ tora_SOURCES=main.cpp \
 	tobackgroundlabel.cpp tobackgroundlabel.h \
 	toconfiguration.cpp toconfiguration.h \
 	toconnection.cpp toconnection.h \
-    toconnectionimport.cpp toconnectionimport.h \
+	toconnectionimport.cpp toconnectionimport.h \
 	toconnectionpool.cpp toconnectionpool.h \
 	torunnable.cpp torunnable.h \
 	toeditwidget.cpp toeditwidget.h \
@@ -284,6 +284,7 @@ BUILT_SOURCES = \
 	moc_tochartmanager.cpp \
 	moc_toconnection.cpp \
 	moc_toconnectionpool.cpp \
+	moc_toconnectionimport.cpp \
 	moc_torunnable.cpp \
 	moc_tonoblockquery.cpp \
 	moc_toeventquery.cpp \
@@ -369,12 +370,14 @@ BUILT_SOURCES = \
 	moc_toscriptschemawidget.cpp \
 	moc_toscripttreemodel.cpp \
 	moc_toworkingwidget.cpp \
+    migratetool/moc_connectionmodel.cpp \
 	ui_toaboutui.h \
 	ui_todroptablespaceui.h \
 	ui_tobrowserconstraintui.h \
 	ui_tobrowserfilterui.h \
 	ui_tobrowserindexui.h \
 	ui_tobrowsertableui.h \
+	ui_toconnectionimportui.h \
 	ui_tochartalarmui.h \
 	ui_tochartsetupui.h \
 	ui_todatabasesettingui.h \
