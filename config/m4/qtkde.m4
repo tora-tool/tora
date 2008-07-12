@@ -443,42 +443,6 @@ AC_DEFUN([KDE_CHECK_LIB64],
     fi
 ])
 
-AC_DEFUN([KDE_MOC_ERROR_MESSAGE],
-[
-    AC_MSG_ERROR([No Qt meta object compiler (moc) found!
-Please check whether you installed Qt correctly.
-You need to have a running moc binary.
-configure tried to run $ac_cv_path_moc and the test didn't
-succeed. If configure shouldn't have tried this one, set
-the environment variable MOC to the right one before running
-configure.
-])
-])
-
-AC_DEFUN([KDE_RCC_ERROR_MESSAGE],
-[
-    AC_MSG_ERROR([No Qt resource compiler (rcc) found!
-Please check whether you installed Qt correctly.
-You need to have a running rcc binary.
-configure tried to run $ac_cv_path_rcc and the test didn't
-succeed. If configure shouldn't have tried this one, set
-the environment variable RCC to the right one before running
-configure.
-])
-])
-
-AC_DEFUN([KDE_UIC_ERROR_MESSAGE],
-[
-    AC_MSG_WARN([No Qt ui compiler (uic) found!
-Please check whether you installed Qt correctly.
-You need to have a running uic binary.
-configure tried to run $ac_cv_path_uic and the test didn't
-succeed. If configure shouldn't have tried this one, set
-the environment variable UIC to the right one before running
-configure.
-])
-])
-
 AC_DEFUN([KDE_LRELEASE_ERROR_MESSAGE],
 [
     AC_MSG_WARN([No lrelease found!
@@ -532,6 +496,150 @@ EOT
     fi
 ])
 
+AC_DEFUN([AC_PATH_MOC],
+[
+  ac_path_moc=NO
+  AC_ARG_WITH([moc],
+      AC_HELP_STRING([--with-moc],
+                     [path to moc (default searches PATH)]),
+      [  ac_path_moc="$withval" ])
+
+  if test "$ac_path_moc" = NO; then
+    AC_PATH_PROGS([ac_path_moc], [moc-qt4 moc], [NO], [$QTDIR/bin:$PATH])
+  fi
+
+  if test "$ac_path_moc" = NO; then
+    AC_MSG_ERROR([
+      moc binary not found.
+
+      You can change this by using --with-moc=PATH
+
+      Please check you have the moc program installed. For more
+      details about this problem, look at the end of config.log.])
+  fi
+
+  MOC="$ac_path_moc"
+  AC_MSG_CHECKING([$MOC works])
+
+  dnl should probably write out a test header, but this will work for now
+  ac_path_moc_cmd="$MOC src/toabout.h -o test.cpp"
+  echo "trying moc $ac_path_moc_cmd" >&AS_MESSAGE_LOG_FD()
+  $ac_path_moc_cmd 2>conftest.err
+  ac_path_moc_status=$?
+  cat conftest.err >&5
+  echo "status $ac_path_moc_status" >&5
+  rm -f conftest.err
+  rm -f test.cpp
+
+  if test "$ac_path_moc_status" != "0"; then
+    AC_MSG_ERROR([
+
+      Running $MOC failed. It is likely the wrong version. Please
+      check your installation.
+
+      You can change this by using --with-moc=PATH])
+  fi
+
+  AC_MSG_RESULT(yes)
+  AC_SUBST(MOC)
+])
+
+AC_DEFUN([AC_PATH_UIC],
+[
+  ac_path_uic=NO
+  AC_ARG_WITH([uic],
+      AC_HELP_STRING([--with-uic],
+                     [path to uic (default searches PATH)]),
+      [  ac_path_uic="$withval" ])
+
+  if test "$ac_path_uic" = NO; then
+    AC_PATH_PROGS([ac_path_uic], [uic-qt4 uic], [NO], [$QTDIR/bin:$PATH])
+  fi
+
+  if test "$ac_path_uic" = NO; then
+    AC_MSG_ERROR([
+      uic binary not found.
+
+      You can change this by using --with-uic=PATH
+
+      Please check you have the uic program installed. For more
+      details about this problem, look at the end of config.log.])
+  fi
+
+  UIC="$ac_path_uic"
+  AC_MSG_CHECKING([$UIC works])
+
+  dnl should probably write out a test header, but this will work for now
+  ac_path_uic_cmd="$UIC src/toaboutui.ui -o test.h"
+  echo "trying uic $ac_path_uic_cmd" >&AS_MESSAGE_LOG_FD()
+  $ac_path_uic_cmd 2>conftest.err
+  ac_path_uic_status=$?
+  cat conftest.err >&5
+  echo "status $ac_path_uic_status" >&5
+  rm -f conftest.err
+  rm -f test.h
+
+  if test "$ac_path_uic_status" != "0"; then
+    AC_MSG_ERROR([
+
+      Running $UIC failed. It is likely the wrong version. Please
+      check your installation.
+
+      You can change this by using --with-uic=PATH])
+  fi
+
+  AC_MSG_RESULT(yes)
+  AC_SUBST(UIC)
+])
+
+AC_DEFUN([AC_PATH_RCC],
+[
+  ac_path_rcc=NO
+  AC_ARG_WITH([rcc],
+      AC_HELP_STRING([--with-rcc],
+                     [path to rcc (default searches PATH)]),
+      [  ac_path_rcc="$withval" ])
+
+  if test "$ac_path_rcc" = NO; then
+    AC_PATH_PROGS([ac_path_rcc], [rcc-qt4 rcc], [NO], [$QTDIR/bin:$PATH])
+  fi
+
+  if test "$ac_path_rcc" = NO; then
+    AC_MSG_ERROR([
+      rcc binary not found. $QTDIR/bin:$PATH
+
+      You can change this by using --with-rcc=PATH
+
+      Please check you have the rcc program installed. For more
+      details about this problem, look at the end of config.log.])
+  fi
+
+  RCC="$ac_path_rcc"
+  AC_MSG_CHECKING([$RCC works])
+
+  dnl should probably write out a test header, but this will work for now
+  ac_path_rcc_cmd="$RCC src/tora.qrc -o test.cpp"
+  echo "trying rcc $ac_path_rcc_cmd" >&AS_MESSAGE_LOG_FD()
+  $ac_path_rcc_cmd 2>conftest.err
+  ac_path_rcc_status=$?
+  cat conftest.err >&5
+  echo "status $ac_path_rcc_status" >&5
+  rm -f conftest.err
+  rm -f test.cpp
+
+  if test "$ac_path_rcc_status" != "0"; then
+    AC_MSG_ERROR([
+
+      Running $RCC failed. It is likely the wrong version. Please
+      check your installation.
+
+      You can change this by using --with-rcc=PATH])
+  fi
+
+  AC_MSG_RESULT(yes)
+  AC_SUBST(RCC)
+])
+
 dnl ------------------------------------------------------------------------
 dnl mrj: hacked to find lrelease and lupdate, too
 dnl Find the meta object compiler and the ui compiler in the PATH,
@@ -549,41 +657,11 @@ AC_DEFUN([AC_PATH_QT_MOC_UIC],
       qt_bindirs="$ac_qt_bindir $qt_bindirs"
    fi
 
-   dnl AC_ARG_VAR([LRELEASE])
-   dnl AC_ARG_VAR([LUPDATE])
-   dnl AC_ARG_VAR([MOC])
-
    KDE_FIND_PATH(lrelease, LRELEASE, [$qt_bindirs], [KDE_LRELEASE_ERROR_MESSAGE])
    KDE_FIND_PATH(lupdate, LUPDATE, [$qt_bindirs], [KDE_LUPDATE_ERROR_MESSAGE])
-   KDE_FIND_PATH(rcc, RCC, [$qt_bindirs], [KDE_RCC_ERROR_MESSAGE])
-
-   KDE_FIND_PATH(moc, MOC, [$qt_bindirs], [KDE_MOC_ERROR_MESSAGE])
-   if test -z "$UIC_NOT_NEEDED"; then
-     KDE_FIND_PATH(uic, UIC_PATH, [$qt_bindirs], [UIC_PATH=""])
-     if test -z "$UIC_PATH" ; then
-       KDE_UIC_ERROR_MESSAGE
-       exit 1
-     else
-       KDE_CHECK_UIC_FLAG(L,[/nonexistant],ac_uic_supports_libpath=yes,ac_uic_supports_libpath=no)
-       KDE_CHECK_UIC_FLAG(nounload,,ac_uic_supports_nounload=yes,ac_uic_supports_nounload=no)
-
-       UIC=$UIC_PATH
-       if test x$ac_uic_supports_libpath = xyes; then
-           UIC="$UIC -L \$(kde_widgetdir)"
-       fi
-       if test x$ac_uic_supports_nounload = xyes; then
-           UIC="$UIC -nounload"
-       fi
-     fi
-   else
-     UIC="echo uic not available: "
-   fi
 
    AC_SUBST(LRELEASE)
    AC_SUBST(LUPDATE)
-   AC_SUBST(MOC)
-   AC_SUBST(UIC)
-   AC_SUBST(RCC)
 ])
 
 AC_DEFUN([KDE_MISC_TESTS],
