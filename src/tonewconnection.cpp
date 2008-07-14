@@ -139,7 +139,7 @@ toNewConnection::toNewConnection(
             SLOT(changeProvider(int)));
 
     connect(Previous,
-            SIGNAL(cellActivated(int, int)),
+            SIGNAL(cellDoubleClicked(int, int)),
             this,
             SLOT(accept()));
 
@@ -434,6 +434,8 @@ void toNewConnection::changeProvider(int current)
             OptionGroup->hide();
         else
             OptionGroup->show();
+
+        changeHost();
     }
     catch (const QString &str)
     {
@@ -444,14 +446,12 @@ void toNewConnection::changeProvider(int current)
 
 void toNewConnection::changeHost(void)
 {
+    QString prov = realProvider();
+
     try {
-        if(!Host->isHidden()) {
+        if(Host->isVisible() || (prov == "Oracle"))
+        {
             QString host = Host->currentText();
-            QString prov = Provider->currentText();
-
-            if(prov == ORACLE_INSTANT || prov == ORACLE_TNS)
-                prov = "Oracle";
-
             std::list<QString> databases = toConnectionProvider::databases(
                 prov,
                 host,
