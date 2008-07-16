@@ -504,8 +504,13 @@ AC_DEFUN([AC_PATH_MOC],
                      [path to moc (default searches PATH)]),
       [  ac_path_moc="$withval" ])
 
+  dnl try qtdir first
+  if test "$ac_path_moc" = NO && test "x$QTDIR" != ""; then
+    AC_PATH_PROGS([ac_path_moc], [moc-qt4 moc], [NO], [$QTDIR/bin])
+  fi
+
   if test "$ac_path_moc" = NO; then
-    AC_PATH_PROGS([ac_path_moc], [moc-qt4 moc], [NO], [$QTDIR/bin:$PATH])
+    AC_PATH_PROGS([ac_path_moc], [moc-qt4 moc], [NO], [$PATH])
   fi
 
   if test "$ac_path_moc" = NO; then
@@ -552,8 +557,13 @@ AC_DEFUN([AC_PATH_UIC],
                      [path to uic (default searches PATH)]),
       [  ac_path_uic="$withval" ])
 
+  dnl try qtdir first
+  if test "$ac_path_uic" = NO && test "x$QTDIR" != ""; then
+    AC_PATH_PROGS([ac_path_uic], [uic-qt4 uic], [NO], [$QTDIR/bin])
+  fi
+
   if test "$ac_path_uic" = NO; then
-    AC_PATH_PROGS([ac_path_uic], [uic-qt4 uic], [NO], [$QTDIR/bin:$PATH])
+    AC_PATH_PROGS([ac_path_uic], [uic-qt4 uic], [NO], [$PATH])
   fi
 
   if test "$ac_path_uic" = NO; then
@@ -600,8 +610,13 @@ AC_DEFUN([AC_PATH_RCC],
                      [path to rcc (default searches PATH)]),
       [  ac_path_rcc="$withval" ])
 
+  dnl try qtdir first
+  if test "$ac_path_rcc" = NO && test "x$QTDIR" != ""; then
+    AC_PATH_PROGS([ac_path_rcc], [rcc-qt4 rcc], [NO], [$QTDIR/bin])
+  fi
+
   if test "$ac_path_rcc" = NO; then
-    AC_PATH_PROGS([ac_path_rcc], [rcc-qt4 rcc], [NO], [$QTDIR/bin:$PATH])
+    AC_PATH_PROGS([ac_path_rcc], [rcc-qt4 rcc], [NO], [$PATH])
   fi
 
   if test "$ac_path_rcc" = NO; then
