@@ -17,26 +17,30 @@ set(ORACLE_HOME $ENV{ORACLE_HOME})
 IF (ORACLE_PATH_INCLUDES)
     SET (ORACLE_INCLUDES_LOCATION ${ORACLE_PATH_INCLUDES})
 ELSE (ORACLE_PATH_INCLUDES)
-    SET (ORACLE_INCLUDES_LOCATION ${ORACLE_HOME}/rdbms/public ${ORACLE_HOME}/include)
+    SET (ORACLE_INCLUDES_LOCATION
+            ${ORACLE_HOME}/rdbms/public
+            ${ORACLE_HOME}/include
+            # sdk
+            ${ORACLE_HOME}/sdk/include
+            # xe on windows
+            ${ORACLE_HOME}/OCI/include
+       )
 ENDIF (ORACLE_PATH_INCLUDES)
 
 IF (ORACLE_PATH_LIB)
     SET (ORACLE_LIB_LOCATION ${ORACLE_PATH_LIB})
 ELSE (ORACLE_PATH_LIB)
-    SET (ORACLE_LIB_LOCATION ${ORACLE_HOME}/lib)
+    SET (ORACLE_LIB_LOCATION
+            ${ORACLE_HOME}/lib
+            # xe on windows
+            ${ORACLE_HOME}/OCI/lib/MSVC
+        )
 ENDIF (ORACLE_PATH_LIB)
 
 FIND_PATH(
     ORACLE_INCLUDES
     oci.h
     ${ORACLE_INCLUDES_LOCATION}
-)
-
-SET(
-    ORACLE_INCLUDES
-    ${ORACLE_INCLUDES}
-    ${ORACLE_HOME}/rdbms/public
-    ${ORACLE_HOME}/sdk/include
 )
 
 FIND_LIBRARY(
