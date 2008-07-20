@@ -62,6 +62,9 @@
 #include <QGridLayout>
 #include <QString>
 
+#ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
+  #include <postgresql/libpq-fe.h>
+#endif
 
 static toSQL SQLVersion("toQSqlConnection:Version",
                         "SHOW VARIABLES LIKE 'version'",
@@ -197,8 +200,36 @@ static toSQL SQLCancelM5("toQSqlConnection:Cancel",
 static toSQL SQLCancelPg("toQSqlConnection:Cancel",
                          "SELECT pg_cancel_backend(:pid)",
                          "",
-                         "",
+                         "8.0",
                          "PostgreSQL");
+
+// seems to be the only way for < 8.0 to not get pg_cancel_backend
+static toSQL SQLCancelPgOld("toQSqlConnection:Cancel",
+                            "native",
+                            "",
+                            "",
+                            "PostgreSQL");
+
+
+void native_cancel(QSqlDriver *driver) {
+    QVariant v = driver->handle();
+    if(v.isValid() && v.typeName() == QString("PGconn*")) {
+#ifdef LIBPQ_DECL_CHECK
+        PGconn *handle = *static_cast<PGconn **>(v.data());
+        if(!handle)
+            return;
+
+        PGcancel *cancel = PQgetCancel(handle);
+        if(!cancel)
+            return;
+
+        char *errbuf = new char[1024];
+        PQcancel(cancel, errbuf, 1024);
+        PQfreeCancel(cancel);
+        delete[] errbuf;
+#endif
+    }
+}
 
 
 struct toQSqlProviderAggregate
@@ -1093,17 +1124,17 @@ class qSqlSub : public toConnectionSub
         QString ConnectionID;
 
         qSqlSub(QSqlDatabase conn, const QString &name)
-                : Lock(1), Connection(conn), Name(name)
-        { }
+                : Lock(1), Connection(conn), Name(name) {
+        }
 
         void lockUp()
         {
-            Lock.up();
+//             Lock.up();
         }
 
         void lockDown ()
         {
-            Lock.down();
+//             Lock.down();
         }
 
         int getLockValue()
@@ -1189,14 +1220,14 @@ class qSqlQuery : public toQuery::queryImpl
                 try
                 {
                     toConnection &conn = query()->connection();
-                    toQList pars;
-                    pars.insert(pars.end(), Connection->ConnectionID);
-                    conn.execute(SQLCancel, pars);
-                    // don't reconnect. causes lots of problems, if
-                    // this doesn't work may need to emulate by adding
-                    // Canceled bool member and manually throwing
-                    // exceptions
-//                     Connection->reconnect(conn);
+                    const QString &sql = toSQL::sql(SQLCancel, conn);
+                    if(!sql.isEmpty() && sql != "native") {
+                        toQList pars;
+                        pars.insert(pars.end(), Connection->ConnectionID);
+                        conn.execute(sql, pars);
+                    }
+                    else
+                        native_cancel(Connection->Connection.driver());
                 }
                 catch (...)
                 {}
@@ -1751,11 +1782,11 @@ toLock myLock;
 
 void toQSqlProvider::qSqlQuery::execute(void)
 {
-    while (Connection->getLockValue() > 1)
-    {
-        Connection->lockDown();
-        toStatusMessage(QString::fromLatin1("Too high value on connection lock semaphore"));
-    }
+//     while (Connection->getLockValue() > 1)
+//     {
+//         Connection->lockDown();
+//         toStatusMessage(QString::fromLatin1("Too high value on connection lock semaphore"));
+//     }
     Connection->lockDown();
     Query = NULL;
     try
@@ -1792,10 +1823,10 @@ void toQSqlProvider::qSqlQuery::execute(void)
 
 void toQSqlProvider::qSqlQuery::checkQuery(void) // Must call with lockDown!!!!
 {
-    while (Connection->getLockValue() > 0)
-    {
-        toStatusMessage(QString::fromLatin1("Too high value on connection lock semaphore for checkQuery"));
-    }
+//     while (Connection->getLockValue() > 0)
+//     {
+//         toStatusMessage(QString::fromLatin1("Too high value on connection lock semaphore for checkQuery"));
+//     }
     do
     {
         if (!Query->isActive())
