@@ -1129,12 +1129,12 @@ class qSqlSub : public toConnectionSub
 
         void lockUp()
         {
-//             Lock.up();
+            Lock.up();
         }
 
         void lockDown ()
         {
-//             Lock.down();
+            Lock.down();
         }
 
         int getLockValue()
@@ -1782,11 +1782,11 @@ toLock myLock;
 
 void toQSqlProvider::qSqlQuery::execute(void)
 {
-//     while (Connection->getLockValue() > 1)
-//     {
-//         Connection->lockDown();
-//         toStatusMessage(QString::fromLatin1("Too high value on connection lock semaphore"));
-//     }
+    while (Connection->getLockValue() > 1)
+    {
+        Connection->lockDown();
+        toStatusMessage(QString::fromLatin1("Too high value on connection lock semaphore"));
+    }
     Connection->lockDown();
     Query = NULL;
     try
@@ -1823,10 +1823,10 @@ void toQSqlProvider::qSqlQuery::execute(void)
 
 void toQSqlProvider::qSqlQuery::checkQuery(void) // Must call with lockDown!!!!
 {
-//     while (Connection->getLockValue() > 0)
-//     {
-//         toStatusMessage(QString::fromLatin1("Too high value on connection lock semaphore for checkQuery"));
-//     }
+    while (Connection->getLockValue() > 0)
+    {
+        toStatusMessage(QString::fromLatin1("Too high value on connection lock semaphore for checkQuery"));
+    }
     do
     {
         if (!Query->isActive())
