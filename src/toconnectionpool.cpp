@@ -43,6 +43,7 @@
 
 #include <QTimer>
 #include <QCoreApplication>
+#include <QApplication>
 
 
 static const int TEST_MSEC = 5000;
@@ -76,6 +77,11 @@ void toConnectionPoolTest::test() {
         if(state == toConnectionPool::Broken)
             Pool->fix(i);
     }
+}
+
+
+void toConnectionPoolTest::exitLoop() {
+    QThread::exit(0);
 }
 
 
@@ -150,7 +156,10 @@ toConnectionPool::toConnectionPool(toConnection *conn) : QObject(conn) {
 
 
 toConnectionPool::~toConnectionPool() {
-    TestThread->exit();
+    QMetaObject::invokeMethod(TestThread, "exitLoop", Qt::QueuedConnection);
+    // must call this or the queued call never executes while we wait
+    // on the thread. Awesome.
+    qApp->processEvents();
     TestThread->wait();
     delete TestThread;
 

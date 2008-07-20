@@ -71,6 +71,15 @@ public:
      */
     virtual void run(void);
 
+public slots:
+    /**
+     * Calling exit() from another thread prevents proper exit of sql
+     * queries, leading to a deadlock
+     *
+     */
+    void exitLoop();
+
+
 private slots:
     // execute tests
     void test(void);
