@@ -80,11 +80,6 @@ void toConnectionPoolTest::test() {
 }
 
 
-void toConnectionPoolTest::exitLoop() {
-    QThread::exit(0);
-}
-
-
 toConnectionPoolExec::toConnectionPoolExec(toConnectionPool *pool, Action act) {
     action = act;
     Pool   = pool;
@@ -156,7 +151,7 @@ toConnectionPool::toConnectionPool(toConnection *conn) : QObject(conn) {
 
 
 toConnectionPool::~toConnectionPool() {
-    QMetaObject::invokeMethod(TestThread, "exitLoop", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(TestThread, "quit", Qt::QueuedConnection);
     // must call this or the queued call never executes while we wait
     // on the thread. Awesome.
     qApp->processEvents();
