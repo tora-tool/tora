@@ -1,0 +1,65 @@
+<html lang="en">
+<head>
+<title>history - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.11">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="help.html#help" title="help">
+<link rel="next" href="workspace.html#workspace" title="workspace">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 1.4.0.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="history"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="workspace.html#workspace">workspace</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="help.html#help">help</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<h2 class="chapter">2 History of TOra</h2>
+
+<p><a name="index-History-and-future-of-TOra-2"></a>
+
+<h3 class="heading">History of TOra</h3>
+
+<p>I started the TOra project in December 2000, the reason being that I had been increasingly jealous of the tools available for interacting with Oracle databases to my colleges using windows. The tools that were available for Linux users were not nearly powerful enough. Execution plans being pretty much the most advanced feature available. During this time I also made a lot of attempts to get VMWare to work without any success fortunately. If I could have made this to work I would never have started TOra but run a VMWare client with Windows.
+
+   <p>I started by working on what is now the worksheet in TOra. Already in the beginning I envisaged TOra being plugin based and easily extendable with new functionality without any or much change of the existing code base, the <a href="api/toTool.html">toTool class</a> being one of the first written gives this functionality.
+
+   <p>In the beginning the development pace was really fast as always and it didn't take long before it had at least in my opinion surpassed any available tool for Linux as an SQL worksheet. Most of the development of these versions were made in airports in Asia since I spent about a week in those on a backpacking holiday there around new years 2000 to 2001. Yes, I know there aren't many other people who would bring a laptop on a backpacking vacation, but I knew I would be spending a lot of time in airports and what better way to waste the time.
+
+   <p>By the time I was back I released the first version of TOra with both worksheet and database browser. By this time I started looking at the PL/SQL debugging package available in Oracle, this was the first time I looked at developing functionality in TOra that I didn't really feel a pressing need for myself since I rarely write any large PL/SQL code. This was released in version 0.4 at the end of January, still only about 1 month after the project was started. This was the first functionality in TOra that is not available from any other open source project.
+
+   <p>The next big thing to happen to this project was that TrollTech released the first version of Qt Free for windows at which point I started glancing at making TOra available for the windows platform. I've made a few feeble attempts earlier using an evaluation copy of Qt/Windows without much success. But when this release was made I really sat down and went through it finding lots of problems mainly with regards to Visual C++ (Which is really crap, but the one you have to use if you want to use Qt Free. Of course no tool can really replace emacs, gcc, make and gdb if you know how to use them).
+
+   <p>After this development slowed down considerably to be able to stabilize the program to get the first stable releasse which was released on the first of september 2001. At almost the same time as 1.0 was released the first development release for 1.1 was released featuring a few of the most asked for features including improved tuning and better busy feedback. Most parts of TOra have been touched in some way for this release. The 1.2 release was also the first commercial release which is a way for me to ensure that TOra can be supported well forward in the future as it is starting to consume more and more of my time.
+
+   <p>This page of the options about fonts and colors used in the user interface.
+
+<h3 class="heading">The future</h3>
+
+<p>I will continue to develop TOra to be the best possible database development and administration tool for Oracle and in the long run probably other databases as well.
+
+   <p>By the time of the 1.2 release development of the 1.4 release is already well under way and will mostly feature DBA improvements. The database browser which will start getting more and more functionality to modify the browsed objects. Other changes are made to make DBA:s administrating database which people are accessing using TOra should also be happy with this release since it will warn more often when you are doing things you probably shouldn't be doing (Like running a server tuning session just to get a handle of whats happening). Improved database tuning with a new wait event analysis tool is also already finnished and ready for beta testing. Also PostgreSQL support will probably be available for the 1.4 release.
+
+   <p>Henrik "Mauritz" Johnson, GlobeCom AB
+
+   </body></html>
+

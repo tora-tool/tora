@@ -23,7 +23,7 @@ The last part of the screen is not always visible and contain information about 
 The toolbar and menu contain pretty much the same commands with a few exceptions.
 
 
-@table
+@table @asis
 @item @strong{Refresh object list}	
       Update the @strong{Object} list to the left of the screen. This is first on the toolbar and close to the end in the menu. 
       The keyboard shortcut for this is @strong{F5}. 
@@ -96,7 +96,7 @@ Which brings us to the last special thing in this editor which is the current li
 
 Information about the current state of execution is shown in the pane at the bottom of the debugger window which you can be hidden. You hide or show this by selecting the command @strong{debug pane} command or by pressing the @strong{F11} key. The debug pane consist of several tabs containing the following information.
 
-@table
+@table @asis
 @item @strong{Stack trace}
       Contains the current stack trace. This means the list of called objects that have lead to the current line of execution. Selecting a line will bring up the object and line where the the call to the next object was made except for the last line which is the current line of execution.
 @item @strong{Watches}

@@ -1,0 +1,59 @@
+<html lang="en">
+<head>
+<title>searchreplace - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.11">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="workspace.html#workspace" title="workspace">
+<link rel="prev" href="charts.html#charts" title="charts">
+<link rel="next" href="preferences.html#preferences" title="preferences">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 1.4.0.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="searchreplace"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="preferences.html#preferences">preferences</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="charts.html#charts">charts</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="workspace.html#workspace">workspace</a>
+<hr>
+</div>
+
+<h3 class="section">3.7 Search &amp; Replace</h3>
+
+<p><a name="index-Search-_0026-Replace-9"></a>
+Ora has an advanced search and replace function that allows you to search result list and editors. Replace is only available for editors though. You can invoke the search &amp; replace dialog by selecting the menu <strong>Edit|Search &amp; Replace</strong> or by pressing <strong>CTRL+F</strong>. The search always operates on the last editor or list that had the focus <strong>when you invoked the dialog</strong>. Not on the current widget of the next search etc. The dialog looks like this.
+
+   <div class="block-image"><img src="images/searchreplace.png" alt="images/searchreplace.png"></div>
+
+<h4 class="subheading">Specifying the search criteria</h4>
+
+<p>You enter the text to search for, this can be either in the format of plain text or regular expressions as defined by the current version of Qt which TOra is compiled against (For more information check out <a href="http://doc.trolltech.com/qregexp.html">http://doc.trolltech.com/qregexp.html</a>, if you are using Qt 3.0 or later you have a more advanced form of regular expressions).
+
+   <p>You can also specify if the search expression must match a whole word or if the match is to be case sensitive.
+
+   <p>After specifying what you are looking for you can execute your search by either pressing the <strong>Search Top</strong> button which will start the search from the top of the contents of the target for the search or <strong>Search Next</strong> which will continue searching for the next match from the current location.
+
+<h4 class="subheading">Replacing</h4>
+
+<p>In the replace text field you can specify the text with which to replace a matched find that has been found. Note that regardless of if the search is case sensitive or not the replacement is the same case as specified in the text field.
+
+   <p>After finding the first occurrence by pressing <strong>Search Top</strong> or <strong>Search Next</strong> you can either replace it with the current substitution by pressing <strong>Replace</strong>, or skip to the next by pressing <strong>Search Next</strong> button again. At any time the <strong>Replace All</strong> will replace all occurrences after the current location in the editor.
+
+   </body></html>
+

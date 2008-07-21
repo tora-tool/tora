@@ -13,7 +13,7 @@ In windows preferences are stored in the registry, but in Linux it is stored in 
 To the left is a list containing the available option pages you can display.
 
 @menu
-* General global settings: Global Settings.
+* General global settings: globalsettings.
 * Global database settings: database.
 * Font and color settings: fonts.
 * Additional manuals in help browser: additionalhelp.
@@ -25,7 +25,7 @@ The rest of the settings are tool specific and covered under corresponding tool 
 Selecting a page does not discard the changes of another page, and no changes are saved until @strong{OK} is pressed. You can always discard any changes made by pressing the escape key or the @strong{Cancel} button.
 
 
-@node Global Settings
+@node globalsettings
 @subsection Global Settings
 
 These may vary some depending on how your system was compiled and configured. Not all options are displayed in the screenshot since that was made on a KDE version of TOra.

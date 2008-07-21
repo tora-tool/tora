@@ -1,0 +1,63 @@
+<html lang="en">
+<head>
+<title>alert - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.11">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="tools.html#tools" title="tools">
+<link rel="prev" href="analyze.html#analyze" title="analyze">
+<link rel="next" href="invalid.html#invalid" title="invalid">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 1.4.0.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="alert"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="invalid.html#invalid">invalid</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="analyze.html#analyze">analyze</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
+<hr>
+</div>
+
+<h3 class="section">4.14 Alert Tool</h3>
+
+<p><a name="index-Alert-Tool-30"></a>This tool is usefull for debugging database packages that send or depend on receiving dbms alerts.
+
+   <div class="block-image"><img src="images/alert.png" alt="images/alert.png"></div>
+
+   <p>This tool is controled solely from it's toolbar which is followed by a list containing the alerts received so far on the watched alerts. The toolbar contains the following controls.
+
+     <dl>
+<dt>Registered<dd>This list contains the alerts that are registered for listening. To add a new alert simply write the name in this combo box and press return or the register current button immediately to the right. To remove an alert select it in the list and press the remove registered button.&lsquo;<samp><span class="samp">Registered</span></samp>&rsquo;.
+
+     <br><dt><strong>Register current</strong><dd>Register the name currently entered in the registered combo box.
+
+     <br><dt><strong>Remove registered</strong><dd>Stop listening to the registered alert currently selected in the registered combo box.
+
+     <br><dt><strong>Name</strong><dd>Name of the alert to send.
+
+     <br><dt><strong>Message</strong><dd>Message to send in an alert. Pressing return in this lineedit will send the alert.
+
+     <br><dt><strong>Edit message in memo</strong><dd>Edit the message in a memo editor, usefull for sending newlines and longer messages.
+
+     <br><dt><strong>Send alert</strong><dd>Send the currently defined alert. You can also send an alert by pressing return in the message line editor.
+
+   </dl>
+
+   </body></html>
+

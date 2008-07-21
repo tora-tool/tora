@@ -202,7 +202,7 @@ These mean every kind of list displayed in TOra. For information about how to in
 
 @subsubheading Charts
 
-Used to visualize data, usually some kind of database statistics. There are no charts in the example window above, @pxref{Using charts, Using charts}.
+Used to visualize data, usually some kind of database statistics. There are no charts in the example window above, @pxref{charts, Using charts}.
 
 
 @subsubheading Object Cache

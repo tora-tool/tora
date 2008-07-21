@@ -1,0 +1,78 @@
+<html lang="en">
+<head>
+<title>lists - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.11">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="workspace.html#workspace" title="workspace">
+<link rel="prev" href="editors.html#editors" title="editors">
+<link rel="next" href="charts.html#charts" title="charts">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 1.4.0.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="lists"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="charts.html#charts">charts</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="editors.html#editors">editors</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="workspace.html#workspace">workspace</a>
+<hr>
+</div>
+
+<h3 class="section">3.5 Using lists</h3>
+
+<p><a name="index-lists-7"></a>
+A list is a very central element of the TOra user interface and is a standard way to display information in a grid. Here is an example of a list.
+
+   <div class="block-image"><img src="images/lists.png" alt="images/lists.png"></div>
+
+<h4 class="subheading">Navigating a list</h4>
+
+<p>If a list does not fit into it's designated area on the screen it will get scrollbars that can be used to navigate the entire contents of the list. There are also the usual key bindings <strong>left</strong>, <strong>right</strong>, <strong>up</strong>, <strong>down</strong>, <strong>page up</strong>, <strong>page down</strong> etc...
+
+   <p>Lists can be hierarchical as can be seen in the screenshot above. When there are child items that are not displayed a + is displayed to the left of the row. Clicking the + will expand the row and display the child items. 
+You can also use the <strong>right</strong> key to expand child items and <strong>left</strong> key to collapse them.
+
+<h4 class="subheading">Result lists</h4>
+
+<p>Result lists are lists that display the result of a query from the database. Only a configured amount of rows are initially read (see <a href="preferences.html#preferences">Options</a> for more information), although enough items to fill the screen is always read if available. To read more items from the queries simply scroll down. If you want to scroll faster use <strong>page down</strong> which will read an entire screen of data at a time from the query. If you want to read all the data available you can use the <strong>Edit|Read All</strong> menu item.
+
+<h4 class="subheading">Manipulating lists</h4>
+
+<p>In a list you can change the sort order by pressing the header of the list to sort on the column whose header you clicked. Clicking the same column again will reverse the sort order. Columns that contain numerical data (Regardless of database format) will be sorted as numbers (2 before 10). Observe that not all lists can be sorted in a different sort order.
+
+   <p>You can also rearrange the column order by dragging the heading of a column to another place.
+
+<h4 class="subheading">Accessing the contents of a field</h4>
+
+<p>The contents of a field (Specific row and column of a list) can be copied either by double-clicking the field, or selecting copy from the context menu available by right-clicking on the field. You can also drag the contents of a field to an editor.
+
+   <p>If the contents is too long to be visible in the list you will get a tooltip with all of the contents if you place the mouse over the field for a short while (As seen in the screenshot). If this is not enough you can display the contents of a field in a separate window by accessing the context menu of the field and selecting <strong>display in editor</strong>.
+
+   <p>You can also place a line in the bind parameter(see <a href="Getting-bind-parameters.html#Getting-bind-parameters">Getting bind parameters</a>) cache by double clicking on a line. The bind name will be the same as the column name in lowercase.
+
+<h4 class="subheading">Other list functionality</h4>
+
+<p>Lists can always be printed by selecting the <strong>File|Print</strong> menu item.
+
+   <p>You can also save a list as a text file by selecting <strong>File|Save</strong> menu item. Any graphics in the list will be discarded and all fields will be left justified in the output.
+
+   <p>In the context menu for the list you can also select the entry <strong>edit SLQ</strong> in which you can edit the SQL used to generated the list. If there is no single SQL used to generate the list you will not find any SQL, however you will usually be pointed in roughly the right direction in the sql editor (see <a href="sqledit.html#sqledit">SQL Editor</a>, Where you can also find more information about the concept of SQL dictionary TOra uses).
+
+   </body></html>
+

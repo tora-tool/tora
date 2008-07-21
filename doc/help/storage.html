@@ -1,0 +1,66 @@
+<html lang="en">
+<head>
+<title>storage - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.11">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="tools.html#tools" title="tools">
+<link rel="prev" href="security.html#security" title="security">
+<link rel="next" href="session.html#session" title="session">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 1.4.0.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="storage"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="session.html#session">session</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="security.html#security">security</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
+<hr>
+</div>
+
+<h3 class="section">4.7 Storage Manager</h3>
+
+<p><a name="index-Storage-Manager-23"></a>
+This tool provides an easy interface to administrate tablespaces and datafiles.
+
+   <div class="block-image"><img src="images/storage.png" alt="images/storage.png"></div>
+
+   <p>As you can see in the screenshot above the tool is a list of all the tablespaces available in the database. The tablespaces can be expanded to display the datafiles they consist of. There is also one option available to this tool, whether to collect information about how coalesced the tablespaces are, the coalesced fetching can be very slow on fragmented databases and if TOra seems to lock itself when you try to start this tool try resetting that option to not show coalesced info. Using the toolbar you can perform these commands.
+
+     <dl>
+<dt><strong>Refresh</strong><dd>      Update the view. 
+<br><dt><strong>Tablespace online</strong><dd>      Take the selected tablespace online. 
+<br><dt><strong>Tablespace offline</strong><dd>      Take the selected tablespace off-line. 
+<br><dt><strong>Enable tablespace logging</strong><dd>      Enable logging for the selected tablespace. 
+<br><dt><strong>Disable tablespace logging</strong><dd>      Disable logging for the selected tablespace. 
+<br><dt><strong>Read write tablespace</strong><dd>      Enable read and write access to the selected tablespace. 
+<br><dt><strong>Read only tablespace</strong><dd>      Only allow read only access to the selected tablespace. 
+<br><dt><strong>Modify tablespace</strong><dd>      Modify the selected tablespace settings. If you don't understand the settings in this dialog please refer to the Oracle Server Concepts manual. 
+<br><dt><strong>Modify datafile</strong><dd>      Modify the current datafiles settings. If you don't understand the settings in this dialog please refer to the Oracle Server Concepts manual. 
+<br><dt><strong>Add tablespace</strong><dd>      Create a new tablespace. If you don't understand the settings in this dialog please refer to the Oracle Server Concepts manual. 
+<br><dt><strong>Add datafile</strong><dd>      Create a new datafile for the currently selected tablespace. If you don't understand the settings in this dialog please refer to the Oracle Server Concepts manual. 
+<br><dt><strong>Coalesced tablespace</strong><dd>      Coalesced free data in the current tablespace. 
+<br><dt><strong>Move datafile</strong><dd>      Move a datafile to another location. 
+<br><dt><strong>Change connection</strong><dd>      Change the connection to administrate storage for. 
+</dl>
+
+   <p>When you select a tablespace or datafile the lower part of this tool displays the objects (to the left) and extents (to the right) in that tablespace or file. A used extent is displayed as green in the extent view if the object it belongs to is not selected in the list to the right. Selecting an item in the list to the right will paint it's extents red in the right extent view. Unallocated space is colored whie. Some information about the number of files and extents are displayed at the top of the extents display. Several datafiles are separated by one line of black in the extent view if a tablespace containing several files are viewed.
+
+   </body></html>
+

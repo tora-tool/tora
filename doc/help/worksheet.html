@@ -1,0 +1,171 @@
+<html lang="en">
+<head>
+<title>worksheet - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.11">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="tools.html#tools" title="tools">
+<link rel="next" href="browser.html#browser" title="browser">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 1.4.0.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="worksheet"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="browser.html#browser">browser</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
+<hr>
+</div>
+
+<h3 class="section">4.1 SQL Worksheet</h3>
+
+<p><a name="index-SQL-Worksheet-17"></a>
+This tool provides a way to execute arbitrary SQL or PL/SQL code and also investigate how it is execute and it's resource consumption.
+
+   <div class="block-image"><img src="images/worksheet.png" alt="images/worksheet.png"></div>
+
+   <p>The worksheet is split into two panes. The upper one is the editor where you enter the queries you want to run. 
+In the lower you can investigate the result.
+
+<h4 class="subheading">Toolbar &amp; menu</h4>
+
+<p>There is a toolbar and a tool menu available for the worksheet. They both contain the following commands.
+
+     <dl>
+<dt><strong>Execute Current</strong><dd>      This executes the statement you current are within or after. When executed the statement executed will be highlighted in the editor. 
+      The keyboard shortcut is <strong>CTRL-Return</strong>. 
+<br><dt><strong>Execute All</strong><dd>      Execute all the statements in the editor. You get no result from the execution, the statement is simply executed. 
+      You can investigate the success of the commands in the <strong>Logging</strong> pane of the result. The keyboard shortcut is <strong>F8</strong>. 
+<br><dt><strong>Execute Next</strong><dd>      This does exactly the same as the <strong>execute current</strong> command with one difference. If the cursor is after the last ;
+      of the statement and before the first non whitespace character of the next statement this command will execute the next statement
+      when the other command will execute the previous statement. The keyboard shortcut is <strong>F9</strong>. 
+<br><dt><strong>Execute Newline Separated</strong><dd>      Execute a statement that is separated by two newlines instead of the normal ';' character. 
+      Could be useful for people who are familiar with some other Oracle tools. The keyboard shortcut is <strong>SHIFT+F9</strong>. 
+      Only available in the menu, not in the toolbar. 
+<br><dt><strong>Refresh</strong><dd>      This will re-execute the last executed statement. The keyboard shortcut is <strong>F5</strong>. 
+<br><dt><strong>Describe under cursor</strong><dd>      Describe the table currently under the cursor. The keyboard shortcut is <strong>F4</strong>. 
+<br><dt><strong>Enable Statistics</strong><dd>      Enable or disable collecting statistics when running the statements. 
+      This will cause TOra to execute at least two extra queries for every statement executed when enabled. 
+      Next to this button in the toolbar is a combo box in which you can choose the refreshtime for the charts in the statistics pane. 
+<br><dt><strong>Stop execution</strong><dd>      Abort execution of the currently running query. This will not work in Windows where the query will keep running in the background until the first row of the query is returned and consume server resources before it is aborted. When you execute a new statement the current execution will be aborted. 
+<br><dt><strong>Execute Saved SQL</strong><dd>      Execute the latest selected saved SQL. For more information see saved SQL. Keyboard shortcut is <strong>F7</strong>. 
+      This is not available in the toolbar. 
+<br><dt><strong>Select Saved SQL</strong><dd>      Popup menu containing saved SQL. For more information see saved SQL. Keyboard shortcut is <strong>CTRL+SHIFT+S</strong>. 
+<br><dt><strong>Save last SQL</strong><dd>      Save the most recently executed SQL to the saved SQL list. When pressed will ask for the name to save the SQL under. If ':' is entered in this name it will separate into submenues on the colon. 
+<br><dt><strong>Edit Saved SQL</strong><dd>      Open the SQL editor to edit saved SQL. For more information see saved SQL. Only available in menu, not in toolbar. 
+<br><dt><strong>Previous Log Entry</strong><dd>      Display the result of the previous entry in the log. If result caching is on in the settings the previous result is displayed,
+      if it isn't the statement is reexecuted to generate the result. Keyboard shortcut is <strong>ALT+Up</strong>. 
+      Only available in menu, not in toolbar. 
+<br><dt><strong>Next Log Entry</strong><dd>      Display the result of the next entry in the log. If result caching is on in the settings the next result is displayed,
+      if it isn't the statement is reexecuted to generate the result. Keyboard shortcut is <strong>ALT+Down</strong>. Only available in menu, not in toolbar. 
+<br><dt><strong>Erase Log</strong><dd>      Erase the contents of the rows under the <strong>Logging</strong> pane of the result. 
+<br><dt><strong>Current duration</strong><dd>      While a query is currently executing you can see how long the query has been running in the right of the toolbar as a slowly ticking up the seconds. This clock will not stop when the first row is returned but run until all rows are read or the query is aborted. Moving the cursor over this label will also display a tooltip containing the SQL currently executing. 
+<br><dt><strong>Change connection</strong><dd>      Change the connection this tool window should operate on.
+
+   </dl>
+
+<h4 class="subheading">Using the worksheet editor</h4>
+
+<p>TOra uses a ; to separate statements in the same way as SQL*Plus. One difference is that TOra doesn't count whitespaces in any way to separate statements. You could write several statements on the same row and it wouldn't be a problem.
+
+   <p>Another difference to SQL*Plus is that TOra parses the SQL you write to determine if you are within a PL/SQL block. 
+If that is the case the entire block will be executed. This feature can be enabled or disabled in the options.
+
+<pre class="example"><pre class="verbatim">     
+     
+     SELECT * FROM dual; SELECT * FROM all_tables;
+     
+     BEGIN
+        DBMS_OUTPUT.PUT_LINE('Hello');
+     END;
+     
+</pre>
+</pre>
+   <p>In the example above there are three statements that TOra will recognize and execute.
+
+   <p>There are a few words that are treated as comments for compatibility with SQL*Plus scripts. They are <strong>&ndash;</strong>, <strong>REM</strong> and <strong>PROMPT</strong>. Comments will disregard whatever is to the right on the line. Also multi line /* ... */ style comments are recognised and ignored.
+
+   <p>You can also use bind variables in the worksheet by using the normal : character. (see <a href="Getting-bind-parameters.html#Getting-bind-parameters">Getting bind parameters</a>for more information how this works). One nice feature is that the first line retrieved from the result set is stored in the parameter cache with a bind name the same as the column name in lowercase. The example in the getting bind parameters could have been used directly after executing the line select * from essprc and get the second row in the table by just using the defaults of the bind dialog if essprc contains a column named prcid.
+
+   <p>You can also describe objects returned as in PL/SQL by using either <strong>DESC</strong> or <strong>DESCRIBE</strong> and an object name.
+
+<h4 class="subheading">Exploring the result</h4>
+
+<p>There are five different panes available with information about the executed statements.
+
+   <p><table summary="">
+<tr align="left"><td valign="top" width="10%"><strong>Result</strong> </td><td valign="top" width="90%">This contains the actual result of the query or describe. For some notes about descriptions see this note.
+
+<p><br></td></tr><tr align="left"><td valign="top" width="10%"><strong>Visualize</strong> </td><td valign="top" width="90%">
+Can be used to visualize the current content of the result. The first column is assumes to contain labels and the rest contain the data.
+
+<div class="block-image"><img src="images/visualize.png" alt="images/visualize.png"></div>
+
+   <p>The toolbar available contains the following controls.
+
+     <dl>
+<dt><strong>Chart type</strong><dd>      What kind of chart to generate. Available types are Bar Chart, Line Chart and Pie Chart. 
+<br><dt><strong>Display Legend</strong><dd>      Display chart legend on the right of the generated chart. 
+<br><dt><strong>Display Grid</strong><dd>      Display a grid in the generated chart. 
+<br><dt><strong>Display Axis Legend</strong><dd>      Display legends of the axises of the generated chart. 
+<br><dt><strong>Update chart</strong><dd>      Generate a chart of the current data in the result tab and the current settings.
+
+   </dl>
+   <p><br></td></tr><tr align="left"><td valign="top" width="10%"><strong>Execution plan</strong> </td><td valign="top" width="90%">
+      The execution plan(see <a href="Explain-plan.html#Explain-plan">Explain plan</a>) of the current statement. 
+<br></td></tr><tr align="left"><td valign="top" width="10%"><strong>Information</strong> </td><td valign="top" width="90%">
+      The information available about the current statement in the SGA. 
+<br></td></tr><tr align="left"><td valign="top" width="10%"><strong>Statistics</strong> </td><td valign="top" width="90%">
+      The statistics collected when this statement was run. You need to enable statistics for this to be enabled. 
+      To update the statistic view simply change to another tab and change back to statistics. 
+      Chart are updated at the interval specified in the toolbar regardless of if you refresh statistics or not. 
+<br></td></tr><tr align="left"><td valign="top" width="10%"><strong>Logging</strong> </td><td valign="top" width="90%">
+      This pane will display the history of the statements you have executed and their result. 
+      It can be sorted up or down depending on options. You can see the statement, it's result and the time (As recorded by the database)
+      when it was executed. You can also see how many seconds until the first row was received. 
+      A new statement isn't added to the log until the first row of the query is returned or the statement has executed, whichever comes first.
+
+   <br></td></tr></table>
+
+<h4 class="subheading">Options</h4>
+
+<p>There are quite a few options available for the worksheet.
+
+   <div class="block-image"><img src="images/worksheetsetup.png" alt="images/worksheetsetup.png"></div>
+
+     <dl>
+<dt><strong>Auto save</strong><dd>      If checked the worksheet will always save changes to the editor <strong>without asking</strong> when the window is closed. 
+<br><dt><strong>Ask about saving changes</strong><dd>      Ask about saving changes to the worksheet when it is modified. Selecting the <strong>Auto save</strong> have precedence over this option. 
+<br><dt><strong>Add log entries at end</strong><dd>      If checked new entries in the <strong>Logging</strong> pane will be added to the end of list, otherwise they will be added at the top. 
+<br><dt><strong>Multiple lines in log</strong><dd>      If checked the lines in the log will display all the lines of the SQL executed. If not checked only the first line is displayed, although you can still see all of it in the tooltip or editor if you want to. For more information(see <a href="lists.html#lists">Using lists</a>). 
+<br><dt><strong>Parse PL/SQL blocks</strong><dd>      If this is checked TOra will parse the text to determine PL/SQL blocks in the editor and execute them as one statement. If it isn't checked statements are strictly separated by ;. 
+<br><dt><strong>Enable statistics</strong><dd>      Indicates if statistics should be enabled or disabled as default when a new worksheet is opened. 
+<br><dt><strong>Enable timed statistics</strong><dd>      Set this to make TOra always enable timed statistics for the sessions that it is collecting statistics for. Observe that timed statistics will not be disabled after the worksheet is closed. The change is strictly for the current session though. 
+<br><dt><strong>Display number column</strong><dd>      Indicate whether or not to display the number column as the first column of the result or suppress it. 
+<br><dt><strong>Move cursor to error</strong><dd>      Move the cursor to the location of an error in an execute statement. 
+<br><dt><strong>Save previous result</strong><dd>      Save the results of all previous statements. This can consume a lot of memory, but will increase time to navigate history results. You can still clear this cache by erasing the log. 
+<br><dt><strong>Default file</strong><dd>      A filename to open automatically when you start a new worksheet. Choose the <strong>Browse</strong> button to select the file in a file dialog.
+
+   </dl>
+
+<h4 class="subheading">Saved SQL</h4>
+
+<p>This is a feature you can use to quickly access SQL you often use. This is a popupmenu accessible in the toolbar of a worksheet. This popup will display all the SQL under "toWorksheet:" in the SQL dictionary(see <a href="sqledit.html#sqledit">SQL Editor</a>). You can create submenues by adding a ":" character in the SQL name. The name of the SQL dictionary is what is used to generate the menu and not the description. You can still use placebinders in saved SQL. By default this list is empty.
+
+   </body></html>
+

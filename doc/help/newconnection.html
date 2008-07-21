@@ -1,0 +1,62 @@
+<html lang="en">
+<head>
+<title>newconnection - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.11">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="workspace.html#workspace" title="workspace">
+<link rel="prev" href="window.html#window" title="window">
+<link rel="next" href="What-privileges-do-you-need-to-run-TOra.html#What-privileges-do-you-need-to-run-TOra" title="What privileges do you need to run TOra">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 1.4.0.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="newconnection"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="What-privileges-do-you-need-to-run-TOra.html#What-privileges-do-you-need-to-run-TOra">What privileges do you need to run TOra</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="window.html#window">window</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="workspace.html#workspace">workspace</a>
+<hr>
+</div>
+
+<h3 class="section">3.2 Connecting to a database</h3>
+
+<p><a name="index-Connecting-to-a-database-5"></a>
+You can connect to a database by selecting the <strong>File|New Connection</strong> menu entry or the toolbar button. For more information about the menu and toolbar see <a href="window.html#window">Elements of the main window</a>.
+
+   <p>After selecting the menu you will be presented with the following dialog.
+
+   <div class="block-image"><img src="images/newconnection.png" alt="images/newconnection.png"></div>
+
+   <p>The filling out of this dialog is pretty straight forward.
+
+     <dl>
+<dt><strong>Previous</strong><dd>      This list contains the previous connection made, selecting an entry from this list will set all the values to the right to the correct
+<br><dt><strong>connections</strong><dd>      values to connect to this database again. 
+<br><dt><strong>Connection provider</strong><dd>      The type of connection to create. Usually Oracle, but MySQL is also supported on some platforms. 
+<br><dt><strong>Username</strong><dd>      The username with which to connect to the database
+<br><dt><strong>Password</strong><dd>      The password to use for the connection, this defaults to manager. You can also configure TOra to remember your last used password(see <a href="preferences.html#preferences">Options</a>)
+<br><dt><strong>Use SQL*Net</strong><dd>      This is perhaps the most difficult setting. This indicates whether to connect locally to the database or use SQL*Net. If you check this box the connection is made through the Oracle listener, otherwise a local connection usually using shared memory or named pipes is made. This is only available for Oracle connections. 
+<br><dt><strong>Hostname</strong><dd>      The host on which the database resides. This is only available for non Oracle connections. 
+<br><dt><strong>Database</strong><dd>      What database to connect to, the listbox is filled with the values available in your tnsnames.ora file. 
+<br><dt><strong>Connection Mode</strong><dd>      The type of connection to make, usually <strong>normal</strong> always suffices here. But sometimes during database administration <strong>SYS_DBA</strong> or <strong>SYS_OPER</strong> is needed. If you don't know what these mean you probably shouldn't be using them. 
+</dl>
+   Upon establishing a successful connection all the settings of the dialog will be saved and remembered when the next connection is made with the exception of the password.
+
+   </body></html>
+

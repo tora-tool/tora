@@ -1,0 +1,63 @@
+<html lang="en">
+<head>
+<title>globalsettings - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.11">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="preferences.html#preferences" title="preferences">
+<link rel="next" href="database.html#database" title="database">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 1.4.0.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="globalsettings"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="database.html#database">database</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="preferences.html#preferences">preferences</a>
+<hr>
+</div>
+
+<h4 class="subsection">3.8.1 Global Settings</h4>
+
+<p>These may vary some depending on how your system was compiled and configured. Not all options are displayed in the screenshot since that was made on a KDE version of TOra.
+
+   <p><table summary=""><tr align="left"><td valign="top" width="20%"><strong>Custom SQL</strong> </td><td valign="top" width="80%">The file in which to store your custom SQL. For more information about custom SQL and the SQL dictionary (see <a href="sqledit.html#sqledit">SQL Editor tool</a>. The string <samp><span class="env">$HOME</span></samp> will be replaced by your home directory on UNIX or documents directory in Windows. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Help directory</strong> </td><td valign="top" width="80%">Should point to where the TOra help table of contents file is stored (toc.html). This should be set up correctly if you made a normal install. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Plugin directory</strong> </td><td valign="top" width="80%">This option is only available in a plugin based TOra installation. It should point to the directory where the plugins for TOra are located. It should be set up correctly on installation if needed. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Cache directory</strong> </td><td valign="top" width="80%">Should point to where the TOra Disk Cache files are stored. There is one file for each Connection. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Change current connection with active window</strong> </td><td valign="top" width="80%">If this option is set, changing the current window will also change the current connection to that of the active window. The connection is only changed when you change window so if you want to change the connection to something else you can still do so as long as you don't change the window. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Save last password</strong> </td><td valign="top" width="80%">Whether or not TOra should store the last password used to connect. <strong>Be aware that the password is store in clear text in either the windows registry or a file.</strong>
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Include DB in caption</strong> </td><td valign="top" width="80%">If this is set the database name will be included in the caption of all your tool windows after the tool name. Observe that there often is no other way of knowing which database the window works on except for this. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Maximize window on start</strong> </td><td valign="top" width="80%">If this is checked the TOra main window will open maximized on startup. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Desktop Aware</strong> </td><td valign="top" width="80%">Set this if Qt should try to figure out and interact nicely with the desktop environment. The reason for this switch is that in some versions of KDE TOra doesn't look nice if this is checked. This switch is only available for Qt only applications. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>use Disk Cache</strong> </td><td valign="top" width="80%">This option tells TOra to Cache the Object List in the Cache Directory. Default is No Caching. When Caching is activated, you have to refresh the object cache with the menu option File-&gt;Reread Object Cache, because, the default source for the Object List is the diskfile. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Antialias fonts</strong>  </td><td valign="top" width="80%">Check this if you want TOra to use antialiased fonts in X11 if available. This option may not be available (Regardless of if you have access to antialiased fonts or not). 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Docks use toolbars</strong>  </td><td valign="top" width="80%">This option tells TOra how to emulate docked windows when they are not available. Docked windows are not available if you do not use KDE and have a Qt version less than 3 (If you run in windows you're it). If this is checked docks will be emulated with a toolbar, this has the drawback that you can't resize them. If unchecked docks appear in normal windows. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Style</strong>  </td><td valign="top" width="80%">The GUI style to use for the TOra application. This switch is only available for Qt only applications. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Display alerts in statusbar only</strong>	 </td><td valign="top" width="80%">Display errors only in the statusbar. This is really usefull since it doesn't interrupt you as much as a dialog window as long as you know to look for information in the statusbar when things doesn't work. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Connect history</strong>	 </td><td valign="top" width="80%">How many connection entries to save in the new connection history list. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Table scale</strong>  </td><td valign="top" width="80%">This is the scale which to use when printing lists. Lists on paper can usually be a little smaller and still be readable. Given as a fraction where 0.5 means half the size on paper and 1.0 the same size. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Status message</strong>  </td><td valign="top" width="80%">The number of seconds to display error messages in the status bar. If you specify 0 they are kept until the next message is displayed. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Message history</strong>	 </td><td valign="top" width="80%">The number of status messages to store in the status message history before the oldest are removed when new are added. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Chart samples</strong>  </td><td valign="top" width="80%">Number of samples to save by default in charts. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Size Unit</strong>  </td><td valign="top" width="80%">The unit to display sizes with in TOra. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Refresh</strong>	 </td><td valign="top" width="80%">The default refresh time to use in TOra. Tools which refresh automatically use this setting as the default. It can also be changed on a per tool basis.
+   <br></td></tr></table>
+
+   </body></html>
+

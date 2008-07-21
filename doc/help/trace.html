@@ -1,0 +1,62 @@
+<html lang="en">
+<head>
+<title>trace - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.11">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="tools.html#tools" title="tools">
+<link rel="prev" href="rollback.html#rollback" title="rollback">
+<link rel="next" href="current.html#current" title="current">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 1.4.0.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="trace"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="current.html#current">current</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="rollback.html#rollback">rollback</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
+<hr>
+</div>
+
+<h3 class="section">4.10 SGA Trace</h3>
+
+<p><a name="index-SGA-Trace-26"></a>
+This tool is used investigate the statements available in the SGA.
+
+   <div class="block-image"><img src="images/sgatrace.png" alt="images/sgatrace.png"></div>
+
+   <p>The session tool consists of a toolbar, a list of SGA statements ( see <a href="SGA-Statement.html#SGA-Statement">SGA Statement</a> ) and finally at the bottom a SGA statement view.
+
+<h4 class="subheading">Toolbar</h4>
+
+<p>The toolbar contain the following controls.
+
+     <dl>
+<dt><strong>Update</strong><dd>      Update the view from the database. 
+<br><dt><strong>Schema</strong><dd>      The user schema to extract statements for. 
+<br><dt><strong>Refresh time</strong><dd>      A list where you can select the interval between automatic updates. 
+<br><dt><strong>Type</strong><dd>      What type of statements you want to examine. Can either be SGA to investigate all entries of the SGA or Long operations to check long operations in the database (Databases must have timed statistics enabled to generate entries for long operations). 
+<br><dt><strong>Change connection</strong><dd>      Change the connection to administrate storage for.
+
+   </dl>
+
+   <p>Don't forget you can sort the view by selecting a column header in the SGA list.
+
+   </body></html>
+

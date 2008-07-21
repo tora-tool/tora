@@ -1,0 +1,53 @@
+<html lang="en">
+<head>
+<title>Explain plan - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.11">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="common.html#common" title="common">
+<link rel="prev" href="SGA-Statement.html#SGA-Statement" title="SGA Statement">
+<link rel="next" href="Getting-bind-parameters.html#Getting-bind-parameters" title="Getting bind parameters">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 1.4.0.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Explain-plan"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="Getting-bind-parameters.html#Getting-bind-parameters">Getting bind parameters</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="SGA-Statement.html#SGA-Statement">SGA Statement</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="common.html#common">common</a>
+<hr>
+</div>
+
+<h4 class="subsection">3.9.2 Explain plan</h4>
+
+<p>This element can be either part of an SGA statement or by itself in some cases (See above for a screenshot). For more information about execution paths check the Oracle manual Designing and Tuning for Performance, chapter 5 in the 8i release.
+
+   <p>A few notes here is that the execution plan displayed here is not necessarily the same as when run depending on one of these reasons.
+
+     <ul>
+<li>It is run as a different user which doesn't access the same database objects as the user you are logged in as now. 
+<li>The session running the query can have changed some optimizer parameters compared to your session. 
+</ul>
+
+   <p>What you see in this window is the execution you would get if you ran the statement like the one you are logged in as now and in your session. One example of this problem is if a user executes SQL which accesses his own objects which doesn't have public synonyms, then another person can simply not execute the SQL without modifying it to add owner specifier to the tables which TOra will not do automatically.
+
+   <p>Explain plan requires a table to store the result in. The name of this table can be configured in the options(see <a href="preferences.html#preferences">Options</a>). If the table doesn't exist TOra will ask you if it should try to create it. Without this table you can not display execution plans in TOra.
+
+   </body></html>
+

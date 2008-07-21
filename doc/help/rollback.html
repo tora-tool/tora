@@ -1,0 +1,84 @@
+<html lang="en">
+<head>
+<title>rollback - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.11">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="tools.html#tools" title="tools">
+<link rel="prev" href="session.html#session" title="session">
+<link rel="next" href="trace.html#trace" title="trace">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 1.4.0.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="rollback"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="trace.html#trace">trace</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="session.html#session">session</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
+<hr>
+</div>
+
+<h3 class="section">4.9 Rollback Segments</h3>
+
+<p><a name="index-Rollback-Segments-25"></a>
+This tool is used to manage rollback segments in the database.
+
+   <div class="block-image"><img src="images/rollback.png" alt="images/rollback.png"></div>
+
+   <p>The window consist of three part. 
+The top one displays the available rollback segments and you can also see running transaction that use segment in the transactions column of the view, the length of the <strong>transactions</strong> show up as bars in this column. One bar for each running transaction using the segment.
+
+   <p>The last part is a unique tool to detect snapshot too old problems in your database. This is discussed more later.
+
+<h4 class="subheading">Toolbar</h4>
+
+<p>The toolbar contains the following commands.
+
+     <dl>
+<dt><strong>Update</strong><dd>      	Update the view from the database. 
+<br><dt><strong>Online</strong><dd>      	Take currently selected segment online. 
+<br><dt><strong>Offline</strong><dd>      	Take currently selected segment off-line. 
+<br><dt><strong>New rollback segment</strong><dd>      	Create new rollback segment. If you are confused about what the items in the dialog mean refer to the Oracle Server Concepts manual as well as the Oracle SQL Reference. 
+<br><dt><strong>Drop segment</strong><dd>                  Drop the currently selected segment. 
+<br><dt><strong>Refresh time</strong><dd>      	A list where you can select the interval between automatic updates. 
+<br><dt><strong>Change connection</strong><dd>      	Change the connection to administrate storage for.
+
+   </dl>
+
+<h4 class="subheading">Snapshot too old detection</h4>
+
+<p>The lower part of this view is used to heuristically detect snapshot too old problems. The operation of this is that whenever the view is updated all SGA statements are cataloged and the corresponding current position in all the rollback segments are also stored the first time a new statement is detected. Since the information about the current location of the rollback when a statement was executed is not available in the SGA you have to keep the tool window open during the entire duration of the execution for this to work.
+
+   <p>In the view you can see when the statement was first detected and who is running it. You also see the snapshot info which will display how far each of the available rollback segments have moved since this statement was executed. This is represented by one bar for each rollback segment. If any of these bars goes all the way through this column you are likely to encounter a snapshot too old statement.
+
+   <p>Finally you can see the SQL for the row. Selecting a line will also let you investigate the statement using the normal SGA statement(see <a href="SGA-Statement.html#SGA-Statement">SGA Statement</a>) view.
+
+   <p>There are a few options to configure how the snapshot too old detection is to work.
+
+   <div class="block-image"><img src="images/rollbacksetup.png" alt="images/rollbacksetup.png"></div>
+
+     <dl>
+<dt><strong>Restart reexecuted statements</strong><dd>      If the execution count is changed for a statement reset the location of the rollback segments to the current location. 
+<br><dt><strong>Must read buffers</strong><dd>      To display a statement it must be reading buffers, it is still kept in memory if no buffers are read, but not displayed in the list until buffers are read again. Check this to remove any statements that you execute and simply kept open even though you will not be reading from them any more. 
+<br><dt><strong>Exclude first appearance</strong><dd>      Exclude the first update that would show the statement. Without this checked any statement with execution changed and buffers read will show up. 
+<br><dt><strong>Disregard start extent</strong><dd>      If you check this the bars will always start from the left of the column. Otherwise the bars will start corresponding to the current extent of the tablespace and then wrap around as they grow. 
+</dl>
+
+   </body></html>
+

@@ -23,7 +23,7 @@ This section will help you familiarize yourself with the framework of the TOra a
 * What privileges do you need to run TOra::
 * Using editors:editors.
 * Using lists:lists.
-* Using charts::
+* Using charts:charts.
 * Search & Replace:searchreplace.
 * Options:preferences.
 * Other common elements:common.
