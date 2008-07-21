@@ -1073,7 +1073,7 @@ void toOracleProvider::oracleQuery::execute(void)
             throw QString::fromLatin1("Query aborted before started");
         Running = true;
 
-        static QRegExp stripnl("\r");
+        QRegExp stripnl("\r");
         Query = new otl_stream;
         Query->set_commit(0);
         if (toQValue::numberFormat() == 0)
