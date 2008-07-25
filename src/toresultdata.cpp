@@ -247,6 +247,9 @@ void toResultData::closeEvent(QCloseEvent *event)
 void toResultData::navigate(QAction *action)
 {
     Edit->setFocus();
+    if (!Edit->selectionModel())
+        return;
+
     QModelIndex current = Edit->selectionModel()->currentIndex();
     int row = current.row();
     int col = current.column();

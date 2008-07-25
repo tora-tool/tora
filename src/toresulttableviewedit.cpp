@@ -542,6 +542,9 @@ void toResultTableViewEdit::duplicateRecord(void)
 
 void toResultTableViewEdit::deleteRecord(void)
 {
+    if (!selectionModel())
+        return;
+
     QModelIndex ind = selectionModel()->currentIndex();
     if (ind.isValid())
         Model->deleteRow(ind);

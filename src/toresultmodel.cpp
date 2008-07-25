@@ -255,7 +255,7 @@ void toResultModel::deleteRow(QModelIndex index)
     if (!Editable)
         return;
 
-    if (!index.isValid() && index.row() >= Rows.size())
+    if (!index.isValid() || index.row() >= Rows.size())
         return;
 
     beginRemoveRows(QModelIndex(), index.row(), index.row());
@@ -390,7 +390,7 @@ QVariant toResultModel::headerData(int section,
     }
 
     if (orientation == Qt::Vertical)
-        return section;
+        return section + 1;
 
     return QVariant();
 }
