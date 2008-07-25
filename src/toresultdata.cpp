@@ -196,6 +196,7 @@ void toResultData::query(const QString &, const toQList &params)
     }
 
     FilterName = filterName();
+    filterAct->setChecked(AllFilter || Criteria.contains(FilterName));
 
     toConnection &conn = connection();
 
@@ -327,7 +328,7 @@ void toResultData::removeFilter(bool)
         QString nam = "";
         Criteria.remove(nam);
         Order.remove(nam);
-
+        AllFilter = false;
         filterAct->setChecked(false);
     }
 
