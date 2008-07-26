@@ -1,0 +1,99 @@
+<html lang="en">
+<head>
+<title>editors - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.11">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="workspace.html#workspace" title="workspace">
+<link rel="prev" href="What-privileges-do-you-need-to-run-TOra.html#What-privileges-do-you-need-to-run-TOra" title="What privileges do you need to run TOra">
+<link rel="next" href="lists.html#lists" title="lists">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 1.4.0.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="editors"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="lists.html#lists">lists</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="What-privileges-do-you-need-to-run-TOra.html#What-privileges-do-you-need-to-run-TOra">What privileges do you need to run TOra</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="workspace.html#workspace">workspace</a>
+<hr>
+</div>
+
+<h3 class="section">3.4 Using editors</h3>
+
+<p><a name="index-Using-editors-6"></a>
+Editors can be in two modes. The first is read and write in which case the following key bindings are defined.
+
+   <p><table summary=""><tr align="left"><td valign="top" width="30%"><strong>Left Arrow</strong>  </td><td valign="top" width="70%">Move the cursor one character to the left
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>Right Arrow</strong>  </td><td valign="top" width="70%">Move the cursor one character to the right
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>Up Arrow</strong> </td><td valign="top" width="70%">Move the cursor one line upwards
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>Down Arrow</strong> </td><td valign="top" width="70%">Move the cursor one line downwards
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>Page Up</strong> </td><td valign="top" width="70%">Move the cursor one page upwards
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>Page Down</strong> </td><td valign="top" width="70%">Move the cursor one page downwards
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>&lt;BS&gt;</strong> </td><td valign="top" width="70%">Delete the character to the left of the cursor
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>&lt;HOME&gt;</strong> </td><td valign="top" width="70%">Move the cursor to the beginning of the line
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>End</strong> </td><td valign="top" width="70%">Move the cursor to the end of the line
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>Delete</strong> </td><td valign="top" width="70%">Delete the character to the right of the cursor
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>SHIFT - Left Arrow</strong> </td><td valign="top" width="70%">Mark text one character to the left
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>SHIFT - Right Arrow</strong> </td><td valign="top" width="70%">Mark text one character to the right
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL-A</strong> </td><td valign="top" width="70%">Select the entire buffer. 
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL-B</strong> </td><td valign="top" width="70%">Move the cursor one character leftwards
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL-C</strong> </td><td valign="top" width="70%">Copy the marked text to the clipboard
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL-D</strong> </td><td valign="top" width="70%">Delete the character to the right of the cursor
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL-E</strong> </td><td valign="top" width="70%">Move the cursor to the end of the line
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL-F</strong> </td><td valign="top" width="70%">Pop up the search &amp; replace dialog
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL-H</strong> </td><td valign="top" width="70%">Delete the character to the left of the cursor
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL-K</strong> </td><td valign="top" width="70%">Delete to end of line
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL-N</strong> </td><td valign="top" width="70%">Move the cursor one line downwards
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL-P</strong> </td><td valign="top" width="70%">Move the cursor one line upwards
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL-V</strong> </td><td valign="top" width="70%">Paste the clipboard text into line edit
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL-X</strong> </td><td valign="top" width="70%">Cut the marked text, copy to clipboard
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL-Z</strong> </td><td valign="top" width="70%">Undo the last operation
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL-Y</strong> </td><td valign="top" width="70%">Redo the last operation
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL - Left</strong> </td><td valign="top" width="70%">Arrow	Move the cursor one word to the left
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL - Right</strong> </td><td valign="top" width="70%">Arrow	Move the cursor one word to the right
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL - Up Arrow</strong> </td><td valign="top" width="70%">Move the cursor one word upwards
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL - Down Arrow</strong> </td><td valign="top" width="70%">Move the cursor one word downwards
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL - Home Arrow</strong> </td><td valign="top" width="70%">Move the cursor to the beginning of the text
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL - End Arrow</strong> </td><td valign="top" width="70%">Move the cursor to the end of the text
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL-S</strong> </td><td valign="top" width="70%">Save the editor with the current filename, if no filename is defined a dialog is displayed for the user to select the filename to use. 
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>CTRL-O</strong> </td><td valign="top" width="70%">Read a file into the editor. A dialog will pop up to select the name to open.
+   <br></td></tr></table>
+
+   <p>The second mode is read only in which only the current key binding are available.
+
+   <p><table summary=""><tr align="left"><td valign="top" width="30%"><strong>Left Arrow</strong> </td><td valign="top" width="70%">Scrolls the table to the left
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>Right Arrow</strong> </td><td valign="top" width="70%">Scrolls the table to the right
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>Up Arrow 	Scrolls</strong> </td><td valign="top" width="70%">the table one line downwards
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>Down Arrow</strong> </td><td valign="top" width="70%">Scrolls the table one line upwards
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>Page Up</strong> </td><td valign="top" width="70%">Scrolls the table one page downwards
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>Page Down</strong> </td><td valign="top" width="70%">Scrolls the table one page upwards
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>Control-C</strong> </td><td valign="top" width="70%">Copy the marked text to the clipboard
+<br></td></tr><tr align="left"><td valign="top" width="30%"><strong>Control-S</strong> </td><td valign="top" width="70%">Save the editor with the current filename, if no filename is defined a dialog is displayed for the user to select the filename to use.
+   <br></td></tr></table>
+
+   <p>Editors support drag and drop which means you can drag a selection to another editor and drop any other text source onto an editable editor to insert the dragged text at the dropped location.
+
+   <p>Also as a shortcut pressing the right mouse button will display a context menu containing the entries from the edit menu which pertain to the editors.
+
+<h4 class="subheading">SQL editors</h4>
+
+<p>Editors for SQL have another feature which is code completion. If you place the cursor after a '.' character TOra will this the available columns for the table referenced by the name before the '.' character. This will only work for defined views and tables. You can also look up tablenames using the <strong>CTRL+T</strong> key which will list all tables starting with the same word as you currently have the cursor in. When the completion list is open you can navigate it using <strong>Up</strong>, <strong>Down</strong> keys and selecting an entry using <strong>Return</strong>. You can also remove the list by pressing the <strong>Escape</strong> key. The completion values are saved in the object cache and can not be used until it is read. If you find this annoying you can disable this in the preferences.
+
+   </body></html>
+

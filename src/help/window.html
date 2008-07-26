@@ -1,0 +1,195 @@
+<html lang="en">
+<head>
+<title>window - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.11">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="workspace.html#workspace" title="workspace">
+<link rel="next" href="newconnection.html#newconnection" title="newconnection">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 1.4.0.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="window"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="newconnection.html#newconnection">newconnection</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="workspace.html#workspace">workspace</a>
+<hr>
+</div>
+
+<h3 class="section">3.1 Elements of the main window</h3>
+
+<p><a name="index-Elements-of-the-main-window-4"></a>
+The main window in TOra has the following elements as shown below. It is assumes you know how to handle a normal windows interface and no explanation about how to press buttons, select menus will be presented. If you are administrating Oracle you probably know how to handle a mouse.
+
+   <div class="block-image"><img src="images/workspace.png" alt="images/workspace.png"></div>
+
+<h4 class="subheading">Menubar</h4>
+
+<p>If you've ever used a windows program you will recognize most of the menus hopefully.
+
+<h5 class="subsubheading">File menu</h5>
+
+<div class="block-image"><img src="images/filemenu.png" alt="images/filemenu.png"></div>
+
+     <dl>
+<dt><strong>New connection</strong><dd>      This will pop up the new connection dialog (see <a href="newconnection.html#newconnection">Connecting to a database</a>) which is used to open new connections to oracle. 
+<br><dt><strong>Close connection</strong><dd>      Will close the current connection to Oracle. If uncommitted data exists it will also ask if you want to commit or rollback the changes. Observe that any tools associated with this connection will also be closed when closing a connection. 
+<br><dt><strong>Commit connection</strong><dd>      Commit the changes currently made to the database. 
+<br><dt><strong>Rollback connection</strong><dd>      Rollback any changes made in the current connection. 
+<br><dt><strong>Current connection</strong><dd>      Set focus to change the current connection. 
+<br><dt><strong>Reread object cache</strong><dd>      Clear the object cache
+<!-- (@pxref{object_cache, Object cache}) -->
+and read it again from the database. 
+<br><dt><strong>Load</strong><dd>      This command will open a dialog asking you for a filename to load into the editor that currently holds the focus. 
+<br><dt><strong>Save</strong><dd>      	This command will open a dialog asking you for a filename to save the contents of the editor that currently holds the focus. If the editor already has a filename this will be used and no dialog displayed. 
+<br><dt><strong>Save As</strong><dd>      This command will open a dialog asking you for a filename to save the contents of the editor that currently holds the focus. 
+<br><dt><strong>Print</strong><dd>      Will print the contents of the list or editor that currently holds the focus
+<br><dt><strong>Quit</strong><dd>      Close all connections and exit TOra
+</dl>
+
+<h5 class="subsubheading">Edit menu</h5>
+
+<div class="block-image"><img src="images/editmenu.png" alt="images/editmenu.png"></div>
+
+     <dl>
+<dt><strong>Undo</strong><dd>      Undo the latest change in the editor that currently holds the focus. 
+<br><dt><strong>Redo</strong><dd>      Redo a previous undo of the latest change in the editor that currently holds the focus. 
+<br><dt><strong>Copy</strong><dd>      Copy the current selection in the editor that currently holds the focus. 
+<br><dt><strong>Cut</strong><dd>      Cut the current selection in the editor that currently holds the focus. 
+<br><dt><strong>Paste</strong><dd>      Paste the contents of the clipboard into the editor that currently holds the focus. 
+<br><dt><strong>Search &amp; Replace</strong><dd>      Display the search &amp; replace dialog (see <a href="searchreplace.html#searchreplace">Search &amp; Replace</a>). 
+<br><dt><strong>Search Next</strong><dd>      Make another search with the current search settings. 
+<br><dt><strong>Select All</strong><dd>      Select all rows in the current editor. 
+<br><dt><strong>Read All Items</strong><dd>      Read all items available for a list. Normally TOra doesn't read all available rows for a query, just enough to fill the screen. Scrolling down will read more. Selecting this will read all available rows from the query, this could take a very long time and consume a lot of memory if selected for a large query result. 
+<br><dt><strong>Options</strong><dd>      	Displays the options dialog (see <a href="preferences.html#preferences">Options</a>) where all aspects of TOra are configured. 
+<br><dt><strong>Edit SQL</strong><dd>      This may not be available because it is actually a tool plugin. Can be used to customize SQL used by TOra to determine the state of a database(see <a href="sqledit.html#sqledit">SQL Editor</a>).
+
+   </dl>
+
+<h5 class="subsubheading">Tools menu</h5>
+
+<div class="block-image"><img src="images/toolsmenu.png" alt="images/toolsmenu.png"></div>
+
+   <p>The entries of this menu start up new tools for the current connection (See connection management for more information about current connections). The contents of the menu may vary depending on which plugins are loaded.
+
+   <p><strong>Tool specific menu</strong>
+
+   <p>There may be a tool specific menu entered between the Tools and Windows menus (In the screenshot it is called Worksheet). These are described in connection to the tools that display them.
+
+<h5 class="subsubheading">Windows menu</h5>
+
+<div class="block-image"><img src="images/windowsmenu.png" alt="images/windowsmenu.png"></div>
+
+     <dl>
+<dt><strong>Close</strong><dd>      Close the current tool window. 
+<br><dt><strong>Close All</strong><dd>      Close all open windows. This will not close any database connections, only windows. 
+<br><dt><strong>Cascade</strong><dd>      Cascade the open windows over the workspace
+<br><dt><strong>Tile</strong><dd>      Tile the open windows over the workspace
+<br><dt><strong>Open windows</strong><dd>      Here windows will line up in a list in the same order as you open them.
+
+   </dl>
+
+<h5 class="subsubheading">Help menu</h5>
+
+<div class="block-image"><img src="images/helpmenu.png" alt="images/helpmenu.png"></div>
+
+     <dl>
+<dt><strong>Current Context</strong><dd>      This will display a help page on the context you are currently in. If no specific context is found the table of contents is shown. 
+<br><dt><strong>Content</strong><dd>      Open the help window displaying the contents of the TOra help. 
+<br><dt><strong>About TOra</strong><dd>      Display information about TOra copyrigh. 
+<br><dt><strong>License</strong><dd>      Display the license under which TOra is distributed. 
+<br><dt><strong>Quotes</strong><dd>      Food for thought. 
+</dl>
+
+<h4 class="subheading">Application toolbar</h4>
+
+<p>Using the toolbar you can perform the most common editing operations, handle your connections and open tool windows.
+
+   <div class="block-image"><img src="images/toolbar.png" alt="images/toolbar.png"></div>
+
+<h4 class="subheading">Editor buttons</h4>
+
+     <dl>
+<dt><strong>Load</strong><dd>      This command will open a dialog asking you for a filename to load into the editor that currently holds the focus. 
+<br><dt><strong>Save</strong><dd>      This command will open a dialog asking you for a filename to save the contents of the editor that currently holds the focus. If the editor already has a filename this will be used and no dialog displayed. 
+<br><dt><strong>Print</strong><dd>      Will print the contents of the list or editor that currently holds the focus
+<br><dt><strong>Undo</strong><dd>      Undo the latest change in the editor that currently holds the focus. 
+<br><dt><strong>Redo</strong><dd>      Redo a previous undo of the latest change in the editor that currently holds the focus. 
+<br><dt><strong>Copy</strong><dd>      Copy the current selection the in editor that currently holds the focus. 
+<br><dt><strong>Cut</strong><dd>      Cut the current selection the in editor that currently holds the focus. 
+<br><dt><strong>Paste</strong><dd>      Paste the contents of the clipboard into the editor that currently holds the focus. 
+</dl>
+
+<h4 class="subheading">Tools</h4>
+
+<p>The buttons in this section can vary depending on which plugins were loaded at startup, they are described in the tools section (see <a href="tools.html#tools">Available tools</a>) of the help. What is notable here is that when a button is pressed it is started for the currently selected connection available at the end of the application toolbar.
+
+<h4 class="subheading">Connection management</h4>
+
+<p>All the buttons in this section have one thing in common. Except for the new connection they all operate on the currently selected connection. The currently open connections are available in a drop down list at the right of the toolbar. The selected item in this list is the connection that new tools will be working on and also any commit, rollback or close connection command.
+
+   <p>The numbers behind the actual connection is the version of the Oracle server that this connection is made to.
+
+     <dl>
+<dt><strong>New connection</strong><dd>      This will pop up the new connection (see <a href="newconnection.html#newconnection">Connecting to a database</a>) dialog which is used to open new connections to oracle. 
+<br><dt><strong>Close connection</strong><dd>      Will close the current connection to Oracle. If uncommitted data exists it will also ask if you want to commit or rollback the changes. Observe that any tools associated with this connection will also be closed when closing a connection. 
+<br><dt><strong>Commit connection</strong><dd>      Commit the changes currently made to the database. 
+<br><dt><strong>Rollback connection</strong><dd>      Rollback any changes made in the current connection. 
+</dl>
+
+<h4 class="subheading">Other items in the workspace</h4>
+
+<p>There are a few other items on the workspace that are worth taking notice of.
+
+<h5 class="subsubheading">Statusbar</h5>
+
+<p>This will display any messages that TOra need to inform the user of. TOra generally takes the path of not bothering the user with pop ups when something goes wrong, but simply display it in the statusbar. Or at least that was my intention. Due to the fact that many people had problems understanding this the default behaviour of TOra is now to pop up a dialog displaying the error. However this dialog contains a checkbox to revert back to the old productive manner. So if something isn't working, make sure you check the statusbar if something went wrong.
+
+   <p>There is an up button available to the right of the toolbar which when pressed can display a history of the contents of the status bar. This is also useful since the statusbar usually clears after certain amount of time but the information is always available here. Both the time until a message disappears and the amount of backlog to keep is configurable from the option dialog (see <a href="preferences.html#preferences">Options</a>). If you select an item in the popup menu the contents of the entry will be opened in a memo editor (see <a href="Memo-editor.html#Memo-editor">Memo editor</a>) where you can read them more easily and also copy the text more easily.
+
+   <p>Next to the right is the coordinates of the editor that currently has the focus.
+
+   <p>Fursthest to the right is swirling logo which will move whenever TOra is doing something in the background to indicate that the database is still busy performing some kind of operation in the background. The speed of the animation will reflect the number of background tasks that are currently running.
+
+<h5 class="subsubheading">Tool windows</h5>
+
+<p>These are the tools that actually let you interact with Oracle. For more information check out the tools section (see <a href="tools.html#tools">Available tools</a>) of the help. One thing to note about tool windows is that if the caption ends with a &lt; digit &gt; this is the digit that you can use together with the control modifier to select this window.
+
+<h5 class="subsubheading">Workspace</h5>
+
+<p>The part of the main window that contain the tool windows.
+
+<h5 class="subsubheading">Editors</h5>
+
+<p>For more information about key bindings etc. see <a href="editors.html#editors">Using editors</a>.
+
+<h5 class="subsubheading">Result List</h5>
+
+<p>These mean every kind of list displayed in TOra. For information about how to interact with these, see <a href="lists.html#lists">Using lists</a>.
+
+<h5 class="subsubheading">Charts</h5>
+
+<p>Used to visualize data, usually some kind of database statistics. There are no charts in the example window above, see <a href="charts.html#charts">Using charts</a>.
+
+<h5 class="subsubheading">Object Cache</h5>
+
+<p>When TOra opens a new connection to a database the database connected to is queried for all its objects and the synonyms available. This data is then used in most places when lists of objects are displayed. The thing to understand is that this data is cached so that any objects modified during the connection will not be visible unless you clear the cache and reread it from the database. As long as the object cache is read you can see the <strong>background activity</strong> swirling in the right part of the status bar.
+
+   </body></html>
+

@@ -1,0 +1,44 @@
+<html lang="en">
+<head>
+<title>What privileges do you need to run TOra - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.11">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="workspace.html#workspace" title="workspace">
+<link rel="prev" href="newconnection.html#newconnection" title="newconnection">
+<link rel="next" href="editors.html#editors" title="editors">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 1.4.0.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="What-privileges-do-you-need-to-run-TOra"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="editors.html#editors">editors</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="newconnection.html#newconnection">newconnection</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="workspace.html#workspace">workspace</a>
+<hr>
+</div>
+
+<h3 class="section">3.3 What privileges do you need to run TOra</h3>
+
+<p>TOra should be able to run as any user, although off course you can never do anything in TOra that aren't allowed from that Oracle account. You will be able to use pretty much any tool in TOra for read only purposes if you are granted the <strong>SELECT_CATALOG_ROLE</strong>, also some parts of TOra will have limited functionality if you do not have the <strong>ALTER SESSION</strong> privilege.
+
+   <p>Also you need to be able to create the plan table if that is not done for you. The plan table (see <a href="database.html#database">Database Settings</a> for how to select plan table name) must also be available with <strong>INSERT</strong> and <strong>SELECT</strong> access. TOra will function without the plan table but off course you will not be able to display any execution plans.
+
+   </body></html>
+

@@ -1,0 +1,54 @@
+<html lang="en">
+<head>
+<title>Getting bind parameters - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.11">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="common.html#common" title="common">
+<link rel="prev" href="Explain-plan.html#Explain-plan" title="Explain plan">
+<link rel="next" href="Object-description.html#Object-description" title="Object description">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 1.4.0.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Getting-bind-parameters"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="Object-description.html#Object-description">Object description</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Explain-plan.html#Explain-plan">Explain plan</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="common.html#common">common</a>
+<hr>
+</div>
+
+<h4 class="subsection">3.9.3 Getting bind parameters</h4>
+
+<p>This dialog is displayed when input parameters are required to run the SQL. For instance the example dialog is the dialog displayed when running the following SQL in the worksheet.
+
+<pre class="example"><pre class="verbatim">     
+     
+     select * from essprc where prcid > :prcid and begrdt > :begrdt;
+     
+</pre>
+</pre>
+   <div class="block-image"><img src="images/getparam.png" alt="images/getparam.png"></div>
+
+   <p>As you can see the field name as specified after the : character is presented as a title. If the same field name is used at several parts of the query you only get to specify it once. You specify the value in the editor line just to the right of the field name label. If you want to specify a NULL value check the <strong>NULL</strong> checkbox to the right of the editor. You can also edit the value in a memo editor(see <a href="Memo-editor.html#Memo-editor">Memo editor</a>) pressing the <strong>Edit</strong> button to the right on the value.
+
+   <p>The parameter editor will cache it's value so it will remember the last parameters you fed to it when you run the query again.
+
+   </body></html>
+
