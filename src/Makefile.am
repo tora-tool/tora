@@ -426,6 +426,9 @@ moc_%.cpp: %.h
 qrc_%.cpp: %.qrc
 	$(RCC) $< -o $@
 
+#make resource file depend on resources
+qrc_tora.cpp: help/*.html help/images/*.png icons/*.xpm
+
 #.h.moc:
 #	$(MOC) $(AM_CPPFLAGS) -o $@ $<
 
@@ -460,6 +463,3 @@ lrelease: tora.pro $(TRANSLATIONS)
 install-data-hook:
 	mkdir -p $(DESTDIR)$(libdir)
 	cp -f $(top_builddir)/src/i18n/*.qm $(DESTDIR)$(libdir)
-	$(INSTALL_DATA) $(top_builddir)/src/templates/log4plsql.tpl $(DESTDIR)$(libdir)
-	$(INSTALL_DATA) $(top_builddir)/src/templates/hints.tpl $(DESTDIR)$(libdir)
-	$(INSTALL_DATA) $(top_builddir)/src/templates/sqlfunctions.tpl $(DESTDIR)$(libdir)

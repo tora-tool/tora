@@ -626,9 +626,14 @@ int toSizeDecode(const QString &str)
 QString toReadFile(const QString &filename)
 {
     QString expanded = toExpandFile(filename);
+    // for some reason qrc:/ urls fail with QFile but are required for
+    // QTextBrowser
+    if(expanded.startsWith("qrc"))
+        expanded = expanded.right(expanded.length() - 3);
+
     QFile file(expanded);
     if (!file.open(QIODevice::ReadOnly))
-        throw QT_TRANSLATE_NOOP("toReadFile", "Couldn't open file %1.").arg(filename);
+        throw QT_TRANSLATE_NOOP("toReadFile", "Couldn't open file %1.").arg(expanded);
 
     QTextStream in(&file);
     return in.readAll();
