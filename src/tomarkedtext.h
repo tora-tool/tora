@@ -58,8 +58,8 @@
 #include <QKeyEvent>
 #include <QPoint>
 
-class TOPrinter;
 class QMenu;
+class QsciPrinter;
 
 
 /**
@@ -85,19 +85,6 @@ class toMarkedText : public QsciScintilla, public toEditWidget
     int CursorTimerID;
 
     QPoint DragStart;
-
-#if 0
-    /** Print one page to printer.
-     * @param printer Printer to print to.
-     * @param painter Painter to print to.
-     * @param line Line at top of page.
-     * @param offset Where one the drawn result this line starts.
-     * @param pageNo Pagenumber.
-     * @param paint Wether to paint or just test.
-     */
-    virtual int printPage(TOPrinter *printer, QPainter *painter, int line, int &offset,
-                          int pageNo, bool paint = true);
-#endif
 
     void searchFound(int line, int col);
     void incrementalSearch(bool forward, bool next);

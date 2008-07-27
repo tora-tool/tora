@@ -44,9 +44,7 @@
 #include "tosearchreplace.h"
 #include "totool.h"
 
-#ifdef TO_HAS_KPRINT
-#include <kprinter.h>
-#endif
+#include <Qsci/qsciprinter.h>
 
 #include <qapplication.h>
 #include <qfileinfo.h>
@@ -65,6 +63,7 @@
 #include <QMouseEvent>
 #include <QDir>
 #include <QApplication>
+#include <QPrintDialog>
 
 #include "icons/undo.xpm"
 #include "icons/redo.xpm"
@@ -196,100 +195,40 @@ void toMarkedText::focusOutEvent (QFocusEvent *e)
     QsciScintilla::focusOutEvent(e);
 }
 
+
 void toMarkedText::editPrint(void)
 {
-#if 0
-    TOPrinter printer;
-    printer.setMinMax(1, 1000);
-    printer.setFromTo(1, 1000);
-    if (printer.setup())
-    {
-        printer.setCreator(tr(TOAPPNAME));
-        QPainter painter(&printer);
+    QsciPrinter printer;
 
-        int line = 0;
-        int offset = 0;
-        int page = 1;
-        while (page < printer.fromPage() &&
-                (line = printPage(&printer, &painter, line, offset, page++, false)))
-            painter.resetXForm();
-        while ((line = printPage(&printer, &painter, line, offset, page++)) &&
-                line < lines() &&
-                (printer.toPage() == 0 || page <= printer.toPage()))
-        {
-            printer.newPage();
-            painter.resetXForm();
-            qApp->processEvents();
-            toStatusMessage(tr("Printing page %1").arg(page), false, false);
-        }
-        painter.end();
-        toStatusMessage(tr("Done printing"), false, false);
+    QPrintDialog dialog(&printer, this);
+    dialog.setMinMax(1, 1000);
+    dialog.setFromTo(1, 1000);
+
+    if(!Filename.isEmpty()) {
+        QFileInfo info(Filename);
+        dialog.setWindowTitle(tr("Print %1").arg(info.fileName()));
+        printer.setOutputFileName(info.path() +
+                                  QString("/") +
+                                  info.baseName() +
+                                  ".pdf");
     }
-#endif
+    else
+        dialog.setWindowTitle(tr("Print Document"));
+
+    // printRange() not handling this and not sure what to do about it
+//     if(hasSelectedText())
+//         dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
+
+    if(!dialog.exec())
+        return;
+
+    printer.setCreator(tr(TOAPPNAME));
+
+    // they show up in the print
+    setMarginLineNumbers(0, false);
+    printer.printRange(this);
+    setMarginLineNumbers(0, true);
 }
-
-#if 0
-int toMarkedText::printPage(TOPrinter *printer, QPainter *painter, int line, int &offset,
-                            int pageNo, bool paint)
-{
-    Q3PaintDeviceMetrics metrics(printer);
-    painter->drawLine(0, 0, metrics.width(), 0);
-    QRect size = painter->boundingRect(0, 0, metrics.width(), metrics.height(),
-                                       Qt::AlignLeft | Qt::AlignTop | Qt::ExpandTabs | Qt::SingleLine,
-                                       Filename);
-    QString str = tr("Page: %1").arg(pageNo);
-    if (paint)
-    {
-        painter->drawText(0, metrics.height() - size.height(), size.width(), size.height(),
-                          Qt::AlignLeft | Qt::AlignTop | Qt::ExpandTabs | Qt::SingleLine,
-                          Filename);
-        painter->drawText(size.width(), metrics.height() - size.height(), metrics.width() - size.width(),
-                          size.height(),
-                          Qt::AlignRight | Qt::AlignTop | Qt::SingleLine,
-                          str);
-        painter->drawLine(0, 0, metrics.width(), 0);
-    }
-    int margin = size.height() + 2;
-
-    QFont defFont = painter->font();
-    painter->setFont(font());
-    size = painter->boundingRect(0, 0, metrics.width(), metrics.height(),
-                                 Qt::AlignLeft | Qt::AlignTop,
-                                 QString::fromLatin1("x"));
-    int height = size.height();
-    int totalHeight = (metrics.height() - margin) / height * height;
-    if (paint)
-        painter->drawLine(0, totalHeight + 2, metrics.width(), totalHeight + 2);
-    painter->setClipRect(0, 2, metrics.width(), totalHeight);
-    int pos = 1 + offset;
-    do
-    {
-        QRect bound;
-        if (paint)
-        {
-            painter->drawText(0, pos,
-                              metrics.width(), metrics.height(),
-                              Qt::AlignLeft | Qt::AlignTop | Qt::ExpandTabs | Qt::WordBreak,
-                              text(line), -1, &bound);
-        }
-        else
-            bound = painter->boundingRect(0, pos,
-                                          metrics.width(), metrics.height(),
-                                          Qt::AlignLeft | Qt::AlignTop | Qt::ExpandTabs | Qt::WordBreak,
-                                          text(line));
-        int cheight = bound.height() ? bound.height() : height;
-        totalHeight -= cheight;
-        pos += cheight;
-        if (totalHeight >= 0)
-            line++;
-    }
-    while (totalHeight > 0 && line < lines());
-    painter->setClipping(false);
-    offset = totalHeight;
-    painter->setFont(defFont);
-    return line;
-}
-#endif
 
 void toMarkedText::openFilename(const QString &file)
 {
