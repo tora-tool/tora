@@ -173,6 +173,7 @@ tora_SOURCES=main.cpp \
 	migratetool/connectionmodel.cpp migratetool/connectionmodel.h \
 	migratetool/sqldeveloper.cpp migratetool/sqldeveloper.h \
 	migratetool/squirrelsql.cpp migratetool/squirrelsql.h \
+	migratetool/tora3.cpp migratetool/tora3.h \
 	$(EXTRA_ORACLE_MONO_SOURCE) \
 	$(LOKIDIR_SRC)/SmallObj.cpp \
 	$(LOKIDIR_SRC)/Singleton.cpp \

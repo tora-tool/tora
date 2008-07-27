@@ -35,48 +35,24 @@
  *
  *****/
 
-#ifndef TOCONNECTIONIMPORT_H
-#define TOCONNECTIONIMPORT_H
+#ifndef TORA3_H
+#define TORA3_H
 
-#include "ui_toconnectionimportui.h"
-#include "migratetool/connectionmodel.h"
+#include <QList>
 
+#include "tonewconnection.h"
 
-/*! \brief GUI to load conections from the others tools.
-\author Petr Vanek <petr@scribus.info>
-*/
-class toConnectionImport : public QDialog, public Ui::toConnectionImport
+namespace MigrateTool
 {
-    Q_OBJECT
 
-    public:
-        toConnectionImport(QWidget * parent = 0);
+/*! \brief Parse Tora 1.3.x preferences file
+ *
+ * Probably works for older versions, too. But does anybody care?
+ *
+ * \author Mike Johnson
+ */
+QList<toConnectionOptions> tora3(QWidget *parent = 0);
 
-        //! \brief Supported loaders
-        enum ToolUsed {
-            None = 0,
-            OracleSQLDeveloper = 1,
-            SquirrelSQL = 2,
-            Tora3 = 3
-        };
-
-        //! \brief Send all imported connections to the caller
-        QList<toConnectionOptions> availableConnections()
-        {
-            return availableModel->availableConnections();
-        };
-
-    private:
-        MigrateTool::ConnectionModel * availableModel;
-
-        ToolUsed m_tool;
-
-    private slots:
-        //! Change m_tool
-        void toolComboBox_changed(int);
-        //! Read new connections from the outside
-        void refreshAvailable();
-
-};
+} // namespace
 
 #endif

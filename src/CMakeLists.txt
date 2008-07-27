@@ -345,6 +345,7 @@ SET(TORA_SOURCES
     migratetool/connectionmodel.cpp
     migratetool/sqldeveloper.cpp
     migratetool/squirrelsql.cpp
+    migratetool/tora3.cpp
 )
 
 QT4_ADD_TRANSLATION(TORA_I18N_QM ${TORA_I18N_TS})
