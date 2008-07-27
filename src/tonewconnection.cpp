@@ -485,7 +485,9 @@ void toNewConnection::importButton_clicked()
     // find latest id (max+1)
     QList<int> keys = OptionMap.keys();
     qSort(keys);
-    int max = keys.at(keys.count()-1) + 1;
+    int max = 0;
+    if(keys.count() > 0)
+        max = keys.at(keys.count()-1) + 1;
 
     foreach (toConnectionOptions opt, dia.availableConnections())
     {
