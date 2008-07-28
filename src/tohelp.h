@@ -161,29 +161,6 @@ class toHelp : public QDialog, public Ui::toHelp
     bool Searching;
 
     /**
-     * List containing the manuals and their sections, compiled from the toc.htm files.
-     * @see toHelp
-     */
-//     toListView *Sections;
-    /**
-     * List containing the search result of the latest search. Search reads the index.htm files.
-     */
-//     toListView *Result;
-    /**
-     * The line containing the search text.
-     */
-//     QLineEdit *SearchLine;
-    /**
-     * Manuals to include in search.
-     */
-//     QComboBox *Manuals;
-//     Q3TextBrowser *Help;
-    /**
-     * Display progress of current search.
-     */
-    QProgressBar *Progress;
-
-    /**
      * Set selection and also update selected item in list if any item matches the
      * selected location.
      * @param lst Listview to update selected item in.

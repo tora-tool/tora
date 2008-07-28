@@ -375,7 +375,7 @@ toHelp::toHelp(QWidget *parent, QString name, bool modal)
     for (int i = 0; i < Sections->topLevelItemCount(); ++i)
         Manuals->addItem(Sections->topLevelItem(i)->text(0));
 
-    Progress = new QProgressBar(tabs);
+//     Progress = new QProgressBar(tabs);
     Progress->setMaximum(Dsc.size());
     Progress->hide();
     Searching = false;
@@ -470,6 +470,8 @@ void toHelp::search(void)
 {
     if (Searching)
         return ;
+
+    Searching = true;
     Result->clear();
     QStringList words = SearchLine->text().toLower().split(QRegExp(QString::fromLatin1("\\s+")));
     if (words.count() == 0)
@@ -478,8 +480,7 @@ void toHelp::search(void)
     QRegExp stripend(QString::fromLatin1(",$"));
     int steps = 1;
     Progress->setValue(0);
-    Progress->show();
-    Searching = true;
+
     qApp->processEvents();
 
     QTreeWidgetItem * parent;
@@ -583,6 +584,8 @@ void toHelp::search(void)
         }
         Progress->setValue(steps);
         ++steps;
+        if (steps > 10)
+            Progress->show();
         qApp->processEvents();
     }
     Progress->hide();
