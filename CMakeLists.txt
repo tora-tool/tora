@@ -59,10 +59,10 @@ if (NOT TORA_DOC_DIR)
     SET (TORA_DOC_DIR "${CMAKE_INSTALL_PREFIX}/share/doc/tora/") # it would be pain for upgrade configs -${VERSION}/")
 endif (NOT TORA_DOC_DIR)
 
-if (NOT TORA_HELP_DIR)
-    SET (TORA_HELP_DIR "${TORA_PLUGIN_DIR}/help/")
-endif (NOT TORA_HELP_DIR)
-ADD_DEFINITIONS("-DTORA_HELP_DIR=\\\"${TORA_HELP_DIR}\\\"")
+#if (NOT TORA_HELP_DIR)
+#    SET (TORA_HELP_DIR "${TORA_PLUGIN_DIR}/help/")
+#endif (NOT TORA_HELP_DIR)
+#ADD_DEFINITIONS("-DTORA_HELP_DIR=\\\"${TORA_HELP_DIR}\\\"")
 
 ##############################################################################################################
 ########## check for the CPU we build for                                                           ##########
@@ -257,6 +257,7 @@ INSTALL(FILES
     NEWS
     README
     README.BINARIES
+    README.CMAKE
     README.CODESTYLE
     README.LAYOUT
     README.LICENSE

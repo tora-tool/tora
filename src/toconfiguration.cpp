@@ -13,12 +13,6 @@
 #include <QSettings>
 #include "toconf.h"
 
-// FIXME: this should be set in autohell too
-#ifndef TORA_HELP_DIR
-#define TORA_HELP_DIR ""
-#endif
-
-
 // static one
 void toConfiguration::setQSettingsEnv()
 {
@@ -66,7 +60,7 @@ toConfiguration::toConfiguration()
 
     m_dbTitle = s.value(CONF_DB_TITLE, true).toBool();
     m_sizeUnit = s.value(CONF_SIZE_UNIT, DEFAULT_SIZE_UNIT).toString();
-    m_helpPath = s.value(CONF_HELP_PATH, TORA_HELP_DIR + QString("/toc.html")).toString();
+    m_helpPath = s.value(CONF_HELP_PATH, "qrc:/help/toc.html").toString();
     m_statusSave = s.value(CONF_STATUS_SAVE, DEFAULT_STATUS_SAVE).toInt();
     m_autoCommit = s.value(CONF_AUTO_COMMIT, false).toBool();
     m_changeConnection = s.value(CONF_CHANGE_CONNECTION, true).toBool();
