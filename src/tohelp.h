@@ -170,11 +170,8 @@ class toHelp : public QDialog, public Ui::toHelp
     /**
      * Reimplemented for internal reasons.
      */
-    virtual void closeEvent(QCloseEvent *e)
-    {
-        if (!Searching)
-            QWidget::closeEvent(e);
-    }
+    virtual void closeEvent(QCloseEvent *e);
+
 private slots:
     /** Initiate a search with the parameters in the internal widgets.
      * @internal

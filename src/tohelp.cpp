@@ -45,25 +45,8 @@
 #include "totool.h"
 #include "tohelpsetup.h"
 
-#include <QAction>
-#include <qcombobox.h>
-#include <qdir.h>
-#include <qfileinfo.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qlineedit.h>
-#include <qmessagebox.h>
-#include <qpushbutton.h>
-#include <qregexp.h>
-#include <qsplitter.h>
-#include <qtabwidget.h>
-#include <qtimer.h>
-#include <qtoolbutton.h>
-#include <qtooltip.h>
-
-#include <QString>
-#include <QVBoxLayout>
-#include <QToolBar>
+#include <QMessageBox>
+#include <QSettings>
 
 
 toHelp *toHelp::Window;
@@ -379,12 +362,30 @@ toHelp::toHelp(QWidget *parent, QString name, bool modal)
     Progress->setMaximum(Dsc.size());
     Progress->hide();
     Searching = false;
+
+    QSettings s;
+    s.beginGroup("helpdialog");
+    restoreGeometry(s.value("geometry").toByteArray());
+    splitter->restoreState(s.value("splitter").toByteArray());
 }
 
 toHelp::~toHelp()
 {
     if (Window == this)
         Window = NULL;
+}
+
+void toHelp::closeEvent(QCloseEvent * e)
+{
+    if (Searching)
+        return;
+
+    QSettings s;
+    s.beginGroup("helpdialog");
+    s.setValue("geometry", saveGeometry());
+    s.setValue("splitter", splitter->saveState());
+
+    QWidget::closeEvent(e);
 }
 
 QString toHelp::path(const QString &path)

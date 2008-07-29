@@ -159,7 +159,6 @@ toNewConnection::toNewConnection(
     Password->setFocus(Qt::OtherFocusReason);
 }
 
-
 QString toNewConnection::realProvider()
 {
     QString p = Provider->currentText();
@@ -172,7 +171,7 @@ QString toNewConnection::realProvider()
 
 void toNewConnection::readSettings()
 {
-    resize(Settings.value("size", QSize(657, 550)).toSize());
+    restoreGeometry(Settings.value("geometry").toByteArray());
 
     Previous->setSortingEnabled(false);
     for (int pos = 0; pos < MAX_HISTORY; pos++)
@@ -230,7 +229,7 @@ void toNewConnection::readSettings()
 
 void toNewConnection::writeSettings()
 {
-    Settings.setValue("size", size());
+    Settings.setValue("geometry", saveGeometry());
 
     Settings.remove("history");
 
@@ -329,6 +328,8 @@ void toNewConnection::loadPrevious(int row)
 
 void toNewConnection::done(int r)
 {
+    writeSettings();
+
     if (!r)
     {
         QDialog::done(r);
@@ -339,7 +340,6 @@ void toNewConnection::done(int r)
     if (!NewConnection)
         return;
 
-    writeSettings();
     QDialog::done(r);
 }
 
