@@ -427,6 +427,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <tabstops>
+  <tabstop>Previous</tabstop>
   <tabstop>Provider</tabstop>
   <tabstop>Username</tabstop>
   <tabstop>Password</tabstop>
@@ -437,9 +438,8 @@
   <tabstop>SqlNet</tabstop>
   <tabstop>SysDba</tabstop>
   <tabstop>SysOper</tabstop>
-  <tabstop>Previous</tabstop>
   <tabstop>ButtonBox</tabstop>
-  <tabstop>OptionGroup</tabstop>
+  <tabstop>ImportButton</tabstop>
  </tabstops>
  <resources/>
  <connections>

@@ -159,7 +159,7 @@ toNewConnection::toNewConnection(
     // must call after connecting signals
     loadPrevious(0);
 
-    Password->setFocus(Qt::OtherFocusReason);
+    Previous->setFocus(Qt::OtherFocusReason);
 }
 
 QString toNewConnection::realProvider()
