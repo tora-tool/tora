@@ -6948,7 +6948,7 @@ QString toOracleExtract::migrateSource(toExtract &ext,
         QString name = toShift(ctx);
         QString source = toShift(ctx);
 
-        if (lastOwner != owner || name != lastName && !source.isEmpty())
+        if (lastOwner != owner || (name != lastName && !source.isEmpty()))
         {
             QString sql = "CREATE " + sourcetype + " " + owner + "." + name;
             if (PROMPT)
