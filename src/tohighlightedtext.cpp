@@ -359,8 +359,9 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     // set default SQL lexer (syntax colouring as well)
     setLexer (sqlLexer());
 
-    // enable line numbers
-    setMarginLineNumbers (0, true);
+    setFolding(QsciScintilla::BoxedFoldStyle);
+    sqlLexer()->setFoldComments(true);
+    sqlLexer()->setFoldCompact(false);
 
     // enable syntax colouring
     setSyntaxColoring (true);
