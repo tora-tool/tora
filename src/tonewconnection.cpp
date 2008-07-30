@@ -109,13 +109,16 @@ toNewConnection::toNewConnection(
             this,
             SLOT(previousMenu(const QPoint &)));
 
-    Previous->setColumnCount(5);
+    Previous->setColumnCount(6);
     Previous->setHorizontalHeaderItem(IndexColumn,    new QTableWidgetItem(tr("Index")));
     Previous->setHorizontalHeaderItem(ProviderColumn, new QTableWidgetItem(tr("Provider")));
     Previous->setHorizontalHeaderItem(HostColumn,     new QTableWidgetItem(tr("Host")));
     Previous->setHorizontalHeaderItem(DatabaseColumn, new QTableWidgetItem(tr("Database")));
     Previous->setHorizontalHeaderItem(UsernameColumn, new QTableWidgetItem(tr("Username")));
-    Previous->sortItems(IndexColumn, Qt::AscendingOrder);
+    Previous->setHorizontalHeaderItem(SchemaColumn,   new QTableWidgetItem(tr("Schema")));
+
+    /* This should be changed to be a setting in preferences */
+    Previous->sortItems(UsernameColumn, Qt::AscendingOrder);
 
     Settings.beginGroup("connections");
     readSettings();
@@ -190,6 +193,7 @@ void toNewConnection::readSettings()
         QString database = Settings.value("database", "").toString();
         QString username = Settings.value("username", "").toString();
         QString password = toUnobfuscate(Settings.value("password", "").toString());
+        QString schema   = Settings.value("schema", "").toString();
 
         if ( provider == ORACLE_TNS )
             host = "";
@@ -210,6 +214,7 @@ void toNewConnection::readSettings()
             database,
             username,
             password,
+            schema,
             Settings.value("port", 0).toInt(),
             options);
         OptionMap[pos] = opt;
@@ -219,6 +224,7 @@ void toNewConnection::readSettings()
         Previous->setItem(pos, HostColumn, new QTableWidgetItem(host));
         Previous->setItem(pos, DatabaseColumn, new QTableWidgetItem(database));
         Previous->setItem(pos, UsernameColumn, new QTableWidgetItem(username));
+        Previous->setItem(pos, SchemaColumn, new QTableWidgetItem(schema));
 
         Settings.endGroup();
     }
@@ -240,6 +246,7 @@ void toNewConnection::writeSettings()
     Settings.setValue("host", Host->currentText());
     Settings.setValue("port", Port->value());
     Settings.setValue("database", Database->currentText());
+    Settings.setValue("schema", Schema->text());
 
     Settings.beginGroup("options");
     QList<QCheckBox *> widgets = OptionGroup->findChildren<QCheckBox *>();
@@ -252,7 +259,8 @@ void toNewConnection::writeSettings()
     int skip = findHistory(Provider->currentText(),
                            Username->text(),
                            Host->currentText(),
-                           Database->currentText());
+                           Database->currentText(),
+                           Schema->text());
 
     int skipped = 0;
     for (int row = 0; row < Previous->rowCount() && row < MAX_HISTORY; row++)
@@ -268,6 +276,7 @@ void toNewConnection::writeSettings()
         Settings.setValue("username", Previous->item(row, UsernameColumn)->text());
         Settings.setValue("host", Previous->item(row, HostColumn)->text());
         Settings.setValue("database", Previous->item(row, DatabaseColumn)->text());
+        Settings.setValue("schema", Previous->item(row, SchemaColumn)->text());
 
         Settings.setValue("port", opt.port);
         Settings.setValue("password", toObfuscate(opt.password));
@@ -285,14 +294,16 @@ void toNewConnection::writeSettings()
 int toNewConnection::findHistory(const QString &provider,
                                  const QString &username,
                                  const QString &host,
-                                 const QString &database)
+                                 const QString &database,
+                                 const QString &schema)
 {
     for (int row = 0; row < Previous->rowCount(); row++)
     {
         if (provider == Previous->item(row, ProviderColumn)->text() &&
                 username == Previous->item(row, UsernameColumn)->text() &&
                 host == Previous->item(row, HostColumn)->text() &&
-                database == Previous->item(row, DatabaseColumn)->text())
+                database == Previous->item(row, DatabaseColumn)->text() &&
+                schema == Previous->item(row, SchemaColumn)->text() )
             return row;
     }
 
@@ -319,6 +330,7 @@ void toNewConnection::loadPrevious(int row)
     Username->setText(opt.username);
     Password->setText(opt.password);
     Port->setValue(opt.port);
+    Schema->setText(opt.schema);
 
     QList<QCheckBox *> widgets = OptionGroup->findChildren<QCheckBox *>();
     Q_FOREACH(QCheckBox *box, widgets)
@@ -383,6 +395,17 @@ void toNewConnection::changeProvider(int current)
         {
             if (provider.startsWith("Oracle"))
                 DefaultPort = 1521;
+        }
+
+        if (Provider->currentText() == ORACLE_TNS || Provider->currentText() == ORACLE_INSTANT )
+        {
+            SchemaLabel->show();
+            Schema->show();
+        }
+        else
+        {
+            SchemaLabel->hide();
+            Schema->hide();
         }
 
         Port->setValue(DefaultPort);
@@ -491,7 +514,7 @@ void toNewConnection::importButton_clicked()
 
     foreach (toConnectionOptions opt, dia.availableConnections())
     {
-        if (findHistory(opt.provider, opt.username, opt.host, opt.database) != -1)
+        if (findHistory(opt.provider, opt.username, opt.host, opt.database, opt.schema) != -1)
             continue;
 
         Previous->setRowCount(pos + 1);
@@ -502,6 +525,7 @@ void toNewConnection::importButton_clicked()
         Previous->setItem(pos, HostColumn, new QTableWidgetItem(opt.host));
         Previous->setItem(pos, DatabaseColumn, new QTableWidgetItem(opt.database));
         Previous->setItem(pos, UsernameColumn, new QTableWidgetItem(opt.username));
+        Previous->setItem(pos, SchemaColumn, new QTableWidgetItem(opt.schema));
         ++pos;
         ++max;
     }
@@ -519,6 +543,10 @@ toConnection* toNewConnection::makeConnection(void)
         QString host;
         if (!Host->isHidden())
             host = Host->currentText();
+
+        QString schema;
+        if (!Schema->isHidden())
+            schema = Schema->text();
 
         QString optionstring;
         std::set<QString> options;
@@ -570,7 +598,8 @@ toConnection* toNewConnection::makeConnection(void)
                 if (conn.user() == Username->text() &&
                         conn.provider() == realProvider() &&
                         conn.host() == host &&
-                        conn.database() == database)
+                        conn.database() == database &&
+                        conn.schema() == schema)
                     return &conn;
             }
             catch (...) {}
@@ -582,6 +611,7 @@ toConnection* toNewConnection::makeConnection(void)
             Password->text(),
             host,
             database,
+            schema,
             options);
 
         return retCon;

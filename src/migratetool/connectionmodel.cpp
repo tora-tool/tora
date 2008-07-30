@@ -65,6 +65,7 @@ QVariant ConnectionModel::headerData(int section, Qt::Orientation orientation, i
         case 1 : return "Host";
         case 2 : return "Database";
         case 3 : return "Username";
+        case 4 : return "Schema";
     }
     return "oops!";
 }
@@ -83,6 +84,7 @@ QVariant ConnectionModel::data(const QModelIndex & index, int role) const
             case 1 : return opt.host;
             case 2 : return opt.database;
             case 3 : return opt.username;
+            case 4 : return opt.schema;
             default : return "oops!";
         }
     }

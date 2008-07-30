@@ -1279,12 +1279,14 @@ void toConnection::closeConnection(toConnectionSub *sub) {
 toConnection::toConnection(const QString &provider,
                            const QString &user, const QString &password,
                            const QString &host, const QString &database,
+                           const QString &schema,
                            const std::set<QString> &options, bool cache)
     : Provider(provider),
       User(user),
       Password(password),
       Host(host),
       Database(database),
+      Schema(schema),
       Options(options),
       Connection(0)
 {
@@ -1314,6 +1316,7 @@ toConnection::toConnection(const toConnection &conn)
       Password(conn.Password),
       Host(conn.Host),
       Database(conn.Database),
+      Schema(conn.Schema),
       Options(conn.Options),
       Connection(0)
 {

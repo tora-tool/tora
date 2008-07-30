@@ -63,7 +63,7 @@ class ConnectionModel : public QAbstractTableModel
 
         QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
         QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
-        int columnCount(const QModelIndex & parent = QModelIndex()) const { return 4; };
+        int columnCount(const QModelIndex & parent = QModelIndex()) const { return 5; };
         int rowCount(const QModelIndex & parent = QModelIndex()) const { return m_data.count(); };
         Qt::ItemFlags flags(const QModelIndex & index) const;
 

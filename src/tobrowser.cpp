@@ -2101,10 +2101,17 @@ void toBrowser::focusObject(void)
 void toBrowser::changeConnection(void)
 {
     Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
-    if (toIsMySQL(connection()))
+   
+    if ( ! connection().schema().isEmpty() )
+    {
+        Schema->setSelected(connection().schema().toUpper());
+    }
+    else if (toIsMySQL(connection()))
         Schema->setSelected(connection().database());
     else if (toIsOracle(connection()) || toIsSapDB(connection()))
+    {
         Schema->setSelected(connection().user().toUpper());
+    }
     else
         Schema->setSelected(connection().user());
     SecondText = QString::null;
@@ -2115,6 +2122,9 @@ void toBrowser::updateTabs(void)
 {
     try
     {
+        if (!Schema->selected().isEmpty() && FirstTab)
+            Schema->setSelected(connection().schema().toUpper());
+
         if (!Schema->selected().isEmpty() && FirstTab)
             FirstTab->changeParams(
                 schema(),

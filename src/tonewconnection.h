@@ -67,6 +67,7 @@ public:
     QString           username;
     QString           password;
     int               port;
+    QString           schema;
     std::set<QString> options;
 
     // must have for qmap
@@ -79,6 +80,7 @@ public:
                         const QString &_data,
                         const QString &_user,
                         const QString &_pass,
+                        const QString &_schema,
                         int _port,
                         std::set<QString> _options)
     {
@@ -87,6 +89,7 @@ public:
         database = _data;
         username = _user;
         password = _pass;
+        schema   = _schema;
         port     = _port;
         options  = _options;
     }
@@ -96,7 +99,8 @@ public:
         return provider == other.provider &&
                host == other.host &&
                database == other.database &&
-               username == other.username;
+               username == other.username &&
+               schema == other.schema;
     }
 
     bool operator!=(const toConnectionOptions &other)
@@ -126,7 +130,8 @@ private:
         ProviderColumn,
         HostColumn,
         DatabaseColumn,
-        UsernameColumn
+        UsernameColumn,
+        SchemaColumn,
     };
 
     // stores connection options by unique id. these are read from the
@@ -142,7 +147,8 @@ private:
     int findHistory(const QString &provider,
                     const QString &username,
                     const QString &host,
-                    const QString &database);
+                    const QString &database,
+                    const QString &schema);
     // fills form with data from previous connection at param row
     void loadPrevious(int row);
 

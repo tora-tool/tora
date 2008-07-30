@@ -174,6 +174,7 @@ void loadConnections(QMap<QString, QString> &pairs, QList<toConnectionOptions> &
         QString host    = pairs[HISTORY + num + "Host"];
         QString options = pairs[HISTORY + num + "Options"];
         QString prov    = pairs[HISTORY + num + "Provider"];
+        QString schema;
 
         if(prov.isEmpty())
             break;
@@ -188,6 +189,7 @@ void loadConnections(QMap<QString, QString> &pairs, QList<toConnectionOptions> &
                                  db,
                                  user,
                                  pass,
+                                 schema,
                                  0,
                                  processOptions(options));
         ret.append(conn);

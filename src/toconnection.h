@@ -499,6 +499,7 @@ class toConnection : public QObject
     QString Password;
     QString Host;
     QString Database;
+    QString Schema;
     QString Version;
     std::list<QPointer<QWidget> > Widgets;
     std::list<QString> InitStrings;
@@ -733,11 +734,12 @@ public:
      * @param password Password to connect with.
      * @param host Host to connect to the database with.
      * @param database Database to connect to.
+     * @param schema Default schema to switch to.
      * @param options Options used to connect to the database with.
      * @param cache Enable object cache for this connection.
      */
     toConnection(const QString &provider, const QString &user, const QString &password,
-                 const QString &host, const QString &database, const std::set
+                 const QString &host, const QString &database, const QString &schema, const std::set
                  <QString> &options,
                  bool cache = true);
     /** Create a copy of a connection. Will not cache objects, so objects will never be available
@@ -788,6 +790,12 @@ public:
     const QString &database() const
     {
         return Database;
+    }
+    /** Get schema of connection.
+     */
+    const QString &schema() const
+    {
+        return Schema;
     }
     /** Get version of connection.
      */

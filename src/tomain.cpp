@@ -1609,6 +1609,7 @@ void toMain::importData(std::map<QString, QString> &data, const QString &prefix)
         QString database = (*i).second;
         QString user = data[key + ":User"];
         QString host = data[key + ":Host"];
+        QString schema = data[key + ":Schema"];
 
         QStringList optionlist = data[key + ":Options"].split(",");
         std::set
@@ -1636,7 +1637,7 @@ void toMain::importData(std::map<QString, QString> &data, const QString &prefix)
         {
             try
             {
-                toConnection *conn = new toConnection(provider.toLatin1(), user, password, host, database, options);
+                toConnection *conn = new toConnection(provider.toLatin1(), user, password, host, database, schema, options);
                 if (conn)
                 {
                     conn = addConnection(conn, false);
