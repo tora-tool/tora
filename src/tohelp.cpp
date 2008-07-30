@@ -172,7 +172,7 @@ void toHelpPrefs::oracleManuals()
                         dsc = QString::null;
                     }
                 }
-                else if (file.open() && file.tag() == "dd" || file.tag() == "book")
+                else if ((file.open() && file.tag() == "dd") || file.tag() == "book")
                 {
                     dsc = QString::null;
                     inDsc = true;

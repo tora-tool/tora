@@ -792,7 +792,7 @@ QStringList toHighlightedText::getCompletionList(QString* partial)
             tokens.setLine(curline);
             tokens.setOffset(curcol);
             token = tokens.getToken();
-            while ((invalidToken(tokens.line(), tokens.offset()) || UpperIdent(token) != cmp && lastToken != ".") && token != ";" && !token.isEmpty())
+            while ((invalidToken(tokens.line(), tokens.offset()) || (UpperIdent(token) != cmp && lastToken != ".")) && token != ";" && !token.isEmpty())
                 token = tokens.getToken();
             lastToken = token;
             tokens.getToken(false);

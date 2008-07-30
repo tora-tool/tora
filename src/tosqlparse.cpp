@@ -885,7 +885,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
             return ret;
         }
         else if (upp == (",") ||
-                 (syntax.reservedWord(upp) &&
+                 ((syntax.reservedWord(upp) &&
                   upp != ("NOT") &&
                   upp != ("IS") &&
                   upp != ("LIKE") &&
@@ -896,7 +896,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
                   upp != ("BETWEEN") &&
                   upp != ("ASC") &&
                   upp != ("DESC") &&
-                  upp != ("NULL")) && !nokey)
+                  upp != ("NULL")) && !nokey))
         {
             ret.subTokens().insert(ret.subTokens().end(), statement(statement::Keyword, token, tokens.line()));
             nokey = false;

@@ -527,8 +527,8 @@ int toResultModel::partition(int left,
 
     for (int i = left; i < right; i++)
     {
-        if (order == Qt::AscendingOrder && (Rows.at(i).at(column) < key) ||
-                order == Qt::DescendingOrder && (Rows.at(i).at(column) > key))
+        if ((order == Qt::AscendingOrder && (Rows.at(i).at(column) < key)) ||
+                (order == Qt::DescendingOrder && (Rows.at(i).at(column) > key)))
             Rows.swap(i, store++);
     }
 
