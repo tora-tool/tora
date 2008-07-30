@@ -154,7 +154,7 @@ void loadConnections(QMap<QString, QString> &pairs, QList<toConnectionOptions> &
 
     QString strMax = pairs[QString("ConnectCurrent")];
 
-    int max;
+    int max = 0;
     if(strMax.isEmpty())
         max = 40;
     else {
