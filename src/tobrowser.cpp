@@ -2128,6 +2128,8 @@ void toBrowser::updateTabs(void)
     {
 #if 0
         // Can't remember why I added this, but it's breaking things
+        // Without it breaks the default-schema stuff... with it breaks changing schemas...
+        // definately have more work to do here
         if (!Schema->selected().isEmpty() && FirstTab)
             Schema->setSelected(connection().schema().toUpper());
 #endif
