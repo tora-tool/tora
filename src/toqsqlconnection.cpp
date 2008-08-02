@@ -66,6 +66,8 @@
   #include <postgresql/libpq-fe.h>
 #endif
 
+#include <QDebug>
+
 static toSQL SQLVersion("toQSqlConnection:Version",
                         "SHOW VARIABLES LIKE 'version'",
                         "Show version of database, "

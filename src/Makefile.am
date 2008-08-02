@@ -50,6 +50,7 @@ tora_SOURCES=main.cpp \
 	tobackgroundlabel.cpp tobackgroundlabel.h \
 	toconfiguration.cpp toconfiguration.h \
 	toconnection.cpp toconnection.h \
+	toqvalue.cpp toqvalue.h \
 	toconnectionimport.cpp toconnectionimport.h \
 	toconnectionpool.cpp toconnectionpool.h \
 	torunnable.cpp torunnable.h \
@@ -241,7 +242,6 @@ EXTRA_DIST = icons \
 	tomysqlkeywords.h \
 	toocistub.cpp \
 	tooraclepreload.cpp \
-	toqvalue.h \
 	toresultresources.h \
 	$(TRANSLATIONS) \
 	LICENSE.h \

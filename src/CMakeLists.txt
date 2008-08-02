@@ -226,6 +226,7 @@ SET(TORA_SOURCES
     tobrowsertable.cpp
     toconfiguration.cpp
     toconnection.cpp
+    toqvalue.cpp
     toconnectionimport.cpp
     toconnectionpool.cpp
     torunnable.cpp
