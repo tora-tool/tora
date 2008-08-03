@@ -310,8 +310,12 @@ class oracleQuery : public toQuery::queryImpl
                     otl_long_string str(buffer, len);
                     (*Query) >> str;
                     Running = false;
-                    if (!str.len())
+
+                    if (!str.len()) {
+                        free(buffer);
                         return null;
+                    }
+
                     QString buf;
                     if (dsc->ftype == otl_var_varchar_long)
                     {
@@ -322,7 +326,7 @@ class oracleQuery : public toQuery::queryImpl
                     else
                     {
                         QByteArray ret(buffer, str.len());
-// Qt4 does not contain assign                            ret.assign(buffer, str.len());
+                        free(buffer);
                         return toQValue::createBinary(ret);
                     }
                 }
@@ -355,10 +359,8 @@ class oracleQuery : public toQuery::queryImpl
                             lob >> sink;
                         }
                         while (!lob.eof() && sink.len() > 0);
-                        if (toThread::mainThread())
-                            toStatusMessage(QString::fromLatin1("Data exists past length of LOB"));
-                        else
-                            printf("Data exists past length of LOB in thread\n");
+
+                        toStatusMessage(QString::fromLatin1("Data exists past length of LOB"));
                     }
                     buffer[data.len()] = 0;
                     Running = false;
@@ -372,7 +374,7 @@ class oracleQuery : public toQuery::queryImpl
                     else
                     {
                         QByteArray ret(buffer, data.len());
-// qt4 does not contain assing                             ret.assign(buffer, data.len());
+                        free(buffer);
                         return toQValue::createBinary(ret);
                     }
                 }
@@ -385,14 +387,13 @@ class oracleQuery : public toQuery::queryImpl
                     buffer = new char[std::max(dsc->elem_size * 5 + 1, 100)];
                     buffer[0] = 0;
                     (*Query) >> buffer;
-                    Running = false;
-                    if (Query->is_null())
-                    {
-                        delete[] buffer;
-                        return null;
-                    }
-                    QString buf(QString::fromUtf8(buffer));
+                    QString buf = QString::fromUtf8(buffer);
                     delete[] buffer;
+
+                    Running = false;
+
+                    if (Query->is_null())
+                        return null;
                     return buf;
                 }
                 break;
