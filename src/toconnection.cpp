@@ -878,6 +878,8 @@ bool toConnection::closeWidgets(void)
             if((*i)->isVisible())
                 return false;
         }
+        else
+            delete *i;
     }
 
     Widgets.clear();
