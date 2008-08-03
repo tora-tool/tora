@@ -49,55 +49,41 @@ static int NumberDecimals;
 
 toQValue::toQValue(int i)
 {
-    Type = intType;
-    Value.Int = i;
+    Value = i;
 }
 
 toQValue::toQValue(double i)
 {
-    Type = doubleType;
-    Value.Double = i;
+    Value = i;
 }
 
 toQValue::toQValue(qlonglong d)
 {
-    Type = longType;
-    Value.Long = d;
+    Value = d;
 }
 
 toQValue::toQValue(qulonglong d)
 {
-    Type = ulongType;
-    Value.uLong = d;
+    Value = d;
 }
 
 toQValue::toQValue(const toQValue &copy)
 {
-    Type = copy.Type;
-    switch (Type)
-    {
-    case intType:
-        Value.Int = copy.Value.Int;
-        break;
-    case doubleType:
-        Value.Double = copy.Value.Double;
-        break;
-    case stringType:
-        Value.String = new QString(*copy.Value.String);
-        break;
-    case binaryType:
-        Value.Array = new QByteArray(*copy.Value.Array);
-        break;
-    case nullType:
-        break;
-    case longType:
-        Value.Long = copy.Value.Long;
-        break;
-    case ulongType:
-        Value.uLong = copy.Value.uLong;
-    }
+    Value = copy.Value;
 }
 
+toQValue::toQValue(const QString &str)
+{
+    Value = str;
+}
+
+toQValue::toQValue()
+{
+}
+
+toQValue::~toQValue()
+{
+}
 
 bool toQValue::operator<(const toQValue &other) const
 {
@@ -110,7 +96,7 @@ bool toQValue::operator<(const toQValue &other) const
     if (isuLong() && other.isuLong())
         return touLong() < other.touLong();
     if (isBinary() && other.isBinary())
-        return Value.Array < other.Value.Array;
+        return Value.toByteArray() < other.Value.toByteArray();
 
     // otherwise, try to convert to double for comparison
     bool ok;
@@ -134,328 +120,94 @@ bool toQValue::operator>(const toQValue &other) const
 
 const toQValue &toQValue::operator = (const toQValue & copy)
 {
-    if (Type == stringType)
-        delete Value.String;
-    else if (Type == binaryType)
-        delete Value.Array;
-
-    Type = copy.Type;
-    switch (Type)
-    {
-    case intType:
-        Value.Int = copy.Value.Int;
-        break;
-    case doubleType:
-        Value.Double = copy.Value.Double;
-        break;
-    case stringType:
-        Value.String = new QString(*copy.Value.String);
-        break;
-    case binaryType:
-        Value.Array = new QByteArray(*copy.Value.Array);
-        break;
-    case nullType:
-        break;
-    case longType:
-        Value.Long = copy.Value.Long;
-        break;
-    case ulongType:
-        Value.uLong = copy.Value.uLong;
-        break;
-    }
-    return *this;
+    Value = copy.Value;
 }
 
 bool toQValue::isNumber() const
 {
-    switch (Type)
-    {
-    case intType:
-    case doubleType:
-    case nullType:              // intentional fall through
-    case longType:
-    case ulongType:
-        return true;
-
-    case stringType:            // intentional
-    case binaryType:
-        return false;
-    }
-
-    return false;
+    return isInt() || isDouble() || isLong() || isuLong();
 }
 
 bool toQValue::operator == (const toQValue &val) const
 {
-    if (isNull() && val.isNull())
-        return true;
-    if (val.Type != Type)
-        return false;
-    switch (Type)
-    {
-    case intType:
-        return (val.Value.Int == Value.Int);
-    case doubleType:
-        return (val.Value.Double == Value.Double);
-    case stringType:
-        return (*val.Value.String) == (*Value.String);
-    case binaryType:
-        return (*val.Value.Array) == (*Value.Array);
-    case nullType:
-        break;
-    case longType:
-        return val.Value.Long == Value.Long;
-    case ulongType:
-        return val.Value.uLong == Value.uLong;
-    }
-    return false;  // Should never get here
+    return Value == val.Value;
 }
 
-toQValue::toQValue(const QString &str)
+QVariant toQValue::toQVariant() const
 {
-    Type = stringType;
-    Value.String = new QString(str);
+    return Value;
 }
 
-toQValue::toQValue(void)
+bool toQValue::isInt() const
 {
-    Type = nullType;
+    return Value.type() == QVariant::Int;
 }
 
-toQValue::~toQValue()
+bool toQValue::isDouble() const
 {
-    if (Type == stringType)
-        delete Value.String;
-    else if (Type == binaryType)
-        delete Value.Array;
+    return Value.type() == QVariant::Double;
 }
 
-QVariant toQValue::toQVariant(void) const
+bool toQValue::isuLong() const
 {
-    if (isInt())
-        return QVariant(toInt());
-    if (isDouble())
-        return QVariant(toDouble());
-    if (isNull())
-        return QVariant();
-    if (isString())
-        return QVariant(toUtf8());
-    if (isBinary())
-        return QVariant(toString());
-    if (isLong())
-        return QVariant(toLong());
-    if (isuLong())
-        return QVariant(touLong());
-    return QVariant(toByteArray());
+    return Value.type() == QVariant::ULongLong;
 }
 
-bool toQValue::isInt(void) const
+bool toQValue::isLong() const
 {
-    return Type == intType;
+    return Value.type() == QVariant::LongLong;
 }
 
-bool toQValue::isDouble(void) const
+bool toQValue::isString() const
 {
-    return Type == doubleType;
+    return Value.type() == QVariant::String;
 }
 
-bool toQValue::isuLong(void) const
+bool toQValue::isBinary() const
 {
-    return Type == ulongType;
+    return Value.type() == QVariant::ByteArray;
 }
 
-bool toQValue::isLong(void) const
+bool toQValue::isNull() const
 {
-    return Type == longType;
+    return Value.isNull();
 }
 
-bool toQValue::isString(void) const
+const QByteArray toQValue::toByteArray() const
 {
-    return Type == stringType;
-}
-
-bool toQValue::isBinary(void) const
-{
-    return Type == binaryType;
-}
-
-bool toQValue::isNull(void) const
-{
-    if (Type == nullType)
-        return true;
-    if (Type == stringType && Value.String->isNull())
-        return true;
-    return false;
-}
-
-const QByteArray &toQValue::toByteArray() const
-{
-    if (Type != binaryType)
-        throw qApp->translate("toQValue", "Tried to convert non binary value to binary");
-    return *Value.Array;
+    return Value.toByteArray();
 }
 
 static char HexString[] = "0123456789ABCDEF";
 
-QString toQValue::toUtf8(void) const
+QString toQValue::toUtf8() const
 {
-    switch (Type)
-    {
-    case nullType:
-    {
-        QString ret;
-        return ret;
-    }
-    case intType:
-    {
-        QString ret;
-        ret.setNum(Value.Int);
-        return ret;
-    }
-    case longType:
-    {
-        QString ret;
-        ret.setNum(Value.Long);
-        return ret;
-    }
-    case ulongType:
-    {
-        QString ret;
-        ret.setNum(Value.uLong);
-        return ret;
-    }
-    case doubleType:
-    {
-        QString ret;
-        if (Value.Double != int(Value.Double))
-        {
-            ret.setNum(Value.Double);
-            return ret;
-        }
-        char buf[100];
-        switch (NumberFormat)
-        {
-        default:
-            ret.setNum(Value.Double);
-            break;
-        case 1:
-            sprintf(buf, "%E", Value.Double);
-            ret = buf;
-            break;
-        case 2:
-            sprintf(buf, "%0.*f", NumberDecimals, Value.Double);
-            ret = buf;
-            break;
-        }
-        return ret;
-    }
-    case stringType:
-        return *(Value.String);
-    case binaryType:
-    {
-        QString ret(Value.Array->size()*2 + 1);
-        for (int i = 0;i < Value.Array->size();i++)
-        {
-            unsigned char c = (unsigned char)Value.Array->at(i);
-//                 ret.at(i*2) = HexString[(c / 16) % 16];
-//                 ret.at(i*2 + 1) = HexString[c % 16];
-            ret[i*2] = HexString[(c / 16) % 16];
-            ret[i*2 + 1] = HexString[c % 16];
-        }
-//             ret.at(Value.Array->size()*2) = 0;
-        ret[Value.Array->size()*2] = 0;
-        return ret;
-    }
-    }
-    throw qApp->translate("toQValue", "Unknown type of query value");
+    return Value.toString();
 }
 
-int toQValue::toInt(void) const
+QString toQValue::toString() const
 {
-    switch (Type)
-    {
-    case nullType:
-        return 0;
-    case intType:
-        return Value.Int;
-    case doubleType:
-        return int(Value.Double);
-    case longType:
-        return int(Value.Long);
-    case ulongType:
-        return int(Value.uLong);
-    case stringType:
-        return Value.String->toInt();
-    case binaryType:
-        throw qApp->translate("toQValue", "Can't transform binary value to int");
-    }
-    throw qApp->translate("toQValue", "Unknown type of query value");
+    return Value.toString();
 }
 
-double toQValue::toDouble(void) const
+int toQValue::toInt() const
 {
-    switch (Type)
-    {
-    case nullType:
-        return 0;
-    case intType:
-        return double(Value.Int);
-    case longType:
-        return double(Value.Long);
-    case ulongType:
-        return double(Value.uLong);
-    case doubleType:
-        return Value.Double;
-    case stringType:
-        return Value.String->toDouble();
-    case binaryType:
-        throw qApp->translate("toQValue", "Can't transform binary value to double");
-    }
-    throw qApp->translate("toQValue", "Unknown type of query value");
+    return Value.toInt();
 }
 
-qlonglong toQValue::toLong(void) const
+double toQValue::toDouble() const
 {
-    switch (Type)
-    {
-    case longType:
-        return Value.Long;
-    case ulongType:
-        return (qlonglong) Value.uLong;
-    case nullType:
-        return (qlonglong) 0;
-    case intType:
-        return (qlonglong) Value.Int;
-    case doubleType:
-        return (qlonglong) Value.Double;
-    case stringType:
-        return Value.String->toLongLong();
-    case binaryType:
-        throw qApp->translate("toQValue", "Can't transform binary value to long");
-    }
-    throw qApp->translate("toQValue", "Unknown type of query value");
+    return Value.toDouble();
 }
 
-qulonglong toQValue::touLong(void) const
+qlonglong toQValue::toLong() const
 {
-    switch (Type)
-    {
-    case longType:
-        return (qulonglong) Value.Long;
-    case ulongType:
-        return Value.uLong;
-    case nullType:
-        return (qulonglong) 0;
-    case intType:
-        return (qulonglong) Value.Int;
-    case doubleType:
-        return (qulonglong) Value.Double;
-    case stringType:
-        return Value.String->toULongLong();
-    case binaryType:
-        throw qApp->translate("toQValue", "Can't transform binary value to ulong");
-    }
-    throw qApp->translate("toQValue", "Unknown type of query value");
+    return Value.toLongLong();
+}
+
+qulonglong toQValue::touLong() const
+{
+    return Value.toULongLong();
 }
 
 void toQValue::setNumberFormat(int format, int decimals)
@@ -487,46 +239,27 @@ QString toQValue::formatNumber(double number)
     }
 }
 
-int toQValue::numberFormat(void)
+int toQValue::numberFormat()
 {
     return NumberFormat;
 }
 
-int toQValue::numberDecimals(void)
+int toQValue::numberDecimals()
 {
     return NumberDecimals;
 }
 
 toQValue toQValue::fromVariant(const QVariant &val)
 {
-    switch (val.type())
-    {
-    case QVariant::Invalid:
-        return toQValue();
-    case QVariant::Bool:
-        return toQValue((int) val.toBool());
-    case QVariant::Double:
-        return toQValue((double) val.toDouble());
-    case QVariant::Int:
-        return toQValue((int) val.toInt());
-    case QVariant::LongLong:
-        return toQValue((qlonglong) val.toLongLong());
-    case QVariant::UInt:
-        return toQValue((qulonglong) val.toUInt());
-    case QVariant::ULongLong:
-        return toQValue(val.toULongLong());
-    case QVariant::ByteArray:
-        return toQValue::createBinary(val.toByteArray());
-    default:
-        return toQValue(val.toString());
-    }
+    toQValue ret;
+    ret.Value = val;
+    return ret;
 }
 
 toQValue toQValue::createBinary(const QByteArray &arr)
 {
     toQValue ret;
-    ret.Type = binaryType;
-    ret.Value.Array = new QByteArray(arr);
+    ret.Value = arr;
     return ret;
 }
 
@@ -587,31 +320,44 @@ toQValue toQValue::createFromHex(const QString &hex)
 
 toQValue::operator QString() const
 {
-    switch (Type)
+    return Value.toString();
+}
+
+
+QString toQValue::toSIsize() const
+{
+    if (this->isNull())
+        return NULL;
+
+    double size = toDouble();
+    QString s = "%1";
+    int i = 0;
+
+    while (size / 1024 >= 10)
     {
-    case nullType:
-        return QString::null;
-    case doubleType:
-        return formatNumber(Value.Double);
-    case intType:
-        return QString::number(Value.Int);
-    case longType:
-        return QString::number(Value.Long);
-    case ulongType:
-        return QString::number(Value.uLong);
-    case stringType:
-        return *Value.String;
-    case binaryType:
+        i++;
+        size = size / 1024;
+    }
+
+    switch (i)
     {
-        QString ret;
-        for (int i = 0;i < Value.Array->size();i++)
-        {
-            unsigned char c = (unsigned char)Value.Array->at(i);
-            ret += HexString[(c / 16) % 16];
-            ret += HexString[c % 16];
-        }
-        return ret;
+    case 0:
+        break;
+    case 1:
+        s.append("K");
+        break;
+    case 2:
+        s.append("M");
+        break;
+    case 3:
+        s.append("G");
+        break;
+    case 4:
+        s.append("T");
+        break;
+    default:
+        s.append("E");
     }
-    }
-    throw qApp->translate("toQValue", "Unknown type of query value");
+
+    return s.arg(size, 0, 'f', 0);
 }

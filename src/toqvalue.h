@@ -42,39 +42,24 @@
 
 #include <list>
 #include <QString>
+#include <QVariant>
 
-class QVariant;
 
-
-/** This function is used to represent values that are passed to and from queries
+/**
+ * This is now a wrapper around QVariant to avoid a lot of memory
+ * copies. Choosing not to subclass QVariant though -- it's a
+ * complicated class and it'd be easy to screw it up.
+ *
  */
 class toQValue
 {
-    enum queryType
-    {
-        intType,
-        doubleType,
-        longType,
-        ulongType,
-        stringType,
-        binaryType,
-        nullType
-    } Type;
-
-    union queryValue
-    {
-        int         Int;
-        double      Double;
-        qlonglong   Long;
-        qulonglong  uLong;
-        QString    *String;
-        QByteArray *Array;
-    } Value;
+    QVariant Value;
 
 public:
     /** Create null value.
      */
     toQValue(void);
+
     /** Create integer value.
      * @param i Value.
      */
@@ -167,7 +152,7 @@ public:
 
     /** Get binary representation of value. Can only be called when the data is actually binary.
      */
-    const QByteArray &toByteArray(void) const;
+    const QByteArray toByteArray(void) const;
 
     /** Convert value to a string. If binary convert to hex.
      */
@@ -175,47 +160,9 @@ public:
 
     /** Convert value to a string. If binary convert to hex.
      */
-    QString toString() const
-    {
-        return QString(*this);
-    }
+    QString toString() const;
 
-    QString toSIsize() const
-    {
-        if (this->isNull()) return NULL;
-
-        double size = toDouble();
-        QString s = "%1";
-        int i = 0;
-
-        while (size / 1024 >= 10)
-        {
-            i++;
-            size = size / 1024;
-        }
-
-        switch (i)
-        {
-        case 0:
-            break;
-        case 1:
-            s.append("K");
-            break;
-        case 2:
-            s.append("M");
-            break;
-        case 3:
-            s.append("G");
-            break;
-        case 4:
-            s.append("T");
-            break;
-        default:
-            s.append("E");
-        }
-
-        return s.arg(size, 0, 'f', 0);
-    }
+    QString toSIsize() const;
 
     /** Set numberformat.
      * @param format 0 = Default, 1 = Scientific, 2 = Fixed Decimals
