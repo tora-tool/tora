@@ -125,6 +125,8 @@ tora_SOURCES=main.cpp \
 	toscripttreeitem.cpp toscripttreeitem.h \
 	toscripttreemodel.cpp toscripttreemodel.h \
 	tosecurity.cpp tosecurity.h  \
+    tosecuritytreemodel.cpp tosecuritytreemodel.h \
+    tosecuritytreeitem.cpp tosecuritytreeitem.h \
 	tosession.cpp tosession.h \
 	tosgatrace.cpp tosgatrace.h \
 	tosqledit.cpp tosqledit.h \
@@ -337,6 +339,7 @@ BUILT_SOURCES = \
 	moc_toscript.cpp \
 	moc_tosearchreplace.cpp \
 	moc_tosecurity.cpp \
+    moc_tosecuritytreemodel.cpp \
 	moc_tosession.cpp \
 	moc_tosgastatement.cpp \
 	moc_tosgatrace.cpp \

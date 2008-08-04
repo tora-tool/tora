@@ -171,6 +171,8 @@ SET(TORA_MOC_CLASSES
     toscripttreemodel.h
     tosearchreplace.h
     tosecurity.h
+    tosecuritytreemodel.h
+#     tosecuritytreeitem.h
     tosession.h
     tosgastatement.h
     tosgatrace.h
@@ -310,6 +312,8 @@ SET(TORA_SOURCES
     toscripttreemodel.cpp
     tosearchreplace.cpp
     tosecurity.cpp
+    tosecuritytreemodel.cpp
+    tosecuritytreeitem.cpp
     tosession.cpp
     tosgastatement.cpp
     tosgatrace.cpp

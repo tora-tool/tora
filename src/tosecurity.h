@@ -43,6 +43,7 @@
 // due the toListView
 #include "toresultview.h"
 #include "ui_tosecurityquotaui.h"
+#include "tosecuritytreemodel.h"
 
 #include <list>
 
@@ -53,6 +54,7 @@ class toConnection;
 // class toListView;
 class toSecurityPage;
 class toSecurityQuota;
+
 
 
 class toSecuritySystem : public toListView
@@ -84,7 +86,7 @@ public slots:
     virtual void changed(toTreeWidgetItem *item);
 };
 
-class toSecurityObject : public toListView
+class toSecurityObject : public QTreeView
 {
     Q_OBJECT
 
@@ -94,8 +96,8 @@ public:
     void sql(const QString &user, std::list<QString> &sql);
     void eraseUser(bool all = true);
     void update(void);
-public slots:
-    virtual void changed(toTreeWidgetItem *item);
+private:
+    toSecurityTreeModel * m_model;
 };
 
 class toSecurity : public toToolWidget

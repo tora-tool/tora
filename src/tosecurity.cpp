@@ -142,30 +142,6 @@ static toSQL SQLSystemGrant("toSecurity:SystemGrant",
                             "SELECT privilege, NVL(admin_option,'NO') FROM sys.dba_sys_privs WHERE grantee = :f1<char[100]>",
                             "Get information about the system privileges a user has, should have same bindings and columns");
 
-static toSQL SQLObjectPrivs("toSecurity:ObjectPrivs",
-                            "SELECT DECODE(:type<char[100]>,'FUNCTION','EXECUTE',\n"
-                            "          'LIBRARY','EXECUTE',\n"
-                            "          'PACKAGE','EXECUTE',\n"
-                            "          'PROCEDURE','EXECUTE',\n"
-                            "          'SEQUENCE','ALTER,SELECT',\n"
-                            "          'TABLE','ALTER,DELETE,INDEX,INSERT,REFERENCES,SELECT,UPDATE',\n"
-                            "          'TYPE','EXECUTE',\n"
-                            "          'VIEW','DELETE,SELECT,INSERT,UPDATE',\n"
-                            "          'OPERATOR','EXECUTE',\n"
-                            "          'DIRECTORY','READ',\n"
-                            "          NULL) FROM sys.DUAL",
-                            "Takes a type as parameter and return ',' separated list of privileges");
-
-static toSQL SQLObjectGrant("toSecurity:ObjectGrant",
-                            "SELECT owner,\n"
-                            "       table_name,\n"
-                            "       privilege,\n"
-                            "       grantable\n"
-                            "  FROM sys.dba_tab_privs\n"
-                            " WHERE grantee = :f1<char[100]>",
-                            "Get the privilege on objects for a user or role, "
-                            "must have same columns and binds");
-
 static toSQL SQLRoleGrant("toSecurity:RoleGrant",
                           "SELECT granted_role,\n"
                           "       admin_option,\n"
@@ -844,279 +820,34 @@ public:
 };
 
 toSecurityObject::toSecurityObject(QWidget *parent)
-        : toListView(parent)
+        : QTreeView(parent)
 {
-    addColumn(tr("Object"));
-    setRootIsDecorated(true);
-    update();
-    setSorting(0);
-    connect(this, SIGNAL(clicked(toTreeWidgetItem *)), this, SLOT(changed(toTreeWidgetItem *)));
+    setObjectName("toSecurityObject");
+
+    m_model = new toSecurityTreeModel(this);
+    setModel(m_model);
+//     update();
 }
 
 
 void toSecurityObject::update(void)
 {
-    clear();
-    try
-    {
-        QString oType;
-        QString oOwner;
-        QString oName;
-        std::list<toConnection::objectName> &objectList = toCurrentConnection(this).objects(true);
-        std::map<QString, QStringList> TypeOptions;
-        toQuery typelst(toCurrentConnection(this));
-        toTreeWidgetItem *typeItem = NULL;
-        toTreeWidgetItem *ownerItem = NULL;
-        toTreeWidgetItem *nameItem = NULL;
-        QStringList Options;
-        for (std::list<toConnection::objectName>::iterator i = objectList.begin();i != objectList.end();i++)
-        {
-            QString type = (*i).Type;
-            QString owner = (*i).Owner;
-            QString name = (*i).Name;
-            if (owner != oOwner)
-            {
-                oType = oName = QString::null;
-                typeItem = nameItem = NULL;
-                oOwner = owner;
-                ownerItem = new toResultViewItem(this, ownerItem, owner);
-            }
-            if (type != oType)
-            {
-                oName = QString::null;
-                nameItem = NULL;
-                oType = type;
-                if (TypeOptions.find(type) == TypeOptions.end())
-                {
-                    toQList args;
-                    toPush(args, toQValue(type));
-                    typelst.execute(SQLObjectPrivs, args);
-                    Options = typelst.readValue().toString().split(QString(","));
-                    TypeOptions[type] = Options;
-                }
-                else
-                    Options = TypeOptions[type];
-
-                if (Options.count() > 0)
-                {
-                    for (typeItem = ownerItem->firstChild();typeItem;typeItem = typeItem->nextSibling())
-                    {
-                        if (typeItem->text(0) == type)
-                            break;
-                    }
-                    if (!typeItem)
-                        typeItem = new toResultViewItem(ownerItem, typeItem, type);
-                }
-            }
-            if (Options.count() > 0)
-            {
-                // causes crash. todo
-//                 nameItem = new toResultViewItem(typeItem, nameItem, name);
-//                 for (QStringList::Iterator i = Options.begin();i != Options.end();i++)
-//                 {
-//                     toTreeWidgetItem *item = new toResultViewCheck(nameItem, *i, toTreeWidgetCheck::CheckBox);
-//                     item->setText(2, name);
-//                     item->setText(3, owner);
-//                     new toResultViewCheck(item, tr("Admin"), toTreeWidgetCheck::CheckBox);
-//                 }
-            }
-        }
-    }
-    TOCATCH
+    m_model->setupModelData(toCurrentConnection(this).user());
 }
 
 void toSecurityObject::eraseUser(bool all)
 {
-    toTreeWidgetItem *next = NULL;
-    for (toTreeWidgetItem *item = firstChild();item;item = next)
-    {
-        toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>(item);
-        if (chk)
-        {
-            if (all)
-                chk->setOn(false);
-            chk->setText(1, QString::null);
-        }
-        if (all)
-            item->setOpen(false);
-        if (item->firstChild())
-            next = item->firstChild();
-        else if (item->nextSibling())
-            next = item->nextSibling();
-        else
-        {
-            next = item;
-            do
-            {
-                next = next->parent();
-            }
-            while (next && !next->nextSibling());
-            if (next)
-                next = next->nextSibling();
-        }
-    }
+    m_model->setupModelData(toCurrentConnection(this).user());
 }
 
 void toSecurityObject::changeUser(const QString &user)
 {
-    bool open = true;
-    eraseUser();
-    try
-    {
-        std::map<QString, std::map<QString, std::map<QString, QString> > > privs;
-        toQuery grant(toCurrentConnection(this), SQLObjectGrant, user);
-        QString yes = "YES";
-        QString admstr = "ADMIN";
-        QString normalstr = "normal";
-        while (!grant.eof())
-        {
-            QString owner(grant.readValue());
-            QString object(grant.readValue());
-            QString priv(grant.readValue());
-            QString admin(grant.readValue());
-
-            ((privs[owner])[object])[priv] = (admin == yes ? admstr : normalstr);
-        }
-
-        for (toTreeWidgetItem *ownerItem = firstChild();ownerItem;ownerItem = ownerItem->nextSibling())
-        {
-            for (toTreeWidgetItem * tmpitem = ownerItem->firstChild();tmpitem;tmpitem = tmpitem->nextSibling())
-            {
-                for (toTreeWidgetItem * object = tmpitem->firstChild();object;object = object->nextSibling())
-                {
-                    for (toTreeWidgetItem * type = object->firstChild();type;type = type->nextSibling())
-                    {
-                        QString t = ((privs[ownerItem->text(0)])[object->text(0)])[type->text(0)];
-                        if (!t.isNull())
-                        {
-                            toResultViewCheck *chk = dynamic_cast<toResultViewCheck *>(type);
-                            if (chk)
-                            {
-                                chk->setText(1, tr("ON"));
-                                chk->setOn(true);
-                                if (t == admstr)
-                                {
-                                    toResultViewCheck *chld = dynamic_cast<toResultViewCheck *>(type->firstChild());
-                                    if (chld)
-                                    {
-                                        chld->setText(1, tr("ON"));
-                                        chld->setOn(true);
-                                        if (open)
-                                            chk->setOpen(true);
-                                    }
-                                }
-                            }
-                            if (open)
-                                for (toTreeWidgetItem *par = chk->parent();par;par = par->parent())
-                                    par->setOpen(true);
-                        }
-                    }
-                }
-            }
-        }
-    }
-    TOCATCH
+    m_model->setupModelData(user);
 }
 
 void toSecurityObject::sql(const QString &user, std::list<QString> &sqlLst)
 {
-    toTreeWidgetItem *next = NULL;
-    for (toTreeWidgetItem *item = firstChild();item;item = next)
-    {
-        toResultViewCheck * check = dynamic_cast<toResultViewCheck *>(item);
-        toResultViewCheck *chld = dynamic_cast<toResultViewCheck *>(item->firstChild());
-        if (check)
-        {
-            QString sql;
-            QString what = item->text(0);
-            what += QString::fromLatin1(" ON \"");
-            what += item->text(3);
-            what += QString::fromLatin1("\".\"");
-            what += item->text(2);
-            what += QString::fromLatin1("\" ");
-            if (chld && chld->isOn() && chld->text(1).isEmpty())
-            {
-                sql = QString::fromLatin1("GRANT ");
-                sql += what;
-                sql += QString::fromLatin1("TO \"");
-                sql += user;
-                sql += QString::fromLatin1("\" WITH GRANT OPTION");
-                sqlLst.insert(sqlLst.end(), sql);
-            }
-            else if (check->isOn() && !item->text(1).isEmpty())
-            {
-                if (chld && !chld->isOn() && !chld->text(1).isEmpty())
-                {
-                    sql = QString::fromLatin1("REVOKE ");
-                    sql += what;
-                    sql += QString::fromLatin1("FROM \"");
-                    sql += user;
-                    sql += QString::fromLatin1("\"");
-                    sqlLst.insert(sqlLst.end(), sql);
-
-                    sql = QString::fromLatin1("GRANT ");
-                    sql += what;
-                    sql += QString::fromLatin1("TO \"");
-                    sql += user;
-                    sql += QString::fromLatin1("\"");
-                    sqlLst.insert(sqlLst.end(), sql);
-                }
-            }
-            else if (check->isOn() && item->text(1).isEmpty())
-            {
-                sql = QString::fromLatin1("GRANT ");
-                sql += what;
-                sql += QString::fromLatin1("TO \"");
-                sql += user;
-                sql += QString::fromLatin1("\"");
-                sqlLst.insert(sqlLst.end(), sql);
-            }
-            else if (!check->isOn() && !item->text(1).isEmpty())
-            {
-                sql = QString::fromLatin1("REVOKE ");
-                sql += what;
-                sql += QString::fromLatin1("FROM \"");
-                sql += user;
-                sql += QString::fromLatin1("\"");
-                sqlLst.insert(sqlLst.end(), sql);
-            }
-        }
-        if (!check && item->firstChild())
-            next = item->firstChild();
-        else if (item->nextSibling())
-            next = item->nextSibling();
-        else
-        {
-            next = item;
-            do
-            {
-                next = next->parent();
-            }
-            while (next && !next->nextSibling());
-            if (next)
-                next = next->nextSibling();
-        }
-    }
-}
-
-void toSecurityObject::changed(toTreeWidgetItem *org)
-{
-    toResultViewCheck *item = dynamic_cast<toResultViewCheck *>(org);
-    if (item)
-    {
-        if (item->isOn())
-        {
-            item = dynamic_cast<toResultViewCheck *>(item->parent());
-            if (item)
-                item->setOn(true);
-        }
-        else
-        {
-            item = dynamic_cast<toResultViewCheck *>(item->firstChild());
-            if (item)
-                item->setOn(false);
-        }
-    }
+    m_model->sql(user, sqlLst);
 }
 
 toSecuritySystem::toSecuritySystem(QWidget *parent)
