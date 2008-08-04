@@ -121,6 +121,7 @@ bool toQValue::operator>(const toQValue &other) const
 const toQValue &toQValue::operator = (const toQValue & copy)
 {
     Value = copy.Value;
+    return *this;
 }
 
 bool toQValue::isNumber() const
@@ -177,8 +178,6 @@ const QByteArray toQValue::toByteArray() const
 {
     return Value.toByteArray();
 }
-
-static char HexString[] = "0123456789ABCDEF";
 
 QString toQValue::toUtf8() const
 {
