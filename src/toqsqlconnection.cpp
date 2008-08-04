@@ -216,7 +216,7 @@ static toSQL SQLCancelPgOld("toQSqlConnection:Cancel",
 void native_cancel(QSqlDriver *driver) {
     QVariant v = driver->handle();
     if(v.isValid() && v.typeName() == QString("PGconn*")) {
-#ifdef LIBPQ_DECL_CHECK
+#ifdef LIBPQ_DECL_CANCEL
         PGconn *handle = *static_cast<PGconn **>(v.data());
         if(!handle)
             return;
