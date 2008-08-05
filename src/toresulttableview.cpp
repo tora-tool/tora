@@ -135,6 +135,7 @@ toResultTableView::toResultTableView(bool readable,
 
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setAlternatingRowColors(true);
 
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this,
