@@ -325,13 +325,25 @@ void toConnectionPool::release(toConnectionSub *sub) {
 }
 
 
-void toConnectionPool::commit() {
-    (new toRunnableThread(new toConnectionPoolExec(this, toConnectionPoolExec::Commit)))->start();
+void toConnectionPool::commit(bool wait) {
+    toConnectionPoolExec *ex = new toConnectionPoolExec(
+        this,
+        toConnectionPoolExec::Commit);
+    if(!wait)
+        (new toRunnableThread(ex))->start();
+    else
+        ex->run();
 }
 
 
-void toConnectionPool::rollback() {
-    (new toRunnableThread(new toConnectionPoolExec(this, toConnectionPoolExec::Rollback)))->start();
+void toConnectionPool::rollback(bool wait) {
+    toConnectionPoolExec *ex = new toConnectionPoolExec(
+        this,
+        toConnectionPoolExec::Rollback);
+    if(!wait)
+        (new toRunnableThread(ex))->start();
+    else
+        ex->run();
 }
 
 

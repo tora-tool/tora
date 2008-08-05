@@ -807,8 +807,6 @@ toConnectionSub* toConnection::pooledConnection(void)
 void toConnection::commit(toConnectionSub *sub)
 {
     toBusy busy;
-    toLocker lock(Lock);
-
     Connection->commit(sub);
 }
 
@@ -821,8 +819,6 @@ void toConnection::commit(void)
 void toConnection::rollback(toConnectionSub *sub)
 {
     toBusy busy;
-    toLocker lock(Lock);
-
     Connection->rollback(sub);
 }
 

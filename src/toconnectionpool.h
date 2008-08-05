@@ -247,14 +247,14 @@ public:
      * Commit connections that are not busy
      *
      */
-    void commit(void);
+    void commit(bool wait = true);
 
 
     /**
      * Rollback connections that are not busy
      *
      */
-    void rollback(void);
+    void rollback(bool wait = true);
 
 
     /**
