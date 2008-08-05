@@ -34,7 +34,7 @@
 * All trademarks belong to their respective owners.
 *
 *****/
-
+// #include <QtDebug>
 #include "utils.h"
 
 #include "toconf.h"
@@ -388,8 +388,7 @@ public:
 
 bool toDebug::isRunning(void)
 {
-    toLocker lock (Lock)
-    ;
+    toLocker lock (Lock);
     return RunningTarget;
 }
 
@@ -419,8 +418,7 @@ void toDebug::targetTask::run(void)
         }
         catch (...)
         {
-            toLocker lock (Parent.Lock)
-            ;
+            toLocker lock (Parent.Lock);
             Parent.TargetLog += QString::fromLatin1("Couldn't enable debugging for target session\n");
         }
         try
@@ -428,16 +426,14 @@ void toDebug::targetTask::run(void)
             toQuery init(Connection, SQLDebugInit);
 
             Parent.DebuggerStarted = true;
-            toLocker lock (Parent.Lock)
-            ;
+            toLocker lock (Parent.Lock);
             Parent.TargetID = init.readValue();
             Parent.ChildSemaphore.up();
             Parent.TargetLog += QString::fromLatin1("Debug session connected\n");
         }
         catch (const QString &exc)
         {
-            toLocker lock (Parent.Lock)
-            ;
+            toLocker lock (Parent.Lock);
             Parent.TargetLog += QString::fromLatin1("Couldn't start debugging:");
             Parent.TargetLog += exc;
             Parent.DebuggerStarted = false;
@@ -448,8 +444,7 @@ void toDebug::targetTask::run(void)
         while (1)
         {
             {
-                toLocker lock (Parent.Lock)
-                ;
+                toLocker lock (Parent.Lock);
                 Parent.RunningTarget = false;
                 colSize = Parent.ColumnSize;
             }
@@ -459,8 +454,7 @@ void toDebug::targetTask::run(void)
             toQList inParams;
             toQList outParams;
             {
-                toLocker lock (Parent.Lock)
-                ;
+                toLocker lock (Parent.Lock);
                 Parent.RunningTarget = true;
                 sql = Parent.TargetSQL;
                 Parent.TargetSQL = "";
@@ -499,8 +493,7 @@ void toDebug::targetTask::run(void)
             }
 
             {
-                toLocker lock (Parent.Lock)
-                ;
+                toLocker lock (Parent.Lock);
                 Parent.OutputData = outParams;
                 Parent.TargetLog += QString::fromLatin1("Execution ended\n");
             }
@@ -509,8 +502,7 @@ void toDebug::targetTask::run(void)
 
     }
     TOCATCH
-    toLocker lock (Parent.Lock)
-    ;
+    toLocker lock (Parent.Lock);
     Parent.DebuggerStarted = false;
     Parent.TargetLog += QString::fromLatin1("Closing debug session\n");
     Parent.TargetThread = NULL;
@@ -857,8 +849,7 @@ void toDebug::execute(void)
                 {
                     return ;
                 }
-                toLocker lock (Lock)
-                ;
+                toLocker lock (Lock);
                 InputData = input;
                 last = head->firstChild();
                 if (InputData.begin() != InputData.end())
@@ -914,8 +905,7 @@ int toDebug::sync(void)
             ret = sync.readValue().toInt();
             reason = sync.readValue().toInt();
             {
-                toLocker lock (Lock)
-                ;
+                toLocker lock (Lock);
                 TargetLog += QString::fromLatin1("Syncing debug session\n");
                 if (!RunningTarget)
                 {
@@ -1120,8 +1110,7 @@ void toDebug::updateContent(toDebugText *current)
 
 void toDebug::readLog(void)
 {
-    toLocker lock (Lock)
-    ;
+    toLocker lock (Lock);
     if (!TargetLog.isEmpty())
     {
         TargetLog.replace(TargetLog.length() - 1, 1, QString::null);
@@ -1256,8 +1245,7 @@ void toDebug::updateState(int reason)
                 editor->setCurrent( -1);
             }
             StackTrace->clear();
-            toLocker lock (Lock)
-            ;
+            toLocker lock (Lock);
             if (OutputData.begin() != OutputData.end())
             {
                 toTreeWidgetItem *head = Parameters->firstChild();
@@ -1725,21 +1713,23 @@ int toDebug::continueExecution(int stopon)
 
 void toDebug::executeInTarget(const QString &str, toQList &params)
 {
+//     qDebug() << "toDebug::executeInTarget 1";
     toBusy busy;
     {
-        toLocker lock (Lock)
-        ;
+        toLocker lock (Lock);
         TargetSQL = toDeepCopy(str);
         InputData = params;
         TargetSemaphore.up();
     }
     StartedSemaphore.down();
+
     int ret = sync();
     while (ret >= 0 && ret != TO_REASON_EXIT && ret != TO_REASON_KNL_EXIT && RunningTarget)
     {
         ret = continueExecution(TO_BREAK_ANY_RETURN);
     }
     readLog();
+//     qDebug() << "toDebug::executeInTarget 2";
 }
 
 void toDebug::stop(void)
@@ -1752,7 +1742,6 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
         : toToolWidget(DebugTool, "debugger.html", main, connection, "toDebug"),
         TargetThread()
 {
-
     createActions();
     QToolBar *toolbar = toAllocBar(this, tr("Debugger"));
     layout()->addWidget(toolbar);
@@ -1906,7 +1895,7 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
     DebugTabs->addTab(RuntimeLog, tr("&Runtime Log"));
 
     Editors = new QTabWidget(hsplitter);
-    Editors->setTabPosition(QTabWidget::South);
+    Editors->setTabPosition(QTabWidget::North);
 
     QToolButton *closeButton = new toPopupButton(Editors);
     closeButton->setIcon(QPixmap(const_cast<const char**>(close_xpm)));
@@ -1924,6 +1913,7 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
 
     refresh();
     connect(&StartTimer, SIGNAL(timeout(void)), this, SLOT(startTarget(void)));
+
     StartTimer.start(1, true);
 }
 
@@ -2140,8 +2130,7 @@ void toDebug::startTarget(void)
 {
     try
     {
-        toLocker lock (Lock)
-        ;
+        toLocker lock (Lock);
         TargetThread = new toThread(new targetTask(*this));
         TargetThread->start();
     }
@@ -2155,19 +2144,19 @@ void toDebug::startTarget(void)
     if (!DebuggerStarted)
     {
         {
-            toLocker lock (Lock)
-            ;
+//             toLocker lock (Lock);
             TOMessageBox::critical(this, tr("Couldn't start debugging"),
                                    tr("Couldn't connect to target session:\n") +
                                    TargetLog,
                                    tr("&Ok"));
         }
-        close();
+//         close();
         return ;
     }
     try
     {
-        connection().execute(SQLAttach, TargetID);
+        if (DebuggerStarted)
+            connection().execute(SQLAttach, TargetID);
     }
     TOCATCH  // Trying to run somthing after this won't work (And will hang tora I think)
     readLog();
@@ -2193,6 +2182,7 @@ static toSQL SQLListObjects("toDebug:ListObjects",
 
 void toDebug::refresh(void)
 {
+//     qDebug() << "toDebug::refresh 1";
     try
     {
         QString selected = Schema->currentText();
@@ -2218,6 +2208,8 @@ void toDebug::refresh(void)
             }
             Objects->clear();
 
+            // refresh the objects
+            connection().rereadCache();
             std::list<toConnection::objectName> &objs = connection().objects(true);
 
             std::map<QString, toTreeWidgetItem *> typeItems;
@@ -2269,10 +2261,12 @@ void toDebug::refresh(void)
         }
     }
     TOCATCH
+//     qDebug() << "toDebug::refresh 2";
 }
 
 bool toDebug::checkStop(void)
 {
+//     qDebug() << "toDebug::checkStop 1";
     Lock.lock();
     if (RunningTarget)
     {
@@ -2280,16 +2274,21 @@ bool toDebug::checkStop(void)
         if (TOMessageBox::information(this, tr("Stop execution?"),
                                       tr("Do you want to abort the current execution?"),
                                       tr("&Ok"), tr("Cancel")) != 0)
+        {
+//             return false;
+            stop();
             return false;
-        stop();
+        }
     }
     else
         Lock.unlock();
+//     qDebug() << "toDebug::checkStop 2";
     return true;
 }
 
 bool toDebug::checkCompile(toDebugText *editor)
 {
+//     qDebug() << "toDebug::checkCompile 1";
     if (editor->isModified())
     {
         switch (TOMessageBox::warning(this,
@@ -2312,22 +2311,26 @@ bool toDebug::checkCompile(toDebugText *editor)
             return false;
         }
     }
+//     qDebug() << "toDebug::checkCompile 2";
     return true;
 }
 
 bool toDebug::checkCompile(void)
 {
+//     qDebug() << "toDebug::checkCompile void 1";
     for (int i = 0;i < Editors->count();i++)
     {
         toDebugText *editor = dynamic_cast<toDebugText *>(Editors->widget(i));
         if (!checkCompile(editor))
             return false;
     }
+//     qDebug() << "toDebug::checkCompile void 2";
     return true;
 }
 
 bool toDebug::close()
 {
+//     qDebug() << "toDebug::close 1";
     if (checkCompile())
     {
         bool ret = toToolWidget::close();
@@ -2335,11 +2338,13 @@ bool toDebug::close()
             Output->close();
         return ret;
     }
+//     qDebug() << "toDebug::close 2";
     return false;
 }
 
 void toDebug::closeEvent(QCloseEvent *e)
 {
+//     qDebug() << "toDebug::closeEvent 1";
     if (close())
     {
         try
@@ -2354,7 +2359,6 @@ void toDebug::closeEvent(QCloseEvent *e)
                     TargetSQL = "";
                     TargetSemaphore.up();
                 }
-
                 ChildSemaphore.down();
             }
             else
@@ -2367,29 +2371,32 @@ void toDebug::closeEvent(QCloseEvent *e)
             DebugTool.closeWindow(connection());
         }
         TOCATCH;
-
+// qDebug() << "toDebug::closeEvent 2";
         e->accept();
     }
     else
         e->ignore();
+// qDebug() << "toDebug::closeEvent 3";
 }
 
 void toDebug::updateCurrent()
 {
+//     qDebug() << "toDebug::updateCurrent 1";
     try
     {
         toDebugText *editor = currentEditor();
 
         editor->readData(connection(), StackTrace);
         editor->setFocus();
-
         updateContent();
     }
     TOCATCH
+//     qDebug() << "toDebug::updateCurrent 2";
 }
 
 void toDebug::changePackage(toTreeWidgetItem *item)
 {
+//     qDebug() << "toDebug::changePackage 1";
     if (item && item->parent())
     {
         viewSource(Schema->currentText(), item->text(0), item->text(1), 0);
@@ -2400,20 +2407,24 @@ void toDebug::changePackage(toTreeWidgetItem *item)
     else if (item && !item->parent())
         item->setOpen(true);
 #endif
+// qDebug() << "toDebug::changePackage 2";
 }
 
 void toDebug::showDebug(bool show)
 {
+//     qDebug() << "toDebug::showDebug 1";
     if (show)
         DebugTabs->show();
     else
         DebugTabs->hide();
 
     debugPaneAct->setChecked(show);
+//     qDebug() << "toDebug::showDebug 2";
 }
 
 bool toDebugText::compile(void)
 {
+//     qDebug() << "toDebugText::compile 1";
     QString str = text();
     bool ret = true;
     if (!str.isEmpty())
@@ -2423,7 +2434,6 @@ bool toDebugText::compile(void)
         toSQLParse::stringTokenizer tokens(str);
 
         QString token = tokens.getToken();
-
         if (token.toUpper() == "CREATE")
         {
             token = tokens.getToken();
@@ -2498,11 +2508,13 @@ bool toDebugText::compile(void)
             ret = false;
         }
     }
+//     qDebug() << "toDebugText::compile 2";
     return ret;
 }
 
 void toDebug::compile(void)
 {
+//     qDebug() << "toDebug::compile 1";
     if (!checkStop())
         return ;
 
@@ -2534,10 +2546,10 @@ void toDebug::compile(void)
         }
         else
             return ;
-
     }
     refresh();
     scanSource();
+//     qDebug() << "toDebug::compile 2";
 }
 
 toDebug::~toDebug()
@@ -2556,6 +2568,7 @@ void toDebug::nextError(void)
 
 void toDebug::changeContent(toTreeWidgetItem *ci)
 {
+//     qDebug() << "toDebug::changeContent 1";
     toContentsItem *item = dynamic_cast<toContentsItem *>(ci);
     if (item)
     {
@@ -2582,11 +2595,14 @@ void toDebug::changeContent(toTreeWidgetItem *ci)
     else
         ci->setOpen(true);
 #endif
+// qDebug() << "toDebug::changeContent 2";
 }
 
 void toDebug::scanSource(void)
 {
+//     qDebug() << "toDebug::scanSource 1";
     updateContent();
+//     qDebug() << "toDebug::scanSource 2";
 }
 
 void toDebug::newSheet(void)
