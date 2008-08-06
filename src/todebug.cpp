@@ -426,6 +426,7 @@ void toDebug::targetTask::run(void)
             toQuery init(Connection, SQLDebugInit);
 
             Parent.DebuggerStarted = true;
+            Parent.enableDebugger(true);
             toLocker lock (Parent.Lock);
             Parent.TargetID = init.readValue();
             Parent.ChildSemaphore.up();
@@ -437,6 +438,7 @@ void toDebug::targetTask::run(void)
             Parent.TargetLog += QString::fromLatin1("Couldn't start debugging:");
             Parent.TargetLog += exc;
             Parent.DebuggerStarted = false;
+            Parent.enableDebugger(false);
             Parent.ChildSemaphore.up();
             return ;
         }
@@ -462,7 +464,7 @@ void toDebug::targetTask::run(void)
                 Parent.InputData.clear(); // To make sure data is not shared
                 Parent.OutputData.clear();
             }
-            Parent.StartedSemaphore.up();
+//             Parent.StartedSemaphore.up();
             if (sql.isEmpty())
                 break;
 
@@ -504,6 +506,7 @@ void toDebug::targetTask::run(void)
     TOCATCH
     toLocker lock (Parent.Lock);
     Parent.DebuggerStarted = false;
+    Parent.enableDebugger(false);
     Parent.TargetLog += QString::fromLatin1("Closing debug session\n");
     Parent.TargetThread = NULL;
     Parent.ChildSemaphore.up();
@@ -866,7 +869,7 @@ void toDebug::execute(void)
                 TargetSQL = toDeepCopy(sql); // Deep copy of SQL
                 TargetSemaphore.up(); // Go go power rangers!
             }
-            StartedSemaphore.down();
+//             StartedSemaphore.down();
             if (sync() >= 0 && RunningTarget)
                 continueExecution(TO_BREAK_ANY_CALL);
         }
@@ -1713,7 +1716,7 @@ int toDebug::continueExecution(int stopon)
 
 void toDebug::executeInTarget(const QString &str, toQList &params)
 {
-//     qDebug() << "toDebug::executeInTarget 1";
+//     qDebug() << "toDebug::executeInTarget 1" << str;
     toBusy busy;
     {
         toLocker lock (Lock);
@@ -1721,7 +1724,7 @@ void toDebug::executeInTarget(const QString &str, toQList &params)
         InputData = params;
         TargetSemaphore.up();
     }
-    StartedSemaphore.down();
+//     StartedSemaphore.down();
 
     int ret = sync();
     while (ret >= 0 && ret != TO_REASON_EXIT && ret != TO_REASON_KNL_EXIT && RunningTarget)
@@ -1917,6 +1920,23 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
     StartTimer.start(1, true);
 }
 
+
+void toDebug::enableDebugger(bool enable)
+{
+    executeAct->setEnabled(enable);
+    stopAct->setEnabled(enable);
+    stepAct->setEnabled(enable);
+    nextAct->setEnabled(enable);
+    returnAct->setEnabled(enable);
+    debugPaneAct->setEnabled(enable);
+    nextErrorAct->setEnabled(enable);
+    previousErrorAct->setEnabled(enable);
+    toggleBreakAct->setEnabled(enable);
+    disableBreakAct->setEnabled(enable);
+    addWatchAct->setEnabled(enable);
+    deleteWatchAct->setEnabled(enable);
+    changeWatchAct->setEnabled(enable);
+}
 
 void toDebug::createActions(void)
 {

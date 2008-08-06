@@ -177,6 +177,11 @@ class toDebug : public toToolWidget
     // End of lock stuff
     toTimer StartTimer;
 
+    /*! \brief Enable/disable debugging related actions (steps etc.).
+    It's set to false when DBMS_DEBUG related calls fail.
+    */
+    void enableDebugger(bool);
+
 class targetTask : public toTask
     {
         toDebug &Parent;
