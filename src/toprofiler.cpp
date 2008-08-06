@@ -543,7 +543,7 @@ toProfiler::toProfiler(QWidget *parent, toConnection &connection)
     connect(Lines, SIGNAL(done()), this, SLOT(calcTotals()));
 
     LastUnit = CurrentRun = 0;
-    show();
+//     show();
 
     try
     {
