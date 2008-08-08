@@ -173,7 +173,6 @@
    </item>
   </layout>
  </widget>
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
   <tabstop>LocalScope_2</tabstop>
   <tabstop>Name</tabstop>

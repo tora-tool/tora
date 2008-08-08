@@ -121,7 +121,6 @@
       </item>
     </layout>
   </widget>
-  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
   <tabstops>
     <tabstop>Format</tabstop>
     <tabstop>Separator</tabstop>

@@ -271,7 +271,6 @@
       </item>
     </layout>
   </widget>
-  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
   <tabstops>
     <tabstop>Name</tabstop>
     <tabstop>Profile</tabstop>

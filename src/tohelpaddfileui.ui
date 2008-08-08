@@ -108,7 +108,6 @@
    </item>
   </layout>
  </widget>
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
   <tabstop>Root</tabstop>
   <tabstop>Filename</tabstop>

@@ -192,7 +192,6 @@
       </item>
     </layout>
   </widget>
-  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
   <tabstops>
     <tabstop>CheckPoint</tabstop>
     <tabstop>DefaultDate</tabstop>

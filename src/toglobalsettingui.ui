@@ -575,7 +575,6 @@ Will leave the password unencryptet in the config file.</string>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
   <tabstop>CustomSQL</tabstop>
   <tabstop>SQLBrowse</tabstop>

@@ -73,7 +73,6 @@
    </item>
   </layout>
  </widget>
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
   <tabstop>OkButton</tabstop>
   <tabstop>CancelButton</tabstop>
