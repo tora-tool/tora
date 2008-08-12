@@ -1,0 +1,83 @@
+<html lang="en">
+<head>
+<title>plsqleditor - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.11">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="tools.html#tools" title="tools">
+<link rel="prev" href="browser.html#browser" title="browser">
+<link rel="next" href="debugger.html#debugger" title="debugger">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 1.4.0.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="plsqleditor"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="debugger.html#debugger">debugger</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="browser.html#browser">browser</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
+<hr>
+</div>
+
+<h3 class="section">4.3 PL/SQL Editor</h3>
+
+<p><a name="index-PL_002fSQL-Editor-19"></a>
+This tool provides you with an advanced editor for developing PL/SQL objects.
+
+<h4 class="subheading">Elements of the editor window</h4>
+
+<p>On the top of the screen is the toolbar for the editor.
+
+   <p>Below that are two panes. 
+The left one Objects contains the available objects in the selected schema. 
+The schema is selectable through the toolbar. 
+Select the code object you want to edit in this list or start
+a new object before starting to edit the code.
+
+   <p>The right pane contains more widgets: Contents, Message Log, and the editor itself. 
+In the Contents list you can find declared methods of packages and also
+variables or even anonymous blocks in your code. 
+Selecting a line in this pane will move the cursor to where the element
+is in your code, for instance where a variable or method is declared.
+
+   <p>The Message Log contains all errors and optional warnings for given PL/SQL code. 
+Clicking the log items will take you to the exact place in the editor.
+
+<h4 class="subheading">Toolbar &amp; menu</h4>
+
+<p>The toolbar and menu contain pretty much the same commands with a few exceptions.
+
+     <dl>
+<dt><strong>Refresh object list</strong><dd>      Update the <strong>Object</strong> list to the left of the screen. This is first on the toolbar and close to the end in the menu. 
+      The keyboard shortcut for this is <strong>F5</strong>. 
+      Observe that this list is read from the object cache and will not be updated unless you reread the object cache as well
+      (Available from the File menu. 
+<br><dt><strong>Select schema</strong><dd>      In the toolbar this is a combobox listing the available schemas. Changing the schema will change the objects displayed in the <strong>Object</strong> list. 
+      Selecting it in the menu (Close to the end) or selecting the <strong>ALT+S</strong> keyboard shortcut will move the keyboard focus to the toolbar combobox. 
+<br><dt><strong>New sheet</strong><dd>      Start editing a new object. 
+<br><dt><strong>Compile</strong><dd>      Compile the current editor. This will compile the procedure with the debug option,
+      if you don't have the debug options you need to recompile it in order to be able to see watches. The keyboard shortcut for this is <strong>F9</strong>. 
+<br><dt><strong>Compile with Warnings</strong><dd>      Compile the current editor with suggested Oracle's PL/SQL Warnings (PLW). Fixing these warnings can speed up your code. 
+<br><dt><strong>Next error</strong><dd>      Move the cursor to the next syntax error in the current editor. For more information about syntax errors in editors see the editor section. 
+      The keyboard shortcut for this is <strong>CTRL+N</strong>. 
+<br><dt><strong>Previous error</strong><dd>      Move the cursor to the previous syntax error in the current editor. For more information about syntax errors in editors see the editor section. 
+      The keyboard shortcut for this is CTRL+P. 
+</dl>
+
+   </body></html>
+

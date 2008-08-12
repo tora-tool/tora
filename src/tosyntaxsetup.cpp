@@ -144,7 +144,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
 #endif
 
     Example->setCurrent(4);
-    std::map<int, QString> Errors;
+    QMap<int, QString> Errors;
     Errors[2] = tr("Unknown variable");
     Example->setErrors(Errors);
 

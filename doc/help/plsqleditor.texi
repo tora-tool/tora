@@ -1,0 +1,54 @@
+@node plsqleditor
+@section PL/SQL Editor
+@cindex PL/SQL Editor
+
+This tool provides you with an advanced editor for developing PL/SQL objects.
+
+
+@subheading Elements of the editor window
+
+On the top of the screen is the toolbar for the editor.
+
+Below that are two panes.
+The left one Objects contains the available objects in the selected schema.
+The schema is selectable through the toolbar.
+Select the code object you want to edit in this list or start
+a new object before starting to edit the code.
+
+The right pane contains more widgets: Contents, Message Log, and the editor itself.
+In the Contents list you can find declared methods of packages and also
+variables or even anonymous blocks in your code.
+Selecting a line in this pane will move the cursor to where the element
+is in your code, for instance where a variable or method is declared.
+
+The Message Log contains all errors and optional warnings for given PL/SQL code.
+Clicking the log items will take you to the exact place in the editor.
+
+@subheading Toolbar & menu
+
+The toolbar and menu contain pretty much the same commands with a few exceptions.
+
+@table @asis
+@item @strong{Refresh object list}	
+      Update the @strong{Object} list to the left of the screen. This is first on the toolbar and close to the end in the menu. 
+      The keyboard shortcut for this is @strong{F5}. 
+      Observe that this list is read from the object cache and will not be updated unless you reread the object cache as well 
+      (Available from the File menu.
+@item @strong{Select schema}
+      In the toolbar this is a combobox listing the available schemas. Changing the schema will change the objects displayed in the @strong{Object} list.
+      Selecting it in the menu (Close to the end) or selecting the @strong{ALT+S} keyboard shortcut will move the keyboard focus to the toolbar combobox.
+@item @strong{New sheet}
+      Start editing a new object.
+@item @strong{Compile}
+      Compile the current editor. This will compile the procedure with the debug option, 
+      if you don't have the debug options you need to recompile it in order to be able to see watches. The keyboard shortcut for this is @strong{F9}.
+@item @strong{Compile with Warnings}
+      Compile the current editor with suggested Oracle's PL/SQL Warnings (PLW). Fixing these warnings can speed up your code.
+@item @strong{Next error}
+      Move the cursor to the next syntax error in the current editor. For more information about syntax errors in editors see the editor section. 
+      The keyboard shortcut for this is @strong{CTRL+N}.
+@item @strong{Previous error}
+      Move the cursor to the previous syntax error in the current editor. For more information about syntax errors in editors see the editor section. 
+      The keyboard shortcut for this is CTRL+P.
+@end table
+

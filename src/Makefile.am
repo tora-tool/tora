@@ -78,6 +78,8 @@ tora_SOURCES=main.cpp \
 	toeventquerytask.cpp toeventquerytask.h \
 	toparamget.cpp toparamget.h \
 	topreferences.cpp topreferences.h \
+	toplsqleditor.cpp  toplsqleditor.h \
+	toplsqltext.cpp  toplsqltext.h \
 	toresult.cpp toresult.h \
 	toresultfield.cpp toresultfield.h \
 	toresultitem.cpp toresultitem.h \
@@ -305,6 +307,8 @@ BUILT_SOURCES = \
 	moc_tooutput.cpp \
 	moc_toparamget.cpp \
 	moc_topiechart.cpp \
+	moc_toplsqleditor.cpp \
+	moc_toplsqltext.cpp \
 	moc_topreferences.cpp \
 	moc_toprofiler.cpp \
 	moc_toproject.cpp \

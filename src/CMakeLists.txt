@@ -132,6 +132,8 @@ SET(TORA_MOC_CLASSES
     tooutput.h
     toparamget.h
     topiechart.h
+    toplsqleditor.h
+    toplsqltext.h
     topreferences.h
     toprofiler.h
     toproject.h
@@ -274,6 +276,8 @@ SET(TORA_SOURCES
     toparamget.cpp
     topassword.cpp
     topiechart.cpp
+    toplsqleditor.cpp
+    toplsqltext.cpp
     topreferences.cpp
     toprofiler.cpp
     toproject.cpp

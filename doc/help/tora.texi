@@ -56,6 +56,7 @@ This manual is for TOra, version 1.4.0.
 @include tools.texi
 @include worksheet.texi
 @include browser.texi
+@include plsqleditor.texi
 @include debugger.texi
 @include unittest.texi
 @include tuning.texi

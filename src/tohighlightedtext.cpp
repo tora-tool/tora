@@ -690,11 +690,11 @@ void toHighlightedText::nextError(void)
 {
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
-    for (std::map<int, QString>::iterator i = Errors.begin();i != Errors.end();i++)
+    for (QMap<int, QString>::iterator i = Errors.begin();i != Errors.end();i++)
     {
-        if ((*i).first > curline)
+        if (i.key() > curline)
         {
-            setCursorPosition((*i).first, 0);
+            setCursorPosition(i.key(), 0);
             break;
         }
     }
@@ -705,28 +705,28 @@ void toHighlightedText::previousError(void)
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
     curcol = -1;
-    for (std::map<int, QString>::iterator i = Errors.begin();i != Errors.end();i++)
+    for (QMap<int, QString>::iterator i = Errors.begin();i != Errors.end();i++)
     {
-        if ((*i).first >= curline)
+        if (i.key() >= curline)
         {
             if (curcol < 0)
-                curcol = (*i).first;
+                curcol = i.key();
             break;
         }
-        curcol = (*i).first;
+        curcol = i.key();
     }
     if (curcol >= 0)
         setCursorPosition(curcol, 0);
 }
 
-void toHighlightedText::setErrors(const std::map<int, QString> &errors)
+void toHighlightedText::setErrors(const QMap<int, QString> &errors)
 {
     Errors = errors;
     setStatusMessage();
     markerDeleteAll(errorMarker);
-    for (std::map<int, QString>::iterator i = Errors.begin();i != Errors.end();i++)
+    for (QMap<int, QString>::const_iterator i = Errors.begin();i != Errors.end();i++)
     {
-        markerAdd((*i).first, errorMarker);
+        markerAdd(i.key(), errorMarker);
     }
 }
 
@@ -734,11 +734,11 @@ void toHighlightedText::setStatusMessage(void)
 {
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
-    std::map<int, QString>::iterator err = Errors.find(curline);
+    QMap<int, QString>::iterator err = Errors.find(curline);
     if (err == Errors.end())
         toStatusMessage(QString::null);
     else
-        toStatusMessage((*err).second, true);
+        toStatusMessage(err.value(), true);
 }
 
 QStringList toHighlightedText::getCompletionList(QString* partial)

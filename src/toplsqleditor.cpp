@@ -1,0 +1,578 @@
+/*****
+*
+* TOra - An Oracle Toolkit for DBA's and developers
+* Copyright (C) 2003-2005 Quest Software, Inc
+* Portions Copyright (C) 2005 Other Contributors
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation;  only version 2 of
+* the License is valid for this program.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+*      As a special exception, you have permission to link this program
+*      with the Oracle Client libraries and distribute executables, as long
+*      as you follow the requirements of the GNU GPL in regard to all of the
+*      software in the executable aside from Oracle client libraries.
+*
+*      Specifically you are not permitted to link this program with the
+*      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+*      And you are not permitted to distribute binaries compiled against
+*      these libraries without written consent from Quest Software, Inc.
+*      Observe that this does not disallow linking to the Qt Free Edition.
+*
+*      You may link this product with any GPL'd Qt library such as Qt/Free
+*
+* All trademarks belong to their respective owners.
+*
+*****/
+#include <QToolBar>
+#include <QMenu>
+#include <QMdiSubWindow>
+#include <QMdiArea>
+#include <QSettings>
+
+#include "utils.h"
+#include "toconnection.h"
+#include "totreewidget.h"
+#include "toplsqleditor.h"
+#include "tomarkedtext.h"
+#include "tomain.h"
+#include "tosql.h"
+#include "toresultview.h"
+#include "toplsqltext.h"
+
+#include "icons/close.xpm"
+#include "icons/compile.xpm"
+#include "icons/compilewarning.xpm"
+#include "icons/refresh.xpm"
+#include "icons/toworksheet.xpm"
+#include "icons/nextbug.xpm"
+#include "icons/prevbug.xpm"
+
+
+class toPLSQLEditorTool : public toTool
+{
+    std::map<toConnection *, QWidget *> Windows;
+
+    virtual const char **pictureXPM(void)
+    {
+        return const_cast<const char**>(compile_xpm);
+    }
+public:
+    toPLSQLEditorTool()
+            : toTool(109, "PL/SQL Editor")
+    { }
+    virtual const char *menuItem()
+    {
+        return "PL/SQL Editor";
+    }
+    virtual QWidget *toolWindow(QWidget *parent, toConnection &connection)
+    {
+        return new toPLSQLEditor(parent, connection);
+    }
+    void closeWindow(toConnection &connection)
+    {
+    }
+    virtual bool canHandle(toConnection &conn)
+    {
+        if (toIsOracle(conn))
+        {
+            return true;
+        }
+        return false;
+    }
+};
+
+static toPLSQLEditorTool PLSQLEditorTool;
+
+
+
+QString toPLSQLEditor::editorName(const QString &schema, const QString &object, const QString &type)
+{
+    QString ret = connection().quote(schema) + "." + connection().quote(object);
+    if (type.contains("BODY"))
+        ret += tr(" body");
+    return ret;
+
+}
+
+QString toPLSQLEditor::editorName(toPLSQLWidget *text)
+{
+    return editorName(text->editor()->schema(),
+                       text->editor()->object(),
+                       text->editor()->type());
+}
+
+QString toPLSQLEditor::currentSchema(void)
+{
+    return Schema->currentText();
+}
+
+bool toPLSQLEditor::viewSource(const QString &schema, const QString &name, const QString &type,
+                         int line, bool setCurrent)
+{
+    try
+    {
+        toPLSQLWidget *editor = NULL;
+        int row = line - 1;
+        int col = 0;
+        for (int i = 0;i < Editors->count();i++)
+        {
+            QString tabname = editorName(schema, name, type);
+            toPLSQLWidget *te = dynamic_cast<toPLSQLWidget *>(Editors->widget(i));
+            te->setObjectName(tabname);
+            if (Editors->tabText(Editors->indexOf(te)) == tabname)
+            {
+                editor = te;
+                break;
+            }
+            if (Editors->tabText(Editors->indexOf(te)) == tr("Unknown") && !te->editor()->isModified())
+                editor = te;
+        }
+        if (!editor)
+        {
+            editor = new toPLSQLWidget(Editors);
+            Editors->addTab(editor, editorName(editor));
+            editor->setObjectName(editorName(editor));
+        }
+        else
+        {
+            editor->editor()->getCursorPosition(&row, &col);
+        }
+        if (editor->editor()->lines() <= 1)
+        {
+            editor->editor()->setData(schema, type, name);
+            editor->editor()->readData(connection()/*, StackTrace*/);
+            Editors->setTabText(Editors->indexOf(editor), editorName(editor));
+            editor->setObjectName(editorName(editor));
+            if (editor->editor()->hasErrors())
+                Editors->setTabIcon(Editors->indexOf(editor),
+                                    QIcon(QPixmap(const_cast<const char**>(nextbug_xpm))));
+            else
+                Editors->setTabIcon(Editors->indexOf(editor), QIcon());
+        }
+        Editors->setCurrentIndex(Editors->indexOf(editor));
+        editor->editor()->setCursorPosition(row, col);
+        if (setCurrent)
+            editor->editor()->setCurrent(line - 1);
+        editor->setFocus();
+        return true;
+    }
+    catch (const QString &str)
+    {
+        toStatusMessage(str);
+        return false;
+    }
+}
+
+toPLSQLEditor::toPLSQLEditor(QWidget *main, toConnection &connection)
+        : toToolWidget(PLSQLEditorTool, "plsqleditor.html", main, connection, "toPLSQLEditor")
+{
+    createActions();
+    QToolBar *toolbar = toAllocBar(this, tr("PLSQLEditor"));
+    layout()->addWidget(toolbar);
+
+    toolbar->addAction(refreshAct);
+
+    toolbar->addSeparator();
+
+    Schema = new QComboBox(toolbar);
+    Schema->setObjectName("PLSQLEditorSchemaCombo");
+    toolbar->addWidget(Schema);
+    connect(Schema,
+            SIGNAL(activated(int)),
+            this,
+            SLOT(changeSchema(int)));
+
+    toolbar->addSeparator();
+
+    toolbar->addAction(newSheetAct);
+    toolbar->addAction(compileAct);
+    toolbar->addAction(compileWarnAct);
+
+    toolbar->addSeparator();
+
+    toolbar->addAction(nextErrorAct);
+    toolbar->addAction(previousErrorAct);
+
+    toolbar->addWidget(new toSpacer());
+
+    splitter = new QSplitter(Qt::Horizontal, this);
+    layout()->addWidget(splitter);
+
+    Objects = new toListView(this);//objSplitter);
+    Objects->addColumn(tr("Objects"));
+    Objects->setRootIsDecorated(true);
+    Objects->setTreeStepSize(10);
+    Objects->setSorting(0);
+    Objects->setSelectionMode(toTreeWidget::Single);
+    Objects->setResizeMode(toTreeWidget::AllColumns);
+    connect(Objects, SIGNAL(selectionChanged(toTreeWidgetItem *)),
+            this, SLOT(changePackage(toTreeWidgetItem *)));
+
+    splitter->addWidget(Objects);
+
+    Editors = new QTabWidget(this);
+    splitter->addWidget(Editors);
+    Editors->setTabPosition(QTabWidget::North);
+
+    QToolButton *closeButton = new toPopupButton(Editors);
+    closeButton->setIcon(QPixmap(const_cast<const char**>(close_xpm)));
+    closeButton->setFixedSize(20, 18);
+
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(closeEditor()));
+    Editors->setCornerWidget(closeButton);
+
+    setFocusProxy(Editors);
+    newSheet();
+
+    ToolMenu = NULL;
+    connect(toMainWidget()->workspace(), SIGNAL(subWindowActivated(QMdiSubWindow *)),
+            this, SLOT(windowActivated(QMdiSubWindow *)));
+
+    QSettings s;
+    s.beginGroup("toPLSQLEditor");
+    splitter->restoreState(s.value("splitter").toByteArray());
+    s.endGroup();
+
+    refresh();
+}
+
+
+void toPLSQLEditor::createActions(void)
+{
+    refreshAct = new QAction(QIcon(QPixmap(const_cast<const char**>(refresh_xpm))),
+                             tr("Refresh"),
+                             this);
+    connect(refreshAct,
+            SIGNAL(triggered()),
+            this,
+            SLOT(refresh()),
+            Qt::QueuedConnection);
+    refreshAct->setShortcut(QKeySequence::Refresh);
+
+    newSheetAct = new QAction(QIcon(QPixmap(const_cast<const char**>(toworksheet_xpm))),
+                              tr("&New Sheet"),
+                              this);
+    connect(newSheetAct,
+            SIGNAL(triggered()),
+            this,
+            SLOT(newSheet()),
+            Qt::QueuedConnection);
+
+    compileAct = new QAction(QIcon(QPixmap(const_cast<const char**>(compile_xpm))),
+                             tr("&Compile"),
+                             this);
+    connect(compileAct,
+            SIGNAL(triggered()),
+            this,
+            SLOT(compile()),
+            Qt::QueuedConnection);
+    compileAct->setShortcut(Qt::Key_F9);
+
+    compileWarnAct = new QAction(QIcon(QPixmap(const_cast<const char**>(compilewarning_xpm))),
+                             tr("&Compile with Warnings"),
+                             this);
+    connect(compileWarnAct,
+            SIGNAL(triggered()),
+            this,
+            SLOT(compileWarn()),
+            Qt::QueuedConnection);
+
+    closeAct = new QAction(QIcon(QPixmap(const_cast<const char**>(close_xpm))),
+                           tr("Close"),
+                           this);
+    connect(closeAct,
+            SIGNAL(triggered()),
+            this,
+            SLOT(closeEditor()),
+            Qt::QueuedConnection);
+
+    closeAllAct = new QAction(tr("Close All"),
+                              this);
+    connect(closeAllAct,
+            SIGNAL(triggered()),
+            this,
+            SLOT(closeAllEditor()),
+            Qt::QueuedConnection);
+
+    nextErrorAct = new QAction(QIcon(QPixmap(const_cast<const char**>(nextbug_xpm))),
+                               tr("Next &Error"),
+                               this);
+    connect(nextErrorAct,
+            SIGNAL(triggered()),
+            this,
+            SLOT(nextError()),
+            Qt::QueuedConnection);
+    nextErrorAct->setShortcut(Qt::CTRL + Qt::Key_N);
+
+    previousErrorAct = new QAction(QIcon(QPixmap(const_cast<const char**>(prevbug_xpm))),
+                                   tr("Pre&vious Error"),
+                                   this);
+    connect(previousErrorAct,
+            SIGNAL(triggered()),
+            this,
+            SLOT(prevError()),
+            Qt::QueuedConnection);
+    previousErrorAct->setShortcut(Qt::CTRL + Qt::Key_P);
+}
+
+toPLSQLWidget *toPLSQLEditor::currentEditor(void)
+{
+    return dynamic_cast<toPLSQLWidget *>(Editors->currentWidget());
+}
+
+void toPLSQLEditor::changeSchema(int)
+{
+    refresh();
+}
+
+void toPLSQLEditor::refresh(void)
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    try
+    {
+        QString selected = Schema->currentText();
+        QString currentSchema;
+        if (selected.isEmpty())
+        {
+            selected = connection().user().toUpper();
+            Schema->clear();
+            toQList users = toQuery::readQuery(connection(),
+                                               toSQL::string(toSQL::TOSQL_USERLIST, connection()));
+            for (toQList::iterator i = users.begin();i != users.end();i++)
+                Schema->addItem(*i);
+        }
+        if (!selected.isEmpty())
+        {
+            {
+                for (int i = 0;i < Schema->count();i++)
+                    if (Schema->itemText(i) == selected)
+                    {
+                        Schema->setCurrentIndex(i);
+                        break;
+                    }
+            }
+            Objects->clear();
+
+            // refresh the objects
+            connection().rereadCache();
+            std::list<toConnection::objectName> &objs = connection().objects(true);
+
+            std::map<QString, toTreeWidgetItem *> typeItems;
+            bool any = false;
+            for (std::list<toConnection::objectName>::iterator i = objs.begin();
+                    i != objs.end();i++)
+            {
+                if ((*i).Owner == selected)
+                {
+                    any = true;
+                    QString type = (*i).Type;
+                    if (type == QString::fromLatin1("FUNCTION") ||
+                            type == QString::fromLatin1("PACKAGE") ||
+                            type == QString::fromLatin1("PROCEDURE") ||
+                            type == QString::fromLatin1("TYPE"))
+                    {
+                        toTreeWidgetItem *typeItem;
+                        std::map<QString, toTreeWidgetItem *>::iterator j = typeItems.find(type);
+                        if (j == typeItems.end())
+                        {
+                            typeItem = new toTreeWidgetItem(Objects, type);
+                            typeItems[type] = typeItem;
+#ifndef AUTOEXPAND
+
+                            typeItem->setSelectable(false);
+#endif
+
+                        }
+                        else
+                            typeItem = (*j).second;
+
+                        QString bodyType(type);
+                        bodyType += QString::fromLatin1(" BODY");
+                        QString name = (*i).Name;
+                        toTreeWidgetItem *item = new toTreeWidgetItem(typeItem, name, type);
+                        if (selected == currentEditor()->editor()->schema() &&
+                                (type == currentEditor()->editor()->type() ||
+                                 bodyType == currentEditor()->editor()->type()) &&
+                                name == currentEditor()->editor()->object())
+                        {
+                            Objects->setOpen(typeItem, true);
+                            Objects->setSelected(item, true);
+                        }
+                    }
+                }
+                else if (any)
+                    break;
+            }
+        }
+    }
+    TOCATCH
+    QApplication::restoreOverrideCursor();
+}
+
+void toPLSQLEditor::closeEvent(QCloseEvent *e)
+{
+    QSettings s;
+    s.beginGroup("toPLSQLEditor");
+    s.setValue("splitter", splitter->saveState());
+    s.endGroup();
+
+    toToolWidget::closeEvent(e);
+}
+
+void toPLSQLEditor::updateCurrent()
+{
+    try
+    {
+        toPLSQLWidget *editor = currentEditor();
+
+        editor->editor()->readData(connection()/*, StackTrace*/);
+        editor->editor()->setFocus();
+    }
+    TOCATCH
+}
+
+void toPLSQLEditor::changePackage(toTreeWidgetItem *item)
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    if (item && item->parent())
+    {
+        viewSource(Schema->currentText(), item->text(0), item->text(1), 0);
+        if (item->text(1) == "PACKAGE" || item->text(1) == "TYPE")
+            viewSource(Schema->currentText(), item->text(0), item->text(1) + " BODY", 0);
+    }
+#ifdef AUTOEXPAND
+    else if (item && !item->parent())
+        item->setOpen(true);
+#endif
+    QApplication::restoreOverrideCursor();
+}
+
+void toPLSQLEditor::compileWarn()
+{
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+    currentEditor()->editor()->compile(toPLSQLText::Warning);
+    QApplication::restoreOverrideCursor();
+}
+
+void toPLSQLEditor::compile(void)
+{
+    // compile only current editor/tab
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+    currentEditor()->editor()->compile(toPLSQLText::Production);
+    QApplication::restoreOverrideCursor();
+//     refresh();
+}
+
+toPLSQLEditor::~toPLSQLEditor()
+{
+}
+
+void toPLSQLEditor::prevError(void)
+{
+    currentEditor()->editor()->previousError();
+}
+
+void toPLSQLEditor::nextError(void)
+{
+    currentEditor()->editor()->nextError();
+}
+
+void toPLSQLEditor::newSheet(void)
+{
+    toPLSQLWidget *text = new toPLSQLWidget(Editors);
+    if (!Schema->currentText().isEmpty())
+        text->editor()->setSchema(Schema->currentText());
+    else
+        text->editor()->setSchema(connection().user().toUpper());
+    Editors->addTab(text, tr("Unknown"));
+    Editors->setCurrentIndex(Editors->indexOf(text));
+}
+
+void toPLSQLEditor::showSource(toTreeWidgetItem *item)
+{
+    if (item)
+        viewSource(item->text(2), item->text(0), item->text(3), item->text(1).toInt(), false);
+}
+
+void toPLSQLEditor::windowActivated(QMdiSubWindow *widget)
+{
+    if (!widget)
+        return;
+    if (widget->widget() == this)
+    {
+        if (!ToolMenu)
+        {
+            ToolMenu = new QMenu(tr("&PL/SQL Editor"), this);
+
+            ToolMenu->addAction(refreshAct);
+
+            ToolMenu->addSeparator();
+
+            ToolMenu->addAction(newSheetAct);
+            ToolMenu->addAction(compileAct);
+            ToolMenu->addAction(compileWarnAct);
+            ToolMenu->addAction(closeAct);
+            ToolMenu->addAction(closeAllAct);
+
+            ToolMenu->addSeparator();
+
+            ToolMenu->addAction(nextErrorAct);
+            ToolMenu->addAction(previousErrorAct);
+
+            toMainWidget()->addCustomMenu(ToolMenu);
+        }
+    }
+    else
+    {
+        delete ToolMenu;
+        ToolMenu = NULL;
+    }
+}
+
+void toPLSQLEditor::closeEditor()
+{
+    toPLSQLWidget *editor = currentEditor();
+    closeEditor(editor);
+}
+
+void toPLSQLEditor::closeAllEditor()
+{
+    int editorCount = Editors->count();
+    while (editorCount > 0)
+    {
+        editorCount--;
+        toPLSQLWidget *editor = dynamic_cast<toPLSQLWidget *>(Editors->widget(editorCount));
+        if (editor)
+            closeEditor(editor);
+    }
+}
+
+
+void toPLSQLEditor::closeEditor(toPLSQLWidget* &editor)
+{
+
+    if (editor)
+    {
+        QString name = editor->objectName();
+        if (Objects->selectedItem() &&
+                Objects->selectedItem()->text(0) == editor->editor()->object() &&
+                Schema->currentText() == editor->editor()->schema())
+            Objects->clearSelection();
+
+        Editors->removeTab(Editors->indexOf(editor));
+        delete editor;
+        if (Editors->count() == 0)
+            newSheet();
+    }
+}

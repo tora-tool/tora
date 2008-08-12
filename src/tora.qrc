@@ -147,6 +147,7 @@
         <file>help/common.html</file>
         <file>help/current.html</file>
         <file>help/database.html</file>
+        <file>help/plsqleditor.html</file>
         <file>help/debugger.html</file>
         <file>help/editors.html</file>
         <file>help/extendingtora.html</file>

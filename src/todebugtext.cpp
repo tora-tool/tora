@@ -200,7 +200,7 @@ bool toDebugText::readErrors(toConnection &conn)
     try
     {
         toQuery errors(conn, SQLReadErrors, Schema, Object, Type);
-        std::map<int, QString> Errors;
+        QMap<int, QString> Errors;
 
         while (!errors.eof())
         {

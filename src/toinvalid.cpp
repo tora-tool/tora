@@ -247,7 +247,7 @@ void toInvalid::changeSelection(void)
             Source->changeParams(Objects->model()->data(item.row(), 1).toString(),
                                  Objects->model()->data(item.row(), 2).toString(),
                                  Objects->model()->data(item.row(), 3).toString());
-            std::map<int, QString> Errors;
+            QMap<int, QString> Errors;
 
             toQuery errors(connection(),
                            SQLReadErrors,

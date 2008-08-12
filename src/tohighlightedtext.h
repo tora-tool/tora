@@ -223,7 +223,7 @@ private:
     bool syntaxColoring;
     /** Map of rows with errors and their error message.
      */
-    std::map<int, QString> Errors;
+    QMap<int, QString> Errors;
     QsciAPIs* complAPI;
     QTimer* timer;
 
@@ -304,7 +304,7 @@ public:
      * @param errors A map of linenumbers to errorstrings. These will be displayed in the
      *               statusbar if the cursor is placed on the line.
      */
-    void setErrors(const std::map<int, QString> &errors);
+    void setErrors(const QMap<int, QString> &errors);
 
     /**
      * DEPRECATED: should use setLexer() instead!!!
