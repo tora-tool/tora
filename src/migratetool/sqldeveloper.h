@@ -50,7 +50,7 @@ Version 1.5 or later ("new" format) is supported only.
 OK, this code looks ugly but it's enough for "one time runners".
 \author Petr Vanek <petr@scribus.info>
 */
-QList<toConnectionOptions> sqlDeveloper(QWidget * parent = 0);
+QMap<int,toConnectionOptions> sqlDeveloper(QWidget * parent = 0);
 
 } // namespace
 

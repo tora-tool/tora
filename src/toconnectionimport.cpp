@@ -41,6 +41,7 @@
 #include "migratetool/squirrelsql.h"
 #include "migratetool/tora3.h"
 #include "toconnectionimport.h"
+#include "toconnectionmodel.h"
 
 
 
@@ -59,7 +60,7 @@ toConnectionImport::toConnectionImport(QWidget * parent)
 
     toolComboBox_changed(0);
 
-    availableModel = new MigrateTool::ConnectionModel();
+    availableModel = new toConnectionModel();
 
     tableView->setModel(availableModel);
 

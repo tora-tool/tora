@@ -51,7 +51,7 @@ namespace MigrateTool
  *
  * \author Mike Johnson
  */
-QList<toConnectionOptions> tora3(QWidget *parent = 0);
+QMap<int,toConnectionOptions> tora3(QWidget *parent = 0);
 
 } // namespace
 

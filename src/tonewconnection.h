@@ -51,6 +51,8 @@
 #include <set>
 
 class toConnection;
+class toConnectionModel;
+class QSortFilterProxyModel;
 class QMenu;
 
 
@@ -123,34 +125,22 @@ private:
 
     QMenu *PreviousContext;
 
-    // an enum to keep the columns in qtablewidget straight
-    enum PreviousColumns
-    {
-        IndexColumn = 0,
-        ProviderColumn,
-        HostColumn,
-        DatabaseColumn,
-        UsernameColumn,
-        SchemaColumn,
-    };
-
-    // stores connection options by unique id. these are read from the
-    // settings class.
-    QMap<int, toConnectionOptions> OptionMap;
+    toConnectionModel * m_connectionModel;
+    QSortFilterProxyModel * m_proxyModel;
 
     // connection created by dialog
     toConnection *NewConnection;
 
     QString realProvider(void);
     void readSettings(void);
-    void writeSettings(void);
+    void writeSettings(bool checkHistory = false);
     int findHistory(const QString &provider,
                     const QString &username,
                     const QString &host,
                     const QString &database,
                     const QString &schema);
     // fills form with data from previous connection at param row
-    void loadPrevious(int row);
+    void loadPrevious(const QModelIndex & current);
 
     toConnection* makeConnection();
 
@@ -173,15 +163,13 @@ public slots:
      * will load details from history.
      *
      */
-    void previousCellChanged(int currentRow,
-                             int currentColumn,
-                             int previousRow,
-                             int previousColumn);
+    void previousCellChanged(const QModelIndex & current);
     void previousMenu(const QPoint &pos);
     void historyDelete(void);
     void changeProvider(int current);
     void changeHost(void);
     void importButton_clicked(void);
+    void searchEdit_textEdited(const QString & text);
 };
 
 

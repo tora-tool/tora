@@ -47,14 +47,14 @@
 namespace MigrateTool
 {
 
-QList<toConnectionOptions> sqlDeveloper(QWidget * parent)
+QMap<int,toConnectionOptions> sqlDeveloper(QWidget * parent)
 {
 
     QString fileName = QFileDialog::getOpenFileName(parent,
                                                     "SQL Developer Connections",
                                                     QDir::homePath(),
                                                     "XML Files (*.xml);;All Files (*.*)");
-    QList<toConnectionOptions> ret;
+    QMap<int,toConnectionOptions> ret;
     if (fileName.isNull())
         return ret;
 
@@ -69,6 +69,7 @@ QList<toConnectionOptions> sqlDeveloper(QWidget * parent)
     bool isXML = false;
     toConnectionOptions opt;
     QString attr;
+    int key = 0;
 
     while (!xml.atEnd())
     {
@@ -85,7 +86,8 @@ QList<toConnectionOptions> sqlDeveloper(QWidget * parent)
                     else
                         opt.provider = "Oracle (Instant Client)";
                 }
-                ret.append(opt);
+                ret[key] = opt;
+                ++key;
                 opt.username = "";
                 opt.database = "";
                 opt.host = "";

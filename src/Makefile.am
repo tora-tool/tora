@@ -175,7 +175,7 @@ tora_SOURCES=main.cpp \
 	totableselect.cpp totableselect.h  \
 	tovisualize.cpp tovisualize.h  \
 	towaitevents.cpp towaitevents.h \
-	migratetool/connectionmodel.cpp migratetool/connectionmodel.h \
+	toconnectionmodel.cpp toconnectionmodel.h \
 	migratetool/sqldeveloper.cpp migratetool/sqldeveloper.h \
 	migratetool/squirrelsql.cpp migratetool/squirrelsql.h \
 	migratetool/tora3.cpp migratetool/tora3.h \

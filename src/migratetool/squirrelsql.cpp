@@ -47,9 +47,10 @@
 namespace MigrateTool
 {
 
-QList<toConnectionOptions> squirrelSql(QWidget * parent)
+QMap<int,toConnectionOptions> squirrelSql(QWidget * parent)
 {
-    QList<toConnectionOptions> ret;
+    QMap<int,toConnectionOptions> ret;
+    int key = 0;
 
     QString fileName = QFileDialog::getOpenFileName(parent,
                                                     "SquirrelSQL Configuration file (SQLAliases23.xml)",
@@ -77,7 +78,8 @@ QList<toConnectionOptions> squirrelSql(QWidget * parent)
         {
             if (!opt.username.isEmpty() && !opt.provider.isEmpty())
             {
-                ret.append(opt);
+                ret[key] = opt;
+                ++key;
                 opt.username = "";
                 opt.database = "";
                 opt.host = "";

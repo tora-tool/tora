@@ -43,6 +43,7 @@
 #include "toconnectionimport.h"
 #include "tomain.h"
 #include "totool.h"
+#include "toconnectionmodel.h"
 
 #include "icons/trash.xpm"
 
@@ -51,8 +52,9 @@
 #include <QStringList>
 #include <QMenu>
 #include <QIcon>
+#include <QSortFilterProxyModel>
 
-#define MAX_HISTORY 50
+// #define MAX_HISTORY 50
 
 static const QString ORACLE_INSTANT = "Oracle (Instant Client)";
 static const QString ORACLE_TNS     = "Oracle (TNS)";
@@ -65,6 +67,13 @@ toNewConnection::toNewConnection(
 {
     setupUi(this);
     toHelp::connectDialog(this);
+
+    m_connectionModel = new toConnectionModel();
+    m_proxyModel = new QSortFilterProxyModel(this);
+    m_proxyModel->setSourceModel(m_connectionModel);
+    m_proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    m_proxyModel->setFilterKeyColumn(-1);
+    Previous->setModel(m_proxyModel);
 
     std::list<QString> lst = toConnectionProvider::providers();
 
@@ -109,32 +118,17 @@ toNewConnection::toNewConnection(
             this,
             SLOT(previousMenu(const QPoint &)));
 
-    Previous->setColumnCount(6);
-    Previous->setHorizontalHeaderItem(IndexColumn,    new QTableWidgetItem(tr("Index")));
-    Previous->setHorizontalHeaderItem(ProviderColumn, new QTableWidgetItem(tr("Provider")));
-    Previous->setHorizontalHeaderItem(HostColumn,     new QTableWidgetItem(tr("Host")));
-    Previous->setHorizontalHeaderItem(DatabaseColumn, new QTableWidgetItem(tr("Database")));
-    Previous->setHorizontalHeaderItem(UsernameColumn, new QTableWidgetItem(tr("Username")));
-    Previous->setHorizontalHeaderItem(SchemaColumn,   new QTableWidgetItem(tr("Schema")));
-
-    /* This should be changed to be a setting in preferences */
-    Previous->sortItems(UsernameColumn, Qt::AscendingOrder);
-
     Settings.beginGroup("connections");
     readSettings();
 
-    Previous->verticalHeader()->setVisible(false);
 	Previous->horizontalHeader()->setStretchLastSection(true);
-    Previous->resizeRowsToContents();
-    Previous->resizeColumnsToContents();
     Previous->horizontalHeader()->setHighlightSections(false);
-    Previous->hideColumn(IndexColumn);
-    Previous->setCurrentCell(0, ProviderColumn);
+    Previous->verticalHeader()->setVisible(false);
 
-    connect(Previous,
-            SIGNAL(currentCellChanged(int, int, int, int)),
+    connect(Previous->selectionModel(),
+            SIGNAL(currentRowChanged(const QModelIndex &,const QModelIndex &)),
             this,
-            SLOT(previousCellChanged(int, int, int, int)));
+            SLOT(previousCellChanged(const QModelIndex &)));
 
     connect(Provider,
             SIGNAL(currentIndexChanged(int)),
@@ -142,7 +136,7 @@ toNewConnection::toNewConnection(
             SLOT(changeProvider(int)));
 
     connect(Previous,
-            SIGNAL(cellDoubleClicked(int, int)),
+            SIGNAL(doubleClicked(const QModelIndex &)),
             this,
             SLOT(accept()));
 
@@ -154,11 +148,11 @@ toNewConnection::toNewConnection(
     connect(ImportButton, SIGNAL(clicked()),
              this, SLOT(importButton_clicked()));
 
+    connect(searchEdit, SIGNAL(textEdited(const QString &)),
+             this, SLOT(searchEdit_textEdited(const QString &)));
+
     // must make sure this gets called manually.
     changeProvider(Provider->currentIndex());
-    // must call after connecting signals
-    loadPrevious(0);
-
     Previous->setFocus(Qt::OtherFocusReason);
 }
 
@@ -171,22 +165,22 @@ QString toNewConnection::realProvider()
     return p;
 }
 
-
 void toNewConnection::readSettings()
 {
+    QMap<int, toConnectionOptions> OptionMap;
     restoreGeometry(Settings.value("geometry").toByteArray());
 
     Previous->setSortingEnabled(false);
-    for (int pos = 0; pos < MAX_HISTORY; pos++)
+
+    Settings.beginGroup("history");
+    for (int pos = 0; pos < Settings.childGroups().count(); ++pos)
     {
-        Settings.beginGroup("history/" + QString::number(pos));
+        Settings.beginGroup(/*"history/" +*/ QString::number(pos)); // X
         if (!Settings.contains("provider"))
         {
-            Settings.endGroup();
+            Settings.endGroup(); // X
             break;
         }
-
-        Previous->setRowCount(pos + 1);
 
         QString provider = Settings.value("provider", "").toString();
         QString host     = Settings.value("host", "").toString();
@@ -206,7 +200,7 @@ void toNewConnection::readSettings()
             if (Settings.value(s, false).toBool())
                 options.insert(s);
         }
-        Settings.endGroup();
+        Settings.endGroup(); // options
 
         toConnectionOptions opt(
             provider,
@@ -218,66 +212,69 @@ void toNewConnection::readSettings()
             Settings.value("port", 0).toInt(),
             options);
         OptionMap[pos] = opt;
-
-        Previous->setItem(pos, IndexColumn, new QTableWidgetItem(QString::number(pos)));
-        Previous->setItem(pos, ProviderColumn, new QTableWidgetItem(provider));
-        Previous->setItem(pos, HostColumn, new QTableWidgetItem(host));
-        Previous->setItem(pos, DatabaseColumn, new QTableWidgetItem(database));
-        Previous->setItem(pos, UsernameColumn, new QTableWidgetItem(username));
-        Previous->setItem(pos, SchemaColumn, new QTableWidgetItem(schema));
-
-        Settings.endGroup();
+        Settings.endGroup(); // X
     }
+    Settings.endGroup(); // history
 
+    m_connectionModel->setupData(OptionMap);
+    Previous->resizeColumnsToContents();
     Previous->setSortingEnabled(true);
+    Previous->hideColumn(0);
 }
 
 
-void toNewConnection::writeSettings()
+void toNewConnection::writeSettings(bool checkHistory)
 {
+    int r = 0;
     Settings.setValue("geometry", saveGeometry());
 
     Settings.remove("history");
 
-    Settings.beginGroup("history/0");
-    Settings.setValue("provider", Provider->currentText());
-    Settings.setValue("username", Username->text());
-    Settings.setValue("password", toObfuscate(Password->text()));
-    Settings.setValue("host", Host->currentText());
-    Settings.setValue("port", Port->value());
-    Settings.setValue("database", Database->currentText());
-    Settings.setValue("schema", Schema->text());
+    if (!Provider->currentText().isEmpty() && checkHistory)
+    {
+        Settings.beginGroup("history/0");
+        Settings.setValue("provider", Provider->currentText());
+        Settings.setValue("username", Username->text());
+        Settings.setValue("password", toObfuscate(Password->text()));
+        Settings.setValue("host", Host->currentText());
+        Settings.setValue("port", Port->value());
+        Settings.setValue("database", Database->currentText());
+        Settings.setValue("schema", Schema->text());
 
-    Settings.beginGroup("options");
-    QList<QCheckBox *> widgets = OptionGroup->findChildren<QCheckBox *>();
-    Q_FOREACH(QCheckBox *box, widgets)
-    Settings.setValue(box->text(), box->isChecked());
-    Settings.endGroup();
-    Settings.endGroup();
+        Settings.beginGroup("options");
+        QList<QCheckBox *> widgets = OptionGroup->findChildren<QCheckBox *>();
+        Q_FOREACH(QCheckBox *box, widgets)
+        Settings.setValue(box->text(), box->isChecked());
+        Settings.endGroup(); // options
+        Settings.endGroup(); // history/0
+        ++r;
+    }
 
     // find history item with same options. will skip later.
-    int skip = findHistory(Provider->currentText(),
+    int skip = -1;
+    if (checkHistory)
+    {
+        skip = findHistory(Provider->currentText(),
                            Username->text(),
                            Host->currentText(),
                            Database->currentText(),
                            Schema->text());
+    }
 
-    int skipped = 0;
-    for (int row = 0; row < Previous->rowCount() && row < MAX_HISTORY; row++)
+    QMap<int,toConnectionOptions> c = m_connectionModel->availableConnections();
+    foreach(int row, c.keys())
     {
-        if (row == skip && ++skipped)
+        if (row == skip)// && ++skipped)
             continue;
 
-        toConnectionOptions &opt =
-            OptionMap[Previous->item(row, IndexColumn)->text().toInt()];
+        toConnectionOptions &opt = c[row];
 
-        Settings.beginGroup("history/" + QString::number(row + 1 - skipped));
-        Settings.setValue("provider", Previous->item(row, ProviderColumn)->text());
-        Settings.setValue("username", Previous->item(row, UsernameColumn)->text());
-        Settings.setValue("host", Previous->item(row, HostColumn)->text());
-        Settings.setValue("database", Previous->item(row, DatabaseColumn)->text());
-        Settings.setValue("schema", Previous->item(row, SchemaColumn)->text());
-
+        Settings.beginGroup("history/" + QString::number(r/*row*/));// + 1 - skipped));
+        Settings.setValue("provider", opt.provider);
+        Settings.setValue("username", opt.username);
+        Settings.setValue("host", opt.host);
+        Settings.setValue("database", opt.database);
+        Settings.setValue("schema", opt.schema);
         Settings.setValue("port", opt.port);
         Settings.setValue("password", toObfuscate(opt.password));
 
@@ -287,6 +284,7 @@ void toNewConnection::writeSettings()
         Settings.endGroup();
 
         Settings.endGroup();
+        ++r;
     }
 }
 
@@ -297,32 +295,29 @@ int toNewConnection::findHistory(const QString &provider,
                                  const QString &database,
                                  const QString &schema)
 {
-    for (int row = 0; row < Previous->rowCount(); row++)
+    QMapIterator<int,toConnectionOptions> i(m_connectionModel->availableConnections());
+    while (i.hasNext())
     {
-        if (provider == Previous->item(row, ProviderColumn)->text() &&
-                username == Previous->item(row, UsernameColumn)->text() &&
-                host == Previous->item(row, HostColumn)->text() &&
-                database == Previous->item(row, DatabaseColumn)->text() &&
-                schema == Previous->item(row, SchemaColumn)->text() )
-            return row;
+        i.next();
+        toConnectionOptions opt = i.value();
+        if (provider == opt.provider &&
+                username == opt.username &&
+                host == opt.host &&
+                database == opt.database &&
+                schema == opt.schema)
+            return i.key();
     }
-
     return -1;
 }
 
-
-void toNewConnection::loadPrevious(int row)
+void toNewConnection::loadPrevious(const QModelIndex & current)
 {
-    QTableWidgetItem *item = Previous->item(row, IndexColumn);
-    if (!item)
+    if (!current.isValid())
         return;
 
-    bool ok;
-    int index = item->text().toInt(&ok);
-    if (!ok)
-        return;
-
-    toConnectionOptions &opt = OptionMap[index];
+    QModelIndex baseIndex = m_proxyModel->index(current.row(), 0);
+    int index = m_proxyModel->data(baseIndex, Qt::DisplayRole).toInt();
+    toConnectionOptions opt = m_connectionModel->availableConnection(index);// OptionMap[index];
 
     Provider->setCurrentIndex(Provider->findText(opt.provider));
     Host->lineEdit()->setText(opt.host);
@@ -356,16 +351,9 @@ void toNewConnection::done(int r)
 }
 
 
-void toNewConnection::previousCellChanged(int currentRow,
-        int currentColumn,
-        int previousRow,
-        int previousColumn)
+void toNewConnection::previousCellChanged(const QModelIndex & current)
 {
-    Q_UNUSED(currentColumn);
-    Q_UNUSED(previousColumn);
-
-    if (currentRow != previousRow)
-        loadPrevious(currentRow);
+     loadPrevious(current);
 }
 
 
@@ -503,30 +491,19 @@ void toNewConnection::importButton_clicked()
 
     Previous->setSortingEnabled(false);
 
-    // rows in gui
-    int pos = Previous->rowCount();
     // find latest id (max+1)
-    QList<int> keys = OptionMap.keys();
+    QList<int> keys = m_connectionModel->availableConnections().keys();
     qSort(keys);
     int max = 0;
-    if(keys.count() > 0)
+    if (keys.count() > 0)
         max = keys.at(keys.count()-1) + 1;
 
-    foreach (toConnectionOptions opt, dia.availableConnections())
+    foreach (toConnectionOptions opt, dia.availableConnections().values())
     {
         if (findHistory(opt.provider, opt.username, opt.host, opt.database, opt.schema) != -1)
             continue;
 
-        Previous->setRowCount(pos + 1);
-        OptionMap[max] = opt;
-
-        Previous->setItem(pos, IndexColumn, new QTableWidgetItem(QString::number(max)));
-        Previous->setItem(pos, ProviderColumn, new QTableWidgetItem(opt.provider));
-        Previous->setItem(pos, HostColumn, new QTableWidgetItem(opt.host));
-        Previous->setItem(pos, DatabaseColumn, new QTableWidgetItem(opt.database));
-        Previous->setItem(pos, UsernameColumn, new QTableWidgetItem(opt.username));
-        Previous->setItem(pos, SchemaColumn, new QTableWidgetItem(opt.schema));
-        ++pos;
+        m_connectionModel->append(max, opt);
         ++max;
     }
     writeSettings();
@@ -534,6 +511,10 @@ void toNewConnection::importButton_clicked()
     Previous->setSortingEnabled(true);
 }
 
+void toNewConnection::searchEdit_textEdited(const QString & text)
+{
+    m_proxyModel->setFilterWildcard(QString("*%1*").arg(text));
+}
 
 toConnection* toNewConnection::makeConnection(void)
 {
@@ -634,10 +615,20 @@ void toNewConnection::previousMenu(const QPoint &pos)
     PreviousContext->exec(QCursor::pos());
 }
 
-
 void toNewConnection::historyDelete()
 {
-    QModelIndexList list = Previous->selectionModel()->selectedIndexes();
-    if (list.size() > 0)
-        Previous->removeRow(list.at(0).row());
+//     QModelIndexList indexes = Previous->selectionModel()->selectedRows();
+//     QModelIndex index;
+//     foreach(index, indexes)   // loop through and remove them
+//     {
+//         int row = m_proxyModel->mapToSource(index).row();
+//         m_connectionModel->removeRow(row, QModelIndex());
+//     }
+    QMap<int,toConnectionOptions> v = m_connectionModel->availableConnections();
+    int ix = m_proxyModel->data(m_proxyModel->index(Previous->currentIndex().row(), 0)).toInt();
+    v.remove(ix);
+    m_connectionModel->setupData(v);
+
+    writeSettings(false);
+    readSettings();
 }

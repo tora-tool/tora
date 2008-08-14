@@ -54,9 +54,10 @@ void loadConnections(QMap<QString, QString> &pairs, QList<toConnectionOptions> &
 std::set<QString> processOptions(const QString &str);
 
 
-QList<toConnectionOptions> tora3(QWidget * parent)
+QMap<int,toConnectionOptions> tora3(QWidget * parent)
 {
-    QList<toConnectionOptions> ret;
+    QMap<int,toConnectionOptions> ret;
+    int key = 0;
 
     // I can't get the stupid QFileDialog to show hidden files by
     // default, so I'm going to just try to open the file.
@@ -75,7 +76,13 @@ QList<toConnectionOptions> tora3(QWidget * parent)
 
     QMap<QString, QString> config;
     loadMap(file.fileName(), config);
-    loadConnections(config, ret);
+    QList<toConnectionOptions> l;
+    loadConnections(config, l);
+    foreach(toConnectionOptions o, l)
+    {
+        ret[key] = o;
+        ++key;
+    }
     return ret;
 }
 

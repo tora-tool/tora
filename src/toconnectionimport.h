@@ -39,7 +39,7 @@
 #define TOCONNECTIONIMPORT_H
 
 #include "ui_toconnectionimportui.h"
-#include "migratetool/connectionmodel.h"
+#include "toconnectionmodel.h"
 
 
 /*! \brief GUI to load conections from the others tools.
@@ -61,13 +61,13 @@ class toConnectionImport : public QDialog, public Ui::toConnectionImport
         };
 
         //! \brief Send all imported connections to the caller
-        QList<toConnectionOptions> availableConnections()
+        QMap<int,toConnectionOptions> availableConnections()
         {
             return availableModel->availableConnections();
         };
 
     private:
-        MigrateTool::ConnectionModel * availableModel;
+        toConnectionModel * availableModel;
 
         ToolUsed m_tool;
 

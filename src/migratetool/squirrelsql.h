@@ -50,7 +50,7 @@ Version 2.6.x or later is supported only.
 OK, this code looks ugly but it's enough for "one time runners".
 \author Petr Vanek <petr@scribus.info>
 */
-QList<toConnectionOptions> squirrelSql(QWidget * parent = 0);
+QMap<int,toConnectionOptions> squirrelSql(QWidget * parent = 0);
 
 } // namespace
 

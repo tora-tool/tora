@@ -87,6 +87,7 @@ SET(TORA_MOC_CLASSES
 #     toconfiguration.h
     toconnection.h
     toconnectionimport.h
+    toconnectionmodel.h
     toconnectionpool.h
     torunnable.h
     tonoblockquery.h
@@ -206,8 +207,6 @@ SET(TORA_MOC_CLASSES
 #     toworksheettext.h
     toworksheetwidget.h
     utils.h
-    #
-    migratetool/connectionmodel.h
 )
 IF (ORACLE_FOUND)
     LIST(APPEND TORA_MOC_CLASSES tooraclesetting.h)
@@ -232,6 +231,7 @@ SET(TORA_SOURCES
     toconnection.cpp
     toqvalue.cpp
     toconnectionimport.cpp
+    toconnectionmodel.cpp
     toconnectionpool.cpp
     torunnable.cpp
     tocurrent.cpp
@@ -351,7 +351,6 @@ SET(TORA_SOURCES
     toworksheetwidget.cpp
     utils.cpp
     #
-    migratetool/connectionmodel.cpp
     migratetool/sqldeveloper.cpp
     migratetool/squirrelsql.cpp
     migratetool/tora3.cpp
