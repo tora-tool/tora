@@ -43,7 +43,18 @@ warn you in this case so you can specify required paths manually:
 
 You have to specify -DORACLE_OCI_VERSION for one of values:
 [8, 8I, 9I, 10G, 10G_R2]. Example:
-cmake -DORACLE_OCI_VERSION=10G_R2
+-DORACLE_OCI_VERSION=10G_R2
+
+
+TOra requires PostgreSQL development environment to enable
+full PgSQL support (native cancel etc.).
+This environment shoud be found automatically on UNIXes. But you can
+specify path for alternative location and/or for Windows too.
+-DPOSTGRESQL_PATH_INCLUDES=/home/devel/pgsql/include
+-DPOSTGRESQL_PATH_INCLUDES=d:\pgsql\include
+-DPOSTGRESQL_PATH_LIB=/home/devel/pgsql/lib
+etc.
+
 
 Search following for more info:
 http://cmake.org

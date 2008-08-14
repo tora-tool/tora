@@ -195,6 +195,22 @@ ELSE(ORACLE_FOUND)
     ADD_DEFINITIONS("-DTO_NO_ORACLE")
 ENDIF(ORACLE_FOUND)
 
+
+FIND_PACKAGE(PostgreSQL)
+IF (POSTGRESQL_FOUND)
+    ADD_DEFINITIONS(-DLIBPQ_DECL_CANCEL)
+    ADD_DEFINITIONS(-DHAVE_POSTGRESQL_LIBPQ_FE_H)
+    MESSAGE(STATUS "PostgreSQL environment found: ${POSTGRESQL_INCLUDE_DIR} ${POSTGRESQL_LIBRARIES}")
+ELSE (POSTGRESQL_FOUND)
+    MESSAGE(" ")
+    MESSAGE(WARNING " No PostgreSQL environment has been found.")
+    MESSAGE(WARNING " Specify -DPOSTGRESQL_PATH_INCLUDES=path")
+    MESSAGE(WARNING " and -DPOSTGRESQL_PATH_LIB manually")
+    MESSAGE(" ")
+ENDIF (POSTGRESQL_FOUND)
+
+
+
 ##############################################################################################################
 ########## Include Setup                                                                            ##########
 

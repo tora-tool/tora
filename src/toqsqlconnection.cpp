@@ -63,10 +63,10 @@
 #include <QString>
 
 #ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
-  #include <postgresql/libpq-fe.h>
+  #include <libpq-fe.h>
 #endif
 
-#include <QDebug>
+// #include <QDebug>
 
 static toSQL SQLVersion("toQSqlConnection:Version",
                         "SHOW VARIABLES LIKE 'version'",
