@@ -279,6 +279,7 @@ BUILT_SOURCES = \
 	moc_tochangeconnection.cpp \
 	moc_tochartmanager.cpp \
 	moc_toconnection.cpp \
+	moc_toconnectionmodel.cpp \
 	moc_toconnectionpool.cpp \
 	moc_toconnectionimport.cpp \
 	moc_torunnable.cpp \
@@ -369,7 +370,6 @@ BUILT_SOURCES = \
 	moc_toscriptschemawidget.cpp \
 	moc_toscripttreemodel.cpp \
 	moc_toworkingwidget.cpp \
-	migratetool/moc_connectionmodel.cpp \
 	ui_toaboutui.h \
 	ui_todroptablespaceui.h \
 	ui_tobrowserconstraintui.h \
