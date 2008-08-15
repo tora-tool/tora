@@ -201,14 +201,14 @@ public:
      * Commit connections that are not busy
      *
      */
-    void commit(bool wait = true);
+    void commit(bool wait = false);
 
 
     /**
      * Rollback connections that are not busy
      *
      */
-    void rollback(bool wait = true);
+    void rollback(bool wait = false);
 
 
     /**
