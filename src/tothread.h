@@ -185,4 +185,49 @@ public:
     }
 };
 
+
+// much thanks to:
+// http://www.ddj.com/cpp/184403766
+// i added lock and unlock
+template <typename T> class LockingPtr {
+public:
+    // Constructors/destructors
+    LockingPtr(volatile T& obj, QMutex& mtx) : pObj_(const_cast<T*>(&obj)),
+                                               pMtx_(&mtx) {
+        mtx.lock();
+        locked = true;
+    }
+
+    ~LockingPtr() {
+        if(locked)
+            pMtx_->unlock();
+    }
+
+    void lock() {
+        pMtx_->lock();
+        locked = true;
+    }
+
+    void unlock() {
+        locked = false;
+        pMtx_->unlock();
+    }
+
+    // Pointer behavior
+    T& operator*() {
+        return *pObj_;
+    }
+
+    T* operator->() {
+        return pObj_;
+    }
+
+private:
+    bool locked;
+    T* pObj_;
+    QMutex* pMtx_;
+    LockingPtr(const LockingPtr&);
+    LockingPtr& operator=(const LockingPtr&);
+};
+
 #endif

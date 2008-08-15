@@ -40,6 +40,7 @@
 #include "toconf.h"
 #include "toconnectionpool.h"
 #include "tosql.h"
+#include "tothread.h"
 
 #include <QTimer>
 #include <QCoreApplication>
@@ -135,7 +136,7 @@ void toConnectionPoolExec::run() {
 
 toConnectionPool::toConnectionPool(toConnection *conn) : QObject(conn) {
     Connection = conn;
-    LockingPtr ptr(Pool, PoolLock);
+    LockingPtr<SubList> ptr(Pool, PoolLock);
 
     for(int i = 0; i < PreferredSize; i++) {
         PooledSub *psub = new PooledSub;
@@ -161,7 +162,7 @@ toConnectionPool::~toConnectionPool() {
     toConnection *conn = Connection;
     Connection = 0;
 
-    LockingPtr ptr(Pool, PoolLock);
+    LockingPtr<SubList> ptr(Pool, PoolLock);
 
     for(int mem = 0; mem < ptr->size(); mem++) {
         PooledSub *psub = (*ptr)[mem];
@@ -185,7 +186,7 @@ void toConnectionPool::fix(int member) {
     if(!Connection)
         return;
 
-    LockingPtr ptr(Pool, PoolLock);
+    LockingPtr<SubList> ptr(Pool, PoolLock);
     PooledSub *psub = (*ptr)[member];
     psub->State = Broken;
     ptr.unlock();
@@ -211,7 +212,7 @@ toConnectionPool::PooledState toConnectionPool::test(int member) {
     if(!Connection)
         return Broken;
 
-    LockingPtr ptr(Pool, PoolLock);
+    LockingPtr<SubList> ptr(Pool, PoolLock);
     PooledSub *psub = (*ptr)[member];
     if(psub->State != Free)
         return psub->State;
@@ -249,13 +250,13 @@ toConnectionPool::PooledState toConnectionPool::test(PooledSub *sub) {
 
 
 int toConnectionPool::size() {
-    LockingPtr ptr(Pool, PoolLock);
+    LockingPtr<SubList> ptr(Pool, PoolLock);
     return ptr->size();
 }
 
 
 toConnectionSub* toConnectionPool::steal(int member) {
-    LockingPtr ptr(Pool, PoolLock);
+    LockingPtr<SubList> ptr(Pool, PoolLock);
     return (*ptr)[member]->Sub;
 }
 
@@ -264,7 +265,7 @@ toConnectionSub* toConnectionPool::borrow() {
     {
         // keep lock here so adding connection below can be sure
         // there's no current lock in case of exception
-        LockingPtr ptr(Pool, PoolLock);
+        LockingPtr<SubList> ptr(Pool, PoolLock);
 
         for(int mem = 0; mem < ptr->size(); mem++) {
             PooledSub *psub = (*ptr)[mem];
@@ -290,14 +291,14 @@ toConnectionSub* toConnectionPool::borrow() {
     toConnectionSub *sub = Connection->addConnection();
     PooledSub *psub = new PooledSub(sub, Busy);
 
-    LockingPtr ptr(Pool, PoolLock);
+    LockingPtr<SubList> ptr(Pool, PoolLock);
     ptr->append(psub);
     return psub->Sub;
 }
 
 
 void toConnectionPool::release(toConnectionSub *sub) {
-    LockingPtr ptr(Pool, PoolLock);
+    LockingPtr<SubList> ptr(Pool, PoolLock);
 
     for(int mem = 0; mem < ptr->size(); mem++) {
         PooledSub *psub = (*ptr)[mem];

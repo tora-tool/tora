@@ -43,6 +43,7 @@
 #include "tomysqlkeywords.h"
 #include "tosql.h"
 #include "totool.h"
+#include "tothread.h"
 
 #include <ctype.h>
 #include <string.h>
@@ -63,7 +64,7 @@
 #include <QString>
 
 #ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
-  #include <libpq-fe.h>
+  #include <postgresql/libpq-fe.h>
 #endif
 
 // #include <QDebug>
@@ -1117,46 +1118,48 @@ class mySQLAnalyzer : public toSyntaxAnalyzer
         }
     };
 
-class qSqlSub : public toConnectionSub
+    class qSqlSub : public toConnectionSub
     {
-        toSemaphore Lock;
     public:
-        QSqlDatabase Connection;
+        // use compilter to prevent accidental unprotected access. Use
+        // LockingPtr.
+        volatile QSqlDatabase Connection;
+        QMutex Lock;
         QString Name;
         QString ConnectionID;
 
         qSqlSub(QSqlDatabase conn, const QString &name)
-                : Lock(1), Connection(conn), Name(name) {
+                : Connection(conn), Name(name) {
         }
 
         void lockUp()
         {
-            Lock.up();
         }
 
         void lockDown ()
         {
-            Lock.down();
         }
 
         int getLockValue()
         {
-            return Lock.getValue();
+            return 1;
         }
-
-        void reconnect(toConnection &conn);
 
         ~qSqlSub()
         {
-            Connection.close();
+            LockingPtr<QSqlDatabase> ptr(Connection, Lock);
+            ptr->close();
         }
+
+        // doh. better release the lock before calling this
         void throwError(const QString &sql)
         {
-            throw ErrorString(Connection.lastError(), sql);
+            LockingPtr<QSqlDatabase> ptr(Connection, Lock);
+            throw ErrorString(ptr->lastError(), sql);
         }
     };
 
-class qSqlQuery : public toQuery::queryImpl
+    class qSqlQuery : public toQuery::queryImpl
     {
         QSqlQuery *Query;
         QSqlRecord Record;
@@ -1192,8 +1195,10 @@ class qSqlQuery : public toQuery::queryImpl
         }
         QSqlQuery *createQuery(const QString &query)
         {
+            LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
+
             QSqlQuery *ret;
-            ret = new QSqlQuery(Connection->Connection);
+            ret = new QSqlQuery(*ptr);
             if (toQSqlProvider::OnlyForward)
                 ret->setForwardOnly(true);
             ret->exec(query);
@@ -1228,8 +1233,10 @@ class qSqlQuery : public toQuery::queryImpl
                         pars.insert(pars.end(), Connection->ConnectionID);
                         conn.execute(sql, pars);
                     }
-                    else
-                        native_cancel(Connection->Connection.driver());
+                    else {
+                        LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
+                        native_cancel(ptr->driver());
+                    }
                 }
                 catch (...)
                 {}
@@ -1302,7 +1309,7 @@ class qSqlQuery : public toQuery::queryImpl
             if (EOQ)
                 throw QString::fromLatin1("Tried to read past end of query");
 
-            Connection->lockDown();
+            LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
             QVariant val;
             bool fixEmpty = false;
             if (ColumnOrder)
@@ -1358,19 +1365,11 @@ class qSqlQuery : public toQuery::queryImpl
                 delete Query;
                 Query = NULL;
                 CurrentExtra = *ExtraData.begin();
-                try
-                {
-                    Query = createQuery(QueryParam(parseReorder(query()->sql()), query()->params(), &ExtraData));
-                }
-                catch (...)
-                {
-                    Connection->lockUp();
-                    throw;
-                }
+                Query = createQuery(QueryParam(parseReorder(query()->sql()), query()->params(), &ExtraData));
+
+                ptr.unlock();
                 checkQuery();
             }
-            else
-                Connection->lockUp();
 
             return toQValue::fromVariant(val);
         }
@@ -1380,35 +1379,30 @@ class qSqlQuery : public toQuery::queryImpl
         }
         virtual int rowsProcessed(void)
         {
+            LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
+
             if (!Query)
                 return 0;
-            Connection->lockDown();
-            int ret = Query->numRowsAffected();
-            Connection->lockUp();
-            return ret;
+            return Query->numRowsAffected();
         }
         virtual int columns(void)
         {
-            Connection->lockDown();
+            LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
             int ret = Record.count();
-            ;
             if (ColumnOrder)
-            {
                 ret = ColumnOrderSize;
-            }
-            Connection->lockUp();
+
             return ret;
         }
         virtual std::list<toQuery::queryDescribe> describe(void)
         {
+            LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
             std::list<toQuery::queryDescribe> ret;
             if (Query && Query->isSelect())
             {
                 QString provider = query()->connection().provider();
-                Connection->lockDown();
                 QSqlRecord rec = Query->record();
                 ret = Describe(provider, rec, ColumnOrder, ColumnOrderSize);
-                Connection->lockUp();
             }
             return ret;
         }
@@ -1598,9 +1592,8 @@ class qSqlConnection : public toConnection::connectionImpl
                     qSqlSub *sub = dynamic_cast<qSqlSub *>(query.connectionSub());
                     if (sub)
                     {
-                        sub->lockDown();
-                        desc = Describe(connection().provider(), sub->Connection.record(quote(table.Name)), NULL, 0);
-                        sub->lockUp();
+                        LockingPtr<QSqlDatabase> ptr(sub->Connection, sub->Lock);
+                        desc = Describe(connection().provider(), ptr->record(quote(table.Name)), NULL, 0);
                     }
                 }
                 else
@@ -1633,14 +1626,20 @@ class qSqlConnection : public toConnection::connectionImpl
         virtual void commit(toConnectionSub *sub)
         {
             qSqlSub *conn = qSqlConv(sub);
-            if (!conn->Connection.commit() && HasTransactions)
+            LockingPtr<QSqlDatabase> ptr(conn->Connection, conn->Lock);
+            if(!ptr->commit() && HasTransactions) {
+                ptr.unlock();
                 conn->throwError(QString::fromLatin1("COMMIT"));
+            }
         }
         virtual void rollback(toConnectionSub *sub)
         {
             qSqlSub *conn = qSqlConv(sub);
-            if (!conn->Connection.rollback() && HasTransactions)
+            LockingPtr<QSqlDatabase> ptr(conn->Connection, conn->Lock);
+            if(!ptr->rollback() && HasTransactions) {
+                ptr.unlock();
                 conn->throwError(QString::fromLatin1("ROLLBACK"));
+            }
         }
 
         virtual toConnectionSub *createConnection(void);
@@ -1654,11 +1653,12 @@ class qSqlConnection : public toConnection::connectionImpl
         {
             QString ret;
             qSqlSub *conn = qSqlConv(sub);
-            conn->lockDown();
             try
             {
-                QSqlQuery query = conn->Connection.exec(
-                    toSQL::string(SQLVersion, connection()));
+                LockingPtr<QSqlDatabase> ptr(conn->Connection, conn->Lock);
+
+                QSqlQuery query = ptr->exec(toSQL::string(SQLVersion,
+                                                          connection()));
                 if (query.next())
                 {
                     if (query.isValid())
@@ -1671,7 +1671,6 @@ class qSqlConnection : public toConnection::connectionImpl
             }
             catch (...)
                 {}
-            conn->lockUp();
             return ret;
         }
 
@@ -1682,23 +1681,21 @@ class qSqlConnection : public toConnection::connectionImpl
         virtual void execute(toConnectionSub *sub, const QString &sql, toQList &params)
         {
             qSqlSub *conn = qSqlConv(sub);
-            conn->lockDown();
             try
             {
-                QSqlQuery Query(conn->Connection.exec(QueryParam(sql, params, NULL)));
+                LockingPtr<QSqlDatabase> ptr(conn->Connection, conn->Lock);
+                QSqlQuery Query(ptr->exec(QueryParam(sql, params, NULL)));
                 if (!Query.isActive())
                 {
-                    conn->lockUp();
                     QString msg = QString::fromLatin1("Query not active ");
                     msg += sql;
+                    ptr.unlock();
                     throw ErrorString(Query.lastError(), msg);
                 }
-                conn->lockUp();
             }
             catch (const toQSqlProviderAggregate &)
             {
                 // Ok, this one is complicated and will probably never be used.
-                conn->lockUp();
                 throw QString("Direct exec aggregate queries are not supported, use a toQuery object for this one");
             }
         }
@@ -1784,12 +1781,6 @@ toLock myLock;
 
 void toQSqlProvider::qSqlQuery::execute(void)
 {
-    while (Connection->getLockValue() > 1)
-    {
-        Connection->lockDown();
-        toStatusMessage(QString::fromLatin1("Too high value on connection lock semaphore"));
-    }
-    Connection->lockDown();
     Query = NULL;
     try
     {
@@ -1800,42 +1791,33 @@ void toQSqlProvider::qSqlQuery::execute(void)
         ExtraData = extraData(aggr);
         if (ExtraData.begin() != ExtraData.end())
             CurrentExtra = *ExtraData.begin();
-        try
+
+        QString t = QueryParam(parseReorder(query()->sql()), query()->params(), &ExtraData);
+        if (t.isEmpty())
         {
-            QString t = QueryParam(parseReorder(query()->sql()), query()->params(), &ExtraData);
-            if (t.isEmpty())
-            {
-                toStatusMessage("Nothing to send to aggregate query");
-                Query = NULL;
-                EOQ = true;
-                Connection->lockUp();
-                return ;
-            }
-            else
-                Query = createQuery(t);
+            toStatusMessage("Nothing to send to aggregate query");
+            Query = NULL;
+            EOQ = true;
+            return;
         }
-        catch (...)
-        {
-            Connection->lockUp();
-            throw;
-        }
+        else
+            Query = createQuery(t);
     }
+
     checkQuery();
 }
 
-void toQSqlProvider::qSqlQuery::checkQuery(void) // Must call with lockDown!!!!
+void toQSqlProvider::qSqlQuery::checkQuery(void) // Must *not* call while locked
 {
-    while (Connection->getLockValue() > 0)
-    {
-        toStatusMessage(QString::fromLatin1("Too high value on connection lock semaphore for checkQuery"));
-    }
+    LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
+
     do
     {
         if (!Query->isActive())
         {
-            Connection->lockUp();
             QString msg = QString::fromLatin1("Query not active ");
             msg += query()->sql();
+            ptr.unlock();
             throw ErrorString(Query->lastError(), msg);
         }
 
@@ -1866,20 +1848,13 @@ void toQSqlProvider::qSqlQuery::checkQuery(void) // Must call with lockDown!!!!
         {
             delete Query;
             Query = NULL;
-            try
-            {
-                Query = createQuery(QueryParam(parseReorder(query()->sql()), query()->params(), &ExtraData));
-            }
-            catch (...)
-            {
-                Connection->lockUp();
-                throw;
-            }
+
+            Query = createQuery(QueryParam(parseReorder(query()->sql()),
+                                           query()->params(),
+                                           &ExtraData));
         }
     }
     while (ExtraData.begin() != ExtraData.end() && EOQ);
-
-    Connection->lockUp();
 }
 
 toQSqlProvider::qSqlSub *toQSqlProvider::createConnection(toConnection &conn)
@@ -1938,19 +1913,6 @@ toQSqlProvider::qSqlSub *toQSqlProvider::createConnection(toConnection &conn)
     catch (...)
     {}
     return ret;
-}
-
-void toQSqlProvider::qSqlSub::reconnect(toConnection &conn)
-{
-    qSqlSub *sub = createConnection(conn);
-    Connection = sub->Connection;
-    ConnectionID = sub->ConnectionID;
-
-    // Switch database and remove the old one
-    QString t = Name;
-    Name = sub->Name;
-    sub->Name = t;
-    delete sub;
 }
 
 toConnectionSub *toQSqlProvider::qSqlConnection::createConnection(void)

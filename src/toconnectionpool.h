@@ -160,52 +160,6 @@ class toConnectionPool : public QObject {
     // lock for the pool.
     QMutex PoolLock;
 
-    // much thanks to:
-    // http://www.ddj.com/cpp/184403766
-    // i remove the template and added lock and unlock
-    class LockingPtr {
-    public:
-        // Constructors/destructors
-        LockingPtr(volatile SubList& obj, QMutex& mtx)
-            : pObj_(const_cast<SubList*>(&obj)),
-              pMtx_(&mtx) {
-
-            mtx.lock();
-            locked = true;
-        }
-
-        ~LockingPtr() {
-            if(locked)
-                pMtx_->unlock();
-        }
-
-        void lock() {
-            pMtx_->lock();
-            locked = true;
-        }
-
-        void unlock() {
-            locked = false;
-            pMtx_->unlock();
-        }
-
-        // Pointer behavior
-        SubList& operator*() {
-            return *pObj_;
-        }
-
-        SubList* operator->() {
-            return pObj_;
-        }
-
-    private:
-        bool locked;
-        SubList* pObj_;
-        QMutex* pMtx_;
-        LockingPtr(const LockingPtr&);
-        LockingPtr& operator=(const LockingPtr&);
-    };
-
     // toConnection instance this class is a member of.  will be used
     // to create new connections when needed.
     QPointer<toConnection> Connection;

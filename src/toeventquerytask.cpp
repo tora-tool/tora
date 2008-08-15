@@ -124,6 +124,7 @@ void toEventQueryTask::run(void) {
     }
 
     try {
+        Closed = true;
         delete Query;
         Query = 0;
     }
