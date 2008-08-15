@@ -1234,8 +1234,10 @@ class mySQLAnalyzer : public toSyntaxAnalyzer
                         conn.execute(sql, pars);
                     }
                     else {
-                        LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
-                        native_cancel(ptr->driver());
+                        // don't lock here or deadlock while waiting
+                        // for query to finish
+                        QSqlDatabase *c = const_cast<QSqlDatabase *>(&(Connection->Connection));
+                        native_cancel(c->driver());
                     }
                 }
                 catch (...)
