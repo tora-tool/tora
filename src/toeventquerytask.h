@@ -82,6 +82,11 @@ class toEventQueryTask : public toRunnable {
     // object was closed
     volatile bool Closed;
 
+    // can't synchronize on query or cancel wouldn't work, but need to
+    // protect access during close() which may be called from the main
+    // thread
+    QMutex CloseLock;
+
 
 public:
 

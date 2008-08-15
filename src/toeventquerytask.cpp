@@ -44,6 +44,7 @@
 #include "toresultstats.h"
 
 #include <QApplication>
+#include <QMutexLocker>
 
 
 #define CATCH_ALL                                   \
@@ -124,6 +125,7 @@ void toEventQueryTask::run(void) {
     }
 
     try {
+        QMutexLocker lock(&CloseLock);
         Closed = true;
         delete Query;
         Query = 0;
@@ -145,6 +147,8 @@ void toEventQueryTask::close() {
         emit done();
 
         disconnect(this, 0, 0, 0);
+
+        QMutexLocker lock(&CloseLock);
         if(Query && !Closed)
             Query->cancel();
     }
