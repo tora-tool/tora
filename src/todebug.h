@@ -147,48 +147,44 @@ class toDebug : public toToolWidget
     toTreeWidget *Contents;
 
     // Debug pane
-    QTabWidget *DebugTabs;
+    QTabWidget   *DebugTabs;
     toTreeWidget *Breakpoints;
     toTreeWidget *StackTrace;
     toTreeWidget *Watch;
     toTreeWidget *Parameters;
-    toOutput *Output;
+    toOutput     *Output;
     toMarkedText *RuntimeLog;
 
     // Editors
     QTabWidget *Editors;
 
     // Must hold lock before reading or writing to these
-    toLock Lock;
-    toSemaphore TargetSemaphore;
-    toSemaphore ChildSemaphore;
-    toSemaphore StartedSemaphore;
-    toThread *TargetThread;
-    QString TargetSQL;
-    QString TargetLog;
-    QString TargetException;
-    toQList InputData;
-    toQList OutputData;
-    int ColumnSize;
-    bool RunningTarget;
-    bool DebuggerStarted;
+    toLock       Lock;
+    toSemaphore  TargetSemaphore;
+    toSemaphore  ChildSemaphore;
+    toSemaphore  StartedSemaphore;
+    toThread    *TargetThread;
+    QString      TargetSQL;
+    QString      TargetLog;
+    QString      TargetException;
+    toQList      InputData;
+    toQList      OutputData;
+    int          ColumnSize;
+    bool         RunningTarget;
+    bool         DebuggerStarted;
     // Can be read after thread startup
-    QString TargetID;
+    QString      TargetID;
     // End of lock stuff
-    toTimer StartTimer;
+    toTimer      StartTimer;
 
-    /*! \brief Enable/disable debugging related actions (steps etc.).
-    It's set to false when DBMS_DEBUG related calls fail.
-    */
-    void enableDebugger(bool);
-
-class targetTask : public toTask
+    class targetTask : public toTask
     {
         toDebug &Parent;
+
     public:
-        targetTask(toDebug &parent)
-                : Parent(parent)
+        targetTask(toDebug &parent) : Parent(parent)
         { }
+
         virtual void run(void);
     };
 
@@ -233,6 +229,12 @@ protected:
 
 private slots:
     void startTarget(void);
+
+    /*! \brief Enable/disable debugging related actions (steps etc.).
+    It's set to false when DBMS_DEBUG related calls fail.
+    */
+    void enableDebugger(bool);
+
 public:
     toDebug(QWidget *parent, toConnection &connection);
 

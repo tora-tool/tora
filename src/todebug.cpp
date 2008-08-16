@@ -425,20 +425,29 @@ void toDebug::targetTask::run(void)
         {
             toQuery init(Connection, SQLDebugInit);
 
-            Parent.DebuggerStarted = true;
-            Parent.enableDebugger(true);
+            // can't use moc from nested class
+            QMetaObject::invokeMethod(&Parent,
+                                      "enableDebugger",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(bool, true));
+
             toLocker lock (Parent.Lock);
+            Parent.DebuggerStarted = true;
             Parent.TargetID = init.readValue();
             Parent.ChildSemaphore.up();
             Parent.TargetLog += QString::fromLatin1("Debug session connected\n");
         }
         catch (const QString &exc)
         {
+            QMetaObject::invokeMethod(&Parent,
+                                      "enableDebugger",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(bool, false));
+
             toLocker lock (Parent.Lock);
             Parent.TargetLog += QString::fromLatin1("Couldn't start debugging:");
             Parent.TargetLog += exc;
             Parent.DebuggerStarted = false;
-            Parent.enableDebugger(false);
             Parent.ChildSemaphore.up();
             return ;
         }
@@ -506,7 +515,10 @@ void toDebug::targetTask::run(void)
     TOCATCH
     toLocker lock (Parent.Lock);
     Parent.DebuggerStarted = false;
-    Parent.enableDebugger(false);
+    QMetaObject::invokeMethod(&Parent,
+                              "enableDebugger",
+                              Qt::QueuedConnection,
+                              Q_ARG(bool, false));
     Parent.TargetLog += QString::fromLatin1("Closing debug session\n");
     Parent.TargetThread = NULL;
     Parent.ChildSemaphore.up();
