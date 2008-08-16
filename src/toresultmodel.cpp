@@ -513,59 +513,56 @@ void toResultModel::setAlignment(int col, Qt::AlignmentFlag fl)
 }
 
 
-int toResultModel::partition(int left,
-                             int right,
-                             int pivot,
-                             int column,
-                             Qt::SortOrder order)
-{
-    Rows.move(pivot, right);        // move to end
-
-    int store = left;
-    toQValue key = Rows.at(right).at(column); // pivot value for
-    // comparisons
-
-    for (int i = left; i < right; i++)
-    {
-        if ((order == Qt::AscendingOrder && (Rows.at(i).at(column) < key)) ||
-                (order == Qt::DescendingOrder && (Rows.at(i).at(column) > key)))
-            Rows.swap(i, store++);
-    }
-
-    Rows.swap(store, right);
-    return store;
-}
-
-
-void toResultModel::qsort(int left,
-                          int right,
-                          int column,
-                          Qt::SortOrder order)
-{
-    // quick sort
-
-    // mrj: i'm not an algorithm guy and i don't really want to do
-    // this, but there's no good way to do this within qt.
-
-    // i did a quick 'n dirty implementation following
-    // http://en.wikipedia.org/wiki/Quicksort
-
-    if (right <= left)
-        return;
-
-    int pivotIndex = left;
-    int index = partition(left, right, pivotIndex, column, order);
-    qsort(left, index - 1, column, order);
-    qsort(index + 1, right, column, order);
-}
-
-
 void toResultModel::sort(int column, Qt::SortOrder order)
 {
     if (column > Headers.size() - 1)
         return;
 
-    qsort(0, Rows.size() - 1, column, order);
+    Rows = mergesort(Rows, column, order);
     emit dataChanged(createIndex(0, 0),
                      createIndex(rowCount(), columnCount()));
+}
+
+
+toResultModel::RowList toResultModel::mergesort(RowList &rows,
+                                                int column,
+                                                Qt::SortOrder order)
+{
+    if(rows.size() <= 1)
+        return rows;
+
+    RowList left, right;
+
+    int middle = (int) (rows.size() / 2);
+    left = rows.mid(0, middle);
+    right = rows.mid(middle);
+
+    left = mergesort(left, column, order);
+    right = mergesort(right, column, order);
+
+    return merge(left, right, column, order);
+}
+
+
+toResultModel::RowList toResultModel::merge(RowList &left,
+                                            RowList &right,
+                                            int column,
+                                            Qt::SortOrder order)
+{
+    RowList result;
+
+    while(left.size() > 0 && right.size() > 0)
+    {
+        if(order == Qt::AscendingOrder && left.at(0).at(column) <= right.at(0).at(column) ||
+           order == Qt::DescendingOrder && left.at(0).at(column) >= right.at(0).at(column))
+            result.append(left.takeAt(0));
+        else
+            result.append(right.takeAt(0));
+    }
+
+    if(left.size() > 0)
+        result << left;
+    if(right.size() > 0)
+        result << right;
+    return result;
 }

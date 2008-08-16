@@ -118,6 +118,39 @@ bool toQValue::operator>(const toQValue &other) const
 }
 
 
+bool toQValue::operator<=(const toQValue &other) const
+{
+    if (isInt() && other.isInt())
+        return toInt() <= other.toInt();
+    if (isDouble() && other.isDouble())
+        return toDouble() <= other.toDouble();
+    if (isLong() && other.isLong())
+        return toLong() <= other.toLong();
+    if (isuLong() && other.isuLong())
+        return touLong() <= other.touLong();
+    if (isBinary() && other.isBinary())
+        return Value.toByteArray() <= other.Value.toByteArray();
+
+    // otherwise, try to convert to double for comparison
+    bool ok;
+    double d1 = toString().toDouble(&ok);
+    if (ok)
+    {
+        double d2 = other.toString().toDouble(&ok);
+        if (ok)
+            return d1 <= d2;
+    }
+
+    return toString() <= other.toString();
+}
+
+
+bool toQValue::operator>=(const toQValue &other) const
+{
+    return !operator<=(other);
+}
+
+
 const toQValue &toQValue::operator = (const toQValue & copy)
 {
     Value = copy.Value;

@@ -99,6 +99,14 @@ public:
      */
     bool operator>(const toQValue &other) const;
 
+    /** Less than operator
+     */
+    bool operator<=(const toQValue &other) const;
+
+    /** greater than operator
+     */
+    bool operator>=(const toQValue &other) const;
+
     /** Check a value for equality. Requires same type and same value. NULL is equal to other NULL values.
      */
     bool operator == (const toQValue &) const;

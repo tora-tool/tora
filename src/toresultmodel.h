@@ -101,8 +101,9 @@ private:
     bool ReadAll;
 
     // helpers for sort implementation
-    int partition(int, int, int, int, Qt::SortOrder);
-    void qsort(int, int, int, Qt::SortOrder);
+    RowList mergesort(RowList&, int, Qt::SortOrder);
+    RowList merge(RowList&, RowList&, int, Qt::SortOrder);
+
 
 private slots:
 
