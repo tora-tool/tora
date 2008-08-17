@@ -155,6 +155,7 @@ SET(TORA_MOC_CLASSES
     toresultlock.h
     toresultlong.h
     toresultmodel.h
+    tocodemodel.h
     toresultparam.h
     toresultpie.h
     toresultplan.h
@@ -298,6 +299,7 @@ SET(TORA_SOURCES
     toresultlock.cpp
     toresultlong.cpp
     toresultmodel.cpp
+    tocodemodel.cpp
     toresultparam.cpp
     toresultpie.cpp
     toresultplan.cpp

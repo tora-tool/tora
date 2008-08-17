@@ -125,6 +125,7 @@ tora_SOURCES=main.cpp \
 	toscript.cpp toscript.h  \
 	toscriptschemawidget.cpp toscriptschemawidget.h \
 	toscripttreeitem.cpp toscripttreeitem.h \
+	tocodemodel.cpp tocodemodel.h \
 	toscripttreemodel.cpp toscripttreemodel.h \
 	tosecurity.cpp tosecurity.h  \
     tosecuritytreemodel.cpp tosecuritytreemodel.h \
@@ -280,6 +281,7 @@ BUILT_SOURCES = \
 	moc_tochartmanager.cpp \
 	moc_toconnection.cpp \
 	moc_toconnectionmodel.cpp \
+	moc_tocodemodel.cpp \
 	moc_toconnectionpool.cpp \
 	moc_toconnectionimport.cpp \
 	moc_torunnable.cpp \

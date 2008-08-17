@@ -84,16 +84,18 @@
 #define TO_BREAK_HANDLER 2048
 #define TO_ABORT_EXECUTION 8192
 
+class QButtonGroup;
 class QComboBox;
-class toTreeWidget;
-class toTreeWidgetItem;
 class QTabWidget;
+class QTreeView;
 class QToolButton;
+class toCodeModel;
 class toConnection;
 class toDebugText;
 class toMarkedText;
 class toOutput;
-class QButtonGroup;
+class toTreeWidget;
+class toTreeWidgetItem;
 
 class toDebug : public toToolWidget
 {
@@ -143,7 +145,8 @@ class toDebug : public toToolWidget
     QMenu *ToolMenu;
 
     // Content pane
-    toTreeWidget *Objects;
+    QTreeView    *Objects;
+    toCodeModel  *CodeModel;
     toTreeWidget *Contents;
 
     // Debug pane
@@ -263,7 +266,7 @@ public slots:
     void compile(void);
     void refresh(void);
     void changeSchema(int);
-    void changePackage(toTreeWidgetItem *);
+    void changePackage(const QModelIndex &, const QModelIndex &);
     void showDebug(bool);
     void prevError(void);
     void nextError(void);

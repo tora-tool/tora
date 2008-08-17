@@ -51,6 +51,7 @@
 #include "tosql.h"
 #include "tosqlparse.h"
 #include "totool.h"
+#include "tocodemodel.h"
 
 #include <stack>
 
@@ -72,6 +73,7 @@
 #include <QMdiArea>
 #include <QMessageBox>
 #include <QButtonGroup>
+#include <QTreeView>
 
 #include "icons/addwatch.xpm"
 #include "icons/changewatch.xpm"
@@ -1754,8 +1756,8 @@ void toDebug::stop(void)
 }
 
 toDebug::toDebug(QWidget *main, toConnection &connection)
-        : toToolWidget(DebugTool, "debugger.html", main, connection, "toDebug"),
-        TargetThread()
+    : toToolWidget(DebugTool, "debugger.html", main, connection, "toDebug"),
+      TargetThread()
 {
     createActions();
     QToolBar *toolbar = toAllocBar(this, tr("Debugger"));
@@ -1829,15 +1831,19 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
 
     QSplitter *objSplitter = new QSplitter(Qt::Vertical, hsplitter);
 
-    Objects = new toListView(objSplitter);
-    Objects->addColumn(tr("Objects"));
-    Objects->setRootIsDecorated(true);
-    Objects->setTreeStepSize(10);
-    Objects->setSorting(0);
-    Objects->setSelectionMode(toTreeWidget::Single);
-    Objects->setResizeMode(toTreeWidget::AllColumns);
-    connect(Objects, SIGNAL(selectionChanged(toTreeWidgetItem *)),
-            this, SLOT(changePackage(toTreeWidgetItem *)));
+    Objects = new QTreeView(objSplitter);
+    CodeModel = new toCodeModel(Objects);
+    Objects->setModel(CodeModel);
+    QString selected = Schema->currentText();
+    if(!selected.isEmpty())
+        CodeModel->refresh(connection, selected);
+//     Objects->setSelectionMode(toTreeWidget::Single);
+//     Objects->setResizeMode(toTreeWidget::AllColumns);
+    connect(Objects->selectionModel(),
+            SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)),
+            this,
+            SLOT(changePackage(const QModelIndex &, const QModelIndex &)));
+
     Contents = new toListView(objSplitter);
     Contents->addColumn(tr("Contents"));
     Contents->setRootIsDecorated(true);
@@ -2230,66 +2236,16 @@ void toDebug::refresh(void)
         }
         if (!selected.isEmpty())
         {
+            for (int i = 0;i < Schema->count();i++)
             {
-                for (int i = 0;i < Schema->count();i++)
-                    if (Schema->itemText(i) == selected)
-                    {
-                        Schema->setCurrentIndex(i);
-                        break;
-                    }
-            }
-            Objects->clear();
-
-            // refresh the objects
-            connection().rereadCache();
-            std::list<toConnection::objectName> &objs = connection().objects(true);
-
-            std::map<QString, toTreeWidgetItem *> typeItems;
-            bool any = false;
-            for (std::list<toConnection::objectName>::iterator i = objs.begin();
-                    i != objs.end();i++)
-            {
-                if ((*i).Owner == selected)
+                if (Schema->itemText(i) == selected)
                 {
-                    any = true;
-                    QString type = (*i).Type;
-                    if (type == QString::fromLatin1("FUNCTION") ||
-                            type == QString::fromLatin1("PACKAGE") ||
-                            type == QString::fromLatin1("PROCEDURE") ||
-                            type == QString::fromLatin1("TYPE"))
-                    {
-                        toTreeWidgetItem *typeItem;
-                        std::map<QString, toTreeWidgetItem *>::iterator j = typeItems.find(type);
-                        if (j == typeItems.end())
-                        {
-                            typeItem = new toTreeWidgetItem(Objects, type);
-                            typeItems[type] = typeItem;
-#ifndef AUTOEXPAND
-
-                            typeItem->setSelectable(false);
-#endif
-
-                        }
-                        else
-                            typeItem = (*j).second;
-
-                        QString bodyType(type);
-                        bodyType += QString::fromLatin1(" BODY");
-                        QString name = (*i).Name;
-                        toTreeWidgetItem *item = new toTreeWidgetItem(typeItem, name, type);
-                        if (selected == currentEditor()->schema() &&
-                                (type == currentEditor()->type() ||
-                                 bodyType == currentEditor()->type()) &&
-                                name == currentEditor()->object())
-                        {
-                            Objects->setOpen(typeItem, true);
-                            Objects->setSelected(item, true);
-                        }
-                    }
-                }
-                else if (any)
+                    Schema->setCurrentIndex(i);
                     break;
+                }
             }
+
+            CodeModel->refresh(connection(), selected);
         }
     }
     TOCATCH
@@ -2426,14 +2382,21 @@ void toDebug::updateCurrent()
 //     qDebug() << "toDebug::updateCurrent 2";
 }
 
-void toDebug::changePackage(toTreeWidgetItem *item)
+void toDebug::changePackage(const QModelIndex &current, const QModelIndex &previous)
 {
 //     qDebug() << "toDebug::changePackage 1";
+    QTreeWidgetItem *item = static_cast<QTreeWidgetItem*>(current.internalPointer());
     if (item && item->parent())
     {
-        viewSource(Schema->currentText(), item->text(0), item->text(1), 0);
-        if (item->text(1) == "PACKAGE" || item->text(1) == "TYPE")
-            viewSource(Schema->currentText(), item->text(0), item->text(1) + " BODY", 0);
+        QString ctype = item->parent()->text(0);
+        if(ctype.isEmpty() || ctype == "Code")
+            return;
+        ctype = ctype.toUpper();
+
+        if (ctype == "PACKAGE" || ctype == "TYPE")
+            ctype += " BODY";
+
+        viewSource(Schema->currentText(), item->text(0), ctype, 0);
     }
 #ifdef AUTOEXPAND
     else if (item && !item->parent())
@@ -3034,10 +2997,10 @@ void toDebug::closeEditor(toDebugText* &editor)
             }
         }
 
-        if (Objects->selectedItem() &&
-                Objects->selectedItem()->text(0) == editor->object() &&
-                Schema->currentText() == editor->schema())
-            Objects->clearSelection();
+//         if (Objects->selectedItem() &&
+//                 Objects->selectedItem()->text(0) == editor->object() &&
+//                 Schema->currentText() == editor->schema())
+//             Objects->clearSelection();
 
         Editors->removeTab(Editors->indexOf(editor));
         delete editor;
