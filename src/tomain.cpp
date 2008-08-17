@@ -186,6 +186,10 @@ toMain::toMain()
 
     show();
 
+    statusBar()->addPermanentWidget(BackgroundLabel, 0);
+    BackgroundLabel->show();
+    BackgroundLabel->setToolTip(tr("No background queries."));
+
     if (Connections.empty())
     {
         try
@@ -209,10 +213,6 @@ toMain::toMain()
         }
         TOCATCH;
     }
-
-    statusBar()->addPermanentWidget(BackgroundLabel, 0);
-    BackgroundLabel->show();
-    BackgroundLabel->setToolTip(tr("No background queries."));
 }
 
 void toMain::createActions()

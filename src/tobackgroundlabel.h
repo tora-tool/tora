@@ -16,6 +16,8 @@
 
 class toBackgroundLabel : public QLabel
 {
+    Q_OBJECT;
+
 public:
     //static toBackgroundLabel createToBackgroundLabel();
     virtual void mouseReleaseEvent(QMouseEvent* e);
@@ -26,8 +28,6 @@ public:
     toBackgroundLabel(QWidget *parent);
 private:
     static QMovie* Animation;
-    static const char data[];
-
 };
 
 

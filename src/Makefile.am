@@ -273,6 +273,7 @@ BUILT_SOURCES = \
 	moc_toanalyze.cpp \
 	moc_tobackup.cpp \
 	moc_tobarchart.cpp \
+	moc_tobackgroundlabel.cpp \
 	moc_tobrowser.cpp \
 	moc_tobrowserconstraint.cpp \
 	moc_tobrowserindex.cpp \
