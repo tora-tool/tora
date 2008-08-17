@@ -39,7 +39,9 @@
 #include <QMdiSubWindow>
 #include <QMdiArea>
 #include <QSettings>
+#include <QTreeView>
 
+#include "config.h"
 #include "utils.h"
 #include "toconnection.h"
 #include "totreewidget.h"
@@ -49,6 +51,7 @@
 #include "tosql.h"
 #include "toresultview.h"
 #include "toplsqltext.h"
+#include "tocodemodel.h"
 
 #include "icons/close.xpm"
 #include "icons/compile.xpm"
@@ -175,7 +178,7 @@ bool toPLSQLEditor::viewSource(const QString &schema, const QString &name, const
 }
 
 toPLSQLEditor::toPLSQLEditor(QWidget *main, toConnection &connection)
-        : toToolWidget(PLSQLEditorTool, "plsqleditor.html", main, connection, "toPLSQLEditor")
+    : toToolWidget(PLSQLEditorTool, "plsqleditor.html", main, connection, "toPLSQLEditor")
 {
     createActions();
     QToolBar *toolbar = toAllocBar(this, tr("PLSQLEditor"));
@@ -209,15 +212,16 @@ toPLSQLEditor::toPLSQLEditor(QWidget *main, toConnection &connection)
     splitter = new QSplitter(Qt::Horizontal, this);
     layout()->addWidget(splitter);
 
-    Objects = new toListView(this);//objSplitter);
-    Objects->addColumn(tr("Objects"));
-    Objects->setRootIsDecorated(true);
-    Objects->setTreeStepSize(10);
-    Objects->setSorting(0);
-    Objects->setSelectionMode(toTreeWidget::Single);
-    Objects->setResizeMode(toTreeWidget::AllColumns);
-    connect(Objects, SIGNAL(selectionChanged(toTreeWidgetItem *)),
-            this, SLOT(changePackage(toTreeWidgetItem *)));
+    Objects = new QTreeView(splitter);
+    CodeModel = new toCodeModel(Objects);
+    Objects->setModel(CodeModel);
+    QString selected = Schema->currentText();
+    if(!selected.isEmpty())
+        CodeModel->refresh(connection, selected);
+    connect(Objects->selectionModel(),
+            SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)),
+            this,
+            SLOT(changePackage(const QModelIndex &, const QModelIndex &)));
 
     splitter->addWidget(Objects);
 
@@ -354,69 +358,20 @@ void toPLSQLEditor::refresh(void)
         }
         if (!selected.isEmpty())
         {
+            for (int i = 0;i < Schema->count();i++)
             {
-                for (int i = 0;i < Schema->count();i++)
-                    if (Schema->itemText(i) == selected)
-                    {
-                        Schema->setCurrentIndex(i);
-                        break;
-                    }
-            }
-            Objects->clear();
-
-            // refresh the objects
-            connection().rereadCache();
-            std::list<toConnection::objectName> &objs = connection().objects(true);
-
-            std::map<QString, toTreeWidgetItem *> typeItems;
-            bool any = false;
-            for (std::list<toConnection::objectName>::iterator i = objs.begin();
-                    i != objs.end();i++)
-            {
-                if ((*i).Owner == selected)
+                if (Schema->itemText(i) == selected)
                 {
-                    any = true;
-                    QString type = (*i).Type;
-                    if (type == QString::fromLatin1("FUNCTION") ||
-                            type == QString::fromLatin1("PACKAGE") ||
-                            type == QString::fromLatin1("PROCEDURE") ||
-                            type == QString::fromLatin1("TYPE"))
-                    {
-                        toTreeWidgetItem *typeItem;
-                        std::map<QString, toTreeWidgetItem *>::iterator j = typeItems.find(type);
-                        if (j == typeItems.end())
-                        {
-                            typeItem = new toTreeWidgetItem(Objects, type);
-                            typeItems[type] = typeItem;
-#ifndef AUTOEXPAND
-
-                            typeItem->setSelectable(false);
-#endif
-
-                        }
-                        else
-                            typeItem = (*j).second;
-
-                        QString bodyType(type);
-                        bodyType += QString::fromLatin1(" BODY");
-                        QString name = (*i).Name;
-                        toTreeWidgetItem *item = new toTreeWidgetItem(typeItem, name, type);
-                        if (selected == currentEditor()->editor()->schema() &&
-                                (type == currentEditor()->editor()->type() ||
-                                 bodyType == currentEditor()->editor()->type()) &&
-                                name == currentEditor()->editor()->object())
-                        {
-                            Objects->setOpen(typeItem, true);
-                            Objects->setSelected(item, true);
-                        }
-                    }
-                }
-                else if (any)
+                    Schema->setCurrentIndex(i);
                     break;
+                }
             }
+
+            CodeModel->refresh(connection(), selected);
         }
     }
-    TOCATCH
+    TOCATCH;
+
     QApplication::restoreOverrideCursor();
 }
 
@@ -442,20 +397,29 @@ void toPLSQLEditor::updateCurrent()
     TOCATCH
 }
 
-void toPLSQLEditor::changePackage(toTreeWidgetItem *item)
+void toPLSQLEditor::changePackage(const QModelIndex &current, const QModelIndex &previous)
 {
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+    toBusy busy;
+
+//     qDebug() << "toDebug::changePackage 1";
+    QTreeWidgetItem *item = static_cast<QTreeWidgetItem*>(current.internalPointer());
     if (item && item->parent())
     {
-        viewSource(Schema->currentText(), item->text(0), item->text(1), 0);
-        if (item->text(1) == "PACKAGE" || item->text(1) == "TYPE")
-            viewSource(Schema->currentText(), item->text(0), item->text(1) + " BODY", 0);
+        QString ctype = item->parent()->text(0);
+        if(ctype.isEmpty() || ctype == "Code")
+            return;
+        ctype = ctype.toUpper();
+
+        if (ctype == "PACKAGE" || ctype == "TYPE")
+            ctype += " BODY";
+
+        viewSource(Schema->currentText(), item->text(0), ctype, 0);
     }
 #ifdef AUTOEXPAND
     else if (item && !item->parent())
         item->setOpen(true);
 #endif
-    QApplication::restoreOverrideCursor();
+// qDebug() << "toDebug::changePackage 2";
 }
 
 void toPLSQLEditor::compileWarn()
@@ -565,10 +529,10 @@ void toPLSQLEditor::closeEditor(toPLSQLWidget* &editor)
     if (editor)
     {
         QString name = editor->objectName();
-        if (Objects->selectedItem() &&
-                Objects->selectedItem()->text(0) == editor->editor()->object() &&
-                Schema->currentText() == editor->editor()->schema())
-            Objects->clearSelection();
+//         if (Objects->selectedItem() &&
+//                 Objects->selectedItem()->text(0) == editor->editor()->object() &&
+//                 Schema->currentText() == editor->editor()->schema())
+//             Objects->clearSelection();
 
         Editors->removeTab(Editors->indexOf(editor));
         delete editor;

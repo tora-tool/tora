@@ -43,13 +43,13 @@
 #include "tohighlightedtext.h"
 #include "tosqlparse.h"
 
+class QMdiSubWindow;
+class QTreeView;
+class toCodeModel;
+class toConnection;
+class toPLSQLWidget;
 class toTreeWidget;
 class toTreeWidgetItem;
-class toConnection;
-class QMdiSubWindow;
-
-class toPLSQLWidget;
-
 
 
 /*! \brief Advanced PL/SQL Editor. It's based on
@@ -80,8 +80,9 @@ class toPLSQLEditor : public toToolWidget
     QMenu *ToolMenu;
 
     // Content pane
-    toTreeWidget *Objects;
-    QSplitter *splitter;
+    QTreeView   *Objects;
+    toCodeModel *CodeModel;
+    QSplitter   *splitter;
     // Editors
     QTabWidget *Editors;
 
@@ -116,7 +117,7 @@ public slots:
     void compileWarn(void);
     void changeSchema(int);
     void refresh(void);
-    void changePackage(toTreeWidgetItem *);
+    void changePackage(const QModelIndex &, const QModelIndex &);
     void prevError(void);
     void nextError(void);
     void showSource(toTreeWidgetItem *);
