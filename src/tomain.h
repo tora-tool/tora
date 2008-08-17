@@ -525,6 +525,23 @@ public slots:
      */
     void showMessage(const QString &str, bool save, bool log);
 
+    /**
+     * Show a busy cursor or other indicators. Must be called from the
+     * main thread.
+     *
+     * class toBusy calls this method.
+     *
+     */
+    void showBusy(void);
+
+    /**
+     * Remove busy cursor or other indicators. Must be called from the
+     * main thread.
+     *
+     * class toBusy calls this method.
+     */
+    void removeBusy(void);
+
 protected:
     /** intercept close event from parent
      */

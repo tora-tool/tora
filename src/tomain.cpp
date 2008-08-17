@@ -1463,6 +1463,16 @@ void toMain::changeConnection(void)
 }
 
 
+void toMain::showBusy() {
+    qApp->setOverrideCursor(Qt::WaitCursor);
+}
+
+
+void toMain::removeBusy() {
+    qApp->restoreOverrideCursor();
+}
+
+
 void toMain::showMessage(const QString &str, bool save, bool log)
 {
     // this function can be called from any thread.

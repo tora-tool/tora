@@ -390,9 +390,7 @@ toTreeWidgetItem *toFindItem(toTreeWidget *list, const QString &str);
  */
 class toBusy
 {
-    static unsigned int Count;
 public:
-    static void clear(void);
     toBusy();
     ~toBusy();
 };

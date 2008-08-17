@@ -896,41 +896,18 @@ toConnection &toCurrentConnection(QObject *cur)
     throw qApp->translate("toCurrentConnection", "Couldn't find parent connection. Internal error.");
 }
 
-unsigned int toBusy::Count = 0;
-
-static toLock BusyLock;
-
-void toBusy::clear()
-{
-    BusyLock.lock();
-    Count = 0;
-    BusyLock.unlock();
-    qApp->restoreOverrideCursor();
-}
-
 toBusy::toBusy()
 {
-    BusyLock.lock();
-    if (toThread::mainThread())
-    {
-        if (!Count)
-            qApp->setOverrideCursor(Qt::WaitCursor);
-        Count++;
-    }
-    BusyLock.unlock();
+    QMetaObject::invokeMethod(toMainWidget(),
+                              "showBusy",
+                              Qt::QueuedConnection);
 }
 
 toBusy::~toBusy()
 {
-    BusyLock.lock();
-    if (toThread::mainThread())
-    {
-        if (Count > 0)
-            Count--;
-        if (!Count)
-            qApp->restoreOverrideCursor();
-    }
-    BusyLock.unlock();
+    QMetaObject::invokeMethod(toMainWidget(),
+                              "removeBusy",
+                              Qt::QueuedConnection);
 }
 
 void toReadableColumn(QString &name)

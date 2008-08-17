@@ -609,7 +609,6 @@ toQList toQuery::readQueryNull(toConnection &conn, const toSQL &sql, toQList &pa
 
 toQList toQuery::readQueryNull(toConnection &conn, const QString &sql, toQList &params)
 {
-    toBusy busy;
     toQuery query(conn, sql, params);
     toQList ret;
     while (!query.eof())
@@ -652,7 +651,6 @@ toQValue toQuery::readValue(void)
     if (!Connection)
         return toQValue(0);
 
-    toBusy busy;
     if (Connection->Abort)
         throw qApp->translate("toQuery", "Query aborted");
     return toNull(Query->readValue());
@@ -663,7 +661,6 @@ toQValue toQuery::readValueNull(void)
     if (!Connection)
         return toQValue(0);
 
-    toBusy busy;
     if (Connection->Abort)
         throw qApp->translate("toQuery", "Query aborted");
     return Query->readValue();
