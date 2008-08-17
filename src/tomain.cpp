@@ -636,10 +636,6 @@ void toMain::handleToolsDisplay()
         Workspace->setViewMode(QMdiArea::TabbedView);
     else
         Workspace->setViewMode(QMdiArea::SubWindowView);
-#else
-#ifdef  __GNUC__
-#warning "Use Qt 4.4.x if you want to use cool stuff."
-#endif
 #endif
 }
 
