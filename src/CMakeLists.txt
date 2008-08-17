@@ -79,6 +79,7 @@ SET(TORA_MOC_CLASSES
     tobackup.h
 #     tobackuptool.h
     tobarchart.h
+    tobackgroundlabel.h
     tobrowserconstraint.h
     tobrowser.h
     tobrowserindex.h
