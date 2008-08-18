@@ -46,6 +46,8 @@ MESSAGE(STATUS "TOra ${VERSION} will be built to install into ${CMAKE_INSTALL_PR
 SET (EXE_NAME "tora")
 
 ADD_DEFINITIONS("-DTOVERSION=\\\"${VERSION}\\\"")
+# Allow using CMAKE-related ifdefs in the code. See e.g. toqsqlconnection.cpp.
+ADD_DEFINITIONS("-DCMAKE_BUILD")
 
 #Set the permissions to be used when installing plugins
 SET(PLUGIN_PERMISSIONS WORLD_EXECUTE GROUP_EXECUTE OWNER_EXECUTE WORLD_READ GROUP_READ OWNER_READ OWNER_WRITE)

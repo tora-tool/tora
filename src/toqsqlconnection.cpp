@@ -64,7 +64,15 @@
 #include <QString>
 
 #ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
+#ifdef CMAKE_BUILD
+  // There is different location of pgsql includes sometimes
+  // E.g. /usr/include/pgsql on suse etc. Cmake hadles it
+  // easily for us.
+  #include <libpq-fe.h>
+#else
+  // This is for autotools
   #include <postgresql/libpq-fe.h>
+#endif
 #endif
 
 // #include <QDebug>
