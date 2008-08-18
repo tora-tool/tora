@@ -118,7 +118,10 @@ void toConnectionPoolExec::run() {
             case Cancel:
                 sub->cancel();
                 // send it back to the pool
-                Pool->release(sub);
+
+                // edit: not a good idea, can cause dead locks in sub
+                // if you're extremely unlucky
+                // Pool->release(sub);
                 break;
 
             case Execute: {
