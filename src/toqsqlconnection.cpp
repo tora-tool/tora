@@ -1102,7 +1102,7 @@ class qSqlSetting : public QWidget, public toSettingTab
         return QString::null;
     }
 
-class mySQLAnalyzer : public toSyntaxAnalyzer
+    class mySQLAnalyzer : public toSyntaxAnalyzer
     {
     public:
         mySQLAnalyzer()
@@ -1149,6 +1149,18 @@ class mySQLAnalyzer : public toSyntaxAnalyzer
         {
             LockingPtr<QSqlDatabase> ptr(Connection, Lock);
             ptr->close();
+        }
+
+        virtual void cancel() {
+            if (!ConnectionID.isEmpty())
+            {
+                // try a native cancel if possible. because
+                // qsqldatabase can't cancel queries itself and this
+                // is called during pool shutdown, we can't rely on
+                // calling another connection to cancel this one.
+                QSqlDatabase *c = const_cast<QSqlDatabase *>(&(Connection));
+                native_cancel(c->driver());
+            }
         }
 
         // doh. better release the lock before calling this
