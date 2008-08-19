@@ -2393,10 +2393,9 @@ void toDebug::changePackage(const QModelIndex &current, const QModelIndex &previ
             return;
         ctype = ctype.toUpper();
 
-        if (ctype == "PACKAGE" || ctype == "TYPE")
-            ctype += " BODY";
-
         viewSource(Schema->currentText(), item->text(0), ctype, 0);
+        if (ctype == "PACKAGE" || ctype == "TYPE")
+            viewSource(Schema->currentText(), item->text(0), ctype + " BODY", 0);
     }
 #ifdef AUTOEXPAND
     else if (item && !item->parent())
