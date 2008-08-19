@@ -595,6 +595,7 @@ toConnection* toNewConnection::makeConnection(void)
             schema,
             options);
 
+        writeSettings(true);
         return retCon;
     }
     catch (const QString &exc)
