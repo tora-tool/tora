@@ -98,7 +98,7 @@ public:
 static toAnalyzeTool AnalyzeTool;
 
 static toSQL SQLListTablesMySQL("toAnalyze:ListTables",
-                                "toad 0,* show table status",
+                                "show table status",
                                 "Get table statistics, first three columns and binds must be same",
                                 "4.1",
                                 "MySQL");
