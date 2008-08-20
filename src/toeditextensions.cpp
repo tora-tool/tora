@@ -666,8 +666,9 @@ public:
         AutoComplete->setShortcut(Qt::CTRL + Qt::Key_Space);
 
         // add buttons to main window
-        toMainWidget()->addButtonApplication(Deindent);
-        toMainWidget()->addButtonApplication(Indent);
+        // disabled due the problems in the state of toolbars
+//         toMainWidget()->addButtonApplication(Deindent);
+//         toMainWidget()->addButtonApplication(Indent);
 
         EditExtensions.receivedFocus(NULL);
 

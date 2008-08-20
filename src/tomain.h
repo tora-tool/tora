@@ -438,6 +438,10 @@ public:
 
     /**
      * add a button to the application toolbar
+     \warning Do not use it. It screw realoading of the state of toolbars
+     \warning The toolbar just after editToolbar the top row of the schema
+     browser is migrating to the right - basically the whitespace after
+     the editToolbar is expanding too far.
      */
     void addButtonApplication(QAction *);
 

@@ -531,7 +531,7 @@ void toMain::createToolbars()
     addToolBarBreak();
 }
 
-
+//! \warning Do not use it. It screw realoading of the state of toolbars
 void toMain::addButtonApplication(QAction *act)
 {
     editToolbar->addAction(act);
