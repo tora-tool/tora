@@ -242,7 +242,7 @@ CHECK_INCLUDE_FILE("sys/stat.h" HAVE_SYS_STAT_H)
 
 #Create configure files.. config.h and uninstall
 #config.h
-INCLUDE (ConfigureChecks.cmake)
+# INCLUDE (ConfigureChecks.cmake)
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 ADD_DEFINITIONS("-DHAVE_CONFIG_H")
 
