@@ -277,14 +277,14 @@ void toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn)
         if (change.row[i].isBinary())
         {
             if (Headers[i].datatype.toUpper().contains("LOB"))
-                sql += ("<blob>");
+                sql += ("<blob,in>");
             else
                 sql += ("<raw_long,in>");
         }
         else
         {
             if (Headers[i].datatype.toUpper().contains("LOB"))
-                sql += ("<clob>");
+                sql += ("<varchar_long,in>");
             else
                 sql += ("<char[4000],in>");
         }
@@ -322,14 +322,14 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn)
         if (change.row[change.column].isBinary())
         {
             if (Headers[change.column].datatype.toUpper().contains("LOB"))
-                sql += ("<blob>");
+                sql += ("<blob,in>");
             else
                 sql += ("<raw_long,in>");
         }
         else
         {
             if (Headers[change.column].datatype.toUpper().contains("LOB"))
-                sql += ("<clob>");
+                sql += ("<varchar_long,in>");
             else
                 sql += ("<char[4000],in>");
         }
