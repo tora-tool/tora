@@ -71,6 +71,7 @@ tora_SOURCES=main.cpp \
 	tomain.cpp tomain.h \
 	tomarkedtext.cpp tomarkedtext.h \
 	tomemoeditor.cpp tomemoeditor.h \
+	tomodeleditor.cpp tomodeleditor.h \
 	tomessage.cpp tomessage.h \
 	tonewconnection.cpp tonewconnection.h \
 	tonoblockquery.cpp tonoblockquery.h \
@@ -126,6 +127,7 @@ tora_SOURCES=main.cpp \
 	toscriptschemawidget.cpp toscriptschemawidget.h \
 	toscripttreeitem.cpp toscripttreeitem.h \
 	tocodemodel.cpp tocodemodel.h \
+	torunningmodel.cpp torunningmodel.h \
 	toscripttreemodel.cpp toscripttreemodel.h \
 	tosecurity.cpp tosecurity.h  \
     tosecuritytreemodel.cpp tosecuritytreemodel.h \
@@ -283,6 +285,7 @@ BUILT_SOURCES = \
 	moc_toconnection.cpp \
 	moc_toconnectionmodel.cpp \
 	moc_tocodemodel.cpp \
+	moc_torunningmodel.cpp \
 	moc_toconnectionpool.cpp \
 	moc_toconnectionimport.cpp \
 	moc_torunnable.cpp \
@@ -306,6 +309,7 @@ BUILT_SOURCES = \
 	moc_tomainwindow.cpp \
 	moc_tomarkedtext.cpp \
 	moc_tomemoeditor.cpp \
+	moc_tomodeleditor.cpp \
 	moc_tomessage.cpp \
 	moc_tonewconnection.cpp \
 	moc_tooutput.cpp \

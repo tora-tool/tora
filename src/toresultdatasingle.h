@@ -76,8 +76,9 @@ public:
     }
 
 private slots:
-    virtual void showMemo(int row);
+    virtual void showMemo(int col);
     void saveRow(void);
+    void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 };
 
 #endif

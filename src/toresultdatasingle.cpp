@@ -41,7 +41,7 @@
 #include "toconfiguration.h"
 #include "toresultdatasingle.h"
 #include "toparamget.h"
-#include "tomemoeditor.h"
+#include "tomodeleditor.h"
 
 #include <QScrollArea>
 #include <QCheckBox>
@@ -130,7 +130,21 @@ void toResultDataSingle::changeSource(toResultModel *model, int _row)
     grid->setRowStretch(row, 1);
 
     changeRow(Row);
+
+    connect(Model,
+            SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
+            this,
+            SLOT(dataChanged(const QModelIndex &, const QModelIndex &)));
 }
+
+
+void toResultDataSingle::dataChanged(const QModelIndex &topLeft,
+                                     const QModelIndex &bottomRight)
+{
+    if(topLeft.row() >= Row && bottomRight.row() <= Row)
+        changeRow(Row);         // update
+}
+
 
 void toResultDataSingle::changeRow(int row)
 {
@@ -181,20 +195,17 @@ void toResultDataSingle::saveRow()
 }
 
 
-void toResultDataSingle::showMemo(int row)
+void toResultDataSingle::showMemo(int col)
 {
-    QLineEdit *obj = findChild<QLineEdit *>(QString::number(row));
-    if (obj)
-    {
-        toMemoEditor *memo = new toMemoEditor(
+    QModelIndex index = Model->index(Row, col);
+    if(index.isValid()) {
+        toModelEditor *memo = new toModelEditor(
             this,
-            obj->text(),
-            row,
-            0,
+            Model,
+            index,
             false,
             true);
 
-        if (memo->exec())
-            obj->setText(memo->text());
+        memo->exec();
     }
 }

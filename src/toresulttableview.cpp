@@ -43,7 +43,7 @@
 #include "utils.h"
 #include "toconfiguration.h"
 #include "toconnection.h"
-#include "tomemoeditor.h"
+#include "tomodeleditor.h"
 #include "tomain.h"
 #include "toresultlistformat.h"
 #include "tolistviewformatter.h"
@@ -377,7 +377,7 @@ void toResultTableView::menuCallback(QAction *action)
     if (action == displayAct)
     {
         QVariant data = model()->data(index, Qt::EditRole);
-        toMemoEditor *ed = new toMemoEditor(this, data.toString());
+        toModelEditor *ed = new toModelEditor(this, model(), index);
         ed->exec();
     }
     else if (action == leftAct)
@@ -462,7 +462,7 @@ void toResultTableView::handleDoubleClick(const QModelIndex &index)
         return;
 
     QVariant data = model()->data(index, Qt::EditRole);
-    toMemoEditor *ed = new toMemoEditor(this, data.toString());
+    toModelEditor *ed = new toModelEditor(this, model(), index);
     ed->exec();
 }
 
