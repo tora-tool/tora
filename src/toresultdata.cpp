@@ -409,8 +409,16 @@ void toResultData::singleRecordForm(bool display)
         }
         Form->changeRow(Edit->selectionModel()->currentIndex().row());
     }
-    else
-        Form->saveRow();
+    else {
+        if(Form->currentRow() >= 0) {
+            // set selection to same as the form's
+            QModelIndex left = Edit->model()->createIndex(Form->currentRow(), 1);
+            Edit->selectionModel()->select(QItemSelection(left, left),
+                                           QItemSelectionModel::ClearAndSelect);
+            Edit->setCurrentIndex(left);
+        }
+    }
+
     Form->setVisible(display);
     Edit->setVisible(!display);
 }
@@ -429,7 +437,6 @@ void toResultData::updateForm()
 
 void toResultData::save()
 {
-    Form->saveRow();
     if (Edit->commitChanges())
         emit changesSaved();
 }
