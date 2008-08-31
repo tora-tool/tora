@@ -117,17 +117,18 @@ void toResultDataSingle::changeSource(toResultModel *model, int _row)
         btn->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed));
         connect(btn, SIGNAL(clicked(int)), this, SLOT(showMemo(int)));
         connect(box, SIGNAL(toggled(bool)), btn, SLOT(setDisabled(bool)));
+        connect(box, SIGNAL(toggled(bool)), this, SLOT(saveRow()));
+        connect(edit, SIGNAL(editingFinished()), this, SLOT(saveRow()));
         grid->addWidget(btn, row, col++);
 
         Value.append(edit);
         Null.append(box);
     }
 
-    // add widget at bottom of grid that can resize
+    // add widget at bottom of grid so it can resize
     grid->addWidget(new QLabel(this), row, 0);
     grid->setRowStretch(row, 1);
 
-    Row = _row;
     changeRow(Row);
 }
 
@@ -139,10 +140,9 @@ void toResultDataSingle::changeRow(int row)
     QList<QLineEdit *>::iterator val = Value.begin();
 
     for (int i = 1;
-            i < Model->columnCount() && chk != Null.end() && val != Value.end();
-            i++, chk++, val++)
+         i < Model->columnCount() && chk != Null.end() && val != Value.end();
+         i++, chk++, val++)
     {
-
         QVariant str = Model->data(row, i);
         if (!str.isNull())
             any = true;

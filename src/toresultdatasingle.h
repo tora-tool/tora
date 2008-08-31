@@ -70,10 +70,14 @@ public:
 
     void changeSource(toResultModel *, int row);
     void changeRow(int row);
-    void saveRow(void);
+
+    inline int currentRow(void) const {
+        return Row;
+    }
 
 private slots:
     virtual void showMemo(int row);
+    void saveRow(void);
 };
 
 #endif
