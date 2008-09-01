@@ -445,7 +445,8 @@ void toResultData::save()
 void toResultData::addRecord()
 {
     Edit->addRecord();
-    navigate(lastAct);
+    // don't navigate here. done by Edit.
+//     navigate(lastAct);
 }
 
 
