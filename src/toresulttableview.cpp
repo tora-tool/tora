@@ -133,8 +133,8 @@ toResultTableView::toResultTableView(bool readable,
 
     createActions();
 
-    setSelectionBehavior(QAbstractItemView::SelectRows);
-    setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setSelectionBehavior(QAbstractItemView::SelectItems);
+    setSelectionMode(QAbstractItemView::ContiguousSelection);
     setAlternatingRowColors(true);
 
     setContextMenuPolicy(Qt::CustomContextMenu);
@@ -150,6 +150,14 @@ toResultTableView::toResultTableView(bool readable,
             SIGNAL(doubleClicked(const QModelIndex &)),
             this,
             SLOT(handleDoubleClick(const QModelIndex &)));
+
+    setDragEnabled(true);
+    if(Editable)
+        viewport()->setAcceptDrops(true);
+    setDropIndicatorShown(true);
+
+    if(Editable)
+        setDragDropMode(QAbstractItemView::DragDrop);
 }
 
 

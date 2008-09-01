@@ -267,7 +267,7 @@ public:
      * a new row.
      *
      * @param ind if valid, the row to duplicate
-     * @returns the row added or -1
+     * @return the CurrentRow (length) or -1
      */
     int addRow(QModelIndex ind = QModelIndex());
 
@@ -278,6 +278,69 @@ public:
      * This is not an overriden method.
      */
     void deleteRow(QModelIndex);
+
+
+    /**
+     * Returns a list of MIME types that can be used to describe a
+     * list of model indexes.
+     *
+     */
+    virtual QStringList mimeTypes() const;
+
+
+    /**
+     * Returns an object that contains serialized items of data
+     * corresponding to the list of indexes specified. The formats
+     * used to describe the encoded data is obtained from the
+     * mimeTypes() function.
+     *
+     * If the list of indexes is empty, or there are no supported MIME
+     * types, 0 is returned rather than a serialized empty list.
+     *
+     */
+    virtual QMimeData* mimeData(const QModelIndexList &indexes) const;
+
+
+    /**
+     * Handles the data supplied by a drag and drop operation that
+     * ended with the given action. Returns true if the data and
+     * action can be handled by the model; otherwise returns false.
+     *
+     * Although the specified row, column and parent indicate the
+     * location of an item in the model where the operation ended, it
+     * is the responsibility of the view to provide a suitable
+     * location for where the data should be inserted.
+     *
+     * For instance, a drop action on an item in a QTreeView can
+     * result in new items either being inserted as children of the
+     * item specified by row, column, and parent, or as siblings of
+     * the item.
+     * 
+     * When row and column are -1 it means that it is up to the model
+     * to decide where to place the data. This can occur in a tree
+     * when data is dropped on a parent. Models will usually append
+     * the data to the parent in this case.
+     * 
+     * Returns true if the dropping was successful otherwise false.
+     *
+     */
+    virtual bool dropMimeData(const QMimeData *data,
+                              Qt::DropAction action,
+                              int row,
+                              int column,
+                              const QModelIndex &parent);
+
+
+    /**
+     * Returns the drop actions supported by this model.
+     *
+     * The default implementation returns Qt::CopyAction. Reimplement
+     * this function if you wish to support additional actions. Note
+     * that you must also reimplement the dropMimeData() function to
+     * handle the additional operations.
+     *
+     */
+    virtual Qt::DropActions supportedDropActions() const;
 
 signals:
 

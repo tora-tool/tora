@@ -62,7 +62,7 @@ toResultTableViewEdit::toResultTableViewEdit(bool readable,
 {
 
     setSelectionBehavior(QAbstractItemView::SelectItems);
-    setSelectionMode(QAbstractItemView::SingleSelection);
+    setSelectionMode(QAbstractItemView::ContiguousSelection);
 }
 
 

@@ -82,6 +82,11 @@ toResultModel::toResultModel(toEventQuery *query,
             this,
             SLOT(fetchMore()));
 
+    if(Editable)
+        setSupportedDragActions(Qt::CopyAction | Qt::MoveAction);
+    else
+        setSupportedDragActions(Qt::CopyAction);
+
     query->start();
 }
 
@@ -263,6 +268,196 @@ void toResultModel::deleteRow(QModelIndex index)
     Row deleted = Rows.takeAt(index.row());
     endRemoveRows();
     emit rowDeleted(deleted);
+}
+
+
+QStringList toResultModel::mimeTypes() const
+{
+    QStringList types;
+    types << "text/plain";
+    types << "application/vnd.text.list";
+    return types;
+}
+
+
+QMimeData* toResultModel::mimeData(const QModelIndexList &indexes) const {
+    QMimeData   *mimeData = new QMimeData();
+    QByteArray   encodedData;
+    QDataStream  stream(&encodedData, QIODevice::WriteOnly);
+
+    int valid = 0;
+    QString text;
+    QModelIndex validIndex;
+
+    // qt sends list by column (all indexes from column 1, then column
+    // column2). Need to figure out the number of columns and
+    // rows. It'd be awesome if we could get the selection but there's
+    // no good way to do that from the model.
+
+    // it also needs to be first in the serialized data, so we have to
+    // loop here.
+    {
+        int rows = 0;
+        int columns = 0;
+        int currentRow = -1;
+        int currentCol = -1;
+        foreach (QModelIndex index, indexes)
+        {
+            if (index.isValid())
+            {
+                if(index.row() > currentRow)
+                {
+                    currentRow = index.row();
+                    rows++;
+                }
+
+                if(currentCol != index.column())
+                {
+                    currentCol = index.column();
+                    columns++;
+                }
+            }
+        }
+
+        stream << rows;
+        stream << columns;
+    }
+
+    foreach (QModelIndex index, indexes)
+    {
+        if (index.isValid())
+        {
+            valid++;
+            validIndex = index;
+            text = data(index, Qt::DisplayRole).toString();
+            stream << text;
+        }
+    }
+
+    if(valid < 1)
+        return 0;
+
+    if(valid == 1) {
+        mimeData->setText(text);
+
+        QByteArray sourceData;
+        QDataStream sourceStream(&sourceData, QIODevice::WriteOnly);
+        sourceStream << validIndex.row();
+        sourceStream << validIndex.column();
+        mimeData->setData("application/vnd.int.list", sourceData);
+    }
+    else
+        mimeData->setData("application/vnd.text.list", encodedData);
+
+    return mimeData;
+}
+
+
+bool toResultModel::dropMimeData(const QMimeData *data,
+                                 Qt::DropAction action,
+                                 int row,
+                                 int column,
+                                 const QModelIndex &parent)
+{
+    if (action == Qt::IgnoreAction)
+        return true;
+    if (!Editable)
+        return false;
+    if (row == 1)
+        return false;           // can't change row number
+
+    if(row < 0 || column < 0)
+    {
+        // friggen qt expects me to figure it out.  you'd think -1
+        // wouldn't happen often but you'd be wrong.
+        row = parent.row();
+        column = parent.column();
+    }
+
+    if(row < 0) {
+        row = addRow() - 1;
+        if(row < 0)
+            return false;
+    }
+
+    if (data->hasText())
+    {
+        // can't do anything with an item without a valid column
+        if(column < 0)
+        {
+            if (data->hasFormat("application/vnd.int.list"))
+            {
+                QByteArray source = data->data("application/vnd.int.list");
+                QDataStream stream(&source, QIODevice::ReadOnly);
+                int sourceRow = 0;
+                int sourceCol = 0;
+                stream >> sourceRow;
+                stream >> sourceCol;
+
+                if(sourceCol > 0)
+                    column = sourceCol;
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+
+        QModelIndex ind = index(row, column);
+        setData(ind, QVariant(data->text()));
+        return true;
+    }
+    else if (data->hasFormat("application/vnd.text.list"))
+    {
+        QByteArray source = data->data("application/vnd.text.list");
+        QDataStream stream(&source, QIODevice::ReadOnly);
+
+        if (column < 0)
+            column = 1;
+
+        int rows;
+        int columns;
+        stream >> rows;
+        stream >> columns;
+
+        // count of rows down we've gone so far
+        int counter = 0;
+        while (!stream.atEnd() && column <= columnCount())
+        {
+            QString text;
+            stream >> text;
+
+            QModelIndex ind = index(row, column);
+            setData(ind, QVariant(text));
+
+            row++;
+            counter++;
+            if (counter >= rows)
+            {
+                row -= counter;
+                counter = 0;
+                column++;
+            }
+
+            if (!stream.atEnd() && row >= rowCount())
+                row = addRow() - 1;
+
+            if (column >= columnCount())
+                return true;    // drop data past end of columns
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+
+Qt::DropActions toResultModel::supportedDropActions() const
+{
+    if(Editable)
+        return Qt::CopyAction | Qt::MoveAction;
+    return Qt::IgnoreAction;
 }
 
 
@@ -500,10 +695,23 @@ void toResultModel::fetchMore(const QModelIndex &parent)
 
 Qt::ItemFlags toResultModel::flags(const QModelIndex &index) const
 {
-    Qt::ItemFlags fl = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    Qt::ItemFlags defaultFlags = QAbstractTableModel::flags(index);
+    Qt::ItemFlags fl = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled;
+
+    if (index.column() == 0)
+        return fl;              // row number column
+
+    if (!index.isValid())
+    {
+        if(Editable)
+            return Qt::ItemIsDropEnabled | defaultFlags;
+        else
+            return defaultFlags;
+    }
+
     if (Editable)
-        fl = fl | Qt::ItemIsEditable;
-    return fl;
+        return fl | defaultFlags | Qt::ItemIsEditable | Qt::ItemIsDropEnabled;
+    return fl | defaultFlags;
 }
 
 
