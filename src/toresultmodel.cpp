@@ -229,18 +229,18 @@ int toResultModel::addRow(QModelIndex ind)
     if (!Editable)
         return -1;
 
-    CurrentRow++;
-    beginInsertRows(QModelIndex(), CurrentRow, CurrentRow);
+    beginInsertRows(QModelIndex(), CurrentRow + 1, CurrentRow + 1);
+    int newRow = CurrentRow++;
 
     Row row;
     if (ind.isValid())
     {
         row = Rows[ind.row()];
-        row[0] = CurrentRow;
+        row[0] = newRow;
     }
     else
     {
-        row.append(toQValue(CurrentRow));
+        row.append(toQValue(newRow));
 
         // null out the rest of the row
         int cols = Headers.size();
@@ -251,7 +251,7 @@ int toResultModel::addRow(QModelIndex ind)
     Rows.append(row);
     endInsertRows();
     emit rowAdded(row);
-    return CurrentRow;
+    return newRow;
 }
 
 
@@ -363,7 +363,7 @@ bool toResultModel::dropMimeData(const QMimeData *data,
         return true;
     if (!Editable)
         return false;
-    if (row == 1)
+    if (column == 0)
         return false;           // can't change row number
 
     if(row < 0 || column < 0)
@@ -375,7 +375,7 @@ bool toResultModel::dropMimeData(const QMimeData *data,
     }
 
     if(row < 0) {
-        row = addRow() - 1;
+        row = addRow();
         if(row < 0)
             return false;
     }
@@ -440,7 +440,7 @@ bool toResultModel::dropMimeData(const QMimeData *data,
             }
 
             if (!stream.atEnd() && row >= rowCount())
-                row = addRow() - 1;
+                row = addRow();
 
             if (column >= columnCount())
                 return true;    // drop data past end of columns

@@ -209,6 +209,12 @@ public slots:
      */
     void revertChanges(void);
 
+
+    /**
+     * Handle signal from model when rows are added
+     *
+     */
+    void handleNewRows(const QModelIndex &parent, int start, int end);
 };
 
 

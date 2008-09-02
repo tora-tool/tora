@@ -109,6 +109,11 @@ void toResultTableViewEdit::query(const QString &SQL, const toQList &params)
             SLOT(recordAdd(const toResultModel::Row &)));
 
     connect(Model,
+            SIGNAL(rowsInserted(const QModelIndex &, int, int)),
+            this,
+            SLOT(handleNewRows(const QModelIndex &, int, int)));
+
+    connect(Model,
             SIGNAL(modelReset()),
             this,
             SLOT(revertChanges()));
@@ -512,31 +517,30 @@ void toResultTableViewEdit::revertChanges()
 }
 
 
-void toResultTableViewEdit::addRecord(void)
+void toResultTableViewEdit::handleNewRows(const QModelIndex &parent,
+                                          int start,
+                                          int end)
 {
     int col = selectionModel()->currentIndex().column();
-    int row = Model->addRow() - 1; // selection starts at 0
-    if (row >= 0)
-    {
-        QModelIndex left  = Model->createIndex(row, col);
-        selectionModel()->select(QItemSelection(left, left),
-                                 QItemSelectionModel::ClearAndSelect);
-        setCurrentIndex(left);
-    }
+    if(col < 1)
+        col = 1;
+    QModelIndex index = Model->index(start - 1, col);
+
+    selectionModel()->select(QItemSelection(index, index),
+                             QItemSelectionModel::ClearAndSelect);
+    setCurrentIndex(index);
+}
+
+
+void toResultTableViewEdit::addRecord(void)
+{
+    Model->addRow();
 }
 
 
 void toResultTableViewEdit::duplicateRecord(void)
 {
-    int col = selectionModel()->currentIndex().column();
-    int row = Model->addRow(selectionModel()->currentIndex()) - 1;
-    if (row >= 0)
-    {
-        QModelIndex left  = Model->createIndex(row, col);
-        selectionModel()->select(QItemSelection(left, left),
-                                 QItemSelectionModel::ClearAndSelect);
-        setCurrentIndex(left);
-    }
+    Model->addRow(selectionModel()->currentIndex());
 }
 
 

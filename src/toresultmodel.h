@@ -267,7 +267,7 @@ public:
      * a new row.
      *
      * @param ind if valid, the row to duplicate
-     * @return the CurrentRow (length) or -1
+     * @return added row
      */
     int addRow(QModelIndex ind = QModelIndex());
 
