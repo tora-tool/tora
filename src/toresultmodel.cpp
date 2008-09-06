@@ -275,7 +275,7 @@ QStringList toResultModel::mimeTypes() const
 {
     QStringList types;
     types << "text/plain";
-    types << "application/vnd.text.list";
+    types << "application/vnd.tomodel.list";
     return types;
 }
 
@@ -284,61 +284,54 @@ QMimeData* toResultModel::mimeData(const QModelIndexList &indexes) const {
     QMimeData   *mimeData = new QMimeData();
     QByteArray   encodedData;
     QDataStream  stream(&encodedData, QIODevice::WriteOnly);
+    QByteArray   stringData;
+    QDataStream  ss(&stringData, QIODevice::WriteOnly);
 
-    int valid = 0;
-    QString text;
+    int         valid = 0;
     QModelIndex validIndex;
+    QString     text;
 
     // qt sends list by column (all indexes from column 1, then column
     // column2). Need to figure out the number of columns and
     // rows. It'd be awesome if we could get the selection but there's
     // no good way to do that from the model.
-
-    // it also needs to be first in the serialized data, so we have to
-    // loop here.
-    {
-        int rows = 0;
-        int columns = 0;
-        int currentRow = -1;
-        int currentCol = -1;
-        foreach (QModelIndex index, indexes)
-        {
-            if (index.isValid())
-            {
-                if(index.row() > currentRow)
-                {
-                    currentRow = index.row();
-                    rows++;
-                }
-
-                if(currentCol != index.column())
-                {
-                    currentCol = index.column();
-                    columns++;
-                }
-            }
-        }
-
-        stream << rows;
-        stream << columns;
-    }
+    int rows       = 0;
+    int columns    = 0;
+    int currentRow = -1;
+    int currentCol = -1;
 
     foreach (QModelIndex index, indexes)
     {
         if (index.isValid())
         {
+            if(index.row() > currentRow)
+            {
+                currentRow = index.row();
+                rows++;
+            }
+
+            if(currentCol != index.column())
+            {
+                currentCol = index.column();
+                columns++;
+            }
+
             valid++;
             validIndex = index;
             text = data(index, Qt::DisplayRole).toString();
-            stream << text;
+            ss << text;
         }
     }
 
     if(valid < 1)
         return 0;
 
-    if(valid == 1) {
+    if(valid == 1)
+    {
         mimeData->setText(text);
+
+        // set row and column in data so we can try to preserve the
+        // columns, if needed
 
         QByteArray sourceData;
         QDataStream sourceStream(&sourceData, QIODevice::WriteOnly);
@@ -347,7 +340,12 @@ QMimeData* toResultModel::mimeData(const QModelIndexList &indexes) const {
         mimeData->setData("application/vnd.int.list", sourceData);
     }
     else
-        mimeData->setData("application/vnd.text.list", encodedData);
+    {
+        // serialize selection shape
+        stream << rows;
+        stream << columns;
+        mimeData->setData("application/vnd.tomodel.list", encodedData + stringData);
+    }
 
     return mimeData;
 }
@@ -407,9 +405,9 @@ bool toResultModel::dropMimeData(const QMimeData *data,
         setData(ind, QVariant(data->text()));
         return true;
     }
-    else if (data->hasFormat("application/vnd.text.list"))
+    else if (data->hasFormat("application/vnd.tomodel.list"))
     {
-        QByteArray source = data->data("application/vnd.text.list");
+        QByteArray source = data->data("application/vnd.tomodel.list");
         QDataStream stream(&source, QIODevice::ReadOnly);
 
         if (column < 0)
