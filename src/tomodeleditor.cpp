@@ -244,7 +244,7 @@ toModelEditor::toModelEditor(QWidget *parent,
     NullCheck = new QCheckBox(tr("NULL"), Toolbar);
     NullCheck->setObjectName(TO_TOOLBAR_WIDGET_NAME);
     Toolbar->addWidget(NullCheck);
-    connect(NullCheck, SIGNAL(toggled(bool)), this, SLOT(null(bool)));
+    connect(NullCheck, SIGNAL(toggled(bool)), this, SLOT(setNull(bool)));
     NullCheck->setEnabled(!Editor->isReadOnly());
     NullCheck->setFocusPolicy(Qt::StrongFocus);
 
