@@ -158,6 +158,17 @@ toResultTableView::toResultTableView(bool readable,
 
     if(Editable)
         setDragDropMode(QAbstractItemView::DragDrop);
+
+    // this is my dirty hack to prevent fetchMore being called on the
+    // model during a horizontal scroll.
+
+    // this would be one great way to fix it, but as of this time it's
+    // prioritized low and not scheduled for a fix:
+    // http://trolltech.no/developer/task-tracker/index_html?method=entry&id=177663
+    disconnect(QTableView::horizontalScrollBar(),
+               SIGNAL(valueChanged(int)),
+               this,
+               SLOT(horizontalScrollbarValueChanged(int)));
 }
 
 
