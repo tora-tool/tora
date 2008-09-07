@@ -422,6 +422,15 @@ public:
         m_bkgndConnect = v;
     };
 
+    bool firewallMode()
+    {
+        return m_firewallMode;
+    }
+    void setFirewallMode(bool v)
+    {
+        m_firewallMode = v;
+    }
+
     int maxContent()
     {
         return m_maxContent;
@@ -1188,6 +1197,7 @@ private:
     bool m_tabbedTools;
     int m_objectCache;
     bool m_bkgndConnect;
+    bool m_firewallMode;
     int m_maxContent;
     bool m_keepPlans;
     bool m_restoreSession;

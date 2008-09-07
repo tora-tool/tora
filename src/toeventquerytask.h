@@ -114,6 +114,7 @@ protected:
 
 private slots:
     void pread(bool all);
+    void timeout(void);
 
 
 public slots:

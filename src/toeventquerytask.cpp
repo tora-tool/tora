@@ -42,9 +42,14 @@
 #include "toresultstats.h"
 #include "totool.h"
 #include "toresultstats.h"
+#include "toconfiguration.h"
 
 #include <QApplication>
 #include <QMutexLocker>
+#include <QTimer>
+
+
+static const int FIREWALL_TIMEOUT = 240000;
 
 
 #define CATCH_ALL                                   \
@@ -107,6 +112,9 @@ void toEventQueryTask::run(void) {
         }
         else {
             read();
+
+            if(toConfigurationSingle::Instance().firewallMode())
+                QTimer::singleShot(FIREWALL_TIMEOUT, this, SLOT(timeout()));
 
             // begin thread's event loop
             thread()->exec();
@@ -197,4 +205,17 @@ void toEventQueryTask::pread(bool all) {
             close();
     }
     CATCH_ALL;
+}
+
+
+void toEventQueryTask::timeout()
+{
+    if(Closed)
+        return;
+
+    pread(false);
+
+    // check again in case config changes
+    if(toConfigurationSingle::Instance().firewallMode())
+        QTimer::singleShot(FIREWALL_TIMEOUT, this, SLOT(timeout()));
 }

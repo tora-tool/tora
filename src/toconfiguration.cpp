@@ -82,6 +82,7 @@ toConfiguration::toConfiguration()
     m_tabbedTools = s.value(CONF_TABBED_TOOLS, false).toBool();
     m_objectCache = s.value(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt();
     m_bkgndConnect = s.value(CONF_BKGND_CONNECT, false).toBool();
+    m_firewallMode = s.value(CONF_FIREWALL_MODE, false).toBool();
     m_maxContent = s.value(CONF_MAX_CONTENT, DEFAULT_MAX_CONTENT).toInt();
     m_keepPlans = s.value(CONF_KEEP_PLANS, false).toBool();
     m_restoreSession = s.value(CONF_RESTORE_SESSION, false).toBool();
@@ -279,6 +280,7 @@ void toConfiguration::saveConfig()
     s.setValue(CONF_TABBED_TOOLS, m_tabbedTools);
     s.setValue(CONF_OBJECT_CACHE, m_objectCache);
     s.setValue(CONF_BKGND_CONNECT, m_bkgndConnect);
+    s.setValue(CONF_FIREWALL_MODE, m_firewallMode);
     s.setValue(CONF_MAX_CONTENT, m_maxContent);
     s.setValue(CONF_KEEP_PLANS, m_keepPlans);
     s.setValue(CONF_RESTORE_SESSION, m_restoreSession);

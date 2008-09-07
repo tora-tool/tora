@@ -278,10 +278,11 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
         Decimals->setEnabled(true);
 
     AutoCommit->setChecked(toConfigurationSingle::Instance().autoCommit());
-    DontReread->setChecked(toConfigurationSingle::Instance().dontReread());
+//     DontReread->setChecked(toConfigurationSingle::Instance().dontReread());
     ObjectCache->setCurrentIndex(toConfigurationSingle::Instance().objectCache());
-    BkgndConnect->setChecked(toConfigurationSingle::Instance().bkgndConnect());
+//     BkgndConnect->setChecked(toConfigurationSingle::Instance().bkgndConnect());
     IndicateEmpty->setChecked(toConfigurationSingle::Instance().indicateEmpty());
+    FirewallMode->setChecked(toConfigurationSingle::Instance().firewallMode());
 
     QColor nullColor;
     nullColor.setNamedColor(toConfigurationSingle::Instance().indicateEmptyColor());
@@ -289,10 +290,10 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
     palette.setColor(IndicateEmptyColor->backgroundRole(), nullColor);
     IndicateEmptyColor->setPalette(palette);
 
-    int val = toConfigurationSingle::Instance().autoLong();
-    AutoLong->setChecked(val);
-    MoveAfter->setValue(val);
-    KeepAlive->setChecked(toConfigurationSingle::Instance().keepAlive());
+//     int val = toConfigurationSingle::Instance().autoLong();
+//     AutoLong->setChecked(val);
+//     MoveAfter->setValue(val);
+//     KeepAlive->setChecked(toConfigurationSingle::Instance().keepAlive());
 }
 
 void toUpdateIndicateEmpty(void);
@@ -322,13 +323,14 @@ void toDatabaseSetting::saveSetting(void)
         toConfigurationSingle::Instance().setMaxContent(maxnum);
     }
     toConfigurationSingle::Instance().setAutoCommit(AutoCommit->isChecked());
-    toConfigurationSingle::Instance().setDontReread(DontReread->isChecked());
+//     toConfigurationSingle::Instance().setDontReread(DontReread->isChecked());
     toConfigurationSingle::Instance().setObjectCache(ObjectCache->currentIndex());
-    toConfigurationSingle::Instance().setBkgndConnect(BkgndConnect->isChecked());
-    toConfigurationSingle::Instance().setAutoLong(AutoLong->isChecked() ? MoveAfter->value() : 0);
+//     toConfigurationSingle::Instance().setBkgndConnect(BkgndConnect->isChecked());
+//     toConfigurationSingle::Instance().setAutoLong(AutoLong->isChecked() ? MoveAfter->value() : 0);
     toConfigurationSingle::Instance().setIndicateEmpty(IndicateEmpty->isChecked());
     toConfigurationSingle::Instance().setIndicateEmptyColor(IndicateEmptyColor->palette().color(IndicateEmptyColor->backgroundRole()).name());
-    toConfigurationSingle::Instance().setKeepAlive(KeepAlive->isChecked() ? DEFAULT_KEEP_ALIVE : -1); //FIXME: there was ""
+//     toConfigurationSingle::Instance().setKeepAlive(KeepAlive->isChecked() ? DEFAULT_KEEP_ALIVE : -1); //FIXME: there was ""
+    toConfigurationSingle::Instance().setFirewallMode(FirewallMode->isChecked());
 
     toConfigurationSingle::Instance().setNumberFormat(NumberFormat->currentIndex());
     toConfigurationSingle::Instance().setNumberDecimals(Decimals->value());

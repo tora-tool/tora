@@ -109,6 +109,7 @@
 #define CONF_OBJECT_CACHE "ObjectCache"
 #define DEFAULT_OBJECT_CACHE 1
 #define CONF_BKGND_CONNECT "BackgroundConnect"
+#define CONF_FIREWALL_MODE "FirewallMode"
 #define CONF_MAX_CONTENT "MaxContent"
 #define DEFAULT_MAX_CONTENT 100
 #define CONF_KEEP_PLANS  "KeepPlans"
