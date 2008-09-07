@@ -1,8 +1,6 @@
 Showstopper Issues before Next Release
 --------------------------------------
 
-Drag and drop in schema browser to copy table cells.
-
 Minimize sf.net error backlog - bugtracker.
 
 Walk through basic tasks and dialogs and test its functionality. (create table, drop, alter etc.)
@@ -14,8 +12,6 @@ Walk through basic tasks and dialogs and test its functionality. (create table, 
 When switching in schema browser from looking at columns of a table to a schema with no tables, the column list never gets
 cleared. It stays as the column list from the original table.
 
-">|" arrow on schema browser view just scrolls to bottom of display instead of reading all rows as it used to.
-
 Row number in first column of schema browser for 'Data' tab - needs to resize to fit contents - right now, it truncates.
 
 
@@ -24,11 +20,7 @@ Minor Issues that would be nice to fix before release
 
 [Nathan] Proper encoding of author names in about dialog.
 
-
-Drag and drop/doubleclick in filter dialog for schema browser no longer works.
-
-Oracle: better handling on extents tab if no access to dba_extents view. 
-
+[working?] Oracle: better handling on extents tab if no access to dba_extents view. 
 
 
 Enhancements
@@ -44,6 +36,12 @@ connection.
 
 Resolved Issues
 ---------------
+
+Drag and drop in schema browser to copy table cells.
+
+[can't be done] ">|" arrow on schema browser view just scrolls to bottom of display instead of reading all rows as it used to.
+
+Drag and drop/doubleclick in filter dialog for schema browser no longer works.
 
 [MOSTLY WORKED AROUND - no perms to tables] Oracle: error "result should be 18 in segment attributes was 2" in toExtract on Script tab
 [i don't get this error, can you send a table create script that'll reproduce?]
