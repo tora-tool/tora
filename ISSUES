@@ -4,15 +4,7 @@ Showstopper Issues before Next Release
 Minimize sf.net error backlog - bugtracker.
 
 Walk through basic tasks and dialogs and test its functionality. (create table, drop, alter etc.)
- - Create table/create index isn't working in the Schema Browser.
- - MIGRATE extraction doesn't work (and I suppose it never did)
 
-[PARTIALLY FIXED - Petr - there is no clear() method for toResult(). So you can get an error message "foo doesn't exist" in some schema changes (Data tab). All other tabs should work fine. Content is cleared in all cases. ]
-[PARTIALLY FIXED - resolved the error message, but column list still doesn't get cleared]
-When switching in schema browser from looking at columns of a table to a schema with no tables, the column list never gets
-cleared. It stays as the column list from the original table.
-
-Row number in first column of schema browser for 'Data' tab - needs to resize to fit contents - right now, it truncates.
 
 
 Minor Issues that would be nice to fix before release
@@ -20,7 +12,6 @@ Minor Issues that would be nice to fix before release
 
 [Nathan] Proper encoding of author names in about dialog.
 
-[working?] Oracle: better handling on extents tab if no access to dba_extents view. 
 
 
 Enhancements
@@ -30,12 +21,26 @@ last schema that was being browsed. In our environment, the user you connect
 as never owns any objects, so if I connect as 'swconf', I'll almost always 
 be browing 'swconf_owner' schema. - This has some overlap with the next suggestion.
 
-Would be nice to be able to specify/store a default schema with the db
+[needs work] Would be nice to be able to specify/store a default schema with the db
 connection. 
+
+[IGNORE/FUTURE] Create table/create index isn't working in the Schema Browser.
+[IGNORE/FUTURE] MIGRATE extraction doesn't work (and I suppose it never did)
 
 
 Resolved Issues
 ---------------
+
+[working?] Oracle: better handling on extents tab if no access to dba_extents view. 
+
+[PARTIALLY FIXED - Petr - there is no clear() method for toResult(). So you can get an error message "foo doesn't exist" in some schema changes (Data tab). All other tabs should work fine. Content is cleared in all cases. ]
+
+[PARTIALLY FIXED - resolved the error message, but column list still doesn't get cleared]
+When switching in schema browser from looking at columns of a table to a schema with no tables, the column list never gets
+cleared. It stays as the column list from the original table.
+
+
+[RESOLVED] Row number in first column of schema browser for 'Data' tab - needs to resize to fit contents - right now, it truncates.
 
 Drag and drop in schema browser to copy table cells.
 
