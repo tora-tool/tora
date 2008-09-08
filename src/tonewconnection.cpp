@@ -219,6 +219,9 @@ void toNewConnection::readSettings()
     m_connectionModel->setupData(OptionMap);
     Previous->resizeColumnsToContents();
     Previous->setSortingEnabled(true);
+
+    Previous->sortByColumn(4, Qt::AscendingOrder);
+
     Previous->hideColumn(0);
 }
 
