@@ -1,7 +1,7 @@
 static const char *LicenseText =
     "<html><body><p>"
-    " The Toolkit for Oracle is Copyright (C) 2003-2005 Quest Software, Inc."
-    " Portions Copyright (C) 2005 Other Contributors"
+    " The Toolkit for Oracle is Copyright (C) 2003-2008 Quest Software, Inc."
+    " Portions Copyright (C) 2008 Other Contributors"
     "</p><p>"
     " You may use, distribute and copy Toolkit for Oracle under the terms of"
     " GNU General Public License version 2, which is displayed below."

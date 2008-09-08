@@ -241,7 +241,6 @@ EXTRA_DIST = icons \
 	$(LOKIDIR_INC) \
 	$(UI_FILES) \
 	Makefile.am \
-	LICENSE.h \
 	toconf.h \
 	todefaultkeywords.h \
 	toextratranslations.cpp \
