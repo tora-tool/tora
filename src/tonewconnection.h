@@ -2,8 +2,8 @@
 /*****
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2003-2005 Quest Software, Inc
- * Portions Copyright (C) 2005 Other Contributors
+ * Copyright (C) 2003-2008 Quest Software, Inc
+ * Portions Copyright (C) 2008 Other Contributors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
