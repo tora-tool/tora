@@ -201,7 +201,7 @@
        <widget class="QCheckBox" name="SavePassword" >
         <property name="toolTip" >
          <string>Remember the last password you used to connect.
-Will leave the password unencryptet in the config file.</string>
+Will leave the password unencrypted in the config file.</string>
         </property>
         <property name="text" >
          <string>&amp;Save passwords</string>
@@ -214,7 +214,7 @@ Will leave the password unencryptet in the config file.</string>
       <item row="1" column="1" >
        <widget class="QLabel" name="StatusLabel" >
         <property name="toolTip" >
-         <string>The time in seconds temporary messages will be displayed in the status bar. 0 menas keep.</string>
+         <string>The time in seconds temporary messages will be displayed in the status bar. 0 means keep.</string>
         </property>
         <property name="text" >
          <string>Status &amp;message</string>
@@ -306,7 +306,7 @@ Will leave the password unencryptet in the config file.</string>
       <item row="3" column="3" >
        <widget class="QCheckBox" name="UnlimitedSamples" >
         <property name="toolTip" >
-         <string>Save unlimited number of samples. Can large amounts of consume memory.</string>
+         <string>Save unlimited number of samples. Can consume large amounts of memory.</string>
         </property>
         <property name="text" >
          <string>Unlimited</string>
