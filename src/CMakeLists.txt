@@ -360,6 +360,11 @@ SET(TORA_SOURCES
     migratetool/squirrelsql.cpp
     migratetool/tora3.cpp
 )
+# compiled in icons for windows
+IF (WIN32 AND MSVC)
+    SET (TORA_SOURCES ${TORA_SOURCES} tora.rc)
+ENDIF (WIN32 AND MSVC)
+
 
 QT4_ADD_TRANSLATION(TORA_I18N_QM ${TORA_I18N_TS})
 QT4_WRAP_UI(TORA_UI_SOURCES ${TORA_UI_SRC} )

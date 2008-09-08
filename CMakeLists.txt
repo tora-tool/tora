@@ -58,7 +58,11 @@ endif (NOT TORA_PLUGIN_DIR)
 ADD_DEFINITIONS("-DDEFAULT_PLUGIN_DIR=\\\"${TORA_PLUGIN_DIR}\\\"")
 
 if (NOT TORA_DOC_DIR)
-    SET (TORA_DOC_DIR "${CMAKE_INSTALL_PREFIX}/share/doc/tora/") # it would be pain for upgrade configs -${VERSION}/")
+	IF (UNIX)
+	    SET (TORA_DOC_DIR "${CMAKE_INSTALL_PREFIX}/share/doc/tora/") # it would be pain for upgrade configs -${VERSION}/")
+	ELSE (UNIX)
+		SET (TORA_DOC_DIR "${CMAKE_INSTALL_PREFIX}/doc/")
+	ENDIF (UNIX)
 endif (NOT TORA_DOC_DIR)
 
 #if (NOT TORA_HELP_DIR)
