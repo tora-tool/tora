@@ -328,7 +328,7 @@ void toResultTableView::applyColumnRules(void)
     resizeColumnsToContents();
 
     if (visible == 1 && ReadableColumns)
-        setColumnWidth(1, maximumViewportSize().width());
+        setColumnWidth(1, viewport()->width());
 }
 
 
