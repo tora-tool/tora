@@ -466,6 +466,8 @@ void toNewConnection::changeHost(void)
         if(Host->isVisible() || (prov == "Oracle"))
         {
             QString host = Host->currentText();
+            if (Provider->currentText() == ORACLE_TNS)
+                host = "SQL*Net";
             std::list<QString> databases = toConnectionProvider::databases(
                 prov,
                 host,
