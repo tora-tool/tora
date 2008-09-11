@@ -1387,10 +1387,11 @@ class qSqlSetting : public QWidget, public toSettingTab
                 delete Query;
                 Query = NULL;
                 CurrentExtra = *ExtraData.begin();
-                Query = createQuery(QueryParam(parseReorder(query()->sql()), query()->params(), &ExtraData));
 
                 ptr.unlock();
+                Query = createQuery(QueryParam(parseReorder(query()->sql()), query()->params(), &ExtraData));
                 checkQuery();
+                ptr.lock();
             }
 
             return toQValue::fromVariant(val);
@@ -1871,9 +1872,11 @@ void toQSqlProvider::qSqlQuery::checkQuery(void) // Must *not* call while locked
             delete Query;
             Query = NULL;
 
+            ptr.unlock();
             Query = createQuery(QueryParam(parseReorder(query()->sql()),
                                            query()->params(),
                                            &ExtraData));
+            ptr.lock();
         }
     }
     while (ExtraData.begin() != ExtraData.end() && EOQ);
