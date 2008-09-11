@@ -1840,7 +1840,6 @@ void toQSqlProvider::qSqlQuery::checkQuery(void) // Must *not* call while locked
         {
             QString msg = QString::fromLatin1("Query not active ");
             msg += query()->sql();
-            ptr.unlock();
             throw ErrorString(Query->lastError(), msg);
         }
 
