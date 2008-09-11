@@ -883,10 +883,14 @@ QString toConnection::description(bool version) const
 {
     QString ret(User);
     ret += QString::fromLatin1("@");
-    ret += Database;
+
+    if(!toIsMySQL(*this))
+        ret += Database;
+
     if (!Host.isEmpty() && Host != "SQL*Net")
     {
-        ret += QString::fromLatin1(".");
+        if(!toIsMySQL(*this))
+            ret += QString::fromLatin1(".");
         ret += Host;
     }
 
