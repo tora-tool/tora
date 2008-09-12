@@ -85,14 +85,10 @@ public:
         if (!Window)
         {
             Window = new toChartManager(toMainWidget()->workspace());
-            toMainWidget()->workspace()->addSubWindow(Window);
             Window->setWindowTitle(qApp->translate("toChartTool", "Chart Manager"));
             Window->setWindowIcon(QPixmap(const_cast<const char**>(chart_xpm)));
         }
         Window->refresh();
-        Window->show();
-        Window->raise();
-        Window->setFocus();
         return Window;
     }
     virtual void customSetup()

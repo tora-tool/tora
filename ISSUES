@@ -5,9 +5,6 @@ Minimize sf.net error backlog - bugtracker.
 
 Walk through basic tasks and dialogs and test its functionality. (create table, drop, alter etc.)
 
-Edit Sql and Chart Manager menu options enter infinite loop. These did
-work but may have been broken since the QMdiArea change.
-
 
 
 Minor Issues that would be nice to fix before release
@@ -33,6 +30,9 @@ connection.
 
 Resolved Issues
 ---------------
+
+[FIXED- PV] Edit Sql and Chart Manager menu options enter infinite loop. These did
+work but may have been broken since the QMdiArea change.
 
 [working?] Oracle: better handling on extents tab if no access to dba_extents view. 
 

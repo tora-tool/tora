@@ -92,12 +92,12 @@ public:
         else
         {
             Window = new toSQLEdit(toMainWidget()->workspace(), connection);
-            toMainWidget()->workspace()->addSubWindow(Window);
+            Window->setWindowIcon(QPixmap(const_cast<const char**>(tosqledit_xpm)));
+//             toMainWidget()->workspace()->addSubWindow(Window);
         }
 
-        Window->raise();
-        Window->setFocus();
-        Window->setWindowIcon(QPixmap(const_cast<const char**>(tosqledit_xpm)));
+//         Window->raise();
+//         Window->setFocus();
         return Window;
     }
 
