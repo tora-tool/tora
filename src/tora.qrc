@@ -2,7 +2,7 @@
     <qresource prefix="/" >
         <file>help/Explain-plan.html</file>
         <file>help/Getting-bind-parameters.html</file>
-        <file>help/Index.html</file>
+        <file>help/Index_002dlist.html</file>
         <file>help/Memo-editor.html</file>
         <file>help/Object-description.html</file>
         <file>help/SGA-Statement.html</file>
