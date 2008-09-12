@@ -598,7 +598,7 @@ bool toMarkedText::searchNext(toSearchReplace *search)
     int col;
     int line;
     getCursorPosition(&line, &col);
-    int pos = FindIndex(text, line, col);
+    int pos = FindIndex(text, line, col) + 1;
 
     int endPos;
     if (search->findString(text, pos, endPos))
