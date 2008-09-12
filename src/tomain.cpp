@@ -53,6 +53,7 @@
 #include "totemplate.h"
 #include "totool.h"
 #include "tomessage.h"
+#include "tothread.h"
 
 #include <qapplication.h>
 #include <qcombobox.h>
@@ -69,7 +70,7 @@
 #include <qtooltip.h>
 #include <QMdiArea>
 #include <QMdiSubWindow>
-
+#include <QThread>
 #include <qstyle.h>
 #include <QPixmap>
 
@@ -98,8 +99,13 @@ toMain::toMain()
         toBackupTool_(new toBackupTool),
         BackgroundLabel(new toBackgroundLabel(statusBar()))
 {
-
     Edit = NULL;
+
+    // must be set early on. this is used to make sure some gui
+    // updates are only done from the main thread of the
+    // application. In QT4, background threads that try to access or
+    // create gui widgets crash.
+    toThread::setMainThread(QThread::currentThread());
 
     Workspace = new QMdiArea(this);
     LastActiveWindow = 0;
