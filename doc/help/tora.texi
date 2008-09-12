@@ -35,7 +35,7 @@ This manual is for TOra, version 1.4.0.
 * Getting to know your workspace: workspace.
 * Available tools: tools.
 * Extending TOra: extendingtora.
-* Index:: Complete index.
+* Index-list:: Complete index.
 @end menu
 
 @include help.texi
@@ -76,8 +76,8 @@ This manual is for TOra, version 1.4.0.
 @include extendingtora.texi
 @include api.texi
 @include externalapi.texi
-@node Index
-@unnumbered Index
+@node Index-list
+@unnumbered Index-list
 @printindex cp
 @bye
 
