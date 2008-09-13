@@ -50,6 +50,7 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QScrollArea>
+#include <QApplication>
 
 
 static toSQL SQLComment(
@@ -413,7 +414,6 @@ toResultCols::toResultCols(QWidget *parent, const char *name, Qt::WFlags f)
     Columns->setDisableTab(false);
     Columns->setReadAll(true);
     vbox->addWidget(Columns);
-    connect(Columns, SIGNAL(done()), this, SLOT(done()));
 
     ColumnComments = NULL;
 
@@ -444,6 +444,13 @@ void toResultCols::query(const QString &sql, const toQList &param)
     QString object;
 
     toConnection &conn = connection();
+
+    if(ColumnComments)
+    {
+        Edit->setChecked(false);
+        delete ColumnComments;
+        ColumnComments = 0;
+    }
 
     try
     {
@@ -571,57 +578,49 @@ void toResultCols::query(const QString &sql, const toQList &param)
 }
 
 
-void toResultCols::done()
+void toResultCols::editComment(bool val)
 {
     setUpdatesEnabled(false);
 
     // setup the comments
-    bool visible = false;
-    if (ColumnComments)
+    if (val && !ColumnComments)
     {
-        visible = ColumnComments->isVisible();
-        delete ColumnComments;
+        QScrollArea *scroll = new QScrollArea(this);
+        ColumnComments = scroll;
+        ColumnComments->setVisible(true);
+        layout()->addWidget(ColumnComments);
+
+        QWidget *container = new QWidget(scroll);
+        scroll->setWidget(container);
+        scroll->setWidgetResizable(true);
+
+        toResultTableView::iterator it(Columns);
+
+        QGridLayout *grid = new QGridLayout;
+        grid->setContentsMargins(2, 2, 2, 2);
+        grid->setSpacing(5);
+
+        int row;
+        for (row = 0; (*it).isValid(); row++, it++)
+        {
+            QString column  = Columns->model()->data(row, 1).toString();
+            QString comment = Columns->model()->data(row, "Comment").toString();
+
+            toResultColsComment *com = new toResultColsComment(container);
+            com->setComment(false,
+                            TableName + "." + connection().quote(column),
+                            comment);
+            grid->addWidget(new QLabel(column));
+            grid->addWidget(com, row, 1);
+        }
+
+        // add widget at bottom of grid that can resize
+        grid->addWidget(new QWidget(container), row, 0);
+        grid->setRowStretch(row, 1);
+
+        container->setLayout(grid);
     }
-    QScrollArea *scroll = new QScrollArea(this);
-    ColumnComments = scroll;
-    ColumnComments->setVisible(visible);
-    layout()->addWidget(ColumnComments);
 
-    QWidget *container = new QWidget(scroll);
-    scroll->setWidget(container);
-    scroll->setWidgetResizable(true);
-
-    toResultTableView::iterator it(Columns);
-
-    QGridLayout *grid = new QGridLayout;
-    grid->setContentsMargins(2, 2, 2, 2);
-    grid->setSpacing(5);
-
-    int row;
-    for (row = 0; (*it).isValid(); row++, it++)
-    {
-        QString column  = Columns->model()->data(row, 1).toString();
-        QString comment = Columns->model()->data(row, "Comment").toString();
-
-        toResultColsComment *com = new toResultColsComment(container);
-        com->setComment(false,
-                        TableName + "." + connection().quote(column),
-                        comment);
-        grid->addWidget(new QLabel(column));
-        grid->addWidget(com, row, 1);
-    }
-
-    // add widget at bottom of grid that can resize
-    grid->addWidget(new QWidget(container), row, 0);
-    grid->setRowStretch(row, 1);
-
-    container->setLayout(grid);
-    setUpdatesEnabled(true);
-}
-
-
-void toResultCols::editComment(bool val)
-{
     // copy text from on to the other so i don't have to refresh to
     // see my comments... i would think they were lost.
     if (EditComment->isVisible())
@@ -631,4 +630,5 @@ void toResultCols::editComment(bool val)
         ColumnComments->setVisible(val);
     EditComment->setVisible(val);
     Comment->setVisible(!val);
+    setUpdatesEnabled(true);
 }

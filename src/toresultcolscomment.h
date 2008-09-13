@@ -60,11 +60,8 @@ class toResultColsComment : public QLineEdit
     bool    Table;
     QString Name;
 
-private:
+private slots:
     void saveUnchanged();
-
-protected:
-    virtual void focusOutEvent(QFocusEvent *);
 
 public:
     toResultColsComment(QWidget *parent);

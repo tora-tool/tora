@@ -88,6 +88,10 @@ toResultColsComment::toResultColsComment(QWidget *parent)
             SIGNAL(textChanged(const QString &)),
             this,
             SLOT(commentChanged()));
+    connect(this,
+            SIGNAL(editingFinished()),
+            this,
+            SLOT(saveUnchanged()));
 }
 
 
@@ -114,13 +118,6 @@ void toResultColsComment::setComment(bool table,
 void toResultColsComment::commentChanged()
 {
     Changed = true;
-}
-
-
-void toResultColsComment::focusOutEvent(QFocusEvent *e)
-{
-    saveUnchanged();
-    QLineEdit::focusOutEvent(e);
 }
 
 

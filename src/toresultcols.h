@@ -45,6 +45,7 @@
 class QCheckBox;
 class QLabel;
 class toResultColsComment;
+class QScrollArea;
 
 
 /**
@@ -63,7 +64,7 @@ class toResultCols : public QWidget, public toResult
     QCheckBox           *Edit;
     toResultTableView   *Columns;
     bool                 Header;
-    QWidget             *ColumnComments; /* container for column
+    QScrollArea         *ColumnComments; /* container for column
                                           * comment widgets */
     QString              TableName;      /* quoted owner and table */
 
@@ -102,7 +103,6 @@ public:
 
 
 private slots:
-    void done(void);
     void editComment(bool val);
 };
 
