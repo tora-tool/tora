@@ -196,7 +196,8 @@ void toResultData::query(const QString &, const toQList &params)
     }
 
     FilterName = filterName();
-    filterAct->setChecked(AllFilter || Criteria.contains(FilterName));
+    bool filter = AllFilter || Criteria.contains(FilterName);
+    filterAct->setChecked(filter);
 
     toConnection &conn = connection();
 
@@ -204,7 +205,7 @@ void toResultData::query(const QString &, const toQList &params)
     SQL = SQL.arg(conn.quote(Owner)).arg(conn.quote(Table));
 
     bool where = false;
-    if (!Criteria[FilterName].isEmpty())
+    if (filter && !Criteria[FilterName].isEmpty())
     {
         SQL += " WHERE ";
         SQL += Criteria[FilterName];
@@ -212,7 +213,7 @@ void toResultData::query(const QString &, const toQList &params)
         where = true;
     }
 
-    if (!Order[FilterName].isEmpty())
+    if (filter && !Order[FilterName].isEmpty())
     {
         SQL += " ORDER BY ";
         SQL += Order[FilterName];
