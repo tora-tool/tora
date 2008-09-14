@@ -6,7 +6,7 @@ $| = 1;
 #
 sub write_if_changed {
     my $origtext = shift;
-    my $curtext  = shift;
+    my $filetext  = shift;
     my $file     = shift;
 
     if ( $origtext ne $filetext ) {
