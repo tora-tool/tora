@@ -43,7 +43,6 @@
 #include <qapplication.h>
 #include <qfile.h>
 #include <qregexp.h>
-//Added by qt3to4:
 #include <QString>
 
 // A little magic to get lrefresh to work and get a check on qApp
@@ -82,11 +81,6 @@ bool toSQL::updateSQL(const QString &name,
                       const QString &provider,
                       bool modified)
 {
-#ifdef TO_NO_ORACLE
-    if (provider == "Oracle")
-        return false;
-#endif
-
     version def(provider, ver, sql, modified);
 
     allocCheck();
