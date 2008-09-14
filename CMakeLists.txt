@@ -277,7 +277,6 @@ INSTALL(FILES
     ChangeLog
     COPYING
     INSTALL
-    LICENSE.txt
     NEWS
     README
     README.BINARIES

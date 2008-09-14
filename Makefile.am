@@ -13,7 +13,6 @@ EXTRA_DIST = debian \
 	Makefile.OSX \
 	Makefile.mingw \
 	$(READMES) \
-	LICENSE.txt \
 	config/m4 \
 	autogen.sh
 

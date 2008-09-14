@@ -1,19 +1,20 @@
 TOra - Toolkit for Oracle
 =========================
-Copyright (C) 2003-2005 Quest Software, Inc (http://www.quest.com/)
-Portions Copyright (C) 2005 Other Contributors
 
-For information about license see the LICENSE.txt file. It is distributed 
-under the GPL which basically means that any derivatory work must be 
-released under an open source license as well.
+* BEGIN_COMMON_COPYRIGHT_HEADER 
+* END_COMMON_COPYRIGHT_HEADER 
+
+For information about license see the COPYING file. TOra is 
+distributed under the GPL which basically means that any derivatory 
+work must be released under the GPL license as well.
 
 TOra is supported for running with an Oracle 8.1.7 or newer
-client installation. It has been verified to work with Oracle 10g.
+client installation. It has been verified to work with Oracle 10g and 11g.
 
 In addition, TOra also supports postgres and mysql if your Qt library
 is compiled with that support.
 
-Toolkit for Oracle is a program for Oracle developers and administrators. The
+Toolkit for Oracle is a program for database developers and administrators. The
 features that are available so far is (As of version 1.2):
 
 * Handles multiple connections
