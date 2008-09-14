@@ -614,13 +614,17 @@ void toMain::createToolMenus()
             int priority = (*i).second->priority();
             if (priority / 100 != lastPriorityPix / 100 && pixmap)
             {
+#ifndef TO_NO_ORACLE
                 toolsToolbar->addSeparator();
+#endif
                 lastPriorityPix = priority;
             }
 
             if (priority / 100 != lastPriorityMenu / 100 && menuName)
             {
+#ifndef TO_NO_ORACLE
                 toolsMenu->addSeparator();
+#endif
                 lastPriorityMenu = priority;
             }
 
@@ -1346,6 +1350,15 @@ void toMain::enableConnectionActions(bool enabled)
 
     // now, loop through tools and enable/disable
 
+    toConnection *conn = 0;
+    try
+    {
+        conn = &currentConnection();
+    }
+    catch(...)
+    {
+    }
+
     std::map<QString, toTool *> &tools = toTool::tools();
     for (std::map<QString, toTool *>::iterator i = tools.begin();
             i != tools.end();
@@ -1355,13 +1368,25 @@ void toMain::enableConnectionActions(bool enabled)
         if (!(*i).second)
             continue;
 
+#ifdef TO_NO_ORACLE
+        // hide icon if tool doesn't support connection. this is to
+        // hide all of the oracle tools that don't make sense if
+        // compiled without it.
+        if(conn)
+            (*i).second->setActionVisible(*conn);
+        else
+            (*i).second->setActionVisible(false);
+#else
         if (!enabled)
             (*i).second->enableAction(false);
         else
         {
-            toConnection &conn = currentConnection();
-            (*i).second->enableAction(conn);
+            if(conn)
+                (*i).second->enableAction(*conn);
+            else
+                (*i).second->enableAction(false);
         }
+#endif
     }
 }
 

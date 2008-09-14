@@ -286,6 +286,26 @@ public:
         enableAction(canHandle(conn));
     }
 
+    /**
+     * Set action visibility if tool can support toConnection
+     * provider.
+     *
+     */
+    void setActionVisible(toConnection &conn)
+    {
+        getAction()->setVisible(canHandle(conn));
+    }
+
+    /**
+     * Set action visibility if tool can support toConnection
+     * provider.
+     *
+     */
+    void setActionVisible(bool en)
+    {
+        getAction()->setVisible(en);
+    }
+
 public slots:
     /**
      * Create a window of the current tool. This function sets up a toolwindow for
