@@ -105,6 +105,10 @@ class toResultData : public QWidget, public toResult
     // generate filtername
     QString filterName();
 
+    // true if user has elected to discard current changes.
+    // should be reset on every query
+    bool Discard;
+
 public:
     toResultData(QWidget *parent = 0,
                  const char *name = 0,

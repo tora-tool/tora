@@ -66,6 +66,9 @@ bool toWorksheetText::editOpen(QString suggestedFile)
     int ret = 1;
     if (isModified())
     {
+        // grab focus so user can see file and decide to save
+        setFocus(Qt::OtherFocusReason);
+
         ret = TOMessageBox::information(
                   this,
                   qApp->translate("toWorksheetText", "Save changes?"),

@@ -68,10 +68,10 @@
 toResultData::toResultData(QWidget *parent,
                            const char *name,
                            Qt::WindowFlags f)
-        : QWidget(parent, f)
+    : QWidget(parent, f)
 {
-
     AllFilter = false;
+    Discard   = false;
 
     if (name)
         setObjectName(name);
@@ -179,6 +179,8 @@ void toResultData::query(const QString &, const toQList &params)
 {
     if (!maybeSave())
         return;
+
+    Discard = false;
 
     if (params.size() == 2)
     {
@@ -375,11 +377,16 @@ bool toResultData::maybeSave(void)
 {
     if (!Edit->changed())
         return true;
+    if (!isVisible())
+        return true;
+
+    // grab focus so user can see file and decide to save
+    setFocus(Qt::OtherFocusReason);
 
     int ret = TOMessageBox::information(
                   this,
-                  "Save changes",
-                  QString("Save changes to %1.%2?").arg(Owner).arg(Table),
+                  tr("Save changes"),
+                  tr("Save changes to %1.%2?").arg(Owner).arg(Table),
                   QMessageBox::Save |
                   QMessageBox::Discard |
                   QMessageBox::Cancel);
@@ -391,7 +398,7 @@ bool toResultData::maybeSave(void)
         return true;
     }
     else if (ret == QMessageBox::Discard)
-        return true;
+        return Discard = true;
     else
         return false;
 }

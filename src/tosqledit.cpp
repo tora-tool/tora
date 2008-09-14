@@ -438,6 +438,9 @@ bool toSQLEdit::checkStore(bool justVer)
             Description->isModified()) &&
             Version->currentText().length() > 0)
     {
+        // grab focus so user can see file and decide to save
+        setFocus(Qt::OtherFocusReason);
+
         switch (TOMessageBox::information(this, tr("Modified SQL dictionary"),
                                           tr("Save changes into the SQL dictionary"),
                                           tr("&Yes"), tr("&No"), tr("Cancel"), 0, 2))

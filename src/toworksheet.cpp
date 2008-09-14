@@ -703,6 +703,9 @@ bool toWorksheet::checkSave(bool input)
                 conn += QString::fromLatin1("unknown connection");
             }
 
+            // grab focus so user can see file and decide to save
+            setFocus(Qt::OtherFocusReason);
+
             QString str = tr("Save changes to editor for %1?").arg(conn);
             if (!Editor->filename().isEmpty())
                 str += QString::fromLatin1("\n(") +
