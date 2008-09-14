@@ -461,6 +461,8 @@ public:
         if (!Dock || !Window)
         {
             Dock = toAllocDock(qApp->translate("toTemplateTool", "Template"), QString::null, *toolbarImage());
+            // fixes warning from QMainWindow::saveState
+            Dock->setObjectName("Template");
             Window = new toTemplate(Dock);
         }
         else if (Dock->isHidden())
@@ -580,6 +582,8 @@ toTemplate::toTemplate(TODock *parent)
     Result = toAllocDock(tr("Template result"),
                          QString::null,
                          *TemplateTool.toolbarImage());
+    // fixes warning from QMainWindow::saveState
+    Result->setObjectName("templateResult");
     vbox->addWidget(List);
     Frame = new toTemplateResult(Result, this);
 
