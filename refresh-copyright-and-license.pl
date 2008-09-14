@@ -44,13 +44,13 @@ my $file     = "src/LICENSE.h";
 my $origtext = slurp($file);
 
 my $tmp = "static const char *LicenseText = ";
-$tmp .= "    \"<html><body><pre>\\n\"\n";
+$tmp .= "    \"<html><body><pre><font size=-1>\\n\"\n";
 foreach my $ln ( split( /[\r\n]/, $lic_text ) ) {
     $ln =~ s/\\/\\\\/g;
     $ln =~ s/"/\\"/g;
     $tmp .= "    \"$ln\\n\"\n";
 }
-$tmp .= "    \"</pre></body></html>\\n\"\n;\n";
+$tmp .= "    \"</font></pre></body></html>\\n\"\n;\n";
 write_if_changed( $origtext, $tmp, $file );
 
 #

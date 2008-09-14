@@ -1,4 +1,4 @@
-static const char *LicenseText =     "<html><body><pre>\n"
+static const char *LicenseText =     "<html><body><pre><font size=-1>\n"
     "		    GNU GENERAL PUBLIC LICENSE\n"
     "		       Version 2, June 1991\n"
     "\n"
@@ -339,5 +339,5 @@ static const char *LicenseText =     "<html><body><pre>\n"
     "consider it more useful to permit linking proprietary applications with the\n"
     "library.  If this is what you want to do, use the GNU Library General\n"
     "Public License instead of this License.\n"
-    "</pre></body></html>\n"
+    "</font></pre></body></html>\n"
 ;
