@@ -12,6 +12,7 @@
 
 #include "toconf.h"
 #include "LICENSE.h"
+#include "COPYRIGHT.h"
 #include "icons/largelogo.xpm"
 
 
@@ -19,7 +20,7 @@ static const char *AboutText = "<html><body bgcolor='#E3B836'>"
                                "<IMG SRC=':/icons/largelogo.xpm'><BR>\n"
                                "Version %1 (<A HREF=http://tora.sourceforge.net>http://tora.sourceforge.net</A>)\n"
                                "<P>\n"
-                               "&copy; 2003-2008 Quest Software, Inc. and numerous other contributors in the Open Source community.<P>\n"
+                               "%2<P>\n"
                                "SourceForge project administered by Nathan Neulinger <A HREF=\"mailto:nneul@neulinger.org\">nneul@neulinger.org</A><P>\n"
                                "This program is available under the GNU General Public License.\n"
                                "Uses the Qt library by TrollTech\n"
@@ -121,7 +122,7 @@ toAbout::toAbout(AboutType page, QWidget* parent, const char* name, bool modal, 
     else
     {
         setWindowTitle(tr(ABOUT_CAPTION).arg(QString::fromLatin1(TOVERSION)));
-        QString buffer = tr(AboutText).arg(QString::fromLatin1(TOVERSION));
+        QString buffer = tr(AboutText).arg(QString::fromLatin1(TOVERSION),QString::fromLatin1(CopyrightText));
         TextView->setHtml(buffer);
         CancelButton->hide();
     }
