@@ -104,7 +104,6 @@ SET(TORA_MOC_CLASSES
     toeventquerytask.h
     tofilesize.h
     toglobalsetting.h
-#     tohelpbrowser.h
     tohelp.h
     tohelpsetup.h
     tohighlightedtext.h

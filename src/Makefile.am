@@ -57,7 +57,6 @@ tora_SOURCES=main.cpp \
 	toeditwidget.cpp toeditwidget.h \
 	toglobalsetting.cpp toglobalsetting.h \
 	tohelp.cpp tohelp.h tohelpsetup.h \
-	tohelpbrowser.h \
 	tohighlightedtext.cpp tohighlightedtext.h \
 	tohtml.cpp tohtml.h \
 	tolistviewformatter.cpp tolistviewformatter.h \
