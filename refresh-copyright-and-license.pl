@@ -81,13 +81,38 @@ $plain_style .= "\nEND_COMMON_COPYRIGHT_HEADER\n\n";
 #
 # Update all the C-style copyright text entries
 #
-foreach $file ("README") {
+foreach $file ("README", "debian/copyright") {
     print "Refreshing $file.\n";
 
     local ($/);
     my $filetext = do { local ($/); my $fh; open( $fh, "<", $file ); <$fh> };
     $filetext =~
 s|\s*BEGIN_COMMON_COPYRIGHT_HEADER.*END_COMMON_COPYRIGHT_HEADER\s*|$plain_style|sx;
+
+    open( OUT, ">", $file );
+    print OUT $filetext;
+    close(OUT);
+}
+
+#
+# Generate the replacement shell-style copyright
+#
+my $shell_style = "\n\n# BEGIN_COMMON_COPYRIGHT_HEADER\n#\n";
+foreach my $ln ( split( /[\r\n]/, $copy_text ) ) {
+    $shell_style .= "# $ln\n";
+}
+$shell_style .= "#\n# END_COMMON_COPYRIGHT_HEADER\n\n";
+
+#
+# Update all the C-style copyright text entries
+#
+foreach $file ( glob("Makefile*"), glob("*/Makefile*"), glob("*/*/Makefile*") ) {
+    print "Refreshing $file.\n";
+
+    local ($/);
+    my $filetext = do { local ($/); my $fh; open( $fh, "<", $file ); <$fh> };
+    $filetext =~
+s|\s*\#\s*BEGIN_COMMON_COPYRIGHT_HEADER.*END_COMMON_COPYRIGHT_HEADER\s*|$shell_style|sx;
 
     open( OUT, ">", $file );
     print OUT $filetext;
