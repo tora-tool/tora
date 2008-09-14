@@ -50,7 +50,7 @@ foreach my $ln ( split( /[\r\n]/, $lic_text ) ) {
     $ln =~ s/"/\\"/g;
     $tmp .= "    \"$ln\\n\"\n";
 }
-$tmp .= "    \"</pre></body></html>\\n\"\n;";
+$tmp .= "    \"</pre></body></html>\\n\"\n;\n";
 write_if_changed( $origtext, $tmp, $file );
 
 #
@@ -66,7 +66,7 @@ foreach my $ln ( split( /[\r\n]/, $copy_text ) ) {
     $ln =~ s/"/\\"/g;
     $tmp .= "    \"$ln\\n\"\n";
 }
-$tmp .= "    \"</pre>\\n\"\n;";
+$tmp .= "    \"</pre>\\n\"\n;\n";
 write_if_changed( $origtext, $tmp, $file );
 
 #
