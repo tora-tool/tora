@@ -7,6 +7,13 @@ $| = 1;
 my $lic_text  = do { local ($/); my $fh; open( $fh, "COPYING" );       <$fh> };
 my $copy_text = do { local ($/); my $fh; open( $fh, "copyright.txt" ); <$fh> };
 
+if ( $ARGV[0] eq "--blank" )
+{
+    shift @ARGV;
+    $copy_text = "";
+    $lic_text = "";
+}
+
 #
 # Generate the src/LICENSE.h file
 #
