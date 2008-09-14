@@ -797,6 +797,14 @@ public:
     {
         return Schema;
     }
+    /**
+     * Set connection's current schema
+     *
+     */
+    inline void setSchema(const QString &schema)
+    {
+        Schema = schema;
+    }
     /** Get version of connection.
      */
     const QString &version() const

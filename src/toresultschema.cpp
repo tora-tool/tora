@@ -54,10 +54,16 @@ toResultSchema::toResultSchema(toConnection &conn,
         conn.host() + "-" +
         conn.database();
 
-    QSettings s;
-    QString sel = s.value("schema/" + ConnectionKey).toString();
+    QString sel = conn.schema();
 
-    if(sel.isNull()) {
+    if(sel.isEmpty())
+    {
+        QSettings s;
+        sel = s.value("schema/" + ConnectionKey).toString();
+    }
+
+    if(sel.isEmpty())
+    {
         if (toIsMySQL(conn))
             sel = conn.database();
         else if (toIsOracle(conn) || toIsSapDB(conn))
@@ -66,6 +72,7 @@ toResultSchema::toResultSchema(toConnection &conn,
             sel = conn.user();
     }
 
+    conn.setSchema(sel);
     setSelected(sel);
     connect(this,
             SIGNAL(currentIndexChanged(const QString &)),
@@ -107,6 +114,8 @@ void toResultSchema::update(const QString &schema) {
             conn.allExecute(CHANGE_CURRENT_SCHEMA_PG.arg(schema));
         else
             throw QString("No support for changing schema for this database");
+
+        conn.setSchema(schema);
     }
     TOCATCH;
 }
