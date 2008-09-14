@@ -69,29 +69,28 @@ s|\s*/\*\s*BEGIN_COMMON_COPYRIGHT_HEADER.*END_COMMON_COPYRIGHT_HEADER\s*\*/\s*|$
     close(OUT);
 }
 
-#!/usr/bin/perl
+#
+# Generate the replacement plain-style copyright
+#
+my $plain_style = "\n\nBEGIN_COMMON_COPYRIGHT_HEADER\n\n";
+foreach my $ln ( split( /[\r\n]/, $copy_text ) ) {
+    $plain_style .= "$ln\n";
+}
+$plain_style .= "\nEND_COMMON_COPYRIGHT_HEADER\n\n";
 
-$/ = undef;
+#
+# Update all the C-style copyright text entries
+#
+foreach $file ("README") {
+    print "Refreshing $file.\n";
 
-open( IN, "/tmp/copy-chunk" );
-my $lic = join( "", <IN> );
-close(IN);
-my $qlic = quotemeta($lic);
+    local ($/);
+    my $filetext = do { local ($/); my $fh; open( $fh, "<", $file ); <$fh> };
+    $filetext =~
+s|\s*BEGIN_COMMON_COPYRIGHT_HEADER.*END_COMMON_COPYRIGHT_HEADER\s*|$plain_style|sx;
 
-#print "QLIC = $qlic\n";
-
-$newlic = "/* BEGIN_COMMON_COPYRIGHT_HEADER 
-* END_COMMON_COPYRIGHT_HEADER */
-";
-
-foreach $file (@ARGV) {
-    open( IN, $file );
-    my $filetext = join( "", <IN> );
-    close(IN);
-
-    $filetext =~ s/$qlic/$newlic/sx;
-
-    open( OUT, ">$file" );
+    open( OUT, ">", $file );
     print OUT $filetext;
     close(OUT);
 }
+
