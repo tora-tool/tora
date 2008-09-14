@@ -1433,9 +1433,11 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                                                          ret.at(ret.length() - 1) == '\''))))
                     {
                         if (t != (";") &&
-                                t != (".") &&
-                                ret.at(ret.length() - 1) != '.' &&
-                                current != 0)
+                            t != (".") &&
+                            t != "@" &&
+                            ret.at(ret.length() - 1) != '.' &&
+                            ret.at(ret.length() - 1) != '@' &&
+                            current != 0)
                         {
                             current++;
                             ret += (" ");
