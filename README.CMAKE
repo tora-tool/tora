@@ -53,6 +53,8 @@ specify path for alternative location and/or for Windows too.
 -DPOSTGRESQL_PATH_INCLUDES=/home/devel/pgsql/include
 -DPOSTGRESQL_PATH_INCLUDES=d:\pgsql\include
 -DPOSTGRESQL_PATH_LIB=/home/devel/pgsql/lib
+Windows note: Sometimes (dunno why) it doesn't find pgsql libs.
+              You can use "set LIB=%LIB%;pathtopgsqllibs" then.
 etc.
 
 

@@ -82,30 +82,47 @@ experimental stage.
 
 Building with MSVC
 
-	0. All related steps are done in the "Visual Studio Command Prompt"
+  0. All related steps are done in the "Visual Studio Command Prompt"
+     I have MS Visual Studio 2008 Express (aka version 9). It contains
+     all basic tools propably so there is no more stuff from Microsoft
+     required.
 
-	1. Downaload Qt4 source version for Windows - Trolltech doesn't provide
-	   MSVC binaries at all.
+  1. Downaload Qt4 source version for Windows - Trolltech doesn't provide
+     MSVC binaries at all.
 
-	2. Install Oracle client - instant or standard one.
+  2. Install Oracle client - instant or standard one.
 
-	3. Download and install Postgresql development packages. It's a part
-	   of default installer - just check its component.
-	   NOTE: Install it to the path *without* space in its name - Qt has
-	         problems with compilation in the case of space.
+  3. Download and install Postgresql development packages. It's a part
+     of default installer - just check its component.
+     NOTE: Install it to the path *without* space in its name - Qt has
+           problems with compilation in the case of space.
 
-	4. Download and install Mysql development packages. It's a part
-	   of default installer - just check its component.
-	   NOTE: Install it to the path *without* space in its name - Qt has
-	         problems with compilation in the case of space.
+  4. Download and install Mysql development packages. It's a part
+     of default installer - just check its component.
+     NOTE: Install it to the path *without* space in its name - Qt has
+           problems with compilation in the case of space.
 
-	5. Update system environment paths in variables: INCLUDE and LIB to
-	   fit Postgresql and Mysql includes and libraries.
-	   Note: Mysql uses subdirectories in its lib directory.
+  5. Update system environment paths in variables: INCLUDE and LIB to
+     fit Postgresql and Mysql includes and libraries.
+     Note: Mysql uses subdirectories in its lib directory.
+     Example:
+set INCLUDE=%INCLUDE%;d:\Qt\sqlite\;D:\Qt\pgsql\include\;d:\Qt\mysql\include\
+set LIB=%LIB%;d:\Qt\sqlite\;d:\Qt\pgsql\lib\;d:\Qt\mysql\lib\opt\
 
-	6. Compile Qt4 with MSVC. Don't forget to specify -qt-sql-mysql
-	   -qt-sql-psql -qt-sql-odbc -plugin-sql-mysql -plugin-sql-psql
-	   -plugin-sql-odbc parameters for configure script.
+  6. Compile Qt4 with MSVC. Don't forget to specify -qt-sql-mysql
+     -qt-sql-psql -qt-sql-odbc -plugin-sql-mysql -plugin-sql-psql
+     -plugin-sql-odbc parameters for configure script.
+     Example:
+configure.exe -plugin-sql-sqlite -system-sqlite -plugin-sql-mysql -plugin-sql-psql -plugin-sql-odbc
+     but it dependes on your system mood. I mean it's not deterministic.
+     Sometimes you will need to hack more paths etc. But building DB
+     plugins is described in the Qt documentation.
 
-	7. Compile Tora - read README.CMAKE
-
+  7. Compile Tora - read README.CMAKE
+     Example:
+set ORACLE_HOME=d:\oracle-xe\...
+set LIB=%LIB%;d:\Qt\pgsql\lib
+cmake -G "NMake Makefiles" -DWANT_INTERNAL_QSCINTILLA=1 -DCMAKE_INSTALL_PREFIX=d:\oss\tora\RELEASE -DORACLE_OCI_VERSION=10G_R2 -DPOSTGRESQL_PATH_INCLUDES=d:\Qt\pgsql\include -DPOSTGRESQL_PATH_LIB=d:\Qt\pgsql\lib\ ..\tora
+     Misc notes: seting ORACLE_HOME is a good thing (TM)
+                 building with internal qscintilla is easier for beginners ;)
+                 prepare for longer headache (if you're a windows devel newbie) 
