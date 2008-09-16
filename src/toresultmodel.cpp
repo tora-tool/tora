@@ -763,8 +763,8 @@ toResultModel::RowList toResultModel::merge(RowList &left,
 
     while(left.size() > 0 && right.size() > 0)
     {
-        if(order == Qt::AscendingOrder && left.at(0).at(column) <= right.at(0).at(column) ||
-           order == Qt::DescendingOrder && left.at(0).at(column) >= right.at(0).at(column))
+        if((order == Qt::AscendingOrder && left.at(0).at(column) <= right.at(0).at(column)) ||
+           (order == Qt::DescendingOrder && left.at(0).at(column) >= right.at(0).at(column)))
             result.append(left.takeAt(0));
         else
             result.append(right.takeAt(0));

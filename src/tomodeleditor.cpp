@@ -132,8 +132,8 @@ toModelEditor::toModelEditor(QWidget *parent,
                              QModelIndex current,
                              bool sql,
                              bool modal) : QDialog(parent),
-                                           Model(model),
-                                           Current(current)
+                                           Current(current),
+                                           Model(model)
 {
     setModal(modal);
     setMinimumSize(400, 300);
