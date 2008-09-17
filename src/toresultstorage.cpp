@@ -495,7 +495,7 @@ static toSQL SQLDatafile8(
     "           FROM sys.dba_free_space\n"
     "          GROUP BY file_id ) s\n"
     " WHERE d.file_id = v.file#\n"
-    "   AND s.file_id = d.file_id ( + )\n"
+    "   AND d.file_id = s.file_id ( + )\n"
     " UNION ALL SELECT d.tablespace_name,\n"
     "       v.name,\n"
     "       v.status,\n"
