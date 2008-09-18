@@ -1298,6 +1298,8 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
     catch (...)
     {
         printf("Failed to set new default date format for session\n");
+        toStatusMessage(QObject::tr("Failed to set new default date format for session: %1")
+                                  .arg(toConfigurationSingle::Instance().dateFormat()));
     }
 
     try
@@ -1396,6 +1398,15 @@ void toOracleSetting::saveSetting()
 {
     toConfigurationSingle::Instance().setKeepPlans(KeepPlans->isChecked());
     toConfigurationSingle::Instance().setDateFormat(DefaultDate->text());
+
+    // try to change NLS for already running sessions
+    QString str("ALTER SESSION SET NLS_DATE_FORMAT = '%1'");
+    foreach (QString c, toMainWidget()->connections())
+    {
+        toQuery synonyms(toMainWidget()->connection(c),
+                        str.arg(toConfigurationSingle::Instance().dateFormat()));
+    }
+
     toConfigurationSingle::Instance().setPlanCheckpoint(CheckPoint->text());
     toConfigurationSingle::Instance().setPlanTable(ExplainPlan->text());
     toConfigurationSingle::Instance().setOpenCursors(OpenCursors->value());
