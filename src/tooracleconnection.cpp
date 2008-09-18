@@ -1403,8 +1403,19 @@ void toOracleSetting::saveSetting()
     QString str("ALTER SESSION SET NLS_DATE_FORMAT = '%1'");
     foreach (QString c, toMainWidget()->connections())
     {
-        toQuery synonyms(toMainWidget()->connection(c),
-                        str.arg(toConfigurationSingle::Instance().dateFormat()));
+        try
+        {
+            toConnection &conn = toMainWidget()->connection(c);
+
+            if(toIsOracle(conn))
+            {
+                conn.allExecute(
+                    str.arg(toConfigurationSingle::Instance().dateFormat()));
+            }
+        }
+        catch(...) {
+            toStatusMessage(tr("Failed to set new default date format for connection: %1").arg(c));
+        }
     }
 
     toConfigurationSingle::Instance().setPlanCheckpoint(CheckPoint->text());
