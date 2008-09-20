@@ -82,6 +82,8 @@ toResultSchema::toResultSchema(toConnection &conn,
             SIGNAL(currentIndexChanged(const QString &)),
             this,
             SLOT(updateLastSchema(const QString &)));
+
+    setFocusPolicy(Qt::NoFocus);
 }
 
 
