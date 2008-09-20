@@ -483,6 +483,7 @@ QToolBar *toAllocBar(QWidget *parent, const QString &str)
 
     tool->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,
                                     QSizePolicy::Fixed));
+    tool->setFocusPolicy(Qt::NoFocus);
     return tool;
 }
 
