@@ -197,165 +197,134 @@ static toSQL SQLImportantLibraryCache("toTuning:Indicators:Important ratios:2Lib
                                       "select sum(reloads)/sum(pins)*100,' %' from v$librarycache",
                                       "Library cache (Shared SQL) miss ratio (%). < 1%");
 
-static toSQL SQLDataCache("toTuning:Indicators:Important ratios:3DataCache",
-                          "SELECT (1-SUM(DECODE(statistic#,40,value,0))/SUM(DECODE(statistic#,38,value,39,value,0)))*100,' %'\n"
-                          "  FROM v$sysstat\n"
-                          " WHERE statistic# IN (38,39,40)",
-                          "Data buffer cache hit ratio (%). > 60% - 70%",
-                          "0800");
+static toSQL SQLDataCache(
+    "toTuning:Indicators:Important ratios:3DataCache",
+    "SELECT ( 1 - SUM ( DECODE ( name,\n"
+    "                            'physical reads',\n"
+    "                            value,\n"
+    "                            0 ) ) / SUM ( DECODE ( name,\n"
+    "                                                   'db block gets',\n"
+    "                                                   value,\n"
+    "                                                   'consistent gets',\n"
+    "                                                   value,\n"
+    "                                                   0 ) ) ) * 100,\n"
+    "       ' %'\n"
+    "  FROM v$sysstat\n"
+    " WHERE name IN ( 'db block gets',\n"
+    "                 'consistent gets',\n"
+    "                 'physical reads' )",
+    "Data buffer cache hit ratio (%). > 60% - 70%",
+    "0800");
 
-static toSQL SQLDataCache10("toTuning:Indicators:Important ratios:3DataCache",
-                            "SELECT (1-SUM(DECODE(statistic#,54,value,0))/SUM(DECODE(statistic#,47,value,50,value,0)))*100,' %'\n"
-                            "  FROM v$sysstat\n"
-                            " WHERE statistic# IN (47,50,54)",
-                            "",
-                            "1000");
+static toSQL SQLDataCache7(
+    "toTuning:Indicators:Important ratios:3DataCache",
+    "SELECT (1-SUM(DECODE(statistic#,39,value,0))/SUM(DECODE(statistic#,37,value,38,value,0)))*100,' %'\n"
+    "  FROM v$sysstat\n"
+    " WHERE statistic# IN (37,38,39)",
+    "",
+    "0703");
 
-static toSQL SQLDataCache9("toTuning:Indicators:Important ratios:3DataCache",
-                           "SELECT (1-SUM(DECODE(statistic#,42,value,0))/SUM(DECODE(statistic#,40,value,41,value,0)))*100,' %'\n"
-                           "  FROM v$sysstat\n"
-                           " WHERE statistic# IN (40,41,42)",
-                           "",
-                           "0900");
+static toSQL SQLLogRedo(
+    "toTuning:Indicators:Redo log contention:1LogSpace",
+    "SELECT value\n"
+    "  FROM v$sysstat\n"
+    " WHERE name = 'redo log space requests'",
+    "Redo log space requests. Close to 0",
+    "0800");
 
-static toSQL SQLDataCache7("toTuning:Indicators:Important ratios:3DataCache",
-                           "SELECT (1-SUM(DECODE(statistic#,39,value,0))/SUM(DECODE(statistic#,37,value,38,value,0)))*100,' %'\n"
-                           "  FROM v$sysstat\n"
-                           " WHERE statistic# IN (37,38,39)",
-                           "",
-                           "0703");
+static toSQL SQLLogRedo7(
+    "toTuning:Indicators:Redo log contention:1LogSpace",
+    "select value from v$sysstat where statistic# = 94",
+    "",
+    "0703");
 
-static toSQL SQLLogRedo("toTuning:Indicators:Redo log contention:1LogSpace",
-                        "select value from v$sysstat where statistic# = 108",
-                        "Redo log space requests. Close to 0",
-                        "0800");
+static toSQL SQLSystemHeadUndo(
+    "toTuning:Indicators:RBS contention:1SystemHeadUndo",
+    "SELECT count / blocks * 100,\n"
+    "       ' %'\n"
+    "  FROM ( SELECT MAX ( count ) count\n"
+    "           FROM v$waitstat\n"
+    "          WHERE class = 'system undo header' ) a,\n"
+    "       ( SELECT SUM ( value ) blocks\n"
+    "           FROM v$sysstat\n"
+    "          WHERE name IN ( 'db block gets',\n"
+    "                          'consistent gets' ) ) b",
+    "System undo header waits (%). < 1%",
+    "0800");
 
-static toSQL SQLLogRedo10("toTuning:Indicators:Redo log contention:1LogSpace",
-                          "select value from v$sysstat where statistic# = 141",
-                          "",
-                          "1000");
+static toSQL SQLSystemHeadUndo7(
+    "toTuning:Indicators:RBS contention:1SystemHeadUndo",
+    "SELECT count/blocks*100,' %'\n"
+    "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo header') a,\n"
+    "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
+    "",
+    "0703");
 
-static toSQL SQLLogRedo9("toTuning:Indicators:Redo log contention:1LogSpace",
-                         "select value from v$sysstat where statistic# = 122",
-                         "",
-                         "0900");
+static toSQL SQLSystemBlockUndo(
+    "toTuning:Indicators:RBS contention:2SystemBlockUndo",
+    "SELECT count / blocks * 100,\n"
+    "       ' %'\n"
+    "  FROM ( SELECT MAX ( count ) count\n"
+    "           FROM v$waitstat\n"
+    "          WHERE class = 'system undo block' ) a,\n"
+    "       ( SELECT SUM ( value ) blocks\n"
+    "           FROM v$sysstat\n"
+    "          WHERE name IN ( 'db block gets',\n"
+    "                          'consistent gets' ) ) b",
+    "System undo block waits (%). < 1%",
+    "0800");
 
-static toSQL SQLLogRedo7("toTuning:Indicators:Redo log contention:1LogSpace",
-                         "select value from v$sysstat where statistic# = 94",
-                         "",
-                         "0703");
+static toSQL SQLSystemBlockUndo7(
+    "toTuning:Indicators:RBS contention:2SystemBlockUndo",
+    "SELECT count/blocks*100,' %'\n"
+    "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo block') a,\n"
+    "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
+    "",
+    "0703");
 
-static toSQL SQLSystemHeadUndo("toTuning:Indicators:RBS contention:1SystemHeadUndo",
-                               "SELECT count/blocks*100,' %'\n"
-                               "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo header') a,\n"
-                               "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (38,39)) b",
-                               "System undo header waits (%). < 1%",
-                               "0800");
+static toSQL SQLHeadUndo(
+    "toTuning:Indicators:RBS contention:3HeadUndo",
+    "SELECT count / blocks * 100,\n"
+    "       ' %'\n"
+    "  FROM ( SELECT MAX ( count ) count\n"
+    "           FROM v$waitstat\n"
+    "          WHERE class = 'undo header' ) a,\n"
+    "       ( SELECT SUM ( value ) blocks\n"
+    "           FROM v$sysstat\n"
+    "          WHERE name IN ( 'db block gets',\n"
+    "                          'consistent gets' ) ) b",
+    "Undo head waits (%). < 1%",
+    "0800");
 
-static toSQL SQLSystemHeadUndo10("toTuning:Indicators:RBS contention:1SystemHeadUndo",
-                                 "SELECT count/blocks*100,' %'\n"
-                                 "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo header') a,\n"
-                                 "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (47,50)) b",
-                                 "",
-                                 "1000");
+static toSQL SQLHeadUndo7(
+    "toTuning:Indicators:RBS contention:3HeadUndo",
+    "SELECT count/blocks*100,' %'\n"
+    "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo header') a,\n"
+    "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
+    "",
+    "0703");
 
-static toSQL SQLSystemHeadUndo9("toTuning:Indicators:RBS contention:1SystemHeadUndo",
-                                "SELECT count/blocks*100,' %'\n"
-                                "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo header') a,\n"
-                                "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (40,41)) b",
-                                "",
-                                "0900");
+static toSQL SQLBlockUndo(
+    "toTuning:Indicators:RBS contention:4BlockUndo",
+    "SELECT count / blocks * 100,\n"
+    "       ' %'\n"
+    "  FROM ( SELECT MAX ( count ) count\n"
+    "           FROM v$waitstat\n"
+    "          WHERE class = 'undo block' ) a,\n"
+    "       ( SELECT SUM ( value ) blocks\n"
+    "           FROM v$sysstat\n"
+    "          WHERE name IN ( 'db block gets',\n"
+    "                          'consistent gets' ) ) b",
+    "Undo block waits (%). < 1%",
+    "0800");
 
-static toSQL SQLSystemHeadUndo7("toTuning:Indicators:RBS contention:1SystemHeadUndo",
-                                "SELECT count/blocks*100,' %'\n"
-                                "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo header') a,\n"
-                                "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
-                                "",
-                                "0703");
-
-static toSQL SQLSystemBlockUndo("toTuning:Indicators:RBS contention:2SystemBlockUndo",
-                                "SELECT count/blocks*100,' %'\n"
-                                "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo block') a,\n"
-                                "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (38,39)) b",
-                                "System undo block waits (%). < 1%",
-                                "0800");
-
-static toSQL SQLSystemBlockUndo10("toTuning:Indicators:RBS contention:2SystemBlockUndo",
-                                  "SELECT count/blocks*100,' %'\n"
-                                  "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo block') a,\n"
-                                  "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (47,50)) b",
-                                  "",
-                                  "1000");
-
-static toSQL SQLSystemBlockUndo9("toTuning:Indicators:RBS contention:2SystemBlockUndo",
-                                 "SELECT count/blocks*100,' %'\n"
-                                 "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo block') a,\n"
-                                 "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (40,41)) b",
-                                 "",
-                                 "0900");
-
-static toSQL SQLSystemBlockUndo7("toTuning:Indicators:RBS contention:2SystemBlockUndo",
-                                 "SELECT count/blocks*100,' %'\n"
-                                 "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo block') a,\n"
-                                 "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
-                                 "",
-                                 "0703");
-
-static toSQL SQLHeadUndo("toTuning:Indicators:RBS contention:3HeadUndo",
-                         "SELECT count/blocks*100,' %'\n"
-                         "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo header') a,\n"
-                         "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (38,39)) b",
-                         "Undo head waits (%). < 1%",
-                         "0800");
-
-static toSQL SQLHeadUndo10("toTuning:Indicators:RBS contention:3HeadUndo",
-                           "SELECT count/blocks*100,' %'\n"
-                           "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo header') a,\n"
-                           "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (47,50)) b",
-                           "",
-                           "1000");
-
-static toSQL SQLHeadUndo9("toTuning:Indicators:RBS contention:3HeadUndo",
-                          "SELECT count/blocks*100,' %'\n"
-                          "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo header') a,\n"
-                          "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (40,41)) b",
-                          "",
-                          "0900");
-
-static toSQL SQLHeadUndo7("toTuning:Indicators:RBS contention:3HeadUndo",
-                          "SELECT count/blocks*100,' %'\n"
-                          "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo header') a,\n"
-                          "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
-                          "",
-                          "0703");
-
-static toSQL SQLBlockUndo("toTuning:Indicators:RBS contention:4BlockUndo",
-                          "SELECT count/blocks*100,' %'\n"
-                          "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo block') a,\n"
-                          "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (38,39)) b",
-                          "Undo block waits (%). < 1%",
-                          "0800");
-
-static toSQL SQLBlockUndo10("toTuning:Indicators:RBS contention:4BlockUndo",
-                            "SELECT count/blocks*100,' %'\n"
-                            "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo block') a,\n"
-                            "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (47,50)) b",
-                            "",
-                            "1000");
-
-static toSQL SQLBlockUndo9("toTuning:Indicators:RBS contention:4BlockUndo",
-                           "SELECT count/blocks*100,' %'\n"
-                           "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo block') a,\n"
-                           "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (40,41)) b",
-                           "",
-                           "0900");
-
-static toSQL SQLBlockUndo7("toTuning:Indicators:RBS contention:4BlockUndo",
-                           "SELECT count/blocks*100,' %'\n"
-                           "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo block') a,\n"
-                           "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
-                           "",
-                           "0703");
+static toSQL SQLBlockUndo7(
+    "toTuning:Indicators:RBS contention:4BlockUndo",
+    "SELECT count/blocks*100,' %'\n"
+    "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo block') a,\n"
+    "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
+    "",
+    "0703");
 
 static toSQL SQLTotalWaits("toTuning:Indicators:RBS contention:5TotalWaits",
                            "select sum(waits)/sum(gets)*100,' %' from v$rollstat",
@@ -383,242 +352,286 @@ static toSQL SQLLicense("toTuning:License",
                         "select * from v$license",
                         "Display licenses available for database");
 
-static toSQL SQLChartsPhysical("toTuning:Charts:1BBPhysical I/O",
-                               "select SYSDATE,\n"
-                               "       sum(decode(statistic#,40,value,0)) \"Physical reads\",\n"
-                               "       sum(decode(statistic#,44,value,0)) \"Physical writes\",\n"
-                               "       sum(decode(statistic#,105,value,0)) \"Redo writes\"\n"
-                               "  from v$sysstat where statistic# in (40,44,105)",
-                               "Generate chart of physical I/O of database.",
-                               "0800");
+static toSQL SQLChartsPhysical(
+    "toTuning:Charts:1BBPhysical I/O",
+    "SELECT SYSDATE,\n"
+    "       sum ( DECODE ( name,\n"
+    "                      'physical reads',\n"
+    "                      value,\n"
+    "                      0 ) ) \"Physical reads\",\n"
+    "       sum ( DECODE ( name,\n"
+    "                      'physical writes',\n"
+    "                      value,\n"
+    "                      0 ) ) \"Physical writes\",\n"
+    "       sum ( DECODE ( name,\n"
+    "                      'redo writes',\n"
+    "                      value,\n"
+    "                      0 ) ) \"Redo writes\"\n"
+    "  FROM v$sysstat\n"
+    " WHERE name IN ( 'physical reads',\n"
+    "                 'physical writes',\n"
+    "                 'redo writes' )",
+    "Generate chart of physical I/O of database.",
+    "0800");
 
-static toSQL SQLChartsPhysical10("toTuning:Charts:1BBPhysical I/O",
-                                 "select SYSDATE,\n"
-                                 "       sum(decode(statistic#,42,value,0)) \"Physical reads\",\n"
-                                 "       sum(decode(statistic#,46,value,0)) \"Physical writes\",\n"
-                                 "       sum(decode(statistic#,119,value,0)) \"Redo writes\"\n"
-                                 "  from v$sysstat where statistic# in (54,62,138)",
-                                 "",
-                                 "1000");
+static toSQL SQLChartsPhysical7(
+    "toTuning:Charts:1BBPhysical I/O",
+    "select SYSDATE,\n"
+    "       sum(decode(statistic#,39,value,0)) \"Physical reads\",\n"
+    "       sum(decode(statistic#,40,value,0)) \"Physical writes\",\n"
+    "       sum(decode(statistic#,91,value,0)) \"Redo writes\"\n"
+    "  from v$sysstat where statistic# in (39,40,91)",
+    "",
+    "0703");
 
-static toSQL SQLChartsPhysical9("toTuning:Charts:1BBPhysical I/O",
-                                "select SYSDATE,\n"
-                                "       sum(decode(statistic#,42,value,0)) \"Physical reads\",\n"
-                                "       sum(decode(statistic#,46,value,0)) \"Physical writes\",\n"
-                                "       sum(decode(statistic#,119,value,0)) \"Redo writes\"\n"
-                                "  from v$sysstat where statistic# in (42,46,119)",
-                                "",
-                                "0900");
+static toSQL SQLChartsLogical(
+    "toTuning:Charts:2BBLogical I/O",
+    "SELECT SYSDATE,\n"
+    "       sum ( DECODE ( name,\n"
+    "                      'db block gets',\n"
+    "                      value,\n"
+    "                      0 ) ) \"Block gets\",\n"
+    "       sum ( DECODE ( name,\n"
+    "                      'consistent gets',\n"
+    "                      value,\n"
+    "                      0 ) ) \"Consistent gets\",\n"
+    "       sum ( DECODE ( name,\n"
+    "                      'db block changes',\n"
+    "                      value,\n"
+    "                      0 ) ) \"Block changes\",\n"
+    "       sum ( DECODE ( name,\n"
+    "                      'consistent changes',\n"
+    "                      value,\n"
+    "                      0 ) ) \"Consistent changes\"\n"
+    "  FROM v$sysstat\n"
+    " WHERE name IN ( 'db block gets',\n"
+    "                 'consistent gets',\n"
+    "                 'db block changes',\n"
+    "                 'consistent changes' )",
+    "Generate chart of physical I/O of database.",
+    "0800");
 
-static toSQL SQLChartsPhysical7("toTuning:Charts:1BBPhysical I/O",
-                                "select SYSDATE,\n"
-                                "       sum(decode(statistic#,39,value,0)) \"Physical reads\",\n"
-                                "       sum(decode(statistic#,40,value,0)) \"Physical writes\",\n"
-                                "       sum(decode(statistic#,91,value,0)) \"Redo writes\"\n"
-                                "  from v$sysstat where statistic# in (39,40,91)",
-                                "",
-                                "0703");
+static toSQL SQLChartsLogical7(
+    "toTuning:Charts:2BBLogical I/O",
+    "select SYSDATE,\n"
+    "       sum(decode(statistic#,37,value,0)) \"Block gets\",\n"
+    "       sum(decode(statistic#,38,value,0)) \"Consistent gets\",\n"
+    "       sum(decode(statistic#,43,value,0)) \"Block changes\",\n"
+    "       sum(decode(statistic#,45,value,0)) \"Consistent changes\"\n"
+    "  from v$sysstat where statistic# in (37,38,43,45)",
+    "",
+    "0703");
 
-static toSQL SQLChartsLogical("toTuning:Charts:2BBLogical I/O",
-                              "select SYSDATE,\n"
-                              "       sum(decode(statistic#,38,value,0)) \"Block gets\",\n"
-                              "       sum(decode(statistic#,39,value,0)) \"Consistent gets\",\n"
-                              "       sum(decode(statistic#,41,value,0)) \"Block changes\",\n"
-                              "       sum(decode(statistic#,42,value,0)) \"Consistent changes\"\n"
-                              "  from v$sysstat where statistic# in (38,39,41,42)",
-                              "Generate chart of physical I/O of database.",
-                              "0800");
+static toSQL SQLChartsWait(
+    "toTuning:Charts:3BMWait events",
+    "SELECT SYSDATE,\n"
+    "       cpu * 10 \"CPU\",\n"
+    "       PARALLEL * 10 \"Parallel execution\",\n"
+    "       filewrite * 10 \"DB File Write\",\n"
+    "       writecomplete * 10 \"Write Complete\",\n"
+    "       fileread * 10 \"DB File Read\",\n"
+    "       singleread * 10 \"DB Single File Read\",\n"
+    "       control * 10 \"Control File I/O\",\n"
+    "       direct * 10 \"Direct I/O\",\n"
+    "       LOG * 10 \"Log file\",\n"
+    "       net * 10 \"SQL*Net\"\n"
+    "  FROM ( SELECT   SUM ( DECODE ( SUBSTR ( event,\n"
+    "                                          1,\n"
+    "                                          2 ),\n"
+    "                                 'PX',\n"
+    "                                 time_waited,\n"
+    "                                 0 ) ) - SUM ( DECODE ( event,\n"
+    "                                                        'PX Idle Wait',\n"
+    "                                                        time_waited,\n"
+    "                                                        0 ) ) as parallel,\n"
+    "                  SUM ( DECODE ( event,\n"
+    "                                 'db file parallel write',\n"
+    "                                 time_waited,\n"
+    "                                 'db file single write',\n"
+    "                                 time_waited,\n"
+    "                                 0 ) ) filewrite,\n"
+    "                  SUM ( DECODE ( event,\n"
+    "                                 'write complete waits',\n"
+    "                                 time_waited,\n"
+    "                                 NULL ) ) writecomplete,\n"
+    "                  SUM ( DECODE ( event,\n"
+    "                                 'db file parallel read',\n"
+    "                                 time_waited,\n"
+    "                                 'db file sequential read',\n"
+    "                                 time_waited,\n"
+    "                                 0 ) ) fileread,\n"
+    "                  SUM ( DECODE ( event,\n"
+    "                                 'db file scattered read',\n"
+    "                                 time_waited,\n"
+    "                                 0 ) ) singleread,\n"
+    "                  SUM ( DECODE ( SUBSTR ( event,\n"
+    "                                          1,\n"
+    "                                          12 ),\n"
+    "                                 'control file',\n"
+    "                                 time_waited,\n"
+    "                                 0 ) ) control,\n"
+    "                  SUM ( DECODE ( SUBSTR ( event,\n"
+    "                                          1,\n"
+    "                                          11 ),\n"
+    "                                 'direct path',\n"
+    "                                 time_waited,\n"
+    "                                 0 ) ) direct,\n"
+    "                  SUM ( DECODE ( SUBSTR ( event,\n"
+    "                                          1,\n"
+    "                                          3 ),\n"
+    "                                 'log',\n"
+    "                                 time_waited,\n"
+    "                                 0 ) ) as log,\n"
+    "                  SUM ( DECODE ( SUBSTR ( event,\n"
+    "                                          1,\n"
+    "                                          7 ),\n"
+    "                                 'SQL*Net',\n"
+    "                                 time_waited,\n"
+    "                                 0 ) ) - SUM ( DECODE ( event,\n"
+    "                                                        'SQL*Net message from client',\n"
+    "                                                        time_waited,\n"
+    "                                                        0 ) ) net\n"
+    "             FROM v$system_event ),\n"
+    "       ( SELECT value * 10 cpu\n"
+    "           FROM v$sysstat\n"
+    "          WHERE name = 'CPU used by this session' )",
+    "Used to generate chart for system wait time.");
 
-static toSQL SQLChartsLogical10("toTuning:Charts:2BBLogical I/O",
-                                "select SYSDATE,\n"
-                                "       sum(decode(statistic#,47,value,0)) \"Block gets\",\n"
-                                "       sum(decode(statistic#,50,value,0)) \"Consistent gets\",\n"
-                                "       sum(decode(statistic#,59,value,0)) \"Block changes\",\n"
-                                "       sum(decode(statistic#,60,value,0)) \"Consistent changes\"\n"
-                                "  from v$sysstat where statistic# in (47,50,59,60)",
-                                "",
-                                "1000");
-
-static toSQL SQLChartsLogical9("toTuning:Charts:2BBLogical I/O",
-                               "select SYSDATE,\n"
-                               "       sum(decode(statistic#,40,value,0)) \"Block gets\",\n"
-                               "       sum(decode(statistic#,41,value,0)) \"Consistent gets\",\n"
-                               "       sum(decode(statistic#,43,value,0)) \"Block changes\",\n"
-                               "       sum(decode(statistic#,44,value,0)) \"Consistent changes\"\n"
-                               "  from v$sysstat where statistic# in (40,41,43,44)",
-                               "",
-                               "0900");
-
-static toSQL SQLChartsLogical7("toTuning:Charts:2BBLogical I/O",
-                               "select SYSDATE,\n"
-                               "       sum(decode(statistic#,37,value,0)) \"Block gets\",\n"
-                               "       sum(decode(statistic#,38,value,0)) \"Consistent gets\",\n"
-                               "       sum(decode(statistic#,43,value,0)) \"Block changes\",\n"
-                               "       sum(decode(statistic#,45,value,0)) \"Consistent changes\"\n"
-                               "  from v$sysstat where statistic# in (37,38,43,45)",
-                               "",
-                               "0703");
-
-static toSQL SQLChartsWait("toTuning:Charts:3BMWait events",
-                           "select sysdate,\n"
-                           "       cpu*10 \"CPU\",\n"
-                           "       parallel*10 \"Parallel execution\",\n"
-                           "       filewrite*10 \"DB File Write\",\n"
-                           "       writecomplete*10 \"Write Complete\",\n"
-                           "       fileread*10 \"DB File Read\",\n"
-                           "       singleread*10 \"DB Single File Read\",\n"
-                           "       control*10 \"Control File I/O\",\n"
-                           "       direct*10 \"Direct I/O\",\n"
-                           "       log*10 \"Log file\",\n"
-                           "       net*10 \"SQL*Net\"\n"
-                           "  from (select SUM(DECODE(SUBSTR(event,1,2),'PX',time_waited,0))-SUM(DECODE(event,'PX Idle Wait',time_waited,0)) parallel,\n"
-                           "               SUM(DECODE(event,'db file parallel write',time_waited,'db file single write',time_waited,0)) filewrite,\n"
-                           "               SUM(DECODE(event,'write complete waits',time_waited,NULL)) writecomplete,\n"
-                           "               SUM(DECODE(event,'db file parallel read',time_waited,'db file sequential read',time_waited,0)) fileread,\n"
-                           "               SUM(DECODE(event,'db file scattered read',time_waited,0)) singleread,\n"
-                           "               SUM(DECODE(SUBSTR(event,1,12),'control file',time_waited,0)) control,\n"
-                           "               SUM(DECODE(SUBSTR(event,1,11),'direct path',time_waited,0)) direct,\n"
-                           "               SUM(DECODE(SUBSTR(event,1,3),'log',time_waited,0)) log,\n"
-                           "               SUM(DECODE(SUBSTR(event,1,7),'SQL*Net',time_waited,0))-SUM(DECODE(event,'SQL*Net message from client',time_waited,0)) net\n"
-                           "          from v$system_event),\n"
-                           "       (select value*10 cpu from v$sysstat where statistic# = 12)",
-                           "Used to generate chart for system wait time.");
-
-static toSQL SQLChartsExecution("toTuning:Charts:6LNExecution",
-                                "select SYSDATE,\n"
-                                "       sum(decode(name,'execute count',value,0)) \"Execute\",\n"
-                                "       sum(decode(name,'parse count (hard)',value,0)) \"Hard parse\",\n"
-                                "       sum(decode(name,'parse count (total)',value,0)) \"Parse\",\n"
-                                "       sum(decode(name,'user calls',value,0)) \"Calls\",\n"
-                                "       sum(decode(name,'user commits',value,0))  \"Commit\",\n"
-                                "       sum(decode(name,'user rollbacks',value,0)) \"Rollbacks\"\n"
-                                "  from v$sysstat where name IN ('execute count','parse count (hard)','parse count (total)','user calls','user commits','user rollbacks')",
-                                "Used to generate chart for execution statistics.",
-                                "0800");
-
-
-static toSQL SQLChartsExecution7("toTuning:Charts:6LNExecution",
-                                 "select SYSDATE,\n"
-                                 "       sum(decode(statistic#,132,value,0)) \"Execute\",\n"
-                                 "       sum(decode(statistic#,131,value,0)) \"Parse\",\n"
-                                 "       sum(decode(statistic#,6,value,0)) \"Calls\",\n"
-                                 "       sum(decode(statistic#,4,value,0))  \"Commit\",\n"
-                                 "       sum(decode(statistic#,5,value,0)) \"Rollbacks\"\n"
-                                 "  from v$sysstat where statistic# in (132,131,4,5,6)",
-                                 "",
-                                 "0703");
-
-static toSQL SQLChartsExecutionPie("toTuning:Charts:8PNExecution Total",
-                                   "select value,decode(name,'execute count','Execute','parse count (hard)','Hard parse','parse count (total)','Parse',\n"
-                                   "                              'user calls','Calls','user commits','Commit','user rollbacks','Rollbacks')\n"
-                                   "  from v$sysstat where name IN ('execute count','parse count (hard)','parse count (total)','user calls','user commits','user rollbacks') order by name",
-                                   "Used to generate pie chart for execution statistics.",
-                                   "0800");
+static toSQL SQLChartsExecution(
+    "toTuning:Charts:6LNExecution",
+    "select SYSDATE,\n"
+    "       sum(decode(name,'execute count',value,0)) \"Execute\",\n"
+    "       sum(decode(name,'parse count (hard)',value,0)) \"Hard parse\",\n"
+    "       sum(decode(name,'parse count (total)',value,0)) \"Parse\",\n"
+    "       sum(decode(name,'user calls',value,0)) \"Calls\",\n"
+    "       sum(decode(name,'user commits',value,0))  \"Commit\",\n"
+    "       sum(decode(name,'user rollbacks',value,0)) \"Rollbacks\"\n"
+    "  from v$sysstat where name IN ('execute count','parse count (hard)','parse count (total)','user calls','user commits','user rollbacks')",
+    "Used to generate chart for execution statistics.",
+    "0800");
 
 
-static toSQL SQLChartsExecutionPie7("toTuning:Charts:8PNExecution Total",
-                                    "select value,decode(statistic#,132,'Execute',131,'Parse',\n"
-                                    "                              6,'Calls',4,'Commit',5,'Rollbacks')\n"
-                                    "  from v$sysstat where statistic# in (132,131,6,4,5) order by name",
-                                    "",
-                                    "0703");
+static toSQL SQLChartsExecution7(
+    "toTuning:Charts:6LNExecution",
+    "select SYSDATE,\n"
+    "       sum(decode(statistic#,132,value,0)) \"Execute\",\n"
+    "       sum(decode(statistic#,131,value,0)) \"Parse\",\n"
+    "       sum(decode(statistic#,6,value,0)) \"Calls\",\n"
+    "       sum(decode(statistic#,4,value,0))  \"Commit\",\n"
+    "       sum(decode(statistic#,5,value,0)) \"Rollbacks\"\n"
+    "  from v$sysstat where statistic# in (132,131,4,5,6)",
+    "",
+    "0703");
 
-static toSQL SQLChartsClients("toTuning:Charts:4BAClients",
-                              "select sysdate,\n"
-                              "       sum(decode(decode(type,'BACKGROUND','WHATEVER',status),'ACTIVE',1,0)) \"Active\",\n"
-                              "       sum(decode(status,'INACTIVE',1,0)) \"Inactive\",\n"
-                              "       sum(decode(type,'BACKGROUND',1,0)) \"System\"\n"
-                              "  from v$session where sid not in (select nvl(sid,0) from v$px_process)",
-                              "Chart displaying connected clients");
+static toSQL SQLChartsExecutionPie(
+    "toTuning:Charts:8PNExecution Total",
+    "select value,decode(name,'execute count','Execute','parse count (hard)','Hard parse','parse count (total)','Parse',\n"
+    "                              'user calls','Calls','user commits','Commit','user rollbacks','Rollbacks')\n"
+    "  from v$sysstat where name IN ('execute count','parse count (hard)','parse count (total)','user calls','user commits','user rollbacks') order by name",
+    "Used to generate pie chart for execution statistics.",
+    "0800");
 
-static toSQL SQLChartsClients8("toTuning:Charts:4BAClients",
-                               "select sysdate,\n"
-                               "       sum(decode(decode(type,'BACKGROUND','WHATEVER',status),'ACTIVE',1,0)) \"Active\",\n"
-                               "       sum(decode(status,'INACTIVE',1,0)) \"Inactive\",\n"
-                               "       sum(decode(type,'BACKGROUND',1,0)) \"System\"\n"
-                               "  from v$session",
-                               "",
-                               "0800");
 
-static toSQL SQLChartsCacheMisses("toTuning:Charts:5CPCache misses",
-                                  "select sysdate,\n"
-                                  "       pread \"Data buffer cache\",read \"Dictionary row cache\",\n"
-                                  "       getmiss \"Library cache\",gets \" \",\n"
-                                  "       reloads \" \",pins \" \"\n"
-                                  "  from (select 100*SUM(DECODE(statistic#,40,value,0)) pread,SUM(DECODE(statistic#,38,value,39,value,0)) read\n"
-                                  "          from v$sysstat where statistic# IN (38,39,40)) \"Data buffer cache\",\n"
-                                  "       (select 100*sum(getmisses) getmiss,sum(gets) gets from v$rowcache) \"Dictionary row cache\",\n"
-                                  "       (select 100*sum(reloads) reloads,sum(pins) pins from v$librarycache) \"Library cache\"\n",
-                                  "Chart display memory allocation. This is really weird to change, especially since the column names "
-                                  "don't correspond exactly to the column data in the chart. Each group of two are divided with each other before drawn.",
-                                  "0800");
+static toSQL SQLChartsExecutionPie7(
+    "toTuning:Charts:8PNExecution Total",
+    "select value,decode(statistic#,132,'Execute',131,'Parse',\n"
+    "                              6,'Calls',4,'Commit',5,'Rollbacks')\n"
+    "  from v$sysstat where statistic# in (132,131,6,4,5) order by name",
+    "",
+    "0703");
 
-static toSQL SQLChartsCacheMisses10("toTuning:Charts:5CPCache misses",
-                                    "select sysdate,\n"
-                                    "       pread \"Data buffer cache\",read \"Dictionary row cache\",\n"
-                                    "       getmiss \"Library cache\",gets \" \",\n"
-                                    "       reloads \" \",pins \" \"\n"
-                                    "  from (select 100*SUM(DECODE(statistic#,54,value,0)) pread,SUM(DECODE(statistic#,47,value,50,value,0)) read\n"
-                                    "          from v$sysstat where statistic# IN (47,50,54)) \"Data buffer cache\",\n"
-                                    "       (select 100*sum(getmisses) getmiss,sum(gets) gets from v$rowcache) \"Dictionary row cache\",\n"
-                                    "       (select 100*sum(reloads) reloads,sum(pins) pins from v$librarycache) \"Library cache\"\n",
-                                    "",
-                                    "1000");
+static toSQL SQLChartsClients(
+    "toTuning:Charts:4BAClients",
+    "select sysdate,\n"
+    "       sum(decode(decode(type,'BACKGROUND','WHATEVER',status),'ACTIVE',1,0)) \"Active\",\n"
+    "       sum(decode(status,'INACTIVE',1,0)) \"Inactive\",\n"
+    "       sum(decode(type,'BACKGROUND',1,0)) \"System\"\n"
+    "  from v$session where sid not in (select nvl(sid,0) from v$px_process)",
+    "Chart displaying connected clients");
 
-static toSQL SQLChartsCacheMisses9("toTuning:Charts:5CPCache misses",
-                                   "select sysdate,\n"
-                                   "       pread \"Data buffer cache\",read \"Dictionary row cache\",\n"
-                                   "       getmiss \"Library cache\",gets \" \",\n"
-                                   "       reloads \" \",pins \" \"\n"
-                                   "  from (select 100*SUM(DECODE(statistic#,42,value,0)) pread,SUM(DECODE(statistic#,40,value,41,value,0)) read\n"
-                                   "          from v$sysstat where statistic# IN (40,41,42)) \"Data buffer cache\",\n"
-                                   "       (select 100*sum(getmisses) getmiss,sum(gets) gets from v$rowcache) \"Dictionary row cache\",\n"
-                                   "       (select 100*sum(reloads) reloads,sum(pins) pins from v$librarycache) \"Library cache\"\n",
-                                   "",
-                                   "0900");
+static toSQL SQLChartsClients8(
+    "toTuning:Charts:4BAClients",
+    "select sysdate,\n"
+    "       sum(decode(decode(type,'BACKGROUND','WHATEVER',status),'ACTIVE',1,0)) \"Active\",\n"
+    "       sum(decode(status,'INACTIVE',1,0)) \"Inactive\",\n"
+    "       sum(decode(type,'BACKGROUND',1,0)) \"System\"\n"
+    "  from v$session",
+    "",
+    "0800");
 
-static toSQL SQLChartsCacheMisses7("toTuning:Charts:5CPCache misses",
-                                   "select sysdate,\n"
-                                   "       pread \"Data buffer cache\",read \"Dictionary row cache\",\n"
-                                   "       getmiss \"Library cache\",gets \" \",\n"
-                                   "       reloads \" \",pins \" \"\n"
-                                   "  from (select 100*SUM(DECODE(statistic#,39,value,0)) pread,SUM(DECODE(statistic#,37,value,38,value,0)) read\n"
-                                   "          from v$sysstat where statistic# IN (37,38,39)) \"Data buffer cache\",\n"
-                                   "       (select 100*sum(getmisses) getmiss,sum(gets) gets from v$rowcache) \"Dictionary row cache\",\n"
-                                   "       (select 100*sum(reloads) reloads,sum(pins) pins from v$librarycache) \"Library cache\"\n",
-                                   "",
-                                   "0703");
+static toSQL SQLChartsCacheMisses(
+    "toTuning:Charts:5CPCache misses",
+    "SELECT SYSDATE,\n"
+    "       pread \"Data buffer cache\",\n"
+    "       read \"Dictionary row cache\",\n"
+    "       getmiss \"Library cache\",\n"
+    "       gets \" \",\n"
+    "       reloads \" \",\n"
+    "       pins \" \"\n"
+    "  FROM ( SELECT 100 * SUM ( DECODE ( name,\n"
+    "                                     'physical reads',\n"
+    "                                     value,\n"
+    "                                     0 ) ) pread,\n"
+    "                SUM ( DECODE ( name,\n"
+    "                               'db block gets',\n"
+    "                               value,\n"
+    "                               'consistent gets',\n"
+    "                               value,\n"
+    "                               41,\n"
+    "                               value,\n"
+    "                               0 ) ) as read\n"
+    "           FROM v$sysstat\n"
+    "          WHERE name IN ( 'db block gets',\n"
+    "                          'consistent gets',\n"
+    "                          'physical reads' ) ) \"Data buffer cache\",\n"
+    "       ( SELECT 100 * sum ( getmisses ) getmiss,\n"
+    "                sum ( gets ) gets\n"
+    "           FROM v$rowcache ) \"Dictionary row cache\",\n"
+    "       ( SELECT 100 * sum ( reloads ) reloads,\n"
+    "                sum ( pins ) pins\n"
+    "           FROM v$librarycache ) \"Library cache\"",
+    "Chart display memory allocation. This is really weird to change, especially since the column names "
+    "don't correspond exactly to the column data in the chart. Each group of two are divided with each other before drawn.",
+    "0800");
 
-static toSQL SQLChartsRedo("toTuning:Charts:7BSRedo log I/O",
-                           "select SYSDATE,\n"
-                           "       sum(decode(statistic#,101,value,0))/:unit<int> \"Redo size\",\n"
-                           "       sum(decode(statistic#,103,value,0))/:unit<int> \"Redo wastage\"\n"
-                           "  from v$sysstat where statistic# in (101,103)",
-                           "Used to generate chart for redo I/O statistics.",
-                           "0800");
+static toSQL SQLChartsCacheMisses7(
+    "toTuning:Charts:5CPCache misses",
+    "select sysdate,\n"
+    "       pread \"Data buffer cache\",read \"Dictionary row cache\",\n"
+    "       getmiss \"Library cache\",gets \" \",\n"
+    "       reloads \" \",pins \" \"\n"
+    "  from (select 100*SUM(DECODE(statistic#,39,value,0)) pread,SUM(DECODE(statistic#,37,value,38,value,0)) read\n"
+    "          from v$sysstat where statistic# IN (37,38,39)) \"Data buffer cache\",\n"
+    "       (select 100*sum(getmisses) getmiss,sum(gets) gets from v$rowcache) \"Dictionary row cache\",\n"
+    "       (select 100*sum(reloads) reloads,sum(pins) pins from v$librarycache) \"Library cache\"\n",
+    "",
+    "0703");
 
-static toSQL SQLChartsRedo10("toTuning:Charts:7BSRedo log I/O",
-                             "select SYSDATE,\n"
-                             "       sum(decode(statistic#,134,value,0))/:unit<int> \"Redo size\",\n"
-                             "       sum(decode(statistic#,136,value,0))/:unit<int> \"Redo wastage\"\n"
-                             "  from v$sysstat where statistic# in (134,136)",
-                             "",
-                             "1000");
+static toSQL SQLChartsRedo(
+    "toTuning:Charts:7BSRedo log I/O",
+    "SELECT SYSDATE,\n"
+    "       sum ( DECODE ( name,\n"
+    "                      'redo size',\n"
+    "                      value,\n"
+    "                      0 ) ) / :unit<int> \"Redo size\",\n"
+    "       sum ( DECODE ( name,\n"
+    "                      'redo wastage',\n"
+    "                      value,\n"
+    "                      0 ) ) / :unit<int> \"Redo wastage\"\n"
+    "  FROM v$sysstat\n"
+    " WHERE name IN ( 'redo size',\n"
+    "                 'redo wastage' )",
+    "Used to generate chart for redo I/O statistics.",
+    "0800");
 
-static toSQL SQLChartsRedo9("toTuning:Charts:7BSRedo log I/O",
-                            "select SYSDATE,\n"
-                            "       sum(decode(statistic#,115,value,0))/:unit<int> \"Redo size\",\n"
-                            "       sum(decode(statistic#,117,value,0))/:unit<int> \"Redo wastage\"\n"
-                            "  from v$sysstat where statistic# in (115,117)",
-                            "",
-                            "0900");
-static toSQL SQLChartsRedo7("toTuning:Charts:7BSRedo log I/O",
-                            "select SYSDATE,\n"
-                            "       sum(decode(statistic#,85,value,0))/:unit<int> \"Redo size\",\n"
-                            "       sum(decode(statistic#,89,value,0))/:unit<int> \"Redo wastage\"\n"
-                            "  from v$sysstat where statistic# in (85,89)",
-                            "",
-                            "0703");
+static toSQL SQLChartsRedo7(
+    "toTuning:Charts:7BSRedo log I/O",
+    "select SYSDATE,\n"
+    "       sum(decode(statistic#,85,value,0))/:unit<int> \"Redo size\",\n"
+    "       sum(decode(statistic#,89,value,0))/:unit<int> \"Redo wastage\"\n"
+    "  from v$sysstat where statistic# in (85,89)",
+    "",
+    "0703");
 
 static toSQL SQLOverviewArchiveWrite("toTuning:Overview:ArchiveWrite",
                                      "select sysdate,sum(blocks) from v$archived_log",
@@ -630,273 +643,194 @@ static toSQL SQLOverviewArchiveWrite7("toTuning:Overview:ArchiveWrite",
                                       "",
                                       "0703");
 
-static toSQL SQLOverviewBufferHit("toTuning:Overview:BufferHit",
-                                  "SELECT SYSDATE,(1-SUM(DECODE(statistic#,40,value,0))/SUM(DECODE(statistic#,38,value,39,value,0)))*100\n"
-                                  "  FROM v$sysstat\n"
-                                  " WHERE statistic# IN (38,39,40)",
-                                  "Buffer hitrate",
-                                  "0800");
+static toSQL SQLOverviewBufferHit(
+    "toTuning:Overview:BufferHit",
+    "SELECT SYSDATE,\n"
+    "       ( 1 - SUM ( DECODE ( name,\n"
+    "                            'physical reads',\n"
+    "                            value,\n"
+    "                            0 ) ) / SUM ( DECODE ( name,\n"
+    "                                                   'db block gets',\n"
+    "                                                   value,\n"
+    "                                                   'consistent gets',\n"
+    "                                                   value,\n"
+    "                                                   0 ) ) ) * 100\n"
+    "  FROM v$sysstat\n"
+    " WHERE name IN ( 'db block gets',\n"
+    "                 'consistent gets',\n"
+    "                 'physical reads' )",
+    "Buffer hitrate",
+    "0800");
 
-static toSQL SQLOverviewBufferHit10("toTuning:Overview:BufferHit",
-                                    "SELECT SYSDATE,(1-SUM(DECODE(statistic#,54,value,0))/SUM(DECODE(statistic#,47,value,50,value,0)))*100\n"
-                                    "  FROM v$sysstat\n"
-                                    " WHERE statistic# IN (47,50,54)",
-                                    "",
-                                    "1000");
+static toSQL SQLOverviewBufferHit7(
+    "toTuning:Overview:BufferHit",
+    "SELECT SYSDATE,(1-SUM(DECODE(statistic#,39,value,0))/SUM(DECODE(statistic#,37,value,38,value,0)))*100\n"
+    "  FROM v$sysstat\n"
+    " WHERE statistic# IN (37,38,39)",
+    "",
+    "0703");
 
-static toSQL SQLOverviewBufferHit9("toTuning:Overview:BufferHit",
-                                   "SELECT SYSDATE,(1-SUM(DECODE(statistic#,42,value,0))/SUM(DECODE(statistic#,40,value,41,value,0)))*100\n"
-                                   "  FROM v$sysstat\n"
-                                   " WHERE statistic# IN (40,41,42)",
-                                   "",
-                                   "0900");
+static toSQL SQLOverviewClientInput(
+    "toTuning:Overview:ClientInput",
+    "SELECT SYSDATE,\n"
+    "       value / :f1<int>\n"
+    "  FROM v$sysstat\n"
+    " WHERE name = 'bytes sent via SQL*Net to client'",
+    "Bytes sent to client",
+    "0800");
 
-static toSQL SQLOverviewBufferHit7("toTuning:Overview:BufferHit",
-                                   "SELECT SYSDATE,(1-SUM(DECODE(statistic#,39,value,0))/SUM(DECODE(statistic#,37,value,38,value,0)))*100\n"
-                                   "  FROM v$sysstat\n"
-                                   " WHERE statistic# IN (37,38,39)",
-                                   "",
-                                   "0703");
+static toSQL SQLOverviewClientInput7(
+    "toTuning:Overview:ClientInput",
+    "select sysdate,value/:f1<int>\n"
+    "  from v$sysstat where statistic# = 134",
+    "",
+    "0703");
 
-static toSQL SQLOverviewClientInput("toTuning:Overview:ClientInput",
-                                    "select sysdate,value/:f1<int>\n"
-                                    "  from v$sysstat where statistic# = 182",
-                                    "Bytes sent to client",
-                                    "0800");
+static toSQL SQLOverviewClientOutput(
+    "toTuning:Overview:ClientOutput",
+    "SELECT SYSDATE,\n"
+    "       value / :f1<int>\n"
+    "  FROM v$sysstat\n"
+    " WHERE name = 'bytes received via SQL*Net from client'",
+    "Bytes sent from client",
+    "0800");
 
-static toSQL SQLOverviewClientInput10("toTuning:Overview:ClientInput",
-                                      "select sysdate,value/:f1<int>\n"
-                                      "  from v$sysstat where statistic# = 338",
-                                      "",
-                                      "1000");
+static toSQL SQLOverviewClientOutput7(
+    "toTuning:Overview:ClientOutput",
+    "select sysdate,value/:f1<int>\n"
+    "  from v$sysstat where statistic# = 133",
+    "",
+    "0703");
 
-static toSQL SQLOverviewClientInput9("toTuning:Overview:ClientInput",
-                                     "select sysdate,value/:f1<int>\n"
-                                     "  from v$sysstat where statistic# = 244",
-                                     "",
-                                     "0900");
+static toSQL SQLOverviewExecute(
+    "toTuning:Overview:Execute",
+    "SELECT SYSDATE,\n"
+    "       value\n"
+    "  FROM v$sysstat\n"
+    " WHERE name = 'execute count'",
+    "Execute count",
+    "0800");
 
-static toSQL SQLOverviewClientInput7("toTuning:Overview:ClientInput",
-                                     "select sysdate,value/:f1<int>\n"
-                                     "  from v$sysstat where statistic# = 134",
-                                     "",
-                                     "0703");
+static toSQL SQLOverviewExecute7(
+    "toTuning:Overview:Execute",
+    "select sysdate,value\n"
+    "  from v$sysstat where statistic# = 132",
+    "",
+    "0703");
 
-static toSQL SQLOverviewClientOutput("toTuning:Overview:ClientOutput",
-                                     "select sysdate,value/:f1<int>\n"
-                                     "  from v$sysstat where statistic# = 183",
-                                     "Bytes sent from client",
-                                     "0800");
+static toSQL SQLOverviewParse(
+    "toTuning:Overview:Parse",
+    "SELECT SYSDATE,\n"
+    "       value\n"
+    "  FROM v$sysstat\n"
+    " WHERE name = 'parse count (total)'",
+    "Parse count",
+    "0800");
 
-static toSQL SQLOverviewClientOutput10("toTuning:Overview:ClientOutput",
-                                       "select sysdate,value/:f1<int>\n"
-                                       "  from v$sysstat where statistic# = 339",
-                                       "",
-                                       "1000");
+static toSQL SQLOverviewParse7(
+    "toTuning:Overview:Parse",
+    "select sysdate,value\n"
+    "  from v$sysstat where statistic# = 131",
+    "",
+    "0703");
 
-static toSQL SQLOverviewClientOutput9("toTuning:Overview:ClientOutput",
-                                      "select sysdate,value/:f1<int>\n"
-                                      "  from v$sysstat where statistic# = 245",
-                                      "",
-                                      "0900");
+static toSQL SQLOverviewRedoEntries(
+    "toTuning:Overview:RedoEntries",
+    "SELECT SYSDATE,\n"
+    "       value\n"
+    "  FROM v$sysstat\n"
+    " WHERE name = 'redo entries'",
+    "Redo entries",
+    "0800");
 
-static toSQL SQLOverviewClientOutput7("toTuning:Overview:ClientOutput",
-                                      "select sysdate,value/:f1<int>\n"
-                                      "  from v$sysstat where statistic# = 133",
-                                      "",
-                                      "0703");
+static toSQL SQLOverviewRedoEntries7(
+    "toTuning:Overview:RedoEntries",
+    "select sysdate,value\n"
+    "  from v$sysstat where statistic# = 84",
+    "",
+    "0703");
 
-static toSQL SQLOverviewExecute("toTuning:Overview:Execute",
-                                "select sysdate,value\n"
-                                "  from v$sysstat where statistic# = 181",
-                                "Execute count",
-                                "0800");
+static toSQL SQLOverviewRedoBlocks(
+    "toTuning:Overview:RedoBlocks",
+    "SELECT SYSDATE,\n"
+    "       value\n"
+    "  FROM v$sysstat\n"
+    " WHERE name = 'redo blocks written'",
+    "Redo blocks written",
+    "0800");
 
-static toSQL SQLOverviewExecute10("toTuning:Overview:Execute",
-                                  "select sysdate,value\n"
-                                  "  from v$sysstat where statistic# = 337",
-                                  "",
-                                  "1000");
+static toSQL SQLOverviewRedoBlocks7(
+    "toTuning:Overview:RedoBlocks",
+    "select sysdate,value\n"
+    "  from v$sysstat where statistic# = 92",
+    "",
+    "0703");
 
-static toSQL SQLOverviewExecute9("toTuning:Overview:Execute",
-                                 "select sysdate,value\n"
-                                 "  from v$sysstat where statistic# = 243",
-                                 "",
-                                 "0900");
+static toSQL SQLOverviewLogicalRead(
+    "toTuning:Overview:LogicalRead",
+    "SELECT SYSDATE,\n"
+    "       sum ( value )\n"
+    "  FROM v$sysstat\n"
+    " WHERE name IN ( 'db block gets',\n"
+    "                 'consistent gets' )",
+    "Blocks read",
+    "0800");
 
-static toSQL SQLOverviewExecute7("toTuning:Overview:Execute",
-                                 "select sysdate,value\n"
-                                 "  from v$sysstat where statistic# = 132",
-                                 "",
-                                 "0703");
+static toSQL SQLOverviewLogicalRead7(
+    "toTuning:Overview:LogicalRead",
+    "select sysdate,sum(value)\n"
+    "  from v$sysstat where statistic# in (37,38)",
+    "",
+    "0703");
 
-static toSQL SQLOverviewParse("toTuning:Overview:Parse",
-                              "select sysdate,value\n"
-                              "  from v$sysstat where statistic# = 179",
-                              "Parse count",
-                              "0800");
+static toSQL SQLOverviewLogicalWrite(
+    "toTuning:Overview:LogicalWrite",
+    "SELECT SYSDATE,\n"
+    "       sum ( value )\n"
+    "  FROM v$sysstat\n"
+    " WHERE name IN ( 'db block changes',\n"
+    "                 'consistent changes' )",
+    "Blocks written",
+    "0800");
 
-static toSQL SQLOverviewParse10("toTuning:Overview:Parse",
-                                "select sysdate,value\n"
-                                "  from v$sysstat where statistic# = 333",
-                                "",
-                                "1000");
+static toSQL SQLOverviewLogicalWrite7(
+    "toTuning:Overview:LogicalWrite",
+    "select sysdate,sum(value)\n"
+    "  from v$sysstat where statistic# in (43,45)",
+    "",
+    "0703");
 
-static toSQL SQLOverviewParse9("toTuning:Overview:Parse",
-                               "select sysdate,value\n"
-                               "  from v$sysstat where statistic# = 240",
-                               "",
-                               "0900");
+static toSQL SQLOverviewPhysicalRead(
+    "toTuning:Overview:PhysicalRead",
+    "SELECT SYSDATE,\n"
+    "       value\n"
+    "  FROM v$sysstat\n"
+    " WHERE name = 'physical reads'",
+    "Blocks physically read",
+    "0800");
 
-static toSQL SQLOverviewParse7("toTuning:Overview:Parse",
-                               "select sysdate,value\n"
-                               "  from v$sysstat where statistic# = 131",
-                               "",
-                               "0703");
+static toSQL SQLOverviewPhysicalRead7(
+    "toTuning:Overview:PhysicalRead",
+    "select sysdate,value\n"
+    "  from v$sysstat where statistic# = 39",
+    "",
+    "0703");
 
-static toSQL SQLOverviewRedoEntries("toTuning:Overview:RedoEntries",
-                                    "select sysdate,value\n"
-                                    "  from v$sysstat where statistic# = 100",
-                                    "Redo entries",
-                                    "0800");
+static toSQL SQLOverviewPhysicalWrite(
+    "toTuning:Overview:PhysicalWrite",
+    "SELECT SYSDATE,\n"
+    "       value\n"
+    "  FROM v$sysstat\n"
+    " WHERE name = 'physical writes'",
+    "Blocks physically written",
+    "0800");
 
-static toSQL SQLOverviewRedoEntries10("toTuning:Overview:RedoEntries",
-                                      "select sysdate,value\n"
-                                      "  from v$sysstat where statistic# = 133",
-                                      "",
-                                      "1000");
-
-static toSQL SQLOverviewRedoEntries9("toTuning:Overview:RedoEntries",
-                                     "select sysdate,value\n"
-                                     "  from v$sysstat where statistic# = 114",
-                                     "",
-                                     "0900");
-
-static toSQL SQLOverviewRedoEntries7("toTuning:Overview:RedoEntries",
-                                     "select sysdate,value\n"
-                                     "  from v$sysstat where statistic# = 84",
-                                     "",
-                                     "0703");
-
-static toSQL SQLOverviewRedoBlocks("toTuning:Overview:RedoBlocks",
-                                   "select sysdate,value\n"
-                                   "  from v$sysstat where statistic# = 106",
-                                   "Redo blocks written",
-                                   "0800");
-
-static toSQL SQLOverviewRedoBlocks10("toTuning:Overview:RedoBlocks",
-                                     "select sysdate,value\n"
-                                     "  from v$sysstat where statistic# = 139",
-                                     "",
-                                     "1000");
-
-static toSQL SQLOverviewRedoBlocks9("toTuning:Overview:RedoBlocks",
-                                    "select sysdate,value\n"
-                                    "  from v$sysstat where statistic# = 120",
-                                    "",
-                                    "0900");
-
-static toSQL SQLOverviewRedoBlocks7("toTuning:Overview:RedoBlocks",
-                                    "select sysdate,value\n"
-                                    "  from v$sysstat where statistic# = 92",
-                                    "",
-                                    "0703");
-
-static toSQL SQLOverviewLogicalRead("toTuning:Overview:LogicalRead",
-                                    "select sysdate,sum(value)\n"
-                                    "  from v$sysstat where statistic# in (38,39)",
-                                    "Blocks read",
-                                    "0800");
-
-static toSQL SQLOverviewLogicalRead10("toTuning:Overview:LogicalRead",
-                                      "select sysdate,sum(value)\n"
-                                      "  from v$sysstat where statistic# in (47,50)",
-                                      "",
-                                      "1000");
-
-static toSQL SQLOverviewLogicalRead9("toTuning:Overview:LogicalRead",
-                                     "select sysdate,sum(value)\n"
-                                     "  from v$sysstat where statistic# in (40,41)",
-                                     "",
-                                     "0900");
-
-static toSQL SQLOverviewLogicalRead7("toTuning:Overview:LogicalRead",
-                                     "select sysdate,sum(value)\n"
-                                     "  from v$sysstat where statistic# in (37,38)",
-                                     "",
-                                     "0703");
-
-static toSQL SQLOverviewLogicalWrite("toTuning:Overview:LogicalWrite",
-                                     "select sysdate,sum(value)\n"
-                                     "  from v$sysstat where statistic# in (41,42)",
-                                     "Blocks written",
-                                     "0800");
-
-static toSQL SQLOverviewLogicalWrite10("toTuning:Overview:LogicalWrite",
-                                       "select sysdate,sum(value)\n"
-                                       "  from v$sysstat where statistic# in (59,60)",
-                                       "",
-                                       "1000");
-
-static toSQL SQLOverviewLogicalWrite9("toTuning:Overview:LogicalWrite",
-                                      "select sysdate,sum(value)\n"
-                                      "  from v$sysstat where statistic# in (43,44)",
-                                      "",
-                                      "0900");
-
-static toSQL SQLOverviewLogicalWrite7("toTuning:Overview:LogicalWrite",
-                                      "select sysdate,sum(value)\n"
-                                      "  from v$sysstat where statistic# in (43,45)",
-                                      "",
-                                      "0703");
-
-static toSQL SQLOverviewPhysicalRead("toTuning:Overview:PhysicalRead",
-                                     "select sysdate,value\n"
-                                     "  from v$sysstat where statistic# = 40",
-                                     "Blocks physically read",
-                                     "0800");
-
-static toSQL SQLOverviewPhysicalRead10("toTuning:Overview:PhysicalRead",
-                                       "select sysdate,value\n"
-                                       "  from v$sysstat where statistic# = 54",
-                                       "",
-                                       "1000");
-
-static toSQL SQLOverviewPhysicalRead9("toTuning:Overview:PhysicalRead",
-                                      "select sysdate,value\n"
-                                      "  from v$sysstat where statistic# = 42",
-                                      "",
-                                      "0900");
-
-static toSQL SQLOverviewPhysicalRead7("toTuning:Overview:PhysicalRead",
-                                      "select sysdate,value\n"
-                                      "  from v$sysstat where statistic# = 39",
-                                      "",
-                                      "0703");
-
-static toSQL SQLOverviewPhysicalWrite("toTuning:Overview:PhysicalWrite",
-                                      "select sysdate,value\n"
-                                      "  from v$sysstat where statistic# = 44",
-                                      "Blocks physically written",
-                                      "0800");
-
-static toSQL SQLOverviewPhysicalWrite10("toTuning:Overview:PhysicalWrite",
-                                        "select sysdate,value\n"
-                                        "  from v$sysstat where statistic# = 62",
-                                        "",
-                                        "1000");
-
-static toSQL SQLOverviewPhysicalWrite9("toTuning:Overview:PhysicalWrite",
-                                       "select sysdate,value\n"
-                                       "  from v$sysstat where statistic# = 46",
-                                       "",
-                                       "0900");
-
-static toSQL SQLOverviewPhysicalWrite7("toTuning:Overview:PhysicalWrite",
-                                       "select sysdate,value\n"
-                                       "  from v$sysstat where statistic# = 40",
-                                       "",
-                                       "0703");
+static toSQL SQLOverviewPhysicalWrite7(
+    "toTuning:Overview:PhysicalWrite",
+    "select sysdate,value\n"
+    "  from v$sysstat where statistic# = 40",
+    "",
+    "0703");
 
 static toSQL SQLOverviewClient("toTuning:Overview:Client",
                                "select sysdate,\n"
