@@ -858,7 +858,8 @@ void toMain::windowCallback(QAction *action)
         if(w) {
             workspace()->setActiveSubWindow(w);
             w->raise();
-            w->setFocus();
+            if(w->widget())
+                w->widget()->setFocus();
             // piece of shit mdi doesn't always send window activated
             // signal
             windowActivated(w);
