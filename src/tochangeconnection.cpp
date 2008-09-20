@@ -68,6 +68,8 @@ toChangeConnection::toChangeConnection(QToolBar *parent, const char *name)
 
     // addWidget manually or the layout gets weird.
     parent->addWidget(this);
+
+    setFocusPolicy(Qt::NoFocus);
 }
 
 void toChangeConnection::popupMenu(void)
