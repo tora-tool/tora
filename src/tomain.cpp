@@ -702,54 +702,34 @@ void toMain::showFileMenu(void)
 
 void toMain::updateRecent()
 {
-//     static bool first = true;
-//     int num = toConfigurationSingle::Instance().recentFiles();
-//
-//     recentMenu->clear();
-//
-//     if (num > 0) {
-//         if(first) {
-//             fileMenu->addSeparator();
-//             first = false;
-//         }
-//
-//         for(int i = 0; i < num; i++) {
-//             QString file = toConfigurationSingle::Instance().globalConfig(
-//                 QString(CONF_RECENT_FILES ":") +
-//                 QString::number(i), "");
-//
-//             if(!file.isEmpty()) {
-//                 QFileInfo fi(file);
-//
-//                 // store file name in tooltip. this is used later to
-//                 // open the file, and is handy to know what file tora
-//                 // is opening.
-//
-//                 QAction *r = new QAction(fi.fileName(), this);
-//                 r->setToolTip(file);
-//                 recentMenu->addAction(r);
-//             }
-//         }
-//     }
     QStringList files(toConfigurationSingle::Instance().recentFiles());
     recentMenu->clear();
-    if (files.count() > 0)
-        recentMenu->addSeparator();
-    foreach (QString s, files)
+
+    int index = 1;
+    QList<QString>::iterator i = files.end();
+    while(i != files.begin())
     {
-        QFileInfo fi(s);
+        i--;
+
+        QFileInfo fi(*i);
         if (!fi.exists())
         {
-            files.removeAt(files.indexOf(s));
+            files.removeAt(files.indexOf(*i));
             continue;
         }
+
         // store file name in tooltip. this is used later to
         // open the file, and is handy to know what file tora
         // is opening.
-        QAction *r = new QAction(fi.fileName(), this);
-        r->setToolTip(s);
+        QString caption = fi.fileName();
+        if(index < 10)
+            caption = "&" + QString::number(index++) + "  " + caption;
+
+        QAction *r = new QAction(caption, this);
+        r->setToolTip(*i);
         recentMenu->addAction(r);
     }
+
     toConfigurationSingle::Instance().setRecentFiles(files);
 }
 
@@ -759,33 +739,11 @@ void toMain::addRecentFile(const QString &file)
     QStringList files(toConfigurationSingle::Instance().recentFiles());
     int maxnum = toConfigurationSingle::Instance().recentMax();
 
-    if (files.contains(file))
-        return;
-    if (files.count() > maxnum)
+    files.removeAll(file);
+    if (files.count() >= maxnum)
         files.removeAt(0);
     files.append(file);
     toConfigurationSingle::Instance().setRecentFiles(files);
-//     std::list<QString> files;
-//     for (int j = 0;j < num;j++)
-//     {
-//         QString t = toConfigurationSingle::Instance().globalConfig(
-//             QString(CONF_RECENT_FILES ":") + QString::number(j), "");
-//         if (t != file)
-//             toPush(files, t);
-//     }
-//     toUnShift(files, file);
-
-//     num = 0;
-//     for (std::list<QString>::iterator i = files.begin();i != files.end();i++)
-//     {
-//         toConfigurationSingle::Instance().globalSetConfig(
-//             QString(CONF_RECENT_FILES ":") + QString::number(num), *i);
-//         num++;
-//         if (num >= maxnum)
-//             break;
-//     }
-//     toConfigurationSingle::Instance().globalSetConfig(CONF_RECENT_FILES, QString::number(num));
-//     toConfigurationSingle::Instance().saveConfig();
 }
 
 void toMain::updateWindowsMenu(void)
@@ -816,7 +774,7 @@ void toMain::updateWindowsMenu(void)
             QString caption = (*it)->windowTitle().trimmed();
 
             if (index < 9)
-                caption = "&" + QString::number(index + 1) + " " + caption;
+                caption = "&" + QString::number(index + 1) + "  " + caption;
 
             QAction *action = new QAction(caption, (*it));
             if (index < 9)

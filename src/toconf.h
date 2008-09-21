@@ -131,7 +131,7 @@
 #define CONF_EXTENSIONS   "Extensions"
 #define CONF_RECENT_FILES "RecentFiles"
 #define CONF_RECENT_MAX  "RecentMax"
-#define DEFAULT_RECENT_MAX 5
+#define DEFAULT_RECENT_MAX 25
 #define CONF_LAST_DIR  "LastDir"
 #define CONF_LOCALE  "Locale"
 #define CONF_KEEP_ALIVE  "KeepAlive"
