@@ -272,7 +272,6 @@ void toMain::createActions()
     refreshAct = new QAction(QPixmap(const_cast<const char**>(refresh_xpm)),
                              tr("Reread Object Cache"),
                              this);
-    refreshAct->setShortcut(Qt::CTRL + Qt::Key_R);
 
     openAct = new QAction(QPixmap(const_cast<const char**>(fileopen_xpm)),
                           tr("&Open File..."),
