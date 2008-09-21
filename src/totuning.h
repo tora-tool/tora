@@ -56,6 +56,7 @@
 #include <QResizeEvent>
 #include <QLabel>
 #include <QScrollArea>
+#include <QList>
 
 class QAction;
 class QMenu;
@@ -172,23 +173,24 @@ class toTuning : public toToolWidget
 {
     Q_OBJECT
 
-    QTabWidget *Tabs;
-    toListView *Indicators;
-    toResultParam *Parameters;
+    QTabWidget        *Tabs;
+    toListView        *Indicators;
+    toResultParam     *Parameters;
     toResultTableView *Options;
-    toResultLock *BlockingLocks;
-    toResultItem *Licenses;
-    toResultStats *Statistics;
+    toResultLock      *BlockingLocks;
+    toResultItem      *Licenses;
+    toResultStats     *Statistics;
     toResultTableView *LibraryCache;
     toResultTableView *ControlFiles;
-    toWaitEvents *Waits;
+    toWaitEvents      *Waits;
+    QScrollArea       *ChartContainer;
 
-    std::map<QString, QWidget *> Charts;
+    QList<QWidget *> Charts;
 
-    QComboBox *Refresh;
+    QComboBox        *Refresh;
     toTuningOverview *Overview;
-    toTuningFileIO *FileIO;
-    QWidget *LastTab;
+    toTuningFileIO   *FileIO;
+    QWidget          *LastTab;
 
     QMenu   *ToolMenu;
     QAction *refreshAct;

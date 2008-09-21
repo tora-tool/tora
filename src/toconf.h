@@ -213,7 +213,7 @@
 #define CONF_OVERVIEW "Overview"
 #define CONF_FILEIO   "File I/O"
 #define CONF_WAITS    "Wait events"
-#define CONF_CHART    "chart"
+#define CONF_CHART    "Charts"
 // toworksheet
 #define CONF_AUTO_SAVE    "AutoSave"
 #define CONF_CHECK_SAVE   "CheckSave"

@@ -1416,25 +1416,9 @@ static toSQL SQLControlFiles("toTuning:ControlFileRecords",
 toTuning::toTuning(QWidget *main, toConnection &connection)
         : toToolWidget(TuningTool, "tuning.html", main, connection, "toTuning")
 {
-//     if (TuningTool.config(CONF_OVERVIEW, "Undefined") == "Undefined")
     if (toConfigurationSingle::Instance().tuningFirstRun())
     {
-        bool def = false; //QString def = QString::null;
-//         if (TOMessageBox::warning(
-//                 toMainWidget(),
-//                 tr("Enable all tuning statistics"),
-//                 tr("Are you sure you want to enable all tuning features.\n"
-//                    "This can put heavy strain on a database and unless you\n"
-//                    "are the DBA you probably don't want this. Selecting\n"
-//                    "no here will give you the option to enable or disable\n"
-//                    "tabs individually as they are needed."),
-//                 tr("Yes"),
-//                 tr("&No"),
-//                 QString::null,
-//                 1) == 0)
-//         {
-//             def = "Yes";
-//         }
+        bool def = false;
         if (TOMessageBox::warning(
                     toMainWidget(),
                     tr("Enable all tuning statistics"),
@@ -1450,9 +1434,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
         {
             def = true;
         }
-//         std::list<QString> tabs = TabList();
-//         for (std::list<QString>::iterator i = tabs.begin();i != tabs.end();i++)
-//             TuningTool.setConfig(*i, def);
+
         toConfigurationSingle::Instance().setTuningOverview(def);
         toConfigurationSingle::Instance().setTuningFileIO(def);
         toConfigurationSingle::Instance().setTuningWaits(def);
@@ -1467,13 +1449,12 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
                      QIcon(QPixmap(const_cast<const char**>(refresh_xpm))),
                      tr("Refresh"),
                      this,
-                     SLOT(refresh(void)));
+                     SLOT(refresh()));
     refreshAct->setShortcut(QKeySequence::Refresh);
 
     toolbar->addSeparator();
 
-    toolbar->addWidget(
-        new QLabel(tr("Refresh") + " ", toolbar));
+    toolbar->addWidget(new QLabel(tr("Refresh") + " ", toolbar));
 
     Refresh = toRefreshCreate(toolbar, TO_TOOLBAR_WIDGET_NAME);
     connect(Refresh, SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
@@ -1516,7 +1497,17 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
         toRefreshParse(timer());
         connect(timer(), SIGNAL(timeout()), Overview, SLOT(refresh()));
     }
-    TOCATCH
+    TOCATCH;
+
+    ChartContainer = new QScrollArea(Tabs);
+    QWidget *chartWidget = new QWidget(ChartContainer);
+    ChartContainer->setWidget(chartWidget);
+    ChartContainer->setWidgetResizable(true);
+    chartWidget->setMinimumHeight(1800);
+    Tabs->addTab(ChartContainer, tr("&Charts"));
+
+    QVBoxLayout *chartBox = new QVBoxLayout;
+    chartWidget->setLayout(chartBox);
 
     QString unitStr = toConfigurationSingle::Instance().sizeUnit();
     toQList unit;
@@ -1532,24 +1523,12 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
                 parts.append(parts[2]);
                 parts[2] = QString::fromLatin1("Charts");
             }
-            std::map<QString, QWidget *>::iterator j = Charts.find(QString(CONF_CHART) + parts[2].toLatin1());
-            QWidget *cchart;
-            if (j == Charts.end())
-            {
-                cchart = new QWidget(Tabs);
-                cchart->setObjectName(QString(CONF_CHART) + parts[2]);
-                cchart->setLayout(new QGridLayout);
-                Charts[QString(CONF_CHART) + parts[2].toLatin1()] = cchart;
-            }
-            else
-                cchart = (*j).second;
-
-            QGridLayout *grid = dynamic_cast<QGridLayout *>(cchart->layout());
 
             if (parts[3].mid(1, 1) == QString::fromLatin1("B"))
             {
-                toResultBar *chart = new toResultBar(cchart);
-                grid->addWidget(chart);
+                toResultBar *chart = new toResultBar(chartWidget);
+                chartBox->addWidget(chart);
+                Charts.append(chart);
                 chart->setTitle(parts[3].mid(3));
                 toQList par;
                 if (parts[3].mid(2, 1) == QString::fromLatin1("B"))
@@ -1573,11 +1552,11 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
             {
                 toResultLine *chart;
                 if (parts[3].mid(1, 1) == QString::fromLatin1("C"))
-                    chart = new toTuningMiss(cchart);
+                    chart = new toTuningMiss(chartWidget);
                 else
-                    chart = new toResultLine(cchart);
-                grid->addWidget(chart);
-                chart->setTitle(parts[3].mid(3));
+                    chart = new toResultLine(chartWidget);
+                chartBox->addWidget(chart);
+                Charts.append(chart);
                 toQList par;
                 if (parts[3].mid(2, 1) == QString::fromLatin1("B"))
                     chart->setYPostfix(tr(" blocks/s"));
@@ -1599,9 +1578,10 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
             }
             else if (parts[3].mid(1, 1) == QString::fromLatin1("P"))
             {
-                toResultPie *chart = new toResultPie(cchart);
+                toResultPie *chart = new toResultPie(chartWidget);
                 chart->setTitle(parts[3].mid(3));
-                grid->addWidget(chart);
+                chartBox->addWidget(chart);
+                Charts.append(chart);
                 if (parts[3].mid(2, 1) == QString::fromLatin1("S"))
                 {
                     chart->query(toSQL::sql(*i), unit);
@@ -1615,20 +1595,8 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
         }
     }
 
-    for (std::map<QString, QWidget *>::iterator k = Charts.begin();
-            k != Charts.end();
-            k++)
-    {
-        QScrollArea *sc = new QScrollArea(Tabs);
-        sc->setWidgetResizable(true);
-        sc->setWidget((*k).second);
-        // HACK: it's ugly but I cannot find any way how to setup it dynamically
-        (*k).second->setMinimumHeight(1800);
-        Tabs->addTab(sc, tr((*k).first.mid(strlen(CONF_CHART)).toAscii().constData()));
-    }
-
     Waits = new toWaitEvents(this, "waits");
-    Tabs->addTab(Waits, tr("Wait events"));
+    Tabs->addTab(Waits, tr("&Wait events"));
 
     FileIO = new toTuningFileIO(Tabs);
     connect(this, SIGNAL(connectionChange()), FileIO, SLOT(changeConnection()));
@@ -1656,7 +1624,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
 
     ControlFiles = new toResultTableView(true, false, Tabs, "control");
     ControlFiles->setSQL(SQLControlFiles);
-    Tabs->addTab(ControlFiles, tr("Control Files"));
+    Tabs->addTab(ControlFiles, tr("C&ontrol Files"));
 
     Options = new toResultTableView(true, false, Tabs, "options");
     Options->setSQL(SQLOptions);
@@ -1675,10 +1643,6 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     connect(toMainWidget()->workspace(), SIGNAL(subWindowActivated(QMdiSubWindow *)),
             this, SLOT(windowActivated(QMdiSubWindow *)));
 
-//     std::list<QString> tabs = TabList();
-//     for (std::list<QString>::iterator i = tabs.begin();i != tabs.end();i++)
-//         if (TuningTool.config(*i, "").isEmpty())
-//             enableTab(*i, false);
     if (!toConfigurationSingle::Instance().tuningOverview())
         enableTab(CONF_OVERVIEW, false);
     if (!toConfigurationSingle::Instance().tuningFileIO())
@@ -1706,9 +1670,9 @@ QWidget *toTuning::tabWidget(const QString &name)
     {
         widget = Waits;
     }
-    else if (Charts.find(CONF_CHART + name) != Charts.end())
+    else if (name == CONF_CHART)
     {
-        widget = Charts[CONF_CHART + name];
+        widget = ChartContainer;
     }
     return widget;
 }
@@ -1735,10 +1699,9 @@ void toTuning::enableTabMenu(QAction *act)
     if (!act)
         return;
 
-    QString text(act->text().toAscii());
-    QWidget *widget = tabWidget(text);
+    QWidget *widget = tabWidget(act->text());
     if (widget)
-        enableTab(text, !Tabs->isTabEnabled(Tabs->indexOf(widget)));
+        enableTab(act->text(), !Tabs->isTabEnabled(Tabs->indexOf(widget)));
 }
 
 void toTuning::enableTab(const QString &name, bool enable)
@@ -1750,15 +1713,15 @@ void toTuning::enableTab(const QString &name, bool enable)
             Overview->start();
         else
             Overview->stop();
+
+        toConfigurationSingle::Instance().setTuningOverview(enable);
         widget = Overview;
     }
-    else if (Charts.find(QString(CONF_CHART) + name) != Charts.end())
+    else if (name == CONF_CHART)
     {
-        QWidget *chart = Charts[QString(CONF_CHART) + name];
-        QObjectList childs = chart->children();
-        for (int i = 0;i < childs.count();i++)
+        Q_FOREACH(QWidget *child, Charts)
         {
-            toResultLine *line = dynamic_cast<toResultLine *>(childs.at(i));
+            toResultLine *line = dynamic_cast<toResultLine *>(child);
             if (line)
             {
                 if (enable)
@@ -1766,7 +1729,7 @@ void toTuning::enableTab(const QString &name, bool enable)
                 else
                     line->stop();
             }
-            toResultBar *bar = dynamic_cast<toResultBar *>(childs.at(i));
+            toResultBar *bar = dynamic_cast<toResultBar *>(child);
             if (bar)
             {
                 if (enable)
@@ -1774,7 +1737,7 @@ void toTuning::enableTab(const QString &name, bool enable)
                 else
                     bar->stop();
             }
-            toResultPie *pie = dynamic_cast<toResultPie *>(childs.at(i));
+            toResultPie *pie = dynamic_cast<toResultPie *>(child);
             if (pie)
             {
                 if (enable)
@@ -1783,7 +1746,9 @@ void toTuning::enableTab(const QString &name, bool enable)
                     pie->stop();
             }
         }
-        widget = chart;
+ 
+        toConfigurationSingle::Instance().setTuningCharts(enable);
+        widget = ChartContainer;
     }
     else if (name == CONF_WAITS)
     {
@@ -1791,6 +1756,8 @@ void toTuning::enableTab(const QString &name, bool enable)
             Waits->start();
         else
             Waits->stop();
+
+        toConfigurationSingle::Instance().setTuningWaits(enable);
         widget = Waits;
     }
     else if (name == CONF_FILEIO)
@@ -1799,10 +1766,35 @@ void toTuning::enableTab(const QString &name, bool enable)
             FileIO->start();
         else
             FileIO->stop();
+
+        toConfigurationSingle::Instance().setTuningFileIO(enable);
         widget = FileIO;
     }
+
     if (widget)
-        Tabs->setTabEnabled(Tabs->indexOf(widget), enable);
+    {
+        int ind = Tabs->indexOf(widget);
+        if(ind < 0)
+            return;
+
+        if(enable)
+            Tabs->setCurrentIndex(ind);
+        else
+        {
+            // qtabwidget is enabling some tabs when we disable one,
+            // so i'm going to pick the next tab to show here
+            for(int pos = 0; pos < Tabs->count(); pos++)
+            {
+                if(pos != ind && Tabs->isTabEnabled(pos))
+                {
+                    Tabs->setCurrentIndex(pos);
+                    break;
+                }
+            }
+        }
+
+        Tabs->setTabEnabled(ind, enable);
+    }
 }
 
 void toTuning::changeTab(int index)
