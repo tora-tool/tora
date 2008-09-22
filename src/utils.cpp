@@ -78,6 +78,7 @@
 #include <QTextStream>
 #include <QStyleFactory>
 #include <QStyle>
+#include <QDir>
 
 
 #ifdef Q_OS_WIN32
@@ -669,11 +670,7 @@ QString toExpandFile(const QString &file)
         {}
 
 #else
-    const char *homet = getenv("HOME");
-    if (!homet)
-        home = "";
-    else
-        home = homet;
+    home = QDir::homePath();
 #endif
 
     ret.replace(QRegExp(QString::fromLatin1("\\$HOME")), home);
