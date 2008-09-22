@@ -51,7 +51,7 @@
 class QComboBox;
 class QLineEdit;
 class toTreeWidget;
-class QToolButton;
+class QAction;
 class toMarkedText;
 class toWorksheet;
 
@@ -64,8 +64,8 @@ class toSQLEdit : public toToolWidget
     toMarkedText *Description;
     QComboBox    *Version;
     toWorksheet  *Editor;
-    QToolButton  *TrashButton;
-    QToolButton  *CommitButton;
+    QAction      *TrashButton;
+    QAction      *CommitButton;
     QString       LastVersion;
     QString       Filename;
 

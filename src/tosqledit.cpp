@@ -60,7 +60,6 @@
 #include <qmessagebox.h>
 #include <qsplitter.h>
 #include <qstring.h>
-#include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <QMdiArea>
 
@@ -186,17 +185,17 @@ toSQLEdit::toSQLEdit(QWidget *main, toConnection &connection)
                        SLOT(saveSQL()));
     toolbar->addSeparator();
 
-    CommitButton = new QToolButton(toolbar);
-    CommitButton->setText(tr("Save this entry in the dictionary"));
-    CommitButton->setIcon(QIcon(commit_xpm));
-    connect(CommitButton, SLOT(triggered()), this, SLOT(commitChanges()));
-    toolbar->addWidget(CommitButton);
+    CommitButton = toolbar->addAction(
+        QIcon(commit_xpm),
+        tr("Save this entry in the dictionary"),
+        this,
+        SLOT(commitChanges()));
 
-    TrashButton = new QToolButton(toolbar);
-    TrashButton->setIcon(QIcon(trash_xpm));
-    TrashButton->setText(tr("Delete this version from the SQL dictionary"));
-    connect(CommitButton, SLOT(triggered()), this, SLOT(deleteVersion()));
-    toolbar->addWidget(TrashButton);
+    TrashButton = toolbar->addAction(
+        QIcon(trash_xpm),
+        tr("Delete this version from the SQL dictionary"),
+        this,
+        SLOT(deleteVersion()));
 
     toolbar->addAction(QIcon(add_xpm),
                        tr("Start new SQL definition"),
@@ -303,6 +302,9 @@ void toSQLEdit::loadSQL(void)
 
 void toSQLEdit::saveSQL(void)
 {
+    // must commit changes first for sql to be present in dictionary.
+    commitChanges();
+
     QString filename = toSaveFilename(QString::null, QString::null, this);
     if (!filename.isEmpty())
     {
