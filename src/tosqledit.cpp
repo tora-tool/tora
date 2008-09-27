@@ -91,16 +91,14 @@ public:
     virtual QWidget *toolWindow(QWidget *parent, toConnection &connection)
     {
         if (Window)
-            Window->show();
-        else
         {
-            Window = new toSQLEdit(toMainWidget()->workspace(), connection);
-            Window->setWindowIcon(QPixmap(const_cast<const char**>(tosqledit_xpm)));
-//             toMainWidget()->workspace()->addSubWindow(Window);
+            Window->setFocus(Qt::OtherFocusReason);
+            // already opened, prevent creating new sub window
+            return 0;
         }
 
-//         Window->raise();
-//         Window->setFocus();
+        Window = new toSQLEdit(parent, connection);
+        Window->setWindowIcon(QPixmap(const_cast<const char**>(tosqledit_xpm)));
         return Window;
     }
 
