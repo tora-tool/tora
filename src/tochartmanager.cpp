@@ -87,12 +87,17 @@ public:
     {
         if (!Handler)
             return NULL;
-        if (!Window)
+
+        if (Window)
         {
-            Window = new toChartManager(toMainWidget()->workspace());
-            Window->setWindowTitle(qApp->translate("toChartTool", "Chart Manager"));
-            Window->setWindowIcon(QPixmap(const_cast<const char**>(chart_xpm)));
+            Window->setFocus(Qt::OtherFocusReason);
+            // already opened, prevent creating new sub window
+            return 0;
         }
+
+        Window = new toChartManager(toMainWidget()->workspace());
+        Window->setWindowTitle(qApp->translate("toChartTool", "Chart Manager"));
+        Window->setWindowIcon(QPixmap(const_cast<const char**>(chart_xpm)));
         Window->refresh();
         return Window;
     }
