@@ -93,7 +93,7 @@ bool toMonolithic(void)
 #endif
 }
 
-void toUpdateIndicateEmpty(void);
+// void toUpdateIndicateEmpty(void);
 
 int main(int argc, char **argv)
 {
@@ -272,7 +272,7 @@ int main(int argc, char **argv)
         toMarkedText::setDefaultTabWidth(toConfigurationSingle::Instance().tabStop());
         toMarkedText::setDefaultTabSpaces(toConfigurationSingle::Instance().tabSpaces());
 
-        toUpdateIndicateEmpty();
+//         toUpdateIndicateEmpty();
 
         new toMain;
 

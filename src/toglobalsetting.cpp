@@ -298,9 +298,12 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
 //     AutoLong->setChecked(val);
 //     MoveAfter->setValue(val);
 //     KeepAlive->setChecked(toConfigurationSingle::Instance().keepAlive());
+
+    connect(IndicateEmpty, SIGNAL(clicked(bool)),
+             IndicateEmptyColor, SLOT(setEnabled(bool)));
 }
 
-void toUpdateIndicateEmpty(void);
+// void toUpdateIndicateEmpty(void);
 
 void toDatabaseSetting::saveSetting(void)
 {
@@ -340,7 +343,7 @@ void toDatabaseSetting::saveSetting(void)
     toConfigurationSingle::Instance().setNumberDecimals(Decimals->value());
     toQValue::setNumberFormat(NumberFormat->currentIndex(), Decimals->value());
 
-    toUpdateIndicateEmpty();
+//     toUpdateIndicateEmpty();
 }
 
 toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)

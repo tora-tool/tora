@@ -1052,17 +1052,17 @@ bool toCheckModal(QWidget *widget)
     return false;
 }
 
-static bool IndicateEmpty = false;
-
-void toUpdateIndicateEmpty(void)
-{
-    IndicateEmpty = toConfigurationSingle::Instance().indicateEmpty();
-}
+// static bool IndicateEmpty = false;
+// 
+// void toUpdateIndicateEmpty(void)
+// {
+//     IndicateEmpty = toConfigurationSingle::Instance().indicateEmpty();
+// }
 
 
 toQValue toNull(const toQValue &str)
 {
-    if (IndicateEmpty)
+    if (!toConfigurationSingle::Instance().indicateEmpty())
     {
         if (str.isNull())
             return str;
@@ -1076,7 +1076,7 @@ toQValue toNull(const toQValue &str)
 
 toQValue toUnnull(const toQValue &str)
 {
-    if (IndicateEmpty)
+    if (!toConfigurationSingle::Instance().indicateEmpty())
     {
         if (QString(str) == QString::fromLatin1("''"))
             return QString::fromLatin1("");

@@ -499,8 +499,8 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const
         return data.toQVariant();
     if (role == Qt::BackgroundRole)
     {
-        if (data.isNull())
-            return QVariant(QColor("#f2ffbc"));
+        if (data.isNull() && toConfigurationSingle::Instance().indicateEmpty())
+            return QVariant(QColor(toConfigurationSingle::Instance().indicateEmptyColor()));
         return QVariant();
     }
     if (role == Qt::TextAlignmentRole)
