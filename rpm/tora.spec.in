@@ -75,8 +75,8 @@ export CXXFLAGS="$RPM_OPT_FLAGS"
 %{__cmake} \
         -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
         -DWANT_INTERNAL_QSCINTILLA=1 \
-        -DORACLE_PATH_INCLUDES=$(ls -d -1 /usr/include/oracle/*/client | tail -n 1) \
-        -DORACLE_PATH_LIB=$(ls -d -1 /usr/lib/oracle/*/client/lib | tail -n 1) \
+        -DORACLE_PATH_INCLUDES=$(ls -d -1 %{_includedir}/oracle/*/client | tail -n 1) \
+        -DORACLE_PATH_LIB=$(ls -d -1 %{_libdir}/oracle/*/client/lib | tail -n 1) \
         -DPOSTGRESQL_PATH_INCLUDES=%{_includedir} \
         .
 
