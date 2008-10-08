@@ -25,7 +25,6 @@ Release:                %{_release}
 Source:                 %{_name}-%{_version}.tar.gz
 URL:                    http://tora.sourceforge.net
 Group:                  Development/Databases
-Packager:               Raj Thukral (thukral at pobox dot com)
 License:                GPL
 BuildRoot:              %{_tmppath}/tora-root
 Prefix:                 %{_prefix}
