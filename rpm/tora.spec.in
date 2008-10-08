@@ -93,16 +93,16 @@ perl -pi -e 's/(libclntsh.so)(\.\d+\.\d+)/sprintf("%s%s",$1,"\0" x length($2))/g
 
 %{__rm} -rf "${RPM_BUILD_ROOT}" 
 %{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/bin"
-%{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help"
-%{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/images"
-%{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/api"
+%{__mkdir_p} "${RPM_BUILD_ROOT}%{_libdir}/tora/help"
+%{__mkdir_p} "${RPM_BUILD_ROOT}%{_libdir}/tora/help/images"
+%{__mkdir_p} "${RPM_BUILD_ROOT}%{_libdir}/tora/help/api"
 %{__mkdir_p} "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/16x16/apps"
 %{__mkdir_p} "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/32x32/apps"
 %{__make} DESTDIR="${RPM_BUILD_ROOT}" install
 
-%{__install} --mode=644 doc/help/*.html "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/"
-%{__install} --mode=644 doc/help/images/*.png "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/images/"
-#%{__install} --mode=644 doc/help/api/*.html "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/api/"
+%{__install} --mode=644 doc/help/*.html "${RPM_BUILD_ROOT}%{_libdir}/tora/help/"
+%{__install} --mode=644 doc/help/images/*.png "${RPM_BUILD_ROOT}%{_libdir}/tora/help/images/"
+#%{__install} --mode=644 doc/help/api/*.html "${RPM_BUILD_ROOT}%{_libdir}/tora/help/api/"
 
 %{__install} --mode=644 src/icons/tora.xpm "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/32x32/apps/tora.xpm"
 %{__install} --mode=644 src/icons/toramini.xpm "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/16x16/apps/tora.xpm"
@@ -115,7 +115,7 @@ perl -pi -e 's/(libclntsh.so)(\.\d+\.\d+)/sprintf("%s%s",$1,"\0" x length($2))/g
 %files 
 %defattr(-,root,root)
 %{_prefix}/bin/*
-%{_prefix}/lib/tora
+%{_libdir}/tora
 %{_iconsdir}/hicolor/*/apps/tora.xpm
 %doc %{_defaultdocdir}/tora
 
