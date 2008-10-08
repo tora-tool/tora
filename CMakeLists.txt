@@ -305,21 +305,19 @@ SET(CPACK_IGNORE_FILES "/CVS/;/\\\\.svn/;\\\\.swp$;\\\\.#;/#;\\\\.tar.gz$;/CMake
 SET(CPACK_SOURCE_IGNORE_FILES ${CPACK_IGNORE_FILES})
 INCLUDE(CPack)
 
-# Check for SVN and get current revision
-IF (EXISTS ${CMAKE_SOURCE_DIR}/.svn)
-  # TODO: automatically set the revision on windows
-  IF(NOT WIN32)
-    FIND_PACKAGE(Subversion)
-    IF(Subversion_FOUND)
-      Subversion_WC_INFO(${CMAKE_SOURCE_DIR} TORA)
-    ENDIF(Subversion_FOUND)
-    MESSAGE("-- Current SVN revision is ${TORA_WC_REVISION}")
-  ENDIF(NOT WIN32)
-ENDIF (EXISTS ${CMAKE_SOURCE_DIR}/.svn)
+# Check for SVN
+FIND_PACKAGE(Subversion)
+IF(NOT Subversion_FOUND)
+    SET(Subversion_SVN_EXECUTABLE true)
+ENDIF(NOT Subversion_FOUND)
 
+# get svn revision in rpmbuild time (and not in Makefile generation time)
+SET(SVN_REVISION
+    "\"$$(" ${Subversion_SVN_EXECUTABLE} info | awk '/Revision:/ {print \$\$2 }' ")\""
+    )
 SET(RPM_DEFINES 
     --define "_version ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
-    --define "_release 0.${TORA_WC_REVISION}svn"
+    --define "_release 0.${SVN_REVISION}svn"
     --define "_sourcedir ${CMAKE_SOURCE_DIR}"
     )
 SET(RPM_SPEC "rpm/tora.spec.in")
