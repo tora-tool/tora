@@ -5,11 +5,11 @@
 #
 
 
-%define _name   	tora
+%define _name           tora
 
-%{!?_version:%define _version	@VERSION@}
-%{!?_release:%define _release	1}
-%{!?_prefix: %define _prefix	/usr/X11R6}
+%{!?_version:%define _version   @VERSION@}
+%{!?_release:%define _release   1}
+%{!?_prefix: %define _prefix    /usr/X11R6}
 
 # filter out oracle libraries because oracle-instantclient rpm doesn't provide them
 %define _use_internal_dependency_generator 0
@@ -18,17 +18,17 @@
 
 
 
-Summary:		Toolkit for Oracle
-Name:			%{_name}
-Version:		%{_version}
-Release:		%{_release}
-Source:			%{_name}-%{_version}.tar.gz
-URL:			http://tora.sourceforge.net
-Group:			Development/Databases
-Packager:		Raj Thukral (thukral at pobox dot com)
-License:		GPL
-BuildRoot:		%{_tmppath}/tora-root
-Prefix:			%{_prefix}
+Summary:                Toolkit for Oracle
+Name:                   %{_name}
+Version:                %{_version}
+Release:                %{_release}
+Source:                 %{_name}-%{_version}.tar.gz
+URL:                    http://tora.sourceforge.net
+Group:                  Development/Databases
+Packager:               Raj Thukral (thukral at pobox dot com)
+License:                GPL
+BuildRoot:              %{_tmppath}/tora-root
+Prefix:                 %{_prefix}
 BuildRequires: postgresql-devel
 BuildRequires: oracle-instantclient-devel
 BuildRequires: qt4 >= 4.3.0
@@ -45,10 +45,10 @@ Requires:      oracle-instantclient-basic
 See README file from TOra distribution.
 
 %package oracle
-Summary:		Oracle specific plugins for %{_name}
-Group:			Development/Databases
-Requires:		%{_name} = %{_version}
-Autoreq:		0
+Summary:                Oracle specific plugins for %{_name}
+Group:                  Development/Databases
+Requires:               %{_name} = %{_version}
+Autoreq:                0
 
 %description oracle
 Oracle specific plugins for %{_name}. This plugin will require a valid installation
