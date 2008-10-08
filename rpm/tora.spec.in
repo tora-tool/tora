@@ -5,17 +5,17 @@
 #
 
 
-%define _name		tora
+%define _name   	tora
 
-%define _version	@VERSION@
-%define _release	1
-%define _prefix		/usr/X11R6
+%{!?_version:%define _version	@VERSION@}
+%{!?_release:%define _release	1}
+%{!?_prefix: %define _prefix	/usr/X11R6}
 
-# preferred something like this
-#%define __find_requires  /usr/lib/rpm/find-requires | grep -v libclntsh
+# filter out oracle libraries because oracle-instantclient rpm doesn't provide them
+%define _use_internal_dependency_generator 0
+%{expand:%global __orig__find_requires %{__find_requires}}
+%define __find_requires  rpm/tora_filter_requires.sh %{__orig__find_requires}
 
-# For the moment
-%define __find_requires %{nil}
 
 
 Summary:		Toolkit for Oracle
@@ -29,6 +29,11 @@ Packager:		Raj Thukral (thukral at pobox dot com)
 License:		GPL
 BuildRoot:		%{_tmppath}/tora-root
 Prefix:			%{_prefix}
+BuildRequires: postgresql-devel
+BuildRequires: oracle-instantclient-devel
+BuildRequires: qt4 >= 4.3.0
+BuildRequires: perl
+Requires:      oracle-instantclient-basic
 
 
 #
@@ -53,36 +58,37 @@ will require to download the entire server distribution to install the client, b
 it is available as a choice in the installer.
 
 %changelog
+* Tue Oct  7 2008 Michael Mraka <michael.mraka@redhat.com> 2.0.0-0.3041svn
+- changed to cmake driven build for 2.0.0 version
+- built against oracle-instantclient 
+
 * Mon Jun 29 2005 Nathan Neulinger <nneul@neulinger.org>
 - standardize on a single tora spec file
 
 %prep
 %setup -q
 
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ORACLE_HOME/lib"
+%{__rm} -rf CMakeFiles CMakeCache.txt
+perl -pi -e 's/SET \(VERSION_SUFFIX ".*"\)/SET (VERSION_SUFFIX "")/' CMakeLists.txt
 
 export CFLAGS="$RPM_OPT_FLAGS"
 export CXXFLAGS="$RPM_OPT_FLAGS"
 
-./configure \
-	 --prefix="%{_prefix}" \
-	 --bindir="%{_prefix}/bin" \
-	 --libdir="%{_prefix}/lib" \
-	--with-qt=$QTDIR \
-	--with-qt-libraries=$QTDIR/lib \
-	--with-qt-includes=$QTDIR/include \
-	--without-kde
+%{__cmake} \
+        -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
+        -DWANT_INTERNAL_QSCINTILLA=1 \
+        -DORACLE_PATH_INCLUDES=$(ls -d -1 /usr/include/oracle/*/client | tail -n 1) \
+        -DORACLE_PATH_LIB=$(ls -d -1 /usr/lib/oracle/*/client/lib | tail -n 1) \
+        -DPOSTGRESQL_PATH_INCLUDES=%{_includedir} \
+        .
 
 %build
 
 %{__make}
-# seemed to break build on mdk
-#%{__strip} .libs/*.so 
 
 # Ugly hack to remove version from libclntsh.so, if someone knows a better way please let me know
-perl -pi -e 's/libclntsh.so.\d\d.\d\d/libclntsh.so\0\0\0\0\0\0/g' .libs/libtooracleconnection.so
-perl -pi -e 's/libclntsh.so.\d\d.\d/libclntsh.so\0\0\0\0\0/g' .libs/libtooracleconnection.so
-perl -pi -e 's/libclntsh.so.\d.\d/libclntsh.so\0\0\0\0/g' .libs/libtooracleconnection.so
+perl -pi -e 's/(libclntsh.so)(\.\d+\.\d+)/sprintf("%s%s",$1,"\0" x length($2))/ge' src/tora
+#perl -pi -e 's/(libclntsh.so)(\.\d+\.\d+)/sprintf("%s%s",$1,"\0" x length($2))/ge' .libs/libtooracleconnection.so \
 
 
 %install
@@ -96,12 +102,12 @@ perl -pi -e 's/libclntsh.so.\d.\d/libclntsh.so\0\0\0\0/g' .libs/libtooracleconne
 %{__mkdir_p} "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/32x32/apps"
 %{__make} DESTDIR="${RPM_BUILD_ROOT}" install
 
-%{__install} --mode=644 help/*.html "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/"
-%{__install} --mode=644 help/images/*.png "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/images/"
-%{__install} --mode=644 help/api/*.html "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/api/"
+%{__install} --mode=644 doc/help/*.html "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/"
+%{__install} --mode=644 doc/help/images/*.png "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/images/"
+#%{__install} --mode=644 doc/help/api/*.html "${RPM_BUILD_ROOT}%{_prefix}/lib/tora/help/api/"
 
-%{__install} --mode=644 icons/tora.xpm "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/32x32/apps/tora.xpm"
-%{__install} --mode=644 icons/toramini.xpm "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/16x16/apps/tora.xpm"
+%{__install} --mode=644 src/icons/tora.xpm "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/32x32/apps/tora.xpm"
+%{__install} --mode=644 src/icons/toramini.xpm "${RPM_BUILD_ROOT}%{_iconsdir}/hicolor/16x16/apps/tora.xpm"
 
 %post
 
@@ -110,21 +116,10 @@ perl -pi -e 's/libclntsh.so.\d.\d/libclntsh.so\0\0\0\0/g' .libs/libtooracleconne
 
 %files 
 %defattr(-,root,root)
-%doc BUGS INSTALL COPYING NEWS README TODO
 %{_prefix}/bin/*
-%{_prefix}/lib/*.a
-%{_prefix}/lib/*.la
-%{_prefix}/lib/*.so
-%dir %{_prefix}/lib/tora
-#%{_prefix}/lib/tora/*.tpl
-#%{_prefix}/lib/tora/*.qm
-%{_prefix}/lib/tora/help
-#%{_menudir}/tora
+%{_prefix}/lib/tora
 %{_iconsdir}/hicolor/*/apps/tora.xpm
-#%{_datadir}/applnk/Development/tora.desktop
-
-#%files oracle -f rpmoracle
-#%defattr(-,root,root)
+%doc %{_defaultdocdir}/tora
 
 %clean
 %{__rm} -rf "${RPM_BUILD_ROOT}"
