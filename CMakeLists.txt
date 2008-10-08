@@ -313,15 +313,20 @@ ENDIF(NOT Subversion_FOUND)
 
 # get svn revision in rpmbuild time (and not in Makefile generation time)
 SET(SVN_REVISION
-    "\"$$(" ${Subversion_SVN_EXECUTABLE} info | awk '/Revision:/ {print \$\$2 }' ")\""
+    "\"$$(" ${Subversion_SVN_EXECUTABLE} info ${CMAKE_SOURCE_DIR} | awk '/Revision:/ {print \$\$2 }' ")\""
     )
 SET(RPM_DEFINES 
-    --define "_version ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
-    --define "_release 0.${SVN_REVISION}svn"
     --define "_sourcedir ${CMAKE_SOURCE_DIR}"
     )
-SET(RPM_SPEC "rpm/tora.spec.in")
+SET(SPEC_IN_SUBST
+    "\""
+    "s/(%define\\s+_version) .*/\\\\1 ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}/\;"
+    "s/(%define\\s+_release) .*/\\\\1 0.${SVN_REVISION}svn/\;"
+    "\""
+    )
+SET(RPM_SPEC "rpm/tora.spec")
 ADD_CUSTOM_TARGET(package-rpm
+        COMMAND sed -r ${SPEC_IN_SUBST} "${RPM_SPEC}.in" >"${RPM_SPEC}"
         COMMAND make package_source
         COMMAND rpmbuild -ba ${RPM_DEFINES} "${RPM_SPEC}"
         )

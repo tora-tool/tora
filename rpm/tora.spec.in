@@ -7,9 +7,8 @@
 
 %define _name           tora
 
-%{!?_version:%define _version   @VERSION@}
-%{!?_release:%define _release   1}
-%{!?_prefix: %define _prefix    /usr/X11R6}
+%define _version        @VERSION@
+%define _release        1
 
 # filter out oracle libraries because oracle-instantclient rpm doesn't provide them
 %define _use_internal_dependency_generator 0
