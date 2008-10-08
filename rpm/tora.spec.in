@@ -27,7 +27,6 @@ URL:                    http://tora.sourceforge.net
 Group:                  Development/Databases
 License:                GPL
 BuildRoot:              %{_tmppath}/tora-root
-Prefix:                 %{_prefix}
 BuildRequires: postgresql-devel
 BuildRequires: oracle-instantclient-devel
 BuildRequires: qt4 >= 4.3.0
