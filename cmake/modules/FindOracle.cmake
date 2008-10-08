@@ -55,7 +55,7 @@ FIND_LIBRARY(
 )
 FIND_LIBRARY(
     ORACLE_LIBRARY_LNNZ
-    NAMES libnnz10 nnz10 ociw32
+    NAMES libnnz10 nnz10 libnnz11 nnz11 ociw32
     PATHS ${ORACLE_LIB_LOCATION}
 )
 
@@ -87,6 +87,8 @@ IF (NOT DEFINED ORACLE_OCI_VERSION AND UNIX)
         SET(ORACLE_OCI_VERSION "10G_R2")
     ELSEIF (${sqlplus_out} MATCHES "10.*")
         SET(ORACLE_OCI_VERSION "10G")
+    ELSEIF (${sqlplus_out} MATCHES "11.*")
+        SET(ORACLE_OCI_VERSION "11G")
     ELSE (${sqlplus_out} MATCHES "8.*")
         SET(ORACLE_OCI_VERSION "10G_R2")
     ENDIF (${sqlplus_out} MATCHES "8.*")
