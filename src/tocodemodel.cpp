@@ -49,7 +49,7 @@
 #include "tocodemodel.h"
 #include "toeventquery.h"
 
-static toSQL SQLListObjects("toCode:ListObjects",
+static toSQL SQLListObjects("toCodeModel:ListObjects",
                             "SELECT a.object_name,\n"
                             "       a.object_type\n"
                             "  FROM sys.all_objects a,\n"
@@ -61,7 +61,8 @@ static toSQL SQLListObjects("toCode:ListObjects",
                             "                          'PACKAGE',\n"
                             "                          'PROCEDURE',\n"
                             "                          'TYPE' )\n"
-                            "   AND a.owner = :owner<char[50]>",
+                            "   AND a.owner = :owner<char[50]>\n"
+                            "ORDER BY a.object_name",
                             "Get list of code objects");
 
 toCodeModel::toCodeModel(QObject *parent) : QAbstractItemModel(parent), query(0)
@@ -97,6 +98,9 @@ QVariant toCodeModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
+
+    if (role == Qt::ToolTipRole)
+        return static_cast<QTreeWidgetItem*>(index.internalPointer())->text(index.column());
 
     if (role != Qt::DisplayRole)
         return QVariant();
