@@ -20,7 +20,7 @@
 Summary:                Toolkit for Oracle
 Name:                   %{_name}
 Version:                %{_version}
-Release:                %{_release}
+Release:                %{_release}%{?dist}
 Source:                 %{_name}-%{_version}.tar.gz
 URL:                    http://tora.sourceforge.net
 Group:                  Development/Databases
