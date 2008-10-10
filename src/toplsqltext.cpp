@@ -285,8 +285,8 @@ bool toPLSQLText::readErrors(toConnection &conn)
     try
     {
         toQuery errors(conn, SQLReadErrors, Schema, Object, Type);
-        QMap<int, QString> Errors;
-        QMap<int, QString> Warnings;
+        QMultiMap<int, QString> Errors;
+        QMultiMap<int, QString> Warnings;
 
         int line;
         QString errType;
@@ -295,9 +295,9 @@ bool toPLSQLText::readErrors(toConnection &conn)
             errType = errors.readValue(); // "ERROR"/"WARNING" etc.
             line = errors.readValue().toInt();
             if (errType == PLSQL_ERROR)
-                Errors[line] = errors.readValue();
+                Errors.insert(line, errors.readValue());
             else // "WARNING"
-                Warnings[line] = errors.readValue();
+                Warnings.insert(line, errors.readValue());
         }
         setErrors(Errors);
 
@@ -486,9 +486,9 @@ toPLSQLWidget::toPLSQLWidget(QWidget * parent)
     layout()->addWidget(m_contentSplitter);
 
     connect(m_editor,
-            SIGNAL(errorsChanged(const QString &, const QMap<int,QString>&)),
+            SIGNAL(errorsChanged(const QString &, const QMultiMap<int,QString>&)),
             this,
-            SLOT(applyResult(const QString &, const QMap<int,QString>&)));
+            SLOT(applyResult(const QString &, const QMultiMap<int,QString>&)));
     connect(m_result,
             SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
             this,
@@ -514,7 +514,7 @@ toPLSQLWidget::~toPLSQLWidget()
 }
 
 void toPLSQLWidget::applyResult(const QString & type,
-                                 const QMap<int,QString> & values)
+                                 const QMultiMap<int,QString> & values)
 {
     QTreeWidgetItem * item = (type == PLSQL_ERROR) ? m_errItem : m_warnItem;
 

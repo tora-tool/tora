@@ -97,7 +97,7 @@ class toPLSQLText : public toHighlightedText
         bool compile(CompilationType t);
 
     signals:
-        void errorsChanged(const QString & type, const QMap<int,QString> & values);
+        void errorsChanged(const QString & type, const QMultiMap<int,QString> & values);
         void warningsChanged(const QMap<int,QString> values);
         void contentChanged();
 
@@ -137,7 +137,7 @@ class toPLSQLWidget : public QWidget
 
     private slots:
         void goToError(QTreeWidgetItem *, QTreeWidgetItem *);
-        void applyResult(const QString &, const QMap<int,QString>&);
+        void applyResult(const QString &, const QMultiMap<int,QString>&);
         void updateContent()
         {
             updateContent(m_editor);
