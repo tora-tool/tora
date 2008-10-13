@@ -26,7 +26,10 @@ find_path(POSTGRESQL_INCLUDE_DIR libpq-fe.h
 )
 
 find_library(POSTGRESQL_LIBRARIES NAMES pq libpq
-             PATH ${POSTGRESQL_PATH_LIB})
+    PATHS
+        ${POSTGRESQL_PATH_LIB}
+        /usr/lib/
+)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(PostgreSQL DEFAULT_MSG
