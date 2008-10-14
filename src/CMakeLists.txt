@@ -30,7 +30,7 @@ SET(TORA_UI_SRC
     todebugchangeui.ui
     todebugwatch.ui
     todroptablespaceui.ui
-    toeditextensiongotoui.ui
+#     toeditextensiongotoui.ui
     toeditextensionsetupui.ui
     toglobalsettingui.ui
     tohelpaddfileui.ui

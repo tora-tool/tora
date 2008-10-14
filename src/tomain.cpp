@@ -230,7 +230,7 @@ void toMain::createActions()
     newConnAct = new QAction(QPixmap(const_cast<const char**>(connect_xpm)),
                              tr("&New Connection..."),
                              this);
-    newConnAct->setShortcut(Qt::CTRL + Qt::Key_G);
+//     newConnAct->setShortcut(Qt::CTRL + Qt::Key_G);
     newConnAct->setToolTip(tr("Create a new connection"));
     connect(newConnAct,
             SIGNAL(triggered()),

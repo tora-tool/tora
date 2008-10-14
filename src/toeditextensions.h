@@ -96,16 +96,16 @@ public slots:
 };
 
 
-class toEditExtensionGoto : public QDialog, public Ui::toEditExtensionGotoUI
-{
-    Q_OBJECT;
-
-    toMarkedText *Editor;
-
-public:
-    toEditExtensionGoto(toMarkedText *editor);
-    void gotoLine();
-};
+// class toEditExtensionGoto : public QDialog, public Ui::toEditExtensionGotoUI
+// {
+//     Q_OBJECT;
+// 
+//     toMarkedText *Editor;
+// 
+// public:
+//     toEditExtensionGoto(toMarkedText *editor);
+//     void gotoLine();
+// };
 
 
 class toEditExtensionSetup : public QWidget,

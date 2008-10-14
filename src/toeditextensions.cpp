@@ -53,6 +53,7 @@
 #include <qmenubar.h>
 #include <qspinbox.h>
 #include <qtoolbutton.h>
+#include <QInputDialog>
 
 #include <QPixmap>
 #include <QMenu>
@@ -156,9 +157,23 @@ void toEditExtensions::gotoLine()
 {
     if (Current)
     {
-        toEditExtensionGoto dialog(Current);
-        if (dialog.exec())
-            dialog.gotoLine();
+//         toEditExtensionGoto dialog(Current);
+//         if (dialog.exec())
+//             dialog.gotoLine();
+        bool ok;
+        int curline, curcol;
+        Current->getCursorPosition(&curline, &curcol);
+        int line = QInputDialog::getInteger(
+                        Current,
+                        tr("Go to line"),
+                        tr("Line Number"),
+                        curline,
+                        1,
+                        Current->lines(),
+                        1,
+                        &ok);
+        if (ok)
+            Current->setCursorPosition(line-1, 0);
     }
 }
 
@@ -661,6 +676,7 @@ public:
                                    "Goto Line"),
                                    &EditExtensions,
                                    SLOT(gotoLine()));
+        GotoLine->setShortcut(Qt::CTRL + Qt::Key_G);
 
         AutoComplete = edit->addAction(
                            qApp->translate("toEditExtensionTool",
@@ -705,24 +721,24 @@ void toEditExtensionSetup::saveSetting(void)
 
 static toEditExtensionTool EditExtensionTool;
 
-toEditExtensionGoto::toEditExtensionGoto(toMarkedText *editor)
-        : QDialog(editor),
-        Editor(editor)
-{
+// toEditExtensionGoto::toEditExtensionGoto(toMarkedText *editor)
+//         : QDialog(editor),
+//         Editor(editor)
+// {
+// 
+//     setupUi(this);
+// 
+//     toHelp::connectDialog(this);
+//     Line->setMaximum(Editor->lines());
+//     Line->setMinimum(1);
+//     {
+//         int curline, curcol;
+//         Editor->getCursorPosition(&curline, &curcol);
+//         Line->setValue(curline);
+//     }
+// }
 
-    setupUi(this);
-
-    toHelp::connectDialog(this);
-    Line->setMaximum(Editor->lines());
-    Line->setMinimum(1);
-    {
-        int curline, curcol;
-        Editor->getCursorPosition(&curline, &curcol);
-        Line->setValue(curline);
-    }
-}
-
-void toEditExtensionGoto::gotoLine()
-{
-    Editor->setCursorPosition(Line->value() - 1, 0);
-}
+// void toEditExtensionGoto::gotoLine()
+// {
+//     Editor->setCursorPosition(Line->value() - 1, 0);
+// }
