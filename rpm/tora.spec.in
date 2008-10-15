@@ -70,6 +70,7 @@ perl -pi -e 's/SET \(VERSION_SUFFIX ".*"\)/SET (VERSION_SUFFIX "")/' CMakeLists.
 
 export CFLAGS="$RPM_OPT_FLAGS"
 export CXXFLAGS="$RPM_OPT_FLAGS"
+unset ORACLE_HOME
 
 %{__cmake} \
         -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
