@@ -223,10 +223,13 @@ toPLSQLEditor::toPLSQLEditor(QWidget *main, toConnection &connection)
     QString selected = Schema->currentText();
     if(!selected.isEmpty())
         CodeModel->refresh(connection, selected);
-    connect(Objects->selectionModel(),
-            SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)),
-            this,
-            SLOT(changePackage(const QModelIndex &, const QModelIndex &)));
+    // even better (?) for reopening the tabs
+//     connect(Objects->selectionModel(),
+//             SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)),
+//             this,
+//             SLOT(changePackage(const QModelIndex &, const QModelIndex &)));
+    connect(Objects, SIGNAL(doubleClicked(const QModelIndex &)),
+             this, SLOT(changePackage(const QModelIndex &)));
 
     splitter->addWidget(Objects);
 
@@ -237,8 +240,13 @@ toPLSQLEditor::toPLSQLEditor(QWidget *main, toConnection &connection)
     QToolButton *closeButton = new toPopupButton(Editors);
     closeButton->setIcon(QPixmap(const_cast<const char**>(close_xpm)));
     closeButton->setFixedSize(20, 18);
-
+    // HACK: disable closing the editor tabs with the global shortcut.
+    // it raises: "QAction::eventFilter: Ambiguous shortcut overload: Ctrl+W"
+    // on some systems. But it rejects to close unfinished.unsaved work.
+    // - <petr@scribus.info>
+    closeButton->setShortcut(QKeySequence::Close);
     connect(closeButton, SIGNAL(clicked()), this, SLOT(closeEditor()));
+
     Editors->setCornerWidget(closeButton);
 
     setFocusProxy(Editors);
@@ -400,6 +408,11 @@ void toPLSQLEditor::updateCurrent()
         editor->editor()->setFocus();
     }
     TOCATCH
+}
+
+void toPLSQLEditor::changePackage(const QModelIndex &current)
+{
+    changePackage(current, QModelIndex());
 }
 
 void toPLSQLEditor::changePackage(const QModelIndex &current, const QModelIndex &previous)

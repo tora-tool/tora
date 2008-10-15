@@ -121,6 +121,7 @@ public slots:
     void compileWarn(void);
     void changeSchema(int);
     void refresh(void);
+    void changePackage(const QModelIndex &);
     void changePackage(const QModelIndex &, const QModelIndex &);
     void prevError(void);
     void nextError(void);
