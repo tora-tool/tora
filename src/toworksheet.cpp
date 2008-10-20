@@ -1,4 +1,4 @@
-
+#include <QtDebug>
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
@@ -412,6 +412,7 @@ void toWorksheet::setup(bool autoLoad)
     connect(Editor, SIGNAL(modificationChanged(bool)), this, SLOT(setCaption()));
 
     ResultTab = new toTabWidget(EditSplitter);
+    qDebug() << objectName() << "ResultTab" << ResultTab << EditSplitter;
     QWidget *container = new QWidget(ResultTab);
     QVBoxLayout *box = new QVBoxLayout;
     ResultTab->addTab(container, tr("&Result"));
@@ -1020,7 +1021,10 @@ void toWorksheet::query(const QString &str, execType type)
             Started->setToolTip(tr("Duration while query has been running\n\n") + QueryString);
             stopAct->setEnabled(true);
             Result->setNumberColumn(toConfigurationSingle::Instance().wsNumber());
-            ResultTab->setCurrentIndex(0);
+            // it fixes crash running statements from Schema Browser - PV
+            if (ResultTab)
+                ResultTab->setCurrentIndex(0);
+
             try
             {
                 saveHistory();
