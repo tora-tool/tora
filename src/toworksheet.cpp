@@ -1,4 +1,4 @@
-#include <QtDebug>
+
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
@@ -412,7 +412,6 @@ void toWorksheet::setup(bool autoLoad)
     connect(Editor, SIGNAL(modificationChanged(bool)), this, SLOT(setCaption()));
 
     ResultTab = new toTabWidget(EditSplitter);
-    qDebug() << objectName() << "ResultTab" << ResultTab << EditSplitter;
     QWidget *container = new QWidget(ResultTab);
     QVBoxLayout *box = new QVBoxLayout;
     ResultTab->addTab(container, tr("&Result"));
