@@ -61,7 +61,9 @@
 #define OTL_ORA_UNICODE
 #define OTL_ORA_TIMESTAMP
 #define OTL_ANSI_CPP
-#define OTL_FUNC_THROW_SPEC_ON
+// mrj: disabled, otl_stream::eof sometimes throws an unexpected
+// exception which causes a crash
+// #define OTL_FUNC_THROW_SPEC_ON
 
 #if 1
 #if defined(OTL_ORA10G) || defined(OTL_ORA10G_R2) || defined(OTL_ORA11G)
@@ -425,7 +427,18 @@ class oracleQuery : public toQuery::queryImpl
         {
             if (!Query || Cancel)
                 return true;
-            return Query->eof();
+            try {
+                return Query->eof();
+            }
+            catch (const otl_exception &exc)
+            {
+                if(query())
+                {
+                    oracleSub *conn = dynamic_cast<oracleSub *>(query()->connectionSub());
+                    if(conn)
+                        conn->throwExtendedException(query()->connection(), exc);
+                }
+            }
         }
         virtual int rowsProcessed(void)
         {
