@@ -46,7 +46,7 @@
 #include "toeditwidget.h"
 
 // for settings classes
-#include "ui_toeditextensiongotoui.h"
+//#include "ui_toeditextensiongotoui.h"
 #include "ui_toeditextensionsetupui.h"
 #include "totemplate.h"
 #include "tosqlparse.h"
