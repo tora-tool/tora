@@ -237,8 +237,12 @@ UI_FILES = toaboutui.ui \
 EXTRA_DIST = icons \
 	templates \
 	windows \
+	COPYRIGHT.h \
+	help \
 	$(LOKIDIR_INC) \
 	$(UI_FILES) \
+	CMakeLists.txt \
+	loki/CMakeLists.txt \
 	Makefile.am \
 	toconf.h \
 	todefaultkeywords.h \

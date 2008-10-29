@@ -45,6 +45,9 @@ READMES = README\
 	README.CODESTYLE \
 	README.LICENSE \
 	README.OSX \
+	README.CMAKE \
+	README.SVN \
+	README.BINARIES \
 	README.RELEASE \
 	README.WINDOWS 
 
@@ -56,7 +59,13 @@ EXTRA_DIST = debian \
 	Makefile.mingw \
 	$(READMES) \
 	config/m4 \
-	autogen.sh
+	autogen.sh \
+	CMakeLists.txt \
+	doc/CMakeLists.txt \
+	utils/chex/CMakeLists.txt \
+	cmake_uninstall.cmake.in \
+	config.h.cmake \
+	cmake
 
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
