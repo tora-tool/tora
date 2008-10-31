@@ -64,12 +64,12 @@ include/loki/yasli/yasli_protocols.h
 include/loki/yasli/yasli_traits.h
 include/loki/yasli/yasli_vector.h
 
-src/OrderedStatic.cpp
-src/SafeFormat.cpp
+#src/OrderedStatic.cpp
+#src/SafeFormat.cpp
 src/Singleton.cpp
 src/SmallObj.cpp
-src/SmartPtr.cpp
-src/StrongPtr.cpp
+#src/SmartPtr.cpp
+#src/StrongPtr.cpp
 )
 
 # QT4_WRAP_CPP(TORA_LOKI_MOC_SOURCES ${TORA_LOKI_MOC_CLASSES})
