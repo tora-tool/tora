@@ -10,5 +10,6 @@ AC_DEFUN([TORA_CHECK_POSTGRES],
 
   if test $ac_pg_cancel = yes; then
     AC_DEFINE([LIBPQ_DECL_CANCEL], 1, [Define if libpg-fe.h declares PQcancel.])
+		AC_SUBST(PQ_LIBS, -lpq)
   fi
 ])

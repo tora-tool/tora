@@ -35,7 +35,7 @@ AM_LDFLAGS = $(PCRE_LIBS) \
 # fix for annoying automake naming problems.
 tora_CXXFLAGS  = $(AM_CXXFLAGS)
 
-tora_LDADD = $(ORACLE_LIBS) $(@TORA_LINK_OTHERS@)
+tora_LDADD = $(ORACLE_LIBS) $(PQ_LIBS) $(@TORA_LINK_OTHERS@)
 
 if HAVE_ORACLE
 EXTRA_ORACLE_MONO_SOURCE = tooracleconnection.cpp tooraclesetting.h \
