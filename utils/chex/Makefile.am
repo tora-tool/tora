@@ -1,2 +1,2 @@
-bin_PROGRAMS = chex
+noinst_PROGRAMS = chex
 chex_SOURCES = chex.cpp
