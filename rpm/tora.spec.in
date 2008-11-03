@@ -13,7 +13,7 @@
 # filter out oracle libraries because oracle-instantclient rpm doesn't provide them
 %define _use_internal_dependency_generator 0
 %{expand:%global __orig__find_requires %{__find_requires}}
-%define __find_requires  rpm/tora_filter_requires.sh %{__orig__find_requires}
+%define __find_requires  %{_builddir}/%{?buildsubdir}/rpm/tora_filter_requires.sh %{__orig__find_requires}
 
 
 
