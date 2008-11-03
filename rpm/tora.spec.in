@@ -72,11 +72,19 @@ export CFLAGS="$RPM_OPT_FLAGS"
 export CXXFLAGS="$RPM_OPT_FLAGS"
 unset ORACLE_HOME
 
+%define oraincdir /usr/include/oracle
+%define oralibdir /usr/lib/oracle
+%define oraclientdir client
+
+%ifarch x86_64 s390x
+%define oraclientdir client64
+%endif
+
 %{__cmake} \
         -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
         -DWANT_INTERNAL_QSCINTILLA=1 \
-        -DORACLE_PATH_INCLUDES=$(ls -d -1 %{_includedir}/oracle/*/client | tail -n 1) \
-        -DORACLE_PATH_LIB=$(ls -d -1 %{_libdir}/oracle/*/client/lib | tail -n 1) \
+        -DORACLE_PATH_INCLUDES=$(ls -d -1 %{oraincdir}/*/%{oraclientdir} | tail -n 1) \
+        -DORACLE_PATH_LIB=$(ls -d -1 %{oralibdir}/*/%{oraclientdir}/lib | tail -n 1) \
         -DPOSTGRESQL_PATH_INCLUDES=%{_includedir} \
         .
 
