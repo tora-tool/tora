@@ -84,6 +84,9 @@ class toResultTableView : public QTableView,
     // if column headers should be modified to be readable
     bool ReadableColumns;
 
+    // number of visible columns
+    int VisibleColumns;
+
     // if vertical header should be displayed
     bool NumberColumn;
 
@@ -160,6 +163,13 @@ protected:
      *
      */
     virtual void paintEvent(QPaintEvent *event);
+
+
+    /**
+     * Overrides QWidget to resize columns when applicable.
+     *
+     */
+    virtual void resizeEvent(QResizeEvent *event);
 
 signals:
 
