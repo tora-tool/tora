@@ -127,6 +127,7 @@ toResultTableView::toResultTableView(bool readable,
     NumberColumn    = numberColumn;
     ColumnsResized  = false;
     Ready           = false;
+    VisibleColumns  = 0;
 
     Working = new toWorkingWidget(this);
     connect(Working, SIGNAL(stop()), this, SLOT(stop()));
@@ -306,12 +307,18 @@ void toResultTableView::paintEvent(QPaintEvent *event)
 }
 
 
-void toResultTableView::applyColumnRules(void)
+void toResultTableView::resizeEvent(QResizeEvent *event)
+{
+    if(VisibleColumns == 1 && ReadableColumns)
+        setColumnWidth(1, viewport()->width());
+}
+
+
+void toResultTableView::applyColumnRules()
 {
     if (!NumberColumn)
         hideColumn(0);
 
-    int visible = 0;
     if (ReadableColumns)
     {
         // loop through columns and hide anything starting with a ' '
@@ -325,13 +332,16 @@ void toResultTableView::applyColumnRules(void)
                 hideColumn(col);
             }
             else
-                visible++;
+                VisibleColumns++;
         }
     }
 
+    // hiding columns sends signal sectionResized
+    ColumnsResized = false;
+
     resizeColumnsToContents();
 
-    if (visible == 1 && ReadableColumns)
+    if (VisibleColumns == 1 && ReadableColumns)
         setColumnWidth(1, viewport()->width());
 }
 
