@@ -31,7 +31,7 @@ find_library(POSTGRESQL_LIBRARIES NAMES pq libpq
         /usr/lib/
 )
 
-include(FindPackageHandleStandardArgs)
+include(ToraFindPackageHandleStandardArgs)
 find_package_handle_standard_args(PostgreSQL DEFAULT_MSG
                                   POSTGRESQL_INCLUDE_DIR POSTGRESQL_LIBRARIES )
 

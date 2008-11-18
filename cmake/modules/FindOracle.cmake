@@ -70,7 +70,9 @@ ENDIF (ORACLE_LIBRARY)
 # guess OCI version
 IF (NOT DEFINED ORACLE_OCI_VERSION AND UNIX)
     FIND_PROGRAM(AWK awk)
-    SET (sqlplus_version "${ORACLE_HOME}/bin/sqlplus -version | ${AWK} '/Release/ {print $3}'")
+    FIND_PROGRAM(SQLPLUS sqlplus PATHS ENV ORACLE_HOME NO_DEFAULT_PATH)
+    FIND_PROGRAM(SQLPLUS sqlplus)
+    SET (sqlplus_version "${SQLPLUS} -version | ${AWK} '/Release/ {print $3}'")
     EXEC_PROGRAM(${sqlplus_version} OUTPUT_VARIABLE sqlplus_out)
     MESSAGE(STATUS "found sqlplus version: ${sqlplus_out}")
 

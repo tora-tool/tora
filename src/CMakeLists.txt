@@ -1,3 +1,5 @@
+INCLUDE(ToraCompat)
+
 #Subdirectories
 # ADD_SUBDIRECTORY(i18n)
 ADD_SUBDIRECTORY(loki)
