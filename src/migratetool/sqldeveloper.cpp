@@ -142,10 +142,8 @@ QMap<int,toConnectionOptions> sqlDeveloper(QWidget * parent)
 //                     qDebug() << "hostname" << val;
                 // "password"
                 // "SavePassword"
-//                 else if (attr == "customUrl")
-//                     qDebug() << "customUrl" << val;
-//                 else
-//                     qDebug() << "Skipped" << attr << val;
+                else if (attr == "customUrl" && opt.database.isEmpty())
+                    opt.database = val;
             }
         }
     }
