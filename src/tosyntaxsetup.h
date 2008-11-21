@@ -88,6 +88,7 @@ public slots:
         Example->setSyntaxColoring(val);
         Example->update();
     }
+    void openEditorShortcutsDialog();
 };
 
 #endif

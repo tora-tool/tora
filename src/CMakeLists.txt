@@ -66,6 +66,8 @@ SET(TORA_UI_SRC
     totuningoverviewui.ui
     totuningsettingui.ui
     toworksheetsetupui.ui
+    # shortcuteditor
+    shortcuteditor/shortcuteditordialog.ui
 )
 IF (ORACLE_FOUND)
     LIST (APPEND TORA_UI_SRC tooraclesettingui.ui)
@@ -211,6 +213,9 @@ SET(TORA_MOC_CLASSES
 #     toworksheettext.h
     toworksheetwidget.h
     utils.h
+# shortcuteditor
+    shortcuteditor/shortcuteditordialog.h
+    shortcuteditor/shortcutmodel.h
 )
 IF (ORACLE_FOUND)
     LIST(APPEND TORA_MOC_CLASSES tooraclesetting.h)
@@ -360,6 +365,9 @@ SET(TORA_SOURCES
     migratetool/sqldeveloper.cpp
     migratetool/squirrelsql.cpp
     migratetool/tora3.cpp
+    # shortcuteditor
+    shortcuteditor/shortcuteditordialog.cpp
+    shortcuteditor/shortcutmodel.cpp
 )
 # compiled in icons for windows
 IF (WIN32 AND MSVC)

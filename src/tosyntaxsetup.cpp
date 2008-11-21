@@ -44,6 +44,7 @@
 #include "toconf.h"
 #include "tohighlightedtext.h"
 #include "tosyntaxsetup.h"
+#include "shortcuteditor/shortcuteditordialog.h"
 
 #include <stdio.h>
 
@@ -74,6 +75,9 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     KeywordUpper->setChecked(toConfigurationSingle::Instance().keywordUpper());
     SyntaxHighlighting->setChecked(toConfigurationSingle::Instance().highlight());
     CodeCompletion->setChecked(toConfigurationSingle::Instance().codeCompletion());
+    EditorShortcuts->setChecked(toConfigurationSingle::Instance().useEditorShortcuts());
+    connect(EditorShortcutsEdit, SIGNAL(clicked()),
+             this, SLOT(openEditorShortcutsDialog()));
     CompletionSort->setChecked(toConfigurationSingle::Instance().completionSort());
     AutoIndent->setChecked(toConfigurationSingle::Instance().autoIndent());
     Extensions->setText(toConfigurationSingle::Instance().extensions());
@@ -278,6 +282,12 @@ void toSyntaxSetup::selectResultFont(void)
     }
 }
 
+void toSyntaxSetup::openEditorShortcutsDialog()
+{
+    ShortcutEditorDialog dia(this);
+    dia.exec();
+}
+
 QString toSyntaxSetup::color()
 {
     QString t = Current->text();
@@ -334,6 +344,7 @@ void toSyntaxSetup::saveSetting(void)
     toConfigurationSingle::Instance().setKeywordUpper(KeywordUpper->isChecked());
     toConfigurationSingle::Instance().setCodeCompletion(highlight && CodeCompletion->isChecked());
     toConfigurationSingle::Instance().setCodeCompletionSort(CompletionSort->isChecked());
+    toConfigurationSingle::Instance().setUseEditorShortcuts(EditorShortcuts->isChecked());
     toConfigurationSingle::Instance().setAutoIndent(AutoIndent->isChecked());
     toMarkedText::setDefaultTabWidth(TabStop->value());
     toConfigurationSingle::Instance().setTabStop(toMarkedText::defaultTabWidth());

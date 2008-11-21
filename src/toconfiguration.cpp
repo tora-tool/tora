@@ -227,6 +227,18 @@ toConfiguration::toConfiguration()
     // mainwindow's toolbars etc
     m_mainWindowState = s.value("state").toByteArray();
     s.endGroup();
+
+    // editor shortcuts
+    s.beginGroup("editorShortcuts");
+    m_useEditorShortcuts = s.value("useEditorShortcuts", false).toBool();
+    cnt = s.beginReadArray("shortcuts");
+    for (int i = 0; i < cnt; ++i)
+    {
+        s.setArrayIndex(i);
+        m_editorShortcuts[s.value("key").toString()] = s.value("value");
+    }
+    s.endArray();
+    s.endGroup();
 }
 
 toConfiguration::~toConfiguration()
@@ -431,6 +443,20 @@ void toConfiguration::saveConfig()
     s.setValue("geometry", m_mainWindowGeometry);
     // mainwindow's toolbars etc
     s.setValue("state", m_mainWindowState);
+    s.endGroup();
+
+    // editor shortcuts
+    s.beginGroup("editorShortcuts");
+    s.setValue("useEditorShortcuts", m_useEditorShortcuts);
+    s.beginWriteArray("shortcuts");
+    for (int i = 0; i < m_editorShortcuts.count(); ++i)
+    {
+        s.setArrayIndex(i);
+        key = m_editorShortcuts.keys().at(i);
+        s.setValue("key", key);
+        s.setValue("value", m_editorShortcuts[key]);
+    }
+    s.endArray();
     s.endGroup();
 }
 

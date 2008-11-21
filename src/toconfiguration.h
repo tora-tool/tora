@@ -17,6 +17,8 @@ typedef QMap<QString, QString> ChartsMap;
 typedef QMapIterator<QString, QString> ChartsMapIterator;
 typedef QMap<QString, QString> TemplatesMap;
 typedef QMapIterator<QString, QString> TemplatesMapIterator;
+typedef QMap<QString,QVariant> EditorShortcutsMap;
+typedef QMapIterator<QString, QVariant> EditorShortcutsMapIterator;
 
 
 class toConfiguration
@@ -1154,6 +1156,13 @@ public:
     QByteArray mainWindowState() { return m_mainWindowState; };
     void setMainWindowState(QByteArray v) { m_mainWindowState = v; };
 
+    // shortcut editor
+    bool useEditorShortcuts() { return m_useEditorShortcuts; };
+    void setUseEditorShortcuts(bool v) { m_useEditorShortcuts = v; };
+    EditorShortcutsMap editorShortcuts() { return m_editorShortcuts; };
+    void setEditorShortcuts(const EditorShortcutsMap & v) { m_editorShortcuts = v; };
+
+
 private:
     QString m_provider;
     bool m_savePassword;
@@ -1320,6 +1329,10 @@ private:
     // mainwindow size
     QByteArray m_mainWindowGeometry;
     QByteArray m_mainWindowState;
+
+    // shortcut editor
+    bool m_useEditorShortcuts;
+    EditorShortcutsMap m_editorShortcuts;
 };
 
 typedef Loki::SingletonHolder<toConfiguration> toConfigurationSingle;

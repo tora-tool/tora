@@ -180,6 +180,8 @@ tora_SOURCES=main.cpp \
 	migratetool/sqldeveloper.cpp migratetool/sqldeveloper.h \
 	migratetool/squirrelsql.cpp migratetool/squirrelsql.h \
 	migratetool/tora3.cpp migratetool/tora3.h \
+	shortcuteditor/shortcuteditordialog.cpp shortcuteditor/shortcuteditordialog.h \
+	shortcuteditor/shortcutmodel.cpp shortcuteditor/shortcutmodel.h \
 	$(EXTRA_ORACLE_MONO_SOURCE) \
 	$(LOKIDIR_SRC)/SmallObj.cpp \
 	$(LOKIDIR_SRC)/Singleton.cpp \
@@ -231,7 +233,8 @@ UI_FILES = toaboutui.ui \
 		tonewconnectionui.ui \
 		tostorageprefsui.ui \
 		todroptablespaceui.ui \
-		toscriptschemawidgetui.ui
+		toscriptschemawidgetui.ui \
+		shortcuteditor/shortcuteditordialog.ui
 
 
 EXTRA_DIST = icons \

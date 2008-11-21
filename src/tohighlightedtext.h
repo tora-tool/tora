@@ -242,6 +242,8 @@ protected:
     int errorMarker;
     toComplPopup* popup;
 
+    virtual void keyPressEvent(QKeyEvent * e);
+
 public:
     friend class toComplPopup;
 
