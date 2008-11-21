@@ -70,11 +70,13 @@ toCodeModel::toCodeModel(QObject *parent) : QAbstractItemModel(parent), query(0)
     rootItem    = new QTreeWidgetItem();
     packageItem = new QTreeWidgetItem(rootItem);
     procItem    = new QTreeWidgetItem(rootItem);
+    funcItem    = new QTreeWidgetItem(rootItem);
     typeItem    = new QTreeWidgetItem(rootItem);
 
     rootItem->setText(0, tr("Code"));
     packageItem->setText(0, tr("Package"));
     procItem->setText(0, tr("Procedure"));
+    funcItem->setText(0, tr("Function"));
     typeItem->setText(0, tr("Type"));
 }
 
@@ -163,8 +165,10 @@ QModelIndex toCodeModel::parent(const QModelIndex &index) const
         return createIndex(1, 0, parentItem);
     if (parentItem == procItem)
         return createIndex(2, 0, parentItem);
-    if (parentItem == typeItem)
+    if (parentItem == funcItem)
         return createIndex(3, 0, parentItem);
+    if (parentItem == typeItem)
+        return createIndex(4, 0, parentItem);
 
     return QModelIndex();
 }
@@ -197,11 +201,13 @@ void toCodeModel::refresh(toConnection &conn, const QString &owner)
 
     packageItem = new QTreeWidgetItem(rootItem);
     procItem = new QTreeWidgetItem(rootItem);
+	funcItem = new QTreeWidgetItem(rootItem);
     typeItem = new QTreeWidgetItem(rootItem);
 
     rootItem->setText(0, tr("Code"));
     packageItem->setText(0, tr("Package"));
     procItem->setText(0, tr("Procedure"));
+    funcItem->setText(0, tr("Function"));
     typeItem->setText(0, tr("Type"));
 
     toQList param;
@@ -259,12 +265,12 @@ void toCodeModel::readData()
         QString ctype = query->readValueNull().toString();
 
         QTreeWidgetItem *item = 0;
-        if(ctype == QString("FUNCTION"))
-            item = new QTreeWidgetItem(procItem);
-        else if(ctype == QString("PACKAGE"))
+        if(ctype == QString("PACKAGE"))
             item = new QTreeWidgetItem(packageItem);
         else if(ctype == QString("PROCEDURE"))
             item = new QTreeWidgetItem(procItem);
+        else if (ctype == QString("FUNCTION"))
+            item = new QTreeWidgetItem(funcItem);
         else if(ctype == QString("TYPE"))
             item = new QTreeWidgetItem(typeItem);
 

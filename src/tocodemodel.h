@@ -91,6 +91,7 @@ private:
     QTreeWidgetItem *rootItem;
     QTreeWidgetItem *packageItem;
     QTreeWidgetItem *procItem;
+    QTreeWidgetItem *funcItem;
     QTreeWidgetItem *typeItem;
     toEventQuery    *query;
 };
