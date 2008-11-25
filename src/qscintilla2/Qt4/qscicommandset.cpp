@@ -1,23 +1,36 @@
 // This module implements the QsciCommandSet class.
 //
-// Copyright (c) 2007
-// 	Phil Thompson <phil@river-bank.demon.co.uk>
+// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This copy of QScintilla is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2, or (at your option) any
-// later version.
+// This file may be used under the terms of the GNU General Public
+// License versions 2.0 or 3.0 as published by the Free Software
+// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
+// included in the packaging of this file.  Alternatively you may (at
+// your option) use any later version of the GNU General Public
+// License if such license has been publicly approved by Riverbank
+// Computing Limited (or its successors, if any) and the KDE Free Qt
+// Foundation. In addition, as a special exception, Riverbank gives you
+// certain additional rights. These rights are described in the Riverbank
+// GPL Exception version 1.1, which can be found in the file
+// GPL_EXCEPTION.txt in this package.
 // 
-// QScintilla is supplied in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-// details.
+// Please review the following information to ensure GNU General
+// Public Licensing requirements will be met:
+// http://trolltech.com/products/qt/licenses/licensing/opensource/. If
+// you are unsure which license is appropriate for your use, please
+// review the following information:
+// http://trolltech.com/products/qt/licenses/licensing/licensingoverview
+// or contact the sales department at sales@riverbankcomputing.com.
 // 
-// You should have received a copy of the GNU General Public License along with
-// QScintilla; see the file LICENSE.  If not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
+// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
+// granted herein.
+// 
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
 #include "Qsci/qscicommandset.h"
@@ -569,6 +582,13 @@ QsciCommandSet::QsciCommandSet(QsciScintilla *qs) : qsci(qs)
 
     // Clear the default map.
     qsci->SendScintilla(QsciScintillaBase::SCI_CLEARALLCMDKEYS);
+
+    // By default control characters don't do anything (rather than insert the
+    // control character into the text).
+    for (int k = 'A'; k <= 'Z'; ++k)
+        qsci->SendScintilla(QsciScintillaBase::SCI_ASSIGNCMDKEY,
+                k + (QsciScintillaBase::SCMOD_CTRL << 16),
+                QsciScintillaBase::SCI_NULL);
 
     for (int i = 0; i < sizeof (cmd_table) / sizeof (cmd_table[0]); ++i)
         cmds.append(new QsciCommand(qsci, cmd_table[i].msg, cmd_table[i].key,

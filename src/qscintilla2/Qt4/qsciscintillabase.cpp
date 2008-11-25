@@ -1,23 +1,36 @@
 // This module implements the "official" low-level API.
 //
-// Copyright (c) 2007
-// 	Phil Thompson <phil@river-bank.demon.co.uk>
+// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This copy of QScintilla is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2, or (at your option) any
-// later version.
+// This file may be used under the terms of the GNU General Public
+// License versions 2.0 or 3.0 as published by the Free Software
+// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
+// included in the packaging of this file.  Alternatively you may (at
+// your option) use any later version of the GNU General Public
+// License if such license has been publicly approved by Riverbank
+// Computing Limited (or its successors, if any) and the KDE Free Qt
+// Foundation. In addition, as a special exception, Riverbank gives you
+// certain additional rights. These rights are described in the Riverbank
+// GPL Exception version 1.1, which can be found in the file
+// GPL_EXCEPTION.txt in this package.
 // 
-// QScintilla is supplied in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-// details.
+// Please review the following information to ensure GNU General
+// Public Licensing requirements will be met:
+// http://trolltech.com/products/qt/licenses/licensing/opensource/. If
+// you are unsure which license is appropriate for your use, please
+// review the following information:
+// http://trolltech.com/products/qt/licenses/licensing/licensingoverview
+// or contact the sales department at sales@riverbankcomputing.com.
 // 
-// You should have received a copy of the GNU General Public License along with
-// QScintilla; see the file LICENSE.  If not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
+// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
+// granted herein.
+// 
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
 #include "Qsci/qsciscintillabase.h"
@@ -90,6 +103,7 @@ QsciScintillaBase::QsciScintillaBase(QWidget *parent)
 
     viewport()->setBackgroundRole(QPalette::Base);
     viewport()->setMouseTracking(true);
+    viewport()->setAttribute(Qt::WA_NoSystemBackground);
 
     triple_click.setSingleShot(true);
 
@@ -140,8 +154,57 @@ long QsciScintillaBase::SendScintilla(unsigned int msg, unsigned long wParam,
 }
 
 
-// Send a message to the real Scintilla widget that needs a TextRange
-// structure.
+// Overloaded message send.
+long QsciScintillaBase::SendScintilla(unsigned int msg, unsigned long wParam,
+        void *lParam) const
+{
+    return sci->WndProc(msg, wParam, reinterpret_cast<sptr_t>(lParam));
+}
+
+
+// Overloaded message send.
+long QsciScintillaBase::SendScintilla(unsigned int msg, unsigned long wParam,
+        const char *lParam) const
+{
+    return sci->WndProc(msg, wParam, reinterpret_cast<sptr_t>(lParam));
+}
+
+
+// Overloaded message send.
+long QsciScintillaBase::SendScintilla(unsigned int msg,
+        const char *lParam) const
+{
+    return sci->WndProc(msg, static_cast<uptr_t>(0),
+            reinterpret_cast<sptr_t>(lParam));
+}
+
+
+// Overloaded message send.
+long QsciScintillaBase::SendScintilla(unsigned int msg, const char *wParam,
+        const char *lParam) const
+{
+    return sci->WndProc(msg, reinterpret_cast<uptr_t>(wParam),
+            reinterpret_cast<sptr_t>(lParam));
+}
+
+
+// Overloaded message send.
+long QsciScintillaBase::SendScintilla(unsigned int msg, long wParam) const
+{
+    return sci->WndProc(msg, static_cast<uptr_t>(wParam),
+            static_cast<sptr_t>(0));
+}
+
+
+// Overloaded message send.
+long QsciScintillaBase::SendScintilla(unsigned int msg, int wParam) const
+{
+    return sci->WndProc(msg, static_cast<uptr_t>(wParam),
+            static_cast<sptr_t>(0));
+}
+
+
+// Overloaded message send.
 long QsciScintillaBase::SendScintilla(unsigned int msg, long cpMin, long cpMax,
         char *lpstrText) const
 {
@@ -151,12 +214,31 @@ long QsciScintillaBase::SendScintilla(unsigned int msg, long cpMin, long cpMax,
     tr.chrg.cpMax = cpMax;
     tr.lpstrText = lpstrText;
 
-    return sci->WndProc(msg, 0, reinterpret_cast<long>(&tr));
+    return sci->WndProc(msg, static_cast<uptr_t>(0),
+            reinterpret_cast<sptr_t>(&tr));
 }
 
 
-// Send a message to the real Scintilla widget that needs a RangeToFormat
-// structure.
+// Overloaded message send.
+long QsciScintillaBase::SendScintilla(unsigned int msg, unsigned long wParam,
+        const QColor &col) const
+{
+    sptr_t lParam = (col.blue() << 16) | (col.green() << 8) | col.red();
+
+    return sci->WndProc(msg, wParam, lParam);
+}
+
+
+// Overloaded message send.
+long QsciScintillaBase::SendScintilla(unsigned int msg, const QColor &col) const
+{
+    uptr_t wParam = (col.blue() << 16) | (col.green() << 8) | col.red();
+
+    return sci->WndProc(msg, wParam, static_cast<sptr_t>(0));
+}
+
+
+// Overloaded message send.
 long QsciScintillaBase::SendScintilla(unsigned int msg, unsigned long wParam,
         QPainter *hdc, const QRect &rc, long cpMin, long cpMax) const
 {
@@ -172,26 +254,24 @@ long QsciScintillaBase::SendScintilla(unsigned int msg, unsigned long wParam,
     rf.chrg.cpMin = cpMin;
     rf.chrg.cpMax = cpMax;
 
-    return sci->WndProc(msg, wParam, reinterpret_cast<long>(&rf));
+    return sci->WndProc(msg, wParam, reinterpret_cast<sptr_t>(&rf));
 }
 
 
-// Send a message to the real Scintilla widget that needs a colour.
+// Overloaded message send.
 long QsciScintillaBase::SendScintilla(unsigned int msg, unsigned long wParam,
-        const QColor &col) const
+        const QPixmap &lParam) const
 {
-    long lParam = (col.blue() << 16) | (col.green() << 8) | col.red();
-
-    return sci->WndProc(msg, wParam, lParam);
+    return sci->WndProc(msg, wParam, reinterpret_cast<sptr_t>(&lParam));
 }
 
 
-// Send a message to the real Scintilla widget that needs a colour.
-long QsciScintillaBase::SendScintilla(unsigned int msg, const QColor &col) const
+// Send a message to the real Scintilla widget using the low level Scintilla
+// API that returns a pointer result.
+void *QsciScintillaBase::SendScintillaPtrResult(unsigned int msg) const
 {
-    unsigned long wParam = (col.blue() << 16) | (col.green() << 8) | col.red();
-
-    return sci->WndProc(msg, wParam, 0);
+    return reinterpret_cast<void *>(sci->WndProc(msg, static_cast<uptr_t>(0),
+            static_cast<sptr_t>(0)));
 }
 
 
@@ -219,7 +299,12 @@ void QsciScintillaBase::focusInEvent(QFocusEvent *)
 // Re-implemented to tell the widget it has lost the focus.
 void QsciScintillaBase::focusOutEvent(QFocusEvent *)
 {
-    sci->SetFocusState(false);
+    // If an autocompletion list is being displayed (a Qt::Tool) and it is
+    // clicked on, then we receive this event but the current focus event is 0.
+    // We detect this and don't tell Scintilla as it would immediately destroy
+    // the list.
+    if (qApp->focusWidget())
+        sci->SetFocusState(false);
 }
 
 

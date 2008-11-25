@@ -89,12 +89,16 @@ static void ColorizeHaskellDoc(unsigned int startPos, int length, int initStyle,
       else if (sc.state == SCE_HA_STRING) {
          if (sc.ch == '\"') {
             sc.ForwardSetState(SCE_HA_DEFAULT);
+         } else if (sc.ch == '\\') {
+            sc.Forward();
          }
       }
          // Char
       else if (sc.state == SCE_HA_CHARACTER) {
          if (sc.ch == '\'') {
             sc.ForwardSetState(SCE_HA_DEFAULT);
+         } else if (sc.ch == '\\') {
+            sc.Forward();
          }
       }
          // Number
@@ -175,6 +179,9 @@ static void ColorizeHaskellDoc(unsigned int startPos, int length, int initStyle,
          // Digit
          if (IsADigit(sc.ch) || (sc.ch == '.' && IsADigit(sc.chNext))) {
             sc.SetState(SCE_HA_NUMBER);
+            if (sc.ch == '0' && (sc.chNext == 'X' || sc.chNext == 'x')) { // Match anything starting with "0x" or "0X", too
+               sc.Forward(1);
+            }
          }
          // Comment line
          else if (sc.Match("--")) {
@@ -189,7 +196,7 @@ static void ColorizeHaskellDoc(unsigned int startPos, int length, int initStyle,
             sc.SetState(SCE_HA_STRING);
          }
          // Character
-         else if (sc.Match('\'') && IsWhitespace(sc.GetRelative(-1)) ) {
+         else if (sc.Match('\'')) {
             sc.SetState(SCE_HA_CHARACTER);
          }
          // Stringstart

@@ -1,23 +1,36 @@
 // This module implements the portability layer for the Qt port of Scintilla.
 //
-// Copyright (c) 2007
-// 	Phil Thompson <phil@river-bank.demon.co.uk>
+// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This copy of QScintilla is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2, or (at your option) any
-// later version.
+// This file may be used under the terms of the GNU General Public
+// License versions 2.0 or 3.0 as published by the Free Software
+// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
+// included in the packaging of this file.  Alternatively you may (at
+// your option) use any later version of the GNU General Public
+// License if such license has been publicly approved by Riverbank
+// Computing Limited (or its successors, if any) and the KDE Free Qt
+// Foundation. In addition, as a special exception, Riverbank gives you
+// certain additional rights. These rights are described in the Riverbank
+// GPL Exception version 1.1, which can be found in the file
+// GPL_EXCEPTION.txt in this package.
 // 
-// QScintilla is supplied in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-// details.
+// Please review the following information to ensure GNU General
+// Public Licensing requirements will be met:
+// http://trolltech.com/products/qt/licenses/licensing/opensource/. If
+// you are unsure which license is appropriate for your use, please
+// review the following information:
+// http://trolltech.com/products/qt/licenses/licensing/licensingoverview
+// or contact the sales department at sales@riverbankcomputing.com.
 // 
-// You should have received a copy of the GNU General Public License along with
-// QScintilla; see the file LICENSE.  If not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
+// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
+// granted herein.
+// 
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
 #include <stdio.h>
@@ -35,6 +48,7 @@
 #include <qcursor.h>
 #include <qlibrary.h>
 
+#include <qdesktopwidget.h>
 #include <qpolygon.h>
 
 #include "Platform.h"
@@ -469,24 +483,32 @@ void SurfaceImpl::MeasureWidths(Font &font_, const char *s, int len,
 {
     QFontMetrics fm = metrics(font_);
     QString qs = convertText(s, len);
-    int totalWidth = 0, ui = 0;
 
-    for (int i = 0; i < qs.length(); ++i)
+    // The position for each byte of a character is the offset from the start
+    // where the following character should be drawn.
+    int i_byte = 0;
+
+    for (int i_char = 0; i_char < qs.length(); ++i_char)
     {
-        totalWidth += fm.width(qs[i]);
+        int width = fm.width(qs, i_char + 1);
 
-        int l = (unicodeMode ? QString(qs[i]).toUtf8().length() : 1);
+        if (unicodeMode)
+        {
+            // Set the same position for each byte of the character.
+            int nbytes = qs.mid(i_char, 1).toUtf8().length();
 
-        while (l--)
-            positions[ui++] = totalWidth;
+            while (nbytes--)
+                positions[i_byte++] = width;
+        }
+        else
+            positions[i_byte++] = width;
     }
 }
 
 int SurfaceImpl::WidthText(Font &font_, const char *s, int len)
 {
-    QString qs = convertText(s, len);
+    return metrics(font_).width(convertText(s, len));
 
-    return metrics(font_).width(qs, qs.length());
 }
 
 int SurfaceImpl::WidthChar(Font &font_, char ch)
@@ -717,6 +739,16 @@ void Window::SetTitle(const char *s)
 }
 
 
+PRectangle Window::GetMonitorRect(Point pt)
+{
+    QPoint qpt = PWindow(id)->mapToGlobal(QPoint(pt.x, pt.y));
+    QRect qr = QApplication::desktop()->availableGeometry(qpt);
+    qpt = PWindow(id)->mapFromGlobal(qr.topLeft());
+
+    return PRectangle(qpt.x(), qpt.y(), qpt.x() + qr.width(), qpt.y() + qr.height());
+}
+
+
 // Menu management.
 Menu::Menu() : id(0)
 {
@@ -853,17 +885,6 @@ bool Platform::MouseButtonBounce()
     return true;
 }
 
-#if defined(__APPLE__)
-bool Platform::WaitMouseMoved(Point pt)
-{
-    // For the moment don't call ::WaitMouseMoved() and see if anybody
-    // complains.  If we need it then we will need to define SCI_NAMESPACE.
-    // However the proper solution would be to use QApplication's
-    // startDragTime() and startDragDistance() for all platforms.
-    return true;
-}
-#endif
-
 void Platform::DebugDisplay(const char *s)
 {
     qDebug("%s", s);
@@ -877,13 +898,15 @@ bool Platform::IsKeyDown(int)
 long Platform::SendScintilla(WindowID w, unsigned int msg,
         unsigned long wParam, long lParam)
 {
-    return static_cast<QsciScintillaBase *>(PWindow(w)->parentWidget())->SendScintilla(msg, wParam, lParam);
+    // This is never called.
+    return 0;
 }
 
 long Platform::SendScintillaPointer(WindowID w, unsigned int msg,
         unsigned long wParam, void *lParam)
 {
-    return static_cast<QsciScintillaBase *>(PWindow(w)->parentWidget())->SendScintilla(msg, wParam, reinterpret_cast<long>(lParam));
+    // This is never called.
+    return 0;
 }
 
 bool Platform::IsDBCSLeadByte(int, char)

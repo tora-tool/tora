@@ -46,6 +46,14 @@ Qt4/Qsci/qsciscintillabase.h
 #Qt4/ListBoxQt.h
 Qt4/SciClasses.h
 #Qt4/ScintillaQt.h
+Qt4/Qsci/qscilexeryaml.h
+Qt4/Qsci/qscilexerxml.h
+Qt4/Qsci/qscilexertcl.h
+Qt4/Qsci/qscilexerpostscript.h
+Qt4/Qsci/qscilexerpascal.h
+Qt4/Qsci/qscilexerfortran77.h
+Qt4/Qsci/qscilexerfortran.h
+Qt4/Qsci/qsciabstractapis.h
 )
 
 SET(TORA_QSCINTILLA2_LIB_SOURCES
@@ -102,6 +110,14 @@ Qt4/qscimacro.cpp
 Qt4/qsciprinter.cpp
 Qt4/qsciscintilla.cpp
 Qt4/qsciscintillabase.cpp
+Qt4/qscilexeryaml.cpp
+Qt4/qscilexerxml.cpp
+Qt4/qscilexertcl.cpp
+Qt4/qscilexerpostscript.cpp
+Qt4/qscilexerpascal.cpp
+Qt4/qscilexerfortran77.cpp
+Qt4/qscilexerfortran.cpp
+Qt4/qsciabstractapis.cpp
 
 src/AutoComplete.cpp
 src/AutoComplete.h
@@ -221,7 +237,12 @@ src/ViewStyle.h
 src/WindowAccessor.cpp
 src/XPM.cpp
 src/XPM.h
-
+src/LexAbaqus.cpp
+src/LexASY.cpp
+src/LexR.cpp
+src/LexPowerShell.cpp
+src/LexMySQL.cpp
+src/LexMagik.cpp
 )
 
 QT4_WRAP_CPP(TORA_QSCINTILLA2_MOC_SOURCES ${TORA_QSCINTILLA2_MOC_CLASSES})

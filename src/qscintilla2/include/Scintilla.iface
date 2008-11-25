@@ -104,7 +104,7 @@ fun void ClearAll=2004(,)
 # Set all style bytes to 0, remove all folding information.
 fun void ClearDocumentStyle=2005(,)
 
-# Returns the number of characters in the document.
+# Returns the number of bytes in the document.
 get int GetLength=2006(,)
 
 # Returns the character byte at the position.
@@ -268,6 +268,7 @@ val SC_MARK_DOTDOTDOT=23
 val SC_MARK_ARROWS=24
 val SC_MARK_PIXMAP=25
 val SC_MARK_FULLRECT=26
+val SC_MARK_LEFTRECT=27
 
 val SC_MARK_CHARACTER=10000
 
@@ -360,7 +361,7 @@ val STYLE_CONTROLCHAR=36
 val STYLE_INDENTGUIDE=37
 val STYLE_CALLTIP=38
 val STYLE_LASTPREDEFINED=39
-val STYLE_MAX=127
+val STYLE_MAX=255
 
 # Character set identifiers are used in StyleSetCharacterSet.
 # The values are the same as the Windows *_CHARSET values.
@@ -515,7 +516,7 @@ get int GetCaretPeriod=2075(,)
 set void SetCaretPeriod=2076(int periodMilliseconds,)
 
 # Set the set of characters making up words for when moving or selecting by word.
-# First sets deaults like SetCharsDefault.
+# First sets defaults like SetCharsDefault.
 set void SetWordChars=2077(, string characters)
 
 # Start a sequence of actions that is undone and redone as a unit.
@@ -727,11 +728,17 @@ set void SetHScrollBar=2130(bool show,)
 # Is the horizontal scroll bar visible?
 get bool GetHScrollBar=2131(,)
 
+enu IndentView=SC_IV_
+val SC_IV_NONE=0
+val SC_IV_REAL=1
+val SC_IV_LOOKFORWARD=2
+val SC_IV_LOOKBOTH=3
+
 # Show or hide indentation guides.
-set void SetIndentationGuides=2132(bool show,)
+set void SetIndentationGuides=2132(int indentView,)
 
 # Are the indentation guides visible?
-get bool GetIndentationGuides=2133(,)
+get int GetIndentationGuides=2133(,)
 
 # Set the highlighted indentation guide column.
 # 0 = no highlighted guide.
@@ -1143,6 +1150,12 @@ set void SetScrollWidth=2274(int pixelWidth,)
 # Retrieve the document width assumed for scrolling.
 get int GetScrollWidth=2275(,)
 
+# Sets whether the maximum width line displayed is used to set scroll width.
+set void SetScrollWidthTracking=2516(bool tracking,)
+
+# Retrieve whether the scroll width tracks wide lines.
+get bool GetScrollWidthTracking=2517(,)
+
 # Measure the pixel width of some text in a particular style.
 # NUL terminated text argument.
 # Does not handle tab or control characters.
@@ -1305,6 +1318,9 @@ fun void DelWordLeft=2335(,)
 
 # Delete the word to the right of the caret.
 fun void DelWordRight=2336(,)
+
+# Delete the word to the right of the caret, but not the trailing non-word characters.
+fun void DelWordRightEnd=2518(,)
 
 # Cut the line containing the caret.
 fun void LineCut=2337(,)
@@ -1520,7 +1536,7 @@ fun void ChooseCaretX=2399(,)
 # Set the focus to this Scintilla widget.
 fun void GrabFocus=2400(,)
 
-enu CaretPolicy = CARET_
+enu CaretPolicy=CARET_
 # Caret policy, used by SetXCaretPolicy and SetYCaretPolicy.
 # If CARET_SLOP is set, we can define a slop value: caretSlop.
 # This value defines an unwanted zone (UZ) where the caret is... unwanted.
@@ -1781,6 +1797,19 @@ set void SetPositionCache=2514(int size,)
 # How many entries are allocated to the position cache?
 get int GetPositionCache=2515(,)
 
+# Copy the selection, if selection empty copy the line with the caret
+fun void CopyAllowLine=2519(,)
+
+# Compact the document buffer and return a read-only pointer to the
+# characters in the document.
+get int GetCharacterPointer=2520(,)
+
+# Always interpret keyboard input as Unicode
+set void SetKeysUnicode=2521(bool keysUnicode,)
+
+# Are keys always interpreted as Unicode?
+get bool GetKeysUnicode=2522(,)
+
 # Start notifying the container of all key presses and commands.
 fun void StartRecord=3001(,)
 
@@ -1845,7 +1874,8 @@ val SC_MOD_BEFOREDELETE=0x800
 val SC_MULTILINEUNDOREDO=0x1000
 val SC_STARTACTION=0x2000
 val SC_MOD_CHANGEINDICATOR=0x4000
-val SC_MODEVENTMASKALL=0x6FFF
+val SC_MOD_CHANGELINESTATE=0x8000
+val SC_MODEVENTMASKALL=0xFFFF
 
 # For compatibility, these go through the COMMAND notification rather than NOTIFY
 # and should have had exactly the same values as the EN_* constants.
@@ -1972,6 +2002,13 @@ val SCLEX_CMAKE=80
 val SCLEX_GAP=81
 val SCLEX_PLM=82
 val SCLEX_PROGRESS=83
+val SCLEX_ABAQUS=84
+val SCLEX_ASYMPTOTE=85
+val SCLEX_R=86
+val SCLEX_MAGIK=87
+val SCLEX_POWERSHELL=88
+val SCLEX_MYSQL=89
+val SCLEX_PO=90
 
 # When a lexer specifies its language as SCLEX_AUTOMATIC it receives a
 # value assigned in sequence from SCLEX_AUTOMATIC+1.
@@ -2224,6 +2261,9 @@ val SCE_PL_STRING_QX=28
 val SCE_PL_STRING_QR=29
 val SCE_PL_STRING_QW=30
 val SCE_PL_POD_VERB=31
+val SCE_PL_SUB_PROTOTYPE=40
+val SCE_PL_FORMAT_IDENT=41
+val SCE_PL_FORMAT=42
 # Lexical states for SCLEX_RUBY
 lex Ruby=SCLEX_RUBY SCE_RB_
 val SCE_RB_DEFAULT=0
@@ -2343,6 +2383,7 @@ val SCE_ERR_IFORT=17
 val SCE_ERR_ABSF=18
 val SCE_ERR_TIDY=19
 val SCE_ERR_JAVA_STACK=20
+val SCE_ERR_VALUE=21
 # Lexical states for SCLEX_BATCH
 lex Batch=SCLEX_BATCH SCE_BAT_
 val SCE_BAT_DEFAULT=0
@@ -2371,6 +2412,7 @@ val SCE_DIFF_HEADER=3
 val SCE_DIFF_POSITION=4
 val SCE_DIFF_DELETED=5
 val SCE_DIFF_ADDED=6
+val SCE_DIFF_CHANGED=7
 # Lexical states for SCLEX_CONF (Apache Configuration Files Lexer)
 lex Conf=SCLEX_CONF SCE_CONF_
 val SCE_CONF_DEFAULT=0
@@ -2564,6 +2606,11 @@ val SCE_CSS_DOUBLESTRING=13
 val SCE_CSS_SINGLESTRING=14
 val SCE_CSS_IDENTIFIER2=15
 val SCE_CSS_ATTRIBUTE=16
+val SCE_CSS_IDENTIFIER3=17
+val SCE_CSS_PSEUDOELEMENT=18
+val SCE_CSS_EXTENDED_IDENTIFIER=19
+val SCE_CSS_EXTENDED_PSEUDOCLASS=20
+val SCE_CSS_EXTENDED_PSEUDOELEMENT=21
 # Lexical states for SCLEX_POV
 lex POV=SCLEX_POV SCE_POV_
 val SCE_POV_DEFAULT=0
@@ -2708,6 +2755,7 @@ val SCE_YAML_REFERENCE=5
 val SCE_YAML_DOCUMENT=6
 val SCE_YAML_TEXT=7
 val SCE_YAML_ERROR=8
+val SCE_YAML_OPERATOR=9
 # Lexical states for SCLEX_TEX
 lex TeX=SCLEX_TEX SCE_TEX_
 val SCE_TEX_DEFAULT=0
@@ -3155,6 +3203,7 @@ val SCE_PLM_IDENTIFIER=4
 val SCE_PLM_OPERATOR=5
 val SCE_PLM_CONTROL=6
 val SCE_PLM_KEYWORD=7
+# Lexical state for SCLEX_PROGRESS
 lex Progress=SCLEX_PROGRESS SCE_4GL_
 val SCE_4GL_DEFAULT=0
 val SCE_4GL_NUMBER=1
@@ -3188,6 +3237,115 @@ val SCE_4GL_COMMENT3_=28
 val SCE_4GL_COMMENT4_=29
 val SCE_4GL_COMMENT5_=30
 val SCE_4GL_COMMENT6_=31
+# Lexical states for SCLEX_ABAQUS
+lex ABAQUS=SCLEX_ABAQUS SCE_ABAQUS_
+val SCE_ABAQUS_DEFAULT=0
+val SCE_ABAQUS_COMMENT=1
+val SCE_ABAQUS_COMMENTBLOCK=2
+val SCE_ABAQUS_NUMBER=3
+val SCE_ABAQUS_STRING=4
+val SCE_ABAQUS_OPERATOR=5
+val SCE_ABAQUS_WORD=6
+val SCE_ABAQUS_PROCESSOR=7
+val SCE_ABAQUS_COMMAND=8
+val SCE_ABAQUS_SLASHCOMMAND=9
+val SCE_ABAQUS_STARCOMMAND=10
+val SCE_ABAQUS_ARGUMENT=11
+val SCE_ABAQUS_FUNCTION=12
+# Lexical states for SCLEX_ASYMPTOTE
+lex Asymptote=SCLEX_ASYMPTOTE SCE_ASY_
+val SCE_ASY_DEFAULT=0
+val SCE_ASY_COMMENT=1
+val SCE_ASY_COMMENTLINE=2
+val SCE_ASY_NUMBER=3
+val SCE_ASY_WORD=4
+val SCE_ASY_STRING=5
+val SCE_ASY_CHARACTER=6
+val SCE_ASY_OPERATOR=7
+val SCE_ASY_IDENTIFIER=8
+val SCE_ASY_STRINGEOL=9
+val SCE_ASY_COMMENTLINEDOC=10
+val SCE_ASY_WORD2=11
+# Lexical states for SCLEX_R
+lex R=SCLEX_R SCE_R_
+val SCE_R_DEFAULT=0
+val SCE_R_COMMENT=1
+val SCE_R_KWORD=2
+val SCE_R_BASEKWORD=3
+val SCE_R_OTHERKWORD=4
+val SCE_R_NUMBER=5
+val SCE_R_STRING=6
+val SCE_R_STRING2=7
+val SCE_R_OPERATOR=8
+val SCE_R_IDENTIFIER=9
+val SCE_R_INFIX=10
+val SCE_R_INFIXEOL=11
+# Lexical state for SCLEX_MAGIKSF
+lex MagikSF=SCLEX_MAGIKSF SCE_MAGIK_
+val SCE_MAGIK_DEFAULT=0
+val SCE_MAGIK_COMMENT=1
+val SCE_MAGIK_HYPER_COMMENT=16
+val SCE_MAGIK_STRING=2
+val SCE_MAGIK_CHARACTER=3
+val SCE_MAGIK_NUMBER=4
+val SCE_MAGIK_IDENTIFIER=5
+val SCE_MAGIK_OPERATOR=6
+val SCE_MAGIK_FLOW=7
+val SCE_MAGIK_CONTAINER=8
+val SCE_MAGIK_BRACKET_BLOCK=9
+val SCE_MAGIK_BRACE_BLOCK=10
+val SCE_MAGIK_SQBRACKET_BLOCK=11
+val SCE_MAGIK_UNKNOWN_KEYWORD=12
+val SCE_MAGIK_KEYWORD=13
+val SCE_MAGIK_PRAGMA=14
+val SCE_MAGIK_SYMBOL=15
+# Lexical state for SCLEX_POWERSHELL
+lex PowerShell=SCLEX_POWERSHELL SCE_POWERSHELL_
+val SCE_POWERSHELL_DEFAULT=0
+val SCE_POWERSHELL_COMMENT=1
+val SCE_POWERSHELL_STRING=2
+val SCE_POWERSHELL_CHARACTER=3
+val SCE_POWERSHELL_NUMBER=4
+val SCE_POWERSHELL_VARIABLE=5
+val SCE_POWERSHELL_OPERATOR=6
+val SCE_POWERSHELL_IDENTIFIER=7
+val SCE_POWERSHELL_KEYWORD=8
+val SCE_POWERSHELL_CMDLET=9
+val SCE_POWERSHELL_ALIAS=10
+# Lexical state for SCLEX_MYSQL
+lex MySQL=SCLEX_MYSQL SCE_MYSQL_
+val SCE_MYSQL_DEFAULT=0
+val SCE_MYSQL_COMMENT=1
+val SCE_MYSQL_COMMENTLINE=2
+val SCE_MYSQL_VARIABLE=3
+val SCE_MYSQL_SYSTEMVARIABLE=4
+val SCE_MYSQL_KNOWNSYSTEMVARIABLE=5
+val SCE_MYSQL_NUMBER=6
+val SCE_MYSQL_MAJORKEYWORD=7
+val SCE_MYSQL_KEYWORD=8
+val SCE_MYSQL_DATABASEOBJECT=9
+val SCE_MYSQL_PROCEDUREKEYWORD=10
+val SCE_MYSQL_STRING=11
+val SCE_MYSQL_SQSTRING=12
+val SCE_MYSQL_DQSTRING=13
+val SCE_MYSQL_OPERATOR=14
+val SCE_MYSQL_FUNCTION=15
+val SCE_MYSQL_IDENTIFIER=16
+val SCE_MYSQL_QUOTEDIDENTIFIER=17
+val SCE_MYSQL_USER1=18
+val SCE_MYSQL_USER2=19
+val SCE_MYSQL_USER3=20
+# Lexical state for SCLEX_PO
+lex Po=SCLEX_PO SCE_PO_
+val SCE_PO_DEFAULT=0
+val SCE_PO_COMMENT=1
+val SCE_PO_MSGID=2
+val SCE_PO_MSGID_TEXT=3
+val SCE_PO_MSGSTR=4
+val SCE_PO_MSGSTR_TEXT=5
+val SCE_PO_MSGCTXT=6
+val SCE_PO_MSGCTXT_TEXT=7
+val SCE_PO_FUZZY=8
 
 # Events
 
@@ -3216,6 +3374,7 @@ evt void CallTipClick=2021(int position)
 evt void AutoCSelection=2022(string text)
 evt void IndicatorClick=2023(int modifiers, int position)
 evt void IndicatorRelease=2024(int modifiers, int position)
+evt void AutoCCancelled=2025(void)
 
 cat Deprecated
 

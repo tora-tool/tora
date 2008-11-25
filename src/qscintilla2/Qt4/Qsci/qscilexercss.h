@@ -1,29 +1,44 @@
 // This defines the interface to the QsciLexerCSS class.
 //
-// Copyright (c) 2007
-// 	Phil Thompson <phil@river-bank.demon.co.uk>
+// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This copy of QScintilla is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2, or (at your option) any
-// later version.
+// This file may be used under the terms of the GNU General Public
+// License versions 2.0 or 3.0 as published by the Free Software
+// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
+// included in the packaging of this file.  Alternatively you may (at
+// your option) use any later version of the GNU General Public
+// License if such license has been publicly approved by Riverbank
+// Computing Limited (or its successors, if any) and the KDE Free Qt
+// Foundation. In addition, as a special exception, Riverbank gives you
+// certain additional rights. These rights are described in the Riverbank
+// GPL Exception version 1.1, which can be found in the file
+// GPL_EXCEPTION.txt in this package.
 // 
-// QScintilla is supplied in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-// details.
+// Please review the following information to ensure GNU General
+// Public Licensing requirements will be met:
+// http://trolltech.com/products/qt/licenses/licensing/opensource/. If
+// you are unsure which license is appropriate for your use, please
+// review the following information:
+// http://trolltech.com/products/qt/licenses/licensing/licensingoverview
+// or contact the sales department at sales@riverbankcomputing.com.
 // 
-// You should have received a copy of the GNU General Public License along with
-// QScintilla; see the file LICENSE.  If not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
+// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
+// granted herein.
+// 
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
 #ifndef QSCILEXERCSS_H
 #define QSCILEXERCSS_H
 
+#ifdef __APPLE__
 extern "C++" {
+#endif
 
 #include <qobject.h>
 
@@ -49,16 +64,18 @@ public:
         //! A class selector.
         ClassSelector = 2,
 
-        //! A pseudo-class.
+        //! A pseudo class.  The list of pseudo classes is defined by keyword
+        //! set 2.
         PseudoClass = 3,
 
-        //! An pseudo-class.
+        //! An unknown pseudo class.
         UnknownPseudoClass = 4,
 
         //! An operator.
         Operator = 5,
 
-        //! A CSS1 property.
+        //! A CSS1 property.  The list of CSS1 properties is defined by keyword
+        //! set 1.
         CSS1Property = 6,
 
         //! An unknown property.
@@ -85,11 +102,32 @@ public:
         //! A single-quoted string.
         SingleQuotedString = 14,
 
-        //! A CSS2 property.
+        //! A CSS2 property.  The list of CSS2 properties is defined by keyword
+        //! set 3.
         CSS2Property = 15,
 
         //! An attribute.
-        Attribute = 16
+        Attribute = 16,
+
+        //! A CSS3 property.  The list of CSS3 properties is defined by keyword
+        //! set 4.
+        CSS3Property = 17,
+
+        //! A pseudo element.  The list of pseudo elements is defined by
+        //! keyword set 5.
+        PseudoElement = 18,
+
+        //! An extended (browser specific) CSS property.  The list of extended
+        //! CSS properties is defined by keyword set 6.
+        ExtendedCSSProperty = 19,
+
+        //! An extended (browser specific) pseudo class.  The list of extended
+        //! pseudo classes is defined by keyword set 7.
+        ExtendedPseudoClass = 20,
+
+        //! An extended (browser specific) pseudo element.  The list of
+        //! extended pseudo elements is defined by keyword set 8.
+        ExtendedPseudoElement = 21
     };
 
     //! Construct a QsciLexerCSS with parent \a parent.  \a parent is typically
@@ -185,6 +223,8 @@ private:
     QsciLexerCSS &operator=(const QsciLexerCSS &);
 };
 
+#ifdef __APPLE__
 }
+#endif
 
 #endif

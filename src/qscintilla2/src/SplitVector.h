@@ -181,6 +181,14 @@ public:
 			gapLength -= insertLength;
 		}
 	}
+
+	/// Ensure at least length elements allocated, 
+	/// appending zero valued elements if needed.
+	void EnsureLength(int wantedLength) {
+		if (Length() < wantedLength) {
+			InsertValue(Length(), wantedLength - Length(), 0);
+		}
+	}
 	
 	/// Insert text into the buffer from an array.
 	void InsertFromArray(int positionToInsert, const T s[], int positionFrom, int insertLength) {
@@ -230,6 +238,12 @@ public:
 		DeleteRange(0, lengthBody);
 	}
 
+	T* BufferPointer() {
+		RoomFor(1);
+		GapTo(lengthBody);
+		body[lengthBody] = 0;
+		return body;
+	}
 };
 
 #endif

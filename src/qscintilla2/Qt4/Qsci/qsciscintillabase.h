@@ -1,29 +1,44 @@
 // This class defines the "official" low-level API.
 //
-// Copyright (c) 2007
-// 	Phil Thompson <phil@river-bank.demon.co.uk>
+// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This copy of QScintilla is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2, or (at your option) any
-// later version.
+// This file may be used under the terms of the GNU General Public
+// License versions 2.0 or 3.0 as published by the Free Software
+// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
+// included in the packaging of this file.  Alternatively you may (at
+// your option) use any later version of the GNU General Public
+// License if such license has been publicly approved by Riverbank
+// Computing Limited (or its successors, if any) and the KDE Free Qt
+// Foundation. In addition, as a special exception, Riverbank gives you
+// certain additional rights. These rights are described in the Riverbank
+// GPL Exception version 1.1, which can be found in the file
+// GPL_EXCEPTION.txt in this package.
 // 
-// QScintilla is supplied in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-// details.
+// Please review the following information to ensure GNU General
+// Public Licensing requirements will be met:
+// http://trolltech.com/products/qt/licenses/licensing/opensource/. If
+// you are unsure which license is appropriate for your use, please
+// review the following information:
+// http://trolltech.com/products/qt/licenses/licensing/licensingoverview
+// or contact the sales department at sales@riverbankcomputing.com.
 // 
-// You should have received a copy of the GNU General Public License along with
-// QScintilla; see the file LICENSE.  If not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
+// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
+// granted herein.
+// 
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
 #ifndef QSCISCINTILLABASE_H
 #define QSCISCINTILLABASE_H
 
+#ifdef __APPLE__
 extern "C++" {
+#endif
 
 #include <qglobal.h>
 
@@ -1592,6 +1607,29 @@ public:
         SCI_GETPOSITIONCACHE = 2515,
 
         //!
+        SCI_SETSCROLLWIDTHTRACKING = 2516,
+
+        //!
+        SCI_GETSCROLLWIDTHTRACKING = 2517,
+
+        //!
+        SCI_DELWORDRIGHTEND = 2518,
+
+        //! This message copies the selection.  If the selection is empty then
+        //! copy the line with the caret.
+        SCI_COPYALLOWLINE = 2519,
+
+        //! This message returns a pointer to the document text.  Any
+        //! subsequent message will invalidate the pointer.
+        SCI_GETCHARACTERPOINTER = 2520,
+
+        //!
+        SCI_SETKEYSUNICODE = 2521,
+
+        //!
+        SCI_GETKEYSUNICODE = 2522,
+
+        //!
         SCI_STARTRECORD = 3001,
 
         //!
@@ -1776,8 +1814,11 @@ public:
         //! An XPM format pixmap.
         SC_MARK_PIXMAP = 25,
 
-        //! A full rectangle.
+        //! A full rectangle (ie. the margin background).
         SC_MARK_FULLRECT = 26,
+
+        //! A left rectangle (ie. part of the margin background).
+        SC_MARK_LEFTRECT = 27,
 
         //! Characters can be used as symbols by adding this to the ASCII value
         //! of the character.
@@ -1827,7 +1868,7 @@ public:
         STYLE_INDENTGUIDE = 37,
         STYLE_CALLTIP = 38,
         STYLE_LASTPREDEFINED = 39,
-        STYLE_MAX = 127
+        STYLE_MAX = 255
     };
 
     enum
@@ -1859,6 +1900,30 @@ public:
         SC_CASE_MIXED = 0,
         SC_CASE_UPPER = 1,
         SC_CASE_LOWER = 2
+    };
+
+    //! This enum defines the different indentation guide views.
+    //!
+    //! \sa SCI_GETINDENTATIONGUIDES, SCI_SETINDENTATIONGUIDES
+    enum
+    {
+        //! No indentation guides are shown.
+        SC_IV_NONE = 0,
+
+        //! Indentation guides are shown inside real indentation white space.
+        SC_IV_REAL = 1,
+
+        //! Indentation guides are shown beyond the actual indentation up to
+        //! the level of the next non-empty line.  If the previous non-empty
+        //! line was a fold header then indentation guides are shown for one
+        //! more level of indent than that line.  This setting is good for
+        //! Python.
+        SC_IV_LOOKFORWARD = 2,
+
+        //! Indentation guides are shown beyond the actual indentation up to
+        //! the level of the next non-empty line or previous non-empty line
+        //! whichever is the greater.  This setting is good for most languages.
+        SC_IV_LOOKBOTH = 3
     };
 
     enum
@@ -1990,7 +2055,8 @@ public:
         SC_MULTILINEUNDOREDO = 0x1000,
         SC_STARTACTION = 0x2000,
         SC_MOD_CHANGEINDICATOR = 0x4000,
-        SC_MODEVENTMASKALL = 0x6fff
+        SC_MOD_CHANGELINESTATE = 0x8000,
+        SC_MODEVENTMASKALL = 0xffff
     };
 
     enum
@@ -2287,7 +2353,28 @@ public:
         SCLEX_PLM = 82,
 
         //! Select the Progress lexer.
-        SCLEX_PROGRESS = 83
+        SCLEX_PROGRESS = 83,
+
+        //! Select the Abaqus lexer.
+        SCLEX_ABAQUS = 84,
+
+        //! Select the Asymptote lexer.
+        SCLEX_ASYMPTOTE = 85,
+
+        //! Select the R lexer.
+        SCLEX_R = 86,
+
+        //! Select the MagikSF lexer.
+        SCLEX_MAGIK = 87,
+
+        //! Select the PowerShell lexer.
+        SCLEX_POWERSHELL = 88,
+
+        //! Select the MySQL lexer.
+        SCLEX_MYSQL = 89,
+
+        //! Select the gettext .po file lexer.
+        SCLEX_PO = 90
     };
 
     //! Construct an empty QsciScintillaBase with parent \a parent.
@@ -2308,36 +2395,24 @@ public:
 
     //! \overload
     long SendScintilla(unsigned int msg, unsigned long wParam,
-            const char *lParam) const
-    {
-        return SendScintilla(msg, wParam, reinterpret_cast<long>(lParam));
-    }
+            void *lParam) const;
 
     //! \overload
-    long SendScintilla(unsigned int msg, const char *lParam) const
-    {
-        return SendScintilla(msg, 0UL, reinterpret_cast<long>(lParam));
-    }
+    long SendScintilla(unsigned int msg, unsigned long wParam,
+            const char *lParam) const;
+
+    //! \overload
+    long SendScintilla(unsigned int msg, const char *lParam) const;
 
     //! \overload
     long SendScintilla(unsigned int msg, const char *wParam,
-            const char *lParam) const
-    {
-        return SendScintilla(msg, reinterpret_cast<unsigned long>(wParam),
-                reinterpret_cast<long>(lParam));
-    }
+            const char *lParam) const;
 
     //! \overload
-    long SendScintilla(unsigned int msg, long wParam) const
-    {
-        return SendScintilla(msg, static_cast<unsigned long>(wParam), 0L);
-    }
+    long SendScintilla(unsigned int msg, long wParam) const;
 
     //! \overload
-    long SendScintilla(unsigned int msg, int wParam) const
-    {
-        return SendScintilla(msg, static_cast<unsigned long>(wParam), 0L);
-    }
+    long SendScintilla(unsigned int msg, int wParam) const;
 
     //! \overload
     long SendScintilla(unsigned int msg, long cpMin, long cpMax,
@@ -2356,10 +2431,10 @@ public:
 
     //! \overload
     long SendScintilla(unsigned int msg, unsigned long wParam,
-            const QPixmap &lParam) const
-    {
-        return SendScintilla(msg, wParam, reinterpret_cast<long>(&lParam));
-    }
+            const QPixmap &lParam) const;
+
+    //! Send the Scintilla message \a msg and return a pointer result.
+    void *SendScintillaPtrResult(unsigned int msg) const;
 
 
 signals:
@@ -2368,12 +2443,19 @@ signals:
     //! deselected.
     void QSCN_SELCHANGED(bool yes);
 
+    //! This signal is emitted when the user cancels an auto-completion list.
+    //!
+    //! \sa SCN_AUTOCSELECTION()
+    void SCN_AUTOCCANCELLED();
+
     //! This signal is emitted when the user selects an item in an
     //! auto-completion list.  It is emitted before the selection is inserted.
     //! The insertion can be cancelled by sending an SCI_AUTOCANCEL message
     //! from a connected slot.
     //! \a selection is the text of the selection.
     //! \a position is the start position of the word being completed.
+    //!
+    //! \sa SCN_AUTOCCANCELLED()
     void SCN_AUTOCSELECTION(const char *selection, int position);
 
     //! This signal is emitted when the document has changed for any reason.
@@ -2433,7 +2515,7 @@ signals:
 
     //! This signal is emitted when a recordable editor command has been
     //! executed.
-    void SCN_MACRORECORD(unsigned int, unsigned long, long);
+    void SCN_MACRORECORD(unsigned int, unsigned long, void *);
 
     //! This signal is emitted when the user clicks on a sensitive margin.
     //! \a position is the position of the start of the line against which the
@@ -2477,7 +2559,7 @@ signals:
     //! This signal is emitted when a range of text needs to be syntax styled.
     //! The range is from the value returned by the SCI_GETENDSTYLED message
     //! and \a position.  It is only emitted if the currently selected lexer is
-    //! SCNLEX_CONTAINER.
+    //! SCLEX_CONTAINER.
     //!
     //! \sa SCI_COLOURISE, SCI_GETENDSTYLED
     void SCN_STYLENEEDED(int position);
@@ -2561,6 +2643,8 @@ private:
     QsciScintillaBase &operator=(const QsciScintillaBase &);
 };
 
+#ifdef __APPLE__
 }
+#endif
 
 #endif

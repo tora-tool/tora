@@ -1,24 +1,37 @@
 // This module implements the specialisation of QListBox that handles the
 // Scintilla double-click callback.
 //
-// Copyright (c) 2007
-// 	Phil Thompson <phil@river-bank.demon.co.uk>
+// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This copy of QScintilla is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2, or (at your option) any
-// later version.
+// This file may be used under the terms of the GNU General Public
+// License versions 2.0 or 3.0 as published by the Free Software
+// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
+// included in the packaging of this file.  Alternatively you may (at
+// your option) use any later version of the GNU General Public
+// License if such license has been publicly approved by Riverbank
+// Computing Limited (or its successors, if any) and the KDE Free Qt
+// Foundation. In addition, as a special exception, Riverbank gives you
+// certain additional rights. These rights are described in the Riverbank
+// GPL Exception version 1.1, which can be found in the file
+// GPL_EXCEPTION.txt in this package.
 // 
-// QScintilla is supplied in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-// details.
+// Please review the following information to ensure GNU General
+// Public Licensing requirements will be met:
+// http://trolltech.com/products/qt/licenses/licensing/opensource/. If
+// you are unsure which license is appropriate for your use, please
+// review the following information:
+// http://trolltech.com/products/qt/licenses/licensing/licensingoverview
+// or contact the sales department at sales@riverbankcomputing.com.
 // 
-// You should have received a copy of the GNU General Public License along with
-// QScintilla; see the file LICENSE.  If not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
+// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
+// granted herein.
+// 
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
 #include "ListBoxQt.h"
@@ -26,10 +39,7 @@
 #include <stdlib.h>
 
 #include "SciClasses.h"
-
-
-// The backdoor through which the full text of the selected item is passed.
-QString ListBoxQt::backdoor;
+#include "Qsci/qsciscintilla.h"
 
 
 ListBoxQt::ListBoxQt()
@@ -180,9 +190,24 @@ void ListBoxQt::GetValue(int n, char *value, int len)
 {
     Q_ASSERT(slb);
 
-    backdoor = slb->text(n);
+    QString selection = slb->text(n);
 
-    if (backdoor.isEmpty() || len <= 0)
+    bool trim_selection = false;
+    QObject *sci_obj = slb->parent();
+
+    if (sci_obj->inherits("QsciScintilla"))
+    {
+        QsciScintilla *sci = static_cast<QsciScintilla *>(sci_obj);
+
+        if (sci->isAutoCompletionList())
+        {
+            // Save the full selection and trim the value we return.
+            sci->acSelection = selection;
+            trim_selection = true;
+        }
+    }
+
+    if (selection.isEmpty() || len <= 0)
         value[0] = '\0';
     else
     {
@@ -192,18 +217,20 @@ void ListBoxQt::GetValue(int n, char *value, int len)
         QByteArray bytes;
 
         if (utf8)
-            bytes = backdoor.toUtf8();
+            bytes = selection.toUtf8();
         else
-            bytes = backdoor.toLatin1();
+            bytes = selection.toLatin1();
 
         s = bytes.data();
         slen = bytes.length();
 
-        // Copy everything up to the first space.  We assume everything
-        // afterwards is additional descriptive information which shouldn't
-        // be inserted into the text.
-        while (slen-- && len-- && *s != ' ')
+        while (slen-- && len--)
+        {
+            if (trim_selection && *s == ' ')
+                break;
+
             *value++ = *s++;
+        }
 
         *value = '\0';
     }

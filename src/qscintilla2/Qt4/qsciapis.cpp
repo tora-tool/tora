@@ -1,23 +1,36 @@
 // This module implements the QsciAPIs class.
 //
-// Copyright (c) 2007
-// 	Phil Thompson <phil@river-bank.demon.co.uk>
+// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This copy of QScintilla is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2, or (at your option) any
-// later version.
+// This file may be used under the terms of the GNU General Public
+// License versions 2.0 or 3.0 as published by the Free Software
+// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
+// included in the packaging of this file.  Alternatively you may (at
+// your option) use any later version of the GNU General Public
+// License if such license has been publicly approved by Riverbank
+// Computing Limited (or its successors, if any) and the KDE Free Qt
+// Foundation. In addition, as a special exception, Riverbank gives you
+// certain additional rights. These rights are described in the Riverbank
+// GPL Exception version 1.1, which can be found in the file
+// GPL_EXCEPTION.txt in this package.
 // 
-// QScintilla is supplied in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-// details.
+// Please review the following information to ensure GNU General
+// Public Licensing requirements will be met:
+// http://trolltech.com/products/qt/licenses/licensing/opensource/. If
+// you are unsure which license is appropriate for your use, please
+// review the following information:
+// http://trolltech.com/products/qt/licenses/licensing/licensingoverview
+// or contact the sales department at sales@riverbankcomputing.com.
 // 
-// You should have received a copy of the GNU General Public License along with
-// QScintilla; see the file LICENSE.  If not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
+// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
+// granted herein.
+// 
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
 #include <stdlib.h>
@@ -155,8 +168,8 @@ void QsciAPIsWorker::run()
     // Sort the full list.
     prepared->raw_apis.sort();
 
-    QStringList wseps = proxy->lex->autoCompletionWordSeparators();
-    bool cs = proxy->lex->caseSensitive();
+    QStringList wseps = proxy->lexer()->autoCompletionWordSeparators();
+    bool cs = proxy->lexer()->caseSensitive();
 
     // Split each entry into separate words but ignoring any arguments.
     for (int a = 0; a < prepared->raw_apis.count(); ++a)
@@ -192,11 +205,10 @@ void QsciAPIsWorker::run()
 
 // The ctor.
 QsciAPIs::QsciAPIs(QsciLexer *lexer)
-    : QObject(lexer),
-      lex(lexer), worker(0), ctcursor(0), origin_len(0)
+    : QsciAbstractAPIs(lexer),
+      worker(0), origin_len(0)
 {
     prep = new QsciAPIsPrepared;
-    lexer->setAPIs(this);
 }
 
 
@@ -314,7 +326,7 @@ QStringList QsciAPIs::positionOrigin(const QStringList &context, QString &path)
     {
         QString word = context[i];
 
-        if (!lex->caseSensitive())
+        if (!lexer()->caseSensitive())
             word = word.toUpper();
 
         if (i < old_context.count() && old_context[i] != word)
@@ -333,7 +345,7 @@ QStringList QsciAPIs::positionOrigin(const QStringList &context, QString &path)
     // auto-completion.
     if (origin_len > 0)
     {
-        const QString wsep = lex->autoCompletionWordSeparators().first();
+        const QString wsep = lexer()->autoCompletionWordSeparators().first();
 
         int start_new = old_context.count();
         int end_new = new_context.count() - 1;
@@ -401,15 +413,15 @@ bool QsciAPIs::originStartsWith(const QString &path, const QString &wsep)
 
 
 // Add auto-completion words to an existing list.
-void QsciAPIs::autoCompletionList(const QStringList &context,
-        QStringList &wlist)
+void QsciAPIs::updateAutoCompletionList(const QStringList &context,
+        QStringList &list)
 {
     QString path;
     QStringList new_context = positionOrigin(context, path);
 
     if (origin_len > 0)
     {
-        const QString wsep = lex->autoCompletionWordSeparators().first();
+        const QString wsep = lexer()->autoCompletionWordSeparators().first();
         QStringList::const_iterator it = origin;
 
         unambiguous_context = path;
@@ -431,8 +443,8 @@ void QsciAPIs::autoCompletionList(const QStringList &context,
                 // Append the space, we know the origin is unambiguous.
                 w.append(' ');
 
-                if (!wlist.contains(w))
-                    wlist << w;
+                if (!list.contains(w))
+                    list << w;
             }
 
             ++it;
@@ -464,7 +476,7 @@ void QsciAPIs::autoCompletionList(const QStringList &context,
                     noc.truncate(op);
             }
 
-            wlist << noc;
+            list << noc;
         }
     }
 }
@@ -477,7 +489,7 @@ const QsciAPIs::WordIndexList *QsciAPIs::wordIndexOf(const QString &word) const
 
     // Indirect through the case dictionary if the language isn't case
     // sensitive.
-    if (lex->caseSensitive())
+    if (lexer()->caseSensitive())
         csword = word;
     else
     {
@@ -511,7 +523,7 @@ void QsciAPIs::lastCompleteWord(const QString &word, QStringList &with_context, 
 // Add auto-completion words based on the last partial word entered.
 void QsciAPIs::lastPartialWord(const QString &word, QStringList &with_context, bool &unambig)
 {
-    if (lex->caseSensitive())
+    if (lexer()->caseSensitive())
     {
         QMap<QString, WordIndexList>::const_iterator it = prep->wdict.lowerBound(word);
 
@@ -543,11 +555,11 @@ void QsciAPIs::lastPartialWord(const QString &word, QStringList &with_context, b
 
 
 // Handle the selection of an entry in the auto-completion list.
-void QsciAPIs::autoCompletionSelected(const QString &sel)
+void QsciAPIs::autoCompletionSelected(const QString &selection)
 {
     // If the selection is an API (ie. it has a space separating the selected
     // word and the optional origin) then remember the origin.
-    QStringList lst = sel.split(' ');
+    QStringList lst = selection.split(' ');
 
     if (lst.count() != 2)
     {
@@ -584,7 +596,7 @@ void QsciAPIs::autoCompletionSelected(const QString &sel)
 void QsciAPIs::addAPIEntries(const WordIndexList &wl, bool complete,
         QStringList &with_context, bool &unambig)
 {
-    QStringList wseps = lex->autoCompletionWordSeparators();
+    QStringList wseps = lexer()->autoCompletionWordSeparators();
 
     for (int w = 0; w < wl.count(); ++w)
     {
@@ -631,13 +643,13 @@ void QsciAPIs::addAPIEntries(const WordIndexList &wl, bool complete,
 
 
 // Return the call tip for a function.
-QString QsciAPIs::callTips(const QStringList &context,
-        QsciScintilla::CallTipsStyle style, int maxnr, int commas,
-        int &ctshift)
+QStringList QsciAPIs::callTips(const QStringList &context, int commas,
+        QsciScintilla::CallTipsStyle style,
+        QList<int> &shifts)
 {
     QString path;
     QStringList new_context = positionOrigin(context, path);
-    QStringList wseps = lex->autoCompletionWordSeparators();
+    QStringList wseps = lexer()->autoCompletionWordSeparators();
     QStringList cts;
 
     if (origin_len > 0)
@@ -645,7 +657,7 @@ QString QsciAPIs::callTips(const QStringList &context,
         QStringList::const_iterator it = origin;
         QString prev;
 
-        // Work out the lenght of the context.
+        // Work out the length of the context.
         const QString &wsep = wseps.first();
         QStringList strip = path.split(wsep);
         strip.removeLast();
@@ -669,14 +681,11 @@ QString QsciAPIs::callTips(const QStringList &context,
 
         while (it != prep->raw_apis.end() && (*it).startsWith(path))
         {
-            if (maxnr > 0 && maxnr == cts.count())
-                break;
-
             QString w = (*it).mid(ctstart);
 
             if (w != prev && enoughCommas(w, commas))
             {
-                ctshifts << shift;
+                shifts << shift;
                 cts << w;
                 prev = w;
             }
@@ -712,80 +721,20 @@ QString QsciAPIs::callTips(const QStringList &context,
                 if (!enoughCommas(api, commas))
                     continue;
 
-                if (maxnr > 0 && maxnr == cts.count())
-                    break;
-
                 if (style == QsciScintilla::CallTipsNoContext)
                 {
-                    ctshifts << 0;
+                    shifts << 0;
                     cts << (fname + api.mid(tail));
                 }
                 else
                 {
-                    ctshifts << tail - fname.length();
+                    shifts << tail - fname.length();
                     cts << api;
                 }
             }
     }
 
-    // See if we want to add a down arrow.
-    if (maxnr < 0 && cts.count() > 1)
-    {
-        // Remember the state so we can scroll through it later.
-        ctlist = cts;
-        ctcursor = 0;
-
-        QString ct = cts[0];
-
-        ct.prepend('\002');
-
-        ctshift = ctshifts.first();
-
-        return ct;
-    }
-
-    // Find the biggest shift.
-    ctshift = 0;
-
-    for (int i = 0; i < ctshifts.count(); ++i)
-    {
-        int shift = ctshifts[i];
-
-        if (ctshift < shift)
-            ctshift = shift;
-    }
-
-    ctshifts.clear();
-    ctlist.clear();
-
-    return cts.join("\n");
-}
-
-
-// Return the next or previous call tip.
-QString QsciAPIs::callTipsNextPrev(int dir, int &ctshift)
-{
-    QString ct;
-
-    // Get the call tip.
-    if (dir == 1 && ctcursor > 0)
-        ct = ctlist[--ctcursor];
-    else if (dir == 2 && ctcursor < ctlist.count() - 1)
-        ct = ctlist[++ctcursor];
-
-    // Add the arrows.
-    if (!ct.isEmpty())
-    {
-        if (ctcursor < ctlist.count() - 1)
-            ct.prepend('\002');
-
-        if (ctcursor > 0)
-            ct.prepend('\001');
-
-        ctshift = ctshifts[ctcursor];
-    }
-
-    return ct;
+    return cts;
 }
 
 
@@ -875,7 +824,7 @@ bool QsciAPIs::loadPrepared(const QString &fname)
     char *lex_name;
     pds >> lex_name;
 
-    if (qstrcmp(lex_name, lex->lexer()) != 0)
+    if (qstrcmp(lex_name, lexer()->lexer()) != 0)
     {
         delete[] lex_name;
         return false;
@@ -886,7 +835,7 @@ bool QsciAPIs::loadPrepared(const QString &fname)
     prep->wdict.clear();
     pds >> prep->wdict;
 
-    if (!lex->caseSensitive())
+    if (!lexer()->caseSensitive())
     {
         // Build up the case dictionary.
         prep->cdict.clear();
@@ -927,7 +876,7 @@ bool QsciAPIs::savePrepared(const QString &fname) const
     // Use a serialisation format supported by Qt v3.0 and later.
     pds.setVersion(QDataStream::Qt_3_0);
     pds << PreparedDataFormatVersion;
-    pds << lex->lexer();
+    pds << lexer()->lexer();
     pds << prep->wdict;
     pds << prep->raw_apis;
 
@@ -979,7 +928,7 @@ QString QsciAPIs::prepName(const QString &fname, bool mkpath) const
         pdname = pd.filePath(qsci_dir);
     }
 
-    return QString("%1/%2.pap").arg(pdname).arg(lex->lexer());
+    return QString("%1/%2.pap").arg(pdname).arg(lexer()->lexer());
 }
 
 
@@ -988,7 +937,7 @@ QStringList QsciAPIs::installedAPIFiles() const
 {
     QString qtdir = QLibraryInfo::location(QLibraryInfo::DataPath);
 
-    QDir apidir = QDir(QString("%1/qsci/api/%2").arg(qtdir).arg(lex->lexer()));
+    QDir apidir = QDir(QString("%1/qsci/api/%2").arg(qtdir).arg(lexer()->lexer()));
     QStringList fnames;
 
     QStringList filters;

@@ -1,29 +1,44 @@
 // This defines the interface to the QsciLexer class.
 //
-// Copyright (c) 2007
-// 	Phil Thompson <phil@river-bank.demon.co.uk>
+// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This copy of QScintilla is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2, or (at your option) any
-// later version.
+// This file may be used under the terms of the GNU General Public
+// License versions 2.0 or 3.0 as published by the Free Software
+// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
+// included in the packaging of this file.  Alternatively you may (at
+// your option) use any later version of the GNU General Public
+// License if such license has been publicly approved by Riverbank
+// Computing Limited (or its successors, if any) and the KDE Free Qt
+// Foundation. In addition, as a special exception, Riverbank gives you
+// certain additional rights. These rights are described in the Riverbank
+// GPL Exception version 1.1, which can be found in the file
+// GPL_EXCEPTION.txt in this package.
 // 
-// QScintilla is supplied in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-// details.
+// Please review the following information to ensure GNU General
+// Public Licensing requirements will be met:
+// http://trolltech.com/products/qt/licenses/licensing/opensource/. If
+// you are unsure which license is appropriate for your use, please
+// review the following information:
+// http://trolltech.com/products/qt/licenses/licensing/licensingoverview
+// or contact the sales department at sales@riverbankcomputing.com.
 // 
-// You should have received a copy of the GNU General Public License along with
-// QScintilla; see the file LICENSE.  If not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
+// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
+// granted herein.
+// 
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
 #ifndef QSCILEXER_H
 #define QSCILEXER_H
 
+#ifdef __APPLE__
 extern "C++" {
+#endif
 
 #include <qcolor.h>
 #include <qfont.h>
@@ -36,7 +51,7 @@ extern "C++" {
 
 class QSettings;
 
-class QsciAPIs;
+class QsciAbstractAPIs;
 
 
 //! \brief The QsciLexer class is an abstract class used as a base for specific
@@ -81,7 +96,7 @@ public:
     //! Returns the current API set or 0 if there isn't one.
     //!
     //! \sa setAPIs()
-    QsciAPIs *apis() const;
+    QsciAbstractAPIs *apis() const;
 
     //! \internal Returns the characters that can fill up auto-completion.
     virtual const char *autoCompletionFillups() const;
@@ -140,6 +155,9 @@ public:
     //! \sa defaultFont()
     virtual QFont font(int style) const;
 
+    //! \internal Returns the view used for indentation guides.
+    virtual int indentationGuideView() const;
+
     //! Returns the set of keywords for the keyword set \a set recognised
     //! by the lexer as a space separated string.  0 is returned if there
     //! is no such set.
@@ -193,7 +211,7 @@ public:
     //! existing APIs for this lexer are removed.
     //!
     //! \sa apis()
-    void setAPIs(QsciAPIs *apis);
+    void setAPIs(QsciAbstractAPIs *apis);
 
     //! The default text colour is set to \a c.
     //!
@@ -312,7 +330,7 @@ private:
     QFont defFont;
     QColor defColor;
     QColor defPaper;
-    QsciAPIs *apiSet;
+    QsciAbstractAPIs *apiSet;
 
     void setStyleDefaults() const;
     StyleData &styleData(int style) const;
@@ -321,6 +339,8 @@ private:
     QsciLexer &operator=(const QsciLexer &);
 };
 
+#ifdef __APPLE__
 }
+#endif
 
 #endif

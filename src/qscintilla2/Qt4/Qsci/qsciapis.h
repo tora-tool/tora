@@ -1,29 +1,44 @@
 // This module defines interface to the QsciAPIs class.
 //
-// Copyright (c) 2007
-// 	Phil Thompson <phil@river-bank.demon.co.uk>
+// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This copy of QScintilla is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2, or (at your option) any
-// later version.
+// This file may be used under the terms of the GNU General Public
+// License versions 2.0 or 3.0 as published by the Free Software
+// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
+// included in the packaging of this file.  Alternatively you may (at
+// your option) use any later version of the GNU General Public
+// License if such license has been publicly approved by Riverbank
+// Computing Limited (or its successors, if any) and the KDE Free Qt
+// Foundation. In addition, as a special exception, Riverbank gives you
+// certain additional rights. These rights are described in the Riverbank
+// GPL Exception version 1.1, which can be found in the file
+// GPL_EXCEPTION.txt in this package.
 // 
-// QScintilla is supplied in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-// details.
+// Please review the following information to ensure GNU General
+// Public Licensing requirements will be met:
+// http://trolltech.com/products/qt/licenses/licensing/opensource/. If
+// you are unsure which license is appropriate for your use, please
+// review the following information:
+// http://trolltech.com/products/qt/licenses/licensing/licensingoverview
+// or contact the sales department at sales@riverbankcomputing.com.
 // 
-// You should have received a copy of the GNU General Public License along with
-// QScintilla; see the file LICENSE.  If not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
+// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
+// granted herein.
+// 
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
 #ifndef QSCIAPIS_H
 #define QSCIAPIS_H
 
+#ifdef __APPLE__
 extern "C++" {
+#endif
 
 #include <qobject.h>
 #include <qpair.h>
@@ -31,6 +46,7 @@ extern "C++" {
 
 #include <QList>
 
+#include <Qsci/qsciabstractapis.h>
 #include <Qsci/qsciglobal.h>
 #include <Qsci/qsciscintilla.h>
 
@@ -40,10 +56,8 @@ class QsciAPIsWorker;
 class QsciLexer;
 
 
-//! \brief The QsciAPIs class represents the textual API information used in
-//! call tips and for auto-completion.  API information is specific to a
-//! particular language lexer but can be shared by multiple instances of the
-//! lexer.
+//! \brief The QsciAPIs class provies an implementation of the textual API
+//! information used in call tips and for auto-completion.
 //!
 //! Raw API information is read from one or more files.  Each API function is
 //! described by a single line of text comprising the function's name, followed
@@ -60,7 +74,7 @@ class QsciLexer;
 //! information described above.  This is done so that large APIs can be
 //! handled while still being responsive to user input.  The conversion of raw
 //! information to prepared information is time consuming (think tens of
-//! seconds) and implemented in a separate thread.  Processed information can
+//! seconds) and implemented in a separate thread.  Prepared information can
 //! be quickly saved to and loaded from files.  Such files are portable between
 //! different architectures.
 //!
@@ -68,7 +82,7 @@ class QsciLexer;
 //! normally provide the user with the ability to specify a set of, possibly
 //! project specific, raw API files and convert them to prepared files that are
 //! loaded quickly when the application is invoked.
-class QSCINTILLA_EXPORT QsciAPIs : public QObject
+class QSCINTILLA_EXPORT QsciAPIs : public QsciAbstractAPIs
 {
     Q_OBJECT
 
@@ -139,20 +153,17 @@ public:
     //! $HOME/.qsci is used.  Returns true if successful, otherwise false.
     bool savePrepared(const QString &fname = QString()) const;
 
-    //! \internal Updates an auto-completion list with API entries based on the
-    //! context from the user.
-    void autoCompletionList(const QStringList &context, QStringList &wlist);
+    //! \reimp
+    virtual void updateAutoCompletionList(const QStringList &context,
+            QStringList &list);
 
-    //! \internal Handle the selection of an entry in the auto-completion list.
-    void autoCompletionSelected(const QString &sel);
+    //! \reimp
+    virtual void autoCompletionSelected(const QString &sel);
 
-    //! \internal Return the call tips valid for the given context.
-    QString callTips(const QStringList &context,
-            QsciScintilla::CallTipsStyle style, int maxnr, int commas,
-            int &ctshift);
-
-    //! \internal
-    QString callTipsNextPrev(int dir, int &ctshift);
+    //! \reimp
+    virtual QStringList callTips(const QStringList &context, int commas,
+            QsciScintilla::CallTipsStyle style,
+            QList<int> &shifts);
 
     //! \internal Reimplemented to receive termination events from the worker
     //! thread.
@@ -193,17 +204,13 @@ private:
     // This is a list of word indexes.
     typedef QList<WordIndex> WordIndexList;
 
-    const QsciLexer *lex;
     QsciAPIsWorker *worker;
-    int ctcursor;
     QStringList old_context;
     QStringList::const_iterator origin;
     int origin_len;
     QString unambiguous_context;
     QStringList apis;
     QsciAPIsPrepared *prep;
-    QStringList ctlist;
-    QList<int> ctshifts;
 
     static bool enoughCommas(const QString &s, int commas);
 
@@ -223,6 +230,8 @@ private:
     QsciAPIs &operator=(const QsciAPIs &);
 };
 
+#ifdef __APPLE__
 }
+#endif
 
 #endif

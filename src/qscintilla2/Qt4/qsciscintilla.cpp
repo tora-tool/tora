@@ -2,24 +2,37 @@
 // Scintilla.  It is modelled on QTextEdit - a method of the same name should
 // behave in the same way.
 //
-// Copyright (c) 2007
-// 	Phil Thompson <phil@river-bank.demon.co.uk>
+// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This copy of QScintilla is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2, or (at your option) any
-// later version.
+// This file may be used under the terms of the GNU General Public
+// License versions 2.0 or 3.0 as published by the Free Software
+// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
+// included in the packaging of this file.  Alternatively you may (at
+// your option) use any later version of the GNU General Public
+// License if such license has been publicly approved by Riverbank
+// Computing Limited (or its successors, if any) and the KDE Free Qt
+// Foundation. In addition, as a special exception, Riverbank gives you
+// certain additional rights. These rights are described in the Riverbank
+// GPL Exception version 1.1, which can be found in the file
+// GPL_EXCEPTION.txt in this package.
 // 
-// QScintilla is supplied in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-// details.
+// Please review the following information to ensure GNU General
+// Public Licensing requirements will be met:
+// http://trolltech.com/products/qt/licenses/licensing/opensource/. If
+// you are unsure which license is appropriate for your use, please
+// review the following information:
+// http://trolltech.com/products/qt/licenses/licensing/licensingoverview
+// or contact the sales department at sales@riverbankcomputing.com.
 // 
-// You should have received a copy of the GNU General Public License along with
-// QScintilla; see the file LICENSE.  If not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
+// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
+// granted herein.
+// 
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
 #include "Qsci/qsciscintilla.h"
@@ -27,11 +40,12 @@
 #include <string.h>
 #include <qapplication.h>
 #include <qcolor.h>
+#include <qiodevice.h>
+#include <qpoint.h>
 
-#include "Qsci/qsciapis.h"
+#include "Qsci/qsciabstractapis.h"
 #include "Qsci/qscicommandset.h"
 #include "Qsci/qscilexer.h"
-#include "ListBoxQt.h"
 
 
 // Make sure these match the values in Scintilla.h.  We don't #include that
@@ -39,6 +53,10 @@
 #define KEYWORDSET_MAX  8
 #define MARKER_MAX      31
 
+
+// The list separators for auto-completion and user lists.
+const char acSeparator = '\x03';
+const char userSeparator = '\x04';
 
 // The default fold margin width.
 static const int defaultFoldMarginWidth = 14;
@@ -51,9 +69,9 @@ static const char *defaultWordChars = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN
 QsciScintilla::QsciScintilla(QWidget *parent)
     : QsciScintillaBase(parent),
       allocatedMarkers(0), oldPos(-1), selText(false), fold(NoFoldStyle),
-      autoInd(false), braceMode(NoBraceMatch), acSource(AcsNone), acThresh(-1),
-      wchars(defaultWordChars), call_tips_style(CallTipsNoContext),
-      maxCallTips(-1), showSingle(false), modified(false),
+      foldmargin(2), autoInd(false), braceMode(NoBraceMatch),
+      acSource(AcsNone), acThresh(-1), wchars(defaultWordChars),
+      call_tips_style(CallTipsNoContext), maxCallTips(-1), showSingle(false),
       explicit_fillups(""), fillups_enabled(false)
 {
     connect(this,SIGNAL(SCN_MODIFYATTEMPTRO()),
@@ -101,6 +119,7 @@ QsciScintilla::QsciScintilla(QWidget *parent)
     SendScintilla(SCI_SETMOUSEDOWNCAPTURES, 0UL);
 
     SendScintilla(SCI_SETPROPERTY, "fold", "1");
+    SendScintilla(SCI_SETPROPERTY, "fold.html", "1");
 
     setMatchedBraceForegroundColor(Qt::blue);
     setUnmatchedBraceForegroundColor(Qt::red);
@@ -249,7 +268,7 @@ bool QsciScintilla::isCallTipActive() const
 // Handle a possible change to any current call tip.
 void QsciScintilla::callTip()
 {
-    QsciAPIs *apis = lex->apis();
+    QsciAbstractAPIs *apis = lex->apis();
 
     if (!apis)
         return;
@@ -294,7 +313,7 @@ void QsciScintilla::callTip()
     if (!found)
         return;
 
-    QStringList context = contextWords(pos, &ctPos);
+    QStringList context = apiContext(pos, pos, ctPos);
 
     if (context.isEmpty())
         return;
@@ -302,20 +321,58 @@ void QsciScintilla::callTip()
     // The last word is complete, not partial.
     context << QString();
 
-    int ctshift;
-    QString ct = apis->callTips(context, call_tips_style, maxCallTips, commas, ctshift);
+    ct_cursor = 0;
+    ct_shifts.clear();
+    ct_entries = apis->callTips(context, commas, call_tips_style, ct_shifts);
 
-    if (ct.isEmpty())
+    int nr_entries = ct_entries.count();
+
+    if (nr_entries == 0)
         return;
+
+    if (maxCallTips > 0 && maxCallTips < nr_entries)
+    {
+        ct_entries = ct_entries.mid(0, maxCallTips);
+        nr_entries = maxCallTips;
+    }
+
+    int shift;
+    QString ct;
+
+    int nr_shifts = ct_shifts.count();
+
+    if (maxCallTips < 0 && nr_entries > 1)
+    {
+        shift = (nr_shifts > 0 ? ct_shifts.first() : 0);
+        ct = ct_entries[0];
+        ct.prepend('\002');
+    }
+    else
+    {
+        if (nr_shifts > nr_entries)
+            nr_shifts = nr_entries;
+
+        // Find the biggest shift.
+        shift = 0;
+
+        for (int i = 0; i < nr_shifts; ++i)
+        {
+            int sh = ct_shifts[i];
+
+            if (shift < sh)
+                shift = sh;
+        }
+
+        ct = ct_entries.join("\n");
+    }
 
     QByteArray ct_ba = ct.toLatin1();
     const char *cts = ct_ba.data();
 
-    SendScintilla(SCI_CALLTIPSHOW, adjustedCallTipPosition(ctshift), cts);
+    SendScintilla(SCI_CALLTIPSHOW, adjustedCallTipPosition(shift), cts);
 
-    // Done if there is more than one line in the call tip or there isn't a
-    // down arrow at the start.
-    if (cts[0] == '\002' || strchr(cts, '\n'))
+    // Done if there is more than one call tip.
+    if (nr_entries > 1)
         return;
 
     // Highlight the current argument.
@@ -359,13 +416,37 @@ void QsciScintilla::callTip()
 // Handle a call tip click.
 void QsciScintilla::handleCallTipClick(int dir)
 {
-    int ctshift;
-    QString ct = lex->apis()->callTipsNextPrev(dir, ctshift);
+    int nr_entries = ct_entries.count();
 
-    if (ct.isNull())
+    // Move the cursor while bounds checking.
+    if (dir == 1)
+    {
+        if (ct_cursor - 1 < 0)
+            return;
+
+        --ct_cursor;
+    }
+    else if (dir == 2)
+    {
+        if (ct_cursor + 1 >= nr_entries)
+            return;
+
+        ++ct_cursor;
+    }
+    else
         return;
 
-    SendScintilla(SCI_CALLTIPSHOW, adjustedCallTipPosition(ctshift), ct.toLatin1().data());
+    int shift = (ct_shifts.count() > ct_cursor ? ct_shifts[ct_cursor] : 0);
+    QString ct = ct_entries[ct_cursor];
+
+    // Add the arrows.
+    if (ct_cursor < nr_entries - 1)
+        ct.prepend('\002');
+
+    if (ct_cursor > 0)
+        ct.prepend('\001');
+
+    SendScintilla(SCI_CALLTIPSHOW, adjustedCallTipPosition(shift), ct.toLatin1().data());
 }
 
 
@@ -392,7 +473,8 @@ int QsciScintilla::adjustedCallTipPosition(int ctshift) const
 // set and it defines start strings.  If so, then the last element might be
 // empty if a start string has just been typed.  On return pos is at the start
 // of the context.
-QStringList QsciScintilla::contextWords(int &pos, int *last_word)
+QStringList QsciScintilla::apiContext(int pos, int &context_start,
+        int &last_word_start)
 {
     enum {
         Either,
@@ -402,6 +484,8 @@ QStringList QsciScintilla::contextWords(int &pos, int *last_word)
 
     QStringList words;
     int good_pos = pos, expecting = Either;
+
+    last_word_start = -1;
 
     while (pos > 0)
     {
@@ -427,11 +511,8 @@ QStringList QsciScintilla::contextWords(int &pos, int *last_word)
             expecting = Separator;
 
             // Return the position of the start of the last word if required.
-            if (last_word)
-            {
-                *last_word = pos;
-                last_word = 0;
-            }
+            if (last_word_start < 0)
+                last_word_start = pos;
         }
 
         // Strip any preceding spaces (mainly around operators).
@@ -453,7 +534,7 @@ QStringList QsciScintilla::contextWords(int &pos, int *last_word)
     if (expecting != Separator)
         words.clear();
 
-    pos = good_pos;
+    context_start = good_pos;
 
     return words;
 }
@@ -560,8 +641,9 @@ bool QsciScintilla::isStartChar(char ch) const
 void QsciScintilla::startAutoCompletion(AutoCompletionSource acs,
         bool checkThresh, bool single)
 {
-    int start = SendScintilla(SCI_GETCURRENTPOS);
-    QStringList context = contextWords(start);
+    int start, ignore;
+    QStringList context = apiContext(SendScintilla(SCI_GETCURRENTPOS), start,
+            ignore);
 
     if (context.isEmpty())
         return;
@@ -595,10 +677,10 @@ void QsciScintilla::startAutoCompletion(AutoCompletionSource acs,
 
     if ((acs == AcsAll || acs == AcsAPIs) && !lex.isNull())
     {
-        QsciAPIs *apis = lex->apis();
+        QsciAbstractAPIs *apis = lex->apis();
 
         if (apis)
-            apis->autoCompletionList(context, wlist);
+            apis->updateAutoCompletionList(context, wlist);
     }
 
     if (acs == AcsAll || acs == AcsDocument)
@@ -662,12 +744,10 @@ void QsciScintilla::startAutoCompletion(AutoCompletionSource acs,
 
     wlist.sort();
 
-    const char sep = '\x03';
-
     SendScintilla(SCI_AUTOCSETCHOOSESINGLE, single);
-    SendScintilla(SCI_AUTOCSETSEPARATOR, sep);
+    SendScintilla(SCI_AUTOCSETSEPARATOR, acSeparator);
 
-    QByteArray chlist = wlist.join(QChar(sep)).toLatin1();
+    QByteArray chlist = wlist.join(QChar(acSeparator)).toLatin1();
     SendScintilla(SCI_AUTOCSHOW, last_len, chlist.constData());
 }
 
@@ -1086,13 +1166,14 @@ void QsciScintilla::setWrapVisualFlags(WrapVisualFlag eflag,
 
 
 // Set the folding style.
-void QsciScintilla::setFolding(FoldStyle folding)
+void QsciScintilla::setFolding(FoldStyle folding, int margin)
 {
     fold = folding;
+    foldmargin = margin;
 
     if (folding == NoFoldStyle)
     {
-        SendScintilla(SCI_SETMARGINWIDTHN, 2, 0L);
+        SendScintilla(SCI_SETMARGINWIDTHN, margin, 0L);
         return;
     }
 
@@ -1101,9 +1182,9 @@ void QsciScintilla::setFolding(FoldStyle folding)
 
     SendScintilla(SCI_SETFOLDFLAGS, SC_FOLDFLAG_LINEAFTER_CONTRACTED);
 
-    SendScintilla(SCI_SETMARGINTYPEN, 2, (long)SC_MARGIN_SYMBOL);
-    SendScintilla(SCI_SETMARGINMASKN, 2, SC_MASK_FOLDERS);
-    SendScintilla(SCI_SETMARGINSENSITIVEN, 2, 1);
+    SendScintilla(SCI_SETMARGINTYPEN, margin, (long)SC_MARGIN_SYMBOL);
+    SendScintilla(SCI_SETMARGINMASKN, margin, SC_MASK_FOLDERS);
+    SendScintilla(SCI_SETMARGINSENSITIVEN, margin, 1);
 
     // Set the marker symbols to use.
     switch (folding)
@@ -1159,7 +1240,7 @@ void QsciScintilla::setFolding(FoldStyle folding)
         break;
     }
 
-    SendScintilla(SCI_SETMARGINWIDTHN, 2, defaultFoldMarginWidth);
+    SendScintilla(SCI_SETMARGINWIDTHN, margin, defaultFoldMarginWidth);
 }
 
 
@@ -1433,7 +1514,7 @@ bool QsciScintilla::findFirst(const QString &expr, bool re, bool cs, bool wo,
     if (line < 0 || index < 0)
         findState.startpos = SendScintilla(SCI_GETCURRENTPOS);
     else
-        findState.startpos = posFromLineIndex(line, index);
+        findState.startpos = positionFromLineIndex(line, index);
 
     if (forward)
         findState.endpos = SendScintilla(SCI_GETLENGTH);
@@ -1589,8 +1670,7 @@ void QsciScintilla::replace(const QString &replaceStr)
 // Query the modified state.
 bool QsciScintilla::isModified() const
 {
-    // We don't use SCI_GETMODIFY as it seems to be buggy in Scintilla v1.61.
-    return modified;
+    return doc.isModified();
 }
 
 
@@ -1618,7 +1698,7 @@ void QsciScintilla::handleMarginClick(int pos, int modifiers, int margin)
 
     int line = SendScintilla(SCI_LINEFROMPOSITION, pos);
 
-    if (fold && margin == 2)
+    if (fold && margin == foldmargin)
         foldClick(line, state);
     else
         emit marginClicked(margin, line, Qt::KeyboardModifiers(state));
@@ -1628,22 +1708,16 @@ void QsciScintilla::handleMarginClick(int pos, int modifiers, int margin)
 // Handle the SCN_SAVEPOINTREACHED notification.
 void QsciScintilla::handleSavePointReached()
 {
-    if (modified)
-    {
-        modified = false;
-        emit modificationChanged(false);
-    }
+    doc.setModified(false);
+    emit modificationChanged(false);
 }
 
 
 // Handle the SCN_SAVEPOINTLEFT notification.
 void QsciScintilla::handleSavePointLeft()
 {
-    if (!modified)
-    {
-        modified = true;
-        emit modificationChanged(true);
-    }
+    doc.setModified(true);
+    emit modificationChanged(true);
 }
 
 
@@ -1663,9 +1737,10 @@ void QsciScintilla::getSelection(int *lineFrom, int *indexFrom, int *lineTo,
 {
     if (selText)
     {
-        lineIndexFromPos(SendScintilla(SCI_GETSELECTIONSTART), lineFrom,
+        lineIndexFromPosition(SendScintilla(SCI_GETSELECTIONSTART), lineFrom,
                 indexFrom);
-        lineIndexFromPos(SendScintilla(SCI_GETSELECTIONEND), lineTo, indexTo);
+        lineIndexFromPosition(SendScintilla(SCI_GETSELECTIONEND), lineTo,
+                indexTo);
     }
     else
         *lineFrom = *indexFrom = *lineTo = *indexTo = -1;
@@ -1676,8 +1751,8 @@ void QsciScintilla::getSelection(int *lineFrom, int *indexFrom, int *lineTo,
 void QsciScintilla::setSelection(int lineFrom, int indexFrom, int lineTo,
         int indexTo)
 {
-    SendScintilla(SCI_SETSELECTIONSTART, posFromLineIndex(lineFrom, indexFrom));
-    SendScintilla(SCI_SETSELECTIONEND, posFromLineIndex(lineTo, indexTo));
+    SendScintilla(SCI_SETSEL, positionFromLineIndex(lineFrom, indexFrom),
+            positionFromLineIndex(lineTo, indexTo));
 }
 
 
@@ -1815,12 +1890,12 @@ void QsciScintilla::insert(const QString &text)
 // Insert the given text at the given line and offset.
 void QsciScintilla::insertAt(const QString &text, int line, int index)
 {
-    insertAtPos(text, posFromLineIndex(line, index));
+    insertAtPos(text, positionFromLineIndex(line, index));
 }
 
 
 // Insert the given text at the given position.
-void QsciScintilla::insertAtPos(const QString &text, long pos)
+void QsciScintilla::insertAtPos(const QString &text, int pos)
 {
     bool ro = ensureRW();
 
@@ -1928,9 +2003,7 @@ QString QsciScintilla::selectedText() const
     if (!selText)
         return QString();
 
-    // Scintilla doesn't tell us the length of the selected text so we use the
-    // length of the whole document.
-    char *buf = new char[length() + 1];
+    char *buf = new char[SendScintilla(SCI_GETSELECTIONEND) - SendScintilla(SCI_GETSELECTIONSTART) + 1];
 
     SendScintilla(SCI_GETSELTEXT, buf);
 
@@ -1995,19 +2068,14 @@ void QsciScintilla::setText(const QString &text)
 // Get the cursor position
 void QsciScintilla::getCursorPosition(int *line, int *index) const
 {
-    long pos = SendScintilla(SCI_GETCURRENTPOS);
-    long lin = SendScintilla(SCI_LINEFROMPOSITION, pos);
-    long linpos = SendScintilla(SCI_POSITIONFROMLINE, lin);
-
-    *line = lin;
-    *index = pos - linpos;
+    lineIndexFromPosition(SendScintilla(SCI_GETCURRENTPOS), line, index);
 }
 
 
 // Set the cursor position
 void QsciScintilla::setCursorPosition(int line, int index)
 {
-    SendScintilla(SCI_GOTOPOS, posFromLineIndex(line, index));
+    SendScintilla(SCI_GOTOPOS, positionFromLineIndex(line, index));
 }
 
 
@@ -2049,10 +2117,10 @@ void QsciScintilla::paste()
 // Select all text, or deselect any selected text.
 void QsciScintilla::selectAll(bool select)
 {
-    if (selText)
-        SendScintilla(SCI_SETANCHOR, SendScintilla(SCI_GETCURRENTPOS));
-    else
+    if (select)
         SendScintilla(SCI_SELECTALL);
+    else
+        SendScintilla(SCI_SETANCHOR, SendScintilla(SCI_GETCURRENTPOS));
 }
 
 
@@ -2127,14 +2195,23 @@ int QsciScintilla::indentWidth() const
 // Return the state of indentation guides.
 bool QsciScintilla::indentationGuides() const
 {
-    return SendScintilla(SCI_GETINDENTATIONGUIDES);
+    return (SendScintilla(SCI_GETINDENTATIONGUIDES) != SC_IV_NONE);
 }
 
 
 // Enable and disable indentation guides.
 void QsciScintilla::setIndentationGuides(bool enable)
 {
-    SendScintilla(SCI_SETINDENTATIONGUIDES, enable);
+    int iv;
+
+    if (!enable)
+        iv = SC_IV_NONE;
+    else if (lex.isNull())
+        iv = SC_IV_REAL;
+    else
+        iv = lex->indentationGuideView();
+
+    SendScintilla(SCI_SETINDENTATIONGUIDES, iv);
 }
 
 
@@ -2594,6 +2671,8 @@ void QsciScintilla::setLexer(QsciLexer *lexer)
         lex->disconnect(this);
 
         SendScintilla(SCI_STYLERESETDEFAULT);
+        SendScintilla(SCI_STYLECLEARALL);
+        SendScintilla(SCI_CLEARDOCUMENTSTYLE);
     }
 
     // Connect up the new lexer.
@@ -2626,8 +2705,10 @@ void QsciScintilla::setLexer(QsciLexer *lexer)
         {
             const char *kw = lex -> keywords(k + 1);
 
-            if (kw)
-                SendScintilla(SCI_SETKEYWORDS, k, kw);
+            if (!kw)
+                kw = "";
+
+            SendScintilla(SCI_SETKEYWORDS, k, kw);
         }
 
         // Initialise each style.  Do the default first so its (possibly
@@ -2653,10 +2734,12 @@ void QsciScintilla::setLexer(QsciLexer *lexer)
             wchars = defaultWordChars;
 
         SendScintilla(SCI_AUTOCSETIGNORECASE, !lex->caseSensitive());
+
+        recolor();
     }
     else
     {
-        SendScintilla(SCI_SETLEXER, SCLEX_NULL);
+        SendScintilla(SCI_SETLEXER, SCLEX_CONTAINER);
 
         setColor(nl_text_colour);
         setPaper(nl_paper_colour);
@@ -2824,7 +2907,7 @@ long QsciScintilla::checkBrace(long pos, int brace_style, bool &colonMode)
 
     if (ch == ':')
     {
-        // A bit of a hack.
+        // A bit of a hack, we should really use a virtual.
         if (!lex.isNull() && qstrcmp(lex->lexer(), "python") == 0)
         {
             brace_pos = pos;
@@ -2947,9 +3030,9 @@ void QsciScintilla::gotoMatchingBrace(bool select)
 
 
 // Return a position from a line number and an index within the line.
-long QsciScintilla::posFromLineIndex(int line, int index) const
+int QsciScintilla::positionFromLineIndex(int line, int index) const
 {
-    long pos = SendScintilla(SCI_POSITIONFROMLINE, line);
+    int pos = SendScintilla(SCI_POSITIONFROMLINE, line);
 
     // Allow for multi-byte characters.
     for(int i = 0; i < index; i++)
@@ -2960,13 +3043,30 @@ long QsciScintilla::posFromLineIndex(int line, int index) const
 
 
 // Return a line number and an index within the line from a position.
-void QsciScintilla::lineIndexFromPos(long pos, int *line, int *index) const
+void QsciScintilla::lineIndexFromPosition(int position, int *line, int *index) const
 {
-    long lin = SendScintilla(SCI_LINEFROMPOSITION, pos);
-    long linpos = SendScintilla(SCI_POSITIONFROMLINE, lin);
+    int lin = SendScintilla(SCI_LINEFROMPOSITION, position);
+    int linpos = SendScintilla(SCI_POSITIONFROMLINE, lin);
+    int indx = 0;
+
+    // Allow for multi-byte characters.
+    while (linpos < position)
+    {
+        int new_linpos = SendScintilla(SCI_POSITIONAFTER, linpos);
+
+        // If the position hasn't moved then we must be at the end of the text
+        // (which implies that the position passed was beyond the end of the
+        // text).
+        if (new_linpos == linpos)
+            break;
+
+        linpos = new_linpos;
+        ++indx;
+    }
+
 
     *line = lin;
-    *index = pos - linpos;
+    *index = indx;
 }
 
 
@@ -3205,10 +3305,10 @@ void QsciScintilla::handleAutoCompletionSelection()
 {
     if (!lex.isNull())
     {
-        QsciAPIs *apis = lex->apis();
+        QsciAbstractAPIs *apis = lex->apis();
 
         if (apis)
-            apis->autoCompletionSelected(ListBoxQt::backdoor);
+            apis->autoCompletionSelected(acSelection);
     }
 }
 
@@ -3220,11 +3320,9 @@ void QsciScintilla::showUserList(int id, const QStringList &list)
     if (id <= 0)
         return;
 
-    const char sep = '\x03';
-
-    SendScintilla(SCI_AUTOCSETSEPARATOR, sep);
+    SendScintilla(SCI_AUTOCSETSEPARATOR, userSeparator);
     SendScintilla(SCI_USERLISTSHOW, id,
-            list.join(QChar(sep)).toLatin1().data());
+            list.join(QChar(userSeparator)).toLatin1().data());
 }
 
 
@@ -3239,4 +3337,114 @@ void QsciScintilla::handleUserListSelection(const char *text, int id)
 bool QsciScintilla::caseSensitive() const
 {
     return lex.isNull() ? true : lex->caseSensitive();
+}
+
+
+// Return true if the current list is an auto-completion list rather than a
+// user list.
+bool QsciScintilla::isAutoCompletionList() const
+{
+    return (SendScintilla(SCI_AUTOCGETSEPARATOR) == acSeparator);
+}
+
+
+// Read the text from a QIODevice.
+bool QsciScintilla::read(QIODevice *io)
+{
+    const int min_size = 1024 * 8;
+
+    int buf_size = min_size;
+    char *buf = new char[buf_size];
+
+    int data_len = 0;
+    bool ok = true;
+
+    qint64 part;
+
+    // Read the whole lot in so we don't have to worry about character
+    // boundaries.
+    do
+    {
+        // Make sure there is a minimum amount of room.
+        if (buf_size - data_len < min_size)
+        {
+            buf_size *= 2;
+            char *new_buf = new char[buf_size * 2];
+
+            memcpy(new_buf, buf, data_len);
+            delete[] buf;
+            buf = new_buf;
+        }
+
+        part = io->read(buf + data_len, buf_size - data_len - 1);
+
+        data_len += part;
+    }
+    while (part > 0);
+
+    if (part < 0)
+        ok = false;
+    else
+    {
+        buf[data_len] = '\0';
+
+        bool ro = ensureRW();
+
+        SendScintilla(SCI_SETTEXT, buf);
+        SendScintilla(SCI_EMPTYUNDOBUFFER);
+
+        setReadOnly(ro);
+    }
+
+    delete[] buf;
+
+    return ok;
+}
+
+
+// Write the text to a QIODevice.
+bool QsciScintilla::write(QIODevice *io) const
+{
+    const char *buf = reinterpret_cast<const char *>(SendScintillaPtrResult(SCI_GETCHARACTERPOINTER));
+
+    const char *bp = buf;
+    uint buflen = qstrlen(buf);
+
+    while (buflen > 0)
+    {
+        qint64 part = io->write(bp, buflen);
+
+        if (part < 0)
+            return false;
+
+        bp += part;
+        buflen -= part;
+    }
+
+    return true;
+}
+
+
+// Return the word at the given cooridinates.
+QString QsciScintilla::wordAtPoint(const QPoint &point) const
+{
+    long close_pos = SendScintilla(SCI_POSITIONFROMPOINTCLOSE, point.x(),
+            point.y());
+
+    if (close_pos < 0)
+        return QString();
+
+    long start_pos = SendScintilla(SCI_WORDSTARTPOSITION, close_pos, true);
+    long end_pos = SendScintilla(SCI_WORDENDPOSITION, close_pos, true);
+    int word_len = end_pos - start_pos;
+
+    if (word_len <= 0)
+        return QString();
+
+    char *buf = new char[word_len + 1];
+    SendScintilla(SCI_GETTEXTRANGE, start_pos, end_pos, buf);
+    QString word = convertTextS2Q(buf);
+    delete[] buf;
+
+    return word;
 }
