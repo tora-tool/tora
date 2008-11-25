@@ -34,7 +34,7 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <item row="1" column="0" colspan="3" >
+      <item row="2" column="0" colspan="3" >
        <widget class="QCheckBox" name="KeywordUpper" >
         <property name="toolTip" >
          <string>Convert all keywords to uppercase when displayingsyntaxhighlighted text.  Only available for monospaced fonts.</string>
@@ -44,7 +44,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="3" >
+      <item row="3" column="0" colspan="3" >
        <widget class="QCheckBox" name="CodeCompletion" >
         <property name="toolTip" >
          <string>Activate code completion in SQL editors. Not recommended on slow connections.</string>
@@ -54,7 +54,7 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0" colspan="3" >
+      <item row="5" column="0" colspan="3" >
        <widget class="QCheckBox" name="CompletionSort" >
         <property name="enabled" >
          <bool>false</bool>
@@ -80,7 +80,7 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="0" colspan="3" >
+      <item row="6" column="0" colspan="3" >
        <widget class="QCheckBox" name="AutoIndent" >
         <property name="toolTip" >
          <string>Indent a new line in an editor to the same column as the previous line</string>
@@ -90,14 +90,14 @@
         </property>
        </widget>
       </item>
-      <item row="8" column="2" >
+      <item row="9" column="2" >
        <widget class="QPushButton" name="PushButton1" >
         <property name="text" >
          <string>Choose</string>
         </property>
        </widget>
       </item>
-      <item row="8" column="0" >
+      <item row="9" column="0" >
        <widget class="QLabel" name="ResultExample" >
         <property name="text" >
          <string>List example</string>
@@ -107,7 +107,7 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="0" >
+      <item row="8" column="0" >
        <widget class="QLabel" name="CodeExample" >
         <property name="text" >
          <string>Code example</string>
@@ -117,14 +117,14 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="2" >
+      <item row="8" column="2" >
        <widget class="QPushButton" name="PushButton1_2" >
         <property name="text" >
          <string>Choose</string>
         </property>
        </widget>
       </item>
-      <item row="6" column="0" >
+      <item row="7" column="0" >
        <widget class="QLabel" name="TextExample" >
         <property name="text" >
          <string>Text example</string>
@@ -134,10 +134,10 @@
         </property>
        </widget>
       </item>
-      <item row="9" column="1" colspan="2" >
+      <item row="10" column="1" colspan="2" >
        <widget class="QLineEdit" name="Extensions" />
       </item>
-      <item row="9" column="0" >
+      <item row="10" column="0" >
        <widget class="QLabel" name="TextLabel1" >
         <property name="text" >
          <string>Filename extensions</string>
@@ -147,7 +147,7 @@
         </property>
        </widget>
       </item>
-      <item row="12" column="1" >
+      <item row="13" column="1" >
        <spacer>
         <property name="orientation" >
          <enum>Qt::Vertical</enum>
@@ -163,14 +163,14 @@
         </property>
        </spacer>
       </item>
-      <item row="10" column="2" >
+      <item row="11" column="2" >
        <widget class="QSpinBox" name="TabStop" >
         <property name="minimum" >
          <number>1</number>
         </property>
        </widget>
       </item>
-      <item row="10" column="0" colspan="2" >
+      <item row="11" column="0" colspan="2" >
        <widget class="QLabel" name="TextLabel1_2" >
         <property name="toolTip" >
          <string>Number of character width of tabstops</string>
@@ -189,7 +189,7 @@
         </property>
        </widget>
       </item>
-      <item row="11" column="0" >
+      <item row="12" column="0" >
        <widget class="QCheckBox" name="TabSpaces" >
         <property name="toolTip" >
          <string>If set the editor will insert spaces rather than tabs</string>
@@ -199,24 +199,47 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="2" >
+      <item row="7" column="2" >
        <widget class="QPushButton" name="PushButton1_2_2" >
         <property name="text" >
          <string>Choose</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0" >
+      <item row="4" column="0" >
        <widget class="QCheckBox" name="EditorShortcuts" >
         <property name="text" >
          <string>&amp;Editor shortcuts (TAB replacement)</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="2" >
+      <item row="4" column="2" >
        <widget class="QPushButton" name="EditorShortcutsEdit" >
         <property name="text" >
          <string>E&amp;dit...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QCheckBox" name="EdgeMarkCheckBox" >
+        <property name="toolTip" >
+         <string>Display the line/column marker at the specified position</string>
+        </property>
+        <property name="text" >
+         <string>Use &amp;maximum text width mark</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" >
+       <widget class="QSpinBox" name="EdgeSizeSpinBox" >
+        <property name="toolTip" >
+         <string>Specify the column (text width) where to show marker</string>
+        </property>
+        <property name="minimum" >
+         <number>1</number>
+        </property>
+        <property name="maximum" >
+         <number>999999</number>
         </property>
        </widget>
       </item>

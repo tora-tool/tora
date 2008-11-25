@@ -341,7 +341,8 @@ void toComplPopup::keyPressEvent(QKeyEvent * e)
 
 
 toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
-        : toMarkedText(parent, name), lexer(0), syntaxColoring(false)
+        : toMarkedText(parent, name),
+        lexer(0)
 {
     sqlLexer()->setDefaultFont(toStringToFont(toConfigurationSingle::Instance().codeFont()));
 
@@ -375,8 +376,21 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
 
     errorMarker = markerDefine(Circle, 4);
     debugMarker = markerDefine(Rectangle, 8);
+    m_currentLineHandle = markerDefine(QsciScintilla::Background);
     updateSyntaxColor(toSyntaxAnalyzer::DebugBg);
     updateSyntaxColor(toSyntaxAnalyzer::ErrorBg);
+    updateSyntaxColor(toSyntaxAnalyzer::CurrentLineMarker);
+
+    // handle "max text width" mark
+    if (toConfigurationSingle::Instance().useMaxTextWidthMark())
+    {
+        setEdgeColumn(toConfigurationSingle::Instance().maxTextWidthMark());
+        setEdgeColor(DefaultAnalyzer.getColor(toSyntaxAnalyzer::CurrentLineMarker).darker(150));
+        setEdgeMode(QsciScintilla::EdgeLine);
+    }
+    else
+        setEdgeMode(QsciScintilla::EdgeNone);
+
     setMarginMarkerMask(1, 0);
     setAutoIndent(true);
     connect(this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(setStatusMessage(void )));
@@ -449,6 +463,9 @@ void toHighlightedText::positionChanged(int row, int col)
         if (timer->isActive())
             timer->stop();
     }
+    // current line marker
+    markerDeleteAll(m_currentLineHandle);
+    markerAdd(row, m_currentLineHandle);
 }
 
 static QString UpperIdent(const QString &str)
@@ -555,6 +572,7 @@ void toHighlightedText::setSyntaxColoring(bool val)
         updateSyntaxColor(toSyntaxAnalyzer::Keyword);
         updateSyntaxColor(toSyntaxAnalyzer::String);
         updateSyntaxColor(toSyntaxAnalyzer::DefaultBg);
+        updateSyntaxColor(toSyntaxAnalyzer::CurrentLineMarker);
 
         update();
     }
@@ -606,6 +624,9 @@ void toHighlightedText::updateSyntaxColor(toSyntaxAnalyzer::infoType t)
         break;
     case toSyntaxAnalyzer::DebugBg:
         setMarkerBackgroundColor(col, debugMarker);
+        break;
+    case toSyntaxAnalyzer::CurrentLineMarker:
+        setMarkerBackgroundColor(col, m_currentLineHandle);
         break;
     default:
         break;

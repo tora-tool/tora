@@ -1148,6 +1148,13 @@ public:
     void setSyntaxDebugBg(QColor v);
     QColor syntaxErrorBg();
     void setSyntaxErrorBg(QColor v);
+    QColor syntaxCurrentLineMarker();
+    void setSyntaxCurrentLineMarker(QColor v);
+
+    bool useMaxTextWidthMark() { return m_useMaxTextWidthMark; };
+    void setUseMaxTextWidthMark(bool v) { m_useMaxTextWidthMark = v; };
+    int maxTextWidthMark() { return m_maxTextWidthMark; };
+    void setMaxTextWidthMark(int v) { m_maxTextWidthMark = v; };
 
     // main window size
     QByteArray mainWindowGeometry() { return m_mainWindowGeometry; };
@@ -1325,6 +1332,9 @@ private:
     QString m_syntaxDefaultBg;
     QString m_syntaxErrorBg;
     QString m_syntaxDebugBg;
+    QString m_syntaxCurrentLineMarker;
+    bool m_useMaxTextWidthMark;
+    int m_maxTextWidthMark;
 
     // mainwindow size
     QByteArray m_mainWindowGeometry;

@@ -218,7 +218,9 @@ toConfiguration::toConfiguration()
     m_syntaxDefaultBg = s.value("SyntaxDefaultBg", cg.color(QPalette::Text).name()).toString();
     m_syntaxErrorBg = s.value("SyntaxErrorBg", "darkred").toString();
     m_syntaxDebugBg = s.value("SyntaxDebugBg", "darkgreen").toString();
-
+    m_syntaxCurrentLineMarker = s.value("SyntaxCurrentLineMarker", "whitesmoke").toString();
+    m_useMaxTextWidthMark = s.value("useMaxTextWidthMark", false).toBool();
+    m_maxTextWidthMark = s.value("maxTextWidthMark", 75).toInt();
     s.endGroup();
 
     // main window
@@ -435,7 +437,9 @@ void toConfiguration::saveConfig()
     s.setValue("SyntaxDefaultBg", m_syntaxDefaultBg);
     s.setValue("SyntaxErrorBg", m_syntaxErrorBg);
     s.setValue("SyntaxDebugBg", m_syntaxDebugBg);
-
+    s.setValue("SyntaxCurrentLineMarker", m_syntaxCurrentLineMarker);
+    s.setValue("useMaxTextWidthMark", m_useMaxTextWidthMark);
+    s.setValue("maxTextWidthMark", m_maxTextWidthMark);
     s.endGroup();
 
     // main window
@@ -634,4 +638,15 @@ QColor toConfiguration::syntaxErrorBg()
 void toConfiguration::setSyntaxErrorBg(QColor v)
 {
     m_syntaxErrorBg = v.name();
+}
+
+QColor toConfiguration::syntaxCurrentLineMarker()
+{
+    QColor c;
+    c.setNamedColor(m_syntaxCurrentLineMarker);
+    return c;
+}
+void toConfiguration::setSyntaxCurrentLineMarker(QColor v)
+{
+    m_syntaxCurrentLineMarker = v.name();
 }

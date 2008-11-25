@@ -83,7 +83,8 @@ public:
         String = 4,
         DefaultBg = 5,
         ErrorBg = 6,
-        DebugBg = 7
+        DebugBg = 7,
+        CurrentLineMarker = 8
     };
 private:
     /** Indicate if colors are updated, can't do this in constructor since QApplication
@@ -92,14 +93,14 @@ private:
     bool ColorsUpdated;
     /** Colors allocated for the different @ref infoType values.
      */
-    QColor Colors[8];
+    QMap<infoType,QColor> Colors;
 
     /** marker per linea contenente errori
       */
-    int errorMarker;
+//     int errorMarker;
     /** marker per linea corrente
       */
-    int debugMarker;
+//     int debugMarker;
     /** Keeps track of possible hits found so far.
      */
     struct posibleHit
@@ -240,6 +241,9 @@ private:
 protected:
     int debugMarker;
     int errorMarker;
+    //! \brief A handler for current line highlighting
+    int m_currentLineHandle;
+
     toComplPopup* popup;
 
     virtual void keyPressEvent(QKeyEvent * e);
