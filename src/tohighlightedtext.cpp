@@ -415,7 +415,8 @@ void toHighlightedText::keyPressEvent(QKeyEvent * e)
     // handle editor shortcuts with TAB
     // It uses qscintilla lowlevel API to handle "word unde cursor"
     // This code is taken from sqliteman.com
-    if (toConfigurationSingle::Instance().useEditorShortcuts() && e->key() == Qt::Key_Tab)
+    if (toConfigurationSingle::Instance().useEditorShortcuts()
+        && e->key() == Qt::Key_Tab)
     {
         int pos = SendScintilla(SCI_GETCURRENTPOS);
         int start = SendScintilla(SCI_WORDSTARTPOSITION, pos,true);
@@ -423,7 +424,6 @@ void toHighlightedText::keyPressEvent(QKeyEvent * e)
         SendScintilla(SCI_SETSELECTIONSTART, start, true);
         SendScintilla(SCI_SETSELECTIONEND, end, true);
         QString key(selectedText());
-        bool done = false;
         EditorShortcutsMap shorts(toConfigurationSingle::Instance().editorShortcuts());
         if (shorts.contains(key))
         {
@@ -432,14 +432,13 @@ void toHighlightedText::keyPressEvent(QKeyEvent * e)
             SendScintilla(SCI_SETCURRENTPOS,
                            SendScintilla(SCI_GETCURRENTPOS) +
                            shorts.value(key).toString().length());
-                           done = true;
+            pos = SendScintilla(SCI_GETCURRENTPOS);
+            SendScintilla(SCI_SETSELECTIONSTART, pos,true);
+            SendScintilla(SCI_SETSELECTIONEND, pos, true);
+            return;
         }
-        pos = SendScintilla(SCI_GETCURRENTPOS);
         SendScintilla(SCI_SETSELECTIONSTART, pos,true);
         SendScintilla(SCI_SETSELECTIONEND, pos, true);
-    
-        if (done)
-            return;
     }
     toMarkedText::keyPressEvent(e);
 }
