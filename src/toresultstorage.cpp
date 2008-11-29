@@ -142,7 +142,7 @@ toResultStorage::toResultStorage(bool available, QWidget *parent, const char *na
 {
     Unit = toConfigurationSingle::Instance().sizeUnit();
     setAllColumnsShowFocus(true);
-    setSorting(0);
+    //setSorting(0);
     setRootIsDecorated(true);
     addColumn(tr("Name"));
     addColumn(tr("Status"));
@@ -758,8 +758,13 @@ toStorageExtent::extentName::extentName(const QString &owner, const QString &tab
     Size = size;
 }
 
-bool toStorageExtent::extentName::operator < (const toStorageExtent::extentName &ext) const
+bool toStorageExtent::extentTotal::operator < (const toStorageExtent::extentTotal &ext) const
 {
+  if (fileView ) {
+    if (LastBlock < ext.LastBlock)
+      return true;
+    return false;
+  } else {
     if (Owner < ext.Owner)
         return true;
     if (Owner > ext.Owner)
@@ -771,6 +776,7 @@ bool toStorageExtent::extentName::operator < (const toStorageExtent::extentName 
     if (Partition < ext.Partition)
         return true;
     return false;
+  }
 }
 
 bool toStorageExtent::extentName::operator == (const toStorageExtent::extentName &ext) const
@@ -805,7 +811,7 @@ bool toStorageExtent::extent::operator == (const toStorageExtent::extent &ext) c
 }
 
 toStorageExtent::toStorageExtent(QWidget *parent, const char *name)
-        : QWidget(parent)
+  : QWidget(parent)
 {
     setObjectName(name);
     QPalette pal = palette();
@@ -906,6 +912,7 @@ static toSQL SQLTablespaceBlocks("toStorageExtent:TablespaceSize",
 
 void toStorageExtent::setTablespace(const QString &tablespace)
 {
+    fileView = false;
     try
     {
         if (Tablespace == tablespace)
@@ -964,6 +971,7 @@ void toStorageExtent::setTablespace(const QString &tablespace)
 
 void toStorageExtent::setFile(const QString &tablespace, int file)
 {
+    fileView = true;
     try
     {
         toBusy busy;
@@ -1093,12 +1101,13 @@ std::list<toStorageExtent::extentTotal> toStorageExtent::objects(void)
             {
                 (*j).Size += (*i).Size;
                 (*j).Extents++;
+                (*j).LastBlock = ( ((*j).LastBlock > (*i).Block) ? (*j).LastBlock : (*i).Block );
                 dup = true;
                 break;
             }
         }
         if (!dup)
-            toPush(ret, extentTotal((*i).Owner, (*i).Table, (*i).Partition, (*i).Size));
+            toPush(ret, extentTotal((*i).Owner, (*i).Table, (*i).Partition, (*i).Block, (*i).Size));
     }
 
     ret.sort();
@@ -1109,7 +1118,7 @@ std::list<toStorageExtent::extentTotal> toStorageExtent::objects(void)
 static toSQL SQLListExtents("toResultStorage:ListExtents",
                             "SELECT * \n"
                             "  FROM SYS.DBA_EXTENTS WHERE OWNER = :f1<char[101]> AND SEGMENT_NAME = :f2<char[101]>\n"
-                            " ORDER BY extent_id",
+                            " ORDER BY block_id",
                             "List the extents of a table in a schema.",
                             "" ,
                             "Oracle");
@@ -1159,3 +1168,5 @@ void toResultExtent::query(const QString &sql, const toQList &params)
     }
     TOCATCH
 }
+
+bool toStorageExtent::fileView;

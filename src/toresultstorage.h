@@ -68,21 +68,23 @@ public:
             Size = 0;
         }
         extentName(const QString &owner, const QString &table, const QString &partition, int size);
-        bool operator < (const extentName &) const;
         bool operator == (const extentName &) const;
     };
 
-struct extentTotal : public extentName
+    struct extentTotal : public extentName
     {
         int Extents;
-        extentTotal(const QString &owner, const QString &table, const QString &partition, int size)
+        int LastBlock;
+        extentTotal(const QString &owner, const QString &table, const QString &partition, int block, int size)
                 : extentName(owner, table, partition, size)
         {
             Extents = 1;
+            LastBlock = block;
         }
+        bool operator < (const extentTotal &) const;
     };
 
-struct extent : public extentName
+    struct extent : public extentName
     {
         int File;
         int Block;
@@ -104,6 +106,7 @@ private:
 
     std::map<int, int> FileOffset;
     int Total;
+    static bool fileView; 
 public:
     toStorageExtent(QWidget *parent, const char *name = NULL);
     void highlight(const QString &owner, const QString &table, const QString &partition);
@@ -114,7 +117,7 @@ public:
     std::list<extentTotal> objects(void);
 protected:
     virtual void paintEvent(QPaintEvent *);
-};
+}; // toStorageExtent
 
 class toResultTableView;
 
