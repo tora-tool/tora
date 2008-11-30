@@ -128,8 +128,8 @@ tora_SOURCES=main.cpp \
 	tocodemodel.cpp tocodemodel.h \
 	toscripttreemodel.cpp toscripttreemodel.h \
 	tosecurity.cpp tosecurity.h  \
-    tosecuritytreemodel.cpp tosecuritytreemodel.h \
-    tosecuritytreeitem.cpp tosecuritytreeitem.h \
+	tosecuritytreemodel.cpp tosecuritytreemodel.h \
+	tosecuritytreeitem.cpp tosecuritytreeitem.h \
 	tosession.cpp tosession.h \
 	tosgatrace.cpp tosgatrace.h \
 	tosqledit.cpp tosqledit.h \
@@ -180,8 +180,8 @@ tora_SOURCES=main.cpp \
 	migratetool/sqldeveloper.cpp migratetool/sqldeveloper.h \
 	migratetool/squirrelsql.cpp migratetool/squirrelsql.h \
 	migratetool/tora3.cpp migratetool/tora3.h \
-	shortcuteditor/shortcuteditordialog.cpp shortcuteditor/shortcuteditordialog.h \
-	shortcuteditor/shortcutmodel.cpp shortcuteditor/shortcutmodel.h \
+	shortcuteditordialog.cpp shortcuteditordialog.h \
+	shortcutmodel.cpp shortcutmodel.h \
 	$(EXTRA_ORACLE_MONO_SOURCE) \
 	$(LOKIDIR_SRC)/SmallObj.cpp \
 	$(LOKIDIR_SRC)/Singleton.cpp \
@@ -234,7 +234,7 @@ UI_FILES = toaboutui.ui \
 		tostorageprefsui.ui \
 		todroptablespaceui.ui \
 		toscriptschemawidgetui.ui \
-		shortcuteditor/shortcuteditordialog.ui
+		shortcuteditordialog.ui
 
 
 EXTRA_DIST = icons \
@@ -354,7 +354,7 @@ BUILT_SOURCES = \
 	moc_toscript.cpp \
 	moc_tosearchreplace.cpp \
 	moc_tosecurity.cpp \
-    moc_tosecuritytreemodel.cpp \
+	moc_tosecuritytreemodel.cpp \
 	moc_tosession.cpp \
 	moc_tosgastatement.cpp \
 	moc_tosgatrace.cpp \
@@ -380,6 +380,8 @@ BUILT_SOURCES = \
 	moc_toscriptschemawidget.cpp \
 	moc_toscripttreemodel.cpp \
 	moc_toworkingwidget.cpp \
+	moc_shortcuteditordialog.cpp \
+	moc_shortcutmodel.cpp \
 	ui_toaboutui.h \
 	ui_todroptablespaceui.h \
 	ui_tobrowserconstraintui.h \
@@ -425,6 +427,7 @@ BUILT_SOURCES = \
 	ui_toworksheetsetupui.h \
 	ui_tohelpui.h \
 	ui_toscriptschemawidgetui.h \
+	ui_shortcuteditordialog.h \
 	$(EXTRA_ORACLE_MONO_SOURCE_MOC) \
 	$(filter %.qm,$(TRANSLATIONS:%.ts=%.qm)) \
 	tora_toad.h \
@@ -435,8 +438,8 @@ BUILT_SOURCES = \
 ui_%.h: %.ui
 	$(UIC) -o $@ $<
 
-%.cpp: %.h %.ui
-	$(UIC) -o $@ $<
+#%.cpp: %.h %.ui
+#	$(UIC) -o $@ $<
 
 moc_%.cpp: %.h
 	$(MOC) $< -o $@
@@ -481,3 +484,19 @@ lrelease: tora.pro $(TRANSLATIONS)
 install-data-hook:
 	mkdir -p $(DESTDIR)$(libdir)
 	cp -f $(top_builddir)/src/i18n/*.qm $(DESTDIR)$(libdir)
+
+# temporary hack - autoconf does not support sources in different dirctory
+shortcuteditordialog.cpp:
+	ln -sf $(top_srcdir)/src/shortcuteditor/shortcuteditordialog.cpp
+
+shortcuteditordialog.h:
+	ln -sf $(top_srcdir)/src/shortcuteditor/shortcuteditordialog.h
+
+shortcuteditordialog.ui:
+	ln -sf $(top_srcdir)/src/shortcuteditor/shortcuteditordialog.ui
+
+shortcutmodel.cpp:
+	ln -sf $(top_srcdir)/src/shortcuteditor/shortcutmodel.cpp
+
+shortcutmodel.h:
+	ln -sf $(top_srcdir)/src/shortcuteditor/shortcutmodel.h
