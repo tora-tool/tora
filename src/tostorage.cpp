@@ -1408,7 +1408,7 @@ toStorageObjectModel::toStorageObjectModel(QObject * parent)
     : QAbstractTableModel(parent)
 {
     m_values.clear();
-    HeaderData << tr("Owner") << tr("Object") << tr("Partition") << tr("Extents") << tr("Blocks");
+    HeaderData << tr("Owner") << tr("Segment") << tr("Partition") << tr("Extents") << tr("Blocks");
 }
 
 toStorageObjectModel::~toStorageObjectModel()
