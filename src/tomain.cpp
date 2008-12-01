@@ -58,6 +58,10 @@
 #include "totool.h"
 #include "tomessage.h"
 #include "tothread.h"
+#include "todocklet.h"
+#include "todockbar.h"
+#include "toworksheet.h"
+#include "tohighlightedtext.h"
 
 #include <qapplication.h>
 #include <qcombobox.h>
@@ -128,6 +132,8 @@ toMain::toMain()
 
     createToolMenus();
 
+    createDocklets();
+
     handleToolsDisplay();
 
     updateRecent();
@@ -188,13 +194,11 @@ toMain::toMain()
         TOCATCH;
     }
 
-//     if (toConfigurationSingle::Instance().maximizeMain() && Connections.empty())
-//         showMaximized();
-//     else
-//         show();
     setCentralWidget(Workspace);
 
     show();
+
+    createDockbars();           // keep after restoreState() and show()
 
     statusBar()->addPermanentWidget(BackgroundLabel, 0);
     BackgroundLabel->show();
@@ -446,6 +450,20 @@ void toMain::createMenus()
             SLOT(commandCallback(QAction *)),
             Qt::QueuedConnection);
 
+    viewMenu = menuBar()->addMenu(tr("&View"));
+    foreach(toDocklet *let, toDocklet::docklets())
+    {
+        viewMenu->addAction(new QAction(let->icon(),
+                                        let->name(),
+                                        0));
+    }
+
+    connect(viewMenu,
+            SIGNAL(triggered(QAction *)),
+            this,
+            SLOT(viewCallback(QAction *)),
+            Qt::QueuedConnection);
+
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     connect(toolsMenu,
             SIGNAL(triggered(QAction *)),
@@ -540,7 +558,7 @@ void toMain::createToolbars()
     addToolBarBreak();
 }
 
-//! \warning Do not use it. It screw realoading of the state of toolbars
+//! \warning Do not use it. It screws up reloading the toolbar state
 void toMain::addButtonApplication(QAction *act)
 {
     editToolbar->addAction(act);
@@ -641,6 +659,48 @@ void toMain::createToolMenus()
     }
     TOCATCH;
 }
+
+
+void toMain::createDocklets()
+{
+    foreach(toDocklet *let, toDocklet::docklets())
+        addDockWidget(Qt::LeftDockWidgetArea, let);
+}
+
+
+// must call this after restoreState()
+
+void toMain::createDockbars()
+{
+    leftDockbar = new toDockbar(Qt::LeftToolBarArea,
+                                tr("Left Dockbar"),
+                                this);
+    addToolBar(Qt::LeftToolBarArea, leftDockbar);
+    leftDockbar->hide();
+
+    rightDockbar = new toDockbar(Qt::RightToolBarArea,
+                                tr("Right Dockbar"),
+                                this);
+    addToolBar(Qt::RightToolBarArea, rightDockbar);
+    rightDockbar->hide();
+
+    // toDockbar keeps it's own settings, but just in case something
+    // goes wrong, or a new setup, add any visible docklets to the
+    // dockbar.
+
+    foreach(toDocklet *let, toDocklet::docklets())
+    {
+        if(!let->isVisible())
+            continue;
+
+        Qt::DockWidgetArea area = dockWidgetArea(let);
+        if(area == Qt::LeftDockWidgetArea)
+            leftDockbar->addDocklet(let, false);
+        else if(area == Qt::RightDockWidgetArea)
+            rightDockbar->addDocklet(let, false);
+    }
+}
+
 
 void toMain::handleToolsDisplay()
 {
@@ -846,6 +906,34 @@ void toMain::recentCallback(QAction *action)
 void toMain::statusCallback(QAction *action)
 {
     new toMemoEditor(this, action->toolTip());
+}
+
+
+void toMain::viewCallback(QAction *action)
+{
+    toDocklet *let = toDocklet::docklet(action->text());
+    if(!let)
+        return;
+
+    if(leftDockbar->contains(let))
+    {
+        leftDockbar->removeDocklet(let);
+        return;
+    }
+    if(rightDockbar->contains(let))
+    {
+        rightDockbar->removeDocklet(let);
+        return;
+    }
+
+    addDockWidget(Qt::LeftDockWidgetArea, let);
+    restoreDockWidget(let);
+
+    Qt::DockWidgetArea area = dockWidgetArea(let);
+    if(area == Qt::RightDockWidgetArea)
+        rightDockbar->addDocklet(let);
+    else
+        leftDockbar->addDocklet(let);
 }
 
 
@@ -1387,6 +1475,9 @@ void toMain::closeEvent(QCloseEvent *event)
     }
     TOCATCH;
 
+    leftDockbar->setAllVisible(true);
+    rightDockbar->setAllVisible(true);
+
     toConfigurationSingle::Instance().setMainWindowGeometry(saveGeometry());
     toConfigurationSingle::Instance().setMainWindowState(saveState());
 
@@ -1462,11 +1553,54 @@ void toMain::removeBusy() {
 }
 
 
+void toMain::editOpenFile(QString file) {
+    toWorksheet *sheet = 0;
+    if(Edit)
+        sheet = dynamic_cast<toWorksheet *>(Edit);
+
+    // the only fscking way to find the tool on top, regardless of
+    // what's got focus or whatever.  this is called from docklets
+    // which usually have focus. though, manually setting focus on
+    // Workspace doesn't help either.
+    if(!Workspace->subWindowList().isEmpty())
+    {
+        QMdiSubWindow *sub = Workspace->subWindowList(QMdiArea::StackingOrder).last();
+        if(!sheet && sub)
+            sheet = dynamic_cast<toWorksheet *>(sub->widget());
+    }
+
+    if(!sheet) {
+        toTool *tool = toTool::tool("00010SQL Editor");
+        if(tool) {
+            QWidget *win = tool->createWindow();
+            if(win)
+                sheet = dynamic_cast<toWorksheet *>(win);
+        }
+        else
+            printf("Couldn't find sql worksheet.\n");
+    }
+
+    if(!sheet)
+        return;
+
+    sheet->editor()->editOpen(file);
+    sheet->setFocus();
+}
+
+
+toDockbar* toMain::dockbar(toDocklet *let)
+{
+    if(rightDockbar->contains(let))
+        return rightDockbar;
+    return leftDockbar;
+}
+
+
 void toMain::showMessage(const QString &str, bool save, bool log)
 {
-    // this function can be called from any thread.
-    // this tomain class is in the main (gui) thread, so emitting
-    // a signal with a queued flag will be picked up in the main
+    // this function can be called from any thread.  this tomain
+    // instance is always in the main (gui) thread, so emitting a
+    // signal with a queued flag will be picked up in the main
     // thread. otherwise tora crashes.
     emit messageRequested(str, save, log);
 }

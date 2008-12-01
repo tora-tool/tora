@@ -60,24 +60,21 @@
 
 // #define MAX_HISTORY 50
 
-static const QString ORACLE_INSTANT = "Oracle (Instant Client)";
-static const QString ORACLE_TNS     = "Oracle (TNS)";
+const QString toNewConnection::ORACLE_INSTANT = "Oracle (Instant Client)";
+const QString toNewConnection::ORACLE_TNS     = "Oracle (TNS)";
+
+static toConnectionModel     *m_connectionModel = 0;
+static QSortFilterProxyModel *m_proxyModel      = 0;
 
 
-toNewConnection::toNewConnection(
-    QWidget* parent,
-    Qt::WFlags fl) : QDialog(parent, fl),
-        toHelpContext(QString::fromLatin1("newconnection.html"))
+toNewConnection::toNewConnection(QWidget* parent, Qt::WFlags fl)
+  : QDialog(parent, fl),
+    toHelpContext(QString::fromLatin1("newconnection.html"))
 {
     setupUi(this);
     toHelp::connectDialog(this);
 
-    m_connectionModel = new toConnectionModel();
-    m_proxyModel = new QSortFilterProxyModel(this);
-    m_proxyModel->setSourceModel(m_connectionModel);
-    m_proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-    m_proxyModel->setFilterKeyColumn(-1);
-    Previous->setModel(m_proxyModel);
+    Previous->setModel(proxyModel());
 
     std::list<QString> lst = toConnectionProvider::providers();
 
@@ -171,56 +168,12 @@ QString toNewConnection::realProvider()
 
 void toNewConnection::readSettings()
 {
-    QMap<int, toConnectionOptions> OptionMap;
     restoreGeometry(Settings.value("geometry").toByteArray());
+
+    connectionModel()->readConfig();
 
     Previous->setSortingEnabled(false);
 
-    Settings.beginGroup("history");
-    for (int pos = 0; pos < Settings.childGroups().count(); ++pos)
-    {
-        Settings.beginGroup(/*"history/" +*/ QString::number(pos)); // X
-        if (!Settings.contains("provider"))
-        {
-            Settings.endGroup(); // X
-            break;
-        }
-
-        QString provider = Settings.value("provider", "").toString();
-        QString host     = Settings.value("host", "").toString();
-        QString database = Settings.value("database", "").toString();
-        QString username = Settings.value("username", "").toString();
-        QString password = toUnobfuscate(Settings.value("password", "").toString());
-        QString schema   = Settings.value("schema", "").toString();
-
-        if ( provider == ORACLE_TNS )
-            host = "";
-
-        Settings.beginGroup("options");
-        std::set<QString> options;
-        QStringList keys = Settings.allKeys();
-        Q_FOREACH(QString s, keys)
-        {
-            if (Settings.value(s, false).toBool())
-                options.insert(s);
-        }
-        Settings.endGroup(); // options
-
-        toConnectionOptions opt(
-            provider,
-            host,
-            database,
-            username,
-            password,
-            schema,
-            Settings.value("port", 0).toInt(),
-            options);
-        OptionMap[pos] = opt;
-        Settings.endGroup(); // X
-    }
-    Settings.endGroup(); // history
-
-    m_connectionModel->setupData(OptionMap);
     Previous->resizeColumnsToContents();
     Previous->setSortingEnabled(true);
 
@@ -268,7 +221,7 @@ void toNewConnection::writeSettings(bool checkHistory)
                            Schema->text());
     }
 
-    QMap<int,toConnectionOptions> c = m_connectionModel->availableConnections();
+    QMap<int,toConnectionOptions> c = connectionModel()->availableConnections();
     foreach(int row, c.keys())
     {
         if (row == skip)// && ++skipped)
@@ -293,6 +246,8 @@ void toNewConnection::writeSettings(bool checkHistory)
         Settings.endGroup();
         ++r;
     }
+
+    connectionModel()->readConfig();
 }
 
 
@@ -302,7 +257,7 @@ int toNewConnection::findHistory(const QString &provider,
                                  const QString &database,
                                  const QString &schema)
 {
-    QMapIterator<int,toConnectionOptions> i(m_connectionModel->availableConnections());
+    QMapIterator<int,toConnectionOptions> i(connectionModel()->availableConnections());
     while (i.hasNext())
     {
         i.next();
@@ -322,9 +277,9 @@ void toNewConnection::loadPrevious(const QModelIndex & current)
     if (!current.isValid())
         return;
 
-    QModelIndex baseIndex = m_proxyModel->index(current.row(), 0);
-    int index = m_proxyModel->data(baseIndex, Qt::DisplayRole).toInt();
-    toConnectionOptions opt = m_connectionModel->availableConnection(index);// OptionMap[index];
+    QModelIndex baseIndex = proxyModel()->index(current.row(), 0);
+    int index = proxyModel()->data(baseIndex, Qt::DisplayRole).toInt();
+    toConnectionOptions opt = connectionModel()->availableConnection(index);
 
     Provider->setCurrentIndex(Provider->findText(opt.provider));
     Host->lineEdit()->setText(opt.host);
@@ -501,7 +456,7 @@ void toNewConnection::importButton_clicked()
     Previous->setSortingEnabled(false);
 
     // find latest id (max+1)
-    QList<int> keys = m_connectionModel->availableConnections().keys();
+    QList<int> keys = connectionModel()->availableConnections().keys();
     qSort(keys);
     int max = 0;
     if (keys.count() > 0)
@@ -512,7 +467,7 @@ void toNewConnection::importButton_clicked()
         if (findHistory(opt.provider, opt.username, opt.host, opt.database, opt.schema) != -1)
             continue;
 
-        m_connectionModel->append(max, opt);
+        connectionModel()->append(max, opt);
         ++max;
     }
     writeSettings();
@@ -522,7 +477,7 @@ void toNewConnection::importButton_clicked()
 
 void toNewConnection::searchEdit_textEdited(const QString & text)
 {
-    m_proxyModel->setFilterWildcard(QString("*%1*").arg(text));
+    proxyModel()->setFilterWildcard(QString("*%1*").arg(text));
 }
 
 toConnection* toNewConnection::makeConnection(void)
@@ -627,18 +582,30 @@ void toNewConnection::previousMenu(const QPoint &pos)
 
 void toNewConnection::historyDelete()
 {
-//     QModelIndexList indexes = Previous->selectionModel()->selectedRows();
-//     QModelIndex index;
-//     foreach(index, indexes)   // loop through and remove them
-//     {
-//         int row = m_proxyModel->mapToSource(index).row();
-//         m_connectionModel->removeRow(row, QModelIndex());
-//     }
-    QMap<int,toConnectionOptions> v = m_connectionModel->availableConnections();
-    int ix = m_proxyModel->data(m_proxyModel->index(Previous->currentIndex().row(), 0)).toInt();
-    v.remove(ix);
-    m_connectionModel->setupData(v);
+    QModelIndex index = proxyModel()->mapToSource(Previous->currentIndex());
+    connectionModel()->removeRow(index.row(), QModelIndex());
 
     writeSettings(false);
     readSettings();
+}
+
+
+toConnectionModel* toNewConnection::connectionModel()
+{
+    if(!m_connectionModel)
+        m_connectionModel = new toConnectionModel;
+    return m_connectionModel;
+}
+
+
+QSortFilterProxyModel* toNewConnection::proxyModel()
+{
+    if(!m_proxyModel) {
+        m_proxyModel = new QSortFilterProxyModel;
+        m_proxyModel->setSourceModel(connectionModel());
+        m_proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+        m_proxyModel->setFilterKeyColumn(-1);
+    }
+
+    return m_proxyModel;
 }

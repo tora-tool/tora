@@ -40,11 +40,14 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "toconnectionmodel.h"
+#include "tonewconnection.h"
+#include "utils.h"
+
+#include <QSettings>
 
 
 toConnectionModel::toConnectionModel()
 {
-    m_data.clear();
 }
 
 void toConnectionModel::setupData(QMap<int,toConnectionOptions> list)
@@ -54,21 +57,76 @@ void toConnectionModel::setupData(QMap<int,toConnectionOptions> list)
     reset();
 }
 
+
+void toConnectionModel::readConfig()
+{
+    m_data.clear();
+
+    QSettings Settings;
+    Settings.beginGroup("connections");
+    Settings.beginGroup("history");
+    for (int pos = 0; pos < Settings.childGroups().count(); ++pos)
+    {
+        Settings.beginGroup(/*"history/" +*/ QString::number(pos)); // X
+        if (!Settings.contains("provider"))
+        {
+            Settings.endGroup(); // X
+            break;
+        }
+
+        QString provider = Settings.value("provider", "").toString();
+        QString host     = Settings.value("host", "").toString();
+        QString database = Settings.value("database", "").toString();
+        QString username = Settings.value("username", "").toString();
+        QString password = toUnobfuscate(Settings.value("password", "").toString());
+        QString schema   = Settings.value("schema", "").toString();
+
+        if (provider == toNewConnection::ORACLE_TNS)
+            host = "";
+
+        Settings.beginGroup("options");
+        std::set<QString> options;
+        QStringList keys = Settings.allKeys();
+        Q_FOREACH(QString s, keys)
+        {
+            if (Settings.value(s, false).toBool())
+                options.insert(s);
+        }
+        Settings.endGroup(); // options
+
+        toConnectionOptions opt(
+            provider,
+            host,
+            database,
+            username,
+            password,
+            schema,
+            Settings.value("port", 0).toInt(),
+            options);
+        m_data[pos] = opt;
+        Settings.endGroup(); // X
+    }
+    Settings.endGroup(); // history
+
+    reset();
+}
+
 void toConnectionModel::append(int ix, toConnectionOptions conn)
 {
     m_data[ix] = conn;
     reset();
 }
 
-// bool toConnectionModel::removeRow(int row, const QModelIndex & parent)
-// {
-// //     beginRemoveRows(QModelIndex(), row, row + 1);
-//     QModelIndex ix = index(row, 0);
-//     int key = data(ix, Qt::DisplayRole).toInt();
-//     bool ret = m_data.remove(key);
-// //     endRemoveRows();
-//     return ret;
-// }
+bool toConnectionModel::removeRow(int row, const QModelIndex &parent)
+{
+    beginRemoveRows(QModelIndex(), row, row + 1);
+    QModelIndex ix = index(row, 0);
+    int key = data(ix, Qt::DisplayRole).toInt();
+    bool ret = m_data.remove(key);
+    endRemoveRows();
+
+    return ret;
+}
 
 QVariant toConnectionModel::headerData(int section, Qt::Orientation orientation, int role) const
 {

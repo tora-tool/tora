@@ -316,7 +316,7 @@ public slots:
      * this tool. It calls the @ref toolWindow function to get widget and sets it
      * up properly.
      */
-    void createWindow(void);
+    QWidget* createWindow(void);
 
 
 };

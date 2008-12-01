@@ -114,6 +114,7 @@ bool toWorksheetText::editOpen(QString suggestedFile)
         }
 
         emit fileOpened();
+        emit fileOpened(fname);
         return true;
     }
     TOCATCH;

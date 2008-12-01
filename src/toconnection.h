@@ -750,7 +750,7 @@ public:
      *  in a subconnection.
      * @param conn Connection to copy.
      */
-    toConnection(const toConnection &conn);
+    explicit toConnection(const toConnection &conn);
     /** Destroy connection.
      */
     virtual ~toConnection();

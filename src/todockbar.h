@@ -39,43 +39,88 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOCONNECTIONMODEL_H
-#define TOCONNECTIONMODEL_H
+#ifndef TODOCKBAR_H
+#define TODOCKBAR_H
 
-#include <QAbstractTableModel>
-#include "tonewconnection.h"
+#include "config.h"
+#include "topushbutton.h"
+
+#include <QAction>
+#include <QToolBar>
+#include <QMap>
+
+class toDocklet;
 
 
-/*! \brief Display imported/available connections in
-the Import dialog's view.
-\author Petr Vanek <petr@scribus.info>
-*/
-
-class toConnectionModel : public QAbstractTableModel
+class toDockbarButton : public toPushButton
 {
-    Q_OBJECT
+    Q_OBJECT;
 
-    public:
-        toConnectionModel();
+public:
+    explicit toDockbarButton(const QIcon &icon,
+                             const QString &text,
+                             QWidget *parent = 0);
+};
 
-        //! \brief Pull connections from QSettings
-        void readConfig();
-        //! \brief Set the m_data and update all connected views.
-        void setupData(QMap<int,toConnectionOptions> list);
-        void append(int ix, toConnectionOptions conn);
-        bool removeRow(int row, const QModelIndex & parent = QModelIndex());
-        //! \brief Bring m_data back to caller.
-        QMap<int,toConnectionOptions> availableConnections() { return m_data; };
-        toConnectionOptions availableConnection(int ix) { return m_data[ix]; };
 
-        QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-        QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
-        int columnCount(const QModelIndex & parent = QModelIndex()) const { return 6; };
-        int rowCount(const QModelIndex & parent = QModelIndex()) const { return m_data.count(); };
-        Qt::ItemFlags flags(const QModelIndex & index) const;
+class toDockbar : public QToolBar
+{
+    Q_OBJECT;
 
-    private:
-        QMap<int,toConnectionOptions> m_data;
+private:
+    Qt::ToolBarArea Area;
+
+    // docklets managed by this dockbar
+    QMap<QString, toDockbarButton *> Docklets;
+
+public:
+    toDockbar(Qt::ToolBarArea area,
+              const QString &title,
+              QWidget *parent = 0);
+
+    /**
+     * Adds docklet to be managed by this dockbar
+     *
+     */
+    void addDocklet(toDocklet *let, bool show = true);
+
+
+    /**
+     * Removes a docklet managed by this dockbar
+     *
+     */
+    toDocklet* removeDocklet(QString name);
+
+
+    /**
+     * Removes a docklet managed by this dockbar
+     *
+     */
+    toDocklet* removeDocklet(toDocklet *let);
+
+
+    /**
+     * Show or hide all docklets
+     *
+     */
+    void setAllVisible(bool);
+
+
+    /**
+     * Returns true if this dockbar manages this docklet
+     *
+     */
+    bool contains(toDocklet *let);
+
+
+    /**
+     * Returns the area for the dockbar
+     *
+     */
+    inline Qt::ToolBarArea area() const
+    {
+        return Area;
+    }
 };
 
 #endif

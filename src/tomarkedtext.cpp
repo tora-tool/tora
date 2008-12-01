@@ -274,6 +274,8 @@ bool toMarkedText::editOpen(QString suggestedFile)
         {
             openFilename(fname);
             emit fileOpened();
+            emit fileOpened(fname);
+            printf("emit file opened\n");
             return true;
         }
         TOCATCH

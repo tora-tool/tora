@@ -525,17 +525,7 @@ void toWorksheet::setup(bool autoLoad)
 
     if (autoLoad)
     {
-        Editor->setFilename(toConfigurationSingle::Instance().wsAutoLoad());
-        if (!Editor->filename().isEmpty())
-        {
-            try
-            {
-                QString data = toReadFile(Editor->filename());
-                Editor->setText(QString(data));
-                Editor->setModified(false);
-            }
-            TOCATCH
-        }
+        Editor->editOpen(toConfigurationSingle::Instance().wsAutoLoad());
     }
 
     ToolMenu = NULL;

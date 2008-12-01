@@ -39,43 +39,58 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOCONNECTIONMODEL_H
-#define TOCONNECTIONMODEL_H
+#ifndef TOVIEWDIRECTORY_H
+#define TOVIEWDIRECTORY_H
 
-#include <QAbstractTableModel>
-#include "tonewconnection.h"
+#include "config.h"
+#include "todocklet.h"
+
+#include <QListView>
+#include <QDirModel>
+
+class toToolWidget;
 
 
-/*! \brief Display imported/available connections in
-the Import dialog's view.
-\author Petr Vanek <petr@scribus.info>
-*/
-
-class toConnectionModel : public QAbstractTableModel
+class toViewDirectory : public toDocklet
 {
-    Q_OBJECT
+    Q_OBJECT;
 
-    public:
-        toConnectionModel();
+private:
+    QDirModel *Model;
+    QListView *ListView;
 
-        //! \brief Pull connections from QSettings
-        void readConfig();
-        //! \brief Set the m_data and update all connected views.
-        void setupData(QMap<int,toConnectionOptions> list);
-        void append(int ix, toConnectionOptions conn);
-        bool removeRow(int row, const QModelIndex & parent = QModelIndex());
-        //! \brief Bring m_data back to caller.
-        QMap<int,toConnectionOptions> availableConnections() { return m_data; };
-        toConnectionOptions availableConnection(int ix) { return m_data[ix]; };
+public:
+    toViewDirectory(QWidget *parent = 0,
+                    Qt::WindowFlags flags = 0);
 
-        QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-        QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
-        int columnCount(const QModelIndex & parent = QModelIndex()) const { return 6; };
-        int rowCount(const QModelIndex & parent = QModelIndex()) const { return m_data.count(); };
-        Qt::ItemFlags flags(const QModelIndex & index) const;
 
-    private:
-        QMap<int,toConnectionOptions> m_data;
+    /**
+     * Get the action icon name for this docklet
+     *
+     */
+    virtual QIcon icon() const;
+
+    /**
+     * Get the docklet's name
+     *
+     */
+    virtual QString name() const;
+
+
+    /**
+     * Update model show the given directory is listed.
+     *
+     */
+    void findRoot(QFileInfo dir);
+
+
+public slots:
+    void handleActivated(const QModelIndex &index);
+
+    void handleToolAdded(toToolWidget *);
+
+    void showFile(QString);
 };
+
 
 #endif

@@ -218,14 +218,16 @@ const QPixmap *toTool::toolbarImage()
     return ButtonPicture;
 }
 
-void toTool::createWindow(void)
+QWidget* toTool::createWindow()
 {
     toMain *main = toMainWidget();
+    QWidget *newWin = 0;
+
     try
     {
         if (!canHandle(main->currentConnection()))
             throw QString("The tool %1 doesn't support the current database").arg(QString(name()));
-        QWidget *newWin = toolWindow(main->workspace(), main->currentConnection());
+        newWin = toolWindow(main->workspace(), main->currentConnection());
 
         if (newWin)
         {
@@ -238,6 +240,7 @@ void toTool::createWindow(void)
             // save previous window
             QMdiSubWindow *previous = main->lastActiveWindow();
             QMdiSubWindow *newsub = main->workspace()->addSubWindow(newWin);
+            newsub->setFocusProxy(newWin);
             const QPixmap *icon = toolbarImage();
             if (icon)
             {
@@ -289,7 +292,9 @@ void toTool::createWindow(void)
             main->updateWindowsMenu();
         }
     }
-    TOCATCH
+    TOCATCH;
+
+    return newWin;
 }
 
 

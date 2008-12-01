@@ -94,6 +94,9 @@ SET(TORA_MOC_CLASSES
     toconnectionimport.h
     toconnectionmodel.h
     toconnectionpool.h
+    todocklet.h
+    todockbar.h
+    topushbutton.h
     torunnable.h
     tonoblockquery.h
     tocurrent.h
@@ -216,6 +219,9 @@ SET(TORA_MOC_CLASSES
 # shortcuteditor
     shortcuteditor/shortcuteditordialog.h
     shortcuteditor/shortcutmodel.h
+# docklets
+    docklets/toviewconnections.h
+    docklets/toviewdirectory.h
 )
 IF (ORACLE_FOUND)
     LIST(APPEND TORA_MOC_CLASSES tooraclesetting.h)
@@ -242,6 +248,9 @@ SET(TORA_SOURCES
     toconnectionimport.cpp
     toconnectionmodel.cpp
     toconnectionpool.cpp
+    todocklet.cpp
+    todockbar.cpp
+    topushbutton.cpp
     torunnable.cpp
     tocurrent.cpp
     todatatype.cpp
@@ -368,6 +377,9 @@ SET(TORA_SOURCES
     # shortcuteditor
     shortcuteditor/shortcuteditordialog.cpp
     shortcuteditor/shortcutmodel.cpp
+    # docklets
+    docklets/toviewconnections.cpp
+    docklets/toviewdirectory.cpp
 )
 # compiled in icons for windows
 IF (WIN32 AND MSVC)

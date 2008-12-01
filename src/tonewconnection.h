@@ -108,6 +108,15 @@ public:
                schema == other.schema;
     }
 
+    bool operator==(const toConnection &conn)
+    {
+        return conn.user() == username &&
+            conn.provider() == provider &&
+            conn.host() == host + ":" + QString::number(port) &&
+            conn.database() == database &&
+            schema.isEmpty() || (conn.schema() == schema);
+    }
+
     bool operator!=(const toConnectionOptions &other)
     {
         return !operator==(other);
@@ -127,9 +136,6 @@ private:
     int DefaultPort;
 
     QMenu *PreviousContext;
-
-    toConnectionModel * m_connectionModel;
-    QSortFilterProxyModel * m_proxyModel;
 
     // connection created by dialog
     toConnection *NewConnection;
@@ -158,6 +164,13 @@ public:
     {
         return NewConnection;
     }
+
+    static const QString ORACLE_INSTANT;
+    static const QString ORACLE_TNS;
+
+    static toConnectionModel* connectionModel(void);
+    static QSortFilterProxyModel* proxyModel(void);
+
 
 public slots:
 

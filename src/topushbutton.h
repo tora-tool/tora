@@ -39,43 +39,62 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOCONNECTIONMODEL_H
-#define TOCONNECTIONMODEL_H
+#ifndef TOPUSHBUTTON_H
+#define TOPUSHBUTTON_H
 
-#include <QAbstractTableModel>
-#include "tonewconnection.h"
+#include "config.h"
+
+#include <QPushButton>
 
 
-/*! \brief Display imported/available connections in
-the Import dialog's view.
-\author Petr Vanek <petr@scribus.info>
-*/
+// a button that can be rotated.
 
-class toConnectionModel : public QAbstractTableModel
+class toPushButton : public QPushButton
 {
-    Q_OBJECT
+    Q_OBJECT;
 
-    public:
-        toConnectionModel();
+public:
+    enum Rotation
+    {
+        NoRotation       = 0,
+        UpsideDown       = 180,
+        Clockwise        = 90,
+        CounterClockwise = 270
+    };
 
-        //! \brief Pull connections from QSettings
-        void readConfig();
-        //! \brief Set the m_data and update all connected views.
-        void setupData(QMap<int,toConnectionOptions> list);
-        void append(int ix, toConnectionOptions conn);
-        bool removeRow(int row, const QModelIndex & parent = QModelIndex());
-        //! \brief Bring m_data back to caller.
-        QMap<int,toConnectionOptions> availableConnections() { return m_data; };
-        toConnectionOptions availableConnection(int ix) { return m_data[ix]; };
+    explicit toPushButton(QWidget *parent = 0);
+    explicit toPushButton(const QString &text,
+                          QWidget *parent = 0);
+    explicit toPushButton(const QIcon &icon,
+                          const QString &text,
+                          QWidget *parent = 0);
 
-        QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-        QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
-        int columnCount(const QModelIndex & parent = QModelIndex()) const { return 6; };
-        int rowCount(const QModelIndex & parent = QModelIndex()) const { return m_data.count(); };
-        Qt::ItemFlags flags(const QModelIndex & index) const;
+    /**
+     * Return the rotation set for this button
+     *
+     */
+    inline Rotation rotation() const
+    {
+        return rotate;
+    }
 
-    private:
-        QMap<int,toConnectionOptions> m_data;
+
+    /**
+     * Set rotation for this button
+     *
+     */
+    void setRotation(Rotation rotation);
+
+
+    virtual QSize sizeHint() const;
+    virtual QSize minimumSizeHint() const;
+
+protected:
+    virtual void paintEvent(QPaintEvent *);
+
+private:
+    Rotation rotate;
+    QStyleOptionButton getStyleOption();
 };
 
 #endif
