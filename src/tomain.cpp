@@ -927,7 +927,9 @@ void toMain::viewCallback(QAction *action)
     }
 
     addDockWidget(Qt::LeftDockWidgetArea, let);
+#if QT_VERSION >= 0x040400
     restoreDockWidget(let);
+#endif
 
     Qt::DockWidgetArea area = dockWidgetArea(let);
     if(area == Qt::RightDockWidgetArea)
