@@ -75,6 +75,7 @@ toNewConnection::toNewConnection(QWidget* parent, Qt::WFlags fl)
     toHelp::connectDialog(this);
 
     Previous->setModel(proxyModel());
+    proxyModel()->setFilterWildcard("*");
 
     std::list<QString> lst = toConnectionProvider::providers();
 
