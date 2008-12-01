@@ -902,6 +902,8 @@ toTuningOverview::toTuningOverview(QWidget *parent, const char *name, Qt::WFlags
 {
     setupUi(this);
 
+    BackgroundGroup->setLayout(new QVBoxLayout);
+
     setupChart(ArchiveWrite, tr("< Archive write"), " " + tr("blocks/s"), SQLOverviewArchiveWrite);
     setupChart(BufferHit, tr("Hitrate"), QString::fromLatin1("%"), SQLOverviewBufferHit);
     BufferHit->setMaxValue(100);
@@ -1314,6 +1316,7 @@ void toTuningOverview::poll(void)
                     if (labIt == Backgrounds.end() || *labIt == NULL)
                     {
                         label = new QLabel(BackgroundGroup);
+                        BackgroundGroup->layout()->addWidget(label);
                         label->show();
                         if (labIt == Backgrounds.end())
                         {
