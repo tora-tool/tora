@@ -31,7 +31,7 @@ BuildRequires: oracle-instantclient-devel
 BuildRequires: qt4-devel >= 4.3.0
 BuildRequires: openssl-devel
 BuildRequires: perl
-BuildRequires: cmake >= 2.6.0
+BuildRequires: cmake >= 2.4.0
 Requires:      qt4 >= 4.3.0
 Requires:      oracle-instantclient-basic
 
@@ -58,6 +58,9 @@ will require to download the entire server distribution to install the client, b
 it is available as a choice in the installer.
 
 %changelog
+* Tue Nov 18 2008 Michael Mraka <michael.mraka@redhat.com> 2.0.0-0.3100svn
+- added cmake 2.4 patch
+
 * Tue Oct  7 2008 Michael Mraka <michael.mraka@redhat.com> 2.0.0-0.3041svn
 - changed to cmake driven build for 2.0.0 version
 - built against oracle-instantclient 
