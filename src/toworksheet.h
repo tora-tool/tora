@@ -105,6 +105,7 @@ class toWorksheet : public toToolWidget
     toTreeWidgetItem  *LastLogItem;
     QWidget           *StatTab;
     bool               TryStrip;
+    //! Used only for DESC/DESCRIBE sql statements
     toResultCols      *Columns;
     QComboBox         *Refresh;
     QLabel            *Started;

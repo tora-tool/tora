@@ -31,6 +31,7 @@ SET(TORA_UI_SRC
     todatabasesettingui.ui
     todebugchangeui.ui
     todebugwatch.ui
+    todescribeui.ui
     todroptablespaceui.ui
 #     toeditextensiongotoui.ui
     toeditextensionsetupui.ui
@@ -103,6 +104,7 @@ SET(TORA_MOC_CLASSES
     todatatype.h
     todebug.h
     todebugtext.h
+    todescribe.h
 #     todefaultkeywords.h
     toeditextensions.h
 #     toeditwidget.h
@@ -256,6 +258,7 @@ SET(TORA_SOURCES
     todatatype.cpp
     todebug.cpp
     todebugtext.cpp
+    todescribe.cpp
     toeditextensions.cpp
     toeditwidget.cpp
     toextract.cpp

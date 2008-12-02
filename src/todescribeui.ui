@@ -1,0 +1,76 @@
+<ui version="4.0" >
+ <class>toDescribe</class>
+ <widget class="QDialog" name="toDescribe" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>751</width>
+    <height>330</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Describe</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" >
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <property name="spacing" >
+    <number>0</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QTabWidget" name="indexesWidget" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="columnsTab" >
+      <attribute name="title" >
+       <string>&amp;Columns</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2" >
+       <item row="0" column="0" >
+        <widget class="toResultCols" native="1" name="columnsWidget" />
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="indexesTab" >
+      <attribute name="title" >
+       <string>&amp;Indexes</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3" >
+       <item row="0" column="0" >
+        <widget class="toResultTableView" name="indexView" />
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="constraintsTab" >
+      <attribute name="title" >
+       <string>C&amp;onstraints</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4" >
+       <item row="0" column="0" >
+        <widget class="toResultTableView" name="constraintsView" />
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>toResultCols</class>
+   <extends>QWidget</extends>
+   <header location="global" >toresultcols.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>toResultTableView</class>
+   <extends>QTableView</extends>
+   <header location="global" >toresulttableview.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

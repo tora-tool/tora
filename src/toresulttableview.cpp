@@ -94,6 +94,26 @@ public:
 };
 
 
+toResultTableView::toResultTableView(QWidget * parent)
+    : QTableView(parent),
+      toResult(),
+    toEditWidget(false,       // open
+              true,        // save
+              true,        // print
+              false,       // undo
+              false,       // redo
+              false,       // cut
+              true,        // copy
+              false,       // past
+              true,        // search
+              true,        // selectall
+              false),      // readall
+    Model(NULL)
+{
+    setObjectName("toResultTableView");
+    setup(true, false, false);
+}
+
 toResultTableView::toResultTableView(bool readable,
                                      bool numberColumn,
                                      QWidget *parent,
@@ -114,10 +134,13 @@ toResultTableView::toResultTableView(bool readable,
                      false),      // readall
         Model(NULL)
 {
-
     if (name)
         setObjectName(name);
+    setup(readable, numberColumn, editable);
+}
 
+void toResultTableView::setup(bool readable, bool numberColumn, bool editable)
+{
     Statistics      = NULL;
     Menu            = NULL;
     Editable        = editable;

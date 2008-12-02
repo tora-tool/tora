@@ -53,6 +53,7 @@ tora_SOURCES=main.cpp \
 	toqvalue.cpp toqvalue.h \
 	toconnectionimport.cpp toconnectionimport.h \
 	toconnectionpool.cpp toconnectionpool.h \
+    todescribe.cpp todescribe.h \
 	torunnable.cpp torunnable.h \
 	toeditwidget.cpp toeditwidget.h \
 	toglobalsetting.cpp toglobalsetting.h \
@@ -199,6 +200,7 @@ UI_FILES = toaboutui.ui \
 		tobrowserindexui.ui \
 		tobrowsertableui.ui \
 		toconnectionimportui.ui \
+        todescribeui.ui \
 		tooraclesettingui.ui \
 		tostoragetablespaceui.ui \
 		tochartalarmui.ui \

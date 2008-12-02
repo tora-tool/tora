@@ -128,6 +128,11 @@ class toResultTableView : public QTableView,
     // use Filter to hide rows
     void applyFilter(void);
 
+    /*! \brief Common setup function called from constructors
+    */
+    void setup(bool readable, bool numberColumn, bool editable);
+
+
 protected slots:
     void displayMenu(const QPoint &pos);
     void menuCallback(QAction *action);
@@ -208,6 +213,9 @@ public:
                       QWidget *parent,
                       const char *name = 0,
                       bool editable = false);
+    /*! \brief Constructor provided for Qt designer. See setup()
+    */
+    toResultTableView(QWidget * parent = 0);
     virtual ~toResultTableView(void);
 
 

@@ -65,6 +65,7 @@
 #include "toworksheetstatistic.h"
 #include "toworksheettext.h"
 #include "toeditablemenu.h"
+#include "todescribe.h"
 
 #include <qcheckbox.h>
 #include <qcheckbox.h>
@@ -1630,33 +1631,22 @@ void toWorksheet::describe(void)
 {
     QString owner, table;
     Editor->tableAtCursor(owner, table);
+    if (owner.isNull())
+        owner = Schema->currentText();
 
-    bool toplevel = toConfigurationSingle::Instance().wsToplevelDescribe();
-
-    toResultCols *columns;
-    if (toplevel)
+    if (toConfigurationSingle::Instance().wsToplevelDescribe())
     {
-        columns = new toResultCols(
-            this,
-            "description",
-            Qt::Window);
-
-        QAction *close = new QAction(columns);
-        close->setShortcut(Qt::Key_Escape);
-        connect(close, SIGNAL(triggered()), columns, SLOT(close()));
-        columns->addAction(close);
+        toDescribe * d = new toDescribe(this);
+        d->changeParams(owner, table);
+        d->show();
     }
     else
     {
-        columns = Columns;
+        unhideResults();
+        Columns->changeParams(owner, table);
         Columns->show();
         Current = Columns;
     }
-
-    if (owner.isNull())
-        owner = Schema->currentText();
-    columns->changeParams(owner, table);
-    columns->show();
 }
 
 void toWorksheet::executeSaved(QAction *act)
