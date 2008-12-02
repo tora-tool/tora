@@ -554,8 +554,6 @@ void toMain::createToolbars()
 
     toolsToolbar = toAllocBar(this, tr("Tools"));
     toolsToolbar->setObjectName("toolsToolbar");
-
-    addToolBarBreak();
 }
 
 //! \warning Do not use it. It screws up reloading the toolbar state
