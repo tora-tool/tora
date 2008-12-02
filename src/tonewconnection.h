@@ -114,7 +114,7 @@ public:
             conn.provider() == provider &&
             conn.host() == host + ":" + QString::number(port) &&
             conn.database() == database &&
-            schema.isEmpty() || (conn.schema() == schema);
+            (schema.isEmpty() || (conn.schema() == schema));
     }
 
     bool operator!=(const toConnectionOptions &other)

@@ -140,7 +140,7 @@ void toViewConnections::handleActivated(const QModelIndex &index) {
                conn.provider() == provider &&
                conn.host() == host &&
                conn.database() == database &&
-               opt.schema.isEmpty() || (conn.schema() == opt.schema))
+               (opt.schema.isEmpty() || (conn.schema() == opt.schema)))
             {
                 toMainWidget()->createDefault();
                 emit activated();
