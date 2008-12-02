@@ -367,10 +367,6 @@ AC_DEFUN([AC_PATH_QT],
   qt_compiled=yes,
   qt_compiled=no)
 
-  CXXFLAGS="$ac_cxxflags_safe"
-  LDFLAGS="$ac_ldflags_safe"
-  LIBS="$ac_libs_safe"
-  
   if test "$qt_compiled" = no; then
     have_qt=no
     AC_MSG_ERROR([Qt not found.
@@ -379,6 +375,28 @@ AC_DEFUN([AC_PATH_QT],
   else
     have_qt=yes
   fi
+
+  AC_COMPILE_IFELSE([
+#include "confdefs.h"
+#include <Qt/qglobal.h>
+
+#if QT_VERSION < 0x040200
+#error Your Qt version is too old.
+#endif
+  ],
+  qt_compiled=yes,
+  qt_compiled=no)
+
+  if test "$qt_compiled" = no; then
+    have_qt=no
+    AC_MSG_ERROR([Your Qt version is too old. Please upgrade to a newer version.])
+  else
+    have_qt=yes
+  fi
+
+  CXXFLAGS="$ac_cxxflags_safe"
+  LDFLAGS="$ac_ldflags_safe"
+  LIBS="$ac_libs_safe"
   ])
   
   eval "$ac_cv_have_qt"
