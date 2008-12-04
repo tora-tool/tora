@@ -1291,7 +1291,7 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens, int line, int pos, exec
         t = t.mid(i);
     }
 
-    if (t.trimmed().length() && EditSplitter)
+    if (t.trimmed().length())
         query(t, type);
 }
 
