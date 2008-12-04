@@ -298,6 +298,7 @@ BUILT_SOURCES = \
 	moc_tocodemodel.cpp \
 	moc_toconnectionpool.cpp \
 	moc_toconnectionimport.cpp \
+	moc_todescribe.cpp \
 	moc_torunnable.cpp \
 	moc_tonoblockquery.cpp \
 	moc_toeventquery.cpp \
@@ -399,6 +400,7 @@ BUILT_SOURCES = \
 	ui_tobrowserconstraintui.h \
 	ui_tobrowserfilterui.h \
 	ui_tobrowserindexui.h \
+	ui_todescribeui.h \
 	ui_tobrowsertableui.h \
 	ui_toconnectionimportui.h \
 	ui_tochartalarmui.h \
