@@ -3,7 +3,7 @@
 # GNU copyright 1997 to 1999 by Joey Hess.
 
 # Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
+export DH_VERBOSE=1
 
 include /usr/share/dpatch/dpatch.make 
 
@@ -22,7 +22,12 @@ ifneq "$(wildcard /usr/share/misc/config.guess)" ""
 endif
 
 	# Add here commands to configure the package.
-	./configure --prefix=/usr --without-oracle --without-rpath --disable-new-check --with-kde --enable-libsuffix= --infodir=/usr/share/info
+	#./configure --prefix=/usr --with-instant-client=/home/mrjohnson/projects/instantclient --infodir=/usr/share/info
+
+	# if you're using oracle you must configure this line to work for your system
+	./configure --prefix=/usr --infodir=/usr/share/info
+	# also, for oracle make sure you uncomment dh_shlibdeps below.
+	# it won't work with proprietary libraries.
 
 	touch configure-stamp
 
@@ -57,10 +62,10 @@ install: build
 	dh_installdirs
 
 	# Add here commands to install the package into debian/tora.
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/tora libdir=/usr/share/tora
-	-install --owner root --group root --mode=644 $(CURDIR)/src/icons/tora.xpm $(CURDIR)/debian/tora/usr/share/icons/hicolor/32x32/apps
-	-install --owner root --group root --mode=644 $(CURDIR)/src/icons/toramini.xpm $(CURDIR)/debian/tora/usr/share/icons/hicolor/16x16/apps/tora.xpm
-	-install --owner root --group root --mode=644 $(CURDIR)/debian/tora.desktop $(CURDIR)/debian/tora/usr/share/applications
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp libdir=/usr/share/tora
+	-install --owner root --group root --mode=644 $(CURDIR)/src/icons/tora.xpm $(CURDIR)/debian/tmp/usr/share/icons/hicolor/32x32/apps
+	-install --owner root --group root --mode=644 $(CURDIR)/src/icons/toramini.xpm $(CURDIR)/debian/tmp/usr/share/icons/hicolor/16x16/apps/tora.xpm
+	-install --owner root --group root --mode=644 $(CURDIR)/debian/tora.desktop $(CURDIR)/debian/tmp/usr/share/applications
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -81,11 +86,10 @@ binary-arch: build install
 	dh_strip
 	dh_compress
 	dh_fixperms
-	dh_installdeb
-	dh_shlibdeps
 	dh_gencontrol
-	dh_md5sums
+	dh_installdeb
 	dh_builddeb
+	dh_shlibdeps
 
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary install configure

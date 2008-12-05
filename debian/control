@@ -1,16 +1,16 @@
 Source: tora
 Section: misc
 Priority: optional
-Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
-Uploaders: Michael Meskes <meskes@debian.org>
-Build-Depends: debhelper (>= 5), autotools-dev, kdelibs4-dev, docbook-xml (>= 4.2), xsltproc, docbook-xsl, kdebase-bin, libqscintilla-dev, texinfo, dpatch
+Maintainer: Mike Johnson <mrjohnson0@users.sourceforge.net>
+Uploaders: Mike Johnson <mrjohnson0@users.sourceforge.net>
+Build-Depends: debhelper (>= 5), autotools-dev, docbook-xml (>= 4.2), xsltproc, docbook-xsl, libqscintilla2-dev, texinfo, dpatch, libqt4-dev (>= 4.2), libaio-dev (>= 0.3)
 Standards-Version: 3.7.3
 
 Package: tora
 Architecture: any
-Depends: libqt3-mt-psql|libqt3-mt-odbc|libqt3-mt-mysql, ${shlibs:Depends}
+Depends: libqt4-sql-mysql|libqt4-sql-psql|libaio1, ${shlibs:Depends}
 Description: A graphical toolkit for database developers and administrators
  Tora features a schema browser, SQL worksheet, PL/SQL editor & debugger,
  storage manager, rollback segment monitor, instance manager, and SQL output
- viewer. Via qt3 it can access PostgreSQL and MySQL directly. Any other
+ viewer. Via qt it can access PostgreSQL and MySQL directly. Any other
  database systems can be accessed via ODBC.
