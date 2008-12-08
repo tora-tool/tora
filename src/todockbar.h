@@ -121,6 +121,21 @@ public:
     {
         return Area;
     }
+
+
+    /**
+     * Save state to QByteArray. Necessary since main window
+     * saveState() will only preserve docked QDockWidgets.
+     *
+     */
+    QByteArray saveState() const;
+
+
+    /**
+     * Restore state of hidden docklets, buttons.
+     *
+     */
+    void restoreState(QByteArray);
 };
 
 #endif

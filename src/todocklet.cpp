@@ -70,6 +70,11 @@ toDocklet::toDocklet(const QString &title,
             SIGNAL(activated()),
             this,
             SLOT(childActivated()));
+
+    connect(this,
+            SIGNAL(dockLocationChanged(Qt::DockWidgetArea)),
+            this,
+            SLOT(handleDockletLocationChanged(Qt::DockWidgetArea)));
 }
 
 
@@ -125,6 +130,8 @@ void toDocklet::showPopup(bool shown)
         QPoint pos;
         if(area == Qt::LeftToolBarArea)
             pos.setX(dockbar->geometry().width());
+        else if(area == Qt::RightToolBarArea)
+            pos.setX(-(this->geometry().width()));
         pos = dockbar->mapToGlobal(pos);
         move(pos);
 
@@ -164,4 +171,10 @@ bool toDocklet::event(QEvent *event)
 void toDocklet::childActivated()
 {
     showPopup(false);
+}
+
+
+void toDocklet::handleDockletLocationChanged(Qt::DockWidgetArea area)
+{
+    emit dockletLocationChanged(this, area);
 }

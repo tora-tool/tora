@@ -42,6 +42,9 @@
 #include "todockbar.h"
 #include "todocklet.h"
 
+#include <QDataStream>
+#include <QByteArray>
+
 
 toDockbarButton::toDockbarButton(const QIcon &icon,
                                  const QString &text,
@@ -122,8 +125,6 @@ toDocklet* toDockbar::removeDocklet(QString name)
 
 toDocklet* toDockbar::removeDocklet(toDocklet *let)
 {
-    if(let->isVisible())
-        let->close();
     if(!Docklets.contains(let->name()))
         return 0;
 
@@ -153,4 +154,50 @@ void toDockbar::setAllVisible(bool visible)
 bool toDockbar::contains(toDocklet *let)
 {
     return Docklets.contains(let->name());
+}
+
+
+QByteArray toDockbar::saveState() const
+{
+    QByteArray buf;
+    QDataStream data(&buf, QIODevice::WriteOnly);
+
+    foreach(QString name, Docklets.keys())
+    {
+        toDocklet *let = toDocklet::docklet(name);
+        if(!let)
+            continue;
+
+        // these will be stored by main window saveState()
+        if(let->isVisible())
+            continue;
+
+        data << let->name();
+        data << let->geometry().width();
+    }
+
+    return buf;
+}
+
+
+void toDockbar::restoreState(QByteArray buf)
+{
+    QDataStream data(&buf, QIODevice::ReadOnly);
+
+    while(!data.atEnd())
+    {
+        QString name;
+        int     width;
+        data >> name;
+        data >> width;
+
+        toDocklet *let = toDocklet::docklet(name);
+        if(!let)
+            continue;
+
+        QRect geo = let->geometry();
+        geo.setWidth(width);
+        let->setGeometry(geo);
+        addDocklet(let, false);
+    }
 }

@@ -585,6 +585,12 @@ public slots:
      */
     toDockbar* dockbar(toDocklet *let);
 
+    /**
+     * Handles moving docklet to new dockbar
+     *
+     */
+    void moveDocklet(toDocklet *let, Qt::DockWidgetArea area);
+
 protected:
     /** intercept close event from parent
      */

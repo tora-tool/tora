@@ -688,15 +688,17 @@ void toMain::createDockbars()
 
     foreach(toDocklet *let, toDocklet::docklets())
     {
-        if(!let->isVisible())
-            continue;
+        if(let->isVisible())
+            moveDocklet(let, dockWidgetArea(let));
 
-        Qt::DockWidgetArea area = dockWidgetArea(let);
-        if(area == Qt::LeftDockWidgetArea)
-            leftDockbar->addDocklet(let, false);
-        else if(area == Qt::RightDockWidgetArea)
-            rightDockbar->addDocklet(let, false);
+        connect(let,
+                SIGNAL(dockletLocationChanged(toDocklet *, Qt::DockWidgetArea)),
+                this,
+                SLOT(moveDocklet(toDocklet *, Qt::DockWidgetArea)));
     }
+
+    leftDockbar->restoreState(toConfigurationSingle::Instance().leftDockbarState());
+    rightDockbar->restoreState(toConfigurationSingle::Instance().rightDockbarState());
 }
 
 
@@ -913,6 +915,7 @@ void toMain::viewCallback(QAction *action)
     if(!let)
         return;
 
+    let->close();
     if(leftDockbar->contains(let))
     {
         leftDockbar->removeDocklet(let);
@@ -930,12 +933,22 @@ void toMain::viewCallback(QAction *action)
 #else
     let->show();
 #endif
+}
 
-    Qt::DockWidgetArea area = dockWidgetArea(let);
+
+void toMain::moveDocklet(toDocklet *let, Qt::DockWidgetArea area)
+{
     if(area == Qt::RightDockWidgetArea)
+    {
+        leftDockbar->removeDocklet(let);
         rightDockbar->addDocklet(let);
-    else
+    }
+
+    if(area == Qt::LeftDockWidgetArea)
+    {
+        rightDockbar->removeDocklet(let);
         leftDockbar->addDocklet(let);
+    }
 }
 
 
@@ -1477,11 +1490,11 @@ void toMain::closeEvent(QCloseEvent *event)
     }
     TOCATCH;
 
-    leftDockbar->setAllVisible(true);
-    rightDockbar->setAllVisible(true);
-
     toConfigurationSingle::Instance().setMainWindowGeometry(saveGeometry());
     toConfigurationSingle::Instance().setMainWindowState(saveState());
+
+    toConfigurationSingle::Instance().setLeftDockbarState(leftDockbar->saveState());
+    toConfigurationSingle::Instance().setRightDockbarState(rightDockbar->saveState());
 
     toConfigurationSingle::Instance().saveConfig();
     event->accept();

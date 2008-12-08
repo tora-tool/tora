@@ -124,6 +124,13 @@ signals:
     void popupVisibleToggled(bool shown);
 
 
+    /**
+     * Emitted when docklet moves to new location
+     *
+     */
+    void dockletLocationChanged(toDocklet *let, Qt::DockWidgetArea area);
+
+
 public slots:
     /**
      * Show or hide popup. This is different from QDockWidget::floating
@@ -138,6 +145,7 @@ protected:
 
 private slots:
     void childActivated();
+    void handleDockletLocationChanged(Qt::DockWidgetArea area);
 
 
 private:
