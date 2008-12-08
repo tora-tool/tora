@@ -48,12 +48,19 @@
 #include "toresultextract.h"
 #include "tosql.h"
 #include "totool.h"
+#include "tomain.h"
 
 
 toResultExtract::toResultExtract(bool prompt, QWidget *parent, const char *name)
         : toWorksheetWidget(parent, name, toCurrentConnection(parent))
 {
     Prompt = prompt;
+}
+
+toResultExtract::toResultExtract(QWidget * parent)
+    : toWorksheetWidget(parent, "toResultExtract", toMainWidget()->currentConnection())
+{
+    Prompt = false;
 }
 
 static toSQL SQLObjectTypeMySQL("toResultExtract:ObjectType",

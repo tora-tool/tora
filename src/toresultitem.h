@@ -130,6 +130,8 @@ public:
      * @param name Name of widget.
      */
     toResultItem(int num, QWidget *parent, const char *name = NULL);
+    //! Dummy constructor for qt Designer
+    toResultItem(QWidget *parent = 0);
     /** Destroy object
      */
     ~toResultItem(void);

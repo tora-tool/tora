@@ -39,42 +39,38 @@
 *
 * END_COMMON_COPYRIGHT_HEADER */
 
-#include <QSettings>
-#include <QHideEvent>
+#include "toresultextract.h"
+#include "toresultitem.h"
+#include "toresulttableview.h"
+#include "toresultgrants.h"
+#include "tobrowsersequencewidget.h"
 
-#include "todescribe.h"
+static toSQL SQLSequenceInfoPgSQL("toBrowser:SequenceInformation",
+                                  "SELECT *, substr(:f1,1) as \"Owner\" FROM :f2<noquote>",
+                                  "Display information about a sequence",
+                                  "7.1",
+                                  "PostgreSQL");
+static toSQL SQLSequenceInfo("toBrowser:SequenceInformation",
+                             "SELECT * FROM SYS.ALL_SEQUENCES\n"
+                             " WHERE Sequence_Owner = :f1<char[101]>\n"
+                             "   AND Sequence_Name = :f2<char[101]>",
+                             "");
 
 
 
-toDescribe::toDescribe(QWidget * parent)
-    : QDialog(parent)
+
+toBrowserSequenceWidget::toBrowserSequenceWidget(QWidget * parent)
+    : toBrowserBaseWidget(parent)
 {
-    setupUi(this);
+    setObjectName("toBrowserSequenceWidget");
 
-    QSettings s;
-    s.beginGroup("toDescribe");
-    restoreGeometry(s.value("geometry", QByteArray()).toByteArray());
-    s.endGroup();
-}
+    resultInfo = new toResultItem(this);
+    resultInfo->setSQL(SQLSequenceInfo);
+    addTab(resultInfo, "Info");
 
-void toDescribe::hideEvent(QHideEvent * event)
-{
-    QSettings s;
-    s.beginGroup("toDescribe");
-    s.setValue("geometry", saveGeometry());
-    s.endGroup();
-    event->accept();
-}
+    grantsView = new toResultGrants(this);
+    addTab(grantsView, "&Grants");
 
-#include "tobrowsertablewidget.h"
-void toDescribe::changeParams(const QString & owner, const QString & object)
-{
-    // TODO/FIXME: check it if it's table or widget or whatever...
-    if (widget)
-    {
-        delete widget;
-        widget = new toBrowserTableWidget(this);
-        layout()->addWidget(widget);
-    }
-    widget->changeParams(owner, object);
+    extractView = new toResultExtract(this);
+    addTab(extractView, "Script");
 }

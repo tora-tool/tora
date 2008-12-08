@@ -39,42 +39,44 @@
 *
 * END_COMMON_COPYRIGHT_HEADER */
 
-#include <QSettings>
-#include <QHideEvent>
+#include "toresultextract.h"
+#include "toresultitem.h"
+#include "toresultgrants.h"
+#include "tobrowsersynonymwidget.h"
 
-#include "todescribe.h"
+static toSQL SQLSynonymInfo("toBrowser:SynonymInformation",
+                            "SELECT * FROM Sys.All_Synonyms a\n"
+                            " WHERE Owner = :f1<char[101]>\n"
+                            "   AND Synonym_Name = :f2<char[101]>",
+                            "Display information about a synonym");
 
-
-
-toDescribe::toDescribe(QWidget * parent)
-    : QDialog(parent)
+toBrowserSynonymWidget::toBrowserSynonymWidget(QWidget * parent)
+    : toBrowserBaseWidget(parent)
 {
-    setupUi(this);
+    setObjectName("toBrowserSynonymWidget");
 
-    QSettings s;
-    s.beginGroup("toDescribe");
-    restoreGeometry(s.value("geometry", QByteArray()).toByteArray());
-    s.endGroup();
+    resultInfo = new toResultItem(this);
+    resultInfo->setSQL(SQLSynonymInfo);
+    addTab(resultInfo, "Info");
+
+    grantsView = new toResultGrants(this);
+    addTab(grantsView, "&Grants");
+
+    extractView = new toResultExtract(this);
+    addTab(extractView, "Script");
 }
 
-void toDescribe::hideEvent(QHideEvent * event)
+void toBrowserSynonymWidget::changeParams(const QString & schema, const QString & object)
 {
-    QSettings s;
-    s.beginGroup("toDescribe");
-    s.setValue("geometry", saveGeometry());
-    s.endGroup();
-    event->accept();
-}
+    int pos = object.indexOf(".");
+    QString own("PUBLIC");
+    QString name(object);
 
-#include "tobrowsertablewidget.h"
-void toDescribe::changeParams(const QString & owner, const QString & object)
-{
-    // TODO/FIXME: check it if it's table or widget or whatever...
-    if (widget)
+    if (pos >= 0)
     {
-        delete widget;
-        widget = new toBrowserTableWidget(this);
-        layout()->addWidget(widget);
+        own = object.mid(0, pos);
+        name = object.mid(pos + 1);
     }
-    widget->changeParams(owner, object);
+
+    toBrowserBaseWidget::changeParams(own, name);
 }

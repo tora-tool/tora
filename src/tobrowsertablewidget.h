@@ -39,42 +39,43 @@
 *
 * END_COMMON_COPYRIGHT_HEADER */
 
-#include <QSettings>
-#include <QHideEvent>
+#ifndef TOBROWSERTABLEWIDGET_H
+#define TOBROWSERTABLEWIDGET_H
 
-#include "todescribe.h"
+#include "tobrowserbasewidget.h"
+
+class toResultCols;
+class toResultTableView;
+class toResultData;
+class toResultItem;
+class toResultExtent;
+class toResultExtract;
+class toResultGrants;
 
 
-
-toDescribe::toDescribe(QWidget * parent)
-    : QDialog(parent)
+/*! \brief Table browser for toBrowser tool.
+See toBrowserBaseWidget for more info.
+\author Petr Vanek <petr@scribus.info>
+*/
+class toBrowserTableWidget : public toBrowserBaseWidget
 {
-    setupUi(this);
+    Q_OBJECT
 
-    QSettings s;
-    s.beginGroup("toDescribe");
-    restoreGeometry(s.value("geometry", QByteArray()).toByteArray());
-    s.endGroup();
-}
+    toResultCols *columnsWidget;
+    toResultTableView *indexView;
+    toResultTableView *constraintsView;
+    toResultTableView *referencesView;
+    toResultGrants *grantsView;
+    toResultTableView *triggersView;
+    toResultData *resultData;
+    toResultItem *resultInfo;
+    toResultTableView *statisticsView;
+    toResultTableView *partitionsView;
+    toResultExtent *extentsView;
+    toResultExtract *extractView;
 
-void toDescribe::hideEvent(QHideEvent * event)
-{
-    QSettings s;
-    s.beginGroup("toDescribe");
-    s.setValue("geometry", saveGeometry());
-    s.endGroup();
-    event->accept();
-}
+    public:
+        toBrowserTableWidget(QWidget * parent);
+};
 
-#include "tobrowsertablewidget.h"
-void toDescribe::changeParams(const QString & owner, const QString & object)
-{
-    // TODO/FIXME: check it if it's table or widget or whatever...
-    if (widget)
-    {
-        delete widget;
-        widget = new toBrowserTableWidget(this);
-        layout()->addWidget(widget);
-    }
-    widget->changeParams(owner, object);
-}
+#endif

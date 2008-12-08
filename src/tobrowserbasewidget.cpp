@@ -1,4 +1,4 @@
-
+#include <QtDebug>
 /* BEGIN_COMMON_COPYRIGHT_HEADER
 *
 * TOra - An Oracle Toolkit for DBA's and developers
@@ -39,42 +39,58 @@
 *
 * END_COMMON_COPYRIGHT_HEADER */
 
-#include <QSettings>
-#include <QHideEvent>
-
-#include "todescribe.h"
+#include "toresult.h"
+#include "tobrowserbasewidget.h"
 
 
-
-toDescribe::toDescribe(QWidget * parent)
-    : QDialog(parent)
+toBrowserBaseWidget::toBrowserBaseWidget(QWidget * parent)
+    : QTabWidget(parent),
+    m_schema(0),
+    m_object(0)
 {
-    setupUi(this);
+    setObjectName("toBrowserBaseWidget");
 
-    QSettings s;
-    s.beginGroup("toDescribe");
-    restoreGeometry(s.value("geometry", QByteArray()).toByteArray());
-    s.endGroup();
+    connect(this, SIGNAL(currentChanged(int)),
+            this, SLOT(tabWidget_currentChanged(int)));
 }
 
-void toDescribe::hideEvent(QHideEvent * event)
+void toBrowserBaseWidget::addTab(QWidget * page, const QString & label)
 {
-    QSettings s;
-    s.beginGroup("toDescribe");
-    s.setValue("geometry", saveGeometry());
-    s.endGroup();
-    event->accept();
+    QTabWidget::addTab(page, label);
+    toResult * r = dynamic_cast<toResult*>(page);
+    Q_ASSERT_X(r, "new tab is not toResult child!", "toBrowserBaseWidget::addTab params must contain toResult");
+    m_tabs[count()-1] = r;
 }
 
-#include "tobrowsertablewidget.h"
-void toDescribe::changeParams(const QString & owner, const QString & object)
+void toBrowserBaseWidget::changeParams(const QString & schema, const QString & object)
 {
-    // TODO/FIXME: check it if it's table or widget or whatever...
-    if (widget)
+    if (m_schema != schema || m_object != object)
     {
-        delete widget;
-        widget = new toBrowserTableWidget(this);
-        layout()->addWidget(widget);
+        m_schema = schema;
+        m_object = object;
+        updateData(currentIndex());
     }
-    widget->changeParams(owner, object);
+}
+
+void toBrowserBaseWidget::tabWidget_currentChanged(int ix)
+{
+    // Re-read data from sql only when there is no cache for given
+    // schema/object
+    if (m_schema.isEmpty() || m_object.isEmpty())
+        return;
+
+    if ((!m_cache.contains(ix))
+        || (m_cache[ix].first != m_schema)
+        || (m_cache[ix].second != m_object))
+    {
+        m_cache[ix] = qMakePair(m_schema, m_object);
+        updateData(ix);
+    }
+}
+
+void toBrowserBaseWidget::updateData(int ix)
+{
+    if (schema().isEmpty() || object().isEmpty())
+        return;
+    m_tabs[ix]->changeParams(schema(), object());
 }

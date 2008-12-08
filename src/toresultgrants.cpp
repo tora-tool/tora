@@ -39,42 +39,29 @@
 *
 * END_COMMON_COPYRIGHT_HEADER */
 
-#include <QSettings>
-#include <QHideEvent>
-
-#include "todescribe.h"
+#include "toresultgrants.h"
+#include "tosql.h"
 
 
+static toSQL SQLAnyGrantsSapDB("toBrowser:AnyGrants",
+                               "SELECT privilege,grantee,grantor,is_grantable\n"
+                               " FROM tableprivileges \n"
+                               " WHERE owner = upper(:f1<char[101]>) and tablename = :f2<char[101]>\n"
+                               " ORDER by privilege,grantee ",
+                               "Display the grants on an object",
+                               "",
+                               "SapDB");
+static toSQL SQLAnyGrants("toBrowser:AnyGrants",
+                          "SELECT Privilege,Grantee,Grantor,Grantable FROM SYS.ALL_TAB_PRIVS\n"
+                          " WHERE Table_Schema = :f1<char[101]> AND Table_Name = :f2<char[101]>\n"
+                          " ORDER BY Privilege,Grantee",
+                          "");
 
-toDescribe::toDescribe(QWidget * parent)
-    : QDialog(parent)
+toResultGrants::toResultGrants(QWidget * parent)
+    : toResultTableView(parent)
 {
-    setupUi(this);
+    setObjectName("toBrowserGrants");
 
-    QSettings s;
-    s.beginGroup("toDescribe");
-    restoreGeometry(s.value("geometry", QByteArray()).toByteArray());
-    s.endGroup();
-}
-
-void toDescribe::hideEvent(QHideEvent * event)
-{
-    QSettings s;
-    s.beginGroup("toDescribe");
-    s.setValue("geometry", saveGeometry());
-    s.endGroup();
-    event->accept();
-}
-
-#include "tobrowsertablewidget.h"
-void toDescribe::changeParams(const QString & owner, const QString & object)
-{
-    // TODO/FIXME: check it if it's table or widget or whatever...
-    if (widget)
-    {
-        delete widget;
-        widget = new toBrowserTableWidget(this);
-        layout()->addWidget(widget);
-    }
-    widget->changeParams(owner, object);
+    setReadAll(true);
+    setSQL(SQLAnyGrants);
 }

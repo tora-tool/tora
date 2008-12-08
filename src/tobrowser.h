@@ -66,34 +66,63 @@ class toMySQLUserAccess;
 class toResultTableView;
 class QMdiSubWindow;
 
+class toBrowserTableWidget;
+class toBrowserViewWidget;
+class toBrowserIndexWidget;
+class toBrowserSequenceWidget;
+class toBrowserSynonymWidget;
+class toBrowserCodeWidget;
+class toBrowserTriggerWidget;
+class toBrowserDBLinksWidget;
+class toBrowserBaseWidget;
+
 
 class toBrowser : public toToolWidget
 {
     Q_OBJECT;
 
     toResultCombo *Schema;
-    toTabWidget   *TopTab;
+    QTabWidget   *m_mainTab;
     QMenu         *ToolMenu;
 
-    QString            SecondText;
-    toResultTableView *FirstTab;
-    toResult          *SecondTab;
+    toResultTableView *tableView;
+    toBrowserTableWidget * tableBrowserWidget;
+    toResultTableView * viewView;
+    toBrowserViewWidget * viewBrowserWidget;
+    toResultTableView * indexView;
+    toBrowserIndexWidget * indexBrowserWidget;
+    toResultTableView * sequenceView;
+    toBrowserSequenceWidget * sequenceBrowserWidget;
+    toResultTableView * synonymView;
+    toBrowserSynonymWidget * synonymBrowserWidget;
+    toResultTableView * codeView;
+    toBrowserCodeWidget * codeBrowserWidget;
+    toResultTableView * triggerView;
+    toBrowserTriggerWidget * triggerBrowserWidget;
+    toResultTableView * dblinkView;
+    toBrowserDBLinksWidget * dblinkBrowserWidget;
+
+    QMap<int,toResultTableView*> m_objectsMap;
+    QMap<int,toBrowserBaseWidget*> m_browsersMap;
+
+
+//     QString            SecondText;
+//     toResultTableView *FirstTab;
+//     toResult          *SecondTab;
     toBrowserFilter   *Filter;
-    QWidget           *CurrentTop;
+//     QWidget           *CurrentTop;
 
-    toResultData *ViewContent;
-    toResultData *TableContent;
-    toResultData *AccessContent;
+//     toResultData *ViewContent;
+//     toResultData *TableContent;
+//     toResultData *AccessContent;
 
-    std::map<QString, toResultTableView *> Map;
-    std::map<QString, toResult *> SecondMap;
+//     std::map<QString, toResultTableView *> Map;
+//     std::map<QString, toResult *> SecondMap;
     void setNewFilter(toBrowserFilter *filter);
 
     QString schema(void);
     void enableDisableConstraints(const QString &);
     void dropSomething(const QString &, const QString &);
-
-    QModelIndex selectedItem(int col = 1);
 
     QAction *refreshAct;
     QAction *FilterButton;
@@ -127,17 +156,11 @@ public:
 
 public slots:
     void refresh(void);
-    void updateTabs(void);
     void changeSchema(int);
-    void changeTab(QWidget *tab);
-    void changeSecond(void);
-    void changeSecondTab(QWidget *tab);
     void changeItem();
     void clearFilter(void);
     void defineFilter(void);
     void windowActivated(QMdiSubWindow *widget);
-    void firstDone(void);
-    void focusObject(void);
 
     void modifyTable(void);
     void addTable(void);
@@ -155,9 +178,6 @@ public slots:
     void flushPrivs(void);
 
     void dropIndex(void);
-#if 0
-    void fixIndexCols(void);
-#endif
 
     void changeConnection(void);
     void enableConstraints(void);
@@ -171,44 +191,48 @@ public slots:
     void addUser(void);
     void dropUser(void);
 
+    private slots:
+        //! \brief Handle main tabwidget and its tabs switch
+        void mainTab_currentChanged(int);
+
 protected:
     virtual void closeEvent(QCloseEvent *);
 };
 
-class toBrowseTemplate : public QObject, public toTemplateProvider
-{
-    Q_OBJECT;
-
-    QToolButton                 *FilterButton;
-    toBrowserFilter             *Filter;
-    std::list<toTemplateItem *>  Parents;
-    bool                         Registered;
-
-public:
-    toBrowseTemplate(void)
-            : QObject(NULL), toTemplateProvider("Browser")
-    {
-        Registered = false;
-        Filter = NULL;
-    }
-
-    virtual void insertItems(toTreeWidget *parent, QToolBar *toolbar);
-    virtual void removeItem(toTreeWidgetItem *item);
-    toBrowserFilter *filter(void)
-    {
-        return Filter;
-    }
-    virtual void exportData(std::map<QString, QString> &data,
-                            const QString &prefix);
-    virtual void importData(std::map<QString, QString> &data,
-                            const QString &prefix);
-
-public slots:
-    void addDatabase(const QString &);
-    void removeDatabase(const QString &);
-    void defineFilter(void);
-    void clearFilter(void);
-};
+// class toBrowseTemplate : public QObject, public toTemplateProvider
+// {
+//     Q_OBJECT;
+// 
+//     QToolButton                 *FilterButton;
+//     toBrowserFilter             *Filter;
+//     std::list<toTemplateItem *>  Parents;
+//     bool                         Registered;
+// 
+// public:
+//     toBrowseTemplate(void)
+//             : QObject(NULL), toTemplateProvider("Browser")
+//     {
+//         Registered = false;
+//         Filter = NULL;
+//     }
+// 
+//     virtual void insertItems(toTreeWidget *parent, QToolBar *toolbar);
+//     virtual void removeItem(toTreeWidgetItem *item);
+//     toBrowserFilter *filter(void)
+//     {
+//         return Filter;
+//     }
+//     virtual void exportData(std::map<QString, QString> &data,
+//                             const QString &prefix);
+//     virtual void importData(std::map<QString, QString> &data,
+//                             const QString &prefix);
+// 
+// public slots:
+//     void addDatabase(const QString &);
+//     void removeDatabase(const QString &);
+//     void defineFilter(void);
+//     void clearFilter(void);
+// };
 
 
 class toBrowseButton : public QToolButton

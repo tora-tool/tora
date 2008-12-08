@@ -39,42 +39,25 @@
 *
 * END_COMMON_COPYRIGHT_HEADER */
 
-#include <QSettings>
-#include <QHideEvent>
+#ifndef TORESULTGRANTS_H
+#define TORESULTGRANTS_H
 
-#include "todescribe.h"
+#include "toresulttableview.h"
 
 
-
-toDescribe::toDescribe(QWidget * parent)
-    : QDialog(parent)
+/*! \brief Standalone widget for GRANTS display.
+This simple class is created only to save toSQL reuse in
+various widgets to avoid toSQL error or warning messages
+caused by copypasted toSQL grants structures everywhere.
+See e.g. toDescribe, toBrowser widgets etc.
+\author Petr Vanek <petr@scribus.info>
+*/
+class toResultGrants : public toResultTableView
 {
-    setupUi(this);
+    Q_OBJECT
 
-    QSettings s;
-    s.beginGroup("toDescribe");
-    restoreGeometry(s.value("geometry", QByteArray()).toByteArray());
-    s.endGroup();
-}
+    public:
+        toResultGrants(QWidget * parent = 0);
+};
 
-void toDescribe::hideEvent(QHideEvent * event)
-{
-    QSettings s;
-    s.beginGroup("toDescribe");
-    s.setValue("geometry", saveGeometry());
-    s.endGroup();
-    event->accept();
-}
-
-#include "tobrowsertablewidget.h"
-void toDescribe::changeParams(const QString & owner, const QString & object)
-{
-    // TODO/FIXME: check it if it's table or widget or whatever...
-    if (widget)
-    {
-        delete widget;
-        widget = new toBrowserTableWidget(this);
-        layout()->addWidget(widget);
-    }
-    widget->changeParams(owner, object);
-}
+#endif

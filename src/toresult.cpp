@@ -172,20 +172,26 @@ void toResult::query(const toSQL &sql, toQList &par)
         setHandle(false);
     }
 }
-
+// #include <QtDebug>
 void toResult::setSQL(const toSQL &sql)
 {
+//     qDebug() << "setSQL";
+//     qDebug() << "setSQL" << sql.name();
     setSQLName(sql.name());
     FromSQL = true;
 
     try
     {
+//         qDebug() << "setSQL 1";
         Params.clear();
+//         qDebug() << "setSQL 2";
         setSQL(toSQL::string(sql, connection()));
+//         qDebug() << "setSQL 3";
         setHandle(true);
     }
     catch (...)
     {
+//         qDebug() << "setSQL failed:" << sql.name();
         setHandle(false);
     }
 }

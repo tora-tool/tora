@@ -42,7 +42,7 @@
 #ifndef TODESCRIBE_H
 #define TODESCRIBE_H
 
-#include "ui_todescribeui.h"
+#include <ui_todescribeui.h>
 
 
 /*! \brief Enhanced "key F4 describe table" dialog.
@@ -54,7 +54,7 @@ class toDescribe : public QDialog, public Ui::toDescribe
 
     public:
         toDescribe(QWidget * parent = 0);
-        void changeParams(const QString & owner, const QString & table);
+        void changeParams(const QString & owner, const QString & object);
 
     protected:
         //! Save the prefs

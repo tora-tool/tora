@@ -39,42 +39,34 @@
 *
 * END_COMMON_COPYRIGHT_HEADER */
 
-#include <QSettings>
-#include <QHideEvent>
+#include "toresultitem.h"
+#include "toresulttableview.h"
 
-#include "todescribe.h"
+#include "tobrowserdblinkswidget.h"
+
+static toSQL SQLDBLinkInfo("toBrowser:DBLinkInformation",
+                           "SELECT * FROM Sys.all_db_links a\n"
+                           " WHERE Owner = :f1<char[101]>\n"
+                           "   AND DB_LINK = :f2<char[101]>",
+                           "Display information about database link");
+static toSQL SQLDBLinkSynonyms("toBrowser:DBLinkSynonyms",
+                               "SELECT * FROM Sys.all_synonyms a\n"
+                               " WHERE Owner = :f1<char[101]>\n"
+                               "   AND DB_LINK = :f2<char[101]>",
+                               "Display foreign synonyms");
 
 
 
-toDescribe::toDescribe(QWidget * parent)
-    : QDialog(parent)
+toBrowserDBLinksWidget::toBrowserDBLinksWidget(QWidget * parent)
+    : toBrowserBaseWidget(parent)
 {
-    setupUi(this);
+    setObjectName("toBrowserDBLinksWidget");
 
-    QSettings s;
-    s.beginGroup("toDescribe");
-    restoreGeometry(s.value("geometry", QByteArray()).toByteArray());
-    s.endGroup();
-}
+    resultDBLink = new toResultItem(this);
+    resultDBLink->setSQL(SQLDBLinkInfo);
+    addTab(resultDBLink, "Info");
 
-void toDescribe::hideEvent(QHideEvent * event)
-{
-    QSettings s;
-    s.beginGroup("toDescribe");
-    s.setValue("geometry", saveGeometry());
-    s.endGroup();
-    event->accept();
-}
-
-#include "tobrowsertablewidget.h"
-void toDescribe::changeParams(const QString & owner, const QString & object)
-{
-    // TODO/FIXME: check it if it's table or widget or whatever...
-    if (widget)
-    {
-        delete widget;
-        widget = new toBrowserTableWidget(this);
-        layout()->addWidget(widget);
-    }
-    widget->changeParams(owner, object);
+    synonymsView = new toResultTableView(this);
+    synonymsView->setSQL(SQLDBLinkSynonyms);
+    addTab(synonymsView, "&Synonyms");
 }

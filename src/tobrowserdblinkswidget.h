@@ -39,42 +39,28 @@
 *
 * END_COMMON_COPYRIGHT_HEADER */
 
-#include <QSettings>
-#include <QHideEvent>
+#ifndef TOBROWSERDBLINKSWIDGET_H
+#define TOBROWSERDBLINKSWIDGET_H
 
-#include "todescribe.h"
+#include "tobrowserbasewidget.h"
+
+class toResultItem;
+class toResultTableView;
 
 
-
-toDescribe::toDescribe(QWidget * parent)
-    : QDialog(parent)
+/*! \brief DB Links browser for toBrowser tool.
+See toBrowserBaseWidget for more info.
+\author Petr Vanek <petr@scribus.info>
+*/
+class toBrowserDBLinksWidget : public toBrowserBaseWidget
 {
-    setupUi(this);
+    Q_OBJECT
 
-    QSettings s;
-    s.beginGroup("toDescribe");
-    restoreGeometry(s.value("geometry", QByteArray()).toByteArray());
-    s.endGroup();
-}
+    toResultItem *resultDBLink;
+    toResultTableView *synonymsView;
 
-void toDescribe::hideEvent(QHideEvent * event)
-{
-    QSettings s;
-    s.beginGroup("toDescribe");
-    s.setValue("geometry", saveGeometry());
-    s.endGroup();
-    event->accept();
-}
+    public:
+        toBrowserDBLinksWidget(QWidget * parent);
+};
 
-#include "tobrowsertablewidget.h"
-void toDescribe::changeParams(const QString & owner, const QString & object)
-{
-    // TODO/FIXME: check it if it's table or widget or whatever...
-    if (widget)
-    {
-        delete widget;
-        widget = new toBrowserTableWidget(this);
-        layout()->addWidget(widget);
-    }
-    widget->changeParams(owner, object);
-}
+#endif

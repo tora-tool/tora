@@ -39,42 +39,33 @@
 *
 * END_COMMON_COPYRIGHT_HEADER */
 
-#include <QSettings>
-#include <QHideEvent>
+#ifndef TOBROWSERCODEWIDGET_H
+#define TOBROWSERCODEWIDGET_H
 
-#include "todescribe.h"
+#include "tobrowserbasewidget.h"
+
+class toResultField;
+class toResultGrants;
+class toResultDepend;
+class toResultExtract;
 
 
-
-toDescribe::toDescribe(QWidget * parent)
-    : QDialog(parent)
+/*! \brief Code browser for toBrowser tool.
+See toBrowserBaseWidget for more info.
+\author Petr Vanek <petr@scribus.info>
+*/
+class toBrowserCodeWidget : public toBrowserBaseWidget
 {
-    setupUi(this);
+    Q_OBJECT
 
-    QSettings s;
-    s.beginGroup("toDescribe");
-    restoreGeometry(s.value("geometry", QByteArray()).toByteArray());
-    s.endGroup();
-}
+    toResultField *declarationResult;
+    toResultField *bodyResult;
+    toResultGrants *grantsView;
+    toResultDepend *dependsWidget;
+    toResultExtract *extractView;
 
-void toDescribe::hideEvent(QHideEvent * event)
-{
-    QSettings s;
-    s.beginGroup("toDescribe");
-    s.setValue("geometry", saveGeometry());
-    s.endGroup();
-    event->accept();
-}
+    public:
+        toBrowserCodeWidget(QWidget * parent);
+};
 
-#include "tobrowsertablewidget.h"
-void toDescribe::changeParams(const QString & owner, const QString & object)
-{
-    // TODO/FIXME: check it if it's table or widget or whatever...
-    if (widget)
-    {
-        delete widget;
-        widget = new toBrowserTableWidget(this);
-        layout()->addWidget(widget);
-    }
-    widget->changeParams(owner, object);
-}
+#endif

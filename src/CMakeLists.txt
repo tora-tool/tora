@@ -33,7 +33,6 @@ SET(TORA_UI_SRC
     todebugwatch.ui
     todescribeui.ui
     todroptablespaceui.ui
-#     toeditextensiongotoui.ui
     toeditextensionsetupui.ui
     toglobalsettingui.ui
     tohelpaddfileui.ui
@@ -87,8 +86,19 @@ SET(TORA_MOC_CLASSES
     tobackgroundlabel.h
     tobrowserconstraint.h
     tobrowser.h
+    toresultgrants.h
     tobrowserindex.h
     tobrowsertable.h
+    tobrowserbasewidget.h
+    tobrowsertablewidget.h
+    tobrowserviewwidget.h
+    tobrowserindexwidget.h
+    tobrowsersequencewidget.h
+    tobrowsersynonymwidget.h
+    tobrowsercodewidget.h
+    tobrowsertriggerwidget.h
+    tobrowserdblinkswidget.h
+#     tobrowserschemabasewidget.h
 #     toconf.h
 #     toconfiguration.h
     toconnection.h
@@ -242,8 +252,19 @@ SET(TORA_SOURCES
     tobarchart.cpp
     tobrowserconstraint.cpp
     tobrowser.cpp
+    toresultgrants.cpp
     tobrowserindex.cpp
     tobrowsertable.cpp
+    tobrowserbasewidget.cpp
+    tobrowsertablewidget.cpp
+    tobrowserviewwidget.cpp
+    tobrowserindexwidget.cpp
+    tobrowsersequencewidget.cpp
+    tobrowsersynonymwidget.cpp
+    tobrowsercodewidget.cpp
+    tobrowsertriggerwidget.cpp
+    tobrowserdblinkswidget.cpp
+#     tobrowserschemabasewidget.cpp
     toconfiguration.cpp
     toconnection.cpp
     toqvalue.cpp

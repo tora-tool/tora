@@ -39,42 +39,32 @@
 *
 * END_COMMON_COPYRIGHT_HEADER */
 
-#include <QSettings>
-#include <QHideEvent>
+#ifndef TOBROWSERINDEXWIDGET_H
+#define TOBROWSERINDEXWIDGET_H
 
-#include "todescribe.h"
+#include "tobrowserbasewidget.h"
+
+class toResultTableView;
+class toResultItem;
+class toResultExtent;
+class toResultExtract;
 
 
-
-toDescribe::toDescribe(QWidget * parent)
-    : QDialog(parent)
+/*! \brief Index browser for toBrowser tool.
+See toBrowserBaseWidget for more info.
+\author Petr Vanek <petr@scribus.info>
+*/
+class toBrowserIndexWidget : public toBrowserBaseWidget
 {
-    setupUi(this);
+    Q_OBJECT
 
-    QSettings s;
-    s.beginGroup("toDescribe");
-    restoreGeometry(s.value("geometry", QByteArray()).toByteArray());
-    s.endGroup();
-}
+    toResultTableView *columnView;
+    toResultItem *resultInfo;
+    toResultExtent *extentsView;
+    toResultExtract *extractView;
 
-void toDescribe::hideEvent(QHideEvent * event)
-{
-    QSettings s;
-    s.beginGroup("toDescribe");
-    s.setValue("geometry", saveGeometry());
-    s.endGroup();
-    event->accept();
-}
+    public:
+        toBrowserIndexWidget(QWidget * parent);
+};
 
-#include "tobrowsertablewidget.h"
-void toDescribe::changeParams(const QString & owner, const QString & object)
-{
-    // TODO/FIXME: check it if it's table or widget or whatever...
-    if (widget)
-    {
-        delete widget;
-        widget = new toBrowserTableWidget(this);
-        layout()->addWidget(widget);
-    }
-    widget->changeParams(owner, object);
-}
+#endif

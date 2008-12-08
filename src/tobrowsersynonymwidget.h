@@ -39,42 +39,34 @@
 *
 * END_COMMON_COPYRIGHT_HEADER */
 
-#include <QSettings>
-#include <QHideEvent>
+#ifndef TOBROWSERSYNONYMWIDGET_H
+#define TOBROWSERSYNONYMWIDGET_H
 
-#include "todescribe.h"
+#include "tobrowserbasewidget.h"
+
+class toResultItem;
+class toResultExtract;
+class toResultGrants;
 
 
-
-toDescribe::toDescribe(QWidget * parent)
-    : QDialog(parent)
+/*! \brief Synonym browser for toBrowser tool.
+See toBrowserBaseWidget for more info.
+\author Petr Vanek <petr@scribus.info>
+*/
+class toBrowserSynonymWidget : public toBrowserBaseWidget
 {
-    setupUi(this);
+    Q_OBJECT
 
-    QSettings s;
-    s.beginGroup("toDescribe");
-    restoreGeometry(s.value("geometry", QByteArray()).toByteArray());
-    s.endGroup();
-}
+    toResultItem *resultInfo;
+    toResultGrants *grantsView;
+    toResultExtract *extractView;
 
-void toDescribe::hideEvent(QHideEvent * event)
-{
-    QSettings s;
-    s.beginGroup("toDescribe");
-    s.setValue("geometry", saveGeometry());
-    s.endGroup();
-    event->accept();
-}
+    public:
+        toBrowserSynonymWidget(QWidget * parent);
 
-#include "tobrowsertablewidget.h"
-void toDescribe::changeParams(const QString & owner, const QString & object)
-{
-    // TODO/FIXME: check it if it's table or widget or whatever...
-    if (widget)
-    {
-        delete widget;
-        widget = new toBrowserTableWidget(this);
-        layout()->addWidget(widget);
-    }
-    widget->changeParams(owner, object);
-}
+        /*! Reimplemented due names given in the SCHEMA.SYNONYMNAME
+        structure. */
+        void changeParams(const QString & schema, const QString & object);
+};
+
+#endif

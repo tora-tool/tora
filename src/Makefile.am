@@ -183,6 +183,16 @@ tora_SOURCES=main.cpp \
 	tovisualize.cpp tovisualize.h  \
 	towaitevents.cpp towaitevents.h \
 	toconnectionmodel.cpp toconnectionmodel.h \
+    tobrowserbasewidget.cpp tobrowserbasewidget.h \
+    tobrowsertablewidget.cpp tobrowsertablewidget.h \
+    tobrowserviewwidget.cpp tobrowserviewwidget.h \
+    tobrowserindexwidget.cpp tobrowserindexwidget.h \
+    tobrowsersequencewidget.cpp tobrowsersequencewidget.h \
+    tobrowsersynonymwidget.cpp tobrowsersynonymwidget.h \
+    tobrowsercodewidget.cpp tobrowsercodewidget.h \
+    tobrowsertriggerwidget.cpp tobrowsertriggerwidget.h \
+    tobrowserdblinkswidget.cpp tobrowserdblinkswidget.h \
+    toresultgrants.cpp toresultgrants.h \
 	migratetool/sqldeveloper.cpp migratetool/sqldeveloper.h \
 	migratetool/squirrelsql.cpp migratetool/squirrelsql.h \
 	migratetool/tora3.cpp migratetool/tora3.h \
@@ -393,6 +403,16 @@ BUILT_SOURCES = \
 	moc_todocklet.cpp \
 	moc_todockbar.cpp \
 	moc_topushbutton.cpp \
+    moc_tobrowserbasewidget.cpp \
+    moc_tobrowsertablewidget.cpp \
+    moc_tobrowserviewwidget.cpp \
+    moc_tobrowserindexwidget.cpp \
+    moc_tobrowsersequencewidget.cpp \
+    moc_tobrowsersynonymwidget.cpp \
+    moc_tobrowsercodewidget.cpp \
+    moc_tobrowsertriggerwidget.cpp \
+    moc_tobrowserdblinkswidget.cpp \
+    moc_toresultgrants.cpp \
 	docklets/moc_toviewdirectory.cpp \
 	docklets/moc_toviewconnections.cpp \
 	ui_toaboutui.h \

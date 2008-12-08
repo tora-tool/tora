@@ -64,6 +64,8 @@ public:
      * @param name Name of widget.
      */
     toResultExtract(bool prompt, QWidget *parent, const char *name = NULL);
+    //! \brief Dummy constructor for Qt designer usage
+    toResultExtract(QWidget * parent = 0);
 
     /** Ignores sql and extect object name and owner as parameters.
      */
