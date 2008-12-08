@@ -1242,10 +1242,19 @@ static toSQL SQLSQLHead("toBrowser:CodeHead",
                         "");
 
 static toSQL SQLSQLBodyPgSQL("toBrowser:CodeBody",
-                             "SELECT p.prosrc\n"
-                             "FROM pg_proc p LEFT OUTER JOIN pg_namespace n ON p.pronamespace=n.oid\n"
-                             "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
-                             "  AND p.proname = :f2\n",
+                             "SELECT 'CREATE OR REPLACE FUNCTION ' || p.proname || ' ( ' ||\n"
+                             "( SELECT array_to_string ( ARRAY ( SELECT t.typname\n"
+                             "   FROM pg_type t\n"
+                             "  WHERE t.OID = ANY ( p.proargtypes ) ),\n"
+                             "   ', ' ) ) || ' ) RETURNS ' || ( SELECT t.typname\n"
+                             "                                   from pg_type t\n"
+                             "                                   where p.prorettype = t.oid) ||\n"
+                             "   ' AS ' || quote_literal ( p.prosrc ) || ' language plpgsql;'\n"
+                             "  FROM pg_proc p\n"
+                             "  LEFT OUTER JOIN pg_namespace n\n"
+                             "    ON p.pronamespace = n.OID\n"
+                             " WHERE ( n.nspname = :f1 OR n.OID IS NULL )\n"
+                             "   AND p.proname = :f2",
                              "Implementation of object",
                              "7.1",
                              "PostgreSQL");
