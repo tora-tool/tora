@@ -9,6 +9,7 @@
 
 #include <qapplication.h>
 
+#include "tothread.h"
 
 typedef QMap<QString, bool> ToolsMap;
 typedef QMap<QString, QString> HelpsMap;
@@ -21,8 +22,11 @@ typedef QMap<QString,QVariant> EditorShortcutsMap;
 typedef QMapIterator<QString, QVariant> EditorShortcutsMapIterator;
 
 
+class toConfigurationPrivate;
 class toConfiguration
 {
+    toConfigurationPrivate *p;
+
 public:
     toConfiguration();
     ~toConfiguration();
@@ -57,1079 +61,385 @@ public:
     */
     bool saveMap(const QString &file, std::map<QString, QString> &pairs);
 
-    QString provider()
-    {
-        return m_provider;
-    };
+    QString provider();
 //   void setProvider(const QString & v) { m_provider = v; };
 
-    bool savePassword()
-    {
-        return m_savePassword;
-    };
-    void setSavePassword(bool v)
-    {
-        m_savePassword = v;
-    };
-
-    QString defaultPassword()
-    {
-        return m_defaultPassword;
-    };
-    void setDefaultPassword(const QString & v)
-    {
-        m_defaultPassword = v;
-    };
-
-    QString defaultDatabase()
-    {
-        return m_defaultDatabase;
-    };
-    void setDefaultDatabase(const QString & v)
-    {
-        m_defaultDatabase = v;
-    };
-
-    QString defaultUser()
-    {
-        return m_defaultUser;
-    };
-    void setDefaultUser(const QString & v)
-    {
-        m_defaultUser = v;
-    };
-
-    QString defaultHost()
-    {
-        return m_defaultHost;
-    };
-
-    int maxNumber()
-    {
-        return m_maxNumber;
-    };
-    void setMaxNumber(int v)
-    {
-        m_maxNumber = v;
-    };
-
-    int maxColSize()
-    {
-        return m_maxColSize;
-    };
-
-    int maxColDisp()
-    {
-        return m_maxColDisp;
-    };
-    void setMaxColDisp(int v)
-    {
-        m_maxColDisp = v;
-    };
-
-    QString planTable()
-    {
-        return m_planTable;
-    };
-    void setPlanTable(const QString & v)
-    {
-        m_planTable = v;
-    };
-
-    QString planCheckpoint()
-    {
-        return m_planCheckpoint;
-    };
-    void setPlanCheckpoint(const QString & v)
-    {
-        m_planCheckpoint = v;
-    };
-
-    QString textFont()
-    {
-        return m_textFont;
-    };
-    void setTextFont(const QString & v)
-    {
-        m_textFont = v;
-    };
-
-    QString codeFont()
-    {
-        return m_codeFont;
-    };
-    void setCodeFont(const QString & v)
-    {
-        m_codeFont = v;
-    };
-
-    QString listFont()
-    {
-        return m_listFont;
-    };
-    void setListFont(const QString & v)
-    {
-        m_listFont = v;
-    };
-
-    QString dateFormat()
-    {
-        return m_dateFormat;
-    };
-    void setDateFormat(const QString & v)
-    {
-        m_dateFormat = v;
-    };
-
-    QString refresh()
-    {
-        return m_refresh;
-    };
-    void setRefresh(const QString & v)
-    {
-        m_refresh = v;
-    };
-
-    bool highlight()
-    {
-        return m_highlight;
-    };
-    void setHighlight(bool v)
-    {
-        m_highlight = v;
-    };
-
-    bool keywordUpper()
-    {
-        return m_keywordUpper;
-    };
-    void setKeywordUpper(bool v)
-    {
-        m_keywordUpper = v;
-    };
-
-    QString pluginDir()
-    {
-        return m_pluginDir;
-    };
-    void setPluginDir(const QString & v)
-    {
-        m_pluginDir = v;
-    };
-
-    QString cacheDir()
-    {
-        return m_cacheDir;
-    };
-    void setCacheDir(const QString & v)
-    {
-        m_cacheDir = v;
-    };
-
-    bool cacheDisk()
-    {
-        return m_cacheDisk;
-    };
-    void setCacheDisk(bool v)
-    {
-        m_cacheDisk = v;
-    };
-
-    QString sqlFile()
-    {
-        return m_sqlFile;
-    };
-    void setSqlFile(const QString & v)
-    {
-        m_sqlFile = v;
-    };
-
-    int statusMessage()
-    {
-        return m_statusMessage;
-    };
-    void setStatusMessage(int v)
-    {
-        m_statusMessage = v;
-    };
-
-    bool dbTitle()
-    {
-        return m_dbTitle;
-    };
-    void setDbTitle(bool v)
-    {
-        m_dbTitle = v;
-    };
-
-    QString sizeUnit()
-    {
-        return m_sizeUnit;
-    };
-    void setSizeUnit(const QString & v)
-    {
-        m_sizeUnit = v;
-    };
-
-    QString helpPath()
-    {
-        return m_helpPath;
-    };
-    void setHelpPath(const QString & v)
-    {
-        m_helpPath = v;
-    };
-
-    int statusSave()
-    {
-        return m_statusSave;
-    };
-    void setStatusSave(int v)
-    {
-        m_statusSave = v;
-    };
-
-    bool autoCommit()
-    {
-        return m_autoCommit;
-    };
-    void setAutoCommit(bool v)
-    {
-        m_autoCommit = v;
-    };
-
-    bool changeConnection()
-    {
-        return m_changeConnection;
-    };
-    void setChangeConnection(bool v)
-    {
-        m_changeConnection = v;
-    };
-
-    int connectSize()
-    {
-        return m_connectSize;
-    };
-    void setConnectSize(int v)
-    {
-        m_connectSize = v;
-    };
-
-    QString defaultTool()
-    {
-        return m_defaultTool;
-    };
-    void setDefaultTool(const QString & v)
-    {
-        m_defaultTool = v;
-    };
-
-    int chartSamples()
-    {
-        return m_chartSamples;
-    };
-    void setChartSamples(int v)
-    {
-        m_chartSamples = v;
-    };
-
-    int displaySamples()
-    {
-        return m_displaySamples;
-    };
-    void setDisplaySamples(int v)
-    {
-        m_displaySamples = v;
-    };
-
-    bool codeCompletion()
-    {
-        return m_codeCompletion;
-    };
-    void setCodeCompletion(bool v)
-    {
-        m_codeCompletion = v;
-    };
-
-    bool completionSort()
-    {
-        return m_completionSort;
-    };
-    void setCodeCompletionSort(bool v)
-    {
-        m_completionSort = v;
-    };
-
-    bool autoIndent()
-    {
-        return m_autoIndent;
-    };
-    void setAutoIndent(bool v)
-    {
-        m_autoIndent = v;
-    };
-
-    bool dontReread()
-    {
-        return m_dontReread;
-    };
-    void setDontReread(bool v)
-    {
-        m_dontReread = v;
-    };
-
-    int autoLong()
-    {
-        return m_autoLong;
-    };
-    void setAutoLong(int v)
-    {
-        m_autoLong = v;
-    };
-
-    bool messageStatusbar()
-    {
-        return m_messageStatusbar;
-    };
-    void setMessageStatusbar(bool v)
-    {
-        m_messageStatusbar = v;
-    };
-
-    bool tabbedTools()
-    {
-        return m_tabbedTools;
-    };
-    void setTabbedTools(bool v)
-    {
-        m_tabbedTools = v;
-    };
-
-    int objectCache()
-    {
-        return m_objectCache;
-    };
-    void setObjectCache(int v)
-    {
-        m_objectCache = v;
-    };
-
-    bool bkgndConnect()
-    {
-        return m_bkgndConnect;
-    };
-    void setBkgndConnect(bool v)
-    {
-        m_bkgndConnect = v;
-    };
-
-    bool firewallMode()
-    {
-        return m_firewallMode;
-    }
-    void setFirewallMode(bool v)
-    {
-        m_firewallMode = v;
-    }
-
-    int maxContent()
-    {
-        return m_maxContent;
-    };
-    void setMaxContent(int v)
-    {
-        m_maxContent = v;
-    };
-
-    bool keepPlans()
-    {
-        return m_keepPlans;
-    };
-    void setKeepPlans(bool v)
-    {
-        m_keepPlans = v;
-    };
-
-    bool restoreSession()
-    {
-        return m_restoreSession;
-    };
-    void setRestoreSession(bool v)
-    {
-        m_restoreSession = v;
-    };
-
-    QString defaultSession()
-    {
-        return m_defaultSession;
-    };
-    void setDefaultSession(const QString & v)
-    {
-        m_defaultSession = v;
-    };
-
-    int defaultFormat()
-    {
-        return m_defaultFormat;
-    };
-    void setDefaultFormat(int v)
-    {
-        m_defaultFormat = v;
-    };
-
-    bool autoIndentRo()
-    {
-        return m_autoIndentRo;
-    };
-    void setAutoIndentRo(bool v)
-    {
-        m_autoIndentRo = v;
-    };
-
-    bool indicateEmpty()
-    {
-        return m_indicateEmpty;
-    };
-    void setIndicateEmpty(bool v)
-    {
-        m_indicateEmpty = v;
-    };
-
-    QString indicateEmptyColor()
-    {
-        return m_indicateEmptyColor;
-    };
-    void setIndicateEmptyColor(const QString & v)
-    {
-        m_indicateEmptyColor = v;
-    };
-
-    QString extensions()
-    {
-        return m_extensions;
-    };
-    void setExtensions(const QString & v)
-    {
-        m_extensions = v;
-    };
-
-    int recentMax()
-    {
-        return m_recentMax;
-    };
-
-    QString lastDir()
-    {
-        return m_lastDir;
-    };
-    void setLastDir(const QString & v)
-    {
-        m_lastDir = v;
-    };
-
-    QString locale()
-    {
-        return m_locale;
-    };
-    void setLocale(const QString & v)
-    {
-        m_locale = v;
-    };
-
-    int keepAlive()
-    {
-        return m_keepAlive;
-    };
-    void setKeepAlive(int v)
-    {
-        m_keepAlive = v;
-    };
-
-    int numberFormat()
-    {
-        return m_numberFormat;
-    };
-    void setNumberFormat(int v)
-    {
-        m_numberFormat = v;
-    };
-
-    int numberDecimals()
-    {
-        return m_numberDecimals;
-    };
-    void setNumberDecimals(int v)
-    {
-        m_numberDecimals = v;
-    };
-
-    int cacheTimeout()
-    {
-        return m_cacheTimeout;
-    };
-
-    int tabStop()
-    {
-        return m_tabStop;
-    };
-    void setTabStop(int v)
-    {
-        m_tabStop = v;
-    };
-
-    bool tabSpaces()
-    {
-        return m_tabSpaces;
-    };
-    void setTabSpaces(bool v)
-    {
-        m_tabSpaces = v;
-    };
-
-    bool editDragDrop()
-    {
-        return m_editDragDrop;
-    };
-    void setEditDragDrop(bool v)
-    {
-        m_editDragDrop = v;
-    };
-
-    bool toadBindings()
-    {
-        return m_toadBindings;
-    };
-    void setToadBindings(bool v)
-    {
-        m_toadBindings = v;
-    };
-
-    bool displayGridlines()
-    {
-        return m_displayGridlines;
-    };
-    void setDisplayGridlines(bool v)
-    {
-        m_displayGridlines = v;
-    };
-
-    QString smtp()
-    {
-        return m_smtp;
-    };
-    void setSmtp(const QString & v)
-    {
-        m_smtp = v;
-    };
-
-    int smtpPort()
-    {
-        return m_smtpPort;
-    };
-    void setSmtpPort(int v)
-    {
-        m_smtpPort = v;
-    };
-
-    QString style()
-    {
-        return m_style;
-    };
-    void setStyle(const QString & v)
-    {
-        m_style = v;
-    };
+    bool savePassword();
+    void setSavePassword(bool v);
+
+    QString defaultPassword();
+    void setDefaultPassword(const QString & v);
+
+    QString defaultDatabase();
+    void setDefaultDatabase(const QString & v);
+
+    QString defaultUser();
+    void setDefaultUser(const QString & v);
+
+    QString defaultHost();
+
+    int maxNumber();
+    void setMaxNumber(int v);
+
+    int maxColSize();
+
+    int maxColDisp();
+    void setMaxColDisp(int v);
+
+    QString planTable();
+    void setPlanTable(const QString & v);
+
+    QString planCheckpoint();
+    void setPlanCheckpoint(const QString & v);
+
+    QString textFont();
+    void setTextFont(const QString & v);
+
+    QString codeFont();
+    void setCodeFont(const QString & v);
+
+    QString listFont();
+    void setListFont(const QString & v);
+
+    QString dateFormat();
+    void setDateFormat(const QString & v);
+
+    QString refresh();
+    void setRefresh(const QString & v);
+
+    bool highlight();
+    void setHighlight(bool v);
+
+    bool keywordUpper();
+    void setKeywordUpper(bool v);
+
+    QString pluginDir();
+    void setPluginDir(const QString & v);
+
+    QString cacheDir();
+    void setCacheDir(const QString & v);
+
+    bool cacheDisk();
+    void setCacheDisk(bool v);
+
+    QString sqlFile();
+    void setSqlFile(const QString & v);
+
+    int statusMessage();
+    void setStatusMessage(int v);
+
+    bool dbTitle();
+    void setDbTitle(bool v);
+
+    QString sizeUnit();
+    void setSizeUnit(const QString & v);
+
+    QString helpPath();
+    void setHelpPath(const QString & v);
+
+    int statusSave();
+    void setStatusSave(int v);
+
+    bool autoCommit();
+    void setAutoCommit(bool v);
+
+    bool changeConnection();
+    void setChangeConnection(bool v);
+
+    int connectSize();
+    void setConnectSize(int v);
+
+    QString defaultTool();
+    void setDefaultTool(const QString & v);
+
+    int chartSamples();
+    void setChartSamples(int v);
+
+    int displaySamples();
+    void setDisplaySamples(int v);
+
+    bool codeCompletion();
+    void setCodeCompletion(bool v);
+
+    bool completionSort();
+    void setCodeCompletionSort(bool v);
+
+    bool autoIndent();
+    void setAutoIndent(bool v);
+
+    bool dontReread();
+    void setDontReread(bool v);
+
+    int autoLong();
+    void setAutoLong(int v);
+
+    bool messageStatusbar();
+    void setMessageStatusbar(bool v);
+
+    bool tabbedTools();
+    void setTabbedTools(bool v);
+
+    int objectCache();
+    void setObjectCache(int v);
+
+    bool bkgndConnect();
+    void setBkgndConnect(bool v);
+
+    bool firewallMode();
+    void setFirewallMode(bool v);
+
+    int maxContent();
+    void setMaxContent(int v);
+
+    bool keepPlans();
+    void setKeepPlans(bool v);
+
+    bool restoreSession();
+    void setRestoreSession(bool v);
+
+    QString defaultSession();
+    void setDefaultSession(const QString & v);
+
+    int defaultFormat();
+    void setDefaultFormat(int v);
+
+    bool autoIndentRo();
+    void setAutoIndentRo(bool v);
+
+    bool indicateEmpty();
+    void setIndicateEmpty(bool v);
+
+    QString indicateEmptyColor();
+    void setIndicateEmptyColor(const QString & v);
+
+    QString extensions();
+    void setExtensions(const QString & v);
+
+    int recentMax();
+
+    QString lastDir();
+    void setLastDir(const QString & v);
+
+    QString locale();
+    void setLocale(const QString & v);
+
+    int keepAlive();
+    void setKeepAlive(int v);
+
+    int numberFormat();
+    void setNumberFormat(int v);
+
+    int numberDecimals();
+    void setNumberDecimals(int v);
+
+    int cacheTimeout();
+
+    int tabStop();
+    void setTabStop(int v);
+
+    bool tabSpaces();
+    void setTabSpaces(bool v);
+
+    bool editDragDrop();
+    void setEditDragDrop(bool v);
+
+    bool toadBindings();
+    void setToadBindings(bool v);
+
+    bool displayGridlines();
+    void setDisplayGridlines(bool v);
+
+    QString smtp();
+    void setSmtp(const QString & v);
+
+    int smtpPort();
+    void setSmtpPort(int v);
+
+    QString style();
+    void setStyle(const QString & v);
 
     // tooracleconnection
-    int openCursors()
-    {
-        return m_openCursors;
-    };
-    void setOpenCursors(int v)
-    {
-        m_openCursors = v;
-    }
+    int openCursors();
+    void setOpenCursors(int v);
 
-    int maxLong()
-    {
-        return m_maxLong;
-    };
-    void setMaxLong(int v)
-    {
-        m_maxLong = v;
-    };
+    int maxLong();
+    void setMaxLong(int v);
 
     // toqsqlconnection
-    bool onlyForward()
-    {
-        return m_onlyForward;
-    };
-    void setOnlyForward(bool v)
-    {
-        m_onlyForward = v;
-    };
+    bool onlyForward();
+    void setOnlyForward(bool v);
 
     // main.cpp
-    QString lastVersion()
-    {
-        return m_lastVersion;
-    };
-    void setLastVersion(const QString & v)
-    {
-        m_lastVersion = v;
-    };
+    QString lastVersion();
+    void setLastVersion(const QString & v);
+    QString firstInstall();
+    void setFirstInstall(const QString & v);
+    QStringList recentFiles();
+    void setRecentFiles(QStringList v);
+    QByteArray mainWindowGeometry();
+    void setMainWindowGeometry(QByteArray v);
+    QByteArray mainWindowState();
+    void setMainWindowState(QByteArray v);
 
-    QString firstInstall()
-    {
-        return m_firstInstall;
-    };
-    void setFirstInstall(const QString & v)
-    {
-        m_firstInstall = v;
-    };
-    // tomain.cpp
-    QStringList recentFiles()
-    {
-        return m_recentFiles;
-    };
-    void setRecentFiles(QStringList v)
-    {
-        m_recentFiles = v;
-    };
+    void setLeftDockbarState(QByteArray v);
+    QByteArray leftDockbarState();
+    void setRightDockbarState(QByteArray v);
+    QByteArray rightDockbarState();
+
     // tools
-    ToolsMap tools()
-    {
-        return m_tools;
-    };
-    void setTools(ToolsMap v)
-    {
-        m_tools = v;
-    };
+    ToolsMap tools();
+    void setTools(ToolsMap v);
 
     // toresultlistformat
-    QString csvSeparator()
-    {
-        return m_csvSeparator;
-    };
-    QString csvDelimiter()
-    {
-        return m_csvDelimiter;
-    };
+    QString csvSeparator();
+    QString csvDelimiter();
 
     // toeditextensions
-    bool commaBefore()
-    {
-        return m_commaBefore;
-    };
-    void setCommaBefore(bool v)
-    {
-        m_commaBefore = v;
-    };
+    bool commaBefore();
+    void setCommaBefore(bool v);
 
-    bool blockOpenLine()
-    {
-        return m_blockOpenLine;
-    };
-    void setBlockOpenLine(bool v)
-    {
-        m_blockOpenLine = v;
-    };
+    bool blockOpenLine();
+    void setBlockOpenLine(bool v);
 
-    bool operatorSpace()
-    {
-        return m_operatorSpace;
-    };
-    void setOperatorSpace(bool v)
-    {
-        m_operatorSpace = v;
-    };
+    bool operatorSpace();
+    void setOperatorSpace(bool v);
 
-    bool rightSeparator()
-    {
-        return m_rightSeparator;
-    };
-    void setRightSeparator(bool v)
-    {
-        m_rightSeparator = v;
-    };
+    bool rightSeparator();
+    void setRightSeparator(bool v);
 
-    bool endBlockNewline()
-    {
-        return m_endBlockNewline;
-    };
-    void setEndBlockNewline(bool v)
-    {
-        m_endBlockNewline = v;
-    };
+    bool endBlockNewline();
+    void setEndBlockNewline(bool v);
 
-    int commentColumn()
-    {
-        return m_commentColumn;
-    };
-    void setCommentColumn(int v)
-    {
-        m_commentColumn = v;
-    };
+    int commentColumn();
+    void setCommentColumn(int v);
 
     // tobrowser
-    bool filterIgnoreCase()
-    {
-        return m_filterIgnoreCase;
-    };
-    void setFilterIgnoreCase(bool v)
-    {
-        m_filterIgnoreCase = v;
-    };
+    bool filterIgnoreCase();
+    void setFilterIgnoreCase(bool v);
 
-    bool filterInvert()
-    {
-        return m_filterInvert;
-    };
-    void setFilterInvert(bool v)
-    {
-        m_filterInvert = v;
-    };
+    bool filterInvert();
+    void setFilterInvert(bool v);
 
-    int filterType()
-    {
-        return m_filterType;
-    };
-    void setFilterType(int v)
-    {
-        m_filterType = v;
-    };
+    int filterType();
+    void setFilterType(int v);
 
-    int filterTablespaceType()
-    {
-        return m_filterTablespaceType;
-    };
-    void setFilterTablespaceType(int v)
-    {
-        m_filterTablespaceType = v;
-    };
+    int filterTablespaceType();
+    void setFilterTablespaceType(int v);
 
-    QString filterText()
-    {
-        return m_filterText;
-    };
-    void setFilterText(const QString & v)
-    {
-        m_filterText = v;
-    };
+    QString filterText();
+    void setFilterText(const QString & v);
 
     // tohelp
-    HelpsMap additionalHelp()
-    {
-        return m_additionalHelp;
-    };
-    void setAdditionalHelp(HelpsMap v)
-    {
-        m_additionalHelp = v;
-    };
+    HelpsMap additionalHelp();
+    void setAdditionalHelp(HelpsMap v);
 
     // tochartmanager
-    ChartsMap chartFiles()
-    {
-        return m_chartFiles;
-    };
-    void setChartFiles(ChartsMap v)
-    {
-        m_chartFiles = v;
-    };
+    ChartsMap chartFiles();
+    void setChartFiles(ChartsMap v);
 
-    ChartsMap chartAlarms()
-    {
-        return m_chartAlarms;
-    };
-    void setChartAlarms(ChartsMap v)
-    {
-        m_chartAlarms = v;
-    };
+    ChartsMap chartAlarms();
+    void setChartAlarms(ChartsMap v);
 
     // toooutput
-    QString polling()
-    {
-        return m_polling;
-    };
-    void setPolling(const QString & v )
-    {
-        m_polling = v;
-    };
+    QString polling();
+    void setPolling(const QString & v );
 
-    int logType()
-    {
-        return m_logType;
-    };
-    void setLogType(int v)
-    {
-        m_logType = v;
-    };
+    int logType();
+    void setLogType(int v);
 
-    QString logUser()
-    {
-        return m_logUser;
-    };
-    void setLogUser(const QString & v)
-    {
-        m_logUser = v;
-    };
+    QString logUser();
+    void setLogUser(const QString & v);
 
     // torollback
-    bool noExec()
-    {
-        return m_noExec;
-    };
-    void setNoExec(bool v)
-    {
-        m_noExec = v;
-    };
+    bool noExec();
+    void setNoExec(bool v);
 
-    bool needRead()
-    {
-        return m_needRead;
-    };
-    void setNeedRead(bool v)
-    {
-        m_needRead = v;
-    };
+    bool needRead();
+    void setNeedRead(bool v);
 
-    bool needTwo()
-    {
-        return m_needTwo;
-    };
-    void setNeedTwo(bool v)
-    {
-        m_needTwo = v;
-    };
+    bool needTwo();
+    void setNeedTwo(bool v);
 
-    bool alignLeft()
-    {
-        return m_alignLeft;
-    };
-    void setAlignLeft(bool v)
-    {
-        m_alignLeft = v;
-    };
+    bool alignLeft();
+    void setAlignLeft(bool v);
 
-    bool oldEnable()
-    {
-        return m_oldEnable;
-    };
-    void setOldEnable(bool v)
-    {
-        m_oldEnable = v;
-    };
+    bool oldEnable();
+    void setOldEnable(bool v);
 
     // tosgatrace
-    bool autoUpdate()
-    {
-        return m_autoUpdate;
-    };
-    void setAutoUpdate(bool v)
-    {
-        m_autoUpdate = v;
-    };
+    bool autoUpdate();
+    void setAutoUpdate(bool v);
 
     // tostorage
-    bool dispTablespaces()
-    {
-        return m_dispTablespaces;
-    };
-    void setDispTablespaces(bool v)
-    {
-        m_dispTablespaces = v;
-    };
+    bool dispTablespaces();
+    void setDispTablespaces(bool v);
 
-    bool dispCoalesced()
-    {
-        return m_dispCoalesced;
-    };
-    void setDispCoalesced(bool v)
-    {
-        m_dispCoalesced = v;
-    };
+    bool dispCoalesced();
+    void setDispCoalesced(bool v);
 
-    bool dispExtents()
-    {
-        return m_dispExtents;
-    };
-    void setDispExtents(bool v)
-    {
-        m_dispExtents = v;
-    };
+    bool dispExtents();
+    void setDispExtents(bool v);
 
-    bool dispAvailableGraph()
-    {
-        return m_dispAvailableGraph;
-    };
-    void setDispAvailableGraph(bool v)
-    {
-        m_dispAvailableGraph = v;
-    };
+    bool dispAvailableGraph();
+    void setDispAvailableGraph(bool v);
 
     // totemplate
-    TemplatesMap templates()
-    {
-        return m_templates;
-    };
-    void setTemplates(TemplatesMap v)
-    {
-        m_templates = v;
-    };
+    TemplatesMap templates();
+    void setTemplates(TemplatesMap v);
 
     // totuning
     /*! True if there are no prefs for tuning.
     It's used when there is no m_tuningOverview defined in prefs. */
-    bool tuningFirstRun()
-    {
-        return m_tuningFirstRun;
-    };
+    bool tuningFirstRun();
 
-    bool tuningOverview()
-    {
-        return m_tuningOverview;
-    };
-    void setTuningOverview(bool v)
-    {
-        m_tuningOverview = v;
-    };
+    bool tuningOverview();
+    void setTuningOverview(bool v);
 
-    bool tuningFileIO()
-    {
-        return m_tuningFileIO;
-    };
-    void setTuningFileIO(bool v)
-    {
-        m_tuningFileIO = v;
-    };
+    bool tuningFileIO();
+    void setTuningFileIO(bool v);
 
-    bool tuningWaits()
-    {
-        return m_tuningWaits;
-    };
-    void setTuningWaits(bool v)
-    {
-        m_tuningWaits = v;
-    };
+    bool tuningWaits();
+    void setTuningWaits(bool v);
 
-    bool tuningCharts()
-    {
-        return m_tuningCharts;
-    };
-    void setTuningCharts(bool v)
-    {
-        m_tuningCharts = v;
-    };
+    bool tuningCharts();
+    void setTuningCharts(bool v);
 
     // toworksheet
-    bool wsAutoSave()
-    {
-        return m_wsAutoSave;
-    };
-    void setWsAutoSave(bool v)
-    {
-        m_wsAutoSave = v;
-    };
+    bool wsAutoSave();
+    void setWsAutoSave(bool v);
 
-    bool wsCheckSave()
-    {
-        return m_wsCheckSave;
-    };
-    void setWsCheckSave(bool v)
-    {
-        m_wsCheckSave = v;
-    };
+    bool wsCheckSave();
+    void setWsCheckSave(bool v);
 
-    QString wsAutoLoad()
-    {
-        return m_wsAutoLoad;
-    };
-    void setWsAutoLoad(const QString & v)
-    {
-        m_wsAutoLoad = v;
-    };
+    QString wsAutoLoad();
+    void setWsAutoLoad(const QString & v);
 
-    bool wsLogAtEnd()
-    {
-        return m_wsLogAtEnd;
-    };
-    void setWsLogAtEnd(bool v)
-    {
-        m_wsLogAtEnd = v;
-    };
+    bool wsLogAtEnd();
+    void setWsLogAtEnd(bool v);
 
-    bool wsLogMulti()
-    {
-        return m_wsLogMulti;
-    };
-    void setWsLogMulti(bool v)
-    {
-        m_wsLogMulti = v;
-    };
+    bool wsLogMulti();
+    void setWsLogMulti(bool v);
 
-    bool wsStatistics()
-    {
-        return m_wsStatistics;
-    };
-    void setWsStatistics(bool v)
-    {
-        m_wsStatistics = v;
-    };
+    bool wsStatistics();
+    void setWsStatistics(bool v);
 
-    bool wsTimedStats()
-    {
-        return m_wsTimedStats;
-    };
-    void setWsTimedStats(bool v)
-    {
-        m_wsTimedStats = v;
-    };
+    bool wsTimedStats();
+    void setWsTimedStats(bool v);
 
-    bool wsNumber()
-    {
-        return m_wsNumber;
-    };
-    void setWsNumber(bool v)
-    {
-        m_wsNumber = v;
-    };
+    bool wsNumber();
+    void setWsNumber(bool v);
 
-    bool wsMoveToErr()
-    {
-        return m_wsMoveToErr;
-    };
-    void setWsMoveToErr(bool v)
-    {
-        m_wsMoveToErr = v;
-    };
+    bool wsMoveToErr();
+    void setWsMoveToErr(bool v);
 
-    bool wsHistory()
-    {
-        return m_wsHistory;
-    };
-    void setWsHistory(bool v)
-    {
-        m_wsHistory = v;
-    };
+    bool wsHistory();
+    void setWsHistory(bool v);
 
-    bool wsExecLog()
-    {
-        return m_wsExecLog;
-    };
-    void setWsExecLog(bool v)
-    {
-        m_wsExecLog = v;
-    };
+    bool wsExecLog();
+    void setWsExecLog(bool v);
 
-    bool wsToplevelDescribe()
-    {
-        return m_wsToplevelDescribe;
-    };
-    void setWsToplevelDescribe(bool v)
-    {
-        m_wsToplevelDescribe = v;
-    };
+    bool wsToplevelDescribe();
+    void setWsToplevelDescribe(bool v);
 
     // tosyntaxsetup
     QColor syntaxDefault();
@@ -1151,198 +461,16 @@ public:
     QColor syntaxCurrentLineMarker();
     void setSyntaxCurrentLineMarker(QColor v);
 
-    bool useMaxTextWidthMark() { return m_useMaxTextWidthMark; };
-    void setUseMaxTextWidthMark(bool v) { m_useMaxTextWidthMark = v; };
-    int maxTextWidthMark() { return m_maxTextWidthMark; };
-    void setMaxTextWidthMark(int v) { m_maxTextWidthMark = v; };
-
-    // main window size
-    QByteArray mainWindowGeometry() { return m_mainWindowGeometry; };
-    void setMainWindowGeometry(QByteArray v) { m_mainWindowGeometry = v; };
-    // mainwindow's toolbars etc
-    QByteArray mainWindowState() { return m_mainWindowState; };
-    void setMainWindowState(QByteArray v) { m_mainWindowState = v; };
+    bool useMaxTextWidthMark();
+    void setUseMaxTextWidthMark(bool v);
+    int maxTextWidthMark();
+    void setMaxTextWidthMark(int v);
 
     // shortcut editor
-    bool useEditorShortcuts() { return m_useEditorShortcuts; };
-    void setUseEditorShortcuts(bool v) { m_useEditorShortcuts = v; };
-    EditorShortcutsMap editorShortcuts() { return m_editorShortcuts; };
-    void setEditorShortcuts(const EditorShortcutsMap & v) { m_editorShortcuts = v; };
-
-
-private:
-    QString m_provider;
-    bool m_savePassword;
-    QString m_defaultPassword;
-    QString m_defaultDatabase;
-    QString m_defaultUser;
-    QString m_defaultHost;
-    int m_maxNumber;
-    int m_maxColSize;
-    int m_maxColDisp;
-    QString m_planTable;
-    QString m_planCheckpoint;
-    QString m_textFont;
-    QString m_codeFont;
-    QString m_listFont;
-    QString m_dateFormat;
-    QString m_refresh;
-    bool m_highlight;
-    bool m_keywordUpper;
-    QString m_pluginDir;
-    QString m_cacheDir;
-    bool m_cacheDisk;
-    QString m_sqlFile;
-    int m_statusMessage;
-    bool m_dbTitle;
-    QString m_sizeUnit;
-    QString m_helpPath;
-    int m_statusSave;
-    bool m_autoCommit;
-    bool m_changeConnection;
-    int m_connectSize;
-    QString m_defaultTool;
-    int m_chartSamples;
-    int m_displaySamples;
-    bool m_codeCompletion;
-    bool m_completionSort;
-    bool m_autoIndent;
-    bool m_dontReread;
-    int m_autoLong;
-    bool m_messageStatusbar;
-    bool m_tabbedTools;
-    int m_objectCache;
-    bool m_bkgndConnect;
-    bool m_firewallMode;
-    int m_maxContent;
-    bool m_keepPlans;
-    bool m_restoreSession;
-    QString m_defaultSession;
-    int m_defaultFormat;
-    bool m_autoIndentRo;
-    bool m_indicateEmpty;
-    QString m_indicateEmptyColor;
-    QString m_extensions;
-    int m_recentMax;
-    QString m_lastDir;
-    QString m_locale;
-    int m_keepAlive;
-    int m_numberFormat;
-    int m_numberDecimals;
-    int m_cacheTimeout;
-    int m_tabStop;
-    bool m_tabSpaces;
-    bool m_editDragDrop;
-    bool m_toadBindings;
-    bool m_displayGridlines;
-    QString m_smtp;
-    int m_smtpPort;
-    QString m_style;
-    // tooracleconnection
-    int m_openCursors;
-    int m_maxLong;
-    // toqsqlconnection
-    bool m_onlyForward;
-    // main.cpp
-    QString m_lastVersion;
-    QString m_firstInstall;
-    // tomain.cpp
-    QStringList m_recentFiles;
-    // tools
-    ToolsMap m_tools;
-    // toresultlistformat
-    QString m_csvSeparator;
-    QString m_csvDelimiter;
-
-    // toeditextensions
-    bool m_commaBefore;
-    bool m_blockOpenLine;
-    bool m_operatorSpace;
-    bool m_rightSeparator;
-    bool m_endBlockNewline;
-    int m_commentColumn;
-
-    // tobrowser
-    bool m_filterIgnoreCase;
-    bool m_filterInvert;
-    int m_filterType;
-    int m_filterTablespaceType;
-    QString m_filterText;
-
-    // tohelp
-    HelpsMap m_additionalHelp;
-
-    // tochartmanager
-    ChartsMap m_chartFiles;
-    ChartsMap m_chartAlarms;
-
-    // tooutput
-    QString m_polling;
-    int m_logType;
-    QString m_logUser;
-
-    // torollback
-    bool m_noExec;
-    bool m_needRead;
-    bool m_needTwo;
-    bool m_alignLeft;
-    bool m_oldEnable;
-
-    // tosgatrace
-    bool m_autoUpdate;
-
-    // tostorage
-    bool m_dispTablespaces;
-    bool m_dispCoalesced;
-    bool m_dispExtents;
-    bool m_dispAvailableGraph;
-
-    // totemplate
-    TemplatesMap m_templates;
-
-    // totuning
-    /*! True if there are all features enabled.
-    It's used when there is no m_tuningOverview defined in prefs. */
-    bool m_tuningFirstRun;
-    bool m_tuningOverview;
-    bool m_tuningFileIO;
-    bool m_tuningWaits;
-    bool m_tuningCharts;
-
-    // toworksheet
-    bool m_wsAutoSave;
-    bool m_wsCheckSave;
-    QString m_wsAutoLoad;
-    bool m_wsLogAtEnd;
-    bool m_wsLogMulti;
-    bool m_wsStatistics;
-    bool m_wsTimedStats;
-    bool m_wsNumber;
-    bool m_wsMoveToErr;
-    bool m_wsHistory;
-    bool m_wsExecLog;
-    bool m_wsToplevelDescribe;
-
-    // tosyntaxsetup
-    QString m_syntaxDefault;
-    QString m_syntaxComment;
-    QString m_syntaxNumber;
-    QString m_syntaxKeyword;
-    QString m_syntaxString;
-    QString m_syntaxDefaultBg;
-    QString m_syntaxErrorBg;
-    QString m_syntaxDebugBg;
-    QString m_syntaxCurrentLineMarker;
-    bool m_useMaxTextWidthMark;
-    int m_maxTextWidthMark;
-
-    // mainwindow size
-    QByteArray m_mainWindowGeometry;
-    QByteArray m_mainWindowState;
-
-    // shortcut editor
-    bool m_useEditorShortcuts;
-    EditorShortcutsMap m_editorShortcuts;
+    bool useEditorShortcuts();
+    void setUseEditorShortcuts(bool v);
+    EditorShortcutsMap editorShortcuts();
+    void setEditorShortcuts(const EditorShortcutsMap & v);
 };
 
 typedef Loki::SingletonHolder<toConfiguration> toConfigurationSingle;
