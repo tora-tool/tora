@@ -85,6 +85,17 @@ class toBrowser : public toToolWidget
     QTabWidget   *m_mainTab;
     QMenu         *ToolMenu;
 
+    enum {
+        TabTable = 0,
+        TabView,
+        TabIndex,
+        TabSequence,
+        TabSynonym,
+        TabCode,
+        TabTrigger,
+        TabDBLink
+    } GuiTabType;
+
     toResultTableView *tableView;
     toBrowserTableWidget * tableBrowserWidget;
     toResultTableView * viewView;
@@ -124,6 +135,8 @@ class toBrowser : public toToolWidget
     void enableDisableConstraints(const QString &);
     void dropSomething(const QString &, const QString &);
 
+    QString currentItemText(int col = 1);
+
     QAction *refreshAct;
     QAction *FilterButton;
     QAction *clearFilterAct;
@@ -131,6 +144,8 @@ class toBrowser : public toToolWidget
     QAction *modTableAct;
     QAction *modConstraintAct;
     QAction *modIndexAct;
+    QAction *addIndexesAct;
+    QAction *dropIndexesAct;
     QAction *dropTableAct;
     QAction *enableConstraintAct;
     QAction *disableConstraintAct;
@@ -235,22 +250,22 @@ protected:
 // };
 
 
-class toBrowseButton : public QToolButton
-{
-    Q_OBJECT;
-
-public:
-    toBrowseButton(const QIcon &iconSet,
-                   const QString &textLabel,
-                   const QString & grouptext,
-                   QObject * receiver,
-                   const char * slot,
-                   QToolBar * parent,
-                   const char * name = 0);
-
-private slots:
-    void connectionChanged(void);
-};
+// class toBrowseButton : public QToolButton
+// {
+//     Q_OBJECT;
+// 
+// public:
+//     toBrowseButton(const QIcon &iconSet,
+//                    const QString &textLabel,
+//                    const QString & grouptext,
+//                    QObject * receiver,
+//                    const char * slot,
+//                    QToolBar * parent,
+//                    const char * name = 0);
+// 
+// private slots:
+//     void connectionChanged(void);
+// };
 
 class toBrowserTool : public toTool
 {

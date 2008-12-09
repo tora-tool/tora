@@ -86,6 +86,11 @@ class toBrowserBaseWidget : public QTabWidget
         //! Returns currently used object name.
         QString object() { return m_object; };
 
+        /*! \brief Check all editable subwidgets for editation in progress.
+        \retval bool true on "all is save". See toResultData::maybeSave().
+        */
+        bool maybeSave();
+
         /*! \brief Add given widget/page as a new tab with label.
         It adds page into m_tabs structure as well.
         \param page a toResult and QWidget inherited object.

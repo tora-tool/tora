@@ -40,6 +40,7 @@
 * END_COMMON_COPYRIGHT_HEADER */
 
 #include "toresult.h"
+#include "toresultdata.h"
 #include "tobrowserbasewidget.h"
 
 
@@ -52,6 +53,18 @@ toBrowserBaseWidget::toBrowserBaseWidget(QWidget * parent)
 
     connect(this, SIGNAL(currentChanged(int)),
             this, SLOT(tabWidget_currentChanged(int)));
+}
+
+bool toBrowserBaseWidget::maybeSave()
+{
+    bool ret = true;
+    foreach (toResult * i, m_tabs.values())
+    {
+        toResultData * d = dynamic_cast<toResultData*>(i);
+        if (d)
+            ret &= d->maybeSave();
+    }
+    return ret;
 }
 
 void toBrowserBaseWidget::addTab(QWidget * page, const QString & label)

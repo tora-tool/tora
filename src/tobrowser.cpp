@@ -117,6 +117,16 @@
 #include "icons/new.xpm"
 #endif
 
+#include "tobrowsertablewidget.h"
+#include "tobrowserviewwidget.h"
+#include "tobrowserindexwidget.h"
+#include "tobrowsersequencewidget.h"
+#include "tobrowsersynonymwidget.h"
+#include "tobrowsercodewidget.h"
+#include "tobrowsertriggerwidget.h"
+#include "tobrowserdblinkswidget.h"
+
+
 
 const char **toBrowserTool::pictureXPM(void)
 {
@@ -561,38 +571,38 @@ public:
     }
 };
 
-toBrowseButton::toBrowseButton(const QIcon &iconSet,
-                               const QString &textLabel,
-                               const QString & grouptext,
-                               QObject * receiver,
-                               const char * slot,
-                               QToolBar * parent,
-                               const char * name)
-        : QToolButton(parent)
-{
-
-    setIcon(iconSet);
-    setText(textLabel);
-    connect(this, SIGNAL(triggered(QAction *)), receiver, slot);
-    setObjectName(name);
-    setToolTip(grouptext);
-
-    try
-    {
-        connect(toCurrentTool(this), SIGNAL(connectionChange()), this, SLOT(connectionChanged()));
-    }
-    TOCATCH
-    connectionChanged();
-}
-
-void toBrowseButton::connectionChanged()
-{
-    try
-    {
-        setEnabled(toExtract::canHandle(toCurrentConnection(this)));
-    }
-    TOCATCH
-}
+// toBrowseButton::toBrowseButton(const QIcon &iconSet,
+//                                const QString &textLabel,
+//                                const QString & grouptext,
+//                                QObject * receiver,
+//                                const char * slot,
+//                                QToolBar * parent,
+//                                const char * name)
+//         : QToolButton(parent)
+// {
+// 
+//     setIcon(iconSet);
+//     setText(textLabel);
+//     connect(this, SIGNAL(triggered(QAction *)), receiver, slot);
+//     setObjectName(name);
+//     setToolTip(grouptext);
+// 
+//     try
+//     {
+//         connect(toCurrentTool(this), SIGNAL(connectionChange()), this, SLOT(connectionChanged()));
+//     }
+//     TOCATCH
+//     connectionChanged();
+// }
+// 
+// void toBrowseButton::connectionChanged()
+// {
+//     try
+//     {
+//         setEnabled(toExtract::canHandle(toCurrentConnection(this)));
+//     }
+//     TOCATCH
+// }
 
 #define FIRST_WIDTH 180
 
@@ -1327,46 +1337,12 @@ static toSQL SQLTruncateTable("toBrowser:TruncateTable",
                               "",
                               "Any");
 
-QString toBrowser::schema(void)
-{
-    try
-    {
-        QString ret = Schema->selected();
-        if (ret == tr("No schemas"))
-            return connection().database();
-        return ret;
-    }
-    catch (...)
-    {
-        return QString::null;
-    }
-}
+static toSQL SQLDropUser("toBrowser:DropUser",
+                         "DELETE FROM mysql.user WHERE concat(user,'@',host) = :f1<char[255]>",
+                         "Drop MYSQL user",
+                         "3.23",
+                         "MySQL");
 
-void toBrowser::setNewFilter(toBrowserFilter *filter)
-{
-    if (Filter)
-    {
-        delete Filter;
-        Filter = NULL;
-    }
-    if (filter)
-        Filter = filter;
-    else
-        Filter = new toBrowserFilter();
-    FilterButton->setChecked(filter);
-//     for (std::map<QString, toResultTableView *>::iterator i = Map.begin();i != Map.end();i++)
-//         (*i).second->setFilter(Filter->clone());
-    refresh();
-}
-
-#include "tobrowsertablewidget.h"
-#include "tobrowserviewwidget.h"
-#include "tobrowserindexwidget.h"
-#include "tobrowsersequencewidget.h"
-#include "tobrowsersynonymwidget.h"
-#include "tobrowsercodewidget.h"
-#include "tobrowsertriggerwidget.h"
-#include "tobrowserdblinkswidget.h"
 
 
 toBrowser::toBrowser(QWidget *parent, toConnection &connection)
@@ -1542,31 +1518,31 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     QToolBar * indexToolbar = toAllocBar(indexWidget, tr("Database browser"));
     indexLayout->addWidget(indexToolbar);
 
-    indexToolbar->addWidget(
-        new toBrowseButton(QPixmap(const_cast<const char**>(addindex_xpm)),
-                           tr("Add indexes"),
-                           tr("Add indexes"),
-                           this, SLOT(addIndex()),
-                           toolbar));
+    addIndexesAct = new QAction(QPixmap(const_cast<const char**>(addindex_xpm)),
+                                      tr("Add indexes"),
+                                      this);
+    connect(addIndexesAct, SIGNAL(triggered()),
+            this, SLOT(addIndex()));
+    tableToolbar->addAction(addIndexesAct);
 
     indexToolbar->addSeparator();
 
-    indexToolbar->addWidget(
-        new toBrowseButton(QPixmap(const_cast<const char**>(modindex_xpm)),
-                           tr("Modify indexes"),
-                           tr("Modify indexes"),
-                           this, SLOT(modifyIndex()),
-                           toolbar));
+//     modifyIndexesAct = new QAction(QPixmap(const_cast<const char**>(modindex_xpm)),
+//                                       tr("Modify indexes"),
+//                                       this);
+//     connect(modifyIndexesAct, SIGNAL(triggered()),
+//             this, SLOT(modifyIndex()));
+    tableToolbar->addAction(modIndexAct);
 
     indexToolbar->addSeparator();
 
-    indexToolbar->addWidget(
-        new toBrowseButton(QPixmap(const_cast<const char**>(trash_xpm)),
-                           tr("Drop index"),
-                           tr("Drop index"),
-                           this, SLOT(dropIndex()),
-                           toolbar));
-
+    dropIndexesAct = new QAction(QPixmap(const_cast<const char**>(trash_xpm)),
+                                      tr("Drop index"),
+                                      this);
+    connect(dropIndexesAct, SIGNAL(triggered()),
+            this, SLOT(dropIndex()));
+    tableToolbar->addAction(dropIndexesAct);
+    
     indexView = new toResultTableView(true, false, indexWidget);
     indexLayout->addWidget(indexView);
     indexView->setReadAll(true);
@@ -1858,11 +1834,37 @@ void toBrowser::windowActivated(QMdiSubWindow *widget)
     }
 }
 
-static toSQL SQLDropUser("toBrowser:DropUser",
-                         "DELETE FROM mysql.user WHERE concat(user,'@',host) = :f1<char[255]>",
-                         "Drop MYSQL user",
-                         "3.23",
-                         "MySQL");
+QString toBrowser::schema(void)
+{
+    try
+    {
+        QString ret = Schema->selected();
+        if (ret == tr("No schemas"))
+            return connection().database();
+        return ret;
+    }
+    catch (...)
+    {
+        return QString::null;
+    }
+}
+
+void toBrowser::setNewFilter(toBrowserFilter *filter)
+{
+    if (Filter)
+    {
+        delete Filter;
+        Filter = NULL;
+    }
+    if (filter)
+        Filter = filter;
+    else
+        Filter = new toBrowserFilter();
+    FilterButton->setChecked(filter);
+    //     for (std::map<QString, toResultTableView *>::iterator i = Map.begin();i != Map.end();i++)
+    //         (*i).second->setFilter(Filter->clone());
+    refresh();
+}
 
 void toBrowser::addUser()
 {
@@ -1930,13 +1932,22 @@ void toBrowser::changeConnection(void)
     refresh();
 }
 
+QString toBrowser::currentItemText(int col)
+{
+    int ix = m_mainTab->currentIndex();
+    if (m_browsersMap.contains(ix))
+    {
+        return m_objectsMap[ix]->selectedIndex(1).data(Qt::EditRole).toString();
+    }
+    return "";
+}
+
 void toBrowser::changeItem()
 {
     int ix = m_mainTab->currentIndex();
     if (m_browsersMap.contains(ix))
     {
-        m_browsersMap[ix]->changeParams(schema(),
-                                         m_objectsMap[ix]->selectedIndex(1).data(Qt::EditRole).toString());
+        m_browsersMap[ix]->changeParams(schema(), currentItemText());
     }
     else
         qDebug() << "changeItem() unhandled index" << ix;
@@ -1978,13 +1989,13 @@ bool toBrowser::canHandle(toConnection &conn)
 
 void toBrowser::modifyTable(void)
 {
-    // TODO/FIXME
-    qDebug("void toBrowser::modifyTable(void) data from tabbrowser!");
-//     toBrowserTable::editTable(connection(),
-//                               Schema->selected(),
-//                               SecondText,
-//                               this);
-//     refresh();
+    if (m_mainTab->currentIndex() != toBrowser::TabTable)
+        return; // only tabs allowed
+    toBrowserTable::editTable(connection(),
+                              schema(),
+                              currentItemText(),
+                              this);
+    refresh();
 }
 
 void toBrowser::addTable(void)
@@ -2017,24 +2028,22 @@ void toBrowser::modifyIndex(void)
 // 
 //     if (item.isValid())
 //     {
-//         toBrowserIndex::modifyIndex(connection(),
-//                                     Schema->selected(),
-//                                     item.data(Qt::EditRole).toString(),
-//                                     this,
-//                                     index);
+        toBrowserIndex::modifyIndex(connection(),
+                                    schema(),
+                                    currentItemText(),
+                                    this/*,
+                                    index*/);
 //     }
-//     refresh();
+    refresh();
 }
 
 void toBrowser::addIndex(void)
 {
-    // TODO/FIXME
-    qDebug("void toBrowser::addIndex(void) move to tabbrowser?");
-//     toBrowserIndex::addIndex(connection(),
-//                              Schema->selected(),
-//                              SecondText,
-//                              this);
-//     refresh();
+    toBrowserIndex::addIndex(connection(),
+                             schema(),
+                             currentItemText(),
+                             this);
+    refresh();
 }
 
 void toBrowser::displayTableMenu(QMenu *menu)
@@ -2144,46 +2153,53 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
         }
         TOCATCH
     }
-    refresh();
+//     refresh(); no refresh goes here as it can be called from loop
 }
 
 void toBrowser::dropTable(void)
 {
-    // TODO/FIXME
-    qDebug() << "void toBrowser::dropTable(void) move to its location";
-//     dropSomething("TABLE", SecondText);
+    if (m_mainTab->currentIndex() != toBrowser::TabTable)
+        return; // only tabs allowed
+
+    for (toResultTableView::iterator it(tableView); (*it).isValid(); it++)
+    {
+        if (tableView->isRowSelected(*it))
+            dropSomething("TABLE", (*it).data(Qt::EditRole).toString());
+    }
+    refresh();
 }
 
 void toBrowser::truncateTable(void)
 {
-    // TODO/FIXME
-    qDebug() << "void toBrowser::truncateTable(void) move to its location";
-//     bool force = false;
-//     for (toResultTableView::iterator it(FirstTab); (*it).isValid(); it++)
-//     {
-//         if (FirstTab->isRowSelected(*it))
-//         {
-//             switch (force ? 0 : TOMessageBox::warning(this, tr("Truncate table?"),
-//                     tr("Are you sure you want to truncate the table %2.%3,\n"
-//                        "this action can not be undone?").arg(
-//                         Schema->selected()).arg((*it).data(Qt::EditRole).toString()),
-//                     tr("&Yes"), tr("Yes to &all"), tr("&Cancel"), 0))
-//             {
-//             case 1 :
-//                 force = true;
-//                 // Intentionally no break here.
-//             case 0:
-//                 connection().execute(
-//                     toSQL::string(SQLTruncateTable, connection()).
-//                     arg(connection().quote(Schema->selected())).
-//                     arg(connection().quote((*it).data(Qt::EditRole).toString())));
-//                 updateTabs();
-//                 break;
-//             case 2:
-//                 return;
-//             }
-//         }
-//     }
+    if (m_mainTab->currentIndex() != toBrowser::TabTable)
+        return; // only tabs allowed
+
+    bool force = false;
+    for (toResultTableView::iterator it(tableView); (*it).isValid(); it++)
+    {
+        if (tableView->isRowSelected(*it))
+        {
+            switch (force ? 0 : TOMessageBox::warning(this, tr("Truncate table?"),
+                    tr("Are you sure you want to truncate the table %2.%3,\n"
+                       "this action can not be undone?").arg(
+                        schema()).arg((*it).data(Qt::EditRole).toString()),
+                    tr("&Yes"), tr("Yes to &all"), tr("&Cancel"), 0))
+            {
+            case 1 :
+                force = true;
+                // Intentionally no break here.
+            case 0:
+                connection().execute(
+                    toSQL::string(SQLTruncateTable, connection()).
+                    arg(connection().quote(schema())).
+                    arg(connection().quote((*it).data(Qt::EditRole).toString())));
+                break;
+            case 2:
+                return;
+            }
+        }
+    }
+    refresh();
 }
 
 void toBrowser::flushPrivs(void)
@@ -2197,43 +2213,43 @@ void toBrowser::flushPrivs(void)
 
 void toBrowser::checkTable(void)
 {
-    // TODO/FIXME
-    qDebug() << "void toBrowser::checkTable(void) move to its location";
-//     QString sql;
-// 
-//     for (toResultTableView::iterator it(FirstTab); (*it).isValid(); it++)
-//     {
-//         if (FirstTab->isRowSelected(*it))
-//         {
-//             if (sql.isEmpty())
-//                 sql = "CHECK TABLE ";
-//             else
-//                 sql += ", ";
-//             sql += connection().quote(Schema->selected()) + "." +
-//                    connection().quote((*it).data(Qt::EditRole).toString());
-//         }
-//     }
-// 
-//     if (!sql.isEmpty())
-//     {
-//         toResultTableView *result = new toResultTableView(true, false, this);
-//         result->setWindowFlags(Qt::Window);
-//         result->setAttribute(Qt::WA_DeleteOnClose);
-//         result->query(sql);
-//         result->show();
-//     }
+    QString sql;
+    if (m_mainTab->currentIndex() != toBrowser::TabTable)
+        return; // only tabs allowed
+
+    for (toResultTableView::iterator it(tableView); (*it).isValid(); it++)
+    {
+        if (tableView->isRowSelected(*it))
+        {
+            if (sql.isEmpty())
+                sql = "CHECK TABLE ";
+            else
+                sql += ", ";
+            sql += connection().quote(schema()) + "." +
+                   connection().quote((*it).data(Qt::EditRole).toString());
+        }
+    }
+
+    if (!sql.isEmpty())
+    {
+        toResultTableView *result = new toResultTableView(true, false, this);
+        result->setWindowFlags(Qt::Window);
+        result->setAttribute(Qt::WA_DeleteOnClose);
+        result->query(sql);
+        result->show();
+    }
 
 }
 
 void toBrowser::optimizeTable(void)
 {
-    // TODO/FIXME
-    qDebug() << "void toBrowser::optimizeTable(void) move to its location";
-/*    QString sql;
+    QString sql;
+    if (m_mainTab->currentIndex() != toBrowser::TabTable)
+        return; // only tabs allowed
 
-    for (toResultTableView::iterator it(FirstTab); (*it).isValid(); it++)
+    for (toResultTableView::iterator it(tableView); (*it).isValid(); it++)
     {
-        if (FirstTab->isRowSelected(*it))
+        if (tableView->isRowSelected(*it))
         {
             if (sql.isEmpty())
                 sql = "OPTIMIZE TABLE ";
@@ -2251,55 +2267,57 @@ void toBrowser::optimizeTable(void)
         result->setAttribute(Qt::WA_DeleteOnClose);
         result->query(sql);
         result->show();
-    }*/
+    }
 }
 
 void toBrowser::changeType(void)
 {
-    // TODO/FIXME
-    qDebug() << "void toBrowser::changeType(void) move to its location";
-//     bool ok;
-//     QString text = QInputDialog::getText(this,
-//                                          "Change table type",
-//                                          "Enter new table type",
-//                                          QLineEdit::Normal,
-//                                          "MyISAM",
-//                                          &ok);
-//     if (ok && !text.isEmpty())
-//     {
-//         for (toResultTableView::iterator it(FirstTab); (*it).isValid(); it++)
-//         {
-//             if (FirstTab->isRowSelected(*it))
-//             {
-//                 QString sql = "ALTER TABLE ";
-//                 sql += connection().quote(Schema->selected()) + "." +
-//                        connection().quote((*it).data(Qt::EditRole).toString());
-//                 sql += " TYPE = " + text;
-//                 try
-//                 {
-//                     connection().execute(sql);
-//                 }
-//                 TOCATCH
-//             }
-//         }
-//     }
+    if (m_mainTab->currentIndex() != toBrowser::TabTable)
+        return; // only tabs allowed
+
+    bool ok;
+    QString text = QInputDialog::getText(this,
+                                         "Change table type",
+                                         "Enter new table type",
+                                         QLineEdit::Normal,
+                                         "MyISAM",
+                                         &ok);
+    if (ok && !text.isEmpty())
+    {
+        for (toResultTableView::iterator it(tableView); (*it).isValid(); it++)
+        {
+            if (tableView->isRowSelected(*it))
+            {
+                QString sql = "ALTER TABLE ";
+                sql += connection().quote(schema()) + "." +
+                       connection().quote((*it).data(Qt::EditRole).toString());
+                sql += " TYPE = " + text;
+                try
+                {
+                    connection().execute(sql);
+                }
+                TOCATCH
+            }
+        }
+    }
 }
 
 void toBrowser::analyzeTable(void)
 {
-    // TODO/FIXME
-    qDebug() << "void toBrowser::analyzeTable(void) move to its location";
-/*    QString sql;
+    if (m_mainTab->currentIndex() != toBrowser::TabTable)
+        return; // only tabs allowed
 
-    for (toResultTableView::iterator it(FirstTab); (*it).isValid(); it++)
+    QString sql;
+
+    for (toResultTableView::iterator it(tableView); (*it).isValid(); it++)
     {
-        if (FirstTab->isRowSelected(*it))
+        if (tableView->isRowSelected(*it))
         {
             if (sql.isEmpty())
                 sql = "ANALYZE TABLE ";
             else
                 sql += ", ";
-            sql += connection().quote(Schema->selected()) + "." +
+            sql += connection().quote(schema()) + "." +
                    connection().quote((*it).data(Qt::EditRole).toString());
         }
     }
@@ -2311,15 +2329,25 @@ void toBrowser::analyzeTable(void)
         result->setAttribute(Qt::WA_DeleteOnClose);
         result->query(sql);
         result->show();
-    }*/
+    }
 }
 
 void toBrowser::dropIndex(void)
 {
-    // TODO/FIXME
-    qDebug() << "void toBrowser::dropIndex(void) move to its location";
-//     dropSomething("INDEX", SecondText);
-    // Why there was this?
+    if (m_mainTab->currentIndex() == toBrowser::TabIndex)
+    {
+        for (toResultTableView::iterator it(indexView); (*it).isValid(); it++)
+        {
+            if (indexView->isRowSelected(*it))
+            {
+                dropSomething("INDEX", (*it).data(Qt::EditRole).toString());
+            }
+        }
+        return;
+    }
+    // TODO/FIXME: implement deleting from table tab
+    qDebug() << "toBrowser::dropIndex()" << "indexes can be dropped only directly from indexes tab";
+
 //     for (toResultTableView::iterator it(FirstTab); (*it).isValid(); it++)
 //     {
 //         if (FirstTab->isRowSelected(*it))
@@ -2337,17 +2365,15 @@ void toBrowser::dropIndex(void)
 
 void toBrowser::closeEvent(QCloseEvent *event)
 {
-    qDebug() << "void toBrowser::closeEvent(QCloseEvent *event)" << "// TODO/FIXME: save edited data in some widgets";
-    // TODO/FIXME: save edited data in some widgets
-//     if (ViewContent->maybeSave() &&
-//             TableContent->maybeSave() &&
-//             AccessContent->maybeSave())
-//     {
+    bool acceptEvent = true;
 
+    for (int i = 0; i < m_browsersMap.count(); ++i)
+        acceptEvent &= m_browsersMap[i]->maybeSave();
+
+    if (acceptEvent)
         event->accept();
-//     }
-//     else
-//         event->ignore();
+    else
+        event->ignore();
 }
 
 
