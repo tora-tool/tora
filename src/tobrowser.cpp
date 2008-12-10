@@ -1523,16 +1523,11 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
                                       this);
     connect(addIndexesAct, SIGNAL(triggered()),
             this, SLOT(addIndex()));
-    tableToolbar->addAction(addIndexesAct);
+    indexToolbar->addAction(addIndexesAct);
 
     indexToolbar->addSeparator();
 
-//     modifyIndexesAct = new QAction(QPixmap(const_cast<const char**>(modindex_xpm)),
-//                                       tr("Modify indexes"),
-//                                       this);
-//     connect(modifyIndexesAct, SIGNAL(triggered()),
-//             this, SLOT(modifyIndex()));
-    tableToolbar->addAction(modIndexAct);
+    indexToolbar->addAction(modIndexAct);
 
     indexToolbar->addSeparator();
 
@@ -1541,8 +1536,8 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
                                       this);
     connect(dropIndexesAct, SIGNAL(triggered()),
             this, SLOT(dropIndex()));
-    tableToolbar->addAction(dropIndexesAct);
-    
+    indexToolbar->addAction(dropIndexesAct);
+
     indexView = new toResultTableView(true, false, indexWidget);
     indexLayout->addWidget(indexView);
     indexView->setReadAll(true);
@@ -1651,12 +1646,14 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     QToolBar * dblinkToolbar = toAllocBar(dblinkWidget, tr("Database browser"));
     dblinkLayout->addWidget(dblinkToolbar);
 
+    dblinkView = new toResultTableView(true, false, dblinkWidget);
+    dblinkBrowserWidget = new toBrowserDBLinksWidget(dblinkSplitter);
+
     testDBLinkAct = new QAction(QPixmap(const_cast<const char**>(modconstraint_xpm)),
                                 tr("Test DBLink"), this);
-    connect(testDBLinkAct, SIGNAL(triggered()), this, SLOT(testDBLink()));
+    connect(testDBLinkAct, SIGNAL(triggered()), dblinkBrowserWidget, SLOT(testDBLink()));
     dblinkToolbar->addAction(testDBLinkAct);
 
-    dblinkView = new toResultTableView(true, false, dblinkWidget);
     dblinkLayout->addWidget(dblinkView);
     dblinkView->setReadAll(true);
     dblinkView->setSQL(SQLListDBLink);
@@ -1670,8 +1667,6 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
             SIGNAL(displayMenu(QMenu *)),
             this,
             SLOT(displayIndexMenu(QMenu *)));
-
-    dblinkBrowserWidget = new toBrowserDBLinksWidget(dblinkSplitter);
 
     dblinkWidget->resize(FIRST_WIDTH, dblinkView->height());
     dblinkSplitter->setStretchFactor(dblinkSplitter->indexOf(dblinkView), 0);
@@ -2008,32 +2003,23 @@ void toBrowser::addTable(void)
 
 void toBrowser::modifyConstraint(void)
 {
-    // TODO/FIXME
-    qDebug("void toBrowser::modifyConstraint(void) data from tabbrowser!");
-//     toBrowserConstraint::modifyConstraint(connection(),
-//                                           Schema->selected(),
-//                                           SecondText,
-//                                           this);
-//     refresh();
+    if (m_mainTab->currentIndex() != toBrowser::TabTable)
+        return;
+
+    toBrowserConstraint::modifyConstraint(connection(),
+                                          schema(),
+                                          tableBrowserWidget->object(),
+                                          this);
+    refresh();
 }
 
 void toBrowser::modifyIndex(void)
 {
-    // TODO/FIXME
-    qDebug("void toBrowser::modifyIndex(void) move to tabbrowser?");
-//     QString index;
-//     QModelIndex item = selectedItem(1);
-//     if (FirstTab->model()->columnCount() > 1 && item.isValid())
-//         index = item.data(Qt::EditRole).toString();
-// 
-//     if (item.isValid())
-//     {
-        toBrowserIndex::modifyIndex(connection(),
-                                    schema(),
-                                    currentItemText(),
-                                    this/*,
-                                    index*/);
-//     }
+    toBrowserIndex::modifyIndex(connection(),
+                                schema(),
+                                tableBrowserWidget->object(),
+                                this,
+                                currentItemText());
     refresh();
 }
 
@@ -2041,7 +2027,7 @@ void toBrowser::addIndex(void)
 {
     toBrowserIndex::addIndex(connection(),
                              schema(),
-                             currentItemText(),
+                             tableBrowserWidget->object(),
                              this);
     refresh();
 }
@@ -3082,102 +3068,14 @@ void toBrowser::fixIndexCols(void)
 //         Filter->exportData(data, prefix + ":Filter");
 // }
 
-void toBrowser::enableDisableConstraints(const QString &what)
-{
-    // TODO/FIXME
-    qDebug() << "void toBrowser::enableDisableConstraints(const QString &what) move to its location";
-/*    if (!SecondTab)
-        return;
-
-    try
-    {
-        toResultTableView *table =
-            dynamic_cast<toResultTableView *>(SecondTab);
-        toConnection &conn = connection();
-        std::list<QString> migrate;
-        if (table && table->objectName() == TAB_TABLE_CONS)
-        {
-            for (toResultTableView::iterator it(table); (*it).isValid(); it++)
-            {
-                if (table->isRowSelected(*it))
-                {
-                    toPush(migrate,
-                           conn.quote(schema()) + ":" +
-                           "TABLE:" +
-                           conn.quote(SecondText) + ":" +
-                           "CONSTRAINT:" +
-                           conn.quote((*it).data(Qt::EditRole).toString()) + ":" +
-                           "DEFINITION:" +
-                           what);
-                }
-            }
-        }
-        else if (table && table->objectName() == TAB_TABLE_DEPEND)
-        {
-            toResultModel *model = table->model();
-            for (toResultTableView::iterator it(table); (*it).isValid(); it++)
-            {
-                if (table->isRowSelected(*it))
-                {
-                    toPush(migrate,
-                           conn.quote(model->data((*it).row(), 0).toString()) + ":" +
-                           "TABLE:" +
-                           conn.quote(model->data((*it).row(), 1).toString()) + ":" +
-                           "CONSTRAINT:" +
-                           conn.quote(model->data((*it).row(), 2).toString()) + ":" +
-                           "DEFINITION:" +
-                           what);
-                }
-            }
-        }
-        else
-        {
-//             toResultView *lst = dynamic_cast<toResultView *>(SecondTab);
-//             if (lst && lst->sqlName() == "toBrowser:TableTrigger") {
-            // Need work
-//             }
-        }
-
-        if (migrate.begin() != migrate.end())
-        {
-            std::list<QString> drop;
-            toExtract extract(conn, this);
-            extract.setPrompt(false);
-            extract.setHeading(false);
-            QString sql = extract.migrate(drop, migrate);
-            conn.execute("BEGIN\n" + sql + "\nEND;");
-        }
-    }
-    TOCATCH;*/
-}
-
 void toBrowser::enableConstraints(void)
 {
-    enableDisableConstraints("ENABLE");
+    if (m_mainTab->currentIndex() == toBrowser::TabTable)
+        tableBrowserWidget->enableConstraints(true);
 }
 
 void toBrowser::disableConstraints(void)
 {
-    enableDisableConstraints("DISABLE");
-}
-
-void toBrowser::testDBLink(void)
-{
-    // TODO/FIXME
-    qDebug() << "void toBrowser::testDBLink(void) move to its location";
-/*    if (SecondText.isEmpty())
-        return ;
-
-    toQList resultset;
-    try
-    {
-        resultset = toQuery::readQueryNull(toCurrentConnection(this),
-                                           "SELECT * FROM dual@" + SecondText);
-    }
-    TOCATCH;
-    //   } catch (...) {
-    //     TOMessageBox::information(this, "Database link", SecondText);
-    //   }
-    QString status(resultset.empty() ? tr("status: FAILED") : tr("status: OK"));
-    TOMessageBox::information(this, "Database link", SecondText + " " + status);*/
+    if (m_mainTab->currentIndex() == toBrowser::TabTable)
+        tableBrowserWidget->enableConstraints(false);
 }

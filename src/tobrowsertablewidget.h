@@ -76,6 +76,11 @@ class toBrowserTableWidget : public toBrowserBaseWidget
 
     public:
         toBrowserTableWidget(QWidget * parent);
+
+        /*! \brief Enable or disable chosen constraints.
+        Affected sub-tabs are: Constraints and Dependencies
+        */
+        void enableConstraints(bool enable);
 };
 
 #endif

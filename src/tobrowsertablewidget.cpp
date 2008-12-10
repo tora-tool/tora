@@ -49,6 +49,7 @@
 #include "toresultgrants.h"
 #include "tobrowsertablewidget.h"
 #include "utils.h"
+#include "toextract.h"
 
 
 static toSQL SQLTableIndex("toBrowserTableWidget:TableIndex",
@@ -336,6 +337,9 @@ static toSQL SQLTablePartition("toBrowser:TablePartitions",
                                "Table partitions",
                                "0801");
 
+#define TAB_CONSTRAINTS 2
+#define TAB_REFERENCES 3
+
 
 toBrowserTableWidget::toBrowserTableWidget(QWidget * parent)
     : toBrowserBaseWidget(parent)
@@ -396,4 +400,67 @@ toBrowserTableWidget::toBrowserTableWidget(QWidget * parent)
     addTab(extractView, "Script");
 }
 
+void toBrowserTableWidget::enableConstraints(bool enable)
+{
+    QString what(enable ? "ENABLE" : "DISABLE");
+    std::list<QString> migrate;
+    toConnection &conn = toCurrentConnection(this);
 
+    try
+    {
+        if (currentIndex() == TAB_CONSTRAINTS)
+        {
+            for (toResultTableView::iterator it(constraintsView); (*it).isValid(); it++)
+            {
+                if (constraintsView->isRowSelected(*it))
+                {
+                    toPush(migrate,
+                            conn.quote(schema()) + ":" +
+                            "TABLE:" +
+                            conn.quote(object()) + ":" +
+                            "CONSTRAINT:" +
+                            conn.quote((*it).data(Qt::EditRole).toString()) + ":" +
+                            "DEFINITION:" +
+                            what);
+                }
+            }
+        }
+        else if (currentIndex() == TAB_REFERENCES)
+        {
+            toResultModel *model = referencesView->model();
+            for (toResultTableView::iterator it(referencesView); (*it).isValid(); it++)
+            {
+                if (referencesView->isRowSelected(*it))
+                {
+                    toPush(migrate,
+                            conn.quote(model->data((*it).row(), 0).toString()) + ":" +
+                            "TABLE:" +
+                            conn.quote(model->data((*it).row(), 1).toString()) + ":" +
+                            "CONSTRAINT:" +
+                            conn.quote(model->data((*it).row(), 2).toString()) + ":" +
+                            "DEFINITION:" +
+                            what);
+                }
+            }
+        }
+        else
+        {
+            qDebug("toBrowserTableWidget::enableConstraints - unimplemented");
+            //             toResultView *lst = dynamic_cast<toResultView *>(SecondTab);
+            //             if (lst && lst->sqlName() == "toBrowser:TableTrigger") {
+            // Need work
+            //             }
+        }
+        
+        if (migrate.begin() != migrate.end())
+        {
+            std::list<QString> drop;
+            toExtract extract(conn, this);
+            extract.setPrompt(false);
+            extract.setHeading(false);
+            QString sql = extract.migrate(drop, migrate);
+            conn.execute("BEGIN\n" + sql + "\nEND;");
+        }
+    }
+    TOCATCH;
+}

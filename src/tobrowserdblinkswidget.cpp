@@ -39,6 +39,9 @@
 *
 * END_COMMON_COPYRIGHT_HEADER */
 
+#include <QMessageBox>
+
+#include "utils.h"
 #include "toresultitem.h"
 #include "toresulttableview.h"
 
@@ -69,4 +72,24 @@ toBrowserDBLinksWidget::toBrowserDBLinksWidget(QWidget * parent)
     synonymsView = new toResultTableView(this);
     synonymsView->setSQL(SQLDBLinkSynonyms);
     addTab(synonymsView, "&Synonyms");
+}
+
+void toBrowserDBLinksWidget::testDBLink()
+{
+    if (object().isEmpty())
+    {
+        TOMessageBox::information(this, "Database link", "No selected database link to test.");
+        return;
+    }
+
+    toQList resultset;
+    try
+    {
+        resultset = toQuery::readQueryNull(toCurrentConnection(this),
+                                           "SELECT * FROM dual@" + object());
+    }
+    TOCATCH;
+
+    QString status(resultset.empty() ? tr("status: FAILED") : tr("status: OK"));
+    TOMessageBox::information(this, "Database link", object() + " " + status);
 }

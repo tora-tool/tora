@@ -61,6 +61,9 @@ class toBrowserDBLinksWidget : public toBrowserBaseWidget
 
     public:
         toBrowserDBLinksWidget(QWidget * parent);
+
+    public slots:
+        void testDBLink();
 };
 
 #endif

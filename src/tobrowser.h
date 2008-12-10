@@ -132,7 +132,6 @@ class toBrowser : public toToolWidget
     void setNewFilter(toBrowserFilter *filter);
 
     QString schema(void);
-    void enableDisableConstraints(const QString &);
     void dropSomething(const QString &, const QString &);
 
     QString currentItemText(int col = 1);
@@ -197,8 +196,6 @@ public slots:
     void changeConnection(void);
     void enableConstraints(void);
     void disableConstraints(void);
-
-    void testDBLink(void);
 
     void displayIndexMenu(QMenu *menu);
     void displayTableMenu(QMenu *menu);
