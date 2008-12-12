@@ -78,6 +78,34 @@ class toBrowserAccessWidget;
 class toBrowserBaseWidget;
 
 
+/*! \brief Main GUI fo Schema Browser.
+toBrowser holds the GUI stuff for schema browsing. It contains
+some slots/actions related to the DB object manipulations - mainly
+the "mass" actions available for multiple objects (e.g. deleting
+all selected tables etc.). Actions related to the one object (e.g.
+test the DB link) are moved to toBrowserBaseWidget inherited
+classes.
+
+The main widget of toBrowser is the tab widget m_mainTab. Every its
+tab widget is based on QSplitter (\see tableSplitter, etc.).
+This QSplitter has two main children - the "object browser" (usually
+the toResultTableView - dblinkView etc. - or QWidget with toolbar
+and toResultTableView) and the "browser" - the toBrowserBaseWidget
+inherited object.
+QSplitters are keys in the m_browsersMap and m_objectsMap implicitly
+shared QMap structures to allow easy and quick access with
+QTabWidget::currentWidget() casted to QSplitter (\see e.g.
+mainTab_currentChanged() as an example of data transfer to subwidgets).
+
+Availability of the tabs for given connection is checked in
+changeConnection() method. Some tabs are available only for
+some DBMS, depending on features. The tab is hidden when there
+is no available fature in DBMS.
+
+Hidden tabs, resp. widgets, are not deleted. All is still available
+in QMap (\see m_objectsMap, m_browsersMap) structures waiting for
+resfresh.
+*/
 class toBrowser : public toToolWidget
 {
     Q_OBJECT;
@@ -86,39 +114,44 @@ class toBrowser : public toToolWidget
     QTabWidget   *m_mainTab;
     QMenu         *ToolMenu;
 
-    enum {
-        TabTable = 0,
-        TabView,
-        TabIndex,
-        TabSequence,
-        TabSynonym,
-        TabCode,
-        TabTrigger,
-        TabDBLink,
-        TabAccess
-    } GuiTabType;
-
+    QSplitter * tableSplitter;
     toResultTableView *tableView;
     toBrowserTableWidget * tableBrowserWidget;
+
+    QSplitter * viewSplitter;
     toResultTableView * viewView;
     toBrowserViewWidget * viewBrowserWidget;
+
+    QSplitter * indexSplitter;
     toResultTableView * indexView;
     toBrowserIndexWidget * indexBrowserWidget;
+
+    QSplitter * sequenceSplitter;
     toResultTableView * sequenceView;
     toBrowserSequenceWidget * sequenceBrowserWidget;
+
+    QSplitter * synonymSplitter;
     toResultTableView * synonymView;
     toBrowserSynonymWidget * synonymBrowserWidget;
+
+    QSplitter * codeSplitter;
     toResultTableView * codeView;
     toBrowserCodeWidget * codeBrowserWidget;
+
+    QSplitter * triggerSplitter;
     toResultTableView * triggerView;
     toBrowserTriggerWidget * triggerBrowserWidget;
+
+    QSplitter * dblinkSplitter;
     toResultTableView * dblinkView;
     toBrowserDBLinksWidget * dblinkBrowserWidget;
+
+    QSplitter * accessSplitter;
     toResultTableView * accessView;
     toBrowserAccessWidget * accessBrowserWidget;
 
-    QMap<int,toResultTableView*> m_objectsMap;
-    QMap<int,toBrowserBaseWidget*> m_browsersMap;
+    QMap<QSplitter*,toResultTableView*> m_objectsMap;
+    QMap<QSplitter*,toBrowserBaseWidget*> m_browsersMap;
 
 
 //     QString            SecondText;
@@ -136,8 +169,18 @@ class toBrowser : public toToolWidget
     void setNewFilter(toBrowserFilter *filter);
 
     QString schema(void);
-    void dropSomething(const QString &, const QString &);
 
+    /*! \brief A wrapper method to drop any object from DB.
+    \param type a uppercase string with e.g. 'TABLE', 'INDEX', etc.
+                Only objects supported by toExtract can be dropped.
+    \param what a object name to drop.
+    */
+    void dropSomething(const QString & type, const QString & what);
+
+    /*! \brief Get text from the active "object browser" (toResultTableView).
+    \see m_objectsMap.
+    \param col a column name. It's 1 by default
+    */
     QString currentItemText(int col = 1);
 
     QAction *refreshAct;

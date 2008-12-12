@@ -1398,9 +1398,9 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     layout()->addWidget(m_mainTab);
 
     // Tables
-    QSplitter *tableSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
+    tableSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     tableSplitter->setObjectName(TAB_TABLES);
-    m_mainTab->addTab(tableSplitter, tr("T&ables"));
+//     m_mainTab->addTab(tableSplitter, tr("T&ables"));
 
     QWidget *tableWidget = new QWidget(tableSplitter);
     QVBoxLayout *tableLayout = new QVBoxLayout;
@@ -1483,13 +1483,13 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
             this,
             SLOT(displayTableMenu(QMenu *)));
 
-    m_objectsMap[m_mainTab->count()-1] = tableView;
-    m_browsersMap[m_mainTab->count()-1] = tableBrowserWidget;
+    m_objectsMap[tableSplitter] = tableView;
+    m_browsersMap[tableSplitter] = tableBrowserWidget;
 
     // Views
-    QSplitter * viewSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
+    viewSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     viewSplitter->setObjectName(TAB_VIEWS);
-    m_mainTab->addTab(viewSplitter, tr("&Views"));
+//     m_mainTab->addTab(viewSplitter, tr("&Views"));
     viewView = new toResultTableView(true, false, viewSplitter);
     viewView->setReadAll(true);
     viewView->setSQL(SQLListView);
@@ -1501,14 +1501,14 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     viewBrowserWidget = new toBrowserViewWidget(viewSplitter);
     viewSplitter->setStretchFactor(viewSplitter->indexOf(viewBrowserWidget), 1);
 
-    m_objectsMap[m_mainTab->count()-1] = viewView;
-    m_browsersMap[m_mainTab->count()-1] = viewBrowserWidget;
+    m_objectsMap[viewSplitter] = viewView;
+    m_browsersMap[viewSplitter] = viewBrowserWidget;
 
 
     // Indexes
-    QSplitter * indexSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
+    indexSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     indexSplitter->setObjectName(TAB_INDEX);
-    m_mainTab->addTab(indexSplitter, tr("Inde&xes"));
+//     m_mainTab->addTab(indexSplitter, tr("Inde&xes"));
 
     QWidget * indexWidget = new QWidget(indexSplitter);
     QVBoxLayout * indexLayout = new QVBoxLayout;
@@ -1554,13 +1554,13 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     indexBrowserWidget = new toBrowserIndexWidget(indexSplitter);
     indexSplitter->setStretchFactor(indexSplitter->indexOf(indexBrowserWidget), 1);
 
-    m_objectsMap[m_mainTab->count()-1] = indexView;
-    m_browsersMap[m_mainTab->count()-1] = indexBrowserWidget;
+    m_objectsMap[indexSplitter] = indexView;
+    m_browsersMap[indexSplitter] = indexBrowserWidget;
 
     // Sequences
-    QSplitter * sequenceSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
+    sequenceSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     sequenceSplitter->setObjectName(TAB_SEQUENCES);
-    m_mainTab->addTab(sequenceSplitter, tr("Se&quences"));
+//     m_mainTab->addTab(sequenceSplitter, tr("Se&quences"));
     sequenceView = new toResultTableView(true, false, sequenceSplitter);
     sequenceView->setReadAll(true);
     sequenceView->setSQL(SQLListSequence);
@@ -1572,14 +1572,14 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     sequenceBrowserWidget = new toBrowserSequenceWidget(sequenceSplitter);
     sequenceSplitter->setStretchFactor(sequenceSplitter->indexOf(sequenceBrowserWidget), 1);
 
-    m_objectsMap[m_mainTab->count()-1] = sequenceView;
-    m_browsersMap[m_mainTab->count()-1] = sequenceBrowserWidget;
+    m_objectsMap[sequenceSplitter] = sequenceView;
+    m_browsersMap[sequenceSplitter] = sequenceBrowserWidget;
 
 
     // Synonyms
-    QSplitter * synonymSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
+    synonymSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     synonymSplitter->setObjectName(TAB_SYNONYM);
-    m_mainTab->addTab(synonymSplitter, tr("S&ynonyms"));
+//     m_mainTab->addTab(synonymSplitter, tr("S&ynonyms"));
     synonymView = new toResultTableView(true, false, synonymSplitter);
     synonymView->setReadAll(true);
     synonymView->setSQL(SQLListSynonym);
@@ -1591,13 +1591,13 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     synonymBrowserWidget = new toBrowserSynonymWidget(synonymSplitter);
     synonymSplitter->setStretchFactor(synonymSplitter->indexOf(synonymBrowserWidget), 1);
 
-    m_objectsMap[m_mainTab->count()-1] = synonymView;
-    m_browsersMap[m_mainTab->count()-1] = synonymBrowserWidget;
+    m_objectsMap[synonymSplitter] = synonymView;
+    m_browsersMap[synonymSplitter] = synonymBrowserWidget;
 
     // Codes
-    QSplitter * codeSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
+    codeSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     codeSplitter->setObjectName(TAB_PLSQL);
-    m_mainTab->addTab(codeSplitter, tr("Cod&e"));
+//     m_mainTab->addTab(codeSplitter, tr("Cod&e"));
     codeView = new toResultTableView(true, false, codeSplitter);
     codeView->setReadAll(true);
     codeView->setSQL(SQLListSQL);
@@ -1609,14 +1609,14 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     codeBrowserWidget = new toBrowserCodeWidget(codeSplitter);
     codeSplitter->setStretchFactor(codeSplitter->indexOf(codeBrowserWidget), 1);
 
-    m_objectsMap[m_mainTab->count()-1] = codeView;
-    m_browsersMap[m_mainTab->count()-1] = codeBrowserWidget;
+    m_objectsMap[codeSplitter] = codeView;
+    m_browsersMap[codeSplitter] = codeBrowserWidget;
 
 
     // Triggers
-    QSplitter * triggerSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
+    triggerSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     triggerSplitter->setObjectName(TAB_TRIGGER);
-    m_mainTab->addTab(triggerSplitter, tr("Tri&ggers"));
+//     m_mainTab->addTab(triggerSplitter, tr("Tri&ggers"));
     triggerView = new toResultTableView(true, false, triggerSplitter);
     triggerView->setReadAll(true);
     triggerView->setSQL(SQLListTrigger);
@@ -1628,14 +1628,13 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     triggerBrowserWidget = new toBrowserTriggerWidget(triggerSplitter);
     triggerSplitter->setStretchFactor(triggerSplitter->indexOf(triggerBrowserWidget), 1);
 
-    m_objectsMap[m_mainTab->count()-1] = triggerView;
-    m_browsersMap[m_mainTab->count()-1] = triggerBrowserWidget;
+    m_objectsMap[triggerSplitter] = triggerView;
+    m_browsersMap[triggerSplitter] = triggerBrowserWidget;
 
 #ifdef DBLINK
-
-    QSplitter * dblinkSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
+    dblinkSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     dblinkSplitter->setObjectName(TAB_DBLINK);
-    m_mainTab->addTab(dblinkSplitter, tr("DBLinks"));
+//     m_mainTab->addTab(dblinkSplitter, tr("DBLinks"));
 
     QWidget * dblinkWidget = new QWidget(dblinkSplitter);
 
@@ -1673,14 +1672,13 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     dblinkSplitter->setStretchFactor(dblinkSplitter->indexOf(dblinkView), 0);
     dblinkSplitter->setStretchFactor(dblinkSplitter->indexOf(dblinkBrowserWidget), 1);
 
-    m_objectsMap[m_mainTab->count()-1] = dblinkView;
-    m_browsersMap[m_mainTab->count()-1] = dblinkBrowserWidget;
+    m_objectsMap[dblinkSplitter] = dblinkView;
+    m_browsersMap[dblinkSplitter] = dblinkBrowserWidget;
 #endif // dblink
 
-
-    QSplitter * accessSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
+    accessSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     accessSplitter->setObjectName(TAB_ACCESS);
-    m_mainTab->addTab(accessSplitter, tr("Access"));
+//     m_mainTab->addTab(accessSplitter, tr("Access"));
 
 #ifdef TOEXTENDED_MYSQL
     // This is propably never compiled... and never worked...
@@ -1718,8 +1716,8 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     accessSplitter->setStretchFactor(accessSplitter->indexOf(accessView), 0);
     accessSplitter->setStretchFactor(accessSplitter->indexOf(accessBrowserWidget), 1);
 
-    m_objectsMap[m_mainTab->count()-1] = accessView;
-    m_browsersMap[m_mainTab->count()-1] = accessBrowserWidget;
+    m_objectsMap[accessSplitter] = accessView;
+    m_browsersMap[accessSplitter] = accessBrowserWidget;
 
     connect(accessView, SIGNAL(selectionChanged()),
             this, SLOT(changeItem()));
@@ -1734,19 +1732,29 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     Schema->setFocus();
 
-    setNewFilter(NULL);
+//     setNewFilter(NULL);
 
-    refresh();
+    changeConnection();
+
     connect(this, SIGNAL(connectionChange()),
              this, SLOT(changeConnection()));
     connect(m_mainTab, SIGNAL(currentChanged(int)),
              this, SLOT(mainTab_currentChanged(int)));
 }
 
-void toBrowser::mainTab_currentChanged(int ix)
+void toBrowser::mainTab_currentChanged(int /*ix*/)
 {
     if (Schema->selected().isEmpty())
         return;
+
+    // It can be called when there is no widget at all
+    // e.g. from refresh(). Exit silently in this case.
+    if (!m_mainTab->currentWidget())
+        return;
+
+    QSplitter * ix = qobject_cast<QSplitter*>(m_mainTab->currentWidget());
+    Q_ASSERT_X(ix, "toBrowser::mainTab_currentChanged",
+                "main widget of the tab is not QSplitter as is mandatory!");
 
     if (m_objectsMap.contains(ix))
         m_objectsMap[ix]->changeParams(schema(), Filter ? Filter->wildCard() : "%");
@@ -1858,6 +1866,7 @@ void toBrowser::refresh(void)
 
 void toBrowser::changeConnection(void)
 {
+    m_mainTab->blockSignals(true);
     Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
 
     if ( ! connection().schema().isEmpty() )
@@ -1877,13 +1886,70 @@ void toBrowser::changeConnection(void)
         Schema->setSelected(connection().user());
     }
 
+    // enable/disable main tabs depending on DB
+    m_mainTab->clear();
+    m_mainTab->addTab(tableSplitter, tr("T&ables"));
+    m_mainTab->addTab(viewSplitter, tr("&Views"));
+    m_mainTab->addTab(indexSplitter, tr("Inde&xes"));
+
+    if (toIsOracle(connection()) || toIsPostgreSQL(connection()))
+    {
+        sequenceSplitter->show();
+        m_mainTab->addTab(sequenceSplitter, tr("Se&quences"));
+    }
+    else
+        sequenceSplitter->hide();
+
+    if (toIsOracle(connection()))
+    {
+        synonymSplitter->show();
+        m_mainTab->addTab(synonymSplitter, tr("S&ynonyms"));
+    }
+    else
+        synonymSplitter->hide();
+
+    if (!toIsMySQL(connection()))
+    {
+        codeSplitter->show();
+        m_mainTab->addTab(codeSplitter, tr("Cod&e"));
+    }
+    else
+        codeSplitter->hide();
+
+    m_mainTab->addTab(triggerSplitter, tr("Tri&ggers"));
+
+    if (toIsOracle(connection()))
+    {
+        dblinkSplitter->show();
+        m_mainTab->addTab(dblinkSplitter, tr("DBLinks"));
+    }
+    else
+        dblinkSplitter->hide();
+
+    if (toIsMySQL(connection()))
+    {
+        accessSplitter->show();
+        m_mainTab->addTab(accessSplitter, tr("Access"));
+    }
+    else
+        accessSplitter->hide();
+
+    foreach (toBrowserBaseWidget * w, m_browsersMap.values())
+        w->changeConnection();
+
+    m_mainTab->setCurrentIndex(0);
+    m_mainTab->blockSignals(false);
+
     refresh();
 }
 
 QString toBrowser::currentItemText(int col)
 {
-    int ix = m_mainTab->currentIndex();
-    if (m_browsersMap.contains(ix))
+    QSplitter * ix = qobject_cast<QSplitter*>(m_mainTab->currentWidget());
+    Q_ASSERT_X(ix, "toBrowser::currentItemText",
+                "main widget of the tab is not QSplitter as is mandatory!");
+
+    if (m_objectsMap.contains(ix))
     {
         return m_objectsMap[ix]->selectedIndex(1).data(Qt::EditRole).toString();
     }
@@ -1892,7 +1958,10 @@ QString toBrowser::currentItemText(int col)
 
 void toBrowser::changeItem()
 {
-    int ix = m_mainTab->currentIndex();
+    QSplitter * ix = qobject_cast<QSplitter*>(m_mainTab->currentWidget());
+    Q_ASSERT_X(ix, "toBrowser::changeItem",
+                "main widget of the tab is not QSplitter as is mandatory!");
+
     if (m_browsersMap.contains(ix))
     {
         m_browsersMap[ix]->changeParams(schema(), currentItemText());
@@ -1937,7 +2006,7 @@ bool toBrowser::canHandle(toConnection &conn)
 
 void toBrowser::modifyTable(void)
 {
-    if (m_mainTab->currentIndex() != toBrowser::TabTable)
+    if (m_mainTab->currentWidget() != tableSplitter)
         return; // only tabs allowed
     toBrowserTable::editTable(connection(),
                               schema(),
@@ -1956,7 +2025,7 @@ void toBrowser::addTable(void)
 
 void toBrowser::modifyConstraint(void)
 {
-    if (m_mainTab->currentIndex() != toBrowser::TabTable)
+    if (m_mainTab->currentWidget() != tableSplitter)
         return;
 
     toBrowserConstraint::modifyConstraint(connection(),
@@ -2097,7 +2166,7 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
 
 void toBrowser::dropTable(void)
 {
-    if (m_mainTab->currentIndex() != toBrowser::TabTable)
+    if (m_mainTab->currentWidget() != tableSplitter)
         return; // only tabs allowed
 
     for (toResultTableView::iterator it(tableView); (*it).isValid(); it++)
@@ -2110,7 +2179,7 @@ void toBrowser::dropTable(void)
 
 void toBrowser::truncateTable(void)
 {
-    if (m_mainTab->currentIndex() != toBrowser::TabTable)
+    if (m_mainTab->currentWidget() != tableSplitter)
         return; // only tabs allowed
 
     bool force = false;
@@ -2145,7 +2214,7 @@ void toBrowser::truncateTable(void)
 void toBrowser::checkTable(void)
 {
     QString sql;
-    if (m_mainTab->currentIndex() != toBrowser::TabTable)
+    if (m_mainTab->currentWidget() != tableSplitter)
         return; // only tabs allowed
 
     for (toResultTableView::iterator it(tableView); (*it).isValid(); it++)
@@ -2175,7 +2244,7 @@ void toBrowser::checkTable(void)
 void toBrowser::optimizeTable(void)
 {
     QString sql;
-    if (m_mainTab->currentIndex() != toBrowser::TabTable)
+    if (m_mainTab->currentWidget() != tableSplitter)
         return; // only tabs allowed
 
     for (toResultTableView::iterator it(tableView); (*it).isValid(); it++)
@@ -2203,7 +2272,7 @@ void toBrowser::optimizeTable(void)
 
 void toBrowser::changeType(void)
 {
-    if (m_mainTab->currentIndex() != toBrowser::TabTable)
+    if (m_mainTab->currentWidget() != tableSplitter)
         return; // only tabs allowed
 
     bool ok;
@@ -2235,7 +2304,7 @@ void toBrowser::changeType(void)
 
 void toBrowser::analyzeTable(void)
 {
-    if (m_mainTab->currentIndex() != toBrowser::TabTable)
+    if (m_mainTab->currentWidget() != tableSplitter)
         return; // only tabs allowed
 
     QString sql;
@@ -2265,7 +2334,7 @@ void toBrowser::analyzeTable(void)
 
 void toBrowser::dropIndex(void)
 {
-    if (m_mainTab->currentIndex() == toBrowser::TabIndex)
+    if (m_mainTab->currentWidget() == indexSplitter)
     {
         for (toResultTableView::iterator it(indexView); (*it).isValid(); it++)
         {
@@ -2298,8 +2367,8 @@ void toBrowser::closeEvent(QCloseEvent *event)
 {
     bool acceptEvent = true;
 
-    for (int i = 0; i < m_browsersMap.count(); ++i)
-        acceptEvent &= m_browsersMap[i]->maybeSave();
+    foreach (toBrowserBaseWidget * w, m_browsersMap.values())
+        acceptEvent &= w->maybeSave();
 
     if (acceptEvent)
         event->accept();
@@ -3015,12 +3084,12 @@ void toBrowser::fixIndexCols(void)
 
 void toBrowser::enableConstraints(void)
 {
-    if (m_mainTab->currentIndex() == toBrowser::TabTable)
+    if (m_mainTab->currentWidget() == tableSplitter)
         tableBrowserWidget->enableConstraints(true);
 }
 
 void toBrowser::disableConstraints(void)
 {
-    if (m_mainTab->currentIndex() == toBrowser::TabTable)
+    if (m_mainTab->currentWidget() == tableSplitter)
         tableBrowserWidget->enableConstraints(false);
 }

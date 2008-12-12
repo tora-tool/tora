@@ -75,11 +75,16 @@ class toBrowserBaseWidget : public QTabWidget
         See updateData().
         */
         virtual void changeParams(const QString & schema, const QString & object);
-        /*! \brief Performs data refresh.
-        Call toResult child its changeParams() if it's really needed.
-        \param ix index of the required tab/widget. See m_tabs.
+
+        /*! \brief Change connection for widget. It has to handle visibility
+        of tabs depending on DB features.
+        This method should be reimplemented in all child classes to customize
+        its impact on child's tab members. All reimplementations should call
+        parent's changeConnection() to clear the cache;
+        \warning If you don't call toBrowserBaseWidget::changeConnection(),
+                 the m_tabs cleaning, before new addTab() you can get assertions.
         */
-        virtual void updateData(int ix);
+        virtual void changeConnection();
 
         //! Returns currently used schema.
         QString schema() { return m_schema; };
@@ -109,16 +114,22 @@ class toBrowserBaseWidget : public QTabWidget
         only when there is no index-reference or the m_schema
         or m_object have been changed from outside.
         Structure:
-         - int and currentTab index for QTabWidget access.
+         - QString is the currentTab's widget objectName for QTabWidget access.
          - QPair's string1 cached schema name
          - QPair's string2 cached object name
         */
-        QMap<int, QPair<QString,QString> > m_cache;
+        QMap<QString, QPair<QString,QString> > m_cache;
 
         /*! Keep pages in this map. It's used in updateData()
         as a quick access shorcut.
         */
-        QMap<int, toResult*> m_tabs;
+        QMap<QString, toResult*> m_tabs;
+
+        /*! \brief Performs data refresh.
+        Call toResult child its changeParams() if it's really needed.
+        \param ix index of the required tab/widget. See m_tabs.
+        */
+        void updateData(const QString & ix);
 
     protected slots:
         /*! \brief Handle current tab change.

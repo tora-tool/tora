@@ -62,9 +62,13 @@ class toBrowserIndexWidget : public toBrowserBaseWidget
     toResultItem *resultInfo;
     toResultExtent *extentsView;
     toResultExtract *extractView;
+    toResultTableView *statisticView;
 
     public:
         toBrowserIndexWidget(QWidget * parent);
+
+        virtual void changeConnection();
+
 };
 
 #endif

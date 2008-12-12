@@ -45,8 +45,10 @@
 #include "toresultfield.h"
 #include "toresultitem.h"
 #include "toresultgrants.h"
+#include "utils.h"
 
 #include "tobrowsertriggerwidget.h"
+
 
 static toSQL SQLTriggerInfo("toBrowser:TriggerInfo",
                             "SELECT Owner,Trigger_Name,\n"
@@ -85,23 +87,44 @@ toBrowserTriggerWidget::toBrowserTriggerWidget(QWidget * parent)
     setObjectName("toBrowserTriggerWidget");
 
     infoView = new toResultItem(this);
+    infoView->setObjectName("infoView");
     infoView->setSQL(SQLTriggerInfo);
-    addTab(infoView, "Info");
 
     codeView = new toResultField(this);
+    codeView->setObjectName("codeView");
     codeView->setSQL(SQLTriggerBody);
-    addTab(codeView, "Code");
 
     columnsWidget = new toResultCols(this);
+    columnsWidget->setObjectName("columnsWidget");
     columnsWidget->setSQL(SQLTriggerCols);
-    addTab(columnsWidget, "&Columns");
 
     grantsView = new toResultGrants(this);
-    addTab(grantsView, "&Grants");
+    grantsView->setObjectName("grantsView");
 
-    dependView = new toResultDepend(this);
-    addTab(dependView, "De&pendencies");
+    dependView = new toResultDepend(this, "dependView");
+//     dependView->setObjectName("dependView");
 
     extractView = new toResultExtract(this);
+    extractView->setObjectName("extractView");
+
+    changeConnection();
+}
+
+void toBrowserTriggerWidget::changeConnection()
+{
+    toBrowserBaseWidget::changeConnection();
+
+    toConnection & c = toCurrentConnection(this);
+
+    addTab(infoView, "Info");
+    addTab(codeView, "Code");
+    addTab(columnsWidget, "&Columns");
+    addTab(grantsView, "&Grants");
+
+    if (toIsOracle(c))
+        addTab(dependView, "De&pendencies");
+    else
+        dependView->setVisible(false);
+
     addTab(extractView, "Script");
 }

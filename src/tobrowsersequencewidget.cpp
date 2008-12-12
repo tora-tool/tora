@@ -43,7 +43,10 @@
 #include "toresultitem.h"
 #include "toresulttableview.h"
 #include "toresultgrants.h"
+#include "utils.h"
+
 #include "tobrowsersequencewidget.h"
+
 
 static toSQL SQLSequenceInfoPgSQL("toBrowser:SequenceInformation",
                                   "SELECT *, substr(:f1,1) as \"Owner\" FROM :f2<noquote>",
@@ -65,12 +68,34 @@ toBrowserSequenceWidget::toBrowserSequenceWidget(QWidget * parent)
     setObjectName("toBrowserSequenceWidget");
 
     resultInfo = new toResultItem(this);
+    resultInfo->setObjectName("resultInfo");
     resultInfo->setSQL(SQLSequenceInfo);
-    addTab(resultInfo, "Info");
 
     grantsView = new toResultGrants(this);
-    addTab(grantsView, "&Grants");
+    grantsView->setObjectName("grantsView");
 
     extractView = new toResultExtract(this);
-    addTab(extractView, "Script");
+    extractView->setObjectName("extractView");
+
+    changeConnection();
+}
+
+void toBrowserSequenceWidget::changeConnection()
+{
+    toBrowserBaseWidget::changeConnection();
+
+    toConnection & c = toCurrentConnection(this);
+
+    if (toIsOracle(c) || toIsPostgreSQL(c))
+    {
+        addTab(resultInfo, "Info");
+        addTab(grantsView, "&Grants");
+        addTab(extractView, "Script");
+    }
+    else
+    {
+        resultInfo->setVisible(false);
+        grantsView->setVisible(false);
+        extractView->setVisible(false);
+    }
 }

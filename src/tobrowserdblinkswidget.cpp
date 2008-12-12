@@ -66,12 +66,30 @@ toBrowserDBLinksWidget::toBrowserDBLinksWidget(QWidget * parent)
     setObjectName("toBrowserDBLinksWidget");
 
     resultDBLink = new toResultItem(this);
+    resultDBLink->setObjectName("resultDBLink");
     resultDBLink->setSQL(SQLDBLinkInfo);
-    addTab(resultDBLink, "Info");
 
     synonymsView = new toResultTableView(this);
+    synonymsView->setObjectName("synonymsView");
     synonymsView->setSQL(SQLDBLinkSynonyms);
-    addTab(synonymsView, "&Synonyms");
+
+    changeConnection();
+}
+
+void toBrowserDBLinksWidget::changeConnection()
+{
+    toBrowserBaseWidget::changeConnection();
+    toConnection & c = toCurrentConnection(this);
+    if (toIsOracle(c))
+    {
+        addTab(resultDBLink, "Info");
+        addTab(synonymsView, "&Synonyms");
+    }
+    else
+    {
+        resultDBLink->setVisible(false);
+        synonymsView->setVisible(false);
+    }
 }
 
 void toBrowserDBLinksWidget::testDBLink()

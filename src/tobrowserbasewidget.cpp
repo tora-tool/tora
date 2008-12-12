@@ -39,6 +39,8 @@
 *
 * END_COMMON_COPYRIGHT_HEADER */
 
+#include <QApplication>
+
 #include "toresult.h"
 #include "toresultdata.h"
 #include "tobrowserbasewidget.h"
@@ -70,9 +72,22 @@ bool toBrowserBaseWidget::maybeSave()
 void toBrowserBaseWidget::addTab(QWidget * page, const QString & label)
 {
     QTabWidget::addTab(page, label);
+    page->setVisible(true);
+
     toResult * r = dynamic_cast<toResult*>(page);
-    Q_ASSERT_X(r, "new tab is not toResult child!", "toBrowserBaseWidget::addTab params must contain toResult");
-    m_tabs[count()-1] = r;
+
+//     qDebug() << objectName() << label <<  page;
+    Q_ASSERT_X(r,
+                "toBrowserBaseWidget::addTab",
+                "new tab is not toResult child");
+    Q_ASSERT_X(!page->objectName().isEmpty(),
+                "toBrowserBaseWidget::addTab",
+                "widget objectName cannot be empty; page must have objectName property set");
+    Q_ASSERT_X(!m_tabs.contains(page->objectName()),
+                "toBrowserBaseWidget::addTab",
+                "widget objectName is already used; page objectName must be unique");
+
+    m_tabs[page->objectName()] = r;
 }
 
 void toBrowserBaseWidget::changeParams(const QString & schema, const QString & object)
@@ -81,8 +96,17 @@ void toBrowserBaseWidget::changeParams(const QString & schema, const QString & o
     {
         m_schema = schema;
         m_object = object;
-        updateData(currentIndex());
+        updateData(currentWidget()->objectName());
     }
+}
+
+void toBrowserBaseWidget::changeConnection()
+{
+    m_schema = "";
+    m_object = "";
+
+    m_tabs.clear();
+    clear();
 }
 
 void toBrowserBaseWidget::tabWidget_currentChanged(int ix)
@@ -92,16 +116,20 @@ void toBrowserBaseWidget::tabWidget_currentChanged(int ix)
     if (m_schema.isEmpty() || m_object.isEmpty())
         return;
 
-    if ((!m_cache.contains(ix))
-        || (m_cache[ix].first != m_schema)
-        || (m_cache[ix].second != m_object))
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+    QString key(currentWidget()->objectName());
+
+    if ((!m_cache.contains(key))
+        || (m_cache[key].first != m_schema)
+        || (m_cache[key].second != m_object))
     {
-        m_cache[ix] = qMakePair(m_schema, m_object);
-        updateData(ix);
+        m_cache[key] = qMakePair(m_schema, m_object);
+        updateData(key);
     }
+    QApplication::restoreOverrideCursor();
 }
 
-void toBrowserBaseWidget::updateData(int ix)
+void toBrowserBaseWidget::updateData(const QString & ix)
 {
     if (schema().isEmpty() || object().isEmpty())
         return;

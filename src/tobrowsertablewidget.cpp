@@ -337,67 +337,114 @@ static toSQL SQLTablePartition("toBrowser:TablePartitions",
                                "Table partitions",
                                "0801");
 
-#define TAB_CONSTRAINTS 2
-#define TAB_REFERENCES 3
-
 
 toBrowserTableWidget::toBrowserTableWidget(QWidget * parent)
     : toBrowserBaseWidget(parent)
 {
-//     setupUi(this);
     setObjectName("toBrowserTableWidget");
 
     columnsWidget = new toResultCols(this);
-    addTab(columnsWidget, "&Columns");
+    columnsWidget->setObjectName("columnsWidget");
 
     indexView = new toResultTableView(this);
+    indexView->setObjectName("indexView");
     indexView->setSQL(SQLTableIndex);
     indexView->setReadAll(true);
-    addTab(indexView, "&Indexes");
 
     constraintsView = new toResultTableView(this);
+    constraintsView->setObjectName("constraintsView");
     constraintsView->setSQL(SQLTableConstraint);
     constraintsView->setReadAll(true);
-    addTab(constraintsView, "C&onstraints");
 
     referencesView = new toResultTableView(this);
+    referencesView->setObjectName("referencesView");
     referencesView->setSQL(SQLTableReferences);
     referencesView->setReadAll(true);
-    addTab(referencesView, "&References");
 
     grantsView = new toResultGrants(this);
-    addTab(grantsView, "&Grants");
+    grantsView->setObjectName("grantsView");
 
     triggersView = new toResultTableView(this);
+    triggersView->setObjectName("triggersView");
     triggersView->setSQL(SQLTableTrigger);
     triggersView->setReadAll(true);
-    addTab(triggersView, "Triggers");
 
     resultData = new toResultData(this);
-    addTab(resultData, "&Data");
+    resultData->setObjectName("resultData");
 
     resultInfo = new toResultItem(this);
+    resultInfo->setObjectName("resultInfo");
     resultInfo->setSQL(SQLTableInfo);
-    addTab(resultInfo, "Information");
 
-    if (toIsSapDB(toCurrentConnection(this)))
-    {
-        statisticsView = new toResultTableView(this);
-        statisticsView->setSQL(SQLTableStatistic);
-        statisticsView->setReadAll(true);
-        addTab(statisticsView, "Statistics");
-    }
+    statisticsView = new toResultTableView(this);
+    statisticsView->setObjectName("statisticsView");
+    statisticsView->setSQL(SQLTableStatistic);
+    statisticsView->setReadAll(true);
 
     partitionsView = new toResultTableView(this);
+    partitionsView->setObjectName("partitionsView");
     partitionsView->setSQL(SQLTablePartition);
     partitionsView->setReadAll(true);
-    addTab(partitionsView, "Partitions");
 
     extentsView = new toResultExtent(this);
-    addTab(extentsView, "Externts");
+    extentsView->setObjectName("extentsView");
 
     extractView = new toResultExtract(this);
+    extractView->setObjectName("extractView");
+
+    changeConnection();
+}
+
+void toBrowserTableWidget::changeConnection()
+{
+    toBrowserBaseWidget::changeConnection();
+
+    toConnection & c = toCurrentConnection(this);
+
+    addTab(columnsWidget, "&Columns");
+    addTab(indexView, "&Indexes");
+
+    if (toIsOracle(c) || toIsPostgreSQL(c))
+        addTab(constraintsView, "C&onstraints");
+    else
+        constraintsView->setVisible(false);
+
+    if (toIsOracle(c))
+        addTab(referencesView, "&References");
+    else
+        referencesView->setVisible(false);
+
+    addTab(grantsView, "&Grants");
+
+    addTab(triggersView, "Triggers");
+
+    addTab(resultData, "&Data");
+
+    addTab(resultInfo, "Information");
+
+    if (toIsSapDB(c))
+        addTab(statisticsView, "Statistics");
+    else
+        statisticsView->setVisible(false);
+
+    if (toIsOracle(c))
+    {
+        addTab(partitionsView, "Partitions");
+        addTab(extentsView, "Extents");
+    }
+    else
+    {
+        partitionsView->setVisible(false);
+        extentsView->setVisible(false);
+    }
+
     addTab(extractView, "Script");
+
+    foreach(QObject * w, children())
+    {
+        QWidget * i = qobject_cast<QWidget*>(w);
+        qDebug() << w << i->isVisible();
+    }
 }
 
 void toBrowserTableWidget::enableConstraints(bool enable)
@@ -408,7 +455,7 @@ void toBrowserTableWidget::enableConstraints(bool enable)
 
     try
     {
-        if (currentIndex() == TAB_CONSTRAINTS)
+        if (currentWidget() == constraintsView)
         {
             for (toResultTableView::iterator it(constraintsView); (*it).isValid(); it++)
             {
@@ -425,7 +472,7 @@ void toBrowserTableWidget::enableConstraints(bool enable)
                 }
             }
         }
-        else if (currentIndex() == TAB_REFERENCES)
+        else if (currentWidget() == referencesView)
         {
             toResultModel *model = referencesView->model();
             for (toResultTableView::iterator it(referencesView); (*it).isValid(); it++)

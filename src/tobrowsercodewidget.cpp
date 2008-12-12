@@ -43,6 +43,7 @@
 #include "toresultextract.h"
 #include "toresultfield.h"
 #include "toresultgrants.h"
+#include "utils.h"
 
 #include "tobrowsercodewidget.h"
 
@@ -92,19 +93,46 @@ toBrowserCodeWidget::toBrowserCodeWidget(QWidget * parent)
     setObjectName("toBrowserCodeWidget");
 
     declarationResult = new toResultField(this);
+    declarationResult->setObjectName("declarationResult");
     declarationResult->setSQL(SQLSQLHead);
-    addTab(declarationResult, "&Declaration");
 
     bodyResult = new toResultField(this);
+    bodyResult->setObjectName("bodyResult");
     bodyResult->setSQL(SQLSQLBody);
-    addTab(bodyResult, "B&ody");
 
     grantsView = new toResultGrants(this);
-    addTab(grantsView, "&Grants");
+    grantsView->setObjectName("grantsView");
 
-    dependsWidget = new toResultDepend(this);
-    addTab(dependsWidget, "De&pendencies");
+    dependsWidget = new toResultDepend(this, "dependsWidget");
+//     dependsWidget->setObjectName("dependsWidget");
 
     extractView = new toResultExtract(this);
+    extractView->setObjectName("extractView");
+
+    changeConnection();
+}
+
+void toBrowserCodeWidget::changeConnection()
+{
+    toBrowserBaseWidget::changeConnection();
+
+    toConnection & c = toCurrentConnection(this);
+    if (toIsOracle(c))
+        addTab(declarationResult, "&Declaration");
+    else
+        declarationResult->setVisible(false);
+
+    addTab(bodyResult, "B&ody");
+
+    if (toIsOracle(c) || toIsSapDB(c))
+        addTab(grantsView, "&Grants");
+    else
+        grantsView->setVisible(false);
+
+    if (toIsOracle(c))
+        addTab(dependsWidget, "De&pendencies");
+    else
+        dependsWidget->setVisible(false);
+
     addTab(extractView, "Script");
 }

@@ -69,6 +69,8 @@ class toBrowserTriggerWidget : public toBrowserBaseWidget
 
     public:
         toBrowserTriggerWidget(QWidget * parent);
+
+        void changeConnection();
 };
 
 #endif

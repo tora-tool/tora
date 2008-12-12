@@ -66,6 +66,8 @@ class toBrowserCodeWidget : public toBrowserBaseWidget
 
     public:
         toBrowserCodeWidget(QWidget * parent);
+
+        virtual void changeConnection();
 };
 
 #endif

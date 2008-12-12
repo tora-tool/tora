@@ -77,6 +77,8 @@ class toBrowserTableWidget : public toBrowserBaseWidget
     public:
         toBrowserTableWidget(QWidget * parent);
 
+        void changeConnection();
+
         /*! \brief Enable or disable chosen constraints.
         Affected sub-tabs are: Constraints and Dependencies
         */

@@ -44,7 +44,6 @@
 #include "tobrowseraccesswidget.h"
 
 
-
 toBrowserAccessWidget::toBrowserAccessWidget(QWidget * parent)
     : toBrowserBaseWidget(parent)
 {
@@ -75,17 +74,28 @@ toBrowserAccessWidget::toBrowserAccessWidget(QWidget * parent)
             AccessPanel,
             SLOT(changeUser(const QString &)));
 
-    AccessContent = new toResultData(curr, TAB_ACCESS_CONTENT);
-    curr->addTab(AccessContent, tr("&Hosts"));
-    SecondMap[TAB_ACCESS_CONTENT] = AccessContent;
+    accessContent = new toResultData(curr, TAB_ACCESS_CONTENT);
+    accessContent->setObjectName("accessContent");
+
 #else
 
     accessContent = new toResultData(this);
-    addTab(accessContent, tr("&Data"));
+    accessContent->setObjectName("accessContent");
     connect(accessContent, SIGNAL(changesSaved()), this, SLOT(flushPrivs()));
 
 #endif
 
+    changeConnection();
+}
+
+void toBrowserAccessWidget::changeConnection()
+{
+    toBrowserBaseWidget::changeConnection();
+
+    if (toIsMySQL(toCurrentConnection(this)))
+        addTab(accessContent, "&Data");
+    else
+        accessContent->setVisible(false);
 }
 
 void toBrowserAccessWidget::flushPrivs(void)

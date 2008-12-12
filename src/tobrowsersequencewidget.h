@@ -63,6 +63,8 @@ class toBrowserSequenceWidget : public toBrowserBaseWidget
 
     public:
         toBrowserSequenceWidget(QWidget * parent);
+
+        virtual void changeConnection();
 };
 
 #endif

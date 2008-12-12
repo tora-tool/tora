@@ -45,6 +45,7 @@
 #include "toresultgrants.h"
 #include "toresultdepend.h"
 #include "toresultextract.h"
+#include "utils.h"
 
 #include "tobrowserviewwidget.h"
 
@@ -74,25 +75,50 @@ static toSQL SQLViewSQLSapDb("toBrowser:ViewSQL",
 toBrowserViewWidget::toBrowserViewWidget(QWidget * parent)
     : toBrowserBaseWidget(parent)
 {
-//     setupUi(this);
     setObjectName("toBrowserViewWidget");
 
     columnsWidget = new toResultCols(this);
-    addTab(columnsWidget, "&Columns");
+    columnsWidget->setObjectName("columnsWidget");
 
     resultField = new toResultField(this);
+    resultField->setObjectName("resultField");
     resultField->setSQL(SQLViewSQL);
-    addTab(resultField, "SQL");
 
     resultData = new toResultData(this);
-    addTab(resultData, "&Data");
+    resultData->setObjectName("resultData");
 
     grantsView = new toResultGrants(this);
-    addTab(grantsView, "&Grants");
+    grantsView->setObjectName("grantsView");
 
-    resultDependencies = new toResultDepend(this);
-    addTab(resultDependencies, "De&pendencies");
+    resultDependencies = new toResultDepend(this, "resultDependencies");
+//     resultDependencies->setObjectName("resultDependencies");
 
     extractView = new toResultExtract(this);
+    extractView->setObjectName("extractView");
+
+    changeConnection();
+}
+
+void toBrowserViewWidget::changeConnection()
+{
+    toBrowserBaseWidget::changeConnection();
+
+    toConnection & c = toCurrentConnection(this);
+
+    addTab(columnsWidget, "&Columns");
+
+    if (toIsOracle(c) || toIsSapDB(c) || toIsPostgreSQL(c))
+        addTab(resultField, "SQL");
+    else
+        resultField->setVisible(false);
+
+    addTab(resultData, "&Data");
+    addTab(grantsView, "&Grants");
+
+    if (toIsOracle(c))
+        addTab(resultDependencies, "De&pendencies");
+    else
+        resultDependencies->setVisible(false);
+
     addTab(extractView, "Script");
 }

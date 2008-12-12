@@ -60,6 +60,8 @@ class toBrowserAccessWidget : public toBrowserBaseWidget
     public:
         toBrowserAccessWidget(QWidget * parent);
 
+        void changeConnection();
+
     private slots:
         void flushPrivs(void);
 };

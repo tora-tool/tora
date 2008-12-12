@@ -42,7 +42,10 @@
 #include "toresultextract.h"
 #include "toresultitem.h"
 #include "toresultgrants.h"
+#include "utils.h"
+
 #include "tobrowsersynonymwidget.h"
+
 
 static toSQL SQLSynonymInfo("toBrowser:SynonymInformation",
                             "SELECT * FROM Sys.All_Synonyms a\n"
@@ -50,20 +53,23 @@ static toSQL SQLSynonymInfo("toBrowser:SynonymInformation",
                             "   AND Synonym_Name = :f2<char[101]>",
                             "Display information about a synonym");
 
+
 toBrowserSynonymWidget::toBrowserSynonymWidget(QWidget * parent)
     : toBrowserBaseWidget(parent)
 {
     setObjectName("toBrowserSynonymWidget");
 
     resultInfo = new toResultItem(this);
+    resultInfo->setObjectName("resultInfo");
     resultInfo->setSQL(SQLSynonymInfo);
-    addTab(resultInfo, "Info");
 
     grantsView = new toResultGrants(this);
-    addTab(grantsView, "&Grants");
+    grantsView->setObjectName("grantsView");
 
     extractView = new toResultExtract(this);
-    addTab(extractView, "Script");
+    extractView->setObjectName("extractView");
+
+    changeConnection();
 }
 
 void toBrowserSynonymWidget::changeParams(const QString & schema, const QString & object)
@@ -79,4 +85,24 @@ void toBrowserSynonymWidget::changeParams(const QString & schema, const QString 
     }
 
     toBrowserBaseWidget::changeParams(own, name);
+}
+
+void toBrowserSynonymWidget::changeConnection()
+{
+    toBrowserBaseWidget::changeConnection();
+
+    toConnection & c = toCurrentConnection(this);
+
+    if (toIsOracle(c))
+    {
+        addTab(resultInfo, "Info");
+        addTab(grantsView, "&Grants");
+        addTab(extractView, "Script");
+    }
+    else
+    {
+        resultInfo->setVisible(false);
+        grantsView->setVisible(false);
+        extractView->setVisible(false);
+    }
 }

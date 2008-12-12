@@ -44,6 +44,7 @@
 #include "toresultitem.h"
 #include "toresulttableview.h"
 #include "tostorage.h"
+#include "utils.h"
 
 #include "tobrowserindexwidget.h"
 
@@ -123,28 +124,49 @@ static toSQL SQLIndexStatistic("toBrowser:IndexStatstics",
 toBrowserIndexWidget::toBrowserIndexWidget(QWidget * parent)
     : toBrowserBaseWidget(parent)
 {
-//     setupUi(this);
     setObjectName("toBrowserIndexWidget");
 
     columnView = new toResultTableView(this);
+    columnView->setObjectName("columnView");
     columnView->setSQL(SQLIndexCols);
     columnView->setReadAll(true);
-    addTab(columnView, "&Columns");
 
     resultInfo = new toResultItem(this);
+    resultInfo->setObjectName("resultInfo");
     resultInfo->setSQL(SQLIndexInfo);
-    addTab(resultInfo, "Informations");
 
     extentsView = new toResultExtent(this);
-    addTab(extentsView, "Extents");
+    extentsView->setObjectName("extentsView");
 
     extractView = new toResultExtract(this);
-    addTab(extractView, "Script");
+    extractView->setObjectName("extractView");
 
-// FIXME/TODO: sapDB only?
-//     tableView = new toResultTableView(true, false, curr, TAB_INDEX_STATISTIC);
-//     tableView->setSQL(SQLIndexStatistic);
-//     tableView->setReadAll(true);
-//     curr->addTab(tableView, tr("&Statistic"));
-//     SecondMap[TAB_INDEX_STATISTIC] = tableView;
+    statisticView = new toResultTableView(this);
+    statisticView->setObjectName("statisticView");
+    statisticView->setSQL(SQLIndexStatistic);
+    statisticView->setReadAll(true);
+
+    changeConnection();
+}
+
+void toBrowserIndexWidget::changeConnection()
+{
+    toBrowserBaseWidget::changeConnection();
+
+    toConnection & c = toCurrentConnection(this);
+
+    addTab(columnView, "&Columns");
+    addTab(resultInfo, "Informations");
+
+    if (toIsOracle(c))
+        addTab(extentsView, "Extents");
+    else
+        extentsView->setVisible(false);
+
+    if (toIsSapDB(c))
+        addTab(statisticView, tr("&Statistic"));
+    else
+        statisticView->setVisible(false);
+
+    addTab(extractView, "Script");
 }
