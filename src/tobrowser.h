@@ -153,19 +153,8 @@ class toBrowser : public toToolWidget
     QMap<QSplitter*,toResultTableView*> m_objectsMap;
     QMap<QSplitter*,toBrowserBaseWidget*> m_browsersMap;
 
-
-//     QString            SecondText;
-//     toResultTableView *FirstTab;
-//     toResult          *SecondTab;
     toBrowserFilter   *Filter;
-//     QWidget           *CurrentTop;
 
-//     toResultData *ViewContent;
-//     toResultData *TableContent;
-//     toResultData *AccessContent;
-
-//     std::map<QString, toResultTableView *> Map;
-//     std::map<QString, toResult *> SecondMap;
     void setNewFilter(toBrowserFilter *filter);
 
     QString schema(void);
@@ -182,6 +171,14 @@ class toBrowser : public toToolWidget
     \param col a column name. It's 1 by default
     */
     QString currentItemText(int col = 1);
+
+    /*! \brief Add a page to the m_mainTab widget;
+    \see changeConnection().
+    \param page a QSplitter main widget (tableSplitter etc.)
+    \param label text to display as a tab title
+    \param enable true when it should be visible. False on missing feature.
+    */
+    void addTab(QSplitter * page, const QString & label, bool enable);
 
     QAction *refreshAct;
     QAction *FilterButton;
@@ -249,9 +246,9 @@ public slots:
     void addUser(void);
     void dropUser(void);
 
-    private slots:
-        //! \brief Handle main tabwidget and its tabs switch
-        void mainTab_currentChanged(int);
+private slots:
+    //! \brief Handle main tabwidget and its tabs switch
+    void mainTab_currentChanged(int);
 
 protected:
     virtual void closeEvent(QCloseEvent *);

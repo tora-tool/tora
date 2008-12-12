@@ -282,6 +282,14 @@ static toSQL SQLTableTriggerPG("toBrowser:TableTrigger",
                                "",
                                "",
                                "PostgreSQL");
+static toSQL SQLTableTriggerMysql("toBrowser:TableTrigger",
+                                "SELECT * FROM INFORMATION_SCHEMA.TRIGGERS\n"
+                                "   WHERE event_object_schema = :f1<char[101]>\n"
+                                "       AND event_object_table = :f2<char[101]>\n"
+                                "   ORDER BY trigger_name\n",
+                                "",
+                                "5.0",
+                                "MySQL");
 static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
                                "show table status from `:own<noquote>` like :tab",
                                "Display information about a table",
@@ -407,14 +415,17 @@ void toBrowserTableWidget::changeConnection()
     if (toIsOracle(c) || toIsPostgreSQL(c))
         addTab(constraintsView, "C&onstraints");
     else
-        constraintsView->setVisible(false);
+        constraintsView->hide();
 
     if (toIsOracle(c))
         addTab(referencesView, "&References");
     else
-        referencesView->setVisible(false);
+        referencesView->hide();
 
-    addTab(grantsView, "&Grants");
+    if (!toIsMySQL(c))
+        addTab(grantsView, "&Grants");
+    else
+        grantsView->hide();
 
     addTab(triggersView, "Triggers");
 
@@ -425,7 +436,7 @@ void toBrowserTableWidget::changeConnection()
     if (toIsSapDB(c))
         addTab(statisticsView, "Statistics");
     else
-        statisticsView->setVisible(false);
+        statisticsView->hide();
 
     if (toIsOracle(c))
     {
@@ -434,11 +445,14 @@ void toBrowserTableWidget::changeConnection()
     }
     else
     {
-        partitionsView->setVisible(false);
-        extentsView->setVisible(false);
+        partitionsView->hide();
+        extentsView->hide();
     }
 
-    addTab(extractView, "Script");
+    if (!toIsMySQL(c))
+        addTab(extractView, "Script");
+    else
+        extractView->hide();
 }
 
 void toBrowserTableWidget::enableConstraints(bool enable)

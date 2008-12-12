@@ -1732,8 +1732,6 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     Schema->setFocus();
 
-//     setNewFilter(NULL);
-
     changeConnection();
 
     connect(this, SIGNAL(connectionChange()),
@@ -1888,51 +1886,24 @@ void toBrowser::changeConnection(void)
 
     // enable/disable main tabs depending on DB
     m_mainTab->clear();
-    m_mainTab->addTab(tableSplitter, tr("T&ables"));
-    m_mainTab->addTab(viewSplitter, tr("&Views"));
-    m_mainTab->addTab(indexSplitter, tr("Inde&xes"));
-
-    if (toIsOracle(connection()) || toIsPostgreSQL(connection()))
-    {
-        sequenceSplitter->show();
-        m_mainTab->addTab(sequenceSplitter, tr("Se&quences"));
-    }
-    else
-        sequenceSplitter->hide();
-
-    if (toIsOracle(connection()))
-    {
-        synonymSplitter->show();
-        m_mainTab->addTab(synonymSplitter, tr("S&ynonyms"));
-    }
-    else
-        synonymSplitter->hide();
-
-    if (!toIsMySQL(connection()))
-    {
-        codeSplitter->show();
-        m_mainTab->addTab(codeSplitter, tr("Cod&e"));
-    }
-    else
-        codeSplitter->hide();
-
-    m_mainTab->addTab(triggerSplitter, tr("Tri&ggers"));
-
-    if (toIsOracle(connection()))
-    {
-        dblinkSplitter->show();
-        m_mainTab->addTab(dblinkSplitter, tr("DBLinks"));
-    }
-    else
-        dblinkSplitter->hide();
-
-    if (toIsMySQL(connection()))
-    {
-        accessSplitter->show();
-        m_mainTab->addTab(accessSplitter, tr("Access"));
-    }
-    else
-        accessSplitter->hide();
+    addTab(tableSplitter, tr("T&ables"),
+            true);
+    addTab(viewSplitter, tr("&Views"),
+            !toIsMySQL(connection()));
+    addTab(indexSplitter, tr("Inde&xes"),
+            true);
+    addTab(sequenceSplitter, tr("Se&quences"),
+            toIsOracle(connection()) || toIsPostgreSQL(connection()));
+    addTab(synonymSplitter, tr("S&ynonyms"),
+            toIsOracle(connection()));
+    addTab(codeSplitter, tr("Cod&e"),
+            !toIsMySQL(connection()));
+    addTab(triggerSplitter, tr("Tri&ggers"),
+            !toIsMySQL(connection()));
+    addTab(dblinkSplitter, tr("DBLinks"),
+            toIsOracle(connection()));
+    addTab(accessSplitter, tr("Access"),
+            toIsMySQL(connection()));
 
     foreach (toBrowserBaseWidget * w, m_browsersMap.values())
         w->changeConnection();
@@ -1941,6 +1912,14 @@ void toBrowser::changeConnection(void)
     m_mainTab->blockSignals(false);
 
     refresh();
+}
+
+void toBrowser::addTab(QSplitter * page, const QString & label, bool enable)
+{
+    page->setVisible(enable);
+    if (!enable)
+        return;
+    m_mainTab->addTab(page, label);
 }
 
 QString toBrowser::currentItemText(int col)
