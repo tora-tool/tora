@@ -1667,19 +1667,22 @@ void toMain::exportData(std::map<QString, QString> &data, const QString &prefix)
 {
     try
     {
-        if (isMaximized())
-            data[prefix + ":State"] = QString::fromLatin1("Maximized");
-        else if (isMinimized())
-            data[prefix + ":State"] = QString::fromLatin1("Minimized");
-        else
-        {
-            QRect rect = geometry();
-            data[prefix + ":X"] = QString::number(rect.x());
-            data[prefix + ":Y"] = QString::number(rect.y());
-            data[prefix + ":Width"] = QString::number(rect.width());
-            data[prefix + ":Height"] = QString::number(rect.height());
-        }
 
+#if 0
+// No need to do it. We are storing it in QSettings now
+//         if (isMaximized())
+//             data[prefix + ":State"] = QString::fromLatin1("Maximized");
+//         else if (isMinimized())
+//             data[prefix + ":State"] = QString::fromLatin1("Minimized");
+//         else
+//         {
+//             QRect rect = geometry();
+//             data[prefix + ":X"] = QString::number(rect.x());
+//             data[prefix + ":Y"] = QString::number(rect.y());
+//             data[prefix + ":Width"] = QString::number(rect.width());
+//             data[prefix + ":Height"] = QString::number(rect.height());
+//         }
+#endif
         int id = 1;
         std::map<toConnection *, int> connMap;
         {
