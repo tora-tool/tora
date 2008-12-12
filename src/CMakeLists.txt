@@ -90,6 +90,7 @@ SET(TORA_MOC_CLASSES
     tobrowserindex.h
     tobrowsertable.h
     tobrowserbasewidget.h
+    tobrowseraccesswidget.h
     tobrowsertablewidget.h
     tobrowserviewwidget.h
     tobrowserindexwidget.h
@@ -256,6 +257,7 @@ SET(TORA_SOURCES
     tobrowserindex.cpp
     tobrowsertable.cpp
     tobrowserbasewidget.cpp
+    tobrowseraccesswidget.cpp
     tobrowsertablewidget.cpp
     tobrowserviewwidget.cpp
     tobrowserindexwidget.cpp

@@ -74,6 +74,7 @@ class toBrowserSynonymWidget;
 class toBrowserCodeWidget;
 class toBrowserTriggerWidget;
 class toBrowserDBLinksWidget;
+class toBrowserAccessWidget;
 class toBrowserBaseWidget;
 
 
@@ -93,7 +94,8 @@ class toBrowser : public toToolWidget
         TabSynonym,
         TabCode,
         TabTrigger,
-        TabDBLink
+        TabDBLink,
+        TabAccess
     } GuiTabType;
 
     toResultTableView *tableView;
@@ -112,6 +114,8 @@ class toBrowser : public toToolWidget
     toBrowserTriggerWidget * triggerBrowserWidget;
     toResultTableView * dblinkView;
     toBrowserDBLinksWidget * dblinkBrowserWidget;
+    toResultTableView * accessView;
+    toBrowserAccessWidget * accessBrowserWidget;
 
     QMap<int,toResultTableView*> m_objectsMap;
     QMap<int,toBrowserBaseWidget*> m_browsersMap;
@@ -189,7 +193,6 @@ public slots:
     void checkTable(void);
     void optimizeTable(void);
     void analyzeTable(void);
-    void flushPrivs(void);
 
     void dropIndex(void);
 

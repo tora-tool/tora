@@ -184,6 +184,7 @@ tora_SOURCES=main.cpp \
 	towaitevents.cpp towaitevents.h \
 	toconnectionmodel.cpp toconnectionmodel.h \
     tobrowserbasewidget.cpp tobrowserbasewidget.h \
+    tobrowseraccesswidget.cpp tobrowseraccesswidget.h \
     tobrowsertablewidget.cpp tobrowsertablewidget.h \
     tobrowserviewwidget.cpp tobrowserviewwidget.h \
     tobrowserindexwidget.cpp tobrowserindexwidget.h \
@@ -404,6 +405,7 @@ BUILT_SOURCES = \
 	moc_todockbar.cpp \
 	moc_topushbutton.cpp \
     moc_tobrowserbasewidget.cpp \
+    moc_tobrowseraccesswidget.cpp \
     moc_tobrowsertablewidget.cpp \
     moc_tobrowserviewwidget.cpp \
     moc_tobrowserindexwidget.cpp \

@@ -125,6 +125,7 @@
 #include "tobrowsercodewidget.h"
 #include "tobrowsertriggerwidget.h"
 #include "tobrowserdblinkswidget.h"
+#include "tobrowseraccesswidget.h"
 
 
 
@@ -1676,113 +1677,64 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     m_browsersMap[m_mainTab->count()-1] = dblinkBrowserWidget;
 #endif // dblink
 
-    // TODO/FIXME: MySQL support temp. removed
-/*
-    splitter = new QSplitter(Qt::Horizontal, TopTab);
-    splitter->setObjectName(TAB_ACCESS);
-    TopTab->addTab(splitter, tr("Access"));
+
+    QSplitter * accessSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
+    accessSplitter->setObjectName(TAB_ACCESS);
+    m_mainTab->addTab(accessSplitter, tr("Access"));
 
 #ifdef TOEXTENDED_MYSQL
-    box = new QWidget(splitter);
-    QVBoxLayout *vbox = new QVBoxLayout;
-    vbox->setSpacing(0);
-    vbox->setContentsMargins(0, 0, 0, 0);
-    setLayout(vbox);
+    // This is propably never compiled... and never worked...
+    QWidget * accessWidget = new QWidget(accessSplitter);
+    QVBoxLayout *accessLayout = new QVBoxLayout;
+    accessLayout->setSpacing(0);
+    accessLayout->setContentsMargins(0, 0, 0, 0);
+    accessWidget->setLayout(accessLayout);
 
-    toolbar = toAllocBar(box, tr("Database browser"));
-    vbox->addWidget(box);
-    toolbar->addWidget(
-        new toBrowseButton(QPixmap(const_cast<const char**>(new_xpm)),
-                           tr("Add user"),
-                           tr("Add user"),
-                           this, SLOT(addUser()),
-                           toolbar));
-    toolbar->addWidget(
-        new toBrowseButton(QPixmap(const_cast<const char**>(trash_xpm)),
-                           tr("Drop user"),
-                           tr("Drop user"),
-                           this, SLOT(dropUser()),
-                           toolbar));
+    QToolBar * accessToolBar = toAllocBar(box, tr("Database browser"));
+    accessLayout->addWidget(accessToolBar);
 
-    tableView = new toResultTableView(true, false, box);
-    vbox->addWidget(tableView);
+    QAction * addUserAct = accessToolBar->addAction(QPixmap(const_cast<const char**>(new_xpm)),
+                           tr("Add user"),
+                           this, SLOT(addUser()));
+    QAction * dropUserAct = accessToolBar->addAction(QPixmap(const_cast<const char**>(trash_xpm)),
+                           tr("Drop user"),
+                           this, SLOT(dropUser()));
+
+    accessView = new toResultTableView(true, false, accessWidget);
+    accessView->setSQL(SQLMySQLUsers);
+    accessView->setReadAll(true);
+    AccessContent = NULL;
+    accessLayout->addWidget(accessView);
+    accessWidget->resize(FIRST_WIDTH, accessView->height());
 #else
-    tableView = new toResultTableView(true, false, splitter);
+    accessView = new toResultTableView(true, false, accessSplitter);
+    accessView->resize(FIRST_WIDTH, accessView->height());
+    accessView->setSQL(SQLMySQLAccess);
+    accessView->setReadAll(true);
 #endif
 
-    tableView->setReadAll(true);
-    Map[TAB_ACCESS] = tableView;
-    tableView->setTabWidget(TopTab);
-    tableView->resize(FIRST_WIDTH, tableView->height());
-    connect(tableView, SIGNAL(selectionChanged()),
+    accessBrowserWidget = new toBrowserAccessWidget(accessSplitter);
+
+    accessSplitter->setStretchFactor(accessSplitter->indexOf(accessView), 0);
+    accessSplitter->setStretchFactor(accessSplitter->indexOf(accessBrowserWidget), 1);
+
+    m_objectsMap[m_mainTab->count()-1] = accessView;
+    m_browsersMap[m_mainTab->count()-1] = accessBrowserWidget;
+
+    connect(accessView, SIGNAL(selectionChanged()),
             this, SLOT(changeItem()));
 
-    curr = new toTabWidget(splitter);
-    splitter->setStretchFactor(splitter->indexOf(curr), 1);
 
-#ifdef TOEXTENDED_MYSQL
-    splitter->setResizeMode(box, QSplitter::KeepSize);
-    tableView->setSQL(SQLMySQLUsers);
-
-    AccessContent = NULL;
-
-    UserPanel = new toMySQLUser(curr, TAB_ACCESS_USER);
-    curr->addTab(UserPanel, tr("&User"));
-    SecondMap[TAB_ACCESS] = UserPanel;
-    SecondMap[TAB_ACCESS_USER] = UserPanel;
-
-    AccessPanel = new toMySQLUserAccess(curr, TAB_ACCESS_OBJECTS);
-    curr->addTab(AccessPanel, tr("&Objects"));
-    SecondMap[TAB_ACCESS_OBJECTS] = UserPanel; // Yes, it should be
-    // this one, it will
-    // signal the
-    // TAB_ACCESS_OBJECTS
-    // to update.
-    connect(AccessPanel, SIGNAL(hasChanged()), UserPanel, SLOT(hasChanged()));
-    connect(UserPanel,
-            SIGNAL(saveChanges(const QString &, const QString &)),
-            AccessPanel,
-            SLOT(saveChanges(const QString &, const QString &)));
-    connect(UserPanel,
-            SIGNAL(changeUser(const QString &)),
-            AccessPanel,
-            SLOT(changeUser(const QString &)));
-
-    AccessContent = new toResultData(curr, TAB_ACCESS_CONTENT);
-    curr->addTab(AccessContent, tr("&Hosts"));
-    SecondMap[TAB_ACCESS_CONTENT] = AccessContent;
-#else
-    splitter->setStretchFactor(splitter->indexOf(tableView), 1);
-    tableView->setSQL(SQLMySQLAccess);
-
-    AccessContent = new toResultData(curr, TAB_ACCESS_CONTENT);
-    curr->addTab(AccessContent, tr("&Data"));
-    SecondMap[TAB_ACCESS] = AccessContent;
-    SecondMap[TAB_ACCESS_CONTENT] = AccessContent;
-#endif
-
-    connect(AccessContent, SIGNAL(changesSaved()), this, SLOT(flushPrivs()));
-
-    connect(curr,
-            SIGNAL(currentTabChanged(QWidget *)),
-            this,
-            SLOT(changeSecondTab(QWidget *)));
-
+    // End of tabs. Now the common things are comming...
     ToolMenu = NULL;
     connect(toMainWidget()->workspace(),
             SIGNAL(subWindowActivated(QMdiSubWindow *)),
             this,
             SLOT(windowActivated(QMdiSubWindow *)));
 
-    connect(TopTab,
-            SIGNAL(currentTabChanged(QWidget *)),
-            this,
-            SLOT(changeTab(QWidget *)));
-    connect(this, SIGNAL(connectionChange()), this, SLOT(changeConnection()));
     Schema->setFocus();
 
     setNewFilter(NULL);
-*/
 
     refresh();
     connect(this, SIGNAL(connectionChange()),
@@ -1871,6 +1823,7 @@ void toBrowser::addUser()
 void toBrowser::dropUser()
 {
 #ifdef TOEXTENDED_MYSQL
+// This propably never woked...
     try
     {
         AccessPanel->dropCurrentAccess();
@@ -2188,14 +2141,6 @@ void toBrowser::truncateTable(void)
     refresh();
 }
 
-void toBrowser::flushPrivs(void)
-{
-    try
-    {
-        connection().execute("FLUSH PRIVILEGES");
-    }
-    TOCATCH
-}
 
 void toBrowser::checkTable(void)
 {
