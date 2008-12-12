@@ -439,12 +439,6 @@ void toBrowserTableWidget::changeConnection()
     }
 
     addTab(extractView, "Script");
-
-    foreach(QObject * w, children())
-    {
-        QWidget * i = qobject_cast<QWidget*>(w);
-        qDebug() << w << i->isVisible();
-    }
 }
 
 void toBrowserTableWidget::enableConstraints(bool enable)

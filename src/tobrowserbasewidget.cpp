@@ -71,8 +71,10 @@ bool toBrowserBaseWidget::maybeSave()
 
 void toBrowserBaseWidget::addTab(QWidget * page, const QString & label)
 {
-    QTabWidget::addTab(page, label);
+    // show must go *before* QTabWidget::addTab() to prevent
+    // widgets glitches in the other tabs.
     page->setVisible(true);
+    QTabWidget::addTab(page, label);
 
     toResult * r = dynamic_cast<toResult*>(page);
 
