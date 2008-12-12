@@ -1298,7 +1298,7 @@ static toSQL SQLListTrigger("toBrowser:ListTrigger",
 //                             "  FROM SYS.ALL_TRIGGER_COLS\n"
 //                             " WHERE Trigger_Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
 //                             "Columns used by trigger");
-#if DBLINK
+// #if DBLINK
 static toSQL SQLListDBLink("toBrowser:ListDBLink",
                            "SELECT Db_Link, Owner FROM SYS.ALL_DB_LINKS\n"
                            " WHERE (Owner = :f1<char[101]> or Owner='PUBLIC') and\n"
@@ -1318,7 +1318,7 @@ static toSQL SQLListDBLinkDBA("toBrowser:ListDBLinkDBA",
 //                                " WHERE Owner = :f1<char[101]>\n"
 //                                "   AND DB_LINK = :f2<char[101]>",
 //                                "Display foreign synonyms");
-#endif
+// #endif
 
 static toSQL SQLMySQLAccess("toBrowser:MySQLAcess",
                             "SHOW TABLES FROM mysql",
@@ -1631,7 +1631,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     m_objectsMap[triggerSplitter] = triggerView;
     m_browsersMap[triggerSplitter] = triggerBrowserWidget;
 
-#ifdef DBLINK
+// #ifdef DBLINK
     dblinkSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     dblinkSplitter->setObjectName(TAB_DBLINK);
 //     m_mainTab->addTab(dblinkSplitter, tr("DBLinks"));
@@ -1674,7 +1674,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     m_objectsMap[dblinkSplitter] = dblinkView;
     m_browsersMap[dblinkSplitter] = dblinkBrowserWidget;
-#endif // dblink
+// #endif // dblink
 
     accessSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     accessSplitter->setObjectName(TAB_ACCESS);
