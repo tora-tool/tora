@@ -143,7 +143,7 @@ public:
      * Returns the data stored under the given role for the item
      * referred to by the index.
      */
-    virtual QVariant data(const QModelIndex &index, int role) const;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
 
     /**
