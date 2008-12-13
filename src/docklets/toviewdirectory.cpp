@@ -48,6 +48,9 @@
 #include "totool.h"
 #include "toconfiguration.h"
 
+#include <QMdiArea>
+#include <QMdiSubWindow>
+
 
 REGISTER_VIEW("Directory", toViewDirectory);
 
@@ -76,6 +79,11 @@ toViewDirectory::toViewDirectory(QWidget *parent,
             this,
             SLOT(handleToolAdded(toToolWidget *)));
 
+    connect(toMainWidget()->workspace(),
+            SIGNAL(subWindowActivated(QMdiSubWindow *)),
+            this,
+            SLOT(windowActivated(QMdiSubWindow *)));
+
     setWidget(ListView);
 
     // default to the default file in worksheet editor if specified
@@ -103,7 +111,9 @@ void toViewDirectory::findRoot(QFileInfo dir) {
     if(!dir.isDir())
         dir = QFileInfo(dir.absoluteDir().absolutePath());
 
-    ListView->setRootIndex(Model->index(dir.absoluteFilePath()));
+    QModelIndex parent = Model->index(dir.absoluteFilePath());
+    ListView->setRootIndex(parent);
+    Model->refresh(parent);
 }
 
 
@@ -137,6 +147,11 @@ void toViewDirectory::handleToolAdded(toToolWidget *tool) {
             SIGNAL(fileOpened(QString)),
             this,
             SLOT(showFile(QString)));
+
+    connect(sheet->editor(),
+            SIGNAL(fileSaved(QString)),
+            this,
+            SLOT(showFile(QString)));
 }
 
 
@@ -156,3 +171,17 @@ void toViewDirectory::showFile(QString file) {
     ListView->setCurrentIndex(index);
 }
 
+
+void toViewDirectory::windowActivated(QMdiSubWindow *w)
+{
+    if(!w || !w->widget())
+        return;
+
+    toWorksheet *sheet = dynamic_cast<toWorksheet *>(w->widget());
+    if(!sheet)
+        return;
+
+    QString file = sheet->editor()->filename();
+    if(!file.isEmpty())
+        showFile(file);
+}

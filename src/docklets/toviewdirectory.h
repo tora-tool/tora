@@ -49,7 +49,7 @@
 #include <QDirModel>
 
 class toToolWidget;
-
+class QMdiSubWindow;
 
 class toViewDirectory : public toDocklet
 {
@@ -90,6 +90,8 @@ public slots:
     void handleToolAdded(toToolWidget *);
 
     void showFile(QString);
+
+    void windowActivated(QMdiSubWindow *w);
 };
 
 

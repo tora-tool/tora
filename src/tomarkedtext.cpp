@@ -296,6 +296,7 @@ bool toMarkedText::editSave(bool askfile)
         toMainWidget()->addRecentFile(fn);
         setFilename(fn);
         setModified(false);
+        emit fileSaved(fn);
         return true;
     }
     return false;

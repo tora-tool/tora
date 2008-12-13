@@ -241,6 +241,7 @@ signals:
     // emitted when a new file is opened
     void fileOpened(void);
     void fileOpened(QString file);
+    void fileSaved(QString file);
 
 protected:
     virtual void newLine(void);
