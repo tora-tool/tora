@@ -163,7 +163,10 @@ void toDocklet::showPopup(bool shown)
 bool toDocklet::event(QEvent *event)
 {
     if(event->type() == QEvent::WindowDeactivate)
+    {
         showPopup(false);
+        qApp->setActiveWindow(toMainWidget());
+    }
     return QDockWidget::event(event);
 }
 
