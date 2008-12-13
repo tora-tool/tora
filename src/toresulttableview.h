@@ -50,20 +50,49 @@
 #include "toresultmodel.h"
 #include "toeditwidget.h"
 
-#include <QObject>
 #include <QAbstractTableModel>
-#include <QTableView>
-#include <QModelIndex>
-#include <QList>
 #include <QHeaderView>
-#include <QMenu>
+#include <QItemDelegate>
 #include <QLabel>
+#include <QList>
+#include <QMenu>
+#include <QModelIndex>
+#include <QObject>
 #include <QPushButton>
+#include <QTableView>
 
 class toResultStats;
 class toViewFilter;
 class toTableViewIterator;
 class toWorkingWidget;
+
+
+/**
+ * This is a simple class for providing sensible size hints to the
+ * view.
+ *
+ */
+class toResultTableViewDelegate : public QItemDelegate
+{
+    static const int maxWidth = 200; // the maximum size to grow a column
+
+public:
+    toResultTableViewDelegate(QObject *parent = 0)
+            : QItemDelegate(parent)
+    {
+    }
+
+
+    virtual QSize sizeHint(const QStyleOptionViewItem &option,
+                           const QModelIndex &index) const
+    {
+        QSize size = QItemDelegate::sizeHint(option, index);
+        if (size.width() > maxWidth)
+            size.setWidth(maxWidth);
+
+        return size;
+    }
+};
 
 
 class toResultTableView : public QTableView,

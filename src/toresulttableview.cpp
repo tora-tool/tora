@@ -56,42 +56,13 @@
 #include "toworkingwidget.h"
 
 #include <QClipboard>
-#include <QScrollBar>
-#include <QItemDelegate>
-#include <QSize>
 #include <QFont>
 #include <QFontMetrics>
-#include <QMessageBox>
-#include <QVBoxLayout>
 #include <QHBoxLayout>
-
-
-/**
- * This is a simple class for providing sensible size hints to the
- * view.
- *
- */
-class toResultTableViewDelegate : public QItemDelegate
-{
-    static const int maxWidth = 200; // the maximum size to grow a column
-
-public:
-    toResultTableViewDelegate(QObject *parent = 0)
-            : QItemDelegate(parent)
-    {
-    }
-
-
-    virtual QSize sizeHint(const QStyleOptionViewItem &option,
-                           const QModelIndex &index) const
-    {
-        QSize size = QItemDelegate::sizeHint(option, index);
-        if (size.width() > maxWidth)
-            size.setWidth(maxWidth);
-
-        return size;
-    }
-};
+#include <QMessageBox>
+#include <QScrollBar>
+#include <QSize>
+#include <QVBoxLayout>
 
 
 toResultTableView::toResultTableView(QWidget * parent)
@@ -156,8 +127,10 @@ void toResultTableView::setup(bool readable, bool numberColumn, bool editable)
     connect(Working, SIGNAL(stop()), this, SLOT(stop()));
     Working->hide(); // hide by default
 
-    toResultTableViewDelegate *del = new toResultTableViewDelegate(this);
-    setItemDelegate(del);
+    // set item delegate if default. Don't replace custom set delegate
+    QAbstractItemDelegate *del = itemDelegate();
+    if(dynamic_cast<toResultTableViewDelegate *>(del) == 0)
+        setItemDelegate(new toResultTableViewDelegate(this));
 
     createActions();
 

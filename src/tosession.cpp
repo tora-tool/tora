@@ -1,4 +1,3 @@
-
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
@@ -83,6 +82,7 @@
 #include "icons/tosession.xpm"
 #include "icons/filter.xpm"
 
+
 class toSessionTool : public toTool
 {
 protected:
@@ -113,21 +113,23 @@ public:
 
 static toSessionTool SessionTool;
 
-static toSQL SQLConnectInfo("toSession:ConnectInfo",
-                            "select authentication_type,osuser,network_service_banner\n"
-                            "  from v$session_connect_info where sid = :f1<char[101]>",
-                            "Get connection info for a session");
+static toSQL SQLConnectInfo(
+    "toSession:ConnectInfo",
+    "select authentication_type,osuser,network_service_banner\n"
+    "  from v$session_connect_info where sid = :f1<char[101]>",
+    "Get connection info for a session");
 
-static toSQL SQLLockedObject("toSession:LockedObject",
-                             "select b.Object_Name \"Object Name\",\n"
-                             "       b.Object_Type \"Type\",\n"
-                             "       DECODE(a.locked_mode,0,'None',1,'Null',2,'Row-S',\n"
-                             "                            3,'Row-X',4,'Share',5,'S/Row-X',\n"
-                             "                            6,'Exclusive',a.Locked_Mode) \"Locked Mode\"\n"
-                             "  from v$locked_object a,sys.all_objects b\n"
-                             " where a.object_id = b.object_id\n"
-                             "   and a.session_id = :f1<char[101]>",
-                             "Display info about objects locked by this session");
+static toSQL SQLLockedObject(
+    "toSession:LockedObject",
+    "select b.Object_Name \"Object Name\",\n"
+    "       b.Object_Type \"Type\",\n"
+    "       DECODE(a.locked_mode,0,'None',1,'Null',2,'Row-S',\n"
+    "                            3,'Row-X',4,'Share',5,'S/Row-X',\n"
+    "                            6,'Exclusive',a.Locked_Mode) \"Locked Mode\"\n"
+    "  from v$locked_object a,sys.all_objects b\n"
+    " where a.object_id = b.object_id\n"
+    "   and a.session_id = :f1<char[101]>",
+    "Display info about objects locked by this session");
 
 static toSQL SQLLockedObjectPg(
     "toSession:LockedObject",
@@ -148,94 +150,101 @@ static toSQL SQLLockedObjectPg(
     "",
     "PostgreSQL");
 
-static toSQL SQLOpenCursors("toSession:OpenCursor",
-                            "select SQL_Text \"SQL\", Address||':'||Hash_Value \" Address\"\n"
-                            "  from v$open_cursor where sid = :f1<char[101]>",
-                            "Display open cursors of this session");
-static toSQL SQLSessionWait(TO_SESSION_WAIT,
-                            "select sysdate,\n"
-                            "       cpu*10 \"CPU\",\n"
-                            "       parallel*10 \"Parallel execution\",\n"
-                            "       filewrite*10 \"DB File Write\",\n"
-                            "       writecomplete*10 \"Write Complete\",\n"
-                            "       fileread*10 \"DB File Read\",\n"
-                            "       singleread*10 \"DB Single File Read\",\n"
-                            "       control*10 \"Control File I/O\",\n"
-                            "       direct*10 \"Direct I/O\",\n"
-                            "       log*10 \"Log file\",\n"
-                            "       net*10 \"SQL*Net\",\n"
-                            "       (total-parallel-filewrite-writecomplete-fileread-singleread-control-direct-log-net)*10 \"Other\"\n"
-                            "  from (select SUM(DECODE(SUBSTR(event,1,2),'PX',time_waited,0))-SUM(DECODE(event,'PX Idle Wait',time_waited,0)) parallel,\n"
-                            "               SUM(DECODE(event,'db file parallel write',time_waited,'db file single write',time_waited,0)) filewrite,\n"
-                            "               SUM(DECODE(event,'write complete waits',time_waited,NULL)) writecomplete,\n"
-                            "               SUM(DECODE(event,'db file parallel read',time_waited,'db file sequential read',time_waited,0)) fileread,\n"
-                            "               SUM(DECODE(event,'db file scattered read',time_waited,0)) singleread,\n"
-                            "               SUM(DECODE(SUBSTR(event,1,12),'control file',time_waited,0)) control,\n"
-                            "               SUM(DECODE(SUBSTR(event,1,11),'direct path',time_waited,0)) direct,\n"
-                            "               SUM(DECODE(SUBSTR(event,1,3),'log',time_waited,0)) log,\n"
-                            "               SUM(DECODE(SUBSTR(event,1,7),'SQL*Net',time_waited,0))-SUM(DECODE(event,'SQL*Net message from client',time_waited,0)) net,\n"
-                            "      SUM(DECODE(event,'PX Idle Wait',0,'SQL*Net message from client',0,time_waited)) total\n"
-                            "          from v$session_event where sid in (select b.sid from v$session a,v$session b where a.sid = :f1<char[101]> and a.audsid = b.audsid)),\n"
-                            "       (select value*10 cpu from v$sesstat a\n"
-                            "         where statistic# = 12 and a.sid in (select b.sid from v$session a,v$session b where a.sid = :f1<char[101]> and a.audsid = b.audsid))",
-                            "Used to generate chart for session wait time.");
-static toSQL SQLSessionIO(TO_SESSION_IO,
-                          "select sysdate,\n"
-                          "       sum(block_gets) \"Block gets\",\n"
-                          "       sum(consistent_gets) \"Consistent gets\",\n"
-                          "       sum(physical_reads) \"Physical reads\",\n"
-                          "       sum(block_changes) \"Block changes\",\n"
-                          "       sum(consistent_changes) \"Consistent changes\"\n"
-                          "  from v$sess_io where sid in (select b.sid from v$session a,v$session b where a.sid = :f1<char[101]> and a.audsid = b.audsid)",
-                          "Display chart of session generated I/O");
+static toSQL SQLOpenCursors(
+    "toSession:OpenCursor",
+    "select SQL_Text \"SQL\", Address||':'||Hash_Value \" Address\"\n"
+    "  from v$open_cursor where sid = :f1<char[101]>",
+    "Display open cursors of this session");
 
-static toSQL SQLAccessedObjects("toSession:AccessedObjects",
-                                "SELECT owner,\n"
-                                "       OBJECT,\n"
-                                "       TYPE FROM v$access\n"
-                                " WHERE sid=:f1<CHAR [101]>\n"
-                                " ORDER BY owner,\n"
-                                "   OBJECT,\n"
-                                "   TYPE",
-                                "Which objects are accessed by the current session");
+static toSQL SQLSessionWait(
+    TO_SESSION_WAIT,
+    "select sysdate,\n"
+    "       cpu*10 \"CPU\",\n"
+    "       parallel*10 \"Parallel execution\",\n"
+    "       filewrite*10 \"DB File Write\",\n"
+    "       writecomplete*10 \"Write Complete\",\n"
+    "       fileread*10 \"DB File Read\",\n"
+    "       singleread*10 \"DB Single File Read\",\n"
+    "       control*10 \"Control File I/O\",\n"
+    "       direct*10 \"Direct I/O\",\n"
+    "       log*10 \"Log file\",\n"
+    "       net*10 \"SQL*Net\",\n"
+    "       (total-parallel-filewrite-writecomplete-fileread-singleread-control-direct-log-net)*10 \"Other\"\n"
+    "  from (select SUM(DECODE(SUBSTR(event,1,2),'PX',time_waited,0))-SUM(DECODE(event,'PX Idle Wait',time_waited,0)) parallel,\n"
+    "               SUM(DECODE(event,'db file parallel write',time_waited,'db file single write',time_waited,0)) filewrite,\n"
+    "               SUM(DECODE(event,'write complete waits',time_waited,NULL)) writecomplete,\n"
+    "               SUM(DECODE(event,'db file parallel read',time_waited,'db file sequential read',time_waited,0)) fileread,\n"
+    "               SUM(DECODE(event,'db file scattered read',time_waited,0)) singleread,\n"
+    "               SUM(DECODE(SUBSTR(event,1,12),'control file',time_waited,0)) control,\n"
+    "               SUM(DECODE(SUBSTR(event,1,11),'direct path',time_waited,0)) direct,\n"
+    "               SUM(DECODE(SUBSTR(event,1,3),'log',time_waited,0)) log,\n"
+    "               SUM(DECODE(SUBSTR(event,1,7),'SQL*Net',time_waited,0))-SUM(DECODE(event,'SQL*Net message from client',time_waited,0)) net,\n"
+    "      SUM(DECODE(event,'PX Idle Wait',0,'SQL*Net message from client',0,time_waited)) total\n"
+    "          from v$session_event where sid in (select b.sid from v$session a,v$session b where a.sid = :f1<char[101]> and a.audsid = b.audsid)),\n"
+    "       (select value*10 cpu from v$sesstat a\n"
+    "         where statistic# = 12 and a.sid in (select b.sid from v$session a,v$session b where a.sid = :f1<char[101]> and a.audsid = b.audsid))",
+    "Used to generate chart for session wait time.");
 
-static toSQL SQLSessions("toSession:ListSession",
-                         "SELECT a.Sid \"-Id\",\n"
-                         "       a.Serial# \"-Serial#\",\n"
-                         "       a.SchemaName \"Schema\",\n"
-                         "       a.Status \"Status\",\n"
-                         "       a.Server \"Server\",\n"
-                         "       a.OsUser \"Osuser\",\n"
-                         "       a.Machine \"Machine\",\n"
-                         "       a.Program \"Program\",\n"
-                         "       a.Type \"Type\",\n"
-                         "       a.Module \"Module\",\n"
-                         "       a.Action \"Action\",\n"
-                         "       a.Client_Info \"Client Info\",\n"
-                         "       b.Block_Gets \"-Block Gets\",\n"
-                         "       b.Consistent_Gets \"-Consistent Gets\",\n"
-                         "       b.Physical_Reads \"-Physical Reads\",\n"
-                         "       b.Block_Changes \"-Block Changes\",\n"
-                         "       b.Consistent_Changes \"-Consistent Changes\",\n"
-                         "       c.Value*10 \"-CPU (ms)\",\n"
-                         "       a.last_call_et \"Last SQL\",\n"
-                         "       a.Process \"-Client PID\",\n"
-                         "       e.SPid \"-Server PID\",\n"
-                         "       d.sql_text \"Current statement\",\n"
-                         "       a.SQL_Address||':'||a.SQL_Hash_Value \" SQL Address\",\n"
-                         "       a.Prev_SQL_Addr||':'||a.Prev_Hash_Value \" Prev SQl Address\"\n"
-                         "  FROM v$session a,\n"
-                         "       v$sess_io b,\n"
-                         "       v$sesstat c,\n"
-                         "       v$sql d,\n"
-                         "       v$process e\n"
-                         " WHERE a.sid = b.sid(+)\n"
-                         "   AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)\n"
-                         "   AND a.sql_address = d.address(+) AND a.sql_hash_value = d.hash_value(+)\n"
-                         "   AND (d.child_number = 0 OR d.child_number IS NULL)\n"
-                         "   AND a.paddr = e.addr(+)\n"
-                         "%1 ORDER BY a.Sid",
-                         "List sessions, must have same number of columns and the first and last 2 must be the same");
+static toSQL SQLSessionIO(
+    TO_SESSION_IO,
+    "select sysdate,\n"
+    "       sum(block_gets) \"Block gets\",\n"
+    "       sum(consistent_gets) \"Consistent gets\",\n"
+    "       sum(physical_reads) \"Physical reads\",\n"
+    "       sum(block_changes) \"Block changes\",\n"
+    "       sum(consistent_changes) \"Consistent changes\"\n"
+    "  from v$sess_io where sid in (select b.sid from v$session a,v$session b where a.sid = :f1<char[101]> and a.audsid = b.audsid)",
+    "Display chart of session generated I/O");
+
+static toSQL SQLAccessedObjects(
+    "toSession:AccessedObjects",
+    "SELECT owner,\n"
+    "       OBJECT,\n"
+    "       TYPE FROM v$access\n"
+    " WHERE sid=:f1<CHAR [101]>\n"
+    " ORDER BY owner,\n"
+    "   OBJECT,\n"
+    "   TYPE",
+    "Which objects are accessed by the current session");
+
+static toSQL SQLSessions(
+    "toSession:ListSession",
+    "SELECT a.Sid \"Id\",\n"
+    "       a.Serial# \"Serial#\",\n"
+    "       a.SchemaName \"Schema\",\n"
+    "       a.Status \"Status\",\n"
+    "       a.Server \"Server\",\n"
+    "       a.OsUser \"Osuser\",\n"
+    "       a.Machine \"Machine\",\n"
+    "       a.Program \"Program\",\n"
+    "       a.Type \"Type\",\n"
+    "       a.Module \"Module\",\n"
+    "       a.Action \"Action\",\n"
+    "       a.Client_Info \"Client Info\",\n"
+    "       b.Block_Gets \"Block Gets\",\n"
+    "       b.Consistent_Gets \"Consistent Gets\",\n"
+    "       b.Physical_Reads \"Physical Reads\",\n"
+    "       b.Block_Changes \"Block Changes\",\n"
+    "       b.Consistent_Changes \"Consistent Changes\",\n"
+    "       c.Value*10 \"CPU (ms)\",\n"
+    "       a.last_call_et \"Last SQL\",\n"
+    "       a.Process \"Client PID\",\n"
+    "       e.SPid \"Server PID\",\n"
+    "       d.sql_text \"Current statement\",\n"
+    "       a.SQL_Address||':'||a.SQL_Hash_Value \" SQL Address\",\n"
+    "       a.Prev_SQL_Addr||':'||a.Prev_Hash_Value \" Prev SQl Address\"\n"
+    "  FROM v$session a,\n"
+    "       v$sess_io b,\n"
+    "       v$sesstat c,\n"
+    "       v$sql d,\n"
+    "       v$process e\n"
+    " WHERE a.sid = b.sid(+)\n"
+    "   AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)\n"
+    "   AND a.sql_address = d.address(+) AND a.sql_hash_value = d.hash_value(+)\n"
+    "   AND (d.child_number = 0 OR d.child_number IS NULL)\n"
+    "   AND a.paddr = e.addr(+)\n"
+    "%1 ORDER BY a.Sid",
+    "List sessions, must have same number of columns and the first and last 2 must be the same");
 
 static toSQL SQLSessionsPg(
     "toSession:ListSession",
@@ -247,7 +256,9 @@ static toSQL SQLSessionsPg(
     "       pg_stat_get_backend_client_port ( s.backendid ) AS \"Port\",\n"
     "       pg_stat_get_backend_activity_start ( s.backendid ) AS \"Started\",\n"
     "       pg_stat_get_backend_waiting ( s.backendid ) AS \"Waiting\",\n"
-    "       pg_stat_get_backend_activity ( s.backendid ) AS \"Current Query\"\n"
+    "       pg_stat_get_backend_activity ( s.backendid ) AS \"Current Query\",\n"
+    "       s.backendid as \" current\",\n"
+    "       null as \" previous\"\n"
     "  FROM ( SELECT pg_stat_get_backend_idset ( ) AS backendid ) AS s",
     "",
     "",
@@ -319,7 +330,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
                 QIcon(QPixmap(const_cast<const char**>(kill_xpm))),
                 tr("Cancel selected backend"),
                 this,
-                SLOT(cancelBackend(void)));
+                SLOT(cancelBackend()));
     }
 
     toolbar->addWidget(
@@ -331,27 +342,28 @@ toSession::toSession(QWidget *main, toConnection &connection)
             this, SLOT(changeRefresh(const QString &)));
     toolbar->addWidget(Refresh);
 
-    if (toIsOracle(connection))
-    {
-        toolbar->addSeparator();
+    // TODO
+//     if (toIsOracle(connection))
+//     {
+//         toolbar->addSeparator();
 
-        QToolButton *btn = new QToolButton(toolbar);
-        btn->setCheckable(true);
-        btn->setIcon(QIcon(filter_xpm));
-        connect(btn, SIGNAL(toggled(bool)), this, SLOT(excludeSelection(bool)));
-        btn->setToolTip(tr("Exclude selected sessions"));
-        toolbar->addWidget(btn);
+//         QToolButton *btn = new QToolButton(toolbar);
+//         btn->setCheckable(true);
+//         btn->setIcon(QIcon(filter_xpm));
+//         connect(btn, SIGNAL(toggled(bool)), this, SLOT(excludeSelection(bool)));
+//         btn->setToolTip(tr("Exclude selected sessions"));
+//         toolbar->addWidget(btn);
 
-        toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(add_xpm))),
-                           tr("Select all sessions"),
-                           this,
-                           SLOT(selectAll(void)));
+//         toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(add_xpm))),
+//                            tr("Select all sessions"),
+//                            this,
+//                            SLOT(selectAll(void)));
 
-        toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(minus_xpm))),
-                           tr("Deselect all sessions"),
-                           this,
-                           SLOT(selectNone(void)));
-    }
+//         toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(minus_xpm))),
+//                            tr("Deselect all sessions"),
+//                            this,
+//                            SLOT(selectNone(void)));
+//     }
 
     toolbar->addWidget(new toSpacer());
 
@@ -364,12 +376,14 @@ toSession::toSession(QWidget *main, toConnection &connection)
     QSplitter *splitter = new QSplitter(Qt::Vertical, this);
     layout()->addWidget(splitter);
 
-    Sessions = new toSessionList(splitter);
+//     Sessions = new toSessionList(splitter);
+    Sessions = new toResultTableView(true,
+                                     false,
+                                     splitter,
+                                     "session list",
+                                     false);                                     
     Sessions->setAlternatingRowColors(true);
-
-    QList<int> list;
-    list.append(75);
-    splitter->setSizes(list);
+    Sessions->horizontalHeader()->setStretchLastSection(true);
 
     Sessions->setReadAll(true);
     connect(Sessions, SIGNAL(done()), this, SLOT(done()));
@@ -402,7 +416,8 @@ toSession::toSession(QWidget *main, toConnection &connection)
         Waits = new toWaitEvents(0, ResultTab, "waits");
         ResultTab->addTab(Waits, tr("Wait events"));
 
-        ConnectInfo = new toResultLong(true, false, toQuery::Background, ResultTab);
+        ConnectInfo = new toResultTableView(true, false, ResultTab);
+        ConnectInfo->horizontalHeader()->setStretchLastSection(true);
         ConnectInfo->setSQL(SQLConnectInfo);
         ResultTab->addTab(ConnectInfo, tr("Connect Info"));
 
@@ -413,7 +428,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
         ResultTab->addTab(LockedObjects, tr("Locked Objects"));
         LockedObjects->setSQL(SQLLockedObject);
 
-        AccessedObjects = new toResultLong(false, false, toQuery::Background, ResultTab);
+        AccessedObjects = new toResultTableView(false, false, ResultTab);
         AccessedObjects->setSQL(SQLAccessedObjects);
         ResultTab->addTab(AccessedObjects, tr("Accessing"));
 
@@ -422,13 +437,16 @@ toSession::toSession(QWidget *main, toConnection &connection)
 
         OpenSplitter = new QSplitter(Qt::Horizontal, ResultTab);
         ResultTab->addTab(OpenSplitter, tr("Open Cursors"));
-        OpenCursors = new toResultLong(false, true, toQuery::Background, OpenSplitter);
+        OpenCursors = new toResultTableView(false, true, OpenSplitter);
         OpenCursors->setSQL(SQLOpenCursors);
-        OpenStatement = new toSGAStatement(OpenSplitter);
+        OpenCursors->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-        OpenCursors->setSelectionMode(toTreeWidget::Single);
-        connect(OpenCursors, SIGNAL(selectionChanged(toTreeWidgetItem *)),
-                this, SLOT(changeCursor(toTreeWidgetItem *)));
+        connect(OpenCursors,
+                SIGNAL(selectionChanged()),
+                this,
+                SLOT(changeCursor()));
+
+        OpenStatement = new toSGAStatement(OpenSplitter);
     }
     else
     {
@@ -451,11 +469,16 @@ toSession::toSession(QWidget *main, toConnection &connection)
         LockedObjects->setSQL(SQLLockedObject);
     }
 
-    Sessions->setSelectionMode(toTreeWidget::Single);
-    connect(Sessions, SIGNAL(selectionChanged(toTreeWidgetItem *)),
-            this, SLOT(changeItem(toTreeWidgetItem *)));
-    connect(ResultTab, SIGNAL(currentChanged(int)),
-            this, SLOT(changeTab(int)));
+    Sessions->setSelectionBehavior(QAbstractItemView::SelectRows);
+    connect(Sessions,
+            SIGNAL(selectionChanged()),
+            this,
+            SLOT(changeItem()));
+
+    connect(ResultTab,
+            SIGNAL(currentChanged(int)),
+            this,
+            SLOT(changeTab(int)));
 
     try
     {
@@ -471,6 +494,11 @@ toSession::toSession(QWidget *main, toConnection &connection)
             this, SLOT(windowActivated(QMdiSubWindow *)));
     refresh();
 
+    QList<int> list;
+    list.append(999);
+    list.append(1);
+    splitter->setSizes(list);
+
     setFocusProxy(Sessions);
 }
 
@@ -481,101 +509,40 @@ bool toSession::canHandle(toConnection &conn)
 
 void toSession::excludeSelection(bool tgl)
 {
-    toSessionList::sessionFilter *filt =
-        dynamic_cast<toSessionList::sessionFilter *>(Sessions->filter());
-    if (filt)
-    {
-        filt->setShow(!tgl);
-        refresh();
-    }
+    // TODO
+//     toSessionList::sessionFilter *filt =
+//         dynamic_cast<toSessionList::sessionFilter *>(Sessions->filter());
+//     if (filt)
+//     {
+//         filt->setShow(!tgl);
+//         refresh();
+//     }
 }
 
 void toSession::selectAll(void)
 {
-    for (toTreeWidgetItem *item = Sessions->firstChild();
-            item;
-            item = item->nextSibling())
-    {
-        toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>(item);
-        if (chk)
-            chk->setOn(true);
-    }
+    // TODO
+//     for (toTreeWidgetItem *item = Sessions->firstChild();
+//             item;
+//             item = item->nextSibling())
+//     {
+//         toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>(item);
+//         if (chk)
+//             chk->setOn(true);
+//     }
 }
 
 void toSession::selectNone(void)
 {
-    for (toTreeWidgetItem *item = Sessions->firstChild();item;item = item->nextSibling())
-    {
-        toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>(item);
-        if (chk)
-            chk->setOn(false);
-    }
+    // TODO
+//     for (toTreeWidgetItem *item = Sessions->firstChild();item;item = item->nextSibling())
+//     {
+//         toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>(item);
+//         if (chk)
+//             chk->setOn(false);
+//     }
 }
 
-toTreeWidgetItem *toSessionList::createItem(toTreeWidgetItem *last, const QString &str)
-{
-    sessionFilter *filt = dynamic_cast<sessionFilter *>(filter());
-    if (filt && filt->show() && toIsOracle(connection()))
-        return new toResultViewCheck(this, last, str, toTreeWidgetCheck::CheckBox);
-    else
-        return new toResultViewItem(this, last, str);
-}
-
-void toSessionList::updateFilter()
-{
-    sessionFilter *filt = dynamic_cast<sessionFilter *>(filter());
-    if (filt)
-        filt->updateList(this);
-}
-
-bool toSessionList::sessionFilter::check(const toTreeWidgetItem *item)
-{
-    if (!OnlyDatabase.isEmpty())
-    {
-        if (OnlyDatabase == "/")
-        {
-            if (item->text(4) == "Sleep")
-                return false;
-        }
-        else if (OnlyDatabase != item->text(3))
-            return false;
-    }
-
-    sessionID serial(item->text(0).toInt(), item->text(1).toInt());
-    bool checked = false;
-    for (std::list<sessionID>::iterator i = Serials.begin();i != Serials.end();i++)
-        if ((*i) == serial)
-        {
-            checked = true;
-            break;
-        }
-    const toResultViewCheck *chk = dynamic_cast<const toResultViewCheck *>(item);
-    if (chk)
-    {
-        const_cast<toResultViewCheck *>(chk)->setOn(checked);
-        return true;
-    }
-    return !checked;
-}
-
-void toSessionList::sessionFilter::updateList(toResultLong *lst)
-{
-    bool first = true;
-    for (toTreeWidgetItem *item = lst->firstChild();item;item = item->nextSibling())
-    {
-        toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>(item);
-        if (chk)
-        {
-            if (first)
-            {
-                Serials.clear();
-                first = false;
-            }
-            if (chk->isOn())
-                Serials.insert(Serials.end(), sessionID(item->text(0).toInt(), item->text(1).toInt()));
-        }
-    }
-}
 
 void toSession::windowActivated(QMdiSubWindow *widget)
 {
@@ -623,11 +590,11 @@ void toSession::refresh(void)
 {
     try
     {
-        toTreeWidgetItem *item = Sessions->selectedItem();
-        if (item)
+        QModelIndex item = Sessions->selectedIndex();
+        if(item.isValid())
         {
-            Session = item->text(0);
-            Serial = item->text(1);
+            Session = item.data().toString();
+            Serial = item.data().toString();
         }
         else
             Session = Serial = QString::null;
@@ -658,25 +625,34 @@ void toSession::refresh(void)
 
 void toSession::done(void)
 {
-    int system = 0, total = 0, active = 0;
-    for (toTreeWidgetItem *item = Sessions->firstChild();
-            item;
-            item = item->nextSibling())
+    int system = 0;
+    int total  = 0;
+    int active = 0;
+
+    for (toResultTableView::iterator it(Sessions); (*it).isValid(); it++)
     {
-        if (item->text(0) == Session &&
-                item->text(1) == Serial)
+        QString session = Sessions->model()->data((*it).row(), 1).toString();
+        QString serial  = Sessions->model()->data((*it).row(), 2).toString();
+        QString user    = Sessions->model()->data((*it).row(), 9).toString();
+        QString act     = Sessions->model()->data((*it).row(), 4).toString();
+
+        if(session == Session && serial == Serial)
         {
-            Sessions->setSelected(item, true);
+            Sessions->selectionModel()->select(
+                QItemSelection(*it, *it),
+                QItemSelectionModel::ClearAndSelect);
+            Sessions->setCurrentIndex(*it);
         }
+
         total++;
-        if (item->text(8) != "USER")
+        if(user != "USER")
             system++;
-        else if (item->text(3) == "ACTIVE")
+        else if(act == "ACTIVE")
             active++;
     }
+
     Total->setText(QString("Total <B>%1</B> (Active <B>%3</B>, System <B>%2</B>)")
                    .arg(total).arg(system).arg(active));
-    Sessions->resizeColumnsToContents();
 }
 
 void toSession::enableStatistics(bool enable)
@@ -703,130 +679,153 @@ void toSession::changeTab(int index)
     if (tab != CurrentTab)
     {
         CurrentTab = tab;
-        toTreeWidgetItem *item = Sessions->selectedItem();
-        if (item)
+        QModelIndex item = Sessions->selectedIndex();
+
+        if(!item.isValid())
+            return;
+
+        QString connectionId = item.data().toString();
+        QModelIndex index = Sessions->model()->index(item.row(), 2);
+        QString serial = index.data().toString();
+
+        if (CurrentTab == StatisticSplitter)
         {
-            if (CurrentTab == StatisticSplitter)
+            int ses = connectionId.toInt();
+            try
             {
-                int ses = item->text(0).toInt();
-                try
+                SessionStatistics->changeSession(ses);
+            }
+            TOCATCH;
+        }
+        else if (CurrentTab == ConnectInfo)
+        {
+            ConnectInfo->clearParams();
+            ConnectInfo->changeParams(connectionId);
+        }
+        else if (CurrentTab == LongOps)
+        {
+            LongOps->clearParams();
+            LongOps->changeParams(connectionId, serial);
+        }
+        else if (CurrentTab == PendingLocks)
+        {
+            PendingLocks->clearParams();
+            PendingLocks->query(connectionId);
+        }
+        else if (CurrentTab == OpenSplitter)
+        {
+            QModelIndex openitem = OpenCursors->selectedIndex(2);
+            QString address;
+            if(openitem.isValid())
+                address = openitem.data().toString();
+            OpenCursors->clearParams();
+            OpenCursors->changeParams(connectionId);
+            if (!address.isEmpty())
+            {
+                for (toResultTableView::iterator it(OpenCursors); (*it).isValid(); it++)
                 {
-                    SessionStatistics->changeSession(ses);
+                    if(address == OpenCursors->model()->data(*it).toString())
+                    {
+                        OpenCursors->selectionModel()->select(
+                            QItemSelection(*it, *it),
+                            QItemSelectionModel::ClearAndSelect);
+                        OpenCursors->setCurrentIndex(*it);
+                    }
                 }
-                TOCATCH;
             }
-            else if (CurrentTab == ConnectInfo)
-            {
-                ConnectInfo->clearParams();
-                ConnectInfo->changeParams(item->text(0));
-            }
-            else if (CurrentTab == LongOps)
-            {
-                LongOps->clearParams();
-                LongOps->changeParams(item->text(0), item->text(1));
-            }
-            else if (CurrentTab == PendingLocks)
-            {
-                PendingLocks->clearParams();
-                PendingLocks->query(item->text(0));
-            }
-            else if (CurrentTab == OpenSplitter)
-            {
-                toTreeWidgetItem *openitem = OpenCursors->currentItem();
-                QString address;
-                if (openitem)
-                    address = openitem->text(2);
-                OpenCursors->clearParams();
-                OpenCursors->changeParams(item->text(0));
-                if (!address.isEmpty())
-                    for (openitem = OpenCursors->firstChild();
-                            openitem;openitem = openitem->nextSibling())
-                        if (address == openitem->text(2))
-                        {
-                            OpenCursors->setSelected(item, true);
-                            break;
-                        }
-            }
-            else if (CurrentTab == CurrentStatement)
-            {
-                CurrentStatement->changeAddress(item->text(Sessions->columns() + 0));
-            }
-            else if (CurrentTab == AccessedObjects)
-            {
-                AccessedObjects->clearParams();
-                AccessedObjects->changeParams(item->text(0));
-            }
-            else if (CurrentTab == LockedObjects)
-            {
-                LockedObjects->clearParams();
-                LockedObjects->changeParams(item->text(0));
-            }
-            else if (CurrentTab == PreviousStatement)
-            {
-                PreviousStatement->changeAddress(item->text(Sessions->columns() + 1));
-            }
+        }
+        else if (CurrentTab == CurrentStatement)
+        {
+            QModelIndex sindex = Sessions->model()->index(
+                item.row(),
+                Sessions->model()->columnCount() - 2);
+            if(sindex.isValid())
+                CurrentStatement->changeAddress(sindex.data().toString());
+        }
+        else if (CurrentTab == AccessedObjects)
+        {
+            AccessedObjects->clearParams();
+            AccessedObjects->changeParams(connectionId);
+        }
+        else if (CurrentTab == LockedObjects)
+        {
+            LockedObjects->clearParams();
+            LockedObjects->changeParams(connectionId);
+        }
+        else if (CurrentTab == PreviousStatement)
+        {
+            QModelIndex sindex = Sessions->model()->index(
+                item.row(),
+                Sessions->model()->columnCount() - 1);
+            if(sindex.isValid())
+                PreviousStatement->changeAddress(sindex.data().toString());
         }
     }
 }
 
-void toSession::changeCursor(toTreeWidgetItem *item)
+void toSession::changeCursor()
 {
-    if (item)
-        OpenStatement->changeAddress(item->text(2));
+    QModelIndex item = OpenCursors->selectedIndex(2);
+    if (item.isValid())
+        OpenStatement->changeAddress(item.data().toString());
 }
 
 void toSession::cancelBackend()
 {
-    toTreeWidgetItem *item = Sessions->selectedItem();
-    if (item)
+    QModelIndex item = Sessions->selectedIndex();
+    if(!item.isValid())
+        return;
+
+    try
     {
-        try
-        {
-            connection().execute(
-                QString("SELECT pg_cancel_backend ( %1 )").arg(item->text(0)));
-        }
-        TOCATCH;
+        connection().execute(
+            QString("SELECT pg_cancel_backend ( %1 )").arg(item.data().toString()));
     }
+    TOCATCH;
 }
 
 void toSession::disconnectSession()
 {
-    toTreeWidgetItem *item = Sessions->selectedItem();
-    if (item)
+    QModelIndex item = Sessions->selectedIndex();
+    if(!item.isValid())
+        return;
+
+    QString connectionId = item.data().toString();
+    QModelIndex index = Sessions->model()->index(item.row(), 2);
+    QString serial = index.data().toString();
+
+    QString sess = QString::fromLatin1("'");
+    sess.append(connectionId);
+    sess.append(QString::fromLatin1(","));
+    sess.append(serial);
+    sess.append(QString::fromLatin1("'"));
+    QString str(tr("Let current transaction finish before "
+                   "disconnecting this session?"));
+    QString sql;
+    switch (TOMessageBox::warning(this,
+                                  tr("Commit work?"),
+                                  str,
+                                  tr("&Yes"),
+                                  tr("&No"),
+                                  tr("Cancel")))
     {
-        QString sess = QString::fromLatin1("'");
-        sess.append(item->text(0));
-        sess.append(QString::fromLatin1(","));
-        sess.append(item->text(1));
-        sess.append(QString::fromLatin1("'"));
-        QString str(tr("Let current transaction finish before "
-                       "disconnecting this session?"));
-        QString sql;
-        switch (TOMessageBox::warning(this,
-                                      tr("Commit work?"),
-                                      str,
-                                      tr("&Yes"),
-                                      tr("&No"),
-                                      tr("Cancel")))
-        {
-        case 0:
-            sql = QString::fromLatin1("ALTER SYSTEM DISCONNECT SESSION ");
-            sql.append(sess);
-            sql.append(QString::fromLatin1(" POST_TRANSACTION"));
-            break;
-        case 1:
-            sql = QString::fromLatin1("ALTER SYSTEM KILL SESSION ");
-            sql.append(sess);
-            break;
-        case 2:
-            return ;
-        }
-        try
-        {
-            connection().execute(sql);
-        }
-        TOCATCH;
+    case 0:
+        sql = QString::fromLatin1("ALTER SYSTEM DISCONNECT SESSION ");
+        sql.append(sess);
+        sql.append(QString::fromLatin1(" POST_TRANSACTION"));
+        break;
+    case 1:
+        sql = QString::fromLatin1("ALTER SYSTEM KILL SESSION ");
+        sql.append(sess);
+        break;
+    case 2:
+        return ;
     }
+    try
+    {
+        connection().execute(sql);
+    }
+    TOCATCH;
 }
 
 void toSession::changeRefresh(const QString &str)
@@ -838,21 +837,28 @@ void toSession::changeRefresh(const QString &str)
     TOCATCH;
 }
 
-void toSession::changeItem(toTreeWidgetItem *item)
+void toSession::changeItem()
 {
-    if (item && LastSession != item->text(0))
+    QModelIndex selected = Sessions->selectedIndex();
+    if(!selected.isValid())
+        return;
+
+    QString item = selected.data().toString();
+    if (LastSession != item)
     {
-        if (!item->text(0).isEmpty())
+        if (!item.isEmpty())
         {
             if (WaitBar)
-                WaitBar->changeParams(item->text(0));
+                WaitBar->changeParams(item);
             if (IOBar)
-                IOBar->changeParams(item->text(0));
+                IOBar->changeParams(item);
             if (Waits)
-                Waits->setSession(item->text(0).toInt());
+                Waits->setSession(item.toInt());
         }
-        LastSession = item->text(0);
+
+        LastSession = item;
     }
+
     QWidget *t = CurrentTab;
     CurrentTab = NULL;
     changeTab(ResultTab->indexOf(t));
@@ -860,7 +866,5 @@ void toSession::changeItem(toTreeWidgetItem *item)
 
 void toSession::refreshTabs(void)
 {
-    toTreeWidgetItem *item = Sessions->selectedItem();
-    if (item)
-        changeItem(item);
+    changeItem();
 }
