@@ -87,15 +87,18 @@ void toBrowserSequenceWidget::changeConnection()
     toConnection & c = toCurrentConnection(this);
 
     if (toIsOracle(c) || toIsPostgreSQL(c))
-    {
         addTab(resultInfo, "Info");
+    else
+        resultInfo->hide();
+
+    if (toIsOracle(c))
+    {
         addTab(grantsView, "&Grants");
         addTab(extractView, "Script");
     }
     else
     {
-        resultInfo->setVisible(false);
-        grantsView->setVisible(false);
-        extractView->setVisible(false);
+        grantsView->hide();
+        extractView->hide();
     }
 }

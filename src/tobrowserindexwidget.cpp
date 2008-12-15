@@ -157,7 +157,7 @@ void toBrowserIndexWidget::changeConnection()
 
     addTab(columnView, "&Columns");
 
-    if (!toIsMySQL(c))
+    if (toIsOracle(c) || toIsSapDB(c))
         addTab(resultInfo, "Informations");
     else
         resultInfo->hide();
@@ -172,7 +172,7 @@ void toBrowserIndexWidget::changeConnection()
     else
         statisticView->hide();
 
-    if (!toIsMySQL(c))
+    if (toIsOracle(c))
         addTab(extractView, "Script");
     else
         extractView->hide();

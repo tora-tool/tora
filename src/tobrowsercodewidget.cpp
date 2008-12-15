@@ -120,19 +120,23 @@ void toBrowserCodeWidget::changeConnection()
     if (toIsOracle(c))
         addTab(declarationResult, "&Declaration");
     else
-        declarationResult->setVisible(false);
+        declarationResult->hide();
 
     addTab(bodyResult, "B&ody");
 
     if (toIsOracle(c) || toIsSapDB(c))
         addTab(grantsView, "&Grants");
     else
-        grantsView->setVisible(false);
+        grantsView->hide();
 
     if (toIsOracle(c))
+    {
         addTab(dependsWidget, "De&pendencies");
+        addTab(extractView, "Script");
+    }
     else
-        dependsWidget->setVisible(false);
-
-    addTab(extractView, "Script");
+    {
+        dependsWidget->hide();
+        extractView->hide();
+    }
 }

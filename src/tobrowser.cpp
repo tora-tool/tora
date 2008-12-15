@@ -1907,7 +1907,7 @@ void toBrowser::changeConnection(void)
     addTab(codeSplitter, tr("Cod&e"),
             !toIsMySQL(connection()));
     addTab(triggerSplitter, tr("Tri&ggers"),
-            !toIsMySQL(connection()));
+            !toIsMySQL(connection()) && !toIsPostgreSQL(connection()));
     addTab(dblinkSplitter, tr("DBLinks"),
             toIsOracle(connection()));
     addTab(accessSplitter, tr("Access"),

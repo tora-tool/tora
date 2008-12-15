@@ -110,15 +110,20 @@ void toBrowserViewWidget::changeConnection()
     if (toIsOracle(c) || toIsSapDB(c) || toIsPostgreSQL(c))
         addTab(resultField, "SQL");
     else
-        resultField->setVisible(false);
+        resultField->hide();
 
     addTab(resultData, "&Data");
-    addTab(grantsView, "&Grants");
 
     if (toIsOracle(c))
+    {
+        addTab(grantsView, "&Grants");
         addTab(resultDependencies, "De&pendencies");
+        addTab(extractView, "Script");
+    }
     else
-        resultDependencies->setVisible(false);
-
-    addTab(extractView, "Script");
+    {
+        grantsView->hide();
+        resultDependencies->hide();
+        extractView->hide();
+    }
 }

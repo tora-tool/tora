@@ -422,7 +422,7 @@ void toBrowserTableWidget::changeConnection()
     else
         referencesView->hide();
 
-    if (!toIsMySQL(c))
+    if (toIsOracle(c))
         addTab(grantsView, "&Grants");
     else
         grantsView->hide();
@@ -449,7 +449,7 @@ void toBrowserTableWidget::changeConnection()
         extentsView->hide();
     }
 
-    if (!toIsMySQL(c))
+    if (toIsOracle(c))
         addTab(extractView, "Script");
     else
         extractView->hide();
