@@ -156,17 +156,24 @@ void toBrowserIndexWidget::changeConnection()
     toConnection & c = toCurrentConnection(this);
 
     addTab(columnView, "&Columns");
-    addTab(resultInfo, "Informations");
+
+    if (!toIsMySQL(c))
+        addTab(resultInfo, "Informations");
+    else
+        resultInfo->hide();
 
     if (toIsOracle(c))
         addTab(extentsView, "Extents");
     else
-        extentsView->setVisible(false);
+        extentsView->hide();
 
     if (toIsSapDB(c))
         addTab(statisticView, tr("&Statistic"));
     else
-        statisticView->setVisible(false);
+        statisticView->hide();
 
-    addTab(extractView, "Script");
+    if (!toIsMySQL(c))
+        addTab(extractView, "Script");
+    else
+        extractView->hide();
 }

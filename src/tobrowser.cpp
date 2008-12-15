@@ -1042,11 +1042,19 @@ static toSQL SQLListViewSapDb("toBrowser:ListView",
 //                              "",
 //                              "SapDB");
 
-static toSQL SQLListIndexMySQL("toBrowser:ListIndex",
-                               "SHOW INDEX FROM `:f1<database>`",
+static toSQL SQLListIndexMySQL3("toBrowser:ListIndex",
+                               "SHOW INDEX FROM :f1<char[100]>",
                                "List the available indexes in a schema",
                                "3.23",
                                "MySQL");
+static toSQL SQLListIndexMySQL("toBrowser:ListIndex",
+                        "select distinct table_name \"Tables with Indexes\"\n"
+                        "    from information_schema.statistics\n"
+                        "    where index_schema = :f1<char[100]>\n"
+                        "    order by 1\n",
+                        "",
+                        "5.0",
+                        "MySQL");
 static toSQL SQLListIndex("toBrowser:ListIndex",
                           "SELECT Index_Name,NULL \" Ignore\",NULL \" Ignore2\",Tablespace_name \" Ignore2\"\n"
                           "  FROM SYS.ALL_INDEXES\n"

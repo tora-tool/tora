@@ -98,6 +98,12 @@ void toBrowserAccessWidget::changeConnection()
         accessContent->setVisible(false);
 }
 
+void toBrowserAccessWidget::changeParams(const QString & schema,
+                                         const QString & object)
+{
+    toBrowserBaseWidget::changeParams("mysql", object);
+}
+
 void toBrowserAccessWidget::flushPrivs(void)
 {
     try

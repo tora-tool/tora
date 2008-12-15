@@ -62,6 +62,9 @@ class toBrowserAccessWidget : public toBrowserBaseWidget
 
         void changeConnection();
 
+        //! Reimplemented due schema workaround for this tab
+        void changeParams(const QString & schema, const QString & object);
+
     private slots:
         void flushPrivs(void);
 };
