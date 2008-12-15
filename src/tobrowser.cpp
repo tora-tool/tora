@@ -1877,7 +1877,9 @@ void toBrowser::changeConnection(void)
 
     if ( ! connection().schema().isEmpty() )
     {
-        Schema->setSelected(connection().schema().toUpper());
+        // No need to upperize the string. Oracle has it uppercased already,
+        // mysql nad pgsql require it as lowercase.
+        Schema->setSelected(connection().schema());//.toUpper());
     }
     else if (toIsMySQL(connection()))
     {
