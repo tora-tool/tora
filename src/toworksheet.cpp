@@ -1638,7 +1638,7 @@ void toWorksheet::describe(void)
     {
         toDescribe * d = new toDescribe(this);
         d->changeParams(owner, table);
-        d->show();
+//         d->show();
     }
     else
     {

@@ -46,7 +46,8 @@
 
 
 /*! \brief Enhanced "key F4 describe table" dialog.
-It's work in progress. It'll require a toBrowser cleanup. A bit...
+It tries to find object by its name. It uses descibe
+widget based on name's type.
 */
 class toDescribe : public QDialog, public Ui::toDescribe
 {
@@ -54,6 +55,10 @@ class toDescribe : public QDialog, public Ui::toDescribe
 
     public:
         toDescribe(QWidget * parent = 0);
+        /*! \brief This method tries to find object type
+        by its name. It shows the dialog itself - so there
+        is no need to call show() explicitly.
+        */
         void changeParams(const QString & owner, const QString & object);
 
     protected:

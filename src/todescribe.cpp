@@ -41,7 +41,17 @@
 
 #include <QSettings>
 #include <QHideEvent>
+#include <QMessageBox>
 
+#include "toconnection.h"
+#include "tobrowsertablewidget.h"
+#include "tobrowserviewwidget.h"
+#include "tobrowserindexwidget.h"
+#include "tobrowsersequencewidget.h"
+#include "tobrowsercodewidget.h"
+#include "tobrowsersynonymwidget.h"
+#include "tobrowsertriggerwidget.h"
+#include "utils.h"
 #include "todescribe.h"
 
 
@@ -66,15 +76,51 @@ void toDescribe::hideEvent(QHideEvent * event)
     event->accept();
 }
 
-#include "tobrowsertablewidget.h"
 void toDescribe::changeParams(const QString & owner, const QString & object)
 {
-    // TODO/FIXME: check it if it's table or widget or whatever...
     if (widget)
     {
         delete widget;
-        widget = new toBrowserTableWidget(this);
-        layout()->addWidget(widget);
+        widget = 0;
     }
+
+    QString objectType;
+
+    std::list<toConnection::objectName> objects = toCurrentConnection(this).objects(false);
+    for (std::list<toConnection::objectName>::iterator i = objects.begin();i != objects.end();i++)
+    {
+        if ((*i).Name == object && (*i).Owner == owner)
+        {
+            objectType = (*i).Type;
+            break;
+        }
+    }
+
+    if (objectType == "TABLE")
+        widget = new toBrowserTableWidget(this);
+    else if (objectType == "VIEW")
+        widget = new toBrowserViewWidget(this);
+    else if (objectType == "INDEX")
+        widget = new toBrowserIndexWidget(this);
+    else if (objectType == "SEQUENCE")
+        widget = new toBrowserSequenceWidget(this);
+    else if (objectType == "SYNONYM")
+        widget = new toBrowserSynonymWidget(this);
+    else if (objectType == "FUNCTION"
+             || objectType == "PROCEDURE"
+             || objectType == "PACKAGE"
+             || objectType == "PACKAGE BODY")
+        widget = new toBrowserCodeWidget(this);
+    else if (objectType == "TRIGGER")
+        widget = new toBrowserTriggerWidget(this);
+    else
+        QMessageBox::information(this, "Describe",
+                                  tr("Object %1 (%2) cannot be described").arg(object, owner));
+
+    if (!widget)
+        return;
+
+    layout()->addWidget(widget);
     widget->changeParams(owner, object);
+    show();
 }
