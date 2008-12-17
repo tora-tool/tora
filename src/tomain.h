@@ -186,6 +186,10 @@ private:
      * Current row label.
      */
     QLabel *RowLabel;
+
+    //! \brief Display current type of text edit selection (normal/block)
+    QLabel * SelectionLabel;
+
     toBackground Poll;
     /**
      * Search & replace dialog if available.
@@ -247,6 +251,10 @@ private:
     QAction *searchReplaceAct;
     QAction *searchNextAct;
     QAction *selectAllAct;
+#if 0
+// TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
+    QAction *selectBlockAct;
+#endif
     QAction *readAllAct;
     QAction *prefsAct;
     QAction *helpCurrentAct;

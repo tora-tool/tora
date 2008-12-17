@@ -86,6 +86,11 @@ QMenu   *CaseMenu  = NULL;
 QAction *UpperCase = NULL;
 QAction *LowerCase = NULL;
 
+QMenu * BookmarkMenu = NULL;
+QAction * BookmarkSwitchAct = NULL;
+QAction * BookmarkPrevAct = NULL;
+QAction * BookmarkNextAct = NULL;
+
 QAction *Indent       = NULL;
 QAction *Deindent     = NULL;
 QAction *Quote        = NULL;
@@ -143,6 +148,7 @@ void toEditExtensions::editEnabled(bool enable)
     IncMenu->setEnabled(enable);
     IndentMenu->setEnabled(enable);
     CaseMenu->setEnabled(enable);
+    BookmarkMenu->setEnabled(enable);
 
     Indent->setEnabled(enable);
     Deindent->setEnabled(enable);
@@ -151,6 +157,27 @@ void toEditExtensions::editEnabled(bool enable)
     GotoLine->setEnabled(enable);
 
     AutoComplete->setEnabled(enable);
+}
+
+void toEditExtensions::bookmarkSwitch()
+{
+    toHighlightedText * t = qobject_cast<toHighlightedText*>(Current);
+    if (t)
+        t->handleBookmark();
+}
+
+void toEditExtensions::bookmarkPrev()
+{
+    toHighlightedText * t = qobject_cast<toHighlightedText*>(Current);
+    if (t)
+        t->gotoPrevBookmark();
+}
+
+void toEditExtensions::bookmarkNext()
+{
+    toHighlightedText * t = qobject_cast<toHighlightedText*>(Current);
+    if (t)
+        t->gotoNextBookmark();
 }
 
 void toEditExtensions::gotoLine()
@@ -645,6 +672,21 @@ public:
                                         &EditExtensions,
                                         SLOT(lowerCase()));
         LowerCase->setShortcut(Qt::CTRL + Qt::Key_L);
+
+        // bookmark menu
+        BookmarkMenu = edit->addMenu(qApp->translate("toEditExtensionTool", "Bookmarks"));
+        BookmarkSwitchAct = BookmarkMenu->addAction("Add/Remove Bookmark",
+                                                     &EditExtensions,
+                                                     SLOT(bookmarkSwitch()));
+        BookmarkSwitchAct->setShortcut(Qt::CTRL + Qt::Key_B);
+        BookmarkPrevAct = BookmarkMenu->addAction("Go to previous Bookmark",
+                                                    &EditExtensions,
+                                                    SLOT(bookmarkPrev()));
+        BookmarkPrevAct->setShortcut(Qt::ALT + Qt::Key_PageUp);
+        BookmarkNextAct = BookmarkMenu->addAction("Go to next Bookmark",
+                                                    &EditExtensions,
+                                                    SLOT(bookmarkNext()));
+        BookmarkNextAct->setShortcut(Qt::ALT + Qt::Key_PageDown);
 
         // ------------------------------ etc
 

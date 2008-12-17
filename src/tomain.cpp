@@ -351,6 +351,13 @@ void toMain::createActions()
     selectAllAct = new QAction(tr("Select &All"), this);
     selectAllAct->setShortcut(QKeySequence::SelectAll);
 
+#if 0
+    // TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
+    selectBlockAct = new QAction(tr("Block Selection"), this);
+    selectBlockAct->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_B);
+    selectBlockAct->setCheckable(true);
+#endif
+
     readAllAct = new QAction(tr("Read All &Items"), this);
 
     prefsAct = new QAction(tr("&Preferences..."), this);
@@ -440,6 +447,10 @@ void toMain::createMenus()
     editMenu->addAction(searchReplaceAct);
     editMenu->addAction(searchNextAct);
     editMenu->addAction(selectAllAct);
+#if 0
+// TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
+    editMenu->addAction(selectBlockAct);
+#endif
     editMenu->addAction(readAllAct);
     editMenu->addSeparator();
 
@@ -566,6 +577,14 @@ void toMain::addButtonApplication(QAction *act)
 void toMain::createStatusbar()
 {
     statusBar()->showMessage(QString::null);
+
+#if 0
+// TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
+    SelectionLabel = new QLabel(statusBar());
+    statusBar()->addPermanentWidget(SelectionLabel);
+    SelectionLabel->setMinimumWidth(90);
+    SelectionLabel->setText("Sel: Normal");
+#endif
 
     RowLabel = new QLabel(statusBar());
     statusBar()->addPermanentWidget(RowLabel, 0);
@@ -988,6 +1007,28 @@ void toMain::commandCallback(QAction *action)
             edit->editCut();
         else if (action == selectAllAct)
             edit->editSelectAll();
+#if 0
+// TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
+        else if (action == selectBlockAct)
+        {
+            // OK, this looks ugly but it's pretty functional.
+            // Here I need to setup chosen selection type for
+            // all QScintilla based editors.
+            int selectionType = action->isChecked()
+                                    ? QsciScintillaBase::SC_SEL_RECTANGLE
+                                    : QsciScintillaBase::SC_SEL_STREAM;
+            foreach (QWidget * i, QApplication::allWidgets())
+            {
+                toMarkedText * w = qobject_cast<toMarkedText*>(i);
+                if (w)
+                {
+                    w->setSelectionType(selectionType);
+                    qDebug() << "setting" << w << selectionType;
+                }
+            }
+            SelectionLabel->setText(action->isChecked() ? "Sel: Block" : "Sel: Normal");
+        }
+#endif
         else if (action == refreshAct)
             edit->editReadAll();
         else if (action == searchReplaceAct)

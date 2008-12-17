@@ -239,10 +239,24 @@ private:
     QStringList defaultCompletion;
 
 protected:
-    int debugMarker;
-    int errorMarker;
-    //! \brief A handler for current line highlighting
+    //! \brief A handler for debug - line highlighted
+    int m_debugHandle;
+    //! \brief A handler for debug - margin
+    int m_debugMarginHandle;
+    //! \brief A handler for code error - line highlighted
+    int m_errorHandle;
+    //! \brief A handler for code error - margin
+    int m_errorMarginHandle;
+    //! \brief A handler for current line highlighting - line highlighted
     int m_currentLineHandle;
+    //! \brief A handler for current line highlighting - margin
+    int m_currentLineMarginHandle;
+    //! \brief A handler for bookrmarks - line highlighted
+    int m_bookmarkHandle;
+    //! \brief A handler for bookrmarks - margin
+    int m_bookmarkMarginHandle;
+    //! \brief Bookrmarks handler list used for navigation (next/prev)
+    QList<int> m_bookmarks;
 
     toComplPopup* popup;
 
@@ -262,7 +276,11 @@ public:
      */
     virtual ~toHighlightedText();
 
-public:
+    /*! \brief Inherited from toMarkedText to clear all required editor
+    markers;
+    */
+    virtual void openFilename(const QString &file);
+
     /**
      * Set the lexer to use.
      * @param lexer to use,
@@ -385,6 +403,10 @@ public slots:
     /** Go to previous error.
      */
     void previousError(void);
+
+    void handleBookmark();
+    void gotoPrevBookmark();
+    void gotoNextBookmark();
 
     virtual void autoCompleteFromAPIs();
 

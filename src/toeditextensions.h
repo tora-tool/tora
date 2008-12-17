@@ -93,6 +93,11 @@ public slots:
     void autoComplete(void);
 
     void editEnabled(bool);
+
+    // bookmarks
+    void bookmarkSwitch();
+    void bookmarkPrev();
+    void bookmarkNext();
 };
 
 

@@ -160,6 +160,14 @@ public:
         return hasSelectedText();
     }
 
+#if 0
+// TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
+    /*! \brief Set the selection mode for editor.
+    \param aType SC_SEL_STREAM = 0, SC_SEL_RECTANGLE = 1, SC_SEL_LINES = 2
+    */
+    void setSelectionType(int aType=SC_SEL_STREAM);
+#endif
+
     /** Get filename of current file in editor.
      * @return Filename of editor.
      */

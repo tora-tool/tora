@@ -666,6 +666,16 @@ void toMarkedText::insert(const QString &str, bool select)
     QsciScintilla::endUndoAction();
 }
 
+#if 0
+// TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
+void toMarkedText::setSelectionType(int aType)
+{
+    qDebug() << "setSelectionType" << SendScintilla(SCI_GETSELECTIONMODE) << aType;
+    qDebug() << SendScintilla(SCI_SETSELECTIONMODE, aType);
+    qDebug() << "setSelectionType" << SendScintilla(SCI_GETSELECTIONMODE) << aType;
+}
+#endif
+
 void toMarkedText::setTextChanged()
 {
     redoEnabled(isRedoAvailable());
