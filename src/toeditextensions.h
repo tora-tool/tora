@@ -64,6 +64,14 @@ class toEditExtensions : public QObject, public toEditWidget::editHandler
 
     void intIndent(int level);
 
+    /*! \brief A helper method for handleComment().
+    It takes given line's text, then it checks if it starts
+    with SQL comment "--". It adds a comment mark if there isn't any.
+    It removes comment mark if there is one in the beginning of the line.
+    \param line row position in the document
+    */
+    void handleCommentLine(int line);
+
 public:
     toEditExtensions();
     virtual void receivedFocus(toEditWidget *widget);
@@ -78,6 +86,11 @@ public slots:
 
     void quoteBlock(void);
     void unquoteBlock(void);
+
+    /*! \brief Comment or uncomment the text selection or current line.
+    See handleCommentLine().
+    */
+    void handleComment();
 
     void obfuscateBlock(void);
     void obfuscateBuffer(void);

@@ -95,6 +95,7 @@ QAction *Indent       = NULL;
 QAction *Deindent     = NULL;
 QAction *Quote        = NULL;
 QAction *UnQuote      = NULL;
+QAction *Comment      = NULL;
 QAction *GotoLine     = NULL;
 QAction *AutoComplete = NULL;
 
@@ -364,6 +365,40 @@ void toEditExtensions::unquoteBlock(void)
     }
 }
 
+void toEditExtensions::handleCommentLine(int line)
+{
+    QString t(Current->text(line));
+    if (t.startsWith("--"))
+    {
+        Current->setSelection(line, 0, line, 2);
+        Current->removeSelectedText();
+    }
+    else
+        Current->insertAt("--", line, 0);
+}
+
+void toEditExtensions::handleComment()
+{
+    if (!Current)
+        return;
+
+    if (Current->hasSelectedText())
+    {
+        int l, c, l1, c1;
+        Current->getSelection(&l, &c, &l1, &c1);
+        for (int i = l; i <= l1; ++i)
+        {
+            handleCommentLine(i);
+        }
+        Current->setSelection(l, c, l1, c1);
+    }
+    else
+    {
+        int l, c;
+        Current->getCursorPosition(&l, &c);
+        handleCommentLine(l);
+    }
+}
 
 void toEditExtensions::upperCase(void)
 {
@@ -710,9 +745,15 @@ public:
                                 SLOT(quoteBlock()));
 
         UnQuote = edit->addAction(qApp->translate("toEditExtensionTool",
-                                  "UnQuote Selection"),
+                                                  "UnQuote Selection"),
                                   &EditExtensions,
                                   SLOT(unquoteBlock()));
+
+        Comment = edit->addAction(qApp->translate("toEditExtensionTool",
+                                                  "Comment or Uncomment"),
+                                  &EditExtensions,
+                                  SLOT(handleComment()),
+                                  Qt::CTRL + Qt::Key_D);
 
         GotoLine = edit->addAction(qApp->translate("toEditExtensionTool",
                                    "Goto Line"),
