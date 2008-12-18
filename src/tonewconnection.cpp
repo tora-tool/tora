@@ -84,8 +84,7 @@ toNewConnection::toNewConnection(QWidget* parent, Qt::WFlags fl)
         if (s == "Oracle")
         {
             Provider->addItem(ORACLE_INSTANT);
-            if (getenv("ORACLE_HOME"))
-                Provider->addItem(ORACLE_TNS);
+            Provider->addItem(ORACLE_TNS);
         }
         else
             Provider->addItem(s);
