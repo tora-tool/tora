@@ -52,18 +52,20 @@
 #include <QAction>
 
 class QComboBox;
-class toTreeWidgetItem;
 class QSplitter;
 class QTabWidget;
+
 class toConnection;
 class toMain;
 class toResultBar;
 class toResultCombo;
 class toResultLock;
 class toResultStats;
-class toSGAStatement;
-class toWaitEvents;
 class toResultTableView;
+class toSGAStatement;
+class toSessionFilter;
+class toTreeWidgetItem;
+class toWaitEvents;
 
 
 #define TO_SESSION_WAIT "toSession:SessionWait"
@@ -99,6 +101,7 @@ class toSession : public toToolWidget
     QMenu             *ToolMenu;
     QComboBox         *Refresh;
     QLabel            *Total;
+    toSessionFilter   *SessionFilter;
 
     QAction *refreshAct;
     QAction *enableTimedAct;
@@ -134,9 +137,9 @@ public slots:
     void disconnectSession(void);
     void windowActivated(QMdiSubWindow *widget);
     void done(void);
-    void excludeSelection(bool);
     void selectAll(void);
     void selectNone(void);
+    void filterChanged(const QString &text);
 };
 
 #ifdef TOEXTENDED_MYSQL

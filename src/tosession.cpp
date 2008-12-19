@@ -72,6 +72,7 @@
 #include <QTabWidget>
 #include <QList>
 #include <QPixmap>
+#include <QRegExp>
 
 #include "icons/add.xpm"
 #include "icons/clock.xpm"
@@ -80,7 +81,9 @@
 #include "icons/noclock.xpm"
 #include "icons/refresh.xpm"
 #include "icons/tosession.xpm"
-#include "icons/filter.xpm"
+// #include "icons/filter.xpm"
+
+#include <QDebug>
 
 
 class toSessionTool : public toTool
@@ -111,7 +114,69 @@ public:
     virtual void closeWindow(toConnection &connection) {};
 };
 
+
 static toSessionTool SessionTool;
+
+
+class toSessionFilter  : public toViewFilter
+{
+    QRegExp Filter;
+
+public:
+    toSessionFilter()
+    {
+    }
+
+
+    virtual toViewFilter* clone()
+    {
+        toSessionFilter *f = new toSessionFilter;
+        f->Filter = Filter;
+        return f;
+    }
+
+
+    void setFilterString(const QString &f)
+    {
+        if(f.isEmpty())
+        {
+            QRegExp filter;
+            Filter = filter;
+        }
+        else
+        {
+            QRegExp filter(QString("*") + f + QString("*"),
+                           Qt::CaseInsensitive,
+                           QRegExp::Wildcard);
+            Filter = filter;
+        }
+    }
+
+
+    /**
+     * return true to show, false to hide
+     *
+     */
+    virtual bool check(const toResultModel *model, const int row)
+    {
+        if(Filter.isEmpty())
+            return true;
+
+        int rows = model->rowCount();
+        for(int col = 0; col < rows; col++)
+        {
+            QString data = model->data(row, col).toString();
+            if(data.isEmpty())
+                continue;
+
+            if(Filter.exactMatch(data))
+                return true;
+        }
+
+        return false;
+    }
+};
+
 
 static toSQL SQLConnectInfo(
     "toSession:ConnectInfo",
@@ -265,7 +330,11 @@ static toSQL SQLSessionsPg(
     "PostgreSQL");
 
 toSession::toSession(QWidget *main, toConnection &connection)
-        : toToolWidget(SessionTool, "session.html", main, connection, "toSession")
+    : toToolWidget(SessionTool,
+                   "session.html",
+                   main,
+                   connection,
+                   "toSession")
 {
     QToolBar *toolbar = toAllocBar(this, tr("Session manager"));
     layout()->addWidget(toolbar);
@@ -342,28 +411,29 @@ toSession::toSession(QWidget *main, toConnection &connection)
             this, SLOT(changeRefresh(const QString &)));
     toolbar->addWidget(Refresh);
 
-    // TODO
-//     if (toIsOracle(connection))
-//     {
-//         toolbar->addSeparator();
+    toolbar->addSeparator();
 
-//         QToolButton *btn = new QToolButton(toolbar);
-//         btn->setCheckable(true);
-//         btn->setIcon(QIcon(filter_xpm));
-//         connect(btn, SIGNAL(toggled(bool)), this, SLOT(excludeSelection(bool)));
-//         btn->setToolTip(tr("Exclude selected sessions"));
-//         toolbar->addWidget(btn);
+    toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(add_xpm))),
+                       tr("Select all sessions"),
+                       this,
+                       SLOT(selectAll(void)));
 
-//         toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(add_xpm))),
-//                            tr("Select all sessions"),
-//                            this,
-//                            SLOT(selectAll(void)));
+    toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(minus_xpm))),
+                       tr("Deselect all sessions"),
+                       this,
+                       SLOT(selectNone(void)));
 
-//         toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(minus_xpm))),
-//                            tr("Deselect all sessions"),
-//                            this,
-//                            SLOT(selectNone(void)));
-//     }
+    toolbar->addWidget(new QLabel(tr("Filter")));
+
+    QLineEdit *filter = new QLineEdit;
+    filter->setMinimumWidth(200);
+    toolbar->addWidget(filter);
+
+    qDebug() << "connect!";
+    connect(filter,
+            SIGNAL(textChanged(const QString &)),
+            this,
+            SLOT(filterChanged(const QString &)));
 
     toolbar->addWidget(new toSpacer());
 
@@ -376,7 +446,6 @@ toSession::toSession(QWidget *main, toConnection &connection)
     QSplitter *splitter = new QSplitter(Qt::Vertical, this);
     layout()->addWidget(splitter);
 
-//     Sessions = new toSessionList(splitter);
     Sessions = new toResultTableView(true,
                                      false,
                                      splitter,
@@ -384,8 +453,13 @@ toSession::toSession(QWidget *main, toConnection &connection)
                                      false);                                     
     Sessions->setAlternatingRowColors(true);
     Sessions->horizontalHeader()->setStretchLastSection(true);
-
+    Sessions->setSelectionBehavior(QAbstractItemView::SelectRows);
+    Sessions->setSelectionMode(QAbstractItemView::ExtendedSelection);
     Sessions->setReadAll(true);
+
+    SessionFilter = new toSessionFilter;
+    Sessions->setFilter(SessionFilter);
+
     connect(Sessions, SIGNAL(done()), this, SLOT(done()));
 
     ResultTab = new QTabWidget(splitter);
@@ -469,7 +543,6 @@ toSession::toSession(QWidget *main, toConnection &connection)
         LockedObjects->setSQL(SQLLockedObject);
     }
 
-    Sessions->setSelectionBehavior(QAbstractItemView::SelectRows);
     connect(Sessions,
             SIGNAL(selectionChanged()),
             this,
@@ -502,45 +575,21 @@ toSession::toSession(QWidget *main, toConnection &connection)
     setFocusProxy(Sessions);
 }
 
+
 bool toSession::canHandle(toConnection &conn)
 {
     return toIsOracle(conn) || toIsPostgreSQL(conn);
 }
 
-void toSession::excludeSelection(bool tgl)
+
+void toSession::selectAll()
 {
-    // TODO
-//     toSessionList::sessionFilter *filt =
-//         dynamic_cast<toSessionList::sessionFilter *>(Sessions->filter());
-//     if (filt)
-//     {
-//         filt->setShow(!tgl);
-//         refresh();
-//     }
+    Sessions->selectAll();
 }
 
-void toSession::selectAll(void)
+void toSession::selectNone()
 {
-    // TODO
-//     for (toTreeWidgetItem *item = Sessions->firstChild();
-//             item;
-//             item = item->nextSibling())
-//     {
-//         toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>(item);
-//         if (chk)
-//             chk->setOn(true);
-//     }
-}
-
-void toSession::selectNone(void)
-{
-    // TODO
-//     for (toTreeWidgetItem *item = Sessions->firstChild();item;item = item->nextSibling())
-//     {
-//         toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>(item);
-//         if (chk)
-//             chk->setOn(false);
-//     }
+    Sessions->clearSelection();
 }
 
 
@@ -590,11 +639,11 @@ void toSession::refresh(void)
 {
     try
     {
-        QModelIndex item = Sessions->selectedIndex();
+        QModelIndex item = Sessions->currentIndex();
         if(item.isValid())
-        {
-            Session = item.data().toString();
-            Serial = item.data().toString();
+        { 
+            Session = Sessions->model()->data(item.row(), 1).toString();
+            Serial  = Sessions->model()->data(item.row(), 2).toString();
         }
         else
             Session = Serial = QString::null;
@@ -679,14 +728,13 @@ void toSession::changeTab(int index)
     if (tab != CurrentTab)
     {
         CurrentTab = tab;
-        QModelIndex item = Sessions->selectedIndex();
+        QModelIndex item = Sessions->currentIndex();
 
         if(!item.isValid())
             return;
-
-        QString connectionId = item.data().toString();
-        QModelIndex index = Sessions->model()->index(item.row(), 2);
-        QString serial = index.data().toString();
+ 
+        QString connectionId = Sessions->model()->data(item.row(), 1).toString();
+        QString serial       = Sessions->model()->data(item.row(), 2).toString();
 
         if (CurrentTab == StatisticSplitter)
         {
@@ -772,36 +820,32 @@ void toSession::changeCursor()
 
 void toSession::cancelBackend()
 {
-    QModelIndex item = Sessions->selectedIndex();
-    if(!item.isValid())
-        return;
-
-    try
+    QModelIndexList selected = Sessions->selectionModel()->selectedRows();
+    foreach(QModelIndex item, selected)
     {
-        connection().execute(
-            QString("SELECT pg_cancel_backend ( %1 )").arg(item.data().toString()));
+        qDebug() << "item is" << item;
+        if(!item.isValid())
+            return;
+
+        try
+        {
+            connection().execute(
+                QString("SELECT pg_cancel_backend ( %1 )").arg(item.data().toString()));
+        }
+        TOCATCH;
     }
-    TOCATCH;
 }
 
 void toSession::disconnectSession()
 {
-    QModelIndex item = Sessions->selectedIndex();
-    if(!item.isValid())
+    QModelIndexList selected = Sessions->selectionModel()->selectedRows();
+    if(selected.isEmpty())
         return;
 
-    QString connectionId = item.data().toString();
-    QModelIndex index = Sessions->model()->index(item.row(), 2);
-    QString serial = index.data().toString();
-
-    QString sess = QString::fromLatin1("'");
-    sess.append(connectionId);
-    sess.append(QString::fromLatin1(","));
-    sess.append(serial);
-    sess.append(QString::fromLatin1("'"));
-    QString str(tr("Let current transaction finish before "
-                   "disconnecting this session?"));
+    QString str(tr("Let transaction(s) finish before disconnecting?"));
     QString sql;
+
+    bool letcommit = false;
     switch (TOMessageBox::warning(this,
                                   tr("Commit work?"),
                                   str,
@@ -810,22 +854,47 @@ void toSession::disconnectSession()
                                   tr("Cancel")))
     {
     case 0:
-        sql = QString::fromLatin1("ALTER SYSTEM DISCONNECT SESSION ");
-        sql.append(sess);
-        sql.append(QString::fromLatin1(" POST_TRANSACTION"));
+        letcommit = true;
         break;
     case 1:
-        sql = QString::fromLatin1("ALTER SYSTEM KILL SESSION ");
-        sql.append(sess);
+        letcommit = false;
         break;
     case 2:
-        return ;
+        return;
     }
-    try
+
+    foreach(QModelIndex item, selected)
     {
-        connection().execute(sql);
+        if(!item.isValid())
+            return;
+
+        QString connectionId = Sessions->model()->data(item.row(), 1).toString();
+        QString serial       = Sessions->model()->data(item.row(), 2).toString();
+
+        QString sess = QString::fromLatin1("'");
+        sess.append(connectionId);
+        sess.append(QString::fromLatin1(","));
+        sess.append(serial);
+        sess.append(QString::fromLatin1("'"));
+
+        if(letcommit)
+        {
+            sql = QString::fromLatin1("ALTER SYSTEM DISCONNECT SESSION ");
+            sql.append(sess);
+            sql.append(QString::fromLatin1(" POST_TRANSACTION"));
+        }
+        else
+        {
+            sql = QString::fromLatin1("ALTER SYSTEM KILL SESSION ");
+            sql.append(sess);
+        }
+
+        try
+        {
+            connection().execute(sql);
+        }
+        TOCATCH;
     }
-    TOCATCH;
 }
 
 void toSession::changeRefresh(const QString &str)
@@ -839,11 +908,11 @@ void toSession::changeRefresh(const QString &str)
 
 void toSession::changeItem()
 {
-    QModelIndex selected = Sessions->selectedIndex();
+    QModelIndex selected = Sessions->currentIndex();
     if(!selected.isValid())
         return;
 
-    QString item = selected.data().toString();
+    QString item = Sessions->model()->data(selected.row(), 1).toString();
     if (LastSession != item)
     {
         if (!item.isEmpty())
@@ -867,4 +936,11 @@ void toSession::changeItem()
 void toSession::refreshTabs(void)
 {
     changeItem();
+}
+
+
+void toSession::filterChanged(const QString &text)
+{
+    SessionFilter->setFilterString(text);
+    Sessions->applyFilter();
 }

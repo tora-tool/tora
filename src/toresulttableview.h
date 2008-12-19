@@ -154,9 +154,6 @@ class toResultTableView : public QTableView,
 
     void createActions(void);
 
-    // use Filter to hide rows
-    void applyFilter(void);
-
     /*! \brief Common setup function called from constructors
     */
     void setup(bool readable, bool numberColumn, bool editable);
@@ -319,10 +316,7 @@ public:
      *
      * @param filter The new filter or NULL if no filter is to be used.
      */
-    void setFilter(toViewFilter *filter)
-    {
-        Filter = filter;
-    }
+    void setFilter(toViewFilter *filter);
 
 
     /**
@@ -464,6 +458,14 @@ public slots:
         if (Model)
             Model->stop();
     }
+
+
+    /**
+     * apply Filter to row visibility
+     *
+     */
+    void applyFilter(void);
+
 
 signals:
 

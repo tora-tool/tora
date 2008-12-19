@@ -116,7 +116,7 @@ void toResultTableView::setup(bool readable, bool numberColumn, bool editable)
     Menu            = NULL;
     Editable        = editable;
     ReadAll         = false;
-    Filter          = false;
+    Filter          = 0;
     ReadableColumns = readable;
     NumberColumn    = numberColumn;
     ColumnsResized  = false;
@@ -175,9 +175,13 @@ void toResultTableView::setup(bool readable, bool numberColumn, bool editable)
 
 toResultTableView::~toResultTableView()
 {
-    if (Model)
+    if(Model)
         delete Model;
     Model = NULL;
+
+    if(Filter)
+        delete Filter;
+    Filter = 0;
 }
 
 
@@ -275,11 +279,15 @@ void toResultTableView::applyFilter()
 
     Filter->startingQuery();
 
+    setUpdatesEnabled(false);
     for (int row = 0; row < Model->rowCount(); row++)
     {
         if (!Filter->check(Model, row))
             hideRow(row);
+        else
+            showRow(row);
     }
+    setUpdatesEnabled(true);
 }
 
 
@@ -510,6 +518,14 @@ bool toResultTableView::running(void)
         return false;
     QModelIndex index = currentIndex();
     return Model->canFetchMore(index);
+}
+
+
+void toResultTableView::setFilter(toViewFilter *filter)
+{
+    if(Filter)
+        delete Filter;
+    Filter = filter;
 }
 
 

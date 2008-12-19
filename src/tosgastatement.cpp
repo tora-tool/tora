@@ -110,7 +110,7 @@ void toSGAStatement::changeTab(int index)
     try
     {
         CurrentTab = widget;
-        if (!Address.isEmpty())
+        if (!Address.isEmpty() && Address != QString::fromLatin1("00:0"))
         {
             if (CurrentTab == SQLText)
             {
