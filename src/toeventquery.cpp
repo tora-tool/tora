@@ -131,6 +131,12 @@ void toEventQuery::start() {
             SLOT(taskFinished()),
             Qt::QueuedConnection);
 
+    connect(Task,
+            SIGNAL(rowsProcessed(int)),
+            this,
+            SLOT(taskRowsProcessed(int)),
+            Qt::QueuedConnection);
+
     (new toRunnableThread(Task))->start();
 }
 
@@ -192,4 +198,9 @@ void toEventQuery::taskError(const toConnection::exception &msg) {
 void toEventQuery::taskFinished() {
     TaskDone = true;
     emit done();
+}
+
+
+void toEventQuery::taskRowsProcessed(int rows) {
+    Processed = rows;
 }

@@ -175,6 +175,13 @@ signals:
      *
      */
     void done();
+
+
+    /**
+     * Emitted if query.rowsProcessed() > 0. Number of affected rows.
+     *
+     */
+    void rowsProcessed(int rows);
 };
 
 #endif

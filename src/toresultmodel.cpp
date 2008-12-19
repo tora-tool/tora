@@ -191,7 +191,15 @@ void toResultModel::readData()
 
                 // need to reset view(s) since we have to poll for data
                 reset();
-                emit firstResult(tr("Statement executed"), false);
+                if(Query && Query->rowsProcessed() > 0) {
+                    emit firstResult(QString::number(Query->rowsProcessed()) +
+                                     (Query->rowsProcessed() == 1 ?
+                                          tr(" row processed") :
+                                          tr(" rows processed")),
+                                     false);
+                }
+                else
+                    emit firstResult(tr("Statement executed"), false);
             }
         }
 

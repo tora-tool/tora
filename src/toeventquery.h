@@ -230,6 +230,9 @@ private slots:
     // handle task finished
     void taskFinished(void);
 
+    // sets Processed. signal is sent if > 0
+    void taskRowsProcessed(int rows);
+
 public slots:
 
     /**

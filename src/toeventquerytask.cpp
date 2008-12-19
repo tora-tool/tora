@@ -156,6 +156,12 @@ toEventQueryTask::~toEventQueryTask() {
 
 void toEventQueryTask::close() {
     try {
+        if(Query) {
+            int p = Query->rowsProcessed();
+            if(p > 0)
+                emit rowsProcessed(p);
+        }
+
         emit done();
 
         disconnect(this, 0, 0, 0);
