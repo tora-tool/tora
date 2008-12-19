@@ -57,6 +57,7 @@
 #include "totool.h"
 #include "towaitevents.h"
 #include "toresulttableview.h"
+#include "toeventquery.h"
 
 #include <qcombobox.h>
 #include <qlabel.h>
@@ -82,8 +83,6 @@
 #include "icons/refresh.xpm"
 #include "icons/tosession.xpm"
 // #include "icons/filter.xpm"
-
-#include <QDebug>
 
 
 class toSessionTool : public toTool
@@ -317,13 +316,16 @@ static toSQL SQLSessionsPg(
     "       ( SELECT u.usename\n"
     "           FROM pg_user u\n"
     "          WHERE u.usesysid = pg_stat_get_backend_userid ( s.backendid ) ) AS \"User\",\n"
+    "       ( SELECT datname\n"
+    "           FROM pg_database db\n"
+    "          WHERE db.OID = pg_stat_get_backend_dbid ( s.backendid ) ) AS \"Database\",\n"
     "       pg_stat_get_backend_client_addr ( s.backendid ) AS \"From\",\n"
     "       pg_stat_get_backend_client_port ( s.backendid ) AS \"Port\",\n"
     "       pg_stat_get_backend_activity_start ( s.backendid ) AS \"Started\",\n"
     "       pg_stat_get_backend_waiting ( s.backendid ) AS \"Waiting\",\n"
     "       pg_stat_get_backend_activity ( s.backendid ) AS \"Current Query\",\n"
-    "       s.backendid as \" current\",\n"
-    "       null as \" previous\"\n"
+    "       s.backendid AS \" current\",\n"
+    "       NULL AS \" previous\"\n"
     "  FROM ( SELECT pg_stat_get_backend_idset ( ) AS backendid ) AS s",
     "",
     "",
@@ -429,7 +431,6 @@ toSession::toSession(QWidget *main, toConnection &connection)
     filter->setMinimumWidth(200);
     toolbar->addWidget(filter);
 
-    qDebug() << "connect!";
     connect(filter,
             SIGNAL(textChanged(const QString &)),
             this,
@@ -820,10 +821,9 @@ void toSession::changeCursor()
 
 void toSession::cancelBackend()
 {
-    QModelIndexList selected = Sessions->selectionModel()->selectedRows();
+    QModelIndexList selected = Sessions->selectionModel()->selectedRows(1);
     foreach(QModelIndex item, selected)
     {
-        qDebug() << "item is" << item;
         if(!item.isValid())
             return;
 
@@ -891,7 +891,17 @@ void toSession::disconnectSession()
 
         try
         {
-            connection().execute(sql);
+            // oracle can take an awful long time to return
+
+            toQList params;
+            toEventQuery *query = new toEventQuery(connection(),
+                                                   sql,
+                                                   params);
+            connect(query,
+                    SIGNAL(done()),
+                    query,
+                    SLOT(deleteLater()));
+            query->start();
         }
         TOCATCH;
     }
