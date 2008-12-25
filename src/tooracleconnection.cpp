@@ -177,19 +177,7 @@ static void ThrowException(const otl_exception &exc)
 class toOracleProvider : public toConnectionProvider
 {
 public:
-class connectionDeleter : public toTask
-    {
-        otl_connect *Connection;
-    public:
-        connectionDeleter(otl_connect *connect)
-                : Connection(connect)
-        { }
-        virtual void run(void)
-        {
-            delete Connection;
-        }
-    };
-class oracleSub : public toConnectionSub
+    class oracleSub : public toConnectionSub
     {
     public:
         otl_connect *Connection;
@@ -199,8 +187,11 @@ class oracleSub : public toConnectionSub
         }
         ~oracleSub()
         {
-            toThread *thread = new toThread(new connectionDeleter(Connection));
-            thread->start();
+            try {
+                delete Connection;
+            }
+            catch(...) {
+            }
         }
         virtual void cancel(void)
         {
@@ -438,6 +429,8 @@ class oracleQuery : public toQuery::queryImpl
                     if(conn)
                         conn->throwExtendedException(query()->connection(), exc);
                 }
+
+                return true;
             }
         }
         virtual int rowsProcessed(void)
