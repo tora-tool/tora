@@ -192,6 +192,8 @@ public:
             }
             catch(...) {
             }
+
+            Connection = 0;
         }
         virtual void cancel(void)
         {
