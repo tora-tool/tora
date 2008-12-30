@@ -785,15 +785,17 @@ void toMain::updateRecent()
     recentMenu->clear();
 
     int index = 1;
-    QList<QString>::iterator i = files.end();
-    while(i != files.begin())
+    QMutableListIterator<QString> i(files);
+    i.toBack();
+    QString f;
+    while (i.hasPrevious())
     {
-        i--;
+        f = i.previous();
 
-        QFileInfo fi(*i);
+        QFileInfo fi(f);
         if (!fi.exists())
         {
-            files.removeAt(files.indexOf(*i));
+            i.remove();
             continue;
         }
 
@@ -805,7 +807,7 @@ void toMain::updateRecent()
             caption = "&" + QString::number(index++) + "  " + caption;
 
         QAction *r = new QAction(caption, this);
-        r->setToolTip(*i);
+        r->setToolTip(f);
         recentMenu->addAction(r);
     }
 
