@@ -70,11 +70,12 @@ toResultSchema::toResultSchema(toConnection &conn,
     {
         if (toIsMySQL(conn))
             sel = conn.database();
-        else if (toIsOracle(conn) || toIsSapDB(conn))
-            sel = conn.user().toUpper();
         else
             sel = conn.user();
     }
+
+    // Oracle usernames are always in upper case
+    if (toIsOracle(conn) || toIsSapDB(conn)) sel = sel.toUpper();
 
     conn.setSchema(sel);
     setSelected(sel);
