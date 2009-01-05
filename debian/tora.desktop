@@ -10,5 +10,5 @@ Comment[fr]=Une boite à outil graphique pour l'administration et le développem
 Comment[de]=Grafisches Toolkit zur Administration und Entwicklung von Datenbanken
 X-KDE-StartupNotify=true
 Terminal=false
-Categories=Database;Office;Development;Qt
+Categories=Database;Office;Development;KDE;Qt
 

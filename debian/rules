@@ -1,95 +1,31 @@
 #!/usr/bin/make -f
-# Sample debian/rules that uses debhelper.
-# GNU copyright 1997 to 1999 by Joey Hess.
 
-# Uncomment this to turn on verbose mode.
-export DH_VERBOSE=1
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/cmake.mk
+include /usr/share/cdbs/1/rules/dpatch.mk
 
-include /usr/share/dpatch/dpatch.make 
+DEB_KDE_ENABLE_FINAL := yes
 
-DB2MAN=/usr/share/sgml/docbook/stylesheet/xsl/nwalsh/manpages/docbook.xsl
-XP=xsltproc -''-nonet
-
-
-configure: patch configure-stamp
-configure-stamp:
-	dh_testdir
-ifneq "$(wildcard /usr/share/misc/config.sub)" ""
-	cp -f /usr/share/misc/config.sub config.sub
-endif
-ifneq "$(wildcard /usr/share/misc/config.guess)" ""
-	cp -f /usr/share/misc/config.guess config.guess
+ifeq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+    cdbs_treat_me_gently_arches := arm m68k alpha ppc64 armel armeb
+    ifeq (,$(filter $(DEB_HOST_ARCH_CPU),$(cdbs_treat_me_gently_arches)))
+        cdbs_kde_enable_final = $(if $(DEB_KDE_ENABLE_FINAL),--enable-final,)
+    else
+        cdbs_kde_enable_final =
+    endif
 endif
 
-	# Add here commands to configure the package.
-	#./configure --prefix=/usr --with-instant-client=/home/mrjohnson/projects/instantclient --infodir=/usr/share/info
-
-	# if you're using oracle you must configure this line to work for your system
-	./configure --prefix=/usr --infodir=/usr/share/info
-	# also, for oracle make sure you uncomment dh_shlibdeps below.
-	# it won't work with proprietary libraries.
-
-	touch configure-stamp
-
-build: build-stamp
-
-build-stamp: configure
-	dh_testdir
-
-	# Add here commands to compile the package.
-	$(MAKE) CFLAGS_GLOB="-O2 -W -g -fPIC -Wall -Wno-unused" libdir=/usr/share/tora
-	$(XP) $(DB2MAN) debian/tora.xml
-
-	touch build-stamp
-
-clean: unpatch
-	dh_testdir
-	dh_testroot
-	rm -f build-stamp configure-stamp
-
-	# Add here commands to clean up after the build process.
-	[ ! -f Makefile ] || $(MAKE) distclean
-	find . -name "*.qm" -exec rm {} \;
-	rm -f tora.pro license/tolicenseui.h license/tolicenseui.cpp license/tolicense.moc license/tolicenseui.moc
-	rm -f tora.1
-
-	dh_clean
-
-install: build
-	dh_testdir
-	dh_testroot
-	dh_clean -k
-	dh_installdirs
-
-	# Add here commands to install the package into debian/tora.
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp libdir=/usr/share/tora
-	-install --owner root --group root --mode=644 $(CURDIR)/src/icons/tora.xpm $(CURDIR)/debian/tmp/usr/share/icons/hicolor/32x32/apps
-	-install --owner root --group root --mode=644 $(CURDIR)/src/icons/toramini.xpm $(CURDIR)/debian/tmp/usr/share/icons/hicolor/16x16/apps/tora.xpm
-	-install --owner root --group root --mode=644 $(CURDIR)/debian/tora.desktop $(CURDIR)/debian/tmp/usr/share/applications
-
-# Build architecture-independent files here.
-binary-indep: build install
-# We have nothing to do by default.
-
-# Build architecture-dependent files here.
-binary-arch: build install
-	dh_testdir
-	dh_testroot
-	dh_installdocs
-	dh_installexamples
-	dh_installmenu
-	dh_installman tora.1
-	dh_installinfo
-	dh_installchangelogs 
+install/tora::
+	# remove some file we don't want to install
+	rm -f $(CURDIR)/debian/tora/usr/share/doc/tora/README.OSX
+	rm -f $(CURDIR)/debian/tora/usr/share/doc/tora/README.LICENSE
+	rm -f $(CURDIR)/debian/tora/usr/share/doc/tora/README.WINDOWS
+	rm -f $(CURDIR)/debian/tora/usr/share/doc/tora/INSTALL
+	rm -f $(CURDIR)/debian/tora/usr/share/doc/tora/COPYING
+	rm -f $(CURDIR)/debian/tora/usr/share/doc/tora/ChangeLog
+	rm -f $(CURDIR)/debian/tora/usr/share/doc/tora/changelog
+	# this file cannot be installed by dh_install because it has to be renamed
+	-install --owner root --group root --mode=644 $(CURDIR)/src/icons/toramini.xpm $(CURDIR)/debian/tora/usr/share/icons/hicolor/16x16/apps/tora.xpm
+	# we have a desktop file
+	-install --owner root --group root --mode=644 $(CURDIR)/debian/tora.desktop $(CURDIR)/debian/tora/usr/share/applications
 	dh_desktop
-	dh_link
-	dh_strip
-	dh_compress
-	dh_fixperms
-	dh_gencontrol
-	dh_installdeb
-	dh_builddeb
-	dh_shlibdeps
-
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install configure

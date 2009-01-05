@@ -1,5 +1,2 @@
-usr/bin
-usr/lib/tora
-usr/share/icons/hicolor/32x32/apps
-usr/share/icons/hicolor/16x16/apps
-usr/share/applications
+/usr/share/icons/hicolor/16x16/apps/
+/usr/share/applications/
