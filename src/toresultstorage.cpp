@@ -142,7 +142,7 @@ toResultStorage::toResultStorage(bool available, QWidget *parent, const char *na
 {
     Unit = toConfigurationSingle::Instance().sizeUnit();
     setAllColumnsShowFocus(true);
-    //setSorting(0);
+    setSortingEnabled(false); // enable it after data fetch
     setRootIsDecorated(true);
     addColumn(tr("Name"));
     addColumn(tr("Status"));
@@ -602,6 +602,7 @@ void toResultStorage::query(void)
 
 void toResultStorage::updateList(void)
 {
+    setSortingEnabled(false); // enable it after data fetch
     clear();
     if (!OnlyFiles)
     {
@@ -653,6 +654,7 @@ void toResultStorage::updateList(void)
             setSelected(file, true);
         }
     }
+    setSortingEnabled(true);
 }
 
 void toResultStorage::poll(void)
