@@ -610,7 +610,26 @@ void toResultStorage::updateList(void)
         {
             toTreeWidgetItem *tablespace = new toResultStorageItem(AvailableGraph, this, NULL);
             for (int i = 0;i < COLUMNS && j != TablespaceValues.end();i++, j++)
+            {
+                if (i == 8)
+                    continue;
                 tablespace->setText(i, *j);
+            }
+
+            // To fill Used/Free/Autoextend column
+            double total = tablespace->text(7).toDouble();
+            double user = tablespace->text(5).toDouble();
+            double free = tablespace->text(6).toDouble();
+            if (total < user )
+                total = user;
+            user /= total;
+            free /= total;
+            QString t;
+//             t.sprintf("%05.1f / %05.1f / %05.1f%%", (user-free)*100, free*100, (1 - user)*100);
+// spaces seems better than 0-filling...
+            t.sprintf("%#5.1f / %#5.1f / %#5.1f%%", (user-free)*100, free*100, (1 - user)*100);
+            tablespace->setText(8,t);
+            // end of Used/Free/Autoextend column
 
             if (CurrentSpace == tablespace->text(0))
             {
