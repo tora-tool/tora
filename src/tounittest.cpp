@@ -42,17 +42,14 @@
 #include <QSettings>
 
 #include "tounittest.h"
-#include "toresultmodel.h"
-#include "toresulttableview.h"
 #include "utils.h"
 #include "tohighlightedtext.h"
 #include "toworksheetwidget.h"
 #include "toeventquery.h"
 #include "toresultcombo.h"
 #include "toresultschema.h"
-#include "toconf.h"
 #include "tochangeconnection.h"
-#include "tooutput.h"
+#include "tocodemodel.h"
 
 #include "icons/unittest.xpm"
 #include "icons/refresh.xpm"
@@ -68,7 +65,8 @@
 
 
 static toSQL SQLPackageParams("toUnitTest:PackageParams",
-                           "select argument_name, data_type, data_length, in_out, data_level, position, default_value\n"
+                           "select argument_name, data_type, data_length,\n"
+                           "        in_out, data_level, position, default_value\n"
                             "   from all_arguments\n"
                             "   where owner = upper(:f1<char[101]>)\n"
                             "   and object_name = upper(:f2<char[101]>)\n"
@@ -78,7 +76,8 @@ static toSQL SQLPackageParams("toUnitTest:PackageParams",
                            "0800");
 
 static toSQL SQLUnitParams("toUnitTest:UnitParams",
-                                "select argument_name, data_type, data_length, in_out, data_level, position, default_value\n"
+                                "select argument_name, data_type, data_length,\n"
+                                "        in_out, data_level, position, default_value\n"
                                 "   from all_arguments\n"
                                 "   where owner = upper(:f1<char[101]>)\n"
                                 "   and object_name = upper(:f2<char[101]>)\n"
@@ -93,14 +92,6 @@ static toSQL SQLListPackage("toUnitTest:ListPackageMethods",
                                    "   and package_name = upper(:f2<char[101]>)",
                                    "List package procedures and functions",
                             "0800");
-
-static toSQL UnitListCode("toUnitTest:ListCode",
-                          "SELECT Object_Name,Object_Type FROM SYS.ALL_OBJECTS\n"
-                                  " WHERE OWNER = upper(:f1<char[101]>)\n"
-                                  "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
-                                  "                       'PROCEDURE')\n"
-                                  " ORDER BY Object_Name",
-          "List all PL/SQL codes.", "0800");
 
 
 class toUnitTestTool : public toTool
@@ -158,7 +149,7 @@ toUnitTest::toUnitTest(QWidget * parent, toConnection &connection)
     QLabel * labSchema = new QLabel(tr("Schema") + " ", toolbar);
     toolbar->addWidget(labSchema);
     Schema = new toResultSchema(connection, toolbar,
-                                TO_TOOLBAR_WIDGET_NAME);
+                                "UTresultSchema");
     try
     {
         Schema->refresh();
@@ -168,7 +159,7 @@ toUnitTest::toUnitTest(QWidget * parent, toConnection &connection)
             this, SLOT(changeSchema(const QString &)));
     toolbar->addWidget(Schema);
 
-    new toChangeConnection(toolbar, TO_TOOLBAR_WIDGET_NAME);
+    new toChangeConnection(toolbar, "UTchangeConnection");
 
     splitter = new QSplitter(this);
     splitter->setOrientation(Qt::Horizontal);
@@ -176,10 +167,11 @@ toUnitTest::toUnitTest(QWidget * parent, toConnection &connection)
     codeSplitter = new QSplitter(this);
     codeSplitter->setOrientation(Qt::Horizontal);
 
-    codeList = new toResultTableView(true, false,
-                                     codeSplitter, "codeList");
-    codeList->setSQL(UnitListCode);
-    refreshCodeList();
+    codeList = new QTreeView(splitter);
+    codeModel = new toCodeModel(codeList);
+    codeList->setModel(codeModel);
+    connect(codeList, SIGNAL(doubleClicked(const QModelIndex &)),
+             this, SLOT(changePackage(const QModelIndex &)));
 
     packageList = new toResultTableView(true, false,
                                         codeSplitter, "packageList");
@@ -189,40 +181,29 @@ toUnitTest::toUnitTest(QWidget * parent, toConnection &connection)
     codeSplitter->addWidget(codeList);
     codeSplitter->addWidget(packageList);
 
-    editorSplitter = new QSplitter(this);
-    editorSplitter->setOrientation(Qt::Vertical);
-
-    worksheet = new toWorksheetWidget(editorSplitter,
+    worksheet = new toWorksheetWidget(splitter,
                                       "UTworksheet", connection);
-    output = new toOutput(editorSplitter, connection, true);
-
-    editorSplitter->addWidget(worksheet);
-    editorSplitter->addWidget(output);
 
     splitter->addWidget(codeSplitter);
-    splitter->addWidget(editorSplitter);
+    splitter->addWidget(worksheet);
 
     layout()->addWidget(splitter);
 
     splitter->setChildrenCollapsible(false);
     codeSplitter->setChildrenCollapsible(false);
-    editorSplitter->setChildrenCollapsible(false);
     codeList->setMinimumWidth(200);
     packageList->setMinimumWidth(200);
-    worksheet->setMinimumHeight(200);
-    output->setMinimumHeight(200);
 
     QSettings s;
     s.beginGroup("toUnitTest");
     splitter->restoreState(s.value("splitter", QByteArray()).toByteArray());
     codeSplitter->restoreState(s.value("codeSplitter", QByteArray()).toByteArray());
-    editorSplitter->restoreState(s.value("editorSplitter", QByteArray()).toByteArray());
     s.endGroup();
 
     connect(packageList, SIGNAL(selectionChanged()),
             this, SLOT(packageList_selectionChanged()));
-    connect(codeList, SIGNAL(selectionChanged()),
-            this, SLOT(codeList_selectionChanged()));
+
+    refreshCodeList();
 }
 
 toUnitTest::~toUnitTest()
@@ -231,7 +212,6 @@ toUnitTest::~toUnitTest()
     s.beginGroup("toUnitTest");
     s.setValue("splitter", splitter->saveState());
     s.setValue("codeSplitter", codeSplitter->saveState());
-    s.setValue("editorSplitter", editorSplitter->saveState());
     s.endGroup();
 }
 
@@ -247,23 +227,34 @@ bool toUnitTest::canHandle(toConnection &conn)
 
 void toUnitTest::refreshCodeList()
 {
-    codeList->clearParams();
-    codeList->changeParams(m_owner);
-    codeList->setReadAll(true);
-    codeList->resizeColumnsToContents();
+    if (!Schema->currentText().isEmpty())
+        m_owner = Schema->currentText();
+    else
+        m_owner = connection().user().toUpper();
+    codeModel->refresh(connection(), m_owner);
 }
 
 void toUnitTest::changeSchema(const QString & name)
 {
-    m_name = name;
+    m_owner = name;
     refreshCodeList();
 }
 
-void toUnitTest::codeList_selectionChanged()
+void toUnitTest::changePackage(const QModelIndex &current)
 {
-    m_name = codeList->selectedIndex(1).data(Qt::EditRole).toString();
-    m_type = codeList->selectedIndex(2).data(Qt::EditRole).toString();
+    toBusy busy;
+
     worksheet->editor()->setText("-- select PL/SQL unit, please.");
+
+    QTreeWidgetItem *item = static_cast<QTreeWidgetItem*>(current.internalPointer());
+    if (item && item->parent())
+    {
+        m_type = item->parent()->text(0);
+        if(m_type.isEmpty() || m_type == "Code")
+            return;
+        m_type = m_type.toUpper();
+        m_name = item->text(0);
+    }
 
     if (m_type == "PACKAGE")
     {
@@ -294,7 +285,6 @@ void toUnitTest::packageList_selectionChanged()
         p.push_back(m_name);
     }
     worksheet->editor()->setText("-- getting the script...");
-    output->disable(false);
     try
     {
         toQuery q(worksheet->toToolWidget::connection(),

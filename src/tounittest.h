@@ -46,7 +46,7 @@
 
 class toWorksheetWidget;
 class toResultTableView;
-class toOutput;
+class toCodeModel;
 class toResultCombo;
 class toResultModel;
 
@@ -69,7 +69,7 @@ DECLARE
 BEGIN
     -- definitions of parameters
     foo := 1;
-    bar := 2;
+    bar := 'a';
     -- calling requested unit
     MYOWN.COOLPACKAGE.FOOBAR(
         foo => foo,
@@ -115,24 +115,21 @@ class toUnitTest : public toToolWidget
         //! SQL editor (worksheet) where is shown the test script.
         toWorksheetWidget * worksheet;
         //! A "result table" for displaying all callable PL/SQL blocks
-        toResultTableView * codeList;
+        QTreeView * codeList;
+        toCodeModel * codeModel;
         //! A "result table" for displaying the package methods
         toResultTableView * packageList;
 
         toResultCombo *Schema;
 
-        //! Spool output
-        toOutput * output;
-
         QSplitter * splitter;
         QSplitter * codeSplitter;
-        QSplitter * editorSplitter;
 
     private slots:
         //! Prepare for SQL test script creation. It's finished in the handleDone().
         void packageList_selectionChanged();
         //! Allow user to chose one of PL/SQL code unit.
-        void codeList_selectionChanged();
+        void changePackage(const QModelIndex &);
         //! Setup and/or update the codeList
         void refreshCodeList();
         //! Set m_owner on schema change
