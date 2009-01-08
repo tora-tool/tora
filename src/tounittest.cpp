@@ -61,26 +61,28 @@
 #define IN_OUT 4
 #define DATA_LEVEL 5
 #define POSITION 6
-#define DEFAULT_VALUE 7
+//#define DEFAULT_VALUE 7
 
 
 static toSQL SQLPackageParams("toUnitTest:PackageParams",
-                           "select argument_name, data_type, data_length,\n"
-                           "        in_out, data_level, position, default_value\n"
+                           "select distinct argument_name, data_type, data_length,\n"
+                           "        in_out, data_level, position --, default_value\n"
                             "   from all_arguments\n"
                             "   where owner = upper(:f1<char[101]>)\n"
                             "   and object_name = upper(:f2<char[101]>)\n"
                             "   and package_name = upper(:f3<char[101]>)\n"
+                            "   and data_level = 0\n"
                             "   order by position\n",
                            "List PL/SQL package unit parameters.",
                            "0800");
 
 static toSQL SQLUnitParams("toUnitTest:UnitParams",
-                                "select argument_name, data_type, data_length,\n"
-                                "        in_out, data_level, position, default_value\n"
+                                "select distinct argument_name, data_type, data_length,\n"
+                                "        in_out, data_level, position --, default_value\n"
                                 "   from all_arguments\n"
                                 "   where owner = upper(:f1<char[101]>)\n"
                                 "   and object_name = upper(:f2<char[101]>)\n"
+                                "   and data_level = 0\n"
                                 "   order by position\n",
                             "List PL/SQL function or procedure unit parameters.",
                             "0800");
@@ -89,7 +91,8 @@ static toSQL SQLListPackage("toUnitTest:ListPackageMethods",
                            "select distinct object_name as \"Package Members\"\n"
                                    "   from all_arguments\n"
                                    "   where owner = upper(:f1<char[101]>)\n"
-                                   "   and package_name = upper(:f2<char[101]>)",
+                                   "   and package_name = upper(:f2<char[101]>)"
+                                   "order by 1",
                                    "List package procedures and functions",
                             "0800");
 
@@ -317,6 +320,14 @@ void toUnitTest::handleDone()
     // params declarations
     for (int i = 0; i < m_model->rowCount(); ++i)
     {
+//         res.append("\n");
+//         res.append(QString("-- %1").arg(i) + QString(" arg ") + m_model->data(i, ARGUMENT_NAME).toString());
+//         res.append(QString("-- %1").arg(i) + QString(" lev ") + m_model->data(i, DATA_LEVEL).toString());
+//         res.append(QString("-- %1").arg(i) + QString(" pos ") + m_model->data(i, POSITION).toString());
+//         res.append(QString("-- %1").arg(i) + QString(" typ ") + m_model->data(i, DATA_TYPE).toString());
+//         res.append(QString("-- %1").arg(i) + QString(" len ") + m_model->data(i, DATA_LENGTH).toString());
+//         res.append(QString("-- %1").arg(i) + QString(" i/o ") + m_model->data(i, IN_OUT).toString());
+
         QString t("\t%1 %2(%3); -- %4");
         if (m_model->data(i, ARGUMENT_NAME).isNull()
                   && m_model->data(i, DATA_LEVEL).toInt() == 0
@@ -335,10 +346,21 @@ void toUnitTest::handleDone()
 //             res.append("-- DEBUG " + m_model->data(i, POSITION).toString() + " skipped");
             continue;
         }
-        res.append(t.arg(m_model->data(i, ARGUMENT_NAME).toString())
-                .arg(m_model->data(i, DATA_TYPE).toString().replace("PL/SQL", ""))
-                .arg(m_model->data(i, DATA_LENGTH).toString())
-                .arg(m_model->data(i, IN_OUT).toString()).replace("()", "(22)"));
+        QString item(t.arg(m_model->data(i, ARGUMENT_NAME).toString())
+                      .arg(m_model->data(i, DATA_TYPE).toString().replace("PL/SQL", ""))
+                      .arg(m_model->data(i, DATA_LENGTH).toString())
+                      .arg(m_model->data(i, IN_OUT).toString()));
+        // 1) fixed-length chars should be handled from all_arguments
+        // 2) all other "numeric" and/or pl/sql types should use ()
+        //    or length from all_arguments
+        if (m_model->data(i, DATA_TYPE) == "VARCHAR2"
+            || m_model->data(i, DATA_TYPE) == "VARCHAR"
+            || m_model->data(i, DATA_TYPE) == "NVARCHAR2")
+        {
+            res.append(item.replace("()", "(3000)") + "; 3000 is the dummy size for testing");
+        }
+        else
+            res.append(item.replace("()", ""));
     }
 
     if (!returnClause.isNull())
@@ -352,19 +374,25 @@ void toUnitTest::handleDone()
     // inputs
     for (int i = 0; i < m_model->rowCount(); ++i)
     {
-        QString t("\t%1 := %2;");
-        QString def;
+        QString t("\t%1 := %2; -- %3");
+        QString def("NULL");
         if (m_model->data(i, ARGUMENT_NAME).isNull())
             continue;
-        if (m_model->data(i, DEFAULT_VALUE).isNull())
-            def = "NULL";
-        else
-            def = m_model->data(i, DEFAULT_VALUE).toString();
-        res.append(t.arg(m_model->data(i, ARGUMENT_NAME).toString()).arg(def));
+/*        if (!m_model->data(i, DEFAULT_VALUE).isNull())
+            def = m_model->data(i, DEFAULT_VALUE).toString();*/
+        // skip OUT params
+        if (m_model->data(i, IN_OUT).toString().startsWith("IN"))
+        {
+            res.append(t.arg(m_model->data(i, ARGUMENT_NAME).toString())
+                        .arg(def)
+                        .arg(m_model->data(i, DATA_TYPE).toString()));
+        }
     }
 
     if (!returnClause.isNull())
         res.append("\n\tret :=");
+    else
+        res.append("\n");
 
     if (m_type == "PACKAGE")
         res.append("\t" + m_owner + "." + m_name
