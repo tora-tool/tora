@@ -72,3 +72,13 @@ void toTextView::focusInEvent (QFocusEvent *e)
     receivedFocus();
     QTextBrowser::focusInEvent(e);
 }
+
+bool toTextView::searchNext(const QString & text)
+{
+    return find(text);
+}
+
+bool toTextView::searchPrevious(const QString & text)
+{
+    return find(text, QTextDocument::FindBackward);
+}

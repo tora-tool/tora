@@ -62,6 +62,8 @@
 #include <QKeyEvent>
 #include <QPoint>
 
+#include "tosearchreplace.h"
+
 class QMenu;
 class QsciPrinter;
 
@@ -89,6 +91,11 @@ class toMarkedText : public QsciScintilla, public toEditWidget
     int CursorTimerID;
 
     QPoint DragStart;
+
+    Search::SearchDirection m_searchDirection;
+    QString m_searchText;
+
+    bool findText(Search::SearchDirection direction);
 
     void searchFound(int line, int col);
     void incrementalSearch(bool forward, bool next);
@@ -205,19 +212,13 @@ public:
      */
     virtual bool editSave(bool askfile);
 
-    /** Move to top of data
-     */
-    virtual void searchTop(void)
-    {
-        setCursorPosition(0, 0);
-    }
-    /** Search for next entry
-     * @return True if found, should select the found text.
-     */
-    virtual bool searchNext(toSearchReplace *search);
+    virtual bool searchNext(const QString & text);
+    virtual bool searchPrevious(const QString & text);
+
     /** Replace entry with new data
      */
     virtual void searchReplace(const QString &newData);
+    virtual void searchReplaceAll(const QString &newData);
     /** Check if data can be modified by search
      * @param all If true can replace all, otherwise can replace right now.
      */

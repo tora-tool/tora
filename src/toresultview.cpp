@@ -49,10 +49,10 @@
 #include "tomemoeditor.h"
 #include "toparamget.h"
 #include "toresultview.h"
-#include "tosearchreplace.h"
 #include "tosql.h"
 #include "totool.h"
 #include "toresultlistformat.h"
+#include "tosearchreplace.h"
 
 #include <qapplication.h>
 #include <qclipboard.h>
@@ -467,7 +467,6 @@ toListView::toListView(QWidget *parent, const char *name, Qt::WFlags f)
                      false, false, false,
                      true, true, false)
 {
-    FirstSearch = false;
     setTreeStepSize(15);
     setSelectionMode(Extended);
     setAllColumnsShowFocus(true);
@@ -916,14 +915,21 @@ void toListView::focusInEvent(QFocusEvent *e)
     toTreeWidget::focusInEvent(e);
 }
 
-bool toListView::searchNext(toSearchReplace *search)
+bool toListView::searchNext(const QString & text)
 {
     toTreeWidgetItem *item = currentItem();
 
-    bool first = FirstSearch;
-    FirstSearch = false;
+    bool first = true;
 
-    for (toTreeWidgetItem *next = NULL;item;item = next)
+    bool cs = toMainWidget()->searchDialog()->caseSensitive();
+    bool ww = toMainWidget()->searchDialog()->wholeWords();
+    bool rx = toMainWidget()->searchDialog()->searchMode() == Search::SearchRegexp;
+
+    QString realSearch(text);
+    if (!cs)
+        realSearch = realSearch.toUpper();
+
+    for (toTreeWidgetItem *next = NULL; item; item = next)
     {
         if (!first)
             first = true;
@@ -931,9 +937,6 @@ bool toListView::searchNext(toSearchReplace *search)
         {
             for (int i = 0;i < columns();i++)
             {
-                int pos = 0;
-                int endPos = 0;
-
                 toResultViewItem *resItem = dynamic_cast<toResultViewItem *>(item);
                 toResultViewCheck *chkItem = dynamic_cast<toResultViewCheck *>(item);
                 QString txt;
@@ -944,7 +947,15 @@ bool toListView::searchNext(toSearchReplace *search)
                 else if (item)
                     txt = item->text(i);
 
-                if (search->findString(item->text(0), pos, endPos))
+                if (!cs)
+                    txt = txt.toUpper();
+
+                if (rx && txt.contains(QRegExp(text)))
+                {
+                    setCurrentItem(item);
+                    return true;
+                }
+                else if ((ww && txt == realSearch) || (!ww && txt.contains(realSearch)))
                 {
                     setCurrentItem(item);
                     return true;
@@ -969,6 +980,12 @@ bool toListView::searchNext(toSearchReplace *search)
         }
     }
     return false;
+}
+
+bool toListView::searchPrevious(const QString & text)
+{
+    // TODO/FIXME: real backward searching
+    return searchNext(text);
 }
 
 toListView *toListView::copyTransposed(void)
@@ -1069,11 +1086,6 @@ bool toListView::editSave(bool)
 }
 
 void toListView::addMenues(QMenu *) {}
-
-bool toListView::searchCanReplace(bool)
-{
-    return false;
-}
 
 int toListView::exportType(QString &separator, QString &delimiter)
 {

@@ -297,21 +297,31 @@ public:
         return ReadAll;
     }
 
-    /** Move to top of data
-     */
-    virtual void searchTop(void)
-    { }
-    /** Search for next entry
-     * @return True if found, should select the found text.
-     */
-    virtual bool searchNext(toSearchReplace *search);
-    /** Replace entry with new data
-     */
-    virtual void searchReplace(const QString &newData);
-    /** Check if data can be modified by search
+    /*! \brief Search for next occrence of text
+    This is pure virtual as it has to be implemented in all
+    separated children of toEditWidget.
+    */
+    virtual bool searchNext(const QString & text) = 0;
+    /*! \brief Search for previous occrence of text
+    This is pure virtual as it has to be implemented in all
+    separated children of toEditWidget.
+    */
+    virtual bool searchPrevious(const QString & text) = 0;
+    /*! \brief Replace current entry with new data
+    This is pure virtual as it has to be implemented in all
+    separated children of toEditWidget.
+    */
+    virtual void searchReplace(const QString &newData) = 0;
+    /*! \brief Replace all entries with new data
+    This is pure virtual as it has to be implemented in all
+    separated children of toEditWidget.
+    */
+    virtual void searchReplaceAll(const QString &newData) = 0;
+
+    /*! \brief Check if data can be modified by search
      * @param all If true can replace all, otherwise can replace right now.
      */
-    virtual bool searchCanReplace(bool all);
+    virtual bool searchCanReplace(bool all) = 0;
 
     /** Call this when this widget has received the focus. Must be called by the implementor.
      */

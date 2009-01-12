@@ -168,16 +168,3 @@ bool toEditWidget::editSave(bool)
 {
     return true;
 }
-
-bool toEditWidget::searchNext(toSearchReplace *)
-{
-    return false;
-}
-
-void toEditWidget::searchReplace(const QString &)
-{}
-
-bool toEditWidget::searchCanReplace(bool)
-{
-    return false;
-}

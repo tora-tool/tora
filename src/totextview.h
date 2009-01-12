@@ -62,7 +62,7 @@ public:
             , toEditWidget(false, true, false,
                            false, false,
                            false, true, false,
-                           false, true, false)
+                           true, true, false)
     { }
     /** See @ref QTextView
      */
@@ -86,6 +86,12 @@ public:
     /** Reimplemented for internal reasons.
      */
     virtual void focusInEvent (QFocusEvent *e);
+
+    virtual bool searchNext(const QString & text);
+    virtual bool searchPrevious(const QString & text);
+    virtual void searchReplace(const QString &newData) {};
+    virtual void searchReplaceAll(const QString &newData) {};
+    virtual bool searchCanReplace(bool all) { return false; };
 };
 
 #endif

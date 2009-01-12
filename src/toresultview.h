@@ -509,8 +509,6 @@ class toListView : public toTreeWidget, public toEditWidget
 {
     Q_OBJECT;
 
-    bool FirstSearch;
-
     /**
      * Name of this list, used primarily when printing. Also used to
      * be able to edit
@@ -712,22 +710,14 @@ public:
         selectAll(true);
     }
 
-    /** Move to top of data
-     */
-    virtual void searchTop(void)
-    {
-        if (firstChild())
-            setCurrentItem(firstChild());
-        FirstSearch = true;
-    }
     /** Search for next entry
      * @return True if found, should select the found text.
      */
-    virtual bool searchNext(toSearchReplace *search);
-    /** Check if data can be modified by search
-     * @param all If true can replace all, otherwise can replace right now.
-     */
-    virtual bool searchCanReplace(bool all);
+    virtual bool searchNext(const QString & text);
+    virtual bool searchPrevious(const QString & text);
+    virtual void searchReplace(const QString & text) {};
+    virtual void searchReplaceAll(const QString & text) {};
+    virtual bool searchCanReplace(bool all) { return false; };
 
     /** Export data to a map.
      * @param data A map that can be used to recreate the data of a chart.

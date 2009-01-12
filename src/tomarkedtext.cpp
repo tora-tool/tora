@@ -80,7 +80,9 @@
 
 
 toMarkedText::toMarkedText(QWidget *parent, const char *name)
-        : QsciScintilla(parent), toEditWidget()
+        : QsciScintilla(parent), toEditWidget(),
+        m_searchDirection(Search::SearchUndefined),
+        m_searchText("")
 {
     if (name)
         setObjectName(name);
@@ -565,7 +567,7 @@ void toMarkedText::importData(std::map<QString, QString> &data, const QString &p
     if (data[prefix + ":Edited"].isEmpty())
         setModified(false);
 }
-
+/*
 static int FindIndex(const QString &str, int line, int col)
 {
     int pos = 0;
@@ -577,7 +579,7 @@ static int FindIndex(const QString &str, int line, int col)
         pos++;
     }
     return pos + col;
-}
+}*/
 
 void toMarkedText::findPosition(int index, int &line, int &col)
 {
@@ -598,34 +600,68 @@ void toMarkedText::findPosition(int index, int &line, int &col)
     return ;
 }
 
-bool toMarkedText::searchNext(toSearchReplace *search)
+bool toMarkedText::searchNext(const QString & text)
 {
-    QString text = toMarkedText::text();
+    return findText(Search::SearchForward);
+}
 
-    int col;
-    int line;
-    getCursorPosition(&line, &col);
-    int pos = FindIndex(text, line, col) + 1;
+bool toMarkedText::searchPrevious(const QString & text)
+{
+    return findText(Search::SearchBackward);
+}
 
-    int endPos;
-    if (search->findString(text, pos, endPos))
+bool toMarkedText::findText(Search::SearchDirection direction)
+{
+    bool r;
+    int line, index;
+    Search::SearchDirection state = m_searchDirection;
+
+    getCursorPosition(&line, &index);
+
+    if (m_searchText != toMainWidget()->searchDialog()->currentSearchText())
     {
-        int endCol;
-        int endLine;
-        findPosition(pos, line, col);
-        findPosition(endPos, endLine, endCol);
-        setSelection(line, col, endLine, endCol);
-        ensureCursorVisible();
-        return true;
+        m_searchText = toMainWidget()->searchDialog()->currentSearchText();
+        state = Search::SearchUndefined; // to reset the findFirst() condition
     }
 
-    return false;
+    if (m_searchDirection != direction)
+        m_searchDirection = direction;
+
+    if (m_searchDirection != state)
+    {
+        r = findFirst(m_searchText,
+                      toMainWidget()->searchDialog()->searchMode() == Search::SearchRegexp,
+                      toMainWidget()->searchDialog()->caseSensitive(),
+                      toMainWidget()->searchDialog()->wholeWords(),
+                      true, //bool   wrap,
+                      (m_searchDirection == Search::SearchForward),
+                      line,
+                      index,
+                      true //bool   show = true
+                     );
+    }
+    else
+        findNext();
+
+    return r;
 }
 
 void toMarkedText::searchReplace(const QString &newData)
 {
-    if (!isReadOnly())
-        insert(newData);
+    if (searchCanReplace(false))
+//         insert(newData);
+        replace(newData);
+}
+
+void toMarkedText::searchReplaceAll(const QString & newData)
+{
+    if (!searchCanReplace(true))
+        return;
+
+    QsciScintilla::beginUndoAction();
+    while (findNext())
+        replace(newData);
+    QsciScintilla::endUndoAction();
 }
 
 bool toMarkedText::searchCanReplace(bool all)

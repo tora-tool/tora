@@ -46,6 +46,8 @@
 #include "tomarkedtext.h"
 #include "tosearchreplace.h"
 
+#include "icons/close.xpm"
+
 #include <qcheckbox.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
@@ -55,9 +57,11 @@
 
 
 toSearchReplace::toSearchReplace(QWidget *parent)
-        : QDialog(parent), toHelpContext(QString::fromLatin1("searchreplace.html"))
+        : QDialog(parent),
+        toHelpContext(QString::fromLatin1("searchreplace.html"))
 {
     setupUi(this);
+    hideButton->setIcon(QPixmap(const_cast<const char**>(close_xpm)));
 
     QAction *action = new QAction(this);
     action->setShortcut(QKeySequence::HelpContents);
@@ -69,6 +73,15 @@ toSearchReplace::toSearchReplace(QWidget *parent)
 
     toEditWidget::addHandler(this);
     receivedFocus(toMainWidget()->editWidget());
+    searchChanged("");
+
+    connect(SearchNext, SIGNAL(clicked()), this, SLOT(searchNext()));
+    connect(SearchPrevious, SIGNAL(clicked()), this, SLOT(searchPrevious()));
+    connect(Replace, SIGNAL(clicked()), this, SLOT(replace()));
+    connect(ReplaceAll, SIGNAL(clicked()), this, SLOT(replaceAll()));
+    connect(hideButton, SIGNAL(clicked()), this, SLOT(close()));
+    connect(SearchText, SIGNAL(editTextChanged(const QString &)),
+             this, SLOT(searchChanged(const QString &)));
 }
 
 void toSearchReplace::displayHelp(void)
@@ -76,125 +89,92 @@ void toSearchReplace::displayHelp(void)
     toHelp::displayHelp();
 }
 
+QString toSearchReplace::currentSearchText()
+{
+    return SearchText->currentText();
+}
+
+Search::SearchMode toSearchReplace::searchMode()
+{
+    if (SearchMode->currentIndex() == 0)
+        return Search::SearchPlaintext;
+    else
+        return Search::SearchRegexp;
+}
+
+bool toSearchReplace::wholeWords()
+{
+    return WholeWords->isChecked();
+}
+
+bool toSearchReplace::caseSensitive()
+{
+    return MatchCase->isChecked();
+}
+
 void toSearchReplace::receivedFocus(toEditWidget *widget)
 {
     Target = widget;
     bool anySearch = Target && Target->searchEnabled();
-    Search->setEnabled(anySearch);
+    SearchPrevious->setEnabled(anySearch);
     SearchNext->setEnabled(anySearch);
     Replace->setEnabled(Target && Target->searchCanReplace(false));
     ReplaceAll->setEnabled(Target && Target->searchCanReplace(true));
 }
 
-void toSearchReplace::search(void)
-{
-    if (Target)
-    {
-        Target->searchTop();
-        searchNext();
-    }
-}
-
 void toSearchReplace::searchNext(void)
 {
+    QString t(SearchText->currentText());
     if (Target)
     {
-        if (Target->searchNext(this))
-        {
-            Replace->setEnabled(Target->searchCanReplace(false));
-            ReplaceAll->setEnabled(Target->searchCanReplace(true));
-        }
-        else
-        {
-            toStatusMessage(tr("No more matches found"), false, false);
-            Replace->setEnabled(false);
-            ReplaceAll->setEnabled(false);
-        }
+        Target->searchNext(t);
+        Replace->setEnabled(Target->searchCanReplace(false));
+        ReplaceAll->setEnabled(Target->searchCanReplace(true));
     }
+    if (t.length() > 0 && SearchText->findText(t) == -1)
+        SearchText->addItem(t);
+}
+
+void toSearchReplace::searchPrevious(void)
+{
+    QString t(SearchText->currentText());
+    if (Target)
+    {
+        Target->searchPrevious(t);
+        Replace->setEnabled(Target->searchCanReplace(false));
+        ReplaceAll->setEnabled(Target->searchCanReplace(true));
+    }
+    if (t.length() > 0 && SearchText->findText(t) == -1)
+        SearchText->addItem(t);
 }
 
 void toSearchReplace::replace(void)
 {
-    if (Target && Target->searchCanReplace(false))
-    {
-        Target->searchReplace(ReplaceText->toPlainText());
-        searchNext();
-    }
+    QString t(ReplaceText->currentText());
+    if (Target)
+        Target->searchReplace(t);
+    if (t.length() > 0 && ReplaceText->findText(t) == -1)
+        ReplaceText->addItem(t);
 }
 
 void toSearchReplace::replaceAll(void)
 {
-    if (Target && Target->searchCanReplace(true))
-    {
-        while (Target->searchCanReplace(false))
-        {
-            Target->searchReplace(ReplaceText->toPlainText());
-            searchNext();
-        }
-    }
+    QString t(ReplaceText->currentText());
+    if (Target)
+        Target->searchReplaceAll(t);
+    if (t.length() > 0 && ReplaceText->findText(t) == -1)
+        ReplaceText->addItem(t);
 }
 
 void toSearchReplace::show()
 {
     SearchText->setFocus();
-    SearchText->selectAll();
     QDialog::show();
 }
 
-
-bool toSearchReplace::findString(const QString &text, int &pos, int &endPos)
+void toSearchReplace::searchChanged(const QString & text)
 {
-    bool ok;
-    int found;
-    int foundLen;
-    QString searchText = SearchText->toPlainText();
-    do
-    {
-        ok = true;
-        if (Exact->isChecked())
-        {
-            found = text.indexOf(searchText, pos, IgnoreCase->isChecked() ?
-                                 Qt::CaseInsensitive :
-                                 Qt::CaseSensitive);
-            foundLen = searchText.length();
-        }
-        else
-        {
-            QRegExp re(searchText,
-                       IgnoreCase->isChecked() ?
-                       Qt::CaseInsensitive :
-                       Qt::CaseSensitive);
-            found = re.indexIn(text, pos);
-            foundLen = re.matchedLength();
-        }
-        if (found == -1)
-        {
-            return false;
-        }
-        if (WholeWord->isChecked())
-        {
-            if (found != 0 && !text[found].isSpace())
-                ok = false;
-            if (found + foundLen != int(text.length()) && !text[found + foundLen].isSpace())
-                ok = false;
-            pos = found + 1;
-        }
-    }
-    while (!ok);
-
-    pos = found;
-    endPos = found + foundLen;
-    return true;
-}
-
-void toSearchReplace::searchChanged(void)
-{
-    bool ena = SearchText->toPlainText().length() > 0;
+    bool ena = text > 0;
     SearchNext->setEnabled(ena);
-    Search->setEnabled(ena);
-}
-
-bool toSearchReplace::searchNextAvailable(void)
-{
-    return SearchNext->isEnabled();
+    SearchPrevious->setEnabled(ena);
 }

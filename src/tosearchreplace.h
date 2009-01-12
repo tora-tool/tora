@@ -51,35 +51,58 @@ class toListView;
 class toMarkedText;
 class toResultContentEditor;
 
+
+//! \brief A helper namespace for Search related tools
+namespace Search
+{
+    enum SearchMode {
+        SearchPlaintext = 0,
+        SearchRegexp
+    };
+
+    enum SearchDirection {
+        SearchUndefined = -1,
+        SearchForward = 0,
+        SearchBackward = 1
+    };
+}; // namespace Search
+
+
 class toSearchReplace : public QDialog, public Ui::toSearchReplaceUI,
             public toHelpContext, public toEditWidget::editHandler
 {
     Q_OBJECT
 
     toEditWidget *Target;
+
 public:
     toSearchReplace(QWidget *parent);
     ~toSearchReplace()
     {
         toEditWidget::delHandler(this);
-    }
+    };
 
-    virtual void show();
-    bool findString(const QString &text, int &pos, int &endPos);
+    void show();
+
+    QString currentSearchText();
+    Search::SearchMode searchMode();
+    bool wholeWords();
+    bool caseSensitive();
+
     virtual void receivedFocus(toEditWidget *widget);
     virtual void lostFocus(toEditWidget *)
     {
         receivedFocus(NULL);
     }
-    bool searchNextAvailable(void);
+
 public slots:
-    virtual void searchNext();
+    void searchNext();
+    void searchPrevious();
 private slots:
-    virtual void replaceAll();
-    virtual void replace();
-    virtual void search();
-    virtual void searchChanged();
-    virtual void displayHelp();
+    void replaceAll();
+    void replace();
+    void searchChanged(const QString & text);
+    void displayHelp();
 };
 
 #endif

@@ -293,6 +293,11 @@ public:
         return Workspace;
     }
 
+    toSearchReplace * searchDialog()
+    {
+        return Search;
+    }
+
     /**
      * The last active sub window in workspace. MDI area is buggy as
      * hell and currentSubWindow will not tell you the correct window

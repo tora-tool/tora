@@ -54,6 +54,7 @@
 #include "tolistviewformatterfactory.h"
 #include "tolistviewformatteridentifier.h"
 #include "toworkingwidget.h"
+#include "tosearchreplace.h"
 
 #include <QClipboard>
 #include <QFont>
@@ -520,6 +521,93 @@ bool toResultTableView::running(void)
     return Model->canFetchMore(index);
 }
 
+bool toResultTableView::searchNext(const QString & text)
+{
+    QModelIndex index = currentIndex();
+    int row = currentIndex().row();
+    int col = currentIndex().column() + 1;
+
+    bool cs = toMainWidget()->searchDialog()->caseSensitive();
+    bool ww = toMainWidget()->searchDialog()->wholeWords();
+    bool rx = toMainWidget()->searchDialog()->searchMode() == Search::SearchRegexp;
+
+    QString currentText;
+    QString realSearch(text);
+
+    if (!cs)
+        realSearch = realSearch.toUpper();
+
+    bool stop = false;
+    while (row < Model->rowCount())
+    {
+        while (col < Model->columnCount())
+        {
+            currentText = Model->data(Model->index(row, col)).toString().trimmed();
+            if (!cs)
+                currentText = currentText.toUpper();
+
+            if (rx && currentText.contains(QRegExp(text)))
+                stop  = true;
+            else if ((ww && currentText == realSearch) || (!ww && currentText.contains(realSearch)))
+                stop = true;
+
+            if (stop)
+            {
+                setCurrentIndex(Model->index(row, col));
+                return true;
+            }
+            ++col;
+        }
+        ++row;
+        col = 0;
+    }
+
+    return false;
+}
+
+bool toResultTableView::searchPrevious(const QString & text)
+{
+    QModelIndex index = currentIndex();
+    int row = currentIndex().row();
+    int col = currentIndex().column() - 1;
+
+    bool cs = toMainWidget()->searchDialog()->caseSensitive();
+    bool ww = toMainWidget()->searchDialog()->wholeWords();
+    bool rx = toMainWidget()->searchDialog()->searchMode() == Search::SearchRegexp;
+
+    QString currentText;
+    QString realSearch(text);
+
+    if (!cs)
+        realSearch = realSearch.toUpper();
+
+    bool stop = false;
+    while (row >= 0)
+    {
+        while (col >= 0)
+        {
+            currentText = Model->data(Model->index(row, col)).toString().trimmed();
+            if (!cs)
+                currentText = currentText.toUpper();
+
+            if (rx && currentText.contains(QRegExp(text)))
+                stop  = true;
+            else if ((ww && currentText == realSearch) || (!ww && currentText.contains(realSearch)))
+                stop = true;
+
+            if (stop)
+            {
+                setCurrentIndex(Model->index(row, col));
+                return true;
+            }
+            --col;
+        }
+        --row;
+        col = Model->columnCount();
+    }
+
+    return false;
+}
 
 void toResultTableView::setFilter(toViewFilter *filter)
 {

@@ -244,6 +244,11 @@ public:
     toResultTableView(QWidget * parent = 0);
     virtual ~toResultTableView(void);
 
+    virtual bool searchNext(const QString & text);
+    virtual bool searchPrevious(const QString & text);
+    virtual void searchReplace(const QString & text) {};
+    virtual void searchReplaceAll(const QString & text) {};
+    virtual bool searchCanReplace(bool all) { return false; };
 
     /**
      * Reimplemented to create query and new model.
@@ -281,7 +286,6 @@ public:
     {
         return Model;
     }
-
 
     /**
      * True if query is running.

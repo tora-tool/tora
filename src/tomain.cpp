@@ -1037,7 +1037,7 @@ void toMain::commandCallback(QAction *action)
         {
             if (!Search)
                 Search = new toSearchReplace(this);
-            Search->show();
+            Search->isVisible() ? Search->hide() : Search->show();
         }
         else if (action == searchNextAct)
         {
@@ -1100,11 +1100,6 @@ void toMain::commandCallback(QAction *action)
         ConnectionSelection->setFocus();
     else if (action == quitAct)
         close();
-    else if (action == searchReplaceAct)
-    {
-        if (Search)
-            Search->searchNext();
-    }
     else if (action == cascadeAct)
         workspace()->cascadeSubWindows();
     else if (action == tileAct)
