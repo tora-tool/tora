@@ -132,6 +132,48 @@ public:
     }
 };
 
+class toResultStorageItemDelegate: public QItemDelegate
+{
+public:
+    toResultStorageItemDelegate()
+    {
+    }
+
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, 
+               const QModelIndex & index ) const  
+    {
+        if(index.column() == 8 ) {
+            int left   = option.rect.left();
+            int top    = option.rect.top();
+            int width  = option.rect.width();
+            int height = option.rect.height();
+            int i      = index.row();
+   
+            QString str = index.model()->data(index, Qt::DisplayRole).toString();
+            QStringList pct = str.split(QRegExp("/"));
+            
+            if (pct.count() == 3) {
+                int w_used = (int) (pct.at(0).toDouble() * width / 100);
+                int w_free = (int) (pct.at(1).toDouble() * width / 100);
+                int w_auto = width - w_used - w_free;
+
+                painter->fillRect(left, top,
+                            w_used, height, QBrush(Qt::red));
+                painter->fillRect(left + w_used, top,
+                            w_free, height, QBrush(Qt::green));
+                painter->fillRect(left + w_used + w_free, top,
+                            w_auto, height, QBrush(Qt::blue));
+                painter->setPen(Qt::white);
+                painter->drawText(option.rect,Qt::TextSingleLine,str);
+            } else {
+                QItemDelegate::paint(painter, option, index);
+            }
+        } else {
+            QItemDelegate::paint(painter, option, index);
+        }
+    }
+};
+
 bool toResultStorage::canHandle(toConnection &conn)
 {
     return toIsOracle(conn);
@@ -175,6 +217,7 @@ toResultStorage::toResultStorage(bool available, QWidget *parent, const char *na
     Tablespaces = Files = NULL;
 
     connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
+    setItemDelegate(new toResultStorageItemDelegate());
 }
 
 toResultStorage::~toResultStorage()
