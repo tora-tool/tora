@@ -67,69 +67,6 @@ public:
                         const QString &buf = QString::null)
             : toResultViewItem(parent, after, buf), AvailableGraph(available)
     { }
-    virtual void paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align)
-    {
-#if 0                           // disabled, wrong override
-        if (column == 8)
-        {
-            QString ct = text(column);
-            if (ct.isEmpty())
-            {
-                toTreeWidgetItem::paintCell(p, cg, column, width, align);
-                return ;
-            }
-            ct = ct.left(ct.length() - 1); // Strip last %
-            double total = text(7).toDouble();
-            double user = text(5).toDouble();
-            double free = text(6).toDouble();
-            if (total < user || !AvailableGraph)
-                total = user;
-
-            QString t;
-
-            user /= total;
-            free /= total;
-            if (AvailableGraph)
-                t.sprintf("%0.1f / %0.1f / %0.1f %%", (user - free)*100, free*100, (1 - user)*100);
-            else
-                t.sprintf("%0.1f %%", free*100);
-            p->fillRect(0, 0, int((user - free)*width), height(),
-                        QBrush(Qt::red));
-            p->fillRect(int((user - free)*width), 0, int(user*width), height(),
-                        QBrush(Qt::blue));
-            if (AvailableGraph)
-                p->fillRect(int(user*width), 0, width, height(),
-                            QBrush(Qt::green));
-
-            QPen pen(Qt::white);
-            p->setPen(pen);
-            p->drawText(0, 0, width, height(), Qt::AlignCenter, t);
-        }
-        else if (column == 9)
-        {
-            QString ct = text(column);
-            if (ct.isEmpty())
-            {
-                toTreeWidgetItem::paintCell(p, cg, column, width, align);
-                return ;
-            }
-            ct = ct.left(ct.length() - 1); // Strip last %
-            double val = ct.toDouble();
-
-            p->fillRect(0, 0, int(val*width / 100), height(), QBrush(Qt::blue));
-            p->fillRect(int(val*width / 100), 0, width, height(),
-                        QBrush(isSelected() ? cg.highlight() : cg.base()));
-
-            QPen pen(isSelected() ? cg.highlightedText() : cg.foreground());
-            p->setPen(pen);
-            p->drawText(0, 0, width, height(), Qt::AlignCenter, text(column));
-        }
-        else
-        {
-            toTreeWidgetItem::paintCell(p, cg, column, width, align);
-        }
-#endif
-    }
 };
 
 class toResultStorageItemDelegate: public QItemDelegate
