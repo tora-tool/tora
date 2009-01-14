@@ -84,7 +84,7 @@ public:
             int top    = option.rect.top();
             int width  = option.rect.width();
             int height = option.rect.height();
-            int i      = index.row();
+//             int i      = index.row();
    
             QString str = index.model()->data(index, Qt::DisplayRole).toString();
             QStringList pct = str.split(QRegExp("/"));
@@ -95,11 +95,11 @@ public:
                 int w_auto = width - w_used - w_free;
 
                 painter->fillRect(left, top,
-                            w_used, height, QBrush(Qt::red));
+                            w_used, height, QBrush(Qt::darkRed/*Qt::red*/));
                 painter->fillRect(left + w_used, top,
-                            w_free, height, QBrush(Qt::green));
+                            w_free, height, QBrush(Qt::darkGreen/*Qt::green*/));
                 painter->fillRect(left + w_used + w_free, top,
-                            w_auto, height, QBrush(Qt::blue));
+                            w_auto, height, QBrush(Qt::darkBlue/*Qt::blue*/));
                 painter->setPen(Qt::white);
                 painter->drawText(option.rect,Qt::TextSingleLine,str);
             } else {
