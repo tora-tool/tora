@@ -84,7 +84,6 @@ public:
             int top    = option.rect.top();
             int width  = option.rect.width();
             int height = option.rect.height();
-//             int i      = index.row();
    
             QString str = index.model()->data(index, Qt::DisplayRole).toString();
             QStringList pct = str.split(QRegExp("/"));
