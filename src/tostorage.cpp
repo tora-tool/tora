@@ -1380,7 +1380,9 @@ void toStorage::selectObject(const QModelIndex & current, const QModelIndex &)
     QModelIndex ix = current;
     if (ix.isValid())
     {
-        toStorageExtent::extentTotal ce = ObjectsModel->values().at(ix.row());
+//      toStorageExtent::extentTotal ce = ObjectsModel->values().at(ix.row());
+        toStorageExtent::extentTotal ce = ObjectsModel->values().at(
+                ix.model()->headerData(ix.row(), Qt::Vertical).toInt()-1);
         Extents->highlight(ce.Owner, ce.Table, ce.Partition);
     }
 }
