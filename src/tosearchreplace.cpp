@@ -169,6 +169,10 @@ void toSearchReplace::replaceAll(void)
 void toSearchReplace::show()
 {
     SearchText->setFocus();
+    toMarkedText * w = dynamic_cast<toMarkedText*>(Target);
+    if (w && w->hasSelectedText())
+        SearchText->lineEdit()->setText(w->selectedText());
+    SearchText->lineEdit()->selectAll();
     QDialog::show();
 }
 
