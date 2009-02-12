@@ -62,6 +62,7 @@
 
 #include "icons/commit.xpm"
 #include "icons/copy.xpm"
+#include "icons/wordwrap.xpm"
 #include "icons/cut.xpm"
 #include "icons/fileopen.xpm"
 #include "icons/filesave.xpm"
@@ -210,6 +211,13 @@ toMemoEditor::toMemoEditor(QWidget *parent,
             act,
             SLOT(setEnabled(bool)));
     act->setEnabled(false);
+
+    QAction * WordWrapAct = new QAction(QIcon(QPixmap(const_cast<const char**>(wordwrap_xpm))),
+                                         tr("Word Wrap"), Toolbar);
+    WordWrapAct->setCheckable(true);
+    connect(WordWrapAct, SIGNAL(toggled(bool)),
+             Editor, SLOT(setWordWrap(bool)));
+    Toolbar->addAction(WordWrapAct);
 
     if (Row >= 0 && Col >= 0 && !listView())
     {

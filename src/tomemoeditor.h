@@ -82,6 +82,7 @@ private slots:
     void saveFile(void);
     void readSettings(void);
     void writeSettings(void) const;
+
 protected:
     QToolBar *toolbar()
     {

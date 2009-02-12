@@ -333,6 +333,8 @@ public slots:
 
         QsciScintilla::selectAll();
     }
+
+    void setWordWrap(bool);
 };
 
 #endif

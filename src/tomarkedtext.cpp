@@ -143,6 +143,22 @@ void toMarkedText::linesChanged()
     setMarginWidth(0, QString().fill('0', x));
 }
 
+void toMarkedText::setWordWrap(bool enable)
+{
+    if (enable)
+    {
+        setWrapMode(QsciScintilla::WrapWord);
+        setWrapVisualFlags(QsciScintilla::WrapFlagByBorder,
+                            QsciScintilla::WrapFlagByBorder);
+    }
+    else
+    {
+        setWrapMode(QsciScintilla::WrapNone);
+        setWrapVisualFlags(QsciScintilla::WrapFlagNone,
+                            QsciScintilla::WrapFlagNone);
+    }
+}
+
 void toMarkedText::setEdit(void)
 {
     if (isReadOnly())

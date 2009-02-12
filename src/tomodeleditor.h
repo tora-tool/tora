@@ -110,7 +110,7 @@ public:
                   QAbstractItemModel *model,
                   QModelIndex current,
                   bool sql = false,
-                  bool modal = false);
+                  bool modal = true); // changed to true to prevent random crashes on tora exits with memo opened - petr vanek
 
 public slots:
     /** Save changes and close.
