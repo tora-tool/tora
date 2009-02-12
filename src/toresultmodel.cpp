@@ -630,10 +630,13 @@ void toResultModel::readHeaders()
 
         d.nullAllowed = (*i).Null;
 
+        // AlignTop is used here to prevent Vert. centering of
+        // data if there are more rows in the cell (CLOB etc.).
+        // AlignVCenter makes it unreadable in this case. -- Petr Vanek
         if ((*i).AlignRight)
-            d.align = Qt::AlignRight | Qt::AlignVCenter;
+            d.align = Qt::AlignRight | Qt::AlignTop; //Qt::AlignVCenter;
         else
-            d.align = Qt::AlignLeft | Qt::AlignVCenter;
+            d.align = Qt::AlignLeft | Qt::AlignTop; //Qt::AlignVCenter;
 
         Headers.append(d);
     }
