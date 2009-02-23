@@ -1,35 +1,20 @@
-Using TOra on OS-X is unsupported, this file and the accompaning
-changes have been contributed by Rick Hall <rphall@sourceforge.net>.
+TOra is reported to build on Mac OS X (10.4 Tiger and later).
 
-  This build assumes that you have Oracle 9.2.0 installed on the target Mac in
-the default installation directory (/Users/oracle/9iR2) and that you've
-installed Qt 3.2.1 for the Mac in the default directory (/usr/local/qt).
-Qt must be configured and built with the static and multi-threaded options
-(./configure -static -thread). You must set the QTDIR environment variable
-as described in the QT documentation.
- 
-  To build for Mac OS-X:
- 
-  1) Copy "Makefile.OSX" to "Makefile" and modify it for your environment
-(if necessary).
+Only Cmake build method is tested. See README.CMAKE.
 
-  2) Run the configure script
- 
-     ./configure --only-prepare
- 
-  3) Run the Makefile
- 
-     make
- 
-  4) The Mac version of TOra will built in a "tora.app" directory. The
-directory is the application bundle. Copy it to some convenient location, like
-your desktop or /Applications folder.
- 
-  5) Before you can run TOra, you must configure the ORACLE_HOME environment
-variable so that it is found when tora.app is doubled clicked from the Finder.
-It is not sufficient to set ORACLE_HOME in your $(HOME)/.bash_profile startup
-script. If one doesn't already exist, you must create a properties file located
-at $(HOME)/.MacOSX/environment.plist, and the file must contain the ORACLE_HOME
-key-value pair. See the documentation for property lists and the Property List
-Builder which is available from developer.apple.com, or just hack away at the
-example of environment.plist which is attached.
+
+Notes on Oracle Instantclient:
+
+1) you'll need the base package *and* SDK package as well.
+
+2) You'll get errors running cmake with Instantclient:
+CMake Error: The following variables are used in this project, but they are set to NOTFOUND.
+Please set them or make sure they are set and tested correctly in the CMake files:
+ORACLE_LIBRARY_CLNTSH
+linked by target "tora" in directory /opt/applications/tora/src
+ORACLE_LIBRARY_OCCI
+linked by target "tora" in directory /opt/applications/tora/src
+
+It's caused by Oracle - you'll need to fix Instantclient libraries yourself:
+ln -s /path/to/instantclient/libclntsh.dylib.10.2 /path/to/instantclient/libclntsh.dylib
+ln -s /path/to/instantclient/libocci.dylib.10.2 /path/to/instantclient/libocci.dylib
