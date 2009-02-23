@@ -57,7 +57,7 @@
 
 #include <QKeyEvent>
 #include <QVBoxLayout>
-#include <QDesktopWidget>
+#include <QDialogButtonBox>
 #include <QSettings>
 
 #include "icons/commit.xpm"
@@ -135,11 +135,7 @@ toMemoEditor::toMemoEditor(QWidget *parent,
         Row(row),
         Col(col)
 {
-
     setModal(modal);
-    setMinimumSize(400, 300);
-    QDesktopWidget *paramDesktop = new QDesktopWidget;
-    setMaximumWidth(paramDesktop->availableGeometry(this).width()*2 / 3);
 
     setWindowTitle("Memo Editor");
 
@@ -158,6 +154,10 @@ toMemoEditor::toMemoEditor(QWidget *parent,
     vbox->addWidget(Editor);
     Editor->setReadOnly(Row < 0 || Col < 0 || listView());
     Editor->setFocus();
+
+    QDialogButtonBox * buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, Qt::Horizontal, this);
+    vbox->addWidget(buttonBox);
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
     if (Row >= 0 && Col >= 0 && !listView())
     {
