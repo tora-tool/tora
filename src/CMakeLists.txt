@@ -47,6 +47,7 @@ SET(TORA_UI_SRC
     toresultcontentfilterui.ui
     toresultlistformatui.ui
     torollbackdialogui.ui
+#    toschedulerui.ui
     toscriptui.ui
     toscriptschemawidgetui.ui
     tosearchreplaceui.ui
@@ -190,6 +191,7 @@ SET(TORA_MOC_CLASSES
     toresultview.h
     toresultlistformat.h
     torollback.h
+#    toscheduler.h
     toscript.h
     toscriptschemawidget.h
 #     toscripttreeitem.h
@@ -356,6 +358,7 @@ SET(TORA_SOURCES
     toresultview.cpp
     toresultlistformat.cpp
     torollback.cpp
+#    toscheduler.cpp
     toscript.cpp
     toscriptschemawidget.cpp
     toscripttreeitem.cpp
