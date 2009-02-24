@@ -482,6 +482,9 @@ QToolBar *toAllocBar(QWidget *parent, const QString &str)
     else
         tool = new QToolBar(parent);
 
+    // Enforce smaller toolbars on mac
+    tool->setIconSize(QSize(16, 16));
+
     tool->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,
                                     QSizePolicy::Fixed));
     tool->setFocusPolicy(Qt::NoFocus);
