@@ -114,6 +114,17 @@ bool toSearchReplace::caseSensitive()
 
 void toSearchReplace::receivedFocus(toEditWidget *widget)
 {
+#ifdef Q_OS_MAC
+    // Dialog is not writable without this magic on macosx.
+    // TODO/FIXME: it would be great to reqrite S&R mechanism
+    // to include it in edit widgets instead of main window...
+    QWidget * w = dynamic_cast<QWidget*>(widget);
+    if (w)
+        setParent(w, Qt::Dialog);
+//     else
+//         qDebug() << widget << "not set as parent" << w;
+#endif
+
     Target = widget;
     bool anySearch = Target && Target->searchEnabled();
     SearchPrevious->setEnabled(anySearch);
