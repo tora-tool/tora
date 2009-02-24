@@ -114,7 +114,7 @@ bool toSearchReplace::caseSensitive()
 
 void toSearchReplace::receivedFocus(toEditWidget *widget)
 {
-#ifdef Q_OS_MAC
+#ifdef Q_WS_MAC
     // Dialog is not writable without this magic on macosx.
     // TODO/FIXME: it would be great to reqrite S&R mechanism
     // to include it in edit widgets instead of main window...
