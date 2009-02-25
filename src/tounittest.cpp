@@ -249,14 +249,14 @@ void toUnitTest::changePackage(const QModelIndex &current)
 
     worksheet->editor()->setText("-- select PL/SQL unit, please.");
 
-    QTreeWidgetItem *item = static_cast<QTreeWidgetItem*>(current.internalPointer());
+    toCodeModelItem *item = static_cast<toCodeModelItem*>(current.internalPointer());
     if (item && item->parent())
     {
-        m_type = item->parent()->text(0);
+        m_type = item->parent()->display();
         if(m_type.isEmpty() || m_type == "Code")
             return;
         m_type = m_type.toUpper();
-        m_name = item->text(0);
+        m_name = item->display();
     }
 
     if (m_type == "PACKAGE")

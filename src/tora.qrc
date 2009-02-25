@@ -103,6 +103,7 @@
         <file>help/window.html</file>
         <file>help/worksheet.html</file>
         <file>help/workspace.html</file>
+
         <file>icons/add.xpm</file>
         <file>icons/addfile.xpm</file>
         <file>icons/addindex.xpm</file>
@@ -231,6 +232,14 @@
         <file>icons/up.xpm</file>
         <file>icons/view.xpm</file>
         <file>icons/writetablespace.xpm</file>
+
+        <file>icons/function.png</file>
+        <file>icons/package.png</file>
+        <file>icons/package-invalid.png</file>
+        <file>icons/param.png</file>
+        <file>icons/procedure.png</file>
+        <file>icons/type.png</file>
+
         <file>templates/completion.api</file>
         <file>templates/hints.tpl</file>
         <file>templates/log4plsql.tpl</file>

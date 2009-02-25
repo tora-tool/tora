@@ -95,6 +95,7 @@ SET(TORA_MOC_CLASSES
     tobrowsertablewidget.h
     tobrowserviewwidget.h
     tobrowserindexwidget.h
+    tobrowserschemawidget.h
     tobrowsersequencewidget.h
     tobrowsersynonymwidget.h
     tobrowsercodewidget.h
@@ -263,6 +264,7 @@ SET(TORA_SOURCES
     tobrowsertablewidget.cpp
     tobrowserviewwidget.cpp
     tobrowserindexwidget.cpp
+    tobrowserschemawidget.cpp
     tobrowsersequencewidget.cpp
     tobrowsersynonymwidget.cpp
     tobrowsercodewidget.cpp

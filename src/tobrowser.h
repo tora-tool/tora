@@ -76,6 +76,9 @@ class toBrowserTriggerWidget;
 class toBrowserDBLinksWidget;
 class toBrowserAccessWidget;
 class toBrowserBaseWidget;
+class toBrowserSchemaBase;
+class toBrowserSchemaCodeBrowser;
+class toBrowserSchemaTableView;
 
 
 /*! \brief Main GUI fo Schema Browser.
@@ -115,42 +118,42 @@ class toBrowser : public toToolWidget
     QMenu         *ToolMenu;
 
     QSplitter * tableSplitter;
-    toResultTableView *tableView;
+    toBrowserSchemaTableView *tableView;
     toBrowserTableWidget * tableBrowserWidget;
 
     QSplitter * viewSplitter;
-    toResultTableView * viewView;
+    toBrowserSchemaTableView * viewView;
     toBrowserViewWidget * viewBrowserWidget;
 
     QSplitter * indexSplitter;
-    toResultTableView * indexView;
+    toBrowserSchemaTableView * indexView;
     toBrowserIndexWidget * indexBrowserWidget;
 
     QSplitter * sequenceSplitter;
-    toResultTableView * sequenceView;
+    toBrowserSchemaTableView * sequenceView;
     toBrowserSequenceWidget * sequenceBrowserWidget;
 
     QSplitter * synonymSplitter;
-    toResultTableView * synonymView;
+    toBrowserSchemaTableView * synonymView;
     toBrowserSynonymWidget * synonymBrowserWidget;
 
     QSplitter * codeSplitter;
-    toResultTableView * codeView;
+    toBrowserSchemaCodeBrowser * codeView;
     toBrowserCodeWidget * codeBrowserWidget;
 
     QSplitter * triggerSplitter;
-    toResultTableView * triggerView;
+    toBrowserSchemaTableView * triggerView;
     toBrowserTriggerWidget * triggerBrowserWidget;
 
     QSplitter * dblinkSplitter;
-    toResultTableView * dblinkView;
+    toBrowserSchemaTableView * dblinkView;
     toBrowserDBLinksWidget * dblinkBrowserWidget;
 
     QSplitter * accessSplitter;
-    toResultTableView * accessView;
+    toBrowserSchemaTableView * accessView;
     toBrowserAccessWidget * accessBrowserWidget;
 
-    QMap<QSplitter*,toResultTableView*> m_objectsMap;
+    QMap<QSplitter*,toBrowserSchemaBase*> m_objectsMap;
     QMap<QSplitter*,toBrowserBaseWidget*> m_browsersMap;
 
     toBrowserFilter   *Filter;
@@ -216,6 +219,7 @@ public slots:
     void refresh(void);
     void changeSchema(int);
     void changeItem();
+    void changeItem(const QModelIndex &);
     void clearFilter(void);
     void defineFilter(void);
     void windowActivated(QMdiSubWindow *widget);

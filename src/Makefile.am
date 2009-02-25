@@ -188,6 +188,7 @@ tora_SOURCES=main.cpp \
     tobrowsertablewidget.cpp tobrowsertablewidget.h \
     tobrowserviewwidget.cpp tobrowserviewwidget.h \
     tobrowserindexwidget.cpp tobrowserindexwidget.h \
+    tobrowserschemawidget.cpp tobrowserschemawidget.h \
     tobrowsersequencewidget.cpp tobrowsersequencewidget.h \
     tobrowsersynonymwidget.cpp tobrowsersynonymwidget.h \
     tobrowsercodewidget.cpp tobrowsercodewidget.h \
@@ -409,6 +410,7 @@ BUILT_SOURCES = \
     moc_tobrowsertablewidget.cpp \
     moc_tobrowserviewwidget.cpp \
     moc_tobrowserindexwidget.cpp \
+    moc_tobrowserschemawidget.cpp \
     moc_tobrowsersequencewidget.cpp \
     moc_tobrowsersynonymwidget.cpp \
     moc_tobrowsercodewidget.cpp \

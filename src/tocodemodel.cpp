@@ -51,33 +51,114 @@
 
 static toSQL SQLListObjects("toCodeModel:ListObjects",
                             "SELECT a.object_name,\n"
-                            "       a.object_type\n"
-                            "  FROM sys.all_objects a,\n"
-                            "       sys.all_tab_comments b\n"
-                            " WHERE a.owner = b.owner ( + )\n"
-                            "   AND a.object_name = b.table_name ( + )\n"
-                            "   AND a.object_type = b.table_type ( + )\n"
-                            "   AND a.object_type IN ( 'FUNCTION',\n"
+                            "       a.object_type,\n"
+                            "       a.status\n"
+                            "  FROM sys.all_objects a\n"
+                            " WHERE\n"
+                            "       a.object_type IN ( 'FUNCTION',\n"
                             "                          'PACKAGE',\n"
                             "                          'PROCEDURE',\n"
                             "                          'TYPE' )\n"
                             "   AND a.owner = :owner<char[50]>\n"
                             "ORDER BY a.object_name",
                             "Get list of code objects");
+static toSQL SQLListObjectsPgSQL("toCodeModel:ListObjects",
+                             "SELECT p.proname AS Object_Name,\n"
+                             "  CASE WHEN p.prorettype = 0 THEN 'PROCEDURE'\n"
+                             "       ELSE 'FUNCTION'\n"
+                             "   END AS Object_Type,\n"
+                             "  'VALID' as Status\n"
+                             "FROM pg_proc p LEFT OUTER JOIN pg_namespace n ON p.pronamespace=n.oid\n"
+                             "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
+                             "ORDER BY Object_Name",
+                             "",
+                             "7.1",
+                             "PostgreSQL");
+
+static toSQL SQLListPackage("toCodeModel:ListPackage",
+                            "SELECT \n"
+                            "       DECODE(a.object_type, 'PACKAGE', 'SPEC', 'BODY'),\n"
+                            "       a.status\n"
+                            "  FROM sys.all_objects a\n"
+                            " WHERE\n"
+                            "       a.object_name = :name<char[50]>\n"
+                            "   AND a.owner = :owner<char[50]>\n"
+                            "ORDER BY a.object_name",
+                            "Get package spec and body status");
+
+
+
+toCodeModelItem::toCodeModelItem(
+                                    toCodeModelItem *parent,
+                                    const QString & display,
+                                    const QString & type,
+                                    const QString & status)
+{
+    parentItem = parent;
+    itemDisplay = display;
+    itemType = type;
+    itemStatus = status;
+    if (parent)
+        parent->appendChild(this);
+}
+
+toCodeModelItem::~toCodeModelItem()
+{
+    qDeleteAll(childItems);
+}
+
+void toCodeModelItem::appendChild(toCodeModelItem *item)
+{
+    childItems.append(item);
+}
+
+toCodeModelItem *toCodeModelItem::child(int row)
+{
+    return childItems.value(row);
+}
+
+int toCodeModelItem::childCount() const
+{
+    return childItems.count();
+}
+
+int toCodeModelItem::columnCount() const
+{
+    return 1;//itemData.count();
+}
+
+QString toCodeModelItem::display() const
+{
+    return itemDisplay;
+}
+
+QString toCodeModelItem::type() const
+{
+    return itemType;
+}
+
+QString toCodeModelItem::status() const
+{
+    return itemStatus;
+}
+
+toCodeModelItem *toCodeModelItem::parent()
+{
+    return parentItem;
+}
+
+int toCodeModelItem::row() const
+{
+    if (parentItem)
+        return parentItem->childItems.indexOf(const_cast<toCodeModelItem*>(this));
+
+    return 0;
+}
+
 
 toCodeModel::toCodeModel(QObject *parent) : QAbstractItemModel(parent), query(0)
 {
-    rootItem    = new QTreeWidgetItem();
-    packageItem = new QTreeWidgetItem(rootItem);
-    procItem    = new QTreeWidgetItem(rootItem);
-    funcItem    = new QTreeWidgetItem(rootItem);
-    typeItem    = new QTreeWidgetItem(rootItem);
-
-    rootItem->setText(0, tr("Code"));
-    packageItem->setText(0, tr("Package"));
-    procItem->setText(0, tr("Procedure"));
-    funcItem->setText(0, tr("Function"));
-    typeItem->setText(0, tr("Type"));
+    rootItem    = new toCodeModelItem(0, "Code");
 }
 
 toCodeModel::~toCodeModel()
@@ -91,7 +172,7 @@ toCodeModel::~toCodeModel()
 int toCodeModel::columnCount(const QModelIndex &parent) const
 {
     if (parent.isValid())
-        return static_cast<QTreeWidgetItem*>(parent.internalPointer())->columnCount();
+        return static_cast<toCodeModelItem*>(parent.internalPointer())->columnCount();
     else
         return rootItem->columnCount();
 }
@@ -102,16 +183,62 @@ QVariant toCodeModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     if (role == Qt::ToolTipRole)
-        return static_cast<QTreeWidgetItem*>(index.internalPointer())->text(index.column());
+        return static_cast<toCodeModelItem*>(index.internalPointer())->display();
+
+    toCodeModelItem *item = static_cast<toCodeModelItem*>(index.internalPointer());
+    if (!item)
+        return QVariant();
+
+    if (role == Qt::FontRole && item->type() == "NULL")
+    {
+        QFont f;
+        f.setBold(true);
+        return f;
+    }
+
+    if (role == Qt::DecorationRole)
+    {
+        if (item->type() == "PACKAGE"
+            || item->type() == "SPEC"
+            || item->type() == "BODY"
+            || item == packageItem)
+        {
+            if (item->status() == "VALID")
+                return QPixmap(":/icons/package.png");
+            else
+                return QPixmap(":/icons/package-invalid.png");
+        }
+        if (item->type() == "PROCEDURE"
+            || item == procItem)
+        {
+            if (item->status() == "VALID")
+                return QPixmap(":/icons/procedure.png");
+            else
+                return QPixmap(":/icons/procedure-invalid.png");
+        }
+        if (item->type() == "FUNCTION"
+            || item == funcItem)
+        {
+            if (item->status() == "VALID")
+                return QPixmap(":/icons/function.png");
+            else
+                return QPixmap(":/icons/function-invalid.png");
+        }
+        if (item->type() == "TYPE"
+            || item == typeItem)
+        {
+            if (item->status() == "VALID")
+                return QPixmap(":/icons/type.png");
+            else
+                return QPixmap(":/icons/type-invalid.png");
+        }
+        return QVariant();
+    }
 
     if (role != Qt::DisplayRole)
         return QVariant();
 
-    QTreeWidgetItem *item = static_cast<QTreeWidgetItem*>(index.internalPointer());
-    if (!item)
-        return QVariant();
-
-    return item->text(index.column());
+    return item->display();
 }
 
 Qt::ItemFlags toCodeModel::flags(const QModelIndex &index) const
@@ -126,7 +253,7 @@ QVariant toCodeModel::headerData(int section, Qt::Orientation orientation,
                                int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-        return tr("Objects");
+        return tr("Code");
 
     return QVariant();
 }
@@ -137,14 +264,14 @@ QModelIndex toCodeModel::index(int row, int column, const QModelIndex &parent)
     if (!hasIndex(row, column, parent))
         return QModelIndex();
 
-    QTreeWidgetItem *parentItem;
+    toCodeModelItem *parentItem;
 
     if (!parent.isValid())
         parentItem = rootItem;
     else
-        parentItem = static_cast<QTreeWidgetItem*>(parent.internalPointer());
+        parentItem = static_cast<toCodeModelItem*>(parent.internalPointer());
 
-    QTreeWidgetItem *childItem = parentItem->child(row);
+    toCodeModelItem *childItem = parentItem->child(row);
     if (childItem)
         return createIndex(row, column, childItem);
     else
@@ -153,36 +280,46 @@ QModelIndex toCodeModel::index(int row, int column, const QModelIndex &parent)
 
 QModelIndex toCodeModel::parent(const QModelIndex &index) const
 {
+//     if (!index.isValid())
+//         return QModelIndex();
+// 
+//     toCodeModelItem *childItem = static_cast<toCodeModelItem*>(index.internalPointer());
+//     toCodeModelItem *parentItem = childItem->parent();
+// 
+//     if (parentItem == rootItem)
+//         return QModelIndex();
+//     if (parentItem == packageItem)
+//         return createIndex(1, 0, parentItem);
+//     if (parentItem == procItem)
+//         return createIndex(2, 0, parentItem);
+//     if (parentItem == funcItem)
+//         return createIndex(3, 0, parentItem);
+//     if (parentItem == typeItem)
+//         return createIndex(4, 0, parentItem);
+// 
+//     return QModelIndex();
     if (!index.isValid())
         return QModelIndex();
 
-    QTreeWidgetItem *childItem = static_cast<QTreeWidgetItem*>(index.internalPointer());
-    QTreeWidgetItem *parentItem = childItem->parent();
+    toCodeModelItem *childItem = static_cast<toCodeModelItem*>(index.internalPointer());
+    toCodeModelItem *parentItem = childItem->parent();
 
     if (parentItem == rootItem)
         return QModelIndex();
-    if (parentItem == packageItem)
-        return createIndex(1, 0, parentItem);
-    if (parentItem == procItem)
-        return createIndex(2, 0, parentItem);
-    if (parentItem == funcItem)
-        return createIndex(3, 0, parentItem);
-    if (parentItem == typeItem)
-        return createIndex(4, 0, parentItem);
 
-    return QModelIndex();
+    return createIndex(parentItem->row(), 0, parentItem);
 }
 
 int toCodeModel::rowCount(const QModelIndex &parent) const
 {
-    QTreeWidgetItem *parentItem;
+    toCodeModelItem *parentItem;
     if (parent.column() > 0)
         return 0;
 
     if (!parent.isValid())
         parentItem = rootItem;
     else
-        parentItem = static_cast<QTreeWidgetItem*>(parent.internalPointer());
+        parentItem = static_cast<toCodeModelItem*>(parent.internalPointer());
 
     return parentItem->childCount();
 }
@@ -196,22 +333,17 @@ void toCodeModel::queryError(const toConnection::exception &err) {
 
 void toCodeModel::refresh(toConnection &conn, const QString &owner)
 {
+    m_owner = owner;
+
     delete rootItem;
-    rootItem = new QTreeWidgetItem();
-
-    packageItem = new QTreeWidgetItem(rootItem);
-    procItem = new QTreeWidgetItem(rootItem);
-	funcItem = new QTreeWidgetItem(rootItem);
-    typeItem = new QTreeWidgetItem(rootItem);
-
-    rootItem->setText(0, tr("Code"));
-    packageItem->setText(0, tr("Package"));
-    procItem->setText(0, tr("Procedure"));
-    funcItem->setText(0, tr("Function"));
-    typeItem->setText(0, tr("Type"));
+    rootItem    = new toCodeModelItem(0, "Code");
+    packageItem = new toCodeModelItem(rootItem, tr("Package"));
+    procItem    = new toCodeModelItem(rootItem, tr("Procedure"));
+    funcItem    = new toCodeModelItem(rootItem, tr("Function"));
+    typeItem    = new toCodeModelItem(rootItem, tr("Type"));
 
     toQList param;
-    param.push_back(owner);
+    param.push_back(m_owner);
 
     try {
         query = new toEventQuery(conn,
@@ -239,6 +371,36 @@ void toCodeModel::refresh(toConnection &conn, const QString &owner)
     TOCATCH;
 }
 
+void toCodeModel::addChildContent(const QModelIndex & index)
+{
+    toCodeModelItem * item = static_cast<toCodeModelItem*>(index.internalPointer());
+    if (!item)
+        return;
+
+    QString itemType(item->type());
+    if (itemType == "PACKAGE")
+    {
+        // don't re-read it until refresh action...
+        if (item->childCount() > 0)
+            return;
+
+        toQuery query(toCurrentConnection(this), SQLListPackage, item->display(), m_owner);
+        QString ctype;
+        QString cstatus;
+
+        emit layoutAboutToBeChanged();
+        while (!query.eof())
+        {
+            ctype = query.readValueNull();
+            cstatus = query.readValueNull();
+
+            new toCodeModelItem(item, ctype, ctype, cstatus);
+        }
+        emit layoutChanged();
+        return;
+    } // end of packages
+}
+
 void toCodeModel::cleanup()
 {
     if (query)
@@ -260,24 +422,27 @@ void toCodeModel::readData()
         return;
     }
 
-    while(query->hasMore()) {
+    while(query->hasMore())
+    {
         QString cname = query->readValueNull().toString();
         QString ctype = query->readValueNull().toString();
+        QString cstatus = query->readValueNull().toString();
 
-        QTreeWidgetItem *item = 0;
+        toCodeModelItem *item = 0;
         if(ctype == QString("PACKAGE"))
-            item = new QTreeWidgetItem(packageItem);
+            item = packageItem;
         else if(ctype == QString("PROCEDURE"))
-            item = new QTreeWidgetItem(procItem);
+            item = procItem;
         else if (ctype == QString("FUNCTION"))
-            item = new QTreeWidgetItem(funcItem);
+            item = funcItem;
         else if(ctype == QString("TYPE"))
-            item = new QTreeWidgetItem(typeItem);
+            item = typeItem;
 
-        item->setText(0, cname);
+        new toCodeModelItem(item, cname, ctype, cstatus);
     }
 
     reset();
+    emit dataReady();
 
     if(!query->hasMore() && query->eof())
     {

@@ -68,6 +68,11 @@ class toBrowserCodeWidget : public toBrowserBaseWidget
         toBrowserCodeWidget(QWidget * parent);
 
         virtual void changeConnection();
+
+        enum {
+            SpecTab = 0,
+            BodyTab = 1
+        } TabOrder;
 };
 
 #endif

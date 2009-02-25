@@ -126,7 +126,7 @@
 #include "tobrowsertriggerwidget.h"
 #include "tobrowserdblinkswidget.h"
 #include "tobrowseraccesswidget.h"
-
+#include "tobrowserschemawidget.h"
 
 
 const char **toBrowserTool::pictureXPM(void)
@@ -1189,48 +1189,48 @@ static toSQL SQLListSynonym("toBrowser:ListSynonym",
 //                             "   AND Synonym_Name = :f2<char[101]>",
 //                             "Display information about a synonym");
 
-static toSQL SQLListSQLPgSQL("toBrowser:ListCode",
-                             "SELECT p.proname AS Object_Name,\n"
-                             "  CASE WHEN p.prorettype = 0 THEN 'PROCEDURE'\n"
-                             "       ELSE 'FUNCTION'\n"
-                             "   END AS Object_Type\n"
-                             "FROM pg_proc p LEFT OUTER JOIN pg_namespace n ON p.pronamespace=n.oid\n"
-                             "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
-                             "ORDER BY Object_Name",
-                             "List the available Code objects in a schema",
-                             "7.1",
-                             "PostgreSQL");
-static toSQL SQLListSQL("toBrowser:ListCode",
-                        "SELECT Object_Name,Object_Type,Status Type FROM SYS.ALL_OBJECTS\n"
-                        " WHERE OWNER = :f1<char[101]>\n"
-                        "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
-                        "                       'PROCEDURE','TYPE')\n"
-                        "   AND UPPER(OBJECT_NAME) LIKE :f2<char[101]>\n"
-                        " ORDER BY Object_Name",
-                        "");
-static toSQL SQLListSQLShortPgSQL("toBrowser:ListCodeShort",
-                                  "SELECT p.proname AS Object_Name\n"
-                                  "FROM pg_proc p LEFT OUTER JOIN pg_namespace n ON p.pronamespace=n.oid\n"
-                                  "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
-                                  "ORDER BY Object_Name",
-                                  "List the available Code objects in a schema, one column version",
-                                  "7.1",
-                                  "PostgreSQL");
-static toSQL SQLListSQLShort("toBrowser:ListCodeShort",
-                             "SELECT Object_Name Type FROM SYS.ALL_OBJECTS\n"
-                             " WHERE OWNER = :f1<char[101]>\n"
-                             "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
-                             "                       'PROCEDURE','TYPE')\n"
-                             "   AND UPPER(OBJECT_NAME) LIKE :f2<char[101]>\n"
-                             " ORDER BY Object_Name",
-                             "");
+// static toSQL SQLListSQLPgSQL("toBrowser:ListCode",
+//                              "SELECT p.proname AS Object_Name,\n"
+//                              "  CASE WHEN p.prorettype = 0 THEN 'PROCEDURE'\n"
+//                              "       ELSE 'FUNCTION'\n"
+//                              "   END AS Object_Type\n"
+//                              "FROM pg_proc p LEFT OUTER JOIN pg_namespace n ON p.pronamespace=n.oid\n"
+//                              "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
+//                              "ORDER BY Object_Name",
+//                              "List the available Code objects in a schema",
+//                              "7.1",
+//                              "PostgreSQL");
+// static toSQL SQLListSQL("toBrowser:ListCode",
+//                         "SELECT Object_Name,Object_Type,Status Type FROM SYS.ALL_OBJECTS\n"
+//                         " WHERE OWNER = :f1<char[101]>\n"
+//                         "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
+//                         "                       'PROCEDURE','TYPE')\n"
+//                         "   AND UPPER(OBJECT_NAME) LIKE :f2<char[101]>\n"
+//                         " ORDER BY Object_Name",
+//                         "");
+// static toSQL SQLListSQLShortPgSQL("toBrowser:ListCodeShort",
+//                                   "SELECT p.proname AS Object_Name\n"
+//                                   "FROM pg_proc p LEFT OUTER JOIN pg_namespace n ON p.pronamespace=n.oid\n"
+//                                   "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
+//                                   "ORDER BY Object_Name",
+//                                   "List the available Code objects in a schema, one column version",
+//                                   "7.1",
+//                                   "PostgreSQL");
+// static toSQL SQLListSQLShort("toBrowser:ListCodeShort",
+//                              "SELECT Object_Name Type FROM SYS.ALL_OBJECTS\n"
+//                              " WHERE OWNER = :f1<char[101]>\n"
+//                              "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
+//                              "                       'PROCEDURE','TYPE')\n"
+//                              "   AND UPPER(OBJECT_NAME) LIKE :f2<char[101]>\n"
+//                              " ORDER BY Object_Name",
+//                              "");
 
 
-static toSQL SQLSQLTemplate("toBrowser:CodeTemplate",
-                            "SELECT Text FROM SYS.ALL_SOURCE\n"
-                            " WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
-                            "   AND Type IN ('PACKAGE','PROCEDURE','FUNCTION','PACKAGE','TYPE')",
-                            "Declaration of object displayed in template window");
+// static toSQL SQLSQLTemplate("toBrowser:CodeTemplate",
+//                             "SELECT Text FROM SYS.ALL_SOURCE\n"
+//                             " WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
+//                             "   AND Type IN ('PACKAGE','PROCEDURE','FUNCTION','PACKAGE','TYPE')",
+//                             "Declaration of object displayed in template window");
 // PostgreSQL does not distinguish between Head and Body for Stored SQL
 // package code will be returnd for both Head and Body
 // static toSQL SQLSQLHeadPgSQL("toBrowser:CodeHead",
@@ -1473,7 +1473,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
             SLOT(disableConstraints(void)));
     tableToolbar->addAction(disableConstraintAct);
 
-    tableView = new toResultTableView(true, false, tableWidget);
+    tableView = new toBrowserSchemaTableView(tableWidget);
     tableLayout->addWidget(tableView);
     tableView->setReadAll(true);
     tableView->setSQL(SQLListTables);
@@ -1498,7 +1498,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     viewSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     viewSplitter->setObjectName(TAB_VIEWS);
 //     m_mainTab->addTab(viewSplitter, tr("&Views"));
-    viewView = new toResultTableView(true, false, viewSplitter);
+    viewView = new toBrowserSchemaTableView(viewSplitter);
     viewView->setReadAll(true);
     viewView->setSQL(SQLListView);
     viewView->resize(FIRST_WIDTH, viewView->height());
@@ -1547,7 +1547,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
             this, SLOT(dropIndex()));
     indexToolbar->addAction(dropIndexesAct);
 
-    indexView = new toResultTableView(true, false, indexWidget);
+    indexView = new toBrowserSchemaTableView(indexWidget);
     indexLayout->addWidget(indexView);
     indexView->setReadAll(true);
     indexView->setTabWidget(m_mainTab);
@@ -1569,7 +1569,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     sequenceSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     sequenceSplitter->setObjectName(TAB_SEQUENCES);
 //     m_mainTab->addTab(sequenceSplitter, tr("Se&quences"));
-    sequenceView = new toResultTableView(true, false, sequenceSplitter);
+    sequenceView = new toBrowserSchemaTableView(sequenceSplitter);
     sequenceView->setReadAll(true);
     sequenceView->setSQL(SQLListSequence);
     sequenceView->resize(FIRST_WIDTH, sequenceView->height());
@@ -1588,7 +1588,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     synonymSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     synonymSplitter->setObjectName(TAB_SYNONYM);
 //     m_mainTab->addTab(synonymSplitter, tr("S&ynonyms"));
-    synonymView = new toResultTableView(true, false, synonymSplitter);
+    synonymView = new toBrowserSchemaTableView(synonymSplitter);
     synonymView->setReadAll(true);
     synonymView->setSQL(SQLListSynonym);
     synonymView->resize(FIRST_WIDTH, synonymView->height());
@@ -1606,12 +1606,12 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     codeSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     codeSplitter->setObjectName(TAB_PLSQL);
 //     m_mainTab->addTab(codeSplitter, tr("Cod&e"));
-    codeView = new toResultTableView(true, false, codeSplitter);
-    codeView->setReadAll(true);
-    codeView->setSQL(SQLListSQL);
+    codeView = new toBrowserSchemaCodeBrowser(codeSplitter);
+//     codeView->setReadAll(true);
+//     codeView->setSQL(SQLListSQL);
     codeView->resize(FIRST_WIDTH*2, codeView->height());
-    connect(codeView, SIGNAL(selectionChanged()),
-            this, SLOT(changeItem()));
+    connect(codeView, SIGNAL(clicked(const QModelIndex &)),
+            this, SLOT(changeItem(const QModelIndex &)));
     codeSplitter->setStretchFactor(codeSplitter->indexOf(codeView), 0);
 
     codeBrowserWidget = new toBrowserCodeWidget(codeSplitter);
@@ -1625,7 +1625,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     triggerSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     triggerSplitter->setObjectName(TAB_TRIGGER);
 //     m_mainTab->addTab(triggerSplitter, tr("Tri&ggers"));
-    triggerView = new toResultTableView(true, false, triggerSplitter);
+    triggerView = new toBrowserSchemaTableView(triggerSplitter);
     triggerView->setReadAll(true);
     triggerView->setSQL(SQLListTrigger);
     triggerView->resize(FIRST_WIDTH, triggerView->height());
@@ -1654,7 +1654,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     QToolBar * dblinkToolbar = toAllocBar(dblinkWidget, tr("Database browser"));
     dblinkLayout->addWidget(dblinkToolbar);
 
-    dblinkView = new toResultTableView(true, false, dblinkWidget);
+    dblinkView = new toBrowserSchemaTableView(dblinkWidget);
     dblinkBrowserWidget = new toBrowserDBLinksWidget(dblinkSplitter);
 
     testDBLinkAct = new QAction(QPixmap(const_cast<const char**>(modconstraint_xpm)),
@@ -1706,14 +1706,14 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
                            tr("Drop user"),
                            this, SLOT(dropUser()));
 
-    accessView = new toResultTableView(true, false, accessWidget);
+    accessView = new toBrowserSchemaTableView(accessWidget);
     accessView->setSQL(SQLMySQLUsers);
     accessView->setReadAll(true);
     AccessContent = NULL;
     accessLayout->addWidget(accessView);
     accessWidget->resize(FIRST_WIDTH, accessView->height());
 #else
-    accessView = new toResultTableView(true, false, accessSplitter);
+    accessView = new toBrowserSchemaTableView(accessSplitter);
     accessView->resize(FIRST_WIDTH, accessView->height());
     accessView->setSQL(SQLMySQLAccess);
     accessView->setReadAll(true);
@@ -1822,8 +1822,7 @@ void toBrowser::setNewFilter(toBrowserFilter *filter)
     else
         Filter = new toBrowserFilter();
     FilterButton->setChecked(filter);
-    //     for (std::map<QString, toResultTableView *>::iterator i = Map.begin();i != Map.end();i++)
-    //         (*i).second->setFilter(Filter->clone());
+
     refresh();
 }
 
@@ -1940,7 +1939,8 @@ QString toBrowser::currentItemText(int col)
 
     if (m_objectsMap.contains(ix))
     {
-        return m_objectsMap[ix]->selectedIndex(1).data(Qt::EditRole).toString();
+//         return m_objectsMap[ix]->selectedIndex(1).data(Qt::EditRole).toString();
+        return m_objectsMap[ix]->objectName();
     }
     return "";
 }
@@ -1957,6 +1957,35 @@ void toBrowser::changeItem()
     }
     else
         qDebug() << "changeItem() unhandled index" << ix;
+}
+
+void toBrowser::changeItem(const QModelIndex &)
+{
+    // It's called only from the code view
+    QSplitter * ix = qobject_cast<QSplitter*>(m_mainTab->currentWidget());
+    if (ix != codeSplitter)
+    {
+        qDebug("Only for code - QSplitter cast!");
+        return;
+    }
+    changeItem();
+
+    toBrowserSchemaCodeBrowser * browser = dynamic_cast<toBrowserSchemaCodeBrowser*>(m_objectsMap[ix]);
+    if (!browser)
+    {
+        qDebug("Only for code - toBrowserSchemaCodeBrowser cast!");
+        return;
+    }
+    if (browser->objectType() == "SPEC")
+        m_browsersMap[ix]->setCurrentIndex(toBrowserCodeWidget::SpecTab);
+    else if (browser->objectType() == "BODY")
+        m_browsersMap[ix]->setCurrentIndex(toBrowserCodeWidget::BodyTab);
+    else if (browser->objectType() == "TYPE")
+        m_browsersMap[ix]->setCurrentIndex(toBrowserCodeWidget::SpecTab);
+    else if (browser->objectType() == "PROCEDURE"
+             || browser->objectType() == "FUNCTION")
+        m_browsersMap[ix]->setCurrentIndex(toBrowserCodeWidget::BodyTab);
+    
 }
 
 void toBrowser::clearFilter(void)
