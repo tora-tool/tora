@@ -93,7 +93,10 @@ class toMarkedText : public QsciScintilla, public toEditWidget
     QPoint DragStart;
 
     Search::SearchDirection m_searchDirection;
+    //! Text to search
     QString m_searchText;
+    //! Highligh all occurrences of m_searchText QScintilla indicator
+    int m_searchIndicator;
 
     bool findText(Search::SearchDirection direction);
 

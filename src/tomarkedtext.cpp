@@ -82,7 +82,8 @@
 toMarkedText::toMarkedText(QWidget *parent, const char *name)
         : QsciScintilla(parent), toEditWidget(),
         m_searchDirection(Search::SearchUndefined),
-        m_searchText("")
+        m_searchText(""),
+        m_searchIndicator(9) // see QsciScintilla docs
 {
     if (name)
         setObjectName(name);
@@ -91,6 +92,16 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
     setFont(toStringToFont(toConfigurationSingle::Instance().textFont()));
     setMarginLineNumbers(0, true);
     setCallTipsStyle(CallTipsNone);
+
+    // search all occurrences
+    // allow indicator painting *under* the text (but it makes editor slower a bit...)
+    // It paints a colored box under the text for all occurrences of m_searchText.
+    SendScintilla(QsciScintilla::SCI_SETTWOPHASEDRAW, 1);
+    SendScintilla(QsciScintilla::SCI_INDICSETSTYLE, m_searchIndicator, QsciScintilla::INDIC_ROUNDBOX);
+    // TODO/FIXME: make it configurable
+    SendScintilla(QsciScintilla::SCI_INDICSETFORE, m_searchIndicator, QColor(255, 230, 90, 100));
+    SendScintilla(QsciScintilla::SCI_INDICSETUNDER, m_searchIndicator, 1);
+    // end of search all occurrences
 
     connect(this, SIGNAL(textChanged()), this, SLOT(setTextChanged()));
     connect(this, SIGNAL(copyAvailable(bool)), this, SLOT(setCopyAvailable(bool)));
@@ -655,6 +666,43 @@ bool toMarkedText::findText(Search::SearchDirection direction)
                       index,
                       true //bool   show = true
                      );
+        // find and highlight all occurrences of m_searchText
+        // from the beginning to the end
+        int from = 0;
+        int to = text().length();
+
+        SendScintilla(QsciScintilla::SCI_SETINDICATORCURRENT, m_searchIndicator);
+        // clear previously used marked text
+        SendScintilla(QsciScintilla::SCI_INDICATORCLEARRANGE, 0, to);
+
+        // set searching flags
+        int searchFlags = 0;
+        //QsciScintilla::SCFIND_WORDSTART;
+        if (toMainWidget()->searchDialog()->searchMode() == Search::SearchRegexp)
+            searchFlags |= QsciScintilla::SCFIND_REGEXP;
+        if (toMainWidget()->searchDialog()->caseSensitive())
+            searchFlags |= QsciScintilla::SCFIND_MATCHCASE;
+        if (toMainWidget()->searchDialog()->wholeWords())
+            searchFlags |= QsciScintilla::SCFIND_WHOLEWORD;
+
+        while (from < to)
+        {
+            // set searching range
+            SendScintilla(QsciScintilla::SCI_SETTARGETSTART, from);
+            SendScintilla(QsciScintilla::SCI_SETTARGETEND, to);
+            SendScintilla(QsciScintilla::SCI_SETSEARCHFLAGS, searchFlags);
+            from = SendScintilla(QsciScintilla::SCI_SEARCHINTARGET,
+                                m_searchText.length(), m_searchText.toUtf8().data());
+
+            // SCI_SEARCHINTARGET returns -1 when it doesn't find anything
+            if (from == -1)
+                break;
+
+            int end = SendScintilla(QsciScintilla::SCI_GETTARGETEND);
+            // mark current occurrence of searchText
+            SendScintilla(QsciScintilla::SCI_INDICATORFILLRANGE, from, end - from);
+            from = end;
+        }
     }
     else
         findNext();
