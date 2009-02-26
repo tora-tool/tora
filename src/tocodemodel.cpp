@@ -49,19 +49,36 @@
 #include "tocodemodel.h"
 #include "toeventquery.h"
 
+// List all code objects and its status (IN/VALID)
+// it takes PACKAGE BODY for every PACKAGE as
+// a IN/VALID indicator too (for invalid icons).
 static toSQL SQLListObjects("toCodeModel:ListObjects",
-                            "SELECT a.object_name,\n"
-                            "       a.object_type,\n"
-                            "       a.status\n"
-                            "  FROM sys.all_objects a\n"
-                            " WHERE\n"
-                            "       a.object_type IN ( 'FUNCTION',\n"
-                            "                          'PACKAGE',\n"
-                            "                          'PROCEDURE',\n"
-                            "                          'TYPE' )\n"
-                            "   AND a.owner = :owner<char[50]>\n"
-                            "ORDER BY a.object_name",
+                             "SELECT a.object_name,\n"
+                             "       a.object_type,\n"
+                             "       (CASE\n"
+                             "           WHEN a.object_type = 'PACKAGE'\n"
+                             "                AND a.status = 'VALID'\n"
+                             "                AND (select count(1)\n"
+                             "                        from sys.all_objects b\n"
+                             "                        where a.object_name = b.object_name\n"
+                             "                            and a.owner = b.owner\n"
+                             "                            and b.object_type = 'PACKAGE BODY'\n"
+                             "                            and b.status != 'VALID'\n"
+                             "                    ) > 0\n"
+                             "                THEN 'INVALID'\n"
+                             "           ELSE a.status\n"
+                             "        END\n"
+                             "       ) as Status\n"
+                             "  FROM sys.all_objects a\n"
+                             "  WHERE\n"
+                             "       a.object_type IN ( 'FUNCTION',\n"
+                             "                          'PACKAGE',\n"
+                             "                          'PROCEDURE',\n"
+                             "                          'TYPE' )\n"
+                             "       AND a.owner = :owner<char[50]>\n"
+                             "ORDER BY a.object_name\n",
                             "Get list of code objects");
+
 static toSQL SQLListObjectsPgSQL("toCodeModel:ListObjects",
                              "SELECT p.proname AS Object_Name,\n"
                              "  CASE WHEN p.prorettype = 0 THEN 'PROCEDURE'\n"
@@ -140,6 +157,11 @@ QString toCodeModelItem::type() const
 QString toCodeModelItem::status() const
 {
     return itemStatus;
+}
+
+void toCodeModelItem::setStatus(const QString & s)
+{
+    itemStatus = s;
 }
 
 toCodeModelItem *toCodeModelItem::parent()
@@ -395,6 +417,12 @@ void toCodeModel::addChildContent(const QModelIndex & index)
             cstatus = query.readValueNull();
 
             new toCodeModelItem(item, ctype, ctype, cstatus);
+            // "inherit" child status for parent if it's required
+            if ((ctype == "SPEC" || ctype == "BODY")
+                && cstatus != "VALID")
+            {
+                item->setStatus(cstatus);
+            }
         }
         emit layoutChanged();
         return;

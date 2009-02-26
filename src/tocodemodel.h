@@ -92,6 +92,7 @@ public:
     QString type() const;
     //! Object status (validity)
     QString status() const;
+    void setStatus(const QString & s);
 
 private:
     QList<toCodeModelItem*> childItems;

@@ -234,11 +234,14 @@
         <file>icons/writetablespace.xpm</file>
 
         <file>icons/function.png</file>
+        <file>icons/function-invalid.png</file>
         <file>icons/package.png</file>
         <file>icons/package-invalid.png</file>
         <file>icons/param.png</file>
         <file>icons/procedure.png</file>
+        <file>icons/procedure-invalid.png</file>
         <file>icons/type.png</file>
+        <file>icons/type-invalid.png</file>
 
         <file>templates/completion.api</file>
         <file>templates/hints.tpl</file>
