@@ -106,7 +106,7 @@ toBrowserCodeWidget::toBrowserCodeWidget(QWidget * parent)
     dependsWidget = new toResultDepend(this, "dependsWidget");
 //     dependsWidget->setObjectName("dependsWidget");
 
-    extractView = new toResultExtract(this);
+    extractView = new toResultExtract(true, this);
     extractView->setObjectName("extractView");
 
     changeConnection();
