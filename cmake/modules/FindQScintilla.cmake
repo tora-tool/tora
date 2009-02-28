@@ -8,17 +8,17 @@
 
 # copyright (c) 2007 Thomas Moenicke thomas.moenicke@kdemail.net
 #
-# Redistribution and use is allowed according to the terms of the BSD license.
+# Redistribution and use is allowed according to the terms of the FreeBSD license.
 
 IF(NOT QT4_FOUND)
     INCLUDE(FindQt4)
 ENDIF(NOT QT4_FOUND)
 
-SET(QSCINTILLA_FOUND "NO")
+SET(QSCINTILLA_FOUND FALSE)
 
 IF(QT4_FOUND)
     FIND_PATH(QSCINTILLA_INCLUDE_DIR qsciglobal.h
-    "${QT_INCLUDE_DIR}/Qsci"
+    "${QT_INCLUDE_DIR}/Qsci" /usr/include /usr/include/Qsci
     )
 
     SET(QSCINTILLA_NAMES ${QSCINTILLA_NAMES} qscintilla2 libqscintilla2)
@@ -27,10 +27,10 @@ IF(QT4_FOUND)
         PATHS ${QT_LIBRARY_DIR}
     )
 
-    IF (QSCINTILLA_LIBRARY)
+    IF (QSCINTILLA_LIBRARY AND QSCINTILLA_INCLUDE_DIR)
 
         SET(QSCINTILLA_LIBRARIES ${QSCINTILLA_LIBRARY})
-        SET(QSCINTILLA_FOUND "YES")
+        SET(QSCINTILLA_FOUND TRUE)
 
         IF (CYGWIN)
             IF(BUILD_SHARED_LIBS)
@@ -40,12 +40,13 @@ IF(QT4_FOUND)
             ENDIF(BUILD_SHARED_LIBS)
         ENDIF (CYGWIN)
 
-    ENDIF (QSCINTILLA_LIBRARY)
+    ENDIF (QSCINTILLA_LIBRARY AND QSCINTILLA_INCLUDE_DIR)
 ENDIF(QT4_FOUND)
 
 IF (QSCINTILLA_FOUND)
   IF (NOT QScintilla_FIND_QUIETLY)
     MESSAGE(STATUS "Found QScintilla2: ${QSCINTILLA_LIBRARY}")
+    MESSAGE(STATUS "         includes: ${QSCINTILLA_INCLUDE_DIR}")
   ENDIF (NOT QScintilla_FIND_QUIETLY)
 ELSE (QSCINTILLA_FOUND)
   IF (QScintilla_FIND_REQUIRED)
@@ -54,3 +55,4 @@ ELSE (QSCINTILLA_FOUND)
 ENDIF (QSCINTILLA_FOUND)
 
 MARK_AS_ADVANCED(QSCINTILLA_INCLUDE_DIR QSCINTILLA_LIBRARY)
+
