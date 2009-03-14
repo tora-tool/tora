@@ -66,6 +66,30 @@ toResultPlan::toResultPlan(QWidget *parent, const char *name)
     oracleSetup();
 }
 
+static toSQL SQLViewVSQLPlan("toResultPlan:ViewVSQLPlan",
+                         "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
+                         "  io_cost,Bytes,Cardinality,\n"
+                         "  partition_start,partition_stop,temp_space,time\n"
+                         "  FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' ORDER BY NVL(Parent_ID,0),ID",
+                         "Get the contents of SQL plan from V$SQL_PLAN.",
+                         "1000");
+
+static toSQL SQLViewVSQLPlan92("toResultPlan:ViewVSQLPlan",
+                         "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
+                         "  io_cost,Bytes,Cardinality,\n"
+                         "  partition_start,partition_stop,temp_space,null time\n"
+                         "  FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' ORDER BY NVL(Parent_ID,0),ID",
+                         "",
+                         "0902");
+
+static toSQL SQLViewVSQLPlan9("toResultPlan:ViewVSQLPlan",
+                         "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
+                         "  io_cost,Bytes,Cardinality,\n"
+                         "  partition_start,partition_stop,null temp_space,null time\n"
+                         "  FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' ORDER BY NVL(Parent_ID,0),ID",
+                         "",
+                         "0900");
+
 static toSQL SQLViewPlan("toResultPlan:ViewPlan",
                          "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
                          "  io_cost,Bytes,Cardinality,\n"
@@ -160,13 +184,17 @@ void toResultPlan::oracleNext(void)
         {
             try
             {
-                conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().user()));
+                // conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().user()));
+		// when we start connection it is for user but in schema context
+                conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().schema()));
             }
             catch (...)
                 {}
             throw;
         }
-        conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().user()));
+        //conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().user()));
+	//when we start connection it is for user but in schema context
+        conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().schema()));
         toQList par;
         Query = new toNoBlockQuery(connection(), toQuery::Normal,
                                    toSQL::string(SQLViewPlan, connection()).
@@ -180,7 +208,7 @@ void toResultPlan::oracleNext(void)
         toQList par;
         Query = new toNoBlockQuery(conn, toQuery::Normal, explain, par);
     }
-    TopItem = new toResultViewItem(this, TopItem, QString::fromLatin1("DML"));
+    TopItem = new toResultViewItem(this, TopItem, QString::fromLatin1("EXPLAIN PLAN:"));
     TopItem->setText(1, sql.left(50).trimmed());
     Poll.start(100);
 }
@@ -287,8 +315,25 @@ void toResultPlan::query(const QString &sql,
             Last.clear();
             TopItem = new toResultViewItem(this, NULL, QString::fromLatin1("DML"));
             TopItem->setText(1, QString::fromLatin1("Saved plan"));
+	    Poll.start(100);
         }
-        else
+        else if (sql.startsWith(QString::fromLatin1("SGA:")))
+        {
+            QString Address = sql.mid(4);
+	    toConnection &conn = connection();
+            toQList par;
+            Query = new toNoBlockQuery(conn, toQuery::Background,
+                                       toSQL::string(SQLViewVSQLPlan, conn).arg(Address),
+                                       par);
+            Reading = true;
+	    LastTop = NULL;
+            Parents.clear();
+            Last.clear();
+            TopItem = new toResultViewItem(this, NULL, QString::fromLatin1("V$SQL_PLAN:"));
+            TopItem->setText(1, toSQLString(conn, Address).left(50).trimmed());
+	    Poll.start(100);
+        }
+	else
         {
             TopItem = NULL;
             std::list<toSQLParse::statement> ret = toSQLParse::parse(sql);
@@ -315,9 +360,13 @@ void toResultPlan::poll(void)
                 toQList par;
                 delete Query;
                 Query = NULL;
+		toConnection &conn = connection();
                 Query = new toNoBlockQuery(connection(), toQuery::Normal,
-                                           toSQL::string(SQLViewPlan, connection()).
-                                           arg(toConfigurationSingle::Instance().planTable()).
+                                           toSQL::string(SQLViewPlan, conn).
+                                           // arg(toConfigurationSingle::Instance().planTable()).
+					   // Since EXPLAIN PLAN is always to conn.user() plan_table
+					   // and current_schema can be different
+					   arg(conn.user()+QString(".")+toConfigurationSingle::Instance().planTable()).
                                            arg(Ident), par);
                 Reading = true;
             }
