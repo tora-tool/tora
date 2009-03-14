@@ -75,6 +75,12 @@ static toSQL SQLParsingSchema(
     "   AND a.address || ':' || a.hash_value = :f1<char[101]> AND a.child_number = 0",
     "Get the schema that parsed a statement");
 
+static toSQL SQLcheckVSQL(
+    "toSGAStatement:checkVSQL",
+    "SELECT count(*) FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1'",
+    "Check whether plan for the statement with specified addres exists in V$SQL_PLAN",
+    "0900");
+
 static toSQL SQLBackendSql(
     "toSGAStatement:BackendSql",
     "SELECT pg_stat_get_backend_activity ( :backend<int> )",
@@ -133,9 +139,18 @@ void toSGAStatement::changeTab(int index)
             }
             else if (CurrentTab == Plan)
             {
+		toConnection &conn = toCurrentConnection(this);
+		    /*
                 Plan->query(toSQLString(toCurrentConnection(this), Address),
                             toQuery::readQuery(toCurrentConnection(this),
                                                SQLParsingSchema, Address));
+					       */
+		if (conn.version() >= "0900" &&
+		    toQuery::readQuery(conn,toSQL::string(SQLcheckVSQL, conn).arg(Address)).begin()->toInt() > 0) 
+	            Plan->query(QString::fromLatin1("SGA:") + Address);
+		else
+		    Plan->query(toSQLString(conn, Address),
+				toQuery::readQuery(conn,SQLParsingSchema, Address));
             }
             else if (CurrentTab == Resources)
                 viewResources();
