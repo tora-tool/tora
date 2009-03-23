@@ -647,6 +647,8 @@ void toWorksheet::windowActivated(QMdiSubWindow *widget)
         // disabled. can cause infinite loop on some window systems
         // depending on the timing.
         // Editor->setFocus();
+		if (Editor)
+			Editor->setFocus(Qt::ActiveWindowFocusReason);
 
         // must set correct schema every time so having two worksheets
         // on different schemas works properly.
