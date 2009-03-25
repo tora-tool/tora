@@ -314,8 +314,9 @@ void toResultTableView::paintEvent(QPaintEvent *event)
 
 void toResultTableView::resizeEvent(QResizeEvent *event)
 {
-    if(VisibleColumns == 1 && ReadableColumns)
-        setColumnWidth(1, viewport()->width());
+	if(VisibleColumns == 1 && ReadableColumns)
+		setColumnWidth(1, viewport()->width());
+	QTableView::resizeEvent(event);
 }
 
 
@@ -346,8 +347,8 @@ void toResultTableView::applyColumnRules()
 
     resizeColumnsToContents();
 
-    if (VisibleColumns == 1 && ReadableColumns)
-        setColumnWidth(1, viewport()->width());
+	if (VisibleColumns == 1 && ReadableColumns)
+		setColumnWidth(1, viewport()->width());
 }
 
 
