@@ -639,7 +639,7 @@ bool toMarkedText::searchPrevious(const QString & text)
 
 bool toMarkedText::findText(Search::SearchDirection direction)
 {
-    bool r;
+    bool r = false;
     int line, index;
     Search::SearchDirection state = m_searchDirection;
 

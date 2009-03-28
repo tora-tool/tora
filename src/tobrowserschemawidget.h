@@ -61,6 +61,7 @@ class toBrowserSchemaBase
 {
     public:
         toBrowserSchemaBase(){};
+        virtual ~toBrowserSchemaBase(){};
         //! \brief Return currently selected object name.
         virtual QString objectName() = 0;
         //! \brief Reset widget data depending on new schema and/or filter.

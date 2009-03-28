@@ -55,6 +55,7 @@ class toDocklet;
 class toDockletHolder
 {
 public:
+    virtual ~toDockletHolder(){};
     virtual toDocklet* docklet(QWidget *parent = 0,
                                Qt::WindowFlags flags = 0) = 0;
 };
