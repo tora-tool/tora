@@ -194,6 +194,9 @@ public:
     bool keepPlans();
     void setKeepPlans(bool v);
 
+    bool vsqlPlans();
+    void setVsqlPlans(bool v);
+
     bool restoreSession();
     void setRestoreSession(bool v);
 

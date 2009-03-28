@@ -172,7 +172,8 @@ void toResultPlan::oracleNext(void)
         sql = sql.mid(0, sql.length() - 1);
 
     QString explain = QString::fromLatin1("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2.%3 FOR %4").
-                      arg(Ident).arg(connection().user()).arg(planTable).arg(toSQLStripSpecifier(sql));
+                      arg(Ident).arg(conn.user()).arg(planTable).arg(toSQLStripSpecifier(sql));
+	
     if (!User.isNull() && User != conn.user().toUpper())
     {
         try
@@ -197,8 +198,10 @@ void toResultPlan::oracleNext(void)
         conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().schema()));
         toQList par;
         Query = new toNoBlockQuery(connection(), toQuery::Normal,
-                                   toSQL::string(SQLViewPlan, connection()).
-                                   arg(toConfigurationSingle::Instance().planTable()).
+                                   toSQL::string(SQLViewPlan, conn).
+				   // arg(toConfigurationSingle::Instance().planTable()).
+				   // Since EXPLAIN PLAN is always to conn.user() plan_table
+				   arg(conn.user()+QString(".")+toConfigurationSingle::Instance().planTable()).
                                    arg(Ident), par);
         Reading = true;
     }

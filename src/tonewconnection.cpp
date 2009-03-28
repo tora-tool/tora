@@ -122,7 +122,7 @@ toNewConnection::toNewConnection(QWidget* parent, Qt::WFlags fl)
     Settings.beginGroup("connections");
     readSettings();
 
-	Previous->horizontalHeader()->setStretchLastSection(true);
+    Previous->horizontalHeader()->setStretchLastSection(true);
     Previous->horizontalHeader()->setHighlightSections(false);
     Previous->verticalHeader()->setVisible(false);
 
@@ -177,7 +177,8 @@ void toNewConnection::readSettings()
     Previous->resizeColumnsToContents();
     Previous->setSortingEnabled(true);
 
-    Previous->sortByColumn(4, Qt::AscendingOrder);
+    int sortList = Settings.value(CONF_PROVIDER_LIST_SORT_OFFSET,DEFAULT_PROVIDER_LIST_SORT_OFFSET).toInt();
+    Previous->sortByColumn(abs(sortList), (sortList>=0 ? Qt::AscendingOrder : Qt::DescendingOrder));
 
     Previous->hideColumn(0);
 }
@@ -187,6 +188,10 @@ void toNewConnection::writeSettings(bool checkHistory)
 {
     int r = 0;
     Settings.setValue("geometry", saveGeometry());
+
+    Settings.setValue(CONF_PROVIDER_LIST_SORT_OFFSET, 
+		    (Previous->horizontalHeader()->sortIndicatorOrder() == Qt:: AscendingOrder? 1:-1)*
+		    Previous->horizontalHeader()->sortIndicatorSection());
 
     Settings.remove("history");
 

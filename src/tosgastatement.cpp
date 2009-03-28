@@ -146,6 +146,7 @@ void toSGAStatement::changeTab(int index)
                                                SQLParsingSchema, Address));
 					       */
 		if (conn.version() >= "0900" &&
+		    toConfigurationSingle::Instance().vsqlPlans() && 
 		    toQuery::readQuery(conn,toSQL::string(SQLcheckVSQL, conn).arg(Address)).begin()->toInt() > 0) 
 	            Plan->query(QString::fromLatin1("SGA:") + Address);
 		else

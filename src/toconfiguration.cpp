@@ -62,6 +62,7 @@ public:
     bool    m_firewallMode;
     int     m_maxContent;
     bool    m_keepPlans;
+    bool    m_vsqlPlans;
     bool    m_restoreSession;
     QString m_defaultSession;
     int     m_defaultFormat;
@@ -263,6 +264,7 @@ public:
         m_firewallMode = s.value(CONF_FIREWALL_MODE, false).toBool();
         m_maxContent = s.value(CONF_MAX_CONTENT, DEFAULT_MAX_CONTENT).toInt();
         m_keepPlans = s.value(CONF_KEEP_PLANS, false).toBool();
+        m_vsqlPlans = s.value(CONF_VSQL_PLANS, true).toBool();
         m_restoreSession = s.value(CONF_RESTORE_SESSION, false).toBool();
         m_defaultSession = s.value(CONF_DEFAULT_SESSION, DEFAULT_SESSION).toString();
         // FIXME!
@@ -474,6 +476,7 @@ public:
         s.setValue(CONF_FIREWALL_MODE, m_firewallMode);
         s.setValue(CONF_MAX_CONTENT, m_maxContent);
         s.setValue(CONF_KEEP_PLANS, m_keepPlans);
+        s.setValue(CONF_VSQL_PLANS, m_vsqlPlans);
         s.setValue(CONF_RESTORE_SESSION, m_restoreSession);
         s.setValue(CONF_DEFAULT_SESSION, m_defaultSession);
         s.setValue(CONF_DEFAULT_FORMAT, m_defaultFormat);
@@ -1265,6 +1268,15 @@ bool toConfiguration::keepPlans()
 void toConfiguration::setKeepPlans(bool v)
 {
     p->m_keepPlans = v;
+}
+
+bool toConfiguration::vsqlPlans()
+{
+    return p->m_vsqlPlans;
+}
+void toConfiguration::setVsqlPlans(bool v)
+{
+    p->m_vsqlPlans = v;
 }
 
 bool toConfiguration::restoreSession()

@@ -116,7 +116,8 @@
 #define CONF_FIREWALL_MODE "FirewallMode"
 #define CONF_MAX_CONTENT "MaxContent"
 #define DEFAULT_MAX_CONTENT 100
-#define CONF_KEEP_PLANS  "KeepPlans"
+#define CONF_KEEP_PLANS  "KeepPlans" // default: false
+#define CONF_VSQL_PLANS  "VSqlPlans"    // default: true
 #define CONF_RESTORE_SESSION "RestoreSession"
 #define CONF_DEFAULT_SESSION "DefaultSession"
 #define DEFAULT_SESSION  "$HOME/.tora.tse"
@@ -166,6 +167,9 @@
 #ifndef DEFAULT_MAX_LONG
 #define DEFAULT_MAX_LONG 30000
 #endif
+// tonewconnection
+#define CONF_PROVIDER_LIST_SORT_OFFSET "ProvListSort" //Sort by database/connection name, asc
+#define DEFAULT_PROVIDER_LIST_SORT_OFFSET 4 
 // tosqlconnection
 #define CONF_ONLY_FORWARD "OnlyForward"
 #define DEFAULT_ONLY_FORWARD true

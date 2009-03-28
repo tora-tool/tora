@@ -109,7 +109,7 @@
           </property>
         </spacer>
       </item>
-      <item rowspan="1" row="5" column="0" colspan="2" >
+      <item rowspan="1" row="5" column="0" colspan="1" >
         <spacer name="Spacer2_2" >
           <property name="sizeHint" >
             <size>
@@ -125,7 +125,7 @@
           </property>
         </spacer>
       </item>
-      <item row="5" column="2" >
+      <item row="5" column="1" >
         <widget class="QPushButton" name="CreatePlanTable" >
           <property name="enabled" >
             <bool>false</bool>
@@ -138,6 +138,16 @@
           </property>
           <property name="text" >
             <string>Create Table</string>
+          </property>
+        </widget>
+      </item>
+      <item row="5" column="2" >
+        <widget class="QCheckBox" name="VsqlPlans" >
+          <property name="text" >
+            <string>&amp;V$SQL_PLAN</string>
+          </property>
+          <property name="toolTip" >
+            <string>Use V$SQL_PLAN when possible.</string>
           </property>
         </widget>
       </item>
@@ -201,6 +211,7 @@
     <tabstop>ExplainPlan</tabstop>
     <tabstop>KeepPlans</tabstop>
     <tabstop>CreatePlanTable</tabstop>
+    <tabstop>VsqlPlans</tabstop>
   </tabstops>
   <connections>
     <connection>
