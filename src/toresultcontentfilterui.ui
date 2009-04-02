@@ -13,25 +13,13 @@
    <string>Content editor filter settings</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
+   <property name="margin" >
     <number>11</number>
    </property>
-   <property name="topMargin" >
-    <number>11</number>
-   </property>
-   <property name="rightMargin" >
-    <number>11</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>11</number>
-   </property>
-   <property name="horizontalSpacing" >
+   <property name="spacing" >
     <number>6</number>
    </property>
-   <property name="verticalSpacing" >
-    <number>6</number>
-   </property>
-   <item row="4" column="1" >
+   <item row="5" column="1" >
     <widget class="QPushButton" name="PushButton1" >
      <property name="text" >
       <string>Ok</string>
@@ -41,14 +29,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="2" >
-    <widget class="QPushButton" name="PushButton3" >
-     <property name="text" >
-      <string>Cancel</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" >
+   <item row="3" column="0" colspan="2" >
     <widget class="QLineEdit" name="Order" />
    </item>
    <item row="0" column="0" >
@@ -73,7 +54,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" >
+   <item row="1" column="0" colspan="2" >
     <widget class="toHighlightedText" native="1" name="Criteria" >
      <property name="focusPolicy" >
       <enum>Qt::StrongFocus</enum>
@@ -102,7 +83,33 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1" colspan="3" >
+   <item rowspan="3" row="1" column="2" colspan="2" >
+    <widget class="toResultCols" native="1" name="Columns" />
+   </item>
+   <item row="5" column="3" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="5" column="0" >
+    <widget class="QCheckBox" name="AllTables" >
+     <property name="text" >
+      <string>Use for all tables</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2" colspan="2" >
     <widget class="QLabel" name="TextLabel2" >
      <property name="sizePolicy" >
       <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
@@ -124,29 +131,10 @@
      </property>
     </widget>
    </item>
-   <item rowspan="3" row="1" column="1" colspan="3" >
-    <widget class="toResultCols" native="1" name="Columns" />
-   </item>
-   <item row="4" column="3" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="4" column="0" >
-    <widget class="QCheckBox" name="AllTables" >
+   <item row="5" column="2" >
+    <widget class="QPushButton" name="PushButton3" >
      <property name="text" >
-      <string>Use for all tables</string>
+      <string>Cancel</string>
      </property>
     </widget>
    </item>
@@ -159,6 +147,15 @@
     <string>Esc</string>
    </property>
   </action>
+  <zorder>PushButton1</zorder>
+  <zorder>Order</zorder>
+  <zorder>TextLabel1</zorder>
+  <zorder>Criteria</zorder>
+  <zorder>TextLabel1_2</zorder>
+  <zorder>Columns</zorder>
+  <zorder>AllTables</zorder>
+  <zorder>TextLabel2</zorder>
+  <zorder>PushButton3</zorder>
  </widget>
  <customwidgets>
   <customwidget>
@@ -176,7 +173,6 @@
   <tabstop>Criteria</tabstop>
   <tabstop>Order</tabstop>
   <tabstop>PushButton1</tabstop>
-  <tabstop>PushButton3</tabstop>
  </tabstops>
  <resources/>
  <connections>
