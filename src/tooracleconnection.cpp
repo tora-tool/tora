@@ -75,7 +75,8 @@
 #if 0 /* OTL tracing */
 #define OTL_TRACE_LEVEL 0xff
 #define OTL_TRACE_STREAM cerr
-#include <iostream.h>
+#include <iostream>
+using namespace std;
 #endif
 
 #include "otlv4.h"
