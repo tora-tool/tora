@@ -178,7 +178,7 @@ void toResultPlan::oracleNext(void)
     {
         try
         {
-            conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(User));
+            conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"").arg(User));
             conn.execute(explain);
         }
         catch (...)
@@ -187,7 +187,7 @@ void toResultPlan::oracleNext(void)
             {
                 // conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().user()));
 		// when we start connection it is for user but in schema context
-                conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().schema()));
+                conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"").arg(connection().schema()));
             }
             catch (...)
                 {}
@@ -195,7 +195,7 @@ void toResultPlan::oracleNext(void)
         }
         //conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().user()));
 	//when we start connection it is for user but in schema context
-        conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().schema()));
+        conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"").arg(connection().schema()));
         toQList par;
         Query = new toNoBlockQuery(connection(), toQuery::Normal,
                                    toSQL::string(SQLViewPlan, conn).
