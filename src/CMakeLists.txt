@@ -416,6 +416,15 @@ SET(TORA_SOURCES
 IF (WIN32 AND MSVC)
     SET (TORA_SOURCES ${TORA_SOURCES} tora.rc)
 ENDIF (WIN32 AND MSVC)
+if (WIN32 AND MINGW)
+    # resource compilation for mingw
+    ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tora_rc.o
+                       COMMAND windres.exe -I${CMAKE_CURRENT_SOURCE_DIR}
+                              -i${CMAKE_CURRENT_SOURCE_DIR}/tora.rc
+                              -o ${CMAKE_CURRENT_BINARY_DIR}/tora_rc.o)
+    SET(TORA_SOURCES ${TORA_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/tora_rc.o)
+endif (WIN32 AND MINGW)
+
 
 
 QT4_ADD_TRANSLATION(TORA_I18N_QM ${TORA_I18N_TS})
