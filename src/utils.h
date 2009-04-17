@@ -246,18 +246,24 @@ QString toFontToString(const QFont &fnt);
  * @return Path to the help directory.
  */
 // QString toHelpPath(void);
-/** Read file from filename.
+/** Read file from filename and return it as binary data (no decoding).
+ * @param filename Filename to read file from.
+ * @return Contents of file.
+ * @exception QString describing I/O problem.
+ */
+QByteArray toReadFileB(const QString &filename);
+/** Read file from filename and decode it according to current locale settings.
  * @param filename Filename to read file from.
  * @return Contents of file.
  * @exception QString describing I/O problem.
  */
 QString toReadFile(const QString &filename);
-/** Write file to filename.
+/** Write file to filename. (binary data, no encoding is performed)
  * @param filename Filename to write file to.
  * @param data Data to write to file.
  */
 bool toWriteFile(const QString &filename, const QByteArray &data);
-/** Write file to filename.
+/** Write file to filename, encoded according to current locale settings.
  * @param filename Filename to write file to.
  * @param data Data to write to file.
  */

@@ -90,6 +90,7 @@ void toProjectTemplateItem::setup(const QString &name, bool open)
     {
         try
         {
+            // read in Filename (encoded according to locale settings)
             QString data = toReadFile(Filename);
             QStringList files = data.split(QRegExp(QString::fromLatin1("\n")));
             toProjectTemplateItem *last = NULL;
@@ -581,7 +582,8 @@ void toProject::saveProject(void)
                         toProjectTemplateItem * projitem = dynamic_cast<toProjectTemplateItem *>(item);
                         data += projitem->filename() + QString::fromLatin1("\n");
                     }
-                    if (toWriteFile(fn, data.toUtf8()))
+                    // write file, encoded according to locale settings
+                    if (toWriteFile(fn, data))
                         oi->setFilename(fn);
                 }
             }

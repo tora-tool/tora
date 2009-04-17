@@ -271,13 +271,19 @@ bool toSQL::saveSQL(const QString &filename, bool all)
         }
         data += str;
     }
-    return toWriteFile(filename, data);
+
+    // TODO: data shouldn't be a QString
+    //       if we use QByteArray, there would be no need to re-encode
+
+    // save as UTF8 encoded file
+    return toWriteFile(filename, data.toUtf8());
 }
 
 void toSQL::loadSQL(const QString &filename)
 {
     allocCheck();
-    QByteArray data = toReadFile(filename).toUtf8();
+    // read UTF8 encoded file as byte array
+    QByteArray data = toReadFileB(filename);
 
     int size = data.length();
     int pos = 0;

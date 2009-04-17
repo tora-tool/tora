@@ -94,7 +94,7 @@ QMap<int,toConnectionOptions> tora3(QWidget * parent)
 // updated old code from toconfiguration.cpp rev 2575
 void loadMap(const QString &filename, QMap<QString, QString> &pairs)
 {
-    QByteArray data = toReadFile(filename).toUtf8();
+    QByteArray data = toReadFileB(filename);
 
     int pos = 0;
     int bol = 0;
