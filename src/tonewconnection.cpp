@@ -200,7 +200,10 @@ void toNewConnection::writeSettings(bool checkHistory)
         Settings.beginGroup("history/0");
         Settings.setValue("provider", Provider->currentText());
         Settings.setValue("username", Username->text());
-        Settings.setValue("password", toObfuscate(Password->text()));
+        if (toConfigurationSingle::Instance().savePassword())
+        {
+            Settings.setValue("password", toObfuscate(Password->text()));
+        }
         Settings.setValue("host", Host->currentText());
         Settings.setValue("port", Port->value());
         Settings.setValue("database", Database->currentText());
@@ -241,8 +244,10 @@ void toNewConnection::writeSettings(bool checkHistory)
         Settings.setValue("database", opt.database);
         Settings.setValue("schema", opt.schema);
         Settings.setValue("port", opt.port);
-        Settings.setValue("password", toObfuscate(opt.password));
-
+        if (toConfigurationSingle::Instance().savePassword())
+        {
+            Settings.setValue("password", toObfuscate(opt.password));
+        }
         Settings.beginGroup("options");
         Q_FOREACH(QString s, opt.options)
         Settings.setValue(s, true);
