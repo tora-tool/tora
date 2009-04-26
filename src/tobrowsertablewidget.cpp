@@ -165,13 +165,15 @@ static toSQL SQLTableConstraint(
        "           c.search_condition,\n"
        "           c.status,\n"
        "           c.delete_rule,\n"
-       "           c.generated\n"
+       "           c.generated,\n"
+       "           c.owner\n"
        "       FROM\n"
        "           sys.All_Constraints c,\n"
        "           sys.all_cons_columns a\n"
        "       WHERE\n"
        "               c.constraint_name = a.constraint_name\n"
        "           AND c.Owner = :f1<char[101]>\n"
+       "           AND c.Owner = a.Owner\n"
        "           AND c.Table_Name = :f2<char[101]>\n"
        "       ORDER BY\n"
        "           c.constraint_name, a.constraint_name, a.position\n"
@@ -179,6 +181,7 @@ static toSQL SQLTableConstraint(
        "       sys.all_cons_columns refs\n"
        "   WHERE\n"
        "           main.r_constraint_name = refs.constraint_name (+)\n"
+       "       AND main.owner = refs.owner (+)"
        "       AND main.column_name = refs.column_name (+)",
     "List the constraints on a table",
     "");
