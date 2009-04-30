@@ -1549,13 +1549,7 @@ void toMain::createDefault(void)
     {
         if(defName.isEmpty() || defName == (*k).first) {
             DefaultTool = (*k).second;
-
-            // need to set the default tool's name now or it'll be
-            // broken in preferences dialog
-            if(defName.isEmpty())
-                toConfigurationSingle::Instance().setDefaultTool((*k).first);
-
-            defName = (*k).first;
+            break;
         }
     }
 
