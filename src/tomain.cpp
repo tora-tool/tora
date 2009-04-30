@@ -154,10 +154,15 @@ toMain::toMain()
 
     std::map<QString, toTool *> &tools = toTool::tools();
 
+    QString defName(toConfigurationSingle::Instance().defaultTool());
     for (std::map<QString, toTool *>::iterator k = tools.begin();
          k != tools.end();
          k++)
     {
+        if(defName.isEmpty()) {
+            toConfigurationSingle::Instance().setDefaultTool((*k).first);
+            defName = (*k).first;
+        }
         (*k).second->customSetup();
     }
     Search = NULL;
