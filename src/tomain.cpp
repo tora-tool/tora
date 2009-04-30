@@ -154,17 +154,10 @@ toMain::toMain()
 
     std::map<QString, toTool *> &tools = toTool::tools();
 
-    QString defName(toConfigurationSingle::Instance().defaultTool());
-    DefaultTool = NULL;
     for (std::map<QString, toTool *>::iterator k = tools.begin();
-            k != tools.end();
-            k++)
+         k != tools.end();
+         k++)
     {
-        if(defName.isEmpty() || defName == (*k).first) {
-            DefaultTool = (*k).second;
-            defName = (*k).first;
-        }
-
         (*k).second->customSetup();
     }
     Search = NULL;
@@ -1546,6 +1539,26 @@ bool toMain::close()
 
 void toMain::createDefault(void)
 {
+    std::map<QString, toTool *> &tools = toTool::tools();
+
+    QString defName(toConfigurationSingle::Instance().defaultTool());
+    toTool *DefaultTool = NULL;
+    for (std::map<QString, toTool *>::iterator k = tools.begin();
+            k != tools.end();
+            k++)
+    {
+        if(defName.isEmpty() || defName == (*k).first) {
+            DefaultTool = (*k).second;
+
+            // need to set the default tool's name now or it'll be
+            // broken in preferences dialog
+            if(defName.isEmpty())
+                toConfigurationSingle::Instance().setDefaultTool((*k).first);
+
+            defName = (*k).first;
+        }
+    }
+
     if (DefaultTool)
         DefaultTool->createWindow();
 }

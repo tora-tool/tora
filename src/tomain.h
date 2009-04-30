@@ -195,10 +195,6 @@ private:
      * Search & replace dialog if available.
      */
     toSearchReplace *Search;
-    /**
-     * Default tool
-     */
-    toTool *DefaultTool;
 
     toBackgroundLabel* BackgroundLabel;
 
