@@ -67,10 +67,10 @@ void toConnectionModel::readConfig()
     Settings.beginGroup("history");
     for (int pos = 0; pos < Settings.childGroups().count(); ++pos)
     {
-        Settings.beginGroup(/*"history/" +*/ QString::number(pos)); // X
+        Settings.beginGroup(QString::number(pos)); // history\## entry in TOra.conf
         if (!Settings.contains("provider"))
         {
-            Settings.endGroup(); // X
+            Settings.endGroup();
             break;
         }
 
@@ -92,7 +92,7 @@ void toConnectionModel::readConfig()
             if (Settings.value(s, false).toBool())
                 options.insert(s);
         }
-        Settings.endGroup(); // options
+        Settings.endGroup();
 
         toConnectionOptions opt(
             provider,
@@ -104,9 +104,9 @@ void toConnectionModel::readConfig()
             Settings.value("port", 0).toInt(),
             options);
         m_data[pos] = opt;
-        Settings.endGroup(); // X
+        Settings.endGroup(); 
     }
-    Settings.endGroup(); // history
+    Settings.endGroup(); // history section
 
     reset();
 }
