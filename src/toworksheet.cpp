@@ -113,9 +113,6 @@
 #include "icons/up.xpm"
 #include "icons/down.xpm"
 
-// for qsettings
-static const QString SETTINGS = "toWorksheet";
-
 toWorksheetSetup::toWorksheetSetup(toTool *tool, QWidget* parent, const char* name)
         : QWidget(parent), toSettingTab("worksheet.html#preferences"), Tool(tool)
 {
@@ -1679,7 +1676,7 @@ void toWorksheet::showSaved()
     SavedMenu->clear();
 
     QSettings settings;
-    settings.beginGroup(SETTINGS);
+    settings.beginGroup("toWorksheet");
 
     QList<QVariant> statements = settings.value("sql").toList();
     QAction *last = 0;
@@ -1696,7 +1693,7 @@ void toWorksheet::showInsertSaved()
     InsertSavedMenu->clear();
 
     QSettings settings;
-    settings.beginGroup(SETTINGS);
+    settings.beginGroup("toWorksheet");
 
     QList<QVariant> statements = settings.value("sql").toList();
     QAction *last = 0;
@@ -1712,7 +1709,7 @@ void toWorksheet::showInsertSaved()
 void toWorksheet::removeSaved(QAction *action)
 {
     QSettings settings;
-    settings.beginGroup(SETTINGS);
+    settings.beginGroup("toWorksheet");
 
     QList<QVariant> statements = settings.value("sql").toList();
     statements.removeAll(action->data().toString());
@@ -1731,7 +1728,7 @@ void toWorksheet::saveLast()
     }
 
     QSettings settings;
-    settings.beginGroup(SETTINGS);
+    settings.beginGroup("toWorksheet");
 
     QString sql = QueryString.trimmed();
     if(!sql.endsWith(";"))
