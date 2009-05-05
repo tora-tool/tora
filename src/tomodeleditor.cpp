@@ -59,6 +59,8 @@
 #include <QSettings>
 #include <QAbstractItemModel>
 
+#include <cstdio>
+
 #include "icons/commit.xpm"
 #include "icons/copy.xpm"
 #include "icons/wordwrap.xpm"

@@ -47,6 +47,8 @@
 #include <QVariant>
 #include <QApplication>
 
+#include <cstdio>
+
 static int NumberFormat;
 static int NumberDecimals;
 

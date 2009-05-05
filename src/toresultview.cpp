@@ -54,6 +54,8 @@
 #include "toresultlistformat.h"
 #include "tosearchreplace.h"
 
+#include <cstdio>
+
 #include <qapplication.h>
 #include <qclipboard.h>
 #include <qcombobox.h>
