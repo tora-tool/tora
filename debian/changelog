@@ -1,3 +1,24 @@
+tora (2.0.0-4) unstable; urgency=low
+
+  * Added patch to add missing include directives, closes: #526166
+
+ -- Michael Meskes <meskes@debian.org>  Mon, 04 May 2009 16:12:37 +0200
+
+tora (2.0.0-3) unstable; urgency=low
+
+  * Cleaned up packaging a little bit.
+  * Added homepage information to control file.
+  * Bumped Standards-Version to 3.8.1.
+  * Released to unstable.
+
+ -- Michael Meskes <meskes@debian.org>  Tue, 07 Apr 2009 13:16:05 +0200
+
+tora (2.0.0-2) experimental; urgency=low
+
+  * Added build dependency on libpq-dev to get full PostgreSQL support.
+
+ -- Michael Meskes <meskes@debian.org>  Tue, 06 Jan 2009 08:49:43 +0100
+
 tora (2.0.0-1) experimental; urgency=low
 
   * New upstream version for KDE4/Qt4.
