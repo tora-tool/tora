@@ -360,7 +360,7 @@ static QString QueryParam(const QString &in, toQList &params, std::list<QString>
                         break;
                     }
                     if (cpar == params.end())
-                        throw QString::fromLatin1("Not all bind variables supplied");
+                        throw toConnection::exception(QString::fromLatin1("Not all bind variables supplied"), i);
                     if ((*cpar).isNull())
                     {
                         str = QString::fromLatin1("NULL");
