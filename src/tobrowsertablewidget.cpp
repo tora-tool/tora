@@ -175,14 +175,24 @@ static toSQL SQLTableConstraint(
        "           AND c.Owner = :f1<char[101]>\n"
        "           AND c.Owner = a.Owner\n"
        "           AND c.Table_Name = :f2<char[101]>\n"
-       "       ORDER BY\n"
-       "           c.constraint_name, a.constraint_name, a.position\n"
        "       ) main,\n"
-       "       sys.all_cons_columns refs\n"
+       "       (\n"
+       "       SELECT\n"
+       "           owner,\n"
+       "           table_name,\n"
+       "           column_name,\n"
+       "           constraint_name\n"
+       "       FROM\n"
+       "           sys.all_cons_columns\n"
+       "       WHERE\n"
+       "               owner = :f1<char[101]>\n"
+       "           AND table_Name = :f2<char[101]>\n" 
+       "       ) refs\n" 
        "   WHERE\n"
        "           main.r_constraint_name = refs.constraint_name (+)\n"
-       "       AND main.owner = refs.owner (+)"
-       "       AND main.column_name = refs.column_name (+)",
+       "       AND main.owner = refs.owner (+)\n"
+       "       AND main.column_name = refs.column_name (+)\n"
+       "   ORDER BY 1\n",
     "List the constraints on a table",
     "");
 
