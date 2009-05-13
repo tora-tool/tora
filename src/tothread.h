@@ -202,6 +202,28 @@ public:
         locked = true;
     }
 
+    /**
+     * Overloaded contructor that attempts lock rather than blocking.
+     *
+     * Will throw an instance of QString if class failed to obtain
+     * lock and tryLock is true.
+     *
+     */
+    LockingPtr(volatile T& obj,
+               QMutex& mtx,
+               bool tryLock) : pObj_(const_cast<T*>(&obj)),
+                               pMtx_(&mtx) {
+        if(tryLock) {
+            locked = mtx.tryLock();
+            if(!locked)
+                throw QString::fromLatin1("Busy");
+        }
+        else {
+            mtx.lock();
+            locked = true;
+        }
+    }
+
     ~LockingPtr() {
         if(locked)
             pMtx_->unlock();

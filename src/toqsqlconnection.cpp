@@ -1406,11 +1406,16 @@ class qSqlSetting : public QWidget, public toSettingTab
         }
         virtual int rowsProcessed(void)
         {
-            LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
+            try {
+                LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock, true);
 
-            if (!Query)
+                if (!Query)
+                    return 0;
+                return Query->numRowsAffected();
+            }
+            catch(...) {
                 return 0;
-            return Query->numRowsAffected();
+            }
         }
         virtual int columns(void)
         {
