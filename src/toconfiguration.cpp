@@ -13,6 +13,12 @@
 
 #include <QLocale>
 #include <QSettings>
+#include <QDir>
+//#ifdef Q_OS_WIN32
+//#include <windows.h>
+//#include <shlobj.h>
+//#endif
+
 
 class toConfigurationPrivate
 {
@@ -203,6 +209,28 @@ public:
         loadConfig();
     }
 
+    /*! \brief Get directory name where to store session files.
+      It's APPDATA on Windows, HOME on UNIX like systems
+     */
+    QString getSpecialDir()
+    {
+//#if defined(Q_OS_WIN32)
+//        QString qstr;
+//       char dir[256];
+//        if ( SHGetSpecialFolderPath(NULL, dir, CSIDL_APPDATA, false) )
+//       {
+//            qstr = dir;
+//            if( !qstr.endsWith("\\") )
+//                qstr += "\\";
+//            qstr.replace( '\\', '/' );
+//       }
+//        return qstr;
+//#else
+        return QDir::homePath() + "/";
+//#endif
+}
+
+
 
     void loadConfig()
     {
@@ -234,7 +262,7 @@ public:
         m_pluginDir = s.value(CONF_PLUGIN_DIR, DEFAULT_PLUGIN_DIR).toString();
         m_cacheDir = s.value(CONF_CACHE_DIR, "").toString();
         m_cacheDisk = s.value(CONF_CACHE_DISK, DEFAULT_CACHE_DISK).toBool();
-        m_sqlFile = s.value(CONF_SQL_FILE, DEFAULT_SQL_FILE).toString();
+        m_sqlFile = s.value(CONF_SQL_FILE, getSpecialDir() + DEFAULT_SQL_FILE).toString();
         m_statusMessage = s.value(CONF_STATUS_MESSAGE, DEFAULT_STATUS_MESSAGE).toInt();
 
         m_dbTitle = s.value(CONF_DB_TITLE, true).toBool();
@@ -266,7 +294,7 @@ public:
         m_keepPlans = s.value(CONF_KEEP_PLANS, false).toBool();
         m_vsqlPlans = s.value(CONF_VSQL_PLANS, true).toBool();
         m_restoreSession = s.value(CONF_RESTORE_SESSION, false).toBool();
-        m_defaultSession = s.value(CONF_DEFAULT_SESSION, DEFAULT_SESSION).toString();
+        m_defaultSession = s.value(CONF_DEFAULT_SESSION, getSpecialDir() + DEFAULT_SESSION).toString();
         // FIXME!
         m_defaultFormat = s.value(CONF_DEFAULT_FORMAT, "").toInt();
         m_autoIndentRo = s.value(CONF_AUTO_INDENT_RO, true).toBool();

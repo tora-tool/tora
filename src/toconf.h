@@ -82,7 +82,7 @@
 #define CONF_CACHE_DISK  "CacheDiskUse"
 #define DEFAULT_CACHE_DISK true
 #define CONF_SQL_FILE  "SQLDictionary"
-#define DEFAULT_SQL_FILE "$HOME/.torasql"
+#define DEFAULT_SQL_FILE ".torasql"
 #define CONF_STATUS_MESSAGE     "StatusMessage"
 #define DEFAULT_STATUS_MESSAGE  "5"
 #define CONF_DB_TITLE  "DBTitle"
@@ -120,7 +120,7 @@
 #define CONF_VSQL_PLANS  "VSqlPlans"    // default: true
 #define CONF_RESTORE_SESSION "RestoreSession"
 #define CONF_DEFAULT_SESSION "DefaultSession"
-#define DEFAULT_SESSION  "$HOME/.tora.tse"
+#define DEFAULT_SESSION  ".tora.tse"
 #define CONF_DEFAULT_FORMAT "DefaultFormat"
 #define CONF_CSV_SEPARATOR "CSVSeparator"
 #define DEFAULT_CSV_SEPARATOR ";"
