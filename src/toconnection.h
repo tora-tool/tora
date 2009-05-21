@@ -708,14 +708,14 @@ private:
 
     connectionImpl *Connection;
 
-    class cacheObjects : public toTask
+class cacheObjects : public toTask
     {
-      QPointer<toConnection> Connection;
+        QPointer<toConnection> Connection;
     public:
-    cacheObjects(toConnection *conn)
-      : Connection(conn)
-      { }
-      virtual void run(void);
+        cacheObjects(toConnection *conn)
+                : Connection(conn)
+        { }
+        virtual void run(void);
     };
     friend class cacheObjects;
 

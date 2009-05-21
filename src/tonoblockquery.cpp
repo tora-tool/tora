@@ -1,6 +1,3 @@
-#include <iomanip>
-#include <iostream>
-#include <string>
 
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
@@ -164,8 +161,6 @@ void toNoBlockQuery::queryTask::run(void)
 
 toQValue toNoBlockQuery::readValueNull()
 {
-    std::cout << "toQValue toNoBlockQuery::readValueNull()" << std::endl;
-    
     if (CurrentValue == Values.end())
     {
         Lock.lock();
