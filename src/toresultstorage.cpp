@@ -1,3 +1,6 @@
+#include <iomanip>
+#include <iostream>
+#include <string>
 
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
@@ -664,11 +667,17 @@ void toResultStorage::poll(void)
         if (Tablespaces && Tablespaces->poll())
         {
             int cols = Tablespaces->describe().size();
+	    std::cout << "--- toResultStorage::poll: " << cols << "----------------------------------------------------" << std::endl;
             while (Tablespaces->poll() && !Tablespaces->eof())
             {
                 for (int i = 0;i < cols && !Tablespaces->eof();i++)
-                    toPush(TablespaceValues, QString(Tablespaces->readValue()));
+		{
+			QString t(Tablespaces->readValue());
+			toPush(TablespaceValues, t);
+			std::cout << t.toUtf8().constData() << '\t';
+		}
             }
+	    std::cout << "--------------------------------------------------------------------------------" << std::endl;
             updateList();
             if (Tablespaces->eof())
             {

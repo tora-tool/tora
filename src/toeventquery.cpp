@@ -1,3 +1,6 @@
+#include <iomanip>
+#include <iostream>
+#include <string>
 
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
@@ -50,6 +53,8 @@
 
 
 toQValue toEventQuery::readValueNull() {
+    std::cout << "toQValue toEventQuery::readValueNull()" << std::endl;
+  
     if(Values.isEmpty())
         throw tr("Read past end of query");
 

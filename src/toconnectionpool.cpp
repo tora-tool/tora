@@ -1,3 +1,6 @@
+#include <iomanip>
+#include <iostream>
+#include <string>
 
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
@@ -51,7 +54,7 @@
 #include <QApplication>
 
 
-static const int TEST_MSEC = 5000;
+static const int TEST_MSEC = 5000000;
 
 
 toConnectionPoolTest::toConnectionPoolTest(toConnectionPool *pool)
@@ -75,6 +78,7 @@ void toConnectionPoolTest::run() {
 
 void toConnectionPoolTest::test() {
     for(int i = 0; Pool && i < Pool->size(); i++) {
+      std::cout << "void toConnectionPoolTest::test(" << i << ")" << std::endl;
         toConnectionPool::PooledState state = Pool->test(i);
         if(state == toConnectionPool::Busy)
             continue;
@@ -239,6 +243,8 @@ toConnectionPool::PooledState toConnectionPool::test(PooledSub *sub) {
     PooledState state = Free;
     try {
         QString sql = toSQL::string("Global:Now", *Connection);
+	std::cout << "toConnectionPool::PooledState toConnectionPool::test(PooledSub *sub) {:"
+		  << sql.toUtf8().constData() << std::endl;
         if(sql.isEmpty())
             return state;
 

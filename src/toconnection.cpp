@@ -1,3 +1,6 @@
+#include <iomanip>
+#include <iostream>
+#include <string>
 
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
@@ -652,6 +655,8 @@ toQList toQuery::readQueryNull(toConnection &conn, const QString &sql,
 
 toQValue toQuery::readValue(void)
 {
+    std::cout << "toQValue toQuery::readValue(void)" << this->sql().toUtf8().constData() << "'" << std::endl;
+    
     if (!Connection)
         return toQValue(0);
 
@@ -662,6 +667,8 @@ toQValue toQuery::readValue(void)
 
 toQValue toQuery::readValueNull(void)
 {
+    //TODO
+  std::cout << "toQuery::readValueNull(void): '" << this->sql().toUtf8().constData() << "'" << std::endl;
     if (!Connection)
         return toQValue(0);
 

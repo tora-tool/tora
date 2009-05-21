@@ -70,7 +70,7 @@ public:
     toConnectionPoolTest(toConnectionPool *pool);
 
     /**
-     * Overrides. Call start() to execute thread.
+    * Overrides. Call start() to execute thread.
      *
      */
     virtual void run(void);
@@ -131,7 +131,7 @@ class toConnectionPool : public QObject {
     toConnectionPoolTest *TestThread;
 
     // for future configuration
-    static const int PreferredSize = 3;
+    static const int PreferredSize = 2;
 
     enum PooledState {
         Busy,
