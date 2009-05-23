@@ -41,10 +41,8 @@
 
 #include "utils.h"
 
-#include "toconf.h"
 #include "toconnectionpool.h"
 #include "tosql.h"
-#include "tothread.h"
 
 #include <QTimer>
 #include <QCoreApplication>
