@@ -44,7 +44,7 @@
 #include "toconf.h"
 #include "tolistviewformatter.h"
 #include "tolistviewformatterfactory.h"
-#include "tolistviewformatteridentifier.h"
+//#include "tolistviewformatteridentifier.h"
 #include "tomain.h"
 #include "tomemoeditor.h"
 #include "toparamget.h"

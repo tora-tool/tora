@@ -52,7 +52,7 @@
 #include "toresultlistformat.h"
 #include "tolistviewformatter.h"
 #include "tolistviewformatterfactory.h"
-#include "tolistviewformatteridentifier.h"
+//#include "tolistviewformatteridentifier.h"
 #include "toworkingwidget.h"
 #include "tosearchreplace.h"
 
