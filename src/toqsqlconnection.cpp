@@ -1750,14 +1750,19 @@ class qSqlConnection : public toConnection::connectionImpl
         }
     }
 
+
     ~toQSqlProvider()
     {
+#ifdef Q_WS_MAC
+#warning "toQSqlProvider is disabled for Mac OS X due crashes. Maybe it is not a correct solution..."
+#else
         for (int i = 0;i < Drivers.count();i++)
         {
             QString t = fromQSqlName(Drivers[i]);
             if (!t.isEmpty())
                 removeProvider(t);
         }
+#endif
     }
 
     virtual QWidget *providerConfigurationTab(const QString &provider,
