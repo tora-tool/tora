@@ -857,7 +857,14 @@ void toMain::updateWindowsMenu(void)
 
             QAction *action = new QAction(caption, (*it));
             if (index < 9)
+            {
+#ifdef Q_WS_MAC
+                // Prevent the Mac's Open Spaces key shortcuts duplicity
+                action->setShortcut(Qt::CTRL + Qt::META + Qt::Key_1 + index);
+#else
                 action->setShortcut(Qt::CTRL + Qt::Key_1 + index);
+#endif
+            }
 
             windowsMenu->addAction(action);
             action->setCheckable(true);
