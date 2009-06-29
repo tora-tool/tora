@@ -18,3 +18,7 @@ linked by target "tora" in directory /opt/applications/tora/src
 It's caused by Oracle - you'll need to fix Instantclient libraries yourself:
 ln -s /path/to/instantclient/libclntsh.dylib.10.2 /path/to/instantclient/libclntsh.dylib
 ln -s /path/to/instantclient/libocci.dylib.10.2 /path/to/instantclient/libocci.dylib
+
+3) Keyboard shortcuts for Tool windows swicthing (AppleKey+number) can conflict with
+Mac's Open Spaces shortcuts in some cases.
+
