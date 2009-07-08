@@ -32,7 +32,7 @@ INCLUDE(TestBigEndian)
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 #Project Setup
-PROJECT(tora)
+PROJECT(TOra)
 #Set our version values
 #Final version is ${VERSION} = ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_SUFFIX}
 #where VERSION_SUFFIX is of the form "", "cvs" or "Ncvs" (N being the minor patch level)
@@ -123,17 +123,30 @@ ELSE (MSVC)
 ENDIF (MSVC)
 
 
-#Based on our build type, setup our build options
-IF(APPLE)
-  SET( ENV{MACOSX_DEPLOYMENT_TARGET} 10.3 ) 
-  SET( ENV{LD_PREBIND} 1 )
-  SET( ENV{LD_PREBIND_ALLOW_OVERLAP} 1 )
-  SET(CMAKE_CXX_FLAGS_DEBUG "-O2 -g3 -fno-inline-functions ${CXX_WARNINGS}")
-  SET(CMAKE_C_FLAGS_DEBUG "-O2 -g3 -fno-inline-functions ${CXX_WARNINGS}")
-ELSE(APPLE)
-  SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 ${CXX_WARNINGS} -fstrict-aliasing")
-  SET(CMAKE_C_FLAGS_DEBUG "-O0 -g3 ${CXX_WARNINGS} -fstrict-aliasing")
-ENDIF(APPLE)
+# --- If we are on OS X copy all the embedded libraries to the app bundle
+IF (APPLE AND WANT_BUNDLE)
+  # -------- Function to build OS X Stand Alone Bundles -----------------
+  function(MakeOSXBundleApp target binary_dir)
+    #-- Set some useful variables
+    SET (OSX_MAKE_STANDALONE_BUNDLE_CMAKE_SCRIPT "${binary_dir}/${target}_OSX_MakeStandAloneBundle.cmake")
+    SET (OSX_MAKE_STANDALONE_BUNDLE_BASH_SCRIPT "${binary_dir}/${target}_OSX_MakeStandAloneBundle.sh")
+    #-- Configure the cmake file and the shell script
+    CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/osx_tools/CompleteBundle.cmake.in"
+      "${OSX_MAKE_STANDALONE_BUNDLE_CMAKE_SCRIPT}" @ONLY IMMEDIATE)
+    CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/osx_tools/CreateBundle.sh.in"
+      "${OSX_MAKE_STANDALONE_BUNDLE_BASH_SCRIPT}" @ONLY IMMEDIATE)
+    #-- Create the installation code
+    install(SCRIPT "${OSX_MAKE_STANDALONE_BUNDLE_CMAKE_SCRIPT}")
+
+  endfunction(MakeOSXBundleApp)
+
+  #IF(CMAKE_BUILD_TYPE MATCHES "Debug")
+  #    MakeOSXBundleApp( "QtTest${EXE_DEBUG_EXTENSION}" ${PROJECT_BINARY_DIR})
+  #ELSE (CMAKE_BUILD_TYPE MATCHES "Debug")
+      MakeOSXBundleApp(TOra ${PROJECT_BINARY_DIR})
+  #ENDIF(CMAKE_BUILD_TYPE MATCHES "Debug")
+
+ENDIF (APPLE AND WANT_BUNDLE)
 
 
 SET(CMAKE_CXX_FLAGS_RELEASE "-O2 ${CXX_WARNINGS}")
@@ -270,6 +283,7 @@ ADD_CUSTOM_TARGET(uninstall
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(doc)
 
+IF (NOT WANT_BUNDLE)
 #Install our READMEs etc.
 INSTALL(FILES
     AUTHORS
@@ -291,6 +305,7 @@ INSTALL(FILES
     TODO
     DESTINATION ${TORA_DOC_DIR}
 )
+ENDIF (NOT WANT_BUNDLE)
 
 # packaging related stuff
 #SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Toolkit for Oracle")

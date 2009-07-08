@@ -58,6 +58,11 @@ Windows note: Sometimes (dunno why) it doesn't find pgsql libs.
 etc.
 
 
+TOra allows to be built as "bundle" application on Mac OS X.
+-DWANT_BUNDLE=1
+The bundle will be created in the CMAKE_INSTALL_PREFIX.
+
+
 Search following for more info:
 http://cmake.org
 http://docs.scribus.net/index.php?lang=en&page=install4
