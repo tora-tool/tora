@@ -64,6 +64,14 @@ endfunction(gp_item_default_embedded_path_override)
 # -- Copy the App bundle to the installation location first
 EXECUTE_PROCESS( COMMAND "@OSX_MAKE_STANDALONE_BUNDLE_BASH_SCRIPT@" )
 
+
+# HACK: some libraries (libcrypt, libssl, libz) aren't writable by default.
+# But we have to "relink" it, so it must be chmod-ed.
+#EXECUTE_PROCESS( COMMAND echo "Chmodding libs" )
+#EXECUTE_PROCESS( COMMAND "find $CMAKE_INSTALL_PREFIX/TOra.app -name \"*.dylib\" | xargs chmod 755" )
+
+
 # -- Run the BundleUtilities cmake code
 include(BundleUtilities)
 fixup_bundle("@CMAKE_INSTALL_PREFIX@/@target@.app" "${PluginList}" "Plugins")
+

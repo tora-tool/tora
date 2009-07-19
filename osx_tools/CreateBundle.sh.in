@@ -15,7 +15,8 @@ if [[ $Xcode == "1x" ]]; then
   fi
   OSX_App="@EXECUTABLE_OUTPUT_PATH@/$BUILD_STYLE/$OSX_App_Name.app"
 else
-  OSX_App="@EXECUTABLE_OUTPUT_PATH@/$OSX_App_Name.app"
+  #OSX_App="@EXECUTABLE_OUTPUT_PATH@/$OSX_App_Name.app"
+  OSX_App="@CMAKE_BINARY_DIR@/src/$OSX_App_Name.app"
 fi
 
 
