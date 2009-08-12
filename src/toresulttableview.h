@@ -202,6 +202,11 @@ protected:
      */
     virtual void resizeEvent(QResizeEvent *event);
 
+	/*! Catch special keyboard shortcuts.
+	  Copy, etc.
+	  */
+	virtual void keyPressEvent(QKeyEvent * event);
+
 signals:
 
     /**

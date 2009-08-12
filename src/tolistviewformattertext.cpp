@@ -293,14 +293,17 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
     }
 
     // write data
-    QVector<int> slist = selectedList(settings.selected);
+    QVector<int> rlist = selectedRows(settings.selected);
+	QVector<int> clist = selectedColumns(settings.selected);
     for (int row = 0; row < rows; row++)
     {
-        if (settings.OnlySelection && !slist.contains(row))
+        if (settings.OnlySelection && !rlist.contains(row))
             continue;
 
         for (int column = 0; column < columns; column++)
         {
+			if (settings.OnlySelection && !clist.contains(column))
+				continue;
             QVariant data = model->data(row, column);
             QString value;
             if (data.isNull())

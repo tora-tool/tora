@@ -224,7 +224,7 @@ QString toListViewFormatterHTML::getFormattedString(toExportSettings &settings,
         endLine(output);
     }
 
-    QVector<int> slist = selectedList(settings.selected);
+    QVector<int> slist = selectedRows(settings.selected);
     for (int row = 0; row < rows; row++)
     {
         if (settings.OnlySelection && !slist.contains(row))

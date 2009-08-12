@@ -92,7 +92,8 @@ public:
 protected:
     virtual void endLine(QString &output);
     // build a vector of selected rows for easy searching
-    virtual QVector<int> selectedList(const QModelIndexList &selected);
+    virtual QVector<int> selectedRows(const QModelIndexList &selected);
+	virtual QVector<int> selectedColumns(const QModelIndexList &selected);
 };
 
 #endif

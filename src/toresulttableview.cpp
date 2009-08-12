@@ -261,9 +261,9 @@ void toResultTableView::createActions()
     leftAct      = new QAction(tr("&Left"), this);
     centerAct    = new QAction(tr("&Center"), this);
     rightAct     = new QAction(tr("&Right"), this);
-    copyAct      = new QAction(tr("&Copy field"), this);
-    copySelAct   = new QAction(tr("Copy &selection"), this);
-    copyHeadAct  = new QAction(tr("Copy selection with &header"), this);
+    copyAct      = new QAction(tr("&Copy"), this);
+    copySelAct   = new QAction(tr("Copy &selection in format..."), this);
+    copyHeadAct  = new QAction(tr("Copy rows in selection with &header..."), this);
     copyTransAct = new QAction(tr("Copy &transposed"), this);
     selectAllAct = new QAction(tr("Select &all"), this);
     exportAct    = new QAction(tr("E&xport to file..."), this);
@@ -317,6 +317,17 @@ void toResultTableView::resizeEvent(QResizeEvent *event)
 	if(VisibleColumns == 1 && ReadableColumns)
 		setColumnWidth(1, viewport()->width());
 	QTableView::resizeEvent(event);
+}
+
+
+void toResultTableView::keyPressEvent(QKeyEvent * event)
+{
+	if (event->matches(QKeySequence::Copy))
+	{
+		editCopy();
+		return;
+	}
+	QTableView::keyPressEvent(event);
 }
 
 
@@ -683,7 +694,7 @@ QString toResultTableView::exportAsText(bool includeHeader,
                               type,
                               separator,
                               delimiter);
-    if(onlySelection)
+    if (onlySelection)
         settings.selected = selectedIndexes();
 
     std::auto_ptr<toListViewFormatter> pFormatter(
@@ -750,10 +761,10 @@ void toResultTableView::editCopy()
 
     // if there's a selection, then export as text to clipboard
     QModelIndexList sel = selectedIndexes();
-    if(sel.size() > 1)
+    if (sel.size() > 1)
     {
         QString sep, del;
-        QString t = exportAsText(true,
+        QString t = exportAsText(false,
                                  true,
                                  0,         // as text
                                  sep,
