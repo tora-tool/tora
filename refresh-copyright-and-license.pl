@@ -14,6 +14,7 @@ sub write_if_changed {
         open( OUT, ">", $file );
         print OUT $filetext;
         close(OUT);
+        print "\n";
     }
     else {
         print "Skipping $file, no changes.\n";
