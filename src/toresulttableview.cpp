@@ -263,7 +263,7 @@ void toResultTableView::createActions()
     rightAct     = new QAction(tr("&Right"), this);
     copyAct      = new QAction(tr("&Copy"), this);
     copySelAct   = new QAction(tr("Copy &selection in format..."), this);
-    copyHeadAct  = new QAction(tr("Copy rows in selection with &header..."), this);
+    copyHeadAct  = new QAction(tr("Copy selection with &header..."), this);
     copyTransAct = new QAction(tr("Copy &transposed"), this);
     selectAllAct = new QAction(tr("Select &all"), this);
     exportAct    = new QAction(tr("E&xport to file..."), this);

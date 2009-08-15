@@ -230,12 +230,15 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
     QString output;
     QVector<int> sizes(columns);
 
+    QVector<int> rlist = selectedRows(settings.selected);
+	QVector<int> clist = selectedColumns(settings.selected);
+
     // must get widest length for each column
 
     // zero array or (if writing headers, set their size)
     for (int i = 0; i < columns; i++)
     {
-        if (settings.IncludeHeader)
+        if (settings.IncludeHeader && clist.contains(i))
         {
             sizes[i] = model->headerData(
                            i,
@@ -251,6 +254,9 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
     {
         for (int column = 0; column < columns; column++)
         {
+			if (!clist.contains(column))
+				continue;
+
             QVariant data = model->data(row, column);
             QString v;
             if (data.isNull())
@@ -269,6 +275,8 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
     {
         for (int column = 0; column < columns; column++)
         {
+			if (!clist.contains(column))
+				continue;
             QString value = model->headerData(
                                 column,
                                 Qt::Horizontal,
@@ -284,6 +292,8 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
         // write ==== border
         for (int column = 0; column < columns; column++)
         {
+			if (!clist.contains(column))
+				continue;
             for (int left = 0; left < sizes[column]; left++)
                 output += '=';
             output += ' ';
@@ -293,8 +303,6 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
     }
 
     // write data
-    QVector<int> rlist = selectedRows(settings.selected);
-	QVector<int> clist = selectedColumns(settings.selected);
     for (int row = 0; row < rows; row++)
     {
         if (settings.OnlySelection && !rlist.contains(row))
