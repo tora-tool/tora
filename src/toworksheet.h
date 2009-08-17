@@ -98,6 +98,8 @@ class toWorksheet : public toToolWidget
     toResultBar       *WaitChart;
     toResultBar       *IOChart;
     toListView        *Logging;
+    //! Re-set EditSplitter sizes with settings.
+    QList<int>        EditSplitterSizes;
     QSplitter         *EditSplitter;
     QSplitter         *ResourceSplitter;
     toResultTableView *LongOps;

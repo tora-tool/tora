@@ -567,6 +567,12 @@ void toWorksheet::setup(bool autoLoad)
     list.append(0);
     EditSplitter->setSizes(list);
 
+    QSettings s;
+    s.beginGroup("toWorksheet");
+    EditSplitterSizes << s.value("EditSplitterSizes0", 10).toInt();
+    EditSplitterSizes << s.value("EditSplitterSizes1", 1).toInt();
+    s.endGroup();
+
     setCaption();
 }
 
@@ -766,6 +772,12 @@ bool toWorksheet::close()
 
 void toWorksheet::closeEvent(QCloseEvent *event)
 {
+    QSettings s;
+    s.beginGroup("toWorksheet");
+    s.setValue("EditSplitterSizes0", EditSplitter->sizes()[0]);
+    s.setValue("EditSplitterSizes1", EditSplitter->sizes()[1]);
+    s.endGroup();
+
     if (close())
         event->accept();
     else
@@ -1305,13 +1317,8 @@ void toWorksheet::unhideResults(const QString &,
 void toWorksheet::unhideResults()
 {
     // move splitter if currently hidden
-    QList<int> list = EditSplitter->sizes();
-    if (list[1] == 0)
-    {
-        list[0] =  10000;
-        list[1] =  1;
-        EditSplitter->setSizes(list);
-    }
+    if (EditSplitter->sizes()[1] == 0)
+        EditSplitter->setSizes(EditSplitterSizes);
 }
 
 void toWorksheet::execute()
