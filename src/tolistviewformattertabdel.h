@@ -50,9 +50,9 @@ class toListViewFormatterTabDel : public toListViewFormatter
 public:
     toListViewFormatterTabDel();
     virtual ~toListViewFormatterTabDel();
-    virtual QString getFormattedString(toListView& tListView);
+    //virtual QString getFormattedString(toListView& tListView);
     virtual QString getFormattedString(toExportSettings &settings,
-                                       const toResultModel *model);
+                                       const QAbstractItemModel * model);
 };
 
 #endif

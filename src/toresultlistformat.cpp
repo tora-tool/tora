@@ -39,49 +39,84 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+#include <QSettings>
+
 #include "config.h"
 #include "toconf.h"
 #include "utils.h"
 
+#include "tolistviewformatter.h"
 #include "toresultlistformat.h"
 #include "toconfiguration.h"
 
 
-toResultListFormat::toResultListFormat(QWidget *parent, const char *name)
+toResultListFormat::toResultListFormat(QWidget *parent, DialogType type, const char *name)
         : QDialog(parent)
 {
 
     setupUi(this);
     setModal(true);
-    Format->addItem(tr("Text"));
-    Format->addItem(tr("Tab delimited"));
-    Format->addItem(tr("CSV"));
-    Format->addItem(tr("HTML"));
-    Format->addItem(tr("SQL"));
+    formatCombo->addItem(tr("Text"));
+    formatCombo->addItem(tr("Tab delimited"));
+    formatCombo->addItem(tr("CSV"));
+    formatCombo->addItem(tr("HTML"));
+    formatCombo->addItem(tr("SQL"));
+
     int num = toConfigurationSingle::Instance().defaultFormat();
-    Format->setCurrentIndex(num);
+    formatCombo->setCurrentIndex(num);
     formatChanged(num);
 
-    Delimiter->setText(toConfigurationSingle::Instance().csvDelimiter());
-    Separator->setText(toConfigurationSingle::Instance().csvSeparator());
+    delimiterEdit->setText(toConfigurationSingle::Instance().csvDelimiter());
+    separatorEdit->setText(toConfigurationSingle::Instance().csvSeparator());
+
+    selectedRowsRadio->setChecked(type == TypeCopy);
+    selectedColumnsRadio->setChecked(type == TypeCopy);
+
+    allRowsRadio->setChecked(type == TypeExport);
+    allColumnsRadio->setChecked(type == TypeExport);
 }
 
+toExportSettings toResultListFormat::exportSettings()
+{
+    toExportSettings::RowExport r;
+    toExportSettings::ColumnExport c;
+
+    if (selectedRowsRadio->isChecked()) r = toExportSettings::RowsSelected;
+    else if (displayedRowsRadio->isChecked()) r = toExportSettings::RowsDisplayed;
+    else r = toExportSettings::RowsAll;
+
+    if (selectedColumnsRadio->isChecked()) c = toExportSettings::ColumnsSelected;
+    else c = toExportSettings::ColumnsAll;
+
+    return toExportSettings(r,
+                     c,
+                     formatCombo->currentIndex(),
+                     includeRowHeaderCheck->isChecked(),
+                     includeColumnHeaderCheck->isChecked(),
+                     separatorEdit->text(),
+                     delimiterEdit->text());
+}
+
+toExportSettings toResultListFormat::plaintextCopySettings()
+{
+    return toExportSettings(toExportSettings::RowsSelected,
+                     toExportSettings::ColumnsSelected,
+                     0,
+                     false,
+                     false,
+                     "",
+                     "");
+}
 
 void toResultListFormat::formatChanged(int pos)
 {
-    Separator->setEnabled(pos == 2);
-    Delimiter->setEnabled(pos == 2);
+    separatorEdit->setEnabled(pos == 2);
+    delimiterEdit->setEnabled(pos == 2);
 }
 
 
-void toResultListFormat::saveDefault(void)
+void toResultListFormat::accept()
 {
-// NOTE: unused in the whole app at all
-//     toConfigurationSingle::Instance().globalSetConfig(
-//         CONF_CSV_DELIMITER,
-//         Delimiter->text());
-//     toConfigurationSingle::Instance().globalSetConfig(
-//         CONF_CSV_SEPARATOR,
-//         Separator->text());
-    toConfigurationSingle::Instance().setDefaultFormat(Format->currentIndex());
+    toConfigurationSingle::Instance().setDefaultFormat(formatCombo->currentIndex());
+    QDialog::accept();
 }

@@ -50,9 +50,8 @@ class toListViewFormatterText : public toListViewFormatter
 public:
     toListViewFormatterText();
     virtual ~toListViewFormatterText();
-    virtual QString getFormattedString(toListView& tListView);
     virtual QString getFormattedString(toExportSettings &settings,
-                                       const toResultModel *model);
+                                       const QAbstractItemModel * model);
 };
 
 #endif

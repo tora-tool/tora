@@ -64,6 +64,7 @@
 #include <QScrollBar>
 #include <QSize>
 #include <QVBoxLayout>
+#include <QProgressDialog>
 
 
 toResultTableView::toResultTableView(QWidget * parent)
@@ -262,8 +263,7 @@ void toResultTableView::createActions()
     centerAct    = new QAction(tr("&Center"), this);
     rightAct     = new QAction(tr("&Right"), this);
     copyAct      = new QAction(tr("&Copy"), this);
-    copySelAct   = new QAction(tr("Copy &selection in format..."), this);
-    copyHeadAct  = new QAction(tr("Copy selection with &header..."), this);
+    copyFormatAct = new QAction(tr("Copy in &format..."), this);
     copyTransAct = new QAction(tr("Copy &transposed"), this);
     selectAllAct = new QAction(tr("Select &all"), this);
     exportAct    = new QAction(tr("E&xport to file..."), this);
@@ -384,8 +384,7 @@ void toResultTableView::displayMenu(const QPoint &pos)
         Menu->addSeparator();
 
         Menu->addAction(copyAct);
-        Menu->addAction(copySelAct);
-        Menu->addAction(copyHeadAct);
+        Menu->addAction(copyFormatAct);
         // not implemented
         // Menu->addAction(copyTransAct);
 
@@ -459,21 +458,14 @@ void toResultTableView::menuCallback(QAction *action)
         refresh();
     else if (action == exportAct)
         editSave(false);
-    else if (action == copySelAct || action == copyHeadAct)
+    else if (action == copyFormatAct)
     {
-        QString sep, del;
-        int type = exportType(sep, del);
-
-        if(type > -1)
-        {
-            QString t = exportAsText(action == copyHeadAct,
-                                     true,
-                                     type,         // as text
-                                     sep,
-                                     del);
-            QClipboard *clip = qApp->clipboard();
-            clip->setText(t);
-        }
+        toResultListFormat exp(this, toResultListFormat::TypeCopy);
+        if (!exp.exec())
+            return;
+        QString t = exportAsText(exp.exportSettings());
+        QClipboard *clip = qApp->clipboard();
+        clip->setText(t);
     }
 }
 
@@ -661,47 +653,28 @@ QModelIndex toResultTableView::selectedIndex(int col)
 }
 
 
-int toResultTableView::exportType(QString &separator, QString &delimiter)
+QString toResultTableView::exportAsText(toExportSettings settings)
 {
-    toResultListFormat format(this, NULL);
-    if (!format.exec())
-        return -1;
-
-    format.saveDefault();
-
-    separator = format.Separator->text();
-    delimiter = format.Delimiter->text();
-
-    return format.Format->currentIndex();
-}
-
-
-QString toResultTableView::exportAsText(bool includeHeader,
-                                        bool onlySelection,
-                                        int type,
-                                        QString &separator,
-                                        QString &delimiter)
-{
-    QString result;
-
-    if (type < 0)
-        type = exportType(separator, delimiter);
-    if (type < 0)
-        return QString::null;
-
-    toExportSettings settings(includeHeader,
-                              onlySelection,
-                              type,
-                              separator,
-                              delimiter);
-    if (onlySelection)
+    if (settings.requireSelection())
         settings.selected = selectedIndexes();
 
-    std::auto_ptr<toListViewFormatter> pFormatter(
-        toListViewFormatterFactory::Instance().CreateObject(type));
-    result = pFormatter->getFormattedString(settings, model());
+    if (settings.rowsExport == toExportSettings::RowsAll)
+    {
+        QProgressDialog progress("Fetching All Data...", "Abort", 0, 2, this);
+        progress.setWindowModality(Qt::WindowModal);
+        while (Model->canFetchMore(currentIndex()))
+        {
+            if (progress.wasCanceled())
+                break;
+            Model->fetchMore(currentIndex());
+            progress.setValue(progress.value() == 0 ? 1 : 0);
+        }
+        progress.setValue(2);
+    }
 
-    return result;
+    std::auto_ptr<toListViewFormatter> pFormatter(
+        toListViewFormatterFactory::Instance().CreateObject(settings.type));
+    return pFormatter->getFormattedString(settings, model());
 }
 
 
@@ -711,38 +684,17 @@ bool toResultTableView::editSave(bool askfile)
 {
     try
     {
-        QString delimiter;
-        QString separator;
-        int type = exportType(separator, delimiter);
-
-        QString nam;
-        switch (type)
-        {
-        case - 1:
+        toResultListFormat exp(this, toResultListFormat::TypeExport);
+        if (!exp.exec())
             return false;
-        default:
-            nam = "*.txt";
-            break;
-        case 2:
-            nam = "*.csv";
-            break;
-        case 3:
-            nam = "*.html";
-            break;
-        case 4:
-            nam = "*.sql";
-            break;
-        }
 
-        QString filename = toSaveFilename(QString::null, nam, this);
+        toExportSettings settings = exp.exportSettings();
+
+        QString filename = toSaveFilename(QString::null, settings.extension, this);
         if (filename.isEmpty())
             return false;
 
-        return toWriteFile(filename, exportAsText(true,
-                           false,
-                           type,
-                           separator,
-                           delimiter));
+        return toWriteFile(filename, exportAsText(settings));
     }
     TOCATCH;
 
@@ -763,13 +715,9 @@ void toResultTableView::editCopy()
     QModelIndexList sel = selectedIndexes();
     if (sel.size() > 1)
     {
-        QString sep, del;
-        QString t = exportAsText(false,
-                                 true,
-                                 0,         // as text
-                                 sep,
-                                 del);
-        clip->setText(t);
+        toExportSettings settings = toResultListFormat::plaintextCopySettings();
+        settings.selected = sel;
+        clip->setText(exportAsText(settings));
     }
     else
     {

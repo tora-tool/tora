@@ -65,6 +65,7 @@ class toResultCols;
 class toResultView;
 class toSQL;
 class toSearchReplace;
+class toExportSettings;
 
 /** Baseclass for filters to apply to the @ref toResultView to filter
  * out rows that you don't want to add as items to the list.
@@ -563,15 +564,8 @@ class toListView : public toTreeWidget, public toEditWidget
         bool paint = true);
 #endif
 
-    int exportType(QString &separator, QString &delimiter);
-
     QString owner;
     QString objectName;
-
-    bool    includeHeader;
-    bool    onlySelection;
-    QString sep;
-    QString del;
 
 protected:
     /**
@@ -584,30 +578,13 @@ protected:
     QAction *rightAct;
     QAction *centerAct;
     QAction *copyAct;
-    QAction *copySelAct;
-    QAction *copyHeadAct;
+    QAction *copyFormatAct;
     QAction *copyTransAct;
     QAction *selectAllAct;
     QAction *exportAct;
     QAction *editAct;
 
 public:
-    bool getIncludeHeader()
-    {
-        return includeHeader;
-    }
-    bool getOnlySelection()
-    {
-        return onlySelection;
-    }
-    QString getSep()
-    {
-        return sep;
-    }
-    QString getDel()
-    {
-        return del;
-    }
 
     /** Create new list view.
      * @param parent Parent of list.
@@ -687,18 +664,8 @@ public:
      */
     virtual void addMenues(QMenu *menu);
     /** Export list as a string.
-     * @param includeHeader Include header.
-     * @param onlySelection Only include selection.
-     * @param type Format of exported list.
-     * @param separator Separator for CSV format.
-     * @param delimiter Delimiter for CSV format.
      */
-    virtual QString exportAsText(
-        bool includeHeader,
-        bool onlySelection,
-        int type = -1,
-        const QString &separator = ";",
-        const QString &delimiter = "\"");
+    virtual QString exportAsText(toExportSettings settings);
     /** Export list as file.
      */
     virtual bool editSave(bool ask);

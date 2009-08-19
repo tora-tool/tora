@@ -76,115 +76,27 @@ QString toListViewFormatterCSV::QuoteString(const QString &str)
     return t;
 }
 
-QString toListViewFormatterCSV::getFormattedString(toListView& tListView)
-{
-    int column_count = tListView.columns();
-    QString separator = tListView.getSep();
-    QString delimiter = tListView.getDel();
-
-    QString output;
-    QString indent;
-    QString bgcolor;
-
-    if (tListView.getIncludeHeader())
-    {
-        if (bgcolor.isEmpty())
-            bgcolor = QString::fromLatin1("nonull");
-        else
-            bgcolor = QString::null;
-        for (int j = 0;j < column_count;j++)
-            output += QString::fromLatin1("%1%2%3%4").
-                      arg(delimiter).
-                      arg(QuoteString((tListView.headerItem())->text(j))).
-                      arg(delimiter).
-                      arg(separator);
-        if (output.length() > 0)
-            output = output.left(output.length() - separator.length());
-
-        endLine(output);
-    }
-
-
-    toTreeWidgetItem *next = NULL;
-
-    for (toTreeWidgetItem *item = tListView.firstChild();item;item = next)
-    {
-        if (!tListView.getOnlySelection() || item->isSelected())
-        {
-
-            toResultViewItem * resItem = dynamic_cast<toResultViewItem *>(item);
-            toResultViewCheck *chkItem = dynamic_cast<toResultViewCheck *>(item);
-
-            if (bgcolor.isEmpty())
-                bgcolor = QString::fromLatin1(" BGCOLOR=#cfcfff");
-            else
-                bgcolor = QString::null;
-            QString line;
-
-            for (int i = 0;i < column_count;i++)
-            {
-                QString text;
-
-                if (resItem)
-                    text = resItem->allText(i);
-                else if (chkItem)
-                    text = chkItem->allText(i);
-                else
-                    text = item->text(i);
-
-                line += indent;
-
-                line += QString::fromLatin1("%1%2%3%4").
-                        arg(delimiter,
-                            QuoteString(text),
-                            delimiter,
-                            separator);
-            }
-            line = line.left(line.length() - separator.length());
-
-            endLine(output);
-            output += line;
-        }
-
-        if (item->firstChild())
-        {
-            indent += QString::fromLatin1(" ");
-            next = item->firstChild();
-        }
-        else if (item->nextSibling())
-            next = item->nextSibling();
-        else
-        {
-            next = item;
-            do
-            {
-                next = next->parent();
-                indent.truncate(indent.length() - 1);
-            }
-            while (next && !next->nextSibling());
-            if (next)
-                next = next->nextSibling();
-        }
-    }
-
-    return output;
-}
-
-
 QString toListViewFormatterCSV::getFormattedString(toExportSettings &settings,
-        const toResultModel *model)
+                                       //const toResultModel *model);
+                                       const QAbstractItemModel * model)
 {
     int     columns   = model->columnCount();
     int     rows      = model->rowCount();
-    QString separator = settings.Separator;
-    QString delimiter = settings.Delimiter;
+    QString separator = settings.separator;
+    QString delimiter = settings.delimiter;
 
     QString output;
     QString indent;
 
-    if (settings.IncludeHeader)
+    QVector<int> rlist = selectedRows(settings.selected);
+    QVector<int> clist = selectedColumns(settings.selected);
+
+    if (settings.columnsHeader)
     {
         for (int j = 0; j < columns; j++)
+        {
+            if (settings.columnsExport == toExportSettings::ColumnsSelected && !clist.contains(j))
+                continue;
             output += QString::fromLatin1("%1%2%3%4").
                       arg(delimiter).
                       arg(QuoteString(model->headerData(
@@ -193,22 +105,29 @@ QString toListViewFormatterCSV::getFormattedString(toExportSettings &settings,
                                           Qt::DisplayRole).toString())).
                       arg(delimiter).
                       arg(separator);
+        }
         if (output.length() > 0)
             output = output.left(output.length() - separator.length());
 
         endLine(output);
     }
 
-    QVector<int> slist = selectedRows(settings.selected);
+    QModelIndex mi;
     for (int row = 0; row < rows; row++)
     {
-        if (settings.OnlySelection && !slist.contains(row))
+        if (settings.rowsExport == toExportSettings::RowsSelected && !rlist.contains(row))
             continue;
 
         QString line;
         for (int i = 0; i < columns; i++)
         {
-            QString text = model->data(row, i).toString();
+            if (settings.columnsExport == toExportSettings::ColumnsSelected && !clist.contains(i))
+                continue;
+            if (!settings.rowsHeader && i == 0)
+                continue;
+
+            mi = model->index(row, i);
+            QString text = model->data(mi, Qt::EditRole).toString();
             line += indent;
 
             line += QString::fromLatin1("%1%2%3%4").

@@ -48,9 +48,10 @@
 
 #include <QDialog>
 
+class toExportSettings;
 
 /**
- * Used internally by toListView.
+ * "Prepare Data Export/Copying" dialog
  *
  * @internal
  */
@@ -58,12 +59,30 @@ class toResultListFormat : public QDialog, public Ui::toResultListFormatUI
 {
     Q_OBJECT;
 
-public:
-    toResultListFormat(QWidget *parent, const char *name);
-    void saveDefault(void);
+    public:
 
-public slots:
-    virtual void formatChanged(int pos);
+        enum DialogType
+        {
+            TypeRaw, // Don't use dialog, just fetch data with plaintextCopySettings()
+            TypeCopy,
+            TypeExport
+        };
+
+        toResultListFormat(QWidget *parent, DialogType type = TypeCopy, const char *name = 0);
+
+        //! Construct export settings with dialog's values.
+        toExportSettings exportSettings();
+
+        /*! Set the toExportSettings for simple plaintext copy
+        settings. No headers, just selection. For quick Ctrl+C.
+        */
+        static toExportSettings plaintextCopySettings();
+
+    public slots:
+        void accept(void);
+
+    private slots:
+        virtual void formatChanged(int pos);
 };
 
 #endif

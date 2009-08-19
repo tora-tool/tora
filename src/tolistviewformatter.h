@@ -57,26 +57,69 @@ class toResultModel;
 class toExportSettings
 {
 public:
-    bool    IncludeHeader;
-    bool    OnlySelection;
-    int     Type;
-    QString Separator;
-    QString Delimiter;
+
+    enum RowExport
+    {
+        RowsAll = 0,
+        RowsDisplayed,
+        RowsSelected
+    };
+
+    enum ColumnExport
+    {
+        ColumnsAll = 0,
+        ColumnsSelected
+    };
+
+    RowExport    rowsExport;
+    ColumnExport columnsExport;
+    bool rowsHeader;
+    bool columnsHeader;
+    int  type;
+    QString separator;
+    QString delimiter;
+    QString extension;
 
     QModelIndexList selected;
 
-    toExportSettings(bool _header,
-                     bool _selection,
+    toExportSettings(RowExport _rowsExport,
+                     ColumnExport _columnsExport,
                      int _type,
+                     bool _rowsHeader,
+                     bool _columnsHeader,
                      const QString &_sep,
                      const QString &_del)
     {
-        IncludeHeader = _header;
-        OnlySelection = _selection;
-        Type          = _type;
-        Separator     = _sep;
-        Delimiter     = _del;
+        rowsExport = _rowsExport;
+        columnsExport = _columnsExport;
+        type = _type;
+        rowsHeader = _rowsHeader;
+        columnsHeader = _columnsHeader;
+        separator = _sep;
+        delimiter = _del;
+
+        switch (type)
+        {
+            default:
+                extension = "*.txt";
+                break;
+            case 2:
+                extension = "*.csv";
+                break;
+            case 3:
+                extension = "*.html";
+                break;
+            case 4:
+                extension = "*.sql";
+                break;
+        };
     }
+
+    bool requireSelection()
+    {
+        return (rowsExport == RowsSelected) || (columnsExport == ColumnsSelected);
+    }
+
 };
 
 
@@ -85,15 +128,14 @@ class toListViewFormatter
 public:
     toListViewFormatter();
     virtual ~toListViewFormatter();
-    virtual QString getFormattedString(toListView& tListView) = 0;
     virtual QString getFormattedString(toExportSettings &settings,
-                                       const toResultModel *model) = 0;
+                                       const QAbstractItemModel * model) = 0;
 
 protected:
     virtual void endLine(QString &output);
     // build a vector of selected rows for easy searching
     virtual QVector<int> selectedRows(const QModelIndexList &selected);
-	virtual QVector<int> selectedColumns(const QModelIndexList &selected);
+    virtual QVector<int> selectedColumns(const QModelIndexList &selected);
 };
 
 #endif

@@ -77,6 +77,7 @@
 #include <QAction>
 #include <QMimeData>
 #include <QColorGroup>
+#include <QProgressDialog>
 
 static int MaxColDisp;
 static bool Gridlines;
@@ -797,11 +798,11 @@ void toListView::displayMenu(const QPoint &pos)
         Menu->addSeparator();
 
         copyAct = Menu->addAction(tr("&Copy field"));
-        if (selectionMode() == Multi || selectionMode() == Extended)
-        {
-            copySelAct  = Menu->addAction(tr("Copy selection"));
-            copyHeadAct = Menu->addAction(tr("Copy selection with header"));
-        }
+//        if (selectionMode() == Multi || selectionMode() == Extended)
+//        {
+//            copySelAct  = Menu->addAction(tr("Copy selection"));
+//            copyHeadAct = Menu->addAction(tr("Copy selection with header"));
+//        }
         copyTransAct = Menu->addAction(tr("Copy transposed"));
         if (selectionMode() == Multi || selectionMode() == Extended)
         {
@@ -845,11 +846,14 @@ void toListView::menuCallback(QAction *action)
         QClipboard *clip = qApp->clipboard();
         clip->setText(menuText());
     }
-    else if (action == copySelAct)
+    else if (action == copyFormatAct)
     {
         try
         {
-            QString str = exportAsText(false, true);
+            toResultListFormat exp(this, toResultListFormat::TypeCopy);
+            if (!exp.exec())
+                return;
+            QString str = exportAsText(exp.exportSettings());
             if (!str.isNull())
             {
                 QClipboard *clip = qApp->clipboard();
@@ -866,21 +870,6 @@ void toListView::menuCallback(QAction *action)
         setColumnAlignment(MenuColumn, Qt::AlignCenter);
     else if (action == rightAct)
         setColumnAlignment(MenuColumn, Qt::AlignRight);
-    else if (action == copyHeadAct)
-    {
-        try
-        {
-            QString str = exportAsText(true, true);
-            if (!str.isNull())
-            {
-                QClipboard *clip = qApp->clipboard();
-                QMimeData drag;
-                drag.setHtml(str);
-                clip->setMimeData(&drag);
-            }
-        }
-        TOCATCH;
-    }
     else if (action == selectAllAct)
         selectAll(true);
 //     else if(act ==
@@ -1054,34 +1043,18 @@ bool toListView::editSave(bool)
 {
     try
     {
-        QString delimiter;
-        QString separator;
-        int type = exportType(separator, delimiter);
-
-        QString nam;
-        switch (type)
-        {
-        case - 1:
+        toResultListFormat dia(this, toResultListFormat::TypeExport);
+        if (!dia.exec())
             return false;
-        default:
-            nam = "*.txt";
-            break;
-        case 2:
-            nam = "*.csv";
-            break;
-        case 3:
-            nam = "*.html";
-            break;
-        case 4:
-            nam = "*.sql";
-            break;
-        }
 
-        QString filename = toSaveFilename(QString::null, nam, this);
+        toExportSettings settings = dia.exportSettings();
+
+        QString filename = toSaveFilename(QString::null, settings.extension, this);
         if (filename.isEmpty())
             return false;
-
-        return toWriteFile(filename, exportAsText(true, false, type, separator, delimiter));
+        std::auto_ptr<toListViewFormatter> pFormatter(
+                toListViewFormatterFactory::Instance().CreateObject(settings.type));
+        return toWriteFile(filename, exportAsText(settings));
     }
     TOCATCH
     return false;
@@ -1089,25 +1062,28 @@ bool toListView::editSave(bool)
 
 void toListView::addMenues(QMenu *) {}
 
-int toListView::exportType(QString &separator, QString &delimiter)
+#if 0
+int toListView::exportType(QString &separator, QString &delimiter,
+                           bool &includeHeader, bool &onlySelection)
 {
     toResultListFormat format(this, NULL);
     if (!format.exec())
         return -1;
 
-    format.saveDefault();
-
     separator = format.Separator->text();
     delimiter = format.Delimiter->text();
+    includeHeader = format.IncludeHeaders->isChecked();
+    onlySelection = format.OnlySelection->isChecked();
 
     return format.Format->currentIndex();
 
 }
+#endif
 
 
-QString toListView::exportAsText(bool tincludeHeader, bool tonlySelection, int type,
-                                 const QString &tsep, const QString &tdel)
+QString toListView::exportAsText(toExportSettings settings)
 {
+#if 0
     QString result;
 
     includeHeader = tincludeHeader;
@@ -1116,7 +1092,7 @@ QString toListView::exportAsText(bool tincludeHeader, bool tonlySelection, int t
     del = tdel;
 
     if (type < 0)
-        type = exportType(sep, del);
+        type = exportType(sep, del, includeHeader, onlySelection);
     if (type < 0)
         return QString::null;
 
@@ -1124,6 +1100,27 @@ QString toListView::exportAsText(bool tincludeHeader, bool tonlySelection, int t
     result =  pFormatter->getFormattedString(*this);
 
     return result;
+#endif
+    if (settings.requireSelection())
+        settings.selected = selectedIndexes();
+
+    if (settings.rowsExport == toExportSettings::RowsAll)
+    {
+        QProgressDialog progress("Fetching All Data...", "Abort", 0, 2, this);
+        progress.setWindowModality(Qt::WindowModal);
+        while (model()->canFetchMore(currentIndex()))
+        {
+            if (progress.wasCanceled())
+                break;
+            model()->fetchMore(currentIndex());
+            progress.setValue(progress.value() == 0 ? 1 : 0);
+        }
+        progress.setValue(2);
+    }
+
+    std::auto_ptr<toListViewFormatter> pFormatter(
+        toListViewFormatterFactory::Instance().CreateObject(settings.type));
+    return pFormatter->getFormattedString(settings, model());
 }
 
 void toListView::exportData(std::map<QString, QString> &ret, const QString &prefix)

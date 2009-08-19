@@ -769,7 +769,6 @@ bool toWorksheet::close()
     return false;
 }
 
-
 void toWorksheet::closeEvent(QCloseEvent *event)
 {
     QSettings s;

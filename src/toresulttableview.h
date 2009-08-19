@@ -65,6 +65,7 @@ class toResultStats;
 class toViewFilter;
 class toTableViewIterator;
 class toWorkingWidget;
+class toExportSettings;
 
 
 /**
@@ -143,8 +144,7 @@ class toResultTableView : public QTableView,
     QAction *rightAct;
     QAction *centerAct;
     QAction *copyAct;
-    QAction *copySelAct;
-    QAction *copyHeadAct;
+    QAction *copyFormatAct;
     QAction *copyTransAct;
     QAction *selectAllAct;
     QAction *exportAct;
@@ -202,10 +202,10 @@ protected:
      */
     virtual void resizeEvent(QResizeEvent *event);
 
-	/*! Catch special keyboard shortcuts.
-	  Copy, etc.
-	  */
-	virtual void keyPressEvent(QKeyEvent * event);
+    /*! Catch special keyboard shortcuts.
+        Copy, etc.
+    */
+    virtual void keyPressEvent(QKeyEvent * event);
 
 signals:
 
@@ -376,28 +376,10 @@ public:
 
 
     /**
-     * Helper function to display a toResultListFormat.
-     *
-     * @param separator
-     * @param delimiter
-     */
-    virtual int exportType(QString &separator, QString &delimiter);
-
-
-    /**
      * Export list as a string.
      *
-     * @param includeHeader Include header.
-     * @param onlySelection Only include selection.
-     * @param type Format of exported list.
-     * @param separator Separator for CSV format.
-     * @param delimiter Delimiter for CSV format.
      */
-    QString exportAsText(bool includeHeader,
-                         bool onlySelection,
-                         int type,
-                         QString &separator,
-                         QString &delimiter);
+    QString exportAsText(toExportSettings settings);
 
 
     // ---------------------------------------- overrides toEditWidget

@@ -61,9 +61,8 @@ private:
 public:
     toListViewFormatterSQL();
     virtual ~toListViewFormatterSQL();
-    virtual QString getFormattedString(toListView& tListView);
     virtual QString getFormattedString(toExportSettings &settings,
-                                       const toResultModel *model);
+                                       const QAbstractItemModel * model);
 };
 
 

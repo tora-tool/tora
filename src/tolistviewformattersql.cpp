@@ -52,7 +52,7 @@ SQLTypeMap toListViewFormatterSQL::getSQLTypes( toListView& tListView )
     return m;
 
 }
-
+#if 0
 QString toListViewFormatterSQL::getFormattedString( toListView& tListView )
 {
     unsigned int column_count = tListView.columns();
@@ -170,10 +170,13 @@ QString toListViewFormatterSQL::getFormattedString( toListView& tListView )
         throw;
     }
 }
-
+#endif
 
 QString toListViewFormatterSQL::getFormattedString(toExportSettings &settings,
-        const toResultModel *model)
+                                       //const toResultModel *model);
+                                       const QAbstractItemModel * model)
 {
+    // TODO/FIXME
+    //const toResultModel *model);
     return QString::null;
 }
