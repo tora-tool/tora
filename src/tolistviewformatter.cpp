@@ -79,6 +79,7 @@ QVector<int> toListViewFormatter::selectedColumns(
 	const QModelIndexList &selected)
 {
 	QVector<int> ret;
+        ret.append(0); // for later check for row headers
 	for (QList<QModelIndex>::const_iterator it = selected.begin();
             it != selected.end();
             it++)

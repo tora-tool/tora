@@ -79,7 +79,6 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
     QVector<int> clist = selectedColumns(settings.selected);
 
     // must get widest length for each column
-
     // zero array or (if writing headers, set their size)
     for (int i = 0; i < columns; i++)
     {
