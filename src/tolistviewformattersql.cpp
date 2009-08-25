@@ -6,13 +6,11 @@
 
 #include "utils.h"
 
-#include "toconf.h"
 #include "toconfiguration.h"
 #include "tolistviewformattersql.h"
-#include "toconnection.h"
 #include "tolistviewformatterfactory.h"
 #include "tolistviewformatteridentifier.h"
-#include "toresultview.h"
+#include "toresultmodel.h"
 
 
 namespace
@@ -31,152 +29,81 @@ toListViewFormatterSQL::toListViewFormatterSQL() : toListViewFormatter()
 toListViewFormatterSQL::~toListViewFormatterSQL()
 {}
 
-SQLTypeMap toListViewFormatterSQL::getSQLTypes( toListView& tListView )
-{
-    SQLTypeMap m;
-    toConnection &conn = toCurrentConnection( &tListView );
-    toConnection::objectName on = toConnection::objectName( tListView.getOwner(), tListView.getObjectName() );
-    toQDescList desc = conn.columns( on );
-    for ( toQDescList::iterator i = desc.begin();i != desc.end(); ++i )
-    {
-        if ( std::find( headerFields.begin(), headerFields.end(), ( ( *i ).Name ) ) != headerFields.end() )
-        {
-            if ( ( ( *i ).Datatype ).indexOf( "NUMBER" ) != -1 )
-                m.insert( std::make_pair( ( *i ).Name, static_cast<int>( SQL_NUMBER ) ) );
-            else if ( ( ( *i ).Datatype ).indexOf( "VARCHAR" ) != -1 )
-                m.insert( std::make_pair( ( *i ).Name, static_cast<int>( SQL_STRING ) ) );
-            else if ( ( ( *i ).Datatype ).indexOf( "DATE" ) != -1 )
-                m.insert( std::make_pair( ( *i ).Name, static_cast<int>( SQL_DATE ) ) );
-        }
-    }
-    return m;
-
-}
-#if 0
-QString toListViewFormatterSQL::getFormattedString( toListView& tListView )
-{
-    unsigned int column_count = tListView.columns();
-    SQLTypeMap sqltypemap;
-    QString output;
-    toTreeWidgetItem* next = 0;
-    unsigned int startIndex = 0;
-    try
-    {
-        for ( unsigned int j = 0;j < column_count;j++ )
-        {
-            headerFields.push_back(tListView.headerItem()->text(j));
-        }
-
-        if ( tListView.getIncludeHeader() )
-        {
-            startIndex = 1;
-            output += "-- INSERT for table " + tListView.getOwner() + "." + tListView.getObjectName() + "\n";
-        }
-        else
-        {
-            startIndex = 0;
-        }
-
-
-        sqltypemap = getSQLTypes( tListView );
-        for ( toTreeWidgetItem * item = tListView.firstChild();item;item = next )
-        {
-            if ( !tListView.getOnlySelection() || item->isSelected() )
-            {
-
-                toResultViewItem * resItem = dynamic_cast<toResultViewItem *>( item );
-                toResultViewCheck *chkItem = dynamic_cast<toResultViewCheck *>( item );
-
-                QString line, text;
-
-                for ( unsigned int i = startIndex; i < column_count; i++ )
-                {
-                    if ( resItem )
-                        text = resItem->allText( i );
-                    else if ( chkItem )
-                        text = chkItem->allText( i );
-                    else
-                        text = item->text( i );
-
-                    if ( i == startIndex )
-                    {
-                        line += "INSERT INTO " + tListView.getOwner() + "." + tListView.getObjectName() + "(";
-                        for ( unsigned int j = startIndex;j < column_count;j++ )
-                        {
-                            line += tListView.headerItem()->text(j) + ",";
-                        }
-                        line.remove( line.length() - 1, 1 );
-                        line += ") VALUES (";
-                    }
-
-                    switch ( sqltypemap[ ( tListView.headerItem() ) ->text( i ) ] )
-                    {
-                    case SQL_NUMBER:
-                        line += ( text.isEmpty() ) ? "NULL," : QString::fromLatin1( "%1," ).arg( text );
-                        break;
-                    case SQL_STRING:
-                        line += ( text.isEmpty() ) ? "NULL," : QString::fromLatin1( "\'%1\'," ).arg( text );
-                        break;
-                    case SQL_DATE:
-                        if ( text.isEmpty() )
-                        {
-                            line += "NULL,";
-                        }
-                        else
-                        {
-                            line += "TO_DATE(" + QString::fromLatin1( "\'%1\'" ).arg( text ) + ",\'" + toConfigurationSingle::Instance().dateFormat() + "\')" + ",";
-                        }
-                        break;
-                    }
-                    if ( i == ( column_count - 1 ) )
-                    {
-                        line.replace( line.length() - 1, 1, ")" );
-#ifdef Q_OS_WIN32
-
-                        line += ";\r\n";
-#else
-
-                        line += ";\n";
-#endif
-
-                    }
-
-                }
-                output += line;
-            }
-
-            if ( item->firstChild() )
-            {
-                next = item->firstChild();
-            }
-            else if ( item->nextSibling() )
-                next = item->nextSibling();
-            else
-            {
-                next = item;
-                do
-                {
-                    next = next->parent();
-                }
-                while ( next && !next->nextSibling() );
-                if ( next )
-                    next = next->nextSibling();
-            }
-        }
-        return output;
-    }
-    catch ( ... )
-    {
-        throw;
-    }
-}
-#endif
 
 QString toListViewFormatterSQL::getFormattedString(toExportSettings &settings,
                                        //const toResultModel *model);
                                        const QAbstractItemModel * model)
 {
-    // TODO/FIXME
-    //const toResultModel *model);
-    return QString::null;
+    int     columns   = model->columnCount();
+    int     rows      = model->rowCount();
+
+    QVector<int> rlist = selectedRows(settings.selected);
+    QVector<int> clist = selectedColumns(settings.selected);
+
+    QString sql("INSERT INTO tablename %1 VALUES (%2);");
+    QString columnNames;
+    QString output;
+
+    if (settings.columnsHeader)
+    {
+        columnNames += "(";
+        for (int j = 1; j < columns; j++)
+        {
+            if (settings.columnsExport == toExportSettings::ColumnsSelected && !clist.contains(j))
+                continue;
+            columnNames += model->headerData(
+                                          j,
+                                          Qt::Horizontal,
+                                          Qt::DisplayRole).toString();
+            columnNames += ", ";
+        }
+        columnNames = columnNames.left(columnNames.length()-2) + ")";
+    }
+
+    const toResultModel *resultModel = reinterpret_cast<const toResultModel*>(model);
+    if (!model)
+        return "-- cannot access data result. Maybe it's not a SQL export";
+
+    QModelIndex mi;
+    toResultModel::HeaderList hdr = resultModel->headers();
+    for (int row = 0; row < rows; row++)
+    {
+        if (settings.rowsExport == toExportSettings::RowsSelected && !rlist.contains(row))
+            continue;
+
+        QString values;
+        for (int i = 1; i < columns; i++)
+        {
+            if (settings.columnsExport == toExportSettings::ColumnsSelected && !clist.contains(i))
+                continue;
+//             if (!settings.rowsHeader && i == 0)
+//                 continue;
+
+            mi = model->index(row, i);
+            QString currVal(model->data(mi, Qt::EditRole).toString());
+            
+            QString h(hdr.at(i).datatype.toUpper());
+            if (h.contains("DATE"))
+            {
+                if (currVal.isEmpty())
+                    values += "NULL";
+                else
+                {
+                    values += "TO_DATE(" + currVal + ",\'" + toConfigurationSingle::Instance().dateFormat() + "\')";
+                }
+            }
+            else if (h.contains("CHAR"))
+                values += (currVal.isEmpty()) ? "NULL" : "\'" + currVal + "\'";
+            else
+                values += (currVal.isEmpty()) ? "NULL" : currVal;
+            
+            values += ", ";
+        }
+        values = values.left(values.length()-2);
+        QString line(sql.arg(columnNames).arg(values));
+        endLine(line);
+        output += line;
+    }
+
+    return output;
 }

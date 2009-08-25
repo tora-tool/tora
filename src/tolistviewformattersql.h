@@ -54,10 +54,6 @@ typedef std::map<QString, int> SQLTypeMap;
 class toListViewFormatterSQL : public toListViewFormatter
 {
 
-private:
-    enum{SQL_STRING, SQL_NUMBER, SQL_DATE};
-    SQLTypeMap getSQLTypes(toListView& tListView);
-    std::list<QString> headerFields;
 public:
     toListViewFormatterSQL();
     virtual ~toListViewFormatterSQL();
