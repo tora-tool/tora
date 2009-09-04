@@ -45,7 +45,7 @@
 #include "config.h"
 #include "tohighlightedtext.h"
 
-#include <totreewidget.h>
+#include "totreewidget.h"
 //Added by qt3to4:
 #include <QString>
 #include <QMouseEvent>

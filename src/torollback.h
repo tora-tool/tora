@@ -47,7 +47,7 @@
 #include "totool.h"
 
 #include <qdialog.h>
-#include <totreewidget.h>
+#include "totreewidget.h"
 
 #include <algorithm>
 

@@ -64,7 +64,7 @@
 #include <qlayout.h>
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <totreewidget.h>
+#include "totreewidget.h"
 #include <qmenubar.h>
 #include <qmessagebox.h>
 #include <qpainter.h>

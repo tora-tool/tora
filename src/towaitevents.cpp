@@ -53,7 +53,7 @@
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <totreewidget.h>
+#include "totreewidget.h"
 #include <qpainter.h>
 #include <qsplitter.h>
 #include <qtoolbar.h>

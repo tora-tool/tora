@@ -50,7 +50,7 @@
 #include <QMenu>
 
 #include "totool.h"
-#include "tothread.h"
+//#include "tothread.h"
 
 class QComboBox;
 class QLineEdit;

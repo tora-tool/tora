@@ -55,7 +55,7 @@
 #include <qfileinfo.h>
 #include <qlabel.h>
 #include <qlineedit.h>
-#include <totreewidget.h>
+#include "totreewidget.h"
 #include <qmenubar.h>
 #include <qmessagebox.h>
 #include <qsplitter.h>

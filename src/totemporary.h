@@ -47,7 +47,7 @@
 #include <list>
 
 #include <QMenu>
-#include <totreewidget.h>
+#include "totreewidget.h"
 
 class toResultView;
 class toTask;

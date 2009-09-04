@@ -46,7 +46,7 @@
 #include "toeditwidget.h"
 #include "toresult.h"
 
-#include <totreewidget.h>
+#include "totreewidget.h"
 
 #include <QString>
 #include <QFocusEvent>

@@ -59,7 +59,7 @@
 #include <qfile.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <totreewidget.h>
+#include "totreewidget.h"
 #include <qmenubar.h>
 #include <qmessagebox.h>
 #include <qregexp.h>

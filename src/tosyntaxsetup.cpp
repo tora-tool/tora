@@ -56,7 +56,7 @@
 #include <qfont.h>
 #include <qlabel.h>
 #include <qlineedit.h>
-#include <totreewidget.h>
+#include "totreewidget.h"
 #include <qspinbox.h>
 
 #include <QString>
