@@ -46,6 +46,7 @@ READMES = README\
 	README.LICENSE \
 	README.LAYOUT \
 	README.CMAKE \
+	README.OSX \
 	README.SVN \
 	README.BINARIES \
 	README.RELEASE \
@@ -55,7 +56,6 @@ EXTRA_DIST = debian \
 	rpm \
 	BUGS \
 	COPYING \
-	Makefile.OSX \
 	Makefile.mingw \
 	$(READMES) \
 	config/m4 \
