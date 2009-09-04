@@ -70,5 +70,6 @@ EXTRA_DIST = debian \
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 	rm -rf `find $(distdir) -name moc_*.cpp`
+	rm -rf `find $(distdir) -name ui_*.h`
 
 SUBDIRS = utils src test doc
