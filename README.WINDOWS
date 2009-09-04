@@ -14,7 +14,10 @@ Content:
      required.
 
   1. Downaload Qt4 source version for Windows - Trolltech doesn't provide
-     MSVC binaries at all.
+     MSVC binaries at all. I didn't find a nice download link for this, but
+     it was available from the FTP server:
+
+	URL: ftp://ftp.qtsoftware.com/qt/source/qt-all-opensource-src-4.5.2.zip
 
   2. Install Oracle client - instant or standard one.
 
@@ -23,10 +26,18 @@ Content:
      NOTE: Install it to the path *without* space in its name - Qt has
            problems with compilation in the case of space.
 
+        URL: http://www.enterprisedb.com/products/pgdownload.do#windows
+	Testing with version 8.4.0
+	Seems that this installer doesn't prompt for any paths/etc.
+	Be sure and disable postgres service after install if you won't be running the server itself
+
   4. Download and install Mysql development packages. It's a part
      of default installer - just check its component.
      NOTE: Install it to the path *without* space in its name - Qt has
            problems with compilation in the case of space.
+
+        URL: http://dev.mysql.com/downloads/mysql/5.1.html#win32
+	I am testing with the 5.1.37 MSI installer, not the 'Essentials' one
 
   5. Update system environment paths in variables: INCLUDE and LIB to
      fit Postgresql and Mysql includes and libraries.
