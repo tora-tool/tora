@@ -218,12 +218,14 @@ void toHelpTool::displayHelp(void)
 static toHelpTool HelpTool;
 
 toHelp::toHelp(QWidget *parent, QString name, bool modal)
-        : QDialog(parent,
-                  Qt::Window |
-                  Qt::WindowTitleHint |
-                  Qt::WindowSystemMenuHint |
-                  Qt::WindowMinimizeButtonHint |
-                  Qt::WindowMaximizeButtonHint)
+        : QDialog(parent)
+//                  ,
+//                  Qt::Window |
+//                  Qt::WindowTitleHint |
+//                  Qt::WindowSystemMenuHint |
+//                  Qt::WindowMinimizeButtonHint |
+//                  Qt::WindowMaximizeButtonHint |
+//                  Qt::WindowCloseButtonHint)
 {
     setupUi(this);
     setModal(modal);
