@@ -3,17 +3,22 @@ Release Procedures:
 
 Source tarball:
 ---------------
-Check out the tora module from CVS
+Check out the tora module from SVN
 Edit the configure.in file to set the version number
 Edit the NEWS file to set a release date
-Commit, and then tag the release "cvs tag TORA_1_3_XX"
+Commit, and then copy trunk to an appropriately named tag, such as:
+
+svn copy -m "tag before starting 2.1.0 release process" https://tora.svn.sourceforge.net/svnroot/tora/trunk/tora https://tora.svn.sourceforge.net/svnroot/tora/tags/tora-2-1-0
 
 configure
 make dist
 
-upload to upload.sf.net:/incoming/
+sftp nneul,tora@frs.sourceforge.net
+cd /home/pfs/project/t/to/tora/tora/2.1.0
+put tora-2.1.0.tar.gz
 
-	curl -T tora-1.3.xx.tar.gz ftp://upload.sf.net/incoming/
+scp tora-2.1.0.tar.gz nneul,tora@frs.sourceforge.net:/home/frs/project/t/to/tora/tora/2.1.0/
+
 
 add new release to the 'tora' package
 
