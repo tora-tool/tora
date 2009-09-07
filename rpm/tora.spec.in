@@ -27,13 +27,13 @@ Group:                  Development/Databases
 License:                GPL
 BuildRoot:              %{_tmppath}/tora-root
 BuildRequires: postgresql-devel
-BuildRequires: oracle-instantclient-devel
+BuildRequires: oracle-instantclient11.1-devel
 BuildRequires: qt4-devel >= 4.3.0
 BuildRequires: openssl-devel
 BuildRequires: perl
 BuildRequires: cmake >= 2.4.0
 Requires:      qt4 >= 4.3.0
-Requires:      oracle-instantclient-basic
+Requires:      oracle-instantclient11.1-basic
 
 
 #
@@ -126,6 +126,10 @@ perl -pi -e 's/(libclntsh.so)(\.\d+\.\d+)/sprintf("%s%s",$1,"\0" x length($2))/g
 %{__rm} -rf "${RPM_BUILD_ROOT}"
 
 %changelog
+* Tue Nov 18 2008 Michael Mraka <michael.mraka@redhat.com> 2.1.0-1
+- bumped to latest version
+- uses oracle-instantclient11.1
+
 * Tue Nov 18 2008 Michael Mraka <michael.mraka@redhat.com> 2.0.0-0.3100svn
 - added cmake 2.4 patch
 
