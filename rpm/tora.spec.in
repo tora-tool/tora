@@ -30,10 +30,12 @@ BuildRequires: postgresql-devel
 BuildRequires: oracle-instantclient11.1-devel
 BuildRequires: qt4-devel >= 4.3.0
 BuildRequires: openssl-devel
+BuildRequires: qscintilla-devel >= 2.0.0
 BuildRequires: perl
 BuildRequires: cmake >= 2.4.0
 Requires:      qt4 >= 4.3.0
 Requires:      oracle-instantclient11.1-basic
+Requires:      qscintilla >= 2.0.0
 
 
 #
@@ -77,7 +79,6 @@ unset ORACLE_HOME
 
 %{__cmake} \
         -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
-        -DWANT_INTERNAL_QSCINTILLA=1 \
         -DORACLE_PATH_INCLUDES=$(ls -d -1 %{oraincdir}/*/%{oraclientdir} | tail -n 1) \
         -DORACLE_PATH_LIB=$(ls -d -1 %{oralibdir}/*/%{oraclientdir}/lib | tail -n 1) \
         -DPOSTGRESQL_PATH_INCLUDES=%{_includedir} \
