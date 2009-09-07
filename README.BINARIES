@@ -3,10 +3,11 @@ willing to build binaries for a platform not listed here (or wish to
 take over building binaries for a listed platform), please send a note
 to tora-develop list after subscribing to it.
 
+With autoconf builds, it is best to specify "CXXFLAGS=-O2" to avoid 
+adding the debug symbols to the code by default.
+
 Current Binary Maintainers:
 ---------------------------
-Mandrake Cooker - Nathan Neulinger <nneul@neulinger.org>
-
 Windows - Alexey Danilchenko <alex@dalex.clara.co.uk>
 
 Gentoo - Don Seiler <don@seiler.us>
