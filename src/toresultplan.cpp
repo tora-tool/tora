@@ -70,7 +70,8 @@ static toSQL SQLViewVSQLPlan("toResultPlan:ViewVSQLPlan",
                          "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
                          "  io_cost,Bytes,Cardinality,\n"
                          "  partition_start,partition_stop,temp_space,time\n"
-                         "  FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' ORDER BY NVL(Parent_ID,0),ID",
+                         "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' and child_number = 0"
+			 "ORDER BY NVL(Parent_ID,0),ID",
                          "Get the contents of SQL plan from V$SQL_PLAN.",
                          "1000");
 
@@ -78,7 +79,8 @@ static toSQL SQLViewVSQLPlan92("toResultPlan:ViewVSQLPlan",
                          "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
                          "  io_cost,Bytes,Cardinality,\n"
                          "  partition_start,partition_stop,temp_space,null time\n"
-                         "  FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' ORDER BY NVL(Parent_ID,0),ID",
+                         "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' and child_number = 0"
+			 "ORDER BY NVL(Parent_ID,0),ID",
                          "",
                          "0902");
 
@@ -86,7 +88,8 @@ static toSQL SQLViewVSQLPlan9("toResultPlan:ViewVSQLPlan",
                          "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
                          "  io_cost,Bytes,Cardinality,\n"
                          "  partition_start,partition_stop,null temp_space,null time\n"
-                         "  FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' ORDER BY NVL(Parent_ID,0),ID",
+                         "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' and child_number = 0"
+			 "ORDER BY NVL(Parent_ID,0),ID",
                          "",
                          "0900");
 
