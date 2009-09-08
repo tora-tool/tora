@@ -65,7 +65,8 @@ EXTRA_DIST = debian \
 	utils/chex/CMakeLists.txt \
 	cmake_uninstall.cmake.in \
 	config.h.cmake \
-	cmake
+	cmake \
+	osx_tools
 
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
