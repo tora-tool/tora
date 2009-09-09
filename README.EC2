@@ -1,0 +1,56 @@
+INITIAL INSTANCE SETUP
+======================
+
+Deploy a windows 2003 basic AMI, small, without auth services 10:03
+	Seems like this sometimes takes 10 minutes or more to deploy.
+
+Create a 2GB EBS volume in same availability zone as the VM.
+
+Wait for windows to be available, and get the default admin pw. 10:16
+
+Change pw to one I know.
+
+Add/Remove Programs - remove windows components that aren't needed
+(accessories, comms, IE advanced security, etc.)
+
+Connect to windows update and apply all security updates and IE8.
+
+Disable screen saver and password lock on resume
+
+Attach the EBS volume as drive E, basic disk, label as 'Build'
+
+Reboot to allow all security updates to take effect.
+
+Set classic start menu
+
+Properties on my computer, optimize for performance.
+
+6.15 GB free on C: at this point
+
+Download and install Visual C++ 2008 Express
+	Do not install silverlight or SQL Server express
+	Install to default C: directory
+
+Run microsoft update to get any updates for VC and any additional server
+updates.
+
+Download and install TortoiseSVN
+
+Download and install Postgres 8.4.1-1, disable postgres server service
+after installation. C:\build\postgres
+
+Download and install MySQL 5.1.38 to C:\build\mysql - JUST the development
+components, deselect everything else to save space.
+
+Download and extract oracle instant client 10.2.0.4 to C:\build\oracle
+
+Download and extract QT 4.5.2 sources to c:\build\qt
+
+Check out tora trunk to C:\build\tora
+
+Download sdelete utility
+Run 'sdelete -c' to erase empty space
+
+PER-USE INSTANCE DEPLOYMENT
+===========================
+
