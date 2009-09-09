@@ -7,6 +7,9 @@ Content:
 # 
 # Building with MSVC - CMake (+ See README.CMAKE)
 #
+  All information below assumes C:\build as the base directory, and
+  C:\build\tora as tora checkout and C:\build\tora-build as tora build dir
+
 
   0. All related steps are done in the "Visual Studio Command Prompt"
      I have MS Visual Studio 2008 Express (aka version 9). It contains
@@ -43,8 +46,10 @@ Content:
      fit Postgresql and Mysql includes and libraries.
      Note: Mysql uses subdirectories in its lib directory.
      Example:
-set INCLUDE=%INCLUDE%;d:\Qt\sqlite\;D:\Qt\pgsql\include\;d:\Qt\mysql\include\
-set LIB=%LIB%;d:\Qt\sqlite\;d:\Qt\pgsql\lib\;d:\Qt\mysql\lib\opt\
+
+set INCLUDE=%INCLUDE%;c:\build\postgres\include\;c:\build\mysql\include\
+set LIB=%LIB%;c:\build\postgres\lib\;c:\build\mysql\lib\opt\
+set ORACLE_HOME=c:\build\oracle
 
   6. Compile Qt4 with MSVC. Run with MS VS 2008 command prompt:
 
@@ -56,9 +61,10 @@ set LIB=%LIB%;d:\Qt\sqlite\;d:\Qt\pgsql\lib\;d:\Qt\mysql\lib\opt\
 
   8. Compile Tora - read README.CMAKE
      Example:
-set ORACLE_HOME=d:\oracle-xe\...
-set LIB=%LIB%;d:\Qt\pgsql\lib
-cmake -G "NMake Makefiles" -DWANT_INTERNAL_QSCINTILLA=1 -DCMAKE_INSTALL_PREFIX=d:\oss\tora\RELEASE -DORACLE_OCI_VERSION=10G_R2 -DPOSTGRESQL_PATH_INCLUDES=d:\Qt\pgsql\include -DPOSTGRESQL_PATH_LIB=d:\Qt\pgsql\lib\ ..\tora
+c:\
+cd \build\tora-build
+set PATH=%PATH%;c:\build\qt\bin
+cmake -G "NMake Makefiles" -DWANT_INTERNAL_QSCINTILLA=1 -DCMAKE_INSTALL_PREFIX=c:\build\tora-build\RELEASE -DORACLE_OCI_VERSION=10G_R2 ..\tora
      Misc notes: seting ORACLE_HOME is a good thing (TM)
                  building with internal qscintilla is easier for beginners ;)
                  prepare for longer headache (if you're a windows devel newbie) 
