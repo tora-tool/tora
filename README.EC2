@@ -53,8 +53,8 @@ Download and install NSIS from nsis.sourceforge.net
 Check out tora trunk to C:\build\tora
 
 Computer / Environment
-set INCLUDE=%INCLUDE%;D:\build\postgres\include\;c:\build\mysql\include\
-set LIB=%LIB%;d:\build\postgres\lib\;c:\build\mysql\lib\opt\
+set INCLUDE=%INCLUDE%;c:\build\postgres\include\;c:\build\mysql\include\
+set LIB=%LIB%;c:\build\postgres\lib\;c:\build\mysql\lib\opt\
 
 Restart to apply any pending patches/updates.
 
