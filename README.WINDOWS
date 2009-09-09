@@ -46,16 +46,15 @@ Content:
 set INCLUDE=%INCLUDE%;d:\Qt\sqlite\;D:\Qt\pgsql\include\;d:\Qt\mysql\include\
 set LIB=%LIB%;d:\Qt\sqlite\;d:\Qt\pgsql\lib\;d:\Qt\mysql\lib\opt\
 
-  6. Compile Qt4 with MSVC. Don't forget to specify -qt-sql-mysql
-     -qt-sql-psql -qt-sql-odbc -plugin-sql-mysql -plugin-sql-psql
-     -plugin-sql-odbc parameters for configure script.
-     Example:
-configure.exe -plugin-sql-sqlite -system-sqlite -plugin-sql-mysql -plugin-sql-psql -plugin-sql-odbc
-     but it dependes on your system mood. I mean it's not deterministic.
-     Sometimes you will need to hack more paths etc. But building DB
-     plugins is described in the Qt documentation.
+  6. Compile Qt4 with MSVC. Run with MS VS 2008 command prompt:
 
-  7. Compile Tora - read README.CMAKE
+	configure.exe -opensource -plugin-sql-sqlite -plugin-sql-mysql -plugin-sql-psql -plugin-sql-odbc
+
+	Might want to consider building with '-release' to only build the release code
+
+  7. Download and install cmake from www.cmake.org.
+
+  8. Compile Tora - read README.CMAKE
      Example:
 set ORACLE_HOME=d:\oracle-xe\...
 set LIB=%LIB%;d:\Qt\pgsql\lib

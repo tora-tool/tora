@@ -4,7 +4,6 @@ INITIAL INSTANCE SETUP
 Deploy a windows 2003 basic AMI, small, without auth services 10:03
 	Seems like this sometimes takes 10 minutes or more to deploy.
 
-Create a 2GB EBS volume in same availability zone as the VM.
 
 Wait for windows to be available, and get the default admin pw. 10:16
 
@@ -17,15 +16,14 @@ Connect to windows update and apply all security updates and IE8.
 
 Disable screen saver and password lock on resume
 
-Attach the EBS volume as drive E, basic disk, label as 'Build'
+Create a 15GB EBS volume in same availability zone as the VM.
+Attach the EBS volume to path C:\build, basic disk, label as 'Build'
 
 Reboot to allow all security updates to take effect.
 
 Set classic start menu
 
 Properties on my computer, optimize for performance.
-
-6.15 GB free on C: at this point
 
 Download and install Visual C++ 2008 Express
 	Do not install silverlight or SQL Server express
@@ -48,14 +46,33 @@ Download and extract QT 4.5.2 sources to c:\build\qt
 
 Download and install CCleaner utility. 
 
+Download and install CMake from cmake.org, add to system path for all users.
+
+Download and install NSIS from nsis.sourceforge.net
+
 Check out tora trunk to C:\build\tora
+
+Computer / Environment
+set INCLUDE=%INCLUDE%;D:\build\postgres\include\;c:\build\mysql\include\
+set LIB=%LIB%;d:\build\postgres\lib\;c:\build\mysql\lib\opt\
 
 Restart to apply any pending patches/updates.
 
 Run CCleaner utility - clean as much as possible, and also run the wipe free space function.
 
-Using elasticfox, bundle the running system into an AMI for re-use later.
+Using elasticfox, bundle the running system into an AMI for re-use later. Be sure
+and clean up old versions of the AMI when you bundle a new one. Ideally all "read write"
+stuff should be on the EBS volume, so the AMI should only need to be regenerated if
+new software gets installed or system updates need to be applied.
+
 
 PER-USE INSTANCE DEPLOYMENT
 ===========================
 
+Launch instance (I suggest using Medium-HighCPU) from the torabuild-X AMI.
+
+Attach the build EBS volume and make sure it is mounted solely as C:\build.
+
+Run builds/etc. as needed. 
+
+Shut down instance when done.
