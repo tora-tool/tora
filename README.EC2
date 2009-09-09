@@ -46,10 +46,15 @@ Download and extract oracle instant client 10.2.0.4 to C:\build\oracle
 
 Download and extract QT 4.5.2 sources to c:\build\qt
 
+Download and install CCleaner utility. 
+
 Check out tora trunk to C:\build\tora
 
-Download sdelete utility
-Run 'sdelete -c' to erase empty space
+Restart to apply any pending patches/updates.
+
+Run CCleaner utility - clean as much as possible, and also run the wipe free space function.
+
+Using elasticfox, bundle the running system into an AMI for re-use later.
 
 PER-USE INSTANCE DEPLOYMENT
 ===========================
