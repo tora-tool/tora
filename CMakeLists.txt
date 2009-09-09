@@ -123,28 +123,6 @@ ELSE (MSVC)
 ENDIF (MSVC)
 
 
-# --- If we are on OS X copy all the embedded libraries to the app bundle
-IF (APPLE AND WANT_BUNDLE)
-  # -------- Function to build OS X Stand Alone Bundles -----------------
-  function(MakeOSXBundleApp target binary_dir)
-    #-- Set some useful variables
-    SET (OSX_MAKE_STANDALONE_BUNDLE_CMAKE_SCRIPT "${binary_dir}/${target}_OSX_MakeStandAloneBundle.cmake")
-    SET (OSX_MAKE_STANDALONE_BUNDLE_BASH_SCRIPT "${binary_dir}/${target}_OSX_MakeStandAloneBundle.sh")
-    #-- Configure the cmake file and the shell script
-    CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/osx_tools/CompleteBundle.cmake.in"
-      "${OSX_MAKE_STANDALONE_BUNDLE_CMAKE_SCRIPT}" @ONLY IMMEDIATE)
-    CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/osx_tools/CreateBundle.sh.in"
-      "${OSX_MAKE_STANDALONE_BUNDLE_BASH_SCRIPT}" @ONLY IMMEDIATE)
-    #-- Create the installation code
-    install(SCRIPT "${OSX_MAKE_STANDALONE_BUNDLE_CMAKE_SCRIPT}")
-
-  endfunction(MakeOSXBundleApp)
-
-  MakeOSXBundleApp(TOra ${PROJECT_BINARY_DIR})
-
-ENDIF (APPLE AND WANT_BUNDLE)
-
-
 SET(CMAKE_CXX_FLAGS_RELEASE "-O2 ${CXX_WARNINGS}")
 SET(CMAKE_C_FLAGS_RELEASE "-O2 ${CXX_WARNINGS}")
 # Required for win wjen there is used an external qscintilla lib

@@ -541,7 +541,41 @@ ELSE (WIN32)
     IF (NOT WANT_BUNDLE)
         INSTALL(TARGETS ${EXE_NAME} RUNTIME DESTINATION bin LIBRARY DESTINATION lib)
     ELSE (NOT WANT_BUNDLE)
+        # Warning: This is dangerous to touch. Except you know what are you doing.
+        #          I ususaly don't know anything about it. But it's working ;)
+ 
         INSTALL(TARGETS ${EXE_NAME} BUNDLE DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+        # --- If we are on OS X copy all the embedded libraries to the app bundle
+        # -------- Function to build OS X Stand Alone Bundles -----------------
+        function(MakeOSXBundleApp target binary_dir)
+            #-- Set some useful variables
+            SET (OSX_MAKE_STANDALONE_BUNDLE_CMAKE_SCRIPT "${binary_dir}/${target}_OSX_MakeStandAloneBundle.cmake")
+            SET (OSX_MAKE_STANDALONE_BUNDLE_BASH_SCRIPT "${binary_dir}/${target}_OSX_MakeStandAloneBundle.sh")
+            #-- Configure the cmake file and the shell script
+            CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/osx_tools/CompleteBundle.cmake.in"
+                           "${OSX_MAKE_STANDALONE_BUNDLE_CMAKE_SCRIPT}" @ONLY IMMEDIATE)
+            CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/osx_tools/CreateBundle.sh.in"
+                           "${OSX_MAKE_STANDALONE_BUNDLE_BASH_SCRIPT}" @ONLY IMMEDIATE)
+            #-- Create the installation code
+            install(SCRIPT "${OSX_MAKE_STANDALONE_BUNDLE_CMAKE_SCRIPT}")
+        endfunction(MakeOSXBundleApp)
+
+        MakeOSXBundleApp(${EXE_NAME} ${PROJECT_BINARY_DIR})
+
+        #-- Put an empty qt.conf file in the bundle so as to NOT load plugins from the installed Qt.
+        INSTALL(CODE "message(STATUS \"${CMAKE_INSTALL_PREFIX}/${EXE_NAME}.app/Contents/Resources/qt.conf\")")
+        INSTALL(CODE "file(WRITE \"${CMAKE_INSTALL_PREFIX}/${EXE_NAME}.app/Contents/Resources/qt.conf\" \"[Paths]
+Plugins = PlugIns\")" )
+
+        #-- Check for Qt4 stuff
+        if ("${QT_MAC_USE_COCOA}" STREQUAL "1")
+            INSTALL(CODE "message(STATUS \"Copying qt_menu.nib into ${EXE_NAME}.app/Contents/Resources\")")
+            INSTALL(CODE "file(MAKE_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${EXE_NAME}.app/Contents/Resources/qt_menu.nib\")")
+            INSTALL(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
+                             \"${QT_LIBRARY_DIR}/QtGui.framework/Resources/qt_menu.nib\"
+                             \"${CMAKE_INSTALL_PREFIX}/${EXE_NAME}.app/Contents/Resources/qt_menu.nib\")")
+        endif()
     ENDIF (NOT WANT_BUNDLE)
 ENDIF (WIN32)
 
