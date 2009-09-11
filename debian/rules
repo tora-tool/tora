@@ -28,4 +28,3 @@ install/tora::
 	-install --owner root --group root --mode=644 $(CURDIR)/src/icons/toramini.xpm $(CURDIR)/debian/tora/usr/share/icons/hicolor/16x16/apps/tora.xpm
 	# we have a desktop file
 	-install --owner root --group root --mode=644 $(CURDIR)/debian/tora.desktop $(CURDIR)/debian/tora/usr/share/applications
-	dh_desktop

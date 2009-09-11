@@ -1,0 +1,19 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 03_README.LAYOUT.dpatch by Michael Meskes <meskes@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No such file README.LAYOUT
+
+@DPATCH@
+
+diff -ruN tora-2.0.0.orig/CMakeLists.txt tora-2.0.0/CMakeLists.txt
+--- tora-2.0.0.orig/CMakeLists.txt	2008-11-03 21:32:20.000000000 +0100
++++ tora-2.0.0/CMakeLists.txt	2009-01-03 21:29:48.000000000 +0100
+@@ -282,7 +282,6 @@
+     README.BINARIES
+     README.CMAKE
+     README.CODESTYLE
+-    README.LAYOUT
+     README.LICENSE
+     README.OSX
+     README.RELEASE
