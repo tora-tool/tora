@@ -45,6 +45,9 @@ You have to specify -DORACLE_OCI_VERSION for one of values:
 [8, 8I, 9I, 10G, 10G_R2]. Example:
 -DORACLE_OCI_VERSION=10G_R2
 
+You can switch off Oracle support with:
+-DNO_ORACLE=1
+
 
 TOra requires PostgreSQL development environment to enable
 full PgSQL support (native cancel etc.).

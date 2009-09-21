@@ -182,15 +182,22 @@ ELSE (WANT_INTERNAL_QSCINTILLA)
 ENDIF (WANT_INTERNAL_QSCINTILLA)
 
 
-FIND_PACKAGE(Oracle)
-IF(ORACLE_FOUND)
-    MESSAGE("Oracle OCI Library Found OK")
-    # what else is hidden in the ifdef hell?!
-    ADD_DEFINITIONS("-DDBLINK")
-ELSE(ORACLE_FOUND)
-    MESSAGE(STATUS "No Oracle OCI found. TOra will be build without Oracle support")
+IF (NO_ORACLE)
+    MESSAGE(STATUS "Oracle support is disabled by user choice")
     ADD_DEFINITIONS("-DTO_NO_ORACLE")
-ENDIF(ORACLE_FOUND)
+ELSE (NO_ORACLE)
+
+  FIND_PACKAGE(Oracle)
+  IF(ORACLE_FOUND)
+      MESSAGE("Oracle OCI Library Found OK")
+      # what else is hidden in the ifdef hell?!
+      ADD_DEFINITIONS("-DDBLINK")
+  ELSE(ORACLE_FOUND)
+      MESSAGE(STATUS "No Oracle OCI found. TOra will be build without Oracle support")
+      ADD_DEFINITIONS("-DTO_NO_ORACLE")
+  ENDIF(ORACLE_FOUND)
+
+ENDIF (NO_ORACLE)
 
 
 FIND_PACKAGE(PostgreSQL)
