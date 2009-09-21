@@ -561,21 +561,63 @@ ELSE (WIN32)
             install(SCRIPT "${OSX_MAKE_STANDALONE_BUNDLE_CMAKE_SCRIPT}")
         endfunction(MakeOSXBundleApp)
 
+
+        install(DIRECTORY ${QT_PLUGINS_DIR}/
+                DESTINATION ${PROJECT_BINARY_DIR}/Contents/Plugins/
+                REGEX "(designer|script|phonon_backend|debug|sqlite|ico)" EXCLUDE)
+
+        install(CODE "
+            # glob for previously installed qt plugins to include in fixup_bundle
+            file(GLOB_RECURSE PluginList
+                 ${PROJECT_BINARY_DIR}/Contents/Plugins/*.bundle)
+        ")
+
         MakeOSXBundleApp(${EXE_NAME} ${PROJECT_BINARY_DIR})
+
+        # TODO/FIXME: this is evil! And it should be done automagically...
+        set(hack_bundle_pth "${CMAKE_INSTALL_PREFIX}/${EXE_NAME}.app/Contents/MacOS")
+        INSTALL(CODE "file(MAKE_DIRECTORY ${hack_bundle_pth}/sqldrivers)")
+        INSTALL(CODE "file(MAKE_DIRECTORY ${hack_bundle_pth}/codecs)")
+        INSTALL(CODE "file(MAKE_DIRECTORY ${hack_bundle_pth}/accessible)")
+        INSTALL(CODE "file(MAKE_DIRECTORY ${hack_bundle_pth}/imageformats)")
+        INSTALL(CODE "file(MAKE_DIRECTORY ${hack_bundle_pth}/graphicssystems)")
+        function(hack_move_plugins filename targetdir)
+            install(CODE "
+                message(STATUS \"file:: ${filename} -> targetdir: ${targetdir} ${hack_bundle_pth}\")
+            ")
+            install(FILES ${hack_bundle_pth}/${filename} DESTINATION ${hack_bundle_pth}/${targetdir})
+            install(CODE "file(REMOVE ${hack_bundle_pth}/${filename})")
+        endfunction(hack_move_plugins)
+        hack_move_plugins("libqcncodecs.bundle" "codecs")
+        hack_move_plugins("libqjpcodecs.bundle" "codecs")
+        hack_move_plugins("libqtwcodecs.bundle" "codecs")
+        hack_move_plugins("libqkrcodecs.bundle" "codecs")
+        hack_move_plugins("libqsqlmysql.bundle" "sqldrivers")
+        hack_move_plugins("libqsqlodbc.bundle" "sqldrivers")
+        hack_move_plugins("libqsqlpsql.bundle" "sqldrivers")
+        hack_move_plugins("libqgif.bundle" "imageformats")
+        hack_move_plugins("libqjpeg.bundle" "imageformats")
+        hack_move_plugins("libqmng.bundle" "imageformats")
+        hack_move_plugins("libqsvg.bundle" "imageformats")
+        hack_move_plugins("libqtiff.bundle" "imageformats")
+        hack_move_plugins("libqtaccessiblewidgets.bundle" "accessible")
+        hack_move_plugins("libqglgraphicssystem.bundle" "graphicssystems")
+        # end of hack
 
         #-- Put an empty qt.conf file in the bundle so as to NOT load plugins from the installed Qt.
         INSTALL(CODE "message(STATUS \"${CMAKE_INSTALL_PREFIX}/${EXE_NAME}.app/Contents/Resources/qt.conf\")")
-        INSTALL(CODE "file(WRITE \"${CMAKE_INSTALL_PREFIX}/${EXE_NAME}.app/Contents/Resources/qt.conf\" \"[Paths]
-Plugins = PlugIns\")" )
+        INSTALL(FILES "${CMAKE_SOURCE_DIR}/osx_tools/qt.conf.in"
+                DESTINATION "${CMAKE_INSTALL_PREFIX}/${EXE_NAME}.app/Contents/Resources/"
+                RENAME "qt.conf")
 
-        #-- Check for Qt4 stuff
         if ("${QT_MAC_USE_COCOA}" STREQUAL "1")
-            INSTALL(CODE "message(STATUS \"Copying qt_menu.nib into ${EXE_NAME}.app/Contents/Resources\")")
+            INSTALL(CODE "message(STATUS \"Copying qt_menu.nib into ${CMAKE_INSTALL_PREFIX}/${EXE_NAME}.app/Contents/Resources\")")
             INSTALL(CODE "file(MAKE_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${EXE_NAME}.app/Contents/Resources/qt_menu.nib\")")
             INSTALL(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
                              \"${QT_LIBRARY_DIR}/QtGui.framework/Resources/qt_menu.nib\"
                              \"${CMAKE_INSTALL_PREFIX}/${EXE_NAME}.app/Contents/Resources/qt_menu.nib\")")
         endif()
+
     ENDIF (NOT WANT_BUNDLE)
 ENDIF (WIN32)
 

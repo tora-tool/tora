@@ -11,6 +11,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
   cmake_policy(SET CMP0005 OLD) # FIXME change it to new when there will be cmake 2.6.x in most distros
+  cmake_policy(SET CMP0011 NEW)
 endif(COMMAND cmake_policy)
 
 
@@ -44,6 +45,9 @@ SET (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_SUFFIX}
 MESSAGE(STATUS "TOra ${VERSION} will be built to install into ${CMAKE_INSTALL_PREFIX}")
 
 SET (EXE_NAME "tora")
+if (WANT_BUNDLE)
+    SET(EXE_NAME "TOra")
+endif(WANT_BUNDLE)
 
 ADD_DEFINITIONS("-DTOVERSION=\\\"${VERSION}\\\"")
 # Allow using CMAKE-related ifdefs in the code. See e.g. toqsqlconnection.cpp.
