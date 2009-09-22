@@ -259,6 +259,7 @@ UI_FILES = toaboutui.ui \
 EXTRA_DIST = icons \
 	templates \
 	windows \
+	qscintilla2 \
 	COPYRIGHT.h \
 	help \
 	$(LOKIDIR_INC) \
