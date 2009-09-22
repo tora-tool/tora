@@ -59,7 +59,7 @@ set ORACLE_HOME=c:\build\oracle
 
   7. Download and install cmake from www.cmake.org.
 
-  8. Compile Tora - read README.CMAKE
+  8. Compile Tora - read README.CMAKE and dont forget to check environment is in 5.
      Example:
 c:\
 cd \build\tora-build
