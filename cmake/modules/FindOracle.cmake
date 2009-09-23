@@ -45,7 +45,7 @@ FIND_PATH(
 
 FIND_LIBRARY(
     ORACLE_LIBRARY_OCCI
-    NAMES libocci occi oraocci10
+    NAMES libocci occi oraocci10 oraocci11
     PATHS ${ORACLE_LIB_LOCATION}
 )
 FIND_LIBRARY(
