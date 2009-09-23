@@ -532,6 +532,10 @@ ENDIF (WANT_INTERNAL_QSCINTILLA)
 # prevent opening the cmd.exe window
 IF (WIN32)
     TARGET_LINK_LIBRARIES(${EXE_NAME} ${WINDOWS_LIB})
+    # don't use console subsystem
+    IF (MINGW)
+        TARGET_LINK_LIBRARIES(${EXE_NAME} "-mwindows")
+    ENDIF (MINGW)
 ENDIF (WIN32)
 
 

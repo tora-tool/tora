@@ -529,7 +529,7 @@ public slots:
      * @param del If user interaction is allowed.
      * @return True if close was allowed, otherwise false.
      */
-    bool close();
+    //bool close();
     /** Used to enable/disable entries in the windows menu
      */
     void updateWindowsMenu();

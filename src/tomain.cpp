@@ -1537,10 +1537,10 @@ void toMain::closeEvent(QCloseEvent *event)
 }
 
 
-bool toMain::close()
-{
-    return QMainWindow::close();
-}
+//bool toMain::close()
+//{
+//    return QMainWindow::close();
+//}
 
 void toMain::createDefault(void)
 {
