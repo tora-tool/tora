@@ -546,6 +546,7 @@ ELSE (WIN32)
  
         INSTALL(TARGETS ${EXE_NAME} BUNDLE DESTINATION ${CMAKE_INSTALL_PREFIX})
 
+      IF (NOT WANT_BUNDLE_STANDALONE)
         # --- If we are on OS X copy all the embedded libraries to the app bundle
         # -------- Function to build OS X Stand Alone Bundles -----------------
         function(MakeOSXBundleApp target binary_dir)
@@ -617,6 +618,7 @@ ELSE (WIN32)
                              \"${QT_LIBRARY_DIR}/QtGui.framework/Resources/qt_menu.nib\"
                              \"${CMAKE_INSTALL_PREFIX}/${EXE_NAME}.app/Contents/Resources/qt_menu.nib\")")
         endif()
+      ENDIF (NOT WANT_BUNDLE_STANDALONE)
 
     ENDIF (NOT WANT_BUNDLE)
 ENDIF (WIN32)

@@ -63,7 +63,11 @@ etc.
 
 TOra allows to be built as "bundle" application on Mac OS X.
 -DWANT_BUNDLE=1
-The bundle will be created in the CMAKE_INSTALL_PREFIX.
+The bundle will be created in the CMAKE_INSTALL_PREFIX. The bundle
+will contain all dependencies (Qt libs, DB clients libs etc.).
+If there is WANT_BUNDLE specified, it can be set not to pack
+all required libraries into the bundle location with:
+-DWANT_BUNDLE_STANDALONE=1
 
 
 Search following for more info:

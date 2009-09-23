@@ -1,7 +1,8 @@
 TOra is reported to build on Mac OS X (10.4 Tiger and later).
 
 Only Cmake build method is tested. See README.CMAKE.
-Mac OS X bundle can be created with WANT_BUNDLE. See README.CMAKE.
+Mac OS X bundle can be created with WANT_BUNDLE and optionaly WANT_BUNDLE_STANDALONE.
+See README.CMAKE.
 
 
 Notes on Oracle Instantclient:
