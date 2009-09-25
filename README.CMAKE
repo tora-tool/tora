@@ -46,7 +46,7 @@ You have to specify -DORACLE_OCI_VERSION for one of values:
 -DORACLE_OCI_VERSION=10G_R2
 
 You can switch off Oracle support with:
--DNO_ORACLE=1
+-DENABLE_ORACLE=0
 
 
 TOra requires PostgreSQL development environment to enable
@@ -59,6 +59,8 @@ specify path for alternative location and/or for Windows too.
 Windows note: Sometimes (dunno why) it doesn't find pgsql libs.
               You can use "set LIB=%LIB%;pathtopgsqllibs" then.
 etc.
+Native PostgreSQL support can be disabled with:
+-DENABLE_PGSQL=0
 
 
 TOra allows to be built as "bundle" application on Mac OS X.

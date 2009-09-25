@@ -1,6 +1,15 @@
 ##############################################################################################################
 ########## CMake Setup                                                                              ##########
 
+# options available for user's input
+OPTION(WANT_DEBUG "Set the debug build and possible additional outputs" OFF)
+OPTION(WANT_INTERNAL_QSCINTILLA "Use internal/bundled QScintilla2 source" OFF)
+OPTION(ENABLE_ORACLE "Disable Oracle support at all. Including detection" ON)
+OPTION(ENABLE_PGSQL "Disable PostgreSQL support. Including detection" ON)
+OPTION(WANT_RPM "Enable additional RPM related stuff. Additional make package_rpm target" ON)
+OPTION(WANT_BUNDLE "Enable Mac OS X bundle build" OFF)
+OPTION(WANT_BUNDLE_STANDALONE "Do not copy required libs and tools into bundle (WANT_BUNDLE)" ON)
+
 #Set our CMake minimum version
 #Require 2.4.2 for Qt finding
 #Require 2.4.3 for moc change detection and rpath updates for custom cairo install
@@ -45,9 +54,9 @@ SET (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_SUFFIX}
 MESSAGE(STATUS "TOra ${VERSION} will be built to install into ${CMAKE_INSTALL_PREFIX}")
 
 SET (EXE_NAME "tora")
-if (WANT_BUNDLE)
+if (ENABLE_BUNDLE)
     SET(EXE_NAME "TOra")
-endif(WANT_BUNDLE)
+endif(ENABLE_BUNDLE)
 
 ADD_DEFINITIONS("-DTOVERSION=\\\"${VERSION}\\\"")
 # Allow using CMAKE-related ifdefs in the code. See e.g. toqsqlconnection.cpp.
@@ -108,9 +117,9 @@ ENDIF (GCC)
 
 #Convert our simpler command line option to the CMake style
 #None, Debug, Release, .. or custom ones
-# SET(WANT_DEBUG 1)
 IF(WANT_DEBUG)
   SET(CMAKE_BUILD_TYPE Debug)
+  ADD_DEFINITIONS("-DDEBUG")
 ELSE(WANT_DEBUG)
   SET(CMAKE_BUILD_TYPE RELEASE)
 ENDIF(WANT_DEBUG)
@@ -182,10 +191,10 @@ ELSE (WANT_INTERNAL_QSCINTILLA)
 ENDIF (WANT_INTERNAL_QSCINTILLA)
 
 
-IF (NO_ORACLE)
+IF (NOT ENABLE_ORACLE)
     MESSAGE(STATUS "Oracle support is disabled by user choice")
     ADD_DEFINITIONS("-DTO_NO_ORACLE")
-ELSE (NO_ORACLE)
+ELSE (NOT ENABLE_ORACLE)
 
   FIND_PACKAGE(Oracle)
   IF(ORACLE_FOUND)
@@ -197,15 +206,19 @@ ELSE (NO_ORACLE)
       ADD_DEFINITIONS("-DTO_NO_ORACLE")
   ENDIF(ORACLE_FOUND)
 
-ENDIF (NO_ORACLE)
+ENDIF (NOT ENABLE_ORACLE)
 
 
-FIND_PACKAGE(PostgreSQL)
-IF (POSTGRESQL_FOUND)
+IF (NOT ENABLE_PGSQL)
+    MESSAGE(STATUS "PostgreSQL support is disabled by user choice")
+ELSE (NOT ENABLE_PGSQL)
+
+  FIND_PACKAGE(PostgreSQL)
+  IF (POSTGRESQL_FOUND)
     ADD_DEFINITIONS(-DLIBPQ_DECL_CANCEL)
     ADD_DEFINITIONS(-DHAVE_POSTGRESQL_LIBPQ_FE_H)
     MESSAGE(STATUS "PostgreSQL environment found: ${POSTGRESQL_INCLUDE_DIR} ${POSTGRESQL_LIBRARIES}")
-ELSE (POSTGRESQL_FOUND)
+  ELSE (POSTGRESQL_FOUND)
     MESSAGE(" ")
     MESSAGE(WARNING " No PostgreSQL environment has been found.")
     MESSAGE(WARNING " Specify -DPOSTGRESQL_PATH_INCLUDES=path")
@@ -213,8 +226,9 @@ ELSE (POSTGRESQL_FOUND)
 	#MESSAGE (STATUS "PostgreSQL includes: ${POSTGRESQL_INCLUDE_DIR} vs. ${POSTGRESQL_PATH_INCLUDES}")
 	#MESSAGE (STATUS "PostgreSQL libs: ${POSTGRESQL_LIBRARIES} vs. ${POSTGRESQL_PATH_LIB}")
     MESSAGE(" ")
-ENDIF (POSTGRESQL_FOUND)
+  ENDIF (POSTGRESQL_FOUND)
 
+ENDIF (NOT ENABLE_PGSQL)
 
 
 ##############################################################################################################
@@ -292,42 +306,44 @@ INSTALL(FILES
 )
 ENDIF (NOT WANT_BUNDLE)
 
-# packaging related stuff
-#SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Toolkit for Oracle")
-SET(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
-#SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
-#SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-SET(CPACK_PACKAGE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
-SET(CPACK_SOURCE_GENERATOR "TGZ")
-#SET(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
-SET(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
-SET(CPACK_IGNORE_FILES "/CVS/;/\\\\.svn/;\\\\.swp$;\\\\.#;/#;\\\\.tar.gz$;/CMakeFiles/;CMakeCache.txt")
-SET(CPACK_SOURCE_IGNORE_FILES ${CPACK_IGNORE_FILES})
-INCLUDE(CPack)
 
-# Check for SVN
-FIND_PACKAGE(Subversion)
-IF(NOT Subversion_FOUND)
-    SET(Subversion_SVN_EXECUTABLE true)
-ENDIF(NOT Subversion_FOUND)
-
-# get svn revision in rpmbuild time (and not in Makefile generation time)
-SET(SVN_REVISION
-    "\"$$(" ${Subversion_SVN_EXECUTABLE} info ${CMAKE_SOURCE_DIR} | awk '/Revision:/ {print \$\$2 }' ")\""
-    )
-SET(RPM_DEFINES 
-    --define "_sourcedir ${CMAKE_SOURCE_DIR}"
-    )
-SET(SPEC_IN_SUBST
-    "\""
-    "s/(%define\\s+_version) .*/\\\\1 ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}/\;"
-    "s/(%define\\s+_release) .*/\\\\1 0.${SVN_REVISION}svn/\;"
-    "\""
-    )
-SET(RPM_SPEC "rpm/tora.spec")
-ADD_CUSTOM_TARGET(package-rpm
-        COMMAND sed -r ${SPEC_IN_SUBST} "${RPM_SPEC}.in" >"${RPM_SPEC}"
-        COMMAND make package_source
-        COMMAND rpmbuild -ba ${RPM_DEFINES} "${RPM_SPEC}"
+IF (WANT_RPM)
+    # packaging related stuff
+    #SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Toolkit for Oracle")
+    SET(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
+    #SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
+    #SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
+    SET(CPACK_PACKAGE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
+    SET(CPACK_SOURCE_GENERATOR "TGZ")
+    #SET(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
+    SET(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
+    SET(CPACK_IGNORE_FILES "/CVS/;/\\\\.svn/;\\\\.swp$;\\\\.#;/#;\\\\.tar.gz$;/CMakeFiles/;CMakeCache.txt")
+    SET(CPACK_SOURCE_IGNORE_FILES ${CPACK_IGNORE_FILES})
+    INCLUDE(CPack)
+    
+    # Check for SVN
+    FIND_PACKAGE(Subversion)
+    IF(NOT Subversion_FOUND)
+        SET(Subversion_SVN_EXECUTABLE true)
+    ENDIF(NOT Subversion_FOUND)
+    
+    # get svn revision in rpmbuild time (and not in Makefile generation time)
+    SET(SVN_REVISION
+        "\"$$(" ${Subversion_SVN_EXECUTABLE} info ${CMAKE_SOURCE_DIR} | awk '/Revision:/ {print \$\$2 }' ")\""
         )
-
+    SET(RPM_DEFINES 
+        --define "_sourcedir ${CMAKE_SOURCE_DIR}"
+        )
+    SET(SPEC_IN_SUBST
+        "\""
+        "s/(%define\\s+_version) .*/\\\\1 ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}/\;"
+        "s/(%define\\s+_release) .*/\\\\1 0.${SVN_REVISION}svn/\;"
+        "\""
+        )
+    SET(RPM_SPEC "rpm/tora.spec")
+    ADD_CUSTOM_TARGET(package-rpm
+            COMMAND sed -r ${SPEC_IN_SUBST} "${RPM_SPEC}.in" >"${RPM_SPEC}"
+            COMMAND make package_source
+            COMMAND rpmbuild -ba ${RPM_DEFINES} "${RPM_SPEC}"
+            )
+ENDIF (WANT_RPM)
