@@ -54,9 +54,9 @@ SET (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_SUFFIX}
 MESSAGE(STATUS "TOra ${VERSION} will be built to install into ${CMAKE_INSTALL_PREFIX}")
 
 SET (EXE_NAME "tora")
-if (ENABLE_BUNDLE)
+if (WANT_BUNDLE)
     SET(EXE_NAME "TOra")
-endif(ENABLE_BUNDLE)
+endif(WANT_BUNDLE)
 
 ADD_DEFINITIONS("-DTOVERSION=\\\"${VERSION}\\\"")
 # Allow using CMAKE-related ifdefs in the code. See e.g. toqsqlconnection.cpp.
