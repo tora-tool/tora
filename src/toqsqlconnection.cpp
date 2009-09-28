@@ -1087,30 +1087,30 @@ class qSqlSetting : public QWidget, public toSettingTab
 
     static QString fromQSqlName(const QString &driv)
     {
-        if (driv == QString::fromLatin1("QMYSQL3"))
+        if (driv == QString::fromLatin1("QMYSQL"))
             return "MySQL";
-        else if (driv == QString::fromLatin1("QPSQL7"))
+        else if (driv == QString::fromLatin1("QPSQL"))
             return "PostgreSQL";
         else if (driv == QString::fromLatin1("QTDS"))
             return "Microsoft SQL/TDS";
-        else if (driv == QString::fromLatin1("QSAPDB7"))
+        else if (driv == QString::fromLatin1("QSAPDB"))
             return "SapDB";
-        else if (driv == QString::fromLatin1("QODBC3"))
+        else if (driv == QString::fromLatin1("QODBC"))
             return "ODBC";
         return "";
     }
     static QString toQSqlName(const QString &driv)
     {
         if (driv == "MySQL")
-            return QString::fromLatin1("QMYSQL3");
+            return QString::fromLatin1("QMYSQL");
         else if (driv == "PostgreSQL")
-            return QString::fromLatin1("QPSQL7");
+            return QString::fromLatin1("QPSQL");
         else if (driv == "Microsoft SQL/TDS")
             return QString::fromLatin1("QTDS");
         else if (driv == "SapDB")
-            return QString::fromLatin1("QSAPDB7");
+            return QString::fromLatin1("QSAPDB");
         else if (driv == "ODBC")
-            return QString::fromLatin1("QODBC3");
+            return QString::fromLatin1("QODBC");
         return QString::null;
     }
 

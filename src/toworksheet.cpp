@@ -568,9 +568,14 @@ void toWorksheet::setup(bool autoLoad)
     EditSplitter->setSizes(list);
 
     QSettings s;
+    int v;
     s.beginGroup("toWorksheet");
-    EditSplitterSizes << s.value("EditSplitterSizes0", 10).toInt();
-    EditSplitterSizes << s.value("EditSplitterSizes1", 1).toInt();
+    v = s.value("EditSplitterSizes0", 10).toInt();
+    if (v == 0) v = 10;
+    EditSplitterSizes << v;
+    v = s.value("EditSplitterSizes1", 10).toInt();
+    if (v == 0) v = 10;
+    EditSplitterSizes << v;
     s.endGroup();
 
     setCaption();
