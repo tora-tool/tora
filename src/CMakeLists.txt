@@ -479,6 +479,11 @@ ENDIF (WANT_INTERNAL_QSCINTILLA)
 
 # Handle win/mac special stuff - it's left empty for linux/unix
 SET (GUI_TYPE)
+IF (APPLE AND WANT_BUNDLE)
+      SET(GUI_TYPE MACOSX_BUNDLE)
+      SET(APPLE_BUNDLE_SOURCES icons/tora.icns)
+ENDIF (APPLE AND WANT_BUNDLE)
+
 
 IF(WIN32)
     IF (MSVC)
@@ -493,13 +498,6 @@ IF(WIN32)
 	ENDIF (WANT_DEBUG)
     ENDIF (MSVC)
 ENDIF(WIN32)
-
-IF (APPLE AND WANT_BUNDLE)
-    SET(GUI_TYPE MACOSX_BUNDLE)
-    SET(MACOSX_BUNDLE_ICON_FILE tora.icns)
-    SET(APPLE_BUNDLE_SOURCES icons/tora.icns)
-    SET_SOURCE_FILES_PROPERTIES(${CMAKE_SOURCE_DIR}/src/icons/tora.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-ENDIF (APPLE AND WANT_BUNDLE)
 
 
 ADD_EXECUTABLE(${EXE_NAME} ${GUI_TYPE}
@@ -545,12 +543,24 @@ ELSE (WIN32)
     IF (NOT WANT_BUNDLE)
         INSTALL(TARGETS ${EXE_NAME} RUNTIME DESTINATION bin LIBRARY DESTINATION lib)
     ELSE (NOT WANT_BUNDLE)
+
+      #SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/osx_tools/Info.plist.in")
+      SET(MACOSX_BUNDLE_ICON_FILE tora.icns)
+      SET(MACOSX_BUNDLE_INFO_STRING "${EXE_NAME} ${VERSION}")
+      SET(MACOSX_BUNDLE_GUI_IDENTIFIER "com.torasql")
+      SET(MACOSX_BUNDLE_LONG_VERSION_STRING "${VERSION}")
+      SET(MACOSX_BUNDLE_BUNDLE_NAME "${EXE_NAME}")
+      SET(MACOSX_BUNDLE_SHORT_VERSION_STRING "${VERSION}")
+      SET(MACOSX_BUNDLE_BUNDLE_VERSION "${VERSION}")
+      SET(MACOSX_BUNDLE_COPYRIGHT "(c) TOra developers")
+      SET_SOURCE_FILES_PROPERTIES(${CMAKE_SOURCE_DIR}/src/icons/tora.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+
         # Warning: This is dangerous to touch. Except you know what are you doing.
         #          I ususaly don't know anything about it. But it's working ;)
  
         INSTALL(TARGETS ${EXE_NAME} BUNDLE DESTINATION ${CMAKE_INSTALL_PREFIX})
 
-      IF (NOT WANT_BUNDLE_STANDALONE)
+      IF (WANT_BUNDLE_STANDALONE)
         # --- If we are on OS X copy all the embedded libraries to the app bundle
         # -------- Function to build OS X Stand Alone Bundles -----------------
         function(MakeOSXBundleApp target binary_dir)
@@ -622,7 +632,7 @@ ELSE (WIN32)
                              \"${QT_LIBRARY_DIR}/QtGui.framework/Resources/qt_menu.nib\"
                              \"${CMAKE_INSTALL_PREFIX}/${EXE_NAME}.app/Contents/Resources/qt_menu.nib\")")
         endif()
-      ENDIF (NOT WANT_BUNDLE_STANDALONE)
+      ENDIF (WANT_BUNDLE_STANDALONE)
 
     ENDIF (NOT WANT_BUNDLE)
 ENDIF (WIN32)
