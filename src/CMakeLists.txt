@@ -616,6 +616,7 @@ ELSE (WIN32)
         hack_move_plugins("libqsvg.bundle" "imageformats")
         hack_move_plugins("libqtiff.bundle" "imageformats")
         hack_move_plugins("libqtaccessiblewidgets.bundle" "accessible")
+        hack_move_plugins("libqtaccessiblecompatwidgets.bundle" "accessible")
         hack_move_plugins("libqglgraphicssystem.bundle" "graphicssystems")
         # end of hack
 
