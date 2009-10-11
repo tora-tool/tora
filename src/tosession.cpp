@@ -298,6 +298,43 @@ static toSQL SQLSessions(
     "       d.sql_text \"Current statement\",\n"
     "       a.SQL_Address||':'||a.SQL_Hash_Value \" SQL Address\",\n"
     "       a.Prev_SQL_Addr||':'||a.Prev_Hash_Value \" Prev SQl Address\"\n"
+    "  FROM v$session a left join v$sess_io b on ( a.sid = b.sid)\n"
+    "       left join v$sesstat c on ( a.sid = c.sid)\n"
+    "       left join v$sql d on (a.sql_address = d.address and\n"
+    "                             a.sql_hash_value=d.hash_value and\n"
+    "                             a.sql_child_number = d.child_number)\n"
+    "       left join v$process e on (a.paddr = e.addr)\n"
+    " WHERE (c.statistic# = 12 OR c.statistic# IS NULL)\n"
+    "%1 ORDER BY a.Sid",
+    "List sessions, must have same number of columns and the first and last 2 must be the same",
+    "1000");
+
+static toSQL SQLSessions7(
+    "toSession:ListSession",
+    "SELECT a.Sid \"Id\",\n"
+    "       a.Serial# \"Serial#\",\n"
+    "       a.SchemaName \"Schema\",\n"
+    "       a.Status \"Status\",\n"
+    "       a.Server \"Server\",\n"
+    "       a.OsUser \"Osuser\",\n"
+    "       a.Machine \"Machine\",\n"
+    "       a.Program \"Program\",\n"
+    "       a.Type \"Type\",\n"
+    "       a.Module \"Module\",\n"
+    "       a.Action \"Action\",\n"
+    "       a.Client_Info \"Client Info\",\n"
+    "       b.Block_Gets \"Block Gets\",\n"
+    "       b.Consistent_Gets \"Consistent Gets\",\n"
+    "       b.Physical_Reads \"Physical Reads\",\n"
+    "       b.Block_Changes \"Block Changes\",\n"
+    "       b.Consistent_Changes \"Consistent Changes\",\n"
+    "       c.Value*10 \"CPU (ms)\",\n"
+    "       a.last_call_et \"Last SQL\",\n"
+    "       a.Process \"Client PID\",\n"
+    "       e.SPid \"Server PID\",\n"
+    "       d.sql_text \"Current statement\",\n"
+    "       a.SQL_Address||':'||a.SQL_Hash_Value \" SQL Address\",\n"
+    "       a.Prev_SQL_Addr||':'||a.Prev_Hash_Value \" Prev SQl Address\"\n"
     "  FROM v$session a,\n"
     "       v$sess_io b,\n"
     "       v$sesstat c,\n"
@@ -309,7 +346,7 @@ static toSQL SQLSessions(
     "   AND (d.child_number = 0 OR d.child_number IS NULL)\n"
     "   AND a.paddr = e.addr(+)\n"
     "%1 ORDER BY a.Sid",
-    "List sessions, must have same number of columns and the first and last 2 must be the same");
+    "0703");
 
 static toSQL SQLSessionsPg(
     "toSession:ListSession",
