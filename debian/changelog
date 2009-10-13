@@ -1,3 +1,9 @@
+tora (2.1.1-1) unstable; urgency=low
+
+  * New upstream version
+
+ -- Nathan Neulinger <nneul@neulinger.org> Tue, 13 Oct 2009 13:44:40 -0600
+
 tora (2.1.0-1) unstable; urgency=low
 
   * New upstream version, the rebuild closes: #540046.
