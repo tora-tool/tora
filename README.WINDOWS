@@ -68,6 +68,8 @@ cmake -G "NMake Makefiles" -DWANT_INTERNAL_QSCINTILLA=1 -DCMAKE_INSTALL_PREFIX=c
      Misc notes: seting ORACLE_HOME is a good thing (TM)
                  building with internal qscintilla is easier for beginners ;)
                  prepare for longer headache (if you're a windows devel newbie) 
+nmake
+     Issuing nmake will actually run the build process itself.
 
 #
 # Building Windows installer.
