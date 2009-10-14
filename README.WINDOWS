@@ -1,3 +1,6 @@
+There is also a Mingw32 Fedora 11 Cross Compile build - see the README file
+in the win32-cross directory, which also contains utility scripts for that build.
+
 Content:
 - Building with MSVC - CMake
 - Building Windows installer.

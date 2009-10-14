@@ -98,6 +98,7 @@ static const QString AboutText = QString::fromUtf8(
     "<LI><B>Stefan Rindeskär</B> - Improved PostgreSQL support.\n"
     "<LI><B>Adam vonNieda</B> - Improvements to RMAN monitoring from OracleTool (<A HREF=http://www.oracletool.com>http://www.oracletool.com</A>)\n"
     "<LI><B>Guillaume Moulard</B> - Log4PL/SQL documentation.\n"
+    "<LI><B>ZippyDufus@yahoo.com</B> - Win32 cross compile build documentation.\n"
     "</UL>\n"
     "Other contributors:<P>\n"
     "<B>Nuno Araujo</B>,\n"

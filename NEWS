@@ -1,3 +1,8 @@
+2.1.2:
+2009-10-14: Added win32 cross compile scripts/patches/notes from ZippyDufus <zippydufus@yahoo.com>
+
+# lots of notes missing for 2.x series
+
 1.4:
 *: Updates for QT4 build support
 
