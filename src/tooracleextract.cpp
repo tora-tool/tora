@@ -5491,7 +5491,7 @@ QString toOracleExtract::createTrigger(toExtract &ext,
     }
     QString schema2 = ext.intSchema(tableOwner, false);
     QString object;
-    if (baseType == "TABLE")
+    if (baseType == "TABLE" || baseType == "VIEW")
     {
         object = schema2;
         object += table;
