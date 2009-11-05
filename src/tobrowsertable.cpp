@@ -55,6 +55,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
+#include <qmessagebox.h>
 #include <qtimer.h>
 
 #include <QResizeEvent>
@@ -64,17 +65,24 @@
 #include <QSpacerItem>
 #include <QScrollArea>
 
-
 static toSQL SQLListTablespaces("toBrowserTable:ListTablespaces",
                                 "SELECT Tablespace_Name FROM sys.DBA_TABLESPACES\n"
                                 " ORDER BY Tablespace_Name",
                                 "List the available tablespaces in a database.");
+static toSQL SQLDefaultTablespace("toBrowserTable:DefaultTablespaces",
+                                  "select default_tablespace from dba_users where username = user",
+                                  "List the default tablespace for current user.");
+
+
 
 void toBrowserTable::editTable(toConnection &conn, const QString &owner, const QString &table, QWidget *parent)
 {
     toBrowserTable dialog(conn, owner, table, parent);
     if (dialog.exec())
     {
+/*
+  TS 2009-10-31 Moved this code to done() as this should be performed before actually
+                closing dialog so that in case of error there would be a chance to fix it.
         std::list<toSQLParse::statement> statements = toSQLParse::parse(dialog.sql(), conn);
         try
         {
@@ -97,9 +105,63 @@ void toBrowserTable::editTable(toConnection &conn, const QString &owner, const Q
                     throw tr("Canceled ongoing table modification, table might be corrupt");
             }
         }
-        TOCATCH;
+        TOCATCH;*/
     }
 }
+
+static QString getDefaultTablespace(toConnection &conn)
+{
+    toQList result;
+    result = toQuery::readQuery(conn, SQLDefaultTablespace);
+    return toShift(result);
+} // getDefaultTablespace
+
+// handle acceptance of table dialog (f.e. pressing OK button)
+// all actions should be done here so that in case of error user would have
+// a chance to fix parameters and retry creation/modification of table
+void toBrowserTable::done(int r)
+{
+    if (!r)
+    {
+        QDialog::done(r);
+        return;
+    } else {
+
+        std::list<toSQLParse::statement> statements = toSQLParse::parse(sql(), *cnct);
+        try
+        {
+            QProgressDialog prog(tr("Performing table changes"),
+                                 tr("Stop"),
+                                 0,
+                                 statements.size(),
+                                 this);
+            prog.setWindowTitle(tr("Performing table changes"));
+            for (std::list<toSQLParse::statement>::iterator i = statements.begin();i != statements.end();i++)
+            {
+                QString sql = toSQLParse::indentStatement(*i, *cnct);
+                int l = sql.length() - 1;
+                while (l >= 0 && (sql.at(l) == ';' || sql.at(l).isSpace()))
+                    l--;
+                if (l >= 0)
+                    cnct->execute(sql.mid(0, l + 1));
+                qApp->processEvents();
+                if (prog.wasCanceled())
+                    throw tr("Canceled ongoing table modification, table might be corrupt");
+            }
+            QDialog::done(r);
+        }
+// Cannot use standard TOCATCH. Table creation dialog always pop'us
+// above standard error message window.
+// TODO: play around with modal/nonmodal properties to fix this
+//        TOCATCH;
+	catch (const QString &str) {                \
+		QMessageBox::warning(0,
+				qApp->translate("toStatusMessage", "TOra Message"),
+				str
+				);
+	}
+    }
+} // toBrowserTable::done
 
 toBrowserTable::toBrowserTable(toConnection &conn,
                                const QString &owner,
@@ -109,6 +171,8 @@ toBrowserTable::toBrowserTable(toConnection &conn,
         : QDialog(parent), toConnectionWidget(conn, this), Extractor(conn, NULL)
 {
     setupUi(this);
+
+    cnct = &conn;
 
     // the central widget to the scrollarea is a widget with a vbox
     // layout so the qgrid doesn't take all the vertical space.
@@ -149,6 +213,9 @@ toBrowserTable::toBrowserTable(toConnection &conn,
     Extractor.setPrompt(false);
     Extractor.setHeading(false);
 
+    connect(ButtonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(ButtonBox, SIGNAL(rejected()), this, SLOT(reject()));
+
     UglyFlag = false; // Indicates wether the correct size has been
     // retreived at least once.
 
@@ -163,6 +230,8 @@ toBrowserTable::toBrowserTable(toConnection &conn,
 
         if (!Table.isEmpty())
         {
+            // Editing existing table. Extract current description of table.
+
             std::list<QString> Objects;
             Objects.insert(Objects.end(), "TABLE:" + Owner + "." + Table);
 
@@ -208,6 +277,8 @@ toBrowserTable::toBrowserTable(toConnection &conn,
                     QString t = toShift(row);
                     if (t.startsWith("TABLESPACE"))
                     {
+                        // TODO: currently toOracleExtract::describe is NOT returning name of
+                        //       tablespace so this one will never be called. Should be fixed.
                         tablespace = connection().unQuote(t.mid(10).trimmed());
                     }
                     else
@@ -236,7 +307,6 @@ toBrowserTable::toBrowserTable(toConnection &conn,
                     column != Columns.end();
                     name++, datatype++, extra++, column++)
             {
-
                 if ((*column).Order == 0)
                     invalid = true;
                 (*name)->setText((*column).Name);
@@ -251,17 +321,22 @@ toBrowserTable::toBrowserTable(toConnection &conn,
                 return ;
             }
         }
-        else
+        else {
+            // create new column, add first column and select default tablespace
             addColumn();
+            tablespace = getDefaultTablespace(connection()); // TODO: NEW connection??!!
+        }
         if (toIsMySQL(connection()))
         {
             ParallelLabel->hide();
             ParallelDeclarations->hide();
             SchemaLabel->setText(tr("&Database"));
         }
+        // set-up tablespace combo box
         try
         {
-            toQuery query(connection(), SQLListTablespaces);
+            // get a list of tablespaces
+            toQuery query(connection(), SQLListTablespaces); // TODO: does this create NEW connection??!!
             while (!query.eof())
             {
                 QString t = query.readValueNull();
@@ -325,12 +400,12 @@ QString toBrowserTable::sql()
     std::list<QString> migrateTable;
 
     std::list<QString> ctx;
-    toPush(ctx, Owner);
+    toPush(ctx, Owner.toLower());
     toPush(ctx, QString("TABLE"));
     if (Table.isEmpty())
         toPush(ctx, Name->text());
     else
-        toPush(ctx, Table);
+        toPush(ctx, Table.toLower());
     toExtract::addDescription(migrateTable, ctx);
     if (Name->text() != Table && !Table.isEmpty())
         toExtract::addDescription(migrateTable, ctx, "RENAME", Name->text());
@@ -346,15 +421,26 @@ QString toBrowserTable::sql()
         if (column != Columns.end())
         {
             cname = (*column).Name;
+
+            // add modify instruction if datatype has changed
+            // remove any spaces in datatype (for exampe NUMBER  (2) -> NUMBER(2))
+            if ((*datatype)->type().remove(" ") != (*column).Definition)
+                toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, "MODIFY", (*datatype)->type());
+
+            // add this anyways to match later with column type row in OriginalDescription
+            toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, (*column).Definition);
+
+            // add rename instruction if column name has changed
             if ((*name)->text() != (*column).Name)
                 toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, "RENAME", (*name)->text());
             column++;
         }
-        else
+        else {
             cname = (*name)->text();
+            toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, (*datatype)->type());
+        }
 
         toExtract::addDescription(migrateTable, ctx, "COLUMN", cname);
-        toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, (*datatype)->type());
         if (!(*extra)->text().isEmpty())
             toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, "EXTRA", (*extra)->text());
         toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, "ORDER", QString::number(num++));
@@ -368,17 +454,30 @@ QString toBrowserTable::sql()
     addParameters(migrateTable, ctx, "STORAGE", StorageDeclarations->text());
     addParameters(migrateTable, ctx, "PARALLEL", ParallelDeclarations->text());
     addParameters(migrateTable, ctx, "PARAMETERS", ExtraDeclarations->text());
+    // when creating new table tablespace must be specified
+    if (OriginalDescription.empty()) {
+        addParameters(migrateTable, ctx, "TABLESPACE", Tablespace->currentText());
+    }
 
     migrateTable.sort();
 
     return Extractor.migrate(OriginalDescription, migrateTable);
 }
 
+// Generates and displays sql statements required to perform chosen operation
+// (creation of new or modifying existing table).
+// If no changes are to be done - warning is displayed.
 void toBrowserTable::displaySQL()
 {
-    toMemoEditor memo(this, sql(), -1, -1, true, true);
-    memo.exec();
-}
+    QString statements = sql();
+
+    if (!statements.isNull()) {
+        toMemoEditor memo(this, statements, -1, -1, true, true);
+        memo.exec();
+    } else {
+        QMessageBox::warning(0, qApp->translate("toStatusMessage", "TOra Message"), "No changes.");
+    }
+} // displaySQL
 
 void toBrowserTable::addColumn()
 {
@@ -388,25 +487,58 @@ void toBrowserTable::addColumn()
 
     tl = new QLineEdit;
     ColumnGridLayout->addWidget(tl, ColumnNumber, 0);
-    tl->setObjectName(QString::number(ColumnNumber));
+    tl->setObjectName(QString::number(ColumnNumber)); // name will be used when deleting
     tl->show();
     ColumnNames.insert(ColumnNames.end(), tl);
 
     td = new toDatatype(connection(), ColumnGrid);
     ColumnGridLayout->addWidget(td, ColumnNumber, 1);
+    td->setObjectName(QString::number(ColumnNumber));
     td->show();
     Datatypes.insert(Datatypes.end(), td);
 
     tl = new QLineEdit;
     ColumnGridLayout->addWidget(tl, ColumnNumber, 2);
+    tl->setObjectName(QString::number(ColumnNumber));
     tl->show();
     Extra.insert(Extra.end(), tl);
 }
 
+// removes currently selected column
 void toBrowserTable::removeColumn()
 {
-    // Not implemented yet
-}
+    QString toBeRemoved = qApp->focusWidget()->objectName();
+
+    std::list<QLineEdit *>::const_iterator name = ColumnNames.begin();
+    std::list<toDatatype *>::const_iterator datatype = Datatypes.begin();
+    std::list<QLineEdit *>::const_iterator extra = Extra.begin();
+    std::list<toExtract::columnInfo>::const_iterator column = Columns.begin();
+    while (name != ColumnNames.end() &&
+           datatype != Datatypes.end() &&
+           extra != Extra.end() &&
+           column != Columns.end()
+          )
+    {
+       if ((*name)->objectName() == toBeRemoved) {
+           ColumnGridLayout->removeWidget(*name);
+           ColumnNames.remove(*name);
+           delete *name;
+           ColumnGridLayout->removeWidget(*datatype);
+           Datatypes.remove(*datatype);
+           delete *datatype;
+           ColumnGridLayout->removeWidget(*extra);
+           Extra.remove(*extra);
+           delete *extra;
+           Columns.remove(*column);
+           return;
+       }
+       name++;
+       datatype++;
+       extra++;
+       column++;
+    } // while
+printf("Could not find column to delete.\n");
+} // removeColumn
 
 void toBrowserTable::toggleCustom(bool val)
 {

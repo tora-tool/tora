@@ -584,6 +584,10 @@ std::map<QString, std::list<QString> > toExtract::migrateGroup(std::list<QString
     return ret;
 }
 
+/* This function can take properties of more than one object as parameters.
+   They are later separated by the call to migrateGroup. Migrate function
+   for specific object is called separately for each identified object.
+*/
 void toExtract::migrate(QTextStream &ret, std::list<QString> &drpLst, std::list<QString> &crtLst)
 {
     std::list<QString> t;
@@ -962,8 +966,10 @@ std::list<toExtract::columnInfo> toExtract::parseColumnDescription(std::list<QSt
                 QString data = toShift(row);
                 if (data.isEmpty())
                 {
-                    if (!current->Definition.isEmpty())
-                        throw qApp->translate("toExtract", "More than one definition for column %1").arg(name);
+// TS 2009-11-01 This can be called twice on the same column, for say VARCHAR2 and for EXTRA
+//               with data variable being empty both times.
+//                    if (!current->Definition.isEmpty())
+//                        throw qApp->translate("toExtract", "More than one definition for column %1").arg(name);
                     current->Definition = extra;
                 }
                 else

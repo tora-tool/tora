@@ -96,6 +96,9 @@ private:
 protected:
     virtual void resizeEvent(QResizeEvent *e);
 
+public slots:
+    virtual void done(int r);
+
 public:
     static void editTable(toConnection &conn,
                           const QString &owner,
@@ -116,6 +119,7 @@ public slots:
 
 private:
     bool UglyFlag;
+    toConnection * cnct;
 
 private slots:
     virtual void uglyWorkaround();

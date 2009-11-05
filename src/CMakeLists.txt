@@ -411,6 +411,7 @@ SET(TORA_SOURCES
     # docklets
     docklets/toviewconnections.cpp
     docklets/toviewdirectory.cpp
+    tooracletable.cpp
 )
 # compiled in icons for windows
 IF (WIN32 AND MSVC)

@@ -73,6 +73,9 @@ class toDatatype : public QWidget
     QLabel    *RightParenthesis;
     QLineEdit *Custom;
     bool       PreferCustom;
+    bool       bCustomVisible;
+    bool       bSizeVisible;
+    bool       bPrecVisible;
 
     void setupLabels();
     void setup(toConnection &conn);
