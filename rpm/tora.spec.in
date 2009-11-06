@@ -33,6 +33,7 @@ BuildRequires: openssl-devel
 BuildRequires: qscintilla-devel >= 2.0.0
 BuildRequires: perl
 BuildRequires: cmake >= 2.4.0
+BuildRequires: gcc-c++
 Requires:      qt4 >= 4.3.0
 Requires:      oracle-instantclient11.1-basic
 Requires:      qscintilla >= 2.0.0
