@@ -39,6 +39,7 @@ tora_LDADD = $(ORACLE_LIBS) $(PQ_LIBS) $(@TORA_LINK_OTHERS@)
 
 if HAVE_ORACLE
 EXTRA_ORACLE_MONO_SOURCE = tooracleconnection.cpp tooraclesetting.h \
+	tooracletable.cpp \
 	tooracleextract.cpp otl/otlv4.h
 EXTRA_ORACLE_MONO_SOURCE_MOC = moc_tooraclesetting.cpp
 endif
