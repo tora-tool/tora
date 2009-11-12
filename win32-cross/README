@@ -13,6 +13,8 @@ STEP 2
 Gather the required Windows packages:
 1.  I installed QScintilla-gpl-2.3.2 and instantclient_11_1 on XPVM and copied them over to F11VM.
 2.  Also install and build the Linux version of TORa with the Oracle Instant client on VMF11. (More on this below.)
+3.  Download the Mingw32 API from "http://sourceforge.net/projects/mingw/files/MinGW API for MS-Windows"
+    (The Fedora mingw32 does not include Windows.h).  Put this folder (w32api-3.13-mingw32) in your root build directory.
 
 STEP 3
 Create *.a library files from the distributed Oracle DLLs.
@@ -25,13 +27,19 @@ Set up the build environment (see build-tora-w32.sh (below) for details):
 2.  Obtain a fresh copy of TOra source from SVN and copy to tora.$revision. Update line 34 of build-tora-w32.sh accordingly.
 3.  Copy the Linux Tora build of chex to $WIN32_ROOT.
 4.  Copy the patches included below to $WIN32_ROOT.
-5.  Run the build script.
-6.  As root or sudo:  cd tora; make install or run make-tora-install.sh (included below, this was for review and debugging)
+5.  Kludge. As root, create the following links in /usr/local/bin to "emulate" a Windows enviroment:
+       # cd /usr/local/bin
+       # ln -s /usr/bin/lrelease-qt4 lrelease-qt4
+       # ln -s /usr/bin/lrelease-qt4 lrelease-qt4.exe
+       # ln -s /usr/bin/lupdate-qt4 lupdate-qt4
+       # ln -s /usr/bin/lupdate-qt4 lupdate-qt4.exe
+6.  Run the build script.
+7.  As root or sudo:  cd tora; make install or run make-tora-install.sh (included below, this was for review and debugging)
 
 STEP 5
 Installation of Windows executable. I'm not interested in building a proper installer and instead performed a quick and dirty install.
 1.  Copy the qscintilla2.dll found in $QSCINTILLA_DIR/Qt4/release/qscintilla2.dll to the tora release directory (/usr/local/tora-w32, I later renamed to tora for installation)
-2.  Copy the mingw32 DLLs libgcc_s_sjlj-1.dll, mingwm10.dll, QtCore4.dll, QtGui4.dll, QtNetwork4.dll, QtSql4.dll found in $QSCINTILLA\_DIR (use find) to the tora release directory.
+2.  Copy the mingw32 DLLs libgcc_s_sjlj-1.dll, mingwm10.dll, QtCore4.dll, QtGui4.dll, QtNetwork4.dll, QtSql4.dll found in $QSCINTILLA_DIR (use find) to the tora release directory. (These are found in /usr/i686-pc-mingw32/sys-root/mingw/bin on my Fedora platform.) 
 3.  I copied the instantclient_11_1 folder in the tora-w32 release directory too (You can install this properly and update your Windows environmental variables accordingly.
 4.  I copied my tnsnames.ora directory into the tora release directory.
 5.  I created tora.bat (see below) in the tora/bin directory and created a shortcut to this. These sets up the Oracle environment. I also attached the nice-looking tora.ico icon to this shortcut.
@@ -47,8 +55,9 @@ Tricks, hacks and kludges
 5.  Patch oracle.m4.patch (see below) removes clntsh from oracle.m4 so configure won't include it in the Makefile.
 
 To-do
-1. Add support for MySQL, PostgreSQL.
+1. Add support for MySQL, PostgreSQL. 
+   (Not likely - Fedora mingw32 is not built with MySQL/ODBC/PostgreSQL support. See /usr/share/doc/mingw32-qt-4.5.2/configure.output)
 2. Tweak configure to create Makefiles that are cross-compile aware so the various patches can be removed and wine used to run chex.exe.
-3. Create a proper installation program.
+3. Create a proper installation program. The NSISWrapper looks promising.
 
 
