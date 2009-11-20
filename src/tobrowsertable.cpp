@@ -202,11 +202,17 @@ toBrowserTable::toBrowserTable(toConnection &conn,
     ColumnNumber = 0;
     ColumnGridLayout->addWidget(new QLabel(tr("Name")), 0, 0);
     ColumnGridLayout->addWidget(new QLabel(tr("Datatype")), 0, 1);
-    ColumnGridLayout->addWidget(new QLabel(tr("Extra parameters")), 0, 2);
+    ColumnGridLayout->addWidget(new QLabel(tr("Not null")), 0, 2);
+    ColumnGridLayout->addWidget(new QLabel(tr("Default")), 0, 3);
+    ColumnGridLayout->addWidget(new QLabel(tr("Comments")), 0, 4);
+    ColumnGridLayout->addWidget(new QLabel(tr("Extra parameters")), 0, 5);
 
     ColumnGridLayout->setColumnStretch(0, 1);
     ColumnGridLayout->setColumnStretch(1, 1);
-    ColumnGridLayout->setColumnStretch(2, 1);
+    ColumnGridLayout->setColumnStretch(2, 0);
+    ColumnGridLayout->setColumnStretch(3, 1);
+    ColumnGridLayout->setColumnStretch(4, 1);
+    ColumnGridLayout->setColumnStretch(5, 1);
 
     Extractor.setIndexes(false);
     Extractor.setConstraints(false);
@@ -299,19 +305,29 @@ toBrowserTable::toBrowserTable(toConnection &conn,
             }
             std::list<QLineEdit *>::iterator name = ColumnNames.begin();
             std::list<toDatatype *>::iterator datatype = Datatypes.begin();
+            std::list<QCheckBox *>::iterator notnull = NotNulls.begin();
+            std::list<QLineEdit *>::iterator defaultValue = Defaults.begin();
             std::list<QLineEdit *>::iterator extra = Extra.begin();
+            std::list<QLineEdit *>::iterator comment = Comments.begin();
             for (std::list<toExtract::columnInfo>::iterator column = Columns.begin();
                     name != ColumnNames.end() &&
                     datatype != Datatypes.end() &&
+                    notnull != NotNulls.end() &&
+                    defaultValue != Defaults.end() &&
                     extra != Extra.end() &&
+                    comment != Comments.end() &&
                     column != Columns.end();
-                    name++, datatype++, extra++, column++)
+                    name++, datatype++, notnull++, defaultValue++, extra++, comment++, column++)
             {
                 if ((*column).Order == 0)
                     invalid = true;
                 (*name)->setText((*column).Name);
                 (*datatype)->setType((*column).Definition);
+                if ((*column).bNotNull)
+                    (*notnull)->setChecked(true);
+                (*defaultValue)->setText((*column).DefaultValue);
                 (*extra)->setText((*column).Data["EXTRA"]);
+                (*comment)->setText((*column).Comment);
             }
             if (invalid)
             {
@@ -395,11 +411,13 @@ void toBrowserTable::addParameters(std::list<QString> &migrateTable,
         toExtract::addDescription(migrateTable, ctx, type, Extractor.createFromParse(beg, end).trimmed());
 }
 
+// Generates and displays sql statements required to perform chosen operation
+// (creation of new or modifying existing table).
 QString toBrowserTable::sql()
 {
-    std::list<QString> migrateTable;
+    std::list<QString> migrateTable; // list of complex (\01 separated) strings to be sent to extractor
 
-    std::list<QString> ctx;
+    std::list<QString> ctx; // context to be added to all strings in migrateTable (f.e. owner, TABLE, tablename)
     toPush(ctx, Owner.toLower());
     toPush(ctx, QString("TABLE"));
     if (Table.isEmpty())
@@ -410,43 +428,70 @@ QString toBrowserTable::sql()
     if (Name->text() != Table && !Table.isEmpty())
         toExtract::addDescription(migrateTable, ctx, "RENAME", Name->text());
 
+    // iterating through columns as they have been upon loading table data (before any changes)
     std::list<toExtract::columnInfo>::const_iterator column = Columns.begin();
+    // iterating through column data as it is (after changes)
     std::list<QLineEdit *>::const_iterator name = ColumnNames.begin();
     std::list<toDatatype *>::const_iterator datatype = Datatypes.begin();
+    std::list<QCheckBox *>::iterator notnull = NotNulls.begin();
+    std::list<QLineEdit *>::iterator defaultValue = Defaults.begin();
     std::list<QLineEdit *>::const_iterator extra = Extra.begin();
-    int num = 1;
-    while (name != ColumnNames.end() && datatype != Datatypes.end() && extra != Extra.end())
+    std::list<QLineEdit *>::const_iterator comment = Comments.begin();
+    int num = 1; // order number, used to generate ORDERn rows
+    while (name != ColumnNames.end() &&
+           datatype != Datatypes.end() &&
+           notnull != NotNulls.end() &&
+           defaultValue != Defaults.end() &&
+           extra != Extra.end() &&
+           comment != Comments.end())
     {
         QString cname;
+        QString cdatatype;
         if (column != Columns.end())
         {
             cname = (*column).Name;
 
-            // add modify instruction if datatype has changed
-            // remove any spaces in datatype (for exampe NUMBER  (2) -> NUMBER(2))
-            if ((*datatype)->type().remove(" ") != (*column).Definition)
-                toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, "MODIFY", (*datatype)->type());
-
-            // add this anyways to match later with column type row in OriginalDescription
-            toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, (*column).Definition);
-
             // add rename instruction if column name has changed
-            if ((*name)->text() != (*column).Name)
-                toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, "RENAME", (*name)->text());
+            if ((*name)->text() != cname)
+                toExtract::addDescription(migrateTable, ctx,
+                    "COLUMN", cname,
+                    "RENAME", (*name)->text());
+
             column++;
-        }
-        else {
+        } else {
             cname = (*name)->text();
-            toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, (*datatype)->type());
         }
 
+        // add column name
         toExtract::addDescription(migrateTable, ctx, "COLUMN", cname);
-        if (!(*extra)->text().isEmpty())
-            toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, "EXTRA", (*extra)->text());
+
+        // add extra info (currently only "not null" property is supported, what else should there be?)
+        if ((*notnull)->isChecked())
+            toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, "EXTRA", "NOT NULL");
+
+        // add comment info
+        if (!(*comment)->text().isEmpty())
+            toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, "COMMENT", (*comment)->text());
+
+        // could this be used for something?
+//        if (!(*extra)->text().isEmpty())
+//            toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, "EXTRA", (*extra)->text());
+
+        // add order info
         toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, "ORDER", QString::number(num++));
+
+        // add datatype row
+        cdatatype = (*datatype)->type();
+        if (!(*defaultValue)->text().isEmpty())
+            cdatatype += " DEFAULT '" + (*defaultValue)->text() + "'"; // space at the end - workaround
+        toExtract::addDescription(migrateTable, ctx, "COLUMN", cname, cdatatype);
+
         name++;
         datatype++;
+        notnull++;
+        defaultValue++;
         extra++;
+        comment++;
     }
 
     if (!Comment->text().isEmpty())
@@ -462,10 +507,9 @@ QString toBrowserTable::sql()
     migrateTable.sort();
 
     return Extractor.migrate(OriginalDescription, migrateTable);
-}
+} // sql
 
-// Generates and displays sql statements required to perform chosen operation
-// (creation of new or modifying existing table).
+// Calls sql() to generate required sql statement(s) and then displays it(them).
 // If no changes are to be done - warning is displayed.
 void toBrowserTable::displaySQL()
 {
@@ -483,6 +527,7 @@ void toBrowserTable::addColumn()
 {
     ColumnNumber++;
     QLineEdit *tl;
+    QCheckBox *cb;
     toDatatype *td;
 
     tl = new QLineEdit;
@@ -497,8 +542,26 @@ void toBrowserTable::addColumn()
     td->show();
     Datatypes.insert(Datatypes.end(), td);
 
+    cb = new QCheckBox;
+    ColumnGridLayout->addWidget(cb, ColumnNumber, 2);
+    cb->setObjectName(QString::number(ColumnNumber));
+    cb->show();
+    NotNulls.insert(NotNulls.end(), cb);
+
     tl = new QLineEdit;
-    ColumnGridLayout->addWidget(tl, ColumnNumber, 2);
+    ColumnGridLayout->addWidget(tl, ColumnNumber, 3);
+    tl->setObjectName(QString::number(ColumnNumber));
+    tl->show();
+    Defaults.insert(Defaults.end(), tl);
+
+    tl = new QLineEdit;
+    ColumnGridLayout->addWidget(tl, ColumnNumber, 4);
+    tl->setObjectName(QString::number(ColumnNumber));
+    tl->show();
+    Comments.insert(Comments.end(), tl);
+
+    tl = new QLineEdit;
+    ColumnGridLayout->addWidget(tl, ColumnNumber, 5);
     tl->setObjectName(QString::number(ColumnNumber));
     tl->show();
     Extra.insert(Extra.end(), tl);
@@ -511,11 +574,17 @@ void toBrowserTable::removeColumn()
 
     std::list<QLineEdit *>::const_iterator name = ColumnNames.begin();
     std::list<toDatatype *>::const_iterator datatype = Datatypes.begin();
+    std::list<QCheckBox *>::iterator notnull = NotNulls.begin();
+    std::list<QLineEdit *>::iterator defaultValue = Defaults.begin();
     std::list<QLineEdit *>::const_iterator extra = Extra.begin();
+    std::list<QLineEdit *>::const_iterator comment = Comments.begin();
     std::list<toExtract::columnInfo>::const_iterator column = Columns.begin();
     while (name != ColumnNames.end() &&
            datatype != Datatypes.end() &&
+           notnull != NotNulls.end() &&
+           defaultValue != Defaults.end() &&
            extra != Extra.end() &&
+           comment != Comments.end() &&
            column != Columns.end()
           )
     {
@@ -523,18 +592,36 @@ void toBrowserTable::removeColumn()
            ColumnGridLayout->removeWidget(*name);
            ColumnNames.remove(*name);
            delete *name;
+
            ColumnGridLayout->removeWidget(*datatype);
            Datatypes.remove(*datatype);
            delete *datatype;
+
+           ColumnGridLayout->removeWidget(*notnull);
+           NotNulls.remove(*notnull);
+           delete *notnull;
+
+           ColumnGridLayout->removeWidget(*defaultValue);
+           Defaults.remove(*defaultValue);
+           delete *defaultValue;
+
            ColumnGridLayout->removeWidget(*extra);
            Extra.remove(*extra);
            delete *extra;
+
+           ColumnGridLayout->removeWidget(*comment);
+           Comments.remove(*comment);
+           delete *comment;
+
            Columns.remove(*column);
            return;
        }
        name++;
        datatype++;
+       notnull++;
+       defaultValue++;
        extra++;
+       comment++;
        column++;
     } // while
 printf("Could not find column to delete.\n");

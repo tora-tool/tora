@@ -3367,12 +3367,17 @@ void toOracleExtract::describeTableColumns(toExtract &ext,
         QString col = QUOTE(toShift(cols));
         QString line = toShift(cols);
         QString extra = toShift(cols);
-        if (!extra.isEmpty())
+        extra = extra.trimmed();
+        // In Oracle (at least up to 11R2 if default value was set on column you cannot totally
+        // remove it from data dictionary. Default value is reported as being null rather than
+        // being empty/not set. Therefore this comparison to "null" is added.
+        if (!extra.isEmpty() && (extra.toLower() != "null"))
         {
             line += " DEFAULT ";
-            line += extra;
+            line += extra.trimmed(); // extra could have trailing spaces
         }
-        extra += toShift(cols);
+        extra = toShift(cols);  // TS 2009-11-15 changed += to = as default value is already
+                                //               added as "line" so not required as "extra"
         addDescription(lst, ctx, "COLUMN", col);
         addDescription(lst, ctx, "COLUMN", col, line);
         if (!extra.isEmpty())
@@ -7482,11 +7487,17 @@ toOracleExtract::toOracleExtract()
   toExtract::datatype * d;
 //  d = new toExtract::datatype("VARCHAR", 2000);
 //  oracle_datatypes.insert(oracle_datatypes.end(), *d);
-  d = new toExtract::datatype("VARCHAR2", 2000);
+  d = new toExtract::datatype("VARCHAR2", 4000);
   oracle_datatypes.insert(oracle_datatypes.end(), *d);
   d = new toExtract::datatype("NUMBER", 32, 32);
   oracle_datatypes.insert(oracle_datatypes.end(), *d);
   d = new toExtract::datatype("DATE");
+  oracle_datatypes.insert(oracle_datatypes.end(), *d);
+  d = new toExtract::datatype("INTEGER");
+  oracle_datatypes.insert(oracle_datatypes.end(), *d);
+  d = new toExtract::datatype("LONG");
+  oracle_datatypes.insert(oracle_datatypes.end(), *d);
+  d = new toExtract::datatype("CLOB");
   oracle_datatypes.insert(oracle_datatypes.end(), *d);
 }
 

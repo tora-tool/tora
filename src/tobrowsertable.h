@@ -77,9 +77,14 @@ private:
 
     int ColumnNumber;
 
+    // lists pointers to all widgets containing column data
     std::list<QLineEdit *> ColumnNames;
     std::list<toDatatype *> Datatypes;
-    std::list<QLineEdit *> Extra;
+    std::list<QCheckBox *> NotNulls;
+    std::list<QLineEdit *> Defaults;
+    std::list<QLineEdit *> Comments;
+    std::list<QLineEdit *> Extra; // not sure if this still needed as it was
+                                  // split into NotNull and DefaultValue
 
     toBrowserTable(toConnection &conn,
                    const QString &owner,

@@ -746,6 +746,18 @@ public:
          */
         int Order;
 
+        /** Can column be null?
+         */
+        bool bNotNull;
+
+        /** Default value for column
+         */
+        QString DefaultValue;
+
+        /** Column comment
+         */
+        QString Comment;
+
         /** Create column information from name.
          */
         columnInfo(const QString &name)

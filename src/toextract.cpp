@@ -905,7 +905,7 @@ QString toExtract::contextDescribe(const QString &str, int level)
     do
     {
         level--;
-        str.indexOf("\01", pos + 1);
+        pos = str.indexOf("\01", pos + 1);
     }
     while (pos >= 0 && level > 0);
 
@@ -957,11 +957,22 @@ std::list<toExtract::columnInfo> toExtract::parseColumnDescription(std::list<QSt
             {
                 ret.insert(ret.end(), columnInfo(name));
                 current = &(*(ret.rbegin()));
+                current->bNotNull = false; // by default columns are not "not null"
             }
             QString extra = toShift(row);
             if (extra == "ORDER")
                 current->Order = toShift(row).toInt();
-            else if (!extra.isEmpty())
+            else if (extra == "COMMENT")
+                current->Comment = toShift(row);
+            else if (extra == "EXTRA") {
+                extra = toShift(row);
+                if (extra == "NOT NULL")
+                    current->bNotNull = true;
+                else
+                    printf("Error! Found unknown extra data for column %s -> %s\n",
+                           name.toAscii().constData(),
+                           extra.toAscii().constData());
+            } else if (!extra.isEmpty())
             {
                 QString data = toShift(row);
                 if (data.isEmpty())
@@ -970,6 +981,24 @@ std::list<toExtract::columnInfo> toExtract::parseColumnDescription(std::list<QSt
 //               with data variable being empty both times.
 //                    if (!current->Definition.isEmpty())
 //                        throw qApp->translate("toExtract", "More than one definition for column %1").arg(name);
+                    int iDefaultPos = // position of string "DEFAULT" in QString
+                        extra.indexOf("DEFAULT", 0, Qt::CaseInsensitive);
+                    if (iDefaultPos > -1) {
+                        // in the following code default value is calculated from a string like
+                        // VARCHAR2(7) DEFAULT 'something' or VARCHAR2(7) DEFAULT null.
+                        // iDefaultPos will point to start of "DEFAULT"
+                        // therefore we have to also remove word "DEFAULT" as well as space and
+                        // opening quote (unless default is null). Ending quote is removed in
+                        // folowing truncate statement if default is not null (without quotes).
+                        if (extra[8 + iDefaultPos] == '\'') {
+                            current->DefaultValue = extra.right(extra.size() - iDefaultPos - 9);
+                            current->DefaultValue.truncate((int)current->DefaultValue.size() - 1);
+                        } else {
+                            // "DEFAULT null" is represented as empty string in "edit table" dialog
+                            current->DefaultValue = "";
+                        }
+                        extra.truncate(iDefaultPos-1);
+                    }
                     current->Definition = extra;
                 }
                 else
