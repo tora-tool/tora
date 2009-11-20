@@ -66,7 +66,8 @@ static toSQL SQLTableIndex("toBrowserTableWidget:TableIndex",
                            "   AND EX.index_owner ( + ) = IND.index_owner\n"
                            "   AND EX.index_name ( + ) = IND.index_name\n"
                            "   AND IND.index_name = AL.index_name ( + )\n"
-                           "   AND IND.index_owner = AL.owner ( + )",
+                           "   AND IND.index_owner = AL.owner ( + )\n"
+                           "ORDER BY ind.index_name, ind.column_position",
                            "List the indexes on a table",
                            "");
 static toSQL SQLTableIndexSapDB("toBrowserTableWidget:TableIndex",
