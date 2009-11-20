@@ -870,6 +870,11 @@ void toHighlightedText::setErrors(const QMap<int, QString> &errors)
     markerDeleteAll(m_errorMarginHandle);
     for (QMap<int, QString>::const_iterator i = Errors.begin();i != Errors.end();i++)
     {
+        if (i.key() < 0)
+        {
+            qDebug() << "toHighlightedText::setErrors errLine:"<< i.key() << " value:" << i.value();
+            continue;
+        }
         markerAdd(i.key(), m_errorHandle);
         markerAdd(i.key(), m_errorMarginHandle);
     }
