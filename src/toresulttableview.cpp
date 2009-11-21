@@ -123,7 +123,7 @@ void toResultTableView::setup(bool readable, bool numberColumn, bool editable)
     NumberColumn    = numberColumn;
     ColumnsResized  = false;
     Ready           = false;
-    VisibleColumns  = 0;
+//    VisibleColumns  = 0; // TS 2009-11-21 moved to applyColumnRules as setup is only called once.
 
     Working = new toWorkingWidget(this);
     connect(Working, SIGNAL(stop()), this, SLOT(stop()));
@@ -338,6 +338,7 @@ void toResultTableView::applyColumnRules()
 
     if (ReadableColumns)
     {
+        VisibleColumns = 0;
         // loop through columns and hide anything starting with a ' '
         for (int col = 1; col < model()->columnCount(); col++)
         {
