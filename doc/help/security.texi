@@ -14,24 +14,25 @@ The commands in the toolbar are from left to right.
 
 @table @asis
 
-@item @strong{Refresh}	
-      Update the user and role list to the left of the screen.	
-@item @strong{Save changes}	
-      Perform any changes made to the current user or role.	
-@item @strong{Remove}	
-      Drop the user or role currently selected. 
-      If the user still owns objects a question will be asked about also removing these objects or abort the drop.	
+@item @strong{Refresh}
+Update the user and role list to the left of the screen.
+@item @strong{Save changes}
+Perform any changes made to the current user or role.
+@item @strong{Remove}
+Drop the user or role currently selected.
+If the user still owns objects a question will be asked about also removing these objects or abort the drop.
 @item @strong{New user}
-      Start defining a new user.	
+Start defining a new user.
 @item @strong{New role}
-      Start defining a new role.	
+Start defining a new role.
 @item @strong{Copy}
-      Copy the current user or role to a new name.	
+Copy the current user or role to a new name.
 @item @strong{SQL}
-      Display the SQL that will be used to apply the current changes in a memo editor(@pxref{Memo editor}).	
+Display the SQL that will be used to apply the current changes in a memo editor(@pxref{Memo editor}).
 @item @strong{Change connection}
-      Change the connection to administrate security for.
+Change the connection to administrate security for.
 @end table
+
 You select the role you want to work on simply by pressing it in the left pane or any of the new user,
 new role or copy buttons to start defining a new one.
 
@@ -41,15 +42,15 @@ There are five tabs available when defining a user or four when doing the same f
 
 @table @asis
 @item @strong{General}
-      Used for setting the name, authentication, default tablespaces etc. for the new user. For more information about this see the Oracle SQL Reference.
+Used for setting the name, authentication, default tablespaces etc. for the new user. For more information about this see the Oracle SQL Reference.
 @item @strong{Roles}
-      Which roles are granted to the user or role. For more information about defining privileges see the section below.
+Which roles are granted to the user or role. For more information about defining privileges see the section below.
 @item @strong{System privileges}
-      Which system privileges this user or role should have. For more information about defining privileges see the section below.		
+Which system privileges this user or role should have. For more information about defining privileges see the section below.
 @item @strong{Object privileges}
-      Which privileges this user or role should have on specific schema objects. For more information about defining privileges see the section below. 	
+Which privileges this user or role should have on specific schema objects. For more information about defining privileges see the section below.
 @item @strong{Quota}
-      Define the quota for the user, this tab is not available for roles. For more information about defining quotas see the section below.
+Define the quota for the user, this tab is not available for roles. For more information about defining quotas see the section below.
 @end table
 
 @subheading Defining privileges
@@ -58,7 +59,7 @@ All roles, system or object privileges are defined using basically the same inte
 
 @image{images/priviledges}
 
-This list contains a tree view with first the schema, then the type, the object and finally the actual privilege to define. In the system or role tabs, the privileges are in the root of the list. If you open the privilege you will find an additional @strong{admin} item which if checked will give the user or role the ability to grant the privilege on to other users or roles. In the role case you also have another child item to the privilege which is @strong{default}. If @strong{default} is checked the role will be enabled by default when the user logs in. When you start a new user all checked items will be made visible by expanding the parent items.
+This list contains a tree view with first the schema, then the type, the object and finally the actual privilege to define. In the system or role tabs, the privileges are in the root of the list. If you open the privilege you will find an additional @strong{with grant option} item which if checked will give the user or role the ability to grant the privilege on to other users or roles. In the role case you also have another child item to the privilege which is @strong{default}. If @strong{default} is checked the role will be enabled by default when the user logs in. When you start a new user all checked items will be made visible by expanding the parent items.
 
 @subheading Defining quota
 

@@ -3,13 +3,13 @@
 <title>window - TOra</title>
 <meta http-equiv="Content-Type" content="text/html">
 <meta name="description" content="TOra">
-<meta name="generator" content="makeinfo 4.11">
+<meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="start" href="index.html#Top">
 <link rel="up" href="workspace.html#workspace" title="workspace">
 <link rel="next" href="newconnection.html#newconnection" title="newconnection">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <!--
-This manual is for TOra, version 1.4.0.-->
+This manual is for TOra, version 2.1.1.-->
 <meta http-equiv="Content-Style-Type" content="text/css">
 <style type="text/css"><!--
   pre.display { font-family:inherit }
@@ -25,8 +25,8 @@ This manual is for TOra, version 1.4.0.-->
 </head>
 <body>
 <div class="node">
-<p>
 <a name="window"></a>
+<p>
 Next:&nbsp;<a rel="next" accesskey="n" href="newconnection.html#newconnection">newconnection</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="workspace.html#workspace">workspace</a>
 <hr>
@@ -35,7 +35,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="workspace.html#workspace">workspace</a>
 <h3 class="section">3.1 Elements of the main window</h3>
 
 <p><a name="index-Elements-of-the-main-window-4"></a>
-The main window in TOra has the following elements as shown below. It is assumes you know how to handle a normal windows interface and no explanation about how to press buttons, select menus will be presented. If you are administrating Oracle you probably know how to handle a mouse.
+The main window in TOra has the following elements as shown below. It is assumed that you know how to handle a normal windows interface therefore no explanation about how to press buttons and select menus will be presented. If you are administrating Oracle you probably know how to handle a mouse.
 
    <div class="block-image"><img src="images/workspace.png" alt="images/workspace.png"></div>
 
@@ -48,19 +48,25 @@ The main window in TOra has the following elements as shown below. It is assumes
 <div class="block-image"><img src="images/filemenu.png" alt="images/filemenu.png"></div>
 
      <dl>
-<dt><strong>New connection</strong><dd>      This will pop up the new connection dialog (see <a href="newconnection.html#newconnection">Connecting to a database</a>) which is used to open new connections to oracle. 
+<dt><strong>New connection</strong><dd>      This will pop up the new connection dialog (see <a href="newconnection.html#newconnection">Connecting to a database</a>) which is used to open new connections to the database. 
 <br><dt><strong>Close connection</strong><dd>      Will close the current connection to Oracle. If uncommitted data exists it will also ask if you want to commit or rollback the changes. Observe that any tools associated with this connection will also be closed when closing a connection. 
 <br><dt><strong>Commit connection</strong><dd>      Commit the changes currently made to the database. 
 <br><dt><strong>Rollback connection</strong><dd>      Rollback any changes made in the current connection. 
 <br><dt><strong>Current connection</strong><dd>      Set focus to change the current connection. 
-<br><dt><strong>Reread object cache</strong><dd>      Clear the object cache
+<br><dt><strong>Stop All Queries</strong><dd>      Stops all queries running in current session. 
+<br><dt><strong>Reread object cache</strong><dd>      Clear the object cache. 
 <!-- (@pxref{object_cache, Object cache}) -->
 and read it again from the database. 
-<br><dt><strong>Load</strong><dd>      This command will open a dialog asking you for a filename to load into the editor that currently holds the focus. 
-<br><dt><strong>Save</strong><dd>      	This command will open a dialog asking you for a filename to save the contents of the editor that currently holds the focus. If the editor already has a filename this will be used and no dialog displayed. 
+<br><dt><strong>Open File</strong><dd>      This command will open a dialog asking you for a filename to load into the editor that currently holds the focus. 
+<br><dt><strong>Recent Files</strong><dd>      This item will have subitems of recently opened files which you can load into the editor that currently holds the focus. 
+<br><dt><strong>Save File</strong><dd>      This command will open a dialog asking you for a filename to save the contents of the editor that currently holds the focus. If the editor already has a filename this will be used and no dialog displayed. 
 <br><dt><strong>Save As</strong><dd>      This command will open a dialog asking you for a filename to save the contents of the editor that currently holds the focus. 
-<br><dt><strong>Print</strong><dd>      Will print the contents of the list or editor that currently holds the focus
-<br><dt><strong>Quit</strong><dd>      Close all connections and exit TOra
+<br><dt><strong>Open Session</strong><dd>      Open previously saved session. 
+<br><dt><strong>Save Session</strong><dd>      Save parameters of current session. 
+<br><dt><strong>Restore Last Session</strong><dd>      Open last saved session. 
+<br><dt><strong>Close Session</strong><dd>      Close current session. 
+<br><dt><strong>Print</strong><dd>      Will print the contents of the list or editor that currently holds the focus. 
+<br><dt><strong>Quit</strong><dd>      Close all connections and exit TOra. 
 </dl>
 
 <h5 class="subsubheading">Edit menu</h5>
@@ -77,8 +83,20 @@ and read it again from the database.
 <br><dt><strong>Search Next</strong><dd>      Make another search with the current search settings. 
 <br><dt><strong>Select All</strong><dd>      Select all rows in the current editor. 
 <br><dt><strong>Read All Items</strong><dd>      Read all items available for a list. Normally TOra doesn't read all available rows for a query, just enough to fill the screen. Scrolling down will read more. Selecting this will read all available rows from the query, this could take a very long time and consume a lot of memory if selected for a large query result. 
-<br><dt><strong>Options</strong><dd>      	Displays the options dialog (see <a href="preferences.html#preferences">Options</a>) where all aspects of TOra are configured. 
-<br><dt><strong>Edit SQL</strong><dd>      This may not be available because it is actually a tool plugin. Can be used to customize SQL used by TOra to determine the state of a database(see <a href="sqledit.html#sqledit">SQL Editor</a>).
+<br><dt><strong>Preferences</strong><dd>      Displays the preferences dialog (see <a href="preferences.html#preferences">Options</a>) where all aspects of TOra are configured. 
+<br><dt><strong>Incremental Search</strong><dd>      . 
+<br><dt><strong>Auto Indent</strong><dd>      . 
+<br><dt><strong>Modify Case</strong><dd>      Change selected text to uppercase or lowercase. 
+<br><dt><strong>Bookmarks</strong><dd>      Manage bookmarks. 
+<br><dt><strong>Indent Block</strong><dd>      Indent selected block. 
+<br><dt><strong>De-indent Block</strong><dd>      Deindent selected block. 
+<br><dt><strong>Quote Selection</strong><dd>      Quote selection. This also handles quotes inside text being quoted. 
+<br><dt><strong>UnQuote Selection</strong><dd>      Unquote selection. 
+<br><dt><strong>Comment or Uncomment</strong><dd>      Comments/uncomments selected text. 
+<br><dt><strong>Goto Line</strong><dd>      Goes to specific line number. 
+<br><dt><strong>Complete</strong><dd>      Pop-up a list of possible completions. For tables and views this would give a list of columns after entering table/view name and a dot. If there is no dot a list of common statements is given. For example if you press ctrl+space after entering "sel" you will get options of "select" and "selection". 
+<br><dt><strong>Edit SQL</strong><dd>      This may not be available because it is actually a tool plugin. Can be used to customize SQL used by TOra to determine the state of a database(see <a href="sqledit.html#sqledit">SQL Editor</a>). 
+<br><dt><strong>Chart Manager</strong><dd>      .
 
    </dl>
 
@@ -90,7 +108,7 @@ and read it again from the database.
 
    <p><strong>Tool specific menu</strong>
 
-   <p>There may be a tool specific menu entered between the Tools and Windows menus (In the screenshot it is called Worksheet). These are described in connection to the tools that display them.
+   <p>There may be a tool specific menu entered between the Tools and Windows menus (In the screenshot at the top of current page it is called Browser). These are described in connection to the tools that display them.
 
 <h5 class="subsubheading">Windows menu</h5>
 
@@ -99,8 +117,8 @@ and read it again from the database.
      <dl>
 <dt><strong>Close</strong><dd>      Close the current tool window. 
 <br><dt><strong>Close All</strong><dd>      Close all open windows. This will not close any database connections, only windows. 
-<br><dt><strong>Cascade</strong><dd>      Cascade the open windows over the workspace
-<br><dt><strong>Tile</strong><dd>      Tile the open windows over the workspace
+<br><dt><strong>Cascade</strong><dd>      Cascade the open windows over the workspace. 
+<br><dt><strong>Tile</strong><dd>      Tile the open windows over the workspace. 
 <br><dt><strong>Open windows</strong><dd>      Here windows will line up in a list in the same order as you open them.
 
    </dl>
@@ -114,7 +132,7 @@ and read it again from the database.
 <br><dt><strong>Content</strong><dd>      Open the help window displaying the contents of the TOra help. 
 <br><dt><strong>About TOra</strong><dd>      Display information about TOra copyrigh. 
 <br><dt><strong>License</strong><dd>      Display the license under which TOra is distributed. 
-<br><dt><strong>Quotes</strong><dd>      Food for thought. 
+<br><dt><strong>About Qt</strong><dd>      Display information about Qt. 
 </dl>
 
 <h4 class="subheading">Application toolbar</h4>
@@ -163,7 +181,7 @@ and read it again from the database.
 
    <p>There is an up button available to the right of the toolbar which when pressed can display a history of the contents of the status bar. This is also useful since the statusbar usually clears after certain amount of time but the information is always available here. Both the time until a message disappears and the amount of backlog to keep is configurable from the option dialog (see <a href="preferences.html#preferences">Options</a>). If you select an item in the popup menu the contents of the entry will be opened in a memo editor (see <a href="Memo-editor.html#Memo-editor">Memo editor</a>) where you can read them more easily and also copy the text more easily.
 
-   <p>Next to the right is the coordinates of the editor that currently has the focus.
+   <p>Next to the left is the coordinates of the editor that currently has the focus.
 
    <p>Fursthest to the right is swirling logo which will move whenever TOra is doing something in the background to indicate that the database is still busy performing some kind of operation in the background. The speed of the animation will reflect the number of background tasks that are currently running.
 

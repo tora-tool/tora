@@ -1,11 +1,13 @@
 @node browser
-@section Database Browser
-@cindex Database Browser
+@section Schema Browser
+@cindex Schema Browser
 
-This tool provides you a simple browser for exploring database schema objects. Initially it can be said that the browser also provides a browser like functionality for the template help (@pxref{template,Template Help})
-which is covered separately. This browser will provide you with more information and you will also in future versions of TOra be able to interact with schema objects (Dropping or create tables etc.), this is not possible in the 
-@c @uref{template.html, template help} 
-version. The template help on the other hand is tree based and some people consider it easier and faster to work with.
+This tool provides you a simple browser for exploring database schema objects. Initially it can be said that the
+browser also provides a browser like functionality for the template help (@pxref{template,Template Help}) which
+is covered separately. This browser will provide you with more information and you will also in future versions
+of TOra be able to interact with schema objects (Dropping or create tables etc.), this is not fully possible in the
+current version. The template help on the other hand is tree based and some people consider it easier and faster to
+work with.
 
 @image{images/browser}
 
@@ -19,36 +21,39 @@ version. The template help on the other hand is tree based and some people consi
 @c @node Using the browser, Available information, browser, browser
 @subheading Using the browser
 
-The database browser has a very simple interface with a toolbar which contain the following functions. All of these are also available in the Browser menu item except for the schema selection and change object.
+The schema browser has a very simple interface with a toolbar which contains the following functions.
+All of these are also available in the Browser menu item except for the schema selection and change object.
 
 @table @asis
 
 @item @strong{Refresh}
-Refresh the displayed data from the database. Also available on the @strong{F5} key.
-
+    Refresh the displayed data from the database. Also available on the @strong{F5} key.
 @item @strong{Define filter}
-Displays the define filter dialog(
+    Displays the define filter dialog(
 @c @pxref{Defining a filter}
-). This is used to specify which objects to show in the browser. The default filter is to show everything. Also available on the @strong{CTRL+SHIFT+G} key.
-
+). This is used to specify which objects to show in the browser. The default filter is to show everything.
+    Also available on the @strong{CTRL+SHIFT+G} key.
 @item @strong{Clear filter}
-Remove the current filter and revert to the default of showing everything. Also available on the @strong{CTRL+SHIFT+H} key.
-
+    Remove the current filter and revert to the default of showing everything. Also available on the @strong{CTRL+SHIFT+H} key.
 @item @strong{Schema}
-The last item on the toolbar is a combo box where you can select the schema to display objects for. It defaults the schema you are currently logged in as. Only schemas that are visible to the current user is selectable in the lost (Really, TOra does not contain the secret DBA password that will always let you access everything regardless of your privileges).
-
+    The last item on the toolbar is a combo box where you can select the schema to display objects for.
+    It defaults the schema you are currently logged in as. Only schemas that are visible to the current user are
+    selectable in the lost (Really, TOra does not contain the secret DBA password that will always let you access
+    everything regardless of your privileges).
 @item @strong{Change connection}
-Change the connection this tool window should operate on.
+    Change the connection this tool window should operate on.
 
 @end table
 
-
-The rest of the interface consists of two tabbed windows, one within the other. The first one you can use to select the object type you want to inspect. When you have selected a type you can see the visible objects of the specified type available in the selected schema. The second tab indicate what kind of information you want to explore about the selected object and depends on the object type (
+The rest of the interface consists of two tabbed windows, one within the other. The first one you can use to
+select the object type you want to inspect. When you have selected a type you can see the visible objects of the
+specified type available in the selected schema. The second tab indicates what kind of information you want to
+explore about the selected object and depends on the object type (
 @c @pxref{Available information}
 .). When you select an object name in the left list you can inspect information about it to the right.
 
-You can move the keyboard focus to the schema selection using @strong{ALT+S} and to the current object list using @strong{ALT+N}.
-
+You can move the keyboard focus to the schema selection using @strong{ALT+S} and to the current object list
+using @strong{ALT+N}.
 
 @menu
 @c * Available information::       
@@ -63,7 +68,7 @@ This is the available information for the different object types.
 
 @multitable @columnfractions .2 .3 .5
 
-@headitem Object type	
+@headitem Object type
 @tab Name
 @tab Description
 
@@ -76,6 +81,9 @@ This is the available information for the different object types.
 @item 
 @tab @strong{Indexes}
 @tab A list with the indexes that have been created for this table.
+@item 
+@tab @strong{Constraints}
+@tab Displays constraints associated with this table.
 @item 
 @tab @strong{References}
 @tab Displays the foreign key constraints that references this table and the other objects that have dependencies on this table.
@@ -92,7 +100,13 @@ This is the available information for the different object types.
 .
 @item 
 @tab @strong{Information}
-@tab Contains information about the table available in the SGA including analyzed statistics etc.
+@tab Contains information about the table available in the SGA including analysed statistics etc.
+@item 
+@tab @strong{Partitions}
+@tab TODO.
+@item 
+@tab @strong{Extents}
+@tab TODO.
 @item 
 @tab @strong{Script}
 @tab This tab displays an SQL script to recreate the database object.
@@ -128,11 +142,11 @@ This is the available information for the different object types.
 @tab @strong{Columns}
 @tab The columns that the index operate on.
 @item 
-@tab @strong{Info}
+@tab @strong{Information}
 @tab Information in the SGA about an index. For instance analyzed statistics available for this index.
 @item 
-@tab @strong{Script}
-@tab This tab displays an SQL script to recreate the database object.
+@tab @strong{Extents}
+@tab TODO.
 @item 
 @tab @strong{Script}
 @tab This tab displays an SQL script to recreate the database object.
@@ -163,7 +177,7 @@ This is the available information for the different object types.
 @tab @strong{Script}
 @tab This tab displays an SQL script to recreate the database object.
 
-@item @strong{PL/SQL}
+@item @strong{Code}
 @tab 
 @tab 
 @item 
@@ -204,14 +218,27 @@ This is the available information for the different object types.
 @tab @strong{Script}
 @tab This tab displays an SQL script to recreate the database object.
 
+@item @strong{DBLinks}
+@tab 
+@tab 
+@item 
+@tab @strong{Info}
+@tab Information about the trigger.
+@item 
+@tab @strong{Synonyms}
+@tab TODO.
+@item 
+
 @end multitable
 
 @c @node  Content editor, Defining a filter, Available information, browser
 @subheading Content editor
 
-The content let you edit the contents of a table or view. There are a few things to note about this.
+The content editor lets you edit the contents of a table or view. There are a few things to note about this.
 
-First of all the content editor is designed to behave nicely to the database which means that it will only save the data when it thinks you are finished editing a row. This happens when you the current row change or you commit the database. When there is unsaved data you can see it in the status bar that there exists unsaved data. Also observe that the content editor will respect the auto commit setting in the database settings.
+First of all the content editor is designed to behave nicely to the database which means that it will only
+save the data when it thinks you are finished editing a row. This happens when you save the current row change
+or you commit the database. When there is unsaved data you can see it in the status bar that there exists unsaved data. Also observe that the content editor will respect the auto commit setting in the database settings.
 
 The content editor has it's own toolbar with the following buttons.
 
@@ -224,17 +251,20 @@ Displays the define filter dialog. This is used to specify which objects to show
 @item @strong{Clear filter}
 Remove the current filter and revert to the default of showing everything.
 
-@item @strong{Add new record}
-Add a new record to the current table.
-
 @item @strong{Save changes}
 Save the changes made to the current row to the database. Observe that this will not commit the changes.
 
-@item @strong{Discard changes}
-Discard the changes made to the current row to the database. Observe that this will not rollback the database connection.
+@item @strong{Add new record}
+Add a new record to the current table.
 
-@item @strong{Delete current record}
+@item @strong{Duplicate an existing record}
+Create a new record copying all data from currently selected one.
+
+@item @strong{Delete current record from table}
 Delete the current record from the database.
+
+@item @strong{Refresh data}
+Requery data from the database.
 
 @item @strong{Go to first row}
 Go to the first record in the editor.
@@ -247,6 +277,9 @@ Go to the next record in the editor.
 
 @item @strong{Go to last row}
 Go to the last record in the editor. Observe that this will read in all available records in the table into memory.
+
+@item @strong{Toggle between table or single record editing}
+Swith between editing data as a table or single record (the later one could be usefull for table with a lot of columns).
 
 @end table
 
@@ -265,7 +298,7 @@ Filtering is based on the object name and can be specified in a variety of ways.
 
 @image{images/browserfilter}
 
-The most important part of this dialog is the editor which let you specify the string to apply the criteria to. This is not available for No filter setting. The different available types and options are.
+The most important part of this dialog is the editor which lets you specify the string to apply the criteria to. This is not available for No filter setting. The different available types and options are.
 
 @table @asis
 
@@ -280,6 +313,9 @@ Only include objects which name ends with the specified string.
 
 @item @strong{Contains}
 Only include objects which name contain the specified string.
+
+@item @strong{Comma list}
+TODO.
 
 @item @strong{RegExp}
 Only include objects which name matches the regular expression specified in the editor. The dialect of RegExp:s is the ones in the

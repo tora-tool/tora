@@ -2,7 +2,7 @@
 @section SQL Output
 @cindex SQL Output
 
-This tool display the output from the DBMS_OUTPUT package (For more information see the Oracle PL/SQL Supplied Packages manual).
+This tool displays the output from the DBMS_OUTPUT package (For more information see the Oracle PL/SQL Supplied Packages manual).
 
 @image{images/output}
 
@@ -12,11 +12,11 @@ The toolbar contain the following controls.
 
 @table @asis
 @item @strong{Update}
-        Poll for more output immediately.	
-@item @strong{Enable}
-        Enable or disable output collecting. Collecting is enabled if light bulb is lit.	
+Poll for more output immediately.
 @item @strong{Clear output}
-      	Clear the currently collected output.	
+Clear the currently collected output.
 @item @strong{Refresh}
-      	The time-out to update automatically. The default value of this is configurable though the options.
+The time-out to update automatically. The default value of this is configurable though the options.
+@item @strong{Type of output}
+You can choose if TOra should fetch output from standard oracle output or from Log4plsql module.
 @end table

@@ -1,7 +1,7 @@
 @node  charts
 @section Using charts
 @cindex Using charts
-There are several different chart types in TOra, you can see them all in the screenshot below.
+There are several different chart types in TOra, you can see them in the screenshot below (taken from Server Tuning tool).
 
 @image{images/charts}
 

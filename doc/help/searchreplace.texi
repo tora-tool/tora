@@ -2,7 +2,7 @@
 @section Search & Replace
 @cindex Search & Replace
 
-Ora has an advanced search and replace function that allows you to search result list and editors. Replace is only available for editors though. You can invoke the search & replace dialog by selecting the menu @strong{Edit|Search & Replace} or by pressing @strong{CTRL+F}. The search always operates on the last editor or list that had the focus @strong{when you invoked the dialog}. Not on the current widget of the next search etc. The dialog looks like this.
+TOra has an advanced search and replace function that allows you to search result list and editors. Replace is only available for editors though. You can invoke the search & replace dialog by selecting the menu @strong{Edit|Search & Replace} or by pressing @strong{CTRL+F}. The search always operates on the last editor or list that had the focus @strong{when you invoked the dialog}. Not on the current widget of the next search etc. The dialog looks like this.
 
 @image{images/searchreplace}
 

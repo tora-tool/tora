@@ -10,7 +10,7 @@ TOra has a default SQL name to statement map which can be redefined by the user 
 
 You start the SQL editor either by selecting @strong{Edit|Edit SQL} or by selecting @strong{Edit SQL} in the result list context editor. You are then presented with the following dialog.
 
-@image{images/script}
+@image{images/sqledit}
 
 The window is divided into several parts. To the left is a list of SQL statements available divided into modules. When an item is selected in this list you can use the right part of the screen to modify the SQL associated by the selected name.
 

@@ -3,14 +3,14 @@
 <title>analyze - TOra</title>
 <meta http-equiv="Content-Type" content="text/html">
 <meta name="description" content="TOra">
-<meta name="generator" content="makeinfo 4.11">
+<meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="start" href="index.html#Top">
 <link rel="up" href="tools.html#tools" title="tools">
 <link rel="prev" href="script.html#script" title="script">
 <link rel="next" href="alert.html#alert" title="alert">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <!--
-This manual is for TOra, version 1.4.0.-->
+This manual is for TOra, version 2.1.1.-->
 <meta http-equiv="Content-Style-Type" content="text/css">
 <style type="text/css"><!--
   pre.display { font-family:inherit }
@@ -26,8 +26,8 @@ This manual is for TOra, version 1.4.0.-->
 </head>
 <body>
 <div class="node">
-<p>
 <a name="analyze"></a>
+<p>
 Next:&nbsp;<a rel="next" accesskey="n" href="alert.html#alert">alert</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="script.html#script">script</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
@@ -37,36 +37,21 @@ Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
 <h3 class="section">4.14 Statistics manager</h3>
 
 <p><a name="index-Statistics-manager-30"></a>
-This tool is usefull for collecting statistics and analyze tables in parallel. You can also use it to browse collected statistics.
+This tool is usefull for collecting statistics and analysing tables in parallel. You can also use it to browse collected statistics.
 
    <div class="block-image"><img src="images/analyze.png" alt="images/analyze.png"></div>
 
-   <p>You control the interface through the controls in the toolbar. The rest of the interface simply displays currently available tables in the current schema. When collecting statistics only the selected items in the tablelist are analyzed.
+   <p>You control the interface through the controls in the toolbar. The rest of the interface simply displays currently available tables in the current schema. When collecting statistics only the selected items in the tablelist are analysed.
 
      <dl>
-<dt>&lsquo;<samp><span class="samp">Refresh</span></samp>&rsquo;<dd>Refresh the table list from the database. 
-&lsquo;<samp><span class="samp">Refresh</span></samp>&rsquo;
-
-     <br><dt>&lsquo;<samp><span class="samp">Schema</span></samp>&rsquo;<dd>The next control is which schema to investigate tables for. 
-&lsquo;<samp><span class="samp">Schema</span></samp>&rsquo;
-
-     <br><dt>&lsquo;<samp><span class="samp">Operation</span></samp>&rsquo;<dd>What operation to perform. Select one of <strong>compute statistics</strong>, <strong>estimate statistics</strong>, <strong>delete statistics</strong> and <strong>validate references</strong>. 
-&lsquo;<samp><span class="samp">Operation</span></samp>&rsquo;
-
-     <br><dt>&lsquo;<samp><span class="samp">Target</span></samp>&rsquo;<dd>Depending on the <strong>operation</strong> you can sometimes select what kind of statistic to collect. Choose between <strong>all</strong>, <strong>table</strong>, <strong>indexed columns</strong> and <strong>local indexes</strong>. 
-&lsquo;<samp><span class="samp">Target</span></samp>&rsquo;
-
-     <br><dt>&lsquo;<samp><span class="samp">Sample</span></samp>&rsquo;<dd>If the <strong>operation</strong> is <strong>estimate statistics</strong> you can choose how large sample should be used to estimate the statistic information in percent of total amount of data. 
-&lsquo;<samp><span class="samp">Sample</span></samp>&rsquo;
-
-     <br><dt>&lsquo;<samp><span class="samp">Parallel</span></samp>&rsquo;<dd>Indicate the number of separate connections to open to the database and run collecting statistics concurrently when collecting. 
-&lsquo;<samp><span class="samp">Parallel</span></samp>&rsquo;
-
-     <br><dt>&lsquo;<samp><span class="samp">Start analyzing</span></samp>&rsquo;<dd>Press this button to perform the indicated operation on the tables selected in the list below the toolbar. 
-&lsquo;<samp><span class="samp">Start analyzing</span></samp>&rsquo;
-
-     <br><dt>&lsquo;<samp><span class="samp">Stop</span></samp>&rsquo;<dd>Stop current run. Before the stop button you can also see information about the currently running statistics gathering run if any is running. 
-&lsquo;<samp><span class="samp">Stop</span></samp>&rsquo;
+<dt><strong>Refresh</strong><dd>Refresh the table list from the database. 
+<br><dt><strong>Schema</strong><dd>The next control is which schema to investigate tables for. 
+<br><dt><strong>Operation</strong><dd>What operation to perform. Select one of <strong>compute statistics</strong>, <strong>estimate statistics</strong>, <strong>delete statistics</strong> and <strong>validate references</strong>. 
+<br><dt><strong>Target</strong><dd>Depending on the <strong>operation</strong> you can sometimes select what kind of statistic to collect. Choose between <strong>all</strong>, <strong>table</strong>, <strong>indexed columns</strong> and <strong>local indexes</strong>. 
+<br><dt><strong>Sample</strong><dd>If the <strong>operation</strong> is <strong>estimate statistics</strong> you can choose how large sample should be used to estimate the statistic information in percent of total amount of data. 
+<br><dt><strong>Parallel</strong><dd>Indicate the number of separate connections to open to the database and run collecting statistics concurrently when collecting. 
+<br><dt><strong>Start analyzing</strong><dd>Press this button to perform the indicated operation on the tables selected in the list below the toolbar. 
+<br><dt><strong>Stop</strong><dd>Stop current run. Before the stop button you can also see information about the currently running statistics gathering run if any is running.
 
    </dl>
 

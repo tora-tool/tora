@@ -10,7 +10,7 @@ This tool provides you with an advanced editor for developing PL/SQL objects.
 On the top of the screen is the toolbar for the editor.
 
 Below that are two panes.
-The left one Objects contains the available objects in the selected schema.
+The left one "Objects" contains the available objects in the selected schema.
 The schema is selectable through the toolbar.
 Select the code object you want to edit in this list or start
 a new object before starting to edit the code.

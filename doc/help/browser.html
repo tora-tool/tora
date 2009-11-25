@@ -3,14 +3,14 @@
 <title>browser - TOra</title>
 <meta http-equiv="Content-Type" content="text/html">
 <meta name="description" content="TOra">
-<meta name="generator" content="makeinfo 4.11">
+<meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="start" href="index.html#Top">
 <link rel="up" href="tools.html#tools" title="tools">
 <link rel="prev" href="worksheet.html#worksheet" title="worksheet">
 <link rel="next" href="plsqleditor.html#plsqleditor" title="plsqleditor">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <!--
-This manual is for TOra, version 1.4.0.-->
+This manual is for TOra, version 2.1.1.-->
 <meta http-equiv="Content-Style-Type" content="text/css">
 <style type="text/css"><!--
   pre.display { font-family:inherit }
@@ -26,21 +26,23 @@ This manual is for TOra, version 1.4.0.-->
 </head>
 <body>
 <div class="node">
-<p>
 <a name="browser"></a>
+<p>
 Next:&nbsp;<a rel="next" accesskey="n" href="plsqleditor.html#plsqleditor">plsqleditor</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="worksheet.html#worksheet">worksheet</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
 <hr>
 </div>
 
-<h3 class="section">4.2 Database Browser</h3>
+<h3 class="section">4.2 Schema Browser</h3>
 
-<p><a name="index-Database-Browser-18"></a>
-This tool provides you a simple browser for exploring database schema objects. Initially it can be said that the browser also provides a browser like functionality for the template help (see <a href="template.html#template">Template Help</a>)
-which is covered separately. This browser will provide you with more information and you will also in future versions of TOra be able to interact with schema objects (Dropping or create tables etc.), this is not possible in the
-<!-- @uref{template.html, template help} -->
-version. The template help on the other hand is tree based and some people consider it easier and faster to work with.
+<p><a name="index-Schema-Browser-18"></a>
+This tool provides you a simple browser for exploring database schema objects. Initially it can be said that the
+browser also provides a browser like functionality for the template help (see <a href="template.html#template">Template Help</a>) which
+is covered separately. This browser will provide you with more information and you will also in future versions
+of TOra be able to interact with schema objects (Dropping or create tables etc.), this is not fully possible in the
+current version. The template help on the other hand is tree based and some people consider it easier and faster to
+work with.
 
    <div class="block-image"><img src="images/browser.png" alt="images/browser.png"></div>
 
@@ -53,28 +55,33 @@ version. The template help on the other hand is tree based and some people consi
 <!-- @node Using the browser, Available information, browser, browser -->
 <h4 class="subheading">Using the browser</h4>
 
-<p>The database browser has a very simple interface with a toolbar which contain the following functions. All of these are also available in the Browser menu item except for the schema selection and change object.
+<p>The schema browser has a very simple interface with a toolbar which contains the following functions. 
+All of these are also available in the Browser menu item except for the schema selection and change object.
 
      <dl>
-<dt><strong>Refresh</strong><dd>Refresh the displayed data from the database. Also available on the <strong>F5</strong> key.
-
-     <br><dt><strong>Define filter</strong><dd>Displays the define filter dialog(
+<dt><strong>Refresh</strong><dd>    Refresh the displayed data from the database. Also available on the <strong>F5</strong> key. 
+<br><dt><strong>Define filter</strong><dd>    Displays the define filter dialog(
 <!-- @pxref{Defining a filter} -->
-). This is used to specify which objects to show in the browser. The default filter is to show everything. Also available on the <strong>CTRL+SHIFT+G</strong> key.
-
-     <br><dt><strong>Clear filter</strong><dd>Remove the current filter and revert to the default of showing everything. Also available on the <strong>CTRL+SHIFT+H</strong> key.
-
-     <br><dt><strong>Schema</strong><dd>The last item on the toolbar is a combo box where you can select the schema to display objects for. It defaults the schema you are currently logged in as. Only schemas that are visible to the current user is selectable in the lost (Really, TOra does not contain the secret DBA password that will always let you access everything regardless of your privileges).
-
-     <br><dt><strong>Change connection</strong><dd>Change the connection this tool window should operate on.
+). This is used to specify which objects to show in the browser. The default filter is to show everything. 
+    Also available on the <strong>CTRL+SHIFT+G</strong> key. 
+<br><dt><strong>Clear filter</strong><dd>    Remove the current filter and revert to the default of showing everything. Also available on the <strong>CTRL+SHIFT+H</strong> key. 
+<br><dt><strong>Schema</strong><dd>    The last item on the toolbar is a combo box where you can select the schema to display objects for. 
+    It defaults the schema you are currently logged in as. Only schemas that are visible to the current user are
+    selectable in the lost (Really, TOra does not contain the secret DBA password that will always let you access
+    everything regardless of your privileges). 
+<br><dt><strong>Change connection</strong><dd>    Change the connection this tool window should operate on.
 
    </dl>
 
-   <p>The rest of the interface consists of two tabbed windows, one within the other. The first one you can use to select the object type you want to inspect. When you have selected a type you can see the visible objects of the specified type available in the selected schema. The second tab indicate what kind of information you want to explore about the selected object and depends on the object type (
+   <p>The rest of the interface consists of two tabbed windows, one within the other. The first one you can use to
+select the object type you want to inspect. When you have selected a type you can see the visible objects of the
+specified type available in the selected schema. The second tab indicates what kind of information you want to
+explore about the selected object and depends on the object type (
 <!-- @pxref{Available information} -->
 .). When you select an object name in the left list you can inspect information about it to the right.
 
-   <p>You can move the keyboard focus to the schema selection using <strong>ALT+S</strong> and to the current object list using <strong>ALT+N</strong>.
+   <p>You can move the keyboard focus to the schema selection using <strong>ALT+S</strong> and to the current object list
+using <strong>ALT+N</strong>.
 
 <!-- * Available information:: -->
 <!-- * Content editor:: -->
@@ -98,6 +105,8 @@ version. The template help on the other hand is tree based and some people consi
 </td><td valign="top" width="50%">A description of the columns in the table. For more information about this information also see object description. 
 <br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Indexes</strong>
 </td><td valign="top" width="50%">A list with the indexes that have been created for this table. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Constraints</strong>
+</td><td valign="top" width="50%">Displays constraints associated with this table. 
 <br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>References</strong>
 </td><td valign="top" width="50%">Displays the foreign key constraints that references this table and the other objects that have dependencies on this table. 
 <br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Grants</strong>
@@ -109,7 +118,11 @@ version. The template help on the other hand is tree based and some people consi
 <!-- @pxref{Content editor} -->
 . 
 <br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Information</strong>
-</td><td valign="top" width="50%">Contains information about the table available in the SGA including analyzed statistics etc. 
+</td><td valign="top" width="50%">Contains information about the table available in the SGA including analysed statistics etc. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Partitions</strong>
+</td><td valign="top" width="50%">TODO. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Extents</strong>
+</td><td valign="top" width="50%">TODO. 
 <br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Script</strong>
 </td><td valign="top" width="50%">This tab displays an SQL script to recreate the database object.
 
@@ -135,10 +148,10 @@ version. The template help on the other hand is tree based and some people consi
 </td><td valign="top" width="50%">
 <br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Columns</strong>
 </td><td valign="top" width="50%">The columns that the index operate on. 
-<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Info</strong>
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Information</strong>
 </td><td valign="top" width="50%">Information in the SGA about an index. For instance analyzed statistics available for this index. 
-<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Script</strong>
-</td><td valign="top" width="50%">This tab displays an SQL script to recreate the database object. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Extents</strong>
+</td><td valign="top" width="50%">TODO. 
 <br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Script</strong>
 </td><td valign="top" width="50%">This tab displays an SQL script to recreate the database object.
 
@@ -162,7 +175,7 @@ version. The template help on the other hand is tree based and some people consi
 <br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Script</strong>
 </td><td valign="top" width="50%">This tab displays an SQL script to recreate the database object.
 
-<p><br></td></tr><tr align="left"><td valign="top" width="20%"><strong>PL/SQL</strong>
+<p><br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Code</strong>
 </td><td valign="top" width="30%">
 </td><td valign="top" width="50%">
 <br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Declaration</strong>
@@ -192,14 +205,24 @@ version. The template help on the other hand is tree based and some people consi
 <br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Script</strong>
 </td><td valign="top" width="50%">This tab displays an SQL script to recreate the database object.
 
+<p><br></td></tr><tr align="left"><td valign="top" width="20%"><strong>DBLinks</strong>
+</td><td valign="top" width="30%">
+</td><td valign="top" width="50%">
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Info</strong>
+</td><td valign="top" width="50%">Information about the trigger. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Synonyms</strong>
+</td><td valign="top" width="50%">TODO. 
+<br></td></tr><tr align="left"><td valign="top" width="20%">
    <br></td></tr></table>
 
 <!-- @node  Content editor, Defining a filter, Available information, browser -->
 <h4 class="subheading">Content editor</h4>
 
-<p>The content let you edit the contents of a table or view. There are a few things to note about this.
+<p>The content editor lets you edit the contents of a table or view. There are a few things to note about this.
 
-   <p>First of all the content editor is designed to behave nicely to the database which means that it will only save the data when it thinks you are finished editing a row. This happens when you the current row change or you commit the database. When there is unsaved data you can see it in the status bar that there exists unsaved data. Also observe that the content editor will respect the auto commit setting in the database settings.
+   <p>First of all the content editor is designed to behave nicely to the database which means that it will only
+save the data when it thinks you are finished editing a row. This happens when you save the current row change
+or you commit the database. When there is unsaved data you can see it in the status bar that there exists unsaved data. Also observe that the content editor will respect the auto commit setting in the database settings.
 
    <p>The content editor has it's own toolbar with the following buttons.
 
@@ -208,13 +231,15 @@ version. The template help on the other hand is tree based and some people consi
 
      <br><dt><strong>Clear filter</strong><dd>Remove the current filter and revert to the default of showing everything.
 
-     <br><dt><strong>Add new record</strong><dd>Add a new record to the current table.
-
      <br><dt><strong>Save changes</strong><dd>Save the changes made to the current row to the database. Observe that this will not commit the changes.
 
-     <br><dt><strong>Discard changes</strong><dd>Discard the changes made to the current row to the database. Observe that this will not rollback the database connection.
+     <br><dt><strong>Add new record</strong><dd>Add a new record to the current table.
 
-     <br><dt><strong>Delete current record</strong><dd>Delete the current record from the database.
+     <br><dt><strong>Duplicate an existing record</strong><dd>Create a new record copying all data from currently selected one.
+
+     <br><dt><strong>Delete current record from table</strong><dd>Delete the current record from the database.
+
+     <br><dt><strong>Refresh data</strong><dd>Requery data from the database.
 
      <br><dt><strong>Go to first row</strong><dd>Go to the first record in the editor.
 
@@ -223,6 +248,8 @@ version. The template help on the other hand is tree based and some people consi
      <br><dt><strong>Go to next row</strong><dd>Go to the next record in the editor.
 
      <br><dt><strong>Go to last row</strong><dd>Go to the last record in the editor. Observe that this will read in all available records in the table into memory.
+
+     <br><dt><strong>Toggle between table or single record editing</strong><dd>Swith between editing data as a table or single record (the later one could be usefull for table with a lot of columns).
 
    </dl>
 
@@ -241,7 +268,7 @@ version. The template help on the other hand is tree based and some people consi
 
    <div class="block-image"><img src="images/browserfilter.png" alt="images/browserfilter.png"></div>
 
-   <p>The most important part of this dialog is the editor which let you specify the string to apply the criteria to. This is not available for No filter setting. The different available types and options are.
+   <p>The most important part of this dialog is the editor which lets you specify the string to apply the criteria to. This is not available for No filter setting. The different available types and options are.
 
      <dl>
 <dt><strong>No filter</strong><dd>No filter specified, display all objects.
@@ -251,6 +278,8 @@ version. The template help on the other hand is tree based and some people consi
      <br><dt><strong>End with</strong><dd>Only include objects which name ends with the specified string.
 
      <br><dt><strong>Contains</strong><dd>Only include objects which name contain the specified string.
+
+     <br><dt><strong>Comma list</strong><dd>TODO.
 
      <br><dt><strong>RegExp</strong><dd>Only include objects which name matches the regular expression specified in the editor. The dialect of RegExp:s is the ones in the
 version of Qt that TOra is compiled against. For more information on regular expressions check out <a href="http://doc.trolltech.com/qregexp.html">http://doc.trolltech.com/qregexp.html</a>, if you are using Qt 3.0 or later you have a more advanced form of regular expressions.

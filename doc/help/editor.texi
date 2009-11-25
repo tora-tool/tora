@@ -1,15 +1,14 @@
-NO TUSED ANYMORE!!! SHOULD BE REMOVED AS OF 2009-11-23
+@node  editor
+@subsection Editor Settings
+@cindex Editor Settings
 
-@node  fonts
-@subsection Font Settings
-@cindex Font Settings
+This page of the options contains settings on how to use TOra editors.
 
-This page of the options about fonts and colors used in the user interface.
+TODO
 
-@image{images/fonts}
+@image{images/editor}
 
 @table @asis
-
 @item @strong{Syntax components}
       This list contains different parts of the SQL syntax. You can change the color used for the element by selecting the item in this list and then pressing the Pick button to select a color. The current color of the currently selected item in the list is displayed just to the left of the Pick button.
 
@@ -28,19 +27,29 @@ The available elements are as follows.
 
 @item @strong{Syntax highlighting}
       Use this to control whether you want syntax highlighting or not. Observe that without syntax highlighting you will not see the indications for errors and current lines in the PL/SQL editor.	
+@item @strong{Use maximum text width mark}
+      TODO.
 @item @strong{Keyword upper}
       Check this box to convert all keywords to uppercase before displaying them. The text itself is not changed so resetting this not changed and the text sent to the database still contain lowercase letters. This setting is disabled if you do not have a monospaced font selected.	
 @item @strong{Code completion}
       Check this box to enable code completion in SQL editors.	
+@item @strong{Editor shortcuts (TAB replacement)}
+      TODO.
 @item @strong{Sort completion rows}
       If checked the completion alternatives are sorted in alphabetical order, otherwise they are in the same order as in the source.	
-@item @strong{Indent same as previous row}
-      When inserting a new row indent it to the same level as the previous row. 	
-@item @strong{Text font}
+@item @strong{Indent same as previous line}
+      When inserting a new line indent it to the same level as the previous one.
+@item @strong{Text example}
       This is the font to use for all editors in TOra that are not syntax highlighted. Choose the @strong{Choose} button immediately to the right of the label to select a new font.	
-@item @strong{Code font}
+@item @strong{Code example}
       This is the font to use for all syntax highlighted SQL editors in TOra. Choose the @strong{Choose} button immediately to the right of the label to select a new font.	
-@item @strong{List font}
+@item @strong{List example}
       This is the font to use for all lists in TOra. Choose the @strong{Choose} button immediately to the right of the label to select a new font.
-
+@item @strong{Filename extensions}
+      TODO.
+@item @strong{Tab stop width}
+      TODO.
+@item @strong{Use only spaces when indenting}
+      TODO.
 @end table
+There may also be pages under this for each individual database provider. Currently onlye Oracle uses this feature. That setup looks like this.

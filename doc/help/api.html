@@ -3,13 +3,13 @@
 <title>api - TOra</title>
 <meta http-equiv="Content-Type" content="text/html">
 <meta name="description" content="TOra">
-<meta name="generator" content="makeinfo 4.11">
+<meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="start" href="index.html#Top">
 <link rel="up" href="extendingtora.html#extendingtora" title="extendingtora">
 <link rel="next" href="externalapi.html#externalapi" title="externalapi">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <!--
-This manual is for TOra, version 1.4.0.-->
+This manual is for TOra, version 2.1.1.-->
 <meta http-equiv="Content-Style-Type" content="text/css">
 <style type="text/css"><!--
   pre.display { font-family:inherit }
@@ -25,8 +25,8 @@ This manual is for TOra, version 1.4.0.-->
 </head>
 <body>
 <div class="node">
-<p>
 <a name="api"></a>
+<p>
 Next:&nbsp;<a rel="next" accesskey="n" href="externalapi.html#externalapi">externalapi</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="extendingtora.html#extendingtora">extendingtora</a>
 <hr>
@@ -40,7 +40,6 @@ This tutorial will create a simple tool that can execute an SQL statement and di
    <p>First of all we create an include file which defines the tool widget. This is the window that will be displayed when the a tool window is created. How that happens comes later.
 
 <pre class="example"><pre class="verbatim">     
-     
      #ifndef TOSIMPLEQUERY_H
      #define TOSIMPLEQUERY_H
      
@@ -72,7 +71,6 @@ This tutorial will create a simple tool that can execute an SQL statement and di
    <p>The first thing we need to do is create a tool description which is done by subclassing the toTool class. This is how we implement this class for this function.
 
 <pre class="example"><pre class="verbatim">     
-     
      #include "totool.h"
      #include "tosimplequery.h"
      
@@ -143,7 +141,6 @@ This tutorial will create a simple tool that can execute an SQL statement and di
    <p>Lastly comes the implementation of the tool widget which is not much longer. I have divided this into several parts to simplify explaining them.
 
 <pre class="example"><pre class="verbatim">     
-     
      #include &lt;list>
      
      #include &lt;qtoolbar.h>
@@ -204,7 +201,6 @@ This tutorial will create a simple tool that can execute an SQL statement and di
    <p>Next up is creating our widgets and connecting them.
 
 <pre class="example"><pre class="verbatim">     
-     
        Statement=new QLineEdit(this);
        Result=new toResultView(this);
        connect(Statement,SIGNAL(returnPressed()),this,SLOT(execute()));
@@ -215,7 +211,6 @@ This tutorial will create a simple tool that can execute an SQL statement and di
    <p>This just adds two additional widgets and connect the returnPressed signal to the execute slot. One thing to realise here is that all the toResult children will use the connection of the closest parent of type toToolWidget in the widget hierarchy. And now the last thing to do is implement the execute method.
 
 <pre class="example"><pre class="verbatim">     
-     
      void toSimpleQuery::execute(void)
      {
        try {
@@ -232,7 +227,6 @@ This tutorial will create a simple tool that can execute an SQL statement and di
    <p>Now finally to compile this module you need to add the tosimplequery.cpp file to SOURCES define in the file Makefile. To build a plugin you also need to add the following line.
 
 <pre class="example"><pre class="verbatim">     
-     
      plugins/tosimplequery.tso:objs/tosimplequery.o
      
 </pre>

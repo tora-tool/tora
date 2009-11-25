@@ -12,12 +12,12 @@ tora_TEXINFO = \
 	charts.texi \
 	common.texi \
 	current.texi \
+	editor.texi \
 	database.texi \
 	debugger.texi \
 	editors.texi \
 	extendingtora.texi \
 	externalapi.texi \
-	fonts.texi \
 	help.texi \
 	history.texi \
 	invalid.texi \

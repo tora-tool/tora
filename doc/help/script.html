@@ -3,14 +3,14 @@
 <title>script - TOra</title>
 <meta http-equiv="Content-Type" content="text/html">
 <meta name="description" content="TOra">
-<meta name="generator" content="makeinfo 4.11">
+<meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="start" href="index.html#Top">
 <link rel="up" href="tools.html#tools" title="tools">
 <link rel="prev" href="current.html#current" title="current">
 <link rel="next" href="analyze.html#analyze" title="analyze">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <!--
-This manual is for TOra, version 1.4.0.-->
+This manual is for TOra, version 2.1.1.-->
 <meta http-equiv="Content-Style-Type" content="text/css">
 <style type="text/css"><!--
   pre.display { font-family:inherit }
@@ -26,8 +26,8 @@ This manual is for TOra, version 1.4.0.-->
 </head>
 <body>
 <div class="node">
-<p>
 <a name="script"></a>
+<p>
 Next:&nbsp;<a rel="next" accesskey="n" href="analyze.html#analyze">analyze</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="current.html#current">current</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
@@ -49,29 +49,30 @@ You choose this by selecting one of the radio buttons to the left of the screen.
    <p>Next you should indicate what kind of information you want included in the extract or compare. This is selected with the checkboxes just to the right of the mode selection. Depending on the mode some options may be disabled.
 
      <dl>
-<dt><strong>Include DDL</strong><dd>      Include any database definition. 
-<br><dt><strong>Include constraints</strong><dd>      Extract constraint definitions from tables
-<br><dt><strong>Include indexes</strong><dd>      Extract indexes for tables. 
-<br><dt><strong>Include grants</strong><dd>      Extract grants for database objects. 
-<br><dt><strong>Include storage specification</strong><dd>      Extract storage specifications for database objects. 
-<br><dt><strong>Include parallel specification</strong><dd>      Extract parallel specification for tables. 
-<br><dt><strong>Include partition specification</strong><dd>      Extract partition specification for tables. 
-<br><dt><strong>Include code specification</strong><dd>      Extract code for packages, procedures and functions. 
-<br><dt><strong>Include comments</strong><dd>      Extract comments for database objects. 
-<br><dt><strong>Include content of tables</strong><dd>      Extract the content of tables as well. 
-<br><dt><strong>Generate prompts</strong><dd>      Generate prompts in the extracted result indicating what the script is doing. 
-<br><dt><strong>Generate header</strong><dd>      Generate header of the script. 
-<br><dt><strong>Generated schema</strong><dd>      This specifies the schema to be used when extracting. If you select Same, the same schema as the source database is used. If you select None, no schema is generated. Specifying anything else will replace the source schema with the one entered here.
+<dt><strong>Include DDL</strong><dd>Include any database definition. 
+<br><dt><strong>Include constraints</strong><dd>Extract constraint definitions from tables. 
+<br><dt><strong>Include indexes</strong><dd>Extract indexes for tables. 
+<br><dt><strong>Include grants</strong><dd>Extract grants for database objects. 
+<br><dt><strong>Include storage specification</strong><dd>Extract storage specifications for database objects. 
+<br><dt><strong>Include parallel specification</strong><dd>Extract parallel specification for tables. 
+<br><dt><strong>Include partition specification</strong><dd>Extract partition specification for tables. 
+<br><dt><strong>Include code specification</strong><dd>Extract code for packages, procedures and functions. 
+<br><dt><strong>Include comments</strong><dd>Extract comments for database objects. 
+<br><dt><strong>Generate prompts</strong><dd>Generate prompts in the extracted result indicating what the script is doing. 
+<br><dt><strong>Generate header</strong><dd>Generate header of the script. 
+<br><dt><strong>Include content of tables</strong><dd>Extract the content of tables as well. 
+<br><dt><strong>Commit distance</strong><dd>TODO. 
+<br><dt><strong>Generated schema</strong><dd>This specifies the schema to be used when extracting. If you select Same, the same schema as the source database is used. If you select None, no schema is generated. Specifying anything else will replace the source schema with the one entered here.
 
    </dl>
 
    <p>If you are searching you also need to indicate what you are searching for in the bottom left of the front page.
 
      <dl>
-<dt><strong>Containing any words</strong><dd>      The object should contain at least one of the words in the line editor. 
-<br><dt><strong>Containing all words</strong><dd>      The object should contain all of the words in the line editor. 
-<br><dt><strong>Exact match</strong><dd>      The object should contain the exact string as in the line editor include whitespaces. 
-<br><dt><strong>RegExp</strong><dd>      The object should contain at least one of the words in the line editor. The dialect of RegExp:s is the ones in the version of Qt that TOra is compiled against. For more information on regular expressions check out <a href="http://doc.trolltech.com/qregexp.html">http://doc.trolltech.com/qregexp.html</a>, if you are using Qt 3.0 or later you have a more advanced form of regular expressions. 
+<dt><strong>Containing any words</strong><dd>The object should contain at least one of the words in the line editor. 
+<br><dt><strong>Containing all words</strong><dd>The object should contain all of the words in the line editor. 
+<br><dt><strong>Exact match</strong><dd>The object should contain the exact string as in the line editor include whitespaces. 
+<br><dt><strong>RegExp</strong><dd>The object should contain at least one of the words in the line editor. The dialect of RegExp:s is the ones in the version of Qt that TOra is compiled against. For more information on regular expressions check out <a href="http://doc.trolltech.com/qregexp.html">http://doc.trolltech.com/qregexp.html</a>, if you are using Qt 3.0 or later you have a more advanced form of regular expressions. 
 </dl>
 
    <p>The next thing you need to do is to specify which objects you want to extract or compare. If you extract you only need to specify the source, if comparing destination objects are also needed.

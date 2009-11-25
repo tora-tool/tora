@@ -13,15 +13,15 @@ The filling out of this dialog is pretty straight forward.
 @table @asis
 
 @item @strong{Previous}
-      This list contains the previous connection made, selecting an entry from this list will set all the values to the right to the correct
-@item @strong{connections}
-      values to connect to this database again.
+      This list contains the previous connection made, selecting an entry from this list will set all the values to the right to the correct. Doubleclicking will connect straight away (only makes sense if you save passwords).
+@item @strong{Connections}
+      Values to connect to this database again.
 @item @strong{Connection provider}
-      The type of connection to create. Usually Oracle, but MySQL is also supported on some platforms.
+      The type of connection to create. You can choose from Oracle, MySQL and others.
 @item @strong{Username}
       The username with which to connect to the database
 @item @strong{Password}
-      The password to use for the connection, this defaults to manager. You can also configure TOra to remember your last used password(@pxref{preferences,Options})
+      The password to use for the connection, this defaults to manager. You can also configure TOra to remember your last used password (@pxref{preferences,Options})
 @item @strong{Use SQL*Net}
       This is perhaps the most difficult setting. This indicates whether to connect locally to the database or use SQL*Net. If you check this box the connection is made through the Oracle listener, otherwise a local connection usually using shared memory or named pipes is made. This is only available for Oracle connections.
 @item @strong{Hostname}

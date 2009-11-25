@@ -10,22 +10,30 @@ The session tool consists of a toolbar, a list displaying the connections curren
 
 @subheading Toolbar
 
-The toolbar contain the following commands.
+The toolbar contains the following commands.
 
 @table @asis
 
 @item @strong{Refresh}
-      Refresh the view from the database.	
+Refresh the view from the database.
+@item @strong{Filter}
+Here you can define which sessions to display. You can choose to see only sessions of specific users, only active sessions, all sessions, all sessions except background or all sessions except system ones.
 @item @strong{Enable timed statistics}
-      Enable timed statistics for the currently selected session.	
+Enable timed statistics for the currently selected session.
 @item @strong{Disable timed statistics}
-      Disable timed statistics for the currently selected session.	
+Disable timed statistics for the currently selected session.
 @item @strong{Disconnect session}
-      Disconnect the currently selected session. You will be asked if you allow the current transaction to finish before kicking the session out or not.
+Disconnect the currently selected session. You will be asked if you allow the current transaction to finish before kicking the session out or not.
 @item @strong{Refresh time}
-      A list where you can select the interval between automatic updates.	
+A list where you can select the interval between automatic updates.
+@item @strong{Select all sessions}
+TODO
+@item @strong{Deselect all sessions}
+TODO
+@item @strong{Filter}
+TODO
 @item @strong{Change connection}
-      Change the connection to administrate storage for.
+Change the connection to administrate storage for.
 
 @end table
 
@@ -35,18 +43,25 @@ When you select a session the following information is available in the tabbed p
 
 @table @asis
 
-@item @strong{Statistics}
-        The session statistics available for the session. You will get more statistics if you enable timed statistics through the toolbar. There are also two charts displaying waitstates and I/O for the selected session.	
-@item @strong{Connection info}
-      Information about the connection and versions of the components used.	
-@item @strong{Pending locks}
-      	What locks this session is currently waiting for.	
-Locked objects	The objects currently locked by this session.	
 @item @strong{Current statement}
-      The statement that is currently being executed (@pxref{SGA Statement} for information about the statement). 	
+The statement that is currently being executed (@pxref{SGA Statement} for information about the statement).
+@item @strong{Long ops}
+TODO
+@item @strong{Statistics}
+The session statistics available for the session. You will get more statistics if you enable timed statistics through the toolbar. There are also two charts displaying waitstates and I/O for the selected session.
+@item @strong{Wait events}
+TODO
+@item @strong{Connection info}
+Information about the connection and versions of the components used.
+@item @strong{Pending locks}
+What locks this session is currently waiting for.
+@item @strong{Locked objects}
+The objects currently locked by this session.
+@item @strong{Accessing}
+TODO
 @item @strong{Previous statement}
-      The next to last statement being executed by the session (@pxref{SGA Statement} for information about the statement).	
+The next to last statement being executed by the session (@pxref{SGA Statement} for information about the statement).
 @item @strong{Open cursors}
-      	This contains a list of all the cursors currently held open by the session. When a statement is selected in the list you can investigate it using the normal SGA statement view.
+This contains a list of all the cursors currently held open by the session. When a statement is selected in the list you can investigate it using the normal SGA statement view.
 
 @end table

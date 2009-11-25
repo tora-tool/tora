@@ -3,14 +3,14 @@
 <title>rollback - TOra</title>
 <meta http-equiv="Content-Type" content="text/html">
 <meta name="description" content="TOra">
-<meta name="generator" content="makeinfo 4.11">
+<meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="start" href="index.html#Top">
 <link rel="up" href="tools.html#tools" title="tools">
 <link rel="prev" href="session.html#session" title="session">
 <link rel="next" href="trace.html#trace" title="trace">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <!--
-This manual is for TOra, version 1.4.0.-->
+This manual is for TOra, version 2.1.1.-->
 <meta http-equiv="Content-Style-Type" content="text/css">
 <style type="text/css"><!--
   pre.display { font-family:inherit }
@@ -26,8 +26,8 @@ This manual is for TOra, version 1.4.0.-->
 </head>
 <body>
 <div class="node">
-<p>
 <a name="rollback"></a>
+<p>
 Next:&nbsp;<a rel="next" accesskey="n" href="trace.html#trace">trace</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="session.html#session">session</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
@@ -51,13 +51,14 @@ The top one displays the available rollback segments and you can also see runnin
 <p>The toolbar contains the following commands.
 
      <dl>
-<dt><strong>Update</strong><dd>      	Update the view from the database. 
-<br><dt><strong>Online</strong><dd>      	Take currently selected segment online. 
-<br><dt><strong>Offline</strong><dd>      	Take currently selected segment off-line. 
-<br><dt><strong>New rollback segment</strong><dd>      	Create new rollback segment. If you are confused about what the items in the dialog mean refer to the Oracle Server Concepts manual as well as the Oracle SQL Reference. 
-<br><dt><strong>Drop segment</strong><dd>                  Drop the currently selected segment. 
-<br><dt><strong>Refresh time</strong><dd>      	A list where you can select the interval between automatic updates. 
-<br><dt><strong>Change connection</strong><dd>      	Change the connection to administrate storage for.
+<dt><strong>Update segment list</strong><dd>Update the view from the database. 
+<br><dt><strong>Enable snapshot too old detection</strong><dd>TODO
+<br><dt><strong>Take segment online</strong><dd>Take currently selected segment online. 
+<br><dt><strong>Take segment offline</strong><dd>Take currently selected segment off-line. 
+<br><dt><strong>Create new rollback segment</strong><dd>Create new rollback segment. If you are confused about what the items in the dialog mean refer to the Oracle Server Concepts manual as well as the Oracle SQL Reference. 
+<br><dt><strong>Drop segment</strong><dd>Drop the currently selected segment. 
+<br><dt><strong>Refresh time</strong><dd>A list where you can select the interval between automatic updates. 
+<br><dt><strong>Change connection</strong><dd>Change the connection to administrate storage for.
 
    </dl>
 
@@ -74,10 +75,11 @@ The top one displays the available rollback segments and you can also see runnin
    <div class="block-image"><img src="images/rollbacksetup.png" alt="images/rollbacksetup.png"></div>
 
      <dl>
-<dt><strong>Restart reexecuted statements</strong><dd>      If the execution count is changed for a statement reset the location of the rollback segments to the current location. 
-<br><dt><strong>Must read buffers</strong><dd>      To display a statement it must be reading buffers, it is still kept in memory if no buffers are read, but not displayed in the list until buffers are read again. Check this to remove any statements that you execute and simply kept open even though you will not be reading from them any more. 
-<br><dt><strong>Exclude first appearance</strong><dd>      Exclude the first update that would show the statement. Without this checked any statement with execution changed and buffers read will show up. 
-<br><dt><strong>Disregard start extent</strong><dd>      If you check this the bars will always start from the left of the column. Otherwise the bars will start corresponding to the current extent of the tablespace and then wrap around as they grow. 
+<dt><strong>Enable snapshot too old detection</strong><dd>TODO
+<br><dt><strong>Disregard start extent</strong><dd>If you check this the bars will always start from the left of the column. Otherwise the bars will start corresponding to the current extent of the tablespace and then wrap around as they grow. 
+<br><dt><strong>Restart reexecuted statements</strong><dd>If the execution count is changed for a statement reset the location of the rollback segments to the current location. 
+<br><dt><strong>Must read buffers</strong><dd>To display a statement it must be reading buffers, it is still kept in memory if no buffers are read, but not displayed in the list until buffers are read again. Check this to remove any statements that you execute and simply kept open even though you will not be reading from them any more. 
+<br><dt><strong>Exclude first appearance</strong><dd>Exclude the first update that would show the statement. Without this checked any statement with execution changed and buffers read will show up. 
 </dl>
 
    </body></html>

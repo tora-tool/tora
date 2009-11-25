@@ -3,14 +3,14 @@
 <title>session - TOra</title>
 <meta http-equiv="Content-Type" content="text/html">
 <meta name="description" content="TOra">
-<meta name="generator" content="makeinfo 4.11">
+<meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="start" href="index.html#Top">
 <link rel="up" href="tools.html#tools" title="tools">
 <link rel="prev" href="storage.html#storage" title="storage">
 <link rel="next" href="rollback.html#rollback" title="rollback">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <!--
-This manual is for TOra, version 1.4.0.-->
+This manual is for TOra, version 2.1.1.-->
 <meta http-equiv="Content-Style-Type" content="text/css">
 <style type="text/css"><!--
   pre.display { font-family:inherit }
@@ -26,8 +26,8 @@ This manual is for TOra, version 1.4.0.-->
 </head>
 <body>
 <div class="node">
-<p>
 <a name="session"></a>
+<p>
 Next:&nbsp;<a rel="next" accesskey="n" href="rollback.html#rollback">rollback</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="storage.html#storage">storage</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
@@ -45,15 +45,19 @@ This tool is used to manage the connections made to the database.
 
 <h4 class="subheading">Toolbar</h4>
 
-<p>The toolbar contain the following commands.
+<p>The toolbar contains the following commands.
 
      <dl>
-<dt><strong>Refresh</strong><dd>      Refresh the view from the database. 
-<br><dt><strong>Enable timed statistics</strong><dd>      Enable timed statistics for the currently selected session. 
-<br><dt><strong>Disable timed statistics</strong><dd>      Disable timed statistics for the currently selected session. 
-<br><dt><strong>Disconnect session</strong><dd>      Disconnect the currently selected session. You will be asked if you allow the current transaction to finish before kicking the session out or not. 
-<br><dt><strong>Refresh time</strong><dd>      A list where you can select the interval between automatic updates. 
-<br><dt><strong>Change connection</strong><dd>      Change the connection to administrate storage for.
+<dt><strong>Refresh</strong><dd>Refresh the view from the database. 
+<br><dt><strong>Filter</strong><dd>Here you can define which sessions to display. You can choose to see only sessions of specific users, only active sessions, all sessions, all sessions except background or all sessions except system ones. 
+<br><dt><strong>Enable timed statistics</strong><dd>Enable timed statistics for the currently selected session. 
+<br><dt><strong>Disable timed statistics</strong><dd>Disable timed statistics for the currently selected session. 
+<br><dt><strong>Disconnect session</strong><dd>Disconnect the currently selected session. You will be asked if you allow the current transaction to finish before kicking the session out or not. 
+<br><dt><strong>Refresh time</strong><dd>A list where you can select the interval between automatic updates. 
+<br><dt><strong>Select all sessions</strong><dd>TODO
+<br><dt><strong>Deselect all sessions</strong><dd>TODO
+<br><dt><strong>Filter</strong><dd>TODO
+<br><dt><strong>Change connection</strong><dd>Change the connection to administrate storage for.
 
    </dl>
 
@@ -62,13 +66,16 @@ This tool is used to manage the connections made to the database.
 <p>When you select a session the following information is available in the tabbed pane at the bottom of the window.
 
      <dl>
-<dt><strong>Statistics</strong><dd>        The session statistics available for the session. You will get more statistics if you enable timed statistics through the toolbar. There are also two charts displaying waitstates and I/O for the selected session. 
-<br><dt><strong>Connection info</strong><dd>      Information about the connection and versions of the components used. 
-<br><dt><strong>Pending locks</strong><dd>      	What locks this session is currently waiting for. 
-Locked objects	The objects currently locked by this session. 
-<br><dt><strong>Current statement</strong><dd>      The statement that is currently being executed (see <a href="SGA-Statement.html#SGA-Statement">SGA Statement</a> for information about the statement). 
-<br><dt><strong>Previous statement</strong><dd>      The next to last statement being executed by the session (see <a href="SGA-Statement.html#SGA-Statement">SGA Statement</a> for information about the statement). 
-<br><dt><strong>Open cursors</strong><dd>      	This contains a list of all the cursors currently held open by the session. When a statement is selected in the list you can investigate it using the normal SGA statement view.
+<dt><strong>Current statement</strong><dd>The statement that is currently being executed (see <a href="SGA-Statement.html#SGA-Statement">SGA Statement</a> for information about the statement). 
+<br><dt><strong>Long ops</strong><dd>TODO
+<br><dt><strong>Statistics</strong><dd>The session statistics available for the session. You will get more statistics if you enable timed statistics through the toolbar. There are also two charts displaying waitstates and I/O for the selected session. 
+<br><dt><strong>Wait events</strong><dd>TODO
+<br><dt><strong>Connection info</strong><dd>Information about the connection and versions of the components used. 
+<br><dt><strong>Pending locks</strong><dd>What locks this session is currently waiting for. 
+<br><dt><strong>Locked objects</strong><dd>The objects currently locked by this session. 
+<br><dt><strong>Accessing</strong><dd>TODO
+<br><dt><strong>Previous statement</strong><dd>The next to last statement being executed by the session (see <a href="SGA-Statement.html#SGA-Statement">SGA Statement</a> for information about the statement). 
+<br><dt><strong>Open cursors</strong><dd>This contains a list of all the cursors currently held open by the session. When a statement is selected in the list you can investigate it using the normal SGA statement view.
 
    </dl>
 

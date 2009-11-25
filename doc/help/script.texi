@@ -16,31 +16,33 @@ Next you should indicate what kind of information you want included in the extra
 @table @asis
 
 @item @strong{Include DDL}
-      Include any database definition.
+Include any database definition.
 @item @strong{Include constraints}
-      Extract constraint definitions from tables	
+Extract constraint definitions from tables.
 @item @strong{Include indexes}
-      Extract indexes for tables.	
+Extract indexes for tables.
 @item @strong{Include grants}
-      Extract grants for database objects.	
+Extract grants for database objects.
 @item @strong{Include storage specification}
-      Extract storage specifications for database objects.	
+Extract storage specifications for database objects.
 @item @strong{Include parallel specification}
-      Extract parallel specification for tables.	
+Extract parallel specification for tables.
 @item @strong{Include partition specification}
-      Extract partition specification for tables.	
+Extract partition specification for tables.
 @item @strong{Include code specification}
-      Extract code for packages, procedures and functions.	
+Extract code for packages, procedures and functions.
 @item @strong{Include comments}
-      Extract comments for database objects.	
-@item @strong{Include content of tables}
-      Extract the content of tables as well.	
+Extract comments for database objects.
 @item @strong{Generate prompts}
-      Generate prompts in the extracted result indicating what the script is doing.	
+Generate prompts in the extracted result indicating what the script is doing.
 @item @strong{Generate header}
-      Generate header of the script.	
+Generate header of the script.
+@item @strong{Include content of tables}
+Extract the content of tables as well.
+@item @strong{Commit distance}
+TODO.
 @item @strong{Generated schema}
-      This specifies the schema to be used when extracting. If you select Same, the same schema as the source database is used. If you select None, no schema is generated. Specifying anything else will replace the source schema with the one entered here.
+This specifies the schema to be used when extracting. If you select Same, the same schema as the source database is used. If you select None, no schema is generated. Specifying anything else will replace the source schema with the one entered here.
 
 @end table
 
@@ -48,13 +50,13 @@ If you are searching you also need to indicate what you are searching for in the
 
 @table @asis
 @item @strong{Containing any words}
-      The object should contain at least one of the words in the line editor.
+The object should contain at least one of the words in the line editor.
 @item @strong{Containing all words}
-      The object should contain all of the words in the line editor. 	
+The object should contain all of the words in the line editor.
 @item @strong{Exact match}
-      The object should contain the exact string as in the line editor include whitespaces. 	
+The object should contain the exact string as in the line editor include whitespaces.
 @item @strong{RegExp}
-      The object should contain at least one of the words in the line editor. The dialect of RegExp:s is the ones in the version of Qt that TOra is compiled against. For more information on regular expressions check out @uref{http://doc.trolltech.com/qregexp.html}, if you are using Qt 3.0 or later you have a more advanced form of regular expressions.
+The object should contain at least one of the words in the line editor. The dialect of RegExp:s is the ones in the version of Qt that TOra is compiled against. For more information on regular expressions check out @uref{http://doc.trolltech.com/qregexp.html}, if you are using Qt 3.0 or later you have a more advanced form of regular expressions.
 @end table
 
 The next thing you need to do is to specify which objects you want to extract or compare. If you extract you only need to specify the source, if comparing destination objects are also needed.
