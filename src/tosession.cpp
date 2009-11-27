@@ -346,6 +346,7 @@ static toSQL SQLSessions7(
     "   AND (d.child_number = 0 OR d.child_number IS NULL)\n"
     "   AND a.paddr = e.addr(+)\n"
     "%1 ORDER BY a.Sid",
+    "",
     "0703");
 
 static toSQL SQLSessionsPg(

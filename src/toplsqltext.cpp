@@ -265,7 +265,17 @@ static toSQL SQLReadErrors("toPLSQLEditor:ReadErrors",
                            "   AND NAME = :f2<char[101]>\n"
                            "   AND TYPE = :f3<char[101]>\n"
                            " ORDER BY Attribute, Type, Line",
-                           "Get lines with errors in object (Observe first line 0)");
+                           "Get lines with errors in object (Observe first line 0)",
+                           "1000",
+                           "Oracle");
+static toSQL SQLReadErrors9("toPLSQLEditor:ReadErrors",
+                           "SELECT 'ERROR', Line-1,Text FROM SYS.All_Errors\n"
+                           " WHERE OWNER = :f1<char[101]>\n"
+                           "   AND NAME = :f2<char[101]>\n"
+                           "   AND TYPE = :f3<char[101]>\n"
+                           " ORDER BY Type, Line",
+                           "",
+                           "0900");
 
 int toPLSQLText::ID = 0;
 

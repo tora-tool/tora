@@ -183,7 +183,7 @@ toSQL toSQL::sql(const QString &name)
     sqlMap::iterator i = Definitions->find(name);
     if (i != Definitions->end())
         return name;
-    throw qApp->translate("toSQL", "Tried to get unknown SQL (%1)").arg(QString(name));
+    throw qApp->translate("toSQL", "01: Tried to get unknown SQL (%1)").arg(QString(name));
 }
 
 QString toSQL::string(const QString &name,
@@ -224,7 +224,7 @@ QString toSQL::string(const QString &name,
         while (!quit);
     }
 
-    throw qApp->translate("toSQL", "Tried to get unknown SQL (%1)").arg(QString(name));
+    throw qApp->translate("toSQL", "02: Tried to get unknown SQL (%1)").arg(QString(name));
 }
 
 bool toSQL::saveSQL(const QString &filename, bool all)
@@ -402,5 +402,5 @@ QString toSQL::description(const QString &name)
     sqlMap::iterator i = Definitions->find(name);
     if (i != Definitions->end())
         return (*i).second.Description;
-    throw qApp->translate("toSQL", "Tried to get unknown SQL (%1)").arg(QString(name));
+    throw qApp->translate("toSQL", "03: Tried to get unknown SQL (%1)").arg(QString(name));
 }
