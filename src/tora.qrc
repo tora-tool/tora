@@ -20,7 +20,7 @@
         <file>help/editors.html</file>
         <file>help/extendingtora.html</file>
         <file>help/externalapi.html</file>
-        <file>help/fonts.html</file>
+        <file>help/editor.html</file>
         <file>help/globalsettings.html</file>
         <file>help/help.html</file>
         <file>help/history.html</file>
@@ -41,7 +41,7 @@
         <file>help/images/difference.png</file>
         <file>help/images/editmenu.png</file>
         <file>help/images/filemenu.png</file>
-        <file>help/images/fonts.png</file>
+        <file>help/images/editor.png</file>
         <file>help/images/getparam.png</file>
         <file>help/images/help.png</file>
         <file>help/images/helpmenu.png</file>
@@ -49,6 +49,7 @@
         <file>help/images/largelogo.png</file>
         <file>help/images/lists.png</file>
         <file>help/images/memo.png</file>
+        <file>help/images/mysql.png</file>
         <file>help/images/newconnection.png</file>
         <file>help/images/oracle.png</file>
         <file>help/images/output.png</file>

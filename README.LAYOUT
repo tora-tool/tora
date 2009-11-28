@@ -19,6 +19,7 @@ tora/
    +--rpm/
    |
    +--src/
+   |    +--help/ <--- symlinks to doc/help
    |    +--i18n/
    |    +--icons/
    |    +--templates/
@@ -50,6 +51,7 @@ debian:
 
 doc:
 	- for documentation
+          note that there is a symlink to this folder from src/help
 
 ext:
 	- directory for external libraries which are part of the 
