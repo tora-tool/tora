@@ -115,6 +115,9 @@ class toWorksheet : public toToolWidget
 
     int RefreshSeconds;
     QTimer RefreshTimer;
+    
+    //! Flag to handle continue-on-error for executeAllAct
+    bool m_batchContinue;
 
     toEditableMenu *SavedMenu;
     toEditableMenu *InsertSavedMenu;

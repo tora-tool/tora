@@ -1015,6 +1015,10 @@ void toWorksheet::query(const QString &str, execType type)
             catch (const QString &exc)
             {
                 addLog(QueryString, exc, true);
+                if (QMessageBox::question(this, tr("Direct Execute Error"),
+                                      exc + "\n\n" + tr("Stop execution ('No' to continue)?"),
+                                      QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
+                    m_batchContinue = false;
             }
         }
         else
@@ -1415,6 +1419,7 @@ void toWorksheet::executeAll()
     int line;
     int pos;
     bool ignore = true;
+    m_batchContinue = true;
     do
     {
         line = tokens.line();
@@ -1446,7 +1451,7 @@ void toWorksheet::executeAll()
             }
         }
     }
-    while (tokens.line() < Editor->lines());
+    while (m_batchContinue && (tokens.line() < Editor->lines()));
 
     Editor->setSelection(cline, cpos, tokens.line(), tokens.offset());
 }
