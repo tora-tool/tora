@@ -428,6 +428,13 @@ QString toTranslateMayby(const QString &context, const QString &text);
  */
 int countChars(const QString &source, const char find);
 
+/**
+ * Get extensions for file save dialog from editor configuration
+ *
+ * @return Extensions.
+ */
+QString GetExtensions(void);
+
 /** Popup toolbutton that works like I think they should under Qt 3.0 as well.
  * this means they will pop up a tool menu when you click on the button as well.
  */

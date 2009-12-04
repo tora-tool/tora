@@ -730,11 +730,11 @@ bool toCompareLists(QStringList &lsta, QStringList &lstb, int len)
     return true;
 }
 
-static QString GetExtensions(void)
+QString GetExtensions(void)
 {
     static QRegExp repl(QString::fromLatin1("\\s*,\\s*"));
     QString t(toConfigurationSingle::Instance().extensions());
-    t.replace(repl, QString::fromLatin1("\n"));
+    t.replace(repl, QString::fromLatin1(";;")); // multiple filters are separated by double semicolons
     return t;
 }
 

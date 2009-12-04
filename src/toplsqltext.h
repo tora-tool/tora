@@ -46,10 +46,11 @@
 #include "totool.h"
 #include "tohighlightedtext.h"
 #include "tosqlparse.h"
+#include "toplsqleditor.h"
 
 class toTreeWidgetItem;
 class toTreeWidget;
-
+class toPLSQLEditor;
 
 /*! \brief An editor widget for PL/SQL Editor.
 */
@@ -62,8 +63,21 @@ class toPLSQLText : public toHighlightedText
 
     static int ID;
 
+    // Reimplement this in order to handle saving of
+    // package specification and body in one file
+    virtual bool editSave(bool askfile);
+    // Pointer to a parent PLSQLEditor tool.
+    // This is later used when saving one part of package (spec or body) to
+    // find another part and save it as well (if set like that in preferences).
+    toPLSQLEditor *Editor;
+
     public:
         toPLSQLText(QWidget *parent = 0);
+
+        void setEditor(toPLSQLEditor * pEditor)
+        {
+            Editor = pEditor;
+        }
 
         enum CompilationType {Production,
                             Warning};

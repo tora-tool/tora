@@ -46,6 +46,7 @@
 #include "totool.h"
 #include "tohighlightedtext.h"
 #include "tosqlparse.h"
+#include "toplsqltext.h"
 
 class QMdiSubWindow;
 class QTreeView;
@@ -54,7 +55,7 @@ class toConnection;
 class toPLSQLWidget;
 class toTreeWidget;
 class toTreeWidgetItem;
-
+class toPLSQLText;
 
 /*! \brief Advanced PL/SQL Editor. It's based on
 Debugger code. But it can compile PL/SQL unit in all cases.
@@ -115,6 +116,7 @@ public:
 
     toPLSQLWidget *currentEditor(void);
     QString currentSchema(void);
+    toPLSQLText *getAnotherPart(QString &pSchema, QString &pObject, QString &pType);
 
 public slots:
     void compile(void);

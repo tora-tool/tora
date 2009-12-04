@@ -40,6 +40,8 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include <QSettings>
+#include <QFileInfo>
+#include <QDir>
 
 #include "utils.h"
 #include "toconnection.h"
@@ -568,3 +570,73 @@ void toPLSQLWidget::changeContent(toTreeWidgetItem *ci)
         ci->setOpen(true);
 #endif
 }
+
+/* All plsql edit widgets are inherited from toMarkedText which does implement
+   save feature. We need to overload it here in order to handle saving of
+   package specification and body into one file.
+*/
+bool toPLSQLText::editSave(bool askfile) {
+
+    // Only packages should be handled differently, for all other types
+    // call original version of save function
+    // TODO: types as well?
+    if ((Type != "PACKAGE") && (Type != "PACKAGE BODY"))
+        return toMarkedText::editSave(askfile);
+
+    QFileInfo file(filename());
+    QString fn = filename();
+
+    if (askfile || fn.isEmpty()) {
+        // get list of default extensions
+        QString t;
+        t = GetExtensions();
+        // append extensions for package spec+body
+        // TODO: make this extension configurable
+        t.append(";;Spec & Body (*.pls)");
+        fn = toSaveFilename(file.dir().path(), t, this);
+    }
+
+    if (!fn.isEmpty())
+    {
+        if (fn.endsWith(".pls")) {
+            // if .pls was chosen - both spec and body must be saved in one file
+
+            // find another part of package
+            toPLSQLText * other_part = (Editor->getAnotherPart(Schema, Object, Type));
+
+            if (other_part == NULL) {
+                // other part of package could not be found. Panic!
+                printf("Other part of package is unknown!!!\n");
+                return false;
+            }
+
+            QString create_statement("create or replace ");
+            // save specification first
+            if (Type == "PACKAGE") {
+                if (!toWriteFile(fn, create_statement + text() + "\n/\n" +
+                                     create_statement + other_part->text() + "\n/\n"))
+                    return false;
+            } else {
+                if (!toWriteFile(fn, create_statement + other_part->text() + "\n/\n" +
+                                     create_statement + text() + "\n/\n"))
+                    return false;
+            }
+            toMainWidget()->addRecentFile(fn);
+            setFilename(fn);
+            other_part->setFilename(fn);
+            setModified(false);
+            other_part->setModified(false);
+            emit fileSaved(fn);
+            emit other_part->fileSaved(fn);
+            return true;
+        } else {
+            // if something else (not .pls) was chosen - then default
+            // functionality (save only current tab) must be performed
+            // set chosen file
+            setFilename(fn);
+            // and call default save functionality without choosing a file again
+            return toMarkedText::editSave(false);
+        }
+    }
+    return false;
+} // editSave

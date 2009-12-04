@@ -156,6 +156,8 @@ bool toPLSQLEditor::viewSource(const QString &schema, const QString &name, const
         {
             editor->editor()->getCursorPosition(&row, &col);
         }
+        // set pointer to this PLSQLEditor to be used when saving packages/types
+        editor->editor()->setEditor(this);
         if (editor->editor()->lines() <= 1)
         {
             editor->editor()->setData(schema, type, name);
@@ -557,3 +559,32 @@ void toPLSQLEditor::closeEditor(toPLSQLWidget* &editor)
             newSheet();
     }
 }
+
+/* Purpose: should find and return object containing another part of package.
+   For example if specification of package A is given as parameter it should
+   find toPLSQLText object containing body of the same package.
+*/
+toPLSQLText * toPLSQLEditor::getAnotherPart(QString &pSchema, QString &pObject, QString &pType)
+{
+    QString other_part_type;
+    toPLSQLText * ret = NULL;
+
+    if (pType == "PACKAGE")
+        other_part_type = "PACKAGE BODY";
+    else
+        other_part_type = "PACKAGE";
+
+    for (int i = 0; i < Editors->count(); i++)
+    {
+        toPLSQLWidget *te = dynamic_cast<toPLSQLWidget *>(Editors->widget(i));
+        if ((te->editor()->schema() == pSchema) &&
+            (te->editor()->object() == pObject) &&
+            (te->editor()->type()   == other_part_type))
+        {
+            ret = te->editor();
+            break;
+        }
+    }
+
+    return ret;
+} // getAnotherPart
