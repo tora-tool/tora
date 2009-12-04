@@ -2,39 +2,39 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2009 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries. 
- * 
+ *      these libraries.
+ *
  *      You may link this product with any GPL'd Qt library.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -116,8 +116,8 @@ QString toPLSQLEditor::editorName(const QString &schema, const QString &object, 
 QString toPLSQLEditor::editorName(toPLSQLWidget *text)
 {
     return editorName(text->editor()->schema(),
-                       text->editor()->object(),
-                       text->editor()->type());
+                      text->editor()->object(),
+                      text->editor()->type());
 }
 
 QString toPLSQLEditor::currentSchema(void)
@@ -126,14 +126,14 @@ QString toPLSQLEditor::currentSchema(void)
 }
 
 bool toPLSQLEditor::viewSource(const QString &schema, const QString &name, const QString &type,
-                         int line, bool setCurrent)
+                               int line, bool setCurrent)
 {
     try
     {
         toPLSQLWidget *editor = NULL;
         int row = line - 1;
         int col = 0;
-        for (int i = 0;i < Editors->count();i++)
+        for (int i = 0; i < Editors->count(); i++)
         {
             QString tabname = editorName(schema, name, type);
             toPLSQLWidget *te = dynamic_cast<toPLSQLWidget *>(Editors->widget(i));
@@ -185,7 +185,7 @@ bool toPLSQLEditor::viewSource(const QString &schema, const QString &name, const
 }
 
 toPLSQLEditor::toPLSQLEditor(QWidget *main, toConnection &connection)
-    : toToolWidget(PLSQLEditorTool, "plsqleditor.html", main, connection, "toPLSQLEditor")
+        : toToolWidget(PLSQLEditorTool, "plsqleditor.html", main, connection, "toPLSQLEditor")
 {
     createActions();
     QToolBar *toolbar = toAllocBar(this, tr("PLSQLEditor"));
@@ -223,7 +223,7 @@ toPLSQLEditor::toPLSQLEditor(QWidget *main, toConnection &connection)
     CodeModel = new toCodeModel(Objects);
     Objects->setModel(CodeModel);
     QString selected = Schema->currentText();
-    if(!selected.isEmpty())
+    if (!selected.isEmpty())
         CodeModel->refresh(connection, selected);
     // even better (?) for reopening the tabs
 //     connect(Objects->selectionModel(),
@@ -231,7 +231,7 @@ toPLSQLEditor::toPLSQLEditor(QWidget *main, toConnection &connection)
 //             this,
 //             SLOT(changePackage(const QModelIndex &, const QModelIndex &)));
     connect(Objects, SIGNAL(doubleClicked(const QModelIndex &)),
-             this, SLOT(changePackage(const QModelIndex &)));
+            this, SLOT(changePackage(const QModelIndex &)));
 
     splitter->addWidget(Objects);
 
@@ -299,8 +299,8 @@ void toPLSQLEditor::createActions(void)
     compileAct->setShortcut(Qt::Key_F9);
 
     compileWarnAct = new QAction(QIcon(QPixmap(const_cast<const char**>(compilewarning_xpm))),
-                             tr("&Compile with Warnings"),
-                             this);
+                                 tr("&Compile with Warnings"),
+                                 this);
     connect(compileWarnAct,
             SIGNAL(triggered()),
             this,
@@ -368,12 +368,12 @@ void toPLSQLEditor::refresh(void)
             Schema->clear();
             toQList users = toQuery::readQuery(connection(),
                                                toSQL::string(toSQL::TOSQL_USERLIST, connection()));
-            for (toQList::iterator i = users.begin();i != users.end();i++)
+            for (toQList::iterator i = users.begin(); i != users.end(); i++)
                 Schema->addItem(*i);
         }
         if (!selected.isEmpty())
         {
-            for (int i = 0;i < Schema->count();i++)
+            for (int i = 0; i < Schema->count(); i++)
             {
                 if (Schema->itemText(i) == selected)
                 {
@@ -426,7 +426,7 @@ void toPLSQLEditor::changePackage(const QModelIndex &current, const QModelIndex 
     if (item && item->parent())
     {
         QString ctype = item->parent()->display();
-        if(ctype.isEmpty() || ctype == "Code")
+        if (ctype.isEmpty() || ctype == "Code")
             return;
         ctype = ctype.toUpper();
 
@@ -578,8 +578,8 @@ toPLSQLText * toPLSQLEditor::getAnotherPart(QString &pSchema, QString &pObject, 
     {
         toPLSQLWidget *te = dynamic_cast<toPLSQLWidget *>(Editors->widget(i));
         if ((te->editor()->schema() == pSchema) &&
-            (te->editor()->object() == pObject) &&
-            (te->editor()->type()   == other_part_type))
+                (te->editor()->object() == pObject) &&
+                (te->editor()->type()   == other_part_type))
         {
             ret = te->editor();
             break;

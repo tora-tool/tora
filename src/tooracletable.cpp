@@ -34,28 +34,41 @@ QString toOracleExtract::createTable(std::list<QString> &destin) const
     // Part I - go through given rows and extract table information into local structures
     std::list<QString>::iterator i = destin.begin();
 
-    while (i != destin.end()) {
+    while (i != destin.end())
+    {
         tmp = toExtract::partDescribe(*i, 3);
-        if (tmp.isNull()) {
+        if (tmp.isNull())
+        {
             // part 3 (starting from 0) is null only for table name description
-            if (!table_name.isNull()) {
+            if (!table_name.isNull())
+            {
                 // if table_name already filled in - error in data or this code
                 throw qApp->translate("toExtract", "Too many table definitions");
             }
             schema_name = toExtract::partDescribe(*i, 0);
             tmp         = toExtract::partDescribe(*i, 1);
-            if (tmp != "TABLE") {
+            if (tmp != "TABLE")
+            {
                 throw qApp->translate("toExtract", "Unkown string %1").arg(*i);
             }
             table_name  = toExtract::partDescribe(*i, 2);
-        } else {
-            if (tmp == "COLUMN") {
-            } else if (tmp == "TABLESPACE") {
+        }
+        else
+        {
+            if (tmp == "COLUMN")
+            {
+            }
+            else if (tmp == "TABLESPACE")
+            {
                 tablespace = toExtract::partDescribe(*i, 4);
-            } else if (tmp == "COMMENT" ) {
+            }
+            else if (tmp == "COMMENT" )
+            {
                 end_statements += ("comment on table " + table_name +
                                    " is '" + toExtract::partDescribe(*i, 4) + "';\n");
-            } else {
+            }
+            else
+            {
                 throw qApp->translate("toExtract", "Unkown string %1").arg(*i);
             }
         } // if context.isNull
@@ -69,7 +82,8 @@ QString toOracleExtract::createTable(std::list<QString> &destin) const
     tmp = "create table " + schema_name + "." + table_name + "(";
 
     // table body - loop through columns
-    for (std::list<toExtract::columnInfo>::iterator i = table_columns.begin(); i != table_columns.end(); i++) {
+    for (std::list<toExtract::columnInfo>::iterator i = table_columns.begin(); i != table_columns.end(); i++)
+    {
         if (!first_column)
             tmp += ",";
         else
@@ -109,25 +123,31 @@ bool propertyMentioned(std::list<QString> &list,
                        const QString property1,
                        const QString property2)
 {
-  QStringList split;
-  bool bProp1;
+    QStringList split;
+    bool bProp1;
 
-  std::list<QString>::iterator i = list.begin();
-  while (i != list.end()) {
-    split = (*i).split("\01");
-    bProp1 = false;
-    for (int j = 0; j < split.count(); j++) {
-        if (!bProp1) {
-            if (split[j] == property1) {
-                bProp1 = true;
+    std::list<QString>::iterator i = list.begin();
+    while (i != list.end())
+    {
+        split = (*i).split("\01");
+        bProp1 = false;
+        for (int j = 0; j < split.count(); j++)
+        {
+            if (!bProp1)
+            {
+                if (split[j] == property1)
+                {
+                    bProp1 = true;
+                }
             }
-        } else if (split[j] == property2) {
-            return true;
+            else if (split[j] == property2)
+            {
+                return true;
+            }
         }
+        i++;
     }
-    i++;
-  }
-  return false;
+    return false;
 } // columnMentioned
 
 /***********************************************************************************
@@ -146,12 +166,13 @@ bool defaultValueRemoved(std::list<QString> &list,
         return false;
 
     std::list<QString>::iterator i = list.begin();
-    while (i != list.end()) {
+    while (i != list.end())
+    {
         split = (*i).split("\01");
         if (split.count() == 6)
             if ((split[3] == "COLUMN") &&
-                (split[4] == column_name) &&
-                (split[5].indexOf(" default '", 0, Qt::CaseInsensitive) > -1))
+                    (split[4] == column_name) &&
+                    (split[5].indexOf(" default '", 0, Qt::CaseInsensitive) > -1))
                 return true; // yes, default value WAS removed
         i++;
     }
@@ -179,11 +200,14 @@ QString toOracleExtract::alterTable(std::list<QString> &source,
     bool add_modify_column = false;
 
     // drop statements
-    for (std::list<QString>::iterator i = drop.begin(); i != drop.end(); i++) {
-printf("drop>>%s\n", (*i).toAscii().constData());
+    for (std::list<QString>::iterator i = drop.begin(); i != drop.end(); i++)
+    {
+        printf("drop>>%s\n", (*i).toAscii().constData());
         table_name = toExtract::partDescribe(*i, 2);
-        if (!SameContext(*i, context)) {
-            if (context != "") {
+        if (!SameContext(*i, context))
+        {
+            if (context != "")
+            {
                 if (column_name != "")
                     // check if property is not mentioned in create list,
                     // if it is, this is not dropping of column but rather renaming
@@ -199,34 +223,50 @@ printf("drop>>%s\n", (*i).toAscii().constData());
         for (int j = 0; j < 3; j++)
             toShift(row);
         tmp = toShift(row);
-        if (tmp == "COLUMN") {
+        if (tmp == "COLUMN")
+        {
             column_name = toShift(row);
             tmp = toShift(row);
-            if (tmp.isNull()) {
+            if (tmp.isNull())
+            {
                 // nothing to be done here, column name was defined
-            } else if (tmp == "ORDER") {
+            }
+            else if (tmp == "ORDER")
+            {
                 // nothing to do with ORDER
-            } else if (tmp == "COMMENT") {
+            }
+            else if (tmp == "COMMENT")
+            {
                 if (propertyMentioned(destin, "COLUMN", column_name)) // if column is not dropped...
                     if (!propertyMentioned(destin, column_name, "COMMENT")) // ...and comment is not changed
                         // then drop comment
                         statements += ("comment on column " + table_name + "." + column_name + " is '';\n");
-            } else if (tmp == "EXTRA") {
+            }
+            else if (tmp == "EXTRA")
+            {
                 if (propertyMentioned(destin, "COLUMN", column_name))
                     // if column does not have to be dropped - just remove "not null" flag
                     statements += ("alter table " + table_name + " modify (" + column_name + " null);\n");
-            } else {
+            }
+            else
+            {
                 // nothing to do with column type
             }
-        } else if (tmp == "PARAMETERS") {
+        }
+        else if (tmp == "PARAMETERS")
+        {
             // TODO Check if anything should/could be done with parameters being dropped
             tmp = toExtract::partDescribe(*i, 4);
             printf("Dropping parameters is NOT currently supported (%s).\n", tmp.toAscii().constData());
-        } else if (tmp == "STORAGE") {
+        }
+        else if (tmp == "STORAGE")
+        {
             // TODO Check if anything should/could be done with sotrage attributes being dropped
             tmp = toExtract::partDescribe(*i, 4);
             printf("Dropping storage attributes is NOT currently supported (%s).\n", tmp.toAscii().constData());
-        } else {
+        }
+        else
+        {
             throw qApp->translate("toExtract", "Unkown string %1 for drop statements").arg(tmp);
         }
     }
@@ -237,19 +277,26 @@ printf("drop>>%s\n", (*i).toAscii().constData());
     // add/modify/rename statements
     column_name = "";
     context = "";
-    for (std::list<QString>::iterator i = create.begin();i != create.end();i++) {
-printf("add>>%s\n", (*i).toAscii().constData());
+    for (std::list<QString>::iterator i = create.begin(); i != create.end(); i++)
+    {
+        printf("add>>%s\n", (*i).toAscii().constData());
 
         table_name = toExtract::partDescribe(*i, 2);
         tmp = toExtract::partDescribe(*i, 5);
-        if (!SameContext(*i, context)) {
-            if (context != "") {
-                if (add_modify_column) {
-                    if (propertyMentioned(source, "COLUMN", column_name)) {
+        if (!SameContext(*i, context))
+        {
+            if (context != "")
+            {
+                if (add_modify_column)
+                {
+                    if (propertyMentioned(source, "COLUMN", column_name))
+                    {
                         operation = "modify";
                         if (defaultValueRemoved(drop, column_name, column_type))
                             column_type += " default null"; // Note! It is not possible to remove default value in Oracle!!!
-                    } else {
+                    }
+                    else
+                    {
                         operation = "add";
                     }
                     statements += ("alter table " + table_name + " " + operation +
@@ -267,38 +314,58 @@ printf("add>>%s\n", (*i).toAscii().constData());
         for (int j = 0; j < 3; j++)
             toShift(row);
         tmp = toShift(row);
-        if (tmp == "COLUMN") {
+        if (tmp == "COLUMN")
+        {
             column_name = toShift(row);
             tmp = toShift(row);  // value AFTER column name
-            if (tmp.isNull()) {
+            if (tmp.isNull())
+            {
                 column_name = tmp1;
-            } else if (tmp == "RENAME") {
+            }
+            else if (tmp == "RENAME")
+            {
                 tmp = toShift(row);
                 statements += ("alter table " + table_name + " rename column " + column_name + " to " + tmp + ";\n");
-            } else if (tmp == "ORDER") {
+            }
+            else if (tmp == "ORDER")
+            {
                 // nothing to do with ORDER
-            } else if (tmp == "COMMENT") {
+            }
+            else if (tmp == "COMMENT")
+            {
                 tmp = toShift(row);
                 end_statements += ("comment on column " + table_name + "." + column_name + " is '" + tmp + "';\n");
-            } else if (tmp == "EXTRA") {
+            }
+            else if (tmp == "EXTRA")
+            {
                 not_null = " NOT NULL"; // set "not null" flag on column
                 add_modify_column = true;
-            } else {
+            }
+            else
+            {
                 column_type = tmp;
                 add_modify_column = true;
             }
-        } else if (tmp == "RENAME") { // rename table
+        }
+        else if (tmp == "RENAME")   // rename table
+        {
             new_table_name = toShift(row);
-        } else {
+        }
+        else
+        {
             throw qApp->translate("toExtract", "Unkown string %1 for alter/add statements.").arg(tmp);
         }
     }
-    if (add_modify_column) {
-        if (propertyMentioned(source, "COLUMN", column_name)) {
+    if (add_modify_column)
+    {
+        if (propertyMentioned(source, "COLUMN", column_name))
+        {
             operation = "modify";
             if (defaultValueRemoved(drop, column_name, column_type))
                 column_type += " default null"; // Note! It is not possible to remove default value in Oracle!!!
-        } else {
+        }
+        else
+        {
             operation = "add";
         }
         statements += ("alter table " + table_name + " " + operation +
@@ -316,21 +383,26 @@ printf("add>>%s\n", (*i).toAscii().constData());
    It will call either createTable either alterTable
 ************************************************************************************/
 QString toOracleExtract::migrateTable(toExtract &ext, std::list<QString> &source,
-                                        std::list<QString> &destin) const
+                                      std::list<QString> &destin) const
 {
     printf("source=\n");
-    for (std::list<QString>::iterator i = source.begin(); i != source.end(); i++) {
+    for (std::list<QString>::iterator i = source.begin(); i != source.end(); i++)
+    {
         printf("%s\n", i->toAscii().constData());
     }
     printf("destin=\n");
-    for (std::list<QString>::iterator i = destin.begin();i != destin.end();i++) {
+    for (std::list<QString>::iterator i = destin.begin(); i != destin.end(); i++)
+    {
         printf("%s\n", i->toAscii().constData());
     }
 
-    if (source.empty()) {
+    if (source.empty())
+    {
         printf("New table has to be created.\n");
         return createTable(destin);
-    } else {
+    }
+    else
+    {
         printf("Existing table is to be modified.\n");
         return alterTable(source, destin);
     }

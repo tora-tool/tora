@@ -2,39 +2,39 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2009 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries. 
- * 
+ *      these libraries.
+ *
  *      You may link this product with any GPL'd Qt library.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -134,7 +134,7 @@ QString toSQLString(toConnection &conn, const QString &address)
 
     toQList vals = toQuery::readQuery(conn, SQLTextPiece, address);
 
-    for (toQList::iterator i = vals.begin();i != vals.end();i++)
+    for (toQList::iterator i = vals.begin(); i != vals.end(); i++)
     {
         sql.append(*i);
     }
@@ -175,7 +175,7 @@ QString toSQLStripSpecifier(const QString &sql)
 {
     QString ret;
     char inString = 0;
-    for (int i = 0;i < sql.length();i++)
+    for (int i = 0; i < sql.length(); i++)
     {
         QChar rc = sql.at(i);
         char c = rc.toLatin1();
@@ -201,7 +201,7 @@ QString toSQLStripSpecifier(const QString &sql)
                 break;
             case ':':
                 ret += rc;
-                for (i++;i < sql.length();i++)
+                for (i++; i < sql.length(); i++)
                 {
                     rc = sql.at(i);
                     c = rc.toLatin1();
@@ -212,7 +212,7 @@ QString toSQLStripSpecifier(const QString &sql)
                 if (c == '<')
                 {
                     ret += QString::fromLatin1(" ");
-                    for (i++;i < sql.length();i++)
+                    for (i++; i < sql.length(); i++)
                     {
                         rc = sql.at(i);
                         c = rc.toLatin1();
@@ -238,7 +238,7 @@ QString toSQLStripBind(const QString &sql)
 {
     QString ret;
     char inString = 0;
-    for (int i = 0;i < sql.length();i++)
+    for (int i = 0; i < sql.length(); i++)
     {
         QChar rc = sql.at(i);
         char  c  = rc.toLatin1(); // current
@@ -277,7 +277,7 @@ QString toSQLStripBind(const QString &sql)
                 }
 
                 ret += QString::fromLatin1("''");
-                for (i++;i < sql.length();i++)
+                for (i++; i < sql.length(); i++)
                 {
                     rc = sql.at(i);
                     c = rc.toLatin1();
@@ -286,7 +286,7 @@ QString toSQLStripBind(const QString &sql)
                 }
                 if (c == '<')
                 {
-                    for (i++;i < sql.length();i++)
+                    for (i++; i < sql.length(); i++)
                     {
                         rc = sql.at(i);
                         c = rc.toLatin1();
@@ -319,7 +319,7 @@ QString toSQLToAddress(toConnection &conn, const QString &sql)
 
     toQList vals = toQuery::readQuery(conn, SQLAddress, search.left(CHUNK_SIZE));
 
-    for (toQList::iterator i = vals.begin();i != vals.end();i++)
+    for (toQList::iterator i = vals.begin(); i != vals.end(); i++)
     {
         if (search == toSQLString(conn, *i))
             return *i;
@@ -430,7 +430,7 @@ QString toGetSessionType(void)
     // This is probably really slow, but who cares.
 
     QStringList keys = QStyleFactory::keys();
-    for (int i = 0;i < keys.size();i++)
+    for (int i = 0; i < keys.size(); i++)
     {
         QString name = keys[i];
         QStyle *t = QStyleFactory::create(name);
@@ -549,13 +549,13 @@ int toSizeDecode(const QString &str)
 // QString toPluginPath(void)
 // {
 //     QString str;
-// 
+//
 // #ifdef Q_OS_WIN32
-// 
+//
 //     CRegistry registry;
 //     DWORD siz = 1024;
 //     char buffer[1024];
-// 
+//
 //     try
 //     {
 //         if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
@@ -578,7 +578,7 @@ int toSizeDecode(const QString &str)
 //     }
 //     catch (...)
 //         {}
-// 
+//
 // #elif defined( Q_OS_MACX )
 //     {
 //         // MacOS
@@ -613,11 +613,11 @@ int toSizeDecode(const QString &str)
 //             //     QString( "Unexpected: unable to get main bundle") );
 //         }
 //     } // MacOS
-// 
+//
 // #else
 //     str = toConfigurationSingle::Instance().pluginDir();
 // #endif
-// 
+//
 //     return str;
 // }
 
@@ -637,7 +637,7 @@ QByteArray toReadFileB(const QString &filename)
     QString expanded = toExpandFile(filename);
     // for some reason qrc:/ urls fail with QFile but are required for
     // QTextBrowser
-    if(expanded.startsWith("qrc"))
+    if (expanded.startsWith("qrc"))
         expanded = expanded.right(expanded.length() - 3);
 
     QFile file(expanded);
@@ -724,7 +724,7 @@ bool toCompareLists(QStringList &lsta, QStringList &lstb, int len)
 {
     if (lsta.count() < len || lstb.count() < len)
         return false;
-    for (int i = 0;i < len;i++)
+    for (int i = 0; i < len; i++)
         if (lsta[i] != lstb[i])
             return false;
     return true;
@@ -926,7 +926,7 @@ toBusy::~toBusy()
 void toReadableColumn(QString &name)
 {
     bool inWord = false;
-    for (int i = 0;i < name.length();i++)
+    for (int i = 0; i < name.length(); i++)
     {
         if (name.at(i) == '_')
         {
@@ -1064,7 +1064,7 @@ bool toCheckModal(QWidget *widget)
 }
 
 // static bool IndicateEmpty = false;
-// 
+//
 // void toUpdateIndicateEmpty(void)
 // {
 //     IndicateEmpty = toConfigurationSingle::Instance().indicateEmpty();
@@ -1134,7 +1134,7 @@ QString toObfuscate(const QString &str)
     QString ret = "\002";
 
     char buf[100]; // Just to be on the safe side
-    for (int i = 0;i < arr.size();i++)
+    for (int i = 0; i < arr.size(); i++)
     {
         sprintf(buf, "%02x", ((unsigned int)arr.at(i)) % 0xff);
         ret += buf;
@@ -1151,7 +1151,7 @@ QString toUnobfuscate(const QString &str)
         return str;
 
     QByteArray arr;
-    for (int i = 1;i < str.length();i += 2)
+    for (int i = 1; i < str.length(); i += 2)
 // qt4        arr.at(i / 2) = str.mid(i, 2).toInt(0, 16);
         arr[i / 2] = str.mid(i, 2).toInt(0, 16);
     if (str.at(0) == '\002')

@@ -2,39 +2,39 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2009 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries. 
- * 
+ *      these libraries.
+ *
  *      You may link this product with any GPL'd Qt library.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -81,7 +81,7 @@ TypeMap[] = { { "FUNCTION", "Fc", true , true },    // Must be first in list
 static toTreeWidgetItem *toLastItem(toTreeWidgetItem *parent)
 {
     toTreeWidgetItem *lastItem = NULL;
-    for (toTreeWidgetItem *item = parent->firstChild();item;item = item->nextSibling())
+    for (toTreeWidgetItem *item = parent->firstChild(); item; item = item->nextSibling())
         lastItem = item;
     return lastItem;
 }
@@ -113,7 +113,7 @@ static bool FindKeyword(toSQLParse::statement &statements, bool onlyNames, bool 
             name = statements.String.toUpper();
 
             int j;
-            for (j = 0;TypeMap[j].Type && TypeMap[j].Type != name;j++)
+            for (j = 0; TypeMap[j].Type && TypeMap[j].Type != name; j++)
                 ;
             if (TypeMap[j].Type)
                 name = TypeMap[j].Description;
@@ -138,7 +138,7 @@ static bool FindKeyword(toSQLParse::statement &statements, bool onlyNames, bool 
         else
             name += " body";
     }
-    for (std::list<toSQLParse::statement>::iterator i = statements.subTokens().begin();i != statements.subTokens().end();i++)
+    for (std::list<toSQLParse::statement>::iterator i = statements.subTokens().begin(); i != statements.subTokens().end(); i++)
     {
         bool ret = FindKeyword(*i, onlyNames, declaration, line, name);
         if (ret)
@@ -271,18 +271,18 @@ static toSQL SQLReadErrors("toPLSQLEditor:ReadErrors",
                            "1000",
                            "Oracle");
 static toSQL SQLReadErrors9("toPLSQLEditor:ReadErrors",
-                           "SELECT 'ERROR', Line-1,Text FROM SYS.All_Errors\n"
-                           " WHERE OWNER = :f1<char[101]>\n"
-                           "   AND NAME = :f2<char[101]>\n"
-                           "   AND TYPE = :f3<char[101]>\n"
-                           " ORDER BY Type, Line",
-                           "",
-                           "0900");
+                            "SELECT 'ERROR', Line-1,Text FROM SYS.All_Errors\n"
+                            " WHERE OWNER = :f1<char[101]>\n"
+                            "   AND NAME = :f2<char[101]>\n"
+                            "   AND TYPE = :f3<char[101]>\n"
+                            " ORDER BY Type, Line",
+                            "",
+                            "0900");
 
 int toPLSQLText::ID = 0;
 
 toPLSQLText::toPLSQLText(QWidget *parent)
-    : toHighlightedText(parent, QString::number(++ID).toLatin1())
+        : toHighlightedText(parent, QString::number(++ID).toLatin1())
 {
 }
 
@@ -348,12 +348,12 @@ bool toPLSQLText::readData(toConnection &conn/*, toTreeWidget *Stack*/)
 
 void toPLSQLWidget::updateArguments(toSQLParse::statement &statements, toTreeWidgetItem *parent)
 {
-    for (std::list<toSQLParse::statement>::iterator i = statements.subTokens().begin();i != statements.subTokens().end();i++)
+    for (std::list<toSQLParse::statement>::iterator i = statements.subTokens().begin(); i != statements.subTokens().end(); i++)
     {
         if ((*i).Type == toSQLParse::statement::List)
         {
             bool first = true;
-            for (std::list<toSQLParse::statement>::iterator j = (*i).subTokens().begin();j != (*i).subTokens().end();j++)
+            for (std::list<toSQLParse::statement>::iterator j = (*i).subTokens().begin(); j != (*i).subTokens().end(); j++)
             {
                 if ((*j).String == ",")
                     first = true;
@@ -368,8 +368,8 @@ void toPLSQLWidget::updateArguments(toSQLParse::statement &statements, toTreeWid
 }
 
 void toPLSQLWidget::updateContent(toSQLParse::statement &statements,
-                                   toTreeWidgetItem *parent,
-                                   const QString &id)
+                                  toTreeWidgetItem *parent,
+                                  const QString &id)
 {
     toTreeWidgetItem *item = NULL;
     int line;
@@ -382,7 +382,7 @@ void toPLSQLWidget::updateContent(toSQLParse::statement &statements,
         item = new toContentsItem(parent, name, line);
     else
     {
-        for (item = m_contents->firstChild();item;item = item->nextSibling())
+        for (item = m_contents->firstChild(); item; item = item->nextSibling())
             if (item->text(0) == name && item->text(1) == id)
             {
                 item->setText(2, QString::null);
@@ -446,7 +446,7 @@ void toPLSQLWidget::updateContent(toPLSQLText *ed)
 
     m_contents->clear();
 
-    for (std::list<toSQLParse::statement>::iterator i = statements.begin();i != statements.end();i++)
+    for (std::list<toSQLParse::statement>::iterator i = statements.begin(); i != statements.end(); i++)
         updateContent(*i, NULL, ed->objectName());
 }
 
@@ -460,7 +460,7 @@ void toPLSQLText::setData(const QString &schema, const QString &type, const QStr
 }
 
 toPLSQLWidget::toPLSQLWidget(QWidget * parent)
-    : QWidget(parent)
+        : QWidget(parent)
 {
     m_contents = new toTreeWidget(this);
     m_contents->addColumn(tr("Contents"));
@@ -498,9 +498,9 @@ toPLSQLWidget::toPLSQLWidget(QWidget * parent)
     layout()->addWidget(m_contentSplitter);
 
     connect(m_editor,
-            SIGNAL(errorsChanged(const QString &, const QMultiMap<int,QString>&)),
+            SIGNAL(errorsChanged(const QString &, const QMultiMap<int, QString>&)),
             this,
-            SLOT(applyResult(const QString &, const QMultiMap<int,QString>&)));
+            SLOT(applyResult(const QString &, const QMultiMap<int, QString>&)));
     connect(m_result,
             SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
             this,
@@ -526,14 +526,14 @@ toPLSQLWidget::~toPLSQLWidget()
 }
 
 void toPLSQLWidget::applyResult(const QString & type,
-                                 const QMultiMap<int,QString> & values)
+                                const QMultiMap<int, QString> & values)
 {
     QTreeWidgetItem * item = (type == PLSQL_ERROR) ? m_errItem : m_warnItem;
 
     foreach (QTreeWidgetItem * c, item->takeChildren())
-        delete c;
+    delete c;
 
-    QMap<int,QString>::const_iterator i = values.constBegin();
+    QMap<int, QString>::const_iterator i = values.constBegin();
     while (i != values.constEnd())
     {
         QStringList l(i.value());
@@ -575,7 +575,8 @@ void toPLSQLWidget::changeContent(toTreeWidgetItem *ci)
    save feature. We need to overload it here in order to handle saving of
    package specification and body into one file.
 */
-bool toPLSQLText::editSave(bool askfile) {
+bool toPLSQLText::editSave(bool askfile)
+{
 
     // Only packages should be handled differently, for all other types
     // call original version of save function
@@ -586,7 +587,8 @@ bool toPLSQLText::editSave(bool askfile) {
     QFileInfo file(filename());
     QString fn = filename();
 
-    if (askfile || fn.isEmpty()) {
+    if (askfile || fn.isEmpty())
+    {
         // get list of default extensions
         QString t;
         t = GetExtensions();
@@ -598,13 +600,15 @@ bool toPLSQLText::editSave(bool askfile) {
 
     if (!fn.isEmpty())
     {
-        if (fn.endsWith(".pls")) {
+        if (fn.endsWith(".pls"))
+        {
             // if .pls was chosen - both spec and body must be saved in one file
 
             // find another part of package
             toPLSQLText * other_part = (Editor->getAnotherPart(Schema, Object, Type));
 
-            if (other_part == NULL) {
+            if (other_part == NULL)
+            {
                 // other part of package could not be found. Panic!
                 printf("Other part of package is unknown!!!\n");
                 return false;
@@ -612,13 +616,16 @@ bool toPLSQLText::editSave(bool askfile) {
 
             QString create_statement("create or replace ");
             // save specification first
-            if (Type == "PACKAGE") {
+            if (Type == "PACKAGE")
+            {
                 if (!toWriteFile(fn, create_statement + text() + "\n/\n" +
-                                     create_statement + other_part->text() + "\n/\n"))
+                                 create_statement + other_part->text() + "\n/\n"))
                     return false;
-            } else {
+            }
+            else
+            {
                 if (!toWriteFile(fn, create_statement + other_part->text() + "\n/\n" +
-                                     create_statement + text() + "\n/\n"))
+                                 create_statement + text() + "\n/\n"))
                     return false;
             }
             toMainWidget()->addRecentFile(fn);
@@ -629,7 +636,9 @@ bool toPLSQLText::editSave(bool askfile) {
             emit fileSaved(fn);
             emit other_part->fileSaved(fn);
             return true;
-        } else {
+        }
+        else
+        {
             // if something else (not .pls) was chosen - then default
             // functionality (save only current tab) must be performed
             // set chosen file
