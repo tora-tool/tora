@@ -2,39 +2,39 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2009 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries. 
- * 
+ *      these libraries.
+ *
  *      You may link this product with any GPL'd Qt library.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -64,6 +64,7 @@
 #include <QVBoxLayout>
 #include <QSpacerItem>
 #include <QScrollArea>
+#include <QDebug>
 
 static toSQL SQLListTablespaces("toBrowserTable:ListTablespaces",
                                 "SELECT Tablespace_Name FROM sys.DBA_TABLESPACES\n"
@@ -80,32 +81,32 @@ void toBrowserTable::editTable(toConnection &conn, const QString &owner, const Q
     toBrowserTable dialog(conn, owner, table, parent);
     if (dialog.exec())
     {
-/*
-  TS 2009-10-31 Moved this code to done() as this should be performed before actually
-                closing dialog so that in case of error there would be a chance to fix it.
-        std::list<toSQLParse::statement> statements = toSQLParse::parse(dialog.sql(), conn);
-        try
-        {
-            QProgressDialog prog(tr("Performing table changes"),
-                                 tr("Stop"),
-                                 0,
-                                 statements.size(),
-                                 &dialog);
-            prog.setWindowTitle(tr("Performing table changes"));
-            for (std::list<toSQLParse::statement>::iterator i = statements.begin();i != statements.end();i++)
-            {
-                QString sql = toSQLParse::indentStatement(*i, conn);
-                int l = sql.length() - 1;
-                while (l >= 0 && (sql.at(l) == ';' || sql.at(l).isSpace()))
-                    l--;
-                if (l >= 0)
-                    conn.execute(sql.mid(0, l + 1));
-                qApp->processEvents();
-                if (prog.wasCanceled())
-                    throw tr("Canceled ongoing table modification, table might be corrupt");
-            }
-        }
-        TOCATCH;*/
+        /*
+          TS 2009-10-31 Moved this code to done() as this should be performed before actually
+                        closing dialog so that in case of error there would be a chance to fix it.
+                std::list<toSQLParse::statement> statements = toSQLParse::parse(dialog.sql(), conn);
+                try
+                {
+                    QProgressDialog prog(tr("Performing table changes"),
+                                         tr("Stop"),
+                                         0,
+                                         statements.size(),
+                                         &dialog);
+                    prog.setWindowTitle(tr("Performing table changes"));
+                    for (std::list<toSQLParse::statement>::iterator i = statements.begin();i != statements.end();i++)
+                    {
+                        QString sql = toSQLParse::indentStatement(*i, conn);
+                        int l = sql.length() - 1;
+                        while (l >= 0 && (sql.at(l) == ';' || sql.at(l).isSpace()))
+                            l--;
+                        if (l >= 0)
+                            conn.execute(sql.mid(0, l + 1));
+                        qApp->processEvents();
+                        if (prog.wasCanceled())
+                            throw tr("Canceled ongoing table modification, table might be corrupt");
+                    }
+                }
+                TOCATCH;*/
     }
 }
 
@@ -125,7 +126,9 @@ void toBrowserTable::done(int r)
     {
         QDialog::done(r);
         return;
-    } else {
+    }
+    else
+    {
 
         std::list<toSQLParse::statement> statements = toSQLParse::parse(sql(), *cnct);
         try
@@ -136,7 +139,7 @@ void toBrowserTable::done(int r)
                                  statements.size(),
                                  this);
             prog.setWindowTitle(tr("Performing table changes"));
-            for (std::list<toSQLParse::statement>::iterator i = statements.begin();i != statements.end();i++)
+            for (std::list<toSQLParse::statement>::iterator i = statements.begin(); i != statements.end(); i++)
             {
                 QString sql = toSQLParse::indentStatement(*i, *cnct);
                 int l = sql.length() - 1;
@@ -154,12 +157,13 @@ void toBrowserTable::done(int r)
 // above standard error message window.
 // TODO: play around with modal/nonmodal properties to fix this
 //        TOCATCH;
-	catch (const QString &str) {                \
-		QMessageBox::warning(0,
-				qApp->translate("toStatusMessage", "TOra Message"),
-				str
-				);
-	}
+        catch (const QString &str)
+        {
+            QMessageBox::warning(0,
+                                 qApp->translate("toStatusMessage", "TOra Message"),
+                                 str
+                                );
+        }
     }
 } // toBrowserTable::done
 
@@ -205,22 +209,22 @@ toBrowserTable::toBrowserTable(toConnection &conn,
     ColumnGridLayout->addWidget(new QLabel(tr("Not null")), 0, 2);
     ColumnGridLayout->addWidget(new QLabel(tr("Default")), 0, 3);
     ColumnGridLayout->addWidget(new QLabel(tr("Comments")), 0, 4);
-    ColumnGridLayout->addWidget(new QLabel(tr("Extra parameters")), 0, 5);
+//    ColumnGridLayout->addWidget(new QLabel(tr("Extra parameters")), 0, 5);
 
     ColumnGridLayout->setColumnStretch(0, 1);
     ColumnGridLayout->setColumnStretch(1, 1);
     ColumnGridLayout->setColumnStretch(2, 0);
     ColumnGridLayout->setColumnStretch(3, 1);
     ColumnGridLayout->setColumnStretch(4, 1);
-    ColumnGridLayout->setColumnStretch(5, 1);
+//    ColumnGridLayout->setColumnStretch(5, 1);
 
     Extractor.setIndexes(false);
     Extractor.setConstraints(false);
     Extractor.setPrompt(false);
     Extractor.setHeading(false);
 
-    connect(ButtonBox, SIGNAL(accepted()), this, SLOT(accept()));
-    connect(ButtonBox, SIGNAL(rejected()), this, SLOT(reject()));
+//    connect(ButtonBox, SIGNAL(accepted()), this, SLOT(accept()));
+//    connect(ButtonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
     UglyFlag = false; // Indicates wether the correct size has been
     // retreived at least once.
@@ -242,6 +246,7 @@ toBrowserTable::toBrowserTable(toConnection &conn,
             Objects.insert(Objects.end(), "TABLE:" + Owner + "." + Table);
 
             OriginalDescription = Extractor.describe(Objects);
+            tablespaceSpecified = false;
             Schema->setEnabled(false);
 
             bool invalid = false;
@@ -252,7 +257,7 @@ toBrowserTable::toBrowserTable(toConnection &conn,
             QString storage;
             QString parallel;
 
-            for (std::list<QString>::iterator i = OriginalDescription.begin();i != OriginalDescription.end();i++)
+            for (std::list<QString>::iterator i = OriginalDescription.begin(); i != OriginalDescription.end(); i++)
             {
                 std::list<QString> row = toExtract::splitDescribe(*i);
                 if (toShift(row) != connection().quote(owner))
@@ -283,9 +288,10 @@ toBrowserTable::toBrowserTable(toConnection &conn,
                     QString t = toShift(row);
                     if (t.startsWith("TABLESPACE"))
                     {
-                        // TODO: currently toOracleExtract::describe is NOT returning name of
+                        // TODO: currently toOracleExtract::describe is NOT always returning name of
                         //       tablespace so this one will never be called. Should be fixed.
                         tablespace = connection().unQuote(t.mid(10).trimmed());
+                        tablespaceSpecified = true;
                     }
                     else
                         declarations += t + " ";
@@ -300,24 +306,24 @@ toBrowserTable::toBrowserTable(toConnection &conn,
             StorageDeclarations->setText(storage.trimmed());
             ParallelDeclarations->setText(parallel.trimmed());
             {
-                for (unsigned int i = 0;i < Columns.size();i++)
+                for (unsigned int i = 0; i < Columns.size(); i++)
                     addColumn();
             }
             std::list<QLineEdit *>::iterator name = ColumnNames.begin();
             std::list<toDatatype *>::iterator datatype = Datatypes.begin();
             std::list<QCheckBox *>::iterator notnull = NotNulls.begin();
             std::list<QLineEdit *>::iterator defaultValue = Defaults.begin();
-            std::list<QLineEdit *>::iterator extra = Extra.begin();
+//            std::list<QLineEdit *>::iterator extra = Extra.begin();
             std::list<QLineEdit *>::iterator comment = Comments.begin();
             for (std::list<toExtract::columnInfo>::iterator column = Columns.begin();
                     name != ColumnNames.end() &&
                     datatype != Datatypes.end() &&
                     notnull != NotNulls.end() &&
                     defaultValue != Defaults.end() &&
-                    extra != Extra.end() &&
+//                    extra != Extra.end() &&
                     comment != Comments.end() &&
                     column != Columns.end();
-                    name++, datatype++, notnull++, defaultValue++, extra++, comment++, column++)
+                    name++, datatype++, notnull++, defaultValue++, /*extra++,*/ comment++, column++)
             {
                 if ((*column).Order == 0)
                     invalid = true;
@@ -326,7 +332,7 @@ toBrowserTable::toBrowserTable(toConnection &conn,
                 if ((*column).bNotNull)
                     (*notnull)->setChecked(true);
                 (*defaultValue)->setText((*column).DefaultValue);
-                (*extra)->setText((*column).Data["EXTRA"]);
+//                (*extra)->setText((*column).Data["EXTRA"]);
                 (*comment)->setText((*column).Comment);
             }
             if (invalid)
@@ -337,7 +343,8 @@ toBrowserTable::toBrowserTable(toConnection &conn,
                 return ;
             }
         }
-        else {
+        else
+        {
             // create new column, add first column and select default tablespace
             addColumn();
             tablespace = getDefaultTablespace(connection()); // TODO: NEW connection??!!
@@ -385,31 +392,72 @@ void toBrowserTable::addParameters(std::list<QString> &migrateTable,
     std::list<toSQLParse::statement>::iterator end = beg;
     while (end != statement.subTokens().end())
     {
-        if (beg != end)
+        if ((beg->String == "BUFFER_POOL") ||
+                (beg->String == "FREELISTS") ||
+                (beg->String == "INITIAL") ||
+                (beg->String == "MAXEXTENTS") ||
+                (beg->String == "MINEXTENTS") ||
+                (beg->String == "NEXT") ||
+                (beg->String == "PCTINCREASE") ||
+                (beg->String == "INITRANS") ||
+                (beg->String == "MAXTRANS") ||
+                (beg->String == "PCTFREE") ||
+                (beg->String == "DEGREE") ||
+                (beg->String == "INSTANCES") ||
+                (beg->String == "ORGANIZATION") ||
+                (beg->String == "TABLESPACE") ||
+                (beg->String == "GROUPS"))
         {
-            if ((*end).String != "=")
+            // process parameters with one argument
+            end++;
+            end++;
+            toExtract::addDescription(migrateTable, ctx, type, Extractor.createFromParse(beg, end));
+            beg = end;
+        }
+        else
+        {
+            if (beg->String == "FREELIST")
             {
-                if ((*end).String == "(")
-                {
-                    do
-                    {
-                        end++;
-                    }
-                    while (end != statement.subTokens().end() && (*end).String != ")");
-                }
+                // process parameters with two arguments
+                end++;
+                end++;
                 end++;
                 toExtract::addDescription(migrateTable, ctx, type, Extractor.createFromParse(beg, end));
                 beg = end;
             }
             else
+            {
+                // process parameters without any arguments
                 end++;
+                toExtract::addDescription(migrateTable, ctx, type, Extractor.createFromParse(beg, end));
+                beg = end;
+            }
         }
-        else
-            end++;
+        /*        if (beg != end)
+                {
+                    if ((*end).String != "=")
+                    {
+                        if ((*end).String == "(")
+                        {
+                            do
+                            {
+                                end++;
+                            }
+                            while (end != statement.subTokens().end() && (*end).String != ")");
+                        }
+                        end++;
+                        toExtract::addDescription(migrateTable, ctx, type, Extractor.createFromParse(beg, end));
+                        beg = end;
+                    }
+                    else
+                        end++;
+                }
+                else
+                    end++;*/
     }
     if (beg != end)
         toExtract::addDescription(migrateTable, ctx, type, Extractor.createFromParse(beg, end).trimmed());
-}
+} // addParameters
 
 // Generates and displays sql statements required to perform chosen operation
 // (creation of new or modifying existing table).
@@ -435,15 +483,15 @@ QString toBrowserTable::sql()
     std::list<toDatatype *>::const_iterator datatype = Datatypes.begin();
     std::list<QCheckBox *>::iterator notnull = NotNulls.begin();
     std::list<QLineEdit *>::iterator defaultValue = Defaults.begin();
-    std::list<QLineEdit *>::const_iterator extra = Extra.begin();
+//    std::list<QLineEdit *>::const_iterator extra = Extra.begin();
     std::list<QLineEdit *>::const_iterator comment = Comments.begin();
     int num = 1; // order number, used to generate ORDERn rows
     while (name != ColumnNames.end() &&
-           datatype != Datatypes.end() &&
-           notnull != NotNulls.end() &&
-           defaultValue != Defaults.end() &&
-           extra != Extra.end() &&
-           comment != Comments.end())
+            datatype != Datatypes.end() &&
+            notnull != NotNulls.end() &&
+            defaultValue != Defaults.end() &&
+//           extra != Extra.end() &&
+            comment != Comments.end())
     {
         QString cname;
         QString cdatatype;
@@ -454,11 +502,13 @@ QString toBrowserTable::sql()
             // add rename instruction if column name has changed
             if ((*name)->text() != cname)
                 toExtract::addDescription(migrateTable, ctx,
-                    "COLUMN", cname,
-                    "RENAME", (*name)->text());
+                                          "COLUMN", cname,
+                                          "RENAME", (*name)->text());
 
             column++;
-        } else {
+        }
+        else
+        {
             cname = (*name)->text();
         }
 
@@ -490,7 +540,7 @@ QString toBrowserTable::sql()
         datatype++;
         notnull++;
         defaultValue++;
-        extra++;
+//        extra++;
         comment++;
     }
 
@@ -499,9 +549,21 @@ QString toBrowserTable::sql()
     addParameters(migrateTable, ctx, "STORAGE", StorageDeclarations->text());
     addParameters(migrateTable, ctx, "PARALLEL", ParallelDeclarations->text());
     addParameters(migrateTable, ctx, "PARAMETERS", ExtraDeclarations->text());
-    // when creating new table tablespace must be specified
-    if (OriginalDescription.empty()) {
+    // when creating new table tablespace must always be specified
+    if (OriginalDescription.empty())
+    {
         addParameters(migrateTable, ctx, "TABLESPACE", Tablespace->currentText());
+    }
+    else
+    {
+        // when adjusting table tablespace is specified only
+        // if it was specified in original description
+        if (tablespaceSpecified)
+        {
+            // "quote" should be used for tablespace, but for tablespace
+            // it will always do toLower anyway
+            addParameters(migrateTable, ctx, "PARAMETERS", "TABLESPACE " + Tablespace->currentText().toLower());
+        }
     }
 
     migrateTable.sort();
@@ -515,10 +577,13 @@ void toBrowserTable::displaySQL()
 {
     QString statements = sql();
 
-    if (!statements.isNull()) {
+    if (!statements.isNull())
+    {
         toMemoEditor memo(this, statements, -1, -1, true, true);
         memo.exec();
-    } else {
+    }
+    else
+    {
         QMessageBox::warning(0, qApp->translate("toStatusMessage", "TOra Message"), "No changes.");
     }
 } // displaySQL
@@ -560,11 +625,11 @@ void toBrowserTable::addColumn()
     tl->show();
     Comments.insert(Comments.end(), tl);
 
-    tl = new QLineEdit;
-    ColumnGridLayout->addWidget(tl, ColumnNumber, 5);
-    tl->setObjectName(QString::number(ColumnNumber));
-    tl->show();
-    Extra.insert(Extra.end(), tl);
+//    tl = new QLineEdit;
+//    ColumnGridLayout->addWidget(tl, ColumnNumber, 5);
+//    tl->setObjectName(QString::number(ColumnNumber));
+//    tl->show();
+//    Extra.insert(Extra.end(), tl);
 }
 
 // removes currently selected column
@@ -576,60 +641,63 @@ void toBrowserTable::removeColumn()
     std::list<toDatatype *>::const_iterator datatype = Datatypes.begin();
     std::list<QCheckBox *>::iterator notnull = NotNulls.begin();
     std::list<QLineEdit *>::iterator defaultValue = Defaults.begin();
-    std::list<QLineEdit *>::const_iterator extra = Extra.begin();
+//    std::list<QLineEdit *>::const_iterator extra = Extra.begin();
     std::list<QLineEdit *>::const_iterator comment = Comments.begin();
     std::list<toExtract::columnInfo>::const_iterator column = Columns.begin();
     while (name != ColumnNames.end() &&
-           datatype != Datatypes.end() &&
-           notnull != NotNulls.end() &&
-           defaultValue != Defaults.end() &&
-           extra != Extra.end() &&
-           comment != Comments.end() &&
-           column != Columns.end()
+            datatype != Datatypes.end() &&
+            notnull != NotNulls.end() &&
+            defaultValue != Defaults.end() &&
+//           extra != Extra.end() &&
+            comment != Comments.end() &&
+            column != Columns.end()
           )
     {
-       if ((*name)->objectName() == toBeRemoved) {
-           ColumnGridLayout->removeWidget(*name);
-           ColumnNames.remove(*name);
-           delete *name;
+        if ((*name)->objectName() == toBeRemoved)
+        {
+            ColumnGridLayout->removeWidget(*name);
+            ColumnNames.remove(*name);
+            delete *name;
 
-           ColumnGridLayout->removeWidget(*datatype);
-           Datatypes.remove(*datatype);
-           delete *datatype;
+            ColumnGridLayout->removeWidget(*datatype);
+            Datatypes.remove(*datatype);
+            delete *datatype;
 
-           ColumnGridLayout->removeWidget(*notnull);
-           NotNulls.remove(*notnull);
-           delete *notnull;
+            ColumnGridLayout->removeWidget(*notnull);
+            NotNulls.remove(*notnull);
+            delete *notnull;
 
-           ColumnGridLayout->removeWidget(*defaultValue);
-           Defaults.remove(*defaultValue);
-           delete *defaultValue;
+            ColumnGridLayout->removeWidget(*defaultValue);
+            Defaults.remove(*defaultValue);
+            delete *defaultValue;
 
-           ColumnGridLayout->removeWidget(*extra);
-           Extra.remove(*extra);
-           delete *extra;
+//           ColumnGridLayout->removeWidget(*extra);
+//           Extra.remove(*extra);
+//           delete *extra;
 
-           ColumnGridLayout->removeWidget(*comment);
-           Comments.remove(*comment);
-           delete *comment;
+            ColumnGridLayout->removeWidget(*comment);
+            Comments.remove(*comment);
+            delete *comment;
 
-           Columns.remove(*column);
-           return;
-       }
-       name++;
-       datatype++;
-       notnull++;
-       defaultValue++;
-       extra++;
-       comment++;
-       column++;
+            Columns.remove(*column);
+            return;
+        }
+        name++;
+        datatype++;
+        notnull++;
+        defaultValue++;
+//       extra++;
+        comment++;
+        column++;
     } // while
-printf("Could not find column to delete.\n");
+#ifdef DEBUG
+    qDebug() << "Could not find column to delete.";
+#endif
 } // removeColumn
 
 void toBrowserTable::toggleCustom(bool val)
 {
-    for (std::list<toDatatype *>::iterator i = Datatypes.begin();i != Datatypes.end();i++)
+    for (std::list<toDatatype *>::iterator i = Datatypes.begin(); i != Datatypes.end(); i++)
         (*i)->setCustom(val);
 }
 

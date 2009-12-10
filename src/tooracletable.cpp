@@ -1,3 +1,4 @@
+#include <QDebug>
 #include "tooracleextract.h"
 
 // the same function as in tooracleextract.cpp should probably be moved to toextract.cpp?
@@ -202,7 +203,10 @@ QString toOracleExtract::alterTable(std::list<QString> &source,
     // drop statements
     for (std::list<QString>::iterator i = drop.begin(); i != drop.end(); i++)
     {
-        printf("drop>>%s\n", (*i).toAscii().constData());
+#ifdef DEBUG
+        qDebug() << "drop>>" + *i;
+#endif
+//        printf(, (*i).toAscii().constData());
         table_name = toExtract::partDescribe(*i, 2);
         if (!SameContext(*i, context))
         {
@@ -257,13 +261,17 @@ QString toOracleExtract::alterTable(std::list<QString> &source,
         {
             // TODO Check if anything should/could be done with parameters being dropped
             tmp = toExtract::partDescribe(*i, 4);
-            printf("Dropping parameters is NOT currently supported (%s).\n", tmp.toAscii().constData());
+#ifdef DEBUG
+            qDebug() << "Dropping parameters is NOT currently supported (" + tmp + ").";
+#endif
         }
         else if (tmp == "STORAGE")
         {
             // TODO Check if anything should/could be done with sotrage attributes being dropped
             tmp = toExtract::partDescribe(*i, 4);
-            printf("Dropping storage attributes is NOT currently supported (%s).\n", tmp.toAscii().constData());
+#ifdef DEBUG
+            qDebug() << "Dropping storage attributes is NOT currently supported (" + tmp + ").";
+#endif
         }
         else
         {
@@ -279,7 +287,9 @@ QString toOracleExtract::alterTable(std::list<QString> &source,
     context = "";
     for (std::list<QString>::iterator i = create.begin(); i != create.end(); i++)
     {
-        printf("add>>%s\n", (*i).toAscii().constData());
+#ifdef DEBUG
+        qDebug() << "add>>" + *i;
+#endif
 
         table_name = toExtract::partDescribe(*i, 2);
         tmp = toExtract::partDescribe(*i, 5);
@@ -385,25 +395,32 @@ QString toOracleExtract::alterTable(std::list<QString> &source,
 QString toOracleExtract::migrateTable(toExtract &ext, std::list<QString> &source,
                                       std::list<QString> &destin) const
 {
-    printf("source=\n");
+#ifdef DEBUG
+    qDebug() << "source=";
     for (std::list<QString>::iterator i = source.begin(); i != source.end(); i++)
     {
-        printf("%s\n", i->toAscii().constData());
+        qDebug() << *i;
     }
-    printf("destin=\n");
+    qDebug() << "destin=";
     for (std::list<QString>::iterator i = destin.begin(); i != destin.end(); i++)
     {
-        printf("%s\n", i->toAscii().constData());
+        qDebug() << *i;
     }
+#endif
+
 
     if (source.empty())
     {
-        printf("New table has to be created.\n");
+#ifdef DEBUG
+        qDebug() << "New table has to be created.";
+#endif
         return createTable(destin);
     }
     else
     {
-        printf("Existing table is to be modified.\n");
+#ifdef DEBUG
+        qDebug() << "Existing table is to be modified.";
+#endif
         return alterTable(source, destin);
     }
 } // migrateTable
