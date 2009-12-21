@@ -111,6 +111,9 @@ public slots:
     void bookmarkSwitch();
     void bookmarkPrev();
     void bookmarkNext();
+
+    // eol
+    void convertEol();
 };
 
 
