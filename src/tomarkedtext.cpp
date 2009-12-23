@@ -93,6 +93,12 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
     setMarginLineNumbers(0, true);
     setCallTipsStyle(CallTipsNone);
 
+    // WARNING: it looks like this hack is mandatory for macosx. Oracle simly
+    // doesn't understand mac's eols, so force to UNIX is a functional workaround
+#ifdef Q_WS_MAC
+    setEolMode(QsciScintilla::EolUnix);
+#endif
+
     // search all occurrences
     // allow indicator painting *under* the text (but it makes editor slower a bit...)
     // It paints a colored box under the text for all occurrences of m_searchText.

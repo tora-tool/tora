@@ -193,14 +193,18 @@ void toEditExtensions::convertEol()
     toHighlightedText * t = qobject_cast<toHighlightedText*>(Current);
     if (!t)
         return;
+    QsciScintilla::EolMode em;
     if (snd == EolUnixAct)
-        t->convertEols(QsciScintilla::EolUnix);
+        em = QsciScintilla::EolUnix;
     else if (snd == EolMacAct)
-        t->convertEols(QsciScintilla::EolMac);
+        em = QsciScintilla::EolMac;
     else if (snd == EolWindowsAct)
-        t->convertEols(QsciScintilla::EolWindows);
+        em = QsciScintilla::EolWindows;
     else
         assert(0);
+
+    t->convertEols(em);
+    t->setEolMode(em);
 }
 
 void toEditExtensions::gotoLine()
