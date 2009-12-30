@@ -122,6 +122,7 @@
         <file>icons/backgroundlabel.gif</file>
         <file>icons/breakpoint.xpm</file>
         <file>icons/canceledit.xpm</file>
+        <file>icons/checkcode.xpm</file>
         <file>icons/changeconnect.xpm</file>
         <file>icons/changewatch.xpm</file>
         <file>icons/chart.xpm</file>

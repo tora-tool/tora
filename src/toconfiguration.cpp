@@ -91,6 +91,7 @@ public:
     QString m_smtp;
     int     m_smtpPort;
     QString m_style;
+    QString m_staticChecker; // path+name to static check script (used in code editor)
 
     // tooracleconnection
     int m_openCursors;
@@ -192,6 +193,7 @@ public:
     QString m_syntaxErrorBg;
     QString m_syntaxDebugBg;
     QString m_syntaxCurrentLineMarker;
+    QString m_syntaxStaticBg;
     bool    m_useMaxTextWidthMark;
     int     m_maxTextWidthMark;
 
@@ -317,6 +319,7 @@ public:
         m_smtp = s.value(CONF_SMTP, DEFAULT_SMTP).toString();
         m_smtpPort = s.value(CONF_SMTP_PORT, DEFAULT_SMTP_PORT).toInt();
         m_style = s.value(CONF_STYLE, DEFAULT_STYLE).toString();
+        m_staticChecker = s.value(CONF_STATIC_CHECKER, "").toString();
         // tooracleconnection.cpp
         m_openCursors = s.value(CONF_OPEN_CURSORS, DEFAULT_OPEN_CURSORS).toInt();
         m_maxLong = s.value(CONF_MAX_LONG, DEFAULT_MAX_LONG).toInt();
@@ -427,6 +430,7 @@ public:
         m_syntaxErrorBg = s.value("SyntaxErrorBg", "darkred").toString();
         m_syntaxDebugBg = s.value("SyntaxDebugBg", "darkgreen").toString();
         m_syntaxCurrentLineMarker = s.value("SyntaxCurrentLineMarker", "whitesmoke").toString();
+        m_syntaxStaticBg = s.value("SyntaxStaticBg", "darkblue").toString();
         m_useMaxTextWidthMark = s.value("useMaxTextWidthMark", false).toBool();
         m_maxTextWidthMark = s.value("maxTextWidthMark", 75).toInt();
         s.endGroup();
@@ -528,6 +532,8 @@ public:
         s.setValue(CONF_SMTP, m_smtp);
         s.setValue(CONF_SMTP_PORT, m_smtpPort);
         s.setValue(CONF_STYLE, m_style);
+        s.setValue(CONF_STATIC_CHECKER, m_staticChecker);
+
         // tooracleconnection
         s.setValue(CONF_OPEN_CURSORS, m_openCursors);
         s.setValue(CONF_MAX_LONG, m_maxLong);
@@ -646,6 +652,7 @@ public:
         s.setValue("SyntaxErrorBg", m_syntaxErrorBg);
         s.setValue("SyntaxDebugBg", m_syntaxDebugBg);
         s.setValue("SyntaxCurrentLineMarker", m_syntaxCurrentLineMarker);
+        s.setValue("SyntaxStaticBg", m_syntaxStaticBg);
         s.setValue("useMaxTextWidthMark", m_useMaxTextWidthMark);
         s.setValue("maxTextWidthMark", m_maxTextWidthMark);
         s.endGroup();
@@ -903,6 +910,16 @@ void toConfiguration::setSyntaxCurrentLineMarker(QColor v)
     p->m_syntaxCurrentLineMarker = v.name();
 }
 
+QColor toConfiguration::syntaxStaticBg()
+{
+    QColor c;
+    c.setNamedColor(p->m_syntaxStaticBg);
+    return c;
+}
+void toConfiguration::setSyntaxStaticBg(QColor v)
+{
+    p->m_syntaxStaticBg = v.name();
+}
 
 QString toConfiguration::provider()
 {
@@ -2068,3 +2085,13 @@ QByteArray toConfiguration::rightDockbarState()
 {
     return p->m_rightDockbarState;
 }
+
+// code editor
+QString toConfiguration::staticChecker()
+{
+    return p->m_staticChecker;
+} // staticChecker
+void toConfiguration::setStaticChecker(const QString & v)
+{
+    p->m_staticChecker = v;
+} // setStaticChecker

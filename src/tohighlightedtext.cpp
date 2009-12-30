@@ -82,7 +82,6 @@ QsciLexerSQL * sqlLexer()
     return _sqlLexer;
 }
 
-
 toSyntaxAnalyzer::toSyntaxAnalyzer(const char **keywords)
 {
     for (int i = 0;keywords[i];i++)
@@ -306,14 +305,12 @@ toComplPopup::~toComplPopup()
 {
 }
 
-
 void toComplPopup::hide()
 {
     if (parentWidget())
         parentWidget()->setFocus();
     QWidget::hide();
 }
-
 
 void toComplPopup::keyPressEvent(QKeyEvent * e)
 {
@@ -338,7 +335,6 @@ void toComplPopup::keyPressEvent(QKeyEvent * e)
         QWidget::keyPressEvent(e);
 
 }
-
 
 toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
         : toMarkedText(parent, name),
@@ -386,9 +382,13 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     m_bookmarkMarginHandle = markerDefine(QsciScintilla::RightTriangle);
     m_bookmarkHandle = markerDefine(QsciScintilla::Background);
 
+    m_staticMarginHandle = markerDefine(QsciScintilla::Circle);
+    m_staticHandle = markerDefine(QsciScintilla::Background);
+
     updateSyntaxColor(toSyntaxAnalyzer::DebugBg);
     updateSyntaxColor(toSyntaxAnalyzer::ErrorBg);
     updateSyntaxColor(toSyntaxAnalyzer::CurrentLineMarker);
+    updateSyntaxColor(toSyntaxAnalyzer::StaticBg);
 
     // handle "max text width" mark
     if (toConfigurationSingle::Instance().useMaxTextWidthMark())
@@ -634,6 +634,9 @@ void toHighlightedText::updateSyntaxColor(toSyntaxAnalyzer::infoType t)
     case toSyntaxAnalyzer::DebugBg:
         setMarkerBackgroundColor(col, m_debugHandle);
         break;
+    case toSyntaxAnalyzer::StaticBg:
+        setMarkerBackgroundColor(col, m_staticHandle);
+        break;
     case toSyntaxAnalyzer::CurrentLineMarker:
         setMarkerBackgroundColor(col, m_currentLineHandle);
 //         setMarkerBackgroundColor(col, m_currentLineMarginHandle);
@@ -697,6 +700,7 @@ void toHighlightedText::setFont (const QFont & font)
         update();
     }
 }
+
 void toHighlightedText::setCurrent(int current)
 {
     setCursorPosition (current, 0);
@@ -862,12 +866,24 @@ void toHighlightedText::gotoNextBookmark()
         setCursorPosition(newline, 0);
 }
 
-void toHighlightedText::setErrors(const QMap<int, QString> &errors)
+/* Sets errors/static observations markers in margins and on text
+*/
+void toHighlightedText::setErrors(const QMap<int, QString> &errors, bool errorsGiven)
 {
+    int handle, marginHandle;
+
+    if (errorsGiven) {
+        handle = m_errorHandle;
+        marginHandle = m_errorMarginHandle;
+    } else {
+        handle = m_staticHandle;
+        marginHandle = m_staticMarginHandle;
+    }
+
     Errors = errors;
     setStatusMessage();
-    markerDeleteAll(m_errorHandle);
-    markerDeleteAll(m_errorMarginHandle);
+    markerDeleteAll(handle);
+    markerDeleteAll(marginHandle);
     for (QMap<int, QString>::const_iterator i = Errors.begin();i != Errors.end();i++)
     {
         if (i.key() < 0)
@@ -875,10 +891,10 @@ void toHighlightedText::setErrors(const QMap<int, QString> &errors)
             qDebug() << "toHighlightedText::setErrors errLine:"<< i.key() << " value:" << i.value();
             continue;
         }
-        markerAdd(i.key(), m_errorHandle);
-        markerAdd(i.key(), m_errorMarginHandle);
+        markerAdd(i.key(), handle);
+        markerAdd(i.key(), marginHandle);
     }
-}
+} // setErrors
 
 void toHighlightedText::setStatusMessage(void)
 {
@@ -1042,7 +1058,6 @@ void toHighlightedText::completeWithText(QString itemText)
     this->setCursorPosition(curline, start + itemText.length());
     connect (this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(positionChanged(int, int)));
 }
-
 
 void toHighlightedText::completeFromAPI(QListWidgetItem* item)
 {

@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>toSyntaxSetupUI</class>
- <widget class="QWidget" name="toSyntaxSetupUI" >
-  <property name="geometry" >
+ <widget class="QWidget" name="toSyntaxSetupUI">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,153 +10,194 @@
     <height>648</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form1</string>
   </property>
-  <property name="toolTip" >
+  <property name="toolTip">
    <string/>
   </property>
-  <layout class="QGridLayout" >
-   <property name="margin" >
+  <layout class="QGridLayout">
+   <property name="margin">
     <number>0</number>
    </property>
-   <property name="spacing" >
+   <property name="spacing">
     <number>6</number>
    </property>
-   <item row="0" column="1" >
-    <widget class="QGroupBox" name="Options" >
-     <property name="title" >
-      <string>Options</string>
+   <item row="1" column="0" colspan="2">
+    <widget class="toHighlightedText" name="Example" native="true"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="GroupBox2">
+     <property name="title">
+      <string>Sy&amp;ntax components</string>
      </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
+     <layout class="QGridLayout">
+      <property name="margin">
        <number>11</number>
       </property>
-      <property name="spacing" >
+      <property name="spacing">
        <number>6</number>
       </property>
-      <item row="2" column="0" colspan="3" >
-       <widget class="QCheckBox" name="KeywordUpper" >
-        <property name="toolTip" >
+      <item row="1" column="0">
+       <widget class="QLabel" name="ExampleColor">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="wordWrap">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="PushButton3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>&amp;Pick</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QListWidget" name="SyntaxComponent"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QGroupBox" name="Options">
+     <property name="title">
+      <string>Options</string>
+     </property>
+     <layout class="QGridLayout">
+      <property name="margin">
+       <number>11</number>
+      </property>
+      <property name="spacing">
+       <number>6</number>
+      </property>
+      <item row="2" column="0" colspan="3">
+       <widget class="QCheckBox" name="KeywordUpper">
+        <property name="toolTip">
          <string>Convert all keywords to uppercase when displayingsyntaxhighlighted text.  Only available for monospaced fonts.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>&amp;Keyword upper</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0" colspan="3" >
-       <widget class="QCheckBox" name="CodeCompletion" >
-        <property name="toolTip" >
+      <item row="3" column="0" colspan="3">
+       <widget class="QCheckBox" name="CodeCompletion">
+        <property name="toolTip">
          <string>Activate code completion in SQL editors. Not recommended on slow connections.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>&amp;Code completion</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="0" colspan="3" >
-       <widget class="QCheckBox" name="CompletionSort" >
-        <property name="enabled" >
+      <item row="5" column="0" colspan="3">
+       <widget class="QCheckBox" name="CompletionSort">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="toolTip" >
+        <property name="toolTip">
          <string>Sort the available completion rows alphabetically or in the order the are.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>&amp;Sort completion rows</string>
         </property>
-        <property name="checked" >
+        <property name="checked">
          <bool>true</bool>
         </property>
        </widget>
       </item>
-      <item row="0" column="0" colspan="3" >
-       <widget class="QCheckBox" name="SyntaxHighlighting" >
-        <property name="toolTip" >
+      <item row="0" column="0" colspan="3">
+       <widget class="QCheckBox" name="SyntaxHighlighting">
+        <property name="toolTip">
          <string>Enable syntax highlighting, or use simple text editor</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>S&amp;yntax highlighting</string>
         </property>
        </widget>
       </item>
-      <item row="6" column="0" colspan="3" >
-       <widget class="QCheckBox" name="AutoIndent" >
-        <property name="toolTip" >
+      <item row="6" column="0" colspan="3">
+       <widget class="QCheckBox" name="AutoIndent">
+        <property name="toolTip">
          <string>Indent a new line in an editor to the same column as the previous line</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>&amp;Indent same as previous line</string>
         </property>
        </widget>
       </item>
-      <item row="9" column="2" >
-       <widget class="QPushButton" name="PushButton1" >
-        <property name="text" >
+      <item row="9" column="2">
+       <widget class="QPushButton" name="PushButton1">
+        <property name="text">
          <string>Choose</string>
         </property>
        </widget>
       </item>
-      <item row="9" column="0" >
-       <widget class="QLabel" name="ResultExample" >
-        <property name="text" >
+      <item row="9" column="0">
+       <widget class="QLabel" name="ResultExample">
+        <property name="text">
          <string>List example</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
        </widget>
       </item>
-      <item row="8" column="0" >
-       <widget class="QLabel" name="CodeExample" >
-        <property name="text" >
+      <item row="8" column="0">
+       <widget class="QLabel" name="CodeExample">
+        <property name="text">
          <string>Code example</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
        </widget>
       </item>
-      <item row="8" column="2" >
-       <widget class="QPushButton" name="PushButton1_2" >
-        <property name="text" >
+      <item row="8" column="2">
+       <widget class="QPushButton" name="PushButton1_2">
+        <property name="text">
          <string>Choose</string>
         </property>
        </widget>
       </item>
-      <item row="7" column="0" >
-       <widget class="QLabel" name="TextExample" >
-        <property name="text" >
+      <item row="7" column="0">
+       <widget class="QLabel" name="TextExample">
+        <property name="text">
          <string>Text example</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
        </widget>
       </item>
-      <item row="10" column="1" colspan="2" >
-       <widget class="QLineEdit" name="Extensions" />
-      </item>
-      <item row="10" column="0" >
-       <widget class="QLabel" name="TextLabel1" >
-        <property name="text" >
+      <item row="10" column="0">
+       <widget class="QLabel" name="TextLabel1">
+        <property name="text">
          <string>Filename extensions</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
        </widget>
       </item>
-      <item row="13" column="1" >
+      <item row="16" column="1">
        <spacer>
-        <property name="orientation" >
+        <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
-        <property name="sizeType" >
+        <property name="sizeType">
          <enum>QSizePolicy::Expanding</enum>
         </property>
-        <property name="sizeHint" stdset="0" >
+        <property name="sizeHint" stdset="0">
          <size>
           <width>20</width>
           <height>20</height>
@@ -163,129 +205,98 @@
         </property>
        </spacer>
       </item>
-      <item row="11" column="2" >
-       <widget class="QSpinBox" name="TabStop" >
-        <property name="minimum" >
+      <item row="12" column="2">
+       <widget class="QSpinBox" name="TabStop">
+        <property name="minimum">
          <number>1</number>
         </property>
        </widget>
       </item>
-      <item row="11" column="0" colspan="2" >
-       <widget class="QLabel" name="TextLabel1_2" >
-        <property name="toolTip" >
+      <item row="12" column="0" colspan="2">
+       <widget class="QLabel" name="TextLabel1_2">
+        <property name="toolTip">
          <string>Number of character width of tabstops</string>
         </property>
-        <property name="whatsThis" >
+        <property name="whatsThis">
          <string>Number of character width of tabstops</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Tab stop width</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>TabStop</cstring>
         </property>
        </widget>
       </item>
-      <item row="12" column="0" >
-       <widget class="QCheckBox" name="TabSpaces" >
-        <property name="toolTip" >
+      <item row="13" column="0">
+       <widget class="QCheckBox" name="TabSpaces">
+        <property name="toolTip">
          <string>If set the editor will insert spaces rather than tabs</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Use only spaces when indenting</string>
         </property>
        </widget>
       </item>
-      <item row="7" column="2" >
-       <widget class="QPushButton" name="PushButton1_2_2" >
-        <property name="text" >
+      <item row="7" column="2">
+       <widget class="QPushButton" name="PushButton1_2_2">
+        <property name="text">
          <string>Choose</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="0" >
-       <widget class="QCheckBox" name="EditorShortcuts" >
-        <property name="text" >
+      <item row="4" column="0">
+       <widget class="QCheckBox" name="EditorShortcuts">
+        <property name="text">
          <string>&amp;Editor shortcuts (TAB replacement)</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="2" >
-       <widget class="QPushButton" name="EditorShortcutsEdit" >
-        <property name="text" >
+      <item row="4" column="2">
+       <widget class="QPushButton" name="EditorShortcutsEdit">
+        <property name="text">
          <string>E&amp;dit...</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" >
-       <widget class="QCheckBox" name="EdgeMarkCheckBox" >
-        <property name="toolTip" >
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="EdgeMarkCheckBox">
+        <property name="toolTip">
          <string>Display the line/column marker at the specified position</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Use &amp;maximum text width mark</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="2" >
-       <widget class="QSpinBox" name="EdgeSizeSpinBox" >
-        <property name="toolTip" >
+      <item row="1" column="2">
+       <widget class="QSpinBox" name="EdgeSizeSpinBox">
+        <property name="toolTip">
          <string>Specify the column (text width) where to show marker</string>
         </property>
-        <property name="minimum" >
+        <property name="minimum">
          <number>1</number>
         </property>
-        <property name="maximum" >
+        <property name="maximum">
          <number>999999</number>
         </property>
        </widget>
       </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="2" >
-    <widget class="toHighlightedText" native="1" name="Example" />
-   </item>
-   <item row="0" column="0" >
-    <widget class="QGroupBox" name="GroupBox2" >
-     <property name="title" >
-      <string>Sy&amp;ntax components</string>
-     </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>11</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="ExampleColor" >
-        <property name="text" >
-         <string/>
-        </property>
-        <property name="wordWrap" >
-         <bool>false</bool>
+      <item row="14" column="0">
+       <widget class="QLabel" name="LSyntaxChecker">
+        <property name="text">
+         <string>Static checker:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1" >
-       <widget class="QPushButton" name="PushButton3" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text" >
-         <string>&amp;Pick</string>
-        </property>
-       </widget>
+      <item row="15" column="0" colspan="3">
+       <widget class="QLineEdit" name="EStaticChecker"/>
       </item>
-      <item row="0" column="0" colspan="2" >
-       <widget class="QListWidget" name="SyntaxComponent" />
+      <item row="11" column="0" colspan="3">
+       <widget class="QLineEdit" name="Extensions"/>
       </item>
      </layout>
     </widget>
@@ -309,7 +320,6 @@
   <tabstop>PushButton1_2_2</tabstop>
   <tabstop>PushButton1_2</tabstop>
   <tabstop>PushButton1</tabstop>
-  <tabstop>Extensions</tabstop>
   <tabstop>TabStop</tabstop>
   <tabstop>Example</tabstop>
   <tabstop>CompletionSort</tabstop>
@@ -322,11 +332,11 @@
    <receiver>toSyntaxSetupUI</receiver>
    <slot>selectResultFont()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -338,11 +348,11 @@
    <receiver>toSyntaxSetupUI</receiver>
    <slot>selectFont()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -354,11 +364,11 @@
    <receiver>toSyntaxSetupUI</receiver>
    <slot>changeHighlight(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -370,11 +380,11 @@
    <receiver>toSyntaxSetupUI</receiver>
    <slot>changeUpper(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -386,11 +396,11 @@
    <receiver>toSyntaxSetupUI</receiver>
    <slot>selectColor()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -402,11 +412,11 @@
    <receiver>toSyntaxSetupUI</receiver>
    <slot>changeLine(QListWidgetItem*)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -418,11 +428,11 @@
    <receiver>CompletionSort</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -434,11 +444,11 @@
    <receiver>CodeCompletion</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -450,11 +460,11 @@
    <receiver>toSyntaxSetupUI</receiver>
    <slot>selectText()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>

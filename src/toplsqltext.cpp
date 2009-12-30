@@ -42,6 +42,7 @@
 #include <QSettings>
 #include <QFileInfo>
 #include <QDir>
+#include <QDebug>
 
 #include "utils.h"
 #include "toconnection.h"
@@ -54,6 +55,7 @@
 
 #define PLSQL_ERROR "ERROR"
 #define PLSQL_WARNING "WARNING"
+#define PLSQL_STATIC "STATIC"
 #define PLSQL_RESULT ""
 
 
@@ -147,12 +149,13 @@ static bool FindKeyword(toSQLParse::statement &statements, bool onlyNames, bool 
     return false;
 }
 
-
-
+/* Parameter t: toPLSQLText::Production - for production compiling (default)
+                toPLSQLText::Warning - to compile with warnings enabled
+*/
 bool toPLSQLText::compile(CompilationType t)
 {
     QString str = text();
-    bool ret = true;
+    bool ret = true; // indicates if compilation action was successfull
     if (str.isEmpty())
         return true;
 
@@ -230,7 +233,8 @@ bool toPLSQLText::compile(CompilationType t)
 
     try
     {
-        if (t == toPLSQLText::Warning)
+        if (t == toPLSQLText::Warning) // TODO: TS 2009-12-21 is it actually compiling if
+                                       // button "compile (without warnings) was pressed?
         {
             QString alter("ALTER %1 \"%2\".\"%3\" COMPILE ");
             if (body)
@@ -249,6 +253,7 @@ bool toPLSQLText::compile(CompilationType t)
 
     readErrors(toMainWidget()->currentConnection());
     emit contentChanged();
+    parent_widget->resizeResults();
 
     return ret;
 }
@@ -284,6 +289,7 @@ int toPLSQLText::ID = 0;
 toPLSQLText::toPLSQLText(QWidget *parent)
         : toHighlightedText(parent, QString::number(++ID).toLatin1())
 {
+    parent_widget = (toPLSQLWidget*)parent;
 }
 
 void toPLSQLText::clear(void)
@@ -292,13 +298,19 @@ void toPLSQLText::clear(void)
     toHighlightedText::clear();
 }
 
+/* This function is called after compiling the code.
+   It's purpose is to read list of warnings/errors.
+*/
 bool toPLSQLText::readErrors(toConnection &conn)
 {
+    int errorCount = 0, warningCount = 0;
+
     try
     {
         toQuery errors(conn, SQLReadErrors, Schema, Object, Type);
         QMultiMap<int, QString> Errors;
         QMultiMap<int, QString> Warnings;
+        QMultiMap<int, QString> Static; // dummy empty array used to clear static messages
 
         int line;
         QString errType;
@@ -307,14 +319,22 @@ bool toPLSQLText::readErrors(toConnection &conn)
             errType = errors.readValue(); // "ERROR"/"WARNING" etc.
             line = errors.readValue().toInt();
             if (errType == PLSQL_ERROR)
+            {
                 Errors.insert(line, errors.readValue());
+                errorCount++;
+            }
             else // "WARNING"
+            {
                 Warnings.insert(line, errors.readValue());
+                warningCount++;
+            }
         }
         setErrors(Errors);
 
-        emit errorsChanged(PLSQL_ERROR, Errors);
+        emit errorsChanged(PLSQL_ERROR, Errors, true);
         emit errorsChanged(PLSQL_WARNING, Warnings);
+        emit errorsChanged(PLSQL_STATIC, Static); // clear all static check messages ir result pane
+        setErrors(Static, false); // remove static error markers in code
 
         return true;
     }
@@ -480,14 +500,14 @@ toPLSQLWidget::toPLSQLWidget(QWidget * parent)
     m_result->setAllColumnsShowFocus(true);
 
     m_result->setHeaderLabels(QStringList() << tr("Message") << tr("Line"));
-    m_errItem = new QTreeWidgetItem(m_result,
-                                    QStringList() << tr("Errors") << "");
-    m_warnItem = new QTreeWidgetItem(m_result,
-                                     QStringList() << tr("Warnings") << "");
+    m_errItem = m_warnItem = m_staticItem = NULL;
 
     m_splitter = new QSplitter(Qt::Vertical, this);
     m_splitter->insertWidget(0, m_editor);
     m_splitter->insertWidget(1, m_result);
+
+    errorCount = warningCount = staticCount = 0;
+    resizeResults();
 
     m_contentSplitter = new QSplitter(Qt::Horizontal, this);
     m_contentSplitter->insertWidget(0, m_contents);
@@ -498,9 +518,9 @@ toPLSQLWidget::toPLSQLWidget(QWidget * parent)
     layout()->addWidget(m_contentSplitter);
 
     connect(m_editor,
-            SIGNAL(errorsChanged(const QString &, const QMultiMap<int, QString>&)),
+            SIGNAL(errorsChanged(const QString &, const QMultiMap<int, QString>&, const bool)),
             this,
-            SLOT(applyResult(const QString &, const QMultiMap<int, QString>&)));
+            SLOT(applyResult(const QString &, const QMultiMap<int, QString>&, const bool)));
     connect(m_result,
             SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
             this,
@@ -525,14 +545,108 @@ toPLSQLWidget::~toPLSQLWidget()
     s.endGroup();
 }
 
-void toPLSQLWidget::applyResult(const QString & type,
-                                const QMultiMap<int, QString> & values)
+/* If NULL is given as type - removes all error, warning and static check messages
+   from m_result list. If argument type has a value - only messages of given type
+   are removed.
+*/
+void toPLSQLWidget::cleanupResults(const QString & type)
 {
-    QTreeWidgetItem * item = (type == PLSQL_ERROR) ? m_errItem : m_warnItem;
+    if ((m_errItem != NULL) && (type == PLSQL_ERROR || type == NULL))
+    {
+        foreach (QTreeWidgetItem * c, m_errItem->takeChildren())
+        delete c;
+        delete m_errItem;
+        m_errItem = NULL;
+    }
 
-    foreach (QTreeWidgetItem * c, item->takeChildren())
-    delete c;
+    if ((m_warnItem != NULL) && (type == PLSQL_WARNING || type == NULL))
+    {
+        foreach (QTreeWidgetItem * c, m_warnItem->takeChildren())
+        delete c;
+        delete m_warnItem;
+        m_warnItem = NULL;
+    }
 
+    if ((m_staticItem != NULL) && (type == PLSQL_STATIC || type == NULL))
+    {
+        foreach (QTreeWidgetItem * c, m_staticItem->takeChildren())
+        delete c;
+        delete m_staticItem;
+        m_staticItem = NULL;
+    }
+} // cleanupResults
+
+/* Resize result pane depending on number of errors, warnings etc. That is if there is anything
+   to show there - restore it's size to "visible". If there are no messages to show - collapse it.
+*/
+int resultSize = 1;
+void toPLSQLWidget::resizeResults(void)
+{
+    QList<int> widget_sizes = m_splitter->sizes();
+
+    if (errorCount == 0 && warningCount == 0 && staticCount == 0 && widget_sizes[1] > 0)
+    {
+        resultSize = widget_sizes[1];
+        widget_sizes[1] = 0;
+        m_splitter->setSizes(widget_sizes);
+    }
+    else if ((errorCount > 0 || warningCount > 0 || staticCount > 0) && (widget_sizes[1] == 0))
+    {
+        widget_sizes[1] = resultSize;
+        m_splitter->setSizes(widget_sizes);
+    }
+} // resizeRezults
+
+void toPLSQLWidget::setCount(const QString & type, const int count)
+{
+    if (type == PLSQL_ERROR) {
+        errorCount = count;
+    } else if (type == PLSQL_WARNING) {
+        warningCount = count;
+    } else if (type == PLSQL_STATIC) {
+        staticCount = count;
+    }
+} // setCount
+
+/* Applies list of errors, warnings or static check observations to corresponding node
+   in results list. This will usually be called after some parts of this list have
+   changed: after compiling (twice: once for errors and once for warnings) or after
+   runing statick check (once: for static observations only).
+   Parameters:
+     type - PLSQL_ERROR or PLSQL_WARNING
+     values - multimap containing list of errors or warnings with
+              line number and description
+*/
+void toPLSQLWidget::applyResult(const QString & type,
+                                const QMultiMap<int, QString> & values,
+                                const bool cleanup)
+{
+    QTreeWidgetItem * item; // abstract item will be used as list of errors or
+                            // warnings or static check observations etc.
+    int count = 0;
+
+    if (cleanup) cleanupResults();
+    else cleanupResults(type);
+
+    if (values.empty()) 
+    {
+        setCount(type, 0);
+        return;
+    }
+
+    if (type == PLSQL_ERROR) {
+        m_errItem = new QTreeWidgetItem(m_result, QStringList() << tr("Errors") << "");
+        item = m_errItem;
+    } else if (type == PLSQL_WARNING) {
+        m_warnItem = new QTreeWidgetItem(m_result, QStringList() << tr("Warnings") << "");
+        item = m_warnItem;
+    } else if (type == PLSQL_STATIC) {
+        m_staticItem = new QTreeWidgetItem(m_result, QStringList() << tr("Static check") << "");
+        item = m_staticItem;
+    } else
+        qDebug() << "Unknown type " << type << " in toPLSQLWidget::applyResult";
+
+    // add new items to the list
     QMap<int, QString>::const_iterator i = values.constBegin();
     while (i != values.constEnd())
     {
@@ -540,20 +654,31 @@ void toPLSQLWidget::applyResult(const QString & type,
         l.append(QString().setNum(i.key()));
         item->addChild(new QTreeWidgetItem(item, l));
         ++i;
+        count++;
     }
+
+    setCount(type, count);
 
     m_result->expandItem(item);
     m_result->resizeColumnToContents(0);
-}
+} // applyResult
 
+/* Called whenever user selects an error, warning or static observation in results list.
+   It should place cursor at he position of corresponding error, warning or static
+   observation position.
+   Parameters:
+     current - newly selected item
+     <second parameter> - previously selected item - not used
+*/
 void toPLSQLWidget::goToError(QTreeWidgetItem * current, QTreeWidgetItem *)
 {
-    if (current != m_errItem && current != m_warnItem)
+    // do not try to move cursor when "parent" item in result list is selected
+    if (current != m_errItem && current != m_warnItem && current != m_staticItem)
     {
         m_editor->setCursorPosition(current->text(1).toInt(), 0);
         m_editor->setFocus(Qt::OtherFocusReason);
     }
-}
+} // goToError
 
 void toPLSQLWidget::changeContent(toTreeWidgetItem *ci)
 {

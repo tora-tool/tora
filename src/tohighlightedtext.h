@@ -84,7 +84,8 @@ public:
         DefaultBg = 5,
         ErrorBg = 6,
         DebugBg = 7,
-        CurrentLineMarker = 8
+        CurrentLineMarker = 8,
+        StaticBg = 9
     };
 private:
     /** Indicate if colors are updated, can't do this in constructor since QApplication
@@ -257,6 +258,10 @@ protected:
     int m_bookmarkMarginHandle;
     //! \brief Bookrmarks handler list used for navigation (next/prev)
     QList<int> m_bookmarks;
+    //! \brief A handler for static check observations - line highlighted
+    int m_staticHandle;
+    //! \brief A handler for static check observations - margin
+    int m_staticMarginHandle;
 
     toComplPopup* popup;
 
@@ -332,7 +337,7 @@ public:
      * @param errors A map of linenumbers to errorstrings. These will be displayed in the
      *               statusbar if the cursor is placed on the line.
      */
-    void setErrors(const QMap<int, QString> &errors);
+    void setErrors(const QMap<int, QString> &errors, bool errorsGiven = true);
 
     /**
      * DEPRECATED: should use setLexer() instead!!!

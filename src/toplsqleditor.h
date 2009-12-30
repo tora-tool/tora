@@ -80,6 +80,7 @@ class toPLSQLEditor : public toToolWidget
     QAction   *closeAllAct;
     QAction   *nextErrorAct;
     QAction   *previousErrorAct;
+    QAction   *checkCodeAct;
 
     // Extra menu
     QMenu *ToolMenu;
@@ -105,6 +106,7 @@ class toPLSQLEditor : public toToolWidget
                     bool current = false);
 
     void closeEditor(toPLSQLWidget* &editor);
+    void parseResults(const QString buf, QMultiMap<int, QString> &res);
 
 protected:
     virtual void closeEvent(QCloseEvent *);
@@ -132,6 +134,7 @@ public slots:
     void windowActivated(QMdiSubWindow *w);
     void closeEditor(void);
     void closeAllEditor(void);
+    void checkCode(void);
 };
 
 #endif

@@ -463,6 +463,8 @@ public:
     void setSyntaxErrorBg(QColor v);
     QColor syntaxCurrentLineMarker();
     void setSyntaxCurrentLineMarker(QColor v);
+    QColor syntaxStaticBg();
+    void setSyntaxStaticBg(QColor v);
 
     bool useMaxTextWidthMark();
     void setUseMaxTextWidthMark(bool v);
@@ -474,6 +476,10 @@ public:
     void setUseEditorShortcuts(bool v);
     EditorShortcutsMap editorShortcuts();
     void setEditorShortcuts(const EditorShortcutsMap & v);
+
+    // code editor
+    QString staticChecker();
+    void setStaticChecker(const QString & v);
 };
 
 typedef Loki::SingletonHolder<toConfiguration> toConfigurationSingle;

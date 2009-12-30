@@ -160,6 +160,8 @@
 #define DEFAULT_SMTP_PORT 25
 #define CONF_STYLE  "Style"
 #define DEFAULT_STYLE "" //"Cleanlooks"
+// code editor
+#define CONF_STATIC_CHECKER "StaticChecker"
 // tooracleconnection.cpp
 #define CONF_OPEN_CURSORS "OpenCursors"
 #define DEFAULT_OPEN_CURSORS 40  // Defined to be able to update tuning view

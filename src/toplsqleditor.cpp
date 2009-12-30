@@ -45,6 +45,9 @@
 #include <QMdiArea>
 #include <QSettings>
 #include <QTreeView>
+#include <QDebug>
+#include <QTemporaryFile>
+#include <QProcess>
 
 #include "config.h"
 #include "utils.h"
@@ -65,6 +68,7 @@
 #include "icons/toworksheet.xpm"
 #include "icons/nextbug.xpm"
 #include "icons/prevbug.xpm"
+#include "icons/checkcode.xpm"
 
 
 class toPLSQLEditorTool : public toTool
@@ -208,6 +212,11 @@ toPLSQLEditor::toPLSQLEditor(QWidget *main, toConnection &connection)
     toolbar->addAction(newSheetAct);
     toolbar->addAction(compileAct);
     toolbar->addAction(compileWarnAct);
+    // only show static check button when static checker is specified
+    if (!toConfigurationSingle::Instance().staticChecker().isEmpty())
+    {
+        toolbar->addAction(checkCodeAct);
+    }
 
     toolbar->addSeparator();
 
@@ -343,6 +352,17 @@ void toPLSQLEditor::createActions(void)
             SLOT(prevError()),
             Qt::QueuedConnection);
     previousErrorAct->setShortcut(Qt::CTRL + Qt::Key_P);
+
+    // tool button to check code
+    checkCodeAct = new QAction(QIcon(QPixmap(const_cast<const char**>(checkcode_xpm))),
+                                   tr("&Check Code"),
+                                   this);
+    connect(checkCodeAct,
+            SIGNAL(triggered()),
+            this,
+            SLOT(checkCode()),
+            Qt::QueuedConnection);
+    checkCodeAct->setShortcut(Qt::CTRL + Qt::Key_G); // TODO: change shortcut to something meaningful :)
 }
 
 toPLSQLWidget *toPLSQLEditor::currentEditor(void)
@@ -541,7 +561,6 @@ void toPLSQLEditor::closeAllEditor()
     }
 }
 
-
 void toPLSQLEditor::closeEditor(toPLSQLWidget* &editor)
 {
 
@@ -588,3 +607,88 @@ toPLSQLText * toPLSQLEditor::getAnotherPart(QString &pSchema, QString &pObject, 
 
     return ret;
 } // getAnotherPart
+
+void toPLSQLEditor::parseResults(const QString buf, QMultiMap<int, QString> &res)
+{
+    // TODO: probably a problem on Mac as it has \r as new line character?
+    QStringList list = buf.split("\n", QString::SkipEmptyParts);
+    int j;
+    for (int i = 0; i < list.size(); i++)
+    {
+        j = list[i].indexOf(":");
+        res.insert(list[i].left(j).trimmed().toInt(), list[i].right(list[i].length() - j - 1).trimmed());
+    }
+} // parseResults
+
+/* Purpose: calls external static code test tool and display it's results
+   TODO: call only selected part of code (if something is selected)
+*/
+void toPLSQLEditor::checkCode(void)
+{
+    if (currentEditor()->editor()->text().isEmpty())
+    {
+        // do nothing if code text is empty
+        return;
+    }
+
+    QTemporaryFile tf;
+    if (tf.open()) {
+        if (!toWriteFile(tf.fileName(), currentEditor()->editor()->text()))
+        {
+#ifdef DEBUG
+            qDebug() << "Unable to write file (" + tf.fileName() + ")";
+#endif
+            return;
+        }
+        else
+        {
+#ifdef DEBUG
+            qDebug() << "Success!!! Temporary file " + tf.fileName();
+#endif
+        }
+    }
+
+    QString program = toConfigurationSingle::Instance().staticChecker().arg(tf.fileName());
+#ifdef DEBUG
+    qDebug() << "program to be executed: " + program;
+#endif
+    QProcess staticCheck(qApp);
+
+    staticCheck.setProcessChannelMode(QProcess::MergedChannels);
+    staticCheck.start(program);
+    staticCheck.waitForFinished(); // default timeout - 30000 miliseconds
+
+    int exit_code = staticCheck.exitStatus();
+    if (exit_code != 0)
+    {
+#ifdef DEBUG
+        qDebug() << "Error executing static check. Exit code = " << exit_code;
+        int run_error = staticCheck.error();
+        // error values taken from Qt4.6 documentation for QProcess
+        switch (run_error) {
+            case 0:
+                qDebug() << "The process failed to start. Either the invoked program is missing, or you may have insufficient permissions to invoke the program.";
+                break;
+            case 1:
+                qDebug() << "The process crashed some time after starting successfully.";
+                break;
+            case 5:
+                qDebug() << "An unknown error occurred.";
+                break;
+            default:
+                qDebug() << "Error code: " << run_error << "--" << staticCheck.errorString();
+        } // switch
+#endif
+        return;
+    }
+    QString qq = staticCheck.readAllStandardOutput();
+#ifdef DEBUG
+    qDebug() << "stdout" << qq;
+#endif
+
+    QMultiMap<int, QString> Observations;
+    parseResults(qq, Observations);
+    currentEditor()->editor()->setErrors(Observations, false);
+    currentEditor()->applyResult("STATIC", Observations);
+    currentEditor()->resizeResults();
+} // checkCode

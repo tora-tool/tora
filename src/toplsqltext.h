@@ -51,6 +51,7 @@
 class toTreeWidgetItem;
 class toTreeWidget;
 class toPLSQLEditor;
+class toPLSQLWidget;
 
 /*! \brief An editor widget for PL/SQL Editor.
 */
@@ -73,6 +74,7 @@ class toPLSQLText : public toHighlightedText
 
 public:
     toPLSQLText(QWidget *parent = 0);
+    toPLSQLWidget * parent_widget;
 
     void setEditor(toPLSQLEditor * pEditor)
     {
@@ -112,7 +114,7 @@ public:
     bool compile(CompilationType t);
 
 signals:
-    void errorsChanged(const QString & type, const QMultiMap<int, QString> & values);
+    void errorsChanged(const QString & type, const QMultiMap<int, QString> & values, const bool cleanup = false);
     void warningsChanged(const QMap<int, QString> values);
     void contentChanged();
 
@@ -126,14 +128,10 @@ class toPLSQLWidget : public QWidget
 {
     Q_OBJECT
 
-public:
-    toPLSQLWidget(QWidget * parent = 0);
-    ~toPLSQLWidget();
-
-    toPLSQLText * editor()
-    {
-        return m_editor;
-    };
+public slots:
+    void applyResult(const QString &, const QMultiMap<int, QString>&, const bool = false);
+    // expands or colapses results pane depending on number of errors, warnings etc.
+    void resizeResults(void);
 
 private:
     toTreeWidget * m_contents;
@@ -143,8 +141,16 @@ private:
     QSplitter * m_splitter;
     QSplitter * m_contentSplitter;
 
-    QTreeWidgetItem * m_errItem;
-    QTreeWidgetItem * m_warnItem;
+    QTreeWidgetItem * m_errItem;    // main branch of errors
+    QTreeWidgetItem * m_warnItem;   // main branch of warnings
+    QTreeWidgetItem * m_staticItem; // main branch of static check observations
+
+    // Count of errors, warnings and static check observations. Values are set after
+    // compilation in function readErrors and after static check execution.
+    // Count is used to auto-hide/display pane displaying list of errors, warnings etc.
+    // Placed here because values are used not only after compiling, but also after
+    // static code check and vice versa.
+    int errorCount, warningCount, staticCount;
 
     void updateArguments(toSQLParse::statement &statements,
                          toTreeWidgetItem *parent);
@@ -152,10 +158,21 @@ private:
                        toTreeWidgetItem *parent,
                        const QString &id = QString::null);
     void updateContent(toPLSQLText *editor);
+    // removes all errors, warnings and static check messages from result pane
+    void cleanupResults(const QString & type = NULL);
+    void setCount(const QString & type, const int count);
+
+public:
+    toPLSQLWidget(QWidget * parent = 0);
+    ~toPLSQLWidget();
+
+    toPLSQLText * editor()
+    {
+        return m_editor;
+    };
 
 private slots:
     void goToError(QTreeWidgetItem *, QTreeWidgetItem *);
-    void applyResult(const QString &, const QMultiMap<int, QString>&);
     void updateContent()
     {
         updateContent(m_editor);
