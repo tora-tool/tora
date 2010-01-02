@@ -51,5 +51,10 @@ The available elements are as follows.
       TODO.
 @item @strong{Use only spaces when indenting}
       TODO.
+@item @strong{Static checker}
+      Specifies static checker to be used. This configuration option should contain %1 which will be replaced with a filename (with full path) containing code to be checked.
+      @example
+perl /usr/bin/staticChecker.pl --output=TORA --file=%1
+      @end example
 @end table
-There may also be pages under this for each individual database provider. Currently onlye Oracle uses this feature. That setup looks like this.
+There may also be pages under this for each individual database provider. Currently only Oracle uses this feature. That setup looks like this.

@@ -73,11 +73,25 @@ Clicking the log items will take you to the exact place in the editor.
 <br><dt><strong>Compile</strong><dd>      Compile the current editor. This will compile the procedure with the debug option,
       if you don't have the debug options you need to recompile it in order to be able to see watches. The keyboard shortcut for this is <strong>F9</strong>. 
 <br><dt><strong>Compile with Warnings</strong><dd>      Compile the current editor with suggested Oracle's PL/SQL Warnings (PLW). Fixing these warnings can speed up your code. 
+<br><dt><strong>Static Check</strong><dd>      Runs external static checker and displays result along with oracle errors and warnings. This button is only visible if static checker has been set up in preferences. 
 <br><dt><strong>Next error</strong><dd>      Move the cursor to the next syntax error in the current editor. For more information about syntax errors in editors see the editor section. 
       The keyboard shortcut for this is <strong>CTRL+N</strong>. 
 <br><dt><strong>Previous error</strong><dd>      Move the cursor to the previous syntax error in the current editor. For more information about syntax errors in editors see the editor section. 
       The keyboard shortcut for this is CTRL+P. 
 </dl>
 
+<h4 class="subheading">Static check</h4>
+
+<p>Running static check will create a temporary file containing currently open code tab. Then external program will be called with name of temporary file (with full path) given as parameter. Result from that external program should be in specific format in order to be interpreted by TOra.
+
+   <p>TOra expects one line of output (written to stdout) to contain one message from static checker. This line should start with number of line followed by semicolon and then text of message.
+
+   <p><strong>Note:</strong> in future TOra should be able to interpret linenumber, code of static message and then message itself. Code of static message will be used to open automatically generated URL descibing static checker message.
+
+   <p>Example of output from static checker:
+
+<pre class="example">     72:STC-0100:Comment describing function/procedure and it's parameters is missing
+     107:STC-0200:Name of procedure "my_procedure" does not comply with naming standard
+</pre>
    </body></html>
 

@@ -29,9 +29,9 @@ Clicking the log items will take you to the exact place in the editor.
 The toolbar and menu contain pretty much the same commands with a few exceptions.
 
 @table @asis
-@item @strong{Refresh object list}	
+@item @strong{Refresh object list}
       Update the @strong{Object} list to the left of the screen. This is first on the toolbar and close to the end in the menu. 
-      The keyboard shortcut for this is @strong{F5}. 
+      The keyboard shortcut for this is @strong{F5}.
       Observe that this list is read from the object cache and will not be updated unless you reread the object cache as well 
       (Available from the File menu.
 @item @strong{Select schema}
@@ -40,10 +40,12 @@ The toolbar and menu contain pretty much the same commands with a few exceptions
 @item @strong{New sheet}
       Start editing a new object.
 @item @strong{Compile}
-      Compile the current editor. This will compile the procedure with the debug option, 
+      Compile the current editor. This will compile the procedure with the debug option,
       if you don't have the debug options you need to recompile it in order to be able to see watches. The keyboard shortcut for this is @strong{F9}.
 @item @strong{Compile with Warnings}
       Compile the current editor with suggested Oracle's PL/SQL Warnings (PLW). Fixing these warnings can speed up your code.
+@item @strong{Static Check}
+      Runs external static checker and displays result along with oracle errors and warnings. This button is only visible if static checker has been set up in preferences.
 @item @strong{Next error}
       Move the cursor to the next syntax error in the current editor. For more information about syntax errors in editors see the editor section. 
       The keyboard shortcut for this is @strong{CTRL+N}.
@@ -52,3 +54,17 @@ The toolbar and menu contain pretty much the same commands with a few exceptions
       The keyboard shortcut for this is CTRL+P.
 @end table
 
+@subheading Static check
+
+Running static check will create a temporary file containing currently open code tab. Then external program will be called with name of temporary file (with full path) given as parameter. Result from that external program should be in specific format in order to be interpreted by TOra.
+
+TOra expects one line of output (written to stdout) to contain one message from static checker. This line should start with number of line followed by semicolon and then text of message.
+
+@strong{Note:} in future TOra should be able to interpret linenumber, code of static message and then message itself. Code of static message will be used to open automatically generated URL descibing static checker message.
+
+Example of output from static checker:
+
+@example
+72:STC-0100:Comment describing function/procedure and it's parameters is missing
+107:STC-0200:Name of procedure "my_procedure" does not comply with naming standard
+@end example
