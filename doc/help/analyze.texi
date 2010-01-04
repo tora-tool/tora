@@ -4,7 +4,7 @@
 
 This tool is usefull for collecting statistics and analysing tables in parallel. You can also use it to browse collected statistics.
 
-@image{images/analyze}
+@image{images/analyze,15cm}
 
 You control the interface through the controls in the toolbar. The rest of the interface simply displays currently available tables in the current schema. When collecting statistics only the selected items in the tablelist are analysed.
 

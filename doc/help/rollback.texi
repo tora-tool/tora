@@ -4,7 +4,7 @@
 
 This tool is used to manage rollback segments in the database.
 
-@image{images/rollback}
+@image{images/rollback,15cm}
 
 The window consist of three part. 
 The top one displays the available rollback segments and you can also see running transaction that use segment in the transactions column of the view, the length of the @strong{transactions} show up as bars in this column. One bar for each running transaction using the segment.
@@ -42,11 +42,11 @@ The lower part of this view is used to heuristically detect snapshot too old pro
 
 In the view you can see when the statement was first detected and who is running it. You also see the snapshot info which will display how far each of the available rollback segments have moved since this statement was executed. This is represented by one bar for each rollback segment. If any of these bars goes all the way through this column you are likely to encounter a snapshot too old statement.
 
-Finally you can see the SQL for the row. Selecting a line will also let you investigate the statement using the normal SGA statement(@pxref{SGA Statement}) view.
+Finally you can see the SQL for the row. Selecting a line will also let you investigate the statement using the normal SGA statement(@pxref{sgastatement}) view.
 
 There are a few options to configure how the snapshot too old detection is to work.
 
-@image{images/rollbacksetup}
+@image{images/rollbacksetup,11cm}
 
 @table @asis
 

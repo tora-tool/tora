@@ -8,6 +8,7 @@ This section will help you familiarize yourself with the framework of the TOra a
 
 @c @item @uref{window.html,Elements of the main window}
 @c @item @uref{newconnection.html,Connecting to a database}
+@c @item @uref{whatprivileges.html,What privileges do you need to run TOra}
 @c @item @uref{editors.html,Using editors}
 @c @item @uref{lists.html,Using lists}
 @c @item @uref{charts.html,Using charts}
@@ -20,7 +21,7 @@ This section will help you familiarize yourself with the framework of the TOra a
 @menu
 * Elements of the main window:window.
 * Connecting to a database:newconnection.
-* What privileges do you need to run TOra::
+* What privileges do you need to run TOra:whatprivileges.
 * Using editors:editors.
 * Using lists:lists.
 * Using charts:charts.

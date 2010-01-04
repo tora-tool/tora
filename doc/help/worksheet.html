@@ -9,7 +9,7 @@
 <link rel="next" href="browser.html#browser" title="browser">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <!--
-This manual is for TOra, version 2.1.1.-->
+This manual is for TOra, version 2.1.1+.-->
 <meta http-equiv="Content-Style-Type" content="text/css">
 <style type="text/css"><!--
   pre.display { font-family:inherit }
@@ -34,7 +34,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
 
 <h3 class="section">4.1 SQL Editor</h3>
 
-<p><a name="index-SQL-Editor-17"></a>
+<p><a name="index-SQL-Editor-19"></a>
 This tool provides a way to execute arbitrary SQL or PL/SQL code and also investigate how it is executed and it's resource consumption.
 
    <div class="block-image"><img src="images/worksheet.png" alt="images/worksheet.png"></div>
@@ -105,7 +105,7 @@ If that is the case the entire block will be executed. This feature can be enabl
 
    <p>There are a few words that are treated as comments for compatibility with SQL*Plus scripts. They are <strong>&ndash;</strong>, <strong>REM</strong> and <strong>PROMPT</strong>. Comments will disregard whatever is to the right on the line. Also multi line /* ... */ style comments are recognised and ignored.
 
-   <p>You can also use bind variables in the worksheet by using the normal : character. (see <a href="Getting-bind-parameters.html#Getting-bind-parameters">Getting bind parameters</a>for more information how this works). One nice feature is that the first line retrieved from the result set is stored in the parameter cache with a bind name the same as the column name in lowercase. The example in the getting bind parameters could have been used directly after executing the line select * from essprc and get the second row in the table by just using the defaults of the bind dialog if essprc contains a column named prcid.
+   <p>You can also use bind variables in the worksheet by using the normal : character. (see <a href="gettingbindparameters.html#gettingbindparameters">gettingbindparameters</a>for more information how this works). One nice feature is that the first line retrieved from the result set is stored in the parameter cache with a bind name the same as the column name in lowercase. The example in the getting bind parameters could have been used directly after executing the line select * from essprc and get the second row in the table by just using the defaults of the bind dialog if essprc contains a column named prcid.
 
    <p>You can also describe objects returned as in PL/SQL by using either <strong>DESC</strong> or <strong>DESCRIBE</strong> and an object name.
 
@@ -117,7 +117,7 @@ If that is the case the entire block will be executed. This feature can be enabl
 <tr align="left"><td valign="top" width="10%"><strong>Result</strong> </td><td valign="top" width="90%">
     This contains the actual result of the query or describe. For some notes about descriptions see this note. 
 <br></td></tr><tr align="left"><td valign="top" width="10%"><strong>Execution plan</strong> </td><td valign="top" width="90%">
-    The execution plan(see <a href="Explain-plan.html#Explain-plan">Explain plan</a>) of the current statement. 
+    The execution plan(see <a href="explainplan.html#explainplan">explainplan</a>) of the current statement. 
 <br></td></tr><tr align="left"><td valign="top" width="10%"><strong>Visualize</strong> </td><td valign="top" width="90%">
     Can be used to visualize the current content of the result. The first column is assumes to contain labels
     and the rest contain the data.

@@ -12,7 +12,7 @@ The top pane is in the default distribution divided into two parts as well. The 
 
 Items in the second part is simply items with a descriptive text associated with them. Selecting the item will bring up the description of it in the information.
 
-@image{images/template}
+@image{images/template,6cm}
 
 @subheading DB Browser
 
@@ -43,7 +43,7 @@ Don't forget that more database browsing functionality is available in the datab
 
 You set up additional help files by selecting the SQL Template page in the options dialog (@pxref{preferences, Options}).
 
-@image{images/templatesetup}
+@image{images/templatesetup,14cm}
 
 To add an existing or start a new template help collection select the @strong{add file} button and enter the filename under 
 which to store the help collection and the name of the root item under which the collection should be displayed in the template help tree.
@@ -56,7 +56,7 @@ To remove a template press the @strong{remove file}, this will not remove the ac
 
 The template editor is used to edit and create new text template help collections.
 
-@image{images/templateeditor}
+@image{images/templateeditor,15cm}
 
 The editor are separated into a few different parts. On the left is a list of available items. To the top right are two buttons @strong{add new template} and @strong{remove current template}. Then comes a line editor where the name of template is. If a ':' character is in the name it will split into a tree in the template collection tree. Then comes a text editor where the actual description of the title is written. You can specify simple HTML in this editor. Finally there is a button called @strong{preview} which will give you a preview of the editor result of HTML.
 

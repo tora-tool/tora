@@ -9,7 +9,7 @@ of TOra be able to interact with schema objects (Dropping or create tables etc.)
 current version. The template help on the other hand is tree based and some people consider it easier and faster to
 work with.
 
-@image{images/browser}
+@image{images/browser,15cm}
 
 @menu
 @c * Using the browser::           
@@ -285,7 +285,7 @@ Swith between editing data as a table or single record (the later one could be u
 
 The content editor can define a filter to specify which part of a table to edit. This dialog looks like this.
 
-@image{images/contentfilter}
+@image{images/contentfilter,14cm}
 
 In the @strong{selection criteria} part you can add whatever you want to go after a @strong{where} in a select statement. In the @strong{sort order} you can list the columns you want to sort on. The sort order only affect the order the records are read from the database, after they are read you can still sort on any column by clicking it. To the right is a list of available columns in the table.
 
@@ -296,7 +296,7 @@ Finally at the bottom is a checkbox called @strong{use for all tables}. If this 
 
 Filtering is based on the object name and can be specified in a variety of ways. This is the dialog used to specify the filter.
 
-@image{images/browserfilter}
+@image{images/browserfilter,13cm}
 
 The most important part of this dialog is the editor which lets you specify the string to apply the criteria to. This is not available for No filter setting. The different available types and options are.
 

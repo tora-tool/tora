@@ -4,7 +4,7 @@
 
 This page is used to configure extra manuals for viewing in the TOra help viewer. Specifically the Oracle HTML based manuals which contents can be parsed and included in the left pane contents tree of the TOra help.
 
-@image{images/additionalhelp}
+@image{images/additionalhelp,13cm}
 
 If you have compiled TOra with KDE support (Not Windows or Qt versions) you can point this to any HTTP location. You could even use the help browser to browse the Oracle manuals directly from Technet if you wanted to (Free membership required).
 

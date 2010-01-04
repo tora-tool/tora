@@ -9,7 +9,7 @@
 <link rel="prev" href="template.html#template" title="template">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <!--
-This manual is for TOra, version 2.1.1.-->
+This manual is for TOra, version 2.1.1+.-->
 <meta http-equiv="Content-Style-Type" content="text/css">
 <style type="text/css"><!--
   pre.display { font-family:inherit }
@@ -34,7 +34,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
 
 <h3 class="section">4.19 SQL Editor</h3>
 
-<p><a name="index-SQL-Editor-35"></a>
+<p><a name="index-SQL-Editor-37"></a>
 When TOra needs to run an SQL statement it will not actually use the SQL needed directly. It will fetch an SQL statement by addressing it with a string. The string is built up by a module name, followed by a colon and a unique name for the SQL (Example: toBrowser:ListIndex which will contain the SQL statement for getting all the indexes for a schema).
 
    <p>For each SQL name there may be a number of actual SQL strings that are available, each are associated with a version number. When TOra requests an SQL statement by a name it will receive the string with the statement with the highest version number lower than the version of Oracle for the current connection that will be used to run it. Each SQL name also has a description associated with it so you can understand what the SQL is supposed to do.

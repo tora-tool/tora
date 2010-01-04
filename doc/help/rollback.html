@@ -10,7 +10,7 @@
 <link rel="next" href="trace.html#trace" title="trace">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <!--
-This manual is for TOra, version 2.1.1.-->
+This manual is for TOra, version 2.1.1+.-->
 <meta http-equiv="Content-Style-Type" content="text/css">
 <style type="text/css"><!--
   pre.display { font-family:inherit }
@@ -36,7 +36,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
 
 <h3 class="section">4.10 Rollback Segments</h3>
 
-<p><a name="index-Rollback-Segments-26"></a>
+<p><a name="index-Rollback-Segments-28"></a>
 This tool is used to manage rollback segments in the database.
 
    <div class="block-image"><img src="images/rollback.png" alt="images/rollback.png"></div>
@@ -68,7 +68,7 @@ The top one displays the available rollback segments and you can also see runnin
 
    <p>In the view you can see when the statement was first detected and who is running it. You also see the snapshot info which will display how far each of the available rollback segments have moved since this statement was executed. This is represented by one bar for each rollback segment. If any of these bars goes all the way through this column you are likely to encounter a snapshot too old statement.
 
-   <p>Finally you can see the SQL for the row. Selecting a line will also let you investigate the statement using the normal SGA statement(see <a href="SGA-Statement.html#SGA-Statement">SGA Statement</a>) view.
+   <p>Finally you can see the SQL for the row. Selecting a line will also let you investigate the statement using the normal SGA statement(see <a href="sgastatement.html#sgastatement">sgastatement</a>) view.
 
    <p>There are a few options to configure how the snapshot too old detection is to work.
 

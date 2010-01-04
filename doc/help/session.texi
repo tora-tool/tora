@@ -4,7 +4,7 @@
 
 This tool is used to manage the connections made to the database.
 
-@image{images/session}
+@image{images/session,15cm}
 
 The session tool consists of a toolbar, a list displaying the connections currently open to the database and at the bottom a tabbed pane where you can investigate a specific connection to the database.
 
@@ -44,7 +44,7 @@ When you select a session the following information is available in the tabbed p
 @table @asis
 
 @item @strong{Current statement}
-The statement that is currently being executed (@pxref{SGA Statement} for information about the statement).
+The statement that is currently being executed (@pxref{sgastatement} for information about the statement).
 @item @strong{Long ops}
 TODO
 @item @strong{Statistics}
@@ -60,7 +60,7 @@ The objects currently locked by this session.
 @item @strong{Accessing}
 TODO
 @item @strong{Previous statement}
-The next to last statement being executed by the session (@pxref{SGA Statement} for information about the statement).
+The next to last statement being executed by the session (@pxref{sgastatement} for information about the statement).
 @item @strong{Open cursors}
 This contains a list of all the cursors currently held open by the session. When a statement is selected in the list you can investigate it using the normal SGA statement view.
 

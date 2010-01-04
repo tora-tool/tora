@@ -1,0 +1,18 @@
+@node gettingbindparameters
+@subsection Getting bind parameters
+
+This dialog is displayed when input parameters are required to run the SQL. For instance the example dialog is the dialog displayed when running the following SQL in the worksheet.
+
+@example 
+@verbatim
+
+select * from essprc where prcid > :prcid and begrdt > :begrdt;
+
+@end verbatim
+@end example
+
+@image{images/getparam,12cm}
+
+As you can see the field name as specified after the : character is presented as a title. If the same field name is used at several parts of the query you only get to specify it once. You specify the value in the editor line just to the right of the field name label. If you want to specify a NULL value check the @strong{NULL} checkbox to the right of the editor. You can also edit the value in a memo editor(@pxref{memoeditor}) pressing the @strong{Edit} button to the right on the value.
+
+The parameter editor will cache it's value so it will remember the last parameters you fed to it when you run the query again.

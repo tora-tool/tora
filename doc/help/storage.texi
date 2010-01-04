@@ -4,7 +4,7 @@
 
 This tool provides an easy interface to administrate tablespaces and datafiles.
 
-@image{images/storage}
+@image{images/storage,15cm}
 
 As you can see in the screenshot above the tool is a list of all the tablespaces available in the database. The tablespaces can be expanded to display the datafiles they consist of. There is also one option available to this tool, whether to collect information about how coalesced the tablespaces are, the coalesced fetching can be very slow on fragmented databases and if TOra seems to lock itself when you try to start this tool try resetting that option to not show coalesced info. Using the toolbar you can perform these commands.
 

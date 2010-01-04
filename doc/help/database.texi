@@ -4,7 +4,7 @@
 
 This page of the options contains settings on how to interact with the database.
 
-@image{images/database}
+@image{images/database,15cm}
 
 @table @asis
 @item @strong{Autocommit changes}
@@ -44,7 +44,7 @@ This page of the options contains settings on how to interact with the database.
 There may also be pages under this for each individual database provider. Currently only Oracle and MySql uses this
 feature. That setup looks like this.
 
-@image{images/oracle}
+@image{images/oracle,13cm}
 
 @table @asis
 @item @strong{Checkpoint name}
@@ -69,7 +69,7 @@ feature. That setup looks like this.
     explanation after it is initially read to keep the explain plan table from filling up with old plans.
 @end table
 
-@image{images/mysql}
+@image{images/mysql,13cm}
 
 @table @asis
 @item @strong{Possibility to break MySql queries}

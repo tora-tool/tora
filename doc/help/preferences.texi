@@ -4,7 +4,7 @@
 
 To access the preferences of TOra you select the @strong{Edit|Preferences} menu item, you will then be presented with the following dialog.
 
-@image{images/preferences}
+@image{images/preferences,15cm}
 
 In windows preferences are stored in the registry, but in Linux it is stored in a file called @file{.torarc} in the users home directory. If this file doesn't exist a file called @file{/etc/torarc} is used if it exists.
 

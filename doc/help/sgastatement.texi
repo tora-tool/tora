@@ -1,0 +1,9 @@
+@node sgastatement
+@subsection SGA Statement
+@cindex SGA Statement
+
+This element is used to describe an element in the SGA.
+
+@image{images/sgastatement,15cm}
+
+The SGA statement have three tabs. The first tab called SQL simply display all of the SQL of the statement. The second tab called Execution plan displays the execution plan of the statement. This is described in more detail later. The last tab called Information simply display the information available about the statement in the SGA.

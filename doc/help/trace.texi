@@ -4,9 +4,9 @@
 
 This tool is used investigate the statements available in the SGA.
 
-@image{images/sgatrace}
+@image{images/sgatrace,15cm}
 
-The session tool consists of a toolbar, a list of SGA statements ( @pxref{SGA Statement} ) and finally at the bottom a SGA statement view.
+The session tool consists of a toolbar, a list of SGA statements ( @pxref{sgastatement} ) and finally at the bottom a SGA statement view.
 
 @subheading Toolbar
 

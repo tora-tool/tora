@@ -5,68 +5,9 @@
 These describe other elements that are used in several parts of the user interface.
 
 @menu
-* SGA Statement::               
-* Explain plan::                
-* Getting bind parameters::     
-* Object description::          
-* Memo editor::                 
+* SGA Statement:sgastatement.
+* Explain plan:explainplan.
+* Getting bind parameters:gettingbindparameters.
+* Object description:objectdescription.
+* Memo editor:memoeditor.
 @end menu
-
-@node  SGA Statement
-@subsection SGA Statement
-
-This element is used to describe an element in the SGA.
-
-@image{images/sgastatement}
-
-The SGA statement have three tabs. The first tab called SQL simply display all of the SQL of the statement. The second tab called Execution plan displays the execution plan of the statement. This is described in more detail later. The last tab called Information simply display the information available about the statement in the SGA.
-
-@node Explain plan
-@subsection Explain plan
-
-This element can be either part of an SGA statement or by itself in some cases (See above for a screenshot). For more information about execution paths check the Oracle manual Designing and Tuning for Performance, chapter 5 in the 8i release.
-
-A few notes here is that the execution plan displayed here is not necessarily the same as when run depending on one of these reasons.
-
-@itemize @bullet
-@item It is run as a different user which doesn't access the same database objects as the user you are logged in as now.
-@item The session running the query can have changed some optimizer parameters compared to your session.
-@end itemize
-
-What you see in this window is the execution you would get if you ran the statement like the one you are logged in as now and in your session. One example of this problem is if a user executes SQL which accesses his own objects which doesn't have public synonyms, then another person can simply not execute the SQL without modifying it to add owner specifier to the tables which TOra will not do automatically.
-
-Explain plan requires a table to store the result in. The name of this table can be configured in the options(@pxref{preferences,Options}). If the table doesn't exist TOra will ask you if it should try to create it. Without this table you can not display execution plans in TOra.
-
-@node Getting bind parameters
-@subsection Getting bind parameters
-
-This dialog is displayed when input parameters are required to run the SQL. For instance the example dialog is the dialog displayed when running the following SQL in the worksheet.
-
-@example 
-@verbatim
-
-select * from essprc where prcid > :prcid and begrdt > :begrdt;
-
-@end verbatim
-@end example
-
-@image{images/getparam}
-
-As you can see the field name as specified after the : character is presented as a title. If the same field name is used at several parts of the query you only get to specify it once. You specify the value in the editor line just to the right of the field name label. If you want to specify a NULL value check the @strong{NULL} checkbox to the right of the editor. You can also edit the value in a memo editor(@pxref{Memo editor}) pressing the @strong{Edit} button to the right on the value.
-
-The parameter editor will cache it's value so it will remember the last parameters you fed to it when you run the query again.
-
-@node Object description
-@subsection Object description
-
-@image{images/describe}
-
-This is a list that describes the columns of a table or view. There is nothing much special about this view except that you can check the collected analyze statistics for the column by placing the cursor over it and reading the tooltip that will be displayed. If no tooltip is displayed there is no analyzed statistics available. Also notable is that this list is read completely from the object cache if it available. This will mean that if you are modifying the object you are modifying you need to reread the object cache before you can see the changes.
-
-@node Memo editor
-@subsection Memo editor
-
-@image{images/memo}
-
-This is used to display or edit larger text than is easily entered in a oneline editor or list. To the top is a toolbar with some editing buttons. Specifically you have the save changes button to the left. You can also do this using the key @strong{CTRL+Return}. 
-You can remove the editor without saving changes using the @strong{Escape} key or closing the window.

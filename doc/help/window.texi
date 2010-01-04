@@ -4,7 +4,7 @@
 
 The main window in TOra has the following elements as shown below. It is assumed that you know how to handle a normal windows interface therefore no explanation about how to press buttons and select menus will be presented. If you are administrating Oracle you probably know how to handle a mouse.
 
-@image{images/workspace}
+@image{images/workspace,15cm}
 
 @subheading Menubar
 
@@ -12,7 +12,7 @@ If you've ever used a windows program you will recognize most of the menus hopef
 
 @subsubheading File menu
 
-@image{images/filemenu}
+@image{images/filemenu,5cm}
 
 @table @asis
 
@@ -56,7 +56,7 @@ and read it again from the database.
 
 @subsubheading Edit menu
 
-@image{images/editmenu}
+@image{images/editmenu,5cm}
 
 @table @asis
 
@@ -112,7 +112,7 @@ and read it again from the database.
 
 @subsubheading Tools menu
 
-@image{images/toolsmenu}
+@image{images/toolsmenu,5cm}
 
 The entries of this menu start up new tools for the current connection (See connection management for more information about current connections). The contents of the menu may vary depending on which plugins are loaded.
 
@@ -122,7 +122,7 @@ There may be a tool specific menu entered between the Tools and Windows menus (I
 
 @subsubheading Windows menu
 
-@image{images/windowsmenu}
+@image{images/windowsmenu,9cm}
 
 @table @asis
 
@@ -141,7 +141,7 @@ There may be a tool specific menu entered between the Tools and Windows menus (I
 
 @subsubheading Help menu
 
-@image{images/helpmenu}
+@image{images/helpmenu,4cm}
 
 @table @asis
 
@@ -161,7 +161,7 @@ There may be a tool specific menu entered between the Tools and Windows menus (I
 
 Using the toolbar you can perform the most common editing operations, handle your connections and open tool windows.
 
-@image{images/toolbar}
+@image{images/toolbar,15cm}
 
 @subheading Editor buttons
 
@@ -214,7 +214,7 @@ There are a few other items on the workspace that are worth taking notice of.
 
 This will display any messages that TOra need to inform the user of. TOra generally takes the path of not bothering the user with pop ups when something goes wrong, but simply display it in the statusbar. Or at least that was my intention. Due to the fact that many people had problems understanding this the default behaviour of TOra is now to pop up a dialog displaying the error. However this dialog contains a checkbox to revert back to the old productive manner. So if something isn't working, make sure you check the statusbar if something went wrong.
 
-There is an up button available to the right of the toolbar which when pressed can display a history of the contents of the status bar. This is also useful since the statusbar usually clears after certain amount of time but the information is always available here. Both the time until a message disappears and the amount of backlog to keep is configurable from the option dialog (@pxref{preferences,Options}). If you select an item in the popup menu the contents of the entry will be opened in a memo editor (@pxref{Memo editor}) where you can read them more easily and also copy the text more easily.
+There is an up button available to the right of the toolbar which when pressed can display a history of the contents of the status bar. This is also useful since the statusbar usually clears after certain amount of time but the information is always available here. Both the time until a message disappears and the amount of backlog to keep is configurable from the option dialog (@pxref{preferences,Options}). If you select an item in the popup menu the contents of the entry will be opened in a memo editor (@pxref{memoeditor}) where you can read them more easily and also copy the text more easily.
 
 Next to the left is the coordinates of the editor that currently has the focus.
 

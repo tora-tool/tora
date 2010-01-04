@@ -4,7 +4,7 @@
 
 This page of the options contain settings on which tools should be enabled in TOra.
 
-@image{images/tools}
+@image{images/tools,14cm}
 
 The first list contains all the available tools in TOra. If an item is selected in the list it is enabled. If unselected it is not enabled.
 

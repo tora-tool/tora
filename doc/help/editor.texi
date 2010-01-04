@@ -6,7 +6,7 @@ This page of the options contains settings on how to use TOra editors.
 
 TODO
 
-@image{images/editor}
+@image{images/editor,15cm}
 
 @table @asis
 @item @strong{Syntax components}
@@ -52,7 +52,7 @@ The available elements are as follows.
 @item @strong{Use only spaces when indenting}
       TODO.
 @item @strong{Static checker}
-      Specifies static checker to be used. This configuration option should contain %1 which will be replaced with a filename (with full path) containing code to be checked.
+      Specifies static checker to be used. This configuration option should contain %1 which will be replaced with a filename (with full path) containing code to be checked. For example:
       @example
 perl /usr/bin/staticChecker.pl --output=TORA --file=%1
       @end example

@@ -4,7 +4,7 @@
 
 This tool provides easy access to important server indicators as well as server statistics and an editor for database parameters.
 
-@image{images/tuning}
+@image{images/tuning,15cm}
 
 The interface for this tool is very simple. First there is a toolbar with the following controlls.
 
@@ -38,12 +38,12 @@ Raw statistic information from the server. The statistics is shown in two column
 @item @strong{Parameters}
 This tab displays the values of the parameters of the database. You can also use it to change the values by selecting a row and entering a new value at the bottom of the tab. After changes has been made you can apply or export these changes using the buttons in the toolbar at the top of the parameter editor.
 
-    @image{images/pfileeditor}
+    @image{images/pfileeditor,13cm}
     @table @asis
     @item @strong{Display hidden parameters}
     TODO
     @item @strong{Generate configuration file}
-    Generate a p-file with the current changes (And original changes as well) into a memo editor(@pxref{Memo editor}).
+    Generate a p-file with the current changes (And original changes as well) into a memo editor(@pxref{memoeditor}).
     @item @strong{Apply changes to system}
     Apply changes made to the system.
     @item @strong{Apply changes to session}

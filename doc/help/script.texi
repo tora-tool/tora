@@ -4,7 +4,7 @@
 
 This tool is used to either extract a script to recreate database objects, compare database objects or search database objects.
 
-@image{images/script}
+@image{images/script,15cm}
 
 @subheading Defining the operation
 
@@ -65,7 +65,7 @@ Selecting or deselecting an item in this list will select all it's child items.
 
 If you specify the @strong{extract} mode you can also indicate a way to resize generated storage specifications. This could be useful to make a database have only a few standard storage specifications making the database less prone to fragmentation.
 
-@image{images/resize}
+@image{images/resize,12cm}
 
 You have three modes to specify how resizing should work. First there is @strong{Don't resize} which means leave the same as the original. 
 Then there is @strong{Auto resize} which should work for pretty much everyone. In this a resize specification for each order of magnitude of size is given a specific storage specification. And last is the @strong{Custom resize} mode in which you specify how to transform the storage specifications to new values.
@@ -77,7 +77,7 @@ When you specify a custom resize you add items to the list with a @strong{limit}
 If you @strong{extract} the result is available under the @strong{Result} tag of the dialog in the form of a worksheet tool where you can either start executing it or save it to a file. 
 If you are comparing objects you will get the result under the @strong{Difference} tab. The tab will look something like this.
 
-@image{images/difference}
+@image{images/difference,13cm}
 
 On the left is a pane containing objects only available in the source database. On the right is a pane containing the objects only available in the destination database.
 

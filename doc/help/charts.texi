@@ -3,7 +3,7 @@
 @cindex Using charts
 There are several different chart types in TOra, you can see them in the screenshot below (taken from Server Tuning tool).
 
-@image{images/charts}
+@image{images/charts,9cm}
 
 @subheading Piecharts
 
@@ -17,17 +17,17 @@ You can zoom a part of a chart by leftclicking it and dragging a selection. If a
 
 The snapshot feature, context menu and printing works the same for these charts as for the piechart. In the context menu you have an additional item though that is @strong{Properties}
 
-@image{images/chartsetup}
+@image{images/chartsetup,13cm}
 
 @table @asis
-@item @strong{Y-Axis}	
+@item @strong{Y-Axis}
       This part is pretty self explanatory and is used to set up the range to display on the Y-axis of the chart. 	
-@item @strong{Show last value}	
-      Display the last sample added to the chart under the title of the chart. 	
-@item @strong{Show axis legend}	
-      Display text with the range and units of the axises. 	
-@item @strong{Show chart legend}	
-      Display the colors used in the chart in a legend to the right. 	
-@item @strong{Divide chart in grids} 	
+@item @strong{Show last value}
+      Display the last sample added to the chart under the title of the chart.
+@item @strong{Show axis legend}
+      Display text with the range and units of the axises.
+@item @strong{Show chart legend}
+      Display the colors used in the chart in a legend to the right.
+@item @strong{Divide chart in grids}
       How many gridlines to divide a chart into.
 @end table

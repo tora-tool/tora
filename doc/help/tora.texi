@@ -8,7 +8,7 @@
 @c %**end of header
 
 @copying
-This manual is for TOra, version 2.1.1.
+This manual is for TOra, version 2.1.1+.
 @end copying
 
 @titlepage
@@ -23,7 +23,7 @@ This manual is for TOra, version 2.1.1.
 
 @ifnottex
 @node Top
-@top TOra Manual 2.1.1
+@top TOra Manual 2.1.1+
 
 @insertcopying
 
@@ -43,6 +43,7 @@ This manual is for TOra, version 2.1.1.
 @include workspace.texi
 @include window.texi
 @include newconnection.texi
+@include whatprivileges.texi
 @include editors.texi
 @include lists.texi
 @include charts.texi
@@ -53,6 +54,11 @@ This manual is for TOra, version 2.1.1.
 @include additionalhelp.texi
 @include toolsetting.texi
 @include common.texi
+@include sgastatement.texi
+@include explainplan.texi
+@include gettingbindparameters.texi
+@include objectdescription.texi
+@include memoeditor.texi
 @include tools.texi
 @include worksheet.texi
 @include browser.texi

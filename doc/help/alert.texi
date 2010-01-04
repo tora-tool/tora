@@ -3,7 +3,7 @@
 @cindex Alert Tool
 This tool is usefull for debugging database packages that send or depend on receiving dbms alerts.
 
-@image{images/alert}
+@image{images/alert,13cm}
 
 This tool is controled solely from it's toolbar which is followed by a list containing the alerts received so far on the watched alerts. The toolbar contains the following controls.
 

@@ -4,7 +4,7 @@
 
 This tool provides information about the current session.
 
-@image{images/current}
+@image{images/current,12cm}
 
 The interface for this tool is very simple. There are four tabs in the window. The first one present the @strong{privileges} currently granted to the your session. 
 Roles can be expanded to display what privileges are available through those groups. The second one present the @strong{version} of the different components in the connection. 

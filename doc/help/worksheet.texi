@@ -4,7 +4,7 @@
 
 This tool provides a way to execute arbitrary SQL or PL/SQL code and also investigate how it is executed and it's resource consumption.
 
-@image{images/worksheet}
+@image{images/worksheet,13cm}
 
 The worksheet is split into two panes. The upper one is the editor where you enter the queries you want to run.
 In the lower you can investigate the result.
@@ -93,7 +93,7 @@ In the example above there are three statements that TOra will recognize and exe
 
 There are a few words that are treated as comments for compatibility with SQL*Plus scripts. They are @strong{--}, @strong{REM} and @strong{PROMPT}. Comments will disregard whatever is to the right on the line. Also multi line /* ... */ style comments are recognised and ignored.
 
-You can also use bind variables in the worksheet by using the normal : character. (@pxref{Getting bind parameters}for more information how this works). One nice feature is that the first line retrieved from the result set is stored in the parameter cache with a bind name the same as the column name in lowercase. The example in the getting bind parameters could have been used directly after executing the line select * from essprc and get the second row in the table by just using the defaults of the bind dialog if essprc contains a column named prcid.
+You can also use bind variables in the worksheet by using the normal : character. (@pxref{gettingbindparameters}for more information how this works). One nice feature is that the first line retrieved from the result set is stored in the parameter cache with a bind name the same as the column name in lowercase. The example in the getting bind parameters could have been used directly after executing the line select * from essprc and get the second row in the table by just using the defaults of the bind dialog if essprc contains a column named prcid.
 
 You can also describe objects returned as in PL/SQL by using either @strong{DESC} or @strong{DESCRIBE} and an object name.
 
@@ -106,12 +106,12 @@ There are six different panes available with information about the executed stat
 @item @strong{Result} @tab
     This contains the actual result of the query or describe. For some notes about descriptions see this note.
 @item @strong{Execution plan} @tab
-    The execution plan(@pxref{Explain plan}) of the current statement.
+    The execution plan(@pxref{explainplan}) of the current statement.
 @item @strong{Visualize} @tab
     Can be used to visualize the current content of the result. The first column is assumes to contain labels
     and the rest contain the data.
 
-@image{images/visualize}
+@image{images/visualize,13cm}
 
 The toolbar available contains the following controls.
 
@@ -151,7 +151,7 @@ The toolbar available contains the following controls.
 
 There are quite a few preferences available for the SQL editor.
 
-@image{images/worksheetsetup}
+@image{images/worksheetsetup,13cm}
 
 @table @asis
 

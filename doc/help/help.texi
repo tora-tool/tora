@@ -6,7 +6,7 @@ You can always bring up help on the current dialog etc. by pressing the @strong{
 
 When you open the help browser which you obviously have done. You are presented with a screen similar to the following.
 
-@image{images/help}
+@image{images/help,15cm}
 
 On the top of the screen is a toolbar with back and forward buttons that you can use to go back and forward in the history of viewed pages that you have previously looked at. This list kept during the duration of running TOra, however when you display help in dialogs that help is not added to the main application help history.
 

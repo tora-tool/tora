@@ -4,7 +4,7 @@
 
 A list is a very central element of the TOra user interface and is a standard way to display information in a grid. Here is an example of a list.
 
-@image{images/lists}
+@image{images/lists,15cm}
 
 @subheading Navigating a list
 
@@ -29,7 +29,7 @@ The contents of a field (Specific row and column of a list) can be copied either
 
 If the contents is too long to be visible in the list you will get a tooltip with all of the contents if you place the mouse over the field for a short while (As seen in the screenshot). If this is not enough you can display the contents of a field in a separate window by accessing the context menu of the field and selecting @strong{display in editor}.
 
-You can also place a line in the bind parameter(@pxref{Getting bind parameters}) cache by double clicking on a line. The bind name will be the same as the column name in lowercase.
+You can also place a line in the bind parameter(@pxref{gettingbindparameters}) cache by double clicking on a line. The bind name will be the same as the column name in lowercase.
 
 @subheading Other list functionality
 
