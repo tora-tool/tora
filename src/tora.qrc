@@ -1,12 +1,12 @@
 <RCC>
     <qresource prefix="/" >
-        <file>help/Explain-plan.html</file>
-        <file>help/Getting-bind-parameters.html</file>
+        <file>help/explainplan.html</file>
+        <file>help/gettingbindparameters.html</file>
         <file>help/Index_002dlist.html</file>
-        <file>help/Memo-editor.html</file>
-        <file>help/Object-description.html</file>
-        <file>help/SGA-Statement.html</file>
-        <file>help/What-privileges-do-you-need-to-run-TOra.html</file>
+        <file>help/memoeditor.html</file>
+        <file>help/objectdescription.html</file>
+        <file>help/sgastatement.html</file>
+        <file>help/whatprivileges.html</file>
         <file>help/additionalhelp.html</file>
         <file>help/alert.html</file>
         <file>help/analyze.html</file>
