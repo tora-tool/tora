@@ -114,7 +114,7 @@ QString toOracleExtract::displaySource(toExtract &ext,
             if (!describe)
                 tmp += schema;
             tmp += line.mid(len);
-            line = tmp.simplified(); // avoid growing amount of spaces
+            line = tmp.simplified() + "\n"; // avoid growing amount of spaces
 
             first = false;
         }
