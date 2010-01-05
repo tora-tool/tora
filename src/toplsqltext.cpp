@@ -621,7 +621,7 @@ void toPLSQLWidget::applyResult(const QString & type,
                                 const QMultiMap<int, QString> & values,
                                 const bool cleanup)
 {
-    QTreeWidgetItem * item; // abstract item will be used as list of errors or
+    QTreeWidgetItem * item = 0; // abstract item will be used as list of errors or
                             // warnings or static check observations etc.
     int count = 0;
 
