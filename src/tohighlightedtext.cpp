@@ -891,8 +891,8 @@ void toHighlightedText::setErrors(const QMap<int, QString> &errors, bool errorsG
             qDebug() << "toHighlightedText::setErrors errLine:"<< i.key() << " value:" << i.value();
             continue;
         }
-        markerAdd(i.key(), handle);
-        markerAdd(i.key(), marginHandle);
+        markerAdd(i.key() - 1, handle);
+        markerAdd(i.key() - 1, marginHandle);
     }
 } // setErrors
 

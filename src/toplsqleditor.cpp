@@ -616,7 +616,7 @@ void toPLSQLEditor::parseResults(const QString buf, QMultiMap<int, QString> &res
     for (int i = 0; i < list.size(); i++)
     {
         j = list[i].indexOf(":");
-        res.insert(list[i].left(j).trimmed().toInt() - 1, list[i].right(list[i].length() - j - 1).trimmed());
+        res.insert(list[i].left(j).trimmed().toInt(), list[i].right(list[i].length() - j - 1).trimmed());
     }
 } // parseResults
 

@@ -267,7 +267,7 @@ static toSQL SQLReadSource("toPLSQLEditor:ReadSource",
                            "Read sourcecode for object");
 
 static toSQL SQLReadErrors("toPLSQLEditor:ReadErrors",
-                           "SELECT attribute, Line-1,Text FROM SYS.All_Errors\n"
+                           "SELECT attribute, Line,Text FROM SYS.All_Errors\n"
                            " WHERE OWNER = :f1<char[101]>\n"
                            "   AND NAME = :f2<char[101]>\n"
                            "   AND TYPE = :f3<char[101]>\n"
@@ -276,7 +276,7 @@ static toSQL SQLReadErrors("toPLSQLEditor:ReadErrors",
                            "1000",
                            "Oracle");
 static toSQL SQLReadErrors9("toPLSQLEditor:ReadErrors",
-                            "SELECT 'ERROR', Line-1,Text FROM SYS.All_Errors\n"
+                            "SELECT 'ERROR', Line,Text FROM SYS.All_Errors\n"
                             " WHERE OWNER = :f1<char[101]>\n"
                             "   AND NAME = :f2<char[101]>\n"
                             "   AND TYPE = :f3<char[101]>\n"
@@ -675,7 +675,7 @@ void toPLSQLWidget::goToError(QTreeWidgetItem * current, QTreeWidgetItem *)
     // do not try to move cursor when "parent" item in result list is selected
     if (current != m_errItem && current != m_warnItem && current != m_staticItem)
     {
-        m_editor->setCursorPosition(current->text(1).toInt(), 0);
+        m_editor->setCursorPosition(current->text(1).toInt() - 1, 0);
         m_editor->setFocus(Qt::OtherFocusReason);
     }
 } // goToError
