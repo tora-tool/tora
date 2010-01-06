@@ -383,7 +383,7 @@ QString toOracleExtract::alterTable(std::list<QString> &source,
     }
 
     if (!new_table_name.isNull())
-        statements += ("rename table " + table_name + " to " + new_table_name + ";");
+        statements += ("alter table " + table_name + " rename to " + new_table_name + ";");
 
     return statements + end_statements;
 } // alterTable
