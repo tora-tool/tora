@@ -275,11 +275,13 @@ static QString DescribePart(std::list<QString> &desc,
             break;
         QString part = ValidPart(desc, i, level);
 
+        /* does it make sense to anybody? For me it doesn't. (pvanek)
         do
         {
             QString part = toExtract::partDescribe(*i, level);
         }
         while (part.isNull());
+        */
         if (lastPart != part)
         {
             if (lastPart.isNull())
@@ -355,7 +357,7 @@ static QString DescribePart(std::list<QString> &desc,
         else
         {
             if (!part.isEmpty())
-                text += QString::fromLatin1("<P>") + toHtml::escape(part) + QString::fromLatin1("</P>\n");
+                text += QString::fromLatin1("<P><PRE>") + toHtml::escape(part) + QString::fromLatin1("</PRE></P>\n");
             i++;
         }
     }
