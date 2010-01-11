@@ -64,7 +64,7 @@ set ORACLE_HOME=c:\build\oracle
 
   8. Compile Tora - read README.CMAKE and dont forget to check environment is in 5.
      Example:
-c:\
+c:
 cd \build\tora-build
 set PATH=%PATH%;c:\build\qt\bin
 
