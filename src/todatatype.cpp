@@ -148,13 +148,13 @@ QString toDatatype::type() const
     {
         type = Type->currentText();
         bool par = false;
-        if (bSizeVisible and (Size->text() != noValue))
+        if (bSizeVisible && (Size->text() != noValue))
         {
             type += "(";
             par = true;
             type += Size->text();
         }
-        if (bPrecVisible and (Precision->text() != noValue))
+        if (bPrecVisible && (Precision->text() != noValue))
         {
             if (!par)
             {
