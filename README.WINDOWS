@@ -67,10 +67,14 @@ set ORACLE_HOME=c:\build\oracle
 c:\
 cd \build\tora-build
 set PATH=%PATH%;c:\build\qt\bin
+
+# If you need to refresh from cmake, otherwise skip this step
 cmake -G "NMake Makefiles" -DWANT_INTERNAL_QSCINTILLA=1 -DCMAKE_INSTALL_PREFIX=c:\build\tora-build\RELEASE -DORACLE_OCI_VERSION=10G_R2 ..\tora
+
      Misc notes: seting ORACLE_HOME is a good thing (TM)
                  building with internal qscintilla is easier for beginners ;)
                  prepare for longer headache (if you're a windows devel newbie) 
+
 nmake
      Issuing nmake will actually run the build process itself.
 
