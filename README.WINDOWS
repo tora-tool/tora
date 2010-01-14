@@ -83,9 +83,10 @@ nmake
 #
 Above build will generate into the tora-build\RELEASE dir. Copy the various dll files from Qt, Postgres, MySQL 
 installs into that dir as well: 
-	comerr32.dll, gssapi32.dll, k5sprt32.dll, krb5_32.dll, libeay32.dll,
-	libiconv-2.dll libintl-8.dll libmysql.dll libpq.dll oci.dll qsqlmysqld4.dll QtCore4.dll QtGui4.dll 
-	QtNetwork4.dll QtSql4.dll QtXml4.dll ssleay32.dll
+	comerr32.dll gssapi32.dll k5sprt32.dll krb5_32.dll libeay32.dll libiconv-2.dll libintl-8.dll libpq.dll ssleay32.dll
+	libmysql.dll qsqlmysqld4.dll
+	oci.dll 
+	QtCore4.dll QtGui4.dll QtNetwork4.dll QtSql4.dll QtXml4.dll 
 Then you should be able to run tora.exe from that dir. This can be used to test prior to packaging.
 
 (NOTE- Above is ghastly, surely there is a better way of doing this?!?!)
