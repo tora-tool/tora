@@ -2,39 +2,39 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2009 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries. 
- * 
+ *      these libraries.
+ *
  *      You may link this product with any GPL'd Qt library.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -84,7 +84,7 @@ QsciLexerSQL * sqlLexer()
 
 toSyntaxAnalyzer::toSyntaxAnalyzer(const char **keywords)
 {
-    for (int i = 0;keywords[i];i++)
+    for (int i = 0; keywords[i]; i++)
     {
         std::list<const char *> &curKey = Keywords[(unsigned char)char(toupper(*keywords[i]))];
         curKey.insert(curKey.end(), keywords[i]);
@@ -280,7 +280,7 @@ bool toSyntaxAnalyzer::reservedWord(const QString &str)
         return false;
     QString t = str.toUpper();
     std::list<const char *> &curKey = Keywords[(unsigned char)char(str[0].toLatin1())];
-    for (std::list<const char *>::iterator i = curKey.begin();i != curKey.end();i++)
+    for (std::list<const char *>::iterator i = curKey.begin(); i != curKey.end(); i++)
         if (t == (*i))
             return true;
     return false;
@@ -424,10 +424,10 @@ void toHighlightedText::keyPressEvent(QKeyEvent * e)
     // It uses qscintilla lowlevel API to handle "word unde cursor"
     // This code is taken from sqliteman.com
     if (toConfigurationSingle::Instance().useEditorShortcuts()
-        && e->key() == Qt::Key_Tab)
+            && e->key() == Qt::Key_Tab)
     {
         int pos = SendScintilla(SCI_GETCURRENTPOS);
-        int start = SendScintilla(SCI_WORDSTARTPOSITION, pos,true);
+        int start = SendScintilla(SCI_WORDSTARTPOSITION, pos, true);
         int end = SendScintilla(SCI_WORDENDPOSITION, pos, true);
         SendScintilla(SCI_SETSELECTIONSTART, start, true);
         SendScintilla(SCI_SETSELECTIONEND, end, true);
@@ -438,14 +438,14 @@ void toHighlightedText::keyPressEvent(QKeyEvent * e)
             removeSelectedText();
             insert(shorts.value(key).toString());
             SendScintilla(SCI_SETCURRENTPOS,
-                           SendScintilla(SCI_GETCURRENTPOS) +
-                           shorts.value(key).toString().length());
+                          SendScintilla(SCI_GETCURRENTPOS) +
+                          shorts.value(key).toString().length());
             pos = SendScintilla(SCI_GETCURRENTPOS);
-            SendScintilla(SCI_SETSELECTIONSTART, pos,true);
+            SendScintilla(SCI_SETSELECTIONSTART, pos, true);
             SendScintilla(SCI_SETSELECTIONEND, pos, true);
             return;
         }
-        SendScintilla(SCI_SETSELECTIONSTART, pos,true);
+        SendScintilla(SCI_SETSELECTIONSTART, pos, true);
         SendScintilla(SCI_SETSELECTIONEND, pos, true);
     }
     toMarkedText::keyPressEvent(e);
@@ -515,7 +515,7 @@ void toHighlightedText::autoCompleteFromAPIs()
         if (!partial.isNull() && partial.length() > 0)
         {
             int i;
-            for (i = 0;i < list->model()->rowCount();i++)
+            for (i = 0; i < list->model()->rowCount(); i++)
             {
                 if (list->item(i)->text().indexOf(partial) == 0)
                 {
@@ -642,7 +642,7 @@ void toHighlightedText::updateSyntaxColor(toSyntaxAnalyzer::infoType t)
 //         setMarkerBackgroundColor(col, m_currentLineMarginHandle);
         // TODO/FIXME?: make it configurable - color.
         setMarkerBackgroundColor(DefaultAnalyzer.getColor(toSyntaxAnalyzer::CurrentLineMarker).lighter(100),
-                          m_bookmarkHandle);
+                                 m_bookmarkHandle);
         break;
     default:
         break;
@@ -657,7 +657,7 @@ void toHighlightedText::openFilename(const QString & file)
     m_bookmarks.clear();
     markerDeleteAll(m_bookmarkHandle);
     markerDeleteAll(m_bookmarkMarginHandle);
-    setErrors(QMap<int,QString>());
+    setErrors(QMap<int, QString>());
 }
 
 /**
@@ -782,7 +782,7 @@ void toHighlightedText::nextError(void)
 {
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
-    for (QMap<int, QString>::iterator i = Errors.begin();i != Errors.end();i++)
+    for (QMap<int, QString>::iterator i = Errors.begin(); i != Errors.end(); i++)
     {
         if (i.key() > curline)
         {
@@ -797,7 +797,7 @@ void toHighlightedText::previousError(void)
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
     curcol = -1;
-    for (QMap<int, QString>::iterator i = Errors.begin();i != Errors.end();i++)
+    for (QMap<int, QString>::iterator i = Errors.begin(); i != Errors.end(); i++)
     {
         if (i.key() >= curline)
         {
@@ -872,10 +872,13 @@ void toHighlightedText::setErrors(const QMap<int, QString> &errors, bool errorsG
 {
     int handle, marginHandle;
 
-    if (errorsGiven) {
+    if (errorsGiven)
+    {
         handle = m_errorHandle;
         marginHandle = m_errorMarginHandle;
-    } else {
+    }
+    else
+    {
         handle = m_staticHandle;
         marginHandle = m_staticMarginHandle;
     }
@@ -884,15 +887,21 @@ void toHighlightedText::setErrors(const QMap<int, QString> &errors, bool errorsG
     setStatusMessage();
     markerDeleteAll(handle);
     markerDeleteAll(marginHandle);
-    for (QMap<int, QString>::const_iterator i = Errors.begin();i != Errors.end();i++)
+    for (QMap<int, QString>::const_iterator i = Errors.begin(); i != Errors.end(); i++)
     {
         if (i.key() < 0)
         {
-            qDebug() << "toHighlightedText::setErrors errLine:"<< i.key() << " value:" << i.value();
+            qDebug() << "toHighlightedText::setErrors errLine:" << i.key() << " value:" << i.value();
             continue;
         }
-        markerAdd(i.key() - 1, handle);
-        markerAdd(i.key() - 1, marginHandle);
+
+        // Some general errors are not attached to any line. Oracle returns lineno 0 for those.
+        // TOra will be showing such errors in error list but no line will be highlighted.
+        if (i.key() > 0)
+        {
+            markerAdd(i.key() - 1, handle);
+            markerAdd(i.key() - 1, marginHandle);
+        }
     }
 } // setErrors
 
@@ -987,7 +996,7 @@ QStringList toHighlightedText::getCompletionList(QString* partial)
         {
             toConnection &conn = toCurrentConnection(this);
             toQDescList &desc = conn.columns(conn.realName(name, false));
-            for (toQDescList::iterator i = desc.begin();i != desc.end();i++)
+            for (toQDescList::iterator i = desc.begin(); i != desc.end(); i++)
             {
                 QString t;
                 int ind = (*i).Name.indexOf("(");

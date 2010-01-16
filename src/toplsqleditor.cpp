@@ -272,6 +272,8 @@ toPLSQLEditor::toPLSQLEditor(QWidget *main, toConnection &connection)
     splitter->restoreState(s.value("splitter").toByteArray());
     s.endGroup();
 
+    conn = &connection;
+
     refresh();
 }
 
@@ -355,8 +357,8 @@ void toPLSQLEditor::createActions(void)
 
     // tool button to check code
     checkCodeAct = new QAction(QIcon(QPixmap(const_cast<const char**>(checkcode_xpm))),
-                                   tr("&Check Code"),
-                                   this);
+                               tr("&Check Code"),
+                               this);
     connect(checkCodeAct,
             SIGNAL(triggered()),
             this,
@@ -437,6 +439,30 @@ void toPLSQLEditor::changePackage(const QModelIndex &current)
     changePackage(current, QModelIndex());
 }
 
+static toSQL SQLHasCode("toPLSQLEditor:HasCode",
+                        "SELECT count(1) FROM all_source\n"
+                        " WHERE OWNER = :f1<char[101]>\n"
+                        "   AND NAME = :f2<char[101]>\n"
+                        "   AND TYPE = :f3<char[101]>\n",
+                        "Checks if given object has any source");
+// checks if given object has any source code
+bool toPLSQLEditor::hasCode(const QString &pSchema, const QString &pType, const QString &pName)
+{
+    int numberOfLines;
+
+    try
+    {
+        toQuery lines(*conn, SQLHasCode, pSchema, pName, pType);
+        numberOfLines = lines.readValue().toInt();
+        if (numberOfLines > 0)
+            return true;
+        else
+            return false;
+    }
+    TOCATCH
+    return true; // try displaying the code in case of error
+} // hasCode
+
 void toPLSQLEditor::changePackage(const QModelIndex &current, const QModelIndex &previous)
 {
     toBusy busy;
@@ -451,7 +477,8 @@ void toPLSQLEditor::changePackage(const QModelIndex &current, const QModelIndex 
         ctype = ctype.toUpper();
 
         viewSource(Schema->currentText(), item->display(), ctype, 0);
-        if (ctype == "PACKAGE" || ctype == "TYPE")
+        if (ctype == "PACKAGE" ||
+                (ctype == "TYPE" && hasCode(Schema->currentText(), item->display(), ctype + " BODY")))
             viewSource(Schema->currentText(), item->display(), ctype + " BODY", 0);
     }
 #ifdef AUTOEXPAND
@@ -632,7 +659,8 @@ void toPLSQLEditor::checkCode(void)
     }
 
     QTemporaryFile tf;
-    if (tf.open()) {
+    if (tf.open())
+    {
         if (!toWriteFile(tf.fileName(), currentEditor()->editor()->text()))
         {
 #ifdef DEBUG
@@ -665,18 +693,19 @@ void toPLSQLEditor::checkCode(void)
         qDebug() << "Error executing static check. Exit code = " << exit_code;
         int run_error = staticCheck.error();
         // error values taken from Qt4.6 documentation for QProcess
-        switch (run_error) {
-            case 0:
-                qDebug() << "The process failed to start. Either the invoked program is missing, or you may have insufficient permissions to invoke the program.";
-                break;
-            case 1:
-                qDebug() << "The process crashed some time after starting successfully.";
-                break;
-            case 5:
-                qDebug() << "An unknown error occurred.";
-                break;
-            default:
-                qDebug() << "Error code: " << run_error << "--" << staticCheck.errorString();
+        switch (run_error)
+        {
+        case 0:
+            qDebug() << "The process failed to start. Either the invoked program is missing, or you may have insufficient permissions to invoke the program.";
+            break;
+        case 1:
+            qDebug() << "The process crashed some time after starting successfully.";
+            break;
+        case 5:
+            qDebug() << "An unknown error occurred.";
+            break;
+        default:
+            qDebug() << "Error code: " << run_error << "--" << staticCheck.errorString();
         } // switch
 #endif
         return;

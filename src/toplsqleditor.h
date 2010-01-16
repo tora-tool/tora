@@ -68,6 +68,8 @@ class toPLSQLEditor : public toToolWidget
 {
     Q_OBJECT;
 
+    toConnection * conn;
+
     // Toolbar
     void createActions(void);
 
@@ -107,6 +109,9 @@ class toPLSQLEditor : public toToolWidget
 
     void closeEditor(toPLSQLWidget* &editor);
     void parseResults(const QString buf, QMultiMap<int, QString> &res);
+
+    // checks if given object has any source code
+    bool hasCode(const QString &schema, const QString &type, const QString &name);
 
 protected:
     virtual void closeEvent(QCloseEvent *);
