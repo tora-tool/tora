@@ -1504,6 +1504,11 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     viewView->resize(FIRST_WIDTH, viewView->height());
     connect(viewView, SIGNAL(selectionChanged()),
             this, SLOT(changeItem()));
+    // connect context menu for views
+    connect(viewView,
+            SIGNAL(displayMenu(QMenu *)),
+            this,
+            SLOT(displayViewMenu(QMenu *)));
     viewSplitter->setStretchFactor(viewSplitter->indexOf(viewView), 0);
 
     viewBrowserWidget = new toBrowserViewWidget(viewSplitter);
@@ -1512,6 +1517,10 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     m_objectsMap[viewSplitter] = viewView;
     m_browsersMap[viewSplitter] = viewBrowserWidget;
 
+    dropViewAct = new QAction(QPixmap(const_cast<const char**>(trash_xpm)),
+                              tr("Drop view"),
+                              this);
+    connect(dropViewAct, SIGNAL(triggered()), this, SLOT(dropView(void)));
 
     // Indexes
     indexSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
@@ -2100,6 +2109,12 @@ void toBrowser::displayTableMenu(QMenu *menu)
     menu->addAction(refreshAct);
 }
 
+void toBrowser::displayViewMenu(QMenu *menu)
+{
+    menu->addSeparator();
+    menu->addAction(dropViewAct);
+} // displayViewMenu
+
 void toBrowser::displayIndexMenu(QMenu *menu)
 {
     menu->addSeparator();
@@ -2118,8 +2133,8 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
     if (what.isEmpty())
         return ;
     if (TOMessageBox::warning(this, tr("Dropping %1?").arg(tr(type.toAscii().constData())),
-                              tr("Are you sure you want to drop the %1 %2.%3,\n"
-                                 "this action can not be undone?").arg(tr(type.toAscii().constData())).arg(
+                              tr("Are you sure you want to drop the %1 %2.%3?\n"
+                                 "This action can not be undone!").arg(tr(type.toAscii().constData())).arg(
                                   Schema->selected()).arg(what),
                               tr("&Yes"), tr("&Cancel"), QString::null, 0) == 0)
     {
@@ -2194,6 +2209,19 @@ void toBrowser::dropTable(void)
     }
     refresh();
 }
+
+void toBrowser::dropView(void)
+{
+    if (m_mainTab->currentWidget() != viewSplitter)
+        return; // only views allowed
+
+    for (toResultTableView::iterator it(viewView); (*it).isValid(); it++)
+    {
+        if (viewView->isRowSelected(*it))
+            dropSomething("VIEW", (*it).data(Qt::EditRole).toString());
+    }
+    refresh();
+} // dropView
 
 void toBrowser::truncateTable(void)
 {

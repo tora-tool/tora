@@ -193,6 +193,7 @@ class toBrowser : public toToolWidget
     QAction *addIndexesAct;
     QAction *dropIndexesAct;
     QAction *dropTableAct;
+    QAction *dropViewAct;
     QAction *enableConstraintAct;
     QAction *disableConstraintAct;
     QAction *testDBLinkAct;
@@ -238,14 +239,17 @@ public slots:
     void optimizeTable(void);
     void analyzeTable(void);
 
+    void dropView(void);
+
     void dropIndex(void);
 
     void changeConnection(void);
     void enableConstraints(void);
     void disableConstraints(void);
 
-    void displayIndexMenu(QMenu *menu);
     void displayTableMenu(QMenu *menu);
+    void displayViewMenu(QMenu *menu);
+    void displayIndexMenu(QMenu *menu);
 
     void addUser(void);
     void dropUser(void);
