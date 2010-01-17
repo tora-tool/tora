@@ -2,39 +2,39 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2009 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries. 
- * 
+ *      these libraries.
+ *
  *      You may link this product with any GPL'd Qt library.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -303,7 +303,7 @@ public:
         data[prefix + ":SpaceType"] = QString::number(TablespaceType);
         data[prefix + ":Text"] = Text;
         int id = 1;
-        for (std::list<QString>::iterator i = Tablespaces.begin();i != Tablespaces.end();i++, id++)
+        for (std::list<QString>::iterator i = Tablespaces.begin(); i != Tablespaces.end(); i++, id++)
             data[prefix + ":Space:" + QString::number(id).toLatin1()] = *i;
         if (OnlyOwnSchema)
             data[prefix + ":OwnlyOwnSchema"] = "Yes";
@@ -391,7 +391,7 @@ public:
             case 1:
             {
                 bool ok = false;
-                for (std::list<QString>::iterator i = Tablespaces.begin();i != Tablespaces.end();i++)
+                for (std::list<QString>::iterator i = Tablespaces.begin(); i != Tablespaces.end(); i++)
                 {
                     if (*i == tablespace)
                     {
@@ -404,7 +404,7 @@ public:
             }
             break;
             case 2:
-                for (std::list<QString>::iterator i = Tablespaces.begin();i != Tablespaces.end();i++)
+                for (std::list<QString>::iterator i = Tablespaces.begin(); i != Tablespaces.end(); i++)
                     if (*i == tablespace)
                         return false;
                 break;
@@ -439,7 +439,7 @@ public:
         case 4:
         {
             QStringList lst = Text.split(QRegExp(QString("\\s*,\\s*")));
-            for (int i = 0;i < lst.count();i++)
+            for (int i = 0; i < lst.count(); i++)
                 if (IgnoreCase)
                 {
                     if (str.toUpper() == lst[i])
@@ -581,13 +581,13 @@ public:
 //                                const char * name)
 //         : QToolButton(parent)
 // {
-// 
+//
 //     setIcon(iconSet);
 //     setText(textLabel);
 //     connect(this, SIGNAL(triggered(QAction *)), receiver, slot);
 //     setObjectName(name);
 //     setToolTip(grouptext);
-// 
+//
 //     try
 //     {
 //         connect(toCurrentTool(this), SIGNAL(connectionChange()), this, SLOT(connectionChanged()));
@@ -595,7 +595,7 @@ public:
 //     TOCATCH
 //     connectionChanged();
 // }
-// 
+//
 // void toBrowseButton::connectionChanged()
 // {
 //     try
@@ -844,7 +844,7 @@ static toSQL SQLTableIndexMySQL("toBrowser:TableIndex",
 //        "       AND main.column_name = refs.column_name (+)",
 //     "List the constraints on a table",
 //     "");
-// 
+//
 // static toSQL SQLTableConstraintPG(
 //     "toBrowser:TableConstraint",
 //     "SELECT conname as \"Constraint Name\",\n"
@@ -1043,18 +1043,18 @@ static toSQL SQLListViewSapDb("toBrowser:ListView",
 //                              "SapDB");
 
 static toSQL SQLListIndexMySQL3("toBrowser:ListIndex",
-                               "SHOW INDEX FROM :f1<char[100]>",
-                               "List the available indexes in a schema",
-                               "3.23",
-                               "MySQL");
+                                "SHOW INDEX FROM :f1<char[100]>",
+                                "List the available indexes in a schema",
+                                "3.23",
+                                "MySQL");
 static toSQL SQLListIndexMySQL("toBrowser:ListIndex",
-                        "select distinct table_name \"Tables with Indexes\"\n"
-                        "    from information_schema.statistics\n"
-                        "    where index_schema = :f1<char[100]>\n"
-                        "    order by 1\n",
-                        "",
-                        "5.0",
-                        "MySQL");
+                               "select distinct table_name \"Tables with Indexes\"\n"
+                               "    from information_schema.statistics\n"
+                               "    where index_schema = :f1<char[100]>\n"
+                               "    order by 1\n",
+                               "",
+                               "5.0",
+                               "MySQL");
 static toSQL SQLListIndex("toBrowser:ListIndex",
                           "SELECT Index_Name,NULL \" Ignore\",NULL \" Ignore2\",Tablespace_name \" Ignore2\"\n"
                           "  FROM SYS.ALL_INDEXES\n"
@@ -1246,7 +1246,7 @@ static toSQL SQLListSynonym("toBrowser:ListSynonym",
 //                         " WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
 //                         "   AND Type IN ('PACKAGE','TYPE')",
 //                         "");
-// 
+//
 // static toSQL SQLSQLBodyPgSQL("toBrowser:CodeBody",
 //                              "SELECT 'CREATE OR REPLACE FUNCTION ' || p.proname || ' ( ' ||\n"
 //                              "( SELECT array_to_string ( ARRAY ( SELECT t.typname\n"
@@ -1537,8 +1537,8 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     indexLayout->addWidget(indexToolbar);
 
     addIndexesAct = new QAction(QPixmap(const_cast<const char**>(addindex_xpm)),
-                                      tr("Add indexes"),
-                                      this);
+                                tr("Add indexes"),
+                                this);
     connect(addIndexesAct, SIGNAL(triggered()),
             this, SLOT(addIndex()));
     indexToolbar->addAction(addIndexesAct);
@@ -1550,8 +1550,8 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     indexToolbar->addSeparator();
 
     dropIndexesAct = new QAction(QPixmap(const_cast<const char**>(trash_xpm)),
-                                      tr("Drop index"),
-                                      this);
+                                 tr("Drop index"),
+                                 this);
     connect(dropIndexesAct, SIGNAL(triggered()),
             this, SLOT(dropIndex()));
     indexToolbar->addAction(dropIndexesAct);
@@ -1712,8 +1712,8 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
                            tr("Add user"),
                            this, SLOT(addUser()));
     QAction * dropUserAct = accessToolBar->addAction(QPixmap(const_cast<const char**>(trash_xpm)),
-                           tr("Drop user"),
-                           this, SLOT(dropUser()));
+                            tr("Drop user"),
+                            this, SLOT(dropUser()));
 
     accessView = new toBrowserSchemaTableView(accessWidget);
     accessView->setSQL(SQLMySQLUsers);
@@ -1752,9 +1752,9 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     changeConnection();
 
     connect(this, SIGNAL(connectionChange()),
-             this, SLOT(changeConnection()));
+            this, SLOT(changeConnection()));
     connect(m_mainTab, SIGNAL(currentChanged(int)),
-             this, SLOT(mainTab_currentChanged(int)));
+            this, SLOT(mainTab_currentChanged(int)));
 }
 
 void toBrowser::mainTab_currentChanged(int /*ix*/)
@@ -1769,7 +1769,7 @@ void toBrowser::mainTab_currentChanged(int /*ix*/)
 
     QSplitter * ix = qobject_cast<QSplitter*>(m_mainTab->currentWidget());
     Q_ASSERT_X(ix, "toBrowser::mainTab_currentChanged",
-                "main widget of the tab is not QSplitter as is mandatory!");
+               "main widget of the tab is not QSplitter as is mandatory!");
 
     if (m_objectsMap.contains(ix))
         m_objectsMap[ix]->changeParams(schema(), Filter ? Filter->wildCard() : "%");
@@ -1905,26 +1905,26 @@ void toBrowser::changeConnection(void)
     // enable/disable main tabs depending on DB
     m_mainTab->clear();
     addTab(tableSplitter, tr("T&ables"),
-            true);
+           true);
     addTab(viewSplitter, tr("&Views"),
-            !toIsMySQL(connection()));
+           !toIsMySQL(connection()));
     addTab(indexSplitter, tr("Inde&xes"),
-            true);
+           true);
     addTab(sequenceSplitter, tr("Se&quences"),
-            toIsOracle(connection()) || toIsPostgreSQL(connection()));
+           toIsOracle(connection()) || toIsPostgreSQL(connection()));
     addTab(synonymSplitter, tr("S&ynonyms"),
-            toIsOracle(connection()));
+           toIsOracle(connection()));
     addTab(codeSplitter, tr("Cod&e"),
-            !toIsMySQL(connection()));
+           !toIsMySQL(connection()));
     addTab(triggerSplitter, tr("Tri&ggers"),
-            !toIsMySQL(connection()) && !toIsPostgreSQL(connection()));
+           !toIsMySQL(connection()) && !toIsPostgreSQL(connection()));
     addTab(dblinkSplitter, tr("DBLinks"),
-            toIsOracle(connection()));
+           toIsOracle(connection()));
     addTab(accessSplitter, tr("Access"),
-            toIsMySQL(connection()));
+           toIsMySQL(connection()));
 
     foreach (toBrowserBaseWidget * w, m_browsersMap.values())
-        w->changeConnection();
+    w->changeConnection();
 
     m_mainTab->setCurrentIndex(0);
     m_mainTab->blockSignals(false);
@@ -1944,7 +1944,7 @@ QString toBrowser::currentItemText(int col)
 {
     QSplitter * ix = qobject_cast<QSplitter*>(m_mainTab->currentWidget());
     Q_ASSERT_X(ix, "toBrowser::currentItemText",
-                "main widget of the tab is not QSplitter as is mandatory!");
+               "main widget of the tab is not QSplitter as is mandatory!");
 
     if (m_objectsMap.contains(ix))
     {
@@ -1958,7 +1958,7 @@ void toBrowser::changeItem()
 {
     QSplitter * ix = qobject_cast<QSplitter*>(m_mainTab->currentWidget());
     Q_ASSERT_X(ix, "toBrowser::changeItem",
-                "main widget of the tab is not QSplitter as is mandatory!");
+               "main widget of the tab is not QSplitter as is mandatory!");
 
     if (m_browsersMap.contains(ix))
     {
@@ -1994,7 +1994,7 @@ void toBrowser::changeItem(const QModelIndex &)
     else if (browser->objectType() == "PROCEDURE"
              || browser->objectType() == "FUNCTION")
         m_browsersMap[ix]->setCurrentIndex(toBrowserCodeWidget::BodyTab);
-    
+
 }
 
 void toBrowser::clearFilter(void)
@@ -2167,7 +2167,7 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
             extractor.setHeading(false);
 
             std::list<QString> objToDrop;
-            QString o = type.toUpper()+ ":" + Schema->selected() + "." + what;
+            QString o = type.toUpper() + ":" + Schema->selected() + "." + what;
             objToDrop.push_back(o);
             QString sql = extractor.drop(objToDrop);
 
@@ -2179,7 +2179,7 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
                                  this);
             prog.setWindowTitle(tr("Performing %1 changes").arg(tr(type.toAscii().constData())));
 
-            for (std::list<toSQLParse::statement>::iterator j = statements.begin();j != statements.end();j++)
+            for (std::list<toSQLParse::statement>::iterator j = statements.begin(); j != statements.end(); j++)
             {
                 QString sql = toSQLParse::indentStatement(*j, connection());
                 int i = sql.length() - 1;
@@ -2414,7 +2414,7 @@ void toBrowser::closeEvent(QCloseEvent *event)
     bool acceptEvent = true;
 
     foreach (toBrowserBaseWidget * w, m_browsersMap.values())
-        acceptEvent &= w->maybeSave();
+    acceptEvent &= w->maybeSave();
 
     if (acceptEvent)
         event->accept();
@@ -2436,92 +2436,92 @@ void toBrowser::exportData(std::map<QString, QString> &data, const QString &pref
 {
     // TODO/FIXME
     qDebug() << "void toBrowser::exportData(std::map<QString, QString> &data, const QString &prefix)";
-/*    data[prefix + ":Schema"] = Schema->selected();
-    data[prefix + ":FirstTab"] = TopTab->currentWidget()->objectName();
-    data[prefix + ":SecondText"] = SecondText;
-    for (std::map<QString, toResult *>::iterator i = SecondMap.begin();i != SecondMap.end();i++)
-    {
-        if ((*i).second == SecondTab && Map.find((*i).first) == Map.end())
+    /*    data[prefix + ":Schema"] = Schema->selected();
+        data[prefix + ":FirstTab"] = TopTab->currentWidget()->objectName();
+        data[prefix + ":SecondText"] = SecondText;
+        for (std::map<QString, toResult *>::iterator i = SecondMap.begin();i != SecondMap.end();i++)
         {
-            data[prefix + ":SecondTab"] = (*i).first;
-            break;
+            if ((*i).second == SecondTab && Map.find((*i).first) == Map.end())
+            {
+                data[prefix + ":SecondTab"] = (*i).first;
+                break;
+            }
         }
-    }
-    ViewContent->exportData(data, prefix + ":View");
-    TableContent->exportData(data, prefix + ":Table");
-    if (AccessContent)
-        AccessContent->exportData(data, prefix + ":Hosts");
-    toToolWidget::exportData(data, prefix);
-    if (Filter)
-        Filter->exportData(data, prefix + ":Filter");*/
+        ViewContent->exportData(data, prefix + ":View");
+        TableContent->exportData(data, prefix + ":Table");
+        if (AccessContent)
+            AccessContent->exportData(data, prefix + ":Hosts");
+        toToolWidget::exportData(data, prefix);
+        if (Filter)
+            Filter->exportData(data, prefix + ":Filter");*/
 }
 
 void toBrowser::importData(std::map<QString, QString> &data, const QString &prefix)
 {
     // TODO/FIXME
     qDebug() << "void toBrowser::importData(std::map<QString, QString> &data, const QString &prefix)";
-/*    disconnect(Schema, SIGNAL(activated(int)),
-               this, SLOT(changeSchema(int)));
-    disconnect(TopTab, SIGNAL(currentTabChanged(QWidget *)), this, SLOT(changeTab(QWidget *)));
+    /*    disconnect(Schema, SIGNAL(activated(int)),
+                   this, SLOT(changeSchema(int)));
+        disconnect(TopTab, SIGNAL(currentTabChanged(QWidget *)), this, SLOT(changeTab(QWidget *)));
 
-    ViewContent->importData(data, prefix + ":View");
-    TableContent->importData(data, prefix + ":Table");
-    if (AccessContent)
-        AccessContent->importData(data, prefix + ":Hosts");
+        ViewContent->importData(data, prefix + ":View");
+        TableContent->importData(data, prefix + ":Table");
+        if (AccessContent)
+            AccessContent->importData(data, prefix + ":Hosts");
 
-    if (data.find(prefix + ":Filter:Type") != data.end())
-    {
-        toBrowserFilter *filter = new toBrowserFilter;
-        filter->importData(data, prefix + ":Filter");
-        setNewFilter(filter);
-    }
-    else
-        setNewFilter(NULL);
-
-    toToolWidget::importData(data, prefix);
-    QString str = data[prefix + ":Schema"];
-    Schema->setSelected(str);
-    for (int i = 0;i < Schema->count();i++)
-        if (Schema->itemText(i) == str)
-            Schema->setCurrentIndex(i);
-
-    str = data[prefix + ":FirstTab"];
-    QWidget *chld = findChild<QWidget *>(str);
-    if (chld && str.length())
-    {
-        SecondText = QString::null;
-        TopTab->setCurrentIndex(TopTab->indexOf(chld));
-
-        toResultTableView *newtab = Map[chld->objectName()];
-        if (newtab != FirstTab && newtab)
+        if (data.find(prefix + ":Filter:Type") != data.end())
         {
-            CurrentTop = chld;
-            setFocusProxy(newtab);
-            FirstTab = newtab;
+            toBrowserFilter *filter = new toBrowserFilter;
+            filter->importData(data, prefix + ":Filter");
+            setNewFilter(filter);
         }
+        else
+            setNewFilter(NULL);
 
-        str = data[prefix + ":SecondTab"];
-        chld = findChild<QWidget *>(str);
+        toToolWidget::importData(data, prefix);
+        QString str = data[prefix + ":Schema"];
+        Schema->setSelected(str);
+        for (int i = 0;i < Schema->count();i++)
+            if (Schema->itemText(i) == str)
+                Schema->setCurrentIndex(i);
+
+        str = data[prefix + ":FirstTab"];
+        QWidget *chld = findChild<QWidget *>(str);
         if (chld && str.length())
         {
-            QWidget *par = chld->parentWidget();
-            while (par && !par->inherits("toTabWidget"))
-                par = par->parentWidget();
-            if (par)
-            {
-                toTabWidget *tab = dynamic_cast<toTabWidget *>(par);
-                if (tab)
-                    tab->setCurrentIndex(tab->indexOf(chld));
-            }
-            changeSecondTab(chld);
-        }
-        SecondText = data[prefix + ":SecondText"];
-    }
+            SecondText = QString::null;
+            TopTab->setCurrentIndex(TopTab->indexOf(chld));
 
-    connect(Schema, SIGNAL(activated(int)),
-            this, SLOT(changeSchema(int)));
-    connect(TopTab, SIGNAL(currentTabChanged(QWidget *)), this, SLOT(changeTab(QWidget *)));
-    refresh();*/
+            toResultTableView *newtab = Map[chld->objectName()];
+            if (newtab != FirstTab && newtab)
+            {
+                CurrentTop = chld;
+                setFocusProxy(newtab);
+                FirstTab = newtab;
+            }
+
+            str = data[prefix + ":SecondTab"];
+            chld = findChild<QWidget *>(str);
+            if (chld && str.length())
+            {
+                QWidget *par = chld->parentWidget();
+                while (par && !par->inherits("toTabWidget"))
+                    par = par->parentWidget();
+                if (par)
+                {
+                    toTabWidget *tab = dynamic_cast<toTabWidget *>(par);
+                    if (tab)
+                        tab->setCurrentIndex(tab->indexOf(chld));
+                }
+                changeSecondTab(chld);
+            }
+            SecondText = data[prefix + ":SecondText"];
+        }
+
+        connect(Schema, SIGNAL(activated(int)),
+                this, SLOT(changeSchema(int)));
+        connect(TopTab, SIGNAL(currentTabChanged(QWidget *)), this, SLOT(changeTab(QWidget *)));
+        refresh();*/
 }
 
 #if 0
@@ -2531,7 +2531,7 @@ void toBrowser::fixIndexCols(void)
     {
         toResultTableView *tmp = dynamic_cast<toResultTableView *>(SecondMap[TAB_INDEX_COLS]);
         if (tmp)
-            for (toTreeWidgetItem *item = tmp->firstChild();item;item = item->nextSibling())
+            for (toTreeWidgetItem *item = tmp->firstChild(); item; item = item->nextSibling())
             {
                 if (!toUnnull(item->text(4)).isNull())
                 {
@@ -2550,7 +2550,7 @@ void toBrowser::fixIndexCols(void)
             if (item.isValid())
             {
                 QString index = item.data(Qt::EditRole).toString();
-                for (toTreeWidgetItem *item = second->firstChild();item;)
+                for (toTreeWidgetItem *item = second->firstChild(); item;)
                 {
                     toTreeWidgetItem *t = item->nextSibling();
                     if (item->text(2) != index)
@@ -2580,7 +2580,7 @@ void toBrowser::fixIndexCols(void)
 //             }
 //     }
 // }
-// 
+//
 // void toBrowseTemplate::defineFilter(void)
 // {
 //     if (Filter)
@@ -2605,7 +2605,7 @@ void toBrowser::fixIndexCols(void)
 //         connect(FilterButton, SIGNAL(toggled(bool)), this, SLOT(defineFilter()));
 //     }
 // }
-// 
+//
 // void toBrowseTemplate::clearFilter(void)
 // {
 //     delete Filter;
@@ -2614,7 +2614,7 @@ void toBrowser::fixIndexCols(void)
 //     FilterButton->setChecked(false);
 //     connect(FilterButton, SIGNAL(toggled(bool)), this, SLOT(defineFilter()));
 // }
-// 
+//
 // void toBrowseTemplate::removeItem(toTreeWidgetItem *item)
 // {
 //     for (std::list<toTemplateItem *>::iterator i = Parents.begin();i != Parents.end();i++)
@@ -2624,7 +2624,7 @@ void toBrowser::fixIndexCols(void)
 //             break;
 //         }
 // }
-// 
+//
 // class toTemplateTableItem : public toTemplateItem
 // {
 //     toConnection &Connection;
@@ -2651,12 +2651,12 @@ void toBrowser::fixIndexCols(void)
 //                 schema = QString::fromLatin1("PUBLIC");
 //             }
 //         }
-// 
+//
 //         if (schema == qApp->translate("toBrowser", "No schemas"))
 //             schema = Connection.database();
-// 
+//
 //         toResult *res;
-// 
+//
 //         toToolWidget *tool = new toToolWidget(BrowserTool,
 //                                               "",
 //                                               par,
@@ -2751,7 +2751,7 @@ void toBrowser::fixIndexCols(void)
 //         return tool;
 //     }
 // };
-// 
+//
 // class toTemplateSchemaItem : public toTemplateItem
 // {
 //     toConnection &Connection;
@@ -2854,7 +2854,7 @@ void toBrowser::fixIndexCols(void)
 //             }
 //         }
 //     }
-// 
+//
 //     virtual QString allText(int col) const
 //     {
 //         QString txt = parent()->parent()->text(0);
@@ -2862,7 +2862,7 @@ void toBrowser::fixIndexCols(void)
 //         txt += text(col);
 //         return txt;
 //     }
-// 
+//
 //     virtual QWidget *selectedWidget(QWidget *par)
 //     {
 //         QString object = text(0);
@@ -2870,7 +2870,7 @@ void toBrowser::fixIndexCols(void)
 //         QString schema = parent()->parent()->text(0);
 //         if (schema == qApp->translate("toBrowser", "No schemas"))
 //             schema = Connection.database();
-// 
+//
 //         toToolWidget *tool = new toToolWidget(BrowserTool,
 //                                               "",
 //                                               par,
@@ -2964,7 +2964,7 @@ void toBrowser::fixIndexCols(void)
 //         return ret;
 //     }
 // };
-// 
+//
 // class toTemplateDBItem : public toTemplateSQL
 // {
 // public:
@@ -2990,7 +2990,7 @@ void toBrowser::fixIndexCols(void)
 //             QPixmap function(const_cast<const char**>(function_xpm));
 //             QPixmap index(const_cast<const char**>(index_xpm));
 //             QPixmap synonym(const_cast<const char**>(synonym_xpm));
-// 
+//
 //             toBrowserFilter *filter = BrowseTemplate.filter();
 //             if (filter && filter->onlyOwnSchema() &&
 //                     name.toUpper() != connection().user().toUpper())
@@ -2998,12 +2998,12 @@ void toBrowser::fixIndexCols(void)
 //                 delete item;
 //                 return NULL;
 //             }
-// 
+//
 //             (new toTemplateSchemaList(connection(),
 //                                       item,
 //                                       qApp->translate("toBrowser", "Tables"),
 //                                       toSQL::string(SQLListTables, connection())))->setPixmap(0, table);
-// 
+//
 //             if (toIsOracle(connection()) ||
 //                     toIsSapDB(connection()) ||
 //                     toIsPostgreSQL(connection()))
@@ -3017,7 +3017,7 @@ void toBrowser::fixIndexCols(void)
 //                                           qApp->translate("toBrowser", "Indexes"),
 //                                           toSQL::string(SQLListIndex, connection())))->setPixmap(0, index);
 //             }
-// 
+//
 //             if (toIsOracle(connection()) || toIsPostgreSQL(connection()))
 //             {
 //                 (new toTemplateSchemaList(connection(),
@@ -3033,7 +3033,7 @@ void toBrowser::fixIndexCols(void)
 //                                           qApp->translate("toBrowser", "Triggers"),
 //                                           toSQL::string(SQLListTrigger, connection())))->setPixmap(0, function);
 //             }
-// 
+//
 //             if (toIsOracle(connection()))
 //             {
 //                 (new toTemplateSchemaList(connection(),
@@ -3049,7 +3049,7 @@ void toBrowser::fixIndexCols(void)
 //         }
 //     }
 // };
-// 
+//
 // class toBrowseTemplateItem : public toTemplateItem
 // {
 // public:
@@ -3060,7 +3060,7 @@ void toBrowser::fixIndexCols(void)
 //         dynamic_cast<toBrowseTemplate &>(provider()).removeItem(this);
 //     }
 // };
-// 
+//
 // void toBrowseTemplate::insertItems(toTreeWidget *parent, QToolBar *toolbar)
 // {
 //     if (!Registered)
@@ -3074,12 +3074,12 @@ void toBrowser::fixIndexCols(void)
 //                 this,
 //                 SLOT(removeDatabase(const QString &)));
 //     }
-// 
+//
 //     toTemplateItem *dbitem = new toBrowseTemplateItem(
 //         *this,
 //         parent,
 //         qApp->translate("toBrowser", "DB Browser"));
-// 
+//
 //     std::list<QString> conn = toMainWidget()->connections();
 //     for (std::list<QString>::iterator i = conn.begin();i != conn.end();i++)
 //     {
@@ -3087,14 +3087,14 @@ void toBrowser::fixIndexCols(void)
 //         new toTemplateDBItem(conn, dbitem, *i);
 //     }
 //     Parents.insert(Parents.end(), dbitem);
-// 
+//
 //     FilterButton = new QToolButton(toolbar);
 //     FilterButton->setCheckable(true);
 //     FilterButton->setIcon(QIcon(QPixmap(const_cast<const char**>(filter_xpm))));
 //     FilterButton->setToolTip(tr("Define the object filter for database browser"));
 //     toolbar->addWidget(FilterButton);
 //     connect(FilterButton, SIGNAL(toggled(bool)), this, SLOT(defineFilter()));
-// 
+//
 //     toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(nofilter_xpm))),
 //                        qApp->translate(
 //                            "toBrowser",
@@ -3102,7 +3102,7 @@ void toBrowser::fixIndexCols(void)
 //                        this,
 //                        SLOT(clearFilter(void)));
 // }
-// 
+//
 // void toBrowseTemplate::addDatabase(const QString &name)
 // {
 //     try
@@ -3112,7 +3112,7 @@ void toBrowser::fixIndexCols(void)
 //     }
 //     TOCATCH
 // }
-// 
+//
 // void toBrowseTemplate::importData(std::map<QString, QString> &data, const QString &prefix)
 // {
 //     if (data.find(prefix + ":Filter:Type") != data.end())
@@ -3121,7 +3121,7 @@ void toBrowser::fixIndexCols(void)
 //         Filter->importData(data, prefix + ":Filter");
 //     }
 // }
-// 
+//
 // void toBrowseTemplate::exportData(std::map<QString, QString> &data, const QString &prefix)
 // {
 //     if (Filter)
