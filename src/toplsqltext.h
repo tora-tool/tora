@@ -72,6 +72,10 @@ class toPLSQLText : public toHighlightedText
     // find another part and save it as well (if set like that in preferences).
     toPLSQLEditor *Editor;
 
+    // Error raised when CALLING compilation (as opposed to errors found during compilation)
+    // Example: ORA-02303: cannot drop or replace a type with type or table dependents
+    QString compilation_error;
+
 public:
     toPLSQLText(QWidget *parent = 0);
     toPLSQLWidget * parent_widget;

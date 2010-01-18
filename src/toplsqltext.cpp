@@ -215,6 +215,7 @@ bool toPLSQLText::compile(CompilationType t)
     sql.append(QString::fromLatin1(" "));
     sql.append(str.mid(offset));
 
+    compilation_error = "";
     try
     {
         toQList nopar;
@@ -227,6 +228,8 @@ bool toPLSQLText::compile(CompilationType t)
     }
     catch (const QString &exc)
     {
+        // save compilation execution error to be added to error list later by readErrors()
+        compilation_error = exc;
 //         toStatusMessage(exc);
         ret = false;
     }
@@ -314,6 +317,14 @@ bool toPLSQLText::readErrors(toConnection &conn)
 
         int line;
         QString errType;
+
+        // add compilation execution error (if there was one)
+        if (!compilation_error.isEmpty())
+        {
+            Errors.insert(1, compilation_error);
+            errorCount++;
+        }
+
         while (!errors.eof())
         {
             errType = errors.readValue(); // "ERROR"/"WARNING" etc.
