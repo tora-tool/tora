@@ -264,6 +264,7 @@ private:
     bool Prompt;
     bool Storage;
     bool Initialized;
+    bool Replace; // if object creation extracts should support RE-creation of existing objects
 
     int CommitDistance;
 
@@ -531,6 +532,13 @@ public:
     {
         Code = val;
     }
+    /** Support RE-creation of existing objects in "create" extracts.
+     * @param val Include code.
+     */
+    void setReplace(bool val)
+    {
+        Replace = val;
+    }
     /** Set blocksize of database.
      * @param val New value of blocksize.
      */
@@ -618,6 +626,13 @@ public:
     bool getContents(void)
     {
         return Contents;
+    }
+    /** Check if support RE-creation of existing objects in "create" extracts is enabled.
+     * @return If RE-creation is enabled.
+     */
+    bool getReplace(void)
+    {
+        return Replace;
     }
     /** Get the distance of the commits when content is generated.
      * @return Commit distance.

@@ -188,6 +188,7 @@ toExtract::toExtract(toConnection &conn, QWidget *parent)
     Contents = true;
     Comments = true;
     Partition = true;
+    Replace = false;
     Schema = "1";
     Initialized = false;
     BlockSize = 8192;

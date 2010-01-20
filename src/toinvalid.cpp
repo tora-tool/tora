@@ -151,7 +151,7 @@ toInvalid::toInvalid(QWidget *main, toConnection &connection)
     refresh();
     setFocusProxy(Objects);
 }
-
+#include <QDebug>
 void toInvalid::recompileSelected(void)
 {
     QProgressDialog progress(tr("Recompiling all invalid"),
@@ -177,14 +177,28 @@ void toInvalid::recompileSelected(void)
             break;
 
         QString type = Objects->model()->data((*it).row(), 3).toString();
+        QString name = Objects->model()->data((*it).row(), 2).toString();
         QString sql;
         if (type == "INDEX")
-            sql = "ALTER " + Objects->model()->data((*it).row(), 3).toString() + " " +
+            sql = "ALTER " + type + " " +
                   conn.quote(Objects->model()->data((*it).row(), 1).toString()) + "." +
-                  conn.quote(Objects->model()->data((*it).row(), 2).toString()) + " REBUILD";
+                  conn.quote(name) + " REBUILD";
         else if (type == "PACKAGE BODY")
             sql = "ALTER PACKAGE " + conn.quote(Objects->model()->data((*it).row(), 1).toString()) + "." +
                   conn.quote(Objects->model()->data((*it).row(), 2).toString()) + " COMPILE BODY";
+        else if ((type == "SYNONYM") && (Objects->model()->data((*it).row(), 1).toString() == "PUBLIC"))
+        {
+            // only SYS user is allowed to do ALTER PUBLIC SYNONYM ...
+            // other users can only do CREATE OR REPLACE PUBLIC SYNONYM ...
+            std::list<QString> objects;
+            toExtract extract(conn, NULL);
+            extract.setCode(true);
+            extract.setHeading(false);
+            extract.setPrompt(false);
+            extract.setReplace(true); // get create OR REPLACE statement
+            objects.insert(objects.end(), type + QString::fromLatin1(":") + "PUBLIC" + QString::fromLatin1(".") + name);
+            sql = extract.create(objects);
+        }
         else
             sql = "ALTER " + Objects->model()->data((*it).row(), 3).toString() + " " +
                   conn.quote(Objects->model()->data((*it).row(), 1).toString()) + "." +
@@ -192,7 +206,16 @@ void toInvalid::recompileSelected(void)
 
         try
         {
-            conn.execute(sql);
+            // remove trailing newlines, spaces, tabs and semicolons from execution
+            // as this could cause "execution" of empty statement (doing nothing)
+            int l = sql.length() - 1;
+            while (l >= 0 && (sql.at(l) == ';' || sql.at(l).isSpace()))
+                l--;
+#ifdef DEBUG
+            qDebug() << "statement=" << sql.mid(0, l + 1);
+#endif
+            if (l >= 0)
+                conn.execute(sql.mid(0, l + 1));
         }
         catch (...)
             {}

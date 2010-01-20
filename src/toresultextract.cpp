@@ -142,6 +142,7 @@ void toResultExtract::query(const QString &sql, const toQList &param)
         extract.setCode(true);
         extract.setHeading(false);
         extract.setPrompt(Prompt);
+        extract.setReplace(true); // generate create OR REPLACE statements
         editor()->setText(extract.create(objects));
     }
     TOCATCH

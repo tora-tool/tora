@@ -4368,9 +4368,10 @@ QString toOracleExtract::createSynonym(toExtract &ext,
     QString useSchema = (schema == "PUBLIC") ? QString("") : schema;
     QString isPublic = (owner == "PUBLIC") ? " PUBLIC" : "";
     QString tableSchema = ext.intSchema(tableOwner, false);
+    QString andReplace = (ext.getReplace()) ? " OR REPLACE" : "";
 
-    QString sql = QString("CREATE%1 SYNONYM %2%3 FOR %4%5%6").
-                  arg(isPublic).arg(useSchema).arg(QUOTE(name)).
+    QString sql = QString("CREATE%1%2 SYNONYM %3%4 FOR %5%6%7").
+                  arg(andReplace).arg(isPublic).arg(useSchema).arg(QUOTE(name)).
                   arg(tableSchema).arg(QUOTE(tableName)).arg(dbLink);
     QString ret;
     if (PROMPT)

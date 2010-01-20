@@ -41,7 +41,23 @@ This tool is usefull to recompile invalid objects in the database.
 
    <div class="block-image"><img src="images/invalid.png" alt="images/invalid.png"></div>
 
-   <p>To the left you see a list of invalid objects. Select an object and the left editor will be filled with code to recreate the code objects, you can then fix whatever problem may be with it. Rows with errors will have red background and you can see the error in the statusbar by putting the cursor on the row. You can also refresh the list or change the active connection by the buttons in the toolbar.
+   <p>To the left you see a list of invalid objects. Select an object and the editor on right hand side will be filled with code to recreate the object, you can then fix whatever problem may be with it. Rows with errors will have red background and you can see the error in the statusbar by putting the cursor on the row. You can also refresh the list or change the active connection by the buttons in the toolbar.
+
+     <dl>
+<dt><strong>Recompile all invalid</strong><dd>This button will try recompiling all displayed invalid objects. Different types of objects are recompiled by callind different statements:
+Index:
+<pre class="verbatim">     alter index &lt;schema.index_name> rebuild
+</pre>
+Package body:
+<pre class="verbatim">     alter package &lt;schema.package_name> compile body
+</pre>
+Public synonym:
+<pre class="verbatim">     create or replace public synonym &lt;synonym_name> for &lt;synonym_target>
+</pre>
+All other objects are recompiled using:
+<pre class="verbatim">     alter &lt;object_type> &lt;schema.object_name> compile
+</pre>
+</dl>
 
    </body></html>
 
