@@ -2,39 +2,39 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2008 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries. 
- * 
+ *      these libraries.
+ *
  *      You may link this product with any GPL'd Qt library.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -134,7 +134,7 @@ std::list<QString> toConnectionProvider::providers()
     std::list<QString> ret;
     if (!Providers)
         return ret;
-    for (std::map<QString, toConnectionProvider *>::iterator i = Providers->begin();i != Providers->end();i++)
+    for (std::map<QString, toConnectionProvider *>::iterator i = Providers->begin(); i != Providers->end(); i++)
         ret.insert(ret.end(), (*i).first);
     return ret;
 }
@@ -143,7 +143,7 @@ void toConnectionProvider::initializeAll(void)
 {
     if (Types)
         for (std::map<QString, toConnectionProvider *>::iterator i = Types->begin();
-                i != Types->end();i++)
+                i != Types->end(); i++)
             (*i).second->initialize();
 }
 
@@ -216,8 +216,8 @@ toQuery::toQuery(toConnection &conn,
                  const QString &arg8,
                  const QString &arg9)
         : Connection(QPointer<toConnection>(&conn)),
-          ConnectionSub(conn.pooledConnection()),
-          SQL(sql(*Connection).toAscii())
+        ConnectionSub(conn.pooledConnection()),
+        SQL(sql(*Connection).toAscii())
 {
     Mode = Normal;
     int numArgs;
@@ -270,7 +270,7 @@ toQuery::toQuery(toConnection &conn,
     }
     catch (...)
     {
-        if(Query)
+        if (Query)
             delete Query;
         Query = NULL;
         Connection->ConnectionPool->release(ConnectionSub);
@@ -345,7 +345,7 @@ toQuery::toQuery(toConnection &conn,
     }
     catch (...)
     {
-        if(Query)
+        if (Query)
             delete Query;
         Query = NULL;
         Connection->ConnectionPool->release(ConnectionSub);
@@ -370,7 +370,7 @@ toQuery::toQuery(toConnection &conn, const toSQL &sql, const toQList &params)
     }
     catch (...)
     {
-        if(Query)
+        if (Query)
             delete Query;
         Query = NULL;
         Connection->ConnectionPool->release(ConnectionSub);
@@ -384,10 +384,10 @@ toQuery::toQuery(toConnection &conn,
                  toConnectionSub *sub,
                  const QString &sql,
                  const toQList &params)
-    : Connection(QPointer<toConnection>(&conn)),
-      ConnectionSub(sub),
-      Params(params),
-      SQL(sql)
+        : Connection(QPointer<toConnection>(&conn)),
+        ConnectionSub(sub),
+        Params(params),
+        SQL(sql)
 {
     Mode = Test;
     toBusy busy;
@@ -399,7 +399,7 @@ toQuery::toQuery(toConnection &conn,
     }
     catch (...)
     {
-        if(Query)
+        if (Query)
             delete Query;
         Query = NULL;
         throw;
@@ -423,7 +423,7 @@ toQuery::toQuery(toConnection &conn, const QString &sql, const toQList &params)
     }
     catch (...)
     {
-        if(Query)
+        if (Query)
             delete Query;
         Query = NULL;
         Connection->ConnectionPool->release(ConnectionSub);
@@ -453,7 +453,7 @@ toQuery::toQuery(toConnection &conn,
     }
     catch (...)
     {
-        if(Query)
+        if (Query)
             delete Query;
         Query = NULL;
         Connection->ConnectionPool->release(ConnectionSub);
@@ -483,7 +483,7 @@ toQuery::toQuery(toConnection &conn,
     }
     catch (...)
     {
-        if(Query)
+        if (Query)
             delete Query;
         Query = NULL;
         Connection->ConnectionPool->release(ConnectionSub);
@@ -507,7 +507,7 @@ toQuery::toQuery(toConnection &conn, queryMode mode)
     }
     catch (...)
     {
-        if(Query)
+        if (Query)
             delete Query;
         Query = NULL;
         throw;
@@ -559,7 +559,7 @@ void toQuery::execute(const toSQL &sql, const QString &param1, const QString &pa
 toQuery::~toQuery()
 {
     toBusy busy;
-    if(Query)
+    if (Query)
         delete Query;
     try
     {
@@ -721,7 +721,7 @@ toConnectionSub* toConnection::addConnection()
     toLocker lock(Lock)
     ;
     toQList params;
-    for (std::list<QString>::iterator i = InitStrings.begin();i != InitStrings.end();i++)
+    for (std::list<QString>::iterator i = InitStrings.begin(); i != InitStrings.end(); i++)
     {
         try
         {
@@ -734,8 +734,9 @@ toConnectionSub* toConnection::addConnection()
 }
 
 
-void toConnection::closeConnection(toConnectionSub *sub) {
-    if(Connection)
+void toConnection::closeConnection(toConnectionSub *sub)
+{
+    if (Connection)
         Connection->closeConnection(sub);
 }
 
@@ -746,15 +747,15 @@ toConnection::toConnection(const QString &provider,
                            const QString &schema,
                            const QString &color,
                            const std::set<QString> &options, bool cache)
-    : Provider(provider),
-      User(user),
-      Password(password),
-      Host(host),
-      Database(database),
-      Schema(schema),
-      Color(color),
-      Options(options),
-      Connection(0)
+        : Provider(provider),
+        User(user),
+        Password(password),
+        Host(host),
+        Database(database),
+        Schema(schema),
+        Color(color),
+        Options(options),
+        Connection(0)
 {
     Connection = toConnectionProvider::connection(Provider, this);
     NeedCommit = Abort = false;
@@ -777,15 +778,15 @@ toConnection::toConnection(const QString &provider,
 }
 
 toConnection::toConnection(const toConnection &conn)
-    : Provider(conn.Provider),
-      User(conn.User),
-      Password(conn.Password),
-      Host(conn.Host),
-      Database(conn.Database),
-      Schema(conn.Schema),
-      Color(conn.Color),
-      Options(conn.Options),
-      Connection(0)
+        : Provider(conn.Provider),
+        User(conn.User),
+        Password(conn.Password),
+        Host(conn.Host),
+        Database(conn.Database),
+        Schema(conn.Schema),
+        Color(conn.Color),
+        Options(conn.Options),
+        Connection(0)
 {
     Connection = toConnectionProvider::connection(Provider, this);
     ReadingValues.up();
@@ -904,15 +905,16 @@ bool toConnection::closeWidgets(void)
 
         // black magic to close widget's MDI subwindow too
         if ((*i)->parent()
-            && (*i)->parent()->metaObject()->className() == QMdiSubWindow::staticMetaObject.className())
+                && (*i)->parent()->metaObject()->className() == QMdiSubWindow::staticMetaObject.className())
         {
             qobject_cast<QMdiSubWindow*>((*i)->parent())->close();
         }
 
-        if (!(*i)->close()) {
+        if (!(*i)->close())
+        {
             // close will fail if parent already closed.
             // closing parent will hide children though
-            if((*i)->isVisible())
+            if ((*i)->isVisible())
                 return false;
         }
         else
@@ -928,12 +930,12 @@ QString toConnection::description(bool version) const
     QString ret(User);
     ret += QString::fromLatin1("@");
 
-    if(!toIsMySQL(*this))
+    if (!toIsMySQL(*this))
         ret += Database;
 
     if (!Host.isEmpty() && Host != "SQL*Net")
     {
-        if(!toIsMySQL(*this))
+        if (!toIsMySQL(*this))
             ret += QString::fromLatin1(".");
         ret += Host;
     }
@@ -1361,14 +1363,14 @@ void toConnection::writeDiskCache()
     QStringList record;
     QStringList records;
     QStringList recordSynonym;
-    for (std::list<objectName>::iterator i = ObjectNames.begin();i != ObjectNames.end();i++)
+    for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
     {
         record.clear();
         record.append((*i).Owner);
         record.append((*i).Name);
         record.append((*i).Type);
         record.append((*i).Comment);
-        for (std::list<QString>::iterator s = (*i).Synonyms.begin();s != (*i).Synonyms.end();s++)
+        for (std::list<QString>::iterator s = (*i).Synonyms.begin(); s != (*i).Synonyms.end(); s++)
         {
             recordSynonym.append((*s));
             synCounter++;
@@ -1398,9 +1400,10 @@ void toConnection::cacheObjects::run()
     try
     {
         diskloaded = Connection->loadDiskCache();
-        if (!diskloaded && !Connection->Abort) {
+        if (!diskloaded && !Connection->Abort)
+        {
             std::list<objectName> n = Connection->Connection->objectNames();
-            if(!Connection->Abort)
+            if (!Connection->Abort)
                 Connection->ObjectNames = n;
         }
 
@@ -1411,7 +1414,7 @@ void toConnection::cacheObjects::run()
         {
             std::map<QString, objectName> m =
                 Connection->Connection->synonymMap(Connection->ObjectNames);
-            if(!Connection->Abort)
+            if (!Connection->Abort)
             {
                 Connection->SynonymMap = m;
                 Connection->writeDiskCache();
@@ -1424,7 +1427,7 @@ void toConnection::cacheObjects::run()
             Connection->ReadingValues.up();
     }
 
-    if(Connection)
+    if (Connection)
         Connection->ReadingValues.up();
 }
 
@@ -1612,7 +1615,7 @@ const toConnection::objectName &toConnection::realName(const QString &object,
     QChar c('.');
 
     bool quote = false;
-    for (int pos = 0;pos < object.length();pos++)
+    for (int pos = 0; pos < object.length(); pos++)
     {
         if (object.at(pos) == q)
         {
@@ -1634,7 +1637,7 @@ const toConnection::objectName &toConnection::realName(const QString &object,
     QString un = name.toUpper();
 
     synonym = QString::null;
-    for (std::list<objectName>::iterator i = ObjectNames.begin();i != ObjectNames.end();i++)
+    for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
     {
         if (owner.isEmpty())
         {

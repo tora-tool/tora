@@ -2,39 +2,39 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2008 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries. 
- * 
+ *      these libraries.
+ *
  *      You may link this product with any GPL'd Qt library.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -102,16 +102,16 @@
 
 #ifdef DEBUG
 static toSQL SQLDebugSelfCheck("toDebug:SelfCheck",
-                                "DECLARE\n"
-                                "  error_message VARCHAR2(1000);\n"
-                                "BEGIN\n"
-                                "  SYS.DBMS_DEBUG.SELF_CHECK;\n"
-                                "  SELECT 'OK' INTO :line<char[101,out> FROM sys.DUAL;\n"
-                                "EXCEPTION WHEN OTHERS THEN\n"
-                                "  error_message := sqlerrm;\n"
-                                "  SELECT error_message INTO :line<char[101,out> FROM sys.DUAL;\n"
-                                "END;",
-                                "Perform Self-check of debugging system");
+                               "DECLARE\n"
+                               "  error_message VARCHAR2(1000);\n"
+                               "BEGIN\n"
+                               "  SYS.DBMS_DEBUG.SELF_CHECK;\n"
+                               "  SELECT 'OK' INTO :line<char[101,out> FROM sys.DUAL;\n"
+                               "EXCEPTION WHEN OTHERS THEN\n"
+                               "  error_message := sqlerrm;\n"
+                               "  SELECT error_message INTO :line<char[101,out> FROM sys.DUAL;\n"
+                               "END;",
+                               "Perform Self-check of debugging system");
 #endif
 class toDebugTool : public toTool
 {
@@ -372,7 +372,7 @@ class toDebugOutput : public toOutput
     toDebug *Debugger;
 //    toConnection * outputConnection;
     toQuery * outputSession; // A specific debug session, the only one having target session attached.
-                             // Attempts to call output functions from any other sessions will fail.
+    // Attempts to call output functions from any other sessions will fail.
 public:
     toDebugOutput(toDebug *debug, QWidget *parent, toConnection &conn, toQuery *query)
             : toOutput(parent, conn), Debugger(debug)
@@ -442,102 +442,105 @@ QString toDebug::getErrorText(int code, int type)
     {
         switch (code)
         {
-            case TO_SUCCESS:
-                ret = "SUCCESS";
-                break;
-            case TO_NO_SUCH_BREAKPOINT:
-                ret = "NO_SUCH_BREAKPOINT";
-                break;
-            case TO_ERROR_NO_DEBUG_INFO:
-                ret = "ERROR_NO_DEBUG_INFO";
-                break;
-            case TO_ERROR_ILLEGAL_LINE:
-                ret = "ERROR_ILLEGAL_LINE";
-                break;
-            case TO_ERROR_BAD_HANDLE:
-                ret = "ERROR_BAD_HANDLE";
-                break;
-            case TO_ERROR_UNIMPLEMENTED:
-                ret = "ERROR_UNIMPLEMENTED";
-                break;
-            case TO_ERROR_TIMEOUT:
-                ret = "ERROR_TIMEOUT";
-                break;
-            case TO_ERROR_NULLVALUE:
-                ret = "ERROR_NULLVALUE";
-                break;
-            case TO_ERROR_NULLCOLLECTION:
-                ret = "ERROR_NULLCOLLECTION";
-                break;
-            case TO_ERROR_INDEX_TABLE:
-                ret = "ERROR_INDEX_TABLE";
-                break;
-            case TO_ERROR_DEFERRED:
-                ret = "ERROR_DEFERRED";
-                break;
-            case TO_ERROR_EXCEPTION:
-                ret = "ERROR_EXCEPTION";
-                break;
-            case TO_ERROR_COMMUNICATION:
-                ret = "ERROR_COMMUNICATION";
-                break;
-            default:
-                ret = "UNKNOWN ERROR CODE " + code;
+        case TO_SUCCESS:
+            ret = "SUCCESS";
+            break;
+        case TO_NO_SUCH_BREAKPOINT:
+            ret = "NO_SUCH_BREAKPOINT";
+            break;
+        case TO_ERROR_NO_DEBUG_INFO:
+            ret = "ERROR_NO_DEBUG_INFO";
+            break;
+        case TO_ERROR_ILLEGAL_LINE:
+            ret = "ERROR_ILLEGAL_LINE";
+            break;
+        case TO_ERROR_BAD_HANDLE:
+            ret = "ERROR_BAD_HANDLE";
+            break;
+        case TO_ERROR_UNIMPLEMENTED:
+            ret = "ERROR_UNIMPLEMENTED";
+            break;
+        case TO_ERROR_TIMEOUT:
+            ret = "ERROR_TIMEOUT";
+            break;
+        case TO_ERROR_NULLVALUE:
+            ret = "ERROR_NULLVALUE";
+            break;
+        case TO_ERROR_NULLCOLLECTION:
+            ret = "ERROR_NULLCOLLECTION";
+            break;
+        case TO_ERROR_INDEX_TABLE:
+            ret = "ERROR_INDEX_TABLE";
+            break;
+        case TO_ERROR_DEFERRED:
+            ret = "ERROR_DEFERRED";
+            break;
+        case TO_ERROR_EXCEPTION:
+            ret = "ERROR_EXCEPTION";
+            break;
+        case TO_ERROR_COMMUNICATION:
+            ret = "ERROR_COMMUNICATION";
+            break;
+        default:
+            ret = "UNKNOWN ERROR CODE " + code;
         } // switch
-    } else if (type == 2) // reason codes
+    }
+    else if (type == 2) // reason codes
     {
         switch (code)
         {
-            case TO_REASON_WHATEVER:
-                ret = "TO_REASON_WHATEVER (0)";
-                break;
-            case TO_REASON_STARTING:
-                ret = "TO_REASON_STARTING (2)";
-                break;
-            case TO_REASON_BREAKPOINT:
-                ret = "TO_REASON_BREAKPOINT (3)";
-                break;
-            case TO_REASON_ENTER:
-                ret = "TO_REASON_ENTER (6)";
-                break;
-            case TO_REASON_RETURN:
-                ret = "TO_REASON_RETURN (7)";
-                break;
-            case TO_REASON_FINISH:
-                ret = "TO_REASON_FINISH (8)";
-                break;
-            case TO_REASON_LINE:
-                ret = "TO_REASON_LINE (9)";
-                break;
-            case TO_REASON_EXIT:
-                ret = "TO_REASON_EXIT (15)";
-                break;
-            case TO_REASON_TIMEOUT:
-                ret = "TO_REASON_TIMEOUT (17)";
-                break;
-            case TO_REASON_KNL_EXIT:
-                ret = "TO_REASON_KNL_EXIT (25)";
-                break;
-            case TO_REASON_NO_SESSION:
-                ret = "TO_REASON_NO_SESSION (-1)";
-                break;
-            default:
-                ret = "UNKNOWN REASON CODE " + QString(code);
+        case TO_REASON_WHATEVER:
+            ret = "TO_REASON_WHATEVER (0)";
+            break;
+        case TO_REASON_STARTING:
+            ret = "TO_REASON_STARTING (2)";
+            break;
+        case TO_REASON_BREAKPOINT:
+            ret = "TO_REASON_BREAKPOINT (3)";
+            break;
+        case TO_REASON_ENTER:
+            ret = "TO_REASON_ENTER (6)";
+            break;
+        case TO_REASON_RETURN:
+            ret = "TO_REASON_RETURN (7)";
+            break;
+        case TO_REASON_FINISH:
+            ret = "TO_REASON_FINISH (8)";
+            break;
+        case TO_REASON_LINE:
+            ret = "TO_REASON_LINE (9)";
+            break;
+        case TO_REASON_EXIT:
+            ret = "TO_REASON_EXIT (15)";
+            break;
+        case TO_REASON_TIMEOUT:
+            ret = "TO_REASON_TIMEOUT (17)";
+            break;
+        case TO_REASON_KNL_EXIT:
+            ret = "TO_REASON_KNL_EXIT (25)";
+            break;
+        case TO_REASON_NO_SESSION:
+            ret = "TO_REASON_NO_SESSION (-1)";
+            break;
+        default:
+            ret = "UNKNOWN REASON CODE " + QString(code);
         }
-    } else if (type == 3) // continue code
+    }
+    else if (type == 3) // continue code
     {
         switch (code)
         {
-            case TO_BREAK_ANY_CALL:
-                ret = "TO_BREAK_ANY_CALL (12)";
-                break;
-            case TO_BREAK_NEXT_LINE:
-                ret = "TO_BREAK_NEXT_LINE (32)";
-                break;
-            default:
-                ret = "UNKOWN CONTINUE CODE " + code;
+        case TO_BREAK_ANY_CALL:
+            ret = "TO_BREAK_ANY_CALL (12)";
+            break;
+        case TO_BREAK_NEXT_LINE:
+            ret = "TO_BREAK_NEXT_LINE (32)";
+            break;
+        default:
+            ret = "UNKOWN CONTINUE CODE " + code;
         }
-    } else ret = "ERROR! Unknown type " + type;
+    }
+    else ret = "ERROR! Unknown type " + type;
 
     return ret;
 } // getTextVersion
@@ -577,7 +580,7 @@ void toDebug::targetTask::run(void)
         try
         {
 #ifdef DEBUG
-qDebug() << "toDebug::targetTask::run ALTER SESSION SET PLSQL_OPTIMIZE_LEVEL = 1";
+            qDebug() << "toDebug::targetTask::run ALTER SESSION SET PLSQL_OPTIMIZE_LEVEL = 1";
 #endif
             targetSession.execute(SQLDebugEnable);
         }
@@ -589,8 +592,8 @@ qDebug() << "toDebug::targetTask::run ALTER SESSION SET PLSQL_OPTIMIZE_LEVEL = 1
         try
         {
 #ifdef DEBUG
-qDebug() << "toDebug::targetTask::run DBMS_DEBUG.INITIALIZE";
-qDebug() << "toDebug::targetTask::run DBMS_DEBUG.DEBUG_ON";
+            qDebug() << "toDebug::targetTask::run DBMS_DEBUG.INITIALIZE";
+            qDebug() << "toDebug::targetTask::run DBMS_DEBUG.DEBUG_ON";
 #endif
             targetSession.execute(SQLDebugInit);
 
@@ -624,18 +627,18 @@ qDebug() << "toDebug::targetTask::run DBMS_DEBUG.DEBUG_ON";
         while (1) // this will loop until target thread is required (while debugger tool is running)
         {
 #ifdef DEBUG
-qDebug() << "toDebug::targetTask::run .........starting iteration....";
+            qDebug() << "toDebug::targetTask::run .........starting iteration....";
 #endif
             {
                 toLocker lock (Parent.Lock);
                 Parent.RunningTarget = false;
             }
 #ifdef DEBUG
-qDebug() << "toDebug::targetTask::run sleep until TargetSemaphore goes up";
+            qDebug() << "toDebug::targetTask::run sleep until TargetSemaphore goes up";
 #endif
             Parent.TargetSemaphore.down();
 #ifdef DEBUG
-qDebug() << "toDebug::targetTask::run TargetSemaphore up! Continue!";
+            qDebug() << "toDebug::targetTask::run TargetSemaphore up! Continue!";
 #endif
 
             QString sql;
@@ -647,7 +650,7 @@ qDebug() << "toDebug::targetTask::run TargetSemaphore up! Continue!";
                 sql = Parent.TargetSQL;
                 Parent.TargetSQL = "";
 #ifdef DEBUG
-qDebug() << "toDebug::targetTask::run Target now RUNNING! Got sql to execute/debug: " << sql;
+                qDebug() << "toDebug::targetTask::run Target now RUNNING! Got sql to execute/debug: " << sql;
 #endif
                 inParams = Parent.InputData;
                 Parent.InputData.clear(); // To make sure data is not shared
@@ -665,17 +668,17 @@ qDebug() << "toDebug::targetTask::run Target now RUNNING! Got sql to execute/deb
 
                 Parent.ChildSemaphore.up(); // resume main TOra thread
 #ifdef DEBUG
-qDebug() << "toDebug::targetTask::run before execution of sql";
+                qDebug() << "toDebug::targetTask::run before execution of sql";
 #endif
                 outParams = targetSession.readQuery(sql, inParams);
 #ifdef DEBUG
-qDebug() << "toDebug::targetTask::run after execution of sql.";
+                qDebug() << "toDebug::targetTask::run after execution of sql.";
 #endif
             }
             catch (const QString &str)
             {
 #ifdef DEBUG
-qDebug() << "toDebug::targetTask::run ERROR! catch1. str = " << str;
+                qDebug() << "toDebug::targetTask::run ERROR! catch1. str = " << str;
 #endif
                 Parent.Lock.lock();
                 Parent.TargetLog += QString::fromLatin1("Encountered error: ");
@@ -688,7 +691,7 @@ qDebug() << "toDebug::targetTask::run ERROR! catch1. str = " << str;
             catch (...)
             {
 #ifdef DEBUG
-qDebug() << "toDebug::targetTask::run ERROR! catch2";
+                qDebug() << "toDebug::targetTask::run ERROR! catch2";
 #endif
                 Parent.Lock.lock();
                 Parent.TargetLog += QString::fromLatin1("Encountered unknown exception\n");
@@ -707,7 +710,7 @@ qDebug() << "toDebug::targetTask::run ERROR! catch2";
     }
     TOCATCH
 #ifdef DEBUG
-qDebug() << "toDebug::targetTask::run DONE. Finishing target session.";
+    qDebug() << "toDebug::targetTask::run DONE. Finishing target session.";
 #endif
     toLocker lock (Parent.Lock);
     Parent.DebuggerStarted = false;
@@ -723,7 +726,7 @@ qDebug() << "toDebug::targetTask::run DONE. Finishing target session.";
 static toTreeWidgetItem *toLastItem(toTreeWidgetItem *parent)
 {
     toTreeWidgetItem *lastItem = NULL;
-    for (toTreeWidgetItem *item = parent->firstChild();item;item = item->nextSibling())
+    for (toTreeWidgetItem *item = parent->firstChild(); item; item = item->nextSibling())
         lastItem = item;
     return lastItem;
 }
@@ -747,7 +750,7 @@ public:
 void toDebug::reorderContent(toTreeWidgetItem *parent, int start, int diff)
 {
     toTreeWidgetItem *next;
-    for (toTreeWidgetItem *item = parent->firstChild();item;item = next)
+    for (toTreeWidgetItem *item = parent->firstChild(); item; item = next)
     {
         toContentsItem * cont = dynamic_cast<toContentsItem *>(item);
         next = item->nextSibling();
@@ -795,7 +798,7 @@ toTreeWidgetItem *toDebug::contents(void)
 void toDebug::reorderContent(int start, int diff)
 {
     QString name = currentEditor()->objectName();
-    for (toTreeWidgetItem *item = Contents->firstChild();item;item = item->nextSibling())
+    for (toTreeWidgetItem *item = Contents->firstChild(); item; item = item->nextSibling())
     {
         if (item->text(1) == name)
             reorderContent(item, start, diff);
@@ -826,14 +829,14 @@ QString toDebug::constructAnonymousBlock(toTreeWidgetItem * head, toTreeWidgetIt
     // package is being tested, in which case cursor must be placed on procedure/function.
     if (hasMembers(currentEditor()->type()))
     {
-        for (toTreeWidgetItem *parent = Contents->firstChild();parent;parent = parent->nextSibling())
+        for (toTreeWidgetItem *parent = Contents->firstChild(); parent; parent = parent->nextSibling())
         {
 #ifdef DEBUG
             qDebug() << parent->text(1);
 #endif
             if (parent->text(1) == curName)
             {
-                for (parent = parent->firstChild();parent;parent = parent->nextSibling())
+                for (parent = parent->firstChild(); parent; parent = parent->nextSibling())
                 {
                     toContentsItem * cont = dynamic_cast<toContentsItem *>(parent);
                     if (cont)
@@ -1014,7 +1017,7 @@ QString toDebug::constructAnonymousBlock(toTreeWidgetItem * head, toTreeWidgetIt
             }
             sql += callName;
 
-            for (std::list<debugParam>::iterator i = CurrentParams.begin();i != CurrentParams.end();i++)
+            for (std::list<debugParam>::iterator i = CurrentParams.begin(); i != CurrentParams.end(); i++)
             {
                 if ((*i).In)
                     last = new toResultViewItem(head, last, (*i).Name);
@@ -1098,8 +1101,8 @@ void toDebug::execute(void)
             last = head->firstChild();
             if (InputData.begin() != InputData.end())
                 for (toQList::iterator i = InputData.begin();
-                    last && i != InputData.end();
-                    i++, last = last->nextSibling())
+                        last && i != InputData.end();
+                        i++, last = last->nextSibling())
                 {
                     // Is there a smarter way to make a deep copy
                     last->setText(1, toDeepCopy(*i));
@@ -1109,22 +1112,22 @@ void toDebug::execute(void)
             TargetSQL = toDeepCopy(sql); // Deep copy of SQL
         }
 #ifdef DEBUG
-qDebug() << "toDebug::execute sql has been prepared. upping TargetSemaphore!";
+        qDebug() << "toDebug::execute sql has been prepared. upping TargetSemaphore!";
 #endif
         TargetSemaphore.up(); // Go go power rangers!
         ChildSemaphore.down(); // Wait until target actually runs the statement
 //        StartedSemaphore.down();
 #ifdef DEBUG
-qDebug() << "toDebug::execute before sync()";
+        qDebug() << "toDebug::execute before sync()";
 #endif
         if (sync() >= 0 && RunningTarget)
             continueExecution(TO_BREAK_ANY_CALL);
 #ifdef DEBUG
-qDebug() << "toDebug::execute after sync() & continueExecution";
+        qDebug() << "toDebug::execute after sync() & continueExecution";
 #endif
     }
 #ifdef DEBUG
-qDebug() << "toDebug::execute DONE!";
+    qDebug() << "toDebug::execute DONE!";
 #endif
 } // execute
 
@@ -1160,7 +1163,8 @@ int toDebug::sync(void)
             ret = debugSession->readValue().toInt();
             reason = debugSession->readValue().toInt();
 #ifdef DEBUG
-            if (ret == TO_ERROR_COMMUNICATION) {
+            if (ret == TO_ERROR_COMMUNICATION)
+            {
                 qDebug() << "Error in communication with target session.";
             }
             qDebug() << "toDebug::sync ret = " << ret << ", reason = " << getErrorText(reason, 2);
@@ -1190,7 +1194,7 @@ int toDebug::sync(void)
         else
             Output->disable(true);
 #ifdef DEBUG
-qDebug() << "toDebug::sync returning";
+        qDebug() << "toDebug::sync returning";
 #endif
         return reason;
     }
@@ -1229,7 +1233,7 @@ static bool FindKeyword(toSQLParse::statement &statements, bool onlyNames, bool 
             name = statements.String.toUpper();
 
             int j;
-            for (j = 0;TypeMap[j].Type && TypeMap[j].Type != name;j++)
+            for (j = 0; TypeMap[j].Type && TypeMap[j].Type != name; j++)
                 ;
             if (TypeMap[j].Type)
                 name = TypeMap[j].Description;
@@ -1254,7 +1258,7 @@ static bool FindKeyword(toSQLParse::statement &statements, bool onlyNames, bool 
         else
             name += " body";
     }
-    for (std::list<toSQLParse::statement>::iterator i = statements.subTokens().begin();i != statements.subTokens().end();i++)
+    for (std::list<toSQLParse::statement>::iterator i = statements.subTokens().begin(); i != statements.subTokens().end(); i++)
     {
         bool ret = FindKeyword(*i, onlyNames, declaration, line, name);
         if (ret)
@@ -1265,12 +1269,12 @@ static bool FindKeyword(toSQLParse::statement &statements, bool onlyNames, bool 
 
 void toDebug::updateArguments(toSQLParse::statement &statements, toTreeWidgetItem *parent)
 {
-    for (std::list<toSQLParse::statement>::iterator i = statements.subTokens().begin();i != statements.subTokens().end();i++)
+    for (std::list<toSQLParse::statement>::iterator i = statements.subTokens().begin(); i != statements.subTokens().end(); i++)
     {
         if ((*i).Type == toSQLParse::statement::List)
         {
             bool first = true;
-            for (std::list<toSQLParse::statement>::iterator j = (*i).subTokens().begin();j != (*i).subTokens().end();j++)
+            for (std::list<toSQLParse::statement>::iterator j = (*i).subTokens().begin(); j != (*i).subTokens().end(); j++)
             {
                 if ((*j).String == ",")
                     first = true;
@@ -1297,7 +1301,7 @@ void toDebug::updateContent(toSQLParse::statement &statements, toTreeWidgetItem 
         item = new toContentsItem(parent, name, line);
     else
     {
-        for (item = Contents->firstChild();item;item = item->nextSibling())
+        for (item = Contents->firstChild(); item; item = item->nextSibling())
             if (item->text(0) == name && item->text(1) == id)
             {
                 item->setText(2, QString::null);
@@ -1361,15 +1365,15 @@ void toDebug::updateContent(toDebugText *current)
 
     toTreeWidgetItem *item;
 
-    for (item = Contents->firstChild();item;item = item->nextSibling())
+    for (item = Contents->firstChild(); item; item = item->nextSibling())
         if (item->text(1) == current->objectName())
             item->setText(2, "DELETE");
 
-    for (std::list<toSQLParse::statement>::iterator i = statements.begin();i != statements.end();i++)
+    for (std::list<toSQLParse::statement>::iterator i = statements.begin(); i != statements.end(); i++)
         updateContent(*i, NULL, current->objectName());
 
     toTreeWidgetItem *ni;
-    for (item = Contents->firstChild();item;item = ni)
+    for (item = Contents->firstChild(); item; item = ni)
     {
         ni = item->nextSibling();
         if (item->text(2) == "DELETE")
@@ -1380,7 +1384,7 @@ void toDebug::updateContent(toDebugText *current)
 void toDebug::readLog(void)
 {
 #ifdef DEBUG
-qDebug() << "toDebug::readLog";
+    qDebug() << "toDebug::readLog";
 #endif
     toLocker lock (Lock);
     if (!TargetLog.isEmpty())
@@ -1503,7 +1507,7 @@ static toSQL SQLGlobalIndex("toDebug:GlobalIndex",
 void toDebug::processWatches(void)
 {
     toTreeWidgetItem *next = NULL;
-    for (toTreeWidgetItem *item = Watch->firstChild();item;item = next)
+    for (toTreeWidgetItem *item = Watch->firstChild(); item; item = next)
     {
 #ifdef DEBUG
         qDebug() << "toDebug::processWatches watch = " << item->text(2);
@@ -1521,9 +1525,9 @@ void toDebug::processWatches(void)
             ret = debugSession->readValue().toInt();
             value = debugSession->readValue();
             if (ret != TO_SUCCESS &&
-                ret != TO_ERROR_NULLVALUE &&
-                ret != TO_ERROR_INDEX_TABLE &&
-                ret != TO_ERROR_NULLCOLLECTION)
+                    ret != TO_ERROR_NULLVALUE &&
+                    ret != TO_ERROR_INDEX_TABLE &&
+                    ret != TO_ERROR_NULLCOLLECTION)
             {
                 object = currentEditor()->object();
                 schema = currentEditor()->schema();
@@ -1594,7 +1598,7 @@ void toDebug::processWatches(void)
             int end;
             toTreeWidgetItem *last = NULL;
             int num = 0;
-            for (end = start;end < value.length();end++)
+            for (end = start; end < value.length(); end++)
             {
                 if (value.at(end) == ',')
                 {
@@ -1660,7 +1664,7 @@ void toDebug::updateState(int reason)
         nextAct->setEnabled(false);
         returnAct->setEnabled(false);
         {
-            for (int i = 0;i < Editors->count();i++)
+            for (int i = 0; i < Editors->count(); i++)
             {
                 toDebugText *editor = dynamic_cast<toDebugText *>(Editors->widget(i));
                 editor->setCurrent( -1);
@@ -1675,18 +1679,18 @@ void toDebug::updateState(int reason)
                 head = new toResultViewItem(Parameters, head, tr("Output"));
                 head->setOpen(true);
                 std::list<debugParam>::iterator cp;
-                for (cp = CurrentParams.begin();cp != CurrentParams.end() && !(*cp).Out;cp++)
+                for (cp = CurrentParams.begin(); cp != CurrentParams.end() && !(*cp).Out; cp++)
                     ;
 
                 toTreeWidgetItem *last = NULL;
                 {
-                    for (toQList::iterator i = OutputData.begin();i != OutputData.end();i++)
+                    for (toQList::iterator i = OutputData.begin(); i != OutputData.end(); i++)
                     {
                         QString name;
                         if (cp != CurrentParams.end())
                         {
                             name = (*cp).Name;
-                            for (cp++;cp != CurrentParams.end() && !(*cp).Out;cp++)
+                            for (cp++; cp != CurrentParams.end() && !(*cp).Out; cp++)
                                 ;
                         }
                         if (name.isEmpty())
@@ -1697,7 +1701,7 @@ void toDebug::updateState(int reason)
                 }
             }
             toTreeWidgetItem *next = NULL;
-            for (toTreeWidgetItem *item = Watch->firstChild();item;item = next)
+            for (toTreeWidgetItem *item = Watch->firstChild(); item; item = next)
             {
                 item->setText(4, QString::fromLatin1("NOCHANGE"));
                 if (item->firstChild())
@@ -1727,20 +1731,20 @@ void toDebug::updateState(int reason)
         try
         {
 #ifdef DEBUG
-qDebug() << "toDebug::updateState DBMS_DEBUG.GET_RUNTIME_INFO";
+            qDebug() << "toDebug::updateState DBMS_DEBUG.GET_RUNTIME_INFO";
 #endif
             debugSession->execute(SQLRuntimeInfo);
             int ret, depth;
             ret = debugSession->readValue().toInt();
             depth = debugSession->readValue().toInt();
 #ifdef DEBUG
-qDebug() << "toDebug::updateState ret = " << ret << ", depth = " << depth;
+            qDebug() << "toDebug::updateState ret = " << ret << ", depth = " << depth;
 #endif
             if (ret != TO_SUCCESS)
             {
                 toStatusMessage(tr("Failed to get runtime info (Reason %1)").arg(ret));
 #ifdef DEBUG
-qDebug() << "toDebug::updateState FAILED to get runtime info. Reason " << getErrorText(ret, 1/*error*/);
+                qDebug() << "toDebug::updateState FAILED to get runtime info. Reason " << getErrorText(ret, 1/*error*/);
 #endif
                 return ;
             }
@@ -1752,12 +1756,12 @@ qDebug() << "toDebug::updateState FAILED to get runtime info. Reason " << getErr
             QString line;
             QString type;
 
-            for (int num = 2;num <= depth;num++)
+            for (int num = 2; num <= depth; num++)
             {
                 toQList args;
                 toPush(args, toQValue(num));
 #ifdef DEBUG
-qDebug() << "toDebug::updateState DBMS_DEBUG.PRINT_BACKTRACE depth=" << num;
+                qDebug() << "toDebug::updateState DBMS_DEBUG.PRINT_BACKTRACE depth=" << num;
 #endif
                 debugSession->execute(SQLStackTrace, args);
 
@@ -1775,7 +1779,7 @@ qDebug() << "toDebug::updateState DBMS_DEBUG.PRINT_BACKTRACE depth=" << num;
             Output->refresh();
             try
             {
-                for (toTreeWidgetItem *item = Watch->firstChild();item;item = item->nextSibling())
+                for (toTreeWidgetItem *item = Watch->firstChild(); item; item = item->nextSibling())
                 {
                     while (item->firstChild())
                         delete item->firstChild();
@@ -1861,7 +1865,7 @@ QString toDebug::checkWatch(const QString &name)
         unsigned int end;
         int num = 0;
         QString ret;
-        for (end = start;end < value.length();end++)
+        for (end = start; end < value.length(); end++)
         {
             if (value.at(end) == ',')
             {
@@ -1887,7 +1891,7 @@ bool toDebug::viewSource(const QString &schema, const QString &name, const QStri
         toDebugText *editor = NULL;
         int row = line - 1;
         int col = 0;
-        for (int i = 0;i < Editors->count();i++)
+        for (int i = 0; i < Editors->count(); i++)
         {
             QString tabname = editorName(schema, name, type);
             toDebugText *te = dynamic_cast<toDebugText *>(Editors->widget(i));
@@ -1940,9 +1944,9 @@ bool toDebug::viewSource(const QString &schema, const QString &name, const QStri
 void toDebug::setDeferedBreakpoints(void)
 {
 #ifdef DEBUG
-qDebug() << "toDebug::setDeferedBreakpoints";
+    qDebug() << "toDebug::setDeferedBreakpoints";
 #endif
-    for (toTreeWidgetItem *item = Breakpoints->firstChild();item;item = item->nextSibling())
+    for (toTreeWidgetItem *item = Breakpoints->firstChild(); item; item = item->nextSibling())
     {
         toBreakpointItem * point = dynamic_cast<toBreakpointItem *>(item);
         if (point)
@@ -1970,7 +1974,7 @@ static toSQL SQLContinue("toDebug:Continue",
 int toDebug::continueExecution(int stopon)
 {
 #ifdef DEBUG
-qDebug() << "toDebug::continueExecution(" << getErrorText(stopon, 3) << ")";
+    qDebug() << "toDebug::continueExecution(" << getErrorText(stopon, 3) << ")";
 #endif
     Lock.lock();
     if (RunningTarget)
@@ -1988,7 +1992,7 @@ qDebug() << "toDebug::continueExecution(" << getErrorText(stopon, 3) << ")";
                 ret = debugSession->readValue().toInt();
                 reason = debugSession->readValue().toInt();
 #ifdef DEBUG
-qDebug() << "toDebug::continueExecution ret=" << ret << ", reason=" << reason;
+                qDebug() << "toDebug::continueExecution ret=" << ret << ", reason=" << reason;
 #endif
                 if (reason == TO_REASON_TIMEOUT || ret == TO_ERROR_TIMEOUT)
                 {
@@ -2041,7 +2045,7 @@ void toDebug::executeInTarget(const QString &str, toQList &params)
 #endif
     }
 #ifdef DEBUG
-        qDebug() << "out of loop";
+    qDebug() << "out of loop";
 #endif
     readLog();
 //     qDebug() << "toDebug::executeInTarget 2";
@@ -2054,8 +2058,8 @@ void toDebug::stop(void)
 }
 
 toDebug::toDebug(QWidget *main, toConnection &connection)
-    : toToolWidget(DebugTool, "debugger.html", main, connection, "toDebug"),
-      TargetThread()
+        : toToolWidget(DebugTool, "debugger.html", main, connection, "toDebug"),
+        TargetThread()
 {
     debugSession = new toQuery(connection);
 
@@ -2142,7 +2146,7 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
     CodeModel = new toCodeModel(Objects);
     Objects->setModel(CodeModel);
     QString selected = Schema->currentText();
-    if(!selected.isEmpty())
+    if (!selected.isEmpty())
         CodeModel->refresh(connection, selected);
 //     Objects->setSelectionMode(toTreeWidget::Single);
 //     Objects->setResizeMode(toTreeWidget::AllColumns);
@@ -2473,7 +2477,7 @@ static toSQL SQLAttach("toDebug:Attach",
 void toDebug::startTarget(void)
 {
 #ifdef DEBUG
-qDebug() << "toDebug::startTarget";
+    qDebug() << "toDebug::startTarget";
 #endif
     try
     {
@@ -2488,7 +2492,7 @@ qDebug() << "toDebug::startTarget";
     }
 
     ChildSemaphore.down(); // sleep until target session is initialised (or fails doing so) in other
-                           // thread (toDebug::targetTask::run must raise this semapthore)
+    // thread (toDebug::targetTask::run must raise this semapthore)
     if (!DebuggerStarted)
     {
         {
@@ -2504,7 +2508,7 @@ qDebug() << "toDebug::startTarget";
     try
     {
 #ifdef DEBUG
-qDebug() << "toDebug::startTarget DBMS_DEBUG.ATTACH_SESSION " << TargetID;
+        qDebug() << "toDebug::startTarget DBMS_DEBUG.ATTACH_SESSION " << TargetID;
 #endif
         if (DebuggerStarted)
             debugSession->execute(SQLAttach, TargetID);
@@ -2544,12 +2548,12 @@ void toDebug::refresh(void)
             Schema->clear();
             toQList users = toQuery::readQuery(connection(),
                                                toSQL::string(toSQL::TOSQL_USERLIST, connection()));
-            for (toQList::iterator i = users.begin();i != users.end();i++)
+            for (toQList::iterator i = users.begin(); i != users.end(); i++)
                 Schema->addItem(*i);
         }
         if (!selected.isEmpty())
         {
-            for (int i = 0;i < Schema->count();i++)
+            for (int i = 0; i < Schema->count(); i++)
             {
                 if (Schema->itemText(i) == selected)
                 {
@@ -2619,7 +2623,7 @@ bool toDebug::checkCompile(toDebugText *editor)
 bool toDebug::checkCompile(void)
 {
 //     qDebug() << "toDebug::checkCompile void 1";
-    for (int i = 0;i < Editors->count();i++)
+    for (int i = 0; i < Editors->count(); i++)
     {
         toDebugText *editor = dynamic_cast<toDebugText *>(Editors->widget(i));
         if (!checkCompile(editor))
@@ -2702,7 +2706,7 @@ void toDebug::changePackage(const QModelIndex &current, const QModelIndex &previ
     if (item && item->parent())
     {
         QString ctype = item->parent()->display();
-        if(ctype.isEmpty() || ctype == "Code")
+        if (ctype.isEmpty() || ctype == "Code")
             return;
         ctype = ctype.toUpper();
 
@@ -2832,7 +2836,7 @@ void toDebug::compile(void)
         return ;
 
     QString lastSchema = currentEditor()->schema();
-    for (int i = 0;i < Editors->count();i++)
+    for (int i = 0; i < Editors->count(); i++)
     {
         toDebugText *editor = dynamic_cast<toDebugText *>(Editors->widget(i));
         int row, col;
@@ -2842,7 +2846,7 @@ void toDebug::compile(void)
             if (editor == currentEditor() &&
                     lastSchema != currentEditor()->schema())
             {
-                for (int i = 0;i < Schema->count();i++)
+                for (int i = 0; i < Schema->count(); i++)
                     if (Schema->itemText(i) == lastSchema)
                     {
                         Schema->setCurrentIndex(i);
@@ -2891,7 +2895,7 @@ void toDebug::changeContent(toTreeWidgetItem *ci)
             ci = ci->parent();
         toHighlightedText *current = NULL;
 
-        for (int i = 0;i < Editors->count();i++)
+        for (int i = 0; i < Editors->count(); i++)
         {
             if (Editors->widget(i)->objectName() == ci->text(1))
             {
@@ -3173,7 +3177,7 @@ void toDebug::changeWatch(toTreeWidgetItem *item)
 void toDebug::exportData(std::map<QString, QString> &data, const QString &prefix)
 {
     data[prefix + ":Editors"] = Editors->count();
-    for (int i = 0;i < Editors->count();i++)
+    for (int i = 0; i < Editors->count(); i++)
     {
         toHighlightedText *editor = dynamic_cast<toHighlightedText *>(Editors->widget(i));
         QString num;
@@ -3183,7 +3187,7 @@ void toDebug::exportData(std::map<QString, QString> &data, const QString &prefix
     data[prefix + ":Schema"] = Schema->currentText();
 
     int id = 1;
-    for (toTreeWidgetItem *item = Breakpoints->firstChild();item;item = item->nextSibling())
+    for (toTreeWidgetItem *item = Breakpoints->firstChild(); item; item = item->nextSibling())
     {
         toBreakpointItem * point = dynamic_cast<toBreakpointItem *>(item);
 
@@ -3202,7 +3206,7 @@ void toDebug::exportData(std::map<QString, QString> &data, const QString &prefix
         id++;
     }
     id = 1;
-    for (toTreeWidgetItem *qitem = Watch->firstChild();qitem;qitem = qitem->nextSibling())
+    for (toTreeWidgetItem *qitem = Watch->firstChild(); qitem; qitem = qitem->nextSibling())
     {
         toResultViewItem * item = dynamic_cast<toResultViewItem *>(qitem);
         if (item)
@@ -3225,7 +3229,7 @@ void toDebug::importData(std::map<QString, QString> &data, const QString &prefix
 {
     QString str = data[prefix + ":Schema"];
     {
-        for (int i = 0;i < Schema->count();i++)
+        for (int i = 0; i < Schema->count(); i++)
             if (Schema->itemText(i) == str)
             {
                 Schema->setCurrentIndex(i);
@@ -3235,7 +3239,7 @@ void toDebug::importData(std::map<QString, QString> &data, const QString &prefix
     }
 
     int count = data[prefix + ":Editors"].toInt();
-    for (int j = 0;j < count;j++)
+    for (int j = 0; j < count; j++)
     {
         toDebugText *text = new toDebugText(Breakpoints, Editors, this);
         // signal removed with qscintilla port.
@@ -3308,7 +3312,7 @@ void toDebug::closeEditor(toDebugText* &editor)
     if (editor && checkCompile(editor))
     {
         QString name = editor->objectName();
-        for (toTreeWidgetItem *item = Contents->firstChild();item;item = item->nextSibling())
+        for (toTreeWidgetItem *item = Contents->firstChild(); item; item = item->nextSibling())
         {
             if (item->text(1) == name)
             {
