@@ -65,13 +65,21 @@
 #define TO_ERROR_NULLVALUE 32
 #define TO_ERROR_NULLCOLLECTION 40
 #define TO_ERROR_INDEX_TABLE 18
+#define TO_ERROR_DEFERRED 27
+#define TO_ERROR_EXCEPTION 28
+#define TO_ERROR_COMMUNICATION 29
 
-#define TO_REASON_KNL_EXIT 25
-#define TO_REASON_NO_SESSION -1
-#define TO_REASON_TIMEOUT 17
-#define TO_REASON_EXIT  15
 #define TO_REASON_WHATEVER 0
 #define TO_REASON_STARTING 2
+#define TO_REASON_BREAKPOINT 3
+#define TO_REASON_ENTER 6
+#define TO_REASON_RETURN 7
+#define TO_REASON_FINISH 8
+#define TO_REASON_LINE 9
+#define TO_REASON_EXIT  15
+#define TO_REASON_TIMEOUT 17
+#define TO_REASON_KNL_EXIT 25
+#define TO_REASON_NO_SESSION -1
 
 #define TO_NAME_CURSOR  0
 #define TO_NAME_TOPLEVEL 1
@@ -123,6 +131,13 @@ class toDebug : public toToolWidget
     // Toolbar
     void createActions(void);
 
+#ifdef DEBUG
+    // Get text version from error/return/reason code returned by DBMS_DEBUG routines
+    // Currently only used for debug information
+    // type: 1 - error, 2 - reason, 3 - continue
+    QString getErrorText(int code, int type);
+#endif
+
     QComboBox *Schema;
     QAction   *refreshAct;
     QAction   *newSheetAct;
@@ -172,15 +187,15 @@ class toDebug : public toToolWidget
     toSemaphore  StartedSemaphore;
     toThread    *TargetThread;
     QString      TargetSQL;
-    QString      TargetLog;
-    QString      TargetException;
+    QString      TargetLog; // accumulates strings (logs) of debugger actions
+    QString      TargetException; // accumulates errors (exceptions) occuring in target session
     toQList      InputData;
     toQList      OutputData;
-    int          ColumnSize;
-    bool         RunningTarget;
-    bool         DebuggerStarted;
+    bool         RunningTarget; // Indicates if target session is currently running.
+                                // (as opposed to waiting with TargetSemaphore down)
+    bool         DebuggerStarted; // Indicates if target session has been initialised
     // Can be read after thread startup
-    QString      TargetID;
+    QString      TargetID; // oracle debug id of "target session"
     // End of lock stuff
     toTimer      StartTimer;
 
@@ -241,6 +256,8 @@ private slots:
     It's set to false when DBMS_DEBUG related calls fail.
     */
     void enableDebugger(bool);
+    void processWatches(void); // Get's values for watches during debugging
+    QString constructAnonymousBlock(toTreeWidgetItem * head, toTreeWidgetItem * last);
 
 public:
     toDebug(QWidget *parent, toConnection &connection);
@@ -254,6 +271,9 @@ public:
     toTreeWidgetItem *contents(void);
     toDebugText *currentEditor(void);
     QString currentSchema(void);
+    toQuery * debugSession; // Main oracle session for debugger. All debug related actions
+                            // all calls of DBMS_DEBUG should be done from this session as
+                            // this specific session has target session attached.
 
     void executeInTarget(const QString &, toQList &params);
 

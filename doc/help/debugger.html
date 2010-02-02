@@ -49,9 +49,9 @@ This tool provides you with an advanced editor and debugger for developing PL/SQ
 
    <p>The lower pane Contents contains the structure of the selected object. Here you can find declared methods of packages and also variables or even anonymous blocks in your code. Selecting a line in this pane will move the cursor to where the element is in your code, for instance where a variable or method is declared.
 
-   <p>To the right is a large editor area where you can edit the current object. The editor is describe more later.
+   <p>To the right is a large editor area where you can edit the current object. The editor is described in more detail later.
 
-   <p>The last part of the screen is not always visible and contain information about the currently running debugging session.
+   <p>The last part of the screen is not always visible. It contains information about the currently running debugging session.
 
 <h4 class="subheading">Toolbar &amp; menu</h4>
 
@@ -60,8 +60,7 @@ This tool provides you with an advanced editor and debugger for developing PL/SQ
      <dl>
 <dt><strong>Refresh object list</strong><dd>      Update the <strong>Object</strong> list to the left of the screen. This is first on the toolbar and close to the end in the menu. 
       The keyboard shortcut for this is <strong>F5</strong>. 
-      Observe that this list is read from the object cache and will not be updated unless you reread the object cache as well
-      (Available from the File menu. 
+      Observe that this list is read from the object cache and will not be updated unless you reread the object cache as well (available from the File menu). 
 <br><dt><strong>Select schema</strong><dd>      In the toolbar this is a combobox listing the available schemas. Changing the schema will change the objects displayed in the <strong>Object</strong> list. 
       Selecting it in the menu (Close to the end) or selecting the <strong>ALT+S</strong> keyboard shortcut will move the keyboard focus to the toolbar combobox. 
 <br><dt><strong>New sheet</strong><dd>      Start editing a new object. 
@@ -78,7 +77,6 @@ This tool provides you with an advanced editor and debugger for developing PL/SQ
 <br><dt><strong>Step into</strong><dd>      Step into any functions or procedures called on the current line of execution. The keyboard shortcut for this is <strong>F7</strong>. 
 <br><dt><strong>Step over</strong><dd>      Step to the next line of the current editor. The keyboard shortcut for this is <strong>F8</strong>
 <br><dt><strong>Return from.</strong><dd>      Continue running until returned from the current function or procedure. The keyboard shortcut for this is <strong>F6</strong>. 
-<br><dt><strong>Head editor</strong><dd>      Switch between the head and body editor. For more information see the editor section below. The keyboard shortcut for this is <strong>CTRL+Space</strong>. 
 <br><dt><strong>Debug pane</strong><dd>      Display or hide the debugging pane at the bottom of the debugging window. The keyboard shortcut for this is <strong>F11</strong>. 
 <br><dt><strong>Next error</strong><dd>      Move the cursor to the next syntax error in the current editor. For more information about syntax errors in editors see the editor section. 
       The keyboard shortcut for this is <strong>CTRL+N</strong>. 
@@ -97,7 +95,7 @@ This tool provides you with an advanced editor and debugger for developing PL/SQ
 
 <h4 class="subheading">Debugger editor</h4>
 
-<p>There are a few things that are special to the PL/SQL debugger compared to other editors in TOra. First of all there are actually two editors. In one you edit the declaration of a package this is called the <strong>head</strong> editor. The other one is used to edit the implementation of a package and is called the <strong>body</strong> editor. If you are editing procedures or functions you will only use the <strong>body</strong> editor. You switch between the editors using the <strong>CTRL+Space</strong> keyboard shortcut or with the <strong>head editor</strong> toolbar button or menu entry. This also mean that when you run a program and make a change, but still decide to keep stepping through your program without restarting you can have one other changed file plus the current file, if you try to step to another object TOra will ask if you want to continue until you are back in the edited files or recompile.
+<p>When you run a program and make a change, but still decide to keep stepping through your program without restarting you can have one other changed file plus the current file, if you try to step to another object TOra will ask if you want to continue until you are back in the edited files or recompile.
 
    <p>Another thing special in this editor is that the PL/SQL editor will show you errors in the package. The errors are highlighted with a special background color (The default is red, but this is configurable in the options(see <a href="preferences.html#preferences">Options</a>). You can also use the <strong>next error</strong> or <strong>previous error</strong> toolbar button/menu entries to step between the errors.
 

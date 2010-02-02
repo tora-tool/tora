@@ -329,6 +329,25 @@ public:
      */
     void execute(const QString &sql, const std::list<toQValue> &params);
 
+    /** Execute an SQL statement with no parameters using this query.
+     * @param sql SQL to run.
+     */
+    void execute(const toSQL &sql);
+
+    /** Execute an SQL statement using this query with String as parameter
+     * @param sql SQL to run.
+     * @param param Parameter to pass to query
+     */
+    void execute(const toSQL &sql, const QString &param);
+
+    /** Execute an SQL statement using this query with 3 Strings as parameters
+     * @param sql SQL to run.
+     * @param param1 1st parameter
+     * @param param2 2nd parameter
+     * @param param3 3rd parameter
+     */
+    void execute(const toSQL &sql, const QString &param1, const QString &param2, const QString &param3);
+
     /** Connection object of this object.
      */
     toConnection &connection(void)
@@ -410,6 +429,15 @@ public:
     static std::list<toQValue> readQuery(toConnection &conn,
                                          const QString &sql,
                                          std::list<toQValue> &params);
+
+    /** Execute a query using this oracle session and return all values.
+      * @param sql SQL to run.
+      * @param params Parameters to pass to query.
+      * @return A list of @ref toQValues:s read from query
+      */
+    std::list<toQValue> readQuery(const QString &sql,
+                                         std::list<toQValue> &params);
+
     /** Execute a query and return all the values returned by it.
      * @param conn Connection to run query on.
      * @param sql SQL to run.

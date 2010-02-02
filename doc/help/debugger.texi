@@ -14,9 +14,9 @@ Below that to the left are two panes. The top one Objects contains the available
 
 The lower pane Contents contains the structure of the selected object. Here you can find declared methods of packages and also variables or even anonymous blocks in your code. Selecting a line in this pane will move the cursor to where the element is in your code, for instance where a variable or method is declared.
 
-To the right is a large editor area where you can edit the current object. The editor is describe more later.
+To the right is a large editor area where you can edit the current object. The editor is described in more detail later.
 
-The last part of the screen is not always visible and contain information about the currently running debugging session.
+The last part of the screen is not always visible. It contains information about the currently running debugging session.
 
 @subheading Toolbar & menu
 
@@ -24,38 +24,35 @@ The toolbar and menu contain pretty much the same commands with a few exceptions
 
 
 @table @asis
-@item @strong{Refresh object list}	
-      Update the @strong{Object} list to the left of the screen. This is first on the toolbar and close to the end in the menu. 
-      The keyboard shortcut for this is @strong{F5}. 
-      Observe that this list is read from the object cache and will not be updated unless you reread the object cache as well 
-      (Available from the File menu.
+@item @strong{Refresh object list}
+      Update the @strong{Object} list to the left of the screen. This is first on the toolbar and close to the end in the menu.
+      The keyboard shortcut for this is @strong{F5}.
+      Observe that this list is read from the object cache and will not be updated unless you reread the object cache as well (available from the File menu).
 @item @strong{Select schema}
       In the toolbar this is a combobox listing the available schemas. Changing the schema will change the objects displayed in the @strong{Object} list.
       Selecting it in the menu (Close to the end) or selecting the @strong{ALT+S} keyboard shortcut will move the keyboard focus to the toolbar combobox.
 @item @strong{New sheet}
-      Start editing a new object.     
+      Start editing a new object.
 @item @strong{Scan source}
       Update the @strong{Contents} list to the left on the screen according to the source currently in the editor. 
       TOra will try to keep up with this as you write, but new blocks and declarations will only show up if you rescan the source. 
       The keyboard shortcut for this is @strong{CTRL+F9}.
 @item @strong{Compile}
-      Compile the current editor. This will compile the procedure with the debug option, 
+      Compile the current editor. This will compile the procedure with the debug option,
       if you don't have the debug options you need to recompile it in order to be able to see watches. The keyboard shortcut for this is @strong{F9}.
 @item @strong{Execute}
-      Call the method, procedure or function closest to the cursor. 
-      It's off course only when you edit packages that there are several methods to choose from in the current editor. 
-      If you have changed the source TOra will ask you if you want to recompile and start over or simply continue without recompiling. 
+      Call the method, procedure or function closest to the cursor.
+      It's off course only when you edit packages that there are several methods to choose from in the current editor.
+      If you have changed the source TOra will ask you if you want to recompile and start over or simply continue without recompiling.
       The keyboard shortcut for this is @strong{CTRL+Return}.
 @item @strong{Stop}
-      Halt the currently running execution. The keyboard shortcut for this is @strong{F12}.    
+      Halt the currently running execution. The keyboard shortcut for this is @strong{F12}.
 @item @strong{Step into}
-      Step into any functions or procedures called on the current line of execution. The keyboard shortcut for this is @strong{F7}.    
+      Step into any functions or procedures called on the current line of execution. The keyboard shortcut for this is @strong{F7}.
 @item @strong{Step over}
       Step to the next line of the current editor. The keyboard shortcut for this is @strong{F8}
 @item @strong{Return from.}
       Continue running until returned from the current function or procedure. The keyboard shortcut for this is @strong{F6}.
-@item @strong{Head editor}
-      Switch between the head and body editor. For more information see the editor section below. The keyboard shortcut for this is @strong{CTRL+Space}.
 @item @strong{Debug pane}
       Display or hide the debugging pane at the bottom of the debugging window. The keyboard shortcut for this is @strong{F11}.
 @item @strong{Next error}
@@ -69,10 +66,10 @@ The toolbar and menu contain pretty much the same commands with a few exceptions
       Breakpoints are indicated with a small stop sign to the right of the line in the editor. The keyboard shortcut for this is @strong{CTRL+F5}.
 @item @strong{Disable breakpoint}
       Will disable or enable a breakpoint on the current editor. 
-      A disabled breakpoint will be seen is grayed out in the margin of the editor of the line it is on. 
+      A disabled breakpoint will be seen is grayed out in the margin of the editor of the line it is on.
       The keyboard shortcut for this is @strong{CTRL+F6}.
 @item @strong{Add watch}
-      Add a watched variable. See here for more information about watches. The keyboard shortcut for this is @strong{F4}.      
+      Add a watched variable. See here for more information about watches. The keyboard shortcut for this is @strong{F4}.
 @item @strong{Delete watch}
       Remove a watched variable. The keyboard shortcut for this is @strong{CTRL+Del}.
 @item @strong{Change watch}
@@ -83,11 +80,11 @@ The toolbar and menu contain pretty much the same commands with a few exceptions
 
 @subheading Debugger editor
 
-There are a few things that are special to the PL/SQL debugger compared to other editors in TOra. First of all there are actually two editors. In one you edit the declaration of a package this is called the @strong{head} editor. The other one is used to edit the implementation of a package and is called the @strong{body} editor. If you are editing procedures or functions you will only use the @strong{body} editor. You switch between the editors using the @strong{CTRL+Space} keyboard shortcut or with the @strong{head editor} toolbar button or menu entry. This also mean that when you run a program and make a change, but still decide to keep stepping through your program without restarting you can have one other changed file plus the current file, if you try to step to another object TOra will ask if you want to continue until you are back in the edited files or recompile.
+When you run a program and make a change, but still decide to keep stepping through your program without restarting you can have one other changed file plus the current file, if you try to step to another object TOra will ask if you want to continue until you are back in the edited files or recompile.
 
 Another thing special in this editor is that the PL/SQL editor will show you errors in the package. The errors are highlighted with a special background color (The default is red, but this is configurable in the options(@pxref{preferences,Options}). You can also use the @strong{next error} or @strong{previous error} toolbar button/menu entries to step between the errors.
 
-Next thing to know about the debugger is breakpoints. You can set a breakpoint either by selecting the @strong{toggle breakpoint} toolbar button or menu entry. This will add a breakpoint to the line you are currently on in the editor. To remove the breakpoint simply select @strong{toggle breakpoint} again. 
+Next thing to know about the debugger is breakpoints. You can set a breakpoint either by selecting the @strong{toggle breakpoint} toolbar button or menu entry. This will add a breakpoint to the line you are currently on in the editor. To remove the breakpoint simply select @strong{toggle breakpoint} again.
 Another way to add or remove breakpoints is to double-click in the left margin of the editor where you also see where the breakpoints are. They are indicated by a small stop sign in the margin. If you want to temporarily disable a breakpoint that you might need to enable again later you can also choose @strong{disable breakpoint}, this is also a toggle so selecting the command again will re-enable the breakpoint. For those of you who don't know breakpoints means that when execution of the object comes to the line containing the breakpoint the debugger will stop and allow you to inspect the data.
 
 Which brings us to the last special thing in this editor which is the current line of execution, this is an indication of where the execution currently is at. This line is indicated by a special background (Default is green, but that is configurable in the options(@pxref{preferences,Options})).
@@ -102,8 +99,8 @@ Information about the current state of execution is shown in the pane at the bot
 @item @strong{Watches}
       Watches is where you can inspect variables in your PL/SQL code while running. They are explained in more detail later.
 @item @strong{Breakpoints}
-      A list of where you current have your breakpoints and their status. The status can be @strong{enabled} or @strong{disabled} which are pretty self explanatory. 
-      It can also be @strong{deferred} which means that some error have occurred setting the breakpoint. 
+      A list of where you current have your breakpoints and their status. The status can be @strong{enabled} or @strong{disabled} which are pretty self explanatory.
+      It can also be @strong{deferred} which means that some error have occurred setting the breakpoint.
       Every time execution is restarted TOra tries to set any breakpoints that are @strong{deferred}.
 @item @strong{Parameters}
       This displays the input and output parameters that you passed to the original call that started the debugging. The output parameters are off course not available until the execution is finished.
@@ -114,7 +111,7 @@ Information about the current state of execution is shown in the pane at the bot
 @end table
 
 @subheading Watches
-Watches are a way to inspect the contents of variables in a running program. 
+Watches are a way to inspect the contents of variables in a running program.
 When you add a watch using the @strong{add watch} command you are presented with the following dialog.
 
 @image{images/addwatch,4cm}

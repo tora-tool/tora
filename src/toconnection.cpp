@@ -531,6 +531,31 @@ void toQuery::execute(const QString &sql, const toQList &params)
     Query->execute();
 }
 
+void toQuery::execute(const toSQL &sql)
+{
+    std::list<toQValue> params;
+    params.clear();
+    execute(sql, params);
+}
+
+void toQuery::execute(const toSQL &sql, const QString &param)
+{
+    std::list<toQValue> params;
+    params.clear();
+    params.insert(params.end(), param);
+    execute(sql, params);
+}
+
+void toQuery::execute(const toSQL &sql, const QString &param1, const QString &param2, const QString &param3)
+{
+    std::list<toQValue> params;
+    params.clear();
+    params.insert(params.end(), param1);
+    params.insert(params.end(), param2);
+    params.insert(params.end(), param3);
+    execute(sql, params);
+}
+
 toQuery::~toQuery()
 {
     toBusy busy;
@@ -568,6 +593,18 @@ toQList toQuery::readQuery(toConnection &conn, const QString &sql, toQList &para
     toQList ret;
     while (!query.eof())
         ret.insert(ret.end(), query.readValue());
+    return ret;
+}
+
+toQList toQuery::readQuery(const QString &sql, toQList &params)
+{
+    toBusy busy;
+    SQL = sql;
+    Params = params;
+    Query->execute();
+    toQList ret;
+    while (!eof())
+        ret.insert(ret.end(), readValue());
     return ret;
 }
 

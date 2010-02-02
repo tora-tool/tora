@@ -39,7 +39,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-// #include <QtDebug>
+#include <QtDebug>
 #include "utils.h"
 
 #include "toconf.h"
@@ -100,7 +100,19 @@
 #include "icons/togglebreak.xpm"
 #include "icons/toworksheet.xpm"
 
-
+#ifdef DEBUG
+static toSQL SQLDebugSelfCheck("toDebug:SelfCheck",
+                                "DECLARE\n"
+                                "  error_message VARCHAR2(1000);\n"
+                                "BEGIN\n"
+                                "  SYS.DBMS_DEBUG.SELF_CHECK;\n"
+                                "  SELECT 'OK' INTO :line<char[101,out> FROM sys.DUAL;\n"
+                                "EXCEPTION WHEN OTHERS THEN\n"
+                                "  error_message := sqlerrm;\n"
+                                "  SELECT error_message INTO :line<char[101,out> FROM sys.DUAL;\n"
+                                "END;",
+                                "Perform Self-check of debugging system");
+#endif
 class toDebugTool : public toTool
 {
     std::map<toConnection *, QWidget *> Windows;
@@ -117,8 +129,19 @@ public:
     {
         return "PL/SQL Debugger";
     }
+    // This one is called then Debug Tool is being launched by TOra user
     virtual QWidget *toolWindow(QWidget *parent, toConnection &connection)
     {
+#ifdef DEBUG
+        // perform self-check (should probably display scary message and close if this test fails)
+        toQuery selfCheck(connection, SQLDebugSelfCheck);
+        QString str = selfCheck.readValueNull();
+        qDebug() << "DBMS_DEBUG.SELF_CHECK result: " << str;
+#endif
+
+        // Only one Debug Tool window is allowed per connection
+        // Therefor is Debug Tool is being launched for a connection with an already
+        // opened Debug window - that window is activated instead of opening a new one
         std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
         if (i != Windows.end())
         {
@@ -132,7 +155,7 @@ public:
             Windows[&connection] = window;
             return window;
         }
-    }
+    } // toolWindow
     void closeWindow(toConnection &connection)
     {
         std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
@@ -141,11 +164,13 @@ public:
     }
     virtual bool canHandle(toConnection &conn)
     {
+        // Debug Tool is only available for Oracle DB
         if (!toIsOracle(conn))
         {
             return false;
         }
 #if 1
+        // Only Oracle DB version 8 and above can handle debugging of plsql code
         QString version = conn.version();
         if (version.left(version.indexOf('.')).toInt() < 8)
         {
@@ -154,10 +179,11 @@ public:
 #endif
         return true;
     }
-};
+}; // class toDebugTool
 
 static toDebugTool DebugTool;
 
+// A class for a Watch dialog (adding/modifying a watch)
 toDebugWatch::toDebugWatch(toDebug *parent)
         : QDialog(parent), Debugger(parent)
 {
@@ -193,7 +219,7 @@ toDebugWatch::toDebugWatch(toDebug *parent)
             this,
             SLOT(changeScope(int)));
     changeScope(1);
-}
+} // toDebugWatch::toDebugWatch
 
 void toDebugWatch::changeScope(int num)
 {
@@ -218,7 +244,7 @@ void toDebugWatch::changeScope(int num)
     }
     break;
     }
-}
+} // toDebugWatch::changeScope
 
 toTreeWidgetItem *toDebugWatch::createWatch(toTreeWidget *watches)
 {
@@ -275,7 +301,7 @@ toTreeWidgetItem *toDebugWatch::createWatch(toTreeWidget *watches)
     item->setText(3, QString::null);
     item->setText(4, QString::fromLatin1("NOCHANGE"));
     return item;
-}
+} // toDebugWatch::createWatch
 
 static toSQL SQLDebugOutputPoll("toDebugOutput:Poll",
                                 "DECLARE\n"
@@ -340,13 +366,19 @@ static toSQL SQLDebugOutputEnable("toDebugOutput:Enable",
                                   "END;",
                                   "Enable output in the debug session");
 
+// Class handling output from target session
 class toDebugOutput : public toOutput
 {
     toDebug *Debugger;
+//    toConnection * outputConnection;
+    toQuery * outputSession; // A specific debug session, the only one having target session attached.
+                             // Attempts to call output functions from any other sessions will fail.
 public:
-    toDebugOutput(toDebug *debug, QWidget *parent, toConnection &conn)
+    toDebugOutput(toDebug *debug, QWidget *parent, toConnection &conn, toQuery *query)
             : toOutput(parent, conn), Debugger(debug)
-    {}
+    {
+        outputSession = query;      // One specific oracle session must be used.
+    }
     virtual void refresh(void)
     {
         if (Debugger->isRunning() && enabled())
@@ -356,9 +388,9 @@ public:
                 int ret = -1;
                 do
                 {
-                    toQuery poll(connection(), SQLDebugOutputPoll);
-                    ret = poll.readValue().toInt();
-                    QString str = poll.readValueNull();
+                    outputSession->execute(SQLDebugOutputPoll);
+                    ret = outputSession->readValue().toInt();
+                    QString str = outputSession->readValueNull();
                     if (ret == 0 || str.length())
                         insertLine(str);
                 }
@@ -369,30 +401,147 @@ public:
     }
     virtual void disable(bool dis)
     {
+#ifdef DEBUG
+        if (dis) qDebug() << "toDebugOutput::disable DISABLE!";
+        else qDebug() << "toDebugOutput::disable ENABLE!";
+#endif
         if (Debugger->isRunning())
         {
             try
             {
                 if (dis)
-                    connection().execute(SQLDebugOutputDisable);
+                    outputSession->execute(SQLDebugOutputDisable);
                 else
-                    connection().execute(SQLDebugOutputEnable);
+                    outputSession->execute(SQLDebugOutputEnable);
             }
-            catch (...)
+//            catch (...)
+            catch (const QString &exc)
             {
                 toStatusMessage(qApp->translate(
                                     "toDebugOutput",
                                     "Couldn't enable/disable output for session"));
             }
         }
-    }
+    } // disable
 
     virtual void closeEvent(QCloseEvent *event)
     {
         toOutput::closeEvent(event);
     }
-};
+}; // class toDebugOutput
 
+#ifdef DEBUG
+// Get text version from error/return/reason code returned by DBMS_DEBUG routines
+// Used for debug purposes
+// type: 1 - error, 2 - reason, 3 - continue
+QString toDebug::getErrorText(int code, int type)
+{
+    QString ret;
+
+    if (type == 1) // error codes
+    {
+        switch (code)
+        {
+            case TO_SUCCESS:
+                ret = "SUCCESS";
+                break;
+            case TO_NO_SUCH_BREAKPOINT:
+                ret = "NO_SUCH_BREAKPOINT";
+                break;
+            case TO_ERROR_NO_DEBUG_INFO:
+                ret = "ERROR_NO_DEBUG_INFO";
+                break;
+            case TO_ERROR_ILLEGAL_LINE:
+                ret = "ERROR_ILLEGAL_LINE";
+                break;
+            case TO_ERROR_BAD_HANDLE:
+                ret = "ERROR_BAD_HANDLE";
+                break;
+            case TO_ERROR_UNIMPLEMENTED:
+                ret = "ERROR_UNIMPLEMENTED";
+                break;
+            case TO_ERROR_TIMEOUT:
+                ret = "ERROR_TIMEOUT";
+                break;
+            case TO_ERROR_NULLVALUE:
+                ret = "ERROR_NULLVALUE";
+                break;
+            case TO_ERROR_NULLCOLLECTION:
+                ret = "ERROR_NULLCOLLECTION";
+                break;
+            case TO_ERROR_INDEX_TABLE:
+                ret = "ERROR_INDEX_TABLE";
+                break;
+            case TO_ERROR_DEFERRED:
+                ret = "ERROR_DEFERRED";
+                break;
+            case TO_ERROR_EXCEPTION:
+                ret = "ERROR_EXCEPTION";
+                break;
+            case TO_ERROR_COMMUNICATION:
+                ret = "ERROR_COMMUNICATION";
+                break;
+            default:
+                ret = "UNKNOWN ERROR CODE " + code;
+        } // switch
+    } else if (type == 2) // reason codes
+    {
+        switch (code)
+        {
+            case TO_REASON_WHATEVER:
+                ret = "TO_REASON_WHATEVER (0)";
+                break;
+            case TO_REASON_STARTING:
+                ret = "TO_REASON_STARTING (2)";
+                break;
+            case TO_REASON_BREAKPOINT:
+                ret = "TO_REASON_BREAKPOINT (3)";
+                break;
+            case TO_REASON_ENTER:
+                ret = "TO_REASON_ENTER (6)";
+                break;
+            case TO_REASON_RETURN:
+                ret = "TO_REASON_RETURN (7)";
+                break;
+            case TO_REASON_FINISH:
+                ret = "TO_REASON_FINISH (8)";
+                break;
+            case TO_REASON_LINE:
+                ret = "TO_REASON_LINE (9)";
+                break;
+            case TO_REASON_EXIT:
+                ret = "TO_REASON_EXIT (15)";
+                break;
+            case TO_REASON_TIMEOUT:
+                ret = "TO_REASON_TIMEOUT (17)";
+                break;
+            case TO_REASON_KNL_EXIT:
+                ret = "TO_REASON_KNL_EXIT (25)";
+                break;
+            case TO_REASON_NO_SESSION:
+                ret = "TO_REASON_NO_SESSION (-1)";
+                break;
+            default:
+                ret = "UNKNOWN REASON CODE " + QString(code);
+        }
+    } else if (type == 3) // continue code
+    {
+        switch (code)
+        {
+            case TO_BREAK_ANY_CALL:
+                ret = "TO_BREAK_ANY_CALL (12)";
+                break;
+            case TO_BREAK_NEXT_LINE:
+                ret = "TO_BREAK_NEXT_LINE (32)";
+                break;
+            default:
+                ret = "UNKOWN CONTINUE CODE " + code;
+        }
+    } else ret = "ERROR! Unknown type " + type;
+
+    return ret;
+} // getTextVersion
+#endif
 
 bool toDebug::isRunning(void)
 {
@@ -400,29 +549,37 @@ bool toDebug::isRunning(void)
     return RunningTarget;
 }
 
+// TODO: PLSQL_DEBUG is deprecated, PLSQL_OPTIMIZE_LEVEL=1 should be used instead
+//       Should be analysed which OracleDB versions support this new way.
 static toSQL SQLDebugEnable("toDebug:EnableDebug",
-                            "ALTER SESSION SET PLSQL_DEBUG = TRUE",
+//                            "ALTER SESSION SET PLSQL_DEBUG = TRUE",
+                            "ALTER SESSION SET PLSQL_OPTIMIZE_LEVEL = 1",
                             "Enable PL/SQL debugging");
 
 static toSQL SQLDebugInit("toDebug:Initialize",
                           "DECLARE\n"
                           "  ret VARCHAR2(200);\n"
                           "BEGIN\n"
-                          "  \n"
                           "  ret:=SYS.DBMS_DEBUG.INITIALIZE;\n"
-                          "  SYS.DBMS_DEBUG.DEBUG_ON;\n"
                           "  SELECT ret INTO :f2<char[201],out> FROM sys.DUAL;\n"
+                          "  SYS.DBMS_DEBUG.DEBUG_ON;\n"
                           "END;",
                           "Initialize the debug session, must have same bindings");
 
+// Target session running in a separate thread
 void toDebug::targetTask::run(void)
 {
+//qDebug() << "toDebug::targetTask::run";
     try
     {
-        toConnection Connection(Parent.connection());
+        // Create a target session using parameters of a current "debug" connection
+        toQuery targetSession(Parent.connection());
         try
         {
-            Connection.execute(SQLDebugEnable);
+#ifdef DEBUG
+qDebug() << "toDebug::targetTask::run ALTER SESSION SET PLSQL_OPTIMIZE_LEVEL = 1";
+#endif
+            targetSession.execute(SQLDebugEnable);
         }
         catch (...)
         {
@@ -431,7 +588,11 @@ void toDebug::targetTask::run(void)
         }
         try
         {
-            toQuery init(Connection, SQLDebugInit);
+#ifdef DEBUG
+qDebug() << "toDebug::targetTask::run DBMS_DEBUG.INITIALIZE";
+qDebug() << "toDebug::targetTask::run DBMS_DEBUG.DEBUG_ON";
+#endif
+            targetSession.execute(SQLDebugInit);
 
             // can't use moc from nested class
             QMetaObject::invokeMethod(&Parent,
@@ -441,8 +602,9 @@ void toDebug::targetTask::run(void)
 
             toLocker lock (Parent.Lock);
             Parent.DebuggerStarted = true;
-            Parent.TargetID = init.readValue();
-            Parent.ChildSemaphore.up();
+            Parent.TargetID = targetSession.readValue();
+//qDebug() << "toDebug::targetTask::run target id = " << Parent.TargetID;
+            Parent.ChildSemaphore.up(); // resume main TOra thread
             Parent.TargetLog += QString::fromLatin1("Debug session connected\n");
         }
         catch (const QString &exc)
@@ -456,18 +618,25 @@ void toDebug::targetTask::run(void)
             Parent.TargetLog += QString::fromLatin1("Couldn't start debugging:");
             Parent.TargetLog += exc;
             Parent.DebuggerStarted = false;
-            Parent.ChildSemaphore.up();
+            Parent.ChildSemaphore.up(); // resume main TOra thread
             return ;
         }
-        int colSize;
-        while (1)
+        while (1) // this will loop until target thread is required (while debugger tool is running)
         {
+#ifdef DEBUG
+qDebug() << "toDebug::targetTask::run .........starting iteration....";
+#endif
             {
                 toLocker lock (Parent.Lock);
                 Parent.RunningTarget = false;
-                colSize = Parent.ColumnSize;
             }
+#ifdef DEBUG
+qDebug() << "toDebug::targetTask::run sleep until TargetSemaphore goes up";
+#endif
             Parent.TargetSemaphore.down();
+#ifdef DEBUG
+qDebug() << "toDebug::targetTask::run TargetSemaphore up! Continue!";
+#endif
 
             QString sql;
             toQList inParams;
@@ -477,6 +646,9 @@ void toDebug::targetTask::run(void)
                 Parent.RunningTarget = true;
                 sql = Parent.TargetSQL;
                 Parent.TargetSQL = "";
+#ifdef DEBUG
+qDebug() << "toDebug::targetTask::run Target now RUNNING! Got sql to execute/debug: " << sql;
+#endif
                 inParams = Parent.InputData;
                 Parent.InputData.clear(); // To make sure data is not shared
                 Parent.OutputData.clear();
@@ -491,20 +663,33 @@ void toDebug::targetTask::run(void)
                 Parent.TargetLog += QString::fromLatin1("Executing SQL\n");
                 Parent.Lock.unlock();
 
-                outParams = toQuery::readQuery(Connection, sql, inParams);
+                Parent.ChildSemaphore.up(); // resume main TOra thread
+#ifdef DEBUG
+qDebug() << "toDebug::targetTask::run before execution of sql";
+#endif
+                outParams = targetSession.readQuery(sql, inParams);
+#ifdef DEBUG
+qDebug() << "toDebug::targetTask::run after execution of sql.";
+#endif
             }
             catch (const QString &str)
             {
+#ifdef DEBUG
+qDebug() << "toDebug::targetTask::run ERROR! catch1. str = " << str;
+#endif
                 Parent.Lock.lock();
                 Parent.TargetLog += QString::fromLatin1("Encountered error: ");
                 Parent.TargetLog += str;
-                if (!str.startsWith("ORA-06543:"))
+                if (!str.startsWith("ORA-06543:")) // PL/SQL: execution error - execution aborted
                     Parent.TargetException += str;
                 Parent.TargetLog += QString::fromLatin1("\n");
                 Parent.Lock.unlock();
             }
             catch (...)
             {
+#ifdef DEBUG
+qDebug() << "toDebug::targetTask::run ERROR! catch2";
+#endif
                 Parent.Lock.lock();
                 Parent.TargetLog += QString::fromLatin1("Encountered unknown exception\n");
                 Parent.TargetException += QString::fromLatin1("Encountered unknown exception\n");
@@ -521,6 +706,9 @@ void toDebug::targetTask::run(void)
 
     }
     TOCATCH
+#ifdef DEBUG
+qDebug() << "toDebug::targetTask::run DONE. Finishing target session.";
+#endif
     toLocker lock (Parent.Lock);
     Parent.DebuggerStarted = false;
     QMetaObject::invokeMethod(&Parent,
@@ -529,7 +717,7 @@ void toDebug::targetTask::run(void)
                               Q_ARG(bool, false));
     Parent.TargetLog += QString::fromLatin1("Closing debug session\n");
     Parent.TargetThread = NULL;
-    Parent.ChildSemaphore.up();
+    Parent.ChildSemaphore.up(); // Resume main TOra thread
 }
 
 static toTreeWidgetItem *toLastItem(toTreeWidgetItem *parent)
@@ -623,17 +811,10 @@ bool toDebug::hasMembers(const QString &str)
         return false;
 }
 
-void toDebug::execute(void)
+QString toDebug::constructAnonymousBlock(toTreeWidgetItem * head, toTreeWidgetItem * last)
 {
-    if (RunningTarget)
-    {
-        continueExecution(TO_BREAK_CONTINUE);
-        return ;
-    }
-
-    if (!checkCompile())
-        return ;
-
+    // Anonymous plsql block has to be constructed calling function/procedure
+    // requested for debugging and handling return value (if any).
     QString curName = currentEditor()->objectName();
     toHighlightedText *current = currentEditor();
     int curline, curcol;
@@ -641,11 +822,15 @@ void toDebug::execute(void)
 
     bool valid = false;
     int line = -1;
+    // Check if it is clear which procedure/function to run. This is only a question if
+    // package is being tested, in which case cursor must be placed on procedure/function.
     if (hasMembers(currentEditor()->type()))
     {
         for (toTreeWidgetItem *parent = Contents->firstChild();parent;parent = parent->nextSibling())
         {
-            printf("%s\n", parent->text(1).toAscii().constData());
+#ifdef DEBUG
+            qDebug() << parent->text(1);
+#endif
             if (parent->text(1) == curName)
             {
                 for (parent = parent->firstChild();parent;parent = parent->nextSibling())
@@ -677,6 +862,7 @@ void toDebug::execute(void)
         line = 0;
     }
 
+    // Only procede if it is clear which procedure/function should be tested
     if (valid)
     {
         try
@@ -712,7 +898,7 @@ void toDebug::execute(void)
             if (token.toUpper() != QString::fromLatin1("FUNCTION") && token.toUpper() != QString::fromLatin1("PROCEDURE"))
             {
                 toStatusMessage(tr("Expected function or procedure, internal error"));
-                return ;
+                return QString("");
             }
             do
             {
@@ -720,7 +906,7 @@ void toDebug::execute(void)
                 if (token.isEmpty())
                 {
                     toStatusMessage(tr("Unexpected end of declaration."));
-                    return ;
+                    return QString("");
                 }
                 if (state == returnType)
                 {
@@ -811,6 +997,7 @@ void toDebug::execute(void)
             }
             while (state != done && token.toUpper() != "IS" && token.toUpper() != "AS" && token != ";");
 
+            // construct an anonymous block calling chosen procedure/function
             QChar sep = '(';
             QString sql;
             if (!retType.isEmpty())
@@ -827,11 +1014,6 @@ void toDebug::execute(void)
             }
             sql += callName;
 
-            Parameters->clear();
-            toTreeWidgetItem *head = new toResultViewItem(Parameters, NULL, tr("Input"));
-            toTreeWidgetItem *last = NULL;
-            head->setOpen(true);
-
             for (std::list<debugParam>::iterator i = CurrentParams.begin();i != CurrentParams.end();i++)
             {
                 if ((*i).In)
@@ -842,7 +1024,7 @@ void toDebug::execute(void)
                 nam.replace(QRegExp(QString::fromLatin1("[^a-zA-Z0-9]+")), QString::fromLatin1("_"));
                 sql += nam;
                 sql += QString::fromLatin1("<char[");
-                sql += toConfigurationSingle::Instance().maxColSize();
+                sql += QString::number(toConfigurationSingle::Instance().maxColSize());
                 sql += QString::fromLatin1("],");
                 if ((*i).In)
                     sql += QString::fromLatin1("in");
@@ -856,48 +1038,95 @@ void toDebug::execute(void)
             if (!retType.isEmpty())
             {
                 sql += QString::fromLatin1(";\n  SELECT ret INTO :tora_int_return<char[");
-                sql += toConfigurationSingle::Instance().maxColSize();
+                sql += QString::number(toConfigurationSingle::Instance().maxColSize());
                 sql += QString::fromLatin1("],out> FROM sys.DUAL");
             }
-            sql += QString::fromLatin1(";\nEND;\n");
+            sql += QString::fromLatin1(";\nEND;");
 
-            {
-                // Can't hold lock since refresh of output will try to lock
-                toQList input;
-                try
-                {
-                    input = toParamGet::getParam(connection(), this, sql);
-                }
-                catch (...)
-                {
-                    return ;
-                }
-                toLocker lock (Lock);
-                InputData = input;
-                last = head->firstChild();
-                if (InputData.begin() != InputData.end())
-                    for (toQList::iterator i = InputData.begin();
-                            last && i != InputData.end();
-                            i++, last = last->nextSibling())
-                    {
-                        // Is there a smarter way to make a deep copy
-                        last->setText(1, toDeepCopy(*i));
-                    }
-                else
-                    delete head;
-                ColumnSize = toConfigurationSingle::Instance().maxColSize();
-                TargetSQL = toDeepCopy(sql); // Deep copy of SQL
-                TargetSemaphore.up(); // Go go power rangers!
-            }
-//             StartedSemaphore.down();
-            if (sync() >= 0 && RunningTarget)
-                continueExecution(TO_BREAK_ANY_CALL);
+            return sql;
         }
         TOCATCH
     }
     else
         toStatusMessage(tr("Couldn't find any function or procedure under cursor."));
-}
+
+    return QString("");
+} // constructAnonymousBlock
+
+// Action when button "Execute/Run" is pressed
+void toDebug::execute(void)
+{
+//qDebug() << "toDebug::execute";
+    if (RunningTarget)
+    {
+        // If target is already running, continue to next breakpoint
+        continueExecution(TO_BREAK_CONTINUE);
+        return ;
+    }
+
+    // Check if current code has been modified in TOra and not commited to database.
+    // If so - force user to compile code.
+    if (!checkCompile())
+        return ;
+
+    // Anonymous plsql block has to be constructed calling function/procedure
+    // requested for debugging and handling return value (if any).
+    Parameters->clear();
+    toTreeWidgetItem *head = new toResultViewItem(Parameters, NULL, tr("Input"));
+    toTreeWidgetItem *last = NULL;
+    head->setOpen(true);
+
+    QString sql = constructAnonymousBlock(head, last);
+    if (!sql.isEmpty())
+    {
+        // Can't hold lock since refresh of output will try to lock
+        toQList input;
+        try
+        {
+            // Parse generated anonymous block and check if there are any input
+            // parameters to be entered by user. If there are any - display a
+            // screen asking user to do so.
+            input = toParamGet::getParam(connection(), this, sql);
+        }
+        catch (...)
+        {
+            return ;
+        }
+        {
+            toLocker lock (Lock);
+            InputData = input;
+            last = head->firstChild();
+            if (InputData.begin() != InputData.end())
+                for (toQList::iterator i = InputData.begin();
+                    last && i != InputData.end();
+                    i++, last = last->nextSibling())
+                {
+                    // Is there a smarter way to make a deep copy
+                    last->setText(1, toDeepCopy(*i));
+                }
+            else
+                delete head;
+            TargetSQL = toDeepCopy(sql); // Deep copy of SQL
+        }
+#ifdef DEBUG
+qDebug() << "toDebug::execute sql has been prepared. upping TargetSemaphore!";
+#endif
+        TargetSemaphore.up(); // Go go power rangers!
+        ChildSemaphore.down(); // Wait until target actually runs the statement
+//        StartedSemaphore.down();
+#ifdef DEBUG
+qDebug() << "toDebug::execute before sync()";
+#endif
+        if (sync() >= 0 && RunningTarget)
+            continueExecution(TO_BREAK_ANY_CALL);
+#ifdef DEBUG
+qDebug() << "toDebug::execute after sync() & continueExecution";
+#endif
+    }
+#ifdef DEBUG
+qDebug() << "toDebug::execute DONE!";
+#endif
+} // execute
 
 static toSQL SQLSync("toDebug:Sync",
                      "DECLARE\n"
@@ -915,6 +1144,7 @@ static toSQL SQLSync("toDebug:Sync",
 
 int toDebug::sync(void)
 {
+//qDebug() << "toDebug::sync";
     try
     {
         toQList args;
@@ -923,29 +1153,45 @@ int toDebug::sync(void)
         int reason;
         do
         {
-            toQuery sync(connection(), SQLSync, args);
-
-            ret = sync.readValue().toInt();
-            reason = sync.readValue().toInt();
+#ifdef DEBUG
+            qDebug() << "toDebug::sync DBMS_DEBUG.SYNCHRONIZE";
+#endif
+            debugSession->execute(SQLSync, args);
+            ret = debugSession->readValue().toInt();
+            reason = debugSession->readValue().toInt();
+#ifdef DEBUG
+            if (ret == TO_ERROR_COMMUNICATION) {
+                qDebug() << "Error in communication with target session.";
+            }
+            qDebug() << "toDebug::sync ret = " << ret << ", reason = " << getErrorText(reason, 2);
+#endif
             {
                 toLocker lock (Lock);
                 TargetLog += QString::fromLatin1("Syncing debug session\n");
                 if (!RunningTarget)
                 {
+#ifdef DEBUG
+                    qDebug() << "toDebug::sync no running target. exit";
+#endif
                     return TO_REASON_KNL_EXIT;
                 }
             }
 #if 0
             qApp->processEvents();
 #endif
-
         }
         while (reason == TO_REASON_TIMEOUT || ret == TO_ERROR_TIMEOUT);
+#ifdef DEBUG
+        qDebug() << "toDebug::sync got reason = " << getErrorText(reason, 2);
+#endif
         setDeferedBreakpoints();
         if (Output->enabled())
             Output->disable(false);
         else
             Output->disable(true);
+#ifdef DEBUG
+qDebug() << "toDebug::sync returning";
+#endif
         return reason;
     }
     TOCATCH
@@ -1133,6 +1379,9 @@ void toDebug::updateContent(toDebugText *current)
 
 void toDebug::readLog(void)
 {
+#ifdef DEBUG
+qDebug() << "toDebug::readLog";
+#endif
     toLocker lock (Lock);
     if (!TargetLog.isEmpty())
     {
@@ -1155,6 +1404,8 @@ static toSQL SQLRuntimeInfo("toDebug:RuntimeInfo",
                             "BEGIN\n"
                             "  ret:=SYS.DBMS_DEBUG.GET_RUNTIME_INFO(SYS.DBMS_DEBUG.info_getStackDepth,info);\n"
                             "  SELECT ret,info.stackDepth INTO :ret<int,out>,:depth<int,out> FROM sys.DUAL;\n"
+                            "EXCEPTION WHEN OTHERS THEN\n"
+                            "  SELECT -1,-1 INTO :ret<int,out>,:depth<int,out> FROM sys.DUAL;\n"
                             "END;",
                             "Get runtime info from debug session, must have same bindings");
 static toSQL SQLStackTrace("toDebug:StackTrace",
@@ -1248,8 +1499,155 @@ static toSQL SQLGlobalIndex("toDebug:GlobalIndex",
                             "END;",
                             "Get indexes of global watch, must have same bindings");
 
+// Called from updateState. Processes watches.
+void toDebug::processWatches(void)
+{
+    toTreeWidgetItem *next = NULL;
+    for (toTreeWidgetItem *item = Watch->firstChild();item;item = next)
+    {
+#ifdef DEBUG
+        qDebug() << "toDebug::processWatches watch = " << item->text(2);
+#endif
+        int ret = -1;
+        int space = 0;
+        QString value;
+        bool local = false;
+        QString object;
+        QString schema;
+        if (!item->text(6).isEmpty())
+        {
+            local = true;
+            debugSession->execute(SQLLocalWatch, item->text(2));
+            ret = debugSession->readValue().toInt();
+            value = debugSession->readValue();
+            if (ret != TO_SUCCESS &&
+                ret != TO_ERROR_NULLVALUE &&
+                ret != TO_ERROR_INDEX_TABLE &&
+                ret != TO_ERROR_NULLCOLLECTION)
+            {
+                object = currentEditor()->object();
+                schema = currentEditor()->schema();
+                local = false;
+                debugSession->execute(SQLGlobalWatch,
+                                      object,
+                                      schema,
+                                      item->text(2));
+                ret = debugSession->readValue().toInt();
+                value = debugSession->readValue();
+                space = debugSession->readValue().toInt();
+                item->setText(0, schema);
+                item->setText(1, object);
+            }
+        }
+        else if (item->text(0).isEmpty())
+        {
+            debugSession->execute(SQLLocalWatch, item->text(2));
+            ret = debugSession->readValue().toInt();
+            value = debugSession->readValue();
+            local = true;
+        }
+        else
+        {
+            object = item->text(1);
+            schema = item->text(0);
+            debugSession->execute(SQLGlobalWatch,
+                                  object, schema, item->text(2));
+            ret = debugSession->readValue().toInt();
+            value = debugSession->readValue();
+            space = debugSession->readValue().toInt();
+            local = false;
+        }
+        item->setText(4, QString::null);
+        if (ret == TO_SUCCESS)
+            item->setText(3, value);
+        else if (ret == TO_ERROR_NULLVALUE)
+        {
+            if (toConfigurationSingle::Instance().indicateEmpty())
+                item->setText(3, QString::fromLatin1("{null}"));
+            else
+                item->setText(3, QString::null);
+            item->setText(5, QString::fromLatin1("NULL"));
+        }
+        else if (ret == TO_ERROR_NULLCOLLECTION)
+        {
+            item->setText(3, tr("[Count %1]").arg(0));
+            item->setText(5, QString::fromLatin1("LIST"));
+        }
+        else if (ret == TO_ERROR_INDEX_TABLE)
+        {
+            if (local)
+            {
+                debugSession->execute(SQLLocalIndex, item->text(2));
+                value = debugSession->readValue();
+            }
+            else
+            {
+                toQList args;
+                toPush(args, toQValue(space));
+                toPush(args, toQValue(object));
+                toPush(args, toQValue(schema));
+                toPush(args, toQValue(item->text(2)));
+                debugSession->execute(SQLGlobalIndex, args);
+                value = debugSession->readValue();
+            }
+            int start = 0;
+            int end;
+            toTreeWidgetItem *last = NULL;
+            int num = 0;
+            for (end = start;end < value.length();end++)
+            {
+                if (value.at(end) == ',')
+                {
+                    if (start < end)
+                    {
+                        QString name = item->text(2);
+                        name += QString::fromLatin1("(");
+                        // Why do I have to add 1 here for it to work?
+                        name += QString::number(value.mid(start, end - start).toInt() + 1);
+                        name += QString::fromLatin1(")");
+                        last = new toResultViewItem(item, last);
+                        last->setText(0, schema);
+                        last->setText(1, object);
+                        last->setText(2, name);
+                        last->setText(3, value.mid(start, end - start));
+                        last->setText(4, QString::fromLatin1("NOCHANGE"));
+                        num++;
+                    }
+                    start = end + 1;
+                }
+            }
+            QString str = tr("[Count %1]").arg(num);
+            item->setText(3, str);
+            item->setText(5, QString::fromLatin1("LIST"));
+        }
+        else
+        {
+            item->setText(3, ret == TO_ERROR_NO_DEBUG_INFO ? tr("{No debug info}") : tr("{Unavailable}"));
+            item->setText(4, QString::fromLatin1("NOCHANGE"));
+        }
+        if (item->firstChild())
+            next = item->firstChild();
+        else if (item->nextSibling())
+            next = item->nextSibling();
+        else
+        {
+            next = item;
+            do
+            {
+                next = next->parent();
+            }
+            while (next && !next->nextSibling());
+            if (next)
+                next = next->nextSibling();
+        }
+    }
+} // processWatches
+
 void toDebug::updateState(int reason)
 {
+#ifdef DEBUG
+    qDebug() << "toDebug::updateState, reason = " << getErrorText(reason, 2);
+#endif
     switch (reason)
     {
     case TO_REASON_EXIT:
@@ -1328,13 +1726,22 @@ void toDebug::updateState(int reason)
         returnAct->setEnabled(true);
         try
         {
-            toQuery info(connection(), SQLRuntimeInfo);
+#ifdef DEBUG
+qDebug() << "toDebug::updateState DBMS_DEBUG.GET_RUNTIME_INFO";
+#endif
+            debugSession->execute(SQLRuntimeInfo);
             int ret, depth;
-            ret = info.readValue().toInt();
-            depth = info.readValue().toInt();
+            ret = debugSession->readValue().toInt();
+            depth = debugSession->readValue().toInt();
+#ifdef DEBUG
+qDebug() << "toDebug::updateState ret = " << ret << ", depth = " << depth;
+#endif
             if (ret != TO_SUCCESS)
             {
                 toStatusMessage(tr("Failed to get runtime info (Reason %1)").arg(ret));
+#ifdef DEBUG
+qDebug() << "toDebug::updateState FAILED to get runtime info. Reason " << getErrorText(ret, 1/*error*/);
+#endif
                 return ;
             }
 
@@ -1349,12 +1756,15 @@ void toDebug::updateState(int reason)
             {
                 toQList args;
                 toPush(args, toQValue(num));
-                toQuery stack(connection(), SQLStackTrace, args);
+#ifdef DEBUG
+qDebug() << "toDebug::updateState DBMS_DEBUG.PRINT_BACKTRACE depth=" << num;
+#endif
+                debugSession->execute(SQLStackTrace, args);
 
-                name = stack.readValue();
-                schema = stack.readValue();
-                line = stack.readValue();
-                type = stack.readValue();
+                name = debugSession->readValue();
+                schema = debugSession->readValue();
+                line = debugSession->readValue();
+                type = debugSession->readValue();
 
                 if (!item)
                     item = new toTreeWidgetItem(StackTrace, name, line, schema, type);
@@ -1365,152 +1775,17 @@ void toDebug::updateState(int reason)
             Output->refresh();
             try
             {
+                for (toTreeWidgetItem *item = Watch->firstChild();item;item = item->nextSibling())
                 {
-                    for (toTreeWidgetItem *item = Watch->firstChild();item;item = item->nextSibling())
-                    {
-                        while (item->firstChild())
-                            delete item->firstChild();
-                    }
+                    while (item->firstChild())
+                        delete item->firstChild();
                 }
-
-                toTreeWidgetItem *next = NULL;
-                for (toTreeWidgetItem *item = Watch->firstChild();item;item = next)
-                {
-                    int ret = -1;
-                    int space = 0;
-                    QString value;
-                    bool local = false;
-                    QString object;
-                    QString schema;
-                    if (!item->text(6).isEmpty())
-                    {
-                        local = true;
-                        toQuery query(connection(), SQLLocalWatch, item->text(2));
-                        ret = query.readValue().toInt();
-                        value = query.readValue();
-                        if (ret != TO_SUCCESS &&
-                                ret != TO_ERROR_NULLVALUE &&
-                                ret != TO_ERROR_INDEX_TABLE &&
-                                ret != TO_ERROR_NULLCOLLECTION)
-                        {
-                            object = currentEditor()->object();
-                            schema = currentEditor()->schema();
-                            local = false;
-                            toQuery q2(connection(), SQLGlobalWatch,
-                                       object,
-                                       schema,
-                                       item->text(2));
-                            ret = q2.readValue().toInt();
-                            value = q2.readValue();
-                            space = q2.readValue().toInt();
-                            item->setText(0, schema);
-                            item->setText(1, object);
-                        }
-                    }
-                    else if (item->text(0).isEmpty())
-                    {
-                        toQuery query(connection(), SQLLocalWatch, item->text(2));
-                        ret = query.readValue().toInt();
-                        value = query.readValue();
-                        local = true;
-                    }
-                    else
-                    {
-                        object = item->text(1);
-                        schema = item->text(0);
-                        toQuery query(connection(), SQLGlobalWatch,
-                                      object, schema, item->text(2));
-                        ret = query.readValue().toInt();
-                        value = query.readValue();
-                        space = query.readValue().toInt();
-                        local = false;
-                    }
-                    item->setText(4, QString::null);
-                    if (ret == TO_SUCCESS)
-                        item->setText(3, value);
-                    else if (ret == TO_ERROR_NULLVALUE)
-                    {
-                        if (toConfigurationSingle::Instance().indicateEmpty())
-                            item->setText(3, QString::fromLatin1("{null}"));
-                        else
-                            item->setText(3, QString::null);
-                        item->setText(5, QString::fromLatin1("NULL"));
-                    }
-                    else if (ret == TO_ERROR_NULLCOLLECTION)
-                    {
-                        item->setText(3, tr("[Count %1]").arg(0));
-                        item->setText(5, QString::fromLatin1("LIST"));
-                    }
-                    else if (ret == TO_ERROR_INDEX_TABLE)
-                    {
-                        if (local)
-                        {
-                            toQuery query(connection(), SQLLocalIndex, item->text(2));
-                            value = query.readValue();
-                        }
-                        else
-                        {
-                            toQList args;
-                            toPush(args, toQValue(space));
-                            toPush(args, toQValue(object));
-                            toPush(args, toQValue(schema));
-                            toPush(args, toQValue(item->text(2)));
-                            toQuery query(connection(), SQLGlobalIndex, args);
-                            value = query.readValue();
-                        }
-                        int start = 0;
-                        int end;
-                        toTreeWidgetItem *last = NULL;
-                        int num = 0;
-                        for (end = start;end < value.length();end++)
-                        {
-                            if (value.at(end) == ',')
-                            {
-                                if (start < end)
-                                {
-                                    QString name = item->text(2);
-                                    name += QString::fromLatin1("(");
-                                    // Why do I have to add 1 here for it to work?
-                                    name += QString::number(value.mid(start, end - start).toInt() + 1);
-                                    name += QString::fromLatin1(")");
-                                    last = new toResultViewItem(item, last);
-                                    last->setText(0, schema);
-                                    last->setText(1, object);
-                                    last->setText(2, name);
-                                    last->setText(3, value.mid(start, end - start));
-                                    last->setText(4, QString::fromLatin1("NOCHANGE"));
-                                    num++;
-                                }
-                                start = end + 1;
-                            }
-                        }
-                        QString str = tr("[Count %1]").arg(num);
-                        item->setText(3, str);
-                        item->setText(5, QString::fromLatin1("LIST"));
-                    }
-                    else
-                    {
-                        item->setText(3, ret == TO_ERROR_NO_DEBUG_INFO ? tr("{No debug info}") : tr("{Unavailable}"));
-                        item->setText(4, QString::fromLatin1("NOCHANGE"));
-                    }
-                    if (item->firstChild())
-                        next = item->firstChild();
-                    else if (item->nextSibling())
-                        next = item->nextSibling();
-                    else
-                    {
-                        next = item;
-                        do
-                        {
-                            next = next->parent();
-                        }
-                        while (next && !next->nextSibling());
-                        if (next)
-                            next = next->nextSibling();
-                    }
-                }
+                processWatches();
             }
             TOCATCH
+            // Stack depth of 1 means that control is in TOra generated anonymous
+            // block. Therefore we should continue until control is in at least
+            // depth 2 - in function/procedure being debugged.
             if (depth >= 2)
             {
                 viewSource(schema, name, type, line.toInt(), true);
@@ -1518,7 +1793,7 @@ void toDebug::updateState(int reason)
             else
             {
                 if (RunningTarget)
-                    continueExecution(TO_BREAK_NEXT_LINE);
+                    continueExecution(TO_BREAK_ANY_CALL); // break any call will go INTO code being debugged
                 return ;
             }
         }
@@ -1527,7 +1802,7 @@ void toDebug::updateState(int reason)
     }
     selectedWatch();
     readLog();
-}
+} // updateState
 
 #if 0 // Not used yet
 QString toDebug::checkWatch(const QString &name)
@@ -1664,6 +1939,9 @@ bool toDebug::viewSource(const QString &schema, const QString &name, const QStri
 
 void toDebug::setDeferedBreakpoints(void)
 {
+#ifdef DEBUG
+qDebug() << "toDebug::setDeferedBreakpoints";
+#endif
     for (toTreeWidgetItem *item = Breakpoints->firstChild();item;item = item->nextSibling())
     {
         toBreakpointItem * point = dynamic_cast<toBreakpointItem *>(item);
@@ -1691,6 +1969,9 @@ static toSQL SQLContinue("toDebug:Continue",
 
 int toDebug::continueExecution(int stopon)
 {
+#ifdef DEBUG
+qDebug() << "toDebug::continueExecution(" << getErrorText(stopon, 3) << ")";
+#endif
     Lock.lock();
     if (RunningTarget)
     {
@@ -1703,9 +1984,12 @@ int toDebug::continueExecution(int stopon)
             {
                 toQList args;
                 toPush(args, toQValue(stopon));
-                toQuery cont(connection(), SQLContinue, args);
-                ret = cont.readValue().toInt();
-                reason = cont.readValue().toInt();
+                debugSession->execute(SQLContinue, args);
+                ret = debugSession->readValue().toInt();
+                reason = debugSession->readValue().toInt();
+#ifdef DEBUG
+qDebug() << "toDebug::continueExecution ret=" << ret << ", reason=" << reason;
+#endif
                 if (reason == TO_REASON_TIMEOUT || ret == TO_ERROR_TIMEOUT)
                 {
                     reason = sync();
@@ -1736,7 +2020,9 @@ int toDebug::continueExecution(int stopon)
 
 void toDebug::executeInTarget(const QString &str, toQList &params)
 {
-//     qDebug() << "toDebug::executeInTarget 1" << str;
+#ifdef DEBUG
+    qDebug() << "toDebug::executeInTarget 1" << str;
+#endif
     toBusy busy;
     {
         toLocker lock (Lock);
@@ -1750,7 +2036,13 @@ void toDebug::executeInTarget(const QString &str, toQList &params)
     while (ret >= 0 && ret != TO_REASON_EXIT && ret != TO_REASON_KNL_EXIT && RunningTarget)
     {
         ret = continueExecution(TO_BREAK_ANY_RETURN);
+#ifdef DEBUG
+//        qDebug() << "ret = " << ret;
+#endif
     }
+#ifdef DEBUG
+        qDebug() << "out of loop";
+#endif
     readLog();
 //     qDebug() << "toDebug::executeInTarget 2";
 }
@@ -1765,7 +2057,16 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
     : toToolWidget(DebugTool, "debugger.html", main, connection, "toDebug"),
       TargetThread()
 {
+    debugSession = new toQuery(connection);
+
     createActions();
+
+    // these buttons should only be enabled after starting debug process
+    stopAct->setEnabled(false);
+    stepAct->setEnabled(false);
+    nextAct->setEnabled(false);
+    returnAct->setEnabled(false);
+
     QToolBar *toolbar = toAllocBar(this, tr("Debugger"));
     layout()->addWidget(toolbar);
 
@@ -1915,7 +2216,7 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
     Parameters->setResizeMode(toTreeWidget::AllColumns);
     DebugTabs->addTab(Parameters, tr("&Parameters"));
 
-    Output = new toDebugOutput(this, DebugTabs, connection);
+    Output = new toDebugOutput(this, DebugTabs, connection, debugSession);
     DebugTabs->addTab(Output, tr("Debug &Output"));
 
     RuntimeLog = new toMarkedText(DebugTabs);
@@ -2166,12 +2467,14 @@ static toSQL SQLAttach("toDebug:Attach",
                        "    timeout BINARY_INTEGER;\n"
                        "BEGIN\n"
                        "    SYS.DBMS_DEBUG.ATTACH_SESSION(:sess<char[201],in>);\n"
-                       "    timeout:=SYS.DBMS_DEBUG.SET_TIMEOUT(1);\n"
                        "END;",
                        "Connect to the debugging session");
 
 void toDebug::startTarget(void)
 {
+#ifdef DEBUG
+qDebug() << "toDebug::startTarget";
+#endif
     try
     {
         toLocker lock (Lock);
@@ -2184,7 +2487,8 @@ void toDebug::startTarget(void)
         return ;
     }
 
-    ChildSemaphore.down();
+    ChildSemaphore.down(); // sleep until target session is initialised (or fails doing so) in other
+                           // thread (toDebug::targetTask::run must raise this semapthore)
     if (!DebuggerStarted)
     {
         {
@@ -2199,8 +2503,11 @@ void toDebug::startTarget(void)
     }
     try
     {
+#ifdef DEBUG
+qDebug() << "toDebug::startTarget DBMS_DEBUG.ATTACH_SESSION " << TargetID;
+#endif
         if (DebuggerStarted)
-            connection().execute(SQLAttach, TargetID);
+            debugSession->execute(SQLAttach, TargetID);
     }
     TOCATCH  // Trying to run somthing after this won't work (And will hang tora I think)
     readLog();
@@ -2424,7 +2731,9 @@ void toDebug::showDebug(bool show)
 
 bool toDebugText::compile(void)
 {
-//     qDebug() << "toDebugText::compile 1";
+#ifdef DEBUG
+    qDebug() << "toDebugText::compile start 1";
+#endif
     QString str = text();
     bool ret = true;
     if (!str.isEmpty())
@@ -2508,13 +2817,17 @@ bool toDebugText::compile(void)
             ret = false;
         }
     }
-//     qDebug() << "toDebugText::compile 2";
+#ifdef DEBUG
+    qDebug() << "toDebugText::compile end 1";
+#endif
     return ret;
 }
 
 void toDebug::compile(void)
 {
-//     qDebug() << "toDebug::compile 1";
+#ifdef DEBUG
+    qDebug() << "toDebug::compile start 2";
+#endif
     if (!checkStop())
         return ;
 
@@ -2549,7 +2862,9 @@ void toDebug::compile(void)
     }
     refresh();
     scanSource();
-//     qDebug() << "toDebug::compile 2";
+#ifdef DEBUG
+    qDebug() << "toDebug::compile end 2";
+#endif
 }
 
 toDebug::~toDebug()
@@ -2828,16 +3143,16 @@ void toDebug::changeWatch(toTreeWidgetItem *item)
             {
                 if (item->text(0).isEmpty())
                 {
-                    toQuery local(connection(), SQLChangeLocal, assign);
-                    ret = local.readValue().toInt();
+                    debugSession->execute(SQLChangeLocal, assign);
+                    ret = debugSession->readValue().toInt();
                 }
                 else
                 {
                     QString tmp = item->text(1);
                     if (tmp.isEmpty())
                         tmp = "";
-                    toQuery local(connection(), SQLChangeGlobal, tmp, item->text(0), assign);
-                    ret = local.readValue().toInt();
+                    debugSession->execute(SQLChangeGlobal, tmp, item->text(0), assign);
+                    ret = debugSession->readValue().toInt();
                 }
                 if (ret == TO_ERROR_UNIMPLEMENTED)
                 {
