@@ -1186,7 +1186,7 @@ toConnection *toMain::addConnection(toConnection *conn, bool def)
     }
 
     Connections.insert(Connections.end(), conn);
-    ConnectionSelection->addItem(conn->description());
+    ConnectionSelection->addItem(connectionColorPixmap(conn->color()), conn->description());
     ConnectionSelection->setCurrentIndex(ConnectionSelection->count() - 1);
 
     if (ConnectionSelection->count() == 1)
@@ -1838,7 +1838,7 @@ void toMain::importData(std::map<QString, QString> &data, const QString &prefix)
         {
             try
             {
-                toConnection *conn = new toConnection(provider.toLatin1(), user, password, host, database, schema, options);
+                toConnection *conn = new toConnection(provider.toLatin1(), user, password, host, database, schema, "", options);
                 if (conn)
                 {
                     conn = addConnection(conn, false);

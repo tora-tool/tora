@@ -63,6 +63,8 @@ public:
     int     m_autoLong;
     bool    m_messageStatusbar;
     bool    m_tabbedTools;
+    bool    m_colorizedConnections;
+    ConnectionColors m_connectionColors;
     int     m_objectCache;
     bool    m_bkgndConnect;
     bool    m_firewallMode;
@@ -288,7 +290,22 @@ public:
         m_dontReread = s.value(CONF_DONT_REREAD, true).toBool();
         m_autoLong = s.value(CONF_AUTO_LONG, 0).toInt();
         m_messageStatusbar = s.value(CONF_MESSAGE_STATUSBAR, false).toBool();
-        m_tabbedTools = s.value(CONF_TABBED_TOOLS, false).toBool();
+        m_tabbedTools = s.value(CONF_TABBED_TOOLS, true).toBool();
+        m_colorizedConnections = s.value("ColorizedConnections", true).toBool();
+        cnt = s.beginReadArray("ConnectionColors");
+        for (int i = 0; i < cnt; ++i)
+        {
+            s.setArrayIndex(i);
+            m_connectionColors[s.value("key").toString()] = s.value("value").toString();
+        }
+        s.endArray();
+        if (m_connectionColors.count() == 0)
+        {
+            m_connectionColors["#FF0000"] = "Production";
+            m_connectionColors["#00FF00"] = "Development";
+            m_connectionColors["#0000FF"] = "Testing";
+        }
+
         m_objectCache = s.value(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt();
         m_bkgndConnect = s.value(CONF_BKGND_CONNECT, false).toBool();
         m_firewallMode = s.value(CONF_FIREWALL_MODE, false).toBool();
@@ -503,6 +520,18 @@ public:
         s.setValue(CONF_AUTO_LONG, m_autoLong);
         s.setValue(CONF_MESSAGE_STATUSBAR, m_messageStatusbar);
         s.setValue(CONF_TABBED_TOOLS, m_tabbedTools);
+
+        s.setValue("ColorizedConnections", m_colorizedConnections);
+        s.beginWriteArray("ConnectionColors");
+        for (int i = 0; i < m_connectionColors.count(); ++i)
+        {
+            s.setArrayIndex(i);
+            key = m_connectionColors.keys().at(i);
+            s.setValue("key", key);
+            s.setValue("value", m_connectionColors[key]);
+        }
+        s.endArray();
+        
         s.setValue(CONF_OBJECT_CACHE, m_objectCache);
         s.setValue(CONF_BKGND_CONNECT, m_bkgndConnect);
         s.setValue(CONF_FIREWALL_MODE, m_firewallMode);
@@ -1268,6 +1297,23 @@ bool toConfiguration::tabbedTools()
 void toConfiguration::setTabbedTools(bool v)
 {
     p->m_tabbedTools = v;
+}
+
+bool toConfiguration::colorizedConnections()
+{
+    return p->m_colorizedConnections;
+}
+void toConfiguration::setColorizedConnections(bool v)
+{
+    p->m_colorizedConnections = v;
+}
+ConnectionColors toConfiguration::connectionColors()
+{
+    return p->m_connectionColors;
+}
+void toConfiguration::setConnectionColors(const ConnectionColors & v)
+{
+    p->m_connectionColors = v;
 }
 
 int toConfiguration::objectCache()

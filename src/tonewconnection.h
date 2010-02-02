@@ -73,6 +73,7 @@ public:
     QString           password;
     int               port;
     QString           schema;
+    QString           color;
     std::set<QString> options;
 
     // must have for qmap
@@ -86,6 +87,7 @@ public:
                         const QString &_user,
                         const QString &_pass,
                         const QString &_schema,
+                        const QString &_color,
                         int _port,
                         std::set<QString> _options)
     {
@@ -95,6 +97,7 @@ public:
         username = _user;
         password = _pass;
         schema   = _schema;
+        color    = _color;
         port     = _port;
         options  = _options;
     }
@@ -147,7 +150,9 @@ private:
                     const QString &username,
                     const QString &host,
                     const QString &database,
-                    const QString &schema);
+                    const QString &schema,
+                    const QString &color,
+                    int port);
     // fills form with data from previous connection at param row
     void loadPrevious(const QModelIndex & current);
 

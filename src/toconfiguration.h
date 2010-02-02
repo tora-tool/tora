@@ -20,6 +20,8 @@ typedef QMap<QString, QString> TemplatesMap;
 typedef QMapIterator<QString, QString> TemplatesMapIterator;
 typedef QMap<QString,QVariant> EditorShortcutsMap;
 typedef QMapIterator<QString, QVariant> EditorShortcutsMapIterator;
+typedef QMap<QString,QString> ConnectionColors;
+typedef QMapIterator<QString, QString> ConnectionColorsIterator;
 
 
 class toConfigurationPrivate;
@@ -178,6 +180,11 @@ public:
 
     bool tabbedTools();
     void setTabbedTools(bool v);
+
+    bool colorizedConnections();
+    void setColorizedConnections(bool v);
+    ConnectionColors connectionColors();
+    void setConnectionColors(const ConnectionColors & v);
 
     int objectCache();
     void setObjectCache(int v);

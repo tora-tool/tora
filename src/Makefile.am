@@ -254,7 +254,8 @@ UI_FILES = toaboutui.ui \
 		tostorageprefsui.ui \
 		todroptablespaceui.ui \
 		toscriptschemawidgetui.ui \
-		shortcuteditor/shortcuteditordialog.ui
+		shortcuteditor/shortcuteditordialog.ui \
+		connectioncolorsdialogui.ui
 
 
 EXTRA_DIST = icons \

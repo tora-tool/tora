@@ -79,6 +79,8 @@
 #include <QStyleFactory>
 #include <QStyle>
 #include <QDir>
+#include <QPixmapCache>
+#include <QPainter>
 
 
 #ifdef Q_OS_WIN32
@@ -736,6 +738,40 @@ QString GetExtensions(void)
     QString t(toConfigurationSingle::Instance().extensions());
     t.replace(repl, QString::fromLatin1(";;")); // multiple filters are separated by double semicolons
     return t;
+}
+
+QPixmap connectionColorPixmap(const QString & name)
+{
+    QPixmap pm;
+    if (name.isNull() || name.isEmpty())
+        return pm;
+    if (!QPixmapCache::find(name, pm))
+    {
+        // draw a "cool 3d" bullet here
+        pm = QPixmap(16, 16);
+        pm.fill(Qt::transparent);
+        QColor col(name);
+
+        QPainter painter(&pm);
+        painter.setRenderHints(QPainter::HighQualityAntialiasing);
+        QRadialGradient brush(16/2, 16/2, 16*1.5, 16/2, 16/4);
+        brush.setColorAt(0, col.lighter());
+        brush.setColorAt(0.2, col);
+        brush.setColorAt(0.6, col.darker());
+        brush.setColorAt(1, Qt::black);
+        painter.setBrush(brush);
+
+        QPen pen(Qt::black);
+        pen.setWidth(1.5);
+        pen.setCosmetic(true);
+        painter.setPen(pen);
+
+        painter.drawEllipse(1, 1, 14, 14);
+        painter.end();
+
+        QPixmapCache::insert(name, pm);
+    }
+    return pm;
 }
 
 static QString AddExt(QString t, const QString &filter)

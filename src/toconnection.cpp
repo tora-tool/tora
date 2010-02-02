@@ -707,6 +707,7 @@ toConnection::toConnection(const QString &provider,
                            const QString &user, const QString &password,
                            const QString &host, const QString &database,
                            const QString &schema,
+                           const QString &color,
                            const std::set<QString> &options, bool cache)
     : Provider(provider),
       User(user),
@@ -714,6 +715,7 @@ toConnection::toConnection(const QString &provider,
       Host(host),
       Database(database),
       Schema(schema),
+      Color(color),
       Options(options),
       Connection(0)
 {
@@ -744,6 +746,7 @@ toConnection::toConnection(const toConnection &conn)
       Host(conn.Host),
       Database(conn.Database),
       Schema(conn.Schema),
+      Color(conn.Color),
       Options(conn.Options),
       Connection(0)
 {

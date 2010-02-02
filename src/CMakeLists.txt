@@ -69,6 +69,7 @@ SET(TORA_UI_SRC
     toworksheetsetupui.ui
     # shortcuteditor
     shortcuteditor/shortcuteditordialog.ui
+    connectioncolorsdialogui.ui
 )
 IF (ORACLE_FOUND)
     LIST (APPEND TORA_UI_SRC tooraclesettingui.ui)

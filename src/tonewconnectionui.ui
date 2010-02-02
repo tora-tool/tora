@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>toNewConnectionUI</class>
- <widget class="QDialog" name="toNewConnectionUI" >
-  <property name="geometry" >
+ <widget class="QDialog" name="toNewConnectionUI">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,42 +10,42 @@
     <height>579</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>New connection</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
-   <item row="0" column="0" colspan="2" >
-    <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" colspan="2">
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout" >
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLabel" name="TextLabel2" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+        <widget class="QLabel" name="TextLabel2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="toolTip" >
+         <property name="toolTip">
           <string>A list of previous connections. Select to bring over to the right.</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Previous &amp;connections</string>
          </property>
-         <property name="wordWrap" >
+         <property name="wordWrap">
           <bool>false</bool>
          </property>
-         <property name="buddy" >
+         <property name="buddy">
           <cstring>Previous</cstring>
          </property>
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer" >
-         <property name="orientation" >
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>40</width>
            <height>20</height>
@@ -53,78 +54,78 @@
         </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="label" >
-         <property name="text" >
+        <widget class="QLabel" name="label">
+         <property name="text">
           <string>Se&amp;arch:</string>
          </property>
-         <property name="buddy" >
+         <property name="buddy">
           <cstring>searchEdit</cstring>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="searchEdit" />
+        <widget class="QLineEdit" name="searchEdit"/>
        </item>
       </layout>
      </item>
      <item>
-      <widget class="QTableView" name="Previous" >
-       <property name="editTriggers" >
+      <widget class="QTableView" name="Previous">
+       <property name="editTriggers">
         <set>QAbstractItemView::NoEditTriggers</set>
        </property>
-       <property name="dragDropOverwriteMode" >
+       <property name="dragDropOverwriteMode">
         <bool>false</bool>
        </property>
-       <property name="dragDropMode" >
+       <property name="dragDropMode">
         <enum>QAbstractItemView::NoDragDrop</enum>
        </property>
-       <property name="alternatingRowColors" >
+       <property name="alternatingRowColors">
         <bool>true</bool>
        </property>
-       <property name="selectionMode" >
+       <property name="selectionMode">
         <enum>QAbstractItemView::SingleSelection</enum>
        </property>
-       <property name="selectionBehavior" >
+       <property name="selectionBehavior">
         <enum>QAbstractItemView::SelectRows</enum>
        </property>
-       <property name="showGrid" >
+       <property name="showGrid">
         <bool>false</bool>
        </property>
-       <property name="sortingEnabled" >
+       <property name="sortingEnabled">
         <bool>true</bool>
        </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item row="0" column="2" >
-    <layout class="QVBoxLayout" >
-     <property name="spacing" >
+   <item row="0" column="2">
+    <layout class="QVBoxLayout">
+     <property name="spacing">
       <number>2</number>
      </property>
      <item>
-      <widget class="QLabel" name="ProviderLabel" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+      <widget class="QLabel" name="ProviderLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Connection pro&amp;vider</string>
        </property>
-       <property name="wordWrap" >
+       <property name="wordWrap">
         <bool>false</bool>
        </property>
-       <property name="buddy" >
+       <property name="buddy">
         <cstring>Provider</cstring>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="Provider" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+      <widget class="QComboBox" name="Provider">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -132,36 +133,36 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="UsernameLabel" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+      <widget class="QLabel" name="UsernameLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="toolTip" >
+       <property name="toolTip">
         <string>Username to connect with</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>&amp;Username</string>
        </property>
-       <property name="wordWrap" >
+       <property name="wordWrap">
         <bool>false</bool>
        </property>
-       <property name="buddy" >
+       <property name="buddy">
         <cstring>Username</cstring>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="Username" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+      <widget class="QLineEdit" name="Username">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize" >
+       <property name="minimumSize">
         <size>
          <width>200</width>
          <height>0</height>
@@ -170,118 +171,118 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="PasswordLabel" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+      <widget class="QLabel" name="PasswordLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="toolTip" >
+       <property name="toolTip">
         <string>Password to connect with.</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>&amp;Password</string>
        </property>
-       <property name="wordWrap" >
+       <property name="wordWrap">
         <bool>false</bool>
        </property>
-       <property name="buddy" >
+       <property name="buddy">
         <cstring>Password</cstring>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="Password" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+      <widget class="QLineEdit" name="Password">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="echoMode" >
+       <property name="echoMode">
         <enum>QLineEdit::Password</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="HostLabel" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+      <widget class="QLabel" name="HostLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="toolTip" >
+       <property name="toolTip">
         <string>Select the database ID to connect to.</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>&amp;Host</string>
        </property>
-       <property name="wordWrap" >
+       <property name="wordWrap">
         <bool>false</bool>
        </property>
-       <property name="buddy" >
+       <property name="buddy">
         <cstring>Host</cstring>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="Host" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+      <widget class="QComboBox" name="Host">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize" >
+       <property name="minimumSize">
         <size>
          <width>200</width>
          <height>0</height>
         </size>
        </property>
-       <property name="editable" >
+       <property name="editable">
         <bool>true</bool>
        </property>
-       <property name="autoCompletion" >
+       <property name="autoCompletion">
         <bool>true</bool>
        </property>
-       <property name="duplicatesEnabled" >
+       <property name="duplicatesEnabled">
         <bool>false</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="SchemaLabel" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+      <widget class="QLabel" name="SchemaLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="toolTip" >
+       <property name="toolTip">
         <string>Schema to switch to</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>&amp;Schema</string>
        </property>
-       <property name="wordWrap" >
+       <property name="wordWrap">
         <bool>false</bool>
        </property>
-       <property name="buddy" >
+       <property name="buddy">
         <cstring>Schema</cstring>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="Schema" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+      <widget class="QLineEdit" name="Schema">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize" >
+       <property name="minimumSize">
         <size>
          <width>200</width>
          <height>0</height>
@@ -290,29 +291,29 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
+      <layout class="QHBoxLayout">
+       <property name="spacing">
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="PortLabel" >
-         <property name="toolTip" >
+        <widget class="QLabel" name="PortLabel">
+         <property name="toolTip">
           <string>Select the database ID to connect to.</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>P&amp;ort</string>
          </property>
-         <property name="wordWrap" >
+         <property name="wordWrap">
           <bool>false</bool>
          </property>
-         <property name="buddy" >
+         <property name="buddy">
           <cstring>Port</cstring>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="Port" >
-         <property name="maximum" >
+        <widget class="QSpinBox" name="Port">
+         <property name="maximum">
           <number>65535</number>
          </property>
         </widget>
@@ -320,93 +321,93 @@
       </layout>
      </item>
      <item>
-      <widget class="QLabel" name="TextLabel3" >
-       <property name="toolTip" >
+      <widget class="QLabel" name="TextLabel3">
+       <property name="toolTip">
         <string>Select the database ID to connect to.</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>&amp;Database</string>
        </property>
-       <property name="wordWrap" >
+       <property name="wordWrap">
         <bool>false</bool>
        </property>
-       <property name="textInteractionFlags" >
+       <property name="textInteractionFlags">
         <set>Qt::NoTextInteraction</set>
        </property>
-       <property name="buddy" >
+       <property name="buddy">
         <cstring>Database</cstring>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="Database" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+      <widget class="QComboBox" name="Database">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize" >
+       <property name="minimumSize">
         <size>
          <width>200</width>
          <height>0</height>
         </size>
        </property>
-       <property name="editable" >
+       <property name="editable">
         <bool>true</bool>
        </property>
-       <property name="autoCompletion" >
+       <property name="autoCompletion">
         <bool>true</bool>
        </property>
-       <property name="duplicatesEnabled" >
+       <property name="duplicatesEnabled">
         <bool>false</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="OptionGroup" >
-       <property name="focusPolicy" >
+      <widget class="QGroupBox" name="OptionGroup">
+       <property name="focusPolicy">
         <enum>Qt::NoFocus</enum>
        </property>
-       <property name="title" >
+       <property name="title">
         <string>Options</string>
        </property>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
+       <layout class="QVBoxLayout">
+        <property name="spacing">
          <number>3</number>
         </property>
-        <property name="leftMargin" >
+        <property name="leftMargin">
          <number>6</number>
         </property>
-        <property name="topMargin" >
+        <property name="topMargin">
          <number>0</number>
         </property>
-        <property name="rightMargin" >
+        <property name="rightMargin">
          <number>0</number>
         </property>
-        <property name="bottomMargin" >
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="SqlNet" >
-          <property name="text" >
+         <widget class="QCheckBox" name="SqlNet">
+          <property name="text">
            <string>SQL*&amp;Net</string>
           </property>
-          <property name="checked" >
+          <property name="checked">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="SysDba" >
-          <property name="text" >
+         <widget class="QCheckBox" name="SysDba">
+          <property name="text">
            <string>S&amp;YSDBA</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="SysOper" >
-          <property name="text" >
+         <widget class="QCheckBox" name="SysOper">
+          <property name="text">
            <string>SYSOP&amp;ER</string>
           </property>
          </widget>
@@ -415,11 +416,21 @@
       </widget>
      </item>
      <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Color Session Identifier</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="colorComboBox"/>
+     </item>
+     <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
          <height>40</height>
@@ -429,26 +440,26 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0" >
-    <widget class="QPushButton" name="ImportButton" >
-     <property name="text" >
+   <item row="1" column="0">
+    <widget class="QPushButton" name="ImportButton">
+     <property name="text">
       <string>&amp;Import Connections...</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1" colspan="2" >
-    <widget class="QDialogButtonBox" name="ButtonBox" >
-     <property name="orientation" >
+   <item row="1" column="1" colspan="2">
+    <widget class="QDialogButtonBox" name="ButtonBox">
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="standardButtons" >
+     <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <tabstops>
   <tabstop>Previous</tabstop>
   <tabstop>Provider</tabstop>
@@ -472,11 +483,11 @@
    <receiver>toNewConnectionUI</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>295</x>
      <y>432</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>295</x>
      <y>228</y>
     </hint>
@@ -488,11 +499,11 @@
    <receiver>toNewConnectionUI</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>295</x>
      <y>432</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>295</x>
      <y>228</y>
     </hint>

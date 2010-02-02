@@ -505,6 +505,7 @@ class toConnection : public QObject
     QString Database;
     QString Schema;
     QString Version;
+    QString Color;
     std::list<QPointer<QWidget> > Widgets;
     std::list<QString> InitStrings;
     std::set<QString> Options;
@@ -739,12 +740,14 @@ public:
      * @param host Host to connect to the database with.
      * @param database Database to connect to.
      * @param schema Default schema to switch to.
+     * @param color Highlighting color for GUI widgets
      * @param options Options used to connect to the database with.
      * @param cache Enable object cache for this connection.
      */
     toConnection(const QString &provider, const QString &user, const QString &password,
-                 const QString &host, const QString &database, const QString &schema, const std::set
-                 <QString> &options,
+                 const QString &host, const QString &database, const QString &schema,
+                 const QString &color,
+                 const std::set<QString> &options,
                  bool cache = true);
     /** Create a copy of a connection. Will not cache objects, so objects will never be available
      *  in a subconnection.
@@ -818,6 +821,16 @@ public:
     /** Get provider of connection.
      */
     const QString &provider() const;
+
+    QString color()
+    {
+        return Color;
+    }
+
+    void setColor(const QString & c)
+    {
+        Color = c;
+    }
 
     /** Change the current database. Observe that this only changes the record of what is the current database. You will still need
      * to change the database oppinion on what database is the current one.

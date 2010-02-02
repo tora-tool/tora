@@ -157,6 +157,7 @@ void toViewConnections::handleActivated(const QModelIndex &index) {
             host,
             database,
             opt.schema,
+            opt.color,
             opt.options);
 
         if(retCon)

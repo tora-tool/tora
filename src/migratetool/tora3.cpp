@@ -201,6 +201,7 @@ void loadConnections(QMap<QString, QString> &pairs, QList<toConnectionOptions> &
                                  user,
                                  pass,
                                  schema,
+                                 "",
                                  0,
                                  processOptions(options));
         ret.append(conn);

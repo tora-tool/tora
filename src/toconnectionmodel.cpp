@@ -80,6 +80,7 @@ void toConnectionModel::readConfig()
         QString username = Settings.value("username", "").toString();
         QString password = toUnobfuscate(Settings.value("password", "").toString());
         QString schema   = Settings.value("schema", "").toString();
+        QString color    = Settings.value("color", "").toString();
 
         if (provider == toNewConnection::ORACLE_TNS)
             host = "";
@@ -101,6 +102,7 @@ void toConnectionModel::readConfig()
             username,
             password,
             schema,
+            color,
             Settings.value("port", 0).toInt(),
             options);
         m_data[pos] = opt;
@@ -151,19 +153,26 @@ QVariant toConnectionModel::data(const QModelIndex & index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    if (role == Qt::DisplayRole)
+
+    toConnectionOptions opt = m_data[index.row()];
+    switch (role)
     {
-        toConnectionOptions opt = m_data[index.row()];
-        switch (index.column())
-        {
-            case 0 : return index.row();
-            case 1 : return opt.provider;
-            case 2 : return opt.host;
-            case 3 : return opt.database;
-            case 4 : return opt.username;
-            case 5 : return opt.schema;
-            default : return "oops!";
-        }
+        case Qt::DisplayRole:
+            switch (index.column())
+            {
+                case 0 : return index.row();
+                case 1 : return opt.provider;
+                case 2 : return opt.host;
+                case 3 : return opt.database;
+                case 4 : return opt.username;
+                case 5 : return opt.schema;
+                default : return "oops!";
+            }
+            break;
+       case Qt::DecorationRole:
+           if (index.column() == 1 && toConfigurationSingle::Instance().colorizedConnections())
+               return connectionColorPixmap(opt.color);
+           break;
     }
     return QVariant();
 }

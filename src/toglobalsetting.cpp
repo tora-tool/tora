@@ -69,6 +69,63 @@
 #include <QFileDialog>
 
 
+
+ConnectionColorsDialog::ConnectionColorsDialog(QWidget * parent)
+    : QDialog(parent)
+{
+    setupUi(this);
+
+    ConnectionColorsIterator it(toConfigurationSingle::Instance().connectionColors());
+    while (it.hasNext())
+    {
+        it.next();
+        newItem(it.key(), it.value());
+    }
+    treeWidget->hideColumn(2);
+
+    connect(addButton, SIGNAL(clicked()), this, SLOT(addItem()));
+    connect(deleteButton, SIGNAL(clicked()), this, SLOT(deleteItem()));
+}
+
+void ConnectionColorsDialog::newItem(const QString & color, const QString & desc)
+{
+    QTreeWidgetItem * item = new QTreeWidgetItem(treeWidget);
+    item->setIcon(0, connectionColorPixmap(color));
+    item->setText(1, desc);
+    item->setText(2, color);
+    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
+}
+
+void ConnectionColorsDialog::addItem()
+{
+    QColor c(QColorDialog::getColor());
+    if (!c.isValid())
+        return;
+
+    newItem(c.name(), c.name());
+}
+
+void ConnectionColorsDialog::deleteItem()
+{
+    int index = treeWidget->indexOfTopLevelItem(treeWidget->currentItem());
+    delete treeWidget->takeTopLevelItem(index);
+}
+
+void ConnectionColorsDialog::accept()
+{
+    ConnectionColors newMap;
+    QTreeWidgetItemIterator it(treeWidget);
+    while (*it)
+    {
+        newMap[(*it)->text(2)] = (*it)->text(1);
+        ++it;
+    }
+    toConfigurationSingle::Instance().setConnectionColors(newMap);
+    QDialog::accept();
+}
+
+
+
 toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags fl)
         : QWidget(parent, fl), toSettingTab("preferences.html#global")
 {
@@ -88,6 +145,9 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     IncludeDB->setChecked(toConfigurationSingle::Instance().dbTitle());
     Statusbar->setChecked(toConfigurationSingle::Instance().messageStatusbar());
     TabbedTools->setChecked(toConfigurationSingle::Instance().tabbedTools());
+    ColorizedConnections->setChecked(toConfigurationSingle::Instance().colorizedConnections());
+    connect(ColorizedConnectionsConfigure, SIGNAL(clicked()),
+            this, SLOT(ColorizedConnectionsConfigure_clicked()));
     RestoreSession->setChecked(toConfigurationSingle::Instance().restoreSession());
     HelpDirectory->setText(toConfigurationSingle::Instance().helpPath()/*toHelpPath()*/);
     ChangeConnection->setChecked(toConfigurationSingle::Instance().changeConnection());
@@ -188,6 +248,12 @@ void toGlobalSetting::cacheBrowse(void)
         CacheDirectory->setText(str);
 }
 
+void toGlobalSetting::ColorizedConnectionsConfigure_clicked()
+{
+    ConnectionColorsDialog dia(this);
+    dia.exec();
+}
+
 void toGlobalSetting::saveSetting(void)
 {
     if (!toMonolithic())
@@ -204,6 +270,7 @@ void toGlobalSetting::saveSetting(void)
     toConfigurationSingle::Instance().setConnectSize(ConnectHistory->value());
     toConfigurationSingle::Instance().setMessageStatusbar(Statusbar->isChecked());
     toConfigurationSingle::Instance().setTabbedTools(TabbedTools->isChecked());
+    toConfigurationSingle::Instance().setColorizedConnections(ColorizedConnections->isChecked());
     toConfigurationSingle::Instance().setRestoreSession(RestoreSession->isChecked());
     toConfigurationSingle::Instance().setDefaultFormat(DefaultFormat->currentIndex());
     toConfigurationSingle::Instance().setToadBindings(ToadBindings->isChecked());

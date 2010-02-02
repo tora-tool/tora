@@ -1,153 +1,154 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>toGlobalSettingUI</class>
- <widget class="QWidget" name="toGlobalSettingUI" >
-  <property name="geometry" >
+ <widget class="QWidget" name="toGlobalSettingUI">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>780</width>
-    <height>757</height>
+    <width>692</width>
+    <height>641</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>toGlobalSettingUI</string>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" >
-    <widget class="QGroupBox" name="GroupBox2" >
-     <property name="title" >
+  <layout class="QGridLayout">
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="GroupBox2">
+     <property name="title">
       <string>Paths</string>
      </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
+     <layout class="QGridLayout">
+      <property name="margin">
        <number>11</number>
       </property>
-      <property name="spacing" >
+      <property name="spacing">
        <number>6</number>
       </property>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="TextLabel5" >
-        <property name="text" >
+      <item row="0" column="0">
+       <widget class="QLabel" name="TextLabel5">
+        <property name="text">
          <string>&amp;Custom SQL</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>CustomSQL</cstring>
         </property>
        </widget>
       </item>
-      <item row="0" column="2" >
-       <widget class="QPushButton" name="SQLBrowse" >
-        <property name="text" >
+      <item row="0" column="2">
+       <widget class="QPushButton" name="SQLBrowse">
+        <property name="text">
          <string>Browse</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1" >
-       <widget class="QLineEdit" name="CustomSQL" />
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="CustomSQL"/>
       </item>
-      <item row="3" column="2" >
-       <widget class="QPushButton" name="PluginBrowse" >
-        <property name="text" >
+      <item row="3" column="2">
+       <widget class="QPushButton" name="PluginBrowse">
+        <property name="text">
          <string>Browse</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1" >
-       <widget class="QLineEdit" name="PluginDirectory" />
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="PluginDirectory"/>
       </item>
-      <item row="3" column="0" >
-       <widget class="QLabel" name="PluginLabel" >
-        <property name="toolTip" >
+      <item row="3" column="0">
+       <widget class="QLabel" name="PluginLabel">
+        <property name="toolTip">
          <string>Directory where to find plugins when starting.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>&amp;Plugin directory</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>PluginDirectory</cstring>
         </property>
        </widget>
       </item>
-      <item row="4" column="2" >
-       <widget class="QPushButton" name="CacheBrowse" >
-        <property name="text" >
+      <item row="4" column="2">
+       <widget class="QPushButton" name="CacheBrowse">
+        <property name="text">
          <string>Browse</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="1" >
-       <widget class="QLineEdit" name="CacheDirectory" />
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="CacheDirectory"/>
       </item>
-      <item row="4" column="0" >
-       <widget class="QLabel" name="CacheLabel" >
-        <property name="toolTip" >
+      <item row="4" column="0">
+       <widget class="QLabel" name="CacheLabel">
+        <property name="toolTip">
          <string>Directory where to place cached dataaseinformation.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>&amp;Cache directory</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>CacheDirectory</cstring>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="PluginLabel_2" >
-        <property name="toolTip" >
+      <item row="1" column="0">
+       <widget class="QLabel" name="PluginLabel_2">
+        <property name="toolTip">
          <string>Directory where to find help files.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>&amp;Help directory</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>HelpDirectory</cstring>
         </property>
        </widget>
       </item>
-      <item row="1" column="1" >
-       <widget class="QLineEdit" name="HelpDirectory" />
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="HelpDirectory"/>
       </item>
-      <item row="1" column="2" >
-       <widget class="QPushButton" name="HelpBrowse" >
-        <property name="text" >
+      <item row="1" column="2">
+       <widget class="QPushButton" name="HelpBrowse">
+        <property name="text">
          <string>Browse</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="PluginLabel_2_2" >
-        <property name="toolTip" >
+      <item row="2" column="0">
+       <widget class="QLabel" name="PluginLabel_2_2">
+        <property name="toolTip">
          <string>Default session to use when saving a session.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Default session</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>DefaultSession</cstring>
         </property>
        </widget>
       </item>
-      <item row="2" column="1" >
-       <widget class="QLineEdit" name="DefaultSession" />
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="DefaultSession"/>
       </item>
-      <item row="2" column="2" >
-       <widget class="QPushButton" name="HelpBrowse_2" >
-        <property name="text" >
+      <item row="2" column="2">
+       <widget class="QPushButton" name="HelpBrowse_2">
+        <property name="text">
          <string>Browse</string>
         </property>
        </widget>
@@ -155,426 +156,447 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="0" >
-    <widget class="QGroupBox" name="OptionGroup" >
-     <property name="title" >
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="OptionGroup">
+     <property name="title">
       <string>Options</string>
      </property>
-     <layout class="QGridLayout" >
-      <item row="0" column="0" >
-       <widget class="QCheckBox" name="ChangeConnection" >
-        <property name="toolTip" >
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="ChangeConnection">
+        <property name="toolTip">
          <string>Change currently select connection to the connection of the new active window</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Change current connection with active window</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1" >
-       <widget class="QLabel" name="TextLabel3_2_2" >
-        <property name="toolTip" >
+      <item row="0" column="1">
+       <widget class="QLabel" name="TextLabel3_2_2">
+        <property name="toolTip">
          <string>Number of connections to save in history.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Connect history</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>ConnectHistory</cstring>
         </property>
        </widget>
       </item>
-      <item row="0" column="2" colspan="2" >
-       <widget class="QSpinBox" name="ConnectHistory" >
-        <property name="suffix" >
+      <item row="0" column="2">
+       <widget class="QSpinBox" name="ConnectHistory">
+        <property name="suffix">
          <string/>
         </property>
-        <property name="maximum" >
+        <property name="maximum">
          <number>1000</number>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" >
-       <widget class="QCheckBox" name="SavePassword" >
-        <property name="toolTip" >
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="SavePassword">
+        <property name="toolTip">
          <string>Remember the last password you used to connect.
 Will leave the password unencrypted in the config file.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>&amp;Save passwords</string>
         </property>
-        <property name="shortcut" >
+        <property name="shortcut">
          <string>Alt+S</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1" >
-       <widget class="QLabel" name="StatusLabel" >
-        <property name="toolTip" >
+      <item row="1" column="1">
+       <widget class="QLabel" name="StatusLabel">
+        <property name="toolTip">
          <string>The time in seconds temporary messages will be displayed in the status bar. 0 means keep.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Status &amp;message</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>Status</cstring>
         </property>
        </widget>
       </item>
-      <item row="1" column="2" colspan="2" >
-       <widget class="QSpinBox" name="Status" >
-        <property name="suffix" >
+      <item row="1" column="2">
+       <widget class="QSpinBox" name="Status">
+        <property name="suffix">
          <string> seconds</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0" >
-       <widget class="QCheckBox" name="IncludeDB" >
-        <property name="toolTip" >
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="IncludeDB">
+        <property name="toolTip">
          <string>Include database connection in window captions</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Include DB in caption</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1" >
-       <widget class="QLabel" name="TextLabel3_2" >
-        <property name="toolTip" >
+      <item row="2" column="1">
+       <widget class="QLabel" name="TextLabel3_2">
+        <property name="toolTip">
          <string>Number of status messages to save in the message history.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Message history</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>HistorySize</cstring>
         </property>
        </widget>
       </item>
-      <item row="2" column="2" colspan="2" >
-       <widget class="QSpinBox" name="HistorySize" >
-        <property name="suffix" >
+      <item row="2" column="2">
+       <widget class="QSpinBox" name="HistorySize">
+        <property name="suffix">
          <string/>
         </property>
-        <property name="maximum" >
+        <property name="maximum">
          <number>1000</number>
         </property>
        </widget>
       </item>
-      <item row="3" column="0" >
-       <widget class="QCheckBox" name="RestoreSession" >
-        <property name="text" >
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="RestoreSession">
+        <property name="text">
          <string>Restore session on startup</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1" >
-       <widget class="QLabel" name="TextLabel3_2_3" >
-        <property name="toolTip" >
+      <item row="3" column="1">
+       <widget class="QLabel" name="TextLabel3_2_3">
+        <property name="toolTip">
          <string>Number of samples to keep in line and barcharts by default.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Chart samples</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>HistorySize</cstring>
         </property>
        </widget>
       </item>
-      <item row="3" column="2" >
-       <widget class="QSpinBox" name="ChartSamples" >
-        <property name="suffix" >
+      <item row="3" column="2">
+       <widget class="QSpinBox" name="ChartSamples">
+        <property name="suffix">
          <string/>
         </property>
-        <property name="maximum" >
+        <property name="maximum">
          <number>1000</number>
         </property>
        </widget>
       </item>
-      <item row="3" column="3" >
-       <widget class="QCheckBox" name="UnlimitedSamples" >
-        <property name="toolTip" >
+      <item row="3" column="3">
+       <widget class="QCheckBox" name="UnlimitedSamples">
+        <property name="toolTip">
          <string>Save unlimited number of samples. Can consume large amounts of memory.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Unlimited</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="1" >
-       <widget class="QLabel" name="TextLabel3_2_3_2" >
-        <property name="toolTip" >
+      <item row="4" column="0">
+       <widget class="QCheckBox" name="ToadBindings">
+        <property name="toolTip">
+         <string>Use TOAD keybindings instead of classic TOra.</string>
+        </property>
+        <property name="text">
+         <string>Prefer TOAD key bindings</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLabel" name="TextLabel3_2_3_2">
+        <property name="toolTip">
          <string>Number of samples to display in line and barcharts by default.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Display samples</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>HistorySize</cstring>
         </property>
        </widget>
       </item>
-      <item row="4" column="2" >
-       <widget class="QSpinBox" name="DisplaySamples" >
-        <property name="suffix" >
+      <item row="4" column="2">
+       <widget class="QSpinBox" name="DisplaySamples">
+        <property name="suffix">
          <string/>
         </property>
-        <property name="maximum" >
+        <property name="maximum">
          <number>1000</number>
         </property>
        </widget>
       </item>
-      <item row="4" column="3" >
-       <widget class="QCheckBox" name="AllSamples" >
-        <property name="toolTip" >
+      <item row="4" column="3">
+       <widget class="QCheckBox" name="AllSamples">
+        <property name="toolTip">
          <string>Display all available samples</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>All</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="1" >
-       <widget class="QLabel" name="SizeLabel" >
-        <property name="toolTip" >
+      <item row="5" column="0">
+       <widget class="QCheckBox" name="DiskCaching">
+        <property name="toolTip">
+         <string>Use Disk Caching of ObjectLists and Synonyms</string>
+        </property>
+        <property name="text">
+         <string>Use Disk Caching</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLabel" name="SizeLabel">
+        <property name="toolTip">
          <string>Define the unit sizes should be displayed.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Size Unit</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>SizeUnit</cstring>
         </property>
        </widget>
       </item>
-      <item row="5" column="2" colspan="2" >
-       <widget class="QComboBox" name="SizeUnit" >
+      <item row="5" column="2">
+       <widget class="QComboBox" name="SizeUnit">
         <item>
-         <property name="text" >
+         <property name="text">
           <string>Bytes</string>
          </property>
         </item>
         <item>
-         <property name="text" >
+         <property name="text">
           <string>KB</string>
          </property>
         </item>
         <item>
-         <property name="text" >
+         <property name="text">
           <string>MB</string>
          </property>
         </item>
        </widget>
       </item>
-      <item row="6" column="1" >
-       <widget class="QLabel" name="RefreshLabel" >
-        <property name="toolTip" >
+      <item row="6" column="0">
+       <widget class="QCheckBox" name="DisplayGrid">
+        <property name="toolTip">
+         <string>Show grid lines in output results table.</string>
+        </property>
+        <property name="text">
+         <string>Display gridlines in results</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLabel" name="RefreshLabel">
+        <property name="toolTip">
          <string>Default refreshtime in tools.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>&amp;Refresh</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>Refresh</cstring>
         </property>
        </widget>
       </item>
-      <item row="6" column="2" colspan="2" >
-       <widget class="QComboBox" name="Refresh" />
+      <item row="6" column="2">
+       <widget class="QComboBox" name="Refresh"/>
       </item>
-      <item row="7" column="1" >
-       <widget class="QLabel" name="TextLabel2" >
-        <property name="text" >
+      <item row="7" column="0">
+       <widget class="QCheckBox" name="Statusbar">
+        <property name="toolTip">
+         <string>Display alerts in messagebar instead of poping up a dialog with a warning.</string>
+        </property>
+        <property name="text">
+         <string>Display alerts in statusbar only</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QLabel" name="TextLabel2">
+        <property name="text">
          <string>Default list format</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
        </widget>
       </item>
-      <item row="7" column="2" colspan="2" >
-       <widget class="QComboBox" name="DefaultFormat" >
+      <item row="7" column="2">
+       <widget class="QComboBox" name="DefaultFormat">
         <item>
-         <property name="text" >
+         <property name="text">
           <string>Text</string>
          </property>
         </item>
         <item>
-         <property name="text" >
+         <property name="text">
           <string>Tab delimited</string>
          </property>
         </item>
         <item>
-         <property name="text" >
+         <property name="text">
           <string>CSV</string>
          </property>
         </item>
         <item>
-         <property name="text" >
+         <property name="text">
           <string>HTML</string>
          </property>
         </item>
        </widget>
       </item>
-      <item row="8" column="1" >
-       <widget class="QLabel" name="StyleLabel" >
-        <property name="toolTip" >
+      <item row="8" column="0">
+       <widget class="QCheckBox" name="TabbedTools">
+        <property name="text">
+         <string>Arrange Tools in Tabs</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QLabel" name="StyleLabel">
+        <property name="toolTip">
          <string>The style to use for the user interface.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>&amp;Style</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>Style</cstring>
         </property>
        </widget>
       </item>
-      <item row="8" column="2" colspan="2" >
-       <widget class="QComboBox" name="Style" />
+      <item row="8" column="2">
+       <widget class="QComboBox" name="Style"/>
       </item>
-      <item row="9" column="1" >
-       <widget class="QLabel" name="LocaleLabel" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+      <item row="9" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QCheckBox" name="ColorizedConnections">
+          <property name="toolTip">
+           <string>Show color icons for session recognition in connection GUI widgets</string>
+          </property>
+          <property name="text">
+           <string>Use Colors in Connections</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="ColorizedConnectionsConfigure">
+          <property name="text">
+           <string>Configure...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="9" column="1">
+       <widget class="QLabel" name="LocaleLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="toolTip" >
+        <property name="toolTip">
          <string>Which translation locale to use for this program. Must restart to have effect.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Translation</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
        </widget>
       </item>
-      <item row="9" column="2" colspan="2" >
-       <widget class="QLineEdit" name="Locale" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+      <item row="9" column="2">
+       <widget class="QLineEdit" name="Locale">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
        </widget>
       </item>
-      <item row="10" column="0" colspan="4" >
-       <layout class="QHBoxLayout" >
-        <property name="spacing" >
+      <item row="10" column="1" colspan="3">
+       <layout class="QHBoxLayout">
+        <property name="spacing">
          <number>6</number>
         </property>
-        <property name="margin" >
+        <property name="margin">
          <number>11</number>
         </property>
         <item>
-         <widget class="QLabel" name="label" >
-          <property name="text" >
+         <widget class="QLabel" name="label">
+          <property name="text">
            <string>SMTP Server</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="SmtpServer" />
+         <widget class="QLineEdit" name="SmtpServer"/>
         </item>
         <item>
-         <widget class="QLabel" name="label_2" >
-          <property name="text" >
+         <widget class="QLabel" name="label_2">
+          <property name="text">
            <string>:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="SmtpPort" >
-          <property name="minimum" >
+         <widget class="QSpinBox" name="SmtpPort">
+          <property name="minimum">
            <number>1</number>
           </property>
-          <property name="maximum" >
+          <property name="maximum">
            <number>65536</number>
           </property>
          </widget>
         </item>
        </layout>
       </item>
-      <item row="4" column="0" >
-       <widget class="QCheckBox" name="ToadBindings" >
-        <property name="toolTip" >
-         <string>Use TOAD keybindings instead of classic TOra.</string>
-        </property>
-        <property name="text" >
-         <string>Prefer TOAD key bindings</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0" >
-       <widget class="QCheckBox" name="DiskCaching" >
-        <property name="toolTip" >
-         <string>Use Disk Caching of ObjectLists and Synonyms</string>
-        </property>
-        <property name="text" >
-         <string>Use Disk Caching</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0" >
-       <widget class="QCheckBox" name="DisplayGrid" >
-        <property name="toolTip" >
-         <string>Show grid lines in output results table.</string>
-        </property>
-        <property name="text" >
-         <string>Display gridlines in results</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="0" >
-       <widget class="QCheckBox" name="Statusbar" >
-        <property name="toolTip" >
-         <string>Display alerts in messagebar instead of poping up a dialog with a warning.</string>
-        </property>
-        <property name="text" >
-         <string>Display alerts in statusbar only</string>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="0" >
-       <widget class="QCheckBox" name="TabbedTools" >
-        <property name="text" >
-         <string>Arrange Tools in Tabs</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <tabstops>
   <tabstop>CustomSQL</tabstop>
   <tabstop>SQLBrowse</tabstop>
@@ -618,11 +640,11 @@ Will leave the password unencrypted in the config file.</string>
    <receiver>toGlobalSettingUI</receiver>
    <slot>pluginBrowse()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -634,11 +656,11 @@ Will leave the password unencrypted in the config file.</string>
    <receiver>toGlobalSettingUI</receiver>
    <slot>cacheBrowse()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>666</x>
      <y>184</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -650,11 +672,11 @@ Will leave the password unencrypted in the config file.</string>
    <receiver>toGlobalSettingUI</receiver>
    <slot>sqlBrowse()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -666,11 +688,11 @@ Will leave the password unencrypted in the config file.</string>
    <receiver>toGlobalSettingUI</receiver>
    <slot>helpBrowse()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -682,11 +704,11 @@ Will leave the password unencrypted in the config file.</string>
    <receiver>toGlobalSettingUI</receiver>
    <slot>sessionBrowse()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -698,11 +720,11 @@ Will leave the password unencrypted in the config file.</string>
    <receiver>ChartSamples</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -714,11 +736,11 @@ Will leave the password unencrypted in the config file.</string>
    <receiver>DisplaySamples</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>

@@ -48,6 +48,24 @@
 #include "tohelp.h"
 #include "totool.h"
 #include "ui_totoolsettingui.h"
+#include "ui_connectioncolorsdialogui.h"
+
+
+class ConnectionColorsDialog : public QDialog, public Ui::ConnectionColorsDialog
+{
+    Q_OBJECT
+
+    public:
+        ConnectionColorsDialog(QWidget * parent);
+
+    private:
+        void newItem(const QString & color, const QString & desc);
+    private slots:
+        void addItem();
+        void deleteItem();
+        void accept();
+};
+
 
 class toGlobalSetting : public QWidget, public Ui::toGlobalSettingUI, public toSettingTab
 {
@@ -64,6 +82,7 @@ public slots:
     virtual void helpBrowse(void);
     virtual void sessionBrowse(void);
     virtual void cacheBrowse(void);
+    void ColorizedConnectionsConfigure_clicked();
 };
 
 class toDatabaseSetting : public QWidget, public Ui::toDatabaseSettingUI, public toSettingTab

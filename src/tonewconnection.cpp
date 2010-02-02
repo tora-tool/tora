@@ -72,6 +72,15 @@ toNewConnection::toNewConnection(QWidget* parent, Qt::WFlags fl)
     toHelpContext(QString::fromLatin1("newconnection.html"))
 {
     setupUi(this);
+
+    colorComboBox->addItem("None", "");
+    ConnectionColorsIterator it(toConfigurationSingle::Instance().connectionColors());
+    while (it.hasNext())
+    {
+        it.next();
+        colorComboBox->addItem(connectionColorPixmap(it.key()), it.value(), it.key());
+    }
+
     toHelp::connectDialog(this);
 
     Previous->setModel(proxyModel());
@@ -208,6 +217,7 @@ void toNewConnection::writeSettings(bool checkHistory)
         Settings.setValue("port", Port->value());
         Settings.setValue("database", Database->currentText());
         Settings.setValue("schema", Schema->text());
+        Settings.setValue("color", colorComboBox->itemData(colorComboBox->currentIndex()));
 
         Settings.beginGroup("options");
         QList<QCheckBox *> widgets = OptionGroup->findChildren<QCheckBox *>();
@@ -226,7 +236,10 @@ void toNewConnection::writeSettings(bool checkHistory)
                            Username->text(),
                            Host->currentText(),
                            Database->currentText(),
-                           Schema->text());
+                           Schema->text(),
+                           colorComboBox->itemData(colorComboBox->currentIndex()).toString(),
+                           Port->value()
+                          );
     }
 
     QMap<int,toConnectionOptions> c = connectionModel()->availableConnections();
@@ -243,6 +256,7 @@ void toNewConnection::writeSettings(bool checkHistory)
         Settings.setValue("host", opt.host);
         Settings.setValue("database", opt.database);
         Settings.setValue("schema", opt.schema);
+        Settings.setValue("color", opt.color);
         Settings.setValue("port", opt.port);
         if (toConfigurationSingle::Instance().savePassword())
         {
@@ -265,7 +279,9 @@ int toNewConnection::findHistory(const QString &provider,
                                  const QString &username,
                                  const QString &host,
                                  const QString &database,
-                                 const QString &schema)
+                                 const QString &schema,
+                                 const QString &color,
+                                 int port)
 {
     QMapIterator<int,toConnectionOptions> i(connectionModel()->availableConnections());
     while (i.hasNext())
@@ -276,7 +292,9 @@ int toNewConnection::findHistory(const QString &provider,
                 username == opt.username &&
                 host == opt.host &&
                 database == opt.database &&
-                schema == opt.schema)
+                schema == opt.schema &&
+                color == opt.color &&
+                port == opt.port)
             return i.key();
     }
     return -1;
@@ -298,6 +316,14 @@ void toNewConnection::loadPrevious(const QModelIndex & current)
     Password->setText(opt.password);
     Port->setValue(opt.port);
     Schema->setText(opt.schema);
+    int ix = colorComboBox->findData(opt.color);
+    // safe fallback routine for undefined colors...
+    if (ix == -1)
+    {
+        colorComboBox->addItem(connectionColorPixmap(opt.color), opt.color, opt.color);
+        ix = colorComboBox->count() - 1;
+    }
+    colorComboBox->setCurrentIndex(ix);
 
     QList<QCheckBox *> widgets = OptionGroup->findChildren<QCheckBox *>();
     Q_FOREACH(QCheckBox *box, widgets)
@@ -474,7 +500,7 @@ void toNewConnection::importButton_clicked()
 
     foreach (toConnectionOptions opt, dia.availableConnections().values())
     {
-        if (findHistory(opt.provider, opt.username, opt.host, opt.database, opt.schema) != -1)
+        if (findHistory(opt.provider, opt.username, opt.host, opt.database, opt.schema, opt.color, opt.port) != -1)
             continue;
 
         connectionModel()->append(max, opt);
@@ -567,6 +593,7 @@ toConnection* toNewConnection::makeConnection(void)
             host,
             database,
             schema,
+            colorComboBox->itemData(colorComboBox->currentIndex()).toString(),
             options);
 
         writeSettings(true);

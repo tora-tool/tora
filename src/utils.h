@@ -435,6 +435,8 @@ int countChars(const QString &source, const char find);
  */
 QString GetExtensions(void);
 
+QPixmap connectionColorPixmap(const QString & name);
+
 /** Popup toolbutton that works like I think they should under Qt 3.0 as well.
  * this means they will pop up a tool menu when you click on the button as well.
  */
