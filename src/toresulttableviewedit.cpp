@@ -200,7 +200,7 @@ void toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &conn)
     const toResultModel::HeaderList Headers = Model->headers();
     bool oracle = toIsOracle(conn);
 
-    QString sql = QString("DELETE FROM %1.%2 ").arg(Owner).arg(Table);
+    QString sql = QString("DELETE FROM %1.%2 ").arg(conn.quote(Owner)).arg(conn.quote(Table));
     sql += (" WHERE ");
 
     bool where = false;
@@ -259,7 +259,7 @@ void toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn)
 {
     const toResultModel::HeaderList Headers = Model->headers();
 
-    QString sql = QString("INSERT INTO %1.%2 (").arg(Owner).arg(Table);
+    QString sql = QString("INSERT INTO %1.%2 (").arg(conn.quote(Owner)).arg(conn.quote(Table));
 
     int num = 0;
     for (int i = 1; i < change.row.size(); i++)
@@ -319,7 +319,7 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn)
     const toResultModel::HeaderList Headers = Model->headers();
     bool oracle = toIsOracle(conn);
 
-    QString sql = QString("UPDATE %1.%2 SET ").arg(Owner).arg(Table);
+    QString sql = QString("UPDATE %1.%2 SET ").arg(conn.quote(Owner)).arg(conn.quote(Table));
     sql += conn.quote(change.columnName);
 
     if (change.newValue.isNull())
@@ -469,8 +469,6 @@ bool toResultTableViewEdit::commitChanges(bool status)
             default:
                 toStatusMessage(tr("Internal error."));
             }
-
-            toStatusMessage(tr("Saved"), false, false);
         }
         catch (const QString &str)
         {
@@ -479,6 +477,8 @@ bool toResultTableViewEdit::commitChanges(bool status)
             break;
         }
     }
+
+    toStatusMessage(tr("Saved %1 changes").arg(Changes.size(), 0, 10), false, false);
 
     if (error)
         refresh();

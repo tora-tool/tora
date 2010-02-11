@@ -42,6 +42,7 @@
 #ifndef TO_NO_ORACLE
 
 #include "utils.h"
+#include "todefaultkeywords.h"
 
 #ifdef Q_OS_WIN32
 #  include "windows/cregistry.h"
@@ -629,19 +630,40 @@ class oracleConnection : public toConnection::connectionImpl
         { }
 
         /** Return a string representation to address an object.
+         * Checks if identifier has illegal characters, starts with digit, is a reserved
+         * word etc. - if so - returns it enclosed with quotes (otherwise returns the same string).
+         * Note that when identifier name returned from oracle data dictionary is in lowercase
+         * - it MUST be enclosed with quotes (case insensitive "normal" identifiers are always
+         * returned in uppercase).
          * @param name The name to be quoted.
+         * @param quoteLowercase Enclose in quotes when identifier has lowercase letters.
+         *   When processing data returned by dada dictionary quoteLowercase should be true
+         *   When processing data entered by user quoteLowercase should be false
          * @return String addressing table.
          */
-        virtual QString quote(const QString &name)
+        virtual QString quote(const QString &name, const bool quoteLowercase)
         {
             bool ok = true;
-            for (int i = 0;i < name.length();i++)
+            // Identifiers starting with digit should be quoted
+            if (name.at(0).isDigit())
+                ok = false;
+            else
+                for (int i = 0; i < name.length(); i++)
+                {
+                    if ((name.at(i).toUpper() != name.at(i) && quoteLowercase) || !toIsIdent(name.at(i)))
+                        ok = false;
+                }
+
+            // Check if given identified is a reserved word
+            int i = 0;
+            while (ok && (DefaultKeywords[i] != NULL))
             {
-                if (name.at(i).toUpper() != name.at(i) || !toIsIdent(name.at(i)))
+                if (name.compare(DefaultKeywords[i], Qt::CaseInsensitive) == 0)
                     ok = false;
+                i++;
             }
             if (ok)
-                return name.toLower();
+                return name.toUpper();
             else
                 return QString::fromLatin1("\"") + name + QString::fromLatin1("\"");
         }

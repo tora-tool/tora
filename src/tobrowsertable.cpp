@@ -232,7 +232,7 @@ toBrowserTable::toBrowserTable(toConnection &conn,
     try
     {
         Owner = owner;
-        Table = table;
+        Table = cnct->quote(table);
 
         QString tablespace;
         Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
@@ -243,7 +243,7 @@ toBrowserTable::toBrowserTable(toConnection &conn,
             // Editing existing table. Extract current description of table.
 
             std::list<QString> Objects;
-            Objects.insert(Objects.end(), "TABLE:" + Owner + "." + Table);
+            Objects.insert(Objects.end(), "TABLE:" + Owner + "." + table);
 
             OriginalDescription = Extractor.describe(Objects);
             tablespaceSpecified = false;
@@ -251,7 +251,7 @@ toBrowserTable::toBrowserTable(toConnection &conn,
 
             bool invalid = false;
 
-            Name->setText(table);
+            Name->setText(Table);
 
             QString declarations;
             QString storage;
@@ -466,12 +466,12 @@ QString toBrowserTable::sql()
     std::list<QString> migrateTable; // list of complex (\01 separated) strings to be sent to extractor
 
     std::list<QString> ctx; // context to be added to all strings in migrateTable (f.e. owner, TABLE, tablename)
-    toPush(ctx, Owner.toLower());
+    toPush(ctx, cnct->quote(Owner));
     toPush(ctx, QString("TABLE"));
     if (Table.isEmpty())
         toPush(ctx, Name->text());
     else
-        toPush(ctx, Table.toLower());
+        toPush(ctx, Table);
     toExtract::addDescription(migrateTable, ctx);
     if (Name->text() != Table && !Table.isEmpty())
         toExtract::addDescription(migrateTable, ctx, "RENAME", Name->text());

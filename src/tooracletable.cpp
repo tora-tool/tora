@@ -206,7 +206,6 @@ QString toOracleExtract::alterTable(std::list<QString> &source,
 #ifdef DEBUG
         qDebug() << "drop>>" + *i;
 #endif
-//        printf(, (*i).toAscii().constData());
         table_name = toExtract::partDescribe(*i, 2);
         if (!SameContext(*i, context))
         {
@@ -396,12 +395,12 @@ QString toOracleExtract::migrateTable(toExtract &ext, std::list<QString> &source
                                       std::list<QString> &destin) const
 {
 #ifdef DEBUG
-    qDebug() << "source=";
+    qDebug() << "toOracleExtract::migrateTable source=";
     for (std::list<QString>::iterator i = source.begin(); i != source.end(); i++)
     {
         qDebug() << *i;
     }
-    qDebug() << "destin=";
+    qDebug() << "toOracleExtract::migrateTable destin=";
     for (std::list<QString>::iterator i = destin.begin(); i != destin.end(); i++)
     {
         qDebug() << *i;

@@ -670,9 +670,10 @@ public:
 
         /** Return a string representation to address an object.
          * @param name The name to be quoted.
+         * @param quoteLowercase Enclose in quotes when identifier has lowercase letters
          * @return String addressing table.
          */
-        virtual QString quote(const QString &name)
+        virtual QString quote(const QString &name, const bool quoteLowercase = true)
         {
             return name;
         }
@@ -1021,9 +1022,10 @@ public:
 
     /** Return a string representation to address an object.
      * @param name The name to be quoted.
+     * @param quoteLowercase Enclose in quotes when identifier has lowercase letters
      * @return String addressing table.
      */
-    QString quote(const QString &name);
+    QString quote(const QString &name, const bool quoteLowercase = true);
     /** Perform the opposite of @ref quote.
      * @param name The name to be un-quoted.
      * @return String addressing table.

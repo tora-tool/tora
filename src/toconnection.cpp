@@ -1490,10 +1490,10 @@ void toConnection::rereadCache(void)
     readObjects();
 }
 
-QString toConnection::quote(const QString &name)
+QString toConnection::quote(const QString &name, const bool quoteLowercase)
 {
     if (!name.isNull())
-        return Connection->quote(name);
+        return Connection->quote(name, quoteLowercase);
     return QString::null;
 }
 
