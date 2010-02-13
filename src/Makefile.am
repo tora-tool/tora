@@ -469,6 +469,7 @@ BUILT_SOURCES = \
 	ui_toworksheetsetupui.h \
 	ui_tohelpui.h \
 	ui_toscriptschemawidgetui.h \
+	ui_connectioncolorsdialogui.h \
 	shortcuteditor/ui_shortcuteditordialog.h \
 	$(EXTRA_ORACLE_MONO_SOURCE_MOC) \
 	$(filter %.qm,$(TRANSLATIONS:%.ts=%.qm)) \
