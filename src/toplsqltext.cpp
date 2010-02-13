@@ -215,6 +215,18 @@ bool toPLSQLText::compile(CompilationType t)
     sql.append(QString::fromLatin1(" "));
     sql.append(str.mid(offset));
 
+    // Remove empty space and the slash at the end of statement.
+    // Note: slash is valid in oracle sqlplus only
+    int i = sql.length() - 1;
+    while ((i > 0) &&
+           ((sql.at(i) == ' ') ||
+            (sql.at(i) == '\r') ||
+            (sql.at(i) == '\n') ||
+            (sql.at(i) == '\t') ||
+            (sql.at(i) == '/')))
+      i--;
+    sql.truncate(i + 1);
+
     compilation_error = "";
     try
     {
@@ -359,9 +371,10 @@ bool toPLSQLText::readData(toConnection &conn/*, toTreeWidget *Stack*/)
     {
         toQuery lines(conn, SQLReadSource, Schema, Object, Type);
 
-        QString str;
+        QString str = "CREATE OR REPLACE ";
         while (!lines.eof())
             str += lines.readValue();
+        str += "\n/";
         setText(str);
         setModified(false);
         setCurrent( -1);
@@ -624,9 +637,12 @@ void toPLSQLWidget::setCount(const QString & type, const int count)
    changed: after compiling (twice: once for errors and once for warnings) or after
    runing statick check (once: for static observations only).
    Parameters:
-     type - PLSQL_ERROR or PLSQL_WARNING
+     type - PLSQL_ERROR, PLSQL_WARNING or PLSQL_STATIC
      values - multimap containing list of errors or warnings with
               line number and description
+     cleanup - cleanup result pane of any messages (including root elements):
+               if true - clears all error, warning and static test errors
+               if false - only messages of given type are cleared
 */
 void toPLSQLWidget::applyResult(const QString & type,
                                 const QMultiMap<int, QString> & values,

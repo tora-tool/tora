@@ -1264,6 +1264,18 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens, int line, int pos, exec
     int opos = pos;
     int i;
 
+    // Remove empty space and the slash at the end of statement.
+    // Note: slash is valid in oracle sqlplus only
+    i = t.length() - 1;
+    while ((i > 0) &&
+           ((t.at(i) == ' ') ||
+            (t.at(i) == '\r') ||
+            (t.at(i) == '\n') ||
+            (t.at(i) == '\t') ||
+            (t.at(i) == '/')))
+      i--;
+    t.truncate(i + 1);
+
     for (i = 0;i < t.length() - 1;i++)
     {
         if (comment)

@@ -935,7 +935,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
             ret.subTokens().insert(ret.subTokens().end(), statement(statement::Token, token, tokens.line()));
             return ret;
         }
-        else if (upp == (";"))
+        else if (upp == (";") || upp == ("/"))
         {
             ret.subTokens().insert(ret.subTokens().end(), statement(statement::Token, token, tokens.line()));
             return ret;
