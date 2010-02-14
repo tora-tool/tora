@@ -47,6 +47,7 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include <QThread>
+#include <QThreadStorage>
 
 /** This is an abstract class that defines something that is to be performed by a
  * thread.
@@ -129,13 +130,16 @@ public:
 
 void *toThreadStartWrapper(void*);
 class taskRunner;
+class toThreadInfo;
 
 class toThread
 {
 private:
     /** Not part of the API.
      */
-
+    static QThreadStorage<toThreadInfo*> toThreadInfoStorage;
+    volatile static unsigned lastThreadNumber;
+    
     taskRunner *Thread;
     static std::list<toThread *> *Threads;
     static toLock *Lock;
@@ -159,6 +163,31 @@ public:
     static void setMainThread(QThread *main);
 
     friend class taskRunner;
+    friend class toThreadInfo;
+    friend class toConnectionPoolTest;
+    friend class toConnectionPoolExec;
+};
+
+/** This class is used for debugging purposes only
+ * Holds thread specific data
+ */
+class toThreadInfo
+{
+ public:
+  unsigned threadNumber;
+  QString threadTask;
+  toThreadInfo(unsigned number);
+  static unsigned getThreadNumber()    
+  {
+	  if(toThread::toThreadInfoStorage.hasLocalData())
+	  {
+		  toThreadInfo *i = toThread::toThreadInfoStorage.localData();
+		  return i->threadNumber;
+	  } else {
+		  throw QString("This thread has no in information associated");
+	  }
+  }
+  virtual ~toThreadInfo();
 };
 
 /** This is a convenience class that holds a lock for the duration of the scope
