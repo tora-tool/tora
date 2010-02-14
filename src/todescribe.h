@@ -42,7 +42,7 @@
 #ifndef TODESCRIBE_H
 #define TODESCRIBE_H
 
-#include <ui_todescribeui.h>
+#include "ui_todescribeui.h"
 
 
 /*! \brief Enhanced "key F4 describe table" dialog.
