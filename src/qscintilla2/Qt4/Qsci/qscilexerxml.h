@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerXML class.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -23,11 +23,6 @@
 // review the following information:
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
-// 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -86,7 +81,38 @@ public:
     //! by the lexer as a space separated string.
     const char *keywords(int set) const;
 
+    //! Causes all properties to be refreshed by emitting the
+    //! propertyChanged() signal as required.
+    void refreshProperties();
+
+    //! If \a allowed is true then scripts are styled.  The default is true.
+    //!
+    //! \sa scriptsStyled()
+    void setScriptsStyled(bool styled);
+
+    //! Returns true if scripts are styled.
+    //!
+    //! \sa setScriptsStyled()
+    bool scriptsStyled() const;
+
+protected:
+    //! The lexer's properties are read from the settings \a qs.  \a prefix
+    //! (which has a trailing '/') should be used as a prefix to the key of
+    //! each setting.  true is returned if there is no error.
+    //!
+    bool readProperties(QSettings &qs, const QString &prefix);
+
+    //! The lexer's properties are written to the settings \a qs.
+    //! \a prefix (which has a trailing '/') should be used as a prefix to
+    //! the key of each setting.  true is returned if there is no error.
+    //!
+    bool writeProperties(QSettings &qs, const QString &prefix) const;
+
 private:
+    void setScriptsProp();
+
+    bool scripts;
+
     QsciLexerXML(const QsciLexerXML &);
     QsciLexerXML &operator=(const QsciLexerXML &);
 };

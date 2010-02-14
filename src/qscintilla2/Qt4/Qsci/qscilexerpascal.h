@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerPascal class.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -23,11 +23,6 @@
 // review the following information:
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
-// 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -58,32 +53,44 @@ public:
         //! The default.
         Default = 0,
 
-        //! A comment.
-        Comment = 1,
+        //! An identifier
+        Identifier = 1,
+
+        //! A '{ ... }' style comment.
+        Comment = 2,
+
+        //! A '(* ... *)' style comment.
+        CommentParenthesis = 3,
 
         //! A comment line.
-        CommentLine = 2,
+        CommentLine = 4,
 
-        //! A JavaDoc/Doxygen style comment.
-        CommentDoc = 3,
+        //! A '{$ ... }' style pre-processor block.
+        PreProcessor = 5,
+
+        //! A '(*$ ... *)' style pre-processor block.
+        PreProcessorParenthesis = 6,
 
         //! A number.
-        Number = 4,
+        Number = 7,
+
+        //! A hexadecimal number.
+        HexNumber = 8,
 
         //! A keyword.
-        Keyword = 5,
+        Keyword = 9,
 
         //! A single-quoted string.
-        SingleQuotedString = 7,
+        SingleQuotedString = 10,
 
-        //! A pre-processor block.
-        PreProcessor = 9,
+        //! The end of a line where a string is not closed.
+        UnclosedString = 11,
+
+        //! A character.
+        Character = 12,
 
         //! An operator.
-        Operator = 10,
-
-        //! An identifier
-        Identifier = 11,
+        Operator = 13,
 
         //! Inline Asm.
         Asm = 14
@@ -130,8 +137,16 @@ public:
     //! \sa defaultPaper()
     QColor defaultColor(int style) const;
 
+    //! Returns the end-of-line fill for style number \a style.
+    bool defaultEolFill(int style) const;
+
     //! Returns the font for style number \a style.
     QFont defaultFont(int style) const;
+
+    //! Returns the background colour of the text for style number \a style.
+    //!
+    //! \sa defaultColor()
+    QColor defaultPaper(int style) const;
 
     //! Returns the set of keywords for the keyword set \a set recognised
     //! by the lexer as a space separated string.
@@ -160,6 +175,19 @@ public:
     //!
     //! \sa setFoldPreprocessor()
     bool foldPreprocessor() const;
+
+    //! If \a enabled is true then some keywords will only be highlighted in an
+    //! appropriate context (similar to how the Delphi IDE works).  The default
+    //! is true.
+    //!
+    //! \sa smartHighlighting()
+    void setSmartHighlighting(bool enabled);
+
+    //! Returns true if some keywords will only be highlighted in an
+    //! appropriate context (similar to how the Delphi IDE works).
+    //!
+    //! \sa setSmartHighlighting()
+    bool smartHighlighting() const;
 
 public slots:
     //! If \a fold is true then multi-line comment blocks can be folded.
@@ -199,10 +227,12 @@ private:
     void setCommentProp();
     void setCompactProp();
     void setPreprocProp();
+    void setSmartHighlightProp();
 
     bool fold_comments;
     bool fold_compact;
     bool fold_preproc;
+    bool smart_highlight;
 
     QsciLexerPascal(const QsciLexerPascal &);
     QsciLexerPascal &operator=(const QsciLexerPascal &);

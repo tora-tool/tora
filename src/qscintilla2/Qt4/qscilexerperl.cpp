@@ -1,6 +1,6 @@
 // This module implements the QsciLexerPerl class.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -24,11 +24,6 @@
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
 // 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
-// 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -43,7 +38,8 @@
 // The ctor.
 QsciLexerPerl::QsciLexerPerl(QObject *parent)
     : QsciLexer(parent),
-      fold_comments(false), fold_compact(true)
+      fold_comments(false), fold_compact(true), fold_packages(true),
+      fold_pod_blocks(true)
 {
 }
 
@@ -434,6 +430,8 @@ void QsciLexerPerl::refreshProperties()
 {
     setCommentProp();
     setCompactProp();
+    setPackagesProp();
+    setPODBlocksProp();
 }
 
 
@@ -444,6 +442,8 @@ bool QsciLexerPerl::readProperties(QSettings &qs,const QString &prefix)
 
     fold_comments = qs.value(prefix + "foldcomments", false).toBool();
     fold_compact = qs.value(prefix + "foldcompact", true).toBool();
+    fold_packages = qs.value(prefix + "foldpackages", true).toBool();
+    fold_pod_blocks = qs.value(prefix + "foldpodblocks", true).toBool();
 
     return rc;
 }
@@ -456,6 +456,8 @@ bool QsciLexerPerl::writeProperties(QSettings &qs,const QString &prefix) const
 
     qs.setValue(prefix + "foldcomments", fold_comments);
     qs.setValue(prefix + "foldcompact", fold_compact);
+    qs.setValue(prefix + "foldpackages", fold_packages);
+    qs.setValue(prefix + "foldpodblocks", fold_pod_blocks);
 
     return rc;
 }
@@ -504,4 +506,50 @@ void QsciLexerPerl::setFoldCompact(bool fold)
 void QsciLexerPerl::setCompactProp()
 {
     emit propertyChanged("fold.compact",(fold_compact ? "1" : "0"));
+}
+
+
+// Return true if packages can be folded.
+bool QsciLexerPerl::foldPackages() const
+{
+    return fold_packages;
+}
+
+
+// Set if packages can be folded.
+void QsciLexerPerl::setFoldPackages(bool fold)
+{
+    fold_packages = fold;
+
+    setPackagesProp();
+}
+
+
+// Set the "fold.perl.package" property.
+void QsciLexerPerl::setPackagesProp()
+{
+    emit propertyChanged("fold.perl.package",(fold_packages ? "1" : "0"));
+}
+
+
+// Return true if POD blocks can be folded.
+bool QsciLexerPerl::foldPODBlocks() const
+{
+    return fold_pod_blocks;
+}
+
+
+// Set if POD blocks can be folded.
+void QsciLexerPerl::setFoldPODBlocks(bool fold)
+{
+    fold_pod_blocks = fold;
+
+    setPODBlocksProp();
+}
+
+
+// Set the "fold.perl.pod" property.
+void QsciLexerPerl::setPODBlocksProp()
+{
+    emit propertyChanged("fold.perl.pod",(fold_pod_blocks ? "1" : "0"));
 }

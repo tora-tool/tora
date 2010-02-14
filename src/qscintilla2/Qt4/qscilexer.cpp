@@ -1,6 +1,6 @@
 // This module implements the QsciLexer class.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -24,11 +24,6 @@
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
 // 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
-// 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -48,7 +43,7 @@
 // The ctor.
 QsciLexer::QsciLexer(QObject *parent)
     : QObject(parent),
-      autoIndStyle(-1), apiSet(0)
+      autoIndStyle(-1), apiSet(0), attached_editor(0)
 {
 #if defined(Q_OS_WIN)
     defFont = QFont("Verdana",10);
@@ -71,6 +66,43 @@ QsciLexer::QsciLexer(QObject *parent)
 QsciLexer::~QsciLexer()
 {
     delete style_map;
+}
+
+
+// Set the attached editor.
+void QsciLexer::setEditor(QsciScintilla *editor)
+{
+    attached_editor = editor;
+
+    if (attached_editor)
+    {
+        attached_editor->SendScintilla(QsciScintillaBase::SCI_SETSTYLEBITS,
+                styleBitsNeeded());
+    }
+}
+
+
+// Return the lexer name.
+const char *QsciLexer::lexer() const
+{
+    return 0;
+}
+
+
+// Return the lexer identifier.
+int QsciLexer::lexerId() const
+{
+    return QsciScintillaBase::SCLEX_CONTAINER;
+}
+
+
+// Return the number of style bits needed by the lexer.
+int QsciLexer::styleBitsNeeded() const
+{
+    if (!attached_editor)
+        return 5;
+
+    return attached_editor->SendScintilla(QsciScintillaBase::SCI_GETSTYLEBITSNEEDED);
 }
 
 

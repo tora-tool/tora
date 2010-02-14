@@ -1,6 +1,6 @@
 // This class defines the "official" low-level API.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -23,11 +23,6 @@
 // review the following information:
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
-// 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -1630,6 +1625,93 @@ public:
         SCI_GETKEYSUNICODE = 2522,
 
         //!
+        SCI_INDICSETALPHA = 2523,
+
+        //!
+        SCI_INDICGETALPHA = 2524,
+
+        //!
+        SCI_SETEXTRAASCENT = 2525,
+
+        //!
+        SCI_GETEXTRAASCENT = 2526,
+
+        //!
+        SCI_SETEXTRADESCENT = 2527,
+
+        //!
+        SCI_GETEXTRADESCENT = 2528,
+
+        //!
+        SCI_MARKERSYMBOLDEFINED = 2529,
+
+        //!
+        SCI_MARGINSETTEXT = 2530,
+
+        //!
+        SCI_MARGINGETTEXT = 2531,
+
+        //!
+        SCI_MARGINSETSTYLE = 2532,
+
+        //!
+        SCI_MARGINGETSTYLE = 2533,
+
+        //!
+        SCI_MARGINSETSTYLES = 2534,
+
+        //!
+        SCI_MARGINGETSTYLES = 2535,
+
+        //!
+        SCI_MARGINTEXTCLEARALL = 2536,
+
+        //!
+        SCI_MARGINSETSTYLEOFFSET = 2537,
+
+        //!
+        SCI_MARGINGETSTYLEOFFSET = 2538,
+
+        //!
+        SCI_ANNOTATIONSETTEXT = 2540,
+
+        //!
+        SCI_ANNOTATIONGETTEXT = 2541,
+
+        //!
+        SCI_ANNOTATIONSETSTYLE = 2542,
+
+        //!
+        SCI_ANNOTATIONGETSTYLE = 2543,
+
+        //!
+        SCI_ANNOTATIONSETSTYLES = 2544,
+
+        //!
+        SCI_ANNOTATIONGETSTYLES = 2545,
+
+        //!
+        SCI_ANNOTATIONGETLINES = 2546,
+
+        //!
+        SCI_ANNOTATIONCLEARALL = 2547,
+
+        //!
+        SCI_ANNOTATIONSETVISIBLE = 2548,
+
+        //!
+        SCI_ANNOTATIONGETVISIBLE = 2549,
+
+        //!
+        SCI_ANNOTATIONSETSTYLEOFFSET = 2550,
+
+        //!
+        SCI_ANNOTATIONGETSTYLEOFFSET = 2551,
+
+        //!
+        SCI_ADDUNDOACTION = 2560,
+
+        //!
         SCI_STARTRECORD = 3001,
 
         //!
@@ -1820,6 +1902,9 @@ public:
         //! A left rectangle (ie. part of the margin background).
         SC_MARK_LEFTRECT = 27,
 
+        //! The value is available for plugins to use.
+        SC_MARK_AVAILABLE = 28,
+
         //! Characters can be used as symbols by adding this to the ASCII value
         //! of the character.
         SC_MARK_CHARACTER = 10000
@@ -1855,7 +1940,13 @@ public:
 
         //! The margin's background color will be set to the default foreground
         //! color.
-        SC_MARGIN_FORE = 3
+        SC_MARGIN_FORE = 3,
+
+        //! The margin will display text.
+        SC_MARGIN_TEXT = 4,
+
+        //! The margin will display right justified text.
+        SC_MARGIN_RTEXT = 5
     };
 
     enum
@@ -1967,16 +2058,11 @@ public:
         SC_FOLDLEVELBASE = 0x00400,
         SC_FOLDLEVELWHITEFLAG = 0x01000,
         SC_FOLDLEVELHEADERFLAG = 0x02000,
-        SC_FOLDLEVELBOXHEADERFLAG = 0x04000,
-        SC_FOLDLEVELBOXFOOTERFLAG = 0x08000,
-        SC_FOLDLEVELCONTRACTED = 0x10000,
-        SC_FOLDLEVELUNINDENT = 0x20000,
         SC_FOLDLEVELNUMBERMASK = 0x00fff
     };
 
     enum
     {
-        SC_FOLDFLAG_BOX = 0x0001,
         SC_FOLDFLAG_LINEBEFORE_EXPANDED = 0x0002,
         SC_FOLDFLAG_LINEBEFORE_CONTRACTED = 0x0004,
         SC_FOLDFLAG_LINEAFTER_EXPANDED = 0x0008,
@@ -2006,6 +2092,13 @@ public:
 
     enum
     {
+        ANNOTATION_HIDDEN = 0,
+        ANNOTATION_STANDARD = 1,
+        ANNOTATION_BOXED = 2
+    };
+
+    enum
+    {
         EDGE_NONE = 0,
         EDGE_LINE = 1,
         EDGE_BACKGROUND = 2
@@ -2015,6 +2108,11 @@ public:
     {
         SC_CURSORNORMAL = -1,
         SC_CURSORWAIT = 4
+    };
+
+    enum
+    {
+        UNDO_MAY_COALESCE = 1
     };
 
     enum
@@ -2056,7 +2154,10 @@ public:
         SC_STARTACTION = 0x2000,
         SC_MOD_CHANGEINDICATOR = 0x4000,
         SC_MOD_CHANGELINESTATE = 0x8000,
-        SC_MODEVENTMASKALL = 0xffff
+        SC_MOD_CHANGEMARGIN = 0x10000,
+        SC_MOD_CHANGEANNOTATION = 0x20000,
+        SC_MOD_CONTAINER = 0x40000,
+        SC_MODEVENTMASKALL = 0x7ffff
     };
 
     enum
@@ -2374,7 +2475,28 @@ public:
         SCLEX_MYSQL = 89,
 
         //! Select the gettext .po file lexer.
-        SCLEX_PO = 90
+        SCLEX_PO = 90,
+
+        //! Select the TAL lexer.
+        SCLEX_TAL = 91,
+
+        //! Select the COBOL lexer.
+        SCLEX_COBOL = 92,
+
+        //! Select the TACL lexer.
+        SCLEX_TACL = 93,
+
+        //! Select the Sorcus lexer.
+        SCLEX_SORCUS = 94,
+
+        //! Select the PowerPro lexer.
+        SCLEX_POWERPRO = 95,
+
+        //! Select the Nimrod lexer.
+        SCLEX_NIMROD = 96,
+
+        //! Select the SML lexer.
+        SCLEX_SML = 97
     };
 
     //! Construct an empty QsciScintillaBase with parent \a parent.
@@ -2447,6 +2569,10 @@ signals:
     //!
     //! \sa SCN_AUTOCSELECTION()
     void SCN_AUTOCCANCELLED();
+
+    //! This signal is emitted when the user deletes a character when an
+    //! auto-completion list is active.
+    void SCN_AUTOCCHARDELETED();
 
     //! This signal is emitted when the user selects an item in an
     //! auto-completion list.  It is emitted before the selection is inserted.
@@ -2528,7 +2654,7 @@ signals:
     void SCN_MARGINCLICK(int position, int modifiers, int margin);
 
     //!
-    void SCN_MODIFIED(int, int, const char *, int, int, int, int, int);
+    void SCN_MODIFIED(int, int, const char *, int, int, int, int, int, int, int);
 
     //! This signal is emitted when the user attempts to modify read-only
     //! text.

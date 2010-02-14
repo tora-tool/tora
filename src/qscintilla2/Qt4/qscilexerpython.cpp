@@ -1,6 +1,6 @@
 // This module implements the QsciLexerPython class.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -24,11 +24,6 @@
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
 // 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
-// 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -50,7 +45,8 @@ const char *QsciLexerPython::keywordClass =
 // The ctor.
 QsciLexerPython::QsciLexerPython(QObject *parent)
     : QsciLexer(parent),
-      fold_comments(false), fold_quotes(false), indent_warn(NoWarning)
+      fold_comments(false), fold_quotes(false), indent_warn(NoWarning),
+      v2_unicode(true), v3_binary_octal(true), v3_bytes(true)
 {
 }
 
@@ -306,6 +302,9 @@ void QsciLexerPython::refreshProperties()
     setCommentProp();
     setQuotesProp();
     setTabWhingeProp();
+    setV2UnicodeProp();
+    setV3BinaryOctalProp();
+    setV3BytesProp();
 }
 
 
@@ -317,6 +316,9 @@ bool QsciLexerPython::readProperties(QSettings &qs,const QString &prefix)
     fold_comments = qs.value(prefix + "foldcomments", false).toBool();
     fold_quotes = qs.value(prefix + "foldquotes", false).toBool();
     indent_warn = (IndentationWarning)qs.value(prefix + "indentwarning", (int)NoWarning).toInt();
+    v2_unicode = qs.value(prefix + "v2unicode", true).toBool();
+    v3_binary_octal = qs.value(prefix + "v3binaryoctal", true).toBool();
+    v3_bytes = qs.value(prefix + "v3bytes", true).toBool();
 
     return rc;
 }
@@ -330,6 +332,9 @@ bool QsciLexerPython::writeProperties(QSettings &qs,const QString &prefix) const
     qs.setValue(prefix + "foldcomments", fold_comments);
     qs.setValue(prefix + "foldquotes", fold_quotes);
     qs.setValue(prefix + "indentwarning", (int)indent_warn);
+    qs.setValue(prefix + "v2unicode", v2_unicode);
+    qs.setValue(prefix + "v3binaryoctal", v3_binary_octal);
+    qs.setValue(prefix + "v3bytes", v3_bytes);
 
     return rc;
 }
@@ -401,4 +406,73 @@ void QsciLexerPython::setIndentationWarning(QsciLexerPython::IndentationWarning 
 void QsciLexerPython::setTabWhingeProp()
 {
     emit propertyChanged("tab.timmy.whinge.level", QByteArray::number(indent_warn));
+}
+
+
+// Return true if v2 unicode string literals are allowed.
+bool QsciLexerPython::v2UnicodeAllowed() const
+{
+    return v2_unicode;
+}
+
+
+// Set if v2 unicode string literals are allowed.
+void QsciLexerPython::setV2UnicodeAllowed(bool allowed)
+{
+    v2_unicode = allowed;
+
+    setV2UnicodeProp();
+}
+
+
+// Set the "lexer.python.strings.u" property.
+void QsciLexerPython::setV2UnicodeProp()
+{
+    emit propertyChanged("lexer.python.strings.u", (v2_unicode ? "1" : "0"));
+}
+
+
+// Return true if v3 binary and octal literals are allowed.
+bool QsciLexerPython::v3BinaryOctalAllowed() const
+{
+    return v3_binary_octal;
+}
+
+
+// Set if v3 binary and octal literals are allowed.
+void QsciLexerPython::setV3BinaryOctalAllowed(bool allowed)
+{
+    v3_binary_octal = allowed;
+
+    setV3BinaryOctalProp();
+}
+
+
+// Set the "lexer.python.literals.binary" property.
+void QsciLexerPython::setV3BinaryOctalProp()
+{
+    emit propertyChanged("lexer.python.literals.binary", (v3_binary_octal ? "1" : "0"));
+}
+
+
+// Return true if v3 bytes string literals are allowed.
+bool QsciLexerPython::v3BytesAllowed() const
+{
+    return v3_bytes;
+}
+
+
+// Set if v3 bytes string literals are allowed.
+void QsciLexerPython::setV3BytesAllowed(bool allowed)
+{
+    v3_bytes = allowed;
+
+    setV3BytesProp();
+}
+
+
+// Set the "lexer.python.strings.b" property.
+void QsciLexerPython::setV3BytesProp()
+{
+    emit propertyChanged("lexer.python.strings.b",(v3_bytes ? "1" : "0"));
 }

@@ -1,6 +1,6 @@
 // This module implements the QsciLexerHTML class.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -24,11 +24,6 @@
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
 // 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
-// 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -46,7 +41,8 @@
 // The ctor.
 QsciLexerHTML::QsciLexerHTML(QObject *parent)
     : QsciLexer(parent),
-      fold_compact(true), fold_preproc(true), case_sens_tags(false)
+      fold_compact(true), fold_preproc(true), case_sens_tags(false),
+      fold_script_comments(false), fold_script_heredocs(false)
 {
 }
 
@@ -1018,6 +1014,8 @@ void QsciLexerHTML::refreshProperties()
     setCompactProp();
     setPreprocProp();
     setCaseSensTagsProp();
+    setScriptCommentsProp();
+    setScriptHeredocsProp();
 }
 
 
@@ -1029,6 +1027,8 @@ bool QsciLexerHTML::readProperties(QSettings &qs,const QString &prefix)
     fold_compact = qs.value(prefix + "foldcompact", true).toBool();
     fold_preproc = qs.value(prefix + "foldpreprocessor", false).toBool();
     case_sens_tags = qs.value(prefix + "casesensitivetags", false).toBool();
+    fold_script_comments = qs.value(prefix + "foldscriptcomments", false).toBool();
+    fold_script_heredocs = qs.value(prefix + "foldscriptheredocs", false).toBool();
 
     return rc;
 }
@@ -1042,6 +1042,8 @@ bool QsciLexerHTML::writeProperties(QSettings &qs,const QString &prefix) const
     qs.setValue(prefix + "foldcompact", fold_compact);
     qs.setValue(prefix + "foldpreprocessor", fold_preproc);
     qs.setValue(prefix + "casesensitivetags", case_sens_tags);
+    qs.setValue(prefix + "foldscriptcomments", fold_script_comments);
+    qs.setValue(prefix + "foldscriptheredocs", fold_script_heredocs);
 
     return rc;
 }
@@ -1113,4 +1115,50 @@ void QsciLexerHTML::setFoldPreprocessor(bool fold)
 void QsciLexerHTML::setPreprocProp()
 {
     emit propertyChanged("fold.html.preprocessor",(fold_preproc ? "1" : "0"));
+}
+
+
+// Return true if script comments can be folded.
+bool QsciLexerHTML::foldScriptComments() const
+{
+    return fold_script_comments;
+}
+
+
+// Set if script comments can be folded.
+void QsciLexerHTML::setFoldScriptComments(bool fold)
+{
+    fold_script_comments = fold;
+
+    setScriptCommentsProp();
+}
+
+
+// Set the "fold.hypertext.comment" property.
+void QsciLexerHTML::setScriptCommentsProp()
+{
+    emit propertyChanged("fold.hypertext.comment",(fold_script_comments ? "1" : "0"));
+}
+
+
+// Return true if script heredocs can be folded.
+bool QsciLexerHTML::foldScriptHeredocs() const
+{
+    return fold_script_heredocs;
+}
+
+
+// Set if script heredocs can be folded.
+void QsciLexerHTML::setFoldScriptHeredocs(bool fold)
+{
+    fold_script_heredocs = fold;
+
+    setScriptHeredocsProp();
+}
+
+
+// Set the "fold.hypertext.heredoc" property.
+void QsciLexerHTML::setScriptHeredocsProp()
+{
+    emit propertyChanged("fold.hypertext.heredoc",(fold_script_heredocs ? "1" : "0"));
 }

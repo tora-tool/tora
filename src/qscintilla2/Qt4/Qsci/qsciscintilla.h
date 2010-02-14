@@ -1,7 +1,7 @@
 // This module defines the "official" high-level API of the Qt port of
 // Scintilla.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -24,11 +24,6 @@
 // review the following information:
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
-// 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -56,8 +51,10 @@ extern "C++" {
 class QIODevice;
 class QPoint;
 
-class QsciLexer;
 class QsciCommandSet;
+class QsciLexer;
+class QsciStyle;
+class QsciStyledText;
 class ListBoxQt;
 
 
@@ -89,6 +86,18 @@ public:
         //! that character is indented as well as the lines that make up the
         //! block.  It may be logically ored with AiOpening.
         AiClosing = 0x04
+    };
+
+    //! This enum defines the different annotation display styles.
+    enum AnnotationDisplay {
+        //! Annotations are not displayed.
+        AnnotationHidden = ANNOTATION_HIDDEN,
+
+        //! Annotations are drawn left justified with no adornment.
+        AnnotationStandard = ANNOTATION_STANDARD,
+
+        //! Annotations are surrounded by a box.
+        AnnotationBoxed = ANNOTATION_BOXED
     };
 
     //! This enum defines the different sources for auto-completion lists.
@@ -192,6 +201,29 @@ public:
         //! Boxed tree style using a flattened tree with boxed plus and minus
         //! symbols and right-angled corners.
         BoxedTreeFoldStyle
+    };
+
+    //! This enum defined the different margin types.
+    enum MarginType {
+        //! The margin contains symbols, including those used for folding.
+        SymbolMargin = SC_MARGIN_SYMBOL,
+
+        //! The margin contains symbols and uses the default foreground color
+        //! as its background color.
+        SymbolMarginDefaultForegroundColor = SC_MARGIN_FORE,
+
+        //! The margin contains symbols and uses the default background color
+        //! as its background color.
+        SymbolMarginDefaultBackgroundColor = SC_MARGIN_BACK,
+
+        //! The margin contains line numbers.
+        NumberMargin = SC_MARGIN_NUMBER,
+
+        //! The margin contains styled text.
+        TextMargin = SC_MARGIN_TEXT,
+
+        //! The margin contains right justified styled text.
+        TextMarginRightJustified = SC_MARGIN_RTEXT
     };
 
     //! This enum defines the different pre-defined marker symbols.
@@ -333,6 +365,32 @@ public:
     //! start of the last word of the context.
     virtual QStringList apiContext(int pos, int &context_start,
             int &last_word_start);
+
+    //! Annotate the line \a line with the text \a text using the style number
+    //! \a style.
+    void annotate(int line, const QString &text, int style);
+
+    //! Annotate the line \a line with the text \a text using the style \a
+    //! style.
+    void annotate(int line, const QString &text, const QsciStyle &style);
+
+    //! Annotate the line \a line with the styled text \a text.
+    void annotate(int line, const QsciStyledText &text);
+
+    //! Annotate the line \a line with the list of styled text \a text.
+    void annotate(int line, const QList<QsciStyledText> &text);
+
+    //! Returns the annotation on line \a line, if any.
+    QString annotation(int line) const;
+
+    //! Returns the display style for annotations.
+    //!
+    //! \sa setAnnotationDisplay()
+    AnnotationDisplay annotationDisplay() const;
+
+    //! The annotations on line \a line are removed.  If \a line is negative
+    //! then all annotations are removed.
+    void clearAnnotations(int line = -1);
 
     //! Returns true if auto-completion lists are case sensitive.
     //!
@@ -622,7 +680,7 @@ public:
 
     //! Returns true if line numbers are enabled for margin \a margin.
     //!
-    //! \sa setMarginLineNumbers(), SCI_GETMARGINTYPEN
+    //! \sa setMarginLineNumbers(), marginType(), SCI_GETMARGINTYPEN
     bool marginLineNumbers(int margin) const;
 
     //! Returns the marker mask of margin \a margin.
@@ -634,6 +692,11 @@ public:
     //!
     //! \sa setMarginSensitivity(), marginClicked(), SCI_GETMARGINTYPEN
     bool marginSensitivity(int margin) const;
+
+    //! Returns the type of margin \a margin.
+    //!
+    //! \sa setMarginType(), SCI_GETMARGINTYPEN
+    MarginType marginType(int margin) const;
 
     //! Returns the width in pixels of margin \a margin.
     //!
@@ -768,6 +831,12 @@ public:
     //! \sa resetFoldMarginColors()
     void setFoldMarginColors(const QColor &fore, const QColor &back);
 
+    //! Set the display style for annotations.  The default is
+    //! AnnotationStandard.
+    //!
+    //! \sa annotationDisplay()
+    void setAnnotationDisplay(AnnotationDisplay display);
+
     //! Enable the use of fill-up characters, either those explicitly set or
     //! those set by a lexer.  By default, fill-up characters are disabled.
     //!
@@ -840,6 +909,30 @@ public:
     //!
     //! \sa edgeMode()
     void setEdgeMode(EdgeMode mode);
+
+    //! Set the margin text of line \a line with the text \a text using the
+    //! style number \a style.
+    void setMarginText(int line, const QString &text, int style);
+
+    //! Set the margin text of line \a line with the text \a text using the
+    //! style \a style.
+    void setMarginText(int line, const QString &text, const QsciStyle &style);
+
+    //! Set the margin text of line \a line with the styled text \a text.
+    void setMarginText(int line, const QsciStyledText &text);
+
+    //! Set the margin text of line \a line with the list of styled text \a
+    //! text.
+    void setMarginText(int line, const QList<QsciStyledText> &text);
+
+    //! Set the type of margin \a margin to type \a type.
+    //!
+    //! \sa marginType(), SCI_SETMARGINTYPEN
+    void setMarginType(int margin, MarginType type);
+
+    //! The margin text on line \a line is removed.  If \a line is negative
+    //! then all margin text is removed.
+    void clearMarginText(int line = -1);
 
     //! Set the background colour, including the alpha component, of marker
     //! \a mnr to \a col.  If \a mnr is -1 then the colour of all markers is
@@ -1241,7 +1334,7 @@ public slots:
     //! Enables or disables, according to \a lnrs, the display of line numbers
     //! in margin \a margin.
     //!
-    //! \sa marginLineNumbers(), SCI_SETMARGINTYPEN
+    //! \sa marginLineNumbers(), setMarginType(), SCI_SETMARGINTYPEN
     virtual void setMarginLineNumbers(int margin, bool lnrs);
 
     //! Sets the marker mask of margin \a margin to \a mask.  Only those
@@ -1449,7 +1542,8 @@ private slots:
     void handleCharAdded(int charadded);
     void handleMarginClick(int pos, int margin, int modifiers);
     void handleModified(int pos, int mtype, const char *text, int len,
-            int added, int line, int foldNow, int foldPrev);
+            int added, int line, int foldNow, int foldPrev, int token,
+            int annotationLinesAdded);
     void handlePropertyChange(const char *prop, const char *val);
     void handleSavePointReached();
     void handleSavePointLeft();
@@ -1465,6 +1559,10 @@ private slots:
     void handleUpdateUI();
 
 private:
+    typedef QByteArray ScintillaString;
+
+    void detachLexer();
+
     enum IndentState {
         isNone,
         isKeywordStart,
@@ -1491,6 +1589,7 @@ private:
             int visLevels = 0, int level = -1);
     void setFoldMarker(int marknr, int mark = SC_MARK_EMPTY);
     QString convertTextS2Q(const char *s) const;
+    ScintillaString convertTextQ2S(const QString &q) const;
     void setLexerStyle(int style);
     void setStylesFont(const QFont &f, int style);
 
@@ -1510,6 +1609,9 @@ private:
 
     bool ensureRW();
     void insertAtPos(const QString &text, int pos);
+
+    ScintillaString styleText(const QList<QsciStyledText> &styled_text,
+            char **styles, int style_offset = 0);
 
     struct FindState
     {

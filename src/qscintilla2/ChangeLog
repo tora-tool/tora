@@ -1,3 +1,202 @@
+2010/01/20 19:55:56  phil
+Updated the build system to Qt v4.6.1.
+Released as v2.4.2.
+
+
+2010/01/18 13:04:46  phil
+Updated Spanish translations from Jaime Seuma.
+
+
+2010/01/15 23:20:14  phil
+The Python bindings now check for SIP v4.10.
+
+
+2010/01/15 18:38:13  phil
+Updated the .ts files.
+
+
+2010/01/15 18:32:53  phil
+Fixed the build system for Qt v3 and v4 prior to v4.5.
+
+
+2010/01/14 14:29:23  phil
+Released as v2.4.1.
+
+
+2009/12/22 16:48:28  phil
+Added the API file for Python v3.1.
+
+
+2009/12/22 11:37:56  phil
+Added support for automatically generated docstrings.
+
+
+2009/12/11 15:10:24  phil
+Fixed a performance problem when displaying very long lines.
+
+
+2009/11/01 17:08:30  phil
+Fixed a possible crash in the handling of call tips.
+
+
+2009/11/01 17:03:09  phil
+Applied the workaround for the autocomplete focus bug under Gnome's window
+manager which (appears) to work with current versions of Qt across all
+platforms.
+
+
+2009/11/01 16:13:12  phil
+Make sure a lexer is fully detached when a QScintilla instance is destroyed.
+
+
+2009/08/19 22:04:28  phil
+Updated German translations from Detlev.
+
+
+2009/08/09 15:46:59  phil
+Added the QsciLexerVerilog class.
+
+
+2009/08/09 12:43:29  phil
+Added the QsciLexerSpice class.
+
+
+2009/06/05  9:37:02  phil
+Released as v2.4.
+
+
+2009/06/03 10:28:54  phil
+Fixed a bug building on Qt v3.
+
+
+2009/05/30 11:32:50  phil
+Applied a fix for copying UTF-8 text to the X clipboard from Lars Reichelt.
+
+
+2009/05/27 11:33:27  phil
+Fixed a missing forward declaration in qscilexercustom.h.
+
+
+2009/05/25 22:13:01  phil
+Don't ask the custom lexer to style zero characters.
+
+
+2009/05/19 18:37:58  phil
+Added Spanish translations from Jaime Seuma.
+
+
+2009/05/19 10:13:56  phil
+A minor fix for ancient C++ compilers.
+
+
+2009/05/18 20:21:50  phil
+Added QsciScintilla::annotation().
+Added QsciLexerCustom (completely untested) and supporting changes to
+QsciLexer.
+
+
+2009/05/17 15:25:11  phil
+Updated translations from Detlev.
+
+
+2009/05/09 18:09:11  phil
+Added support for text margins.
+
+
+2009/05/09 15:40:27  phil
+Debugged the support for annotations.
+Tidied up the QString to Scintilla string conversions.
+
+
+2009/05/08 19:11:13  phil
+Implemented the rest of the annotation API - still needs debugging.
+
+
+2009/05/07 23:53:20  phil
+Added the QsciStyle class.
+
+
+2009/05/06 21:23:15  phil
+Fixed the key event handling when the text() is empty and the key() should be
+used - only seems to happen with OS/X.
+
+
+2009/05/03 17:48:29  phil
+Merged the v2.3 branch onto the trunk.
+
+
+2009/05/03 17:24:43  phil
+Added QsciLexer::lexerId() and provided a default implementation of
+QsciLexer::lexer() so that special lexers (ie. with a SCLEX_* value, but no
+name - specifically SCLEX_CONTAINER) can be implemented.
+
+
+2009/05/03 16:03:39  phil
+Improved the names of the new script styling methods in the XML lexer.
+
+
+2009/05/03 15:50:51  phil
+Updated the signature of QsciScintillaBase::SCN_MODIFIED() to allow for the
+extra notification fields.
+
+
+2009/05/03 15:28:03  phil
+Added setSmartHighlighting() and smartHighlighting() to QsciLexerPascal.
+Updated the styles for the new Scintilla Pascal lexer.
+
+
+2009/05/03 12:28:45  phil
+Added setFoldScriptComments(), foldScriptComments(), setFoldScriptHeredocs()
+and foldScriptHeredocs() to QsciLexerHTML.
+
+
+2009/05/03 11:58:07  phil
+Added setScriptsAllowed() and scriptsAllowed() to QsciLexerXML.
+
+
+2009/05/02 19:06:54  phil
+Added setDollarsAllowed() and dollarsAllowed() to QsciLexerCPP.
+
+
+2009/05/02 18:29:49  phil
+Added setFoldPackages(), foldPackages(), setFoldPODBlocks() and foldPODBlocks()
+to QsciLexerPerl.
+
+
+2009/05/02 17:20:48  phil
+Added setV2UnicodeAllowed(), v2UnicodeAllowed(), setV3BinaryOctalAllowed(),
+v3BinaryOctalAllowed(), setV3BytesAllowed and v3BytesAllowed() to
+QsciLexerPython.
+
+
+2009/05/02 15:58:29  phil
+Completed the integration of the low-level API of Scintilla v1.78.
+
+
+2009/05/02 14:03:23  phil
+Initial merge of Scintilla v1.78.
+
+
+2009/04/14 11:39:50  phil
+Updated German translations from Detlev.
+
+
+2009/04/03 11:05:13  phil
+Added support for Python v3.
+
+
+2009/03/05 10:25:18  phil
+Fixed the previous fix for Qt3.
+
+
+2009/03/04 20:51:43  phil
+Fixed a problem with using API entries with images as call tips.
+
+
+2009/02/26  8:39:23  phil
+Added the missing support for UUID in QsciLexerCPP.description().
+
+
 2008/11/17 13:52:19  phil
 Released as v2.3.2.
 

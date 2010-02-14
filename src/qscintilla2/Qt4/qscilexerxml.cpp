@@ -1,6 +1,6 @@
 // This module implements the QsciLexerXML class.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -24,11 +24,6 @@
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
 // 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
-// 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -37,11 +32,13 @@
 
 #include <qcolor.h>
 #include <qfont.h>
+#include <qsettings.h>
 
 
 // The ctor.
 QsciLexerXML::QsciLexerXML(QObject *parent)
-    : QsciLexerHTML(parent)
+    : QsciLexerHTML(parent),
+      scripts(true)
 {
 }
 
@@ -209,4 +206,56 @@ QColor QsciLexerXML::defaultPaper(int style) const
     }
 
     return QsciLexerHTML::defaultPaper(style);
+}
+
+
+// Refresh all properties.
+void QsciLexerXML::refreshProperties()
+{
+    setScriptsProp();
+}
+
+
+// Read properties from the settings.
+bool QsciLexerXML::readProperties(QSettings &qs, const QString &prefix)
+{
+    int rc = QsciLexerHTML::readProperties(qs, prefix), num;
+
+    scripts = qs.value(prefix + "scriptsstyled", true).toBool();
+
+    return rc;
+}
+
+
+// Write properties to the settings.
+bool QsciLexerXML::writeProperties(QSettings &qs, const QString &prefix) const
+{
+    int rc = QsciLexerHTML::writeProperties(qs, prefix);
+
+    qs.setValue(prefix + "scriptsstyled", scripts);
+
+    return rc;
+}
+
+
+// Return true if scripts are styled.
+bool QsciLexerXML::scriptsStyled() const
+{
+    return scripts;
+}
+
+
+// Set if scripts are styled.
+void QsciLexerXML::setScriptsStyled(bool styled)
+{
+    scripts = styled;
+
+    setScriptsProp();
+}
+
+
+// Set the "lexer.xml.allow.scripts" property.
+void QsciLexerXML::setScriptsProp()
+{
+    emit propertyChanged("lexer.xml.allow.scripts",(scripts ? "1" : "0"));
 }

@@ -1,6 +1,6 @@
 // The implementation of the Qt specific subclass of ScintillaBase.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -24,11 +24,6 @@
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
 // 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
-// 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -51,6 +46,7 @@
 // We want to use the Scintilla notification names as Qt signal names.
 #undef  SCEN_CHANGE
 #undef  SCN_AUTOCCANCELLED
+#undef  SCN_AUTOCCHARDELETED
 #undef  SCN_AUTOCSELECTION
 #undef  SCN_CALLTIPCLICK
 #undef  SCN_CHARADDED
@@ -78,6 +74,7 @@ enum
 {
     SCEN_CHANGE = 768,
     SCN_AUTOCCANCELLED = 2025,
+    SCN_AUTOCCHARDELETED = 2026,
     SCN_AUTOCSELECTION = 2022,
     SCN_CALLTIPCLICK = 2021,
     SCN_CHARADDED = 2001,
@@ -292,6 +289,10 @@ void ScintillaQt::NotifyParent(SCNotification scn)
         emit qsb->SCN_AUTOCCANCELLED();
         break;
 
+    case SCN_AUTOCCHARDELETED:
+        emit qsb->SCN_AUTOCCHARDELETED();
+        break;
+
     case SCN_AUTOCSELECTION:
         emit qsb->SCN_AUTOCSELECTION(scn.text, scn.lParam);
         break;
@@ -339,8 +340,8 @@ void ScintillaQt::NotifyParent(SCNotification scn)
 
     case SCN_MODIFIED:
         emit qsb->SCN_MODIFIED(scn.position, scn.modificationType, scn.text,
-                scn.length,scn.linesAdded, scn.line, scn.foldLevelNow,
-                scn.foldLevelPrev);
+                scn.length, scn.linesAdded, scn.line, scn.foldLevelNow,
+                scn.foldLevelPrev, scn.token, scn.annotationLinesAdded);
         break;
 
     case SCN_MODIFYATTEMPTRO:
@@ -510,7 +511,7 @@ void ScintillaQt::ClaimSelection()
             CopySelectionRange(&text);
 
             if (text.s)
-                cb->setText(text.s, QClipboard::Selection);
+                cb->setText(textRange(&text), QClipboard::Selection);
         }
 
         primarySelection = true;

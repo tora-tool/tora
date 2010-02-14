@@ -1,7 +1,7 @@
 // The implementation of various Qt version independent classes used by the
 // rest of the port.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -24,11 +24,6 @@
 // review the following information:
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
-// 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -128,7 +123,16 @@ void SciPopup::on_triggered(int cmd)
 SciListBox::SciListBox(QWidget *parent, ListBoxQt *lbx_)
     : QListWidget(parent), lbx(lbx_)
 {
+    // This is the root of the focus problems under Gnome's window manager.  We
+    // have tried many flag combinations in the past.  The consensus now seems
+    // to be that the following works.  However it might now work because of a
+    // change in Qt so we only enable it for recent versions in order to
+    // reduce the risk of breaking something that works with earlier versions.
+#if QT_VERSION >= 0x040500
+    setWindowFlags(Qt::ToolTip|Qt::WindowStaysOnTopHint);
+#else
     setWindowFlags(Qt::Tool|Qt::FramelessWindowHint);
+#endif
     setAttribute(Qt::WA_StaticContents);
 
     setFocusProxy(parent);

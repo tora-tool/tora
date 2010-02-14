@@ -1,6 +1,6 @@
 // This module implements the QsciLexerCPP class.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -24,11 +24,6 @@
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
 // 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
-// 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -44,7 +39,8 @@
 QsciLexerCPP::QsciLexerCPP(QObject *parent, bool caseInsensitiveKeywords)
     : QsciLexer(parent),
       fold_atelse(false), fold_comments(false), fold_compact(true),
-      fold_preproc(true), style_preproc(false), nocase(caseInsensitiveKeywords)
+      fold_preproc(true), style_preproc(false), dollars(true),
+      nocase(caseInsensitiveKeywords)
 {
 }
 
@@ -295,6 +291,9 @@ QString QsciLexerCPP::description(int style) const
     case SingleQuotedString:
         return tr("Single-quoted string");
 
+    case UUID:
+        return tr("IDL UUID");
+
     case PreProcessor:
         return tr("Pre-processor block");
 
@@ -345,6 +344,7 @@ void QsciLexerCPP::refreshProperties()
     setCompactProp();
     setPreprocProp();
     setStylePreprocProp();
+    setDollarsProp();
 }
 
 
@@ -358,6 +358,7 @@ bool QsciLexerCPP::readProperties(QSettings &qs,const QString &prefix)
     fold_compact = qs.value(prefix + "foldcompact", true).toBool();
     fold_preproc = qs.value(prefix + "foldpreprocessor", true).toBool();
     style_preproc = qs.value(prefix + "stylepreprocessor", false).toBool();
+    dollars = qs.value(prefix + "dollars", true).toBool();
 
     return rc;
 }
@@ -373,6 +374,7 @@ bool QsciLexerCPP::writeProperties(QSettings &qs,const QString &prefix) const
     qs.setValue(prefix + "foldcompact", fold_compact);
     qs.setValue(prefix + "foldpreprocessor", fold_preproc);
     qs.setValue(prefix + "stylepreprocessor", style_preproc);
+    qs.setValue(prefix + "dollars", dollars);
 
     return rc;
 }
@@ -486,8 +488,31 @@ void QsciLexerCPP::setStylePreprocessor(bool style)
 }
 
 
-// Set the "style.within.preprocessor" property.
+// Set the "styling.within.preprocessor" property.
 void QsciLexerCPP::setStylePreprocProp()
 {
-    emit propertyChanged("style.within.preprocessor",(style_preproc ? "1" : "0"));
+    emit propertyChanged("styling.within.preprocessor",(style_preproc ? "1" : "0"));
+}
+
+
+// Return true if '$' characters are allowed.
+bool QsciLexerCPP::dollarsAllowed() const
+{
+    return dollars;
+}
+
+
+// Set if '$' characters are allowed.
+void QsciLexerCPP::setDollarsAllowed(bool allowed)
+{
+    dollars = allowed;
+
+    setDollarsProp();
+}
+
+
+// Set the "lexer.cpp.allow.dollars" property.
+void QsciLexerCPP::setDollarsProp()
+{
+    emit propertyChanged("lexer.cpp.allow.dollars",(dollars ? "1" : "0"));
 }

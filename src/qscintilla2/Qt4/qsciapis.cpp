@@ -1,6 +1,6 @@
 // This module implements the QsciAPIs class.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -23,11 +23,6 @@
 // review the following information:
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
-// 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -73,16 +68,27 @@ struct QsciAPIsPrepared
     // The raw API information.
     QStringList raw_apis;
 
-    QStringList apiWords(int api_idx, const QStringList &wseps) const;
+    QStringList apiWords(int api_idx, const QStringList &wseps,
+            bool strip_image) const;
     static QString apiBaseName(const QString &api);
 };
 
 
 
 // Return a particular API entry as a list of words.
-QStringList QsciAPIsPrepared::apiWords(int api_idx, const QStringList &wseps) const
+QStringList QsciAPIsPrepared::apiWords(int api_idx, const QStringList &wseps,
+        bool strip_image) const
 {
     QString base = apiBaseName(raw_apis[api_idx]);
+
+    // Remove any embedded image reference if necessary.
+    if (strip_image)
+    {
+        int tail = base.indexOf('?');
+
+        if (tail >= 0)
+            base.truncate(tail);
+    }
 
     if (wseps.isEmpty())
         return QStringList(base);
@@ -178,7 +184,7 @@ void QsciAPIsWorker::run()
         if (abort)
             break;
 
-        QStringList words = prepared->apiWords(a, wseps);
+        QStringList words = prepared->apiWords(a, wseps, true);
 
         for (int w = 0; w < words.count(); ++w)
         {
@@ -408,7 +414,7 @@ bool QsciAPIs::originStartsWith(const QString &path, const QString &wsep)
     // follows in the origin is either a word separator or a (.
     QString tail = orig.mid(path.length());
 
-    return (tail.startsWith(wsep) || tail.at(0) == '(');
+    return (!tail.isEmpty() && (tail.startsWith(wsep) || tail.at(0) == '('));
 }
 
 
@@ -602,7 +608,7 @@ void QsciAPIs::addAPIEntries(const WordIndexList &wl, bool complete,
     {
         const WordIndex &wi = wl[w];
 
-        QStringList api_words = prep->apiWords(wi.first, wseps);
+        QStringList api_words = prep->apiWords(wi.first, wseps, false);
 
         int idx = wi.second;
 
@@ -704,7 +710,7 @@ QStringList QsciAPIs::callTips(const QStringList &context, int commas,
             for (int i = 0; i < wil->count(); ++i)
             {
                 const WordIndex &wi = (*wil)[i];
-                QStringList awords = prep->apiWords(wi.first, wseps);
+                QStringList awords = prep->apiWords(wi.first, wseps, true);
 
                 // Check the word is the function name and not part of any
                 // context.

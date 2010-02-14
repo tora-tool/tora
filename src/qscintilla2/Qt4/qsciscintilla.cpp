@@ -2,7 +2,7 @@
 // Scintilla.  It is modelled on QTextEdit - a method of the same name should
 // behave in the same way.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -26,11 +26,6 @@
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
 // 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
-// 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -46,6 +41,8 @@
 #include "Qsci/qsciabstractapis.h"
 #include "Qsci/qscicommandset.h"
 #include "Qsci/qscilexer.h"
+#include "Qsci/qscistyle.h"
+#include "Qsci/qscistyledtext.h"
 
 
 // Make sure these match the values in Scintilla.h.  We don't #include that
@@ -53,6 +50,8 @@
 #define KEYWORDSET_MAX  8
 #define MARKER_MAX      31
 
+#define ScintillaStringData(s)      (s).constData()
+#define ScintillaStringLength(s)    (s).size()
 
 // The list separators for auto-completion and user lists.
 const char acSeparator = '\x03';
@@ -77,8 +76,8 @@ QsciScintilla::QsciScintilla(QWidget *parent)
     connect(this,SIGNAL(SCN_MODIFYATTEMPTRO()),
              SIGNAL(modificationAttempted()));
 
-    connect(this,SIGNAL(SCN_MODIFIED(int,int,const char *,int,int,int,int,int)),
-             SLOT(handleModified(int,int,const char *,int,int,int,int,int)));
+    connect(this,SIGNAL(SCN_MODIFIED(int,int,const char *,int,int,int,int,int,int,int)),
+             SLOT(handleModified(int,int,const char *,int,int,int,int,int,int,int)));
     connect(this,SIGNAL(SCN_CALLTIPCLICK(int)),
              SLOT(handleCallTipClick(int)));
     connect(this,SIGNAL(SCN_CHARADDED(int)),
@@ -124,6 +123,7 @@ QsciScintilla::QsciScintilla(QWidget *parent)
     setMatchedBraceForegroundColor(Qt::blue);
     setUnmatchedBraceForegroundColor(Qt::red);
 
+    setAnnotationDisplay(AnnotationStandard);
     setLexer();
 
     // Set the visible policy.  These are the same as SciTE's defaults
@@ -140,6 +140,9 @@ QsciScintilla::QsciScintilla(QWidget *parent)
 // The dtor.
 QsciScintilla::~QsciScintilla()
 {
+    // Detach any current lexer.
+    detachLexer();
+
     doc.undisplay(this);
     delete stdCmds;
 }
@@ -649,25 +652,9 @@ void QsciScintilla::startAutoCompletion(AutoCompletionSource acs,
         return;
 
     // Get the last word's raw data and length.
-    const QString &last = context.last();
-    const char *last_data;
-    int last_len;
-    QByteArray s;
-
-    if (isUtf8())
-    {
-        s = last.toUtf8();
-
-        last_data = s.data();
-        last_len = s.length();
-    }
-    else
-    {
-        s = last.toLatin1();
-
-        last_data = s.data();
-        last_len = s.length();
-    }
+    ScintillaString s = convertTextQ2S(context.last());
+    const char *last_data = ScintillaStringData(s);
+    int last_len = ScintillaStringLength(s);
 
     if (checkThresh && last_len < acThresh)
         return;
@@ -1435,7 +1422,8 @@ void QsciScintilla::foldLine(int line)
 
 // Handle the SCN_MODIFIED notification.
 void QsciScintilla::handleModified(int pos, int mtype, const char *text,
-        int len, int added, int line, int foldNow, int foldPrev)
+        int len, int added, int line, int foldNow, int foldPrev, int token,
+        int annotationLinesAdded)
 {
     if (mtype & SC_MOD_CHANGEFOLD)
     {
@@ -1605,27 +1593,10 @@ int QsciScintilla::simpleFind()
     SendScintilla(SCI_SETTARGETSTART, findState.startpos);
     SendScintilla(SCI_SETTARGETEND, findState.endpos);
 
-    int pos;
+    ScintillaString s = convertTextQ2S(findState.expr);
 
-    if (isUtf8())
-    {
-        QByteArray s = findState.expr.toUtf8();
-
-        pos = SendScintilla(SCI_SEARCHINTARGET, s.length(), s.data());
-    }
-    else
-    {
-        const char *s;
-        int len;
-
-        QByteArray ba = findState.expr.toLatin1();
-        s = ba;
-        len = ba.length();
-
-        pos = SendScintilla(SCI_SEARCHINTARGET, len, s);
-    }
-
-    return pos;
+    return SendScintilla(SCI_SEARCHINTARGET, ScintillaStringLength(s),
+            ScintillaStringData(s));
 }
 
 
@@ -1639,24 +1610,10 @@ void QsciScintilla::replace(const QString &replaceStr)
 
     SendScintilla(SCI_TARGETFROMSELECTION);
 
-    long len;
     int cmd = (findState.flags & SCFIND_REGEXP) ? SCI_REPLACETARGETRE : SCI_REPLACETARGET;
 
-    if (isUtf8())
-    {
-        QByteArray s = replaceStr.toUtf8();
-
-        len = SendScintilla(cmd, -1, s.data());
-    }
-    else
-    {
-        const char *s;
-
-        QByteArray ba = replaceStr.toLatin1();
-        s = ba;
-
-        len = SendScintilla(cmd, -1, s);
-    }
+    ScintillaString s = convertTextQ2S(replaceStr);
+    long len = SendScintilla(cmd, -1, ScintillaStringData(s));
 
     // Reset the selection.
     SendScintilla(SCI_SETSELECTIONSTART, start);
@@ -1856,23 +1813,9 @@ void QsciScintilla::append(const QString &text)
 {
     bool ro = ensureRW();
 
-    if (isUtf8())
-    {
-        QByteArray s = text.toUtf8();
-
-        SendScintilla(SCI_APPENDTEXT, s.length(), s.data());
-    }
-    else
-    {
-        const char *s;
-        int len;
-
-        QByteArray ba = text.toLatin1();
-        s = ba;
-        len = ba.length();
-
-        SendScintilla(SCI_APPENDTEXT, len, s);
-    }
+    ScintillaString s = convertTextQ2S(text);
+    SendScintilla(SCI_APPENDTEXT, ScintillaStringLength(s),
+            ScintillaStringData(s));
 
     SendScintilla(SCI_EMPTYUNDOBUFFER);
 
@@ -1900,12 +1843,8 @@ void QsciScintilla::insertAtPos(const QString &text, int pos)
     bool ro = ensureRW();
 
     SendScintilla(SCI_BEGINUNDOACTION);
-
-    if (isUtf8())
-        SendScintilla(SCI_INSERTTEXT, pos, text.toUtf8().data());
-    else
-        SendScintilla(SCI_INSERTTEXT, pos, text.toLatin1().data());
-
+    SendScintilla(SCI_INSERTTEXT, pos,
+            ScintillaStringData(convertTextQ2S(text)));
     SendScintilla(SCI_ENDUNDOACTION);
 
     setReadOnly(ro);
@@ -2054,11 +1993,7 @@ void QsciScintilla::setText(const QString &text)
 {
     bool ro = ensureRW();
 
-    if (isUtf8())
-        SendScintilla(SCI_SETTEXT, text.toUtf8().data());
-    else
-        SendScintilla(SCI_SETTEXT, text.toLatin1().data());
-
+    SendScintilla(SCI_SETTEXT, ScintillaStringData(convertTextQ2S(text)));
     SendScintilla(SCI_EMPTYUNDOBUFFER);
 
     setReadOnly(ro);
@@ -2299,6 +2234,70 @@ void QsciScintilla::setIndentationsUseTabs(bool tabs)
 }
 
 
+// Return the margin type.
+QsciScintilla::MarginType QsciScintilla::marginType(int margin) const
+{
+    return (MarginType)SendScintilla(SCI_GETMARGINTYPEN, margin);
+}
+
+
+// Set the margin type.
+void QsciScintilla::setMarginType(int margin, QsciScintilla::MarginType type)
+{
+    SendScintilla(SCI_SETMARGINTYPEN, margin, type);
+}
+
+
+// Clear margin text.
+void QsciScintilla::clearMarginText(int line)
+{
+    if (line < 0)
+        SendScintilla(SCI_MARGINSETTEXT, line, (const char *)0);
+    else
+        SendScintilla(SCI_MARGINTEXTCLEARALL);
+}
+
+
+// Annotate a line.
+void QsciScintilla::setMarginText(int line, const QString &text, int style)
+{
+    int style_offset = SendScintilla(SCI_MARGINGETSTYLEOFFSET);
+
+    SendScintilla(SCI_MARGINSETTEXT, line,
+            ScintillaStringData(convertTextQ2S(text)));
+
+    SendScintilla(SCI_MARGINSETSTYLE, line, style - style_offset);
+}
+
+
+// Annotate a line.
+void QsciScintilla::setMarginText(int line, const QString &text, const QsciStyle &style)
+{
+    setMarginText(line, text, style.style());
+}
+
+
+// Annotate a line.
+void QsciScintilla::setMarginText(int line, const QsciStyledText &text)
+{
+    setMarginText(line, text.text(), text.style());
+}
+
+
+// Annotate a line.
+void QsciScintilla::setMarginText(int line, const QList<QsciStyledText> &text)
+{
+    char *styles;
+    ScintillaString styled_text = styleText(text, &styles,
+            SendScintilla(SCI_MARGINGETSTYLEOFFSET));
+
+    SendScintilla(SCI_MARGINSETTEXT, line, ScintillaStringData(styled_text));
+    SendScintilla(SCI_MARGINSETSTYLES, line, styles);
+
+    delete[] styles;
+}
+
+
 // Return the state of line numbers in a margin.
 bool QsciScintilla::marginLineNumbers(int margin) const
 {
@@ -2309,7 +2308,8 @@ bool QsciScintilla::marginLineNumbers(int margin) const
 // Enable and disable line numbers in a margin.
 void QsciScintilla::setMarginLineNumbers(int margin, bool lnrs)
 {
-    SendScintilla(SCI_SETMARGINTYPEN, margin, lnrs ? SC_MARGIN_NUMBER : 0);
+    SendScintilla(SCI_SETMARGINTYPEN, margin,
+            lnrs ? SC_MARGIN_NUMBER : SC_MARGIN_SYMBOL);
 }
 
 
@@ -2358,14 +2358,8 @@ void QsciScintilla::setMarginWidth(int margin, int width)
 // Set the width of a margin to the width of some text.
 void QsciScintilla::setMarginWidth(int margin, const QString &s)
 {
-    int width;
-
-    if (isUtf8())
-        width = SendScintilla(SCI_TEXTWIDTH, STYLE_LINENUMBER,
-                s.toUtf8().data());
-    else
-        width = SendScintilla(SCI_TEXTWIDTH, STYLE_LINENUMBER,
-                s.toLatin1().data());
+    int width = SendScintilla(SCI_TEXTWIDTH, STYLE_LINENUMBER,
+            ScintillaStringData(convertTextQ2S(s)));
 
     setMarginWidth(margin, width);
 }
@@ -2662,29 +2656,38 @@ void QsciScintilla::setUnmatchedBraceForegroundColor(const QColor &col)
 }
 
 
-// Set the lexer.
-void QsciScintilla::setLexer(QsciLexer *lexer)
+// Detach any lexer.
+void QsciScintilla::detachLexer()
 {
-    // Disconnect any previous lexer.
     if (!lex.isNull())
     {
+        lex->setEditor(0);
         lex->disconnect(this);
 
         SendScintilla(SCI_STYLERESETDEFAULT);
         SendScintilla(SCI_STYLECLEARALL);
         SendScintilla(SCI_CLEARDOCUMENTSTYLE);
     }
+}
+
+
+// Set the lexer.
+void QsciScintilla::setLexer(QsciLexer *lexer)
+{
+    // Detach any current lexer.
+    detachLexer();
 
     // Connect up the new lexer.
     lex = lexer;
 
     if (lex)
     {
-        SendScintilla(SCI_SETLEXERLANGUAGE, lex->lexer());
+        if (lex->lexer())
+            SendScintilla(SCI_SETLEXERLANGUAGE, lex->lexer());
+        else
+            SendScintilla(SCI_SETLEXER, lex->lexerId());
 
-        int bits = SendScintilla(SCI_GETSTYLEBITSNEEDED);
-
-        SendScintilla(SCI_SETSTYLEBITS, bits);
+        lex->setEditor(this);
 
         connect(lex,SIGNAL(colorChanged(const QColor &, int)),
                 SLOT(handleStyleColorChange(const QColor &, int)));
@@ -2715,7 +2718,7 @@ void QsciScintilla::setLexer(QsciLexer *lexer)
         // incorrect) font setting gets reset when style 0 is set.
         setLexerStyle(STYLE_DEFAULT);
 
-        int nrStyles = 1 << bits;
+        int nrStyles = 1 << SendScintilla(SCI_GETSTYLEBITS);
 
         for (int s = 0; s < nrStyles; ++s)
             if (!lex->description(s).isNull())
@@ -3064,7 +3067,6 @@ void QsciScintilla::lineIndexFromPosition(int position, int *line, int *index) c
         ++indx;
     }
 
-
     *line = lin;
     *index = indx;
 }
@@ -3077,6 +3079,16 @@ QString QsciScintilla::convertTextS2Q(const char *s) const
         return QString::fromUtf8(s);
 
     return QString::fromLatin1(s);
+}
+
+
+// Convert a Qt Unicode string to a Scintilla string.
+QsciScintilla::ScintillaString QsciScintilla::convertTextQ2S(const QString &q) const
+{
+    if (isUtf8())
+        return q.toUtf8();
+
+    return q.toLatin1();
 }
 
 
@@ -3447,4 +3459,129 @@ QString QsciScintilla::wordAtPoint(const QPoint &point) const
     delete[] buf;
 
     return word;
+}
+
+
+// Return the display style for annotations.
+QsciScintilla::AnnotationDisplay QsciScintilla::annotationDisplay() const
+{
+    return (AnnotationDisplay)SendScintilla(SCI_ANNOTATIONGETVISIBLE);
+}
+
+
+// Set the display style for annotations.
+void QsciScintilla::setAnnotationDisplay(QsciScintilla::AnnotationDisplay display)
+{
+    SendScintilla(SCI_ANNOTATIONSETVISIBLE, display);
+}
+
+
+// Clear annotations.
+void QsciScintilla::clearAnnotations(int line)
+{
+    if (line < 0)
+        SendScintilla(SCI_ANNOTATIONSETTEXT, line, (const char *)0);
+    else
+        SendScintilla(SCI_ANNOTATIONCLEARALL);
+}
+
+
+// Annotate a line.
+void QsciScintilla::annotate(int line, const QString &text, int style)
+{
+    int style_offset = SendScintilla(SCI_ANNOTATIONGETSTYLEOFFSET);
+
+    ScintillaString s = convertTextQ2S(text);
+
+    SendScintilla(SCI_ANNOTATIONSETTEXT, line, ScintillaStringData(s));
+
+    // SCI_ANNOTATIONSETSTYLE is broken in Scintilla v1.78 when the text
+    // contains newlines.
+#if 0
+    SendScintilla(SCI_ANNOTATIONSETSTYLE, line, style - style_offset);
+#else
+    int nr_bytes = ScintillaStringLength(s);
+    char *styles = new char[nr_bytes];
+
+    memset(styles, style - style_offset, nr_bytes);
+    SendScintilla(SCI_ANNOTATIONSETSTYLES, line, styles);
+
+    delete[] styles;
+#endif
+}
+
+
+// Annotate a line.
+void QsciScintilla::annotate(int line, const QString &text, const QsciStyle &style)
+{
+    annotate(line, text, style.style());
+}
+
+
+// Annotate a line.
+void QsciScintilla::annotate(int line, const QsciStyledText &text)
+{
+    annotate(line, text.text(), text.style());
+}
+
+
+// Annotate a line.
+void QsciScintilla::annotate(int line, const QList<QsciStyledText> &text)
+{
+    char *styles;
+    ScintillaString styled_text = styleText(text, &styles,
+            SendScintilla(SCI_ANNOTATIONGETSTYLEOFFSET));
+
+    SendScintilla(SCI_ANNOTATIONSETTEXT, line,
+            ScintillaStringData(styled_text));
+    SendScintilla(SCI_ANNOTATIONSETSTYLES, line, styles);
+
+    delete[] styles;
+}
+
+
+// Get the annotation for a line, if any.
+QString QsciScintilla::annotation(int line) const
+{
+    char *buf = new char[SendScintilla(SCI_ANNOTATIONGETTEXT, line, (const char *)0) + 1];
+
+    buf[SendScintilla(SCI_ANNOTATIONGETTEXT, line, buf)] = '\0';
+
+    QString qs = convertTextS2Q(buf);
+    delete[] buf;
+
+    return qs;
+}
+
+
+// Convert a list of styled text to the low-level arrays.
+QsciScintilla::ScintillaString QsciScintilla::styleText(const QList<QsciStyledText> &styled_text, char **styles, int style_offset)
+{
+    QString text;
+    int i;
+
+    // Build the full text.
+    for (i = 0; i < styled_text.count(); ++i)
+    {
+        const QsciStyledText &st = styled_text[i];
+
+        text.append(st.text());
+    }
+
+    ScintillaString s = convertTextQ2S(text);
+
+    // There is a style byte for every byte.
+    char *sp = *styles = new char[ScintillaStringLength(s)];
+
+    for (i = 0; i < styled_text.count(); ++i)
+    {
+        const QsciStyledText &st = styled_text[i];
+        ScintillaString part = convertTextQ2S(st.text());
+        int part_length = ScintillaStringLength(part);
+
+        for (int c = 0; c < part_length; ++c)
+            *sp++ = (char)(st.style() - style_offset);
+    }
+
+    return s;
 }

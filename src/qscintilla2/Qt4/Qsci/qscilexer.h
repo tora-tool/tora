@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexer class.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -23,11 +23,6 @@
 // review the following information:
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
-// 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -52,27 +47,30 @@ extern "C++" {
 class QSettings;
 
 class QsciAbstractAPIs;
+class QsciScintilla;
 
 
-//! \brief The QsciLexer class is an abstract class used as a base for specific
-//! existing Scintilla language lexers.
+//! \brief The QsciLexer class is an abstract class used as a base for language
+//! lexers.
 //!
-//! A Scintilla lexer scans the text breaking it up into separate language
-//! objects, e.g. keywords, strings, operators.  The lexer then uses a
-//! different style to draw each object.  A style is identified by a style
-//! number and has a number of attributes, including colour and font.  A
-//! specific language lexer will implement appropriate default styles which can
-//! be overriden by an application by further sub-classing the specific
-//! language lexer.
+//! A lexer scans the text breaking it up into separate language objects, e.g.
+//! keywords, strings, operators.  The lexer then uses a different style to
+//! draw each object.  A style is identified by a style number and has a number
+//! of attributes, including colour and font.  A specific language lexer will
+//! implement appropriate default styles which can be overriden by an
+//! application by further sub-classing the specific language lexer.
 //!
-//! A specific language lexer may provide one or more sets of words to be
-//! recognised as keywords.  Most lexers only provide one set, but some may
-//! support languages embedded in other languages and provide several sets.
+//! A lexer may provide one or more sets of words to be recognised as keywords.
+//! Most lexers only provide one set, but some may support languages embedded
+//! in other languages and provide several sets.
 //!
 //! QsciLexer provides convenience methods for saving and restoring user
-//! preferences for fonts and colours.  Note that QSciLexer is not a means to
-//! writing new lexers - you must do that by adding a new lexer to the
-//! underlying Scintilla code.
+//! preferences for fonts and colours.
+//!
+//! If you want to write a lexer for a new language then you can add it to the
+//! underlying Scintilla code and implement a corresponding QsciLexer sub-class
+//! to manage the different styles used.  Alternatively you can implement a
+//! sub-class of QsciLexerCustom.
 class QSCINTILLA_EXPORT QsciLexer : public QObject
 {
     Q_OBJECT
@@ -89,9 +87,18 @@ public:
     //! sub-class.
     virtual const char *language() const = 0;
 
-    //! Returns the name of the lexer.  Some lexers support a number of
-    //! languages.  It must be re-implemented by a sub-class.
-    virtual const char *lexer() const = 0;
+    //! Returns the name of the lexer.  If 0 is returned then the lexer's
+    //! numeric identifier is used.  The default implementation returns 0.
+    //!
+    //! \sa lexerId()
+    virtual const char *lexer() const;
+
+    //! Returns the identifier (i.e. a QsciScintillaBase::SCLEX_* value) of the
+    //! lexer.  This is only used if lexer() returns 0.  The default
+    //! implementation returns QsciScintillaBase::SCLEX_CONTAINER.
+    //!
+    //! \sa lexer()
+    virtual int lexerId() const;
 
     //! Returns the current API set or 0 if there isn't one.
     //!
@@ -207,6 +214,10 @@ public:
     //! Returns the default paper colour for style number \a style.
     virtual QColor defaultPaper(int style) const;
 
+    //! Returns the QsciScintilla instance that the lexer is currently attached
+    //! to or 0 if it is unattached.
+    QsciScintilla *editor() const {return attached_editor;}
+
     //! The current set of APIs is set to \a apis.  If \a apis is 0 then any
     //! existing APIs for this lexer are removed.
     //!
@@ -228,6 +239,9 @@ public:
     //! \sa defaultPaper(), paper()
     void setDefaultPaper(const QColor &c);
 
+    //! \internal Set the QsciScintilla instance that the lexer is attached to.
+    virtual void setEditor(QsciScintilla *editor);
+
     //! The colour, paper, font and end-of-line for each style number, and
     //! all lexer specific properties are read from the settings \a qs.
     //! \a prefix is prepended to the key of each entry.  true is returned
@@ -239,6 +253,10 @@ public:
     //! Causes all properties to be refreshed by emitting the
     //! propertyChanged() signal as required.
     virtual void refreshProperties();
+
+    //! Returns the number of style bits needed by the lexer.  Normally this
+    //! should only be re-implemented by custom lexers.
+    virtual int styleBitsNeeded() const;
 
     //! \internal Returns the string of characters that comprise a word.
     //! The default is 0 which implies the upper and lower case alphabetic
@@ -331,6 +349,7 @@ private:
     QColor defColor;
     QColor defPaper;
     QsciAbstractAPIs *apiSet;
+    QsciScintilla *attached_editor;
 
     void setStyleDefaults() const;
     StyleData &styleData(int style) const;

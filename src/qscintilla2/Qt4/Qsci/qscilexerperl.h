@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerPerl class.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -23,11 +23,6 @@
 // review the following information:
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
-// 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -214,6 +209,26 @@ public:
     //! \sa setFoldCompact()
     bool foldCompact() const;
 
+    //! If \a fold is true then packages can be folded.  The default is true.
+    //!
+    //! \sa foldPackages()
+    void setFoldPackages(bool fold);
+
+    //! Returns true if packages can be folded.
+    //!
+    //! \sa setFoldPackages()
+    bool foldPackages() const;
+
+    //! If \a fold is true then POD blocks can be folded.  The default is true.
+    //!
+    //! \sa foldPODBlocks()
+    void setFoldPODBlocks(bool fold);
+
+    //! Returns true if POD blocks can be folded.
+    //!
+    //! \sa setFoldPODBlocks()
+    bool foldPODBlocks() const;
+
 public slots:
     //! If \a fold is true then multi-line comment blocks can be folded.
     //! The default is false.
@@ -243,9 +258,13 @@ protected:
 private:
     void setCommentProp();
     void setCompactProp();
+    void setPackagesProp();
+    void setPODBlocksProp();
 
     bool fold_comments;
     bool fold_compact;
+    bool fold_packages;
+    bool fold_pod_blocks;
 
     QsciLexerPerl(const QsciLexerPerl &);
     QsciLexerPerl &operator=(const QsciLexerPerl &);

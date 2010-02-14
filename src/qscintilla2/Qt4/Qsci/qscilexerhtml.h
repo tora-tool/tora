@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerHTML class.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -23,11 +23,6 @@
 // review the following information:
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
-// 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -449,6 +444,28 @@ public:
     //! \sa setCaseSensitiveTags()
     bool caseSensitiveTags() const;
 
+    //! If \a fold is true then script comments can be folded.  The default is
+    //! false.
+    //!
+    //! \sa foldScriptComments()
+    void setFoldScriptComments(bool fold);
+
+    //! Returns true if script comments can be folded.
+    //!
+    //! \sa setFoldScriptComments()
+    bool foldScriptComments() const;
+
+    //! If \a fold is true then script heredocs can be folded.  The default is
+    //! false.
+    //!
+    //! \sa foldScriptHeredocs()
+    void setFoldScriptHeredocs(bool fold);
+
+    //! Returns true if script heredocs can be folded.
+    //!
+    //! \sa setFoldScriptHeredocs()
+    bool foldScriptHeredocs() const;
+
 public slots:
     //! If \a fold is true then trailing blank lines are included in a fold
     //! block. The default is true.
@@ -484,10 +501,14 @@ private:
     void setCompactProp();
     void setPreprocProp();
     void setCaseSensTagsProp();
+    void setScriptCommentsProp();
+    void setScriptHeredocsProp();
 
     bool fold_compact;
     bool fold_preproc;
     bool case_sens_tags;
+    bool fold_script_comments;
+    bool fold_script_heredocs;
 
     QsciLexerHTML(const QsciLexerHTML &);
     QsciLexerHTML &operator=(const QsciLexerHTML &);

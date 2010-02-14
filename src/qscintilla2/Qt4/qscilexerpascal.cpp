@@ -1,6 +1,6 @@
 // This module implements the QsciLexerPascal class.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -24,11 +24,6 @@
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
 // 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
-// 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -43,7 +38,8 @@
 // The ctor.
 QsciLexerPascal::QsciLexerPascal(QObject *parent)
     : QsciLexer(parent),
-      fold_comments(false), fold_compact(true), fold_preproc(false)
+      fold_comments(false), fold_compact(true), fold_preproc(false),
+      smart_highlight(true)
 {
 }
 
@@ -87,8 +83,8 @@ const char *QsciLexerPascal::blockStartKeyword(int *style) const
         *style = Keyword;
 
     return
-        "case catch class default do else for then private protected public "
-        "struct try union while type";
+        "case class do else for then private protected public published "
+        "repeat try while type";
 }
 
 
@@ -125,36 +121,50 @@ QColor QsciLexerPascal::defaultColor(int style) const
     switch (style)
     {
     case Default:
-    case Operator:
-        return QColor(0x00,0x00,0x00);
+        return QColor(0x80,0x80,0x80);
+
+    case Identifier:
+        break;
 
     case Comment:
+    case CommentParenthesis:
     case CommentLine:
         return QColor(0x00,0x7f,0x00);
 
-    case CommentDoc:
-        return QColor(0x7f,0x7f,0x7f);
+    case PreProcessor:
+    case PreProcessorParenthesis:
+        return QColor(0x7f,0x7f,0x00);
 
     case Number:
+    case HexNumber:
         return QColor(0x00,0x7f,0x7f);
 
     case Keyword:
         return QColor(0x00,0x00,0x7f);
 
     case SingleQuotedString:
+    case Character:
         return QColor(0x7f,0x00,0x7f);
 
-    case PreProcessor:
-        return QColor(0x7f,0x7f,0x00);
-
-    case Identifier:
-        break;
+    case UnclosedString:
+    case Operator:
+        return QColor(0x00,0x00,0x00);
 
     case Asm:
-        return QColor(0x00,0x80,0x80);
+        return QColor(0x80,0x40,0x80);
     }
 
     return QsciLexer::defaultColor(style);
+}
+
+
+// Returns the end-of-line fill for a style.
+bool QsciLexerPascal::defaultEolFill(int style) const
+{
+    if (style == UnclosedString)
+        return true;
+
+    return QsciLexer::defaultEolFill(style);
 }
 
 
@@ -166,6 +176,7 @@ QFont QsciLexerPascal::defaultFont(int style) const
     switch (style)
     {
     case Comment:
+    case CommentParenthesis:
     case CommentLine:
 #if defined(Q_OS_WIN)
         f = QFont("Comic Sans MS",9);
@@ -175,6 +186,7 @@ QFont QsciLexerPascal::defaultFont(int style) const
         break;
 
     case Keyword:
+    case Operator:
         f = QsciLexer::defaultFont(style);
         f.setBold(true);
         break;
@@ -188,6 +200,14 @@ QFont QsciLexerPascal::defaultFont(int style) const
         f.setItalic(true);
         break;
 
+    case UnclosedString:
+#if defined(Q_OS_WIN)
+        f = QFont("Courier New", 10);
+#else
+        f = QFont("Bitstream Vera Sans Mono", 9);
+#endif
+        break;
+
     default:
         f = QsciLexer::defaultFont(style);
     }
@@ -196,26 +216,36 @@ QFont QsciLexerPascal::defaultFont(int style) const
 }
 
 
+// Returns the background colour of the text for a style.
+QColor QsciLexerPascal::defaultPaper(int style) const
+{
+    if (style == UnclosedString)
+        return QColor(0xe0,0xc0,0xe0);
+
+    return QsciLexer::defaultPaper(style);
+}
+
+
 // Returns the set of keywords.
 const char *QsciLexerPascal::keywords(int set) const
 {
     if (set == 1)
         return
-            "and array asm begin case cdecl class const constructor contains "
-            "default destructor div do downto else end end. except exit "
-            "exports external far file finalization finally for function goto "
-            "if implementation in index inherited initialization inline "
-            "interface label library message mod near nil not object of on or "
-            "out overload override package packed pascal private procedure "
-            "program property protected public published raise read record "
-            "register repeat requires resourcestring safecall set shl shr "
-            "stdcall stored string then threadvar to try type unit until uses "
-            "var virtual while with write xor";
-
-    if (set == 2)
-        return
-            "write read default public protected private property published "
-            "stored";
+            "absolute abstract and array as asm assembler automated begin "
+            "case cdecl class const constructor deprecated destructor dispid "
+            "dispinterface div do downto dynamic else end except export "
+            "exports external far file final finalization finally for forward "
+            "function goto if implementation in inherited initialization "
+            "inline interface is label library message mod near nil not "
+            "object of on or out overload override packed pascal platform "
+            "private procedure program property protected public published "
+            "raise record register reintroduce repeat resourcestring safecall "
+            "sealed set shl shr static stdcall strict string then threadvar "
+            "to try type unit unsafe until uses var varargs virtual while "
+            "with xor"
+            "add default implements index name nodefault read readonly remove "
+            "stored write writeonly"
+            "package contains requires";
 
     return 0;
 }
@@ -229,17 +259,29 @@ QString QsciLexerPascal::description(int style) const
     case Default:
         return tr("Default");
 
+    case Identifier:
+        return tr("Identifier");
+
     case Comment:
-        return tr("Comment");
+        return tr("'{ ... }' style comment");
+
+    case CommentParenthesis:
+        return tr("'(* ... *)' style comment");
 
     case CommentLine:
         return tr("Line comment");
 
-    case CommentDoc:
-        return tr("JavaDoc style comment");
+    case PreProcessor:
+        return tr("'{$ ... }' style pre-processor block");
+
+    case PreProcessorParenthesis:
+        return tr("'(*$ ... *)' style pre-processor block");
 
     case Number:
         return tr("Number");
+
+    case HexNumber:
+        return tr("Hexadecimal number");
 
     case Keyword:
         return tr("Keyword");
@@ -247,14 +289,14 @@ QString QsciLexerPascal::description(int style) const
     case SingleQuotedString:
         return tr("Single-quoted string");
 
-    case PreProcessor:
-        return tr("Pre-processor block");
+    case UnclosedString:
+        return tr("Unclosed string");
+
+    case Character:
+        return tr("Character");
 
     case Operator:
         return tr("Operator");
-
-    case Identifier:
-        return tr("Identifier");
 
     case Asm:
         return tr("Inline asm");
@@ -270,6 +312,7 @@ void QsciLexerPascal::refreshProperties()
     setCommentProp();
     setCompactProp();
     setPreprocProp();
+    setSmartHighlightProp();
 }
 
 
@@ -281,6 +324,7 @@ bool QsciLexerPascal::readProperties(QSettings &qs,const QString &prefix)
     fold_comments = qs.value(prefix + "foldcomments", false).toBool();
     fold_compact = qs.value(prefix + "foldcompact", true).toBool();
     fold_preproc = qs.value(prefix + "foldpreprocessor", true).toBool();
+    smart_highlight = qs.value(prefix + "smarthighlight", true).toBool();
 
     return rc;
 }
@@ -294,6 +338,7 @@ bool QsciLexerPascal::writeProperties(QSettings &qs,const QString &prefix) const
     qs.setValue(prefix + "foldcomments", fold_comments);
     qs.setValue(prefix + "foldcompact", fold_compact);
     qs.setValue(prefix + "foldpreprocessor", fold_preproc);
+    qs.setValue(prefix + "smarthighlight", smart_highlight);
 
     return rc;
 }
@@ -365,4 +410,27 @@ void QsciLexerPascal::setFoldPreprocessor(bool fold)
 void QsciLexerPascal::setPreprocProp()
 {
     emit propertyChanged("fold.preprocessor",(fold_preproc ? "1" : "0"));
+}
+
+
+// Return true if smart highlighting is enabled.
+bool QsciLexerPascal::smartHighlighting() const
+{
+    return smart_highlight;
+}
+
+
+// Set if smart highlighting is enabled.
+void QsciLexerPascal::setSmartHighlighting(bool enabled)
+{
+    smart_highlight = enabled;
+
+    setSmartHighlightProp();
+}
+
+
+// Set the "lexer.pascal.smart.highlighting" property.
+void QsciLexerPascal::setSmartHighlightProp()
+{
+    emit propertyChanged("lexer.pascal.smart.highlighting", (smart_highlight ? "1" : "0"));
 }

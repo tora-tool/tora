@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerPython class.
 //
-// Copyright (c) 2008 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2010 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -23,11 +23,6 @@
 // review the following information:
 // http://trolltech.com/products/qt/licenses/licensing/licensingoverview
 // or contact the sales department at sales@riverbankcomputing.com.
-// 
-// This file is provided "AS IS" with NO WARRANTY OF ANY KIND,
-// INCLUDING THE WARRANTIES OF DESIGN, MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE. Trolltech reserves all rights not expressly
-// granted herein.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -205,6 +200,42 @@ public:
     //! \sa setIndentationWarning()
     QsciLexerPython::IndentationWarning indentationWarning() const;
 
+    //! If \a allowed is true then Python v2 unicode string literals (e.g.
+    //! u"utf8") are allowed.  The default is true.
+    //!
+    //! \sa v2UnicodeAllowed()
+    void setV2UnicodeAllowed(bool allowed);
+
+    //! Returns true if Python v2 unicode string literals (e.g. u"utf8") are
+    //! allowed.
+    //!
+    //! \sa setV2UnicodeAllowed()
+    bool v2UnicodeAllowed() const;
+
+    //! If \a allowed is true then Python v3 binary and octal literals (e.g.
+    //! 0b1011, 0o712) are allowed.  The default is true.
+    //!
+    //! \sa v3BinaryOctalAllowed()
+    void setV3BinaryOctalAllowed(bool allowed);
+
+    //! Returns true if Python v3 binary and octal literals (e.g. 0b1011,
+    //! 0o712) are allowed.
+    //!
+    //! \sa setV3BinaryOctalAllowed()
+    bool v3BinaryOctalAllowed() const;
+
+    //! If \a allowed is true then Python v3 bytes string literals (e.g.
+    //! b"bytes") are allowed.  The default is true.
+    //!
+    //! \sa v3BytesAllowed()
+    void setV3BytesAllowed(bool allowed);
+
+    //! Returns true if Python v3 bytes string literals (e.g. b"bytes") are
+    //! allowed.
+    //!
+    //! \sa setV3BytesAllowed()
+    bool v3BytesAllowed() const;
+
 public slots:
     //! If \a fold is true then indented comment blocks can be folded.  The
     //! default is false.
@@ -241,10 +272,16 @@ private:
     void setCommentProp();
     void setQuotesProp();
     void setTabWhingeProp();
+    void setV2UnicodeProp();
+    void setV3BinaryOctalProp();
+    void setV3BytesProp();
 
     bool fold_comments;
     bool fold_quotes;
     IndentationWarning indent_warn;
+    bool v2_unicode;
+    bool v3_binary_octal;
+    bool v3_bytes;
 
     friend class QsciLexerHTML;
 
