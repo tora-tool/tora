@@ -304,7 +304,7 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn, toQuery::queryMode mode,
     }
 }
 
-toQDescList &toNoBlockQuery::describe(void)
+toQDescList const &toNoBlockQuery::describe(void) const
 {
     toLocker lock (Lock)
     ;
@@ -446,7 +446,7 @@ bool toNoBlockQuery::poll(void)
     return false;
 }
 
-void toNoBlockQuery::checkError()
+void toNoBlockQuery::checkError() const
 {
     if (!Error.isNull())
     {

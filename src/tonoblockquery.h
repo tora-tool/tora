@@ -82,7 +82,7 @@ class queryTask : public toTask
     toSemaphore Continue;
     /** Lock for all this stuff
      */
-    toLock Lock;
+    mutable toLock Lock;
     /** Current location that values are being read.
      */
     toQList::iterator CurrentValue;
@@ -124,7 +124,7 @@ class queryTask : public toTask
     toQuery *Query;
     /** Throw error if any.
      */
-    void checkError();
+    void checkError() const;
     /** Stop reading query
      */
     void stop();
@@ -161,7 +161,7 @@ public:
     /** Get description of columns.
      * @return Description of columns list. Don't modify this list.
      */
-    toQDescList &describe(void);
+    const toQDescList &describe(void) const;
 
     /** Read the next value from the query.
      * @return The next available value.
