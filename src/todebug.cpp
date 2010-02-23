@@ -1521,6 +1521,11 @@ void toDebug::processWatches(void)
         if (!item->text(6).isEmpty())
         {
             local = true;
+            /* Get value of given variable. Note, that this call can semi-fail raising
+               exception telling that given object/variable is:
+               * The object is a table, but no index was provided
+               * Value of current variable is NULL
+            */
             debugSession->execute(SQLLocalWatch, item->text(2));
             ret = debugSession->readValue().toInt();
             value = debugSession->readValue();
@@ -1581,6 +1586,8 @@ void toDebug::processWatches(void)
         {
             if (local)
             {
+                // this call get's a list of indexes separated with comma (with trailing comma)
+                // example:  -1,0,1,2,5,8,
                 debugSession->execute(SQLLocalIndex, item->text(2));
                 value = debugSession->readValue();
             }
@@ -1606,8 +1613,7 @@ void toDebug::processWatches(void)
                     {
                         QString name = item->text(2);
                         name += QString::fromLatin1("(");
-                        // Why do I have to add 1 here for it to work?
-                        name += QString::number(value.mid(start, end - start).toInt() + 1);
+                        name += QString::number(value.mid(start, end - start).toInt());
                         name += QString::fromLatin1(")");
                         last = new toResultViewItem(item, last);
                         last->setText(0, schema);
