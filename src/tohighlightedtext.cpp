@@ -68,7 +68,6 @@
 
 #include "todefaultkeywords.h"
 
-
 // Default SQL lexer
 // static QsciLexerSQL sqlLexer;
 // this definition (via function) fixes the font screwing
@@ -377,7 +376,6 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     m_debugHandle = markerDefine(QsciScintilla::Background);
 
     m_currentLineMarginHandle = markerDefine(QsciScintilla::RightArrow);
-    m_currentLineHandle = markerDefine(QsciScintilla::Background);
 
     m_bookmarkMarginHandle = markerDefine(QsciScintilla::RightTriangle);
     m_bookmarkHandle = markerDefine(QsciScintilla::Background);
@@ -389,6 +387,11 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     updateSyntaxColor(toSyntaxAnalyzer::ErrorBg);
     updateSyntaxColor(toSyntaxAnalyzer::CurrentLineMarker);
     updateSyntaxColor(toSyntaxAnalyzer::StaticBg);
+
+    // highlight caret line
+    setCaretLineVisible(true);
+    setCaretLineBackgroundColor(DefaultAnalyzer.getColor(toSyntaxAnalyzer::CurrentLineMarker));
+    QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, 100);
 
     // handle "max text width" mark
     if (toConfigurationSingle::Instance().useMaxTextWidthMark())
@@ -470,10 +473,8 @@ void toHighlightedText::positionChanged(int row, int col)
         if (timer->isActive())
             timer->stop();
     }
-    // current line marker
-    markerDeleteAll(m_currentLineHandle);
+    // current line marker (margin arrow)
     markerDeleteAll(m_currentLineMarginHandle);
-    markerAdd(row, m_currentLineHandle);
     markerAdd(row, m_currentLineMarginHandle);
 }
 
@@ -638,7 +639,6 @@ void toHighlightedText::updateSyntaxColor(toSyntaxAnalyzer::infoType t)
         setMarkerBackgroundColor(col, m_staticHandle);
         break;
     case toSyntaxAnalyzer::CurrentLineMarker:
-        setMarkerBackgroundColor(col, m_currentLineHandle);
 //         setMarkerBackgroundColor(col, m_currentLineMarginHandle);
         // TODO/FIXME?: make it configurable - color.
         setMarkerBackgroundColor(DefaultAnalyzer.getColor(toSyntaxAnalyzer::CurrentLineMarker).lighter(100),

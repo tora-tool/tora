@@ -132,15 +132,10 @@ void QsciDocument::undisplay(QsciScintillaBase *qsb)
 // Display the underlying document.
 void QsciDocument::display(QsciScintillaBase *qsb, const QsciDocument *from)
 {
-    void *ndoc;
+    void *ndoc = (from ? from->pdoc->doc : 0);
 
-    if (from)
-    {
-        ndoc = from->pdoc->doc;
-        qsb->SendScintilla(QsciScintillaBase::SCI_SETDOCPOINTER, 0, ndoc);
-    }
-    else
-        ndoc = qsb->SendScintillaPtrResult(QsciScintillaBase::SCI_GETDOCPOINTER);
+    qsb->SendScintilla(QsciScintillaBase::SCI_SETDOCPOINTER, 0, ndoc);
+    ndoc = qsb->SendScintillaPtrResult(QsciScintillaBase::SCI_GETDOCPOINTER);
 
     pdoc->doc = ndoc;
     ++pdoc->nr_displays;

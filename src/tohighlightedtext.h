@@ -96,12 +96,6 @@ private:
      */
     QMap<infoType,QColor> Colors;
 
-    /** marker per linea contenente errori
-      */
-//     int errorMarker;
-    /** marker per linea corrente
-      */
-//     int debugMarker;
     /** Keeps track of possible hits found so far.
      */
     struct posibleHit
@@ -174,7 +168,7 @@ public:
      */
     QColor getColor(infoType typ);
 
-    /** Check if a word is reserved.
+    /** Check if a word is reserved. (Used in toSQLParse)
      * @param word Word to check.
      * @return True if word is reserved.
      */
@@ -248,8 +242,6 @@ protected:
     int m_errorHandle;
     //! \brief A handler for code error - margin
     int m_errorMarginHandle;
-    //! \brief A handler for current line highlighting - line highlighted
-    int m_currentLineHandle;
     //! \brief A handler for current line highlighting - margin
     int m_currentLineMarginHandle;
     //! \brief A handler for bookrmarks - line highlighted
@@ -324,7 +316,7 @@ public:
         return line;
     }
 
-    /** Set current line. Will be indicated with a different background.
+    /** Set current debug line. Will be indicated with a different background. Used from debug tool.
      * @param current Current line.
      */
     void setCurrent(int current);

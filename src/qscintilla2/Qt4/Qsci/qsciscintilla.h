@@ -465,6 +465,12 @@ public:
     //! is no current lexer then true is returned.
     bool caseSensitive() const;
 
+    //! Clear all current folds, i.e. ensure that all lines are displayed
+    //! unfolded.
+    //!
+    //! \sa setFolding()
+    void clearFolds();
+
     //! Clear all registered images.
     //!
     //! \sa registerImage()
@@ -708,8 +714,8 @@ public:
     //! marker number is returned or -1 if the marker number was already
     //! allocated or too many markers have been defined.
     //!
-    //! Markers are small geometric symbols and character used, for example, to
-    //! indicate the current line or, in debuggers, to indicate breakpoints.
+    //! Markers are small geometric symbols and characters used, for example,
+    //! to indicate the current line or, in debuggers, to indicate breakpoints.
     //! If a margin has a width of 0 then its markers are not drawn, but their
     //! background colours affect the background colour of the corresponding
     //! line of text.

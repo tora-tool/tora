@@ -1231,6 +1231,27 @@ void QsciScintilla::setFolding(FoldStyle folding, int margin)
 }
 
 
+// Clear all current folds.
+void QsciScintilla::clearFolds()
+{
+    recolor();
+
+    int maxLine = SendScintilla(SCI_GETLINECOUNT);
+
+    for (int line = 0; line < maxLine; line++)
+    {
+        int level = SendScintilla(SCI_GETFOLDLEVEL, line);
+
+        if (level & SC_FOLDLEVELHEADERFLAG)
+        {
+            SendScintilla(SCI_SETFOLDEXPANDED, line, 1);
+            foldExpand(line, true, false, 0, level);
+            line--;
+        }
+    }
+}
+
+
 // Set up a folder marker.
 void QsciScintilla::setFoldMarker(int marknr, int mark)
 {
@@ -1716,12 +1737,13 @@ void QsciScintilla::setSelection(int lineFrom, int indexFrom, int lineTo,
 // Set the background colour of selected text.
 void QsciScintilla::setSelectionBackgroundColor(const QColor &col)
 {
-    SendScintilla(SCI_SETSELBACK, 1, col);
-
-    int alpha = qAlpha(col.rgb());
+    int alpha = col.alpha();
     
-    if (alpha < 255)
-        SendScintilla(SCI_SETSELALPHA, alpha);
+    if (alpha == 255)
+        alpha = SC_ALPHA_NOALPHA;
+
+    SendScintilla(SCI_SETSELBACK, 1, col);
+    SendScintilla(SCI_SETSELALPHA, alpha);
 }
 
 
@@ -1778,12 +1800,13 @@ void QsciScintilla::setCaretForegroundColor(const QColor &col)
 // Set the background colour of the line containing the caret.
 void QsciScintilla::setCaretLineBackgroundColor(const QColor &col)
 {
-    SendScintilla(SCI_SETCARETLINEBACK, col);
+    int alpha = col.alpha();
 
-    int alpha = qAlpha(col.rgb());
-    
-    if (alpha < 255)
-        SendScintilla(SCI_SETCARETLINEBACKALPHA, alpha);
+    if (alpha == 255)
+        alpha = SC_ALPHA_NOALPHA;
+
+    SendScintilla(SCI_SETCARETLINEBACK, col);
+    SendScintilla(SCI_SETCARETLINEBACKALPHA, alpha);
 }
 
 
@@ -2509,7 +2532,11 @@ void QsciScintilla::setMarkerBackgroundColor(const QColor &col, int mnr)
 {
     if (mnr <= MARKER_MAX)
     {
-        int alpha = qAlpha(col.rgb());
+        int alpha = col.alpha();
+
+        // An opaque background would make the text invisible.
+        if (alpha == 255)
+            alpha = SC_ALPHA_NOALPHA;
 
         if (mnr < 0)
         {
@@ -2520,9 +2547,7 @@ void QsciScintilla::setMarkerBackgroundColor(const QColor &col, int mnr)
                 if (am & 1)
                 {
                     SendScintilla(SCI_MARKERSETBACK, m, col);
-
-                    if (alpha < 255)
-                        SendScintilla(SCI_MARKERSETALPHA, m, alpha);
+                    SendScintilla(SCI_MARKERSETALPHA, m, alpha);
                 }
 
                 am >>= 1;
@@ -2531,9 +2556,7 @@ void QsciScintilla::setMarkerBackgroundColor(const QColor &col, int mnr)
         else if (allocatedMarkers & (1 << mnr))
         {
             SendScintilla(SCI_MARKERSETBACK, mnr, col);
-
-            if (alpha < 255)
-                SendScintilla(SCI_MARKERSETALPHA, mnr, alpha);
+            SendScintilla(SCI_MARKERSETALPHA, mnr, alpha);
         }
     }
 }
@@ -2557,7 +2580,9 @@ void QsciScintilla::setMarkerForegroundColor(const QColor &col, int mnr)
             }
         }
         else if (allocatedMarkers & (1 << mnr))
+        {
             SendScintilla(SCI_MARKERSETFORE, mnr, col);
+        }
     }
 }
 
