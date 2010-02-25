@@ -350,7 +350,7 @@ signals:
      * @param value New values for charts (One for each line).
      * @param label X-value on these values.
      */
-    virtual void valueAdded(std::list<double> &value, const QString &xValues);
+    void valueAdded(std::list<double> &value, const QString &xValues);
 public slots:
     /** Clear the values from the chart.
      */
