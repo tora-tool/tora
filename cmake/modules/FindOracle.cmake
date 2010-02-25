@@ -4,8 +4,9 @@
 # ORACLE_HAS_XML - Oracle has XDK support(thick client installed)
 # ORACLE_INCLUDES - where to find oci.h
 # ORACLE_LIBRARIES - the libraries to link against to use Oracle OCI
-#
+# 
 # copyright (c) 2007 Petr Vanek <petr@scribus.info>
+# copyright (c) 2009 Ivan Brezina <ibre5041@ibrezina.net>
 # Redistribution and use is allowed according to the terms of the GPLv2 license.
 #
 
@@ -15,7 +16,7 @@ SET(ORACLE_HOME $ENV{ORACLE_HOME})
 
 
 IF (ORACLE_PATH_INCLUDES)
-    SET (ORACLE_INCLUDES_LOCATION ${ORACLE_PATH_INCLUDES})
+  SET (ORACLE_INCLUDES_LOCATION ${ORACLE_PATH_INCLUDES})
 ELSE (ORACLE_PATH_INCLUDES)
     SET (ORACLE_INCLUDES_LOCATION
             ${ORACLE_HOME}/rdbms/public
@@ -34,10 +35,10 @@ IF (ORACLE_PATH_LIB)
 ELSE (ORACLE_PATH_LIB)
     SET (ORACLE_LIB_LOCATION
             # TODO add 32/64bit version here (lib32/lib64 on some platforms)
-            ${ORACLE_HOME}/lib
+            ${ORACLE_HOME}/lib 
             # xe on windows
             ${ORACLE_HOME}/OCI/lib/MSVC
-	    ${ORACLE_HOME}
+            ${ORACLE_HOME}
         )
 ENDIF (ORACLE_PATH_LIB)
 
@@ -78,7 +79,7 @@ IF (APPLE)
     )
     MESSAGE(STATUS "Searching for libociei: ${ORACLE_LIBRARY_OCIEI} in ${ORACLE_LIB_LOCATION}")
     IF (ORACLE_LIBRARY_OCIEI)
-	LIST(APPEND ORACLE_LIBRARY ${ORACLE_LIBRARY_OCIEI})
+        LIST(APPEND ORACLE_LIBRARY ${ORACLE_LIBRARY_OCIEI})
     ELSE (ORACLE_LIBRARY_OCIEI)
         MESSAGE(STATUS "libociei.dylib is not found. Maybe it will cause crashes if you are building BUNDLE")
     ENDIF (ORACLE_LIBRARY_OCIEI)
@@ -98,50 +99,46 @@ IF (ORACLE_INCLUDES_XML AND ORACLE_LIBRARY_XML)
     SET(ORACLE_HAS_XML "YES")
     LIST(APPEND ORACLE_INCLUDES ${ORACLE_INCLUDES_XML})
 ENDIF (ORACLE_INCLUDES_XML AND ORACLE_LIBRARY_XML)
-
+  
 # guess OCI version
-IF (NOT DEFINED ORACLE_OCI_VERSION AND UNIX)
-    FIND_PROGRAM(AWK awk)
-    FIND_PROGRAM(SQLPLUS sqlplus PATHS ENV ORACLE_HOME NO_DEFAULT_PATH)
-    FIND_PROGRAM(SQLPLUS sqlplus)
-    SET (sqlplus_version "${SQLPLUS} -version | ${AWK} '/Release/ {print $3}'")
-    EXEC_PROGRAM(${sqlplus_version} OUTPUT_VARIABLE sqlplus_out)
-    MESSAGE(STATUS "found sqlplus version: ${sqlplus_out}")
+IF (NOT DEFINED ORACLE_OCI_VERSION AND ORACLE_INCLUDES)
+  TRY_RUN(OCIVER_TYPE OCIVER_COMPILED
+    ${CMAKE_BINARY_DIR}
+    ${CMAKE_SOURCE_DIR}/cmake/modules/OCIVersion.c
+    CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${ORACLE_INCLUDES}"
+    OUTPUT_VARIABLE OCIVER)
 
-    # WARNING!
-    # MATCHES operator is using Cmake regular expression.
-    # so the e.g. 9.* does not expand like shell file mask
-    # but as "9 and then any sequence of characters"
-    IF (${sqlplus_out} MATCHES "8.*")
-        SET(ORACLE_OCI_VERSION "8I")
-    ELSEIF (${sqlplus_out} MATCHES "9.*")
-        SET(ORACLE_OCI_VERSION "9")
-# do not change the order of the ora10 checking!
-    ELSEIF (${sqlplus_out} MATCHES "10.2.*")
-        SET(ORACLE_OCI_VERSION "10G_R2")
-    ELSEIF (${sqlplus_out} MATCHES "10.*")
-        SET(ORACLE_OCI_VERSION "10G")
-    ELSEIF (${sqlplus_out} MATCHES "11.*")
-        SET(ORACLE_OCI_VERSION "11G")
-    ELSE (${sqlplus_out} MATCHES "8.*")
-        SET(ORACLE_OCI_VERSION "10G_R2")
-    ENDIF (${sqlplus_out} MATCHES "8.*")
-
-    MESSAGE(STATUS "Guessed ORACLE_OCI_VERSION value: ${ORACLE_OCI_VERSION}")
-ENDIF (NOT DEFINED ORACLE_OCI_VERSION AND UNIX)
+  IF (${OCIVER_TYPE} GREATER "110")
+    SET(ORACLE_OCI_VERSION "11G")
+  ELSEIF (${OCIVER_TYPE} EQUAL "102")
+    SET(ORACLE_OCI_VERSION "10G_R2")
+  ELSEIF (${OCIVER_TYPE} EQUAL "101")
+    SET(ORACLE_OCI_VERSION "10G")
+  ELSEIF (${OCIVER_TYPE} EQUAL "91")
+    SET(ORACLE_OCI_VERSION "9")
+  ELSEIF (${OCIVER_TYPE} EQUAL "92")
+    SET(ORACLE_OCI_VERSION "9")
+  ELSEIF (NOT ${OCIVER_TYPE} GREATER "90")
+    SET(ORACLE_OCI_VERSION "8I")
+  ELSE (${OCIVER_TYPE} GREATER "110")
+    SET(ORACLE_OCI_VERSION "10G_R2")
+  ENDIF (${OCIVER_TYPE} GREATER "110")
+  
+  MESSAGE(STATUS "Guessed ORACLE_OCI_VERSION value: ${ORACLE_OCI_VERSION} for ${OCIVER_TYPE}")
+ENDIF (NOT DEFINED ORACLE_OCI_VERSION AND ORACLE_INCLUDES)
 
 MESSAGE(STATUS "Found Oracle: ${ORACLE_LIBRARY} (ORACLE_HOME='${ORACLE_HOME}')")
 MESSAGE(STATUS "Found XML Oracle: ${ORACLE_INCLUDES_XML} ${ORACLE_LIBRARY_XML}")
 IF (ORACLE_FOUND)
     IF (NOT ORACLE_FIND_QUIETLY)
          MESSAGE(STATUS "Found Oracle: ${ORACLE_LIBRARY} (ORACLE_HOME='${ORACLE_HOME}')")
-         MESSAGE(STATUS "              ${ORACLE_INCLUDES}")	 
+	 MESSAGE(STATUS "              ${ORACLE_INCLUDES}")
     ENDIF (NOT ORACLE_FIND_QUIETLY)
     # there *must* be OCI version defined for internal libraries
     IF (ORACLE_OCI_VERSION)
         ADD_DEFINITIONS(-DOTL_ORA${ORACLE_OCI_VERSION})
     ELSE (ORACLE_OCI_VERSION)
-        MESSAGE(FATAL_ERROR "Set -DORACLE_OCI_VERSION for your oci. [8, 8I, 9I, 10G, 10G_R2 11G]")
+        MESSAGE(FATAL_ERROR "Set -DORACLE_OCI_VERSION for your oci. [8, 8I, 9I, 10G, 10G_R2]")
     ENDIF (ORACLE_OCI_VERSION)
 
 ELSE (ORACLE_FOUND)
