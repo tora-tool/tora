@@ -9,6 +9,8 @@ OPTION(ENABLE_PGSQL "Disable PostgreSQL support. Including detection" ON)
 OPTION(WANT_RPM "Enable additional RPM related stuff. Additional make package_rpm target" ON)
 OPTION(WANT_BUNDLE "Enable Mac OS X bundle build" OFF)
 OPTION(WANT_BUNDLE_STANDALONE "Do not copy required libs and tools into bundle (WANT_BUNDLE)" ON)
+OPTION(USE_TROTL "Use trotl OCI wrapper library" OFF)
+OPTION(USE_PCH "Use percompiled headers" OFF)
 
 #Set our CMake minimum version
 #Require 2.4.2 for Qt finding
@@ -86,8 +88,8 @@ endif (NOT TORA_DOC_DIR)
 ##############################################################################################################
 ########## check for the CPU we build for                                                           ##########
 
-IF (GCC)
-
+IF (CMAKE_COMPILER_IS_GNUCC)
+  
 EXECUTE_PROCESS(
     COMMAND ${CMAKE_C_COMPILER} -dumpmachine
     OUTPUT_VARIABLE MACHINE
@@ -113,7 +115,12 @@ IF (_machine_ppc)
     SET(ARCH_PPC 1)
 ENDIF (_machine_ppc)
 
-ENDIF (GCC)
+SET(CMAKE_CXX_FLAGS_RELEASE "-O2 ${CXX_WARNINGS}")
+SET(CMAKE_C_FLAGS_RELEASE "-O2 ${CXX_WARNINGS}")
+SET(CMAKE_CXX_FLAGS_DEBUG "-O0 ${CXX_WARNINGS} -ggdb3 -fno-inline -rdynamic")
+SET(CMAKE_C_FLAGS_DEBUG "-O0 ${CXX_WARNINGS} -gbdb3 -fno-inline -rdynamic")
+
+ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
 #Convert our simpler command line option to the CMake style
 #None, Debug, Release, .. or custom ones
@@ -136,8 +143,6 @@ ELSE (MSVC)
 ENDIF (MSVC)
 
 
-SET(CMAKE_CXX_FLAGS_RELEASE "-O2 ${CXX_WARNINGS}")
-SET(CMAKE_C_FLAGS_RELEASE "-O2 ${CXX_WARNINGS}")
 # Required for win wjen there is used an external qscintilla lib
 IF (WIN32 AND NOT DEFINED WANT_INTERNAL_QSCINTILLA)
   SET(CMAKE_CXX_FLAGS_RELEASE "/DQSCINTILLA_DLL ${CMAKE_CXX_FLAGS_RELEASE}")

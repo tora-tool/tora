@@ -1,4 +1,5 @@
 INCLUDE(ToraCompat)
+INCLUDE(PCHSupport_26)
 
 #Subdirectories
 # ADD_SUBDIRECTORY(i18n)
@@ -319,7 +320,7 @@ SET(TORA_SOURCES
     tonewconnection.cpp
     tonoblockquery.cpp
 #win only?    toocistub.cpp
-    tooracleconnection.cpp
+#    tooracleconnection.cpp
     tooracleextract.cpp
     tooraclepreload.cpp
     tooutput.cpp
@@ -414,6 +415,13 @@ SET(TORA_SOURCES
     docklets/toviewdirectory.cpp
     tooracletable.cpp
 )
+
+IF(USE_TROTL)
+    LIST(APPEND TORA_SOURCES tooracleconnection_trotl.cpp)
+ELSE(USE_TROTL)
+    LIST(APPEND TORA_SOURCES tooracleconnection.cpp)
+ENDIF(USE_TROTL)    
+
 # compiled in icons for windows
 IF (WIN32 AND MSVC)
     SET (TORA_SOURCES ${TORA_SOURCES} tora.rc)
