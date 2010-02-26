@@ -1,0 +1,83 @@
+
+Include files:
+
+trotl_common.h
+	- same proprocessor definitions __HERE__, min, max, ...
+	- type tstring
+	
+trotl_base.h
+	- base clases
+	- OCIhandle management
+	- SqlInd - NULL value indicator 
+	- SqlIndArray - array of NULL values indicators
+	- SqlValue - base class for bind variables
+	- ColumnType - column description type
+	- OciException, throw_ocipl_exception, oci_check_error
+
+trotl_conn.h
+	- OracleServer
+	- LoginPara
+	- LoginAndPChangePara
+	- OciLogin
+	- OciConnection
+	
+trotl_var.h
+	- BindPar(C)
+	- SQLT(T)
+
+trotl_stat.h
+	- SqlStatement
+	- SqlResult
+	
+trotl_string.h
+	- SqlString
+	
+trotl_int.h
+	- SqlInt, SqlNumber
+	
+trotl_date.h
+	- OciDate
+	- ocidatetime
+	- SqlDateTime
+
+trotl_xml.h
+	- SqlXML
+	
+trotl.h
+	- entry point
+	- OciEnvAlloc - OCIEnv holder
+
+Include hierarchy:
+
+trotl.h
+	- trotl_mfile.h
+	- trotl_stat.h
+		- trotl_parser.h
+		- trotl_string.h
+			- trotl_var.h
+		- trotl_int.h
+			- trotl_var.h    		
+#			- trotl_date.h   
+#				- trotl_base.h
+#					-trotl_common.h
+	- trotl_conn.h
+		- trotl_base.h
+			- trotl_common.h
+			
+Tests:
+test_10 - Dump internal factories contents
+test_11 - Example - simple PL/SQL parser
+test_20 - Simple connect test / dump contens of the factories
+test_21 - Connect with password chang
+test_22 - SqlNumber operations
+test_23 - Int, long, float, double inserts
+test_24 - Int, long, float, double vector inserts
+test_25 - Int, long, float, double vectors in PL/SQL statements
+test_26 - Select numeric values
+test_27 - String inserts
+test_31 - Select strings/lobs
+test_35 - Select dates
+test_36 - Select lobs
+test_37 - Select SYS.XMLTYPE
+test_40 - first multihreading test
+test_41 - multihreading logger test
