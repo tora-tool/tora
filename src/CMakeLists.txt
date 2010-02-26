@@ -320,7 +320,7 @@ SET(TORA_SOURCES
     tonewconnection.cpp
     tonoblockquery.cpp
 #win only?    toocistub.cpp
-#    tooracleconnection.cpp
+    tooracleconnection.cpp
     tooracleextract.cpp
     tooraclepreload.cpp
     tooutput.cpp
@@ -415,13 +415,13 @@ SET(TORA_SOURCES
     docklets/toviewdirectory.cpp
     tooracletable.cpp
 )
-
-IF(USE_TROTL)
-    LIST(APPEND TORA_SOURCES tooracleconnection_trotl.cpp)
-ELSE(USE_TROTL)
-    LIST(APPEND TORA_SOURCES tooracleconnection.cpp)
-ENDIF(USE_TROTL)    
-
+IF (DB2_FOUND)
+    LIST (APPEND TORA_SOURCES db2/todb2connection.cpp
+                              db2/db2connectionsub.cpp
+                              db2/db2provider.cpp
+                              db2/db2query.cpp)
+    #db2/qsql_db2.cpp)
+ENDIF (DB2_FOUND)
 # compiled in icons for windows
 IF (WIN32 AND MSVC)
     SET (TORA_SOURCES ${TORA_SOURCES} tora.rc)
@@ -473,12 +473,16 @@ INCLUDE_DIRECTORIES(
 )
 
 IF (ORACLE_INCLUDES)
-        INCLUDE_DIRECTORIES( ${ORACLE_INCLUDES} )
+    INCLUDE_DIRECTORIES( ${ORACLE_INCLUDES} )
 ENDIF (ORACLE_INCLUDES)
 
 IF (POSTGRESQL_INCLUDE_DIR)
-  INCLUDE_DIRECTORIES( ${POSTGRESQL_INCLUDE_DIR} )
+    INCLUDE_DIRECTORIES( ${POSTGRESQL_INCLUDE_DIR} )
 ENDIF (POSTGRESQL_INCLUDE_DIR)
+
+IF (DB2_INCLUDES)
+    INCLUDE_DIRECTORIES( ${DB2_INCLUDES} )
+ENDIF (DB2_INCLUDES)
 
 IF (WANT_INTERNAL_QSCINTILLA)
     INCLUDE_DIRECTORIES(
@@ -531,12 +535,16 @@ TARGET_LINK_LIBRARIES(${EXE_NAME}
 )
 
 IF (ORACLE_LIBRARIES)
-        TARGET_LINK_LIBRARIES (${EXE_NAME} ${ORACLE_LIBRARIES} )
+    TARGET_LINK_LIBRARIES (${EXE_NAME} ${ORACLE_LIBRARIES} )
 ENDIF (ORACLE_LIBRARIES)
 
 IF (POSTGRESQL_LIBRARIES)
-  TARGET_LINK_LIBRARIES (${EXE_NAME} ${POSTGRESQL_LIBRARIES})
+   TARGET_LINK_LIBRARIES (${EXE_NAME} ${POSTGRESQL_LIBRARIES})
 ENDIF (POSTGRESQL_LIBRARIES)
+
+IF (DB2_LIBRARIES)
+   TARGET_LINK_LIBRARIES (${EXE_NAME} ${DB2_LIBRARIES})
+ENDIF (DB2_LIBRARIES)
 
 # static
 TARGET_LINK_LIBRARIES(${EXE_NAME} ${TORA_LOKI_LIB})
