@@ -8,6 +8,12 @@ IF (WIN32)
     ADD_SUBDIRECTORY(windows)
 ENDIF (WIN32)
 
+IF (USE_TROTL)
+  ADD_SUBDIRECTORY(trotl)
+  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/trotl/src)
+  LINK_DIRECTORIES(./trotl)
+  SET (TROTL_LIB "trotl")
+ENDIF (USE_TROTL)
 
 # Default: qsci2 as 3rd party lib!
 IF (WANT_INTERNAL_QSCINTILLA)
@@ -16,7 +22,7 @@ ENDIF(WANT_INTERNAL_QSCINTILLA)
 
 
 # only toad bindings are here. All others qm files will blow the binary too much
-set (TORA_I18N_TS
+SET (TORA_I18N_TS
     i18n/tora_toad.ts
 )
 
@@ -320,7 +326,7 @@ SET(TORA_SOURCES
     tonewconnection.cpp
     tonoblockquery.cpp
 #win only?    toocistub.cpp
-    tooracleconnection.cpp
+#    tooracleconnection.cpp
     tooracleextract.cpp
     tooraclepreload.cpp
     tooutput.cpp
@@ -415,6 +421,13 @@ SET(TORA_SOURCES
     docklets/toviewdirectory.cpp
     tooracletable.cpp
 )
+
+IF(USE_TROTL)
+  LIST(APPEND TORA_SOURCES tooracleconnection_trotl.cpp)
+ELSE (USE_TROTL)
+  LIST(APPEND TORA_SOURCES tooracleconnection.cpp)
+ENDIF (USE_TROTL)
+    
 IF (DB2_FOUND)
     LIST (APPEND TORA_SOURCES db2/todb2connection.cpp
                               db2/db2connectionsub.cpp
@@ -526,6 +539,11 @@ ADD_EXECUTABLE(${EXE_NAME} ${GUI_TYPE}
   ${APPLE_BUNDLE_SOURCES}
 )
 
+
+IF(USE_PCH)
+ADD_PRECOMPILED_HEADER(${EXE_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/precompiled.h)
+ENDIF(USE_PCH)
+
 #Set up libraries to link with all found packages
 # dynamic
 TARGET_LINK_LIBRARIES(${EXE_NAME}
@@ -546,6 +564,11 @@ IF (DB2_LIBRARIES)
    TARGET_LINK_LIBRARIES (${EXE_NAME} ${DB2_LIBRARIES})
 ENDIF (DB2_LIBRARIES)
 
+IF (USE_TROTL)
+  SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES COMPILE_FLAGS "-DTROTL_DLL")
+  TARGET_LINK_LIBRARIES (${EXE_NAME} ${TROTL_LIB})
+ENDIF (USE_TROTL)
+
 # static
 TARGET_LINK_LIBRARIES(${EXE_NAME} ${TORA_LOKI_LIB})
 IF (WANT_INTERNAL_QSCINTILLA)
@@ -559,7 +582,6 @@ IF (WIN32)
         TARGET_LINK_LIBRARIES(${EXE_NAME} "-mwindows")
     ENDIF (MINGW)
 ENDIF (WIN32)
-
 
 IF (WIN32)
     INSTALL(TARGETS ${EXE_NAME} RUNTIME DESTINATION .)

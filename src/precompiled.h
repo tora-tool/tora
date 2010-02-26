@@ -184,13 +184,13 @@
 #include <list>
 
 // TOra headers
-#include "toresultview.h"
-#include "tomain.h"
-#include "tosql.h"
-#include "toconf.h"
-#include "totool.h"
-#include "toconnection.h"
-#include "utils.h"
-#include "config.h"
-#include "tologger.h"
+//#include "toresultview.h"
+//#include "tomain.h"
+//#include "tosql.h"
+//#include "toconf.h"
+//#include "totool.h"
+//#include "toconnection.h"
+//#include "utils.h"
+//#include "config.h"
+//#include "tologger.h"
 
