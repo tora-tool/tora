@@ -2,39 +2,39 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2009 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries. 
- * 
+ *      these libraries.
+ *
  *      You may link this product with any GPL'd Qt library.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -44,7 +44,10 @@
 #include <QFile>
 #include <QDir>
 #include <QFileDialog>
-// 
+#include <QCompleter>
+#include <QDirModel>
+#include <QSettings>
+//
 #include "toscript.h"
 #include "utils.h"
 #include "toextract.h"
@@ -158,6 +161,10 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     vbox->addWidget(Report);
     Report->hide();
 
+    QCompleter *FilenameCompleter = new QCompleter(this);
+    FilenameCompleter->setModel(new QDirModel(FilenameCompleter));
+    ScriptUI->Filename->setCompleter(FilenameCompleter);
+
     DropList = new toListView(hsplitter);
     DropList->addColumn(tr("Dropped"));
     DropList->setRootIsDecorated(true);
@@ -193,13 +200,11 @@ toScript::toScript(QWidget *parent, toConnection &connection)
 
     // Remove when migrate and resize is implemented
 #if 1
-
     ScriptUI->Migrate->hide();
 #endif
 
     ScriptUI->Source->setConnectionString(connection.description());
     ScriptUI->Destination->setConnectionString(connection.description());
-
 
     connect(ScriptUI->Browse, SIGNAL(clicked()), this, SLOT(browseFile()));
     connect(ScriptUI->AddButton, SIGNAL(clicked()), this, SLOT(newSize()));
@@ -208,7 +213,37 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     ScriptUI->Schema->setCurrentIndex(0);
     setFocusProxy(ScriptUI->Tabs);
 
-    changeMode(MODE_COMPARE);
+    QSettings s;
+    s.beginGroup("toScript");
+    // radiobuttons - modes
+    ScriptUI->Compare->setChecked(s.value("Compare", true).toBool());
+    ScriptUI->Extract->setChecked(s.value("Extract", false).toBool());
+    ScriptUI->Search->setChecked(s.value("Search", false).toBool());
+    ScriptUI->Migrate->setChecked(s.value("Migrate", false).toBool());
+    ScriptUI->Report->setChecked(s.value("Report", false).toBool());
+    // checkboxes - options
+    ScriptUI->IncludeDDL->setChecked(s.value("IncludeDDL", true).toBool());
+    ScriptUI->IncludeConstraints->setChecked(s.value("IncludeConstraints", true).toBool());
+    ScriptUI->IncludeIndexes->setChecked(s.value("IncludeIndexes", true).toBool());
+    ScriptUI->IncludeGrants->setChecked(s.value("IncludeGrants", true).toBool());
+    ScriptUI->IncludeStorage->setChecked(s.value("IncludeStorage", true).toBool());
+    ScriptUI->IncludeParallell->setChecked(s.value("IncludeParallell", true).toBool());
+    ScriptUI->IncludePartition->setChecked(s.value("IncludePartition", true).toBool());
+    ScriptUI->IncludeCode->setChecked(s.value("IncludeCode", true).toBool());
+    ScriptUI->IncludeComment->setChecked(s.value("IncludeComment", true).toBool());
+    ScriptUI->IncludePrompt->setChecked(s.value("IncludePrompt", false).toBool());
+    ScriptUI->IncludeHeader->setChecked(s.value("IncludeHeader", true).toBool());
+    ScriptUI->IncludeContent->setChecked(s.value("IncludeContent", false).toBool());
+    ScriptUI->CommitDistance->setValue(s.value("CommitDistance", 0).toInt());
+    ScriptUI->Schema->setEditText(s.value("Schema", "Same").toString());
+    // target
+    ScriptUI->OutputTab->setChecked(s.value("OutputTab", true).toBool());
+    ScriptUI->OutputFile->setChecked(s.value("OutputFile", false).toBool());
+    ScriptUI->OutputDir->setChecked(s.value("OutputDir", false).toBool());
+    ScriptUI->Filename->setText(s.value("Filename", "").toString());
+    s.endGroup();
+
+    changeMode(group->checkedId());
 }
 
 toScript::~toScript()
@@ -217,7 +252,39 @@ toScript::~toScript()
 void toScript::closeEvent(QCloseEvent *event)
 {
     if (Worksheet && Worksheet->close())
+    {
+        QSettings s;
+        s.beginGroup("toScript");
+        // radiobuttons - modes
+        s.setValue("Compare", ScriptUI->Compare->isChecked());
+        s.setValue("Extract", ScriptUI->Extract->isChecked());
+        s.setValue("Search", ScriptUI->Search->isChecked());
+        s.setValue("Migrate", ScriptUI->Migrate->isChecked());
+        s.setValue("Report", ScriptUI->Report->isChecked());
+        // checkboxes - options
+        s.setValue("Report", ScriptUI->Report->isChecked());
+        s.setValue("IncludeDDL", ScriptUI->IncludeDDL->isChecked());
+        s.setValue("IncludeConstraints", ScriptUI->IncludeConstraints->isChecked());
+        s.setValue("IncludeIndexes", ScriptUI->IncludeIndexes->isChecked());
+        s.setValue("IncludeGrants", ScriptUI->IncludeGrants->isChecked());
+        s.setValue("IncludeStorage", ScriptUI->IncludeStorage->isChecked());
+        s.setValue("IncludeParallell", ScriptUI->IncludeParallell->isChecked());
+        s.setValue("IncludePartition", ScriptUI->IncludePartition->isChecked());
+        s.setValue("IncludeCode", ScriptUI->IncludeCode->isChecked());
+        s.setValue("IncludeComment", ScriptUI->IncludeComment->isChecked());
+        s.setValue("IncludePrompt", ScriptUI->IncludePrompt->isChecked());
+        s.setValue("IncludeHeader", ScriptUI->IncludeHeader->isChecked());
+        s.setValue("IncludeContent", ScriptUI->IncludeContent->isChecked());
+        s.setValue("CommitDistance", ScriptUI->CommitDistance->value());
+        s.setValue("Schema", ScriptUI->Schema->currentText());
+        // target
+           s.setValue("OutputTab", ScriptUI->OutputTab->isChecked());
+        s.setValue("OutputFile", ScriptUI->OutputFile->isChecked());
+        s.setValue("OutputDir", ScriptUI->OutputDir->isChecked());
+        s.setValue("Filename", ScriptUI->Filename->text());
+        s.endGroup();
         event->accept();
+    }
     else
         event->ignore();
 }
