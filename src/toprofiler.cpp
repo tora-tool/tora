@@ -175,7 +175,7 @@ static toSQL SQLListSource("toProfiler:ListSource",
                            "           AND a.type = :typ<char[101]>\n"
                            "           AND not exists (select 'X'\n"
                            "                             from plsql_profiler_data b\n"
-                           "                            where b.runid = :run<char[1019>\n"
+                           "                            where b.runid = :run<char[1019]>\n"
                            "                              and b.unit_number = :unit<char[101]>\n"
                            "                              and a.line = b.line#)\n"
                            "       )\n"

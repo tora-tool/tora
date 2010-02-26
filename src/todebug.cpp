@@ -106,10 +106,10 @@ static toSQL SQLDebugSelfCheck("toDebug:SelfCheck",
                                "  error_message VARCHAR2(1000);\n"
                                "BEGIN\n"
                                "  SYS.DBMS_DEBUG.SELF_CHECK;\n"
-                               "  SELECT 'OK' INTO :line<char[101,out> FROM sys.DUAL;\n"
+                               "  SELECT 'OK' INTO :line<char[101],out> FROM sys.DUAL;\n"
                                "EXCEPTION WHEN OTHERS THEN\n"
                                "  error_message := sqlerrm;\n"
-                               "  SELECT error_message INTO :line<char[101,out> FROM sys.DUAL;\n"
+                               "  SELECT error_message INTO :line<char[101],out> FROM sys.DUAL;\n"
                                "END;",
                                "Perform Self-check of debugging system");
 #endif
@@ -338,7 +338,7 @@ static toSQL SQLDebugOutputPoll("toDebugOutput:Poll",
                                 "  ELSE\n"
                                 "    ret:=1;\n"
                                 "  END IF;\n"
-                                "  SELECT ret,line INTO :ret<int,out>,:line<char[101,out> FROM sys.DUAL;\n"
+                                "  SELECT ret,line INTO :ret<int,out>,:line<char[101],out> FROM sys.DUAL;\n"
                                 "END;",
                                 "Poll for output in the debug session, must have same bindings");
 static toSQL SQLDebugOutputDisable("toDebugOutput:Disable",
