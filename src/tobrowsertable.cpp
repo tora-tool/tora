@@ -79,35 +79,7 @@ static toSQL SQLDefaultTablespace("toBrowserTable:DefaultTablespaces",
 void toBrowserTable::editTable(toConnection &conn, const QString &owner, const QString &table, QWidget *parent)
 {
     toBrowserTable dialog(conn, owner, table, parent);
-    if (dialog.exec())
-    {
-        /*
-          TS 2009-10-31 Moved this code to done() as this should be performed before actually
-                        closing dialog so that in case of error there would be a chance to fix it.
-                std::list<toSQLParse::statement> statements = toSQLParse::parse(dialog.sql(), conn);
-                try
-                {
-                    QProgressDialog prog(tr("Performing table changes"),
-                                         tr("Stop"),
-                                         0,
-                                         statements.size(),
-                                         &dialog);
-                    prog.setWindowTitle(tr("Performing table changes"));
-                    for (std::list<toSQLParse::statement>::iterator i = statements.begin();i != statements.end();i++)
-                    {
-                        QString sql = toSQLParse::indentStatement(*i, conn);
-                        int l = sql.length() - 1;
-                        while (l >= 0 && (sql.at(l) == ';' || sql.at(l).isSpace()))
-                            l--;
-                        if (l >= 0)
-                            conn.execute(sql.mid(0, l + 1));
-                        qApp->processEvents();
-                        if (prog.wasCanceled())
-                            throw tr("Canceled ongoing table modification, table might be corrupt");
-                    }
-                }
-                TOCATCH;*/
-    }
+    dialog.exec();
 }
 
 static QString getDefaultTablespace(toConnection &conn)
@@ -562,7 +534,7 @@ QString toBrowserTable::sql()
         {
             // "quote" should be used for tablespace, but for tablespace
             // it will always do toLower anyway
-            addParameters(migrateTable, ctx, "PARAMETERS", "TABLESPACE " + Tablespace->currentText().toLower());
+            addParameters(migrateTable, ctx, "PARAMETERS", "TABLESPACE " + Tablespace->currentText());
         }
     }
 
