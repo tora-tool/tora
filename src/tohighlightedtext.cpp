@@ -391,7 +391,12 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     // highlight caret line
     setCaretLineVisible(true);
     setCaretLineBackgroundColor(DefaultAnalyzer.getColor(toSyntaxAnalyzer::CurrentLineMarker));
+#ifdef SCI_LEXER
+    // This is only required until transparency fixes in QScintilla go into stable release
+    QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, QsciScintilla::SC_ALPHA_NOALPHA);
+#else
     QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, 100);
+#endif
 
     // handle "max text width" mark
     if (toConfigurationSingle::Instance().useMaxTextWidthMark())
