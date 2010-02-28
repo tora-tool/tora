@@ -114,7 +114,7 @@ Information about the current state of execution is shown in the pane at the bot
 Watches are a way to inspect the contents of variables in a running program.
 When you add a watch using the @strong{add watch} command you are presented with the following dialog.
 
-@image{images/addwatch,4cm}
+@image{images/addwatch,5cm}
 
 First of all you need to select the scope the variable is declared in. The @strong{local} scope is variables only declared in the current context, like for instance this function or procedure. The @strong{head} and @strong{body} are variables declared in packages. Variables in packages are usually also available in the global scope. When you declare a watch in any scope except for @strong{local} you should also indicate the object in which the variable is declared in the format schema.object.variable. The current object is prepended to the variable name when you select anything but the @strong{local} scope.
 
@@ -128,7 +128,7 @@ You can remove a watch by selecting it in the watch list and selecting the @stro
 
 You can also change the content of a watch. First you select the watch you want to change in the watch list, then you select the @strong{change watch} command. You will be shown this dialog.
 
-@image{images/changewatch,10cm}
+@image{images/changewatch,7cm}
 
 If you have selected the parent of an array watch you will be able to select the index you want to assign a new value with the @strong{index} indicator to right. Then you enter the new value in the text field or check the @strong{NULL} indicator to set the value to NULL.
 
