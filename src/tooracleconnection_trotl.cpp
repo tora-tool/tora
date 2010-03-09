@@ -241,7 +241,10 @@ public:
 				   ub4 lang=OCI_NTV_SYNTAX,
 				   int bulk_rows=::trotl::g_OCIPL_BULK_ROWS)
 				: ::trotl::SqlStatement(conn, stmt, lang, bulk_rows)
-			{};
+			{
+				if(get_stmt_type() == STMT_ALTER || _in_cnt == 0)
+					execute_internal(::trotl::g_OCIPL_BULK_ROWS, OCI_DEFAULT);
+			};
 			void readValue(toQValue &value)
 			{
 				super::BindPar const &BP(get_stmt_type() == STMT_SELECT ?
@@ -319,6 +322,9 @@ public:
 				
 				if(_out_pos == _column_count && BP._bind_type == BP.DEFINE_SELECT)
 					++_last_buff_row;
+
+				if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
+					_state |= EOF_DATA; 
 				
 				if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
 					fetch(_buff_size);				
@@ -349,203 +355,7 @@ public:
 		{
 			toQValue retval;
 			Query->readValue(retval);
-			return retval;
-			
-// 			const oracleQuery::trotlQuery::BindPar& bp(
-// 				Query->_stmt_type == OCI_STMT_SELECT ?
-// 				Query->get_curr_column() : Query->get_curr_out_bindpar());
-// 			try {
-// 				switch(bp.dty) {
-// 				case SQLT_NUM:
-// 				case SQLT_VNU:
-// 				{
-// 					int i;				
-// 					(*Query) >> i;
-//  					 get_log(0).ts<toDecorator>( __HERE__) <<
-// 						 "d:\t" << bp.dty <<
-// 						 "\ti:\t'" << i << '\'' << std::endl;
-//  					return toQValue(i);
-// 				}
-// 				default:
-// 				{
-// 					std::string val;			
-// 					(*Query) >> val;
-// 					get_log(0).ts<toDecorator>( __HERE__) <<
-// 						"d:\t" << bp.dty <<
-// 						"\ts:\t'" << val << '\'' << std::endl;
-// 					return toQValue(val.c_str());
-// 				}
-// 				}
-// 			} catch (::trotl::OciException e) {
-// 				get_log(0).ts<toDecorator>( __HERE__) <<
-// 					e.what() << std::endl;
-// 				return QString();
-// 			} catch (...) {
-// 				get_log(0).ts<toDecorator>( __HERE__) <<
-// 					"Unknown exception" << std::endl;
-// 				return QString();
-// 			}
-
-
-			/*
-			  char *buffer = NULL;
-			  otl_var_desc *dsc = Query->describe_next_out_var();
-			  if (!dsc)
-			  throw QString::fromLatin1("Couldn't get description of next column to read");
-
-			  oracleSub *conn = dynamic_cast<oracleSub *>(query()->connectionSub());
-			  if (!conn)
-			  throw QString::fromLatin1("Internal error, not oracle sub connection");
-			  if (Cancel)
-			  throw QString::fromLatin1("Cancelled while waiting to read value");
-			  Running = true;
-			  SaveInPool = true;
-			  try
-			  {
-			  toQValue null;
-			  switch (dsc->ftype)
-			  {
-			  case otl_var_double:
-			  case otl_var_float:
-			  {
-			  double d = 0;
-			  (*Query) >> d;
-			  Running = false;
-			  if (Query->is_null())
-			  return null;
-			  return toQValue(d);
-			  }
-			  break;
-			  case otl_var_int:
-			  case otl_var_unsigned_int:
-			  case otl_var_short:
-			  case otl_var_long_int:
-			  {
-			  int i = 0;
-			  (*Query) >> i;
-			  Running = false;
-			  if (Query->is_null())
-			  return null;
-			  return toQValue(i);
-			  }
-			  break;
-			  case otl_var_varchar_long:
-			  case otl_var_raw:
-			  case otl_var_raw_long:
-			  {
-			  int len = toMaxLong;
-			  if (toMaxLong < 0)
-			  len = DEFAULT_MAX_LONG;
-			  buffer = (char *)malloc(len + 1);
-			  buffer[len] = 0;
-			  otl_long_string str(buffer, len);
-			  (*Query) >> str;
-			  Running = false;
-
-			  if (!str.len()) {
-			  free(buffer);
-			  return null;
-			  }
-
-			  QString buf;
-			  if (dsc->ftype == otl_var_varchar_long)
-			  {
-			  buf = (QString::fromUtf8(buffer));
-			  free(buffer);
-			  return buf;
-			  }
-			  else
-			  {
-			  QByteArray ret(buffer, str.len());
-			  free(buffer);
-			  return toQValue::createBinary(ret);
-			  }
-			  }
-			  case otl_var_clob:
-			  case otl_var_blob:
-			  {
-			  otl_lob_stream lob;
-			  (*Query) >> lob;
-			  if (lob.len() == 0)
-			  {
-			  Running = false;
-			  return null;
-			  }
-			  int len = lob.len();
-			  if (toMaxLong >= 0 && len > toMaxLong)
-			  len = toMaxLong;
-			  if (dsc->ftype == otl_var_clob)
-			  len *= 5;
-			  else
-			  len *= 2;
-			  buffer = (char *)malloc(len + 1);
-			  buffer[0] = 0;
-			  otl_long_string data(buffer, len);
-			  lob >> data;
-			  if (!lob.eof())
-			  {
-			  otl_long_string sink(10000);
-			  do
-			  {
-			  lob >> sink;
-			  }
-			  while (!lob.eof() && sink.len() > 0);
-
-			  toStatusMessage(QString::fromLatin1("Data exists past length of LOB"));
-			  }
-			  buffer[data.len()] = 0;
-			  Running = false;
-
-			  if (dsc->ftype == otl_var_clob)
-			  {
-			  QString buf = QString::fromUtf8(buffer);
-			  free(buffer);
-			  return buf;
-			  }
-			  else
-			  {
-			  QByteArray ret(buffer, data.len());
-			  free(buffer);
-			  return toQValue::createBinary(ret);
-			  }
-			  }
-			  break;
-			  default:       // Try using char if all else fails
-			  {
-			  // The *5 is for raw columns or UTF expanded data, also dates and numbers
-			  // are a bit tricky but if someone specifies a dateformat longer than 100 bytes he
-			  // deserves everything he gets!
-			  buffer = new char[std::max(dsc->elem_size * 5 + 1, 100)];
-			  buffer[0] = 0;
-			  (*Query) >> buffer;
-			  QString buf = QString::fromUtf8(buffer);
-			  delete[] buffer;
-
-			  Running = false;
-
-			  if (Query->is_null())
-			  return null;
-			  return buf;
-			  }
-			  break;
-			  }
-			  }
-			  catch (const ::trotl::OciException &exc)
-			  {
-			  Running = false;
-			  delete[] buffer;
-			  if(conn && query())
-			  conn->throwExtendedException(query()->connection(), exc);
-			  }
-			  catch (...)
-			  {
-			  Running = false;
-			  delete[] buffer;
-			  throw;
-			  }
-			*/
-			// Never get here
-			return QString(); //qt4 ::null;
+			return retval;			
 		}
 
 		virtual void cancel(void);

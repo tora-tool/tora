@@ -268,8 +268,13 @@ const SqlStatement::BindPar& SqlStatement::get_curr_in_bindpar()
 SqlStatement::BindPar& SqlStatement::get_next_out_bindpar()
 {
 	if( _all_binds == 0 || _out_binds == 0 )
-		throw OciException(__HERE__, "No out Bindpars specified");
-	
+	{
+		tstring message("No out Bindpars specified for:\n");
+		message += _orig_stmt;
+		//throw OciException(__HERE__, "No out Bindpars specified");
+		throw OciException(__HERE__, message.c_str());
+	}
+
 	ub4 pos = _out_pos < _out_cnt ? ++_out_pos : _out_pos=1;  //Round robin hack
 	return *_all_binds[_out_binds[ pos ]];
 }
@@ -279,7 +284,7 @@ const SqlStatement::BindPar& SqlStatement::get_curr_out_bindpar()
 	if( _all_binds == 0 || _out_binds == 0 )
 		throw OciException(__HERE__, "No out Bindpars specified");
 
-	ub4 pos = _out_pos < _out_cnt ? (_out_pos+1) : 1;  //Round robin hack
+	//ub4 pos = _out_pos < _out_cnt ? (_out_pos+1) : 1;  //Round robin hack
 	return *_all_binds[_out_binds[_out_pos ? _out_pos : 1 ]];
 }
 
@@ -348,6 +353,9 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 	case STMT_BEGIN:
 	case STMT_DECLARE:
 		iters = 1;
+		_last_buff_row = 0;
+		if( _out_cnt == 0 && _in_cnt == 0)
+			_state |= EOF_DATA;
 		break;
 	case STMT_CREATE:
 	case STMT_DROP:
