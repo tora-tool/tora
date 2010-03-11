@@ -58,6 +58,8 @@ class toSyntaxAnalyzer;
 class toSQLParse
 {
 public:
+    /** Settings for indentation (code formatter)
+     */
     struct settings
     {
         bool ExpandSpaces;
@@ -104,6 +106,17 @@ public:
             /** Type of token.
              */
         } Type;
+        /** Indicates type of statement - DDL/DML or PLSQL block
+            This is later used when deciding if trailing semicolon should
+            be removed or not before executing.
+         */
+        enum statementClass
+        {
+            unknown,
+            ddldml,     // DML's, create object statements, environment settings etc.
+            plsqlblock  // PLSQL blocks (named and anonymous)
+        } StatementClass;
+
         /** Was there a comment attached to this token
          */
         QString Comment;

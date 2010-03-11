@@ -253,7 +253,10 @@ ENDIF (ORACLE_FOUND)
 
 
 SET(TORA_SOURCES
+    # include main.cpp for "normal" TOra build, but comment it out and include
+    # tosqlparsetest.cpp when running unit tests for sql parser.
     main.cpp
+    #tosqlparsetest.cpp
     toabout.cpp
     toalert.cpp
     toanalyze.cpp

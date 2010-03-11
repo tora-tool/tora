@@ -95,6 +95,7 @@
 #include <QProgressDialog>
 #include <QDateTime>
 #include <QSettings>
+#include <QDebug>
 
 #include "icons/clock.xpm"
 #include "icons/recall.xpm"
@@ -816,7 +817,7 @@ void toWorksheet::changeResult(int index)
 void toWorksheet::refresh(void)
 {
     if (!QueryString.isEmpty())
-        query(QueryString, Normal);
+        query(QueryString, Normal, QueryStatementClass);
     if (RefreshSeconds > 0)
     {
         RefreshTimer.setSingleShot(true);
@@ -884,7 +885,7 @@ bool toWorksheet::describe(const QString &query)
     return false;
 }
 
-void toWorksheet::query(const QString &str, execType type)
+void toWorksheet::query(const QString &str, execType type, toSQLParse::statement::statementClass sc)
 {
     Result->stop();
     RefreshTimer.stop();
@@ -892,14 +893,27 @@ void toWorksheet::query(const QString &str, execType type)
     QRegExp strq(QString::fromLatin1("'[^']*'"));
     QString chk = str.toLower();
     chk.replace(strq, QString::fromLatin1(" "));
-    bool code = false;
+    bool code;
+
+    // TS 2010-03-11 Parser identifies if it is SQL or PLSQL block
+    if (sc == toSQLParse::statement::unknown)
+    {
+        // If query is executed from some text buffer it should be parsed to identify statementClass
+        toSQLParse::stringTokenizer tokens(str);
+        toSQLParse::statement st = toSQLParse::parseStatement(tokens);
+        sc = st.StatementClass;
+    }
+    code = (sc == toSQLParse::statement::plsqlblock);
+    /*
     static QRegExp codere(QString::fromLatin1("[^a-z0-9]end\\s+[a-z0-9_-]*;$"), Qt::CaseSensitive);
     static QRegExp codere2(QString::fromLatin1("[^a-z0-9]end;"), Qt::CaseSensitive);
 
     if (codere.indexIn(chk) >= 0 || codere2.indexIn(chk) >= 0)
         code = true;
+    */
 
     QueryString = str;
+    QueryStatementClass = sc;
     if (!code && QueryString.length() > 0 && QueryString.at(QueryString.length() - 1) == ';')
         QueryString.truncate(QueryString.length() - 1);
 
@@ -1235,7 +1249,8 @@ void toWorksheet::addLog(const QString &sql,
     saveDefaults();
 }
 
-void toWorksheet::execute(toSQLParse::tokenizer &tokens, int line, int pos, execType type)
+void toWorksheet::execute(toSQLParse::tokenizer &tokens, int line, int pos, execType type,
+                          toSQLParse::statement::statementClass sc)
 {
     LastLine = line;
     LastOffset = pos;
@@ -1243,7 +1258,7 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens, int line, int pos, exec
     if (Editor->lines() <= tokens.line())
     {
         endLine = Editor->lines() - 1;
-        endCol = Editor->lineLength(Editor->lines() - 1);
+        endCol = Editor->lineLength(endLine);
     }
     else
     {
@@ -1323,7 +1338,7 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens, int line, int pos, exec
     }
 
     if (t.trimmed().length())
-        query(t, type);
+        query(t, type, sc);
 }
 
 void toWorksheet::unhideResults(const QString &,
@@ -1345,7 +1360,7 @@ void toWorksheet::execute()
 {
     if (Editor->hasSelectedText())
     {
-        query(Editor->selectedText(), Normal);
+        query(Editor->selectedText(), Normal, toSQLParse::statement::unknown);
         return;
     }
 
@@ -1356,23 +1371,25 @@ void toWorksheet::execute()
 
     int line;
     int pos;
+    toSQLParse::statement st;
     do
     {
         line = tokens.line();
         pos = tokens.offset();
-        toSQLParse::parseStatement(tokens);
+        st = toSQLParse::parseStatement(tokens);
     }
     while (tokens.line() < cline ||
             (tokens.line() == cline && tokens.offset() < cpos));
 
-    execute(tokens, line, pos, Normal);
+    execute(tokens, line, pos, Normal, st.StatementClass);
 }
 
+// TODO: TS 2010-03-11 This function is the same as execute, just Normal->OnlyPlan. Should be optimised.
 void toWorksheet::explainPlan()
 {
     if (Editor->hasSelectedText())
     {
-        query(Editor->selectedText(), OnlyPlan);
+        query(Editor->selectedText(), OnlyPlan, toSQLParse::statement::unknown);
         return ;
     }
 
@@ -1383,16 +1400,17 @@ void toWorksheet::explainPlan()
 
     int line;
     int pos;
+    toSQLParse::statement st;
     do
     {
         line = tokens.line();
         pos = tokens.offset();
-        toSQLParse::parseStatement(tokens);
+        st = toSQLParse::parseStatement(tokens);
     }
     while (tokens.line() < cline ||
             (tokens.line() == cline && tokens.offset() < cpos));
 
-    execute(tokens, line, pos, OnlyPlan);
+    execute(tokens, line, pos, OnlyPlan, st.StatementClass);
 }
 
 void toWorksheet::executeStep()
@@ -1404,16 +1422,17 @@ void toWorksheet::executeStep()
 
     int line;
     int pos;
+    toSQLParse::statement st;
     do
     {
         line = tokens.line();
         pos = tokens.offset();
-        toSQLParse::parseStatement(tokens);
+        st = toSQLParse::parseStatement(tokens);
     }
     while (tokens.line() < cline ||
             (tokens.line() == cline && tokens.offset() <= cpos));
 
-    execute(tokens, line, pos, Normal);
+    execute(tokens, line, pos, Normal, st.StatementClass);
 }
 
 void toWorksheet::executeAll()
@@ -1440,7 +1459,7 @@ void toWorksheet::executeAll()
         qApp->processEvents();
         if (dialog.wasCanceled())
             break;
-        toSQLParse::parseStatement(tokens);
+        toSQLParse::statement st = toSQLParse::parseStatement(tokens);
 
         if (ignore && (tokens.line() > cline ||
                        (tokens.line() == cline &&
@@ -1453,7 +1472,7 @@ void toWorksheet::executeAll()
 
         if (tokens.line() < Editor->lines() && !ignore)
         {
-            execute(tokens, line, pos, Direct);
+            execute(tokens, line, pos, Direct, st.StatementClass);
             if (Current)
             {
                 toResultView *last = dynamic_cast<toResultView *>(Current);
@@ -1491,7 +1510,7 @@ void toWorksheet::parseAll()
         qApp->processEvents();
         if (dialog.wasCanceled())
             break;
-        toSQLParse::parseStatement(tokens);
+        toSQLParse::statement st = toSQLParse::parseStatement(tokens);
 
         if (ignore && (tokens.line() > cline ||
                        (tokens.line() == cline &&
@@ -1504,7 +1523,7 @@ void toWorksheet::parseAll()
 
         if (tokens.line() < Editor->lines() && !ignore)
         {
-            execute(tokens, line, pos, Parse);
+            execute(tokens, line, pos, Parse, st.StatementClass);
             if (Current)
             {
                 toResultView *last = dynamic_cast<toResultView *>(Current);
@@ -1651,7 +1670,7 @@ void toWorksheet::executeNewline(void)
     LastLine = cline;
     LastOffset = 0;
     if (Editor->hasSelectedText())
-        query(Editor->selectedText(), Normal);
+        query(Editor->selectedText(), Normal, toSQLParse::statement::unknown);
 }
 
 void toWorksheet::describe(void)
@@ -1683,7 +1702,7 @@ void toWorksheet::executeSaved(QAction *act)
     {
         try
         {
-            query(sql, Normal);
+            query(sql, Normal, toSQLParse::statement::unknown);
         }
         TOCATCH;
     }
@@ -1838,7 +1857,7 @@ void toWorksheet::executeLog(void)
         if (item->text(4).isEmpty())
         {
             if (toConfigurationSingle::Instance().wsExecLog())
-                query(item->allText(0), Normal);
+                query(item->allText(0), Normal, toSQLParse::statement::unknown);
         }
         else
         {
