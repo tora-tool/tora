@@ -195,6 +195,9 @@ public:
     bool firewallMode();
     void setFirewallMode(bool v);
 
+    int connTestInterval();
+    void setConnTestInterval(int v);
+
     int maxContent();
     void setMaxContent(int v);
 

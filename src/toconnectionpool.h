@@ -129,6 +129,7 @@ class toConnectionPool : public QObject {
     friend class toConnectionPoolExec;
 
     toConnectionPoolTest *TestThread;
+    bool TestThreadRunning; // indicates if constructor has created a thread for periodic queries
 
     // for future configuration
     static const int PreferredSize = 3;

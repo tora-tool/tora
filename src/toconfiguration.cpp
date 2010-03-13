@@ -108,6 +108,7 @@ public:
     int     m_objectCache;
     bool    m_bkgndConnect;
     bool    m_firewallMode;
+    int     m_connTestInterval;
     int     m_maxContent;
     bool    m_keepPlans;
     bool    m_vsqlPlans;
@@ -349,6 +350,7 @@ public:
         m_objectCache = s.value(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt();
         m_bkgndConnect = s.value(CONF_BKGND_CONNECT, false).toBool();
         m_firewallMode = s.value(CONF_FIREWALL_MODE, false).toBool();
+        m_connTestInterval = s.value(CONF_CONN_TEST_INTERVAL, DEFAULT_CONN_TEST_INTERVAL).toInt();
         m_maxContent = s.value(CONF_MAX_CONTENT, DEFAULT_MAX_CONTENT).toInt();
         m_keepPlans = s.value(CONF_KEEP_PLANS, false).toBool();
         m_vsqlPlans = s.value(CONF_VSQL_PLANS, true).toBool();
@@ -575,6 +577,7 @@ public:
         s.setValue(CONF_OBJECT_CACHE, m_objectCache);
         s.setValue(CONF_BKGND_CONNECT, m_bkgndConnect);
         s.setValue(CONF_FIREWALL_MODE, m_firewallMode);
+        s.setValue(CONF_CONN_TEST_INTERVAL, m_connTestInterval);
         s.setValue(CONF_MAX_CONTENT, m_maxContent);
         s.setValue(CONF_KEEP_PLANS, m_keepPlans);
         s.setValue(CONF_VSQL_PLANS, m_vsqlPlans);
@@ -1381,6 +1384,15 @@ bool toConfiguration::firewallMode()
 void toConfiguration::setFirewallMode(bool v)
 {
     p->m_firewallMode = v;
+}
+
+int toConfiguration::connTestInterval()
+{
+    return p->m_connTestInterval;
+}
+void toConfiguration::setConnTestInterval(int v)
+{
+    p->m_connTestInterval = v;
 }
 
 int toConfiguration::maxContent()

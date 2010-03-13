@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>toDatabaseSettingUI</class>
- <widget class="QWidget" name="toDatabaseSettingUI" >
-  <property name="geometry" >
+ <widget class="QWidget" name="toDatabaseSettingUI">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,279 +10,269 @@
     <height>526</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>toDatabaseSettingUI</string>
   </property>
-  <layout class="QGridLayout" >
-   <property name="leftMargin" >
+  <layout class="QGridLayout">
+   <property name="margin">
     <number>11</number>
    </property>
-   <property name="topMargin" >
-    <number>11</number>
-   </property>
-   <property name="rightMargin" >
-    <number>11</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>11</number>
-   </property>
-   <property name="horizontalSpacing" >
+   <property name="spacing">
     <number>6</number>
    </property>
-   <property name="verticalSpacing" >
-    <number>6</number>
-   </property>
-   <item row="0" column="0" >
-    <widget class="QCheckBox" name="AutoCommit" >
-     <property name="toolTip" >
+   <item row="0" column="0">
+    <widget class="QCheckBox" name="AutoCommit">
+     <property name="toolTip">
       <string>Specify if changes should be automatically commited.</string>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>&amp;Autocommit changes</string>
      </property>
-     <property name="shortcut" >
+     <property name="shortcut">
       <string>Alt+A</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0" >
-    <widget class="QComboBox" name="ObjectCache" >
+   <item row="1" column="0">
+    <widget class="QComboBox" name="ObjectCache">
      <item>
-      <property name="text" >
+      <property name="text">
        <string>Start read object cache when needed</string>
       </property>
      </item>
      <item>
-      <property name="text" >
+      <property name="text">
        <string>Read object cache on connect</string>
       </property>
      </item>
      <item>
-      <property name="text" >
+      <property name="text">
        <string>Never read object cache until mandatory</string>
       </property>
      </item>
      <item>
-      <property name="text" >
+      <property name="text">
        <string>Never read object cache (Will leave parts of application nonfunctianal)</string>
       </property>
      </item>
     </widget>
    </item>
-   <item row="2" column="0" >
-    <widget class="QGroupBox" name="QueryGroup" >
-     <property name="title" >
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="QueryGroup">
+     <property name="title">
       <string>Query settings</string>
      </property>
-     <layout class="QGridLayout" >
-      <property name="leftMargin" >
+     <layout class="QGridLayout">
+      <property name="margin">
        <number>11</number>
       </property>
-      <property name="topMargin" >
-       <number>11</number>
-      </property>
-      <property name="rightMargin" >
-       <number>11</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>11</number>
-      </property>
-      <property name="horizontalSpacing" >
+      <property name="spacing">
        <number>6</number>
       </property>
-      <property name="verticalSpacing" >
-       <number>6</number>
-      </property>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="TextLabel6_2_2" >
-        <property name="toolTip" >
+      <item row="2" column="0">
+       <widget class="QLabel" name="TextLabel6_2_2">
+        <property name="toolTip">
          <string>The largest default size of a column in query results.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Maximum size &amp;display</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>MaxColDisp</cstring>
         </property>
        </widget>
       </item>
-      <item row="0" column="2" >
-       <widget class="QCheckBox" name="ReadAll" >
-        <property name="text" >
+      <item row="0" column="2">
+       <widget class="QCheckBox" name="ReadAll">
+        <property name="text">
          <string>&amp;All</string>
         </property>
-        <property name="shortcut" >
+        <property name="shortcut">
          <string>Alt+A</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="TextLabel6" >
-        <property name="toolTip" >
+      <item row="0" column="0">
+       <widget class="QLabel" name="TextLabel6">
+        <property name="toolTip">
          <string>The number of rows to always fetch when executing a query.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>&amp;Initial rows to fetch in query</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>InitialFetch</cstring>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="TextLabel6_2" >
-        <property name="toolTip" >
+      <item row="1" column="0">
+       <widget class="QLabel" name="TextLabel6_2">
+        <property name="toolTip">
          <string>Number of rows to initially start reading in content editor, use unlimited on slow connections.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Initially &amp;read in content editor</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>MaxContent</cstring>
         </property>
        </widget>
       </item>
-      <item row="1" column="2" >
-       <widget class="QCheckBox" name="UnlimitedContent" >
-        <property name="text" >
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="UnlimitedContent">
+        <property name="text">
          <string>&amp;All</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1" colspan="2" >
-       <widget class="QSpinBox" name="MaxColDisp" >
-        <property name="maximum" >
+      <item row="2" column="1" colspan="2">
+       <widget class="QSpinBox" name="MaxColDisp">
+        <property name="maximum">
          <number>999999999</number>
         </property>
        </widget>
       </item>
-      <item row="0" column="1" >
-       <widget class="QSpinBox" name="InitialFetch" />
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="InitialFetch"/>
       </item>
-      <item row="1" column="1" >
-       <widget class="QSpinBox" name="MaxContent" >
-        <property name="maximum" >
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="MaxContent">
+        <property name="maximum">
          <number>999999999</number>
         </property>
        </widget>
       </item>
-      <item row="3" column="0" >
-       <widget class="QCheckBox" name="FirewallMode" >
-        <property name="toolTip" >
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="FirewallMode">
+        <property name="baseSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="toolTip">
          <string>When enabled idle queries will request data at regular intervals to keep the connection alive.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>&amp;Firewall Mode</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label">
+        <property name="toolTip">
+         <string>Amount of time (in seconds.) after which dummy queries will be sent to database</string>
+        </property>
+        <property name="text">
+         <string>Connection test interval</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QSpinBox" name="ConnTestInterval">
+        <property name="maximum">
+         <number>100000</number>
+        </property>
+        <property name="singleStep">
+         <number>10</number>
         </property>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="3" column="0" >
-    <widget class="QGroupBox" name="GroupBox3" >
-     <property name="title" >
+   <item row="3" column="0">
+    <widget class="QGroupBox" name="GroupBox3">
+     <property name="title">
       <string>Dataformat</string>
      </property>
-     <layout class="QGridLayout" >
-      <property name="leftMargin" >
+     <layout class="QGridLayout">
+      <property name="margin">
        <number>11</number>
       </property>
-      <property name="topMargin" >
-       <number>11</number>
-      </property>
-      <property name="rightMargin" >
-       <number>11</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>11</number>
-      </property>
-      <property name="horizontalSpacing" >
+      <property name="spacing">
        <number>6</number>
       </property>
-      <property name="verticalSpacing" >
-       <number>6</number>
-      </property>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="TextLabel1_2" >
-        <property name="toolTip" >
+      <item row="1" column="0">
+       <widget class="QLabel" name="TextLabel1_2">
+        <property name="toolTip">
          <string>The way numbers should be presented.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Number format</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
        </widget>
       </item>
-      <item row="1" column="3" >
-       <widget class="QSpinBox" name="Decimals" >
-        <property name="enabled" >
+      <item row="1" column="3">
+       <widget class="QSpinBox" name="Decimals">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="maximum" >
+        <property name="maximum">
          <number>20</number>
         </property>
-        <property name="value" >
+        <property name="value">
          <number>2</number>
         </property>
        </widget>
       </item>
-      <item row="0" column="0" colspan="2" >
-       <widget class="QCheckBox" name="IndicateEmpty" >
-        <property name="text" >
+      <item row="0" column="0" colspan="2">
+       <widget class="QCheckBox" name="IndicateEmpty">
+        <property name="text">
          <string>Indicate empty values as '' instead of &amp;NULL as {null}.</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1" >
-       <widget class="QComboBox" name="NumberFormat" >
+      <item row="1" column="1">
+       <widget class="QComboBox" name="NumberFormat">
         <item>
-         <property name="text" >
+         <property name="text">
           <string>Default</string>
          </property>
         </item>
         <item>
-         <property name="text" >
+         <property name="text">
           <string>Scientific</string>
          </property>
         </item>
         <item>
-         <property name="text" >
+         <property name="text">
           <string>Fixed decimal</string>
          </property>
         </item>
        </widget>
       </item>
-      <item row="0" column="2" colspan="2" >
-       <widget class="QPushButton" name="IndicateEmptyColor" >
-        <property name="text" >
+      <item row="0" column="2" colspan="2">
+       <widget class="QPushButton" name="IndicateEmptyColor">
+        <property name="text">
          <string>NULL background color</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="2" >
-       <widget class="QLabel" name="TextLabel3" >
-        <property name="toolTip" >
+      <item row="1" column="2">
+       <widget class="QLabel" name="TextLabel3">
+        <property name="toolTip">
          <string>Number of decimals for fixed decimal format.</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>&amp;Decimals</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>Decimals</cstring>
         </property>
        </widget>
@@ -289,12 +280,12 @@
      </layout>
     </widget>
    </item>
-   <item row="4" column="0" >
+   <item row="4" column="0">
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>40</height>
@@ -304,7 +295,7 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <tabstops>
   <tabstop>AutoCommit</tabstop>
   <tabstop>ObjectCache</tabstop>
@@ -322,11 +313,11 @@
    <receiver>toDatabaseSettingUI</receiver>
    <slot>numberFormatChange()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -338,11 +329,11 @@
    <receiver>toDatabaseSettingUI</receiver>
    <slot>IndicateEmptyColor_clicked()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>

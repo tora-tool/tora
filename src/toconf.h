@@ -114,6 +114,8 @@
 #define DEFAULT_OBJECT_CACHE 1
 #define CONF_BKGND_CONNECT "BackgroundConnect"
 #define CONF_FIREWALL_MODE "FirewallMode"
+#define CONF_CONN_TEST_INTERVAL "Connection test interval"
+#define DEFAULT_CONN_TEST_INTERVAL 5000
 #define CONF_MAX_CONTENT "MaxContent"
 #define DEFAULT_MAX_CONTENT 100
 #define CONF_KEEP_PLANS  "KeepPlans" // default: false

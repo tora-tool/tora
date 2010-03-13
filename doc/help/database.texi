@@ -34,7 +34,11 @@ This page of the options contains settings on how to interact with the database.
     you can still see the rest of the columns even if one of the first can contain very large values. You can
     always resize the column by hand afterwards.
 @item @strong{Firewall mode.}
-    TODO.
+    Makes each connection in connection pool to run extra queries (selecting sysdate from dual) at specified
+    interval (see "Connection test interval" option). This could be useful if there is a firewall between
+    TOra and database and firewall is dropping connections if there is no traffic.
+@item @strong{Connection test interval}
+    Interval in seconds at which TOra should be sending dummy queries to database (see "Firewall mode").
 @item @strong{Indicate empty values as ''.}
     TODO.
 @item @strong{Number format.}

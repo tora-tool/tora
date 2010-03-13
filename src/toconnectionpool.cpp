@@ -42,15 +42,12 @@
 #include "utils.h"
 
 #include "toconnectionpool.h"
+#include "toconfiguration.h"
 #include "tosql.h"
 
 #include <QTimer>
 #include <QCoreApplication>
 #include <QApplication>
-
-
-static const int TEST_MSEC = 5000;
-
 
 toConnectionPoolTest::toConnectionPoolTest(toConnectionPool *pool)
     : QThread(0), timer(0) {
@@ -58,10 +55,9 @@ toConnectionPoolTest::toConnectionPoolTest(toConnectionPool *pool)
     Pool = pool;
 }
 
-
 void toConnectionPoolTest::run() {
     timer = new QTimer();
-    timer->setInterval(TEST_MSEC);
+    timer->setInterval(toConfigurationSingle::Instance().connTestInterval());
     connect(timer, SIGNAL(timeout()), this, SLOT(test()), Qt::DirectConnection);
     timer->start();
 
@@ -69,7 +65,6 @@ void toConnectionPoolTest::run() {
 
     delete timer;
 }
-
 
 void toConnectionPoolTest::test() {
     for(int i = 0; Pool && i < Pool->size(); i++) {
@@ -81,7 +76,6 @@ void toConnectionPoolTest::test() {
             Pool->fix(i);
     }
 }
-
 
 toConnectionPoolExec::toConnectionPoolExec(toConnectionPool *pool, Action act) {
     action = act;
@@ -151,23 +145,32 @@ toConnectionPool::toConnectionPool(toConnection *conn) : QObject(conn) {
         ptr->append(psub);
     }
 
-    TestThread = new toConnectionPoolTest(this);
-    TestThread->start();
+    if(toConfigurationSingle::Instance().firewallMode())
+    {
+        TestThread = new toConnectionPoolTest(this);
+        TestThread->start();
+        TestThreadRunning = true;
+    }
+    else
+        TestThreadRunning = false;
 }
 
 
 toConnectionPool::~toConnectionPool() {
-    QMetaObject::invokeMethod(TestThread, "quit", Qt::QueuedConnection);
+    if (TestThreadRunning)
+    {
+        QMetaObject::invokeMethod(TestThread, "quit", Qt::QueuedConnection);
 #ifdef Q_WS_MAC
 	// This is propably mandatory on Mac. If it's missing, the TestThread->wait()
 	// will block entire GUI for ever.
 	TestThread->quit();
 #endif
-    // must call this or the queued call never executes while we wait
-    // on the thread. Awesome.
-    qApp->processEvents();
-    TestThread->wait();
-    delete TestThread;
+        // must call this or the queued call never executes while we wait
+        // on the thread. Awesome.
+        qApp->processEvents();
+        TestThread->wait();
+        delete TestThread;
+    }
 
     toConnection *conn = Connection;
     Connection = 0;

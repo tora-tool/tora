@@ -354,6 +354,7 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
 //     BkgndConnect->setChecked(toConfigurationSingle::Instance().bkgndConnect());
     IndicateEmpty->setChecked(toConfigurationSingle::Instance().indicateEmpty());
     FirewallMode->setChecked(toConfigurationSingle::Instance().firewallMode());
+    ConnTestInterval->setValue(toConfigurationSingle::Instance().connTestInterval());
 
     QColor nullColor;
     nullColor.setNamedColor(toConfigurationSingle::Instance().indicateEmptyColor());
@@ -405,6 +406,7 @@ void toDatabaseSetting::saveSetting(void)
     toConfigurationSingle::Instance().setIndicateEmptyColor(IndicateEmptyColor->palette().color(IndicateEmptyColor->backgroundRole()).name());
 //     toConfigurationSingle::Instance().setKeepAlive(KeepAlive->isChecked() ? DEFAULT_KEEP_ALIVE : -1); //FIXME: there was ""
     toConfigurationSingle::Instance().setFirewallMode(FirewallMode->isChecked());
+    toConfigurationSingle::Instance().setConnTestInterval(ConnTestInterval->value());
 
     toConfigurationSingle::Instance().setNumberFormat(NumberFormat->currentIndex());
     toConfigurationSingle::Instance().setNumberDecimals(Decimals->value());

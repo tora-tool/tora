@@ -63,7 +63,10 @@ This page of the options contains settings on how to interact with the database.
 <br><dt><strong>Maximum size display</strong><dd>    The maximum width a list column will get automatically regardless of how large the content is. This is so
     you can still see the rest of the columns even if one of the first can contain very large values. You can
     always resize the column by hand afterwards. 
-<br><dt><strong>Firewall mode.</strong><dd>    TODO. 
+<br><dt><strong>Firewall mode.</strong><dd>    Makes each connection in connection pool to run extra queries (selecting sysdate from dual) at specified
+    interval (see "Connection test interval" option). This could be useful if there is a firewall between
+    TOra and database and firewall is dropping connections if there is no traffic. 
+<br><dt><strong>Connection test interval</strong><dd>    Interval in seconds at which TOra should be sending dummy queries to database (see "Firewall mode"). 
 <br><dt><strong>Indicate empty values as &rdquo;.</strong><dd>    TODO. 
 <br><dt><strong>Number format.</strong><dd>    TODO. 
 </dl>
