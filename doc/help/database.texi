@@ -37,6 +37,8 @@ This page of the options contains settings on how to interact with the database.
     Makes each connection in connection pool to run extra queries (selecting sysdate from dual) at specified
     interval (see "Connection test interval" option). This could be useful if there is a firewall between
     TOra and database and firewall is dropping connections if there is no traffic.
+
+    @strong{Note!} If you change this option, you have to reconnect in order to make it effective.
 @item @strong{Connection test interval}
     Interval in seconds at which TOra should be sending dummy queries to database (see "Firewall mode").
 @item @strong{Indicate empty values as ''.}

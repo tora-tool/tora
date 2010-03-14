@@ -128,7 +128,7 @@ int main(int argc, char **argv)
     //===================================================
     // Test #1 Simplest DML statement ever
     testSet.insert(testSet.end(),
-                    "select sysdate from dual;" );
+                   "select sysdate from dual;");
     testCount.insert(testCount.end(), 1);
     testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
 
@@ -800,6 +800,48 @@ int main(int argc, char **argv)
     testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
     testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
 
+    //===================================================
+    // Test #24 Insert statements ending with "/" rather than ";"
+    testSet.insert(testSet.end(),
+                   "insert into a values ('aaa', 222)\n"
+                   "/\n"
+                   "insert into a values ('bbb', 333)\n"
+                   "/\n");
+    testCount.insert(testCount.end(), 2);
+    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+
+    //===================================================
+    // Test #25 Two procedures separated with "/"
+    testSet.insert(testSet.end(),
+                   "create procedure a1 as\n"
+                   "begin null; end;\n"
+                   "/\n"
+                   "create procedure a2 as\n"
+                   "begin null; end;\n"
+                   "/\n");
+    testCount.insert(testCount.end(), 2);
+    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
+    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
+
+    //===================================================
+    // Test #26 Statement with slash in it
+    testSet.insert(testSet.end(),
+                   "select 2/1 from dual;");
+    testCount.insert(testCount.end(), 1);
+    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+
+    //===================================================
+    // Test #27 Update statements containing "/"'s ending with "/" rather than ";"
+    testSet.insert(testSet.end(),
+                   "update a set b=2/1 where c='qqq'\n"
+                   "/\n"
+                   "update a set b=3/2, c=2/1 where q='qq/qq'\n"
+                   "/\n");
+    testCount.insert(testCount.end(), 2);
+    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+
     QApplication test(argc, argv);
     toMarkedText text(NULL);
 
@@ -844,7 +886,7 @@ int main(int argc, char **argv)
             cls++;
         }
         //printf("===== End of list of parsed statements =====\n");
-        //printf("Number of statements: %i, should have been %i\n", statementCount, *c);
+        //printf("Number of statements: %i, should have been %i\n", statementCount, *cnt);
 
         // check if correct number of statements was identified
         if (statementCount != *cnt)
@@ -872,7 +914,7 @@ int main(int argc, char **argv)
             //printf("Reparse doesn't match\n");
             //printf("Second\n\n%s\n", (const char *)secondparse.toUtf8());
             e++;
-            errors = errors + "Reparse doesn't match for test #" + n + "\n";
+            errors = errors + "Reparse doesn't match for test #" + QString::number(n) + "\n";
             printf("[ERROR]\n");
         }
         else

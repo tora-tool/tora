@@ -172,6 +172,13 @@ QString toSQLParse::stringTokenizer::getToken(bool forward, bool comments)
             nc = '\n';
         if (state == space)
         {
+            // This condition finds '/' used in sqlplus to mark end of statement
+            if (Offset == 0 && c == '/' && nc != '*')
+            {
+                Offset++;
+                return "~~~";
+            }
+
             if (forward && c == '-' && nc == '-')
             {
                 int spos = Offset;
@@ -614,7 +621,19 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
             ret.subTokens().insert(ret.subTokens().end(), statement(statement::Token, token, tokens.line()));
             return ret;
         }
-        else if (upp == (";") || upp == ("/"))
+        else if (upp == ("~~~"))
+        {
+            if  (first == ("~~~"))
+            {
+                // empty statement (sql+ would repeat the last statement)
+            }
+            else if (first == ("INSERT") || first == ("UPDATE") || first == ("DELETE"))
+            {
+                // return without inserting token "/"
+                return ret;
+            }
+        }
+        else if (upp == (";"))
         {
             ret.subTokens().insert(ret.subTokens().end(), statement(statement::Token, token, tokens.line()));
             return ret;

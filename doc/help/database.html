@@ -65,7 +65,9 @@ This page of the options contains settings on how to interact with the database.
     always resize the column by hand afterwards. 
 <br><dt><strong>Firewall mode.</strong><dd>    Makes each connection in connection pool to run extra queries (selecting sysdate from dual) at specified
     interval (see "Connection test interval" option). This could be useful if there is a firewall between
-    TOra and database and firewall is dropping connections if there is no traffic. 
+    TOra and database and firewall is dropping connections if there is no traffic.
+
+     <p><strong>Note!</strong> If you change this option, you have to reconnect in order to make it effective. 
 <br><dt><strong>Connection test interval</strong><dd>    Interval in seconds at which TOra should be sending dummy queries to database (see "Firewall mode"). 
 <br><dt><strong>Indicate empty values as &rdquo;.</strong><dd>    TODO. 
 <br><dt><strong>Number format.</strong><dd>    TODO. 
