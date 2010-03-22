@@ -524,7 +524,7 @@ QString toBrowserTable::sql()
     // when creating new table tablespace must always be specified
     if (OriginalDescription.empty())
     {
-        addParameters(migrateTable, ctx, "TABLESPACE", Tablespace->currentText());
+        addParameters(migrateTable, ctx, "TABLESPACE", cnct->quote(Tablespace->currentText()));
     }
     else
     {
@@ -534,7 +534,7 @@ QString toBrowserTable::sql()
         {
             // "quote" should be used for tablespace, but for tablespace
             // it will always do toLower anyway
-            addParameters(migrateTable, ctx, "PARAMETERS", "TABLESPACE " + Tablespace->currentText());
+            addParameters(migrateTable, ctx, "PARAMETERS", "TABLESPACE " + cnct->quote(Tablespace->currentText()));
         }
     }
 

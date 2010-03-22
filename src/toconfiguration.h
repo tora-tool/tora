@@ -115,6 +115,9 @@ public:
     bool keywordUpper();
     void setKeywordUpper(bool v);
 
+    bool objectNamesUpper();
+    void setObjectNamesUpper(bool v);
+
     QString pluginDir();
     void setPluginDir(const QString & v);
 

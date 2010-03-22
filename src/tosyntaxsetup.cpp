@@ -73,6 +73,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
 
     setupUi(this);
     KeywordUpper->setChecked(toConfigurationSingle::Instance().keywordUpper());
+    ObjectNamesUpper->setChecked(toConfigurationSingle::Instance().objectNamesUpper());
     SyntaxHighlighting->setChecked(toConfigurationSingle::Instance().highlight());
     EdgeMarkCheckBox->setChecked(toConfigurationSingle::Instance().useMaxTextWidthMark());
     EdgeSizeSpinBox->setValue(toConfigurationSingle::Instance().maxTextWidthMark());
@@ -359,6 +360,7 @@ void toSyntaxSetup::saveSetting(void)
     toConfigurationSingle::Instance().setUseMaxTextWidthMark(EdgeMarkCheckBox->isChecked());
     toConfigurationSingle::Instance().setMaxTextWidthMark(EdgeSizeSpinBox->value());
     toConfigurationSingle::Instance().setKeywordUpper(KeywordUpper->isChecked());
+    toConfigurationSingle::Instance().setObjectNamesUpper(ObjectNamesUpper->isChecked());
     toConfigurationSingle::Instance().setCodeCompletion(highlight && CodeCompletion->isChecked());
     toConfigurationSingle::Instance().setCodeCompletionSort(CompletionSort->isChecked());
     toConfigurationSingle::Instance().setUseEditorShortcuts(EditorShortcuts->isChecked());

@@ -83,6 +83,7 @@ using namespace std;
 #include "otlv4.h"
 
 #include "toconf.h"
+#include "toconfiguration.h"
 #include "toconnection.h"
 #include "tomain.h"
 #include "tosql.h"
@@ -663,7 +664,12 @@ class oracleConnection : public toConnection::connectionImpl
                 i++;
             }
             if (ok)
-                return name.toUpper();
+            {
+                if (toConfigurationSingle::Instance().objectNamesUpper())
+                    return name.toUpper();
+                else
+                    return name.toLower();
+            }
             else
                 return QString::fromLatin1("\"") + name + QString::fromLatin1("\"");
         }

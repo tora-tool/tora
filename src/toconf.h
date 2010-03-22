@@ -76,6 +76,8 @@
 #define CONF_HIGHLIGHT  "SyntaxHighlight"
 #define CONF_KEYWORD_UPPER "KeywordUpper"
 #define DEFAULT_KEYWORD_UPPER false
+#define CONF_OBJECT_NAMES_UPPER "ObjectNamesUpper"
+#define DEFAULT_OBJECT_NAMES_UPPER false
 #define CONF_COLOR  "KeywordColor"
 #define CONF_PLUGIN_DIR  "PluginDir"
 #define CONF_CACHE_DIR  "CacheDir"

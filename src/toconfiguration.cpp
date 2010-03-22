@@ -81,6 +81,7 @@ public:
     QString m_refresh;
     bool    m_highlight;
     bool    m_keywordUpper;
+    bool    m_objectNamesUpper;
     QString m_pluginDir;
     QString m_cacheDir;
     bool    m_cacheDisk;
@@ -303,6 +304,7 @@ public:
         m_refresh = s.value(CONF_REFRESH, DEFAULT_REFRESH).toString();
         m_highlight = s.value(CONF_HIGHLIGHT, true).toBool();
         m_keywordUpper = s.value(CONF_KEYWORD_UPPER, DEFAULT_KEYWORD_UPPER).toBool();
+        m_objectNamesUpper = s.value(CONF_OBJECT_NAMES_UPPER, DEFAULT_OBJECT_NAMES_UPPER).toBool();
 
         m_pluginDir = s.value(CONF_PLUGIN_DIR, DEFAULT_PLUGIN_DIR).toString();
         m_cacheDir = s.value(CONF_CACHE_DIR, "").toString();
@@ -540,6 +542,7 @@ public:
         s.setValue(CONF_REFRESH, m_refresh);
         s.setValue(CONF_HIGHLIGHT, m_highlight);
         s.setValue(CONF_KEYWORD_UPPER, m_keywordUpper);
+        s.setValue(CONF_OBJECT_NAMES_UPPER, m_objectNamesUpper);
         s.setValue(CONF_PLUGIN_DIR, m_pluginDir);
         s.setValue(CONF_CACHE_DIR, m_cacheDir);
         s.setValue(CONF_CACHE_DISK, m_cacheDisk);
@@ -1142,6 +1145,15 @@ bool toConfiguration::keywordUpper()
 void toConfiguration::setKeywordUpper(bool v)
 {
     p->m_keywordUpper = v;
+}
+
+bool toConfiguration::objectNamesUpper()
+{
+    return p->m_objectNamesUpper;
+}
+void toConfiguration::setObjectNamesUpper(bool v)
+{
+    p->m_objectNamesUpper = v;
 }
 
 QString toConfiguration::pluginDir()

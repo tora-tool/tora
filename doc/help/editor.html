@@ -37,11 +37,35 @@ Up:&nbsp;<a rel="up" accesskey="u" href="preferences.html#preferences">preferenc
 <h4 class="subsection">3.8.2 Editor Settings</h4>
 
 <p><a name="index-Editor-Settings-12"></a>
-This page of the options contains settings on how to use TOra editors.
+This page of the options contains settings for TOra editors. Editor settings are organised in two tabs: Options and Syntax.
 
-   <p>TODO
+   <p><strong>Options tab</strong>
 
    <div class="block-image"><img src="images/editor.png" alt="images/editor.png"></div>
+
+     <dl>
+<dt><strong>Syntax highlighting</strong><dd>      Use this to control whether you want syntax highlighting or not. Observe that without syntax highlighting you will not see the indications for errors and current lines in the PL/SQL editor. 
+<br><dt><strong>Use maximum text width mark</strong><dd>      Check this option and specify maximum length of text. A vertical line indicating this margin will be displayed in text editor. Note that this option will <strong>not</strong> prevent text to be writen beyond maximum text width margin. this option is purely for visual representation. 
+<br><dt><strong>Keyword upper</strong><dd>      Check this box to convert all keywords to uppercase before displaying them. The text itself is not changed so resetting this not changed and the text sent to the database still contain lowercase letters. This setting is disabled if you do not have a monospaced font selected. 
+<br><dt><strong>Object names upper</strong><dd>      Extract all names of objects (tables, views, columns etc.) from database as uppercase (default). For example this setting will be used when generating object creation scripts. 
+<br><dt><strong>Code completion</strong><dd>      Check this box to enable code completion in SQL editors. 
+<br><dt><strong>Editor shortcuts (TAB replacement)</strong><dd>      By checking this option and pressing a button "Edit..." you can add/modify/delete editor shortcuts. Editor shortcut is a short word which can be replaced to a long phrase by pressing TAB button. For example you can set that a short word "selsysd" be replaced with "select sysdate from dual". 
+<br><dt><strong>Sort completion rows</strong><dd>      If checked the completion alternatives are sorted in alphabetical order, otherwise they are in the same order as in the source. 
+<br><dt><strong>Indent same as previous line</strong><dd>      When inserting a new line indent it to the same level as the previous one. 
+<br><dt><strong>Text example</strong><dd>      This is the font to use for all editors in TOra that are not syntax highlighted. Choose the <strong>Choose</strong> button immediately to the right of the label to select a new font. 
+<br><dt><strong>Code example</strong><dd>      This is the font to use for all syntax highlighted SQL editors in TOra. Choose the <strong>Choose</strong> button immediately to the right of the label to select a new font. 
+<br><dt><strong>List example</strong><dd>      This is the font to use for all lists in TOra. Choose the <strong>Choose</strong> button immediately to the right of the label to select a new font. 
+<br><dt><strong>Filename extensions</strong><dd>      TODO. 
+<br><dt><strong>Tab stop width</strong><dd>      With of tab character. This value is also used when indenting automatically generated/formated scripts. 
+<br><dt><strong>Use only spaces when indenting</strong><dd>      TODO. 
+<br><dt><strong>Static checker</strong><dd>      Specifies static checker to be used. This configuration option should contain %1 which will be replaced with a filename (with full path) containing code to be checked. For example:
+     <pre class="example">          perl /usr/bin/staticChecker.pl --output=TORA --file=%1
+</pre>
+     </dl>
+
+   <p><strong>Syntax tab</strong>
+
+   <div class="block-image"><img src="images/editor_syntax.png" alt="images/editor_syntax.png"></div>
 
      <dl>
 <dt><strong>Syntax components</strong><dd>      This list contains different parts of the SQL syntax. You can change the color used for the element by selecting the item in this list and then pressing the Pick button to select a color. The current color of the currently selected item in the list is displayed just to the left of the Pick button.
@@ -56,26 +80,8 @@ This page of the options contains settings on how to use TOra editors.
  <br></td></tr><tr align="left"><td valign="top" width="30%"><strong>String</strong>	</td><td valign="top" width="70%">Color to use for text in strings. 
  <br></td></tr><tr align="left"><td valign="top" width="30%"><strong>Unfinished string</strong> </td><td valign="top" width="70%">Color to use for strings that miss their terminating ' or ".
      <br></td></tr></table>
- At the bottom of this dialog is a text field that displays en example of the current setting.
-
-     <br><dt><strong>Syntax highlighting</strong><dd>      Use this to control whether you want syntax highlighting or not. Observe that without syntax highlighting you will not see the indications for errors and current lines in the PL/SQL editor. 
-<br><dt><strong>Use maximum text width mark</strong><dd>      TODO. 
-<br><dt><strong>Keyword upper</strong><dd>      Check this box to convert all keywords to uppercase before displaying them. The text itself is not changed so resetting this not changed and the text sent to the database still contain lowercase letters. This setting is disabled if you do not have a monospaced font selected. 
-<br><dt><strong>Code completion</strong><dd>      Check this box to enable code completion in SQL editors. 
-<br><dt><strong>Editor shortcuts (TAB replacement)</strong><dd>      TODO. 
-<br><dt><strong>Sort completion rows</strong><dd>      If checked the completion alternatives are sorted in alphabetical order, otherwise they are in the same order as in the source. 
-<br><dt><strong>Indent same as previous line</strong><dd>      When inserting a new line indent it to the same level as the previous one. 
-<br><dt><strong>Text example</strong><dd>      This is the font to use for all editors in TOra that are not syntax highlighted. Choose the <strong>Choose</strong> button immediately to the right of the label to select a new font. 
-<br><dt><strong>Code example</strong><dd>      This is the font to use for all syntax highlighted SQL editors in TOra. Choose the <strong>Choose</strong> button immediately to the right of the label to select a new font. 
-<br><dt><strong>List example</strong><dd>      This is the font to use for all lists in TOra. Choose the <strong>Choose</strong> button immediately to the right of the label to select a new font. 
-<br><dt><strong>Filename extensions</strong><dd>      TODO. 
-<br><dt><strong>Tab stop width</strong><dd>      TODO. 
-<br><dt><strong>Use only spaces when indenting</strong><dd>      TODO. 
-<br><dt><strong>Static checker</strong><dd>      Specifies static checker to be used. This configuration option should contain %1 which will be replaced with a filename (with full path) containing code to be checked. For example:
-     <pre class="example">          perl /usr/bin/staticChecker.pl --output=TORA --file=%1
-</pre>
-     </dl>
-   There may also be pages under this for each individual database provider. Currently only Oracle uses this feature. That setup looks like this.
+ At the bottom of this dialog is a text field that displays en example of the current setting. 
+</dl>
 
    </body></html>
 

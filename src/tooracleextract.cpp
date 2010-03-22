@@ -1,4 +1,3 @@
-
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
@@ -4442,7 +4441,7 @@ static toSQL SQLTableInfo("toOracleExtract:TableInfo",
                           "      , t.min_extents\n"
                           "      , DECODE(\n"
                           "                t.max_extents\n"
-                          "               ,2147483645,'unlimited'\n"
+                          "               ,2147483645,'UNLIMITED'\n"
                           "               ,           t.max_extents\n"
                           "              )                       AS max_extents\n"
                           "      , NVL(t.pct_increase,0)\n"
