@@ -5,6 +5,7 @@ Source tarball:
 ---------------
 Check out the tora module from SVN
 Edit the configure.ac file to set the version number
+Edit CMakeLists.txt file to set the version number for CMake
 Edit the NEWS file to set a release date
 Commit, and then copy trunk to an appropriately named tag, such as:
 
