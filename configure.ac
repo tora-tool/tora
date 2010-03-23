@@ -1,6 +1,6 @@
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT([tora],[2.1.1],[tora-develop@lists.sourceforge.net])
+AC_INIT([tora],[2.1.2],[tora-develop@lists.sourceforge.net])
 AC_PREREQ([2.59])
 AC_CONFIG_AUX_DIR(config)
 # Every other copy of the package version number gets its value from here

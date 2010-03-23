@@ -4,7 +4,7 @@ Release Procedures:
 Source tarball:
 ---------------
 Check out the tora module from SVN
-Edit the configure.in file to set the version number
+Edit the configure.ac file to set the version number
 Edit the NEWS file to set a release date
 Commit, and then copy trunk to an appropriately named tag, such as:
 
@@ -31,3 +31,12 @@ Static binary tarball:
 No longer producing this, too specific to particular builds and difficult to resolve some
 Qt dependencies with static only.
 
+TOra documentation
+------------------
+Update version info in /doc/help/tora.texi (two places)
+Run /doc/help/make-pdf.sh to generate latest version of tora_documentation.pdf
+Upload it to TOra root folder:
+
+sftp yourusername,tora@frs.sourceforge.net
+cd /home/pfs/project/t/to/tora/tora/
+put tora_documentation.pdf
