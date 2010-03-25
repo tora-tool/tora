@@ -53,6 +53,7 @@
 #include <trotl.h>
 
 #include "toconf.h"
+#include "toconfiguration.h"
 #include "toconnection.h"
 #include "tomain.h"
 #include "tosql.h"
@@ -479,7 +480,7 @@ public:
 					if ((name.at(i).toUpper() != name.at(i) && quoteLowercase) || !toIsIdent(name.at(i)))
 						ok = false;
 				}
-			
+
 			// Check if given identified is a reserved word
 			int i = 0;
 			while (ok && (DefaultKeywords[i] != NULL))
@@ -489,10 +490,16 @@ public:
 				i++;
 			}
 			if (ok)
-				return name.toUpper();
+			{
+				if (toConfigurationSingle::Instance().objectNamesUpper())
+					return name.toUpper();
+				else
+					return name.toLower();
+			}
 			else
 				return QString::fromLatin1("\"") + name + QString::fromLatin1("\"");
 		}
+		
 		virtual QString unQuote(const QString &str)
 		{
 			if (str.at(0).toLatin1() == '\"' && str.at(str.length() - 1).toLatin1() == '\"')
@@ -1271,13 +1278,13 @@ toConnectionSub* toOracleProvider::oracleConnection::createConnection(void)
 	try
 	{
 		//oracleQuery::oracleSqlStatement info(*conn,
-		oracleQuery::trotlQuery info(*conn,
+		oracleQuery::trotlQuery info(*conn,  std::string(
 						     "BEGIN\n"
 						     "  SYS.DBMS_APPLICATION_INFO.SET_CLIENT_INFO('" TOAPPNAME
 						     " (http://tora.sf.net)"
 						     "');\n"
 						     "  SYS.DBMS_APPLICATION_INFO.SET_MODULE('" TOAPPNAME "','Access Database');\n"
-						     "END;");
+						     "END;"));
 	}
 	catch (...)
 	{
