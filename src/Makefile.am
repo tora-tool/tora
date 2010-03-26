@@ -276,6 +276,13 @@ EXTRA_DIST = icons \
 	toocistub.cpp \
 	tooraclepreload.cpp \
 	toresultresources.h \
+	tooracleextract.h \
+	tologger.h \
+	ts_log/critical_section.h \
+	ts_log/decorator.h \
+	ts_log/message_handler_log.h \
+	ts_log/thread_safe_log.h \
+	ts_log/ts_log_utils.h \
 	$(TRANSLATIONS) \
 	LICENSE.h \
 	tora.qrc \
