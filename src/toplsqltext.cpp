@@ -121,7 +121,7 @@ private:
     }
 
 };
-#include <QtDebug>
+
 static bool FindKeyword(toSQLParse::statement &statements, bool onlyNames,
                         bool &declaration, int &line, QString &name,
                         QString & icon, QString & itemtype)
