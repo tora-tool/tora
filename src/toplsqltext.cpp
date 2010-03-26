@@ -63,19 +63,20 @@ static struct TypeMapType
 {
     const char *Type;
     const char *Description;
+    const char *Icon;
     bool WantName;
     bool Declaration;
 }
-TypeMap[] = { { "FUNCTION", "Fc", true , true },    // Must be first in list
-    { "PROCEDURE", "Pr", true , true },
-    { "PACKAGE", "Pkg", true , true },
-    { "DECLARE", "Anon", false, true },
-    { "TYPE", "Type", true , false},
-    { "CURSOR", "Cur", true , false},
-    { "IF", "Cond", false, false},
-    { "LOOP", "Loop", false, false},
-    { "WHILE", "Loop", false, false},
-    { "FOR", "Loop", false, false},
+TypeMap[] = { { "FUNCTION", "Fc", ":/icons/function.png", true , true },    // Must be first in list
+    { "PROCEDURE", "Pr", ":/icons/procedure.png", true , true },
+    { "PACKAGE", "Pkg", ":/icons/package.png", true , true },
+    { "DECLARE", "Anon", NULL, false, true },
+    { "TYPE", "Type", ":/icons/type.png", true , false},
+    { "CURSOR", "Cursor", NULL, true , false},
+    { "IF", "Condition", NULL, false, false},
+    { "LOOP", "Loop", NULL, false, false},
+    { "WHILE", "Loop", NULL, false, false},
+    { "FOR", "Loop", NULL, false, false},
     { NULL, NULL, false, false}
 };
 
@@ -88,23 +89,42 @@ static toTreeWidgetItem *toLastItem(toTreeWidgetItem *parent)
     return lastItem;
 }
 
+// TODO/FIXME: well, icon handling and the "tree item" stuff
+// is really ugly. It should be simplified one day (model-view) to
+// allow searching, sorting, etc. Of course it should force me to
+// understand parser output...
 class toContentsItem : public toTreeWidgetItem
 {
 public:
     int Line;
-    toContentsItem(toTreeWidgetItem *parent, const QString &name, int line)
+
+    toContentsItem(toTreeWidgetItem *parent, const QString & icon, const QString &name, int line)
             : toTreeWidgetItem(parent, toLastItem(parent), name)
     {
-        Line = line;
+        setup(icon, line);
     }
-    toContentsItem(toTreeWidget *parent, const QString &name, const QString &id, int line)
+    toContentsItem(toTreeWidget *parent, const QString & icon, const QString &name, const QString &id, int line)
             : toTreeWidgetItem(parent, name, id)
     {
-        Line = line;
+        setup(icon, line);
     }
-};
+    
+private:
+    void setup(const QString & icon, int line)
+    {
+        Line = line;
+        if (!icon.isNull())
+           setIcon(0, QIcon(icon));
+        int space = text(0).indexOf(" ");
+        if (space != -1)
+           setText(0, text(0).mid(space));
+    }
 
-static bool FindKeyword(toSQLParse::statement &statements, bool onlyNames, bool &declaration, int &line, QString &name)
+};
+#include <QtDebug>
+static bool FindKeyword(toSQLParse::statement &statements, bool onlyNames,
+                        bool &declaration, int &line, QString &name,
+                        QString & icon, QString & itemtype)
 {
     if (statements.Type == toSQLParse::statement::Keyword ||
             statements.Type == toSQLParse::statement::Token)
@@ -118,7 +138,11 @@ static bool FindKeyword(toSQLParse::statement &statements, bool onlyNames, bool 
             for (j = 0; TypeMap[j].Type && TypeMap[j].Type != name; j++)
                 ;
             if (TypeMap[j].Type)
+            {
                 name = TypeMap[j].Description;
+                icon = TypeMap[j].Icon;
+                itemtype = TypeMap[j].Type;
+            }
             else
                 name = "Anonymous";
 
@@ -142,7 +166,7 @@ static bool FindKeyword(toSQLParse::statement &statements, bool onlyNames, bool 
     }
     for (std::list<toSQLParse::statement>::iterator i = statements.subTokens().begin(); i != statements.subTokens().end(); i++)
     {
-        bool ret = FindKeyword(*i, onlyNames, declaration, line, name);
+        bool ret = FindKeyword(*i, onlyNames, declaration, line, name, icon, itemtype);
         if (ret)
             return ret;
     }
@@ -403,7 +427,8 @@ void toPLSQLWidget::updateArguments(toSQLParse::statement &statements, toTreeWid
                     first = true;
                 else if (first)
                 {
-                    new toContentsItem(parent, "Param " + (*j).String, (*j).Line);
+                    // arguments
+                    new toContentsItem(parent, ":/icons/type.png", (*j).String, (*j).Line);
                     first = false;
                 }
             }
@@ -419,11 +444,13 @@ void toPLSQLWidget::updateContent(toSQLParse::statement &statements,
     int line;
     QString name;
     bool declaration;
-    if (!FindKeyword(statements, statements.Type == toSQLParse::statement::Statement, declaration, line, name) || name.isNull())
+    QString icon;
+    QString itemtype;
+    if (!FindKeyword(statements, statements.Type == toSQLParse::statement::Statement, declaration, line, name, icon, itemtype) || name.isNull())
         return ;
 
     if (parent)
-        item = new toContentsItem(parent, name, line);
+        item = new toContentsItem(parent, icon, name, line);
     else
     {
         for (item = m_contents->firstChild(); item; item = item->nextSibling())
@@ -432,8 +459,9 @@ void toPLSQLWidget::updateContent(toSQLParse::statement &statements,
                 item->setText(2, QString::null);
                 break;
             }
-        if (!item)
-            item = new toContentsItem(m_contents, name, id, line);
+        if (!item) {
+            item = new toContentsItem(m_contents, icon, "Item Unit Content", id, line);
+        }
         else
         {
             while (item->firstChild())
@@ -472,7 +500,8 @@ void toPLSQLWidget::updateContent(toSQLParse::statement &statements,
                     if ((*j).String.toUpper() == "BEGIN")
                         declaration = false;
                     else if ((*j).Type == toSQLParse::statement::Token && (*j).String.toUpper() != "END")
-                        new toContentsItem(item, "Var " + (*j).String, (*j).Line);
+                        // variables
+                        new toContentsItem(item, ":/icons/type.png", (*j).String, (*j).Line);
                 }
             }
             updateContent(*i, item);
