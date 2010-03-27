@@ -40,7 +40,9 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "utils.h"
+#ifdef DEBUG
 #include "tologger.h"
+#endif
 
 #include "tomain.h"
 #include "tothread.h"
@@ -186,9 +188,13 @@ void taskRunner::run(void)
 
 toThreadInfo::toThreadInfo(unsigned number) :threadNumber(number), threadTask("")
 {
+#ifdef DEBUG
     get_log(0).ts<toDecorator>( __HERE__) << "Thread no: " << threadNumber << " started." << std::endl;
+#endif
 }
 toThreadInfo::~toThreadInfo()
 {
+#ifdef DEBUG
     get_log(0).ts<toDecorator>( __HERE__) << "Thread no: " << threadNumber << " exited." << std::endl;
+#endif
 }
