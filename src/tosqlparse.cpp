@@ -2,39 +2,39 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2009 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries. 
- * 
+ *      these libraries.
+ *
  *      You may link this product with any GPL'd Qt library.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -50,7 +50,7 @@
 #include <QDebug>
 
 toSQLParse::statement::statement(type ntype, const QString &token, int cline)
-        : Type(ntype), String(token), Line(cline)
+    : Type(ntype), String(token), Line(cline)
 {
     SubTokens = NULL;
 }
@@ -120,22 +120,23 @@ bool toSQLParse::statement::operator == (const statement &stat) const
 }
 
 static const char *Operators[] =
-    {":=",
-     "=>",
-     "||",
-     "**",
-     "<<",
-     ">>",
-     "..",
-     "<>",
-     "::",
-     "!=",
-     "~=",
-     "^=",
-     "<=",
-     ">=",
-     NULL
-    };
+{
+    ":=",
+    "=>",
+    "||",
+    "**",
+    "<<",
+    ">>",
+    "..",
+    "<>",
+    "::",
+    "!=",
+    "~=",
+    "^=",
+    "<=",
+    ">=",
+    NULL
+};
 
 QString toSQLParse::stringTokenizer::getToken(bool forward, bool comments)
 {
@@ -179,7 +180,8 @@ QString toSQLParse::stringTokenizer::getToken(bool forward, bool comments)
             {
                 Offset++;
                 return "~~~";
-            } else if (c == '\n' && nc == '/' && String[Offset + inc + inc] != '*')
+            }
+            else if (c == '\n' && nc == '/' && String[Offset + inc + inc] != '*')
             {
                 Offset += 2;
                 return "~~~";
@@ -189,7 +191,7 @@ QString toSQLParse::stringTokenizer::getToken(bool forward, bool comments)
             {
                 int spos = Offset;
                 if (forward)
-                    for (Offset++;Offset < int(String.length()) && String[Offset] != '\n';Offset++)
+                    for (Offset++; Offset < int(String.length()) && String[Offset] != '\n'; Offset++)
                         ;
                 if (comments)
                     return String.mid(spos, Offset - spos);
@@ -277,7 +279,7 @@ QString toSQLParse::stringTokenizer::getToken(bool forward, bool comments)
                 }
                 else
                 {
-                    for (int i = 0;Operators[i];i++)
+                    for (int i = 0; Operators[i]; i++)
                     {
                         if ((forward && c == Operators[i][0] && nc == Operators[i][1]) ||
                                 (!forward && nc == Operators[i][0] && c == Operators[i][1]))
@@ -354,7 +356,7 @@ QString toSQLParse::stringTokenizer::remaining(bool eol)
 }
 
 toSQLParse::editorTokenizer::editorTokenizer(toMarkedText *editor, int offset, int line)
-        : tokenizer(offset, line)
+    : tokenizer(offset, line)
 {
     Editor = editor;
     toHighlightedText *text = dynamic_cast<toHighlightedText *>(editor);
@@ -467,7 +469,7 @@ QString toSQLParse::editorTokenizer::remaining(bool eol)
     {
         QStringList rows;
         rows << Editor->text(Line).mid(Offset);
-        for (int i = Line;i < Editor->lines();i++)
+        for (int i = Line; i < Editor->lines(); i++)
             rows << Editor->text(i);
         Line = Editor->lines();
         Offset = 0;
@@ -505,13 +507,14 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
             realfirst = first = upp;
 
         if (upp == ("PROCEDURE") ||
-            upp == ("FUNCTION") ||
-            upp == ("PACKAGE"))
+                upp == ("FUNCTION") ||
+                upp == ("PACKAGE"))
         {
             block = true;
             ret.StatementClass = statement::plsqlblock;
-        } else if (upp == "DECLARE" ||
-                   upp == "BEGIN")
+        }
+        else if (upp == "DECLARE" ||
+                 upp == "BEGIN")
         {
             ret.StatementClass = statement::plsqlblock;
         }
@@ -571,7 +574,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
             ret.subTokens().insert(ret.subTokens().end(), statement(statement::Keyword, token, tokens.line()));
             int line = tokens.line();
             int offset = tokens.offset();
-            for (QString tmp = tokens.getToken(true, true);line == tokens.line();tmp = tokens.getToken(true, true))
+            for (QString tmp = tokens.getToken(true, true); line == tokens.line(); tmp = tokens.getToken(true, true))
                 ret.subTokens().insert(ret.subTokens().end(), statement(statement::Token, tmp, line));
             tokens.setLine(line);
             tokens.setOffset(offset);
@@ -580,17 +583,17 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
         }
         else if (upp == (",") ||
                  ((syntax.reservedWord(upp) &&
-                  upp != ("NOT") &&
-                  upp != ("IS") &&
-                  upp != ("LIKE") &&
-                  upp != ("IN") &&
-                  upp != ("ELSE") &&
-                  upp != ("ELSIF") &&
-                  upp != ("END") &&
-                  upp != ("BETWEEN") &&
-                  upp != ("ASC") &&
-                  upp != ("DESC") &&
-                  upp != ("NULL")) && !nokey))
+                   upp != ("NOT") &&
+                   upp != ("IS") &&
+                   upp != ("LIKE") &&
+                   upp != ("IN") &&
+                   upp != ("ELSE") &&
+                   upp != ("ELSIF") &&
+                   upp != ("END") &&
+                   upp != ("BETWEEN") &&
+                   upp != ("ASC") &&
+                   upp != ("DESC") &&
+                   upp != ("NULL")) && !nokey))
         {
             ret.subTokens().insert(ret.subTokens().end(), statement(statement::Keyword, token, tokens.line()));
             nokey = false;
@@ -730,14 +733,14 @@ int toSQLParse::countIndent(const QString &txt, int &chars)
 }
 
 toSQLParse::settings toSQLParse::Settings = {true,
-        false,
-        false,
-        false,
-        true,
-        true,
-        true,
-        4,
-        60
+                                 false,
+                                 false,
+                                 false,
+                                 true,
+                                 true,
+                                 true,
+                                 4,
+                                 60
                                             };
 
 QString toSQLParse::indentString(int level)
@@ -745,13 +748,13 @@ QString toSQLParse::indentString(int level)
     QString ret;
     if (!Settings.ExpandSpaces)
     {
-        for (int i = 0;i < level / Settings.IndentLevel;i++)
+        for (int i = 0; i < level / Settings.IndentLevel; i++)
             ret += ("\t");
-        for (int j = 0;j < level % Settings.IndentLevel;j++)
+        for (int j = 0; j < level % Settings.IndentLevel; j++)
             ret += (" ");
     }
     else
-        for (int j = 0;j < level;j++)
+        for (int j = 0; j < level; j++)
             ret += (" ");
     return ret;
 }
@@ -791,7 +794,7 @@ static QString IndentComment(int level, int current, const QString &comment, boo
             ret += ("\n");
             current = 0;
         }
-        for (int i = 0;i < comment.length();i++)
+        for (int i = 0; i < comment.length(); i++)
         {
             if (!nl || !comment.at(i).isSpace())
             {
@@ -891,7 +894,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
             if ((*i).Type == statement::List)
             {
                 int i;
-                for (i = ret.length() - 1;i >= 0 && ret[i].isSpace();i--)
+                for (i = ret.length() - 1; i >= 0 && ret[i].isSpace(); i--)
                     ;
                 ret = ret.mid(0, std::max(i + 1, 0));
                 ret += ("\n");
@@ -1142,11 +1145,11 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                                                          ret.at(ret.length() - 1) == '\''))))
                     {
                         if (t != (";") &&
-                            t != (".") &&
-                            t != "@" &&
-                            ret.at(ret.length() - 1) != '.' &&
-                            ret.at(ret.length() - 1) != '@' &&
-                            current != 0)
+                                t != (".") &&
+                                t != "@" &&
+                                ret.at(ret.length() - 1) != '.' &&
+                                ret.at(ret.length() - 1) != '@' &&
+                                current != 0)
                         {
                             current++;
                             ret += (" ");
