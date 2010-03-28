@@ -63,7 +63,7 @@ public:
     struct settings
     {
         bool ExpandSpaces;
-        bool CommaBefore;
+        bool CommaBefore; // should comma on lists be placed on start of new line
         bool BlockOpenLine;
         bool OperatorSpace;
         bool KeywordUpper;
@@ -100,6 +100,9 @@ public:
             /** Another token of whatever it is detected in.
              */
             Token,
+            /** End of statement marker
+             */
+            EndOfStatement,
             /** Unparsed data
              */
             Raw

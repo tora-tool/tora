@@ -88,6 +88,9 @@ void printSt(toSQLParse::statement &stat, int level)
     case toSQLParse::statement::Token:
         printf("Token:");
         break;
+    case toSQLParse::statement::EndOfStatement:
+        printf("EndOfStatement:");
+        break;
     case toSQLParse::statement::Raw:
         printf("Raw:");
         break;
@@ -842,6 +845,47 @@ int main(int argc, char **argv)
     testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
     testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
 
+    //===================================================
+    // Test #28 Merge statement
+    // Note: Semicolon after first merge is only required for reparse test
+    //       Initial parse test should be ok without it. Reparse has problems
+    //       with it because parser separates statements and removes any "/"
+    //       signs which makes these two merge statements as one on second parse.
+    testSet.insert(testSet.end(),
+                   "MERGE INTO a\n"
+                   "USING (\n"
+                   " SELECT 1 id from dual) b on (a.id = b.id)\n"
+                   "WHEN MATCHED THEN\n"
+                   " UPDATE SET a.c = a.c +1\n"
+                   " DELETE WHERE (a.c > 2)\n"
+                   "WHEN NOT MATCHED THEN\n"
+                   " INSERT (a.id, a.c)\n"
+                   " VALUES (b.id, 0)\n"
+                   "/"
+                   "MERGE INTO a\n"
+                   "USING (\n"
+                   " SELECT 1 id from dual) b on (a.id = b.id)\n"
+                   "WHEN MATCHED THEN\n"
+                   " UPDATE SET a.c = a.c +1\n"
+                   " DELETE WHERE (a.c > 2)\n"
+                   "WHEN NOT MATCHED THEN\n"
+                   " INSERT (a.id, a.c)\n"
+                   " VALUES (b.id, 0)\n"
+                   "/\n");
+    testCount.insert(testCount.end(), 2);
+    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+
+    //===================================================
+    // Test #29 Query statement with "with" structure
+    testSet.insert(testSet.end(),
+                   "WITH p AS (SELECT 1/2 as half_a FROM dual),\n"
+                   "q AS(SELECT 1/2 half_b FROM dual)\n"
+                   "SELECT half_a/half_b FROM p, q;\n"
+                   "/\n");
+    testCount.insert(testCount.end(), 1);
+    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+
     QApplication test(argc, argv);
     toMarkedText text(NULL);
 
@@ -905,6 +949,8 @@ int main(int argc, char **argv)
         //qDebug() << "parsed=" << QString("\n") + firstparse;
 
         QString firstparse = toSQLParse::indent(stat);
+        // Note that secondparse will go directly to stringTokenizer::getToken
+        // bypassing editorTokenizer
         QString secondparse = toSQLParse::indent(firstparse);
 
         //printf("First\n\n%s\n", (const char *)firstparse.toUtf8());

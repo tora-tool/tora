@@ -173,9 +173,15 @@ QString toSQLParse::stringTokenizer::getToken(bool forward, bool comments)
         if (state == space)
         {
             // This condition finds '/' used in sqlplus to mark end of statement
+            // Note that when called from editorTokenizer it scans one string at a time (no \n's)
+            // when called from stringTokenizer full statement is passes including \n chars
             if (Offset == 0 && c == '/' && nc != '*')
             {
                 Offset++;
+                return "~~~";
+            } else if (c == '\n' && nc == '/' && String[Offset + inc + inc] != '*')
+            {
+                Offset += 2;
                 return "~~~";
             }
 
@@ -627,9 +633,10 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
             {
                 // empty statement (sql+ would repeat the last statement)
             }
-            else if (first == ("INSERT") || first == ("UPDATE") || first == ("DELETE"))
+            else if (first == ("INSERT") || first == ("UPDATE") || first == ("DELETE") || first == ("MERGE"))
             {
                 // return without inserting token "/"
+                ret.subTokens().insert(ret.subTokens().end(), statement(statement::EndOfStatement, "/", tokens.line()));
                 return ret;
             }
         }
@@ -848,7 +855,7 @@ QString toSQLParse::indentStatement(statement &stat, toConnection &conn, int lev
 
 QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer &syntax)
 {
-    QString ret;
+    QString ret; // indented (formatted) given statement
 
     switch (stat.Type)
     {
@@ -995,6 +1002,10 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                     current += CurrentColumn(t);
                 ret += t;
                 any = true;
+            }
+            else if ((*i).Type == statement::EndOfStatement)
+            {
+                ret += "\n/";
             }
             else if ((*i).String == ("::"))
             {
