@@ -104,7 +104,7 @@ static toSQL SQLListObjects8("toCodeModel:ListObjects",
                              "                          'TYPE' )\n"
                              "       AND a.owner = :owner<char[50]>\n"
                              "ORDER BY a.object_name\n",
-                             "Get list of code objects",
+                             "",
                              "0801",
                              "Oracle");
 

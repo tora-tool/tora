@@ -912,7 +912,7 @@ void toWorksheet::query(const QString &str, execType type, toSQLParse::statement
         code = true;
     */
 
-    QueryString = str;
+    QueryString = str.trimmed();
     QueryStatementClass = sc;
     if (!code && QueryString.length() > 0 && QueryString.at(QueryString.length() - 1) == ';')
         QueryString.truncate(QueryString.length() - 1);
