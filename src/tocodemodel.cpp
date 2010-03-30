@@ -77,7 +77,36 @@ static toSQL SQLListObjects("toCodeModel:ListObjects",
                              "                          'TYPE' )\n"
                              "       AND a.owner = :owner<char[50]>\n"
                              "ORDER BY a.object_name\n",
-                            "Get list of code objects");
+                             "Get list of code objects",
+                             "0901",
+                             "Oracle");
+
+static toSQL SQLListObjects8("toCodeModel:ListObjects",
+                             "SELECT a.object_name,\n"
+                             "       a.object_type,\n"
+                             "       DECODE (a.object_type,\n"
+                             "         'PACKAGE', (SELECT DECODE (ao.status,\n"
+                             "           'VALID', (SELECT ao2.status \n"
+                             "                       FROM sys.all_objects ao2\n"
+                             "                      WHERE ao2.object_name = a.object_name\n"
+                             "                        AND ao2.owner = a.owner \n"
+                             "                        AND ao2.object_type='PACKAGE BODY'),\n"
+                             "           ao.status )\n"
+                             " FROM sys.all_objects ao\n"
+                             " WHERE ao.object_name = a.object_name\n"
+                             " AND ao.owner = a.owner AND ao.object_type=a.object_type ),\n"
+                             " a.status ) AS Status\n"
+                             "  FROM sys.all_objects a\n"
+                             "  WHERE\n"
+                             "       a.object_type IN ( 'FUNCTION',\n"
+                             "                          'PACKAGE',\n"
+                             "                          'PROCEDURE',\n"
+                             "                          'TYPE' )\n"
+                             "       AND a.owner = :owner<char[50]>\n"
+                             "ORDER BY a.object_name\n",
+                             "Get list of code objects",
+                             "0801",
+                             "Oracle");
 
 static toSQL SQLListObjectsPgSQL("toCodeModel:ListObjects",
                              "SELECT p.proname AS Object_Name,\n"
