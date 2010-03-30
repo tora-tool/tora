@@ -1,21 +1,27 @@
 tora (2.1.2-1) unstable; urgency=low
 
-  * Improved: Add editor option for uppler/lowercase object names
-  * Improved: Db extract/compare tool now remembers widgets states
-  * New: Filesystem completer for target line edit
-  * Improved: Compatibility with sql+
-  * New: Color/pixmap identifier for connection
-  * Improved: Schema browser improvements
-  * New: Ability to add external static check
-  * New: Save package specification and body to one file
-  * New: Initial support for creating/modifying tables
-  * Bugfixes
+  * Added debug package. (Closes: #560064)
+  * New Upstream version 2.1.2
+    * Improved: Add editor option for uppler/lowercase object names
+    * Improved: Db extract/compare tool now remembers widgets states
+    * New: Filesystem completer for target line edit
+    * Improved: Compatibility with sql+
+    * New: Color/pixmap identifier for connection
+    * Improved: Schema browser improvements
+    * New: Ability to add external static check
+    * New: Save package specification and body to one file
+    * New: Initial support for creating/modifying tables
+    * Bugfixes
+  * Bumped Standards-Version to 3.8.4, no changes needed.
+  * No patches needed anymore, removed patch system.
+
+ -- Michael Meskes <meskes@debian.org>  Tue, 30 Mar 2010 13:14:16 +0200
 
 tora (2.1.1-1) unstable; urgency=low
 
-  * New upstream version
+  * New upstream version.
 
- -- Nathan Neulinger <nneul@neulinger.org> Tue, 13 Oct 2009 13:44:40 -0600
+ -- Michael Meskes <meskes@debian.org>  Thu, 19 Nov 2009 15:18:19 +0100
 
 tora (2.1.0-1) unstable; urgency=low
 

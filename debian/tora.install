@@ -2,3 +2,6 @@ doc/help/*.html		/usr/share/tora/help
 doc/help/images/*.png	/usr/share/tora/help/images
 
 src/icons/tora.xpm	/usr/share/icons/hicolor/32x32/apps
+
+debian/tmp/usr/share/doc/tora/*	/usr/share/doc/tora
+debian/tmp/usr/bin/tora		/usr/bin
