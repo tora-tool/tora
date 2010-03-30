@@ -2336,7 +2336,7 @@ fetch size. Will adjust value to be higher.</source>
         <translation>&amp;Autocommit på alla ändringar</translation>
     </message>
     <message>
-        <source>Specify if changes should be automatically commited.</source>
+        <source>Specify if changes should be automatically committed.</source>
         <translation>Anger att alla databasändringar automatiskt skall sparas i databasen direkt.</translation>
     </message>
     <message>
@@ -3909,7 +3909,7 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
         <translation>Oavslutat attribut på slutet</translation>
     </message>
     <message>
-        <source>Exceded qualifier max in toHtml</source>
+        <source>Exceeded qualifier max in toHtml</source>
         <translation>Attribut överskred max i toHtml</translation>
     </message>
     <message>

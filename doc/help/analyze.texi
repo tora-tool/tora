@@ -2,7 +2,7 @@
 @section Statistics manager
 @cindex Statistics manager
 
-This tool is usefull for collecting statistics and analysing tables in parallel. You can also use it to browse collected statistics.
+This tool is useful for collecting statistics and analysing tables in parallel. You can also use it to browse collected statistics.
 
 @image{images/analyze,15cm}
 

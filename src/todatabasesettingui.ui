@@ -23,7 +23,7 @@
    <item row="0" column="0">
     <widget class="QCheckBox" name="AutoCommit">
      <property name="toolTip">
-      <string>Specify if changes should be automatically commited.</string>
+      <string>Specify if changes should be automatically committed.</string>
      </property>
      <property name="text">
       <string>&amp;Autocommit changes</string>

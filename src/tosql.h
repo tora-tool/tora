@@ -55,7 +55,7 @@ class toConnection;
 
 /**
  * This class handles an abstraction of SQL statements used by TOra to extract
- * information and manipulate data. This is usefull in two ways, first off you
+ * information and manipulate data. This is useful in two ways, first off you
  * can edit the strings using a handy editor inside TOra if you find bugs. Also
  * you can use different statements for different Oracle versions. You can also
  * add support for new versions of Oracle without any need for recompilation or

@@ -874,16 +874,16 @@ public:
      */
     virtual QString description(bool version = true) const;
 
-    /** Set if this connection needs to be commited.
+    /** Set if this connection needs to be committed.
      */
     void setNeedCommit(bool needCommit = true)
     {
         NeedCommit = needCommit;
     }
     /**
-     * Get information about if the connection has uncommited data.
+     * Get information about if the connection has uncommitted data.
      *
-     * @return Whether uncommited data is available.
+     * @return Whether uncommitted data is available.
      */
     bool needCommit(void) const
     {
@@ -1177,7 +1177,7 @@ public:
 
     /** Get a list of options available for the connection. An option with the name
      * "-" indicates a break should be made to separate the rest of the options from the previous
-     * options. An option preceeded by "*" means selected by default. The * shoul be stripped before
+     * options. An option preceded by "*" means selected by default. The * shoul be stripped before
      * before passing it to the connection call.
      */
     virtual std::list<QString> providedOptions(const QString &provider);

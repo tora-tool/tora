@@ -2,7 +2,7 @@
 @section Invalid Objects
 @cindex Invalid Objects
 
-This tool is usefull to recompile invalid objects in the database.
+This tool is useful to recompile invalid objects in the database.
 
 @image{images/invalid,15cm}
 

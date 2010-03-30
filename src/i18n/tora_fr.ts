@@ -2289,7 +2289,7 @@ fetch size. Will adjust value to be higher.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Specify if changes should be automatically commited.</source>
+        <source>Specify if changes should be automatically committed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3756,7 +3756,7 @@ Will leave the password unencryptet in the config file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Exceded qualifier max in toHtml</source>
+        <source>Exceeded qualifier max in toHtml</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

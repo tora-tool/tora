@@ -158,7 +158,7 @@ void toBrowserIndexWidget::changeConnection()
     addTab(columnView, "&Columns");
 
     if (toIsOracle(c) || toIsSapDB(c))
-        addTab(resultInfo, "Informations");
+        addTab(resultInfo, "Information");
     else
         resultInfo->hide();
 

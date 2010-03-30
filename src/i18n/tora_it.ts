@@ -3270,7 +3270,7 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
     </message>
     <message>
         <location filename="../ui_todatabasesettingui.h" line="214"/>
-        <source>Specify if changes should be automatically commited.</source>
+        <source>Specify if changes should be automatically committed.</source>
         <translation>Specificare se i cambiamenti devono essere committati automaticamente.</translation>
     </message>
     <message>
@@ -5110,7 +5110,7 @@ Will leave the password unencrypted in the config file.</source>
     </message>
     <message>
         <location filename="../tohtml.cpp" line="197"/>
-        <source>Exceded qualifier max in toHtml</source>
+        <source>Exceeded qualifier max in toHtml</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

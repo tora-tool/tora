@@ -194,7 +194,7 @@ void toHtml::nextToken(void)
             }
             QualifierNum++;
             if (QualifierNum >= TO_HTML_MAX_QUAL)
-                throw qApp->translate("toHtml", "Exceded qualifier max in toHtml");
+                throw qApp->translate("toHtml", "Exceeded qualifier max in toHtml");
         }
     }
     else

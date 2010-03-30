@@ -201,7 +201,7 @@ public slots:
     /**
      * Handle connection toolbar's commit and rollback.
      *
-     * @param conn Connection that is commited.
+     * @param conn Connection that is committed.
      * @param cmt true for commit, false for rollback
      */
     void commitChanges(toConnection &conn, bool cmt);

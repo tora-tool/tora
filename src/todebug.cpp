@@ -1067,7 +1067,7 @@ void toDebug::execute(void)
         return ;
     }
 
-    // Check if current code has been modified in TOra and not commited to database.
+    // Check if current code has been modified in TOra and not committed to database.
     // If so - force user to compile code.
     if (!checkCompile())
         return ;

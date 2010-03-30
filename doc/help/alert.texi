@@ -1,7 +1,7 @@
 @node alert
 @section Alert Tool
 @cindex Alert Tool
-This tool is usefull for debugging database packages that send or depend on receiving dbms alerts.
+This tool is useful for debugging database packages that send or depend on receiving dbms alerts.
 
 @image{images/alert,13cm}
 
@@ -24,7 +24,7 @@ Name of the alert to send.
 Message to send in an alert. Pressing return in this lineedit will send the alert. 	
 
 @item @strong{Edit message in memo}
-Edit the message in a memo editor, usefull for sending newlines and longer messages. 	
+Edit the message in a memo editor, useful for sending newlines and longer messages. 	
 
 @item @strong{Send alert}
 Send the currently defined alert. You can also send an alert by pressing return in the message line editor.

@@ -365,7 +365,7 @@ public:
      * @exception QString If connection wasn't found.
      */
     toConnection &connection(const QString &);
-    /** Set if a connection needs to be commited. Also updates visual feedback in interface.
+    /** Set if a connection needs to be committed. Also updates visual feedback in interface.
      */
     void setNeedCommit(toConnection &conn, bool needCommit = true);
 
@@ -510,7 +510,7 @@ signals:
      */
     void removedToolWidget(toToolWidget *tool);
     /** Emitted before a commit or rollback is made to the current connection.
-     * @param conn Connection that is commited
+     * @param conn Connection that is committed
      * @param cmt True if commit, false if rollback.
      */
     void willCommit(toConnection &conn, bool cmt);

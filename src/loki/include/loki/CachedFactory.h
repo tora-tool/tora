@@ -151,7 +151,7 @@ namespace Loki
      * 
      * This implementation will prevent from Creating more than maxCreation objects
      * within byTime ms by throwing an exception.
-     * Could be usefull to detect prevent loads (http connection for instance).
+     * Could be useful to detect prevent loads (http connection for instance).
      * Use the setRate method to set the rate parameters.
      * default is 10 objects in a second.
      */
