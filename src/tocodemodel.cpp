@@ -121,6 +121,16 @@ static toSQL SQLListObjectsPgSQL("toCodeModel:ListObjects",
                              "7.1",
                              "PostgreSQL");
 
+static toSQL SQLListObjectsMySQL("toCodeModel:ListObjects",
+                                 "select r.routine_name object_name,\n"
+                                 "       r.routine_type objec_type,\n"
+                                 "       'VALID' status\n"
+                                 "  from information_schema.routines r\n"
+                                 " where r.routine_schema = :owner<char[50]>\n",
+                                 "",
+                                 "5.0",
+                                 "MySQL");
+
 static toSQL SQLListPackage("toCodeModel:ListPackage",
                             "SELECT \n"
                             "       DECODE(a.object_type, 'PACKAGE', 'SPEC', 'BODY'),\n"
@@ -386,12 +396,18 @@ void toCodeModel::refresh(toConnection &conn, const QString &owner)
 {
     m_owner = owner;
 
+    // Create an empty code object tree displayed on the right hand-side
+    // Individual items are fetched later using SQLListObjects query
+    // Note: MySQL does not support packages and types therefore these
+    // branches are not included for MySQL connections.
     delete rootItem;
     rootItem    = new toCodeModelItem(0, "Code");
-    packageItem = new toCodeModelItem(rootItem, tr("Package"));
+    if (!toIsMySQL(conn))
+        packageItem = new toCodeModelItem(rootItem, tr("Package"));
     procItem    = new toCodeModelItem(rootItem, tr("Procedure"));
     funcItem    = new toCodeModelItem(rootItem, tr("Function"));
-    typeItem    = new toCodeModelItem(rootItem, tr("Type"));
+    if (!toIsMySQL(conn))
+        typeItem    = new toCodeModelItem(rootItem, tr("Type"));
 
     toQList param;
     param.push_back(m_owner);

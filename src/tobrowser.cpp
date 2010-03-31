@@ -1914,8 +1914,12 @@ void toBrowser::changeConnection(void)
            toIsOracle(connection()) || toIsPostgreSQL(connection()));
     addTab(synonymSplitter, tr("S&ynonyms"),
            toIsOracle(connection()));
+    // 2010-03-31
+    // Starting with version 5.0 MySQL supports stored functions/procedures
+    // If TOra is used a lot with older versions of MySQL the "true" parameter
+    // should be enhanced with a check for MySQL version
     addTab(codeSplitter, tr("Cod&e"),
-           !toIsMySQL(connection()));
+           true);
     addTab(triggerSplitter, tr("Tri&ggers"),
            !toIsMySQL(connection()) && !toIsPostgreSQL(connection()));
     addTab(dblinkSplitter, tr("DBLinks"),

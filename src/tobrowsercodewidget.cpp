@@ -86,6 +86,12 @@ static toSQL SQLSQLBody("toBrowser:CodeBody",
                         "   AND Type IN ('PROCEDURE','FUNCTION','PACKAGE BODY','TYPE BODY')",
                         "");
 
+static toSQL SQLSQLBodyMySQL("toBrowser:CodeBody",
+                             "select routine_definition from information_schema.routines\n"
+                             " where routine_schema = :f1<char[101]> and routine_name = :f2<char[101]>",
+                             "",
+                             "5.0",
+                             "MySQL");
 
 toBrowserCodeWidget::toBrowserCodeWidget(QWidget * parent)
     : toBrowserBaseWidget(parent)
