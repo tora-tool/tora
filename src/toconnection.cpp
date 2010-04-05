@@ -220,6 +220,7 @@ toQuery::toQuery(toConnection &conn,
         SQL(sql(*Connection).toAscii())
 {
     Mode = Normal;
+    showBusy = true;
     int numArgs;
     if (!arg9.isNull())
         numArgs = 9;
@@ -295,6 +296,7 @@ toQuery::toQuery(toConnection &conn,
         SQL(sql)
 {
     Mode = Normal;
+    showBusy = true;
     int numArgs;
     if (!arg9.isNull())
         numArgs = 9;
@@ -361,6 +363,7 @@ toQuery::toQuery(toConnection &conn, const toSQL &sql, const toQList &params)
         SQL(sql(conn).toAscii())
 {
     Mode = Normal;
+    showBusy = true;
     toBusy busy;
     try
     {
@@ -390,6 +393,7 @@ toQuery::toQuery(toConnection &conn,
         SQL(sql)
 {
     Mode = Test;
+    showBusy = true;
     toBusy busy;
     try
     {
@@ -414,6 +418,7 @@ toQuery::toQuery(toConnection &conn, const QString &sql, const toQList &params)
         SQL(sql)
 {
     Mode = Normal;
+    showBusy = true;
     toBusy busy;
     try
     {
@@ -441,6 +446,7 @@ toQuery::toQuery(toConnection &conn,
         SQL(sql(conn).toAscii())
 {
     Mode = mode;
+    showBusy = true;
 
     ConnectionSub = conn.pooledConnection();
 
@@ -471,6 +477,7 @@ toQuery::toQuery(toConnection &conn,
         SQL(sql)
 {
     Mode = mode;
+    showBusy = true;
 
     ConnectionSub = conn.pooledConnection();
 
@@ -496,6 +503,7 @@ toQuery::toQuery(toConnection &conn, queryMode mode)
         : Connection(QPointer<toConnection>(&conn))
 {
     Mode = mode;
+    showBusy = true;
 
     ConnectionSub = conn.pooledConnection();
 
@@ -598,7 +606,7 @@ toQList toQuery::readQuery(toConnection &conn, const QString &sql, toQList &para
 
 toQList toQuery::readQuery(const QString &sql, toQList &params)
 {
-    toBusy busy;
+    toBusy busy(showBusy);
     SQL = sql;
     Params = params;
     Query->execute();

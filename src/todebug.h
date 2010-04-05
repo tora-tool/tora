@@ -135,7 +135,7 @@ class toDebug : public toToolWidget
     // Get text version from error/return/reason code returned by DBMS_DEBUG routines
     // Currently only used for debug information
     // type: 1 - error, 2 - reason, 3 - continue
-    QString getErrorText(int code, int type);
+    void getErrorText(int code, int type, QString &ret);
 #endif
 
     QComboBox *Schema;
@@ -181,14 +181,14 @@ class toDebug : public toToolWidget
     QTabWidget *Editors;
 
     // Must hold lock before reading or writing to these
-    toLock       Lock;
-    toSemaphore  TargetSemaphore;
-    toSemaphore  ChildSemaphore;
-    toSemaphore  StartedSemaphore;
+    toLock       Lock; // Lock of main session used to synchronise access to different items from main/target
+    toSemaphore  TargetSemaphore; // This semaphore is down when target is waiting
+    toSemaphore  ChildSemaphore; // This semaphore is down when main debug session is waiting
     toThread    *TargetThread;
-    QString      TargetSQL;
-    QString      TargetLog; // accumulates strings (logs) of debugger actions
-    QString      TargetException; // accumulates errors (exceptions) occuring in target session
+    QString      TargetSQL; // Variable used to pass on SQL which has to be executed in target session
+    bool         DebugTarget; // Does target session has to go into debug mode before executing statement?
+    QString      TargetLog; // Accumulates strings (logs) of debugger actions
+    QString      TargetException; // Accumulates errors (exceptions) occuring in target session
     toQList      InputData;
     toQList      OutputData;
     bool         RunningTarget; // Indicates if target session is currently running.
@@ -198,6 +198,11 @@ class toDebug : public toToolWidget
     QString      TargetID; // oracle debug id of "target session"
     // End of lock stuff
     toTimer      StartTimer;
+
+    // This bool is used as a workaround for a problem when toConnection::closeWidgets
+    // is calling close() twice. This variable would make it possible to skip closing
+    // actions when called for the second time (TODO: should be fixed properly in toconnection.cpp)
+    bool closedAlready;
 
     class targetTask : public toTask
     {
@@ -276,6 +281,7 @@ public:
     // this specific session has target session attached.
 
     void executeInTarget(const QString &, toQList &params);
+    void executeInTargetNoDebug(const QString &);
 
     QString checkWatch(const QString &name);
 

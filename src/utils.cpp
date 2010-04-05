@@ -945,18 +945,21 @@ toConnection &toCurrentConnection(QObject *cur)
     throw qApp->translate("toCurrentConnection", "Couldn't find parent connection. Internal error.");
 }
 
-toBusy::toBusy()
+toBusy::toBusy(bool busy)
 {
-    QMetaObject::invokeMethod(toMainWidget(),
-                              "showBusy",
-                              Qt::QueuedConnection);
+    Busy = busy;
+    if (busy)
+        QMetaObject::invokeMethod(toMainWidget(),
+                                  "showBusy",
+                                  Qt::QueuedConnection);
 }
 
 toBusy::~toBusy()
 {
-    QMetaObject::invokeMethod(toMainWidget(),
-                              "removeBusy",
-                              Qt::QueuedConnection);
+    if (Busy)
+        QMetaObject::invokeMethod(toMainWidget(),
+                                  "removeBusy",
+                                  Qt::QueuedConnection);
 }
 
 void toReadableColumn(QString &name)

@@ -216,6 +216,7 @@ private:
     std::list<toQValue> Params;
     QString SQL;
     queryMode Mode;
+    bool showBusy; // does a "busy" indicator has to be shown while query is running (default - true)
 
     queryImpl *Query;
     toQuery(const toQuery &);
@@ -507,6 +508,13 @@ public:
     /** Cancel the current execution of a query.
      */
     void cancel(void);
+
+    /** Specify if busy cursor must be displayed while a query is running
+     */
+    void setShowBusy(bool busy)
+    {
+        showBusy = busy;
+    }
 };
 
 /** A short representation of a @ref toQuery::queryDescribe
