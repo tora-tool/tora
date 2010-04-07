@@ -103,26 +103,29 @@ void toResultSchema::update(const QString &schema) {
     try {
         toConnection &conn = connection();
 
-        if (toIsOracle(conn)) {
-            /* remove current schema initstring */
-            conn.delInit(CHANGE_CURRENT_SCHEMA.arg(conn.user()));
+        if (schema != conn.schema())
+        {
+            if (toIsOracle(conn)) {
+                /* remove current schema initstring */
+                conn.delInit(CHANGE_CURRENT_SCHEMA.arg(conn.user()));
 
-            /* set the new one with selected schema */
-            QString sql = CHANGE_CURRENT_SCHEMA.arg(schema);
-            conn.allExecute(sql);
+                /* set the new one with selected schema */
+                QString sql = CHANGE_CURRENT_SCHEMA.arg(schema);
+                conn.allExecute(sql);
 
-            conn.addInit(sql);
+                conn.addInit(sql);
+            }
+            else if (toIsMySQL(conn)) {
+                conn.allExecute(QString("USE `%1`").arg(schema));
+                conn.setDatabase(schema);
+            }
+            else if (toIsPostgreSQL(conn))
+                conn.allExecute(CHANGE_CURRENT_SCHEMA_PG.arg(schema));
+            else
+                throw QString("No support for changing schema for this database");
+
+            conn.setSchema(schema);
         }
-        else if (toIsMySQL(conn)) {
-            conn.allExecute(QString("USE `%1`").arg(schema));
-            conn.setDatabase(schema);
-        }
-        else if (toIsPostgreSQL(conn))
-            conn.allExecute(CHANGE_CURRENT_SCHEMA_PG.arg(schema));
-        else
-            throw QString("No support for changing schema for this database");
-
-        conn.setSchema(schema);
     }
     TOCATCH;
 }
