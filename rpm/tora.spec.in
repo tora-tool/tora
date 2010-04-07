@@ -26,6 +26,7 @@ Release:                %{_release}%{?dist}
 Source:                 %{_name}-%{_version}.tar.gz
 URL:                    http://tora.sourceforge.net
 Group:                  Development/Databases
+Vendor:                 TOra
 License:                GPL
 BuildRoot:              %{_tmppath}/tora-root
 BuildRequires: postgresql-devel
