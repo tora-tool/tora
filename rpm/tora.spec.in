@@ -33,13 +33,15 @@ BuildRequires: postgresql-devel
 BuildRequires: oracle-instantclient11.2-devel
 BuildRequires: qt4-devel >= 4.3.0
 BuildRequires: openssl-devel
-BuildRequires: qscintilla-devel >= 2.0.0
 BuildRequires: perl
 BuildRequires: cmake >= 2.4.0
 BuildRequires: gcc-c++
 Requires:      qt4 >= 4.3.0
 Requires:      oracle-instantclient11.2-basic
+%if ! 0%{?rhel} || 0%{?rhel} > 5
+BuildRequires: qscintilla-devel >= 2.0.0
 Requires:      qscintilla >= 2.0.0
+%endif
 
 
 #
@@ -86,6 +88,9 @@ unset ORACLE_HOME
         -DORACLE_PATH_INCLUDES=$(ls -d -1 %{oraincdir}/*/%{oraclientdir} | tail -n 1) \
         -DORACLE_PATH_LIB=$(ls -d -1 %{oralibdir}/*/%{oraclientdir}/lib | tail -n 1) \
         -DPOSTGRESQL_PATH_INCLUDES=%{_includedir} \
+%if  0%{?rhel} && 0%{?rhel} < 6
+        -DWANT_INTERNAL_QSCINTILLA=1 \
+%endif
         .
 
 %build
