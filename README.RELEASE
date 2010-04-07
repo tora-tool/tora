@@ -9,16 +9,24 @@ Edit CMakeLists.txt file to set the version number for CMake
 Edit the NEWS file to set a release date
 Commit, and then copy trunk to an appropriately named tag, such as:
 
-svn copy -m "tag before starting 2.1.0 release process" https://tora.svn.sourceforge.net/svnroot/tora/trunk/tora https://tora.svn.sourceforge.net/svnroot/tora/tags/tora-2-1-0
+VER=2.1.0
+USR=nneul
+
+svn copy -m "tag before starting $VER release process" https://tora.svn.sourceforge.net/svnroot/tora/trunk/tora https://tora.svn.sourceforge.net/svnroot/tora/tags/tora-$VER
 
 configure
 make dist
 
-sftp nneul,tora@frs.sourceforge.net
-cd /home/pfs/project/t/to/tora/tora/2.1.0
-put tora-2.1.0.tar.gz
+sftp $USR,tora@frs.sourceforge.net
+cd /home/pfs/project/t/to/tora/tora
+mkdir $VER
+chmod 775 $VER
+cd /home/pfs/project/t/to/tora/tora/$VER
+put tora-$VER.tar.gz
 
-scp tora-2.1.0.tar.gz nneul,tora@frs.sourceforge.net:/home/frs/project/t/to/tora/tora/2.1.0/
+or
+
+scp tora-$VER.tar.gz $USR,tora@frs.sourceforge.net:/home/frs/project/t/to/tora/tora/$VER/
 
 
 add new release to the 'tora' package
