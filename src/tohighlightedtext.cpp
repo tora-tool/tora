@@ -363,8 +363,8 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     sqlLexer()->setFoldComments(true);
     sqlLexer()->setFoldCompact(false);
 
-    // enable syntax colouring
-    setSyntaxColoring (true);
+    // enable syntax colouring if "Syntax highlighting" is on in editor preferences
+    setSyntaxColoring(toConfigurationSingle::Instance().highlight());
 
     // set the font
     setFont(toStringToFont(toConfigurationSingle::Instance().codeFont()));
