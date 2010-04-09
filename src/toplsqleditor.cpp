@@ -478,7 +478,7 @@ void toPLSQLEditor::changePackage(const QModelIndex &current, const QModelIndex 
 
         viewSource(Schema->currentText(), item->display(), ctype, 0);
         if (ctype == "PACKAGE" ||
-                (ctype == "TYPE" && hasCode(Schema->currentText(), item->display(), ctype + " BODY")))
+                (ctype == "TYPE" && hasCode(Schema->currentText(), ctype + " BODY", item->display())))
             viewSource(Schema->currentText(), item->display(), ctype + " BODY", 0);
     }
 #ifdef AUTOEXPAND
