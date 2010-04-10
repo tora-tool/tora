@@ -65,6 +65,24 @@ Section "Start Menu Shortcuts"
   
 SectionEnd
 
+
+
+Section "Stub oci.dll" stub_section_id
+
+	
+  File oci\oci.dll
+  
+SectionEnd
+
+Function .onInit
+
+SearchPath $1 "oci.dll"
+IfErrors +2 0
+SectionSetFlags ${stub_section_id} 0
+
+
+FunctionEnd
+
 ;--------------------------------
 
 ; Uninstaller
@@ -80,6 +98,7 @@ Section "Uninstall"
 
   ; Remove files from directories
   Delete $INSTDIR\*.*
+  Delete $INSTDIR\sqldrivers\*.*
   Delete $INSTDIR\help\*.*
   Delete $INSTDIR\help\api\*.*
   Delete $INSTDIR\help\images\*.*
@@ -89,6 +108,7 @@ Section "Uninstall"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\Tora"
+  RMDir "$INSTDIR\sqldrivers"
   RMDir "$INSTDIR\help\api"
   RMDir "$INSTDIR\help\images"
   RMDir "$INSTDIR\help"
