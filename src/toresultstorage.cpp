@@ -2,39 +2,39 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2008 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries. 
- * 
+ *      these libraries.
+ *
  *      You may link this product with any GPL'd Qt library.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -55,6 +55,9 @@
 #include <QPaintEvent>
 #include <QProgressDialog>
 
+
+/*! \brief Item for storage data display and sorting.
+*/
 class toResultStorageItem : public toResultViewItem
 {
     bool AvailableGraph;
@@ -67,6 +70,60 @@ public:
                         const QString &buf = QString::null)
             : toResultViewItem(parent, after, buf), AvailableGraph(available)
     { }
+
+	//! Try to guess real type of the value taken from DB
+    void setSortValue(int col, const QVariant & v)
+    {
+    	bool ok;
+    	int i = v.toInt(&ok);
+    	if (ok)
+   		{
+   			m_sortValues[col] = i;
+   			return;
+   		}
+   		double d = v.toDouble(&ok);
+   		if (ok)
+   		{
+   			m_sortValues[col] = d;
+   			return;
+   		}
+   		m_sortValues[col] = v;
+   	}
+
+	//! See operator<
+    QVariant sortValue(int i) const
+    {
+    	return m_sortValues[i];
+   	}
+
+	/*! Operator used for sorting. Original operator handles
+	    only string-based sorting. Now it supports int and double
+	    for numeric columns.
+	 */
+    bool operator<(const QTreeWidgetItem &other) const
+    {
+        int column = treeWidget()->sortColumn();
+        QVariant v(m_sortValues[column]);
+
+        const toResultStorageItem * o = dynamic_cast<const toResultStorageItem*>(&other);
+        Q_ASSERT_X(o, "cast", "only toResultStorageItem are supported");
+
+        switch (v.type())
+        {
+        	case QVariant::Int:
+	        	return v.toInt() < o->sortValue(column).toInt();
+        	case QVariant::Double:
+				return v.toDouble() < o->sortValue(column).toDouble();
+        	case QVariant::String:
+	        	return v.toString() < o->sortValue(column).toString();
+	        default:
+	        	Q_ASSERT_X(0, "compare", "more comparation is not supported now");
+	    };
+    }
+
+private:
+	//! Store the value used for sorting for every column
+	QHash<int,QVariant> m_sortValues;
 };
 
 class toResultStorageItemDelegate: public QItemDelegate
@@ -76,18 +133,18 @@ public:
     {
     }
 
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, 
-               const QModelIndex & index ) const  
+    void paint(QPainter *painter, const QStyleOptionViewItem &option,
+               const QModelIndex & index ) const
     {
         if(index.column() == 8 ) {
             int left   = option.rect.left();
             int top    = option.rect.top();
             int width  = option.rect.width();
             int height = option.rect.height();
-   
+
             QString str = index.model()->data(index, Qt::DisplayRole).toString();
             QStringList pct = str.split(QRegExp("/"));
-            
+
             if (pct.count() == 3) {
                 int w_used = (int) (pct.at(0).toDouble() * width / 100);
                 int w_free = (int) (pct.at(1).toDouble() * width / 100);
@@ -587,12 +644,13 @@ void toResultStorage::updateList(void)
     {
         for (std::list<QString>::iterator j = TablespaceValues.begin();j != TablespaceValues.end();)
         {
-            toTreeWidgetItem *tablespace = new toResultStorageItem(AvailableGraph, this, NULL);
+            toResultStorageItem *tablespace = new toResultStorageItem(AvailableGraph, this, NULL);
             for (int i = 0;i < COLUMNS && j != TablespaceValues.end();i++, j++)
             {
                 if (i == 8)
                     continue;
                 tablespace->setText(i, *j);
+                tablespace->setSortValue(i, *j);
             }
 
             // To fill Used/Free/Autoextend column
@@ -607,13 +665,14 @@ void toResultStorage::updateList(void)
 //             t.sprintf("%05.1f / %05.1f / %05.1f%%", (user-free)*100, free*100, (1 - user)*100);
 // spaces seems better than 0-filling...
             t.sprintf("%#5.1f / %#5.1f / %#5.1f%%", (user-free)*100, free*100, (1 - user)*100);
-            tablespace->setText(8,t);
+            tablespace->setText(8, t);
+            tablespace->setSortValue(8, (user-free)*100);
             // end of Used/Free/Autoextend column
 
             if (CurrentSpace == tablespace->text(0))
             {
                 if (CurrentFile.isEmpty())
-                    setSelected(tablespace, true);
+                    tablespace->setSelected(true);
             }
         }
     }
@@ -641,9 +700,13 @@ void toResultStorage::updateList(void)
             file = new toResultStorageItem(AvailableGraph, tablespace, NULL);
         }
         for (int i = 0;i < FILECOLUMNS && k != FileValues.end();i++, k++)
+        {
             file->setText(i, *k);
+            reinterpret_cast<toResultStorageItem*>(file)->setSortValue(i, *k);
+        }
 
         file->setText(COLUMNS, name);
+        reinterpret_cast<toResultStorageItem*>(file)->setSortValue(COLUMNS, name);
         if (CurrentSpace == file->text(COLUMNS) &&
                 CurrentFile == file->text(0))
         {
