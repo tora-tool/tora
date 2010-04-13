@@ -218,6 +218,13 @@ toMemoEditor::toMemoEditor(QWidget *parent,
     connect(WordWrapAct, SIGNAL(toggled(bool)),
              Editor, SLOT(setWordWrap(bool)));
     Toolbar->addAction(WordWrapAct);
+    
+    QAction * XMLWrapAct = new QAction(QIcon(":/icons/xmlwrap.png"), tr("XML Format"), Toolbar);
+    XMLWrapAct->setCheckable(true);
+    connect(XMLWrapAct, SIGNAL(toggled(bool)),
+             Editor, SLOT(setXMLWrap(bool)));
+    Toolbar->addAction(XMLWrapAct);
+    
 
     if (Row >= 0 && Col >= 0 && !listView())
     {

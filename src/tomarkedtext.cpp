@@ -68,6 +68,7 @@
 #include <QDir>
 #include <QApplication>
 #include <QPrintDialog>
+#include <QDomDocument>
 
 #include "icons/undo.xpm"
 #include "icons/redo.xpm"
@@ -173,6 +174,28 @@ void toMarkedText::setWordWrap(bool enable)
         setWrapMode(QsciScintilla::WrapNone);
         setWrapVisualFlags(QsciScintilla::WrapFlagNone,
                             QsciScintilla::WrapFlagNone);
+    }
+}
+
+void toMarkedText::setXMLWrap(bool wrap)
+{
+    if (wrap)
+    {
+        QDomDocument d;
+        if (m_origContent.isEmpty())
+            m_origContent = text();
+        if (d.setContent(m_origContent))
+            setText(d.toString(2));
+        else
+            m_origContent.clear();
+    }
+    else
+    {
+        if (!m_origContent.isEmpty())
+        {
+            setText(m_origContent);
+            m_origContent.clear();
+        }
     }
 }
 

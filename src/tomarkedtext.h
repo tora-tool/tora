@@ -97,6 +97,9 @@ class toMarkedText : public QsciScintilla, public toEditWidget
     QString m_searchText;
     //! Highligh all occurrences of m_searchText QScintilla indicator
     int m_searchIndicator;
+    
+    //! Original content of the editor for XML format functionality. See setXMLWrap()
+    QString m_origContent;
 
     bool findText(Search::SearchDirection direction);
 
@@ -247,7 +250,7 @@ public:
      * @param col Will be filled out with the col.
      */
     void findPosition(int index, int &line, int &col);
-
+    
 signals:
     void displayMenu(QMenu *);
     // emitted when a new file is opened
@@ -338,6 +341,15 @@ public slots:
     }
 
     void setWordWrap(bool);
+
+    /*! \brief Tries to format XML content of the editor.
+    It's using "brute force" = expecting it's a xml string. If the QDomDocument fails
+    with parsing, nothing is changed.
+    The original content of the editor is stored in QString m_origContent. This attribute
+    is cleared if it's not needed
+    \param wrap true for use formatting, false for use original text
+    */
+    void setXMLWrap(bool wrap);
 };
 
 #endif

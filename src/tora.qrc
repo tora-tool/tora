@@ -245,6 +245,7 @@
         <file>icons/procedure-invalid.png</file>
         <file>icons/type.png</file>
         <file>icons/type-invalid.png</file>
+        <file>icons/xmlwrap.png</file>
 
         <file>templates/completion.api</file>
         <file>templates/hints.tpl</file>
