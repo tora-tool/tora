@@ -74,7 +74,7 @@ class toBrowserBaseWidget : public QTabWidget
         Update data if it's different from previously used schema/object.
         See updateData().
         */
-        virtual void changeParams(const QString & schema, const QString & object);
+        virtual void changeParams(const QString & schema, const QString & object, const QString & type = "");
 
         /*! \brief Change connection for widget. It has to handle visibility
         of tabs depending on DB features.
@@ -88,6 +88,8 @@ class toBrowserBaseWidget : public QTabWidget
 
         //! Returns currently used schema.
         QString schema() { return m_schema; };
+        //! Returns type of currently used object.
+        QString type() { return m_type; };
         //! Returns currently used object name.
         QString object() { return m_object; };
 
@@ -105,6 +107,7 @@ class toBrowserBaseWidget : public QTabWidget
 
     private:
         QString m_schema;
+        QString m_type;
         QString m_object;
 
         /*! Some kind of cache to save some fetching from DB.

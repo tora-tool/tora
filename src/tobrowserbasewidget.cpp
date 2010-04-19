@@ -44,7 +44,9 @@
 #include "toresult.h"
 #include "toresultdata.h"
 #include "tobrowserbasewidget.h"
-
+#include "toconnection.h"
+#include "tomain.h"
+#include "utils.h"
 
 toBrowserBaseWidget::toBrowserBaseWidget(QWidget * parent)
     : QTabWidget(parent),
@@ -92,12 +94,13 @@ void toBrowserBaseWidget::addTab(QWidget * page, const QString & label)
     m_tabs[page->objectName()] = r;
 }
 
-void toBrowserBaseWidget::changeParams(const QString & schema, const QString & object)
+void toBrowserBaseWidget::changeParams(const QString & schema, const QString & object, const QString & type)
 {
-    if (m_schema != schema || m_object != object)
+    if (m_schema != schema || m_object != object || m_type != type)
     {
         m_schema = schema;
         m_object = object;
+        m_type   = type;
         updateData(currentWidget()->objectName());
     }
 }
@@ -105,6 +108,7 @@ void toBrowserBaseWidget::changeParams(const QString & schema, const QString & o
 void toBrowserBaseWidget::changeConnection()
 {
     m_schema = "";
+    m_type   = "";
     m_object = "";
 
     m_tabs.clear();
@@ -135,5 +139,12 @@ void toBrowserBaseWidget::updateData(const QString & ix)
 {
     if (schema().isEmpty() || object().isEmpty())
         return;
-    m_tabs[ix]->changeParams(schema(), object());
+    toConnection &conn = toMainWidget()->currentConnection();
+    if (toIsMySQL(conn) && !type().isEmpty())
+       // MySQL requires additional parameter to fetch routine (procedure/function) creation script
+       // Parameter must be passed first. This parameter (type) is only specified when it is a MySQL
+       // connection and routine code is being fetched (as opposed to fetching say tables)
+       m_tabs[ix]->changeParams(type(), schema(), object());
+    else
+       m_tabs[ix]->changeParams(schema(), object());
 }

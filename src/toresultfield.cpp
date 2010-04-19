@@ -56,6 +56,7 @@ toResultField::toResultField(QWidget *parent, const char *name)
     setReadOnly(true);
     Query = NULL;
     connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
+    whichResultField = 1;
 }
 
 toResultField::~toResultField()
@@ -98,6 +99,15 @@ void toResultField::poll(void)
         {
             while (Query->poll() && !Query->eof())
             {
+                // For some MySQL statements (say "show create function aaa.bbb") more than one column is returned
+                // and it is not possible to control that (or I do not know how to do it). This workaround will get
+                // a required field (say 3rd) from a result set returned.
+                int fieldNo = whichResultField; // by default this would be set to 1 in constructor
+                while (fieldNo > 1)
+                {
+                    fieldNo--;
+                    Query->readValue();
+                }
                 Unapplied += Query->readValue();
             }
             if (Unapplied.length() > THRESHOLD)

@@ -86,9 +86,18 @@ static toSQL SQLSQLBody("toBrowser:CodeBody",
                         "   AND Type IN ('PROCEDURE','FUNCTION','PACKAGE BODY','TYPE BODY')",
                         "");
 
-static toSQL SQLSQLBodyMySQL("toBrowser:CodeBody",
+// Fetching from routine_definition table is not enough as it does not return information about
+// routine arguments, return type etc.
+/*static toSQL SQLSQLBodyMySQL("toBrowser:CodeBody",
                              "select routine_definition from information_schema.routines\n"
                              " where routine_schema = :f1<char[101]> and routine_name = :f2<char[101]>",
+                             "",
+                             "5.0",
+                             "MySQL");*/
+
+// NOTE! MySQL query has an additional argument :f1 which should be set to 'FUNCTION' or 'PROCEDURE'!
+static toSQL SQLSQLBodyMySQL("toBrowser:CodeBody",
+                             "show create :f3<noquote> `:f1<noquote>`.`:f2<noquote>`;",
                              "",
                              "5.0",
                              "MySQL");
@@ -105,6 +114,12 @@ toBrowserCodeWidget::toBrowserCodeWidget(QWidget * parent)
     bodyResult = new toResultField(this);
     bodyResult->setObjectName("bodyResult");
     bodyResult->setSQL(SQLSQLBody);
+    toConnection & c = toCurrentConnection(this);
+    if (toIsMySQL(c))
+        // For MySQL we need value from third column. As it is not a query which is fetching
+        // routine creation script - particular field cannot be specified (or I do not know
+        // how to do it). Therefore we need this workaround.
+        bodyResult->setWhichResultField(3);
 
     grantsView = new toResultGrants(this);
     grantsView->setObjectName("grantsView");

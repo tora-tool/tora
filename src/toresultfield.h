@@ -61,8 +61,13 @@ class toResultField : public toHighlightedText, public toResult
     QString Unapplied;
     toNoBlockQuery *Query;
     toBackground Poll;
+    int whichResultField; // Shows which field from result should be used (for MySQL only), used for calls to "show create ..."
 
 public:
+    void setWhichResultField(int i)
+    {
+        whichResultField = i;
+    }
     /** Create the widget.
      * @param parent Parent widget.
      * @param name Name of widget.

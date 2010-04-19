@@ -1966,7 +1966,21 @@ void toBrowser::changeItem()
 
     if (m_browsersMap.contains(ix))
     {
-        m_browsersMap[ix]->changeParams(schema(), currentItemText());
+        if (ix != codeSplitter)
+            m_browsersMap[ix]->changeParams(schema(), currentItemText());
+        else
+        {
+            // If code browser has been clicked we need to know type of code (function, procedure...) too
+            // as it is not possible to identify code by just schema and object (in MySQL there can be
+            // a function and procedure with the same name in the same schema)
+            toBrowserSchemaCodeBrowser * browser = dynamic_cast<toBrowserSchemaCodeBrowser*>(m_objectsMap[ix]);
+            if (!browser)
+            {
+                qDebug("Only for code - toBrowserSchemaCodeBrowser cast!");
+                return;
+            }
+            m_browsersMap[ix]->changeParams(schema(), currentItemText(), browser->objectType());
+        }
     }
     else
         qDebug() << "changeItem() unhandled index" << ix;
