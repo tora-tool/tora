@@ -885,6 +885,21 @@ bool toWorksheet::describe(const QString &query)
     return false;
 }
 
+static toSQL SQLCheckMySQLRoutine("toWorksheet:CheckRoutine",
+                        "select count(1)\n"
+                        "from information_schema.routines\n"
+                        "where routine_name = :f1<char[101]>\n"
+                        "  and lower(routine_type) = :f2<char[101]>",
+                        "Check if routine exists in MySQL",
+                        "5.0",
+                        "MySQL");
+
+static toSQL SQLDropMySQLRoutine("toWorksheet:DropRoutine",
+                        "drop :f1<noquote> if exists :f2<noquote>;",
+                        "Drop MySQL routine if it exists",
+                        "5.0",
+                        "MySQL");
+
 void toWorksheet::query(const QString &str, execType type, toSQLParse::statement::statementClass sc)
 {
     Result->stop();
@@ -924,6 +939,60 @@ void toWorksheet::query(const QString &str, execType type, toSQLParse::statement
     chk.replace(QRegExp(QString::fromLatin1(" or replace ")), QString::fromLatin1(" "));
     if (chk.startsWith(QString::fromLatin1("create trigger ")))
         nobinds = true;
+
+    // MySQL does not support replacing currently existing routines. Trying to create existing
+    // routine raises exception. Therefore when creating a routine a previous one should be
+    // dropped first.
+    if (toIsMySQL(connection()) && code)
+    {
+        // do a "poor mans" parsing as we do not actually need to parse everything
+        chk.replace("(", " ");
+        chk.replace("\n", " ");
+        QStringList tok = chk.split(" ", QString::SkipEmptyParts);
+
+        // only for "create" statements
+        if (tok[0] == "create")
+        {
+            int i;
+            if (tok[1].startsWith("definer="))
+                i = 1;
+            else
+                i = 0;
+
+            // only for create function|procedure statements (not for create table|index etc...)
+            if (tok[1 + i] == "function" || tok[1 + i] == "procedure")
+            {
+                int c = 1; // count of existing routines (would logically be 0 or 1)
+
+                try {
+                    if (1==1 /* config "check if routine exists" is enabled */)
+                    {
+                        // Check if this routine actually exists in database
+                        toQList param;
+                        toPush(param, toQValue(tok[2 + i].remove('`'))); // routine name
+                        toPush(param, toQValue(tok[1 + i])); // routine type (procedure or function)
+                        toQuery query(connection(), toQuery::Long, SQLCheckMySQLRoutine, param);
+                        c = query.readValue().toInt(); // 1 - exists, 0 - does not exist
+                    }
+
+                    if (c == 1 /*|| config "drop always" */)
+                    {
+                        if (TOMessageBox::information(this, tr("Drop routine?"),
+                                                      tr("Do you want to drop %1 %2?").arg(tok[1 + i]).arg(tok[2 + i]),
+                                                      tr("&Drop"), tr("Leave it and continue")) == 0)
+                        {
+                            toQList param;
+                            toPush(param, toQValue(tok[1 + i])); // routine type (procedure or function)
+                            toPush(param, toQValue(tok[2 + i])); // routine name
+                            // Note that if routine creation is not successfull you will be left without any routine!
+                            toQuery query(connection(), toQuery::Long, SQLDropMySQLRoutine, param);
+                        }
+                    }
+                }
+                TOCATCH;
+            }
+        }
+    } // if toIsMySQL
 
     if (type == OnlyPlan)
     {
