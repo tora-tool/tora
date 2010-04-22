@@ -99,6 +99,20 @@ feature. That setup looks like this.
 
      <dl>
 <dt><strong>Possibility to break MySql queries</strong><dd>    TODO. 
+<br><dt><strong>When calling create routine statement in worksheet</strong><dd>    MySQL routine creation does not support "create or replace" therefore if you try to create new routine and it
+    already exists you will get an exception. This option controls if TOra should try to avoid such exceptions in
+    one of supported ways:
+          <ul>
+    <li><strong>Do nothing</strong> - do not try to detect and avoid exception when creating routines. 
+    <li><strong>Drop before creating</strong> - execute "drop &lt;procedure|function&gt; if exists &lt;name&gt;" before calling create statement. 
+    <li><strong>Drop before creating (if exists)</strong> - check routines table if routine already exists. If so - execute drop statement. 
+    <li><strong>Ask</strong> - ask user if TOra should try dropping a routine before creating it (without checking if it already exists). 
+    <li><strong>Ask (if exists)</strong> - check routines table if routine already exists. If so - ask user if drop
+      statement should be called (without it creating procedure will fail, but it could be usefull if you didn't know
+      that routine with given name exists already and now you would like to skip creation and probably change the name
+      of routine). 
+    </ul>
+         <strong>Note!</strong> - if routine creation statement fails you will be left without <strong>any</strong> version of routine in the database! 
 </dl>
 
    </body></html>

@@ -183,6 +183,9 @@ class toWorksheet : public toToolWidget
     // private for toworksheetwidget
     toWorksheet(QWidget *parent, const char *name, toConnection &connection);
 
+    // Imitate something like "create or replace" syntax for MySQL
+    void mySQLBeforeCreate(QString &chk);
+
 protected:
     void closeEvent(QCloseEvent *event);
 

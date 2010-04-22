@@ -284,6 +284,8 @@ public:
     // toqsqlconnection
     bool onlyForward();
     void setOnlyForward(bool v);
+    int createAction();
+    void setCreateAction(int v);
 
     // main.cpp
     QString lastVersion();

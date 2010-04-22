@@ -143,6 +143,7 @@ public:
 
     // toqsqlconnection
     bool m_onlyForward;
+    int  m_createAction;
 
     // main.cpp
     QString     m_lastVersion;
@@ -386,6 +387,7 @@ public:
         m_maxLong = s.value(CONF_MAX_LONG, DEFAULT_MAX_LONG).toInt();
         // toqsqlconnection
         m_onlyForward = s.value(CONF_ONLY_FORWARD, DEFAULT_ONLY_FORWARD).toBool();
+        m_createAction = s.value(CONF_CREATE_ACTION, DEFAULT_CREATE_ACTION).toInt();
         // main.cpp
         m_lastVersion = s.value(CONF_LAST_VERSION, "").toString();
         m_firstInstall = s.value(CONF_FIRST_INSTALL, "").toString();
@@ -614,6 +616,7 @@ public:
         s.setValue(CONF_MAX_LONG, m_maxLong);
         // toqsqlconnection
         s.setValue(CONF_ONLY_FORWARD, m_onlyForward);
+        s.setValue(CONF_CREATE_ACTION, m_createAction);
         // main.cpp
         s.setValue(CONF_LAST_VERSION, m_lastVersion);
         s.setValue(CONF_FIRST_INSTALL, m_firstInstall);
@@ -1651,6 +1654,16 @@ bool toConfiguration::onlyForward()
 void toConfiguration::setOnlyForward(bool v)
 {
     p->m_onlyForward = v;
+}
+
+int toConfiguration::createAction()
+{
+    return p->m_createAction;
+}
+
+void toConfiguration::setCreateAction(int v)
+{
+    p->m_createAction = v;
 }
 
 // main.cpp

@@ -1042,6 +1042,8 @@ public:
 class qSqlSetting : public QWidget, public toSettingTab
     {
         QCheckBox *OnlyForward;
+        QLabel    *CreateLabel;
+        QComboBox *BeforeCreateAction;
     public:
         qSqlSetting(QWidget *parent)
                 : QWidget(parent), toSettingTab("database.html#qsql")
@@ -1069,6 +1071,22 @@ class qSqlSetting : public QWidget, public toSettingTab
             OnlyForward->setChecked(toConfigurationSingle::Instance().onlyForward());
             vbox->addWidget(OnlyForward);
 
+            CreateLabel = new QLabel(
+                qApp->translate("qSqlSetting", "When calling create routine statement in worksheet"),
+                box);
+            vbox->addWidget(CreateLabel);
+
+            BeforeCreateAction = new QComboBox(box);
+            BeforeCreateAction->clear();
+            BeforeCreateAction->insertItems(0, QStringList()
+              << qApp->translate("qSqlSetting", "Do nothing")
+              << qApp->translate("qSqlSetting", "Drop before creating")
+              << qApp->translate("qSqlSetting", "Drop before creating (if exists)")
+              << qApp->translate("qSqlSetting", "Ask")
+              << qApp->translate("qSqlSetting", "Ask (if exists)"));
+            BeforeCreateAction->setCurrentIndex(toConfigurationSingle::Instance().createAction());
+            vbox->addWidget(BeforeCreateAction);
+
             QSpacerItem *spacer = new QSpacerItem(
                 20,
                 20,
@@ -1082,6 +1100,7 @@ class qSqlSetting : public QWidget, public toSettingTab
         {
             toConfigurationSingle::Instance().setOnlyForward(OnlyForward->isChecked());
             toQSqlProvider::OnlyForward = OnlyForward->isChecked();
+            toConfigurationSingle::Instance().setCreateAction(BeforeCreateAction->currentIndex());
         }
     };
 

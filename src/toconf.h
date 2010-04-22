@@ -179,6 +179,8 @@
 // tosqlconnection
 #define CONF_ONLY_FORWARD "OnlyForward"
 #define DEFAULT_ONLY_FORWARD true
+#define CONF_CREATE_ACTION "BeforeCreateAction"
+#define DEFAULT_CREATE_ACTION 0
 // main.cpp
 #define CONF_LAST_VERSION "LastVersion"
 #define CONF_FIRST_INSTALL "FirstInstall"
