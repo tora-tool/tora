@@ -109,6 +109,14 @@ void toResultField::poll(void)
                     Query->readValue();
                 }
                 Unapplied += Query->readValue();
+
+                // Read any remaining columns for queries with specific field to fetch.
+                // This is primarily used for MySQL statements like "show create..." which
+                // return different uncontrollable number of fields for different users.
+                // If remaining fields are not fetched polling thread will loop.
+                if (whichResultField > 1)
+                    while (!Query->eof())
+                        Query->readValue();
             }
             if (Unapplied.length() > THRESHOLD)
             {
