@@ -2298,6 +2298,12 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
 
     Editors = new QTabWidget(hsplitter);
     Editors->setTabPosition(QTabWidget::North);
+#if QT_VERSION >= 0x040500
+    Editors->setTabsClosable(true);
+    connect(Editors, SIGNAL(tabCloseRequested(int)),
+            this, SLOT(closeEditor(int)));
+#endif
+
 
     QToolButton *closeButton = new toPopupButton(Editors);
     closeButton->setIcon(QPixmap(const_cast<const char**>(close_xpm)));
@@ -3374,6 +3380,13 @@ void toDebug::closeEditor()
 {
     toDebugText *editor = currentEditor();
     closeEditor(editor);
+}
+
+void toDebug::closeEditor(int ix)
+{
+    toDebugText * w = qobject_cast<toDebugText*>(Editors->widget(ix));
+    assert(w);
+    closeEditor(w);
 }
 
 void toDebug::closeAllEditor()

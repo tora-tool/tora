@@ -120,6 +120,9 @@ toMain::toMain()
 
     Message = new toMessage(this);
 
+    // it needs go first due signal/slot connection in it
+    handleToolsDisplay();
+
     // setup all QAction objects
     createActions();
 
@@ -133,8 +136,6 @@ toMain::toMain()
     createToolMenus();
 
     createDocklets();
-
-    handleToolsDisplay();
 
     updateRecent();
 
@@ -722,8 +723,15 @@ void toMain::createDockbars()
 void toMain::handleToolsDisplay()
 {
 #if QT_VERSION >= 0x040400
-    if (toConfigurationSingle::Instance().tabbedTools())
+    if (toConfigurationSingle::Instance().tabbedTools()) {
         Workspace->setViewMode(QMdiArea::TabbedView);
+        // HACK: a workaround for missing QMdiArea feature. Real patch is waiting in th Qt4 bugtracker.
+        foreach (QTabBar *b, Workspace->findChildren<QTabBar*>())
+        {
+            b->setTabsClosable(true);
+            connect(b, SIGNAL(tabCloseRequested(int)), this, SLOT(workspaceCloseWindow(int)));
+        }
+    }
     else
         Workspace->setViewMode(QMdiArea::SubWindowView);
 #endif
@@ -1692,6 +1700,27 @@ void toMain::showMessageImpl(const QString &str, bool save, bool log)
                 displayMessage();
         }
     }
+}
+
+
+// HACK: workaround for close button in the tabs. See HACK note near the QMdiArea construction.
+void toMain::workspaceCloseWindow(int ix)
+{
+    QMdiSubWindow * w = Workspace->subWindowList()[ix];
+    assert(w);
+    if (w != Workspace->activeSubWindow())
+    {
+        Workspace->setActiveSubWindow(w);
+    }
+    // HACK in HACK: toWorksheet's behaviour is strange here.
+    // it gets a QObject 0x0 pointer in this case. So this
+    // will handle it.
+    // Let's hope the MDI patch will be applied ASAP...
+    if (!Workspace->activeSubWindow())
+    {
+        w->close();
+    }
+    Workspace->closeActiveSubWindow();
 }
 
 

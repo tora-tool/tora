@@ -652,6 +652,8 @@ private slots:
      *
      */
     void showMessageImpl(const QString &str, bool save, bool log);
+
+    void workspaceCloseWindow(int);
 };
 
 /** Get a pointer to the main window

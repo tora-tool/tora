@@ -138,6 +138,7 @@ public slots:
     void newSheet(void);
     void windowActivated(QMdiSubWindow *w);
     void closeEditor(void);
+    void closeEditor(int);
     void closeAllEditor(void);
     void checkCode(void);
 };

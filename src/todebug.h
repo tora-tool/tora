@@ -328,6 +328,7 @@ public slots:
     void changeWatch(void);
     void changeWatch(toTreeWidgetItem *item);
     void closeEditor(void);
+    void closeEditor(int);
     void closeAllEditor(void);
 };
 

@@ -245,6 +245,11 @@ toPLSQLEditor::toPLSQLEditor(QWidget *main, toConnection &connection)
     splitter->addWidget(Objects);
 
     Editors = new QTabWidget(this);
+#if QT_VERSION >= 0x040500
+    Editors->setTabsClosable(true);
+    connect(Editors, SIGNAL(tabCloseRequested(int)),
+            this, SLOT(closeEditor(int)));
+#endif
     splitter->addWidget(Editors);
     Editors->setTabPosition(QTabWidget::North);
 
@@ -576,6 +581,13 @@ void toPLSQLEditor::closeEditor()
     closeEditor(editor);
 }
 
+void toPLSQLEditor::closeEditor(int ix)
+{
+    toPLSQLWidget * w = qobject_cast<toPLSQLWidget*>(Editors->widget(ix));
+    assert(w);
+    closeEditor(w);
+}
+
 void toPLSQLEditor::closeAllEditor()
 {
     int editorCount = Editors->count();
@@ -721,3 +733,4 @@ void toPLSQLEditor::checkCode(void)
     currentEditor()->applyResult("STATIC", Observations);
     currentEditor()->resizeResults();
 } // checkCode
+
