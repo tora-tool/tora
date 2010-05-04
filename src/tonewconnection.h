@@ -156,7 +156,7 @@ private:
     // fills form with data from previous connection at param row
     void loadPrevious(const QModelIndex & current);
 
-    toConnection* makeConnection();
+    toConnection* makeConnection(bool savePrefs);
 
 public slots:
     virtual void done(int r);
@@ -177,7 +177,7 @@ public:
     static QSortFilterProxyModel* proxyModel(void);
 
 
-public slots:
+private slots:
 
     /**
      * Handles selection changes in Previous. On selecting a new row,
@@ -191,6 +191,7 @@ public slots:
     void changeHost(void);
     void importButton_clicked(void);
     void searchEdit_textEdited(const QString & text);
+    void testConnectionButton_clicked();
 };
 
 

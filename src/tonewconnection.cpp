@@ -156,10 +156,13 @@ toNewConnection::toNewConnection(QWidget* parent, Qt::WFlags fl)
             SLOT(changeHost()));
 
     connect(ImportButton, SIGNAL(clicked()),
-             this, SLOT(importButton_clicked()));
+            this, SLOT(importButton_clicked()));
 
     connect(searchEdit, SIGNAL(textEdited(const QString &)),
-             this, SLOT(searchEdit_textEdited(const QString &)));
+            this, SLOT(searchEdit_textEdited(const QString &)));
+
+    connect(testConnectionButton, SIGNAL(clicked()),
+            this, SLOT(testConnectionButton_clicked()));
 
     // must make sure this gets called manually.
     changeProvider(Provider->currentIndex());
@@ -341,7 +344,7 @@ void toNewConnection::done(int r)
         return;
     }
 
-    NewConnection = makeConnection();
+    NewConnection = makeConnection(true);
     if (!NewConnection)
         return;
 
@@ -516,7 +519,20 @@ void toNewConnection::searchEdit_textEdited(const QString & text)
     proxyModel()->setFilterWildcard(QString("*%1*").arg(text));
 }
 
-toConnection* toNewConnection::makeConnection(void)
+void toNewConnection::testConnectionButton_clicked()
+{
+    toConnection * c = makeConnection(false);
+    if (c)
+    {
+        QMessageBox::information(this->parentWidget(),
+                                 tr("Connection succeeded"),
+                                 tr("Connection succeeded")
+                                 );
+        delete c;
+    }
+}
+
+toConnection* toNewConnection::makeConnection(bool savePrefs)
 {
     try
     {
@@ -596,7 +612,9 @@ toConnection* toNewConnection::makeConnection(void)
             colorComboBox->itemData(colorComboBox->currentIndex()).toString(),
             options);
 
-        writeSettings(true);
+        if (savePrefs)
+            writeSettings(true);
+
         return retCon;
     }
     catch (const QString &exc)
