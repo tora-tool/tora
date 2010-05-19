@@ -60,6 +60,7 @@
 #include "toresultview.h"
 #include "toplsqltext.h"
 #include "tocodemodel.h"
+#include "todescribe.h"
 
 #include "icons/close.xpm"
 #include "icons/compile.xpm"
@@ -69,6 +70,7 @@
 #include "icons/nextbug.xpm"
 #include "icons/prevbug.xpm"
 #include "icons/checkcode.xpm"
+#include "icons/describe.xpm"
 
 
 class toPLSQLEditorTool : public toTool
@@ -222,6 +224,7 @@ toPLSQLEditor::toPLSQLEditor(QWidget *main, toConnection &connection)
 
     toolbar->addAction(nextErrorAct);
     toolbar->addAction(previousErrorAct);
+    toolbar->addAction(describeAct);
 
     toolbar->addWidget(new toSpacer());
 
@@ -294,6 +297,12 @@ void toPLSQLEditor::createActions(void)
             SLOT(refresh()),
             Qt::QueuedConnection);
     refreshAct->setShortcut(QKeySequence::Refresh);
+    
+    describeAct = new QAction(QPixmap(const_cast<const char**>(describe_xpm)),
+                              tr("Describe under cursor"),
+                              this);
+    describeAct->setShortcut(Qt::Key_F4);
+    connect(describeAct, SIGNAL(triggered()), this, SLOT(describe(void)));
 
     newSheetAct = new QAction(QIcon(QPixmap(const_cast<const char**>(toworksheet_xpm))),
                               tr("&New Sheet"),
@@ -551,6 +560,7 @@ void toPLSQLEditor::windowActivated(QMdiSubWindow *widget)
             ToolMenu = new QMenu(tr("&PL/SQL Editor"), this);
 
             ToolMenu->addAction(refreshAct);
+            ToolMenu->addAction(describeAct);
 
             ToolMenu->addSeparator();
 
@@ -616,6 +626,17 @@ void toPLSQLEditor::closeEditor(toPLSQLWidget* &editor)
         if (Editors->count() == 0)
             newSheet();
     }
+}
+
+void toPLSQLEditor::describe()
+{
+    QString owner, table;
+    toHighlightedText * marked = currentEditor()->editor();
+    marked->tableAtCursor(owner, table);
+    if (owner.isNull())
+        owner = Schema->currentText();
+    toDescribe * d = new toDescribe(this);
+    d->changeParams(owner, table);
 }
 
 /* Purpose: should find and return object containing another part of package.
