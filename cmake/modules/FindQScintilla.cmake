@@ -17,8 +17,29 @@ ENDIF(NOT QT4_FOUND)
 SET(QSCINTILLA_FOUND FALSE)
 
 IF(QT4_FOUND)
+
+    # macosx specific tests for frameworks and include paths
+    set (FRAMEWORK_INCLUDE_DIR "")
+    if (APPLE)
+        # HACK to fixup macosx issue with QT_INCLUDE_DIR:
+        # QT_INCLUDE_DIR /opt/local/libexec/qt4-mac/include;/opt/local/libexec/qt4-mac/lib/QtCore.framework
+        # it should be only:
+        # QT_INCLUDE_DIR /opt/local/libexec/qt4-mac/include
+        list(LENGTH QT_INCLUDE_DIR QT_INCLUDE_DIR_LENGTH)
+        if (QT_INCLUDE_DIR_LENGTH)
+            list(GET QT_INCLUDE_DIR 0 FRAMEWORK_INCLUDE_DIR) 
+        endif (QT_INCLUDE_DIR_LENGTH)
+    endif (APPLE)
+
+
     FIND_PATH(QSCINTILLA_INCLUDE_DIR qsciglobal.h
-    "${QT_INCLUDE_DIR}/Qsci" /usr/include /usr/include/Qsci
+                # standard locations
+                /usr/include
+                /usr/include/Qsci
+                # qt4 location except mac's frameworks
+                "${QT_INCLUDE_DIR}/Qsci"
+                # mac's frameworks
+                ${FRAMEWORK_INCLUDE_DIR}/Qsci
     )
 
     SET(QSCINTILLA_NAMES ${QSCINTILLA_NAMES} qscintilla2 libqscintilla2)
