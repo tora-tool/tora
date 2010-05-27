@@ -725,12 +725,14 @@ void toMain::handleToolsDisplay()
 #if QT_VERSION >= 0x040400
     if (toConfigurationSingle::Instance().tabbedTools()) {
         Workspace->setViewMode(QMdiArea::TabbedView);
-        // HACK: a workaround for missing QMdiArea feature. Real patch is waiting in th Qt4 bugtracker.
+#if QT_VERSION >= 0x040500
+        // HACK: a workaround for missing QMdiArea feature. Real patch is waiting in the Qt4 bugtracker.
         foreach (QTabBar *b, Workspace->findChildren<QTabBar*>())
         {
             b->setTabsClosable(true);
             connect(b, SIGNAL(tabCloseRequested(int)), this, SLOT(workspaceCloseWindow(int)));
         }
+#endif
     }
     else
         Workspace->setViewMode(QMdiArea::SubWindowView);
