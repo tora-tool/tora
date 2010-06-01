@@ -381,27 +381,28 @@ static toSQL SQLRollback("toRollback:Information",
                          "       a.owner \"Owner\",\n"
                          "       a.tablespace_name \"Tablespace\",\n"
                          "       a.status \"Status\",\n"
-                         "       b.xacts \"-Transactions\",\n"
-                         "       ROUND ( a.initial_extent / :unit<char[100]>,\n"
-                         "        3 ) \"-Initial (MB)\",\n"
-                         "       ROUND ( a.next_extent / :unit<char[100]>,\n"
-                         "        3 ) \"-Next (MB)\",\n"
-                         "       a.pct_increase \"-PCT Increase\",\n"
-                         "       ROUND ( b.rssize / :unit<char[100]>,\n"
-                         "        3 ) \"-Current (MB)\",\n"
-                         "       ROUND ( b.optsize / :unit<char[100]>,\n"
-                         "        3 ) \"-Optimal (MB)\",\n"
-                         "       ROUND ( b.aveactive / :unit<char[100]>,\n"
-                         "        3 ) \"-Used (MB)\",\n"
-                         "       b.EXTENTS \"-Extents\",\n"
-                         "       b.CurExt \"-Current\",\n"
-                         "       b.CurBlk \"-Block\",\n"
-                         "       b.gets \"-Reads\",\n"
+                         "       b.xacts \"Transactions\",\n"
+                         "       ROUND ( a.initial_extent / u.unit,\n"
+                         "        3 ) \"Initial (UNIT)\",\n"
+                         "       ROUND ( a.next_extent / u.unit,\n"
+                         "        3 ) \"Next (UNIT)\",\n"
+                         "       a.pct_increase \"PCT Increase\",\n"
+                         "       ROUND ( b.rssize / u.unit,\n"
+                         "        3 ) \"Current (UNIT)\",\n"
+                         "       ROUND ( b.optsize / u.unit,\n"
+                         "        3 ) \"Optimal (UNIT)\",\n"
+                         "       ROUND ( b.aveactive / u.unit,\n"
+                         "        3 ) \"Used (UNIT)\",\n"
+                         "       b.EXTENTS \"Extents\",\n"
+                         "       b.CurExt \"Curr. Extent\",\n"
+                         "       b.CurBlk \"Curr. Block\",\n"
+                         "       b.gets \"Reads\",\n"
                          "       ROUND ( ( b.gets - b.waits ) * 100 / b.gets,\n"
-                         "        2 ) || '%' \"-Hitrate\",\n"
-                         "       a.segment_id \" USN\"\n"
+                         "        2 ) || '%' \"Hitrate\",\n"
+                         "       a.segment_id \"USN\"\n"
                          "  FROM sys.dba_rollback_segs a,\n"
-                         "       v$rollstat b\n"
+                         "       v$rollstat b,\n"
+                         "       (select :unit<char[10]> as unit from dual) u\n"
                          " WHERE a.segment_id = b.usn ( + )\n"
                          " ORDER BY a.segment_name",
                          "Get information about rollback segments.");
@@ -411,95 +412,6 @@ static toSQL SQLStartExt("toRollback:StartExtent",
                          "  from v$transaction b\n"
                          " where b.xidusn = :f1<char[40]>",
                          "Get information about current extent in rollback of transactions");
-
-class toRollbackView : public toResultView
-{
-public:
-class rollbackItem : public toResultViewItem
-    {
-    public:
-        rollbackItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString::null)
-                : toResultViewItem(parent, after, buf)
-        { }
-        virtual void paintCell (QPainter *pnt, const QColorGroup & cg,
-                                int column, int width, int alignment)
-        {
-#if 0                           // disabled, wrong override
-            if (column == 4)
-            {
-                std::list<double> items;
-                std::list<double> curExt;
-                std::list<double> maxExt;
-                for (int i = TRANSCOL;!text(i).isEmpty();i++)
-                {
-                    items.insert(items.end(), text(i).toDouble());
-                    curExt.insert(curExt.end(), text(12).toDouble());
-                    maxExt.insert(maxExt.end(), text(11).toDouble());
-                }
-                PaintBars(this, pnt, cg, width, items,
-                          maxExt, curExt);
-                QPen pen(isSelected() ? cg.highlightedText() : cg.foreground());
-                pnt->setPen(pen);
-                pnt->drawText(0, 0, width, height(), Qt::AlignRight, text(column));
-            }
-            else
-                toResultViewItem::paintCell(pnt, cg, column, width, alignment);
-#endif
-        }
-
-        virtual void setup(void)
-        {
-            toResultViewItem::setup();
-
-            int i;
-            for (i = TRANSCOL;!text(i).isEmpty();i++)
-                ;
-            setHeight(std::max(toResultViewItem::height(), MIN_HEIGHT*(i - TRANSCOL)));
-        }
-    };
-
-    virtual toTreeWidgetItem *createItem(toTreeWidgetItem *last, const QString &str)
-    {
-        return new rollbackItem(this, last, str);
-    }
-
-    toRollbackView(QWidget *parent)
-            : toResultView(false, false, parent)
-    {
-        setSQL(SQLRollback);
-    }
-    virtual void query(const QString &sql, const toQList &)
-    {
-        QString unit(toConfigurationSingle::Instance().sizeUnit());
-
-        toQList par;
-        par.insert(par.end(), QString::number(toSizeDecode(unit)));
-        toResultView::query(sql, (const toQList &)par);
-        QRegExp repl(QString::fromLatin1("(MB)"));
-        QString res = QString::fromLatin1("(");
-        res += unit;
-        res += QString::fromLatin1(")");
-        for (int i = 0;i < columns();i++)
-        {
-            QString str = headerItem()->text(i);
-            str.replace(repl, res);
-            headerItem()->setText(i, str);
-        }
-        try
-        {
-            toQuery trx(connection());
-            for (toTreeWidgetItem *i = firstChild();i;i = i->nextSibling())
-            {
-                toQList args;
-                toPush(args, toQValue(QString(i->text(TRANSCOL - 1))));
-                trx.execute(SQLStartExt, args);
-                for (int j = TRANSCOL;!trx.eof();j++)
-                    i->setText(j, trx.readValueNull());
-            }
-        }
-        TOCATCH
-    }
-};
 
 static toSQL SQLStatementInfo("toRollback:StatementInfo",
                               "SELECT TO_CHAR(SYSDATE),\n"
@@ -777,10 +689,13 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
     QSplitter *splitter = new QSplitter(Qt::Vertical, this);
     layout()->addWidget(splitter);
 
-    Segments = new toRollbackView(splitter);
-    Segments->setSelectionMode(toTreeWidget::Single);
-    connect(Segments, SIGNAL(selectionChanged(toTreeWidgetItem *)),
-            this, SLOT(changeItem(toTreeWidgetItem *)));
+    Segments = new toResultTableView(true, false, splitter, "Segments");
+    Segments->setSQL(SQLRollback);
+    Segments->setSelectionBehavior(QAbstractItemView::SelectRows);
+    connect(Segments, SIGNAL(selectionChanged()),
+            this, SLOT(changeItem()));
+    connect(Segments, SIGNAL(firstResult(const QString &, const toConnection::exception &, bool)),
+            this, SLOT(updateHeaders(const QString &, const toConnection::exception &, bool)));
 
     QTabWidget *tab = new QTabWidget(splitter);
     TransactionUsers = new toResultTableView(false, false, tab);
@@ -853,37 +768,26 @@ void toRollback::windowActivated(QMdiSubWindow *widget)
 
 void toRollback::refresh(void)
 {
-    BarsAlignLeft = toConfigurationSingle::Instance().alignLeft();
-
-    toTreeWidgetItem *item = Segments->selectedItem();
-    QString current;
-    if (item)
-        current = item->text(TRANSCOL - 1);
+    QString unit(toConfigurationSingle::Instance().sizeUnit());
+    Segments->changeParams(QString::number(toSizeDecode(unit)));
     Segments->refresh();
-    if (!current.isEmpty())
-        for (item = Segments->firstChild();item;item = item->nextSibling())
-            if (item->text(TRANSCOL - 1) == current)
-            {
-                Segments->setSelected(item, true);
-                break;
-            }
-    if (Statements->isEnabled())
-    {
-        item = Statements->selectedItem();
-        if (item)
-            current = item->text(4);
-        else
-            current = "";
-        Statements->refresh();
-        if (!current.isEmpty())
-            for (item = Statements->firstChild();item;item = item->nextSibling())
-                if (item->text(4) == current)
-                {
-                    Statements->setSelected(item, true);
-                    break;
-                }
+
+    TransactionUsers->refresh();        
+}
+
+void toRollback::updateHeaders(const QString &sql, const toConnection::exception &res, bool error)
+{
+    QString d;
+    QString unit("(" + toConfigurationSingle::Instance().sizeUnit() + ")");
+
+    for (int i = 0; i < Segments->model()->columnCount(); ++i) {
+        d = Segments->model()->headerData(i, Qt::Horizontal).toString();
+        if (d.indexOf("(UNIT)", 0, Qt::CaseInsensitive) != -1) {
+            d.replace("(UNIT)", unit, Qt::CaseInsensitive);
+            Segments->model()->setHeaderData(i, Qt::Horizontal, d, Qt::DisplayRole);
+        }
     }
-    TransactionUsers->refresh();
+
 }
 
 void toRollback::changeStatement(toTreeWidgetItem *item)
@@ -892,19 +796,12 @@ void toRollback::changeStatement(toTreeWidgetItem *item)
         CurrentStatement->changeAddress(item->text(4));
 }
 
-void toRollback::changeItem(toTreeWidgetItem *item)
+void toRollback::changeItem()
 {
-    if (item)
-    {
-        OfflineAct->setEnabled(item->text(3) != QString::fromLatin1("OFFLINE"));
-        OnlineAct->setEnabled(item->text(3) != QString::fromLatin1("ONLINE"));
-    }
-    else
-    {
-        OnlineAct->setEnabled(false);
-        OfflineAct->setEnabled(false);
-    }
-    DropAct->setEnabled(item);
+    QString stat(Segments->selectedIndex(4).data().toString());
+    OfflineAct->setEnabled(stat != "OFFLINE");
+    OnlineAct->setEnabled(stat != "ONLINE");
+    DropAct->setEnabled(true);
 }
 
 void toRollback::changeRefresh(const QString &str)
@@ -918,10 +815,7 @@ void toRollback::changeRefresh(const QString &str)
 
 QString toRollback::currentSegment(void)
 {
-    toTreeWidgetItem *item = Segments->selectedItem();
-    if (!item)
-        throw tr("No segment selected");
-    return item->text(0);
+    return Segments->selectedIndex(1).data().toString();
 }
 
 void toRollback::addSegment(void)
@@ -993,3 +887,4 @@ void toRollback::enableOld(bool ena)
 {
     Statements->setEnabled(ena);
 }
+

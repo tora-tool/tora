@@ -600,7 +600,20 @@ QVariant toResultModel::headerData(int section,
     return QVariant();
 }
 
+bool toResultModel::setHeaderData(int section,
+                                  Qt::Orientation orientation,
+                                  const QVariant & value,
+                                  int role)
+{
+    if (role != Qt::DisplayRole)
+        return false;
 
+    if (orientation != Qt::Horizontal)
+        return false;
+
+    Headers[section].name = value.toString();
+    return true;
+}
 
 void toResultModel::readHeaders()
 {

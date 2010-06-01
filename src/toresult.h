@@ -217,7 +217,7 @@ public:
      * @param sql New sql.
      * @see setSQL
      */
-    void query(const toSQL &sql, toQList &par);
+    void query(const toSQL &sql, const toQList &par);
     /** Get SQL to execute
      */
     QString sql(void)

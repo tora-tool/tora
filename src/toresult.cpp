@@ -158,7 +158,7 @@ void toResult::query(const toSQL &sql)
     }
 }
 
-void toResult::query(const toSQL &sql, toQList &par)
+void toResult::query(const toSQL &sql, const toQList &par)
 {
     setSQLName(sql.name());
     FromSQL = true;

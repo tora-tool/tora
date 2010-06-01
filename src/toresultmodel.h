@@ -187,6 +187,17 @@ public:
     QVariant headerData(int section,
                         Qt::Orientation orientation,
                         int role = Qt::DisplayRole) const;
+                        
+    /*! Update the header.name attribute for the horizontal header.
+    This method changes data wchich are taken from DB (but it doesn't
+    change it in the DB) so use it only if you know what are you doing.
+    It's allowed for Horizontal orientation and DisplayRole only. Else
+    it returns always false and it does not do anything.
+    */
+    bool setHeaderData(int section,
+                       Qt::Orientation orientation,
+                       const QVariant & value,
+                       int role = Qt::EditRole);
 
     /**
      * Returns the number of columns for the children of the given

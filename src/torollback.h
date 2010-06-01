@@ -48,12 +48,12 @@
 
 #include <qdialog.h>
 #include "totreewidget.h"
+#include "toconnection.h"
 
 #include <algorithm>
 
 class QComboBox;
 class QMenu;
-class toConnection;
 class toResultItem;
 class toResultView;
 class toSGAStatement;
@@ -81,7 +81,7 @@ class toRollback : public toToolWidget
 {
     Q_OBJECT
 
-    toResultView *Segments;
+    toResultTableView *Segments;
     toResultView *Statements;
 
     QWidget *CurrentTab;
@@ -103,9 +103,10 @@ class toRollback : public toToolWidget
 
 public:
     toRollback(QWidget *parent, toConnection &connection);
-public slots:
+
+private slots:
     void changeStatement(toTreeWidgetItem *item);
-    void changeItem(toTreeWidgetItem *item);
+    void changeItem();
     void changeRefresh(const QString &str);
 
     void enableOld(bool);
@@ -115,6 +116,8 @@ public slots:
     void addSegment(void);
     void dropSegment(void);
     void windowActivated(QMdiSubWindow *widget);
+    //! Change (UNIT) string to appropriate Bytes/MB... value
+    void updateHeaders(const QString &sql, const toConnection::exception &res, bool error);
 };
 
 #endif
