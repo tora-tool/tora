@@ -150,7 +150,7 @@ QWidget *toBrowserTool::toolWindow(QWidget *parent, toConnection &connection)
 
 bool toBrowserTool::canHandle(toConnection &conn)
 {
-    return toIsOracle(conn) || toIsMySQL(conn) || toIsPostgreSQL(conn) || toIsSapDB(conn);
+    return toIsOracle(conn) || toIsMySQL(conn) || toIsPostgreSQL(conn) || toIsSapDB(conn) || toIsTeradata(conn);
 }
 
 void toBrowserTool::customSetup()
@@ -713,6 +713,15 @@ static toSQL SQLListTablesSapDB("toBrowser:ListTables",
                                 "",
                                 "",
                                 "SapDB");
+static toSQL SQLListTablesTD("toBrowser:ListTables",
+                             "SELECT trim ( tablename ) AS \"Table Name\"\n"
+                             "  FROM dbc.TABLES\n"
+                             " WHERE databasename = trim ( upper ( :f1<char[101]> ) )\n"
+                             "   AND tablekind = 'T'\n"
+                             " ORDER BY 1",
+                             "",
+                             "",
+                             "Teradata");
 
 static toSQL SQLTableIndex("toBrowser:TableIndex",
                            "SELECT IND.index_name AS \"Index Name\",\n"
@@ -1021,6 +1030,16 @@ static toSQL SQLListViewSapDb("toBrowser:ListView",
                               "",
                               "",
                               "SapDB");
+static toSQL SQLListViewTD("toBrowser:ListView",
+                           "SELECT trim ( tablename ) AS \"View_Name\"\n"
+                           "  FROM dbc.TABLES\n"
+                           " WHERE databasename = trim ( upper ( :f1<char[101]> ) )\n"
+                           "   AND tablekind = 'V'\n"
+                           " ORDER BY 1",
+                           "",
+                           "",
+                           "Teradata");
+
 // static toSQL SQLViewSQLPgSQL("toBrowser:ViewSQL",
 //                              "SELECT pg_get_viewdef(c.relname)\n"
 //                              "  FROM pg_class c LEFT OUTER JOIN pg_namespace n ON c.relnamespace=n.oid\n"

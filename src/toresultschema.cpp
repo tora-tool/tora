@@ -90,6 +90,7 @@ toResultSchema::toResultSchema(toConnection &conn,
 
 #define CHANGE_CURRENT_SCHEMA QString("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"")
 #define CHANGE_CURRENT_SCHEMA_PG QString("SET search_path TO %1,\"$user\",public")
+#define CHANGE_CURRENT_SCHEMA_TD QString("DATABASE \"%1\"")
 
 void toResultSchema::update() {
     update(toResultCombo::currentText());
@@ -121,6 +122,8 @@ void toResultSchema::update(const QString &schema) {
             }
             else if (toIsPostgreSQL(conn))
                 conn.allExecute(CHANGE_CURRENT_SCHEMA_PG.arg(schema));
+            else if (toIsTeradata(conn))
+                conn.allExecute(CHANGE_CURRENT_SCHEMA_TD.arg(schema));
             else
                 throw QString("No support for changing schema for this database");
 

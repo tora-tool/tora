@@ -1313,31 +1313,34 @@ bool toConnection::loadDiskCache()
     /** build cache lists
      */
 
-    QStringList records = data.split("\x1D", QString::KeepEmptyParts);
-    for (QStringList::Iterator i = records.begin(); i != records.end(); i++)
+    if(!data.isEmpty())
     {
-        objCounter++;
-        QStringList record = (*i).split("\x1E", QString::KeepEmptyParts);
-        QStringList::Iterator rec = record.begin();
-        cur = new objectName;
-        (*cur).Owner = (*rec);
-        rec++;
-        (*cur).Name = (*rec);
-        rec++;
-        (*cur).Type = (*rec);
-        rec++;
-        (*cur).Comment = (*rec);
-        rec++;
-        QStringList slist = (*rec).split("\x1F", QString::SkipEmptyParts);
-        for (QStringList::Iterator s = slist.begin(); s != slist.end(); s++)
+        QStringList records = data.split("\x1D", QString::KeepEmptyParts);
+        for (QStringList::Iterator i = records.begin(); i != records.end(); i++)
         {
-            SynonymMap[(*s)] = (*cur);
-            (*cur).Synonyms.insert((*cur).Synonyms.end(), (*s));
-            synCounter++;
+            objCounter++;
+            QStringList record = (*i).split("\x1E", QString::KeepEmptyParts);
+            QStringList::Iterator rec = record.begin();
+            cur = new objectName;
+            (*cur).Owner = (*rec);
+            rec++;
+            (*cur).Name = (*rec);
+            rec++;
+            (*cur).Type = (*rec);
+            rec++;
+            (*cur).Comment = (*rec);
+            rec++;
+            QStringList slist = (*rec).split("\x1F", QString::SkipEmptyParts);
+            for (QStringList::Iterator s = slist.begin(); s != slist.end(); s++)
+            {
+                SynonymMap[(*s)] = (*cur);
+                (*cur).Synonyms.insert((*cur).Synonyms.end(), (*s));
+                synCounter++;
+            }
+            ObjectNames.insert(ObjectNames.end(), (*cur));
+            delete cur;
+            cur = 0;
         }
-        ObjectNames.insert(ObjectNames.end(), (*cur));
-        delete cur;
-        cur = 0;
     }
     return true;
 }
@@ -1692,6 +1695,18 @@ toQDescList &toConnection::columns(const objectName &object, bool nocache)
     }
 
     return ColumnCache[object];
+}
+std::list<toConnection::objectName> toConnection::tables(const objectName &object, bool nocache)
+{
+    std::list<objectName> ret;
+
+    Q_FOREACH(objectName obj, ObjectNames)
+    {
+        if(obj.Owner == object.Name)
+            ret.insert(ret.end(), obj);
+    }
+
+    return ret;
 }
 
 bool toConnection::objectName::operator < (const objectName &nam) const

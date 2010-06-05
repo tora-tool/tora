@@ -51,6 +51,7 @@ AC_PATH_MOC
 AC_PATH_UIC
 AC_PATH_RCC
 TORA_CHECK_POSTGRES
+TORA_CHECK_TERADATA
 TORA_CHECK_ORACLE
 TORA_CHECK_QSCINTILLA
 AX_PATH_LIB_PCRE
@@ -59,6 +60,7 @@ AM_CONDITIONAL([CPPUNIT], [test "x$found_cppunit" = "xyes"])
 
 # Makefile.am uses these
 AM_CONDITIONAL(HAVE_ORACLE, test "$enable_oracle" = yes)
+AM_CONDITIONAL(HAVE_TERADATA, test "$enable_teradata" = yes)
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([utils/Makefile])

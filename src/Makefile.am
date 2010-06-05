@@ -19,6 +19,7 @@ AM_CPPFLAGS += $(PCRE_CFLAGS) \
 	-DDEFAULT_PLUGIN_DIR=\"$(libdir)\" \
 	-DTOVERSION=\"$(PACKAGE_VERSION)\" \
 	$(ORACLE_CXXFLAGS) \
+	$(TERADATA_CXXFLAGS) \
 	$(QT_DEFINES) \
 	$(WIN_CXXFLAGS) \
 	$(QSCINTILLA_CXXFLAGS)
@@ -29,19 +30,24 @@ AM_LDFLAGS = $(PCRE_LIBS) \
 	-lstdc++ \
 	$(LIBPTHREAD) \
 	$(ORACLE_LDFLAGS) \
+	$(TERADATA_LDFLAGS) \
 	$(WIN_LDFLAGS) \
 	$(QSCINTILLA_LDFLAGS)
 
 # fix for annoying automake naming problems.
 tora_CXXFLAGS  = $(AM_CXXFLAGS)
 
-tora_LDADD = $(ORACLE_LIBS) $(PQ_LIBS) $(@TORA_LINK_OTHERS@)
+tora_LDADD = $(ORACLE_LIBS) $(PQ_LIBS) $(TERADATA_LIBS) $(@TORA_LINK_OTHERS@)
 
 if HAVE_ORACLE
 EXTRA_ORACLE_MONO_SOURCE = tooracleconnection.cpp tooraclesetting.h \
 	tooracletable.cpp \
 	tooracleextract.cpp otl/otlv4.h
 EXTRA_ORACLE_MONO_SOURCE_MOC = moc_tooraclesetting.cpp
+endif
+
+if HAVE_TERADATA
+EXTRA_TERADATE_SOURCE = toteradataconnection.cpp
 endif
 
 tora_SOURCES=main.cpp \
@@ -202,6 +208,7 @@ tora_SOURCES=main.cpp \
 	shortcuteditor/shortcuteditordialog.cpp shortcuteditor/shortcuteditordialog.h \
 	shortcuteditor/shortcutmodel.cpp shortcuteditor/shortcutmodel.h \
 	$(EXTRA_ORACLE_MONO_SOURCE) \
+	$(EXTRA_TERADATE_SOURCE) \
 	$(LOKIDIR_SRC)/SmallObj.cpp \
 	$(LOKIDIR_SRC)/Singleton.cpp \
 	$(EXTRA_tora_SOURCES) \

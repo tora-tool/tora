@@ -83,12 +83,34 @@ static toSQL SQLCommentPG(
     "7.1",
     "PostgreSQL");
 
+static toSQL SQLCommentTD(
+    "toResultCols:Comments",
+    "SELECT c.columnname,\n"
+    "       c.commentstring\n"
+    "  FROM dbc.COLUMNS c\n"
+    " WHERE trim ( databasename ) = trim ( :f1<char[100]> )\n"
+    "   AND trim ( tablename ) = trim ( :f2<char[100]> )",
+    "",
+    "",
+    "Teradata");
+
 static toSQL SQLTableCommentMySQL(
     "toResultCols:TableComment",
     "SHOW TABLE STATUS FROM `:f1<noquote>` LIKE :f2<char[100]>",
     "Display Table comment",
     "4.1",
     "MySQL");
+
+
+static toSQL SQLTableCommentTD(
+    "toResultCols:TableComment",
+    "SELECT c.commentstring\n"
+    "  FROM dbc.tables c\n"
+    " WHERE trim ( databasename ) = trim ( :f1<char[100]> )\n"
+    "   AND trim ( tablename ) = trim ( :f2<char[100]> )",
+    "",
+    "",
+    "Teradata");
 
 static toSQL SQLTableComment(
     "toResultCols:TableComment",
@@ -367,6 +389,24 @@ static toSQL SQLTableColumnsPG(
     "7.1",
     "PostgreSQL");
 
+static toSQL SQLTableColumnsTD(
+    "toResultCols:ListCols",
+    "SELECT c.columnname AS \"Name\",\n"
+    "       c.columntitle AS \"Title\",\n"
+    "       c.columntype AS \"Type\",\n"
+    "       c.defaultvalue AS \"Default Value\",\n"
+    "       c.nullable AS \"Null\",\n"
+    "       c.createtimestamp AS \"Created\",\n"
+    "       c.lastaltertimestamp AS \"Last Modified\",\n"
+    "       c.CommentString AS \"Comment\"\n"
+    "  FROM dbc.COLUMNS c\n"
+    " WHERE trim ( databasename ) = trim ( :f1<char[100]> )\n"
+    "   AND trim ( tablename ) = trim ( :f2<char[100]> )\n"
+    " ORDER BY 1",
+    "",
+    "",
+    "Teradata");
+
 static toSQL SQLTableColumnsMySql(
     "toResultCols:ListCols",
     "SHOW FULL COLUMNS FROM :f1<noquote>",
@@ -551,8 +591,9 @@ void toResultCols::query(const QString &sql, const toQList &param)
         label += QString::fromLatin1("</B>");
 
         if (connection().provider() == "Oracle" ||
-                connection().provider() == "MySQL" ||
-                connection().provider() == "PostgreSQL")
+            connection().provider() == "MySQL" ||
+            connection().provider() == "PostgreSQL" ||
+            connection().provider() == "Teradata")
         {
             toConnection &conn = connection();
             toQuery query(conn, SQLTableComment, Owner, Name);

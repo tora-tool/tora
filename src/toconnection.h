@@ -1073,6 +1073,14 @@ public:
      * @return A list of the columns for a table.
      */
     toQDescList &columns(const objectName &table, bool nocache = false);
+
+    /**
+     * Get a list of object names for a owner, typically this is a
+     * list of tables for a database or schema.
+     *
+     */
+    std::list<objectName> tables(const objectName &object, bool nocache = false);
+
     /**
      * Reread the object and column cache.
      */

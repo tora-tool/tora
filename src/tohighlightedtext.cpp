@@ -1000,19 +1000,33 @@ QStringList toHighlightedText::getCompletionList(QString* partial)
         try
         {
             toConnection &conn = toCurrentConnection(this);
-            toQDescList &desc = conn.columns(conn.realName(name, false));
-            for (toQDescList::iterator i = desc.begin(); i != desc.end(); i++)
+            toConnection::objectName object = conn.realName(name, false);
+            if(object.Type == "DATABASE")
             {
-                QString t;
-                int ind = (*i).Name.indexOf("(");
-                if (ind < 0)
-                    ind = (*i).Name.indexOf("RETURNING") - 1; //it could be a function or procedure without parameters. -1 to remove the space
-                if (ind >= 0)
-                    t = conn.quote((*i).Name.mid(0, ind)) + (*i).Name.mid(ind);
-                else
-                    t = conn.quote((*i).Name);
-                if (t.indexOf(*partial) == 0)
-                    toReturn.append(t);
+                std::list<toConnection::objectName> list = conn.tables(object);
+                Q_FOREACH(toConnection::objectName table, list)
+                {
+                    QString t = conn.quote(table.Name, false);
+                    if(t.indexOf(*partial) == 0)
+                        toReturn.append(t);
+                }
+            }
+            else
+            {
+                toQDescList &desc = conn.columns(object);
+                for (toQDescList::iterator i = desc.begin(); i != desc.end(); i++)
+                {
+                    QString t;
+                    int ind = (*i).Name.indexOf("(");
+                    if (ind < 0)
+                        ind = (*i).Name.indexOf("RETURNING") - 1; //it could be a function or procedure without parameters. -1 to remove the space
+                    if (ind >= 0)
+                        t = conn.quote((*i).Name.mid(0, ind), false) + (*i).Name.mid(ind);
+                    else
+                        t = conn.quote((*i).Name, false);
+                    if (t.indexOf(*partial) == 0)
+                        toReturn.append(t);
+                }
             }
         }
         catch (QString e)

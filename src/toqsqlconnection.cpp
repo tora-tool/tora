@@ -1039,7 +1039,7 @@ class toQSqlProvider : public toConnectionProvider
 public:
     static bool OnlyForward;
 
-class qSqlSetting : public QWidget, public toSettingTab
+    class qSqlSetting : public QWidget, public toSettingTab
     {
         QCheckBox *OnlyForward;
         QLabel    *CreateLabel;

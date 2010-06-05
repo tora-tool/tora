@@ -337,6 +337,9 @@ bool toIsMySQL(const toConnection &);
 /** Check if this connection is an PostgreSQL connection.
  */
 bool toIsPostgreSQL(const toConnection &);
+/** Check if this connection is a Teradata connection.
+ */
+bool toIsTeradata(const toConnection &);
 /** Strip extra bind specifier from an SQL statement. (That means the extra <***> part after
  * the bind variable.
  * @param sql The sql to strip.

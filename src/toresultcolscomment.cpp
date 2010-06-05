@@ -73,6 +73,13 @@ static toSQL SQLChangeTableCommentPG(
     "7.1",
     "PostgreSQL");
 
+static toSQL SQLChangeTableCommentTD(
+    "toResultCols:ChangeTableComment",
+    "COMMENT ON TABLE %1 IS %2",
+    "",
+    "",
+    "Teradata");
+
 static toSQL SQLChangeColumnComment(
     "toResultCols:ChangeColumnComment",
     "COMMENT ON COLUMN %1 IS %2",
@@ -84,6 +91,13 @@ static toSQL SQLChangeColumnCommentPG(
     "",
     "7.1",
     "PostgreSQL");
+
+static toSQL SQLChangeColumnCommentTD(
+    "toResultCols:ChangeColumnComment",
+    "COMMENT ON COLUMN %1 IS %2",
+    "",
+    "",
+    "Teradata");
 
 
 toResultColsComment::toResultColsComment(QWidget *parent)
