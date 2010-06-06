@@ -961,7 +961,7 @@ QStringList toHighlightedText::getCompletionList(QString* partial)
     {
         QString cmp = UpperIdent(name);
         QString lastToken;
-        while ((invalidToken(tokens.line(), tokens.offset() + token.length()) || UpperIdent(token) != cmp || lastToken == ".") && token != ";" && !token.isEmpty())
+        while ((invalidToken(tokens.line(), tokens.offset() + token.length()) || UpperIdent(token) != cmp || lastToken == ".") && token != ";" && token != "~~~" && !token.isEmpty())
         {
             lastToken = token;
             token = tokens.getToken(false);

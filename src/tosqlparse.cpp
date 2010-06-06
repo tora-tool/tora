@@ -140,8 +140,9 @@ static const char *Operators[] =
 
 QString toSQLParse::stringTokenizer::getToken(bool forward, bool comments)
 {
-    QChar c;
-    QChar nc;
+    QChar c; // current character
+    QChar nc; // next character
+    QChar nnc; // next next char (character after next one)
     QChar endString;
 
     enum
@@ -181,10 +182,18 @@ QString toSQLParse::stringTokenizer::getToken(bool forward, bool comments)
                 Offset++;
                 return "~~~";
             }
-            else if (c == '\n' && nc == '/' && String[Offset + inc + inc] != '*')
+            else
             {
-                Offset += 2;
-                return "~~~";
+                if ((String.length() >= Offset + inc + inc) && // check that index does...
+                    (Offset + inc + inc >= 0)) // ... not go out of string bounds
+                    nnc = String[Offset + inc + inc];
+                else
+                    nnc = ' ';
+                if (c == '\n' && nc == '/' && nnc != '*')
+                {
+                    Offset += 2;
+                    return "~~~";
+                }
             }
 
             if (forward && c == '-' && nc == '-')
