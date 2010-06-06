@@ -75,6 +75,10 @@ cmake -G "NMake Makefiles" -DWANT_INTERNAL_QSCINTILLA=1 -DCMAKE_INSTALL_PREFIX=c
                  building with internal qscintilla is easier for beginners ;)
                  prepare for longer headache (if you're a windows devel newbie) 
 
+                 If you build qscintilla externally, follow the directions to make a staticlib.
+                 Otherwise you get mysterious linker unresolved external symbols
+                 even though depends.exe can see them. Meh, Windows.
+                 
 nmake
      Issuing nmake will actually run the build process itself.
 
