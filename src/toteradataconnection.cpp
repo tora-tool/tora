@@ -520,7 +520,7 @@ public:
             if(callServer(request, DBFERQ) != EM_OK)
                 throw QString::fromLatin1("Error in end request");
 
-            request->dbcp->i_req_id == 0;
+            request->dbcp->i_req_id = 0;
         }
 
         toQValue readValue(tdRequest *request)
@@ -548,13 +548,14 @@ public:
             DBCHQEP QEPParms;
             char release[63];
 
+            const char *hostdata = host.toUtf8().data();
             memset(&QEPParms, 0, sizeof(QEPParms));
             QEPParms.qepLevel = QEPLEVEL;
             QEPParms.qepItem = QEPIDBR;
             QEPParms.qepRALen = sizeof(release);
             QEPParms.qepRArea = &release;
-            QEPParms.qepTDP = host.toUtf8().data();
-            QEPParms.qepTLen = strlen(QEPParms.qepTDP);
+            QEPParms.qepTDP = (Int32) hostdata;
+            QEPParms.qepTLen = strlen(hostdata);
             DBCHQE(&result, Cnta, &QEPParms);
 
             release[62] = 0;
@@ -1146,8 +1147,6 @@ public:
         bool fetchParcel(tdRequest *request)
         {
             // qDebug() << "fetchParcel";
-            int status;
-
             request->dbcp->i_req_id  = request->dbcp->o_req_id;
 
             callServer(request, DBFFET);
@@ -1289,7 +1288,7 @@ public:
 
         virtual int columns()
         {
-            request->columns.size();
+            return request->columns.size();
         }
 
         virtual std::list<toQuery::queryDescribe> describe()
