@@ -7,6 +7,7 @@ OPTION(WANT_INTERNAL_QSCINTILLA "Use internal/bundled QScintilla2 source" OFF)
 OPTION(ENABLE_ORACLE "Enable/Disable Oracle support at all. Including detection" ON)
 OPTION(ENABLE_PGSQL "Enable/Disable PostgreSQL support. Including detection" ON)
 OPTION(ENABLE_DB2 "Enable/Disable DB2 support. Including detection" ON)
+OPTION(ENABLE_TERADATA "Enable/Disable Teradata support." OFF)
 OPTION(WANT_RPM "Enable additional RPM related stuff. Additional make package_rpm target" ON)
 OPTION(WANT_BUNDLE "Enable Mac OS X bundle build" OFF)
 OPTION(WANT_BUNDLE_STANDALONE "Do not copy required libs and tools into bundle (WANT_BUNDLE)" ON)
@@ -126,12 +127,7 @@ ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
 #Convert our simpler command line option to the CMake style
 #None, Debug, Release, .. or custom ones
-IF(WANT_DEBUG)
-  SET(CMAKE_BUILD_TYPE Debug)
-  ADD_DEFINITIONS("-DDEBUG")
-ELSE(WANT_DEBUG)
   SET(CMAKE_BUILD_TYPE RELEASE)
-ENDIF(WANT_DEBUG)
 
 
 # Lets disable Wall warnings due the MSVC too much talkative
@@ -140,6 +136,7 @@ ENDIF(WANT_DEBUG)
 # MSVC, MSVC_IDE, MSVC60, MSVC70, MSVC71, MSVC80, CMAKE_COMPILER_2005
 IF (MSVC)
     SET (CXX_WARNINGS "")
+    ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
 ELSE (MSVC)
     SET (CXX_WARNINGS "-Wall")
 ENDIF (MSVC)
@@ -150,7 +147,6 @@ IF (WIN32 AND NOT DEFINED WANT_INTERNAL_QSCINTILLA)
   SET(CMAKE_CXX_FLAGS_RELEASE "/DQSCINTILLA_DLL ${CMAKE_CXX_FLAGS_RELEASE}")
   SET(CMAKE_C_FLAGS_RELEASE "/DQSCINTILLA_DLL ${CMAKE_C_FLAGS_RELEASE}")
 ENDIF (WIN32 AND NOT DEFINED WANT_INTERNAL_QSCINTILLA)
-
 
 ##############################################################################################################
 ########## Find Dependencies                                                                        ##########
@@ -255,6 +251,16 @@ ELSE (NOT ENABLE_DB2)
     ENDIF (DB2_FOUND)
 
 ENDIF (NOT ENABLE_DB2)
+
+IF (NOT ENABLE_TERADATA)
+    MESSAGE(STATUS "Teradata support disabled (enable with -DENABLE_TERADATA=on)")
+ELSE (NOT ENABLE_TERADATA)
+    FIND_PACKAGE(TERADATA)
+    IF (TERADATA_FOUND)
+        MESSAGE(STATUS "Teradata found")
+    ENDIF (TERADATA_FOUND)
+ENDIF (NOT ENABLE_TERADATA)
+
 
 ##############################################################################################################
 ########## Include Setup                                                                            ##########
