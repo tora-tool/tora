@@ -554,7 +554,13 @@ public:
             QEPParms.qepItem = QEPIDBR;
             QEPParms.qepRALen = sizeof(release);
             QEPParms.qepRArea = &release;
+
+#ifdef CLI_64BIT
+            QEPParms.qepTDP = (char *) hostdata;
+#else
             QEPParms.qepTDP = (Int32) hostdata;
+#endif
+
             QEPParms.qepTLen = strlen(hostdata);
             DBCHQE(&result, Cnta, &QEPParms);
 
