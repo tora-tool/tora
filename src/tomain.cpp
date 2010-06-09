@@ -104,7 +104,6 @@
 
 toMain::toMain()
         : toMainWindow(),
-        toBackupTool_(new toBackupTool),
         BackgroundLabel(new toBackgroundLabel(statusBar()))
 {
     Edit = NULL;

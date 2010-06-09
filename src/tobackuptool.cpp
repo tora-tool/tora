@@ -79,4 +79,5 @@ void toBackupTool::closeWindow(toConnection &connection)
         Windows.erase(i);
 }
 
+static toBackupTool BackupTool;
 

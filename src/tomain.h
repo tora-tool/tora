@@ -44,7 +44,6 @@
 
 #include "config.h"
 #include "tobackground.h"
-#include "tobackuptool.h"
 
 #include "tomainwindow.h"
 
@@ -55,6 +54,7 @@
 #include <qtimer.h>
 
 #include <QLabel>
+#include <QMdiSubWindow>
 #include <QPointer>
 
 #define TOMessageBox QMessageBox
@@ -66,7 +66,6 @@ class toTreeWidgetItem;
 class QToolBar;
 class QToolButton;
 class QMdiArea;
-class QMdiSubWindow;
 class toBackgroundLabel;
 class toConnection;
 class toEditWidget;
@@ -89,7 +88,6 @@ class toMain : public toMainWindow
     Q_OBJECT;
 
 private:
-    std::auto_ptr<toBackupTool> toBackupTool_;
     /**
      * The connections that have been opened in TOra.
      */

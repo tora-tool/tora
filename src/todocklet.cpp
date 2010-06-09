@@ -46,6 +46,7 @@
 #include "tomain.h"
 #include "todockbar.h"
 
+#include <QApplication>
 #include <QMdiArea>
 #include <QVBoxLayout>
 
