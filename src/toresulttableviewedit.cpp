@@ -531,14 +531,17 @@ void toResultTableViewEdit::handleNewRows(const QModelIndex &parent,
         int start,
         int end)
 {
-    int col = selectionModel()->currentIndex().column();
-    if (col < 1)
-        col = 1;
-    QModelIndex index = Model->index(start - 1, col);
+    // mrj: this was a work around for a scrolling bug. Don't think we
+    // need this anymore.
 
-    selectionModel()->select(QItemSelection(index, index),
-                             QItemSelectionModel::ClearAndSelect);
-    setCurrentIndex(index);
+    // int col = selectionModel()->currentIndex().column();
+    // if (col < 1)
+    //     col = 1;
+    // QModelIndex index = Model->index(start - 1, col);
+
+    // selectionModel()->select(QItemSelection(index, index),
+    //                          QItemSelectionModel::ClearAndSelect);
+    // setCurrentIndex(index);
 }
 
 
