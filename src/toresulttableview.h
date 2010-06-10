@@ -132,6 +132,10 @@ class toResultTableView : public QTableView,
     // set true when model has signaled
     bool Ready;
 
+    // set true when model has finished.
+    // helps work around determining when query.eof has been reached.
+    bool Finished;
+
 
     /**
      * context menu items. may be null.

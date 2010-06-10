@@ -123,7 +123,7 @@ void toResultTableView::setup(bool readable, bool numberColumn, bool editable)
     NumberColumn    = numberColumn;
     ColumnsResized  = false;
     Ready           = false;
-//    VisibleColumns  = 0; // TS 2009-11-21 moved to applyColumnRules as setup is only called once.
+    Finished        = false;
 
     Working = new toWorkingWidget(this);
     connect(Working, SIGNAL(stop()), this, SLOT(stop()));
@@ -204,6 +204,7 @@ void toResultTableView::query(const QString &sql, const toQList &param)
 
         readAllAct->setEnabled(true);
         Ready = false;
+        Finished = false;
         Working->setText(tr("Please wait..."));
         Working->hide();
 
@@ -477,6 +478,7 @@ void toResultTableView::handleDone(void)
 
     applyFilter();
     Ready = true;
+    Finished = true;
     Working->hide();
     emit done();
 }
@@ -661,15 +663,26 @@ QString toResultTableView::exportAsText(toExportSettings settings)
 
     if (settings.rowsExport == toExportSettings::RowsAll)
     {
-        QProgressDialog progress("Fetching All Data...", "Abort", 0, 2, this);
+        QProgressDialog progress("Fetching All Data...", "Abort", 0, 2, parentWidget());
         progress.setWindowModality(Qt::WindowModal);
-        while (Model->canFetchMore(currentIndex()))
+        progress.show();
+
+        // prevent scrolling in table view
+        this->clearSelection();
+        this->setEnabled(false);
+
+        while (!Finished)
         {
+            qApp->processEvents();
+
             if (progress.wasCanceled())
                 break;
-            Model->fetchMore(currentIndex());
+            if (Model->canFetchMore(currentIndex()))
+                Model->fetchMore(currentIndex());
             progress.setValue(progress.value() == 0 ? 1 : 0);
         }
+
+        this->setEnabled(true);
         progress.setValue(2);
     }
 
