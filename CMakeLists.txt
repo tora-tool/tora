@@ -22,10 +22,18 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
 
 # handle new cmake versions correctly
 if(COMMAND cmake_policy)
-  cmake_policy(SET CMP0003 NEW)
-  cmake_policy(SET CMP0005 OLD) # FIXME change it to new when there will be cmake 2.6.x in most distros
-  cmake_policy(SET CMP0011 NEW)
-  cmake_policy(SET CMP0015 NEW)
+  if (POLICY CMP0003)
+    cmake_policy(SET CMP0003 NEW)
+  endif (POLICY CMP0003)
+  if (POLICY CMP0005)
+    cmake_policy(SET CMP0005 OLD) # FIXME change it to new when there will be cmake 2.6.x in most distros
+  endif (POLICY CMP0005)
+  if (POLICY CMP0011)
+    cmake_policy(SET CMP0011 NEW)
+  endif (POLICY CMP0011)
+  if (POLICY CMP0015)
+    cmake_policy(SET CMP0015 NEW)
+  endif (POLICY CMP0015)
 endif(COMMAND cmake_policy)
 
 
