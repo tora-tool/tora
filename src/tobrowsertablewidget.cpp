@@ -102,10 +102,17 @@ static toSQL SQLTableIndexPG("toBrowserTableWidget:TableIndex",
                              "",
                              "PostgreSQL");
 
-static toSQL SQLTableIndexMySQL("toBrowserTableWidget:TableIndex",
+static toSQL SQLTableIndexMySQL3("toBrowserTableWidget:TableIndex",
                                 "SHOW INDEX FROM `:f1<noquote>`.`:tab<noquote>`",
                                 "",
+                                "3.0",
+                                "MySQL");
+static toSQL SQLTableIndexMySQL("toBrowserTableWidget:TableIndex",
+                                "SELECT * FROM INFORMATION_SCHEMA.STATISTICS\n"
+                                "    WHERE table_schema = :f1<char[101]>\n"
+                                "        AND table_name = :f2<char[101]>\n",
                                 "",
+                                "5.0",
                                 "MySQL");
 
 static toSQL SQLTableConstraint(

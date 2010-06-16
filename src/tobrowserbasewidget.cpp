@@ -137,14 +137,27 @@ void toBrowserBaseWidget::tabWidget_currentChanged(int ix)
 
 void toBrowserBaseWidget::updateData(const QString & ix)
 {
-    if (schema().isEmpty() || object().isEmpty())
-        return;
+    QString sch(schema());
+    QString obj(object());
+    // HACK: clear content on "refresh" or "schema change" with dummy empty names
+    // resolving bug #514310 - When switching to a different schema, or refreshing
+    // the current schema in schema browser, the detail
+    // window still displays the info for the last item selected...
+    if (sch.isEmpty())
+        sch = " ";
+    if (obj.isEmpty())
+        obj = " ";
+
     toConnection &conn = toMainWidget()->currentConnection();
     if (toIsMySQL(conn) && !type().isEmpty())
-       // MySQL requires additional parameter to fetch routine (procedure/function) creation script
-       // Parameter must be passed first. This parameter (type) is only specified when it is a MySQL
-       // connection and routine code is being fetched (as opposed to fetching say tables)
-       m_tabs[ix]->changeParams(type(), schema(), object());
+    {
+        // MySQL requires additional parameter to fetch routine (procedure/function) creation script
+        // Parameter must be passed first. This parameter (type) is only specified when it is a MySQL
+        // connection and routine code is being fetched (as opposed to fetching say tables)
+        m_tabs[ix]->changeParams(type(), sch, obj);
+    }
     else
-       m_tabs[ix]->changeParams(schema(), object());
+    {
+        m_tabs[ix]->changeParams(sch, obj);
+    }
 }

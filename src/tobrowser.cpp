@@ -670,10 +670,17 @@ public:
 #define TAB_ACCESS_USER  "AccessUser"
 #define TAB_ACCESS_OBJECTS "AccessObjects"
 
-static toSQL SQLListTablesMysql("toBrowser:ListTables",
-                                "SHOW TABLES FROM `:f1<noquote>`",
+static toSQL SQLListTablesMysql3("toBrowser:ListTables",
+                                "SHOW TABLES FROM :f1<noquote>",
                                 "List the available tables in a schema.",
                                 "3.0",
+                                "MySQL");
+static toSQL SQLListTablesMysql("toBrowser:ListTables",
+                                "SELECT TABLE_NAME TABLES\n"
+                                "    FROM information_schema.tables\n"
+                                "    WHERE table_schema = :f1<char[101]>",
+                                "",
+                                "5.0",
                                 "MySQL");
 static toSQL SQLListTables("toBrowser:ListTables",
                            "SELECT Table_Name,NULL \" Ignore\",NULL \" Ignore2\",Tablespace_name \" Ignore2\"\n"
@@ -723,60 +730,60 @@ static toSQL SQLListTablesTD("toBrowser:ListTables",
                              "",
                              "Teradata");
 
-static toSQL SQLTableIndex("toBrowser:TableIndex",
-                           "SELECT IND.index_name AS \"Index Name\",\n"
-                           "       ind.column_name AS \"Column Name\",\n"
-                           "       al.uniqueness AS \"Unique\",\n"
-                           "       AL.index_type AS \"Type\",\n"
-                           "       EX.column_expression AS \"Column Expression\"\n"
-                           "  FROM SYS.ALL_IND_COLUMNS IND,\n"
-                           "       SYS.ALL_IND_EXPRESSIONS EX,\n"
-                           "       sys.All_Indexes AL\n"
-                           " WHERE IND.INDEX_OWNER = :own<char[101]>\n"
-                           "   AND IND.TABLE_NAME = :nam<char[101]>\n"
-                           "   AND EX.index_owner ( + ) = IND.index_owner\n"
-                           "   AND EX.index_name ( + ) = IND.index_name\n"
-                           "   AND IND.index_name = AL.index_name ( + )\n"
-                           "   AND IND.index_owner = AL.owner ( + )",
-                           "List the indexes on a table",
-                           "");
-static toSQL SQLTableIndexSapDB("toBrowser:TableIndex",
-                                "SELECT owner,\n"
-                                "       indexname \"Index_Name\",\n"
-                                "       'NORMAL',\n"
-                                "       type\n"
-                                " FROM indexes \n"
-                                " WHERE owner = :f1<char[101]> and tablename = :f2<char[101]> \n"
-                                " ORDER by indexname",
-                                "",
-                                "",
-                                "SapDB");
-
-static toSQL SQLTableIndexPG("toBrowser:TableIndex",
-                             "SELECT u.usename AS \"Owner\",\n"
-                             "       c2.relname AS \"Index Name\",\n"
-                             "       pg_get_indexdef(i.indexrelid) as \"Definition\"\n"
-                             "  FROM pg_class c,\n"
-                             "       pg_class c2,\n"
-                             "       pg_index i,\n"
-                             "       pg_user u,\n"
-                             "       pg_namespace n\n"
-                             " WHERE c.relowner = u.usesysid\n"
-                             "   AND n.nspname = :f1\n"
-                             "   AND c.relname = :f2\n"
-                             "   AND c.relowner = u.usesysid\n"
-                             "   AND n.OID = c.relnamespace\n"
-                             "   AND c.OID = i.indrelid\n"
-                             "   AND i.indexrelid = c2.OID",
-                             "",
-                             "",
-                             "PostgreSQL");
-
-static toSQL SQLTableIndexMySQL("toBrowser:TableIndex",
-                                "SHOW INDEX FROM `:f1<noquote>`.`:tab<noquote>`",
-                                "",
-                                "",
-                                "MySQL");
+// static toSQL SQLTableIndex("toBrowser:TableIndex",
+//                            "SELECT IND.index_name AS \"Index Name\",\n"
+//                            "       ind.column_name AS \"Column Name\",\n"
+//                            "       al.uniqueness AS \"Unique\",\n"
+//                            "       AL.index_type AS \"Type\",\n"
+//                            "       EX.column_expression AS \"Column Expression\"\n"
+//                            "  FROM SYS.ALL_IND_COLUMNS IND,\n"
+//                            "       SYS.ALL_IND_EXPRESSIONS EX,\n"
+//                            "       sys.All_Indexes AL\n"
+//                            " WHERE IND.INDEX_OWNER = :own<char[101]>\n"
+//                            "   AND IND.TABLE_NAME = :nam<char[101]>\n"
+//                            "   AND EX.index_owner ( + ) = IND.index_owner\n"
+//                            "   AND EX.index_name ( + ) = IND.index_name\n"
+//                            "   AND IND.index_name = AL.index_name ( + )\n"
+//                            "   AND IND.index_owner = AL.owner ( + )",
+//                            "List the indexes on a table",
+//                            "");
+// static toSQL SQLTableIndexSapDB("toBrowser:TableIndex",
+//                                 "SELECT owner,\n"
+//                                 "       indexname \"Index_Name\",\n"
+//                                 "       'NORMAL',\n"
+//                                 "       type\n"
+//                                 " FROM indexes \n"
+//                                 " WHERE owner = :f1<char[101]> and tablename = :f2<char[101]> \n"
+//                                 " ORDER by indexname",
+//                                 "",
+//                                 "",
+//                                 "SapDB");
+// 
+// static toSQL SQLTableIndexPG("toBrowser:TableIndex",
+//                              "SELECT u.usename AS \"Owner\",\n"
+//                              "       c2.relname AS \"Index Name\",\n"
+//                              "       pg_get_indexdef(i.indexrelid) as \"Definition\"\n"
+//                              "  FROM pg_class c,\n"
+//                              "       pg_class c2,\n"
+//                              "       pg_index i,\n"
+//                              "       pg_user u,\n"
+//                              "       pg_namespace n\n"
+//                              " WHERE c.relowner = u.usesysid\n"
+//                              "   AND n.nspname = :f1\n"
+//                              "   AND c.relname = :f2\n"
+//                              "   AND c.relowner = u.usesysid\n"
+//                              "   AND n.OID = c.relnamespace\n"
+//                              "   AND c.OID = i.indrelid\n"
+//                              "   AND i.indexrelid = c2.OID",
+//                              "",
+//                              "",
+//                              "PostgreSQL");
+// 
+// static toSQL SQLTableIndexMySQL3("toBrowser:TableIndex",
+//                                 "SHOW INDEX FROM `:f1<noquote>`.`:tab<noquote>`",
+//                                 "",
+//                                 "3.0",
+//                                 "MySQL");
 
 // static toSQL SQLTableConstraint(
 //     "toBrowser:TableConstraint",
@@ -1791,7 +1798,10 @@ void toBrowser::mainTab_currentChanged(int /*ix*/)
                "main widget of the tab is not QSplitter as is mandatory!");
 
     if (m_objectsMap.contains(ix))
+    {
         m_objectsMap[ix]->changeParams(schema(), Filter ? Filter->wildCard() : "%");
+        changeItem();
+    }
     else
         qDebug() << "mainTab_currentChanged unhandled index:" << ix;
 }

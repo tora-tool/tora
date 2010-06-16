@@ -407,13 +407,18 @@ static toSQL SQLTableColumnsTD(
     "",
     "Teradata");
 
-static toSQL SQLTableColumnsMySql(
+static toSQL SQLTableColumnsMySql3(
     "toResultCols:ListCols",
     "SHOW FULL COLUMNS FROM :f1<noquote>",
     "",
     "3.23",
     "MySQL");
-
+static toSQL SQLTableColumnsMySql(
+    "toResultCols:ListCols",
+    "SELECT * FROM information_schema.columns WHERE table_schema = :f1<char[101]> AND table_name = :f2<char[101]>",
+    "",
+    "5.0",
+    "MySQL");
 
 toResultCols::toResultCols(QWidget *parent, const char *name, Qt::WFlags f)
         : QWidget(parent, f)
@@ -525,17 +530,18 @@ void toResultCols::query(const QString &sql, const toQList &param)
         TableName = conn.quote(Owner) + "." + conn.quote(Name);
 
         Columns->setSQL(SQLTableColumns);
-        if (toIsMySQL(conn))
-        {
-            if (Owner.isEmpty())
-                Columns->changeParams(Name);
-            else
-                Columns->changeParams("`" + Owner + "`." + Name);
-        }
-        else
-        {
+        // MySQL is using information_schema now - so there should be always Owner defined
+//         if (toIsMySQL(conn))
+//         {
+//             if (Owner.isEmpty())
+//                 Columns->changeParams(Name);
+//             else
+//                 Columns->changeParams("`" + Owner + "`." + Name);
+//         }
+//         else
+//         {
             Columns->changeParams(Owner, Name);
-        }
+//         }
     }
     TOCATCH;
 
