@@ -56,6 +56,25 @@
 #include <QProgressDialog>
 
 
+// columns count
+#define FILECOLUMNS 15
+#define COLUMNS (FILECOLUMNS-2)
+// order of the result columns
+#define COL_NAME 0
+#define COL_STATUS 1
+#define COL_INFO 2
+#define COL_CONTENT 3
+#define COL_LOGGING 4
+#define COL_SIZE 5
+#define COL_FREE_UNIT 6
+#define COL_FREE_PERCENT 7
+#define COL_AUTOEXT 8
+#define COL_USED_FREE_AUTO 9
+#define COL_COALESCED 10
+#define COL_MAX_FREE 11
+#define COL_FREE_FRAGMENTS 12
+
+
 /*! \brief Item for storage data display and sorting.
 */
 class toResultStorageItem : public toResultViewItem
@@ -136,7 +155,7 @@ public:
     void paint(QPainter *painter, const QStyleOptionViewItem &option,
                const QModelIndex & index ) const
     {
-        if(index.column() == 8 ) {
+        if(index.column() == COL_USED_FREE_AUTO ) {
             int left   = option.rect.left();
             int top    = option.rect.top();
             int width  = option.rect.width();
@@ -186,6 +205,7 @@ toResultStorage::toResultStorage(bool available, QWidget *parent, const char *na
     addColumn(tr("Logging"));
     addColumn(tr("Size (%1)").arg(Unit));
     addColumn(tr("Free (%1)").arg(Unit));
+    addColumn(tr("Free (%)"));
     addColumn(tr("Autoextend (%1)").arg(Unit));
     if (available)
         addColumn(tr("Used/Free/Autoextend"));
@@ -196,13 +216,14 @@ toResultStorage::toResultStorage(bool available, QWidget *parent, const char *na
     addColumn(tr("Free fragments"));
     setSQLName(tr("toResultStorage"));
 
-    setColumnAlignment(5, Qt::AlignRight);
-    setColumnAlignment(6, Qt::AlignRight);
-    setColumnAlignment(7, Qt::AlignRight);
-    setColumnAlignment(8, Qt::AlignCenter);
-    setColumnAlignment(9, Qt::AlignCenter);
-    setColumnAlignment(10, Qt::AlignRight);
-    setColumnAlignment(11, Qt::AlignRight);
+    setColumnAlignment(COL_SIZE, Qt::AlignRight);
+    setColumnAlignment(COL_FREE_UNIT, Qt::AlignRight);
+    setColumnAlignment(COL_FREE_PERCENT, Qt::AlignRight);
+    setColumnAlignment(COL_AUTOEXT, Qt::AlignCenter);
+    setColumnAlignment(COL_USED_FREE_AUTO, Qt::AlignCenter);
+    setColumnAlignment(COL_COALESCED, Qt::AlignRight);
+    setColumnAlignment(COL_MAX_FREE, Qt::AlignRight);
+    setColumnAlignment(COL_FREE_FRAGMENTS, Qt::AlignRight);
 
     ShowCoalesced = false;
     OnlyFiles = false;
@@ -227,6 +248,7 @@ static toSQL SQLShowCoalesced("toResultStorage:ShowCoalesced",
                               "       d.logging,\n"
                               "       TO_CHAR(ROUND(NVL(a.tbs_size,0) / b.unit,2)),\n"
                               "       TO_CHAR(ROUND(NVL(f.free_size,0) / b.unit,2)),\n"
+                              "       TO_CHAR(ROUND(NVL(f.free_size,0)/NVL(a.tbs_size,1)*100)),\n" // free%
                               "       TO_CHAR(ROUND(NVL(a.autoextend_size,0) / b.unit,2)),\n"
                               "       '-',\n"
                               "       TO_CHAR(ROUND(f.percent_extents_coalesced,1))||'%',\n"
@@ -255,6 +277,7 @@ static toSQL SQLShowCoalesced("toResultStorage:ShowCoalesced",
                               "       d.logging,\n"
                               "       TO_CHAR(ROUND(NVL(a.tbs_size,0) / b.unit,2)),\n"
                               "       TO_CHAR(ROUND(NVL(f.free_size,0) / b.unit,2)),\n"
+                              "       TO_CHAR(ROUND(NVL(f.free_size,0)/NVL(a.tbs_size,1)*100)),\n" // free%
                               "       TO_CHAR(ROUND(NVL(a.autoextend_size,0) / b.unit,2)),\n"
                               "       '-',\n"
                               "       '-',\n"
@@ -288,6 +311,7 @@ static toSQL SQLShowCoalesced8("toResultStorage:ShowCoalesced",
                                "       d.logging,\n"
                                "       TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
                                "       TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)),\n"
+                               "       TO_CHAR(ROUND(NVL(f.bytes,0)/NVL(a.bytes,1)*100)),\n" // free%
                                "       TO_CHAR(ROUND(NVL(a.maxbytes / b.unit, 0),2)),\n"
                                "       '-',\n"
                                "       TO_CHAR(ROUND(f.percent_extents_coalesced,1))||'%',\n"
@@ -311,6 +335,7 @@ static toSQL SQLShowCoalesced7("toResultStorage:ShowCoalesced",
                                "       'N/A',\n"
                                "       TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
                                "       TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)),\n"
+                               "       TO_CHAR(ROUND(NVL(f.bytes,0)/NVL(a.bytes,1)*100)),\n" // free%
                                "       '-',\n"
                                "       '-',\n"
                                "       TO_CHAR(ROUND(f.percent_extents_coalesced,1))||'%',\n"
@@ -339,6 +364,7 @@ static toSQL SQLNoShowCoalesced(
     "       TO_CHAR ( ROUND ( NVL ( f.free_size,\n"
     "                               0 ) / b.unit,\n"
     "                         2 ) ),\n"
+    "       TO_CHAR(ROUND(NVL(f.free_size,0)/NVL(s.tbs_size,1)*100)),\n" // free%
     "       TO_CHAR ( ROUND ( NVL ( s.autoextend_size,\n"
     "                               0 ) / b.unit,\n"
     "                         2 ) ),\n"
@@ -394,6 +420,7 @@ static toSQL SQLNoShowCoalesced8("toResultStorage:NoCoalesced",
                                  "       d.logging,\n"
                                  "       TO_CHAR(ROUND(NVL(a.bytes,0) / b.unit,2)),\n"
                                  "       TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)),\n"
+                                 "       TO_CHAR(ROUND(NVL(f.bytes,0)/NVL(a.bytes,1)*100)),\n" // free%
                                  "       TO_CHAR(ROUND(NVL(a.maxbytes,0) / b.unit,2)),\n"
                                  "       '-',\n"
                                  "       '-',\n"
@@ -417,6 +444,7 @@ static toSQL SQLNoShowCoalesced7("toResultStorage:NoCoalesced",
                                  "       'N/A',\n"
                                  "       TO_CHAR(ROUND(NVL(a.bytes,0) / b.unit,2)),\n"
                                  "       TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)),\n"
+                                 "       TO_CHAR(ROUND(NVL(f.bytes,0)/NVL(a.bytes,1)*100)),\n" // free%
                                  "       '-',\n"
                                  "       '-',\n"
                                  "       '-',\n"
@@ -444,6 +472,7 @@ static toSQL SQLDatafile(
     "                         2 ) ),\n"
     "       to_char ( round ( s.bytes / b.unit,\n"
     "                         2 ) ),\n"
+    "       TO_CHAR(ROUND(NVL(s.bytes,0)/NVL(d.bytes,1)*100)),\n" // free%
     "       to_char ( round ( d.maxbytes / b.unit,\n"
     "                         2 ) ),\n"
     "       '-',\n"
@@ -478,6 +507,7 @@ static toSQL SQLDatafile(
     "                         2 ) ),\n"
     "       to_char ( round ( ( d.user_bytes - t.bytes_cached ) / b.unit,\n"
     "                         2 ) ),\n"
+    "       TO_CHAR(ROUND(NVL(d.user_bytes - t.bytes_cached,0)/NVL(d.bytes,1)*100)),\n" // free%
     "       to_char ( round ( d.maxbytes / b.unit,\n"
     "                         2 ) ),\n"
     "       '-',\n"
@@ -509,6 +539,7 @@ static toSQL SQLDatafile8(
     "                         2 ) ),\n"
     "       to_char ( round ( s.bytes / b.unit,\n"
     "                         2 ) ),\n"
+    "       TO_CHAR(ROUND(NVL(s.bytes,0)/NVL(d.bytes,1)*100)),\n" // free%
     "       to_char ( round ( d.maxbytes / b.unit,\n"
     "                         2 ) ),\n"
     "       '-',\n"
@@ -542,6 +573,7 @@ static toSQL SQLDatafile8(
     "                         2 ) ),\n"
     "       to_char ( round ( ( d.user_bytes - t.bytes_cached ) / b.unit,\n"
     "                         2 ) ),\n"
+    "       TO_CHAR(ROUND(NVL(d.user_bytes - t.bytes_cached,0)/NVL(d.bytes,1)*100)),\n" // free%
     "       to_char ( round ( d.maxbytes / b.unit,\n"
     "                         2 ) ),\n"
     "       '-',\n"
@@ -569,6 +601,7 @@ static toSQL SQLDatafile7("toResultStorage:Datafile",
                           "    ' ',\n"
                           "        to_char(round(d.bytes/b.unit,2)),\n"
                           "        to_char(round(s.bytes/b.unit,2)),\n"
+                          "       TO_CHAR(ROUND(NVL(s.bytes,0)/NVL(d.bytes,1)*100)),\n" // free%
                           "        '-',\n"
                           "        '-',\n"
                           "    ' ',\n"
@@ -584,9 +617,6 @@ static toSQL SQLDatafile7("toResultStorage:Datafile",
                           "   AND  (d.file_name = v.name)",
                           "",
                           "0703");
-
-#define FILECOLUMNS 14
-#define COLUMNS (FILECOLUMNS-2)
 
 void toResultStorage::saveSelected(void)
 {
@@ -647,16 +677,16 @@ void toResultStorage::updateList(void)
             toResultStorageItem *tablespace = new toResultStorageItem(AvailableGraph, this, NULL);
             for (int i = 0;i < COLUMNS && j != TablespaceValues.end();i++, j++)
             {
-                if (i == 8)
+                if (i == COL_USED_FREE_AUTO)
                     continue;
                 tablespace->setText(i, *j);
                 tablespace->setSortValue(i, *j);
             }
 
             // To fill Used/Free/Autoextend column
-            double total = tablespace->text(7).toDouble();
-            double user = tablespace->text(5).toDouble();
-            double free = tablespace->text(6).toDouble();
+            double total = tablespace->text(COL_FREE_PERCENT).toDouble();
+            double user = tablespace->text(COL_SIZE).toDouble();
+            double free = tablespace->text(COL_FREE_UNIT).toDouble();
             if (total < user )
                 total = user;
             user /= total;
@@ -665,8 +695,8 @@ void toResultStorage::updateList(void)
 //             t.sprintf("%05.1f / %05.1f / %05.1f%%", (user-free)*100, free*100, (1 - user)*100);
 // spaces seems better than 0-filling...
             t.sprintf("%#5.1f / %#5.1f / %#5.1f%%", (user-free)*100, free*100, (1 - user)*100);
-            tablespace->setText(8, t);
-            tablespace->setSortValue(8, (user-free)*100);
+            tablespace->setText(COL_USED_FREE_AUTO, t);
+            tablespace->setSortValue(COL_USED_FREE_AUTO, (user-free)*100);
             // end of Used/Free/Autoextend column
 
             if (CurrentSpace == tablespace->text(0))
