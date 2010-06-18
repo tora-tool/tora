@@ -440,7 +440,7 @@ public:
 
             fetchAllParcels(&request);
 
-            Version = getVersion(&request, host);
+            Version = getVersion(&request, ip);
         }
 
         ~teradataSub()
@@ -576,6 +576,11 @@ public:
 
             QEPParms.qepTLen = strlen(hostdata);
             DBCHQE(&result, Cnta, &QEPParms);
+
+            if(result != EM_OK) {
+                fprintf(stderr, "toTeradataConnection WARNING: getVersion failed\n");
+                return QString("");
+            }
 
             release[62] = 0;
             QString ret(release);
