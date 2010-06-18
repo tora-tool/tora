@@ -72,6 +72,8 @@ Copyright © 2005 Geoffrey Rommel
 
 #include <QDebug>
 #include <QList>
+#include <QHostInfo>
+#include <QHostAddress>
 
 // teradata defines
 #undef VERSION
@@ -399,10 +401,21 @@ public:
                     port = 1025; // for some reason this is 0
             }
 
+            // library doesn't work with names, for some reason
+            QString ip = host;
+            QList<QHostAddress> addresses = QHostInfo::fromName(host).addresses();
+            if(addresses.isEmpty())
+                fprintf(stderr, "toTeradataConnection WARNING: no addresses found for hostname\n");
+            else {
+                if(addresses.length() > 1)
+                    fprintf(stderr, "toTeradataConnection WARNING: found multiple addresses, using first\n");
+                ip = addresses.at(0).toString();
+            }
+
             // build standard TD logon string
             // [host[:port]]/user[,pass] [charset] [transaction mode] 
             QString logon = QString("%0:%1/%3,%4 UTF-8")
-                .arg(host)
+                .arg(ip)
                 .arg(port)
                 .arg(user)
                 .arg(pass);
