@@ -125,6 +125,7 @@
 #include "tobrowsercodewidget.h"
 #include "tobrowsertriggerwidget.h"
 #include "tobrowserdblinkswidget.h"
+#include "tobrowserdirectorieswidget.h"
 #include "tobrowseraccesswidget.h"
 #include "tobrowserschemawidget.h"
 
@@ -664,6 +665,8 @@ public:
 #define TAB_DBLINK  "DBLink"
 #define TAB_DBLINK_INFO  "DBLinkInfo"
 #define TAB_DBLINK_SYNONYMS "DBLinkSynonyms"
+
+#define TAB_DIRECTORIES  "Directories"
 
 #define TAB_ACCESS  "Access"
 #define TAB_ACCESS_CONTENT "AccessContent"
@@ -1354,6 +1357,11 @@ static toSQL SQLListDBLinkDBA("toBrowser:ListDBLinkDBA",
 //                                "Display foreign synonyms");
 // #endif
 
+static toSQL SQLListDirectories("toBrowser:ListDirectories",
+                           "SELECT DISTINCT directory_name FROM SYS.ALL_DIRECTORIES\n"
+                           " ORDER BY directory_name",
+                           "List database external directories");
+
 static toSQL SQLMySQLAccess("toBrowser:MySQLAcess",
                             "SHOW TABLES FROM mysql",
                             "Show access tables for MySQL databases",
@@ -1719,6 +1727,43 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     m_browsersMap[dblinkSplitter] = dblinkBrowserWidget;
 // #endif // dblink
 
+    
+    
+    directoriesSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
+    directoriesSplitter->setObjectName(TAB_DIRECTORIES);
+
+    QWidget * directoriesWidget = new QWidget(directoriesSplitter);
+
+    QVBoxLayout * directoriesLayout = new QVBoxLayout;
+    directoriesLayout->setSpacing(0);
+    directoriesLayout->setContentsMargins(0, 0, 0, 0);
+    directoriesWidget->setLayout(directoriesLayout);
+
+    directoriesView = new toBrowserSchemaTableView(directoriesWidget);
+    directoriesBrowserWidget = new toBrowserDirectoriesWidget(directoriesSplitter);
+
+    directoriesLayout->addWidget(directoriesView);
+    directoriesView->setReadAll(true);
+    directoriesView->setSQL(SQLListDirectories);
+    directoriesView->resize(FIRST_WIDTH, directoriesView->height());
+
+    connect(directoriesView,
+            SIGNAL(selectionChanged()),
+            this,
+            SLOT(changeItem()));
+    connect(directoriesView,
+            SIGNAL(displayMenu(QMenu *)),
+            this,
+            SLOT(displayIndexMenu(QMenu *)));
+
+    directoriesWidget->resize(FIRST_WIDTH, directoriesView->height());
+    directoriesSplitter->setStretchFactor(directoriesSplitter->indexOf(directoriesView), 0);
+    directoriesSplitter->setStretchFactor(directoriesSplitter->indexOf(directoriesBrowserWidget), 1);
+
+    m_objectsMap[directoriesSplitter] = directoriesView;
+    m_browsersMap[directoriesSplitter] = directoriesBrowserWidget;
+
+
     accessSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     accessSplitter->setObjectName(TAB_ACCESS);
 //     m_mainTab->addTab(accessSplitter, tr("Access"));
@@ -1933,12 +1978,9 @@ void toBrowser::changeConnection(void)
 
     // enable/disable main tabs depending on DB
     m_mainTab->clear();
-    addTab(tableSplitter, tr("T&ables"),
-           true);
-    addTab(viewSplitter, tr("&Views"),
-           !toIsMySQL(connection()));
-    addTab(indexSplitter, tr("Inde&xes"),
-           true);
+    addTab(tableSplitter, tr("T&ables"), true);
+    addTab(viewSplitter, tr("&Views"), !toIsMySQL(connection()));
+    addTab(indexSplitter, tr("Inde&xes"), true);
     addTab(sequenceSplitter, tr("Se&quences"),
            toIsOracle(connection()) || toIsPostgreSQL(connection()));
     addTab(synonymSplitter, tr("S&ynonyms"),
@@ -1947,14 +1989,12 @@ void toBrowser::changeConnection(void)
     // Starting with version 5.0 MySQL supports stored functions/procedures
     // If TOra is used a lot with older versions of MySQL the "true" parameter
     // should be enhanced with a check for MySQL version
-    addTab(codeSplitter, tr("Cod&e"),
-           true);
+    addTab(codeSplitter, tr("Cod&e"), true);
     addTab(triggerSplitter, tr("Tri&ggers"),
            !toIsMySQL(connection()) && !toIsPostgreSQL(connection()));
-    addTab(dblinkSplitter, tr("DBLinks"),
-           toIsOracle(connection()));
-    addTab(accessSplitter, tr("Access"),
-           toIsMySQL(connection()));
+    addTab(dblinkSplitter, tr("DBLinks"), toIsOracle(connection()));
+    addTab(directoriesSplitter, tr("Directories"), toIsOracle(connection()));
+    addTab(accessSplitter, tr("Access"), toIsMySQL(connection()));
 
     foreach (toBrowserBaseWidget * w, m_browsersMap.values())
     w->changeConnection();

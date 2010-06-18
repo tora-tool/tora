@@ -201,6 +201,7 @@ tora_SOURCES=main.cpp \
     tobrowsercodewidget.cpp tobrowsercodewidget.h \
     tobrowsertriggerwidget.cpp tobrowsertriggerwidget.h \
     tobrowserdblinkswidget.cpp tobrowserdblinkswidget.h \
+    tobrowserdirectorieswidget.cpp tobrowserdirectorieswidget.h \
     toresultgrants.cpp toresultgrants.h \
 	migratetool/sqldeveloper.cpp migratetool/sqldeveloper.h \
 	migratetool/squirrelsql.cpp migratetool/squirrelsql.h \
@@ -434,6 +435,7 @@ BUILT_SOURCES = \
     moc_tobrowsercodewidget.cpp \
     moc_tobrowsertriggerwidget.cpp \
     moc_tobrowserdblinkswidget.cpp \
+    moc_tobrowserdirectorieswidget.cpp \
     moc_toresultgrants.cpp \
 	docklets/moc_toviewdirectory.cpp \
 	docklets/moc_toviewconnections.cpp \

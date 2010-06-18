@@ -74,6 +74,7 @@ class toBrowserSynonymWidget;
 class toBrowserCodeWidget;
 class toBrowserTriggerWidget;
 class toBrowserDBLinksWidget;
+class toBrowserDirectoriesWidget;
 class toBrowserAccessWidget;
 class toBrowserBaseWidget;
 class toBrowserSchemaBase;
@@ -148,6 +149,10 @@ class toBrowser : public toToolWidget
     QSplitter * dblinkSplitter;
     toBrowserSchemaTableView * dblinkView;
     toBrowserDBLinksWidget * dblinkBrowserWidget;
+    
+    QSplitter * directoriesSplitter;
+    toBrowserSchemaTableView * directoriesView;
+    toBrowserDirectoriesWidget * directoriesBrowserWidget;
 
     QSplitter * accessSplitter;
     toBrowserSchemaTableView * accessView;

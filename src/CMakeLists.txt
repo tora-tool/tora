@@ -109,6 +109,7 @@ SET(TORA_MOC_CLASSES
     tobrowsercodewidget.h
     tobrowsertriggerwidget.h
     tobrowserdblinkswidget.h
+    tobrowserdirectorieswidget.h
 #     tobrowserschemabasewidget.h
 #     toconf.h
 #     toconfiguration.h
@@ -281,6 +282,7 @@ SET(TORA_SOURCES
     tobrowsercodewidget.cpp
     tobrowsertriggerwidget.cpp
     tobrowserdblinkswidget.cpp
+    tobrowserdirectorieswidget.cpp
 #     tobrowserschemabasewidget.cpp
     toconfiguration.cpp
     toconnection.cpp
