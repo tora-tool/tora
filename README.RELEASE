@@ -28,6 +28,8 @@ or
 
 scp tora-$VER.tar.gz $USR,tora@frs.sourceforge.net:/home/frs/project/t/to/tora/tora/$VER/
 
+For each uploaded release source tarball or binary, also upload a .md5sum and .sha1sum file for
+the upload in the same directory.
 
 add new release to the 'tora' package
 

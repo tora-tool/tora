@@ -48,6 +48,12 @@ work must be released under the GPL license as well.
 TOra is supported for running with an Oracle 8.1.7 or newer
 client installation. It has been verified to work with Oracle 10g and 11g.
 
+WINDOWS / ORACLE NOTICE: The windows build of tora includes a stub Oracle DLL to
+enable the product to work with other database engines even if oracle is not 
+installed. If you have Oracle client installed, and want oracle support in TOra to
+function, remove the oci.dll file from the TOra installation directory after 
+installing it.
+
 In addition, TOra also supports postgres and mysql if your Qt library
 is compiled with that support.
 
