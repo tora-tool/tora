@@ -12,7 +12,7 @@ OPTION(WANT_RPM "Enable additional RPM related stuff. Additional make package_rp
 OPTION(WANT_BUNDLE "Enable Mac OS X bundle build" OFF)
 OPTION(WANT_BUNDLE_STANDALONE "Do not copy required libs and tools into bundle (WANT_BUNDLE)" ON)
 OPTION(USE_TROTL "Use trotl OCI wrapper library" OFF)
-OPTION(USE_PCH "Use percompiled headers" OFF)
+OPTION(USE_PCH "Use percompiled headers" ON)
 
 #Set our CMake minimum version
 #Require 2.4.2 for Qt finding
@@ -135,8 +135,12 @@ ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
 #Convert our simpler command line option to the CMake style
 #None, Debug, Release, .. or custom ones
+IF(WANT_DEBUG)
+  SET(CMAKE_BUILD_TYPE Debug)
+  ADD_DEFINITIONS("-DDEBUG")
+ELSE(WANT_DEBUG)
   SET(CMAKE_BUILD_TYPE RELEASE)
-
+ENDIF(WANT_DEBUG)
 
 # Lets disable Wall warnings due the MSVC too much talkative
 # output. Wall can slow down compiletion up to hours and
