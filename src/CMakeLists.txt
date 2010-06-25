@@ -87,6 +87,7 @@ SET(TORA_MOC_CLASSES
     toabout.h
     toalert.h
     toanalyze.h
+    toawr.h
 #     tobackground.h
 #     tobackgroundlabel.h
     tobackup.h
@@ -261,6 +262,7 @@ SET(TORA_SOURCES
     toabout.cpp
     toalert.cpp
     toanalyze.cpp
+    toawr.cpp
     tobackground.cpp
     tobackgroundlabel.cpp
     tobackup.cpp
