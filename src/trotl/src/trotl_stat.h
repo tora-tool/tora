@@ -483,7 +483,7 @@ SqlStatement& SqlStatement::operator>> <tstring> (std::vector<tstring> &val);
 
 /** Factory for creating instantions of BindPar structure.
  *  name of datatype is used as a key
- *  each constructor takes two arguments - position,  BindVarDecl
+ *  each constructor takes three arguments - position,  SqlStatement, BindVarDecl
  *  BindVarDecl - is created by simple PL/SQL parser
  *  this factory is used for PL/SQL statements
  **/
@@ -495,7 +495,7 @@ class TROTL_EXPORT  BindParFactTwoParmSing: public Loki::SingletonHolder<BindPar
  
 /** Factory for creating instantions of BindPar structure.
  *  SQLT_<X> const is used as a key
- *  each constructor takes two arguments - position,  count
+ *  each constructor takes three arguments - position,  SqlStatement, ColumnType
  *  this factory is used in SELECT statements
  **/
 TROTL_EXPORT typedef Util::GenericFactory<SqlStatement::BindPar, LOKI_TYPELIST_3(unsigned int, SqlStatement&, ColumnType&), int> DefineParFactTwoParm;
@@ -506,7 +506,7 @@ class TROTL_EXPORT  DefineParFactTwoParmSing: public Loki::SingletonHolder<Defin
  
 /** Factory for creating instantions of BindPar structure.
  *  Name of the type is used as a key, i.e. 'SYS.XMLTYPE'
- *  each constructor takes two arguments - position,  count
+ *  each constructor takes the arguments - position,  SqlStatement, ColumnType
  *  this factory will be used for complex/custom datatypes
  **/
 TROTL_EXPORT typedef Util::GenericFactory<SqlStatement::BindPar, LOKI_TYPELIST_3(unsigned int, SqlStatement&, ColumnType&)> CustDefineParFactTwoParm;

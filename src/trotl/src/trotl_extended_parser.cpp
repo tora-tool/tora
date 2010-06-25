@@ -1,8 +1,3 @@
-// Copyright (c) 2003, 2004, 2005, 2006, 2007, 2008 Martin Fuchs <martin-fuchs@gmx.net>
-//
-// forked from OCIPL Version 1.3
-// by Ivan Brezina <ivan@cvut.cz>
-
 /*
 
   All rights reserved.
@@ -194,8 +189,8 @@ namespace trotl {
 		  );
 	  bool p = res.full;
 
-//	  BOOST_SPIRIT_DEBUG_RULE(K_SELECT);
-// 	  BOOST_SPIRIT_DEBUG_RULE(M_WHITE);
+	  BOOST_SPIRIT_DEBUG_RULE(K_SELECT);
+ 	  BOOST_SPIRIT_DEBUG_RULE(M_WHITE);
 // 	  BOOST_SPIRIT_DEBUG_RULE(keyword_tm);
 // 	  BOOST_SPIRIT_DEBUG_RULE(comment_cl);
  	  BOOST_SPIRIT_DEBUG_RULE(word_cl);
@@ -211,6 +206,7 @@ namespace trotl {
 	  return p;
   };
 
+  
   tstring ExtendedPlsqlParser::colorword(const tstring &i, int color)
   {
 	  char command[256], normal[256];

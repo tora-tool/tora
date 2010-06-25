@@ -67,6 +67,7 @@ namespace trotl {
   void OciConnection::cancel()
   {
     sword res = OCICALL(OCICALL(OCIBreak(_svc_ctx, _env._errh)));
+
     oci_check_error(__HERE__, _env._errh, res);
   }
 

@@ -250,17 +250,14 @@ public:
 
 	virtual tstring get_string(unsigned int row) const
 	{
-//		std::cout << " S:" << value_sz << ":" << dty << " ";
-
 		if(!indp[row])
 		{
 			tostream ret;
-			ret << "0x";
-//			return tstring(((char*)valuep)+(row * value_sz), value_sz)
+//			ret << "0x";
 			for(int i=0; i<value_sz; ++i)
 			{
 				char buffer[4];
-				snprintf(buffer, sizeof(buffer), "%0X", ((char*)valuep)[i]);
+				snprintf(buffer, sizeof(buffer), "%.2X", ((unsigned char*)valuep)[i]);
 				ret << buffer;
 			}
 			return ret.str();
@@ -269,136 +266,10 @@ public:
 		return "";
 	}
 
-//	virtual int get_int(unsigned int row) const { return get_number<int>(row); };
-//	virtual unsigned int get_uint(unsigned int row) const { return get_number<unsigned int>(row); };
-//	virtual long get_long(unsigned int row) const { return get_number<long>(row); };
-//	virtual unsigned long get_ulong(unsigned int row) const { return get_number<unsigned long>(row); };
-//	virtual float get_float(unsigned int row) const { return get_number<float>(row); };
-//	virtual double get_double(unsigned int row) const { return get_number<double>(row); };
 protected:
 		BindParRaw(const BindParRaw &other);
 };
 
-// Original code starts here
-
-///// string buffer bind variable structure
-//struct SqlString : public SqlValue
-//{
-//	SqlString(int blen=2000): _blen(blen),_str((char*)malloc((blen+1)*sizeof(char)))
-//	{
-//		*_str = '\0';
-//	}
-//
-//	SqlString(const char* s): _blen(strlen(s)), _str(strdup(s))
-//	{
-//		if (*s) _ind.set();
-//	}
-//
-//	SqlString(const char* s, int blen): _blen(blen), _str((char*)malloc((blen+1)*sizeof(char)))
-//	{
-//		_str = strndup(s, blen+1);
-//		if (*s)
-//			_ind.set();
-//	}
-//
-//	SqlString(const SqlString& other): SqlValue(other), _blen(strlen(other._str)), _str(strdup(other._str))
-//	{}
-//
-//	~SqlString() { free(_str); }
-//
-//	size_t len() const { return is_null() ? 0 : strlen(_str); }
-//	size_t blen() const { return _blen; }
-//	size_t alen() const { return _blen + 1; }
-//
-//	void resize(size_t l)
-//	{
-//		_blen = l;
-//		_str = (char*)realloc(_str, (l+1)*sizeof(char));
-//	}
-//
-//	void clear()
-//	{
-//		*_str = '\0';
-//		_ind.clear();
-//	}
-//
-//	char* str() { return _str; } // Note: _ind is not checked by this function.
-//	char* str(int l)
-//	{
-//		resize(l);
-//		return _str;
-//	} // Note: _ind is not changed by this function.
-//
-//	const char* c_str() const { return is_null() ? "" : _str; }
-//	operator const char*() const { return is_null() ? "" : _str; }
-//
-//	SqlString& operator=(const char* s);
-//	SqlString& operator=(const tstring& s);
-//
-//	friend tostream& operator<<(tostream& os, const SqlString& str)
-//	{
-//		if (str.is_not_null())
-//			os << str._str;
-//		return os;
-//	}
-//
-//	static inline char* strcpyn(char* dest, const char* source, size_t count)
-//	{
-//		char* d = dest;
-//		for (const char* s=source; count&&(*d++=*s++);)
-//			count--;
-//		return dest;
-//	}
-//
-//	static inline char* tcscpyn(char* dest, const char* source, size_t count)
-//	{
-//		char* d = dest;
-//		for (const char* s=source; count && (*d++=*s++); )
-//			count--;
-//		return dest;
-//	}
-//
-//protected:
-//	size_t _blen;
-//	char* _str;
-//};
-
-///// array of string bind variable buffers
-//struct SqlStringArray : public SqlIndArray {
-//	SqlStringArray(int size=g_OCIPL_BULK_ROWS, int blen=2000) :
-//		SqlIndArray(size),
-//		_blen(blen),
-//		_buffer((char*)malloc(size*(blen+1)*sizeof(char)))
-//		{
-//		memset(_buffer, 0, size*(blen+1)*sizeof(char));
-//		}
-//
-//	SqlStringArray(const SqlStringArray& other) :
-//		SqlIndArray(other), _blen(other._blen),
-//		_buffer((char*)malloc(other._count*(other._blen+1)*sizeof(char)))
-//		{
-//		memcpy(_buffer, other._buffer, other._count*(other._blen+1)*sizeof(char));
-//		}
-//
-//	~SqlStringArray()
-//	{
-//		free(_buffer);
-//	}
-//
-//	size_t len(int row) const {return is_not_null(row) ? strlen(_buffer) : 0;}
-//	size_t blen() const {return _blen;}
-//	size_t alen() const {return _blen+1;}
-//
-//	void clear(int row) {*_buffer = '\0'; _pind[row].clear();}
-//
-//	char* str(int row) {return _buffer + row*(_blen+1);}	// Note: _ind is not checked by this function.
-//	const char* c_str(int row) const {return is_not_null(row) ? _buffer + row*(_blen+1) : "";}
-//
-//protected:
-//	size_t	_blen;
-//	char*	_buffer;
-//};
-
-}
+};
 
 #endif

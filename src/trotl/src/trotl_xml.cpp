@@ -38,7 +38,7 @@ namespace trotl {
 
 Util::RegisterInFactory<BindParXML, BindParFactTwoParmSing> regBindXML("SYS.XMLTYPE");
 
-Util::RegisterInFactory<BindParXML, CustDefineParFactTwoParmSing> regCustDefineNTY("SYS.XMLTYPE");
+Util::RegisterInFactory<BindParXML, CustDefineParFactTwoParmSing> regCustDefineNTY_XML("SYS.XMLTYPE");
 
 // TODO - use NULL indicator for SYS.XMLTYPE
 tstring BindParXML::get_string(unsigned int row) const

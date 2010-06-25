@@ -243,7 +243,12 @@ public:
 				   int bulk_rows=::trotl::g_OCIPL_BULK_ROWS)
 				: ::trotl::SqlStatement(conn, stmt, lang, bulk_rows)
 			{
-				if(get_stmt_type() == STMT_ALTER || _in_cnt == 0)
+				// Be compatible with otl, execute some statements immediatelly
+				if(
+					get_stmt_type() == STMT_ALTER
+					|| get_stmt_type() == STMT_OTHER // ANALYZE
+					|| _in_cnt == 0
+					)
 					execute_internal(::trotl::g_OCIPL_BULK_ROWS, OCI_DEFAULT);
 			};
 			void readValue(toQValue &value)

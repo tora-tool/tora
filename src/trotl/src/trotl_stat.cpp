@@ -128,8 +128,8 @@ _bound(false)
 					_columns[dpos] );
 			
 			if(_all_defines[dpos].get() == NULL)
-				throw OciException(__HERE__, "DefinePar: Data type not registered: %d\n"
-					).arg(_columns[dpos]._data_type);
+				throw OciException(__HERE__, "DefinePar: Data type not registered: %s(%d)\n"
+					).arg(_columns[dpos]._data_type_name).arg(_columns[dpos]._data_type);
 			define(*_all_defines[dpos]);
 		}
 		_state |= DEFINED;
@@ -268,13 +268,8 @@ const SqlStatement::BindPar& SqlStatement::get_curr_in_bindpar()
 SqlStatement::BindPar& SqlStatement::get_next_out_bindpar()
 {
 	if( _all_binds == 0 || _out_binds == 0 )
-	{
-		tstring message("No out Bindpars specified for:\n");
-		message += _orig_stmt;
-		//throw OciException(__HERE__, "No out Bindpars specified");
-		throw OciException(__HERE__, message.c_str());
-	}
-
+		throw OciException(__HERE__, "No out Bindpars specified");
+	
 	ub4 pos = _out_pos < _out_cnt ? ++_out_pos : _out_pos=1;  //Round robin hack
 	return *_all_binds[_out_binds[ pos ]];
 }
@@ -284,7 +279,7 @@ const SqlStatement::BindPar& SqlStatement::get_curr_out_bindpar()
 	if( _all_binds == 0 || _out_binds == 0 )
 		throw OciException(__HERE__, "No out Bindpars specified");
 
-	//ub4 pos = _out_pos < _out_cnt ? (_out_pos+1) : 1;  //Round robin hack
+	ub4 pos = _out_pos < _out_cnt ? (_out_pos+1) : 1;  //Round robin hack
 	return *_all_binds[_out_binds[_out_pos ? _out_pos : 1 ]];
 }
 
@@ -319,7 +314,7 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		try {
 			set_attribute(OCI_ATTR_PREFETCH_MEMORY, 1500);
 			//set_attribute(OCI_ATTR_PREFETCH_ROWS, 10);
-			set_attribute(OCI_ATTR_PREFETCH_ROWS, 3);
+			set_attribute(OCI_ATTR_PREFETCH_ROWS, g_OCIPL_BULK_ROWS);
 		} catch(std::exception&) {
 			// ignore exception of this optional performance tuning
 			//TODO add some debug output here
@@ -330,6 +325,7 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 	{
 	case STMT_OTHER:
 		iters = 1;
+		_state |= EOF_DATA;
 		break;
 	case STMT_SELECT:
 		iters = rows;
