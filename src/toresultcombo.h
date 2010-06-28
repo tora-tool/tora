@@ -70,7 +70,16 @@ class toResultCombo : public QComboBox, public toResult
 
     QString Selected;
     QStringList Additional;
+
 public:
+    enum selectionPolicy {
+	    LastButOne = -1,
+	    Last = 0,
+	    First = 1,
+	    None
+    };
+    selectionPolicy SelectionPolicy;
+    
     /** Create the widget.
      * @param parent Parent widget.
      * @param name Name of widget.
@@ -117,6 +126,11 @@ public:
         return Selected;
     }
 
+    void setSelectionPolicy(selectionPolicy pol)
+    {
+	    SelectionPolicy = pol;
+    }
+    
     // Why are these needed?
 #if 1
     /** Set the SQL statement of this list
