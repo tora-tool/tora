@@ -46,12 +46,11 @@
 
 #include "totool.h"
 
-
+#include <QDate>
  
 class toResultView;
 class QLineEdit;
 class toConnection;
-
 class toResultCombo;
 
 class toAWR : public toToolWidget {
