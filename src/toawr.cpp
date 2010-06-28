@@ -67,7 +67,7 @@
 #include "icons/awrtool.xpm"
 
 // -- Instances in this Workload Repository schema
-// => inst_num
+// => instnum
 // => dbid
 static toSQL SQLDBInstances("toAWR:DBInstances",
 		 "select distinct \n"
@@ -92,6 +92,7 @@ static toSQL SQLDBInstances("toAWR:DBInstances",
 
 // --
 // --  Error reporting
+// --  Plus query max_snap_time
 
 // whenever sqlerror exit;
 // variable max_snap_time char(10);
@@ -99,13 +100,12 @@ static toSQL SQLDBInstances("toAWR:DBInstances",
 //   cursor cidnum is
 //      select 'X'
 //        from dba_hist_database_instance
-//       where instance_number = :inst_num
+//       where instance_number = :instnum
 //         and dbid            = :dbid;
-
 //   cursor csnapid is
 //      select to_char(max(end_interval_time),'dd/mm/yyyy')
 //        from dba_hist_snapshot
-//       where instance_number = :inst_num
+//       where instance_number = :instnum
 //         and dbid            = :dbid;
 //   vx     char(1);
 // begin
@@ -114,7 +114,7 @@ static toSQL SQLDBInstances("toAWR:DBInstances",
 //   fetch cidnum into vx;
 //   if cidnum%notfound then
 //     raise_application_error(-20200,
-//       'Database/Instance ' || :dbid || '/' || :inst_num ||
+//       'Database/Instance ' || :dbid || '/' || :instnum ||
 //       ' does not exist in DBA_HIST_DATABASE_INSTANCE');
 //   end if;
 //   close cidnum;
@@ -123,7 +123,7 @@ static toSQL SQLDBInstances("toAWR:DBInstances",
 //   fetch csnapid into :max_snap_time;
 //   if csnapid%notfound then
 //     raise_application_error(-20200,
-//       'No snapshots exist for Database/Instance '||:dbid||'/'||:inst_num);
+//       'No snapshots exist for Database/Instance '||:dbid||'/'||:instnum);
 //   end if;
 //   close csnapid;
 // end;
@@ -131,13 +131,13 @@ static toSQL SQLDBInstances("toAWR:DBInstances",
 // whenever sqlerror continue;
 
 // tohle asi muzu preskocit
-// - validni kombinace <inst_num,dbid> je uz znama
+// - validni kombinace <instnum,dbid> je uz znama
 // - <snapid,end_interval_time> nactu do komboboxu (anebo tam bude "No snaps")
 
 
 // -- List available snapshots
 static toSQL SQLSnaps("toAWR:Snaps",
-		" select to_char(s.end_interval_time,'dd Mon YYYY HH24:mi') snapdat      \n"
+		" select to_char(s.end_interval_time,'HH24:mi') snapdat                  \n"
 		" , di.instance_name                                  inst_name          \n"
 		" , di.db_name                                        db_name            \n"
 		" , s.snap_id                                         snap_id            \n"
@@ -145,13 +145,15 @@ static toSQL SQLSnaps("toAWR:Snaps",
 		" , to_char(s.startup_time,'dd Mon \"at\" HH24:mi:ss')  instart_fmt      \n"
 		"from dba_hist_snapshot s                      \n"
 		" , dba_hist_database_instance di              \n"
-		"where s.dbid              = :dbid<varchar[40],in>     \n"
-		"  and di.dbid             = :dbid<varchar[40],in>     \n"
-		"  and s.instance_number   = :instnum<varchar[40],in>  \n"
-		"  and di.instance_number  = :instnum<varchar[40],in>  \n"
+		"where s.dbid              = :db_id<char[40],in>    \n"
+		"  and di.dbid             = s.dbid                    \n"
+		"  and s.instance_number   = :instnum<char[40],in>  \n"
+		"  and di.instance_number  = s.instance_number         \n"
 		"  and di.dbid             = s.dbid            \n"
 		"  and di.instance_number  = s.instance_number \n"
 		"  and di.startup_time     = s.startup_time    \n"
+		"  and s.end_interval_time between trunc(to_date(:sdate<char[11],in>, 'YYYY:MM:DD'))    \n"
+		      "	and trunc(to_date(:edate<char[11],in>, 'YYYY:MM:DD')+1)                         \n"
 //		"  and s.end_interval_time >= decode( &num_days "
 //		"                                  , 0   , to_date('31-JAN-9999','DD-MON-YYYY') "
 //		"                                  , 3.14, s.end_interval_time "
@@ -171,37 +173,37 @@ static toSQL SQLCheckSnaps("toAWR:CheckSnaps",
 		"           , startup_time                                \n"
 		"        from dba_hist_snapshot                           \n"
 		"       where snap_id         = vspid                     \n"
-		"         and dbid            = :dbid<varchar[40],in>     \n"
-		"         and instance_number = :inst<varchar[40],in>;    \n"
+		"         and dbid            = :dbid<char[40],in>     \n"
+		"         and instance_number = :inst<char[40],in>;    \n"
 		"   bsnapt  dba_hist_snapshot.end_interval_time%type;     \n"
 		"   bstart  dba_hist_snapshot.startup_time%type;          \n"
 		"   esnapt  dba_hist_snapshot.end_interval_time%type;     \n"
 		"   estart  dba_hist_snapshot.startup_time%type;          \n"
 		" begin                                                   \n"
 		"   -- Check Begin Snapshot id is valid, get corresponding instance startup time \n"
-		"   open cspid(:fsnap<varchar[40],in>);                   \n"
+		"   open cspid(:fsnap<char[40],in>);                   \n"
 		"   fetch cspid into bsnapt, bstart;                      \n"
 		"   if cspid%notfound then                                \n"
 		"     raise_application_error(-20200,                     \n"
-		"       'Begin Snapshot Id '||:fsnap<varchar[40],in>||' does not exist for this database/instance'); \n"
+		"       'Begin Snapshot Id '||:fsnap<char[40],in>||' does not exist for this database/instance'); \n"
 		"   end if;                                               \n"
 		"   close cspid;                                          \n"
 		"   -- Check End Snapshot id is valid and get corresponding instance startup time \n"
-		"   open cspid(:tsnap<varchar[40],in>);                   \n"
+		"   open cspid(:tsnap<char[40],in>);                   \n"
 		"   fetch cspid into esnapt, estart;                      \n"
 		"   if cspid%notfound then                                \n"
 		"     raise_application_error(-20200,                     \n"
-		"       'End Snapshot Id '||:tsnap<varchar[40],in>||' does not exist for this database/instance'); \n"
+		"       'End Snapshot Id '||:tsnap<char[40],in>||' does not exist for this database/instance'); \n"
 		"   end if;                                               \n"
 		"   if esnapt <= bsnapt then                              \n"
 		"     raise_application_error(-20200,                     \n"
-		"       'End Snapshot Id '||:tsnap<varchar[40],in>||' must be greater than Begin Snapshot Id '||:fsnap<varchar[40],in>); \n"
+		"       'End Snapshot Id '||:tsnap<char[40],in>||' must be greater than Begin Snapshot Id '||:fsnap<char[40],in>); \n"
 		"   end if;                                               \n"
 		"   close cspid;                                          \n"
 		"   -- Check startup time is same for begin and end snapshot ids \n"
 		"   if ( bstart != estart) then                           \n"
 		"     raise_application_error(-20200,                     \n"
-		"       'The instance was shutdown between snapshots '||:fsnap<varchar[40],in>||' and '||:tsnap<varchar[40],in>); \n"
+		"       'The instance was shutdown between snapshots '||:fsnap<char[40],in>||' and '||:tsnap<char[40],in>); \n"
 		"   end if;                                               \n"
 		" end; \n",
 		"Check if the pair of snap ids is valid" );
@@ -219,7 +221,7 @@ public:
 	{ }
 	virtual const char *menuItem()
 	{
-		return "Simple Query";
+		return "AWR Report";
 	}
 
 	virtual bool canHandle(toConnection &conn)
@@ -267,13 +269,23 @@ toAWR::toAWR(/*toTool *tool,*/ QWidget *parent, toConnection &_connection)
 	
 	toolbar->addWidget(new QLabel("Inst:", toolbar));
 	dbid = new toResultCombo(toolbar, "AWR toolbar");
-	fsnap = new toResultCombo(toolbar, "AWR toolbar");
-	tsnap = new toResultCombo(toolbar, "AWR toolbar");
+	fsnap = new toResultCombo(toolbar, "AWR toolbar");	fsnap->setSelectionPolicy(toResultCombo::LastButOne);
+	tsnap = new toResultCombo(toolbar, "AWR toolbar");	tsnap->setSelectionPolicy(toResultCombo::Last);
+
+	startdate = new QDateTimeEdit(QDate::currentDate());	startdate->setCalendarPopup(true);
+	enddate = new QDateTimeEdit(QDate::currentDate());	enddate->setCalendarPopup(true);
+
 	connect(dbid, SIGNAL(activated(int)), this, SLOT(instanceChanged(int)));
 	connect(dbid, SIGNAL(done()), this, SLOT(instanceRead()));
+	connect(startdate, SIGNAL(dateChanged(QDate)), this, SLOT(startDateChanged(QDate)));
+	connect(enddate, SIGNAL(dateChanged(QDate)), this, SLOT(endDateChanged(QDate)));
+	
 	toolbar->addWidget(dbid);
+	toolbar->addWidget(startdate);
 	toolbar->addWidget(fsnap);
+	toolbar->addWidget(enddate);
 	toolbar->addWidget(tsnap);
+
 	try
 	{
 		dbid->query(toSQL::sql("toAWR:DBInstances", connection()));
@@ -328,10 +340,10 @@ void toAWR::execute(void)
 					"select NVL(output,' ') \n"
 					//"from table(dbms_workload_repository.awr_report_text( \n"
 					"from table(dbms_workload_repository.awr_report_html( \n"
-					"               :dbid<varchar[40],in>, \n"
-					"               :inst<varchar[40],in>, \n"
-					"               :f<varchar[40],in>,    \n"
-					"               :t<varchar[40],in>, 0))",
+					"               :dbid<char[40],in>, \n"
+					"               :inst<char[40],in>, \n"
+					"               :f<char[40],in>,    \n"
+					"               :t<char[40],in>, 0))",
 					dbids, insts, fsnaps, tsnaps);
 
 			QString reports;
@@ -357,7 +369,7 @@ void toAWR::execute(void)
 			//tb->setFontFamily("Courier");
 
 			vbox->addWidget(tb);
-			Tabs->addTab(box, tr("Redo Switches"));
+			Tabs->addTab(box, tr("AWR Report"));
 
 		} catch (const toConnection::exception &t ) {
 			TOMessageBox::information(this, t, t);
@@ -371,6 +383,8 @@ toAWR::~toAWR()
 	delete dbid;
 	delete fsnap;
 	delete tsnap;
+	delete startdate;
+	delete enddate;
 }
 
 void toAWR::closeEvent(QCloseEvent *event)
@@ -382,6 +396,65 @@ void toAWR::closeEvent(QCloseEvent *event)
     TOCATCH;
 
     event->accept();
+}
+
+void toAWR::startDateChanged(QDate date)
+{
+	std::cerr << "startDateChanged:" << date.toString() << std::endl;
+
+	int pos = dbid->currentIndex();
+	QVariant d = dbid->itemData(pos);
+	QStringList l = d.toStringList();
+	std::stringstream s;
+	for(QList<QString>::iterator i=l.begin(); i!=l.end(); ++i)
+	{
+		s << ":\'" << (*i).toAscii().constData() << '\'';
+	}
+	get_log(0).ts<toDecorator>( __HERE__) << "start date changed:" << date.toString("YYYY:MM:DD") << std::endl;
+	QString dbid = l.at(0);
+	QString inst = l.at(1);
+	try
+	{
+		toQList params;
+		params.push_back(dbid);
+		params.push_back(inst);
+		params.push_back(date.toString("yyyy:MM:dd"));
+		params.push_back(date.toString("yyyy:MM:dd"));
+		fsnap->setSelectionPolicy(toResultCombo::None);
+		fsnap->query(toSQL::sql("toAWR:Snaps", connection()), const_cast<const toQList&>(params ) );
+		fsnap->refresh();
+	}
+	TOCATCH;
+}
+
+void toAWR::endDateChanged(QDate date)
+{
+	std::cerr << "endDateChanged:" << date.toString() << std::endl;
+
+	int pos = dbid->currentIndex();
+	QVariant d = dbid->itemData(pos);
+	QStringList l = d.toStringList();
+	std::stringstream s;
+	for(QList<QString>::iterator i=l.begin(); i!=l.end(); ++i)
+	{
+		s << ":\'" << (*i).toAscii().constData() << '\'';
+	}
+	get_log(0).ts<toDecorator>( __HERE__) << "end date changed:" << date.toString("YYYY:MM:DD") << std::endl;
+	QString dbid = l.at(0);
+	QString inst = l.at(1);
+	try
+	{
+		toQList params;
+		params.push_back(dbid);
+		params.push_back(inst);
+		params.push_back(date.toString("yyyy:MM:dd"));
+		params.push_back(date.toString("yyyy:MM:dd"));
+		fsnap->setSelectionPolicy(toResultCombo::None);
+		tsnap->query(toSQL::sql("toAWR:Snaps", connection()), const_cast<const toQList&>(params ) );
+		tsnap->refresh();
+	}
+	TOCATCH;
+
 }
 
 void toAWR::instanceChanged(int pos)
@@ -398,11 +471,21 @@ void toAWR::instanceChanged(int pos)
 	QString inst = l.at(1);
 	try
 	{
-		toQList params;
-		params.push_back(dbid);
-		params.push_back(inst);
-		fsnap->query(toSQL::sql("toAWR:Snaps", connection()), const_cast<const toQList&>(params ) );
-		tsnap->query(toSQL::sql("toAWR:Snaps", connection()), const_cast<const toQList&>(params ) );
+		toQList sparams, eparams;
+		sparams.push_back(dbid);
+		sparams.push_back(inst);
+		sparams.push_back(startdate->date().toString("yyyy:MM:dd"));
+		sparams.push_back(startdate->date().toString("yyyy:MM:dd"));
+		get_log(1).ts<toDecorator>( __HERE__) << "FSNAP: ("  << sparams.size() << ")" << std::endl;
+		fsnap->query(toSQL::sql("toAWR:Snaps", connection()), const_cast<const toQList&>(sparams ) );
+		fsnap->refresh();
+		eparams.push_back(dbid);
+		eparams.push_back(inst);
+		eparams.push_back(enddate->date().toString("yyyy:MM:dd"));
+		eparams.push_back(enddate->date().toString("yyyy:MM:dd"));
+		get_log(1).ts<toDecorator>( __HERE__) << "TSNAP: ("  << eparams.size() << ")" << std::endl;
+		tsnap->query(toSQL::sql("toAWR:Snaps", connection()), const_cast<const toQList&>(eparams ) );
+		tsnap->refresh();
 	}
 	TOCATCH;
 };

@@ -64,6 +64,7 @@ class toAWR : public toToolWidget {
   QTextBrowser *tb;
 
   toResultCombo *dbid, *fsnap, *tsnap;
+  QDateTimeEdit *startdate, *enddate;
 public:
   toAWR(/*toTool *tool,*/ QWidget *parent,toConnection &connection);
   virtual ~toAWR();
@@ -75,6 +76,8 @@ private slots:
   void execute(void);
   void instanceChanged(int);
   void instanceRead(void);
+  void startDateChanged(QDate);
+  void endDateChanged(QDate);
 };
  
 #endif
