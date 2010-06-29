@@ -254,7 +254,7 @@ public:
 		{
 			tostream ret;
 //			ret << "0x";
-			for(int i=0; i<value_sz; ++i)
+			for(unsigned i=row*value_sz; i<(row+1)*value_sz; ++i)
 			{
 				char buffer[4];
 				snprintf(buffer, sizeof(buffer), "%.2X", ((unsigned char*)valuep)[i]);
