@@ -49,9 +49,7 @@
 #include "utils.h"
 
 toBrowserBaseWidget::toBrowserBaseWidget(QWidget * parent)
-    : QTabWidget(parent),
-    m_schema(0),
-    m_object(0)
+    : QTabWidget(parent)
 {
     setObjectName("toBrowserBaseWidget");
 
