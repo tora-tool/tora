@@ -55,7 +55,7 @@ class toBrowserDirectoriesWidget : public toBrowserBaseWidget
 {
     Q_OBJECT
 
-    toResultTableView *synonymsView;
+    toResultTableView *directoriesView;
 
     public:
         toBrowserDirectoriesWidget(QWidget * parent);

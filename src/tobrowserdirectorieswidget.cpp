@@ -57,9 +57,9 @@ toBrowserDirectoriesWidget::toBrowserDirectoriesWidget(QWidget * parent)
 {
     setObjectName("toBrowserDirectoriesWidget");
 
-    synonymsView = new toResultTableView(this);
-    synonymsView->setObjectName("directoriesView");
-    synonymsView->setSQL(SQLDirectoriesInfo);
+    directoriesView = new toResultTableView(this);
+    directoriesView->setObjectName("directoriesView");
+    directoriesView->setSQL(SQLDirectoriesInfo);
 
     changeConnection();
 }
@@ -70,10 +70,10 @@ void toBrowserDirectoriesWidget::changeConnection()
     toConnection & c = toCurrentConnection(this);
     if (toIsOracle(c))
     {
-        addTab(synonymsView, "&Directories");
+        addTab(directoriesView, "&Directories");
     }
     else
     {
-        synonymsView->setVisible(false);
+        directoriesView->setVisible(false);
     }
 }
