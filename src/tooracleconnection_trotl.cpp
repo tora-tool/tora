@@ -108,7 +108,7 @@ static toSQL SQLListSynonyms("toOracleConnection:ListSynonyms",
 
 static void ThrowException(const ::trotl::OciException &exc)
 {
-	get_log(0).ts<toDecorator>( __HERE__)
+	TLOG(0,toDecorator,__HERE__)
 		<< "What:" << exc.what() << std::endl
 		<< exc.get_sql() << std::endl
 		<< "--------------------------------------------------------------------------------"
@@ -176,7 +176,7 @@ public:
 			}
 			catch(...)
 			{
-				get_log(1).ts<toDecorator>( __HERE__) << "	Ignored exception." << std::endl;
+				TLOG(1,toDecorator,__HERE__) << "	Ignored exception." << std::endl;
 			}
 			_conn = 0;
 			_login = 0;
@@ -185,12 +185,12 @@ public:
 		virtual void cancel(void)
 		{
 			_conn->cancel();
-			get_log(0).ts<toDecorator>( __HERE__) << "oracleSub::cancel(this=" << _conn << ")" << std::endl; 
+			TLOG(0,toDecorator,__HERE__) << "oracleSub::cancel(this=" << _conn << ")" << std::endl; 
 		}
 
 		virtual void throwExtendedException(toConnection &conn, const ::trotl::OciException &exc)
 		{
-			get_log(0).ts<toDecorator>( __HERE__)
+			TLOG(0,toDecorator,__HERE__)
 				<< "What:" << exc.what() << std::endl
 				<< exc.get_sql() << std::endl
 				<< "--------------------------------------------------------------------------------"
@@ -263,7 +263,7 @@ public:
 
 				if(BP.is_null(_last_buff_row)) {
 					value = toQValue();
-					get_log(4).ts<toDecorator>( __HERE__) << "Just read: NULL" << std::endl;
+					TLOG(4,toDecorator,__HERE__) << "Just read: NULL" << std::endl;
 				} else {
 					switch(BP.dty) {
 					case SQLT_NUM:
@@ -285,7 +285,7 @@ public:
 										     &i);
 								oci_check_error(__HERE__, _errh, res);
 								value = toQValue(i);
-								get_log(4).ts<toDecorator>( __HERE__) << "Just read: " << i << std::endl;
+								TLOG(4,toDecorator,__HERE__) << "Just read: " << i << std::endl;
 							} else {
 								double d;
 								sword res = OCINumberToReal(_errh,
@@ -294,7 +294,7 @@ public:
 											    &d);
 								oci_check_error(__HERE__, _errh, res);
 								value = toQValue(d);
-								get_log(4).ts<toDecorator>( __HERE__) << "Just read: " << d << std::endl;
+								TLOG(4,toDecorator,__HERE__) << "Just read: " << d << std::endl;
 							}
 						} catch(const ::trotl::OciException &e) {
 							text str_buf[65];
@@ -322,11 +322,11 @@ public:
 						if((xmlnode*)bpx->_xmlvaluep[_last_buff_row] == NULL)
 						{
 							value = toQValue();
-							get_log(4).ts<toDecorator>( __HERE__) << "Just read: NULL XML" << std::endl; 
+							TLOG(4,toDecorator,__HERE__) << "Just read: NULL XML" << std::endl; 
 						} else {
 							std::string s(BP.get_string(_last_buff_row));
 							value = toQValue(QString(s.c_str()));
-							get_log(4).ts<toDecorator>( __HERE__) << "Just read: \"" << s << "\"" << std::endl; 
+							TLOG(4,toDecorator,__HERE__) << "Just read: \"" << s << "\"" << std::endl; 
 						}
 					}
 						break;
@@ -342,7 +342,7 @@ public:
 					default:
 						std::string s(BP.get_string(_last_buff_row));
 						value = toQValue(QString(s.c_str()));
-						get_log(4).ts<toDecorator>( __HERE__) << "Just read: \"" << s << "\"" << std::endl;
+						TLOG(4,toDecorator,__HERE__) << "Just read: \"" << s << "\"" << std::endl;
 					}
 				}
 				
@@ -361,7 +361,7 @@ public:
 		oracleQuery(toQuery *query, oracleSub *)
 			: toQuery::queryImpl(query)
 		{
-			get_log(0).ts<toDecorator>( __HERE__) << std::endl;
+			TLOG(0,toDecorator,__HERE__) << std::endl;
 			Running = Cancel = false;
 			SaveInPool = false;
 			Query = NULL;
@@ -389,7 +389,7 @@ public:
 		virtual bool eof(void)
 		{
 			if (!Query || Cancel) {
-				get_log(0).ts<toDecorator>( __HERE__) << "eof - on canceled query" << std::endl;
+				TLOG(0,toDecorator,__HERE__) << "eof - on canceled query" << std::endl;
 				return true;
 			}
 			try {
@@ -397,13 +397,13 @@ public:
 				if(e)
 				{
 					Running = false;
-					get_log(0).ts<toDecorator>( __HERE__) << "eof(" << Query->row_count() << ')' << std::endl;
+					TLOG(0,toDecorator,__HERE__) << "eof(" << Query->row_count() << ')' << std::endl;
 				}
 				return e; //Query->eof();
 			}
 			catch (const ::trotl::OciException &exc)
 			{
-				get_log(0).ts<toDecorator>( __HERE__) << "eof(e) - " << exc.what() << std::endl;
+				TLOG(0,toDecorator,__HERE__) << "eof(e) - " << exc.what() << std::endl;
 				if(query())
 				{
 					oracleSub *conn = dynamic_cast<oracleSub *>(query()->connectionSub());
@@ -418,12 +418,12 @@ public:
 		{
 			if (!Query)
 			{
-				get_log(0).ts<toDecorator>( __HERE__) << "rowsProcessed() - non-query" << std::endl;
+				TLOG(0,toDecorator,__HERE__) << "rowsProcessed() - non-query" << std::endl;
 				return 0;
 			}
 			//return Query->get_last_row(); ????
 			unsigned i = Query->get_last_row();
-			get_log(0).ts<toDecorator>( __HERE__) << "rowsProcessed(" << i << ")" << std::endl;
+			TLOG(0,toDecorator,__HERE__) << "rowsProcessed(" << i << ")" << std::endl;
 			return i;
 		}
 
@@ -431,28 +431,28 @@ public:
 		{
 			//int descriptionLen;
 			//Query->describe_select(descriptionLen);
-			get_log(0).ts<toDecorator>( __HERE__) << "columns(" << Query->get_column_count() << ")" << std::endl;
+			TLOG(0,toDecorator,__HERE__) << "columns(" << Query->get_column_count() << ")" << std::endl;
 			return Query->get_column_count();
 		}
 
 		virtual std::list<toQuery::queryDescribe> describe(void)
 		{
-			get_log(0).ts<toDecorator>( __HERE__) << std::endl;
+			TLOG(0,toDecorator,__HERE__) << std::endl;
 			std::list<toQuery::queryDescribe> ret;
 
 			int datatypearg1 = 0;
 			int datatypearg2 = 0;
-			get_log(0).ts<toDecorator>( __HERE__) << "TODO describe:" << std::endl;
+			TLOG(0,toDecorator,__HERE__) << "TODO describe:" << std::endl;
 
 			// TODO trotl should return const iterator
 
 			const std::vector<trotl::ColumnType> &col = Query->get_columns();
 			if(col.empty()) return ret;
 			std::vector<trotl::ColumnType>::const_iterator it = col.begin(); ++it; // starts with 1st
-			//get_log(0).ts<toDecorator>( __HERE__) << "Columns: " << q1.get_column_count() << std::endl;
+			//TLOG(0,toDecorator,__HERE__) << "Columns: " << q1.get_column_count() << std::endl;
 			for(; it != col.end(); ++it)
 			{
-				get_log(0).ts<toDecorator>( __HERE__) << "Var: " << (*it).get_type_str(true) << std::endl;
+				TLOG(0,toDecorator,__HERE__) << "Var: " << (*it).get_type_str(true) << std::endl;
 				toQuery::queryDescribe desc;
  				desc.AlignRight = false;
  				desc.Name = QString::fromUtf8( (*it)._column_name.c_str() );
@@ -553,7 +553,7 @@ public:
 				cur.Comment = objects.readValueNull();
 				ret.insert(ret.end(), cur);
 			}
-			get_log(0).ts<toDecorator>( __HERE__)
+			TLOG(0,toDecorator,__HERE__)
 				<< "++++ objectNames +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 				<< std::endl;
 
@@ -585,7 +585,7 @@ public:
 					(*i).Synonyms.insert((*i).Synonyms.end(), synonym);
 				}
 			}
-			get_log(0).ts<toDecorator>( __HERE__)
+			TLOG(0,toDecorator,__HERE__)
 				<< "++++ synonymMap ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 				<< std::endl;			
 
@@ -653,7 +653,7 @@ public:
 				}
 				catch (...)
 				{
-					get_log(1).ts<toDecorator>( __HERE__) << "	Ignored exception." << std::endl;
+					TLOG(1,toDecorator,__HERE__) << "	Ignored exception." << std::endl;
 				}
 				return ret;
 			}
@@ -670,7 +670,7 @@ public:
 			}
 			catch (...)
 			{
-				get_log(1).ts<toDecorator>( __HERE__) << "	Ignored exception." << std::endl;
+				TLOG(1,toDecorator,__HERE__) << "	Ignored exception." << std::endl;
 			}
 
 			try
@@ -754,11 +754,11 @@ public:
 				return QString(version.str().c_str());
 			}
 			catch (::trotl::OciException e) {
-				get_log(0).ts<toDecorator>( __HERE__) << e.what() << std::endl;
+				TLOG(0,toDecorator,__HERE__) << e.what() << std::endl;
 			}
 			catch (...)
 			{
-				get_log(1).ts<toDecorator>( __HERE__) << "	Ignored exception." << std::endl;
+				TLOG(1,toDecorator,__HERE__) << "	Ignored exception." << std::endl;
 				// Ignore any errors here
 			}
 			return QString::QString();
@@ -777,7 +777,7 @@ public:
 		virtual void execute(toConnectionSub *sub, const QString &sql, toQList &params)
 		{
 			oracleSub *conn = oracleConv(sub);
-			get_log(0).ts<toDecorator>( __HERE__) << std::endl;
+			TLOG(0,toDecorator,__HERE__) << std::endl;
 			if ( params.empty() )
 			{
 				try
@@ -787,7 +787,7 @@ public:
 				  query.execute_internal(::trotl::g_OCIPL_BULK_ROWS, OCI_DEFAULT);
 				  //otl_cursor::direct_exec(*(conn->Connection), sql.toUtf8().constData());
 				  //TODO
-				  get_log(0).ts<toDecorator>( __HERE__) << "TODO: otl_cursor::direct_exec" << std::endl;
+				  TLOG(0,toDecorator,__HERE__) << "TODO: otl_cursor::direct_exec" << std::endl;
 				}
 				catch (const ::trotl::OciException &exc)
 				{
@@ -830,7 +830,7 @@ public:
 
 		_envp = new ::trotl::OciEnv(*_envallocp);
 
-		//get_log(0).ts<toDecorator>( __HERE__) << "TODO: initialize" << std::endl << __HERE__ << std::endl;
+		//TLOG(0,toDecorator,__HERE__) << "TODO: initialize" << std::endl << __HERE__ << std::endl;
 
 		addProvider("Oracle");
 	}
@@ -1010,7 +1010,7 @@ void toOracleProvider::oracleQuery::execute(void)
 		
 		//Query = new oracleQuery::oracleSqlStatement(*conn->_conn, sql.toUtf8().constData());
 		Query = new oracleQuery::trotlQuery(*conn->_conn, ::std::string(sql.toUtf8().constData()));
-		get_log(0).ts<toDecorator>( __HERE__) << "SQL(conn=" << conn->_conn << ", this=" << Query << "): " << ::std::string(sql.toUtf8().constData()) << std::endl;
+		TLOG(0,toDecorator,__HERE__) << "SQL(conn=" << conn->_conn << ", this=" << Query << "): " << ::std::string(sql.toUtf8().constData()) << std::endl;
 		// TODO autocommit ??
 		// Query->set_commit(0);
 		//if (toQValue::numberFormat() == 0)
@@ -1040,7 +1040,7 @@ void toOracleProvider::oracleQuery::execute(void)
 			
 			if( bp.bind_typename == "int" /*&& (*i).isInt()*/ ) {
 				(*Query) << (*i).toInt();
-				get_log(0).ts<toDecorator>( __HERE__)
+				TLOG(0,toDecorator,__HERE__)
 					<< "<<(conn=" << conn->_conn << ", this=" << Query << ")"
 					<< "::operator<<(" << bp.type_name << " ftype=" << bp.dty
 					<< ", placeholder=" << bp.bind_name
@@ -1049,7 +1049,7 @@ void toOracleProvider::oracleQuery::execute(void)
 			} else if( (bp.bind_typename == "char" || bp.bind_typename == "varchar") && (*i).isString()) {
 				std::string param((const char*)((*i).toString().toUtf8().constData()));
 				(*Query) << ::std::string((const char*)((*i).toString().toUtf8().constData()));
-				get_log(0).ts<toDecorator>( __HERE__)
+				TLOG(0,toDecorator,__HERE__)
 					<< "<<(conn=" << conn->_conn << ", this=" << Query << ")"
 					<< "::operator<<(" << bp.type_name << " ftype=" << bp.dty
 					<< ", placeholder=" << bp.bind_name
@@ -1133,7 +1133,7 @@ void toOracleProvider::oracleQuery::cancel(void)
 	oracleSub *conn = dynamic_cast<oracleSub *>(query()->connectionSub());
 	if(!Running || Cancel)
 	{
-		get_log(0).ts<toDecorator>( __HERE__) << ":oracleQuery::cancel(conn=" << conn->_conn << ", this=" << Query << ") on non-running query" << std::endl;	
+		TLOG(0,toDecorator,__HERE__) << ":oracleQuery::cancel(conn=" << conn->_conn << ", this=" << Query << ") on non-running query" << std::endl;	
 		return;
 	}
 	
@@ -1144,7 +1144,7 @@ void toOracleProvider::oracleQuery::cancel(void)
 	conn->_conn->reset();
 	Cancel = true;
 	Running = false;
-	get_log(0).ts<toDecorator>( __HERE__) << ":oracleQuery::cancel(conn=" << conn->_conn << ", this=" << Query << ")" << std::endl;
+	TLOG(0,toDecorator,__HERE__) << ":oracleQuery::cancel(conn=" << conn->_conn << ", this=" << Query << ")" << std::endl;
 }
 
 
@@ -1209,7 +1209,7 @@ toConnectionSub* toOracleProvider::oracleConnection::createConnection(void)
 								(ub4) session_mode);
 				conn = new ::trotl::OciConnection(_env, *login);
 
-				::get_log(0).ts<toDecorator>( __HERE__) << "Oracle database version: "
+				::TLOG(0,toDecorator,__HERE__) << "Oracle database version: "
 					    << ::std::hex << ::std::showbase << ::std::setw(10)
 					    << ::std::setfill('0') << ::std::internal
 					    << login->_server._version << ::std::endl
@@ -1224,7 +1224,7 @@ toConnectionSub* toOracleProvider::oracleConnection::createConnection(void)
 			}
 			catch (const ::trotl::OciException &exc)
 			{
-			        get_log(0).ts<toDecorator>( __HERE__)
+			        TLOG(0,toDecorator,__HERE__)
 					<< "TODO: catch" << std::endl << __HERE__ << std::endl;
  				if (toThread::mainThread() && exc.get_code() == 28001)
  				{
@@ -1266,7 +1266,7 @@ toConnectionSub* toOracleProvider::oracleConnection::createConnection(void)
 					
 					connection().setPassword(newpass);
  				} else { 
-					get_log(0).ts<toDecorator>( __HERE__) << std::endl;
+					TLOG(0,toDecorator,__HERE__) << std::endl;
 					throw exc;
 				} //  (toThread::mainThread() && exc.get_code() == 28001)
 			} // catch (const ::trotl::OciException &exc)
@@ -1399,7 +1399,7 @@ toOracleSetting::toOracleSetting(QWidget *parent)
 	}
 	catch (...)
         {
-		get_log(1).ts<toDecorator>( __HERE__) << "	Ignored exception." << std::endl;
+		TLOG(1,toDecorator,__HERE__) << "	Ignored exception." << std::endl;
 	}
 }
 

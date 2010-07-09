@@ -189,12 +189,12 @@ void taskRunner::run(void)
 toThreadInfo::toThreadInfo(unsigned number) :threadNumber(number), threadTask("")
 {
 #ifdef DEBUG
-    get_log(0).ts<toDecorator>( __HERE__) << "Thread no: " << threadNumber << " started." << std::endl;
+    TLOG(0,toDecorator,__HERE__) << "Thread no: " << threadNumber << " started." << std::endl;
 #endif
 }
 toThreadInfo::~toThreadInfo()
 {
 #ifdef DEBUG
-    get_log(0).ts<toDecorator>( __HERE__) << "Thread no: " << threadNumber << " exited." << std::endl;
+    TLOG(0,toDecorator,__HERE__) << "Thread no: " << threadNumber << " exited." << std::endl;
 #endif
 }

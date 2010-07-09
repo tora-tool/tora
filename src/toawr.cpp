@@ -327,7 +327,7 @@ void toAWR::execute(void)
 //		toQList params;
 //		params.push_back(fsnaps);
 //		params.push_back(tsnaps);
-		get_log(0).ts<toDecorator>( __HERE__)
+		TLOG(0,toDecorator,__HERE__)
 				<< "Dbid:" << dbids.toAscii().constData() << ' '
 				<< "Inst:" << insts.toAscii().constData() << ' '
 				<< "fsnap:" << fsnaps.toAscii().constData() << ' '
@@ -410,7 +410,7 @@ void toAWR::startDateChanged(QDate date)
 	{
 		s << ":\'" << (*i).toAscii().constData() << '\'';
 	}
-	get_log(0).ts<toDecorator>( __HERE__) << "start date changed:" << date.toString("YYYY:MM:DD") << std::endl;
+	TLOG(0,toDecorator,__HERE__) << "start date changed:" << date.toString("YYYY:MM:DD") << std::endl;
 	QString dbid = l.at(0);
 	QString inst = l.at(1);
 	try
@@ -439,7 +439,7 @@ void toAWR::endDateChanged(QDate date)
 	{
 		s << ":\'" << (*i).toAscii().constData() << '\'';
 	}
-	get_log(0).ts<toDecorator>( __HERE__) << "end date changed:" << date.toString("YYYY:MM:DD") << std::endl;
+	TLOG(0,toDecorator,__HERE__) << "end date changed:" << date.toString("YYYY:MM:DD") << std::endl;
 	QString dbid = l.at(0);
 	QString inst = l.at(1);
 	try
@@ -466,7 +466,7 @@ void toAWR::instanceChanged(int pos)
 	{
 		s << ":\'" << (*i).toAscii().constData() << '\'';
 	}
-	get_log(0).ts<toDecorator>( __HERE__) << "Instance changed:" << pos << s.str() << std::endl;
+	TLOG(0,toDecorator,__HERE__) << "Instance changed:" << pos << s.str() << std::endl;
 	QString dbid = l.at(0);
 	QString inst = l.at(1);
 	try
@@ -476,14 +476,14 @@ void toAWR::instanceChanged(int pos)
 		sparams.push_back(inst);
 		sparams.push_back(startdate->date().toString("yyyy:MM:dd"));
 		sparams.push_back(startdate->date().toString("yyyy:MM:dd"));
-		get_log(1).ts<toDecorator>( __HERE__) << "FSNAP: ("  << sparams.size() << ")" << std::endl;
+		TLOG(1,toDecorator,__HERE__) << "FSNAP: ("  << sparams.size() << ")" << std::endl;
 		fsnap->query(toSQL::sql("toAWR:Snaps", connection()), const_cast<const toQList&>(sparams ) );
 		fsnap->refresh();
 		eparams.push_back(dbid);
 		eparams.push_back(inst);
 		eparams.push_back(enddate->date().toString("yyyy:MM:dd"));
 		eparams.push_back(enddate->date().toString("yyyy:MM:dd"));
-		get_log(1).ts<toDecorator>( __HERE__) << "TSNAP: ("  << eparams.size() << ")" << std::endl;
+		TLOG(1,toDecorator,__HERE__) << "TSNAP: ("  << eparams.size() << ")" << std::endl;
 		tsnap->query(toSQL::sql("toAWR:Snaps", connection()), const_cast<const toQList&>(eparams ) );
 		tsnap->refresh();
 	}
