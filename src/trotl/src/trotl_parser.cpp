@@ -123,7 +123,7 @@ namespace trotl {
 	  rule<> bracket_cl = ( ch_p('[') >> unumber_tm[boost::bind(&BindVarDecl::setname, boost::ref(_bindvar), "bracket", _1, _2)] >> ch_p(']') );
 
 	  rule<> bindvar = (ch_p(':') >>
-			  (+alnum_p)[boost::bind(&BindVarDecl::setname, boost::ref(_bindvar), "bindname", _1, _2)] >>
+			  (bind_tm)[boost::bind(&BindVarDecl::setname, boost::ref(_bindvar), "bindname", _1, _2)] >>
 			  ch_p('<') >>
 			  (bind_tm)[boost::bind(&BindVarDecl::setname, boost::ref(_bindvar), "bindtype", _1, _2)] >>
 			  (!bracket_cl) >>			    
