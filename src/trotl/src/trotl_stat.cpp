@@ -84,7 +84,7 @@ _bound(false)
 
 // 	if(get_bindpar_count() != parser._bindvars.size())
 // 		throw_ocipl_exception(
-// 				OciException(__HERE__, "Wrong bindvar count(%d vs. %d)"
+// 				OciException(__TROTL_HERE__, "Wrong bindvar count(%d vs. %d)"
 // 					     ).arg(get_bindpar_count()).arg(parser._bindvars.size())
 // 		);
 
@@ -100,12 +100,12 @@ _bound(false)
 			std::auto_ptr<BindPar> bp;
 			dvoid* parmdp;
 			sword res = OCICALL(OCIParamGet(_handle, get_type_id(), _errh, &parmdp, dpos));
-			oci_check_error(__HERE__, _errh, res);
+			oci_check_error(__TROTL_HERE__, _errh, res);
 			
 			_columns[dpos].describe(_errh, parmdp);
 			
 			res = OCICALL(OCIDescriptorFree(parmdp, OCI_DTYPE_PARAM));
-			oci_check_error(__HERE__, _env, res);
+			oci_check_error(__TROTL_HERE__, _env, res);
 			
 			//get_log().ts( std::string(__HERE_SHORT__))
 			//std::cout 
@@ -128,7 +128,7 @@ _bound(false)
 					_columns[dpos] );
 			
 			if(_all_defines[dpos].get() == NULL)
-				throw OciException(__HERE__, "DefinePar: Data type not registered: %s(%d)\n"
+				throw OciException(__TROTL_HERE__, "DefinePar: Data type not registered: %s(%d)\n"
 					).arg(_columns[dpos]._data_type_name).arg(_columns[dpos]._data_type);
 			define(*_all_defines[dpos]);
 		}
@@ -154,7 +154,7 @@ _bound(false)
 		} else if(it->inout == "out") {
 			_out_binds[++_out_pos] = ipos;
 		} else {
-			throw OciException(__HERE__, "Unsupported bindpar parameter: %s\n").arg(it->inout);
+			throw OciException(__TROTL_HERE__, "Unsupported bindpar parameter: %s\n").arg(it->inout);
 		};
 
 
@@ -162,7 +162,7 @@ _bound(false)
 		_all_binds[ipos] = BindParFactTwoParmSing::Instance().create(it->bindtype, ipos, *this, *it);
 
 		if ( _all_binds[ipos].get() == NULL )
-			throw OciException(__HERE__, "BindPar: Data type not registered: %s\n").arg(it->bindtype);
+			throw OciException(__TROTL_HERE__, "BindPar: Data type not registered: %s\n").arg(it->bindtype);
 	}
 
 	_in_cnt = _in_pos; _in_pos=0;
@@ -187,10 +187,10 @@ void SqlStatement::prepare(const tstring& sql, ub4 lang)
 	sword res;
 
 	res = OCICALL(OCIStmtPrepare(_handle/*stmtp*/, _errh, (text*)sql.c_str(), (ub4)sql.length(), lang, OCI_DEFAULT));
-	oci_check_error(__HERE__, _errh, res);
+	oci_check_error(__TROTL_HERE__, _errh, res);
 
 	res = OCICALL(OCIAttrGet(_handle/*stmtp*/, get_type_id(), &stmt_type, &size, OCI_ATTR_STMT_TYPE, _errh));
-	oci_check_error(__HERE__, _errh, res);
+	oci_check_error(__TROTL_HERE__, _errh, res);
 
 	_stmt_type = (STMT_TYPE)stmt_type;
 	_state |= PREPARED;
@@ -202,7 +202,7 @@ void SqlStatement::execute_describe()
 
 	res = OCICALL(OCIStmtExecute(_conn._svc_ctx, _handle, _errh, _stmt_type == STMT_SELECT ? (ub4) 0 : (ub4) 1,
 			0, (OCISnapshot *)0, (OCISnapshot *)0, OCI_DESCRIBE_ONLY));
-	oci_check_error(__HERE__, *this, res);
+	oci_check_error(__TROTL_HERE__, *this, res);
 
 	_state |= DESCRIBED;
 }
@@ -219,7 +219,7 @@ ub4 SqlStatement::get_column_count() const
 		return _column_count;
 
 	res = OCICALL(OCIAttrGet(_handle, get_type_id(), &_column_count, &size, OCI_ATTR_PARAM_COUNT, _errh));
-	oci_check_error(__HERE__, _errh, res);
+	oci_check_error(__TROTL_HERE__, _errh, res);
 
 	//get_log().ts( std::string(__HERE_SHORT__))
 // 	std::cout
@@ -237,7 +237,7 @@ ub4 SqlStatement::get_bindpar_count() const
 		return _param_count;
 	
 	res = OCICALL(OCIAttrGet(_handle, get_type_id(), &_param_count, &size, OCI_ATTR_BIND_COUNT, _errh));
-	oci_check_error(__HERE__, _errh, res);
+	oci_check_error(__TROTL_HERE__, _errh, res);
 
 	//get_log().ts( std::string(__HERE_SHORT__))
 	//std::cout
@@ -250,7 +250,7 @@ ub4 SqlStatement::get_bindpar_count() const
 SqlStatement::BindPar& SqlStatement::get_next_in_bindpar()
 {
 	if( _all_binds == 0 || _in_cnt == 0 )
-		throw OciException(__HERE__, "No in Bindpars specified");
+		throw OciException(__TROTL_HERE__, "No in Bindpars specified");
 
 	ub4 pos = _in_pos < _in_cnt ? ++_in_pos : _in_pos=1;  //Round robin hack
 	return *_all_binds[_in_binds[pos]];
@@ -259,7 +259,7 @@ SqlStatement::BindPar& SqlStatement::get_next_in_bindpar()
 const SqlStatement::BindPar& SqlStatement::get_curr_in_bindpar()
 {
 	if( _all_binds == 0 || _in_binds == 0 )
-		throw OciException(__HERE__, "No in Bindpars specified");
+		throw OciException(__TROTL_HERE__, "No in Bindpars specified");
 
   	ub4 pos = _in_pos < _in_cnt ? (_in_pos+1) : 1;  //Round robin hack
 	return *_all_binds[_in_binds[ pos ]];
@@ -268,7 +268,7 @@ const SqlStatement::BindPar& SqlStatement::get_curr_in_bindpar()
 SqlStatement::BindPar& SqlStatement::get_next_out_bindpar()
 {
 	if( _all_binds == 0 || _out_binds == 0 )
-		throw OciException(__HERE__, "No out Bindpars specified");
+		throw OciException(__TROTL_HERE__, "No out Bindpars specified");
 	
 	ub4 pos = _out_pos < _out_cnt ? ++_out_pos : _out_pos=1;  //Round robin hack
 	return *_all_binds[_out_binds[ pos ]];
@@ -277,7 +277,7 @@ SqlStatement::BindPar& SqlStatement::get_next_out_bindpar()
 const SqlStatement::BindPar& SqlStatement::get_curr_out_bindpar()
 {
 	if( _all_binds == 0 || _out_binds == 0 )
-		throw OciException(__HERE__, "No out Bindpars specified");
+		throw OciException(__TROTL_HERE__, "No out Bindpars specified");
 
 	ub4 pos = _out_pos < _out_cnt ? (_out_pos+1) : 1;  //Round robin hack
 	return *_all_binds[_out_binds[_out_pos ? _out_pos : 1 ]];
@@ -343,7 +343,7 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		// Loop over input bind vars - insert can have out binds too(i.e. returning clause)
 		for(unsigned i=1; i<=_in_cnt; ++i)
 			if(_all_binds[_in_binds[i]]->_cnt != iters)
-				throw OciException(__HERE__, "Wrong count of bindvars: (%d vs. %d)\n"
+				throw OciException(__TROTL_HERE__, "Wrong count of bindvars: (%d vs. %d)\n"
 					).arg(iters).arg(_all_binds[_in_binds[i]]->_cnt);
 		break;
 	case STMT_BEGIN:
@@ -401,13 +401,13 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		return false;	// There are no additional rows pending to be fetched.
 	case OCI_ERROR:
 		_state = STMT_ERROR;
-		throw OciException(__HERE__, *this);
+		throw OciException(__TROTL_HERE__, *this);
 	default:
 		if (rows > 0)
 			_state |= EXECUTED|FETCHED;
 		else
 			_state = (_state|EXECUTED) & ~FETCHED;
-		if(res != OCI_SUCCESS_WITH_INFO) oci_check_error(__HERE__, _errh, res);
+		if(res != OCI_SUCCESS_WITH_INFO) oci_check_error(__TROTL_HERE__, _errh, res);
 		return true;	// There may be more rows available to be fetched (for queries) or the DML statement succeeded.
 	}
 }
@@ -429,8 +429,8 @@ bool SqlStatement::fetch(ub4 rows/*=-1*/)
 		_state |= EOF_DATA;
 		return false;
 	default:
-		oci_check_error(__HERE__, _errh, res);
-		//oci_check_error(__HERE__, *this, res);
+		oci_check_error(__TROTL_HERE__, _errh, res);
+		//oci_check_error(__TROTL_HERE__, *this, res);
 		return true;
 	}
 			
@@ -442,7 +442,7 @@ ub4 SqlStatement::row_count() const
 	ub4 size = sizeof(row_count);
 
 	sword res = OCICALL(OCIAttrGet(_handle/*stmtp*/, get_type_id(), &row_count, &size, OCI_ATTR_ROW_COUNT, _errh));
-	oci_check_error(__HERE__, _errh, res);
+	oci_check_error(__TROTL_HERE__, _errh, res);
 
 	//std::cout << "ub4 SqlStatement::row_count() const: " << row_count << std::endl;
 
@@ -457,7 +457,7 @@ ub4 SqlStatement::fetched_rows() const
 	ub4 size = sizeof(row_count);
 
 	sword res = OCICALL(OCIAttrGet(_handle, get_type_id(), &row_count, &size, OCI_ATTR_ROWS_FETCHED, _errh));
-	oci_check_error(__HERE__, _errh, res);
+	oci_check_error(__TROTL_HERE__, _errh, res);
 
 	_fetched_row = row_count;
 
@@ -506,7 +506,7 @@ void SqlStatement::bind(BindPar &bp)
 			(ub4*)(((_stmt_type == STMT_DECLARE ||_stmt_type == STMT_BEGIN ) && bp._max_cnt > 1) ? &bp._cnt : NULL),
 			OCI_DEFAULT));
 
-	oci_check_error(__HERE__, _errh, res);
+	oci_check_error(__TROTL_HERE__, _errh, res);
 
 //	std::cout << std::endl
 //	<< "alen:" << bp.alenp << std::endl
@@ -534,7 +534,7 @@ void SqlStatement::define(BindPar &dp)
 			dp.rcodep,
 //			(ub2*)0, (ub2*)0,
 			OCI_DEFAULT));
-	oci_check_error(__HERE__, _errh, res);
+	oci_check_error(__TROTL_HERE__, _errh, res);
 
 	dp.define_hook(*this);
 }
@@ -674,11 +674,11 @@ SqlStatement& SqlStatement::operator<< <tstring> (const tstring &val)
 
 	// Check type correctness
 	if( BP.dty != SQLT_CHR && BP.dty != SQLT_STR )
-		throw OciException(__HERE__, "Invalid datatype in bind operation(tstring vs. dty(%d)\n").arg(BP.dty);
+		throw OciException(__TROTL_HERE__, "Invalid datatype in bind operation(tstring vs. dty(%d)\n").arg(BP.dty);
 
 	//Check string length
 	if( val.length()+(BP.dty==SQLT_STR ? 1 : 0) > (unsigned)BP.value_sz )
-		throw OciException(__HERE__, "String too long (%d max. %d) at pos %d %s\n"
+		throw OciException(__TROTL_HERE__, "String too long (%d max. %d) at pos %d %s\n"
 				).arg(val.length()).arg(BP.value_sz - (BP.dty==SQLT_STR ? 1 : 0) ).arg(_in_pos);
 
 	// store value inside BindPar class
@@ -711,7 +711,7 @@ SqlStatement& SqlStatement::operator<< <int>(const std::vector<int> &val)
 
 	// Check vector size
 	if(BP._max_cnt < val.size())
-		throw OciException(__HERE__,"Input vector too long(length:%d vs. %d)\n").arg(val.size()).arg(BP._max_cnt);
+		throw OciException(__TROTL_HERE__,"Input vector too long(length:%d vs. %d)\n").arg(val.size()).arg(BP._max_cnt);
 
 	for(unsigned pos=0; pos<val.size(); ++pos)
 	{
@@ -737,7 +737,7 @@ SqlStatement& SqlStatement::operator<< <unsigned int>(const std::vector<unsigned
 
 	// Check vector size
 	if(BP._max_cnt < val.size())
-		throw OciException(__HERE__, "Input vector too long(length:%d vs. %d)\n").arg(val.size()).arg(BP._max_cnt);
+		throw OciException(__TROTL_HERE__, "Input vector too long(length:%d vs. %d)\n").arg(val.size()).arg(BP._max_cnt);
 
 	for(unsigned pos=0; pos<val.size(); ++pos)
 	{
@@ -763,7 +763,7 @@ SqlStatement& SqlStatement::operator<< <long>(const std::vector<long> &val)
 
 	// Check vector size
 	if(BP._max_cnt < val.size())
-		throw OciException(__HERE__, "Input vector too long(length:%d vs. %d)\n").arg(val.size()).arg(BP._max_cnt);
+		throw OciException(__TROTL_HERE__, "Input vector too long(length:%d vs. %d)\n").arg(val.size()).arg(BP._max_cnt);
 
 	for(unsigned pos=0; pos<val.size(); ++pos)
 	{
@@ -789,7 +789,7 @@ SqlStatement& SqlStatement::operator<< <unsigned long>(const std::vector<unsigne
 
 	// Check vector size
 	if(BP._max_cnt < val.size())
-		throw OciException(__HERE__,"Input vector too long(length:%d vs. %d)\n").arg(val.size()).arg(BP._max_cnt);
+		throw OciException(__TROTL_HERE__,"Input vector too long(length:%d vs. %d)\n").arg(val.size()).arg(BP._max_cnt);
 
 	for(unsigned pos=0; pos<val.size(); ++pos)
 	{
@@ -815,7 +815,7 @@ SqlStatement& SqlStatement::operator<< <float>(const std::vector<float> &val)
 
 	// Check vector size
 	if(BP._max_cnt < val.size())
-		throw OciException(__HERE__,"Input vector too long(length:%d vs. %d)\n").arg(val.size()).arg(BP._max_cnt);
+		throw OciException(__TROTL_HERE__,"Input vector too long(length:%d vs. %d)\n").arg(val.size()).arg(BP._max_cnt);
 
 	for(unsigned pos=0; pos<val.size(); ++pos)
 	{
@@ -841,7 +841,7 @@ SqlStatement& SqlStatement::operator<< <double>(const std::vector<double> &val)
 
 	// Check vector size
 	if(BP._max_cnt < val.size())
-		throw OciException(__HERE__,"Input vector too long(length:%d vs. %d)\n").arg(val.size()).arg(BP._max_cnt);
+		throw OciException(__TROTL_HERE__,"Input vector too long(length:%d vs. %d)\n").arg(val.size()).arg(BP._max_cnt);
 
 	for(unsigned pos=0; pos<val.size(); ++pos)
 	{
@@ -866,11 +866,11 @@ SqlStatement& SqlStatement::operator<< <tstring> (const std::vector<tstring> &va
 
 	// Check type correctness
 	if( BP.dty != SQLT_CHR && BP.dty != SQLT_STR )
-		throw OciException(__HERE__, "Invalid datatype in bind operation(tstring vs. dty(%d)").arg(BP.dty);
+		throw OciException(__TROTL_HERE__, "Invalid datatype in bind operation(tstring vs. dty(%d)").arg(BP.dty);
 
 	// Check vector size
 	if(BP._max_cnt < val.size())
-		throw OciException(__HERE__,"Input vector too long(length:%d vs. %d)\n").arg(val.size()).arg(BP._max_cnt);
+		throw OciException(__TROTL_HERE__,"Input vector too long(length:%d vs. %d)\n").arg(val.size()).arg(BP._max_cnt);
 
 	char *lastpos = (char*)BP.valuep;
 
@@ -879,7 +879,7 @@ SqlStatement& SqlStatement::operator<< <tstring> (const std::vector<tstring> &va
 	{
 		//Check string length
 		if( val[pos].length()+(BP.dty==SQLT_STR ? 1 : 0) > (unsigned)BP.value_sz )
-			throw OciException(__HERE__, "String too long (length: %d max. %d)\n"
+			throw OciException(__TROTL_HERE__, "String too long (length: %d max. %d)\n"
 				).arg(val[pos].length()).arg(BP.value_sz - (BP.dty==SQLT_STR ? 1 : 0));
 
 		// store value inside BindPar class
@@ -916,11 +916,11 @@ SqlStatement& SqlStatement::operator<< (const char *val)
 	unsigned int l = strlen(val);
 	// Check type correctness
 	if( BP.dty != SQLT_CHR && BP.dty != SQLT_STR )
-		throw OciException(__HERE__, "Invalid datatype in bind operation(tstring vs. dty(%d)\n").arg(BP.dty);
+		throw OciException(__TROTL_HERE__, "Invalid datatype in bind operation(tstring vs. dty(%d)\n").arg(BP.dty);
 
 	//Check string length
 	if( l+(BP.dty==SQLT_STR ? 1 : 0)  > (unsigned)BP.value_sz )
-		throw OciException(__HERE__,"String too long (%d max. %d) at pos %d\n"
+		throw OciException(__TROTL_HERE__,"String too long (%d max. %d) at pos %d\n"
 			).arg(l).arg(BP.value_sz - (BP.dty==SQLT_STR ? 1 : 0) ).arg(_in_pos);
 
 	// store value inside BindPar class
@@ -1143,7 +1143,7 @@ SqlStatement& SqlStatement::operator>> <tstring> (tstring &val)
 //
 ////	throw_ocipl_exception(
 ////			OciException(
-////					__HERE__,
+////					__TROTL_HERE__,
 ////					"!!!! Misssing conversion(%s%d to SqlValue)\n"
 ////			).arg(BP.name).arg(BP.value_sz)
 ////	);
@@ -1178,7 +1178,7 @@ template<>
 SqlStatement& SqlStatement::operator>> <int>(std::vector<int> &val)
 {
 	if( get_stmt_type() != STMT_DECLARE && get_stmt_type() != STMT_BEGIN)
-		throw OciException(__HERE__, "Reading vectors from SQL statements is not implemented yet");
+		throw OciException(__TROTL_HERE__, "Reading vectors from SQL statements is not implemented yet");
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 	prefferedNumericType const &BP2 = dynamic_cast<const prefferedNumericType&>(BP);
@@ -1210,7 +1210,7 @@ template<>
 SqlStatement& SqlStatement::operator>> <unsigned int>(std::vector<unsigned int> &val)
 {
 	if( get_stmt_type() != STMT_DECLARE && get_stmt_type() != STMT_BEGIN)
-		throw OciException(__HERE__, "Reading vectors from SQL statements is not implemented yet");
+		throw OciException(__TROTL_HERE__, "Reading vectors from SQL statements is not implemented yet");
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 	prefferedNumericType const &BP2 = dynamic_cast<const prefferedNumericType&>(BP);
@@ -1233,7 +1233,7 @@ template<>
 SqlStatement& SqlStatement::operator>> <long>(std::vector<long> &val)
 {
 	if( get_stmt_type() != STMT_DECLARE && get_stmt_type() != STMT_BEGIN)
-		throw OciException(__HERE__, "Reading vectors from SQL statements is not implemented yet");
+		throw OciException(__TROTL_HERE__, "Reading vectors from SQL statements is not implemented yet");
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 	prefferedNumericType const &BP2 = dynamic_cast<const prefferedNumericType&>(BP);
@@ -1256,7 +1256,7 @@ template<>
 SqlStatement& SqlStatement::operator>> <unsigned long>(std::vector<unsigned long> &val)
 {
 	if( get_stmt_type() != STMT_DECLARE && get_stmt_type() != STMT_BEGIN)
-		throw OciException(__HERE__, "Reading vectors from SQL statements is not implemented yet");
+		throw OciException(__TROTL_HERE__, "Reading vectors from SQL statements is not implemented yet");
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 	prefferedNumericType const &BP2 = dynamic_cast<const prefferedNumericType&>(BP);
@@ -1279,7 +1279,7 @@ template<>
 SqlStatement& SqlStatement::operator>> <float>(std::vector<float> &val)
 {
 	if( get_stmt_type() != STMT_DECLARE && get_stmt_type() != STMT_BEGIN)
-		throw OciException(__HERE__, "Reading vectors from SQL statements is not implemented yet");
+		throw OciException(__TROTL_HERE__, "Reading vectors from SQL statements is not implemented yet");
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 	prefferedNumericType const &BP2 = dynamic_cast<const prefferedNumericType&>(BP);
@@ -1302,7 +1302,7 @@ template<>
 SqlStatement& SqlStatement::operator>> <double>(std::vector<double> &val)
 {
 	if( get_stmt_type() != STMT_DECLARE && get_stmt_type() != STMT_BEGIN)
-		throw OciException(__HERE__, "Reading vectors from SQL statements is not implemented yet");
+		throw OciException(__TROTL_HERE__, "Reading vectors from SQL statements is not implemented yet");
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 	prefferedNumericType const &BP2 = dynamic_cast<const prefferedNumericType&>(BP);
@@ -1325,7 +1325,7 @@ template<>
 SqlStatement& SqlStatement::operator>> <tstring>(std::vector<tstring> &val)
 {
 	if( get_stmt_type() != STMT_DECLARE && get_stmt_type() != STMT_BEGIN)
-		throw OciException(__HERE__, "Reading vectors from SQL statements is not implemented yet");
+		throw OciException(__TROTL_HERE__, "Reading vectors from SQL statements is not implemented yet");
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 

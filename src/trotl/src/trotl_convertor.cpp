@@ -67,7 +67,7 @@ void ConvertorForRead::Fire(const BindParClob &BP, SqlClob &CL)
 	{	      
 		//sword res = OCICALL(OCILobAssign(BP._env, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &CL._loc));
 		//_conn._env, _conn._env._errh, other._loc, &_loc));	// no support for temporary LOBs
-		//oci_check_error(__HERE__, BP._env._errh, res);
+		//oci_check_error(__TROTL_HERE__, BP._env._errh, res);
 		CL._loc = ((OCILobLocator**)BP.valuep)[_row]; ((OCILobLocator**)BP.valuep)[_row] = NULL;
 		CL._ind = BP.indp[_row];
 	}
@@ -81,7 +81,7 @@ void ConvertorForRead::Fire(const BindParBlob &BP, SqlBlob &BL)
 	{	      	       
 		//sword res = OCICALL(OCILobAssign(BP._env, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &BL._loc));
 		//_conn._env, _conn._env._errh, other._loc, &_loc));	// no support for temporary LOBs
-		//oci_check_error(__HERE__, BP._env._errh, res);
+		//oci_check_error(__TROTL_HERE__, BP._env._errh, res);
 		BL._loc = ((OCILobLocator**)BP.valuep)[_row]; ((OCILobLocator**)BP.valuep)[_row] = NULL;
 		BL._ind = BP.indp[_row];
 	}
@@ -89,32 +89,32 @@ void ConvertorForRead::Fire(const BindParBlob &BP, SqlBlob &BL)
 
 void ConvertorForRead::Fire(const prefferedNumericType &BP, SqlInt<int> &BL)
 {
-	throw OciException(__HERE__, "Conversion from BindParInt to SqlInt<int> implemented elsewhere");
+	throw OciException(__TROTL_HERE__, "Conversion from BindParInt to SqlInt<int> implemented elsewhere");
 };
 
 void ConvertorForRead::Fire(const prefferedNumericType &BP, SqlInt<unsigned int> &BL)
 {
-	throw OciException(__HERE__, "Conversion from BindParInt to SqlInt<unsigned int> implemented elsewhere");
+	throw OciException(__TROTL_HERE__, "Conversion from BindParInt to SqlInt<unsigned int> implemented elsewhere");
 };
 
 void ConvertorForRead::Fire(const prefferedNumericType &BP, SqlInt<long> &BL)
 {
-	throw OciException(__HERE__, "Conversion from BindParInt to SqlInt<long> implemented elsewhere");
+	throw OciException(__TROTL_HERE__, "Conversion from BindParInt to SqlInt<long> implemented elsewhere");
 };
 
 void ConvertorForRead::Fire(const prefferedNumericType &BP, SqlInt<unsigned long> &BL)
 {
-	throw OciException(__HERE__, "Conversion from BindParInt to SqlInt<unsigned long> implemented elsewhere");
+	throw OciException(__TROTL_HERE__, "Conversion from BindParInt to SqlInt<unsigned long> implemented elsewhere");
 };
 
 void ConvertorForRead::Fire(const prefferedNumericType &BP, SqlInt<float> &BL)
 {
-	throw OciException(__HERE__, "Conversion from BindParInt to SqlInt<float> implemented elsewhere");
+	throw OciException(__TROTL_HERE__, "Conversion from BindParInt to SqlInt<float> implemented elsewhere");
 };
 
 void ConvertorForRead::Fire(const prefferedNumericType &BP, SqlInt<double> &BL)
 {
-	throw OciException(__HERE__, "Conversion from BindParInt to SqlInt<double> implemented elsewhere");
+	throw OciException(__TROTL_HERE__, "Conversion from BindParInt to SqlInt<double> implemented elsewhere");
 };
 
 // todo - this relies on the fact that prefferedNumericType is BindParNumber now
@@ -124,7 +124,7 @@ void ConvertorForRead::Fire(const prefferedNumericType &BP, SqlNumber &SN)
 	if(SN.is_not_null())
 	{
 		sword res = OCICALL(OCINumberAssign(SN._env._errh, BP.get_ref(_row), &SN._val));
-		oci_check_error(__HERE__, SN._env._errh, res);
+		oci_check_error(__TROTL_HERE__, SN._env._errh, res);
 	}
 	// TODO raise exception here, if STMT.type==PL/SQL and BP._cnt > 1
 	//if(BP._cnt != 1)
@@ -162,7 +162,7 @@ void ConvertorForWrite::Fire(const SqlClob &CL, BindParClob &BP)
 {
 	//TODO sword res = OCICALL(OCILobAssign(BP._env, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &CL._loc));
 	//_conn._env, _conn._env._errh, other._loc, &_loc));	// no support for temporary LOBs
-	//oci_check_error(__HERE__, BP._env._errh, res);
+	//oci_check_error(__TROTL_HERE__, BP._env._errh, res);
 
 	((OCILobLocator**)BP.valuep)[_row] = CL._loc;
 //	CL._loc = NULL;
@@ -173,7 +173,7 @@ void ConvertorForWrite::Fire(const SqlBlob &BL, BindParBlob &BP)
 {
 	//TODO sword res = OCICALL(OCILobAssign(BP._env, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &CL._loc));
 	//_conn._env, _conn._env._errh, other._loc, &_loc));	// no support for temporary LOBs
-	//oci_check_error(__HERE__, BP._env._errh, res);
+	//oci_check_error(__TROTL_HERE__, BP._env._errh, res);
 
 	((OCILobLocator**)BP.valuep)[_row] = BL._loc;
 //	BL._loc = NULL;
@@ -182,13 +182,13 @@ void ConvertorForWrite::Fire(const SqlBlob &BL, BindParBlob &BP)
 
 void ConvertorForWrite::Fire(const SqlInt<int> &BL, BindParInt &BP)
 {
-	throw OciException(__HERE__, "Conversion from SqlInt<int> to BindParInt implemented elsewhere");
+	throw OciException(__TROTL_HERE__, "Conversion from SqlInt<int> to BindParInt implemented elsewhere");
 };
 
 #ifdef ORACLE_HAS_XML
 void ConvertorForWrite::Fire(const SqlXML &BL, BindParXML &BP)
 {
-//	throw_ocipl_exception(OciException(__HERE__, "Not implemented yet\n"));
+//	throw_ocipl_exception(OciException(__TROTL_HERE__, "Not implemented yet\n"));
 	BP._xmlvaluep[0] = BL.xml;
 //	((OCILobLocator**)BP.valuep)[_row] = NULL;
 //	BP.indp[_row] = BL._ind;
@@ -197,12 +197,12 @@ void ConvertorForWrite::Fire(const SqlXML &BL, BindParXML &BP)
 
 void Convertor::OnError(const SqlStatement::BindPar &BP, SqlValue &val)
 {
-	throw OciException(__HERE__, "Misssing Conversion(%s%d to SqlValue)\n").arg(BP.type_name).arg(BP.value_sz);
+	throw OciException(__TROTL_HERE__, "Misssing Conversion(%s%d to SqlValue)\n").arg(BP.type_name).arg(BP.value_sz);
 };
 
 void Convertor::OnError(const SqlValue &val, SqlStatement::BindPar &BP)
 {
-	throw OciException(__HERE__, "Misssing Conversion(SqlValue to %s%d)\n").arg(BP.type_name).arg(BP.value_sz);
+	throw OciException(__TROTL_HERE__, "Misssing Conversion(SqlValue to %s%d)\n").arg(BP.type_name).arg(BP.value_sz);
 };
 
 };

@@ -78,7 +78,7 @@ tstring BindParDate::get_string(unsigned int row) const
 				(ub4 *)&str_len,
 				str_buf
 		));
-		oci_check_error(__HERE__, _env._errh, res);		
+		oci_check_error(__TROTL_HERE__, _env._errh, res);		
 		
 		str_buf[ min( (str_len+1) , (unsigned)sizeof(str_buf) ) ] = '\0'; 
 		
@@ -269,7 +269,7 @@ struct tm* SqlDateTime::to_lctime(void) const
 //    if (str && *str) {
 //      sword res = OCICALL(OCIDateFromText(errh, (const text*)str, (ub4)strlen(str), NULL/*fmt*/, 0, NULL/*lang*/, 0, this));
 //
-//      oci_check_error(__HERE__, errh, res);
+//      oci_check_error(__TROTL_HERE__, errh, res);
 //
 //      _ind.set();
 //    } else

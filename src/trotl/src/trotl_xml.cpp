@@ -96,10 +96,10 @@ void BindParXML::init(SqlStatement &stmt)
 			OCI_DURATION_SESSION, OCI_TYPEGET_HEADER,
 			(OCIType**) &xmltdo
 	));
-	oci_check_error(__HERE__, _stmt._errh, res);
+	oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 
 	if(xmltdo == NULL)
-		throw OciException(__HERE__, "Unknown datatype in the database: SYS.XMLTYPE");
+		throw OciException(__TROTL_HERE__, "Unknown datatype in the database: SYS.XMLTYPE");
 
 	for(int i=0; i<g_OCIPL_BULK_ROWS; i++)
 	{
@@ -119,7 +119,7 @@ void BindParXML::init(SqlStatement &stmt)
 //				FALSE,
 //				(dvoid **) &xml[i]
 //		));
-//		oci_check_error(__HERE__, conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, conn._env._errh, res);
 //	}
 }
 
@@ -137,10 +137,10 @@ void BindParXML::define_hook(SqlStatement &stmt)
 			0,
 			0, //(dvoid **) &xml_ind,
 			0));
-	oci_check_error(__HERE__, stmt._errh, res);
+	oci_check_error(__TROTL_HERE__, stmt._errh, res);
 
 //	res = OCICALL(OCIDefineArrayOfStruct(defnpp, stmt._errh, sizeof(OCIXMLType*), 0, 0, 0));
-//	oci_check_error(__HERE__, stmt._errh, res);
+//	oci_check_error(__TROTL_HERE__, stmt._errh, res);
 }
 
 void BindParXML::bind_hook(SqlStatement &stmt)
@@ -157,11 +157,11 @@ void BindParXML::bind_hook(SqlStatement &stmt)
 			0,
 			0, //(dvoid **) &xml_ind,
 			0));
-	oci_check_error(__HERE__, stmt._errh, res);
+	oci_check_error(__TROTL_HERE__, stmt._errh, res);
 //  TODO
 //	if( _cnt > 1 ) {
 //		res = OCICALL(OCIDefineArrayOfStruct(bindp, conn._env._errh, sizeof(OCIXMLType*), 0, 0, 0));
-//		oci_check_error(__HERE__, conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, conn._env._errh, res);
 //	}
 }
 

@@ -56,23 +56,23 @@ struct TROTL_EXPORT OracleServer : public OciHandle<OCIServer>
 	~OracleServer()
 	{
 		sword res = OCICALL(OCIServerDetach(_handle, _env._errh, OCI_DEFAULT));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 	}
 
 	void attach(const tstring& tnsname)
 	{
 		sword res = OCICALL(OCIServerAttach(_handle, _env._errh, (OraText*)tnsname.c_str(), (sb4)tnsname.length()*sizeof(char), OCI_DEFAULT));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 
 		res = OCICALL(OCIServerRelease(_handle, _env._errh, (OraText*)_version_string, sizeof(_version_string), OCI_HTYPE_SERVER, &_version));
 		//res = OCICALL(OCIServerVersion(_handle, _env._errh, (OraText*)_version_string, sizeof(_version_string), OCI_HTYPE_SVCCTX));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 	}
 
 	void detach()
 	{
 		sword res = OCICALL(OCIServerDetach(_handle, _env._errh, OCI_DEFAULT));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 	}
 
 	sword versionNumber() const { return  ((sword)(((_version) >> 24) & 0x000000FF)); }
@@ -157,7 +157,7 @@ struct TROTL_EXPORT OciLogin : public OciHandle<OCISvcCtx>
 		set_attribute(_server);
 
 		sword res = OCICALL(OCISessionBegin(_handle, _env._errh, _session, OCI_CRED_RDBMS, mode));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 
 		// look for warning messages ("ORA-28002: the password will expire within ... days")
 		if (res == OCI_SUCCESS_WITH_INFO) {
@@ -179,7 +179,7 @@ struct TROTL_EXPORT OciLogin : public OciHandle<OCISvcCtx>
 		   (TOraText*)username.c_str(), username.length(),
 		   (TOraText*)password.c_str(), password.length(),
 		   (TOraText*)tnsname.c_str(), tnsname.length()));
-		   oci_check_error(__HERE__, _env._errh, res);
+		   oci_check_error(__TROTL_HERE__, _env._errh, res);
 		*/
 	}
 
@@ -200,7 +200,7 @@ struct TROTL_EXPORT OciLogin : public OciHandle<OCISvcCtx>
 				(text*)(new_password.c_str()),
 				(ub4)(new_password.length()),
 				OCI_AUTH));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 	}
 
 	~OciLogin()
@@ -216,7 +216,7 @@ struct TROTL_EXPORT OciLogin : public OciHandle<OCISvcCtx>
 			 * _svchp = 0;
 			 */
 			sword res = OCICALL(OCISessionEnd(_handle, _env._errh, _session, OCI_DEFAULT));
-			oci_check_error(__HERE__, _env._errh, res);
+			oci_check_error(__TROTL_HERE__, _env._errh, res);
 
 			_server.detach();
 			_connected = false;
@@ -226,13 +226,13 @@ struct TROTL_EXPORT OciLogin : public OciHandle<OCISvcCtx>
 	void commit(ub4 flags=OCI_DEFAULT)
 	{
 		sword res = OCICALL(OCITransCommit(_handle, _env._errh, flags));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 	}
 
 	void rollback(ub4 flags=OCI_DEFAULT)
 	{
 		sword res = OCICALL(OCITransRollback(_handle, _env._errh, flags));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 	}
 
 	OracleServer	_server;
@@ -283,7 +283,7 @@ struct TROTL_EXPORT OciConnection
 	void commit(ub4 flags=OCI_DEFAULT)
 	{
 		sword res = OCICALL(OCITransCommit(_svc_ctx, _env._errh, flags));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 	}
 
 	void commit_nowait()
@@ -294,7 +294,7 @@ struct TROTL_EXPORT OciConnection
 	void rollback(ub4 flags=OCI_DEFAULT)
 	{
 		sword res = OCICALL(OCITransRollback(_svc_ctx, _env._errh, flags));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 	}
 
 	//StatementCache	_stmt_cache; TODO

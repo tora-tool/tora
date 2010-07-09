@@ -60,18 +60,18 @@ void ColumnType::describe(OCIError* errh, dvoid* handle)
 
 	size = sizeof(pcol_name);
 	res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &pcol_name, &size, OCI_ATTR_NAME, errh));
-	oci_check_error(__HERE__, errh, res);
+	oci_check_error(__TROTL_HERE__, errh, res);
 	_column_name.assign((const char*)pcol_name, size);
 
 	// get column data type
 	size = sizeof(_data_type);
 	res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_data_type, &size, OCI_ATTR_DATA_TYPE, errh));
-	oci_check_error(__HERE__, errh, res);
+	oci_check_error(__TROTL_HERE__, errh, res);
 
 	// get NULL-ability flag
 	size = sizeof(_nullable);
 	res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_nullable, &size, OCI_ATTR_IS_NULL, errh));
-	oci_check_error(__HERE__, errh, res);
+	oci_check_error(__TROTL_HERE__, errh, res);
 
 #if ORACLE_MAJOR_VERSION>=9
 	// Oracle 9 ->
@@ -87,13 +87,13 @@ void ColumnType::describe(OCIError* errh, dvoid* handle)
 	{
 		// get the column width in characters
 		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_width, &size, OCI_ATTR_CHAR_SIZE, errh));
-		oci_check_error(__HERE__, errh, res);
+		oci_check_error(__TROTL_HERE__, errh, res);
 	} else
 #endif
 	{
 		// get the column width in bytes
 		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_width, &size, OCI_ATTR_DATA_SIZE, errh));
-		oci_check_error(__HERE__, errh, res);
+		oci_check_error(__TROTL_HERE__, errh, res);
 	}
 
 	switch(_data_type) {
@@ -105,11 +105,11 @@ void ColumnType::describe(OCIError* errh, dvoid* handle)
 	case SQLT_NUM: {
 		size = sizeof(_precision);
 		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_precision, &size, OCI_ATTR_PRECISION, errh));
-		oci_check_error(__HERE__, errh, res);
+		oci_check_error(__TROTL_HERE__, errh, res);
 
 		size = sizeof(_scale);
 		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_scale, &size, OCI_ATTR_SCALE, errh));
-		oci_check_error(__HERE__, errh, res);
+		oci_check_error(__TROTL_HERE__, errh, res);
 		break;}
 
 	case SQLT_DAT:
@@ -128,11 +128,11 @@ void ColumnType::describe(OCIError* errh, dvoid* handle)
 
 		ssize = sizeof(pschema_name);
 		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &pschema_name, &ssize, OCI_ATTR_SCHEMA_NAME, errh));
-		oci_check_error(__HERE__, errh, res);
+		oci_check_error(__TROTL_HERE__, errh, res);
 
 		nsize = sizeof(ptype_name);
 		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &ptype_name, &nsize, OCI_ATTR_TYPE_NAME, errh));
-		oci_check_error(__HERE__, errh, res);
+		oci_check_error(__TROTL_HERE__, errh, res);
 
 		_data_type_name = tstring((char*)pschema_name, ssize) + "." + tstring((char*)ptype_name);
 //		_data_type_name.assign((const char*)ptype_name, size);
@@ -146,7 +146,7 @@ void ColumnType::describe(OCIError* errh, dvoid* handle)
 	case SQLT_VCS:
 	case SQLT_CLOB:
 		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &cform, 0, OCI_ATTR_CHARSET_FORM, errh));
-		oci_check_error(__HERE__, errh, res);
+		oci_check_error(__TROTL_HERE__, errh, res);
 		_utf16 = (cform == SQLCS_NCHAR);
 		break;
 	}

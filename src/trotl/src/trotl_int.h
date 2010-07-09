@@ -81,18 +81,18 @@ struct NumericConvertor
 				sword res;
 				boolean isint;
 				res = OCICALL(OCINumberIsInt(_errh, number, &isint));
-				oci_check_error(__HERE__, _errh, res);
+				oci_check_error(__TROTL_HERE__, _errh, res);
 
 				if(!isint)
 				{
 					OCINumber truncated;
 					res = OCICALL(OCINumberRound (_errh, number, 0 /*decplace*/, &truncated));
-					oci_check_error(__HERE__, _errh, res);
+					oci_check_error(__TROTL_HERE__, _errh, res);
 					res = OCICALL(OCINumberToInt(_errh, &truncated, sizeof(wrapped_type),
 						(Loki::TypeTraits<wrapped_type>::isSignedInt ? OCI_NUMBER_SIGNED : OCI_NUMBER_UNSIGNED),
 						&rsl
 						));
-					oci_check_error(__HERE__, _errh, res);
+					oci_check_error(__TROTL_HERE__, _errh, res);
 					return;
 				}
 			}
@@ -103,9 +103,9 @@ struct NumericConvertor
 							    OCI_NUMBER_SIGNED : OCI_NUMBER_UNSIGNED),
 							   &rsl
 						    ));
-			oci_check_error(__HERE__, _errh, res);
+			oci_check_error(__TROTL_HERE__, _errh, res);
 		} catch (OciException const &e) {
-			std::cerr << __HERE__ << e.what() << std::endl;
+			std::cerr << __TROTL_HERE__ << e.what() << std::endl;
 			rsl = 0;
 		}		    		 
 	}
@@ -120,9 +120,9 @@ struct NumericConvertor
 							    sizeof(wrapped_type),
 							    &rsl
 						    ));
-			oci_check_error(__HERE__, _errh, res);
+			oci_check_error(__TROTL_HERE__, _errh, res);
 		} catch (OciException const &e) {
-			std::cerr << __HERE__ << e.what() << std::endl;
+			std::cerr << __TROTL_HERE__ << e.what() << std::endl;
 			rsl = 0;
 		} 
 	}
@@ -139,9 +139,9 @@ struct NumericConvertor
 							       OCI_NUMBER_SIGNED : OCI_NUMBER_UNSIGNED),
 							      number
 						    ));
-			oci_check_error(__HERE__, _errh, res);
+			oci_check_error(__TROTL_HERE__, _errh, res);
 		} catch (OciException const &e) {
-			std::cerr << __HERE__ << e.what() << std::endl;
+			std::cerr << __TROTL_HERE__ << e.what() << std::endl;
 			exit(0);
 		}
 	}
@@ -156,9 +156,9 @@ struct NumericConvertor
 							       sizeof(wrapped_type),
 							       number
 						    ));			
-			oci_check_error(__HERE__, _errh, res);
+			oci_check_error(__TROTL_HERE__, _errh, res);
 		} catch (OciException const &e) {
-			std::cerr << __HERE__ << e.what() << std::endl;
+			std::cerr << __TROTL_HERE__ << e.what() << std::endl;
 			exit(0);
 		}
 	}
@@ -340,7 +340,7 @@ struct SqlNumber : public SqlValue
 /* 	SqlNumber(OCIError* errh, double d) */
 /* 	{ */
 /* 		sword res = OCICALL(OCINumberFromReal(errh, &d, sizeof(d), (OCINumber*)&_val)); */
-/* 		oci_check_error(__HERE__, errh, res); */
+/* 		oci_check_error(__TROTL_HERE__, errh, res); */
 /* 		_ind.set(); */
 /* 	}; */
 
@@ -413,7 +413,7 @@ struct SqlNumber : public SqlValue
 		if(other.is_not_null())
 		{
 			sword res = OCICALL(OCINumberAssign(_env._errh, other, &_val));
-			oci_check_error(__HERE__, _env._errh, res);
+			oci_check_error(__TROTL_HERE__, _env._errh, res);
 		}
 		_ind.set(other._ind);
 		return *this;
@@ -425,7 +425,7 @@ struct SqlNumber : public SqlValue
 			return false;
 		sword cmpres;
 		sword res = OCICALL(OCINumberCmp(_env._errh, &_val, other, &cmpres));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 		return cmpres==0;
 	};
 
@@ -437,84 +437,84 @@ struct SqlNumber : public SqlValue
 	bool operator< (const SqlNumber &other) const
 	{
 		if( is_null() || other.is_null())
-			throw OciException(__HERE__, "Nulls are not compareable\n");
+			throw OciException(__TROTL_HERE__, "Nulls are not compareable\n");
 		sword cmpres;
 		sword res = OCICALL(OCINumberCmp(_env._errh, &_val, other, &cmpres));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 		return cmpres<0;
 	};
 
 	bool operator> (const SqlNumber &other) const
 	{
 		if( is_null() || other.is_null())
-			throw OciException(__HERE__, "Nulls are not compareable\n");
+			throw OciException(__TROTL_HERE__, "Nulls are not compareable\n");
 		sword cmpres;
 		sword res = OCICALL(OCINumberCmp(_env._errh, &_val, other, &cmpres));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 		return cmpres>0;
 	};
 	
 	SqlNumber& operator+= (const SqlNumber &other)
 	{
 		if( is_null() || other.is_null())
-			throw OciException(__HERE__, "One of the operands is NULL\n");
+			throw OciException(__TROTL_HERE__, "One of the operands is NULL\n");
 		sword res = OCICALL(OCINumberAdd(_env._errh, &_val, other, &_val));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 		return *this;
 	};
 
 	SqlNumber operator+ (const SqlNumber &other) const
 	{
 		if( is_null() || other.is_null())
-			throw OciException(__HERE__, "One of the operands is NULL\n" );
+			throw OciException(__TROTL_HERE__, "One of the operands is NULL\n" );
 		return SqlNumber(*this) += other;
 	};
 	
 	SqlNumber& operator-= (const SqlNumber &other)
 	{
 		if( is_null() || other.is_null())
-			throw OciException(__HERE__, "One of the operands is NULL\n");
+			throw OciException(__TROTL_HERE__, "One of the operands is NULL\n");
 		sword res = OCICALL(OCINumberSub(_env._errh, &_val, other, &_val));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 		return *this;
 	};
 
 	SqlNumber operator- (const SqlNumber &other) const
 	{
 		if( is_null() || other.is_null())
-			throw OciException(__HERE__, "One of the operands is NULL\n");
+			throw OciException(__TROTL_HERE__, "One of the operands is NULL\n");
 		return SqlNumber(*this) -= other;
 	};
 
 	SqlNumber& operator*= (const SqlNumber &other)
 	{
 		if( is_null() || other.is_null())
-			throw OciException(__HERE__, "One of the operands is NULL\n");
+			throw OciException(__TROTL_HERE__, "One of the operands is NULL\n");
 		sword res = OCICALL(OCINumberMul(_env._errh, &_val, other, &_val));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 		return *this;
 	};
 
 	SqlNumber operator* (const SqlNumber &other) const
 	{
 		if( is_null() || other.is_null())
-			throw OciException(__HERE__, "One of the operands is NULL\n");
+			throw OciException(__TROTL_HERE__, "One of the operands is NULL\n");
 		return SqlNumber(*this) *= other;
 	};
 
 	SqlNumber& operator/= (const SqlNumber &other)
 	{
 		if( is_null() || other.is_null())
-			throw OciException(__HERE__, "One of the operands is NULL\n");
+			throw OciException(__TROTL_HERE__, "One of the operands is NULL\n");
 		sword res = OCICALL(OCINumberDiv(_env._errh, &_val, other, &_val));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 		return *this;
 	};
 
 	SqlNumber operator/ (const SqlNumber &other) const
 	{
 		if( is_null() || other.is_null())
-			throw OciException(__HERE__, "One of the operands is NULL\n" );
+			throw OciException(__TROTL_HERE__, "One of the operands is NULL\n" );
 		return SqlNumber(*this) /= other;
 	};
 
@@ -585,7 +585,7 @@ protected:
 					    (ub4*)&str_len,
 					    str_buf
 					    ));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 
 		//str_buf[str_len+1] = '\0';
 

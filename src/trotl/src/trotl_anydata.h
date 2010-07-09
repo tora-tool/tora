@@ -118,7 +118,7 @@ struct TROTL_EXPORT SqlANYDATA : public SqlValue
 	SqlANYDATA(const SqlValue &value, OciConnection &conn): _conn(conn)
 	{
 		//_ind.set();
-		throw OciException(__HERE__, "Not implemented yet");
+		throw OciException(__TROTL_HERE__, "Not implemented yet");
 	}
 
 	tstring str() const;

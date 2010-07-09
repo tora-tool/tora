@@ -90,7 +90,7 @@ struct TROTL_EXPORT BindParDate: public SqlStatement::BindPar
 //	{
 //		throw_ocipl_exception(
 //				OciException(
-//						__HERE__,
+//						__TROTL_HERE__,
 //						"Invalid datatype in conversion(BindParDate to %d%s)\n"
 //				).arg(sizeof(return_type)).arg(typeid(return_type).name())
 //		);

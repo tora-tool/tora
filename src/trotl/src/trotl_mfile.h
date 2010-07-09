@@ -57,13 +57,13 @@ namespace trotl {
 	  void open(const char* product, const char* facility, OCIDuration dur=OCI_DURATION_PROCESS)
 	  {
 		  sword res = OCICALL(OCIMessageOpen(_env, _env._errh, &_msgh, (OraText*)product, (OraText*)facility, dur));
-		  oci_check_error(__HERE__, _env._errh, res);
+		  oci_check_error(__TROTL_HERE__, _env._errh, res);
 	  }
 
 	  void close()
 	  {
 		  sword res = OCICALL(OCIMessageClose(_env, _env._errh, _msgh));
-		  oci_check_error(__HERE__, _env._errh, res);
+		  oci_check_error(__TROTL_HERE__, _env._errh, res);
 	  }
 
 	  OraText* get_msg(ub4 msgno) const

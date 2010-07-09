@@ -113,7 +113,7 @@ struct TROTL_EXPORT SqlValue
         SqlValue(const SqlValue& other) : _ind(other._ind) {};
 	SqlValue(const char *)
 	{
-		throw OciException(__HERE__, "Invalid SqlValue initialization: const char*");
+		throw OciException(__TROTL_HERE__, "Invalid SqlValue initialization: const char*");
 	};
 
 	bool is_null() const {return _ind.is_null();}

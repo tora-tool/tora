@@ -82,7 +82,7 @@ namespace trotl {
 //	return ret.str();
 //}
 
-//#define OCICALL(x)  x; do { std::cerr << __HERE__ << #x << std::endl; } while(0)
+//#define OCICALL(x)  x; do { std::cerr << __TROTL_HERE__ << #x << std::endl; } while(0)
 #define OCICALL(x)  x
 
 #ifdef __GNUC__
@@ -128,23 +128,27 @@ namespace trotl {
 
 };
 
+#ifdef DEBUG
 #ifdef __GNUC__
-	#define __HERE__ std::string(((strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1)) + ":"__HERE1__(__LINE__)
+	#define __TROTL_HERE__ std::string(((strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1)) + ":"__TROTL_HERE1__(__LINE__)
 //	#define __HERE_SHORT__ std::string(((strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1)) + ":"__HERE1__(__LINE__)
-//	#define __HERE__ ::trotl::str_backtrace() + __HERE3__(__LINE__, __FILE__)
-	#define __HERE1__(x)   STR(x)"\t" + __PRETTY_FUNCTION__
+//	#define __TROTL_HERE__ ::trotl::str_backtrace() + __HERE3__(__LINE__, __FILE__)
+	#define __TROTL_HERE1__(x)   STR(x)"\t" + __PRETTY_FUNCTION__
 //	#define __HERE2__(x,y) ::trotl::tstring("("y":" STR(x)"(") +  __PRETTY_FUNCTION__ +")"
 //	#define __HERE3__(x,y) ::trotl::tstring("\n(") + __PRETTY_FUNCTION__ + ") " y ":" STR(x) + "\n"
 	#define STR(a) #a
 #else
-//	#define __HERE__ __HERE3__(__LINE__, __FILE__)
+//	#define __TROTL_HERE__ __HERE3__(__LINE__, __FILE__)
 //	#define __HERE_SHORT__ __HERE3__(__LINE__, __FILE__)
-//	#define __HERE__ ::trotl::str_backtrace() + __HERE3__(__LINE__, __FILE__)
+//	#define __TROTL_HERE__ ::trotl::str_backtrace() + __HERE3__(__LINE__, __FILE__)
 //	#define __HERE2__(x,y) ::trotl::tstring("("y":" STR(x)"(") +  __FUNCTION__ +")"
 //	#define __HERE3__(x,y) std::string("\n(") + __FUNCTION__ + ") " y ":" STR(x) + "\n"
-	#define __HERE__ std::string(__FILE__) + ":"__HERE1__(__LINE__)
-	#define __HERE1__(x)   STR(x)"\t" +  __FUNCSIG__
+	#define __TROTL_HERE__ std::string(__FILE__) + ":"__TROTL_HERE1__(__LINE__)
+	#define __TROTL_HERE1__(x)   STR(x)"\t" +  __FUNCSIG__
 	#define STR(a) #a
+#endif //__GNUC__
+#else  //DEBUG
+#define __TROTL_HERE__ ""
 #endif
 
 #endif

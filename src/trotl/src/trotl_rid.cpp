@@ -90,7 +90,7 @@ void BindParRid::descAlloc(void)
 	for(unsigned i=0; i<_cnt; ++i)
 	{
 		sword res = OCICALL(OCIDescriptorAlloc(_env, &((void**)valuep)[i], OCI_DTYPE_ROWID, 0, NULL));
-		oci_check_error(__HERE__, _env, res);
+		oci_check_error(__TROTL_HERE__, _env, res);
 	}
 }
 
@@ -101,7 +101,7 @@ void BindParRid::descFree(void)
 		if(((void**)valuep)[i])
 		{
 			sword res = OCICALL(OCIDescriptorFree( ((void**)valuep)[i], OCI_DTYPE_ROWID));
-			oci_check_error(__HERE__, _env, res);
+			oci_check_error(__TROTL_HERE__, _env, res);
 		}
 	}
 }
@@ -110,14 +110,14 @@ void BindParRid::descFree(void)
 void BindParRid::bind_hook(SqlStatement &stmt)
 {
 //	sword res = OCICALL(OCIBindArrayOfStruct(bindp, stmt._errh, sizeof(OCIRowid*), 0, 0, 0 ));
-//	oci_check_error(__HERE__, stmt._errh, res);
+//	oci_check_error(__TROTL_HERE__, stmt._errh, res);
 }
 
 // TODO add ind skip here
 void BindParRid::define_hook(SqlStatement &stmt)
 {
 //	sword res = OCICALL(OCIDefineArrayOfStruct(defnpp , _env._errh, sizeof(OCIRowid*), 0, 0, 0 ));
-//	oci_check_error(__HERE__, _stmt._errh, res);
+//	oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 }
 
 tstring BindParRid::get_string(unsigned int i) const
@@ -127,20 +127,20 @@ tstring BindParRid::get_string(unsigned int i) const
 	OraText buffer[4001];
 	ub2 outbfl = sizeof(buffer);
 	sword res = OCICALL(OCIRowidToChar(((OCIRowid**)valuep)[i], buffer, &outbfl, _stmt._errh));
-	oci_check_error(__HERE__, _stmt._errh, res);
+	oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 	return std::string((char*)buffer, outbfl);
 }
 
 SqlRid::SqlRid(OciEnv &env) : _env(env)
 {
 	sword res = OCICALL(OCIDescriptorAlloc(_env, (dvoid**)&_rid, OCI_DTYPE_ROWID, 0, NULL));
-	oci_check_error(__HERE__, _env, res);
+	oci_check_error(__TROTL_HERE__, _env, res);
 };
 
 SqlRid::~SqlRid()
 {
 	sword res = OCICALL(OCIDescriptorFree(_rid, OCI_DTYPE_ROWID));
-	oci_check_error(__HERE__, _env, res);
+	oci_check_error(__TROTL_HERE__, _env, res);
 };
 
 };

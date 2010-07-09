@@ -100,7 +100,7 @@ void BindParLob::descAlloc(void) //TODO OCI_DTYPE_FILE for BFILE, CFILE
 	for(unsigned i=0; i<_cnt; ++i)
 	{
 		sword res = OCICALL(OCIDescriptorAlloc(_env, &((void**)valuep)[i], OCI_DTYPE_LOB, 0, NULL));
-		oci_check_error(__HERE__, _env, res);
+		oci_check_error(__TROTL_HERE__, _env, res);
 	}
 }
 
@@ -112,7 +112,7 @@ void BindParLob::descFree(void)
 		{
 			//std::cerr << "void descFree(void)" << std::endl;
 			sword res = OCICALL(OCIDescriptorFree( ((void**)valuep)[i], OCI_DTYPE_LOB));
-			oci_check_error(__HERE__, _env, res);
+			oci_check_error(__TROTL_HERE__, _env, res);
 		}
 	}
 	//std::cerr << "void descFree(void) done" << std::endl;
@@ -122,13 +122,13 @@ void BindParLob::descFree(void)
 void BindParLob::bind_hook(SqlStatement &stmt)
 {
 	sword res = OCICALL(OCIBindArrayOfStruct(bindp, stmt._errh, sizeof(OCILobLocator*), 0, 0, 0 ));
-	oci_check_error(__HERE__, stmt._errh, res);
+	oci_check_error(__TROTL_HERE__, stmt._errh, res);
 }
 // TODO add ind skip here
 void BindParLob::define_hook(SqlStatement &stmt)
 {
 //	sword res = OCICALL(OCIDefineArrayOfStruct(defnpp , _env._errh, sizeof(OCILobLocator*), 0, 0, 0 ));
-//	oci_check_error(__HERE__, _env, res);
+//	oci_check_error(__TROTL_HERE__, _env, res);
 }
 
 BindParClob::BindParClob(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : BindParLob(pos, stmt, ct)
@@ -182,7 +182,7 @@ BindParBFile::BindParBFile(unsigned int pos, SqlStatement &stmt, BindVarDecl &de
 SqlLob::SqlLob(OciConnection &conn) : _conn(conn), _loc(NULL)
 {
 	sword res = OCICALL(OCIDescriptorAlloc(_conn._env, (dvoid**)&_loc, OCI_DTYPE_LOB, 0, NULL));
-	oci_check_error(__HERE__, _conn._env, res);
+	oci_check_error(__TROTL_HERE__, _conn._env, res);
 };
 
 SqlLob::~SqlLob()
@@ -191,18 +191,18 @@ SqlLob::~SqlLob()
 	// implicit created temporary LOBs as soon as possible.
 	if (is_temporary()) {
 		sword res = OCICALL(OCILobFreeTemporary(_conn._svc_ctx, _conn._env._errh, _loc));
-		oci_check_error(__HERE__, _conn._env._errh, res);
+		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	}
 
 	sword res = OCICALL(OCIDescriptorFree(_loc, OCI_DTYPE_LOB));
-	oci_check_error(__HERE__, _conn._env, res);
+	oci_check_error(__TROTL_HERE__, _conn._env, res);
 };
 
 boolean SqlLob::operator==(const SqlLob& other) const
 {
 	boolean is_equal;
 	sword res = OCICALL(OCILobIsEqual(_conn._env, _loc, other._loc, &is_equal));
-	oci_check_error(__HERE__, _conn._env, res);
+	oci_check_error(__TROTL_HERE__, _conn._env, res);
 	return is_equal;
 };
 
@@ -210,14 +210,14 @@ void SqlLob::clear()
 {
 	ub4 lobEmpty = 0;
 	sword res = OCICALL(OCIAttrSet(_loc, OCI_DTYPE_LOB, &lobEmpty, 0, OCI_ATTR_LOBEMPTY, _conn._env._errh));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 };
 
 ub4	SqlLob::get_chunk_size()
 {
 	ub4 size;
 	sword res = OCICALL( OCILobGetChunkSize(_conn._svc_ctx, _conn._env._errh, _loc, &size));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return size;
 };
 
@@ -227,7 +227,7 @@ ub4	SqlLob::get_length()
 	{
 		ub4 len;
 		sword res = OCICALL(OCILobGetLength(_conn._svc_ctx, _conn._env._errh, _loc, &len));
-		oci_check_error(__HERE__, _conn._env._errh, res);
+		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 		return len;
 	} else {
 		return 0;
@@ -238,7 +238,7 @@ boolean	SqlLob::is_open() const
 {
 	boolean flag;
 	sword res = OCICALL(OCILobIsOpen(_conn._svc_ctx, _conn._env._errh, _loc, &flag));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return flag;
 };
 
@@ -246,51 +246,51 @@ boolean	SqlLob::is_temporary() const
 {
 	boolean flag;
 	sword res = OCICALL(OCILobIsTemporary(_conn._env, _conn._env._errh, _loc, &flag));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return flag;
 };
 
 void SqlLob::copy(const SqlLob& src, ub4 amount, ub4 dst_offset, ub4 src_offset)
 {
 	sword res = OCICALL(OCILobCopy(_conn._svc_ctx, _conn._env._errh, _loc, src._loc, amount, dst_offset, src_offset));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 };
 
 void SqlLob::append(const SqlLob& src)
 {
 	sword res = OCICALL(OCILobAppend(_conn._svc_ctx, _conn._env._errh, _loc, src._loc));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 };
 
 void SqlLob::trim(ub4 newlen)
 {
 	sword res = OCICALL(OCILobTrim(_conn._svc_ctx, _conn._env._errh, _loc, newlen));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 };
 
 ub4	SqlLob::erase(ub4 offset, ub4 amount)
 {
 	sword res = OCICALL(OCILobErase(_conn._svc_ctx, _conn._env._errh, _loc, &amount, offset));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return amount;
 };
 
 void SqlLob::enable_buffering()
 {
 	sword res = OCICALL(OCILobEnableBuffering(_conn._svc_ctx, _conn._env._errh, _loc));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 };
 
 void SqlLob::disable_buffering()
 {
 	sword res = OCICALL(OCILobDisableBuffering(_conn._svc_ctx, _conn._env._errh, _loc));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 };
 
 void SqlLob::flush(ub4 flag)
 {
 	sword res = OCICALL(OCILobFlushBuffer(_conn._svc_ctx, _conn._env._errh, _loc, flag));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 };
 
 SqlOpenLob::SqlOpenLob(SqlLob& lob, ub1 mode) : _lob(lob)
@@ -301,7 +301,7 @@ SqlOpenLob::SqlOpenLob(SqlLob& lob, ub1 mode) : _lob(lob)
 			lob._loc,
 			mode
 	));
-	oci_check_error(__HERE__, lob._conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, lob._conn._env._errh, res);
 };
 
 SqlOpenLob::~SqlOpenLob()
@@ -311,7 +311,7 @@ SqlOpenLob::~SqlOpenLob()
 			_lob._conn._env._errh,
 			_lob._loc
 	));
-	oci_check_error(__HERE__, _lob._conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _lob._conn._env._errh, res);
 };
 
 ub4	SqlBlob::write(const dvoid* bufp, ub4 buflen, ub4 offset/*=1*/, ub4 amount)
@@ -320,7 +320,7 @@ ub4	SqlBlob::write(const dvoid* bufp, ub4 buflen, ub4 offset/*=1*/, ub4 amount)
 			&amount, offset, (dvoid*)bufp, buflen,
 			OCI_ONE_PIECE/*ub1 piece*/, NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,dvoid*bufp,ub4*len,ub1*piece)*/,
 			0, 0));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return amount;
 };
 
@@ -330,7 +330,7 @@ ub4	SqlBlob::write_append(const dvoid* bufp, ub4 buflen, ub4 amount)
 			&amount, (dvoid*)bufp, buflen,
 			OCI_ONE_PIECE/*ub1 piece*/, NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,dvoid*bufp,ub4*len,ub1*piece)*/,
 			0, 0));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return amount;
 };
 
@@ -340,7 +340,7 @@ ub4	SqlBlob::read(dvoid* bufp, ub4 buflen, ub4 offset, ub4 amount)
 			&amount, offset, bufp, buflen,
 			NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,CONST dvoid*bufp,ub4*len,ub1*piece)*/,
 			0, 0));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return amount;
 };
 
@@ -348,14 +348,14 @@ SqlTempBlob::SqlTempBlob(OciConnection& conn, OCIDuration dur) : SqlBlob(conn)
 {
 	sword res = OCICALL(OCILobCreateTemporary(conn._svc_ctx, conn._env._errh, _loc,
 			OCI_DEFAULT, SQLCS_IMPLICIT, OCI_TEMP_BLOB, FALSE, dur));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 };
 
 SqlTempBlob::~SqlTempBlob()
 {
 	// already implemented in ~OciLob
 	// sword res = OCICALL(OCILobFreeTemporary(_conn._svc_ctx, _conn._env._errh, _loc));
-	// oci_check_error(__HERE__, _conn._env._errh, res);
+	// oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 };
 
 ub4	SqlClob::write(const dvoid* bufp, ub4 buflen, ub4 offset, ub4 amount, ub2 csid, ub1 csfrm)
@@ -364,7 +364,7 @@ ub4	SqlClob::write(const dvoid* bufp, ub4 buflen, ub4 offset, ub4 amount, ub2 cs
 			&amount, offset, (dvoid*)bufp, buflen,
 			OCI_ONE_PIECE/*ub1 piece*/, NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,dvoid*bufp,ub4*len,ub1*piece)*/,
 			csid, csfrm));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return amount;
 };
 
@@ -374,7 +374,7 @@ ub4	SqlClob::write_append(const dvoid* bufp, ub4 buflen, ub4 amount, ub2 csid, u
 			&amount, (dvoid*)bufp, buflen,
 			OCI_ONE_PIECE/*ub1 piece*/, NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,dvoid*bufp,ub4*len,ub1*piece)*/,
 			csid, csfrm));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return amount;
 };
 
@@ -396,7 +396,7 @@ ub4	SqlClob::read(dvoid* bufp, ub4 buflen, ub4 offset, ub4 amount, ub2 csid, ub1
 			0 /* csid */,
 			0 /* csfrm */
 	));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return amount;
 };
 
@@ -404,14 +404,14 @@ SqlTempClob::SqlTempClob(OciConnection& conn, OCIDuration dur) : SqlClob(conn)
 {
 	sword res = OCICALL(OCILobCreateTemporary(conn._svc_ctx, conn._env._errh, _loc,
 			OCI_DEFAULT, SQLCS_IMPLICIT, OCI_TEMP_CLOB, FALSE, dur));
-	oci_check_error(__HERE__, _conn._env._errh, res);
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 }
 
 SqlTempClob::~SqlTempClob()
 {
 	// already implemented in ~OciLob
 	// sword res = OCICALL(OCILobFreeTemporary(_conn._svc_ctx, _conn._env._errh, _loc));
-	// oci_check_error(__HERE__, _conn._env._errh, res);
+	// oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 }
 
 };

@@ -49,7 +49,7 @@ struct TROTL_EXPORT BindParLob: public SqlStatement::BindPar
 
 	virtual tstring get_string(unsigned int) const
 	{
-		throw OciException(__HERE__, "Invalid datatype in conversion(BindParLob to tstring)\n");
+		throw OciException(__TROTL_HERE__, "Invalid datatype in conversion(BindParLob to tstring)\n");
 		//return "";
 	}
 
@@ -207,7 +207,7 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //	OciLob(OciConnection& conn):_conn(conn)
 //	{
 //		sword res = OCICALL(OCIDescriptorAlloc(conn._env, (dvoid**)&_loc, OCI_DTYPE_LOB, 0, NULL));
-//		oci_check_error(__HERE__, conn._env, res);
+//		oci_check_error(__TROTL_HERE__, conn._env, res);
 //	}
 //
 //	OciLob(OciConnection& conn, OCILobLocator* loc):_conn(conn),_loc(loc)
@@ -217,14 +217,14 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //	OciLob(const OciLob& other):_conn(other._conn)
 //	{
 //		sword res = OCICALL(OCIDescriptorAlloc(_conn._env, (dvoid**)&_loc, OCI_DTYPE_LOB, 0, NULL));
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //
 //#if ORACLE_MAJOR_VERSION>=8 && ORACLE_MINOR_VERSION>=1
 //		res = OCICALL(OCILobLocatorAssign(_conn._svc_ctx, _conn._env._errh, other._loc, &_loc));
 //#else
 //		res = OCICALL(OCILobAssign(_conn._env, _conn._env._errh, other._loc, &_loc));	// no support for temporary LOBs
 //#endif
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //
 //		clear();
 //	}
@@ -236,18 +236,18 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //		// implicit created temporary LOBs as soon as possible.
 //		if (is_temporary()) {
 //			sword res = OCICALL(OCILobFreeTemporary(_conn._svc_ctx, _conn._env._errh, _loc));
-//			oci_check_error(__HERE__, _conn._env._errh, res);
+//			oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //		}
 //#endif
 //		sword res = OCICALL(OCIDescriptorFree(_loc, OCI_DTYPE_LOB));
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //	}
 //
 //	boolean operator==(const OciLob& other) const
 //	{
 //		boolean is_equal;
 //		sword res = OCICALL(OCILobIsEqual(_conn._env, _loc, other._loc, &is_equal));
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //		return is_equal;
 //	}
 //
@@ -255,7 +255,7 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //	{
 //		ub4 lobEmpty = 0;
 //		sword res = OCICALL(OCIAttrSet(_loc, OCI_DTYPE_LOB, &lobEmpty, 0, OCI_ATTR_LOBEMPTY, _conn._env._errh));
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //	}
 //
 //	void* get_ref() {return &_loc;}
@@ -267,7 +267,7 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //	{
 //		ub4 len;
 //		sword res = OCICALL(OCILobGetLength(_conn._svc_ctx, _conn._env._errh, _loc, &len));
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //		return len;
 //	}
 //
@@ -276,7 +276,7 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //	{
 //		ub4 size;
 //		sword res = OCICALL(OCILobGetChunkSize(_conn._svc_ctx, _conn._env._errh, _loc, &size));
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //		return size;
 //	}
 //
@@ -284,7 +284,7 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //	{
 //		boolean flag;
 //		sword res = OCICALL(OCILobIsOpen(_conn._svc_ctx, _conn._env._errh, _loc, &flag));
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //		return flag;
 //	}
 //
@@ -292,7 +292,7 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //	{
 //		boolean flag;
 //		sword res = OCICALL(OCILobIsTemporary(_conn._env, _conn._env._errh, _loc, &flag));
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //		return flag;
 //	}
 //#endif
@@ -301,25 +301,25 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //void copy(const OciLob& src, ub4 amount, ub4 dst_offset, ub4 src_offset)
 //{
 //	sword res = OCICALL(OCILobCopy(_conn._svc_ctx, _conn._env._errh, _loc, src._loc, amount, dst_offset, src_offset));
-//	oci_check_error(__HERE__, _conn._env._errh, res);
+//	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //}
 //
 //void append(const OciLob& src)
 //{
 //	sword res = OCICALL(OCILobAppend(_conn._svc_ctx, _conn._env._errh, _loc, src._loc));
-//	oci_check_error(__HERE__, _conn._env._errh, res);
+//	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //}
 //
 //void trim(ub4 newlen=0)
 //{
 //	sword res = OCICALL(OCILobTrim(_conn._svc_ctx, _conn._env._errh, _loc, newlen));
-//	oci_check_error(__HERE__, _conn._env._errh, res);
+//	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //}
 //
 //ub4	erase(ub4 offset, ub4 amount)
 //{
 //	sword res = OCICALL(OCILobErase(_conn._svc_ctx, _conn._env._errh, _loc, &amount, offset));
-//	oci_check_error(__HERE__, _conn._env._errh, res);
+//	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //	return amount;
 //}
 //
@@ -327,19 +327,19 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //void enable_buffering()
 //{
 //	sword res = OCICALL(OCILobEnableBuffering(_conn._svc_ctx, _conn._env._errh, _loc));
-//	oci_check_error(__HERE__, _conn._env._errh, res);
+//	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //}
 //
 //void disable_buffering()
 //{
 //	sword res = OCICALL(OCILobDisableBuffering(_conn._svc_ctx, _conn._env._errh, _loc));
-//	oci_check_error(__HERE__, _conn._env._errh, res);
+//	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //}
 //
 //void flush(ub4 flag=OCI_LOB_BUFFER_NOFREE)
 //{
 //	sword res = OCICALL(OCILobFlushBuffer(_conn._svc_ctx, _conn._env._errh, _loc, flag));
-//	oci_check_error(__HERE__, _conn._env._errh, res);
+//	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //}
 //
 //protected:
@@ -356,13 +356,13 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //	OciOpenLob(OciLob& lob, ub1 mode=OCI_LOB_READWRITE):_lob(lob)
 //	{
 //		sword res = OCICALL(OCILobOpen(lob._conn._svc_ctx, lob._conn._env._errh, lob._loc, mode));
-//		oci_check_error(__HERE__, lob._conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, lob._conn._env._errh, res);
 //	}
 //
 //	~OciOpenLob()
 //	{
 //		sword res = OCICALL(OCILobClose(_lob._conn._svc_ctx, _lob._conn._env._errh, _lob._loc));
-//		oci_check_error(__HERE__, _lob._conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _lob._conn._env._errh, res);
 //	}
 //
 //protected:
@@ -382,7 +382,7 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //				&amount, offset, (dvoid*)bufp, buflen,
 //				OCI_ONE_PIECE/*ub1 piece*/, NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,dvoid*bufp,ub4*len,ub1*piece)*/,
 //				0, 0));
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //		return amount;
 //	}
 //
@@ -392,7 +392,7 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //				&amount, (dvoid*)bufp, buflen,
 //				OCI_ONE_PIECE/*ub1 piece*/, NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,dvoid*bufp,ub4*len,ub1*piece)*/,
 //				0, 0));
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //		return amount;
 //	}
 //
@@ -402,7 +402,7 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //				&amount, offset, bufp, buflen,
 //				NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,CONST dvoid*bufp,ub4*len,ub1*piece)*/,
 //				0, 0));
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //		return amount;
 //	}
 //};
@@ -414,14 +414,14 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //	{
 //		sword res = OCICALL(OCILobCreateTemporary(conn._svc_ctx, conn._env._errh, _loc,
 //				OCI_DEFAULT, SQLCS_IMPLICIT, OCI_TEMP_BLOB, FALSE, dur));
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //	}
 //
 //	~OciTempBlob()
 //	{
 //		/*already implemented in ~OciLob
 //	  sword res = OCICALL(OCILobFreeTemporary(_conn._svc_ctx, _conn._env._errh, _loc));
-//	  oci_check_error(__HERE__, _conn._env._errh, res);
+//	  oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //		 */
 //	}
 //};
@@ -440,7 +440,7 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //				OCI_ONE_PIECE/*ub1 piece*/, NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,dvoid*bufp,ub4*len,ub1*piece)*/,
 //				csid, csfrm));
 //
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //
 //		return amount;
 //	}
@@ -452,7 +452,7 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //				OCI_ONE_PIECE/*ub1 piece*/, NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,dvoid*bufp,ub4*len,ub1*piece)*/,
 //				csid, csfrm));
 //
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //
 //		return amount;
 //	}
@@ -464,7 +464,7 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //				NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,CONST dvoid*bufp,ub4*len,ub1*piece)*/,
 //				csid, csfrm));
 //
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //
 //		return amount;
 //	}
@@ -478,14 +478,14 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 //		sword res = OCICALL(OCILobCreateTemporary(conn._svc_ctx, conn._env._errh, _loc,
 //				OCI_DEFAULT, SQLCS_IMPLICIT, OCI_TEMP_CLOB, FALSE, dur));
 //
-//		oci_check_error(__HERE__, _conn._env._errh, res);
+//		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //	}
 //
 //	~OciTempClob()
 //	{
 //		/*already implemented in ~OciLob
 //	sword res = OCICALL(OCILobFreeTemporary(_conn._svc_ctx, _conn._env._errh, _loc));
-//	oci_check_error(__HERE__, _conn._env._errh, res);
+//	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 //		 */
 //	}
 //};

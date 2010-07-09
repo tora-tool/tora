@@ -241,7 +241,7 @@ OciException::OciException(const OciException& other):
 	_parse_offset(other._parse_offset)
 	{
 		//throw std::logic_error("OciException should not be copied");
-		std::cerr << __HERE__ << "OciException should not be copied" << std::endl;
+		std::cerr << __TROTL_HERE__ << "OciException should not be copied" << std::endl;
 	}
 
 OciException& OciException::arg(int d)

@@ -85,7 +85,7 @@ tstring BindParNumber::get_string(unsigned int row) const
 				(ub4*)&str_len,
 				str_buf
 		));
-		oci_check_error(__HERE__, _env._errh, res);
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
 
 		str_buf[str_len+1] = '\0';
 
@@ -113,7 +113,7 @@ tstring BindParNumber::get_string(unsigned int row) const
 //				(const text*)nls_fmt, (ub4)strlen(nls_fmt),
 //				(OCINumber*)&_val));
 //
-//		oci_check_error(__HERE__, errh, res);
+//		oci_check_error(__TROTL_HERE__, errh, res);
 //		_ind.set();
 //	} else
 //		_ind.clear();
@@ -130,7 +130,7 @@ tstring BindParNumber::get_string(unsigned int row) const
 //				(const text*)nls_fmt, (ub4)strlen(nls_fmt),
 //				&l, buffer));
 //  
-//  oci_check_error(__HERE__, errh, res);
+//  oci_check_error(__TROTL_HERE__, errh, res);
 //  
 //  //	const char* p = (const char*)buffer;
 //  //	while(istspace(*p))

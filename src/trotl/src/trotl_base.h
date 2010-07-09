@@ -77,10 +77,10 @@ namespace trotl {
   */
   template <> inline ub4 OciHandleID<OCIServer>::get_attr_id()	{return OCI_ATTR_SERVER;}
   template <> inline ub4 OciHandleID<OCISession>::get_attr_id()	{return OCI_ATTR_SESSION;}
-  template <> inline ub4 OciHandleID<OCIEnv>::get_attr_id()	{std::cout << "Error:" << __HERE__ << std::endl; return -1;}
-  template <> inline ub4 OciHandleID<OCIError>::get_attr_id()	{std::cout << "Error:" << __HERE__ << std::endl; return -1;}
-  template <> inline ub4 OciHandleID<OCISvcCtx>::get_attr_id()	{std::cout << "Error:" << __HERE__ << std::endl; return -1;}
-  template <> inline ub4 OciHandleID<OCIStmt>::get_attr_id()	{std::cout << "Error:" << __HERE__ << std::endl; return -1;}
+  template <> inline ub4 OciHandleID<OCIEnv>::get_attr_id()	{std::cout << "Error:" << __TROTL_HERE__ << std::endl; return -1;}
+  template <> inline ub4 OciHandleID<OCIError>::get_attr_id()	{std::cout << "Error:" << __TROTL_HERE__ << std::endl; return -1;}
+  template <> inline ub4 OciHandleID<OCISvcCtx>::get_attr_id()	{std::cout << "Error:" << __TROTL_HERE__ << std::endl; return -1;}
+  template <> inline ub4 OciHandleID<OCIStmt>::get_attr_id()	{std::cout << "Error:" << __TROTL_HERE__ << std::endl; return -1;}
 
   struct TROTL_EXPORT OciEnv;
 
@@ -118,7 +118,7 @@ namespace trotl {
       _envh = envh;
 
       sword res = OCICALL(OCIHandleAlloc(envh, (dvoid**)&_handle, OciHandleID<TYPE>::get_type_id(), 0, 0));
-      oci_check_error(__HERE__, envh, res);
+      oci_check_error(__TROTL_HERE__, envh, res);
     }
 
     void destroy()
@@ -127,7 +127,7 @@ namespace trotl {
       _handle = 0;
 
       if (_envh) {
-	oci_check_error(__HERE__, _envh, res);
+	oci_check_error(__TROTL_HERE__, _envh, res);
 	_envh = 0;
       }
     }
@@ -135,8 +135,8 @@ namespace trotl {
     void get_attribute(dvoid* attributep, ub4* sizep, ub4 attrtype, OCIError* errh)
     {
       sword res = OCICALL(OCIAttrGet(_handle, OciHandleID<TYPE>::get_type_id(), attributep, sizep, attrtype, errh));
-      //oci_check_error(__HERE__, _envh, res); //?? TODO I am not here which error handle should be used here
-      oci_check_error(__HERE__, errh, res);
+      //oci_check_error(__TROTL_HERE__, _envh, res); //?? TODO I am not here which error handle should be used here
+      oci_check_error(__TROTL_HERE__, errh, res);
     }
 
   protected:
@@ -213,7 +213,7 @@ namespace trotl {
 	destroy();
 
       sword res = OCICALL(OCIHandleAlloc(_env, (dvoid**)&_handle, OciHandleID<TYPE>::get_type_id(), 0, 0));
-      oci_check_error(__HERE__, _env, res);
+      oci_check_error(__TROTL_HERE__, _env, res);
     }
 
     void destroy()
@@ -221,37 +221,37 @@ namespace trotl {
       sword res = OCICALL(OCIHandleFree(_handle, OciHandleID<TYPE>::get_type_id()));
       _handle = 0;
 
-      oci_check_error(__HERE__, _env, res);
+      oci_check_error(__TROTL_HERE__, _env, res);
     }
 
     void set_attribute(ub4 attrtype, const tstring& str)
     {
       sword res = OCICALL(OCIAttrSet(_handle, OciHandleID<TYPE>::get_type_id(), (char*)str.c_str(), (ub4)str.length()*sizeof(char), attrtype, _env._errh));
-      oci_check_error(__HERE__, _env._errh, res);
+      oci_check_error(__TROTL_HERE__, _env._errh, res);
     }
 
     void set_attribute(ub4 attrtype, ub4 value)
     {
       sword res = OCICALL(OCIAttrSet(_handle, OciHandleID<TYPE>::get_type_id(), (OraText*)&value, (ub4)sizeof(value), attrtype, _env._errh));
-      oci_check_error(__HERE__, _env._errh, res);
+      oci_check_error(__TROTL_HERE__, _env._errh, res);
     }
 
     void get_attribute(dvoid* attributep, ub4* sizep, ub4 attrtype)
     {
       sword res = OCICALL(OCIAttrGet(_handle, OciHandleID<TYPE>::get_type_id(), attributep, sizep, attrtype, _env._errh));
-      oci_check_error(__HERE__, _env._errh, res);
+      oci_check_error(__TROTL_HERE__, _env._errh, res);
     }
 
     void set_attribute_handle(ub4 attrtype, void* handle)
     {
       sword res = OCICALL(OCIAttrSet(_handle, OciHandleID<TYPE>::get_type_id(), handle, 0, attrtype, _env._errh));
-      oci_check_error(__HERE__, _env._errh, res);
+      oci_check_error(__TROTL_HERE__, _env._errh, res);
     }
 
     template<typename ATTR> void set_attribute(ATTR& attr)
     {
       sword res = OCICALL(OCIAttrSet(_handle, OciHandleID<TYPE>::get_type_id(), attr, 0, ATTR::get_attr_id(), _env._errh));
-      oci_check_error(__HERE__, _env._errh, res);
+      oci_check_error(__TROTL_HERE__, _env._errh, res);
     }
 
     operator HandleType*() {return _handle;}
@@ -307,7 +307,7 @@ namespace trotl {
 		  _envh = envh;
 
 		  sword res = OCICALL(OCIDescriptorAlloc(envh, (dvoid**)&_descriptor, OciDescriptorID<TYPE,i>::get_descr_id(), 0, 0));
-		  oci_check_error(__HERE__, envh, res);
+		  oci_check_error(__TROTL_HERE__, envh, res);
 	  }
 
 	  void destroy()
@@ -316,7 +316,7 @@ namespace trotl {
 		  _descriptor = 0;
 
 		  if (_envh) {
-			  oci_check_error(__HERE__, _envh, res);
+			  oci_check_error(__TROTL_HERE__, _envh, res);
 			  _envh = 0;
 		  }
 	  }
@@ -339,7 +339,7 @@ namespace trotl {
 	  {
 		  sword res = OCICALL(OCIEnvCreate(&_handle, oci_mode, 0/*ctxp*/, 0, 0, 0, 0/*xtramem_sz*/, 0/*usrmempp*/));
 		  //std::cerr << "OCIEnvCreate:" << res << std::endl;
-		  oci_check_error(__HERE__, _handle, res);
+		  oci_check_error(__TROTL_HERE__, _handle, res);
 	  }
   };
 

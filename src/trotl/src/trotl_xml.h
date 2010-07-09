@@ -153,7 +153,7 @@ struct TROTL_EXPORT SqlXML : public SqlValue
 		xmldocnode *x = XmlLoadDom(xctx, &xerr, "file", f._filename.c_str(), NULL);
 		if(xerr)
 		{
-			throw OciException(__HERE__, "Error parsing XML %d\n").arg(xerr);
+			throw OciException(__TROTL_HERE__, "Error parsing XML %d\n").arg(xerr);
 		}
 		xml = (OCIXMLType*) x;
 	}
@@ -174,7 +174,7 @@ struct TROTL_EXPORT SqlXML : public SqlValue
 		xmldocnode *x = XmlLoadDom(xctx, &xerr, "uri", u._uri.c_str(), NULL);
 		if(xerr)
 		{
-			throw OciException(__HERE__, "Error parsing XML %d\n").arg(xerr);
+			throw OciException(__TROTL_HERE__, "Error parsing XML %d\n").arg(xerr);
 		}
 		xml = (OCIXMLType*) x;
 	}
@@ -183,7 +183,7 @@ struct TROTL_EXPORT SqlXML : public SqlValue
 	SqlXML(const SqlValue &value, OciConnection &conn): _conn(conn)
 	{
 		//_ind.set();
-		throw OciException(__HERE__, "Not implemented yet");
+		throw OciException(__TROTL_HERE__, "Not implemented yet");
 	}
 
 	tstring str() const;

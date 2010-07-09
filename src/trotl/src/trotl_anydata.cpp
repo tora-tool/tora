@@ -50,13 +50,13 @@ tstring BindParANYDATA::get_string(unsigned int row) const
 	OCIInd ind;
 	
 	sword res1 = OCICALL(OCIAnyDataIsNull(_stmt._conn._svc_ctx, _stmt._errh, _oan_buffer[row], &isNull));
-	oci_check_error(__HERE__, _stmt._errh, res1);
+	oci_check_error(__TROTL_HERE__, _stmt._errh, res1);
 	if(isNull) return "";
 	
 	sword res = OCICALL(OCIAnyDataGetType(_stmt._conn._svc_ctx,
 					      _stmt._errh, _oan_buffer[row],
 					      (OCITypeCode *)&tc, (OCIType **)&type));
-	oci_check_error(__HERE__, _stmt._errh, res);
+	oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 
 	switch (tc)
 	{
@@ -75,7 +75,7 @@ tstring BindParANYDATA::get_string(unsigned int row) const
 						      (OCIType *)0,
 						      (dvoid *)&ind,
 						      (dvoid **)&num_ptr, &len));
-		oci_check_error(__HERE__, _stmt._errh, res1);
+		oci_check_error(__TROTL_HERE__, _stmt._errh, res1);
 
 		const char fmt[]="99999999999999999999999999999999999999D90";
 		sword res2 = OCICALL(OCINumberToText(_stmt._errh,
@@ -87,7 +87,7 @@ tstring BindParANYDATA::get_string(unsigned int row) const
 						     (ub4*)&str_len,
 						     str_buf
 					     ));
-		oci_check_error(__HERE__, _env._errh, res2);
+		oci_check_error(__TROTL_HERE__, _env._errh, res2);
 
 		return tstring( (const char *)&str_buf[0], str_len);
 	}
@@ -100,7 +100,7 @@ tstring BindParANYDATA::get_string(unsigned int row) const
   		sword res1 = OCICALL(OCIAnyDataAccess(_stmt._conn._svc_ctx, _stmt._errh,
 						     _oan_buffer[row], (OCITypeCode)OCI_TYPECODE_VARCHAR2, 
 						     (OCIType *)0, (dvoid *)&indp, (dvoid *)&str, &len));
-		oci_check_error(__HERE__, _env._errh, res1);
+		oci_check_error(__TROTL_HERE__, _env._errh, res1);
 
 		return tstring( (const char *)OCIStringPtr(_stmt._env, str), OCIStringSize(_stmt._env, str));
 	}
@@ -204,7 +204,7 @@ tstring BindParANYDATA::get_string(unsigned int row) const
 // 		} 
 // 		break;
 		
- 	DEFAULT:
+ 	default:
  		printf("TYPED DATA CAN'T BE DISPLAYED IN THIS PROGRAM(%d)\n", tc);
  		break;
  	}
@@ -228,10 +228,10 @@ void BindParANYDATA::init(SqlStatement &stmt)
 			OCI_DURATION_SESSION, OCI_TYPEGET_ALL,
 			(OCIType**) &_anydatatdo
 	));
-	oci_check_error(__HERE__, _stmt._errh, res);
+	oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 
 	if(_anydatatdo == NULL)
-		throw OciException(__HERE__, "Unknown datatype in the database: SYS.ANYDATA");
+		throw OciException(__TROTL_HERE__, "Unknown datatype in the database: SYS.ANYDATA");
 
 	for(int i=0; i<g_OCIPL_BULK_ROWS; i++)
 	{
@@ -247,14 +247,14 @@ void BindParANYDATA::define_hook(SqlStatement &stmt)
  					    (ub4 *) 0,
  					    0, //(dvoid **) &_any_indp,
  					    (ub4 *) 0));
- 	oci_check_error(__HERE__, stmt._errh, res);
+ 	oci_check_error(__TROTL_HERE__, stmt._errh, res);
 // 	// TODO OCIDefineArrayOfStruct here ??
 }
 
 void BindParANYDATA::bind_hook(SqlStatement &stmt)
 {
 	//TODO
-	throw OciException(__HERE__, "Not implemented yet");
+	throw OciException(__TROTL_HERE__, "Not implemented yet");
 }
 
 tstring SqlANYDATA::str() const

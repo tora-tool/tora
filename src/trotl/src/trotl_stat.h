@@ -206,7 +206,7 @@ public:
 	{
 		_state &= ( UNINITIALIZED | PREPARED | DESCRIBED | DEFINED );
 		_in_pos = _out_pos = 0;
-		//get_log().ts( std::string(__HERE_SHORT__)) << "TODO: " << __HERE__ << std::endl;
+		//get_log().ts( std::string(__HERE_SHORT__)) << "TODO: " << __TROTL_HERE__ << std::endl;
 	};
 
 	SqlStatement& operator<< (const char *);
@@ -222,12 +222,12 @@ public:
 		} else {
 			BindPar &BP(get_next_in_bindpar());
 
-			throw OciException(__HERE__,"Misssing conversion(%s%d to %s%d)\n"
+			throw OciException(__TROTL_HERE__,"Misssing conversion(%s%d to %s%d)\n"
 					).arg(typeid(wrapped_type).name()).arg(sizeof(wrapped_type)).arg(BP.type_name).arg(BP.value_sz);
 
 			// Check type correctness
 			if(  BP.value_sz != sizeof(wrapped_type) || BP.type_name != typeid(wrapped_type).name() )
-				throw OciException(__HERE__, "Invalid datatype in bind operation(sizes: %s%d vs. %s%d)\n"
+				throw OciException(__TROTL_HERE__, "Invalid datatype in bind operation(sizes: %s%d vs. %s%d)\n"
 						).arg(typeid(wrapped_type).name()).arg(sizeof(wrapped_type)).arg(BP.type_name).arg(BP.value_sz);
 
 			// store value insite BindPar class
@@ -250,17 +250,17 @@ public:
 
 		// Check type correctness
 		if( BP.value_sz != sizeof(typename std::vector<wrapped_type>::value_type))
-			throw OciException(__HERE__, "Invalid datatype in bind operation(sizes: %d vs. %d)\n"
+			throw OciException(__TROTL_HERE__, "Invalid datatype in bind operation(sizes: %d vs. %d)\n"
 					).arg(sizeof(typename std::vector<wrapped_type>::value_type)).arg(BP.value_sz);
 
 		// Check bind datatypes
 		if( BP.dty != SQLT<wrapped_type>::value )
-			throw OciException(__HERE__, "Invalid datatype in bind operation(types: %d vs. %d)\n"
+			throw OciException(__TROTL_HERE__, "Invalid datatype in bind operation(types: %d vs. %d)\n"
 					).arg(SQLT<wrapped_type>::value).arg(BP.dty);
 
 		// Check vector size
 		if(BP._max_cnt < val.size())
-			throw OciException(__HERE__, "Input vector too long(%d vs. %d)"
+			throw OciException(__TROTL_HERE__, "Input vector too long(%d vs. %d)"
 					).arg(val.size()).arg(BP._max_cnt);
 
 		// store value inside BindPar class
@@ -291,7 +291,7 @@ public:
 		} else {
 			BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 
-			throw OciException(__HERE__, "Misssing conversion(%s%d to %s%d)\n"
+			throw OciException(__TROTL_HERE__, "Misssing conversion(%s%d to %s%d)\n"
 					).arg(typeid(wrapped_type).name()).arg(sizeof(wrapped_type)).arg(BP.type_name).arg(BP.value_sz);
 		}
 
@@ -303,7 +303,7 @@ public:
 	{
 		BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 
-		throw OciException(__HERE__, "unsupported vector conversion(%s%d to %s%d)\n"
+		throw OciException(__TROTL_HERE__, "unsupported vector conversion(%s%d to %s%d)\n"
 				).arg(typeid(wrapped_type).name()).arg(sizeof(wrapped_type)).arg(BP.type_name).arg(BP.value_sz);
 
 		return *this;

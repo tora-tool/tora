@@ -107,7 +107,7 @@ public:
 //	{
 //		throw_ocipl_exception(
 //				OciException(
-//						__HERE__,
+//						__TROTL_HERE__,
 //						"Invalid datatype in conversion(BindParVarchar to %d%s)\n"
 //				).arg(sizeof(return_type)).arg(typeid(return_type).name())
 //		);
@@ -176,7 +176,7 @@ public:
 	template<class return_type>
 	return_type get_number(unsigned int row) const
 	{
-		throw OciException(__HERE__, "Invalid datatype in conversion(BindParChar to %d%s)\n"
+		throw OciException(__TROTL_HERE__, "Invalid datatype in conversion(BindParChar to %d%s)\n"
 				).arg(sizeof(return_type)).arg(typeid(return_type).name());
 //		return (return_type)0;
 	}
@@ -243,7 +243,7 @@ public:
 	template<class return_type>
 	return_type get_number(unsigned int row) const
 	{
-		throw OciException(__HERE__, "Invalid datatype in conversion(BindParRaw to %d%s)\n"
+		throw OciException(__TROTL_HERE__, "Invalid datatype in conversion(BindParRaw to %d%s)\n"
 				).arg(sizeof(return_type)).arg(typeid(return_type).name());
 		return (return_type)0;
 	}
