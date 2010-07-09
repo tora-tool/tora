@@ -55,6 +55,7 @@
 #include <QMenu>
 #include <QAction>
 
+// Constant values are taken from Oracle DBMS_DEBUG package.
 #define TO_SUCCESS  0
 #define TO_NO_SUCH_BREAKPOINT 13
 #define TO_ERROR_NO_DEBUG_INFO  2
@@ -185,6 +186,7 @@ class toDebug : public toToolWidget
     toSemaphore  TargetSemaphore; // This semaphore is down when target is waiting
     toSemaphore  ChildSemaphore; // This semaphore is down when main debug session is waiting
     toThread    *TargetThread;
+    toQuery      *TargetQuery; // Session running target, used in main thread to cancel target
     QString      TargetSQL; // Variable used to pass on SQL which has to be executed in target session
     bool         DebugTarget; // Does target session has to go into debug mode before executing statement?
     QString      TargetLog; // Accumulates strings (logs) of debugger actions
@@ -197,8 +199,13 @@ class toDebug : public toToolWidget
     // Can be read after thread startup
     QString      TargetID; // oracle debug id of "target session"
     // End of lock stuff
-    toTimer      StartTimer;
+    // TS 2010-07-08 Timer was used to initialise target session some time after launching
+    // debugger tool. From now on target session is only initialised when actually needed.
+    //toTimer      StartTimer;
 
+    // set to true when stopping after user pressed button "stop" (or have chosen
+    // to compile while running, which means debugger will stop and then compile)
+    bool manualStopping;
     // This bool is used as a workaround for a problem when toConnection::closeWidgets
     // is calling close() twice. This variable would make it possible to skip closing
     // actions when called for the second time (TODO: should be fixed properly in toconnection.cpp)
@@ -280,8 +287,9 @@ public:
     // all calls of DBMS_DEBUG should be done from this session as
     // this specific session has target session attached.
 
-    void executeInTarget(const QString &, toQList &params);
-    void executeInTargetNoDebug(const QString &);
+    // TS 2010-07-10 These functions are not used anymore
+    //void executeInTarget(const QString &, toQList &params);
+    //void executeInTargetNoDebug(const QString &);
 
     QString checkWatch(const QString &name);
 

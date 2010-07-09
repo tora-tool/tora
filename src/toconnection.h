@@ -527,7 +527,7 @@ Q_DECLARE_METATYPE(toQDescList);
 
 
 /** Represent a database connection in TOra. Observe that this can mean several actual
- * connections to the database as queries that ae expected to run a long time are sometimes
+ * connections to the database as queries that are expected to run a long time are sometimes
  * executed in their own connection to make sure the interface doesn't lock up for a long time.
  */
 class toConnection : public QObject
@@ -624,7 +624,7 @@ public:
         bool operator == (const objectName &) const;
     };
 
-    /** This class is an abstract baseclass to actually implement the comunication with the
+    /** This class is an abstract baseclass to actually implement the communication with the
      * database.
      * (See also @ref toQuery::queryImpl and @ref toConnectionProvider)
      */
