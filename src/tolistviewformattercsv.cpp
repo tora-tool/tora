@@ -93,7 +93,7 @@ QString toListViewFormatterCSV::getFormattedString(toExportSettings &settings,
 
     if (settings.columnsHeader)
     {
-        for (int j = 0; j < columns; j++)
+        for (int j = (settings.rowsHeader ? 0 : 1); j < columns; j++)
         {
             if (settings.columnsExport == toExportSettings::ColumnsSelected && !clist.contains(j))
                 continue;
