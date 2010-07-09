@@ -185,6 +185,7 @@ public:
 		virtual void cancel(void)
 		{
 			_conn->cancel();
+			get_log(0).ts<toDecorator>( __HERE__) << "oracleSub::cancel(this=" << _conn << ")" << std::endl; 
 		}
 
 		virtual void throwExtendedException(toConnection &conn, const ::trotl::OciException &exc)
@@ -262,7 +263,7 @@ public:
 
 				if(BP.is_null(_last_buff_row)) {
 					value = toQValue();
-					get_log(0).ts<toDecorator>( __HERE__) << "Just read: NULL" << std::endl;
+					get_log(4).ts<toDecorator>( __HERE__) << "Just read: NULL" << std::endl;
 				} else {
 					switch(BP.dty) {
 					case SQLT_NUM:
@@ -272,27 +273,46 @@ public:
 						boolean isint;
 						res = OCINumberIsInt(_errh, vnu, &isint);
 						oci_check_error(__HERE__, _errh, res);
-						if(isint)
+						try
 						{
-							long long i;						
-							res = OCINumberToInt(_errh, 
-									     vnu,
-									     sizeof(long long),
-									     OCI_NUMBER_SIGNED,
-									     &i);
-							oci_check_error(__HERE__, _errh, res);
-							value = toQValue(i);
-							get_log(0).ts<toDecorator>( __HERE__) << "Just read: " << i << std::endl;
-						} else {
-							double d;
-							sword res = OCINumberToReal(_errh,
+							if(isint)
+							{
+								long long i;						
+								res = OCINumberToInt(_errh, 
+										     vnu,
+										     sizeof(long long),
+										     OCI_NUMBER_SIGNED,
+										     &i);
+								oci_check_error(__HERE__, _errh, res);
+								value = toQValue(i);
+								get_log(4).ts<toDecorator>( __HERE__) << "Just read: " << i << std::endl;
+							} else {
+								double d;
+								sword res = OCINumberToReal(_errh,
+											    vnu,
+											    sizeof(double),
+											    &d);
+								oci_check_error(__HERE__, _errh, res);
+								value = toQValue(d);
+								get_log(4).ts<toDecorator>( __HERE__) << "Just read: " << d << std::endl;
+							}
+						} catch(const ::trotl::OciException &e) {
+							text str_buf[65];
+							ub4 str_len = sizeof(str_buf) / sizeof(*str_buf);
+							//const char fmt[]="99999999999999999999999999999999999999D00000000000000000000";
+							const char fmt[]="TM";
+							sword res = OCINumberToText(_errh,
 										    vnu,
-										    sizeof(double),
-										    &d);
-							oci_check_error(__HERE__, _errh, res);
-							value = toQValue(d);
-							get_log(0).ts<toDecorator>( __HERE__) << "Just read: " << d << std::endl;
-						}
+										    (const oratext*)fmt,
+										    sizeof(fmt) -1,
+										    0, // CONST OraText *nls_params,
+										    0, // ub4 nls_p_length,
+										    (ub4*)&str_len,
+										    str_buf );
+							oci_check_error(__HERE__, _env._errh, res);
+							str_buf[str_len+1] = '\0';
+							value = toQValue(QString((const char*)str_buf));
+						}							
 					}
 						break;
 #ifdef ORACLE_HAS_XML
@@ -302,11 +322,11 @@ public:
 						if((xmlnode*)bpx->_xmlvaluep[_last_buff_row] == NULL)
 						{
 							value = toQValue();
-							get_log(0).ts<toDecorator>( __HERE__) << "Just read: NULL XML" << std::endl; 
+							get_log(4).ts<toDecorator>( __HERE__) << "Just read: NULL XML" << std::endl; 
 						} else {
 							std::string s(BP.get_string(_last_buff_row));
 							value = toQValue(QString(s.c_str()));
-							get_log(0).ts<toDecorator>( __HERE__) << "Just read: \"" << s << "\"" << std::endl; 
+							get_log(4).ts<toDecorator>( __HERE__) << "Just read: \"" << s << "\"" << std::endl; 
 						}
 					}
 						break;
@@ -322,7 +342,7 @@ public:
 					default:
 						std::string s(BP.get_string(_last_buff_row));
 						value = toQValue(QString(s.c_str()));
-						get_log(0).ts<toDecorator>( __HERE__) << "Just read: \"" << s << "\"" << std::endl;
+						get_log(4).ts<toDecorator>( __HERE__) << "Just read: \"" << s << "\"" << std::endl;
 					}
 				}
 				
@@ -369,17 +389,21 @@ public:
 		virtual bool eof(void)
 		{
 			if (!Query || Cancel) {
-				get_log(0).ts<toDecorator>( __HERE__) << "eof - (1) true" << std::endl;
+				get_log(0).ts<toDecorator>( __HERE__) << "eof - on canceled query" << std::endl;
 				return true;
 			}
 			try {
 				bool e = Query->eof();
-				get_log(0).ts<toDecorator>( __HERE__) << "eof - (2) " << Query->row_count() << '\t' << e << std::endl;
+				if(e)
+				{
+					Running = false;
+					get_log(0).ts<toDecorator>( __HERE__) << "eof(" << Query->row_count() << ')' << std::endl;
+				}
 				return e; //Query->eof();
 			}
 			catch (const ::trotl::OciException &exc)
 			{
-			        get_log(0).ts<toDecorator>( __HERE__) << "eof - (e) true" << std::endl;
+				get_log(0).ts<toDecorator>( __HERE__) << "eof(e) - " << exc.what() << std::endl;
 				if(query())
 				{
 					oracleSub *conn = dynamic_cast<oracleSub *>(query()->connectionSub());
@@ -392,13 +416,14 @@ public:
 
 		virtual int rowsProcessed(void)
 		{
-			get_log(0).ts<toDecorator>( __HERE__) << "TODO: rowsProcessed A:" << std::endl;
-
 			if (!Query)
+			{
+				get_log(0).ts<toDecorator>( __HERE__) << "rowsProcessed() - non-query" << std::endl;
 				return 0;
+			}
 			//return Query->get_last_row(); ????
 			unsigned i = Query->get_last_row();
-			get_log(0).ts<toDecorator>( __HERE__) << "TODO: rowsProcessed B: " << i << std::endl;
+			get_log(0).ts<toDecorator>( __HERE__) << "rowsProcessed(" << i << ")" << std::endl;
 			return i;
 		}
 
@@ -406,7 +431,7 @@ public:
 		{
 			//int descriptionLen;
 			//Query->describe_select(descriptionLen);
-			get_log(0).ts<toDecorator>( __HERE__) << "TODO: columns:" << Query->get_column_count() << std::endl;
+			get_log(0).ts<toDecorator>( __HERE__) << "columns(" << Query->get_column_count() << ")" << std::endl;
 			return Query->get_column_count();
 		}
 
@@ -967,8 +992,6 @@ static toOracleProvider OracleProvider;
 
 void toOracleProvider::oracleQuery::execute(void)
 {
-	get_log(0).ts<toDecorator>( __HERE__) << std::endl;
-
 	oracleSub *conn = dynamic_cast<oracleSub *>(query()->connectionSub());
 	if (!conn)
 		throw QString::fromLatin1("Internal error, not oracle sub connection");
@@ -984,11 +1007,10 @@ void toOracleProvider::oracleQuery::execute(void)
 		QRegExp stripnl("\r");
 		QString sql = this->query()->sql();
 		sql.replace(stripnl, "");
-
-		get_log(0).ts<toDecorator>( __HERE__) << "SQL:" << ::std::string(sql.toUtf8().constData()) << std::endl;
-
+		
 		//Query = new oracleQuery::oracleSqlStatement(*conn->_conn, sql.toUtf8().constData());
 		Query = new oracleQuery::trotlQuery(*conn->_conn, ::std::string(sql.toUtf8().constData()));
+		get_log(0).ts<toDecorator>( __HERE__) << "SQL(conn=" << conn->_conn << ", this=" << Query << "): " << ::std::string(sql.toUtf8().constData()) << std::endl;
 		// TODO autocommit ??
 		// Query->set_commit(0);
 		//if (toQValue::numberFormat() == 0)
@@ -1019,20 +1041,20 @@ void toOracleProvider::oracleQuery::execute(void)
 			if( bp.bind_typename == "int" /*&& (*i).isInt()*/ ) {
 				(*Query) << (*i).toInt();
 				get_log(0).ts<toDecorator>( __HERE__)
-					<< "VERY VERY TODO: bind param(i):'"
-					<< bp.bind_name << "'\t"
-					<< (*i).toInt() << " of:" << query()->params().size() << std::endl;
+					<< "<<(conn=" << conn->_conn << ", this=" << Query << ")"
+					<< "::operator<<(" << bp.type_name << " ftype=" << bp.dty
+					<< ", placeholder=" << bp.bind_name
+					<< ", value=" << (*i).toInt() << ");"
+					<< "\t of:" << query()->params().size() << std::endl;
 			} else if( (bp.bind_typename == "char" || bp.bind_typename == "varchar") && (*i).isString()) {
 				std::string param((const char*)((*i).toString().toUtf8().constData()));
+				(*Query) << ::std::string((const char*)((*i).toString().toUtf8().constData()));
 				get_log(0).ts<toDecorator>( __HERE__)
-					<< "VERY VERY TODO: bind param(s):'"
-					<< bp.bind_name << "'\t"
-					<< param << " of:" << query()->params().size() << std::endl;
-
-			        (*Query) << ::std::string((const char*)((*i).toString().toUtf8().constData()));
-				get_log(0).ts<toDecorator>( __HERE__)
-					<< "VERY VERY TODO: bind param:"
-					<< ::std::string((const char*)((*i).toString().toUtf8().constData())) << std::endl;
+					<< "<<(conn=" << conn->_conn << ", this=" << Query << ")"
+					<< "::operator<<(" << bp.type_name << " ftype=" << bp.dty
+					<< ", placeholder=" << bp.bind_name
+					<< ", value=" << ::std::string((const char*)((*i).toString().toUtf8().constData())) << ");"
+					<< "\t of:" << query()->params().size() << std::endl;
 			} else {
 				std::cerr << "Fatal pruser error - unsupported BindPar:" << std::endl;
 				throw toConnection::exception(
@@ -1093,10 +1115,11 @@ void toOracleProvider::oracleQuery::execute(void)
 			*/
 		}
 
-		Running = false;
+		//Running = false;
 	}
 	catch (const ::trotl::OciException &exc)
 	{
+		conn->_conn->reset();
 		delete Query;
 		Query = NULL;
 
@@ -1107,15 +1130,21 @@ void toOracleProvider::oracleQuery::execute(void)
 
 void toOracleProvider::oracleQuery::cancel(void)
 {
-	if(!Running || Cancel)
-		return;
-
 	oracleSub *conn = dynamic_cast<oracleSub *>(query()->connectionSub());
+	if(!Running || Cancel)
+	{
+		get_log(0).ts<toDecorator>( __HERE__) << ":oracleQuery::cancel(conn=" << conn->_conn << ", this=" << Query << ") on non-running query" << std::endl;	
+		return;
+	}
+	
 	if (!conn)
 		throw QString::fromLatin1("Internal error, not oracle sub connection");
 
 	conn->_conn->cancel();
+	conn->_conn->reset();
 	Cancel = true;
+	Running = false;
+	get_log(0).ts<toDecorator>( __HERE__) << ":oracleQuery::cancel(conn=" << conn->_conn << ", this=" << Query << ")" << std::endl;
 }
 
 
