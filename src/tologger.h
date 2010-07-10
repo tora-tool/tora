@@ -11,6 +11,7 @@
 #include "ts_log/ts_log_utils.h"
 #include "ts_log/decorator.h"
 #include <iostream>
+#include <QString>
 #include <boost/iostreams/device/null.hpp>
 #include <boost/iostreams/stream.hpp>
 using namespace boost;
@@ -96,6 +97,7 @@ inline thread_safe_log get_log( int idxLog)
 
 #include "ts_log/ts_log_utils.h"
 #include "ts_log/decorator.h"
+#include <QString>
 
 class NullLogger;
 
