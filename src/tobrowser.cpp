@@ -1716,10 +1716,10 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
             SIGNAL(selectionChanged()),
             this,
             SLOT(changeItem()));
-    connect(dblinkView,
-            SIGNAL(displayMenu(QMenu *)),
-            this,
-            SLOT(displayIndexMenu(QMenu *)));
+//     connect(dblinkView,
+//             SIGNAL(displayMenu(QMenu *)),
+//             this,
+//             SLOT(displayIndexMenu(QMenu *)));
 
     dblinkWidget->resize(FIRST_WIDTH, dblinkView->height());
     dblinkSplitter->setStretchFactor(dblinkSplitter->indexOf(dblinkView), 0);
@@ -1753,10 +1753,10 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
             SIGNAL(selectionChanged()),
             this,
             SLOT(changeItem()));
-    connect(directoriesView,
-            SIGNAL(displayMenu(QMenu *)),
-            this,
-            SLOT(displayIndexMenu(QMenu *)));
+//     connect(directoriesView,
+//             SIGNAL(displayMenu(QMenu *)),
+//             this,
+//             SLOT(displayIndexMenu(QMenu *)));
 
     directoriesWidget->resize(FIRST_WIDTH, directoriesView->height());
     directoriesSplitter->setStretchFactor(directoriesSplitter->indexOf(directoriesView), 0);
