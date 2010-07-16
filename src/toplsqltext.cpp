@@ -791,7 +791,7 @@ bool toPLSQLText::editSave(bool askfile)
             if (other_part == NULL)
             {
                 // other part of package could not be found. Panic!
-                printf("Other part of package is unknown!!!\n");
+                toStatusMessage(qApp->translate("toPLSQLText", "Other part of a package was not found!!!\nNothing will be saved to file."));
                 return false;
             }
 
@@ -799,14 +799,14 @@ bool toPLSQLText::editSave(bool askfile)
             // save specification first
             if (Type == "PACKAGE")
             {
-                if (!toWriteFile(fn, create_statement + text() + "\n/\n" +
-                                 create_statement + other_part->text() + "\n/\n"))
+                if (!toWriteFile(fn, create_statement + text() + "\n" +
+                                 create_statement + other_part->text() + "\n"))
                     return false;
             }
             else
             {
-                if (!toWriteFile(fn, create_statement + other_part->text() + "\n/\n" +
-                                 create_statement + text() + "\n/\n"))
+                if (!toWriteFile(fn, create_statement + other_part->text() + "\n" +
+                                 create_statement + text() + "\n"))
                     return false;
             }
             toMainWidget()->addRecentFile(fn);
