@@ -761,7 +761,7 @@ public:
 				TLOG(1,toDecorator,__HERE__) << "	Ignored exception." << std::endl;
 				// Ignore any errors here
 			}
-			return QString::QString();
+			return QString();
 		}
 
 		virtual toQuery::queryImpl *createQuery(toQuery *query, toConnectionSub *sub)

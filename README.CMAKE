@@ -9,6 +9,11 @@ cmake [options] build_dir
 where "build_dir" can be e.g.: . for TOra source root directory
 or manually created directory to keep build files out of SVN copy.
 
+Make targets:
+ * make
+ * make install
+ * make dist
+
 Options:
 
 Cmake installs TOra into /usr/local as default. You can change it

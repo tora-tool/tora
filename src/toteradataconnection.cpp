@@ -1441,7 +1441,7 @@ public:
             {
                 // Ignore any errors here
             }
-            return QString::QString();
+            return QString();
         }
 
         virtual toQuery::queryImpl *createQuery(toQuery *query, toConnectionSub *sub)
