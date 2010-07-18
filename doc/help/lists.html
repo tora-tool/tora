@@ -10,7 +10,7 @@
 <link rel="next" href="charts.html#charts" title="charts">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <!--
-This manual is for TOra, version 2.1.2+.-->
+This manual is for TOra, version 2.1.3+.-->
 <meta http-equiv="Content-Style-Type" content="text/css">
 <style type="text/css"><!--
   pre.display { font-family:inherit }
@@ -65,6 +65,26 @@ You can also use the <strong>right</strong> key to expand child items and <stron
    <p>If the contents is too long to be visible in the list you will get a tooltip with all of the contents if you place the mouse over the field for a short while (As seen in the screenshot). If this is not enough you can display the contents of a field in a separate window by accessing the context menu of the field and selecting <strong>display in editor</strong>.
 
    <p>You can also place a line in the bind parameter(see <a href="gettingbindparameters.html#gettingbindparameters">gettingbindparameters</a>) cache by double clicking on a line. The bind name will be the same as the column name in lowercase.
+
+<h4 class="subheading">Exporting the contents of a list</h4>
+
+<p>Contents of a list can be exported by choosing an "Export to file..." item from a context menu. This will give you a following dialog:
+
+   <div class="block-image"><img src="images/exporttofile.png" alt="images/exporttofile.png"></div>
+
+   <p>TOra allows you to export data in a number of formats:
+
+     <ul>
+<li><strong>Text</strong> - simple text file will be created with values in different columns separated by a required number of spaces. 
+<li><strong>Tab delimited</strong> - same as text just columns will be separated with a tab character. 
+<li><strong>CSV</strong> - values will be exported with a specified separator used. 
+<li><strong>Html</strong> - a html file be created with a single table containing values of a list. 
+<li><strong>SQL</strong> - a sql file will be created containing insert statements for values chosen. 
+</ul>
+
+   <p>Please note that this functionality can be called from schema browser as well as from a sql worksheet tool. When exporting to sql file, only calling from schema browser tool will produce an insert statements with a correct table name. SQL Worksheet does not now exactly data of which table you're exporting (you could be exporting from a number of tables) therefore TOra will put "tablename" instead of actual name of table when exporting from SQL worksheet. Do not forget to update it in resulting sql file!
+
+   <p>Case of keywords in insert statement can be controlled via configuration option "Keywords upper" found in editore preferences.
 
 <h4 class="subheading">Other list functionality</h4>
 
