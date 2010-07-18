@@ -69,8 +69,8 @@ toListViewFormatterSQL::~toListViewFormatterSQL()
 
 
 QString toListViewFormatterSQL::getFormattedString(toExportSettings &settings,
-                                       //const toResultModel *model);
-                                       const QAbstractItemModel * model)
+        //const toResultModel *model);
+        const QAbstractItemModel * model)
 {
     int     columns   = model->columnCount();
     int     rows      = model->rowCount();
@@ -78,24 +78,44 @@ QString toListViewFormatterSQL::getFormattedString(toExportSettings &settings,
     QVector<int> rlist = selectedRows(settings.selected);
     QVector<int> clist = selectedColumns(settings.selected);
 
-    QString sql("INSERT INTO tablename %1 VALUES (%2);");
+    QString sql;
+    QString objectName;
     QString columnNames;
     QString output;
 
+    if (toConfigurationSingle::Instance().keywordUpper())
+        sql = "INSERT INTO %1%2 VALUES (%3);";
+    else
+        sql = "insert into %1%2 values (%3);";
+
+    if (!settings.objectName.isEmpty())
+    {
+        if (!settings.owner.isEmpty())
+            objectName = settings.owner + "." + settings.objectName;
+        else
+            objectName = settings.objectName;
+    }
+    else
+    {
+        // If name of object is unknown (which shouldn't be the case)
+        // fall back to "general" name for object.
+        objectName = "tablename";
+    }
+
     if (settings.columnsHeader)
     {
-        columnNames += "(";
+        columnNames += " (";
         for (int j = 1; j < columns; j++)
         {
             if (settings.columnsExport == toExportSettings::ColumnsSelected && !clist.contains(j))
                 continue;
             columnNames += model->headerData(
-                                          j,
-                                          Qt::Horizontal,
-                                          Qt::DisplayRole).toString();
+                               j,
+                               Qt::Horizontal,
+                               Qt::DisplayRole).toString();
             columnNames += ", ";
         }
-        columnNames = columnNames.left(columnNames.length()-2) + ")";
+        columnNames = columnNames.left(columnNames.length() - 2) + ")";
     }
 
     const toResultModel *resultModel = reinterpret_cast<const toResultModel*>(model);
@@ -119,7 +139,7 @@ QString toListViewFormatterSQL::getFormattedString(toExportSettings &settings,
 
             mi = model->index(row, i);
             QString currVal(model->data(mi, Qt::EditRole).toString());
-            
+
             QString h(hdr.at(i).datatype.toUpper());
             if (h.contains("DATE"))
             {
@@ -127,18 +147,18 @@ QString toListViewFormatterSQL::getFormattedString(toExportSettings &settings,
                     values += "NULL";
                 else
                 {
-                    values += "TO_DATE(" + currVal + ",\'" + toConfigurationSingle::Instance().dateFormat() + "\')";
+                    values += "TO_DATE(\'" + currVal + "\' ,\'" + toConfigurationSingle::Instance().dateFormat() + "\')";
                 }
             }
             else if (h.contains("CHAR"))
                 values += (currVal.isEmpty()) ? "NULL" : "\'" + currVal + "\'";
             else
                 values += (currVal.isEmpty()) ? "NULL" : currVal;
-            
+
             values += ", ";
         }
-        values = values.left(values.length()-2);
-        QString line(sql.arg(columnNames).arg(values));
+        values = values.left(values.length() - 2);
+        QString line(sql.arg(objectName).arg(columnNames).arg(values));
         endLine(line);
         output += line;
     }

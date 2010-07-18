@@ -85,8 +85,8 @@ class toResultTableViewEdit : public toResultTableView
     // this is a fifo -- don't sort or insert. just append.
     QList<struct ChangeSet> Changes;
 
-    QString Owner;
-    QString Table;
+    //QString Owner; // defined in parent - toResultTableView
+    //QString Table; // defined in parent - toResultTableView
 
     void commitDelete(ChangeSet &change, toConnection &conn);
     void commitAdd(ChangeSet &change, toConnection &conn);

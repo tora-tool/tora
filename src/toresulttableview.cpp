@@ -2,39 +2,39 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2008 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries. 
- * 
+ *      these libraries.
+ *
  *      You may link this product with any GPL'd Qt library.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -70,18 +70,18 @@
 toResultTableView::toResultTableView(QWidget * parent)
     : QTableView(parent),
       toResult(),
-    toEditWidget(false,       // open
-              true,        // save
-              true,        // print
-              false,       // undo
-              false,       // redo
-              false,       // cut
-              true,        // copy
-              false,       // past
-              true,        // search
-              true,        // selectall
-              false),      // readall
-    Model(NULL)
+      toEditWidget(false,       // open
+                   true,        // save
+                   true,        // print
+                   false,       // undo
+                   false,       // redo
+                   false,       // cut
+                   true,        // copy
+                   false,       // past
+                   true,        // search
+                   true,        // selectall
+                   false),      // readall
+      Model(NULL)
 {
     setObjectName("toResultTableView");
     setup(true, false, false);
@@ -92,20 +92,20 @@ toResultTableView::toResultTableView(bool readable,
                                      QWidget *parent,
                                      const char *name,
                                      bool editable)
-        : QTableView(parent),
-        toResult(),
-        toEditWidget(false,       // open
-                     true,        // save
-                     true,        // print
-                     false,       // undo
-                     false,       // redo
-                     false,       // cut
-                     true,        // copy
-                     false,       // past
-                     true,        // search
-                     true,        // selectall
-                     false),      // readall
-        Model(NULL)
+    : QTableView(parent),
+      toResult(),
+      toEditWidget(false,       // open
+                   true,        // save
+                   true,        // print
+                   false,       // undo
+                   false,       // redo
+                   false,       // cut
+                   true,        // copy
+                   false,       // past
+                   true,        // search
+                   true,        // selectall
+                   false),      // readall
+      Model(NULL)
 {
     if (name)
         setObjectName(name);
@@ -185,7 +185,6 @@ toResultTableView::~toResultTableView()
         delete Filter;
     Filter = 0;
 }
-
 
 void toResultTableView::query(const QString &sql, const toQList &param)
 {
@@ -301,12 +300,14 @@ int toResultTableView::sizeHintForRow(int row) const
 
 void toResultTableView::paintEvent(QPaintEvent *event)
 {
-    if(!Ready) {
+    if(!Ready)
+    {
         Working->setGeometry(this->viewport()->frameGeometry());
         Working->show();
         event->ignore();
     }
-    else {
+    else
+    {
         Working->hide();
         QTableView::paintEvent(event);
     }
@@ -315,20 +316,20 @@ void toResultTableView::paintEvent(QPaintEvent *event)
 
 void toResultTableView::resizeEvent(QResizeEvent *event)
 {
-	if(VisibleColumns == 1 && ReadableColumns)
-		setColumnWidth(1, viewport()->width());
-	QTableView::resizeEvent(event);
+    if(VisibleColumns == 1 && ReadableColumns)
+        setColumnWidth(1, viewport()->width());
+    QTableView::resizeEvent(event);
 }
 
 
 void toResultTableView::keyPressEvent(QKeyEvent * event)
 {
-	if (event->matches(QKeySequence::Copy))
-	{
-		editCopy();
-		return;
-	}
-	QTableView::keyPressEvent(event);
+    if (event->matches(QKeySequence::Copy))
+    {
+        editCopy();
+        return;
+    }
+    QTableView::keyPressEvent(event);
 }
 
 
@@ -360,8 +361,8 @@ void toResultTableView::applyColumnRules()
 
     resizeColumnsToContents();
 
-	if (VisibleColumns == 1 && ReadableColumns)
-		setColumnWidth(1, viewport()->width());
+    if (VisibleColumns == 1 && ReadableColumns)
+        setColumnWidth(1, viewport()->width());
 }
 
 
@@ -688,6 +689,8 @@ QString toResultTableView::exportAsText(toExportSettings settings)
 
     std::auto_ptr<toListViewFormatter> pFormatter(
         toListViewFormatterFactory::Instance().CreateObject(settings.type));
+    settings.owner = Owner;
+    settings.objectName = Table;
     return pFormatter->getFormattedString(settings, model());
 }
 

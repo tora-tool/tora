@@ -2,39 +2,39 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2008 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries. 
- * 
+ *      these libraries.
+ *
  *      You may link this product with any GPL'd Qt library.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -153,7 +153,7 @@ int toResultViewMLine::realWidth(const QFontMetrics &fm, const toTreeWidget *top
     QString t = text(column);
     if (t.isNull())
         t = txt;
-    return std::min(TextWidth(fm, t), MaxColDisp) + top->itemMargin()*2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
+    return std::min(TextWidth(fm, t), MaxColDisp) + top->itemMargin() * 2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
 }
 
 QString toResultViewItem::firstText(int col) const
@@ -187,7 +187,7 @@ int toResultViewItem::realWidth(const QFontMetrics &fm, const toTreeWidget *top,
     if (t.isNull())
         t = txt;
     QRect bounds = fm.boundingRect(t);
-    return std::min(bounds.width(), MaxColDisp) + top->itemMargin()*2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
+    return std::min(bounds.width(), MaxColDisp) + top->itemMargin() * 2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
 }
 
 void toResultViewItem::paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align)
@@ -227,7 +227,7 @@ void toResultViewItem::setText(int col, const QString &txt)
             int ns = (col + ALLOC_SIZE) / ALLOC_SIZE * ALLOC_SIZE;
             keyData *nd = new keyData[ns];
             int i;
-            for (i = 0;i < ColumnCount;i++)
+            for (i = 0; i < ColumnCount; i++)
                 nd[i] = ColumnData[i];
             while (i < ns)
             {
@@ -280,8 +280,8 @@ void toResultViewItem::setText(int col, const toQValue &text)
 }
 
 toResultViewCheck::toResultViewCheck(toTreeWidget *parent, toTreeWidgetItem *after, const QString &text, toTreeWidgetCheck::Type type)
-        :
-        toTreeWidgetCheck(parent, after, QString::null, type)
+    :
+    toTreeWidgetCheck(parent, after, QString::null, type)
 {
     ColumnData = NULL;
     ColumnCount = 0;
@@ -290,8 +290,8 @@ toResultViewCheck::toResultViewCheck(toTreeWidget *parent, toTreeWidgetItem *aft
 }
 
 toResultViewCheck::toResultViewCheck(toTreeWidgetItem *parent, toTreeWidgetItem *after, const QString &text, toTreeWidgetCheck::Type type)
-        :
-        toTreeWidgetCheck(parent, after, QString::null, type)
+    :
+    toTreeWidgetCheck(parent, after, QString::null, type)
 {
     ColumnData = NULL;
     ColumnCount = 0;
@@ -308,7 +308,7 @@ void toResultViewCheck::setText(int col, const QString &txt)
             int ns = (col + ALLOC_SIZE) / ALLOC_SIZE * ALLOC_SIZE;
             keyData *nd = new keyData[ns];
             int i;
-            for (i = 0;i < ColumnCount;i++)
+            for (i = 0; i < ColumnCount; i++)
                 nd[i] = ColumnData[i];
             while (i < ns)
             {
@@ -464,11 +464,11 @@ QString toResultViewCheck::firstText(int col) const
 }
 
 toListView::toListView(QWidget *parent, const char *name, Qt::WFlags f)
-        : toTreeWidget(parent, name, f),
-        toEditWidget(false, true, true,
-                     false, false,
-                     false, false, false,
-                     true, true, false)
+    : toTreeWidget(parent, name, f),
+      toEditWidget(false, true, true,
+                   false, false,
+                   false, false, false,
+                   true, true, false)
 {
     setTreeStepSize(15);
     setSelectionMode(Extended);
@@ -511,7 +511,7 @@ void toListView::contentsMouseDoubleClickEvent(QMouseEvent *e)
         clip->setText(item->text(col));
 
     Q3Header *head = header();
-    for (int i = 0;i < columns();i++)
+    for (int i = 0; i < columns(); i++)
     {
         QString str;
         if (resItem)
@@ -622,7 +622,7 @@ toTreeWidgetItem *toListView::printPage(TOPrinter *printer, QPainter *painter, t
     font.setPointSizeFloat(font.pointSizeFloat() / std::max(wpscalex, wpscaley));
     painter->setFont(font);
 
-    for (int i = column;i < columns();i++)
+    for (int i = column; i < columns(); i++)
     {
         double width = columnWidth(i);
         if (width + x >= mwidth)
@@ -653,7 +653,7 @@ toTreeWidgetItem *toListView::printPage(TOPrinter *printer, QPainter *painter, t
         else
             x = 0;
         painter->translate(x, 0);
-        for (int i = column;i < columns();i++)
+        for (int i = column; i < columns(); i++)
         {
             double width = columnWidth(i);
             if (width + x >= mwidth)
@@ -740,10 +740,10 @@ void toListView::editPrint(void)
     if (printer.setup())
     {
         QList<int> pages;
-        for (int i = printer.fromPage();i <= printer.toPage() || (printer.toPage() == 0 && i < page);i++)
+        for (int i = printer.fromPage(); i <= printer.toPage() || (printer.toPage() == 0 && i < page); i++)
             pages += i;
 
-        for (QList<int>::iterator pageit = pages.begin();pageit != pages.end();pageit++)
+        for (QList<int>::iterator pageit = pages.begin(); pageit != pages.end(); pageit++)
         {
             page = *pageit;
             item = PageItems[page];
@@ -926,7 +926,7 @@ bool toListView::searchNext(const QString & text)
             first = true;
         else
         {
-            for (int i = 0;i < columns();i++)
+            for (int i = 0; i < columns(); i++)
             {
                 toResultViewItem *resItem = dynamic_cast<toResultViewItem *>(item);
                 toResultViewCheck *chkItem = dynamic_cast<toResultViewCheck *>(item);
@@ -994,7 +994,7 @@ toListView *toListView::copyTransposed(void)
     lst->Name = Name;
 
     toTreeWidgetItem *next = NULL;
-    for (int i = 1;i < columns();i++)
+    for (int i = 1; i < columns(); i++)
     {
         next = new toResultViewItem(lst, next);
         next->setText(0, headerItem()->text(i));
@@ -1003,12 +1003,12 @@ toListView *toListView::copyTransposed(void)
     next = NULL;
     int col = 1;
     lst->addColumn(headerItem()->text(0));
-    for (toTreeWidgetItem *item = firstChild();item;item = next)
+    for (toTreeWidgetItem *item = firstChild(); item; item = next)
     {
 
         lst->addColumn(item->text(0));
         toTreeWidgetItem *ci = lst->firstChild();
-        for (int i = 1;i < columns() && ci;i++)
+        for (int i = 1; i < columns() && ci; i++)
         {
             ci->setText(col, item->text(i));
             ci = ci->nextSibling();
@@ -1053,7 +1053,7 @@ bool toListView::editSave(bool)
         if (filename.isEmpty())
             return false;
         std::auto_ptr<toListViewFormatter> pFormatter(
-                toListViewFormatterFactory::Instance().CreateObject(settings.type));
+            toListViewFormatterFactory::Instance().CreateObject(settings.type));
         return toWriteFile(filename, exportAsText(settings));
     }
     TOCATCH
@@ -1120,13 +1120,15 @@ QString toListView::exportAsText(toExportSettings settings)
 
     std::auto_ptr<toListViewFormatter> pFormatter(
         toListViewFormatterFactory::Instance().CreateObject(settings.type));
+    settings.owner = owner;
+    settings.objectName = objectName;
     return pFormatter->getFormattedString(settings, model());
 }
 
 void toListView::exportData(std::map<QString, QString> &ret, const QString &prefix)
 {
     int id = 0;
-    for (int i = 0;i < columns();i++)
+    for (int i = 0; i < columns(); i++)
     {
         id++;
         ret[prefix + ":Labels:" + QString::number(id).toLatin1()] = headerItem()->text(i);
@@ -1136,7 +1138,7 @@ void toListView::exportData(std::map<QString, QString> &ret, const QString &pref
     id = 0;
     if (rootIsDecorated())
         ret[prefix + ":Decorated"] = QString::fromLatin1("Yes");
-    for (toTreeWidgetItem *item = firstChild();item;item = next)
+    for (toTreeWidgetItem *item = firstChild(); item; item = next)
     {
         id++;
         QString nam = prefix;
@@ -1150,7 +1152,7 @@ void toListView::exportData(std::map<QString, QString> &ret, const QString &pref
             ret[nam + "Parent"] = QString::fromLatin1("0");
         if (item->isOpen())
             ret[nam + "Open"] = QString::fromLatin1("Yes");
-        for (int i = 0;i < columns();i++)
+        for (int i = 0; i < columns(); i++)
         {
             toResultViewItem *resItem = dynamic_cast<toResultViewItem *>(item);
             toResultViewCheck *chkItem = dynamic_cast<toResultViewCheck *>(item);
@@ -1213,7 +1215,7 @@ void toListView::importData(std::map<QString, QString> &ret, const QString &pref
         if (!ret[nam + "Open"].isEmpty())
             item->setOpen(true);
         itemMap[id] = item;
-        for (int j = 0;j < columns();j++)
+        for (int j = 0; j < columns(); j++)
             item->setText(j, ret[nam + QString::number(j).toLatin1()]);
         id++;
     }
@@ -1255,13 +1257,13 @@ void toResultView::setup(bool readable, bool dispCol)
 }
 
 toResultView::toResultView(bool readable, bool dispCol, QWidget *parent, const char *name, Qt::WFlags f)
-        : toListView(parent, name, f)
+    : toListView(parent, name, f)
 {
     setup(readable, dispCol);
 }
 
 toResultView::toResultView(QWidget *parent, const char *name, Qt::WFlags f)
-        : toListView(parent, name, f)
+    : toListView(parent, name, f)
 {
     setup(false, true);
 }
@@ -1271,7 +1273,7 @@ toResultView::toResultView(QWidget *parent, const char *name, Qt::WFlags f)
 toTreeWidgetItem *toResultView::createItem(toTreeWidgetItem *last, const QString &str)
 {
     if (childCount() == STOP_RESIZE_ROW && resizeMode() == toTreeWidget::NoColumn)
-        for (int i = 0;i < columns();i++)
+        for (int i = 0; i < columns(); i++)
             setColumnWidthMode(i, toTreeWidget::Manual);
 
     return new toResultViewItem(this, last, str);
@@ -1297,7 +1299,7 @@ void toResultView::addItem(void)
             }
             else
                 LastItem->setText(columns(), QString::number(RowNumber));
-            for (int j = 0;(j < Query->columns() || j == 0) && !Query->eof();j++)
+            for (int j = 0; (j < Query->columns() || j == 0) && !Query->eof(); j++)
                 LastItem->setText(j + disp, Query->readValue());
             if (Filter && !Filter->check(LastItem))
             {
@@ -1343,7 +1345,7 @@ void toResultView::query(const QString &sql, const toQList &param)
 
         bool hidden = false;
 
-        for (toQDescList::iterator i = description.begin();i != description.end();i++)
+        for (toQDescList::iterator i = description.begin(); i != description.end(); i++)
         {
             QString name = (*i).Name;
             if (ReadableColumns)
@@ -1376,7 +1378,7 @@ void toResultView::query(const QString &sql, const toQList &param)
             setSorting(Query->columns());
 
         int MaxNumber = toConfigurationSingle::Instance().maxNumber();
-        for (int j = 0;j < MaxNumber && !Query->eof();j++)
+        for (int j = 0; j < MaxNumber && !Query->eof(); j++)
             addItem();
         if (ReadAll || MaxNumber < 0)
             editReadAll();
