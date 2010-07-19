@@ -730,6 +730,9 @@ void toMain::handleToolsDisplay()
         {
             b->setTabsClosable(true);
             connect(b, SIGNAL(tabCloseRequested(int)), this, SLOT(workspaceCloseWindow(int)));
+            // we should be quite sure that the QMdiArea tab-widget
+            // goes first (because findChildren is called recursively)
+            break;
         }
 #endif
     }
