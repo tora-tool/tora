@@ -795,18 +795,17 @@ bool toPLSQLText::editSave(bool askfile)
                 return false;
             }
 
-            QString create_statement("create or replace ");
             // save specification first
             if (Type == "PACKAGE")
             {
-                if (!toWriteFile(fn, create_statement + text() + "\n" +
-                                 create_statement + other_part->text() + "\n"))
+                if (!toWriteFile(fn, text() + "\n" +
+                                 other_part->text() + "\n"))
                     return false;
             }
             else
             {
-                if (!toWriteFile(fn, create_statement + other_part->text() + "\n" +
-                                 create_statement + text() + "\n"))
+                if (!toWriteFile(fn, other_part->text() + "\n" +
+                                 text() + "\n"))
                     return false;
             }
             toMainWidget()->addRecentFile(fn);
