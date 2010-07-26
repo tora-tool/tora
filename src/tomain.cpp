@@ -1855,16 +1855,13 @@ void toMain::importData(std::map<QString, QString> &data, const QString &prefix)
         QString password = toUnobfuscate(data[key + ":Password"]);
         QString provider = data[key + ":Provider"];
         bool ok = true;
-        // NOTE: it looks like there was a CONF_SAVE_PWD mismatch for ages.
-        // Sometimes it's used for "should I store passwords for sessions (bool),
-        // here it's taken as a string. WTF?
         if (toConfigurationSingle::Instance().defaultPassword() == password)
         {
             password = QInputDialog::getText(this,
                                              tr("Input password"),
                                              tr("Enter password for %1").arg(database),
                                              QLineEdit::Password,
-                                             QString::fromLatin1(DEFAULT_SAVE_PWD),
+                                             "",
                                              &ok);
         }
         if (ok)
