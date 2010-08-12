@@ -189,10 +189,35 @@ void SqlStatement::prepare(const tstring& sql, ub4 lang)
 	res = OCICALL(OCIStmtPrepare(_handle/*stmtp*/, _errh, (text*)sql.c_str(), (ub4)sql.length(), lang, OCI_DEFAULT));
 	oci_check_error(__TROTL_HERE__, _errh, res);
 
+	/* NOTE this call alse returns other values than mentioned in OCI docs.
+	 * for example "EXPLAIN PLAN FOR ..." returns value 15
+	 */
 	res = OCICALL(OCIAttrGet(_handle/*stmtp*/, get_type_id(), &stmt_type, &size, OCI_ATTR_STMT_TYPE, _errh));
 	oci_check_error(__TROTL_HERE__, _errh, res);
 
-	_stmt_type = (STMT_TYPE)stmt_type;
+	switch(stmt_type)
+	{
+	case OCI_STMT_SELECT:
+	case OCI_STMT_UPDATE:
+	case OCI_STMT_DELETE:
+	case OCI_STMT_INSERT:
+	case OCI_STMT_CREATE:
+	case OCI_STMT_DROP:
+	case OCI_STMT_ALTER:
+	case OCI_STMT_BEGIN:
+	case OCI_STMT_DECLARE:			    
+		_stmt_type = (STMT_TYPE)stmt_type;
+		break;
+	case 0:			// ANALYZE TABLE
+	case 15:		// EXPLAIN PLAN FOR
+		_stmt_type = STMT_OTHER;
+		break;
+	default:
+		_stmt_type = STMT_OTHER;
+		std::cerr << "Unknown statement type: " << stmt_type << std::endl << _parsed_stmt << std::endl;
+		//exit(-1);
+	};
+
 	_state |= PREPARED;
 }
 
@@ -343,15 +368,12 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		// Loop over input bind vars - insert can have out binds too(i.e. returning clause)
 		for(unsigned i=1; i<=_in_cnt; ++i)
 			if(_all_binds[_in_binds[i]]->_cnt != iters)
-				throw OciException(__TROTL_HERE__, "Wrong count of bindvars: (%d vs. %d)\n"
-					).arg(iters).arg(_all_binds[_in_binds[i]]->_cnt);
+				throw OciException(__TROTL_HERE__, "Wrong count of bindvars: (%d vs. %d)\n")
+					.arg(iters).arg(_all_binds[_in_binds[i]]->_cnt);
 		break;
 	case STMT_BEGIN:
 	case STMT_DECLARE:
 		iters = 1;
-		_last_buff_row = 0;
-		if( _out_cnt == 0 && _in_cnt == 0)
-			_state |= EOF_DATA;
 		break;
 	case STMT_CREATE:
 	case STMT_DROP:
@@ -360,10 +382,6 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		_last_buff_row = 0;
 		_state |= EOF_DATA;
 		break;
-	default:
-		std::cerr << "Unknown statement type: " << t
-			  << std::endl << _parsed_stmt << std::endl;
-		exit(-1);
 	};
 
 	if(!_bound && _out_cnt)
@@ -384,7 +402,7 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 			iters,//_stmt_type == STMT_SELECT ? rows : 1, // iters
 			0, // rowoff
 			(CONST OCISnapshot*)0, (OCISnapshot*)0, mode));
-
+	
 	//std::cout << std::endl
 	//	<< "iters:" << iters << std::endl;
 

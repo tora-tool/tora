@@ -250,9 +250,15 @@ protected:
 /// wrap OCIEnv and OCISvcCtx together
 struct TROTL_EXPORT OciConnection
 {
-  	OciConnection(OCIEnv* envh, OCISvcCtx* svc_ctx) :
-  		_env(envh), _svc_ctx(svc_ctx)
-  		{}
+	OciEnv	_env;
+#ifdef WIN32
+	template struct TROTL_EXPORT OciHandleWrapper<OCISvcCtx>;
+#endif
+	OciContext	_svc_ctx;
+
+  	OciConnection(OCIEnv* envh, OCISvcCtx* svc_ctx)
+		: _env(envh), _svc_ctx(svc_ctx)
+	{}
 
 	//OciConnection(OCIEnv* envh) :
 	//	_env(envh), _svc_ctx(0)
@@ -274,12 +280,6 @@ struct TROTL_EXPORT OciConnection
 	tstring	getNLS_LANG();
 	void	changePassword (tstring userid, tstring password, tstring new_password);
 
-	OciEnv	_env;
-#ifdef WIN32
-	template struct TROTL_EXPORT OciHandleWrapper<OCISvcCtx>;
-#endif
-	OciContext	_svc_ctx;
-
 	void commit(ub4 flags=OCI_DEFAULT)
 	{
 		sword res = OCICALL(OCITransCommit(_svc_ctx, _env._errh, flags));
@@ -297,6 +297,30 @@ struct TROTL_EXPORT OciConnection
 		oci_check_error(__TROTL_HERE__, _env._errh, res);
 	}
 
+	bool is_noblocking()
+	{
+		/* Some OCI statements silently enter blocking mode without any warning
+		 * we call OCIAttrGet everytime
+		 */
+		ub1 nonblocking;
+		//_svc_ctx.get_attribute(&nonblocking, NULL, OCI_ATTR_NONBLOCKING_MODE);
+		return nonblocking;
+	}
+	
+	void set_noblocking()
+	{
+		//_svc_ctx.set_attribute_handle(OCI_ATTR_NONBLOCKING_MODE, NULL);
+	}
+	
+	// TODO check server's version too
+	void ping()
+	{
+#if (OCI_MAJOR_VERSION == 10 && OCI_MINOR_VERSION >=2) || (OCI_MAJOR_VERSION > 10)
+		sword res = OCICALL(OCIPing(_svc_ctx, _env._errh, OCI_DEFAULT));
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
+#endif
+	}
+	
 	//StatementCache	_stmt_cache; TODO
 
 private:

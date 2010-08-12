@@ -341,6 +341,12 @@ namespace trotl {
 		  //std::cerr << "OCIEnvCreate:" << res << std::endl;
 		  oci_check_error(__TROTL_HERE__, _handle, res);
 	  }
+
+	  ~OciEnvAlloc()
+	  {
+//		  sword res = OCITerminate (OCI_DEFAULT);
+//		  oci_check_error(__TROTL_HERE__, _handle, res);
+	  }
   };
 
   /* This set of specialized templates represent translation table

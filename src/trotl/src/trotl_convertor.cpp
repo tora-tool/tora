@@ -61,29 +61,33 @@ void ConvertorForRead::Fire(const BindParDate &BP, SqlDateTime &DT)
  */
 void ConvertorForRead::Fire(const BindParClob &BP, SqlClob &CL)
 {
-	//std::cout << "Convert: void Fire(BindParClob, SqlClob)\n";
 	CL._ind = BP.indp[_row];
 	if(CL.is_not_null())
-	{	      
-		//sword res = OCICALL(OCILobAssign(BP._env, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &CL._loc));
-		//_conn._env, _conn._env._errh, other._loc, &_loc));	// no support for temporary LOBs
-		//oci_check_error(__TROTL_HERE__, BP._env._errh, res);
-		CL._loc = ((OCILobLocator**)BP.valuep)[_row]; ((OCILobLocator**)BP.valuep)[_row] = NULL;
-		CL._ind = BP.indp[_row];
+	{
+		/* TODO:
+		 * - whose errh should I use? BP's or SqlValue's (race)
+		 * - no support for temporary lobs here
+		 */
+		sword res = OCICALL(OCILobAssign(BP._env, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &CL._loc));
+		oci_check_error(__TROTL_HERE__, BP._env._errh, res);
+
+		//CL._loc = ((OCILobLocator**)BP.valuep)[_row];
+		//((OCILobLocator**)BP.valuep)[_row] = NULL;
+		//CL._ind = BP.indp[_row];
 	}
 };
 
 void ConvertorForRead::Fire(const BindParBlob &BP, SqlBlob &BL)
 {
-        //std::cout << "Convert: void Fire(BindParBlob, SqlBlob)\n";
 	BL._ind = BP.indp[_row];
 	if(BL.is_not_null())
 	{	      	       
-		//sword res = OCICALL(OCILobAssign(BP._env, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &BL._loc));
-		//_conn._env, _conn._env._errh, other._loc, &_loc));	// no support for temporary LOBs
-		//oci_check_error(__TROTL_HERE__, BP._env._errh, res);
-		BL._loc = ((OCILobLocator**)BP.valuep)[_row]; ((OCILobLocator**)BP.valuep)[_row] = NULL;
-		BL._ind = BP.indp[_row];
+		sword res = OCICALL(OCILobAssign(BP._env, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &BL._loc));
+		oci_check_error(__TROTL_HERE__, BP._env._errh, res);
+
+		//BL._loc = ((OCILobLocator**)BP.valuep)[_row];
+		//((OCILobLocator**)BP.valuep)[_row] = NULL;
+		//BL._ind = BP.indp[_row];
 	}
 };
 
@@ -160,11 +164,16 @@ void ConvertorForWrite::Fire(const SqlDateTime &DT, BindParDate &BP)
 
 void ConvertorForWrite::Fire(const SqlClob &CL, BindParClob &BP)
 {
-	//TODO sword res = OCICALL(OCILobAssign(BP._env, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &CL._loc));
-	//_conn._env, _conn._env._errh, other._loc, &_loc));	// no support for temporary LOBs
-	//oci_check_error(__TROTL_HERE__, BP._env._errh, res);
+	std::cerr << "void ConvertorForWrite::Fire(const SqlClob &CL, BindParClob &BP), row: " << _row << std::endl;
+	/* TODO:
+	 * - whose errh should I use? BP's or SqlValue's (race)
+	 * - no support for temporary lobs here
+	 * - should I call OCILobLocatorIsInit here ??
+	 */
+	sword res = OCICALL(OCILobAssign(BP._env, BP._env._errh, CL._loc, &((OCILobLocator**)BP.valuep)[_row]));
+	oci_check_error(__TROTL_HERE__, BP._env._errh, res);
 
-	((OCILobLocator**)BP.valuep)[_row] = CL._loc;
+//	((OCILobLocator**)BP.valuep)[_row] = CL._loc;
 //	CL._loc = NULL;
 	BP.indp[_row] = CL._ind;
 };

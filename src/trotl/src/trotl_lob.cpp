@@ -108,9 +108,9 @@ void BindParLob::descFree(void)
 {
 	for(unsigned i=0; i<_cnt; ++i)
 	{
-		if(((void**)valuep)[i])
+		if(((OCILobLocator**)valuep)[i])
 		{
-			//std::cerr << "void descFree(void)" << std::endl;
+			std::cerr << "void descFree(void): " << i << std::endl;
 			sword res = OCICALL(OCIDescriptorFree( ((void**)valuep)[i], OCI_DTYPE_LOB));
 			oci_check_error(__TROTL_HERE__, _env, res);
 		}
@@ -181,7 +181,7 @@ BindParBFile::BindParBFile(unsigned int pos, SqlStatement &stmt, BindVarDecl &de
 
 SqlLob::SqlLob(OciConnection &conn) : _conn(conn), _loc(NULL)
 {
-	sword res = OCICALL(OCIDescriptorAlloc(_conn._env, (dvoid**)&_loc, OCI_DTYPE_LOB, 0, NULL));
+	sword res = OCICALL(OCIDescriptorAlloc(_conn._env, (void**)&_loc, OCI_DTYPE_LOB, 0, NULL));
 	oci_check_error(__TROTL_HERE__, _conn._env, res);
 };
 
