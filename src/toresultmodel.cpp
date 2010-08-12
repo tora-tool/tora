@@ -492,28 +492,33 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const
     if (index.row() > Rows.size() - 1 || index.column() > Headers.size() - 1)
         return QVariant();
 
-    toQValue data = Rows.at(index.row()).at(index.column());
+    toQValue const &data = Rows.at(index.row()).at(index.column());
 
-    if (role == Qt::DisplayRole)
+    switch(role)
     {
-        if (data.isNull())
-            return toNull(data).toQVariant();
-
-        return data.toQVariant();
-    }
-    if (role == Qt::EditRole)
-        return data.toQVariant();
-    if (role == Qt::ToolTipRole)
-        return data.toQVariant();
-    if (role == Qt::BackgroundRole)
-    {
-        if (data.isNull() && toConfigurationSingle::Instance().indicateEmpty())
-            return QVariant(QColor(toConfigurationSingle::Instance().indicateEmptyColor()));
-        return QVariant();
-    }
-    if (role == Qt::TextAlignmentRole)
-        return (int) Headers.at(index.column()).align;
-
+    case Qt::DisplayRole:
+           if (data.isNull())
+                   return toNull(data).toQVariant();
+           if (data.isUserType())
+           {
+                   toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
+                   return QVariant(QString("{%1}").arg(i->dataTypeName()));
+           }
+           return data.toQVariant();
+    case Qt::EditRole:
+    case Qt::ToolTipRole:
+           return data.toQVariant();
+    case Qt::BackgroundRole:
+           if (data.isNull() && toConfigurationSingle::Instance().indicateEmpty())
+                   return QVariant(QColor(toConfigurationSingle::Instance().indicateEmptyColor()));
+           return QVariant();
+    case Qt::TextAlignmentRole:
+           return (int) Headers.at(index.column()).align;
+    case Qt::UserRole:
+           return data.toQVariant();
+    default:
+           return QVariant();
+    }        
     return QVariant();
 }
 

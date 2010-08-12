@@ -332,10 +332,20 @@ void toModelEditor::store()
 void toModelEditor::changePosition(QModelIndex index)
 {
     Current = index;
+    QVariant const &data = Model->data(Current, Qt::UserRole);
+    if(data.type() == QVariant::UserType)
+    {
+           toQValue::complexType *i = data.value<toQValue::complexType*>();
+           setText(i->summary());
+           return;
+    }
+           
     if(Editable)
-        setText(Model->data(Current, Qt::EditRole).toString());
+           setText(Model->data(Current, Qt::EditRole).toString());
     else
-        setText(Model->data(Current, Qt::DisplayRole).toString());
+    {
+           setText(Model->data(Current, Qt::DisplayRole).toString());
+    }
 }
 
 void toModelEditor::firstColumn()

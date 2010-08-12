@@ -60,6 +60,23 @@ class toQValue
     QVariant Value;
 
 public:
+    /**
+     * This is helper class for visualization of complex types
+     * like: CLOB, BLOB, XML, vector of strings, image...
+     * This class should be subclassed in tooracleconnection and other
+     * connection providers. Subclasses then will be registered
+     * into QT's metatype system using Q_DECLARE_METATYPE and stored inside QVariant
+     */
+    class complexType
+    {
+    public:
+	    virtual bool isBinary() const = 0;
+	    virtual bool isLarge() const = 0;
+	    virtual QString summary() const = 0;
+	    virtual QString dataTypeName() const = 0;
+	    virtual ~complexType() {};
+    };
+    
     /** Create null value.
      */
     toQValue(void);
@@ -133,7 +150,10 @@ public:
     /** Check if this value is binary.
      */
     bool isBinary(void) const;
-
+    /** Check if this value holds "custom" user type
+     */
+    bool isUserType(void) const;
+    
     /** Get toUtf8 format of this value.
      */
     QString toUtf8(void) const;
@@ -160,7 +180,7 @@ public:
 
     /** Convert value to a QVariant
      */
-    QVariant toQVariant(void) const;
+    QVariant const& toQVariant(void) const;
 
     /** Get binary representation of value. Can only be called when the data is actually binary.
      */
@@ -204,6 +224,7 @@ public:
      */
     static toQValue fromVariant(const QVariant &);
 };
+Q_DECLARE_METATYPE(toQValue::complexType*)
 
 /** A short representation of list<toQuery::queryValue>
  */

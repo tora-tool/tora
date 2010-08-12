@@ -51,6 +51,7 @@
 #endif
 
 #include <trotl.h>
+#include <trotl_convertor.h>
 
 #include "toconf.h"
 #include "toconfiguration.h"
@@ -152,6 +153,80 @@ static void ThrowException(const ::trotl::OciException &exc)
 		throw ret;
 	}
 }
+
+class toOracleClob: public toQValue::complexType
+{
+public:
+	toOracleClob(trotl::OciConnection &_conn)
+		: toQValue::complexType(),
+		  data(_conn)
+	{};
+	/* virtual */ bool isBinary() const
+	{
+		return false;
+	}
+	/* virtual */ bool isLarge() const
+	{
+		return false;
+	}
+	/* virtual */ QString summary() const
+	{
+		return QString("Datape: Oracle [N]CLOB\n"
+			       "Size: %1B\n").arg(data.get_length());
+	}
+	/* virtual */ QString dataTypeName() const
+	{
+		return QString("clob");
+	}
+	~toOracleClob()
+	{
+		TLOG(1,toDecorator,__HERE__) << "toOracleClob DELETED:" << this << std::endl;
+	}
+
+	mutable trotl::SqlClob data;
+protected:
+	toOracleClob(toOracleClob const&);
+	toOracleClob operator=(toOracleClob const&);
+	//TODO copying prohibited
+};
+//Q_DECLARE_METATYPE(toOracleClob*)
+
+class toOracleBlob: public toQValue::complexType
+{
+public:
+	toOracleBlob(trotl::OciConnection &_conn)
+		: toQValue::complexType(),
+		  data(_conn)
+	{};
+	/* virtual */ bool isBinary() const
+	{
+		return false;
+	}
+	/* virtual */ bool isLarge() const
+	{
+		return false;
+	}
+	/* virtual */ QString summary() const
+	{
+		return QString("Datape: Oracle BLOB\n"
+			       "Size: %1B\n").arg(data.get_length());
+	}
+	/* virtual */ QString dataTypeName() const
+	{
+		return QString("blob");
+	}	
+	~toOracleBlob()
+	{
+		TLOG(1,toDecorator,__HERE__) << "toOracleBlob DELETED:" << this << std::endl;
+	}
+
+	mutable trotl::SqlBlob data;
+protected:
+	toOracleBlob(toOracleBlob const&);
+	toOracleBlob operator=(toOracleBlob const&);
+	//TODO copying prohibited
+};
+//Q_DECLARE_METATYPE(toOracleBlob*)
 
 class toOracleProvider : public toConnectionProvider
 {
@@ -285,7 +360,7 @@ public:
 										     &i);
 								oci_check_error(__HERE__, _errh, res);
 								value = toQValue(i);
-								TLOG(4,toDecorator,__HERE__) << "Just read: " << i << std::endl;
+								TLOG(4,toDecorator,__HERE__) << "Just read: '" << i << '\'' << std::endl;
 							} else {
 								double d;
 								sword res = OCINumberToReal(_errh,
@@ -294,7 +369,7 @@ public:
 											    &d);
 								oci_check_error(__HERE__, _errh, res);
 								value = toQValue(d);
-								TLOG(4,toDecorator,__HERE__) << "Just read: " << d << std::endl;
+								TLOG(4,toDecorator,__HERE__) << "Just read: '" << d << '\'' << std::endl;
 							}
 						} catch(const ::trotl::OciException &e) {
 							text str_buf[65];
@@ -332,11 +407,24 @@ public:
 						break;
 #endif
 					case SQLT_CLOB: {
-						value = toQValue(QString("<CLOB>"));
+						toOracleClob *i = new toOracleClob(_conn);
+						trotl::ConvertorForRead c(_last_buff_row);
+						trotl::DispatcherForRead::Go(BP, i->data, c);
+						QVariant v;
+						v.setValue((toQValue::complexType*)i);
+						value = toQValue::fromVariant(v);
+						//int id = qMetaTypeId<toQValue::complexType*>();
+						TLOG(4,toDecorator,__HERE__) << "Just read: \"CLOB\"" << std::endl; 
 					}
 						break;
 					case SQLT_BLOB: {
-						value = toQValue(QString("<BLOB>"));
+						toOracleBlob *i = new toOracleBlob(_conn);
+						trotl::ConvertorForRead c(_last_buff_row);
+						trotl::DispatcherForRead::Go(BP, i->data, c);
+						QVariant v;
+						v.setValue((toQValue::complexType*)i);
+						value = toQValue::fromVariant(v);
+						TLOG(4,toDecorator,__HERE__) << "Just read: \"BLOB\"" << std::endl; 
 					}						
 						break;
 					default:
@@ -761,7 +849,7 @@ public:
 				TLOG(1,toDecorator,__HERE__) << "	Ignored exception." << std::endl;
 				// Ignore any errors here
 			}
-			return QString();
+			return QString::QString();
 		}
 
 		virtual toQuery::queryImpl *createQuery(toQuery *query, toConnectionSub *sub)
@@ -865,7 +953,6 @@ public:
 	{
 		QString str;
 #ifdef Q_OS_WIN32
-
 		CRegistry registry;
 		DWORD siz = 1024;
 		char buffer[1024];
@@ -1030,7 +1117,6 @@ void toOracleProvider::oracleQuery::execute(void)
 	}
 	try
 	{
-		//otl_null null;
 		for (toQList::iterator i = query()->params().begin();i != query()->params().end();i++)
 		{
  			const trotlQuery::BindPar& bp = (*Query).get_curr_in_bindpar();
@@ -1060,59 +1146,7 @@ void toOracleProvider::oracleQuery::execute(void)
 				throw toConnection::exception(
 					QString::fromLatin1("Fatal pruser error - unsupported BindPar:") + bp.bind_typename.c_str());
 				exit(-1);
-			}
-			
-			
-			// TODO
-			/*
-			  if ((*i).isNull())
-			  (*Query) << null;
-			  else
-			  {
-			  otl_var_desc *next = Query->describe_next_in_var();
-			  if (next)
-			  {
-			  switch (next->ftype)
-			  {
-			  case otl_var_double:
-			  case otl_var_float:
-			  (*Query) << (*i).toDouble();
-			  break;
-			  case otl_var_int:
-			  case otl_var_unsigned_int:
-			  case otl_var_short:
-			  case otl_var_long_int:
-			  (*Query) << (*i).toInt();
-			  break;
-			  case otl_var_raw_long:
-			  case otl_var_blob:
-			  if ((*i).isBinary())
-			  {
-			  QByteArray arr = (*i).toByteArray();
-			  otl_long_string str(arr, arr.size(), arr.size());
-			  (*Query) << str;
-			  break;
-			  }
-			  // Intentially left out break
-			  case otl_var_varchar_long:
-			  case otl_var_clob:
-			  {
-			  QString buf = (*i).toUtf8();
-			  otl_long_string str(buf.toUtf8().constData(), buf.length(), buf.length());
-			  (*Query) << str;
-			  }
-			  break;
-			  default:
-			  (*Query) << (*i).toUtf8().toUtf8().constData();
-			  break;
-			  }
-			  }
-			  else
-			  {
-			  printf("ERROR: More parameters than binds\n");
-			  }
-			  }
-			*/
+			}			
 		}
 
 		//Running = false;
@@ -1209,7 +1243,7 @@ toConnectionSub* toOracleProvider::oracleConnection::createConnection(void)
 								(ub4) session_mode);
 				conn = new ::trotl::OciConnection(_env, *login);
 
-				::TLOG(0,toDecorator,__HERE__) << "Oracle database version: "
+				TLOG(0,toDecorator,__HERE__) << "Oracle database version: "
 					    << ::std::hex << ::std::showbase << ::std::setw(10)
 					    << ::std::setfill('0') << ::std::internal
 					    << login->_server._version << ::std::endl
@@ -1320,9 +1354,13 @@ toConnectionSub* toOracleProvider::oracleConnection::createConnection(void)
 						     "  SYS.DBMS_APPLICATION_INFO.SET_MODULE('" TOAPPNAME "','Access Database');\n"
 						     "END;"));
 	}
+	catch (::trotl::OciException const&e)
+	{
+		TLOG(0,toDecorator,__HERE__) << "Failed to set client info for session:\n" << e.what();
+	}
 	catch (...)
 	{
-		printf("Failed to set client info for session\n");
+		TLOG(0,toDecorator,__HERE__) << "Failed to set client info for session\n";
 	}
 
 	return new oracleSub(conn, login);

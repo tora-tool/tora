@@ -76,6 +76,26 @@ toQValue::toQValue(qulonglong d)
 toQValue::toQValue(const toQValue &copy)
 {
     Value = copy.Value;
+    /** Be destructive only if complexType is held
+     *  There should be no copying of data read from a query,
+     *  but toQValue is also used for query parameters(toQList and others)
+     *  and these are copyined often (toNoBlockQuery.Params => toQuery.Params)
+     */
+    if(isUserType())
+	    const_cast<toQValue&>(copy).Value = "deleted value(clone)";
+}
+
+const toQValue &toQValue::operator = (const toQValue & copy)
+{
+    Value = copy.Value;
+    /** Be destructive only if complexType is held
+     *  There should be no copying of data read from a query,
+     *  but toQValue is also used for query parameters(toQList and others)
+     *  and these are copyined often (toNoBlockQuery.Params => toQuery.Params)
+     */
+    if(isUserType())
+	    const_cast<toQValue&>(copy).Value = "deleted value(assign)";
+    return *this;
 }
 
 toQValue::toQValue(const QString &str)
@@ -89,6 +109,12 @@ toQValue::toQValue()
 
 toQValue::~toQValue()
 {
+	if(isUserType())
+	{
+		complexType *i = Value.value<toQValue::complexType*>();
+		if(i)
+			delete i;
+	}    
 }
 
 bool toQValue::operator<(const toQValue &other) const
@@ -156,13 +182,6 @@ bool toQValue::operator>=(const toQValue &other) const
     return !operator<=(other);
 }
 
-
-const toQValue &toQValue::operator = (const toQValue & copy)
-{
-    Value = copy.Value;
-    return *this;
-}
-
 bool toQValue::isNumber() const
 {
     return isInt() || isDouble() || isLong() || isuLong();
@@ -173,7 +192,7 @@ bool toQValue::operator == (const toQValue &val) const
     return Value == val.Value;
 }
 
-QVariant toQValue::toQVariant() const
+QVariant const& toQValue::toQVariant() const
 {
     return Value;
 }
@@ -208,6 +227,11 @@ bool toQValue::isBinary() const
     return Value.type() == QVariant::ByteArray;
 }
 
+bool toQValue::isUserType(void) const
+{
+    return Value.type() == QVariant::UserType;
+}
+
 bool toQValue::isNull() const
 {
     return Value.isNull();
@@ -220,12 +244,18 @@ const QByteArray toQValue::toByteArray() const
 
 QString toQValue::toUtf8() const
 {
-    return Value.toString();
+    if(isUserType())
+      return QString("U UserType");
+    else
+      return Value.toString();
 }
 
 QString toQValue::toString() const
 {
-    return Value.toString();
+    if(isUserType())
+      return QString("T UserType");
+    else  
+      return Value.toString();
 }
 
 int toQValue::toInt() const
@@ -358,7 +388,10 @@ toQValue toQValue::createFromHex(const QString &hex)
 
 toQValue::operator QString() const
 {
-    return Value.toString();
+    if(isUserType())
+      return QString("O UserType");
+    else
+      return Value.toString();
 }
 
 
@@ -392,6 +425,9 @@ QString toQValue::toSIsize() const
         break;
     case 4:
         s.append("T");
+        break;
+    case 5:
+      s.append("P");
         break;
     default:
         s.append("E");
