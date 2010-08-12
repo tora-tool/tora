@@ -38,7 +38,7 @@ struct s_null_sink : public boost::iostreams::stream_buffer<boost::iostreams::nu
 };
 
 template< int idxLog>
-inline thread_safe_log templ_get_log_ownthread( int_to_type< idxLog> * = NULL )
+inline thread_safe_log templ_get_log_ownthread( int_to_type< idxLog> *i = NULL )
 {
 	/* static std::ofstream out( get_out_name< idxLog>( false).c_str() ); */
 #ifdef DEBUG
@@ -87,9 +87,11 @@ inline thread_safe_log get_log( int idxLog)
 	case 0: return templ_get_log_ownthread< 0>(); // tooracleconnection log
 	case 1: return templ_get_log_ownthread< 1>(); // exception log
 	case 2: return templ_get_log_ownthread< 2>(); // qDebug log
-	case 3: return templ_get_log_ownthread< 3>(); // tonoblockquery log
-	case 4: return templ_get_log_ownthread< 4>(); // data read log
-	default: assert( false);
+	case 3: return templ_get_log_ownthread< 3>(NULL); // tonoblockquery log
+	case 4: return templ_get_log_ownthread< 4>(NULL); // data read log
+	default: 
+		assert( false);
+		return templ_get_log_ownthread< 0>();
 	}
 }
 

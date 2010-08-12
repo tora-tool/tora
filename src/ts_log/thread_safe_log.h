@@ -377,7 +377,7 @@ class thread_safe_log_writer_ownthread
 				}
 				else
 					// nothing to write - wait
-					thread_manager::sleep( 1);
+					thread_manager::sleep( 100);
 			}
 		}
 		this_class * m_pThis;
