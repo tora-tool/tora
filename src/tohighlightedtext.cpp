@@ -375,7 +375,8 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     m_debugMarginHandle = markerDefine(QsciScintilla::Rectangle);
     m_debugHandle = markerDefine(QsciScintilla::Background);
 
-    m_currentLineMarginHandle = markerDefine(QsciScintilla::RightArrow);
+// FIXME: disabled due repainting issues
+//    m_currentLineMarginHandle = markerDefine(QsciScintilla::RightArrow);
 
     m_bookmarkMarginHandle = markerDefine(QsciScintilla::RightTriangle);
     m_bookmarkHandle = markerDefine(QsciScintilla::Background);
@@ -478,9 +479,10 @@ void toHighlightedText::positionChanged(int row, int col)
         if (timer->isActive())
             timer->stop();
     }
+// FIXME: disabled due repainting issues
     // current line marker (margin arrow)
-    markerDeleteAll(m_currentLineMarginHandle);
-    markerAdd(row, m_currentLineMarginHandle);
+//    markerDeleteAll(m_currentLineMarginHandle);
+//    markerAdd(row, m_currentLineMarginHandle);
 }
 
 static QString UpperIdent(const QString &str)

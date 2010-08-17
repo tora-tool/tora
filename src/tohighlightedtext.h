@@ -243,7 +243,8 @@ protected:
     //! \brief A handler for code error - margin
     int m_errorMarginHandle;
     //! \brief A handler for current line highlighting - margin
-    int m_currentLineMarginHandle;
+// FIXME: disabled due repainting issues
+//    int m_currentLineMarginHandle;
     //! \brief A handler for bookrmarks - line highlighted
     int m_bookmarkHandle;
     //! \brief A handler for bookrmarks - margin
