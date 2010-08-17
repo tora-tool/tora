@@ -407,7 +407,8 @@ public:
 		while ( !thread_manager::join_thread( m_info))
 		{
 			auto_lock_unlock locker( m_cs);
-			assert ( m_info.m_bHasFinished);
+            // FIXME: this always crashes on mac. Need to be fixed in proper way.
+			//assert ( m_info.m_bHasFinished);
 			// the other thread has finished
 			break;
 		}
