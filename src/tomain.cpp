@@ -931,6 +931,8 @@ void toMain::recentCallback(QAction *action)
 
     if (edit)
         edit->editOpen(action->toolTip());
+    else
+        this->editOpenFile(action->toolTip());
 }
 
 
@@ -1056,8 +1058,6 @@ void toMain::commandCallback(QAction *action)
             else
                 searchReplaceAct->activate(QAction::Trigger);
         }
-        else if (action == openAct)
-            edit->editOpen();
         else if (action == saveAsAct)
             edit->editSave(true);
         else if (action == saveAct)
@@ -1065,6 +1065,13 @@ void toMain::commandCallback(QAction *action)
         else if (action == printAct)
             edit->editPrint();
     } // if edit
+
+    if (action == openAct && !this->Connections.empty()) {
+        if (edit)
+            edit->editOpen();
+        else
+            this->editOpenFile(QString::null);
+    }
 
     if (action == commitAct)
     {
@@ -1360,7 +1367,7 @@ void toMain::editDisable(toEditWidget *edit)
     if (main)
     {
         main->editEnable(edit,
-                         false,
+                         !main->Connections.empty(),
                          false,
                          false,
                          false,
@@ -1460,6 +1467,8 @@ void toMain::enableConnectionActions(bool enabled)
     stopAct->setEnabled(enabled);
     closeConn->setEnabled(enabled);
     refreshAct->setEnabled(enabled);
+    openAct->setEnabled(enabled);
+    recentMenu->setEnabled(enabled);
 
     // now, loop through tools and enable/disable
 
