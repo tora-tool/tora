@@ -43,6 +43,7 @@
 #include <QFocusEvent>
 #include <QKeyEvent>
 #include <QList>
+#include <QMimeData>
 #include <QMouseEvent>
 #include <QPaintEvent>
 
@@ -294,12 +295,7 @@ void QsciScintillaBase::focusInEvent(QFocusEvent *)
 // Re-implemented to tell the widget it has lost the focus.
 void QsciScintillaBase::focusOutEvent(QFocusEvent *)
 {
-    // If an autocompletion list is being displayed (a Qt::Tool) and it is
-    // clicked on, then we receive this event but the current focus event is 0.
-    // We detect this and don't tell Scintilla as it would immediately destroy
-    // the list.
-    if (qApp->focusWidget())
-        sci->SetFocusState(false);
+    sci->SetFocusState(false);
 }
 
 
@@ -604,13 +600,7 @@ void QsciScintillaBase::dragMoveEvent(QDragMoveEvent *e)
     sci->SetDragPosition(sci->PositionFromLocation(Point(e->pos().x(),
                     e->pos().y())));
 
-    if (sci->pdoc->IsReadOnly() || !e->mimeData()->hasText())
-    {
-        e->ignore();
-        return;
-    }
-
-    e->acceptProposedAction();
+    acceptAction(e);
 }
 
 
@@ -620,26 +610,68 @@ void QsciScintillaBase::dropEvent(QDropEvent *e)
     bool moving;
     const char *s;
 
-    if (sci->pdoc->IsReadOnly() || !e->mimeData()->hasText())
-    {
-        e->ignore();
+    acceptAction(e);
+
+    if (!e->isAccepted())
         return;
-    }
 
-    e->acceptProposedAction();
+    moving = (e->dropAction() == Qt::MoveAction);
 
-    moving = (e->dropAction() == Qt::MoveAction &&
-            (e->source() == this || e->source() == viewport()));
-
+    QString qs = fromMimeData(e->mimeData());
     QByteArray ba;
 
     if (sci->IsUnicodeMode())
-        ba = e->mimeData()->text().toUtf8();
+        ba = qs.toUtf8();
     else
-        ba = e->mimeData()->text().toLatin1();
+        ba = qs.toLatin1();
 
     s = ba.data();
 
     sci->DropAt(sci->posDrop, s, moving, false);
     sci->Redraw();
 }
+
+
+void QsciScintillaBase::acceptAction(QDropEvent *e)
+{
+    if (sci->pdoc->IsReadOnly() || !canInsertFromMimeData(e->mimeData()))
+    {
+        e->ignore();
+    }
+    else if ((e->source() == this || e->source() == viewport()) && (e->keyboardModifiers() & Qt::ControlModifier) == 0)
+    {
+        e->setDropAction(Qt::MoveAction);
+        e->accept();
+    }
+    else
+    {
+        e->acceptProposedAction();
+    }
+}
+
+
+
+// See if a MIME data object can be decoded.
+bool QsciScintillaBase::canInsertFromMimeData(const QMimeData *source) const
+{
+    return source->hasText() && !source->text().isEmpty();
+}
+
+
+// Create text from a MIME data object.
+QString QsciScintillaBase::fromMimeData(const QMimeData *source) const
+{
+    return source->text();
+}
+
+
+// Create a MIME data object for some text.
+QMimeData *QsciScintillaBase::toMimeData(const QString &text) const
+{
+    QMimeData *mime = new QMimeData;
+
+    mime->setText(text);
+
+    return mime;
+}
+

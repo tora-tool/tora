@@ -67,10 +67,17 @@ const char *QsciLexerHTML::lexer() const
 }
 
 
+// Return the auto-completion fillup characters.
+const char *QsciLexerHTML::autoCompletionFillups() const
+{
+    return "/>";
+}
+
+
 // Return the string of characters that comprise a word.
 const char *QsciLexerHTML::wordCharacters() const
 {
-        return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
+    return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
 }
 
 

@@ -69,8 +69,9 @@ QsciStyle::QsciStyle(int style, const QString &description,
 // Initialisation common to all ctors.
 void QsciStyle::init(int style)
 {
-    // The next style number to allocate.
-    static int next_style_nr = QsciScintillaBase::STYLE_MAX;
+    // The next style number to allocate.  The initial values corresponds to
+    // the amount of space that Scintilla initially creates for styles.
+    static int next_style_nr = 63;
 
     // See if a new style should be allocated.  Note that we allow styles to be
     // passed in that are bigger than STYLE_MAX because the styles used for

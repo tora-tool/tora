@@ -238,6 +238,9 @@ QString QsciLexerVerilog::description(int style) const
     case Number:
         return tr("Number");
 
+    case Keyword:
+        return tr("Primary keywords and identifiers");
+
     case String:
         return tr("String");
 

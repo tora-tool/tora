@@ -397,6 +397,9 @@ public:
     //! languages.
     const char *lexer() const;
 
+    //! \internal Returns the auto-completion fillup characters.
+    const char *autoCompletionFillups() const;
+
     //! \internal Returns the string of characters that comprise a word.
     const char *wordCharacters() const;
 

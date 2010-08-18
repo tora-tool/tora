@@ -734,8 +734,8 @@ void QsciScintilla::startAutoCompletion(AutoCompletionSource acs,
     SendScintilla(SCI_AUTOCSETCHOOSESINGLE, single);
     SendScintilla(SCI_AUTOCSETSEPARATOR, acSeparator);
 
-    QByteArray chlist = wlist.join(QChar(acSeparator)).toLatin1();
-    SendScintilla(SCI_AUTOCSHOW, last_len, chlist.constData());
+    ScintillaString wlist_s = convertTextQ2S(wlist.join(QChar(acSeparator)));
+    SendScintilla(SCI_AUTOCSHOW, last_len, ScintillaStringData(wlist_s));
 }
 
 
@@ -2415,7 +2415,7 @@ int QsciScintilla::markerDefine(MarkerSymbol sym, int mnr)
     checkMarker(mnr);
 
     if (mnr >= 0)
-        SendScintilla(SCI_MARKERDEFINE, mnr,static_cast<long>(sym));
+        SendScintilla(SCI_MARKERDEFINE, mnr, static_cast<long>(sym));
 
     return mnr;
 }
@@ -2447,7 +2447,7 @@ int QsciScintilla::markerDefine(const QPixmap &pm, int mnr)
 
 
 // Add a marker to a line.
-int QsciScintilla::markerAdd(int linenr,int mnr)
+int QsciScintilla::markerAdd(int linenr, int mnr)
 {
     if (mnr < 0 || mnr > MARKER_MAX || (allocatedMarkers & (1 << mnr)) == 0)
         return -1;
@@ -2592,8 +2592,8 @@ void QsciScintilla::checkMarker(int &mnr)
 {
     if (mnr >= 0)
     {
-        // Check the explicit marker number isn't already allocated.
-        if (mnr > MARKER_MAX || allocatedMarkers & (1 << mnr))
+        // Note that we allow existing markers to be explicitly redefined.
+        if (mnr > MARKER_MAX)
             mnr = -1;
     }
     else
@@ -3358,8 +3358,9 @@ void QsciScintilla::showUserList(int id, const QStringList &list)
         return;
 
     SendScintilla(SCI_AUTOCSETSEPARATOR, userSeparator);
-    SendScintilla(SCI_USERLISTSHOW, id,
-            list.join(QChar(userSeparator)).toLatin1().data());
+
+    ScintillaString s = convertTextQ2S(list.join(QChar(userSeparator)));
+    SendScintilla(SCI_USERLISTSHOW, id, ScintillaStringData(s));
 }
 
 
@@ -3504,7 +3505,7 @@ void QsciScintilla::setAnnotationDisplay(QsciScintilla::AnnotationDisplay displa
 // Clear annotations.
 void QsciScintilla::clearAnnotations(int line)
 {
-    if (line < 0)
+    if (line >= 0)
         SendScintilla(SCI_ANNOTATIONSETTEXT, line, (const char *)0);
     else
         SendScintilla(SCI_ANNOTATIONCLEARALL);

@@ -28,6 +28,8 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
+#include <string.h>
+
 #include <qapplication.h>
 #include <qevent.h>
 #include <qpainter.h>
@@ -141,21 +143,21 @@ void ScintillaQt::StartDrag()
 {
     inDragDrop = ddDragging;
 
-    QMimeData *mime = new QMimeData;
-    mime->setText(textRange(&drag));
-
-    QDrag *drag = new QDrag(qsb);
-    drag->setMimeData(mime);
+    QDrag *qdrag = new QDrag(qsb);
+    qdrag->setMimeData(qsb->toMimeData(textRange(&drag)));
 
 # if QT_VERSION >= 0x040300
-    Qt::DropAction action = drag->exec(Qt::MoveAction | Qt::CopyAction, Qt::MoveAction);
+    // The default action is to copy so that the cursor is correct when over
+    // another widget or application (when we have no control over it).  We
+    // make sure it is correct over ourself in the event handlers.
+    Qt::DropAction action = qdrag->exec(Qt::MoveAction | Qt::CopyAction, Qt::CopyAction);
 # else
-    Qt::DropAction action = drag->start(Qt::MoveAction);
+    Qt::DropAction action = qdrag->start(Qt::MoveAction);
 # endif
 
     // Remove the dragged text if it was a move to another widget or
     // application.
-    if (action == Qt::MoveAction && drag->target() != qsb->viewport())
+    if (action == Qt::MoveAction && qdrag->target() != qsb->viewport())
         ClearSelection();
 
     SetDragPosition(-1);
@@ -339,10 +341,30 @@ void ScintillaQt::NotifyParent(SCNotification scn)
         break;
 
     case SCN_MODIFIED:
-        emit qsb->SCN_MODIFIED(scn.position, scn.modificationType, scn.text,
-                scn.length, scn.linesAdded, scn.line, scn.foldLevelNow,
-                scn.foldLevelPrev, scn.token, scn.annotationLinesAdded);
-        break;
+        {
+            char *text;
+
+            // Give some protection to the Python bindings.
+            if (scn.text && (scn.modificationType & (SC_MOD_INSERTTEXT|SC_MOD_DELETETEXT) != 0))
+            {
+                text = new char[scn.length + 1];
+                memcpy(text, scn.text, scn.length);
+                text[scn.length] = '\0';
+            }
+            else
+            {
+                text = 0;
+            }
+
+            emit qsb->SCN_MODIFIED(scn.position, scn.modificationType, text,
+                    scn.length, scn.linesAdded, scn.line, scn.foldLevelNow,
+                    scn.foldLevelPrev, scn.token, scn.annotationLinesAdded);
+
+            if (text)
+                delete[] text;
+
+            break;
+        }
 
     case SCN_MODIFYATTEMPTRO:
         emit qsb->SCN_MODIFYATTEMPTRO();
@@ -402,7 +424,8 @@ QString ScintillaQt::textRange(const SelectionText *text)
 // Copy the selected text to the clipboard.
 void ScintillaQt::CopyToClipboard(const SelectionText &selectedText)
 {
-    QApplication::clipboard()->setText(textRange(&selectedText));
+    QApplication::clipboard()->setMimeData(
+            qsb->toMimeData(textRange(&selectedText)));
 }
 
 
@@ -429,10 +452,12 @@ void ScintillaQt::Paste()
 // Paste text from either the clipboard or selection.
 void ScintillaQt::pasteFromClipboard(QClipboard::Mode mode)
 {
-    QString str = QApplication::clipboard()->text(mode);
+    const QMimeData *source = QApplication::clipboard()->mimeData(mode);
 
-    if (str.isEmpty())
+    if (!source || !qsb->canInsertFromMimeData(source))
         return;
+
+    QString str = qsb->fromMimeData(source);
 
     pdoc->BeginUndoAction();
 
