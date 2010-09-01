@@ -49,6 +49,8 @@
 #include "totool.h"
 
 #include <Qsci/qsciprinter.h>
+#include <Qsci/qscilexer.h>
+#include <Qsci/qsciabstractapis.h>
 
 #include <qapplication.h>
 #include <qfileinfo.h>

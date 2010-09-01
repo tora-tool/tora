@@ -55,6 +55,7 @@
 #include <qtimer.h>
 #include <qkeysequence.h>
 #include <Qsci/qsciapis.h>
+#include <Qsci/qsciabstractapis.h>
 #include <qnamespace.h>
 #include <QListWidget>
 #include <QtDebug>
