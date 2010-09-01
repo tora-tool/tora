@@ -171,7 +171,12 @@ public:
 		}
 		bool join()
 		{
-			return QThread::wait(10);
+			while(isRunning())
+			{
+				if(!QThread::wait(50))
+					QThread::yieldCurrentThread();
+			}
+			return isFinished();
 		}
 		friend class qt_thread_manager;
 	};

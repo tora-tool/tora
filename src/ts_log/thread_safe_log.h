@@ -94,7 +94,7 @@ class basic_thread_safe_log_writer_sharethread
 					for ( int idx = 0; idx < m_pThis->m_nSumOfPriorities; ++idx)
 					{
 						LogWrites & writes = *( m_pThis->m_aWritesTo[ m_pThis->m_idxWrite]);
-						if ( writes.m_astr.size() > 0)
+						if (!writes.m_astr.empty())
 							// we found a log that we should write to
 							break;
 						++m_pThis->m_idxWrite;
@@ -119,7 +119,7 @@ class basic_thread_safe_log_writer_sharethread
 						}
 						// we flush only when there are no more messages to write
 						// (flushing could be time-consuming)
-						bDoFlush = ( writes.m_astr.size() == 0);
+						bDoFlush = writes.m_astr.empty();
 					}
 					// ... only when there are no more messages,
 					//    will we ask if we should be destructed
@@ -131,7 +131,7 @@ class basic_thread_safe_log_writer_sharethread
 					}
 				} // end locked block
 				// write the string(s)
-				if ( astrMsgs.size() > 0)
+				if ( !astrMsgs.empty())
 				{
 					std::vector< std::string *>::iterator
 						first = astrMsgs.begin(), last = astrMsgs.end();
@@ -147,10 +147,10 @@ class basic_thread_safe_log_writer_sharethread
 				}
 				else
 					// nothing to write - wait
-					thread_manager::sleep( 1);
+					thread_manager::sleep( 100);
 				continue;
 			unlock_and_sleep:
-				thread_manager::sleep( 1);
+				thread_manager::sleep( 100);
 				continue;
 			} // while(true)
 		} // virtual operator()()
@@ -350,19 +350,21 @@ class thread_safe_log_writer_ownthread
 				{
 					auto_lock_unlock locker( m_pThis->m_cs);
 					// get the string
-					if ( m_pThis->m_astrMessages.size() > 0)
+					if ( !m_pThis->m_astrMessages.empty())
 					{
 						pstr = m_pThis->m_astrMessages.front();
 						m_pThis->m_astrMessages.pop();
 						// we flush only when there are no more messages to write
 						// (flushing could be time-consuming)
-						bDoFlush = ( m_pThis->m_astrMessages.size() == 0);
+						bDoFlush = m_pThis->m_astrMessages.empty();
 					}
 					// ... only when there are no more messages,
 					//    will we ask if we should be destructed
 					else if ( m_pThis->m_bShouldBeDestructed)
 					{
 						// signal to the other thread we've finished
+						m_pThis->m_underlyingLog << "Log writter thread finished." << std::endl;
+						m_pThis->m_underlyingLog.flush();
 						m_bHasFinished = true;
 						return;
 					}
@@ -407,8 +409,7 @@ public:
 		while ( !thread_manager::join_thread( m_info))
 		{
 			auto_lock_unlock locker( m_cs);
-            // FIXME: this always crashes on mac. Need to be fixed in proper way.
-			//assert ( m_info.m_bHasFinished);
+			assert ( m_info.m_bHasFinished);
 			// the other thread has finished
 			break;
 		}
