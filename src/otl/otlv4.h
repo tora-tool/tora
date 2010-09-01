@@ -20353,6 +20353,15 @@ public:
   else
    return 1;
  }
+ 
+ int reset(void)
+ {int status;
+  status=OCIReset(srvhp,errhp);
+  if(status)
+   return 0;
+  else
+   return 1;
+ }
 
  int server_attach(const char* tnsname)
  {int& status=last_status;
@@ -23696,6 +23705,19 @@ public:
   }
  }
 
+  void reset(void)
+    OTL_THROWS_OTL_EXCEPTION
+  {
+    if(!connected)return;
+    retcode=connect_struct.reset();
+    if(!retcode){
+      throw_count++;
+      if(throw_count>1)return;
+      if(otl_uncaught_exception()) return; 
+      throw otl_exception(connect_struct);
+    }
+  }
+  
 #if defined(OTL_ORA10G_R2)
  void commit_nowait(void)
    OTL_THROWS_OTL_EXCEPTION
