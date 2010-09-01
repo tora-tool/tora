@@ -102,7 +102,7 @@ class basic_thread_safe_log_writer_sharethread
 					}
 					// did we find a log with messages that should be written to it?
 					LogWrites & writes = *( m_pThis->m_aWritesTo[ m_pThis->m_idxWrite]);
-					if ( writes.m_astr.size() > 0)
+					if ( !writes.m_astr.empty())
 					{
 						// we get the string(s) to write to this log
 						pLog = writes.m_pDestLog;
