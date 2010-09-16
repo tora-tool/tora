@@ -448,6 +448,31 @@ public:
         }
 
 
+        void close()
+        {
+            try {
+                tdRequest request;
+                request.message = "DISCONNECT";
+
+                request.dbcp->extension_pointer = 0;
+                request.dbcp->change_opts = 'Y';
+                request.dbcp->i_req_id = 0;
+                request.dbcp->o_req_id = 0;
+
+                request.columns.clear();
+                request.data.clear();
+
+                initialize(&request);
+
+                callServer(&request, DBFDSC);
+            }
+            catch(...)
+            {
+                qDebug() << "unhandled exception caught in teradataSub::close()";
+            }
+        }
+
+
         void execute(tdRequest *request, QString sql, toQList &params)
         {
             qDebug() << "execute! session: " << SessionId << "request id" << (long) request << request->message;
@@ -656,7 +681,9 @@ public:
             request->dbcp->func = func;
 
             Int32 ret = DBCHCL(&(request->result), Cnta, request->dbcp);
-            checkError(request);
+
+            if(func != DBFDSC)  // logoff function
+                checkError(request);
             return ret;
         }
 
@@ -1417,6 +1444,10 @@ public:
 
         void closeConnection(toConnectionSub *conn)
         {
+            qDebug() << "close connection";
+            teradataSub *sub = static_cast<teradataSub *>(conn);
+            if(sub)
+                sub->close();
             delete conn;
         }
 
