@@ -1,27 +1,76 @@
+tora (2.1.3-1) unstable; urgency=lowercase
+
+Features:
+ * Terradata support
+ * AWR performance report tool
+ * xml formatting for memo editor/display
+ * Improved support for displaying routines in MySQL. From now on it will
+   display full routine creation script including arguments, return type etc.
+ * close buttons in tabs implemented
+ * connection dialog: test connection button
+ * F4 describe under cursor in PL/SQL editor
+ * RFE #2949032 tab with directories into the schema browser
+ * RFE #2916092 - column "percentage free" in the storage manage
+
+Bugfixes:
+
+ * Build fixes (macosx, windows, cmake, rpm, oci stub)
+ * Do not update current schema on focus if schema had already been changed
+ * Enable syntax colouring only if "Syntax highlighting" was selected in preferences
+ * Fix for pl/sql editor in the case of TYPE BODY
+ * Add SCI_LEXER, fixes highlight issue on ubuntu
+ * Full implementation of bug #2477760 - data shown in storage manager is
+   not sortable
+ * Check/drop MySQL routine before creating one.
+ * A problem when in MySQL "show create ..." returns different number of
+   columns for users with different permissions
+ * Rollback segments tool shows a lot of duplicate columns. "Initial", "next"
+   columns have a lot of "(((((((" characters. Tree view is replaced with
+   toresulttable. Less code, mem-leaks fixes
+ * Fix crash when entering a dot after a forward slash in editor
+ * Fixed #514310: When switching to a different schema, or refreshing the
+   current schema in schema browser, the detail window still displays the info
+   for the last item selected
+ * Updated sql that includes user role access
+ * Patch #3022103: TOra fails to build with Qt 4.7. by Felix Geyer
+ * Fix directory browser for trotl
+ * Apply patch for column labels from John Vandenberg
+ * Fixed #3023700 When i right click on a dblink in the database browser, they
+   are entry, drop index, create index, modify index instead of dblink entry
+
+Development:
+
+ * Various Trotl improvements and fixes
+ * toResultCombo can use a query returning more than one colum
+   - toResultCombo can use a query returning more than one colum, 1st column
+   is desplayed, the others are kept as a vector of QVariants. This is used in
+   AWR tool to keep mapping between diplayed snap time and the snap id. (I
+   know that in QT4 I should use MVC, in the future, mayby)
+   - toResulCombe can have selectPolicy. It can be set to either:
+     None - default behaviour, does nothing
+     First - select the first Combo field
+     LastButOne -
+     Last -
+ * Example tool window
+
 tora (2.1.2-1) unstable; urgency=low
 
-  * Added debug package. (Closes: #560064)
-  * New Upstream version 2.1.2
-    * Improved: Add editor option for uppler/lowercase object names
-    * Improved: Db extract/compare tool now remembers widgets states
-    * New: Filesystem completer for target line edit
-    * Improved: Compatibility with sql+
-    * New: Color/pixmap identifier for connection
-    * Improved: Schema browser improvements
-    * New: Ability to add external static check
-    * New: Save package specification and body to one file
-    * New: Initial support for creating/modifying tables
-    * Bugfixes
-  * Bumped Standards-Version to 3.8.4, no changes needed.
-  * No patches needed anymore, removed patch system.
-
- -- Michael Meskes <meskes@debian.org>  Tue, 30 Mar 2010 13:14:16 +0200
+  * Improved: Add editor option for uppler/lowercase object names
+  * Improved: Db extract/compare tool now remembers widgets states
+  * New: Filesystem completer for target line edit
+  * Improved: Compatibility with sql+
+  * New: Color/pixmap identifier for connection
+  * Improved: Schema browser improvements
+  * New: Ability to add external static check
+  * New: Save package specification and body to one file
+  * New: Initial support for creating/modifying tables
+  * Bugfixes
 
 tora (2.1.1-1) unstable; urgency=low
 
-  * New upstream version.
+  * New upstream version
 
- -- Michael Meskes <meskes@debian.org>  Thu, 19 Nov 2009 15:18:19 +0100
+ -- Nathan Neulinger <nneul@neulinger.org> Tue, 13 Oct 2009 13:44:40 -0600
 
 tora (2.1.0-1) unstable; urgency=low
 
