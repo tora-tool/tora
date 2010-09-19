@@ -203,6 +203,8 @@ tora_SOURCES=main.cpp \
     tobrowserdblinkswidget.cpp tobrowserdblinkswidget.h \
     tobrowserdirectorieswidget.cpp tobrowserdirectorieswidget.h \
     toresultgrants.cpp toresultgrants.h \
+	toawr.cpp toawr.h \
+	precompiled.h \
 	migratetool/sqldeveloper.cpp migratetool/sqldeveloper.h \
 	migratetool/squirrelsql.cpp migratetool/squirrelsql.h \
 	migratetool/tora3.cpp migratetool/tora3.h \
