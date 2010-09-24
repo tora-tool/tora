@@ -52,28 +52,32 @@ namespace trotl {
  */
 struct TROTL_EXPORT BindParDate: public SqlStatement::BindPar
 {
-	BindParDate(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): SqlStatement::BindPar(pos, stmt, decl)
-	{
-		valuep = new unsigned char [ _cnt * sizeof(OCIDate) ];
-//		memset(valuep, 0x00, _cnt * sizeof(OCIDate) );
-
-		dty = SQLT_ODT;
-		value_sz = sizeof(OCIDate);
-		type_name = "DATE";
-
-		memset(valuep, 0x00, _cnt * sizeof(OCIDate) );
-	}
-
 	BindParDate(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 	{
-		valuep = new unsigned char [ _cnt * sizeof(OCIDate) ];
-//		memset(valuep, 0x00, _cnt * sizeof(OCIDate) );
+		valuep = (void**) new unsigned char [ _cnt * sizeof(OCIDate) ];
+		memset(valuep, 0x00, _cnt * sizeof(OCIDate) );
 
 		dty = SQLT_ODT;
 		value_sz = sizeof(OCIDate);
+		for(unsigned i = 0; i < _cnt; ++i)
+		{
+			((ub2*)rlenp)[i] = (ub2) value_sz;
+		}		
 		type_name = ct.get_type_str();
+	}
 
+	BindParDate(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): SqlStatement::BindPar(pos, stmt, decl)
+	{
+		valuep = (void**) new unsigned char [ _cnt * sizeof(OCIDate) ];
 		memset(valuep, 0x00, _cnt * sizeof(OCIDate) );
+
+		dty = SQLT_ODT;
+		value_sz = sizeof(OCIDate);
+		for(unsigned i = 0; i < _cnt; ++i)
+		{
+			((ub4*)rlenp)[i] = (ub4) value_sz;
+		}
+		type_name = "DATE";
 	}
 
 	~BindParDate()
@@ -85,25 +89,8 @@ struct TROTL_EXPORT BindParDate: public SqlStatement::BindPar
 		}
 	}
 
-//	template<class return_type>
-//	return_type get_number(unsigned int row) const
-//	{
-//		throw_ocipl_exception(
-//				OciException(
-//						__TROTL_HERE__,
-//						"Invalid datatype in conversion(BindParDate to %d%s)\n"
-//				).arg(sizeof(return_type)).arg(typeid(return_type).name())
-//		);
-//	}
-
 	virtual tstring get_string(unsigned int row) const;
 
-//	virtual int get_int(unsigned int row) const { return get_number<int>(row); };
-//	virtual unsigned int get_uint(unsigned int row) const { return get_number<unsigned int>(row); };
-//	virtual long get_long(unsigned int row) const { return get_number<long>(row); };
-//	virtual unsigned long get_ulong(unsigned int row) const { return get_number<unsigned long>(row); };
-//	virtual float get_float(unsigned int row) const { return get_number<float>(row); };
-//	virtual double get_double(unsigned int row) const { return get_number<double>(row); };
 protected:
 	BindParDate(const BindParDate &other);
 };

@@ -87,93 +87,120 @@ public:
 	 **/
 	struct TROTL_EXPORT BindPar
 	{
-	  enum {
-	    BIND_IN=1, BIND_INOUT=2, BIND_OUT=4, DEFINE_SELECT=8
-	  };
-
-	BindPar(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl):
-	valuep(NULL), indp(NULL), rlenp(NULL), rcodep(NULL), alenp(NULL),
-	bindp(NULL), defnpp(NULL), _env(stmt._env), _stmt(stmt),//_conn(conn),
-	_pos(pos), _max_cnt(decl.bracket[1]), _cnt(decl.bracket[1]),
-	_bound(false), type_name(""), bind_name(decl.bindname), bind_typename(decl.bindtype)
-	{
-		indp = new OCIInd [_cnt];
-		memset(indp, 0, sizeof(OCIInd)*_cnt);
-////		memset(indp, 0x5a, sizeof(OCIInd)*_cnt);
-
-		rlenp = new ub2 [_cnt];
-		rcodep= new ub2 [_cnt];
-
-		if(decl.inout == "in")
-			_bind_type = BIND_IN;
-		else if(decl.inout == "inout")
-			_bind_type = BIND_INOUT;
-		else if(decl.inout == "out")
-			_bind_type = BIND_OUT;
-
-		//std::cerr << "BindPar::BindPar" << std::endl;
-	};
+		enum {
+			BIND_IN=1,
+			BIND_INOUT=2,
+			BIND_OUT=4,
+			DEFINE_SELECT=8
+		};
 		
-	BindPar(unsigned int pos, SqlStatement &stmt, ColumnType &ct):
-	valuep(NULL), indp(NULL), rlenp(NULL), rcodep(NULL), alenp(NULL),
-	bindp(NULL), defnpp(NULL), _env(stmt._env), _stmt(stmt),//_conn(conn),
-	_pos(pos), _max_cnt(g_OCIPL_BULK_ROWS), _cnt(g_OCIPL_BULK_ROWS),
-	_bound(false), type_name(""), bind_name(""), bind_typename("")
-	{
-		indp = new OCIInd [_cnt];
-		memset(indp, 0, sizeof(OCIInd)*_cnt);
-		////		memset(indp, 0x5a, sizeof(OCIInd)*_cnt);
+		/* Placeholder for Bind operations */
+		BindPar(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl)
+			: valuep(NULL)
+			, indp(NULL)
+			, rlenp(NULL)
+			// , rcodep(NULL)
+			, alenp(NULL)
+			, mode(OCI_DEFAULT)
+			, bindp(NULL)
+			, defnpp(NULL)
+			, _env(stmt._env)
+			, _stmt(stmt)
+			, _pos(pos)
+			, _max_cnt(decl.bracket[1])
+			, _cnt(decl.bracket[1])
+			, _bound(false)
+			, type_name("")
+			, bind_name(decl.bindname)
+			, bind_typename(decl.bindtype)
+		{
+			indp = new OCIInd [_cnt];
+			memset(indp, 0, sizeof(OCIInd)*_cnt);
+			
+			rlenp = malloc( sizeof(ub4) * _cnt); // OCIBindByPos uses ub4* for lenp 
+			alenp = new ub2 [_cnt];
+			
+			if(decl.inout == "in")
+				_bind_type = BIND_IN;
+			else if(decl.inout == "inout")
+				_bind_type = BIND_INOUT;
+			else if(decl.inout == "out")
+				_bind_type = BIND_OUT;
+		};
+
+		/* Placeholder for Define operations */		
+		BindPar(unsigned int pos, SqlStatement &stmt, ColumnType &ct)
+			: valuep(NULL)
+			, indp(NULL)
+			, rlenp(NULL)
+			// , rcodep(NULL)
+			, alenp(NULL)
+			, mode(OCI_DEFAULT)
+			, bindp(NULL)
+			, defnpp(NULL)
+			, _env(stmt._env)
+			, _stmt(stmt)
+			, _pos(pos)
+			, _max_cnt(g_OCIPL_BULK_ROWS)
+			, _cnt(g_OCIPL_BULK_ROWS)
+			, _bound(false)
+			, type_name("")
+			, bind_name("")
+			, bind_typename("")
+		{
+			indp = new OCIInd [_cnt];
+			memset(indp, 0, sizeof(OCIInd)*_cnt);
 		
-		//alenp = new ub2 [_cnt];
-		rcodep= new ub2 [_cnt];
+			rlenp = malloc( sizeof(ub2) * _cnt); // OciDefineByPos uses ub2* for lenp 
+			
+			_bind_type = DEFINE_SELECT;
+		};
 
-		_bind_type = DEFINE_SELECT;
-
-		//std::cerr<< "BindPar::BindPar" << std::endl;
-	};
-
-	virtual ~BindPar()
-	{
-		if(indp) delete[] indp;
-		if(rlenp) delete[] rlenp;
-		if(rcodep) delete[] rcodep;
-		if(alenp) delete[] alenp;
-		indp = NULL;
-		rlenp = rcodep = alenp = NULL;
-	}
-
-	// every datatype can be converted to a string
-	virtual tstring get_string(unsigned int row) const = 0;
+		virtual ~BindPar()
+		{
+			if(indp) { delete[] indp; indp = NULL; }
+			if(rlenp) { free(rlenp); rlenp = NULL; }
+			// if(rcodep) { delete[] rcodep; rcodep = NULL; }
+			if(alenp) {delete[] alenp; alenp = NULL; }
+		};
+		
+		// every datatype can be converted to a string
+		virtual tstring get_string(unsigned int row) const = 0;
 	
-	// This callback is used by descendents to call
-	// OCIBindArrayOfStructures, OCIBindObject etc, ...
-	virtual void bind_hook(SqlStatement&) {};
-	virtual void define_hook(SqlStatement&) {};
+		/* These two callbacks are used by descendents to call
+		 * OCIBindArrayOfStructures, OCIBindObject etc, ...
+		 * is called *after* OCIDefineByPos
+		 */
+		virtual void bind_hook(SqlStatement&) {};
+		virtual void define_hook(SqlStatement&) {};
 
-	dvoid *valuep;
-	sb4 value_sz;
-	ub2 dty;
-	OCIInd *indp;
-	ub2 *rlenp, *rcodep;
-	ub2 *alenp;
-	OCIBind *bindp;
-	OCIDefine *defnpp;  //TODO union with OCIBind *bindpp
-	OciEnv &_env;
-//	OciConnection &_conn;
-	SqlStatement &_stmt;
-	unsigned int _pos, /*_cnt,*/ _max_cnt, _bind_type;
-	size_t _cnt;
-	bool _bound;
-	tstring type_name, bind_name, bind_typename;
+		/* members used for OCI calls */
+		dvoid **valuep;
+		sb4 value_sz;
+		ub2 dty;
+		OCIInd *indp;	// OCIInd aka sb2 ignored for SQL_NTY and SQL_REF
+		void *rlenp;
+		//ub2 *rcodep;
+		ub2 *alenp;
+		ub4 mode;	// define mode = OCI_DEFAULT, except for SQLT_LONG = OCI_DYNAMIC_FETCH TODO fix long
+		OCIBind *bindp;
+		OCIDefine *defnpp;  //TODO union with OCIBind *bindpp
+		
+		OciEnv &_env;
+		SqlStatement &_stmt;
+		unsigned int _pos, /*_cnt,*/ _max_cnt, _bind_type;
+		size_t _cnt;
+		bool _bound;
+		tstring type_name, bind_name, bind_typename;
 
-	bool is_null(unsigned row) const {return indp[row]==OCI_IND_NULL;};
-	bool is_not_null(unsigned row) const {return indp[row]!=OCI_IND_NULL;};
-
+		/* NOTE these two function do not work with complex types SQLT_NTY */
+		bool is_null(unsigned row) const {return indp[row]==OCI_IND_NULL;};
+		bool is_not_null(unsigned row) const {return indp[row]!=OCI_IND_NULL;};		
 	protected:
-	BindPar(const BindPar &other);
-	friend class SqlStatement;
+		BindPar(const BindPar &other);
+		friend class SqlStatement;
 	}; // class BindPar
-
+	
 	SqlStatement(OciConnection& conn, const tstring& stmt, ub4 lang=OCI_NTV_SYNTAX, int bulk_rows=g_OCIPL_BULK_ROWS);
 
 	bool execute_internal(ub4 rows, ub4 mode);

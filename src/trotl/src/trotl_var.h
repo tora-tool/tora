@@ -61,6 +61,8 @@ struct TROTL_EXPORT ColumnType
 {
 	tstring _column_name;
 	tstring _data_type_name;
+	tstring _data_type_dblink; // ?? TODO
+					
 	ub2	_data_type;
 	ub2	_width;
 	ub1	_char_semantics;	// for Oracle 9
@@ -69,21 +71,28 @@ struct TROTL_EXPORT ColumnType
 	ub1	_nullable;
 	bool    _utf16;
 
-	ColumnType():
-		_data_type(0),
-		_width(0),
-		_char_semantics(0),
-		_scale(-127),
-		_precision(0),		  
-		_nullable(false),
-		_utf16(false)  
-		{};
+	// for complex types
+	OCITypeCode _typecode, _collection_typecode;
+	dvoid *_collection_dschp;	
+	OCIType *_tdo;
+	OCIRef *_oref;
+	
+	ColumnType(): _data_type(0)
+	  , _width(0)
+	  , _char_semantics(0)
+	  , _scale(-127)
+	  , _precision(0)
+	  , _nullable(false)
+	  , _utf16(false)
+	  , _collection_dschp(NULL)
+	  , _tdo(NULL)
+	  , _oref(NULL)
+	  {};
 
-		ColumnType(OCIError* errh, dvoid* handle);
-
-		tstring get_type_str(bool show_null=false) const;
-
-		void describe(OCIError* errh, dvoid* handle);
+	ColumnType(SqlStatement &stat, dvoid* handle);
+	void describe(SqlStatement &stat, dvoid* handle);
+	
+	tstring get_type_str(bool show_null=false) const;
 };
 
 

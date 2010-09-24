@@ -335,7 +335,7 @@ namespace trotl {
   {
 	  typedef OciSimpleHandle<OCIEnv> super;
 	  
-	  OciEnvAlloc(ub4 oci_mode=OCI_OBJECT)	// OCI_OBJECT for OCINumber... functions
+	  OciEnvAlloc(ub4 oci_mode=OCI_OBJECT|OCI_THREADED)	// OCI_OBJECT for OCINumber... functions
 	  {
 		  sword res = OCICALL(OCIEnvCreate(&_handle, oci_mode, 0/*ctxp*/, 0, 0, 0, 0/*xtramem_sz*/, 0/*usrmempp*/));
 		  //std::cerr << "OCIEnvCreate:" << res << std::endl;
@@ -422,14 +422,40 @@ namespace trotl {
 
   inline void oci_check_error(tstring where, OCIError* errh, sword res)
   {
-	  if (res != OCI_SUCCESS)
+	  switch(res)
+	  {
+	  case OCI_SUCCESS:
+	  case OCI_SUCCESS_WITH_INFO:
+		  break;
+	  case OCI_ERROR:
 		  throw OciException(where, errh);
+		  break;
+	  case OCI_INVALID_HANDLE:
+		  throw OciException(where, "Invalid handle");
+		  break;
+	  default:		  
+		  throw OciException(where, "Unsupported result code");
+		  break;
+	  }		  		  
   }
 
   inline void oci_check_error(tstring where, OCIEnv* envh, sword res)
   {
-	  if (res != OCI_SUCCESS)
+	  switch(res)
+	  {
+	  case OCI_SUCCESS:
+	  case OCI_SUCCESS_WITH_INFO:
+		  break;
+	  case OCI_ERROR:
 		  throw OciException(where, envh);
+		  break;
+	  case OCI_INVALID_HANDLE:
+		  throw OciException(where, "Invalid handle");
+		  break;
+	  default:		  
+		  throw OciException(where, "Unsupported result code");
+		  break;
+	  }		  		  
   }
 
 /*

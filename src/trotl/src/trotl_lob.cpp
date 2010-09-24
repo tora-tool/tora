@@ -58,22 +58,30 @@ Util::RegisterInFactory<BindParBFile, DefineParFactTwoParmSing, int> regDefineNu
 BindParLob::BindParLob(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : BindPar(pos, stmt, ct)
 {
 	//valuep = new unsigned char [ _cnt * ( sizeof(OCILobLocator*) ) ];
-	valuep = malloc( _cnt * sizeof(OCILobLocator*)  );
-
-	////memset(valuep, 0x5a, _cnt * sizeof(OCILobLocator*) );
+	valuep = (void**) malloc( _cnt * sizeof(OCILobLocator*)  );
+	memset(valuep, 0, _cnt * sizeof(OCILobLocator*) );
 
 	value_sz = sizeof(OCILobLocator*);
+	for(unsigned i = 0; i < _cnt; ++i)
+	{
+		((ub2*)rlenp)[i] = (ub2) value_sz;
+	}		
+
 	descAlloc();
 }
 
 BindParLob::BindParLob(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): BindPar(pos, stmt, decl)
 {
 	//valuep = new unsigned char [ decl.bracket[1] * ( OCI_NUMBER_SIZE + 1) ];
-	valuep = malloc( _cnt * sizeof(OCILobLocator*)  );
-
-	////memset(valuep, 0x5a, _cnt * sizeof(OCILobLocator*) );
+	valuep = (void**) malloc( _cnt * sizeof(OCILobLocator*)  );
+	memset(valuep, 0, _cnt * sizeof(OCILobLocator*) );
 
 	value_sz = sizeof(OCILobLocator*);
+	for(unsigned i = 0; i < _cnt; ++i)
+	{
+		((ub4*)rlenp)[i] = (ub4) value_sz;
+	}		
+
 	descAlloc();
 };
 

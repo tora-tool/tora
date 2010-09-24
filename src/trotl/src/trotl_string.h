@@ -60,33 +60,27 @@ namespace trotl {
 // returned.
 struct TROTL_EXPORT BindParVarchar: public SqlStatement::BindPar
 {
-public:
+  	BindParVarchar(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
+	{
+		/* amount of bytes =  (string length +1 ) * (array length) */
+		valuep = (void**) new char [ ( ct._width + 1 ) * (_cnt) ]; // +1 for ending zero
+		memset(valuep, 0x00, (ct._width + 1) * _cnt);
+		
+		dty = SQLT_STR;
+		value_sz = ct._width + 1;
+		type_name = typeid(tstring).name();
+	}
+
 	BindParVarchar(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl) : SqlStatement::BindPar(pos, stmt, decl)
 	{
 		// amount of bytes =  (string length +1 ) * (array length)
-		valuep = new char [ (decl.bracket[0]+1) * (decl.bracket[1]) ];
+		valuep = (void**) new char [ (decl.bracket[0]+1) * (decl.bracket[1]) ];
+		memset(valuep, 0x00, (decl.bracket[0]+1) * (decl.bracket[1]));
+		
 		dty = SQLT_STR;
 		value_sz = decl.bracket[0]+1;
-		alenp = new ub2 [decl.bracket[1]];
 		type_name = typeid(tstring).name();
-
-		memset(valuep, 0x00, (decl.bracket[0]+1) * (decl.bracket[1]));
-		//memset(alenp, 0x00, (decl.bracket[0]+1) * decl.bracket[1]);
 	}
-
-	BindParVarchar(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
-	{
-		// amount of bytes =  (string length +1 ) * (array length)
-		valuep = new char [ ( ct._width + 1 ) * (_cnt) ]; // +1 for ending zero
-		dty = SQLT_STR;
-		value_sz = ct._width + 1;
-		alenp = new ub2 [_cnt];
-		type_name = typeid(tstring).name();
-
-		memset(valuep, 0x00, (ct._width + 1) * _cnt);
-		//memset(alenp, 0x00, sizeof(ub2) * _cnt);
-	}
-
 
 	~BindParVarchar()
 	{
@@ -94,11 +88,6 @@ public:
 		{
 			delete[] (char*)valuep;
 			valuep = NULL;
-		}
-		if(alenp)
-		{
-			delete[] (ub2*)alenp;
-			alenp = NULL;
 		}
 	}
 
@@ -132,31 +121,24 @@ protected:
  **/
 struct TROTL_EXPORT BindParChar: public SqlStatement::BindPar
 {
-public:
-	BindParChar(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): SqlStatement::BindPar(pos, stmt, decl)
-	{
-		valuep = new char [ (decl.bracket[0]) * (decl.bracket[1]) ];
-		dty = SQLT_CHR;
-		value_sz = decl.bracket[0];
-		alenp = new ub2 [decl.bracket[1]];
-		type_name = typeid(tstring).name();
-
-		memset(valuep, 0x00, (decl.bracket[0]) * (decl.bracket[1]));
-		memset(alenp, 0x00, sizeof(ub2) * decl.bracket[1]);
-		//memset(valuep, 0x5a, (decl.bracket[0]) * (decl.bracket[1]));
-	}
-
 	BindParChar(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 	{
-		// amount of bytes =  (string length +1 ) * (array length)
-		valuep = new char [ ( ct._width + 1 ) * _cnt ];
+		valuep = (void**) new char [ ( ct._width + 1 ) * _cnt ];
+		memset(valuep, 0x00, ( ct._width + 1 ) * _cnt);
+		
 		dty = SQLT_CHR;
 		value_sz = ct._width;
-		alenp = new ub2 [_cnt];
 		type_name = typeid(tstring).name();
+	}
 
-		memset(valuep, 0x00, ( ct._width + 1 ) * _cnt);
-		memset(alenp, 0x00, sizeof(ub2) * _cnt);
+	BindParChar(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): SqlStatement::BindPar(pos, stmt, decl)
+	{
+		valuep = (void**) new char [ (decl.bracket[0]) * (decl.bracket[1]) ];
+		memset(valuep, 0x00, (decl.bracket[0]) * (decl.bracket[1]));
+
+		dty = SQLT_CHR;
+		value_sz = decl.bracket[0];
+		type_name = typeid(tstring).name();
 	}
 
 	~BindParChar()
@@ -166,19 +148,6 @@ public:
 			delete[] (char*)valuep;
 			valuep = NULL;
 		}
-		if(alenp)
-		{
-			delete[] (ub2*)alenp;
-			alenp = NULL;
-		}
-	}
-
-	template<class return_type>
-	return_type get_number(unsigned int row) const
-	{
-		throw OciException(__TROTL_HERE__, "Invalid datatype in conversion(BindParChar to %d%s)\n"
-				).arg(sizeof(return_type)).arg(typeid(return_type).name());
-//		return (return_type)0;
 	}
 
 	virtual tstring get_string(unsigned int row) const
@@ -190,12 +159,6 @@ public:
 		return "";
 	}
 
-//	virtual int get_int(unsigned int row) const { return get_number<int>(row); };
-//	virtual unsigned int get_uint(unsigned int row) const { return get_number<unsigned int>(row); };
-//	virtual long get_long(unsigned int row) const { return get_number<long>(row); };
-//	virtual unsigned long get_ulong(unsigned int row) const { return get_number<unsigned long>(row); };
-//	virtual float get_float(unsigned int row) const { return get_number<float>(row); };
-//	virtual double get_double(unsigned int row) const { return get_number<double>(row); };
 protected:	
 	BindParChar(const BindParChar &other);
 };
@@ -204,26 +167,25 @@ protected:
  **/
 struct TROTL_EXPORT BindParRaw: public SqlStatement::BindPar
 {
-public:
-	BindParRaw(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): SqlStatement::BindPar(pos, stmt, decl)
-	{
-		valuep = new char [ (decl.bracket[0]) * (decl.bracket[1]) ];
-		dty = SQLT_BIN;
-		value_sz = decl.bracket[0];
-		alenp = new ub2 [decl.bracket[1]];
-		type_name = "RAW";
-	}
-
 	BindParRaw(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 	{
 		// amount of bytes =  (string length +1 ) * (array length)
-		valuep = new char [ ( ct._width + 1 ) * _cnt ];
+		valuep = (void**) new char [ ( ct._width + 1 ) * _cnt ];
+		memset(valuep, 0x00, (ct._width + 1) * _cnt);
+		
 		dty = SQLT_BIN;
 		value_sz = ct._width;
-		alenp = new ub2 [_cnt];
 		type_name = ct.get_type_str();
+	}
 
-		////		memset(valuep, 0x5a, value_sz * _cnt);
+	BindParRaw(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): SqlStatement::BindPar(pos, stmt, decl)
+	{
+		valuep = (void**) new char [ (decl.bracket[0]) * (decl.bracket[1]) ];
+		memset(valuep, 0x00, (decl.bracket[0]) * (decl.bracket[1]));
+		
+		dty = SQLT_BIN;
+		value_sz = decl.bracket[0];
+		type_name = "RAW";
 	}
 
 	~BindParRaw()
@@ -233,21 +195,8 @@ public:
 			delete[] (char*)valuep;
 			valuep = NULL;
 		}
-		if(alenp)
-		{
-			delete[] (ub2*)alenp;
-			alenp = NULL;
-		}
 	}
-
-	template<class return_type>
-	return_type get_number(unsigned int row) const
-	{
-		throw OciException(__TROTL_HERE__, "Invalid datatype in conversion(BindParRaw to %d%s)\n"
-				).arg(sizeof(return_type)).arg(typeid(return_type).name());
-		return (return_type)0;
-	}
-
+	
 	virtual tstring get_string(unsigned int row) const
 	{
 		if(!indp[row])

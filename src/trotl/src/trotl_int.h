@@ -192,31 +192,30 @@ struct TROTL_EXPORT BindParNumber: public SqlStatement::BindPar
 {
 	BindParNumber(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 	{
-		// SQLT_NUM - unsigned char[22]
-		// I am not sure here, SQLT_VNU can one byte longer than SQLT_NUM - probably
-		valuep = new unsigned char [ _cnt * ( OCI_NUMBER_SIZE + 1) ];
-
-		// memset(valuep, 0x5a, cnt * OCI_NUMBER_SIZE );
-		// ((unsigned char*)valuep)[0] = pos;
-		memset(valuep, 0x00, _cnt * (OCI_NUMBER_SIZE+1) );
+		valuep = (void**) new unsigned char [ _cnt * (OCI_NUMBER_SIZE) ];
+		memset(valuep, 0x00, _cnt * (OCI_NUMBER_SIZE) );
 
 		dty =  SQLT_VNU; //dty = SQLT_NUM;
-		value_sz = OCI_NUMBER_SIZE + 1;
+		value_sz = OCI_NUMBER_SIZE;
+		for(unsigned i = 0; i < _cnt; ++i)
+		{
+			((ub2*)rlenp)[i] = (ub2) value_sz;
+		}
 		type_name = ct.get_type_str();
 	}
 
 	BindParNumber(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): SqlStatement::BindPar(pos, stmt, decl)
 	{
-		// SQLT_NUM - unsigned char[22]
-		// I am not sure here, SQLT_VNU can one byte longer than SQLT_NUM - probably
-		valuep = new unsigned char [ decl.bracket[1] * ( OCI_NUMBER_SIZE + 1) ];
-
-		// memset(valuep, 0x5a, cnt * OCI_NUMBER_SIZE );
-		// ((unsigned char*)valuep)[0] = pos;
-		memset(valuep, 0x00, decl.bracket[1] * (OCI_NUMBER_SIZE+1) );
+		valuep = (void**) new unsigned char [ decl.bracket[1] * (OCI_NUMBER_SIZE) ];
+		memset(valuep, 0x00, decl.bracket[1] * (OCI_NUMBER_SIZE) );
 
 		dty =  SQLT_VNU; //dty = SQLT_NUM;
-		value_sz = OCI_NUMBER_SIZE + 1;
+		value_sz = OCI_NUMBER_SIZE;
+		for(unsigned i = 0; i < _cnt; ++i)
+		{
+			((ub4*)rlenp)[i] = (ub4) value_sz;
+		}
+
 		type_name = "NUMBER";
 	};
 

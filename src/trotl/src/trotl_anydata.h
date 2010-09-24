@@ -54,40 +54,41 @@ struct TROTL_EXPORT BindParANYDATA: public SqlStatement::BindPar
 	friend struct ConvertorForWrite;
 
 	// TODO remember OCIConn or at least svcctx in this class
-	BindParANYDATA(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
-	  , _oan_buffer(NULL), _any_indp(NULL)
+	BindParANYDATA(unsigned int pos, SqlStatement &stmt, ColumnType &ct)
+		: SqlStatement::BindPar(pos, stmt, ct)
+		, _oan_buffer(NULL)
+		, _any_indp(NULL)
 	{
-		valuep = NULL; value_sz = 0; delete[] indp; indp = NULL; delete[] rcodep; rcodep = NULL;
 		dty =  SQLT_NTY;
-		value_sz = 0;
 		type_name = ct.get_type_str();
+		value_sz = sizeof(OCIAnyData*);
+		for(unsigned i = 0; i < _cnt; ++i)
+		{
+			((ub2*)rlenp)[i] = (ub2) value_sz;
+		}		
+
 		init(stmt);
 	}
 	
-	BindParANYDATA(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): SqlStatement::BindPar(pos, stmt, decl)
-	  , _oan_buffer(NULL), _any_indp(NULL)
+	BindParANYDATA(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl)
+		: SqlStatement::BindPar(pos, stmt, decl)
+		, _oan_buffer(NULL)
+		, _any_indp(NULL)
 	{
-		valuep = NULL;
 		dty =  SQLT_NTY;
-		value_sz = 0;
 		type_name = "SYS.ANYDATA";
-		init(stmt);
-	};
+		value_sz = sizeof(OCIAnyData*);
+		for(unsigned i = 0; i < _cnt; ++i)
+		{
+			((ub4*)rlenp)[i] = (ub4) value_sz;
+		}		
 
+		init(stmt);
+	}
+	
 	~BindParANYDATA()
 	{
-		if(valuep)
-		{
-			delete[] (unsigned char*) valuep;
-			valuep = NULL;
-		}
-		/*
-		if(_xmlvaluep)
-		{
-			delete[] _xmlvaluep;
-			_xmlvaluep = NULL;
-		}
-		*/
+		// TODO free _any_indp, _oan_buffer
 	}
 
 	virtual tstring get_string(unsigned int row) const;

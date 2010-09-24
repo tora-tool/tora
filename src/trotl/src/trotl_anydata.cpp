@@ -41,6 +41,49 @@ namespace trotl {
 
 Util::RegisterInFactory<BindParANYDATA, CustDefineParFactTwoParmSing> regCustDefineNTY_ANYDATA("SYS.ANYDATA");
 
+void BindParANYDATA::init(SqlStatement &stmt)
+{	
+	sword res;
+	_anydatatdo = 0;
+
+
+	_oan_buffer = new OCIAnyData* [ _cnt ];
+
+	res = OCICALL(OCITypeByName(_stmt._env, _stmt._errh, _stmt._conn._svc_ctx,
+			(const oratext*)"SYS", strlen("SYS"),
+			(const oratext*)"ANYDATA", strlen("ANYDATA"),
+			0, 0,
+			OCI_DURATION_SESSION, OCI_TYPEGET_ALL,
+			(OCIType**) &_anydatatdo));
+	oci_check_error(__TROTL_HERE__, _stmt._errh, res);
+
+	if(_anydatatdo == NULL)
+		throw OciException(__TROTL_HERE__, "Unknown datatype in the database: SYS.ANYDATA");
+
+	for(int i=0; i<g_OCIPL_BULK_ROWS; i++)
+	{
+		_oan_buffer[i] = NULL;
+	}
+}
+
+void BindParANYDATA::define_hook(SqlStatement &stmt)
+{
+ 	sword res = OCICALL(OCIDefineObject(defnpp, stmt._errh,
+ 					    _anydatatdo,
+ 					    (dvoid **) &(_oan_buffer[0]), //(dvoid **) &_oan_buffer,
+ 					    (ub4 *) 0,
+ 					    0, //(dvoid **) &_any_indp,
+ 					    (ub4 *) 0));
+ 	oci_check_error(__TROTL_HERE__, stmt._errh, res);
+// 	// TODO OCIDefineArrayOfStruct here ??
+}
+
+void BindParANYDATA::bind_hook(SqlStatement &stmt)
+{
+	//TODO
+	throw OciException(__TROTL_HERE__, "Not implemented yet");
+}
+
 // TODO
 tstring BindParANYDATA::get_string(unsigned int row) const
 {
@@ -65,7 +108,6 @@ tstring BindParANYDATA::get_string(unsigned int row) const
 		OCINumber num;
 		OCINumber *num_ptr = &num;
 		ub4 len;
-		OCIInd indp; // TODO check indp here
 		text str_buf[61];
 		ub4 str_len = sizeof(str_buf) / sizeof(*str_buf);
 		
@@ -93,35 +135,56 @@ tstring BindParANYDATA::get_string(unsigned int row) const
 	}
  	case OCI_TYPECODE_VARCHAR2:
 	{
-		OCIInd indp; // TODO check indp here
+		OCIInd _indp; // TODO check indp here
 		OCIString *str = (OCIString *) 0;
 		ub4 len, len2;
 
   		sword res1 = OCICALL(OCIAnyDataAccess(_stmt._conn._svc_ctx, _stmt._errh,
-						     _oan_buffer[row], (OCITypeCode)OCI_TYPECODE_VARCHAR2, 
-						     (OCIType *)0, (dvoid *)&indp, (dvoid *)&str, &len));
-		oci_check_error(__TROTL_HERE__, _env._errh, res1);
+						      _oan_buffer[row], (OCITypeCode)OCI_TYPECODE_VARCHAR2, 
+						      (OCIType *)0, (dvoid *)&_indp, (dvoid *)&str, &len));
+		oci_check_error(__TROTL_HERE__, _stmt._errh, res1);
 
 		return tstring( (const char *)OCIStringPtr(_stmt._env, str), OCIStringSize(_stmt._env, str));
 	}
-// 	case OCI_TYPECODE_DATE:
+ 	case OCI_TYPECODE_DATE:
+	{
 // 		/*checkerr(ctxptr->errhp, OCIAnyDataAccess(ctxptr->svchp,
 // 		  ctxptr->errhp, oan_buffer,
 // 		  (OCITypeCode)OCI_TYPECODE_DATE, 
 // 		  (OCIType *)0, (dvoid *)&indp, (dvoid *)&date, &len));
 // 		  OCIDateGetDate( (CONST OCIDate *) &date, &year1, &month1, &day1 ); */
-		
-// 		checkerr(ctxptr->errhp, OCIAnyDataAccess(ctxptr->svchp,
-// 							 ctxptr->errhp, oan_buffer,
-// 							 (OCITypeCode)OCI_TYPECODE_DATE, 
-// 							 (OCIType *)0, (dvoid *)&indp, 
-// 							 (dvoid **)&date_ptr, &len));
+		OCIInd _indp; // TODO check indp here
+		OCIDate *date_ptr = 0;		
+		text str_buf[200];
+		ub4 str_len = sizeof(str_buf) / sizeof( *str_buf);
+		ub4 len;
+
+ 		sword res1= OCICALL(OCIAnyDataAccess(_stmt._conn._svc_ctx, _stmt._errh,
+						     _oan_buffer[row], (OCITypeCode)OCI_TYPECODE_DATE, 
+						     (OCIType *)0, (dvoid *)&_indp, 
+						     (dvoid **)&date_ptr, &len));
+		oci_check_error(__TROTL_HERE__, _stmt._errh, res1);
 // 		OCIDateGetDate( (CONST OCIDate *) date_ptr, &year1, &month1, &day1 );
-		
+
+	
+		const char fmt[] = "YYYY:MM:DD HH24:MI:SS";
+		const char lang_fmt[] = "American";		
+					
+		res1 = OCICALL(OCIDateToText(_stmt._errh, 
+					     date_ptr,
+					     (CONST text*) fmt,
+					     (ub4) sizeof(fmt)-1,
+					     (CONST text*) lang_fmt,
+					     (ub4) sizeof(lang_fmt)-1,
+					     (ub4 *)&str_len,
+					     str_buf
+					    ));
+		oci_check_error(__TROTL_HERE__, _stmt._errh, res1);
+		str_buf[ min( (str_len+1) , (unsigned)sizeof(str_buf) ) ] = '\0'; 
+
+		return (const char*)str_buf;
 // 		printf("c2 is %d/%d/%d\n", day1, month1, year1);
-		
-// 		break;
-		
+	}
 // 	case OCI_TYPECODE_OBJECT:
 // 		checkerr(ctxptr->errhp, OCIAnyDataAccess(ctxptr->svchp, ctxptr->errhp,
 // 							 oan_buffer, (OCITypeCode) OCI_TYPECODE_OBJECT,
@@ -211,52 +274,7 @@ tstring BindParANYDATA::get_string(unsigned int row) const
 
 	return _stringrepres.str();
 };
-
-void BindParANYDATA::init(SqlStatement &stmt)
-{
 	
-	sword res;
-	_anydatatdo = 0;
-
-
-	_oan_buffer = new OCIAnyData* [ _cnt ];
-
-	res = OCICALL(OCITypeByName(_stmt._env, _stmt._errh, _stmt._conn._svc_ctx,
-			(const oratext*)"SYS", strlen("SYS"),
-			(const oratext*)"ANYDATA", strlen("ANYDATA"),
-			0, 0,
-			OCI_DURATION_SESSION, OCI_TYPEGET_ALL,
-			(OCIType**) &_anydatatdo
-	));
-	oci_check_error(__TROTL_HERE__, _stmt._errh, res);
-
-	if(_anydatatdo == NULL)
-		throw OciException(__TROTL_HERE__, "Unknown datatype in the database: SYS.ANYDATA");
-
-	for(int i=0; i<g_OCIPL_BULK_ROWS; i++)
-	{
-		_oan_buffer[i] = NULL;
-	}
-}
-
-void BindParANYDATA::define_hook(SqlStatement &stmt)
-{
- 	sword res = OCICALL(OCIDefineObject(defnpp, stmt._errh,
- 					    _anydatatdo,
- 					    (dvoid **) &(_oan_buffer[0]), //(dvoid **) &_oan_buffer,
- 					    (ub4 *) 0,
- 					    0, //(dvoid **) &_any_indp,
- 					    (ub4 *) 0));
- 	oci_check_error(__TROTL_HERE__, stmt._errh, res);
-// 	// TODO OCIDefineArrayOfStruct here ??
-}
-
-void BindParANYDATA::bind_hook(SqlStatement &stmt)
-{
-	//TODO
-	throw OciException(__TROTL_HERE__, "Not implemented yet");
-}
-
 tstring SqlANYDATA::str() const
 {
 	return _stringrepres.str();

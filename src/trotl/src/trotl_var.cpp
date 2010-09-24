@@ -40,15 +40,25 @@
 #endif
 
 #include "trotl_var.h"
+#include "trotl_stat.h"
 
 namespace trotl {
 
-ColumnType::ColumnType(OCIError* errh, dvoid* handle)
+ColumnType::ColumnType(SqlStatement &stat, dvoid* handle): _data_type(0)
+							 , _width(0)
+							 , _char_semantics(0)
+							 , _scale(-127)
+							 , _precision(0)
+							 , _nullable(false)
+							 , _utf16(false)
+							 , _collection_dschp(NULL)
+							 , _tdo(NULL)
+							 , _oref(NULL)	
 {
-	describe(errh, handle);
+	describe(stat, handle);
 }
 
-void ColumnType::describe(OCIError* errh, dvoid* handle)
+void ColumnType::describe(SqlStatement &stat, dvoid* handle)
 {
 	// get column name
 	text* pcol_name = NULL;
@@ -58,26 +68,40 @@ void ColumnType::describe(OCIError* errh, dvoid* handle)
 	ub1 cform;
 	sword res;
 
+	OCIDescribe *dschp = (OCIDescribe *) 0;
+	OCIParam *parmp;
+	ub1 fsprecision, lfprecision;
+
 	size = sizeof(pcol_name);
-	res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &pcol_name, &size, OCI_ATTR_NAME, errh));
-	oci_check_error(__TROTL_HERE__, errh, res);
+	res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &pcol_name, &size, OCI_ATTR_NAME, stat._errh));
+	oci_check_error(__TROTL_HERE__, stat._errh, res);
 	_column_name.assign((const char*)pcol_name, size);
 
+	// TODO use this attribute
+	size = sizeof(fsprecision);
+	res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, (dvoid*)&fsprecision, &size, OCI_ATTR_FSPRECISION, stat._errh));
+	oci_check_error(__TROTL_HERE__, stat._errh, res);
+
+	// TODO use this attribute
+	size = sizeof(lfprecision);
+	res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, (dvoid*)&lfprecision, &size, OCI_ATTR_LFPRECISION, stat._errh));
+	oci_check_error(__TROTL_HERE__, stat._errh, res);
+	
 	// get column data type
 	size = sizeof(_data_type);
-	res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_data_type, &size, OCI_ATTR_DATA_TYPE, errh));
-	oci_check_error(__TROTL_HERE__, errh, res);
+	res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_data_type, &size, OCI_ATTR_DATA_TYPE, stat._errh));
+	oci_check_error(__TROTL_HERE__, stat._errh, res);
 
 	// get NULL-ability flag
 	size = sizeof(_nullable);
-	res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_nullable, &size, OCI_ATTR_IS_NULL, errh));
-	oci_check_error(__TROTL_HERE__, errh, res);
+	res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_nullable, &size, OCI_ATTR_IS_NULL, stat._errh));
+	oci_check_error(__TROTL_HERE__, stat._errh, res);
 
 #if ORACLE_MAJOR_VERSION>=9
 	// Oracle 9 ->
 	// retrieve the length semantics for the column
 	size = sizeof(_char_semantics);
-	res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_char_semantics, &size, OCI_ATTR_CHAR_USED, errh));
+	res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_char_semantics, &size, OCI_ATTR_CHAR_USED, stat._errh));
 	if (res != OCI_SUCCESS)
 		_char_semantics = 0;
 	// <- Oracle 9
@@ -86,32 +110,33 @@ void ColumnType::describe(OCIError* errh, dvoid* handle)
 	if (_char_semantics)
 	{
 		// get the column width in characters
-		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_width, &size, OCI_ATTR_CHAR_SIZE, errh));
-		oci_check_error(__TROTL_HERE__, errh, res);
+		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_width, &size, OCI_ATTR_CHAR_SIZE, stat._errh));
+		oci_check_error(__TROTL_HERE__, stat._errh, res);
 	} else
 #endif
 	{
 		// get the column width in bytes
-		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_width, &size, OCI_ATTR_DATA_SIZE, errh));
-		oci_check_error(__TROTL_HERE__, errh, res);
+		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_width, &size, OCI_ATTR_DATA_SIZE, stat._errh));
+		oci_check_error(__TROTL_HERE__, stat._errh, res);
 	}
 
-	switch(_data_type) {
+	switch(_data_type)
+	{
 	default: //case OCI_TYPECODE_VARCHAR:
 		_precision = 0;
 		_scale = -127;
 		break;
 
-	case SQLT_NUM: {
+	case SQLT_NUM:
 		size = sizeof(_precision);
-		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_precision, &size, OCI_ATTR_PRECISION, errh));
-		oci_check_error(__TROTL_HERE__, errh, res);
+		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_precision, &size, OCI_ATTR_PRECISION, stat._errh));
+		oci_check_error(__TROTL_HERE__, stat._errh, res);
 
 		size = sizeof(_scale);
-		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_scale, &size, OCI_ATTR_SCALE, errh));
-		oci_check_error(__TROTL_HERE__, errh, res);
-		break;}
+		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &_scale, &size, OCI_ATTR_SCALE, stat._errh));
+		oci_check_error(__TROTL_HERE__, stat._errh, res);
 
+		break;
 	case SQLT_DAT:
 #if ORACLE_MAJOR_VERSION>=8 && ORACLE_MINOR_VERSION>=1
 	case SQLT_TIME:
@@ -122,22 +147,139 @@ void ColumnType::describe(OCIError* errh, dvoid* handle)
 #endif
 		_precision = 0;
 		_scale = -127;
+
 		break;
 	case SQLT_NTY:
+	{
+		OCIType *tdo = 0;
+		OCIRef *oref = 0;
 		ub4 ssize, nsize;
 
+		size = sizeof(oref);
+		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, (dvoid*)&oref, &size, OCI_ATTR_REF_TDO, stat._errh));
+		oci_check_error(__TROTL_HERE__, stat._errh, res);
+		_oref = oref;
+
+		res = OCICALL(OCITypeByRef(stat._env, stat._errh, oref, OCI_DURATION_SESSION, OCI_TYPEGET_HEADER, &tdo));
+		oci_check_error(__TROTL_HERE__, stat._errh, res);
+		_tdo = tdo;
+		
+		// size = sizeof(tdo2);
+		// res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, (dvoid*)&tdo2, &size, OCI_ATTR_TDO, stat._errh));
+		// oci_check_error(__TROTL_HERE__, stat._errh, res);
+
+		// size = sizeof(_typecode);
+		// res = OCICALL(OCIAttrGet(parmp, OCI_DTYPE_PARAM, (dvoid*)&_typecode, &size, OCI_ATTR_TYPECODE, stat._errh));
+		// //oci_check_error(__TROTL_HERE__, stat._errh, res);
+		// checkerr(stat._errh, res);
+
+		// size = sizeof(boolean);
+		// res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &boolean, &size, OCI_ATTR_IS_INCOMPLETE_TYPE, stat._errh));
+		// oci_check_error(__TROTL_HERE__, stat._errh, res);
+		
+		// size = sizeof(boolean);
+		// res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &boolean, &size, OCI_ATTR_IS_SYSTEM_TYPE, stat._errh));
+		// oci_check_error(__TROTL_HERE__, stat._errh, res);
+		
+		// size = sizeof(boolean);
+		// res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &boolean, &size, OCI_ATTR_IS_PREDEFINED_TYPE, stat._errh));
+		// oci_check_error(__TROTL_HERE__, stat._errh, res);
+		
+		// size = sizeof(boolean);
+		// res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &boolean, &size, OCI_ATTR_IS_TRANSIENT_TYPE, stat._errh));
+		// oci_check_error(__TROTL_HERE__, stat._errh, res);
+		
+		// size = sizeof(boolean);
+		// res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &boolean, &size, OCI_ATTR_IS_SYSTEM_GENERATED_TYPE, stat._errh));
+		// oci_check_error(__TROTL_HERE__, stat._errh, res);
+		
+		// size = sizeof(boolean);
+		// res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &boolean, &size, OCI_ATTR_HAS_NESTED_TABLE, stat._errh));
+		//oci_check_error(__TROTL_HERE__, stat._errh, res);
+
+		// size = sizeof(obj_id);
+		// res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, (dvoid*)&obj_name, &size, OCI_ATTR_OBJ_ID, stat._errh));
+		// oci_check_error(__TROTL_HERE__, stat._errh, res);
+		
+		// size = sizeof(obj_name);
+		// res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, (dvoid*)&obj_name, &size, OCI_ATTR_OBJ_NAME, stat._errh));
+		// oci_check_error(__TROTL_HERE__, stat._errh, res);
+		
+		// size = sizeof(obj_schema);
+		// res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, (dvoid*)&obj_name, &size, OCI_ATTR_OBJ_SCHEMA, stat._errh));
+		// oci_check_error(__TROTL_HERE__, stat._errh, res);
+		
 		ssize = sizeof(pschema_name);
-		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &pschema_name, &ssize, OCI_ATTR_SCHEMA_NAME, errh));
-		oci_check_error(__TROTL_HERE__, errh, res);
-
+		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &pschema_name, &ssize, OCI_ATTR_SCHEMA_NAME, stat._errh));
+		oci_check_error(__TROTL_HERE__, stat._errh, res);
 		nsize = sizeof(ptype_name);
-		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &ptype_name, &nsize, OCI_ATTR_TYPE_NAME, errh));
-		oci_check_error(__TROTL_HERE__, errh, res);
+		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &ptype_name, &nsize, OCI_ATTR_TYPE_NAME, stat._errh));
+		oci_check_error(__TROTL_HERE__, stat._errh, res);
+		_data_type_name = tstring((char*)pschema_name, ssize) + "." + tstring((char*)ptype_name,nsize);
+		
+		res = OCICALL(OCIHandleAlloc((dvoid *) stat._env, (dvoid **) &dschp, (ub4) OCI_HTYPE_DESCRIBE, (size_t) 0, (dvoid **) 0));
+		oci_check_error(__TROTL_HERE__, stat._errh, res);
+		
+		res = OCICALL(OCIDescribeAny(stat._conn._svc_ctx, stat._errh,
+					     (dvoid *) oref, 0, OCI_OTYPE_REF, (ub1)OCI_DEFAULT, (ub1) OCI_PTYPE_TYPE, dschp));
+		oci_check_error(__TROTL_HERE__, stat._errh, res);
+		
+		res = OCICALL(OCIAttrGet((dvoid *) dschp, (ub4) OCI_HTYPE_DESCRIBE,	(dvoid *)&parmp, (ub4 *)0, (ub4)OCI_ATTR_PARAM, stat._errh));
+		oci_check_error(__TROTL_HERE__, stat._errh, res);
+		
+		size = sizeof(_typecode);
+		res = OCICALL(OCIAttrGet(parmp, OCI_DTYPE_PARAM, (dvoid*)&_typecode, &size, OCI_ATTR_TYPECODE, stat._errh));
+		oci_check_error(__TROTL_HERE__, stat._errh, res);
 
-		_data_type_name = tstring((char*)pschema_name, ssize) + "." + tstring((char*)ptype_name);
-//		_data_type_name.assign((const char*)ptype_name, size);
-//		_data_type_schema.assign((const char*)pschema_name, size);
+		if (_typecode == OCI_TYPECODE_NAMEDCOLLECTION)
+		{
+			ub4 ssize;
+			ub2 len;
+			text* col_type_name = NULL;
+			text* col_schema_name = NULL;
+			res = OCICALL(OCIAttrGet((dvoid *) parmp, (ub4) OCI_DTYPE_PARAM,
+						 (dvoid *)&_collection_typecode, (ub4 *)0, (ub4)OCI_ATTR_COLLECTION_TYPECODE, stat._errh));
+			oci_check_error(__TROTL_HERE__, stat._errh, res);
+			
+			res = OCICALL(OCIAttrGet((dvoid *) parmp, (ub4) OCI_DTYPE_PARAM,
+						 (dvoid *)&_collection_dschp, (ub4 *)0,	(ub4)OCI_ATTR_COLLECTION_ELEMENT, stat._errh));			
+			oci_check_error(__TROTL_HERE__, stat._errh, res);
+
+			/* get the data size */
+			res = OCICALL(OCIAttrGet((dvoid*) _collection_dschp, (ub4) OCI_DTYPE_PARAM, (dvoid*) &len, (ub4 *) 0, (ub4) OCI_ATTR_DATA_SIZE, stat._errh));
+			oci_check_error(__TROTL_HERE__, stat._errh, res);
+			
+			/* get the name of the collection */
+			res = OCICALL(OCIAttrGet((dvoid*) _collection_dschp, (ub4) OCI_DTYPE_PARAM, (dvoid*) &col_type_name, (ub4 *) &ssize, (ub4) OCI_ATTR_TYPE_NAME, stat._errh));
+			oci_check_error(__TROTL_HERE__, stat._errh, res);
+			
+			/* get the name of the schema */
+			res = OCICALL(OCIAttrGet((dvoid*) _collection_dschp, (ub4) OCI_DTYPE_PARAM, (dvoid*) &col_schema_name, (ub4 *) &ssize, (ub4) OCI_ATTR_SCHEMA_NAME, stat._errh));
+			oci_check_error(__TROTL_HERE__, stat._errh, res);
+			
+			/* get the data type */
+			res = OCICALL(OCIAttrGet((dvoid*) _collection_dschp, (ub4) OCI_DTYPE_PARAM, (dvoid*) &_collection_typecode, (ub4 *) 0, (ub4) OCI_ATTR_DATA_TYPE, stat._errh));
+			oci_check_error(__TROTL_HERE__, stat._errh, res);
+			
+			ub4 num_elems = 0;
+			if (_collection_typecode == OCI_TYPECODE_VARRAY)
+			{
+				/* get the number of elements */
+				res = OCICALL(OCIAttrGet((dvoid*) _collection_dschp, (ub4) OCI_DTYPE_PARAM, (dvoid*) &num_elems, (ub4 *) 0,	(ub4) OCI_ATTR_NUM_ELEMS, stat._errh));
+				oci_check_error(__TROTL_HERE__, stat._errh, res);
+			}
+			std::cout << "OCI_ATTR_COLLECTION_TYPECODE: " << _collection_typecode << std::endl
+				  << "OCI_ATTR_COLLECTION_ELEMENT: " << _collection_dschp << std::endl
+				  << "OCI_ATTR_DATA_SIZE: " << len << std::endl
+				  << "OCI_ATTR_TYPE_NAME: " << col_type_name << std::endl
+				  << "OCI_ATTR_SCHEMA_NAME: " << col_schema_name << std::endl
+				  << "OCI_ATTR_DATA_TYPE: " << _collection_typecode << std::endl
+				  << "OCI_ATTR_NUM_ELEMS: " << num_elems << std::endl
+				  << "========================================" << std::endl;
+			_data_type = (OCI_TYPECODE_VARRAY << 8) + _collection_typecode;
+		}
 		break;
+	}
 	case SQLT_LNG:
 		_width = g_OCIPL_MAX_LONG; //TODO long can have up to 2GB
 		break;
@@ -145,8 +287,8 @@ void ColumnType::describe(OCIError* errh, dvoid* handle)
 	case SQLT_STR:
 	case SQLT_VCS:
 	case SQLT_CLOB:
-		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &cform, 0, OCI_ATTR_CHARSET_FORM, errh));
-		oci_check_error(__TROTL_HERE__, errh, res);
+		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &cform, 0, OCI_ATTR_CHARSET_FORM, stat._errh));
+		oci_check_error(__TROTL_HERE__, stat._errh, res);
 		_utf16 = (cform == SQLCS_NCHAR);
 		break;
 	}
@@ -181,6 +323,7 @@ tstring ColumnType::get_type_str(bool show_null) const
 			str << "NUMBER(" << (int)_precision << "," << (int)_scale << ")";
 		else
 			str << "NUMBER(" << (int)_precision << ")";
+
 		break;
 	case SQLT_DAT: // OCI_TYPECODE_DATE:
 		str << "DATE";
@@ -397,3 +540,5 @@ tstring ColumnType::get_type_str(bool show_null) const
 
 //                 ret.insert(ret.end(), desc);
 // 			}
+
+

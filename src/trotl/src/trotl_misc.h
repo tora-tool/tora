@@ -54,29 +54,26 @@ namespace trotl {
 */
 struct TROTL_EXPORT BindParMisc: public SqlStatement::BindPar
 {
-public:
 	BindParMisc(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl) : SqlStatement::BindPar(pos, stmt, decl)
 	{
 		// amount of bytes =  (string length +1 ) * (array length)
-		valuep = new char [ (128) * (decl.bracket[1]) ];
+		valuep = (void**) new char [ (128) * (decl.bracket[1]) ];
+		memset(valuep, 0x00, 128 * (decl.bracket[1]));
+		
 		dty = SQLT_STR;
 		value_sz = 128;
-		alenp = new ub2 [decl.bracket[1]];
 		type_name = typeid(tstring).name();
-
-		memset(valuep, 0x00, 128 * (decl.bracket[1]));
 	}
 
 	BindParMisc(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 	{
 		// amount of bytes =  (string length +1 ) * (array length)
-		valuep = new char [ ( 128 ) * (_cnt) ]; // +1 for ending zero
+		valuep =  (void**)  new char [ ( 128 ) * (_cnt) ]; // +1 for ending zero
+		memset(valuep, 0x00, (128) * _cnt);
+		
 		dty = SQLT_STR;
 		value_sz = 128;
-		alenp = new ub2 [_cnt];
 		type_name = typeid(tstring).name();
-
-		memset(valuep, 0x00, (128) * _cnt);
 	}
 
 
@@ -87,16 +84,11 @@ public:
 			delete[] (char*)valuep;
 			valuep = NULL;
 		}
-		if(alenp)
-		{
-			delete[] (ub2*)alenp;
-			alenp = NULL;
-		}
 	}
 
 	virtual tstring get_string(unsigned int row) const
 	{	  
-	  return is_null(row) ? "NULL" : tstring(((char*)valuep)+(row * value_sz));
+		return is_null(row) ? "NULL" : tstring(((char*)valuep)+(row * value_sz));
 	}
 
 protected:

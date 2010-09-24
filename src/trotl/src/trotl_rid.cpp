@@ -47,13 +47,12 @@ Util::RegisterInFactory<BindParRid, BindParFactTwoParmSing> regBindURid("urid");
 
 
 // // Register Bind datatypes in factory(Define - SELECT)
-Util::RegisterInFactory<BindParRid, DefineParFactTwoParmSing, int> regDefineNumberRid(SQLT_RDD);
+Util::RegisterInFactory<BindParRid, DefineParFactTwoParmSing, int> regDefineRid(SQLT_RDD);
 
 BindParRid::BindParRid(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): BindPar(pos, stmt, decl)
 {
-	//valuep = new unsigned char [ decl.bracket[1] * ( OCI_NUMBER_SIZE + 1) ];
-	valuep = malloc( _cnt * sizeof(OCIRowid*) );
-	////memset(valuep, 0x5a, _cnt * sizeof(OCIRowid*) );
+	valuep = (void**) malloc( _cnt * sizeof(OCIRowid*) );
+	memset(valuep, 0, _cnt * sizeof(OCIRowid*) );
 	
 	dty = SQLT_RDD;
 	value_sz = sizeof(OCIRowid*);
@@ -64,9 +63,8 @@ BindParRid::BindParRid(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl):
 
 BindParRid::BindParRid(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : BindPar(pos, stmt, ct)
 {
-	//valuep = new unsigned char [ _cnt * ( sizeof(OCIRowid*) ) ];
-	valuep = malloc( _cnt * sizeof(OCIRowid*) );
-	////memset(valuep, 0x5a, _cnt * sizeof(OCIRowid*) );
+	valuep = (void**) malloc( _cnt * sizeof(OCIRowid*) );
+	memset(valuep, 0, _cnt * sizeof(OCIRowid*) );
 	
 	dty = SQLT_RDD;
 	value_sz = sizeof(OCIRowid*);

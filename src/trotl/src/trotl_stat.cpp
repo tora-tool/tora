@@ -48,7 +48,7 @@
 
 namespace trotl {
 
-int TROTL_EXPORT g_OCIPL_BULK_ROWS = 3;
+int TROTL_EXPORT g_OCIPL_BULK_ROWS = 1;
 int TROTL_EXPORT g_OCIPL_MAX_LONG = 30000;
 
 
@@ -98,11 +98,11 @@ _bound(false)
 		for(unsigned dpos = 1; dpos <= get_column_count(); ++dpos)
 		{
 			std::auto_ptr<BindPar> bp;
-			dvoid* parmdp;
-			sword res = OCICALL(OCIParamGet(_handle, get_type_id(), _errh, &parmdp, dpos));
+			OCIParam* parmdp;
+			sword res = OCICALL(OCIParamGet(_handle, get_type_id(), _errh, (void**)&parmdp, dpos));
 			oci_check_error(__TROTL_HERE__, _errh, res);
 			
-			_columns[dpos].describe(_errh, parmdp);
+			_columns[dpos].describe(*this, parmdp);
 			
 			res = OCICALL(OCIDescriptorFree(parmdp, OCI_DTYPE_PARAM));
 			oci_check_error(__TROTL_HERE__, _env, res);
@@ -112,7 +112,7 @@ _bound(false)
 			//	<< "This: " << this << std::endl
 			//	<< "Columns:" << _columns[dpos].get_type_str(true) << std::endl;
 			
-			// Use column datatype for lookup in hash table
+			// Use column datatype for lookup in a hash table
 			// and call appropriate create function from the factory
 			if( _columns[dpos]._data_type != SQLT_NTY)
 				_all_defines[dpos] = DefineParFactTwoParmSing::Instance().create(
@@ -128,8 +128,12 @@ _bound(false)
 					_columns[dpos] );
 			
 			if(_all_defines[dpos].get() == NULL)
-				throw OciException(__TROTL_HERE__, "DefinePar: Data type not registered: %s(%d)\n"
-					).arg(_columns[dpos]._data_type_name).arg(_columns[dpos]._data_type);
+			  throw OciException(__TROTL_HERE__, "DefinePar: Data type not registered: %s(%d:%d:%d:%s)\n")
+				  .arg(_columns[dpos]._data_type_name)
+				  .arg(_columns[dpos]._data_type)
+				  .arg(_columns[dpos]._typecode)
+				  .arg(_columns[dpos]._collection_typecode)
+				  .arg(_columns[dpos]._data_type_name);
 			define(*_all_defines[dpos]);
 		}
 		_state |= DEFINED;
@@ -399,9 +403,10 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 			_conn._svc_ctx,
 			_handle, // *stmtp
 			_errh, // *errhp
-			iters,//_stmt_type == STMT_SELECT ? rows : 1, // iters
+			iters, //_stmt_type == STMT_SELECT ? rows : 1, // iters
 			0, // rowoff
 			(CONST OCISnapshot*)0, (OCISnapshot*)0, mode));
+	std::cout << "OCIStmtExecute" << std::endl; 
 	
 	//std::cout << std::endl
 	//	<< "iters:" << iters << std::endl;
@@ -507,6 +512,7 @@ void SqlStatement::bind(BindPar &bp)
   // 	  << "This: " << this << std::endl
   // 	  << "Bind:'"<< bp.bind_name << "' " << bp.bind_name.length() << std::endl;
   
+
 	sword res = OCICALL(OCIBindByName (_handle,
 			&bp.bindp,
 			_errh,
@@ -523,7 +529,6 @@ void SqlStatement::bind(BindPar &bp)
 			//NULL for non-PL/SQL statements
 			(ub4*)(((_stmt_type == STMT_DECLARE ||_stmt_type == STMT_BEGIN ) && bp._max_cnt > 1) ? &bp._cnt : NULL),
 			OCI_DEFAULT));
-
 	oci_check_error(__TROTL_HERE__, _errh, res);
 
 //	std::cout << std::endl
@@ -538,24 +543,24 @@ void SqlStatement::bind(BindPar &bp)
 	bp._bound = true;
 }
 
-void SqlStatement::define(BindPar &dp)
-{
-	sword res = OCICALL(OCIDefineByPos(_handle/*stmtp*/,
-			&dp.defnpp,
-			_errh,
-			dp._pos,
-			dp.valuep,
-			dp.value_sz,
-			dp.dty,
-			dp.indp,
-			dp.rlenp,
-			dp.rcodep,
-//			(ub2*)0, (ub2*)0,
-			OCI_DEFAULT));
-	oci_check_error(__TROTL_HERE__, _errh, res);
-
-	dp.define_hook(*this);
-}
+	void SqlStatement::define(BindPar &dp)
+	{
+		sword res = OCICALL(OCIDefineByPos(_handle/*stmtp*/,
+						   &dp.defnpp,		  // (OCIDefine **)
+						   _errh,		  // (OCIError*)
+						   dp._pos,		  // ub4 position
+						   dp.valuep,		  // dvoid *valuep
+						   dp.value_sz,		  // sb4 value_sz
+						   dp.dty,		  // ub2 dty
+						   dp.indp,		  // dvoid *indp
+						   (ub2*) dp.rlenp,	  // ub2 *rlenp
+						   NULL,		  // ub2 *rcodep
+						   dp.mode));
+		oci_check_error(__TROTL_HERE__, _errh, res);
+		std::cout << "OCIDefineByPos" << std::endl;
+		
+		dp.define_hook(*this);
+	}
 
 SqlStatement::~SqlStatement()
 {
@@ -568,7 +573,7 @@ SqlStatement::~SqlStatement()
 		delete [] _in_binds;
 		delete [] _out_binds;
 	}
-	_state |= 255;
+	_state |= 0xff;
 };
 
 template<>

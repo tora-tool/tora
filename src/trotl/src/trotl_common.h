@@ -136,7 +136,6 @@ namespace trotl {
 	#define __TROTL_HERE1__(x)   STR(x)"\t" + __PRETTY_FUNCTION__
 //	#define __HERE2__(x,y) ::trotl::tstring("("y":" STR(x)"(") +  __PRETTY_FUNCTION__ +")"
 //	#define __HERE3__(x,y) ::trotl::tstring("\n(") + __PRETTY_FUNCTION__ + ") " y ":" STR(x) + "\n"
-	#define STR(a) #a
 #else
 //	#define __TROTL_HERE__ __HERE3__(__LINE__, __FILE__)
 //	#define __HERE_SHORT__ __HERE3__(__LINE__, __FILE__)
@@ -145,10 +144,11 @@ namespace trotl {
 //	#define __HERE3__(x,y) std::string("\n(") + __FUNCTION__ + ") " y ":" STR(x) + "\n"
 	#define __TROTL_HERE__ std::string(__FILE__) + ":"__TROTL_HERE1__(__LINE__)
 	#define __TROTL_HERE1__(x)   STR(x)"\t" +  __FUNCSIG__
-	#define STR(a) #a
 #endif //__GNUC__
 #else  //DEBUG
 #define __TROTL_HERE__ ""
 #endif
+
+#define STR(a) #a
 
 #endif
