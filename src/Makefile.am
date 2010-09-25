@@ -439,6 +439,7 @@ BUILT_SOURCES = \
     moc_tobrowserdblinkswidget.cpp \
     moc_tobrowserdirectorieswidget.cpp \
     moc_toresultgrants.cpp \
+    moc_toawr.cpp \
 	docklets/moc_toviewdirectory.cpp \
 	docklets/moc_toviewconnections.cpp \
 	ui_toaboutui.h \
