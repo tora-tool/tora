@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
 Uploaders: Michael Meskes <meskes@debian.org>
 Build-Depends: debhelper (>= 5), libqscintilla2-dev, cdbs, libpq-dev, cmake
-Standards-Version: 3.8.4
+Standards-Version: 3.9.1
 Homepage: http://www.torasql.com
 Vcs-Git: git://git.debian.org/pkg-kde/kde-extras/tora.git
 Vcs-Browser: http://git.debian.org/?p=pkg-kde/kde-extras/tora.git
