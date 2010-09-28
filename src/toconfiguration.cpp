@@ -104,6 +104,7 @@ public:
     int     m_autoLong;
     bool    m_messageStatusbar;
     bool    m_tabbedTools;
+    bool    m_multiLineResults;
     bool    m_colorizedConnections;
     ConnectionColors m_connectionColors;
     int     m_objectCache;
@@ -335,6 +336,7 @@ public:
         m_autoLong = s.value(CONF_AUTO_LONG, 0).toInt();
         m_messageStatusbar = s.value(CONF_MESSAGE_STATUSBAR, false).toBool();
         m_tabbedTools = s.value(CONF_TABBED_TOOLS, true).toBool();
+        m_multiLineResults = s.value(CONF_MULTI_LINE_RESULTS, DEFAULT_MULTI_LINE_RESULTS).toBool();
         m_colorizedConnections = s.value("ColorizedConnections", true).toBool();
         cnt = s.beginReadArray("ConnectionColors");
         for (int i = 0; i < cnt; ++i)
@@ -567,6 +569,7 @@ public:
         s.setValue(CONF_AUTO_LONG, m_autoLong);
         s.setValue(CONF_MESSAGE_STATUSBAR, m_messageStatusbar);
         s.setValue(CONF_TABBED_TOOLS, m_tabbedTools);
+        s.setValue(CONF_MULTI_LINE_RESULTS, m_multiLineResults);
 
         s.setValue("ColorizedConnections", m_colorizedConnections);
         s.beginWriteArray("ConnectionColors");
@@ -1355,6 +1358,15 @@ bool toConfiguration::tabbedTools()
 void toConfiguration::setTabbedTools(bool v)
 {
     p->m_tabbedTools = v;
+}
+
+bool toConfiguration::multiLineResults()
+{
+    return p->m_multiLineResults;
+}
+void toConfiguration::setMultiLineResults(bool v)
+{
+    p->m_multiLineResults = v;
 }
 
 bool toConfiguration::colorizedConnections()

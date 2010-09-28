@@ -129,11 +129,6 @@ void toResultTableView::setup(bool readable, bool numberColumn, bool editable)
     connect(Working, SIGNAL(stop()), this, SLOT(stop()));
     Working->hide(); // hide by default
 
-    // set item delegate if default. Don't replace custom set delegate
-    QAbstractItemDelegate *del = itemDelegate();
-    if(dynamic_cast<toResultTableViewDelegate *>(del) == 0)
-        setItemDelegate(new toResultTableViewDelegate(this));
-
     createActions();
 
     setSelectionBehavior(QAbstractItemView::SelectItems);
@@ -292,11 +287,31 @@ void toResultTableView::applyFilter()
 }
 
 
+/* Controls height of all table views in TOra. Will use standart Qt function to
+   calculate a row height and will control that it is not larger than a predefined
+   size. Note: this height is only used in QTableView when resizeRowsToContents
+   is called. */
 int toResultTableView::sizeHintForRow(int row) const
 {
-    return 5;
-}
+    int s;
 
+    s = QTableView::sizeHintForRow(row);
+    if (s > 60) s = 60; // TODO: This should probably be moved to configuration file
+    return s;
+} // sizeHintForRow
+
+/* Controls width of all table views in TOra. Will use standart Qt function to
+   calculate a columns width and will control that it is not larger than a predefined
+   size. Note: this height is only used in QTableView when resizeColumnsToContents
+   is called. Column width is also adjusted when calculating width of column headers! */
+int toResultTableView::sizeHintForColumn(int col) const
+{
+    int s;
+
+    s = QTableView::sizeHintForColumn(col);
+    if (s > 200) s = 200; // TODO: This should probably be moved to configuration file
+    return s;
+} // sizeHintForColumn
 
 void toResultTableView::paintEvent(QPaintEvent *event)
 {
@@ -360,6 +375,8 @@ void toResultTableView::applyColumnRules()
     ColumnsResized = false;
 
     resizeColumnsToContents();
+    if (toConfigurationSingle::Instance().multiLineResults())
+        resizeRowsToContents();
 
     if (VisibleColumns == 1 && ReadableColumns)
         setColumnWidth(1, viewport()->width());
@@ -631,6 +648,14 @@ void toResultTableView::setModel(toResultModel *model)
 //         throw tr("Cannot change model while query is running.");
     Model = QPointer<toResultModel>(model);
     QTableView::setModel(model);
+    // After data model is set we need to connect to it's signal dataChanged. This signal
+    // will be emitted after sorting on column and we need to resize Row's again then
+    // because height of rows do not "move" together with their rows when sorting.
+    if (toConfigurationSingle::Instance().multiLineResults())
+        connect(model,
+                SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
+                this,
+                SLOT(resizeRowsToContents()));
 }
 
 
@@ -762,6 +787,10 @@ void toResultTableView::resizeColumnsToContents()
 void toResultTableView::columnWasResized(int, int, int)
 {
     ColumnsResized = true;
+    // After resizing columns it could happen that different amount of vertical
+    // space is required to display all information therefore we resize Rows.
+    if (toConfigurationSingle::Instance().multiLineResults())
+        resizeRowsToContents();
 }
 
 
@@ -771,8 +800,6 @@ void toResultTableView::refresh()
     // didn't work.
     toResult::refresh();
 }
-
-
 
 // ---------------------------------------- iterator
 

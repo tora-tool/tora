@@ -112,6 +112,8 @@
 #define CONF_AUTO_LONG  "AutoLong"
 #define CONF_MESSAGE_STATUSBAR "MessageStatusbar"
 #define CONF_TABBED_TOOLS "TabbedTools"
+#define CONF_MULTI_LINE_RESULTS "MultiLineResults"
+#define DEFAULT_MULTI_LINE_RESULTS 0 // default false
 #define CONF_OBJECT_CACHE "ObjectCache"
 #define DEFAULT_OBJECT_CACHE 1
 #define CONF_BKGND_CONNECT "BackgroundConnect"

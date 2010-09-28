@@ -184,6 +184,9 @@ public:
     bool tabbedTools();
     void setTabbedTools(bool v);
 
+    bool multiLineResults();
+    void setMultiLineResults(bool v);
+
     bool colorizedConnections();
     void setColorizedConnections(bool v);
     ConnectionColors connectionColors();

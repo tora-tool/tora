@@ -67,35 +67,6 @@ class toTableViewIterator;
 class toWorkingWidget;
 class toExportSettings;
 
-
-/**
- * This is a simple class for providing sensible size hints to the
- * view.
- *
- */
-class toResultTableViewDelegate : public QItemDelegate
-{
-    static const int maxWidth = 200; // the maximum size to grow a column
-
-public:
-    toResultTableViewDelegate(QObject *parent = 0)
-        : QItemDelegate(parent)
-    {
-    }
-
-
-    virtual QSize sizeHint(const QStyleOptionViewItem &option,
-                           const QModelIndex &index) const
-    {
-        QSize size = QItemDelegate::sizeHint(option, index);
-        if (size.width() > maxWidth)
-            size.setWidth(maxWidth);
-
-        return size;
-    }
-};
-
-
 class toResultTableView : public QTableView,
     public toResult,
     public toEditWidget
@@ -187,12 +158,16 @@ protected:
     /**
      * overridden from parent.
      *
-     * Returns the size hint for the given row's height or -1 if there
-     * is no model.
-     *
+     * Controls maximum size (height) of a given row.
      */
     virtual int sizeHintForRow(int row) const;
 
+    /**
+     * overridden from parent.
+     *
+     * Controls a maximum size (width) of a given column.
+     */
+    virtual int sizeHintForColumn(int col) const;
 
     /**
      * overrides parent to overlay working working message until model

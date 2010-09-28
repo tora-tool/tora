@@ -145,6 +145,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     IncludeDB->setChecked(toConfigurationSingle::Instance().dbTitle());
     Statusbar->setChecked(toConfigurationSingle::Instance().messageStatusbar());
     TabbedTools->setChecked(toConfigurationSingle::Instance().tabbedTools());
+    MultiLineResults->setChecked(toConfigurationSingle::Instance().multiLineResults());
     ColorizedConnections->setChecked(toConfigurationSingle::Instance().colorizedConnections());
     connect(ColorizedConnectionsConfigure, SIGNAL(clicked()),
             this, SLOT(ColorizedConnectionsConfigure_clicked()));
@@ -270,6 +271,7 @@ void toGlobalSetting::saveSetting(void)
     toConfigurationSingle::Instance().setConnectSize(ConnectHistory->value());
     toConfigurationSingle::Instance().setMessageStatusbar(Statusbar->isChecked());
     toConfigurationSingle::Instance().setTabbedTools(TabbedTools->isChecked());
+    toConfigurationSingle::Instance().setMultiLineResults(MultiLineResults->isChecked());
     toConfigurationSingle::Instance().setColorizedConnections(ColorizedConnections->isChecked());
     toConfigurationSingle::Instance().setRestoreSession(RestoreSession->isChecked());
     toConfigurationSingle::Instance().setDefaultFormat(DefaultFormat->currentIndex());
