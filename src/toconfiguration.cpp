@@ -276,7 +276,7 @@ public:
 //#else
         return QDir::homePath() + "/";
 //#endif
-}
+    }
 
 
 
@@ -581,7 +581,7 @@ public:
             s.setValue("value", m_connectionColors[key]);
         }
         s.endArray();
-        
+
         s.setValue(CONF_OBJECT_CACHE, m_objectCache);
         s.setValue(CONF_BKGND_CONNECT, m_bkgndConnect);
         s.setValue(CONF_FIREWALL_MODE, m_firewallMode);
@@ -832,11 +832,11 @@ public:
         QString data;
 
         {
- // qt4        QRegExp newline(QString::fromLatin1("\n"));
+// qt4        QRegExp newline(QString::fromLatin1("\n"));
 // qt4        QRegExp backslash(QString::fromLatin1("\\"));
             QString newline("\n");
             QString backslash("\\");
-            for (std::map<QString, QString>::iterator i = pairs.begin();i != pairs.end();i++)
+            for (std::map<QString, QString>::iterator i = pairs.begin(); i != pairs.end(); i++)
             {
                 QString str = (*i).first;
                 str.append(QString::fromLatin1("="));

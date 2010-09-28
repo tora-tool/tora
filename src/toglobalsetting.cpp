@@ -2,39 +2,39 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2009 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries. 
- * 
+ *      these libraries.
+ *
  *      You may link this product with any GPL'd Qt library.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -127,7 +127,7 @@ void ConnectionColorsDialog::accept()
 
 
 toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags fl)
-        : QWidget(parent, fl), toSettingTab("preferences.html#global")
+    : QWidget(parent, fl), toSettingTab("preferences.html#global")
 {
     if (name)
         setObjectName(name);
@@ -181,7 +181,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
 
     Style->addItems(toGetSessionTypes());
     QString str = toGetSessionType();
-    for (int i = 0;i < Style->count();i++)
+    for (int i = 0; i < Style->count(); i++)
     {
         if (str == Style->itemText(i))
         {
@@ -320,7 +320,7 @@ void toDatabaseSetting::IndicateEmptyColor_clicked()
 }
 
 toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFlags fl)
-        : QWidget(parent, fl), toSettingTab("database.html")
+    : QWidget(parent, fl), toSettingTab("database.html")
 {
     if (name)
         setObjectName(name);
@@ -370,7 +370,7 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
 //     KeepAlive->setChecked(toConfigurationSingle::Instance().keepAlive());
 
     connect(IndicateEmpty, SIGNAL(clicked(bool)),
-             IndicateEmptyColor, SLOT(setEnabled(bool)));
+            IndicateEmptyColor, SLOT(setEnabled(bool)));
 }
 
 // void toUpdateIndicateEmpty(void);
@@ -418,23 +418,23 @@ void toDatabaseSetting::saveSetting(void)
 }
 
 toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
-        : QWidget(parent/*, name, fl*/), toSettingTab("toolsetting.html")
+    : QWidget(parent/*, name, fl*/), toSettingTab("toolsetting.html")
 {
     setupUi(this);
 
     std::map<QString, toTool *> &tools = toTool::tools();
     Enabled->setSorting(0);
     ToolsMap tMap(toConfigurationSingle::Instance().tools());
-    for (std::map<QString, toTool *>::iterator i = tools.begin();i != tools.end();i++)
+    for (std::map<QString, toTool *>::iterator i = tools.begin(); i != tools.end(); i++)
     {
         if ((*i).second->menuItem())
         {
             QString menuName = qApp->translate("toTool", (*i).second->menuItem());
             DefaultTool->addItem(menuName);
             toTreeWidgetItem *item = new toTreeWidgetItem(Enabled,
-                                                          menuName,
-                                                          (*i).second->name(),
-                                                          (*i).first);
+                    menuName,
+                    (*i).second->name(),
+                    (*i).first);
             item->setSelected(tMap[(*i).first]);
         }
     }

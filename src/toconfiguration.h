@@ -18,9 +18,9 @@ typedef QMap<QString, QString> ChartsMap;
 typedef QMapIterator<QString, QString> ChartsMapIterator;
 typedef QMap<QString, QString> TemplatesMap;
 typedef QMapIterator<QString, QString> TemplatesMapIterator;
-typedef QMap<QString,QVariant> EditorShortcutsMap;
+typedef QMap<QString, QVariant> EditorShortcutsMap;
 typedef QMapIterator<QString, QVariant> EditorShortcutsMapIterator;
-typedef QMap<QString,QString> ConnectionColors;
+typedef QMap<QString, QString> ConnectionColors;
 typedef QMapIterator<QString, QString> ConnectionColorsIterator;
 
 
