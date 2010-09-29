@@ -64,8 +64,14 @@ struct TROTL_EXPORT OracleServer : public OciHandle<OCIServer>
 		sword res = OCICALL(OCIServerAttach(_handle, _env._errh, (OraText*)tnsname.c_str(), (sb4)tnsname.length()*sizeof(char), OCI_DEFAULT));
 		oci_check_error(__TROTL_HERE__, _env._errh, res);
 
-		res = OCICALL(OCIServerRelease(_handle, _env._errh, (OraText*)_version_string, sizeof(_version_string), OCI_HTYPE_SERVER, &_version));
-		//res = OCICALL(OCIServerVersion(_handle, _env._errh, (OraText*)_version_string, sizeof(_version_string), OCI_HTYPE_SVCCTX));
+		// version might be wrong, depending on parameter sec_return_server_release_banner
+		// to get the correct version getVersion() will be called a second time in connect() after the session has been sucessfully authenticated
+		getVersion();
+	}
+
+	void getVersion()
+	{
+		sword res = OCICALL(OCIServerRelease(_handle, _env._errh, (OraText*)_version_string, sizeof(_version_string), OCI_HTYPE_SERVER, &_version));
 		oci_check_error(__TROTL_HERE__, _env._errh, res);
 	}
 
@@ -171,6 +177,9 @@ struct TROTL_EXPORT OciLogin : public OciHandle<OCISvcCtx>
 		}
 
 		_connected = true;
+
+		// second call
+		_server.getVersion();
 
 		set_attribute(_session);
 
