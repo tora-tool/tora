@@ -157,7 +157,10 @@ struct TROTL_EXPORT SqlCollection : public SqlValue
 		throw OciException(__TROTL_HERE__, "Not implemented yet");
 	}
 
-	tstring str() const;
+	tstring str() const
+	{
+		throw OciException(__TROTL_HERE__, "Not implemented yet");
+	}
 
 	operator tstring() const { return str(); };
 
