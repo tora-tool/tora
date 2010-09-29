@@ -192,8 +192,7 @@ struct TROTL_EXPORT BindParNumber: public SqlStatement::BindPar
 {
 	BindParNumber(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 	{
-		valuep = (void**) new unsigned char [ _cnt * (OCI_NUMBER_SIZE) ];
-		memset(valuep, 0x00, _cnt * (OCI_NUMBER_SIZE) );
+		valuep = (void**) calloc(_cnt, (size_t)OCI_NUMBER_SIZE );
 
 		dty =  SQLT_VNU; //dty = SQLT_NUM;
 		value_sz = OCI_NUMBER_SIZE;
@@ -206,8 +205,7 @@ struct TROTL_EXPORT BindParNumber: public SqlStatement::BindPar
 
 	BindParNumber(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): SqlStatement::BindPar(pos, stmt, decl)
 	{
-		valuep = (void**) new unsigned char [ decl.bracket[1] * (OCI_NUMBER_SIZE) ];
-		memset(valuep, 0x00, decl.bracket[1] * (OCI_NUMBER_SIZE) );
+		valuep = (void**) calloc(_cnt, (size_t)OCI_NUMBER_SIZE );
 
 		dty =  SQLT_VNU; //dty = SQLT_NUM;
 		value_sz = OCI_NUMBER_SIZE;
@@ -219,14 +217,7 @@ struct TROTL_EXPORT BindParNumber: public SqlStatement::BindPar
 		type_name = "NUMBER";
 	};
 
-	~BindParNumber()
-	{
-		if(valuep)
-		{
-			delete[] (unsigned char*) valuep;
-			valuep = NULL;
-		}
-	}
+	~BindParNumber() {};
 
 	template<class wrapped_int>
 	wrapped_int get_number(unsigned row) const
@@ -324,15 +315,8 @@ protected:
 // wrapper for internal Oracle NUMBER type [length][1-20digits][mantisa]
 struct SqlNumber : public SqlValue
 {
-	//SqlNumber() {};
-
 	//SqlNumber(const oraclenumber* pnum);
-
-/* 	SqlNumber(OCIError* errh, const char* s, */
-/* 		  const char* fmt="99999999999999999999999999999999999999D99999999999999999999", */
-/* 		  const char* nls_fmt="NLS_NUMERIC_CHARACTERS='.,'"); */
-
-/* 	SqlNumber(OCIError* errh, const std::string, */
+	/* 	SqlNumber(OCIError* errh, const std::string, */
 /* 		  const char* fmt="99999999999999999999999999999999999999D99999999999999999999", */
 /* 		  const char* nls_fmt="NLS_NUMERIC_CHARACTERS='.,'"); */
 	
@@ -343,10 +327,14 @@ struct SqlNumber : public SqlValue
 /* 		_ind.set(); */
 /* 	}; */
 
-        SqlNumber(SqlNumber const &other) : _env(other._env)
+	SqlNumber(SqlNumber const &other) : _env(other._env)
 	{
 		*this = other;
 	};
+
+	SqlNumber(OciEnv &env, const char* s,
+		  const char* fmt="99999999999999999999999999999999999999D99999999999999999999",
+		  const char* nls_fmt="NLS_NUMERIC_CHARACTERS='.,'");
 	
         SqlNumber(OciEnv &env) : _env(env)
 	{

@@ -78,11 +78,6 @@ struct TROTL_EXPORT BindParXML: public SqlStatement::BindPar
 
 	~BindParXML()
 	{
-		if(valuep)
-		{
-			delete[] (unsigned char*) valuep;
-			valuep = NULL;
-		}
 		if(_xmlvaluep)
 		{
 			delete[] _xmlvaluep;

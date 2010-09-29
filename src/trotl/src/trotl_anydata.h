@@ -54,8 +54,7 @@ struct TROTL_EXPORT BindParANYDATA: public SqlStatement::BindPar
 	friend struct ConvertorForWrite;
 
 	// TODO remember OCIConn or at least svcctx in this class
-	BindParANYDATA(unsigned int pos, SqlStatement &stmt, ColumnType &ct)
-		: SqlStatement::BindPar(pos, stmt, ct)
+	BindParANYDATA(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 		, _oan_buffer(NULL)
 		, _any_indp(NULL)
 	{
@@ -70,13 +69,12 @@ struct TROTL_EXPORT BindParANYDATA: public SqlStatement::BindPar
 		init(stmt);
 	}
 	
-	BindParANYDATA(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl)
-		: SqlStatement::BindPar(pos, stmt, decl)
+	BindParANYDATA(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl) : SqlStatement::BindPar(pos, stmt, decl)
 		, _oan_buffer(NULL)
 		, _any_indp(NULL)
 	{
 		dty =  SQLT_NTY;
-		type_name = "SYS.ANYDATA";
+		type_name = "SYS.ANYDATA";		
 		value_sz = sizeof(OCIAnyData*);
 		for(unsigned i = 0; i < _cnt; ++i)
 		{

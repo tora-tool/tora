@@ -415,10 +415,11 @@ namespace trotl {
   };
 
   /// error handling functions
-  //  extern void TROTL_EXPORT throw_oci_exception(tstring where, OCIError* errh, sword res);
-  //  extern void TROTL_EXPORT throw_oci_exception(tstring where, OCIEnv* envh, sword res);
-  //  __declspec(noreturn) void throw_ocipl_exception(OciException& e);
-  //  extern void TROTL_EXPORT throw_ocipl_exception(OciException const & e);
+  extern void TROTL_EXPORT throw_oci_exception(tstring where, OCIError* errh, sword res);
+  extern void TROTL_EXPORT throw_oci_exception(tstring where, OCIEnv* envh, sword res);
+  extern void TROTL_EXPORT throw_ocipl_exception(OciException const & e);
+  // __declspec(noreturn) void throw_ocipl_exception(OciException& e);
+
 
   inline void oci_check_error(tstring where, OCIError* errh, sword res)
   {

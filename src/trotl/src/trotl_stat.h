@@ -93,40 +93,6 @@ public:
 			BIND_OUT=4,
 			DEFINE_SELECT=8
 		};
-		
-		/* Placeholder for Bind operations */
-		BindPar(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl)
-			: valuep(NULL)
-			, indp(NULL)
-			, rlenp(NULL)
-			// , rcodep(NULL)
-			, alenp(NULL)
-			, mode(OCI_DEFAULT)
-			, bindp(NULL)
-			, defnpp(NULL)
-			, _env(stmt._env)
-			, _stmt(stmt)
-			, _pos(pos)
-			, _max_cnt(decl.bracket[1])
-			, _cnt(decl.bracket[1])
-			, _bound(false)
-			, type_name("")
-			, bind_name(decl.bindname)
-			, bind_typename(decl.bindtype)
-		{
-			indp = new OCIInd [_cnt];
-			memset(indp, 0, sizeof(OCIInd)*_cnt);
-			
-			rlenp = malloc( sizeof(ub4) * _cnt); // OCIBindByPos uses ub4* for lenp 
-			alenp = new ub2 [_cnt];
-			
-			if(decl.inout == "in")
-				_bind_type = BIND_IN;
-			else if(decl.inout == "inout")
-				_bind_type = BIND_INOUT;
-			else if(decl.inout == "out")
-				_bind_type = BIND_OUT;
-		};
 
 		/* Placeholder for Define operations */		
 		BindPar(unsigned int pos, SqlStatement &stmt, ColumnType &ct)
@@ -145,23 +111,55 @@ public:
 			, _cnt(g_OCIPL_BULK_ROWS)
 			, _bound(false)
 			, type_name("")
+			, reg_name("")
 			, bind_name("")
 			, bind_typename("")
 		{
-			indp = new OCIInd [_cnt];
-			memset(indp, 0, sizeof(OCIInd)*_cnt);
+			indp = (OCIInd*) calloc(_cnt, sizeof(OCIInd));
+			rlenp = calloc(_cnt, sizeof(ub2)); // OciDefineByPos uses ub2* for lenp 
 		
-			rlenp = malloc( sizeof(ub2) * _cnt); // OciDefineByPos uses ub2* for lenp 
-			
 			_bind_type = DEFINE_SELECT;
 		};
+		
+		/* Placeholder for Bind operations */
+		BindPar(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl)
+			: valuep(NULL)
+			, indp(NULL)
+			, rlenp(NULL)
+			// , rcodep(NULL)
+			, alenp(NULL)
+			, mode(OCI_DEFAULT)
+			, bindp(NULL)
+			, defnpp(NULL)
+			, _env(stmt._env)
+			, _stmt(stmt)
+			, _pos(pos)
+			, _max_cnt(decl.bracket[1])
+			, _cnt(decl.bracket[1])
+			, _bound(false)
+			, type_name("")
+			, reg_name("")		  
+			, bind_name(decl.bindname)
+			, bind_typename(decl.bindtype)
+		{
+			indp = (OCIInd*) calloc(_cnt, sizeof(OCIInd));
+			rlenp = calloc(_cnt, sizeof(ub4)); // OCIBindByPos uses ub4* for lenp			
+			
+			if(decl.inout == "in")
+				_bind_type = BIND_IN;
+			else if(decl.inout == "inout")
+				_bind_type = BIND_INOUT;
+			else if(decl.inout == "out")
+				_bind_type = BIND_OUT;
+		};
+
 
 		virtual ~BindPar()
 		{
-			if(indp) { delete[] indp; indp = NULL; }
+			if(indp) { free(indp); indp = NULL; }
 			if(rlenp) { free(rlenp); rlenp = NULL; }
 			// if(rcodep) { delete[] rcodep; rcodep = NULL; }
-			if(alenp) {delete[] alenp; alenp = NULL; }
+			if(alenp) { free(alenp); alenp = NULL; }
 		};
 		
 		// every datatype can be converted to a string
@@ -182,7 +180,7 @@ public:
 		void *rlenp;
 		//ub2 *rcodep;
 		ub2 *alenp;
-		ub4 mode;	// define mode = OCI_DEFAULT, except for SQLT_LONG = OCI_DYNAMIC_FETCH TODO fix long
+		ub4 mode;	// define mode = OCI_DEFAULT, except for SQLT_LONG => OCI_DYNAMIC_FETCH TODO fix long
 		OCIBind *bindp;
 		OCIDefine *defnpp;  //TODO union with OCIBind *bindpp
 		
@@ -191,12 +189,13 @@ public:
 		unsigned int _pos, /*_cnt,*/ _max_cnt, _bind_type;
 		size_t _cnt;
 		bool _bound;
-		tstring type_name, bind_name, bind_typename;
+		tstring type_name, reg_name, bind_name, bind_typename;
 
-		/* NOTE these two function do not work with complex types SQLT_NTY */
+		/* NOTE these two functions do not work with complex types SQLT_NTY */
 		bool is_null(unsigned row) const {return indp[row]==OCI_IND_NULL;};
 		bool is_not_null(unsigned row) const {return indp[row]!=OCI_IND_NULL;};		
 	protected:
+
 		BindPar(const BindPar &other);
 		friend class SqlStatement;
 	}; // class BindPar
@@ -386,14 +385,14 @@ protected:
 	void execute_describe();
 
 	bool fetch(ub4 rows=-1);
-
+	
 	/* OCIBindByPos - for PL/SQL statements */
 	void bind(BindPar &bp);
 	/* OCIDefineByPos - for SELECT statements */
 	void define(BindPar &dp);
 
 	//OCISvcCtx* _svchp;
-public:	//todo delete me - these fields should not be public	
+public:	//todo delete me - these fields should not be public
 	const ub4 _lang;
 	const tstring _orig_stmt;
 	mutable tstring _parsed_stmt;

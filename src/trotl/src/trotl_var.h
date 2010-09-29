@@ -62,6 +62,7 @@ struct TROTL_EXPORT ColumnType
 	tstring _column_name;
 	tstring _data_type_name;
 	tstring _data_type_dblink; // ?? TODO
+	tstring _reg_name;
 					
 	ub2	_data_type;
 	ub2	_width;

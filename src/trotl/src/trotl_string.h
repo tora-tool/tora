@@ -63,8 +63,8 @@ struct TROTL_EXPORT BindParVarchar: public SqlStatement::BindPar
   	BindParVarchar(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 	{
 		/* amount of bytes =  (string length +1 ) * (array length) */
-		valuep = (void**) new char [ ( ct._width + 1 ) * (_cnt) ]; // +1 for ending zero
-		memset(valuep, 0x00, (ct._width + 1) * _cnt);
+		valuep = (void**) calloc(_cnt, ct._width + 1);
+		alenp = (ub2*) calloc(_cnt, sizeof(ub2));
 		
 		dty = SQLT_STR;
 		value_sz = ct._width + 1;
@@ -74,8 +74,8 @@ struct TROTL_EXPORT BindParVarchar: public SqlStatement::BindPar
 	BindParVarchar(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl) : SqlStatement::BindPar(pos, stmt, decl)
 	{
 		// amount of bytes =  (string length +1 ) * (array length)
-		valuep = (void**) new char [ (decl.bracket[0]+1) * (decl.bracket[1]) ];
-		memset(valuep, 0x00, (decl.bracket[0]+1) * (decl.bracket[1]));
+		valuep = (void**) calloc(decl.bracket[0]+1, decl.bracket[1]);
+		alenp = (ub2*) calloc(_cnt, sizeof(ub2));
 		
 		dty = SQLT_STR;
 		value_sz = decl.bracket[0]+1;
@@ -123,8 +123,8 @@ struct TROTL_EXPORT BindParChar: public SqlStatement::BindPar
 {
 	BindParChar(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 	{
-		valuep = (void**) new char [ ( ct._width + 1 ) * _cnt ];
-		memset(valuep, 0x00, ( ct._width + 1 ) * _cnt);
+		valuep = (void**) calloc(_cnt, ct._width + 1); // TODO +1 ?? why?
+		alenp = (ub2*) calloc(_cnt, sizeof(ub2));
 		
 		dty = SQLT_CHR;
 		value_sz = ct._width;
@@ -133,9 +133,9 @@ struct TROTL_EXPORT BindParChar: public SqlStatement::BindPar
 
 	BindParChar(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): SqlStatement::BindPar(pos, stmt, decl)
 	{
-		valuep = (void**) new char [ (decl.bracket[0]) * (decl.bracket[1]) ];
-		memset(valuep, 0x00, (decl.bracket[0]) * (decl.bracket[1]));
-
+		valuep = (void**) calloc(decl.bracket[1], decl.bracket[0]);
+		alenp = (ub2*) calloc(_cnt, sizeof(ub2));
+		
 		dty = SQLT_CHR;
 		value_sz = decl.bracket[0];
 		type_name = typeid(tstring).name();
@@ -170,8 +170,8 @@ struct TROTL_EXPORT BindParRaw: public SqlStatement::BindPar
 	BindParRaw(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 	{
 		// amount of bytes =  (string length +1 ) * (array length)
-		valuep = (void**) new char [ ( ct._width + 1 ) * _cnt ];
-		memset(valuep, 0x00, (ct._width + 1) * _cnt);
+		valuep = (void**) calloc(_cnt, ct._width + 1);
+		alenp = (ub2*) calloc(_cnt, sizeof(ub2));
 		
 		dty = SQLT_BIN;
 		value_sz = ct._width;
@@ -180,8 +180,8 @@ struct TROTL_EXPORT BindParRaw: public SqlStatement::BindPar
 
 	BindParRaw(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): SqlStatement::BindPar(pos, stmt, decl)
 	{
-		valuep = (void**) new char [ (decl.bracket[0]) * (decl.bracket[1]) ];
-		memset(valuep, 0x00, (decl.bracket[0]) * (decl.bracket[1]));
+		valuep = (void**) calloc (decl.bracket[1], decl.bracket[0]);
+		alenp = (ub2*) calloc(_cnt, sizeof(ub2));
 		
 		dty = SQLT_BIN;
 		value_sz = decl.bracket[0];

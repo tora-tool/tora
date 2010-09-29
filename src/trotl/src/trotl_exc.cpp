@@ -296,31 +296,31 @@ OciException& OciException::arg(tstring s)
 	return *this;
 }
 
-// void TROTL_EXPORT throw_ocipl_exception(OciException const & e)
-// {
-// 	throw(e);
-// }
+void TROTL_EXPORT throw_ocipl_exception(OciException const & e)
+{
+	throw(e);
+}
 
-// void TROTL_EXPORT throw_oci_exception(tstring where, OCIError* errh, sword res)
-// {
-// 	switch(res) {
-// 	case OCI_ERROR:
-// 		throw_ocipl_exception(OciException(where, errh));
-// 	case OCI_INVALID_HANDLE:
-// 		throw_ocipl_exception(OciException(where, "invalid handle"));
-// 		//@todo handle other error states
-// 	}
-// }
+void TROTL_EXPORT throw_oci_exception(tstring where, OCIError* errh, sword res)
+{
+	switch(res) {
+	case OCI_ERROR:
+		throw_ocipl_exception(OciException(where, errh));
+	case OCI_INVALID_HANDLE:
+		throw_ocipl_exception(OciException(where, "invalid handle"));
+		//@todo handle other error states
+	}
+}
 
-// void TROTL_EXPORT throw_oci_exception(tstring where, OCIEnv* envh, sword res)
-// {
-// 	switch(res) {
-// 	case OCI_ERROR:
-// 		throw_ocipl_exception(OciException(where, envh));
-// 	case OCI_INVALID_HANDLE:
-// 		throw_ocipl_exception(OciException(where, envh));
-// 		//@todo handle other error states
-// 	}
-// }
+void TROTL_EXPORT throw_oci_exception(tstring where, OCIEnv* envh, sword res)
+{
+	switch(res) {
+	case OCI_ERROR:
+		throw_ocipl_exception(OciException(where, envh));
+	case OCI_INVALID_HANDLE:
+		throw_ocipl_exception(OciException(where, envh));
+		//@todo handle other error states
+	}
+}
 
 };

@@ -51,38 +51,22 @@ Util::RegisterInFactory<BindParRid, DefineParFactTwoParmSing, int> regDefineRid(
 
 BindParRid::BindParRid(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): BindPar(pos, stmt, decl)
 {
-	valuep = (void**) malloc( _cnt * sizeof(OCIRowid*) );
-	memset(valuep, 0, _cnt * sizeof(OCIRowid*) );
-	
+	valuep = (void**) calloc(_cnt, sizeof(OCIRowid*));
+	value_sz = sizeof(OCIRowid*);	
 	dty = SQLT_RDD;
-	value_sz = sizeof(OCIRowid*);
 	type_name = "ROWID";
-
 	descAlloc();
 };
 
 BindParRid::BindParRid(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : BindPar(pos, stmt, ct)
 {
-	valuep = (void**) malloc( _cnt * sizeof(OCIRowid*) );
-	memset(valuep, 0, _cnt * sizeof(OCIRowid*) );
-	
+	valuep = (void**) calloc(_cnt, sizeof(OCIRowid*));
+	value_sz = sizeof(OCIRowid*);       
 	dty = SQLT_RDD;
-	value_sz = sizeof(OCIRowid*);
-	type_name = ct.get_type_str();
-	
+	type_name = ct.get_type_str();       
 	descAlloc();
 }
 	
-BindParRid::~BindParRid()
-{
-	descFree();
-	if(valuep)
-	{
-		free(valuep);
-		valuep = NULL;
-	}
-}
-
 void BindParRid::descAlloc(void)
 {
 	for(unsigned i=0; i<_cnt; ++i)

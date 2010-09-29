@@ -215,7 +215,7 @@ void ColumnType::describe(SqlStatement &stat, dvoid* handle)
 		nsize = sizeof(ptype_name);
 		res = OCICALL(OCIAttrGet(handle, OCI_DTYPE_PARAM, &ptype_name, &nsize, OCI_ATTR_TYPE_NAME, stat._errh));
 		oci_check_error(__TROTL_HERE__, stat._errh, res);
-		_data_type_name = tstring((char*)pschema_name, ssize) + "." + tstring((char*)ptype_name,nsize);
+		_reg_name = _data_type_name = tstring((char*)pschema_name, ssize) + "." + tstring((char*)ptype_name,nsize);
 		
 		res = OCICALL(OCIHandleAlloc((dvoid *) stat._env, (dvoid **) &dschp, (ub4) OCI_HTYPE_DESCRIBE, (size_t) 0, (dvoid **) 0));
 		oci_check_error(__TROTL_HERE__, stat._errh, res);
@@ -233,10 +233,10 @@ void ColumnType::describe(SqlStatement &stat, dvoid* handle)
 
 		if (_typecode == OCI_TYPECODE_NAMEDCOLLECTION)
 		{
-			ub4 ssize;
+			ub4 ssize, tsize;
 			ub2 len;
-			text* col_type_name = NULL;
-			text* col_schema_name = NULL;
+			text* coll_type_name = NULL;
+			text* coll_schema_name = NULL;
 			res = OCICALL(OCIAttrGet((dvoid *) parmp, (ub4) OCI_DTYPE_PARAM,
 						 (dvoid *)&_collection_typecode, (ub4 *)0, (ub4)OCI_ATTR_COLLECTION_TYPECODE, stat._errh));
 			oci_check_error(__TROTL_HERE__, stat._errh, res);
@@ -250,11 +250,11 @@ void ColumnType::describe(SqlStatement &stat, dvoid* handle)
 			oci_check_error(__TROTL_HERE__, stat._errh, res);
 			
 			/* get the name of the collection */
-			res = OCICALL(OCIAttrGet((dvoid*) _collection_dschp, (ub4) OCI_DTYPE_PARAM, (dvoid*) &col_type_name, (ub4 *) &ssize, (ub4) OCI_ATTR_TYPE_NAME, stat._errh));
+			res = OCICALL(OCIAttrGet((dvoid*) _collection_dschp, (ub4) OCI_DTYPE_PARAM, (dvoid*) &coll_type_name, (ub4 *) &tsize, (ub4) OCI_ATTR_TYPE_NAME, stat._errh));
 			oci_check_error(__TROTL_HERE__, stat._errh, res);
 			
 			/* get the name of the schema */
-			res = OCICALL(OCIAttrGet((dvoid*) _collection_dschp, (ub4) OCI_DTYPE_PARAM, (dvoid*) &col_schema_name, (ub4 *) &ssize, (ub4) OCI_ATTR_SCHEMA_NAME, stat._errh));
+			res = OCICALL(OCIAttrGet((dvoid*) _collection_dschp, (ub4) OCI_DTYPE_PARAM, (dvoid*) &coll_schema_name, (ub4 *) &ssize, (ub4) OCI_ATTR_SCHEMA_NAME, stat._errh));
 			oci_check_error(__TROTL_HERE__, stat._errh, res);
 			
 			/* get the data type */
@@ -265,18 +265,22 @@ void ColumnType::describe(SqlStatement &stat, dvoid* handle)
 			if (_collection_typecode == OCI_TYPECODE_VARRAY)
 			{
 				/* get the number of elements */
-				res = OCICALL(OCIAttrGet((dvoid*) _collection_dschp, (ub4) OCI_DTYPE_PARAM, (dvoid*) &num_elems, (ub4 *) 0,	(ub4) OCI_ATTR_NUM_ELEMS, stat._errh));
+				res = OCICALL(OCIAttrGet((dvoid*) _collection_dschp, (ub4) OCI_DTYPE_PARAM, (dvoid*) &num_elems, (ub4 *) 0,
+							 (ub4) OCI_ATTR_NUM_ELEMS, stat._errh));
 				oci_check_error(__TROTL_HERE__, stat._errh, res);
+				_reg_name = tstring("VARARRAY OF ") + tstring((char*)coll_type_name ,tsize);
+			} else {
+				_reg_name = tstring("TABLE OF ") + tstring((char*)coll_type_name ,tsize);
 			}
-			std::cout << "OCI_ATTR_COLLECTION_TYPECODE: " << _collection_typecode << std::endl
-				  << "OCI_ATTR_COLLECTION_ELEMENT: " << _collection_dschp << std::endl
-				  << "OCI_ATTR_DATA_SIZE: " << len << std::endl
-				  << "OCI_ATTR_TYPE_NAME: " << col_type_name << std::endl
-				  << "OCI_ATTR_SCHEMA_NAME: " << col_schema_name << std::endl
-				  << "OCI_ATTR_DATA_TYPE: " << _collection_typecode << std::endl
-				  << "OCI_ATTR_NUM_ELEMS: " << num_elems << std::endl
-				  << "========================================" << std::endl;
-			_data_type = (OCI_TYPECODE_VARRAY << 8) + _collection_typecode;
+			// std::cout << "OCI_ATTR_COLLECTION_TYPECODE: " << _collection_typecode << std::endl
+			// 	  << "OCI_ATTR_COLLECTION_ELEMENT: " << _collection_dschp << std::endl
+			// 	  << "OCI_ATTR_DATA_SIZE: " << len << std::endl
+			// 	  << "OCI_ATTR_TYPE_NAME: " << coll_type_name << std::endl
+			// 	  << "OCI_ATTR_SCHEMA_NAME: " << coll_schema_name << std::endl
+			// 	  << "OCI_ATTR_DATA_TYPE: " << _collection_typecode << std::endl
+			// 	  << "OCI_ATTR_NUM_ELEMS: " << num_elems << std::endl
+			// 	  << "========================================" << std::endl;
+			//_data_type = (OCI_TYPECODE_VARRAY << 8) + _collection_typecode;
 		}
 		break;
 	}

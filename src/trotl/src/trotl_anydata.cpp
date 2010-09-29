@@ -45,9 +45,7 @@ void BindParANYDATA::init(SqlStatement &stmt)
 {	
 	sword res;
 	_anydatatdo = 0;
-
-
-	_oan_buffer = new OCIAnyData* [ _cnt ];
+	_oan_buffer = (OCIAnyData**) calloc(_cnt, sizeof(OCIAnyData*));
 
 	res = OCICALL(OCITypeByName(_stmt._env, _stmt._errh, _stmt._conn._svc_ctx,
 			(const oratext*)"SYS", strlen("SYS"),
@@ -137,7 +135,7 @@ tstring BindParANYDATA::get_string(unsigned int row) const
 	{
 		OCIInd _indp; // TODO check indp here
 		OCIString *str = (OCIString *) 0;
-		ub4 len, len2;
+		ub4 len;
 
   		sword res1 = OCICALL(OCIAnyDataAccess(_stmt._conn._svc_ctx, _stmt._errh,
 						      _oan_buffer[row], (OCITypeCode)OCI_TYPECODE_VARCHAR2, 

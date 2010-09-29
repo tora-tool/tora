@@ -18,7 +18,7 @@
 	distribution.
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  AND ANY EXPRES7S OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
@@ -58,10 +58,9 @@ Util::RegisterInFactory<BindParBFile, DefineParFactTwoParmSing, int> regDefineNu
 BindParLob::BindParLob(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : BindPar(pos, stmt, ct)
 {
 	//valuep = new unsigned char [ _cnt * ( sizeof(OCILobLocator*) ) ];
-	valuep = (void**) malloc( _cnt * sizeof(OCILobLocator*)  );
-	memset(valuep, 0, _cnt * sizeof(OCILobLocator*) );
-
+	valuep = (void**) calloc(_cnt, sizeof(OCILobLocator*));
 	value_sz = sizeof(OCILobLocator*);
+	
 	for(unsigned i = 0; i < _cnt; ++i)
 	{
 		((ub2*)rlenp)[i] = (ub2) value_sz;
@@ -73,10 +72,9 @@ BindParLob::BindParLob(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : B
 BindParLob::BindParLob(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): BindPar(pos, stmt, decl)
 {
 	//valuep = new unsigned char [ decl.bracket[1] * ( OCI_NUMBER_SIZE + 1) ];
-	valuep = (void**) malloc( _cnt * sizeof(OCILobLocator*)  );
-	memset(valuep, 0, _cnt * sizeof(OCILobLocator*) );
-
+	valuep = (void**) calloc(_cnt, sizeof(OCILobLocator*));
 	value_sz = sizeof(OCILobLocator*);
+	
 	for(unsigned i = 0; i < _cnt; ++i)
 	{
 		((ub4*)rlenp)[i] = (ub4) value_sz;

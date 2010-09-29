@@ -83,6 +83,7 @@ namespace trotl {
 //}
 
 //#define OCICALL(x)  x; do { std::cerr << __TROTL_HERE__ << #x << std::endl; } while(0)
+//#define OCICALL(x)  x; do { std::cerr << #x << std::endl; } while(0)	
 #define OCICALL(x)  x
 
 #ifdef __GNUC__

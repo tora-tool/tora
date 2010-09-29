@@ -48,7 +48,7 @@
 
 namespace trotl {
 
-int TROTL_EXPORT g_OCIPL_BULK_ROWS = 1;
+int TROTL_EXPORT g_OCIPL_BULK_ROWS = 3;
 int TROTL_EXPORT g_OCIPL_MAX_LONG = 30000;
 
 
@@ -122,18 +122,19 @@ _bound(false)
 					_columns[dpos] );
 			else
 				_all_defines[dpos] = CustDefineParFactTwoParmSing::Instance().create(
-					_columns[dpos]._data_type_name.c_str(),
+					_columns[dpos]._reg_name.c_str(),
 					dpos,
 					*this,
 					_columns[dpos] );
 			
 			if(_all_defines[dpos].get() == NULL)
-			  throw OciException(__TROTL_HERE__, "DefinePar: Data type not registered: %s(%d:%d:%d:%s)\n")
-				  .arg(_columns[dpos]._data_type_name)
-				  .arg(_columns[dpos]._data_type)
-				  .arg(_columns[dpos]._typecode)
-				  .arg(_columns[dpos]._collection_typecode)
-				  .arg(_columns[dpos]._data_type_name);
+				throw OciException(__TROTL_HERE__, "DefinePar: Data type not registered: %s(%d:%d:%d:%s:%s)\n")
+					.arg(_columns[dpos]._data_type_name)
+					.arg(_columns[dpos]._data_type)
+					.arg(_columns[dpos]._typecode)
+					.arg(_columns[dpos]._collection_typecode)
+					.arg(_columns[dpos]._data_type_name)
+					.arg(_columns[dpos]._reg_name);
 			define(*_all_defines[dpos]);
 		}
 		_state |= DEFINED;
@@ -334,7 +335,8 @@ bool SqlStatement::eof()
 
 bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 {
-	ub4 iters;
+	if( _state & EXECUTED)
+		return true;       
 
 	//	TODO replace rows by something else - &FETCHED
 	if (rows==0 && get_stmt_type() == STMT_SELECT)
@@ -350,6 +352,7 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		}
 	}
 
+	ub4 iters;
 	switch(STMT_TYPE t = get_stmt_type())
 	{
 	case STMT_OTHER:
@@ -366,6 +369,7 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		iters = 1;
 		break;
 	case STMT_INSERT:
+		iters = 1;
 		if( _in_cnt == 0 )
 			break;
 		iters  = _all_binds[_in_binds[1]]->_cnt;
@@ -406,7 +410,6 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 			iters, //_stmt_type == STMT_SELECT ? rows : 1, // iters
 			0, // rowoff
 			(CONST OCISnapshot*)0, (OCISnapshot*)0, mode));
-	std::cout << "OCIStmtExecute" << std::endl; 
 	
 	//std::cout << std::endl
 	//	<< "iters:" << iters << std::endl;
@@ -437,8 +440,8 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 
 bool SqlStatement::fetch(ub4 rows/*=-1*/)
 {
-	sword res = OCICALL(OCIStmtFetch2(_handle, _errh, rows, OCI_FETCH_NEXT, 0, OCI_DEFAULT));
-
+	sword res = OCICALL(OCIStmtFetch(_handle, _errh, rows, OCI_FETCH_NEXT, OCI_DEFAULT));
+	
  	_last_row += _last_buff_row;
 	_last_fetched_row = row_count();
 	_last_buff_row = 0;
@@ -557,7 +560,6 @@ void SqlStatement::bind(BindPar &bp)
 						   NULL,		  // ub2 *rcodep
 						   dp.mode));
 		oci_check_error(__TROTL_HERE__, _errh, res);
-		std::cout << "OCIDefineByPos" << std::endl;
 		
 		dp.define_hook(*this);
 	}

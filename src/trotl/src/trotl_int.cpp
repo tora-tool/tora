@@ -95,28 +95,27 @@ tstring BindParNumber::get_string(unsigned int row) const
 	}
 }
 
+SqlNumber::SqlNumber(OciEnv &env, const char* str, const char* fmt, const char* nls_fmt) : _env(env)
+{
+	//while(str && istspace(*str)) ++str; 
+
+	if (str && *str) {
+		sword res = OCICALL(OCINumberFromText(_env._errh,
+						      (const text*)str, (ub4)strlen(str),
+						      (const text*)fmt, (ub4)strlen(fmt),
+						      (const text*)nls_fmt, (ub4)strlen(nls_fmt),
+						      (OCINumber*)&_val));
+		oci_check_error(__TROTL_HERE__, _env._errh, res);
+		_ind.set();
+	} else
+		_ind.clear();
+}
+  
 //SqlNumber::SqlNumber(const oraclenumber* pnum)
 //{
 //	memcpy(&_val.exp, &pnum->exp, pnum->len);
 //	_val.len = pnum->len;
 //	_ind.set();
-//}
-
-//SqlNumber::SqlNumber(OCIError* errh, const char* str, const char* fmt, const char* nls_fmt)
-//{
-//	//while(str && istspace(*str)) ++str; 
-//
-//	if (str && *str) {
-//		sword res = OCICALL(OCINumberFromText(errh,
-//				(const text*)str, (ub4)strlen(str),
-//				(const text*)fmt, (ub4)strlen(fmt),
-//				(const text*)nls_fmt, (ub4)strlen(nls_fmt),
-//				(OCINumber*)&_val));
-//
-//		oci_check_error(__TROTL_HERE__, errh, res);
-//		_ind.set();
-//	} else
-//		_ind.clear();
 //}
 
 //tstring number_to_str(const oraclenumber& val, OCIError* errh, const char* fmt, const char* nls_fmt)

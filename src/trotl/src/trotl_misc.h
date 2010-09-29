@@ -54,28 +54,26 @@ namespace trotl {
 */
 struct TROTL_EXPORT BindParMisc: public SqlStatement::BindPar
 {
-	BindParMisc(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl) : SqlStatement::BindPar(pos, stmt, decl)
-	{
-		// amount of bytes =  (string length +1 ) * (array length)
-		valuep = (void**) new char [ (128) * (decl.bracket[1]) ];
-		memset(valuep, 0x00, 128 * (decl.bracket[1]));
-		
-		dty = SQLT_STR;
-		value_sz = 128;
-		type_name = typeid(tstring).name();
-	}
-
 	BindParMisc(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 	{
-		// amount of bytes =  (string length +1 ) * (array length)
-		valuep =  (void**)  new char [ ( 128 ) * (_cnt) ]; // +1 for ending zero
-		memset(valuep, 0x00, (128) * _cnt);
+		valuep = (void**) calloc(_cnt, 128);
+		alenp = (ub2*) calloc(_cnt, sizeof(ub2));
 		
 		dty = SQLT_STR;
 		value_sz = 128;
 		type_name = typeid(tstring).name();
 	}
 
+	BindParMisc(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl) : SqlStatement::BindPar(pos, stmt, decl)
+	{
+		// an assumtion is that remaining datatypes can hit into 128 chars
+		valuep = (void**) calloc(decl.bracket[1], 128);
+		alenp = (ub2*) calloc(_cnt, sizeof(ub2));
+		
+		dty = SQLT_STR;
+		value_sz = 128;
+		type_name = typeid(tstring).name();
+	}
 
 	~BindParMisc()
 	{

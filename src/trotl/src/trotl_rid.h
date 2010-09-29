@@ -44,7 +44,7 @@ struct TROTL_EXPORT BindParRid: public SqlStatement::BindPar
 {
 	BindParRid(unsigned int pos, SqlStatement &stmt, ColumnType &ct);
 	BindParRid(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl);
-	~BindParRid();
+	~BindParRid() {};
 
 	virtual tstring get_string(unsigned int) const;       
    

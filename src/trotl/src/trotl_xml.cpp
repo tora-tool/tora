@@ -40,50 +40,13 @@ Util::RegisterInFactory<BindParXML, BindParFactTwoParmSing> regBindXML("SYS.XMLT
 
 Util::RegisterInFactory<BindParXML, CustDefineParFactTwoParmSing> regCustDefineNTY_XML("SYS.XMLTYPE");
 
-// TODO - use NULL indicator for SYS.XMLTYPE
-tstring BindParXML::get_string(unsigned int row) const
-{
-	if((xmlnode*)_xmlvaluep[row] == NULL)
-		return "";
-	
-	OCIDuration dur;
-	xmlerr xerr = (xmlerr)0;
-	oraerr oerr = (oraerr)0;
-	struct xmlctx *xctx = (xmlctx*) 0;
-//	xmldocnode *doc = (xmldocnode*) 0;
-	ocixmldbparam params[1];
-
-	/* Get an XML context */
-	params[0].name_ocixmldbparam = XCTXINIT_OCIDUR;
-	params[0].value_ocixmldbparam = &dur;
-
-	// TODO add some error checking here
-	// TODO this xml context should be "more global"
-	xctx = OCIXmlDbInitXmlCtx(_env, _stmt._conn._svc_ctx, _env._errh, params, 1);
-
-	orastream *os = OraStreamInit((void*)0xDEAD, (void*)this, &oerr, "write", stream_write_callback, "open", stream_open_callback, NULL);
-
-	oerr = OraStreamOpen(os, NULL);
-	//boolean op;
-	//op = OraStreamReadable(os);
-	//printf("Stream os readable %d\n", op);
-	//op = OraStreamWriteable(os);
-	//printf("Stream os writeable %d\n", op);
-
-	XmlSaveDom(xctx, &xerr, (xmlnode*)_xmlvaluep[row], "stream", os, NULL);
-
-	OCIXmlDbFreeXmlCtx(xctx);
-
-	return _stringrepres.str();
-};
-
 void BindParXML::init(SqlStatement &stmt)
 {
 	sword res;
 	xmltdo = 0;
 
-	_xmlvaluep = new OCIXMLType* [ _cnt ];
-	_xmlindp = new OCIInd [ _cnt ];
+	_xmlvaluep = (OCIXMLType**) calloc(_cnt, sizeof(OCIXMLType*));
+	_xmlindp = (OCIInd*) calloc(_cnt, sizeof(OCIInd));
 
 //	xmlsize = new ub4 [_cnt];
 
@@ -164,6 +127,44 @@ void BindParXML::bind_hook(SqlStatement &stmt)
 //		oci_check_error(__TROTL_HERE__, conn._env._errh, res);
 //	}
 }
+  
+// TODO - use NULL indicator for SYS.XMLTYPE
+tstring BindParXML::get_string(unsigned int row) const
+{
+	if((xmlnode*)_xmlvaluep[row] == NULL)
+		return "";
+	
+	OCIDuration dur;
+	xmlerr xerr = (xmlerr)0;
+	oraerr oerr = (oraerr)0;
+	struct xmlctx *xctx = (xmlctx*) 0;
+//	xmldocnode *doc = (xmldocnode*) 0;
+	ocixmldbparam params[1];
+
+	/* Get an XML context */
+	params[0].name_ocixmldbparam = XCTXINIT_OCIDUR;
+	params[0].value_ocixmldbparam = &dur;
+
+	// TODO add some error checking here
+	// TODO this xml context should be "more global"
+	xctx = OCIXmlDbInitXmlCtx(_env, _stmt._conn._svc_ctx, _env._errh, params, 1);
+
+	orastream *os = OraStreamInit((void*)0xDEAD, (void*)this, &oerr, "write", stream_write_callback, "open", stream_open_callback, NULL);
+
+	oerr = OraStreamOpen(os, NULL);
+	//boolean op;
+	//op = OraStreamReadable(os);
+	//printf("Stream os readable %d\n", op);
+	//op = OraStreamWriteable(os);
+	//printf("Stream os writeable %d\n", op);
+
+	XmlSaveDom(xctx, &xerr, (xmlnode*)_xmlvaluep[row], "stream", os, NULL);
+
+	OCIXmlDbFreeXmlCtx(xctx);
+
+	return _stringrepres.str();
+};
+
 
 ORASTREAM_OPEN_F(BindParXML::stream_open_callback, sctx, sid, hdl, length)
 {
