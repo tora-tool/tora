@@ -740,6 +740,12 @@ Qt::ItemFlags toResultModel::flags(const QModelIndex &index) const
             return defaultFlags;
     }
 
+    toQValue const &data = Rows.at(index.row()).at(index.column());
+    if (data.isUserType())
+    {
+       return ( defaultFlags | fl ) & ~Qt::ItemIsEditable;
+    }
+    
     if (Editable)
         return fl | defaultFlags | Qt::ItemIsEditable | Qt::ItemIsDropEnabled;
     return fl | defaultFlags;
