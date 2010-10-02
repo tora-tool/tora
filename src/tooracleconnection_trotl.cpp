@@ -52,6 +52,7 @@
 
 #include <trotl.h>
 #include <trotl_convertor.h>
+#include <trotl_anydata.h>
 
 #include "toconf.h"
 #include "toconfiguration.h"
@@ -391,18 +392,27 @@ public:
 					}
 						break;
 #ifdef ORACLE_HAS_XML
-					case SQLT_NTY: { // NOTE: Only one SQLT_NTY is supported - SYS.XMLTYPE						
-						::trotl::BindParXML const *bpx = dynamic_cast<const trotl::BindParXML *>(&BP);
-						assert(bpx);
-						if((xmlnode*)bpx->_xmlvaluep[_last_buff_row] == NULL)
+					case SQLT_NTY: {
+						if( ::trotl::BindParXML const *bpx = dynamic_cast<const trotl::BindParXML *>(&BP))
 						{
-							value = toQValue();
-							TLOG(4,toDecorator,__HERE__) << "Just read: NULL XML" << std::endl; 
-						} else {
-							std::string s(BP.get_string(_last_buff_row));
-							value = toQValue(QString(s.c_str()));
-							TLOG(4,toDecorator,__HERE__) << "Just read: \"" << s << "\"" << std::endl; 
-						}
+							if((xmlnode*)bpx->_xmlvaluep[_last_buff_row] == NULL)
+							{
+								value = toQValue();
+								TLOG(4,toDecorator,__HERE__) << "Just read: NULL XML" << std::endl; 
+							} else {
+								std::string s(BP.get_string(_last_buff_row));
+								value = toQValue(QString(s.c_str()));
+								TLOG(4,toDecorator,__HERE__) << "Just read: \"" << s << "\"" << std::endl; 
+							}
+						} else if( ::trotl::BindParANYDATA const *bpa = dynamic_cast<const trotl::BindParANYDATA *>(&BP)) {
+							if( bpa->_oan_buffer[_last_buff_row] == NULL)
+							{
+								value = toQValue();
+							} else {
+								std::string s(BP.get_string(_last_buff_row));
+								value = toQValue(QString(s.c_str()));
+							}
+						}							
 					}
 						break;
 #endif

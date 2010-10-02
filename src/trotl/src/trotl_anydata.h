@@ -97,7 +97,7 @@ struct TROTL_EXPORT BindParANYDATA: public SqlStatement::BindPar
 	virtual void bind_hook(SqlStatement &stmt);
 
 
-private:
+//private:
 	std::stringstream _stringrepres;
 
 	OCIType *_anydatatdo;
