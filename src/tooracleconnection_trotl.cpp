@@ -168,7 +168,7 @@ public:
 	}
 	/* virtual */ bool isLarge() const
 	{
-		return false;
+		return true;
 	}
 	/* virtual */ QString summary() const
 	{
@@ -179,7 +179,21 @@ public:
 	{
 		return QString("clob");
 	}
-	~toOracleClob()
+	/* virtual */ QByteArray read() const
+	{
+		char buffer[4096];
+		unsigned int bytes_read;
+		{
+			::trotl::SqlOpenLob clob_open(data, OCI_LOB_READONLY);
+			bytes_read = data.read(&buffer[0], sizeof(buffer), 1, sizeof(buffer));
+			buffer[bytes_read] = '\0';
+		}
+		return QByteArray(buffer, bytes_read);		
+	}
+	/* virtual */ void write(QByteArray const &data)
+	{
+	}	
+	/* virtual */~toOracleClob()
 	{
 		TLOG(1,toDecorator,__HERE__) << "toOracleClob DELETED:" << this << std::endl;
 	}
@@ -205,7 +219,7 @@ public:
 	}
 	/* virtual */ bool isLarge() const
 	{
-		return false;
+		return true;
 	}
 	/* virtual */ QString summary() const
 	{
@@ -215,8 +229,22 @@ public:
 	/* virtual */ QString dataTypeName() const
 	{
 		return QString("blob");
-	}	
-	~toOracleBlob()
+	}
+	/* virtual */ QByteArray read() const
+	{
+		char buffer[4096];
+		unsigned int bytes_read;
+		{
+			::trotl::SqlOpenLob blob_open(data, OCI_LOB_READONLY);
+			bytes_read = data.read(&buffer[0], sizeof(buffer), 1, sizeof(buffer));
+			buffer[bytes_read] = '\0';
+		}
+		return QByteArray(buffer, bytes_read);		
+	}
+	/* virtual */ void write(QByteArray const &data)
+	{
+	}
+	/* virtual */~toOracleBlob()
 	{
 		TLOG(1,toDecorator,__HERE__) << "toOracleBlob DELETED:" << this << std::endl;
 	}
@@ -228,6 +256,50 @@ protected:
 	//TODO copying prohibited
 };
 //Q_DECLARE_METATYPE(toOracleBlob*)
+
+class toOracleCollection: public toQValue::complexType
+{
+public:
+	toOracleCollection(trotl::OciConnection &_conn)
+		: toQValue::complexType()
+		,  data(_conn)
+	{};
+	/* virtual */ bool isBinary() const
+	{
+		return false;
+	}
+	/* virtual */ bool isLarge() const
+	{
+		return false;
+	}
+	/* virtual */ QString summary() const
+	{
+		return QString("Datape: user type collection %1\n\%2")
+			.arg(data._data_type_name.c_str())
+			.arg(((::trotl::tstring)data).c_str());
+	}
+	/* virtual */ QString dataTypeName() const
+	{
+		return QString(data._data_type_name.c_str());
+	}
+	/* virtual */ QByteArray read() const
+	{
+	}
+	/* virtual */ void write(QByteArray const &data)
+	{
+	}	
+	/* virtual */ ~toOracleCollection()
+	{
+		TLOG(1,toDecorator,__HERE__) << "toOracleCollection DELETED:" << this << std::endl;
+	}
+
+	mutable trotl::SqlCollection data;
+protected:
+	toOracleCollection(toOracleCollection const&);
+	toOracleCollection operator=(toOracleCollection const&);
+	//TODO copying prohibited
+};
+//Q_DECLARE_METATYPE(toOracleCollection*)
 
 class toOracleProvider : public toConnectionProvider
 {
@@ -343,7 +415,8 @@ public:
 				} else {
 					switch(BP.dty) {
 					case SQLT_NUM:
-					case SQLT_VNU: {
+					case SQLT_VNU:
+					{
 						OCINumber* vnu = (OCINumber*) &((char*)BP.valuep)[_last_buff_row * BP.value_sz ];
 						sword res;
 						boolean isint;
@@ -390,9 +463,10 @@ public:
 							value = toQValue(QString((const char*)str_buf));
 						}							
 					}
-						break;
-#ifdef ORACLE_HAS_XML
-					case SQLT_NTY: {
+					break;
+					case SQLT_NTY:
+					{
+#ifdef ORACLE_HAS_XML					  
 						if( ::trotl::BindParXML const *bpx = dynamic_cast<const trotl::BindParXML *>(&BP))
 						{
 							if((xmlnode*)bpx->_xmlvaluep[_last_buff_row] == NULL)
@@ -404,7 +478,10 @@ public:
 								value = toQValue(QString(s.c_str()));
 								TLOG(4,toDecorator,__HERE__) << "Just read: \"" << s << "\"" << std::endl; 
 							}
-						} else if( ::trotl::BindParANYDATA const *bpa = dynamic_cast<const trotl::BindParANYDATA *>(&BP)) {
+						}
+#endif							
+						if( ::trotl::BindParANYDATA const *bpa = dynamic_cast<const trotl::BindParANYDATA *>(&BP))
+						{
 							if( bpa->_oan_buffer[_last_buff_row] == NULL)
 							{
 								value = toQValue();
@@ -412,11 +489,29 @@ public:
 								std::string s(BP.get_string(_last_buff_row));
 								value = toQValue(QString(s.c_str()));
 							}
-						}							
+						} else if( ::trotl::BindParCollectionTabNum const *bpc = dynamic_cast<const trotl::BindParCollectionTabNum *>(&BP))
+						{
+							if( *(sb2*)(bpc->_collection_indp[_last_buff_row]) == OCI_IND_NULL)
+							{
+								value = toQValue();
+								TLOG(4,toDecorator,__HERE__) << "Just read: NULL collection" << std::endl; 
+							} else {
+								toOracleCollection *i = new toOracleCollection(_conn);
+								trotl::ConvertorForRead c(_last_buff_row);
+								trotl::DispatcherForRead::Go(BP, i->data, c);
+								QVariant v;
+								v.setValue((toQValue::complexType*)i);
+								value = toQValue::fromVariant(v);
+								TLOG(4,toDecorator,__HERE__) << "Just read: collection:"
+											     << (::trotl::tstring)i->data
+											     << std::endl; 
+							}							
+						}
+						
 					}
-						break;
-#endif
-					case SQLT_CLOB: {
+					break;
+					case SQLT_CLOB:
+					{
 						toOracleClob *i = new toOracleClob(_conn);
 						trotl::ConvertorForRead c(_last_buff_row);
 						trotl::DispatcherForRead::Go(BP, i->data, c);
@@ -426,8 +521,9 @@ public:
 						//int id = qMetaTypeId<toQValue::complexType*>();
 						TLOG(4,toDecorator,__HERE__) << "Just read: \"CLOB\"" << std::endl; 
 					}
-						break;
-					case SQLT_BLOB: {
+					break;
+					case SQLT_BLOB:
+					{
 						toOracleBlob *i = new toOracleBlob(_conn);
 						trotl::ConvertorForRead c(_last_buff_row);
 						trotl::DispatcherForRead::Go(BP, i->data, c);
@@ -436,7 +532,7 @@ public:
 						value = toQValue::fromVariant(v);
 						TLOG(4,toDecorator,__HERE__) << "Just read: \"BLOB\"" << std::endl; 
 					}						
-						break;
+					break;
 					default:
 						std::string s(BP.get_string(_last_buff_row));
 						value = toQValue(QString(s.c_str()));

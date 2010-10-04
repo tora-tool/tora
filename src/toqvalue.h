@@ -74,6 +74,8 @@ public:
 	    virtual bool isLarge() const = 0;
 	    virtual QString summary() const = 0;
 	    virtual QString dataTypeName() const = 0;
+	    virtual QByteArray read() const = 0;
+	    virtual void write(QByteArray const &) = 0;
 	    virtual ~complexType() {};
     };
     
