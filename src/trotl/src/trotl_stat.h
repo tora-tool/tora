@@ -190,11 +190,11 @@ public:
 		size_t _cnt;
 		bool _bound;
 		tstring type_name, reg_name, bind_name, bind_typename;
-
+				
+	//protected:
 		/* NOTE these two functions do not work with complex types SQLT_NTY */
 		bool is_null(unsigned row) const {return indp[row]==OCI_IND_NULL;};
-		bool is_not_null(unsigned row) const {return indp[row]!=OCI_IND_NULL;};		
-	protected:
+		bool is_not_null(unsigned row) const {return indp[row]!=OCI_IND_NULL;};
 
 		BindPar(const BindPar &other);
 		friend class SqlStatement;

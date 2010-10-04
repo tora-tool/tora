@@ -68,28 +68,22 @@ tstring BindParNumber::get_string(unsigned int row) const
 {
 	if(!indp[row])
 	{
-		text str_buf[61];
+		text str_buf[64];
 		ub4 str_len = sizeof(str_buf) / sizeof(*str_buf);
-
-		//		const char fmt[]="99999999999999999999999999999999999999D99999999999999999999";
-		const char fmt[]="99999999999999999999999999999999999999D90";
-		//	const char fmt[]="0009D99";
 
 		sword res = OCICALL(OCINumberToText(
 				_env._errh,
-				(OCINumber*) &((char*)valuep)[row * value_sz ], //(OCINumber*)valuep,
-				(const oratext*)fmt,
-				sizeof(fmt) -1,
-				0, // CONST OraText *nls_params,
-				0, // ub4 nls_p_length,
+				(OCINumber*) &((char*)valuep)[row * value_sz ],		//(OCINumber*)valuep,
+				(const oratext*) g_TROTL_DEFAULT_NUM_FTM,
+				strlen(g_TROTL_DEFAULT_NUM_FTM),
+				0,							// CONST OraText *nls_params,
+				0,							// ub4 nls_p_length,
 				(ub4*)&str_len,
 				str_buf
 		));
 		oci_check_error(__TROTL_HERE__, _env._errh, res);
 
-		str_buf[str_len+1] = '\0';
-
-		return tstring((const char*)str_buf);
+		return tstring((const char*)str_buf, str_len);
 	} else {
 		return "";
 	}

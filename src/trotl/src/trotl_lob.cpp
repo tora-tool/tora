@@ -98,7 +98,7 @@ BindParLob::~BindParLob()
 		//std::cerr << "~BindParLob3" << std::endl;
 		valuep = NULL;
 	}
-	std::cerr << "~BindParLob4" << std::endl;
+	//std::cerr << "~BindParLob4" << std::endl;
 }
 
 void BindParLob::descAlloc(void) //TODO OCI_DTYPE_FILE for BFILE, CFILE
@@ -116,7 +116,7 @@ void BindParLob::descFree(void)
 	{
 		if(((OCILobLocator**)valuep)[i])
 		{
-			std::cerr << "void descFree(void): " << i << std::endl;
+			//std::cerr << "void descFree(void): " << i << std::endl;
 			sword res = OCICALL(OCIDescriptorFree( ((void**)valuep)[i], OCI_DTYPE_LOB));
 			oci_check_error(__TROTL_HERE__, _env, res);
 		}
@@ -137,6 +137,14 @@ void BindParLob::define_hook(SqlStatement &stmt)
 //	oci_check_error(__TROTL_HERE__, _env, res);
 }
 
+boolean BindParLob::is_temporary(unsigned _row) const
+{
+	boolean flag;
+	sword res = OCICALL(OCILobIsTemporary(_env, _env._errh, ((OCILobLocator**)valuep)[_row], &flag));
+	oci_check_error(__TROTL_HERE__, _env._errh, res);
+	return flag;
+}
+  
 BindParClob::BindParClob(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : BindParLob(pos, stmt, ct)
 {
 	dty = SQLT_CLOB;

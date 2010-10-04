@@ -41,6 +41,7 @@
 #include "trotl_int.h"
 #include "trotl_lob.h"
 #include "trotl_date.h"
+#include "trotl_collection.h"
 
 #ifdef ORACLE_HAS_XML
 #include "trotl_xml.h"
@@ -63,10 +64,6 @@ struct TROTL_EXPORT ConvertorForRead: public Convertor
 	 * This the only way, how can I pass row argument
 	 */
 	ConvertorForRead(unsigned int row) : _row(row) {};
-
-	void Fire(const BindParDate &BP, SqlDateTime &SV);
-	void Fire(const BindParBlob &BP, SqlBlob &SV);
-	void Fire(const BindParClob &BP, SqlClob &SV);
 	
 	void Fire(const prefferedNumericType &BP, SqlInt<int> &SV);	
 	void Fire(const prefferedNumericType &BP, SqlInt<unsigned int> &SV);
@@ -75,11 +72,15 @@ struct TROTL_EXPORT ConvertorForRead: public Convertor
 	void Fire(const prefferedNumericType &BP, SqlInt<double> &SV);
 	void Fire(const prefferedNumericType &BP, SqlInt<float> &SV);
 	void Fire(const prefferedNumericType &BP, SqlNumber &SV);
-
+	void Fire(const prefferedNumericType &BP, SqlCollection &SV) { OnError(BP, SV); };
+	void Fire(const prefferedNumericType &BP, SqlDateTime &SV) { OnError(BP, SV); };
+	void Fire(const prefferedNumericType &BP, SqlBlob &SV) { OnError(BP, SV); };
+	void Fire(const prefferedNumericType &BP, SqlClob &SV) { OnError(BP, SV); };
 #ifdef ORACLE_HAS_XML
-	void Fire(const BindParXML &BP, SqlXML &SV);
+	void Fire(const prefferedNumericType &BP, SqlXML &SV) { OnError(BP, SV); };
 #endif
 
+	void Fire(const BindParDate &BP, SqlDateTime &SV);	
 	void Fire(const BindParDate &BP, SqlClob &SV) { OnError(BP, SV); };
 	void Fire(const BindParDate &BP, SqlBlob &SV) { OnError(BP, SV); };
 	void Fire(const BindParDate &BP, SqlInt<int> &SV) { OnError(BP, SV); };
@@ -89,10 +90,12 @@ struct TROTL_EXPORT ConvertorForRead: public Convertor
 	void Fire(const BindParDate &BP, SqlInt<double> &SV) { OnError(BP, SV); };
 	void Fire(const BindParDate &BP, SqlInt<float> &SV) { OnError(BP, SV); };
 	void Fire(const BindParDate &BP, SqlNumber &SV) { OnError(BP, SV); };
+	void Fire(const BindParDate &BP, SqlCollection &SV) { OnError(BP, SV); };
 #ifdef ORACLE_HAS_XML
 	void Fire(const BindParDate &BP, SqlXML &SV) { OnError(BP, SV); };
 #endif
 
+	void Fire(const BindParClob &BP, SqlClob &SV);	
 	void Fire(const BindParClob &BP, SqlDateTime &SV) { OnError(BP, SV); };
 	void Fire(const BindParClob &BP, SqlBlob &SV) { OnError(BP, SV); };
 	void Fire(const BindParClob &BP, SqlInt<int> &SV) { OnError(BP, SV); };
@@ -102,10 +105,12 @@ struct TROTL_EXPORT ConvertorForRead: public Convertor
 	void Fire(const BindParClob &BP, SqlInt<double> &SV) { OnError(BP, SV); };
 	void Fire(const BindParClob &BP, SqlInt<float> &SV) { OnError(BP, SV); };
 	void Fire(const BindParClob &BP, SqlNumber &SV) { OnError(BP, SV); };
+	void Fire(const BindParClob &BP, SqlCollection &SV) { OnError(BP, SV); };
 #ifdef ORACLE_HAS_XML
 	void Fire(const BindParClob &BP, SqlXML &SV) { OnError(BP, SV); }; // TODO is any convesion possible here?
 #endif
-
+	
+	void Fire(const BindParBlob &BP, SqlBlob &SV);
 	void Fire(const BindParBlob &BP, SqlDateTime &SV) { OnError(BP, SV); };
 	void Fire(const BindParBlob &BP, SqlClob &SV) { OnError(BP, SV); };
 	void Fire(const BindParBlob &BP, SqlInt<int> &SV) { OnError(BP, SV); };
@@ -115,17 +120,29 @@ struct TROTL_EXPORT ConvertorForRead: public Convertor
 	void Fire(const BindParBlob &BP, SqlInt<double> &SV) { OnError(BP, SV); };
 	void Fire(const BindParBlob &BP, SqlInt<float> &SV) { OnError(BP, SV); };
 	void Fire(const BindParBlob &BP, SqlNumber &SV) { OnError(BP, SV); };
+	void Fire(const BindParBlob &BP, SqlCollection &SV) { OnError(BP, SV); };
 #ifdef ORACLE_HAS_XML
 	void Fire(const BindParBlob &BP, SqlXML &SV) { OnError(BP, SV); };
 #endif
 
-	void Fire(const prefferedNumericType &BP, SqlDateTime &SV) { OnError(BP, SV); };
-	void Fire(const prefferedNumericType &BP, SqlBlob &SV) { OnError(BP, SV); };
-	void Fire(const prefferedNumericType &BP, SqlClob &SV) { OnError(BP, SV); };
-#ifdef ORACLE_HAS_XML
-	void Fire(const prefferedNumericType &BP, SqlXML &SV) { OnError(BP, SV); };
+	void Fire(const BindParCollectionTabNum &BP, SqlDateTime &SV) { OnError(BP, SV); };
+	void Fire(const BindParCollectionTabNum &BP, SqlClob &SV) { OnError(BP, SV); };	
+	void Fire(const BindParCollectionTabNum &BP, SqlBlob &SV) { OnError(BP, SV); };
+	void Fire(const BindParCollectionTabNum &BP, SqlNumber &SV) { OnError(BP, SV); };
+	void Fire(const BindParCollectionTabNum &BP, SqlCollection &SV);
+#ifdef ORACLE_HAS_XML	
+	void Fire(const BindParCollectionTabNum &BP, SqlXML &SV) { OnError(BP, SV); };
 #endif
-
+	
+	void Fire(const BindParCollectionTabVarchar &BP, SqlClob &SV) { OnError(BP, SV); };
+	void Fire(const BindParCollectionTabVarchar &BP, SqlBlob &SV) { OnError(BP, SV); };
+	void Fire(const BindParCollectionTabVarchar &BP, SqlDateTime &SV) { OnError(BP, SV); };
+	void Fire(const BindParCollectionTabVarchar &BP, SqlNumber &SV) { OnError(BP, SV); };
+	void Fire(const BindParCollectionTabVarchar &BP, SqlCollection &SV) { OnError(BP, SV); };
+#ifdef ORACLE_HAS_XML	
+	void Fire(const BindParCollectionTabVarchar &BP, SqlXML &SV) { OnError(BP, SV); };
+#endif
+	
 #ifdef ORACLE_HAS_XML
 	void Fire(const BindParXML &BP, SqlDateTime &SV) { OnError(BP, SV); };
 	void Fire(const BindParXML &BP, SqlBlob &SV) { OnError(BP, SV); };
@@ -137,36 +154,48 @@ struct TROTL_EXPORT ConvertorForRead: public Convertor
 	void Fire(const BindParXML &BP, SqlInt<double> &SV) { OnError(BP, SV); };
 	void Fire(const BindParXML &BP, SqlInt<float> &SV) { OnError(BP, SV); };
 	void Fire(const BindParXML &BP, SqlNumber &SV) { OnError(BP, SV); };
+	void Fire(const BindParXML &BP, SqlXML &SV);
+	void Fire(const BindParXML &BP, SqlCollection &SV) { OnError(BP, SV); };
 #endif
 
+	
 private:
 	ConvertorForRead();
 	unsigned int _row;
 };
 
-typedef ::Loki::StaticDispatcher
-<
-ConvertorForRead,
-const SqlStatement::BindPar,
-
+ typedef LOKI_TYPELIST_6(const prefferedNumericType,
+			 const BindParClob,
+			 const BindParBlob,
+			 const BindParDate,
+			 const BindParCollectionTabNum,
+			 const BindParCollectionTabVarchar)
+   TL_DispatcherForReadInput;
+   
+ typedef LOKI_TYPELIST_5(SqlClob,
+			 SqlBlob,
+			 SqlDateTime,
+			 SqlNumber,
+			 SqlCollection)
+   TL_DispatcherForReadOutput;
+ 
 #ifdef ORACLE_HAS_XML
-LOKI_TYPELIST_5(const prefferedNumericType, const BindParClob, const BindParBlob, const BindParDate, const BindParXML),
+ typedef ::Loki::TL::Append<TL_DispatcherForReadInput, const BindParXML>::Result TL_DispatcherForReadInputX;
+ typedef ::Loki::TL::Append<TL_DispatcherForReadOutput, SqlXML>::Result TL_DispatcherForReadOutputX;
 #else
-LOKI_TYPELIST_4(const prefferedNumericType, const BindParClob, const BindParBlob, const BindParDate),
+ typedef TL_DispatcherForReadInput TL_DispatcherForReadInputX;
+ typedef TL_DispatcherForReadOutput TL_DispatcherForReadOutputX;
 #endif
-
-false,
-SqlValue,
-
-#ifdef ORACLE_HAS_XML
-LOKI_TYPELIST_5(SqlClob, SqlBlob, SqlDateTime, SqlXML, SqlNumber),
-		   /*SqlInt<int>, SqlInt<unsigned>, SqlInt<long>, SqlInt<unsigned long>, SqlInt<double>, SqlInt<float>,*/
-#else
-LOKI_TYPELIST_4(SqlClob, SqlBlob, SqlDateTime, SqlNumber),
-#endif
-
-void
-> DispatcherForRead;
+  
+typedef ::Loki::StaticDispatcher <
+  ConvertorForRead,
+  const SqlStatement::BindPar,
+  TL_DispatcherForReadInputX,
+  false,
+  SqlValue,
+  TL_DispatcherForReadOutputX,
+  void
+  > DispatcherForRead;
  
 struct TROTL_EXPORT ConvertorForWrite: public Convertor
 {

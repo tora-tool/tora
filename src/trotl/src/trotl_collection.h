@@ -89,7 +89,7 @@ struct TROTL_EXPORT BindParCollectionTabNum: public SqlStatement::BindPar
 	virtual void bind_hook(SqlStatement &stmt);
 
 
-private:
+//private:
 	mutable std::stringstream _stringrepres;
 	void **_collection_indp;
 	OCIType *_collection_tdo;
@@ -147,26 +147,35 @@ struct TROTL_EXPORT SqlCollection : public SqlValue
 	friend struct ConvertorForRead;
 	friend struct ConvertorForWrite;
 
-	SqlCollection(OciConnection &conn): _conn(conn) // NULL constructor
+	SqlCollection(OciConnection &conn)
+	  : _conn(conn)
+	  , _collection_tdo(NULL)
 	{}
 
 	
-	SqlCollection(const SqlValue &value, OciConnection &conn): _conn(conn)
-	{
-		//_ind.set();
+	SqlCollection(const SqlValue &value, OciConnection &conn)
+	  : _conn(conn)
+	  , _collection_tdo(NULL)
+	{		
 		throw OciException(__TROTL_HERE__, "Not implemented yet");
 	}
 
-	tstring str() const
-	{
-		throw OciException(__TROTL_HERE__, "Not implemented yet");
-	}
+	~SqlCollection() {};
+	
+	tstring str() const;
 
 	operator tstring() const { return str(); };
 
-protected:
-	std::stringstream _stringrepres;
+//protected:
 	OciConnection&	_conn;
+	mutable std::stringstream _stringrepres;
+	tstring _data_type_name;
+	
+	OCIColl *_valuep;
+	OCIType *_collection_tdo;
+	OCIInd  _ind;
+	ub2	_data_type;
+
 };
 
 

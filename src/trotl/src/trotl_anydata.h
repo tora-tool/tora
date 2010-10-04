@@ -128,7 +128,7 @@ struct TROTL_EXPORT SqlANYDATA : public SqlValue
 
 	//	int* get_ref() {return &_value;}
 
-protected:
+//protected:
 
 	std::stringstream _stringrepres;
 

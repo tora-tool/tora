@@ -48,10 +48,11 @@ namespace trotl {
 #if defined(TROTL_MAKE_DLL) || defined(__GNUC__) 
 extern int TROTL_EXPORT g_OCIPL_BULK_ROWS;
 extern int TROTL_EXPORT g_OCIPL_MAX_LONG;
+extern char TROTL_EXPORT *g_TROTL_DEFAULT_NUM_FTM;
 #else
-//  int TROTL_EXPORT g_OCIPL_BULK_ROWS; debug
 int TROTL_EXPORT g_OCIPL_BULK_ROWS;
-int TROTL_EXPORT g_OCIPL_MAX_LONG; 
+int TROTL_EXPORT g_OCIPL_MAX_LONG;
+char TROTL_EXPORT *g_TROTL_DEFAULT_NUM_FTM;
 #endif
 
 struct Convertor;

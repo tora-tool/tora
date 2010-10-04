@@ -70,6 +70,9 @@ OciException::OciException(tstring where, OCIEnv* envh) :
 		_sql_error_code.push_back(21001); // my bogus value
 		_mess += "ORACLE_HOME not found\n";
 		break;
+	case OCI_NO_DATA:
+		_sql_error_code.push_back(21002); // my bogus value
+		_mess += "OCIErrorGet: OCI_NO_DATA\n";
 	default:
 		_sql_error_code.push_back(0);
 	}
@@ -90,30 +93,30 @@ OciException::OciException(tstring where, OCIError* errh) :
 	sb4 errorcode;
 	sword res = OCICALL(OCIErrorGet(errh, 1, NULL, &errorcode, (OraText*)buffer, sizeof(buffer), OCI_HTYPE_ERROR));
 
-	if (res == OCI_SUCCESS) {
+	switch(res)
+	{
+	case OCI_SUCCESS:
+	{
 		_sql_error_code.push_back(errorcode);
-//#ifdef _UNICODE
-// #if 0
-// 		char nbuffer[2048];
-// #ifdef _MSC_VER
-// 		std::_USE(std::locale::empty(), std::ctype<wchar_t>)
-// #else
-// 		std::use_facet<std::ctype<wchar_t> >(std::locale::empty())
-// #endif
-// 		.narrow((const char*)buffer, (const char*)buffer+_tcslen((const char*)buffer)+1, 0, nbuffer);
-// 		_mess += nbuffer;
-// #else
 		_mess += buffer;
-//#endif
-	} else {
-		_sql_error_code.push_back(0);
+		break;
 	}
-//	std::cerr << "Res:" << res << ":" << _mess << std::endl;
+	case OCI_NO_DATA:
+	{
+		_sql_error_code.push_back(21002);
+		_mess += "OCIErrorGet: OCI_NO_DATA\n";
+	}
+	default:
+	{
+		_sql_error_code.push_back(0);
+		_mess += "OCIErrorGet: unknown error: \n" + res;
+	}
+	}
 	_parse_offset = 0;
 }
 
 //OciException::OciException(tstring where, OCIError* errh, SqlStatement& stmt)
-OciException::OciException(tstring where, SqlStatement& stmt) :
+	OciException::OciException(tstring where, SqlStatement& stmt) :
 	_where(where), _mess(where)
 {
 #ifdef DEBUG  

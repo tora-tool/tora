@@ -62,13 +62,12 @@ void BindParCollectionTabNum::bind_hook(SqlStatement &stmt)
 // TODO
 tstring BindParCollectionTabNum::get_string(unsigned int row) const
 {
-	OCITypeCode tc;
-	OCIType *type = (OCIType *)NULL;
-	boolean isNull, eoc = false;
-	OCIInd ind;
+	boolean eoc = false;
 	sword res;
 	OCIIter *itr;
 
+	_stringrepres.str("");
+	
 	if( *(sb2*)(_collection_indp[row]) == OCI_IND_NULL)
 	{
 		_stringrepres << "<NULL>";
@@ -77,8 +76,7 @@ tstring BindParCollectionTabNum::get_string(unsigned int row) const
 
 	res = OCICALL(OCIIterCreate (_env, _stmt._errh, (OCIColl*)valuep[row], &itr));
 	oci_check_error(__TROTL_HERE__, _stmt._errh, res);
-
-	_stringrepres.str("");
+	
 	_stringrepres << type_name << "(";
 
 	bool comma=false;
@@ -86,7 +84,6 @@ tstring BindParCollectionTabNum::get_string(unsigned int row) const
 	{
 		OCINumber *ocinum = NULL;
 		void *elemind = NULL;
-		int i;
 		res = OCICALL(OCIIterNext (_env, _stmt._errh,
 					   itr,
 					   (void**) &ocinum,
@@ -99,17 +96,25 @@ tstring BindParCollectionTabNum::get_string(unsigned int row) const
 
 		if(comma)
 			_stringrepres << ", ";
-		
+		comma = true;
 		if(*(sb2*)(elemind) == OCI_IND_NULL)  
 		{
 			_stringrepres << "NULL";
 		} else {
-			res = OCICALL(OCINumberToInt(_stmt._errh, ocinum, sizeof(i), 0, &i));
-			oci_check_error(__TROTL_HERE__, _stmt._errh, res); 
-			_stringrepres << i;
-		}
-		
-		comma = true;
+			text str_buf[64];
+			ub4 str_len = sizeof(str_buf) / sizeof(*str_buf);			
+			sword res = OCICALL(OCINumberToText(_stmt._errh,
+							    (OCINumber*) ocinum,
+							    (const oratext*) g_TROTL_DEFAULT_NUM_FTM,
+							    strlen(g_TROTL_DEFAULT_NUM_FTM),
+							    0, // CONST OraText *nls_params,
+							    0, // ub4 nls_p_length,
+							    (ub4*)&str_len,
+							    str_buf
+						    ));
+			oci_check_error(__TROTL_HERE__, _env._errh, res);
+			_stringrepres << tstring((const char*)str_buf, str_len);
+		}	       
 	}
 	_stringrepres << ")";
 	
@@ -138,10 +143,7 @@ void BindParCollectionTabVarchar::bind_hook(SqlStatement &stmt)
 	
 tstring BindParCollectionTabVarchar::get_string(unsigned int row) const
 {
-	OCITypeCode tc;
-	OCIType *type = (OCIType *)NULL;
-	boolean isNull, eoc = false;
-	OCIInd ind;
+	boolean eoc = false;
 	sword res;
 	OCIIter *itr;
 
@@ -162,7 +164,6 @@ tstring BindParCollectionTabVarchar::get_string(unsigned int row) const
 	{
 		void *ocistring = NULL;
 		void *elemind = NULL;
-		int i;
 		res = OCICALL(OCIIterNext (_env, _stmt._errh,
 					   itr,
 					   (void**) &ocistring,
@@ -181,9 +182,6 @@ tstring BindParCollectionTabVarchar::get_string(unsigned int row) const
 			_stringrepres << "NULL";
 		} else {
 			_stringrepres << '\'' << OCIStringPtr(_env, *(OCIString **)ocistring) << '\'';
-			// res = OCICALL(OCINumberToInt(_stmt._errh, ocinum, sizeof(i), 0, &i));
-			// oci_check_error(__TROTL_HERE__, _stmt._errh, res); 
-			// _stringrepres << i;
 		}
 		
 		comma = true;
@@ -195,6 +193,80 @@ tstring BindParCollectionTabVarchar::get_string(unsigned int row) const
 	
 	return _stringrepres.str();
 };
+
+tstring SqlCollection::str() const
+{
+	boolean eoc = false;
+	sword res;
+	OCIIter *itr;
+
+	_stringrepres.str("");
+	
+	if( _ind == OCI_IND_NULL)
+	{
+	 	_stringrepres << "<NULL>";
+		return _stringrepres.str();
+	}
+	
+	res = OCICALL(OCIIterCreate (_conn._env, _conn._env._errh, _valuep, &itr));
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
+	
+	_stringrepres << _data_type_name <<  "(";
+
+	bool comma=false;
+	while(!eoc)
+	{
+		OCINumber *ocinum = NULL;
+		void *elemind = NULL;
+		res = OCICALL(OCIIterNext (_conn._env, _conn._env._errh,
+					   itr,
+					   (void**) &ocinum,
+					   (void**) &elemind, //NULL, //void **elemind,
+					   &eoc));
+		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
+
+		if(eoc)
+			break;
+
+		if(comma)
+			_stringrepres << ", ";
+		comma = true;
+		if(*(sb2*)(elemind) == OCI_IND_NULL)  
+		{
+			_stringrepres << "NULL";
+		} else {
+			switch(_data_type)
+			{
+			case SQLT_NUM:
+			{
+				text str_buf[64];
+				ub4 str_len = sizeof(str_buf) / sizeof(*str_buf);			
+				sword res = OCICALL(OCINumberToText(_conn._env._errh,
+								    (OCINumber*) ocinum,
+								    (const oratext*) g_TROTL_DEFAULT_NUM_FTM,
+								    strlen(g_TROTL_DEFAULT_NUM_FTM),
+								    0, // CONST OraText *nls_params,
+								    0, // ub4 nls_p_length,
+								    (ub4*)&str_len,
+								    str_buf
+							    ));
+				oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
+				_stringrepres << tstring((const char*)str_buf, str_len);
+			}
+			break;
+			default:
+				throw OciException(__TROTL_HERE__, "Not implemented yet");
+			}
+		}	       
+	}
+	_stringrepres << ")";
+	
+	res = sword(OCIIterDelete (_conn._env, _conn._env._errh, &itr));
+	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
+	
+	return _stringrepres.str();
+};
+
 	
 // tstring SqlCollection::str() const
 // {

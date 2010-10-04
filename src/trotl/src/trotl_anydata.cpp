@@ -106,7 +106,7 @@ tstring BindParANYDATA::get_string(unsigned int row) const
 		OCINumber num;
 		OCINumber *num_ptr = &num;
 		ub4 len;
-		text str_buf[61];
+		text str_buf[64];
 		ub4 str_len = sizeof(str_buf) / sizeof(*str_buf);
 		
 		sword res1 = OCICALL(OCIAnyDataAccess(_stmt._conn._svc_ctx, _stmt._errh, 
@@ -117,11 +117,10 @@ tstring BindParANYDATA::get_string(unsigned int row) const
 						      (dvoid **)&num_ptr, &len));
 		oci_check_error(__TROTL_HERE__, _stmt._errh, res1);
 
-		const char fmt[]="99999999999999999999999999999999999999D90";
 		sword res2 = OCICALL(OCINumberToText(_stmt._errh,
 						     (OCINumber*) &num,
-						     (const oratext*)fmt,
-						     sizeof(fmt) -1,
+						     (const oratext*) g_TROTL_DEFAULT_NUM_FTM,
+						     strlen(g_TROTL_DEFAULT_NUM_FTM),
 						     0, // CONST OraText *nls_params,
 						     0, // ub4 nls_p_length,
 						     (ub4*)&str_len,
@@ -129,7 +128,7 @@ tstring BindParANYDATA::get_string(unsigned int row) const
 					     ));
 		oci_check_error(__TROTL_HERE__, _env._errh, res2);
 
-		return tstring( (const char *)&str_buf[0], str_len);
+		return tstring((const char*)str_buf, str_len);
 	}
  	case OCI_TYPECODE_VARCHAR2:
 	{

@@ -56,6 +56,8 @@ struct TROTL_EXPORT BindParLob: public SqlStatement::BindPar
 	virtual void bind_hook(SqlStatement &stmt);
 	virtual void define_hook(SqlStatement &stmt);
 
+	boolean	is_temporary(unsigned _row) const;
+
 private:
 	void descAlloc(void); //TODO OCI_DTYPE_FILE for BFILE, CFILE
 	void descFree(void);
