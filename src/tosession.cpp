@@ -266,7 +266,7 @@ static toSQL SQLAccessedObjects(
     "SELECT owner,\n"
     "       OBJECT,\n"
     "       TYPE FROM v$access\n"
-    " WHERE sid=:f1<CHAR [101]>\n"
+    " WHERE sid=:f1<char[101]>\n"
     " ORDER BY owner,\n"
     "   OBJECT,\n"
     "   TYPE",
