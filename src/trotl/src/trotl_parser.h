@@ -88,8 +88,7 @@ public:
 	void print() const
 	{
 		// get_log().ts( std::string(__HERE_SHORT__))
-		std::cout 
-			<< ':' << bindname << '<' << bindtype << bracket[0] << ',' << inout << bracket[1] << '>' << std::endl;
+		//std::cout << ':' << bindname << '<' << bindtype << bracket[0] << ',' << inout << bracket[1] << '>' << std::endl;
 	}
 
 	bool operator==(tstring _varname)
