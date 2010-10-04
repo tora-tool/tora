@@ -127,7 +127,24 @@ void toModelEditor::openFile()
 
 void toModelEditor::saveFile()
 {
-    Editor->editSave(true);
+    QVariant const &data = Model->data(Current, Qt::UserRole);
+    if (data.type() == QVariant::UserType)
+    {
+	    toQValue::complexType *i = data.value<toQValue::complexType*>();
+	    QByteArray a = i->read();
+	    
+	    QString fn;
+	    fn = toSaveFilename("", QString::null, this);
+	    if (!fn.isEmpty() && toWriteFile(fn, a))
+	    {
+		    toMainWidget()->addRecentFile(fn);
+		    // setFilename(fn);
+		    // setModified(false);
+		    //emit fileSaved(fn);
+	    }
+
+    } else
+	    Editor->editSave(true);
 }
 
 toModelEditor::toModelEditor(QWidget *parent,
