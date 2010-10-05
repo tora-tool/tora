@@ -115,8 +115,7 @@ OciException::OciException(tstring where, OCIError* errh) :
 	_parse_offset = 0;
 }
 
-//OciException::OciException(tstring where, OCIError* errh, SqlStatement& stmt)
-	OciException::OciException(tstring where, SqlStatement& stmt) :
+OciException::OciException(tstring where, SqlStatement& stmt) :
 	_where(where), _mess(where)
 {
 #ifdef DEBUG  
@@ -231,21 +230,22 @@ OciException::OciException(tstring where, const char* msg) :
 #ifdef DEBUG  
 	dbg::stack s;
 	std::copy(s.begin(), s.end(), std::ostream_iterator<dbg::stack_frame>(_stack, "\n"));
-	_mess += "\n" + _stack.str() + msg;
-#endif	
+	_mess += "\n" + _stack.str();
+#endif
+	_mess += msg;
 }
 
 OciException::OciException(const OciException& other):
 	_sql_error_code(other._sql_error_code),
-	_where(other._where),
+	_where(), //_where(other._where),
 	_mess(other._mess),
 	_stack(),
 	_last_sql(other._last_sql),
-	_parse_offset(other._parse_offset)
-	{
-		//throw std::logic_error("OciException should not be copied");
-		//std::cerr << __TROTL_HERE__ << "OciException should not be copied" << std::endl;
-	}
+	_parse_offset() // _parse_offset(other._parse_offset)
+{
+	//throw std::logic_error("OciException should not be copied");
+	//std::cerr << __TROTL_HERE__ << "OciException should not be copied" << std::endl;
+}
 
 OciException& OciException::arg(int d)
 {
