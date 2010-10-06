@@ -20,6 +20,7 @@
 // thread managers
 
 #ifdef USE_WIN32_THREAD_MANAGER
+#define NOMINMAX
 #include <windows.h>
 
 // the object to be started - on a given thread
@@ -27,6 +28,8 @@ struct win32_thread_obj
 {
     virtual ~win32_thread_obj() {}
     virtual void operator()() = 0;
+	DWORD dwThreadID;
+	HANDLE hHandle;
 };
  
 
@@ -37,10 +40,21 @@ struct win32_thread_manager
 	static void sleep( int nMillisecs) { Sleep( nMillisecs); } 
 	static void create_thread( win32_thread_obj & obj)
 	{
-		DWORD dwThreadID;
-		CreateThread( 0, 0,
-			      win32_thread_manager::ThreadProc, &obj, 0, &dwThreadID);
+		obj.hHandle = CreateThread( 0, 0, win32_thread_manager::ThreadProc, &obj, 0, &obj.dwThreadID);
 	}
+	static bool join_thread( thread_obj_base &obj)
+	{
+		WaitForSingleObject(obj.hHandle, INFINITE);
+		return true;
+	}
+
+	static std::string tid(void)
+	{
+		::std::stringstream s;
+		s << GetCurrentThreadId();
+		return s.str();
+	}
+
 
 // critical section for Win32
 
