@@ -138,7 +138,7 @@ struct TROTL_EXPORT ConvertorForRead: public Convertor
 	void Fire(const BindParCollectionTabVarchar &BP, SqlBlob &SV) { OnError(BP, SV); };
 	void Fire(const BindParCollectionTabVarchar &BP, SqlDateTime &SV) { OnError(BP, SV); };
 	void Fire(const BindParCollectionTabVarchar &BP, SqlNumber &SV) { OnError(BP, SV); };
-	void Fire(const BindParCollectionTabVarchar &BP, SqlCollection &SV) { OnError(BP, SV); };
+	void Fire(const BindParCollectionTabVarchar &BP, SqlCollection &SV);
 #ifdef ORACLE_HAS_XML	
 	void Fire(const BindParCollectionTabVarchar &BP, SqlXML &SV) { OnError(BP, SV); };
 #endif

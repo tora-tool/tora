@@ -157,7 +157,28 @@ void ConvertorForRead::Fire(const BindParCollectionTabNum &BP, SqlCollection &SV
 {
 	sword res;
 	SV._collection_tdo = BP._collection_tdo;
-	SV._data_type = SQLT_NUM;
+	SV._collection_typecode = BP._collection_typecode;
+	SV._ind = *(sb2*)(BP._collection_indp[_row]);
+	SV._data_type_name = BP.type_name;
+	
+	res = OCICALL(OCIObjectNew(BP._stmt._env, BP._stmt._errh, BP._stmt._conn._svc_ctx,
+				   OCI_TYPECODE_TABLE, // TabNum => Table
+				   BP._collection_tdo,
+				   NULL,               // dvoid *table
+				   OCI_DURATION_SESSION,
+				   TRUE,               // boolean value
+				   (dvoid**) &SV._valuep));
+	oci_check_error(__TROTL_HERE__, BP._stmt._errh, res);
+
+	res = OCICALL(OCICollAssign(BP._stmt._env, BP._stmt._errh, (OCIColl*)BP.valuep[_row], SV._valuep)); 
+	oci_check_error(__TROTL_HERE__, BP._stmt._errh, res);
+}
+
+void ConvertorForRead::Fire(const BindParCollectionTabVarchar &BP, SqlCollection &SV)
+{
+	sword res;
+	SV._collection_tdo = BP._collection_tdo;
+	SV._collection_typecode = BP._collection_typecode;
 	SV._ind = *(sb2*)(BP._collection_indp[_row]);
 	SV._data_type_name = BP.type_name;
 	

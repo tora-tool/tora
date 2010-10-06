@@ -216,11 +216,11 @@ tstring SqlCollection::str() const
 	bool comma=false;
 	while(!eoc)
 	{
-		OCINumber *ocinum = NULL;
+		void *field = NULL;
 		void *elemind = NULL;
 		res = OCICALL(OCIIterNext (_conn._env, _conn._env._errh,
 					   itr,
-					   (void**) &ocinum,
+					   (void**) &field,
 					   (void**) &elemind, //NULL, //void **elemind,
 					   &eoc));
 		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
@@ -235,14 +235,14 @@ tstring SqlCollection::str() const
 		{
 			_stringrepres << "NULL";
 		} else {
-			switch(_data_type)
+			switch(_collection_typecode)
 			{
 			case SQLT_NUM:
 			{
 				text str_buf[64];
 				ub4 str_len = sizeof(str_buf) / sizeof(*str_buf);			
 				sword res = OCICALL(OCINumberToText(_conn._env._errh,
-								    (OCINumber*) ocinum,
+								    (OCINumber*) field,
 								    (const oratext*) g_TROTL_DEFAULT_NUM_FTM,
 								    strlen(g_TROTL_DEFAULT_NUM_FTM),
 								    0, // CONST OraText *nls_params,
@@ -254,8 +254,13 @@ tstring SqlCollection::str() const
 				_stringrepres << tstring((const char*)str_buf, str_len);
 			}
 			break;
+			case SQLT_CHR: // NOTE: this is also valid for array of VARCHAR2
+			{
+				_stringrepres << '\'' << OCIStringPtr(_conn._env, *(OCIString **)field) << '\'';
+			}
+			break;
 			default:
-				throw OciException(__TROTL_HERE__, "Not implemented yet");
+				throw OciException(__TROTL_HERE__, "Collection to string convertorsion - Not implemented yet");
 			}
 		}	       
 	}

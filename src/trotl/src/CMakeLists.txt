@@ -14,7 +14,6 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 SET(TROTL_SOURCES
-  trotl_aq.cpp
   trotl_anydata.cpp
   trotl_conn.cpp
   trotl_convertor.cpp

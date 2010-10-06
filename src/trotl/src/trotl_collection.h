@@ -56,6 +56,7 @@ struct TROTL_EXPORT BindParCollectionTabNum: public SqlStatement::BindPar
  	BindParCollectionTabNum(unsigned int pos, SqlStatement &stmt, ColumnType &ct)
 		: SqlStatement::BindPar(pos, stmt, ct)
 		, _collection_indp(NULL)
+		, _collection_typecode(ct._collection_typecode)
 	{
 		valuep = (void**) calloc(_cnt, sizeof(void*));
 		value_sz = sizeof(OCIColl*);
@@ -70,6 +71,7 @@ struct TROTL_EXPORT BindParCollectionTabNum: public SqlStatement::BindPar
 	BindParCollectionTabNum(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl)
 		: SqlStatement::BindPar(pos, stmt, decl)
 		, _collection_indp(NULL)
+		// , _collection_typecode(???) TODO
 	{		
 		valuep = (void**) calloc(_cnt, sizeof(void*));
 		value_sz = sizeof(OCIColl*);
@@ -92,6 +94,7 @@ struct TROTL_EXPORT BindParCollectionTabNum: public SqlStatement::BindPar
 //private:
 	mutable std::stringstream _stringrepres;
 	void **_collection_indp;
+	OCITypeCode _collection_typecode; 
 	OCIType *_collection_tdo;
 };
 
@@ -103,6 +106,7 @@ struct TROTL_EXPORT BindParCollectionTabVarchar: public SqlStatement::BindPar
  	BindParCollectionTabVarchar(unsigned int pos, SqlStatement &stmt, ColumnType &ct)
 		: SqlStatement::BindPar(pos, stmt, ct)
 		, _collection_indp(NULL)
+		, _collection_typecode(ct._collection_typecode)
 	{
 		valuep = (void**) calloc(_cnt, sizeof(void*));
 		value_sz = sizeof(OCIColl*);
@@ -116,7 +120,8 @@ struct TROTL_EXPORT BindParCollectionTabVarchar: public SqlStatement::BindPar
 	
 	BindParCollectionTabVarchar(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl)
 		: SqlStatement::BindPar(pos, stmt, decl)
-		, _collection_indp(NULL)		
+		, _collection_indp(NULL)
+		// , _collection_typecode(???) TODO
 	{		
 		valuep = (void**) calloc(_cnt, sizeof(void*));
 		value_sz = sizeof(OCIColl*);
@@ -136,9 +141,10 @@ struct TROTL_EXPORT BindParCollectionTabVarchar: public SqlStatement::BindPar
 	virtual void bind_hook(SqlStatement &stmt);
 
 
-private:
+//private:
 	mutable std::stringstream _stringrepres;
 	void **_collection_indp;
+	OCITypeCode _collection_typecode; 	
 	OCIType *_collection_tdo;
 };
 	
@@ -149,7 +155,9 @@ struct TROTL_EXPORT SqlCollection : public SqlValue
 
 	SqlCollection(OciConnection &conn)
 	  : _conn(conn)
+          , _collection_typecode(0)
 	  , _collection_tdo(NULL)
+
 	{}
 
 	
@@ -172,10 +180,9 @@ struct TROTL_EXPORT SqlCollection : public SqlValue
 	tstring _data_type_name;
 	
 	OCIColl *_valuep;
+	OCITypeCode _collection_typecode;
 	OCIType *_collection_tdo;
 	OCIInd  _ind;
-	ub2	_data_type;
-
 };
 
 

@@ -285,7 +285,7 @@ void ColumnType::describe(SqlStatement &stat, dvoid* handle)
 		break;
 	}
 	case SQLT_LNG:
-		_width = g_OCIPL_MAX_LONG; //TODO long can have up to 2GB
+		_width = g_OCIPL_MAX_LONG; //TODO long can have up to 2GB, use callback define
 		break;
 	case SQLT_CHR:
 	case SQLT_STR:
