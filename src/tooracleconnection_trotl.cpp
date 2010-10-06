@@ -78,6 +78,11 @@
 #include <QString>
 #include <QTextStream>
 
+#define MAXTOMAXLONG 30000
+#define MAXLOBSHOWN 256
+
+static int toMaxLong = toConfigurationSingle::Instance().maxLong();
+
 static toSQL SQLComment("toOracleConnection:Comments",
                         "SELECT Column_name,Comments FROM sys.All_Col_Comments\n"
                         " WHERE Owner = :f1<char[100]>\n"
@@ -159,8 +164,9 @@ class toOracleClob: public toQValue::complexType
 {
 public:
 	toOracleClob(trotl::OciConnection &_conn)
-		: toQValue::complexType(),
-		  data(_conn)
+		: toQValue::complexType()
+		, data(_conn)
+		, _length(0)
 	{};
 	/* virtual */ bool isBinary() const
 	{
@@ -170,25 +176,81 @@ public:
 	{
 		return true;
 	}
-	/* virtual */ QString summary() const
+
+	/* virtual */ QString displayData() const
 	{
-		return QString("Datape: Oracle [N]CLOB\n"
-			       "Size: %1B\n").arg(data.get_length());
+		::trotl::SqlOpenLob clob_open(data, OCI_LOB_READONLY);
+		char buffer[MAXLOBSHOWN];
+
+		unsigned bytes_read = data.read(&buffer[0], sizeof(buffer), 1, sizeof(buffer));
+		buffer[bytes_read] = '\0';
+
+		TLOG(4,toDecorator,__HERE__) << "Just read CLOB: \"" << buffer << "\"" << std::endl; 
+		
+		if(bytes_read < MAXLOBSHOWN)
+		{
+			return QString("{clob}") + buffer;
+		} else {
+			QString retval = QString("{clob}");
+			retval += buffer;
+			retval += "...<truncated>";
+			return QString("{clob}") + buffer + "...<truncated>";
+		}
 	}
+	
+	/* virtual */ QString editData() const
+	{
+		::trotl::SqlOpenLob clob_open(data, OCI_LOB_READONLY);
+		QString retval = QString("Datatyp pe: Oracle [N]CLOB\nSize: %1B\n").arg(getLength());
+		char buffer[MAXTOMAXLONG];
+		ub4 chunk_size = data.get_chunk_size();
+		unsigned bytes_read, offset = 0;
+
+		while(offset < MAXTOMAXLONG)
+		{
+			unsigned to_read = ::std::min(MAXTOMAXLONG - offset, chunk_size);
+			unsigned bytes_read = data.read(&buffer[offset], MAXTOMAXLONG - offset, offset+1, to_read);
+			offset += bytes_read;
+			if(bytes_read == 0) // end of LOB reached
+				break;
+		}
+		buffer[::std::min(offset,(unsigned)MAXTOMAXLONG)] = '\0';
+
+		if(offset == MAXTOMAXLONG)
+			return QString(buffer) + "\n...<TRUNCATED>";
+		else
+			return QString(buffer);
+	}
+
+	/* virtual */ QString userData() const
+	{
+		return QString("Datape: Oracle [N]CLOB\nSize: %1B\n")
+			.arg(getLength());
+	}
+
+	/* virtual */ QString tooltipData() const
+	{
+		return QString("Datape: Oracle [N]CLOB\n" "Size: %1B\n")
+			.arg(getLength());
+	}
+	
 	/* virtual */ QString dataTypeName() const
 	{
-		return QString("clob");
+		return QString("CLOB");
 	}
-	/* virtual */ QByteArray read() const
+	/* virtual */ QByteArray read(unsigned offset) const
 	{
-		char buffer[4096];
+		unsigned chunksize = data.get_chunk_size();
+		char *buffer = (char*)malloc( chunksize ); // TODO use alloc here(or _alloc on MSVC)
 		unsigned int bytes_read;
 		{
 			::trotl::SqlOpenLob clob_open(data, OCI_LOB_READONLY);
-			bytes_read = data.read(&buffer[0], sizeof(buffer), 1, sizeof(buffer));
+			bytes_read = data.read(buffer, chunksize, offset+1, chunksize);
 			buffer[bytes_read] = '\0';
 		}
-		return QByteArray(buffer, bytes_read);		
+		QByteArray retval(buffer, bytes_read);
+		free(buffer);
+		return retval;		
 	}
 	/* virtual */ void write(QByteArray const &data)
 	{
@@ -200,6 +262,14 @@ public:
 
 	mutable trotl::SqlClob data;
 protected:
+	ub4 getLength() const
+	{
+		if(!_length)
+			_length = data.get_length();
+		return _length;
+	};
+				
+	mutable ub4 _length; // NOTE: OCILobGetLength makes one roundtrip to the server
 	toOracleClob(toOracleClob const&);
 	toOracleClob operator=(toOracleClob const&);
 	//TODO copying prohibited
@@ -210,36 +280,103 @@ class toOracleBlob: public toQValue::complexType
 {
 public:
 	toOracleBlob(trotl::OciConnection &_conn)
-		: toQValue::complexType(),
-		  data(_conn)
+		: toQValue::complexType()
+		, data(_conn)
+		, _length(0)
 	{};
 	/* virtual */ bool isBinary() const
 	{
-		return false;
+		return true;
 	}
 	/* virtual */ bool isLarge() const
 	{
 		return true;
 	}
-	/* virtual */ QString summary() const
+
+	/* virtual */ QString displayData() const
 	{
-		return QString("Datape: Oracle BLOB\n"
-			       "Size: %1B\n").arg(data.get_length());
+		::trotl::SqlOpenLob blob_open(data, OCI_LOB_READONLY);
+		unsigned char buffer[MAXLOBSHOWN/2];
+		QString retval("{blob}");
+		
+		unsigned bytes_read = data.read(&buffer[0], sizeof(buffer), 1, sizeof(buffer));
+		buffer[bytes_read] = '\0';
+		
+		for(unsigned i=0; i<bytes_read; ++i)
+		{
+			char sbuff[4];
+			snprintf(sbuff, sizeof(sbuff), " %.2X", buffer[i]);
+			retval += sbuff;
+		}
+
+		
+		if(bytes_read >= MAXLOBSHOWN/2)
+			retval += "...<truncated>";
+		return retval;
 	}
+	
+	/* virtual */ QString editData() const
+	{
+		::trotl::SqlOpenLob clob_open(data, OCI_LOB_READONLY);
+		QString retval = QString("Datatyp pe: Oracle BLOB\nSize: %1B\n").arg(getLength());
+		unsigned char buffer[MAXTOMAXLONG];
+		ub4 chunk_size = data.get_chunk_size();
+		unsigned bytes_read, offset = 0;
+		
+		while(offset < MAXTOMAXLONG)
+		{
+			unsigned to_read = ::std::min(MAXTOMAXLONG - offset, chunk_size);
+			unsigned bytes_read = data.read(&buffer[offset], MAXTOMAXLONG - offset, offset+1, to_read);
+
+			if(bytes_read == 0) // end of LOB reached
+				break;
+
+			for(unsigned i=0; i<bytes_read; ++i)
+			{
+				char sbuff[4];
+				snprintf(sbuff, sizeof(sbuff), " %.2X", buffer[i]);
+				retval += sbuff;
+				if( (offset+i) % 32 == 31)
+					retval += "\n";
+			}
+			
+			offset += bytes_read;
+		}
+		
+		if(offset == MAXTOMAXLONG)
+			retval += "\n...<TRUNCATED>";
+		return retval;
+	}
+
+	/* virtual */ QString userData() const
+	{
+		return QString("Datape: Oracle BLOB\nSize: %1B\n")
+			.arg(data.get_length());
+	}
+
+	/* virtual */ QString tooltipData() const
+	{
+		return QString("Datape: Oracle BLOB\nSize: %1B\n")
+			.arg(data.get_length());
+	}
+	
 	/* virtual */ QString dataTypeName() const
 	{
 		return QString("blob");
 	}
-	/* virtual */ QByteArray read() const
+	/* virtual */ QByteArray read(unsigned offset) const
 	{
-		char buffer[4096];
+		unsigned chunksize = data.get_chunk_size();
+		char *buffer = (char*)malloc( chunksize ); // TODO use alloc here(or _alloc on MSVC)
 		unsigned int bytes_read;
 		{
 			::trotl::SqlOpenLob blob_open(data, OCI_LOB_READONLY);
-			bytes_read = data.read(&buffer[0], sizeof(buffer), 1, sizeof(buffer));
+			bytes_read = data.read(buffer, chunksize, offset+1, chunksize);
 			buffer[bytes_read] = '\0';
 		}
-		return QByteArray(buffer, bytes_read);		
+		QByteArray retval(buffer, bytes_read);
+		free(buffer);
+		return retval;
 	}
 	/* virtual */ void write(QByteArray const &data)
 	{
@@ -251,6 +388,14 @@ public:
 
 	mutable trotl::SqlBlob data;
 protected:
+	ub4 getLength() const
+	{
+		if(!_length)
+			_length = data.get_length();
+		return _length;
+	};
+	
+	mutable ub4 _length; // NOTE: OCILobGetLength makes one roundtrip to the server
 	toOracleBlob(toOracleBlob const&);
 	toOracleBlob operator=(toOracleBlob const&);
 	//TODO copying prohibited
@@ -272,17 +417,33 @@ public:
 	{
 		return false;
 	}
-	/* virtual */ QString summary() const
+
+
+	/* virtual */ QString displayData() const
 	{
-		return QString("Datape: user type collection %1\n\%2")
-			.arg(data._data_type_name.c_str())
-			.arg(((::trotl::tstring)data).c_str());
+		return QString("{collection}");
 	}
+	
+	/* virtual */ QString editData() const
+	{
+		return QString(((::trotl::tstring)data).c_str());
+	}
+
+	/* virtual */ QString userData() const
+	{
+		return QString("collection");
+	}
+
+	/* virtual */ QString tooltipData() const
+	{
+		return dataTypeName();
+	}
+
 	/* virtual */ QString dataTypeName() const
 	{
 		return QString(data._data_type_name.c_str());
 	}
-	/* virtual */ QByteArray read() const
+	/* virtual */ QByteArray read(unsigned offset) const
 	{
 	}
 	/* virtual */ void write(QByteArray const &data)
@@ -409,7 +570,7 @@ public:
 				if((_state & EXECUTED) == 0)
 					execute_internal(::trotl::g_OCIPL_BULK_ROWS, OCI_DEFAULT);
 
-				if(BP.is_null(_last_buff_row)) {
+				if(BP.is_null(_last_buff_row) && BP.dty != SQLT_NTY) {
 					value = toQValue();
 					TLOG(4,toDecorator,__HERE__) << "Just read: NULL" << std::endl;
 				} else {
@@ -494,7 +655,7 @@ public:
 							if( *(sb2*)(bpc->_collection_indp[_last_buff_row]) == OCI_IND_NULL)
 							{
 								value = toQValue();
-								TLOG(4,toDecorator,__HERE__) << "Just read: NULL collection" << std::endl; 
+								TLOG(1,toDecorator,__HERE__) << "Just read: NULL collection" << std::endl; 
 							} else {
 								toOracleCollection *i = new toOracleCollection(_conn);
 								trotl::ConvertorForRead c(_last_buff_row);
@@ -502,10 +663,27 @@ public:
 								QVariant v;
 								v.setValue((toQValue::complexType*)i);
 								value = toQValue::fromVariant(v);
-								TLOG(4,toDecorator,__HERE__) << "Just read: collection:"
+								TLOG(1,toDecorator,__HERE__) << "Just read: collection:"
 											     << (::trotl::tstring)i->data
 											     << std::endl; 
-							}							
+							}
+						} else if( ::trotl::BindParCollectionTabVarchar const *bpc = dynamic_cast<const trotl::BindParCollectionTabVarchar *>(&BP))
+						{
+							if( *(sb2*)(bpc->_collection_indp[_last_buff_row]) == OCI_IND_NULL)
+							{
+								value = toQValue();
+								TLOG(1,toDecorator,__HERE__) << "Just read: NULL collection" << std::endl; 
+							} else {
+								toOracleCollection *i = new toOracleCollection(_conn);
+								trotl::ConvertorForRead c(_last_buff_row);
+								trotl::DispatcherForRead::Go(BP, i->data, c);
+								QVariant v;
+								v.setValue((toQValue::complexType*)i);
+								value = toQValue::fromVariant(v);
+								TLOG(1,toDecorator,__HERE__) << "Just read: collection:"
+											     << (::trotl::tstring)i->data
+											     << std::endl; 
+							} 
 						}
 						
 					}
@@ -1018,7 +1196,7 @@ public:
 
 	virtual void initialize(void)
 	{
-		//toMaxLong = toConfigurationSingle::Instance().maxLong();
+		toMaxLong = toConfigurationSingle::Instance().maxLong();
 		::trotl::g_OCIPL_MAX_LONG = ( toConfigurationSingle::Instance().maxLong() == -1 ? ::trotl::g_OCIPL_MAX_LONG : toConfigurationSingle::Instance().maxLong() );
 		::trotl::OciEnvAlloc *_envallocp = new ::trotl::OciEnvAlloc;
 
@@ -1585,13 +1763,13 @@ void toOracleSetting::saveSetting()
 	*/
 	if (Unlimited->isChecked())
 	{
-		//toMaxLong = -1;
 		toConfigurationSingle::Instance().setMaxLong(-1);
+		toMaxLong = MAXTOMAXLONG;
 	}
 	else
 	{
 		toConfigurationSingle::Instance().setMaxLong(MaxLong->text().toInt());
-		//toMaxLong = MaxLong->text().toInt();
+		toMaxLong = MaxLong->text().toInt();
 	}
 }
 

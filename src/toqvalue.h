@@ -72,9 +72,15 @@ public:
     public:
 	    virtual bool isBinary() const = 0;
 	    virtual bool isLarge() const = 0;
-	    virtual QString summary() const = 0;
+
+	    virtual QString displayData() const = 0;
+	    virtual QString editData() const = 0;
+	    virtual QString userData() const = 0;
+	    virtual QString tooltipData() const = 0;
+
 	    virtual QString dataTypeName() const = 0;
-	    virtual QByteArray read() const = 0;
+
+	    virtual QByteArray read(unsigned offset) const = 0;
 	    virtual void write(QByteArray const &) = 0;
 	    virtual ~complexType() {};
     };
