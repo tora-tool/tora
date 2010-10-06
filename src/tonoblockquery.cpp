@@ -137,6 +137,11 @@ void toNoBlockQuery::queryTask::run(void)
         ;
         Parent.Error = str;
     }
+    catch(std::exception const &e) {
+        toLocker lock (Parent.Lock)
+        ;
+	Parent.Error = QString(e.what());
+	}                                               
     catch (...)
     {
         toLocker lock (Parent.Lock)

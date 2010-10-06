@@ -69,6 +69,12 @@ static const int FIREWALL_TIMEOUT = 240000;
             close();                                \
         }                                           \
     }                                               \
+    catch(std::exception const &e) {                \
+        if(!Closed) {                               \
+	    emit error(QString(e.what()));	    \
+	    close();                                \
+	}                                           \
+    }						    \
     catch(...) {                                    \
         if(!Closed) {                               \
             emit error(tr("Unknown exception"));    \
