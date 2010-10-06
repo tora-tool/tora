@@ -48,6 +48,9 @@
 #ifdef Q_OS_WIN32
 #  include "windows/cregistry.h"
 #include <Windows.h>
+#define MIN min
+#else
+#define MIN std::min
 #endif
 
 #include <trotl.h>
@@ -204,17 +207,17 @@ public:
 		QString retval = QString("Datatyp pe: Oracle [N]CLOB\nSize: %1B\n").arg(getLength());
 		char buffer[MAXTOMAXLONG];
 		ub4 chunk_size = data.get_chunk_size();
-		unsigned bytes_read, offset = 0;
+		unsigned offset = 0;
 
 		while(offset < MAXTOMAXLONG)
 		{
-			unsigned to_read = ::std::min(MAXTOMAXLONG - offset, chunk_size);
+			unsigned to_read = MIN(MAXTOMAXLONG - offset, chunk_size);
 			unsigned bytes_read = data.read(&buffer[offset], MAXTOMAXLONG - offset, offset+1, to_read);
 			offset += bytes_read;
 			if(bytes_read == 0) // end of LOB reached
 				break;
 		}
-		buffer[::std::min(offset,(unsigned)MAXTOMAXLONG)] = '\0';
+		buffer[MIN(offset,(unsigned)MAXTOMAXLONG)] = '\0';
 
 		if(offset == MAXTOMAXLONG)
 			return QString(buffer) + "\n...<TRUNCATED>";
@@ -321,11 +324,11 @@ public:
 		QString retval = QString("Datatyp pe: Oracle BLOB\nSize: %1B\n").arg(getLength());
 		unsigned char buffer[MAXTOMAXLONG];
 		ub4 chunk_size = data.get_chunk_size();
-		unsigned bytes_read, offset = 0;
+		unsigned offset = 0;
 		
 		while(offset < MAXTOMAXLONG)
 		{
-			unsigned to_read = ::std::min(MAXTOMAXLONG - offset, chunk_size);
+			unsigned to_read = MIN(MAXTOMAXLONG - offset, chunk_size);
 			unsigned bytes_read = data.read(&buffer[offset], MAXTOMAXLONG - offset, offset+1, to_read);
 
 			if(bytes_read == 0) // end of LOB reached
