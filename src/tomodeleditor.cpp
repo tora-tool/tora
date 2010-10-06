@@ -130,21 +130,40 @@ void toModelEditor::saveFile()
     QVariant const &data = Model->data(Current, Qt::UserRole);
     if (data.type() == QVariant::UserType)
     {
-	    toQValue::complexType *i = data.value<toQValue::complexType*>();
-	    QByteArray a = i->read();
-	    
 	    QString fn;
-	    fn = toSaveFilename("", QString::null, this);
-	    if (!fn.isEmpty() && toWriteFile(fn, a))
+	    fn = toSaveFilename(Editor->filename(), QString::null, this);
+	    QString expanded = toExpandFile(fn);
+	    QFile file(expanded);
+	    if (!file.open(QIODevice::WriteOnly))
 	    {
-		    toMainWidget()->addRecentFile(fn);
-		    // setFilename(fn);
-		    // setModified(false);
-		    //emit fileSaved(fn);
+		    TOMessageBox::warning(
+			    toMainWidget(),
+			    QT_TRANSLATE_NOOP("toWriteFile", "File error"),
+			    QT_TRANSLATE_NOOP("toWriteFile", QString("Couldn't open %1 for writing")
+					      .arg(expanded).toAscii().constData())); // TODO test this in MSVC
+		    return;
 	    }
-
-    } else
+	    offset = 0;
+	    bool retval = toWriteLargeFile(file, *this, false, this);
+	    if(retval)
+		    toMainWidget()->addRecentFile(fn);
+    } else {
 	    Editor->editSave(true);
+    }
+};
+
+QByteArray toModelEditor::nextData() const
+{
+	QVariant const &data = Model->data(Current, Qt::UserRole);
+	if (data.type() == QVariant::UserType)
+	{
+		toQValue::complexType *i = data.value<toQValue::complexType*>();
+		QByteArray a = i->read(offset);
+		offset += a.size();
+		return a;
+	} else {
+		return QByteArray();
+	}
 }
 
 toModelEditor::toModelEditor(QWidget *parent,
@@ -353,7 +372,7 @@ void toModelEditor::changePosition(QModelIndex index)
     if(data.type() == QVariant::UserType)
     {
            toQValue::complexType *i = data.value<toQValue::complexType*>();
-           setText(i->summary());
+           setText(i->editData());
            return;
     }
            

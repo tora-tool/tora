@@ -74,6 +74,7 @@ class toModelEditor : public QDialog
     QModelIndex         Current;
     QAbstractItemModel *Model;
 
+    mutable unsigned offset;
 private slots:
     void openFile(void);
     void saveFile(void);
@@ -140,6 +141,10 @@ public slots:
     /** Change value of editor.
      */
     virtual void setText(const QString &);
+
+    /** Retun next chunk of data(for write into a file
+     */
+    QByteArray nextData() const;
 };
 
 #endif

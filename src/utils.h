@@ -53,6 +53,11 @@
 #include <QPixmap>
 #include <QKeyEvent>
 #include <QMainWindow>
+#include <QProgressBar>
+#include <QFile>
+#include <QMessageBox>
+
+#include "tomain.h"
 
 #define TOPrinter QPrinter
 #define TOFileDialog QFileDialog
@@ -268,6 +273,33 @@ bool toWriteFile(const QString &filename, const QByteArray &data);
  * @param data Data to write to file.
  */
 bool toWriteFile(const QString &filename, const QString &data);
+/** Write large data into a QFile
+ *  T is instance of class that implements method "QByteArray next()" this method is continuesly called till whole data is written
+ * @param file openned filehandle to write into
+ * @param reference to a class that implements a method "nextData()"
+ * @param progressbar show progressbar(true, false)
+ * @param parent parent widget(for progressbar)
+ */
+template<class T> bool toWriteLargeFile(QFile &file, T const &source, bool progressbar, QWidget *parent)
+{
+	// TODO add progressbar
+	while(true)
+	{
+		QByteArray const &data = source.nextData();
+		if(data.isEmpty()) // End of stream is reported as an empty QByteArray
+			return true;
+		file.write(data);
+		if (file.error() != QFile::NoError)
+		{
+			TOMessageBox::warning(
+				toMainWidget(),
+				QT_TRANSLATE_NOOP("toWriteLargeFile", "File error"),
+				QT_TRANSLATE_NOOP("toWriteLargeFile", "Couldn't write data to file"));
+			return false;
+		}
+	}
+	return false;
+};
 /** Compare two string lists.
  * @param l1 First list to compare.
  * @param l2 Second list to compare.

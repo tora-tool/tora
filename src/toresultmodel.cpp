@@ -496,17 +496,32 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const
 
     switch(role)
     {
+    case Qt::ToolTipRole:
+	    if (data.isNull())
+		    return toNull(data).toQVariant();
+	    if (data.isUserType())
+	    {
+		    toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
+		    return QVariant(i->tooltipData());
+	    }
+	    return data.toQVariant();
+    case Qt::EditRole:
+	    if (data.isNull())
+		    return toNull(data).toQVariant();
+	    if (data.isUserType())
+	    {
+		    toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
+		    return QVariant(i->editData());
+	    }
+	    return data.toQVariant();
     case Qt::DisplayRole:
            if (data.isNull())
                    return toNull(data).toQVariant();
            if (data.isUserType())
            {
                    toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
-                   return QVariant(QString("{%1}").arg(i->dataTypeName()));
+                   return QVariant(i->displayData());
            }
-           return data.toQVariant();
-    case Qt::EditRole:
-    case Qt::ToolTipRole:
            return data.toQVariant();
     case Qt::BackgroundRole:
            if (data.isNull() && toConfigurationSingle::Instance().indicateEmpty())
