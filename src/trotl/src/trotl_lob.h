@@ -56,8 +56,9 @@ struct TROTL_EXPORT BindParLob: public SqlStatement::BindPar
 	virtual void bind_hook(SqlStatement &stmt);
 	virtual void define_hook(SqlStatement &stmt);
 
-	boolean	is_temporary(unsigned _row) const;
-
+	boolean	isTemporary(unsigned row) const;
+	ub4 getChunkSize(unsigned row) const;
+	
 private:
 	void descAlloc(void); //TODO OCI_DTYPE_FILE for BFILE, CFILE
 	void descFree(void);
@@ -116,7 +117,7 @@ struct TROTL_EXPORT SqlLob: public SqlValue
 
 	boolean	is_open() const;
 
-	boolean	is_temporary() const;
+	boolean	isTemporary() const;
 
 	void copy(const SqlLob& src, ub4 amount, ub4 dst_offset, ub4 src_offset);
 
@@ -124,7 +125,7 @@ struct TROTL_EXPORT SqlLob: public SqlValue
 
 	void trim(ub4 newlen=0);
 
-	ub4	erase(ub4 offset, ub4 amount);
+	ub4 erase(ub4 offset, ub4 amount);
 
 	void enable_buffering();
 

@@ -34,12 +34,13 @@
 
 #include "trotl_xml.h"
 #include <string.h>
+
 namespace trotl {
 
 Util::RegisterInFactory<BindParXML, BindParFactTwoParmSing> regBindXML("SYS.XMLTYPE");
 
 Util::RegisterInFactory<BindParXML, CustDefineParFactTwoParmSing> regCustDefineNTY_XML("SYS.XMLTYPE");
-
+  
 void BindParXML::init(SqlStatement &stmt)
 {
 	sword res;

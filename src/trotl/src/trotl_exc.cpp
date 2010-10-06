@@ -170,7 +170,7 @@ OciException::OciException(tstring where, SqlStatement& stmt) :
 		const char* sql = _last_sql.c_str();
 		size_t l = strlen(buffer);
 
-		int line = 1;
+		unsigned line = 1;
 		const char* s = sql;
 		const char* e = sql + _parse_offset;
 		const char* lp = sql;
@@ -190,7 +190,7 @@ OciException::OciException(tstring where, SqlStatement& stmt) :
 //#ifdef __STDC_WANT_SECURE_LIB__
 //		char* b = buffer+l + snprintf_s(buffer+l, sizeof(buffer)-l, _TRUNCATE, "\nerror at SQL position %d [%d.%d]:\n", _parse_offset, line, column);
 //#else
-		char* b = buffer+l + snprintf(buffer+l, sizeof(buffer)-l-1, "\nerror at SQL position %d [%d.%d]:\n", _parse_offset, line, column);
+		char* b = buffer+l + snprintf(buffer+l, sizeof(buffer)-l-1, "\nerror at SQL position %u [%u.%zu]:\n", (unsigned)_parse_offset, line, column);
 //#endif
 		char* p = b;
 		s = lp;
@@ -225,7 +225,7 @@ OciException::OciException(tstring where, SqlStatement& stmt) :
 }
 
 OciException::OciException(tstring where, const char* msg) :
-	_where(where), _mess(where), _parse_offset(0), _last_sql("")
+	_where(where), _mess(where), _last_sql(""), _parse_offset(0)
 {
 #ifdef DEBUG  
 	dbg::stack s;
@@ -235,13 +235,13 @@ OciException::OciException(tstring where, const char* msg) :
 	_mess += msg;
 }
 
-OciException::OciException(const OciException& other):
-	_sql_error_code(other._sql_error_code),
-	_where(), //_where(other._where),
-	_mess(other._mess),
-	_stack(),
-	_last_sql(other._last_sql),
-	_parse_offset() // _parse_offset(other._parse_offset)
+OciException::OciException(const OciException& other)
+	: _sql_error_code(other._sql_error_code)
+	, _where() //_where(other._where)
+	, _stack()	  
+	, _mess(other._mess)	  
+	, _last_sql(other._last_sql)
+	, _parse_offset() // _parse_offset(other._parse_offset)
 {
 	//throw std::logic_error("OciException should not be copied");
 	//std::cerr << __TROTL_HERE__ << "OciException should not be copied" << std::endl;

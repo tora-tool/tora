@@ -137,12 +137,21 @@ void BindParLob::define_hook(SqlStatement &stmt)
 //	oci_check_error(__TROTL_HERE__, _env, res);
 }
 
-boolean BindParLob::is_temporary(unsigned _row) const
+boolean BindParLob::isTemporary(unsigned _row) const
 {
 	boolean flag;
 	sword res = OCICALL(OCILobIsTemporary(_env, _env._errh, ((OCILobLocator**)valuep)[_row], &flag));
 	oci_check_error(__TROTL_HERE__, _env._errh, res);
 	return flag;
+}
+
+ub4 BindParLob::getChunkSize(unsigned _row) const
+{
+	ub4 retval;
+	sword res = OCICALL(OCILobGetChunkSize(_stmt._conn._svc_ctx, _env._errh, ((OCILobLocator**)valuep)[_row], &retval));
+	oci_check_error(__TROTL_HERE__, _env._errh, res);
+	return retval;
+
 }
   
 BindParClob::BindParClob(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : BindParLob(pos, stmt, ct)
@@ -203,7 +212,7 @@ SqlLob::~SqlLob()
 {
 	// According to the Oracle 10g documentation we should try to free
 	// implicit created temporary LOBs as soon as possible.
-	if (is_temporary()) {
+	if (isTemporary()) {
 		sword res = OCICALL(OCILobFreeTemporary(_conn._svc_ctx, _conn._env._errh, _loc));
 		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	}
@@ -256,7 +265,7 @@ boolean	SqlLob::is_open() const
 	return flag;
 };
 
-boolean	SqlLob::is_temporary() const
+boolean	SqlLob::isTemporary() const
 {
 	boolean flag;
 	sword res = OCICALL(OCILobIsTemporary(_conn._env, _conn._env._errh, _loc, &flag));
@@ -351,9 +360,9 @@ ub4	SqlBlob::write_append(const dvoid* bufp, ub4 buflen, ub4 amount)
 ub4	SqlBlob::read(dvoid* bufp, ub4 buflen, ub4 offset, ub4 amount)
 {
 	sword res = OCICALL(OCILobRead(_conn._svc_ctx, _conn._env._errh, _loc,
-			&amount, offset, bufp, buflen,
-			NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,CONST dvoid*bufp,ub4*len,ub1*piece)*/,
-			0, 0));
+				       &amount, offset, bufp, buflen,
+				       NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,CONST dvoid*bufp,ub4*len,ub1*piece)*/,
+				       0, 0));
 	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return amount;
 };

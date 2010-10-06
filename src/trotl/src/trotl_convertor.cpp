@@ -64,7 +64,7 @@ void ConvertorForRead::Fire(const BindParClob &BP, SqlClob &CL)
 	CL._ind = BP.indp[_row];
 	if(CL.is_not_null())
 	{
-		if(BP.is_temporary(_row))
+		if(BP.isTemporary(_row))
 		{
 			sword res = OCICALL(OCILobLocatorAssign(BP._stmt._conn._svc_ctx, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &CL._loc));
 			oci_check_error(__TROTL_HERE__, BP._env._errh, res);
@@ -83,7 +83,7 @@ void ConvertorForRead::Fire(const BindParBlob &BP, SqlBlob &BL)
 	BL._ind = BP.indp[_row];
 	if(BL.is_not_null())
 	{
-		if(BP.is_temporary(_row))
+		if(BP.isTemporary(_row))
 		{
 			sword res = OCICALL(OCILobLocatorAssign(BP._stmt._conn._svc_ctx, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &BL._loc));
 			oci_check_error(__TROTL_HERE__, BP._env._errh, res);
