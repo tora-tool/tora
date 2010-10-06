@@ -496,7 +496,7 @@ public:
 /**
  * functor for cleanup containers of pointers
  */
-struct DeleteObject
+struct deleteObject
 {
     template <typename T>
     void operator()(const T* ptr) const

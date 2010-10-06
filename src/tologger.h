@@ -26,8 +26,7 @@ using namespace boost::iostreams;
 
 typedef Tdecorator<
 	TSLOG_TYPELIST_6(dashDecorator<4>,
-			 //tidDecorator<qt_thread_manager>,
-			 tidDecorator<win32_thread_manager>,			 
+			 tidDecorator<DEFAULT_THREAD_MANAGER>, 
 			 charDecorator<' '>,
 			 hereDecorator, 
 			 dashDecorator<4>,

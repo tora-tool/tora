@@ -714,7 +714,7 @@ void toAnalyze::stop(void)
 {
     try
     {
-        for_each(Running.begin(), Running.end(), DeleteObject());
+        for_each(Running.begin(), Running.end(), deleteObject());
         Running.clear();
         Pending.clear();
         Stop->setEnabled(false);
