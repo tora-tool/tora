@@ -655,7 +655,7 @@ public:
 							if( *(sb2*)(bpc->_collection_indp[_last_buff_row]) == OCI_IND_NULL)
 							{
 								value = toQValue();
-								TLOG(1,toDecorator,__HERE__) << "Just read: NULL collection" << std::endl; 
+								TLOG(4,toDecorator,__HERE__) << "Just read: NULL collection" << std::endl; 
 							} else {
 								toOracleCollection *i = new toOracleCollection(_conn);
 								trotl::ConvertorForRead c(_last_buff_row);
@@ -663,7 +663,7 @@ public:
 								QVariant v;
 								v.setValue((toQValue::complexType*)i);
 								value = toQValue::fromVariant(v);
-								TLOG(1,toDecorator,__HERE__) << "Just read: collection:"
+								TLOG(4,toDecorator,__HERE__) << "Just read: collection:"
 											     << (::trotl::tstring)i->data
 											     << std::endl; 
 							}
@@ -672,7 +672,7 @@ public:
 							if( *(sb2*)(bpc->_collection_indp[_last_buff_row]) == OCI_IND_NULL)
 							{
 								value = toQValue();
-								TLOG(1,toDecorator,__HERE__) << "Just read: NULL collection" << std::endl; 
+								TLOG(4,toDecorator,__HERE__) << "Just read: NULL collection" << std::endl; 
 							} else {
 								toOracleCollection *i = new toOracleCollection(_conn);
 								trotl::ConvertorForRead c(_last_buff_row);
@@ -680,7 +680,7 @@ public:
 								QVariant v;
 								v.setValue((toQValue::complexType*)i);
 								value = toQValue::fromVariant(v);
-								TLOG(1,toDecorator,__HERE__) << "Just read: collection:"
+								TLOG(4,toDecorator,__HERE__) << "Just read: collection:"
 											     << (::trotl::tstring)i->data
 											     << std::endl; 
 							} 
