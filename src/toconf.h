@@ -71,7 +71,7 @@
 #define CONF_LIST  "ListText"
 #define CONF_DATE_FORMAT "ConfDateFormat"
 #define DEFAULT_DATE_FORMAT "YYYY-MM-DD HH24:MI:SS"
-#define CONF_REFRESH  "Refresh"
+#define CONF_REFRESH  "RefreshInterval"
 #define DEFAULT_REFRESH  "None"
 #define CONF_HIGHLIGHT  "SyntaxHighlight"
 #define CONF_KEYWORD_UPPER "KeywordUpper"
@@ -204,7 +204,7 @@
 #define CONF_FILTER_TABLESPACE_TYPE   "FilterTablespaceType"
 #define CONF_FILTER_TEXT   "FilterText"
 // tooutput
-#define CONF_POLLING     "Refresh"
+#define CONF_POLLING     "PollingInterval"
 #define DEFAULT_POLLING  "10 seconds"
 #define CONF_LOG_TYPE  "Type"
 #define DEFAULT_LOG_TYPE 0
