@@ -1,4 +1,4 @@
-#include <QtDebug>
+
 /* BEGIN_COMMON_COPYRIGHT_HEADER
 *
 * TOra - An Oracle Toolkit for DBA's and developers
@@ -419,6 +419,9 @@ toBrowserTableWidget::toBrowserTableWidget(QWidget * parent)
 void toBrowserTableWidget::changeConnection()
 {
     toBrowserBaseWidget::changeConnection();
+    // changeConnection() clears type field which should be set so
+    // that extractor knows what type of object TOra is handling.
+    setType("TABLE");
 
     toConnection & c = toCurrentConnection(this);
 

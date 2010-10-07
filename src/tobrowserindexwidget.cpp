@@ -159,6 +159,9 @@ toBrowserIndexWidget::toBrowserIndexWidget(QWidget * parent)
 void toBrowserIndexWidget::changeConnection()
 {
     toBrowserBaseWidget::changeConnection();
+    // changeConnection() clears type field which should be set so
+    // that extractor knows what type of object TOra is handling.
+    setType("INDEX");
 
     toConnection & c = toCurrentConnection(this);
 

@@ -90,6 +90,9 @@ void toBrowserSynonymWidget::changeParams(const QString & schema, const QString 
 void toBrowserSynonymWidget::changeConnection()
 {
     toBrowserBaseWidget::changeConnection();
+    // changeConnection() clears type field which should be set so
+    // that extractor knows what type of object TOra is handling.
+    setType("SYNONYM");
 
     toConnection & c = toCurrentConnection(this);
 

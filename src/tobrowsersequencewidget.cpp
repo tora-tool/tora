@@ -83,6 +83,9 @@ toBrowserSequenceWidget::toBrowserSequenceWidget(QWidget * parent)
 void toBrowserSequenceWidget::changeConnection()
 {
     toBrowserBaseWidget::changeConnection();
+    // changeConnection() clears type field which should be set so
+    // that extractor knows what type of object TOra is handling.
+    setType("SEQUENCE");
 
     toConnection & c = toCurrentConnection(this);
 

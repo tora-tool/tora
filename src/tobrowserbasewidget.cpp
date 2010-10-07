@@ -94,11 +94,16 @@ void toBrowserBaseWidget::addTab(QWidget * page, const QString & label)
 
 void toBrowserBaseWidget::changeParams(const QString & schema, const QString & object, const QString & type)
 {
-    if (m_schema != schema || m_object != object || m_type != type)
+    // Note: "type" may be set when creating an object of a class and that value should
+    //       be preserved even when empty value for "type" is given in changeParams.
+    //       This also means that "type" cannot be reset to NULL here but that should
+    //       never be required.
+    if (m_schema != schema || m_object != object || (m_type != type && !type.isEmpty()))
     {
         m_schema = schema;
         m_object = object;
-        m_type   = type;
+        if (!type.isEmpty())
+            m_type   = type;
         updateData(currentWidget()->objectName());
     }
 }
@@ -146,16 +151,27 @@ void toBrowserBaseWidget::updateData(const QString & ix)
     if (obj.isEmpty())
         obj = " ";
 
-    toConnection &conn = toMainWidget()->currentConnection();
-    if (toIsMySQL(conn) && !type().isEmpty())
-    {
-        // MySQL requires additional parameter to fetch routine (procedure/function) creation script
-        // Parameter must be passed first. This parameter (type) is only specified when it is a MySQL
-        // connection and routine code is being fetched (as opposed to fetching say tables)
-        m_tabs[ix]->changeParams(type(), sch, obj);
-    }
-    else
-    {
-        m_tabs[ix]->changeParams(sch, obj);
+    // Some result types need a type specified in order to get information on correct
+    // object (when the same object name is used for objects of different types).
+    if (currentWidget()->objectName() == "extractView") {
+        m_tabs[ix]->changeParams(sch, obj, type());
+    } else {
+        toConnection &conn = toMainWidget()->currentConnection();
+        if (toIsMySQL(conn) && !type().isEmpty())
+        {
+            // MySQL requires additional parameter to fetch routine (procedure/function) creation script
+            // Parameter must be passed first. This parameter (type) is only specified when it is a MySQL
+            // connection and routine code is being fetched (as opposed to fetching say tables)
+            m_tabs[ix]->changeParams(sch, obj, type());
+        }
+        else
+        {
+            m_tabs[ix]->changeParams(sch, obj);
+        }
     }
 }
+
+void toBrowserBaseWidget::setType(const QString & type)
+{
+    m_type = type;
+} // setType

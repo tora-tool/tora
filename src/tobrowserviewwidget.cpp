@@ -113,6 +113,9 @@ toBrowserViewWidget::toBrowserViewWidget(QWidget * parent)
 void toBrowserViewWidget::changeConnection()
 {
     toBrowserBaseWidget::changeConnection();
+    // changeConnection() clears type field which should be set so
+    // that extractor knows what type of object TOra is handling.
+    setType("VIEW");
 
     toConnection & c = toCurrentConnection(this);
 

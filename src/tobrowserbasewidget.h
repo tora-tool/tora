@@ -105,6 +105,14 @@ class toBrowserBaseWidget : public QTabWidget
         */
         virtual void addTab(QWidget * page, const QString & label);
 
+        /*! \brief Set type of object being handled
+        This is required for some result displaying classes (for example extractor). If
+        type is not set TOra cannot distinguish which object should be used when
+        different types of object use the same name.
+        \param type type of object. Must be in uppercase and must match name of type used in database.
+        */
+        void setType(const QString & type);
+
     private:
         QString m_schema;
         QString m_type;

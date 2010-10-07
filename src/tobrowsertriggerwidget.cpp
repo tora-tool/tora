@@ -113,6 +113,9 @@ toBrowserTriggerWidget::toBrowserTriggerWidget(QWidget * parent)
 void toBrowserTriggerWidget::changeConnection()
 {
     toBrowserBaseWidget::changeConnection();
+    // changeConnection() clears type field which should be set so
+    // that extractor knows what type of object TOra is handling.
+    setType("TRIGGER");
 
     toConnection & c = toCurrentConnection(this);
 
