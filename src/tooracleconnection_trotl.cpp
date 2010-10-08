@@ -274,7 +274,7 @@ protected:
 			_length = data.get_length();
 		return _length;
 	};
-				
+	
 	mutable ub4 _length; // NOTE: OCILobGetLength makes one roundtrip to the server
 	toOracleClob(toOracleClob const&);
 	toOracleClob operator=(toOracleClob const&);
@@ -451,7 +451,7 @@ public:
 	}
 	/* virtual */ QByteArray read(unsigned offset) const
 	{
-		return QByteArray();
+		return QByteArray();	  
 	}
 	/* virtual */ void write(QByteArray const &data)
 	{
@@ -800,10 +800,16 @@ public:
 				TLOG(0,toDecorator,__HERE__) << "rowsProcessed() - non-query" << std::endl;
 				return 0;
 			}
-			//return Query->get_last_row(); ????
-			unsigned i = Query->get_last_row();
-			TLOG(0,toDecorator,__HERE__) << "rowsProcessed(" << i << ")" << std::endl;
-			return i;
+			int retval;
+			
+			if( Query->get_stmt_type() == ::trotl::SqlStatement::STMT_SELECT )
+			{
+				retval = Query->get_last_row();
+			} else {
+				retval = Query->row_count();
+			}
+			TLOG(0,toDecorator,__HERE__) << "rowsProcessed(" << retval << ")" << std::endl;
+			return retval;
 		}
 
 		virtual int columns(void)
@@ -1459,7 +1465,9 @@ void toOracleProvider::oracleQuery::execute(void)
 					<< ", placeholder=" << bp.bind_name
 					<< ", value=" << (*i).toInt() << ");"
 					<< "\t of:" << query()->params().size() << std::endl;
-			} else if( (bp.bind_typename == "char" || bp.bind_typename == "varchar") && (*i).isString()) {
+			} else if( (bp.bind_typename == "char" || bp.bind_typename == "varchar")
+				   && ((*i).isString() || (*i).isNumber() || (*i).isNull() ))
+			{
 				std::string param((const char*)((*i).toString().toUtf8().constData()));
 				(*Query) << ::std::string((const char*)((*i).toString().toUtf8().constData()));
 				TLOG(0,toDecorator,__HERE__)
@@ -1469,9 +1477,18 @@ void toOracleProvider::oracleQuery::execute(void)
 					<< ", value=" << ::std::string((const char*)((*i).toString().toUtf8().constData())) << ");"
 					<< "\t of:" << query()->params().size() << std::endl;
 			} else {
-				std::cerr << "Fatal pruser error - unsupported BindPar:" << std::endl;
+				TLOG(0,toDecorator,__HERE__)
+					<< "Fatal pruser error - unsupported BindPar: " << bp.bind_typename << std::endl
+					<< " For SQL: \n" << query()->sql() << std::endl
+					<< "<<(conn=" << conn->_conn << ", this=" << Query << ")"
+					<< "::operator<<(" << bp.type_name << " ftype=" << bp.dty
+					<< ", placeholder=" << bp.bind_name
+					<< ", value=" << ::std::string((const char*)((*i).toString().toUtf8().constData())) << ");"
+					<< "\t of:" << query()->params().size() << std::endl;
 				throw toConnection::exception(
-					QString::fromLatin1("Fatal pruser error - unsupported BindPar:") + bp.bind_typename.c_str());
+					QString::fromLatin1("Fatal pruser error - unsupported BindPar:%1\nFor SQL:\n%2\n")
+					.arg(bp.bind_typename.c_str())
+					.arg(query()->sql()));
 				exit(-1);
 			}			
 		}
@@ -1480,7 +1497,29 @@ void toOracleProvider::oracleQuery::execute(void)
 	}
 	catch (const ::trotl::OciException &exc)
 	{
-		conn->_conn->reset();
+		TLOG(0,toDecorator,__HERE__)
+			<< "What:" << exc.what() << std::endl
+			<< exc.get_sql() << std::endl
+			<< "--------------------------------------------------------------------------------"
+			<< std::endl;
+		try {
+			conn->_conn->reset();
+		} catch(const ::trotl::OciException &e2) {
+			TLOG(0,toDecorator,__HERE__)
+				<< "Exception in exception What:\n" << e2.what() << std::endl
+				<< e2.get_sql() << std::endl
+				<< "--------------------------------------------------------------------------------"
+				<< std::endl;
+		}
+		try {
+			conn->_conn->reset();
+		} catch(const ::trotl::OciException &e2) {
+			TLOG(0,toDecorator,__HERE__)
+				<< "Exception in exception What:\n" << e2.what() << std::endl
+				<< e2.get_sql() << std::endl
+				<< "--------------------------------------------------------------------------------"
+				<< std::endl;
+		}		
 		delete Query;
 		Query = NULL;
 

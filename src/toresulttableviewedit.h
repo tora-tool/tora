@@ -88,9 +88,9 @@ class toResultTableViewEdit : public toResultTableView
     //QString Owner; // defined in parent - toResultTableView
     //QString Table; // defined in parent - toResultTableView
 
-    void commitDelete(ChangeSet &change, toConnection &conn);
-    void commitAdd(ChangeSet &change, toConnection &conn);
-    void commitUpdate(ChangeSet &change, toConnection &conn);
+    unsigned commitDelete(ChangeSet &change, toConnection &conn);
+    unsigned commitAdd(ChangeSet &change, toConnection &conn);
+    unsigned commitUpdate(ChangeSet &change, toConnection &conn);
 
 public:
     /**

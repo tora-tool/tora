@@ -49,6 +49,7 @@
 #include "toconnection.h"
 #include "tomemoeditor.h"
 #include "tomain.h"
+#include "tologger.h"
 
 #include <QClipboard>
 #include <QScrollBar>
@@ -195,34 +196,43 @@ void toResultTableViewEdit::recordDelete(const toResultModel::Row &row)
 }
 
 
-void toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &conn)
+unsigned toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &conn)
 {
     const toResultModel::HeaderList Headers = Model->headers();
     bool oracle = toIsOracle(conn);
 
     QString sql = QString("DELETE FROM %1.%2 ").arg(conn.quote(Owner)).arg(conn.quote(Table));
     sql += (" WHERE ");
-
+    int col = 1;
     bool where = false;
-    for (int i = 1; i < change.row.size(); i++)
+    for (toResultModel::Row::iterator j = change.row.begin() + 1;
+	 j != change.row.end();
+	 j++, col++)
     {
-        if (!oracle || (!Headers[i].datatype.toUpper().startsWith(("LONG")) &&
-                        !Headers[i].datatype.toUpper().contains(("LOB"))))
+        if (!oracle || (!Headers[col].datatype.toUpper().startsWith(("LONG")) &&
+                        !Headers[col].datatype.toUpper().contains(("LOB"))))
         {
+	    if ((*j).isUserType())
+	    {
+		    toStatusMessage(tr("This table contains complex/user defined columns "
+				       "and can not be edited"));
+		    return 0;
+	    }
+
             if (where)
                 sql += " AND ";
             else
                 where = true;
 
-            sql += conn.quote(Headers[i].name);
+            sql += conn.quote(Headers[col].name);
 
-            if (change.row[i].isNull())
+            if ((*j).isNull())
                 sql += " IS NULL";
             else
             {
                 sql += "= :c";
-                sql += QString::number(i);
-                if (change.row[i].isBinary())
+                sql += QString::number(col);
+                if ((*j).isBinary())
                     sql += "<raw_long>";
                 else
                     sql += "<char[4000]>";
@@ -233,7 +243,7 @@ void toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &conn)
     if (!where)
     {
         toStatusMessage(tr("This table contains only LOB/LONG columns and can not be edited"));
-        return;
+        return 0;
     }
 
     toQList args;
@@ -246,16 +256,17 @@ void toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &conn)
         }
     }
 
-    conn.execute(sql, args);
+    toQuery q(conn, sql, args);
 
     if (toConfigurationSingle::Instance().autoCommit())
-        conn.commit();
+      conn.commit();
     else
-        toMainWidget()->setNeedCommit(conn);
+      toMainWidget()->setNeedCommit(conn);
+    return q.rowsProcessed();
 }
 
 
-void toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn)
+unsigned toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn)
 {
     const toResultModel::HeaderList Headers = Model->headers();
 
@@ -274,25 +285,33 @@ void toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn)
     }
 
     sql += ") VALUES (";
-
-    num = 0;
-    for (int i = 1; i < change.row.size(); i++, num++)
+    int col = 1;
+    for (toResultModel::Row::iterator j = change.row.begin() + 1;
+	 j != change.row.end();
+	 j++, col++)
     {
-        if (num > 0)
+	if ((*j).isUserType())
+	{
+		toStatusMessage(tr("This table contains complex/user defined columns "
+				   "and can not be edited"));
+		return 0;
+	}
+	    
+        if (col > 1)
             sql += (",");
         sql += (":f");
-        sql += QString::number(num + 1);
+        sql += QString::number(col);
 
-        if (change.row[i].isBinary())
+        if ((*j).isBinary())
         {
-            if (Headers[i].datatype.toUpper().contains("LOB"))
+            if (Headers[col].datatype.toUpper().contains("LOB"))
                 sql += ("<blob,in>");
             else
                 sql += ("<raw_long,in>");
         }
         else
         {
-            if (Headers[i].datatype.toUpper().contains("LOB"))
+            if (Headers[col].datatype.toUpper().contains("LOB"))
                 sql += ("<varchar_long,in>");
             else
                 sql += ("<char[4000],in>");
@@ -306,15 +325,16 @@ void toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn)
         toPush(args, change.row[i]);
 
     toQuery q(conn, sql, args);
-
+	    
     if (toConfigurationSingle::Instance().autoCommit())
-        conn.commit();
+      conn.commit();
     else
-        toMainWidget()->setNeedCommit(conn);
+      toMainWidget()->setNeedCommit(conn);
+    return q.rowsProcessed();
 }
 
 
-void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn)
+unsigned toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn)
 {
     const toResultModel::HeaderList Headers = Model->headers();
     bool oracle = toIsOracle(conn);
@@ -361,6 +381,13 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn)
         if (!oracle || (!Headers[col].datatype.toUpper().startsWith(("LONG")) &&
                         !Headers[col].datatype.toUpper().contains(("LOB"))))
         {
+	    if ((*j).isUserType())
+	    {
+		    toStatusMessage(tr("This table contains complex/user defined columns "
+				       "and can not be edited"));
+		    return 0;
+	    }
+
             if (where)
                 sql += (" AND (");
             else
@@ -400,7 +427,7 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn)
     {
         toStatusMessage(tr("This table contains only LOB/LONG "
                            "columns and can not be edited"));
-        return;
+        return 0;
     }
 
     toQList args;
@@ -430,9 +457,10 @@ void toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn)
 
     toQuery q(conn, sql, args);
     if (toConfigurationSingle::Instance().autoCommit())
-        conn.commit();
+      conn.commit();
     else
-        toMainWidget()->setNeedCommit(conn);
+      toMainWidget()->setNeedCommit(conn);
+    return q.rowsProcessed();
 }
 
 
@@ -455,6 +483,7 @@ bool toResultTableViewEdit::commitChanges(bool status)
                              this);
 
     bool error = false;
+    unsigned updated=0, added=0, deleted=0;
     for (int changeIndex = 0; changeIndex < Changes.size(); changeIndex++)
     {
         progress.setValue(changeIndex);
@@ -469,13 +498,13 @@ bool toResultTableViewEdit::commitChanges(bool status)
             switch (change.kind)
             {
             case Delete:
-                commitDelete(change, conn);
+                deleted += commitDelete(change, conn);
                 break;
             case Add:
-                commitAdd(change, conn);
+                added += commitAdd(change, conn);
                 break;
             case Update:
-                commitUpdate(change, conn);
+                updated += commitUpdate(change, conn);
                 break;
             default:
                 toStatusMessage(tr("Internal error."));
@@ -489,8 +518,12 @@ bool toResultTableViewEdit::commitChanges(bool status)
         }
     }
 
-    toStatusMessage(tr("Saved %1 changes").arg(Changes.size(), 0, 10), false, false);
-
+    toStatusMessage(tr("Saved %1 changes(updated %2, added %3, deleted %4)")
+		    .arg(Changes.size(), 0, 10)
+		    .arg(updated, 0, 10)
+		    .arg(added, 0, 10)
+		    .arg(deleted, 0, 10)
+		    , false, false);
     if (error)
         refresh();
     else
