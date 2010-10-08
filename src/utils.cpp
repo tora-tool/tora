@@ -782,7 +782,7 @@ QPixmap connectionColorPixmap(const QString & name)
         painter.setBrush(brush);
 
         QPen pen(Qt::black);
-        pen.setWidth(1.5);
+        pen.setWidth(1);
         pen.setCosmetic(true);
         painter.setPen(pen);
 

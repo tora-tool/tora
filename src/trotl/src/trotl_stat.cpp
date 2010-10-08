@@ -353,7 +353,7 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		}
 	}
 
-	ub4 iters;
+	ub4 iters = 0;
 	switch(STMT_TYPE t = get_stmt_type())
 	{
 	case STMT_OTHER:
@@ -390,6 +390,9 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		iters = 1;
 		_last_buff_row = 0;
 		_state |= EOF_DATA;
+		break;
+	// do nothing
+	case STMT_NONE:
 		break;
 	};
 

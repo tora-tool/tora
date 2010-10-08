@@ -138,6 +138,8 @@ public:
 	        default:
 	        	Q_ASSERT_X(0, "compare", "more comparation is not supported now");
 	    };
+	// never reached
+	return false;
     }
 
 private:

@@ -451,6 +451,7 @@ public:
 	}
 	/* virtual */ QByteArray read(unsigned offset) const
 	{
+		return QByteArray();
 	}
 	/* virtual */ void write(QByteArray const &data)
 	{
