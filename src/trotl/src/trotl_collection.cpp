@@ -39,7 +39,9 @@ namespace trotl {
 //Util::RegisterInFactory<BindParCollectionTabNum, BindParFactTwoParmSing> regBindCollection("???Collection???"); TODO
 //Util::RegisterInFactory<BindParCollectionTabNum, DefineParFactTwoParmSing, int> regDefineCollection((OCI_TYPECODE_VARRAY << 8) + 2);
 Util::RegisterInFactory<BindParCollectionTabNum, CustDefineParFactTwoParmSing> regCustDefineNTY_NUM_TAB("TABLE OF NUMBER");
+Util::RegisterInFactory<BindParCollectionTabNum, CustDefineParFactTwoParmSing> regCustDefineNTY_INT_TAB("TABLE OF INTEGER");
 Util::RegisterInFactory<BindParCollectionTabVarchar, CustDefineParFactTwoParmSing> regCustDefineNTY_VARCHAR_TAB("TABLE OF VARCHAR2");
+Util::RegisterInFactory<BindParCollectionTabVarchar, CustDefineParFactTwoParmSing> regCustDefineNTY_CHAR_TAB("TABLE OF CHAR");
 
 void BindParCollectionTabNum::define_hook(SqlStatement &stmt)
 {
@@ -254,6 +256,7 @@ tstring SqlCollection::str() const
 				_stringrepres << tstring((const char*)str_buf, str_len);
 			}
 			break;
+			case SQLT_AFC: // fixed char
 			case SQLT_CHR: // NOTE: this is also valid for array of VARCHAR2
 			{
 				_stringrepres << '\'' << OCIStringPtr(_conn._env, *(OCIString **)field) << '\'';
