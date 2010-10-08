@@ -54,8 +54,7 @@ struct TROTL_EXPORT BindParDate: public SqlStatement::BindPar
 {
 	BindParDate(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 	{
-		valuep = (void**) new unsigned char [ _cnt * sizeof(OCIDate) ];
-		memset(valuep, 0x00, _cnt * sizeof(OCIDate) );
+		valuep = (void**) calloc(_cnt, sizeof(OCIDate));
 
 		dty = SQLT_ODT;
 		value_sz = sizeof(OCIDate);
@@ -68,8 +67,7 @@ struct TROTL_EXPORT BindParDate: public SqlStatement::BindPar
 
 	BindParDate(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): SqlStatement::BindPar(pos, stmt, decl)
 	{
-		valuep = (void**) new unsigned char [ _cnt * sizeof(OCIDate) ];
-		memset(valuep, 0x00, _cnt * sizeof(OCIDate) );
+		valuep = (void**) calloc(_cnt, sizeof(OCIDate));
 
 		dty = SQLT_ODT;
 		value_sz = sizeof(OCIDate);
@@ -81,13 +79,7 @@ struct TROTL_EXPORT BindParDate: public SqlStatement::BindPar
 	}
 
 	~BindParDate()
-	{
-		if(valuep)
-		{
-			delete[] (unsigned char*)valuep;
-			valuep = NULL;
-		}
-	}
+	{}
 
 	virtual tstring get_string(unsigned int row) const;
 

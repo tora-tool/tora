@@ -83,13 +83,7 @@ struct TROTL_EXPORT BindParVarchar: public SqlStatement::BindPar
 	}
 
 	~BindParVarchar()
-	{
-		if(valuep)
-		{
-			delete[] (char*)valuep;
-			valuep = NULL;
-		}
-	}
+	{}
 
 //	template<class return_type>
 //	return_type get_number(unsigned int row) const
@@ -142,13 +136,7 @@ struct TROTL_EXPORT BindParChar: public SqlStatement::BindPar
 	}
 
 	~BindParChar()
-	{
-		if(valuep)
-		{
-			delete[] (char*)valuep;
-			valuep = NULL;
-		}
-	}
+	{}
 
 	virtual tstring get_string(unsigned int row) const
 	{
@@ -189,13 +177,7 @@ struct TROTL_EXPORT BindParRaw: public SqlStatement::BindPar
 	}
 
 	~BindParRaw()
-	{
-		if(valuep)
-		{
-			delete[] (char*)valuep;
-			valuep = NULL;
-		}
-	}
+	{}
 	
 	virtual tstring get_string(unsigned int row) const
 	{

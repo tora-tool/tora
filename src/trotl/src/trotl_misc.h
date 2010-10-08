@@ -76,13 +76,7 @@ struct TROTL_EXPORT BindParMisc: public SqlStatement::BindPar
 	}
 
 	~BindParMisc()
-	{
-		if(valuep)
-		{
-			delete[] (char*)valuep;
-			valuep = NULL;
-		}
-	}
+	{}
 
 	virtual tstring get_string(unsigned int row) const
 	{	  

@@ -160,6 +160,7 @@ public:
 			if(rlenp) { free(rlenp); rlenp = NULL; }
 			// if(rcodep) { delete[] rcodep; rcodep = NULL; }
 			if(alenp) { free(alenp); alenp = NULL; }
+			if(valuep) { free(valuep); valuep = NULL; }
 		};
 		
 		// every datatype can be converted to a string
@@ -544,30 +545,24 @@ template<class wrapped_type, unsigned int SQLT_TYPE>
 class TBindParInt: public SqlStatement::BindPar
 {
 public:
-	TBindParInt(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl) : SqlStatement::BindPar(pos, stmt, decl)
+	TBindParInt(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 	{
-		valuep = new wrapped_type [_max_cnt];
+		valuep = calloc(_cnt, sizeof(wrapped_type));
 		dty = SQLT<wrapped_type>::value;
 		value_sz = sizeof(wrapped_type);
 		type_name = typeid(wrapped_type).name();
 	}
-
-	TBindParInt(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
+	
+	TBindParInt(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl) : SqlStatement::BindPar(pos, stmt, decl)
 	{
-		valuep = new wrapped_type [_cnt];
+		valuep = calloc(_max_cnt, sizeof(wrapped_type));
 		dty = SQLT<wrapped_type>::value;
 		value_sz = sizeof(wrapped_type);
 		type_name = typeid(wrapped_type).name();
 	}
 
 	~TBindParInt()
-	{
-		if(valuep)
-		{
-			delete[] (wrapped_type*)valuep;
-			valuep = NULL;
-		}			       
-	}
+	{}
 
 	virtual tstring get_string(unsigned int row) const
 	{

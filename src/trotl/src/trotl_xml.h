@@ -60,7 +60,7 @@ struct TROTL_EXPORT BindParXML: public SqlStatement::BindPar
 	// TODO remember OCIConn or at least svcctx in this class
 	BindParXML(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 	{
-		valuep = NULL;
+		free(valuep); valuep = NULL;
 		dty =  SQLT_NTY;
 		value_sz = 0;
 		type_name = ct.get_type_str();
@@ -69,7 +69,7 @@ struct TROTL_EXPORT BindParXML: public SqlStatement::BindPar
 
 	BindParXML(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): SqlStatement::BindPar(pos, stmt, decl)
 	{
-		valuep = NULL;
+		free(valuep); valuep = NULL;
 		dty =  SQLT_NTY;
 		value_sz = 0;
 		type_name = "SYS.XMLTYPE";
@@ -78,16 +78,8 @@ struct TROTL_EXPORT BindParXML: public SqlStatement::BindPar
 
 	~BindParXML()
 	{
-		if(_xmlvaluep)
-		{
-			delete[] _xmlvaluep;
-			_xmlvaluep = NULL;
-		}
-		if(_xmlindp)
-		{
-			delete[] _xmlindp;
-			_xmlindp = NULL;
-		}
+		if(_xmlvaluep) { free(_xmlvaluep); _xmlvaluep = NULL; }
+		if(_xmlindp) { free(_xmlindp); _xmlindp = NULL; }
 	}
 
 	virtual tstring get_string(unsigned int row) const;
