@@ -98,7 +98,7 @@ toTableSelect::toTableSelect(QWidget *parent, const char *name)
 {
     setObjectName(name);
     Schema = Table = NULL;
-    QTimer::singleShot(1, this, SLOT(setup()));
+    QTimer::singleShot(0, this, SLOT(setup()));
 }
 
 void toTableSelect::setTable(const QString &table)

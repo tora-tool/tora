@@ -60,7 +60,7 @@ toResult::toResult()
         FromSQL(false),
         DisableTab(true)
 {
-    QTimer::singleShot(1, &Slots, SLOT(setup()));
+    QTimer::singleShot(0, &Slots, SLOT(setup()));
 }
 
 void toResult::changeHandle(void)

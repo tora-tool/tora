@@ -1460,7 +1460,7 @@ void toResultView::setSorting(int col, bool asc)
         col = -1;
         toListView::setSorting(0, true);
         sort();
-        QTimer::singleShot(1, this, SLOT(checkHeading()));
+        QTimer::singleShot(0, this, SLOT(checkHeading()));
     }
     else if (SortConnected)
     {

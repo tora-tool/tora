@@ -572,13 +572,13 @@ toProfiler::toProfiler(QWidget *parent, toConnection &connection)
             catch (const QString &str)
             {
                 toStatusMessage(str);
-                QTimer::singleShot(1, this, SLOT(noTables()));
+                QTimer::singleShot(0, this, SLOT(noTables()));
                 return ;
             }
         }
         else
         {
-            QTimer::singleShot(1, this, SLOT(noTables()));
+            QTimer::singleShot(0, this, SLOT(noTables()));
             return ;
         }
     }
