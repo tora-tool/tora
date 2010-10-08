@@ -40,6 +40,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "utils.h"
+#include "tologger.h"
 
 #include "toconf.h"
 #include "toconnection.h"
@@ -365,7 +366,7 @@ static toSQL SQLLines("toOutput:Poll",
                       "BEGIN\n"
                       "    SYS.DBMS_OUTPUT.GET_LINE(:lines<char[1000],out>,\n"
                       "                             :stat<int,out>);\n"
-                      "    :lines := :lines || chr(10);\n"
+                      "    :lines<char[1000],out> := :lines<char[1000],out> || chr(10);\n"
                       "END;",
                       "Get lines from SQL Output, must use same bindings");
 
