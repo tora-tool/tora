@@ -192,6 +192,7 @@ private slots:
     void importButton_clicked(void);
     void searchEdit_textEdited(const QString & text);
     void testConnectionButton_clicked();
+    void saveConnectionButton_clicked();
 };
 
 

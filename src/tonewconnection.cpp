@@ -164,6 +164,9 @@ toNewConnection::toNewConnection(QWidget* parent, Qt::WFlags fl)
     connect(testConnectionButton, SIGNAL(clicked()),
             this, SLOT(testConnectionButton_clicked()));
 
+    connect(saveConnectionButton, SIGNAL(clicked()),
+            this, SLOT(saveConnectionButton_clicked()));
+
     // must make sure this gets called manually.
     changeProvider(Provider->currentIndex());
     Previous->setFocus(Qt::OtherFocusReason);
@@ -530,6 +533,11 @@ void toNewConnection::testConnectionButton_clicked()
                                  );
         delete c;
     }
+}
+
+void toNewConnection::saveConnectionButton_clicked()
+{
+    writeSettings(true);
 }
 
 toConnection* toNewConnection::makeConnection(bool savePrefs)
