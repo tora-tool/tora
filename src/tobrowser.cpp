@@ -733,185 +733,179 @@ static toSQL SQLListTablesTD("toBrowser:ListTables",
                              "",
                              "Teradata");
 
-// static toSQL SQLTableIndex("toBrowser:TableIndex",
-//                            "SELECT IND.index_name AS \"Index Name\",\n"
-//                            "       ind.column_name AS \"Column Name\",\n"
-//                            "       al.uniqueness AS \"Unique\",\n"
-//                            "       AL.index_type AS \"Type\",\n"
-//                            "       EX.column_expression AS \"Column Expression\"\n"
-//                            "  FROM SYS.ALL_IND_COLUMNS IND,\n"
-//                            "       SYS.ALL_IND_EXPRESSIONS EX,\n"
-//                            "       sys.All_Indexes AL\n"
-//                            " WHERE IND.INDEX_OWNER = :own<char[101]>\n"
-//                            "   AND IND.TABLE_NAME = :nam<char[101]>\n"
-//                            "   AND EX.index_owner ( + ) = IND.index_owner\n"
-//                            "   AND EX.index_name ( + ) = IND.index_name\n"
-//                            "   AND IND.index_name = AL.index_name ( + )\n"
-//                            "   AND IND.index_owner = AL.owner ( + )",
-//                            "List the indexes on a table",
-//                            "");
-// static toSQL SQLTableIndexSapDB("toBrowser:TableIndex",
-//                                 "SELECT owner,\n"
-//                                 "       indexname \"Index_Name\",\n"
-//                                 "       'NORMAL',\n"
-//                                 "       type\n"
-//                                 " FROM indexes \n"
-//                                 " WHERE owner = :f1<char[101]> and tablename = :f2<char[101]> \n"
-//                                 " ORDER by indexname",
-//                                 "",
-//                                 "",
-//                                 "SapDB");
-// 
-// static toSQL SQLTableIndexPG("toBrowser:TableIndex",
-//                              "SELECT u.usename AS \"Owner\",\n"
-//                              "       c2.relname AS \"Index Name\",\n"
-//                              "       pg_get_indexdef(i.indexrelid) as \"Definition\"\n"
-//                              "  FROM pg_class c,\n"
-//                              "       pg_class c2,\n"
-//                              "       pg_index i,\n"
-//                              "       pg_user u,\n"
-//                              "       pg_namespace n\n"
-//                              " WHERE c.relowner = u.usesysid\n"
-//                              "   AND n.nspname = :f1\n"
-//                              "   AND c.relname = :f2\n"
-//                              "   AND c.relowner = u.usesysid\n"
-//                              "   AND n.OID = c.relnamespace\n"
-//                              "   AND c.OID = i.indrelid\n"
-//                              "   AND i.indexrelid = c2.OID",
-//                              "",
-//                              "",
-//                              "PostgreSQL");
-// 
-// static toSQL SQLTableIndexMySQL3("toBrowser:TableIndex",
-//                                 "SHOW INDEX FROM `:f1<noquote>`.`:tab<noquote>`",
-//                                 "",
-//                                 "3.0",
-//                                 "MySQL");
-
-// static toSQL SQLTableConstraint(
-//     "toBrowser:TableConstraint",
-// //     "SELECT sub.constraint_name AS \"Constraint Name\",\n"
-// //     "       srch.search_condition AS \"Search Condition\",\n"
-// //     "       sub.condition AS \"Condition\",\n"
-// //     "       sub.status AS \"Status\",\n"
-// //     "       sub.constraint_type AS \"Type\",\n"
-// //     "       sub.delete_rule AS \"Delete Rule\",\n"
-// //     "       sub.GENERATED AS \"Generated\"\n"
-// //     "  FROM ( SELECT c.Constraint_Name,\n"
-// //     "                DECODE ( constraint_type,\n"
-// //     "                         'R',\n"
-// //     "                         'foreign key (' || a.column_name || ') references ' "
-// //     "|| a2.owner || '.' || a2.table_name || '(' || a2.column_name || ')',\n"
-// //     "                         'P',\n"
-// //     "                         'primary key (' || a.column_name || ')',\n"
-// //     "                         'U',\n"
-// //     "                         'unique (' || a.column_name || ')',\n"
-// //     "                         NULL ) AS condition,\n"
-// //     "                c.Status,\n"
-// //     "                c.Constraint_Type,\n"
-// //     "                c.Delete_Rule,\n"
-// //     "                c.GENERATED\n"
-// //     "           FROM sys.All_Constraints c,\n"
-// //     "                sys.all_cons_columns a,\n"
-// //     "                sys.all_cons_columns a2\n"
-// //     "          WHERE c.constraint_name = a.constraint_name\n"
-// //     "            AND c.Owner = :f1<char[101]>\n"
-// //     "            AND c.Table_Name = :f2<char[101]>\n"
-// //     "            AND c.r_constraint_name = a2.constraint_name ( + ) ) sub,\n"
-// //     "       sys.all_constraints srch\n"
-// //     " WHERE sub.constraint_name = srch.constraint_name",
-//        "SELECT main.constraint_name AS \"Constraint Name\",\n"
-//        "   main.column_name AS \"Column Name\",\n"
-//        "   main.search_condition AS \"Search Condition\",\n"
-//        "   main.status AS \"Status\",\n"
-//        "   main.constraint_type AS \"Type\",\n"
-//        "   main.delete_rule AS \"Delete Rule\",\n"
-//        "   main.generated AS \"Generated\",\n"
-//        "   DECODE ( main.constraint_type,\n"
-//        "            'R',\n"
-//        "            'FK (' || main.column_name || ') ref. ' || refs.owner || '.'\n"
-//        "                   || refs.table_name || '(' || refs.column_name || ')',\n"
-//        "            'P',\n"
-//        "            'PK (' || main.column_name || ')',\n"
-//        "            'U',\n"
-//        "            'unique (' || main.column_name || ')',\n"
-//        "            NULL ) AS \"Condition\"\n"
-//        "   FROM\n"
-//        "       (\n"
-//        "       SELECT\n"
-//        "           c.constraint_name,\n"
-//        "           a.column_name,\n"
-//        "           c.constraint_type,\n"
-//        "           c.r_constraint_name,\n"
-//        "           c.search_condition,\n"
-//        "           c.status,\n"
-//        "           c.delete_rule,\n"
-//        "           c.generated\n"
-//        "       FROM\n"
-//        "           sys.All_Constraints c,\n"
-//        "           sys.all_cons_columns a\n"
-//        "       WHERE\n"
-//        "               c.constraint_name = a.constraint_name\n"
-//        "           AND c.Owner = :f1<char[101]>\n"
-//        "           AND c.Table_Name = :f2<char[101]>\n"
-//        "       ORDER BY\n"
-//        "           c.constraint_name, a.constraint_name, a.position\n"
-//        "       ) main,\n"
-//        "       sys.all_cons_columns refs\n"
-//        "   WHERE\n"
-//        "           main.r_constraint_name = refs.constraint_name (+)\n"
-//        "       AND main.column_name = refs.column_name (+)",
-//     "List the constraints on a table",
-//     "");
-//
-// static toSQL SQLTableConstraintPG(
-//     "toBrowser:TableConstraint",
-//     "SELECT conname as \"Constraint Name\",\n"
-//     "       pg_catalog.pg_get_constraintdef ( r.OID,\n"
-//     "                                         TRUE ) AS \"Description\"\n"
-//     "  FROM pg_catalog.pg_constraint r,\n"
-//     "       pg_catalog.pg_class c,\n"
-//     "       pg_catalog.pg_namespace n\n"
-//     " WHERE n.nspname = :f1\n"
-//     "   AND c.relname = :f2\n"
-//     "   AND c.relnamespace = n.OID\n"
-//     "   AND c.OID = r.conrelid\n"
-//     " ORDER BY 1",
-//     "",
-//     "",
-//     "PostgreSQL");
-
-// static toSQL SQLTableReferences(
-//     "toBrowser:TableReferences",
-//     "SELECT a.Owner AS \"Owner\",\n"
-//     "       a.Table_Name AS \"Object\",\n"
-//     "       a.Constraint_Name AS \"Constraint\",\n"
-//     "       'foreign key (' || c.column_name || ') references ' || r.owner || "
-//     "'.' || r.table_name || '(' || r.column_name || ')' AS \"Condition\",\n"
-//     "       a.Status AS \"Status\",\n"
-//     "       a.Delete_Rule AS \"Delete Rule\"\n"
-//     "  FROM sys.all_constraints a,\n"
-//     "       sys.all_cons_columns r,\n"
-//     "       sys.all_cons_columns c\n"
-//     " WHERE a.constraint_type = 'R'\n"
-//     "   AND a.r_constraint_name IN ( SELECT b.constraint_name\n"
-//     "                                  FROM sys.all_constraints b\n"
-//     "                                 WHERE b.OWNER = :owner<char[101]>\n"
-//     "                                   AND b.TABLE_NAME = :tab<char[101]> )\n"
-//     "   AND a.r_constraint_name = r.constraint_name\n"
-//     "   AND a.constraint_name = c.constraint_name\n"
-//     " UNION SELECT owner,\n"
-//     "       name,\n"
-//     "       NULL,\n"
-//     "       TYPE || ' ' || dependency_type,\n"
-//     "       'DEPENDENCY',\n"
-//     "       NULL\n"
-//     "  FROM sys.all_dependencies\n"
-//     " WHERE referenced_owner = :owner<char[101]>\n"
-//     "   AND referenced_name = :tab<char[101]>",
-//     "List the references on a table",
-//     "");
-
+/* static toSQL SQLTableIndex("toBrowser:TableIndex",
+                            "SELECT IND.index_name AS \"Index Name\",\n"
+                            "       ind.column_name AS \"Column Name\",\n"
+                            "       al.uniqueness AS \"Unique\",\n"
+                            "       AL.index_type AS \"Type\",\n"
+                            "       EX.column_expression AS \"Column Expression\"\n"
+                            "  FROM SYS.ALL_IND_COLUMNS IND,\n"
+                            "       SYS.ALL_IND_EXPRESSIONS EX,\n"
+                            "       sys.All_Indexes AL\n"
+                            " WHERE IND.INDEX_OWNER = :own<char[101]>\n"
+                            "   AND IND.TABLE_NAME = :nam<char[101]>\n"
+                            "   AND EX.index_owner ( + ) = IND.index_owner\n"
+                            "   AND EX.index_name ( + ) = IND.index_name\n"
+                            "   AND IND.index_name = AL.index_name ( + )\n"
+                            "   AND IND.index_owner = AL.owner ( + )",
+                            "List the indexes on a table",
+                            "");*/
+/* static toSQL SQLTableIndexSapDB("toBrowser:TableIndex",
+                                 "SELECT owner,\n"
+                                 "       indexname \"Index_Name\",\n"
+                                 "       'NORMAL',\n"
+                                 "       type\n"
+                                 " FROM indexes \n"
+                                 " WHERE owner = :f1<char[101]> and tablename = :f2<char[101]> \n"
+                                 " ORDER by indexname",
+                                 "",
+                                 "",
+                                 "SapDB");*/
+/* static toSQL SQLTableIndexPG("toBrowser:TableIndex",
+                              "SELECT u.usename AS \"Owner\",\n"
+                              "       c2.relname AS \"Index Name\",\n"
+                              "       pg_get_indexdef(i.indexrelid) as \"Definition\"\n"
+                              "  FROM pg_class c,\n"
+                              "       pg_class c2,\n"
+                              "       pg_index i,\n"
+                              "       pg_user u,\n"
+                              "       pg_namespace n\n"
+                              " WHERE c.relowner = u.usesysid\n"
+                              "   AND n.nspname = :f1\n"
+                              "   AND c.relname = :f2\n"
+                              "   AND c.relowner = u.usesysid\n"
+                              "   AND n.OID = c.relnamespace\n"
+                              "   AND c.OID = i.indrelid\n"
+                              "   AND i.indexrelid = c2.OID",
+                              "",
+                              "",
+                              "PostgreSQL");*/
+/* static toSQL SQLTableIndexMySQL3("toBrowser:TableIndex",
+                                 "SHOW INDEX FROM `:f1<noquote>`.`:tab<noquote>`",
+                                 "",
+                                 "3.0",
+                                 "MySQL");*/
+/* static toSQL SQLTableConstraint(
+     "toBrowser:TableConstraint",
+//     "SELECT sub.constraint_name AS \"Constraint Name\",\n"
+//     "       srch.search_condition AS \"Search Condition\",\n"
+//     "       sub.condition AS \"Condition\",\n"
+//     "       sub.status AS \"Status\",\n"
+//     "       sub.constraint_type AS \"Type\",\n"
+//     "       sub.delete_rule AS \"Delete Rule\",\n"
+//     "       sub.GENERATED AS \"Generated\"\n"
+//     "  FROM ( SELECT c.Constraint_Name,\n"
+//     "                DECODE ( constraint_type,\n"
+//     "                         'R',\n"
+//     "                         'foreign key (' || a.column_name || ') references ' "
+//     "|| a2.owner || '.' || a2.table_name || '(' || a2.column_name || ')',\n"
+//     "                         'P',\n"
+//     "                         'primary key (' || a.column_name || ')',\n"
+//     "                         'U',\n"
+//     "                         'unique (' || a.column_name || ')',\n"
+//     "                         NULL ) AS condition,\n"
+//     "                c.Status,\n"
+//     "                c.Constraint_Type,\n"
+//     "                c.Delete_Rule,\n"
+//     "                c.GENERATED\n"
+//     "           FROM sys.All_Constraints c,\n"
+//     "                sys.all_cons_columns a,\n"
+//     "                sys.all_cons_columns a2\n"
+//     "          WHERE c.constraint_name = a.constraint_name\n"
+//     "            AND c.Owner = :f1<char[101]>\n"
+//     "            AND c.Table_Name = :f2<char[101]>\n"
+//     "            AND c.r_constraint_name = a2.constraint_name ( + ) ) sub,\n"
+//     "       sys.all_constraints srch\n"
+//     " WHERE sub.constraint_name = srch.constraint_name",
+       "SELECT main.constraint_name AS \"Constraint Name\",\n"
+       "   main.column_name AS \"Column Name\",\n"
+       "   main.search_condition AS \"Search Condition\",\n"
+       "   main.status AS \"Status\",\n"
+       "   main.constraint_type AS \"Type\",\n"
+       "   main.delete_rule AS \"Delete Rule\",\n"
+       "   main.generated AS \"Generated\",\n"
+       "   DECODE ( main.constraint_type,\n"
+       "            'R',\n"
+       "            'FK (' || main.column_name || ') ref. ' || refs.owner || '.'\n"
+       "                   || refs.table_name || '(' || refs.column_name || ')',\n"
+       "            'P',\n"
+       "            'PK (' || main.column_name || ')',\n"
+       "            'U',\n"
+       "            'unique (' || main.column_name || ')',\n"
+       "            NULL ) AS \"Condition\"\n"
+       "   FROM\n"
+       "       (\n"
+       "       SELECT\n"
+       "           c.constraint_name,\n"
+       "           a.column_name,\n"
+       "           c.constraint_type,\n"
+       "           c.r_constraint_name,\n"
+       "           c.search_condition,\n"
+       "           c.status,\n"
+       "           c.delete_rule,\n"
+       "           c.generated\n"
+       "       FROM\n"
+       "           sys.All_Constraints c,\n"
+       "           sys.all_cons_columns a\n"
+       "       WHERE\n"
+       "               c.constraint_name = a.constraint_name\n"
+       "           AND c.Owner = :f1<char[101]>\n"
+       "           AND c.Table_Name = :f2<char[101]>\n"
+       "       ORDER BY\n"
+       "           c.constraint_name, a.constraint_name, a.position\n"
+       "       ) main,\n"
+       "       sys.all_cons_columns refs\n"
+       "   WHERE\n"
+       "           main.r_constraint_name = refs.constraint_name (+)\n"
+       "       AND main.column_name = refs.column_name (+)",
+    "List the constraints on a table",
+    "");*/
+/* static toSQL SQLTableConstraintPG(
+     "toBrowser:TableConstraint",
+     "SELECT conname as \"Constraint Name\",\n"
+     "       pg_catalog.pg_get_constraintdef ( r.OID,\n"
+     "                                         TRUE ) AS \"Description\"\n"
+     "  FROM pg_catalog.pg_constraint r,\n"
+     "       pg_catalog.pg_class c,\n"
+     "       pg_catalog.pg_namespace n\n"
+     " WHERE n.nspname = :f1\n"
+     "   AND c.relname = :f2\n"
+     "   AND c.relnamespace = n.OID\n"
+     "   AND c.OID = r.conrelid\n"
+     " ORDER BY 1",
+     "",
+     "",
+     "PostgreSQL");*/
+/* static toSQL SQLTableReferences(
+     "toBrowser:TableReferences",
+     "SELECT a.Owner AS \"Owner\",\n"
+     "       a.Table_Name AS \"Object\",\n"
+     "       a.Constraint_Name AS \"Constraint\",\n"
+     "       'foreign key (' || c.column_name || ') references ' || r.owner || "
+     "'.' || r.table_name || '(' || r.column_name || ')' AS \"Condition\",\n"
+     "       a.Status AS \"Status\",\n"
+     "       a.Delete_Rule AS \"Delete Rule\"\n"
+     "  FROM sys.all_constraints a,\n"
+     "       sys.all_cons_columns r,\n"
+     "       sys.all_cons_columns c\n"
+     " WHERE a.constraint_type = 'R'\n"
+     "   AND a.r_constraint_name IN ( SELECT b.constraint_name\n"
+     "                                  FROM sys.all_constraints b\n"
+     "                                 WHERE b.OWNER = :owner<char[101]>\n"
+     "                                   AND b.TABLE_NAME = :tab<char[101]> )\n"
+     "   AND a.r_constraint_name = r.constraint_name\n"
+     "   AND a.constraint_name = c.constraint_name\n"
+     " UNION SELECT owner,\n"
+     "       name,\n"
+     "       NULL,\n"
+     "       TYPE || ' ' || dependency_type,\n"
+     "       'DEPENDENCY',\n"
+     "       NULL\n"
+     "  FROM sys.all_dependencies\n"
+     " WHERE referenced_owner = :owner<char[101]>\n"
+     "   AND referenced_name = :tab<char[101]>",
+     "List the references on a table",
+     "");*/
 /*static toSQL SQLTableTriggerSapDB("toBrowser:TableTrigger",
                                   "SELECT TriggerName,'UPDATE' \"Event\",''\"Column\",'ENABLED' \"Status\",''\"Description\"\n"
                                   " FROM triggers \n"
@@ -996,27 +990,27 @@ static toSQL SQLTableInfoSapDB("toBrowser:TableInformation",
                                "Table Statistics",
                                "",
                                "SapDB");*/
-// static toSQL SQLTablePartition("toBrowser:TablePartitions",
-//                                "select    p.partition_name \"Partition\"\n"
-//                                " , p.composite \"Composite\"\n"
-//                                " , p.num_rows \"Partition rows\"\n"
-//                                " , p.high_value \"High value\"\n"
-//                                " , p.subpartition_count \"Subpartitions\"\n"
-//                                " , p.partition_position \"Position\"\n"
-//                                " , s.subpartition_name \"Subpartition\"\n"
-//                                " , s.num_rows \"Subpartition rows\"\n"
-//                                " , s.subpartition_position \"Subpartition position\"\n"
-//                                "  from all_tab_partitions p,\n"
-//                                "       all_tab_subpartitions s\n"
-//                                " where p.table_owner = s.table_owner(+)\n"
-//                                "   and p.table_name = s.table_name(+)\n"
-//                                "   and p.partition_name = s.partition_name(+)\n"
-//                                "   and p.table_owner like upper(:table_owner<char[101]>)\n"
-//                                "   and p.table_name like upper(:table_name<char[101]>)\n"
-//                                " order by p.partition_name\n"
-//                                " , s.subpartition_name\n",
-//                                "Table partitions",
-//                                "0801");
+/* static toSQL SQLTablePartition("toBrowser:TablePartitions",
+                                "select    p.partition_name \"Partition\"\n"
+                                " , p.composite \"Composite\"\n"
+                                " , p.num_rows \"Partition rows\"\n"
+                                " , p.high_value \"High value\"\n"
+                                " , p.subpartition_count \"Subpartitions\"\n"
+                                " , p.partition_position \"Position\"\n"
+                                " , s.subpartition_name \"Subpartition\"\n"
+                                " , s.num_rows \"Subpartition rows\"\n"
+                                " , s.subpartition_position \"Subpartition position\"\n"
+                                "  from all_tab_partitions p,\n"
+                                "       all_tab_subpartitions s\n"
+                                " where p.table_owner = s.table_owner(+)\n"
+                                "   and p.table_name = s.table_name(+)\n"
+                                "   and p.partition_name = s.partition_name(+)\n"
+                                "   and p.table_owner like upper(:table_owner<char[101]>)\n"
+                                "   and p.table_name like upper(:table_name<char[101]>)\n"
+                                " order by p.partition_name\n"
+                                " , s.subpartition_name\n",
+                                "Table partitions",
+                                "0801");*/
 
 static toSQL SQLListViewPgSQL("toBrowser:ListView",
                               "SELECT c.relname as View_Name\n"
@@ -1050,26 +1044,26 @@ static toSQL SQLListViewTD("toBrowser:ListView",
                            "",
                            "Teradata");
 
-// static toSQL SQLViewSQLPgSQL("toBrowser:ViewSQL",
-//                              "SELECT pg_get_viewdef(c.relname)\n"
-//                              "  FROM pg_class c LEFT OUTER JOIN pg_namespace n ON c.relnamespace=n.oid\n"
-//                              " WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
-//                              "   AND c.relkind = 'v' AND c.relname = :f2",
-//                              "Display SQL of a specified view",
-//                              "7.1",
-//                              "PostgreSQL");
-// static toSQL SQLViewSQL("toBrowser:ViewSQL",
-//                         "SELECT Text SQL\n"
-//                         "  FROM SYS.ALL_Views\n"
-//                         " WHERE Owner = :f1<char[101]> AND View_Name = :f2<char[101]>",
-//                         "");
-// static toSQL SQLViewSQLSapDb("toBrowser:ViewSQL",
-//                              "SELECT definition \"SQL\"\n"
-//                              " FROM viewdefs \n"
-//                              " WHERE  viewname = :f2<char[101]> and owner = upper(:f1<char[101]>)\n",
-//                              "",
-//                              "",
-//                              "SapDB");
+/* static toSQL SQLViewSQLPgSQL("toBrowser:ViewSQL",
+                              "SELECT pg_get_viewdef(c.relname)\n"
+                              "  FROM pg_class c LEFT OUTER JOIN pg_namespace n ON c.relnamespace=n.oid\n"
+                              " WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
+                              "   AND c.relkind = 'v' AND c.relname = :f2",
+                              "Display SQL of a specified view",
+                              "7.1",
+                              "PostgreSQL");*/
+/* static toSQL SQLViewSQL("toBrowser:ViewSQL",
+                         "SELECT Text SQL\n"
+                         "  FROM SYS.ALL_Views\n"
+                         " WHERE Owner = :f1<char[101]> AND View_Name = :f2<char[101]>",
+                         "");*/
+/* static toSQL SQLViewSQLSapDb("toBrowser:ViewSQL",
+                              "SELECT definition \"SQL\"\n"
+                              " FROM viewdefs \n"
+                              " WHERE  viewname = :f2<char[101]> and owner = upper(:f1<char[101]>)\n",
+                              "",
+                              "",
+                              "SapDB");*/
 
 static toSQL SQLListIndexMySQL3("toBrowser:ListIndex",
                                 "SHOW INDEX FROM :f1<char[100]>",
@@ -1108,75 +1102,74 @@ static toSQL SQLListIndexSapDb("toBrowser:ListIndex",
                                "",
                                "SapDB");
 
-// static toSQL SQLIndexColsMySQL("toBrowser:IndexCols",
-//                                "SHOW INDEX FROM `:f1<noquote>`.`:f2<noquote>`",
-//                                "Display columns on which an index is built",
-//                                "3.23",
-//                                "MySQL");
-// static toSQL SQLIndexCols("toBrowser:IndexCols",
-//                           "SELECT a.Table_Name,a.Column_Name,a.Column_Length,a.Descend,b.Column_Expression \" \"\n"
-//                           "  FROM sys.All_Ind_Columns a,sys.All_Ind_Expressions b\n"
-//                           " WHERE a.Index_Owner = :f1<char[101]> AND a.Index_Name = :f2<char[101]>\n"
-//                           "   AND a.Index_Owner = b.Index_Owner(+) AND a.Index_Name = b.Index_Name(+)\n"
-//                           "   AND a.column_Position = b.Column_Position(+)\n"
-//                           " ORDER BY a.Column_Position",
-//                           "",
-//                           "0801");
-// static toSQL SQLIndexCols8("toBrowser:IndexCols",
-//                            "SELECT Table_Name,Column_Name,Column_Length,Descend\n"
-//                            "  FROM SYS.ALL_IND_COLUMNS\n"
-//                            " WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
-//                            " ORDER BY Column_Position",
-//                            "",
-//                            "0800");
-// static toSQL SQLIndexCols7("toBrowser:IndexCols",
-//                            "SELECT Table_Name,Column_Name,Column_Length\n"
-//                            "  FROM SYS.ALL_IND_COLUMNS\n"
-//                            " WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
-//                            " ORDER BY Column_Position",
-//                            "",
-//                            "0703");
-// static toSQL SQLIndexColsPgSQL("toBrowser:IndexCols",
-//                                "SELECT a.attname,\n"
-//                                "       format_type(a.atttypid, a.atttypmod) as FORMAT,\n"
-//                                "       a.attnotnull,\n"
-//                                "       a.atthasdef\n"
-//                                "  FROM pg_class c LEFT OUTER JOIN pg_namespace n ON c.relnamespace=n.oid,\n"
-//                                "       pg_attribute a\n"
-//                                " WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
-//                                "   AND a.attrelid = c.oid AND c.relname = :f2\n"
-//                                "   AND a.attnum > 0\n"
-//                                " ORDER BY a.attnum\n",
-//                                "",
-//                                "7.1",
-//                                "PostgreSQL");
-// static toSQL SQLIndexColsSapDb("toBrowser:IndexCols",
-//                                "SELECT tablename,columnname,len \"Length\",DataType,Sort \n"
-//                                " FROM indexcolumns \n"
-//                                " WHERE  owner = upper(:f1<char[101]>) and indexname = upper(:f2<char[101]>)\n"
-//                                " ORDER BY indexname,columnno",
-//                                "",
-//                                "",
-//                                "SapDB");
-
-// static toSQL SQLIndexInfoSapDb("toBrowser:IndexInformation",
-//                                "SELECT  INDEXNAME,TABLENAME, TYPE, CREATEDATE,CREATETIME,INDEX_USED, DISABLED \n"
-//                                " FROM indexes\n"
-//                                " WHERE  owner = upper(:f1<char[101]>) and indexname = :f2<char[101]>\n",
-//                                "Display information about an index",
-//                                "",
-//                                "SapDB");
-// static toSQL SQLIndexInfo("toBrowser:IndexInformation",
-//                           "SELECT * FROM SYS.ALL_INDEXES\n"
-//                           " WHERE Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>",
-//                           "");
-// static toSQL SQLIndexStatistic("toBrowser:IndexStatstics",
-//                                "SELECT description \"Description\", value(char_value,numeric_value) \"Value\" \n"
-//                                " FROM indexstatistics \n"
-//                                " WHERE owner = upper(:f1<char[101]>) and indexname = :f2<char[101]>",
-//                                "Index Statistics",
-//                                "",
-//                                "SapDB");
+/* static toSQL SQLIndexColsMySQL("toBrowser:IndexCols",
+                                "SHOW INDEX FROM `:f1<noquote>`.`:f2<noquote>`",
+                                "Display columns on which an index is built",
+                                "3.23",
+                                "MySQL");*/
+/* static toSQL SQLIndexCols("toBrowser:IndexCols",
+                           "SELECT a.Table_Name,a.Column_Name,a.Column_Length,a.Descend,b.Column_Expression \" \"\n"
+                           "  FROM sys.All_Ind_Columns a,sys.All_Ind_Expressions b\n"
+                           " WHERE a.Index_Owner = :f1<char[101]> AND a.Index_Name = :f2<char[101]>\n"
+                           "   AND a.Index_Owner = b.Index_Owner(+) AND a.Index_Name = b.Index_Name(+)\n"
+                           "   AND a.column_Position = b.Column_Position(+)\n"
+                           " ORDER BY a.Column_Position",
+                           "",
+                           "0801");*/
+/* static toSQL SQLIndexCols8("toBrowser:IndexCols",
+                            "SELECT Table_Name,Column_Name,Column_Length,Descend\n"
+                            "  FROM SYS.ALL_IND_COLUMNS\n"
+                            " WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
+                            " ORDER BY Column_Position",
+                            "",
+                            "0800");*/
+/* static toSQL SQLIndexCols7("toBrowser:IndexCols",
+                            "SELECT Table_Name,Column_Name,Column_Length\n"
+                            "  FROM SYS.ALL_IND_COLUMNS\n"
+                            " WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
+                            " ORDER BY Column_Position",
+                            "",
+                            "0703");*/
+/* static toSQL SQLIndexColsPgSQL("toBrowser:IndexCols",
+                                "SELECT a.attname,\n"
+                                "       format_type(a.atttypid, a.atttypmod) as FORMAT,\n"
+                                "       a.attnotnull,\n"
+                                "       a.atthasdef\n"
+                                "  FROM pg_class c LEFT OUTER JOIN pg_namespace n ON c.relnamespace=n.oid,\n"
+                                "       pg_attribute a\n"
+                                " WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
+                                "   AND a.attrelid = c.oid AND c.relname = :f2\n"
+                                "   AND a.attnum > 0\n"
+                                " ORDER BY a.attnum\n",
+                                "",
+                                "7.1",
+                                "PostgreSQL");*/
+/* static toSQL SQLIndexColsSapDb("toBrowser:IndexCols",
+                                "SELECT tablename,columnname,len \"Length\",DataType,Sort \n"
+                                " FROM indexcolumns \n"
+                                " WHERE  owner = upper(:f1<char[101]>) and indexname = upper(:f2<char[101]>)\n"
+                                " ORDER BY indexname,columnno",
+                                "",
+                                "",
+                                "SapDB");*/
+/* static toSQL SQLIndexInfoSapDb("toBrowser:IndexInformation",
+                                "SELECT  INDEXNAME,TABLENAME, TYPE, CREATEDATE,CREATETIME,INDEX_USED, DISABLED \n"
+                                " FROM indexes\n"
+                                " WHERE  owner = upper(:f1<char[101]>) and indexname = :f2<char[101]>\n",
+                                "Display information about an index",
+                                "",
+                                "SapDB");*/
+/* static toSQL SQLIndexInfo("toBrowser:IndexInformation",
+                           "SELECT * FROM SYS.ALL_INDEXES\n"
+                           " WHERE Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>",
+                           "");*/
+/* static toSQL SQLIndexStatistic("toBrowser:IndexStatstics",
+                                "SELECT description \"Description\", value(char_value,numeric_value) \"Value\" \n"
+                                " FROM indexstatistics \n"
+                                " WHERE owner = upper(:f1<char[101]>) and indexname = :f2<char[101]>",
+                                "Index Statistics",
+                                "",
+                                "SapDB");*/
 
 static toSQL SQLListSequencePgSQL("toBrowser:ListSequence",
                                   "SELECT c.relname AS \"Sequence Name\"\n"
@@ -1193,16 +1186,16 @@ static toSQL SQLListSequence("toBrowser:ListSequence",
                              "   AND UPPER(SEQUENCE_NAME) LIKE :f2<char[101]>\n"
                              " ORDER BY Sequence_Name",
                              "");
-// static toSQL SQLSequenceInfoPgSQL("toBrowser:SequenceInformation",
-//                                   "SELECT *, substr(:f1,1) as \"Owner\" FROM :f2<noquote>",
-//                                   "Display information about a sequence",
-//                                   "7.1",
-//                                   "PostgreSQL");
-// static toSQL SQLSequenceInfo("toBrowser:SequenceInformation",
-//                              "SELECT * FROM SYS.ALL_SEQUENCES\n"
-//                              " WHERE Sequence_Owner = :f1<char[101]>\n"
-//                              "   AND Sequence_Name = :f2<char[101]>",
-//                              "");
+/* static toSQL SQLSequenceInfoPgSQL("toBrowser:SequenceInformation",
+                                   "SELECT *, substr(:f1,1) as \"Owner\" FROM :f2<noquote>",
+                                   "Display information about a sequence",
+                                   "7.1",
+                                   "PostgreSQL");*/
+/* static toSQL SQLSequenceInfo("toBrowser:SequenceInformation",
+                              "SELECT * FROM SYS.ALL_SEQUENCES\n"
+                              " WHERE Sequence_Owner = :f1<char[101]>\n"
+                              "   AND Sequence_Name = :f2<char[101]>",
+                              "");*/
 
 static toSQL SQLListSynonym("toBrowser:ListSynonym",
                             "SELECT DECODE(Owner,'PUBLIC','',Owner||'.')||Synonym_Name \"Synonym Name\"\n"
@@ -1212,93 +1205,88 @@ static toSQL SQLListSynonym("toBrowser:ListSynonym",
                             "   AND UPPER(Synonym_Name) LIKE :f2<char[101]>\n"
                             " ORDER BY Synonym_Name",
                             "List the available synonyms in a schema");
-// static toSQL SQLSynonymInfo("toBrowser:SynonymInformation",
-//                             "SELECT * FROM Sys.All_Synonyms a\n"
-//                             " WHERE Owner = :f1<char[101]>\n"
-//                             "   AND Synonym_Name = :f2<char[101]>",
-//                             "Display information about a synonym");
-
-// static toSQL SQLListSQLPgSQL("toBrowser:ListCode",
-//                              "SELECT p.proname AS Object_Name,\n"
-//                              "  CASE WHEN p.prorettype = 0 THEN 'PROCEDURE'\n"
-//                              "       ELSE 'FUNCTION'\n"
-//                              "   END AS Object_Type\n"
-//                              "FROM pg_proc p LEFT OUTER JOIN pg_namespace n ON p.pronamespace=n.oid\n"
-//                              "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
-//                              "ORDER BY Object_Name",
-//                              "List the available Code objects in a schema",
-//                              "7.1",
-//                              "PostgreSQL");
-// static toSQL SQLListSQL("toBrowser:ListCode",
-//                         "SELECT Object_Name,Object_Type,Status Type FROM SYS.ALL_OBJECTS\n"
-//                         " WHERE OWNER = :f1<char[101]>\n"
-//                         "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
-//                         "                       'PROCEDURE','TYPE')\n"
-//                         "   AND UPPER(OBJECT_NAME) LIKE :f2<char[101]>\n"
-//                         " ORDER BY Object_Name",
-//                         "");
-// static toSQL SQLListSQLShortPgSQL("toBrowser:ListCodeShort",
-//                                   "SELECT p.proname AS Object_Name\n"
-//                                   "FROM pg_proc p LEFT OUTER JOIN pg_namespace n ON p.pronamespace=n.oid\n"
-//                                   "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
-//                                   "ORDER BY Object_Name",
-//                                   "List the available Code objects in a schema, one column version",
-//                                   "7.1",
-//                                   "PostgreSQL");
-// static toSQL SQLListSQLShort("toBrowser:ListCodeShort",
-//                              "SELECT Object_Name Type FROM SYS.ALL_OBJECTS\n"
-//                              " WHERE OWNER = :f1<char[101]>\n"
-//                              "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
-//                              "                       'PROCEDURE','TYPE')\n"
-//                              "   AND UPPER(OBJECT_NAME) LIKE :f2<char[101]>\n"
-//                              " ORDER BY Object_Name",
-//                              "");
-
-
-// static toSQL SQLSQLTemplate("toBrowser:CodeTemplate",
-//                             "SELECT Text FROM SYS.ALL_SOURCE\n"
-//                             " WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
-//                             "   AND Type IN ('PACKAGE','PROCEDURE','FUNCTION','PACKAGE','TYPE')",
-//                             "Declaration of object displayed in template window");
+/* static toSQL SQLSynonymInfo("toBrowser:SynonymInformation",
+                             "SELECT * FROM Sys.All_Synonyms a\n"
+                             " WHERE Owner = :f1<char[101]>\n"
+                             "   AND Synonym_Name = :f2<char[101]>",
+                             "Display information about a synonym");*/
+/* static toSQL SQLListSQLPgSQL("toBrowser:ListCode",
+                              "SELECT p.proname AS Object_Name,\n"
+                              "  CASE WHEN p.prorettype = 0 THEN 'PROCEDURE'\n"
+                              "       ELSE 'FUNCTION'\n"
+                              "   END AS Object_Type\n"
+                              "FROM pg_proc p LEFT OUTER JOIN pg_namespace n ON p.pronamespace=n.oid\n"
+                              "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
+                              "ORDER BY Object_Name",
+                              "List the available Code objects in a schema",
+                              "7.1",
+                              "PostgreSQL");*/
+/* static toSQL SQLListSQL("toBrowser:ListCode",
+                         "SELECT Object_Name,Object_Type,Status Type FROM SYS.ALL_OBJECTS\n"
+                         " WHERE OWNER = :f1<char[101]>\n"
+                         "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
+                         "                       'PROCEDURE','TYPE')\n"
+                         "   AND UPPER(OBJECT_NAME) LIKE :f2<char[101]>\n"
+                         " ORDER BY Object_Name",
+                         "");*/
+/* static toSQL SQLListSQLShortPgSQL("toBrowser:ListCodeShort",
+                                   "SELECT p.proname AS Object_Name\n"
+                                   "FROM pg_proc p LEFT OUTER JOIN pg_namespace n ON p.pronamespace=n.oid\n"
+                                   "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
+                                   "ORDER BY Object_Name",
+                                   "List the available Code objects in a schema, one column version",
+                                   "7.1",
+                                   "PostgreSQL");*/
+/* static toSQL SQLListSQLShort("toBrowser:ListCodeShort",
+                              "SELECT Object_Name Type FROM SYS.ALL_OBJECTS\n"
+                              " WHERE OWNER = :f1<char[101]>\n"
+                              "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
+                              "                       'PROCEDURE','TYPE')\n"
+                              "   AND UPPER(OBJECT_NAME) LIKE :f2<char[101]>\n"
+                              " ORDER BY Object_Name",
+                              "");*/
+/* static toSQL SQLSQLTemplate("toBrowser:CodeTemplate",
+                             "SELECT Text FROM SYS.ALL_SOURCE\n"
+                             " WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
+                             "   AND Type IN ('PACKAGE','PROCEDURE','FUNCTION','PACKAGE','TYPE')",
+                             "Declaration of object displayed in template window");*/
 // PostgreSQL does not distinguish between Head and Body for Stored SQL
 // package code will be returnd for both Head and Body
-// static toSQL SQLSQLHeadPgSQL("toBrowser:CodeHead",
-//                              "SELECT p.prosrc\n"
-//                              "FROM pg_proc p LEFT OUTER JOIN pg_namespace n ON p.pronamespace=n.oid\n"
-//                              "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
-//                              "  AND p.proname = :f2\n",
-//                              "Declaration of object",
-//                              "7.1",
-//                              "PostgreSQL");
-// static toSQL SQLSQLHead("toBrowser:CodeHead",
-//                         "SELECT Text FROM SYS.ALL_SOURCE\n"
-//                         " WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
-//                         "   AND Type IN ('PACKAGE','TYPE')",
-//                         "");
-//
-// static toSQL SQLSQLBodyPgSQL("toBrowser:CodeBody",
-//                              "SELECT 'CREATE OR REPLACE FUNCTION ' || p.proname || ' ( ' ||\n"
-//                              "( SELECT array_to_string ( ARRAY ( SELECT t.typname\n"
-//                              "   FROM pg_type t\n"
-//                              "  WHERE t.OID = ANY ( p.proargtypes ) ),\n"
-//                              "   ', ' ) ) || ' ) RETURNS ' || ( SELECT t.typname\n"
-//                              "                                   from pg_type t\n"
-//                              "                                   where p.prorettype = t.oid) ||\n"
-//                              "   ' AS ' || quote_literal ( p.prosrc ) || ' language plpgsql;'\n"
-//                              "  FROM pg_proc p\n"
-//                              "  LEFT OUTER JOIN pg_namespace n\n"
-//                              "    ON p.pronamespace = n.OID\n"
-//                              " WHERE ( n.nspname = :f1 OR n.OID IS NULL )\n"
-//                              "   AND p.proname = :f2",
-//                              "Implementation of object",
-//                              "7.1",
-//                              "PostgreSQL");
-// static toSQL SQLSQLBody("toBrowser:CodeBody",
-//                         "SELECT Text FROM SYS.ALL_SOURCE\n"
-//                         " WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
-//                         "   AND Type IN ('PROCEDURE','FUNCTION','PACKAGE BODY','TYPE BODY')",
-//                         "");
-
+/* static toSQL SQLSQLHeadPgSQL("toBrowser:CodeHead",
+                              "SELECT p.prosrc\n"
+                              "FROM pg_proc p LEFT OUTER JOIN pg_namespace n ON p.pronamespace=n.oid\n"
+                              "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
+                              "  AND p.proname = :f2\n",
+                              "Declaration of object",
+                              "7.1",
+                              "PostgreSQL");*/
+/* static toSQL SQLSQLHead("toBrowser:CodeHead",
+                         "SELECT Text FROM SYS.ALL_SOURCE\n"
+                         " WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
+                         "   AND Type IN ('PACKAGE','TYPE')",
+                         "");*/
+/* static toSQL SQLSQLBodyPgSQL("toBrowser:CodeBody",
+                              "SELECT 'CREATE OR REPLACE FUNCTION ' || p.proname || ' ( ' ||\n"
+                              "( SELECT array_to_string ( ARRAY ( SELECT t.typname\n"
+                              "   FROM pg_type t\n"
+                              "  WHERE t.OID = ANY ( p.proargtypes ) ),\n"
+                              "   ', ' ) ) || ' ) RETURNS ' || ( SELECT t.typname\n"
+                              "                                   from pg_type t\n"
+                              "                                   where p.prorettype = t.oid) ||\n"
+                              "   ' AS ' || quote_literal ( p.prosrc ) || ' language plpgsql;'\n"
+                              "  FROM pg_proc p\n"
+                              "  LEFT OUTER JOIN pg_namespace n\n"
+                              "    ON p.pronamespace = n.OID\n"
+                              " WHERE ( n.nspname = :f1 OR n.OID IS NULL )\n"
+                              "   AND p.proname = :f2",
+                              "Implementation of object",
+                              "7.1",
+                              "PostgreSQL");*/
+/* static toSQL SQLSQLBody("toBrowser:CodeBody",
+                         "SELECT Text FROM SYS.ALL_SOURCE\n"
+                         " WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
+                         "   AND Type IN ('PROCEDURE','FUNCTION','PACKAGE BODY','TYPE BODY')",
+                         "");*/
 
 static toSQL SQLListTrigger("toBrowser:ListTrigger",
                             "SELECT Trigger_Name FROM SYS.ALL_TRIGGERS\n"
@@ -1306,35 +1294,35 @@ static toSQL SQLListTrigger("toBrowser:ListTrigger",
                             "   AND UPPER(TRIGGER_NAME) LIKE :f2<char[101]>\n"
                             " ORDER BY Trigger_Name",
                             "List the available triggers in a schema");
-// static toSQL SQLTriggerInfo("toBrowser:TriggerInfo",
-//                             "SELECT Owner,Trigger_Name,\n"
-//                             "       Trigger_Type,Triggering_Event,\n"
-//                             "       Table_Owner,Base_Object_Type,Table_Name,Column_Name,\n"
-//                             "       Referencing_Names,When_Clause,Status,\n"
-//                             "       Description,Action_Type\n"
-//                             "  FROM SYS.ALL_TRIGGERS\n"
-//                             "WHERE Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
-//                             "Display information about a trigger",
-//                             "0801");
-// static toSQL SQLTriggerInfo8("toBrowser:TriggerInfo",
-//                              "SELECT Owner,Trigger_Name,\n"
-//                              "       Trigger_Type,Triggering_Event,\n"
-//                              "       Table_Owner,Table_Name,\n"
-//                              "       Referencing_Names,When_Clause,Status,\n"
-//                              "       Description\n"
-//                              "  FROM SYS.ALL_TRIGGERS\n"
-//                              "WHERE Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
-//                              "",
-//                              "0800");
-// static toSQL SQLTriggerBody("toBrowser:TriggerBody",
-//                             "SELECT Trigger_Body FROM SYS.ALL_TRIGGERS\n"
-//                             " WHERE Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
-//                             "Implementation of trigger");
-// static toSQL SQLTriggerCols("toBrowser:TriggerCols",
-//                             "SELECT Column_Name,Column_List \"In Update\",Column_Usage Usage\n"
-//                             "  FROM SYS.ALL_TRIGGER_COLS\n"
-//                             " WHERE Trigger_Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
-//                             "Columns used by trigger");
+/* static toSQL SQLTriggerInfo("toBrowser:TriggerInfo",
+                             "SELECT Owner,Trigger_Name,\n"
+                             "       Trigger_Type,Triggering_Event,\n"
+                             "       Table_Owner,Base_Object_Type,Table_Name,Column_Name,\n"
+                             "       Referencing_Names,When_Clause,Status,\n"
+                             "       Description,Action_Type\n"
+                             "  FROM SYS.ALL_TRIGGERS\n"
+                             "WHERE Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
+                             "Display information about a trigger",
+                             "0801");*/
+/* static toSQL SQLTriggerInfo8("toBrowser:TriggerInfo",
+                              "SELECT Owner,Trigger_Name,\n"
+                              "       Trigger_Type,Triggering_Event,\n"
+                              "       Table_Owner,Table_Name,\n"
+                              "       Referencing_Names,When_Clause,Status,\n"
+                              "       Description\n"
+                              "  FROM SYS.ALL_TRIGGERS\n"
+                              "WHERE Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
+                              "",
+                              "0800");*/
+/* static toSQL SQLTriggerBody("toBrowser:TriggerBody",
+                             "SELECT Trigger_Body FROM SYS.ALL_TRIGGERS\n"
+                             " WHERE Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
+                             "Implementation of trigger");*/
+/* static toSQL SQLTriggerCols("toBrowser:TriggerCols",
+                             "SELECT Column_Name,Column_List \"In Update\",Column_Usage Usage\n"
+                             "  FROM SYS.ALL_TRIGGER_COLS\n"
+                             " WHERE Trigger_Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
+                             "Columns used by trigger");*/
 // #if DBLINK
 static toSQL SQLListDBLink("toBrowser:ListDBLink",
                            "SELECT Db_Link, Owner FROM SYS.ALL_DB_LINKS\n"
@@ -1345,16 +1333,16 @@ static toSQL SQLListDBLinkDBA("toBrowser:ListDBLinkDBA",
                               "SELECT Owner, Db_Link, Username, Host, Created\n"
                               " FROM SYS.DBA_DB_LINK\n",
                               "List database links as DBA");
-// static toSQL SQLDBLinkInfo("toBrowser:DBLinkInformation",
-//                            "SELECT * FROM Sys.all_db_links a\n"
-//                            " WHERE Owner = :f1<char[101]>\n"
-//                            "   AND DB_LINK = :f2<char[101]>",
-//                            "Display information about database link");
-// static toSQL SQLDBLinkSynonyms("toBrowser:DBLinkSynonyms",
-//                                "SELECT * FROM Sys.all_synonyms a\n"
-//                                " WHERE Owner = :f1<char[101]>\n"
-//                                "   AND DB_LINK = :f2<char[101]>",
-//                                "Display foreign synonyms");
+/* static toSQL SQLDBLinkInfo("toBrowser:DBLinkInformation",
+                            "SELECT * FROM Sys.all_db_links a\n"
+                            " WHERE Owner = :f1<char[101]>\n"
+                            "   AND DB_LINK = :f2<char[101]>",
+                            "Display information about database link");*/
+/* static toSQL SQLDBLinkSynonyms("toBrowser:DBLinkSynonyms",
+                                "SELECT * FROM Sys.all_synonyms a\n"
+                                " WHERE Owner = :f1<char[101]>\n"
+                                "   AND DB_LINK = :f2<char[101]>",
+                                "Display foreign synonyms");*/
 // #endif
 
 static toSQL SQLListDirectories("toBrowser:ListDirectories",
@@ -1393,6 +1381,8 @@ static toSQL SQLDropUser("toBrowser:DropUser",
 toBrowser::toBrowser(QWidget *parent, toConnection &connection)
         : toToolWidget(BrowserTool, "browser.html", parent, connection, "toBrowser")
 {
+    refreshing = false;
+
     Filter = new toBrowserFilter(false);
 
     // man toolbar of the tool
@@ -1949,7 +1939,9 @@ void toBrowser::refresh(void)
     try
     {
         Schema->refresh();
+        refreshing = true; // indicate that no object information should be fetched
         mainTab_currentChanged(m_mainTab->currentIndex());
+        refreshing = false;
     }
     TOCATCH
 }
@@ -2041,6 +2033,7 @@ void toBrowser::changeItem()
             m_browsersMap[ix]->changeParams(schema(), currentItemText());
         else
         {
+            QString obj;
             // If code browser has been clicked we need to know type of code (function, procedure...) too
             // as it is not possible to identify code by just schema and object (in MySQL there can be
             // a function and procedure with the same name in the same schema)
@@ -2050,7 +2043,13 @@ void toBrowser::changeItem()
                 qDebug("Only for code - toBrowserSchemaCodeBrowser cast!");
                 return;
             }
-            m_browsersMap[ix]->changeParams(schema(), currentItemText(), browser->objectType());
+
+            // When refreshing no object information should be displayd - so
+            // empty object name is passed. Trying to fetch currentItemText
+            // during refreshing crashes TOra.
+            if (!refreshing)
+                obj = currentItemText();
+            m_browsersMap[ix]->changeParams(schema(), obj/*currentItemText()*/, browser->objectType());
         }
     }
     else
@@ -2083,7 +2082,6 @@ void toBrowser::changeItem(const QModelIndex &)
     else if (browser->objectType() == "PROCEDURE"
              || browser->objectType() == "FUNCTION")
         m_browsersMap[ix]->setCurrentIndex(toBrowserCodeWidget::BodyTab);
-
 }
 
 void toBrowser::clearFilter(void)

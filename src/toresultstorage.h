@@ -139,6 +139,9 @@ public slots:
      * @param params Parameters needed as input to execute statement.
      */
     virtual void query(const QString &sql, const toQList &params);
+
+    /** Clear result widget */
+    virtual void clearData();
 };
 
 class toResultStorage : public toResultView

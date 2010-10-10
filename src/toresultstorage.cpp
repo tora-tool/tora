@@ -1264,4 +1264,10 @@ void toResultExtent::query(const QString &sql, const toQList &params)
     TOCATCH
 }
 
+void toResultExtent::clearData()
+{
+    List->clearData();
+    // TODO: graph should also be cleared. Somehow...
+}
+
 bool toStorageExtent::fileView;

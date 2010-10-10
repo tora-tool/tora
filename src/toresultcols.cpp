@@ -463,6 +463,7 @@ toResultCols::toResultCols(QWidget *parent, const char *name, Qt::WFlags f)
     Columns->setDisableTab(false);
     Columns->setReadAll(true);
     vbox->addWidget(Columns);
+    Columns->setSQL(SQLTableColumns);
 
     ColumnComments = NULL;
 
@@ -494,7 +495,7 @@ void toResultCols::query(const QString &sql, const toQList &param)
 
     toConnection &conn = connection();
 
-    if(ColumnComments)
+    if (ColumnComments)
     {
         Edit->setChecked(false);
         delete ColumnComments;
@@ -529,19 +530,7 @@ void toResultCols::query(const QString &sql, const toQList &param)
 
         TableName = conn.quote(Owner) + "." + conn.quote(Name);
 
-        Columns->setSQL(SQLTableColumns);
-        // MySQL is using information_schema now - so there should be always Owner defined
-//         if (toIsMySQL(conn))
-//         {
-//             if (Owner.isEmpty())
-//                 Columns->changeParams(Name);
-//             else
-//                 Columns->changeParams("`" + Owner + "`." + Name);
-//         }
-//         else
-//         {
-            Columns->changeParams(Owner, Name);
-//         }
+        Columns->changeParams(Owner, Name);
     }
     TOCATCH;
 
@@ -628,6 +617,20 @@ void toResultCols::query(const QString &sql, const toQList &param)
     }
 }
 
+void toResultCols::clearData()
+{
+    if (ColumnComments)
+    {
+        Edit->setChecked(false);
+        delete ColumnComments;
+        ColumnComments = 0;
+    }
+    // We need to clear QTableView here
+    Columns->clearData();
+    // Also clear two label fields
+    Title->clear();
+    Comment->clear();
+} // clearData
 
 void toResultCols::editComment(bool val)
 {

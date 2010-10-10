@@ -208,6 +208,19 @@ class toBrowser : public toToolWidget
     toMySQLUserAccess *AccessPanel;
 #endif
 
+    /* TS 2010-10-10 When refreshing object/schema list TOra crashes somewhere in
+       toBrowserSchemaCodeBrowser::objectName() as it does get some non null pointer as
+       "item" but is unable to call any methods of it.
+       As a workaround this bool is set to true when refreshing object list and thus
+       object name is set to NULL rather than being fetched from "item".
+       Test scenario to crash without this bool:
+         1. select tab "Code".
+         2. select a code (procedure, function etc.).
+         3. press "refresh".
+       TODO: toBrowserSchemaCodeBrowser::objectName() should be fixed and this bool removed.
+    */
+    bool refreshing;
+
 public:
     toBrowser(QWidget *parent, toConnection &connection);
     virtual ~toBrowser();

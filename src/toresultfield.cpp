@@ -87,6 +87,11 @@ void toResultField::query(const QString &sql, const toQList &param)
     TOCATCH
 }
 
+void toResultField::clearData()
+{
+    this->clear();
+}
+
 #define THRESHOLD 10240
 
 void toResultField::poll(void)

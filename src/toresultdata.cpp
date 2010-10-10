@@ -197,7 +197,7 @@ void toResultData::query(const QString &, const toQList &params)
     /* Always check, if either is empty, query will fail */
     if (Owner.isEmpty() || Table.isEmpty())
     {
-        /* Need to clear columns here */
+        Edit->clearData();
         return;
     }
 
@@ -228,6 +228,10 @@ void toResultData::query(const QString &, const toQList &params)
     Edit->query(SQL, params);
 }
 
+void toResultData::clearData()
+{
+    Edit->clearData();
+}
 
 void toResultData::exportData(std::map<QString, QString> &data,
                               const QString &prefix)

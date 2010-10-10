@@ -58,7 +58,9 @@
 #include <QHeaderView>
 #include <QMenu>
 
-
+/*! \brief Displays query result as a table and provides functionality to edit it.
+  Used in Schema browser tool.
+*/
 class toResultTableViewEdit : public toResultTableView
 {
     Q_OBJECT;

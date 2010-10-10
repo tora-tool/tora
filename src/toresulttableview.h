@@ -245,7 +245,6 @@ public:
      */
     virtual void query(const QString &sql, const toQList &param);
 
-
     /**
      * Reimplemented to create query and new model.
      *
@@ -256,6 +255,8 @@ public:
         query(sql, p);
     }
 
+    /** Clear result widget */
+    virtual void clearData();
 
     /**
      * Set statistics widget.

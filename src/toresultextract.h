@@ -71,6 +71,9 @@ public:
      */
     virtual void query(const QString &sql, const toQList &param);
 
+    /** Clear result widget */
+    virtual void clearData();
+
     /** Support Oracle
      */
     virtual bool canHandle(toConnection &conn);

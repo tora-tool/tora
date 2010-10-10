@@ -154,6 +154,12 @@ public:
      * @param Param3 Third parameter.
      */
     virtual void changeParams(const QString &Param1, const QString &Param2, const QString &Param3);
+
+    /** Clear result pane. When used in Schema Browser this method will be called when
+        nothing is selected in object list.
+     */
+    virtual void clearData() {}
+
     /** Reimplemented for internal reasons.
      */
     virtual bool canHandle(toConnection &)

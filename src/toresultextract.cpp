@@ -148,6 +148,11 @@ void toResultExtract::query(const QString &sql, const toQList &param)
     TOCATCH
 }
 
+void toResultExtract::clearData()
+{
+    editor()->clear();
+}
+
 bool toResultExtract::canHandle(toConnection &conn)
 {
     try

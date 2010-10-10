@@ -150,6 +150,11 @@ void toResultDepend::query(const QString &sql, const toQList &param)
     TOCATCH
 }
 
+void toResultDepend::clearData()
+{
+    clear();
+}
+
 void toResultDepend::poll(void)
 {
     try

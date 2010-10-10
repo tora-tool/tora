@@ -401,16 +401,18 @@ void toCodeModel::refresh(toConnection &conn, const QString &owner)
     // Note: MySQL does not support packages and types therefore these
     // branches are not included for MySQL connections.
     delete rootItem;
-    rootItem    = new toCodeModelItem(0, "Code");
+    rootItem = new toCodeModelItem(0, "Code");
     if (!toIsMySQL(conn))
         packageItem = new toCodeModelItem(rootItem, tr("Package"));
-    procItem    = new toCodeModelItem(rootItem, tr("Procedure"));
-    funcItem    = new toCodeModelItem(rootItem, tr("Function"));
+    procItem = new toCodeModelItem(rootItem, tr("Procedure"));
+    funcItem = new toCodeModelItem(rootItem, tr("Function"));
     if (!toIsMySQL(conn))
-        typeItem    = new toCodeModelItem(rootItem, tr("Type"));
+        typeItem = new toCodeModelItem(rootItem, tr("Type"));
 
     toQList param;
     param.push_back(m_owner);
+
+    cleanup(); // stop/delete query object (if exists)
 
     try {
         query = new toEventQuery(conn,

@@ -80,6 +80,7 @@ toBrowserSchemaCodeBrowser::toBrowserSchemaCodeBrowser(QWidget * parent)
 QString toBrowserSchemaCodeBrowser::objectName()
 {
     toCodeModelItem *item = static_cast<toCodeModelItem*>(currentIndex().internalPointer());
+
     if (!item || item->type() == "NULL")
         return "";
 
@@ -90,6 +91,7 @@ QString toBrowserSchemaCodeBrowser::objectName()
     {
         return item->display();
     }
+
     if (item->type() == "SPEC" || item->type() == "BODY")
         return item->parent()->display();
 
@@ -113,5 +115,4 @@ void toBrowserSchemaCodeBrowser::changeParams(const QString & schema, const QStr
     //          in toBrowser. Dunno why...
     QCoreApplication::processEvents();
     m_model->refresh(toCurrentConnection(this), schema);
-
 }

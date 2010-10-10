@@ -362,6 +362,15 @@ void toResultItem::query(const QString &sql, const toQList &param)
     }
 }
 
+void toResultItem::clearData()
+{
+    for (int i = 0; i < NumWidgets; i++)
+    {
+        if (Widgets[i])
+            Widgets[i]->hide();
+    }
+}
+
 void toResultItem::poll(void)
 {
     try

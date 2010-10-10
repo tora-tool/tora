@@ -1,4 +1,4 @@
-#include <QtDebug>
+
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
@@ -140,21 +140,19 @@ void toBrowserBaseWidget::tabWidget_currentChanged(int ix)
 
 void toBrowserBaseWidget::updateData(const QString & ix)
 {
-    QString sch(schema());
-    QString obj(object());
-    // HACK: clear content on "refresh" or "schema change" with dummy empty names
-    // resolving bug #514310 - When switching to a different schema, or refreshing
-    // the current schema in schema browser, the detail
-    // window still displays the info for the last item selected...
-    if (sch.isEmpty())
-        sch = " ";
-    if (obj.isEmpty())
-        obj = " ";
+    // When changing connection or refreshing a list of objects (tables, indexes etc.)
+    // updateData will be called with shema/object being empty (as after refreshing
+    // nothing is selected yet. We have to clear result pane then without executing
+    // any queries.
+    if (schema().isEmpty() || object().isEmpty()) {
+        m_tabs[ix]->clearData();
+        return;
+    }
 
     // Some result types need a type specified in order to get information on correct
     // object (when the same object name is used for objects of different types).
     if (currentWidget()->objectName() == "extractView") {
-        m_tabs[ix]->changeParams(sch, obj, type());
+        m_tabs[ix]->changeParams(schema(), object(), type());
     } else {
         toConnection &conn = toMainWidget()->currentConnection();
         if (toIsMySQL(conn) && !type().isEmpty())
@@ -162,11 +160,11 @@ void toBrowserBaseWidget::updateData(const QString & ix)
             // MySQL requires additional parameter to fetch routine (procedure/function) creation script
             // Parameter must be passed first. This parameter (type) is only specified when it is a MySQL
             // connection and routine code is being fetched (as opposed to fetching say tables)
-            m_tabs[ix]->changeParams(sch, obj, type());
+            m_tabs[ix]->changeParams(schema(), object(), type());
         }
         else
         {
-            m_tabs[ix]->changeParams(sch, obj);
+            m_tabs[ix]->changeParams(schema(), object());
         }
     }
 }

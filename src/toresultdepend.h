@@ -88,6 +88,10 @@ public:
         toQList p;
         query(sql, p);
     }
+
+    /** Clear result widget */
+    virtual void clearData();
+
     /** Support Oracle
      */
     virtual bool canHandle(toConnection &conn);

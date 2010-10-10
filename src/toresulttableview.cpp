@@ -249,6 +249,17 @@ void toResultTableView::query(const QString &sql, const toQList &param)
     ColumnsResized = false;
 }
 
+void toResultTableView::clearData()
+{
+    // Note that destroying data model effectively "clears" QTableView
+    if (Model && running())
+        Model->stop();
+    if(Model)
+    {
+        delete Model;
+        Model = NULL;
+    }
+} // clearData
 
 void toResultTableView::createActions()
 {

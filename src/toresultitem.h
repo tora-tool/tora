@@ -184,6 +184,9 @@ public:
      */
     virtual void query(const QString &sql, const toQList &param);
 
+    /** Clear result widget */
+    virtual void clearData();
+
     /** Handle any connection
      */
     virtual bool canHandle(toConnection &)

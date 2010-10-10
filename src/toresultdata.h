@@ -125,6 +125,8 @@ public:
      */
     virtual void query(const QString &, const toQList &params);
 
+    /** Clear result widget */
+    virtual void clearData();
 
     /**
      * Reimplemented from toResult. Can handle all connections.
