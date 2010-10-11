@@ -155,12 +155,12 @@ void toBrowserBaseWidget::updateData(const QString & ix)
         m_tabs[ix]->changeParams(schema(), object(), type());
     } else {
         toConnection &conn = toMainWidget()->currentConnection();
-        if (toIsMySQL(conn) && !type().isEmpty())
+        if (toIsMySQL(conn) && !type().isEmpty() && (type() == "PROCEDURE" || type() == "FUNCTION"))
         {
             // MySQL requires additional parameter to fetch routine (procedure/function) creation script
-            // Parameter must be passed first. This parameter (type) is only specified when it is a MySQL
-            // connection and routine code is being fetched (as opposed to fetching say tables)
-            m_tabs[ix]->changeParams(schema(), object(), type());
+            // Parameter type must be passed first because it is not possible to rearrange parameters
+            // used in SQL.
+            m_tabs[ix]->changeParams(type(), schema(), object());
         }
         else
         {
