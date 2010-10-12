@@ -408,6 +408,7 @@ void toCodeModel::refresh(toConnection &conn, const QString &owner)
     funcItem = new toCodeModelItem(rootItem, tr("Function"));
     if (!toIsMySQL(conn))
         typeItem = new toCodeModelItem(rootItem, tr("Type"));
+    this->reset();
 
     toQList param;
     param.push_back(m_owner);

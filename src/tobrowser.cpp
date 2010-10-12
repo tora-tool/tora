@@ -1381,8 +1381,6 @@ static toSQL SQLDropUser("toBrowser:DropUser",
 toBrowser::toBrowser(QWidget *parent, toConnection &connection)
         : toToolWidget(BrowserTool, "browser.html", parent, connection, "toBrowser")
 {
-    refreshing = false;
-
     Filter = new toBrowserFilter(false);
 
     // man toolbar of the tool
@@ -1939,9 +1937,7 @@ void toBrowser::refresh(void)
     try
     {
         Schema->refresh();
-        refreshing = true; // indicate that no object information should be fetched
         mainTab_currentChanged(m_mainTab->currentIndex());
-        refreshing = false;
     }
     TOCATCH
 }
@@ -2033,7 +2029,6 @@ void toBrowser::changeItem()
             m_browsersMap[ix]->changeParams(schema(), currentItemText());
         else
         {
-            QString obj;
             // If code browser has been clicked we need to know type of code (function, procedure...) too
             // as it is not possible to identify code by just schema and object (in MySQL there can be
             // a function and procedure with the same name in the same schema)
@@ -2044,12 +2039,7 @@ void toBrowser::changeItem()
                 return;
             }
 
-            // When refreshing no object information should be displayd - so
-            // empty object name is passed. Trying to fetch currentItemText
-            // during refreshing crashes TOra.
-            if (!refreshing)
-                obj = currentItemText();
-            m_browsersMap[ix]->changeParams(schema(), obj/*currentItemText()*/, browser->objectType());
+            m_browsersMap[ix]->changeParams(schema(), currentItemText(), browser->objectType());
         }
     }
     else
