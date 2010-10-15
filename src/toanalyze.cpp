@@ -398,7 +398,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
         try
         {
             Plans->query(toSQL::string(SQLListPlans, connection).arg(
-                             toConfigurationSingle::Instance().planTable()));
+                             toConfigurationSingle::Instance().planTable(connection.user())));
         }
         TOCATCH;
 

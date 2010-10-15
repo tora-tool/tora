@@ -1784,10 +1784,11 @@ toOracleSetting::toOracleSetting(QWidget *parent)
 	setupUi(this);
 	DefaultDate->setText(toConfigurationSingle::Instance().dateFormat());
 	CheckPoint->setText(toConfigurationSingle::Instance().planCheckpoint());
-	ExplainPlan->setText(toConfigurationSingle::Instance().planTable());
+	ExplainPlan->setText(toConfigurationSingle::Instance().planTable(NULL));
 	OpenCursors->setValue(toConfigurationSingle::Instance().openCursors());
 	KeepPlans->setChecked(toConfigurationSingle::Instance().keepPlans());
  	VsqlPlans->setChecked(toConfigurationSingle::Instance().vsqlPlans());
+ 	SharedPlan->setChecked(toConfigurationSingle::Instance().sharedPlan());
 	int len = toConfigurationSingle::Instance().maxLong();
 	if (len >= 0)
 	{
@@ -1812,6 +1813,7 @@ void toOracleSetting::saveSetting()
 {
 	toConfigurationSingle::Instance().setKeepPlans(KeepPlans->isChecked());
  	toConfigurationSingle::Instance().setVsqlPlans(VsqlPlans->isChecked());
+ 	toConfigurationSingle::Instance().setSharedPlan(SharedPlan->isChecked());
 	toConfigurationSingle::Instance().setDateFormat(DefaultDate->text());
 
 	// try to change NLS for already running sessions

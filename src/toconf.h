@@ -124,6 +124,7 @@
 #define DEFAULT_MAX_CONTENT 100
 #define CONF_KEEP_PLANS  "KeepPlans" // default: false
 #define CONF_VSQL_PLANS  "VSqlPlans"    // default: true
+#define CONF_SHARED_PLAN  "SharedPlan"    // default: false
 #define CONF_RESTORE_SESSION "RestoreSession"
 #define CONF_DEFAULT_SESSION "DefaultSession"
 #define DEFAULT_SESSION  ".tora.tse"

@@ -88,7 +88,7 @@ public:
     int maxColDisp();
     void setMaxColDisp(int v);
 
-    QString planTable();
+    QString planTable(QString schema);
     void setPlanTable(const QString & v);
 
     QString planCheckpoint();
@@ -212,6 +212,9 @@ public:
 
     bool vsqlPlans();
     void setVsqlPlans(bool v);
+
+    bool sharedPlan();
+    void setSharedPlan(bool v);
 
     bool restoreSession();
     void setRestoreSession(bool v);

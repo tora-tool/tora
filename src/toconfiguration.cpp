@@ -114,6 +114,7 @@ public:
     int     m_maxContent;
     bool    m_keepPlans;
     bool    m_vsqlPlans;
+    bool    m_sharedPlan;
     bool    m_restoreSession;
     QString m_defaultSession;
     int     m_defaultFormat;
@@ -359,6 +360,7 @@ public:
         m_maxContent = s.value(CONF_MAX_CONTENT, DEFAULT_MAX_CONTENT).toInt();
         m_keepPlans = s.value(CONF_KEEP_PLANS, false).toBool();
         m_vsqlPlans = s.value(CONF_VSQL_PLANS, true).toBool();
+        m_sharedPlan = s.value(CONF_SHARED_PLAN, false).toBool();
         m_restoreSession = s.value(CONF_RESTORE_SESSION, false).toBool();
         m_defaultSession = s.value(CONF_DEFAULT_SESSION, getSpecialDir() + DEFAULT_SESSION).toString();
         // FIXME!
@@ -589,6 +591,7 @@ public:
         s.setValue(CONF_MAX_CONTENT, m_maxContent);
         s.setValue(CONF_KEEP_PLANS, m_keepPlans);
         s.setValue(CONF_VSQL_PLANS, m_vsqlPlans);
+        s.setValue(CONF_SHARED_PLAN, m_sharedPlan);
         s.setValue(CONF_RESTORE_SESSION, m_restoreSession);
         s.setValue(CONF_DEFAULT_SESSION, m_defaultSession);
         s.setValue(CONF_DEFAULT_FORMAT, m_defaultFormat);
@@ -1072,9 +1075,12 @@ void toConfiguration::setMaxColDisp(int v)
     p->m_maxColDisp = v;
 }
 
-QString toConfiguration::planTable()
+QString toConfiguration::planTable(QString schema)
 {
-    return p->m_planTable;
+    if(p->m_sharedPlan || p->m_planTable.contains('.') || schema.isNull())
+      return p->m_planTable;
+
+    return schema + '.' + p->m_planTable;
 }
 void toConfiguration::setPlanTable(const QString & v)
 {
@@ -1447,6 +1453,15 @@ bool toConfiguration::vsqlPlans()
 void toConfiguration::setVsqlPlans(bool v)
 {
     p->m_vsqlPlans = v;
+}
+
+bool toConfiguration::sharedPlan()
+{
+    return p->m_sharedPlan;
+}
+void toConfiguration::setSharedPlan(bool v)
+{
+    p->m_sharedPlan = v;
 }
 
 bool toConfiguration::restoreSession()

@@ -163,7 +163,7 @@ void toResultPlan::oracleNext(void)
 
     Ident = QString::fromLatin1("TOra ") + QString::number((int)time(NULL) + rand());
 
-    QString planTable(toConfigurationSingle::Instance().planTable());
+    QString planTable(toConfigurationSingle::Instance().planTable(conn.user()));
 
     QString sql = toShift(Statements);
     if (sql.isNull())
@@ -174,8 +174,8 @@ void toResultPlan::oracleNext(void)
     if (sql.length() > 0 && sql.at(sql.length() - 1).toLatin1() == ';')
         sql = sql.mid(0, sql.length() - 1);
 
-    QString explain = QString::fromLatin1("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2.%3 FOR %4").
-                      arg(Ident).arg(conn.user()).arg(planTable).arg(toSQLStripSpecifier(sql));
+    QString explain = QString::fromLatin1("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2 FOR %3").
+                      arg(Ident).arg(planTable).arg(toSQLStripSpecifier(sql));
 	
     if (!User.isNull() && User != conn.user().toUpper())
     {
@@ -204,7 +204,7 @@ void toResultPlan::oracleNext(void)
                                    toSQL::string(SQLViewPlan, conn).
 				   // arg(toConfigurationSingle::Instance().planTable()).
 				   // Since EXPLAIN PLAN is always to conn.user() plan_table
-				   arg(conn.user()+QString(".")+toConfigurationSingle::Instance().planTable()).
+				   arg(explain).
                                    arg(Ident), par);
         Reading = true;
     }
@@ -304,7 +304,7 @@ void toResultPlan::query(const QString &sql,
 
         clear();
 
-        QString planTable(toConfigurationSingle::Instance().planTable());
+        QString planTable(toConfigurationSingle::Instance().planTable(connection().user()));
 
         Statements.clear();
         if (sql.startsWith(QString::fromLatin1("SAVED:")))
@@ -372,7 +372,7 @@ void toResultPlan::poll(void)
                                            // arg(toConfigurationSingle::Instance().planTable()).
 					   // Since EXPLAIN PLAN is always to conn.user() plan_table
 					   // and current_schema can be different
-					   arg(conn.user()+QString(".")+toConfigurationSingle::Instance().planTable()).
+					   arg(toConfigurationSingle::Instance().planTable(conn.user())).
                                            arg(Ident), par);
                 Reading = true;
             }
@@ -484,19 +484,28 @@ void toResultPlan::checkException(const QString &str)
     {
         if (str.startsWith(QString::fromLatin1("ORA-02404")))
         {
-            QString planTable(toConfigurationSingle::Instance().planTable());
-            int ret = TOMessageBox::warning(this,
-                                            tr("Plan table doesn't exist"),
-                                            tr("Specified plan table %1 didn't exist.\n"
-                                               "Should TOra try to create it?").arg(planTable),
-                                            tr("&Yes"), tr("&No"), QString::null, 0, 1);
-            if (ret == 0)
-            {
-                connection().execute(toSQL::string(toSQL::TOSQL_CREATEPLAN,
-                                                   connection()).arg(planTable));
-                QString t = sql();
-                setSQL(QString::null);
-                query(t, params());
+            QString planTable(toConfigurationSingle::Instance().planTable(connection().user()));
+
+            // if shared plan table does not exist, do not try to create it
+            if(toConfigurationSingle::Instance().sharedPlan()) {
+                TOMessageBox::warning(this,
+                                      tr("Plan table doesn't exist"),
+                                      tr("Specified plan table %1 doesn't exist.").arg(planTable),
+                                      tr("&OK"));
+            } else {
+                int ret = TOMessageBox::warning(this,
+                                                tr("Plan table doesn't exist"),
+                                                tr("Specified plan table %1 doesn't exist.\n"
+                                                   "Should TOra try to create it?").arg(planTable),
+                                                tr("&Yes"), tr("&No"), QString::null, 0, 1);
+                if (ret == 0)
+                {
+                    connection().execute(toSQL::string(toSQL::TOSQL_CREATEPLAN,
+                                                       connection()).arg(planTable));
+                    QString t = sql();
+                    setSQL(QString::null);
+                    query(t, params());
+                }
             }
         }
         else
