@@ -783,7 +783,8 @@ void toMain::showFileMenu(void)
     commitAct->setEnabled(hascon);
     stopAct->setEnabled(hascon);
     rollbackAct->setEnabled(hascon);
-    refreshAct->setEnabled(hascon);
+    // disable reread cache if use caching is disabled
+    refreshAct->setEnabled(hascon && toConfigurationSingle::Instance().cacheDisk());
     closeConn->setEnabled(hascon);
 
     updateRecent();
