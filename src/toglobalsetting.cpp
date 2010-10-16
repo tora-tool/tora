@@ -346,6 +346,8 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
 //     InitialFetch->setValidator(new QIntValidator(InitialFetch));
 //     MaxContent->setValidator(new QIntValidator(InitialFetch));
 
+    NumberFormat->setCurrentIndex(toConfigurationSingle::Instance().numberFormat());
+
     Decimals->setValue(toConfigurationSingle::Instance().numberDecimals());
     if (NumberFormat->currentIndex() == 2)
         Decimals->setEnabled(true);
