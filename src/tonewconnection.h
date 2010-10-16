@@ -151,7 +151,6 @@ private:
                     const QString &host,
                     const QString &database,
                     const QString &schema,
-                    const QString &color,
                     int port);
     // fills form with data from previous connection at param row
     void loadPrevious(const QModelIndex & current);

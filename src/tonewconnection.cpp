@@ -243,7 +243,6 @@ void toNewConnection::writeSettings(bool checkHistory)
                            Host->currentText(),
                            Database->currentText(),
                            Schema->text(),
-                           colorComboBox->itemData(colorComboBox->currentIndex()).toString(),
                            Port->value()
                           );
     }
@@ -286,7 +285,6 @@ int toNewConnection::findHistory(const QString &provider,
                                  const QString &host,
                                  const QString &database,
                                  const QString &schema,
-                                 const QString &color,
                                  int port)
 {
     QMapIterator<int,toConnectionOptions> i(connectionModel()->availableConnections());
@@ -299,7 +297,6 @@ int toNewConnection::findHistory(const QString &provider,
                 host == opt.host &&
                 database == opt.database &&
                 schema == opt.schema &&
-                color == opt.color &&
                 port == opt.port)
             return i.key();
     }
@@ -506,7 +503,7 @@ void toNewConnection::importButton_clicked()
 
     foreach (toConnectionOptions opt, dia.availableConnections().values())
     {
-        if (findHistory(opt.provider, opt.username, opt.host, opt.database, opt.schema, opt.color, opt.port) != -1)
+        if (findHistory(opt.provider, opt.username, opt.host, opt.database, opt.schema, opt.port) != -1)
             continue;
 
         connectionModel()->append(max, opt);
