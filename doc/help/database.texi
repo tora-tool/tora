@@ -42,9 +42,10 @@ This page of the options contains settings on how to interact with the database.
 @item @strong{Connection test interval}
     Interval in seconds at which TOra should be sending dummy queries to database (see "Firewall mode").
 @item @strong{Indicate empty values as ''.}
-    TODO.
+    Display NULL values as "@{null@}" in the specified color.
 @item @strong{Number format.}
-    TODO.
+    Select the format for displaying numbers. You can choose from "Default", "Scientific" and "Fixed decimal" 
+    where the last allows you to specify the number of decimals.
 @end table
 
 There may also be pages under this for each individual database provider. Currently only Oracle and MySql uses this
@@ -62,17 +63,24 @@ feature. That setup looks like this.
     it starts to operate. The string should be a standard Oracle date to string conversion specification. For more
     information see the Oracle SQL Reference.
 @item @strong{Maximum cursors to keep open}
-    TODO.
+    This specifies the size of the connection pool if TOra was compiled with OTL_STREAM_POOLING_ON.
 @item @strong{Max LONG and LOB data length}
     The amount of data to read from LONG, BLOB or CLOB data fields. If you always want all the data to be read
     check the @strong{Unlimited} checkbox to the right. LONG datafields can not be specified as @strong{Unlimited},
     if this is specified 33000 characters are read by default.
 @item @strong{Explain plan table}
-    The table to use to temporarily store explained execution plans. Use the @strong{Create Table} button to create
-    the table if you don't have it.
+    The table to use to temporarily store explained execution plans. the table can be specified with or without a
+    schema name. If you leave out a schemaname the table will be created in the schema of the connected user, either
+    manually by clicking @strong{Create Table} button or automatically by TOra if needed and confirmed by the user.
 @item @strong{Keep plans}
-    If this is check explained plans are left in the explain plan table. The normal behaviour is to rollback the
+    If this is checked explained plans are left in the explain plan table. The normal behaviour is to rollback the
     explanation after it is initially read to keep the explain plan table from filling up with old plans.
+@item @strong{Use V$SQL_PLAN}
+    If possible, TOra will try to get the execution plan by reading V$SQL_PLAN instead of executing EXPLAIN for the
+    statement.
+@item @strong{shared PLAN_TABLE}
+    Enable this option if you wish to use the system-wide PLAN_TABLE provided by Oracle or a shared
+    plan table set up by yourself. In this case TOra will never create a plan table for you.
 @end table
 
 @image{images/mysql,13cm}

@@ -195,6 +195,7 @@ toModelEditor::toModelEditor(QWidget *parent,
     Editable = Model->flags(Current) & Qt::ItemIsEditable;
     Editor->setReadOnly(!Editable);
     Editor->setFocus();
+    Editor->setWordWrap(true);
 
     QDialogButtonBox * buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, Qt::Horizontal, this);
     vbox->addWidget(buttonBox);
@@ -256,6 +257,7 @@ toModelEditor::toModelEditor(QWidget *parent,
     QAction * WordWrapAct = new QAction(QIcon(QPixmap(const_cast<const char**>(wordwrap_xpm))),
                                          tr("Word Wrap"), Toolbar);
     WordWrapAct->setCheckable(true);
+    WordWrapAct->setChecked(true);
     connect(WordWrapAct, SIGNAL(toggled(bool)),
              Editor, SLOT(setWordWrap(bool)));
              Toolbar->addAction(WordWrapAct);
