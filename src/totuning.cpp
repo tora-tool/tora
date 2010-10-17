@@ -43,7 +43,7 @@
 #include "toconf.h"
 #include "toconnection.h"
 #include "tomain.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 #include "toresultbar.h"
 #include "toresultitem.h"
 #include "toresultline.h"
@@ -2008,7 +2008,6 @@ toTuningFileIO::toTuningFileIO(QWidget *parent)
 
         changeCharts(0);
         CurrentStamp = 0;
-        connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
         Query = NULL;
         refresh();
     }
@@ -2157,12 +2156,23 @@ void toTuningFileIO::refresh(void)
             toQList par;
             LastStamp = CurrentStamp;
             CurrentStamp = time(NULL);
-            Query = new toNoBlockQuery(conn, toQuery::Background, toSQL::string(SQLFileIO, conn), par);
+            Query = new toEventQuery(conn, toQuery::Background, toSQL::string(SQLFileIO, conn), par);
+            connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
+            connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+            Query->readAll();
+            Query->start();
             LastTablespace = QString::null;
-
-            Poll.start(100);
         }
         TOCATCH
+    }
+}
+
+void toTuningFileIO::queryDone(void)
+{
+    if (Query)
+    {
+        delete Query;
+        Query = NULL;
     }
 }
 
@@ -2170,12 +2180,12 @@ void toTuningFileIO::poll(void)
 {
     try
     {
-        if (Query && Query->poll())
+        if (Query)
         {
             QString tablespace;
             QString datafile;
             QString timestr;
-            while (Query->poll())
+            while (Query->hasMore())
             {
                 if (!Query->eof())
                 {
@@ -2230,7 +2240,6 @@ void toTuningFileIO::poll(void)
             }
             if (Query->eof())
             {
-                Poll.stop();
                 delete Query;
                 Query = NULL;
             }

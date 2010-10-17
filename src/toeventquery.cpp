@@ -104,9 +104,6 @@ void toEventQuery::start() {
     Task = new toEventQueryTask(this, *Connection, SQL, Param, Statistics);
     Task->ThreadAlive.lock();
 
-    qRegisterMetaType<toQDescList>("toQDescList&");
-    qRegisterMetaType<ValuesList>("ValuesList&");
-
     connect(Task,
             SIGNAL(headers(toQDescList &, int)),
             this,

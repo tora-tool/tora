@@ -48,6 +48,7 @@
 #include "tomain.h"
 #include "tosql.h"
 #include "totool.h"
+#include "toeventquery.h"
 
 // qt4 in via the qtranslator
 // #include "tora_toad.h"
@@ -271,6 +272,10 @@ int main(int argc, char **argv)
 
         toMarkedText::setDefaultTabWidth(toConfigurationSingle::Instance().tabStop());
         toMarkedText::setDefaultTabSpaces(toConfigurationSingle::Instance().tabSpaces());
+
+        qRegisterMetaType<toQDescList>("toQDescList&");
+        qRegisterMetaType<ValuesList>("ValuesList&");
+        qRegisterMetaType<toConnection::exception>("toConnection::exception");
 
 //         toUpdateIndicateEmpty();
 

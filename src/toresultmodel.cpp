@@ -67,8 +67,6 @@ toResultModel::toResultModel(toEventQuery *query,
     Query = query;
     Query->setParent(this);
 
-    qRegisterMetaType<toConnection::exception>("toConnection::exception");
-
     connect(query,
             SIGNAL(descriptionAvailable()),
             this,

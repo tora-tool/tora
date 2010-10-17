@@ -67,7 +67,7 @@ class QTabWidget;
 class toBarChart;
 class toConnection;
 class toListView;
-class toNoBlockQuery;
+class toEventQuery;
 class toResultItem;
 class toResultLock;
 class toResultTableView;
@@ -100,7 +100,7 @@ class toTuningFileIO : public QWidget
     double TblMin;
     double TblMaxRead;
     double TblMaxWrite;
-    toNoBlockQuery *Query;
+    toEventQuery *Query;
 
     time_t CurrentStamp;
     time_t LastStamp;
@@ -128,6 +128,8 @@ public slots:
     void changeCharts(int val);
     void changeConnection(void);
     void poll(void);
+private slots:
+    void queryDone(void);
 };
 
 class toTuningOverview : public QWidget, public Ui::toTuningOverviewUI

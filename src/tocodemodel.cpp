@@ -421,8 +421,6 @@ void toCodeModel::refresh(toConnection &conn, const QString &owner)
                                  toSQL::sql(SQLListObjects, conn),
                                  param);
 
-        qRegisterMetaType<toConnection::exception>("toConnection::exception");
-
         connect(query,
                 SIGNAL(dataAvailable()),
                 this,
