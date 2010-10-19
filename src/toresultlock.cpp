@@ -43,7 +43,7 @@
 
 #include "toconf.h"
 #include "toconnection.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 #include "toresultlock.h"
 #include "tosql.h"
 #include "totool.h"
@@ -75,12 +75,12 @@ toResultLock::toResultLock(QWidget *parent, const char *name)
     setSQLName(QString::fromLatin1("toResultLock"));
 
     Query = NULL;
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
 }
 
 toResultLock::~toResultLock()
 {
-    delete Query;
+    if (Query)
+        delete Query;
 }
 
 static toSQL SQLBlockingLock("toResultLock:BlockingLocks",
@@ -177,6 +177,14 @@ static toSQL SQLLock("toResultLock:Locks",
                      "   and e.request != 0",
                      "List locks in a session");
 
+void toResultLock::startQuery(void)
+{
+    connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
+    connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+    Query->readAll(); // indicate that all records should be fetched
+    Query->start();
+} // startQuery
+
 void toResultLock::query(const QString &sql,
                          const toQList &param)
 {
@@ -201,20 +209,18 @@ void toResultLock::query(const QString &sql,
         if (!sql.isEmpty())
         {
             par.insert(par.end(), sql);
-            Query = new toNoBlockQuery(connection(), toQuery::Background,
+            Query = new toEventQuery(connection(), toQuery::Background,
                                        toSQL::string(SQLLock, connection()), par);
         }
         else
         {
-            Query = new toNoBlockQuery(connection(), toQuery::Background,
+            Query = new toEventQuery(connection(), toQuery::Background,
                                        toSQL::string(SQLBlockingLock, connection()), par);
         }
-        Poll.start(100);
+        startQuery();
     }
     TOCATCH
-}
-
-#define MARK_COL 20
+} // query
 
 void toResultLock::poll(void)
 {
@@ -222,109 +228,115 @@ void toResultLock::poll(void)
     {
         if (!toCheckModal(this))
             return ;
-        if (Query && Query->poll())
+        if (Query)
         {
-            if (!Query->eof())
+            while (Query->hasMore())
             {
-                do
-                {
-                    toTreeWidgetItem *item;
-                    if (!LastItem)
-                        item = new toResultViewItem(this, NULL);
-                    else
-                        item = new toResultViewItem(LastItem, NULL);
-                    toQDescList desc = Query->describe();
-                    for (unsigned int pos = 0;pos < desc.size();pos++)
-                        item->setText(int(pos), Query->readValue());
-                }
-                while (!Query->eof());
-            }
-
-            delete Query;
-            Query = NULL;
-
-            LastItem = NULL;
-            toTreeWidgetItem *next = NULL;
-            for (toTreeWidgetItem *item = firstChild();item;item = next)
-            {
-                int sid = item->text(0).toInt();
-                if (item->text(MARK_COL).isEmpty())
-                {
-                    item->setText(MARK_COL, QString::fromLatin1("Yes"));
-                    item->setOpen(true);
-                    if (!Checked[sid])
-                    {
-                        Checked[sid] = true;
-                        LastItem = item;
-                        toQList par;
-                        par.insert(par.end(), LastItem->text(0));
-                        Query = new toNoBlockQuery(connection(), toQuery::Background,
-                                                   toSQL::string(SQLLock, connection()), par);
-                    }
-                    else
-                    {
-                        toTreeWidgetItem *cn = NULL;
-                        for (toTreeWidgetItem *ci = firstChild();ci;ci = cn)
-                        {
-                            if (ci != item && ci->text(0) == item->text(0))
-                            {
-                                if (ci->firstChild())
-                                {
-                                    ci = ci->firstChild();
-                                    cn = new toResultViewItem(item, NULL);
-                                    for (int i = 0;i < columns();i++)
-                                        cn->setText(i, ci->text(i));
-                                }
-                                break;
-                            }
-                            if (ci->firstChild())
-                            {
-                                cn = ci->firstChild();
-                            }
-                            else if (ci->nextSibling())
-                                cn = ci->nextSibling();
-                            else
-                            {
-                                cn = ci;
-                                do
-                                {
-                                    cn = cn->parent();
-                                }
-                                while (cn && !cn->nextSibling());
-                                if (cn)
-                                    cn = cn->nextSibling();
-                            }
-                        }
-                    }
-                    break;
-                }
-                if (item->firstChild())
-                {
-                    next = item->firstChild();
-                }
-                else if (item->nextSibling())
-                    next = item->nextSibling();
+                toTreeWidgetItem *item;
+                // Check if item has to be added to top level...
+                if (!LastItem)
+                    item = new toResultViewItem(this, NULL);
+                // ...or attached as a child record to some parent.
                 else
-                {
-                    next = item;
-                    do
-                    {
-                        next = next->parent();
-                    }
-                    while (next && !next->nextSibling());
-                    if (next)
-                        next = next->nextSibling();
-                }
+                    item = new toResultViewItem(LastItem, NULL);
+                toQDescList desc = Query->describe();
+                for (unsigned int pos = 0; pos < desc.size(); pos++)
+                    item->setText(int(pos), Query->readValue());
             }
-            if (!LastItem)
-                Poll.stop();
         }
     }
     catch (const QString &exc)
     {
         delete Query;
         Query = NULL;
-        Poll.stop();
         toStatusMessage(exc);
     }
-}
+} // poll
+
+// Which column is used as a marker for records processed for children. This
+// column will get value "Yes" so that it is not processed on on subsequent pass.
+#define MARK_COL 20
+
+void toResultLock::queryDone(void)
+{
+    if (Query)
+    {
+        delete Query;
+        Query = NULL;
+    }
+
+    LastItem = NULL;
+    toTreeWidgetItem *next = NULL;
+    for (toTreeWidgetItem *item = firstChild(); item; item = next)
+    {
+        int sid = item->text(0).toInt();
+        if (item->text(MARK_COL).isEmpty())
+        {
+            item->setText(MARK_COL, QString::fromLatin1("Yes"));
+            item->setOpen(true);
+            if (!Checked[sid])
+            {
+                Checked[sid] = true;
+                LastItem = item;
+                toQList par;
+                par.insert(par.end(), LastItem->text(0));
+                Query = new toEventQuery(connection(), toQuery::Background,
+                                           toSQL::string(SQLLock, connection()), par);
+                startQuery();
+            }
+            else
+            {
+                toTreeWidgetItem *cn = NULL;
+                for (toTreeWidgetItem *ci = firstChild(); ci; ci = cn)
+                {
+                    if (ci != item && ci->text(0) == item->text(0))
+                    {
+                        if (ci->firstChild())
+                        {
+                            ci = ci->firstChild();
+                            cn = new toResultViewItem(item, NULL);
+                            for (int i = 0; i < columns(); i++)
+                                cn->setText(i, ci->text(i));
+                        }
+                        break;
+                    }
+                    if (ci->firstChild())
+                    {
+                        cn = ci->firstChild();
+                    }
+                    else if (ci->nextSibling())
+                        cn = ci->nextSibling();
+                    else
+                    {
+                        cn = ci;
+                        do
+                        {
+                            cn = cn->parent();
+                        }
+                        while (cn && !cn->nextSibling());
+                        if (cn)
+                            cn = cn->nextSibling();
+                    }
+                }
+            }
+            break;
+        }
+        if (item->firstChild())
+        {
+            next = item->firstChild();
+        }
+        else if (item->nextSibling())
+            next = item->nextSibling();
+        else
+        {
+            next = item;
+            do
+            {
+                next = next->parent();
+            }
+            while (next && !next->nextSibling());
+            if (next)
+                next = next->nextSibling();
+        }
+    }
+} // queryDone

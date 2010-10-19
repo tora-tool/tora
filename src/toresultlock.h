@@ -49,16 +49,19 @@
 #include "tobackground.h"
 #include "toresultview.h"
 
-class toNoBlockQuery;
+class toEventQuery;
 
+/**
+ * A result table displaying information about locks in a hierarchy.
+ *
+ */
 class toResultLock : public toResultView
 {
     Q_OBJECT
 
-    toBackground Poll;
-    toNoBlockQuery *Query;
-    toTreeWidgetItem *LastItem;
-    std::map<int, bool> Checked;
+    toEventQuery *Query;
+    toTreeWidgetItem *LastItem; // used to point to parent when polling children records
+    std::map<int, bool> Checked; // list of sessions which have been checked for "children"
 public:
     toResultLock(QWidget *parent, const char *name = NULL);
     ~toResultLock();
@@ -73,8 +76,11 @@ public:
     /** Support Oracle
      */
     virtual bool canHandle(toConnection &conn);
+private:
+    void startQuery(void); // connect signals-slots and start query
 private slots:
-    void poll(void);
+    void poll(void); // Poll query results
+    void queryDone(void); // Clean up query
 };
 
 #endif

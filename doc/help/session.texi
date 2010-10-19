@@ -54,7 +54,7 @@ TODO
 @item @strong{Connection info}
 Information about the connection and versions of the components used.
 @item @strong{Pending locks}
-What locks this session is currently waiting for.
+What locks this session is currently waiting for. If current session is locked by another session which in turn is locked by the third one, information about the third one is displayed as a child of the second one.
 @item @strong{Locked objects}
 The objects currently locked by this session.
 @item @strong{Accessing}
