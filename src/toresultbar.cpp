@@ -44,7 +44,7 @@
 #include "toconf.h"
 #include "toconnection.h"
 #include "tomain.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 #include "toresultbar.h"
 #include "tosql.h"
 #include "totool.h"
@@ -55,7 +55,6 @@
 toResultBar::toResultBar(QWidget *parent, const char *name)
         : toBarChart(parent, name)
 {
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
     LastStamp = 0;
     Flow = true;
     Columns = 0;
@@ -105,8 +104,11 @@ void toResultBar::query(const QString &sql, const toQList &param, bool first)
     try
     {
         First = first;
-        Query = new toNoBlockQuery(connection(), toQuery::Background, sql, param);
-        Poll.start(100);
+        Query = new toEventQuery(connection(), toQuery::Background, sql, param);
+        connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
+        connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+        Query->readAll(); // indicate that all records should be fetched
+        Query->start();
     }
     TOCATCH
 }
@@ -115,7 +117,7 @@ void toResultBar::poll(void)
 {
     try
     {
-        if (Query && Query->poll())
+        if (Query)
         {
             toQDescList desc;
             if (!Columns)
@@ -136,7 +138,7 @@ void toResultBar::poll(void)
                 setLabels(labels);
             }
 
-            while (Query->poll() && !Query->eof())
+            while (Query->hasMore())
             {
                 unsigned int num = 0;
                 QString lab = Query->readValue();
@@ -177,24 +179,24 @@ void toResultBar::poll(void)
                     addValues(tmp, lab);
                 }
             }
-            if (Query->eof())
-            {
-                Poll.stop();
-                Columns = 0;
-                delete Query;
-                Query = NULL;
-                update();
-            }
         }
     }
     catch (const QString &exc)
     {
+        Columns = 0;
         delete Query;
         Query = NULL;
-        Poll.stop();
         toStatusMessage(exc);
     }
 }
+
+void toResultBar::queryDone(void)
+{
+    Columns = 0;
+    delete Query;
+    Query = NULL;
+    update();
+} // queryDone
 
 std::list<double> toResultBar::transform(std::list<double> &input)
 {

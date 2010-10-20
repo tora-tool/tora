@@ -46,7 +46,6 @@
 
 #include <map>
 
-#include "tobackground.h"
 #include "toresultview.h"
 
 class toEventQuery;

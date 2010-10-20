@@ -43,7 +43,6 @@
 #define TORESULTBAR_H
 
 #include "config.h"
-#include "tobackground.h"
 #include "tobarchart.h"
 #include "toresult.h"
 
@@ -52,7 +51,7 @@
 #include <list>
 #include <QMenu>
 
-class toNoBlockQuery;
+class toEventQuery;
 class toSQL;
 
 /** Display the result of a query in a piechart. The first column of the query should
@@ -74,8 +73,7 @@ class toResultBar : public toBarChart, public toResult
      */
     std::list<double> LastValues;
     bool First;
-    toNoBlockQuery *Query;
-    toBackground Poll;
+    toEventQuery *Query;
     unsigned int Columns;
     void query(const QString &sql, const toQList &param, bool first);
 public:
@@ -215,6 +213,7 @@ protected slots:
 private slots:
     void poll(void);
     void editSQL(void);
+    void queryDone(void);
 };
 
 #endif

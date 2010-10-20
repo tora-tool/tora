@@ -47,15 +47,12 @@
 #include <qcombobox.h>
 #include <qstringlist.h>
 
-#include <loki/SmartPtr.h>
+#include <QPointer>
 
-#include "tobackground.h"
 #include "toresult.h"
 
-class toNoBlockQuery;
+class toEventQuery;
 class toSQL;
-
-using Loki::SmartPtr;
 
 /** This widget displays the result of a query where each field is added as an item
  * to a combobox.
@@ -65,8 +62,7 @@ class toResultCombo : public QComboBox, public toResult
 {
     Q_OBJECT
 
-    SmartPtr<toNoBlockQuery> Query;
-    toBackground Poll;
+    QPointer<toEventQuery> Query;
 
     QString Selected;
     QStringList Additional;
@@ -203,6 +199,7 @@ public slots:
     }
 private slots:
     void poll(void);
+    void queryDone(void);
     void changeSelected(void);
 };
 

@@ -43,7 +43,7 @@
 
 #include "toconf.h"
 #include "toconnection.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 #include "toresultcombo.h"
 #include "tosql.h"
 #include "totool.h"
@@ -53,7 +53,6 @@ toResultCombo::toResultCombo(QWidget *parent, const char *name)
   : QComboBox(parent), Query(0), SelectionPolicy(None)
 {
     setObjectName(name);
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
     connect(this, SIGNAL(activated(int)),
             this, SLOT(changeSelected(void)));
     setSizeAdjustPolicy(QComboBox::AdjustToContents);
@@ -61,6 +60,8 @@ toResultCombo::toResultCombo(QWidget *parent, const char *name)
 
 toResultCombo::~toResultCombo()
 {
+    if (Query)
+        delete Query;
 }
 
 void toResultCombo::query(const QString &sql, const toQList &param)
@@ -76,8 +77,11 @@ void toResultCombo::query(const QString &sql, const toQList &param)
             if (Additional[i] == Selected)
                 setCurrentIndex(i);
 
-        Query = new toNoBlockQuery(connection(), toQuery::Background, sql, param);
-        Poll.start(100);
+        Query = new toEventQuery(connection(), toQuery::Background, sql, param);
+        connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
+        connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+        Query->readAll(); // indicate that all records should be fetched
+        Query->start();
     }
     TOCATCH
 }
@@ -94,52 +98,50 @@ void toResultCombo::poll(void)
         if (!toCheckModal(this))
             return ;
 
-        if (Query && Query->poll())
+        if (Query)
         {
-		while (Query->poll() && !Query->eof())
-		{
-    			QString t = Query->readValue();
-    			QStringList l;
-        		for(unsigned i=1; i<Query->describe().size(); ++i)
-        		{
-        			QString v = Query->readValue();
-        			l.append(v);
-        		}
-    			addItem(t, QVariant(l));
-    			if (t == Selected)
-    				setCurrentIndex(count() - 1);
-		}
-
-            if (Query->eof())
+            while (Query->hasMore())
             {
-		    Poll.stop();
-		    switch(SelectionPolicy)
-		    {
-		    case First:
-			    if (currentIndex() != 0)
-				    setCurrentIndex(0);
-			    break;
-		    case Last:
-			    if (currentIndex() != count()-1)
-				    setCurrentIndex(count()-1);
-			    break;
-		    case LastButOne:
-			    if (currentIndex() != count()-2)
-				    setCurrentIndex(count()-2);
-			    break;
-		    case None:
-			    ;
-		    };
-		    setFont(font()); // Small hack to invalidate size hint of combobox which should resize to needed size.
-		    updateGeometry();
-		    emit done();
+                QString t = Query->readValue();
+                QStringList l;
+                for (unsigned i = 1; i < Query->describe().size(); ++i)
+                {
+                    QString v = Query->readValue();
+                    l.append(v);
+                }
+                addItem(t, QVariant(l));
+                if (t == Selected)
+                    setCurrentIndex(count() - 1);
             }
         }
     }
     catch (const QString &exc)
     {
-        Poll.stop();
         emit done();
         toStatusMessage(exc);
     }
 }
+
+void toResultCombo::queryDone(void)
+{
+    switch(SelectionPolicy)
+    {
+        case First:
+            if (currentIndex() != 0)
+                setCurrentIndex(0);
+            break;
+        case Last:
+            if (currentIndex() != count() - 1)
+                setCurrentIndex(count() - 1);
+            break;
+        case LastButOne:
+            if (currentIndex() != count() - 2)
+                setCurrentIndex(count() - 2);
+            break;
+        case None:
+            ;
+    };
+    setFont(font()); // Small hack to invalidate size hint of combobox which should resize to needed size.
+    updateGeometry();
+    emit done();
+} // queryDone
