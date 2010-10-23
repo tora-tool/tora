@@ -267,8 +267,7 @@ signals:
      *
      * @param rows Number of rows to be read
      */
-    void dataAvailable();
-
+    void dataAvailable(toEventQuery * e = NULL);
 
     /**
      * Emitted with error string
@@ -276,12 +275,11 @@ signals:
      */
     void error(const toConnection::exception &);
 
-
     /**
      * Emitted when done
      *
      */
-    void done();
+    void done(toEventQuery * e = NULL);
 };
 
 #endif

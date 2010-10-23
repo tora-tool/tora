@@ -43,11 +43,8 @@
 #define TOANALYZE_H
 
 #include "config.h"
-#include "tobackground.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 #include "totool.h"
-
-#include <list>
 
 #include <QAction>
 #include <QLabel>
@@ -78,15 +75,16 @@ class toAnalyze : public toToolWidget
     QSpinBox             *Parallel;
     QLabel               *Current;
     QToolButton          *Stop;
-    toBackground          Poll;
     toResultTableView    *Plans;
     toResultPlan         *CurrentPlan;
     toWorksheetStatistic *Worksheet;
 
-    std::list<toNoBlockQuery *> Running;
-    std::list<QString> Pending;
+    QList<toEventQuery *> Running;
+    QStringList Pending;
 
-    std::list<QString> getSQL(void);
+    QStringList getSQL(void);
+
+    void startQuery(toEventQuery * q);
 
 public:
     toAnalyze(QWidget *parent, toConnection &connection);
@@ -99,7 +97,8 @@ public slots:
     virtual void displaySQL(void);
     virtual void changeOperation(int);
     virtual void execute(void);
-    virtual void poll(void);
+    virtual void poll(toEventQuery *);
+    virtual void queryDone(toEventQuery *);
     virtual void stop(void);
     virtual void refresh(void);
     virtual void selectPlan(void);

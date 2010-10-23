@@ -378,8 +378,6 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
     if (Type)
         connect(Type, SIGNAL(activated(int)), this, SLOT(refresh()));
 
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
-
     box->setSpacing(0);
     box->setContentsMargins(0, 0, 0, 0);
     container->setLayout(box);
@@ -520,67 +518,55 @@ void toAnalyze::refresh(void)
     TOCATCH;
 }
 
-void toAnalyze::poll(void)
+void toAnalyze::startQuery(toEventQuery * q)
 {
+    connect(q, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(poll(toEventQuery*)));
+    connect(q, SIGNAL(done(toEventQuery*)), this, SLOT(queryDone(toEventQuery*)));
+    q->readAll(); // indicate that all records should be fetched
+    q->start();
+} // connectSlots
+
+void toAnalyze::poll(toEventQuery* q)
+{
+    // This function will probably never be called as table statistics
+    // calculation is a statement and it does not return any values.
     try
     {
-        int running = 0;
-        for (std::list<toNoBlockQuery *>::iterator i = Running.begin();i != Running.end();i++)
-        {
-            bool eof = false;
+        int cols = q->describe().size();
+        for (int j = 0; j < cols; j++)
+            q->readValueNull();  // Eat the output if any.
 
-            try
-            {
-                if ((*i)->poll())
-                {
-                    int cols = (*i)->describe().size();
-                    for (int j = 0;j < cols;j++)
-                        (*i)->readValueNull();  // Eat the output if any.
-                }
-
-                try
-                {
-                    eof = (*i)->eof();
-                }
-                catch (const QString &)
-                {
-                    eof = true;
-                }
-            }
-            catch (const QString &err)
-            {
-                toStatusMessage(err);
-                eof = true;
-            }
-            if (eof)
-            {
-                QString sql = toShift(Pending);
-                if (!sql.isEmpty())
-                {
-                    delete(*i);
-                    toQList par;
-                    (*i) = new toNoBlockQuery(connection(), sql, par);
-                    running++;
-                }
-            }
-            else
-                running++;
-        }
-        if (!running)
-        {
-            Poll.stop();
-            refresh();
-            stop();
-        }
-        else
-            Current->setText(tr("Running %1 Pending %2").arg(running).arg(Pending.size()));
+        Current->setText(tr("Running %1 Pending %2").arg(Running.size()).arg(Pending.size()));
     }
     TOCATCH;
 }
 
-std::list<QString> toAnalyze::getSQL(void)
+void toAnalyze::queryDone(toEventQuery* q)
 {
-    std::list<QString> ret;
+    Running.removeOne(q);
+    delete q;
+
+    if (!Pending.isEmpty())
+    {
+        QString sql = Pending.takeFirst();
+        toQList par;
+        toEventQuery * q = new toEventQuery(connection(), sql, par);
+        startQuery(q);
+        Running.append(q);
+        Current->setText(tr("Running %1 Pending %2").arg(Running.size()).arg(Pending.size()));
+    }
+    else
+    {
+        if (Running.isEmpty()) {
+            refresh();
+            stop();
+        }
+    }
+} // queryDone
+
+QStringList toAnalyze::getSQL(void)
+{
+    QStringList ret;
     for (toResultTableView::iterator it(Statistics); (*it).isValid(); it++)
     {
         if (Statistics->isRowSelected((*it)))
@@ -626,7 +612,7 @@ std::list<QString> toAnalyze::getSQL(void)
                     sql += QString::fromLatin1("VALIDATE REF UPDATE");
                     break;
                 }
-                toPush(ret,
+                ret.append(
                        sql.arg(Statistics->model()->data((*it).row(), 2).toString())
                        .arg(Statistics->model()->data((*it).row(), 3).toString())
                        .arg(Statistics->model()->data((*it).row(), 1).toString()));
@@ -651,7 +637,7 @@ std::list<QString> toAnalyze::getSQL(void)
 
                 QString table = Statistics->model()->data((*it).row(), 3).toString();
                 QString schema = Statistics->model()->data((*it).row(), 2).toString();
-                toPush(ret, sql.arg(schema).arg(table));
+                ret.append(sql.arg(schema).arg(table));
             }
             else
             {
@@ -668,8 +654,7 @@ std::list<QString> toAnalyze::getSQL(void)
                 QString owner = Statistics->model()->data((*it).row(), 2).toString();
                 if (toUnnull(owner).isNull())
                     owner = Schema->selected();
-                toPush(ret,
-                       sql.arg(owner).arg(
+                ret.append(sql.arg(owner).arg(
                            Statistics->model()->data((*it).row(), 1).toString()));
             }
         }
@@ -679,57 +664,55 @@ std::list<QString> toAnalyze::getSQL(void)
 
 void toAnalyze::displaySQL(void)
 {
-    QString txt;
-    std::list<QString> sql = getSQL();
-    for (std::list<QString>::iterator i = sql.begin();i != sql.end();i++)
-        txt += (*i) + ";\n";
-    new toMemoEditor(this, txt, -1, -1, true);
+    QStringList sql = getSQL();
+    new toMemoEditor(this, sql.join(";\n"), -1, -1, true);
 }
 
 void toAnalyze::execute(void)
 {
     stop();
 
-    std::list<QString> sql = getSQL();
-    for (std::list<QString>::iterator i = sql.begin();i != sql.end();i++)
-        toPush(Pending, *i);
+    Pending = getSQL();
+
+    if (Pending.isEmpty())
+        return;
 
     try
     {
         toQList par;
         for (int i = 0; i < Parallel->value(); i++)
         {
-            QString sql = toShift(Pending);
-            if (!sql.isEmpty())
-                toPush(Running, new toNoBlockQuery(connection(), sql, par));
+            if (!Pending.isEmpty())
+            {
+                QString sql = Pending.takeFirst();
+                toEventQuery * q = new toEventQuery(connection(), sql, par);
+                Running.append(q);
+                startQuery(q);
+            }
         }
-        Poll.start(100);
         Stop->setEnabled(true);
-        poll();
     }
     TOCATCH;
 }
 
 void toAnalyze::stop(void)
 {
-    try
+    QList<toEventQuery*>::iterator i;
+    for (i = Running.begin(); i != Running.end(); i++)
+        delete *i;
+    Running.clear();
+    Pending.clear();
+    Stop->setEnabled(false);
+    Current->setText(QString::null);
+    if (!connection().needCommit())
     {
-        for_each(Running.begin(), Running.end(), deleteObject());
-        Running.clear();
-        Pending.clear();
-        Stop->setEnabled(false);
-        Current->setText(QString::null);
-        if (!connection().needCommit())
+        try
         {
-            try
-            {
-                connection().rollback();
-            }
-            catch (...) { }
+            connection().rollback();
         }
+        catch (...) { }
     }
-    TOCATCH;
-}
+} // stop
 
 void toAnalyze::createTool(void)
 {

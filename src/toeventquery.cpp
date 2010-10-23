@@ -168,7 +168,7 @@ void toEventQuery::stop(void) {
 
 void toEventQuery::taskData(ValuesList &values) {
     Values += values;
-    emit dataAvailable();
+    emit dataAvailable(this);
 
     try {
         if(Statistics)
@@ -194,7 +194,7 @@ void toEventQuery::taskError(const toConnection::exception &msg) {
 
 void toEventQuery::taskFinished() {
     TaskDone = true;
-    emit done();
+    emit done(this);
 }
 
 
