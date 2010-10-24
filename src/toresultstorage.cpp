@@ -43,7 +43,7 @@
 
 #include "toconf.h"
 #include "toconnection.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 #include "toresulttableview.h"
 #include "toresultstorage.h"
 #include "tosql.h"
@@ -232,7 +232,6 @@ toResultStorage::toResultStorage(bool available, QWidget *parent, const char *na
 
     Tablespaces = Files = NULL;
 
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
     setItemDelegate(new toResultStorageItemDelegate());
 }
 
@@ -638,7 +637,6 @@ void toResultStorage::saveSelected(void)
     }
 }
 
-
 void toResultStorage::query(void)
 {
     if (!handled() || Tablespaces || Files)
@@ -657,13 +655,19 @@ void toResultStorage::query(void)
         TablespaceValues.clear();
         FileValues.clear();
 
-        Tablespaces = new toNoBlockQuery(conn, toQuery::Background,
-                                         toSQL::string(ShowCoalesced ? SQLShowCoalesced : SQLNoShowCoalesced, connection()), args);
-        Files = NULL;
-        Files = new toNoBlockQuery(conn, toQuery::Background,
-                                   toSQL::string(SQLDatafile, connection()), args);
+        Tablespaces = new toEventQuery(conn, toQuery::Background,
+                                       toSQL::string(ShowCoalesced ? SQLShowCoalesced : SQLNoShowCoalesced, connection()), args);
+        connect(Tablespaces, SIGNAL(dataAvailable()), this, SLOT(pollTablespaces()));
+        connect(Tablespaces, SIGNAL(done()), this, SLOT(doneTablespaces()));
+        Tablespaces->readAll(); // indicate that all records should be fetched
+        Tablespaces->start();
 
-        Poll.start(100);
+        Files = new toEventQuery(conn, toQuery::Background,
+                                 toSQL::string(SQLDatafile, connection()), args);
+        connect(Files, SIGNAL(dataAvailable()), this, SLOT(pollFiles()));
+        connect(Files, SIGNAL(done()), this, SLOT(doneFiles()));
+        Files->readAll(); // indicate that all records should be fetched
+        Files->start();
     }
     TOCATCH
 }
@@ -674,10 +678,10 @@ void toResultStorage::updateList(void)
     clear();
     if (!OnlyFiles)
     {
-        for (std::list<QString>::iterator j = TablespaceValues.begin();j != TablespaceValues.end();)
+        for (QStringList::iterator j = TablespaceValues.begin(); j != TablespaceValues.end();)
         {
             toResultStorageItem *tablespace = new toResultStorageItem(AvailableGraph, this, NULL);
-            for (int i = 0;i < COLUMNS && j != TablespaceValues.end();i++, j++)
+            for (int i = 0; i < COLUMNS && j != TablespaceValues.end(); i++, j++)
             {
                 if (i == COL_USED_FREE_AUTO)
                     continue;
@@ -709,7 +713,7 @@ void toResultStorage::updateList(void)
         }
     }
 
-    for (std::list<QString>::iterator k = FileValues.begin();k != FileValues.end();)
+    for (QStringList::iterator k = FileValues.begin(); k != FileValues.end();)
     {
         QString name = *k;
         k++;
@@ -750,59 +754,67 @@ void toResultStorage::updateList(void)
     setSortingEnabled(true);
 }
 
-void toResultStorage::poll(void)
+void toResultStorage::pollTablespaces(void)
 {
     try
     {
         if (!toCheckModal(this))
-            return ;
-        if (Tablespaces && Tablespaces->poll())
-        {
-            int cols = Tablespaces->describe().size();
-            while (Tablespaces->poll() && !Tablespaces->eof())
-            {
-                for (int i = 0;i < cols && !Tablespaces->eof();i++)
-                    toPush(TablespaceValues, QString(Tablespaces->readValue()));
-            }
-            updateList();
-            if (Tablespaces->eof())
-            {
-                delete Tablespaces;
-                Tablespaces = NULL;
-            }
-        }
+            return;
 
-        if (Files && Files->poll())
+        int cols = Tablespaces->describe().size();
+        while (Tablespaces->hasMore())
         {
-            int cols = Files->describe().size();
-            while (Files->poll() && !Files->eof())
-            {
-                for (int i = 0;i < cols && !Files->eof();i++)
-                    toPush(FileValues, QString(Files->readValue()));
-            }
-            if (Files->eof())
-            {
-                delete Files;
-                Files = NULL;
-            }
-        }
-
-        if (Tablespaces == NULL && Files == NULL)
-        {
-            updateList();
-            Poll.stop();
+            for (int i = 0; i < cols && !Tablespaces->eof(); i++)
+                TablespaceValues.append(QString(Tablespaces->readValue()));
         }
     }
     catch (const QString &exc)
     {
         delete Tablespaces;
         Tablespaces = NULL;
+        toStatusMessage(exc);
+    }
+} // pollTablespaces
+
+void toResultStorage::doneTablespaces(void)
+{
+    delete Tablespaces;
+    Tablespaces = NULL;
+
+    if (Tablespaces == NULL && Files == NULL)
+        updateList();
+} // doneTablespaces
+
+void toResultStorage::pollFiles(void)
+{
+    try
+    {
+        if (!toCheckModal(this))
+            return;
+
+        int cols = Files->describe().size();
+        while (Files->hasMore())
+        {
+            for (int i = 0; i < cols && !Files->eof(); i++)
+                FileValues.append(QString(Files->readValue()));
+        }
+    }
+    catch (const QString &exc)
+    {
         delete Files;
         Files = NULL;
-        Poll.stop();
         toStatusMessage(exc);
     }
 }
+
+void toResultStorage::doneFiles(void)
+{
+    delete Files;
+    Files = NULL;
+
+    if (Tablespaces == NULL && Files == NULL)
+        updateList();
+} // pollFiles
 
 QString toResultStorage::currentTablespace(void)
 {

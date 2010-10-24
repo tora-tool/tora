@@ -43,13 +43,12 @@
 #define TORESULTSTORAGE_H
 
 #include "config.h"
-#include "tobackground.h"
 #include "toresultview.h"
 
 #include <QSplitter>
 #include <QPaintEvent>
 
-class toNoBlockQuery;
+class toEventQuery;
 
 class toStorageExtent : public QWidget
 {
@@ -150,15 +149,14 @@ class toResultStorage : public toResultView
 
     bool ShowCoalesced;
     QString Unit;
-    toBackground Poll;
 
-    toNoBlockQuery *Tablespaces;
-    toNoBlockQuery *Files;
+    toEventQuery *Tablespaces;
+    toEventQuery *Files;
 
     bool OnlyFiles;
     bool AvailableGraph;
-    std::list<QString> TablespaceValues;
-    std::list<QString> FileValues;
+    QStringList TablespaceValues;
+    QStringList FileValues;
 
     QString CurrentSpace;
     QString CurrentFile;
@@ -188,7 +186,10 @@ public:
 public slots:
     virtual void query(void);
 private slots:
-    void poll(void);
+    void pollFiles(void);
+    void pollTablespaces(void);
+    void doneFiles(void);
+    void doneTablespaces(void);
 };
 
 #endif
