@@ -274,7 +274,6 @@ void toResultModel::deleteRow(QModelIndex index)
         return;
 
     beginRemoveRows(QModelIndex(), index.row(), index.row());
-
     Row deleted = Rows.takeAt(index.row());
     endRemoveRows();
     emit rowDeleted(deleted);
@@ -745,7 +744,7 @@ Qt::ItemFlags toResultModel::flags(const QModelIndex &index) const
     if (index.column() == 0)
         return fl;              // row number column
 
-    if (!index.isValid())
+    if (!index.isValid() || index.row() >= Rows.size())
     {
         if(Editable)
             return Qt::ItemIsDropEnabled | defaultFlags;
@@ -758,7 +757,7 @@ Qt::ItemFlags toResultModel::flags(const QModelIndex &index) const
     {
        return ( defaultFlags | fl ) & ~Qt::ItemIsEditable;
     }
-    
+
     if (Editable)
         return fl | defaultFlags | Qt::ItemIsEditable | Qt::ItemIsDropEnabled;
     return fl | defaultFlags;

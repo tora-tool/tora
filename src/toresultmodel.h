@@ -46,7 +46,6 @@
 #include "tosql.h"
 #include "toresult.h"
 #include "toconnection.h"
-#include "tobackground.h"
 
 #include <QObject>
 #include <QAbstractTableModel>
