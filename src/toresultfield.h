@@ -43,11 +43,10 @@
 #define TORESULTFIELD_H
 
 #include "config.h"
-#include "tobackground.h"
 #include "tohighlightedtext.h"
 #include "toresult.h"
 
-class toNoBlockQuery;
+class toEventQuery;
 class toSQL;
 
 /** This widget displays the result of a query where each item in the stream
@@ -59,8 +58,7 @@ class toResultField : public toHighlightedText, public toResult
     Q_OBJECT
 
     QString Unapplied;
-    toNoBlockQuery *Query;
-    toBackground Poll;
+    toEventQuery *Query;
     int whichResultField; // Shows which field from result should be used (for MySQL only), used for calls to "show create ..."
 
 public:
@@ -159,6 +157,7 @@ public slots:
     }
 private slots:
     void poll(void);
+    void queryDone(void);
 };
 
 #endif

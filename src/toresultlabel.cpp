@@ -43,7 +43,7 @@
 
 #include "toconf.h"
 #include "toconnection.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 #include "toresultlabel.h"
 #include "tosql.h"
 #include "totool.h"
@@ -56,12 +56,12 @@ toResultLabel::toResultLabel(QWidget *parent, const char *name)
 {
     setObjectName(name);
     Query = NULL;
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
 }
 
 toResultLabel::~toResultLabel()
 {
-    delete Query;
+    if (Query)
+        delete Query;
 }
 
 void toResultLabel::query(const QString &sql, const toQList &param)
@@ -78,8 +78,12 @@ void toResultLabel::query(const QString &sql, const toQList &param)
             Query = NULL;
         }
 
-        Query = new toNoBlockQuery(connection(), toQuery::Background, sql, param);
-        Poll.start(100);
+        Query = new toEventQuery(connection(), toQuery::Background, sql, param);
+        res.clear();
+        connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
+        connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+        Query->readAll(); // indicate that all records should be fetched
+        Query->start();
     }
     TOCATCH
 }
@@ -92,24 +96,27 @@ void toResultLabel::poll(void)
     {
         if (!toCheckModal(this))
             return ;
-        if (Query && Query->poll())
+
+        if (Query)
         {
-            QStringList res;
-            while (!Query->eof())
+            while (Query->hasMore())
             {
                 res << Query->readValue();
             }
             setText(res.join(QString::fromLatin1("/")));
-            delete Query;
-            Query = NULL;
-            Poll.stop();
         }
     }
     catch (const QString &exc)
     {
         delete Query;
         Query = NULL;
-        Poll.stop();
         toStatusMessage(exc);
     }
 }
+
+void toResultLabel::queryDone(void)
+{
+    delete Query;
+    Query = NULL;
+    res.clear();
+} // queryDone

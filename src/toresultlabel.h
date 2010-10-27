@@ -43,12 +43,11 @@
 #define TORESULTLABEL_H
 
 #include "config.h"
-#include "tobackground.h"
 #include "toresult.h"
 
 #include <qlabel.h>
 
-class toNoBlockQuery;
+class toEventQuery;
 class toSQL;
 
 /** This widget displays the result of a query where each item in the stream
@@ -59,9 +58,9 @@ class toResultLabel : public QLabel, public toResult
 {
     Q_OBJECT
 
-    toNoBlockQuery *Query;
-    toBackground Poll;
+    toEventQuery *Query;
 
+    QStringList res;
     QString Separator;
 
 public:
@@ -166,6 +165,7 @@ public slots:
     }
 private slots:
     void poll(void);
+    void queryDone(void);
 };
 
 #endif

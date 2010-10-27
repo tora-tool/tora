@@ -42,7 +42,7 @@
 #include "utils.h"
 
 #include "toconnection.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 #include "toresultdepend.h"
 #include "tosql.h"
 
@@ -92,7 +92,6 @@ toResultDepend::toResultDepend(QWidget *parent, const char *name)
 
     Query = NULL;
     Current = NULL;
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
 }
 
 toResultDepend::~toResultDepend()
@@ -141,11 +140,14 @@ void toResultDepend::query(const QString &sql, const toQList &param)
 
     try
     {
-        Query = new toNoBlockQuery(connection(),
+        Query = new toEventQuery(connection(),
                                    toQuery::Background,
                                    toSQL::string(SQLResultDepend, connection()),
                                    param);
-        Poll.start(100);
+        connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
+        connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+        Query->readAll(); // indicate that all records should be fetched
+        Query->start();
     }
     TOCATCH
 }
@@ -161,10 +163,10 @@ void toResultDepend::poll(void)
     {
         if (!toCheckModal(this))
             return ;
-        if (Query && Query->poll())
+        if (Query)
         {
             int cols = Query->describe().size();
-            while (Query->poll() && !Query->eof())
+            while (Query->hasMore())
             {
                 toTreeWidgetItem *item;
                 QString owner = Query->readValue();
@@ -176,56 +178,60 @@ void toResultDepend::poll(void)
                     else
                         item = new toResultViewItem(Current, NULL, owner);
                     item->setText(1, name);
-                    for (int i = 2;i < cols;i++)
+                    for (int i = 2; i < cols; i++)
                         item->setText(i, Query->readValue());
                 }
                 else
                 {
-                    for (int i = 2;i < cols;i++)
+                    for (int i = 2; i < cols; i++)
                         Query->readValue();
                 }
             }
-            if (Query->eof())
-            {
-                if (!Current)
-                    Current = firstChild();
-                else if (Current->firstChild())
-                    Current = Current->firstChild();
-                else if (Current->nextSibling())
-                    Current = Current->nextSibling();
-                else
-                {
-                    do
-                    {
-                        Current = Current->parent();
-                    }
-                    while (Current && !Current->nextSibling());
-                    if (Current)
-                        Current = Current->nextSibling();
-                }
-                delete Query;
-                Query = NULL;
-                if (Current)
-                {
-                    toQList param;
-                    param.insert(param.end(), Current->text(0));
-                    param.insert(param.end(), Current->text(1));
-                    Query = new toNoBlockQuery(connection(),
-                                               toQuery::Background,
-                                               toSQL::string(SQLResultDepend, connection()),
-                                               param);
-                }
-                else
-                    Poll.stop();
-            }
         }
-        resizeColumnsToContents();
     }
     catch (const QString &exc)
     {
         delete Query;
         Query = NULL;
-        Poll.stop();
         toStatusMessage(exc);
     }
 }
+
+void toResultDepend::queryDone(void)
+{
+    delete Query;
+    Query = NULL;
+
+    if (!Current)
+        Current = firstChild();
+    else if (Current->firstChild())
+        Current = Current->firstChild();
+    else if (Current->nextSibling())
+        Current = Current->nextSibling();
+    else
+    {
+        do
+        {
+            Current = Current->parent();
+        }
+        while (Current && !Current->nextSibling());
+            if (Current)
+                Current = Current->nextSibling();
+    }
+
+    if (Current)
+    {
+        toQList param;
+        param.insert(param.end(), Current->text(0));
+        param.insert(param.end(), Current->text(1));
+        Query = new toEventQuery(connection(),
+                                 toQuery::Background,
+                                 toSQL::string(SQLResultDepend, connection()),
+                                 param);
+        connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
+        connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+        Query->readAll(); // indicate that all records should be fetched
+        Query->start();
+    }
+    resizeColumnsToContents();
+} // queryDone

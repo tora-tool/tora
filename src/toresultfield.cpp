@@ -43,7 +43,7 @@
 
 #include "toconf.h"
 #include "toconnection.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 #include "toresultfield.h"
 #include "tosql.h"
 #include "tosqlparse.h"
@@ -55,7 +55,6 @@ toResultField::toResultField(QWidget *parent, const char *name)
 {
     setReadOnly(true);
     Query = NULL;
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
     whichResultField = 1;
 }
 
@@ -81,8 +80,11 @@ void toResultField::query(const QString &sql, const toQList &param)
             Query = NULL;
         }
 
-        Query = new toNoBlockQuery(connection(), toQuery::Background, sql, param);
-        Poll.start(100);
+        Query = new toEventQuery(connection(), toQuery::Background, sql, param);
+        connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
+        connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+        Query->readAll(); // indicate that all records should be fetched
+        Query->start();
     }
     TOCATCH
 }
@@ -100,9 +102,9 @@ void toResultField::poll(void)
     {
         if (!toCheckModal(this))
             return ;
-        if (Query && Query->poll())
+        if (Query)
         {
-            while (Query->poll() && !Query->eof())
+            while (Query->hasMore())
             {
                 // For some MySQL statements (say "show create function aaa.bbb") more than one column is returned
                 // and it is not possible to control that (or I do not know how to do it). This workaround will get
@@ -128,31 +130,31 @@ void toResultField::poll(void)
                 append(Unapplied);
                 Unapplied = QString::null;
             }
-            if (Query->eof())
-            {
-                delete Query;
-                Query = NULL;
-                Poll.stop();
-                try
-                {
-                    // Code is formatted if it is set in preferences (Preferences->Editor Extensions) to
-                    // indent (format) a read only code AND! if it is not a MySQL code because current
-                    // TOra code parser/indenter does not work correctly with MySQL code (routines)
-                    if (toConfigurationSingle::Instance().autoIndentRo() && !toIsMySQL(connection()))
-                        setText(toSQLParse::indent(text() + Unapplied));
-                    else
-                        append(Unapplied);
-                }
-                TOCATCH
-                Unapplied = QString::null;
-            }
         }
     }
     catch (const QString &exc)
     {
         delete Query;
         Query = NULL;
-        Poll.stop();
         toStatusMessage(exc);
     }
 }
+
+void toResultField::queryDone(void)
+{
+    delete Query;
+    Query = NULL;
+
+    try
+    {
+        // Code is formatted if it is set in preferences (Preferences->Editor Extensions) to
+        // indent (format) a read only code AND! if it is not a MySQL code because current
+        // TOra code parser/indenter does not work correctly with MySQL code (routines)
+        if (toConfigurationSingle::Instance().autoIndentRo() && !toIsMySQL(connection()))
+            setText(toSQLParse::indent(text() + Unapplied));
+        else
+            append(Unapplied);
+    }
+    TOCATCH
+    Unapplied = QString::null;
+} // queryDone

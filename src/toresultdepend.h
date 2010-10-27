@@ -42,11 +42,9 @@
 #ifndef TORESULTDEPEND_H
 #define TORESULTDEPEND_H
 
-#include "config.h"
-#include "tobackground.h"
 #include "toresultview.h"
 
-class toNoBlockQuery;
+class toEventQuery;
 
 /** This widget displays information about the dependencies of an object
  * specified by the first and second parameter in the query. The sql is not
@@ -65,8 +63,7 @@ class toResultDepend : public toResultView
      */
     bool exists(const QString &owner, const QString &name);
 
-    toNoBlockQuery *Query;
-    toBackground Poll;
+    toEventQuery *Query;
     toTreeWidgetItem *Current;
 public:
     /** Create the widget.
@@ -97,6 +94,7 @@ public:
     virtual bool canHandle(toConnection &conn);
 public slots:
     void poll(void);
+    void queryDone(void);
 };
 
 #endif
