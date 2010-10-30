@@ -42,11 +42,9 @@
 #ifndef TORESULTSTATS_H
 #define TORESULTSTATS_H
 
-#include "config.h"
-#include "tobackground.h"
 #include "toresultview.h"
 
-class toNoBlockQuery;
+class toEventQuery;
 
 #define TO_STAT_BLOCKS 10
 #define TO_STAT_MAX 500
@@ -74,9 +72,8 @@ class toResultStats : public toResultView
     double LastValues[TO_STAT_MAX + TO_STAT_BLOCKS];
 
     bool Reset;
-    toNoBlockQuery *Query;
-    toNoBlockQuery *SessionIO;
-    toBackground Poll;
+    toEventQuery *Query;
+    toEventQuery *SessionIO;
 
     /** Setup widget.
      */
@@ -143,7 +140,10 @@ public slots:
      */
     void refreshStats(bool reset = true);
 private slots:
-    void poll(void);
+    void pollQuery(void);
+    void queryDone(void);
+    void pollSystem(void);
+    void systemDone(void);
 };
 
 #endif

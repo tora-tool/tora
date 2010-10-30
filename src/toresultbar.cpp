@@ -41,7 +41,6 @@
 
 #include "utils.h"
 
-#include "toconf.h"
 #include "toconnection.h"
 #include "tomain.h"
 #include "toeventquery.h"

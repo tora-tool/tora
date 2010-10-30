@@ -41,9 +41,8 @@
 
 #include "utils.h"
 
-#include "toconf.h"
 #include "toconnection.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 #include "toresultpie.h"
 #include "tosql.h"
 
@@ -53,7 +52,6 @@ toResultPie::toResultPie(QWidget *parent, const char *name)
 {
     Query = NULL;
     Columns = 0;
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
     Started = false;
     LabelFirst = false;
 }
@@ -95,8 +93,11 @@ void toResultPie::query(const QString &sql, const toQList &param)
 
     try
     {
-        Query = new toNoBlockQuery(connection(), toQuery::Background, sql, param);
-        Poll.start(100);
+        Query = new toEventQuery(connection(), toQuery::Background, sql, param);
+        connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
+        connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+        Query->readAll(); // indicate that all records should be fetched
+        Query->start();
     }
     TOCATCH
 }
@@ -105,11 +106,11 @@ void toResultPie::poll(void)
 {
     try
     {
-        if (Query && Query->poll())
+        if (Query)
         {
             if (!Columns)
                 Columns = Query->describe().size();
-            while (Query->poll() && !Query->eof())
+            while (Query->hasMore())
             {
                 QString val;
                 QString lab;
@@ -138,23 +139,22 @@ void toResultPie::poll(void)
                 if (Columns > 1)
                     Labels.insert(Labels.end(), lab);
             }
-            if (Query->eof())
-            {
-                setValues(Values, Labels);
-                Values.clear();
-                Labels.clear();
-                delete Query;
-                Query = NULL;
-                Columns = 0;
-                Poll.stop();
-            }
         }
     }
     catch (const QString &exc)
     {
         delete Query;
         Query = NULL;
-        Poll.stop();
         toStatusMessage(exc);
     }
 }
+
+void toResultPie::queryDone(void)
+{
+    setValues(Values, Labels);
+    Values.clear();
+    Labels.clear();
+    delete Query;
+    Query = NULL;
+    Columns = 0;
+} // queryDone

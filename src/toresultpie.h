@@ -42,8 +42,6 @@
 #ifndef TORESULTPIE_H
 #define TORESULTPIE_H
 
-#include "config.h"
-#include "tobackground.h"
 #include "topiechart.h"
 #include "toresult.h"
 
@@ -51,7 +49,7 @@
 
 #include <qregexp.h>
 
-class toNoBlockQuery;
+class toEventQuery;
 class toSQL;
 
 /** Display the result of a query in a piechart. The first column of the query should
@@ -62,10 +60,9 @@ class toResultPie : public toPieChart, public toResult
 {
     Q_OBJECT
 
-    toNoBlockQuery *Query;
+    toEventQuery *Query;
     std::list<QString> Labels;
     std::list<double> Values;
-    toBackground Poll;
     int Columns;
     bool Started;
     bool LabelFirst;
@@ -195,6 +192,7 @@ public slots:
     }
 private slots:
     void poll(void);
+    void queryDone(void);
 };
 
 #endif

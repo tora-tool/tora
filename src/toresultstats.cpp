@@ -42,7 +42,7 @@
 #include "utils.h"
 
 #include "toconnection.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 #include "toresultstats.h"
 #include "tosql.h"
 
@@ -129,8 +129,6 @@ void toResultStats::setup(void)
     setColumnAlignment(2, Qt::AlignRight);
 
     Query = SessionIO = NULL;
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
-
     connect(this,
             SIGNAL(sessionChanged(int)),
             this,
@@ -279,74 +277,47 @@ void toResultStats::refreshStats(bool reset)
         toQList args;
         if (!System)
             args.insert(args.end(), SessionID);
-        Query = new toNoBlockQuery(conn,
-                                   toQuery::Background,
-                                   toSQL::string(System ? SQLSystemStatisticName : SQLStatisticName,
-                                                 connection()),
-                                   args);
+        Query = new toEventQuery(conn,
+                                 toQuery::Background,
+                                 toSQL::string(System ? SQLSystemStatisticName : SQLStatisticName,
+                                               connection()),
+                                 args);
+        connect(Query, SIGNAL(dataAvailable()), this, SLOT(pollQuery()));
+        connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+        Query->readAll(); // indicate that all records should be fetched
+        Query->start();
+
         if (!System)
-            SessionIO = new toNoBlockQuery(conn, toQuery::Background,
-                                           toSQL::string(SQLSessionIO, connection()),
-                                           args);
-        Poll.start(100);
+            SessionIO = new toEventQuery(conn, toQuery::Background,
+                                         toSQL::string(SQLSessionIO, connection()),
+                                         args);
+        connect(SessionIO, SIGNAL(dataAvailable()), this, SLOT(pollSystem()));
+        connect(SessionIO, SIGNAL(done()), this, SLOT(systemDone()));
+        SessionIO->readAll(); // indicate that all records should be fetched
+        SessionIO->start();
+
         Reset = reset;
 
     }
     TOCATCH
 }
 
-void toResultStats::poll(void)
+void toResultStats::pollQuery(void)
 {
+qDebug() << "toResultStats::pollQuery";
+    if (!toCheckModal(this))
+        return;
+
     try
     {
-        if (!toCheckModal(this))
-            return ;
-        bool done = true;
 
-        if (Query && Query->poll())
+        while (Query->hasMore())
         {
-            while (Query->poll() && !Query->eof())
-            {
-                QString name = Query->readValue();
-                int id = Query->readValue().toInt();
-                double value = Query->readValue().toDouble();
-                addValue(Reset, id, name, value);
-            }
-
-            if (Query->eof())
-            {
-                delete Query;
-                Query = NULL;
-            }
-            else
-                done = false;
+            QString name = Query->readValue();
+            int id = Query->readValue().toInt();
+            double value = Query->readValue().toDouble();
+            addValue(Reset, id, name, value);
         }
-        else if (Query)
-            done = false;
-
-        if (SessionIO && SessionIO->poll())
-        {
-            int id = 0;
-            toQDescList description = SessionIO->describe();
-            toQDescList::iterator i = description.begin();
-            while (!SessionIO->eof())
-            {
-                addValue(Reset, id, (*i).Name, SessionIO->readValue().toDouble());
-                id++;
-                if (i == description.end())
-                    i = description.begin();
-                else
-                    i++;
-            }
-            delete SessionIO;
-            SessionIO = NULL;
-        }
-        else if (SessionIO)
-            done = false;
-
-        if (done)
-            Poll.stop();
-		resizeColumnsToContents();
     }
     catch (const QString &exc)
     {
@@ -354,7 +325,51 @@ void toResultStats::poll(void)
         Query = NULL;
         delete SessionIO;
         SessionIO = NULL;
-        Poll.stop();
         toStatusMessage(exc);
     }
-}
+} // pollQuery
+
+void toResultStats::queryDone(void)
+{
+qDebug() << "toResultStats::queryDone";
+    delete Query;
+    Query = NULL;
+    resizeColumnsToContents();
+} // queryDone
+
+void toResultStats::pollSystem(void)
+{
+qDebug() << "toResultStats::pollSystem";
+    if (!toCheckModal(this))
+        return;
+
+    try
+    {
+        int id = 0;
+        toQDescList description = SessionIO->describe();
+        toQDescList::iterator i = description.begin();
+        while (SessionIO->hasMore())
+        {
+            addValue(Reset, id, (*i).Name, SessionIO->readValue().toDouble());
+            id++;
+            if (i == description.end())
+                i = description.begin();
+            else
+                i++;
+        }
+    }
+    catch (const QString &exc)
+    {
+        delete SessionIO;
+        SessionIO = NULL;
+        toStatusMessage(exc);
+    }
+} // pollSystem
+
+void toResultStats::systemDone(void)
+{
+qDebug() << "toResultStats::systemDone";
+    delete SessionIO;
+    SessionIO = NULL;
+    resizeColumnsToContents();
+} // systemDone

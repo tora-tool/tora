@@ -42,7 +42,6 @@
 #ifndef TOBARCHART_H
 #define TOBARCHART_H
 
-#include "config.h"
 #include "tolinechart.h"
 
 /** A widget that displays a barchart. Each line is added onto the next one.

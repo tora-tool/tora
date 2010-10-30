@@ -42,8 +42,6 @@
 #ifndef TORESULTLINE_H
 #define TORESULTLINE_H
 
-#include "config.h"
-#include "tobackground.h"
 #include "tolinechart.h"
 #include "toresult.h"
 
@@ -52,7 +50,7 @@
 #include <list>
 
 class QMenu;
-class toNoBlockQuery;
+class toEventQuery;
 class toSQL;
 
 
@@ -75,8 +73,7 @@ class toResultLine : public toLineChart, public toResult
      */
     std::list<double> LastValues;
     bool First;
-    toNoBlockQuery *Query;
-    toBackground Poll;
+    toEventQuery *Query;
     unsigned int Columns;
     void query(const QString &sql, const toQList &param, bool first);
 public:
@@ -214,6 +211,7 @@ protected slots:
     virtual void addMenues(QMenu *);
 private slots:
     void poll(void);
+    void queryDone(void);
     void editSQL(void);
 };
 
