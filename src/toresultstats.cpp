@@ -304,7 +304,6 @@ void toResultStats::refreshStats(bool reset)
 
 void toResultStats::pollQuery(void)
 {
-qDebug() << "toResultStats::pollQuery";
     if (!toCheckModal(this))
         return;
 
@@ -331,7 +330,6 @@ qDebug() << "toResultStats::pollQuery";
 
 void toResultStats::queryDone(void)
 {
-qDebug() << "toResultStats::queryDone";
     delete Query;
     Query = NULL;
     resizeColumnsToContents();
@@ -339,7 +337,6 @@ qDebug() << "toResultStats::queryDone";
 
 void toResultStats::pollSystem(void)
 {
-qDebug() << "toResultStats::pollSystem";
     if (!toCheckModal(this))
         return;
 
@@ -368,7 +365,6 @@ qDebug() << "toResultStats::pollSystem";
 
 void toResultStats::systemDone(void)
 {
-qDebug() << "toResultStats::systemDone";
     delete SessionIO;
     SessionIO = NULL;
     resizeColumnsToContents();
