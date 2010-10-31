@@ -46,7 +46,7 @@
 #include "toconf.h"
 #include "tocurrent.h"
 #include "tomain.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 #include "toresulttableview.h"
 #include "toresultparam.h"
 #include "toresultstats.h"
@@ -155,8 +155,6 @@ toCurrent::toCurrent(QWidget *main, toConnection &connection)
     ResourceLimit->setSQL(SQLResourceLimit);
     Tabs->addTab(ResourceLimit, tr("Resource Limits"));
 
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
-
     Query = NULL;
     refresh();
 
@@ -204,59 +202,50 @@ static toSQL SQLUserRolePrivs("toCurrent:UserRolePrivs",
 
 void toCurrent::addList(bool isrole, toTreeWidgetItem *parent, const QString &type, const toSQL &sql, const QString &role)
 {
-    Updates.insert(Updates.end(), update(isrole, parent, type, sql(connection()), role));
+    Updates.append(update(isrole, parent, type, sql(connection()), role));
 }
+
+void toCurrent::processUpdate()
+{
+    if (Updates.empty())
+        return;
+
+    CurrentUpdate = Updates.takeFirst();
+
+    toQList param;
+    if (!CurrentUpdate.Role.isEmpty())
+        toPush(param, toQValue(CurrentUpdate.Role));
+    Query = new toEventQuery(connection(),
+                             toQuery::Background,
+                             CurrentUpdate.SQL,
+                             param);
+    connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
+    connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+    Query->readAll(); // indicate that all records should be fetched
+    Query->start();
+} // processUpdate
 
 void toCurrent::poll()
 {
     try
     {
-        if (Query)
+        while (Query->hasMore())
         {
-            while (Query && Query->poll())
+            toTreeWidgetItem *item;
+            if (CurrentUpdate.Parent)
+                item = new toResultViewItem(CurrentUpdate.Parent, NULL);
+            else
+                item = new toResultViewItem(Grants, NULL);
+            item->setText(0, Query->readValue());
+            item->setText(1, CurrentUpdate.Type);
+            item->setText(2, Query->readValue());
+            if (CurrentUpdate.IsRole)
             {
-                if (Query->eof())
-                {
-                    delete Query;
-                    Query = NULL;
-                }
-                else
-                {
-                    toTreeWidgetItem *item;
-                    if (CurrentUpdate.Parent)
-                        item = new toResultViewItem(CurrentUpdate.Parent, NULL);
-                    else
-                        item = new toResultViewItem(Grants, NULL);
-                    item->setText(0, Query->readValue());
-                    item->setText(1, CurrentUpdate.Type);
-                    item->setText(2, Query->readValue());
-                    if (CurrentUpdate.IsRole)
-                    {
-                        addList(false, item, tr("System"), SQLRoleSysPrivs, item->text(0));
-                        addList(false, item, tr("Object"), SQLRoleTabPrivs, item->text(0));
-                        addList(true, item, tr("Role"), SQLRoleRolePrivs, item->text(0));
-                    }
-                }
+                // Add details of this role to the query que
+                addList(false, item, tr("System"), SQLRoleSysPrivs, item->text(0));
+                addList(false, item, tr("Object"), SQLRoleTabPrivs, item->text(0));
+                addList(true, item, tr("Role"), SQLRoleRolePrivs, item->text(0));
             }
-        }
-
-        if (!Query)
-        {
-            if ( Updates.empty() )
-            {
-                Poll.stop();
-                return ;
-            }
-
-            CurrentUpdate = toShift(Updates);
-
-            toQList param;
-            if (!CurrentUpdate.Role.isEmpty())
-                toPush(param, toQValue(CurrentUpdate.Role));
-            Query = new toNoBlockQuery(connection(),
-                                       toQuery::Background,
-                                       CurrentUpdate.SQL,
-                                       param);
         }
     }
     catch (const QString &exc)
@@ -266,6 +255,14 @@ void toCurrent::poll()
         Query = NULL;
     }
 }
+
+void toCurrent::queryDone()
+{
+    delete Query;
+    Query = NULL;
+    processUpdate(); // done with this query, so process the next one!
+    Grants->resizeColumnsToContents();
+} // queryDone
 
 void toCurrent::refresh()
 {
@@ -285,8 +282,7 @@ void toCurrent::refresh()
         addList(false, NULL, tr("Object"), SQLUserTabPrivs);
         addList(true, NULL, tr("Role"), SQLUserRolePrivs);
 
-        poll();
-        Poll.start(100);
+        processUpdate();
     }
     TOCATCH
 }

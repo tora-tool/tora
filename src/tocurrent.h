@@ -42,15 +42,13 @@
 #ifndef TOCURRENT_H
 #define TOCURRENT_H
 
-#include "config.h"
 #include "totool.h"
 #include "tosql.h"
-#include "tobackground.h"
 
 #include "toresultview.h"
 
 class QTabWidget;
-class toNoBlockQuery;
+class toEventQuery;
 class toResultParam;
 class toResultStats;
 class toResultView;
@@ -89,7 +87,7 @@ class toCurrent : public toToolWidget
         }
     };
 
-    std::list<update> Updates;
+    QList<update> Updates;
 
     QTabWidget        *Tabs;
     toResultTableView *Version;
@@ -97,16 +95,16 @@ class toCurrent : public toToolWidget
     toResultTableView *ResourceLimit;
     toResultParam     *Parameters;
     toResultStats     *Statistics;
-    toBackground       Poll;
 
     update CurrentUpdate;
-    toNoBlockQuery *Query;
+    toEventQuery *Query;
 
     virtual void addList(bool isrole,
                          toTreeWidgetItem *parent,
                          const QString &typ,
                          const toSQL &sql,
                          const QString &role = QString::null);
+    void processUpdate(void);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -118,6 +116,7 @@ public:
 public slots:
     void refresh(void);
     void poll(void);
+    void queryDone();
 };
 
 #endif

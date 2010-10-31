@@ -43,7 +43,7 @@
 
 #include "toconf.h"
 #include "toconnection.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 #include "toresultitem.h"
 #include "toresultresources.h"
 #include "tosql.h"
@@ -139,7 +139,6 @@ static toSQL SQLResource(
 toResultResources::toResultResources(QWidget *parent, const char *name)
         : toResultItem(3, true, parent, name)
 {
-
     setSQL(SQLResource);
 }
 
@@ -163,8 +162,6 @@ void toResultItem::setup(int num, bool readable)
     Result = new QGridLayout;
     Result->setSpacing(3);
     w->setLayout(Result);
-
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
 }
 
 toResultItem::toResultItem(int num,
@@ -173,7 +170,6 @@ toResultItem::toResultItem(int num,
                            const char *name)
         : QScrollArea(parent), DataFont(QFont())
 {
-
     setObjectName(name);
     setup(num, readable);
 }
@@ -349,11 +345,13 @@ void toResultItem::query(const QString &sql, const toQList &param)
             delete Query;
             Query = NULL;
         }
-        Query = new toNoBlockQuery(connection(),
-                                   toQuery::Background,
-                                   sql, param);
-        Poll.start(100);
-
+        Query = new toEventQuery(connection(),
+                                 toQuery::Background,
+                                 sql, param);
+        connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
+        connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+        Query->readAll(); // indicate that all records should be fetched
+        Query->start();
     }
     catch (const QString &str)
     {
@@ -373,33 +371,28 @@ void toResultItem::clearData()
 
 void toResultItem::poll(void)
 {
+    if (!toCheckModal(this))
+        return;
+
     try
     {
-        if (!toCheckModal(this))
-            return ;
-        if (Query && Query->poll())
+        toQDescList desc = Query->describe();
+
+        if (Query->hasMore())
         {
-            toQDescList desc = Query->describe();
-
-            if (!Query->eof())
+            for (toQDescList::iterator i = desc.begin();
+                 i != desc.end();
+                 i++)
             {
-                for (toQDescList::iterator i = desc.begin();
-                        i != desc.end();
-                        i++)
-                {
+                QString name = (*i).Name;
+                if (ReadableColumns)
+                    toReadableColumn(name);
 
-                    QString name = (*i).Name;
-                    if (ReadableColumns)
-                        toReadableColumn(name);
-
-                    addItem(name, Query->readValue());
-                }
+                addItem(name, Query->readValue());
             }
-            done();
-            delete Query;
-            Query = NULL;
-            Poll.stop();
         }
+        // Should we try to fetch any remaining values here,
+        // because we've only red one row...
     }
     catch (const QString &str)
     {
@@ -407,6 +400,12 @@ void toResultItem::poll(void)
         Query = NULL;
         done();
         toStatusMessage(str);
-        Poll.stop();
     }
+}
+
+void toResultItem::queryDone(void )
+{
+    done();
+    delete Query;
+    Query = NULL;
 }

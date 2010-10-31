@@ -42,19 +42,16 @@
 #ifndef TORESULTITEM_H
 #define TORESULTITEM_H
 
-#include "config.h"
-#include "tobackground.h"
 #include "toresult.h"
 
 #include <QScrollArea>
 #include <qfont.h>
-/* #include <QResizeEvent> */
 #include <QGridLayout>
 
 #include <vector>
 
 class toSQL;
-class toNoBlockQuery;
+class toEventQuery;
 
 /** Display the first row of a query with each column with a separate label.
  * If the label of the item is a single '-' character the data is treated as
@@ -95,8 +92,7 @@ class toResultItem : public QScrollArea, public toResult
      */
     QFont DataFont;
 
-    toNoBlockQuery *Query;
-    toBackground Poll;
+    toEventQuery *Query;
 
     /** Setup widget.
      * @param num Number of columns.
@@ -262,6 +258,7 @@ public slots:
     }
 private slots:
     void poll(void);
+    void queryDone(void);
 };
 
 #endif

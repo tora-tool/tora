@@ -42,13 +42,11 @@
 #ifndef TORESULTLONG_H
 #define TORESULTLONG_H
 
-#include "config.h"
-#include "tobackground.h"
 #include "toconnection.h"
 #include "toresultview.h"
 
 class toTreeWidgetItem;
-class toNoBlockQuery;
+class toEventQuery;
 class toResultStats;
 class toResultTip;
 class toresultlong;
@@ -61,10 +59,7 @@ class toResultLong : public toResultView
 
     /** No blocking query object.
      */
-    toNoBlockQuery *Query;
-    /** Timer to poll for new data.
-     */
-    toBackground Timer;
+    toEventQuery *Query;
     /** Indicator if headers have been parsed yet.
      */
     bool HasHeaders;
@@ -157,6 +152,7 @@ public slots:
     /** Reimplemented for internal reasons.
      */
     virtual void addItem(void);
+    void queryDone(void);
 };
 
 #endif

@@ -44,7 +44,7 @@
 #include "toresultlong.h"
 #include "toconf.h"
 #include "totool.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 
 #include <stdio.h>
 
@@ -60,7 +60,6 @@ toResultLong::toResultLong(bool readable, bool dispCol, toQuery::queryMode mode,
     Statistics = NULL;
     Mode       = mode;
     HasHeaders = false;
-    connect(&Timer, SIGNAL(timeout(void)), this, SLOT(addItem(void)));
 }
 
 toResultLong::toResultLong(QWidget *parent, const char *name, Qt::WFlags f)
@@ -70,7 +69,6 @@ toResultLong::toResultLong(QWidget *parent, const char *name, Qt::WFlags f)
     Statistics = NULL;
     Mode       = toQuery::Long;
     HasHeaders = false;
-    connect(&Timer, SIGNAL(timeout(void)), this, SLOT(addItem(void)));
 }
 
 void toResultLong::query(const QString &sql, const toQList &param)
@@ -103,13 +101,17 @@ void toResultLong::query(const QString &sql, const toQList &param)
 
     try
     {
-        Query = new toNoBlockQuery(connection(), Mode, sql, param, Statistics);
-
+        Query = new toEventQuery(connection(), Mode, sql, param, Statistics);
+        connect(Query, SIGNAL(dataAvailable()), this, SLOT(addItem()));
+        connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
         if (ReadAll)
+        {
             MaxNumber = -1;
+            Query->readAll(); // indicate that all records should be fetched
+        }
         else
             MaxNumber = toConfigurationSingle::Instance().maxNumber();
-        addItem();
+        Query->start();
     }
     catch (const toConnection::exception &str)
     {
@@ -134,147 +136,123 @@ void toResultLong::query(const QString &sql, const toQList &param)
 
 void toResultLong::editReadAll(void)
 {
-    if (Query && !Query->eof())
+    if (Query && Query->hasMore())
     {
         MaxNumber = -1;
-        Timer.start(TO_POLL_CHECK);
+        Query->readAll();
     }
 }
 
 void toResultLong::addItem(void)
 {
+    if (!toCheckModal(this))
+        return;
+
     try
     {
-        if (!toCheckModal(this))
-            return ;
-        if (Query)
+        while (Query->hasMore())
         {
-            if (Query->poll())
+            bool em = false; // should we emit signal about first row fetched?
+            QString buffer;
+            if (First)
             {
-                bool em = false;
-                QString buffer;
-                if (First)
-                {
-                    QString tmp = sql().simplified().mid(0, 10).toLower();
-                    if (tmp.startsWith(QString::fromLatin1("update")) ||
-                            tmp.startsWith(QString::fromLatin1("delete")) ||
-                            tmp.startsWith(QString::fromLatin1("insert")))
-                        buffer = tr("%1 rows processed").arg(Query->rowsProcessed());
-                    else if (tmp.startsWith(QString::fromLatin1("select")))
-                        buffer = tr("Query executed");
-                    else
-                        buffer = tr("Statement executed");
-                    em = true;
-                }
-                if (!HasHeaders)
-                {
-                    Description = Query->describe();
-                    bool hidden = false;
-
-                    for (toQDescList::iterator i = Description.begin();i != Description.end();i++)
-                    {
-                        QString name = (*i).Name;
-                        if (ReadableColumns)
-                            toReadableColumn(name);
-                        if (name.length() > 0 && name[0].toLatin1() != ' ')
-                        {
-                            if (hidden)
-                                throw tr("Can only hide last column in query");
-                            if (name[0].toLatin1() == '-')
-                            {
-                                addColumn(toTranslateMayby(sqlName(), name.right(name.length() - 1)));
-                                setColumnAlignment(columns() - 1, Qt::AlignRight);
-                            }
-                            else
-                            {
-                                addColumn(toTranslateMayby(sqlName(), name));
-                                if ((*i).AlignRight)
-                                    setColumnAlignment(columns() - 1, Qt::AlignRight);
-                            }
-                        }
-                        else
-                            hidden = true;
-                    }
-                    HasHeaders = true;
-
-                    setResizeMode(toTreeWidget::AllColumns);
-
-                    if (sortColumn() < 0)
-                    {
-                        if (NumberColumn)
-                            setSorting(0);
-                        else
-                            setSorting(Description.size());
-                    }
-                }
-
-                if (!Query->eof())
-                {
-                    int disp = 0;
-                    unsigned int cols = Description.size();
-                    if (NumberColumn)
-                    {
-                        disp = 1;
-                    }
-                    do
-                    {
-                        toTreeWidgetItem *last = LastItem;
-                        LastItem = createItem(LastItem, QString::null);
-                        if (NumberColumn)
-                            LastItem->setText(0, QString::number(RowNumber + 1));
-                        else
-                            LastItem->setText(cols, QString::number(RowNumber + 1));
-                        toResultViewItem *ri = dynamic_cast<toResultViewItem *>(LastItem);
-                        toResultViewCheck *ci = dynamic_cast<toResultViewCheck *>(LastItem);
-                        for (unsigned int j = 0;(j < cols || j == 0) && !Query->eof();j++)
-                        {
-                            if (ri)
-                                ri->setText(j + disp, Query->readValue());
-                            else if (ci)
-                                ci->setText(j + disp, Query->readValue());
-                            else
-                                LastItem->setText(j + disp, Query->readValue());
-                        }
-                        if (Filter && !Filter->check(LastItem))
-                        {
-                            delete LastItem;
-                            LastItem = last;
-                        }
-                        else
-                            RowNumber++;
-                    }
-                    while (Query->poll() && !Query->eof() && (MaxNumber < 0 || MaxNumber > RowNumber));
-                }
-                if (em)
-                {
-                    First = false;
-                    emit firstResult(sql(), toConnection::exception(buffer), false);
-                }
-                if (Query->eof())
-                {
-                    cleanup();
-                    return ;
-                }
-                if (MaxNumber < 0 || MaxNumber > RowNumber)
-                {
-                    if (!Timer.isActive())
-                        Timer.start(1); // Must use timer, would mean really long recursion otherwise
-                    else
-                        Timer.start(TO_POLL_CHECK);
-                }
+                QString tmp = sql().simplified().mid(0, 10).toLower();
+                if (tmp.startsWith(QString::fromLatin1("update")) ||
+                    tmp.startsWith(QString::fromLatin1("delete")) ||
+                    tmp.startsWith(QString::fromLatin1("insert")))
+                    buffer = tr("%1 rows processed").arg(Query->rowsProcessed());
+                else if (tmp.startsWith(QString::fromLatin1("select")))
+                    buffer = tr("Query executed");
                 else
-                    Timer.stop();
+                    buffer = tr("Statement executed");
+                em = true;
             }
-            else
+            if (!HasHeaders)
             {
-                if (Query->eof())
+                Description = Query->describe();
+                bool hidden = false;
+
+                for (toQDescList::iterator i = Description.begin();i != Description.end();i++)
                 {
-                    cleanup();
-                    return ;
+                    QString name = (*i).Name;
+                    if (ReadableColumns)
+                        toReadableColumn(name);
+                    if (name.length() > 0 && name[0].toLatin1() != ' ')
+                    {
+                        if (hidden)
+                            throw tr("Can only hide last column in query");
+                        if (name[0].toLatin1() == '-')
+                        {
+                            addColumn(toTranslateMayby(sqlName(), name.right(name.length() - 1)));
+                            setColumnAlignment(columns() - 1, Qt::AlignRight);
+                        }
+                        else
+                        {
+                            addColumn(toTranslateMayby(sqlName(), name));
+                            if ((*i).AlignRight)
+                                setColumnAlignment(columns() - 1, Qt::AlignRight);
+                        }
+                    }
+                    else
+                        hidden = true;
                 }
-                else if (!Timer.isActive())
-                    Timer.start(TO_POLL_CHECK);
+                HasHeaders = true;
+
+                setResizeMode(toTreeWidget::AllColumns);
+
+                if (sortColumn() < 0)
+                {
+                    if (NumberColumn)
+                        setSorting(0);
+                    else
+                        setSorting(Description.size());
+                }
             }
+
+            if (Query->hasMore())
+            {
+                int disp = 0;
+                unsigned int cols = Description.size();
+                if (NumberColumn)
+                {
+                    disp = 1;
+                }
+                do
+                {
+                    toTreeWidgetItem *last = LastItem;
+                    LastItem = createItem(LastItem, QString::null);
+                    if (NumberColumn)
+                        LastItem->setText(0, QString::number(RowNumber + 1));
+                    else
+                        LastItem->setText(cols, QString::number(RowNumber + 1));
+                    toResultViewItem *ri = dynamic_cast<toResultViewItem *>(LastItem);
+                    toResultViewCheck *ci = dynamic_cast<toResultViewCheck *>(LastItem);
+                    for (unsigned int j = 0;(j < cols || j == 0) && !Query->eof();j++)
+                    {
+                        if (ri)
+                            ri->setText(j + disp, Query->readValue());
+                        else if (ci)
+                            ci->setText(j + disp, Query->readValue());
+                        else
+                            LastItem->setText(j + disp, Query->readValue());
+                    }
+                    if (Filter && !Filter->check(LastItem))
+                    {
+                        delete LastItem;
+                        LastItem = last;
+                    }
+                    else
+                        RowNumber++;
+                }
+                while (Query->hasMore() && (MaxNumber < 0 || MaxNumber > RowNumber));
+            }
+            if (em)
+            {
+                First = false;
+                emit firstResult(sql(), toConnection::exception(buffer), false);
+            }
+            if (!(MaxNumber < 0 || MaxNumber > RowNumber))
+                Query->stop();
         }
     }
     catch (const toConnection::exception &str)
@@ -310,16 +288,20 @@ void toResultLong::cleanup(void)
     if (Query)
     {
         // delete causes crash on short running queries.
-//         delete Query;
-//         Query = NULL;
+        delete Query;
+        Query = NULL;
         emit done();
-        Timer.stop();
     }
+}
+
+void toResultLong::queryDone(void)
+{
+    cleanup();
 }
 
 bool toResultLong::eof(void)
 {
-    return !Query || Query->eof();
+    return !Query || !Query->hasMore();
 }
 
 void toResultLong::stop(void)
@@ -328,7 +310,6 @@ void toResultLong::stop(void)
     {
         delete Query;
         Query = NULL;
-        Timer.stop();
         emit done();
     }
 }
