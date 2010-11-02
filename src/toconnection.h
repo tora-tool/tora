@@ -54,6 +54,7 @@
 #include <QString>
 #include <QPointer>
 #include <QMetaType>
+#include <QDateTime>
 
 class QWidget;
 class toConnection;
@@ -73,6 +74,7 @@ class toConnectionPool;
 class toConnectionSub
 {
     toQuery *Query;
+    QDateTime LastUsed; // last time this db connection was actually used
 public:
     /** Create connection to database.
      */
@@ -100,6 +102,18 @@ public:
      */
     virtual void cancel(void)
     { }
+    /** Get time when last query on this connection has finished
+     */
+    QDateTime lastUsed(void)
+    {
+        return LastUsed;
+    }
+    /** Set time when last query on this connection has finished to "now"
+     */
+    void setLastUsed(void)
+    {
+        LastUsed = QDateTime::currentDateTime();
+    }
 }
 ;
 

@@ -46,6 +46,7 @@
 #include "tosql.h"
 
 #include <QTimer>
+#include <QDateTime>
 #include <QCoreApplication>
 #include <QApplication>
 
@@ -240,7 +241,6 @@ toConnectionPool::PooledState toConnectionPool::test(int member) {
     return psub->State;
 }
 
-
 toConnectionPool::PooledState toConnectionPool::test(PooledSub *sub) {
     PooledState state = Free;
     try {
@@ -274,11 +274,14 @@ toConnectionSub* toConnectionPool::steal(int member) {
 }
 
 
+/* Checks which connection is available in a pool and then returns it.
+*/
 toConnectionSub* toConnectionPool::borrow() {
     {
         // keep lock here so adding connection below can be sure
         // there's no current lock in case of exception
         LockingPtr<SubList> ptr(Pool, PoolLock);
+        int connectionTestTimeout = toConfigurationSingle::Instance().connectionTestTimeout();
 
         for(int mem = 0; mem < ptr->size(); mem++) {
             PooledSub *psub = (*ptr)[mem];
@@ -287,8 +290,17 @@ toConnectionSub* toConnectionPool::borrow() {
                 psub->State = Busy;
                 ptr.unlock();
 
-                PooledState state = test(psub);
-                if(state == Free)
+                // Check how many seconds have passed since something has been executed
+                // on this particular database connection.
+                int diff = psub->Sub->lastUsed().secsTo(QDateTime::currentDateTime());
+                PooledState state;
+                // If more than configured amount has passed - perform a connection
+                // test - run some simple operation to check if connection is still alive.
+                if (diff > connectionTestTimeout)
+                    state = test(psub);
+                else
+                    state = Free;
+                if (state == Free)
                     return psub->Sub;
                 else {
                     ptr.lock();

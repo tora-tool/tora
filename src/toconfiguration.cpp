@@ -138,6 +138,7 @@ public:
     int     m_smtpPort;
     QString m_style;
     QString m_staticChecker; // path+name to static check script (used in code editor)
+    int     m_connectionTestTimeout; // after how many seconds connection should be tested
 
     // tooracleconnection
     int m_openCursors;
@@ -500,6 +501,7 @@ public:
         m_syntaxStaticBg = s.value("SyntaxStaticBg", "darkblue").toString();
         m_useMaxTextWidthMark = s.value("useMaxTextWidthMark", false).toBool();
         m_maxTextWidthMark = s.value("maxTextWidthMark", 75).toInt();
+        m_connectionTestTimeout = s.value(CONF_CONNECTION_TEST_TIMEOUT, DEFAULT_CONNECTION_TEST_TIMEOUT).toInt();
         s.endGroup();
 
         // main window
@@ -739,6 +741,7 @@ public:
         s.setValue("SyntaxStaticBg", m_syntaxStaticBg);
         s.setValue("useMaxTextWidthMark", m_useMaxTextWidthMark);
         s.setValue("maxTextWidthMark", m_maxTextWidthMark);
+        s.setValue(CONF_CONNECTION_TEST_TIMEOUT, m_connectionTestTimeout);
         s.endGroup();
 
         // main window
@@ -2193,6 +2196,16 @@ int toConfiguration::maxTextWidthMark()
 void toConfiguration::setMaxTextWidthMark(int v)
 {
     p->m_maxTextWidthMark = v;
+}
+
+int toConfiguration::connectionTestTimeout()
+{
+    return p->m_connectionTestTimeout;
+}
+
+void toConfiguration::setConnectionTestTimeout(int v)
+{
+    p->m_connectionTestTimeout;
 }
 
 QByteArray toConfiguration::mainWindowGeometry()

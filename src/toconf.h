@@ -169,6 +169,9 @@
 #define DEFAULT_STYLE "" //"Cleanlooks"
 // code editor
 #define CONF_STATIC_CHECKER "StaticChecker"
+// connection (general)
+#define CONF_CONNECTION_TEST_TIMEOUT "ConnectionTestTimeout"
+#define DEFAULT_CONNECTION_TEST_TIMEOUT 0
 // tooracleconnection.cpp
 #define CONF_OPEN_CURSORS "OpenCursors"
 #define DEFAULT_OPEN_CURSORS 40  // Defined to be able to update tuning view

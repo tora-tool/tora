@@ -492,6 +492,9 @@ public:
     int maxTextWidthMark();
     void setMaxTextWidthMark(int v);
 
+    int connectionTestTimeout();
+    void setConnectionTestTimeout(int v);
+
     // shortcut editor
     bool useEditorShortcuts();
     void setUseEditorShortcuts(bool v);

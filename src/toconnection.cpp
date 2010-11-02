@@ -529,6 +529,7 @@ void toQuery::execute(const toSQL &sql, const toQList &params)
     SQL = sql(*Connection);
     Params = params;
     Query->execute();
+    this->connectionSub()->setLastUsed();
 }
 
 void toQuery::execute(const QString &sql, const toQList &params)
@@ -537,6 +538,7 @@ void toQuery::execute(const QString &sql, const toQList &params)
     SQL = sql;
     Params = params;
     Query->execute();
+    this->connectionSub()->setLastUsed();
 }
 
 void toQuery::execute(const toSQL &sql)
@@ -544,6 +546,7 @@ void toQuery::execute(const toSQL &sql)
     std::list<toQValue> params;
     params.clear();
     execute(sql, params);
+    this->connectionSub()->setLastUsed();
 }
 
 void toQuery::execute(const toSQL &sql, const QString &param)
@@ -552,6 +555,7 @@ void toQuery::execute(const toSQL &sql, const QString &param)
     params.clear();
     params.insert(params.end(), param);
     execute(sql, params);
+    this->connectionSub()->setLastUsed();
 }
 
 void toQuery::execute(const toSQL &sql, const QString &param1, const QString &param2, const QString &param3)
@@ -562,6 +566,7 @@ void toQuery::execute(const toSQL &sql, const QString &param1, const QString &pa
     params.insert(params.end(), param2);
     params.insert(params.end(), param3);
     execute(sql, params);
+    this->connectionSub()->setLastUsed();
 }
 
 toQuery::~toQuery()
