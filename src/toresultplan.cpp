@@ -44,7 +44,7 @@
 #include "toconf.h"
 #include "toconnection.h"
 #include "tomain.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 #include "toresultplan.h"
 #include "tosql.h"
 #include "totool.h"
@@ -60,7 +60,6 @@ toResultPlan::toResultPlan(QWidget *parent, const char *name)
         : toResultView(false, false, parent, name)
 {
     setSQLName(QString::fromLatin1("toResultPlan"));
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
     setAlternatingRowColors(true);
     Query = NULL;
     oracleSetup();
@@ -149,6 +148,15 @@ void toResultPlan::oracleSetup(void)
     setColumnAlignment(12, Qt::AlignRight);
 }
 
+// Connects query signals to appropriate slots. Created just in order not to repeat code...
+void toResultPlan::connectSlotsAndStart()
+{
+    connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
+    connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+    Query->readAll(); // indicate that all records should be fetched
+    Query->start();
+} // connectSlotsAndStart
+
 void toResultPlan::oracleNext(void)
 {
     LastTop = NULL;
@@ -168,7 +176,6 @@ void toResultPlan::oracleNext(void)
     QString sql = toShift(Statements);
     if (sql.isNull())
     {
-        Poll.stop();
         return ;
     }
     if (sql.length() > 0 && sql.at(sql.length() - 1).toLatin1() == ';')
@@ -189,7 +196,7 @@ void toResultPlan::oracleNext(void)
             try
             {
                 // conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().user()));
-		// when we start connection it is for user but in schema context
+                // when we start connection it is for user but in schema context
                 conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"").arg(connection().schema()));
             }
             catch (...)
@@ -197,26 +204,27 @@ void toResultPlan::oracleNext(void)
             throw;
         }
         //conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().user()));
-	//when we start connection it is for user but in schema context
+        //when we start connection it is for user but in schema context
         conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"").arg(connection().schema()));
         toQList par;
-        Query = new toNoBlockQuery(connection(), toQuery::Normal,
-                                   toSQL::string(SQLViewPlan, conn).
-				   // arg(toConfigurationSingle::Instance().planTable()).
-				   // Since EXPLAIN PLAN is always to conn.user() plan_table
-				   arg(explain).
-                                   arg(Ident), par);
+        Query = new toEventQuery(connection(), toQuery::Normal,
+                                 toSQL::string(SQLViewPlan, conn).
+                                 // arg(toConfigurationSingle::Instance().planTable()).
+                                 // Since EXPLAIN PLAN is always to conn.user() plan_table
+                                 arg(explain).
+                                 arg(Ident), par);
+        connectSlotsAndStart();
         Reading = true;
     }
     else
     {
         Reading = false;
         toQList par;
-        Query = new toNoBlockQuery(conn, toQuery::Normal, explain, par);
+        Query = new toEventQuery(conn, toQuery::Normal, explain, par);
+        connectSlotsAndStart();
     }
     TopItem = new toResultViewItem(this, TopItem, QString::fromLatin1("EXPLAIN PLAN:"));
     TopItem->setText(1, sql.left(50).trimmed());
-    Poll.start(100);
 }
 
 static void StripInto(std::list<toSQLParse::statement> &stats)
@@ -311,33 +319,33 @@ void toResultPlan::query(const QString &sql,
         {
             Ident = sql.mid(6);
             toQList par;
-            Query = new toNoBlockQuery(connection(), toQuery::Background,
-                                       toSQL::string(SQLViewPlan, connection()).
-                                       arg(planTable).arg(Ident),
-                                       par);
+            Query = new toEventQuery(connection(), toQuery::Background,
+                                     toSQL::string(SQLViewPlan, connection()).
+                                     arg(planTable).arg(Ident),
+                                     par);
+            connectSlotsAndStart();
             Reading = true;
             LastTop = NULL;
             Parents.clear();
             Last.clear();
             TopItem = new toResultViewItem(this, NULL, QString::fromLatin1("DML"));
             TopItem->setText(1, QString::fromLatin1("Saved plan"));
-	    Poll.start(100);
         }
         else if (sql.startsWith(QString::fromLatin1("SGA:")))
         {
             QString Address = sql.mid(4);
 	    toConnection &conn = connection();
             toQList par;
-            Query = new toNoBlockQuery(conn, toQuery::Background,
+            Query = new toEventQuery(conn, toQuery::Background,
                                        toSQL::string(SQLViewVSQLPlan, conn).arg(Address),
                                        par);
+            connectSlotsAndStart();
             Reading = true;
 	    LastTop = NULL;
             Parents.clear();
             Last.clear();
             TopItem = new toResultViewItem(this, NULL, QString::fromLatin1("V$SQL_PLAN:"));
             TopItem->setText(1, toSQLString(conn, Address).left(50).trimmed());
-	    Poll.start(100);
         }
 	else
         {
@@ -355,116 +363,80 @@ void toResultPlan::query(const QString &sql,
 
 void toResultPlan::poll(void)
 {
+    if (!toCheckModal(this))
+        return;
+
     try
     {
-        if (!toCheckModal(this))
-            return ;
-        if (Query && Query->poll())
+        while (Query->hasMore())
         {
-            if (!Reading)
+            QString id = Query->readValueNull();
+            QString parentid = Query->readValueNull();
+            QString operation = Query->readValueNull();
+            QString options = Query->readValueNull();
+            QString object = Query->readValueNull();
+            QString optimizer = Query->readValueNull();
+            QString cost = Query->readValueNull();
+            QString iocost = Query->readValueNull();
+            QString bytes = Query->readValueNull().toSIsize();
+            QString cardinality = Query->readValueNull();
+            QString startpartition = Query->readValueNull();
+            QString endpartition = Query->readValueNull();
+            QString tempspace = Query->readValueNull().toSIsize();
+            QString time = Query->readValueNull();
+
+            toResultViewItem *item;
+            if (!parentid.isNull() && Parents[parentid])
             {
-                toQList par;
-                delete Query;
-                Query = NULL;
-		toConnection &conn = connection();
-                Query = new toNoBlockQuery(connection(), toQuery::Normal,
-                                           toSQL::string(SQLViewPlan, conn).
-                                           // arg(toConfigurationSingle::Instance().planTable()).
-					   // Since EXPLAIN PLAN is always to conn.user() plan_table
-					   // and current_schema can be different
-					   arg(toConfigurationSingle::Instance().planTable(conn.user())).
-                                           arg(Ident), par);
-                Reading = true;
+                item = new toResultViewItem(Parents[parentid], Last[parentid]);
+//            setOpen(Parents[parentid], true);
+                Last[parentid] = item;
             }
             else
             {
-                while (Query->poll() && !Query->eof())
-                {
-                    QString id = Query->readValueNull();
-                    QString parentid = Query->readValueNull();
-                    QString operation = Query->readValueNull();
-                    QString options = Query->readValueNull();
-                    QString object = Query->readValueNull();
-                    QString optimizer = Query->readValueNull();
-                    QString cost = Query->readValueNull();
-                    QString iocost = Query->readValueNull();
-                    QString bytes = Query->readValueNull().toSIsize();
-                    QString cardinality = Query->readValueNull();
-                    QString startpartition = Query->readValueNull();
-                    QString endpartition = Query->readValueNull();
-                    QString tempspace = Query->readValueNull().toSIsize();
-                    QString time = Query->readValueNull();
-
-                    toResultViewItem *item;
-                    if (!parentid.isNull() && Parents[parentid])
-                    {
-                        item = new toResultViewItem(Parents[parentid], Last[parentid]);
-//                         setOpen(Parents[parentid], true);
-                        Last[parentid] = item;
-                    }
-                    else
-                    {
-                        item = new toResultViewItem(TopItem, LastTop);
-                        LastTop = item;
-                    }
-
-                    QString cpupct = NULL;
-
-                    if (!cost.isEmpty())
-                    {
-
-                        double pct = 100;
-
-                        if (cost.toDouble() > 0)
-                        {
-                            pct = 100 - (iocost.toDouble() / cost.toDouble() * 100);
-                        }
-
-                        cpupct.setNum(pct, 'f', 2);
-                    }
-
-                    if (!time.isEmpty())
-                    {
-
-                        double seconds = time.toDouble();
-
-                        int hours = (int) (seconds / 3600);
-                        int mins = (int) (( seconds - hours * 3600) / 60);
-                        int secs = (int) seconds - (hours * 3600 + mins * 60);
-
-                        time.sprintf("%d:%02d:%02d", hours, mins, secs);
-                    }
-
-                    item->setText(0, id);
-                    item->setText(1, operation);
-                    item->setText(2, options);
-                    item->setText(3, object);
-                    item->setText(4, optimizer);
-                    item->setText(5, cost);
-                    item->setText(6, cpupct);
-                    item->setText(7, bytes);
-                    item->setText(8, cardinality);
-                    item->setText(9, tempspace);
-                    item->setText(10, time);
-                    item->setText(11, startpartition);
-                    item->setText(12, endpartition);
-                    Parents[id] = item;
-                }
-                if (Query->eof())
-                {
-                    delete Query;
-                    Query = NULL;
-                    QString chkPoint(toConfigurationSingle::Instance().planCheckpoint());
-                    if (!sql().startsWith(QString::fromLatin1("SAVED:")))
-                    {
-                        if (toConfigurationSingle::Instance().keepPlans())
-                            connection().execute(QString::fromLatin1("ROLLBACK TO SAVEPOINT %1").arg(chkPoint));
-                        else
-                            toMainWidget()->setNeedCommit(connection());
-                    }
-                    oracleNext();
-                }
+                item = new toResultViewItem(TopItem, LastTop);
+                LastTop = item;
             }
+
+            QString cpupct = NULL;
+
+            if (!cost.isEmpty())
+            {
+                double pct = 100;
+
+                if (cost.toDouble() > 0)
+                {
+                    pct = 100 - (iocost.toDouble() / cost.toDouble() * 100);
+                }
+
+                cpupct.setNum(pct, 'f', 2);
+            }
+
+            if (!time.isEmpty())
+            {
+                double seconds = time.toDouble();
+
+                int hours = (int) (seconds / 3600);
+                int mins = (int) (( seconds - hours * 3600) / 60);
+                int secs = (int) seconds - (hours * 3600 + mins * 60);
+
+                time.sprintf("%d:%02d:%02d", hours, mins, secs);
+            }
+
+            item->setText(0, id);
+            item->setText(1, operation);
+            item->setText(2, options);
+            item->setText(3, object);
+            item->setText(4, optimizer);
+            item->setText(5, cost);
+            item->setText(6, cpupct);
+            item->setText(7, bytes);
+            item->setText(8, cardinality);
+            item->setText(9, tempspace);
+            item->setText(10, time);
+            item->setText(11, startpartition);
+            item->setText(12, endpartition);
+            Parents[id] = item;
         }
         expandAll();
         resizeColumnsToContents();
@@ -473,10 +445,41 @@ void toResultPlan::poll(void)
     {
         delete Query;
         Query = NULL;
-        Poll.stop();
         checkException(str);
     }
 }
+
+void toResultPlan::queryDone()
+{
+    delete Query;
+    Query = NULL;
+    if (!Reading)
+    {
+        toQList par;
+        toConnection &conn = connection();
+        Query = new toEventQuery(connection(), toQuery::Normal,
+                                 toSQL::string(SQLViewPlan, conn).
+                                 // arg(toConfigurationSingle::Instance().planTable()).
+                                 // Since EXPLAIN PLAN is always to conn.user() plan_table
+                                 // and current_schema can be different
+                                 arg(toConfigurationSingle::Instance().planTable(conn.user())).
+                                 arg(Ident), par);
+        connectSlotsAndStart();
+        Reading = true;
+    }
+    else
+    {
+        QString chkPoint(toConfigurationSingle::Instance().planCheckpoint());
+        if (!sql().startsWith(QString::fromLatin1("SAVED:")))
+        {
+            if (toConfigurationSingle::Instance().keepPlans())
+                connection().execute(QString::fromLatin1("ROLLBACK TO SAVEPOINT %1").arg(chkPoint));
+            else
+                toMainWidget()->setNeedCommit(connection());
+        }
+        oracleNext();
+    }
+} // queryDone
 
 void toResultPlan::checkException(const QString &str)
 {

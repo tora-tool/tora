@@ -43,14 +43,13 @@
 #define TORESULTPLAN_H
 
 #include "config.h"
-#include "tobackground.h"
 #include "tosqlparse.h"
 #include "toresultview.h"
 
 #include <map>
 #include <stdio.h>
 
-class toNoBlockQuery;
+class toEventQuery;
 
 /** This widget displays the execution plan of a statement. The statement
  * is identified by the first parameter which should be the address as gotten
@@ -67,15 +66,15 @@ class toResultPlan : public toResultView
     std::list<QString> Statements;
     toTreeWidgetItem *TopItem;
     toTreeWidgetItem *LastTop;
-    bool Reading;
-    toNoBlockQuery *Query;
-    toBackground Poll;
+    bool Reading; // true when reading the plan, false when setting up the plan
+    toEventQuery *Query;
     QString User;
     void checkException(const QString &);
     void oracleSetup(void);
 
     void oracleNext(void);
     void addStatements(std::list<toSQLParse::statement> &stats);
+    void connectSlotsAndStart();
 public:
     /** Create the widget.
      * @param parent Parent widget.
@@ -103,6 +102,7 @@ public:
     virtual bool canHandle(toConnection &conn);
 private slots:
     void poll();
+    void queryDone();
 };
 
 #endif
