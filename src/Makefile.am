@@ -81,7 +81,6 @@ tora_SOURCES=main.cpp \
 	tomodeleditor.cpp tomodeleditor.h \
 	tomessage.cpp tomessage.h \
 	tonewconnection.cpp tonewconnection.h \
-	tonoblockquery.cpp tonoblockquery.h \
 	toeventquery.cpp toeventquery.h \
 	toeventquerytask.cpp toeventquerytask.h \
 	toparamget.cpp toparamget.h \
@@ -333,7 +332,6 @@ BUILT_SOURCES = \
 	moc_toconnectionimport.cpp \
 	moc_todescribe.cpp \
 	moc_torunnable.cpp \
-	moc_tonoblockquery.cpp \
 	moc_toeventquery.cpp \
 	moc_toeventquerytask.cpp \
 	moc_tocurrent.cpp \

@@ -122,7 +122,6 @@ SET(TORA_MOC_CLASSES
     todockbar.h
     topushbutton.h
     torunnable.h
-    tonoblockquery.h
     tocurrent.h
     todatatype.h
     todebug.h
@@ -162,7 +161,6 @@ SET(TORA_MOC_CLASSES
     tomessage.h
 #     tomysqlkeywords.h
     tonewconnection.h
-#     tonoblockquery.h
     tooutput.h
     toparamget.h
     topiechart.h
@@ -331,7 +329,6 @@ SET(TORA_SOURCES
     tomodeleditor.cpp
     tomessage.cpp
     tonewconnection.cpp
-    tonoblockquery.cpp
 #win only?    toocistub.cpp
 #    tooracleconnection.cpp
     tooracleextract.cpp
