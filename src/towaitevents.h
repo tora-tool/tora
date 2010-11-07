@@ -42,9 +42,6 @@
 #ifndef TOWAITEVENTS_H
 #define TOWAITEVENTS_H
 
-#include "config.h"
-#include "tobackground.h"
-
 #include <list>
 #include <map>
 #include <algorithm>
@@ -53,7 +50,7 @@
 #include <QString>
 
 class toTreeWidget;
-class toNoBlockQuery;
+class toEventQuery;
 class toPieChart;
 class toResultBar;
 class QSplitter;
@@ -69,8 +66,7 @@ class toWaitEvents : public QWidget
     toPieChart *AbsolutePie;
     toPieChart *DeltaPie;
     toTreeWidget *Types;
-    toNoBlockQuery *Query;
-    toBackground Poll;
+    toEventQuery *Query;
 
     bool First;
     bool ShowTimes;
@@ -103,6 +99,7 @@ public slots:
     virtual void connectionChanged(void);
     virtual void changeSelection(void);
     virtual void poll(void);
+    virtual void queryDone(void);
     virtual void refresh(void);
     virtual void start(void);
     virtual void stop(void);

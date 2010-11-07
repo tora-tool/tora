@@ -45,7 +45,7 @@
 #include "toconnection.h"
 #include "tohelp.h"
 #include "tomarkedtext.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 #include "toresultview.h"
 #include "totemplate.h"
 #include "totool.h"
@@ -831,7 +831,6 @@ toTemplateSQLObject::toTemplateSQLObject(toTemplateSQL *parent)
         : Parent(parent)
 {
     Query = NULL;
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
 }
 
 void toTemplateSQL::expand(void)
@@ -847,44 +846,44 @@ void toTemplateSQLObject::expand(void)
     {
         delete Query;
         Query = NULL;
-        Query = new toNoBlockQuery(Parent->connection(), toQuery::Background,
+        Query = new toEventQuery(Parent->connection(), toQuery::Background,
                                    Parent->SQL, Parent->parameters());
-        Poll.start(100);
+        connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
+        connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+        Query->readAll(); // indicate that all records should be fetched
+        Query->start();
     }
     TOCATCH
 }
 
 void toTemplateSQLObject::poll(void)
 {
+    if (QApplication::activeModalWidget()) // Template is never in widget
+        return;
+
     try
     {
-        if (QApplication::activeModalWidget()) // Template is never in widget
-            return ;
-        if (Query && Query->poll())
+        toQDescList desc = Query->describe();
+        while (Query->hasMore())
         {
-            toQDescList desc = Query->describe();
-            while (Query->poll() && !Query->eof())
-            {
-                toTreeWidgetItem *item = Parent->createChild(Query->readValue());
-                for (unsigned int j = 1;j < desc.size();j++)
-                    item->setText(j, Query->readValue());
-            }
-            if (Query->eof())
-            {
-                delete Query;
-                Query = NULL;
-                Poll.stop();
-            }
+            toTreeWidgetItem *item = Parent->createChild(Query->readValue());
+            for (unsigned int j = 1; j < desc.size(); j++)
+                item->setText(j, Query->readValue());
         }
     }
     catch (const QString &str)
     {
         delete Query;
         Query = NULL;
-        Poll.stop();
         toStatusMessage(str);
     }
-}
+} // poll
+
+void toTemplateSQLObject::queryDone(void )
+{
+    delete Query;
+    Query = NULL;
+} // queryDone
 
 toTemplateSQLObject::~toTemplateSQLObject()
 {

@@ -42,8 +42,6 @@
 #ifndef TOTEMPLATE_H
 #define TOTEMPLATE_H
 
-#include "config.h"
-#include "tobackground.h"
 #include "tohelp.h"
 #include "toresultview.h"
 // due the TODock
@@ -69,7 +67,7 @@ class toConnection;
 class toListView;
 class toTemplateItem;
 class toTemplateProvider;
-class toNoBlockQuery;
+class toEventQuery;
 
 /** Not part of the API.
  * @internal
@@ -273,8 +271,7 @@ class toTemplateSQLObject : public QObject
 {
     Q_OBJECT;
 
-    toNoBlockQuery *Query;
-    toBackground Poll;
+    toEventQuery *Query;
     toTemplateSQL *Parent;
     toTemplateSQLObject(toTemplateSQL *parent);
     virtual ~toTemplateSQLObject();
@@ -283,6 +280,7 @@ class toTemplateSQLObject : public QObject
     friend class toTemplateSQL;
 private slots:
     void poll(void);
+    void queryDone(void);
 };
 
 /** This class represent an item that when expanded will execute an SQL statement

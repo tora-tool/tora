@@ -43,7 +43,7 @@
 
 #include "toconf.h"
 #include "toconnection.h"
-#include "tonoblockquery.h"
+#include "toeventquery.h"
 #include "topiechart.h"
 #include "toresultbar.h"
 #include "toresultview.h"
@@ -212,7 +212,6 @@ void toWaitEvents::setup(int session)
     AbsolutePie->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
     AbsolutePie->showLegend(false);
     layout->addWidget(AbsolutePie, 1, 1);
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
     Query = NULL;
     start();
     try
@@ -236,8 +235,6 @@ void toWaitEvents::setup(int session)
         splitter->restoreState(ba);
 
     LastTime = 0;
-    
-
 
     First = true;
     ShowTimes = false;
@@ -276,7 +273,6 @@ void toWaitEvents::setSession(int session)
         Relative.clear();
         RelativeTimes.clear();
         Enabled.clear();
-        Poll.stop();
         delete Query;
         Query = NULL;
         refresh();
@@ -410,152 +406,149 @@ void toWaitEvents::connectionChanged(void)
 
 void toWaitEvents::poll(void)
 {
+    if (!toCheckModal(this))
+        return;
+
     try
     {
-        if (!toCheckModal(this))
-            return ;
-        if (Query && Query->poll())
+        while (Query->hasMore())
         {
-            while (Query->poll() && !Query->eof())
+            QString cur = Query->readValueNull();
+            Now = Query->readValueNull();
+            if (First)
             {
-                QString cur = Query->readValueNull();
-                Now = Query->readValueNull();
-                if (First)
-                {
-                    Labels.insert(Labels.end(), cur);
-                    Current.insert(Current.end(), Query->readValueNull().toDouble());
-                    CurrentTimes.insert(CurrentTimes.end(), Query->readValueNull().toDouble());
-                }
-                else
-                {
-                    double val = Query->readValueNull().toDouble();
-                    double tim = Query->readValueNull().toDouble();
-                    std::list<double>::iterator i = Current.begin();
-                    std::list<double>::iterator j = CurrentTimes.begin();
-                    std::list<QString>::iterator k = Labels.begin();
-                    while (i != Current.end() && j != CurrentTimes.end() && k != Labels.end())
-                    {
-                        if (*k == cur)
-                        {
-                            *i = val;
-                            *j = tim;
-                            break;
-                        }
-                        i++;
-                        j++;
-                        k++;
-                    }
-                }
-                Query->readValueNull().toDouble();
+                Labels.insert(Labels.end(), cur);
+                Current.insert(Current.end(), Query->readValueNull().toDouble());
+                CurrentTimes.insert(CurrentTimes.end(), Query->readValueNull().toDouble());
             }
-            if (Query->eof())
+            else
             {
-                std::map<QString, bool> types;
-                toTreeWidgetItem *item = NULL;
-                {
-                    for (toTreeWidgetItem *ci = Types->firstChild();ci;ci = ci->nextSibling())
-                    {
-                        types[ci->text(1)] = true;
-                        item = ci;
-                    }
-                }
-
-                {
-                    std::list<double>::iterator j = CurrentTimes.begin();
-                    for (std::list<QString>::iterator i = Labels.begin();i != Labels.end();i++, j++)
-                    {
-                        if ((*j) != 0 && types.find(*i) == types.end())
-                        {
-                            item = new toWaitEventsItem(Types, item, *i);
-                            item->setSelected(First && HideMap.find(*i) == HideMap.end());
-                            types[*i] = true;
-                        }
-                    }
-                }
-                if (First)
-                {
-                    Delta->setLabels(Labels);
-                    DeltaTimes->setLabels(Labels);
-                    First = false;
-                }
-
-                time_t now = time(NULL);
-
-                for (toTreeWidgetItem *ci = Types->firstChild();ci;ci = ci->nextSibling())
-                {
-                    toWaitEventsItem * item = dynamic_cast<toWaitEventsItem *>(ci);
-                    if (item)
-                    {
-                        int col = 0;
-                        std::list<double>::iterator i = Current.begin();
-                        std::list<double>::iterator j = CurrentTimes.begin();
-                        std::list<QString>::iterator k = Labels.begin();
-                        while (i != Current.end() && j != CurrentTimes.end() && k != Labels.end())
-                        {
-                            if (item->text(1) == *k)
-                            {
-                                item->setColor(col);
-                                item->setText(2, QString::number((*i - item->text(3).toDouble()) / std::max(int(now - LastTime), 1)));
-                                item->setText(3, QString::number(*i));
-                                item->setText(4, QString::number((*j - item->text(5).toDouble()) / std::max(int(now - LastTime), 1)));
-                                item->setText(5, QString::number(*j));
-                                break;
-                            }
-                            col++;
-                            i++;
-                            j++;
-                            k++;
-                        }
-                    }
-                }
-
-                Relative.clear();
-                RelativeTimes.clear();
-
-                std::list<double>::iterator j = LastCurrent.begin();
+                double val = Query->readValueNull().toDouble();
+                double tim = Query->readValueNull().toDouble();
                 std::list<double>::iterator i = Current.begin();
-                while (i != Current.end() && j != LastCurrent.end())
+                std::list<double>::iterator j = CurrentTimes.begin();
+                std::list<QString>::iterator k = Labels.begin();
+                while (i != Current.end() && j != CurrentTimes.end() && k != Labels.end())
                 {
-                    Relative.insert(Relative.end(), ((*i) - (*j)) / std::max(int(now - LastTime), 1));
+                    if (*k == cur)
+                    {
+                        *i = val;
+                        *j = tim;
+                        break;
+                    }
                     i++;
                     j++;
+                    k++;
                 }
-
-                j = LastTimes.begin();
-                i = CurrentTimes.begin();
-                while (i != CurrentTimes.end() && j != LastTimes.end())
-                {
-                    RelativeTimes.insert(RelativeTimes.end(), ((*i) - (*j)) / std::max(int(now - LastTime), 1));
-                    i++;
-                    j++;
-                }
-
-                LastTime = now;
-                LastTimes = CurrentTimes;
-                LastCurrent = Current;
-
-                if (Relative.begin() != Relative.end())
-                {
-                    Delta->addValues(Relative, Now);
-                    DeltaTimes->addValues(RelativeTimes, Now);
-                }
-
-                changeSelection();
-
-                delete Query;
-                Query = NULL;
-                Poll.stop();
             }
+            Query->readValueNull().toDouble();
         }
     }
     catch (const QString &exc)
     {
         delete Query;
         Query = NULL;
-        Poll.stop();
         toStatusMessage(exc);
     }
 }
+
+void toWaitEvents::queryDone(void )
+{
+    std::map<QString, bool> types;
+    toTreeWidgetItem *item = NULL;
+    {
+        for (toTreeWidgetItem *ci = Types->firstChild(); ci; ci = ci->nextSibling())
+        {
+            types[ci->text(1)] = true;
+            item = ci;
+        }
+    }
+
+    {
+        std::list<double>::iterator j = CurrentTimes.begin();
+        for (std::list<QString>::iterator i = Labels.begin();i != Labels.end();i++, j++)
+        {
+            if ((*j) != 0 && types.find(*i) == types.end())
+            {
+                item = new toWaitEventsItem(Types, item, *i);
+                item->setSelected(First && HideMap.find(*i) == HideMap.end());
+                types[*i] = true;
+            }
+        }
+    }
+    if (First)
+    {
+        Delta->setLabels(Labels);
+        DeltaTimes->setLabels(Labels);
+        First = false;
+    }
+
+    time_t now = time(NULL);
+
+    for (toTreeWidgetItem *ci = Types->firstChild(); ci; ci = ci->nextSibling())
+    {
+        toWaitEventsItem * item = dynamic_cast<toWaitEventsItem *>(ci);
+        if (item)
+        {
+            int col = 0;
+            std::list<double>::iterator i = Current.begin();
+            std::list<double>::iterator j = CurrentTimes.begin();
+            std::list<QString>::iterator k = Labels.begin();
+            while (i != Current.end() && j != CurrentTimes.end() && k != Labels.end())
+            {
+                if (item->text(1) == *k)
+                {
+                    item->setColor(col);
+                    item->setText(2, QString::number((*i - item->text(3).toDouble()) / std::max(int(now - LastTime), 1)));
+                    item->setText(3, QString::number(*i));
+                    item->setText(4, QString::number((*j - item->text(5).toDouble()) / std::max(int(now - LastTime), 1)));
+                    item->setText(5, QString::number(*j));
+                    break;
+                }
+                col++;
+                i++;
+                j++;
+                k++;
+            }
+        }
+    }
+
+    Relative.clear();
+    RelativeTimes.clear();
+
+    std::list<double>::iterator j = LastCurrent.begin();
+    std::list<double>::iterator i = Current.begin();
+    while (i != Current.end() && j != LastCurrent.end())
+    {
+        Relative.insert(Relative.end(), ((*i) - (*j)) / std::max(int(now - LastTime), 1));
+        i++;
+        j++;
+    }
+
+    j = LastTimes.begin();
+    i = CurrentTimes.begin();
+    while (i != CurrentTimes.end() && j != LastTimes.end())
+    {
+        RelativeTimes.insert(RelativeTimes.end(), ((*i) - (*j)) / std::max(int(now - LastTime), 1));
+        i++;
+        j++;
+    }
+
+    LastTime = now;
+    LastTimes = CurrentTimes;
+    LastCurrent = Current;
+
+    if (Relative.begin() != Relative.end())
+    {
+        Delta->addValues(Relative, Now);
+        DeltaTimes->addValues(RelativeTimes, Now);
+    }
+
+    changeSelection();
+
+    delete Query;
+    Query = NULL;
+} // queryDone
 
 static toSQL SQLSessionWaitEvents("toWaitEvents:Session",
                                   "SELECT b.name,\n"
@@ -648,9 +641,11 @@ void toWaitEvents::refresh(void)
         }
         else
             sql = toSQL::string(SQLWaitEvents, conn);
-        Query = new toNoBlockQuery(conn, sql, par);
-
-        Poll.start(100);
+        Query = new toEventQuery(conn, sql, par);
+        connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
+        connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+        Query->readAll(); // indicate that all records should be fetched
+        Query->start();
     }
     TOCATCH
 }
