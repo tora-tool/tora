@@ -105,6 +105,7 @@ Please install the instant client sdk package or use --with-oracle-includes=DIR.
       $ORACLE_HOME/rdbms/public
       $ORACLE_HOME/network/public
       $ORACLE_HOME/sdk/
+      $ORACLE_HOME/sdk/include
       $ORACLE_HOME/include/"
 
     for dir in $ora_check_inc; do
@@ -117,6 +118,7 @@ Please install the instant client sdk package or use --with-oracle-includes=DIR.
 
     ora_check_lib="
       $oracle_user_lib
+      $ORACLE_HOME/
       $ORACLE_HOME/lib
       $ORACLE_HOME/lib32
       $ORACLE_HOME/lib64"
@@ -264,6 +266,7 @@ int main(int c, char **v) {
         dnl try to find using awk and sqlplus
         sqlplus_try="
         $oracle_user_instant/sqlplus
+        $ORACLE_HOME/sqlplus	
         $ORACLE_HOME/bin/sqlplus
         $ORACLE_HOME/bin/sqlplusO"
 
