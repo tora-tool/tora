@@ -472,6 +472,7 @@ protected:
 class toOracleProvider : public toConnectionProvider
 {
 	::trotl::OciEnv *_envp;
+	QByteArray dateFormat;
 public:
 	class oracleSub : public toConnectionSub
 	{
@@ -1211,11 +1212,11 @@ public:
 	{
 		toMaxLong = toConfigurationSingle::Instance().maxLong();
 		::trotl::g_OCIPL_MAX_LONG = ( toConfigurationSingle::Instance().maxLong() == -1 ? ::trotl::g_OCIPL_MAX_LONG : toConfigurationSingle::Instance().maxLong() );
+		dateFormat = toConfigurationSingle::Instance().dateFormat().toAscii();
+		::trotl::g_TROTL_DEFAULT_DATE_FTM = const_cast<char*>(dateFormat.constData());
 		::trotl::OciEnvAlloc *_envallocp = new ::trotl::OciEnvAlloc;
 
 		_envp = new ::trotl::OciEnv(*_envallocp);
-
-		//TLOG(0,toDecorator,__HERE__) << "TODO: initialize" << std::endl << __HERE__ << std::endl;
 
 		addProvider("Oracle");
 	}
@@ -1788,7 +1789,7 @@ toOracleSetting::toOracleSetting(QWidget *parent)
 	OpenCursors->setValue(toConfigurationSingle::Instance().openCursors());
 	KeepPlans->setChecked(toConfigurationSingle::Instance().keepPlans());
  	VsqlPlans->setChecked(toConfigurationSingle::Instance().vsqlPlans());
- 	SharedPlan->setChecked(toConfigurationSingle::Instance().sharedPlan());
+	SharedPlan->setChecked(toConfigurationSingle::Instance().sharedPlan());
 	int len = toConfigurationSingle::Instance().maxLong();
 	if (len >= 0)
 	{
@@ -1812,8 +1813,8 @@ toOracleSetting::toOracleSetting(QWidget *parent)
 void toOracleSetting::saveSetting()
 {
 	toConfigurationSingle::Instance().setKeepPlans(KeepPlans->isChecked());
- 	toConfigurationSingle::Instance().setVsqlPlans(VsqlPlans->isChecked());
- 	toConfigurationSingle::Instance().setSharedPlan(SharedPlan->isChecked());
+	toConfigurationSingle::Instance().setVsqlPlans(VsqlPlans->isChecked());
+	toConfigurationSingle::Instance().setSharedPlan(SharedPlan->isChecked());
 	toConfigurationSingle::Instance().setDateFormat(DefaultDate->text());
 
 	// try to change NLS for already running sessions

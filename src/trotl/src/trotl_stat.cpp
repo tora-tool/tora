@@ -50,9 +50,9 @@ namespace trotl {
 
 int TROTL_EXPORT g_OCIPL_BULK_ROWS = 3;
 int TROTL_EXPORT g_OCIPL_MAX_LONG = 30000;
-char TROTL_EXPORT *g_TROTL_DEFAULT_NUM_FTM = "TM\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-
-
+char TROTL_EXPORT *g_TROTL_DEFAULT_NUM_FTM = "TM";
+char TROTL_EXPORT *g_TROTL_DEFAULT_DATE_FTM = "YYYY:MM:DD HH24:MI:SS";
+  
 SqlStatement::SqlStatement(OciConnection& conn, const tstring& stmt, ub4 lang, int bulk_rows)
 : super(conn._env),
 //_svchp(conn._svc_ctx),

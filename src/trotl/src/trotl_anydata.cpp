@@ -164,13 +164,13 @@ tstring BindParANYDATA::get_string(unsigned int row) const
 // 		OCIDateGetDate( (CONST OCIDate *) date_ptr, &year1, &month1, &day1 );
 
 	
-		const char fmt[] = "YYYY:MM:DD HH24:MI:SS";
+		//const char fmt[] = "YYYY:MM:DD HH24:MI:SS";
 		const char lang_fmt[] = "American";		
 					
 		res1 = OCICALL(OCIDateToText(_stmt._errh, 
 					     date_ptr,
-					     (CONST text*) fmt,
-					     (ub4) sizeof(fmt)-1,
+					     (CONST text*) g_TROTL_DEFAULT_DATE_FTM,
+					     strlen(g_TROTL_DEFAULT_DATE_FTM),
 					     (CONST text*) lang_fmt,
 					     (ub4) sizeof(lang_fmt)-1,
 					     (ub4 *)&str_len,

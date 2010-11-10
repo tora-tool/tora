@@ -66,18 +66,18 @@ tstring BindParDate::get_string(unsigned int row) const
 		text str_buf[200];
 		ub4 str_len = sizeof(str_buf) / sizeof( *str_buf);
 		
-		const char fmt[] = "YYYY:MM:DD HH24:MI:SS";
+		//const char fmt[] = "YYYY:MM:DD HH24:MI:SS";
 		const char lang_fmt[] = "American";		
 					
 		sword res = OCICALL(OCIDateToText(_env._errh, 
-				&(((OCIDate*)valuep)[row]),
-				(CONST text*) fmt,
-				(ub4) sizeof(fmt)-1,
-				(CONST text*) lang_fmt,
-				(ub4) sizeof(lang_fmt)-1,
-				(ub4 *)&str_len,
-				str_buf
-		));
+						  &(((OCIDate*)valuep)[row]),
+						  (CONST text*) g_TROTL_DEFAULT_DATE_FTM,
+						  strlen(g_TROTL_DEFAULT_DATE_FTM),
+						  (CONST text*) lang_fmt,
+						  (ub4) sizeof(lang_fmt)-1,
+						  (ub4 *)&str_len,
+						  str_buf
+						  ));
 		oci_check_error(__TROTL_HERE__, _env._errh, res);		
 		
 		str_buf[ min( (str_len+1) , (unsigned)sizeof(str_buf) ) ] = '\0'; 
