@@ -857,8 +857,11 @@ int main(int argc, char **argv)
     testSet.append("WITH p AS (SELECT 1/2 as half_a FROM dual),\n"
                    "q AS(SELECT 1/2 half_b FROM dual)\n"
                    "SELECT half_a/half_b FROM p, q;\n"
+                   "/\n"
+                   "select sysdate from dual\n"
                    "/\n");
-    testCount.append(1);
+    testCount.append(2);
+    testClass.append(toSQLParse::statement::ddldml);
     testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
