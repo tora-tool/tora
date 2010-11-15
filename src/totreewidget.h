@@ -43,7 +43,6 @@
 #define TOTREEWIDGET_H
 
 #include "config.h"
-#include "totreewidget.h"
 
 #include <QTreeWidget>
 #include <QTreeWidgetItem>

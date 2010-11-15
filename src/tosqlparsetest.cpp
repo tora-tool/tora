@@ -124,46 +124,41 @@ int main(int argc, char **argv)
 {
     //TODO: rewrite this with one list and structure :)
     // each test set contains:
-    std::list<QString> testSet; // statement (or a set of statements) to be parsed
-    std::list<int> testCount;   // count of statements (to be checked against parser result)
-    std::list<int> testClass;   // statement class
+    QStringList testSet; // statement (or a set of statements) to be parsed
+    QList<int> testCount;   // count of statements (to be checked against parser result)
+    QList<int> testClass;   // statement class
 
     //===================================================
     // Test #1 Simplest DML statement ever
-    testSet.insert(testSet.end(),
-                   "select sysdate from dual;");
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testSet.append("select sysdate from dual;");
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #2 Double simplest DML statement
-    testSet.insert(testSet.end(),
-                   "select sysdate from dual;"
+    testSet.append("select sysdate from dual;"
                    "select sysdate from dual;");
-    testCount.insert(testCount.end(), 2);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testCount.append(2);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #3 Simple DDL statement
-    testSet.insert(testSet.end(),
-                   "create table test ( col varchar(12) );");
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testSet.append("create table test ( col varchar(12) );");
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #4 Simple DML statement with new line in text
-    testSet.insert(testSet.end(),
-                   "insert into prova3 (prova)\n"
+    testSet.append("insert into prova3 (prova)\n"
                    "values ('This insert contains a ''\n"
                    "and now it goes to new line');");
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #5 Procedure with exceptions and conditional statements
-    testSet.insert(testSet.end(),
-                   "create or replace PROCEDURE prova1\n"
+    testSet.append("create or replace PROCEDURE prova1\n"
                    "is\n"
                    "v_tmp NUMBER(1);\n"
                    "begin\n"
@@ -184,20 +179,19 @@ int main(int argc, char **argv)
                    "null;\n"
                    "end if;\n"
                    "end;");
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::plsqlblock);
 
     //===================================================
     // Test #6 Comment
-    testSet.insert(testSet.end(), "\n"
-                   "comment on column prova1.prova1 is 'This comment is\n"
+    testSet.append("comment on column prova1.prova1 is 'This comment is\n"
                    "on more than one line';\n");
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #7 Package specification
-    testSet.insert(testSet.end(), "\n"
+    testSet.append("\n"
                    "PACKAGE oasSIMActivation AS\n"
                    " FUNCTION ParseCommand(Command VARCHAR2,inICC VARCHAR2,Param VARCHAR2) RETURN VARCHAR2;\n"
                    "\n"
@@ -219,12 +213,12 @@ int main(int argc, char **argv)
                    "    Param VARCHAR2);\n"
                    "END;\n"
                   );
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::plsqlblock);
 
     //===================================================
     // Test #8 Anonymous block with case statement
-    testSet.insert(testSet.end(), "\n"
+    testSet.append("\n"
                    "DECLARE\n"
                    "grade CHAR(1);\n"
                    "appraisal VARCHAR2(20);\n"
@@ -242,12 +236,12 @@ int main(int argc, char **argv)
                    "END IF;\n"
                    "END;\n"
                   );
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::plsqlblock);
 
     //===================================================
     // Test #9 Procedure with conditional statement
-    testSet.insert(testSet.end(), "\n"
+    testSet.append("\n"
                    "CREATE OR REPLACE PROCEDURE A(p IN INTEGER) AS\n"
                    "BEGIN\n"
                    "IF a = 1 THEN NULL;\n"
@@ -256,13 +250,13 @@ int main(int argc, char **argv)
                    "END IF;\n"
                    "END;\n"
                   );
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::plsqlblock);
 
     //===================================================
     // Test #10 Procedure with case statement
     //          Note! Should generate only ONE statement (block)
-    testSet.insert(testSet.end(), "\n"
+    testSet.append("\n"
                    "CREATE OR REPLACE PROCEDURE A AS\n"
                    "BEGIN\n"
                    "CASE a\n"
@@ -272,13 +266,12 @@ int main(int argc, char **argv)
                    "END CASE;\n"
                    "END;\n"
                   );
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::plsqlblock);
 
     //===================================================
     // Test #11 Anonynous block without declaration with query (incorrect syntax but should parse anyway:)
-    testSet.insert(testSet.end(),
-                   "BEGIN\n"
+    testSet.append("BEGIN\n"
                    "IF 1 == 1 THEN\n"
                    "NULL;\n"
                    "END IF;\n"
@@ -288,32 +281,29 @@ int main(int argc, char **argv)
                    "SELECT CASE WHEN dummy='X' THEN 'A' ELSE 'B' END,  2 FROM dual;\n"
                    "END IF;\n"
                    "END;\n");
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::plsqlblock);
 
     //===================================================
     // Test #12
-    testSet.insert(testSet.end(),
-                   "select count(case when dummy = 'Y' then dummy\n"
+    testSet.append("select count(case when dummy = 'Y' then dummy\n"
                    "             else null end) as tot_str\n"
                    "from dual;\n");
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #13
-    testSet.insert(testSet.end(),
-                   "SET TRANSACTION READ ONLY\n"
+    testSet.append("SET TRANSACTION READ ONLY\n"
                    "\n"
                    "PROMPT Hello\n");
-    testCount.insert(testCount.end(), 2);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testCount.append(2);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #14
-    testSet.insert(testSet.end(),
-                   "/* Test comment\n"
+    testSet.append("/* Test comment\n"
                    "*/\n"
                    "INSERT INTO cdrProcess(ProcessID,\n"
                    "         StartDate,\n"
@@ -335,13 +325,12 @@ int main(int argc, char **argv)
                    " :6,\n"
                    " :7,\n"
                    " :8);\n");
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #15
-    testSet.insert(testSet.end(),
-                   "CREATE or REPLACE Procedure TEST_SPR\n"
+    testSet.append("CREATE or REPLACE Procedure TEST_SPR\n"
                    "(\n"
                    "    IN_TICKET_NUM   IN  VARCHAR2\n"
                    ")\n"
@@ -360,26 +349,24 @@ int main(int argc, char **argv)
                    " \n"
                    "END;\n"
                    "END TEST_SPR;\n");
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::plsqlblock);
 
     //===================================================
     // Test #16
-    testSet.insert(testSet.end(),
-                   "SELECT owner,\n"
+    testSet.append("SELECT owner,\n"
                    "       OBJECT,\n"
                    "       TYPE FROM v$access\n"
                    " WHERE sid=:f1<char[101]>\n"
                    " ORDER BY owner,\n"
                    "   OBJECT,\n"
                    "   TYPE;\n");
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #17
-    testSet.insert(testSet.end(),
-                   "CREATE TABLE ess.EssCalLog (\n"
+    testSet.append("CREATE TABLE ess.EssCalLog (\n"
                    "        CalID  CHAR(5) NOT NULL,  -- Calender type\n"
                    " SeqID  NUMBER(8) NOT NULL,\n"
                    " ActStt  CHAR(1) NOT NULL\n"
@@ -393,13 +380,12 @@ int main(int argc, char **argv)
                    "  USING INDEX TABLESPACE Index02 -- A Comment\n"
                    ");\n"
                    "-- Another comment\n");
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #18
-    testSet.insert(testSet.end(),
-                   "CREATE OR REPLACE procedure spTuxGetAccData (oRet                        OUT  NUMBER,\n"
+    testSet.append("CREATE OR REPLACE procedure spTuxGetAccData (oRet                        OUT  NUMBER,\n"
                    "          oNumSwt                     OUT  NUMBER)\n"
                    "IS\n"
                    "  vYear  CHAR(4);\n"
@@ -424,14 +410,13 @@ int main(int argc, char **argv)
                    "begin\n"
                    "  null;\n"
                    "end;\n");
-    testCount.insert(testCount.end(), 2);
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
+    testCount.append(2);
+    testClass.append(toSQLParse::statement::plsqlblock);
+    testClass.append(toSQLParse::statement::plsqlblock);
 
     //===================================================
     // Test #19
-    testSet.insert(testSet.end(),
-                   "-------------------------------------------------------------------\n"
+    testSet.append("-------------------------------------------------------------------\n"
                    "--    EssCal, Current calendar view\n"
                    "\n"
                    "CREATE VIEW ess.EssCal AS\n"
@@ -442,13 +427,12 @@ int main(int argc, char **argv)
                    "   FROM ess.EssCalLog a\n"
                    "  WHERE SeqID = (SELECT MAX(aa.SeqID) FROM EssCalLog aa WHERE aa.CalID = a.CalID)\n"
                    "    AND ActStt = 'A';\n");
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #20
-    testSet.insert(testSet.end(),
-                   "    /* A little comment\n"
+    testSet.append("    /* A little comment\n"
                    "     */\n"
                    "    SELECT /*+\n"
                    "FULL(a)\n"
@@ -492,26 +476,24 @@ int main(int argc, char **argv)
                    " WHERE a.sid = b.sid(+)\n"
                    "   AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)\n"
                    " ORDER BY a.Sid;\n");
-    testCount.insert(testCount.end(), 2);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testCount.append(2);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #21
-    testSet.insert(testSet.end(),
-                   "select a.TskCod TskCod,\n"
+    testSet.append("select a.TskCod TskCod,\n"
                    "       count(1) Tot\n"
                    "  from (select * from EssTsk where PrsID >= '1940') ,EssTra b\n"
                    " where decode(a.TspActOprID,NULL,NULL,a.PrsID)+5 = b.PrsID(+)\n"
                    " group by a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod\n"
                    "having count(a.TspActOprID) > 0;\n");
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #22
-    testSet.insert(testSet.end(),
-                   "CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)\n"
+    testSet.append("CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)\n"
                    "AS\n"
                    "  vYear  CHAR(4);\n"
                    "BEGIN\n"
@@ -524,13 +506,12 @@ int main(int argc, char **argv)
                    "        WHEN VALUE_ERROR THEN\n"
                    "     oRet := 3;\n"
                    "END;");
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::plsqlblock);
 
     //===================================================
     // Test #23 BIG TEST! Run all statemens at once. Should separate statements correctly.
-    testSet.insert(testSet.end(), "\n"
-                   "create table test ( col varchar(12) );\n"
+    testSet.append("create table test ( col varchar(12) );\n"
                    "insert into prova3 (prova)\n"
                    "values ('This insert contains a ''\n"
                    "and now it goes to new line');\n"
@@ -780,70 +761,66 @@ int main(int argc, char **argv)
                    "        WHEN VALUE_ERROR THEN\n"
                    "     oRet := 3;\n"
                    "END;");
-    testCount.insert(testCount.end(), 21);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml); // comment
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock); // package spec
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock); // anonymous block
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock); // anonymous block (without declare)
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml); // create table ess.EssCalLog...
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
+    testCount.append(21);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::plsqlblock);
+    testClass.append(toSQLParse::statement::ddldml); // comment
+    testClass.append(toSQLParse::statement::plsqlblock); // package spec
+    testClass.append(toSQLParse::statement::plsqlblock); // anonymous block
+    testClass.append(toSQLParse::statement::plsqlblock); // anonymous block (without declare)
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::plsqlblock);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::ddldml); // create table ess.EssCalLog...
+    testClass.append(toSQLParse::statement::plsqlblock);
+    testClass.append(toSQLParse::statement::plsqlblock);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::plsqlblock);
 
     //===================================================
     // Test #24 Insert statements ending with "/" rather than ";"
-    testSet.insert(testSet.end(),
-                   "insert into a values ('aaa', 222)\n"
+    testSet.append("insert into a values ('aaa', 222)\n"
                    "/\n"
                    "insert into a values ('bbb', 333)\n"
                    "/\n");
-    testCount.insert(testCount.end(), 2);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testCount.append(2);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #25 Two procedures separated with "/"
-    testSet.insert(testSet.end(),
-                   "create procedure a1 as\n"
+    testSet.append("create procedure a1 as\n"
                    "begin null; end;\n"
                    "/\n"
                    "create procedure a2 as\n"
                    "begin null; end;\n"
                    "/\n");
-    testCount.insert(testCount.end(), 2);
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
-    testClass.insert(testClass.end(), toSQLParse::statement::plsqlblock);
+    testCount.append(2);
+    testClass.append(toSQLParse::statement::plsqlblock);
+    testClass.append(toSQLParse::statement::plsqlblock);
 
     //===================================================
     // Test #26 Statement with slash in it
-    testSet.insert(testSet.end(),
-                   "select 2/1 from dual;");
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testSet.append("select 2/1 from dual;");
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #27 Update statements containing "/"'s ending with "/" rather than ";"
-    testSet.insert(testSet.end(),
-                   "update a set b=2/1 where c='qqq'\n"
+    testSet.append("update a set b=2/1 where c='qqq'\n"
                    "/\n"
                    "update a set b=3/2, c=2/1 where q='qq/qq'\n"
                    "/\n");
-    testCount.insert(testCount.end(), 2);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testCount.append(2);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #28 Merge statement
@@ -851,8 +828,7 @@ int main(int argc, char **argv)
     //       Initial parse test should be ok without it. Reparse has problems
     //       with it because parser separates statements and removes any "/"
     //       signs which makes these two merge statements as one on second parse.
-    testSet.insert(testSet.end(),
-                   "MERGE INTO a\n"
+    testSet.append("MERGE INTO a\n"
                    "USING (\n"
                    " SELECT 1 id from dual) b on (a.id = b.id)\n"
                    "WHEN MATCHED THEN\n"
@@ -872,19 +848,30 @@ int main(int argc, char **argv)
                    " INSERT (a.id, a.c)\n"
                    " VALUES (b.id, 0)\n"
                    "/\n");
-    testCount.insert(testCount.end(), 2);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testCount.append(2);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::ddldml);
 
     //===================================================
     // Test #29 Query statement with "with" structure
-    testSet.insert(testSet.end(),
-                   "WITH p AS (SELECT 1/2 as half_a FROM dual),\n"
+    testSet.append("WITH p AS (SELECT 1/2 as half_a FROM dual),\n"
                    "q AS(SELECT 1/2 half_b FROM dual)\n"
                    "SELECT half_a/half_b FROM p, q;\n"
                    "/\n");
-    testCount.insert(testCount.end(), 1);
-    testClass.insert(testClass.end(), toSQLParse::statement::ddldml);
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::ddldml);
+
+    //===================================================
+    // Test #30 Placeholder for plsql goto statement
+    testSet.append("create procedure a1 as\n"
+                   "begin <<placeholder>> end;\n"
+                   "/\n"
+                   "create procedure a2 as\n"
+                   "begin <<placeholder>> end;\n"
+                   "/\n");
+    testCount.append(2);
+    testClass.append(toSQLParse::statement::plsqlblock);
+    testClass.append(toSQLParse::statement::plsqlblock);
 
     QApplication test(argc, argv);
     toMarkedText text(NULL);
@@ -892,17 +879,33 @@ int main(int argc, char **argv)
     int n = 1;
     int e = 0; // error count
     QString errors;
-    std::list<int>::iterator cnt = testCount.begin();
-    std::list<int>::iterator cls = testClass.begin();
+    QList<int>::iterator cnt = testCount.begin();
+    QList<int>::iterator cls = testClass.begin();
 
-    for (std::list<QString>::iterator i = testSet.begin(); i != testSet.end(); i++)
+    for (QStringList::iterator i = testSet.begin(); i != testSet.end(); i++)
     {
         printf("Start test %i ", n);
+
+        // The code below skips all other tests except one particular
+        /*if (n != 30) {
+            n++;
+            for (int j = 1; j <= *cnt; j++)
+                cls++;
+            cnt++;
+            continue;
+        }*/
+
         text.setText(*i);
 
         //printf("Initialising editorTokenizer\n");
         toSQLParse::editorTokenizer tokens(&text);
 
+        /* This code will display tokens
+        QString tt = tokens.getToken();
+        while (!tt.isNull()) {
+            qDebug() << "getToken = " << tt;
+            tt = tokens.getToken();
+        }*/
         //printf("Parsing statement\n");
         std::list<toSQLParse::statement> stat = toSQLParse::parse(tokens);
 

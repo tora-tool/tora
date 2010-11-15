@@ -150,7 +150,7 @@ static bool FindKeyword(toSQLParse::statement &statements, bool onlyNames,
 
             if (onlyNames && !TypeMap[j].WantName)
             {
-                name = QString::null;
+                name.clear();
                 return true;
             }
 
@@ -414,11 +414,14 @@ bool toPLSQLText::readData(toConnection &conn/*, toTreeWidget *Stack*/)
     return false;
 }
 
+/* Process a given statement and find any lists in it which should be block arguments.
+ * Put those arguments in a code hearchy tree.
+ */
 void toPLSQLWidget::updateArguments(toSQLParse::statement &statements, toTreeWidgetItem *parent)
 {
     for (std::list<toSQLParse::statement>::iterator i = statements.subTokens().begin(); i != statements.subTokens().end(); i++)
     {
-        if ((*i).Type == toSQLParse::statement::List)
+        if ((*i).isList())
         {
             bool first = true;
             for (std::list<toSQLParse::statement>::iterator j = (*i).subTokens().begin(); j != (*i).subTokens().end(); j++)
@@ -428,7 +431,7 @@ void toPLSQLWidget::updateArguments(toSQLParse::statement &statements, toTreeWid
                 else if (first)
                 {
                     // arguments
-                    new toContentsItem(parent, ":/icons/type.png", (*j).String, (*j).Line);
+                    new toContentsItem(parent, ":/icons/argument.png", (*j).String, (*j).Line);
                     first = false;
                 }
             }
@@ -436,6 +439,10 @@ void toPLSQLWidget::updateArguments(toSQLParse::statement &statements, toTreeWid
     }
 }
 
+/* Loops through given statement and fills in code hierarchy: adds corresponding
+ * items (procedure/function names, parameters, loops etc.) to the given parent
+ * widget item.
+ */
 void toPLSQLWidget::updateContent(toSQLParse::statement &statements,
                                   toTreeWidgetItem *parent,
                                   const QString &id)
@@ -449,6 +456,7 @@ void toPLSQLWidget::updateContent(toSQLParse::statement &statements,
     if (!FindKeyword(statements, statements.Type == toSQLParse::statement::Statement, declaration, line, name, icon, itemtype) || name.isNull())
         return ;
 
+    // Find position in code hearchy tree where information about given statement should be added
     if (parent)
         item = new toContentsItem(parent, icon, name, line);
     else
@@ -474,6 +482,7 @@ void toPLSQLWidget::updateContent(toSQLParse::statement &statements,
     }
 
     std::list<toSQLParse::statement>::iterator i = statements.subTokens().begin();
+    // Process first subtoken which can be arguments
     if (statements.Type == toSQLParse::statement::Block)
     {
         if (i != statements.subTokens().end())
@@ -488,9 +497,10 @@ void toPLSQLWidget::updateContent(toSQLParse::statement &statements,
         if (i != statements.subTokens().end())
             i++;
     }
+    // Process remaining subtokens
     while (i != statements.subTokens().end())
     {
-        if ((*i).Type == toSQLParse::statement::Block || (*i).Type == toSQLParse::statement::Statement)
+        if ((*i).isBlock() || (*i).isStatement())
         {
             if (declaration)
             {
@@ -499,7 +509,7 @@ void toPLSQLWidget::updateContent(toSQLParse::statement &statements,
                 {
                     if ((*j).String.toUpper() == "BEGIN")
                         declaration = false;
-                    else if ((*j).Type == toSQLParse::statement::Token && (*j).String.toUpper() != "END")
+                    else if ((*j).isToken() && (*j).String.toUpper() != "END")
                         // variables
                         new toContentsItem(item, ":/icons/type.png", (*j).String, (*j).Line);
                 }
@@ -512,13 +522,19 @@ void toPLSQLWidget::updateContent(toSQLParse::statement &statements,
         delete item;
 }
 
+/* This function should be called after updating editor content (procedure, funcion,
+ * package etc.). This function will update code tree according to new code.
+ */
 void toPLSQLWidget::updateContent(toPLSQLText *ed)
 {
+    // Splits text (code) in editor to tokens
     toSQLParse::editorTokenizer tokenizer(ed);
+    // Parse tokens to statements
     std::list<toSQLParse::statement> statements = toSQLParse::parse(tokenizer);
 
     m_contents->clear();
 
+    // Update content tree according to newly parsed statements
     for (std::list<toSQLParse::statement>::iterator i = statements.begin(); i != statements.end(); i++)
         updateContent(*i, NULL, ed->objectName());
 }

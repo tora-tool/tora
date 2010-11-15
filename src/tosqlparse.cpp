@@ -652,7 +652,10 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
                 return ret;
             }
         }
-        else if (upp == (";"))
+        // End of statement
+        // Note that goto placeholder is kind of a separate statement but without ending semicolon
+        else if (upp == (";") ||
+                (upp.startsWith("<<") && upp.endsWith(">>"))) // find goto placeholder
         {
             ret.subTokens().insert(ret.subTokens().end(), statement(statement::Token, token, tokens.line()));
             return ret;

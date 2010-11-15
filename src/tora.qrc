@@ -245,6 +245,7 @@
         <file>icons/procedure.png</file>
         <file>icons/procedure-invalid.png</file>
         <file>icons/type.png</file>
+        <file>icons/argument.png</file>
         <file>icons/type-invalid.png</file>
         <file>icons/xmlwrap.png</file>
 

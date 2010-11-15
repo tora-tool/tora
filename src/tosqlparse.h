@@ -109,6 +109,11 @@ public:
             /** Type of token.
              */
         } Type;
+        bool isBlock(void) { return Type == Block; }
+        bool isStatement(void) { return Type == Statement; }
+        bool isList(void) { return Type == List; }
+        bool isToken(void) { return Type == Token; }
+
         /** Indicates type of statement - DDL/DML or PLSQL block
             This is later used when deciding if trailing semicolon should
             be removed or not before executing.
