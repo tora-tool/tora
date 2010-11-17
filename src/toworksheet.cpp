@@ -1037,11 +1037,12 @@ void toWorksheet::query(const QString &str, execType type, toSQLParse::statement
         }
 
         if (first == QString::fromLatin1("REM") ||
-                first == QString::fromLatin1("ASSIGN") ||
-                first == QString::fromLatin1("PROMPT") ||
-                first == QString::fromLatin1("COLUMN") ||
-                first == QString::fromLatin1("SPOOL") ||
-                first == QString::fromLatin1("STORE"))
+            first == QString::fromLatin1("ASSIGN") ||
+            first == QString::fromLatin1("PROMPT") ||
+            first == QString::fromLatin1("COLUMN") ||
+            first == QString::fromLatin1("SPOOL") ||
+            first == QString::fromLatin1("STORE") ||
+            first == QString::fromLatin1("SET"))
         {
 
             QString t = tr("Ignoring SQL*Plus command");
