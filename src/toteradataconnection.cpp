@@ -166,13 +166,12 @@ static double powers10[19] = {
 
 static toSQL SQLListDatabases(
     "toTeradataConnection:ListDatabases",
-    "SELECT DISTINCT ( trim ( db.databasename ) )\n"
-    "  FROM dbc.AccessRights ar,\n"
-    "       dbc.dbase db\n"
-    " WHERE ar.userid IN ( SELECT  userid\n"
-    "                         FROM dbc.sessiontbl\n"
-    "                        WHERE sessionno = SESSION )\n"
-    "   AND ar.databaseid = db.databaseid",
+    "SELECT trim ( databasename )\n"
+    "  FROM dbc.UserRights\n"
+    " UNION\n"
+    "SELECT trim ( databasename )\n"
+    "  FROM dbc.UserRoleRights\n"
+    " GROUP BY 1",
     "List all databases with access rights (used for object cache)",
     "",
     "Teradata");
