@@ -1759,7 +1759,9 @@ static QString QueryParam(const QString &in,
                             str += d;
                         }
                     }
-                    str += QString::fromLatin1("'");
+
+                    if (in != QString::fromLatin1("noquote"))
+                        str += QString::fromLatin1("'");
                 }
                 binds[nam] = str;
                 ret += str;
