@@ -49,7 +49,7 @@
 #include "torunnable.h"
 
 
-toQValue toEventQuery::readValueNull() {
+toQValue toEventQuery::readValue() {
     if(Values.isEmpty())
         throw tr("Read past end of query");
 
@@ -59,11 +59,6 @@ toQValue toEventQuery::readValueNull() {
     }
 
     return Values.takeFirst();
-}
-
-
-toQValue toEventQuery::readValue() {
-    return toNull(readValueNull());
 }
 
 

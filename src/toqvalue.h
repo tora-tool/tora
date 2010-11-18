@@ -160,11 +160,8 @@ public:
     bool isBinary(void) const;
     /** Check if this value holds "custom" user type
      */
-    bool isUserType(void) const;
+    bool isComplexType(void) const;
     
-    /** Get toUtf8 format of this value.
-     */
-    QString toUtf8(void) const;
     /** Get integer representation of this value.
      */
     int toInt(void) const;
@@ -172,6 +169,16 @@ public:
      */
     double toDouble(void) const;
 
+    /** Used for DisplayRole
+     */
+    QString displayData() const;
+    /** Used for EditRole
+     */
+    QString editData() const;
+    /** Used for UserRole(CSV export)
+     */
+    QString userData() const;
+    
     /** Check if this value is long.
      */
     bool isLong(void) const;
@@ -197,10 +204,6 @@ public:
     /** Convert value to a string. If binary convert to hex.
      */
     operator QString() const;
-
-    /** Convert value to a string. If binary convert to hex.
-     */
-    QString toString() const;
 
     QString toSIsize() const;
 

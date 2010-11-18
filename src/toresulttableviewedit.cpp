@@ -209,16 +209,16 @@ unsigned toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &co
 	 j != change.row.end();
 	 j++, col++)
     {
+        if ((*j).isComplexType())
+	{
+		toStatusMessage(tr("This table contains complex/user defined columns "
+				   "and can not be edited"));
+		return 0;
+	}
+
         if (!oracle || (!Headers[col].datatype.toUpper().startsWith(("LONG")) &&
                         !Headers[col].datatype.toUpper().contains(("LOB"))))
         {
-	    if ((*j).isUserType())
-	    {
-		    toStatusMessage(tr("This table contains complex/user defined columns "
-				       "and can not be edited"));
-		    return 0;
-	    }
-
             if (where)
                 sql += " AND ";
             else
@@ -290,7 +290,7 @@ unsigned toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn)
 	 j != change.row.end();
 	 j++, col++)
     {
-	if ((*j).isUserType())
+	if ((*j).isComplexType())
 	{
 		toStatusMessage(tr("This table contains complex/user defined columns "
 				   "and can not be edited"));
@@ -378,16 +378,16 @@ unsigned toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &co
                                             Qt::Horizontal,
                                             Qt::DisplayRole).toString());
 
+	if ((*j).isComplexType())
+	{
+		toStatusMessage(tr("This table contains complex/user defined columns "
+				   "and can not be edited"));
+		return 0;
+	}
+
         if (!oracle || (!Headers[col].datatype.toUpper().startsWith(("LONG")) &&
                         !Headers[col].datatype.toUpper().contains(("LOB"))))
         {
-	    if ((*j).isUserType())
-	    {
-		    toStatusMessage(tr("This table contains complex/user defined columns "
-				       "and can not be edited"));
-		    return 0;
-	    }
-
             if (where)
                 sql += (" AND (");
             else

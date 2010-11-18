@@ -118,19 +118,19 @@ void toResultPie::poll(void)
                 {
                     if (LabelFirst)
                     {
-                        lab = Query->readValueNull();
-                        val = Query->readValueNull();
+                        lab = Query->readValue();
+                        val = Query->readValue();
                     }
                     else
                     {
-                        val = Query->readValueNull();
-                        lab = Query->readValueNull();
+                        val = Query->readValue();
+                        lab = Query->readValue();
                     }
                     for (int i = 2;i < Columns;i++)
-                        Query->readValueNull();
+                        Query->readValue();
                 }
                 else
-                    val = Query->readValueNull();
+                    val = Query->readValue();
                 if (!Filter.isEmpty() && !Filter.exactMatch(lab))
                     continue;
                 if (!ValueFilter.isEmpty() && !ValueFilter.exactMatch(val))

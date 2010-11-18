@@ -103,8 +103,8 @@ void toBrowserDBLinksWidget::testDBLink()
     toQList resultset;
     try
     {
-        resultset = toQuery::readQueryNull(toCurrentConnection(this),
-                                           "SELECT * FROM dual@" + object());
+        resultset = toQuery::readQuery(toCurrentConnection(this),
+				       "SELECT * FROM dual@" + object());
     }
     TOCATCH;
 

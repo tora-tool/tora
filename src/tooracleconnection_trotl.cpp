@@ -933,10 +933,10 @@ public:
 			toConnection::objectName cur;
 			while (!objects.eof())
 			{
-				cur.Owner = objects.readValueNull();
-				cur.Name = objects.readValueNull();
-				cur.Type = objects.readValueNull();
-				cur.Comment = objects.readValueNull();
+				cur.Owner = objects.readValue();
+				cur.Name = objects.readValue();
+				cur.Type = objects.readValue();
+				cur.Comment = objects.readValue();
 				ret.insert(ret.end(), cur);
 			}
 			TLOG(0,toDecorator,__HERE__)
@@ -958,9 +958,9 @@ public:
 			std::list<toConnection::objectName>::iterator i = objects.begin();
 			while (!synonyms.eof())
 			{
-				QString synonym = synonyms.readValueNull();
-				cur.Owner = synonyms.readValueNull();
-				cur.Name = synonyms.readValueNull();
+				QString synonym = synonyms.readValue();
+				cur.Owner = synonyms.readValue();
+				cur.Name = synonyms.readValue();
 				while (i != objects.end() && (*i) < cur)
 					i++;
 				if (i == objects.end())
@@ -996,8 +996,8 @@ public:
 					{
 						QString name = member.readValue();
 						QString overld = member.readValue();
-						QString arg = member.readValueNull();
-						QString type = member.readValueNull();
+						QString arg = member.readValue();
+						QString type = member.readValue();
 						if (lastName != name || overld != lastOver)
 						{
 							if (hasArgs)
@@ -1051,7 +1051,7 @@ public:
 				while (!comment.eof())
 				{
 					QString col = comment.readValue();
-					comments[col] = comment.readValueNull();
+					comments[col] = comment.readValue();
 				}
 			}
 			catch (...)
@@ -1469,13 +1469,13 @@ void toOracleProvider::oracleQuery::execute(void)
 			} else if( (bp.bind_typename == "char" || bp.bind_typename == "varchar")
 				   && ((*i).isString() || (*i).isNumber() || (*i).isNull() ))
 			{
-				std::string param((const char*)((*i).toString().toUtf8().constData()));
-				(*Query) << ::std::string((const char*)((*i).toString().toUtf8().constData()));
+			  std::string param((const char*)(((QString)*i).toUtf8().constData()));				
+			  (*Query) << param;
 				TLOG(0,toDecorator,__HERE__)
 					<< "<<(conn=" << conn->_conn << ", this=" << Query << ")"
 					<< "::operator<<(" << bp.type_name << " ftype=" << bp.dty
 					<< ", placeholder=" << bp.bind_name
-					<< ", value=" << ::std::string((const char*)((*i).toString().toUtf8().constData())) << ");"
+					<< ", value=" << ::std::string((const char*)(((QString)*i).toUtf8().constData())) << ");" 
 					<< "\t of:" << query()->params().size() << std::endl;
 			} else {
 				TLOG(0,toDecorator,__HERE__)
@@ -1484,7 +1484,7 @@ void toOracleProvider::oracleQuery::execute(void)
 					<< "<<(conn=" << conn->_conn << ", this=" << Query << ")"
 					<< "::operator<<(" << bp.type_name << " ftype=" << bp.dty
 					<< ", placeholder=" << bp.bind_name
-					<< ", value=" << ::std::string((const char*)((*i).toString().toUtf8().constData())) << ");"
+					<< ", value=" << ::std::string((const char*)(((QString)*i).toUtf8().constData())) << ");"
 					<< "\t of:" << query()->params().size() << std::endl;
 				throw toConnection::exception(
 					QString::fromLatin1("Fatal pruser error - unsupported BindPar:%1\nFor SQL:\n%2\n")

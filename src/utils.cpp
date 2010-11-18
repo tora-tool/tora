@@ -1127,40 +1127,6 @@ bool toCheckModal(QWidget *widget)
     return false;
 }
 
-// static bool IndicateEmpty = false;
-//
-// void toUpdateIndicateEmpty(void)
-// {
-//     IndicateEmpty = toConfigurationSingle::Instance().indicateEmpty();
-// }
-
-
-toQValue toNull(const toQValue &str)
-{
-    if (!toConfigurationSingle::Instance().indicateEmpty())
-    {
-        if (str.isNull())
-            return str;
-        if (str.toString().length() == 0)
-            return QString::fromLatin1("''");
-    }
-    else if (str.isNull())
-        return QString::fromLatin1("{null}");
-    return str;
-}
-
-toQValue toUnnull(const toQValue &str)
-{
-    if (!toConfigurationSingle::Instance().indicateEmpty())
-    {
-        if (QString(str) == QString::fromLatin1("''"))
-            return QString::fromLatin1("");
-    }
-    else if (QString(str) == QString::fromLatin1("{null}"))
-        return QString();
-    return str;
-}
-
 QString toTranslateMayby(const QString &ctx, const QString &text)
 {
     if (ctx.contains(QString::fromLatin1(" ")) || ctx.toLatin1() != ctx.toUtf8() || text.toLatin1() != text.toUtf8() || ctx.isEmpty() || text.isEmpty())

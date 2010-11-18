@@ -44,6 +44,8 @@
 #include "toconf.h"
 #include "toqvalue.h"
 
+#include "toconfiguration.h"
+
 #include <QVariant>
 #include <QApplication>
 
@@ -81,7 +83,7 @@ toQValue::toQValue(const toQValue &copy)
      *  but toQValue is also used for query parameters(toQList and others)
      *  and these are copyined often (toNoBlockQuery.Params => toQuery.Params)
      */
-    if(isUserType())
+    if(isComplexType())
 	    const_cast<toQValue&>(copy).Value = "deleted value(clone)";
 }
 
@@ -93,7 +95,7 @@ const toQValue &toQValue::operator = (const toQValue & copy)
      *  but toQValue is also used for query parameters(toQList and others)
      *  and these are copyined often (toNoBlockQuery.Params => toQuery.Params)
      */
-    if(isUserType())
+    if(isComplexType())
 	    const_cast<toQValue&>(copy).Value = "deleted value(assign)";
     return *this;
 }
@@ -109,7 +111,7 @@ toQValue::toQValue()
 
 toQValue::~toQValue()
 {
-	if(isUserType())
+	if(isComplexType())
 	{
 		complexType *i = Value.value<toQValue::complexType*>();
 		if(i)
@@ -132,15 +134,15 @@ bool toQValue::operator<(const toQValue &other) const
 
     // otherwise, try to convert to double for comparison
     bool ok;
-    double d1 = toString().toDouble(&ok);
+    double d1 = Value.toString().toDouble(&ok);
     if (ok)
     {
-        double d2 = other.toString().toDouble(&ok);
+        double d2 = other.Value.toString().toDouble(&ok);
         if (ok)
             return d1 < d2;
     }
 
-    return toString() < other.toString();
+    return Value.toString() < other.Value.toString();
 }
 
 
@@ -165,15 +167,15 @@ bool toQValue::operator<=(const toQValue &other) const
 
     // otherwise, try to convert to double for comparison
     bool ok;
-    double d1 = toString().toDouble(&ok);
+    double d1 = Value.toString().toDouble(&ok);
     if (ok)
     {
-        double d2 = other.toString().toDouble(&ok);
+        double d2 = other.Value.toString().toDouble(&ok);
         if (ok)
             return d1 <= d2;
     }
 
-    return toString() <= other.toString();
+    return Value.toString() <= other.Value.toString();
 }
 
 
@@ -227,7 +229,7 @@ bool toQValue::isBinary() const
     return Value.type() == QVariant::ByteArray;
 }
 
-bool toQValue::isUserType(void) const
+bool toQValue::isComplexType(void) const
 {
     return Value.type() == QVariant::UserType;
 }
@@ -242,20 +244,32 @@ const QByteArray toQValue::toByteArray() const
     return Value.toByteArray();
 }
 
-QString toQValue::toUtf8() const
+QString toQValue::displayData() const
 {
-    if(isUserType())
-      return QString("U UserType");
-    else
-      return Value.toString();
+	if (isNull() && toConfigurationSingle::Instance().indicateEmpty())
+	{
+		return QString::fromLatin1("{null}");
+	}
+
+	if( isBinary())
+	{
+		QByteArray const &raw = Value.toByteArray();
+		return raw.toHex();
+	}
+	    
+	return Value.toString();
 }
 
-QString toQValue::toString() const
+QString toQValue::editData() const
 {
-    if(isUserType())
-      return QString("T UserType");
-    else  
-      return Value.toString();
+	return Value.toString();
+}
+
+QString toQValue::userData() const
+{
+	if (isNull() )
+		return QString::fromLatin1("NULL");
+	return Value.toString();
 }
 
 int toQValue::toInt() const
@@ -388,7 +402,7 @@ toQValue toQValue::createFromHex(const QString &hex)
 
 toQValue::operator QString() const
 {
-    if(isUserType())
+    if(isComplexType())
       return QString("O UserType");
     else
       return Value.toString();

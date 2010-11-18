@@ -394,14 +394,10 @@ public:
         return Mode;
     }
 
-    /** Read a value from the query. Convert the value NULL to the string {null}.
+    /** Read a value from the query.
      * @return Value read.
      */
     toQValue readValue(void);
-    /** Read a value from the query. Nulls are returned as empty @ref toQValue.
-     * @return Value read.
-     */
-    toQValue readValueNull(void);
     /** Check if end of query is reached.
      * @return True if end of query is reached.
      */
@@ -477,48 +473,7 @@ public:
                                          const QString &arg5 = QString::null, const QString &arg6 = QString::null,
                                          const QString &arg7 = QString::null, const QString &arg8 = QString::null,
                                          const QString &arg9 = QString::null);
-    /** Execute a query and return all the values returned by it.
-     * @param conn Connection to run query on.
-     * @param sql SQL to run.
-     * @param params Parameters to pass to query.
-     * @return A list of @ref toQValues:s read from the query.
-     */
-    static std::list<toQValue> readQueryNull(toConnection &conn,
-            const toSQL &sql,
-            std::list<toQValue> &params);
-    /** Execute a query and return all the values returned by it.
-     * @param conn Connection to run query on.
-     * @param sql SQL to run.
-     * @param params Parameters to pass to query.
-     * @return A list of @ref toQValues:s read from the query.
-     */
-    static std::list<toQValue> readQueryNull(toConnection &conn,
-            const QString &sql,
-            std::list<toQValue> &params);
-    /** Execute a query and return all the values returned by it.
-     * @param conn Connection to run query on.
-     * @param sql SQL to run.
-     * @param arg1 Parameters to pass to query.
-     * @return A list of @ref toQValues:s read from the query.
-     */
-    static std::list<toQValue> readQueryNull(toConnection &conn, const toSQL &sql,
-            const QString &arg1 = QString::null, const QString &arg2 = QString::null,
-            const QString &arg3 = QString::null, const QString &arg4 = QString::null,
-            const QString &arg5 = QString::null, const QString &arg6 = QString::null,
-            const QString &arg7 = QString::null, const QString &arg8 = QString::null,
-            const QString &arg9 = QString::null);
-    /** Execute a query and return all the values returned by it.
-     * @param conn Connection to run query on.
-     * @param sql SQL to run.
-     * @param arg1 Parameters to pass to query.
-     * @return A list of @ref toQValues:s read from the query.
-     */
-    static std::list<toQValue> readQueryNull(toConnection &conn, const QString &sql,
-            const QString &arg1 = QString::null, const QString &arg2 = QString::null,
-            const QString &arg3 = QString::null, const QString &arg4 = QString::null,
-            const QString &arg5 = QString::null, const QString &arg6 = QString::null,
-            const QString &arg7 = QString::null, const QString &arg8 = QString::null,
-            const QString &arg9 = QString::null);
+    
     /** Cancel the current execution of a query.
      */
     void cancel(void);

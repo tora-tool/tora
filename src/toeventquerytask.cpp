@@ -207,7 +207,7 @@ void toEventQueryTask::pread(bool all) {
 
             for(int row = 0; row < maxRead; row++) {
                 for(int i = 0; i < Columns && !Query->eof(); i++)
-                    values.append(Query->readValueNull());
+                    values.append(Query->readValue());
             }
 
             if(values.size() > 0)

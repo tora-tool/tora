@@ -596,10 +596,10 @@ void toProfiler::refresh(void)
         int id = 1;
         while (!query.eof())
         {
-            QString runid = query.readValueNull();
-            QString owner = query.readValueNull();
-            QString comment = query.readValueNull();
-            double total = query.readValueNull().toDouble() / 1E9;
+            QString runid = query.readValue();
+            QString owner = query.readValue();
+            QString comment = query.readValue();
+            double total = query.readValue().toDouble() / 1E9;
             if (!owner.isEmpty())
                 owner = QString::fromLatin1("(") + owner + QString::fromLatin1(")");
             QString timstr = QString::fromLatin1(" [") + FormatTime(total) + QString::fromLatin1("]");

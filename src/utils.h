@@ -387,12 +387,6 @@ QString toSQLStripBind(const QString &sql);
 /** Expand filename with $HOME to be replaced with home directory or my documents.
  */
 QString toExpandFile(const QString &file);
-/** Convert string read by readValue to value read by readValueNull
- */
-toQValue toUnnull(const toQValue &str);
-/** Convert string read by readValueNull to value to be read by readValue.
- */
-toQValue toNull(const toQValue &str);
 
 /** Take a string and make it illegible. Some security through obscurity here so you will
  * need to check the source to see what is actually done.

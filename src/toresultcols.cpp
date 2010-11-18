@@ -595,7 +595,7 @@ void toResultCols::query(const QString &sql, const toQList &param)
             QString t;
             if (!query.eof())
             {
-                t = query.readValueNull();
+                t = query.readValue();
                 EditComment->setComment(true, TableName, t);
             }
             Comment->setText(t);

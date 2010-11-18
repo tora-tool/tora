@@ -177,8 +177,8 @@ public:
      *
      * @return The next available value.
      */
-    toQValue readValueNull(void);
-
+    //toQValue readValueNull(void);
+    
 
     /**
      * Get the number of rows processed.

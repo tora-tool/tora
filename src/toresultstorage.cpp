@@ -1054,21 +1054,21 @@ void toStorageExtent::setTablespace(const QString &tablespace)
             }
             ++progressCurr;
 
-            cur.Owner = query.readValueNull();
-            cur.Table = query.readValueNull();
-            cur.Partition = query.readValueNull();
-            cur.File = query.readValueNull().toInt();
-            cur.Block = query.readValueNull().toInt();
-            cur.Size = query.readValueNull().toInt();
+            cur.Owner = query.readValue();
+            cur.Table = query.readValue();
+            cur.Partition = query.readValue();
+            cur.File = query.readValue().toInt();
+            cur.Block = query.readValue().toInt();
+            cur.Size = query.readValue().toInt();
             toPush(Extents, cur);
         }
         toQuery blocks(toCurrentConnection(this), SQLTablespaceBlocks, tablespace);
         Total = 0;
         while (!blocks.eof())
         {
-            int id = blocks.readValueNull().toInt();
+            int id = blocks.readValue().toInt();
             FileOffset[id] = Total;
-            Total += blocks.readValueNull().toInt();
+            Total += blocks.readValue().toInt();
         }
     }
     TOCATCH
@@ -1107,21 +1107,21 @@ void toStorageExtent::setFile(const QString &tablespace, int file)
             }
             ++progressCurr;
 
-            cur.Owner = query.readValueNull();
-            cur.Table = query.readValueNull();
-            cur.Partition = query.readValueNull();
-            cur.File = query.readValueNull().toInt();
-            cur.Block = query.readValueNull().toInt();
-            cur.Size = query.readValueNull().toInt();
+            cur.Owner = query.readValue();
+            cur.Table = query.readValue();
+            cur.Partition = query.readValue();
+            cur.File = query.readValue().toInt();
+            cur.Block = query.readValue().toInt();
+            cur.Size = query.readValue().toInt();
             toPush(Extents, cur);
         }
         toQuery blocks(toCurrentConnection(this), SQLFileBlocks, tablespace, QString::number(file));
         Total = 0;
         while (!blocks.eof())
         {
-            int id = blocks.readValueNull().toInt();
+            int id = blocks.readValue().toInt();
             FileOffset[id] = Total;
-            Total += blocks.readValueNull().toInt();
+            Total += blocks.readValue().toInt();
         }
     }
     TOCATCH
@@ -1268,7 +1268,7 @@ void toResultExtent::query(const QString &sql, const toQList &params)
 
         List->changeParams(owner, table);
 
-        toQList res = toQuery::readQueryNull(connection(), SQLTableTablespace, owner, table);
+        toQList res = toQuery::readQuery(connection(), SQLTableTablespace, owner, table);
 
         Graph->setTablespace(toShift(res));
         Graph->highlight(owner, table, QString::null);

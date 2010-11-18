@@ -413,18 +413,18 @@ void toWaitEvents::poll(void)
     {
         while (Query->hasMore())
         {
-            QString cur = Query->readValueNull();
-            Now = Query->readValueNull();
+            QString cur = Query->readValue();
+            Now = Query->readValue();
             if (First)
             {
                 Labels.insert(Labels.end(), cur);
-                Current.insert(Current.end(), Query->readValueNull().toDouble());
-                CurrentTimes.insert(CurrentTimes.end(), Query->readValueNull().toDouble());
+                Current.insert(Current.end(), Query->readValue().toDouble());
+                CurrentTimes.insert(CurrentTimes.end(), Query->readValue().toDouble());
             }
             else
             {
-                double val = Query->readValueNull().toDouble();
-                double tim = Query->readValueNull().toDouble();
+                double val = Query->readValue().toDouble();
+                double tim = Query->readValue().toDouble();
                 std::list<double>::iterator i = Current.begin();
                 std::list<double>::iterator j = CurrentTimes.begin();
                 std::list<QString>::iterator k = Labels.begin();
@@ -441,7 +441,7 @@ void toWaitEvents::poll(void)
                     k++;
                 }
             }
-            Query->readValueNull().toDouble();
+            Query->readValue().toDouble();
         }
     }
     catch (const QString &exc)

@@ -559,7 +559,7 @@ toStorageDialog::toStorageDialog(toConnection &conn, const QString &tablespace, 
         TablespaceOrig = tablespace;
         Tablespace->Modify = true;
         Default->setEnabled(false);
-        if (toShift(result).toString() == "DICTIONARY")
+        if ( (QString)toShift(result) == "DICTIONARY")
             Tablespace->Dictionary->setChecked(true);
         else
         {
@@ -568,9 +568,9 @@ toStorageDialog::toStorageDialog(toConnection &conn, const QString &tablespace, 
         }
         Tablespace->ExtentGroup->setEnabled(false);
 
-        Tablespace->Permanent->setChecked(toShift(result).toString() == "PERMANENT");
-        Tablespace->Logging->setChecked(toShift(result).toString() == "LOGGING");
-        Tablespace->Online->setChecked(toShift(result).toString() == "ONLINE");
+        Tablespace->Permanent->setChecked( (QString)toShift(result) == "PERMANENT");
+        Tablespace->Logging->setChecked( (QString)toShift(result) == "LOGGING");
+        Tablespace->Online->setChecked( (QString)toShift(result) == "ONLINE");
         Tablespace->OnlineOrig = Tablespace->Online->isChecked();
         Tablespace->PermanentOrig = Tablespace->Permanent->isChecked();
         Tablespace->LoggingOrig = Tablespace->Logging->isChecked();

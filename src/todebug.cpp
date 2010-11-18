@@ -140,7 +140,7 @@ public:
 #ifdef DEBUG
         // perform self-check (should probably display scary message and close if this test fails)
         toQuery selfCheck(connection, SQLDebugSelfCheck);
-        QString str = selfCheck.readValueNull();
+        QString str = selfCheck.readValue();
         qDebug() << "DBMS_DEBUG.SELF_CHECK result: " << str;
 #endif
 
@@ -402,7 +402,7 @@ public:
                 {
                     outputSession->execute(SQLDebugOutputPoll);
                     ret = outputSession->readValue().toInt();
-                    QString str = outputSession->readValueNull();
+                    QString str = outputSession->readValue();
                     if (ret == 0 || str.length())
                         insertLine(str);
                 }

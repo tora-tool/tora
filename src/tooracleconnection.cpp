@@ -73,7 +73,7 @@
 #endif
 #endif
 
-#if 0 /* OTL tracing */
+#if 1 /* OTL tracing */
 #define OTL_TRACE_LEVEL 0xff
 #define OTL_TRACE_STREAM cerr
 #include <iostream>
@@ -691,10 +691,10 @@ class oracleConnection : public toConnection::connectionImpl
             toConnection::objectName cur;
             while (!objects.eof())
             {
-                cur.Owner = objects.readValueNull();
-                cur.Name = objects.readValueNull();
-                cur.Type = objects.readValueNull();
-                cur.Comment = objects.readValueNull();
+                cur.Owner = objects.readValue();
+                cur.Name = objects.readValue();
+                cur.Type = objects.readValue();
+                cur.Comment = objects.readValue();
                 ret.insert(ret.end(), cur);
             }
 
@@ -713,9 +713,9 @@ class oracleConnection : public toConnection::connectionImpl
             std::list<toConnection::objectName>::iterator i = objects.begin();
             while (!synonyms.eof())
             {
-                QString synonym = synonyms.readValueNull();
-                cur.Owner = synonyms.readValueNull();
-                cur.Name = synonyms.readValueNull();
+                QString synonym = synonyms.readValue();
+                cur.Owner = synonyms.readValue();
+                cur.Name = synonyms.readValue();
                 while (i != objects.end() && (*i) < cur)
                     i++;
                 if (i == objects.end())
@@ -748,8 +748,8 @@ class oracleConnection : public toConnection::connectionImpl
                     {
                         QString name = member.readValue();
                         QString overld = member.readValue();
-                        QString arg = member.readValueNull();
-                        QString type = member.readValueNull();
+                        QString arg = member.readValue();
+                        QString type = member.readValue();
                         if (lastName != name || overld != lastOver)
                         {
                             if (hasArgs)
@@ -801,7 +801,7 @@ class oracleConnection : public toConnection::connectionImpl
                 while (!comment.eof())
                 {
                     QString col = comment.readValue();
-                    comments[col] = comment.readValueNull();
+                    comments[col] = comment.readValue();
                 }
             }
             catch (...)
@@ -1174,13 +1174,13 @@ void toOracleProvider::oracleQuery::execute(void)
                     case otl_var_varchar_long:
                     case otl_var_clob:
                     {
-                        QString buf = (*i).toUtf8();
+                        QString buf = (*i).editData();
                         otl_long_string str(buf.toUtf8().constData(), buf.length(), buf.length());
                         (*Query) << str;
                     }
                     break;
                     default:
-                        (*Query) << (*i).toUtf8().toUtf8().constData();
+                        (*Query) << (*i).editData().toUtf8().constData();
                         break;
                     }
                 }

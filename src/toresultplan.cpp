@@ -370,20 +370,20 @@ void toResultPlan::poll(void)
     {
         while (Query->hasMore())
         {
-            QString id = Query->readValueNull();
-            QString parentid = Query->readValueNull();
-            QString operation = Query->readValueNull();
-            QString options = Query->readValueNull();
-            QString object = Query->readValueNull();
-            QString optimizer = Query->readValueNull();
-            QString cost = Query->readValueNull();
-            QString iocost = Query->readValueNull();
-            QString bytes = Query->readValueNull().toSIsize();
-            QString cardinality = Query->readValueNull();
-            QString startpartition = Query->readValueNull();
-            QString endpartition = Query->readValueNull();
-            QString tempspace = Query->readValueNull().toSIsize();
-            QString time = Query->readValueNull();
+            QString id = Query->readValue();
+            QString parentid = Query->readValue();
+            QString operation = Query->readValue();
+            QString options = Query->readValue();
+            QString object = Query->readValue();
+            QString optimizer = Query->readValue();
+            QString cost = Query->readValue();
+            QString iocost = Query->readValue();
+            QString bytes = Query->readValue().toSIsize();
+            QString cardinality = Query->readValue();
+            QString startpartition = Query->readValue();
+            QString endpartition = Query->readValue();
+            QString tempspace = Query->readValue().toSIsize();
+            QString time = Query->readValue();
 
             toResultViewItem *item;
             if (!parentid.isNull() && Parents[parentid])

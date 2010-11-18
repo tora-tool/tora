@@ -104,8 +104,8 @@ toSecurityTreeModel::toSecurityTreeModel(QObject *parent)
     QStringList value;
     while (!typelst.eof())
     {
-        key = typelst.readValueNull();
-        value = typelst.readValueNull().toString().split(",");
+        key = typelst.readValue();
+        value = typelst.readValue().userData().split(",");
         m_SQLObjectPrivs[key] = value;
     }
 }

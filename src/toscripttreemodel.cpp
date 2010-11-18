@@ -263,19 +263,19 @@ void toScriptTreeModel::setupModelData(const QString & connId, const QString & s
     {
         try
         {
-            object = toQuery::readQueryNull(conn, SQLObjectList);
+            object = toQuery::readQuery(conn, SQLObjectList);
         }
         catch (...)
         {
 //             qDebug() << "SQLObjectList call failed. Running 'common user' stmt.";
             qDebug("SQLObjectList call failed. Running 'common user' stmt.");
         }
-        toQList object1 = toQuery::readQueryNull(conn, SQLUserObjectList);
+        toQList object1 = toQuery::readQuery(conn, SQLUserObjectList);
         object.splice(object.end(), object1);
     }
     else
     {
-        object = toQuery::readQueryNull(conn, SQLUserObjects, schema);
+        object = toQuery::readQuery(conn, SQLUserObjects, schema);
     }
 
     QString c1;

@@ -459,8 +459,8 @@ void toCodeModel::addChildContent(const QModelIndex & index)
         emit layoutAboutToBeChanged();
         while (!query.eof())
         {
-            ctype = query.readValueNull();
-            cstatus = query.readValueNull();
+            ctype = query.readValue();
+            cstatus = query.readValue();
 
             new toCodeModelItem(item, ctype, ctype, cstatus);
             // "inherit" child status for parent if it's required
@@ -498,9 +498,9 @@ void toCodeModel::readData()
 
     while(query->hasMore())
     {
-        QString cname = query->readValueNull().toString();
-        QString ctype = query->readValueNull().toString();
-        QString cstatus = query->readValueNull().toString();
+	QString cname = query->readValue();
+        QString ctype = query->readValue();
+        QString cstatus = query->readValue();
 
         toCodeModelItem *item = 0;
         if(ctype == QString("PACKAGE"))

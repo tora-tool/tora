@@ -1540,7 +1540,7 @@ class qSqlConnection : public toConnection::connectionImpl
                 toQuery databases(connection(), SQLListDatabases);
                 while (!databases.eof())
                 {
-                    QString db = databases.readValueNull();
+                    QString db = databases.readValue();
                     cur.Owner = db;
                     cur.Type = "DATABASE";
                     cur.Name = QString::null;
@@ -1550,12 +1550,12 @@ class qSqlConnection : public toConnection::connectionImpl
                         toQuery tables(connection(), SQLListObjectsDatabase, db);
                         while (!tables.eof())
                         {
-                            cur.Name = tables.readValueNull();
+                            cur.Name = tables.readValue();
                             cur.Owner = db;
                             cur.Type = "TABLE";
                             for (int i = 2;i < tables.columns();i++) // I just wan't the last column except for the first one
-                                tables.readValueNull();
-                            cur.Comment = tables.readValueNull();
+                                tables.readValue();
+                            cur.Comment = tables.readValue();
                             ret.insert(ret.end(), cur);
                         }
                     }
@@ -1568,13 +1568,13 @@ class qSqlConnection : public toConnection::connectionImpl
                 toQuery tables(connection(), SQLListObjects);
                 while (!tables.eof())
                 {
-                    cur.Name = tables.readValueNull();
+                    cur.Name = tables.readValue();
                     if (tables.columns() > 1)
-                        cur.Owner = tables.readValueNull();
+                        cur.Owner = tables.readValue();
                     else
                         cur.Owner = connection().database();
                     if (tables.columns() > 2)
-                        cur.Type = tables.readValueNull();
+                        cur.Type = tables.readValue();
                     else
                         cur.Type = QString::fromLatin1("TABLE");
                     ret.insert(ret.end(), cur);
@@ -1597,9 +1597,9 @@ class qSqlConnection : public toConnection::connectionImpl
                 std::list<toConnection::objectName>::iterator i = objects.begin();
                 while (!synonyms.eof())
                 {
-                    QString synonym = synonyms.readValueNull();
-                    cur.Owner = synonyms.readValueNull();
-                    cur.Name = synonyms.readValueNull();
+                    QString synonym = synonyms.readValue();
+                    cur.Owner = synonyms.readValue();
+                    cur.Name = synonyms.readValue();
                     while (i != objects.end() && (*i) < cur)
                         i++;
                     if (i == objects.end())
@@ -1628,7 +1628,7 @@ class qSqlConnection : public toConnection::connectionImpl
                 while (!comment.eof())
                 {
                     QString col = comment.readValue();
-                    comments[col] = comment.readValueNull();
+                    comments[col] = comment.readValue();
                 }
             }
             catch (...)

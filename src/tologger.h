@@ -67,14 +67,14 @@ inline thread_safe_log templ_get_log_ownthread(int_to_type<3>*)
 }
 
 // tonoblockquery<4> - data read(disabled)
-template<>
-inline thread_safe_log templ_get_log_ownthread(int_to_type<4>*)
-{
-	static s_null_sink nsink;
-	static std::ostream out(&nsink);
-	static internal_thread_safe_log_ownthread log( out );
-	return thread_safe_log( log);
-}
+/* template<> */
+/* inline thread_safe_log templ_get_log_ownthread(int_to_type<4>*) */
+/* { */
+/* 	static s_null_sink nsink; */
+/* 	static std::ostream out(&nsink); */
+/* 	static internal_thread_safe_log_ownthread log( out ); */
+/* 	return thread_safe_log( log); */
+/* } */
 
 /*
 thread_safe_log templ_get_log_ownthread<1>( int_to_type< 1> * = NULL )

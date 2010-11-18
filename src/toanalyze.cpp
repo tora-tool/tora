@@ -534,7 +534,7 @@ void toAnalyze::poll(toEventQuery* q)
     {
         int cols = q->describe().size();
         for (int j = 0; j < cols; j++)
-            q->readValueNull();  // Eat the output if any.
+            q->readValue();  // Eat the output if any.
 
         Current->setText(tr("Running %1 Pending %2").arg(Running.size()).arg(Pending.size()));
     }
@@ -652,7 +652,7 @@ QStringList toAnalyze::getSQL(void)
                     break;
                 }
                 QString owner = Statistics->model()->data((*it).row(), 2).toString();
-                if (toUnnull(owner).isNull())
+                if (owner.isNull())
                     owner = Schema->selected();
                 ret.append(sql.arg(owner).arg(
                            Statistics->model()->data((*it).row(), 1).toString()));

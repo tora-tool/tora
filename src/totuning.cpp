@@ -2189,9 +2189,9 @@ void toTuningFileIO::poll(void)
             {
                 if (!Query->eof())
                 {
-                    tablespace = Query->readValueNull();
-                    datafile = Query->readValueNull();
-                    timestr = Query->readValueNull();
+                    tablespace = Query->readValue();
+                    datafile = Query->readValue();
+                    timestr = Query->readValue();
                 }
                 else
                     tablespace = QString::null;
@@ -2213,14 +2213,14 @@ void toTuningFileIO::poll(void)
                 if (Query->eof())
                     break;
 
-                double reads = Query->readValueNull().toDouble();
-                double writes = Query->readValueNull().toDouble();
-                double readBlk = Query->readValueNull().toDouble();
-                double writeBlk = Query->readValueNull().toDouble();
-                double avgTim = Query->readValueNull().toDouble();
-                double minTim = Query->readValueNull().toDouble();
-                double maxRead = Query->readValueNull().toDouble();
-                double maxWrite = Query->readValueNull().toDouble();
+                double reads = Query->readValue().toDouble();
+                double writes = Query->readValue().toDouble();
+                double readBlk = Query->readValue().toDouble();
+                double writeBlk = Query->readValue().toDouble();
+                double avgTim = Query->readValue().toDouble();
+                double minTim = Query->readValue().toDouble();
+                double maxRead = Query->readValue().toDouble();
+                double maxWrite = Query->readValue().toDouble();
 
                 TblReads += reads;
                 TblWrites += writes;

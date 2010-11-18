@@ -334,7 +334,7 @@ toBrowserTable::toBrowserTable(toConnection &conn,
             toQuery query(connection(), SQLListTablespaces); // TODO: does this create NEW connection??!!
             while (!query.eof())
             {
-                QString t = query.readValueNull();
+                QString t = query.readValue();
                 Tablespace->addItem(t);
                 if (t == tablespace)
                     Tablespace->setCurrentIndex(Tablespace->count() - 1);

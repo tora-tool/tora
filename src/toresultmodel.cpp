@@ -164,7 +164,7 @@ void toResultModel::readData()
             row.append(toQValue(current + 1));
 
             for (int j = 1; (j < cols || j == 0) && Query->hasMore(); j++)
-                row.append(Query->readValueNull());
+                row.append(Query->readValue());
 
             tmp.append(row);
             current++;
@@ -495,31 +495,27 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const
     {
     case Qt::ToolTipRole:
 	    if (data.isNull())
-		    return toNull(data).toQVariant();
-	    if (data.isUserType())
+		    return data.toQVariant();
+	    if (data.isComplexType())
 	    {
 		    toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
 		    return QVariant(i->tooltipData());
 	    }
 	    return data.toQVariant();
     case Qt::EditRole:
-	    if (data.isNull())
-		    return toNull(data).toQVariant();
-	    if (data.isUserType())
+	    if (data.isComplexType())
 	    {
 		    toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
 		    return QVariant(i->editData());
 	    }
-	    return data.toQVariant();
+	    return QVariant(data.editData());
     case Qt::DisplayRole:
-           if (data.isNull())
-                   return toNull(data).toQVariant();
-           if (data.isUserType())
-           {
-                   toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
-                   return QVariant(i->displayData());
-           }
-           return data.toQVariant();
+	    if (data.isComplexType())
+	    {
+		    toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
+		    return QVariant(i->displayData());
+	    }
+	    return QVariant(data.displayData());
     case Qt::BackgroundRole:
            if (data.isNull() && toConfigurationSingle::Instance().indicateEmpty())
                    return QVariant(QColor(toConfigurationSingle::Instance().indicateEmptyColor()));
@@ -553,7 +549,7 @@ bool toResultModel::setData(const QModelIndex &index,
 
     Row &row = Rows[index.row()];
     Row oldRow = row;           // keep old version
-    toQValue newValue = toUnnull(toQValue::fromVariant(_value));
+    toQValue newValue = toQValue::fromVariant(_value);
 
     row[index.column()] = newValue;
 
@@ -753,7 +749,7 @@ Qt::ItemFlags toResultModel::flags(const QModelIndex &index) const
     }
 
     toQValue const &data = Rows.at(index.row()).at(index.column());
-    if (data.isUserType())
+    if (data.isComplexType())
     {
        return ( defaultFlags | fl ) & ~Qt::ItemIsEditable;
     }
