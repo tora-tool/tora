@@ -148,6 +148,7 @@ private:
     toCodeModelItem *packageItem;
     toCodeModelItem *procItem;
     toCodeModelItem *funcItem;
+    toCodeModelItem *macroItem;
     toCodeModelItem *typeItem;
     toEventQuery    *query;
     QString m_owner;

@@ -131,6 +131,22 @@ static toSQL SQLListObjectsMySQL("toCodeModel:ListObjects",
                                  "5.0",
                                  "MySQL");
 
+static toSQL SQLListObjectsTeradata(
+    "toCodeModel:ListObjects",
+    "SELECT tvm.tvmname,\n"
+    "       CASE WHEN tvm.tablekind = 'P' THEN 'PROCEDURE' ELSE 'MACRO' END AS object_type,\n"
+    "       'VALID ' AS Status\n"
+    "  FROM DBC.DBase d,\n"
+    "       dbc.tvm\n"
+    " WHERE databasenamei = trim ( :f1<char[101]> )\n"
+    "   AND d.databaseid = tvm.databaseid\n"
+    "   AND tvm.tablekind IN ( 'P',\n"
+    "                          'M' )\n"
+    " ORDER BY 1",
+    "",
+    "",
+    "Teradata");
+
 static toSQL SQLListPackage("toCodeModel:ListPackage",
                             "SELECT \n"
                             "       DECODE(a.object_type, 'PACKAGE', 'SPEC', 'BODY'),\n"
@@ -285,6 +301,16 @@ QVariant toCodeModel::data(const QModelIndex &index, int role) const
             else
                 return QPixmap(":/icons/function-invalid.png");
         }
+
+        if (item->type() == "MACRO"
+            || item == macroItem)
+        {
+            if (item->status() == "VALID")
+                return QPixmap(":/icons/function.png");
+            else
+                return QPixmap(":/icons/function-invalid.png");
+        }
+
         if (item->type() == "TYPE"
             || item == typeItem)
         {
@@ -402,11 +428,14 @@ void toCodeModel::refresh(toConnection &conn, const QString &owner)
     // branches are not included for MySQL connections.
     delete rootItem;
     rootItem = new toCodeModelItem(0, "Code");
-    if (!toIsMySQL(conn))
+    if (!toIsMySQL(conn) && !toIsTeradata(conn))
         packageItem = new toCodeModelItem(rootItem, tr("Package"));
     procItem = new toCodeModelItem(rootItem, tr("Procedure"));
-    funcItem = new toCodeModelItem(rootItem, tr("Function"));
-    if (!toIsMySQL(conn))
+    if (!toIsTeradata(conn))
+        funcItem = new toCodeModelItem(rootItem, tr("Function"));
+    if (toIsTeradata(conn))
+        macroItem = new toCodeModelItem(rootItem, tr("Macro"));
+    if (!toIsMySQL(conn) && !toIsTeradata(conn))
         typeItem = new toCodeModelItem(rootItem, tr("Type"));
     this->reset();
 
@@ -509,6 +538,8 @@ void toCodeModel::readData()
             item = procItem;
         else if (ctype == QString("FUNCTION"))
             item = funcItem;
+        else if (ctype == QString("MACRO"))
+            item = macroItem;
         else if(ctype == QString("TYPE"))
             item = typeItem;
 

@@ -102,6 +102,12 @@ static toSQL SQLSQLBodyMySQL("toBrowser:CodeBody",
                              "5.0",
                              "MySQL");
 
+static toSQL SQLSQLBodyTeradata("toBrowser:CodeBody",
+                                "show :f3<noquote> :f1<noquote>.:f2<noquote>",
+                                "",
+                                "",
+                                "Teradata");
+
 toBrowserCodeWidget::toBrowserCodeWidget(QWidget * parent)
     : toBrowserBaseWidget(parent)
 {

@@ -150,7 +150,7 @@ void toResultField::queryDone(void)
         // Code is formatted if it is set in preferences (Preferences->Editor Extensions) to
         // indent (format) a read only code AND! if it is not a MySQL code because current
         // TOra code parser/indenter does not work correctly with MySQL code (routines)
-        if (toConfigurationSingle::Instance().autoIndentRo() && !toIsMySQL(connection()))
+        if (toConfigurationSingle::Instance().autoIndentRo() && !toIsMySQL(connection()) && !toIsTeradata(connection()))
             setText(toSQLParse::indent(text() + Unapplied));
         else
             append(Unapplied);

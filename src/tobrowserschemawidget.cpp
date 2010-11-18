@@ -86,6 +86,7 @@ QString toBrowserSchemaCodeBrowser::objectName()
 
     if (item->type() == "PACKAGE"
         || item->type() == "FUNCTION"
+        || item->type() == "MACRO"
         || item->type() == "PROCEDURE"
         || item->type() == "TYPE")
     {
