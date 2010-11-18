@@ -453,20 +453,20 @@ public:
             qDebug() << "disconnect";
 
             try {
-                // tdRequest request;
-                // request.message = "DISCONNECT";
+                tdRequest request;
+                request.message = "DISCONNECT";
 
-                // request.dbcp->extension_pointer = 0;
-                // request.dbcp->change_opts = 'Y';
-                // request.dbcp->i_req_id = 0;
-                // request.dbcp->o_req_id = 0;
+                request.dbcp->extension_pointer = 0;
+                request.dbcp->change_opts = 'Y';
+                request.dbcp->i_req_id = 0;
+                request.dbcp->o_req_id = 0;
 
-                // request.columns.clear();
-                // request.data.clear();
+                request.columns.clear();
+                request.data.clear();
 
-                // initialize(&request);
+                initialize(&request);
 
-                // callServer(&request, DBFDSC);
+                callServer(&request, DBFDSC);
             }
             catch(...)
             {
