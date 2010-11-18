@@ -450,21 +450,23 @@ public:
 
         void close()
         {
+            qDebug() << "disconnect";
+
             try {
-                tdRequest request;
-                request.message = "DISCONNECT";
+                // tdRequest request;
+                // request.message = "DISCONNECT";
 
-                request.dbcp->extension_pointer = 0;
-                request.dbcp->change_opts = 'Y';
-                request.dbcp->i_req_id = 0;
-                request.dbcp->o_req_id = 0;
+                // request.dbcp->extension_pointer = 0;
+                // request.dbcp->change_opts = 'Y';
+                // request.dbcp->i_req_id = 0;
+                // request.dbcp->o_req_id = 0;
 
-                request.columns.clear();
-                request.data.clear();
+                // request.columns.clear();
+                // request.data.clear();
 
-                initialize(&request);
+                // initialize(&request);
 
-                callServer(&request, DBFDSC);
+                // callServer(&request, DBFDSC);
             }
             catch(...)
             {
@@ -1501,7 +1503,7 @@ public:
                 toQuery databases(connection(), SQLListDatabases);
                 while(!databases.eof())
                 {
-                    QString db = databases.readValueNull();
+                    QString db = databases.readValue();
                     qDebug() << "got db" << db;
 
                     toConnection::objectName cur;
@@ -1516,10 +1518,10 @@ public:
                         while(!tables.eof())
                         {
                             toConnection::objectName table;
-                            table.Name = tables.readValueNull();
+                            table.Name = tables.readValue();
                             table.Owner = db;
                             table.Type = "TABLE";
-                            table.Comment = tables.readValueNull();
+                            table.Comment = tables.readValue();
                             ret.insert(ret.end(), table);
                         }
                     }
@@ -1568,9 +1570,9 @@ public:
                 while(!desc.eof())
                 {
                     toQDescribe d;
-                    d.Name = desc.readValueNull();
-                    d.Datatype = desc.readValueNull();
-                    d.Comment = desc.readValueNull();
+                    d.Name = desc.readValue();
+                    d.Datatype = desc.readValue();
+                    d.Comment = desc.readValue();
 
                     ret.insert(ret.end(), d);
                 }
