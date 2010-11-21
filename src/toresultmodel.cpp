@@ -39,7 +39,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "config.h"
 #include "toresultmodel.h"
 #include "toconf.h"
 #include "utils.h"
@@ -62,7 +61,7 @@ toResultModel::toResultModel(toEventQuery *query,
 
     MaxRead = MaxNumber = toConfigurationSingle::Instance().maxNumber();
 
-    CurrentRow = 0;
+    CurrRowKey = 1;
 
     Query = query;
     Query->setParent(this);
@@ -153,15 +152,15 @@ void toResultModel::readData()
         // beginInsertRows(). but to do that, we have to know how many
         // records we're going to add.
         RowList tmp;
-        int     current = CurrentRow;
+        int     current = Rows.size();
 
         while(Query->hasMore() &&
               (MaxNumber < 0 || MaxNumber > current))
         {
             Row row;
 
-            // the number column. should never change
-            row.append(toQValue(current + 1));
+            // The number column (rowKey). should never change
+            row.append(toQValue(CurrRowKey++));
 
             for (int j = 1; (j < cols || j == 0) && Query->hasMore(); j++)
                 row.append(Query->readValue());
@@ -173,9 +172,8 @@ void toResultModel::readData()
         // if we read some data, then go ahead and insert them now.
         if (tmp.size() > 0)
         {
-            beginInsertRows(QModelIndex(), CurrentRow, current - 1);
+            beginInsertRows(QModelIndex(), Rows.size(), current - 1);
             Rows << tmp;
-            CurrentRow = current;
             endInsertRows();
         }
 
@@ -233,24 +231,30 @@ void toResultModel::readData()
     }
 }
 
-
-int toResultModel::addRow(QModelIndex ind)
+int toResultModel::addRow(QModelIndex ind, bool duplicate)
 {
     if (!Editable)
         return -1;
 
-    beginInsertRows(QModelIndex(), CurrentRow + 1, CurrentRow + 1);
-    int newRow = CurrentRow++;
+    int newRowPos;
+    if (ind.isValid())
+        newRowPos = ind.row() + 1; // new row is inserted right after the current one
+    else
+        newRowPos = Rows.size() + 1; // new row is appended at the end
+    beginInsertRows(QModelIndex(), newRowPos, newRowPos);
 
     Row row;
-    if (ind.isValid())
+    if (duplicate)
     {
+        // Create a duplicate of current row
         row = Rows[ind.row()];
-        row[0] = newRow;
+        // Reset a 0'th column
+        row[0] = CurrRowKey++;
     }
     else
     {
-        row.append(toQValue(newRow));
+        // Create a new empty row
+        row.append(toQValue(CurrRowKey++));
 
         // null out the rest of the row
         int cols = Headers.size();
@@ -258,11 +262,11 @@ int toResultModel::addRow(QModelIndex ind)
             row.append(toQValue());
     }
 
-    Rows.append(row);
+    Rows.insert(newRowPos, row);
     endInsertRows();
     emit rowAdded(row);
-    return newRow;
-}
+    return newRowPos;
+} // addRow
 
 
 void toResultModel::deleteRow(QModelIndex index)
@@ -473,7 +477,7 @@ int toResultModel::rowCount(const QModelIndex &parent) const
     if (parent.isValid())
         return 0;
 
-    return CurrentRow;
+    return Rows.size();
 }
 
 
@@ -712,7 +716,7 @@ void toResultModel::fetchMore()
         MaxNumber = -1;
         readData();
     }
-    else if(CurrentRow < MaxNumber) {
+    else if(Rows.size() < MaxNumber) {
         QModelIndex ind;
         fetchMore(ind);
     }
@@ -725,7 +729,7 @@ void toResultModel::fetchMore(const QModelIndex &parent)
 
     // sometimes the view calls this before the query has even
     // run. don't actually increase max until we've hit it.
-    if (MaxNumber < 0 || MaxNumber <= CurrentRow)
+    if (MaxNumber < 0 || MaxNumber <= Rows.size())
         MaxNumber += MaxRead;
 
     readData();

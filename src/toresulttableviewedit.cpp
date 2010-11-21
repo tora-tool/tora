@@ -39,7 +39,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "config.h"
 #include "toresulttableviewedit.h"
 #include "toresultmodel.h"
 #include "toconf.h"
@@ -186,12 +185,33 @@ void toResultTableViewEdit::recordAdd(const toResultModel::Row &row)
 
 void toResultTableViewEdit::recordDelete(const toResultModel::Row &row)
 {
-    struct ChangeSet change;
+    // Loop through all previously recorded changes. If there is an insert (add)
+    // statement for the row being deleted - remove it (as there is no point of
+    // trying to insert a possibly bad row and throw exceptions then that row
+    // must be deleted).
+    QMutableListIterator<struct ChangeSet> j(Changes);
+    struct ChangeSet cs;
+    bool insertFound = false;
+    while (j.hasNext() && !insertFound)
+    {
+        cs = j.next();
+        if ((cs.row[0] == row[0]) &&
+            (cs.kind == Add))
+        {
+                j.remove();
+                insertFound = true;
+        }
+    }
 
-    change.row      = row;
-    change.kind     = Delete;
+    if (!insertFound)
+    {
+        struct ChangeSet change;
 
-    Changes.append(change);
+        change.row      = row;
+        change.kind     = Delete;
+
+        Changes.append(change);
+    }
     emit changed(changed());
 }
 
@@ -580,13 +600,13 @@ void toResultTableViewEdit::handleNewRows(const QModelIndex &parent,
 
 void toResultTableViewEdit::addRecord(void)
 {
-    Model->addRow();
+    Model->addRow(selectionModel()->currentIndex(), false);
 }
 
 
 void toResultTableViewEdit::duplicateRecord(void)
 {
-    Model->addRow(selectionModel()->currentIndex());
+    Model->addRow(selectionModel()->currentIndex(), true);
 }
 
 

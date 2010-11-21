@@ -42,7 +42,6 @@
 #ifndef TORESULTMODEL_H
 #define TORESULTMODEL_H
 
-#include "config.h"
 #include "tosql.h"
 #include "toresult.h"
 #include "toconnection.h"
@@ -70,7 +69,7 @@ public:
         Qt::Alignment     align;       /* alignment */
     };
 
-    typedef QList<toQValue> Row;
+    typedef QList<toQValue> Row; // NOTE: first (0th) value in a row is a row number (see variable currRowKey)
     typedef QList<Row> RowList;
     typedef QList<HeaderDesc> HeaderList;
 
@@ -86,7 +85,10 @@ private:
     // how much to read at a time
     int MaxRead;
 
-    int CurrentRow;
+    // [0] column of each row contains a row number which is later used for insert/update/delete
+    // operations. This variable is used to generate non repeating row keys (something like
+    // oracle sequence).
+    int CurrRowKey;
 
     // If column names are to be made more readable.
     bool ReadableColumns;
@@ -117,7 +119,7 @@ private slots:
     void queryError(const toConnection::exception &);
 
 public:
-    toResultModel(toEventQuery *query,
+    explicit toResultModel(toEventQuery *query,
                   QObject *parent = 0,
                   bool edit = false,
                   bool read = false);
@@ -280,16 +282,17 @@ public:
      * needs a row number and index. This is provided to simply append
      * a new row.
      *
-     * @param ind if valid, the row to duplicate
+     * @param ind index of a selected cell when this action was called
+     * @param duplicate - should the value of current row be copied/duplicated
      * @return added row
      */
-    int addRow(QModelIndex ind = QModelIndex());
+    int addRow(QModelIndex ind = QModelIndex(), bool duplicate = false);
 
 
     /**
      * Delete a row interally. Emits rowDeleted on success.
      *
-     * This is not an overriden method.
+     * This is not an overridden method.
      */
     void deleteRow(QModelIndex);
 
