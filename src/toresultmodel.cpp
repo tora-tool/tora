@@ -2,39 +2,39 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2009 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries. 
- * 
+ *      these libraries.
+ *
  *      You may link this product with any GPL'd Qt library.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -51,7 +51,7 @@ toResultModel::toResultModel(toEventQuery *query,
                              QObject *parent,
                              bool edit,
                              bool read)
-        : QAbstractTableModel(parent)
+    : QAbstractTableModel(parent)
 {
     ReadableColumns = read;
     HeadersRead     = false;
@@ -113,8 +113,10 @@ void toResultModel::cleanup()
 }
 
 
-void toResultModel::queryError(const toConnection::exception &err) {
-    if(First) {
+void toResultModel::queryError(const toConnection::exception &err)
+{
+    if(First)
+    {
         emit firstResult(err, true);
         First = !First;
         toStatusMessage(err);
@@ -155,7 +157,7 @@ void toResultModel::readData()
         int     current = Rows.size();
 
         while(Query->hasMore() &&
-              (MaxNumber < 0 || MaxNumber > current))
+                (MaxNumber < 0 || MaxNumber > current))
         {
             Row row;
 
@@ -187,11 +189,12 @@ void toResultModel::readData()
 
                 // need to reset view(s) since we have to poll for data
                 reset();
-                if(Query && Query->rowsProcessed() > 0) {
+                if(Query && Query->rowsProcessed() > 0)
+                {
                     emit firstResult(QString::number(Query->rowsProcessed()) +
                                      (Query->rowsProcessed() == 1 ?
-                                          tr(" row processed") :
-                                          tr(" rows processed")),
+                                      tr(" row processed") :
+                                      tr(" rows processed")),
                                      false);
                 }
                 else
@@ -293,7 +296,8 @@ QStringList toResultModel::mimeTypes() const
 }
 
 
-QMimeData* toResultModel::mimeData(const QModelIndexList &indexes) const {
+QMimeData* toResultModel::mimeData(const QModelIndexList &indexes) const
+{
     QMimeData   *mimeData = new QMimeData();
     QByteArray   encodedData;
     QDataStream  stream(&encodedData, QIODevice::WriteOnly);
@@ -385,7 +389,8 @@ bool toResultModel::dropMimeData(const QMimeData *data,
         column = parent.column();
     }
 
-    if(row < 0) {
+    if(row < 0)
+    {
         row = addRow();
         if(row < 0)
             return false;
@@ -498,39 +503,39 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const
     switch(role)
     {
     case Qt::ToolTipRole:
-	    if (data.isNull())
-		    return data.toQVariant();
-	    if (data.isComplexType())
-	    {
-		    toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
-		    return QVariant(i->tooltipData());
-	    }
-	    return data.toQVariant();
+        if (data.isNull())
+            return data.toQVariant();
+        if (data.isComplexType())
+        {
+            toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
+            return QVariant(i->tooltipData());
+        }
+        return data.toQVariant();
     case Qt::EditRole:
-	    if (data.isComplexType())
-	    {
-		    toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
-		    return QVariant(i->editData());
-	    }
-	    return QVariant(data.editData());
+        if (data.isComplexType())
+        {
+            toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
+            return QVariant(i->editData());
+        }
+        return QVariant(data.editData());
     case Qt::DisplayRole:
-	    if (data.isComplexType())
-	    {
-		    toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
-		    return QVariant(i->displayData());
-	    }
-	    return QVariant(data.displayData());
+        if (data.isComplexType())
+        {
+            toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
+            return QVariant(i->displayData());
+        }
+        return QVariant(data.displayData());
     case Qt::BackgroundRole:
-           if (data.isNull() && toConfigurationSingle::Instance().indicateEmpty())
-                   return QVariant(QColor(toConfigurationSingle::Instance().indicateEmptyColor()));
-           return QVariant();
+        if (data.isNull() && toConfigurationSingle::Instance().indicateEmpty())
+            return QVariant(QColor(toConfigurationSingle::Instance().indicateEmptyColor()));
+        return QVariant();
     case Qt::TextAlignmentRole:
-           return (int) Headers.at(index.column()).align;
+        return (int) Headers.at(index.column()).align;
     case Qt::UserRole:
-           return data.toQVariant();
+        return data.toQVariant();
     default:
-           return QVariant();
-    }        
+        return QVariant();
+    }
     return QVariant();
 }
 
@@ -712,11 +717,13 @@ bool toResultModel::canFetchMore(const QModelIndex &parent) const
 
 void toResultModel::fetchMore()
 {
-    if(ReadAll) {
+    if(ReadAll)
+    {
         MaxNumber = -1;
         readData();
     }
-    else if(Rows.size() < MaxNumber) {
+    else if(Rows.size() < MaxNumber)
+    {
         QModelIndex ind;
         fetchMore(ind);
     }
@@ -755,7 +762,7 @@ Qt::ItemFlags toResultModel::flags(const QModelIndex &index) const
     toQValue const &data = Rows.at(index.row()).at(index.column());
     if (data.isComplexType())
     {
-       return ( defaultFlags | fl ) & ~Qt::ItemIsEditable;
+        return ( defaultFlags | fl ) & ~Qt::ItemIsEditable;
     }
 
     if (Editable)
@@ -782,8 +789,8 @@ void toResultModel::sort(int column, Qt::SortOrder order)
 
 
 toResultModel::RowList toResultModel::mergesort(RowList &rows,
-                                                int column,
-                                                Qt::SortOrder order)
+        int column,
+        Qt::SortOrder order)
 {
     if(rows.size() <= 1)
         return rows;
@@ -802,16 +809,16 @@ toResultModel::RowList toResultModel::mergesort(RowList &rows,
 
 
 toResultModel::RowList toResultModel::merge(RowList &left,
-                                            RowList &right,
-                                            int column,
-                                            Qt::SortOrder order)
+        RowList &right,
+        int column,
+        Qt::SortOrder order)
 {
     RowList result;
 
     while(left.size() > 0 && right.size() > 0)
     {
         if((order == Qt::AscendingOrder && left.at(0).at(column) <= right.at(0).at(column)) ||
-           (order == Qt::DescendingOrder && left.at(0).at(column) >= right.at(0).at(column)))
+                (order == Qt::DescendingOrder && left.at(0).at(column) >= right.at(0).at(column)))
             result.append(left.takeAt(0));
         else
             result.append(right.takeAt(0));

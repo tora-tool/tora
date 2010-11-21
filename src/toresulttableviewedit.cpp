@@ -62,7 +62,7 @@ toResultTableViewEdit::toResultTableViewEdit(bool readable,
         bool numberColumn,
         QWidget *parent,
         const char *name)
-        : toResultTableView(readable, numberColumn, parent, name, true)
+    : toResultTableView(readable, numberColumn, parent, name, true)
 {
 
     setSelectionBehavior(QAbstractItemView::SelectItems);
@@ -196,10 +196,10 @@ void toResultTableViewEdit::recordDelete(const toResultModel::Row &row)
     {
         cs = j.next();
         if ((cs.row[0] == row[0]) &&
-            (cs.kind == Add))
+                (cs.kind == Add))
         {
-                j.remove();
-                insertFound = true;
+            j.remove();
+            insertFound = true;
         }
     }
 
@@ -226,15 +226,15 @@ unsigned toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &co
     int col = 1;
     bool where = false;
     for (toResultModel::Row::iterator j = change.row.begin() + 1;
-	 j != change.row.end();
-	 j++, col++)
+            j != change.row.end();
+            j++, col++)
     {
         if ((*j).isComplexType())
-	{
-		toStatusMessage(tr("This table contains complex/user defined columns "
-				   "and can not be edited"));
-		return 0;
-	}
+        {
+            toStatusMessage(tr("This table contains complex/user defined columns "
+                               "and can not be edited"));
+            return 0;
+        }
 
         if (!oracle || (!Headers[col].datatype.toUpper().startsWith(("LONG")) &&
                         !Headers[col].datatype.toUpper().contains(("LOB"))))
@@ -279,9 +279,9 @@ unsigned toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &co
     toQuery q(conn, sql, args);
 
     if (toConfigurationSingle::Instance().autoCommit())
-      conn.commit();
+        conn.commit();
     else
-      toMainWidget()->setNeedCommit(conn);
+        toMainWidget()->setNeedCommit(conn);
     return q.rowsProcessed();
 }
 
@@ -307,16 +307,16 @@ unsigned toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn)
     sql += ") VALUES (";
     int col = 1;
     for (toResultModel::Row::iterator j = change.row.begin() + 1;
-	 j != change.row.end();
-	 j++, col++)
+            j != change.row.end();
+            j++, col++)
     {
-	if ((*j).isComplexType())
-	{
-		toStatusMessage(tr("This table contains complex/user defined columns "
-				   "and can not be edited"));
-		return 0;
-	}
-	    
+        if ((*j).isComplexType())
+        {
+            toStatusMessage(tr("This table contains complex/user defined columns "
+                               "and can not be edited"));
+            return 0;
+        }
+
         if (col > 1)
             sql += (",");
         sql += (":f");
@@ -345,11 +345,11 @@ unsigned toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn)
         toPush(args, change.row[i]);
 
     toQuery q(conn, sql, args);
-	    
+
     if (toConfigurationSingle::Instance().autoCommit())
-      conn.commit();
+        conn.commit();
     else
-      toMainWidget()->setNeedCommit(conn);
+        toMainWidget()->setNeedCommit(conn);
     return q.rowsProcessed();
 }
 
@@ -398,12 +398,12 @@ unsigned toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &co
                                             Qt::Horizontal,
                                             Qt::DisplayRole).toString());
 
-	if ((*j).isComplexType())
-	{
-		toStatusMessage(tr("This table contains complex/user defined columns "
-				   "and can not be edited"));
-		return 0;
-	}
+        if ((*j).isComplexType())
+        {
+            toStatusMessage(tr("This table contains complex/user defined columns "
+                               "and can not be edited"));
+            return 0;
+        }
 
         if (!oracle || (!Headers[col].datatype.toUpper().startsWith(("LONG")) &&
                         !Headers[col].datatype.toUpper().contains(("LOB"))))
@@ -477,9 +477,9 @@ unsigned toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &co
 
     toQuery q(conn, sql, args);
     if (toConfigurationSingle::Instance().autoCommit())
-      conn.commit();
+        conn.commit();
     else
-      toMainWidget()->setNeedCommit(conn);
+        toMainWidget()->setNeedCommit(conn);
     return q.rowsProcessed();
 }
 
@@ -503,7 +503,7 @@ bool toResultTableViewEdit::commitChanges(bool status)
                              this);
 
     bool error = false;
-    unsigned updated=0, added=0, deleted=0;
+    unsigned updated = 0, added = 0, deleted = 0;
     for (int changeIndex = 0; changeIndex < Changes.size(); changeIndex++)
     {
         progress.setValue(changeIndex);
@@ -539,11 +539,11 @@ bool toResultTableViewEdit::commitChanges(bool status)
     }
 
     toStatusMessage(tr("Saved %1 changes(updated %2, added %3, deleted %4)")
-		    .arg(Changes.size(), 0, 10)
-		    .arg(updated, 0, 10)
-		    .arg(added, 0, 10)
-		    .arg(deleted, 0, 10)
-		    , false, false);
+                    .arg(Changes.size(), 0, 10)
+                    .arg(updated, 0, 10)
+                    .arg(added, 0, 10)
+                    .arg(deleted, 0, 10)
+                    , false, false);
     if (error)
         refresh();
     else
