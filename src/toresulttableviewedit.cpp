@@ -353,7 +353,6 @@ unsigned toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn)
     return q.rowsProcessed();
 }
 
-
 unsigned toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &conn)
 {
     const toResultModel::HeaderList Headers = Model->headers();
@@ -362,6 +361,7 @@ unsigned toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &co
     QString sql = QString("UPDATE %1.%2 SET ").arg(conn.quote(Owner)).arg(conn.quote(Table));
     sql += conn.quote(change.columnName);
 
+    // set new value in update statement
     if (change.newValue.isNull())
         sql += (" = NULL");
     else
@@ -384,6 +384,7 @@ unsigned toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &co
         }
     }
 
+    // set where clause for update statement
     sql += (" WHERE (");
     int col = 1;
     bool where = false;
@@ -419,7 +420,10 @@ unsigned toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &co
             {
                 sql += " IS NULL ";
 
-                if ((*j).isNumber())
+                // QVariant cannot identify the type when value is null therefore
+                // we use the actual database type for this check.
+                if (Headers[col].datatype.startsWith("NUMBER") ||
+                    Headers[col].datatype.startsWith("INT"))
                     sql += ")";
                 else
                 {
