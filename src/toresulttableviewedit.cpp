@@ -423,7 +423,8 @@ unsigned toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &co
                 // QVariant cannot identify the type when value is null therefore
                 // we use the actual database type for this check.
                 if (Headers[col].datatype.startsWith("NUMBER") ||
-                    Headers[col].datatype.startsWith("INT"))
+                    Headers[col].datatype.startsWith("INT") ||
+                    Headers[col].datatype.startsWith("DATE"))
                     sql += ")";
                 else
                 {
@@ -470,7 +471,9 @@ unsigned toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &co
         {
             if ((*j).isNull())
             {
-                if (!(*j).isNumber())
+                if (!Headers[col].datatype.startsWith("NUMBER") &&
+                    !Headers[col].datatype.startsWith("INT") &&
+                    !Headers[col].datatype.startsWith("DATE"))
                     toPush(args, toQValue(QString("")));
                 // else don't push null for numbers
             }
