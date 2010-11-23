@@ -133,15 +133,12 @@ static toSQL SQLListObjectsMySQL("toCodeModel:ListObjects",
 
 static toSQL SQLListObjectsTeradata(
     "toCodeModel:ListObjects",
-    "SELECT tvm.tvmname,\n"
-    "       CASE WHEN tvm.tablekind = 'P' THEN 'PROCEDURE' ELSE 'MACRO' END AS object_type,\n"
-    "       'VALID ' AS Status\n"
-    "  FROM DBC.DBase d,\n"
-    "       dbc.tvm\n"
-    " WHERE databasenamei = trim ( :f1<char[101]> )\n"
-    "   AND d.databaseid = tvm.databaseid\n"
-    "   AND tvm.tablekind IN ( 'P',\n"
-    "                          'M' )\n"
+    "SELECT TABLENAME,\n"
+    "       CASE WHEN TABLEKIND = 'P' THEN 'PROCEDURE' ELSE 'MACRO' END AS object_type,\n"
+    "       'VALID' AS Status\n"
+    "  FROM dbc.TABLES\n"
+    " WHERE databasename = trim ( :f1<char[101]> )\n"
+    "   AND tablekind IN ( 'P', 'M' )\n"
     " ORDER BY 1",
     "",
     "",
