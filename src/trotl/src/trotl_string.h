@@ -85,28 +85,11 @@ struct TROTL_EXPORT BindParVarchar: public SqlStatement::BindPar
 	~BindParVarchar()
 	{}
 
-//	template<class return_type>
-//	return_type get_number(unsigned int row) const
-//	{
-//		throw_ocipl_exception(
-//				OciException(
-//						__TROTL_HERE__,
-//						"Invalid datatype in conversion(BindParVarchar to %d%s)\n"
-//				).arg(sizeof(return_type)).arg(typeid(return_type).name())
-//		);
-//	}
-
 	virtual tstring get_string(unsigned int row) const
 	{	  
 	  return is_null(row) ? "NULL" : tstring(((char*)valuep)+(row * value_sz));
 	}
 
-//	virtual int get_int(unsigned int row) const { return get_number<int>(row); };
-//	virtual unsigned int get_uint(unsigned int row) const { return get_number<unsigned int>(row); };
-//	virtual long get_long(unsigned int row) const { return get_number<long>(row); };
-//	virtual unsigned long get_ulong(unsigned int row) const { return get_number<unsigned long>(row); };
-//	virtual float get_float(unsigned int row) const { return get_number<float>(row); };
-//	virtual double get_double(unsigned int row) const { return get_number<double>(row); };
 protected:
 	BindParVarchar(const BindParVarchar &other);
 };
@@ -130,7 +113,7 @@ struct TROTL_EXPORT BindParChar: public SqlStatement::BindPar
 		valuep = (void**) calloc(decl.bracket[1], decl.bracket[0]);
 		alenp = (ub2*) calloc(_cnt, sizeof(ub2));
 		
-		dty = SQLT_CHR;
+		dty = SQLT_STR;	/* use STR_CHR even if placeholder defined as "char" */
 		value_sz = decl.bracket[0];
 		type_name = typeid(tstring).name();
 	}
@@ -140,10 +123,8 @@ struct TROTL_EXPORT BindParChar: public SqlStatement::BindPar
 
 	virtual tstring get_string(unsigned int row) const
 	{
-//		std::cout << " S:" << value_sz << ":" << dty << " ";
-
 		if(!indp[row])
-			return tstring(((char*)valuep)+(row * value_sz), value_sz);
+			return tstring(((char*)valuep)+(row * value_sz), (_bind_type != DEFINE_SELECT ? alenp[row] : value_sz) );		
 		return "";
 	}
 

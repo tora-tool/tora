@@ -401,7 +401,7 @@ public:	//todo delete me - these fields should not be public
 	int _state;
 	STMT_TYPE _stmt_type;
 	mutable ub4 _param_count, _column_count, _in_cnt, _out_cnt;
-	ub4	_last_row, _last_fetched_row, _in_pos, _out_pos;
+	ub4 _last_row, _last_fetched_row, _in_pos, _out_pos, _iters;
 
 	ub4 _last_buff_row, _buff_size; // used in select statements
 	mutable ub4 _fetched_row;

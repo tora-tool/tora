@@ -63,7 +63,7 @@ _parsed_stmt(""),
 _state(UNINITIALIZED),
 _stmt_type(STMT_NONE),
 _param_count(0), _column_count(0),
-_in_cnt(0), _out_cnt(0),
+_in_cnt(0), _out_cnt(0), _iters(0),
 _last_row(-1),
 _last_fetched_row(-1),
 _in_pos(0), _out_pos(0),
@@ -353,41 +353,40 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		}
 	}
 
-	ub4 iters = 0;
 	switch(STMT_TYPE t = get_stmt_type())
 	{
 	case STMT_OTHER:
-		iters = 1;
+		_iters = 1;
 		_state |= EOF_DATA;
 		break;
 	case STMT_SELECT:
-		iters = rows;
+		_iters = rows;
 		break;
 	case STMT_UPDATE:
-		iters = 1;
+		_iters = 1;
 		break;
 	case STMT_DELETE:
-		iters = 1;
+		_iters = 1;
 		break;
 	case STMT_INSERT:
-		iters = 1;
+		_iters = 1;
 		if( _in_cnt == 0 )
 			break;
-		iters  = _all_binds[_in_binds[1]]->_cnt;
+		_iters  = _all_binds[_in_binds[1]]->_cnt;
 		// Loop over input bind vars - insert can have out binds too(i.e. returning clause)
 		for(unsigned i=1; i<=_in_cnt; ++i)
-			if(_all_binds[_in_binds[i]]->_cnt != iters)
+			if(_all_binds[_in_binds[i]]->_cnt != _iters)
 				throw OciException(__TROTL_HERE__, "Wrong count of bindvars: (%d vs. %d)\n")
-					.arg(iters).arg(_all_binds[_in_binds[i]]->_cnt);
+					.arg(_iters).arg(_all_binds[_in_binds[i]]->_cnt);
 		break;
 	case STMT_BEGIN:
 	case STMT_DECLARE:
-		iters = 1;
+		_iters = 1;
 		break;
 	case STMT_CREATE:
 	case STMT_DROP:
 	case STMT_ALTER:
-		iters = 1;
+		_iters = 1;
 		_last_buff_row = 0;
 		_state |= EOF_DATA;
 		break;
@@ -411,12 +410,12 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 			_conn._svc_ctx,
 			_handle, // *stmtp
 			_errh, // *errhp
-			iters, //_stmt_type == STMT_SELECT ? rows : 1, // iters
+			_iters, //_stmt_type == STMT_SELECT ? rows : 1, // _iters
 			0, // rowoff
 			(CONST OCISnapshot*)0, (OCISnapshot*)0, mode));
 	
 	//std::cout << std::endl
-	//	<< "iters:" << iters << std::endl;
+	//	<< "_iters:" << _iters << std::endl;
 
 	_state |= EXECUTED;
 	_last_row = _last_buff_row = 0;
@@ -961,6 +960,8 @@ SqlStatement& SqlStatement::operator<< (const char *val)
 		//CHAR
 		memset(BP.valuep, ' ', BP.value_sz);
 		memcpy(BP.valuep, val, l);
+		//strcpy((char*)BP.valuep, val);
+		BP.value_sz = l;
 	}
 	BP.alenp[0] = (ub2)l;
 	BP._cnt = 1;
@@ -1206,7 +1207,9 @@ SqlStatement& SqlStatement::operator>> (SqlValue &val)
 template<>
 SqlStatement& SqlStatement::operator>> <int>(std::vector<int> &val)
 {
-	if( get_stmt_type() != STMT_DECLARE && get_stmt_type() != STMT_BEGIN)
+	if( get_stmt_type() != STMT_DECLARE &&
+	    get_stmt_type() != STMT_BEGIN &&
+	    get_stmt_type() != STMT_INSERT )
 		throw OciException(__TROTL_HERE__, "Reading vectors from SQL statements is not implemented yet");
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
@@ -1215,12 +1218,12 @@ SqlStatement& SqlStatement::operator>> <int>(std::vector<int> &val)
 	if((_state & EXECUTED) == 0)
 		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
 
-	val.resize(BP._cnt);
-	//val = BP.get_int( _last_buff_row);
-	for(unsigned i=0; i < BP._cnt; ++i)
+	ub4 iters = get_stmt_type() == STMT_INSERT ? _iters : BP._cnt;
+	val.resize(iters);
+	
+	for(unsigned i=0; i < iters; ++i)
 	{
 		val.at(i) = BP2.get_number<int>(i);
-//		std::cout << "setting:" << BP2.get_number<int>(i) << std::endl;
 	}
 
 //	if(_out_pos == _column_count && BP._bind_type == BP.DEFINE_SELECT)
@@ -1238,7 +1241,9 @@ SqlStatement& SqlStatement::operator>> <int>(std::vector<int> &val)
 template<>
 SqlStatement& SqlStatement::operator>> <unsigned int>(std::vector<unsigned int> &val)
 {
-	if( get_stmt_type() != STMT_DECLARE && get_stmt_type() != STMT_BEGIN)
+	if( get_stmt_type() != STMT_DECLARE &&
+	    get_stmt_type() != STMT_BEGIN &&
+	    get_stmt_type() != STMT_INSERT )
 		throw OciException(__TROTL_HERE__, "Reading vectors from SQL statements is not implemented yet");
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
@@ -1247,9 +1252,10 @@ SqlStatement& SqlStatement::operator>> <unsigned int>(std::vector<unsigned int> 
 	if((_state & EXECUTED) == 0)
 		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
 
-	val.resize(BP._cnt);
+	ub4 iters = get_stmt_type() == STMT_INSERT ? _iters : BP._cnt;
+	val.resize(iters);
 
-	for(unsigned i=0; i < BP._cnt; ++i)
+	for(unsigned i=0; i < iters; ++i)
 		val.at(i) = BP2.get_number<unsigned int>(i);
 
 	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
@@ -1261,7 +1267,9 @@ SqlStatement& SqlStatement::operator>> <unsigned int>(std::vector<unsigned int> 
 template<>
 SqlStatement& SqlStatement::operator>> <long>(std::vector<long> &val)
 {
-	if( get_stmt_type() != STMT_DECLARE && get_stmt_type() != STMT_BEGIN)
+	if( get_stmt_type() != STMT_DECLARE &&
+	    get_stmt_type() != STMT_BEGIN &&
+	    get_stmt_type() != STMT_INSERT )
 		throw OciException(__TROTL_HERE__, "Reading vectors from SQL statements is not implemented yet");
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
@@ -1270,7 +1278,8 @@ SqlStatement& SqlStatement::operator>> <long>(std::vector<long> &val)
 	if((_state & EXECUTED) == 0)
 		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
 
-	val.resize(BP._cnt);
+	ub4 iters = get_stmt_type() == STMT_INSERT ? _iters : BP._cnt;
+	val.resize(iters);
 
 	for(unsigned i=0; i < BP._cnt; ++i)
 		val.at(i) = BP2.get_number<long>(i);
@@ -1284,7 +1293,9 @@ SqlStatement& SqlStatement::operator>> <long>(std::vector<long> &val)
 template<>
 SqlStatement& SqlStatement::operator>> <unsigned long>(std::vector<unsigned long> &val)
 {
-	if( get_stmt_type() != STMT_DECLARE && get_stmt_type() != STMT_BEGIN)
+	if( get_stmt_type() != STMT_DECLARE &&
+	    get_stmt_type() != STMT_BEGIN &&
+	    get_stmt_type() != STMT_INSERT )
 		throw OciException(__TROTL_HERE__, "Reading vectors from SQL statements is not implemented yet");
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
@@ -1292,10 +1303,11 @@ SqlStatement& SqlStatement::operator>> <unsigned long>(std::vector<unsigned long
 
 	if((_state & EXECUTED) == 0)
 		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
+	
+	ub4 iters = get_stmt_type() == STMT_INSERT ? _iters : BP._cnt;
+	val.resize(iters);
 
-	val.resize(BP._cnt);
-
-	for(unsigned i=0; i < BP._cnt; ++i)
+	for(unsigned i=0; i < iters; ++i)
 		val.at(i) = BP2.get_number<unsigned long>(i);
 
 	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
@@ -1307,7 +1319,9 @@ SqlStatement& SqlStatement::operator>> <unsigned long>(std::vector<unsigned long
 template<>
 SqlStatement& SqlStatement::operator>> <float>(std::vector<float> &val)
 {
-	if( get_stmt_type() != STMT_DECLARE && get_stmt_type() != STMT_BEGIN)
+	if( get_stmt_type() != STMT_DECLARE &&
+	    get_stmt_type() != STMT_BEGIN &&
+	    get_stmt_type() != STMT_INSERT )
 		throw OciException(__TROTL_HERE__, "Reading vectors from SQL statements is not implemented yet");
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
@@ -1316,9 +1330,10 @@ SqlStatement& SqlStatement::operator>> <float>(std::vector<float> &val)
 	if((_state & EXECUTED) == 0)
 		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
 
-	val.resize(BP._cnt);
-
-	for(unsigned i=0; i < BP._cnt; ++i)
+	ub4 iters = get_stmt_type() == STMT_INSERT ? _iters : BP._cnt;
+	val.resize(iters);
+	
+	for(unsigned i=0; i < iters; ++i)
 		val.at(i) = BP2.get_number<float>(i);
 
 	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
@@ -1330,7 +1345,9 @@ SqlStatement& SqlStatement::operator>> <float>(std::vector<float> &val)
 template<>
 SqlStatement& SqlStatement::operator>> <double>(std::vector<double> &val)
 {
-	if( get_stmt_type() != STMT_DECLARE && get_stmt_type() != STMT_BEGIN)
+	if( get_stmt_type() != STMT_DECLARE &&
+	    get_stmt_type() != STMT_BEGIN &&
+	    get_stmt_type() != STMT_INSERT )
 		throw OciException(__TROTL_HERE__, "Reading vectors from SQL statements is not implemented yet");
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
@@ -1339,21 +1356,24 @@ SqlStatement& SqlStatement::operator>> <double>(std::vector<double> &val)
 	if((_state & EXECUTED) == 0)
 		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
 
-	val.resize(BP._cnt);
+	ub4 iters = get_stmt_type() == STMT_INSERT ? _iters : BP._cnt;
+	val.resize(iters);
 
-	for(unsigned i=0; i < BP._cnt; ++i)
+	for(unsigned i=0; i < _iters; ++i)
 		val.at(i) = BP2.get_number<double>(i);
 
 	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
 		_state |= EOF_DATA; 
-		
+	
 	return *this;
 }
 
 template<>
 SqlStatement& SqlStatement::operator>> <tstring>(std::vector<tstring> &val)
 {
-	if( get_stmt_type() != STMT_DECLARE && get_stmt_type() != STMT_BEGIN)
+	if( get_stmt_type() != STMT_DECLARE &&
+	    get_stmt_type() != STMT_BEGIN &&
+	    get_stmt_type() != STMT_INSERT )
 		throw OciException(__TROTL_HERE__, "Reading vectors from SQL statements is not implemented yet");
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
@@ -1361,9 +1381,10 @@ SqlStatement& SqlStatement::operator>> <tstring>(std::vector<tstring> &val)
 	if((_state & EXECUTED) == 0)
 		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
 
-	val.resize(BP._cnt);
+	ub4 iters = get_stmt_type() == STMT_INSERT ? _iters : BP._cnt;
+	val.resize(iters);
 
-	for(unsigned i=0; i < BP._cnt; ++i)
+	for(unsigned i=0; i < iters; ++i)
 		val.at(i) = BP.get_string(i);
 
 	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
