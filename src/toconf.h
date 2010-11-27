@@ -167,6 +167,8 @@
 #define DEFAULT_SMTP_PORT 25
 #define CONF_STYLE  "Style"
 #define DEFAULT_STYLE "" //"Cleanlooks"
+#define CONF_ENCODING "Encoding"
+#define DEFAULT_ENCODING "Default"
 // code editor
 #define CONF_STATIC_CHECKER "StaticChecker"
 // connection (general)

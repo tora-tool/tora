@@ -14,6 +14,7 @@ This section will help you familiarize yourself with the framework of the TOra a
 @c @item @uref{charts.html,Using charts}
 @c @item @uref{searchreplace.html,Search & replace}
 @c @item @uref{preferences.html,Options}
+@c @item @xpref{advancedpreferences,Advanced preferences}
 @c @item @uref{common.html,Other common elements}
 
 @c @end itemize
@@ -27,6 +28,7 @@ This section will help you familiarize yourself with the framework of the TOra a
 * Using charts:charts.
 * Search & Replace:searchreplace.
 * Options:preferences.
+* Advanced preferences:advancedpreferences.
 * Other common elements:common.
 @end menu
 

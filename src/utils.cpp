@@ -669,9 +669,20 @@ QByteArray toReadFileB(const QString &filename)
     return file.readAll();
 }
 
+/* Get encoding used to read/write files.
+ */
+QTextCodec * toGetCodec(void)
+{
+    QString codecConf = toConfigurationSingle::Instance().encoding();
+    if (codecConf == DEFAULT_ENCODING)
+        return QTextCodec::codecForLocale();
+    else
+        return QTextCodec::codecForName(codecConf.toAscii());
+} // toGetCodec
+
 QString toReadFile(const QString &filename)
 {
-    QTextCodec *codec = QTextCodec::codecForLocale();
+    QTextCodec *codec = toGetCodec();
     return codec->toUnicode(toReadFileB(filename));
 }
 
@@ -722,7 +733,8 @@ bool toWriteFile(const QString &filename, const QByteArray &data)
                 QString("Couldn't open %1 for writing").arg(filename).toAscii().constData()));
         return false;
     }
-    file.write(data);
+    QTextCodec *codec = toGetCodec();
+    file.write(codec->fromUnicode(data));
     if (file.error() != QFile::NoError)
     {
         TOMessageBox::warning(

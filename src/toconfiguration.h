@@ -504,6 +504,10 @@ public:
     // code editor
     QString staticChecker();
     void setStaticChecker(const QString & v);
+
+    // default encoding used when reading/writing files
+    QString encoding();
+    void setEncoding(const QString & v);
 };
 
 typedef Loki::SingletonHolder<toConfiguration> toConfigurationSingle;

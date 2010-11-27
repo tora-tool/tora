@@ -89,6 +89,7 @@
         <file>help/output.html</file>
         <file>help/plsqleditor.html</file>
         <file>help/preferences.html</file>
+        <file>help/advancedpreferences.html</file>
         <file>help/rollback.html</file>
         <file>help/script.html</file>
         <file>help/searchreplace.html</file>

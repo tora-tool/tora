@@ -25,6 +25,7 @@ tora_TEXINFO = \
 	newconnection.texi \
 	output.texi \
 	preferences.texi \
+	advancedpreferences.texi \
 	rollback.texi \
 	script.texi \
 	searchreplace.texi \

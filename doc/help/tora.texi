@@ -53,6 +53,7 @@ This manual is for TOra, version 2.1.4+.
 @include database.texi
 @include additionalhelp.texi
 @include toolsetting.texi
+@include advancedpreferences.texi
 @include common.texi
 @include sgastatement.texi
 @include explainplan.texi

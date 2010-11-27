@@ -139,6 +139,7 @@ public:
     QString m_style;
     QString m_staticChecker; // path+name to static check script (used in code editor)
     int     m_connectionTestTimeout; // after how many seconds connection should be tested
+    QString m_encoding;
 
     // tooracleconnection
     int m_openCursors;
@@ -502,6 +503,7 @@ public:
         m_useMaxTextWidthMark = s.value("useMaxTextWidthMark", false).toBool();
         m_maxTextWidthMark = s.value("maxTextWidthMark", 75).toInt();
         m_connectionTestTimeout = s.value(CONF_CONNECTION_TEST_TIMEOUT, DEFAULT_CONNECTION_TEST_TIMEOUT).toInt();
+        m_encoding = s.value(CONF_ENCODING, DEFAULT_ENCODING).toString();
         s.endGroup();
 
         // main window
@@ -742,6 +744,7 @@ public:
         s.setValue("useMaxTextWidthMark", m_useMaxTextWidthMark);
         s.setValue("maxTextWidthMark", m_maxTextWidthMark);
         s.setValue(CONF_CONNECTION_TEST_TIMEOUT, m_connectionTestTimeout);
+        s.setValue(CONF_ENCODING, m_encoding);
         s.endGroup();
 
         // main window
@@ -2258,3 +2261,13 @@ void toConfiguration::setStaticChecker(const QString & v)
 {
     p->m_staticChecker = v;
 } // setStaticChecker
+
+// Default encoding used when reading/writing files
+QString toConfiguration::encoding()
+{
+    return p->m_encoding;
+}
+void toConfiguration::setEncoding(const QString & v)
+{
+    p->m_encoding = v;
+}
