@@ -876,6 +876,15 @@ int main(int argc, char **argv)
     testClass.append(toSQLParse::statement::plsqlblock);
     testClass.append(toSQLParse::statement::plsqlblock);
 
+    //===================================================
+    // Test #31 Statement after an end with "/" and no ";"
+    testSet.append("create view a as select a from a\n"
+                   "/\n"
+                   "select sysdate from dual\n");
+    testCount.append(2);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::ddldml);
+
     QApplication test(argc, argv);
     toMarkedText text(NULL);
 

@@ -639,13 +639,15 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
             ret.subTokens().insert(ret.subTokens().end(), statement(statement::Token, token, tokens.line()));
             return ret;
         }
-        else if (upp == ("~~~"))
+        else if (upp == ("~~~")) // Note: "~~~" indicates a "/" on a new line - sqlplus "end of statement"
         {
             if  (first == ("~~~"))
             {
                 // empty statement (sql+ would repeat the last statement)
             }
-            else if (first == ("INSERT") || first == ("UPDATE") || first == ("DELETE") || first == ("MERGE"))
+            else if (first == ("INSERT") || first == ("UPDATE") || first == ("DELETE") || first == ("MERGE") ||
+                ((realfirst == "CREATE") && (ret.StatementClass == statement::ddldml)) // this one is for "create...view"
+            )
             {
                 // return without inserting token "/"
                 ret.subTokens().insert(ret.subTokens().end(), statement(statement::EndOfStatement, "/", tokens.line()));
