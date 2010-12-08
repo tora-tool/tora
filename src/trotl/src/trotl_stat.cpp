@@ -45,6 +45,7 @@
 
 #include "trotl_stat.h"
 #include "trotl_convertor.h"
+#include "trotl_cursor.h"
 
 namespace trotl {
 
@@ -92,53 +93,6 @@ _bound(false)
 	if(get_stmt_type() == STMT_SELECT)
 	{
 		execute_describe();
-		_columns.resize(get_column_count()+1);	// we do not use zero-th position
-
-		_all_defines= new std::auto_ptr<BindPar> [get_column_count()+1];
-
-		for(unsigned dpos = 1; dpos <= get_column_count(); ++dpos)
-		{
-			std::auto_ptr<BindPar> bp;
-			OCIParam* parmdp;
-			sword res = OCICALL(OCIParamGet(_handle, get_type_id(), _errh, (void**)&parmdp, dpos));
-			oci_check_error(__TROTL_HERE__, _errh, res);
-			
-			_columns[dpos].describe(*this, parmdp);
-			
-			res = OCICALL(OCIDescriptorFree(parmdp, OCI_DTYPE_PARAM));
-			oci_check_error(__TROTL_HERE__, _env, res);
-			
-			//get_log().ts( std::string(__HERE_SHORT__))
-			//std::cout 
-			//	<< "This: " << this << std::endl
-			//	<< "Columns:" << _columns[dpos].get_type_str(true) << std::endl;
-			
-			// Use column datatype for lookup in a hash table
-			// and call appropriate create function from the factory
-			if( _columns[dpos]._data_type != SQLT_NTY)
-				_all_defines[dpos] = DefineParFactTwoParmSing::Instance().create(
-					_columns[dpos]._data_type,
-					dpos,
-					*this,
-					_columns[dpos] );
-			else
-				_all_defines[dpos] = CustDefineParFactTwoParmSing::Instance().create(
-					_columns[dpos]._reg_name.c_str(),
-					dpos,
-					*this,
-					_columns[dpos] );
-			
-			if(_all_defines[dpos].get() == NULL)
-				throw OciException(__TROTL_HERE__, "DefinePar: Data type not registered: %s(%d:%d:%d:%s:%s)\n")
-					.arg(_columns[dpos]._data_type_name)
-					.arg(_columns[dpos]._data_type)
-					.arg(_columns[dpos]._typecode)
-					.arg(_columns[dpos]._collection_typecode)
-					.arg(_columns[dpos]._data_type_name)
-					.arg(_columns[dpos]._reg_name);
-			define(*_all_defines[dpos]);
-		}
-		_state |= DEFINED;
 	}
 
 	if(get_bindpar_count())
@@ -177,13 +131,29 @@ _bound(false)
 	if(_out_binds) _out_binds[0]=0;
 //	if(_binds_all) _binds_all[0]=0;
 
-//	get_log().ts( std::string(__HERE_SHORT__))
-// 	std::cout	  
-// 	  << "This: " << this << std::endl
-// 	  << "Stat: " << stmt << std::endl
-// 	  << "In Binds: " << _in_cnt << std::endl
-// 	  << "Out Binds: " << _out_cnt << std::endl
-// 	  << "All Binds: " << get_bindpar_count() << std::endl;
+};
+
+SqlStatement::SqlStatement(OciConnection& conn, OciHandle<OCIStmt>& handle, ub4 lang, int bulk_rows)
+: super(handle),
+_conn(conn),
+_lang(lang),
+_orig_stmt(""),
+_parsed_stmt(""),
+_state(UNINITIALIZED),
+_stmt_type(STMT_NONE),
+_param_count(0), _column_count(0),
+_in_cnt(0), _out_cnt(0), _iters(0),
+_last_row(-1),
+_last_fetched_row(-1),
+_in_pos(0), _out_pos(0),
+_last_buff_row(0), _buff_size(g_OCIPL_BULK_ROWS),
+_all_binds(NULL), _in_binds(NULL), _out_binds(NULL),
+_bound(false)
+//	_res(NULL),
+//	_bulk_rows(bulk_rows),
+//	_result_buffers(0),
+{
+	_errh.alloc(_env);
 };
 
 void SqlStatement::prepare(const tstring& sql, ub4 lang)
@@ -238,6 +208,52 @@ void SqlStatement::execute_describe()
 	_state |= DESCRIBED;
 }
 
+void SqlStatement::define_all()
+{
+	_columns.resize(get_column_count()+1);	// we do not use zero-th position	
+	_all_defines= new std::auto_ptr<BindPar> [get_column_count()+1];
+
+	for(unsigned dpos = 1; dpos <= get_column_count(); ++dpos)
+	{
+		std::auto_ptr<BindPar> bp;
+		OCIParam* parmdp;
+		sword res = OCICALL(OCIParamGet(_handle, get_type_id(), _errh, (void**)&parmdp, dpos));
+		oci_check_error(__TROTL_HERE__, _errh, res);
+			
+		_columns[dpos].describe(*this, parmdp);
+			
+		res = OCICALL(OCIDescriptorFree(parmdp, OCI_DTYPE_PARAM));
+		oci_check_error(__TROTL_HERE__, _env, res);
+			
+		// Use column datatype for lookup in a hash table
+		// and call appropriate create function from the factory
+		if( _columns[dpos]._data_type != SQLT_NTY)
+			_all_defines[dpos] = DefineParFactTwoParmSing::Instance().create(
+				_columns[dpos]._data_type,
+				dpos,
+				*this,
+				_columns[dpos] );
+		else
+			_all_defines[dpos] = CustDefineParFactTwoParmSing::Instance().create(
+				_columns[dpos]._reg_name.c_str(),
+				dpos,
+				*this,
+				_columns[dpos] );
+			
+		if(_all_defines[dpos].get() == NULL)
+			throw OciException(__TROTL_HERE__, "DefinePar: Data type not registered: %s(%d:%d:%d:%s:%s)\n")
+				.arg(_columns[dpos]._data_type_name)
+				.arg(_columns[dpos]._data_type)
+				.arg(_columns[dpos]._typecode)
+				.arg(_columns[dpos]._collection_typecode)
+				.arg(_columns[dpos]._data_type_name)
+				.arg(_columns[dpos]._reg_name);
+		define(*_all_defines[dpos]);
+	}
+	_state |= DEFINED;
+}
+
+	
 ub4 SqlStatement::get_column_count() const
 {
 	if(get_stmt_type() != STMT_SELECT)
@@ -251,11 +267,11 @@ ub4 SqlStatement::get_column_count() const
 
 	res = OCICALL(OCIAttrGet(_handle, get_type_id(), &_column_count, &size, OCI_ATTR_PARAM_COUNT, _errh));
 	oci_check_error(__TROTL_HERE__, _errh, res);
-
+	
 	//get_log().ts( std::string(__HERE_SHORT__))
-// 	std::cout
-// 	  << "This: " << this << std::endl
-// 	  << "Column count:" << _column_count << std::endl;
+ 	// std::cout
+ 	//   << "This: " << this << std::endl
+ 	//   << "Column count:" << _column_count << std::endl;
 	return _column_count;
 }
 
@@ -328,8 +344,8 @@ const SqlStatement::BindPar& SqlStatement::get_curr_column()
   
 bool SqlStatement::eof()
 {
-  	if((_state & EXECUTED) == 0)
-	  execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
+	if((_state & EXECUTED) == 0)
+		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
 
 	return _state >= EOF_DATA && _last_buff_row >= fetched_rows();
 }
@@ -360,7 +376,8 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		_state |= EOF_DATA;
 		break;
 	case STMT_SELECT:
-		_iters = rows;
+		//_iters = rows;
+		_iters = 0;
 		break;
 	case STMT_UPDATE:
 		_iters = 1;
@@ -404,14 +421,15 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 			if(!BP._bound) bind(BP);
 		}
 	}
-
-	// execute and fetch
+	_bound = true;
+	
+	// execute and do not fetch
 	sword res = OCICALL(OCIStmtExecute(
 			_conn._svc_ctx,
-			_handle, // *stmtp
-			_errh, // *errhp
-			_iters, //_stmt_type == STMT_SELECT ? rows : 1, // _iters
-			0, // rowoff
+			_handle,	// *stmtp
+			_errh,		// *errhp
+			_iters,
+			0,		// rowoff
 			(CONST OCISnapshot*)0, (OCISnapshot*)0, mode));
 	
 	//std::cout << std::endl
@@ -420,8 +438,14 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 	_state |= EXECUTED;
 	_last_row = _last_buff_row = 0;
 	if(get_stmt_type() == STMT_SELECT)
-	  _last_fetched_row = row_count();
-	_bound = true;
+	{
+		if((_state & DEFINED) == 0)
+		{
+			define_all();
+		}
+		fetch(_buff_size);		
+		_last_fetched_row = row_count();
+	}	
 
 	switch(res)
 	{
@@ -455,7 +479,7 @@ bool SqlStatement::fetch(ub4 rows/*=-1*/)
 		_state |= FETCHED;
 		return true;
 	case OCI_NO_DATA:
-		_state |= EOF_DATA;
+		_state |= FETCHED | EOF_DATA;
 		return false;
 	default:
 		oci_check_error(__TROTL_HERE__, _errh, res);
@@ -1392,5 +1416,27 @@ SqlStatement& SqlStatement::operator>> <tstring>(std::vector<tstring> &val)
 	
 	return *this;
 }
+
+SqlStatement& SqlStatement::operator>> (SqlCursor &val)
+{
+	BindPar &BP(get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar());
+	BindParCursor &BP2 = dynamic_cast<BindParCursor&>(BP);
+
+	val.c = BP2._cursors.at(_last_buff_row);
+	BP2.redefine(_last_buff_row);
+	
+	if(_out_pos == _column_count && BP._bind_type == BP.DEFINE_SELECT)
+		++_last_buff_row;		
+
+	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
+		_state |= EOF_DATA; 
+	
+	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
+	{
+		fetch(_buff_size);
+	}
+	
+	return *this;
+};
 
 };

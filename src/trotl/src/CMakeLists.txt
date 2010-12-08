@@ -18,6 +18,7 @@ SET(TROTL_SOURCES
   trotl_conn.cpp
   trotl_convertor.cpp
   trotl_collection.cpp
+  trotl_cursor.cpp
   trotl_date.cpp
   trotl_exc.cpp
   trotl_int.cpp

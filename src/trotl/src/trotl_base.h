@@ -174,7 +174,7 @@ namespace trotl {
       // allocate error handle
       _errh.alloc(_handle);
     }
-#ifdef WIN32 // is ithis really neccessary?
+#ifdef WIN32 // is this really neccessary?
     template struct TROTL_EXPORT OciSimpleHandle<OCIError>;
 #endif
     OciError _errh;
@@ -198,7 +198,7 @@ namespace trotl {
     OciHandle(const OciHandle& other)
     : _env(other._env), _handle(other._handle)
     {
-    	const_cast<HandleType*>(other._handle) = NULL;
+    	const_cast<OciHandle&>(other)._handle = NULL;
     }
 
     ~OciHandle()

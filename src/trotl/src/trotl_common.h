@@ -67,21 +67,6 @@ namespace trotl {
 //TODO
 //thread_safe_log get_log();
 
-//inline tstring str_backtrace()
-//{
-//	tostream ret;
-//#ifdef __GNUC__
-//	void *buffer[TROTL_BACKTRACE_DEPTH];
-//
-//	int bsize = ::backtrace(buffer, TROTL_BACKTRACE_DEPTH);
-//	char **names = backtrace_symbols (buffer, bsize);
-//	for(int i=0; i<bsize; i++)
-//		ret << names[i] << std::endl;
-//	free(names);
-//#endif
-//	return ret.str();
-//}
-
 //#define OCICALL(x)  x; do { std::cerr << __TROTL_HERE__ << #x << std::endl; } while(0)
 //#define OCICALL(x)  x; do { std::cerr << #x << std::endl; } while(0)	
 #define OCICALL(x)  x

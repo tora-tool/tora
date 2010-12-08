@@ -52,7 +52,9 @@
 
 namespace trotl {
 
-  
+class BindParCursor;
+class SqlCursor;
+
 inline void oci_check_error(tstring where, SqlStatement &stmt, sword res)
 {
 	if (res != OCI_SUCCESS)
@@ -63,7 +65,7 @@ inline void oci_check_error(tstring where, SqlStatement &stmt, sword res)
 class TROTL_EXPORT SqlStatement : public OciHandle<OCIStmt>
 {
 	typedef OciHandle<OCIStmt> super;
-
+	friend class BindParCursor;
 public:
 	enum STMT_TYPE {
 		STMT_OTHER = 0, // truncate table, ...
@@ -202,6 +204,7 @@ public:
 	}; // class BindPar
 	
 	SqlStatement(OciConnection& conn, const tstring& stmt, ub4 lang=OCI_NTV_SYNTAX, int bulk_rows=g_OCIPL_BULK_ROWS);
+	SqlStatement(OciConnection& conn, OciHandle<OCIStmt> &handle, ub4 lang=OCI_NTV_SYNTAX, int bulk_rows=g_OCIPL_BULK_ROWS);
 
 	bool execute_internal(ub4 rows, ub4 mode);
 	ub4 row_count() const;
@@ -307,6 +310,7 @@ public:
 	}
 	
 	SqlStatement& operator>> (SqlValue &val);
+	SqlStatement& operator>> (SqlCursor &val);
 
 	template<class wrapped_type>
 	SqlStatement& operator>>(wrapped_type &val)
@@ -391,6 +395,7 @@ protected:
 	void bind(BindPar &bp);
 	/* OCIDefineByPos - for SELECT statements */
 	void define(BindPar &dp);
+	void define_all();
 
 	//OCISvcCtx* _svchp;
 public:	//todo delete me - these fields should not be public
