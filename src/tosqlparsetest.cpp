@@ -885,6 +885,16 @@ int main(int argc, char **argv)
     testClass.append(toSQLParse::statement::ddldml);
     testClass.append(toSQLParse::statement::ddldml);
 
+    //===================================================
+    // Test #32 Statement after an end with "/" and no ";"
+    testSet.append("create table tfr_scenarios\n"
+                   " (a number)\n"
+                   "/\n"
+                   "alter table tfr_scenarios add scn_type date;\n");
+    testCount.append(2);
+    testClass.append(toSQLParse::statement::ddldml);
+    testClass.append(toSQLParse::statement::ddldml);
+
     QApplication test(argc, argv);
     toMarkedText text(NULL);
 

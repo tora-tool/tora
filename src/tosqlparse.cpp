@@ -506,6 +506,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
     QString realfirst;
     bool nokey = false;
     bool block = false;
+    bool createtable = false;
     for (QString token = tokens.getToken(true, true);
             !token.isNull();
             token = tokens.getToken(true, true))
@@ -516,8 +517,8 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
             realfirst = first = upp;
 
         if (upp == ("PROCEDURE") ||
-                upp == ("FUNCTION") ||
-                upp == ("PACKAGE"))
+            upp == ("FUNCTION") ||
+            upp == ("PACKAGE"))
         {
             block = true;
             ret.StatementClass = statement::plsqlblock;
@@ -526,6 +527,10 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
                  upp == "BEGIN")
         {
             ret.StatementClass = statement::plsqlblock;
+        }
+        else if (upp == "TABLE" && first == "CREATE")
+        {
+            createtable = true;
         }
 
         if (upp == ("SELF"))
@@ -615,7 +620,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
             if (lst.Type != statement::List)
                 toStatusMessage(qApp->translate("toSQLparse", "Unbalanced parenthesis (Too many '(')"));
             nokey = false;
-            if (first == ("CREATE") && !block)
+            if (first == ("CREATE") && !block && !createtable)
             {
                 // save statement as type "Block"
                 statement end = parseStatement(tokens, false, true);
@@ -641,6 +646,18 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
         }
         else if (upp == ("~~~")) // Note: "~~~" indicates a "/" on a new line - sqlplus "end of statement"
         {
+            // If "/" is found right after end of statement say:
+            // insert into ... ;
+            // /
+            // then this is an empty statement (sql+ would repeat the last statement)
+            // subTokens list is empty then.
+            if (ret.subTokens().size() > 0)
+            {
+                // return without inserting token "/"
+                ret.subTokens().insert(ret.subTokens().end(), statement(statement::EndOfStatement, "/", tokens.line()));
+                return ret;
+            }
+/* TS 2010-12-09 TS replaced this with a simplified code above. To be removed after some time (say after 2011-05-08)
             if  (first == ("~~~"))
             {
                 // empty statement (sql+ would repeat the last statement)
@@ -652,7 +669,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
                 // return without inserting token "/"
                 ret.subTokens().insert(ret.subTokens().end(), statement(statement::EndOfStatement, "/", tokens.line()));
                 return ret;
-            }
+            }*/
         }
         // End of statement
         // Note that goto placeholder is kind of a separate statement but without ending semicolon
