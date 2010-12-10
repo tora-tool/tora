@@ -44,6 +44,7 @@
 #include "toconnectionpool.h"
 #include "toconfiguration.h"
 #include "tosql.h"
+#include "toquery.h"
 
 #include <QTimer>
 #include <QDateTime>

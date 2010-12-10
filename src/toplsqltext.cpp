@@ -45,7 +45,7 @@
 #include <QDebug>
 
 #include "utils.h"
-#include "toconnection.h"
+#include "toquery.h"
 #include "totreewidget.h"
 #include "toplsqltext.h"
 #include "tomarkedtext.h"

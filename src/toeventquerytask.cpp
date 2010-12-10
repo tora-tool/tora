@@ -47,6 +47,7 @@
 #include "totool.h"
 #include "toresultstats.h"
 #include "toconfiguration.h"
+#include "toquery.h"
 
 #include <QApplication>
 #include <QMutexLocker>

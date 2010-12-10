@@ -73,7 +73,7 @@
 #endif
 #endif
 
-#if 1 /* OTL tracing */
+#if 0 /* OTL tracing */
 #define OTL_TRACE_LEVEL 0xff
 #define OTL_TRACE_STREAM cerr
 #include <iostream>
@@ -85,6 +85,8 @@ using namespace std;
 #include "toconf.h"
 #include "toconfiguration.h"
 #include "toconnection.h"
+#include "toquery.h"
+#include "toqueryimpl.h"
 #include "tomain.h"
 #include "tosql.h"
 #include "totool.h"
@@ -204,7 +206,7 @@ public:
         }
         virtual void throwExtendedException(toConnection &conn, const otl_exception &exc)
         {
-            if (conn.version() < "0800" && exc.code == 0)
+/*            if (conn.version() < "0800" && exc.code == 0)
             {
                 // Serious OCI voodoo to get the Parse error location on Oracle7 servers
 
@@ -229,12 +231,12 @@ public:
                                    Connection->connect_struct.errhp,
                                    &lda);
                 }
-            }
+            }*/
             ThrowException(exc);
         }
     };
 
-class oracleQuery : public toQuery::queryImpl
+class oracleQuery : public queryImpl
     {
         bool Cancel;
         bool Running;
@@ -242,7 +244,7 @@ class oracleQuery : public toQuery::queryImpl
         otl_stream *Query;
     public:
         oracleQuery(toQuery *query, oracleSub *)
-                : toQuery::queryImpl(query)
+                : queryImpl(query)
         {
             Running = Cancel = false;
             SaveInPool = false;
@@ -451,9 +453,9 @@ class oracleQuery : public toQuery::queryImpl
             Query->describe_select(descriptionLen);
             return descriptionLen;
         }
-        virtual std::list<toQuery::queryDescribe> describe(void)
+        virtual std::list<toQDescribe> describe(void)
         {
-            std::list<toQuery::queryDescribe> ret;
+            std::list<toQDescribe> ret;
             int descriptionLen;
             int datatypearg1 = 0;
             int datatypearg2 = 0;
@@ -461,7 +463,7 @@ class oracleQuery : public toQuery::queryImpl
 
             for (int i = 0;i < descriptionLen;i++)
             {
-                toQuery::queryDescribe desc;
+                toQDescribe desc;
                 desc.AlignRight = false;
                 desc.Name = QString::fromUtf8(description[i].name);
                 /*
@@ -737,7 +739,7 @@ class oracleConnection : public toConnection::connectionImpl
                 toQDescList ret;
                 try
                 {
-                    toQuery::queryDescribe desc;
+                    toQDescribe desc;
                     desc.Datatype = ("MEMBER");
                     desc.Null = false;
                     QString lastName;
@@ -902,7 +904,7 @@ class oracleConnection : public toConnection::connectionImpl
             return QString();
         }
 
-        virtual toQuery::queryImpl *createQuery(toQuery *query, toConnectionSub *sub)
+        virtual queryImpl *createQuery(toQuery *query, toConnectionSub *sub)
         {
             return new oracleQuery(query, oracleConv(sub));
         }

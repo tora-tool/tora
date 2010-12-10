@@ -44,6 +44,7 @@
 #include "utils.h"
 #include "toresultitem.h"
 #include "toresulttableview.h"
+#include "toquery.h"
 
 #include "tobrowserdblinkswidget.h"
 

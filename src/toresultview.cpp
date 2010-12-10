@@ -50,6 +50,7 @@
 #include "toparamget.h"
 #include "toresultview.h"
 #include "tosql.h"
+#include "toquery.h"
 #include "totool.h"
 #include "toresultlistformat.h"
 #include "tosearchreplace.h"

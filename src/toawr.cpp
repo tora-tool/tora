@@ -60,6 +60,7 @@
 #include "toresultview.h"
 #include "toparamget.h"
 #include "tochangeconnection.h"
+#include "toquery.h"
  
 //#include "tosimplequery.moc"
  

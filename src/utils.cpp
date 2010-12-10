@@ -43,7 +43,7 @@
 
 #include "tobackground.h"
 #include "toconf.h"
-#include "toconnection.h"
+#include "toquery.h"
 #include "tohighlightedtext.h"
 #include "tomain.h"
 #include "toresult.h"

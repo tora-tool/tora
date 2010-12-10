@@ -48,7 +48,7 @@
 #include "tobrowserindex.h"
 #include "tochangeconnection.h"
 #include "toconf.h"
-#include "toconnection.h"
+#include "toquery.h"
 #include "toextract.h"
 #include "tohelp.h"
 #include "tomain.h"

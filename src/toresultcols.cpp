@@ -41,7 +41,7 @@
 
 #include "utils.h"
 
-#include "toconnection.h"
+#include "toquery.h"
 #include "toresultcols.h"
 #include "toresultcolscomment.h"
 #include "toresulttableview.h"

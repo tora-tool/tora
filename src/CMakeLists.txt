@@ -115,6 +115,8 @@ SET(TORA_MOC_CLASSES
 #     toconf.h
 #     toconfiguration.h
     toconnection.h
+    toquery.h
+    #tocache.h
     toconnectionimport.h
     toconnectionmodel.h
     toconnectionpool.h
@@ -284,8 +286,10 @@ SET(TORA_SOURCES
     tobrowserdblinkswidget.cpp
     tobrowserdirectorieswidget.cpp
 #     tobrowserschemabasewidget.cpp
+    tocache.cpp
     toconfiguration.cpp
     toconnection.cpp
+    toquery.cpp
     toqvalue.cpp
     toconnectionimport.cpp
     toconnectionmodel.cpp

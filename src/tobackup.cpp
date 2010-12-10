@@ -48,6 +48,7 @@
 #include "toresulttableview.h"
 #include "tosql.h"
 #include "totool.h"
+#include "toquery.h"
 
 #include <qlabel.h>
 #include <qmenubar.h>

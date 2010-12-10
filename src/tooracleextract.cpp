@@ -43,7 +43,7 @@
 #include "utils.h"
 
 #include "toconf.h"
-#include "toconnection.h"
+#include "toquery.h"
 #include "toextract.h"
 #include "tosql.h"
 #include "totool.h"

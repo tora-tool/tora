@@ -42,7 +42,7 @@
 #include "utils.h"
 
 #include "toconf.h"
-#include "toconnection.h"
+#include "toquery.h"
 #include "toextract.h"
 #include "tohighlightedtext.h"
 #include "toresultextract.h"

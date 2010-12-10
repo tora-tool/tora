@@ -204,7 +204,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     /** disk caching options
      */
 
-    CacheDirectory->setText(toConnection::cacheDir());
+    CacheDirectory->setText(toCache::cacheDir());
     DiskCaching->setChecked(toConfigurationSingle::Instance().cacheDisk());
 
     CustomSQL->setText(toConfigurationSingle::Instance().sqlFile());

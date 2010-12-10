@@ -61,6 +61,7 @@
 #include "toconf.h"
 #include "toconfiguration.h"
 #include "toconnection.h"
+#include "toquery.h"
 #include "tomain.h"
 #include "tosql.h"
 #include "totool.h"
@@ -544,7 +545,7 @@ public:
 		}
 	};
 
-	class oracleQuery : public toQuery::queryImpl
+	class oracleQuery : public queryImpl
 	{
 		bool Cancel;
 		bool Running;
@@ -739,7 +740,7 @@ public:
 		trotlQuery * Query;
 		
 		oracleQuery(toQuery *query, oracleSub *)
-			: toQuery::queryImpl(query)
+			: queryImpl(query)
 		{
 			TLOG(0,toDecorator,__HERE__) << std::endl;
 			Running = Cancel = false;
@@ -821,10 +822,10 @@ public:
 			return Query->get_column_count();
 		}
 
-		virtual std::list<toQuery::queryDescribe> describe(void)
+		virtual std::list<toQDescribe> describe(void)
 		{
 			TLOG(0,toDecorator,__HERE__) << std::endl;
-			std::list<toQuery::queryDescribe> ret;
+			std::list<toQDescribe> ret;
 
 			int datatypearg1 = 0;
 			int datatypearg2 = 0;
@@ -839,7 +840,7 @@ public:
 			for(; it != col.end(); ++it)
 			{
 				TLOG(0,toDecorator,__HERE__) << "Var: " << (*it).get_type_str(true) << std::endl;
-				toQuery::queryDescribe desc;
+				toQDescribe desc;
  				desc.AlignRight = false;
  				desc.Name = QString::fromUtf8( (*it)._column_name.c_str() );
 				desc.Datatype = QString::fromLatin1( (*it).get_type_str(true).c_str() );
@@ -985,7 +986,7 @@ public:
 				toQDescList ret;
 				try
 				{
-					toQuery::queryDescribe desc;
+					toQDescribe desc;
 					desc.Datatype = ("MEMBER");
 					desc.Null = false;
 					QString lastName;
@@ -1147,10 +1148,11 @@ public:
 				TLOG(1,toDecorator,__HERE__) << "	Ignored exception." << std::endl;
 				// Ignore any errors here
 			}
-			return QString::QString();
+			//return QString::QString(); // TS 2010-12-05 couldn't compile with this...
+                        return QString::null;        // ... so changed to this.
 		}
 
-		virtual toQuery::queryImpl *createQuery(toQuery *query, toConnectionSub *sub)
+		virtual queryImpl *createQuery(toQuery *query, toConnectionSub *sub)
 		{
 			return new oracleQuery(query, oracleConv(sub));
 		}

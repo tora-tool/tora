@@ -41,7 +41,7 @@
 
 #include "utils.h"
 
-#include "toconnection.h"
+#include "toquery.h"
 #include "todebug.h"
 #include "todebugtext.h"
 #include "tosql.h"

@@ -41,7 +41,7 @@
 
 #include "tochangeconnection.h"
 #include "toconf.h"
-#include "toconnection.h"
+#include "toquery.h"
 #include "tofilesize.h"
 #include "tohelp.h"
 #include "tomain.h"

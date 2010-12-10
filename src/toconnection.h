@@ -45,12 +45,13 @@
 #include "config.h"
 #include "toqvalue.h"
 #include "tothread.h"
+#include "tocache.h"
+#include "toqueryimpl.h"
 
 #include <list>
 #include <map>
 #include <set>
 
-#include <QString>
 #include <QString>
 #include <QPointer>
 #include <QMetaType>
@@ -70,7 +71,6 @@ class toConnectionPool;
  * bother with this class if you aren't creating a new database provider
  * (@ref toConnectionProvider).
  */
-
 class toConnectionSub
 {
     toQuery *Query;
@@ -114,386 +114,7 @@ public:
     {
         LastUsed = QDateTime::currentDateTime();
     }
-}
-;
-
-/** This class is used to perform a query on a database connection.
- */
-
-class toQuery : public QObject
-{
-    Q_OBJECT;
-
-public:
-    /** Represent different modes to run a query in.
-     */
-    enum queryMode
-    {
-        /** Run the query normally on the main connection of the @ref toConnection object.
-         */
-        Normal,
-        /** Run the query normally on the main backgrround connection of the
-         * @ref toConnection object. This can be the same as the main connection depending
-         * on settings.
-         */
-        Background,
-        /** Run the query in a separate connection for long running queries.
-         */
-        Long,
-        /** Run the query on all non occupied connections of the @ref toConnection object.
-         */
-        All,
-        /** For internal use, doesn't close resources
-         */
-        Test
-    };
-
-    /** This structure is used to describe the resultset of a query.
-     */
-
-    struct queryDescribe
-    {
-        /** Column name
-         */
-        QString Name;
-        /** Datatype of string.
-         */
-        QString Datatype;
-        /** If column can contain null values.
-         */
-        bool Null;
-        /** Preferred alignment of this kind of value.
-         */
-        bool AlignRight;
-        /** Comment on column (Only filled out in column cache.
-         */
-        QString Comment;
-    };
-    /** Abstract parent of implementations of a query for a database provider
-     * (See @ref toConnection::connectionImpl and @ref toConnectionProvider)
-     */
-    class queryImpl
-    {
-        toQuery *Parent;
-    public:
-        /** Get the parent query object. All the parameters of the query must be read from here.
-         * nothing is passed to the functions.
-         */
-        toQuery *query()
-        {
-            return Parent;
-        }
-
-        /** Create a query implementation. The constructor must not perform any actions with the
-         * database that could block for a noticable time (Like execute or parse a query). The
-         * data for the query may not be available when this object created.
-         * @param query Parent query object.
-         */
-        queryImpl(toQuery *query)
-                : Parent(query)
-        { }
-        /** Destroy query implementation.
-         */
-        virtual ~queryImpl()
-        { }
-        /** Execute a query. Parameters can be gotten from the @ref toQuery object.
-         */
-        virtual void execute(void) = 0;
-        /** Read the next value from the stream.
-         * @return The value read from the query.
-         */
-        virtual toQValue readValue(void) = 0;
-        /** Check if the end of the query has been reached.
-         * @return True if all values have been read.
-         */
-        virtual bool eof(void) = 0;
-        /** Get the number of rows processed in the last executed query.
-         */
-        virtual int rowsProcessed(void) = 0;
-        /** Describe the currently running query.
-         * @return A list of column descriptions of the query.
-         */
-        virtual std::list<queryDescribe> describe(void) = 0;
-        /** Get number of columns in the resultset.
-         * @return Column number.
-         */
-        virtual int columns(void) = 0;
-        /** Cancel the current execution of a query. This will usually be called from another
-         * thread than is executing the query.
-         */
-        virtual void cancel(void) = 0;
-    };
-
-private:
-    QPointer<toConnection> Connection;
-    toConnectionSub *ConnectionSub;
-    std::list<toQValue> Params;
-    QString SQL;
-    queryMode Mode;
-    bool showBusy; // does a "busy" indicator has to be shown while query is running (default - true)
-
-    queryImpl *Query;
-    toQuery(const toQuery &);
-public:
-    /** Create a normal query.
-     * @param conn Connection to create query on.
-     * @param sql SQL to run.
-     * @param params Parameters to pass to query.
-     */
-    toQuery(toConnection &conn,
-            const toSQL &sql,
-            const std::list<toQValue> &params);
-
-    /** Create a normal query.
-     * @param conn Connection to create query on.
-     * @param sql SQL to run.
-     * @param params Parameters to pass to query.
-     */
-    toQuery(toConnection &conn,
-            const QString &sql,
-            const std::list<toQValue> &params);
-
-    /** Create a normal query.
-     * @param conn Connection to create query on.
-     * @param sql SQL to run.
-     * @param arg1 Arguments to pass to query.
-     */
-    toQuery(toConnection &conn,
-            const toSQL &sql,
-            const QString &arg1 = QString::null,
-            const QString &arg2 = QString::null,
-            const QString &arg3 = QString::null,
-            const QString &arg4 = QString::null,
-            const QString &arg5 = QString::null,
-            const QString &arg6 = QString::null,
-            const QString &arg7 = QString::null,
-            const QString &arg8 = QString::null,
-            const QString &arg9 = QString::null);
-    /** Create a normal query.
-     * @param conn Connection to create query on.
-     * @param sql SQL to run.
-     * @param arg1 Arguments to pass to query.
-     */
-    toQuery(toConnection &conn,
-            const QString &sql,
-            const QString &arg1 = QString::null,
-            const QString &arg2 = QString::null,
-            const QString &arg3 = QString::null,
-            const QString &arg4 = QString::null,
-            const QString &arg5 = QString::null,
-            const QString &arg6 = QString::null,
-            const QString &arg7 = QString::null,
-            const QString &arg8 = QString::null,
-            const QString &arg9 = QString::null);
-
-    /** Create a query.
-     * @param conn Connection to create query on.
-     * @param mode Mode to run query in.
-     * @param sql SQL to run.
-     * @param params Arguments to pass to query.
-     */
-    toQuery(toConnection &conn,
-            queryMode mode,
-            const toSQL &sql,
-            const std::list<toQValue> &params);
-
-    /** Internal use. Create a query object to test a
-     * toConnectionSub. Does not close sub.
-     *
-     * @param conn Connection to create query on.
-     * @param mode Mode to run query in.
-     * @param sql SQL to run.
-     * @param params Arguments to pass to query.
-     */
-    toQuery(toConnection &conn,
-            toConnectionSub *sub,
-            const QString &sql,
-            const std::list<toQValue> &params);
-
-    /** Create a query.
-     * @param conn Connection to create query on.
-     * @param mode Mode to run query in.
-     * @param sql SQL to run.
-     * @param params Arguments to pass to query.
-     */
-    toQuery(toConnection &conn,
-            queryMode mode,
-            const QString &sql,
-            const std::list<toQValue> &params);
-
-    /** Create a query. Don't runn any SQL using it yet. Observe though that the @ref
-     * toConnectionSub object is assigned here so you know that all queries run using this
-     * query object will run on the same actual connection to the database (Unless mode is All off
-     * course).
-     * @param conn Connection to create query for.
-     * @param mode Mode to execute queries in.
-     */
-    toQuery(toConnection &conn, queryMode mode = Normal);
-    /** Destroy query.
-     */
-    virtual ~toQuery();
-
-    /** Execute an SQL statement using this query.
-     * @param sql SQL to run.
-     * @param params Parameters to pass to query.
-     */
-    void execute(const toSQL &sql, const std::list<toQValue> &params);
-    /** Execute an SQL statement using this query.
-     * @param sql SQL to run.
-     * @param params Parameters to pass to query.
-     */
-    void execute(const QString &sql, const std::list<toQValue> &params);
-
-    /** Execute an SQL statement with no parameters using this query.
-     * @param sql SQL to run.
-     */
-    void execute(const toSQL &sql);
-
-    /** Execute an SQL statement using this query with String as parameter
-     * @param sql SQL to run.
-     * @param param Parameter to pass to query
-     */
-    void execute(const toSQL &sql, const QString &param);
-
-    /** Execute an SQL statement using this query with 3 Strings as parameters
-     * @param sql SQL to run.
-     * @param param1 1st parameter
-     * @param param2 2nd parameter
-     * @param param3 3rd parameter
-     */
-    void execute(const toSQL &sql, const QString &param1, const QString &param2, const QString &param3);
-
-    /** Connection object of this object.
-     */
-    toConnection &connection(void)
-    {
-        return *Connection;
-    }
-    /** Actual database connection that this query is currently using.
-     */
-    toConnectionSub *connectionSub(void)
-    {
-        return ConnectionSub;
-    }
-    /** Parameters of the current query.
-     */
-    std::list<toQValue> &params(void)
-    {
-        return Params;
-    }
-    /** SQL to run. Observe that this string is in UTF8 format.
-     */
-    QString sql(void)
-    {
-        return SQL;
-    }
-    /** Get the mode this query is executed in.
-     */
-    toQuery::queryMode mode(void) const
-    {
-        return Mode;
-    }
-
-    /** Read a value from the query.
-     * @return Value read.
-     */
-    toQValue readValue(void);
-    /** Check if end of query is reached.
-     * @return True if end of query is reached.
-     */
-    bool eof(void);
-
-    /** Get the number of rows processed by the query.
-     */
-    int rowsProcessed(void)
-    {
-        return Query->rowsProcessed();
-    }
-    /** Get a list of descriptions for the columns. This function is relatively slow.
-     */
-    std::list<queryDescribe> describe(void)
-    {
-        return Query->describe();
-    }
-    /** Get the number of columns in the resultset of the query.
-     */
-    int columns(void)
-    {
-        return Query->columns();
-    }
-
-    /** Execute a query and return all the values returned by it.
-     * @param conn Connection to run query on.
-     * @param sql SQL to run.
-     * @param params Parameters to pass to query.
-     * @return A list of @ref toQValues:s read from the query.
-     */
-    static std::list<toQValue> readQuery(toConnection &conn,
-                                         const toSQL &sql,
-                                         std::list<toQValue> &params);
-    /** Execute a query and return all the values returned by it.
-     * @param conn Connection to run query on.
-     * @param sql SQL to run.
-     * @param params Parameters to pass to query.
-     * @return A list of @ref toQValues:s read from the query.
-     */
-    static std::list<toQValue> readQuery(toConnection &conn,
-                                         const QString &sql,
-                                         std::list<toQValue> &params);
-
-    /** Execute a query using this oracle session and return all values.
-      * @param sql SQL to run.
-      * @param params Parameters to pass to query.
-      * @return A list of @ref toQValues:s read from query
-      */
-    std::list<toQValue> readQuery(const QString &sql,
-                                  std::list<toQValue> &params);
-
-    /** Execute a query and return all the values returned by it.
-     * @param conn Connection to run query on.
-     * @param sql SQL to run.
-     * @param arg1 Parameters to pass to query.
-     * @return A list of @ref toQValues:s read from the query.
-     */
-    static std::list<toQValue> readQuery(toConnection &conn, const toSQL &sql,
-                                         const QString &arg1 = QString::null, const QString &arg2 = QString::null,
-                                         const QString &arg3 = QString::null, const QString &arg4 = QString::null,
-                                         const QString &arg5 = QString::null, const QString &arg6 = QString::null,
-                                         const QString &arg7 = QString::null, const QString &arg8 = QString::null,
-                                         const QString &arg9 = QString::null);
-    /** Execute a query and return all the values returned by it.
-     * @param conn Connection to run query on.
-     * @param sql SQL to run.
-     * @param arg1 Parameters to pass to query.
-     * @return A list of @ref toQValues:s read from the query.
-     */
-    static std::list<toQValue> readQuery(toConnection &conn, const QString &sql,
-                                         const QString &arg1 = QString::null, const QString &arg2 = QString::null,
-                                         const QString &arg3 = QString::null, const QString &arg4 = QString::null,
-                                         const QString &arg5 = QString::null, const QString &arg6 = QString::null,
-                                         const QString &arg7 = QString::null, const QString &arg8 = QString::null,
-                                         const QString &arg9 = QString::null);
-    
-    /** Cancel the current execution of a query.
-     */
-    void cancel(void);
-
-    /** Specify if busy cursor must be displayed while a query is running
-     */
-    void setShowBusy(bool busy)
-    {
-        showBusy = busy;
-    }
 };
-
-/** A short representation of a @ref toQuery::queryDescribe
- */
-typedef toQuery::queryDescribe toQDescribe;
-/** A short representation of list<toQuery::queryDescribe>
- */
-typedef std::list<toQDescribe> toQDescList;
-Q_DECLARE_METATYPE(toQDescList);
-
 
 /** Represent a database connection in TOra. Observe that this can mean several actual
  * connections to the database as queries that are expected to run a long time are sometimes
@@ -517,12 +138,12 @@ class toConnection : public QObject
     bool NeedCommit;
 
     toLock Lock;
-    // held while cacheObjects is running
-    toLock CacheLock;
 
     toConnectionPool *ConnectionPool;
 
 public:
+
+    typedef toCache::objectName objectName;
 
     /** Class that could be used to throw exceptions in connection errors. Must use if you
      * want to indicate error offset.
@@ -541,7 +162,7 @@ public:
         /** Create an exception with a string description.
          */
         exception(const QString &str, int offset = -1)
-                : QString(str)
+            : QString(str)
         {
             Offset = offset;
         }
@@ -557,40 +178,6 @@ public:
         {
             Offset = offset;
         }
-    };
-
-    /** Contain information about a tablename.
-     */
-    struct objectName
-    {
-        /** The object name
-         */
-        QString Name;
-        /** The schema that owns it
-         */
-        QString Owner;
-        /** Object type
-         */
-        QString Type;
-        /** Comment about this object
-         */
-        QString Comment;
-        /** synonyms (used for faster disk caching...)
-         */
-        std::list <QString> Synonyms;
-
-        /** Create an object name with filled in values.
-         */
-        objectName(const QString &owner, const QString &name, const QString &type = QString("TABLE"), const QString &comment = QString::null)
-                : Name(name), Owner(owner), Type(type), Comment(comment)
-        { }
-
-        /** Create an empty object name.
-         */
-        objectName()
-        { }
-        bool operator < (const objectName &) const;
-        bool operator == (const objectName &) const;
     };
 
     /** This class is an abstract baseclass to actually implement the communication with the
@@ -674,7 +261,7 @@ public:
          * goes wrong should throw exception.
          * @return List of available objects.
          */
-        virtual std::list<objectName> objectNames(void);
+        virtual std::list<toConnection::objectName> objectNames(void);
         /** Get synonyms available for connection. Any access to the
          * database should always be run using a long running query. If something
          * goes wrong should throw exception.
@@ -683,17 +270,17 @@ public:
          *                this list.
          * @return Map of synonyms to objectnames.
          */
-        virtual std::map<QString, objectName> synonymMap(std::list<objectName> &objects);
-        /* Extract available columns to query for a table.
+        virtual std::map<QString, toConnection::objectName> synonymMap(std::list<toConnection::objectName> &objects);
+        /** Extract available columns to query for a table.
          * @param table Table to get column for.
          * @return List of columns for table or view.
          */
-        virtual toQDescList columnDesc(const objectName &table);
+        virtual toQDescList columnDesc(const toConnection::objectName &table);
 
         /** Create a new query implementation for this connection.
          * @return A query implementation, allocated with new.
          */
-        virtual toQuery::queryImpl *createQuery(toQuery *query, toConnectionSub *conn) = 0;
+        virtual queryImpl *createQuery(toQuery *query, toConnectionSub *conn) = 0;
         /** Execute a query on an actual connection without caring about the result.
          * @param conn Connection to execute on.
          * @param sql SQL to execute.
@@ -720,24 +307,22 @@ private:
         QPointer<toConnection> Connection;
     public:
         cacheObjects(toConnection *conn)
-                : Connection(conn)
+            : Connection(conn)
         { }
         virtual void run(void);
     };
     friend class cacheObjects;
 
-    bool ReadingCache;
-    toSemaphore ReadingValues;
     bool Abort;
-    std::map<objectName, toQDescList> ColumnCache;
-    std::list<objectName> ObjectNames;
-    std::map<QString, objectName> SynonymMap;
+
+    // held while cacheObjects is running
+    toLock CacheLock;
 
     toConnectionSub* pooledConnection(void);
-    void readObjects(void);
 
-    QString cacheFile();
 public:
+    toCache * Cache;
+
     /** Create a new connection.
      * @param provider Which database provider to use for this connection.
      * (See @ref to toDatabaseConnection)
@@ -1010,63 +595,19 @@ public:
     QString unQuote(const QString &name);
 
     /**
-     * Get the objects available for the current user. Do not modify the returned list.
-     * @param block Indicate wether or not to block until cached objects are available.
-     * @return A list of object available for the current user. The list is sorted in
-     *         owner and name order.
-     */
-    std::list<objectName> &objects(bool block);
-
-    /** Add a new object to the objectlist if it doesn't exist already.
-     * @param object The object to add
-     */
-    void addIfNotExists(objectName &object);
-
-    /**
      * Get syntax analyzer for connection
      * @return A reference to the syntax analyzer to use for the connection.
      */
     virtual toSyntaxAnalyzer &analyzer();
 
     /**
-     * Get the synonyms available for objects. Do not modify the returned list.
+     * Get the objects available for the current user. Do not modify the returned list.
      * @param block Indicate wether or not to block until cached objects are available.
-     * @return A list of synonyms to objects available for the current user.
+     * @return A list of object available for the current user. The list is sorted in
+     *         owner and name order.
      */
-    std::map<QString, objectName> &synonyms(bool block);
-    /**
-     * Get a list of the available columns for a table. This function caches the responses
-     * and should be fairly fast after the first call. Do not modify the returned list.
-     * @param table The table to describe.
-     * @param nocache Don't use cached values even if they are available.
-     * @return A list of the columns for a table.
-     */
-    toQDescList &columns(const objectName &table, bool nocache = false);
+    std::list<toConnection::objectName> &objects(bool block);
 
-    /**
-     * Get a list of object names for a owner, typically this is a
-     * list of tables for a database or schema.
-     *
-     */
-    std::list<objectName> tables(const objectName &object, bool nocache = false);
-
-    /**
-     * Reread the object and column cache.
-     */
-    void rereadCache(void);
-    /**
-     * Get the real object name of an object.
-     * @param object Object name
-     * @param block Block if not done caching object.
-     */
-    const objectName &realName(const QString &object, bool block);
-    /**
-     * Get the real object name of a synonym.
-     * @param object Object name
-     * @param synonym Filled with the synonym used to access the object returned or empty.
-     * @param block Block if not done caching object.
-     */
-    const objectName &realName(const QString &object, QString &synonym, bool block);
     /** Check if cache is available or not.
      * @param synonyms If synonyms are needed or not.
      * @param block Block until cache is done.
@@ -1075,25 +616,49 @@ public:
      */
     bool cacheAvailable(bool synonyms, bool block = false, bool need = true);
 
+    /**
+     * Get a list of the available columns for a table. This function caches the responses
+     * and should be fairly fast after the first call. Do not modify the returned list.
+     * @param table The table to describe.
+     * @param nocache Don't use cached values even if they are available.
+     * @return A list of the columns for a table.
+     */
+    toQDescList &columns(const toConnection::objectName &table, bool nocache = false);
+
+    /**
+     * Get the real object name of a synonym.
+     * @param object Object name
+     * @param synonym Filled with the synonym used to access the object returned or empty.
+     * @param block Block if not done caching object.
+     */
+    const toConnection::objectName &realName(const QString &object, QString &synonym, bool block);
+
+    /**
+     * Get the real object name of an object.
+     * @param object Object name
+     * @param block Block if not done caching object.
+     */
+    const toConnection::objectName &realName(const QString &object, bool block);
+
+    /**
+     * Get a list of object names for a owner, typically this is a
+     * list of tables for a database or schema.
+     *
+     */
+    std::list<toConnection::objectName> tables(const toConnection::objectName &object, bool nocache = false);
+
+    /**
+     * Reread the object and column cache.
+     */
+    void rereadCache(void);
+
     /** Try to stop all running queries.
      */
     void cancelAll(void);
 
-    /** load disk cache
-     */
-
-    bool loadDiskCache(void);
-
-    /** write disk cache
-     */
-
-    void writeDiskCache(void);
-
     /** Get a list of currently running SQL.
      */
     std::list<QString> running(void);
-
-    static QString cacheDir();
 
     friend class toQuery;
     friend class toConnectionPool;

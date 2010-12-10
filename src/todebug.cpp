@@ -54,6 +54,7 @@
 #include "toparamget.h"
 #include "toresultview.h"
 #include "tosql.h"
+#include "toquery.h"
 #include "tosqlparse.h"
 #include "totool.h"
 #include "tocodemodel.h"
@@ -782,6 +783,7 @@ void toDebug::targetTask::run(void)
         // TS 2010-07-10 Doesn't seem right to skipt this delete, but with it
         // debugger hangs on subsequent restart of debugger during
         // DBMS_DEBUG.INITIALIZE.
+	//targetSession->disconnect();
         //delete targetSession;
     }
     TOCATCH
@@ -2968,7 +2970,7 @@ bool toDebugText::compile(void)
             no.Name = Object;
             no.Owner = Schema;
             no.Type = type;
-            Debugger->connection().addIfNotExists(no);
+            Debugger->connection().Cache->addIfNotExists(no);
         }
         catch (const QString &exc)
         {

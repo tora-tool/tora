@@ -43,7 +43,7 @@
 
 #include "tochangeconnection.h"
 #include "toconf.h"
-#include "toconnection.h"
+#include "toquery.h"
 #include "tohelp.h"
 #include "tomain.h"
 #include "tomemoeditor.h"

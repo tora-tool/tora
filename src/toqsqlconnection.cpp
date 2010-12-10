@@ -41,7 +41,7 @@
 
 #include "utils.h"
 
-#include "toconnection.h"
+#include "toquery.h"
 #include "tohighlightedtext.h"
 #include "tomain.h"
 #include "tomysqlkeywords.h"
@@ -555,9 +555,9 @@ enum enum_field_types { FIELD_TYPE_DECIMAL, FIELD_TYPE_TINY,
 
 
 
-static std::list<toQuery::queryDescribe> Describe(const QString &type, QSqlRecord record, int *order, unsigned int orderSize)
+static std::list<toQDescribe> Describe(const QString &type, QSqlRecord record, int *order, unsigned int orderSize)
 {
-    std::list<toQuery::queryDescribe> ret;
+    std::list<toQDescribe> ret;
     unsigned int count = record.count();
     if (order)
     {
@@ -565,7 +565,7 @@ static std::list<toQuery::queryDescribe> Describe(const QString &type, QSqlRecor
     }
     for (unsigned int i = 0;i < count;i++)
     {
-        toQuery::queryDescribe desc;
+        toQDescribe desc;
         desc.AlignRight = false;
         int col = i;
         if (order)
@@ -1202,7 +1202,7 @@ public:
         }
     };
 
-    class qSqlQuery : public toQuery::queryImpl
+    class qSqlQuery : public queryImpl
     {
         QSqlQuery *Query;
         QSqlRecord Record;
@@ -1249,7 +1249,7 @@ public:
         }
     public:
         qSqlQuery(toQuery *query, qSqlSub *conn)
-                : toQuery::queryImpl(query), Connection(conn)
+                : queryImpl(query), Connection(conn)
         {
             Column = 0;
             ColumnOrder = NULL;
@@ -1445,10 +1445,10 @@ public:
 
             return ret;
         }
-        virtual std::list<toQuery::queryDescribe> describe(void)
+        virtual std::list<toQDescribe> describe(void)
         {
             LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
-            std::list<toQuery::queryDescribe> ret;
+            std::list<toQDescribe> ret;
             if (Query && Query->isSelect())
             {
                 QString provider = query()->connection().provider();
@@ -1725,7 +1725,7 @@ class qSqlConnection : public toConnection::connectionImpl
             return ret;
         }
 
-        virtual toQuery::queryImpl *createQuery(toQuery *query, toConnectionSub *sub)
+        virtual queryImpl *createQuery(toQuery *query, toConnectionSub *sub)
         {
             return new qSqlQuery(query, qSqlConv(sub));
         }

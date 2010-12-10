@@ -45,7 +45,7 @@
 #include "utils.h"
 #include "toqvalue.h"
 #include "toconfiguration.h"
-#include "toconnection.h"
+#include "toquery.h"
 #include "tomemoeditor.h"
 #include "tomain.h"
 #include "tologger.h"

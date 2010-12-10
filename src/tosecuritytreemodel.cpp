@@ -40,7 +40,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tosql.h"
-#include "toconnection.h"
+#include "toquery.h"
 #include "tomain.h"
 #include "toqvalue.h"
 #include "utils.h"

@@ -48,6 +48,7 @@
 #include "tosql.h"
 #include "totool.h"
 #include "toconnectionpool.h"
+#include "tocache.h"
 
 #include <string>
 #include <time.h>
@@ -202,470 +203,6 @@ QWidget *toConnectionProvider::providerConfigurationTab(const QString &, QWidget
     return NULL;
 }
 
-// toQuery implementation
-
-toQuery::toQuery(toConnection &conn,
-                 const toSQL &sql,
-                 const QString &arg1,
-                 const QString &arg2,
-                 const QString &arg3,
-                 const QString &arg4,
-                 const QString &arg5,
-                 const QString &arg6,
-                 const QString &arg7,
-                 const QString &arg8,
-                 const QString &arg9)
-        : Connection(QPointer<toConnection>(&conn)),
-        ConnectionSub(conn.pooledConnection()),
-        SQL(sql(*Connection).toAscii())
-{
-    Mode = Normal;
-    showBusy = true;
-    int numArgs;
-    if (!arg9.isNull())
-        numArgs = 9;
-    else if (!arg8.isNull())
-        numArgs = 8;
-    else if (!arg7.isNull())
-        numArgs = 7;
-    else if (!arg6.isNull())
-        numArgs = 6;
-    else if (!arg5.isNull())
-        numArgs = 5;
-    else if (!arg4.isNull())
-        numArgs = 4;
-    else if (!arg3.isNull())
-        numArgs = 3;
-    else if (!arg2.isNull())
-        numArgs = 2;
-    else if (!arg1.isNull())
-        numArgs = 1;
-    else
-        numArgs = 0;
-
-    if (numArgs > 0)
-        Params.insert(Params.end(), arg1);
-    if (numArgs > 1)
-        Params.insert(Params.end(), arg2);
-    if (numArgs > 2)
-        Params.insert(Params.end(), arg3);
-    if (numArgs > 3)
-        Params.insert(Params.end(), arg4);
-    if (numArgs > 4)
-        Params.insert(Params.end(), arg5);
-    if (numArgs > 5)
-        Params.insert(Params.end(), arg6);
-    if (numArgs > 6)
-        Params.insert(Params.end(), arg7);
-    if (numArgs > 7)
-        Params.insert(Params.end(), arg8);
-    if (numArgs > 8)
-        Params.insert(Params.end(), arg9);
-
-    toBusy busy;
-    try
-    {
-        Query = NULL;
-        Query = conn.Connection->createQuery(this, ConnectionSub);
-        Query->execute();
-    }
-    catch (...)
-    {
-        if (Query)
-            delete Query;
-        Query = NULL;
-        Connection->ConnectionPool->release(ConnectionSub);
-        throw;
-    }
-    ConnectionSub->setQuery(this);
-}
-
-toQuery::toQuery(toConnection &conn,
-                 const QString &sql,
-                 const QString &arg1,
-                 const QString &arg2,
-                 const QString &arg3,
-                 const QString &arg4,
-                 const QString &arg5,
-                 const QString &arg6,
-                 const QString &arg7,
-                 const QString &arg8,
-                 const QString &arg9)
-        : Connection(QPointer<toConnection>(&conn)),
-        ConnectionSub(conn.pooledConnection()),
-        SQL(sql)
-{
-    Mode = Normal;
-    showBusy = true;
-    int numArgs;
-    if (!arg9.isNull())
-        numArgs = 9;
-    else if (!arg8.isNull())
-        numArgs = 8;
-    else if (!arg7.isNull())
-        numArgs = 7;
-    else if (!arg6.isNull())
-        numArgs = 6;
-    else if (!arg5.isNull())
-        numArgs = 5;
-    else if (!arg4.isNull())
-        numArgs = 4;
-    else if (!arg3.isNull())
-        numArgs = 3;
-    else if (!arg2.isNull())
-        numArgs = 2;
-    else if (!arg1.isNull())
-        numArgs = 1;
-    else
-        numArgs = 0;
-
-    if (numArgs > 0)
-        Params.insert(Params.end(), arg1);
-    if (numArgs > 1)
-        Params.insert(Params.end(), arg2);
-    if (numArgs > 2)
-        Params.insert(Params.end(), arg3);
-    if (numArgs > 3)
-        Params.insert(Params.end(), arg4);
-    if (numArgs > 4)
-        Params.insert(Params.end(), arg5);
-    if (numArgs > 5)
-        Params.insert(Params.end(), arg6);
-    if (numArgs > 6)
-        Params.insert(Params.end(), arg7);
-    if (numArgs > 7)
-        Params.insert(Params.end(), arg8);
-    if (numArgs > 8)
-        Params.insert(Params.end(), arg9);
-
-    toBusy busy;
-    try
-    {
-        Query = NULL;
-        Query = conn.Connection->createQuery(this, ConnectionSub);
-        Query->execute();
-    }
-    catch (...)
-    {
-        if (Query)
-            delete Query;
-        Query = NULL;
-        Connection->ConnectionPool->release(ConnectionSub);
-        throw;
-    }
-    ConnectionSub->setQuery(this);
-}
-
-toQuery::toQuery(toConnection &conn, const toSQL &sql, const toQList &params)
-        : Connection(QPointer<toConnection>(&conn)),
-        ConnectionSub(conn.pooledConnection()),
-        Params(params),
-        SQL(sql(conn).toAscii())
-{
-    Mode = Normal;
-    showBusy = true;
-    toBusy busy;
-    try
-    {
-        Query = NULL;
-        Query = conn.Connection->createQuery(this, ConnectionSub);
-        Query->execute();
-    }
-    catch (...)
-    {
-        if (Query)
-            delete Query;
-        Query = NULL;
-        Connection->ConnectionPool->release(ConnectionSub);
-        throw;
-    }
-    ConnectionSub->setQuery(this);
-}
-
-// for testing sub
-toQuery::toQuery(toConnection &conn,
-                 toConnectionSub *sub,
-                 const QString &sql,
-                 const toQList &params)
-        : Connection(QPointer<toConnection>(&conn)),
-        ConnectionSub(sub),
-        Params(params),
-        SQL(sql)
-{
-    Mode = Test;
-    showBusy = true;
-    toBusy busy;
-    try
-    {
-        Query = NULL;
-        Query = conn.Connection->createQuery(this, ConnectionSub);
-        Query->execute();
-    }
-    catch (...)
-    {
-        if (Query)
-            delete Query;
-        Query = NULL;
-        throw;
-    }
-    ConnectionSub->setQuery(this);
-}
-
-toQuery::toQuery(toConnection &conn, const QString &sql, const toQList &params)
-        : Connection(QPointer<toConnection>(&conn)),
-        ConnectionSub(conn.pooledConnection()),
-        Params(params),
-        SQL(sql)
-{
-    Mode = Normal;
-    showBusy = true;
-    toBusy busy;
-    try
-    {
-        Query = NULL;
-        Query = conn.Connection->createQuery(this, ConnectionSub);
-        Query->execute();
-    }
-    catch (...)
-    {
-        if (Query)
-            delete Query;
-        Query = NULL;
-        Connection->ConnectionPool->release(ConnectionSub);
-        throw;
-    }
-    ConnectionSub->setQuery(this);
-}
-
-toQuery::toQuery(toConnection &conn,
-                 queryMode mode,
-                 const toSQL &sql,
-                 const toQList &params)
-        : Connection(QPointer<toConnection>(&conn)),
-        Params(params),
-        SQL(sql(conn).toAscii())
-{
-    Mode = mode;
-    showBusy = true;
-
-    ConnectionSub = conn.pooledConnection();
-
-    toBusy busy;
-    try
-    {
-        Query = NULL;
-        Query = conn.Connection->createQuery(this, ConnectionSub);
-        Query->execute();
-    }
-    catch (...)
-    {
-        if (Query)
-            delete Query;
-        Query = NULL;
-        Connection->ConnectionPool->release(ConnectionSub);
-        throw;
-    }
-    ConnectionSub->setQuery(this);
-}
-
-toQuery::toQuery(toConnection &conn,
-                 queryMode mode,
-                 const QString &sql,
-                 const toQList &params)
-        : Connection(QPointer<toConnection>(&conn)),
-        Params(params),
-        SQL(sql)
-{
-    Mode = mode;
-    showBusy = true;
-
-    ConnectionSub = conn.pooledConnection();
-
-    toBusy busy;
-    try
-    {
-        Query = NULL;
-        Query = conn.Connection->createQuery(this, ConnectionSub);
-        Query->execute();
-    }
-    catch (...)
-    {
-        if (Query)
-            delete Query;
-        Query = NULL;
-        Connection->ConnectionPool->release(ConnectionSub);
-        throw;
-    }
-    ConnectionSub->setQuery(this);
-}
-
-toQuery::toQuery(toConnection &conn, queryMode mode)
-        : Connection(QPointer<toConnection>(&conn))
-{
-    Mode = mode;
-    showBusy = true;
-
-    ConnectionSub = conn.pooledConnection();
-
-    toBusy busy;
-    try
-    {
-        Query = NULL;
-        Query = conn.Connection->createQuery(this, ConnectionSub);
-    }
-    catch (...)
-    {
-        if (Query)
-            delete Query;
-        Query = NULL;
-        throw;
-    }
-    ConnectionSub->setQuery(this);
-}
-
-void toQuery::execute(const toSQL &sql, const toQList &params)
-{
-    toBusy busy;
-    SQL = sql(*Connection);
-    Params = params;
-    Query->execute();
-    this->connectionSub()->setLastUsed();
-}
-
-void toQuery::execute(const QString &sql, const toQList &params)
-{
-    toBusy busy;
-    SQL = sql;
-    Params = params;
-    Query->execute();
-    this->connectionSub()->setLastUsed();
-}
-
-void toQuery::execute(const toSQL &sql)
-{
-    std::list<toQValue> params;
-    params.clear();
-    execute(sql, params);
-    this->connectionSub()->setLastUsed();
-}
-
-void toQuery::execute(const toSQL &sql, const QString &param)
-{
-    std::list<toQValue> params;
-    params.clear();
-    params.insert(params.end(), param);
-    execute(sql, params);
-    this->connectionSub()->setLastUsed();
-}
-
-void toQuery::execute(const toSQL &sql, const QString &param1, const QString &param2, const QString &param3)
-{
-    std::list<toQValue> params;
-    params.clear();
-    params.insert(params.end(), param1);
-    params.insert(params.end(), param2);
-    params.insert(params.end(), param3);
-    execute(sql, params);
-    this->connectionSub()->setLastUsed();
-}
-
-toQuery::~toQuery()
-{
-    toBusy busy;
-    if (Query)
-        delete Query;
-    try
-    {
-        if (ConnectionSub->query() == this)
-            ConnectionSub->setQuery(NULL);
-        if (Mode != Test && Connection && Connection->ConnectionPool)
-            Connection->ConnectionPool->release(ConnectionSub);
-    }
-    catch (...) {}
-}
-
-bool toQuery::eof(void)
-{
-    return Query->eof();
-}
-
-toQList toQuery::readQuery(toConnection &conn, const toSQL &sql, toQList &params)
-{
-    toBusy busy;
-    toQuery query(conn, sql, params);
-    toQList ret;
-    while (!query.eof())
-        ret.insert(ret.end(), query.readValue());
-    return ret;
-}
-
-toQList toQuery::readQuery(toConnection &conn, const QString &sql, toQList &params)
-{
-    toBusy busy;
-    toQuery query(conn, sql, params);
-    toQList ret;
-    while (!query.eof())
-        ret.insert(ret.end(), query.readValue());
-    return ret;
-}
-
-toQList toQuery::readQuery(const QString &sql, toQList &params)
-{
-    toBusy busy(showBusy);
-    SQL = sql;
-    Params = params;
-    Query->execute();
-    toQList ret;
-    while (!eof())
-        ret.insert(ret.end(), readValue());
-    return ret;
-}
-
-toQList toQuery::readQuery(toConnection &conn, const toSQL &sql,
-                           const QString &arg1, const QString &arg2,
-                           const QString &arg3, const QString &arg4,
-                           const QString &arg5, const QString &arg6,
-                           const QString &arg7, const QString &arg8,
-                           const QString &arg9)
-{
-    toBusy busy;
-    toQuery query(conn, sql, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
-    toQList ret;
-    while (!query.eof())
-        ret.insert(ret.end(), query.readValue());
-    return ret;
-}
-
-toQList toQuery::readQuery(toConnection &conn, const QString &sql,
-                           const QString &arg1, const QString &arg2,
-                           const QString &arg3, const QString &arg4,
-                           const QString &arg5, const QString &arg6,
-                           const QString &arg7, const QString &arg8,
-                           const QString &arg9)
-{
-    toBusy busy;
-    toQuery query(conn, sql, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
-    toQList ret;
-    while (!query.eof())
-        ret.insert(ret.end(), query.readValue());
-    return ret;
-}
-
-toQValue toQuery::readValue(void)
-{
-    if (!Connection)
-        return toQValue(0);
-
-    if (Connection->Abort)
-        throw qApp->translate("toQuery", "Query aborted");
-    return Query->readValue();
-}
-
-void toQuery::cancel(void)
-{
-    Query->cancel();
-}
-
 // toConnection implementation
 
 toConnectionSub* toConnection::addConnection()
@@ -701,20 +238,20 @@ toConnection::toConnection(const QString &provider,
                            const QString &schema,
                            const QString &color,
                            const std::set<QString> &options, bool cache)
-        : Provider(provider),
-        User(user),
-        Password(password),
-        Host(host),
-        Database(database),
-        Schema(schema),
-        Color(color),
-        Options(options),
-        Connection(0)
+    : Provider(provider),
+      User(user),
+      Password(password),
+      Host(host),
+      Database(database),
+      Schema(schema),
+      Color(color),
+      Options(options),
+      Connection(0)
 {
     Connection = toConnectionProvider::connection(Provider, this);
     NeedCommit = Abort = false;
-    ReadingCache = false;
     ConnectionPool = new toConnectionPool(this);
+    Cache = new toCache(description(false).trimmed());
 
     PoolPtr sub(ConnectionPool);
     Version = Connection->version(*sub);
@@ -722,30 +259,29 @@ toConnection::toConnection(const QString &provider,
     if (cache)
     {
         if (toConfigurationSingle::Instance().objectCache() == 1)
-            readObjects();
+            Cache->readObjects(new cacheObjects(this));
     }
     else
     {
-        ReadingValues.up();
-        ReadingValues.up();
+        Cache->ReadingValues.up();
+        Cache->ReadingValues.up();
     }
 }
 
 toConnection::toConnection(const toConnection &conn)
-        : Provider(conn.Provider),
-        User(conn.User),
-        Password(conn.Password),
-        Host(conn.Host),
-        Database(conn.Database),
-        Schema(conn.Schema),
-        Color(conn.Color),
-        Options(conn.Options),
-        Connection(0)
+    : Provider(conn.Provider),
+      User(conn.User),
+      Password(conn.Password),
+      Host(conn.Host),
+      Database(conn.Database),
+      Schema(conn.Schema),
+      Color(conn.Color),
+      Options(conn.Options),
+      Connection(0)
 {
     Connection = toConnectionProvider::connection(Provider, this);
-    ReadingValues.up();
-    ReadingValues.up();
-    ReadingCache = false;
+    Cache->ReadingValues.up();
+    Cache->ReadingValues.up();
     NeedCommit = Abort = false;
     ConnectionPool = new toConnectionPool(this);
 
@@ -786,11 +322,6 @@ toConnection::~toConnection()
         ConnectionPool = 0;
 
         toLocker lock(Lock);
-    }
-    if (ReadingCache)
-    {
-        ReadingValues.down();
-        ReadingValues.down();
     }
     delete Connection;
 }
@@ -1202,151 +733,6 @@ const QString &toConnection::provider(void) const
     return Provider;
 }
 
-QString toConnection::cacheDir()
-{
-    QString home(QDir::homePath());
-    QString dirname(toConfigurationSingle::Instance().cacheDir());
-
-    if (dirname.isEmpty())
-    {
-#ifdef Q_OS_WIN32
-        if (getenv("TEMP"))
-            dirname = QString(getenv("TEMP"));
-        else
-#endif
-            dirname = QString(home);
-        dirname += "/.tora_cache";
-    }
-    return dirname;
-}
-
-QString toConnection::cacheFile()
-{
-    QString dbname(description(false).trimmed());
-
-    return (cacheDir() + "/" + dbname).trimmed();
-}
-
-bool toConnection::loadDiskCache()
-{
-    if (!toConfigurationSingle::Instance().cacheDisk())
-        return false;
-
-    toConnection::objectName *cur = 0;
-    int objCounter = 0;
-    int synCounter = 0;
-
-    QString filename = cacheFile();
-
-    QFile file(filename);
-
-    if (!QFile::exists(filename))
-        return false;
-
-    QFileInfo fi(file);
-    QDateTime today;
-    if (fi.lastModified().addDays(toConfigurationSingle::Instance().cacheTimeout()) < today)
-        return false;
-
-    /** read in all data
-     */
-
-    if (!file.open(QIODevice::ReadOnly))
-        return false;
-
-    QString data = file.readAll();
-
-    /** build cache lists
-     */
-
-    if(!data.isEmpty())
-    {
-        QStringList records = data.split("\x1D", QString::KeepEmptyParts);
-        for (QStringList::Iterator i = records.begin(); i != records.end(); i++)
-        {
-            objCounter++;
-            QStringList record = (*i).split("\x1E", QString::KeepEmptyParts);
-            QStringList::Iterator rec = record.begin();
-            cur = new objectName;
-            (*cur).Owner = (*rec);
-            rec++;
-            (*cur).Name = (*rec);
-            rec++;
-            (*cur).Type = (*rec);
-            rec++;
-            (*cur).Comment = (*rec);
-            rec++;
-            QStringList slist = (*rec).split("\x1F", QString::SkipEmptyParts);
-            for (QStringList::Iterator s = slist.begin(); s != slist.end(); s++)
-            {
-                SynonymMap[(*s)] = (*cur);
-                (*cur).Synonyms.insert((*cur).Synonyms.end(), (*s));
-                synCounter++;
-            }
-            ObjectNames.insert(ObjectNames.end(), (*cur));
-            delete cur;
-            cur = 0;
-        }
-    }
-    return true;
-}
-
-void toConnection::writeDiskCache()
-{
-    QString text;
-    long objCounter = 0;
-    long synCounter = 0;
-
-    if (!toConfigurationSingle::Instance().cacheDisk())
-        return ;
-
-
-    QString filename(cacheFile());
-
-    /** check pathnames and create
-     */
-
-    QString dirname(cacheDir());
-    QDir dir;
-    dir.setPath(dirname);
-
-    if (!dir.exists(dirname))
-        dir.mkdir(dirname);
-
-
-    /** build record to write out
-     */
-
-    QStringList record;
-    QStringList records;
-    QStringList recordSynonym;
-    for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
-    {
-        record.clear();
-        record.append((*i).Owner);
-        record.append((*i).Name);
-        record.append((*i).Type);
-        record.append((*i).Comment);
-        for (std::list<QString>::iterator s = (*i).Synonyms.begin(); s != (*i).Synonyms.end(); s++)
-        {
-            recordSynonym.append((*s));
-            synCounter++;
-        }
-        record.append(recordSynonym.join("\x1F"));
-        recordSynonym.clear();
-        objCounter++;
-        records.append(record.join("\x1E"));
-    }
-    /** open file
-     */
-    QFile file(filename);
-    file.open(QIODevice::ReadWrite | QIODevice::Truncate);
-    QTextStream t(&file);
-    t << records.join("\x1D");
-    file.flush();
-    file.close();
-}
-
 void toConnection::cacheObjects::run()
 {
     bool diskloaded = false;
@@ -1356,95 +742,36 @@ void toConnection::cacheObjects::run()
 
     try
     {
-        diskloaded = Connection->loadDiskCache();
+        diskloaded = Connection->Cache->loadDiskCache();
         if (!diskloaded && !Connection->Abort)
         {
             std::list<objectName> n = Connection->Connection->objectNames();
             if (!Connection->Abort)
-                Connection->ObjectNames = n;
+                Connection->Cache->ObjectNames = n;
         }
 
-        Connection->ObjectNames.sort();
-        Connection->ReadingValues.up();
+        Connection->Cache->ObjectNames.sort();
+        Connection->Cache->ReadingValues.up();
 
         if (!diskloaded && !Connection->Abort)
         {
             std::map<QString, objectName> m =
-                Connection->Connection->synonymMap(Connection->ObjectNames);
+                Connection->Connection->synonymMap(Connection->Cache->ObjectNames);
             if (!Connection->Abort)
             {
-                Connection->SynonymMap = m;
-                Connection->writeDiskCache();
+                Connection->Cache->SynonymMap = m;
+                Connection->Cache->writeDiskCache();
             }
         }
     }
     catch (...)
     {
-        if (Connection->ReadingValues.getValue() == 0)
-            Connection->ReadingValues.up();
+        if (Connection->Cache->ReadingValues.getValue() == 0)
+            Connection->Cache->ReadingValues.up();
     }
 
     if (Connection)
-        Connection->ReadingValues.up();
-}
-
-
-void toConnection::readObjects(void)
-{
-    if (toConfigurationSingle::Instance().objectCache() == 3)
-    {
-        ReadingCache = false;
-        return ;
-    }
-
-    if (!ReadingCache)
-    {
-        ReadingCache = true;
-        try
-        {
-            (new toThread(new cacheObjects(this)))->start();
-        }
-        catch (...)
-        {
-            ReadingCache = false;
-        }
-    }
-}
-
-void toConnection::rereadCache(void)
-{
-
-    if (toConfigurationSingle::Instance().objectCache() == 3)
-    {
-        ColumnCache.clear();
-        return ;
-    }
-
-    if (ReadingValues.getValue() < 2 && ReadingCache)
-    {
-        toStatusMessage(qApp->translate("toConnection",
-                                        "Not done caching objects, can not clear unread cache"));
-        return ;
-    }
-
-
-    ReadingCache = false;
-    while (ReadingValues.getValue() > 0)
-        ReadingValues.down();
-
-    ObjectNames.clear();
-    ColumnCache.clear();
-    SynonymMap.clear();
-
-    /** delete cache file to force reload
-     */
-
-    QString filename(cacheFile());
-
-    if (QFile::exists(filename))
-        QFile::remove(filename);
-
-    readObjects();
+        Connection->Cache->ReadingValues.up();
 }
 
 QString toConnection::quote(const QString &name, const bool quoteLowercase)
@@ -1461,220 +788,6 @@ QString toConnection::unQuote(const QString &name)
     return QString::null;
 }
 
-bool toConnection::cacheAvailable(bool synonyms, bool block, bool need)
-{
-    if (toConfigurationSingle::Instance().objectCache() == 3)
-        return true;
-
-    if (!ReadingCache)
-    {
-        if (!need)
-            return true;
-        if (toConfigurationSingle::Instance().objectCache() == 2 && !block)
-            return true;
-        readObjects();
-        toMainWidget()->checkCaching();
-    }
-    if (ReadingValues.getValue() == 0 || (ReadingValues.getValue() == 1 && synonyms == true))
-    {
-        if (block)
-        {
-            toBusy busy;
-            if (toThread::mainThread())
-            {
-                QProgressDialog waiting(qApp->translate("toConnection",
-                                                        "Waiting for object caching to be completed.\n"
-                                                        "Canceling this dialog will probably leave some list of\n"
-                                                        "database objects empty."),
-                                        qApp->translate("toConnection", "Cancel"),
-                                        0,
-                                        10,
-                                        toMainWidget());
-                waiting.setWindowTitle(qApp->translate("toConnection", "Waiting for object cache"));
-                int num = 1;
-
-                int waitVal = (synonyms ? 2 : 1);
-                do
-                {
-                    qApp->processEvents();
-                    toThread::msleep(100);
-                    waiting.setValue((++num) % 10);
-                    if (waiting.wasCanceled())
-                        return false;
-                }
-                while (ReadingValues.getValue() < waitVal);
-            }
-
-            ReadingValues.down();
-            if (synonyms)
-            {
-                ReadingValues.down();
-                ReadingValues.up();
-            }
-            ReadingValues.up();
-        }
-        else
-            return false;
-    }
-    return true;
-}
-
-std::list<toConnection::objectName> &toConnection::objects(bool block)
-{
-    if (!cacheAvailable(false, block))
-    {
-        toStatusMessage(qApp->translate("toConnection", "Not done caching objects"), false, false);
-        static std::list<objectName> ret;
-        return ret;
-    }
-
-    return ObjectNames;
-}
-
-void toConnection::addIfNotExists(toConnection::objectName &obj)
-{
-    if (!cacheAvailable(true, false))
-    {
-        toStatusMessage(qApp->translate("toConnection", "Not done caching objects"), false, false);
-        return ;
-    }
-    std::list<toConnection::objectName>::iterator i = ObjectNames.begin();
-    while (i != ObjectNames.end() && (*i) < obj)
-        i++;
-    if (i != ObjectNames.end() && *i == obj) // Already exists, don't add
-        return ;
-    ObjectNames.insert(i, obj);
-}
-
-std::map<QString, toConnection::objectName> &toConnection::synonyms(bool block)
-{
-    if (!cacheAvailable(true, block))
-    {
-        toStatusMessage(qApp->translate("toConnection", "Not done caching objects"), false, false);
-        static std::map<QString, objectName> ret;
-        return ret;
-    }
-
-    return SynonymMap;
-}
-
-const toConnection::objectName &toConnection::realName(const QString &object,
-        QString &synonym,
-        bool block)
-{
-    if (!cacheAvailable(true, block))
-        throw qApp->translate("toConnection", "Not done caching objects");
-
-    QString name;
-    QString owner;
-
-    QChar q('"');
-    QChar c('.');
-
-    bool quote = false;
-    for (int pos = 0; pos < object.length(); pos++)
-    {
-        if (object.at(pos) == q)
-        {
-            quote = !quote;
-        }
-        else
-        {
-            if (!quote && object.at(pos) == c)
-            {
-                owner = name;
-                name = QString::null;
-            }
-            else
-                name += object.at(pos);
-        }
-    }
-
-    QString uo = owner.toUpper();
-    QString un = name.toUpper();
-
-    synonym = QString::null;
-    for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
-    {
-        if (owner.isEmpty())
-        {
-            if (((*i).Name == un || (*i).Name == name) &&
-                    ((*i).Owner == user().toUpper() || (*i).Owner == database()))
-                return *i;
-        }
-        else if (((*i).Name == un || (*i).Name == name) &&
-                 ((*i).Owner == uo || (*i).Owner == owner))
-            return *i;
-    }
-    if (owner.isEmpty())
-    {
-        std::map<QString, objectName>::iterator i = SynonymMap.find(name);
-        if (i == SynonymMap.end() && un != name)
-        {
-            i = SynonymMap.find(un);
-            synonym = un;
-        }
-        else
-            synonym = name;
-        if (i != SynonymMap.end())
-        {
-            return (*i).second;
-        }
-    }
-    throw qApp->translate(
-        "toConnection",
-        "Object %1 not available for %2").arg(object).arg(user());
-}
-
-const toConnection::objectName &toConnection::realName(const QString &object, bool block)
-{
-    QString dummy;
-    return realName(object, dummy, block);
-}
-
-toQDescList &toConnection::columns(const objectName &object, bool nocache)
-{
-    std::map<objectName, toQDescList>::iterator i = ColumnCache.find(object);
-    if (i == ColumnCache.end() || nocache)
-    {
-        ColumnCache[object] = Connection->columnDesc(object);
-    }
-
-    return ColumnCache[object];
-}
-std::list<toConnection::objectName> toConnection::tables(const objectName &object, bool nocache)
-{
-    std::list<objectName> ret;
-
-    Q_FOREACH(objectName obj, ObjectNames)
-    {
-        if(obj.Owner == object.Name)
-            ret.insert(ret.end(), obj);
-    }
-
-    return ret;
-}
-
-bool toConnection::objectName::operator < (const objectName &nam) const
-{
-    if (Owner < nam.Owner || (Owner.isNull() && !nam.Owner.isNull()))
-        return true;
-    if (Owner > nam.Owner || (!Owner.isNull() && nam.Owner.isNull()))
-        return false;
-    if (Name < nam.Name || (Name.isNull() && !nam.Name.isNull()))
-        return true;
-    if (Name > nam.Name || (!Name.isNull() && nam.Name.isNull()))
-        return false;
-    if (Type < nam.Type)
-        return true;
-    return false;
-}
-
-bool toConnection::objectName::operator == (const objectName &nam) const
-{
-    return Owner == nam.Owner && Name == nam.Name && Type == nam.Type;
-}
-
 toSyntaxAnalyzer &toConnection::connectionImpl::analyzer()
 {
     return toSyntaxAnalyzer::defaultAnalyzer();
@@ -1685,17 +798,15 @@ toSyntaxAnalyzer &toConnection::analyzer()
     return Connection->analyzer();
 }
 
-std::list<toConnection::objectName>
-toConnection::connectionImpl::objectNames(void)
+std::list<toConnection::objectName> toConnection::connectionImpl::objectNames(void)
 {
-    std::list<toConnection::objectName> ret;
+    std::list<objectName> ret;
     return ret;
 }
 
-std::map<QString, toConnection::objectName>
-toConnection::connectionImpl::synonymMap(std::list<toConnection::objectName> &)
+std::map<QString, toConnection::objectName> toConnection::connectionImpl::synonymMap(std::list<objectName> &)
 {
-    std::map<QString, toConnection::objectName> ret;
+    std::map<QString, objectName> ret;
     return ret;
 }
 
@@ -1703,6 +814,50 @@ toQDescList toConnection::connectionImpl::columnDesc(const objectName &)
 {
     toQDescList ret;
     return ret;
+}
+
+toQDescList &toConnection::columns(const objectName &object, bool nocache)
+{
+    toQDescList * cols;
+    cols = &(Cache->columns(object));
+    if (cols->size() == 0 || nocache)
+    {
+        Cache->addColumns(object, Connection->columnDesc(object));
+        cols = &(Cache->columns(object));
+    }
+
+    return *cols;
+}
+
+void toConnection::rereadCache(void)
+{
+    Cache->rereadCache(new cacheObjects(this));
+}
+
+std::list<toConnection::objectName> &toConnection::objects(bool block)
+{
+    return Cache->objects(block);
+}
+
+bool toConnection::cacheAvailable(bool synonyms, bool block, bool need)
+{
+    return Cache->cacheAvailable(synonyms, block, need, new cacheObjects(this));
+}
+
+const toConnection::objectName &toConnection::realName(const QString &object, QString &synonym, bool block)
+{
+    return Cache->realName(object, synonym, block, user(), database());
+}
+
+const toConnection::objectName &toConnection::realName(const QString &object, bool block)
+{
+    QString dummy;
+    return Cache->realName(object, dummy, block, user(), database());
+}
+
+std::list<toConnection::objectName> toConnection::tables(const objectName &object, bool nocache)
+{
+    return Cache->tables(object, nocache);
 }
 
 void toConnection::connectionImpl::parse(toConnectionSub *,

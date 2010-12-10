@@ -42,7 +42,7 @@
 #include "utils.h"
 
 #include "tobrowsertable.h"
-#include "toconnection.h"
+#include "toquery.h"
 #include "todatatype.h"
 #include "toextract.h"
 #include "tohighlightedtext.h"

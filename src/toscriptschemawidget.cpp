@@ -42,7 +42,7 @@
 #include "utils.h"
 #include "tosql.h"
 #include "tomain.h"
-#include "toconnection.h"
+#include "toquery.h"
 #include "toscripttreemodel.h"
 #include "toscripttreeitem.h"
 #include "toscriptschemawidget.h"

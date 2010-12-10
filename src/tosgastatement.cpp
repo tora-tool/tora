@@ -41,7 +41,7 @@
 
 #include "utils.h"
 
-#include "toconnection.h"
+#include "toquery.h"
 #include "toconf.h"
 #include "toresultfield.h"
 #include "toresultplan.h"

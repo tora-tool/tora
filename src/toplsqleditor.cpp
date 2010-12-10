@@ -51,7 +51,7 @@
 
 #include "config.h"
 #include "utils.h"
-#include "toconnection.h"
+#include "toquery.h"
 #include "totreewidget.h"
 #include "toplsqleditor.h"
 #include "tomarkedtext.h"

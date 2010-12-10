@@ -43,7 +43,7 @@
 #include "tologger.h"
 
 #include "toconf.h"
-#include "toconnection.h"
+#include "toquery.h"
 #include "tomain.h"
 #include "tomarkedtext.h"
 #include "toresultview.h"

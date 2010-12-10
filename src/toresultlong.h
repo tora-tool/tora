@@ -43,6 +43,7 @@
 #define TORESULTLONG_H
 
 #include "toconnection.h"
+#include "toquery.h"
 #include "toresultview.h"
 
 class toTreeWidgetItem;
