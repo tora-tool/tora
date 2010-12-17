@@ -323,6 +323,8 @@ toConnection::~toConnection()
 
         toLocker lock(Lock);
     }
+    this->Cache->writeDiskCache();
+
     delete Connection;
 }
 
@@ -747,19 +749,18 @@ void toConnection::cacheObjects::run()
         {
             std::list<objectName> n = Connection->Connection->objectNames();
             if (!Connection->Abort)
-                Connection->Cache->ObjectNames = n;
+                Connection->Cache->setObjectList(n);
         }
 
-        Connection->Cache->ObjectNames.sort();
         Connection->Cache->ReadingValues.up();
 
         if (!diskloaded && !Connection->Abort)
         {
             std::map<QString, objectName> m =
-                Connection->Connection->synonymMap(Connection->Cache->ObjectNames);
+                Connection->Connection->synonymMap(Connection->Cache->objects(true));
             if (!Connection->Abort)
             {
-                Connection->Cache->SynonymMap = m;
+                Connection->Cache->setSynonymList(m);
                 Connection->Cache->writeDiskCache();
             }
         }

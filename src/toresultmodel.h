@@ -79,6 +79,11 @@ private:
     RowList Rows;
     HeaderList Headers;
 
+    // Following two variables hold information on how was data last sorted by sort() function.
+    // This is used by sort() function in order not to waste CPU on resorting.
+    int SortedOnColumn;
+    Qt::SortOrder SortedOrder;
+
     // max rows to read until
     int MaxNumber;
 
@@ -123,6 +128,14 @@ public:
                            QObject *parent = 0,
                            bool edit = false,
                            bool read = false);
+
+    /** This constructor is used when model has to be filled in
+     * from the cache rather than from the database.
+     */
+    toResultModel(const QString &owner,
+                  const QString &type,
+                  QObject *parent = 0,
+                  bool read = false);
 
     ~toResultModel();
 
@@ -358,6 +371,11 @@ public:
      *
      */
     virtual Qt::DropActions supportedDropActions() const;
+
+    /** Get raw data of the data model. This is currently used to
+     * prepare and send data to cache.
+     */
+    RowList &getRawData(void);
 
 signals:
 

@@ -44,12 +44,17 @@
 #include "tobrowserschemawidget.h"
 #include "tocodemodel.h"
 #include "utils.h"
+#include "toconfiguration.h"
+#include "tocurrent.h"
 
-
-toBrowserSchemaTableView::toBrowserSchemaTableView(QWidget * parent)
+toBrowserSchemaTableView::toBrowserSchemaTableView(QWidget * parent, const QString &type)
     : toResultTableView(true, false, parent),
       toBrowserSchemaBase()
 {
+    ObjectType = type;
+    ForceRequery = false;
+    if (!type.isEmpty())
+        connect(this, SIGNAL(done()), this, SLOT(updateCache()));
 }
 
 QString toBrowserSchemaTableView::objectName()
@@ -59,9 +64,47 @@ QString toBrowserSchemaTableView::objectName()
 
 void toBrowserSchemaTableView::changeParams(const QString & schema, const QString & filter)
 {
+    // If all objects of a specific type are to be displayed, try displaying them from the cache
+    // This cannot work for filtered objects yet as we do not want to re-impelement the "like" operator.
+    if (filter == "%" &&
+        !ObjectType.isEmpty() &&
+        !ForceRequery
+        /* && toCurrentConnection(this).cacheAvailable(false)*/)
+        if (toCurrentConnection(this).Cache->objectExists(schema, "TORA_LIST", ObjectType))
+        {
+            this->queryFromCache(schema, ObjectType);
+            return;
+        }
+
+    ForceRequery = false;
+    Schema = schema;
     toResultTableView::changeParams(schema, filter);
 }
 
+void toBrowserSchemaTableView::updateCache(void)
+{
+    // Update list of objects
+    QList<toCache::objectName> rows;
+    toCache::objectName obj;
+    obj.Owner = Schema;
+    obj.Type = ObjectType;
+    // TODO: Check that result model rows are NOT sorted in descending order as that would break updating of cache!!!
+    toResultModel::RowList modelRows = this->Model->getRawData();
+    for (QList<toResultModel::Row>::iterator i = modelRows.begin(); i != modelRows.end(); i++)
+    {
+        obj.Name = (*i)[1];
+        rows.append(obj);
+    }
+    toCurrentConnection(this).Cache->updateObjects(Schema, ObjectType, rows);
+
+    // Update information when list of this type of objects in this schema was updated
+    // NOTE: Type is placed in the name field in order not to
+    // mix this meta-information with actual list of objects.
+    obj.Owner = Schema;
+    obj.Type = "TORA_LIST";
+    obj.Name = ObjectType;
+    toCurrentConnection(this).Cache->addIfNotExists(obj);
+} // updateCache
 
 toBrowserSchemaCodeBrowser::toBrowserSchemaCodeBrowser(QWidget * parent)
     : QTreeView(parent),

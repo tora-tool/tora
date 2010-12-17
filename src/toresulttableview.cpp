@@ -812,6 +812,30 @@ void toResultTableView::refresh()
     toResult::refresh();
 }
 
+bool toResultTableView::queryFromCache(const QString &owner, const QString &type)
+{
+    if (Model && running())
+        Model->stop();
+    if(Model)
+    {
+        delete Model;
+        Model = NULL;
+    }
+
+    Model = new toResultModel(owner,
+                              type,
+                              this,
+                              ReadableColumns);
+    setModel(Model);
+
+    this->sortByColumn(0, Qt::AscendingOrder);
+    setSortingEnabled(true);
+
+    // when a new model is created the column sizes are lost
+    applyColumnRules();
+    Ready = true;
+}
+
 // ---------------------------------------- iterator
 
 /**

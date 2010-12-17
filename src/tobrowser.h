@@ -260,8 +260,11 @@ public slots:
     void dropUser(void);
 
 private slots:
-    //! \brief Handle main tabwidget and its tabs switch
-    void mainTab_currentChanged(int);
+    /** Handle main tabwidget and its tabs switch
+     * @param int Tab which has been activated
+     * @param force_requery Do not try using the cache but query the database instead
+     */
+    void mainTab_currentChanged(int, bool force_requery = false);
 
 protected:
     virtual void closeEvent(QCloseEvent *);

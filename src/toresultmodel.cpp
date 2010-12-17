@@ -45,6 +45,7 @@
 #include "toconfiguration.h"
 #include "toqvalue.h"
 #include "toeventquery.h"
+#include <boost/concept_check.hpp>
 
 
 toResultModel::toResultModel(toEventQuery *query,
@@ -91,6 +92,60 @@ toResultModel::toResultModel(toEventQuery *query,
     query->start();
 }
 
+toResultModel::toResultModel(const QString &owner,
+                             const QString &type,
+                             QObject *parent,
+                             bool read)
+    : QAbstractTableModel(parent)
+{
+    ReadableColumns = read;
+    HeadersRead     = false;
+    First           = true;
+    Editable        = false;
+    ReadAll         = false;
+
+    CurrRowKey = 1;
+
+    Query = 0;
+
+    setSupportedDragActions(Qt::CopyAction);
+
+    // Manually add two columns (first one will be invisible)
+    // NOTE: If this function is used to display say table columns from the cache
+    // it will have to be modified to set header dynamically according to type of
+    // data displayed.
+    struct HeaderDesc d;
+    d.name     = "#";
+    d.align    = Qt::AlignRight;
+    d.datatype = "INT";
+    Headers.append(d);
+    d.name = type + " name (cached)";
+    d.align    = Qt::AlignLeft;
+    d.datatype = "CHAR";
+    Headers.append(d);
+    HeadersRead = true;
+
+    // Fetch list of objects from the cache
+    toCache::RowList tmp = toCurrentConnection(this).Cache->getObjects(owner, type);
+
+    beginInsertRows(QModelIndex(), 0, tmp.count());
+    // Convert list of objects to appropriate type
+    toResultModel::Row row;
+    int counter;
+    for (toCache::RowList::iterator i = tmp.begin(); i != tmp.end(); i++)
+    {
+        // For each row a mandatory rownumber integer should be added
+        row.append(toQValue(counter++));
+        // Copy all values of a record
+        for (toCache::Row::iterator ii = (*i).begin(); ii != (*i).end(); ii++)
+        {
+            row.append((*ii).toString());
+        }
+        Rows.append(row);
+        row.clear();
+    }
+    endInsertRows();
+}
 
 toResultModel::~toResultModel()
 {
@@ -782,7 +837,14 @@ void toResultModel::sort(int column, Qt::SortOrder order)
     if (column > Headers.size() - 1)
         return;
 
+    // Do nothing if data was already sorted in the requested way
+    if (SortedOnColumn == column &&
+        SortedOrder == order)
+        return;
+
     Rows = mergesort(Rows, column, order);
+    SortedOnColumn = column;
+    SortedOrder = order;
     emit dataChanged(createIndex(0, 0),
                      createIndex(rowCount(), columnCount()));
 }
@@ -829,4 +891,9 @@ toResultModel::RowList toResultModel::merge(RowList &left,
     if(right.size() > 0)
         result << right;
     return result;
+}
+
+toResultModel::RowList &toResultModel::getRawData(void)
+{
+    return Rows;
 }

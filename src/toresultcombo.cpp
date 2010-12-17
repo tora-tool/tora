@@ -48,6 +48,7 @@
 #include "tosql.h"
 #include "totool.h"
 
+#define USERLIST "TORA_USER_LIST"
 
 toResultCombo::toResultCombo(QWidget *parent, const char *name)
   : QComboBox(parent), Query(0), SelectionPolicy(None)
@@ -56,6 +57,7 @@ toResultCombo::toResultCombo(QWidget *parent, const char *name)
     connect(this, SIGNAL(activated(int)),
             this, SLOT(changeSelected(void)));
     setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    queryingUserlist = false;
 }
 
 toResultCombo::~toResultCombo()
@@ -77,11 +79,29 @@ void toResultCombo::query(const QString &sql, const toQList &param)
             if (Additional[i] == Selected)
                 setCurrentIndex(i);
 
-        Query = new toEventQuery(connection(), toQuery::Background, sql, param);
-        connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
-        connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
-        Query->readAll(); // indicate that all records should be fetched
-        Query->start();
+        if (sql != toSQL::string(toSQL::TOSQL_USERLIST, connection()) ||
+            !connection().Cache->objectExists("ALL", USERLIST, "SYS"))
+        {
+            queryingUserlist = true;
+            userList.clear();
+            Query = new toEventQuery(connection(), toQuery::Background, sql, param);
+            connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
+            connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+            Query->readAll(); // indicate that all records should be fetched
+            Query->start();
+        }
+        else
+        {
+            toCache::RowList users = connection().Cache->getObjects("ALL", USERLIST);
+            for (QList<toCache::Row>::iterator i = users.begin(); i != users.end(); i++)
+            {
+                QString t = (*i)[0].toString();
+                addItem(t);
+                if (t == Selected)
+                    setCurrentIndex(count() - 1);
+            }
+            queryDone();
+        }
     }
     TOCATCH
 }
@@ -110,6 +130,14 @@ void toResultCombo::poll(void)
                     l.append(v);
                 }
                 addItem(t, QVariant(l));
+                if (queryingUserlist)
+                {
+                    toCache::objectName userItem;
+                    userItem.Owner = "ALL";
+                    userItem.Type = USERLIST;
+                    userItem.Name = t;
+                    userList.append(userItem);
+                }
                 if (t == Selected)
                     setCurrentIndex(count() - 1);
             }
@@ -143,5 +171,12 @@ void toResultCombo::queryDone(void)
     };
     setFont(font()); // Small hack to invalidate size hint of combobox which should resize to needed size.
     updateGeometry();
+
+    // If we were querying user list - save it to cache
+    if (queryingUserlist)
+    {
+        connection().Cache->updateObjects("ALL", USERLIST, userList);
+    }
+
     emit done();
 } // queryDone

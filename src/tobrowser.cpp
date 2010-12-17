@@ -1497,7 +1497,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
             SLOT(disableConstraints(void)));
     tableToolbar->addAction(disableConstraintAct);
 
-    tableView = new toBrowserSchemaTableView(tableWidget);
+    tableView = new toBrowserSchemaTableView(tableWidget, "TABLE");
     tableLayout->addWidget(tableView);
     tableView->setReadAll(true);
     tableView->setSQL(SQLListTables);
@@ -1522,7 +1522,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     viewSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     viewSplitter->setObjectName(TAB_VIEWS);
 //     m_mainTab->addTab(viewSplitter, tr("&Views"));
-    viewView = new toBrowserSchemaTableView(viewSplitter);
+    viewView = new toBrowserSchemaTableView(viewSplitter, "VIEW");
     viewView->setReadAll(true);
     viewView->setSQL(SQLListView);
     viewView->resize(FIRST_WIDTH, viewView->height());
@@ -1580,7 +1580,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
             this, SLOT(dropIndex()));
     indexToolbar->addAction(dropIndexesAct);
 
-    indexView = new toBrowserSchemaTableView(indexWidget);
+    indexView = new toBrowserSchemaTableView(indexWidget, "INDEX");
     indexLayout->addWidget(indexView);
     indexView->setReadAll(true);
     indexView->setTabWidget(m_mainTab);
@@ -1602,7 +1602,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     sequenceSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     sequenceSplitter->setObjectName(TAB_SEQUENCES);
 //     m_mainTab->addTab(sequenceSplitter, tr("Se&quences"));
-    sequenceView = new toBrowserSchemaTableView(sequenceSplitter);
+    sequenceView = new toBrowserSchemaTableView(sequenceSplitter, "SEQUENCE");
     sequenceView->setReadAll(true);
     sequenceView->setSQL(SQLListSequence);
     sequenceView->resize(FIRST_WIDTH, sequenceView->height());
@@ -1621,7 +1621,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     synonymSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     synonymSplitter->setObjectName(TAB_SYNONYM);
 //     m_mainTab->addTab(synonymSplitter, tr("S&ynonyms"));
-    synonymView = new toBrowserSchemaTableView(synonymSplitter);
+    synonymView = new toBrowserSchemaTableView(synonymSplitter); // Note, object cache does not cache synonyms
     synonymView->setReadAll(true);
     synonymView->setSQL(SQLListSynonym);
     synonymView->resize(FIRST_WIDTH, synonymView->height());
@@ -1658,7 +1658,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     triggerSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     triggerSplitter->setObjectName(TAB_TRIGGER);
 //     m_mainTab->addTab(triggerSplitter, tr("Tri&ggers"));
-    triggerView = new toBrowserSchemaTableView(triggerSplitter);
+    triggerView = new toBrowserSchemaTableView(triggerSplitter, "TRIGGER");
     triggerView->setReadAll(true);
     triggerView->setSQL(SQLListTrigger);
     triggerView->resize(FIRST_WIDTH, triggerView->height());
@@ -1717,8 +1717,6 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     m_browsersMap[dblinkSplitter] = dblinkBrowserWidget;
 // #endif // dblink
 
-    
-    
     directoriesSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     directoriesSplitter->setObjectName(TAB_DIRECTORIES);
 
@@ -1729,7 +1727,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     directoriesLayout->setContentsMargins(0, 0, 0, 0);
     directoriesWidget->setLayout(directoriesLayout);
 
-    directoriesView = new toBrowserSchemaTableView(directoriesWidget);
+    directoriesView = new toBrowserSchemaTableView(directoriesWidget, "DIRECTORY");
     directoriesBrowserWidget = new toBrowserDirectoriesWidget(directoriesSplitter);
 
     directoriesLayout->addWidget(directoriesView);
@@ -1818,7 +1816,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
             this, SLOT(mainTab_currentChanged(int)));
 }
 
-void toBrowser::mainTab_currentChanged(int /*ix*/)
+void toBrowser::mainTab_currentChanged(int /*ix*/, bool force_requery)
 {
     if (Schema->selected().isEmpty())
         return;
@@ -1834,6 +1832,8 @@ void toBrowser::mainTab_currentChanged(int /*ix*/)
 
     if (m_objectsMap.contains(ix))
     {
+        if (force_requery)
+            m_objectsMap[ix]->forceRequery();
         m_objectsMap[ix]->changeParams(schema(), Filter ? Filter->wildCard() : "%");
         changeItem();
     }
@@ -1937,7 +1937,7 @@ void toBrowser::refresh(void)
     try
     {
         Schema->refresh();
-        mainTab_currentChanged(m_mainTab->currentIndex());
+        mainTab_currentChanged(m_mainTab->currentIndex(), true);
     }
     TOCATCH
 }

@@ -4,6 +4,9 @@
 
 #include "tothread.h"
 #include <QMetaType>
+#include <QDate>
+#include <QList>
+#include <QVariant>
 #include <map>
 #include <list>
 #include <set>
@@ -12,10 +15,16 @@
  */
 class toCache : public QObject
 {
+    /** Description of connection for which this instance of cache is used.
+     *  This name is used as a filename to store cache content between TOra runs.
+     */
     QString ConnectionDescription;
     bool ReadingCache;
 
 public:
+    typedef QList<QVariant> Row; // NOTE: first (0th) value in a row is a row number (see variable currRowKey)
+    typedef QList<Row> RowList;
+
     toSemaphore ReadingValues;
 
     /** Contain information about a tablename.
@@ -37,6 +46,10 @@ public:
         /** synonyms (used for faster disk caching...)
          */
         std::list <QString> Synonyms;
+
+        /** A date when information about this particular object was last updated
+         */
+        QDate Timestamp;
 
         /** Create an object name with filled in values.
          */
@@ -73,8 +86,12 @@ public:
         QString Comment;
     };
 
+private:
     std::list<objectName> ObjectNames;
     std::map<QString, objectName> SynonymMap;
+    void ll(void);
+
+public:
     typedef queryDescribe toQDescribe;
     typedef std::list<toQDescribe> toQDescList;
     std::map<objectName, toQDescList> ColumnCache;
@@ -82,7 +99,8 @@ public:
     toCache(QString description);
     ~toCache();
 
-    /** load disk cache
+    /** Load cache information for current connection from a file on disk
+     * @return True if cache was loaded
      */
     bool loadDiskCache(void);
 
@@ -103,8 +121,14 @@ public:
      */
     bool cacheAvailable(bool synonyms, bool block = false, bool need = true, toTask * t = NULL);
 
+    /** Return the file used to store cache contents for this connection.
+     * @return A string representing a full path and filename of cache file
+     */
     QString cacheFile();
 
+    /** Return the directory storing files (caches) of all connections.
+     * @return A string representing a full path to cache store directory
+     */
     static QString cacheDir();
 
     /**
@@ -147,6 +171,34 @@ public:
      * Reread the object and column cache.
      */
     void rereadCache(toTask * t);
+
+    /** Set a list of objects. This is used when list of objects is loaded in bulk
+     * outside of a cache (for example in connection class). Note that this fucntion
+     * will remove any existing objects in cache (for this connection).
+     * @param list list of objects to be set
+     */
+    void setObjectList(std::list<objectName> &list);
+
+    /** Set a list of object synonyms. This is used when list of synonyms is loaded
+     * in bulk outside of a cache (for example in connection class). Note that this
+     * fucntion will remove any existing synonyms.
+     * @param list list of objects to be set
+     */
+    void setSynonymList(std::map<QString, objectName> &list);
+
+    /** Checks if given object is saved in the cache.
+     */
+    bool objectExists(const QString &owner, const QString &type, const QString &name);
+
+    /** Returns a list of objects of particular type and schema/owner
+     */
+    RowList getObjects(const QString &owner, const QString &type);
+
+    /** Update a list of objects of particular type and schema owner in cache.
+     * This should add any new object to the list as well as remove no longer
+     * existing ones.
+     */
+    void updateObjects(const QString &owner, const QString &type, const QList<toCache::objectName> rows);
 }; // toCache
 
 /** A short representation of a @ref toCache::queryDescribe

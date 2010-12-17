@@ -397,6 +397,10 @@ public:
      */
     virtual void editSelectAll(void);
 
+    /** Fill in result from the cache rather than executing actual query on database.
+     */
+    bool queryFromCache(const QString &owner, const QString &type);
+
 public slots:
     /**
      * Resizes all columns based on the size hints of the delegate

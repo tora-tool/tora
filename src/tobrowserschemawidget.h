@@ -59,6 +59,9 @@ in the toBrowser.
 */
 class toBrowserSchemaBase
 {
+    protected:
+        bool ForceRequery; // Next query MUST be from database rather than from cache
+
     public:
         toBrowserSchemaBase(){};
         virtual ~toBrowserSchemaBase(){};
@@ -66,6 +69,7 @@ class toBrowserSchemaBase
         virtual QString objectName() = 0;
         //! \brief Reset widget data depending on new schema and/or filter.
         virtual void changeParams(const QString & schema, const QString & filter) = 0;
+        void forceRequery(void) { ForceRequery = true; }
 };
 
 
@@ -78,10 +82,16 @@ class toBrowserSchemaTableView : public toResultTableView,
 {
     Q_OBJECT
 
+    QString ObjectType; // What type of object is displayed (TABLE, VIEW etc.)
+    QString Schema;
+
     public:
-        toBrowserSchemaTableView(QWidget * parent = 0);
+        toBrowserSchemaTableView(QWidget * parent = 0, const QString &type = 0);
         QString objectName();
         void changeParams(const QString & schema, const QString & filter);
+
+    private slots:
+        void updateCache(void);
 };
 
 

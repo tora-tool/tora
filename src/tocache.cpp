@@ -6,6 +6,7 @@
 #include <QDateTime>
 #include <QTextStream>
 #include <QProgressDialog>
+//#include <boost/preprocessor/iteration/detail/local.hpp>
 
 toCache::toCache(QString description)
 {
@@ -42,9 +43,7 @@ QString toCache::cacheDir()
 
 QString toCache::cacheFile()
 {
-    QString dbname(ConnectionDescription);
-
-    return (cacheDir() + "/" + dbname).trimmed();
+    return (cacheDir() + "/" + ConnectionDescription).trimmed();
 } // cacheFile
 
 bool toCache::loadDiskCache()
@@ -103,11 +102,26 @@ bool toCache::loadDiskCache()
                 (*cur).Synonyms.insert((*cur).Synonyms.end(), (*s));
                 synCounter++;
             }
+            /** TODO: This "if" condition is added here for bakwards compatibility as timestamp
+             * parameter was not saved to disk before 2010-12-12. Therefore this condition can
+             * be removed after 2011-12-12 (one year for everybody to update). Another way to
+             * fix this is to delete the cache.
+             */
+            if (record.count() >= 6)
+            {
+                rec++;
+                (*cur).Timestamp = QDate::fromString((*rec), "yyyy-MM-dd");
+            }
+            else
+                (*cur).Timestamp = QDate::currentDate();
             ObjectNames.insert(ObjectNames.end(), (*cur));
             delete cur;
             cur = 0;
         }
     }
+
+    ObjectNames.sort();
+
     return true;
 }
 
@@ -120,12 +134,10 @@ void toCache::writeDiskCache()
     if (!toConfigurationSingle::Instance().cacheDisk())
         return ;
 
-
     QString filename(cacheFile());
 
     /** check pathnames and create
      */
-
     QString dirname(cacheDir());
     QDir dir;
     dir.setPath(dirname);
@@ -133,13 +145,11 @@ void toCache::writeDiskCache()
     if (!dir.exists(dirname))
         dir.mkdir(dirname);
 
-
     /** build record to write out
      */
-
-    QStringList record;
-    QStringList records;
-    QStringList recordSynonym;
+    QStringList record; // information about one object
+    QStringList records; // all objects
+    QStringList recordSynonym; // all synonyms of one particular object
     for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
     {
         record.clear();
@@ -153,11 +163,13 @@ void toCache::writeDiskCache()
             synCounter++;
         }
         record.append(recordSynonym.join("\x1F"));
+        record.append((*i).Timestamp.toString("yyyy-MM-dd"));
         recordSynonym.clear();
         objCounter++;
         records.append(record.join("\x1E"));
     }
-    /** open file
+
+    /** Write all records to a file
      */
     QFile file(filename);
     file.open(QIODevice::ReadWrite | QIODevice::Truncate);
@@ -436,3 +448,115 @@ bool toCache::objectName::operator == (const objectName &nam) const
     return Owner == nam.Owner && Name == nam.Name && Type == nam.Type;
 }
 
+void toCache::setObjectList(std::list<objectName> &list)
+{
+    ObjectNames = list;
+    // Set the date when information about this object was red. This will later
+    // be used to clean up an old information.
+    for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
+        (*i).Timestamp = QDate::currentDate();
+    list.sort();
+} // setObjectList
+
+void toCache::setSynonymList(std::map<QString, objectName> &list)
+{
+    SynonymMap = list;
+} // setSynonymList
+
+bool toCache::objectExists(const QString &owner, const QString &type, const QString &name)
+{
+    // TODO: ObjectList is sorted therefore going through all of it is not necessary!
+    for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
+    {
+        if ((*i).Owner == owner &&
+            (*i).Name == name &&
+            (*i).Type == type)
+            return true;
+    }
+
+    return false;
+} // objectExists
+
+toCache::RowList toCache::getObjects(const QString &owner, const QString &type)
+{
+    Row r;
+    RowList rl;
+    for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
+    {
+        if ((*i).Owner == owner &&
+            (*i).Type == type)
+        {
+            r.append((*i).Name);
+            rl.append(r);
+            r.clear();
+        }
+    }
+
+    return rl;
+} // getObjects
+
+void toCache::updateObjects(const QString &owner, const QString &type, const QList<objectName> rows)
+{
+    bool OwnerExists = false;
+    QList<objectName>::const_iterator newObjects = rows.begin();
+    std::list<objectName>::iterator currentObjects = ObjectNames.begin();
+
+    if (ObjectNames.size() > 0)
+    {
+        // Find first object belonging to required owner/schema
+        while (currentObjects != ObjectNames.end() &&
+               (*currentObjects).Owner < owner)
+            currentObjects++;
+        if (currentObjects != ObjectNames.end() &&
+            (*currentObjects).Owner == owner)
+            OwnerExists = true;
+    }
+
+    while (newObjects != rows.end())
+    {
+        if (OwnerExists)
+        {
+            while ((*currentObjects).Type != type && currentObjects != ObjectNames.end())
+                currentObjects++; // skip cached objects of other types
+
+            //qDebug() << "iterating through (new:curr)" << (*newObjects).Name << (*currentObjects).Name;
+            if ((*currentObjects).Name == (*newObjects).Name)
+            {
+                //qDebug() << "Object is already in cache" << (*newObjects).Name;
+                currentObjects++;
+                newObjects++;
+            }
+            else if ((*currentObjects).Name < (*newObjects).Name)
+            {
+                //qDebug() << "DELETE:" << (*currentObjects).Name;
+                currentObjects = ObjectNames.erase(currentObjects);
+            }
+            else
+            {
+                //qDebug() << "NEW:" << (*newObjects).Name;
+                ObjectNames.insert(currentObjects, (*newObjects));
+                newObjects++;
+            }
+        }
+        else
+        {
+            //qDebug() << "NEW2:" << (*newObjects).Name;
+            ObjectNames.insert(currentObjects, (*newObjects));
+            newObjects++;
+        }
+    }
+    // Delete any remaining objects
+    while (OwnerExists &&
+           currentObjects != ObjectNames.end() &&
+           (*currentObjects).Owner == owner)
+    {
+        //qDebug() << "iterating2 through" << (*currentObjects).Name;
+        if ((*currentObjects).Type == type)
+        {
+            //qDebug() << "DELETE2:" << (*currentObjects).Name;
+            currentObjects = ObjectNames.erase(currentObjects);
+        }
+        else
+            currentObjects++;
+    }
+} // updateObjects

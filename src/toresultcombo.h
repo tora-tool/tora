@@ -50,6 +50,7 @@
 #include <QPointer>
 
 #include "toresult.h"
+#include "tocache.h"
 
 class toEventQuery;
 class toSQL;
@@ -66,6 +67,8 @@ class toResultCombo : public QComboBox, public toResult
 
     QString Selected;
     QStringList Additional;
+    bool queryingUserlist;
+    QList<toCache::objectName> userList;
 
 public:
     enum selectionPolicy {
