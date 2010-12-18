@@ -57,7 +57,10 @@ tora_SOURCES=main.cpp \
 	tobackgroundlabel.cpp tobackgroundlabel.h \
 	toconfiguration.cpp toconfiguration.h \
 	toconnection.cpp toconnection.h \
+	toquery.cpp toquery.h \
+	toqueryimpl.h \
 	toqvalue.cpp toqvalue.h \
+	tocache.cpp tocache.h \
 	toconnectionimport.cpp toconnectionimport.h \
 	toconnectionpool.cpp toconnectionpool.h \
     todescribe.cpp todescribe.h \
@@ -326,6 +329,9 @@ BUILT_SOURCES = \
 	moc_tochangeconnection.cpp \
 	moc_tochartmanager.cpp \
 	moc_toconnection.cpp \
+	moc_toquery.cpp \
+	moc_toqueryimpl.cpp \
+	moc_tocache.cpp \
 	moc_toconnectionmodel.cpp \
 	moc_tocodemodel.cpp \
 	moc_toconnectionpool.cpp \

@@ -60,6 +60,8 @@ Copyright © 2005 Geoffrey Rommel
 #include "toconf.h"
 #include "toconfiguration.h"
 #include "toconnection.h"
+#include "toquery.h"
+#include "toqueryimpl.h"
 #include "tomain.h"
 #include "tosql.h"
 #include "totool.h"
@@ -1285,7 +1287,7 @@ public:
         }
     };
 
-    class teradataQuery : public toQuery::queryImpl
+    class teradataQuery : public queryImpl
     {
         bool Cancel;
         bool Running;
@@ -1294,7 +1296,7 @@ public:
 
     public:
         teradataQuery(toQuery *query, teradataSub *conn)
-            : toQuery::queryImpl(query),
+            : queryImpl(query),
               Connection(conn),
               request(0)
         {
@@ -1343,12 +1345,12 @@ public:
             return request->columns.size();
         }
 
-        virtual std::list<toQuery::queryDescribe> describe()
+        virtual std::list<toQDescribe> describe()
         {
-            std::list<toQuery::queryDescribe> ret;
+            std::list<toQDescribe> ret;
             Q_FOREACH(columnDesc desc, request->columns)
             {
-                toQuery::queryDescribe qd;
+                toQDescribe qd;
                 qd.Name = desc.name;
                 qd.Datatype = desc.typeName;
                 qd.AlignRight = false;
@@ -1476,7 +1478,7 @@ public:
             return QString();
         }
 
-        virtual toQuery::queryImpl *createQuery(toQuery *query, toConnectionSub *sub)
+        virtual queryImpl *createQuery(toQuery *query, toConnectionSub *sub)
         {
             return new teradataQuery(query, teradataConv(sub));
         }
