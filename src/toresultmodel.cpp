@@ -45,7 +45,6 @@
 #include "toconfiguration.h"
 #include "toqvalue.h"
 #include "toeventquery.h"
-#include <boost/concept_check.hpp>
 
 
 toResultModel::toResultModel(toEventQuery *query,
