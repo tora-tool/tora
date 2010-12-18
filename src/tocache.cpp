@@ -237,19 +237,20 @@ bool toCache::cacheAvailable(bool synonyms, bool block, bool need, toTask * t)
     return true;
 }
 
-void toCache::addIfNotExists(objectName &obj)
+bool toCache::addIfNotExists(objectName &obj)
 {
     if (!cacheAvailable(true, false))
     {
         toStatusMessage(qApp->translate("toConnection", "Not done caching objects"), false, false);
-        return ;
+        return false;
     }
     std::list<objectName>::iterator i = ObjectNames.begin();
     while (i != ObjectNames.end() && (*i) < obj)
         i++;
     if (i != ObjectNames.end() && *i == obj) // Already exists, don't add
-        return ;
+        return false;
     ObjectNames.insert(i, obj);
+    return true;
 }
 
 void toCache::readObjects(toTask * t)

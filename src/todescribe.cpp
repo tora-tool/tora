@@ -85,16 +85,33 @@ void toDescribe::changeParams(const QString & owner, const QString & object)
     }
 
     QString objectType;
+    bool foundInCache = false; // was object found in cache?
+    bool addedNewObjects = false; // did we actually add new objects to cache during rereading?
+    bool newlyAddedObjectChecked = false; // did we try to go through a cache again after rereading?
 
-    std::list<toConnection::objectName> objects = toCurrentConnection(this).objects(false);
-    for (std::list<toConnection::objectName>::iterator i = objects.begin();i != objects.end();i++)
-    {
-        if ((*i).Name == object && (*i).Owner == owner)
+    do {
+        // Get a cached list of objects and then search in it without querying
+        // the database in order to improve performance
+        std::list<toConnection::objectName> objects = toCurrentConnection(this).Cache->objects(false);
+        for (std::list<toConnection::objectName>::iterator i = objects.begin();i != objects.end();i++)
         {
-            objectType = (*i).Type;
-            break;
+            if ((*i).Name == object && (*i).Owner == owner)
+            {
+                objectType = (*i).Type;
+                foundInCache = true;
+                break;
+            }
         }
-    }
+        if (addedNewObjects)
+            newlyAddedObjectChecked = true;
+
+        if (!foundInCache && // only check if object was not found in already cached list
+            !newlyAddedObjectChecked) // do not requery the database again
+        {
+            // If object was not found in cache, then try updating the cache
+            addedNewObjects = toCurrentConnection(this).rereadObjects(owner, "", object);
+        }
+    } while (!foundInCache && addedNewObjects && !newlyAddedObjectChecked);
 
     if (objectType == "TABLE")
         widget = new toBrowserTableWidget(this);

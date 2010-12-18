@@ -261,7 +261,9 @@ public:
          * goes wrong should throw exception.
          * @return List of available objects.
          */
-        virtual std::list<toConnection::objectName> objectNames(void);
+        virtual std::list<toConnection::objectName> objectNames(const QString &owner = "",
+                                                                const QString &type = "",
+                                                                const QString &name = "");
         /** Get synonyms available for connection. Any access to the
          * database should always be run using a long running query. If something
          * goes wrong should throw exception.
@@ -601,12 +603,24 @@ public:
     virtual toSyntaxAnalyzer &analyzer();
 
     /**
-     * Get the objects available for the current user. Do not modify the returned list.
+     * Get the objects available for the current user from cache. Do not modify the returned list.
      * @param block Indicate wether or not to block until cached objects are available.
      * @return A list of object available for the current user. The list is sorted in
      *         owner and name order.
      */
     std::list<toConnection::objectName> &objects(bool block);
+
+    /**
+     * Reread specified objects from database to the cache. If null is given as value of any
+     * parameter - then any value for that parameter is ok in database matches.
+     * @param owner only read object belonging to given schema
+     * @param type only read objects of given type
+     * @param name only read objects with given name.
+     * @return true if at least one new object was added to cache
+     */
+    bool rereadObjects(const QString &owner = "",
+                       const QString &type = "",
+                       const QString &name = "");
 
     /** Check if cache is available or not.
      * @param synonyms If synonyms are needed or not.

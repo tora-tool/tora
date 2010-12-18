@@ -799,7 +799,9 @@ toSyntaxAnalyzer &toConnection::analyzer()
     return Connection->analyzer();
 }
 
-std::list<toConnection::objectName> toConnection::connectionImpl::objectNames(void)
+std::list<toConnection::objectName> toConnection::connectionImpl::objectNames(const QString &owner,
+                                                                              const QString &type,
+                                                                              const QString &name)
 {
     std::list<objectName> ret;
     return ret;
@@ -839,6 +841,22 @@ std::list<toConnection::objectName> &toConnection::objects(bool block)
 {
     return Cache->objects(block);
 }
+
+bool toConnection::rereadObjects(const QString &owner,
+                                 const QString &type,
+                                 const QString &name)
+{
+    bool added = false; // did we actually add at least one new object?
+
+    std::list<toConnection::objectName> objects = this->Connection->objectNames(owner, type, name);
+    for (std::list<toConnection::objectName>::iterator i = objects.begin();i != objects.end();i++)
+    {
+        added = added || Cache->addIfNotExists(*i);
+    }
+    // TODO: If all objects of a particular type/owner are fetched we should delete all non
+    // matching records from the cache!
+    return added;
+} // rereadObjects
 
 bool toConnection::cacheAvailable(bool synonyms, bool block, bool need)
 {

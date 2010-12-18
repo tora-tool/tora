@@ -128,7 +128,10 @@ static toSQL SQLListObjects("toOracleConnection:ListObjects",
                             "  from sys.all_objects a,\n"
                             "       sys.all_tab_comments b\n"
                             " where a.owner = b.owner(+) and a.object_name = b.table_name(+)\n"
-                            "   and a.object_type = b.table_type(+) and a.object_type != 'SYNONYM'",
+                            "   and a.object_type = b.table_type(+) and a.object_type != 'SYNONYM'\n"
+                            "   and a.owner = nvl(:owner<char[101]>, a.owner)"
+                            "   and a.object_type = nvl(:type<char[101]>, a.object_type)"
+                            "   and a.object_name = nvl(:name<char[101]>, a.object_name)",
                             "List the objects to cache for a connection, should have same "
                             "columns and binds");
 
@@ -683,11 +686,16 @@ class oracleConnection : public toConnection::connectionImpl
             return str.toUpper();
         }
 
-        virtual std::list<toConnection::objectName> objectNames(void)
+        virtual std::list<toConnection::objectName> objectNames(const QString &owner,
+                                                                const QString &type,
+                                                                const QString &name)
         {
             std::list<toConnection::objectName> ret;
 
             std::list<toQValue> par;
+            par.insert(par.end(), owner);
+            par.insert(par.end(), type);
+            par.insert(par.end(), name);
             toQuery objects(connection(), toQuery::Long,
                             SQLListObjects, par);
             toConnection::objectName cur;

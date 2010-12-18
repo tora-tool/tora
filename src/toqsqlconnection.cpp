@@ -1530,8 +1530,11 @@ class qSqlConnection : public toConnection::connectionImpl
             return name;
         }
 
-        virtual std::list<toConnection::objectName> objectNames(void)
+        virtual std::list<toConnection::objectName> objectNames(const QString &owner,
+                                                                const QString &type,
+                                                                const QString &name)
         {
+            // TODO: Optimise this code to fetch only required data (as per parameter values)
             std::list<toConnection::objectName> ret;
 
             toConnection::objectName cur;

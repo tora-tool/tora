@@ -110,8 +110,9 @@ public:
 
     /** Add a new object to the objectlist if it doesn't exist already.
      * @param object The object to add
+     * @return true if object was not in the cache and was added
      */
-    void addIfNotExists(objectName &object);
+    bool addIfNotExists(objectName &object);
 
     /** Check if cache is available or not.
      * @param synonyms If synonyms are needed or not.
@@ -146,6 +147,9 @@ public:
      */
     std::map<QString, objectName> &synonyms(bool block);
 
+    /**
+     * Starts a new thread which will read all objects and synonyms from the database.
+     */
     void readObjects(toTask * t);
 
     /**
