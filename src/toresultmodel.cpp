@@ -298,7 +298,12 @@ int toResultModel::addRow(QModelIndex ind, bool duplicate)
     if (ind.isValid())
         newRowPos = ind.row() + 1; // new row is inserted right after the current one
     else
-        newRowPos = Rows.size() + 1; // new row is appended at the end
+    {
+        if (!duplicate || Rows.size() > 0)
+            newRowPos = Rows.size() + 1; // new row is appended at the end
+        else
+            return -1; // unable to duplicate a record if there are no records
+    }
     beginInsertRows(QModelIndex(), newRowPos, newRowPos);
 
     Row row;
