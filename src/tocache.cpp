@@ -517,17 +517,19 @@ void toCache::updateObjects(const QString &owner, const QString &type, const QLi
     {
         if (OwnerExists)
         {
-            while ((*currentObjects).Type != type && currentObjects != ObjectNames.end())
+            while (currentObjects != ObjectNames.end() &&
+                   (*currentObjects).Type != type)
                 currentObjects++; // skip cached objects of other types
 
-            //qDebug() << "iterating through (new:curr)" << (*newObjects).Name << (*currentObjects).Name;
-            if ((*currentObjects).Name == (*newObjects).Name)
+            if (currentObjects != ObjectNames.end() &&
+                (*currentObjects).Name == (*newObjects).Name)
             {
                 //qDebug() << "Object is already in cache" << (*newObjects).Name;
                 currentObjects++;
                 newObjects++;
             }
-            else if ((*currentObjects).Name < (*newObjects).Name)
+            else if (currentObjects != ObjectNames.end() &&
+                     (*currentObjects).Name < (*newObjects).Name)
             {
                 //qDebug() << "DELETE:" << (*currentObjects).Name;
                 currentObjects = ObjectNames.erase(currentObjects);
