@@ -53,6 +53,7 @@ toSQLParse::statement::statement(type ntype, const QString &token, int cline)
     : Type(ntype), String(token), Line(cline)
 {
     SubTokens = NULL;
+    StatementStatus = statement::ok;
 }
 
 std::list<toSQLParse::statement> &toSQLParse::statement::subTokens(void)
@@ -74,6 +75,7 @@ toSQLParse::statement::statement(const statement &stat)
     Comment = stat.Comment;
     Line = stat.Line;
     StatementClass = stat.StatementClass;
+    StatementStatus = stat.StatementStatus;
     if (stat.SubTokens)
     {
         SubTokens = new std::list<statement>;
@@ -90,6 +92,7 @@ const toSQLParse::statement &toSQLParse::statement::operator = (const statement 
     Comment = stat.Comment;
     Line = stat.Line;
     StatementClass = stat.StatementClass;
+    StatementStatus = stat.StatementStatus;
     delete SubTokens;
     if (stat.SubTokens)
     {
@@ -556,7 +559,10 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
             {
                 cur = parseStatement(tokens, dcl, false);
                 if (cur.Type == statement::List)
+                {
                     toStatusMessage(qApp->translate("toSQLparse", "Unbalanced parenthesis (Too many ')')"));
+                    cur.StatementStatus = statement::invalid;
+                }
                 blk.subTokens().insert(blk.subTokens().end(), cur);
                 if (cur.subTokens().begin() != cur.subTokens().end() &&
                         (*(cur.subTokens().begin())).String.toUpper() == ("BEGIN"))
@@ -618,7 +624,10 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
             statement lst = parseStatement(tokens, false, true);
             statement t = toPop(lst.subTokens()); // Pop the last value out of a list
             if (lst.Type != statement::List)
+            {
                 toStatusMessage(qApp->translate("toSQLparse", "Unbalanced parenthesis (Too many '(')"));
+                ret.StatementStatus = statement::invalid;
+            }
             nokey = false;
             if (first == ("CREATE") && !block && !createtable)
             {
@@ -626,6 +635,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
                 statement end = parseStatement(tokens, false, true);
                 statement blk(statement::Block);
                 blk.subTokens().insert(blk.subTokens().end(), ret);
+                blk.StatementStatus = ret.StatementStatus;
                 blk.subTokens().insert(blk.subTokens().end(), lst);
                 end.subTokens().insert(end.subTokens().begin(), t);
                 blk.subTokens().insert(blk.subTokens().end(), end);
@@ -727,7 +737,10 @@ std::list<toSQLParse::statement> toSQLParse::parse(tokenizer &tokens)
             cur = parseStatement(tokens, false, false))
     {
         if (cur.Type == statement::List)
+        {
             toStatusMessage(qApp->translate("toSQLparse", "Unbalanced parenthesis (Too many ')')"));
+            cur.StatementStatus = statement::invalid;
+        }
         ret.insert(ret.end(), cur);
     }
     QString str = tokens.remaining(false);
@@ -1275,6 +1288,13 @@ QString toSQLParse::indent(const QString &str, toSyntaxAnalyzer &syntax)
             i != blk.end();
             i++)
     {
+        if ((*i).StatementStatus == statement::invalid)
+        {
+            // If at least one part was not parsed successfully - return initial
+            // string because trying to indend an incorrectly parset statement
+            // will probably produce garbage/truncated result.
+            return str;
+        }
         ret += indentStatement(*i, level, syntax);
     }
     pos = ret.length();

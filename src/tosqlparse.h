@@ -125,6 +125,17 @@ public:
             plsqlblock  // PLSQL blocks (named and anonymous)
         } StatementClass;
 
+        /** Indicates if statement was parsed correctly. This is used in indentation code
+         * in order NOT to try indenting the code which was not fully understood (which was
+         * not parsed successfully). Currently statement becomes invalid if parenthesis
+         * are incorrect.
+         */
+        enum statementStatus
+        {
+            ok,
+            invalid
+        } StatementStatus;
+
         /** Was there a comment attached to this token
          */
         QString Comment;
