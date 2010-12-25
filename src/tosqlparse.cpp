@@ -39,11 +39,10 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+#include "tosqlparse.h"
 #include "utils.h"
-
 #include "toconnection.h"
 #include "tohighlightedtext.h"
-#include "tosqlparse.h"
 
 #include <qapplication.h>
 #include <qstringlist.h>
@@ -242,7 +241,7 @@ QString toSQLParse::stringTokenizer::getToken(bool forward, bool comments)
                     else
                     {
                         state = space;
-                        token = QString::null;
+                        token.clear();
                     }
                 }
                 break;
@@ -1064,7 +1063,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                 if (Settings.CommaBefore)
                 {
                     ret += IndentComment(Settings.CommentColumn, current, comment, true);
-                    comment = QString::null;
+                    comment.clear();
                     ret += indentString(level + maxlev - (Settings.OperatorSpace ? 2 : 1));
                     ret += (",");
                 }
@@ -1072,7 +1071,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                 {
                     ret += (",");
                     ret += IndentComment(Settings.CommentColumn, current + 1, comment, true);
-                    comment = QString::null;
+                    comment.clear();
                     ret += indentString(level + maxlev);
                 }
                 current = level + maxlev;
@@ -1104,7 +1103,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                 else
                 {
                     ret += IndentComment(Settings.CommentColumn, current, comment, true);
-                    comment = QString::null;
+                    comment.clear();
                     ret += indentString(level);
                     ret += Settings.KeywordUpper ? (*i).String.toUpper() : (*i).String;
                     current = level + (*i).String.length();
@@ -1119,7 +1118,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
                 {
                     ret += IndentComment(Settings.CommentColumn, current, comment, true);
                     current = 0;
-                    comment = QString::null;
+                    comment.clear();
                 }
                 if (current == 0)
                 {
@@ -1238,7 +1237,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
         if (stat.Type == statement::Statement)
         {
             ret += IndentComment(Settings.CommentColumn, current, comment, true);
-            comment = QString::null;
+            comment.clear();
             if (Settings.EndBlockNewline &&
                     level == 0 &&
                     stat.subTokens().begin() != stat.subTokens().end() &&
@@ -1248,7 +1247,7 @@ QString toSQLParse::indentStatement(statement &stat, int level, toSyntaxAnalyzer
         else if (!comment.isEmpty())
         {
             ret += IndentComment(Settings.CommentColumn, current, comment, true);
-            comment = QString::null;
+            comment.clear();
             ret += indentString(level - (Settings.OperatorSpace ? 2 : 1));
         }
         break;
