@@ -79,8 +79,6 @@
 #endif
 #endif
 
-// #include <QDebug>
-
 static toSQL SQLVersion("toQSqlConnection:Version",
                         "SHOW VARIABLES LIKE 'version'",
                         "Show version of database, "
@@ -101,13 +99,13 @@ static toSQL SQLVersionPgSQL("toQSqlConnection:Version",
                              "PostgreSQL");
 
 static toSQL SQLListDatabases("toQSqlConnection:ListDatabases",
-                              "show databases",
+                              "show databases where `Database` = :f1<quote> or :f1<quote> = ''",
                               "List the available databases for a mysql connection",
                               "3.0",
                               "MySQL");
 
 static toSQL SQLListObjectsDatabase("toQSqlConnection:ListObjectsDatabase",
-                                    "show table status from :f1<noquote>",
+                                    "show table status from :f1<noquote> where `Name` = :f2<quote> or :f2<quote> = ''",
                                     "Get the available tables for a specific database (MySQL specific, won't work for anything else)",
                                     "3.0",
                                     "MySQL");
@@ -1534,13 +1532,12 @@ class qSqlConnection : public toConnection::connectionImpl
                                                                 const QString &type,
                                                                 const QString &name)
         {
-            // TODO: Optimise this code to fetch only required data (as per parameter values)
             std::list<toConnection::objectName> ret;
 
             toConnection::objectName cur;
             try
             {
-                toQuery databases(connection(), SQLListDatabases);
+                toQuery databases(connection(), SQLListDatabases, owner);
                 while (!databases.eof())
                 {
                     QString db = databases.readValue();
@@ -1550,7 +1547,7 @@ class qSqlConnection : public toConnection::connectionImpl
                     ret.insert(ret.end(), cur);
                     try
                     {
-                        toQuery tables(connection(), SQLListObjectsDatabase, db);
+                        toQuery tables(connection(), SQLListObjectsDatabase, db, name);
                         while (!tables.eof())
                         {
                             cur.Name = tables.readValue();
@@ -1568,6 +1565,7 @@ class qSqlConnection : public toConnection::connectionImpl
             }
             catch (...)
             {
+                // TODO: Optimise this code to fetch only required data (as per parameter values)
                 toQuery tables(connection(), SQLListObjects);
                 while (!tables.eof())
                 {
