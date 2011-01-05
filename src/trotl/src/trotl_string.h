@@ -64,7 +64,7 @@ struct TROTL_EXPORT BindParVarchar: public SqlStatement::BindPar
 	{
 		/* amount of bytes =  (string length +1 ) * (array length) */
 		valuep = (void**) calloc(_cnt, ct._width + 1);
-		alenp = (ub2*) calloc(_cnt, sizeof(ub2));
+		alenp = (ub2*) calloc(_cnt, sizeof(ub4));
 		
 		dty = SQLT_STR;
 		value_sz = ct._width + 1;
@@ -87,7 +87,7 @@ struct TROTL_EXPORT BindParVarchar: public SqlStatement::BindPar
 
 	virtual tstring get_string(unsigned int row) const
 	{	  
-	  return is_null(row) ? "NULL" : tstring(((char*)valuep)+(row * value_sz));
+		return is_null(row) ? "NULL" : tstring(((char*)valuep)+(row * value_sz));
 	}
 
 protected:
@@ -101,7 +101,7 @@ struct TROTL_EXPORT BindParChar: public SqlStatement::BindPar
 	BindParChar(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 	{
 		valuep = (void**) calloc(_cnt, ct._width + 1); // TODO +1 ?? why?
-		alenp = (ub2*) calloc(_cnt, sizeof(ub2));
+		alenp = (ub2*) calloc(_cnt, sizeof(ub4));
 		
 		dty = SQLT_CHR;
 		value_sz = ct._width;
@@ -140,7 +140,7 @@ struct TROTL_EXPORT BindParRaw: public SqlStatement::BindPar
 	{
 		// amount of bytes =  (string length +1 ) * (array length)
 		valuep = (void**) calloc(_cnt, ct._width + 1);
-		alenp = (ub2*) calloc(_cnt, sizeof(ub2));
+		alenp = (ub2*) calloc(_cnt, sizeof(ub4));
 		
 		dty = SQLT_BIN;
 		value_sz = ct._width;
@@ -182,6 +182,66 @@ protected:
 		BindParRaw(const BindParRaw &other);
 };
 
+struct TROTL_EXPORT BindParLong: public SqlStatement::BindPar
+{
+  	BindParLong(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
+	{
+		/* amount of bytes =  (string length +1 ) * (array length) */
+		valuep = (void**) calloc(8192, 1);
+		alenp = (ub2*) calloc(_cnt, sizeof(ub4));
+
+		alenp[0] = 8192;
+		
+		dty = SQLT_LNG;
+		value_sz = 0x10000000; //ct._width + 1;
+		type_name = typeid(tstring).name();
+		mode = OCI_DYNAMIC_FETCH;
+
+		s.reserve(_cnt);
+		for(unsigned i=0; i<_cnt; ++i)
+		{
+			s.push_back(new std::stringstream());
+		}
+	}
+
+	BindParLong(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl) : SqlStatement::BindPar(pos, stmt, decl)
+	{
+		// amount of bytes =  (string length +1 ) * (array length)
+		valuep = (void**) calloc(decl.bracket[0]+1, decl.bracket[1]);
+		alenp = (ub2*) calloc(_cnt, sizeof(ub2));
+
+		alenp[0] = 16;
+		
+		dty = SQLT_LNG;
+		value_sz = decl.bracket[0]+1;
+		type_name = typeid(tstring).name();
+	}
+
+
+	virtual void fetch_hook(ub4 iter, ub4 idx, ub1 piece, ub4 alen, sb2 ind);
+
+	//virtual void define_hook();
+	//static sb4 cdf_fetch_buffer(dvoid *ctx, OCIDefine *defnp, ub4 iter, dvoid **bufpp, ub4 **alenpp, ub1 *piecep, dvoid **indpp, ub2 **rcpp);
+	
+	~BindParLong()
+	{
+		for(unsigned i=0; i<_cnt; ++i)
+		{
+			delete s.at(i);
+		}
+	}
+
+	virtual tstring get_string(unsigned int row) const
+	{	  
+		//return is_null(row) ? "NULL" : tstring(((char*)valuep)+(row * value_sz));
+		return s.at(row)->str();
+	}
+
+protected:
+	BindParLong(const BindParLong &other);
+	std::vector<std::stringstream*> s;
+};
+ 
 };
 
 #endif

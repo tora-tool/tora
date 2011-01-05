@@ -207,28 +207,28 @@ struct TROTL_EXPORT ConvertorForWrite: public Convertor
 	void Fire(const SqlDateTime &SV, BindParDate &BP);
 	void Fire(const SqlBlob &SV, BindParBlob &BP);
 	void Fire(const SqlClob &SV, BindParClob &BP);
-	void Fire(const SqlInt<int> &SV, BindParInt &BP);
+	void Fire(const SqlInt<int> &SV, BindParCInt &BP);
 #ifdef ORACLE_HAS_XML
 	void Fire(const SqlXML &SV, BindParXML &BP);
 #endif
 
 	void Fire(const SqlDateTime &SV, BindParClob &BP) { OnError(SV, BP); };
 	void Fire(const SqlDateTime &SV, BindParBlob &BP) { OnError(SV, BP); }
-	void Fire(const SqlDateTime &SV, BindParInt &BP) { OnError(SV, BP); };
+	void Fire(const SqlDateTime &SV, BindParCInt &BP) { OnError(SV, BP); };
 #ifdef ORACLE_HAS_XML
 	void Fire(const SqlDateTime &SV, BindParXML &BP) { OnError(SV, BP); };
 #endif
 
  	void Fire(const SqlBlob &SV, BindParDate &BP) { OnError(SV, BP); };
 	void Fire(const SqlBlob &SV, BindParClob &BP) { OnError(SV, BP); };
-	void Fire(const SqlBlob &SV, BindParInt &BP) { OnError(SV, BP); };
+	void Fire(const SqlBlob &SV, BindParCInt &BP) { OnError(SV, BP); };
 #ifdef ORACLE_HAS_XML
  	void Fire(const SqlBlob &SV, BindParXML &BP) { OnError(SV, BP); };
 #endif
 
  	void Fire(const SqlClob &SV, BindParDate &BP) { OnError(SV, BP); };
   	void Fire(const SqlClob &SV, BindParBlob &BP) { OnError(SV, BP); };
-  	void Fire(const SqlClob &SV, BindParInt &BP) { OnError(SV, BP); };
+  	void Fire(const SqlClob &SV, BindParCInt &BP) { OnError(SV, BP); };
 #ifdef ORACLE_HAS_XML
 	void Fire(const SqlClob &SV, BindParXML &BP) { OnError(SV, BP); };
 #endif
@@ -244,7 +244,7 @@ struct TROTL_EXPORT ConvertorForWrite: public Convertor
 	void Fire(const SqlXML &SV, BindParDate &BP) { OnError(SV, BP); };
   	void Fire(const SqlXML &SV, BindParBlob &BP) { OnError(SV, BP); };
 	void Fire(const SqlXML &SV, BindParClob &BP) { OnError(SV, BP); };
-	void Fire(const SqlXML &SV, BindParInt &BP) { OnError(SV, BP); };
+	void Fire(const SqlXML &SV, BindParCInt &BP) { OnError(SV, BP); };
 #endif
 
 private:
@@ -267,9 +267,9 @@ false,
 SqlStatement::BindPar,
 
 #ifdef ORACLE_HAS_XML
-LOKI_TYPELIST_5(BindParInt, BindParClob, BindParBlob, BindParDate, BindParXML),
+LOKI_TYPELIST_5(BindParCInt, BindParClob, BindParBlob, BindParDate, BindParXML),
 #else
-LOKI_TYPELIST_4(BindParInt, BindParClob, BindParBlob, BindParDate),
+LOKI_TYPELIST_4(BindParCInt, BindParClob, BindParBlob, BindParDate),
 #endif
 
 void

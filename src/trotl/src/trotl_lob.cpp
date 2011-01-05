@@ -125,13 +125,13 @@ void BindParLob::descFree(void)
 }
 
 // TODO add ind skip here
-void BindParLob::bind_hook(SqlStatement &stmt)
+void BindParLob::bind_hook()
 {
-	sword res = OCICALL(OCIBindArrayOfStruct(bindp, stmt._errh, sizeof(OCILobLocator*), 0, 0, 0 ));
-	oci_check_error(__TROTL_HERE__, stmt._errh, res);
+	sword res = OCICALL(OCIBindArrayOfStruct(bindp, _stmt._errh, sizeof(OCILobLocator*), 0, 0, 0 ));
+	oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 }
 // TODO add ind skip here
-void BindParLob::define_hook(SqlStatement &stmt)
+void BindParLob::define_hook()
 {
 //	sword res = OCICALL(OCIDefineArrayOfStruct(defnpp , _env._errh, sizeof(OCILobLocator*), 0, 0, 0 ));
 //	oci_check_error(__TROTL_HERE__, _env, res);

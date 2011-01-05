@@ -49,10 +49,11 @@
 
 namespace trotl {
 
+
 int TROTL_EXPORT g_OCIPL_BULK_ROWS = 3;
-int TROTL_EXPORT g_OCIPL_MAX_LONG = 30000;
-char TROTL_EXPORT *g_TROTL_DEFAULT_NUM_FTM = "TM";
-char TROTL_EXPORT *g_TROTL_DEFAULT_DATE_FTM = "YYYY:MM:DD HH24:MI:SS";
+int TROTL_EXPORT g_OCIPL_MAX_LONG = 0x20000; //128 KB
+const char TROTL_EXPORT *g_TROTL_DEFAULT_NUM_FTM = "TM";
+const char TROTL_EXPORT *g_TROTL_DEFAULT_DATE_FTM = "YYYY:MM:DD HH24:MI:SS";
   
 SqlStatement::SqlStatement(OciConnection& conn, const tstring& stmt, ub4 lang, int bulk_rows)
 : super(conn._env),
@@ -64,10 +65,10 @@ _parsed_stmt(""),
 _state(UNINITIALIZED),
 _stmt_type(STMT_NONE),
 _param_count(0), _column_count(0),
-_in_cnt(0), _out_cnt(0), _iters(0),
+_in_cnt(0), _out_cnt(0), 
 _last_row(-1),
 _last_fetched_row(-1),
-_in_pos(0), _out_pos(0),
+_in_pos(0), _out_pos(0), _iters(0),
 _last_buff_row(0), _buff_size(g_OCIPL_BULK_ROWS),
 _all_binds(NULL), _in_binds(NULL), _out_binds(NULL),
 _bound(false)
@@ -142,10 +143,10 @@ _parsed_stmt(""),
 _state(UNINITIALIZED),
 _stmt_type(STMT_NONE),
 _param_count(0), _column_count(0),
-_in_cnt(0), _out_cnt(0), _iters(0),
+_in_cnt(0), _out_cnt(0),
 _last_row(-1),
 _last_fetched_row(-1),
-_in_pos(0), _out_pos(0),
+_in_pos(0), _out_pos(0), _iters(0),
 _last_buff_row(0), _buff_size(g_OCIPL_BULK_ROWS),
 _all_binds(NULL), _in_binds(NULL), _out_binds(NULL),
 _bound(false)
@@ -326,7 +327,7 @@ const SqlStatement::BindPar& SqlStatement::get_curr_out_bindpar()
 	if( _all_binds == 0 || _out_binds == 0 )
 		throw OciException(__TROTL_HERE__, "No out Bindpars specified");
 
-	ub4 pos = _out_pos < _out_cnt ? (_out_pos+1) : 1;  //Round robin hack
+	//ub4 pos = _out_pos < _out_cnt ? (_out_pos+1) : 1;  //Round robin hack
 	return *_all_binds[_out_binds[_out_pos ? _out_pos : 1 ]];
 }
 
@@ -391,6 +392,7 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 			break;
 		_iters  = _all_binds[_in_binds[1]]->_cnt;
 		// Loop over input bind vars - insert can have out binds too(i.e. returning clause)
+		// and check vector lengths
 		for(unsigned i=1; i<=_in_cnt; ++i)
 			if(_all_binds[_in_binds[i]]->_cnt != _iters)
 				throw OciException(__TROTL_HERE__, "Wrong count of bindvars: (%d vs. %d)\n")
@@ -422,6 +424,8 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		}
 	}
 	_bound = true;
+
+	define_all();
 	
 	// execute and do not fetch
 	sword res = OCICALL(OCIStmtExecute(
@@ -465,28 +469,74 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 	}
 }
 
-bool SqlStatement::fetch(ub4 rows/*=-1*/)
+void SqlStatement::fetch(ub4 rows/*=-1*/)
 {
 	sword res = OCICALL(OCIStmtFetch(_handle, _errh, rows, OCI_FETCH_NEXT, OCI_DEFAULT));
-	
- 	_last_row += _last_buff_row;
-	_last_fetched_row = row_count();
-	_last_buff_row = 0;
+
+	while (res == OCI_NEED_DATA)
+	{
+		// NOTE: idx is ignored here, therefore fetch for TABLE OF LONG will fail
+		ub1   piece = OCI_FIRST_PIECE, in_out = 0;
+		dvoid *hdlptr = (dvoid *) 0;
+		ub4   hdltype = OCI_HTYPE_DEFINE, iter = 0, idx = 0;
+		BindPar *BPp = 0;
+		sword res2;
+		
+		res2 = OCICALL(OCIStmtGetPieceInfo(_handle, _errh, &hdlptr, &hdltype, &in_out, &iter, &idx, &piece));
+		oci_check_error(__TROTL_HERE__, _errh, res2);
+		
+		switch(hdltype)
+		{
+		case OCI_HTYPE_DEFINE:
+			for(unsigned i=1; i<=_column_count; ++i)
+			{
+				if(_all_defines[i].get()->defnpp == hdlptr)
+				{
+					BPp = _all_defines[i].get();
+					break;
+				}
+			}
+			break;
+		case OCI_HTYPE_BIND:
+			for(unsigned i=1; i<=_param_count; ++i)
+			{
+				if(_all_binds[i].get()->bindp == hdlptr)
+				{
+					BPp = _all_binds[i].get();
+					break;
+				}
+			}
+			break;
+		}
+
+		ub4   alen  = (ub4)BPp->alenp[0];
+		sb2   indptr = 0;
+		ub2   rcode = 0;
+
+		res2 = OCICALL(OCIStmtSetPieceInfo((dvoid *)hdlptr, (ub4)hdltype, _errh, (dvoid *) BPp->valuep, &alen, piece, (dvoid *)&indptr, &rcode));
+		oci_check_error(__TROTL_HERE__, _errh, res2);
+			
+		res = OCICALL(OCIStmtFetch(_handle, _errh, rows, OCI_FETCH_NEXT, OCI_DEFAULT));
+		if(res == OCI_NEED_DATA || res == OCI_NO_DATA || res == OCI_SUCCESS || res == OCI_SUCCESS_WITH_INFO)
+			BPp->fetch_hook(iter, idx, piece, alen, indptr);
+	}
 
 	switch(res)
 	{
+	case OCI_NO_DATA:
+		_state |= EOF_DATA;		
 	case OCI_SUCCESS:
 		_state |= FETCHED;
-		return true;
-	case OCI_NO_DATA:
-		_state |= FETCHED | EOF_DATA;
-		return false;
+		break;
+	// case OCI_NEED_DATA:
+	// 	break;
 	default:
 		oci_check_error(__TROTL_HERE__, _errh, res);
-		//oci_check_error(__TROTL_HERE__, *this, res);
-		return true;
 	}
-			
+
+	_last_row += _last_buff_row;
+	_last_fetched_row = row_count();
+	_last_buff_row = 0;
 }
 
 ub4 SqlStatement::row_count() const
@@ -544,21 +594,21 @@ void SqlStatement::bind(BindPar &bp)
   
 
 	sword res = OCICALL(OCIBindByName (_handle,
-			&bp.bindp,
-			_errh,
-			(const OraText*)bp.bind_name.c_str(),
-			bp.bind_name.length(),
-			bp.valuep,
-			bp.value_sz,
-			bp.dty,
-			bp.indp,
-			(bp._bind_type == BindPar::BIND_IN ? NULL : bp.alenp),
-			0, // *rcodep
-			//NULL for non-PL/SQL statements - maybe
-			(((_stmt_type == STMT_DECLARE ||_stmt_type == STMT_BEGIN ) && bp._max_cnt > 1) ? bp._max_cnt : 0),
-			//NULL for non-PL/SQL statements
-			(ub4*)(((_stmt_type == STMT_DECLARE ||_stmt_type == STMT_BEGIN ) && bp._max_cnt > 1) ? &bp._cnt : NULL),
-			OCI_DEFAULT));
+					   &bp.bindp,
+					   _errh,
+					   (const OraText*)bp.bind_name.c_str(),
+					   bp.bind_name.length(),
+					   bp.valuep,
+					   bp.value_sz,
+					   bp.dty,
+					   bp.indp,
+					   (bp._bind_type == BindPar::BIND_IN ? NULL : bp.alenp),
+					   0, // *rcodep
+					   //NULL for non-PL/SQL statements - maybe
+					   (((_stmt_type == STMT_DECLARE ||_stmt_type == STMT_BEGIN ) && bp._max_cnt > 1) ? bp._max_cnt : 0),
+					   //NULL for non-PL/SQL statements
+					   (ub4*)(((_stmt_type == STMT_DECLARE ||_stmt_type == STMT_BEGIN ) && bp._max_cnt > 1) ? &bp._cnt : NULL),
+					   OCI_DEFAULT));
 	oci_check_error(__TROTL_HERE__, _errh, res);
 
 //	std::cout << std::endl
@@ -568,28 +618,28 @@ void SqlStatement::bind(BindPar &bp)
 //	<< "stmt_type2:" << ((_stmt_type == STMT_DECLARE ||_stmt_type == STMT_BEGIN) ? bp._max_cnt : 0) << std::endl
 //	<< "stmt_type3:" << ((_stmt_type == STMT_DECLARE ||_stmt_type == STMT_BEGIN) ? bp._cnt : NULL) << std::endl
 //	<< std::endl;
- 	bp.bind_hook(*this);
+	bp.bind_hook();
 //TODO use atribute OCI_ATTR_MAXDATA_SIZE here
 	bp._bound = true;
 }
 
-	void SqlStatement::define(BindPar &dp)
-	{
-		sword res = OCICALL(OCIDefineByPos(_handle/*stmtp*/,
-						   &dp.defnpp,		  // (OCIDefine **)
-						   _errh,		  // (OCIError*)
-						   dp._pos,		  // ub4 position
-						   dp.valuep,		  // dvoid *valuep
-						   dp.value_sz,		  // sb4 value_sz
-						   dp.dty,		  // ub2 dty
-						   dp.indp,		  // dvoid *indp
-						   (ub2*) dp.rlenp,	  // ub2 *rlenp
-						   NULL,		  // ub2 *rcodep
-						   dp.mode));
-		oci_check_error(__TROTL_HERE__, _errh, res);
+void SqlStatement::define(BindPar &dp)
+{
+	sword res = OCICALL(OCIDefineByPos(_handle/*stmtp*/,
+					   &dp.defnpp,		  // (OCIDefine **)
+					   _errh,		  // (OCIError*)
+					   dp._pos,		  // ub4 position
+					   dp.valuep,		  // dvoid *valuep
+					   dp.value_sz,		  // sb4 value_sz
+					   dp.dty,		  // ub2 dty
+					   dp.indp,		  // dvoid *indp
+					   (ub2*) dp.rlenp,	  // ub2 *rlenp
+					   NULL,		  // ub2 *rcodep
+					   dp.mode));             // ub4 mode (OCI_DEFAULT,OCI_DYNAMIC_FETCH,...)
+	oci_check_error(__TROTL_HERE__, _errh, res);
 		
-		dp.define_hook(*this);
-	}
+	dp.define_hook();
+}
 
 SqlStatement::~SqlStatement()
 {

@@ -43,19 +43,19 @@ Util::RegisterInFactory<BindParCollectionTabNum, CustDefineParFactTwoParmSing> r
 Util::RegisterInFactory<BindParCollectionTabVarchar, CustDefineParFactTwoParmSing> regCustDefineNTY_VARCHAR_TAB("TABLE OF VARCHAR2");
 Util::RegisterInFactory<BindParCollectionTabVarchar, CustDefineParFactTwoParmSing> regCustDefineNTY_CHAR_TAB("TABLE OF CHAR");
 
-void BindParCollectionTabNum::define_hook(SqlStatement &stmt)
+void BindParCollectionTabNum::define_hook()
 {
 	//ub4 *size = 0;
 	sword res;
-	res = OCICALL(OCIDefineObject(defnpp, stmt._errh, _collection_tdo,
+	res = OCICALL(OCIDefineObject(defnpp, _stmt._errh, _collection_tdo,
 				      valuep,
 				      (ub4 *) NULL,
 				      (void**) _collection_indp, //(dvoid **) NULL
 				      (ub4 *) 0));
- 	oci_check_error(__TROTL_HERE__, stmt._errh, res);
+ 	oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 }
 
-void BindParCollectionTabNum::bind_hook(SqlStatement &stmt)
+void BindParCollectionTabNum::bind_hook()
 {
 	//TODO
 	throw OciException(__TROTL_HERE__, "Not implemented yet");

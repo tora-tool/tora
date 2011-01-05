@@ -87,33 +87,33 @@ void BindParXML::init(SqlStatement &stmt)
 //	}
 }
 
-void BindParXML::define_hook(SqlStatement &stmt)
+void BindParXML::define_hook()
 {
 //	xmlsize = 0;
 
 //	std::cout << "OCIDefineObject" << std::endl;
 
-	sword res = OCICALL(OCIDefineObject(defnpp, stmt._errh,
-			xmltdo,
-			// TODO If the application wants the buffer to be implicitly allocated in the cache,
-			// *pgvpp should be passed in as null.
-			(dvoid **) &(_xmlvaluep[0]),
-			0,
-			0, //(dvoid **) &xml_ind,
-			0));
-	oci_check_error(__TROTL_HERE__, stmt._errh, res);
+	sword res = OCICALL(OCIDefineObject(defnpp, _stmt._errh,
+					    xmltdo,
+					    // TODO If the application wants the buffer to be implicitly allocated in the cache,
+					    // *pgvpp should be passed in as null.
+					    (dvoid **) &(_xmlvaluep[0]),
+					    0,
+					    0, //(dvoid **) &xml_ind,
+					    0));
+	oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 
 //	res = OCICALL(OCIDefineArrayOfStruct(defnpp, stmt._errh, sizeof(OCIXMLType*), 0, 0, 0));
 //	oci_check_error(__TROTL_HERE__, stmt._errh, res);
 }
 
-void BindParXML::bind_hook(SqlStatement &stmt)
+void BindParXML::bind_hook()
 {
 //	xmlsize = 0;
 
 //	std::cout << "OCIBindObject" << std::endl;
 
-	sword res = OCICALL(OCIBindObject(bindp, stmt._errh,
+	sword res = OCICALL(OCIBindObject(bindp, _stmt._errh,
 			xmltdo,
 			// TODO If the application wants the buffer to be implicitly allocated in the cache,
 			// *pgvpp should be passed in as null.
@@ -121,7 +121,7 @@ void BindParXML::bind_hook(SqlStatement &stmt)
 			0,
 			0, //(dvoid **) &xml_ind,
 			0));
-	oci_check_error(__TROTL_HERE__, stmt._errh, res);
+	oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 //  TODO
 //	if( _cnt > 1 ) {
 //		res = OCICALL(OCIDefineArrayOfStruct(bindp, conn._env._errh, sizeof(OCIXMLType*), 0, 0, 0));

@@ -87,8 +87,8 @@ struct TROTL_EXPORT BindParCollectionTabNum: public SqlStatement::BindPar
 
 	virtual tstring get_string(unsigned int row) const;
 
-	virtual void define_hook(SqlStatement &stmt);
-	virtual void bind_hook(SqlStatement &stmt);
+	virtual void define_hook();
+	virtual void bind_hook();
 
 
 //private:

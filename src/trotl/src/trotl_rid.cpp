@@ -89,14 +89,14 @@ void BindParRid::descFree(void)
 }
 
 // TODO add ind skip here
-void BindParRid::bind_hook(SqlStatement &stmt)
+void BindParRid::bind_hook()
 {
 //	sword res = OCICALL(OCIBindArrayOfStruct(bindp, stmt._errh, sizeof(OCIRowid*), 0, 0, 0 ));
 //	oci_check_error(__TROTL_HERE__, stmt._errh, res);
 }
 
 // TODO add ind skip here
-void BindParRid::define_hook(SqlStatement &stmt)
+void BindParRid::define_hook()
 {
 //	sword res = OCICALL(OCIDefineArrayOfStruct(defnpp , _env._errh, sizeof(OCIRowid*), 0, 0, 0 ));
 //	oci_check_error(__TROTL_HERE__, _stmt._errh, res);

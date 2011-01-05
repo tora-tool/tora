@@ -86,8 +86,8 @@ struct TROTL_EXPORT BindParXML: public SqlStatement::BindPar
 
 	void init(SqlStatement &stmt);
 
-	virtual void define_hook(SqlStatement &stmt);
-	virtual void bind_hook(SqlStatement &stmt);
+	virtual void define_hook();
+	virtual void bind_hook();
 
 
 //private:

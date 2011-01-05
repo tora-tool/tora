@@ -41,7 +41,7 @@ namespace trotl {
 
 Util::RegisterInFactory<BindParANYDATA, CustDefineParFactTwoParmSing> regCustDefineNTY_ANYDATA("SYS.ANYDATA");
 
-void BindParANYDATA::init(SqlStatement &stmt)
+void BindParANYDATA::init()
 {	
 	sword res;
 	_anydatatdo = 0;
@@ -64,19 +64,19 @@ void BindParANYDATA::init(SqlStatement &stmt)
 	}
 }
 
-void BindParANYDATA::define_hook(SqlStatement &stmt)
+void BindParANYDATA::define_hook()
 {
- 	sword res = OCICALL(OCIDefineObject(defnpp, stmt._errh,
+	sword res = OCICALL(OCIDefineObject(defnpp, _stmt._errh,
  					    _anydatatdo,
  					    (dvoid **) &(_oan_buffer[0]), //(dvoid **) &_oan_buffer,
  					    (ub4 *) 0,
  					    0, //(dvoid **) &_any_indp,
  					    (ub4 *) 0));
- 	oci_check_error(__TROTL_HERE__, stmt._errh, res);
+ 	oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 // 	// TODO OCIDefineArrayOfStruct here ??
 }
 
-void BindParANYDATA::bind_hook(SqlStatement &stmt)
+void BindParANYDATA::bind_hook()
 {
 	//TODO
 	throw OciException(__TROTL_HERE__, "Not implemented yet");

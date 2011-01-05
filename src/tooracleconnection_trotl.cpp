@@ -56,6 +56,7 @@
 #include <trotl.h>
 #include <trotl_convertor.h>
 #include <trotl_anydata.h>
+#include <trotl_cursor.h>
 
 #include "utils.h"
 #include "toconf.h"
@@ -109,7 +110,7 @@ static toSQL SQLListObjects("toOracleConnection:ListObjects",
                             "  from sys.all_objects a,\n"
                             "       sys.all_tab_comments b\n"
                             " where a.owner = b.owner(+) and a.object_name = b.table_name(+)\n"
-                            "   and a.object_type = b.table_type(+) and a.object_type <> 'SYNONYM'"
+                            "   and a.object_type = b.table_type(+) and a.object_type != 'SYNONYM'\n"
                             "   and a.owner = nvl(:owner<char[101]>, a.owner)"
                             "   and a.object_type = nvl(:type<char[101]>, a.object_type)"
                             "   and a.object_name = nvl(:name<char[101]>, a.object_name)",
@@ -473,6 +474,67 @@ protected:
 };
 //Q_DECLARE_METATYPE(toOracleCollection*)
 
+class toOracleCursor: public toQValue::complexType
+{
+public:
+	toOracleCursor() {};
+	
+	/* virtual */ bool isBinary() const
+	{
+		return false;
+	}
+	/* virtual */ bool isLarge() const
+	{
+		return true;
+	}
+
+
+	/* virtual */ QString displayData() const
+	{
+		return QString("{cursor}");
+	}
+	
+	/* virtual */ QString editData() const
+	{
+		std::string s;
+		data >> s;
+		return QString(s.c_str());
+	}
+
+	/* virtual */ QString userData() const
+	{
+		return QString("cursor");
+	}
+
+	/* virtual */ QString tooltipData() const
+	{
+		return dataTypeName();
+	}
+
+	/* virtual */ QString dataTypeName() const
+	{
+		return QString("cursor SQLT_RSET");
+	}
+	/* virtual */ QByteArray read(unsigned offset) const
+	{
+		return QByteArray();	  
+	}
+	/* virtual */ void write(QByteArray const &data)
+	{
+	}	
+	/* virtual */ ~toOracleCursor()
+	{
+		TLOG(1,toDecorator,__HERE__) << "toOracleCursor DELETED:" << this << std::endl;
+	}
+
+	mutable trotl::SqlCursor data;
+protected:
+	toOracleCursor(toOracleCursor const&);
+	toOracleCursor operator=(toOracleCursor const&);
+	//TODO copying prohibited
+};
+//Q_DECLARE_METATYPE(toOracleCursor*)
+
 class toOracleProvider : public toConnectionProvider
 {
 	::trotl::OciEnv *_envp;
@@ -723,6 +785,16 @@ public:
 						TLOG(4,toDecorator,__HERE__) << "Just read: \"BLOB\"" << std::endl; 
 					}						
 					break;
+					case SQLT_RSET:
+					{
+						toOracleCursor *i = new toOracleCursor();
+						trotl::ConvertorForRead c(_last_buff_row);
+						trotl::DispatcherForRead::Go(BP, i->data, c);
+						QVariant v;
+						v.setValue((toQValue::complexType*)i);
+						value = toQValue::fromVariant(v);
+						TLOG(4,toDecorator,__HERE__) << "Just read: \"CURSOR\"" << std::endl;
+					}
 					default:
 						std::string s(BP.get_string(_last_buff_row));
 						value = toQValue(QString(s.c_str()));
@@ -1220,8 +1292,9 @@ public:
 
 	virtual void initialize(void)
 	{
-		toMaxLong = toConfigurationSingle::Instance().maxLong();
-		::trotl::g_OCIPL_MAX_LONG = ( toConfigurationSingle::Instance().maxLong() == -1 ? ::trotl::g_OCIPL_MAX_LONG : toConfigurationSingle::Instance().maxLong() );
+		toMaxLong = toConfigurationSingle::Instance().maxLong() == -1 ? 0x80000000 : toConfigurationSingle::Instance().maxLong();		  
+		::trotl::g_OCIPL_MAX_LONG = toMaxLong;
+		
 		dateFormat = toConfigurationSingle::Instance().dateFormat().toAscii();
 		::trotl::g_TROTL_DEFAULT_DATE_FTM = const_cast<char*>(dateFormat.constData());
 		::trotl::OciEnvAlloc *_envallocp = new ::trotl::OciEnvAlloc;
@@ -1851,21 +1924,20 @@ void toOracleSetting::saveSetting()
 	toConfigurationSingle::Instance().setOpenCursors(OpenCursors->value());
 
 	/*
-	  TODO - there is nothing like "unlimited" size for LONG.
-	  max size for LONG col. is 2GB, so we should prepare
-	  at least one 2GB buffer in RAM.
-	  In reality we use 30000B if toMaxLong == -1.
+	  max size for LONG col. is 2GB, so we should prepare at least one 4GB buffer in RAM.
+	  2GB for trotl's internal buffer + 2GB for toQValue
 	*/
 	if (Unlimited->isChecked())
 	{
 		toConfigurationSingle::Instance().setMaxLong(-1);
-		toMaxLong = MAXTOMAXLONG;
+		toMaxLong = 0x80000000; // 2GB max size for LONG
 	}
 	else
 	{
 		toConfigurationSingle::Instance().setMaxLong(MaxLong->text().toInt());
 		toMaxLong = MaxLong->text().toInt();
 	}
+	::trotl::g_OCIPL_MAX_LONG = toMaxLong;
 }
 
 

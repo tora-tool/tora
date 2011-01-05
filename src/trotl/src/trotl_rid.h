@@ -48,8 +48,8 @@ struct TROTL_EXPORT BindParRid: public SqlStatement::BindPar
 
 	virtual tstring get_string(unsigned int) const;       
    
-	virtual void bind_hook(SqlStatement &stmt);
-	virtual void define_hook(SqlStatement &stmt);
+	virtual void bind_hook();
+	virtual void define_hook();
 
 private:
 	void descAlloc(void); //TODO OCI_DTYPE_FILE for BFILE, CFILE

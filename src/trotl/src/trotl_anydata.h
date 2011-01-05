@@ -66,7 +66,7 @@ struct TROTL_EXPORT BindParANYDATA: public SqlStatement::BindPar
 			((ub2*)rlenp)[i] = (ub2) value_sz;
 		}		
 
-		init(stmt);
+		init();
 	}
 	
 	BindParANYDATA(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl) : SqlStatement::BindPar(pos, stmt, decl)
@@ -81,7 +81,7 @@ struct TROTL_EXPORT BindParANYDATA: public SqlStatement::BindPar
 			((ub4*)rlenp)[i] = (ub4) value_sz;
 		}		
 
-		init(stmt);
+		init();
 	}
 	
 	~BindParANYDATA()
@@ -91,10 +91,10 @@ struct TROTL_EXPORT BindParANYDATA: public SqlStatement::BindPar
 
 	virtual tstring get_string(unsigned int row) const;
 
-	void init(SqlStatement &stmt);
+	void init();
 
-	virtual void define_hook(SqlStatement &stmt);
-	virtual void bind_hook(SqlStatement &stmt);
+	virtual void define_hook();
+	virtual void bind_hook();
 
 
 //private:

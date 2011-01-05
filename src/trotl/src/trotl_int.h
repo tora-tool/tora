@@ -50,12 +50,12 @@ struct BindParNumber;
 typedef BindParNumber prefferedNumericType;
 
 /* The template TBindPar is defined in trotl_stat.h */   
-typedef TROTL_EXPORT TBindParInt<int,           SQLT<int>::value> BindParInt;
-typedef TROTL_EXPORT TBindParInt<long,          SQLT<long>::value> BindParLong;
-typedef TROTL_EXPORT TBindParInt<unsigned int,  SQLT<unsigned int>::value> BindParUInt;
-typedef TROTL_EXPORT TBindParInt<unsigned long, SQLT<unsigned long>::value> BindParULong;
-typedef TROTL_EXPORT TBindParInt<double,        SQLT<double>::value> BindParDouble;
-typedef TROTL_EXPORT TBindParInt<float,         SQLT<float>::value> BindParFloat;
+typedef TROTL_EXPORT TBindParInt<int,           SQLT<int>::value> BindParCInt;
+typedef TROTL_EXPORT TBindParInt<long,          SQLT<long>::value> BindParCLong;
+typedef TROTL_EXPORT TBindParInt<unsigned int,  SQLT<unsigned int>::value> BindParCUInt;
+typedef TROTL_EXPORT TBindParInt<unsigned long, SQLT<unsigned long>::value> BindParCULong;
+typedef TROTL_EXPORT TBindParInt<double,        SQLT<double>::value> BindParCDouble;
+typedef TROTL_EXPORT TBindParInt<float,         SQLT<float>::value> BindParCFloat;
 
 namespace Private
 {

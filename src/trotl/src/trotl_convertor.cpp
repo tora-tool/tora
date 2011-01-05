@@ -100,32 +100,32 @@ void ConvertorForRead::Fire(const BindParBlob &BP, SqlBlob &BL)
 
 void ConvertorForRead::Fire(const prefferedNumericType &BP, SqlInt<int> &BL)
 {
-	throw OciException(__TROTL_HERE__, "Conversion from BindParInt to SqlInt<int> implemented elsewhere");
+	throw OciException(__TROTL_HERE__, "Conversion from BindParCInt to SqlInt<int> implemented elsewhere");
 };
 
 void ConvertorForRead::Fire(const prefferedNumericType &BP, SqlInt<unsigned int> &BL)
 {
-	throw OciException(__TROTL_HERE__, "Conversion from BindParInt to SqlInt<unsigned int> implemented elsewhere");
+	throw OciException(__TROTL_HERE__, "Conversion from BindParCInt to SqlInt<unsigned int> implemented elsewhere");
 };
 
 void ConvertorForRead::Fire(const prefferedNumericType &BP, SqlInt<long> &BL)
 {
-	throw OciException(__TROTL_HERE__, "Conversion from BindParInt to SqlInt<long> implemented elsewhere");
+	throw OciException(__TROTL_HERE__, "Conversion from BindParCInt to SqlInt<long> implemented elsewhere");
 };
 
 void ConvertorForRead::Fire(const prefferedNumericType &BP, SqlInt<unsigned long> &BL)
 {
-	throw OciException(__TROTL_HERE__, "Conversion from BindParInt to SqlInt<unsigned long> implemented elsewhere");
+	throw OciException(__TROTL_HERE__, "Conversion from BindParCInt to SqlInt<unsigned long> implemented elsewhere");
 };
 
 void ConvertorForRead::Fire(const prefferedNumericType &BP, SqlInt<float> &BL)
 {
-	throw OciException(__TROTL_HERE__, "Conversion from BindParInt to SqlInt<float> implemented elsewhere");
+	throw OciException(__TROTL_HERE__, "Conversion from BindParCInt to SqlInt<float> implemented elsewhere");
 };
 
 void ConvertorForRead::Fire(const prefferedNumericType &BP, SqlInt<double> &BL)
 {
-	throw OciException(__TROTL_HERE__, "Conversion from BindParInt to SqlInt<double> implemented elsewhere");
+	throw OciException(__TROTL_HERE__, "Conversion from BindParCInt to SqlInt<double> implemented elsewhere");
 };
 
 // todo - this relies on the fact that prefferedNumericType is BindParNumber now
@@ -238,9 +238,9 @@ void ConvertorForWrite::Fire(const SqlBlob &BL, BindParBlob &BP)
 	BP.indp[_row] = BL._ind;
 };
 
-void ConvertorForWrite::Fire(const SqlInt<int> &BL, BindParInt &BP)
+void ConvertorForWrite::Fire(const SqlInt<int> &BL, BindParCInt &BP)
 {
-	throw OciException(__TROTL_HERE__, "Conversion from SqlInt<int> to BindParInt implemented elsewhere");
+	throw OciException(__TROTL_HERE__, "Conversion from SqlInt<int> to BindParCInt implemented elsewhere");
 };
 
 #ifdef ORACLE_HAS_XML

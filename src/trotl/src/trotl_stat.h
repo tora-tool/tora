@@ -172,8 +172,9 @@ public:
 		 * OCIBindArrayOfStructures, OCIBindObject etc, ...
 		 * is called *after* OCIDefineByPos
 		 */
-		virtual void bind_hook(SqlStatement&) {};
-		virtual void define_hook(SqlStatement&) {};
+		virtual void bind_hook() {};
+		virtual void define_hook() {};
+		virtual void fetch_hook(ub4 iter, ub4 idx, ub1 piece, ub4, sb2 ind) {};
 
 		/* members used for OCI calls */
 		dvoid **valuep;
@@ -182,7 +183,7 @@ public:
 		OCIInd *indp;	// OCIInd aka sb2 ignored for SQL_NTY and SQL_REF
 		void *rlenp;
 		//ub2 *rcodep;
-		ub2 *alenp;
+		ub2 *alenp;	// (ub2*) in case of Bind op. (ub4*) in case of Define op.
 		ub4 mode;	// define mode = OCI_DEFAULT, except for SQLT_LONG => OCI_DYNAMIC_FETCH TODO fix long
 		OCIBind *bindp;
 		OCIDefine *defnpp;  //TODO union with OCIBind *bindpp
@@ -373,7 +374,6 @@ public:
 	OciConnection &_conn;
 	mutable OciError _errh;
 
-protected:
 	enum STATE {
 		UNINITIALIZED=0,
 		PREPARED=1,
@@ -384,12 +384,13 @@ protected:
 		EOF_DATA=32,
 		STMT_ERROR=64
 	};
+protected:
 
 	virtual void prepare(const tstring& sql, ub4 lang=OCI_NTV_SYNTAX);
 
 	void execute_describe();
 
-	bool fetch(ub4 rows=-1);
+	void fetch(ub4 rows=-1);
 	
 	/* OCIBindByPos - for PL/SQL statements */
 	void bind(BindPar &bp);

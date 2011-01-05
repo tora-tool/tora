@@ -53,8 +53,8 @@ struct TROTL_EXPORT BindParLob: public SqlStatement::BindPar
 		//return "";
 	}
 
-	virtual void bind_hook(SqlStatement &stmt);
-	virtual void define_hook(SqlStatement &stmt);
+	virtual void bind_hook();
+	virtual void define_hook();
 
 	boolean	isTemporary(unsigned row) const;
 	ub4 getChunkSize(unsigned row) const;
