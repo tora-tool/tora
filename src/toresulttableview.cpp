@@ -834,6 +834,7 @@ bool toResultTableView::queryFromCache(const QString &owner, const QString &type
     // when a new model is created the column sizes are lost
     applyColumnRules();
     Ready = true;
+    return true;
 }
 
 // ---------------------------------------- iterator
