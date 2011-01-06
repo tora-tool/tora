@@ -59,7 +59,7 @@ toConnectionPoolTest::toConnectionPoolTest(toConnectionPool *pool)
 
 void toConnectionPoolTest::run() {
     timer = new QTimer();
-    timer->setInterval(toConfigurationSingle::Instance().connTestInterval());
+    timer->setInterval(toConfigurationSingle::Instance().connTestInterval()*1000); // Test interval in miliseconds and connTestInterval in seconds
     connect(timer, SIGNAL(timeout()), this, SLOT(test()), Qt::DirectConnection);
     timer->start();
 
