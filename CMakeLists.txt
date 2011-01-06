@@ -54,8 +54,6 @@ INCLUDE(TestBigEndian)
 #Set the custom CMake module directory where our include/lib finders are
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
-INCLUDE(LibSuffix)
-
 #Project Setup
 PROJECT(TOra)
 #Set our version values
@@ -76,6 +74,9 @@ endif(WANT_BUNDLE)
 ADD_DEFINITIONS("-DTOVERSION=\\\"${VERSION}\\\"")
 # Allow using CMAKE-related ifdefs in the code. See e.g. toqsqlconnection.cpp.
 ADD_DEFINITIONS("-DCMAKE_BUILD")
+
+# Ok, it has to be called after project is set. The we are sure we have size of void pointer set correctly...
+INCLUDE(LibSuffix)
 
 #Set the permissions to be used when installing plugins
 SET(PLUGIN_PERMISSIONS WORLD_EXECUTE GROUP_EXECUTE OWNER_EXECUTE WORLD_READ GROUP_READ OWNER_READ OWNER_WRITE)

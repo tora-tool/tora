@@ -3,6 +3,7 @@ IF (NOT LIB_SUFFIX)
 	MESSAGE(STATUS "") 
 	MESSAGE(STATUS "LIB_SUFFIX variable is not defined. It will be autodetected now.") 
 	MESSAGE(STATUS "You can set it manually with -DLIB_SUFFIX=<value> (64 for example)") 
+    MESSAGE(STATUS "CMAKE_SIZEOF_VOID_P=${CMAKE_SIZEOF_VOID_P}")
 	IF (NOT APPLE) 
 		# check 64 bit 
 		IF (CMAKE_SIZEOF_VOID_P EQUAL 4) 
