@@ -54,6 +54,8 @@ INCLUDE(TestBigEndian)
 #Set the custom CMake module directory where our include/lib finders are
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
+INCLUDE(LibSuffix)
+
 #Project Setup
 PROJECT(TOra)
 #Set our version values
