@@ -106,6 +106,9 @@ public:
     QString dateFormat();
     void setDateFormat(const QString & v);
 
+    QString timestampFormat();
+    void setTimestampFormat(const QString & v);
+
     QString refresh();
     void setRefresh(const QString & v);
 

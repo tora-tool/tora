@@ -71,6 +71,8 @@
 #define CONF_LIST  "ListText"
 #define CONF_DATE_FORMAT "ConfDateFormat"
 #define DEFAULT_DATE_FORMAT "YYYY-MM-DD HH24:MI:SS"
+#define CONF_TIMESTAMP_FORMAT "ConfTimestampFormat"
+#define DEFAULT_TIMESTAMP_FORMAT "YYYY-MM-DD HH24:MI:SSXFF"
 #define CONF_REFRESH  "RefreshInterval"
 #define DEFAULT_REFRESH  "None"
 #define CONF_HIGHLIGHT  "SyntaxHighlight"

@@ -78,6 +78,7 @@ public:
     QString m_codeFont;
     QString m_listFont;
     QString m_dateFormat;
+    QString m_timestampFormat;
     QString m_refresh;
     bool    m_highlight;
     bool    m_keywordUpper;
@@ -306,6 +307,7 @@ public:
         m_codeFont = s.value(CONF_CODE, "").toString();
         m_listFont = s.value(CONF_LIST, "").toString();
         m_dateFormat = s.value(CONF_DATE_FORMAT, DEFAULT_DATE_FORMAT).toString();
+	m_timestampFormat = s.value(CONF_TIMESTAMP_FORMAT, DEFAULT_TIMESTAMP_FORMAT).toString();
         m_refresh = s.value(CONF_REFRESH, DEFAULT_REFRESH).toString();
         m_highlight = s.value(CONF_HIGHLIGHT, true).toBool();
         m_keywordUpper = s.value(CONF_KEYWORD_UPPER, DEFAULT_KEYWORD_UPPER).toBool();
@@ -549,6 +551,7 @@ public:
         s.setValue(CONF_CODE, m_codeFont);
         s.setValue(CONF_LIST, m_listFont);
         s.setValue(CONF_DATE_FORMAT, m_dateFormat);
+	s.setValue(CONF_TIMESTAMP_FORMAT, m_timestampFormat);
         s.setValue(CONF_REFRESH, m_refresh);
         s.setValue(CONF_HIGHLIGHT, m_highlight);
         s.setValue(CONF_KEYWORD_UPPER, m_keywordUpper);
@@ -1136,6 +1139,15 @@ QString toConfiguration::dateFormat()
 void toConfiguration::setDateFormat(const QString & v)
 {
     p->m_dateFormat = v;
+}
+
+QString toConfiguration::timestampFormat()
+{
+    return p->m_timestampFormat;
+}
+void toConfiguration::setTimestampFormat(const QString & v)
+{
+    p->m_timestampFormat = v;
 }
 
 QString toConfiguration::refresh()

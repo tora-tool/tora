@@ -1352,6 +1352,20 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
 
     try
     {
+        QString str = QString::fromLatin1("ALTER SESSION SET NLS_TIMESTAMP_FORMAT = '");
+        str += toConfigurationSingle::Instance().timestampFormat();
+        str += QString::fromLatin1("'");
+        otl_stream timestmp(1, str.toUtf8(), *conn);
+    }
+    catch (...)
+    {
+        printf("Failed to set new default timestamp format for session\n");
+        toStatusMessage(QObject::tr("Failed to set new default timestamp format for session: %1")
+                                  .arg(toConfigurationSingle::Instance().timestampFormat()));
+    }
+
+    try
+    {
         otl_stream info(1,
                         "BEGIN\n"
                         "  SYS.DBMS_APPLICATION_INFO.SET_CLIENT_INFO('" TOAPPNAME
@@ -1420,6 +1434,7 @@ toOracleSetting::toOracleSetting(QWidget *parent)
 
     setupUi(this);
     DefaultDate->setText(toConfigurationSingle::Instance().dateFormat());
+    DefaultTimestamp->setText(toConfigurationSingle::Instance().timestampFormat());
     CheckPoint->setText(toConfigurationSingle::Instance().planCheckpoint());
     ExplainPlan->setText(toConfigurationSingle::Instance().planTable(NULL));
     OpenCursors->setValue(toConfigurationSingle::Instance().openCursors());
@@ -1450,9 +1465,11 @@ void toOracleSetting::saveSetting()
     toConfigurationSingle::Instance().setVsqlPlans(VsqlPlans->isChecked());
     toConfigurationSingle::Instance().setSharedPlan(SharedPlan->isChecked());
     toConfigurationSingle::Instance().setDateFormat(DefaultDate->text());
+    toConfigurationSingle::Instance().setTimestampFormat(DefaultTimestamp->text());
 
     // try to change NLS for already running sessions
     QString str("ALTER SESSION SET NLS_DATE_FORMAT = '%1'");
+    QString str1("ALTER SESSION SET NLS_TIMESTAMP_FORMAT = '%1'");
     foreach (QString c, toMainWidget()->connections())
     {
         try
@@ -1468,6 +1485,20 @@ void toOracleSetting::saveSetting()
         catch(...) {
             toStatusMessage(tr("Failed to set new default date format for connection: %1").arg(c));
         }
+	try
+	{
+            toConnection &conn = toMainWidget()->connection(c);
+
+            if(toIsOracle(conn))
+            {
+                conn.allExecute(
+                    str1.arg(toConfigurationSingle::Instance().timestampFormat()));
+            }
+        }
+        catch(...) {
+            toStatusMessage(tr("Failed to set new default timestamp format for connection: %1").arg(c));
+	}
+
     }
 
     toConfigurationSingle::Instance().setPlanCheckpoint(CheckPoint->text());
