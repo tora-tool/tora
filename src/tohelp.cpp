@@ -150,13 +150,14 @@ void toHelpPrefs::delFile()
 
 void toHelpPrefs::oracleManuals()
 {
+    // For Oracle 11g look for a file /nav/portal_3.htm which contains a list of all books
     QString filename = toOpenFilename(QString::null, QString::fromLatin1("*index.htm*"), this);
     try
     {
         toHtml file(toReadFile(filename));
         QString dsc;
         bool inDsc = false;
-        QRegExp isToc(QString::fromLatin1("toc\\.html?$"));
+        QRegExp isToc(QString::fromLatin1("toc\\.htm?$"));
         while (!file.eof())
         {
             file.nextToken();
@@ -167,18 +168,25 @@ void toHelpPrefs::oracleManuals()
                     QString href = toHelp::path(filename);
                     href += file.value("href");
                     if (!href.isEmpty() &&
-                            !dsc.isEmpty() &&
-                            href.indexOf(isToc) >= 0 &&
-                            !file.value("title").isNull())
+                        !dsc.isEmpty() &&
+                        href.indexOf(isToc) >= 0 &&
+                        !file.value("title").isNull())
                     {
                         new toTreeWidgetItem(FileList, dsc.simplified(), href);
                         inDsc = false;
                         dsc = QString::null;
                     }
                 }
+                // This one is for oracle manuals with version 11
+                else if ((file.open() && file.tag() == "td") && !file.value("id").isNull())
+                {
+                    dsc.clear();
+                    inDsc = true;
+                }
+                // This one is for old version of oracle manuals
                 else if ((file.open() && file.tag() == "dd") || file.tag() == "book")
                 {
-                    dsc = QString::null;
+                    dsc.clear();
                     inDsc = true;
                 }
             }
@@ -251,19 +259,6 @@ toHelp::toHelp(QWidget *parent, QString name, bool modal)
 
     std::map<QString, QString> Dsc;
     Dsc[tr(TOAPPNAME " manual")] = QString("qrc:/help/toc.html");
-//     int tot = HelpTool.config("Number", "-1").toInt();
-
-//     if (tot != -1)
-//     {
-//         for (int i = 0;i < tot;i++)
-//         {
-//             QString num = QString::number(i);
-//             QString dsc = HelpTool.config(num.toLatin1(), "");
-//             num += QString::fromLatin1("file");
-//             QString file = HelpTool.config(num.toLatin1(), "");
-//             Dsc[dsc] = file;
-//         }
-//     }
     HelpsMapIterator i(toConfigurationSingle::Instance().additionalHelp());
     while (i.hasNext())
     {
@@ -282,20 +277,27 @@ toHelp::toHelp(QWidget *parent, QString name, bool modal)
             QString path = toHelp::path((*i).second);
             QString filename = (*i).second;
             QTreeWidgetItem * parent;
-            if ((*i).first == tr("TOra manual"))
-            {
+            // TODO: With this "if" removed TOra manual could be added somewhere in the
+            //       middle of other help documents which is not OK. This should be
+            //       fixed so that TOra manual is always the first one.
+            //if ((*i).first == tr("TOra manual"))
+            //{
                 parent = new QTreeWidgetItem(Sections, QStringList() << (*i).first << "" << filename);
                 Sections->expandItem(parent);
                 if (!lastParent)
                     lastParent = parent;
-            }
-            else
-                parent = lastParent = new QTreeWidgetItem(lastParent, QStringList() << (*i).first << "" << filename);
+            //}
+            //else
+            //    parent = lastParent = new QTreeWidgetItem(lastParent, QStringList() << (*i).first << "" << filename);
             toHtml file(toReadFile(filename));
             bool inA = false;
             QString dsc;
             QString href;
             QTreeWidgetItem * last = NULL;
+            bool inOracle = false; // indicates that we're in an Oracle documentation
+            // Following two variables indicate that we're in a specific part of oracle documentation
+            bool inHeader = false; // in h2 class=tocheader (1st level content)
+            bool inList = false;   // in li (2nd, 3rd... level conent)
             while (!file.eof())
             {
                 file.nextToken();
@@ -311,7 +313,7 @@ toHelp::toHelp(QWidget *parent, QString name, bool modal)
                 else
                 {
                     QString c = file.tag();
-                    if (c == "a")
+                    if (c == "a" && (!inOracle || (inOracle && (inHeader || inList))))
                     {
                         if (file.open())
                         {
@@ -322,23 +324,23 @@ toHelp::toHelp(QWidget *parent, QString name, bool modal)
                         else
                         {
                             if (inA &&
-                                    !dsc.isEmpty() &&
-                                    !href.isEmpty())
+                                !dsc.isEmpty() &&
+                                !href.isEmpty())
                             {
                                 if (href.indexOf("//") < 0 &&
-                                        href.indexOf("..") < 0)
+                                    href.indexOf("..") < 0)
                                 {
                                     last = new QTreeWidgetItem(parent, QStringList() << dsc);
                                     filename = path;
                                     filename += href;
                                     last->setText(2, filename);
                                 }
-                                dsc = "";
+                                dsc.clear();
                             }
                             inA = false;
                         }
                     }
-                    else if (c == "dl")
+                    else if (c == "dl" || c == "ul")
                     {
                         if (file.open())
                         {
@@ -354,6 +356,24 @@ toHelp::toHelp(QWidget *parent, QString name, bool modal)
                             if (!parent)
                                 throw tr("Missing parent, unbalanced dl in help file content");
                         }
+                    }
+                    else if (c == "h2")
+                    {
+                        if (file.open() &&  file.value("class") == "tocheader")
+                            inHeader = true;
+                        else
+                            inHeader = false;
+                    }
+                    else if (c == "li")
+                    {
+                        if (file.open())
+                            inHeader = true;
+                        else
+                            inHeader = false;
+                    }
+                    else if ((c == "meta") && file.value("name") == "generator")
+                    {
+                        inOracle = true;
                     }
                 }
             }
@@ -416,10 +436,6 @@ void toHelp::displayHelp(const QString &context, QWidget *parent)
 
     file += context;
 
-//     if (context.indexOf("htm") >= 0)
-//         window->Help->setTextFormat(Qt::RichText);
-//     else
-//         window->Help->setTextFormat(Qt::AutoText);
     window->Help->setSource(file);
 
     if (parent)
@@ -462,12 +478,16 @@ void toHelp::changeContent(QTreeWidgetItem * item, QTreeWidgetItem *)
     disconnect(Help, SIGNAL(textChanged(void)),
                this, SLOT(removeSelection(void)));
 
-//     if (item->text(2).indexOf("htm") >= 0)
-//         Help->setTextFormat(Qt::RichText);
-//     else
-//         Help->setTextFormat(Qt::AutoText);
     if (!item->text(2).isEmpty())
-        Help->setSource(item->text(2));
+    {
+        if (item->text(2).startsWith("qrc:"))
+            Help->setSource(item->text(2));
+        else
+            // NOTE: it would be more correct to get a proper url of local file using
+            // QUrl::fromLocalFile but in that case we would have to remove html anchor
+            // and then add it back again after getting a file url.
+            Help->setSource("file://" + item->text(2));
+    }
 
     connect(Help, SIGNAL(textChanged(void)),
             this, SLOT(removeSelection(void)));
