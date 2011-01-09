@@ -190,7 +190,8 @@ bool toCache::cacheAvailable(bool synonyms, bool block, bool need, toTask * t)
             return true;
         if (toConfigurationSingle::Instance().objectCache() == 2 && !block)
             return true;
-        readObjects(t);
+        if (t)
+            readObjects(t);
         toMainWidget()->checkCaching();
     }
     if (ReadingValues.getValue() == 0 || (ReadingValues.getValue() == 1 && synonyms == true))
