@@ -70,11 +70,22 @@ void toBrowserSchemaTableView::changeParams(const QString & schema, const QStrin
         !ObjectType.isEmpty() &&
         !ForceRequery
         /* && toCurrentConnection(this).cacheAvailable(false)*/)
-        if (toCurrentConnection(this).Cache->objectExists(schema, "TORA_LIST", ObjectType))
+    {
+        /* NOTE: that directories are not owned by any individual schema. Therefore they are
+         * always stored under schema "SYS" in Oracle data dictionary. This is why in case
+         * of directories we're not specifying schema name when checking the cache.
+         */
+        QString sch;
+        if (ObjectType == "DIRECTORY")
+            sch = "%";
+        else
+            sch = schema;
+        if (toCurrentConnection(this).Cache->objectExists(sch, "TORA_LIST", ObjectType))
         {
-            this->queryFromCache(schema, ObjectType);
+            this->queryFromCache(sch, ObjectType);
             return;
         }
+    }
 
     ForceRequery = false;
     Schema = schema;
@@ -95,6 +106,10 @@ void toBrowserSchemaTableView::updateCache(void)
         obj.Name = (*i)[1];
         rows.append(obj);
     }
+    // NOTE: Oracle directories do not belong to any particular schema.
+    //       Therefore they are saved as belonging to SYS schema.
+    if (ObjectType == "DIRECTORY")
+        Schema = "SYS";
     toCurrentConnection(this).Cache->updateObjects(Schema, ObjectType, rows);
 
     // Update information when list of this type of objects in this schema was updated

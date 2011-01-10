@@ -190,11 +190,13 @@ public:
      */
     void setSynonymList(std::map<QString, objectName> &list);
 
-    /** Checks if given object is saved in the cache.
+    /** Checks if given object is saved in the cache. Note that if "%" is provided as
+     * a value of a parameter, then any value matches.
      */
     bool objectExists(const QString &owner, const QString &type, const QString &name);
 
-    /** Returns a list of objects of particular type and schema/owner
+    /** Returns a list of objects of particular type and schema/owner. Note that
+     * if "%" is provided as a value of a parameter, then any value matches.
      */
     RowList getObjects(const QString &owner, const QString &type);
 

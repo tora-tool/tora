@@ -470,7 +470,7 @@ bool toCache::objectExists(const QString &owner, const QString &type, const QStr
     // TODO: ObjectList is sorted therefore going through all of it is not necessary!
     for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
     {
-        if ((*i).Owner == owner &&
+        if (((*i).Owner == owner || owner == "%") &&
             (*i).Name == name &&
             (*i).Type == type)
             return true;
@@ -485,7 +485,7 @@ toCache::RowList toCache::getObjects(const QString &owner, const QString &type)
     RowList rl;
     for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
     {
-        if ((*i).Owner == owner &&
+        if (((*i).Owner == owner || owner == "%") &&
             (*i).Type == type)
         {
             r.append((*i).Name);
