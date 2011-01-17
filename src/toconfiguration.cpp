@@ -141,6 +141,7 @@ public:
     QString m_staticChecker; // path+name to static check script (used in code editor)
     int     m_connectionTestTimeout; // after how many seconds connection should be tested
     QString m_encoding;
+    QString m_forcelineend; // force line end type (win, linux, mac) when saving text files
 
     // tooracleconnection
     int m_openCursors;
@@ -506,6 +507,7 @@ public:
         m_maxTextWidthMark = s.value("maxTextWidthMark", 75).toInt();
         m_connectionTestTimeout = s.value(CONF_CONNECTION_TEST_TIMEOUT, DEFAULT_CONNECTION_TEST_TIMEOUT).toInt();
         m_encoding = s.value(CONF_ENCODING, DEFAULT_ENCODING).toString();
+        m_forcelineend = s.value(CONF_FORCELINEEND, DEFAULT_FORCELINEEND).toString();
         s.endGroup();
 
         // main window
@@ -748,6 +750,7 @@ public:
         s.setValue("maxTextWidthMark", m_maxTextWidthMark);
         s.setValue(CONF_CONNECTION_TEST_TIMEOUT, m_connectionTestTimeout);
         s.setValue(CONF_ENCODING, m_encoding);
+        s.setValue(CONF_FORCELINEEND, m_forcelineend);
         s.endGroup();
 
         // main window
@@ -2282,4 +2285,14 @@ QString toConfiguration::encoding()
 void toConfiguration::setEncoding(const QString & v)
 {
     p->m_encoding = v;
+}
+
+// Force using a particular line end type (win, linux, mac) when saving text files
+QString toConfiguration::forceLineEnd()
+{
+    return p->m_forcelineend;
+}
+void toConfiguration::setForceLineEnd(const QString & v)
+{
+    p->m_forcelineend = v;
 }

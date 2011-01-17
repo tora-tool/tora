@@ -171,6 +171,8 @@
 #define DEFAULT_STYLE "" //"Cleanlooks"
 #define CONF_ENCODING "Encoding"
 #define DEFAULT_ENCODING "Default"
+#define CONF_FORCELINEEND "ForceLineEnd"
+#define DEFAULT_FORCELINEEND "Default"
 // code editor
 #define CONF_STATIC_CHECKER "StaticChecker"
 // connection (general)

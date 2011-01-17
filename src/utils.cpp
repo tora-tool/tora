@@ -734,7 +734,25 @@ bool toWriteFile(const QString &filename, const QByteArray &data)
         return false;
     }
     QTextCodec *codec = toGetCodec();
-    file.write(codec->fromUnicode(data));
+
+    // Check if line end type should be changed to particular one
+    // Note that line end type can be changed manually via menu
+    QString forceLineEndSetting = toConfigurationSingle::Instance().forceLineEnd();
+    if (forceLineEndSetting == "Linux" ||
+        forceLineEndSetting == "Windows" ||
+        forceLineEndSetting == "Mac")
+    {
+        QByteArray ba = data;
+        if (toConfigurationSingle::Instance().forceLineEnd() == "Linux")
+            changeLineEnds(&ba, T_EOL_LF);
+        else if (toConfigurationSingle::Instance().forceLineEnd() == "Windows")
+            changeLineEnds(&ba, T_EOL_CRLF);
+        else if (toConfigurationSingle::Instance().forceLineEnd() == "Mac")
+            changeLineEnds(&ba, T_EOL_CR);
+        file.write(codec->fromUnicode(ba));
+    } else
+        file.write(codec->fromUnicode(data));
+
     if (file.error() != QFile::NoError)
     {
         TOMessageBox::warning(
@@ -1251,3 +1269,58 @@ toSpacer::toSpacer(QWidget *parent) : QWidget(parent)
     setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                               QSizePolicy::Minimum));
 }
+
+// This code is taken from (Q)Scintilla source
+void changeLineEnds(QByteArray * text, int eolModeSet)
+{
+    for (int pos = 0; pos < text->length(); pos++)
+    {
+        if (text->at(pos) == '\r')
+        {
+            if (text->at(pos + 1) == '\n')
+            {
+                // CRLF
+                if (eolModeSet == T_EOL_CR)
+                {
+                    text->remove(pos + 1, 1); // Delete the LF
+                }
+                else if (eolModeSet == T_EOL_LF)
+                {
+                    text->remove(pos, 1); // Delete the CR
+                }
+                else
+                {
+                    pos++;
+                }
+            }
+            else
+            {
+                // CR
+                if (eolModeSet == T_EOL_CRLF)
+                {
+                    text->insert(pos + 1, "\n"); // Insert LF
+                    pos++;
+                }
+                else if (eolModeSet == T_EOL_LF)
+                {
+                    text->insert(pos, "\n"); // Insert LF
+                    text->remove(pos + 1, 1); // Delete CR
+                }
+            }
+        }
+        else if (text->at(pos) == '\n')
+        {
+            // LF
+            if (eolModeSet == T_EOL_CRLF)
+            {
+                text->insert(pos, "\r"); // Insert CR
+                pos++;
+            }
+            else if (eolModeSet == T_EOL_CR)
+            {
+                text->insert(pos, "\r"); // Insert CR
+                text->remove(pos + 1, 1); // Delete LF
+            }
+        }
+    }
+} // changeLineEnds

@@ -539,4 +539,12 @@ public:
     }
 };
 
+#define T_EOL_CRLF 0
+#define T_EOL_CR 1
+#define T_EOL_LF 2
+/**
+ * Convert line ends in given byte array to a specified type (windows, linux or mac)
+ */
+void changeLineEnds(QByteArray * text, int eolModeSet);
+
 #endif

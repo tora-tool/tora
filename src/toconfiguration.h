@@ -511,6 +511,11 @@ public:
     // default encoding used when reading/writing files
     QString encoding();
     void setEncoding(const QString & v);
+
+    // Force using a particular line end type (win, linux, mac) when saving text files
+    QString forceLineEnd();
+    void setForceLineEnd(const QString & v);
+
 };
 
 typedef Loki::SingletonHolder<toConfiguration> toConfigurationSingle;
