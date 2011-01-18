@@ -405,7 +405,7 @@ public:
 private:
     static settings Settings;
     static statement parseStatement(tokenizer &tokens,
-                                    bool declare, bool lst);
+                                    bool declare, bool lst, bool typebody = false);
     /** Indent a parse statement structure into a string.
      * @param stat Statement to indent.
      * @param level Initial indentation level to use.

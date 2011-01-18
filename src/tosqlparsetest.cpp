@@ -895,6 +895,26 @@ int main(int argc, char **argv)
     testClass.append(toSQLParse::statement::ddldml);
     testClass.append(toSQLParse::statement::ddldml);
 
+    //===================================================
+    // Test #33 Create type body statement
+    testSet.append("create or replace type body egz_task_ot is\n"
+                   "constructor function egz_task_ot return self as result is\n"
+                   "begin return; end;\n"
+                   "end;\n"
+                   "/\n");
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::plsqlblock);
+
+    //===================================================
+    // Test #34 Create type statement
+    testSet.append("create or replace type egz_task_ot as object\n"
+                   "(aaa number(11),\n"
+                   " bbb varchar2(2000),\n"
+                   "constructor function egz_task_ot return self as result\n"
+                   ")\n");
+    testCount.append(1);
+    testClass.append(toSQLParse::statement::ddldml);
+
     QApplication test(argc, argv);
     toMarkedText text(NULL);
 
@@ -909,7 +929,7 @@ int main(int argc, char **argv)
         printf("Start test %i ", n);
 
         // The code below skips all other tests except one particular
-        /*if (n != 30) {
+        /*if (n != 34) {
             n++;
             for (int j = 1; j <= *cnt; j++)
                 cls++;

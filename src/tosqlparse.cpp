@@ -497,7 +497,7 @@ QString toSQLParse::editorTokenizer::remaining(bool eol)
 
 // Parameters:
 //   lst - indicates that parsing is done in a list (inside parenthesis)
-toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare, bool lst)
+toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare, bool lst, bool typebody)
 {
     statement ret(statement::Statement);
     ret.StatementClass = statement::ddldml; // by default statement is not plsqlblock
@@ -506,9 +506,12 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
 
     QString first; // first token in statement being parsed
     QString realfirst;
+    QString previous;
     bool nokey = false;
     bool block = false;
     bool createtable = false;
+    bool createtypebody = false;
+    bool constructor = false;
     for (QString token = tokens.getToken(true, true);
             !token.isNull();
             token = tokens.getToken(true, true))
@@ -534,8 +537,18 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
         {
             createtable = true;
         }
+        else if (first == "CREATE" && previous == "TYPE" && upp == "BODY")
+        {
+            block = true;
+            createtypebody = true; // Note: this value will be passed to recursive call of parseStatement
+            ret.StatementClass = statement::plsqlblock;
+        }
+        else if (upp == "CONSTRUCTOR")
+        {
+            constructor = true;
+        }
 
-        if (upp == ("SELF"))
+        if (upp == ("SELF") && !(constructor && typebody))
             block = false;
 
         if (first != ("END") && ((first == ("IF") && upp == ("THEN")) ||
@@ -548,6 +561,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
                                  ((!declare || block) && upp == ("BEGIN"))))
         {
             block = false;
+            constructor = false;
             statement blk(statement::Block);
             ret.subTokens().insert(ret.subTokens().end(), statement(statement::Keyword, token, tokens.line()));
             blk.subTokens().insert(blk.subTokens().end(), ret);
@@ -556,7 +570,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
             bool dcl = (upp == ("DECLARE") || upp == ("IS") || upp == ("AS"));
             do
             {
-                cur = parseStatement(tokens, dcl, false);
+                cur = parseStatement(tokens, dcl, false, createtypebody);
                 if (cur.Type == statement::List)
                 {
                     toStatusMessage(qApp->translate("toSQLparse", "Unbalanced parenthesis (Too many ')')"));
@@ -723,6 +737,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
             first = upp;
         else if (first == ("IS") && upp == ("NULL"))
             first = realfirst;
+        previous = upp;
     }
     return ret;
 }
