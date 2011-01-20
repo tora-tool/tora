@@ -2223,7 +2223,7 @@ int toConfiguration::connectionTestTimeout()
 
 void toConfiguration::setConnectionTestTimeout(int v)
 {
-    p->m_connectionTestTimeout;
+    p->m_connectionTestTimeout = v;
 }
 
 QByteArray toConfiguration::mainWindowGeometry()

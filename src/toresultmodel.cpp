@@ -130,7 +130,7 @@ toResultModel::toResultModel(const QString &owner,
     beginInsertRows(QModelIndex(), 0, tmp.count());
     // Convert list of objects to appropriate type
     toResultModel::Row row;
-    int counter;
+    int counter = 1;
     for (toCache::RowList::iterator i = tmp.begin(); i != tmp.end(); i++)
     {
         // For each row a mandatory rownumber integer should be added
