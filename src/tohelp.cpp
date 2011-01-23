@@ -39,10 +39,9 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "utils.h"
-
-#include "toconf.h"
 #include "tohelp.h"
+#include "utils.h"
+#include "toconf.h"
 #include "tohtml.h"
 #include "tomain.h"
 #include "toresultview.h"
@@ -174,7 +173,7 @@ void toHelpPrefs::oracleManuals()
                     {
                         new toTreeWidgetItem(FileList, dsc.simplified(), href);
                         inDsc = false;
-                        dsc = QString::null;
+                        dsc.clear();
                     }
                 }
                 // This one is for oracle manuals with version 11
