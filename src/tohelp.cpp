@@ -478,7 +478,7 @@ void toHelp::changeContent(QTreeWidgetItem * item, QTreeWidgetItem *)
     disconnect(Help, SIGNAL(textChanged(void)),
                this, SLOT(removeSelection(void)));
 
-    if (!item->text(2).isEmpty())
+    if (item && !item->text(2).isEmpty())
     {
         if (item->text(2).startsWith("qrc:"))
             Help->setSource(item->text(2));
@@ -518,7 +518,33 @@ void toHelp::search(void)
         {
             QString path = toHelp::path(parent->text(2));
             QString filename = path;
-            filename.append(QString::fromLatin1("toc.html"));
+            /* We have to find file with index information. This file should be called
+             * either toc.html or index.htm. Note that we cannot use QFile::exists()
+             * to check existance of file in qt resources so that case is hardcoded.
+             */
+            if (filename.startsWith("qrc:"))
+                filename.append(QString::fromLatin1("toc.html"));
+            else
+            {
+                QFile file;
+                // Oracle 11g has an index.htm file with manual index
+                file.setFileName(filename + "index.htm");
+                if (file.exists())
+                    filename.append(QString::fromLatin1("index.htm"));
+                else
+                {
+                    // toc.html is here for backwards compatibility (say Oracle 9i)
+                    // Can probably be removed later (written on 2011-01-23)
+                    file.setFileName(filename + "toc.html");
+                    if (file.exists())
+                        filename.append(QString::fromLatin1("toc.html"));
+                    else
+                    {
+                        // If neither toc.html nor index.htm was found in manual directory - do nothing
+                        continue;
+                    }
+                }
+            }
 
             try
             {
