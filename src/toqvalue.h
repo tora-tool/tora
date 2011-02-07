@@ -73,10 +73,10 @@ public:
 	    virtual bool isBinary() const = 0;
 	    virtual bool isLarge() const = 0;
 
-	    virtual QString displayData() const = 0;
-	    virtual QString editData() const = 0;
-	    virtual QString userData() const = 0;
-	    virtual QString tooltipData() const = 0;
+	    virtual QString displayData() const throw()  = 0;
+	    virtual QString editData() const throw()  = 0;
+	    virtual QString userData() const throw()  = 0;
+	    virtual QString tooltipData() const throw()  = 0;
 
 	    virtual QString dataTypeName() const = 0;
 

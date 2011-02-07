@@ -188,7 +188,7 @@ public:
 		return true;
 	}
 
-	/* virtual */ QString displayData() const
+	/* virtual */ QString displayData() const throw()
 	{
 		::trotl::SqlOpenLob clob_open(data, OCI_LOB_READONLY);
 		char buffer[MAXLOBSHOWN];
@@ -209,7 +209,7 @@ public:
 		}
 	}
 	
-	/* virtual */ QString editData() const
+	/* virtual */ QString editData() const throw()
 	{
 		::trotl::SqlOpenLob clob_open(data, OCI_LOB_READONLY);
 		QString retval = QString("Datatyp pe: Oracle [N]CLOB\nSize: %1B\n").arg(getLength());
@@ -233,13 +233,13 @@ public:
 			return QString(buffer);
 	}
 
-	/* virtual */ QString userData() const
+	/* virtual */ QString userData() const throw()
 	{
 		return QString("Datape: Oracle [N]CLOB\nSize: %1B\n")
 			.arg(getLength());
 	}
 
-	/* virtual */ QString tooltipData() const
+	/* virtual */ QString tooltipData() const throw()
 	{
 		return QString("Datape: Oracle [N]CLOB\n" "Size: %1B\n")
 			.arg(getLength());
@@ -304,7 +304,7 @@ public:
 		return true;
 	}
 
-	/* virtual */ QString displayData() const
+	/* virtual */ QString displayData() const throw()
 	{
 		::trotl::SqlOpenLob blob_open(data, OCI_LOB_READONLY);
 		unsigned char buffer[MAXLOBSHOWN/2];
@@ -326,7 +326,7 @@ public:
 		return retval;
 	}
 	
-	/* virtual */ QString editData() const
+	/* virtual */ QString editData() const throw()
 	{
 		::trotl::SqlOpenLob clob_open(data, OCI_LOB_READONLY);
 		QString retval = QString("Datatyp pe: Oracle BLOB\nSize: %1B\n").arg(getLength());
@@ -359,13 +359,13 @@ public:
 		return retval;
 	}
 
-	/* virtual */ QString userData() const
+	/* virtual */ QString userData() const throw()
 	{
 		return QString("Datape: Oracle BLOB\nSize: %1B\n")
 			.arg(data.get_length());
 	}
 
-	/* virtual */ QString tooltipData() const
+	/* virtual */ QString tooltipData() const throw()
 	{
 		return QString("Datape: Oracle BLOB\nSize: %1B\n")
 			.arg(data.get_length());
@@ -430,22 +430,22 @@ public:
 	}
 
 
-	/* virtual */ QString displayData() const
+	/* virtual */ QString displayData() const throw()
 	{
 		return QString("{collection}");
 	}
 	
-	/* virtual */ QString editData() const
+	/* virtual */ QString editData() const throw()
 	{
 		return QString(((::trotl::tstring)data).c_str());
 	}
 
-	/* virtual */ QString userData() const
+	/* virtual */ QString userData() const throw()
 	{
 		return QString("collection");
 	}
 
-	/* virtual */ QString tooltipData() const
+	/* virtual */ QString tooltipData() const throw()
 	{
 		return dataTypeName();
 	}
@@ -489,24 +489,24 @@ public:
 	}
 
 
-	/* virtual */ QString displayData() const
+	/* virtual */ QString displayData() const throw()
 	{
 		return QString("{cursor}");
 	}
 	
-	/* virtual */ QString editData() const
+	/* virtual */ QString editData() const throw()
 	{
 		std::string s;
 		data >> s;
 		return QString(s.c_str());
 	}
 
-	/* virtual */ QString userData() const
+	/* virtual */ QString userData() const throw()
 	{
 		return QString("cursor");
 	}
 
-	/* virtual */ QString tooltipData() const
+	/* virtual */ QString tooltipData() const throw()
 	{
 		return dataTypeName();
 	}
