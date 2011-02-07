@@ -135,7 +135,7 @@ Util::RegisterInFactory<BindParLong, DefineParFactTwoParmSing, int> regDefineLon
 		
 	// 	len = PIECE_SIZE;
 	// 	*alenpp = &len;
-		
+
 	// 	ind = 0;
 	// 	if (glGetInd)
 	// 		*indpp  = (dvoid *) &ind;

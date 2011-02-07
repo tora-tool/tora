@@ -41,6 +41,9 @@
 
 #include "trotl_lob.h"
 
+#include <assert.h>
+#include <unistd.h>
+
 namespace trotl {
 
 // Register Bind datatypes in factory(Bind - PL/SQL)
@@ -318,23 +321,62 @@ void SqlLob::flush(ub4 flag)
 
 SqlOpenLob::SqlOpenLob(SqlLob& lob, ub1 mode) : _lob(lob)
 {
-	sword res = OCICALL(OCILobOpen(
-			lob._conn._svc_ctx,
-			lob._conn._env._errh,
-			lob._loc,
-			mode
-	));
-	oci_check_error(__TROTL_HERE__, lob._conn._env._errh, res);
+	bool done = false;
+	while(!done)
+	{	
+		sword res = OCICALL(OCILobOpen(
+					    lob._conn._svc_ctx,
+					    lob._conn._env._errh,
+					    lob._loc,
+					    mode
+					    ));
+		if( res != OCI_SUCCESS )
+		{
+			sb4 errorcode;
+			sword res2 = OCICALL(OCIErrorGet(_lob._conn._env._errh, 1, NULL, &errorcode, NULL, 0, OCI_HTYPE_ERROR));
+			assert(res2 == OCI_SUCCESS);
+
+			if(errorcode == 3127) // ORA-03127: no new operations allowed until the active operation ends
+			{
+				std::cerr << "ORA-03127: no new operations allowed until the active operation ends" << std::endl;
+				usleep(100);
+			} else {
+				oci_check_error(__TROTL_HERE__, _lob._conn._env._errh, res);
+			}
+		} else {
+			done = true;
+		}
+	}
 };
 
 SqlOpenLob::~SqlOpenLob()
 {
-	sword res = OCICALL(OCILobClose(
-			_lob._conn._svc_ctx,
-			_lob._conn._env._errh,
-			_lob._loc
-	));
-	oci_check_error(__TROTL_HERE__, _lob._conn._env._errh, res);
+	bool done = false;
+	while(!done)
+	{
+		sword res = OCICALL(OCILobClose(
+					    _lob._conn._svc_ctx,
+					    _lob._conn._env._errh,
+					    _lob._loc
+					    ));
+
+		if( res != OCI_SUCCESS )
+		{
+			sb4 errorcode;
+			sword res2 = OCICALL(OCIErrorGet(_lob._conn._env._errh, 1, NULL, &errorcode, NULL, 0, OCI_HTYPE_ERROR));
+			assert(res2 == OCI_SUCCESS);
+
+			if(errorcode == 3127) // ORA-03127: no new operations allowed until the active operation ends
+			{
+				std::cerr << "ORA-03127: no new operations allowed until the active operation ends" << std::endl;
+				usleep(100);
+			} else {
+				oci_check_error(__TROTL_HERE__, _lob._conn._env._errh, res);
+			}
+		} else {
+			done = true;
+		}
+	}
 };
 
 ub4	SqlBlob::write(const dvoid* bufp, ub4 buflen, ub4 offset/*=1*/, ub4 amount)

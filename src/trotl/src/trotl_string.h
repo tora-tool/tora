@@ -190,10 +190,10 @@ struct TROTL_EXPORT BindParLong: public SqlStatement::BindPar
 		valuep = (void**) calloc(8192, 1);
 		alenp = (ub2*) calloc(_cnt, sizeof(ub4));
 
-		alenp[0] = 8192;
+		alenp[0] = 8192;       // Fetch buffer size 8KB
 		
 		dty = SQLT_LNG;
-		value_sz = 0x10000000; //ct._width + 1;
+		value_sz = 8192; //0x80000000; // 2GB
 		type_name = typeid(tstring).name();
 		mode = OCI_DYNAMIC_FETCH;
 

@@ -425,7 +425,7 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 	}
 	_bound = true;
 
-	define_all();
+	//define_all();
 	
 	// execute and do not fetch
 	sword res = OCICALL(OCIStmtExecute(
