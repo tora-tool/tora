@@ -363,7 +363,7 @@ public:
 /* 		_state |= EOF_DATA; */
 		
 /*  		if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT) */
-/*  			fetch(_buff_size); */
+/*  			fetch(_fetch_rows); */
 
 /* 		return *this; */
 /* 	} */
@@ -409,7 +409,7 @@ public:	//todo delete me - these fields should not be public
 	mutable ub4 _param_count, _column_count, _in_cnt, _out_cnt;
 	ub4 _last_row, _last_fetched_row, _in_pos, _out_pos, _iters;
 
-	ub4 _last_buff_row, _buff_size; // used in select statements
+	ub4 _last_buff_row, _buff_size, _fetch_rows; // used in select statements
 	mutable ub4 _fetched_row;
 
 	std::vector<ColumnType> _columns; // TODO move into some SQL-result class

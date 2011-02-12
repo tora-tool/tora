@@ -56,6 +56,12 @@ Util::RegisterInFactory<BindParLong, DefineParFactTwoParmSing, int> regDefineLon
 	
 	void BindParLong::fetch_hook(ub4 iter, ub4 idx, ub1 piece, ub4 alen, sb2 ind)
 	{
+		std::cerr << "\t iter: " << iter
+			  << "\t idx: " << idx
+			  << "\t piece: " << (unsigned short)piece
+			  << "\t alen: " << alen
+			  << "\t ind: " << ind			  
+			  << std::endl;
 		if(piece == OCI_FIRST_PIECE)
 		{
 			s.at(iter)->clear();
@@ -135,7 +141,7 @@ Util::RegisterInFactory<BindParLong, DefineParFactTwoParmSing, int> regDefineLon
 		
 	// 	len = PIECE_SIZE;
 	// 	*alenpp = &len;
-
+		
 	// 	ind = 0;
 	// 	if (glGetInd)
 	// 		*indpp  = (dvoid *) &ind;

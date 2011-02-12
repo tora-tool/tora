@@ -69,7 +69,7 @@ _in_cnt(0), _out_cnt(0),
 _last_row(-1),
 _last_fetched_row(-1),
 _in_pos(0), _out_pos(0), _iters(0),
-_last_buff_row(0), _buff_size(g_OCIPL_BULK_ROWS),
+_last_buff_row(0), _buff_size(g_OCIPL_BULK_ROWS), _fetch_rows(g_OCIPL_BULK_ROWS),
 _all_binds(NULL), _in_binds(NULL), _out_binds(NULL),
 _bound(false)
 //	_res(NULL),
@@ -250,6 +250,9 @@ void SqlStatement::define_all()
 				.arg(_columns[dpos]._data_type_name)
 				.arg(_columns[dpos]._reg_name);
 		define(*_all_defines[dpos]);
+
+		if(_all_defines[dpos]->dty == SQLT_LNG)
+			_fetch_rows = 1;
 	}
 	_state |= DEFINED;
 }
@@ -447,7 +450,7 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		{
 			define_all();
 		}
-		fetch(_buff_size);		
+		fetch(_fetch_rows);		
 		_last_fetched_row = row_count();
 	}	
 
@@ -516,7 +519,7 @@ void SqlStatement::fetch(ub4 rows/*=-1*/)
 		res2 = OCICALL(OCIStmtSetPieceInfo((dvoid *)hdlptr, (ub4)hdltype, _errh, (dvoid *) BPp->valuep, &alen, piece, (dvoid *)&indptr, &rcode));
 		oci_check_error(__TROTL_HERE__, _errh, res2);
 			
-		res = OCICALL(OCIStmtFetch(_handle, _errh, rows, OCI_FETCH_NEXT, OCI_DEFAULT));
+		res = OCICALL(OCIStmtFetch(_handle, _errh, 1, OCI_FETCH_NEXT, OCI_DEFAULT));
 		if(res == OCI_NEED_DATA || res == OCI_NO_DATA || res == OCI_SUCCESS || res == OCI_SUCCESS_WITH_INFO)
 			BPp->fetch_hook(iter, idx, piece, alen, indptr);
 	}
@@ -1088,7 +1091,7 @@ SqlStatement& SqlStatement::operator>> <int> (int &val)
 		_state |= EOF_DATA; 
 	
 	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-		fetch(_buff_size);
+		fetch(_fetch_rows);
 
 	return *this;
 };
@@ -1112,7 +1115,7 @@ SqlStatement& SqlStatement::operator>> <unsigned int> (unsigned int &val)
 		_state |= EOF_DATA; 
 
 	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-		fetch(_buff_size);
+		fetch(_fetch_rows);
 
 	return *this;
 };
@@ -1136,7 +1139,7 @@ SqlStatement& SqlStatement::operator>> <long> (long &val)
 		_state |= EOF_DATA; 
 	
 	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-		fetch(_buff_size);
+		fetch(_fetch_rows);
 
 	return *this;
 };
@@ -1161,7 +1164,7 @@ SqlStatement& SqlStatement::operator>> <unsigned long> (unsigned long &val)
 		_state |= EOF_DATA; 
 	
 	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-		fetch(_buff_size);
+		fetch(_fetch_rows);
 
 	return *this;
 };
@@ -1185,7 +1188,7 @@ SqlStatement& SqlStatement::operator>> <float> (float &val)
 		_state |= EOF_DATA; 	
 	
 	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-		fetch(_buff_size);
+		fetch(_fetch_rows);
 
 	return *this;
 };
@@ -1209,7 +1212,7 @@ SqlStatement& SqlStatement::operator>> <double> (double &val)
 		_state |= EOF_DATA; 
 		
 	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-		fetch(_buff_size);
+		fetch(_fetch_rows);
 
 	return *this;
 };
@@ -1232,7 +1235,7 @@ SqlStatement& SqlStatement::operator>> <tstring> (tstring &val)
 		_state |= EOF_DATA; 
 	
 	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-		fetch(_buff_size);
+		fetch(_fetch_rows);
 
 	return *this;
 }
@@ -1273,7 +1276,7 @@ SqlStatement& SqlStatement::operator>> (SqlValue &val)
 		_state |= EOF_DATA; 
 	
 	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-		fetch(_buff_size);
+		fetch(_fetch_rows);
 
 	return *this;
 }
@@ -1307,7 +1310,7 @@ SqlStatement& SqlStatement::operator>> <int>(std::vector<int> &val)
 		_state |= EOF_DATA; 
 		
 //	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-//		fetch(_buff_size);
+//		fetch(_fetch_rows);
 
 	return *this;
 }
@@ -1483,7 +1486,7 @@ SqlStatement& SqlStatement::operator>> (SqlCursor &val)
 	
 	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
 	{
-		fetch(_buff_size);
+		fetch(_fetch_rows);
 	}
 	
 	return *this;

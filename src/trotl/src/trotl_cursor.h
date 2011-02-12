@@ -71,7 +71,7 @@ public:
 		};
 		void fetch()
 		{
-			SqlStatement::fetch(_buff_size);
+			SqlStatement::fetch(_fetch_rows);
 		};
 	};
 	void descAlloc(void);
