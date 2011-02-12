@@ -212,7 +212,7 @@ public:
 	/* virtual */ QString editData() const throw()
 	{
 		::trotl::SqlOpenLob clob_open(data, OCI_LOB_READONLY);
-		QString retval = QString("Datatyp pe: Oracle [N]CLOB\nSize: %1B\n").arg(getLength());
+		QString retval = QString("Datatype: Oracle [N]CLOB\nSize: %1B\n").arg(getLength());
 		char buffer[MAXTOMAXLONG];
 		ub4 chunk_size = data.get_chunk_size();
 		unsigned offset = 0;
@@ -809,7 +809,7 @@ public:
 					_state |= EOF_DATA; 
 				
 				if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-					fetch(_buff_size);				
+					fetch(_fetch_rows); 
 			}
 		};
 		trotlQuery * Query;
