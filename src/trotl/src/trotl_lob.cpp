@@ -448,20 +448,39 @@ ub4	SqlClob::write_append(const dvoid* bufp, ub4 buflen, ub4 amount, ub2 csid, u
  */
 ub4	SqlClob::read(dvoid* bufp, ub4 buflen, ub4 offset, ub4 amount, ub2 csid, ub1 csfrm)
 {
-	sword res = OCICALL(OCILobRead(
-			_conn._svc_ctx,
-			_conn._env._errh,
-			_loc,
-			&amount,
-			offset,
-			bufp,
-			buflen,
-			NULL, /*dvoid* ctxp*/
-			NULL, /*sb4 (*cbfp)(dvoid*ctxp,CONST dvoid*bufp,ub4*len,ub1*piece)*/
-			0 /* csid */,
-			0 /* csfrm */
-	));
-	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
+	bool done = false;
+	while(!done)
+	{
+		sword res = OCICALL(OCILobRead(
+					    _conn._svc_ctx,
+					    _conn._env._errh,
+					    _loc,
+					    &amount,
+					    offset,
+					    bufp,
+					    buflen,
+					    NULL, /*dvoid* ctxp*/
+					    NULL, /*sb4 (*cbfp)(dvoid*ctxp,CONST dvoid*bufp,ub4*len,ub1*piece)*/
+					    0 /* csid */,
+					    0 /* csfrm */
+					    ));
+		if( res != OCI_SUCCESS )
+		{
+			sb4 errorcode;
+			sword res2 = OCICALL(OCIErrorGet(_conn._env._errh, 1, NULL, &errorcode, NULL, 0, OCI_HTYPE_ERROR));
+			assert(res2 == OCI_SUCCESS);
+			
+			if(errorcode == 24804) // ORA-24804: Lob read/write functions called while another OCI LOB read/write streaming is in progress
+			{
+				std::cerr << "ORA-24804: Lob read/write functions called while another OCI LOB read/write streaming is in progress" << std::endl;
+				usleep(100);
+			} else {
+				oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
+			}
+		} else {
+			done = true;
+		}
+	}
 	return amount;
 };
 

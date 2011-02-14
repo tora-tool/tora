@@ -87,7 +87,7 @@
 #include <QVector>
 
 #define MAXTOMAXLONG 30000
-#define MAXLOBSHOWN 256
+#define MAXLOBSHOWN 64
 
 static int toMaxLong = toConfigurationSingle::Instance().maxLong();
 
@@ -176,7 +176,8 @@ class toOracleClob: public toQValue::complexType
 public:
 	toOracleClob(trotl::OciConnection &_conn)
 		: toQValue::complexType()
-		, data(_conn)
+		, _data(_conn)
+		, _displayData()
 		, _length(0)
 	{};
 	/* virtual */ bool isBinary() const
@@ -190,37 +191,35 @@ public:
 
 	/* virtual */ QString displayData() const throw()
 	{
-		::trotl::SqlOpenLob clob_open(data, OCI_LOB_READONLY);
+		if(!_displayData.isEmpty())
+			return _displayData;
+		::trotl::SqlOpenLob clob_open(_data, OCI_LOB_READONLY);
 		char buffer[MAXLOBSHOWN];
 
-		unsigned bytes_read = data.read(&buffer[0], sizeof(buffer), 1, sizeof(buffer));
+		unsigned bytes_read = _data.read(&buffer[0], sizeof(buffer), 1, sizeof(buffer));
 		buffer[bytes_read] = '\0';
 
 		TLOG(4,toDecorator,__HERE__) << "Just read CLOB: \"" << buffer << "\"" << std::endl; 
-		
-		if(bytes_read < MAXLOBSHOWN)
-		{
-			return QString("{clob}") + buffer;
-		} else {
-			QString retval = QString("{clob}");
-			retval += buffer;
-			retval += "...<truncated>";
-			return QString("{clob}") + buffer + "...<truncated>";
-		}
+
+		QString _displayData = QString("{clob}");
+		_displayData += buffer;
+		if(bytes_read == MAXLOBSHOWN)
+			_displayData += "...<truncated>";	       
+		return _displayData;
 	}
 	
 	/* virtual */ QString editData() const throw()
 	{
-		::trotl::SqlOpenLob clob_open(data, OCI_LOB_READONLY);
+		::trotl::SqlOpenLob clob_open(_data, OCI_LOB_READONLY);
 		QString retval = QString("Datatype: Oracle [N]CLOB\nSize: %1B\n").arg(getLength());
 		char buffer[MAXTOMAXLONG];
-		ub4 chunk_size = data.get_chunk_size();
+		ub4 chunk_size = _data.get_chunk_size();
 		unsigned offset = 0;
 
 		while(offset < MAXTOMAXLONG)
 		{
 			unsigned to_read = MIN(MAXTOMAXLONG - offset, chunk_size);
-			unsigned bytes_read = data.read(&buffer[offset], MAXTOMAXLONG - offset, offset+1, to_read);
+			unsigned bytes_read = _data.read(&buffer[offset], MAXTOMAXLONG - offset, offset+1, to_read);
 			offset += bytes_read;
 			if(bytes_read == 0) // end of LOB reached
 				break;
@@ -251,12 +250,12 @@ public:
 	}
 	/* virtual */ QByteArray read(unsigned offset) const
 	{
-		unsigned chunksize = data.get_chunk_size();
+		unsigned chunksize = _data.get_chunk_size();
 		char *buffer = (char*)malloc( chunksize ); // TODO use alloc here(or _alloc on MSVC)
 		unsigned int bytes_read;
 		{
-			::trotl::SqlOpenLob clob_open(data, OCI_LOB_READONLY);
-			bytes_read = data.read(buffer, chunksize, offset+1, chunksize);
+			::trotl::SqlOpenLob clob_open(_data, OCI_LOB_READONLY);
+			bytes_read = _data.read(buffer, chunksize, offset+1, chunksize);
 			buffer[bytes_read] = '\0';
 		}
 		QByteArray retval(buffer, bytes_read);
@@ -271,12 +270,13 @@ public:
 		TLOG(1,toDecorator,__HERE__) << "toOracleClob DELETED:" << this << std::endl;
 	}
 
-	mutable trotl::SqlClob data;
+	mutable trotl::SqlClob _data;
+	mutable QString _displayData;
 protected:
 	ub4 getLength() const
 	{
 		if(!_length)
-			_length = data.get_length();
+			_length = _data.get_length();
 		return _length;
 	};
 	
@@ -766,7 +766,7 @@ public:
 					{
 						toOracleClob *i = new toOracleClob(_conn);
 						trotl::ConvertorForRead c(_last_buff_row);
-						trotl::DispatcherForRead::Go(BP, i->data, c);
+						trotl::DispatcherForRead::Go(BP, i->_data, c);
 						QVariant v;
 						v.setValue((toQValue::complexType*)i);
 						value = toQValue::fromVariant(v);
