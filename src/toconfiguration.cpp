@@ -256,6 +256,16 @@ public:
     bool               m_useEditorShortcuts;
     EditorShortcutsMap m_editorShortcuts;
 
+    // Extractor. Controls the method used to produce database object extracts
+    // as well as extraction settings (which information should be extracted).
+    bool m_extractorIncludeSotrage;
+    bool   m_extractorSkipOrgMonInformation;
+    bool   m_extractorSkipStorageExceptTablespaces;
+    bool m_extractorIncludeParallel;
+    bool m_extractorIncludePartition;
+    bool m_extractorIncludeCode;
+    bool m_extractorIncludeHeader;
+    bool m_extractorIncludePrompt;
 
     toConfigurationPrivate()
     {
@@ -308,7 +318,7 @@ public:
         m_codeFont = s.value(CONF_CODE, "").toString();
         m_listFont = s.value(CONF_LIST, "").toString();
         m_dateFormat = s.value(CONF_DATE_FORMAT, DEFAULT_DATE_FORMAT).toString();
-	m_timestampFormat = s.value(CONF_TIMESTAMP_FORMAT, DEFAULT_TIMESTAMP_FORMAT).toString();
+        m_timestampFormat = s.value(CONF_TIMESTAMP_FORMAT, DEFAULT_TIMESTAMP_FORMAT).toString();
         m_refresh = s.value(CONF_REFRESH, DEFAULT_REFRESH).toString();
         m_highlight = s.value(CONF_HIGHLIGHT, true).toBool();
         m_keywordUpper = s.value(CONF_KEYWORD_UPPER, DEFAULT_KEYWORD_UPPER).toBool();
@@ -529,6 +539,18 @@ public:
             m_editorShortcuts[s.value("key").toString()] = s.value("value");
         }
         s.endArray();
+
+        s.beginGroup(CONF_EXT_GROUP_NAME);
+        m_extractorIncludeSotrage = s.value(CONF_EXT_INC_STORAGE, DEFAULT_EXT_INC_STORAGE).toBool();
+        m_extractorSkipOrgMonInformation = s.value(CONF_EXT_SKIP_ORGMON, DEFAULT_EXT_SKIP_ORGMON).toBool();
+        m_extractorSkipStorageExceptTablespaces = s.value(CONF_EXT_SKIP_STORAGE_EX_TABLESPACE, DEFAULT_EXT_SKIP_STORAGE_EX_TABLESPACE).toBool();
+        m_extractorIncludeParallel = s.value(CONF_EXT_INC_PARALLEL, DEFAULT_EXT_INC_PARALLEL).toBool();
+        m_extractorIncludePartition = s.value(CONF_EXT_INC_PARTITION, DEFAULT_EXT_INC_PARTITION).toBool();
+        m_extractorIncludeCode = s.value(CONF_EXT_INC_CODE, DEFAULT_EXT_INC_CODE).toBool();
+        m_extractorIncludeHeader = s.value(CONF_EXT_INC_HEADER, DEFAULT_EXT_INC_HEADER).toBool();
+        m_extractorIncludePrompt = s.value(CONF_EXT_INC_PROMPT, DEFAULT_EXT_INC_PROMPT).toBool();
+        s.endGroup(); // end extractor group
+
         s.endGroup();
     }
 
@@ -553,7 +575,7 @@ public:
         s.setValue(CONF_CODE, m_codeFont);
         s.setValue(CONF_LIST, m_listFont);
         s.setValue(CONF_DATE_FORMAT, m_dateFormat);
-	s.setValue(CONF_TIMESTAMP_FORMAT, m_timestampFormat);
+        s.setValue(CONF_TIMESTAMP_FORMAT, m_timestampFormat);
         s.setValue(CONF_REFRESH, m_refresh);
         s.setValue(CONF_HIGHLIGHT, m_highlight);
         s.setValue(CONF_KEYWORD_UPPER, m_keywordUpper);
@@ -775,6 +797,17 @@ public:
         }
         s.endArray();
         s.endGroup();
+
+        s.beginGroup(CONF_EXT_GROUP_NAME);
+        s.setValue(CONF_EXT_INC_STORAGE, m_extractorIncludeSotrage);
+        s.setValue(CONF_EXT_SKIP_ORGMON, m_extractorSkipOrgMonInformation);
+        s.setValue(CONF_EXT_SKIP_STORAGE_EX_TABLESPACE, m_extractorSkipStorageExceptTablespaces);
+        s.setValue(CONF_EXT_INC_PARALLEL, m_extractorIncludeParallel);
+        s.setValue(CONF_EXT_INC_PARTITION, m_extractorIncludePartition);
+        s.setValue(CONF_EXT_INC_CODE, m_extractorIncludeCode);
+        s.setValue(CONF_EXT_INC_HEADER, m_extractorIncludeHeader);
+        s.setValue(CONF_EXT_INC_PROMPT, m_extractorIncludePrompt);
+        s.endGroup(); // end extractor group
     }
 
 
@@ -1090,7 +1123,7 @@ void toConfiguration::setMaxColDisp(int v)
 QString toConfiguration::planTable(QString schema)
 {
     if(p->m_sharedPlan || p->m_planTable.contains('.') || schema.isNull())
-      return p->m_planTable;
+        return p->m_planTable;
 
     return schema + '.' + p->m_planTable;
 }
@@ -2295,4 +2328,76 @@ QString toConfiguration::forceLineEnd()
 void toConfiguration::setForceLineEnd(const QString & v)
 {
     p->m_forcelineend = v;
+}
+
+bool toConfiguration::extractorIncludeSotrage()
+{
+    return p->m_extractorIncludeSotrage;
+}
+void toConfiguration::setExtractorIncludeSotrage(bool v)
+{
+    p->m_extractorIncludeSotrage = v;
+}
+
+bool toConfiguration::extractorSkipOrgMonInformation()
+{
+    return p->m_extractorSkipOrgMonInformation;
+}
+void toConfiguration::setExtractorSkipOrgMonInformation(bool v)
+{
+    p->m_extractorSkipOrgMonInformation = v;
+}
+
+bool toConfiguration::extractorSkipStorageExceptTablespaces()
+{
+    return p->m_extractorSkipStorageExceptTablespaces;
+}
+void toConfiguration::setExtractorSkipStorageExceptTablespaces(bool v)
+{
+    p->m_extractorSkipStorageExceptTablespaces = v;
+}
+
+bool toConfiguration::extractorIncludeParallel()
+{
+    return p->m_extractorIncludeParallel;
+}
+void toConfiguration::setExtractorIncludeParallel(bool v)
+{
+    p->m_extractorIncludeParallel = v;
+}
+
+bool toConfiguration::extractorIncludePartition()
+{
+    return p->m_extractorIncludePartition;
+}
+void toConfiguration::setExtractorIncludePartition(bool v)
+{
+    p->m_extractorIncludePartition = v;
+}
+
+bool toConfiguration::extractorIncludeCode()
+{
+    return p->m_extractorIncludeCode;
+}
+void toConfiguration::setExtractorIncludeCode(bool v)
+{
+    p->m_extractorIncludeCode = v;
+}
+
+bool toConfiguration::extractorIncludeHeader()
+{
+    return p->m_extractorIncludeHeader;
+}
+void toConfiguration::setExtractorIncludeHeader(bool v)
+{
+    p->m_extractorIncludeHeader = v;
+}
+
+bool toConfiguration::extractorIncludePrompt()
+{
+    return p->m_extractorIncludePrompt;
+}
+void toConfiguration::setExtractorIncludePrompt(bool v)
+{
+    p->m_extractorIncludePrompt = v;
 }

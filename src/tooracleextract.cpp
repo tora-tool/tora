@@ -798,16 +798,19 @@ QString toOracleExtract::createTableText(toExtract &ext,
         ret += QString("      USING TABLESPACE %2\n").arg(QUOTE(tablespace));
     }
     ret += ")\n";
-    if (CONNECTION.version() >= "0800" && ext.getStorage() && ! organization.isEmpty() )
+    if (!toConfigurationSingle::Instance().extractorSkipOrgMonInformation())
     {
-        ret += "ORGANIZATION        ";
-        ret += organization;
-        ret += "\n";
-    }
-    if (CONNECTION.version() >= "0801" && ext.getStorage() && ! monitoring.isEmpty() )
-    {
-        ret += monitoring;
-        ret += "\n";
+        if (CONNECTION.version() >= "0800" && ext.getStorage() && ! organization.isEmpty() )
+        {
+            ret += "ORGANIZATION        ";
+            ret += organization;
+            ret += "\n";
+        }
+        if (CONNECTION.version() >= "0801" && ext.getStorage() && ! monitoring.isEmpty() )
+        {
+            ret += monitoring;
+            ret += "\n";
+        }
     }
     if (ext.getParallel() && ! degree.isEmpty() && ! instances.isEmpty() )
         ret += QString("PARALLEL\n"
@@ -2371,47 +2374,50 @@ QString toOracleExtract::segmentAttributes(toExtract &ext, toQList &result) cons
         QString blocks = *i;
         i++;
 
-        if (ext.getResize())
-            ext.initialNext(blocks, initial, next);
-
-        if (organization == "HEAP")
+        if (!toConfigurationSingle::Instance().extractorSkipStorageExceptTablespaces())
         {
-            if (cache != "N/A")
+            if (ext.getResize())
+                ext.initialNext(blocks, initial, next);
+
+            if (organization == "HEAP")
             {
-                ret += indent;
-                ret += cache;
-                ret += "\n";
+                if (cache != "N/A")
+                {
+                    ret += indent;
+                    ret += cache;
+                    ret += "\n";
+                }
+                if (!ext.state("IsASnapIndex").toBool() && !pctUsed.isEmpty())
+                    ret += QString("%1PCTUSED             %2\n").arg(indent).arg(pctUsed);
             }
-            if (!ext.state("IsASnapIndex").toBool() && !pctUsed.isEmpty())
-                ret += QString("%1PCTUSED             %2\n").arg(indent).arg(pctUsed);
-        }
-        if (!ext.state("IsASnapIndex").toBool())
-            ret += QString("%1PCTFREE             %2\n").arg(indent).arg(pctFree);
-        if (!ext.state("IsASnapTable").toBool())
-            ret += QString("%1INITRANS            %2\n").arg(indent).arg(iniTrans);
+            if (!ext.state("IsASnapIndex").toBool())
+                ret += QString("%1PCTFREE             %2\n").arg(indent).arg(pctFree);
+            if (!ext.state("IsASnapTable").toBool())
+                ret += QString("%1INITRANS            %2\n").arg(indent).arg(iniTrans);
 
-        ret += QString("%1MAXTRANS            %2\n").arg(indent).arg(maxTrans);
-        ret += indent;
-        ret += "STORAGE\n";
-        ret += indent;
-        ret += "(\n";
-        ret += QString("%1  INITIAL           %2\n").arg(indent).arg(initial);
-        if (!next.isEmpty())
-            ret += QString("%1  NEXT              %2\n").arg(indent).arg(next);
-        ret += QString("%1  MINEXTENTS        %2\n").arg(indent).arg(minExtents);
-        ret += QString("%1  MAXEXTENTS        %2\n").arg(indent).arg(maxExtents);
-        if (!pctIncrease.isEmpty())
-            ret += QString("%1  PCTINCREASE       %2\n").arg(indent).arg(pctIncrease);
-        ret += QString("%1  FREELISTS         %2\n").arg(indent).arg(freelists);
-        ret += QString("%1  FREELIST GROUPS   %2\n").arg(indent).arg(freelistGroups);
-        if (CONNECTION.version() >= "0801")
-        {
-            ret += QString("%1  BUFFER_POOL       %2\n").arg(indent).arg(QUOTE(bufferPool));
+            ret += QString("%1MAXTRANS            %2\n").arg(indent).arg(maxTrans);
+            ret += indent;
+            ret += "STORAGE\n";
+            ret += indent;
+            ret += "(\n";
+            ret += QString("%1  INITIAL           %2\n").arg(indent).arg(initial);
+            if (!next.isEmpty())
+                ret += QString("%1  NEXT              %2\n").arg(indent).arg(next);
+            ret += QString("%1  MINEXTENTS        %2\n").arg(indent).arg(minExtents);
+            ret += QString("%1  MAXEXTENTS        %2\n").arg(indent).arg(maxExtents);
+            if (!pctIncrease.isEmpty())
+                ret += QString("%1  PCTINCREASE       %2\n").arg(indent).arg(pctIncrease);
+            ret += QString("%1  FREELISTS         %2\n").arg(indent).arg(freelists);
+            ret += QString("%1  FREELIST GROUPS   %2\n").arg(indent).arg(freelistGroups);
+            if (CONNECTION.version() >= "0801")
+            {
+                ret += QString("%1  BUFFER_POOL       %2\n").arg(indent).arg(QUOTE(bufferPool));
+            }
+            ret += indent;
+            ret += ")\n";
+            if (CONNECTION.version() >= "0800")
+                ret += QString("%1%2\n").arg(indent).arg(logging);
         }
-        ret += indent;
-        ret += ")\n";
-        if (CONNECTION.version() >= "0800")
-            ret += QString("%1%2\n").arg(indent).arg(logging);
         ret += QString("%1TABLESPACE          %2\n").arg(indent).arg(QUOTE(tablespace));
     }
     return ret;
@@ -2714,11 +2720,11 @@ QString toOracleExtract::tableColumns(toExtract &ext,
         QString notNull = toShift(cols);
         if (!def.isEmpty())
         {
-            ret += "DEFAULT ";
+            ret += " DEFAULT ";
             ret += def.trimmed();
-            ret += " ";
         }
-        ret += notNull;
+        if (!notNull.isEmpty())
+            ret += " " + notNull;
     }
     ret += "\n";
     return ret;

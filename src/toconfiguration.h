@@ -516,6 +516,24 @@ public:
     QString forceLineEnd();
     void setForceLineEnd(const QString & v);
 
+    // Extractor. Controls the method used to produce database object extracts
+    // as well as extraction settings (which information should be extracted).
+    bool extractorIncludeSotrage();
+    void setExtractorIncludeSotrage(bool v);
+    bool extractorSkipOrgMonInformation();
+    void setExtractorSkipOrgMonInformation(bool v);
+    bool extractorSkipStorageExceptTablespaces();
+    void setExtractorSkipStorageExceptTablespaces(bool v);
+    bool extractorIncludeParallel();
+    void setExtractorIncludeParallel(bool v);
+    bool extractorIncludePartition();
+    void setExtractorIncludePartition(bool v);
+    bool extractorIncludeCode();
+    void setExtractorIncludeCode(bool v);
+    bool extractorIncludeHeader();
+    void setExtractorIncludeHeader(bool v);
+    bool extractorIncludePrompt();
+    void setExtractorIncludePrompt(bool v);
 };
 
 typedef Loki::SingletonHolder<toConfiguration> toConfigurationSingle;

@@ -252,6 +252,25 @@
 #define CONF_EXEC_LOG     "ExecLog"
 #define CONF_TOPLEVEL_DESCRIBE "ToplevelDescribe"
 
+// Extractor. Controls the method used to produce database object extracts
+// as well as extraction settings (which information should be extracted).
+#define CONF_EXT_GROUP_NAME "ExtractorOptions"
+#define CONF_EXT_INC_STORAGE "IncludeStorage"
+#define DEFAULT_EXT_INC_STORAGE true
+#define CONF_EXT_SKIP_ORGMON "SkipOrgMon"
+#define DEFAULT_EXT_SKIP_ORGMON false
+#define CONF_EXT_SKIP_STORAGE_EX_TABLESPACE "SkipStorageExceptTablespace"
+#define DEFAULT_EXT_SKIP_STORAGE_EX_TABLESPACE false
+#define CONF_EXT_INC_PARALLEL "IncludeParallel"
+#define DEFAULT_EXT_INC_PARALLEL true
+#define CONF_EXT_INC_PARTITION "IncludePartition"
+#define DEFAULT_EXT_INC_PARTITION true
+#define CONF_EXT_INC_CODE "IncludeCode"
+#define DEFAULT_EXT_INC_CODE true
+#define CONF_EXT_INC_HEADER "IncludeHeader"
+#define DEFAULT_EXT_INC_HEADER true
+#define CONF_EXT_INC_PROMPT "IncludePrompt"
+#define DEFAULT_EXT_INC_PROMPT true
 
 // Version of TOra, must also change rpm files
 #ifndef TOAPPNAME
