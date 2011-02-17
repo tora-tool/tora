@@ -2,39 +2,39 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2008 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries. 
- * 
+ *      these libraries.
+ *
  *      You may link this product with any GPL'd Qt library.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -161,8 +161,8 @@ static void ThrowException(const otl_exception &exc)
             else if (ret.isEmpty())
             {
                 ret = QString::fromLatin1(
-                    "Missing error description. This may be caused by a library "
-                    "version mismatch. Check that your ORACLE_HOME and library path is correct.");
+                          "Missing error description. This may be caused by a library "
+                          "version mismatch. Check that your ORACLE_HOME and library path is correct.");
             }
         }
 
@@ -195,10 +195,12 @@ public:
         }
         ~oracleSub()
         {
-            try {
+            try
+            {
                 delete Connection;
             }
-            catch(...) {
+            catch(...)
+            {
             }
 
             Connection = 0;
@@ -209,37 +211,37 @@ public:
         }
         virtual void throwExtendedException(toConnection &conn, const otl_exception &exc)
         {
-/*            if (conn.version() < "0800" && exc.code == 0)
-            {
-                // Serious OCI voodoo to get the Parse error location on Oracle7 servers
+            /*            if (conn.version() < "0800" && exc.code == 0)
+                        {
+                            // Serious OCI voodoo to get the Parse error location on Oracle7 servers
 
-                Lda_Def lda;
-                Cda_Def cda;
-                if (OCISvcCtxToLda(Connection->connect_struct.svchp,
-                                   Connection->connect_struct.errhp,
-                                   &lda) == OCI_SUCCESS)
-                {
-                    if (oopen(&cda,
-                              &lda,
-                              (OraText *)0, -1,
-                              -1,
-                              (OraText *)0, -1) == OCI_SUCCESS)
-                    {
-                        cda.peo = 0;
-                        oparse(&cda, (OraText *)exc.stm_text, -1, FALSE, 1);
-                        ((otl_exception &)exc).code = cda.peo;
-                        oclose(&cda);
-                    }
-                    OCILdaToSvcCtx(&Connection->connect_struct.svchp,
-                                   Connection->connect_struct.errhp,
-                                   &lda);
-                }
-            }*/
+                            Lda_Def lda;
+                            Cda_Def cda;
+                            if (OCISvcCtxToLda(Connection->connect_struct.svchp,
+                                               Connection->connect_struct.errhp,
+                                               &lda) == OCI_SUCCESS)
+                            {
+                                if (oopen(&cda,
+                                          &lda,
+                                          (OraText *)0, -1,
+                                          -1,
+                                          (OraText *)0, -1) == OCI_SUCCESS)
+                                {
+                                    cda.peo = 0;
+                                    oparse(&cda, (OraText *)exc.stm_text, -1, FALSE, 1);
+                                    ((otl_exception &)exc).code = cda.peo;
+                                    oclose(&cda);
+                                }
+                                OCILdaToSvcCtx(&Connection->connect_struct.svchp,
+                                               Connection->connect_struct.errhp,
+                                               &lda);
+                            }
+                        }*/
             ThrowException(exc);
         }
     };
 
-class oracleQuery : public queryImpl
+    class oracleQuery : public queryImpl
     {
         bool Cancel;
         bool Running;
@@ -247,7 +249,7 @@ class oracleQuery : public queryImpl
         otl_stream *Query;
     public:
         oracleQuery(toQuery *query, oracleSub *)
-                : queryImpl(query)
+            : queryImpl(query)
         {
             Running = Cancel = false;
             SaveInPool = false;
@@ -319,7 +321,8 @@ class oracleQuery : public queryImpl
                     (*Query) >> str;
                     Running = false;
 
-                    if (!str.len()) {
+                    if (!str.len())
+                    {
                         free(buffer);
                         return null;
                     }
@@ -429,7 +432,8 @@ class oracleQuery : public queryImpl
         {
             if (!Query || Cancel)
                 return true;
-            try {
+            try
+            {
                 return Query->eof();
             }
             catch (const otl_exception &exc)
@@ -464,7 +468,7 @@ class oracleQuery : public queryImpl
             int datatypearg2 = 0;
             otl_column_desc *description = Query->describe_select(descriptionLen);
 
-            for (int i = 0;i < descriptionLen;i++)
+            for (int i = 0; i < descriptionLen; i++)
             {
                 toQDescribe desc;
                 desc.AlignRight = false;
@@ -609,7 +613,7 @@ class oracleQuery : public queryImpl
         }
     };
 
-class oracleConnection : public toConnection::connectionImpl
+    class oracleConnection : public toConnection::connectionImpl
     {
         QString connectString(void)
         {
@@ -633,7 +637,7 @@ class oracleConnection : public toConnection::connectionImpl
         }
     public:
         oracleConnection(toConnection *conn)
-                : toConnection::connectionImpl(conn)
+            : toConnection::connectionImpl(conn)
         { }
 
         /** Return a string representation to address an object.
@@ -687,8 +691,8 @@ class oracleConnection : public toConnection::connectionImpl
         }
 
         virtual std::list<toConnection::objectName> objectNames(const QString &owner,
-                                                                const QString &type,
-                                                                const QString &name)
+                const QString &type,
+                const QString &name)
         {
             std::list<toConnection::objectName> ret;
 
@@ -836,7 +840,7 @@ class oracleConnection : public toConnection::connectionImpl
                 toQList par;
                 query.execute(SQL, par);
                 toQDescList desc = query.describe();
-                for (toQDescList::iterator j = desc.begin();j != desc.end();j++)
+                for (toQDescList::iterator j = desc.begin(); j != desc.end(); j++)
                     (*j).Comment = comments[(*j).Name];
 
                 return desc;
@@ -954,7 +958,7 @@ class oracleConnection : public toConnection::connectionImpl
     };
 
     toOracleProvider(void)
-            : toConnectionProvider("Oracle", false)
+        : toConnectionProvider("Oracle", false)
     {}
 
     virtual void initialize(void)
@@ -1150,7 +1154,7 @@ void toOracleProvider::oracleQuery::execute(void)
     try
     {
         otl_null null;
-        for (toQList::iterator i = query()->params().begin();i != query()->params().end();i++)
+        for (toQList::iterator i = query()->params().begin(); i != query()->params().end(); i++)
         {
             if ((*i).isNull())
                 (*Query) << null;
@@ -1347,7 +1351,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
     {
         printf("Failed to set new default date format for session\n");
         toStatusMessage(QObject::tr("Failed to set new default date format for session: %1")
-                                  .arg(toConfigurationSingle::Instance().dateFormat()));
+                        .arg(toConfigurationSingle::Instance().dateFormat()));
     }
 
     try
@@ -1361,7 +1365,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
     {
         printf("Failed to set new default timestamp format for session\n");
         toStatusMessage(QObject::tr("Failed to set new default timestamp format for session: %1")
-                                  .arg(toConfigurationSingle::Instance().timestampFormat()));
+                        .arg(toConfigurationSingle::Instance().timestampFormat()));
     }
 
     try
@@ -1429,7 +1433,7 @@ static toSQL SQLCreatePlanTable(toSQL::TOSQL_CREATEPLAN,
 
 
 toOracleSetting::toOracleSetting(QWidget *parent)
-        : QWidget(parent), toSettingTab("database.html#oracle")
+    : QWidget(parent), toSettingTab("database.html#oracle")
 {
 
     setupUi(this);
@@ -1491,11 +1495,12 @@ void toOracleSetting::saveSetting()
                     str.arg(toConfigurationSingle::Instance().dateFormat()));
             }
         }
-        catch(...) {
+        catch(...)
+        {
             toStatusMessage(tr("Failed to set new default date format for connection: %1").arg(c));
         }
-	try
-	{
+        try
+        {
             toConnection &conn = toMainWidget()->connection(c);
 
             if(toIsOracle(conn))
@@ -1504,9 +1509,10 @@ void toOracleSetting::saveSetting()
                     str1.arg(toConfigurationSingle::Instance().timestampFormat()));
             }
         }
-        catch(...) {
+        catch(...)
+        {
             toStatusMessage(tr("Failed to set new default timestamp format for connection: %1").arg(c));
-	}
+        }
 
     }
 
