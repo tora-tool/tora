@@ -110,26 +110,26 @@ struct TROTL_EXPORT SqlLob: public SqlValue
 
 	void clear();
 
-	ub4	get_chunk_size();
+	ub4 getChunkSize();
 
 	//TODO OCILobGetLength2 for 64 bit mode
-	ub4	get_length();
+	oraub8	length();
 
-	boolean	is_open() const;
+	boolean	isOpen() const;
 
 	boolean	isTemporary() const;
 
-	void copy(const SqlLob& src, ub4 amount, ub4 dst_offset, ub4 src_offset);
+	void copy(const SqlLob& src, oraub8 amount, oraub8 dst_offset, oraub8 src_offset);
 
 	void append(const SqlLob& src);
 
-	void trim(ub4 newlen=0);
+	void trim(oraub8 newlen=0);
 
-	ub4 erase(ub4 offset, ub4 amount);
+	oraub8 erase(oraub8 offset, oraub8 amount);
 
-	void enable_buffering();
+	void enableBuffering();
 
-	void disable_buffering();
+	void disableBuffering();
 
 	void flush(ub4 flag=OCI_LOB_BUFFER_NOFREE);
 
@@ -161,11 +161,11 @@ struct TROTL_EXPORT SqlBlob : public SqlLob
 {
 	SqlBlob(OciConnection &conn) : SqlLob(conn) {}
 
-	ub4	write(const dvoid* bufp, ub4 buflen, ub4 offset/*=1*/, ub4 amount);
+	oraub8	write(const dvoid* bufp, oraub8 buflen, oraub8 offset/*=1*/, oraub8 amount);
 
-	ub4	write_append(const dvoid* bufp, ub4 buflen, ub4 amount);
+	oraub8	write_append(const dvoid* bufp, oraub8 buflen, oraub8 amount);
 
-	ub4	read(dvoid* bufp, ub4 buflen, ub4 offset, ub4 amount);
+	oraub8	read(dvoid* bufp, oraub8 buflen, oraub8 offset, oraub8 amount);
 };
 
 struct TROTL_EXPORT SqlTempBlob : public SqlBlob
@@ -180,14 +180,14 @@ struct TROTL_EXPORT SqlClob : public SqlLob
 {
 	SqlClob(OciConnection &conn) : SqlLob(conn) {}
 
-	ub4	write(const dvoid* bufp, ub4 buflen, ub4 offset, ub4 amount, ub2 csid=0, ub1 csfrm=SQLCS_IMPLICIT);
+	oraub8	write(const dvoid* bufp, oraub8 buflen, oraub8 offset, oraub8 amount, ub2 csid=0, ub1 csfrm=SQLCS_IMPLICIT);
 
-	ub4	write_append(const dvoid* bufp, ub4 buflen, ub4 amount, ub2 csid=0, ub1 csfrm=SQLCS_IMPLICIT);
+	oraub8	write_append(const dvoid* bufp, oraub8 buflen, oraub8 amount, ub2 csid=0, ub1 csfrm=SQLCS_IMPLICIT);
 
 	/*
 	 * NOTE: !! offset has to be >= 1. Oracle's LOBs start with 1st byte.
 	 */
-	ub4	read(dvoid* bufp, ub4 buflen, ub4 offset, ub4 amount, ub2 csid=0, ub1 csfrm=SQLCS_IMPLICIT);
+	oraub8	read(dvoid* bufp, oraub8 buflen, oraub8 offset, oraub8 amount, oraub8 *chars=NULL, ub2 csid=0, ub1 csfrm=SQLCS_IMPLICIT);
 };
 
 struct TROTL_EXPORT SqlTempClob : public SqlClob

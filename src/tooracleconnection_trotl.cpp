@@ -141,13 +141,13 @@ static void ThrowException(const ::trotl::OciException &exc)
 		    {
 		    if (exc.code != 0)
 		    {
-		    ret = QString::fromLatin1("ORA-") +
+		    ret = QString::fromUtf8("ORA-") +
 		    QString::number(exc.code) +
-		    QString::fromLatin1(" missing error description");
+		    QString::fromUtf8(" missing error description");
 		    }
 		    else if (ret.isEmpty())
 		    {
-		    ret = QString::fromLatin1(
+		    ret = QString::fromUtf8(
 		    "Missing error description. This may be caused by a library "
 		    "version mismatch. Check that your ORACLE_HOME and library path is correct.");
 		    }
@@ -202,7 +202,7 @@ public:
 		TLOG(4,toDecorator,__HERE__) << "Just read CLOB: \"" << buffer << "\"" << std::endl; 
 
 		QString _displayData = QString("{clob}");
-		_displayData += buffer;
+		_displayData += QString::fromUtf8(buffer);
 		if(bytes_read == MAXLOBSHOWN)
 			_displayData += "...<truncated>";	       
 		return _displayData;
@@ -213,7 +213,7 @@ public:
 		::trotl::SqlOpenLob clob_open(_data, OCI_LOB_READONLY);
 		QString retval = QString("Datatype: Oracle [N]CLOB\nSize: %1B\n").arg(getLength());
 		char buffer[MAXTOMAXLONG];
-		ub4 chunk_size = _data.get_chunk_size();
+		ub4 chunk_size = _data.getChunkSize();
 		unsigned offset = 0;
 
 		while(offset < MAXTOMAXLONG)
@@ -227,9 +227,9 @@ public:
 		buffer[MIN(offset,(unsigned)MAXTOMAXLONG)] = '\0';
 
 		if(offset == MAXTOMAXLONG)
-			return QString(buffer) + "\n...<TRUNCATED>";
+			return QString::fromUtf8(buffer) + "\n...<TRUNCATED>";
 		else
-			return QString(buffer);
+			return QString::fromUtf8(buffer);
 	}
 
 	/* virtual */ QString userData() const throw()
@@ -250,7 +250,7 @@ public:
 	}
 	/* virtual */ QByteArray read(unsigned offset) const
 	{
-		unsigned chunksize = _data.get_chunk_size();
+		unsigned chunksize = _data.getChunkSize();
 		char *buffer = (char*)malloc( chunksize ); // TODO use alloc here(or _alloc on MSVC)
 		unsigned int bytes_read;
 		{
@@ -273,14 +273,14 @@ public:
 	mutable trotl::SqlClob _data;
 	mutable QString _displayData;
 protected:
-	ub4 getLength() const
+	oraub8 getLength() const
 	{
 		if(!_length)
-			_length = _data.get_length();
+			_length = _data.length();
 		return _length;
 	};
 	
-	mutable ub4 _length; // NOTE: OCILobGetLength makes one roundtrip to the server
+	mutable oraub8 _length; // NOTE: OCILobGetLength makes one roundtrip to the server
 	toOracleClob(toOracleClob const&);
 	toOracleClob operator=(toOracleClob const&);
 	//TODO copying prohibited
@@ -331,7 +331,7 @@ public:
 		::trotl::SqlOpenLob clob_open(data, OCI_LOB_READONLY);
 		QString retval = QString("Datatyp pe: Oracle BLOB\nSize: %1B\n").arg(getLength());
 		unsigned char buffer[MAXTOMAXLONG];
-		ub4 chunk_size = data.get_chunk_size();
+		ub4 chunk_size = data.getChunkSize();
 		unsigned offset = 0;
 		
 		while(offset < MAXTOMAXLONG)
@@ -362,13 +362,13 @@ public:
 	/* virtual */ QString userData() const throw()
 	{
 		return QString("Datape: Oracle BLOB\nSize: %1B\n")
-			.arg(data.get_length());
+			.arg(data.length());
 	}
 
 	/* virtual */ QString tooltipData() const throw()
 	{
 		return QString("Datape: Oracle BLOB\nSize: %1B\n")
-			.arg(data.get_length());
+			.arg(data.length());
 	}
 	
 	/* virtual */ QString dataTypeName() const
@@ -377,7 +377,7 @@ public:
 	}
 	/* virtual */ QByteArray read(unsigned offset) const
 	{
-		unsigned chunksize = data.get_chunk_size();
+		unsigned chunksize = data.getChunkSize();
 		char *buffer = (char*)malloc( chunksize ); // TODO use alloc here(or _alloc on MSVC)
 		unsigned int bytes_read;
 		{
@@ -399,14 +399,14 @@ public:
 
 	mutable trotl::SqlBlob data;
 protected:
-	ub4 getLength() const
+	oraub8 getLength() const
 	{
 		if(!_length)
-			_length = data.get_length();
+			_length = data.length();
 		return _length;
 	};
 	
-	mutable ub4 _length; // NOTE: OCILobGetLength makes one roundtrip to the server
+	mutable oraub8 _length; // NOTE: OCILobGetLength makes one roundtrip to the server
 	toOracleBlob(toOracleBlob const&);
 	toOracleBlob operator=(toOracleBlob const&);
 	//TODO copying prohibited
@@ -437,7 +437,7 @@ public:
 	
 	/* virtual */ QString editData() const throw()
 	{
-		return QString(((::trotl::tstring)data).c_str());
+		return QString::fromUtf8(((::trotl::tstring)data).c_str());
 	}
 
 	/* virtual */ QString userData() const throw()
@@ -452,7 +452,7 @@ public:
 
 	/* virtual */ QString dataTypeName() const
 	{
-		return QString(data._data_type_name.c_str());
+		return QString::fromUtf8(data._data_type_name.c_str());
 	}
 	/* virtual */ QByteArray read(unsigned offset) const
 	{
@@ -498,7 +498,7 @@ public:
 	{
 		std::string s;
 		data >> s;
-		return QString(s.c_str());
+		return QString::fromUtf8(s.c_str());
 	}
 
 	/* virtual */ QString userData() const throw()
@@ -695,7 +695,7 @@ public:
 										    str_buf );
 							oci_check_error(__HERE__, _env._errh, res);
 							str_buf[str_len+1] = '\0';
-							value = toQValue(QString((const char*)str_buf));
+							value = toQValue(QString::fromUtf8((const char*)str_buf));
 						}							
 					}
 					break;
@@ -710,7 +710,7 @@ public:
 								TLOG(4,toDecorator,__HERE__) << "Just read: NULL XML" << std::endl; 
 							} else {
 								std::string s(BP.get_string(_last_buff_row));
-								value = toQValue(QString(s.c_str()));
+								value = toQValue(QString::fromUtf8(s.c_str()));
 								TLOG(4,toDecorator,__HERE__) << "Just read: \"" << s << "\"" << std::endl; 
 							}
 						}
@@ -722,7 +722,7 @@ public:
 								value = toQValue();
 							} else {
 								std::string s(BP.get_string(_last_buff_row));
-								value = toQValue(QString(s.c_str()));
+								value = toQValue(QString::fromUtf8(s.c_str()));
 							}
 						} else if( ::trotl::BindParCollectionTabNum const *bpc = dynamic_cast<const trotl::BindParCollectionTabNum *>(&BP))
 						{
@@ -797,7 +797,7 @@ public:
 					}
 					default:
 						std::string s(BP.get_string(_last_buff_row));
-						value = toQValue(QString(s.c_str()));
+						value = toQValue(QString::fromUtf8(s.c_str()));
 						TLOG(4,toDecorator,__HERE__) << "Just read: \"" << s << "\"" << std::endl;
 					}
 				}
@@ -918,7 +918,7 @@ public:
 				toQDescribe desc;
  				desc.AlignRight = false;
  				desc.Name = QString::fromUtf8( (*it)._column_name.c_str() );
-				desc.Datatype = QString::fromLatin1( (*it).get_type_str(true).c_str() );
+				desc.Datatype = QString::fromUtf8( (*it).get_type_str(true).c_str() );
 
 				//datatypearg1 = description[i].char_size;
 				desc.Datatype.sprintf(desc.Datatype.toUtf8().constData(), datatypearg1, datatypearg2);
@@ -940,7 +940,7 @@ public:
 		{
 			oracleSub *conn = dynamic_cast<oracleSub *>(sub);
 			if (!conn)
-				throw QString::fromLatin1("Internal error, not oracle sub connection");
+				throw QString::fromLatin1("Internal error, not a oracle sub connection");
 			return conn;
 		}
 	public:
@@ -1218,7 +1218,7 @@ public:
 					<< login._server.portReleaseNumber() << "."
 					<< login._server.portUpdateNumber();
 
-				return QString(version.str().c_str());
+				return QString::fromLatin1(version.str().c_str());
 			}
 			catch (::trotl::OciException e) {
 				TLOG(0,toDecorator,__HERE__) << e.what() << std::endl;

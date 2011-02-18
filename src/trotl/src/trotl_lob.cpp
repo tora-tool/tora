@@ -239,7 +239,7 @@ void SqlLob::clear()
 	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 };
 
-ub4	SqlLob::get_chunk_size()
+ub4	SqlLob::getChunkSize()
 {
 	ub4 size;
 	sword res = OCICALL( OCILobGetChunkSize(_conn._svc_ctx, _conn._env._errh, _loc, &size));
@@ -247,12 +247,12 @@ ub4	SqlLob::get_chunk_size()
 	return size;
 };
 
-ub4	SqlLob::get_length()
+oraub8	SqlLob::length()
 {
 	if(is_not_null())
 	{
-		ub4 len;
-		sword res = OCICALL(OCILobGetLength(_conn._svc_ctx, _conn._env._errh, _loc, &len));
+		oraub8 len;
+		sword res = OCICALL(OCILobGetLength2(_conn._svc_ctx, _conn._env._errh, _loc, &len));
 		oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 		return len;
 	} else {
@@ -260,7 +260,7 @@ ub4	SqlLob::get_length()
 	}
 };
 
-boolean	SqlLob::is_open() const
+boolean	SqlLob::isOpen() const
 {
 	boolean flag;
 	sword res = OCICALL(OCILobIsOpen(_conn._svc_ctx, _conn._env._errh, _loc, &flag));
@@ -276,7 +276,7 @@ boolean	SqlLob::isTemporary() const
 	return flag;
 };
 
-void SqlLob::copy(const SqlLob& src, ub4 amount, ub4 dst_offset, ub4 src_offset)
+void SqlLob::copy(const SqlLob& src, oraub8 amount, oraub8 dst_offset, oraub8 src_offset)
 {
 	sword res = OCICALL(OCILobCopy(_conn._svc_ctx, _conn._env._errh, _loc, src._loc, amount, dst_offset, src_offset));
 	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
@@ -288,26 +288,26 @@ void SqlLob::append(const SqlLob& src)
 	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 };
 
-void SqlLob::trim(ub4 newlen)
+void SqlLob::trim(oraub8 newlen)
 {
 	sword res = OCICALL(OCILobTrim(_conn._svc_ctx, _conn._env._errh, _loc, newlen));
 	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 };
 
-ub4	SqlLob::erase(ub4 offset, ub4 amount)
+oraub8	SqlLob::erase(oraub8 offset, oraub8 amount)
 {
-	sword res = OCICALL(OCILobErase(_conn._svc_ctx, _conn._env._errh, _loc, &amount, offset));
+	sword res = OCICALL(OCILobErase2(_conn._svc_ctx, _conn._env._errh, _loc, &amount, offset));
 	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return amount;
 };
 
-void SqlLob::enable_buffering()
+void SqlLob::enableBuffering()
 {
 	sword res = OCICALL(OCILobEnableBuffering(_conn._svc_ctx, _conn._env._errh, _loc));
 	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 };
 
-void SqlLob::disable_buffering()
+void SqlLob::disableBuffering()
 {
 	sword res = OCICALL(OCILobDisableBuffering(_conn._svc_ctx, _conn._env._errh, _loc));
 	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
@@ -379,32 +379,38 @@ SqlOpenLob::~SqlOpenLob()
 	}
 };
 
-ub4	SqlBlob::write(const dvoid* bufp, ub4 buflen, ub4 offset/*=1*/, ub4 amount)
+oraub8	SqlBlob::write(const dvoid* bufp, oraub8 buflen, oraub8 offset/*=1*/, oraub8 amount)
 {
-	sword res = OCICALL(OCILobWrite(_conn._svc_ctx, _conn._env._errh, _loc,
-			&amount, offset, (dvoid*)bufp, buflen,
-			OCI_ONE_PIECE/*ub1 piece*/, NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,dvoid*bufp,ub4*len,ub1*piece)*/,
+	sword res = OCICALL(OCILobWrite2(_conn._svc_ctx, _conn._env._errh, _loc,
+					 &amount, NULL, offset, (dvoid*)bufp, buflen,
+					 OCI_ONE_PIECE/*ub1 piece*/, NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,dvoid*bufp,ub4*len,ub1*piece)*/,
 			0, 0));
 	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return amount;
 };
 
-ub4	SqlBlob::write_append(const dvoid* bufp, ub4 buflen, ub4 amount)
+oraub8	SqlBlob::write_append(const dvoid* bufp, oraub8 buflen, oraub8 amount)
 {
-	sword res = OCICALL(OCILobWriteAppend(_conn._svc_ctx, _conn._env._errh, _loc,
-			&amount, (dvoid*)bufp, buflen,
-			OCI_ONE_PIECE/*ub1 piece*/, NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,dvoid*bufp,ub4*len,ub1*piece)*/,
-			0, 0));
+	sword res = OCICALL(OCILobWriteAppend2(_conn._svc_ctx, _conn._env._errh, _loc,
+					       &amount, NULL, (dvoid*)bufp, buflen,
+					       OCI_ONE_PIECE, /* ub1 piece */
+					       NULL, /* dvoid* ctxp */
+					       NULL, /* sb4 (*cbfp)(dvoid*ctxp,dvoid*bufp,ub4*len,ub1*piece)*/
+					       0, 0  /* ub2 csid, ub1 csfrm */
+				    ));
 	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return amount;
 };
 
-ub4	SqlBlob::read(dvoid* bufp, ub4 buflen, ub4 offset, ub4 amount)
+oraub8	SqlBlob::read(dvoid* bufp, oraub8 buflen, oraub8 offset, oraub8 amount)
 {
-	sword res = OCICALL(OCILobRead(_conn._svc_ctx, _conn._env._errh, _loc,
-				       &amount, offset, bufp, buflen,
-				       NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,CONST dvoid*bufp,ub4*len,ub1*piece)*/,
-				       0, 0));
+	sword res = OCICALL(OCILobRead2(_conn._svc_ctx, _conn._env._errh, _loc,
+					&amount, NULL, offset, bufp, buflen,
+					OCI_ONE_PIECE, /* ub1 piece */
+					NULL, /* dvoid* ctxp */
+					NULL, /* sb4 (*cbfp)(dvoid*ctxp,CONST dvoid*bufp,ub4*len,ub1*piece) */
+					0, 0  /* ub2 csid, ub1 csfrm */
+				    ));
 	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return amount;
 };
@@ -423,22 +429,31 @@ SqlTempBlob::~SqlTempBlob()
 	// oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 };
 
-ub4	SqlClob::write(const dvoid* bufp, ub4 buflen, ub4 offset, ub4 amount, ub2 csid, ub1 csfrm)
+oraub8	SqlClob::write(const dvoid* bufp, oraub8 buflen, oraub8 offset, oraub8 amount, ub2 csid, ub1 csfrm)
 {
-	sword res = OCICALL(OCILobWrite(_conn._svc_ctx, _conn._env._errh, _loc,
-			&amount, offset, (dvoid*)bufp, buflen,
-			OCI_ONE_PIECE/*ub1 piece*/, NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,dvoid*bufp,ub4*len,ub1*piece)*/,
-			csid, csfrm));
+	sword res = OCICALL(OCILobWrite2(_conn._svc_ctx, _conn._env._errh, _loc,
+					 &amount, /* *byte_amtp - The number of bytes to write to the database. For CLOB and NCLOB it is used only when char_amtp is zero. */
+					 NULL, /* *char_amtp - The maximum number of characters to write to the database. */
+					 offset,
+					 (dvoid*)bufp, buflen,
+					 OCI_ONE_PIECE, /* ub1 piece */
+					 NULL, /* dvoid* ctxp */
+					 NULL, /* sb4 (*cbfp)(dvoid*ctxp,dvoid*bufp,oraub8*len,ub1*piece) */
+					 csid, csfrm));
 	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return amount;
 };
 
-ub4	SqlClob::write_append(const dvoid* bufp, ub4 buflen, ub4 amount, ub2 csid, ub1 csfrm)
+oraub8	SqlClob::write_append(const dvoid* bufp, oraub8 buflen, oraub8 amount, ub2 csid, ub1 csfrm)
 {
-	sword res = OCICALL(OCILobWriteAppend(_conn._svc_ctx, _conn._env._errh, _loc,
-			&amount, (dvoid*)bufp, buflen,
-			OCI_ONE_PIECE/*ub1 piece*/, NULL/*dvoid* ctxp*/, NULL/*sb4 (*cbfp)(dvoid*ctxp,dvoid*bufp,ub4*len,ub1*piece)*/,
-			csid, csfrm));
+	sword res = OCICALL(OCILobWriteAppend2(_conn._svc_ctx, _conn._env._errh, _loc,
+					       &amount, /* *byte_amtp - The number of bytes to write to the database. For CLOB and NCLOB it is used only when char_amtp is zero. */
+					       NULL,    /* *char_amtp - The maximum number of characters to write to the database. */
+					       (dvoid*)bufp, buflen,
+					       OCI_ONE_PIECE, /* ub1 piece*/
+					       NULL, /* dvoid* ctxp */
+					       NULL, /* sb4 (*cbfp)(dvoid*ctxp,dvoid*bufp,oraub8*len,ub1*piece) */					       
+					       csid, csfrm));
 	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 	return amount;
 };
@@ -446,21 +461,24 @@ ub4	SqlClob::write_append(const dvoid* bufp, ub4 buflen, ub4 amount, ub2 csid, u
 /*
  * NOTE: !! offset has to be >= 1. Oracle's LOBs start at 1st byte.
  */
-ub4	SqlClob::read(dvoid* bufp, ub4 buflen, ub4 offset, ub4 amount, ub2 csid, ub1 csfrm)
+oraub8	SqlClob::read(dvoid* bufp, oraub8 buflen, oraub8 offset, oraub8 amount, oraub8 *chars, ub2 csid, ub1 csfrm)
 {
+	oraub8 char_amt;
 	bool done = false;
 	while(!done)
 	{
-		sword res = OCICALL(OCILobRead(
+		sword res = OCICALL(OCILobRead2(
 					    _conn._svc_ctx,
 					    _conn._env._errh,
 					    _loc,
 					    &amount,
+					    &char_amt,
 					    offset,
 					    bufp,
 					    buflen,
-					    NULL, /*dvoid* ctxp*/
-					    NULL, /*sb4 (*cbfp)(dvoid*ctxp,CONST dvoid*bufp,ub4*len,ub1*piece)*/
+					    OCI_ONE_PIECE, /* ub1 piece */
+					    NULL, /* dvoid* ctxp */
+					    NULL, /* sb4 (*cbfp)(dvoid*ctxp,CONST dvoid*bufp,oraub8*len,ub1*piece) */
 					    0 /* csid */,
 					    0 /* csfrm */
 					    ));
@@ -481,6 +499,9 @@ ub4	SqlClob::read(dvoid* bufp, ub4 buflen, ub4 offset, ub4 amount, ub2 csid, ub1
 			done = true;
 		}
 	}
+
+	if(chars)
+		*chars = char_amt;
 	return amount;
 };
 
