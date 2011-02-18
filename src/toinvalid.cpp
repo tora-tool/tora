@@ -186,6 +186,9 @@ void toInvalid::recompileSelected(void)
         else if (type == "PACKAGE BODY")
             sql = "ALTER PACKAGE " + conn.quote(Objects->model()->data((*it).row(), 1).toString()) + "." +
                   conn.quote(Objects->model()->data((*it).row(), 2).toString()) + " COMPILE BODY";
+        else if (type == "TYPE BODY")
+            sql = "ALTER TYPE " + conn.quote(Objects->model()->data((*it).row(), 1).toString()) + "." +
+                  conn.quote(Objects->model()->data((*it).row(), 2).toString()) + " COMPILE BODY";
         else if ((type == "SYNONYM") && (Objects->model()->data((*it).row(), 1).toString() == "PUBLIC"))
         {
             // only SYS user is allowed to do ALTER PUBLIC SYNONYM ...
