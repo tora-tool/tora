@@ -177,8 +177,8 @@ public:
 	toOracleClob(trotl::OciConnection &_conn)
 		: toQValue::complexType()
 		, _data(_conn)
-		, _displayData()
 		, _length(0)
+		, _displayData()
 	{};
 	/* virtual */ bool isBinary() const
 	{
@@ -197,7 +197,7 @@ public:
 		char buffer[MAXLOBSHOWN];
 
 		unsigned bytes_read = _data.read(&buffer[0], sizeof(buffer), 1, sizeof(buffer));
-		buffer[bytes_read] = '\0';
+		buffer[bytes_read-1] = '\0';
 
 		TLOG(4,toDecorator,__HERE__) << "Just read CLOB: \"" << buffer << "\"" << std::endl; 
 
@@ -271,7 +271,6 @@ public:
 	}
 
 	mutable trotl::SqlClob _data;
-	mutable QString _displayData;
 protected:
 	oraub8 getLength() const
 	{
@@ -281,6 +280,7 @@ protected:
 	};
 	
 	mutable oraub8 _length; // NOTE: OCILobGetLength makes one roundtrip to the server
+	mutable QString _displayData;
 	toOracleClob(toOracleClob const&);
 	toOracleClob operator=(toOracleClob const&);
 	//TODO copying prohibited
@@ -294,6 +294,7 @@ public:
 		: toQValue::complexType()
 		, data(_conn)
 		, _length(0)
+		, _displayData()
 	{};
 	/* virtual */ bool isBinary() const
 	{
@@ -306,24 +307,24 @@ public:
 
 	/* virtual */ QString displayData() const throw()
 	{
+		if(!_displayData.isEmpty())
+			return _displayData;
 		::trotl::SqlOpenLob blob_open(data, OCI_LOB_READONLY);
 		unsigned char buffer[MAXLOBSHOWN/2];
-		QString retval("{blob}");
+		_displayData = QString("{blob}");
 		
 		unsigned bytes_read = data.read(&buffer[0], sizeof(buffer), 1, sizeof(buffer));
-		buffer[bytes_read] = '\0';
 		
 		for(unsigned i=0; i<bytes_read; ++i)
 		{
 			char sbuff[4];
 			snprintf(sbuff, sizeof(sbuff), " %.2X", buffer[i]);
-			retval += sbuff;
+			_displayData += sbuff;
 		}
-
 		
 		if(bytes_read >= MAXLOBSHOWN/2)
-			retval += "...<truncated>";
-		return retval;
+			_displayData += "...<truncated>";
+		return _displayData;
 	}
 	
 	/* virtual */ QString editData() const throw()
@@ -407,6 +408,7 @@ protected:
 	};
 	
 	mutable oraub8 _length; // NOTE: OCILobGetLength makes one roundtrip to the server
+	mutable QString _displayData;
 	toOracleBlob(toOracleBlob const&);
 	toOracleBlob operator=(toOracleBlob const&);
 	//TODO copying prohibited
