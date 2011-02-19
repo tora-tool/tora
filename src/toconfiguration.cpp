@@ -539,6 +539,7 @@ public:
             m_editorShortcuts[s.value("key").toString()] = s.value("value");
         }
         s.endArray();
+        s.endGroup();
 
         s.beginGroup(CONF_EXT_GROUP_NAME);
         m_extractorIncludeSotrage = s.value(CONF_EXT_INC_STORAGE, DEFAULT_EXT_INC_STORAGE).toBool();
@@ -550,8 +551,6 @@ public:
         m_extractorIncludeHeader = s.value(CONF_EXT_INC_HEADER, DEFAULT_EXT_INC_HEADER).toBool();
         m_extractorIncludePrompt = s.value(CONF_EXT_INC_PROMPT, DEFAULT_EXT_INC_PROMPT).toBool();
         s.endGroup(); // end extractor group
-
-        s.endGroup();
     }
 
 
