@@ -1897,6 +1897,15 @@ toOracleSetting::toOracleSetting(QWidget *parent)
 		MaxLong->setValidator(new QIntValidator(MaxLong));
 		Unlimited->setChecked(false);
 	}
+        cbUseDbmsMetadata->setChecked(toConfigurationSingle::Instance().extractorUseDbmsMetadata());
+        cbIncludeStorage->setChecked(toConfigurationSingle::Instance().extractorIncludeSotrage());
+        cbSkipOrgMon->setChecked(toConfigurationSingle::Instance().extractorSkipOrgMonInformation());
+        cbSkiptStorExTablespace->setChecked(toConfigurationSingle::Instance().extractorSkipStorageExceptTablespaces());
+        cbIncludeParallel->setChecked(toConfigurationSingle::Instance().extractorIncludeParallel());
+        cbIncludePartition->setChecked(toConfigurationSingle::Instance().extractorIncludePartition());
+        cbIncludeCode->setChecked(toConfigurationSingle::Instance().extractorIncludeCode());
+        cbIncludeHeader->setChecked(toConfigurationSingle::Instance().extractorIncludeHeader());
+        cbIncludePrompt->setChecked(toConfigurationSingle::Instance().extractorIncludePrompt());
 	try
 	{
 		// Check if connection exists
@@ -1971,6 +1980,16 @@ void toOracleSetting::saveSetting()
 		toMaxLong = MaxLong->text().toInt();
 	}
 	::trotl::g_OCIPL_MAX_LONG = toMaxLong;
+        // extractor group options
+        toConfigurationSingle::Instance().setExtractorUseDbmsMetadata(cbUseDbmsMetadata->isChecked());
+        toConfigurationSingle::Instance().setExtractorIncludeSotrage(cbIncludeStorage->isChecked());
+        toConfigurationSingle::Instance().setExtractorSkipOrgMonInformation(cbSkipOrgMon->isChecked());
+        toConfigurationSingle::Instance().setExtractorSkipStorageExceptTablespaces(cbSkiptStorExTablespace->isChecked());
+        toConfigurationSingle::Instance().setExtractorIncludeParallel(cbIncludeParallel->isChecked());
+        toConfigurationSingle::Instance().setExtractorIncludePartition(cbIncludePartition->isChecked());
+        toConfigurationSingle::Instance().setExtractorIncludeCode(cbIncludeCode->isChecked());
+        toConfigurationSingle::Instance().setExtractorIncludeHeader(cbIncludeHeader->isChecked());
+        toConfigurationSingle::Instance().setExtractorIncludePrompt(cbIncludePrompt->isChecked());
 }
 
 
