@@ -1453,6 +1453,7 @@ toOracleSetting::toOracleSetting(QWidget *parent)
         Unlimited->setChecked(false);
     }
     // extractor group options
+    cbUseDbmsMetadata->setChecked(toConfigurationSingle::Instance().extractorUseDbmsMetadata());
     cbIncludeStorage->setChecked(toConfigurationSingle::Instance().extractorIncludeSotrage());
     cbSkipOrgMon->setChecked(toConfigurationSingle::Instance().extractorSkipOrgMonInformation());
     cbSkiptStorExTablespace->setChecked(toConfigurationSingle::Instance().extractorSkipStorageExceptTablespaces());
@@ -1530,6 +1531,7 @@ void toOracleSetting::saveSetting()
         toMaxLong = MaxLong->text().toInt();
     }
     // extractor group options
+    toConfigurationSingle::Instance().setExtractorUseDbmsMetadata(cbUseDbmsMetadata->isChecked());
     toConfigurationSingle::Instance().setExtractorIncludeSotrage(cbIncludeStorage->isChecked());
     toConfigurationSingle::Instance().setExtractorSkipOrgMonInformation(cbSkipOrgMon->isChecked());
     toConfigurationSingle::Instance().setExtractorSkipStorageExceptTablespaces(cbSkiptStorExTablespace->isChecked());

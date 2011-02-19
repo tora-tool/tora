@@ -518,6 +518,8 @@ public:
 
     // Extractor. Controls the method used to produce database object extracts
     // as well as extraction settings (which information should be extracted).
+    bool extractorUseDbmsMetadata();
+    void setExtractorUseDbmsMetadata(bool v);
     bool extractorIncludeSotrage();
     void setExtractorIncludeSotrage(bool v);
     bool extractorSkipOrgMonInformation();

@@ -258,6 +258,7 @@ public:
 
     // Extractor. Controls the method used to produce database object extracts
     // as well as extraction settings (which information should be extracted).
+    bool m_extractorUseDbmsMetadata;
     bool m_extractorIncludeSotrage;
     bool   m_extractorSkipOrgMonInformation;
     bool   m_extractorSkipStorageExceptTablespaces;
@@ -542,6 +543,7 @@ public:
         s.endGroup();
 
         s.beginGroup(CONF_EXT_GROUP_NAME);
+        m_extractorUseDbmsMetadata = s.value(CONF_USE_DBMS_METADATA, DEFAULT_USE_DBMS_METADATA).toBool();
         m_extractorIncludeSotrage = s.value(CONF_EXT_INC_STORAGE, DEFAULT_EXT_INC_STORAGE).toBool();
         m_extractorSkipOrgMonInformation = s.value(CONF_EXT_SKIP_ORGMON, DEFAULT_EXT_SKIP_ORGMON).toBool();
         m_extractorSkipStorageExceptTablespaces = s.value(CONF_EXT_SKIP_STORAGE_EX_TABLESPACE, DEFAULT_EXT_SKIP_STORAGE_EX_TABLESPACE).toBool();
@@ -798,6 +800,7 @@ public:
         s.endGroup();
 
         s.beginGroup(CONF_EXT_GROUP_NAME);
+        s.setValue(CONF_USE_DBMS_METADATA, m_extractorUseDbmsMetadata);
         s.setValue(CONF_EXT_INC_STORAGE, m_extractorIncludeSotrage);
         s.setValue(CONF_EXT_SKIP_ORGMON, m_extractorSkipOrgMonInformation);
         s.setValue(CONF_EXT_SKIP_STORAGE_EX_TABLESPACE, m_extractorSkipStorageExceptTablespaces);
@@ -2327,6 +2330,15 @@ QString toConfiguration::forceLineEnd()
 void toConfiguration::setForceLineEnd(const QString & v)
 {
     p->m_forcelineend = v;
+}
+
+bool toConfiguration::extractorUseDbmsMetadata()
+{
+    return p->m_extractorUseDbmsMetadata;
+}
+void toConfiguration::setExtractorUseDbmsMetadata(bool v)
+{
+    p->m_extractorUseDbmsMetadata = v;
 }
 
 bool toConfiguration::extractorIncludeSotrage()

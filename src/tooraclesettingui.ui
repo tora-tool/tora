@@ -203,7 +203,14 @@
      <property name="title">
       <string>Extractor options</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0">
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,0">
+      <item>
+       <widget class="QCheckBox" name="cbUseDbmsMetadata">
+        <property name="text">
+         <string>Use DBMS_METADATA</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QCheckBox" name="cbIncludeStorage">
         <property name="text">

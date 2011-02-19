@@ -123,8 +123,9 @@ void toResultExtract::query(const QString &sql, const toQList &param)
 
         if (toIsOracle(conn))
         {
-            if (type == QString::fromLatin1("TABLE") ||
-                    type == QString::fromLatin1("TABLE PARTITION"))
+            if ((type == QString::fromLatin1("TABLE") ||
+                type == QString::fromLatin1("TABLE PARTITION")) &&
+                !toConfigurationSingle::Instance().extractorUseDbmsMetadata())
             {
                 objects.insert(objects.end(), QString::fromLatin1("TABLE FAMILY:") + owner + QString::fromLatin1(".") + name);
                 objects.insert(objects.end(), QString::fromLatin1("TABLE REFERENCES:") + owner + QString::fromLatin1(".") + name);

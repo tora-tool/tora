@@ -255,6 +255,8 @@
 // Extractor. Controls the method used to produce database object extracts
 // as well as extraction settings (which information should be extracted).
 #define CONF_EXT_GROUP_NAME "ExtractorOptions"
+#define CONF_USE_DBMS_METADATA "UseDbmsMetadata"
+#define DEFAULT_USE_DBMS_METADATA false
 #define CONF_EXT_INC_STORAGE "IncludeStorage"
 #define DEFAULT_EXT_INC_STORAGE true
 #define CONF_EXT_SKIP_ORGMON "SkipOrgMon"

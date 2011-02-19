@@ -332,6 +332,10 @@ std::list<toExtract::datatype> oracle_datatypes;
                             std::list<QString> &destin) const;
     QString migrateTable(toExtract &ext, std::list<QString> &source,
                          std::list<QString> &destin) const;
+
+    // DBMS_METADATA
+    QString createMetadata(toExtract &ext, const QString &owner, const QString &name, const QString &type) const;
+
 public:
     // Public interface
 

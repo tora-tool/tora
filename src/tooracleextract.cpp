@@ -7256,6 +7256,27 @@ QString toOracleExtract::migrateSequence(toExtract &ext,
     return ret;
 }
 
+static toSQL SQLDbmsMetadataGetDdl("toOracleExtract:DbmsMetadataGetDdl",
+                                   "SELECT dbms_metadata.get_ddl(:typ<char[100]>,\n"
+                                   "                             :nam<char[100]>,\n"
+                                   "                             :sch<char[100]>) FROM dual",
+                                   "Get object creation ddl using dbms_metadata package");
+
+QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, const QString &name, const QString &type) const
+{
+    toQuery inf(CONNECTION, SQLDbmsMetadataGetDdl, type, name, owner);
+    if (inf.eof())
+        throw qApp->translate("toOracleExtract", "Couldn't get meta information for %1 %2.%3").arg(type).arg(owner).arg(name);
+
+    QString ret;
+    if (PROMPT)
+        ret = QString("PROMPT CREATE OR REPLACE %1 %2%3\n\n").
+              arg(type).
+              arg(owner).
+              arg(QUOTE(name));
+    return inf.readValue();
+} // createMeatada
+
 // Implementation public interface
 
 toOracleExtract::toOracleExtract()
@@ -7605,6 +7626,12 @@ void toOracleExtract::create(toExtract &ext,
                              const QString &name) const
 {
     clearFlags(ext);
+
+    if (toConfigurationSingle::Instance().extractorUseDbmsMetadata())
+    {
+        stream << createMetadata(ext, owner, name, type);
+        return;
+    }
 
     if (type == "CONSTRAINT")
         stream << createConstraint(ext, schema, owner, name);

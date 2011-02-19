@@ -81,13 +81,26 @@ feature. That setup looks like this.
 @item @strong{shared PLAN_TABLE}
     Enable this option if you wish to use the system-wide PLAN_TABLE provided by Oracle or a shared
     plan table set up by yourself. In this case TOra will never create a plan table for you.
+@item @strong{Extractor options}
+    These options control the way TOra generates object creation scripts (ddl's) in database extractor tool as well as "Script" tab in schema browser.
+    @itemize @bullet
+    @item @strong{Use DBMS_METADATA} Use standard Oracle package DBMS_METADATA to get ddl. If not selected TOra will use internal routines to generate ddl.
+    @item @strong{Include storage information}
+    @item @strong{Skip organisation and monitoring} Exclude organisation and monitoring from storage information
+    @item @strong{Skip storage except tablespace} Exclude all storage information except tablespace
+    @item @strong{Include parallel information}
+    @item @strong{Include partition information}
+    @item @strong{Include code}
+    @item @strong{Include header} Include TOra generated script header, containing information such as database name, time of extraction etc.
+    @item @strong{Include prompt}
+    @end itemize
 @end table
 
 @image{images/mysql,13cm}
 
 @table @asis
 @item @strong{Possibility to break MySql queries}
-    TODO.
+    TODO
 @item @strong{When calling create routine statement in worksheet}
     MySQL routine creation does not support "create or replace" therefore if you try to create new routine and it
     already exists you will get an exception. This option controls if TOra should try to avoid such exceptions in
