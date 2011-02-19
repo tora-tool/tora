@@ -44,6 +44,7 @@
 #include "utils.h"
 #include "toresultitem.h"
 #include "toresulttableview.h"
+#include "toresultextract.h"
 #include "toquery.h"
 
 #include "tobrowserdblinkswidget.h"
@@ -74,6 +75,9 @@ toBrowserDBLinksWidget::toBrowserDBLinksWidget(QWidget * parent)
     synonymsView->setObjectName("synonymsView");
     synonymsView->setSQL(SQLDBLinkSynonyms);
 
+    extractDBLink = new toResultExtract(this);
+    extractDBLink->setObjectName("extractDBLink");
+
     changeConnection();
 }
 
@@ -85,6 +89,7 @@ void toBrowserDBLinksWidget::changeConnection()
     {
         addTab(resultDBLink, "Info");
         addTab(synonymsView, "&Synonyms");
+        addTab(extractDBLink, "Script");
     }
     else
     {

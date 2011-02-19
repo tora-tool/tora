@@ -46,6 +46,7 @@
 
 class toResultItem;
 class toResultTableView;
+class toResultExtract;
 
 
 /*! \brief DB Links browser for toBrowser tool.
@@ -58,6 +59,7 @@ class toBrowserDBLinksWidget : public toBrowserBaseWidget
 
     toResultItem *resultDBLink;
     toResultTableView *synonymsView;
+    toResultExtract *extractDBLink;
 
     public:
         toBrowserDBLinksWidget(QWidget * parent);
