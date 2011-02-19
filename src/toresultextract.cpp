@@ -71,7 +71,9 @@ static toSQL SQLObjectTypeMySQL("toResultExtract:ObjectType",
 
 static toSQL SQLObjectType("toResultExtract:ObjectType",
                            "SELECT Object_Type FROM sys.All_Objects\n"
-                           " WHERE Owner = :f1<char[101]> AND Object_Name = :f2<char[101]>",
+                           " WHERE (Owner = :f1<char[101]> \n"
+                           " or (object_type = 'DIRECTORY' and owner = 'SYS'))\n"
+                           " AND Object_Name = :f2<char[101]>",
                            "");
 
 void toResultExtract::query(const QString &sql, const toQList &param)

@@ -45,6 +45,7 @@
 #include "tobrowserbasewidget.h"
 
 class toResultTableView;
+class toResultExtract;
 
 
 /*! \brief Directories browser for toBrowser tool.
@@ -56,6 +57,7 @@ class toBrowserDirectoriesWidget : public toBrowserBaseWidget
     Q_OBJECT
 
     toResultTableView *directoriesView;
+    toResultExtract *extractDirectory;
 
     public:
         toBrowserDirectoriesWidget(QWidget * parent);

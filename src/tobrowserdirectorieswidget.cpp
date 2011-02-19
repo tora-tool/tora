@@ -40,6 +40,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "toresulttableview.h"
+#include "toresultextract.h"
 #include "utils.h"
 
 #include "tobrowserdirectorieswidget.h"
@@ -61,6 +62,9 @@ toBrowserDirectoriesWidget::toBrowserDirectoriesWidget(QWidget * parent)
     directoriesView->setObjectName("directoriesView");
     directoriesView->setSQL(SQLDirectoriesInfo);
 
+    extractDirectory = new toResultExtract(this);
+    extractDirectory->setObjectName("extractDirecory");
+
     changeConnection();
 }
 
@@ -71,6 +75,7 @@ void toBrowserDirectoriesWidget::changeConnection()
     if (toIsOracle(c))
     {
         addTab(directoriesView, "&Directories");
+        addTab(extractDirectory, "Script");
     }
     else
     {

@@ -182,6 +182,8 @@ std::list<toExtract::datatype> oracle_datatypes;
                              const QString &name) const;
     QString createDBLink(toExtract &ext, const QString &schema, const QString &owner,
                          const QString &name) const;
+    QString createDirectory(toExtract &ext, const QString &schema, const QString &owner,
+                            const QString &name) const;
     QString createExchangeIndex(toExtract &ext, const QString &schema, const QString &owner,
                                 const QString &name) const;
     QString createExchangeTable(toExtract &ext, const QString &schema, const QString &owner,

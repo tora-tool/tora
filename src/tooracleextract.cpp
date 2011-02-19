@@ -3582,6 +3582,35 @@ QString toOracleExtract::createDBLink(toExtract &ext,
     return ret;
 }
 
+static toSQL SQLDirectory("toOracleExtract:ExtractDirectory",
+                       "SELECT directory_name,\n"
+                       "       directory_path\n"
+                       "  FROM all_directories\n"
+                       " WHERE directory_name = :nam<char[100]>",
+                       "Get information about a DB Link, must have same binds and columns");
+
+QString toOracleExtract::createDirectory(toExtract &ext,
+                                         const QString &,
+                                         const QString &owner,
+                                         const QString &name) const
+{
+    toQuery inf(CONNECTION, SQLDirectory, name);
+    if (inf.eof())
+        throw qApp->translate("toOracleExtract", "Directory %1 doesn't exist").arg(name);
+    QString dname(inf.readValue());
+    QString path(inf.readValue());
+    QString sql = QString("CREATE DIRECTORY %1").arg(QUOTE(dname));
+    QString ret;
+    if (PROMPT)
+    {
+        ret = "PROMPT ";
+        ret += sql;
+        ret += "\n\n";
+    }
+    ret += QString("CREATE DIRECTORY %1 AS '%2';").arg(QUOTE(dname)).arg(path);
+    return ret;
+}
+
 static toSQL SQLPartitionSegmentType("toOracleExtract:PartitionSegment type",
                                      "SELECT SUBSTR(segment_type,7),\n"
                                      "       TO_CHAR(blocks)\n"
@@ -7245,6 +7274,9 @@ toOracleExtract::toOracleExtract()
                     "DATABASE LINK");
     registerExtract(ORACLE_NAME,
                     "CREATE",
+                    "DIRECTORY");
+    registerExtract(ORACLE_NAME,
+                    "CREATE",
                     "EXCHANGE INDEX");
     registerExtract(ORACLE_NAME,
                     "CREATE",
@@ -7578,6 +7610,8 @@ void toOracleExtract::create(toExtract &ext,
         stream << createConstraint(ext, schema, owner, name);
     else if (type == "DATABASE LINK")
         stream << createDBLink(ext, schema, owner, name);
+    else if (type == "DIRECTORY")
+        stream << createDirectory(ext, schema, owner, name);
     else if (type == "EXCHANGE INDEX")
         stream << createExchangeIndex(ext, schema, owner, name);
     else if (type == "EXCHANGE TABLE")
