@@ -195,15 +195,14 @@ public:
 			return _displayData;
 		::trotl::SqlOpenLob clob_open(_data, OCI_LOB_READONLY);
 		char buffer[MAXLOBSHOWN];
-
-		unsigned bytes_read = _data.read(&buffer[0], sizeof(buffer), 1, sizeof(buffer));
-		buffer[bytes_read-1] = '\0';
+		oraub8 chars_read = 0;
+		unsigned bytes_read = _data.read(&buffer[0], sizeof(buffer), 1, sizeof(buffer), &chars_read);
 
 		TLOG(4,toDecorator,__HERE__) << "Just read CLOB: \"" << buffer << "\"" << std::endl; 
 
 		QString _displayData = QString("{clob}");
-		_displayData += QString::fromUtf8(buffer);
-		if(bytes_read == MAXLOBSHOWN)
+		_displayData += QString::fromUtf8(buffer, bytes_read);
+		if(chars_read != _data.length())
 			_displayData += "...<truncated>";	       
 		return _displayData;
 	}
@@ -211,25 +210,27 @@ public:
 	/* virtual */ QString editData() const throw()
 	{
 		::trotl::SqlOpenLob clob_open(_data, OCI_LOB_READONLY);
-		QString retval = QString("Datatype: Oracle [N]CLOB\nSize: %1B\n").arg(getLength());
-		char buffer[MAXTOMAXLONG];
-		ub4 chunk_size = _data.getChunkSize();
+		QString retval = QString("Datatype: Oracle [N]CLOB\nSize: %1 Chars\n").arg(getLength());
+		char buffer[524288];
 		unsigned offset = 0;
-
+		unsigned to_read = 16 * _data.getChunkSize();
+		oraub8 bytes_read = 0, chars_read = 0;
+		
 		while(offset < MAXTOMAXLONG)
 		{
-			unsigned to_read = MIN(MAXTOMAXLONG - offset, chunk_size);
-			unsigned bytes_read = _data.read(&buffer[offset], MAXTOMAXLONG - offset, offset+1, to_read);
-			offset += bytes_read;
-			if(bytes_read == 0) // end of LOB reached
+			oraub8 cr = 0, br = 0;
+			br = _data.read(&buffer[0], sizeof(buffer), offset+1, to_read, &cr);
+			offset += cr;
+			chars_read += cr;
+			bytes_read += br;
+			if(br == 0) // end of LOB reached
 				break;
+			retval += QString::fromUtf8(buffer, br);
 		}
-		buffer[MIN(offset,(unsigned)MAXTOMAXLONG)] = '\0';
-
-		if(offset == MAXTOMAXLONG)
-			return QString::fromUtf8(buffer) + "\n...<TRUNCATED>";
-		else
-			return QString::fromUtf8(buffer);
+		
+		if(offset != _data.length())
+			retval += "\n...<TRUNCATED>";
+		return retval;
 	}
 
 	/* virtual */ QString userData() const throw()

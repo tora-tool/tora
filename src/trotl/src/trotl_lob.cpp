@@ -463,7 +463,7 @@ oraub8	SqlClob::write_append(const dvoid* bufp, oraub8 buflen, oraub8 amount, ub
  */
 oraub8	SqlClob::read(dvoid* bufp, oraub8 buflen, oraub8 offset, oraub8 amount, oraub8 *chars, ub2 csid, ub1 csfrm)
 {
-	oraub8 char_amt;
+	oraub8 char_amt = 0;
 	bool done = false;
 	while(!done)
 	{
