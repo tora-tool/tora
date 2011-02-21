@@ -1295,6 +1295,18 @@ public:
 
 	virtual void initialize(void)
 	{
+		QString nls = getenv("NLS_LANG");
+		if (nls.isEmpty())
+			nls = "AMERICAN_AMERICA.AL32UTF8";
+		else
+		{
+			int pos = nls.lastIndexOf('.');
+			if (pos > 0)
+				nls = nls.left(pos);
+			nls += ".AL32UTF8";
+		}
+		toSetEnv("NLS_LANG", nls);
+	  
 		toMaxLong = toConfigurationSingle::Instance().maxLong() == -1 ? 0x80000000 : toConfigurationSingle::Instance().maxLong();		  
 		::trotl::g_OCIPL_MAX_LONG = toMaxLong;
 		

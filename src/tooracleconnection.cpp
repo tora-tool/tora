@@ -963,6 +963,18 @@ public:
 
     virtual void initialize(void)
     {
+        QString nls = getenv("NLS_LANG");
+        if (nls.isEmpty())
+	  nls = "AMERICAN_AMERICA.AL32UTF8";
+	else
+	{
+	    int pos = nls.lastIndexOf('.');
+	    if (pos > 0)
+	      nls = nls.left(pos);
+	    nls += ".AL32UTF8";
+	}
+	toSetEnv("NLS_LANG", nls);
+
         toMaxLong = toConfigurationSingle::Instance().maxLong();
         if (otl_connect::otl_initialize(1))
             addProvider("Oracle");

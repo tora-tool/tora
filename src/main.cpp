@@ -200,22 +200,9 @@ int main(int argc, char **argv)
         }
         catch (...)
             {}
-        toConnectionProvider::initializeAll();
-
-        {
-            QString nls = getenv("NLS_LANG");
-            if (nls.isEmpty())
-                nls = "american_america.UTF8";
-            else
-            {
-                int pos = nls.lastIndexOf('.');
-                if (pos > 0)
-                    nls = nls.left(pos);
-                nls += ".UTF8";
-            }
-            toSetEnv("NLS_LANG", nls);
-        }
-
+	
+	toConnectionProvider::initializeAll();
+	
         if (toConfigurationSingle::Instance().lastVersion() != TOVERSION)
         {
             std::auto_ptr<toAbout> about ( new toAbout(toAbout::About, NULL, "About " TOAPPNAME, true));
