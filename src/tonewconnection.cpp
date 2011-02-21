@@ -367,6 +367,7 @@ void toNewConnection::changeProvider(int current)
         std::list<QString> hosts = toConnectionProvider::hosts(provider);
 
         DefaultPort = 0;
+        Host->clear();
         for (std::list<QString>::iterator i = hosts.begin(); i != hosts.end(); i++)
         {
             if ((*i).isEmpty())
