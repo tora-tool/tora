@@ -61,7 +61,7 @@ class toAlert : public toToolWidget
 {
     Q_OBJECT;
 
-class pollTask : public toTask
+    class pollTask : public toTask
     {
         toAlert &Parent;
 

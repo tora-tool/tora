@@ -81,9 +81,9 @@ void toTemplateProvider::importAllData(std::map<QString, QString> &data, const Q
     {
         try
         {
-            toTool *tool = toTool::tool(*ToolKey);
-            if (tool)
-                tool->createWindow();
+            toTool *pTool = ToolsSing::Instance().value(*ToolKey, NULL);
+            if (pTool)
+	       pTool->createWindow();
         }
         catch (...)
             {}

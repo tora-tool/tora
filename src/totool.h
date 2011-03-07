@@ -74,7 +74,7 @@ class toTimer;
 
 class toTool : public QObject
 {
-    Q_OBJECT
+    Q_OBJECT;
 private:
     /**
      * Name of the tool.
@@ -89,11 +89,6 @@ private:
      */
     int Priority;
     /**
-     * A map of @ref Key to tools. Used to keep track of the different tools
-     * available.
-     */
-    static std::map<QString, toTool *> *Tools;
-    /**
      * Contain the pixmap of this tool if any. Used for the toolbar and menu entries.
      */
     QPixmap *ButtonPicture;
@@ -104,7 +99,7 @@ private:
      */
     QAction *toolAction;
 
-
+    
 protected:
     /**
      * Should return the xpm used to create the @ref ButtonPicture.
@@ -210,34 +205,6 @@ public:
      * @param parent The parent widget of the about dialog.
      */
     virtual void about(QWidget *parent);
-    /** Indicate whether or not this tool has an about dialog.
-     */
-    virtual bool hasAbout(void)
-    {
-        return false;
-    }
-
-    /**
-     * Get access to the map of tools. Don't modify it. Observe that the index string is not
-     * the name of the tool but an internal key used to get tools sorted in the correct
-     * priority order.
-     *
-     * @see Tools
-     * @return A reference to the tool map.
-     */
-    static std::map<QString, toTool *> &tools(void)
-    {
-        if (!Tools)
-            Tools = new std::map<QString, toTool *>;
-        return *Tools;
-    }
-    /**
-     * Get a pointer to the tool with a specified key.
-     *
-     * @see Tools
-     * @return A pointer to the tool or NULL if tool doesn't exist.
-     */
-    static toTool *tool(const QString &key);
 
     /**
      * Get tool specific settings.
@@ -321,6 +288,8 @@ public slots:
 
 };
 
+
+
 #include "tohelp.h"
 
 /**
@@ -389,7 +358,7 @@ public:
  */
 class toToolWidget : public QWidget, public toHelpContext, public toConnectionWidget
 {
-    Q_OBJECT
+    Q_OBJECT;
     toTimer *Timer;
     toTool &Tool;
 private slots:

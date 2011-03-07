@@ -219,7 +219,7 @@ void toToolWidget::importData(std::map<QString, QString> &data, const QString &p
     }
 }
 
-std::map<QString, toTool *> *toTool::Tools;
+// std::map<QString, toTool *> *toTool::Tools;
 // std::map<QCString, QString> *toTool::Configuration;
 
 
@@ -234,15 +234,13 @@ toTool::toTool(int priority, const char *name)
         ButtonPicture(0),
         toolAction(0)
 {
-    if (!Tools)
-        Tools = new std::map<QString, toTool *>;
     Key.sprintf("%05d%s", priority, name);
-    (*Tools)[Key] = this;
+    ToolsSing::Instance().insert(Key, this);
 }
 
 toTool::~toTool()
 {
-    Tools->erase(Key);
+    ToolsSing::Instance().erase(ToolsSing::Instance().find(Key));
     delete ButtonPicture;
 }
 
@@ -367,17 +365,6 @@ void toTool::customSetup()
 QWidget *toTool::configurationTab(QWidget *)
 {
     return NULL;
-}
-
-toTool *toTool::tool(const QString &key)
-{
-    if (!Tools)
-        Tools = new std::map<QString, toTool *>;
-    std::map<QString, toTool *>::iterator i = Tools->find(key);
-    if (i == Tools->end())
-        return NULL;
-
-    return (*i).second;
 }
 
 void toTool::about(QWidget *)

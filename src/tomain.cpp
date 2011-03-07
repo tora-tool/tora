@@ -152,18 +152,16 @@ toMain::toMain()
 
     enableConnectionActions(false);
 
-    std::map<QString, toTool *> &tools = toTool::tools();
-
     QString defName(toConfigurationSingle::Instance().defaultTool());
-    for (std::map<QString, toTool *>::iterator k = tools.begin();
-         k != tools.end();
-         k++)
+    for (ToolsSing::ObjectType::iterator k = ToolsSing::Instance().begin();
+	 k != ToolsSing::Instance().end();
+	 ++k)
     {
         if(defName.isEmpty()) {
-            toConfigurationSingle::Instance().setDefaultTool((*k).first);
-            defName = (*k).first;
+            toConfigurationSingle::Instance().setDefaultTool(k.key());
+            defName = k.key();
         }
-        (*k).second->customSetup();
+        k.value()->customSetup();
     }
     Search = NULL;
 
@@ -622,17 +620,17 @@ void toMain::createToolMenus()
         int lastPriorityPix = 0;
         int lastPriorityMenu = 0;
 
-        std::map<QString, toTool *> &tools = toTool::tools();
+        ToolsSing::ObjectType &tools = ToolsSing::Instance();
         ToolsMap cfgTools(toConfigurationSingle::Instance().tools());
 
-        for (std::map<QString, toTool *>::iterator i = tools.begin();
-                i != tools.end();
-                i++)
-        {
-
-            QAction *toolAct = (*i).second->getAction();
-            const QPixmap *pixmap = (*i).second->toolbarImage();
-            const char *menuName = (*i).second->menuItem();
+	for (ToolsSing::ObjectType::iterator i = ToolsSing::Instance().begin();
+	     i != ToolsSing::Instance().end();
+	     ++i)
+	{
+            toTool *pTool = i.value();
+            QAction *toolAct = pTool->getAction();
+            const QPixmap *pixmap = pTool->toolbarImage();
+            const char *menuName = pTool->menuItem();
 
 //             QString tmp = (*i).first;
 //             tmp += CONF_TOOL_ENABLE;
@@ -641,13 +639,13 @@ void toMain::createToolMenus()
 //                 continue;
 //             }
             // set the tools for the first run
-            if (!cfgTools.contains((*i).first))
-                cfgTools[(*i).first] = true;
+            if (!cfgTools.contains(i.key()))
+                cfgTools[i.key()] = true;
             // only enabled tools are set
-            if (cfgTools[(*i).first] == false)
+            if (cfgTools[i.key()] == false)
                 continue;
 
-            int priority = (*i).second->priority();
+            int priority = pTool->priority();
             if (priority / 100 != lastPriorityPix / 100 && pixmap)
             {
 #ifndef TO_NO_ORACLE
@@ -1482,13 +1480,12 @@ void toMain::enableConnectionActions(bool enabled)
     {
     }
 
-    std::map<QString, toTool *> &tools = toTool::tools();
-    for (std::map<QString, toTool *>::iterator i = tools.begin();
-            i != tools.end();
-            i++)
+    for (ToolsSing::ObjectType::iterator i = ToolsSing::Instance().begin();
+	 i != ToolsSing::Instance().end();
+	 ++i)
     {
-
-        if (!(*i).second)
+        toTool *pTool = i.value();
+        if (!pTool)
             continue;
 
 #ifdef TO_NO_ORACLE
@@ -1496,18 +1493,18 @@ void toMain::enableConnectionActions(bool enabled)
         // hide all of the oracle tools that don't make sense if
         // compiled without it.
         if(conn)
-            (*i).second->setActionVisible(*conn);
+            pTool->setActionVisible(*conn);
         else
-            (*i).second->setActionVisible(false);
+            pTool->setActionVisible(false);
 #else
         if (!enabled)
-            (*i).second->enableAction(false);
+            pTool->enableAction(false);
         else
         {
             if(conn)
-                (*i).second->enableAction(*conn);
+                pTool->enableAction(*conn);
             else
-                (*i).second->enableAction(false);
+                pTool->enableAction(false);
         }
 #endif
     }
@@ -1566,16 +1563,15 @@ void toMain::closeEvent(QCloseEvent *event)
 
 void toMain::createDefault(void)
 {
-    std::map<QString, toTool *> &tools = toTool::tools();
-
     QString defName(toConfigurationSingle::Instance().defaultTool());
     toTool *DefaultTool = NULL;
-    for (std::map<QString, toTool *>::iterator k = tools.begin();
-            k != tools.end();
-            k++)
+
+    for (ToolsSing::ObjectType::iterator i = ToolsSing::Instance().begin();
+	     i != ToolsSing::Instance().end();
+	     ++i)
     {
-        if(defName.isEmpty() || defName == (*k).first) {
-            DefaultTool = (*k).second;
+        if(defName.isEmpty() || defName == i.key()) {
+            DefaultTool = i.value();
             break;
         }
     }
@@ -1596,11 +1592,9 @@ void toMain::setCoordinates(int line, int col)
 
 void toMain::editSQL(const QString &str)
 {
-    std::map<QString, toTool *> &tools = toTool::tools();
-
-    if (!SQLEditor.isNull() && tools[SQLEditor])
+    if (!SQLEditor.isNull() && ToolsSing::Instance().contains(SQLEditor))
     {
-        tools[SQLEditor]->createWindow();
+        ToolsSing::Instance().value(SQLEditor)->createWindow();
         emit sqlEditor(str);
     }
 }
@@ -1657,9 +1651,9 @@ void toMain::editOpenFile(QString file) {
     }
 
     if(!sheet) {
-        toTool *tool = toTool::tool("00010SQL Editor");
-        if(tool) {
-            QWidget *win = tool->createWindow();
+        toTool *pTool = ToolsSing::Instance().value("00010SQL Editor");
+        if(pTool) {
+            QWidget *win = pTool->createWindow();
             if(win)
                 sheet = dynamic_cast<toWorksheet *>(win);
         }
@@ -1898,11 +1892,11 @@ void toMain::importData(std::map<QString, QString> &data, const QString &prefix)
         std::map<int, toConnection *>::iterator j = connMap.find(connid);
         if (j != connMap.end())
         {
-            toTool *tool = toTool::tool(key);
-            if (tool)
+            toTool *pTool = ToolsSing::Instance().value(key);
+            if (pTool)
             {
-                QWidget *widget = tool->toolWindow(workspace(), *((*j).second));
-                const QPixmap *icon = tool->toolbarImage();
+                QWidget *widget = pTool->toolWindow(workspace(), *((*j).second));
+                const QPixmap *icon = pTool->toolbarImage();
                 if (icon)
                     widget->setWindowIcon(*icon);
                 widget->show();
@@ -1911,7 +1905,7 @@ void toMain::importData(std::map<QString, QString> &data, const QString &prefix)
                     toToolWidget *tw = dynamic_cast<toToolWidget *>(widget);
                     if (tw)
                     {
-                        toToolCaption(tw, tool->name());
+                        toToolCaption(tw, pTool->name());
                         tw->importData(data, prefix + ":Tools:" + QString::number(id));
                         toolWidgetAdded(tw);
                     }

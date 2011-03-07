@@ -424,21 +424,23 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
 {
     setupUi(this);
 
-    std::map<QString, toTool *> &tools = toTool::tools();
     Enabled->setSorting(0);
     ToolsMap tMap(toConfigurationSingle::Instance().tools());
-    for (std::map<QString, toTool *>::iterator i = tools.begin(); i != tools.end(); i++)
+    for (ToolsSing::ObjectType::iterator i = ToolsSing::Instance().begin();
+	 i != ToolsSing::Instance().end();
+	 ++i)
     {
-        if ((*i).second->menuItem())
-        {
-            QString menuName = qApp->translate("toTool", (*i).second->menuItem());
-            DefaultTool->addItem(menuName);
-            toTreeWidgetItem *item = new toTreeWidgetItem(Enabled,
+           toTool *pTool = i.value();
+           if (pTool && pTool->menuItem())
+	   {
+	     QString menuName = qApp->translate("toTool", pTool->menuItem());
+	     DefaultTool->addItem(menuName);
+	     toTreeWidgetItem *item = new toTreeWidgetItem(Enabled,
                     menuName,
-                    (*i).second->name(),
-                    (*i).first);
-            item->setSelected(tMap[(*i).first]);
-        }
+                    pTool->name(),
+                    i.key());
+	     item->setSelected(tMap[i.key()]);
+	   }
     }
 
     // set the default tool to prevent overvritting when
@@ -447,7 +449,7 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
     int currIx = -1;
     if (!defName.isEmpty())
     {
-        toTool *def = tools[toConfigurationSingle::Instance().defaultTool()];
+        toTool *def = ToolsSing::Instance().value(toConfigurationSingle::Instance().defaultTool());
         currIx = DefaultTool->findText(def->name());
     }
     DefaultTool->setCurrentIndex( (currIx == -1) ? 0 : currIx );

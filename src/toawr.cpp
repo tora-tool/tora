@@ -220,6 +220,7 @@ public:
 	toAWRTool()
 		: toTool(10003,"AWR")
 	{ }
+	
 	virtual const char *menuItem()
 	{
 		return "AWR Report";
@@ -259,11 +260,10 @@ public:
 
 const char **toAWRTool::pictureXPM(void) { return const_cast<const char**>(awrtool_xpm); }
 
-
 static toAWRTool AWRTool;
  
 toAWR::toAWR(/*toTool *tool,*/ QWidget *parent, toConnection &_connection)
-	: toToolWidget(/* *tool*/AWRTool, "simplequery.html", parent, _connection, "toAWR")
+	: toToolWidget(AWRTool, "simplequery.html", parent, _connection, "toAWR")
 {
 	QToolBar *toolbar=toAllocBar(this, tr("Simple Query"));
 	layout()->addWidget(toolbar);
@@ -392,7 +392,7 @@ void toAWR::closeEvent(QCloseEvent *event)
 {
     try
     {
-        AWRTool.closeWindow(connection());
+	    AWRTool.closeWindow(connection());
     }
     TOCATCH;
 

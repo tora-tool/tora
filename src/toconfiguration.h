@@ -23,6 +23,15 @@ typedef QMapIterator<QString, QVariant> EditorShortcutsMapIterator;
 typedef QMap<QString, QString> ConnectionColors;
 typedef QMapIterator<QString, QString> ConnectionColorsIterator;
 
+/*
+ * Get access to the map of tools. Don't modify it. Observe that the index string is not
+ * the name of the tool but an internal key used to get tools sorted in the correct
+ * priority order.
+ //  * @see Tools
+ //  * @return A reference to the tool map.
+ */
+class toTool;
+typedef ::Loki::SingletonHolder<QMap<QString, toTool *> > ToolsSing;
 
 class toConfigurationPrivate;
 class toConfiguration

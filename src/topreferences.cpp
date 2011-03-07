@@ -140,25 +140,18 @@ toPreferences::toPreferences(QWidget* parent, const char* name, bool modal, Qt::
 
         TabSelection->setCurrentItem(0);
 
-        std::map<QString, toTool *> tools = toTool::tools();
-        std::map<QString, toTool *> newSort;
-        {
-            for (std::map<QString, toTool *>::iterator i = tools.begin();i != tools.end();i++)
-                newSort[(*i).second->name()] = (*i).second;
-        }
-
-        {
-            for (std::map<QString, toTool *>::iterator i = newSort.begin();i != newSort.end();i++)
-            {
-                QWidget *tab = (*i).second->configurationTab(Parent);
-                if (tab)
-                {
-                    QString str(QString::fromLatin1(" "));
-                    str.append((*i).first);
-                    addWidget(new QListWidgetItem(str, TabSelection), tab);
-                }
-            }
-        }
+	for (ToolsSing::ObjectType::iterator i = ToolsSing::Instance().begin();
+	     i != ToolsSing::Instance().end();
+	     ++i)
+	{
+		QWidget *tab = i.value()->configurationTab(Parent);
+		if (tab)
+		{
+			QString str(QString::fromLatin1(" "));
+			str.append(i.value()->name());
+			addWidget(new QListWidgetItem(str, TabSelection), tab);
+		}
+	}
     }
     TOCATCH;
 }
