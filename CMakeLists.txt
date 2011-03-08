@@ -132,7 +132,7 @@ ENDIF (_machine_ppc)
 SET(CMAKE_CXX_FLAGS_RELEASE "-O2 ${CXX_WARNINGS} -ggdb3")
 SET(CMAKE_C_FLAGS_RELEASE "-O2 ${CXX_WARNINGS} -ggdb3")
 SET(CMAKE_CXX_FLAGS_DEBUG "-O0 ${CXX_WARNINGS} -ggdb3 -fno-inline -rdynamic")
-SET(CMAKE_C_FLAGS_DEBUG "-O0 ${CXX_WARNINGS} -gbdb3 -fno-inline -rdynamic")
+SET(CMAKE_C_FLAGS_DEBUG "-O0 ${CXX_WARNINGS} -ggdb3 -fno-inline -rdynamic")
 
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 

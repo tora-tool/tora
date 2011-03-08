@@ -79,10 +79,12 @@ class toDocklet;
 class toDockbar;
 
 
-/** This class defines the main window. Observe that this class will have different baseclass
- * depending on if TOra is a Qt or KDE application. In the case of Qt this will be a
- * QMainWindow descendant.
- */
+/**
+ * This class defines the main window for TOra application
+ *
+ * NOTE: all methods inherited from toMainWindow are marked
+ * with /*virtual*
+*/
 class toMain : public toMainWindow
 {
     Q_OBJECT;
@@ -265,7 +267,6 @@ private:
     void createMenus();
     void createToolbars();
     void createStatusbar();
-    void createToolMenus();
     void createDocklets();
     void createDockbars();
     //! \brief Sets tools displaying depending on preferences (tabs/windows)
@@ -282,12 +283,12 @@ public:
      * Get the workspace widget of the main window.
      * @return Workspace widget.
      */
-    QMdiArea *workspace() const
+    /*virtual*/ QMdiArea *workspace() const
     {
         return Workspace;
     }
 
-    toSearchReplace * searchDialog()
+    /*virtual*/ toSearchReplace * searchDialog()
     {
         return Search;
     }
@@ -300,7 +301,7 @@ public:
      *
      * Use this to find the last active sub window.
      */
-    QMdiSubWindow* lastActiveWindow() const
+    /*virtual*/ QMdiSubWindow* lastActiveWindow() const
     {
         return LastActiveWindow;
     }
@@ -309,8 +310,8 @@ public:
      * Get the current database connection
      * @return Reference to current connection.
      */
-    toConnection &currentConnection(void);
-
+    /*virtual*/ toConnection &currentConnection(void);
+    
     /**
      * Set the widget to edit through menues and toolbar.
      */
@@ -331,7 +332,7 @@ public:
 
     /** Get current edit widget
      */
-    toEditWidget *editWidget()
+    /*virtual*/ toEditWidget *editWidget()
     {
         return Edit;
     }
@@ -341,36 +342,36 @@ public:
      *
      * This is the tool with the highest priority, usually the SQL worksheet.
      */
-    void createDefault(void);
-
+    /*virtual*/ void createDefault(void);
+    
     /**
      * Set coordinates in the statusbar.
      *
      * Used to indicate current cursor position by child widgets.
      */
-    void setCoordinates(int, int);
+    /*virtual*/ void setCoordinates(int, int);
 
-    toBackgroundLabel* getBackgroundLabel();
+    /*virtual*/ toBackgroundLabel* getBackgroundLabel();
 
     /**
      * Get a list of currently open connections.
      * @return List of connection names. The returned list can then be used by
      * @ref connection to get the actual connection.
      */
-    std::list<QString> connections(void);
+    /*virtual*/ std::list<QString> connections(void);
     /** Get a connection identified by a string.
      * @return A reference to a connection.
      * @exception QString If connection wasn't found.
      */
-    toConnection &connection(const QString &);
+    /*virtual*/ toConnection &connection(const QString &);
     /** Set if a connection needs to be committed. Also updates visual feedback in interface.
      */
-    void setNeedCommit(toConnection &conn, bool needCommit = true);
+    /*virtual*/ void setNeedCommit(toConnection &conn, bool needCommit = true);
 
     /** Edit an SQL statement in the SQL editor if any connected.
      * @param str Identifier of the SQL to edit.
      */
-    void editSQL(const QString &str);
+    /*virtual*/ void editSQL(const QString &str);
     /**
      * Register a tool which to use as an SQL editor. When something
      * is to be edited first a toolwindow will be created and the @ref
@@ -381,16 +382,16 @@ public:
      *               editor. This is the value which is passed to the
      *               @ref toTool::customSetup member.
      */
-    void registerSQLEditor(const QString &);
+    /*virtual*/ void registerSQLEditor(const QString &);
 
     /** Called by @ref toTool when a new tool is created.
      * @param tool The tool widget created.
      */
-    void toolWidgetAdded(toToolWidget *tool);
+    /*virtual*/ void toolWidgetAdded(toToolWidget *tool);
     /** Called by @ref toToolWidget when a new tool is about to be destroyed.
      * @param tool The tool widget created.
      */
-    void toolWidgetRemoved(toToolWidget *tool);
+    /*virtual*/ void toolWidgetRemoved(toToolWidget *tool);
 
     /** Export data to a map.
      * @param data A map that can be used to recreate the session.
@@ -408,56 +409,56 @@ public:
                             const QString &prefix);
     /** Added chart.
      */
-    void addChart(toLineChart *chart);
+    /*virtual*/ void addChart(toLineChart *chart);
     /** Removed chart.
      */
-    void removeChart(toLineChart *chart);
+    /*virtual*/ void removeChart(toLineChart *chart);
     /** Setup chart.
      */
-    void setupChart(toLineChart *chart);
+    /*virtual*/ void setupChart(toLineChart *chart);
     /** Add recent file
      */
-    void addRecentFile(const QString &filename);
+    /*virtual*/ void addRecentFile(const QString &filename);
 
     /**
      * allow tools to add custom menus (ie. File, Edit, Sql Editor)
      * without giving away public access to menubars.
      *
      */
-    void addCustomMenu(QMenu *);
+    /*virtual*/ void addCustomMenu(QMenu *);
 
     // access needed to some QActions for creating popup menus
-    QAction* getUndoAction()
+    /*virtual*/ QAction* getUndoAction()
     {
         return undoAct;
     }
 
-    QAction* getRedoAction()
+    /*virtual*/ QAction* getRedoAction()
     {
         return redoAct;
     }
 
-    QAction* getCutAction()
+    /*virtual*/ QAction* getCutAction()
     {
         return cutAct;
     }
 
-    QAction* getCopyAction()
+    /*virtual*/ QAction* getCopyAction()
     {
         return copyAct;
     }
 
-    QAction* getPasteAction()
+    /*virtual*/ QAction* getPasteAction()
     {
         return pasteAct;
     }
 
-    QAction* getSelectAllAction()
+    /*virtual*/ QAction* getSelectAllAction()
     {
         return selectAllAct;
     }
 
-    QMenu* getEditMenu()
+    /*virtual*/ QMenu* getEditMenu()
     {
         return editMenu;
     }
@@ -475,7 +476,7 @@ public:
      * Add a new connection. The connection itself must already be created.
      * Returns the connection or it's duplicate already opened connection.
      */
-    toConnection *addConnection(toConnection *conn, bool def = true);
+    /*virtual*/toConnection *addConnection(toConnection *conn, bool def = true);
 
 signals:
     /** Invoked to start editing an SQL identifier.
@@ -530,16 +531,16 @@ public slots:
     //bool close();
     /** Used to enable/disable entries in the windows menu
      */
-    void updateWindowsMenu();
+    /*virtual*/ void updateWindowsMenu();
     /** Called when active window is changed.
      */
-    void windowActivated(QMdiSubWindow *);
+    /*virtual*/ void windowActivated(QMdiSubWindow *);
     /** Used to enable/disable entries in the file menu
      */
     void showFileMenu(void);
     /** Check if object caching is done.
      */
-    void checkCaching(void);
+    /*virtual*/ void checkCaching(void);
     /** Save the current TOra session
      */
     void saveSession(void);
@@ -551,7 +552,7 @@ public slots:
     void closeSession(void);
     /** Change current connection
      */
-    void changeConnection(void);
+    /*virtual*/ void changeConnection(void);
     /**
      * Show a statusbar message.
      *
@@ -559,7 +560,7 @@ public slots:
      * @param save save to messages menu
      * @param log
      */
-    void showMessage(const QString &str, bool save, bool log);
+    /*virtual*/ void showMessage(const QString &str, bool save, bool log);
 
     /**
      * Show a busy cursor or other indicators. Must be called from the
@@ -582,7 +583,7 @@ public slots:
      * Open a file in sql worksheet
      *
      */
-    void editOpenFile(QString file);
+    /*virtual*/ void editOpenFile(QString file);
 
     /**
      * Return the toDockbar that manages the docklet. If none
@@ -590,7 +591,7 @@ public slots:
      * is shown.
      *
      */
-    toDockbar* dockbar(toDocklet *let);
+    /*virtual*/ toDockbar* dockbar(toDocklet *let);
 
     /**
      * Handles moving docklet to new dockbar
@@ -657,6 +658,6 @@ private slots:
 /** Get a pointer to the main window
  * @return Pointer to main window.
  */
-toMain *toMainWidget(void);
+toMainWindow *toMainWidget(void);
 
 #endif

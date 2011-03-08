@@ -1255,7 +1255,7 @@ toConnection &toMain::connection(const QString &str)
 
 void toMain::setEditWidget(toEditWidget *edit)
 {
-    toMain *main = toMainWidget();
+    toMain *main = dynamic_cast<toMain*>(toMainWidget());
     if (main && edit)
     {
         if (main->Edit)
@@ -1274,7 +1274,7 @@ void toMain::editEnable(toEditWidget *edit)
     if (!edit)
         return;
 
-    toMain *main = toMainWidget();
+    toMain *main = dynamic_cast<toMain*>(toMainWidget());
     if (main)
         main->editEnable(edit,
                          edit->openEnabled(),
@@ -1300,7 +1300,7 @@ void toMain::editEnable(toEditWidget *edit)
 
 void toMain::editDisable(toEditWidget *edit)
 {
-    toMain *main = toMainWidget();
+    toMain *main = dynamic_cast<toMain*>(toMainWidget());
 
     if (main)
     {
@@ -1948,12 +1948,12 @@ toBackgroundLabel* toMain::getBackgroundLabel()
     return BackgroundLabel;
 }
 
-toMain* getMainWidget()
+toMainWindow* getMainWidget()
 {
     QWidgetList widgets = qApp->topLevelWidgets();
     for (QWidgetList::iterator it = widgets.begin(); it != widgets.end(); it++)
     {
-        toMain *main = dynamic_cast<toMain *>((*it));
+        toMainWindow *main = dynamic_cast<toMainWindow *>((*it));
         if (main)
             return main;
     }
@@ -1961,9 +1961,9 @@ toMain* getMainWidget()
     return NULL;
 }
 
-toMain* toMainWidget()
+toMainWindow* toMainWidget()
 {
-    static toMain *main = getMainWidget();
+    static toMainWindow *main = getMainWidget();
     // if there is no main widget yet, try to refresh it
     if (!main)
         main = getMainWidget();

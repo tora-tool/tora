@@ -290,10 +290,10 @@ namespace Util {
 
 	  void dump() const {
 	          typename parent::FctRegistry::const_iterator i;
-		  for(i = parent::mRegistry.begin(); i != parent::mRegistry.end(); ++i)
-		  {
-			  std::cout << "Key:" << i->first << std::endl;
-		  }
+		  /* for(i = parent::mRegistry.begin(); i != parent::mRegistry.end(); ++i) */
+		  /* { */
+		  /* 	  std::cout << "Key:" << i->first << std::endl; */
+		  /* } */
 	  }
 
       private:

@@ -258,7 +258,7 @@ const QPixmap *toTool::toolbarImage()
 
 QWidget* toTool::createWindow()
 {
-    toMain *main = toMainWidget();
+    toMainWindow *main = toMainWidget();
     QWidget *newWin = 0;
 
     try

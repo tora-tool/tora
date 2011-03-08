@@ -10,7 +10,7 @@
 #include "config.h"
 #include "totimer.h"
 
-class toMain;
+class toMainWindow;
 
 
 /**
@@ -39,7 +39,7 @@ public:
     static void init(void);
 private:
     static int Running;
-    toMain* main;
+    toMainWindow* main;
 };
 
 #endif
