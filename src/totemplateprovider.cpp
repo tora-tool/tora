@@ -81,7 +81,7 @@ void toTemplateProvider::importAllData(std::map<QString, QString> &data, const Q
     {
         try
         {
-            toTool *pTool = ToolsSing::Instance().value(*ToolKey, NULL);
+            toTool *pTool = ToolsRegistrySing::Instance().value(*ToolKey, NULL);
             if (pTool)
 	       pTool->createWindow();
         }

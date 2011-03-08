@@ -426,8 +426,8 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
 
     Enabled->setSorting(0);
     ToolsMap tMap(toConfigurationSingle::Instance().tools());
-    for (ToolsSing::ObjectType::iterator i = ToolsSing::Instance().begin();
-	 i != ToolsSing::Instance().end();
+    for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin();
+	 i != ToolsRegistrySing::Instance().end();
 	 ++i)
     {
            toTool *pTool = i.value();
@@ -449,7 +449,7 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
     int currIx = -1;
     if (!defName.isEmpty())
     {
-        toTool *def = ToolsSing::Instance().value(toConfigurationSingle::Instance().defaultTool());
+        toTool *def = ToolsRegistrySing::Instance().value(toConfigurationSingle::Instance().defaultTool());
         currIx = DefaultTool->findText(def->name());
     }
     DefaultTool->setCurrentIndex( (currIx == -1) ? 0 : currIx );

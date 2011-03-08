@@ -132,8 +132,6 @@ toMain::toMain()
 
     createStatusbar();
 
-    createToolMenus();
-
     createDocklets();
 
     updateRecent();
@@ -153,8 +151,8 @@ toMain::toMain()
     enableConnectionActions(false);
 
     QString defName(toConfigurationSingle::Instance().defaultTool());
-    for (ToolsSing::ObjectType::iterator k = ToolsSing::Instance().begin();
-	 k != ToolsSing::Instance().end();
+    for (ToolsRegistrySing::ObjectType::iterator k = ToolsRegistrySing::Instance().begin();
+	 k != ToolsRegistrySing::Instance().end();
 	 ++k)
     {
         if(defName.isEmpty()) {
@@ -477,6 +475,7 @@ void toMain::createMenus()
             this,
             SLOT(commandCallback(QAction *)),
             Qt::QueuedConnection);
+    ToolsRegistrySing::Instance().toolsMenu(toolsMenu);
 
     // windows menu handled separately by update function
     windowsMenu = menuBar()->addMenu(tr("&Window"));
@@ -561,6 +560,7 @@ void toMain::createToolbars()
 
     toolsToolbar = toAllocBar(this, tr("Tools"));
     toolsToolbar->setObjectName("toolsToolbar");
+    ToolsRegistrySing::Instance().toolsToolbar(toolsToolbar);
 }
 
 //! \warning Do not use it. It screws up reloading the toolbar state
@@ -610,67 +610,6 @@ void toMain::createStatusbar()
             SIGNAL(pressed()),
             dispStatus,
             SLOT(showMenu()));
-}
-
-
-void toMain::createToolMenus()
-{
-    try
-    {
-        int lastPriorityPix = 0;
-        int lastPriorityMenu = 0;
-
-        ToolsSing::ObjectType &tools = ToolsSing::Instance();
-        ToolsMap cfgTools(toConfigurationSingle::Instance().tools());
-
-	for (ToolsSing::ObjectType::iterator i = ToolsSing::Instance().begin();
-	     i != ToolsSing::Instance().end();
-	     ++i)
-	{
-            toTool *pTool = i.value();
-            QAction *toolAct = pTool->getAction();
-            const QPixmap *pixmap = pTool->toolbarImage();
-            const char *menuName = pTool->menuItem();
-
-//             QString tmp = (*i).first;
-//             tmp += CONF_TOOL_ENABLE;
-//             if(toConfigurationSingle::Instance().globalConfig(
-//                    tmp, "Yes").isEmpty()) {
-//                 continue;
-//             }
-            // set the tools for the first run
-            if (!cfgTools.contains(i.key()))
-                cfgTools[i.key()] = true;
-            // only enabled tools are set
-            if (cfgTools[i.key()] == false)
-                continue;
-
-            int priority = pTool->priority();
-            if (priority / 100 != lastPriorityPix / 100 && pixmap)
-            {
-#ifndef TO_NO_ORACLE
-                toolsToolbar->addSeparator();
-#endif
-                lastPriorityPix = priority;
-            }
-
-            if (priority / 100 != lastPriorityMenu / 100 && menuName)
-            {
-#ifndef TO_NO_ORACLE
-                toolsMenu->addSeparator();
-#endif
-                lastPriorityMenu = priority;
-            }
-
-            if (pixmap)
-                toolsToolbar->addAction(toolAct);
-
-            if (menuName)
-                toolsMenu->addAction(toolAct);
-        } // for tools
-        toConfigurationSingle::Instance().setTools(cfgTools);
-    }
-    TOCATCH;
 }
 
 
@@ -1480,8 +1419,8 @@ void toMain::enableConnectionActions(bool enabled)
     {
     }
 
-    for (ToolsSing::ObjectType::iterator i = ToolsSing::Instance().begin();
-	 i != ToolsSing::Instance().end();
+    for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin();
+	 i != ToolsRegistrySing::Instance().end();
 	 ++i)
     {
         toTool *pTool = i.value();
@@ -1566,8 +1505,8 @@ void toMain::createDefault(void)
     QString defName(toConfigurationSingle::Instance().defaultTool());
     toTool *DefaultTool = NULL;
 
-    for (ToolsSing::ObjectType::iterator i = ToolsSing::Instance().begin();
-	     i != ToolsSing::Instance().end();
+    for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin();
+	     i != ToolsRegistrySing::Instance().end();
 	     ++i)
     {
         if(defName.isEmpty() || defName == i.key()) {
@@ -1592,9 +1531,9 @@ void toMain::setCoordinates(int line, int col)
 
 void toMain::editSQL(const QString &str)
 {
-    if (!SQLEditor.isNull() && ToolsSing::Instance().contains(SQLEditor))
+    if (!SQLEditor.isNull() && ToolsRegistrySing::Instance().contains(SQLEditor))
     {
-        ToolsSing::Instance().value(SQLEditor)->createWindow();
+        ToolsRegistrySing::Instance().value(SQLEditor)->createWindow();
         emit sqlEditor(str);
     }
 }
@@ -1651,7 +1590,7 @@ void toMain::editOpenFile(QString file) {
     }
 
     if(!sheet) {
-        toTool *pTool = ToolsSing::Instance().value("00010SQL Editor");
+        toTool *pTool = ToolsRegistrySing::Instance().value("00010SQL Editor");
         if(pTool) {
             QWidget *win = pTool->createWindow();
             if(win)
@@ -1892,7 +1831,7 @@ void toMain::importData(std::map<QString, QString> &data, const QString &prefix)
         std::map<int, toConnection *>::iterator j = connMap.find(connid);
         if (j != connMap.end())
         {
-            toTool *pTool = ToolsSing::Instance().value(key);
+            toTool *pTool = ToolsRegistrySing::Instance().value(key);
             if (pTool)
             {
                 QWidget *widget = pTool->toolWindow(workspace(), *((*j).second));

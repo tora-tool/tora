@@ -1777,11 +1777,11 @@ void toConfiguration::setRecentFiles(QStringList v)
     p->m_recentFiles = v;
 }
 // tools
-ToolsMap toConfiguration::tools()
+ToolsMap& toConfiguration::tools()
 {
     return p->m_tools;
 }
-void toConfiguration::setTools(ToolsMap v)
+void toConfiguration::setTools(ToolsMap &v)
 {
     p->m_tools = v;
 }

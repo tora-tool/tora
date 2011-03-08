@@ -140,8 +140,8 @@ toPreferences::toPreferences(QWidget* parent, const char* name, bool modal, Qt::
 
         TabSelection->setCurrentItem(0);
 
-	for (ToolsSing::ObjectType::iterator i = ToolsSing::Instance().begin();
-	     i != ToolsSing::Instance().end();
+	for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin();
+	     i != ToolsRegistrySing::Instance().end();
 	     ++i)
 	{
 		QWidget *tab = i.value()->configurationTab(Parent);

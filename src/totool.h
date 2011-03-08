@@ -47,8 +47,8 @@
 
 #include <map>
 
-#include <qobject.h>
-#include <qstring.h>
+#include <QObject>
+#include <QString>
 
 #include <QPixmap>
 #include <QAction>
@@ -288,8 +288,6 @@ public slots:
 
 };
 
-
-
 #include "tohelp.h"
 
 /**
@@ -421,5 +419,25 @@ public:
      */
     virtual void importData(std::map<QString, QString> &data, const QString &prefix);
 };
+
+/*
+ * Get access to the map of tools. Don't modify it. Observe that the index string is not
+ * the name of the tool but an internal key used to get tools sorted in the correct
+ * priority order.
+ //  * @see Tools
+ //  * @return A reference to the tool map.
+ */
+class QToolBar;
+class QMenu;
+class toToolsRegistry: public QMap<QString, toTool *>
+{
+public:
+	typedef QMap<QString, toTool*> super;
+	QToolBar* toolsToolbar(QToolBar *toolbar) const;
+	QMenu* toolsMenu(QMenu* menu) const;
+private:
+};
+
+typedef Loki::SingletonHolder<toToolsRegistry> ToolsRegistrySing;
 
 #endif

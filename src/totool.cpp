@@ -64,7 +64,8 @@
 #include <QMdiArea>
 #include <QMdiSubWindow>
 #include <QVBoxLayout>
-
+#include <QToolBar>
+#include <QMenu>
 
 // A little magic to get lrefresh to work and get a check on qApp
 
@@ -235,12 +236,12 @@ toTool::toTool(int priority, const char *name)
         toolAction(0)
 {
     Key.sprintf("%05d%s", priority, name);
-    ToolsSing::Instance().insert(Key, this);
+    ToolsRegistrySing::Instance().insert(Key, this);
 }
 
 toTool::~toTool()
 {
-    ToolsSing::Instance().erase(ToolsSing::Instance().find(Key));
+    ToolsRegistrySing::Instance().erase(ToolsRegistrySing::Instance().find(Key));
     delete ButtonPicture;
 }
 
@@ -377,3 +378,86 @@ void toTool::about(QWidget *)
 // void toTool::setConfig(const QString &tag, const QString &value) {
 //     toConfigurationSingle::Instance().setConfig(tag, value, Name);
 // }
+
+QToolBar* toToolsRegistry::toolsToolbar(QToolBar *toolbar) const
+{
+	if(!toolbar)
+		return toolbar;
+
+	try
+	{
+		int lastPriorityPix = 0;
+		ToolsMap &cfgTools = toConfigurationSingle::Instance().tools();
+
+		for (super::const_iterator i = super::begin(); i != super::end(); ++i)
+		{
+			toTool *pTool = i.value();
+			QAction *toolAct = pTool->getAction();
+			const QPixmap *pixmap = pTool->toolbarImage();
+			
+			// set the tools for the first run
+			if (!cfgTools.contains(i.key()))
+				cfgTools[i.key()] = true;
+			// only enabled tools are set
+			if (cfgTools[i.key()] == false)
+				continue;
+			
+			int priority = pTool->priority();
+			if (priority / 100 != lastPriorityPix / 100 && pixmap)
+			{
+#ifndef TO_NO_ORACLE
+				toolbar->addSeparator();
+#endif
+				lastPriorityPix = priority;
+			}
+			
+			if (pixmap)
+				toolbar->addAction(toolAct);
+			
+		} // for tools
+	}
+	TOCATCH;
+	return toolbar;
+}
+
+QMenu* toToolsRegistry::toolsMenu(QMenu *menu) const
+{
+	if(!menu)
+		return menu;
+
+	try
+	{
+		int lastPriorityMenu = 0;
+		
+		ToolsMap &cfgTools = toConfigurationSingle::Instance().tools();
+
+		for (super::const_iterator i = super::begin(); i != super::end(); ++i)
+		{
+			toTool *pTool = i.value();
+			QAction *toolAct = pTool->getAction();
+			const QPixmap *pixmap = pTool->toolbarImage();
+			const char *menuName = pTool->menuItem();
+			
+			// set the tools for the first run
+			if (!cfgTools.contains(i.key()))
+				cfgTools[i.key()] = true;
+			// only enabled tools are set
+			if (cfgTools[i.key()] == false)
+				continue;
+			
+			int priority = pTool->priority();
+			if (priority / 100 != lastPriorityMenu / 100 && menuName)
+			{
+#ifndef TO_NO_ORACLE
+				menu->addSeparator();
+#endif
+				lastPriorityMenu = priority;
+			}
+			
+			if (menuName)
+			 	menu->addAction(toolAct);
+		} // for tools
+	}
+	TOCATCH;
+	return menu;
+}
