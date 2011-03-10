@@ -1,4 +1,3 @@
-
 #ifndef TOCACHE_H
 #define TOCACHE_H
 
@@ -11,21 +10,46 @@
 #include <list>
 #include <set>
 
-/** Object cache for a connection.
+/** Object cache for a connection. This class is accessed only through toConnection
+    a could be a nested class of toConnection.
  */
+class toConnection;
+
 class toCache : public QObject
 {
-    /** Description of connection for which this instance of cache is used.
-     *  This name is used as a filename to store cache content between TOra runs.
-     */
-    QString ConnectionDescription;
-    bool ReadingCache;
-
+	friend class toConnection;
+	/** Description of connection for which this instance of cache is used.
+	 *  This name is used as a filename to store cache content between TOra runs.
+	 */
+	QString ConnectionDescription;
+	unsigned refCount; // Multiple connections can point onto same toCache instance, the last connection should delete me.
 public:
-    typedef QList<QVariant> Row; // NOTE: first (0th) value in a row is a row number (see variable currRowKey)
-    typedef QList<Row> RowList;
+	mutable toLock cacheLock;
+    
+	typedef QList<QVariant> Row; // NOTE: first (0th) value in a row is a row number (see variable currRowKey)
+	typedef QList<Row> RowList;
+	
+	enum toCacheState
+	{
 
-    toSemaphore ReadingValues;
+		NOT_STARTED = 0,
+		READING_OBJECTS,
+		READING_SYNONYMS,
+		DONE,
+		FAILED
+	};
+	
+	/* This enum is used to distingish parameter of cacheAvailable */
+	enum cacheEntryType
+	{
+		SYNONYMS,
+		OBJECTS
+	};
+
+	/* This semaphore is used to synchronize with toConnection::cacheObjects::run()
+	   is initialized in toConnection constructors to 2
+	*/
+	toSemaphore ReadingThread;
 
     /** Contain information about a tablename.
      */
@@ -89,14 +113,16 @@ public:
 private:
     std::list<objectName> ObjectNames;
     std::map<QString, objectName> SynonymMap;
-    void ll(void);
 
+    toCacheState state;
+    void setCacheState(toCacheState);
 public:
     typedef queryDescribe toQDescribe;
     typedef std::list<toQDescribe> toQDescList;
+    
     std::map<objectName, toQDescList> ColumnCache;
 
-    toCache(QString description);
+    toCache(QString const &description);
     ~toCache();
 
     /** Load cache information for current connection from a file on disk
@@ -117,11 +143,17 @@ public:
     /** Check if cache is available or not.
      * @param synonyms If synonyms are needed or not.
      * @param block Block until cache is done.
-     * @param true True if you need the cache, or just checking.
+     * @param t (pointer to toConnection::cacheObjects)
      * @return True if cache is available.
      */
-    bool cacheAvailable(bool synonyms, bool block = false, bool need = true, toTask * t = NULL);
+    bool cacheAvailable(cacheEntryType e, bool block = false, toTask * t = NULL);
 
+    /** Non-blocking version of cacheAvailable, used by toMain to update toBackgroundLabel
+     */
+    bool cacheRefreshRunning() const;
+
+    toCacheState cacheState() const;
+    
     /** Return the file used to store cache contents for this connection.
      * @return A string representing a full path and filename of cache file
      */
@@ -181,14 +213,14 @@ public:
      * will remove any existing objects in cache (for this connection).
      * @param list list of objects to be set
      */
-    void setObjectList(std::list<objectName> &list);
+    void setObjectList(const std::list<objectName> &list);
 
     /** Set a list of object synonyms. This is used when list of synonyms is loaded
      * in bulk outside of a cache (for example in connection class). Note that this
      * fucntion will remove any existing synonyms.
      * @param list list of objects to be set
      */
-    void setSynonymList(std::map<QString, objectName> &list);
+    void setSynonymList(const std::map<QString, objectName> &list);
 
     /** Checks if given object is saved in the cache. Note that if "%" is provided as
      * a value of a parameter, then any value matches.

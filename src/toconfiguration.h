@@ -32,6 +32,17 @@ public:
     toConfiguration();
     ~toConfiguration();
 
+    /* This enum represents various states from ObjectCache comboBox
+     * database settings gui(see todatabasesettingui.ui).
+     */ 
+    enum ObjectCache
+    {
+      WHEN_NEEDED = 0,
+      ON_CONNECT = 1,
+      UNTIL_MANDATORY = 2,
+      NEVER = 3
+    };
+
     /*! \brief Set the QSettings access strings.
     QSettings uses these. It's used in the main.cpp before
     new QApplication instance init.
@@ -194,8 +205,8 @@ public:
     ConnectionColors connectionColors();
     void setConnectionColors(const ConnectionColors & v);
 
-    int objectCache();
-    void setObjectCache(int v);
+    ObjectCache objectCache();
+    void setObjectCache(ObjectCache v);
 
     bool bkgndConnect();
     void setBkgndConnect(bool v);

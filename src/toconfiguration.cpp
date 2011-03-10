@@ -108,7 +108,7 @@ public:
     bool    m_multiLineResults;
     bool    m_colorizedConnections;
     ConnectionColors m_connectionColors;
-    int     m_objectCache;
+    toConfiguration::ObjectCache m_objectCache;
     bool    m_bkgndConnect;
     bool    m_firewallMode;
     int     m_connTestInterval;
@@ -369,7 +369,7 @@ public:
             m_connectionColors["#0000FF"] = "Testing";
         }
 
-        m_objectCache = s.value(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt();
+        m_objectCache = (toConfiguration::ObjectCache)s.value(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt();
         m_bkgndConnect = s.value(CONF_BKGND_CONNECT, false).toBool();
         m_firewallMode = s.value(CONF_FIREWALL_MODE, false).toBool();
         m_connTestInterval = s.value(CONF_CONN_TEST_INTERVAL, DEFAULT_CONN_TEST_INTERVAL).toInt();
@@ -1448,11 +1448,11 @@ void toConfiguration::setConnectionColors(const ConnectionColors & v)
     p->m_connectionColors = v;
 }
 
-int toConfiguration::objectCache()
+toConfiguration::ObjectCache toConfiguration::objectCache()
 {
-    return p->m_objectCache;
+  return p->m_objectCache;
 }
-void toConfiguration::setObjectCache(int v)
+void toConfiguration::setObjectCache(toConfiguration::ObjectCache v)
 {
     p->m_objectCache = v;
 }

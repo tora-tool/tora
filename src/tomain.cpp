@@ -1676,7 +1676,7 @@ void toMain::checkCaching(void)
     int num = 0;
     for (std::list<toConnection *>::iterator i = Connections.begin();i != Connections.end();i++)
     {
-        if (!(*i)->cacheAvailable(true, false, false))
+       if ((*i)->cacheRefreshRunning())
             num++;
     }
     if (num == 0)

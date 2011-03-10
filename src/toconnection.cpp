@@ -209,7 +209,7 @@ toConnectionSub* toConnection::addConnection()
 {
     toBusy busy;
     toConnectionSub *sub = Connection->createConnection();
-    toLocker lock(Lock)
+    toLocker lock(ConnectionLock)
     ;
     toQList params;
     for (std::list<QString>::iterator i = InitStrings.begin(); i != InitStrings.end(); i++)
@@ -238,15 +238,15 @@ toConnection::toConnection(const QString &provider,
                            const QString &schema,
                            const QString &color,
                            const std::set<QString> &options, bool cache)
-    : Provider(provider),
-      User(user),
-      Password(password),
-      Host(host),
-      Database(database),
-      Schema(schema),
-      Color(color),
-      Options(options),
-      Connection(0)
+        : Provider(provider),
+        User(user),
+        Password(password),
+        Host(host),
+        Database(database),
+        Schema(schema),
+        Color(color),
+        Options(options),
+        Connection(0)
 {
     Connection = toConnectionProvider::connection(Provider, this);
     NeedCommit = Abort = false;
@@ -258,41 +258,36 @@ toConnection::toConnection(const QString &provider,
 
     if (cache)
     {
-        if (toConfigurationSingle::Instance().objectCache() == 1)
+        if (toConfigurationSingle::Instance().objectCache() == toConfiguration::ON_CONNECT)
             Cache->readObjects(new cacheObjects(this));
-    }
-    else
-    {
-        Cache->ReadingValues.up();
-        Cache->ReadingValues.up();
     }
 }
 
 toConnection::toConnection(const toConnection &conn)
-    : Provider(conn.Provider),
-      User(conn.User),
-      Password(conn.Password),
-      Host(conn.Host),
-      Database(conn.Database),
-      Schema(conn.Schema),
-      Color(conn.Color),
-      Options(conn.Options),
-      Connection(0)
-{
+        : Provider(conn.Provider),
+        User(conn.User),
+        Password(conn.Password),
+        Host(conn.Host),
+        Database(conn.Database),
+        Schema(conn.Schema),
+        Color(conn.Color),
+        Options(conn.Options),
+	Connection(0),
+        Cache(conn.Cache)
+{	
     Connection = toConnectionProvider::connection(Provider, this);
-    Cache->ReadingValues.up();
-    Cache->ReadingValues.up();
     NeedCommit = Abort = false;
     ConnectionPool = new toConnectionPool(this);
 
     PoolPtr sub(ConnectionPool);
     Version = Connection->version(*sub);
+    Cache->refCount++;
 }
 
 std::list<QString> toConnection::running(void)
 {
     toBusy busy;
-    toLocker lock(Lock)
+    toLocker lock(ConnectionLock)
     ;
     std::list<QString> ret;
     // this is insane. disabled code that tried to get sql from
@@ -310,21 +305,28 @@ toConnection::~toConnection()
     toBusy busy;
     Abort = true;
 
+    unsigned cacheRefCnt;
     {
-        closeWidgets();
-
-        ConnectionPool->cancelAll(true);
-
-        // wait for cacheObjects to finish
-        toLocker clock(CacheLock);
-
-        delete ConnectionPool;
-        ConnectionPool = 0;
-
-        toLocker lock(Lock);
+	    toLocker clock(Cache->cacheLock);
+	    cacheRefCnt = --Cache->refCount;
     }
-    this->Cache->writeDiskCache();
+    if(cacheRefCnt == 0)
+    {
+	    this->Cache->writeDiskCache();
+	    // this will wait for cacheObjects thread to finish
+	    delete this->Cache;
+    }
+		    
+    {
+	    closeWidgets();
 
+	    ConnectionPool->cancelAll(true);
+	    
+	    delete ConnectionPool;
+	    ConnectionPool = 0;
+	    
+	    toLocker lock(ConnectionLock);
+    }
     delete Connection;
 }
 
@@ -735,44 +737,52 @@ const QString &toConnection::provider(void) const
     return Provider;
 }
 
+/* This method runs as a separate thread executed from:
+   toCache::readObjects(toTask * t)
+*/
 void toConnection::cacheObjects::run()
 {
-    bool diskloaded = false;
+	bool diskloaded = false;
+    
+	try
+	{
+		Connection->Cache->setCacheState(toCache::READING_OBJECTS);
+		/* Increase the semaphore to "unlock" parent thread */
+		Connection->Cache->ReadingThread.up();
 
-    // hold while running
-    toLocker clock(Connection->CacheLock);
+		diskloaded = Connection->Cache->loadDiskCache();
+		if (!diskloaded && !Connection->Abort)
+		{
+			const std::list<objectName> &n = Connection->Connection->objectNames();
+			if (!Connection->Abort)
+				Connection->Cache->setObjectList(n);
+		}
 
-    try
-    {
-        diskloaded = Connection->Cache->loadDiskCache();
-        if (!diskloaded && !Connection->Abort)
-        {
-            std::list<objectName> n = Connection->Connection->objectNames();
-            if (!Connection->Abort)
-                Connection->Cache->setObjectList(n);
-        }
+		if (!diskloaded && !Connection->Abort)
+		{
+			Connection->Cache->setCacheState(toCache::READING_SYNONYMS);
+			/* NOTE: we cannot pass n as parameter of synonymMap because
+			   it's parameter needs to be sorted */
+			std::map<QString, objectName> m =
+				Connection->Connection->synonymMap(Connection->Cache->objects(true));
+			if (!Connection->Abort)
+			{
+				Connection->Cache->setSynonymList(m);
+				Connection->Cache->writeDiskCache();
+			}
+		}
+		/* Increase the semaphore to "unlock" parent thread destructor */
+		Connection->Cache->ReadingThread.up();
+		Connection->Cache->setCacheState(toCache::DONE);
+		toMainWidget()->checkCaching();
+	}
+	catch (...)
+	{
+		Connection->Cache->ReadingThread.up();
+		Connection->Cache->setCacheState(toCache::FAILED);
+		toMainWidget()->checkCaching();
+	}
 
-        Connection->Cache->ReadingValues.up();
-
-        if (!diskloaded && !Connection->Abort)
-        {
-            std::map<QString, objectName> m =
-                Connection->Connection->synonymMap(Connection->Cache->objects(true));
-            if (!Connection->Abort)
-            {
-                Connection->Cache->setSynonymList(m);
-                Connection->Cache->writeDiskCache();
-            }
-        }
-    }
-    catch (...)
-    {
-        if (Connection->Cache->ReadingValues.getValue() == 0)
-            Connection->Cache->ReadingValues.up();
-    }
-
-    if (Connection)
-        Connection->Cache->ReadingValues.up();
 }
 
 QString toConnection::quote(const QString &name, const bool quoteLowercase)
@@ -800,8 +810,8 @@ toSyntaxAnalyzer &toConnection::analyzer()
 }
 
 std::list<toConnection::objectName> toConnection::connectionImpl::objectNames(const QString &owner,
-                                                                              const QString &type,
-                                                                              const QString &name)
+        const QString &type,
+        const QString &name)
 {
     std::list<objectName> ret;
     return ret;
@@ -849,7 +859,7 @@ bool toConnection::rereadObjects(const QString &owner,
     bool added = false; // did we actually add at least one new object?
 
     std::list<toConnection::objectName> objects = this->Connection->objectNames(owner, type, name);
-    for (std::list<toConnection::objectName>::iterator i = objects.begin();i != objects.end();i++)
+    for (std::list<toConnection::objectName>::iterator i = objects.begin(); i != objects.end(); i++)
     {
         added = added || Cache->addIfNotExists(*i);
     }
@@ -858,9 +868,14 @@ bool toConnection::rereadObjects(const QString &owner,
     return added;
 } // rereadObjects
 
-bool toConnection::cacheAvailable(bool synonyms, bool block, bool need)
+bool toConnection::cacheAvailable(toCache::cacheEntryType type, bool block)
 {
-    return Cache->cacheAvailable(synonyms, block, need, new cacheObjects(this));
+    return Cache->cacheAvailable(type, block, new cacheObjects(this));
+}
+
+bool toConnection::cacheRefreshRunning() const
+{
+    return Cache->cacheRefreshRunning();
 }
 
 const toConnection::objectName &toConnection::realName(const QString &object, QString &synonym, bool block)

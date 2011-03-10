@@ -8,20 +8,417 @@
 #include <QProgressDialog>
 //#include <boost/preprocessor/iteration/detail/local.hpp>
 
-toCache::toCache(QString description)
+toCache::toCache(QString const &description)
+  : ConnectionDescription(description)
+  , state(NOT_STARTED)
+  , refCount(1) // we assume that we were created from toConnection
 {
-    ConnectionDescription = description;
-    ReadingCache = false;
 }
 
 toCache::~toCache()
 {
-    if (ReadingCache)
+	/* toCache locked be parent toConnection */
+	if(cacheRefreshRunning())
+		ReadingThread.down();
+}
+
+
+bool toCache::cacheAvailable(cacheEntryType type, bool block, toTask * t)
+{
+	toCacheState waitState = (type == SYNONYMS ? DONE : READING_SYNONYMS);
+	toCacheState currState = cacheState();
+	    
+	switch(toConfigurationSingle::Instance().objectCache())
+	{
+	case toConfiguration::NEVER:
+	case toConfiguration::UNTIL_MANDATORY: //NOTE: this config option is not handled at all
+		return currState != FAILED && currState >= waitState;
+	case toConfiguration::ON_CONNECT:
+	case toConfiguration::WHEN_NEEDED: //NOTE: this config option is not handled at all
+		if (!block)
+		{
+			return currState != FAILED && currState >= waitState;
+		}
+
+		if (t)
+		{
+			readObjects(t);
+		}
+	    
+		if (block)
+		{
+			toBusy busy;
+			if (toThread::mainThread())
+			{
+				QProgressDialog waiting(qApp->translate("toConnection",
+									"Waiting for object caching to be completed.\n"
+									"Canceling this dialog will probably leave some list of\n"
+									"database objects empty."),
+							qApp->translate("toConnection", "Cancel"),
+							0,
+							10,
+							toMainWidget());
+				waiting.setWindowTitle(qApp->translate("toConnection", "Waiting for object cache"));
+				int num = 1;
+
+				do
+				{				    
+					qApp->processEvents();
+					toThread::msleep(100);
+					waiting.setValue((++num) % 10);
+					if (waiting.wasCanceled())
+						return false;
+					currState = cacheState();
+				}
+				while (currState < waitState);
+				toMainWidget()->checkCaching();
+			}
+		    
+			return currState != FAILED;
+		} else {
+			return currState != FAILED && cacheState() >= waitState;
+		}
+	    
+	} //switch
+}
+
+bool toCache::cacheRefreshRunning() const
+{
+	toLocker lock(cacheLock);
+	return state != NOT_STARTED && state != DONE;
+}
+
+toCache::toCacheState toCache::cacheState() const
+{
+	toLocker lock(cacheLock);
+	return state;
+}
+
+void toCache::setCacheState(toCache::toCacheState s)
+{
+	toLocker lock(cacheLock);
+	state = s;
+}
+
+bool toCache::addIfNotExists(objectName &obj)
+{
+    if (!cacheAvailable(SYNONYMS, false))
     {
-        ReadingValues.down();
-        ReadingValues.down();
+        toStatusMessage(qApp->translate("toConnection", "Not done caching objects"), false, false);
+        return false;
+    }
+    std::list<objectName>::iterator i = ObjectNames.begin();
+    while (i != ObjectNames.end() && (*i) < obj)
+        i++;
+    if (i != ObjectNames.end() && *i == obj) // Already exists, don't add
+        return false;
+    ObjectNames.insert(i, obj);
+    return true;
+}
+
+void toCache::readObjects(toTask * t)
+{
+    if (toConfigurationSingle::Instance().objectCache() == toConfiguration::NEVER)
+    {
+	    return ;
+    }
+
+    {
+	    try
+	    {
+		    (new toThread(t))->start();
+		    ReadingThread.down(); // Wait till child thread starts
+		    toMainWidget()->checkCaching();					
+	    }
+	    catch (...)
+	    {
+		    state = FAILED;
+	    }
     }
 }
+
+void toCache::rereadCache(toTask * t)
+{
+
+    if (toConfigurationSingle::Instance().objectCache() == toConfiguration::NEVER)
+    {
+        ColumnCache.clear();
+        return ;
+    }
+
+    if (cacheRefreshRunning())
+    {
+	    toStatusMessage(qApp->translate("toConnection",
+					    "Not done caching objects, can not clear unread cache"));
+	    return ;
+    }
+
+    ObjectNames.clear();
+    ColumnCache.clear();
+    SynonymMap.clear();
+
+    /** delete cache file to force reload
+     */
+
+    QString filename(cacheFile());
+
+    if (QFile::exists(filename))
+        QFile::remove(filename);
+
+    readObjects(t);
+}
+
+const toCache::objectName &toCache::realName(const QString &object,
+        QString &synonym,
+        bool block,
+        QString user,
+        QString database)
+{
+    if (!cacheAvailable(SYNONYMS, block))
+        throw qApp->translate("toConnection", "Not done caching synonyms");
+
+    QString name;
+    QString owner;
+
+    QChar q('"');
+    QChar c('.');
+
+    bool quote = false;
+    for (int pos = 0; pos < object.length(); pos++)
+    {
+        if (object.at(pos) == q)
+        {
+            quote = !quote;
+        }
+        else
+        {
+            if (!quote && object.at(pos) == c)
+            {
+                owner = name;
+                name = QString::null;
+            }
+            else
+                name += object.at(pos);
+        }
+    }
+
+    QString uo = owner.toUpper();
+    QString un = name.toUpper();
+
+    synonym = QString::null;
+    for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
+    {
+        if (owner.isEmpty())
+        {
+            if (((*i).Name == un || (*i).Name == name) &&
+                    ((*i).Owner == user.toUpper() || (*i).Owner == database))
+                return *i;
+        }
+        else if (((*i).Name == un || (*i).Name == name) &&
+                 ((*i).Owner == uo || (*i).Owner == owner))
+            return *i;
+    }
+    if (owner.isEmpty())
+    {
+        std::map<QString, objectName>::iterator i = SynonymMap.find(name);
+        if (i == SynonymMap.end() && un != name)
+        {
+            i = SynonymMap.find(un);
+            synonym = un;
+        }
+        else
+            synonym = name;
+        if (i != SynonymMap.end())
+        {
+            return (*i).second;
+        }
+    }
+    throw qApp->translate(
+        "toConnection",
+        "Object %1 not available for %2").arg(object).arg(user);
+}
+
+std::map<QString, toCache::objectName> &toCache::synonyms(bool block)
+{
+    if (!cacheAvailable(SYNONYMS, block))
+    {
+        toStatusMessage(qApp->translate("toConnection", "Not done caching synonyms"), false, false);
+        static std::map<QString, objectName> ret;
+        return ret;
+    }
+
+    return SynonymMap;
+}
+
+std::list<toCache::objectName> &toCache::objects(bool block)
+{
+    if (!cacheAvailable(OBJECTS, block))
+    {
+        toStatusMessage(qApp->translate("toConnection", "Not done caching objects"), false, false);
+        static std::list<objectName> ret;
+        return ret;
+    }
+
+    return ObjectNames;
+}
+
+toQDescList &toCache::columns(const objectName &object)
+{
+    return ColumnCache[object];
+}
+
+void toCache::addColumns(objectName object, toQDescList list)
+{
+    ColumnCache[object] = list;
+} // addColumns
+
+std::list<toCache::objectName> toCache::tables(const objectName &object, bool nocache)
+{
+    std::list<objectName> ret;
+
+    Q_FOREACH(objectName obj, ObjectNames)
+    {
+        if(obj.Owner == object.Name)
+            ret.insert(ret.end(), obj);
+    }
+
+    return ret;
+}
+
+bool toCache::objectName::operator < (const objectName &nam) const
+{
+    if (Owner < nam.Owner || (Owner.isNull() && !nam.Owner.isNull()))
+        return true;
+    if (Owner > nam.Owner || (!Owner.isNull() && nam.Owner.isNull()))
+        return false;
+    if (Name < nam.Name || (Name.isNull() && !nam.Name.isNull()))
+        return true;
+    if (Name > nam.Name || (!Name.isNull() && nam.Name.isNull()))
+        return false;
+    if (Type < nam.Type)
+        return true;
+    return false;
+}
+
+bool toCache::objectName::operator == (const objectName &nam) const
+{
+    return Owner == nam.Owner && Name == nam.Name && Type == nam.Type;
+}
+
+void toCache::setObjectList(const std::list<objectName> &list)
+{
+    ObjectNames = list;
+    // Set the date when information about this object was red. This will later
+    // be used to clean up an old information.
+    for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
+        (*i).Timestamp = QDate::currentDate();
+    ObjectNames.sort();
+} // setObjectList
+
+void toCache::setSynonymList(const std::map<QString, objectName> &list)
+{
+    SynonymMap = list;
+} // setSynonymList
+
+bool toCache::objectExists(const QString &owner, const QString &type, const QString &name)
+{
+    // TODO: ObjectList is sorted therefore going through all of it is not necessary!
+    for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
+    {
+        if (((*i).Owner == owner || owner == "%") &&
+            (*i).Name == name &&
+            (*i).Type == type)
+            return true;
+    }
+
+    return false;
+} // objectExists
+
+toCache::RowList toCache::getObjects(const QString &owner, const QString &type)
+{
+    Row r;
+    RowList rl;
+    for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
+    {
+        if (((*i).Owner == owner || owner == "%") &&
+            (*i).Type == type)
+        {
+            r.append((*i).Name);
+            rl.append(r);
+            r.clear();
+        }
+    }
+
+    return rl;
+} // getObjects
+
+void toCache::updateObjects(const QString &owner, const QString &type, const QList<objectName> rows)
+{
+    bool OwnerExists = false;
+    QList<objectName>::const_iterator newObjects = rows.begin();
+    std::list<objectName>::iterator currentObjects = ObjectNames.begin();
+
+    if (ObjectNames.size() > 0)
+    {
+        // Find first object belonging to required owner/schema
+        while (currentObjects != ObjectNames.end() &&
+               (*currentObjects).Owner < owner)
+            currentObjects++;
+        if (currentObjects != ObjectNames.end() &&
+            (*currentObjects).Owner == owner)
+            OwnerExists = true;
+    }
+
+    while (newObjects != rows.end())
+    {
+        if (OwnerExists)
+        {
+            while (currentObjects != ObjectNames.end() &&
+                   (*currentObjects).Type != type)
+                currentObjects++; // skip cached objects of other types
+
+            if (currentObjects != ObjectNames.end() &&
+                (*currentObjects).Name == (*newObjects).Name)
+            {
+                //qDebug() << "Object is already in cache" << (*newObjects).Name;
+                currentObjects++;
+                newObjects++;
+            }
+            else if (currentObjects != ObjectNames.end() &&
+                     (*currentObjects).Name < (*newObjects).Name)
+            {
+                //qDebug() << "DELETE:" << (*currentObjects).Name;
+                currentObjects = ObjectNames.erase(currentObjects);
+            }
+            else
+            {
+                //qDebug() << "NEW:" << (*newObjects).Name;
+                ObjectNames.insert(currentObjects, (*newObjects));
+                newObjects++;
+            }
+        }
+        else
+        {
+            //qDebug() << "NEW2:" << (*newObjects).Name;
+            ObjectNames.insert(currentObjects, (*newObjects));
+            newObjects++;
+        }
+    }
+    // Delete any remaining objects
+    while (OwnerExists &&
+           currentObjects != ObjectNames.end() &&
+           (*currentObjects).Owner == owner)
+    {
+        //qDebug() << "iterating2 through" << (*currentObjects).Name;
+        if ((*currentObjects).Type == type)
+        {
+            //qDebug() << "DELETE2:" << (*currentObjects).Name;
+            currentObjects = ObjectNames.erase(currentObjects);
+        }
+        else
+            currentObjects++;
+    }
+} // updateObjects
 
 QString toCache::cacheDir()
 {
@@ -178,389 +575,3 @@ void toCache::writeDiskCache()
     file.flush();
     file.close();
 }
-
-bool toCache::cacheAvailable(bool synonyms, bool block, bool need, toTask * t)
-{
-    if (toConfigurationSingle::Instance().objectCache() == 3)
-        return true;
-
-    if (!ReadingCache)
-    {
-        if (!need)
-            return true;
-        if (toConfigurationSingle::Instance().objectCache() == 2 && !block)
-            return true;
-        if (t)
-            readObjects(t);
-        toMainWidget()->checkCaching();
-    }
-    if (ReadingValues.getValue() == 0 || (ReadingValues.getValue() == 1 && synonyms == true))
-    {
-        if (block)
-        {
-            toBusy busy;
-            if (toThread::mainThread())
-            {
-                QProgressDialog waiting(qApp->translate("toConnection",
-                                                        "Waiting for object caching to be completed.\n"
-                                                        "Canceling this dialog will probably leave some list of\n"
-                                                        "database objects empty."),
-                                        qApp->translate("toConnection", "Cancel"),
-                                        0,
-                                        10,
-                                        toMainWidget());
-                waiting.setWindowTitle(qApp->translate("toConnection", "Waiting for object cache"));
-                int num = 1;
-
-                int waitVal = (synonyms ? 2 : 1);
-                do
-                {
-                    qApp->processEvents();
-                    toThread::msleep(100);
-                    waiting.setValue((++num) % 10);
-                    if (waiting.wasCanceled())
-                        return false;
-                }
-                while (ReadingValues.getValue() < waitVal);
-            }
-
-            ReadingValues.down();
-            if (synonyms)
-            {
-                ReadingValues.down();
-                ReadingValues.up();
-            }
-            ReadingValues.up();
-        }
-        else
-            return false;
-    }
-    return true;
-}
-
-bool toCache::addIfNotExists(objectName &obj)
-{
-    if (!cacheAvailable(true, false))
-    {
-        toStatusMessage(qApp->translate("toConnection", "Not done caching objects"), false, false);
-        return false;
-    }
-    std::list<objectName>::iterator i = ObjectNames.begin();
-    while (i != ObjectNames.end() && (*i) < obj)
-        i++;
-    if (i != ObjectNames.end() && *i == obj) // Already exists, don't add
-        return false;
-    ObjectNames.insert(i, obj);
-    return true;
-}
-
-void toCache::readObjects(toTask * t)
-{
-    if (toConfigurationSingle::Instance().objectCache() == 3)
-    {
-        ReadingCache = false;
-        return ;
-    }
-
-    if (!ReadingCache)
-    {
-        ReadingCache = true;
-        try
-        {
-            (new toThread(t))->start();
-            //(new toThread(new cacheObjects(this)))->start();
-        }
-        catch (...)
-        {
-            ReadingCache = false;
-        }
-    }
-}
-
-void toCache::rereadCache(toTask * t)
-{
-
-    if (toConfigurationSingle::Instance().objectCache() == 3)
-    {
-        ColumnCache.clear();
-        return ;
-    }
-
-    if (ReadingValues.getValue() < 2 && ReadingCache)
-    {
-        toStatusMessage(qApp->translate("toConnection",
-                                        "Not done caching objects, can not clear unread cache"));
-        return ;
-    }
-
-
-    ReadingCache = false;
-    while (ReadingValues.getValue() > 0)
-        ReadingValues.down();
-
-    ObjectNames.clear();
-    ColumnCache.clear();
-    SynonymMap.clear();
-
-    /** delete cache file to force reload
-     */
-
-    QString filename(cacheFile());
-
-    if (QFile::exists(filename))
-        QFile::remove(filename);
-
-    readObjects(t);
-}
-
-const toCache::objectName &toCache::realName(const QString &object,
-        QString &synonym,
-        bool block,
-        QString user,
-        QString database)
-{
-    if (!cacheAvailable(true, block))
-        throw qApp->translate("toConnection", "Not done caching objects");
-
-    QString name;
-    QString owner;
-
-    QChar q('"');
-    QChar c('.');
-
-    bool quote = false;
-    for (int pos = 0; pos < object.length(); pos++)
-    {
-        if (object.at(pos) == q)
-        {
-            quote = !quote;
-        }
-        else
-        {
-            if (!quote && object.at(pos) == c)
-            {
-                owner = name;
-                name = QString::null;
-            }
-            else
-                name += object.at(pos);
-        }
-    }
-
-    QString uo = owner.toUpper();
-    QString un = name.toUpper();
-
-    synonym = QString::null;
-    for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
-    {
-        if (owner.isEmpty())
-        {
-            if (((*i).Name == un || (*i).Name == name) &&
-                    ((*i).Owner == user.toUpper() || (*i).Owner == database))
-                return *i;
-        }
-        else if (((*i).Name == un || (*i).Name == name) &&
-                 ((*i).Owner == uo || (*i).Owner == owner))
-            return *i;
-    }
-    if (owner.isEmpty())
-    {
-        std::map<QString, objectName>::iterator i = SynonymMap.find(name);
-        if (i == SynonymMap.end() && un != name)
-        {
-            i = SynonymMap.find(un);
-            synonym = un;
-        }
-        else
-            synonym = name;
-        if (i != SynonymMap.end())
-        {
-            return (*i).second;
-        }
-    }
-    throw qApp->translate(
-        "toConnection",
-        "Object %1 not available for %2").arg(object).arg(user);
-}
-
-std::map<QString, toCache::objectName> &toCache::synonyms(bool block)
-{
-    if (!cacheAvailable(true, block))
-    {
-        toStatusMessage(qApp->translate("toConnection", "Not done caching objects"), false, false);
-        static std::map<QString, objectName> ret;
-        return ret;
-    }
-
-    return SynonymMap;
-}
-
-std::list<toCache::objectName> &toCache::objects(bool block)
-{
-    if (!cacheAvailable(false, block))
-    {
-        toStatusMessage(qApp->translate("toConnection", "Not done caching objects"), false, false);
-        static std::list<objectName> ret;
-        return ret;
-    }
-
-    return ObjectNames;
-}
-
-toQDescList &toCache::columns(const objectName &object)
-{
-    return ColumnCache[object];
-}
-
-void toCache::addColumns(objectName object, toQDescList list)
-{
-    ColumnCache[object] = list;
-} // addColumns
-
-std::list<toCache::objectName> toCache::tables(const objectName &object, bool nocache)
-{
-    std::list<objectName> ret;
-
-    Q_FOREACH(objectName obj, ObjectNames)
-    {
-        if(obj.Owner == object.Name)
-            ret.insert(ret.end(), obj);
-    }
-
-    return ret;
-}
-
-bool toCache::objectName::operator < (const objectName &nam) const
-{
-    if (Owner < nam.Owner || (Owner.isNull() && !nam.Owner.isNull()))
-        return true;
-    if (Owner > nam.Owner || (!Owner.isNull() && nam.Owner.isNull()))
-        return false;
-    if (Name < nam.Name || (Name.isNull() && !nam.Name.isNull()))
-        return true;
-    if (Name > nam.Name || (!Name.isNull() && nam.Name.isNull()))
-        return false;
-    if (Type < nam.Type)
-        return true;
-    return false;
-}
-
-bool toCache::objectName::operator == (const objectName &nam) const
-{
-    return Owner == nam.Owner && Name == nam.Name && Type == nam.Type;
-}
-
-void toCache::setObjectList(std::list<objectName> &list)
-{
-    ObjectNames = list;
-    // Set the date when information about this object was red. This will later
-    // be used to clean up an old information.
-    for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
-        (*i).Timestamp = QDate::currentDate();
-    list.sort();
-} // setObjectList
-
-void toCache::setSynonymList(std::map<QString, objectName> &list)
-{
-    SynonymMap = list;
-} // setSynonymList
-
-bool toCache::objectExists(const QString &owner, const QString &type, const QString &name)
-{
-    // TODO: ObjectList is sorted therefore going through all of it is not necessary!
-    for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
-    {
-        if (((*i).Owner == owner || owner == "%") &&
-            (*i).Name == name &&
-            (*i).Type == type)
-            return true;
-    }
-
-    return false;
-} // objectExists
-
-toCache::RowList toCache::getObjects(const QString &owner, const QString &type)
-{
-    Row r;
-    RowList rl;
-    for (std::list<objectName>::iterator i = ObjectNames.begin(); i != ObjectNames.end(); i++)
-    {
-        if (((*i).Owner == owner || owner == "%") &&
-            (*i).Type == type)
-        {
-            r.append((*i).Name);
-            rl.append(r);
-            r.clear();
-        }
-    }
-
-    return rl;
-} // getObjects
-
-void toCache::updateObjects(const QString &owner, const QString &type, const QList<objectName> rows)
-{
-    bool OwnerExists = false;
-    QList<objectName>::const_iterator newObjects = rows.begin();
-    std::list<objectName>::iterator currentObjects = ObjectNames.begin();
-
-    if (ObjectNames.size() > 0)
-    {
-        // Find first object belonging to required owner/schema
-        while (currentObjects != ObjectNames.end() &&
-               (*currentObjects).Owner < owner)
-            currentObjects++;
-        if (currentObjects != ObjectNames.end() &&
-            (*currentObjects).Owner == owner)
-            OwnerExists = true;
-    }
-
-    while (newObjects != rows.end())
-    {
-        if (OwnerExists)
-        {
-            while (currentObjects != ObjectNames.end() &&
-                   (*currentObjects).Type != type)
-                currentObjects++; // skip cached objects of other types
-
-            if (currentObjects != ObjectNames.end() &&
-                (*currentObjects).Name == (*newObjects).Name)
-            {
-                //qDebug() << "Object is already in cache" << (*newObjects).Name;
-                currentObjects++;
-                newObjects++;
-            }
-            else if (currentObjects != ObjectNames.end() &&
-                     (*currentObjects).Name < (*newObjects).Name)
-            {
-                //qDebug() << "DELETE:" << (*currentObjects).Name;
-                currentObjects = ObjectNames.erase(currentObjects);
-            }
-            else
-            {
-                //qDebug() << "NEW:" << (*newObjects).Name;
-                ObjectNames.insert(currentObjects, (*newObjects));
-                newObjects++;
-            }
-        }
-        else
-        {
-            //qDebug() << "NEW2:" << (*newObjects).Name;
-            ObjectNames.insert(currentObjects, (*newObjects));
-            newObjects++;
-        }
-    }
-    // Delete any remaining objects
-    while (OwnerExists &&
-           currentObjects != ObjectNames.end() &&
-           (*currentObjects).Owner == owner)
-    {
-        //qDebug() << "iterating2 through" << (*currentObjects).Name;
-        if ((*currentObjects).Type == type)
-        {
-            //qDebug() << "DELETE2:" << (*currentObjects).Name;
-            currentObjects = ObjectNames.erase(currentObjects);
-        }
-        else
-            currentObjects++;
-    }
-} // updateObjects

@@ -403,7 +403,7 @@ void toDatabaseSetting::saveSetting(void)
     }
     toConfigurationSingle::Instance().setAutoCommit(AutoCommit->isChecked());
 //     toConfigurationSingle::Instance().setDontReread(DontReread->isChecked());
-    toConfigurationSingle::Instance().setObjectCache(ObjectCache->currentIndex());
+    toConfigurationSingle::Instance().setObjectCache((toConfiguration::ObjectCache)ObjectCache->currentIndex());
 //     toConfigurationSingle::Instance().setBkgndConnect(BkgndConnect->isChecked());
 //     toConfigurationSingle::Instance().setAutoLong(AutoLong->isChecked() ? MoveAfter->value() : 0);
     toConfigurationSingle::Instance().setIndicateEmpty(IndicateEmpty->isChecked());

@@ -137,7 +137,7 @@ class toConnection : public QObject
     std::set<QString> Options;
     bool NeedCommit;
 
-    toLock Lock;
+    toLock ConnectionLock;
 
     toConnectionPool *ConnectionPool;
 
@@ -316,9 +316,6 @@ private:
     friend class cacheObjects;
 
     bool Abort;
-
-    // held while cacheObjects is running
-    toLock CacheLock;
 
     toConnectionSub* pooledConnection(void);
 
@@ -623,12 +620,15 @@ public:
                        const QString &name = "");
 
     /** Check if cache is available or not.
-     * @param synonyms If synonyms are needed or not.
+     * @param type (can be either OBJECTS or SYNONYMS)
      * @param block Block until cache is done.
-     * @param true True if you need the cache, or just checking.
      * @return True if cache is available.
      */
-    bool cacheAvailable(bool synonyms, bool block = false, bool need = true);
+    bool cacheAvailable(toCache::cacheEntryType type, bool block = false);
+    
+    /** Non-blocking version of cacheAvailable, used by toMain to update toBackgroundLabel
+     */
+    bool cacheRefreshRunning() const;
 
     /**
      * Get a list of the available columns for a table. This function caches the responses
