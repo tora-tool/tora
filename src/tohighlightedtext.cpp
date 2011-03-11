@@ -1016,8 +1016,8 @@ QStringList toHighlightedText::getCompletionList(QString* partial)
             }
             else
             {
-                toQDescList &desc = conn.columns(object);
-                for (toQDescList::iterator i = desc.begin(); i != desc.end(); i++)
+                const toQDescList &desc = conn.columns(object);
+                for (toQDescList::const_iterator i = desc.begin(); i != desc.end(); i++)
                 {
                     QString t;
                     int ind = (*i).Name.indexOf("(");

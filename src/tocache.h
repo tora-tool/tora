@@ -186,11 +186,13 @@ public:
 
     /**
      * Get the objects available for the current user. Do not modify the returned list.
+     * NOTE: this list IS MODIFIED by caller in toConnection::cacheObjects::run
+     * by calling synonymMap.
      * @param block Indicate wether or not to block until cached objects are available.
      * @return A list of object available for the current user. The list is sorted in
      *         owner and name order.
      */
-    std::list<objectName> &objects(bool block);
+    std::list<objectName>& objects(bool block);
 
     toQDescList &columns(const objectName &table);
 
@@ -201,7 +203,7 @@ public:
      * list of tables for a database or schema.
      *
      */
-    std::list<objectName> tables(const objectName &object, bool nocache = false);
+    const std::list<objectName> tables(const objectName &object, bool nocache = false) const;
 
     /**
      * Reread the object and column cache.

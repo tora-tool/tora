@@ -276,8 +276,8 @@ void toSecurityTreeModel::setupModelData(const QString & user)
     QString owner;
     QString name;
 
-    std::list<toConnection::objectName> &objectList = toCurrentConnection(this).objects(true);
-    for (std::list<toConnection::objectName>::iterator i = objectList.begin();
+    const std::list<toConnection::objectName> &objectList = toCurrentConnection(this).objects(true);
+    for (std::list<toConnection::objectName>::const_iterator i = objectList.begin();
         i != objectList.end();
         i++)
     {

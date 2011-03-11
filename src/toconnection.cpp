@@ -256,11 +256,8 @@ toConnection::toConnection(const QString &provider,
     PoolPtr sub(ConnectionPool);
     Version = Connection->version(*sub);
 
-    if (cache)
-    {
-        if (toConfigurationSingle::Instance().objectCache() == toConfiguration::ON_CONNECT)
+    if (cache && toConfigurationSingle::Instance().objectCache() == toConfiguration::ON_CONNECT)
             Cache->readObjects(new cacheObjects(this));
-    }
 }
 
 toConnection::toConnection(const toConnection &conn)
@@ -281,7 +278,10 @@ toConnection::toConnection(const toConnection &conn)
 
     PoolPtr sub(ConnectionPool);
     Version = Connection->version(*sub);
-    Cache->refCount++;
+    {
+	    toLocker clock(Cache->cacheLock);
+	    Cache->refCount++;
+    }
 }
 
 std::list<QString> toConnection::running(void)
@@ -313,7 +313,7 @@ toConnection::~toConnection()
     if(cacheRefCnt == 0)
     {
 	    this->Cache->writeDiskCache();
-	    // this will wait for cacheObjects thread to finish
+	    // this will wait for cacheObjects thread to finish in toCache::~toCache
 	    delete this->Cache;
     }
 		    
@@ -459,7 +459,7 @@ void toConnection::delInit(const QString &sql)
     }
 }
 
-const std::list<QString> toConnection::initStrings() const
+const std::list<QString>& toConnection::initStrings() const
 {
     return InitStrings;
 }
@@ -829,17 +829,16 @@ toQDescList toConnection::connectionImpl::columnDesc(const objectName &)
     return ret;
 }
 
-toQDescList &toConnection::columns(const objectName &object, bool nocache)
+const toQDescList &toConnection::columns(const objectName &object, bool nocache)
 {
-    toQDescList * cols;
-    cols = &(Cache->columns(object));
-    if (cols->size() == 0 || nocache)
+    toQDescList& cols = Cache->columns(object);
+    if (cols.empty() || nocache)
     {
         Cache->addColumns(object, Connection->columnDesc(object));
-        cols = &(Cache->columns(object));
+        cols = Cache->columns(object);
     }
 
-    return *cols;
+    return cols;
 }
 
 void toConnection::rereadCache(void)
@@ -847,7 +846,7 @@ void toConnection::rereadCache(void)
     Cache->rereadCache(new cacheObjects(this));
 }
 
-std::list<toConnection::objectName> &toConnection::objects(bool block)
+const std::list<toConnection::objectName> &toConnection::objects(bool block) const
 {
     return Cache->objects(block);
 }
@@ -878,20 +877,20 @@ bool toConnection::cacheRefreshRunning() const
     return Cache->cacheRefreshRunning();
 }
 
-const toConnection::objectName &toConnection::realName(const QString &object, QString &synonym, bool block)
+const toConnection::objectName& toConnection::realName(const QString &object, QString &synonym, bool block) const
 {
     return Cache->realName(object, synonym, block, user(), database());
 }
 
-const toConnection::objectName &toConnection::realName(const QString &object, bool block)
+const toConnection::objectName& toConnection::realName(const QString &object, bool block) const
 {
     QString dummy;
     return Cache->realName(object, dummy, block, user(), database());
 }
 
-std::list<toConnection::objectName> toConnection::tables(const objectName &object, bool nocache)
+const std::list<toConnection::objectName> toConnection::tables(const objectName &object, bool nocache) const
 {
-    return Cache->tables(object, nocache);
+  return Cache->tables(object, nocache);
 }
 
 void toConnection::connectionImpl::parse(toConnectionSub *,

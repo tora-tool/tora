@@ -250,7 +250,7 @@ std::map<QString, toCache::objectName> &toCache::synonyms(bool block)
     return SynonymMap;
 }
 
-std::list<toCache::objectName> &toCache::objects(bool block)
+std::list<toCache::objectName>& toCache::objects(bool block)
 {
     if (!cacheAvailable(OBJECTS, block))
     {
@@ -272,7 +272,7 @@ void toCache::addColumns(objectName object, toQDescList list)
     ColumnCache[object] = list;
 } // addColumns
 
-std::list<toCache::objectName> toCache::tables(const objectName &object, bool nocache)
+const std::list<toCache::objectName> toCache::tables(const objectName &object, bool nocache) const
 {
     std::list<objectName> ret;
 

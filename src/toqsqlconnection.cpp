@@ -1217,8 +1217,8 @@ public:
         std::list<QString> extraData(const toQSqlProviderAggregate &aggr)
         {
             std::list<QString> ret;
-            std::list<toConnection::objectName> &objects = query()->connection().objects(false);
-            for (std::list<toConnection::objectName>::iterator i = objects.begin();i != objects.end();i++)
+            const std::list<toConnection::objectName> &objects = query()->connection().objects(false);
+            for (std::list<toConnection::objectName>::const_iterator i = objects.begin();i != objects.end();i++)
             {
                 if ((*i).Type == "DATABASE" && aggr.Type == toQSqlProviderAggregate::AllDatabases)
                 {

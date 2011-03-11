@@ -579,7 +579,7 @@ public:
     /**
      * Get a list of the current init strings.
      */
-    const std::list<QString> initStrings() const;
+    const std::list<QString>& initStrings() const;
 
     /** Return a string representation to address an object.
      * @param name The name to be quoted.
@@ -605,7 +605,7 @@ public:
      * @return A list of object available for the current user. The list is sorted in
      *         owner and name order.
      */
-    std::list<toConnection::objectName> &objects(bool block);
+    const std::list<toConnection::objectName>& objects(bool block) const;
 
     /**
      * Reread specified objects from database to the cache. If null is given as value of any
@@ -637,7 +637,7 @@ public:
      * @param nocache Don't use cached values even if they are available.
      * @return A list of the columns for a table.
      */
-    toQDescList &columns(const toConnection::objectName &table, bool nocache = false);
+    const toQDescList& columns(const toConnection::objectName &table, bool nocache = false);
 
     /**
      * Get the real object name of a synonym.
@@ -645,21 +645,21 @@ public:
      * @param synonym Filled with the synonym used to access the object returned or empty.
      * @param block Block if not done caching object.
      */
-    const toConnection::objectName &realName(const QString &object, QString &synonym, bool block);
+    const toConnection::objectName& realName(const QString &object, QString &synonym, bool block) const;
 
     /**
      * Get the real object name of an object.
      * @param object Object name
      * @param block Block if not done caching object.
      */
-    const toConnection::objectName &realName(const QString &object, bool block);
+    const toConnection::objectName &realName(const QString &object, bool block) const;
 
     /**
      * Get a list of object names for a owner, typically this is a
      * list of tables for a database or schema.
      *
      */
-    std::list<toConnection::objectName> tables(const toConnection::objectName &object, bool nocache = false);
+    const std::list<toConnection::objectName> tables(const toConnection::objectName &object, bool nocache = false) const;
 
     /**
      * Reread the object and column cache.
