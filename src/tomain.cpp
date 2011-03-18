@@ -455,19 +455,23 @@ void toMain::createMenus()
             SLOT(commandCallback(QAction *)),
             Qt::QueuedConnection);
 
-    viewMenu = menuBar()->addMenu(tr("&View"));
-    foreach(toDocklet *let, toDocklet::docklets())
+    // Use only when there are any docklets registered
+    if (toDocklet::docklets().count())
     {
-        viewMenu->addAction(new QAction(let->icon(),
-                                        let->name(),
-                                        0));
-    }
+        viewMenu = menuBar()->addMenu(tr("&View"));
+        foreach(toDocklet *let, toDocklet::docklets())
+    	{
+    	    viewMenu->addAction(new QAction(let->icon(),
+    	                                    let->name(),
+    	                                    0));
+    	}
 
-    connect(viewMenu,
-            SIGNAL(triggered(QAction *)),
-            this,
-            SLOT(viewCallback(QAction *)),
-            Qt::QueuedConnection);
+   	 	connect(viewMenu,
+    	        SIGNAL(triggered(QAction *)),
+    	        this,
+    	        SLOT(viewCallback(QAction *)),
+    	        Qt::QueuedConnection);
+    }
 
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     connect(toolsMenu,
