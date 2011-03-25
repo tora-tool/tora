@@ -44,7 +44,9 @@ extern "C++" {
 #include <Qsci/qsciglobal.h>
 
 
+QT_BEGIN_NAMESPACE
 class QSettings;
+QT_END_NAMESPACE
 
 class QsciAbstractAPIs;
 class QsciScintilla;

@@ -48,8 +48,10 @@ extern "C++" {
 #include <Qsci/qsciscintillabase.h>
 
 
+QT_BEGIN_NAMESPACE
 class QIODevice;
 class QPoint;
+QT_END_NAMESPACE
 
 class QsciCommandSet;
 class QsciLexer;
@@ -203,7 +205,35 @@ public:
         BoxedTreeFoldStyle
     };
 
-    //! This enum defined the different margin types.
+    //! This enum defines the different indicator styles.
+    enum IndicatorStyle {
+        // A single straight underline.
+        PlainIndicator = INDIC_PLAIN,
+
+        // A squiggly underline.
+        SquiggleIndicator = INDIC_SQUIGGLE,
+
+        // A line of small T shapes.
+        TTIndicator = INDIC_TT,
+
+        // Diagonal hatching.
+        DiagonalIndicator = INDIC_DIAGONAL,
+
+        // Strike out.
+        StrikeIndicator = INDIC_STRIKE,
+
+        // An indicator with no visual appearence.
+        HiddenIndicator = INDIC_HIDDEN,
+
+        // A rectangle around the text.
+        BoxIndicator = INDIC_BOX,
+
+        // A rectangle with rounded corners around the text with the interior
+        // more transparent than the border.
+        RoundBoxIndicator = INDIC_ROUNDBOX
+    };
+
+    //! This enum defines the different margin types.
     enum MarginType {
         //! The margin contains symbols, including those used for folding.
         SymbolMargin = SC_MARGIN_SYMBOL,
@@ -471,6 +501,14 @@ public:
     //! \sa setFolding()
     void clearFolds();
 
+    //! Clears the range of text with indicator \a inr starting at position \a
+    //! indexFrom in line \a lineFrom and finishing at position \a indexTo in
+    //! line \a lineTo.
+    //!
+    //! \sa fillIndicatorRange()
+    void clearIndicatorRange(int lineFrom, int indexFrom, int lineTo,
+            int indexTo, int inr);
+
     //! Clear all registered images.
     //!
     //! \sa registerImage()
@@ -528,6 +566,14 @@ public:
     //!
     //! \sa setEolVisibility()
     bool eolVisibility() const;
+
+    //! Fills the range of text with indicator \a inr starting at position \a
+    //! indexFrom in line \a lineFrom and finishing at position \a indexTo in
+    //! line \a lineTo.
+    //!
+    //! \sa clearIndicatorRange()
+    void fillIndicatorRange(int lineFrom, int indexFrom, int lineTo,
+            int indexTo, int inr);
 
     //! Find the next occurrence of the string \a expr and return true if
     //! \a expr was found, otherwise returns false.  If \a expr is found it
@@ -615,6 +661,28 @@ public:
     //!
     //! \sa setIndentationWidth(), tabWidth()
     int indentationWidth() const;
+
+    //! Define a type of indicator using the style \a style with the indicator
+    //! number \a inr.  If \a inr is -1 then the indicator number is
+    //! automatically allocated.  The indicator number is returned or -1 if too
+    //! many types of indicator have been defined.
+    //!
+    //! Indicators are used to display additional information over the top of
+    //! styling.  They can be used to show, for example, syntax errors,
+    //! deprecated names anf bad indentation by drawing lines under text or
+    //! boxes around text.
+    //!
+    //! There may be up to 32 types of indicator defined at a time.  The first
+    //! 8 are normally used by lexers.  By default indicator number 0 is a
+    //! dark green SquiggleIndicator, 1 is a blue TTIndicator, and 2 is a red
+    //! PlainIndicator.
+    int indicatorDefine(IndicatorStyle style, int inr = -1);
+
+    //! Returns true if the indicator \a inr is drawn under the text (i.e. in
+    //! the background).  The default is false.
+    //!
+    //! \sa setIndicatorDrawUnder()
+    bool indicatorDrawUnder(int inr) const;
 
     //! Returns true if a call tip is currently active.
     bool isCallTipActive() const;
@@ -916,6 +984,17 @@ public:
     //!
     //! \sa edgeMode()
     void setEdgeMode(EdgeMode mode);
+
+    //! Enables or disables, according to \a under, if the indicator \a inr is
+    //! drawn under or over the text (i.e. in the background or foreground).
+    //! If \a inr is -1 then the state of all indicators is set.
+    //!
+    //! \sa indicatorDrawUnder()
+    void setIndicatorDrawUnder(bool under, int inr = -1);
+
+    //! Set the foreground colour of indicator \a inr to \a col.  If \a inr is
+    //! -1 then the colour of all indicators is set.
+    void setIndicatorForegroundColor(const QColor &col, int inr = -1);
 
     //! Set the margin text of line \a line with the text \a text using the
     //! style number \a style.
@@ -1492,9 +1571,9 @@ public slots:
 
 signals:
     //! This signal is emitted whenever the cursor position changes.  \a line
-    //! contains the line number and \a pos contains the character position
+    //! contains the line number and \a index contains the character index
     //! within the line.
-    void cursorPositionChanged(int line, int pos);
+    void cursorPositionChanged(int line, int index);
 
     //! This signal is emitted whenever text is selected or de-selected.
     //! \a yes is true if text has been selected and false if text has been
@@ -1504,6 +1583,24 @@ signals:
     //!
     //! \sa copy(), selectionChanged()
     void copyAvailable(bool yes);
+
+    //! This signal is emitted whenever the user clicks on an indicator.  \a
+    //! line is the number of the line where the user clicked.  \a index is the
+    //! character index within the line.  \a state is the state of the modifier
+    //! keys (Qt::ShiftModifier, Qt::ControlModifier and Qt::AltModifer) when
+    //! the user clicked.
+    //!
+    //! \sa indicatorReleased()
+    void indicatorClicked(int line, int index, Qt::KeyboardModifiers state);
+
+    //! This signal is emitted whenever the user releases the mouse on an
+    //! indicator.  \a line is the number of the line where the user clicked.
+    //! \a index is the character index within the line.  \a state is the state
+    //! of the modifier keys (Qt::ShiftModifier, Qt::ControlModifier and
+    //! Qt::AltModifer) when the user released the mouse.
+    //!
+    //! \sa indicatorClicked()
+    void indicatorReleased(int line, int index, Qt::KeyboardModifiers state);
 
     //! This signal is emitted whenever the number of lines of text changes.
     void linesChanged();
@@ -1547,6 +1644,8 @@ signals:
 private slots:
     void handleCallTipClick(int dir);
     void handleCharAdded(int charadded);
+    void handleIndicatorClick(int pos, int modifiers);
+    void handleIndicatorRelease(int pos, int modifiers);
     void handleMarginClick(int pos, int margin, int modifiers);
     void handleModified(int pos, int mtype, const char *text, int len,
             int added, int line, int foldNow, int foldPrev, int token,
@@ -1586,6 +1685,8 @@ private:
     int findStyledWord(const char *text, int style, const char *words);
 
     void checkMarker(int &mnr);
+    void checkIndicator(int &inr);
+    static void allocateId(int &id, unsigned &allocated, int min, int max);
     int currentIndent() const;
     int indentWidth() const;
     bool doFind();
@@ -1616,6 +1717,7 @@ private:
 
     bool ensureRW();
     void insertAtPos(const QString &text, int pos);
+    static int mapModifiers(int modifiers);
 
     ScintillaString styleText(const QList<QsciStyledText> &styled_text,
             char **styles, int style_offset = 0);
@@ -1637,6 +1739,7 @@ private:
     FindState findState;
 
     unsigned allocatedMarkers;
+    unsigned allocatedIndicators;
     int oldPos;
     int ctPos;
     bool selText;

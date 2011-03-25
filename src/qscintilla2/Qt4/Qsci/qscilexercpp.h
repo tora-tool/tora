@@ -110,7 +110,7 @@ public:
         //! A JavaDoc/Doxygen keyword error.
         CommentDocKeywordError = 18,
 
-        //! A global class or typedef defined in keyword set number 4.
+        //! A global class or typedef defined in keyword set number 5.
         //! The class must be sub-classed and re-implement keywords()
         //! to make use of this style.
         GlobalClass = 19

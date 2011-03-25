@@ -35,9 +35,14 @@
 #include <qglobal.h>
 #include <qwidget.h>
 
+#include <Qsci/qsciglobal.h>
 
+
+QT_BEGIN_NAMESPACE
 class QMouseEvent;
 class QPaintEvent;
+QT_END_NAMESPACE
+
 class ScintillaQt;
 
 

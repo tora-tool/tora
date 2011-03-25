@@ -139,6 +139,9 @@ QString QsciLexerProperties::description(int style) const
 
     case DefaultValue:
         return tr("Default value");
+
+    case Key:
+        return tr("Key");
     }
 
     return QString();

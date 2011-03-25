@@ -35,6 +35,8 @@
 #include <qtimer.h>
 #include <qclipboard.h>
 
+#include <Qsci/qsciglobal.h>
+
 // These are needed because scintilla class header files don't seem to manage
 // their own dependencies properly.
 #include <ctype.h>
@@ -68,8 +70,10 @@
 #include "ScintillaBase.h"
 
 
+QT_BEGIN_NAMESPACE
 class QPaintEvent;
 class QDropEvent;
+QT_END_NAMESPACE
 
 class QsciScintillaBase;
 class SciCallTip;

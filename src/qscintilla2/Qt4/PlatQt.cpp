@@ -123,6 +123,14 @@ void Font::Create(const char *faceName, int, int size, bool bold, bool italic,
 
     QFont *f = new QFont();
 
+#if defined(Q_WS_MAC)
+#if QT_VERSION >= 0x040700
+    f->setStyleStrategy(QFont::ForceIntegerMetrics);
+#else
+#warning "Correct handling of QFont metrics requires Qt v4.7.0 or later"
+#endif
+#endif
+
     // If name of the font begins with a '-', assume, that it is an XLFD.
     if (faceName[0] == '-')
         f->setRawName(faceName);

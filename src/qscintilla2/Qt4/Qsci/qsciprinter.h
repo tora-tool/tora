@@ -41,8 +41,11 @@ extern "C++" {
 #include <Qsci/qsciscintilla.h>
 
 
+QT_BEGIN_NAMESPACE
 class QRect;
 class QPainter;
+QT_END_NAMESPACE
+
 class QsciScintillaBase;
 
 

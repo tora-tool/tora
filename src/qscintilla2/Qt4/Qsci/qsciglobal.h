@@ -38,8 +38,8 @@ extern "C++" {
 #include <qglobal.h>
 
 
-#define QSCINTILLA_VERSION      0x020405
-#define QSCINTILLA_VERSION_STR  "2.4.5"
+#define QSCINTILLA_VERSION      0x020406
+#define QSCINTILLA_VERSION_STR  "2.4.6"
 
 
 // Under Windows, define QSCINTILLA_MAKE_DLL to create a Scintilla DLL, or
@@ -58,6 +58,8 @@ extern "C++" {
 #if !defined(QSCINTILLA_EXPORT)
 #define QSCINTILLA_EXPORT
 #endif
+
+
 
 #ifdef __APPLE__
 }

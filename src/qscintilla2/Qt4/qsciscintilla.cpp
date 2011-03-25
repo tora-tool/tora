@@ -67,11 +67,12 @@ static const char *defaultWordChars = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN
 // The ctor.
 QsciScintilla::QsciScintilla(QWidget *parent)
     : QsciScintillaBase(parent),
-      allocatedMarkers(0), oldPos(-1), selText(false), fold(NoFoldStyle),
-      foldmargin(2), autoInd(false), braceMode(NoBraceMatch),
-      acSource(AcsNone), acThresh(-1), wchars(defaultWordChars),
-      call_tips_style(CallTipsNoContext), maxCallTips(-1), showSingle(false),
-      explicit_fillups(""), fillups_enabled(false)
+      allocatedMarkers(0), allocatedIndicators(7), oldPos(-1), selText(false),
+      fold(NoFoldStyle), foldmargin(2), autoInd(false),
+      braceMode(NoBraceMatch), acSource(AcsNone), acThresh(-1),
+      wchars(defaultWordChars), call_tips_style(CallTipsNoContext),
+      maxCallTips(-1), showSingle(false), explicit_fillups(""),
+      fillups_enabled(false)
 {
     connect(this,SIGNAL(SCN_MODIFYATTEMPTRO()),
              SIGNAL(modificationAttempted()));
@@ -82,6 +83,10 @@ QsciScintilla::QsciScintilla(QWidget *parent)
              SLOT(handleCallTipClick(int)));
     connect(this,SIGNAL(SCN_CHARADDED(int)),
              SLOT(handleCharAdded(int)));
+    connect(this,SIGNAL(SCN_INDICATORCLICK(int,int)),
+             SLOT(handleIndicatorClick(int,int)));
+    connect(this,SIGNAL(SCN_INDICATORRELEASE(int,int)),
+             SLOT(handleIndicatorRelease(int,int)));
     connect(this,SIGNAL(SCN_MARGINCLICK(int,int,int)),
              SLOT(handleMarginClick(int,int,int)));
     connect(this,SIGNAL(SCN_SAVEPOINTREACHED()),
@@ -719,8 +724,27 @@ void QsciScintilla::startAutoCompletion(AutoCompletionSource acs,
             }
 
             // Add the word if it isn't already there.
-            if (!w.isEmpty() && !wlist.contains(w))
-                wlist.append(w);
+            if (!w.isEmpty())
+            {
+                bool keep;
+
+                // If there are APIs then check if the word is already present
+                // as an API word (i.e. with a trailing space).
+                if (acs == AcsAll)
+                {
+                    QString api_w = w;
+                    api_w.append(' ');
+
+                    keep = !wlist.contains(api_w);
+                }
+                else
+                {
+                    keep = true;
+                }
+
+                if (keep && !wlist.contains(w))
+                    wlist.append(w);
+            }
         }
 
         delete []orig_context;
@@ -1660,20 +1684,34 @@ void QsciScintilla::setModified(bool m)
 }
 
 
+// Handle the SCN_INDICATORCLICK notification.
+void QsciScintilla::handleIndicatorClick(int pos, int modifiers)
+{
+    int state = mapModifiers(modifiers);
+    int line, index;
+
+    lineIndexFromPosition(pos, &line, &index);
+
+    emit indicatorClicked(line, index, Qt::KeyboardModifiers(state));
+}
+
+
+// Handle the SCN_INDICATORRELEASE notification.
+void QsciScintilla::handleIndicatorRelease(int pos, int modifiers)
+{
+    int state = mapModifiers(modifiers);
+    int line, index;
+
+    lineIndexFromPosition(pos, &line, &index);
+
+    emit indicatorReleased(line, index, Qt::KeyboardModifiers(state));
+}
+
+
 // Handle the SCN_MARGINCLICK notification.
 void QsciScintilla::handleMarginClick(int pos, int modifiers, int margin)
 {
-    int state = 0;
-
-    if (modifiers & SCMOD_SHIFT)
-        state |= Qt::ShiftModifier;
-
-    if (modifiers & SCMOD_CTRL)
-        state |= Qt::ControlModifier;
-
-    if (modifiers & SCMOD_ALT)
-        state |= Qt::AltModifier;
-
+    int state = mapModifiers(modifiers);
     int line = SendScintilla(SCI_LINEFROMPOSITION, pos);
 
     if (fold && margin == foldmargin)
@@ -2409,6 +2447,130 @@ void QsciScintilla::setMarginsFont(const QFont &f)
 }
 
 
+// Define an indicator.
+int QsciScintilla::indicatorDefine(IndicatorStyle style, int inr)
+{
+    checkIndicator(inr);
+
+    if (inr >= 0)
+        SendScintilla(SCI_INDICSETSTYLE, inr, static_cast<long>(style));
+
+    return inr;
+}
+
+
+// Return the state of an indicator being drawn under the text.
+bool QsciScintilla::indicatorDrawUnder(int inr) const
+{
+    if (inr < 0 || inr >= INDIC_MAX)
+        return false;
+
+    return SendScintilla(SCI_INDICGETUNDER, inr);
+}
+
+
+// Set the state of indicators being drawn under the text.
+void QsciScintilla::setIndicatorDrawUnder(bool under, int inr)
+{
+    if (inr <= INDIC_MAX)
+    {
+        // We ignore allocatedIndicators to allow any indicators defined
+        // elsewhere (e.g. in lexers) to be set.
+        if (inr < 0)
+        {
+            for (int i = 0; i <= INDIC_MAX; ++i)
+                SendScintilla(SCI_INDICSETUNDER, i, under);
+        }
+        else
+        {
+            SendScintilla(SCI_INDICSETUNDER, inr, under);
+        }
+    }
+}
+
+
+// Set the indicator foreground colour.
+void QsciScintilla::setIndicatorForegroundColor(const QColor &col, int inr)
+{
+    if (inr <= INDIC_MAX)
+    {
+        int alpha = col.alpha();
+
+        // We ignore allocatedIndicators to allow any indicators defined
+        // elsewhere (e.g. in lexers) to be set.
+        if (inr < 0)
+        {
+            for (int i = 0; i <= INDIC_MAX; ++i)
+            {
+                SendScintilla(SCI_INDICSETFORE, i, col);
+                SendScintilla(SCI_INDICSETALPHA, i, alpha);
+            }
+        }
+        else
+        {
+            SendScintilla(SCI_INDICSETFORE, inr, col);
+            SendScintilla(SCI_INDICSETALPHA, inr, alpha);
+        }
+    }
+}
+
+
+// Fill a range with an indicator.
+void QsciScintilla::fillIndicatorRange(int lineFrom, int indexFrom,
+        int lineTo, int indexTo, int inr)
+{
+    if (inr <= INDIC_MAX)
+    {
+        int start = positionFromLineIndex(lineFrom, indexFrom);
+        int finish = positionFromLineIndex(lineTo, indexTo);
+
+        // We ignore allocatedIndicators to allow any indicators defined
+        // elsewhere (e.g. in lexers) to be set.
+        if (inr < 0)
+        {
+            for (int i = 0; i <= INDIC_MAX; ++i)
+            {
+                SendScintilla(SCI_SETINDICATORCURRENT, i);
+                SendScintilla(SCI_INDICATORFILLRANGE, start, finish - start);
+            }
+        }
+        else
+        {
+            SendScintilla(SCI_SETINDICATORCURRENT, inr);
+            SendScintilla(SCI_INDICATORFILLRANGE, start, finish - start);
+        }
+    }
+}
+
+
+// Clear a range with an indicator.
+void QsciScintilla::clearIndicatorRange(int lineFrom, int indexFrom,
+        int lineTo, int indexTo, int inr)
+{
+    if (inr <= INDIC_MAX)
+    {
+        int start = positionFromLineIndex(lineFrom, indexFrom);
+        int finish = positionFromLineIndex(lineTo, indexTo);
+
+        // We ignore allocatedIndicators to allow any indicators defined
+        // elsewhere (e.g. in lexers) to be set.
+        if (inr < 0)
+        {
+            for (int i = 0; i <= INDIC_MAX; ++i)
+            {
+                SendScintilla(SCI_SETINDICATORCURRENT, i);
+                SendScintilla(SCI_INDICATORCLEARRANGE, start, finish - start);
+            }
+        }
+        else
+        {
+            SendScintilla(SCI_SETINDICATORCURRENT, inr);
+            SendScintilla(SCI_INDICATORCLEARRANGE, start, finish - start);
+        }
+    }
+}
+
+
 // Define a marker based on a symbol.
 int QsciScintilla::markerDefine(MarkerSymbol sym, int mnr)
 {
@@ -2590,29 +2752,43 @@ void QsciScintilla::setMarkerForegroundColor(const QColor &col, int mnr)
 // Check a marker, allocating a marker number if necessary.
 void QsciScintilla::checkMarker(int &mnr)
 {
-    if (mnr >= 0)
+    allocateId(mnr, allocatedMarkers, 0, MARKER_MAX);
+}
+
+
+// Check an indicator, allocating an indicator number if necessary.
+void QsciScintilla::checkIndicator(int &inr)
+{
+    allocateId(inr, allocatedIndicators, INDIC_CONTAINER, INDIC_MAX);
+}
+
+
+// Make sure an identifier is valid and allocate it if necessary.
+void QsciScintilla::allocateId(int &id, unsigned &allocated, int min, int max)
+{
+    if (id >= 0)
     {
-        // Note that we allow existing markers to be explicitly redefined.
-        if (mnr > MARKER_MAX)
-            mnr = -1;
+        // Note that we allow existing identifiers to be explicitly redefined.
+        if (id > max)
+            id = -1;
     }
     else
     {
-        unsigned am = allocatedMarkers;
+        unsigned aids = allocated;
 
-        // Find the smallest unallocated marker number.
-        for (mnr = 0; mnr <= MARKER_MAX; ++mnr)
+        // Find the smallest unallocated identifier.
+        for (id = min; id <= max; ++id)
         {
-            if ((am & 1) == 0)
+            if ((aids & 1) == 0)
                 break;
 
-            am >>= 1;
+            aids >>= 1;
         }
     }
 
-    // Define the marker if it is valid.
-    if (mnr >= 0)
-        allocatedMarkers |= (1 << mnr);
+    // Allocate the identifier if it is valid.
+    if (id >= 0)
+        allocated |= (1 << id);
 }
 
 
@@ -3610,4 +3786,22 @@ QsciScintilla::ScintillaString QsciScintilla::styleText(const QList<QsciStyledTe
     }
 
     return s;
+}
+
+
+// Convert Scintilla modifiers to the Qt equivalent.
+int QsciScintilla::mapModifiers(int modifiers)
+{
+    int state = 0;
+
+    if (modifiers & SCMOD_SHIFT)
+        state |= Qt::ShiftModifier;
+
+    if (modifiers & SCMOD_CTRL)
+        state |= Qt::ControlModifier;
+
+    if (modifiers & SCMOD_ALT)
+        state |= Qt::AltModifier;
+
+    return state;
 }

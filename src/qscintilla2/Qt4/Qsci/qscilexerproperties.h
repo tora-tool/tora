@@ -64,7 +64,10 @@ public:
         Assignment = 3,
 
         //! A default value.
-        DefaultValue = 4
+        DefaultValue = 4,
+
+        //! A key.
+        Key = 5
     };
 
     //! Construct a QsciLexerProperties with parent \a parent.  \a parent is

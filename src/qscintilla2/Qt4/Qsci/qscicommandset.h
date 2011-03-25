@@ -43,7 +43,10 @@ extern "C++" {
 #include <Qsci/qscicommand.h>
 
 
+QT_BEGIN_NAMESPACE
 class QSettings;
+QT_END_NAMESPACE
+
 class QsciScintilla;
 
 

@@ -45,10 +45,12 @@ extern "C++" {
 #include <Qsci/qsciglobal.h>
 
 
+QT_BEGIN_NAMESPACE
 class QColor;
 class QPainter;
 class QPixmap;
 class QMimeData;
+QT_END_NAMESPACE
 
 class ScintillaQt;
 

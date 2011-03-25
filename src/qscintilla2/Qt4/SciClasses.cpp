@@ -86,6 +86,8 @@ void SciCallTip::mousePressEvent(QMouseEvent *e)
 
     sci->ct.MouseClick(pt);
     sci->CallTipClick();
+
+    update();
 }
 
 
