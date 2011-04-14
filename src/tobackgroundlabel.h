@@ -21,11 +21,12 @@ class toBackgroundLabel : public QLabel
 public:
     //static toBackgroundLabel createToBackgroundLabel();
     virtual void mouseReleaseEvent(QMouseEvent* e);
-    virtual void unpause();
+    toBackgroundLabel(QWidget *parent);
+public slots:
+	virtual void unpause();
     virtual void pause();
     virtual void setTip(QString tip);
     virtual void setSpeed(int Running);
-    toBackgroundLabel(QWidget *parent);
 private:
     static QMovie* Animation;
 };

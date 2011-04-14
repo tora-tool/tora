@@ -58,71 +58,59 @@ int toBackground::Running = 0;
 
 toBackground::toBackground(QObject* parent, const char* name)
         : toTimer(parent, name)
+		, main(toMainWidget())
 {
-    //createToBackgroundLabel()
-    main = toMainWidget();
+	/* It it not allowed to touch the gui(instance of toBackgroundLabel) from parallel thread,
+	 * therefore we connect it(if it exists) to our signals and will update it using signal emits.
+	 * QT signal mechanism will satisfy handover of singal data between our thread and mainWindowThread
+	 */
+	if(main && main->getBackgroundLabel())
+	{
+		connect(this, SIGNAL(pause(void)), main->getBackgroundLabel(), SLOT(pause(void)));		
+		connect(this, SIGNAL(unpause(void)), main->getBackgroundLabel(), SLOT(unpause(void)));		
+		connect(this, SIGNAL(setSpeed(int)), main->getBackgroundLabel(), SLOT(setSpeed(int)));		
+		connect(this, SIGNAL(setTip(QString)), main->getBackgroundLabel(), SLOT(setTip(QString)));		
+	}
 }
 
 void toBackground::start(int msec)
 {
-    main = toMainWidget();
-
     if (!isActive())
     {
         Running++;
-        main->getBackgroundLabel()->unpause();
+        emit unpause();
     }
-    main->getBackgroundLabel()->setSpeed(std::min(Running, 1)*100);
-    //Animation->setSpeed(std::min(Running, 1)*100);
+    emit setSpeed(std::min(Running, 1)*100);
     if (Running > 1)
     {
-        main->getBackgroundLabel()->setTip(tr("%1 queries running in background.").arg(Running));
-        //QToolTip::add(Label, tr("%1 queries running in background.").arg(Running));
+        emit setTip(tr("%1 queries running in background.").arg(Running));
     }
     else
     {
-        main->getBackgroundLabel()->setTip(tr("One query running in background."));
-        //   QToolTip::add(Label, tr("One query running in background."));
+        emit setTip(tr("One query running in background."));
     }
     toTimer::start(msec);
 }
 
 void toBackground::stop(void)
 {
-    main = toMainWidget();
-
-    /*if (!Animation)
-        init(); */
     if (isActive())
     {
         Running--;
-        if (Running == 0 )
-            main->getBackgroundLabel()->pause();
-        else
-            main->getBackgroundLabel()->setSpeed(Running*100);
-        if (Running > 1)
-            main->getBackgroundLabel()->setTip(tr("%1 queries running in background.").arg(Running));
-        else if (Running == 1)
-            main->getBackgroundLabel()->setTip("One query running in background.");
-        else
-            main->getBackgroundLabel()->setTip(tr("No background queries."));
+		if (Running == 0)
+			emit pause();
+		else
+			emit setSpeed(Running*100);
 
+		if (Running > 1)
+			emit setTip(tr("%1 queries running in background.").arg(Running));
+		else if (Running == 1)
+			emit setTip("One query running in background.");
+		else
+			emit setTip(tr("No background queries."));
     }
     toTimer::stop();
 }
-
-/*void toBackground::init(void)
-{
-    toMain *main = toMainWidget();
-    if (!main || Label)
-        return ;
-
-    Label = theToBackgroundLabel(main->statusBar());
-    Label->show();
-    main->statusBar()->addWidget(Label, 0, true);
-    QToolTip::add
-        (Label, tr("No background queries."));
-}*/
 
 toBackground::~toBackground()
 {

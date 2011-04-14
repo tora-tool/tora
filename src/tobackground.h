@@ -20,6 +20,7 @@ class toMainWindow;
  */
 class toBackground : public toTimer
 {
+	Q_OBJECT
 public:
     /**
      * Create a background timer widget.
@@ -37,6 +38,12 @@ public:
     void stop(void);
 
     static void init(void);
+signals:
+	void pause();
+	void unpause();
+	void setSpeed(int Running);
+	void setTip(QString tip);
+
 private:
     static int Running;
     toMainWindow* main;

@@ -88,8 +88,8 @@ SET(TORA_MOC_CLASSES
     toalert.h
     toanalyze.h
     toawr.h
-#     tobackground.h
-#     tobackgroundlabel.h
+    tobackground.h
+    tobackgroundlabel.h
     tobackup.h
 #     tobackuptool.h
     tobarchart.h
