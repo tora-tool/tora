@@ -34,15 +34,19 @@
 #ifdef WIN32
 #include "trotl_parser.h"
 #include <stdio.h>
+#include <windows.h>
 #define snprintf _snprintf
+#define MSLEEP(x) Sleep(x)
 //#define gmtime gmtime_s
 //#define localtime localtime_s
+#else
+#include <unistd.h>
+#define MSLEEP(x) usleep(1000 * x)
 #endif
 
 #include "trotl_lob.h"
 
 #include <assert.h>
-#include <unistd.h>
 
 namespace trotl {
 
@@ -339,7 +343,7 @@ SqlOpenLob::SqlOpenLob(SqlLob& lob, ub1 mode) : _lob(lob)
 			if(errorcode == 3127) // ORA-03127: no new operations allowed until the active operation ends
 			{
 				std::cerr << "ORA-03127: no new operations allowed until the active operation ends" << std::endl;
-				usleep(100);
+				MSLEEP(100);
 			} else {
 				oci_check_error(__TROTL_HERE__, _lob._conn._env._errh, res);
 			}
@@ -369,7 +373,7 @@ SqlOpenLob::~SqlOpenLob()
 			if(errorcode == 3127) // ORA-03127: no new operations allowed until the active operation ends
 			{
 				std::cerr << "ORA-03127: no new operations allowed until the active operation ends" << std::endl;
-				usleep(100);
+				MSLEEP(100);
 			} else {
 				oci_check_error(__TROTL_HERE__, _lob._conn._env._errh, res);
 			}
@@ -491,7 +495,7 @@ oraub8	SqlClob::read(dvoid* bufp, oraub8 buflen, oraub8 offset, oraub8 amount, o
 			if(errorcode == 24804) // ORA-24804: Lob read/write functions called while another OCI LOB read/write streaming is in progress
 			{
 				std::cerr << "ORA-24804: Lob read/write functions called while another OCI LOB read/write streaming is in progress" << std::endl;
-				usleep(100);
+				MSLEEP(100);
 			} else {
 				oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
 			}

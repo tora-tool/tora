@@ -249,7 +249,7 @@ struct TROTL_EXPORT OciLogin : public OciHandle<OCISvcCtx>
 	tstring	_tnsname;
 
 protected:
-#ifdef WIN32
+#if _MSC_VER==1400
 	template struct TROTL_EXPORT OciHandle<OCISession>;
 #endif
 	OciHandle<OCISession>	_session;
@@ -260,7 +260,7 @@ protected:
 struct TROTL_EXPORT OciConnection
 {
 	OciEnv	_env;
-#ifdef WIN32
+#if _MSC_VER==1400
 	template struct TROTL_EXPORT OciHandleWrapper<OCISvcCtx>;
 #endif
 	OciContext	_svc_ctx;
@@ -311,7 +311,7 @@ struct TROTL_EXPORT OciConnection
 		/* Some OCI statements silently enter blocking mode without any warning
 		 * we call OCIAttrGet everytime
 		 */
-		ub1 nonblocking;
+		ub1 nonblocking = 1;
 		//_svc_ctx.get_attribute(&nonblocking, NULL, OCI_ATTR_NONBLOCKING_MODE);
 		return nonblocking;
 	}

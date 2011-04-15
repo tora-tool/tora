@@ -174,7 +174,9 @@ namespace trotl {
       // allocate error handle
       _errh.alloc(_handle);
     }
-#ifdef WIN32 // is this really neccessary?
+
+//Workaround for MSVC2008
+#if _MSC_VER==1400
     template struct TROTL_EXPORT OciSimpleHandle<OCIError>;
 #endif
     OciError _errh;

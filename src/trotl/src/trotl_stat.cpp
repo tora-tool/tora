@@ -103,27 +103,31 @@ _bound(false)
 		_out_binds = new unsigned [get_bindpar_count()+1];
 	}
 
-	int ipos=1;
-	for(std::vector<BindVarDecl>::iterator it = parser._bindvars.begin(); it != parser._bindvars.end(); ++it, ++ipos)
+	if( get_stmt_type() != STMT_OTHER && get_stmt_type() != STMT_DROP && get_stmt_type() != STMT_CREATE &&
+		get_stmt_type() != STMT_ALTER && get_stmt_type() != OCI_STMT_UNKNOWN)
 	{
-		if(it->inout == "in")
+		int ipos=1;
+		for(std::vector<BindVarDecl>::iterator it = parser._bindvars.begin(); it != parser._bindvars.end(); ++it, ++ipos)
 		{
-			_in_binds[++_in_pos] = ipos;
-		} else if(it->inout == "inout") {
-			_in_binds[++_in_pos] = ipos;
-			_out_binds[++_out_pos] = ipos;
-		} else if(it->inout == "out") {
-			_out_binds[++_out_pos] = ipos;
-		} else {
-			throw OciException(__TROTL_HERE__, "Unsupported bindpar parameter: %s\n").arg(it->inout);
-		};
+			if(it->inout == "in")
+			{
+				_in_binds[++_in_pos] = ipos;
+			} else if(it->inout == "inout") {
+				_in_binds[++_in_pos] = ipos;
+				_out_binds[++_out_pos] = ipos;
+			} else if(it->inout == "out") {
+				_out_binds[++_out_pos] = ipos;
+			} else {
+				throw OciException(__TROTL_HERE__, "Unsupported bindpar parameter: %s\n").arg(it->inout);
+			};
 
 
-		//Create BindPar instance, constructor takes two arguments (position, BindVarDecl&)
-		_all_binds[ipos] = BindParFactTwoParmSing::Instance().create(it->bindtype, ipos, *this, *it);
+			//Create BindPar instance, constructor takes two arguments (position, BindVarDecl&)
+			_all_binds[ipos] = BindParFactTwoParmSing::Instance().create(it->bindtype, ipos, *this, *it);
 
-		if ( _all_binds[ipos].get() == NULL )
-			throw OciException(__TROTL_HERE__, "BindPar: Data type not registered: %s\n").arg(it->bindtype);
+			if ( _all_binds[ipos].get() == NULL )
+				throw OciException(__TROTL_HERE__, "BindPar: Data type not registered: %s\n").arg(it->bindtype);
+		}
 	}
 
 	_in_cnt = _in_pos; _in_pos=0;
