@@ -174,7 +174,8 @@ static toSQL SQLTableConstraint(
        "           c.status,\n"
        "           c.delete_rule,\n"
        "           c.generated,\n"
-       "           c.owner\n"
+       "           c.owner,\n"
+	   "           c.r_owner\n"
        "       FROM\n"
        "           sys.All_Constraints c,\n"
        "           sys.all_cons_columns a\n"
@@ -189,8 +190,7 @@ static toSQL SQLTableConstraint(
        "       sys.all_cons_columns refs\n"
        "   WHERE\n"
        "           main.r_constraint_name = refs.constraint_name (+)\n"
-       "       AND main.owner = refs.owner (+)\n"
-       "       AND main.column_name = refs.column_name (+)\n",
+       "       AND main.r_owner = refs.owner (+)\n",
     "List the constraints on a table",
     "");
 
