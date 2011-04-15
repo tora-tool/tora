@@ -22,7 +22,6 @@ public:
     //static toBackgroundLabel createToBackgroundLabel();
     virtual void mouseReleaseEvent(QMouseEvent* e);
     toBackgroundLabel(QWidget *parent);
-public slots:
 	virtual void unpause();
     virtual void pause();
     virtual void setTip(QString tip);

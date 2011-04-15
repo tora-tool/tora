@@ -39,6 +39,11 @@ public:
 
     static void init(void);
 signals:
+	void SignalPause();
+	void SignalUnpause();
+	void SignalSetSpeed(int Running);
+	void SignalSetTip(QString tip);
+private slots:
 	void pause();
 	void unpause();
 	void setSpeed(int Running);

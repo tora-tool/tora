@@ -61,15 +61,15 @@ toBackground::toBackground(QObject* parent, const char* name)
 		, main(toMainWidget())
 {
 	/* It it not allowed to touch the gui(instance of toBackgroundLabel) from parallel thread,
-	 * therefore we connect it(if it exists) to our signals and will update it using signal emits.
-	 * QT signal mechanism will satisfy handover of singal data between our thread and mainWindowThread
-	 */
-	if(main && main->getBackgroundLabel())
+	* therefore we connect it(if it exists) to our signals and will update it using signal emits.
+	* QT signal mechanism will satisfy handover of singal data between our thread and mainWindowThread
+	*/
+
 	{
-		connect(this, SIGNAL(pause(void)), main->getBackgroundLabel(), SLOT(pause(void)));		
-		connect(this, SIGNAL(unpause(void)), main->getBackgroundLabel(), SLOT(unpause(void)));		
-		connect(this, SIGNAL(setSpeed(int)), main->getBackgroundLabel(), SLOT(setSpeed(int)));		
-		connect(this, SIGNAL(setTip(QString)), main->getBackgroundLabel(), SLOT(setTip(QString)));		
+		connect(this, SIGNAL(SignalPause(void)), this, SLOT(pause(void)));		
+		connect(this, SIGNAL(SignalUnpause(void)), this, SLOT(unpause(void)));		
+		connect(this, SIGNAL(SignalSetSpeed(int)), this, SLOT(setSpeed(int)));		
+		connect(this, SIGNAL(SignalSetTip(QString)), this, SLOT(setTip(QString)));		
 	}
 }
 
@@ -78,16 +78,16 @@ void toBackground::start(int msec)
     if (!isActive())
     {
         Running++;
-        emit unpause();
+        emit SignalUnpause();
     }
-    emit setSpeed(std::min(Running, 1)*100);
+    emit SignalSetSpeed(std::min(Running, 1)*100);
     if (Running > 1)
     {
-        emit setTip(tr("%1 queries running in background.").arg(Running));
+        emit SignalSetTip(tr("%1 queries running in background.").arg(Running));
     }
     else
     {
-        emit setTip(tr("One query running in background."));
+        emit SignalSetTip(tr("One query running in background."));
     }
     toTimer::start(msec);
 }
@@ -98,16 +98,16 @@ void toBackground::stop(void)
     {
         Running--;
 		if (Running == 0)
-			emit pause();
+			emit SignalPause();
 		else
-			emit setSpeed(Running*100);
+			emit SignalSetSpeed(Running*100);
 
 		if (Running > 1)
-			emit setTip(tr("%1 queries running in background.").arg(Running));
+			emit SignalSetTip(tr("%1 queries running in background.").arg(Running));
 		else if (Running == 1)
-			emit setTip("One query running in background.");
+			emit SignalSetTip("One query running in background.");
 		else
-			emit setTip(tr("No background queries."));
+			emit SignalSetTip(tr("No background queries."));
     }
     toTimer::stop();
 }
@@ -115,4 +115,36 @@ void toBackground::stop(void)
 toBackground::~toBackground()
 {
     stop();
+}
+
+void toBackground::pause()
+{
+	if(main && main->getBackgroundLabel())
+	{
+		main->getBackgroundLabel()->pause();
+	}
+}
+
+void toBackground::unpause()
+{
+	if(main && main->getBackgroundLabel())
+	{
+		main->getBackgroundLabel()->unpause();
+	}
+}
+
+void toBackground::setSpeed(int speed)
+{
+	if(main && main->getBackgroundLabel())
+	{
+		main->getBackgroundLabel()->setSpeed(speed);
+	}
+}
+
+void toBackground::setTip(QString tip)
+{
+	if(main && main->getBackgroundLabel())
+	{
+		main->getBackgroundLabel()->setTip(tip);
+	}
 }
