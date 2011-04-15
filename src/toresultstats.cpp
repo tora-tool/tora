@@ -69,6 +69,7 @@ bool toResultStats::close()
 {
     delete Query;
     delete SessionIO;
+    Query = SessionIO = NULL;
 
     return true;
 }
@@ -288,13 +289,15 @@ void toResultStats::refreshStats(bool reset)
         Query->start();
 
         if (!System)
+        {
             SessionIO = new toEventQuery(conn, toQuery::Background,
                                          toSQL::string(SQLSessionIO, connection()),
                                          args);
-        connect(SessionIO, SIGNAL(dataAvailable()), this, SLOT(pollSystem()));
-        connect(SessionIO, SIGNAL(done()), this, SLOT(systemDone()));
-        SessionIO->readAll(); // indicate that all records should be fetched
-        SessionIO->start();
+            connect(SessionIO, SIGNAL(dataAvailable()), this, SLOT(pollSystem()));
+            connect(SessionIO, SIGNAL(done()), this, SLOT(systemDone()));
+            SessionIO->readAll(); // indicate that all records should be fetched
+            SessionIO->start();
+        }
 
         Reset = reset;
 
@@ -321,9 +324,8 @@ void toResultStats::pollQuery(void)
     catch (const QString &exc)
     {
         delete Query;
-        Query = NULL;
         delete SessionIO;
-        SessionIO = NULL;
+        Query = SessionIO = NULL;
         toStatusMessage(exc);
     }
 } // pollQuery
