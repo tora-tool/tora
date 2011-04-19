@@ -85,7 +85,8 @@ private:
     int Columns;
 
     // QThread instance that will do actual reading
-    QPointer<toEventQueryTask> Task;
+    // Note: this pointer is NOT deleted by me, but by toRunnableThread::run/delete Runner
+    toEventQueryTask *Task;
 
     // true when task finishes. this set from a slot called by a
     // queued message. the problem is that sometimes the thread can
