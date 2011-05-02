@@ -11,6 +11,7 @@ OPTION(ENABLE_TERADATA "Enable/Disable Teradata support." OFF)
 OPTION(WANT_RPM "Enable additional RPM related stuff. Additional make package_rpm target" ON)
 OPTION(WANT_BUNDLE "Enable Mac OS X bundle build" OFF)
 OPTION(WANT_BUNDLE_STANDALONE "Do not copy required libs and tools into bundle (WANT_BUNDLE)" ON)
+OPTION(WANT_UNIVERSAL "Build mac binary for 32 and 64 bit together" ON)
 OPTION(USE_TROTL "Use trotl OCI wrapper library" OFF)
 OPTION(USE_PCH "Use percompiled headers" ON)
 
@@ -133,6 +134,14 @@ SET(CMAKE_CXX_FLAGS_RELEASE "-O2 ${CXX_WARNINGS} -ggdb3")
 SET(CMAKE_C_FLAGS_RELEASE "-O2 ${CXX_WARNINGS} -ggdb3")
 SET(CMAKE_CXX_FLAGS_DEBUG "-O0 ${CXX_WARNINGS} -ggdb3 -fno-inline -rdynamic")
 SET(CMAKE_C_FLAGS_DEBUG "-O0 ${CXX_WARNINGS} -ggdb3 -fno-inline -rdynamic")
+
+IF (WANT_UNIVERSAL)
+    #SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -arch i386 -arch x86_64")
+    #SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -arch i386 -arch x86_64")
+    #SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -arch i386 -arch x86_64")
+    #SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -arch i386 -arch x86_64")
+    SET (CMAKE_OSX_ARCHITECTURES "i386;x86_64;")
+ENDIF (WANT_UNIVERSAL)
 
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
