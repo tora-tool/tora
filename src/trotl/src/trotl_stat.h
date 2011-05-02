@@ -50,6 +50,11 @@
 #include "Loki/static_check.h"
 #include "Loki/TypeTraits.h"
 
+// OCI_STMT_UNKNOWN is not defined in 10.x instantlient (at least on mac)
+#ifndef OCI_STMT_UNKNOWN
+#define OCI_STMT_UNKNOWN 0
+#endif
+
 namespace trotl {
 
 class BindParCursor;
