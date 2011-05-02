@@ -149,7 +149,7 @@ void toDocklet::showPopup(bool shown)
     {
         if(isPopup)                             // may be open in dock
         {
-            setWindowFlags(0);                  // defaults
+            // setWindowFlags(0);                  // defaults
             hide();
             isPopup = false;                    // not anymore
             setWindowModality(Qt::NonModal);

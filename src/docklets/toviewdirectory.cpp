@@ -51,11 +51,7 @@
 #include <QMdiSubWindow>
 
 
-#ifndef Q_WS_MAC
 REGISTER_VIEW("Directory", toViewDirectory);
-#else
-#warning toDocklets are broken on mac - volunteers wanted for fix
-#endif
 
 toViewDirectory::toViewDirectory(QWidget *parent,
                                  Qt::WindowFlags flags)

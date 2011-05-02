@@ -46,11 +46,7 @@
 
 #include <QHeaderView>
 
-#ifndef Q_WS_MAC
 REGISTER_VIEW("Connection", toViewConnections);
-#else
-#warning toDocklets are broken on mac - volunteers wanted for fix
-#endif
 
 toViewConnections::toViewConnections(QWidget *parent,
                                  Qt::WindowFlags flags)
