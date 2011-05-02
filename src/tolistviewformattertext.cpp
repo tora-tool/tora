@@ -80,7 +80,7 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
 
     // must get widest length for each column
     // zero array or (if writing headers, set their size)
-    for (int i = 0; i < columns; i++)
+    for (int i = 0; i < columns - 1; i++)
     {
         if (settings.columnsHeader)
         {
@@ -94,12 +94,13 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
         else
             sizes[i] = 0;
     }
+    sizes[columns - 1] = 1;
 
     // loop through model and get column widths
     QModelIndex mi;
     for (int row = 0; row < rows; row++)
     {
-        for (int column = 0; column < columns; column++)
+        for (int column = 0; column < columns - 1; column++)
         {
             if (settings.columnsExport == toExportSettings::ColumnsSelected && !clist.contains(column))
                 continue;
