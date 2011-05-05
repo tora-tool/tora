@@ -210,11 +210,20 @@ static toSQL SQLCancelM5("toQSqlConnection:Cancel",
                        "5.0",
                        "MySQL");
 
+#ifndef HAVE_POSTGRESQL_LIBPQ_FE_H
+// Only attempt to cancel a query using a secondary connection if we
+// didn't build with the postgres api.
+
+// Opening a second connection has drawbacks and can fail to
+// successfully cancel queries if there is any problem getting a
+// second connection, causing crashes.
+
 static toSQL SQLCancelPg("toQSqlConnection:Cancel",
                          "SELECT pg_cancel_backend(:pid)",
                          "",
                          "8.0",
                          "PostgreSQL");
+#endif
 
 // seems to be the only way for < 8.0 to not get pg_cancel_backend
 static toSQL SQLCancelPgOld("toQSqlConnection:Cancel",
