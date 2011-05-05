@@ -162,6 +162,7 @@ toEventQueryTask::~toEventQueryTask() {
 
 
 void toEventQueryTask::close() {
+    QMutexLocker lock(&CloseLock);
     try {
         if(Query) {
             int p = Query->rowsProcessed();
@@ -173,7 +174,6 @@ void toEventQueryTask::close() {
 
         disconnect(this, 0, 0, 0);
 
-        QMutexLocker lock(&CloseLock);
         if(Query && !Closed)
             Query->cancel();
     }
