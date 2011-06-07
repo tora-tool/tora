@@ -276,6 +276,8 @@ void toSecurityTreeModel::setupModelData(const QString & user)
     QString owner;
     QString name;
 
+    beginResetModel();
+
     const std::list<toConnection::objectName> &objectList = toCurrentConnection(this).objects(true);
     for (std::list<toConnection::objectName>::const_iterator i = objectList.begin();
         i != objectList.end();
@@ -339,7 +341,7 @@ void toSecurityTreeModel::setupModelData(const QString & user)
         }
     }
 
-    reset();
+	endResetModel();
 }
 
 void toSecurityTreeModel::sql(const QString &user, std::list<QString> &sqlLst)
