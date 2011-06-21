@@ -340,6 +340,30 @@ static toSQL SQLTablePartition("toBrowser:TablePartitions",
                                "select    p.partition_name \"Partition\"\n"
                                " , p.composite \"Composite\"\n"
                                " , p.num_rows \"Partition rows\"\n"
+                               " , p.high_value \"High value\"\n"
+                               " , p.subpartition_count \"Subpartitions\"\n"
+                               " , p.partition_position \"Position\"\n"
+                               " , s.subpartition_name \"Subpartition\"\n"
+                               " , s.num_rows \"Subpartition rows\"\n"
+                               " , s.subpartition_position \"Subpartition position\"\n"
+                               "  from all_tab_partitions p,\n"
+                               "       all_tab_subpartitions s\n"
+                               " where p.table_owner = s.table_owner(+)\n"
+                               "   and p.table_name = s.table_name(+)\n"
+                               "   and p.partition_name = s.partition_name(+)\n"
+                               "   and p.table_owner like upper(:table_owner<char[101]>)\n"
+                               "   and p.table_name like upper(:table_name<char[101]>)\n"
+                               " order by p.partition_name\n"
+                               " , s.subpartition_name\n",
+                               "Table partitions",
+                               "0801");
+
+// NOTE: this query is not used yet we need to implement some kind of flag in connection
+// saying: "User has 'admin' rights and can see dba_* v$* tables"
+static toSQL SQLTablePartitionDBA("toBrowser:TablePartitions",
+                               "select    p.partition_name \"Partition\"\n"
+                               " , p.composite \"Composite\"\n"
+                               " , p.num_rows \"Partition rows\"\n"
 							   " , round(seg.bytes/1024/1024) \"MB\"\n"
                                " , p.high_value \"High value\"\n"
                                " , p.subpartition_count \"Subpartitions\"\n"
@@ -349,7 +373,7 @@ static toSQL SQLTablePartition("toBrowser:TablePartitions",
                                " , s.subpartition_position \"Subpartition position\"\n"
                                "  from all_tab_partitions p,\n"
                                "       all_tab_subpartitions s,\n"
-							   "       all_segments seg\n"
+							   "       dba_segments seg\n"
                                " where p.table_owner = s.table_owner(+)\n"
                                "   and p.table_name = s.table_name(+)\n"
                                "   and p.partition_name = s.partition_name(+)\n"
