@@ -50,8 +50,6 @@ ELSE (ORACLE_PATH_INCLUDES)
             ${ORACLE_HOME}/sdk/include
             # xe on windows
             ${ORACLE_HOME}/OCI/include
-            # InstantClient on WinXP
-            ${ORACLE_HOME}/sdk/lib/msvc/
        )
 ENDIF (ORACLE_PATH_INCLUDES)
 
@@ -64,6 +62,8 @@ ELSE (ORACLE_PATH_LIB)
             # xe on windows
             ${ORACLE_HOME}/OCI/lib/MSVC
             ${ORACLE_HOME}
+            # InstantClient on WinXP
+            ${ORACLE_HOME}/sdk/lib/msvc/
         )
 ENDIF (ORACLE_PATH_LIB)
 
