@@ -423,6 +423,7 @@ void toCodeModel::refresh(toConnection &conn, const QString &owner)
     // Individual items are fetched later using SQLListObjects query
     // Note: MySQL does not support packages and types therefore these
     // branches are not included for MySQL connections.
+    beginResetModel();
     delete rootItem;
     rootItem = new toCodeModelItem(0, "Code");
     if (!toIsMySQL(conn) && !toIsTeradata(conn))
@@ -434,7 +435,7 @@ void toCodeModel::refresh(toConnection &conn, const QString &owner)
         macroItem = new toCodeModelItem(rootItem, tr("Macro"));
     if (!toIsMySQL(conn) && !toIsTeradata(conn))
         typeItem = new toCodeModelItem(rootItem, tr("Type"));
-    this->reset();
+    endResetModel();
 
     toQList param;
     param.push_back(m_owner);
