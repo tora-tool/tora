@@ -48,6 +48,13 @@
 #include <QString>
 #include <QVariant>
 
+enum toRowStatus {EXISTED=1,ADDED,MODIFIED,REMOVED};
+struct toRowDesc
+{
+  	int key;
+  	toRowStatus status;
+};
+Q_DECLARE_METATYPE(toRowDesc);
 
 /**
  * This is now a wrapper around QVariant to avoid a lot of memory
@@ -109,6 +116,10 @@ public:
      * @param d Value.
      */
     toQValue(qulonglong d);
+    /** Create row
+     * @param
+     */
+    toQValue(toRowDesc d);
     /** Destruct query.
      */
     ~toQValue();
@@ -168,6 +179,8 @@ public:
     /** Get double representation of this value.
      */
     double toDouble(void) const;
+
+    toRowDesc getRowDesc() const;
 
     /** Used for DisplayRole
      */

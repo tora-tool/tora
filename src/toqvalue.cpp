@@ -74,6 +74,10 @@ toQValue::toQValue(qulonglong d)
 {
     Value = d;
 }
+toQValue::toQValue(toRowDesc d)
+{
+	Value.setValue(d);
+}
 
 toQValue::toQValue(const toQValue &copy)
 {
@@ -231,6 +235,9 @@ bool toQValue::isBinary() const
 
 bool toQValue::isComplexType(void) const
 {
+	//toRowDesc is special
+	if (Value.canConvert<toRowDesc>())
+		return false;
     return Value.type() == QVariant::UserType;
 }
 
@@ -280,6 +287,11 @@ int toQValue::toInt() const
 double toQValue::toDouble() const
 {
     return Value.toDouble();
+}
+toRowDesc toQValue::getRowDesc() const
+{
+	Q_ASSERT(Value.canConvert<toRowDesc>());
+	return Value.value<toRowDesc>();
 }
 
 qlonglong toQValue::toLong() const

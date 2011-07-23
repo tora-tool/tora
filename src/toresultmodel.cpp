@@ -134,7 +134,11 @@ toResultModel::toResultModel(const QString &owner,
     for (toCache::RowList::iterator i = tmp.begin(); i != tmp.end(); i++)
     {
         // For each row a mandatory rownumber integer should be added
-        row.append(toQValue(counter++));
+    	toRowDesc rowDesc;
+    	rowDesc.key=counter++;
+    	rowDesc.status=EXISTED;
+    	row.append(toQValue(rowDesc));
+        //row.append(toQValue(counter++));
         // Copy all values of a record
         for (toCache::Row::iterator ii = (*i).begin(); ii != (*i).end(); ii++)
         {
@@ -216,7 +220,11 @@ void toResultModel::readData()
             Row row;
 
             // The number column (rowKey). should never change
-            row.append(toQValue(CurrRowKey++));
+            toRowDesc rowDesc;
+            rowDesc.key=CurrRowKey++;
+            rowDesc.status=EXISTED;
+            row.append(toQValue(rowDesc));
+            //row.append(toQValue(CurrRowKey++));
 
             for (int j = 1; (j < cols || j == 0) && Query->hasMore(); j++)
                 row.append(Query->readValue());
@@ -306,17 +314,21 @@ int toResultModel::addRow(QModelIndex ind, bool duplicate)
     beginInsertRows(QModelIndex(), newRowPos, newRowPos);
 
     Row row;
+    toRowDesc rowDesc;
+    rowDesc.key= CurrRowKey++;
+    rowDesc.status=ADDED;
+
     if (duplicate)
     {
         // Create a duplicate of current row
         row = Rows[ind.row()];
         // Reset a 0'th column
-        row[0] = CurrRowKey++;
+        row[0]=rowDesc;
     }
     else
     {
         // Create a new empty row
-        row.append(toQValue(CurrRowKey++));
+        row.append(toQValue(rowDesc));
 
         // null out the rest of the row
         int cols = Headers.size();
@@ -339,10 +351,44 @@ void toResultModel::deleteRow(QModelIndex index)
     if (!index.isValid() || index.row() >= Rows.size())
         return;
 
+    Row deleted = Rows[index.row()];
+    toRowDesc rowDesc=deleted[0].getRowDesc();
+
+    if(rowDesc.status==REMOVED)
+    {
+    	//Make sure removed row can't be removed twice
+    	return;
+    }else if(rowDesc.status==ADDED)
+    {
+    	//Newly added record can be removed regularly
     beginRemoveRows(QModelIndex(), index.row(), index.row());
-    Row deleted = Rows.takeAt(index.row());
+    	Rows.takeAt(index.row());
     endRemoveRows();
+    }else //Existed and Modified
+    {
+    	rowDesc.status=REMOVED;
+    	Rows[index.row()][0]=toQValue(rowDesc);
+    }
     emit rowDeleted(deleted);
+}
+
+void toResultModel::clearStatus()
+{
+	// Go through all records and set their status to be existed
+	for(QList<Row>::iterator ite=Rows.begin();ite!=Rows.end();ite++)
+	{
+		toRowDesc rowDesc = ite->at(0).getRowDesc();
+		if(rowDesc.status==REMOVED)
+		{
+			ite=Rows.erase(ite);
+		}
+		else if(rowDesc.status!=EXISTED)
+		{
+			rowDesc.status=EXISTED;
+			(*ite)[0]=toQValue(rowDesc);
+		}
+	}
+	emit headerDataChanged(Qt::Vertical,0,Rows.size()-1);
 }
 
 
@@ -559,6 +605,9 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const
 
     toQValue const &data = Rows.at(index.row()).at(index.column());
 
+    toRowDesc rowDesc=Rows[index.row()][0].getRowDesc();
+    QFont fontRet;
+
     switch(role)
     {
     case Qt::ToolTipRole:
@@ -592,6 +641,14 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const
         return (int) Headers.at(index.column()).align;
     case Qt::UserRole:
         return data.toQVariant();
+    case Qt::FontRole:
+    	if (rowDesc.status==REMOVED)
+    		fontRet.setStrikeOut(true);
+    	else if (rowDesc.status==ADDED)
+    		fontRet.setBold(true);
+    	else if (rowDesc.status==MODIFIED)
+    		fontRet.setItalic(true);
+    	return fontRet;
     default:
         return QVariant();
     }
@@ -626,6 +683,10 @@ bool toResultModel::setData(const QModelIndex &index,
 
     // for the view
     emit dataChanged(index, index);
+
+    toRowDesc rowDesc = Rows.at(index.row())[0].getRowDesc();
+    rowDesc.status = MODIFIED;
+    Rows[index.row()][0] = toQValue(rowDesc);
     return true;
 }
 
@@ -661,8 +722,8 @@ QVariant toResultModel::headerData(int section,
                                    Qt::Orientation orientation,
                                    int role) const
 {
-    if (role != Qt::DisplayRole)
-        return QVariant();
+    /*if (role != Qt::DisplayRole)
+        return QVariant();*/
 
     if (orientation == Qt::Horizontal)
     {
@@ -672,11 +733,34 @@ QVariant toResultModel::headerData(int section,
         if (section > Headers.size() - 1)
             return QVariant();
 
+        if (role == Qt::DisplayRole)
         return Headers[section].name;
+        else
+        	return QVariant();
     }
 
     if (orientation == Qt::Vertical)
+    {
+    	if (role == Qt::DisplayRole)
         return section + 1;
+    	else if (role == Qt::ForegroundRole)
+    	{
+    		if(section<0 || section>Rows.size())
+    			return QVariant();
+			toRowDesc rowDesc = Rows[section][0].getRowDesc();
+			switch (rowDesc.status) {
+			case REMOVED:
+				return QBrush(Qt::red);
+			case ADDED:
+				return QBrush(Qt::green);
+			case MODIFIED:
+				return QBrush(Qt::blue);
+			case EXISTED:
+			default:
+				return QVariant();
+			}
+		}
+    }
 
     return QVariant();
 }
@@ -819,14 +903,21 @@ Qt::ItemFlags toResultModel::flags(const QModelIndex &index) const
     }
 
     toQValue const &data = Rows.at(index.row()).at(index.column());
+    toRowDesc rowDesc = Rows.at(index.row()).at(0).getRowDesc();
     if (data.isComplexType())
     {
         return ( defaultFlags | fl ) & ~Qt::ItemIsEditable;
     }
 
     if (Editable)
-        return fl | defaultFlags | Qt::ItemIsEditable | Qt::ItemIsDropEnabled;
-    return fl | defaultFlags;
+        fl |= defaultFlags | Qt::ItemIsEditable | Qt::ItemIsDropEnabled;
+    else
+    	fl |= defaultFlags;
+
+    //Check the status of current record
+    if (rowDesc.status==REMOVED)
+    	fl &= ~Qt::ItemIsEditable;
+    return fl;
 }
 
 

@@ -142,10 +142,10 @@ void toResultTableViewEdit::recordChange(const QModelIndex &index,
 {
     // first, if it was an added row, find and update the ChangeSet so
     // they all get inserted as one.
-    toQValue rowid = row[0];
+    toQValue rowDesc = row[0];
     for (int changeIndex = 0; changeIndex < Changes.size(); changeIndex++)
     {
-        if (Changes[changeIndex].kind == Add && Changes[changeIndex].row[0] == rowid)
+        if (Changes[changeIndex].kind == Add && Changes[changeIndex].row[0].getRowDesc().key == rowDesc.getRowDesc().key)
         {
             Changes[changeIndex].row[index.column()] = newValue;
             return;
@@ -155,6 +155,7 @@ void toResultTableViewEdit::recordChange(const QModelIndex &index,
     // don't record if not changed
     if (newValue == row[index.column()])
         return;
+
 
     struct ChangeSet change;
 
@@ -195,7 +196,7 @@ void toResultTableViewEdit::recordDelete(const toResultModel::Row &row)
     while (j.hasNext() && !insertFound)
     {
         cs = j.next();
-        if ((cs.row[0] == row[0]) &&
+        if ((cs.row[0].getRowDesc().key == row[0].getRowDesc().key) &&
                 (cs.kind == Add))
         {
             j.remove();
@@ -551,9 +552,11 @@ bool toResultTableViewEdit::commitChanges(bool status)
                     .arg(added, 0, 10)
                     .arg(deleted, 0, 10)
                     , false, false);
-    if (error)
+    /*if (error)
         refresh();
     else
+        Changes.clear();*/
+    if (!error)
         Changes.clear();
 
     emit changed(changed());
@@ -571,9 +574,11 @@ void toResultTableViewEdit::commitChanges(toConnection &conn, bool cmt)
 
     if (cmt)
     {
-        commitChanges(false);
+        bool success = commitChanges(false);
         connection().commit();  // make sure to commit connection
         // where our changes are.
+        // some cleanup work
+        if (success) Model->clearStatus();
     }
     else
         refresh();

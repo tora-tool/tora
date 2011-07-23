@@ -45,17 +45,15 @@
 #include "tosql.h"
 #include "toresult.h"
 #include "toconnection.h"
-
+#include "toqvalue.h"
 #include <QObject>
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <QList>
 #include <QMap>
 
-class toQValue;
+
 class toEventQuery;
-
-
 class toResultModel : public QAbstractTableModel
 {
     Q_OBJECT;
@@ -69,7 +67,7 @@ public:
         Qt::Alignment     align;       /* alignment */
     };
 
-    typedef QList<toQValue> Row; // NOTE: first (0th) value in a row is a row number (see variable currRowKey)
+    typedef QList<toQValue> Row; // NOTE: first (0th) value in a row is a row description (see variable currRowKey)
     typedef QList<Row> RowList;
     typedef QList<HeaderDesc> HeaderList;
 
@@ -303,11 +301,16 @@ public:
 
 
     /**
-     * Delete a row interally. Emits rowDeleted on success.
+     * Mark to delete a row interally. Emits rowDeleted on success.
      *
      * This is not an overridden method.
      */
     void deleteRow(QModelIndex);
+
+    /**
+     * Clear the status of records.
+     */
+    void clearStatus();
 
 
     /**
