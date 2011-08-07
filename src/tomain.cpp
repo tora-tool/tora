@@ -1183,6 +1183,20 @@ void toMain::setNeedCommit(toConnection &conn, bool needCommit)
     conn.setNeedCommit(needCommit);
 }
 
+class toConnectionDeleter : public toTask
+{
+    toConnection *Conn;
+
+public:
+    toConnectionDeleter(toConnection *conn)
+        : Conn(conn) { }
+
+    virtual void run()
+    {
+        delete Conn;
+    }
+};
+
 bool toMain::delConnection(void)
 {
     toConnection *conn = NULL;
@@ -1227,7 +1241,8 @@ bool toMain::delConnection(void)
             ConnectionSelection->removeItem(pos);
             if (ConnectionSelection->count())
                 ConnectionSelection->setCurrentIndex(std::max(pos - 1, 0));
-            delete conn;
+            toThread *thread = new toThread(new toConnectionDeleter(conn));
+            thread->start();
             break;
         }
         pos++;
