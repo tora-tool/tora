@@ -1028,16 +1028,16 @@ void toMain::commandCallback(QAction *action)
     }
     else if (action == stopAct)
     {
+        // Change the current override cursor back to a normal
+        // cursor. This has no effect if there's no current
+        // override, so this should not corrupt the cursor stack
+        // in qApplication.
+        qApp->changeOverrideCursor(Qt::ArrowCursor);
+
         try
         {
             toConnection &conn = currentConnection();
             conn.cancelAll();
-
-            // Change the current override cursor back to a normal
-            // cursor. This has no effect if there's no current
-            // override, so this should not corrupt the cursor stack
-            // in qApplication.
-            qApp->changeOverrideCursor(Qt::ArrowCursor);
         }
         TOCATCH;
     }
