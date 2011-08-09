@@ -105,7 +105,7 @@ public:
             return window;
         }
     }
-    void closeWindow(toConnection &connection)
+    virtual void closeWindow(toConnection &connection)
     {
         std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
         if (i != Windows.end())
@@ -227,6 +227,7 @@ toAlert::toAlert(QWidget *main, toConnection &connection)
     {
         toStatusMessage(tr("Failed to start polling thread, try closing "
                            "some other tools and restart Alert Messenger"));
+		State = Done;
     }
 
     setFocusProxy(Message);
@@ -266,20 +267,18 @@ toAlert::~toAlert()
 
 void toAlert::closeEvent(QCloseEvent *event)
 {
-    try
-    {
-        Lock.lock();
-        State = Quit;
-        while (State != Done)
-        {
-            Lock.unlock();
-            Semaphore.down();
-            Lock.lock();
-        }
-        Lock.unlock();
-        AlertTool.closeWindow(connection());
-    }
-    TOCATCH;
+	if(State == Done)
+	{
+		AlertTool.closeWindow(connection());
+		return;
+	}
+
+	State = Quit;
+	while (State != Done)
+	{
+		Semaphore.down();
+	}
+	AlertTool.closeWindow(connection());
 }
 
 static toSQL SQLRegister("toAlert:Register",
@@ -307,6 +306,7 @@ void toAlert::pollTask::run(void)
 {
     Parent.Lock.lock();
     bool fatal = false;
+	bool namesEmpty;
     while (Parent.State != Quit && !fatal)
     {
         Parent.Lock.unlock();
@@ -358,11 +358,15 @@ void toAlert::pollTask::run(void)
                 Parent.SendMessages.clear();
                 Parent.Connection.commit();
             }
+			
+			{
+				toLocker lock (Parent.Lock)
+				;
+				namesEmpty = Parent.Names.empty();
+			}
 
-            Parent.Lock.lock();
-            if (Parent.Names.size())
+            if (!namesEmpty)
             {
-                Parent.Lock.unlock();
                 toQuery query(Parent.Connection, SQLPoll, QString::number(TIMEOUT));
                 QString name = query.readValue();
                 QString msg = query.readValue();
@@ -376,13 +380,7 @@ void toAlert::pollTask::run(void)
             }
             else
             {
-                Parent.Lock.unlock();
-#ifndef Q_OS_WIN32
-                sleep(TIMEOUT);
-#else
-
-                Sleep(TIMEOUT*1000);
-#endif
+				toThread::sleep(TIMEOUT);
             }
         }
         catch (const QString &str)
@@ -390,6 +388,7 @@ void toAlert::pollTask::run(void)
             Parent.Lock.lock();
             Parent.Error.sprintf("Exception in alert polling:\n%s", (const char *)str.toLatin1());
             fprintf(stderr, "%s\n", Parent.Error.toAscii().constData());
+			fatal = true;
             Parent.Lock.unlock();
         }
         catch (...)
@@ -397,18 +396,21 @@ void toAlert::pollTask::run(void)
             Parent.Lock.lock();
             Parent.Error.sprintf("Unexpected exception in alert in polling.");
             fprintf(stderr, "%s\n", Parent.Error.toAscii().constData());
+			fatal = true;
             Parent.Lock.unlock();
         }
 
         Parent.Lock.lock();
     }
-    if (Parent.Names.size() > 0)
+    if (!Parent.Names.empty())
         try
         {
             Parent.Connection.execute(SQLRemoveAll);
         }
         catch (...)
-            {}
+	{
+		fatal = true;
+	}
     Parent.State = Done;
     Parent.Semaphore.up();
     Parent.Lock.unlock();
