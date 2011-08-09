@@ -136,6 +136,11 @@ void toThread::msleep(int msec)
     taskRunner::msleep(msec);
 }
 
+void toThread::sleep(int sec)
+{
+    taskRunner::sleep(sec);
+}
+
 taskRunner::taskRunner(toTask *task)
         : Task(task)
 {}

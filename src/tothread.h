@@ -128,6 +128,50 @@ public:
     }
 };
 
+class toSharedLock
+{
+private:
+	QMutex SharedMutex;
+	QMutex ExclusiveMutex;
+	unsigned sharedCount;
+public:
+	toSharedLock(void)
+	  : SharedMutex(QMutex::NonRecursive)
+	  , ExclusiveMutex(QMutex::NonRecursive)
+	  , sharedCount(0)
+	{};
+
+	void sharedLock()
+	{
+		SharedMutex.lock();
+		if(sharedCount++ == 0)
+			ExclusiveMutex.lock();
+		SharedMutex.unlock();
+	}
+
+	void sharedUnlock()
+	{
+		SharedMutex.lock();
+		if(--sharedCount == 0)
+			ExclusiveMutex.unlock();
+		SharedMutex.unlock();
+	}
+
+	void exclusiveLock()
+	{
+		SharedMutex.lock();
+		ExclusiveMutex.lock();
+	}
+
+	void exclusiveUnlock()
+	{
+		SharedMutex.unlock();
+		ExclusiveMutex.unlock();
+	}
+private:
+	toSharedLock(const toSharedLock&);
+};
+
 void *toThreadStartWrapper(void*);
 class taskRunner;
 class toThreadInfo;
@@ -153,6 +197,7 @@ public:
     void start(void);
     void startAsync(void);
     static void msleep(int msec);
+	static void sleep(int sec);
     static bool mainThread(void);
 
     /**
@@ -195,7 +240,6 @@ class toThreadInfo
  * declare an auto @ref toLocker to hold the lock. If any exception is thrown the
  * locker will be deallocated and the lock released.
  */
-
 class toLocker
 {
 private:
@@ -216,6 +260,57 @@ public:
     {
         Lock.unlock();
     }
+};
+
+/** This is a convenience class that holds a lock for the duration of the scope
+ * of the object. It is very convenient to use if exceptions can be thrown, simply
+ * declare an auto @ref toLocker to hold the lock. If any exception is thrown the
+ * locker will be deallocated and the lock released.
+ */
+class toSharedLocker
+{
+private:
+    /** Lock held.
+     */
+    toSharedLock &Lock;
+public:
+    /** Create locker.
+     * @param lock Lock to hold.
+     */
+    toSharedLocker(toSharedLock &lock )
+		: Lock(lock )
+    {
+        Lock.sharedLock();
+    }
+    ~toSharedLocker()
+    {
+        Lock.sharedUnlock();
+    }
+private:
+	toSharedLocker(const toSharedLocker &);
+};
+
+class toExclusiveLocker
+{
+private:
+    /** Lock held.
+     */
+    toSharedLock &Lock;
+public:
+    /** Create locker.
+     * @param lock Lock to hold.
+     */
+    toExclusiveLocker(toSharedLock &lock )
+		: Lock(lock )
+    {
+        Lock.exclusiveLock();
+    }
+    ~toExclusiveLocker()
+    {
+        Lock.exclusiveUnlock();
+    }
+private:
+	toExclusiveLocker(const toExclusiveLocker &);
 };
 
 
