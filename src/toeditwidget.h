@@ -297,6 +297,12 @@ public:
         return ReadAll;
     }
 
+    /*! \brief Return all current text
+    This virtual function can be re-implemented subclasses(like toMarkedText).
+    So far it is used in toCodeOutline only.
+    */
+    virtual QString editText() { return QString(); }
+
     /*! \brief Search for next occrence of text
     This is pure virtual as it has to be implemented in all
     separated children of toEditWidget.
@@ -317,7 +323,7 @@ public:
     separated children of toEditWidget.
     */
     virtual void searchReplaceAll(const QString &newData) = 0;
-
+    
     /*! \brief Check if data can be modified by search
      * @param all If true can replace all, otherwise can replace right now.
      */

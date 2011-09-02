@@ -14,6 +14,7 @@ OPTION(WANT_BUNDLE_STANDALONE "Do not copy required libs and tools into bundle (
 OPTION(WANT_UNIVERSAL "Build mac binary for 32 and 64 bit together" ON)
 OPTION(USE_TROTL "Use trotl OCI wrapper library" OFF)
 OPTION(USE_PCH "Use percompiled headers" ON)
+OPTION(USE_EXPERIMENTAL "Use experimental code" OFF)
 
 #Set our CMake minimum version
 #Require 2.4.2 for Qt finding

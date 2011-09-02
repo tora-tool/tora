@@ -19,9 +19,12 @@ ENDIF (USE_TROTL)
 
 # Default: qsci2 as 3rd party lib!
 IF (WANT_INTERNAL_QSCINTILLA)
-    ADD_SUBDIRECTORY(qscintilla2)
+  ADD_SUBDIRECTORY(qscintilla2)
 ENDIF(WANT_INTERNAL_QSCINTILLA)
 
+IF (USE_EXPERIMENTAL)
+  ADD_SUBDIRECTORY(libantlr3c-3.3)
+ENDIF(USE_EXPERIMENTAL)  
 
 # only toad bindings are here. All others qm files will blow the binary too much
 SET (TORA_I18N_TS
@@ -259,6 +262,9 @@ IF (ORACLE_FOUND)
     LIST(APPEND TORA_MOC_CLASSES tooraclesetting.h)
 ENDIF (ORACLE_FOUND)
 
+IF (USE_EXPERIMENTAL)
+    LIST(APPEND TORA_MOC_CLASSES docklets/tocodeoutline.h)
+ENDIF (USE_EXPERIMENTAL)
 
 SET(TORA_SOURCES
     # include main.cpp for "normal" TOra build, but comment it out and include
@@ -454,6 +460,10 @@ IF (TERADATA_FOUND)
     LIST (APPEND TORA_SOURCES toteradataconnection.cpp)
 ENDIF (TERADATA_FOUND)
 
+IF (USE_EXPERIMENTAL)
+    LIST(APPEND TORA_SOURCES docklets/tocodeoutline.cpp)
+ENDIF (USE_EXPERIMENTAL)
+
 # compiled in icons for windows
 IF (WIN32 AND MSVC)
     SET (TORA_SOURCES ${TORA_SOURCES} tora.rc)
@@ -529,6 +539,23 @@ ELSE (WANT_INTERNAL_QSCINTILLA)
     INCLUDE_DIRECTORIES(${QSCINTILLA_INCLUDE_DIR})
 ENDIF (WANT_INTERNAL_QSCINTILLA)
 
+IF (USE_EXPERIMENTAL)
+  LIST(APPEND TORA_SOURCES
+    "parsing/tsqlparse.cpp"
+    "parsing/tsqlparseoracle.cpp"
+    "parsing/tplsqlparseoracle.cpp"
+    "parsing/tsqllexeroracle.cpp"
+    "parsing/error_handler.c"
+    "parsing/OracleSQLLexer.c"
+    "parsing/OracleSQLParser.c"
+    "parsing/OraclePLSQLLexer.c"
+    "parsing/OraclePLSQLParser.c"
+    )
+  INCLUDE_DIRECTORIES(
+    "${CMAKE_CURRENT_SOURCE_DIR}/libantlr3c-3.3/include"
+    "${CMAKE_CURRENT_BINARY_DIR}/libantlr3c-3.3"
+    )
+ENDIF (USE_EXPERIMENTAL)
 
 # Handle win/mac special stuff - it's left empty for linux/unix
 SET (GUI_TYPE)
@@ -595,6 +622,10 @@ IF (USE_TROTL)
   SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES COMPILE_FLAGS "-DTROTL_DLL")
   TARGET_LINK_LIBRARIES (${EXE_NAME} ${TROTL_LIB})
 ENDIF (USE_TROTL)
+
+IF (USE_EXPERIMENTAL)
+  TARGET_LINK_LIBRARIES(${EXE_NAME} antlr3c)
+ENDIF(USE_EXPERIMENTAL)  
 
 # static
 TARGET_LINK_LIBRARIES(${EXE_NAME} ${TORA_LOKI_LIB})

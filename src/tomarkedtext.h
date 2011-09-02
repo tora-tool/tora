@@ -228,6 +228,11 @@ public:
      */
     virtual bool searchCanReplace(bool all);
 
+    virtual QString editText()
+    {
+	    return text();
+    };
+    
     /** Start incremental search mode, or search next if started.
      */
     void incrementalSearch(bool forward);
