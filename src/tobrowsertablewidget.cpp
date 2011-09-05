@@ -387,7 +387,7 @@ static toSQL SQLTablePartitionDBA("toBrowser:TablePartitions",
 							   "   and p.table_name = seg.segment_name \n"
                                " order by p.partition_name\n"
                                " , s.subpartition_name\n",
-                               "Table partitions",
+                               "",
                                "0801");
 
 
