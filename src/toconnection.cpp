@@ -106,9 +106,12 @@ std::list<QString> toConnectionProvider::providedOptions(const QString &)
 
 void toConnectionProvider::removeProvider(const QString &provider)
 {
-    std::map<QString, toConnectionProvider *>::iterator i = Providers->find(provider);
-    if (i != Providers->end())
-        Providers->erase(i);
+    if (Providers)
+    {
+        std::map<QString, toConnectionProvider *>::iterator i = Providers->find(provider);
+        if (i != Providers->end())
+            Providers->erase(i);
+    }
 }
 
 toConnectionProvider::~toConnectionProvider()
