@@ -116,7 +116,8 @@ static toSQL SQLProfiles("toSecurity:Profiles",
                          "Get profiles available.");
 
 static toSQL SQLTablespace("toSecurity:Tablespaces",
-                           "SELECT DISTINCT Tablespace_Name FROM sys.DBA_Tablespaces"
+                           "SELECT DISTINCT Tablespace_Name FROM sys.DBA_Tablespaces\n"
+                           " WHERE contents = :f1<char[30]>\n"
                            " ORDER BY Tablespace_Name",
                            "Get tablespaces available.");
 
@@ -230,7 +231,7 @@ void toSecurityQuota::update(void)
     Tablespaces->clear();
     try
     {
-        toQuery tablespaces(toCurrentConnection(this), SQLTablespace);
+        toQuery tablespaces(toCurrentConnection(this), SQLTablespace, "PERMANENT");
         toTreeWidgetItem *item = NULL;
         while (!tablespaces.eof())
         {
@@ -499,12 +500,18 @@ toSecurityUser::toSecurityUser(toSecurityQuota *quota, toConnection &conn, QWidg
         while (!profiles.eof())
             Profile->addItem(profiles.readValue());
 
-        toQuery tablespaces(Connection,
-                            SQLTablespace);
+        QString buf;
+        toQuery tablespaces(Connection, SQLTablespace, "PERMANENT");
         while (!tablespaces.eof())
         {
-            QString buf = tablespaces.readValue();
+            buf = tablespaces.readValue();
             DefaultSpace->addItem(buf);
+        }
+        
+        toQuery temp(Connection, SQLTablespace, "TEMPORARY");
+        while (!temp.eof())
+        {
+            buf = temp.readValue();
             TempSpace->addItem(buf);
         }
     }
