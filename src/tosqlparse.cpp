@@ -607,7 +607,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens, bool declare
             ret.subTokens().insert(ret.subTokens().end(), statement(statement::Keyword, token, tokens.line()));
             int line = tokens.line();
             int offset = tokens.offset();
-            for (QString tmp = tokens.getToken(true, true); line == tokens.line(); tmp = tokens.getToken(true, true))
+            for (QString tmp = tokens.getToken(true, true); line == tokens.line() && !tmp.isEmpty(); tmp = tokens.getToken(true, true))
                 ret.subTokens().insert(ret.subTokens().end(), statement(statement::Token, tmp, line));
             tokens.setLine(line);
             tokens.setOffset(offset);
