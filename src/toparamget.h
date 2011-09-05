@@ -92,16 +92,16 @@ class toParamGet : public QDialog, public toHelpContext
 
     /** Default values cache
      */
-    static std::map<QString, std::list<QString> > DefaultCache;
+    static QHash<QString, QStringList> DefaultCache;
 
     /** Specified values cache
      */
-    static std::map<QString, std::list<QString> > Cache;
+    static QHash<QString, QStringList> Cache;
 
     QScrollArea *View;
     QGridLayout *Container;
 
-    std::list<QComboBox *> Value;
+    QList<QComboBox *> Value;
     toParamGet(QWidget *parent = 0, const char *name = 0);
 
 public:

@@ -47,26 +47,13 @@
 #include "toparamget.h"
 #include "totool.h"
 
-#include <qapplication.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qlineedit.h>
-#include <qpalette.h>
-#include <qpushbutton.h>
-#include <qsizepolicy.h>
-
-#include <QResizeEvent>
-#include <QGridLayout>
-#include <QScrollArea>
-#include <QDesktopWidget>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
+#include <QtDebug>
+#include <QtGui/QCheckBox>
 
 
-std::map<QString, std::list<QString> > toParamGet::DefaultCache;
-std::map<QString, std::list<QString> > toParamGet::Cache;
+QHash<QString, QStringList> toParamGet::DefaultCache;
+QHash<QString, QStringList> toParamGet::Cache;
+
 
 toParamGet::toParamGet(QWidget *parent, const char *name)
         : QDialog(parent),
@@ -128,7 +115,7 @@ toQList toParamGet::getParam(toConnection &conn,
                              bool interactive)
 {
     std::map<QString, bool> parameters;
-    std::list<QString> names;
+    QStringList names;
     toParamGet *widget = NULL;
 
     enum
@@ -281,46 +268,32 @@ toQList toParamGet::getParam(toConnection &conn,
                     edit->setSizePolicy(QSizePolicy::MinimumExpanding,
                                         QSizePolicy::MinimumExpanding);
                     edit->setMinimumContentsLength(30);
+                    // take away the completer - it causes:
+                    // #3061131: problem when using parameters in query
+                    //when doing a "select id, name from table1 where name = :pname" TORA asks me for the value of pname. When i enter e.g. "Lars" the query runs.
+                    // When doing the same query again answering "LARS" for the value TORA runs the query again, but not with the second value, it uses the forst one.
+                    edit->setCompleter(0);
+
                     widget->Container->addWidget(edit, num, 1);
-
-                    QString defval;
-                    std::map<QString, std::list<QString> >::iterator fnd = Cache.find(fname);
-                    if (fnd != Cache.end())
+                    
+                    if (Cache.contains(fname))
                     {
-                        for (std::list<QString>::iterator i = (*fnd).second.begin();
-                                i != (*fnd).second.end();
-                                i++)
-                        {
-
-                            if (edit->count() == 0)
-                                defval = *i;
-                            edit->addItem(*i);
-                        }
+                        edit->addItems(Cache[fname]);
                     }
 
-                    fnd = DefaultCache.find(fname);
-                    if (fnd != DefaultCache.end())
+                    if (DefaultCache.contains(fname))
                     {
-                        for (std::list<QString>::iterator i = (*fnd).second.begin();
-                                i != (*fnd).second.end();
-                                i++)
-                        {
-
-                            if (edit->count() == 0)
-                                defval = *i;
-                            edit->addItem(*i);
-                        }
+                        edit->addItems(DefaultCache[fname]);
                     }
-
+                    
                     QCheckBox *box = new QCheckBox(tr("NULL"), widget);
                     connect(box,
                             SIGNAL(toggled(bool)),
                             edit,
                             SLOT(setDisabled(bool)));
-                    if (edit->count() > 0)
+                    if (edit->currentText().isNull())
                     {
-                        if (defval.isNull())
-                            box->setChecked(true);
+                        box->setChecked(true);
                     }
                     widget->Container->addWidget(box, num, 2);
 
@@ -328,18 +301,14 @@ toQList toParamGet::getParam(toConnection &conn,
                         num,
                         widget);
                     btn->setText(tr("Edit"));
-                    connect(btn,
-                            SIGNAL(clicked(int)),
-                            widget,
-                            SLOT(showMemo(int)));
-                    connect(box,
-                            SIGNAL(toggled(bool)),
-                            btn,
-                            SLOT(setDisabled(bool)));
+                    connect(btn, SIGNAL(clicked(int)),
+                            widget, SLOT(showMemo(int)));
+                    connect(box, SIGNAL(toggled(bool)),
+                            btn, SLOT(setDisabled(bool)));
                     widget->Container->addWidget(btn, num, 3);
                     widget->Value.insert(widget->Value.end(), edit);
 
-                    names.insert(names.end(), fname);
+                    names.append(fname);
 
                     widget->Container->setRowMinimumHeight(num, 30);
                     num++;
@@ -356,7 +325,6 @@ toQList toParamGet::getParam(toConnection &conn,
     {
         // set edit column to stretch
         widget->Container->setColumnStretch(1, 1);
-
         // add widget at bottom of grid that can resize
         widget->Container->addWidget(new QLabel(widget), num, 0);
         widget->Container->setRowStretch(num, 1);
@@ -368,10 +336,9 @@ toQList toParamGet::getParam(toConnection &conn,
         (*widget->Value.begin())->setFocus();
         if (!interactive || widget->exec())
         {
-            std::list<QString>::iterator cn = names.begin();
-            for (std::list<QComboBox *>::iterator i = widget->Value.begin();i != widget->Value.end();i++)
+            int ix = 0;
+            foreach(QComboBox* current, widget->Value)
             {
-                QComboBox *current = *i;
                 QString val;
                 if (current)
                 {
@@ -380,28 +347,18 @@ toQList toParamGet::getParam(toConnection &conn,
                     else
                         val = QString::null;
                 }
-                if (cn != names.end())
-                {
-                    std::list<QString> &lst = Cache[*cn];
-                    for (std::list<QString>::iterator i = lst.begin();i != lst.end();i++)
-                        if ((*i) == val)
-                        {
-                            lst.erase(i);
-                            break;
-                        }
-                    lst.insert(lst.begin(), val);
 
-                    std::map<QString, std::list<QString> >::iterator fnd = DefaultCache.find(*cn);
-                    if (fnd != DefaultCache.find(*cn))
-                        for (std::list<QString>::iterator i = (*fnd).second.begin();i != (*fnd).second.end();i++)
-                            if ((*i) == val)
-                            {
-                                (*fnd).second.erase(i);
-                                break;
-                            }
+                QString keyName = names.at(ix);
+                ++ix; 
 
-                    cn++;
-                }
+                QStringList lst = Cache[keyName];
+                lst.removeAll(val);
+                lst.prepend(val);
+                Cache[keyName] = lst;
+
+                lst = DefaultCache[keyName];
+                lst.removeAll(val);
+
                 ret.insert(ret.end(), val);
             }
             delete widget;
@@ -419,20 +376,13 @@ toQList toParamGet::getParam(toConnection &conn,
 
 void toParamGet::setDefault(toConnection &, const QString &name, const QString &val)
 {
-    std::map<QString, std::list<QString> >::iterator fnd = Cache.find(name);
-    if (fnd != Cache.end())
-        for (std::list<QString>::iterator i = (*fnd).second.begin();i != (*fnd).second.end();i++)
-            if (val == *i)
-                return ;
+    if (Cache[name].contains(val))
+        return;
 
-    std::list<QString> &lst = DefaultCache[name];
-    for (std::list<QString>::iterator i = lst.begin();i != lst.end();i++)
-        if ((*i) == val)
-        {
-            lst.erase(i);
-            break;
-        }
-    lst.insert(lst.begin(), val);
+    QStringList lst = DefaultCache[name];
+    lst.removeAll(val);
+    lst.prepend(val);
+    DefaultCache[name] = lst;
 }
 
 void toParamGet::showMemo(int row)
