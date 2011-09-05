@@ -2,6 +2,7 @@
 #include "tocache.h"
 #include "toconfiguration.h"
 #include "utils.h"
+#include <QtDebug>
 #include <QDir>
 #include <QDateTime>
 #include <QTextStream>
@@ -440,7 +441,13 @@ QString toCache::cacheDir()
 
 QString toCache::cacheFile()
 {
-    return (cacheDir() + "/" + ConnectionDescription).trimmed();
+    QString ret (ConnectionDescription.trimmed());
+    // using instantclient connectionstrins can result in file name like this:
+    //     isepl_global_stage@//oraclexe11:1521/xe
+    // which is invalid. Just remove "/" or replace it with something safer.
+    ret = ret.replace("/", "_");
+
+    return cacheDir() + "/" + ret;
 } // cacheFile
 
 bool toCache::loadDiskCache()
@@ -569,9 +576,13 @@ void toCache::writeDiskCache()
     /** Write all records to a file
      */
     QFile file(filename);
-    file.open(QIODevice::ReadWrite | QIODevice::Truncate);
-    QTextStream t(&file);
-    t << records.join("\x1D");
-    file.flush();
-    file.close();
+    if (file.open(QIODevice::ReadWrite | QIODevice::Truncate))
+    {
+        QTextStream t(&file);
+        t << records.join("\x1D");
+        file.flush();
+        file.close();
+    }
+    else
+        qDebug() << "Cannot open file" << filename << "!";
 }
