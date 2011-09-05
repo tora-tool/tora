@@ -271,9 +271,11 @@ int main(int c, char **v) {
         $ORACLE_HOME/bin/sqlplusO"
 
         for try in $sqlplus_try; do
-          if test -x "$try"; then
-            sqlplus="$try"
-            break;
+          if test -f "$try"; then
+            if test -x "$try"; then
+              sqlplus="$try"
+              break;
+            fi
           fi
         done
 
