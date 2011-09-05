@@ -55,12 +55,14 @@ toResultExtract::toResultExtract(bool prompt, QWidget *parent, const char *name)
     : toWorksheetWidget(parent, name, toCurrentConnection(parent))
 {
     Prompt = prompt;
+    m_heading = true;
 }
 
 toResultExtract::toResultExtract(QWidget * parent)
     : toWorksheetWidget(parent, "toResultExtract", toMainWidget()->currentConnection())
 {
     Prompt = false;
+    m_heading = true;
 }
 
 static toSQL SQLObjectTypeMySQL("toResultExtract:ObjectType",
@@ -143,7 +145,7 @@ void toResultExtract::query(const QString &sql, const toQList &param)
 
         toExtract extract(conn, NULL);
         extract.setCode(toConfigurationSingle::Instance().extractorIncludeCode());
-        extract.setHeading(toConfigurationSingle::Instance().extractorIncludeHeader());
+        extract.setHeading(m_heading && toConfigurationSingle::Instance().extractorIncludeHeader());
         extract.setPrompt(Prompt);
         extract.setReplace(true); // generate create OR REPLACE statements
         extract.setParallel(toConfigurationSingle::Instance().extractorIncludeParallel());

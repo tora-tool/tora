@@ -57,6 +57,7 @@ class toResultExtract : public toWorksheetWidget, public toResult
     Q_OBJECT
 
     bool Prompt;
+    bool m_heading;
 
 public:
     /** Create the widget.
@@ -66,6 +67,14 @@ public:
     toResultExtract(bool prompt, QWidget *parent, const char *name = NULL);
     //! \brief Dummy constructor for Qt designer usage
     toResultExtract(QWidget * parent = 0);
+
+    /** Display generated headers in the extractor.
+        The final behavior depends on this flag *and* 
+        toConfigurationSingle::Instance().extractorIncludeHeader() too.
+        See:
+        extract.setHeading(m_heading && toConfigurationSingle::Instance().extractorIncludeHeader());
+    */
+    void setHeading(bool enable) { m_heading = enable; };
 
     /** Ignores sql and extect object name and owner as parameters.
      */

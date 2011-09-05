@@ -62,6 +62,8 @@
 #include <QPixmap>
 #include <QProgressDialog>
 #include <QList>
+#include <QDebug>
+
 
 #include "icons/refresh.xpm"
 #include "icons/toinvalid.xpm"
@@ -143,7 +145,8 @@ toInvalid::toInvalid(QWidget *main, toConnection &connection)
 
     connect(Objects, SIGNAL(selectionChanged()), this, SLOT(changeSelection()));
 
-    Source = new toResultExtract(false, splitter);
+    Source = new toResultExtract(splitter);
+    Source->setHeading(false);
     Source->setSQL(SQLListSource);
 
     connect(Source, SIGNAL(executed()), this, SLOT(refresh()));
@@ -151,7 +154,7 @@ toInvalid::toInvalid(QWidget *main, toConnection &connection)
     refresh();
     setFocusProxy(Objects);
 }
-#include <QDebug>
+
 void toInvalid::recompileSelected(void)
 {
     QProgressDialog progress(tr("Recompiling all invalid"),
