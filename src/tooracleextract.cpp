@@ -2112,17 +2112,31 @@ static toSQL SQLIndexColumns7("toOracleExtract:IndexColumns",
                               " ORDER BY column_position",
                               "",
                               "07");
+
+// fix for #2692105: Can't extract DDL for some (probably function-based) indexes
+//static toSQL SQLIndexFunction("toOracleExtract:IndexFunction",
+//                              "SELECT c.default$\n"
+//                              "  FROM sys.col$ c,\n"
+//                              "       sys.all_indexes i,\n"
+//                              "       sys.all_objects o\n"
+//                              " WHERE i.index_name = :ind<char[100]>\n"
+//                              "   AND o.object_name = i.table_name\n"
+//                              "   AND c.obj# = o.object_id\n"
+//                              "   AND c.name = :tab<char[100]>\n"
+//                              "   AND i.owner = :own<char[100]>\n"
+//                              "   AND o.owner = i.table_owner",
+//                              "Get function of index column, same column and binds");
 static toSQL SQLIndexFunction("toOracleExtract:IndexFunction",
-                              "SELECT c.default$\n"
-                              "  FROM sys.col$ c,\n"
-                              "       sys.all_indexes i,\n"
-                              "       sys.all_objects o\n"
-                              " WHERE i.index_name = :ind<char[100]>\n"
-                              "   AND o.object_name = i.table_name\n"
-                              "   AND c.obj# = o.object_id\n"
-                              "   AND c.name = :tab<char[100]>\n"
-                              "   AND i.owner = :own<char[100]>\n"
-                              "   AND o.owner = i.table_owner",
+                              "SELECT c.column_expression\n"
+                              "  FROM sys.all_ind_expressions c,\n"
+                              "      sys.all_ind_columns i\n"
+                              "  WHERE \n"
+                              "          c.table_name = i.table_name\n"
+                              "      AND c.index_owner = i.index_owner\n"
+                              "      AND c.column_position = i.column_position\n"
+                              "      AND i.index_name = :ind<char[100]>\n"
+                              "      AND i.column_name = :own<char[100]>\n"
+                              "      AND i.index_owner = :col<char[100]>\n",
                               "Get function of index column, same column and binds");
 
 QString toOracleExtract::indexColumns(toExtract &ext,
@@ -2915,7 +2929,8 @@ void toOracleExtract::describeIndexColumns(toExtract &ext,
         if (func.indexIn(col) >= 0)
         {
             toQuery def(CONNECTION, SQLIndexFunction, col, name, owner);
-            QString function(inf.readValue());
+            QString function(def.readValue());
+            inf.readValue(); // we read function index from def, but inf has to be shifted too
             function.replace(quote, "");
             if (asc == "DESC")
                 row = QString("%1 DESC").arg(function, 30);
