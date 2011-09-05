@@ -389,6 +389,7 @@ class toSecurityUser : public QWidget, public Ui::toSecurityUserUI
 public:
     toSecurityUser(toSecurityQuota *quota, toConnection &conn, QWidget *parent);
     void clear(bool all = true);
+    void update();
     void changeUser(const QString &);
     QString name(void)
     {
@@ -494,6 +495,11 @@ toSecurityUser::toSecurityUser(toSecurityQuota *quota, toConnection &conn, QWidg
     setupUi(this);
     Name->setValidator(new toSecurityUpper(Name));
     setFocusProxy(Name);
+    update();
+}
+
+void toSecurityUser::update()
+{
     try
     {
         toQuery profiles(Connection, SQLProfiles);
@@ -502,6 +508,7 @@ toSecurityUser::toSecurityUser(toSecurityQuota *quota, toConnection &conn, QWidg
 
         QString buf;
         toQuery tablespaces(Connection, SQLTablespace, "PERMANENT");
+        DefaultSpace->clear();
         while (!tablespaces.eof())
         {
             buf = tablespaces.readValue();
@@ -509,6 +516,7 @@ toSecurityUser::toSecurityUser(toSecurityQuota *quota, toConnection &conn, QWidg
         }
         
         toQuery temp(Connection, SQLTablespace, "TEMPORARY");
+        TempSpace->clear();
         while (!temp.eof())
         {
             buf = temp.readValue();
@@ -827,6 +835,11 @@ public:
             return Role->sql();
         else
             return User->sql();
+    }
+    void update()
+    {
+        User->update();
+        Role->update();
     }
 };
 
@@ -1493,6 +1506,8 @@ void toSecurity::refresh(void)
     RoleGrant->update();
     ObjectGrant->update();
     Quota->update();
+    General->update();
+
     UserList->clear();
     try
     {
