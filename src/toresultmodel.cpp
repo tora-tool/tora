@@ -676,6 +676,13 @@ bool toResultModel::setData(const QModelIndex &index,
     Row oldRow = row;           // keep old version
     toQValue newValue = toQValue::fromVariant(_value);
 
+    toRowDesc rowDesc = Rows.at(index.row())[0].getRowDesc();
+    if (rowDesc.status == EXISTED && !(row[index.column()] == newValue))
+    {
+    	// leave row that's added as in status added
+    	rowDesc.status = MODIFIED;
+    	Rows[index.row()][0] = toQValue(rowDesc);
+    }
     row[index.column()] = newValue;
 
     // for writing to the database
@@ -684,9 +691,6 @@ bool toResultModel::setData(const QModelIndex &index,
     // for the view
     emit dataChanged(index, index);
 
-    toRowDesc rowDesc = Rows.at(index.row())[0].getRowDesc();
-    rowDesc.status = MODIFIED;
-    Rows[index.row()][0] = toQValue(rowDesc);
     return true;
 }
 
