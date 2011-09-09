@@ -141,7 +141,8 @@ static const QString AboutText = QString::fromUtf8(
     "<B>Matthias Wolle</B>,\n"
     "<B>Joachim Zetzsche</B>,\n"
     "<B>Massimiliano Ziccardi</B>,\n"
-    "<B>Raj Thukral</B>...\n"
+    "<B>Raj Thukral</B>,\n"
+    "<B>Heran Quan</B>...\n"
     "<HR BREAK=ALL>\n"
     "<P><FONT SIZE=-1>%2</FONT><P>\n"
     "</body></html>");
