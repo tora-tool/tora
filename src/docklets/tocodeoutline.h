@@ -60,11 +60,11 @@ class toCodeOutline : public toDocklet
     class editHandlerHolder: public toEditWidget::editHandler
     {
     public:
-		editHandlerHolder() : m_current(NULL) {};
+	    editHandlerHolder() : m_current(NULL) {};
 	    virtual ~editHandlerHolder() {};
 	    virtual void receivedFocus(toEditWidget *widget)
 	    {
-		    m_current = widget;		    
+		    m_current = widget;
 	    }
 	    virtual void lostFocus(toEditWidget *widget)
 	    {

@@ -137,6 +137,10 @@ void toCodeOutline::timerEvent(QTimerEvent *e)
 					     << stat->root()->toStringRecursive().toStdString() << std::endl;
 
 		procedures->clear();
+		functions->clear();
+		cursors->clear();
+		types->clear();
+		exceptions->clear();
 		
 		QMap<QString, const SQLParser::Token*>::const_iterator i = stat->declarations().begin();
 		for(; i != stat->declarations().end(); ++i)
@@ -144,13 +148,35 @@ void toCodeOutline::timerEvent(QTimerEvent *e)
 			TLOG(0,toDecorator,__HERE__) << i.key() << ' ' << i.value()->getPosition().toString() << std::endl;
 			QListWidgetItem *wi = new QListWidgetItem(i.key());
 			wi->setToolTip(i.value()->getPosition().toString());
-			procedures->addItem(wi);
+			
+			SQLParser::Token const &node = *i.value();
+			if(node.getTokenUsageType() == SQLParser::Token::Declaration)
+			{
+				switch(node.getTokenType())
+				{
+				case SQLParser::Token::L_DATATYPE:
+					types->addItem(wi);
+					break;
+				case SQLParser::Token::L_FUNCTIONNAME:
+					functions->addItem(wi);
+					break;
+				case SQLParser::Token::L_PROCEDURENAME:
+					procedures->addItem(wi);
+					break;
+				case SQLParser::Token::L_CURSORNAME:
+					cursors->addItem(wi);
+					break;
+				case SQLParser::Token::L_EXCEPTIONNAME:
+					exceptions->addItem(wi);
+					break;
+				}
+			}
 		}
 	}
 	catch ( SQLParser::ParseException const &e)
 	{
-		
-	}		
+
+	}
 }
 
 QIcon toCodeOutline::icon() const
