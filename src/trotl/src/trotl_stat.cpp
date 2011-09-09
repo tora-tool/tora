@@ -191,6 +191,7 @@ void SqlStatement::prepare(const tstring& sql, ub4 lang)
 		break;
 	case 0:			// ANALYZE TABLE
 	case 15:		// EXPLAIN PLAN FOR
+	case 21:		// COMMIT
 		_stmt_type = STMT_OTHER;
 		break;
 	default:
@@ -255,8 +256,14 @@ void SqlStatement::define_all()
 				.arg(_columns[dpos]._reg_name);
 		define(*_all_defines[dpos]);
 
+		// When using piecewise callbacks - fetch rows one by one
 		if(_all_defines[dpos]->dty == SQLT_LNG)
 			_fetch_rows = 1;
+		// Due to some ugly SEGFAULT in OCIRowidToChar I can not fetch more than 2 rows 
+		// when datatype (U)ROWID is explicitly listed in queries column list
+		// and when ROWID equals to this 'AAADVKAABAAAHypAA3' surprisingly some other ROWIDs are fine
+		if(_all_defines[dpos]->dty == SQLT_RDD)
+			_fetch_rows = min(_fetch_rows, 2);
 	}
 	_state |= DEFINED;
 }
