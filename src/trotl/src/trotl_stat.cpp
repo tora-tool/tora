@@ -263,7 +263,7 @@ void SqlStatement::define_all()
 		// when datatype (U)ROWID is explicitly listed in queries column list
 		// and when ROWID equals to this 'AAADVKAABAAAHypAA3' surprisingly some other ROWIDs are fine
 		if(_all_defines[dpos]->dty == SQLT_RDD)
-			_fetch_rows = min(_fetch_rows, 2);
+		  _fetch_rows = min(_fetch_rows, (ub4)2);
 	}
 	_state |= DEFINED;
 }
