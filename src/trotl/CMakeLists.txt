@@ -38,21 +38,21 @@ SET (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_SUFFIX}
 
 SET (LIB_NAME "trotl")
 
-IF (CMAKE_COMPILER_IS_GNUCC)  
-    SET(CXX_WARNINGS "-Wall")
-    SET(CMAKE_CXX_FLAGS_RELEASE "-O2 ${CXX_WARNINGS} -rdynamic -fvisibility-inlines-hidden")
-    SET(CMAKE_C_FLAGS_RELEASE "-O2 ${CXX_WARNINGS} -rdynamic -fvisibility-inlines-hidden")
-    SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb3 -fno-inline ${CXX_WARNINGS} -fstrict-aliasing -rdynamic")
-    SET(CMAKE_C_FLAGS_DEBUG "-O0 -ggbb3 -fno-inline ${CXX_WARNINGS} -fstrict-aliasing -rdynamic")
-ENDIF (CMAKE_COMPILER_IS_GNUCC)  
+# IF (CMAKE_COMPILER_IS_GNUCC)  
+#     SET(CXX_WARNINGS "-Wall")
+#     SET(CMAKE_CXX_FLAGS_RELEASE "-O2 ${CXX_WARNINGS} -rdynamic -fvisibility-inlines-hidden")
+#     SET(CMAKE_C_FLAGS_RELEASE "-O2 ${CXX_WARNINGS} -rdynamic -fvisibility-inlines-hidden")
+#     SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb3 -fno-inline ${CXX_WARNINGS} -fstrict-aliasing -rdynamic")
+#     SET(CMAKE_C_FLAGS_DEBUG "-O0 -ggbb3 -fno-inline ${CXX_WARNINGS} -fstrict-aliasing -rdynamic")
+# ENDIF (CMAKE_COMPILER_IS_GNUCC)  
 
 # Lets disable Wall warnings due the MSVC too much talkative
 # output.
 # MSVC, MSVC_IDE, MSVC60, MSVC70, MSVC71, MSVC80, CMAKE_COMPILER_2005
 IF (MSVC)
-    SET (CXX_WARNINGS "/wd4251")
     ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS )
-    SET (CMAKE_CXX_FLAGS_DEBUG ${CXX_WARNINGS})
+    SET (CXX_WARNINGS "/wd4251")
+    SET (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_WARNINGS}")
 
 #	SET (CMAKE_SHARED_LINKER_FLAGS "/INCREMENTAL:NO")
 #	SET (CMAKE_SHARED_LINKER_FLAGS_DEBUG "/INCREMENTAL:NO")
