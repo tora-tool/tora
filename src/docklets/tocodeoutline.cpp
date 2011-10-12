@@ -113,7 +113,7 @@ void toCodeOutline::timerEvent(QTimerEvent *e)
 {
 	QString newText;
 	
-	TLOG(0,toDecorator,__HERE__) << "void toQueryModel::timerEvent(QTimerEvent *e) fired" << std::endl;
+	//TLOG(0,toDecorator,__HERE__) << "void toQueryModel::timerEvent(QTimerEvent *e) fired" << std::endl;
 	
 	if( m_timerID != e->timerId())
 	{
