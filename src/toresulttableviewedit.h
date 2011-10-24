@@ -134,7 +134,7 @@ public:
      */
     bool changed(void)
     {
-        return Changes.size() > 0;
+        return !Changes.isEmpty();
     }
 
 
