@@ -82,6 +82,7 @@ using namespace std;
 
 #include "otlv4.h"
 
+#include "toociwrapper.h"
 #include "toconf.h"
 #include "toconfiguration.h"
 #include "toconnection.h"
@@ -993,6 +994,7 @@ public:
         ret.insert(ret.end(), "-");
         ret.insert(ret.end(), "SYS_OPER");
         ret.insert(ret.end(), "SYS_DBA");
+        ret.insert(ret.end(), "SYS_ASM");
         return ret;
     }
     virtual std::list<QString> providedHosts(const QString &)
@@ -1262,6 +1264,9 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
             session_mode = OCI_SYSOPER;
         else if (options.find("SYS_DBA") != options.end())
             session_mode = OCI_SYSDBA;
+        else if (options.find("SYS_ASM") != options.end())
+            session_mode = OCI_SYSASM;
+
         do
         {
             conn = new otl_connect;
