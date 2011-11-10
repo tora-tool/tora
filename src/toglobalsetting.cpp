@@ -450,7 +450,8 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
     if (!defName.isEmpty())
     {
         toTool *def = ToolsRegistrySing::Instance().value(toConfigurationSingle::Instance().defaultTool());
-        currIx = DefaultTool->findText(def->name());
+        if (def)
+	    currIx = DefaultTool->findText(def->name());
     }
     DefaultTool->setCurrentIndex( (currIx == -1) ? 0 : currIx );
     changeEnable();
