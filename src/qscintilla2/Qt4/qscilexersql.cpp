@@ -201,7 +201,7 @@ const char *QsciLexerSQL::keywords(int set) const
             "deferrable deferred delete depth deref desc "
             "describe descriptor destroy destructor "
             "deterministic dictionary diagnostics disconnect "
-            "distinct domain double drop dynamic each else end "
+            "distinct domain double drop dynamic each else elsif end "
             "end-exec equals escape every except exception exec "
             "execute external false fetch first float for "
             "foreign found from free full function general get "
