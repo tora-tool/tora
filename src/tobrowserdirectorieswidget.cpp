@@ -47,7 +47,8 @@
 
 static toSQL SQLDirectoriesInfo("toBrowser:DirectoriesInformation",
                            "SELECT * FROM sys.all_directories\n"
-                           " WHERE directory_name = :f1<char[101]>\n"
+                           " WHERE (Owner = 'SYS' OR Owner = :f1<char[101]>)\n"
+                           " AND directory_name = :f2<char[101]>\n"
                            " ORDER BY owner, directory_name",
                            "Display information about directories by name");
 
