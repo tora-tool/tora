@@ -50,6 +50,8 @@ ELSE (ORACLE_PATH_INCLUDES)
             ${ORACLE_HOME}/sdk/include
             # xe on windows
             ${ORACLE_HOME}/OCI/include
+            # instant client from rpm
+            /usr/include/oracle/11.2/client${LIB_SUFFIX}/
        )
 ENDIF (ORACLE_PATH_INCLUDES)
 
@@ -64,6 +66,8 @@ ELSE (ORACLE_PATH_LIB)
             ${ORACLE_HOME}
             # InstantClient on WinXP
             ${ORACLE_HOME}/sdk/lib/msvc/
+            # Instant client from rpm
+            /usr/lib${LIB_SUFFIX}/
         )
 ENDIF (ORACLE_PATH_LIB)
 
@@ -78,11 +82,15 @@ SET(FORCE_ERROR 0)
 
 
 IF (ORACLE_USE_CLNTSH)
+    # The NO_DEFAULT_PATH is necessary here in the case there is Oracle DB
+    # *and* instant client installed. The order is given in ORACLE_LIB_LOCATION.
+    # See above.
     FIND_LIBRARY(
         ORACLE_LIBRARY_CLNTSH
         NAMES libclntsh clntsh oci
         PATHS ${ORACLE_LIB_LOCATION}
-       # NO_DEFAULT_PATH NO_CMAKE_ENVIRONMENT_PATH NO_CMAKE_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH
+        NO_DEFAULT_PATH
+	#NO_CMAKE_ENVIRONMENT_PATH NO_CMAKE_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH
     )
     IF (NOT ORACLE_LIBRARY_CLNTSH)
         IF (Oracle_FIND_REQUIRED)
