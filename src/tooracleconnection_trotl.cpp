@@ -48,9 +48,6 @@
 #ifdef Q_OS_WIN32
 #  include "windows/cregistry.h"
 #include <Windows.h>
-#define MIN min
-#else
-#define MIN std::min
 #endif
 
 #include <trotl.h>
@@ -339,7 +336,7 @@ public:
 		
 		while(offset < MAXTOMAXLONG)
 		{
-			unsigned to_read = MIN(MAXTOMAXLONG - offset, chunk_size);
+		  unsigned to_read = (std::min)(MAXTOMAXLONG - offset, chunk_size);
 			unsigned bytes_read = data.read(&buffer[offset], MAXTOMAXLONG - offset, offset+1, to_read);
 
 			if(bytes_read == 0) // end of LOB reached

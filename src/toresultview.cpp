@@ -154,7 +154,7 @@ int toResultViewMLine::realWidth(const QFontMetrics &fm, const toTreeWidget *top
     QString t = text(column);
     if (t.isNull())
         t = txt;
-    return std::min(TextWidth(fm, t), MaxColDisp) + top->itemMargin() * 2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
+    return (std::min)(TextWidth(fm, t), MaxColDisp) + top->itemMargin() * 2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
 }
 
 QString toResultViewItem::firstText(int col) const
@@ -188,7 +188,7 @@ int toResultViewItem::realWidth(const QFontMetrics &fm, const toTreeWidget *top,
     if (t.isNull())
         t = txt;
     QRect bounds = fm.boundingRect(t);
-    return std::min(bounds.width(), MaxColDisp) + top->itemMargin() * 2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
+    return (std::min)(bounds.width(), MaxColDisp) + top->itemMargin() * 2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
 }
 
 void toResultViewItem::paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align)
@@ -414,7 +414,7 @@ int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *t
     if (column == 0)
         wx += top->style()->pixelMetric(QStyle::PM_CheckListButtonSize) + 4 + top->itemMargin();
 
-    return std::min(TextWidth(fm, t), MaxColDisp) + wx;
+    return (std::min)(TextWidth(fm, t), MaxColDisp) + wx;
 }
 
 int toResultViewCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *top, int column, const QString &txt) const
@@ -432,7 +432,7 @@ int toResultViewCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *top
     if (column == 0)
         wx += top->style()->pixelMetric(QStyle::PM_CheckListButtonSize) + 4 + top->itemMargin();
 
-    return std::min(bounds.width(), MaxColDisp) + wx;
+    return (std::min)(bounds.width(), MaxColDisp) + wx;
 }
 
 

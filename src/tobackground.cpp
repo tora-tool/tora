@@ -80,7 +80,7 @@ void toBackground::start(int msec)
         Running++;
         emit SignalUnpause();
     }
-    emit SignalSetSpeed(std::min(Running, 1)*100);
+    emit SignalSetSpeed((std::min)(Running, 1)*100);
     if (Running > 1)
     {
         emit SignalSetTip(tr("%1 queries running in background.").arg(Running));

@@ -79,7 +79,7 @@ void toBackgroundLabel::setTip(QString tip)
 
 void toBackgroundLabel::setSpeed(int Running)
 {
-    Animation->setSpeed(std::min(Running, 1)*100);
+    Animation->setSpeed((std::min)(Running, 1)*100);
 }
 
 void toBackgroundLabel::mouseReleaseEvent(QMouseEvent *e)

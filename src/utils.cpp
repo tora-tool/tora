@@ -965,9 +965,9 @@ QBrush toChartBrush(int index)
 
     color += offset;
 
-    QBrush brush(QColor(TO_MIN(255, r*color*256 / (COLORS)),
-                        TO_MIN(255, g*color*256 / (COLORS)),
-                        TO_MIN(255, b*color*256 / (COLORS))),
+    QBrush brush(QColor((std::min)(255, r*color*256 / (COLORS)),
+                        (std::min)(255, g*color*256 / (COLORS)),
+                        (std::min)(255, b*color*256 / (COLORS))),
                  rets);
     return brush;
 }

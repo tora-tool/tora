@@ -517,12 +517,6 @@ struct deleteObject
       } catch(...) { }                          \
     }
 
-/**
- * std::min name collisions on windows/cygwin
- *
- */
-#define TO_MIN qMin
-
 #define QTRANS(x,y) (qApp?qApp->translate(x,y):QString::fromLatin1(y))
 
 /**
