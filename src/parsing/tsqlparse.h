@@ -9,7 +9,7 @@
 #include <QVariant>
 #include <QVector>
 #include <ostream>
-#include "Loki/Factory_alt.h"
+#include "loki/Factory_alt.h"
 
 #include <boost/iterator/iterator_facade.hpp>
 
