@@ -15,7 +15,7 @@
 // $Id: foo_export.h 760 2006-10-17 20:36:13Z syntheticpp $
 
 
-#include "Loki/LokiExport.h"
+#include "loki/LokiExport.h"
 
 #if (defined(TROTL_MAKE_DLL) && defined(TROTL_DLL)) || \
     (defined(TROTL_MAKE_DLL) && defined(TROTL_STATIC)) || \

@@ -3,6 +3,7 @@ SET(TROTL_CLIENT_DEFINES -DLOKI_STATIC -DEXPLICIT_EXPORT -DTROTL_DLL)
 
 INCLUDE_DIRECTORIES(
   ${ORACLE_INCLUDES}
+  ${CMAKE_SOURCE_DIR}/src/loki/include
 )
 
 # include the stack library in dubug builds only

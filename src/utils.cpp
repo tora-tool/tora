@@ -81,6 +81,7 @@
 #include <QDir>
 #include <QPixmapCache>
 #include <QPainter>
+#include <QDebug>
 
 
 #ifdef Q_OS_WIN32
