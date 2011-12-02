@@ -6,10 +6,7 @@ ${CMAKE_SOURCE_DIR}/src/windows/
 # )
 
 SET(WINDOWS_LIB_SOURCES
-cregistry.h
 resource.h
-
-cregistry.cpp
 
 tora.ico
 tora.rc

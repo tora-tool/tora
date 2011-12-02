@@ -44,11 +44,6 @@
 #include "utils.h"
 #include "todefaultkeywords.h"
 
-#ifdef Q_OS_WIN32
-#  include "windows/cregistry.h"
-#include <Windows.h>
-#endif
-
 /**
  * mrj: disabled stream pooling. it doesn't seem to be fully thread
  * safe. if you're hitting the database hard, say the tuning overview
@@ -107,6 +102,9 @@ using namespace std;
 
 #include <QString>
 #include <QTextStream>
+#include <QSettings>
+#include <QFileInfo>
+#include <QDir>
 
 static int toMaxLong = toConfigurationSingle::Instance().maxLong();
 
@@ -1007,127 +1005,148 @@ public:
     virtual std::list<QString> providedDatabases(const QString &,
             const QString &host,
             const QString &,
-            const QString &)
-    {
-        QString str;
-#ifdef Q_OS_WIN32
+            const QString &);
 
-        CRegistry registry;
-        DWORD siz = 1024;
-        char buffer[1024];
-        try
-        {
-            if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
-                                        "SOFTWARE\\ORACLE\\HOME0",
-                                        "TNS_ADMIN",
-                                        buffer, siz))
-            {
-                if (siz > 0)
-                    str = buffer;
-                else
-                    throw 0;
-            }
-            else
-                throw 0;
-        }
-        catch (...)
-        {
-            try
-            {
-                if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
-                                            "SOFTWARE\\ORACLE\\HOME0",
-                                            "ORACLE_HOME",
-                                            buffer, siz))
-                {
-                    if (siz > 0)
-                    {
-                        str = buffer;
-                        str += "\\network\\admin";
-                    }
-                    else
-                        throw 0;
-                }
-                else
-                    throw 0;
-            }
-            catch (...)
-            {
-                if (GetEnvironmentVariableA("TNS_ADMIN", buffer, siz) > 0)
-                    str = buffer;
-            }
-        }
-#else
-        if (getenv("TNS_ADMIN"))
-        {
-            str = getenv("TNS_ADMIN");
-        }
-        else
-        {
-            str = getenv("ORACLE_HOME");
-            str.append(QString::fromLatin1("/network/admin"));
-        }
-#endif
-        str.append(QString::fromLatin1("/tnsnames.ora"));
-
-
-        std::list<QString> ret;
-
-        QFile file(str);
-        if (!file.open(QIODevice::ReadOnly))
-            return ret;
-
-        QTextStream in(&file);
-        QByteArray barray = in.readAll().toUtf8();
-        const char *buf = barray.constData();
-
-        int begname = -1;
-        int parambeg = -1;
-        int pos = 0;
-        int param = 0;
-        while (pos < barray.size())
-        {
-            if (buf[pos] == '#')
-            {
-                while (pos < barray.size() && buf[pos] != '\n')
-                    pos++;
-            }
-            else if (buf[pos] == '=')
-            {
-                if (param == 0)
-                {
-                    if (begname >= 0 && !host.isEmpty())
-                        ret.insert(ret.end(), QString::fromLatin1(buf + begname, pos - begname));
-                }
-            }
-            else if (buf[pos] == '(')
-            {
-                begname = -1;
-                parambeg = pos + 1;
-                param++;
-            }
-            else if (buf[pos] == ')')
-            {
-                if (parambeg >= 0 && host.isEmpty())
-                {
-                    QString tmp = QString::fromLatin1(buf + parambeg, pos - parambeg);
-                    tmp.replace(QRegExp(QString::fromLatin1("\\s+")), QString::null);
-                    if (tmp.toLower().startsWith(QString::fromLatin1("sid=")))
-                        ret.insert(ret.end(), tmp.mid(4));
-                }
-                begname = -1;
-                parambeg = -1;
-                param--;
-            }
-            else if (!isspace(buf[pos]) && begname < 0)
-            {
-                begname = pos;
-            }
-            pos++;
-        }
-        return ret;
-    }
     virtual QWidget *providerConfigurationTab(const QString &provider, QWidget *parent);
 };
+
+std::list<QString> toOracleProvider::providedDatabases(const QString &, const QString &host, const QString &user, const QString &pwd)
+{
+	QSet<QString> tnsnames; // List of locations for the file tnsnames.ora
+	QString str;
+#ifdef Q_OS_WIN32
+	{
+		QSettings settings("HKEY_LOCAL_MACHINE\\Software\\ORACLE", QSettings::NativeFormat);
+		foreach(QString key, settings.childGroups())
+		{
+			QString sHome = settings.value(key + '/' + "ORACLE_HOME").toString();
+			if( sHome.isEmpty())
+				continue;
+
+			QString sHomeName = settings.value(key + '/' + "ORACLE_HOME_NAME").toString();
+			QString version = settings.value(key + '/' + "VERSION").toString();
+
+			QDir dHome(sHome);
+			if( !dHome.exists())
+				continue;
+
+			QFileInfo tnsPath(dHome.absolutePath() + "/network/admin/tnsnames.ora");
+			if( !tnsPath.exists() || !tnsPath.isFile() || !tnsPath.isReadable())
+				continue;
+
+			tnsnames.insert(tnsPath.absoluteFilePath());
+		}
+	}
+#else
+	{
+
+
+		str = QDir::homePath() + QDir::separator() + ".tnsnames.ora";
+		QFileInfo home(str);
+		if(home.exists() && home.isFile() && home.isReadable())
+		{
+			tnsnames.insert(home.absoluteFilePath());
+		}
+
+
+		str = "/etc/tnsnames.ora";
+		QFileInfo etc(str);
+		if(etc.exists() && etc.isFile() && etc.isReadable())
+		{
+			tnsnames.insert(etc.absoluteFilePath());
+		}
+	}
+#endif
+
+	if(getenv("TNS_ADMIN"))
+	{
+		str = getenv("TNS_ADMIN");
+		str += "/tnsnames.ora";
+	}
+	else if( getenv("ORACLE_HOME"))
+	{
+		str = getenv("ORACLE_HOME");
+		str + "/network/admin/tnsnames.ora";
+	} else {
+		str.truncate(0);
+	}
+
+	QFileInfo ohome_net_adm(str);
+	if(!str.isEmpty() && ohome_net_adm.exists() && ohome_net_adm.isFile() && ohome_net_adm.isReadable())
+	{
+		tnsnames.insert(ohome_net_adm.absoluteFilePath());
+	}
+
+	std::list<QString> ret;
+
+	foreach(QString filename, tnsnames)
+	{
+		QFile file(filename);
+		int begname = -1;
+		int parambeg = -1;
+		int pos = 0;
+		int param = 0;
+		QByteArray barray;
+		const char *buf;
+
+		try {
+			barray = toReadFileB(filename);
+			buf = barray.constData();
+		} catch( QString const &e ) {
+			TOMessageBox::warning(
+				toMainWidget(),
+				QT_TRANSLATE_NOOP("toReadFileB", "File error"),
+				QT_TRANSLATE_NOOP("toReadFileB", QString("Couldn't open %1 for readonly").arg(filename)));
+			goto next;
+		}
+
+		while (pos < barray.size())
+		{
+			if (buf[pos] == '#')
+			{
+				while (pos < barray.size() && buf[pos] != '\n')
+					pos++;
+			}
+			else if (buf[pos] == '=')
+			{
+				if (param == 0)
+				{
+					if (begname >= 0 && !host.isEmpty())
+						ret.insert(ret.end(), QString::fromLatin1(buf + begname, pos - begname));
+				}
+			}
+			else if (buf[pos] == '(')
+			{
+				begname = -1;
+				parambeg = pos + 1;
+				param++;
+			}
+			else if (buf[pos] == ')')
+			{
+				if (parambeg >= 0 && host.isEmpty())
+				{
+					QString tmp = QString::fromLatin1(buf + parambeg, pos - parambeg);
+					tmp.replace(QRegExp(QString::fromLatin1("\\s+")), QString::null);
+					if (tmp.toLower().startsWith(QString::fromLatin1("sid=")))
+						ret.insert(ret.end(), tmp.mid(4));
+				}
+				begname = -1;
+				parambeg = -1;
+				param--;
+			}
+			else if (!isspace(buf[pos]) && begname < 0)
+			{
+				begname = pos;
+			}
+			pos++;
+		}
+next:
+		;;
+	} // foreach(QString str, tnsnames)
+
+	ret.sort();
+	return ret;
+}
 
 static toOracleProvider OracleProvider;
 

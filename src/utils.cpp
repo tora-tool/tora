@@ -83,12 +83,6 @@
 #include <QPainter>
 #include <QDebug>
 
-
-#ifdef Q_OS_WIN32
-#  include "windows/cregistry.h"
-# include "windows.h"
-#endif
-
 #if defined(Q_OS_MACX)
 #include <sys/param.h>
 #include <CoreServices/CoreServices.h>
@@ -692,28 +686,7 @@ QString toExpandFile(const QString &file)
     QString ret(file);
     QString home;
 
-#ifdef Q_OS_WIN32
-
-    CRegistry registry;
-    DWORD siz = 1024;
-    char buffer[1024];
-    try
-    {
-        if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
-                                    "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
-                                    "Personal",
-                                    buffer, siz))
-        {
-            if (siz > 0)
-                home = buffer;
-        }
-    }
-    catch (...)
-        {}
-
-#else
     home = QDir::homePath();
-#endif
 
     ret.replace(QRegExp(QString::fromLatin1("\\$HOME")), home);
     return ret;
