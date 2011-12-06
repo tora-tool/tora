@@ -37,8 +37,8 @@
 #include "trotl_export.h"
 #include "trotl_base.h"
 #include "trotl_stat.h"
-#include "Loki/static_check.h"
-#include "Loki/TypeTraits.h"
+#include "loki/static_check.h"
+#include "loki/TypeTraits.h"
 
 #include <string.h>
 

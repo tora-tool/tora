@@ -47,7 +47,7 @@
 #include "trotl_xml.h"
 #endif
 
-#include "Loki/MultiMethods.h"
+#include "loki/MultiMethods.h"
 
 namespace trotl
 {

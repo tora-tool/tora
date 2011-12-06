@@ -47,8 +47,8 @@
 
 //#include "trotl_int.h"
 
-#include "Loki/static_check.h"
-#include "Loki/TypeTraits.h"
+#include "loki/static_check.h"
+#include "loki/TypeTraits.h"
 
 // OCI_STMT_UNKNOWN is not defined in 10.x instantlient (at least on mac)
 #ifndef OCI_STMT_UNKNOWN

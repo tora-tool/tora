@@ -41,7 +41,7 @@
 
 #ifdef __GNUC__
 #include <execinfo.h>
-#include "Loki/TypeTraits.h"
+#include "loki/TypeTraits.h"
 #endif
 
 //#include <fstream>

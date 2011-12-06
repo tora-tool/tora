@@ -80,6 +80,7 @@
 #include <qvalidator.h>
 
 #include <QFileInfo>
+#include <QDir>
 #include <QString>
 #include <QTextStream>
 #include <QVector>

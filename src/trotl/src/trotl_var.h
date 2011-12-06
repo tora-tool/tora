@@ -38,7 +38,7 @@
 #include "trotl_base.h"
 #include "trotl_parser.h"
 
-#include "Loki/Factory_alt.h"
+#include "loki/Factory_alt.h"
 
 #include <string.h>
 
