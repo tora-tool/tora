@@ -670,7 +670,9 @@ void toMain::handleToolsDisplay()
         foreach (QTabBar *b, Workspace->findChildren<QTabBar*>())
         {
             b->setTabsClosable(true);
+#if QT_VERSION < 0x040800
             connect(b, SIGNAL(tabCloseRequested(int)), this, SLOT(workspaceCloseWindow(int)));
+#endif
             // we should be quite sure that the QMdiArea tab-widget
             // goes first (because findChildren is called recursively)
             break;
