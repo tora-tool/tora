@@ -104,7 +104,8 @@
 
 toMain::toMain()
         : toMainWindow(),
-        BackgroundLabel(new toBackgroundLabel(statusBar()))
+          Message(0),
+          BackgroundLabel(new toBackgroundLabel(statusBar()))
 {
     Edit = NULL;
 
@@ -116,8 +117,6 @@ toMain::toMain()
 
     Workspace = new QMdiArea(this);
     LastActiveWindow = 0;
-
-    Message = new toMessage(this);
 
     // it needs go first due signal/slot connection in it
     handleToolsDisplay();
@@ -1957,6 +1956,8 @@ void toMain::displayMessage(void)
     if (StatusMessages.size() < 1)
         return;
 
+    if (!Message)
+        Message = new toMessage(this);
     Message->appendText(*(--StatusMessages.end()));
 }
 
