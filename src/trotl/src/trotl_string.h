@@ -62,23 +62,23 @@ struct TROTL_EXPORT BindParVarchar: public SqlStatement::BindPar
 {
   	BindParVarchar(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 	{
-		/* amount of bytes =  (string length +1 ) * (array length) */
-		valuep = (void**) calloc(_cnt, ct._width + 1);
+		/* amount of bytes =  (string length +1 ) * 4 * (array length) */
+		valuep = (void**) calloc(_cnt, (ct._width + 1) * 4);
 		alenp = (ub2*) calloc(_cnt, sizeof(ub4));
 		
 		dty = SQLT_STR;
-		value_sz = ct._width + 1;
+		value_sz = (ct._width + 1) * 4;
 		type_name = typeid(tstring).name();
 	}
 
 	BindParVarchar(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl) : SqlStatement::BindPar(pos, stmt, decl)
 	{
 		// amount of bytes =  (string length +1 ) * (array length)
-		valuep = (void**) calloc(decl.bracket[0]+1, decl.bracket[1]);
+		valuep = (void**) calloc(decl.bracket[1], (decl.bracket[0] + 1 ) * 4);
 		alenp = (ub2*) calloc(_cnt, sizeof(ub2));
 		
 		dty = SQLT_STR;
-		value_sz = decl.bracket[0]+1;
+		value_sz = (decl.bracket[0] + 1 ) * 4;
 		type_name = typeid(tstring).name();
 	}
 
@@ -100,21 +100,21 @@ struct TROTL_EXPORT BindParChar: public SqlStatement::BindPar
 {
 	BindParChar(unsigned int pos, SqlStatement &stmt, ColumnType &ct) : SqlStatement::BindPar(pos, stmt, ct)
 	{
-		valuep = (void**) calloc(_cnt, ct._width + 1); // TODO +1 ?? why?
+		valuep = (void**) calloc(_cnt, (ct._width + 1) * 4); // TODO +1 ?? why?
 		alenp = (ub2*) calloc(_cnt, sizeof(ub4));
 		
 		dty = SQLT_CHR;
-		value_sz = ct._width;
+		value_sz = ct._width * 4;
 		type_name = typeid(tstring).name();
 	}
 
 	BindParChar(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl): SqlStatement::BindPar(pos, stmt, decl)
 	{
-		valuep = (void**) calloc(decl.bracket[1], decl.bracket[0]);
+		valuep = (void**) calloc(decl.bracket[1], (decl.bracket[0] + 1) * 4);
 		alenp = (ub2*) calloc(_cnt, sizeof(ub2));
 		
 		dty = SQLT_STR;	/* use STR_CHR even if placeholder defined as "char" */
-		value_sz = decl.bracket[0];
+		value_sz = (decl.bracket[0] + 1) * 4;
 		type_name = typeid(tstring).name();
 	}
 
