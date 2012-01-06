@@ -325,6 +325,7 @@ SET(TORA_SOURCES
 # temporarily disabled due the lack of firebird here    tofyracleconnection.cpp
     toglobalsetting.cpp
     tohelp.cpp
+    tohelpsetup.cpp
     tohighlightedtext.cpp
     tohtml.cpp
     tochangeconnection.cpp
