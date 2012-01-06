@@ -173,7 +173,7 @@ private:
 };
 
 void *toThreadStartWrapper(void*);
-class taskRunner;
+class toTaskRunner;
 class toThreadInfo;
 
 class toThread
@@ -184,7 +184,7 @@ private:
     static QThreadStorage<toThreadInfo*> toThreadInfoStorage;
     volatile static unsigned lastThreadNumber;
     
-    taskRunner *Thread;
+    toTaskRunner *Thread;
     static std::list<toThread *> *Threads;
     static toLock *Lock;
     static QThread *MainThread;
@@ -207,7 +207,7 @@ public:
      */
     static void setMainThread(QThread *main);
 
-    friend class taskRunner;
+    friend class toTaskRunner;
     friend class toThreadInfo;
     friend class toConnectionPoolTest;
     friend class toConnectionPoolExec;

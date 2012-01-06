@@ -111,7 +111,8 @@ tora_SOURCES=main.cpp \
 	totabwidget.cpp totabwidget.h \
 	totemplateprovider.cpp \
 	totextview.cpp totextview.h \
-	tothread.cpp tothread.h tothread_p.h \
+	tothread.cpp tothread.h \
+	totaskrunner.cpp totaskrunner.h \
 	totimer.cpp totimer.h \
 	totool.cpp totool.h \
 	utils.cpp utils.h \
@@ -412,7 +413,7 @@ BUILT_SOURCES = \
 	moc_totabwidget.cpp \
 	moc_totemplate.cpp \
 	moc_totemporary.cpp \
-	moc_tothread_p.cpp \
+	moc_totaskrunner.cpp \
 	moc_totool.cpp \
 	moc_totuning.cpp \
 	moc_tounittest.cpp \

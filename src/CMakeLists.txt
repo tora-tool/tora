@@ -236,7 +236,7 @@ SET(TORA_MOC_CLASSES
     totemplate.h
     totemporary.h
 #     totextview.h
-    tothread_p.h
+    totaskrunner.h
     totreewidget.h
 #     totimer.h
     totool.h
@@ -415,6 +415,7 @@ SET(TORA_SOURCES
     totemporary.cpp
     totextview.cpp
     tothread.cpp
+    totaskrunner.cpp
     totimer.cpp
     totool.cpp
     totreewidget.cpp

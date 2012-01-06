@@ -46,7 +46,7 @@
 
 #include "tomain.h"
 #include "tothread.h"
-#include "tothread_p.h"
+#include "totaskrunner.h"
 
 #include <stdio.h>
 #include <errno.h>
@@ -100,7 +100,7 @@ bool toThread::mainThread(void)
 
 toThread::toThread(toTask *task)
 {
-    Thread = new taskRunner(task);
+    Thread = new toTaskRunner(task);
     if (!Threads)
         Threads = new std::list<toThread *>;
     if (!Lock)
@@ -133,62 +133,12 @@ void toThread::startAsync(void)
 
 void toThread::msleep(int msec)
 {
-    taskRunner::msleep(msec);
+    toTaskRunner::msleep(msec);
 }
 
 void toThread::sleep(int sec)
 {
-    taskRunner::sleep(sec);
-}
-
-taskRunner::taskRunner(toTask *task)
-        : Task(task)
-{}
-
-void taskRunner::run(void)
-{
-    try
-    {
-        toThread::Lock->lock ()
-        ;
-        toThread::toThreadInfoStorage.setLocalData(new toThreadInfo(++toThread::lastThreadNumber));
-        StartSemaphore.up();
-        toThread::mainThread();
-        toThread::Lock->unlock();
-        Task->run();
-        toThread::Lock->lock ()
-        ;
-        delete Task;
-        Task = NULL;
-        toThread::Lock->unlock();
-    }
-    catch (const QString &exc)
-    {
-        fprintf(stderr, "Unhandled exception in thread:\n%s\n", exc.toAscii().constData());
-    }
-    catch (...)
-    {
-        fprintf(stderr, "Unhandled exception in thread:\nUnknown type\n");
-    }
-
-
-    // This is a cludge to clean up finnished threads, there won't be many hanging at least
-
-    toThread::Lock->lock ()
-    ;
-    for (std::list<toThread *>::iterator i = toThread::Threads->begin();
-            i != toThread::Threads->end();)
-    {
-        if ((*i)->Thread->isFinished())
-        {
-            delete (*i);
-            toThread::Threads->erase(i);
-            i = toThread::Threads->begin();
-        }
-        else
-            i++;
-    }
-    toThread::Lock->unlock();
+    toTaskRunner::sleep(sec);
 }
 
 toThreadInfo::toThreadInfo(unsigned number) :threadNumber(number), threadTask("")

@@ -39,21 +39,21 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOTHREAD_P_H
-#define TOTHREAD_P_H
+#ifndef TOTASKRUNNER_H
+#define TOTASKRUNNER_H
 
 #include "config.h"
 #include "tothread.h"
 
 #include <QThread>
 
-class taskRunner : public QThread
+class toTaskRunner : public QThread
 {
     Q_OBJECT
 public:
     toSemaphore StartSemaphore;
     toTask *Task;
-    taskRunner(toTask *);
+    toTaskRunner(toTask *);
     virtual void run(void);
     friend class toThread;
 };
