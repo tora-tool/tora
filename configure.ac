@@ -28,7 +28,7 @@ if test "${MAKEINFO}" = no; then
 fi
 # Checks for header files.
 # AC_HEADER_STDC
-AC_CHECK_HEADERS(unistd.h sys/param.h sys/time.h time.h sys/mkdev.h sys/sysmacros.h string.h memory.h fcntl.h dirent.h sys/ndir.h ndir.h alloca.h locale.h utime.h postgresql/libpq-fe.h)
+AC_CHECK_HEADERS(unistd.h sys/param.h sys/time.h time.h sys/mkdev.h sys/sysmacros.h string.h memory.h fcntl.h dirent.h sys/ndir.h ndir.h alloca.h locale.h utime.h libpq-fe.h)
 AC_HEADER_MAJOR
 AC_FUNC_ALLOCA
 AC_FUNC_MALLOC
