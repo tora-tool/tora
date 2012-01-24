@@ -236,7 +236,7 @@ bool toPLSQLText::compile(CompilationType t)
     sql.append(schema);
     sql.append(QString::fromLatin1("."));
     sql.append(object);
-    sql.append(QString::fromLatin1(" "));
+    //sql.append(QString::fromLatin1(" ")); // TS 2012-01-19 There is an initial space at the start of str.mid(offset)
     sql.append(str.mid(offset));
 
     // Remove empty space and the slash at the end of statement.
@@ -272,8 +272,7 @@ bool toPLSQLText::compile(CompilationType t)
 
     try
     {
-        if (t == toPLSQLText::Warning) // TODO: TS 2009-12-21 is it actually compiling if
-                                       // button "compile (without warnings) was pressed?
+        if (t == toPLSQLText::Warning)
         {
             QString alter("ALTER %1 \"%2\".\"%3\" COMPILE ");
             if (body)
@@ -396,8 +395,40 @@ bool toPLSQLText::readData(toConnection &conn/*, toTreeWidget *Stack*/)
         toQuery lines(conn, SQLReadSource, Schema, Object, Type);
 
         QString str = "CREATE OR REPLACE ";
-        while (!lines.eof())
-            str += lines.readValue();
+        bool firstLine = true; // first line of code returned, this line contains program unit type, name etc.
+        while (!lines.eof()) {
+            if (firstLine) {
+	        /* Process the first line of code as the code returned may contain some extra spaces after
+		 * unit type and actual name which causes irritations when saving code to code versioning systems
+		 */
+                QString s = lines.readValue();
+		int pos;
+                if (s.startsWith("PACKAGE BODY", Qt::CaseInsensitive)) {
+                    pos = 13;
+                }
+                else if (s.startsWith("PACKAGE", Qt::CaseInsensitive)) {
+                    pos = 8;
+                }
+                else if (s.startsWith("PROCEDURE", Qt::CaseInsensitive)) {
+                    pos = 10;
+                }
+                else if (s.startsWith("FUNCTION", Qt::CaseInsensitive)) {
+                    pos = 9;
+                }
+                else if (s.startsWith("TYPE BODY", Qt::CaseInsensitive)) {
+                    pos = 10;
+                }
+                else if (s.startsWith("TYPE", Qt::CaseInsensitive)) {
+                    pos = 5;
+                }
+                while (s.at(pos) == ' ')
+                    s.remove(pos, 1); // remove all extra spaces between unit type and unit name
+                str += s;
+                firstLine = false;
+            } else {
+                str += lines.readValue();
+            }
+        }
         str += "\n/";
         setText(str);
         setModified(false);
