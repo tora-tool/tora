@@ -137,7 +137,7 @@ def configure(conf):
         conf.env.QTDIR = Options.options.qt_lib
     if hasattr(Options.options, 'qt_bin'):
         conf.env.QTDIR = Options.options.qt_bin
-    
+
     if is_msvc(conf.env):
         # add exception support
         conf.env.append_value('CXXFLAGS', ['/EHsc'])
@@ -169,6 +169,11 @@ def configure(conf):
     conf.env.TORA_LIBS = libs
 
 def build(bld):
+    # make sure the source tree is clean
+    if bld.path.ant_glob('**/moc_*.cpp **/ui_*.h'):
+        raise ConfigurationError('Old build files found. Remove any moc_*.cpp or ui_*.h ' \
+                                     'files (or checkout a clean copy) before building with waf.')
+
     conditional_oracle_sources = bld.path.ant_glob(
         'src/tooracleconnection.cpp '
             'src/tooracleconnection_trotl.cpp '
