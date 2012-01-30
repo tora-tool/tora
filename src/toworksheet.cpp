@@ -522,7 +522,7 @@ void toWorksheet::setup(bool autoLoad)
     connect(ResultTab, SIGNAL(currentChanged(int)),
             this, SLOT(changeResult(int)));
 
-    if (autoLoad)
+    if (autoLoad && !toConfigurationSingle::Instance().wsAutoLoad().isEmpty())
     {
         Editor->editOpen(toConfigurationSingle::Instance().wsAutoLoad());
     }
