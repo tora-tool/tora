@@ -762,14 +762,18 @@ public:
                      qApp->translate("toEditExtensionTool", "Indent Block"),
                      &EditExtensions,
                      SLOT(indentBlock()));
+#ifndef Q_WS_MAC
         Indent->setShortcut(Qt::ALT + Qt::Key_Right);
+#endif
 
         Deindent = edit->addAction(
                        QIcon(QPixmap(const_cast<const char**>(deindent_xpm))),
                        qApp->translate("toEditExtensionTool", "De-indent Block"),
                        &EditExtensions,
                        SLOT(deindentBlock()));
+#ifndef Q_WS_MAC
         Deindent->setShortcut(Qt::ALT + Qt::Key_Left);
+#endif
 
         Quote = edit->addAction(qApp->translate("toEditExtensionTool",
                                                 "Quote Selection"),
