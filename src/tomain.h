@@ -83,7 +83,7 @@ class toDockbar;
  * This class defines the main window for TOra application
  *
  * NOTE: all methods inherited from toMainWindow are marked
- * with /*virtual*
+ * with "virtual"
 */
 class toMain : public toMainWindow
 {
