@@ -45,6 +45,7 @@
 #include "config.h"
 #include "tosqlparse.h"
 #include "toresultview.h"
+#include "toresultcombo.h"
 
 #include <map>
 #include <stdio.h>
@@ -69,6 +70,7 @@ class toResultPlan : public toResultView
     bool Reading; // true when reading the plan, false when setting up the plan
     toEventQuery *Query;
     QString User;
+    toResultCombo *CursorChildSel; //Used for Oracle for V$SQL_PLAN to choose plans among cursor children
     void checkException(const QString &);
     void oracleSetup(void);
 
@@ -88,6 +90,7 @@ public:
 
     /** Reimplemented for internal reasons. If you prepend "SAVED:" a saved plan is read
      * with the identified_by set to the string following the initial "SAVED:" string.
+     * If you prepend SGA: the rest is interpreted as cursor address:hash_value in V$SQL_PLAN.
      */
     virtual void query(const QString &sql, const toQList &param);
     /** Reimplemented for internal reasons.
@@ -103,6 +106,8 @@ public:
 private slots:
     void poll();
     void queryDone();
+    void ChildComboReady();
+    void ChildComboChanged(int NewIndex);
 };
 
 #endif

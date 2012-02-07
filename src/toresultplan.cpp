@@ -65,45 +65,59 @@ toResultPlan::toResultPlan(QWidget *parent, const char *name)
     oracleSetup();
 }
 
+static toSQL SQLVSQLChildSel("toResultPlan:VSQLChildSel",
+			 "SELECT distinct to_char(child_number)||' ('||to_char(plan_hash_value)||')' cn_disp, child_number, sql_id, plan_hash_value\n"
+			 "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1'\n"
+			 "ORDER BY child_number",
+			 "Get list of child plans for cursor",
+			 "1000");
+
+static toSQL SQLVSQLChildSel9("toResultPlan:VSQLChildSel",
+			 "SELECT distinct to_char(child_number) cn_disp, child_number, null sql_id, null plan_hash_value\n"
+			 "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1'\n"
+			 "ORDER BY child_number",
+			 "",
+			 "0900");
+
 static toSQL SQLViewVSQLPlan("toResultPlan:ViewVSQLPlan",
                          "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
-                         "  io_cost,Bytes,Cardinality,\n"
-                         "  partition_start,partition_stop,temp_space,time\n"
-                         "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' and child_number = 0"
+                         "  io_cost,Bytes,Cardinality,partition_start,partition_stop,\n"
+                         "  temp_space,time,access_predicates,filter_predicates\n"
+                         "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' and child_number = %2"
 			 "ORDER BY NVL(Parent_ID,0),ID",
                          "Get the contents of SQL plan from V$SQL_PLAN.",
                          "1000");
 
 static toSQL SQLViewVSQLPlan92("toResultPlan:ViewVSQLPlan",
                          "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
-                         "  io_cost,Bytes,Cardinality,\n"
-                         "  partition_start,partition_stop,temp_space,null time\n"
-                         "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' and child_number = 0"
+                         "  io_cost,Bytes,Cardinality,partition_start,partition_stop,\n"
+                         "  temp_space,null time,access_predicates,filter_predicates\n"
+                         "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' and child_number = %2"
 			 "ORDER BY NVL(Parent_ID,0),ID",
                          "",
                          "0902");
 
 static toSQL SQLViewVSQLPlan9("toResultPlan:ViewVSQLPlan",
                          "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
-                         "  io_cost,Bytes,Cardinality,\n"
-                         "  partition_start,partition_stop,null temp_space,null time\n"
-                         "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' and child_number = 0"
+                         "  io_cost,Bytes,Cardinality,partition_start,partition_stop,\n"
+                         "  null temp_space,null time,access_predicates,filter_predicates\n"
+                         "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' and child_number = %2"
 			 "ORDER BY NVL(Parent_ID,0),ID",
                          "",
                          "0900");
 
 static toSQL SQLViewPlan("toResultPlan:ViewPlan",
                          "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
-                         "  io_cost,Bytes,Cardinality,\n"
-                         "  partition_start,partition_stop,temp_space,time\n"
+                         "  io_cost,Bytes,Cardinality,partition_start,partition_stop,\n"
+                         "  temp_space,time,access_predicates,filter_predicates\n"
                          "  FROM %1 WHERE Statement_ID = '%2' ORDER BY NVL(Parent_ID,0),ID",
                          "Get the contents of a plan table. Observe the %1 and %2 which must be present. Must return same columns",
                          "1000");
 
 static toSQL SQLViewPlan8("toResultPlan:ViewPlan",
                           "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
-                          "  io_cost,Bytes,Cardinality,\n"
-                          "  partition_start,partition_stop,' ',' '\n"
+                          "  io_cost,Bytes,Cardinality,partition_start,partition_stop,\n"
+                          "  ' ',' ',' 'access_predicates,' 'filter_predicates\n"
                           "  FROM %1 WHERE Statement_ID = '%2' ORDER BY NVL(Parent_ID,0),ID",
                           "",
                           "0800");
@@ -125,27 +139,24 @@ void toResultPlan::oracleSetup(void)
     setAllColumnsShowFocus(true);
     setSorting( -1);
     setRootIsDecorated(true);
-    addColumn(QString::fromLatin1("#"));
-    addColumn(tr("Operation"));
-    addColumn(tr("Options"));
-    addColumn(tr("Object name"));
-    addColumn(tr("Mode"));
-    addColumn(tr("Cost"));
-    addColumn(tr("%CPU"));
-    addColumn(tr("Bytes"));
-    addColumn(tr("Rows"));
-    addColumn(tr("TEMP Space"));
-    addColumn(tr("Time"));
-    addColumn(tr("Startpartition"));
-    addColumn(tr("Endpartition"));
-    setColumnAlignment(5, Qt::AlignRight);
-    setColumnAlignment(6, Qt::AlignRight);
-    setColumnAlignment(7, Qt::AlignRight);
-    setColumnAlignment(8, Qt::AlignRight);
-    setColumnAlignment(9, Qt::AlignRight);
-    setColumnAlignment(10, Qt::AlignRight);
-    setColumnAlignment(11, Qt::AlignRight);
-    setColumnAlignment(12, Qt::AlignRight);
+    
+    QTreeWidgetItem *header = new QTreeWidgetItem();
+    header->setText(0, QString::fromLatin1("#"));
+    header->setText(1,tr("Operation"));
+    header->setText(2,tr("Options"));
+    header->setText(3,tr("Object name"));
+    header->setText(4,tr("Mode"));
+    header->setText(5,tr("Cost"));
+    header->setText(6,tr("%CPU"));
+    header->setText(7,tr("Bytes"));
+    header->setText(8,tr("Rows"));
+    header->setText(9,tr("Time"));
+    header->setText(10,tr("Access pred."));
+    header->setText(11,tr("Filter pred."));
+    header->setText(12,tr("TEMP Space"));
+    header->setText(13,tr("Startpartition"));
+    header->setText(14,tr("Endpartition"));
+    setHeaderItem(header);
 }
 
 // Connects query signals to appropriate slots. Created just in order not to repeat code...
@@ -159,7 +170,8 @@ void toResultPlan::connectSlotsAndStart()
 
 void toResultPlan::oracleNext(void)
 {
-    LastTop = NULL;
+   printf("toResultPlan::oracleNext\n");
+   LastTop = NULL;
     Parents.clear();
     Last.clear();
 
@@ -176,7 +188,7 @@ void toResultPlan::oracleNext(void)
     QString sql = toShift(Statements);
     if (sql.isNull())
     {
-        return ;
+       return ;
     }
     if (sql.length() > 0 && sql.at(sql.length() - 1).toLatin1() == ';')
         sql = sql.mid(0, sql.length() - 1);
@@ -333,20 +345,27 @@ void toResultPlan::query(const QString &sql,
         }
         else if (sql.startsWith(QString::fromLatin1("SGA:")))
         {
-            QString Address = sql.mid(4);
+            Ident = sql.mid(4);
 	    toConnection &conn = connection();
-            toQList par;
-            Query = new toEventQuery(conn, toQuery::Background,
-                                       toSQL::string(SQLViewVSQLPlan, conn).arg(Address),
-                                       par);
-            connectSlotsAndStart();
-            Reading = true;
+	    
 	    LastTop = NULL;
             Parents.clear();
             Last.clear();
             TopItem = new toResultViewItem(this, NULL, QString::fromLatin1("V$SQL_PLAN:"));
-            TopItem->setText(1, toSQLString(conn, Address).left(50).trimmed());
-        }
+	    QString queryText = toSQLString(conn, Ident);
+            TopItem->setText(1, queryText.left(50).trimmed());
+            TopItem->setToolTip(1, queryText);
+
+	    CursorChildSel = new toResultCombo(this, "toResultPlan");
+	    CursorChildSel->setSelectionPolicy(toResultCombo::First);
+	    try
+	    {
+		CursorChildSel->query(toSQL::string(SQLVSQLChildSel, conn).arg(Ident));
+	    }
+	    TOCATCH;
+	    setItemWidget(TopItem, 3, CursorChildSel);
+	    connect(CursorChildSel, SIGNAL(done()), this, SLOT(ChildComboReady())); //Wait for cursor children combo to fill
+       }
 	else
         {
             TopItem = NULL;
@@ -384,6 +403,8 @@ void toResultPlan::poll(void)
             QString endpartition = Query->readValue();
             QString tempspace = Query->readValue().toSIsize();
             QString time = Query->readValue();
+            QString accesspred = Query->readValue();
+            QString filterpred = Query->readValue();
 
             toResultViewItem *item;
             if (!parentid.isNull() && Parents[parentid])
@@ -429,13 +450,24 @@ void toResultPlan::poll(void)
             item->setText(3, object);
             item->setText(4, optimizer);
             item->setText(5, cost);
+	    item->setTextAlignment (5,Qt::AlignRight);
             item->setText(6, cpupct);
+	    item->setTextAlignment (6,Qt::AlignRight);
             item->setText(7, bytes);
+	    item->setTextAlignment (7,Qt::AlignRight);
             item->setText(8, cardinality);
-            item->setText(9, tempspace);
-            item->setText(10, time);
-            item->setText(11, startpartition);
-            item->setText(12, endpartition);
+	    item->setTextAlignment (8,Qt::AlignRight);
+            item->setText(9, time);
+            item->setText(10, accesspred);
+            item->setToolTip(10, accesspred);
+            item->setSizeHint(10, QSize(120,0));
+            item->setText(11, filterpred);
+            item->setToolTip(11, filterpred);
+            item->setSizeHint(11, QSize(120,0));
+            item->setText(12, tempspace);
+	    item->setTextAlignment (12,Qt::AlignRight);
+            item->setText(13, startpartition);
+            item->setText(14, endpartition);
             Parents[id] = item;
         }
         expandAll();
@@ -448,6 +480,51 @@ void toResultPlan::poll(void)
         checkException(str);
     }
 }
+
+void toResultPlan::ChildComboReady()
+{
+    toConnection &conn = connection();
+    QStringList cur_sel = CursorChildSel->itemData(0).toStringList();
+    QString ChildNumber = cur_sel.at(0);
+    QString SInfo = QString::fromLatin1("V$SQL_PLAN: %1\nChild: %2 SQL_ID: %3").arg(cur_sel.at(2)).arg(ChildNumber).arg(cur_sel.at(1));
+    TopItem->setText(0,SInfo);
+    connect(CursorChildSel, SIGNAL(currentIndexChanged (int) ), this, SLOT(ChildComboChanged(int)));
+
+    toQList par;
+    Query = new toEventQuery(conn, toQuery::Background,
+                             toSQL::string(SQLViewVSQLPlan, conn).arg(Ident).arg(ChildNumber),
+                             par);
+    connectSlotsAndStart();
+    Reading = true;
+}
+
+void toResultPlan::ChildComboChanged(int NewIndex)
+{
+    if (NewIndex > -1 )
+    {
+      toConnection &conn = connection();
+      QStringList cur_sel = CursorChildSel->itemData(NewIndex).toStringList();
+      QString ChildNumber = cur_sel.at(0);
+      QString SInfo = QString::fromLatin1("V$SQL_PLAN: %1\nChild: %2 SQL_ID: %3").arg(cur_sel.at(2)).arg(ChildNumber).arg(cur_sel.at(1));
+      TopItem->setText(0,SInfo);
+      
+ /*
+      std::map <QString, toTreeWidgetItem *>::reverse_iterator it;
+      for (it=Parents.rbegin(); it!=Parents.rend(); it++) {printf("Aqq %s\n",it->first.toAscii().constData()); delete it->second;}
+ */
+      TopItem->deleteChildren();
+      LastTop = NULL;
+      Parents.clear();
+      Last.clear();
+      toQList par;
+      Query = new toEventQuery(conn, toQuery::Background,
+			      toSQL::string(SQLViewVSQLPlan, conn).arg(Ident).arg(ChildNumber),
+			      par);
+      connectSlotsAndStart();
+      Reading = true;
+    }
+}
+
 
 void toResultPlan::queryDone()
 {
@@ -466,6 +543,10 @@ void toResultPlan::queryDone()
                                  arg(Ident), par);
         connectSlotsAndStart();
         Reading = true;
+    }
+    else if (sql().startsWith(QString::fromLatin1("SGA:")))
+    {
+	return;
     }
     else
     {

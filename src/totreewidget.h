@@ -765,6 +765,11 @@ public:
      *
      */
     virtual void moveItem(toTreeWidgetItem *after);
+    
+    /**
+    * Delete all item children
+    */
+    virtual void deleteChildren();
 
 
     /**

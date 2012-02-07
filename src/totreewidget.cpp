@@ -654,6 +654,18 @@ void toTreeWidgetItem::setSelectable(bool enable)
     QTreeWidgetItem::setFlags(fl);
 }
 
+void toTreeWidgetItem::deleteChildren()
+{
+    QList<QTreeWidgetItem*> c_list = takeChildren();
+    toTreeWidgetItem* it;
+    while (!c_list.isEmpty())
+    {
+       it = (toTreeWidgetItem*)c_list.takeFirst();
+       it->deleteChildren();
+       delete it;
+    }
+}
+
 
 void toTreeWidgetItem::moveItem(toTreeWidgetItem *after)
 {
