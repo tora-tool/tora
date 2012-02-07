@@ -83,7 +83,7 @@ static toSQL SQLViewVSQLPlan("toResultPlan:ViewVSQLPlan",
                          "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
                          "  io_cost,Bytes,Cardinality,partition_start,partition_stop,\n"
                          "  temp_space,time,access_predicates,filter_predicates\n"
-                         "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' and child_number = %2"
+                         "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' and child_number = %2\n"
 			 "ORDER BY NVL(Parent_ID,0),ID",
                          "Get the contents of SQL plan from V$SQL_PLAN.",
                          "1000");
@@ -92,7 +92,7 @@ static toSQL SQLViewVSQLPlan92("toResultPlan:ViewVSQLPlan",
                          "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
                          "  io_cost,Bytes,Cardinality,partition_start,partition_stop,\n"
                          "  temp_space,null time,access_predicates,filter_predicates\n"
-                         "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' and child_number = %2"
+                         "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' and child_number = %2\n"
 			 "ORDER BY NVL(Parent_ID,0),ID",
                          "",
                          "0902");
@@ -101,7 +101,7 @@ static toSQL SQLViewVSQLPlan9("toResultPlan:ViewVSQLPlan",
                          "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
                          "  io_cost,Bytes,Cardinality,partition_start,partition_stop,\n"
                          "  null temp_space,null time,access_predicates,filter_predicates\n"
-                         "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' and child_number = %2"
+                         "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1' and child_number = %2\n"
 			 "ORDER BY NVL(Parent_ID,0),ID",
                          "",
                          "0900");
@@ -170,8 +170,7 @@ void toResultPlan::connectSlotsAndStart()
 
 void toResultPlan::oracleNext(void)
 {
-   printf("toResultPlan::oracleNext\n");
-   LastTop = NULL;
+    LastTop = NULL;
     Parents.clear();
     Last.clear();
 

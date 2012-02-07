@@ -614,6 +614,9 @@ public:
 
     class oracleConnection : public toConnection::connectionImpl
     {
+	QString version_raw;
+	QString version_frm;
+
         QString connectString(void)
         {
             QString ret;
@@ -887,6 +890,7 @@ public:
 
         virtual QString version(toConnectionSub *sub)
         {
+	    if (!version_raw.isNull()) return version_raw;
             oracleSub *conn = oracleConv(sub);
             try
             {
@@ -899,13 +903,36 @@ public:
                     version >> buffer;
                     QStringList vl = QString(buffer).split('.');
                     QString ve;
-                    QString verrj;
                     for ( QStringList::iterator vi = vl.begin(); vi != vl.end(); ++vi )
                     {
                         ve = *vi;
-                        verrj += ve.rightJustified(2, '0');
+                        version_raw += ve.rightJustified(2, '0');
                     }
-                    return verrj;
+                    return version_raw;
+                }
+            }
+            catch (...)
+            {
+                // Ignore any errors here
+            }
+            return QString();
+        }
+
+        virtual QString versionfrm(toConnectionSub *sub)
+        {
+	    if (!version_frm.isNull()) return version_frm;
+            oracleSub *conn = oracleConv(sub);
+            try
+            {
+                otl_stream version(1,
+                                   "SELECT version FROM product_component_version where product like 'Oracle%'",
+                                   *(conn->Connection));
+                if (!version.eof())
+                {
+                    char buffer[1024];
+                    version >> buffer;
+                    version_frm = QString::fromLatin1(buffer);
+                    return version_frm;
                 }
             }
             catch (...)

@@ -170,7 +170,7 @@ public:
     static bool updateSQL(const QString &name,
                           const QString &sql,
                           const QString &description,
-                          const QString &ver = "8.1",
+                          const QString &ver = "0801",
                           const QString &provider = "Oracle",
                           bool modified = true);
 
@@ -303,7 +303,7 @@ public:
     toSQL(const QString &name,
           const QString &sql,
           const QString &description = "",
-          const QString &ver = "8.1",
+          const QString &ver = "0801",
           const QString &provider = "Oracle");
 };
 

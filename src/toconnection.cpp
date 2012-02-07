@@ -434,7 +434,15 @@ QString toConnection::description(bool version) const
 
     if (version)
     {
-        if (!Version.isEmpty())
+
+        if (toIsOracle(*this))
+	{
+            PoolPtr sub(ConnectionPool);
+            ret += QString::fromLatin1(" [");
+            ret += Connection->versionfrm(*sub);
+            ret += QString::fromLatin1("]");
+	}    
+        else if (!Version.isEmpty())
         {
             ret += QString::fromLatin1(" [");
             ret += Version;

@@ -90,6 +90,12 @@
 
 static int toMaxLong = toConfigurationSingle::Instance().maxLong();
 
+//PRODUCT_COMPONENT_VERSION view exists from Oracle7 at least and have grant select to public privs
+static toSQL SQLDBVersion("toOracleConnection:DBVersion",
+                        "SELECT version FROM PRODUCT_COMPONENT_VERSION\n"
+                        " WHERE product like 'Oracle%'",
+                        "Read Oracle RDBMS Version");
+
 static toSQL SQLComment("toOracleConnection:Comments",
                         "SELECT Column_name,Comments FROM sys.All_Col_Comments\n"
                         " WHERE Owner = :f1<char[100]>\n"
@@ -937,6 +943,8 @@ public:
 	{
 		::trotl::OciEnv &_env;
 		QString connectString(void);
+		QString version_raw;
+		QString version_frm;
 
 		oracleSub *oracleConv(toConnectionSub *sub)
 		{
@@ -1209,9 +1217,24 @@ public:
 
 		virtual QString version(toConnectionSub *sub)
 		{
+			if (!version_raw.isNull()) return version_raw;
 			oracleSub *connp = oracleConv(sub);
 			try
 			{
+				toQuery dbversion(connection(), SQLDBVersion);
+				if (!dbversion.eof())
+				{
+					QString ver = dbversion.readValue();
+					QStringList vl = QString(ver).split('.');
+					QString ve;
+					for ( QStringList::iterator vi = vl.begin(); vi != vl.end(); ++vi )
+					{
+						ve = *vi;
+						version_raw += ve.rightJustified(2, '0');
+					}
+					return version_raw;
+				}
+/*				
 				::trotl::OciLogin &login( *(connp->_login) );
 				::std::stringstream version;
 				version << login._server.versionNumber() << "."
@@ -1221,6 +1244,32 @@ public:
 					<< login._server.portUpdateNumber();
 
 				return QString::fromLatin1(version.str().c_str());
+*/
+			}
+			catch (::trotl::OciException e) {
+				TLOG(0,toDecorator,__HERE__) << e.what() << std::endl;
+			}
+			catch (...)
+			{
+				TLOG(1,toDecorator,__HERE__) << "	Ignored exception." << std::endl;
+				// Ignore any errors here
+			}
+			//return QString::QString(); // TS 2010-12-05 couldn't compile with this...
+                        return QString::null;        // ... so changed to this.
+		}
+
+		virtual QString versionfrm(toConnectionSub *sub)
+		{
+			if (!version_frm.isNull()) return version_frm;
+			oracleSub *connp = oracleConv(sub);
+			try
+			{
+				toQuery dbversion(connection(), SQLDBVersion);
+				if (!dbversion.eof())
+				{
+					version_frm = dbversion.readValue();
+					return version_frm;
+				}
 			}
 			catch (::trotl::OciException e) {
 				TLOG(0,toDecorator,__HERE__) << e.what() << std::endl;

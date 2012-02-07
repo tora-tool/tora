@@ -232,6 +232,10 @@ public:
          */
         virtual QString version(toConnectionSub *) = 0;
 
+        /** Get formated string of the version of the database connected to.
+         */
+        virtual QString versionfrm(toConnectionSub *sub) {return version(sub);}
+
         /** Return a string representation to address an object.
          * @param name The name to be quoted.
          * @param quoteLowercase Enclose in quotes when identifier has lowercase letters
