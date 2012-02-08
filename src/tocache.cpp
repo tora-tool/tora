@@ -79,7 +79,9 @@ bool toCache::cacheAvailable(cacheEntryType type, bool block, toTask * t)
 		} else {
 			return currState != FAILED && cacheState() >= waitState;
 		}
-	    
+	default:
+		assert(0);
+		return true; // NEVER reached, just prevent MSVC warning
 	} //switch
 }
 

@@ -45,11 +45,6 @@
 #include "tologger.h"
 #include <iomanip>
 
-#ifdef Q_OS_WIN32
-#  include "windows/cregistry.h"
-#include <Windows.h>
-#endif
-
 #include <trotl.h>
 #include <trotl_convertor.h>
 #include <trotl_anydata.h>
@@ -84,6 +79,7 @@
 #include <QString>
 #include <QTextStream>
 #include <QVector>
+#include <QSettings>
 
 #define MAXTOMAXLONG 30000
 #define MAXLOBSHOWN 64
