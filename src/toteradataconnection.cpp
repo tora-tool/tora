@@ -546,7 +546,7 @@ public:
                 if(callServer(request, DBFABT) != EM_OK)
                     throw QString::fromLatin1("Error aborting request");
             }
-            catch(QString err)
+            catch(QString const &err)
             {
                 qDebug() << "Expected error in abort" << err;
             }

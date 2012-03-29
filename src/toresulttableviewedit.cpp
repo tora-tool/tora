@@ -79,9 +79,7 @@ void toResultTableViewEdit::query(const QString &SQL, const toQList &params)
 {
     revertChanges();
 
-    if (params.size() != 2)
-        ;                       // assume it's a refresh
-    else
+    if (params.size() == 2)
     {
         toQList::const_iterator par = params.begin();
         Owner = *par;

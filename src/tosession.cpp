@@ -692,17 +692,22 @@ void toSession::refresh(void)
         if (toIsOracle(connection()))
         {
             QString extra;
-            if (Select->currentIndex() == 0)
+            switch(Select->currentIndex())
+            {
+            case 0:
                 extra = "   AND a.Type != 'BACKGROUND' AND a.Status != 'INACTIVE'\n";
-            else if (Select->currentIndex() == 1)
-                ; // Do nothing
-            else if (Select->currentIndex() == 2)
+            	break;
+            case 1:
+            	break;
+            case 2:
                 extra = "   AND a.Type != 'BACKGROUND'\n";
-            else if (Select->currentIndex() == 3)
+            	break;
+            case 3:
                 extra = "   AND a.SchemaName NOT IN ('SYS','SYSTEM')\n";
-            else
+            	break;
+            default:
                 extra = "   AND a.SchemaName = '" + Select->currentText() + "'\n";
-
+            }
             sql = sql.arg(extra);
         }
 

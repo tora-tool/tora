@@ -1032,7 +1032,7 @@ QStringList toHighlightedText::getCompletionList(QString* partial)
                 }
             }
         }
-        catch (QString e)
+        catch (QString const &e)
         {
             qDebug() << "toHighlightedText::getCompletionList:" << e;
         }

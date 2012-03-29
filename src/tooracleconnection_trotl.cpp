@@ -1242,7 +1242,7 @@ public:
 				return QString::fromLatin1(version.str().c_str());
 */
 			}
-			catch (::trotl::OciException e) {
+			catch (::trotl::OciException const &e) {
 				TLOG(0,toDecorator,__HERE__) << e.what() << std::endl;
 			}
 			catch (...)
@@ -1267,7 +1267,7 @@ public:
 					return version_frm;
 				}
 			}
-			catch (::trotl::OciException e) {
+			catch (::trotl::OciException const &e) {
 				TLOG(0,toDecorator,__HERE__) << e.what() << std::endl;
 			}
 			catch (...)
