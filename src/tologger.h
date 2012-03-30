@@ -33,6 +33,9 @@ typedef Tdecorator<
 			 charDecorator<'\n'>
 		)> toDecorator;
 
+typedef Tdecorator<
+	TSLOG_TYPELIST_1(charDecorator<' '>
+		)> toNoDecorator;
 
 struct s_null_sink : public boost::iostreams::stream_buffer<boost::iostreams::null_sink>
 {
@@ -56,6 +59,28 @@ inline thread_safe_log templ_get_log_ownthread( int_to_type< idxLog> *i = NULL )
 	return thread_safe_log( log);
 }
 
+// generic debug <0> - debugging(enabled)
+/*
+template<>
+inline thread_safe_log templ_get_log_ownthread(int_to_type<0>*)
+{
+	static s_null_sink nsink;
+	static std::ostream out(&nsink);
+	static internal_thread_safe_log_ownthread log( out );
+	return thread_safe_log( log);
+}
+*/
+
+// exceptions debug<1> - debugging(disabled)
+template<>
+inline thread_safe_log templ_get_log_ownthread(int_to_type<1>*)
+{
+	static s_null_sink nsink;
+	static std::ostream out(&nsink);
+	static internal_thread_safe_log_ownthread log( out );
+	return thread_safe_log( log);
+}
+
 // tonoblockquery<3> - debugging(disabled)
 template<>
 inline thread_safe_log templ_get_log_ownthread(int_to_type<3>*)
@@ -67,14 +92,14 @@ inline thread_safe_log templ_get_log_ownthread(int_to_type<3>*)
 }
 
 // tonoblockquery<4> - data read(disabled)
-/* template<> */
-/* inline thread_safe_log templ_get_log_ownthread(int_to_type<4>*) */
-/* { */
-/* 	static s_null_sink nsink; */
-/* 	static std::ostream out(&nsink); */
-/* 	static internal_thread_safe_log_ownthread log( out ); */
-/* 	return thread_safe_log( log); */
-/* } */
+template<>
+inline thread_safe_log templ_get_log_ownthread(int_to_type<4>*)
+{
+ 	static s_null_sink nsink;
+ 	static std::ostream out(&nsink);
+ 	static internal_thread_safe_log_ownthread log( out );
+ 	return thread_safe_log( log);
+}
 
 /*
 thread_safe_log templ_get_log_ownthread<1>( int_to_type< 1> * = NULL )
@@ -89,14 +114,14 @@ inline thread_safe_log get_log( int idxLog)
 {
 	switch( idxLog)
 	{
-	case 0: return templ_get_log_ownthread< 0>(); // tooracleconnection log
-	case 1: return templ_get_log_ownthread< 1>(); // exception log
-	case 2: return templ_get_log_ownthread< 2>(); // qDebug log
+	case 0: return templ_get_log_ownthread< 0>(NULL); // tooracleconnection log
+	case 1: return templ_get_log_ownthread< 1>(NULL); // exception log
+	case 2: return templ_get_log_ownthread< 2>(NULL); // qDebug log
 	case 3: return templ_get_log_ownthread< 3>(NULL); // tonoblockquery log
 	case 4: return templ_get_log_ownthread< 4>(NULL); // data read log
 	default: 
 		assert( false);
-		return templ_get_log_ownthread< 0>();
+		return templ_get_log_ownthread< 0>(NULL);
 	}
 }
 

@@ -9,36 +9,16 @@
 #include "OracleSQLParser.h"
 
 #include "tsqlparse.h"
+#include "tologger.h"
 
 #include <QPair>
 
 namespace SQLParser
-{
-	/* each instance of T_SELECT can holds transtation map TABLE_ALIAS -> TABLE_REF */
-	class TSQLPARSER_EXPORT Translation : public QMap<QString, Token*>
-	{
-	public:
-		virtual ~Translation() {};
-	};
-
-	/* Vertex represents "table". Table's scope is either: "global" Token* == ROOT
-	   or "local" Token* points into some nested/factored subquery
-	*/
-	class TSQLPARSER_EXPORT Vertex : public QPair<Translation*, Token*>	
-	{
-	};
-
-	/* Edge connects two Vertexes */
-	class TSQLPARSER_EXPORT Edge : public QPair<Vertex*, Vertex*>
-	{
-	};
-	
+{	
 	class OracleSQLToken: public Token
 	{
 	public:
-		OracleSQLToken (Token *parent, const Position &pos, const QString &str, unsigned tokentype, const char* tokentypestring, unsigned usagetype = T_UNKNOWN);
-		Translation _mTranslation; // table alias "A" -> table ref "SCHEMA.TABLE_A"
-		
+		OracleSQLToken (Token *parent, const Position &pos, const QString &str, unsigned tokentype, const char* tokentypestring, unsigned usagetype = T_UNKNOWN);				
 	};
 
 	OracleSQLToken::OracleSQLToken (Token *parent, const Position &pos, const QString &str, unsigned tokentype, const char* tokentypestring, unsigned usagetype)
@@ -144,6 +124,9 @@ namespace SQLParser
 				_mTokenTypeRef = X_FAILURE;
 			}
 			break;
+		case T_COLUMN_LIST:
+			_mTokenTypeRef = S_COLUMN_LIST;
+			break;
 		case T_TABLE_CAST:
 			_mTokenTypeRef = S_SUBQUERY_NESTED;
 			break;
@@ -159,43 +142,37 @@ namespace SQLParser
 		case T_IDENTIFIER:
 			_mTokenTypeRef = S_IDENTIFIER;
 			break;
+		case T_OPERATOR_BINARY:
+			_mTokenTypeRef = S_OPERATOR_BINARY;
+			break;
 		} // switch(tokentype)
 
-	};
-
-	class OracleIdentifier: public Identifier
-	{
-	public:
-		OracleIdentifier(QVector<Token*> const &a) : Identifier(a), _mTableRef(NULL) {};
-		OracleIdentifier() : Identifier(), _mTableRef(0) {};
-
-		QString toStringTranslated() const;
-		
-		virtual ~OracleIdentifier() {};		
-	private:
-		Token const* _mTableRef;
-	protected:
 	};
 	
 	class OracleSQLStatement: public Statement
 	{
 	public:
 		OracleSQLStatement(const QString &statement, const QString &name);
-		~OracleSQLStatement()
-		{};
-		virtual void tree2Dot(std::ostream &o) const;
+		virtual ~OracleSQLStatement() {};
+
 		//template<class T> T& recursiveWalk(Token const* node, T &stream) const;
 	private:
 		void parse ();
 		/* Recursive walk through ANTLR3_BASE_TREE and create AST tree*/
 		void treeWalk(pOracleSQLParser psr, QPointer<Token> root,  ANTLR3_BASE_TREE *tree, ANTLR3_UINT32 &lastindex);
-		/* Walk through Token tree and look for table names, table aliases, ... */
-		void scanTree();
-
+		
+		/* Walk through Token tree and look for table names, table aliases, ... and try to resolve them
+		   Note: this function also replaces some instances of Token* with Token's subclass instances
+		   */
 		void disambiguate();
 		
+	public:
+		/* Walk through Token tree and look for table names, table aliases, ... and try to resolve them using cached database catalogue*/
+		virtual void scanTree(ObjectCache *, QString const&);
+		
+	private:		
 		void addTranslation(QString const& alias, Token const *tableOrSubquery, Token const *context);
-		Token const* translate(QString const& alias, Token const *context);
+		void addTableRef(Token const *tableOrSubquery, Token const *context);
 		
 		pANTLR3_VECTOR lexerTokenVector;
 	};
@@ -204,7 +181,6 @@ namespace SQLParser
 	{
 		_mStatementType = S_SELECT;
 		parse();
-		scanTree();
 		disambiguate();
 	};
 
@@ -273,15 +249,16 @@ namespace SQLParser
 			
 		if (psr->pParser->rec->state->errorCount > 0)
 		{
-			fprintf(stderr, "The parser returned %d errors, tree walking aborted.\n", psr->pParser->rec->state->errorCount);
+			// TODO throw reasonable exception HERE
+			// fprintf(stderr, "The parser returned %d errors, tree walking aborted.\n", psr->pParser->rec->state->errorCount);
 			throw ParseException();
 		}
 
 		//pANTLR3_COMMON_TOKEN root_token = langAST.tree->getToken(langAST.tree);
-		_mAST = new Token( NULL
-				   ,Position(0,0)
-				   , ""
-				   , Token::X_ROOT
+		_mAST = new TokenSubquery( NULL
+			,Position(0,0)
+			, ""
+			, Token::X_ROOT
 			);
 		_mAST->setTokenATypeName("ROOT");
 		ANTLR3_UINT32 lastIndex = 0;
@@ -334,11 +311,18 @@ namespace SQLParser
 				}
 
 				Token *childToken = new OracleSQLToken ( root
-								      , Position(pChildLexeme->getLine(pChildLexeme), pChildLexeme->getCharPositionInLine(pChildLexeme))
-								      , (const char*)pChildLexeme->getText(pChildLexeme)->chars
-								      , pChildLexeme->getType(pChildLexeme)
-									  , (const char*) psr->pParser->rec->state->tokenNames[ pChildNode->getType(pChildNode) ]
-								      , (ANTLR3_UINT64)(pChildNode->u)
+									 , Position(pChildLexeme->getLine(pChildLexeme), pChildLexeme->getCharPositionInLine(pChildLexeme))
+									 , (const char*)pChildLexeme->getText(pChildLexeme)->chars
+									 , pChildLexeme->getType(pChildLexeme)
+									 ,
+									 (
+										 pChildNode->getType(pChildNode) == ANTLR3_TOKEN_EOF
+										 ?
+										 (const char *)"EOF"
+										 :										 
+										 (const char*) psr->pParser->rec->state->tokenNames[ pChildNode->getType(pChildNode) ]
+									 )
+									 , (ANTLR3_UINT64)(pChildNode->u)
 					);
 				//childToken->setTokenTypeName( (const char*) psr->pParser->rec->state->tokenNames[ pChildNode->getType(pChildNode) ]);
 
@@ -361,10 +345,10 @@ namespace SQLParser
 				}
 				
 				// TODO check for EOF in lexer stream */
-				printf("Leaf node \'%s\'(%d)\n",
-				       (const char*)pChildNode->getText(pChildNode)->chars,
-				       lastindex
-				       );
+				//printf("Leaf node \'%s\'(%d)\n",
+				//       (const char*)pChildNode->getText(pChildNode)->chars,
+				//       lastindex
+				//       );
 
 				Token *childToken = new OracleSQLToken ( root
 									 , Position(pChildLexeme->getLine(pChildLexeme), pChildLexeme->getCharPositionInLine(pChildLexeme))
@@ -373,7 +357,14 @@ namespace SQLParser
 									 // if the attribute user1 is set then the token is considered to be an identifier
 									 // user2 represents either alias declaration or usage
 									 , pChildLexeme->user1 ? pChildLexeme->user1 : pChildLexeme->getType(pChildLexeme)
-									 , (const char*) psr->pParser->rec->state->tokenNames[ pChildNode->getType(pChildNode) ]
+									 , 
+									 (
+										 pChildNode->getType(pChildNode) == ANTLR3_TOKEN_EOF
+										 ?
+										 (const char *)"EOF"
+										 :										 
+										 (const char*) psr->pParser->rec->state->tokenNames[ pChildNode->getType(pChildNode) ]
+									 )									
 									 , pChildLexeme->user2 ? pChildLexeme->user2 : T_UNKNOWN
 					);
 				root->appendChild(childToken);
@@ -399,184 +390,305 @@ namespace SQLParser
 		} // for each child
 	};
 
-	/* walk through statement tree and detect identifiers, tables, table aliases */
-	void OracleSQLStatement::scanTree()
+	void OracleSQLStatement::disambiguate()
 	{
-		/* find all identifiers */
-		QVector<Token*> identifierParts;
-		bool dotFound = false;
-		SQLParser::Statement::token_const_iterator node;
-		for(node=begin(); node!=end(); ++node)
-		{
-			Token* pNode = const_cast<Token*>(&*node);
-			if( node->getTokenType() == Token::S_IDENTIFIER)
-			{
-				QList<QPointer<Token> > const& children = node->getChildren();
-				foreach( const QPointer<Token> i, children)
-				{
-					if( i->toString().compare(QString(".")) == 0)
-						continue;
-					identifierParts.push_back(i.data());
-				}
-				_mIdentifiers.push_back(OracleIdentifier(identifierParts));
-				identifierParts.clear();
-			}
-		}
-		
+		// First of all replace some instances of Token with Token's sub-classes
 		for(SQLParser::Statement::token_const_iterator i=begin(); i!=end(); ++i)
 		{
 			Token const &node = *i;
 			switch( node.getTokenType())
 			{
-			case Token::L_TABLENAME:
-				_mTablesSet.insert( node.toString().toUpper());
+			case Token::S_TABLE_REF:
+			{
+				i--; // At this moment iterator's stack points onto node beeing replaced.
+				Token *parent = node.parent();
+				Token *me = const_cast<Token*>(&node);
+				TokenTable *newToken = new TokenTable(node);
+				parent->replaceChild(me->row(), newToken);
+				i++;
 				break;
-			case Token::L_SCHEMANAME:
-				//_mAliases.insert( node.toString().toUpper());
+			}
+			case Token::S_SUBQUERY_FACTORED:
+			case Token::S_SUBQUERY_NESTED:
+			case Token::X_ROOT: // TODO fix me. T_SELECT under T_UNION is also marked as X_ROOT => there is more than one X_ROOT
+			{
+				if(node.parent() == NULL)
+					break;
+
+				i--; // At this moment iterator's stack points onto node beeing replaced.
+				Token *parent = node.parent();
+				Token *me = const_cast<Token*>(&node);
+				TokenSubquery *newToken = new TokenSubquery(node);
+				parent->replaceChild(me->row(), newToken);
+				i++;
 				break;
+			}
+			case Token::S_IDENTIFIER:
+			{
+				i--; // At this moment iterator's stack points onto node beeing replaced.
+				Token *parent = node.parent();
+				Token *me = const_cast<Token*>(&node);
+				TokenIdentifier *newToken = new TokenIdentifier(node);
+				parent->replaceChild(me->row(), newToken);
+				i++;
+				break;
+			}
+			} // switch
+		} // for each AST node
+
+		for(SQLParser::Statement::token_const_iterator i=begin(); i!=end(); ++i)
+		{
+			Token const &node = *i;
+			switch( node.getTokenType())
+			{
+			/*
+				TABLE ALIAS was found:
+				- loop over left brothers until you find TABLE_REF or SUBQUERY_NESTED
+				- update brothers alias attribute
+				- find parent of type SUBQUERY(or X_ROOT) and insert translation ALIAS => BROTHER
+			*/
 			case Token::L_TABLEALIAS:
 			{
 				if( node.getTokenUsageType() != Token::Declaration )
 					break;
 				
-				//TODO loop over rigth brothers unil you find either a reserved word or a table name
+				//loop over left brothers until you find either a reserved word or a table name
 				QList<QPointer<Token> > const& brothers = node.parent()->getChildren();
-				QPointer<Token> t = const_cast<Token*>(&(*i));
-				QString table_name;
-
-				std::cout << "Alias found:" << node.toString().toAscii().constData() << std::endl;
-							
-				for( int j = brothers.indexOf(t) ; j >= 0; --j)
+				////std::cout << "Alias found:" << node.toString().toAscii().constData() << std::endl;							
+				for( int j = node.row() - 1 ; j >= 0; --j)
 				{
-					QPointer<Token> const brother = brothers.at(j);
+					Token *brother = brothers.at(j);
 					if( brother->getTokenType() == Token::S_SUBQUERY_NESTED)
 					{
-						std::cout << node.toString().toAscii().constData() << "=>"
-							  << (*brother).toStringRecursive().toStdString() << std::endl;
-						_mDeclarations.insertMulti(node.toString(), brother.data());
-						for(SQLParser::Statement::token_const_iterator_to_root k(&*i); &*k; ++k)
-						{							
-							std::cout << k->toString().toStdString() << "->";
-						}
-						std::cout << std::endl;						
+						////std::cout << node.toString().toStdString() << "=>" << brother->toStringRecursive().toStdString() << std::endl;
+
+						//_mDeclarations.insertMulti(node.toString(), brother.data());
+						//for(SQLParser::Statement::token_const_iterator_to_root k(&*i); &*k; ++k)
+						//{							
+						//	std::cout << k->toString().toStdString() << "->";
+						//}						
+						//std::cout << std::endl;
+						
+						static_cast<TokenSubquery*>(brother)->setNodeAlias(&node);
+						addTranslation(node.toString(), brother, node.parent());
 						break;						
 					}
 					if( brother->getTokenType() == Token::S_TABLE_REF)
 					{
-						std::cout << node.toString().toAscii().constData() << "=>"
-							  << (*brother).toStringRecursive().toAscii().constData() << std::endl;
-						_mDeclarations.insertMulti(node.toString(), brother.data());
-						for(SQLParser::Statement::token_const_iterator_to_root k(&*i); &*k; ++k)
-						{							
-							std::cout << k->toString().toStdString() << "->";
-						}
-						std::cout << std::endl;
-						addTranslation(node.toString(), brother.data(), &node);
+						//std::cout << node.toString().toAscii().constData() << "=>" << (*brother).toStringRecursive().toAscii().constData() << std::endl;
+
+						//_mDeclarations.insertMulti(node.toString(), brother.data());
+						//for(SQLParser::Statement::token_const_iterator_to_root k(&*i); &*k; ++k)
+						//{							
+						//	std::cout << k->toString().toStdString() << "->";
+						//}
+						//std::cout << std::endl;
+						
+						static_cast<TokenSubquery*>(brother)->setNodeAlias(&node);
+						addTranslation(node.toString(), brother, node.parent());
 						break;
 					}
+
+					/* We have not found anything usefull:
+						SELECT * FROM TABLE_A, TABLE(CAST(VariableX) AS TABLE) X; => no translation for table alias X
+						TODO - do break on "JOIN" (joining clause) too.
+						SELECT * FROM TABLE_A A NATURAL JOIN TABLE(CAST(VariableX) AS TABLE) X; => no translation for table alias X
+					*/
 					if( brother->toString().compare(QString(",")) == 0)
+						break;
+					if( brother->getTokenType() == Token::L_TABLEALIAS)
+						break;
+					if( brother->getTokenType() == Token::L_RESERVED)
 						break;
 				}
 				
-				_mAliasesSet.insert( node.toString().toUpper());
 				break;
 			}
+			/*
+				SUBQUERY ALIAS was found:
+				- loop over right brothers until you find SUBQUERY_FACTORED
+				- update brothers alias attribute
+				- find parent of type SUBQUERY(or X_ROOT) and insert translation ALIAS => BROTHER
+			*/
 			case Token::L_SUBQUERY_ALIAS:
-			{
-				std::cout << "Subquery alias found:" << node.toString().toAscii().constData() << std::endl;
-				QList<QPointer<Token> > const& brothers = node.parent()->getChildren();
-				bool nodeFound = false;
-				foreach( const QPointer<Token> brother, brothers)
+			{				
+				//loop over rigth brothers until you find S_SUBQUERY_FACTORED
+				QList<QPointer<Token> > const& brothers = node.parent()->getChildren();				
+				for( int j = node.row() + 1 ; j < node.parent()->childCount() ; ++j)
 				{
-					if( brother == &node)
-					{
-						nodeFound = true;
-						continue;
-					}
-					if( nodeFound == false)
-						continue;
+					Token *brother = brothers.at(j);
+					
 					if( brother->getTokenType() == Token::S_SUBQUERY_FACTORED)
 					{
-						std::cout << node.toString().toAscii().constData() << "=>"
-							  << (*brother).toStringRecursive().toAscii().constData() << std::endl;
-						_mDeclarations.insertMulti(node.toString(), brother.data());
+						//std::cout << node.toString().toAscii().constData() << "=>" << brother->toStringRecursive().toStdString() << std::endl;
+						
+						//_mDeclarations.insertMulti(node.toString(), brother.data());
+						
+						static_cast<TokenSubquery*>(brother)->setNodeAlias(&node);
+						addTranslation(node.toString(), brother, node.parent());
+						
+						//std::cout << "Subquery alias found:" << node.toString().toStdString() << "->" << brother->toString().toStdString() << std::endl;
 						break;
 					}
 				}
-				if( node.getTokenUsageType() == Token::Declaration )
-					_mAliasesSet.insert( node.toString().toUpper());
+				//if( node.getTokenUsageType() == Token::Declaration )
+				//	_mAliasesSet.insert( node.toString().toUpper());
+				break;
+			}
+			/* A table reference was found. Traverse to ROOT, try to find a SUBQUERies ROOT
+			   and update its table list
+			*/
+			case Token::S_TABLE_REF:
+			{
+				addTableRef(&node, node.parent());
+				_mTablesList.append(&*i);
+				break;
+			}
+			case Token::S_SUBQUERY_FACTORED:
+			case Token::S_SUBQUERY_NESTED:
+			case Token::X_ROOT: // TODO fix me. T_SELECT under T_UNION is also marked as X_ROOT => there is more than one X_ROOT node in AST tree.
+			{
+				if(node.parent() == NULL)
+					break;				
+				addTableRef(&node, node.parent());
 				break;
 			}
 			} // switch(node.getTokenType())
-		}
-	};
-
-	void OracleSQLStatement::disambiguate()
+		} // for each AST node
+	};	
+	
+	/* walk through statement tree and detect identifiers, tables, table aliases */
+	void OracleSQLStatement::scanTree(ObjectCache* o, QString const& cs)
 	{
-		/* loop over all the identifiers and try to find table alias translation in the AST tree */
-		foreach( Identifier const &i, _mIdentifiers)
+		for(SQLParser::Statement::token_const_iterator i=begin(); i!=end(); ++i)
 		{
-			if ( i.length() == 1)
-				continue;
+			if( i->getTokenType() == Token::S_IDENTIFIER )
+			{
+				QString stopToken;
+				bool insideColumnList;
 
-			OracleSQLToken const* context;
-			if (( context = dynamic_cast<OracleSQLToken*>(i._mFields.at(0))) == NULL)
-				continue;
-				
-			QString alias = i._mFields.at(0)->toString();
-			OracleSQLToken const* table = ( OracleSQLToken*)translate(alias, context);
+				// Do not resolve identifiers under S_COLUMN_LIST
+				for(token_iterator_to_root k(i->parent()); k->parent(); ++k)
+				{
+					stopToken = k->toString();
+					if( k->getTokenType() == Token::S_COLUMN_LIST)
+					{
+						TLOG(0,toNoDecorator,__HERE__) << " Dont Resolve identifier: " << i->toStringRecursive(false).toStdString() << "\t under: " <<  stopToken.toStdString() << std::endl;
+						insideColumnList = true;
+						break;
+					}
+					if( k->getTokenType() == Token::X_ROOT ||
+						k->getTokenType() == Token::S_SUBQUERY_FACTORED ||
+						k->getTokenType() == Token::S_SUBQUERY_NESTED ||
+						k->getTokenType() == Token::S_WHERE ||
+						k->getTokenType() == Token::L_JOINING_CLAUSE)
+					{
+						insideColumnList = false;
+						break;
+					}
+				};
+				if( insideColumnList)
+					continue;
 
-			if( table)
-				std::cout << "al: " << i.toString().toStdString() << "=>" << table->toStringRecursive().toStdString() << std::endl;
+				TokenIdentifier const& id = static_cast<TokenIdentifier const&>(*i);
+				TLOG(0,toNoDecorator,__HERE__) << "Resolve identifier: " << id.toStringRecursive(false).toStdString() << "\t under: " <<  stopToken.toStdString() << std::endl;
+
+				QString schemaName, tableName, columnName;
+
+				switch(id.childCount()) // odd children should be dots.
+				{
+				case 0:
+				case 2:
+				case 4:
+					TLOG(0,toNoDecorator,__HERE__) << " invalid length:" << id.childCount() << std::endl;
+					break;
+				case 1:
+					// We have column name only
+					break;
+				case 3:
+					{
+						// T1.C1
+						tableName = id.child(0)->toStringRecursive(false).toUpper();
+						// TODO check child(1) == '.'
+						columnName = id.child(2)->toStringRecursive(false).toUpper();
+
+						Token const *translatedAlias = translateAlias(tableName, &*i);
+						if( translatedAlias)
+						{
+							if(translatedAlias->childCount() == 3)
+							{
+								schemaName = translatedAlias->child(0)->toStringRecursive(false).toUpper();
+								tableName = translatedAlias->child(2)->toStringRecursive(false).toUpper();
+								goto label5;
+							}
+							if(translatedAlias->childCount() == 1)
+							{
+								tableName = translatedAlias->child(0)->toStringRecursive(false).toUpper();
+							}
+						}
+						bool columnExists = o->columnExists(cs, tableName, columnName);
+						TLOG(0,toNoDecorator,__HERE__) << " identifier found " << cs << '.' << tableName << '.' << columnName << ':' << columnExists << std::endl;
+					}
+					break;
+					label5:
+				case 5:
+					{
+						if( schemaName.isEmpty() && tableName.isEmpty())
+						{
+							schemaName = id.child(0)->toStringRecursive(false).toUpper();
+							tableName = id.child(2)->toStringRecursive(false).toUpper();
+							columnName = id.child(4)->toStringRecursive(false).toUpper();
+						}
+						bool columnExists = o->columnExists(schemaName, tableName, columnName);
+						TLOG(0,toNoDecorator,__HERE__) << " identifier found: " << schemaName << '.' << tableName << '.' << columnName << ':' << columnExists << std::endl;
+					}
+					break;
+				default:
+					TLOG(0,toNoDecorator,__HERE__) << " unsupported length:" << id.childCount() << std::endl;
+					break;
+				} // switch(id.childCount()) // odd children should be dots.
+			}
 		}
-		/* TODO - table name can also point onto SUBQUERY_FACTORED */		
 	};
 	
+	/* Information stored using this function can be queried using translateAlias
+	*/
 	void OracleSQLStatement::addTranslation(QString const& alias, Token const *tableOrSubquery, Token const *context)
 	{
-		for( SQLParser::Statement::token_const_iterator_to_root k(context); k->parent(); ++k)
+		for( SQLParser::Statement::token_iterator_to_root k(const_cast<Token*>(context)); k->parent(); ++k)
 		{
-			std::cout << "tr: " << k->toString().toStdString() << std::endl;
+			//std::cout << "tr: " << k->toString().toStdString() << std::endl;
 			if( k->getTokenType() == Token::S_SUBQUERY_NESTED ||
-			    k->getTokenType() == Token::S_SUBQUERY_FACTORED ||
-			    k->getTokenType() == Token::X_ROOT)
+				k->getTokenType() == Token::S_SUBQUERY_FACTORED ||
+				k->getTokenType() == Token::X_ROOT)
 			{
-				if( OracleSQLToken const *l = dynamic_cast<OracleSQLToken const*>((Token const*)k))
-				{
-					OracleSQLToken &m = *(const_cast<OracleSQLToken*>(l));
-					m._mTranslation.insert(alias, const_cast<Token*>(tableOrSubquery));
-				}
+				TokenSubquery &s = static_cast<TokenSubquery&>(*k);
+				s.aliasTranslation().insert(alias.toUpper(), const_cast<Token*>(tableOrSubquery));
+				//std::cout << "Alias translation added:" << alias.toStdString() << "=>" << tableOrSubquery->toStringRecursive(false).toStdString() << " context: " << k->toString().toStdString() << std::endl;
 				break;
 			}
 		}
 	};
 
-	Token const* OracleSQLStatement::translate(QString const& alias, Token const *context)
+	/* Information stored using this function can be queried using getTableRef
+	*/
+	void OracleSQLStatement::addTableRef(Token const *tableRef, Token const *context)
 	{
-		for( SQLParser::Statement::token_const_iterator_to_root k(context); k->parent(); ++k)
+		for( SQLParser::Statement::token_iterator_to_root k(const_cast<Token*>(context)); k->parent(); ++k)
 		{
+			//std::cout << "tr: " << k->toString().toStdString() << std::endl;
 			if( k->getTokenType() == Token::S_SUBQUERY_NESTED ||
-			    k->getTokenType() == Token::S_SUBQUERY_FACTORED ||
-			    k->getTokenType() == Token::X_ROOT)
+				k->getTokenType() == Token::S_SUBQUERY_FACTORED ||
+				k->getTokenType() == Token::X_ROOT)
 			{
-				if( OracleSQLToken const *l = dynamic_cast<OracleSQLToken const*>((Token const*)k))
-				{
-					OracleSQLToken &m = *(const_cast<OracleSQLToken*>(l));
-					if(m._mTranslation.contains(alias))
-						return m._mTranslation.value(alias);
-				}
+				TokenSubquery &s = static_cast<TokenSubquery&>(*k);
+				s.nodeTables().insertMulti(tableRef->toStringRecursive(false).toUpper(), const_cast<Token*>(tableRef));
+				//std::cout << "Table ref added:" << tableOrSubquery->toStringRecursive(false).toStdString() << " context: " << k->toString().toStdString() << std::endl;
+				break;
 			}
 		}
-		return NULL;
 	};
-	
-	/*virtual*/ void OracleSQLStatement::tree2Dot(std::ostream &o) const
-	{
-		Token const* _root = Statement::root();
-		QString s;
-		//recursiveWalk<>(_root, s);
-	};
-	
+
 }; // namespace SQLParser
 
 Util::RegisterInFactory<SQLParser::OracleSQLStatement, StatementFactTwoParmSing> regOracleSQLStatement("OracleSQL");

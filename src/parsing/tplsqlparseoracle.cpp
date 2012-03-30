@@ -84,16 +84,15 @@ namespace SQLParser
 	{
 	public:
 		OraclePLSQLStatement(const QString &statement, const QString &name);
-		~OraclePLSQLStatement()
-		{};
-		virtual void tree2Dot(std::ostream &o) const;
-		//template<class T> T& recursiveWalk(Token const* node, T &stream) const;
+		virtual ~OraclePLSQLStatement()	{};
+
 	private:
 		void parse ();
 		/* Recursive walk through ANTLR3_BASE_TREE */
  		void treeWalk(pOraclePLSQLParser psr, QPointer<Token> root,  ANTLR3_BASE_TREE *tree, ANTLR3_UINT32 &lastindex);
 		/* Walk through Token tree and look for table names, table aliases, ... */
-		void scanTree();
+		virtual void scanTree(ObjectCache* o, QString const& cs);
+		void findDeclarations();
 		pANTLR3_VECTOR lexerTokenVector;
 	};
 
@@ -168,7 +167,8 @@ namespace SQLParser
 			
 		if (psr->pParser->rec->state->errorCount > 0)
 		{
-			fprintf(stderr, "The parser returned %d errors, tree walking aborted.\n", psr->pParser->rec->state->errorCount);
+			// TODO throw reasonable expeption here
+			// fprintf(stderr, "The parser returned %d errors, tree walking aborted.\n", psr->pParser->rec->state->errorCount);
 			throw ParseException();
 		}
 
@@ -183,7 +183,7 @@ namespace SQLParser
 		
 		treeWalk(psr, _mAST, langAST.tree, lastIndex);
 
-		scanTree();
+		findDeclarations();
 		
 		psr ->free (psr); psr		= NULL;
 		tstream ->free (tstream); tstream	= NULL; this->lexerTokenVector = NULL;
@@ -249,7 +249,7 @@ namespace SQLParser
 				//        (const char*)parser_token->getText(parser_token)->chars,
 				//        parser_token->user1
 				//        );
-
+				
 				Token *childToken = new OraclePLSQLToken ( root
 									   , Position(pChildLexeme->getLine(pChildLexeme), pChildLexeme->getCharPositionInLine(pChildLexeme))
 									   , (const char*)pChildLexeme->getText(pChildLexeme)->chars
@@ -257,7 +257,11 @@ namespace SQLParser
 									   // if the attribute user1 is set then the token is considered to be an identifier
 									   // user2 represents either alias declaration or usage
 									   , pChildLexeme->user1 ? pChildLexeme->user1 : pChildLexeme->getType(pChildLexeme)
-									   , (const char*) psr->pParser->rec->state->tokenNames[ pChildNode->getType(pChildNode) ]
+									   , (
+									      pChildNode->getType(pChildNode) != (ANTLR3_UINT32)0xffffffff
+									      ? ((const char*) psr->pParser->rec->state->tokenNames[ pChildNode->getType(pChildNode) ])
+									      : ((const char*) "Build-in ANTLR token")
+									      )
 									   , pChildLexeme->user2 ? pChildLexeme->user2 : T_UNKNOWN
 					);
 				root->appendChild(childToken);
@@ -282,7 +286,9 @@ namespace SQLParser
 		} // for each child
 	};
 	
-	void OraclePLSQLStatement::scanTree()
+	/* virtual */ void OraclePLSQLStatement::scanTree(ObjectCache *, QString const& cs) {};
+
+	void OraclePLSQLStatement::findDeclarations()
 	{
 		for(SQLParser::Statement::token_const_iterator i=begin(); i!=end(); ++i)
 		{
@@ -313,13 +319,6 @@ namespace SQLParser
 			// 	_mAliasesSet.insert( node.toString().toUpper());
 			// break;
 		}
-	};
-	
-	/*virtual*/ void OraclePLSQLStatement::tree2Dot(std::ostream &o) const
-	{
-		Token const* _root = Statement::root();
-		QString s;
-		//recursiveWalk<>(_root, s);
 	};
 	
 }; // namespace SQLParser

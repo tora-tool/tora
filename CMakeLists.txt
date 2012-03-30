@@ -13,7 +13,7 @@ OPTION(WANT_BUNDLE "Enable Mac OS X bundle build" OFF)
 OPTION(WANT_BUNDLE_STANDALONE "Do not copy required libs and tools into bundle (WANT_BUNDLE)" ON)
 OPTION(WANT_UNIVERSAL "Build mac binary for 32 and 64 bit together" ON)
 OPTION(USE_TROTL "Use trotl OCI wrapper library" OFF)
-OPTION(USE_PCH "Use percompiled headers" ON)
+OPTION(USE_PCH "Use percompiled headers" OFF)
 OPTION(USE_EXPERIMENTAL "Use experimental code" OFF)
 
 #Set our CMake minimum version
@@ -330,7 +330,9 @@ CHECK_INCLUDE_FILE("sys/stat.h" HAVE_SYS_STAT_H)
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 ADD_DEFINITIONS("-DHAVE_CONFIG_H")
 
-
+IF (USE_EXPERIMENTAL)
+  FIND_PACKAGE(GraphViz)
+ENDIF(USE_EXPERIMENTAL)
 
 ##############################################################################################################
 ########## Uninstall Setup                                                                          ##########

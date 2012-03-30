@@ -16,7 +16,7 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
     	${CMAKE_CXX_COMPILER}  
         ARGS 	${CMAKE_CXX_COMPILER_ARG1} -dumpversion 
         OUTPUT_VARIABLE gcc_compiler_version)
-    #MESSAGE("GCC Version: ${gcc_compiler_version}")
+
     IF(gcc_compiler_version MATCHES "4\\.[0-9]\\.[0-9]")
         SET(PCHSupport_FOUND TRUE)
     ELSE(gcc_compiler_version MATCHES "4\\.[0-9]\\.[0-9]")
@@ -28,6 +28,7 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
 	SET(_PCH_include_prefix "-I")
 	
 ELSE(CMAKE_COMPILER_IS_GNUCXX)
+  
 	IF(WIN32)	
 		SET(PCHSupport_FOUND TRUE) # for experimental msvc support
 		SET(_PCH_include_prefix "/I")
@@ -38,25 +39,22 @@ ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 
 MACRO(_PCH_GET_COMPILE_FLAGS _out_compile_flags)
-
-
   STRING(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
   SET(${_out_compile_flags} ${${_flags_var_name}} )
   
   IF(CMAKE_COMPILER_IS_GNUCXX)
     
     GET_TARGET_PROPERTY(_targetType ${_PCH_current_target} TYPE)
-    IF(${_targetType} STREQUAL SHARED_LIBRARY)
-      LIST(APPEND ${_out_compile_flags} "${${_out_compile_flags}} -fPIC")
-    ENDIF(${_targetType} STREQUAL SHARED_LIBRARY)
-    
+    IF((${_targetType} STREQUAL SHARED_LIBRARY) OR (${_targetType} STREQUAL MODULE_LIBRARY))
+      LIST(APPEND ${_out_compile_flags} "-fPIC")
+    ENDIF((${_targetType} STREQUAL SHARED_LIBRARY) OR (${_targetType} STREQUAL MODULE_LIBRARY))
   ELSE(CMAKE_COMPILER_IS_GNUCXX)
     ## TODO ... ? or does it work out of the box 
   ENDIF(CMAKE_COMPILER_IS_GNUCXX)
   
   GET_DIRECTORY_PROPERTY(DIRINC INCLUDE_DIRECTORIES )
   FOREACH(item ${DIRINC})
-    LIST(APPEND ${_out_compile_flags} "${_PCH_include_prefix}${item}")
+    LIST(APPEND ${_out_compile_flags} " ${_PCH_include_prefix}\"${item}\"")
   ENDFOREACH(item)
 
   SET(_build_type "${CMAKE_BUILD_TYPE}")
@@ -73,13 +71,27 @@ MACRO(_PCH_GET_COMPILE_FLAGS _out_compile_flags)
   # MESSAGE("_directory_flags ${_directory_flags}" )
   GET_DIRECTORY_PROPERTY(_directory_flags DEFINITIONS)
   #MESSAGE("_directory_flags ${_directory_flags}" )
+  GET_DIRECTORY_PROPERTY(_global_definitions DIRECTORY ${CMAKE_SOURCE_DIR} DEFINITIONS)  
   LIST(APPEND ${_out_compile_flags} ${_directory_flags})
+  LIST(APPEND ${_out_compile_flags} ${_global_definitions})
   LIST(APPEND ${_out_compile_flags} ${CMAKE_CXX_FLAGS} )
   
   SEPARATE_ARGUMENTS(${_out_compile_flags})
 
 ENDMACRO(_PCH_GET_COMPILE_FLAGS)
 
+MACRO(_PCH_GET_PDB_FILENAME out_filename _target)
+	SET(_targetOutput ${CMAKE_CURRENT_BINARY_DIR})
+
+	# determine target postfix
+	STRING(TOUPPER "${CMAKE_BUILD_TYPE}_POSTFIX" _postfix_var_name)
+	GET_TARGET_PROPERTY(_targetPostfix ${_target} ${_postfix_var_name})
+	IF(${_targetPostfix} MATCHES NOTFOUND)
+		SET(_targetPostfix "")
+	ENDIF(${_targetPostfix} MATCHES NOTFOUND)
+
+	SET(${out_filename} "${_targetOutput}/${_target}${_targetPostfix}.pdb")
+ENDMACRO(_PCH_GET_PDB_FILENAME)
 
 MACRO(_PCH_WRITE_PCHDEP_CXX _targetName _include_file _dephelp)
 
@@ -115,12 +127,12 @@ MACRO(_PCH_GET_COMPILE_COMMAND out_command _input _output)
 	      )
           ENDIF(CMAKE_CXX_COMPILER_ARG1)
 	ELSE(CMAKE_COMPILER_IS_GNUCXX)
-		
+	        _PCH_GET_PDB_FILENAME(PDB_FILE ${_PCH_current_target})
 		SET(_dummy_str "#include <${_input}>")
 		FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/pch_dummy.cpp ${_dummy_str})
 	
 		SET(${out_command} 
-			${CMAKE_CXX_COMPILER} ${_compile_FLAGS} /c /Fp${_native_output} /Yc${_native_input} pch_dummy.cpp
+			${CMAKE_CXX_COMPILER} ${_compile_FLAGS} /c /Fd\"${PDB_FILE}\" /Fp${_native_output} /Yc${_native_input} pch_dummy.cpp
 		)	
 		#/out:${_output}
 
@@ -206,7 +218,6 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
     SET(_dowarn 1)
   ENDIF("${ARGN}" STREQUAL "0")
 
-
   GET_FILENAME_COMPONENT(_name ${_input} NAME)
   GET_FILENAME_COMPONENT(_path ${_input} PATH)
   GET_PRECOMPILED_HEADER_OUTPUT( ${_targetName} ${_input} _output)
@@ -223,7 +234,6 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
   ENDIF(${_targetType} STREQUAL SHARED_LIBRARY)
 
   FILE(MAKE_DIRECTORY ${_outdir})
-
   
   _PCH_GET_COMPILE_FLAGS(_compile_FLAGS)
   
@@ -247,7 +257,6 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input)
     COMMAND ${_command}
     DEPENDS ${_input}   ${CMAKE_CURRENT_BINARY_DIR}/${_name} ${_targetName}_pch_dephelp
    )
-
 
   ADD_PRECOMPILED_HEADER_TO_TARGET(${_targetName} ${_input}  ${_output} ${_dowarn})
 ENDMACRO(ADD_PRECOMPILED_HEADER)
@@ -279,7 +288,7 @@ MACRO(GET_NATIVE_PRECOMPILED_HEADER _targetName _input)
 ENDMACRO(GET_NATIVE_PRECOMPILED_HEADER)
 
 
-MACRO(ADD_NATIVE_PRECOMPILED_HEADER _targetName _input)
+MACRO(ADD_NATIVE_PRECOMPILED_HEADER _targetName _inputh)
 
 	IF( "${ARGN}" STREQUAL "0")
 		SET(_dowarn 0)
@@ -293,39 +302,39 @@ MACRO(ADD_NATIVE_PRECOMPILED_HEADER _targetName _input)
 		# and I don't want to specifiy /F- for each moc/res/ui generated files (using Qt)
 
 		GET_TARGET_PROPERTY(oldProps ${_targetName} COMPILE_FLAGS)
-		if (${oldProps} MATCHES NOTFOUND)
+		IF (${oldProps} MATCHES NOTFOUND)
 			SET(oldProps "")
-		endif(${oldProps} MATCHES NOTFOUND)
+		ENDIF(${oldProps} MATCHES NOTFOUND)
 
-		SET(newProperties "${oldProps} /Yu\"${_input}\" /FI\"${_input}\"")
+		SET(newProperties "${oldProps} /Yu\"${_inputh}\" /FI\"${_inputh}\"")
 		SET_TARGET_PROPERTIES(${_targetName} PROPERTIES COMPILE_FLAGS "${newProperties}")
 		
 		#also inlude ${oldProps} to have the same compile options 
-		SET_SOURCE_FILES_PROPERTIES(${${_targetName}_pch} PROPERTIES COMPILE_FLAGS "${oldProps} /Yc\"${_input}\"")
+		SET_SOURCE_FILES_PROPERTIES(${${_targetName}_pch} PROPERTIES COMPILE_FLAGS "${oldProps} /Yc\"${_inputh}\"")
 		
-	else(CMAKE_GENERATOR MATCHES Visual*)
+	ELSE(CMAKE_GENERATOR MATCHES Visual*)
 	
-		if (CMAKE_GENERATOR MATCHES Xcode)
+		IF (CMAKE_GENERATOR MATCHES Xcode)
 			# For Xcode, cmake needs my patch to process
 			# GCC_PREFIX_HEADER and GCC_PRECOMPILE_PREFIX_HEADER as target properties
 			
 			GET_TARGET_PROPERTY(oldProps ${_targetName} COMPILE_FLAGS)
-			if (${oldProps} MATCHES NOTFOUND)
+			IF (${oldProps} MATCHES NOTFOUND)
 				SET(oldProps "")
-			endif(${oldProps} MATCHES NOTFOUND)
+			ENDIF(${oldProps} MATCHES NOTFOUND)
 
 			# When buiding out of the tree, precompiled may not be located
 			# Use full path instead.
-			GET_FILENAME_COMPONENT(fullPath ${_input} ABSOLUTE)
+			GET_FILENAME_COMPONENT(fullPath ${_inputh} ABSOLUTE)
 
 			SET_TARGET_PROPERTIES(${_targetName} PROPERTIES XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${fullPath}")
 			SET_TARGET_PROPERTIES(${_targetName} PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER "YES")
 
-		else (CMAKE_GENERATOR MATCHES Xcode)
+		ELSE (CMAKE_GENERATOR MATCHES Xcode)
 
 			#Fallback to the "old" precompiled suppport
-			#ADD_PRECOMPILED_HEADER(${_targetName} ${_input} ${_dowarn})
-		endif(CMAKE_GENERATOR MATCHES Xcode)
-	endif(CMAKE_GENERATOR MATCHES Visual*)
+			#ADD_PRECOMPILED_HEADER(${_targetName} ${_inputh} ${_dowarn})
+		ENDIF(CMAKE_GENERATOR MATCHES Xcode)
+	ENDIF(CMAKE_GENERATOR MATCHES Visual*)
 
 ENDMACRO(ADD_NATIVE_PRECOMPILED_HEADER)

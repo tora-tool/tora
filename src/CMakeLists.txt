@@ -23,7 +23,11 @@ IF (WANT_INTERNAL_QSCINTILLA)
 ENDIF(WANT_INTERNAL_QSCINTILLA)
 
 IF (USE_EXPERIMENTAL)
+  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/trotl/src)
   ADD_SUBDIRECTORY(libantlr3c-3.3)
+  IF(graphviz_FOUND)
+    ADD_SUBDIRECTORY(ermodel)
+  ENDIF(graphviz_FOUND)
 ENDIF(USE_EXPERIMENTAL)  
 
 # only toad bindings are here. All others qm files will blow the binary too much
@@ -264,6 +268,9 @@ ENDIF (ORACLE_FOUND)
 
 IF (USE_EXPERIMENTAL)
     LIST(APPEND TORA_MOC_CLASSES docklets/tocodeoutline.h)
+    IF(graphviz_FOUND)
+      LIST(APPEND TORA_MOC_CLASSES docklets/toquerymodel.h)
+    ENDIF(graphviz_FOUND)
 ENDIF (USE_EXPERIMENTAL)
 
 SET(TORA_SOURCES
@@ -464,6 +471,9 @@ ENDIF (TERADATA_FOUND)
 
 IF (USE_EXPERIMENTAL)
     LIST(APPEND TORA_SOURCES docklets/tocodeoutline.cpp)
+    IF(graphviz_FOUND)
+      LIST (APPEND TORA_SOURCES docklets/toquerymodel.cpp docklets/toastwalk.cpp)
+    ENDIF(graphviz_FOUND)
 ENDIF (USE_EXPERIMENTAL)
 
 # compiled in icons for windows
@@ -627,6 +637,9 @@ ENDIF (USE_TROTL)
 
 IF (USE_EXPERIMENTAL)
   TARGET_LINK_LIBRARIES(${EXE_NAME} antlr3c)
+  IF(graphviz_FOUND)
+    TARGET_LINK_LIBRARIES(${EXE_NAME} ermodel)
+  ENDIF(graphviz_FOUND)
 ENDIF(USE_EXPERIMENTAL)  
 
 # static
