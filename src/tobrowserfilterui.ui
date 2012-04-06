@@ -422,5 +422,85 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>StartWith</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>String</receiver>
+   <slot>setFocus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>370</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>326</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>EndWith</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>String</receiver>
+   <slot>setFocus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>370</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>326</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>  
+  <connection>
+   <sender>Contains</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>String</receiver>
+   <slot>setFocus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>370</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>326</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>CommaSeparate</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>String</receiver>
+   <slot>setFocus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>370</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>326</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>RegExp</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>String</receiver>
+   <slot>setFocus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>370</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>326</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>  
  </connections>
 </ui>
