@@ -567,6 +567,9 @@ IF (USE_EXPERIMENTAL)
     "${CMAKE_CURRENT_SOURCE_DIR}/libantlr3c-3.3/include"
     "${CMAKE_CURRENT_BINARY_DIR}/libantlr3c-3.3"
     )
+  IF(graphviz_FOUND)
+    INCLUDE_DIRECTORIES(${graphviz_INCLUDE_DIRECTORIES})
+  ENDIF(graphviz_FOUND)
 ENDIF (USE_EXPERIMENTAL)
 
 # Handle win/mac special stuff - it's left empty for linux/unix
