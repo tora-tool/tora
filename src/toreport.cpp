@@ -52,6 +52,9 @@
 #ifdef Q_OS_WIN32
 #include <winsock2.h>
 #endif
+#ifndef Q_OS_WIN32
+#include <unistd.h>
+#endif
 
 
 static bool SameContext(const QString &str, const QString &str2)

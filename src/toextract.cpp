@@ -58,6 +58,9 @@
 #include <winsock2.h>
 #endif
 
+#ifndef Q_OS_WIN32
+#include <unistd.h>
+#endif
 
 std::map<QString, toExtract::extractor *> *toExtract::Extractors;
 
