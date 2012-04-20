@@ -1,4 +1,3 @@
-
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
@@ -369,21 +368,21 @@ void toModelEditor::store()
 
 void toModelEditor::changePosition(QModelIndex index)
 {
-    Current = index;
-    QVariant const &data = Model->data(Current, Qt::UserRole);
-    if(data.type() == QVariant::UserType)
-    {
-           toQValue::complexType *i = data.value<toQValue::complexType*>();
-           setText(i->editData());
-           return;
-    }
+	Current = index;
+	QVariant const &data = Model->data(Current, Qt::UserRole);	
+	if(data.type() == QVariant::UserType && data.canConvert<toQValue::complexType*>() )
+	{
+		toQValue::complexType *i = data.value<toQValue::complexType*>();	   
+		setText(i->editData());
+		return;
+	}
            
-    if(Editable)
-           setText(Model->data(Current, Qt::EditRole).toString());
-    else
-    {
-           setText(Model->data(Current, Qt::DisplayRole).toString());
-    }
+	if(Editable)
+		setText(Model->data(Current, Qt::EditRole).toString());
+	else
+	{
+		setText(Model->data(Current, Qt::DisplayRole).toString());
+	}
 }
 
 void toModelEditor::firstColumn()
