@@ -170,6 +170,9 @@ void toQueryModel::timerEvent(QTimerEvent *e)
 	 	toDocklet::timerEvent(e);
 	 }
 
+	 if( !isVisible())
+		 return;
+
 	 if( m_currentEditor->m_current == NULL)
 		 return;
 
