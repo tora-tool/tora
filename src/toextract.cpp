@@ -39,28 +39,17 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+#include "toextract.h"
 #include "utils.h"
-
 #include "toconf.h"
 #include "toconnection.h"
-#include "toextract.h"
 
-#include <stdio.h>
-
-#include <qapplication.h>
-#include <qlabel.h>
+#include <QApplication>
+#include <QLabel>
 #include <QProgressDialog>
-#include <qdatetime.h>
-
+#include <QDateTime>
+#include <QHostInfo>
 #include <QString>
-
-#ifdef Q_OS_WIN32
-#include <winsock2.h>
-#endif
-
-#ifndef Q_OS_WIN32
-#include <unistd.h>
-#endif
 
 std::map<QString, toExtract::extractor *> *toExtract::Extractors;
 
@@ -689,8 +678,6 @@ QString toExtract::generateHeading(const QString &action,
 {
     if (!Heading)
         return QString::null;
-    char host[1024];
-    gethostname(host, 1024);
 
     QString db = Connection.host();
     if (db.length() && db != QString::fromLatin1("*"))
@@ -708,7 +695,7 @@ QString toExtract::generateHeading(const QString &action,
                                   "-- on:   %6\n"
                                   "--\n").
                   arg(QString::fromLatin1(TOVERSION)).
-                  arg(QString::fromLatin1(host)).
+                  arg(QHostInfo::localHostName()).
                   arg(db).
                   arg(QString(Connection.provider())).
                   arg(QString(Connection.version())).

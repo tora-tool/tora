@@ -39,23 +39,16 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+#include "toreport.h"
 #include "utils.h"
-
 #include "toconf.h"
-#include "toconnection.h"
+
 #include "tohtml.h"
 #include "toextract.h"
-#include "toreport.h"
 
-#include <qapplication.h>
-#include <qdatetime.h>
-#ifdef Q_OS_WIN32
-#include <winsock2.h>
-#endif
-#ifndef Q_OS_WIN32
-#include <unistd.h>
-#endif
-
+#include <QApplication>
+#include <QDateTime>
+#include <QHostInfo>
 
 static bool SameContext(const QString &str, const QString &str2)
 {
@@ -370,9 +363,6 @@ static QString DescribePart(std::list<QString> &desc,
 
 QString toGenerateReport(toConnection &conn, std::list<QString> &desc)
 {
-    char host[1024];
-    gethostname(host, 1024);
-
     QString db = conn.host();
     if (db.length() && db != QString::fromLatin1("*"))
         db += QString::fromLatin1(":");
@@ -389,7 +379,7 @@ QString toGenerateReport(toConnection &conn, std::list<QString> &desc)
                                   "<TR><TD VALIGN=top>On:</TD><TD VALIGN=top>%6</TD></TR>\n"
                                   "</TABLE>\n").
                   arg(QString::fromLatin1(TOVERSION)).
-                  arg(QString::fromLatin1(host)).
+                  arg(QHostInfo::localHostName()).
                   arg(db).
                   arg(QString(conn.provider())).
                   arg(QString(conn.version())).
