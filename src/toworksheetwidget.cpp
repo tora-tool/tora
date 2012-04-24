@@ -45,7 +45,7 @@
 * suitable for adding to other tools. this is better.
 */
 
-#include "config.h"
+ 
 
 #include "utils.h"
 #include "toworksheetwidget.h"

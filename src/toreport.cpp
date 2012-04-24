@@ -42,9 +42,9 @@
 #include "toreport.h"
 #include "utils.h"
 #include "toconf.h"
-
 #include "tohtml.h"
 #include "toextract.h"
+#include "toraversion.h"
 
 #include <QApplication>
 #include <QDateTime>
@@ -378,7 +378,7 @@ QString toGenerateReport(toConnection &conn, std::list<QString> &desc)
                                   "<TR><TD VALIGN=top>From:</TD><TD VALIGN=top>%3, an %4 %5 database</TD></TR>\n"
                                   "<TR><TD VALIGN=top>On:</TD><TD VALIGN=top>%6</TD></TR>\n"
                                   "</TABLE>\n").
-                  arg(QString::fromLatin1(TOVERSION)).
+                  arg(QString::fromLatin1(TORAVERSION)).
                   arg(QHostInfo::localHostName()).
                   arg(db).
                   arg(QString(conn.provider())).

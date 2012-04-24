@@ -39,7 +39,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "config.h"
 #include "tora3.h"
 #include "utils.h"
 

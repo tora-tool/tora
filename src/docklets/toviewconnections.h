@@ -42,7 +42,7 @@
 #ifndef TOVIEWCONNECTIONS_H
 #define TOVIEWCONNECTIONS_H
 
-#include "config.h"
+//#include "config.h"
 #include "todocklet.h"
 
 #include <QTableView>

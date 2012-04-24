@@ -49,7 +49,7 @@
 #include <QTemporaryFile>
 #include <QProcess>
 
-#include "config.h"
+ 
 #include "utils.h"
 #include "toquery.h"
 #include "totreewidget.h"

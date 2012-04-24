@@ -42,7 +42,7 @@
 #ifndef TOCODEOUTLINE_H
 #define TOCODEOUTLINE_H
 
-#include "config.h"
+//#include "config.h"
 #include "todocklet.h"
 #include "toeditwidget.h"
 

@@ -39,7 +39,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "config.h"
+ 
 
 #include <qtooltip.h>
 #include <qcheckbox.h>

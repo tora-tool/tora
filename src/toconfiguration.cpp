@@ -54,11 +54,6 @@
 #include <QLocale>
 #include <QSettings>
 #include <QDir>
-//#ifdef Q_OS_WIN32
-//#include <windows.h>
-//#include <shlobj.h>
-//#endif
-
 
 class toConfigurationPrivate
 {
@@ -1226,11 +1221,11 @@ void toConfiguration::setObjectNamesUpper(bool v)
 
 QString toConfiguration::pluginDir()
 {
-    return p->m_pluginDir;
+   return p->m_pluginDir;
 }
 void toConfiguration::setPluginDir(const QString & v)
 {
-    p->m_pluginDir = v;
+   p->m_pluginDir = v;
 }
 
 QString toConfiguration::cacheDir()

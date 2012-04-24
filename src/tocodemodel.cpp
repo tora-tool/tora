@@ -39,7 +39,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "config.h"
+ 
 
 #include "tosql.h"
 #include "toconnection.h"

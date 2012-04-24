@@ -42,7 +42,7 @@
 #ifndef TOVIEWDIRECTORY_H
 #define TOVIEWDIRECTORY_H
 
-#include "config.h"
+//#include "config.h"
 #include "todocklet.h"
 
 #include <QListView>

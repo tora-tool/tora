@@ -41,7 +41,7 @@
 
 #include <QSettings>
 
-#include "config.h"
+ 
 #include "toconf.h"
 #include "utils.h"
 
