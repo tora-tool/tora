@@ -41,18 +41,15 @@
 
 #include "toabout.h"
 
-#include <qmime.h>
-#include <qpushbutton.h>
-//Added by qt3to4:
-#include <QPixmap>
-
-#include "config.h"
-
 #include "toconf.h"
+#include "toraversion.h"
 #include "LICENSE.h"
 #include "COPYRIGHT.h"
 #include "icons/largelogo.xpm"
 
+#include <qmime.h>
+#include <QPushButton>
+#include <QPixmap>
 
 static const QString AboutText = QString::fromUtf8(
     "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" /></head>"
@@ -169,8 +166,8 @@ toAbout::toAbout(AboutType page, QWidget* parent, const char* name, bool modal, 
     }
     else
     {
-        setWindowTitle(tr(ABOUT_CAPTION).arg(QString::fromLatin1(TOVERSION)));
-        QString buffer = AboutText.arg(QString::fromLatin1(TOVERSION),QString::fromLatin1(CopyrightText));
+        setWindowTitle(tr(ABOUT_CAPTION).arg(QString::fromLatin1(TORAVERSION)));
+        QString buffer = AboutText.arg(QString::fromLatin1(TORAVERSION),QString::fromLatin1(CopyrightText));
         TextView->setHtml(buffer);
         CancelButton->hide();
     }

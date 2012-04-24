@@ -43,6 +43,7 @@
 #include "utils.h"
 #include "toconf.h"
 #include "toconnection.h"
+#include "toraversion.h"
 
 #include <QApplication>
 #include <QLabel>
@@ -694,7 +695,7 @@ QString toExtract::generateHeading(const QString &action,
                                   "--\n"
                                   "-- on:   %6\n"
                                   "--\n").
-                  arg(QString::fromLatin1(TOVERSION)).
+                  arg(QString::fromLatin1(TORAVERSION)).
                   arg(QHostInfo::localHostName()).
                   arg(db).
                   arg(QString(Connection.provider())).

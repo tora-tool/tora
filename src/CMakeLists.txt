@@ -604,6 +604,8 @@ ADD_EXECUTABLE(${EXE_NAME} ${GUI_TYPE}
   ${APPLE_BUNDLE_SOURCES}
 )
 
+# explicitly say that the executable depends on the svnheader
+add_dependencies(${EXE_NAME} revisiontag)
 
 IF(USE_PCH)
 ADD_PRECOMPILED_HEADER(${EXE_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/precompiled.h)

@@ -49,6 +49,7 @@
 #include "tosql.h"
 #include "totool.h"
 #include "toeventquery.h"
+#include "toraversion.h"
 
 // qt4 in via the qtranslator
 // #include "tora_toad.h"
@@ -203,14 +204,14 @@ int main(int argc, char **argv)
 	
 	toConnectionProvider::initializeAll();
 	
-        if (toConfigurationSingle::Instance().lastVersion() != TOVERSION)
+        if (toConfigurationSingle::Instance().lastVersion() != TORAVERSION)
         {
             std::auto_ptr<toAbout> about ( new toAbout(toAbout::About, NULL, "About " TOAPPNAME, true));
             if (!about->exec())
             {
                 exit (2);
             }
-            toConfigurationSingle::Instance().setLastVersion(TOVERSION);
+            toConfigurationSingle::Instance().setLastVersion(TORAVERSION);
         }
 
 

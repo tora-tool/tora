@@ -39,15 +39,14 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+#include "tomain.h"
 #include "utils.h"
-
 #include "toabout.h"
 #include "tobackgroundlabel.h"
 #include "toconf.h"
 #include "toconnection.h"
 #include "toeditwidget.h"
 #include "tohelp.h"
-#include "tomain.h"
 #include "tomarkedtext.h"
 #include "tomemoeditor.h"
 #include "ui_tomessageui.h"
@@ -62,6 +61,7 @@
 #include "todockbar.h"
 #include "toworksheet.h"
 #include "tohighlightedtext.h"
+#include "toraversion.h"
 
 #include <qapplication.h>
 #include <qcombobox.h>
@@ -136,7 +136,7 @@ toMain::toMain()
     updateRecent();
 
     char buffer[100];
-    sprintf(buffer, DEFAULT_TITLE, TOVERSION);
+    sprintf(buffer, DEFAULT_TITLE, TORAVERSION);
     setWindowTitle(tr(buffer));
 
     setWindowIcon(QPixmap(const_cast<const char**>(tora_xpm)));

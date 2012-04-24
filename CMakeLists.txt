@@ -19,7 +19,8 @@ OPTION(USE_EXPERIMENTAL "Use experimental code" OFF)
 #Set our CMake minimum version
 #Require 2.4.2 for Qt finding
 #Require 2.4.3 for moc change detection and rpath updates for custom cairo install
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
+#Require 2.8 for svnversion
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8 FATAL_ERROR)
 # FIXME: dont't forget to change CMP0005 policy to NEW after 2.6.0 minimum required!
 
 # handle new cmake versions correctly
@@ -52,28 +53,41 @@ INCLUDE(CheckCCompilerFlag)
 INCLUDE(CheckCXXCompilerFlag)
 INCLUDE(CheckTypeSize)
 INCLUDE(TestBigEndian)
+INCLUDE(FindSubversion)
+
 
 #Set the custom CMake module directory where our include/lib finders are
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
+# Check for SVN
+FIND_PACKAGE(Subversion)
+IF (Subversion_FOUND)
+	# a custom target that is always built
+	add_custom_target(revisiontag ALL)
+	# creates svnheader.h using cmake script
+	add_custom_command(TARGET revisiontag COMMAND ${CMAKE_COMMAND} 
+		-DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR} 
+		-P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getsvn.cmake)
+	ADD_DEFINITIONS("-DHAVE_SVNREVISION_H=1")
+ENDIF(Subversion_FOUND)
+
 #Project Setup
 PROJECT(TOra)
 #Set our version values
-#Final version is ${VERSION} = ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_SUFFIX}
-#where VERSION_SUFFIX is of the form "", "cvs" or "Ncvs" (N being the minor patch level)
+#Final version is ${VERSION} = ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}.${VERSION_SUFFIX}
 SET (VERSION_MAJOR "2")
 SET (VERSION_MINOR "1")
 SET (VERSION_PATCH "4")
-SET (VERSION_SUFFIX "")
-SET (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_SUFFIX})
+SET (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 MESSAGE(STATUS "TOra ${VERSION} will be built to install into ${CMAKE_INSTALL_PREFIX}")
+FILE(WRITE  toversion.h "#define TOVERSION \"${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}\"\n")
 
 SET (EXE_NAME "tora")
 if (WANT_BUNDLE)
     SET(EXE_NAME "TOra")
 endif(WANT_BUNDLE)
 
-ADD_DEFINITIONS("-DTOVERSION=\\\"${VERSION}\\\"")
+ADD_DEFINITIONS("-DVERSION=\\\"${VERSION}\\\"")
 # Allow using CMAKE-related ifdefs in the code. See e.g. toqsqlconnection.cpp.
 ADD_DEFINITIONS("-DCMAKE_BUILD")
 
@@ -82,17 +96,16 @@ INCLUDE(LibSuffix)
 
 #Set the permissions to be used when installing plugins
 SET(PLUGIN_PERMISSIONS WORLD_EXECUTE GROUP_EXECUTE OWNER_EXECUTE WORLD_READ GROUP_READ OWNER_READ OWNER_WRITE)
-
 if (NOT TORA_PLUGIN_DIR)
-    SET (TORA_PLUGIN_DIR "${CMAKE_INSTALL_PREFIX}/share/tora/")
+    SET (TORA_PLUGIN_DIR "share/tora/")
 endif (NOT TORA_PLUGIN_DIR)
 ADD_DEFINITIONS("-DDEFAULT_PLUGIN_DIR=\\\"${TORA_PLUGIN_DIR}\\\"")
 
 if (NOT TORA_DOC_DIR)
 	IF (UNIX)
-	    SET (TORA_DOC_DIR "${CMAKE_INSTALL_PREFIX}/share/doc/tora/") # it would be pain for upgrade configs -${VERSION}/")
+	    SET (TORA_DOC_DIR "share/doc/tora/") # it would be pain for upgrade configs -${VERSION}/")
 	ELSE (UNIX)
-		SET (TORA_DOC_DIR "${CMAKE_INSTALL_PREFIX}/doc/")
+		SET (TORA_DOC_DIR "doc/")
 	ENDIF (UNIX)
 endif (NOT TORA_DOC_DIR)
 
@@ -327,8 +340,8 @@ CHECK_INCLUDE_FILE("sys/stat.h" HAVE_SYS_STAT_H)
 #Create configure files.. config.h and uninstall
 #config.h
 # INCLUDE (ConfigureChecks.cmake)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
-ADD_DEFINITIONS("-DHAVE_CONFIG_H")
+##CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+##ADD_DEFINITIONS("-DHAVE_CONFIG_H")
 
 IF (USE_EXPERIMENTAL)
   FIND_PACKAGE(GraphViz)
@@ -393,8 +406,6 @@ add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
 
 IF (WANT_RPM)
-    # Check for SVN
-    FIND_PACKAGE(Subversion)
     IF(NOT Subversion_FOUND)
         SET(Subversion_SVN_EXECUTABLE true)
     ENDIF(NOT Subversion_FOUND)
