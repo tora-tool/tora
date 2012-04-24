@@ -42,7 +42,7 @@
 #ifndef TOSMTP_H
 #define TOSMTP_H
 
-#include "config.h"
+ 
 
 #include <qobject.h>
 #include <qstring.h>

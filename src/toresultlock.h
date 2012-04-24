@@ -42,7 +42,7 @@
 #ifndef TORESULTLOCK_H
 #define TORESULTLOCK_H
 
-#include "config.h"
+ 
 
 #include <map>
 

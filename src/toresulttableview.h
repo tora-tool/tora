@@ -42,7 +42,7 @@
 #ifndef TORESULTTABLEVIEW_H
 #define TORESULTTABLEVIEW_H
 
-#include "config.h"
+ 
 #include "toqvalue.h"
 #include "tosql.h"
 #include "toresult.h"

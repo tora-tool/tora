@@ -7,7 +7,7 @@
 #ifndef TOBACKGROUND_H
 #define TOBACKGROUND_H
 
-#include "config.h"
+ 
 #include "totimer.h"
 
 class toMainWindow;

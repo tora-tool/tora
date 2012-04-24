@@ -42,7 +42,7 @@
 #ifndef TOLINECHART_H
 #define TOLINECHART_H
 
-#include "config.h"
+ 
 
 #include <list>
 #include <map>

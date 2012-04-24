@@ -42,7 +42,7 @@
 #ifndef TOTHREAD_H
 #define TOTHREAD_H
 
-#include "config.h"
+ 
 
 #include <QMutex>
 #include <QWaitCondition>

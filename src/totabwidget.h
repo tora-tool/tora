@@ -42,7 +42,7 @@
 #ifndef TOTABWIDGET_H
 #define TOTABWIDGET_H
 
-#include "config.h"
+ 
 
 #include <QTabWidget>
 #include <QMap>

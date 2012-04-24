@@ -42,7 +42,7 @@
 #ifndef TOPROJECT_H
 #define TOPROJECT_H
 
-#include "config.h"
+ 
 #include "totemplate.h"
 
 #include <map>

@@ -42,7 +42,7 @@
 #ifndef TODEBUGTEXT_H
 #define TODEBUGTEXT_H
 
-#include "config.h"
+ 
 #include "tohighlightedtext.h"
 
 #include "totreewidget.h"

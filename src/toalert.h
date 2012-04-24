@@ -42,7 +42,7 @@
 #ifndef TOALERT_H
 #define TOALERT_H
 
-#include "config.h"
+ 
 
 #include <list>
 

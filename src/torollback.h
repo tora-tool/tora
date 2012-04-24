@@ -42,7 +42,7 @@
 #ifndef TOROLLBACK_H
 #define TOROLLBACK_H
 
-#include "config.h"
+ 
 #include "ui_torollbackdialogui.h"
 #include "totool.h"
 

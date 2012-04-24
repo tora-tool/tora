@@ -42,7 +42,7 @@
 #ifndef TODOCKBAR_H
 #define TODOCKBAR_H
 
-#include "config.h"
+ 
 #include "topushbutton.h"
 
 #include <QAction>

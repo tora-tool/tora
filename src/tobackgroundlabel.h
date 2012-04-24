@@ -6,7 +6,7 @@
 #ifndef TOBACKGROUNDLABEL_H
 #define TOBACKGROUNDLABEL_H
 
-#include "config.h"
+ 
 
 #include <qmovie.h>
 #include <qwidget.h>

@@ -42,7 +42,7 @@
 #ifndef TOABOUT_H
 #define TOABOUT_H
 
-#include "config.h"
+ 
 #include "ui_toaboutui.h"
 
 class toAbout : public QDialog, public Ui::toAboutUI

@@ -42,7 +42,7 @@
 #ifndef TONEWCONNECTION_H
 #define TONEWCONNECTION_H
 
-#include "config.h"
+ 
 #include "ui_tonewconnectionui.h"
 #include "tohelp.h"
 #include "toconnection.h"

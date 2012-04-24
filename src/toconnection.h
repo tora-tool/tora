@@ -42,7 +42,7 @@
 #ifndef TOCONNECTION_H
 #define TOCONNECTION_H
 
-#include "config.h"
+ 
 #include "toqvalue.h"
 #include "tothread.h"
 #include "tocache.h"

@@ -42,7 +42,7 @@
 #ifndef TOLISTVIEWFORMATTERCSV_H
 #define TOLISTVIEWFORMATTERCSV_H
 
-#include "config.h"
+ 
 #include "tolistviewformatter.h"
 
 class toListViewFormatterCSV : public toListViewFormatter

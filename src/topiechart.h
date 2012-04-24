@@ -42,7 +42,7 @@
 #ifndef TOPIECHART_H
 #define TOPIECHART_H
 
-#include "config.h"
+ 
 
 #include <list>
 #include <qwidget.h>

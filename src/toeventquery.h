@@ -42,7 +42,7 @@
 #ifndef TOEVENTQUERY_H
 #define TOEVENTQUERY_H
 
-#include "config.h"
+ 
 #include "toquery.h"
 #include "toconnection.h"
 #include "toeventquerytask.h"

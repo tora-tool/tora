@@ -42,7 +42,7 @@
 #ifndef TOHIGHLIGHTEDTEXT_H
 #define TOHIGHLIGHTEDTEXT_H
 
-#include "config.h"
+ 
 
 #include "tomarkedtext.h"
 

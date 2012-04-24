@@ -42,7 +42,7 @@
 #ifndef TOLISTVIEWFORMATTERTABDEL_H
 #define TOLISTVIEWFORMATTERTABDEL_H
 
-#include "config.h"
+ 
 #include "tolistviewformatter.h"
 
 class toListViewFormatterTabDel : public toListViewFormatter

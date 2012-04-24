@@ -42,7 +42,7 @@
 #ifndef TOBROWSERCONSTRAINT_H
 #define TOBROWSERCONSTRAINT_H
 
-#include "config.h"
+ 
 #include "ui_tobrowserconstraintui.h"
 #include "toextract.h"
 #include "totool.h"

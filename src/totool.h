@@ -42,7 +42,7 @@
 #ifndef TOTOOL_H
 #define TOTOOL_H
 
-#include "config.h"
+ 
 #include "toconfiguration.h"
 
 #include <map>

@@ -42,7 +42,7 @@
 #ifndef TORESULTSTORAGE_H
 #define TORESULTSTORAGE_H
 
-#include "config.h"
+ 
 #include "toresultview.h"
 
 #include <QSplitter>

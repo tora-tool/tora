@@ -42,7 +42,7 @@
 #ifndef TOTASKRUNNER_H
 #define TOTASKRUNNER_H
 
-#include "config.h"
+ 
 #include "tothread.h"
 
 #include <QThread>

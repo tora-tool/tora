@@ -44,7 +44,7 @@
 
 #include "ui_toresultlistformatui.h"
 
-#include "config.h"
+ 
 
 #include <QDialog>
 

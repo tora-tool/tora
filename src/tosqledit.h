@@ -42,7 +42,7 @@
 #ifndef TOSQLEDIT_H
 #define TOSQLEDIT_H
 
-#include "config.h"
+ 
 #include "totemplate.h"
 #include "totool.h"
 

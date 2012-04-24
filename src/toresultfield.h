@@ -42,7 +42,7 @@
 #ifndef TORESULTFIELD_H
 #define TORESULTFIELD_H
 
-#include "config.h"
+ 
 #include "tohighlightedtext.h"
 #include "toresult.h"
 

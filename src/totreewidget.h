@@ -42,7 +42,7 @@
 #ifndef TOTREEWIDGET_H
 #define TOTREEWIDGET_H
 
-#include "config.h"
+ 
 
 #include <QTreeWidget>
 #include <QTreeWidgetItem>

@@ -42,7 +42,7 @@
 #ifndef TOWORKSHEET_WIDGET_H
 #define TOWORKSHEET_WIDGET_H
 
-#include "config.h"
+ 
 
 #include "toworksheet.h"
 

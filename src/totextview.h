@@ -42,7 +42,7 @@
 #ifndef TOTEXTVIEW_H
 #define TOTEXTVIEW_H
 
-#include "config.h"
+ 
 
 #include "toeditwidget.h"
 

@@ -42,7 +42,7 @@
 #ifndef TODOCKLET_H
 #define TODOCKLET_H
 
-#include "config.h"
+ 
 
 #include <QMap>
 #include <QAction>

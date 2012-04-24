@@ -42,7 +42,7 @@
 #ifndef TOSCRIPT_H
 #define TOSCRIPT_H
 
-#include "config.h"
+ 
 #include "tohelp.h"
 #include "ui_toscriptui.h"
 

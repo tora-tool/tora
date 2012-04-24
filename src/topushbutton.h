@@ -42,7 +42,7 @@
 #ifndef TOPUSHBUTTON_H
 #define TOPUSHBUTTON_H
 
-#include "config.h"
+ 
 
 #include <QPushButton>
 

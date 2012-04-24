@@ -42,7 +42,7 @@
 #ifndef TOSECURITY_H
 #define TOSECURITY_H
 
-#include "config.h"
+ 
 #include "totool.h"
 // due the toListView
 #include "toresultview.h"

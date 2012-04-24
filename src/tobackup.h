@@ -42,7 +42,7 @@
 #ifndef TOBACKUP_H
 #define TOBACKUP_H
 
-#include "config.h"
+ 
 #include "totool.h"
 
 #include <QLabel>

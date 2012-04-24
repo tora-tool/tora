@@ -42,7 +42,7 @@
 #ifndef TOSQLPARSE_H
 #define TOSQLPARSE_H
 
-#include "config.h"
+ 
 
 #include <list>
 #include <algorithm>

@@ -42,7 +42,7 @@
 #ifndef TOHELPSETUP_H
 #define TOHELPSETUP_H
 
-#include "config.h"
+ 
 
 #include <QProgressBar>
 #include <QWidget>

@@ -42,7 +42,7 @@
 #ifndef TORESULTCOMBO_H
 #define TORESULTCOMBO_H
 
-#include "config.h"
+ 
 
 #include <qcombobox.h>
 #include <qstringlist.h>

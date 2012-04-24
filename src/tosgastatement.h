@@ -42,7 +42,7 @@
 #ifndef TOSGASTATEMENT_H
 #define TOSGASTATEMENT_H
 
-#include "config.h"
+ 
 
 #include <qtabwidget.h>
 

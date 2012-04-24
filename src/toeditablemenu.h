@@ -42,7 +42,7 @@
 #ifndef TOEDITABLEMENU_H
 #define TOEDITABLEMENU_H
 
-#include "config.h"
+ 
 
 #include <QMenu>
 #include <QKeyEvent>

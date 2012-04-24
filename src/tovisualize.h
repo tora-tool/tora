@@ -42,7 +42,7 @@
 #ifndef TOVISUALIZE_H
 #define TOVISUALIZE_H
 
-#include "config.h"
+ 
 
 #include <QWidget>
 #include <algorithm>

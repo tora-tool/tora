@@ -1,7 +1,7 @@
 #ifndef TOCONFIGURATION_H
 #define TOCONFIGURATION_H
 
-#include "config.h"
+ 
 
 #include <loki/Singleton.h>
 #include <QStringList>

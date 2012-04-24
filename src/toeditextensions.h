@@ -42,7 +42,7 @@
 #ifndef TOEDITEXTENSIONS_H
 #define TOEDITEXTENSIONS_H
 
-#include "config.h"
+ 
 #include "toeditwidget.h"
 
 // for settings classes

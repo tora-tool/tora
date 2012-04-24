@@ -42,7 +42,7 @@
 #ifndef TORESULTCOLSCOMMENT_H
 #define TORESULTCOLSCOMMENT_H
 
-#include "config.h"
+ 
 
 #include <QString>
 #include <QLineEdit>

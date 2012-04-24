@@ -42,7 +42,7 @@
 #ifndef TORESULTVIEW_H
 #define TORESULTVIEW_H
 
-#include "config.h"
+ 
 #include "toeditwidget.h"
 #include "toresult.h"
 

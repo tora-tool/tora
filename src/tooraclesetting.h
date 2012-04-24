@@ -42,7 +42,7 @@
 #ifndef TOORACLESETTING_H
 #define TOORACLESETTING_H
 
-#include "config.h"
+ 
 #include "totool.h"
 
 #include "ui_tooraclesettingui.h"

@@ -42,7 +42,7 @@
 #ifndef TORESULTCOLS_H
 #define TORESULTCOLS_H
 
-#include "config.h"
+ 
 #include "toconnection.h"
 #include "toresulttableview.h"
 

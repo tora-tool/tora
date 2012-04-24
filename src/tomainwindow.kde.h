@@ -42,7 +42,7 @@
 #ifndef TOMAINWINDOW_KDE_H
 #define TOMAINWINDOW_KDE_H
 
-#include "config.h"
+ 
 
 #include <kapp.h>
 #include <kdockwidget.h>

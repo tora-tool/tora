@@ -42,7 +42,7 @@
 #ifndef TOINVALID_H
 #define TOINVALID_H
 
-#include "config.h"
+ 
 #include "totool.h"
 
 class toResultExtract;

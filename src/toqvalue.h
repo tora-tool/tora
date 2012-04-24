@@ -42,7 +42,7 @@
 #ifndef TOQVALUE_H
 #define TOQVALUE_H
 
-#include "config.h"
+ 
 
 #include <list>
 #include <QString>

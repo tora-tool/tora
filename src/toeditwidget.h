@@ -42,7 +42,7 @@
 #ifndef TOEDITWIDGET_H
 #define TOEDITWIDGET_H
 
-#include "config.h"
+ 
 
 #include <list>
 

@@ -42,7 +42,7 @@
 #ifndef TOWORKSHEET_TEXT_H
 #define TOWORKSHEET_TEXT_H
 
-#include "config.h"
+ 
 
 #include "tohighlightedtext.h"
 #include "toworksheet.h"

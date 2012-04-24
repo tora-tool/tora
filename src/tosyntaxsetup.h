@@ -42,7 +42,7 @@
 #ifndef TOSYNTAXSETUP_H
 #define TOSYNTAXSETUP_H
 
-#include "config.h"
+ 
 #include "tohelp.h"
 #include "tohighlightedtext.h"
 #include "ui_tosyntaxsetupui.h"

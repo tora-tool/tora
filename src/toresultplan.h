@@ -42,7 +42,7 @@
 #ifndef TORESULTPLAN_H
 #define TORESULTPLAN_H
 
-#include "config.h"
+ 
 #include "tosqlparse.h"
 #include "toresultview.h"
 #include "toresultcombo.h"

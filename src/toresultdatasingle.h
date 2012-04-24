@@ -42,7 +42,7 @@
 #ifndef TORESULTDATASINGLE_H
 #define TORESULTDATASINGLE_H
 
-#include "config.h"
+ 
 #include "toresultmodel.h"
 
 #include <QWidget>

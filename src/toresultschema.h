@@ -42,7 +42,7 @@
 #ifndef TORESULTSCHEMA_H
 #define TORESULTSCHEMA_H
 
-#include "config.h"
+ 
 
 #include "toresultcombo.h"
 

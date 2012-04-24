@@ -42,7 +42,7 @@
 #ifndef TOCHARTMANAGER_H
 #define TOCHARTMANAGER_H
 
-#include "config.h"
+ 
 #include "tohelp.h"
 #include "ui_tochartsetupui.h"
 #include "ui_tochartalarmui.h"

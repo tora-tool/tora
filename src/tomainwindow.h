@@ -42,7 +42,7 @@
 #ifndef TOMAINWINDOW_H
 #define TOMAINWINDOW_H
 
-#include "config.h"
+ 
 
 #include <QMainWindow>
 

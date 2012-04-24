@@ -42,7 +42,7 @@
 #ifndef TOANALYZE_H
 #define TOANALYZE_H
 
-#include "config.h"
+ 
 #include "toeventquery.h"
 #include "totool.h"
 

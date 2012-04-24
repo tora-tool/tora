@@ -42,7 +42,7 @@
 #ifndef TOLISTVIEWFORMATTERTEXT_H
 #define TOLISTVIEWFORMATTERTEXT_H
 
-#include "config.h"
+ 
 #include "tolistviewformatter.h"
 
 class toListViewFormatterText : public toListViewFormatter

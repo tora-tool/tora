@@ -46,7 +46,7 @@
 #include <QModelIndex>
 #include <QVariant>
 
-#include "config.h"
+ 
 #include "toconnection.h"
 
 class toEventQuery;

@@ -42,7 +42,7 @@
 #ifndef TOMARKEDTEXT_H
 #define TOMARKEDTEXT_H
 
-#include "config.h"
+ 
 #include "toeditwidget.h"
 
 #include <map>

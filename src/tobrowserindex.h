@@ -42,7 +42,7 @@
 #ifndef TOBROWSERINDEX_H
 #define TOBROWSERINDEX_H
 
-#include "config.h"
+ 
 #include "ui_tobrowserindexui.h"
 #include "toextract.h"
 #include "totool.h"

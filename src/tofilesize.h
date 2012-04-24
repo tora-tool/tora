@@ -42,7 +42,7 @@
 #ifndef TOFILESIZE_H
 #define TOFILESIZE_H
 
-#include "config.h"
+ 
 
 #include <QGroupBox>
 

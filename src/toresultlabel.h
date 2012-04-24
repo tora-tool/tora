@@ -42,7 +42,7 @@
 #ifndef TORESULTLABEL_H
 #define TORESULTLABEL_H
 
-#include "config.h"
+ 
 #include "toresult.h"
 
 #include <qlabel.h>

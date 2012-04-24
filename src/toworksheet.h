@@ -42,7 +42,7 @@
 #ifndef TOWORKSHEET_H
 #define TOWORKSHEET_H
 
-#include "config.h"
+ 
 
 #include <map>
 

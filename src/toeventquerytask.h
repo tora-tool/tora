@@ -42,7 +42,7 @@
 #ifndef TOEVENTQUERYTASK_H
 #define TOEVENTQUERYTASK_H
 
-#include "config.h"
+ 
 #include "toconnection.h"
 #include "tothread.h"
 #include "torunnable.h"
