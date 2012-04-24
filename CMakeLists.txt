@@ -87,7 +87,6 @@ if (WANT_BUNDLE)
     SET(EXE_NAME "TOra")
 endif(WANT_BUNDLE)
 
-ADD_DEFINITIONS("-DVERSION=\\\"${VERSION}\\\"")
 # Allow using CMAKE-related ifdefs in the code. See e.g. toqsqlconnection.cpp.
 ADD_DEFINITIONS("-DCMAKE_BUILD")
 
