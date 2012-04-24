@@ -39,6 +39,9 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+// temporary workaround non-monolitic build is broken
+#define TOMONOLITHIC
+
 #include "utils.h"
 
 #include "toabout.h"
