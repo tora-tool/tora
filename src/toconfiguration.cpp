@@ -264,9 +264,8 @@ public:
     {
 		// Note we must save copy of this before we change into some other directory
 		// Note: m_applicationDir will be empty if QCoreApplication was not instantiated yet
-		m_applicationDir = QCoreApplication::applicationDirPath();
+        m_applicationDir.setPath("");
         loadConfig();
-		QString aa = m_applicationDir.absolutePath();
     }
 
     /*! \brief Get directory name where to store session files.
