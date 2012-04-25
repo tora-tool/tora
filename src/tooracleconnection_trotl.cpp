@@ -236,8 +236,26 @@ public:
 
 	/* virtual */ QString userData() const throw()
 	{
-		return QString("Datape: Oracle [N]CLOB\nSize: %1B\n")
-			.arg(getLength());
+		::trotl::SqlOpenLob clob_open(_data, OCI_LOB_READONLY);
+		QString retval;
+		char buffer[524288];
+		unsigned offset = 0;
+		unsigned to_read = 16 * _data.getChunkSize();
+		oraub8 bytes_read = 0, chars_read = 0;
+		// BEWARE - the memory alloaced can be WERY HUGE. 
+		// So far this is used only for DBMS_METADATA.GET_DDL
+		while(offset < MAXTOMAXLONG)
+		{
+			oraub8 cr = 0, br = 0;
+			br = _data.read(&buffer[0], sizeof(buffer), offset+1, to_read, &cr);
+			offset += cr;
+			chars_read += cr;
+			bytes_read += br;
+			if(br == 0) // end of LOB reached
+				break;
+			retval += QString::fromUtf8(buffer, br);
+		}
+		return retval;
 	}
 
 	/* virtual */ QString tooltipData() const throw()
@@ -332,7 +350,7 @@ public:
 	/* virtual */ QString editData() const throw()
 	{
 		::trotl::SqlOpenLob clob_open(data, OCI_LOB_READONLY);
-		QString retval = QString("Datatyp pe: Oracle BLOB\nSize: %1B\n").arg(getLength());
+		QString retval = QString("Datatype: Oracle BLOB\nSize: %1B\n").arg(getLength());
 		unsigned char buffer[MAXTOMAXLONG];
 		ub4 chunk_size = data.getChunkSize();
 		unsigned offset = 0;
@@ -364,14 +382,12 @@ public:
 
 	/* virtual */ QString userData() const throw()
 	{
-		return QString("Datape: Oracle BLOB\nSize: %1B\n")
-			.arg(data.length());
+		return QString("Datape: Oracle BLOB\nSize: %1B\n").arg(data.length());
 	}
 
 	/* virtual */ QString tooltipData() const throw()
 	{
-		return QString("Datape: Oracle BLOB\nSize: %1B\n")
-			.arg(data.length());
+		return QString("Datape: Oracle BLOB\nSize: %1B\n").arg(data.length());
 	}
 	
 	/* virtual */ QString dataTypeName() const

@@ -7289,7 +7289,10 @@ QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, co
               arg(type).
               arg(owner).
               arg(QUOTE(name));
-    return inf.readValue();
+	toQValue sql = inf.readValue();
+	ret += sql.userData();
+	ret += ';';
+    return ret;
 } // createMeatada
 
 // Implementation public interface

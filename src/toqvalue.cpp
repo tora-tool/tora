@@ -85,7 +85,7 @@ toQValue::toQValue(const toQValue &copy)
     /** Be destructive only if complexType is held
      *  There should be no copying of data read from a query,
      *  but toQValue is also used for query parameters(toQList and others)
-     *  and these are copyined often (toNoBlockQuery.Params => toQuery.Params)
+     *  and these are copied often (toNoBlockQuery.Params => toQuery.Params)
      */
     if(isComplexType())
 	    const_cast<toQValue&>(copy).Value = "deleted value(clone)";
@@ -97,7 +97,7 @@ const toQValue &toQValue::operator = (const toQValue & copy)
     /** Be destructive only if complexType is held
      *  There should be no copying of data read from a query,
      *  but toQValue is also used for query parameters(toQList and others)
-     *  and these are copyined often (toNoBlockQuery.Params => toQuery.Params)
+     *  and these are copied often (toNoBlockQuery.Params => toQuery.Params)
      */
     if(isComplexType())
 	    const_cast<toQValue&>(copy).Value = "deleted value(assign)";
@@ -253,7 +253,7 @@ const QByteArray toQValue::toByteArray() const
 
 QString toQValue::displayData() const
 {
-	if (isNull() && toConfigurationSingle::Instance().indicateEmpty())
+	if( isNull() && toConfigurationSingle::Instance().indicateEmpty())
 	{
 		return QString::fromLatin1("{null}");
 	}
@@ -263,12 +263,18 @@ QString toQValue::displayData() const
 		QByteArray const &raw = Value.toByteArray();
 		return raw.toHex();
 	}
-	    
+	
 	return Value.toString();
 }
 
 QString toQValue::editData() const
 {
+	if( isComplexType())
+	{
+		complexType *i = Value.value<toQValue::complexType*>();
+		return i->editData();
+	}
+
 	return Value.toString();
 }
 
@@ -276,6 +282,13 @@ QString toQValue::userData() const
 {
 	if (isNull() )
 		return QString::fromLatin1("NULL");
+
+	if( isComplexType())
+	{
+		complexType *i = Value.value<toQValue::complexType*>();
+		return i->userData();
+	}
+
 	return Value.toString();
 }
 
