@@ -456,7 +456,6 @@ bool toCache::loadDiskCache()
 {
     if (!toConfigurationSingle::Instance().cacheDisk())
         return false;
-
     objectName *cur = 0;
     int objCounter = 0;
     int synCounter = 0;
@@ -526,8 +525,10 @@ bool toCache::loadDiskCache()
         }
     }
 
-    ObjectNames.sort();
-
+	{
+		toLocker lock(cacheLock);
+		ObjectNames.sort();
+	}
     return true;
 }
 
