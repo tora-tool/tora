@@ -173,6 +173,10 @@
 #define DEFAULT_ENCODING "Default"
 #define CONF_FORCELINEEND "ForceLineEnd"
 #define DEFAULT_FORCELINEEND "Default"
+
+#define DEFAULT_PLUGIN_DIR "share/tora/"
+#define DEFAULT_HELP_DIR DEFAULT_PLUGIN_DIR "help/"
+
 // code editor
 #define CONF_STATIC_CHECKER "StaticChecker"
 // connection (general)

@@ -95,10 +95,10 @@ INCLUDE(LibSuffix)
 
 #Set the permissions to be used when installing plugins
 SET(PLUGIN_PERMISSIONS WORLD_EXECUTE GROUP_EXECUTE OWNER_EXECUTE WORLD_READ GROUP_READ OWNER_READ OWNER_WRITE)
-if (NOT TORA_PLUGIN_DIR)
-    SET (TORA_PLUGIN_DIR "share/tora/")
-endif (NOT TORA_PLUGIN_DIR)
-ADD_DEFINITIONS("-DDEFAULT_PLUGIN_DIR=\\\"${TORA_PLUGIN_DIR}\\\"")
+## if (NOT TORA_PLUGIN_DIR)
+##     SET (TORA_PLUGIN_DIR "share/tora/")
+## endif (NOT TORA_PLUGIN_DIR)
+## ADD_DEFINITIONS("-DDEFAULT_PLUGIN_DIR=\\\"${TORA_PLUGIN_DIR}\\\"")
 
 if (NOT TORA_DOC_DIR)
 	IF (UNIX)
@@ -199,7 +199,7 @@ ENDIF (WIN32 AND NOT DEFINED WANT_INTERNAL_QSCINTILLA)
 ########## Find Dependencies                                                                        ##########
 
 # wo don't want to plugin build
-ADD_DEFINITIONS(-DTOMONOLITHIC)
+#ADD_DEFINITIONS(-DTOMONOLITHIC)
 
 
 SET (QT_MT_REQUIRED true)

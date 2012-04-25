@@ -39,10 +39,6 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "toconfiguration.h"
-
-// #include <qapplication.h>
-// #include <qregexp.h>
-
 #include "utils.h"
 
 // A little magic to get lrefresh to work and get a check on qApp
@@ -78,7 +74,8 @@ public:
     bool    m_highlight;
     bool    m_keywordUpper;
     bool    m_objectNamesUpper;
-    QString m_pluginDir;
+	mutable QDir    m_pluginDir;
+	mutable QDir    m_applicationDir;
     QString m_cacheDir;
     bool    m_cacheDisk;
     QString m_sqlFile;
@@ -265,7 +262,11 @@ public:
 
     toConfigurationPrivate()
     {
+		// Note we must save copy of this before we change into some other directory
+		// Note: m_applicationDir will be empty if QCoreApplication was not instantiated yet
+		m_applicationDir = QCoreApplication::applicationDirPath();
         loadConfig();
+		QString aa = m_applicationDir.absolutePath();
     }
 
     /*! \brief Get directory name where to store session files.
@@ -273,23 +274,8 @@ public:
      */
     QString getSpecialDir()
     {
-//#if defined(Q_OS_WIN32)
-//        QString qstr;
-//       char dir[256];
-//        if ( SHGetSpecialFolderPath(NULL, dir, CSIDL_APPDATA, false) )
-//       {
-//            qstr = dir;
-//            if( !qstr.endsWith("\\") )
-//                qstr += "\\";
-//            qstr.replace( '\\', '/' );
-//       }
-//        return qstr;
-//#else
         return QDir::homePath() + "/";
-//#endif
     }
-
-
 
     void loadConfig()
     {
@@ -319,8 +305,12 @@ public:
         m_highlight = s.value(CONF_HIGHLIGHT, true).toBool();
         m_keywordUpper = s.value(CONF_KEYWORD_UPPER, DEFAULT_KEYWORD_UPPER).toBool();
         m_objectNamesUpper = s.value(CONF_OBJECT_NAMES_UPPER, DEFAULT_OBJECT_NAMES_UPPER).toBool();
+	
+		// Commented out. m_pluginDir depends QCoreApplication instance, and this one is not intantiated yet
+		// m_pluginDir = s.value(CONF_PLUGIN_DIR, DEFAULT_PLUGIN_DIR).toString();
+		// overwrite CWD in m_pluginDir by empty string
+		m_pluginDir.setPath("");
 
-        m_pluginDir = s.value(CONF_PLUGIN_DIR, DEFAULT_PLUGIN_DIR).toString();
         m_cacheDir = s.value(CONF_CACHE_DIR, "").toString();
         m_cacheDisk = s.value(CONF_CACHE_DISK, DEFAULT_CACHE_DISK).toBool();
         m_sqlFile = s.value(CONF_SQL_FILE, getSpecialDir() + DEFAULT_SQL_FILE).toString();
@@ -576,7 +566,7 @@ public:
         s.setValue(CONF_HIGHLIGHT, m_highlight);
         s.setValue(CONF_KEYWORD_UPPER, m_keywordUpper);
         s.setValue(CONF_OBJECT_NAMES_UPPER, m_objectNamesUpper);
-        s.setValue(CONF_PLUGIN_DIR, m_pluginDir);
+        s.setValue(CONF_PLUGIN_DIR, m_pluginDir.absolutePath());
         s.setValue(CONF_CACHE_DIR, m_cacheDir);
         s.setValue(CONF_CACHE_DISK, m_cacheDisk);
         s.setValue(CONF_SQL_FILE, m_sqlFile);
@@ -1221,7 +1211,22 @@ void toConfiguration::setObjectNamesUpper(bool v)
 
 QString toConfiguration::pluginDir()
 {
-   return p->m_pluginDir;
+	// Note we must save copy of this before we change into some other directory
+	if (p->m_applicationDir.absolutePath().isEmpty())
+		p->m_applicationDir = QCoreApplication::applicationDirPath();
+
+	if (p->m_pluginDir.absolutePath().isEmpty())
+	// m_pluginDir init
+	{
+        QSettings s;
+        s.beginGroup("preferences");
+		QString configPath = s.value(CONF_PLUGIN_DIR, p->m_applicationDir.absolutePath() + QDir::separator () + DEFAULT_PLUGIN_DIR).toString();
+		QDir shareDir(configPath);
+
+		if (shareDir.exists())
+			p->m_pluginDir = shareDir;
+	}        
+	return p->m_pluginDir.absolutePath();
 }
 void toConfiguration::setPluginDir(const QString & v)
 {
