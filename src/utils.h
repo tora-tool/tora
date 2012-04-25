@@ -323,6 +323,12 @@ void toUnSetEnv(const QString &var);
  * @return Selected filename.
  */
 QString toOpenFilename(const QString &filename, const QString &filter, QWidget *parent);
+/** Pop up a dialog and choose a file to open. Uses config property LastDir.
+ * @param filter Filter of filenames (See @ref QFileDialog)
+ * @param parent Parent of dialog.
+ * @return Selected filename.
+ */
+QString toOpenFilename(const QString &filter, QWidget *parent);
 /** Pop up a dialog and choose a file to save to.
  * @param filename Default filename to open.
  * @param filter Filter of filenames (See @ref QFileDialog)

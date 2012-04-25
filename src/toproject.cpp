@@ -328,8 +328,7 @@ void toProjectTemplate::removeItems(toTreeWidgetItem *item)
 
 void toProjectTemplate::addFile(void)
 {
-    QString file = toOpenFilename(QString::null,
-                                  QString::fromLatin1(PROJECT_EXTENSIONS),
+    QString file = toOpenFilename(QString::fromLatin1(PROJECT_EXTENSIONS),
                                   toMainWidget());
     if (!file.isNull())
     {

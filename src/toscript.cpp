@@ -813,7 +813,7 @@ void toScript::browseFile(void)
 {
     if (ScriptUI->OutputFile->isChecked())
     {
-        QString f = toOpenFilename(QString::null, QString::null, this);
+        QString f = toOpenFilename(QString::null, this);
         if (!f.isEmpty())
             ScriptUI->Filename->setText(f);
     }

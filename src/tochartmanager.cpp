@@ -904,7 +904,7 @@ static QString ReadCSV(const QString &data, int &pos, bool &nl)
 
 void toChartManager::openChart(void)
 {
-    QString name = toOpenFilename(QString::null, QString::fromLatin1("*.csv"), this);
+    QString name = toOpenFilename(QString::fromLatin1("*.csv"), this);
     if (!name.isEmpty())
     {
         try

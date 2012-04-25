@@ -148,7 +148,7 @@ void toHelpPrefs::delFile()
 void toHelpPrefs::oracleManuals()
 {
     // For Oracle 11g look for a file /nav/portal_3.htm which contains a list of all books
-    QString filename = toOpenFilename(QString::null, QString::fromLatin1("*index.htm*"), this);
+    QString filename = toOpenFilename(QString::fromLatin1("*index.htm*"), this);
     try
     {
         toHtml file(toReadFile(filename));

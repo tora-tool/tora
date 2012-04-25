@@ -1901,7 +1901,7 @@ void toMain::saveSession(void)
 
 void toMain::loadSession(void)
 {
-    QString filename = toOpenFilename(QString::null, QString::fromLatin1("*.tse"), this);
+    QString filename = toOpenFilename(QString::fromLatin1("*.tse"), this);
     if (!filename.isEmpty())
     {
         try

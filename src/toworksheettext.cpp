@@ -97,10 +97,7 @@ bool toWorksheetText::editOpen(QString suggestedFile)
     if (suggestedFile != QString::null)
         fname = suggestedFile;
     else
-    {
-        QFileInfo file(filename());
-        fname = toOpenFilename(file.dir().path(), QString::null, this);
-    }
+		fname = toOpenFilename(QString::null, this);
     if (fname.isEmpty())
         return false;
     try

@@ -316,7 +316,7 @@ void toWorksheetStatistic::remove(QAction *action)
 
 void toWorksheetStatistic::load(void)
 {
-    QString filename = toOpenFilename(QString::null, QString::fromLatin1("*.stat"), this);
+    QString filename = toOpenFilename(QString::fromLatin1("*.stat"), this);
     if (!filename.isEmpty())
     {
         try

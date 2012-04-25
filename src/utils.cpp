@@ -827,14 +827,30 @@ static QString AddExt(QString t, const QString &filter)
 QString toOpenFilename(const QString &filename, const QString &filter, QWidget *parent)
 {
     QString t = filter;
+	QString retval;
+
     if (t.isEmpty())
         t = GetExtensions();
 
-    QString dir = filename;
-    if (dir.isNull())
-        dir = toConfigurationSingle::Instance().lastDir();
+	QFileInfo fi(filename);
+	if (!filename.isEmpty() && fi.absoluteDir().exists())
+		retval = AddExt(TOFileDialog::getOpenFileName(parent, QObject::tr("Open File", "utils/toOpenFilename"), fi.absoluteFilePath(), t), t);
+	else
+	{
+		QString const& lastDir = toConfigurationSingle::Instance().lastDir();
+		retval = AddExt(TOFileDialog::getOpenFileName(parent, QObject::tr("Open File", "utils/toOpenFilename"), lastDir, t), t);
+	}
+	if (!retval.isEmpty())
+		toConfigurationSingle::Instance().setLastDir(retval);
+	return retval;
+}
 
-    return AddExt(TOFileDialog::getOpenFileName(parent, QObject::tr("Open File", "utils/toOpenFilename"), dir, t), t);
+QString toOpenFilename(const QString &filter, QWidget *parent)
+{
+	QFileInfo fi(toConfigurationSingle::Instance().lastDir());
+	if ( fi.absoluteDir().exists())
+		return toOpenFilename( fi.absolutePath(), filter, parent);
+	return toOpenFilename(QDir::currentPath(), filter, parent);
 }
 
 QString toSaveFilename(const QString &filename, const QString &filter, QWidget *parent)

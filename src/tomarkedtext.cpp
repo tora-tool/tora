@@ -350,7 +350,7 @@ bool toMarkedText::editOpen(QString suggestedFile)
     if (!suggestedFile.isEmpty())
         fname = suggestedFile;
     else
-        fname = toOpenFilename(QDir::currentPath(), QString::null, this);
+        fname = toOpenFilename(QString::null, this);
 
     if (!fname.isEmpty())
     {

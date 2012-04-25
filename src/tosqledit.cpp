@@ -288,7 +288,7 @@ void toSQLEdit::loadSQL(void)
 {
     try
     {
-        QString filename = toOpenFilename(QString::null, QString::null, this);
+        QString filename = toOpenFilename(QString::null, this);
         if (!filename.isEmpty())
         {
             toSQL::loadSQL(filename);
