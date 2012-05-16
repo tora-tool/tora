@@ -1,0 +1,7 @@
+[fedora-cross]
+name=fedora-cross
+baseurl=http://build1.openftd.org/fedora-cross/f$releasever/$basearch
+gpgcheck=1
+enabled=1
+gpgkey=http://build1.openftd.org/fedora-cross/RPM-GPG-KEY-Erik-van-Pienbroek
+#exclude=cross-gcc*.fc15_cross* cross-cpp*.fc15_cross* mingw32-gcc*.fc15_cross* mingw32-cpp*.fc15_cross* mingw64-gcc*.fc15_cross* mingw64-cpp*.fc15_cross*
