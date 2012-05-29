@@ -135,7 +135,7 @@ void toConnectionPoolExec::run() {
 }
 
 
-toConnectionPool::toConnectionPool(toConnection *conn) : QObject(NULL) {
+toConnectionPool::toConnectionPool(toConnection *conn) : QObject(NULL), TestThread(NULL) {
     Connection = conn;
     LockingPtr<SubList> ptr(Pool, PoolLock);
 
