@@ -119,6 +119,7 @@ void toResultTableView::setup(bool readable, bool numberColumn, bool editable)
     Editable        = editable;
     ReadAll         = false;
     Filter          = 0;
+    VisibleColumns  = 0;
     ReadableColumns = readable;
     NumberColumn    = numberColumn;
     ColumnsResized  = false;
@@ -342,7 +343,7 @@ void toResultTableView::paintEvent(QPaintEvent *event)
 
 void toResultTableView::resizeEvent(QResizeEvent *event)
 {
-    if(VisibleColumns == 1 && ReadableColumns)
+    if(ReadableColumns && VisibleColumns == 1)
         setColumnWidth(1, viewport()->width());
     QTableView::resizeEvent(event);
 }
@@ -389,7 +390,7 @@ void toResultTableView::applyColumnRules()
     if (toConfigurationSingle::Instance().multiLineResults())
         resizeRowsToContents();
 
-    if (VisibleColumns == 1 && ReadableColumns)
+    if (ReadableColumns && VisibleColumns == 1)
         setColumnWidth(1, viewport()->width());
 }
 

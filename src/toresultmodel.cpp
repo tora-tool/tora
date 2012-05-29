@@ -58,7 +58,8 @@ toResultModel::toResultModel(toEventQuery *query,
     First           = true;
     Editable        = edit;
     ReadAll         = false;
-
+    SortedOnColumn  = -1;
+    
     MaxRead = MaxNumber = toConfigurationSingle::Instance().maxNumber();
 
     CurrRowKey = 1;
@@ -102,7 +103,8 @@ toResultModel::toResultModel(const QString &owner,
     First           = true;
     Editable        = false;
     ReadAll         = false;
-
+    SortedOnColumn  = -1;
+    
     CurrRowKey = 1;
 
     Query = 0;
