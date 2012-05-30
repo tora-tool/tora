@@ -581,7 +581,7 @@ ENDIF (APPLE AND WANT_BUNDLE)
 
 
 IF(WIN32)
-    IF (MSVC)
+    IF (MSVC AND NOT WANT_DEBUG)
         # this is a must to switch off subsystem:console (console window poping up)
         # WinMain wrapper from QT_QTMAIN_LIBRARY is used and liner must be modified
         LINK_LIBRARIES(${QT_QTMAIN_LIBRARY})
@@ -591,7 +591,7 @@ IF(WIN32)
 #        ELSE (WANT_DEBUG)
 #            SET (CMAKE_EXE_LINKER_FLAGS "/NODEFAULTLIB:msvcrt.lib ${CMAKE_EXE_LINKER_FLAGS}")
 #        ENDIF (WANT_DEBUG)
-    ENDIF (MSVC)
+    ENDIF ()
 ENDIF(WIN32)
 
 

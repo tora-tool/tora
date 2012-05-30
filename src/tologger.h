@@ -171,15 +171,10 @@ inline NullLogger& get_null_log()
   
 #endif
 
-
-// TODO add some comment on this MSVC
 inline std::ostream& operator<<( std::ostream & stream, const QString & str)
-{ // TODO review this
-	QByteArray b( str.toAscii());
-	const char *c = b.constData();
-	stream << c;
+{
+	stream << qPrintable(str);
 	return stream;
 }
-
 
 #endif
