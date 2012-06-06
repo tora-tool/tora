@@ -448,6 +448,7 @@ QString toCache::cacheFile()
     //     isepl_global_stage@//oraclexe11:1521/xe
     // which is invalid. Just remove "/" or replace it with something safer.
     ret = ret.replace("/", "_");
+    ret = ret.replace(":", "~");
 
     return cacheDir() + "/" + ret;
 } // cacheFile
