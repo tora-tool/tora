@@ -2193,6 +2193,7 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
         : toToolWidget(DebugTool, "debugger.html", main, connection, "toDebug")
         , TargetThread()
         , TargetQuery(NULL)
+        , DebuggerStarted(false)
 {
     debugSession = new toQuery(connection);
 
