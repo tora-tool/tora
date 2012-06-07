@@ -2115,7 +2115,8 @@ int toDebug::continueExecution(int stopon)
                 // When stopping target session we have to cancel corresponding query rather
                 // than sending a ABORT_EXECUTION signal (which apparently kills whole target
                 // session
-                TargetQuery->cancel();
+                if( TargetQuery)
+                    TargetQuery->cancel();
                 debugSession->execute(SQLDetach);
                 reason = TO_REASON_KNL_EXIT;
             } // if stopon != TO_ABORT_EXECUTION
@@ -2189,8 +2190,9 @@ void toDebug::stop(void)
 }
 
 toDebug::toDebug(QWidget *main, toConnection &connection)
-        : toToolWidget(DebugTool, "debugger.html", main, connection, "toDebug"),
-        TargetThread()
+        : toToolWidget(DebugTool, "debugger.html", main, connection, "toDebug")
+        , TargetThread()
+        , TargetQuery(NULL)
 {
     debugSession = new toQuery(connection);
 
