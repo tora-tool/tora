@@ -40,7 +40,7 @@
           </widget>
          </item>
          <item>
-          <widget class="toResultCombo" name="Schema" native="true"/>
+          <widget class="toResultSchema" name="Schema" native="true"/>
          </item>
          <item>
           <widget class="QLabel" name="NameLabel">
@@ -277,9 +277,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>toResultCombo</class>
+   <class>toResultSchema</class>
    <extends>QWidget</extends>
-   <header>toresultcombo.h</header>
+   <header>toresultschema.h</header>
   </customwidget>
   <customwidget>
    <class>toHighlightedText</class>
@@ -295,7 +295,7 @@
   <tabstop>ShowSql</tabstop>
  </tabstops>
  <includes>
-  <include location="local">toresultcombo.h</include>
+  <include location="local">toresultschema.h</include>
   <include location="local">tohighlightedtext.h</include>
   <include location="local">tohighlightedtext.h</include>
   <include location="local">tohighlightedtext.h</include>

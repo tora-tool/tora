@@ -56,6 +56,7 @@ class toPLSQLWidget;
 class toTreeWidget;
 class toTreeWidgetItem;
 class toPLSQLText;
+class toResultSchema;
 
 /*! \brief Advanced PL/SQL Editor. It's based on
 Debugger code. But it can compile PL/SQL unit in all cases.
@@ -73,7 +74,7 @@ class toPLSQLEditor : public toToolWidget
     // Toolbar
     void createActions(void);
 
-    QComboBox *Schema;
+    toResultSchema *Schema;
     QAction   *refreshAct;
     QAction   *describeAct;
     QAction   *newSheetAct;

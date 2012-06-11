@@ -7,13 +7,14 @@
 #include <QGroupBox>
 
 class toConnection;
+class toResultSchema;
 class toResultCombo;
 
 class toTableSelect : public QGroupBox
 {
     Q_OBJECT
 
-    toResultCombo *Schema;
+    toResultSchema *Schema;
     toResultCombo *Table;
 
     QString SelectedTable;

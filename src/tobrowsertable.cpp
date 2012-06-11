@@ -207,7 +207,8 @@ toBrowserTable::toBrowserTable(toConnection &conn,
         Table = cnct->quote(table);
 
         QString tablespace;
-        Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
+        //Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
+                Schema->refresh();
         Schema->setSelected(Owner);
 
         if (!Table.isEmpty())

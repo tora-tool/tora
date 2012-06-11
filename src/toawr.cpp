@@ -270,6 +270,7 @@ toAWR::toAWR(/*toTool *tool,*/ QWidget *parent, toConnection &_connection)
 	
 	toolbar->addWidget(new QLabel("Inst:", toolbar));
 	dbid = new toResultCombo(toolbar, "AWR toolbar");
+	dbid->setSQL(toSQL::sql("toAWR:DBInstances", connection()));
 	fsnap = new toResultCombo(toolbar, "AWR toolbar");	fsnap->setSelectionPolicy(toResultCombo::LastButOne);
 	tsnap = new toResultCombo(toolbar, "AWR toolbar");	tsnap->setSelectionPolicy(toResultCombo::Last);
 
@@ -289,7 +290,7 @@ toAWR::toAWR(/*toTool *tool,*/ QWidget *parent, toConnection &_connection)
 
 	try
 	{
-		dbid->query(toSQL::sql("toAWR:DBInstances", connection()));
+		dbid->refresh();
 	}
 	TOCATCH;
 

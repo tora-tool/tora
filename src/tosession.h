@@ -58,7 +58,7 @@ class QTabWidget;
 class toConnection;
 class toMain;
 class toResultBar;
-class toResultCombo;
+class toResultSchema;
 class toResultLock;
 class toResultStats;
 class toResultTableView;
@@ -80,7 +80,7 @@ class toSession : public toToolWidget
 
     QWidget *CurrentTab;
 
-    toResultCombo *Select;
+    toResultSchema *Select;
 
     toSGAStatement    *CurrentStatement;
     toSGAStatement    *PreviousStatement;

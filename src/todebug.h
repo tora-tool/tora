@@ -109,6 +109,7 @@ class toMarkedText;
 class toOutput;
 class toTreeWidget;
 class toTreeWidgetItem;
+class toResultSchema;
 
 class toDebug : public toToolWidget
 {
@@ -139,7 +140,7 @@ class toDebug : public toToolWidget
     void getErrorText(int code, int type, QString &ret);
 #endif
 
-    QComboBox *Schema;
+    toResultSchema *Schema;
     QAction   *refreshAct;
     QAction   *newSheetAct;
     QAction   *scanSourceAct;

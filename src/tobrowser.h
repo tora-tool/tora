@@ -57,7 +57,7 @@ class toTabWidget;
 class QToolBar;
 class toBrowserFilter;
 class toResult;
-class toResultCombo;
+class toResultSchema;
 class toResultData;
 class toResultData;
 class toResultFilter;
@@ -114,7 +114,7 @@ class toBrowser : public toToolWidget
 {
     Q_OBJECT;
 
-    toResultCombo *Schema;
+    toResultSchema *Schema;
     QTabWidget   *m_mainTab;
     QMenu         *ToolMenu;
 

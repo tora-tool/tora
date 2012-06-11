@@ -39,20 +39,20 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "utils.h"
 #include "toresultschema.h"
+#include "utils.h"
 #include "toconnection.h"
+#include "tologger.h"
 
 #include <QSettings>
 
-
-toResultSchema::toResultSchema(toConnection &conn,
-                               QWidget *parent,
+toResultSchema::toResultSchema(QWidget *parent,
                                const char *name)
     : toResultCombo(parent, name)
 {
     setSQL(toSQL::sql(toSQL::TOSQL_USERLIST));
 
+    toConnection &conn = toCurrentConnection(parent);
     ConnectionKey =
         conn.provider() + "-" +
         conn.host() + "-" +
@@ -96,7 +96,6 @@ void toResultSchema::update() {
     update(toResultCombo::currentText());
 }
 
-
 void toResultSchema::update(const QString &schema) {
     if(schema.isEmpty())
         return;
@@ -133,8 +132,18 @@ void toResultSchema::update(const QString &schema) {
     TOCATCH;
 }
 
-
 void toResultSchema::updateLastSchema(const QString &schema) {
     QSettings s;
     s.setValue("schema/" + ConnectionKey, schema);
+}
+
+void toResultSchema::refresh(void)
+{
+       try {
+               toResultCombo::refresh();
+       }
+       catch (...)
+       {
+               TLOG(1,toDecorator,__HERE__) << "       Ignored exception." << std::endl;
+       }
 }

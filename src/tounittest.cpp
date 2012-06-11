@@ -151,8 +151,7 @@ toUnitTest::toUnitTest(QWidget * parent, toConnection &connection)
 
     QLabel * labSchema = new QLabel(tr("Schema") + " ", toolbar);
     toolbar->addWidget(labSchema);
-    Schema = new toResultSchema(connection, toolbar,
-                                "UTresultSchema");
+    Schema = new toResultSchema(toolbar, "UTresultSchema");
     try
     {
         Schema->refresh();

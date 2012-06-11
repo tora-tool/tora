@@ -42,12 +42,9 @@
 #ifndef TORESULTSCHEMA_H
 #define TORESULTSCHEMA_H
 
- 
-
 #include "toresultcombo.h"
 
 class toConnection;
-
 
 /**
  * This widget displays a list of schemas
@@ -66,11 +63,13 @@ public:
      *
      * @param parent Parent widget.
      * @param name Name of widget.
+        *
+        * NOTE: this widget does not eneed any reference to toConnection,
+        * whenever queriyng it finds toCurrentConnection
      */
-    toResultSchema(toConnection &conn,
-                   QWidget *parent,
-                   const char *name = NULL);
+       toResultSchema(QWidget *parent, const char *name = NULL);
 
+       virtual ~toResultSchema() {};
 private slots:
 
     // stores last schema selected in qsettings
@@ -90,6 +89,11 @@ public slots:
      *
      */
     void update(void);
+
+       virtual void refresh(void);
+
+private:
+       void init(toConnection &conn);
 };
 
 #endif

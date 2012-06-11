@@ -903,7 +903,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     strech->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                       QSizePolicy::Minimum));
 
-    Schema = new toResultSchema(connection, toolbar, TO_TOOLBAR_WIDGET_NAME);
+    Schema = new toResultSchema(toolbar, TO_TOOLBAR_WIDGET_NAME);
     connect(Schema, SIGNAL(activated(int)),
             this, SLOT(changeSchema(int)));
     toolbar->addWidget(Schema);
@@ -1431,7 +1431,7 @@ void toBrowser::refresh(void)
 void toBrowser::changeConnection(void)
 {
     m_mainTab->blockSignals(true);
-    Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
+    Schema->refresh();
 
     if ( ! connection().schema().isEmpty() )
     {

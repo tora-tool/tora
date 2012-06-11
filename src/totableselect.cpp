@@ -41,7 +41,7 @@
 #include "utils.h"
 
 #include "toconnection.h"
-#include "toresultcombo.h"
+#include "toresultschema.h"
 #include "totableselect.h"
 
 #include <qlabel.h>
@@ -66,7 +66,7 @@ void toTableSelect::setup()
     label->show();
     vbox->addWidget(label);
 
-    Schema = new toResultCombo(this);
+    Schema = new toResultSchema(this);
     Schema->show();
     Schema->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
     vbox->addWidget(Schema);
@@ -81,7 +81,7 @@ void toTableSelect::setup()
     vbox->addWidget(Table);
 
     Schema->additionalItem(mysql ? tr("Select database") : tr("Select schema"));
-    Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
+       Schema->refresh();
     Table->additionalItem(tr("Select table"));
     // petr vanek 03/01/07 bug #1180847 Error when creating referential constraint
     Table->setSQL(toSQL::sql("toBrowser:ListTableNames"));
@@ -95,9 +95,10 @@ void toTableSelect::setup()
 
 toTableSelect::toTableSelect(QWidget *parent, const char *name)
         : QGroupBox(parent)
+               , Schema(NULL)
+               , Table(NULL)
 {
     setObjectName(name);
-    Schema = Table = NULL;
     QTimer::singleShot(0, this, SLOT(setup()));
 }
 

@@ -46,7 +46,7 @@
 #include "toconnection.h"
 #include "tomain.h"
 #include "toresultbar.h"
-#include "toresultcombo.h"
+#include "toresultschema.h"
 #include "toresultlock.h"
 #include "toresultlong.h"
 #include "toresultstats.h"
@@ -392,13 +392,13 @@ toSession::toSession(QWidget *main, toConnection &connection)
     {
         toolbar->addSeparator();
 
-        Select = new toResultCombo(toolbar, TO_TOOLBAR_WIDGET_NAME);
+        Select = new toResultSchema(toolbar, TO_TOOLBAR_WIDGET_NAME);
         Select->setSelected(tr("Only active users"));
         Select->additionalItem(tr("Only active users"));
         Select->additionalItem(tr("All"));
         Select->additionalItem(tr("No background"));
         Select->additionalItem(tr("No system"));
-        Select->query(toSQL::sql(toSQL::TOSQL_USERLIST));
+               Select->refresh();
         toolbar->addWidget(Select);
 
         connect(Select, SIGNAL(activated(int)), this, SLOT(refresh()));

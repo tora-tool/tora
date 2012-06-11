@@ -43,7 +43,7 @@
 #include "toconf.h"
 #include "toconnection.h"
 #include "tomain.h"
-#include "toresultcombo.h"
+#include "toresultschema.h"
 #include "toresulttableview.h"
 #include "toresultresources.h"
 #include "toresultview.h"
@@ -53,7 +53,6 @@
 #include "totool.h"
 
 #include <qcheckbox.h>
-#include <qcombobox.h>
 #include <QGroupBox>
 #include <qlabel.h>
 #include <qmenubar.h>
@@ -167,10 +166,10 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
     QLabel * labSchema = new QLabel(tr("Schema") + " ", toolbar);
     toolbar->addWidget(labSchema);
 
-    Schema = new toResultCombo(toolbar);
+    Schema = new toResultSchema(toolbar);
     Schema->additionalItem(tr("Any"));
     Schema->setSelected(connection.user().toUpper());
-    Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
+       Schema->refresh();
     toolbar->addWidget(Schema);
 
     connect(Schema, SIGNAL(activated(const QString &)), this, SLOT(changeSchema(const QString &)));

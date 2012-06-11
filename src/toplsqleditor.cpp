@@ -61,6 +61,7 @@
 #include "toplsqltext.h"
 #include "tocodemodel.h"
 #include "todescribe.h"
+#include "toresultschema.h"
 
 #include "icons/close.xpm"
 #include "icons/compile.xpm"
@@ -128,7 +129,7 @@ QString toPLSQLEditor::editorName(toPLSQLWidget *text)
 
 QString toPLSQLEditor::currentSchema(void)
 {
-    return Schema->currentText();
+    return Schema->selected();
 }
 
 bool toPLSQLEditor::viewSource(const QString &schema, const QString &name, const QString &type,
@@ -201,8 +202,7 @@ toPLSQLEditor::toPLSQLEditor(QWidget *main, toConnection &connection)
 
     toolbar->addSeparator();
 
-    Schema = new QComboBox(toolbar);
-    Schema->setObjectName("PLSQLEditorSchemaCombo");
+    Schema = new toResultSchema(toolbar, "PLSQLEditorSchemaCombo");
     toolbar->addWidget(Schema);
     connect(Schema,
             SIGNAL(activated(int)),
@@ -234,7 +234,7 @@ toPLSQLEditor::toPLSQLEditor(QWidget *main, toConnection &connection)
     Objects = new QTreeView(splitter);
     CodeModel = new toCodeModel(Objects);
     Objects->setModel(CodeModel);
-    QString selected = Schema->currentText();
+    QString selected = Schema->selected();
     if (!selected.isEmpty())
         CodeModel->refresh(connection, selected);
     // even better (?) for reopening the tabs
@@ -394,34 +394,10 @@ void toPLSQLEditor::changeSchema(int)
 void toPLSQLEditor::refresh(void)
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    try
-    {
-        QString selected = Schema->currentText();
-        QString currentSchema;
-        if (selected.isEmpty())
-        {
-            selected = connection().user().toUpper();
-            Schema->clear();
-            toQList users = toQuery::readQuery(connection(),
-                                               toSQL::string(toSQL::TOSQL_USERLIST, connection()));
-            for (toQList::iterator i = users.begin(); i != users.end(); i++)
-                Schema->addItem(*i);
-        }
-        if (!selected.isEmpty())
-        {
-            for (int i = 0; i < Schema->count(); i++)
-            {
-                if (Schema->itemText(i) == selected)
-                {
-                    Schema->setCurrentIndex(i);
-                    break;
-                }
-            }
+           Schema->refresh();
+    QString selected = Schema->selected();
 
-            CodeModel->refresh(connection(), selected);
-        }
-    }
-    TOCATCH;
+    CodeModel->refresh(connection(), selected);
 
     QApplication::restoreOverrideCursor();
 }
@@ -490,10 +466,10 @@ void toPLSQLEditor::changePackage(const QModelIndex &current, const QModelIndex 
             return;
         ctype = ctype.toUpper();
 
-        viewSource(Schema->currentText(), item->display(), ctype, 0);
+        viewSource(Schema->selected(), item->display(), ctype, 0);
         if (ctype == "PACKAGE" ||
-                (ctype == "TYPE" && hasCode(Schema->currentText(), ctype + " BODY", item->display())))
-            viewSource(Schema->currentText(), item->display(), ctype + " BODY", 0);
+                (ctype == "TYPE" && hasCode(Schema->selected(), ctype + " BODY", item->display())))
+            viewSource(Schema->selected(), item->display(), ctype + " BODY", 0);
     }
 #ifdef AUTOEXPAND
     else if (item && !item->parent())
@@ -535,8 +511,8 @@ void toPLSQLEditor::nextError(void)
 void toPLSQLEditor::newSheet(void)
 {
     toPLSQLWidget *text = new toPLSQLWidget(Editors);
-    if (!Schema->currentText().isEmpty())
-        text->editor()->setSchema(Schema->currentText());
+    if (!Schema->selected().isEmpty())
+        text->editor()->setSchema(Schema->selected());
     else
         text->editor()->setSchema(connection().user().toUpper());
     Editors->addTab(text, tr("Unknown"));
@@ -634,7 +610,7 @@ void toPLSQLEditor::describe()
     toHighlightedText * marked = currentEditor()->editor();
     marked->tableAtCursor(owner, table);
     if (owner.isNull())
-        owner = Schema->currentText();
+        owner = Schema->selected();
     toDescribe * d = new toDescribe(this);
     d->changeParams(owner, table);
 }

@@ -46,7 +46,7 @@
 #include "toconnection.h"
 #include "tomain.h"
 #include "tomemoeditor.h"
-#include "toresultcombo.h"
+#include "toresultschema.h"
 #include "toresulttableview.h"
 #include "toresultplan.h"
 #include "tosql.h"
@@ -238,15 +238,11 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
         toolbar->addWidget(Analyzed);
     }
 
-    Schema = new toResultCombo(toolbar, TO_TOOLBAR_WIDGET_NAME);
+    Schema = new toResultSchema(toolbar, TO_TOOLBAR_WIDGET_NAME);
     Schema->setSelected(tr("All"));
     Schema->additionalItem(tr("All"));
     toolbar->addWidget(Schema);
-    try
-    {
-        Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
-    }
-    TOCATCH;
+       Schema->refresh();
 
     if (toIsOracle(connection))
     {

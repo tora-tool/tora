@@ -53,6 +53,7 @@
 #include "tooutput.h"
 #include "toparamget.h"
 #include "toresultview.h"
+#include "toresultschema.h"
 #include "tosql.h"
 #include "toquery.h"
 #include "tosqlparse.h"
@@ -63,7 +64,6 @@
 #include <stack>
 
 #include <qcheckbox.h>
-#include <qcombobox.h>
 #include <qlabel.h>
 #include <qregexp.h>
 #include <qsizepolicy.h>
@@ -866,7 +866,7 @@ QString toDebug::editorName(toDebugText *text)
 
 QString toDebug::currentSchema(void)
 {
-    return Schema->currentText();
+    return Schema->selected();
 }
 
 toTreeWidgetItem *toDebug::contents(void)
@@ -2193,7 +2193,7 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
         : toToolWidget(DebugTool, "debugger.html", main, connection, "toDebug")
         , TargetThread()
         , TargetQuery(NULL)
-        , DebuggerStarted(false)
+		, DebuggerStarted(false)
 {
     debugSession = new toQuery(connection);
 
@@ -2206,13 +2206,12 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
 
     toolbar->addSeparator();
 
-    Schema = new QComboBox(toolbar);
-    Schema->setObjectName(TO_TOOLBAR_WIDGET_NAME);
-    toolbar->addWidget(Schema);
+    Schema = new toResultSchema(toolbar, TO_TOOLBAR_WIDGET_NAME);
     connect(Schema,
             SIGNAL(activated(int)),
             this,
             SLOT(changeSchema(int)));
+    toolbar->addWidget(Schema);
 
     toolbar->addSeparator();
 
@@ -2670,7 +2669,12 @@ toDebugText *toDebug::currentEditor(void)
 
 void toDebug::changeSchema(int)
 {
-    refresh();
+    try
+    {
+                Schema->update();
+                CodeModel->refresh(connection(), Schema->selected());
+    }
+    TOCATCH
 }
 
 static toSQL SQLListObjects("toDebug:ListObjects",
@@ -2683,33 +2687,13 @@ static toSQL SQLListObjects("toDebug:ListObjects",
 
 void toDebug::refresh(void)
 {
+
 //     qDebug() << "toDebug::refresh 1";
     try
     {
-        QString selected = Schema->currentText();
-        QString currentSchema;
-        if (selected.isEmpty())
-        {
-            selected = connection().user().toUpper();
-            Schema->clear();
-            toQList users = toQuery::readQuery(connection(),
-                                               toSQL::string(toSQL::TOSQL_USERLIST, connection()));
-            for (toQList::iterator i = users.begin(); i != users.end(); i++)
-                Schema->addItem(*i);
-        }
-        if (!selected.isEmpty())
-        {
-            for (int i = 0; i < Schema->count(); i++)
-            {
-                if (Schema->itemText(i) == selected)
-                {
-                    Schema->setCurrentIndex(i);
-                    break;
-                }
-            }
-
-            CodeModel->refresh(connection(), selected);
-        }
+                Schema->refresh();
+        QString selected = Schema->selected();
+        CodeModel->refresh(connection(), selected);
     }
     TOCATCH
 //     qDebug() << "toDebug::refresh 2";
@@ -2867,9 +2851,9 @@ void toDebug::changePackage(const QModelIndex &current, const QModelIndex &previ
             return;
         ctype = ctype.toUpper();
 
-        viewSource(Schema->currentText(), item->display(), ctype, 0);
+        viewSource(Schema->selected(), item->display(), ctype, 0);
         if (ctype == "PACKAGE" || ctype == "TYPE")
-            viewSource(Schema->currentText(), item->display(), ctype + " BODY", 0);
+            viewSource(Schema->selected(), item->display(), ctype + " BODY", 0);
     }
 #ifdef AUTOEXPAND
     else if (item && !item->parent())
@@ -3003,15 +2987,9 @@ void toDebug::compile(void)
         editor->getCursorPosition(&row, &col);
         if (editor->compile())
         {
-            if (editor == currentEditor() &&
-                    lastSchema != currentEditor()->schema())
+            if (editor == currentEditor() && lastSchema != currentEditor()->schema())
             {
-                for (int i = 0; i < Schema->count(); i++)
-                    if (Schema->itemText(i) == lastSchema)
-                    {
-                        Schema->setCurrentIndex(i);
-                        break;
-                    }
+                                Schema->update(lastSchema);
             }
             if (editor->hasErrors())
                 Editors->setTabIcon(Editors->indexOf(editor),
@@ -3090,8 +3068,8 @@ void toDebug::newSheet(void)
     // signal removed with qscintilla port.
 //     connect(text, SIGNAL(insertedLines(int, int)),
 //             this, SLOT(reorderContent(int, int)));
-    if (!Schema->currentText().isEmpty())
-        text->setSchema(Schema->currentText());
+    if (!Schema->selected().isEmpty())
+        text->setSchema(Schema->selected());
     else
         text->setSchema(connection().user().toUpper());
     Editors->addTab(text, tr("Unknown"));
@@ -3344,7 +3322,7 @@ void toDebug::exportData(std::map<QString, QString> &data, const QString &prefix
         num.setNum(i);
         editor->exportData(data, prefix + ":Editor:" + num);
     }
-    data[prefix + ":Schema"] = Schema->currentText();
+    data[prefix + ":Schema"] = Schema->selected();
 
     int id = 1;
     for (toTreeWidgetItem *item = Breakpoints->firstChild(); item; item = item->nextSibling())
@@ -3388,15 +3366,8 @@ void toDebug::exportData(std::map<QString, QString> &data, const QString &prefix
 void toDebug::importData(std::map<QString, QString> &data, const QString &prefix)
 {
     QString str = data[prefix + ":Schema"];
-    {
-        for (int i = 0; i < Schema->count(); i++)
-            if (Schema->itemText(i) == str)
-            {
-                Schema->setCurrentIndex(i);
-                changeSchema(i);
-                break;
-            }
-    }
+        Schema->update(str);
+    changeSchema(-1);  // NOTE: int argument -1 is required for a slot, but it is not used anyway
 
     int count = data[prefix + ":Editors"].toInt();
     for (int j = 0; j < count; j++)

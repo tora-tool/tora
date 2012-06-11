@@ -54,7 +54,7 @@ class QMenu;
 class QTabWidget;
 class toConnection;
 class toMain;
-class toResultCombo;
+class toResultSchema;
 class toResultTableView;
 class toSGAStatement;
 class toTool;
@@ -67,7 +67,7 @@ class toSGATrace : public toToolWidget
     QTabWidget *ResultTab;
 
     QAction       *FetchAct;
-    toResultCombo *Schema;
+    toResultSchema *Schema;
     QComboBox     *Type;
     QComboBox     *Refresh;
     QComboBox     *Limit;

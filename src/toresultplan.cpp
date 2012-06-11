@@ -356,10 +356,11 @@ void toResultPlan::query(const QString &sql,
             TopItem->setToolTip(1, queryText);
 
 	    CursorChildSel = new toResultCombo(this, "toResultPlan");
+		CursorChildSel->query(toSQL::string(SQLVSQLChildSel, conn).arg(Ident));
 	    CursorChildSel->setSelectionPolicy(toResultCombo::First);
 	    try
 	    {
-		CursorChildSel->query(toSQL::string(SQLVSQLChildSel, conn).arg(Ident));
+			CursorChildSel->refresh();
 	    }
 	    TOCATCH;
 	    setItemWidget(TopItem, 3, CursorChildSel);

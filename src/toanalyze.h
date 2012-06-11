@@ -55,7 +55,7 @@ class QSpinBox;
 class QTabWidget;
 class QTimer;
 class QLabel;
-class toResultCombo;
+class toResultSchema;
 class toResultPlan;
 class toResultTableView;
 class toWorksheetStatistic;
@@ -67,7 +67,7 @@ class toAnalyze : public toToolWidget
     QTabWidget           *Tabs;
     toResultTableView    *Statistics;
     QComboBox            *Analyzed;
-    toResultCombo        *Schema;
+    toResultSchema       *Schema;
     QComboBox            *Type;
     QComboBox            *Operation;
     QComboBox            *For;

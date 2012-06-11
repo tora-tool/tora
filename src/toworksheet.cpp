@@ -382,13 +382,9 @@ void toWorksheet::setup(bool autoLoad)
     Started->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
                                        QSizePolicy::Minimum));
 
-    Schema = new toResultSchema(connection(), workToolbar);
+    Schema = new toResultSchema(workToolbar);
     workToolbar->addWidget(Schema);
-    try
-    {
-        Schema->refresh();
-    }
-    catch (...) {}
+	Schema->refresh();
     connect(Schema,
             SIGNAL(currentIndexChanged(const QString &)),
             Schema,
@@ -2150,7 +2146,7 @@ void toWorksheet::createPopupMenu(const QPoint &pos)
 
 void toWorksheet::changeConnection(void)
 {
-    Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
+    Schema->refresh();
     if (toIsMySQL(connection()))
         Schema->setSelected(connection().database());
     else if (toIsOracle(connection()) || toIsSapDB(connection()))
