@@ -62,6 +62,7 @@ class toResultStats;
 class toEventQuery : public QObject {
     Q_OBJECT;
 
+    friend class toEventQueryTask;
 private:
 
     ValuesList Values;

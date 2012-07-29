@@ -43,6 +43,7 @@
 
 #include "toconf.h"
 #include "toeventquerytask.h"
+#include "toeventquery.h"
 #include "toresultstats.h"
 #include "totool.h"
 #include "toresultstats.h"
@@ -84,7 +85,7 @@ static const int FIREWALL_TIMEOUT = 240000;
     }
 
 
-toEventQueryTask::toEventQueryTask(QObject *parent,
+toEventQueryTask::toEventQueryTask(toEventQuery *parent,
                                    toConnection &conn,
                                    const QString &sql,
                                    const toQList &param,
@@ -92,7 +93,9 @@ toEventQueryTask::toEventQueryTask(QObject *parent,
     : toRunnable(),
       SQL(sql),
       Params(param),
-      Statistics(stats) {
+      Statistics(stats),
+      ParentQuery(parent)
+{
     Query      = 0;
     Columns    = 0;
     Connection = &conn;
@@ -157,7 +160,9 @@ void toEventQueryTask::run(void) {
 }
 
 
-toEventQueryTask::~toEventQueryTask() {
+toEventQueryTask::~toEventQueryTask()
+{
+    ParentQuery->Task = NULL;
 }
 
 

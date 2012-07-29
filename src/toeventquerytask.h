@@ -57,7 +57,7 @@ typedef QList<toQValue> ValuesList;
 Q_DECLARE_METATYPE(ValuesList);
 
 class toResultStats;
-
+class toEventQuery;
 
 /**
  * Threaded class used by toEventQuery. Internal to toEventQuery only.
@@ -86,6 +86,8 @@ class toEventQueryTask : public toRunnable {
     // object was closed
     volatile bool Closed;
 
+    toEventQuery *ParentQuery;
+
     // can't synchronize on query or cancel wouldn't work, but need to
     // protect access during close() which may be called from the main
     // thread
@@ -99,7 +101,7 @@ public:
     // task is alive.
     QMutex ThreadAlive;
 
-    toEventQueryTask(QObject *parent,
+    toEventQueryTask(toEventQuery *parent,
                      toConnection &conn,
                      const QString &sql,
                      const toQList &param,
