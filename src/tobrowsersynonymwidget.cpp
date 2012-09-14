@@ -72,7 +72,7 @@ toBrowserSynonymWidget::toBrowserSynonymWidget(QWidget * parent)
     changeConnection();
 }
 
-void toBrowserSynonymWidget::changeParams(const QString & schema, const QString & object)
+void toBrowserSynonymWidget::changeParams(const QString & schema, const QString & object, const QString & type)
 {
     int pos = object.indexOf(".");
     QString own("PUBLIC");

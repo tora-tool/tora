@@ -66,7 +66,7 @@ class toBrowserSynonymWidget : public toBrowserBaseWidget
 
         /*! Reimplemented due names given in the SCHEMA.SYNONYMNAME
         structure. */
-        void changeParams(const QString & schema, const QString & object);
+        void changeParams(const QString & schema, const QString & object, const QString & type = "");
 
         void changeConnection();
 };
