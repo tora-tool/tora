@@ -162,7 +162,8 @@ void toEventQueryTask::run(void) {
 
 toEventQueryTask::~toEventQueryTask()
 {
-    ParentQuery->Task = NULL;
+    if(ParentQuery)
+        ParentQuery->Task = NULL;
 }
 
 
