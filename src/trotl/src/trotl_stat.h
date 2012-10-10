@@ -87,9 +87,9 @@ public:
 	};
 
 	/* This structure represents a pack of all values needed for bind/define operation
-	 * All descendents of this class are created using factory BindParFactTwoParmSing
+	 * All descendants of this class are created using factory BindParFactTwoParmSing
 	 * or DefineParFactTwoParm
-	 * All descendents have to be resistered by creating an instance of the template
+	 * All descendants have to be registered by creating an instance of the template
 	 * Util::RegisterInFactory - look at trotl_int.cpp
 	 **/
 	struct TROTL_EXPORT BindPar

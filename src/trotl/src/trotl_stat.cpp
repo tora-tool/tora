@@ -191,6 +191,7 @@ void SqlStatement::prepare(const tstring& sql, ub4 lang)
 		break;
 	case 0:			// ANALYZE TABLE
 	case 15:		// EXPLAIN PLAN FOR
+	case 17:        // ROLLBACK
 	case 21:		// COMMIT
 		_stmt_type = STMT_OTHER;
 		break;
