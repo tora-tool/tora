@@ -30,11 +30,6 @@ IF( Oracle_FIND_COMPONENTS )
     SET(ORACLE_USE_CLNTSH 1)
   ENDIF (NOT ORACLE_USE_CLNTSH)
 
-  # it looks like it's mandatory on macosx
-  IF (APPLE)
-    SET(ORACLE_USE_OCIEI 1)
-  ENDIF (APPLE)
-
 ENDIF( Oracle_FIND_COMPONENTS )
 
 

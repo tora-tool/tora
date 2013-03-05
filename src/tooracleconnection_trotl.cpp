@@ -276,7 +276,6 @@ public:
 		{
 			::trotl::SqlOpenLob clob_open(_data, OCI_LOB_READONLY);
 			bytes_read = _data.read(buffer, chunksize, offset+1, chunksize);
-			buffer[bytes_read] = '\0';
 		}
 		QByteArray retval(buffer, bytes_read);
 		free(buffer);
@@ -402,7 +401,6 @@ public:
 		{
 			::trotl::SqlOpenLob blob_open(data, OCI_LOB_READONLY);
 			bytes_read = data.read(buffer, chunksize, offset+1, chunksize);
-			buffer[bytes_read] = '\0';
 		}
 		QByteArray retval(buffer, bytes_read);
 		free(buffer);

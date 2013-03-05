@@ -50,6 +50,10 @@ You have to specify -DORACLE_OCI_VERSION for one of values:
 [8, 8I, 9I, 10G, 10G_R2]. Example:
 -DORACLE_OCI_VERSION=10G_R2
 
+For MAC OS X - instant client older than 11, the libociei.dydlib linking
+is mandatory. Use:
+-DUSE_OCIEI=1
+
 You can switch off Oracle support with:
 -DENABLE_ORACLE=0
 
