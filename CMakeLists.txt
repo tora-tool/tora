@@ -246,13 +246,7 @@ IF (NOT ENABLE_ORACLE)
     ADD_DEFINITIONS("-DTO_NO_ORACLE")
 ELSE (NOT ENABLE_ORACLE)
 
-  # TODO/FIXME: maybe parse oci.h for value from oci.h
-  # #define OCI_MAJOR_VERSION  11 ...
-  if (USE_OCIEI)
-      set(USE_OCIEI_VALUE ociei)
-  endif(USE_OCIEI)
-
-  FIND_PACKAGE(Oracle COMPONENTS CLNTSH XML ${USE_OCIEI_VALUE})
+  FIND_PACKAGE(Oracle COMPONENTS CLNTSH XML)
   IF(ORACLE_FOUND)
       MESSAGE("Oracle OCI Library Found OK")
       # what else is hidden in the ifdef hell?!
