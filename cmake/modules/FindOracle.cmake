@@ -11,7 +11,7 @@
 # 
 # copyright (c) 2007 Petr Vanek <petr@scribus.info>
 # copyright (c) 2009 Ivan Brezina <ibre5041@ibrezina.net>
-# Redistribution and use is allowed according to the terms of the GPLv2 license.
+# Redistribution and use is allowed according to the terms of the BSD license.
 #
 
 SET(ORACLE_FOUND "NO")
