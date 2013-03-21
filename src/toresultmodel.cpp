@@ -634,10 +634,15 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const
             toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
             return QVariant(i->displayData());
         }
+        if (index.column() == 0)
+            return index.row() + 1;
         return QVariant(data.displayData());
     case Qt::BackgroundRole:
         if (data.isNull() && toConfigurationSingle::Instance().indicateEmpty())
             return QVariant(QColor(toConfigurationSingle::Instance().indicateEmptyColor()));
+        if (index.column() == 0) {
+            return QPalette().color(QPalette::Window);
+        }
         return QVariant();
     case Qt::TextAlignmentRole:
         return (int) Headers.at(index.column()).align;
