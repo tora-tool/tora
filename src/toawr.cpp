@@ -61,6 +61,7 @@
 #include "toparamget.h"
 #include "tochangeconnection.h"
 #include "toquery.h"
+#include "totextview.h"
  
 //#include "tosimplequery.moc"
  
@@ -364,7 +365,8 @@ void toAWR::execute(void)
 			box->setLayout(vbox);
 
 			vbox->addWidget(new QLabel(tr("AWR report"), box));
-			QTextBrowser *tb = new QTextBrowser(box);
+//			QTextBrowser *tb = new QTextBrowser(box);
+			toTextView *tb = new toTextView(box);
 			tb->setFontFamily("monospace");
 			tb->setReadOnly(true);
 			tb->setText(reports);

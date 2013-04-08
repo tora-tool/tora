@@ -50,9 +50,10 @@ bool toTextView::editSave(bool)
     QString fn = toSaveFilename(QString::null, QString::fromLatin1("*.html"), this);
     if (!fn.isEmpty())
     {
-        if (!toWriteFile(fn, toPlainText()))
-            return false;
-        return true;
+	if (fn.contains(".HTML", Qt::CaseInsensitive) || fn.contains(".HTM", Qt::CaseInsensitive))
+	    return toWriteFile(fn, toHtml());
+	else
+	    return toWriteFile(fn, toPlainText());
     }
     return false;
 }
