@@ -528,8 +528,11 @@ void toResultPlan::ChildComboChanged(int NewIndex)
 
 void toResultPlan::queryDone()
 {
-    delete Query;
-    Query = NULL;
+    if (Query)
+    {
+	delete Query;
+	Query = NULL;
+    }
     if (!Reading)
     {
         toQList par;
@@ -553,7 +556,7 @@ void toResultPlan::queryDone()
         QString chkPoint(toConfigurationSingle::Instance().planCheckpoint());
         if (!sql().startsWith(QString::fromLatin1("SAVED:")))
         {
-            if (toConfigurationSingle::Instance().keepPlans())
+            if (!toConfigurationSingle::Instance().keepPlans())
                 connection().execute(QString::fromLatin1("ROLLBACK TO SAVEPOINT %1").arg(chkPoint));
             else
                 toMainWidget()->setNeedCommit(connection());

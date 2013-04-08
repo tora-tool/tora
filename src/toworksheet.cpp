@@ -1016,8 +1016,10 @@ void toWorksheet::query(const QString &str, execType type, toSQLParse::statement
 
     if (type == OnlyPlan)
     {
-        ResultTab->setCurrentIndex(ResultTab->indexOf(Plan));
-        Plan->query(str);
+       if (ResultTab->currentIndex() != ResultTab->indexOf(Plan))
+           ResultTab->setCurrentIndex(ResultTab->indexOf(Plan)); //this calls Plan->query
+       else
+           Plan->query(str);
         unhideResults();
     }
     else if (!describe(QueryString))

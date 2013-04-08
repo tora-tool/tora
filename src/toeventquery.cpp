@@ -140,7 +140,8 @@ toEventQuery::~toEventQuery() {
             if(Task->thread())
                 Task->thread()->exit();
             Task->ThreadAlive.unlock();
-        }
+	    Task->ParentQuery = NULL; //We are just destroying object ParentQuery points to
+	}
     }
     catch(...) {
         ; // ignored

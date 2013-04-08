@@ -69,6 +69,7 @@ class toEventQuery;
 class toEventQueryTask : public toRunnable {
     Q_OBJECT;
 
+    friend class toEventQuery;
     // the real query object
     QPointer<toQuery> Query;
 
