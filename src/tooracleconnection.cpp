@@ -1093,7 +1093,7 @@ std::list<QString> toOracleProvider::providedDatabases(const QString &, const QS
 	else if( getenv("ORACLE_HOME"))
 	{
 		str = getenv("ORACLE_HOME");
-		str + "/network/admin/tnsnames.ora";
+		str += "/network/admin/tnsnames.ora";
 	} else {
 		str.truncate(0);
 	}
