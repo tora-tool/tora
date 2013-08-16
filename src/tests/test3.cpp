@@ -53,6 +53,12 @@
 #include <QtCore/QLibrary>
 #include <QtGui/QProgressBar>
 
+static void usage()
+{
+	printf("Usage:\n\n  test5 connectstring\n\n");
+	exit(2); 
+}
+
 int main(int argc, char **argv)
 {
 	int p = 0;
@@ -197,12 +203,34 @@ int main(int argc, char **argv)
 				       qApp->translate("main", "Exit"));
 	}
 
-	QString user = QString::fromAscii("system");
-	QString password = QString::fromAscii("acror");
-	QString connect = QString::fromAscii("DEVEL");
+	if (qApp->argc() == 1)
+		usage();
+	
+	QString connect = QString::fromLatin1(qApp->argv()[1]);
+	QString user, password, database;
+	
+	QStringList slashList, atList = connect.split("@", QString::SkipEmptyParts);
+	if( atList.size() == 1)
+		database = QString::fromLatin1(qgetenv("ORACLE_SID"));
+	if( atList.size() > 2)
+		usage();
+	
+	if( atList.at(0).contains("/"))
+	{
+		slashList = atList.at(0).split("/", QString::SkipEmptyParts);
+		user = slashList.at(0);
+		password = slashList.at(1);
+		database = atList.at(1);
+	} else {
+		slashList = atList.at(1).split("/", QString::SkipEmptyParts);
+		user = atList.at(0);
+		database = slashList.at(0);
+		password = slashList.at(1);
+	}
+	
 	QSet<QString> options;
 
-	new Test3Window(user, password, connect, options);
+	new Test3Window(user, password, database, options);
 	int ret = qApp->exec();
 	return ret;
 }

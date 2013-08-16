@@ -1,7 +1,8 @@
 for update of xyz.a123.g5556 for update of abc.b789.h8888
-/*#1234*/
+/*1234*/
+
 --fdskfjsdfk
-/*
+
 -1
 - 1
 1.5 + .5
@@ -22,5 +23,5 @@ select
 , n'nchar literal'
 from dual
 select 1..10 from dd "gdgdgd" 'gfgdgd' fdfsfs ;
-*/
+
 

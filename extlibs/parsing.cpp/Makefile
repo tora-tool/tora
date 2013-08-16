@@ -22,11 +22,8 @@ all: t0 t1 t2 t4 m0 p0 s0 s1 s2
 
 $(ANTLR): org/antlr/codegen/templates/Cpp/Cpp.stg \
 	org/antlr/codegen/templates/Cpp/AST.stg \
-	org/antlr/codegen/templates/Cpp/ASTParser.stg \
-	org/antlr/codegen/templates/Java/Java.stg \
-	org/antlr/codegen/templates/Java/AST.stg \
-	org/antlr/codegen/templates/Java/ASTTreeParser.stg 
-	jar uvf $(ANTLR) org/antlr/codegen/templates/Cpp/*.stg org/antlr/codegen/templates/Java/*.stg
+	org/antlr/codegen/templates/Cpp/ASTParser.stg
+	jar uvf $(ANTLR) org/antlr/codegen/templates/Cpp/*.stg
 
 t0:	t0.cpp PLSQLGuiLexer.tokens t0.cpp $(TOBJS) PLSQLGuiLexer.o Makefile UserGuiTraits.hpp
 	g++ $(CFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) t0.cpp PLSQLGuiLexer.o $(LIBS) -o $@

@@ -77,31 +77,31 @@ Test3Window::Test3Window(QString user, QString password, QString connect, QSet<Q
 				     << std::endl;	
 	addConnection(oraCon);
 	{
-		QSplitter *splitter;
-		
-		splitter = new QSplitter(this);
-		splitter->setOrientation(Qt::Horizontal);
+//		QSplitter *splitter;
+//		splitter = new QSplitter(this);
+//		splitter->setOrientation(Qt::Horizontal);
 
-		QMdiArea *Workspace = new QMdiArea(splitter);
-		Workspace->setActivationOrder(QMdiArea::CreationOrder);
-		Workspace->setViewMode(QMdiArea::TabbedView); 
-	
-		//toWorksheet *w1 = new toWorksheet(Workspace, *oraCon);	
-		//toWorksheet *w2 = new toWorksheet(Workspace, *oraCon);
-		//MdiChild *mc1 = new MdiChild;
+//		QMdiArea *Workspace = new QMdiArea(splitter);
+//		Workspace->setActivationOrder(QMdiArea::CreationOrder);
+//		Workspace->setViewMode(QMdiArea::TabbedView);
+//
+//		toWorksheet *w1 = new toWorksheet(Workspace, *oraCon);
+//		toWorksheet *w2 = new toWorksheet(Workspace, *oraCon);
+//		MdiChild *mc1 = new MdiChild;
 		//MdiChild *mc2 = new MdiChild;
 		//Workspace->addSubWindow(mc1);
 		//Workspace->addSubWindow(mc2);
 		//Workspace->addSubWindow(w1);
 		//Workspace->addSubWindow(w2);
 		
-		splitter->addWidget(&this->Workspace);
+//		splitter->addWidget(&this->Workspace);
 		
 		m_describeAction = new QAction("&Describe", this);
 		
 		///createDocklets(); // Must be called after Wokspace is initialized
 
-		//this->setCentralWidget(splitter);
+//		this->setCentralWidget(splitter);
+		this->setCentralWidget(&Workspace);
 
 		//statusbar = new QStatusBar(this);
 		//this->setStatusBar(statusbar);
