@@ -1,0 +1,53 @@
+Release Procedures:
+===================
+
+Source tarball:
+---------------
+Check out the tora module from SVN
+Edit the configure.ac file to set the version number
+Edit CMakeLists.txt file to set the version number for CMake
+Edit the NEWS file to set a release date
+Commit, and then copy trunk to an appropriately named tag, such as:
+
+VER=2.1.0
+USR=nneul
+
+svn copy -m "tag before starting $VER release process" https://tora.svn.sourceforge.net/svnroot/tora/trunk/tora https://tora.svn.sourceforge.net/svnroot/tora/tags/tora-$VER
+
+configure
+make dist
+
+sftp $USR,tora@frs.sourceforge.net
+cd /home/pfs/project/t/to/tora/tora
+mkdir $VER
+chmod 775 $VER
+cd /home/pfs/project/t/to/tora/tora/$VER
+put tora-$VER.tar.gz
+
+or
+
+scp tora-$VER.tar.gz $USR,tora@frs.sourceforge.net:/home/frs/project/t/to/tora/tora/$VER/
+
+For each uploaded release source tarball or binary, also upload a .md5sum and .sha1sum file for
+the upload in the same directory.
+
+add new release to the 'tora' package
+
+RPM binaries:
+-------------
+No set procedure yet, still deciding on a standardized RPM to use.
+
+Static binary tarball:
+----------------------
+No longer producing this, too specific to particular builds and difficult to resolve some
+Qt dependencies with static only.
+
+TOra documentation
+------------------
+Update version info in /doc/help/tora.texi (two places)
+Run /doc/help/make-pdf.sh to generate latest version of tora_documentation.pdf
+Upload it to TOra root folder:
+
+sftp yourusername,tora@frs.sourceforge.net
+cd /home/pfs/project/t/to/tora/tora/
+put tora_documentation.pdf

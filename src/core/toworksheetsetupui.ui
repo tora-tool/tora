@@ -1,0 +1,268 @@
+<ui version="4.0" >
+ <class>toWorksheetSetupUI</class>
+ <widget class="QWidget" name="toWorksheetSetupUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>568</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form1</string>
+  </property>
+  <property name="toolTip" >
+   <string>Automatically save file when closing editor (Without asking any questions).</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>6</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QGroupBox" name="GroupBox1" >
+     <property name="title" >
+      <string>SQL Editor</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>11</number>
+      </property>
+      <property name="topMargin" >
+       <number>11</number>
+      </property>
+      <property name="rightMargin" >
+       <number>11</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>11</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>6</number>
+      </property>
+      <item row="0" column="0" colspan="3" >
+       <widget class="QCheckBox" name="AutoSave" >
+        <property name="text" >
+         <string>Auto &amp;save</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="3" >
+       <widget class="QCheckBox" name="CheckSave" >
+        <property name="toolTip" >
+         <string>Ask about saving changes when closing worksheet.</string>
+        </property>
+        <property name="text" >
+         <string>Ask about saving &amp;changes</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="3" >
+       <widget class="QCheckBox" name="LogAtEnd" >
+        <property name="toolTip" >
+         <string>Add newly executed queries at end of log instead of top. Changing this will mess up the log in the windows that are opened.</string>
+        </property>
+        <property name="text" >
+         <string>Add &amp;log entries at end</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="3" >
+       <widget class="QCheckBox" name="LogMulti" >
+        <property name="toolTip" >
+         <string>Display multiple lines in the SQL column of the logging.</string>
+        </property>
+        <property name="text" >
+         <string>&amp;Multiple lines in log.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="3" >
+       <widget class="QCheckBox" name="Statistics" >
+        <property name="toolTip" >
+         <string>Enable statistic collection per default.</string>
+        </property>
+        <property name="text" >
+         <string>&amp;Enable statistics</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="3" >
+       <widget class="QCheckBox" name="TimedStatistics" >
+        <property name="toolTip" >
+         <string>Enable timed statistics as well when collecting normal statistics.</string>
+        </property>
+        <property name="text" >
+         <string>Enable &amp;timed statistics</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0" colspan="3" >
+       <widget class="QCheckBox" name="DisplayNumber" >
+        <property name="toolTip" >
+         <string>Add a numbering column to the left of the result.</string>
+        </property>
+        <property name="text" >
+         <string>&amp;Display number column</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0" colspan="3" >
+       <widget class="QCheckBox" name="MoveToError" >
+        <property name="toolTip" >
+         <string>Move the cursor to an error if the error occurs.</string>
+        </property>
+        <property name="text" >
+         <string>Move &amp;cursor to error</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0" colspan="3" >
+       <widget class="QCheckBox" name="History" >
+        <property name="toolTip" >
+         <string>Keep previous results in while editor is open. Will consume lot of memory.</string>
+        </property>
+        <property name="text" >
+         <string>Save previous results</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="1" >
+       <widget class="QLineEdit" name="DefaultFile" />
+      </item>
+      <item row="11" column="2" >
+       <widget class="QPushButton" name="FileChoose" >
+        <property name="text" >
+         <string>&amp;Browse</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="0" >
+       <widget class="QLabel" name="TextLabel1" >
+        <property name="toolTip" >
+         <string>File to automatically open in a new editor.</string>
+        </property>
+        <property name="text" >
+         <string>Default &amp;file</string>
+        </property>
+        <property name="wordWrap" >
+         <bool>false</bool>
+        </property>
+        <property name="buddy" >
+         <cstring>DefaultFile</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="1" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>20</width>
+          <height>160</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="9" column="0" colspan="3" >
+       <widget class="QCheckBox" name="ExecLog" >
+        <property name="toolTip" >
+         <string>Execute a statement when it is
+			selected in the log, if disabled simply selected
+			the statement in the log.</string>
+        </property>
+        <property name="text" >
+         <string>Execute directly when selecting in log</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0" colspan="3" >
+       <widget class="QCheckBox" name="ToplevelDescribe" >
+        <property name="toolTip" >
+         <string>Execute a statement when it is
+			selected in the log, if disabled simply selected
+			the statement in the log.</string>
+        </property>
+        <property name="text" >
+         <string>Display column descriptions in own toplevel window.</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <tabstops>
+  <tabstop>AutoSave</tabstop>
+  <tabstop>CheckSave</tabstop>
+  <tabstop>LogAtEnd</tabstop>
+  <tabstop>LogMulti</tabstop>
+  <tabstop>Statistics</tabstop>
+  <tabstop>TimedStatistics</tabstop>
+  <tabstop>DisplayNumber</tabstop>
+  <tabstop>History</tabstop>
+  <tabstop>ExecLog</tabstop>
+  <tabstop>DefaultFile</tabstop>
+  <tabstop>FileChoose</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>FileChoose</sender>
+   <signal>clicked()</signal>
+   <receiver>toWorksheetSetupUI</receiver>
+   <slot>chooseFile()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>History</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ExecLog</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

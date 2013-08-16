@@ -1,0 +1,10 @@
+
+test1 - some lexer/parser test
+
+test2 - toConnection/toQuery test
+
+test3 - simple application - execute toWorksheet in separate application
+
+test4 - simple application - execute toHighlightedText in separate application
+                             compare Qscintilla and ANTLR based Oracle lexer
+

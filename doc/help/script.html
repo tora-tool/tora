@@ -1,0 +1,103 @@
+<html lang="en">
+<head>
+<title>script - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.13">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="tools.html#tools" title="tools">
+<link rel="prev" href="current.html#current" title="current">
+<link rel="next" href="analyze.html#analyze" title="analyze">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 2.1.4+.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<a name="script"></a>
+<p>
+Next:&nbsp;<a rel="next" accesskey="n" href="analyze.html#analyze">analyze</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="current.html#current">current</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
+<hr>
+</div>
+
+<h3 class="section">4.13 Schema extraction, compare and search</h3>
+
+<p><a name="index-Schema-extraction_002c-compare-and-search-32"></a>
+This tool is used to either extract a script to recreate database objects, compare database objects or search database objects.
+
+   <div class="block-image"><img src="images/script.png" alt="images/script.png"></div>
+
+<h4 class="subheading">Defining the operation</h4>
+
+<p>The first thing to select is if you want to <strong>extract</strong> script to recreate an object, <strong>compare</strong> or <strong>search</strong>. 
+You choose this by selecting one of the radio buttons to the left of the screen.
+
+   <p>Next you should indicate what kind of information you want included in the extract or compare. This is selected with the checkboxes just to the right of the mode selection. Depending on the mode some options may be disabled.
+
+     <dl>
+<dt><strong>Include DDL</strong><dd>Include any database definition. 
+<br><dt><strong>Include constraints</strong><dd>Extract constraint definitions from tables. 
+<br><dt><strong>Include indexes</strong><dd>Extract indexes for tables. 
+<br><dt><strong>Include grants</strong><dd>Extract grants for database objects. 
+<br><dt><strong>Include storage specification</strong><dd>Extract storage specifications for database objects. 
+<br><dt><strong>Include parallel specification</strong><dd>Extract parallel specification for tables. 
+<br><dt><strong>Include partition specification</strong><dd>Extract partition specification for tables. 
+<br><dt><strong>Include code specification</strong><dd>Extract code for packages, procedures and functions. 
+<br><dt><strong>Include comments</strong><dd>Extract comments for database objects. 
+<br><dt><strong>Generate prompts</strong><dd>Generate prompts in the extracted result indicating what the script is doing. 
+<br><dt><strong>Generate header</strong><dd>Generate header of the script. 
+<br><dt><strong>Include content of tables</strong><dd>Extract the content of tables as well. 
+<br><dt><strong>Commit distance</strong><dd>TODO. 
+<br><dt><strong>Generated schema</strong><dd>This specifies the schema to be used when extracting. If you select Same, the same schema as the source database is used. If you select None, no schema is generated. Specifying anything else will replace the source schema with the one entered here.
+
+   </dl>
+
+   <p>If you are searching you also need to indicate what you are searching for in the bottom left of the front page.
+
+     <dl>
+<dt><strong>Containing any words</strong><dd>The object should contain at least one of the words in the line editor. 
+<br><dt><strong>Containing all words</strong><dd>The object should contain all of the words in the line editor. 
+<br><dt><strong>Exact match</strong><dd>The object should contain the exact string as in the line editor include whitespaces. 
+<br><dt><strong>RegExp</strong><dd>The object should contain at least one of the words in the line editor. The dialect of RegExp:s is the ones in the version of Qt that TOra is compiled against. For more information on regular expressions check out <a href="http://doc.trolltech.com/qregexp.html">http://doc.trolltech.com/qregexp.html</a>, if you are using Qt 3.0 or later you have a more advanced form of regular expressions. 
+</dl>
+
+   <p>The next thing you need to do is to specify which objects you want to extract or compare. If you extract you only need to specify the source, if comparing destination objects are also needed.
+
+   <p>Selecting or deselecting an item in this list will select all it's child items.
+
+   <p>If you specify the <strong>extract</strong> mode you can also indicate a way to resize generated storage specifications. This could be useful to make a database have only a few standard storage specifications making the database less prone to fragmentation.
+
+   <div class="block-image"><img src="images/resize.png" alt="images/resize.png"></div>
+
+   <p>You have three modes to specify how resizing should work. First there is <strong>Don't resize</strong> which means leave the same as the original. 
+Then there is <strong>Auto resize</strong> which should work for pretty much everyone. In this a resize specification for each order of magnitude of size is given a specific storage specification. And last is the <strong>Custom resize</strong> mode in which you specify how to transform the storage specifications to new values.
+
+   <p>When you specify a custom resize you add items to the list with a <strong>limit</strong> size, <strong>initial</strong> size and <strong>next</strong> size. The sizes are used in the following way. When TOra is to determine the storage clause of an object it will take the <strong>initial</strong> and <strong>next</strong> sizes of the row in this list with the lowest <strong>limit</strong> size still higher than the current size of the object. If no row is found the one with the highest <strong>limit</strong> is used.
+
+<h4 class="subheading">Reading the result</h4>
+
+<p>If you <strong>extract</strong> the result is available under the <strong>Result</strong> tag of the dialog in the form of a worksheet tool where you can either start executing it or save it to a file. 
+If you are comparing objects you will get the result under the <strong>Difference</strong> tab. The tab will look something like this.
+
+   <div class="block-image"><img src="images/difference.png" alt="images/difference.png"></div>
+
+   <p>On the left is a pane containing objects only available in the source database. On the right is a pane containing the objects only available in the destination database.
+
+   <p>Only the items in the lists that have checks on them are actually dropped or created, the other items only need to be added to lead the list tree to the items that are actually dropped or created.
+
+   </body></html>
+

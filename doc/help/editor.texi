@@ -1,0 +1,67 @@
+@node  editor
+@subsection Editor Settings
+@cindex Editor Settings
+
+This page of the options contains settings for TOra editors. Editor settings are organised in two tabs: Options and Syntax.
+
+@strong{Options tab}
+
+@image{images/editor,15cm}
+
+@table @asis
+@item @strong{Syntax highlighting}
+      Use this to control whether you want syntax highlighting or not. Observe that without syntax highlighting you will not see the indications for errors and current lines in the PL/SQL editor.	
+@item @strong{Use maximum text width mark}
+      Check this option and specify maximum length of text. A vertical line indicating this margin will be displayed in text editor. Note that this option will @strong{not} prevent text to be writen beyond maximum text width margin. this option is purely for visual representation.
+@item @strong{Keyword upper}
+      Check this box to convert all keywords to uppercase before displaying them. The text itself is not changed so resetting this not changed and the text sent to the database still contain lowercase letters. This setting is disabled if you do not have a monospaced font selected.
+@item @strong{Object names upper}
+      Extract all names of objects (tables, views, columns etc.) from database as uppercase (default). For example this setting will be used when generating object creation scripts.
+@item @strong{Code completion}
+      Check this box to enable code completion in SQL editors.
+@item @strong{Editor shortcuts (TAB replacement)}
+      By checking this option and pressing a button "Edit..." you can add/modify/delete editor shortcuts. Editor shortcut is a short word which can be replaced to a long phrase by pressing TAB button. For example you can set that a short word "selsysd" be replaced with "select sysdate from dual".
+@item @strong{Sort completion rows}
+      If checked the completion alternatives are sorted in alphabetical order, otherwise they are in the same order as in the source.
+@item @strong{Indent same as previous line}
+      When inserting a new line indent it to the same level as the previous one.
+@item @strong{Text example}
+      This is the font to use for all editors in TOra that are not syntax highlighted. Choose the @strong{Choose} button immediately to the right of the label to select a new font.
+@item @strong{Code example}
+      This is the font to use for all syntax highlighted SQL editors in TOra. Choose the @strong{Choose} button immediately to the right of the label to select a new font.
+@item @strong{List example}
+      This is the font to use for all lists in TOra. Choose the @strong{Choose} button immediately to the right of the label to select a new font.
+@item @strong{Filename extensions}
+      TODO.
+@item @strong{Tab stop width}
+      With of tab character. This value is also used when indenting automatically generated/formated scripts.
+@item @strong{Use only spaces when indenting}
+      TODO.
+@item @strong{Static checker}
+      Specifies static checker to be used. This configuration option should contain %1 which will be replaced with a filename (with full path) containing code to be checked. For example:
+      @example
+perl /usr/bin/staticChecker.pl --output=TORA --file=%1
+      @end example
+@end table
+
+@strong{Syntax tab}
+
+@image{images/editor_syntax,15cm}
+
+@table @asis
+@item @strong{Syntax components}
+      This list contains different parts of the SQL syntax. You can change the color used for the element by selecting the item in this list and then pressing the Pick button to select a color. The current color of the currently selected item in the list is displayed just to the left of the Pick button.
+
+The available elements are as follows.
+ @multitable @columnfractions .3 .7
+ @item @strong{Background} @tab The normal background color for text.
+ @item @strong{Comment}	@tab An SQL comment. Currently this only includes -- comments, not rem comments.
+ @item @strong{Current background}	@tab 	This is the background to use for the current line of execution in the PL/SQL debugger.	
+ @item @strong{Error background}	@tab 	This is the background to use for lines that have SQL errors in the in the PL/SQL debugger/editor.	
+ @item @strong{Keyword}	@tab 	This is the color to use for the text of an SQL keyword.	
+ @item @strong{Normal}	@tab 	Normal text color.	
+ @item @strong{String}	@tab 	Color to use for text in strings.	
+ @item @strong{Unfinished string} @tab Color to use for strings that miss their terminating ' or ".
+ @end multitable
+ At the bottom of this dialog is a text field that displays en example of the current setting.
+@end table

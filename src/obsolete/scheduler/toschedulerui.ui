@@ -1,0 +1,190 @@
+<ui version="4.0" >
+ <class>toSchedulerUI</class>
+ <widget class="QWidget" name="toSchedulerUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>633</width>
+    <height>555</height>
+   </rect>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" >
+   <item row="0" column="0" >
+    <widget class="QTabWidget" name="tabWidget" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="jobsTab" >
+      <attribute name="title" >
+       <string>Jobs (v10)</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2" >
+       <item row="0" column="0" >
+        <widget class="QSplitter" name="splitter" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <widget class="toResultTableView" name="jobsTableView" >
+          <property name="selectionBehavior" >
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+         </widget>
+         <widget class="QGroupBox" name="groupBox" >
+          <property name="title" >
+           <string>Job Settings</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_3" >
+           <item row="0" column="0" >
+            <widget class="QLabel" name="label" >
+             <property name="text" >
+              <string>Job ID:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="QLineEdit" name="jobEdit" >
+             <property name="readOnly" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_2" >
+             <property name="text" >
+              <string>Next Date:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QDateTimeEdit" name="nextDateTimeEdit" >
+             <property name="calendarPopup" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" >
+            <widget class="QLabel" name="label_3" >
+             <property name="text" >
+              <string>Interval:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" colspan="3" >
+            <widget class="QComboBox" name="intervalComboBox" >
+             <property name="editable" >
+              <bool>true</bool>
+             </property>
+             <item>
+              <property name="text" >
+               <string>Daily (SYSDATE + 1)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Once per week (SYSDATE + 7)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Hourly (SYSDATE + 1/24)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Every 10 min. (SYSDATE + 10/1440)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Every 30 sec. (SYSDATE + 30/86400)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Don't re-execute (NULL)</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="3" column="0" >
+            <widget class="QLabel" name="label_4" >
+             <property name="text" >
+              <string>What (Code):</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1" colspan="3" >
+            <widget class="toHighlightedText" native="1" name="whatEditor" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="2" >
+            <spacer name="horizontalSpacer" >
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>195</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="4" column="3" >
+            <widget class="QPushButton" name="jobSaveButton" >
+             <property name="text" >
+              <string>Save</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="schedulerTab" >
+      <attribute name="title" >
+       <string>Scheduler (v11)</string>
+      </attribute>
+      <widget class="toResultTableView" name="schedulerTableView" >
+       <property name="geometry" >
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>609</width>
+         <height>235</height>
+        </rect>
+       </property>
+       <property name="selectionBehavior" >
+        <enum>QAbstractItemView::SelectRows</enum>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>toResultTableView</class>
+   <extends>QTableView</extends>
+   <header>toresulttableview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>toHighlightedText</class>
+   <extends>QWidget</extends>
+   <header>tohighlightedtext.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

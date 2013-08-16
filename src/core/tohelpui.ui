@@ -1,0 +1,177 @@
+<ui version="4.0" >
+ <class>toHelp</class>
+ <widget class="QDialog" name="toHelp" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>678</width>
+    <height>452</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Help Browser</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <widget class="QToolButton" name="backButton" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+     <property name="toolTip" >
+      <string>Backward one help page</string>
+     </property>
+     <property name="arrowType" >
+      <enum>Qt::LeftArrow</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QToolButton" name="forwardButton" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+     <property name="toolTip" >
+      <string>Forward one help page</string>
+     </property>
+     <property name="arrowType" >
+      <enum>Qt::RightArrow</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>271</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="0" colspan="3" >
+    <widget class="QSplitter" name="splitter" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QTabWidget" name="tabs" >
+      <property name="currentIndex" >
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab" >
+       <property name="geometry" >
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>332</width>
+         <height>375</height>
+        </rect>
+       </property>
+       <attribute name="title" >
+        <string>Contents</string>
+       </attribute>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="QTreeWidget" name="Sections" >
+          <property name="alternatingRowColors" >
+           <bool>true</bool>
+          </property>
+          <column>
+           <property name="text" >
+            <string>Contents</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_2" >
+       <property name="geometry" >
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>332</width>
+         <height>375</height>
+        </rect>
+       </property>
+       <attribute name="title" >
+        <string>Search</string>
+       </attribute>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="QLabel" name="label" >
+          <property name="text" >
+           <string>Search:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="QLineEdit" name="SearchLine" />
+        </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="label_2" >
+          <property name="text" >
+           <string>Manuals:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <widget class="QComboBox" name="Manuals" >
+          <item>
+           <property name="text" >
+            <string>All manuals</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="2" >
+         <widget class="QProgressBar" name="Progress" >
+          <property name="value" >
+           <number>24</number>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="2" >
+         <widget class="QTreeWidget" name="Result" >
+          <property name="alternatingRowColors" >
+           <bool>true</bool>
+          </property>
+          <column>
+           <property name="text" >
+            <string>Result</string>
+           </property>
+          </column>
+          <column>
+           <property name="text" >
+            <string>Manual</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QTextBrowser" name="Help" />
+    </widget>
+   </item>
+  </layout>
+  <zorder>backButton</zorder>
+  <zorder>forwardButton</zorder>
+  <zorder>splitter</zorder>
+ </widget>
+ <tabstops>
+  <tabstop>tabs</tabstop>
+  <tabstop>backButton</tabstop>
+  <tabstop>forwardButton</tabstop>
+  <tabstop>Sections</tabstop>
+  <tabstop>SearchLine</tabstop>
+  <tabstop>Manuals</tabstop>
+  <tabstop>Result</tabstop>
+  <tabstop>Help</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

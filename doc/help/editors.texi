@@ -1,0 +1,63 @@
+@node  editors
+@section Using editors
+@cindex Using editors
+
+Editors can be in two modes. The first is read and write in which case the following key bindings are defined.
+
+@multitable @columnfractions .3 .7  
+@item @strong{Left Arrow}  @tab  Move the cursor one character to the left
+@item @strong{Right Arrow}  @tab  Move the cursor one character to the right
+@item @strong{Up Arrow} @tab 	Move the cursor one line upwards 	
+@item @strong{Down Arrow} @tab 	Move the cursor one line downwards 	
+@item @strong{Page Up} @tab 	Move the cursor one page upwards 	
+@item @strong{Page Down} @tab 	Move the cursor one page downwards 	
+@item @strong{@key{BS}} @tab 	Delete the character to the left of the cursor 	
+@item @strong{@key{HOME}} @tab 	Move the cursor to the beginning of the line 	
+@item @strong{End} @tab 	Move the cursor to the end of the line 	
+@item @strong{Delete} @tab 	Delete the character to the right of the cursor 	
+@item @strong{SHIFT - Left Arrow} @tab 	Mark text one character to the left 	
+@item @strong{SHIFT - Right Arrow} @tab 	Mark text one character to the right 	
+@item @strong{CTRL-A} @tab 	Select the entire buffer. 	
+@item @strong{CTRL-B} @tab 	Move the cursor one character leftwards 	
+@item @strong{CTRL-C} @tab 	Copy the marked text to the clipboard 	
+@item @strong{CTRL-D} @tab 	Delete the character to the right of the cursor 	
+@item @strong{CTRL-E} @tab 	Move the cursor to the end of the line 	
+@item @strong{CTRL-F} @tab 	Pop up the search & replace dialog 	
+@item @strong{CTRL-H} @tab 	Delete the character to the left of the cursor 	
+@item @strong{CTRL-K} @tab 	Delete to end of line 	
+@item @strong{CTRL-N} @tab 	Move the cursor one line downwards 	
+@item @strong{CTRL-P} @tab 	Move the cursor one line upwards 	
+@item @strong{CTRL-V} @tab 	Paste the clipboard text into line edit 	
+@item @strong{CTRL-X} @tab 	Cut the marked text, copy to clipboard 	
+@item @strong{CTRL-Z} @tab 	Undo the last operation 	
+@item @strong{CTRL-Y} @tab 	Redo the last operation 	
+@item @strong{CTRL - Left} @tab  Arrow	Move the cursor one word to the left 	
+@item @strong{CTRL - Right} @tab  Arrow	Move the cursor one word to the right 	
+@item @strong{CTRL - Up Arrow} @tab 	Move the cursor one word upwards 	
+@item @strong{CTRL - Down Arrow} @tab 	Move the cursor one word downwards 	
+@item @strong{CTRL - Home Arrow} @tab 	Move the cursor to the beginning of the text 	
+@item @strong{CTRL - End Arrow} @tab 	Move the cursor to the end of the text 	
+@item @strong{CTRL-S} @tab 	Save the editor with the current filename, if no filename is defined a dialog is displayed for the user to select the filename to use. 	
+@item @strong{CTRL-O} @tab 	Read a file into the editor. A dialog will pop up to select the name to open.
+@end multitable
+
+The second mode is read only in which only the current key binding are available.
+
+@multitable @columnfractions .3 .7  
+@item @strong{Left Arrow} @tab	Scrolls the table to the left 	
+@item @strong{Right Arrow} @tab	Scrolls the table to the right 	
+@item @strong{Up Arrow 	Scrolls} @tab the table one line downwards 	
+@item @strong{Down Arrow} @tab	Scrolls the table one line upwards 	
+@item @strong{Page Up} @tab	Scrolls the table one page downwards 	
+@item @strong{Page Down} @tab	Scrolls the table one page upwards 	
+@item @strong{Control-C} @tab	Copy the marked text to the clipboard 	
+@item @strong{Control-S} @tab	Save the editor with the current filename, if no filename is defined a dialog is displayed for the user to select the filename to use.
+@end multitable
+
+Editors support drag and drop which means you can drag a selection to another editor and drop any other text source onto an editable editor to insert the dragged text at the dropped location.
+
+Also as a shortcut pressing the right mouse button will display a context menu containing the entries from the edit menu which pertain to the editors.
+
+@subheading SQL editors
+
+Editors for SQL have another feature which is code completion. If you place the cursor after a '.' character TOra will this the available columns for the table referenced by the name before the '.' character. This will only work for defined views and tables. You can also look up tablenames using the @strong{CTRL+T} key which will list all tables starting with the same word as you currently have the cursor in. When the completion list is open you can navigate it using @strong{Up}, @strong{Down} keys and selecting an entry using @strong{Return}. You can also remove the list by pressing the @strong{Escape} key. The completion values are saved in the object cache and can not be used until it is read. If you find this annoying you can disable this in the preferences.

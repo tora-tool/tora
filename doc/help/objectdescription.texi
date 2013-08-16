@@ -1,0 +1,6 @@
+@node objectdescription
+@subsection Object description
+
+@image{images/describe,15cm}
+
+This is a list that describes the columns of a table or view. There is nothing much special about this view except that you can check the collected analyze statistics for the column by placing the cursor over it and reading the tooltip that will be displayed. If no tooltip is displayed there is no analyzed statistics available. Also notable is that this list is read completely from the object cache if it available. This will mean that if you are modifying the object you are modifying you need to reread the object cache before you can see the changes.

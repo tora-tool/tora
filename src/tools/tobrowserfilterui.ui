@@ -1,0 +1,506 @@
+<ui version="4.0" >
+ <class>toBrowserFilterUI</class>
+ <widget class="QDialog" name="toBrowserFilterUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>646</width>
+    <height>484</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Filter setting</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>11</number>
+   </property>
+   <property name="topMargin" >
+    <number>11</number>
+   </property>
+   <property name="rightMargin" >
+    <number>11</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>11</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>6</number>
+   </property>
+   <item row="4" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="1" >
+    <widget class="QPushButton" name="OkButton" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>&amp;Ok</string>
+     </property>
+     <property name="default" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2" >
+    <widget class="QPushButton" name="Cancel" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>Cancel</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="3" >
+    <widget class="QGroupBox" name="ButtonsBox" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="title" >
+      <string>Filter on name</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <item>
+       <layout class="QHBoxLayout" >
+        <item>
+         <widget class="QRadioButton" name="None" >
+          <property name="text" >
+           <string>&amp;No filter</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+          <property name="buttonGroupId" stdset="0" >
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="StartWith" >
+          <property name="toolTip" >
+           <string>Object name start with</string>
+          </property>
+          <property name="text" >
+           <string>&amp;Start with</string>
+          </property>
+          <property name="buttonGroupId" stdset="0" >
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="EndWith" >
+          <property name="toolTip" >
+           <string>Object name ends in</string>
+          </property>
+          <property name="text" >
+           <string>&amp;End with</string>
+          </property>
+          <property name="buttonGroupId" stdset="0" >
+           <number>2</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="Contains" >
+          <property name="toolTip" >
+           <string>Object name contains</string>
+          </property>
+          <property name="text" >
+           <string>&amp;Contains</string>
+          </property>
+          <property name="buttonGroupId" stdset="0" >
+           <number>3</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="CommaSeparate" >
+          <property name="toolTip" >
+           <string>Comma separated list of object names</string>
+          </property>
+          <property name="text" >
+           <string>&amp;Comma list</string>
+          </property>
+          <property name="buttonGroupId" stdset="0" >
+           <number>4</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="RegExp" >
+          <property name="toolTip" >
+           <string>Object name matches RegExp</string>
+          </property>
+          <property name="text" >
+           <string>&amp;RegExp</string>
+          </property>
+          <property name="buttonGroupId" stdset="0" >
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="String" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="3" >
+    <widget class="QGroupBox" name="TablespaceType" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title" >
+      <string>Filter on tablespace</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>11</number>
+      </property>
+      <property name="topMargin" >
+       <number>11</number>
+      </property>
+      <property name="rightMargin" >
+       <number>11</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>11</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>6</number>
+      </property>
+      <item row="0" column="0" >
+       <widget class="QRadioButton" name="IncludeAll" >
+        <property name="text" >
+         <string>Include &amp;All</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QRadioButton" name="Include" >
+        <property name="text" >
+         <string>&amp;Include</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" >
+       <widget class="QRadioButton" name="Exclude" >
+        <property name="text" >
+         <string>&amp;Exclude</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="3" >
+       <widget class="toResultView" native="1" name="Tablespaces" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="focusPolicy" >
+         <enum>Qt::StrongFocus</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="3" >
+    <layout class="QHBoxLayout" >
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QCheckBox" name="OnlyOwnSchema" >
+       <property name="text" >
+        <string>Only display own schema</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="IgnoreCase" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="text" >
+        <string>Ignore &amp;Case</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="Invert" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="text" >
+        <string>&amp;Invert selection</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>toResultView</class>
+   <extends>QWidget</extends>
+   <header>core/toresultview.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>OnlyOwnSchema</tabstop>
+  <tabstop>IgnoreCase</tabstop>
+  <tabstop>Invert</tabstop>
+  <tabstop>None</tabstop>
+  <tabstop>String</tabstop>
+  <tabstop>IncludeAll</tabstop>
+  <tabstop>Include</tabstop>
+  <tabstop>Exclude</tabstop>
+  <tabstop>Tablespaces</tabstop>
+  <tabstop>OkButton</tabstop>
+  <tabstop>Cancel</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>None</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>String</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>None</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>IgnoreCase</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>None</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Invert</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Cancel</sender>
+   <signal>clicked()</signal>
+   <receiver>toBrowserFilterUI</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>OkButton</sender>
+   <signal>clicked()</signal>
+   <receiver>toBrowserFilterUI</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>IncludeAll</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Tablespaces</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>StartWith</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>String</receiver>
+   <slot>setFocus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>370</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>326</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>EndWith</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>String</receiver>
+   <slot>setFocus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>370</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>326</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>  
+  <connection>
+   <sender>Contains</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>String</receiver>
+   <slot>setFocus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>370</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>326</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>CommaSeparate</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>String</receiver>
+   <slot>setFocus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>370</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>326</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>RegExp</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>String</receiver>
+   <slot>setFocus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>370</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>326</x>
+     <y>109</y>
+    </hint>
+   </hints>
+  </connection>  
+ </connections>
+</ui>

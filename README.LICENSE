@@ -1,0 +1,5 @@
+TOra is licensed under the GPL. Copyright in the code is held by a combination of the
+various authors. Originally there was a license exception for commercial binary-only
+builds with the closed source Qt. This is no longer the case, and the release is fully
+GPL'd. Builds for windows can be made using any Qt release that is compatible with
+the GPL.

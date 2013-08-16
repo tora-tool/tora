@@ -1,0 +1,119 @@
+@node  database
+@subsection Database Settings
+@cindex Database Settings
+
+This page of the options contains settings on how to interact with the database.
+
+@image{images/database,15cm}
+
+@table @asis
+@item @strong{Autocommit changes}
+    If this is set any changes made to the database will be automatically committed as soon as you make them. Use
+    this with care, the transaction handling is there for a reason you know.
+@item @strong{Reading object cache}
+    There are four options of object cache behaviour. @strong{Start read object cache when needed} - will start
+    reading it when it is first used. @strong{Read object cache on connect} - TOra will start reading the object
+    cache when you start a connection to a database. @strong{Never read object cache until mandatory} - TODO.
+    @strong{Never read object cache until mandatory (Will leave some parts of application nonfunctional} - TODO.
+    Note that reading this is quite a costly query so you probably shouldn't have this checked if you are in a
+    production environment, on a slow connection or not using the object cache. The object cache is mostly used
+    for describing tables, the PL/SQL debugger and code completion.
+@item @strong{Initial rows to fetch in query}
+    This setting indicates how many rows to always fetch from a query when executing it. Observe that you can
+    always read more from the individual query just by scrolling down. Check the @strong{All} checkbox to always
+    read all available records. Be aware that TOra will interact sluggishly or not at all while reading many lines.
+    It will also keep the entire result in memory so checking the @strong{All} box and reading a really large
+    table could bring your machine to it's knees.
+@item @strong{Initially read in content editor}
+    If set to something other than @strong{All} a query will be placed only this number of rows initially from
+    Oracle when browsing the content. The reason for this is that Oracle will be under high load if a content
+    list is started on a large table. When this value is reached the query will be reread to fetch the rest of
+    the values so you as a user will not see any difference.
+@item @strong{Maximum size display}
+    The maximum width a list column will get automatically regardless of how large the content is. This is so
+    you can still see the rest of the columns even if one of the first can contain very large values. You can
+    always resize the column by hand afterwards.
+@item @strong{Firewall mode.}
+    Makes each connection in connection pool to run extra queries (selecting sysdate from dual) at specified
+    interval (see "Connection test interval" option). This could be useful if there is a firewall between
+    TOra and database and firewall is dropping connections if there is no traffic.
+
+    @strong{Note!} If you change this option, you have to reconnect in order to make it effective.
+@item @strong{Connection test interval}
+    Interval in seconds at which TOra should be sending dummy queries to database (see "Firewall mode").
+@item @strong{Indicate empty values as ''.}
+    Display NULL values as "@{null@}" in the specified color.
+@item @strong{Number format.}
+    Select the format for displaying numbers. You can choose from "Default", "Scientific" and "Fixed decimal" 
+    where the last allows you to specify the number of decimals.
+@end table
+
+There may also be pages under this for each individual database provider. Currently only Oracle and MySql uses this
+feature. That setup looks like this.
+
+@image{images/oracle,13cm}
+
+@table @asis
+@item @strong{Checkpoint name}
+    This is a checkpoint TOra should use when it is making changes that need to be rolled back. One place where this
+    is used is to perform explain plans without filling up the plan table. The name doesn't matter, just make sure
+    you don't use this checkpoint name yourself.
+@item @strong{Default date format}
+    The format that you prefer dates to be displayed. Changing this will require a reconnect to the database before
+    it starts to operate. The string should be a standard Oracle date to string conversion specification. For more
+    information see the Oracle SQL Reference.
+@item @strong{Maximum cursors to keep open}
+    This specifies the size of the connection pool if TOra was compiled with OTL_STREAM_POOLING_ON.
+@item @strong{Max LONG and LOB data length}
+    The amount of data to read from LONG, BLOB or CLOB data fields. If you always want all the data to be read
+    check the @strong{Unlimited} checkbox to the right. LONG datafields can not be specified as @strong{Unlimited},
+    if this is specified 33000 characters are read by default.
+@item @strong{Explain plan table}
+    The table to use to temporarily store explained execution plans. the table can be specified with or without a
+    schema name. If you leave out a schemaname the table will be created in the schema of the connected user, either
+    manually by clicking @strong{Create Table} button or automatically by TOra if needed and confirmed by the user.
+@item @strong{Keep plans}
+    If this is checked explained plans are left in the explain plan table. The normal behaviour is to rollback the
+    explanation after it is initially read to keep the explain plan table from filling up with old plans.
+@item @strong{Use V$SQL_PLAN}
+    If possible, TOra will try to get the execution plan by reading V$SQL_PLAN instead of executing EXPLAIN for the
+    statement.
+@item @strong{shared PLAN_TABLE}
+    Enable this option if you wish to use the system-wide PLAN_TABLE provided by Oracle or a shared
+    plan table set up by yourself. In this case TOra will never create a plan table for you.
+@item @strong{Extractor options}
+    These options control the way TOra generates object creation scripts (ddl's) in database extractor tool as well as "Script" tab in schema browser.
+    @itemize @bullet
+    @item @strong{Use DBMS_METADATA} Use standard Oracle package DBMS_METADATA to get ddl. If not selected TOra will use internal routines to generate ddl.
+    @item @strong{Include storage information}
+    @item @strong{Skip organisation and monitoring} Exclude organisation and monitoring from storage information
+    @item @strong{Skip storage except tablespace} Exclude all storage information except tablespace
+    @item @strong{Include parallel information}
+    @item @strong{Include partition information}
+    @item @strong{Include code}
+    @item @strong{Include header} Include TOra generated script header, containing information such as database name, time of extraction etc.
+    @item @strong{Include prompt}
+    @end itemize
+@end table
+
+@image{images/mysql,13cm}
+
+@table @asis
+@item @strong{Possibility to break MySql queries}
+    TODO
+@item @strong{When calling create routine statement in worksheet}
+    MySQL routine creation does not support "create or replace" therefore if you try to create new routine and it
+    already exists you will get an exception. This option controls if TOra should try to avoid such exceptions in
+    one of supported ways:
+    @itemize @bullet
+    @item @strong{Do nothing} - do not try to detect and avoid exception when creating routines.
+    @item @strong{Drop before creating} - execute "drop <procedure|function> if exists <name>" before calling create statement.
+    @item @strong{Drop before creating (if exists)} - check routines table if routine already exists. If so - execute drop statement.
+    @item @strong{Ask} - ask user if TOra should try dropping a routine before creating it (without checking if it already exists).
+    @item @strong{Ask (if exists)} - check routines table if routine already exists. If so - ask user if drop
+      statement should be called (without it creating procedure will fail, but it could be usefull if you didn't know
+      that routine with given name exists already and now you would like to skip creation and probably change the name
+      of routine).
+    @end itemize
+    @strong{Note!} - if routine creation statement fails you will be left without @strong{any} version of routine in the database!
+@end table

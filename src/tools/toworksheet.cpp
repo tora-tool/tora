@@ -1,0 +1,2203 @@
+
+/* BEGIN_COMMON_COPYRIGHT_HEADER
+ *
+ * TOra - An Oracle Toolkit for DBA's and developers
+ *
+ * Shared/mixed copyright is held throughout files in this product
+ *
+ * Portions Copyright (C) 2000-2001 Underscore AB
+ * Portions Copyright (C) 2003-2005 Quest Software, Inc.
+ * Portions Copyright (C) 2004-2009 Numerous Other Contributors
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation;  only version 2 of
+ * the License is valid for this program.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *      As a special exception, you have permission to link this program
+ *      with the Oracle Client libraries and distribute executables, as long
+ *      as you follow the requirements of the GNU GPL in regard to all of the
+ *      software in the executable aside from Oracle client libraries.
+ *
+ *      Specifically you are not permitted to link this program with the
+ *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+ *      And you are not permitted to distribute binaries compiled against
+ *      these libraries.
+ *
+ *      You may link this product with any GPL'd Qt library.
+ *
+ * All trademarks belong to their respective owners.
+ *
+
+ * END_COMMON_COPYRIGHT_HEADER */
+
+#include "tools/toworksheet.h"
+#include "ui_toworksheetsetupui.h"
+
+//#include "tools/tosgatrace.h"
+//
+#include "core/toresultview.h"
+#include "core/toeditablemenu.h"
+#include "core/utils.h"
+#include "core/toconf.h"
+#include "core/tochangeconnection.h"
+#include "core/toconf.h"
+#include "core/toparamget.h"
+////obsolete #include "core/toresultbar.h"
+#include "core/toresultschema.h"
+#include "core/toresultcols.h"
+#include "core/toresultitem.h"
+#include "core/toresultplan.h"
+#include "core/toresultresources.h"
+#include "core/toresulttableview.h"
+#include "core/toresultstats.h"
+#include "core/totabwidget.h"
+#include "core/totreewidget.h"
+#include "core/totimer.h"
+//obsolete #include "core/tovisualize.h"
+#ifdef TORA3_STAT
+#include "tools/toworksheetstatistic.h"
+#endif
+#include "tools/toworksheeteditor.h"
+#include "core/todescribe.h"
+#include "core/toeditmenu.h"
+
+//#include "core/tsqlparse.h"
+#include "parsing/tsqllexer.h"
+#include "parsing/tosyntaxanalyzer.h"
+
+#include "editor/tohighlightedtext.h"
+#include "core/toglobalevent.h"
+#include "core/toconfiguration.h"
+
+#include <QtCore/QDebug>
+#include <QtCore/QSettings>
+#include <QtCore/QTextStream>
+#include <QtGui/QInputDialog>
+#include <QtGui/QProgressDialog>
+
+#include "icons/clock.xpm"
+#include "icons/recall.xpm"
+#include "icons/describe.xpm"
+#include "icons/eraselog.xpm"
+#include "icons/lockconnection.xpm"
+#include "icons/execute.xpm"
+#include "icons/executeall.xpm"
+#include "icons/executestep.xpm"
+#include "icons/explainplan.xpm"
+#include "icons/filesave.xpm"
+#include "icons/insertsaved.xpm"
+#include "icons/previous.xpm"
+#include "icons/refresh.xpm"
+#include "icons/stop.xpm"
+#include "icons/toworksheet.xpm"
+#include "icons/up.xpm"
+#include "icons/down.xpm"
+
+class toWorksheetTool : public toTool
+{
+protected:
+    virtual const char **pictureXPM(void)
+    {
+        return const_cast<const char**>(toworksheet_xpm);
+    }
+public:
+    toWorksheetTool()
+        : toTool(10, "SQL Editor") { }
+    virtual const char *menuItem()
+    {
+        return "SQL Editor";
+    }
+    virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+    {
+        return new toWorksheet(parent, connection);
+    }
+    virtual QWidget *configurationTab(QWidget *parent)
+    {
+        return new toWorksheetSetup(this, parent);
+    }
+    virtual bool canHandle(toConnection &)
+    {
+        return true;
+    }
+    virtual void closeWindow(toConnection &connection) {};
+};
+
+static toWorksheetTool WorksheetTool;
+
+#define CHUNK_SIZE 31
+/** Get an address to a SQL statement in the SGA. The address has the form
+ * 'address:hash_value' which are resolved from the v$sqltext_with_newlines
+ * view in Oracle.
+ * @param conn Connection to get address from
+ * @param sql Statement to get address for.
+ * @return String with address in.
+ * @exception QString if address not found.
+ */
+static toSQL SQLAddress("Global:Address",
+                        "SELECT Address||':'||Hash_Value\n"
+                        "  FROM V$SQLText_With_Newlines\n"
+                        " WHERE SQL_Text LIKE :f1<char[150]>||'%'",
+                        "Get address of an SQL statement");
+
+static QString toSQLToAddress(toConnection &conn, const QString &sql)
+{
+  QString search = Utils::toSQLStripSpecifier(sql);
+
+  toQList vals = toQuery::readQuery(conn, SQLAddress, toQueryParams() << search.left(CHUNK_SIZE));
+
+  for (toQList::iterator i = vals.begin(); i != vals.end(); i++)
+  {
+      if (search == Utils::toSQLString(conn, *i))
+          return *i;
+  }
+  throw qApp->translate("toSQLToAddress", "SQL Query not found in SGA");
+}
+
+void toWorksheet::viewResources(void)
+{
+    try
+    {
+        QString address = toSQLToAddress(connection(), m_lastQuery.sql);
+        Resources->refreshWithParams(toQueryParams() << address);
+        QString sql = toSQL::string("toSGATrace:LongOps", connection());
+        sql += "   AND b.SQL_Address||':'||b.SQL_Hash_Value = :addr<char[100]>";
+        LongOps->setSQL(sql);
+        LongOps->clearParams();
+        LongOps->refreshWithParams(toQueryParams() << address);
+    }
+    TOCATCH
+}
+
+void toWorksheet::createActions()
+{
+    parseAct = new QAction(tr("Check syntax of buffer"), this);
+    parseAct->setShortcut(Qt::CTRL + Qt::Key_F9);
+    connect(parseAct, SIGNAL(triggered()), this, SLOT(slotParseAll(void)));
+
+    lockConnectionAct = new QAction(QPixmap(const_cast<const char**>(lockconnection_xpm)),
+                                    tr("Lock connection to this worksheet"),
+                                    this);
+    lockConnectionAct->setCheckable(true);
+    connect(lockConnectionAct, SIGNAL(toggled(bool)), this, SLOT(slotLockConnection(bool)));
+
+    executeAct = new QAction(QPixmap(const_cast<const char**>(execute_xpm)),
+                             tr("Execute current statement"),
+                             this);
+    executeAct->setShortcut(Qt::CTRL + Qt::Key_Return);
+    connect(executeAct, SIGNAL(triggered()), this, SLOT(slotExecute(void)));
+
+    executeStepAct = new QAction(QPixmap(const_cast<const char**>(executestep_xpm)),
+                                 tr("Step through statements"),
+                                 this);
+    executeStepAct->setShortcut(Qt::Key_F9);
+    connect(executeStepAct, SIGNAL(triggered()), this, SLOT(slotExecuteStep(void)));
+
+    executeAllAct = new QAction(QPixmap(const_cast<const char**>(executeall_xpm)),
+                                tr("Execute all statements"),
+                                this);
+    executeAllAct->setShortcut(Qt::Key_F8);
+    connect(executeAllAct, SIGNAL(triggered()), this, SLOT(slotExecuteAll(void)));
+
+    refreshAct = new QAction(QPixmap(const_cast<const char**>(refresh_xpm)),
+                             tr("Reexecute Last Statement"),
+                             this);
+    refreshAct->setShortcut(QKeySequence::Refresh); //NOTE: on Win and MacOSX Refresh is bound to "F5"
+    connect(refreshAct, SIGNAL(triggered()), this, SLOT(slotRefreshSetup(void)));
+
+    describeAct = new QAction(QPixmap(const_cast<const char**>(describe_xpm)),
+                              tr("Describe under cursor"),
+                              this);
+    describeAct->setShortcut(Qt::Key_F4);
+    connect(describeAct, SIGNAL(triggered()), this, SLOT(slotDescribe(void)));
+
+    describeActNew = new QAction(QPixmap(const_cast<const char**>(describe_xpm)),
+                                 tr("Describe under cursor(New parser)"),
+                                 this);
+    describeActNew->setShortcut(Qt::SHIFT + Qt::Key_F4);
+    connect(describeActNew, SIGNAL(triggered()), this, SLOT(slotDescribeNew(void)));
+
+    explainAct = new QAction(QPixmap(const_cast<const char**>(explainplan_xpm)),
+                             tr("Explain plan of current statement"),
+                             this);
+    explainAct->setShortcut(Qt::Key_F6);
+    connect(explainAct, SIGNAL(triggered()), this, SLOT(slotExplainPlan(void)));
+
+    stopAct = new QAction(QPixmap(const_cast<const char**>(stop_xpm)),
+                          tr("Stop execution"),
+                          this);
+    connect(stopAct, SIGNAL(triggered()), this, SLOT(slotStop(void)));
+    stopAct->setEnabled(false);
+
+    eraseAct = new QAction(QPixmap(const_cast<const char**>(eraselog_xpm)),
+                           tr("Clear execution log"),
+                           this);
+    connect(eraseAct, SIGNAL(triggered()), this, SLOT(slotEraseLogButton(void)));
+
+    statisticAct = new QAction(QPixmap(const_cast<const char**>(clock_xpm)),
+                               tr("Gather session statistic of execution"),
+                               this);
+    statisticAct->setCheckable(true);
+    connect(statisticAct, SIGNAL(toggled(bool)), this, SLOT(slotEnableStatistic(bool)));
+
+    previousAct = new QAction(QPixmap(const_cast<const char**>(up_xpm)),
+                              tr("Previous log entry"),
+                              this);
+    connect(previousAct, SIGNAL(triggered()), this, SLOT(slotExecutePreviousLog(void)));
+
+    nextAct = new QAction(QPixmap(const_cast<const char**>(down_xpm)),
+                          tr("Next log entry"),
+                          this);
+    connect(nextAct, SIGNAL(triggered()), this, SLOT(slotExecuteNextLog(void)));
+
+    saveLastAct = new QAction(QPixmap(const_cast<const char**>(previous_xpm)),
+                              tr("Save last SQL"),
+                              this);
+    connect(saveLastAct, SIGNAL(triggered()), this, SLOT(slotSaveLast(void)));
+}
+
+
+void toWorksheet::setup(bool autoLoad)
+{
+    QToolBar *workToolbar = Utils::toAllocBar(this, tr("SQL worksheet"));
+    layout()->addWidget(workToolbar);
+
+    workToolbar->addAction(executeAct);
+    workToolbar->addAction(executeStepAct);
+    workToolbar->addAction(executeAllAct);
+
+    workToolbar->addSeparator();
+    workToolbar->addAction(refreshAct);
+
+    workToolbar->addSeparator();
+    workToolbar->addAction(describeAct);
+    workToolbar->addAction(describeActNew);
+    workToolbar->addAction(explainAct);
+
+    workToolbar->addAction(stopAct);
+
+    workToolbar->addSeparator();
+
+    workToolbar->addAction(eraseAct);
+
+    workToolbar->addSeparator();
+
+    workToolbar->addAction(statisticAct);
+
+    workToolbar->addWidget(new QLabel(tr("Refresh") + " ",
+                                      workToolbar));
+    Refresh = Utils::toRefreshCreate(workToolbar);
+    workToolbar->addWidget(Refresh);
+    connect(Refresh,
+            SIGNAL(activated(const QString &)),
+            this,
+            SLOT(slotChangeRefresh(const QString &)));
+    Refresh->setEnabled(false);
+    Refresh->setFocusPolicy(Qt::NoFocus);
+
+    // enable refresh button from statisticAct
+    connect(statisticAct, SIGNAL(toggled(bool)), Refresh, SLOT(setEnabled(bool)));
+
+    workToolbar->addSeparator();
+
+    workToolbar->addAction(previousAct);
+
+    workToolbar->addAction(nextAct);
+
+    workToolbar->addSeparator();
+
+    InsertSavedMenu = new toEditableMenu(workToolbar);
+    InsertSavedMenu->setIcon(
+        QPixmap(const_cast<const char**>(insertsaved_xpm)));
+    InsertSavedMenu->setTitle(tr("Insert current saved SQL"));
+    workToolbar->addAction(InsertSavedMenu->menuAction());
+    connect(InsertSavedMenu,
+            SIGNAL(aboutToShow()),
+            this,
+            SLOT(slotShowInsertSaved()));
+    connect(InsertSavedMenu,
+            SIGNAL(triggered(QAction *)),
+            this,
+            SLOT(slotInsertSaved(QAction *)));
+    connect(InsertSavedMenu,
+            SIGNAL(actionRemoved(QAction *)),
+            this,
+            SLOT(slotRemoveSaved(QAction *)));
+
+    SavedMenu = new toEditableMenu(workToolbar);
+    SavedMenu->setIcon(QPixmap(const_cast<const char**>(recall_xpm)));
+    SavedMenu->setTitle(tr("Run current saved SQL"));
+    workToolbar->addAction(SavedMenu->menuAction());
+    connect(SavedMenu, SIGNAL(aboutToShow()), this, SLOT(slotShowSaved()));
+    connect(SavedMenu,
+            SIGNAL(triggered(QAction *)),
+            this,
+            SLOT(slotExecuteSaved(QAction *)));
+    connect(SavedMenu,
+            SIGNAL(actionRemoved(QAction *)),
+            this,
+            SLOT(slotRemoveSaved(QAction *)));
+
+    workToolbar->addAction(saveLastAct);
+
+    workToolbar->addWidget(Started = new QLabel(workToolbar));
+    Started->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    Started->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
+                                       QSizePolicy::Minimum));
+
+    Schema = new toResultSchema(workToolbar);
+    workToolbar->addWidget(Schema);
+    Schema->refresh();
+    connect(Schema,
+            SIGNAL(currentIndexChanged(const QString &)),
+            Schema,
+            SLOT(update(const QString &)));
+
+    new toChangeConnection(workToolbar);
+
+    workToolbar->addAction(lockConnectionAct);
+
+    RefreshSeconds = 60;
+    connect(&RefreshTimer, SIGNAL(timeout()), this, SLOT(slotRefresh()));
+
+    LastLine = LastOffset = -1;
+    LastID = 0;
+
+    EditSplitter = new QSplitter(Qt::Vertical, this);
+    layout()->addWidget(EditSplitter);
+
+    Editor = new toWorksheetEditor(this, EditSplitter);
+    // stop any running query when a file is loaded
+    connect(Editor, SIGNAL(fileOpened()), this, SLOT(slotStop()));
+    connect(Editor->editor(), SIGNAL(modificationChanged(bool)), this, SLOT(slotSetCaption()));
+
+    ResultTab = new toTabWidget(EditSplitter);
+    QWidget *container = new QWidget(ResultTab);
+    QVBoxLayout *box = new QVBoxLayout;
+    ResultTab->addTab(container, tr("&Result"));
+
+    Current = Result = new toResultTableView(false, true, container);
+    box->addWidget(Result);
+    connect(Result, SIGNAL(done(void)), this, SLOT(slotQueryDone(void)));
+    connect(Result,
+            SIGNAL(firstResult(const QString &,
+                               const toConnection::exception &,
+                               bool)),
+            this,
+            SLOT(slotAddLog(const QString &,
+                        const toConnection::exception &,
+                        bool)));
+    connect(Result,
+            SIGNAL(firstResult(const QString &,
+                               const toConnection::exception &,
+                               bool)),
+            this,
+            SLOT(slotUnhideResults(const QString &,
+                               const toConnection::exception &,
+                               bool)));
+
+    Columns = new toResultCols(container, "description");
+    box->addWidget(Columns);
+    Columns->hide();
+
+    box->setContentsMargins(0, 0, 0, 0);
+    container->setLayout(box);
+
+    ResultTab->setTabEnabled(ResultTab->indexOf(Columns), false);
+    Plan = new toResultPlan(ResultTab);
+    ResultTab->addTab(Plan, tr("E&xecution plan"));
+    explainAct->setEnabled(Plan->handled());
+
+    ResourceSplitter = new QSplitter(Qt::Vertical, ResultTab);
+    Resources = new toResultResources(ResourceSplitter);
+
+    LongOps = new toResultTableView(true, true, ResourceSplitter);
+
+    //obsolete Visualize = new toVisualize(Result, ResultTab);
+    // ResultTab->addTab(Visualize, tr("&Visualize"));
+    ResultTab->addTab(ResourceSplitter, tr("&Information"));
+    ResultTab->setTabShown(ResourceSplitter, Resources->handled());
+
+    StatTab = new QWidget(ResultTab);
+    box = new QVBoxLayout;      // reassigned
+
+    QToolBar *stattool = Utils::toAllocBar(StatTab, tr("Worksheet Statistics"));
+
+    stattool->addAction(QIcon(QPixmap(const_cast<const char**>(filesave_xpm))),
+                        tr("Save statistics for later analysis"),
+                        this,
+                        SLOT(slotSaveStatistics(void)));
+
+    QLabel *statlabel = new QLabel(stattool);
+    stattool->addWidget(statlabel);
+
+    box->addWidget(stattool);
+
+    QSplitter *splitter = new QSplitter(Qt::Horizontal, StatTab);
+    Statistics = new toResultStats(true, splitter);
+
+#ifdef TORA3_GRAPH        
+    WaitChart = new toResultBar(splitter);
+    try
+    {
+        WaitChart->setSQL(toSQL::sql("toSession:SessionWait"));
+    }
+    catch (...)
+    {
+        TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
+    }
+    WaitChart->setTitle(tr("Wait states"));
+    WaitChart->setYPostfix(QString::fromLatin1("ms/s"));
+    WaitChart->setSamples(-1);
+    WaitChart->start();
+    // TODO: there is no method toResult::changeParams(QString const &, ...)
+    // it was renamed to refreshWithParams(toQueryParams const&)
+    connect(Statistics, SIGNAL(sessionChanged(const QString &)),
+            WaitChart, SLOT(changeParams(const QString &)));
+
+    IOChart = new toResultBar(splitter);
+    try
+    {
+        IOChart->setSQL(toSQL::sql("toSession:SessionIO"));
+    }
+    catch (...)
+    {
+        TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
+    }
+    IOChart->setTitle(tr("I/O"));
+    IOChart->setYPostfix(tr("blocks/s"));
+    IOChart->setSamples(-1);
+    IOChart->start();
+    // TODO: there is no method toResult::changeParams(QString const &, ...)
+    // it was renamed to refreshWithParams(toQueryParams const&)
+    connect(Statistics, SIGNAL(sessionChanged(const QString &)),
+            IOChart, SLOT(changeParams(const QString &)));
+#endif
+    box->setSpacing(0);
+    box->setContentsMargins(0, 0, 0, 0);
+    box->addWidget(splitter);
+    StatTab->setLayout(box);
+
+    ResultTab->addTab(StatTab, tr("&Statistics"));
+    ResultTab->setTabEnabled(ResultTab->indexOf(StatTab), false);
+
+    Logging = new toListView(ResultTab);
+    ResultTab->addTab(Logging, tr("&Logging"));
+    Logging->addColumn(tr("SQL"));
+    Logging->addColumn(tr("Result"));
+    Logging->addColumn(tr("Timestamp"));
+    Logging->addColumn(tr("Duration"));
+    Logging->setColumnAlignment(3, Qt::AlignRight);
+    Logging->setSelectionMode(toTreeWidget::Single);
+    connect(Logging, SIGNAL(selectionChanged(toTreeWidgetItem *)), this, SLOT(slotExecuteLog()));
+    LastLogItem = NULL;
+
+    connect(ResultTab, SIGNAL(currentChanged(int)),
+            this, SLOT(slotChangeResult(int)));
+
+    if (autoLoad && !toConfigurationSingle::Instance().wsAutoLoad().isEmpty())
+    {
+        Editor->editOpen(toConfigurationSingle::Instance().wsAutoLoad());
+    }
+
+    ToolMenu = NULL;
+
+    try
+    {
+        if (connection().providerIs("Oracle"))
+        {
+            if (toConfigurationSingle::Instance().wsStatistics())
+            {
+                statisticAct->setChecked(true);
+            }
+        }
+        else
+            statisticAct->setEnabled(false);
+    }
+    TOCATCH;
+
+    connect(this, SIGNAL(connectionChange()), this, SLOT(slotConnectionChanged()));
+
+    context = NULL;
+    Editor->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(Editor,
+            SIGNAL(customContextMenuRequested(const QPoint &)),
+            this,
+            SLOT(slotCreatePopupMenu(const QPoint &)));
+
+    connect(&Poll, SIGNAL(timeout()), this, SLOT(slotPoll()));
+    connect(this, SIGNAL(connectionChange()), this, SLOT(slotChangeConnection()));
+
+    connect(&toGlobalEventSingle::Instance(),
+            SIGNAL(s_commitRequested(toConnection &)),
+            this,
+            SLOT(slotCommitChanges(toConnection &)));
+
+    connect(&toGlobalEventSingle::Instance(),
+            SIGNAL(s_rollbackRequested(toConnection &)),
+            this,
+            SLOT(slotRollbackChanges(toConnection &)));
+
+    ///setFocusProxy(Editor);
+
+    // don't show results yet
+
+    QList<int> list;
+    list.append(1);
+    list.append(0);
+    EditSplitter->setSizes(list);
+
+    QSettings s;
+    int v;
+    s.beginGroup("toWorksheet");
+    v = s.value("EditSplitterSizes0", 10).toInt();
+    if (v == 0) v = 10;
+    EditSplitterSizes << v;
+    v = s.value("EditSplitterSizes1", 10).toInt();
+    if (v == 0) v = 10;
+    EditSplitterSizes << v;
+    s.endGroup();
+
+    slotSetCaption();
+}
+
+toWorksheet::toWorksheet(QWidget *main, toConnection &connection, bool autoLoad)
+    : toToolWidget(WorksheetTool, "worksheet.html", main, connection, "toWorksheet")
+{
+    createActions();
+    setup(autoLoad);
+}
+
+
+void toWorksheet::slotChangeRefresh(const QString &str)
+{
+    try
+    {
+        if (stopAct->isEnabled() && statisticAct->isChecked())
+            Utils::toRefreshParse(timer(), str);
+    }
+    TOCATCH;
+}
+
+void toWorksheet::slotWindowActivated(toToolWidget *widget)
+{
+    if (!widget)
+        return;
+
+    if (widget == this)
+    {
+        if (!ToolMenu)
+        {
+            ToolMenu = new QMenu(tr("Edit&or"), this);
+
+            ToolMenu->addAction(executeAct);
+            ToolMenu->addAction(executeStepAct);
+            ToolMenu->addAction(executeAllAct);
+            ToolMenu->addAction(refreshAct);
+            ToolMenu->addAction(parseAct);
+
+            ToolMenu->addSeparator();
+
+            ToolMenu->addAction(describeAct);
+            ToolMenu->addAction(describeActNew);
+            ToolMenu->addAction(explainAct);
+            ToolMenu->addAction(statisticAct);
+            ToolMenu->addAction(stopAct);
+
+            ToolMenu->addSeparator();
+
+            ToolMenu->addAction(SavedMenu->menuAction());
+
+            ToolMenu->addAction(saveLastAct);
+
+            ToolMenu->addSeparator();
+
+            ToolMenu->addAction(previousAct);
+            ToolMenu->addAction(nextAct);
+            ToolMenu->addAction(eraseAct);
+
+            toGlobalEventSingle::Instance().addCustomMenu(ToolMenu);
+        }
+
+        // disabled. can cause infinite loop on some window systems
+        // depending on the timing.
+        // Editor->setFocus();
+        //        if (Editor)
+        //            Editor->setFocus(Qt::ActiveWindowFocusReason);
+
+        // must set correct schema every time so having two worksheets
+        // on different schemas works properly.
+#ifndef QT_DEBUG
+        // This method is called whenever Tora gets focus,
+        // this makes debugging pretty anyoning
+        if(Schema)
+            Schema->update();
+#endif
+    }
+    else
+    {
+        delete ToolMenu;
+        ToolMenu = NULL;
+    }
+}
+
+void toWorksheet::slotConnectionChanged(void)
+{
+    try
+    {
+        statisticAct->setEnabled(connection().providerIs("Oracle"));
+        ResultTab->setTabShown(ResourceSplitter, Resources->handled());
+        explainAct->setEnabled(Plan->handled());
+        delete ToolMenu;
+        ToolMenu = NULL;
+        slotWindowActivated(this);
+    }
+    TOCATCH;
+}
+
+bool toWorksheet::checkSave()
+{
+    if (!Editor->isModified())
+        return true;
+
+    if (!toConfigurationSingle::Instance().wsCheckSave())
+    	return true;
+
+    if (toConfigurationSingle::Instance().wsAutoSave() && !Editor->filename().isEmpty())
+    	if (Utils::toWriteFile(Editor->filename(), Editor->text()))
+    	{
+    		Editor->setModified(false);
+    		return true;
+    	} else {
+    		return false;
+    	}
+
+    // CheckSave is true
+    // AutoSave is false or Editor->filemame is empty
+    // Display file save dialog
+    QString conn;
+    try
+    {
+    	conn = connection().description();
+    }
+    catch (...)
+    {
+    	conn = QString::fromLatin1("unknown connection");
+    }
+
+    // grab focus so user can see file and decide to save
+    setFocus(Qt::OtherFocusReason);
+
+    QString str = tr("Save changes to editor for %1?").arg(conn);
+    if (!Editor->filename().isEmpty())
+    	str += QString::fromLatin1("\n(%1)").arg(Editor->filename());
+
+    int ret = TOMessageBox::information(
+    		this,
+    		"Save File",
+    		str,
+    		QMessageBox::Save |
+    		QMessageBox::Discard |
+    		QMessageBox::Cancel);
+
+    switch(ret)
+    {
+    case QMessageBox::Save:
+    {
+    	// Editor->filename is empty => show filesave dialog
+    	if (Editor->filename().isEmpty())
+    	{
+    		Editor->setFilename(Utils::toSaveFilename(Editor->filename(),
+    				QString::null,
+    				this));
+    		// if Editor's filename is still empty => file save dialog failed
+    		if (Editor->filename().isEmpty())
+    		{
+    			return false;
+    		} else {
+    			Editor->setModified(false);
+    			return true;
+    		}
+    	// Editor->filename if not empty => try to save it
+    	} else {
+    		if (Utils::toWriteFile(Editor->filename(), Editor->text()))
+    		{
+    			Editor->setModified(false);
+    			return true;
+    		} else {
+    			return false;
+    		}
+    	}
+    } break;
+    case QMessageBox::Discard:
+    {
+    	// only ever called if closing widget, make sure this
+    	// is not called again.
+    	Editor->setModified(false);
+    	return true;
+    }
+    default: // QMessageBox::Cancel
+    	return false;
+    }
+}
+
+bool toWorksheet::slotClose()
+{
+    if (Statistics)
+    {
+        Statistics->close();
+        delete Statistics;
+        Statistics = NULL;
+    }
+
+    if (checkSave())
+    {
+        Result->slotStop();
+        return toToolWidget::close();
+    }
+
+    return false;
+}
+
+void toWorksheet::closeEvent(QCloseEvent *event)
+{
+    QSettings s;
+    s.beginGroup("toWorksheet");
+    s.setValue("EditSplitterSizes0", EditSplitter->sizes()[0]);
+    s.setValue("EditSplitterSizes1", EditSplitter->sizes()[1]);
+    s.endGroup();
+
+    if (slotClose())
+        event->accept();
+    else
+        event->ignore();
+}
+
+void toWorksheet::focusInEvent(QFocusEvent *e)
+{
+	qDebug() << ">>> toWorksheet::focusInEvent" << this;
+	super::focusInEvent(e);
+}
+
+void toWorksheet::focusOutEvent(QFocusEvent *e)
+{
+	qDebug() << ">>> toWorksheet::focusOutEvent" << this;
+	super::focusOutEvent(e);
+}
+
+toWorksheet::~toWorksheet()
+{
+}
+
+toHighlightedEditor* toWorksheet::editor(void)
+{
+    return Editor;
+}
+
+bool toWorksheet::canHandle(toConnection &)
+{
+    return true;
+}
+
+void toWorksheet::slotChangeResult(int index)
+{
+    QWidget *widget = ResultTab->widget(index);
+    if (!widget)
+        return;
+
+    CurrentTab = widget;
+    if (!m_lastQuery.sql.isEmpty())
+    {
+        if (CurrentTab == Plan)
+            Plan->query(m_lastQuery.sql, toQueryParams());
+        else if (CurrentTab == ResourceSplitter)
+            viewResources();
+        else if (CurrentTab == Statistics && Result->running())
+            Statistics->slotRefreshStats(false);
+    }
+}
+
+void toWorksheet::slotRefresh(void)
+{
+    if (!m_lastQuery.sql.isEmpty())
+        query(m_lastQuery, Normal, DontSelectQueryEnum);
+    if (RefreshSeconds > 0)
+    {
+        RefreshTimer.setSingleShot(true);
+        RefreshTimer.start(RefreshSeconds * 1000);
+    }
+}
+
+static QString unQuote(const QString &str)
+{
+    if (str.at(0).toLatin1() == '\"' && str.at(str.length() - 1).toLatin1() == '\"')
+        return str.left(str.length() - 1).right(str.length() - 2);
+    return str.toUpper();
+}
+
+bool toWorksheet::describe(toSyntaxAnalyzer::statement const& query)
+{
+    static QRegExp white("\\s");
+    try
+    {
+        if (query.firstWord.startsWith("DESC", Qt::CaseInsensitive))
+        {
+        	QStringList parts = query.sql.split(white);
+            slotUnhideResults();
+
+            if (connection().providerIs("Oracle"))
+            {
+                if (parts.count() == 2)
+                {
+                	Columns->changeObject(toCache::ObjectRef(Schema->selected(), unQuote(parts[1])));
+                }
+                else if (parts.count() == 3)
+                {
+                	Columns->changeObject(toCache::ObjectRef(unQuote(parts[1]), unQuote(parts[2])));
+                }
+                else
+                    throw tr("Wrong number of parameters for describe");
+            }
+            else if (connection().providerIs("QMYSQL"))
+            {
+                if (parts.count() == 2)
+                {
+                    Columns->changeObject(toCache::ObjectRef(Schema->selected(), parts[1]));
+                }
+                else
+                    throw tr("Wrong number of parameters for describe");
+            }
+            Current->hide();
+            Columns->show();
+            Current = Columns;
+            return true;
+        }
+    }
+    TOCATCH
+    return false;
+}
+
+static toSQL SQLCheckMySQLRoutine("toWorksheet:CheckRoutine",
+                                  "select count(1)\n"
+                                  "from information_schema.routines\n"
+                                  "where routine_name = :f1<char[101]>\n"
+                                  "  and lower(routine_type) = :f2<char[101]>\n"
+                                  "  and routine_schema = :f3<char[101]>",
+                                  "Check if routine exists in MySQL",
+                                  "5.0",
+                                  "QMYSQL");
+
+static toSQL SQLDropMySQLRoutine("toWorksheet:DropRoutine",
+                                 "drop :f1<noquote> if exists :f2<noquote>;",
+                                 "Drop MySQL routine if it exists",
+                                 "5.0",
+                                 "QMYSQL");
+
+// MySQL does not support replacing currently existing routines. Trying to create existing
+// routine raises exception. Therefore when creating a routine a previous one should be
+// dropped first.
+// There is a configuration option in MySQL settings section on how exactly this feature
+// should behave:
+//   0 - do nothing
+//   1 - drop before creating
+//   2 - drop before creating (if exists)
+//   3 - ask
+//   4 - ask (if exists)
+void toWorksheet::mySQLBeforeCreate(QString &chk)
+{
+    // wether routine exists must checked if config is set to 2 (drop if exists) and 4 (ask if exists)
+    bool check = (toConfigurationSingle::Instance().createAction() % 2 == 0);
+    // wether to ask or drop automatically if config is set to 3 (ask) and 4 (ask if exists)
+    bool ask = (toConfigurationSingle::Instance().createAction() > 2);
+    bool answerYes;
+
+    // do a "poor mans" parsing as we do not actually need to parse everything
+    chk.replace("(", " ");
+    chk.replace("\n", " ");
+    QStringList tok = chk.split(" ", QString::SkipEmptyParts);
+
+    // only for "create" statements
+    if (tok[0] == "create")
+    {
+        int i;
+        if (tok[1].startsWith("definer="))
+            i = 1;
+        else
+            i = 0;
+
+        // only for create function|procedure statements (not for create table|index etc...)
+        if (tok[1 + i] == "function" || tok[1 + i] == "procedure")
+        {
+            int c = 1; // count of existing routines (would logically be 0 or 1)
+
+            try
+            {
+                if (check)
+                {
+                    // Check if this routine actually exists in database
+                    toQueryParams param;
+					toConnectionSubLoan conn(connection());
+                    param << toQValue(tok[2 + i].remove('`')); // routine name
+                    param << toQValue(tok[1 + i]); // routine type (procedure or function)
+                    param << toQValue(Schema->currentText());
+                    toQuery query(conn, /*toQuery::Long,*/ SQLCheckMySQLRoutine, param);
+                    c = query.readValue().toInt(); // 1 - exists, 0 - does not exist
+                }
+
+                if (c == 1)
+                {
+                    if (ask)
+                        answerYes = (TOMessageBox::information(this, tr("Drop routine?"),
+                                                               tr("Do you want to drop %1 %2?").arg(tok[1 + i]).arg(tok[2 + i]),
+                                                               tr("&Drop"), tr("Leave it and continue")) == 0);
+                    else
+                        answerYes = true;
+
+                    if (answerYes)
+                    {
+                        toQueryParams param;
+						toConnectionSubLoan conn(connection());
+                        param << toQValue(tok[1 + i]); // routine type (procedure or function)
+                        param << toQValue(tok[2 + i]); // routine name
+                        // Note that if routine creation is not successfull you will be left without any routine!
+                        toQuery query(conn, /*toQuery::Long,*/ SQLDropMySQLRoutine, param);
+                    }
+                }
+            }
+            TOCATCH;
+        }
+    }
+} // mySQLBeforeCreate
+
+void toWorksheet::query(QString const& text, execTypeEnum execType)
+{
+	toSyntaxAnalyzer *analyzer = Editor->editor()->analyzer();
+	toSyntaxAnalyzer::statementList stats = analyzer->getStatements(text);
+
+	if(stats.isEmpty())
+		return;
+
+	toSyntaxAnalyzer::statement stat(stats.first());
+	analyzer->sanitizeStatement(stat);
+	query(stat, execType, DontSelectQueryEnum);
+}
+
+void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEnum execType, selectionModeEnum selectMode)
+{
+    Result->slotStop();
+    RefreshTimer.stop();
+
+    if(!Editor->editor()->hasSelectedText() || selectMode)
+    	Editor->editor()->SendScintilla(QsciScintilla::SCI_SETSEL, statement.posFrom, statement.posTo);
+
+    TLOG(0, toDecorator, __HERE__)
+            << "Current statements: [" << LastLine << ',' << LastOffset << ']' << std::endl
+            << statement.sql.toStdString() << std::endl;
+
+    if (statement.firstWord.trimmed().isEmpty())
+        return;
+
+    // Imitate something like "create or replace" syntax for MySQL
+//    if (connection().providerIs("QMYSQL") && code && toConfigurationSingle::Instance().createAction() > 0)
+//        mySQLBeforeCreate(chk);
+
+    if (describe(statement))
+    	return;
+
+    QWidget *curr = ResultTab->currentWidget();
+	Current->hide();
+	Result->show();
+	Current = Result;
+	if (curr == Columns)
+		ResultTab->setCurrentIndex(ResultTab->indexOf(Result));
+
+    if (connection().providerIs("Oracle") && statement.firstWord.startsWith("EXEC", Qt::CaseInsensitive))
+    {
+    	Utils::toStatusMessage("Ignoring SQL*Plus command", true);
+    	// todo handle leading spaces any comments here
+    	// put exec in anonymous plsql block or they won't work
+    	//m_lastQuery = m_lastQuery.sql.trimmed().right(m_lastQuery.sql.length() - m_lastQuery.firstWord.length())
+    	//m_lastQuery = QString("BEGIN\n%1;\nEND;").arg(m_lastQuery);
+    	return;
+    }
+
+    if (statement.statementType == toSyntaxAnalyzer::SQLPLUS)
+    {
+    	QString t = tr("Ignoring SQL*Plus command");
+    	slotAddLog(statement.sql, toConnection::exception(t), false);
+    	Utils::toStatusMessage(t, true);
+    	return ;
+    }
+
+	Time.start(); // Setup query duration timer
+	m_FirstDataReceived = false;
+
+    switch(execType)
+    {
+    case OnlyPlan: {
+    	if (ResultTab->currentIndex() != ResultTab->indexOf(Plan))
+    		ResultTab->setCurrentIndex(ResultTab->indexOf(Plan)); //this calls Plan->query
+    	else
+    		Plan->query(statement.sql, toQueryParams());
+    	slotUnhideResults();
+    } break;
+    case Parse: {
+    	try
+    	{
+    		//parser connection().parse(QueryString);
+    	}
+    	catch (const QString &exc)
+    	{
+    		slotAddLog(statement.sql, exc, true);
+    	}
+    } break;
+    // This is in fact Batch Execution
+    case Direct: {
+    	try
+    	{
+    		QString buffer;
+    		if (!toConfigurationSingle::Instance().wsHistory())
+    		{
+    			toConnectionSubLoan conn(connection());
+    			toQuery query(conn, statement.sql, toQueryParams());
+    			if (query.rowsProcessed() > 0)
+    				buffer = tr("%1 rows processed").arg((int)query.rowsProcessed());
+    			else
+    				buffer = tr("Query executed");
+    		}
+    		else
+    		{
+    			throw QString("TODO: rewrite unreadable code: %1").arg(__QHERE__);
+    			// This code has relation to WorksheetSetup UI: checkbox Save Previous Results
+    			// This should open a new Result tab for each query exec.
+#ifdef TORA3_SOMETHING_UGLY
+    			toResultView *statement = new toResultView(Current->parentWidget());
+
+    			try
+    			{
+    				statement->statement((QString) m_lastQuery, param);
+    				if (statement->statement() && statement->statement()->rowsProcessed() > 0)
+    					buffer = tr("%1 rows processed").arg((int)statement->statement()->rowsProcessed());
+    				else
+    					buffer = tr("Query executed");
+    				Current->hide();
+    				Current = statement;
+    				Current->show();
+    			}
+    			catch (...)
+    			{
+    				delete statement;
+    				throw;
+    			}
+#endif
+    		}
+
+    		slotAddLog(statement.sql, toConnection::exception(buffer), false);
+    	}
+    	catch (const QString &exc)
+    	{
+    		slotAddLog(statement.sql, exc, true);
+    		if (QMessageBox::question(this, tr("Direct Execute Error"),
+    				exc + "\n\n" + tr("Stop execution ('No' to continue)?"),
+    				QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
+    			throw BatchExecException();
+    	}
+    } break;
+    case Normal: {
+        this->m_lastQuery = statement;
+
+        // unhide the results pane if there's something to show
+        if (m_lastQuery.statementType == toSyntaxAnalyzer::SELECT || (ResultTab && ResultTab->currentIndex() != 0))
+        	slotUnhideResults();
+
+        toQueryParams param;
+        if (m_lastQuery.statementType == toSyntaxAnalyzer::SELECT || m_lastQuery.statementType == toSyntaxAnalyzer::DML)
+        {
+        	try
+        	{
+        		param = toParamGet::getParam(connection(), this, m_lastQuery.sql);
+        	}
+        	catch (...)
+        	{
+        		return ;
+        	}
+        }
+        Utils::toStatusMessage(tr("Processing query"), true);
+
+    	stopAct->setEnabled(true);
+    	Poll.start(1000);
+    	Started->setToolTip(tr("Duration while query has been running\n\n") + statement.sql);
+    	stopAct->setEnabled(true);
+    	Result->setNumberColumn(toConfigurationSingle::Instance().wsNumber());
+    	// it fixes crash running statements from Schema Browser - PV
+    	if (ResultTab)
+    		ResultTab->setCurrentIndex(0);
+
+    	try
+    	{
+    		saveHistory();
+    		Result->removeSQL();
+    		//    		if (LockedConnection)
+    		//    			Result->querySub(LockedConnection, statement.sql, param);
+    		//    		else
+    		Result->query(statement.sql, param);
+
+    		//                 if (CurrentTab)
+    		//                 {
+    		// todo
+    		// if(CurrentTab == Visualize)
+    		//                         Visualize->display();
+    		// PV - let's open really required tab for called action
+    		// e.g. Plan for explainplan, Result for run statement action etc.
+    		// It stops to really run a statement when I expect explain plan
+    		//                     else
+    		//                     if (CurrentTab == Plan)
+    		//                         Plan->query(QueryString);
+    		//                     else if (CurrentTab == ResourceSplitter)
+    		//                         viewResources();
+    		//                 }
+    	}
+    	catch (const toConnection::exception &exc)
+    	{
+    		slotAddLog(statement.sql, exc, true);
+    	}
+    	catch (const QString &exc)
+    	{
+    		slotAddLog(statement.sql, exc, true);
+    	}
+    	try
+    	{
+    		if (statisticAct->isChecked())
+    			Utils::toRefreshParse(timer(), Refresh->currentText());
+    	}
+    	TOCATCH
+    	Result->setSQLName(statement.sql.simplified().left(40));
+    } break;
+    }
+}
+
+void toWorksheet::querySelection(execTypeEnum execType)
+{
+	toSyntaxAnalyzer *analyzer = Editor->editor()->analyzer();
+
+	int lineFrom, indexFrom, lineTo, indexTo;
+	Editor->editor()->getSelection(&lineFrom, &indexFrom, &lineTo, &indexTo);
+
+	toSyntaxAnalyzer::statement stat(lineFrom, lineTo);
+	analyzer->sanitizeStatement(stat);
+	query(stat, execType, DontSelectQueryEnum);
+}
+
+
+void toWorksheet::saveHistory(void)
+{
+#if 0                           // todo
+    if (WorksheetTool.config(CONF_HISTORY, "").isEmpty())
+        return ;
+    if (Result->firstChild() && Current == Result)
+    {
+        History[LastID] = Result;
+        Result->hide();
+        Result->slotStop();
+        disconnect(Result, SIGNAL(done(void)), this, SLOT(slotQueryDone(void)));
+        disconnect(Result, SIGNAL(firstResult(const QString &, const toConnection::exception &, bool)),
+                   this, SLOT(slotAddLog(const QString &, const toConnection::exception &, bool)));
+        disconnect(stopAct, SIGNAL(clicked(void)), Result, SLOT(slotStop(void)));
+
+        Result = new toResultTableView(Result->parentWidget());
+        if (statisticAct->isChecked())
+            slotEnableStatistic(true);
+        Result->show();
+        Current = Result;
+        connect(stopAct, SIGNAL(clicked(void)), Result, SLOT(slotStop(void)));
+        connect(Result, SIGNAL(done(void)), this, SLOT(slotQueryDone(void)));
+        connect(Result, SIGNAL(firstResult(const QString &, const toConnection::exception &, bool)),
+                this, SLOT(slotAddLog(const QString &, const toConnection::exception &, bool)));
+    }
+#endif
+}
+
+toSyntaxAnalyzer::statement toWorksheet::currentStatement() const
+{
+    int cpos, cline;
+    Editor->getCursorPosition(&cline, &cpos);
+    toSyntaxAnalyzer *analyzer = Editor->editor()->analyzer();
+    toSyntaxAnalyzer::statement stat = analyzer->getStatementAt(cline, cpos);
+    analyzer->sanitizeStatement(stat);
+
+	return stat;
+}
+
+QString toWorksheet::duration(int dur, bool hundreds)
+{
+    char buf[100];
+    if (dur >= 3600000)
+    {
+        if (hundreds)
+            sprintf(buf, "%d:%02d:%02d.%02d", dur / 3600000, (dur / 60000) % 60, (dur / 1000) % 60, (dur / 10) % 100);
+        else
+            sprintf(buf, "%d:%02d:%02d", dur / 3600000, (dur / 60000) % 60, (dur / 1000) % 60);
+    }
+    else
+    {
+        if (hundreds)
+            sprintf(buf, "%d:%02d.%02d", dur / 60000, (dur / 1000) % 60, (dur / 10) % 100);
+        else
+            sprintf(buf, "%d:%02d", dur / 60000, (dur / 1000) % 60);
+    }
+    return QString::fromLatin1(buf);
+}
+
+void toWorksheet::slotAddLog(const QString &sql,
+                         const toConnection::exception &result,
+                         bool error)
+{
+    QString now = QDateTime::currentDateTime().toString(Qt::SystemLocaleDate);
+    toResultViewItem *item = NULL;
+
+    LastID++;
+
+    int dur = Time.elapsed();
+    m_FirstDataReceived = true;
+
+    if (Logging)
+    {
+        if (!toConfigurationSingle::Instance().wsLogMulti())
+        {
+            if (!toConfigurationSingle::Instance().wsLogAtEnd())
+                item = new toResultViewItem(Logging, NULL);
+            else
+                item = new toResultViewItem(Logging, LastLogItem);
+        }
+        else if (!toConfigurationSingle::Instance().wsLogAtEnd())
+            item = new toResultViewMLine(Logging, NULL);
+        else
+            item = new toResultViewMLine(Logging, LastLogItem);
+        item->setText(0, sql);
+
+        LastLogItem = item;
+        item->setText(1, result);
+        item->setText(2, now);
+        if (toConfigurationSingle::Instance().wsHistory())
+            item->setText(4, QString::number(LastID));
+        item->setText(5, QString::number(result.offset()));
+    }
+
+    if (result.offset() >= 0 && LastLine >= 0 && LastOffset >= 0 &&
+            toConfigurationSingle::Instance().wsMoveToErr())
+    {
+        QChar cmp = '\n';
+        int lastnl = 0;
+        int lines = 0;
+        for (int i = 0; i < result.offset() && i < sql.length(); i++)
+        {
+            if (sql.at(i) == cmp)
+            {
+                LastOffset = 0;
+                lastnl = i + 1;
+                lines++;
+            }
+        }
+        Editor->setCursorPosition(LastLine + lines, LastOffset + result.offset() - lastnl);
+        LastLine = LastOffset = -1;
+    }
+
+    QString buf = duration(dur);
+
+    if (Logging)
+    {
+        item->setText(3, buf);
+
+        toTreeWidgetItem *last = Logging->currentItem();
+        toResultViewItem *citem = NULL;
+        if (last)
+            citem = dynamic_cast<toResultViewItem *>(last);
+        if (!citem || citem->allText(0) != sql)
+        {
+            disconnect(Logging,
+                       SIGNAL(selectionChanged(toTreeWidgetItem *)),
+                       this,
+                       SLOT(slotExecuteLog()));
+            Logging->setSelected(item, true);
+            connect(Logging,
+                    SIGNAL(selectionChanged(toTreeWidgetItem *)),
+                    this,
+                    SLOT(slotExecuteLog()));
+            Logging->ensureItemVisible(item);
+        }
+    }
+
+    {
+        QString str = result;
+        str += "\n" + tr("(Duration %1)").arg(buf);
+        if (!error)
+            Utils::toStatusMessage(str, false, false);
+    }
+
+    if (!error)
+    {
+        if(ResultTab)
+            slotChangeResult(ResultTab->indexOf(CurrentTab));
+
+        // the sql string will be trimmed but case will be same as the
+        // original.  the code originally compared the result return, but
+        // that class doesn't know if a commit is needed either.
+
+        static QRegExp re(QString::fromLatin1("^SELECT"));
+        re.setCaseSensitivity(Qt::CaseInsensitive);
+        try
+        {
+            if (!sql.contains(re))
+            {
+                if (toConfigurationSingle::Instance().autoCommit())
+                    connection().commit();
+                else
+		    toGlobalEventSingle::Instance().setNeedCommit(connection());
+            }
+        }
+        TOCATCH;
+    }
+
+    saveDefaults();
+}
+
+void toWorksheet::slotUnhideResults(const QString &,
+                                const toConnection::exception &,
+                                bool error)
+{
+    if (!error && Result->model()->rowCount() > 0)
+        slotUnhideResults();
+}
+
+void toWorksheet::slotUnhideResults()
+{
+    // move splitter if currently hidden
+    if (EditSplitter->sizes()[1] == 0)
+        EditSplitter->setSizes(EditSplitterSizes);
+}
+
+void toWorksheet::slotCommitChanges(toConnection &conn)
+{
+	if( &this->connection() != &conn)
+		return;
+
+	conn.commit();
+}
+
+void toWorksheet::slotRollbackChanges(toConnection &conn)
+{
+	if( &this->connection() != &conn)
+		return;
+
+	conn.rollback();
+}
+
+void toWorksheet::slotExecute()
+{
+
+    if (Editor->hasSelectedText())
+    {
+    	querySelection(Normal);
+        return;
+    }
+    toSyntaxAnalyzer::statement stat = currentStatement();
+    query(stat, Normal);
+}
+
+void toWorksheet::slotExplainPlan()
+{
+    if (Editor->hasSelectedText())
+    {
+    	querySelection(OnlyPlan);
+        return ;
+    }
+    toSyntaxAnalyzer::statement stat = currentStatement();
+    query(stat, OnlyPlan);
+}
+
+void toWorksheet::slotExecuteStep()
+{
+	toSyntaxAnalyzer::statement stat = currentStatement();
+	query(stat, Normal);
+}
+
+void toWorksheet::slotToggleStatistic(void)
+{
+    statisticAct->toggle();
+}
+
+
+void toWorksheet::slotExecuteAll()
+{
+    /* TODO get analyzer from Editor->editor() */
+    toSyntaxAnalyzerNL analyzer(Editor->editor());
+    toSyntaxAnalyzer::statementList stats = analyzer.getStatements(Editor->editor()->text());
+
+    int cpos, cline, lastLinePos;
+    Editor->getCursorPosition(&cline, &cpos);
+
+    QProgressDialog dialog(tr("Executing all statements"),
+                           tr("Cancel"),
+                           0,
+                           Editor->lines(),
+                           this);
+    Q_FOREACH(toSyntaxAnalyzer::statement stat, stats)
+    {
+        dialog.setValue(stat.lineFrom);
+        qApp->processEvents();
+        if (dialog.wasCanceled())
+            break;
+
+        if( stat.lineTo < cline)
+        	continue;
+
+		analyzer.sanitizeStatement(stat);
+
+		try
+		{
+			query(stat, Direct, DontSelectQueryEnum);
+		} catch ( BatchExecException const& e) {
+			break;
+		}
+
+        if (Current)
+        	if (toResultView *last = dynamic_cast<toResultView *>(Current))
+        		if (toConfigurationSingle::Instance().wsHistory())
+        			if (last->firstChild())
+        				History[LastID] = last;
+        lastLinePos = stat.lineTo;
+    }
+
+    Editor->setSelection(cline, 0, lastLinePos+1, 0);
+}
+
+void toWorksheet::slotParseAll()
+{
+#if 0
+    toSQLParse::editorTokenizer tokens(Editor->editor());
+
+    int cpos, cline;
+    Editor->getCursorPosition(&cline, &cpos);
+
+    QProgressDialog dialog(tr("Parsing all statements"),
+                           tr("Cancel"),
+                           0,
+                           Editor->lines(),
+                           this);
+    int line;
+    int pos;
+    bool ignore = true;
+    do
+    {
+        line = tokens.line();
+        pos = tokens.offset();
+        dialog.setValue(line);
+        qApp->processEvents();
+        if (dialog.wasCanceled())
+            break;
+        toSQLParse::statement st = toSQLParse::parseStatement(tokens);
+
+        if (ignore && (tokens.line() > cline ||
+                       (tokens.line() == cline &&
+                        tokens.offset() >= cpos)))
+        {
+            ignore = false;
+            cline = line;
+            cpos = pos;
+        }
+
+        if (tokens.line() < Editor->lines() && !ignore)
+        {
+            execute(tokens, line, pos, Parse, st.StatementClass);
+            if (Current)
+            {
+                toResultView *last = dynamic_cast<toResultView *>(Current);
+                if (toConfigurationSingle::Instance().wsHistory() &&
+                        last && last->firstChild())
+                    History[LastID] = last;
+            }
+        }
+    }
+    while (tokens.line() < Editor->lines());
+
+    Editor->setSelection(cline, cpos, tokens.line(), tokens.offset());
+#endif
+    throw QString("TODO: not implemented yet: %1").arg(__QHERE__);
+}
+
+void toWorksheet::slotEraseLogButton()
+{
+    if (!Logging)
+        return;
+
+    Logging->clear();
+    LastLogItem = NULL;
+    for (std::map<int, QWidget *>::iterator i = History.begin(); i != History.end(); i++)
+        delete(*i).second;
+    History.clear();
+}
+
+void toWorksheet::slotQueryDone(void)
+{
+    if (!m_FirstDataReceived && !m_lastQuery.sql.isEmpty())
+        slotAddLog(m_lastQuery.sql, toConnection::exception(tr("Aborted")), false);
+    else
+        emit executed();
+    try
+    {
+        timer()->stop();
+    }
+    TOCATCH
+    stopAct->setEnabled(false);
+    Poll.stop();
+    stopAct->setEnabled(false);
+    saveDefaults();
+}
+
+void toWorksheet::saveDefaults(void)
+{
+#if 0                           // todo
+    toTreeWidgetItem *item = Result->firstChild();
+    if (item)
+    {
+        QTreeWidgetItem *head = Result->headerItem();
+        for (int i = 0; i < Result->columns(); i++)
+        {
+            toResultViewItem *resItem = dynamic_cast<toResultViewItem *>(item);
+            QString str;
+            if (resItem)
+                str = resItem->allText(i);
+            else if (item)
+                str = item->text(i);
+
+            try
+            {
+                toParamGet::setDefault(connection(), head->text(i).lower(), toUnnull(toQValue(str)));
+            }
+            TOCATCH
+        }
+    }
+#endif
+}
+
+#define ENABLETIMED "ALTER SESSION SET TIMED_STATISTICS = TRUE"
+
+void toWorksheet::slotEnableStatistic(bool ena)
+{
+    if (ena)
+    {
+        Result->setStatistics(Statistics);
+        ResultTab->setTabEnabled(ResultTab->indexOf(StatTab), true);
+        statisticAct->setChecked(true);
+        Statistics->clear();
+        if (toConfigurationSingle::Instance().wsTimedStats())
+        {
+            try
+            {
+                connection().allExecute(QString::fromLatin1(ENABLETIMED));
+                connection().addInit(QString::fromLatin1(ENABLETIMED));
+            }
+            TOCATCH;
+        }
+    }
+    else
+    {
+        try
+        {
+            connection().delInit(QString::fromLatin1(ENABLETIMED));
+        }
+        catch (...) {}
+        Result->setStatistics(NULL);
+        ResultTab->setTabEnabled(ResultTab->indexOf(StatTab), false);
+        statisticAct->setChecked(false);
+    }
+}
+
+void toWorksheet::slotDescribe(void)
+{
+    toCache::ObjectRef table;
+    Editor->editor()->tableAtCursor(table);
+    if (table.first.isEmpty())
+    	table.first = Schema->currentText();
+
+    if (toConfigurationSingle::Instance().wsToplevelDescribe())
+    {
+        toDescribe * d = new toDescribe(this);
+        d->changeParams(table.first, table.second); // this also calls QWidget::show()
+    }
+    else
+    {
+        slotUnhideResults();
+        Columns->changeObject(table);
+        Columns->show();
+        Current = Columns;
+    }
+}
+
+void toWorksheet::slotDescribeNew(void)
+{
+#if 0
+    int line, col;
+    QString buffer;
+    QString firstWord, currentWord;
+    QString txt = Editor->text();
+    Editor->getCursorPosition(&line, &col);
+    TLOG(1, toDecorator, __HERE__) << "describe: "
+                                   << '[' << line << ',' << col << ']'
+                                   << "--------------------------------------------------------------------------------" << std::endl
+                                   << txt.toStdString()
+                                   << std::endl;
+
+    try
+    {
+        std::auto_ptr <SQLParser::Statement> stmt;
+        std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleSQL", txt, "");
+        firstWord = lexer->firstWord();
+        currentWord = lexer->currentWord(line, col);
+
+        if(
+            QString::compare("CALL", firstWord, Qt::CaseInsensitive)      == 0 ||
+            QString::compare("ANALYZE", firstWord, Qt::CaseInsensitive)   == 0 ||
+            QString::compare("DECLARE", firstWord, Qt::CaseInsensitive)   == 0 ||
+            QString::compare("BEGIN", firstWord, Qt::CaseInsensitive)     == 0 ||
+            QString::compare("CREATE", firstWord, Qt::CaseInsensitive)    == 0 ||
+            QString::compare("ALTER", firstWord, Qt::CaseInsensitive)     == 0 ||
+            QString::compare("LOCK", firstWord, Qt::CaseInsensitive)      == 0 ||
+            QString::compare("EXPLAIN", firstWord, Qt::CaseInsensitive)   == 0 ||
+            QString::compare("DROP", firstWord, Qt::CaseInsensitive)      == 0 ||
+            QString::compare("COMMIT", firstWord, Qt::CaseInsensitive)    == 0 ||
+            QString::compare("ROLLBACK", firstWord, Qt::CaseInsensitive)  == 0 ||
+            QString::compare("GRANT", firstWord, Qt::CaseInsensitive)     == 0 ||
+            QString::compare("TRUNCATE", firstWord, Qt::CaseInsensitive)  == 0 ||
+            QString::compare("SAVEPOINT", firstWord, Qt::CaseInsensitive) == 0 ||
+            QString::compare("SET", firstWord, Qt::CaseInsensitive) == 0
+        )
+        {
+            std::cout << "PLSQL:" << std::endl;
+            stmt = StatementFactTwoParmSing::Instance().create("OraclePLSQL", txt, "");
+            std::cout << stmt->root()->toStringRecursive().toStdString() << std::endl;
+        }
+        else if(
+            QString::compare("WITH", firstWord, Qt::CaseInsensitive)    == 0 ||
+            QString::compare("SELECT", firstWord, Qt::CaseInsensitive)  == 0 ||
+            QString::compare("INSERT", firstWord, Qt::CaseInsensitive)  == 0 ||
+            QString::compare("UPDATE", firstWord, Qt::CaseInsensitive)  == 0 ||
+            QString::compare("DELETE", firstWord, Qt::CaseInsensitive)  == 0 ||
+            QString::compare("MERGE", firstWord, Qt::CaseInsensitive)   == 0
+        )
+        {
+            std::cout << "SQL:" << std::endl;
+            stmt = StatementFactTwoParmSing::Instance().create("OracleSQL", txt, "");
+            std::cout << stmt->root()->toStringRecursive().toStdString() << std::endl;
+        }
+        else
+        {
+            std::cout << "Unknown:" << firstWord.QString::toStdString() << std::endl;
+            throw QString("Unknown word %1").arg(firstWord);
+        }
+
+        SQLParser::Position cursor(line + 1, col);
+        SQLParser::Statement::token_const_iterator currentToken = stmt->begin();
+        for(SQLParser::Statement::token_const_iterator j = stmt->begin(); j != stmt->end(); ++j)
+        {
+            if( j->getPosition() > cursor)
+                break;
+            if( j->getPosition() == cursor)
+            {
+                currentToken = j;
+                break;
+            }
+            if(j->isLeaf())
+                currentToken = j;
+        }
+
+        SQLParser::Statement::token_const_iterator_to_root stackPath(&*currentToken);
+        QTextStream buf(&buffer);
+
+        buf << "Cursor position: " << cursor.toString() << "\n"
+            << "Detail for the token: " << currentToken->toString() << "\n"
+            << "Positon: " << currentToken->getPosition().toString() << "\n"
+            << "Token AType: " << currentToken->getTokenATypeName() << '\n'
+//            << "Token Type: " << currentToken->getTokenTypeString() << '\n'
+			;
+
+        QList<QString> stack;
+        while(stackPath->parent())
+        {
+            QString t = stackPath->toString() + '(' + stackPath->getTokenATypeName() + ')';
+            stack.push_back(t);
+            stackPath++;
+        }
+
+        buf << "Token depth: " << stack.size() << '\n';
+        QString padding;
+        while(!stack.empty())
+        {
+            buffer += padding + stack.takeLast() + '\n';
+            padding += "  ";
+        }
+
+        buf << "AST path:\n"
+            << '\n';
+        switch(currentToken->getTokenType())
+        {
+        case SQLParser::Token::L_TABLEALIAS:
+        case SQLParser::Token::S_SUBQUERY_NESTED:
+        case SQLParser::Token::L_SUBQUERY_ALIAS:
+            QList<const SQLParser::Token*> d = stmt->declarations(currentToken->toString());
+            while(!d.empty())
+            {
+                const SQLParser::Token *alias = d.takeFirst();
+                buf << "Table alias: " << currentToken->toString() << " => " << '\n'
+                    << alias->toStringRecursive() << '\n';
+            }
+            break;
+        }
+
+    }
+    catch ( SQLParser::ParseException const &e)
+    {
+        buffer = "Parser error\n";
+    }
+    catch ( QString const& e)
+    {
+        buffer = "Parser error: " + e;
+    }
+    TOMessageBox::information (this, currentWord, buffer );
+    //currentToken->parent()->toStringRecursive() );
+
+    return;
+#endif
+}
+
+void toWorksheet::slotExecuteSaved(QAction *act)
+{
+    QString sql = act->data().toString();
+    if(!sql.isEmpty())
+    {
+        try
+        {
+            query(sql, Normal);
+        }
+        TOCATCH;
+    }
+}
+
+void toWorksheet::slotInsertSaved(QAction *act)
+{
+    QString sql = act->data().toString();
+    if(!sql.isEmpty())
+    {
+        Editor->setFocus();
+        Editor->insert(sql);
+    }
+}
+
+void toWorksheet::slotShowSaved()
+{
+    SavedMenu->clear();
+
+    QSettings settings;
+    settings.beginGroup("toWorksheet");
+
+    QList<QVariant> statements = settings.value("sql").toList();
+    QAction *last = 0;
+    foreach(QVariant v, statements)
+    {
+        QAction *a = new QAction(v.toString().left(50), SavedMenu);
+        a->setData(v.toString());
+        SavedMenu->insertAction(last, a);
+        last = a;
+    }
+}
+
+void toWorksheet::slotShowInsertSaved()
+{
+    InsertSavedMenu->clear();
+
+    QSettings settings;
+    settings.beginGroup("toWorksheet");
+
+    QList<QVariant> statements = settings.value("sql").toList();
+    QAction *last = 0;
+    foreach(QVariant v, statements)
+    {
+        QAction *a = new QAction(v.toString().left(50), InsertSavedMenu);
+        a->setData(v.toString());
+        InsertSavedMenu->insertAction(last, a);
+        last = a;
+    }
+}
+
+
+void toWorksheet::slotRemoveSaved(QAction *action)
+{
+    QSettings settings;
+    settings.beginGroup("toWorksheet");
+
+    QList<QVariant> statements = settings.value("sql").toList();
+    statements.removeAll(action->data().toString());
+    settings.setValue("sql", statements);
+}
+
+
+void toWorksheet::slotSaveLast()
+{
+    if (m_lastQuery.firstWord.isEmpty())
+    {
+        TOMessageBox::warning(this, tr("No SQL to save"),
+                              tr("You haven't executed any SQL yet"),
+                              tr("&Ok"));
+        return;
+    }
+
+    QSettings settings;
+    settings.beginGroup("toWorksheet");
+
+    QString sql = m_lastQuery.sql.trimmed();
+    if(!sql.endsWith(";"))
+        sql += ";";
+
+    QList<QVariant> statements = settings.value("sql").toList();
+    if(statements.indexOf(sql) > -1)
+        return;                 // already in list
+
+    statements.append(sql);
+    settings.setValue("sql", statements);
+}
+
+void toWorksheet::insertStatement(const QString &str)
+{
+    QString txt = Editor->text();
+
+    int i = txt.indexOf(str);
+
+    if (i >= 0)
+    {
+        int startCol, endCol;
+        int startRow, endRow;
+
+        Editor->findPosition(i, startRow, startCol);
+        Editor->findPosition(i + str.length(), endRow, endCol);
+
+        if (endCol < Editor->text(endRow).size())
+        {
+            if (Editor->text(endRow).at(endCol) == ';')
+                endCol++;
+        }
+        Editor->setSelection(startRow, startCol, endRow, endCol);
+    }
+    else
+    {
+        QString t = str;
+        if (str.right(1) != ";")
+        {
+            t += ";";
+        }
+
+        Editor->insert(t, true);
+    }
+}
+
+void toWorksheet::slotExecutePreviousLog(void)
+{
+    Result->slotStop();
+
+    LastLine = LastOffset = -1;
+    saveHistory();
+
+    toTreeWidgetItem *item = Logging->currentItem();
+    if (item)
+    {
+        toTreeWidgetItem *pt = Logging->firstChild();
+        while (pt && pt->nextSibling() != item)
+            pt = pt->nextSibling();
+
+        if (pt)
+            Logging->setSelected(pt, true);
+    }
+}
+
+void toWorksheet::slotExecuteLog(void)
+{
+    Result->slotStop();
+
+    LastLine = LastOffset = -1;
+    saveHistory();
+
+    toTreeWidgetItem *ci = Logging->currentItem();
+    toResultViewItem *item = dynamic_cast<toResultViewItem *>(ci);
+    if (item)
+    {
+        insertStatement(item->allText(0));
+
+        if (item->text(4).isEmpty())
+        {
+            if (toConfigurationSingle::Instance().wsExecLog())
+            {
+                query(item->allText(0), Normal);
+            }
+        }
+        else
+        {
+            std::map<int, QWidget *>::iterator i = History.find(item->text(4).toInt());
+            slotChangeResult(ResultTab->currentIndex());
+            if (i != History.end() && (*i).second)
+            {
+                Current->hide();
+                Current = (*i).second;
+                Current->show();
+            }
+        }
+    }
+}
+
+void toWorksheet::slotExecuteNextLog(void)
+{
+    Result->slotStop();
+
+    LastLine = LastOffset = -1;
+    saveHistory();
+
+    toTreeWidgetItem *item = Logging->currentItem();
+    if (item && item->nextSibling())
+    {
+        toResultViewItem *next = dynamic_cast<toResultViewItem *>(item->nextSibling());
+        if (next)
+            Logging->setSelected(next, true);
+    }
+}
+
+void toWorksheet::slotPoll(void)
+{
+    Started->setText(duration(Time.elapsed(), false));
+}
+
+void toWorksheet::slotSaveStatistics(void)
+{
+    std::map<QString, QString> stmt;
+#ifdef TORA3_GRAPH
+    Statistics->exportData(stmt, "Stat");
+    IOChart->exportData(stmt, "IO");
+    WaitChart->exportData(stmt, "Wait");
+
+    if (Plan->firstChild())
+        Plan->exportData(stmt, "Plan");
+    else
+        Utils::toStatusMessage(tr("No plan available to save"), false, false);
+    stmt["Description"] = m_lastQuery;
+
+    toWorksheetStatistic::saveStatistics(stmt);
+#endif
+}
+
+#ifdef TORA3_GRAPH
+void toWorksheet::exportData(std::map<QString, QString> &data, const QString &prefix)
+{
+    Editor->exportData(data, prefix + ":Edit");
+    if (statisticAct->isChecked())
+        data[prefix + ":Stats"] = Refresh->currentText();
+    toToolWidget::exportData(data, prefix);
+}
+
+void toWorksheet::importData(std::map<QString, QString> &data, const QString &prefix)
+{
+    Editor->importData(data, prefix + ":Edit");
+    QString stmt = data[prefix + ":Stats"];
+    if (!stmt.isNull())
+    {
+        for (int i = 0; i < Refresh->count(); i++)
+        {
+            if (Refresh->itemText(i) == stmt)
+            {
+                Refresh->setCurrentIndex(i);
+                break;
+            }
+        }
+        statisticAct->setChecked(true);
+    }
+    else
+        statisticAct->setChecked(false);
+
+    toToolWidget::importData(data, prefix);
+    slotSetCaption();
+}
+#endif
+
+void toWorksheet::slotSetCaption(void)
+{
+    QString name = WorksheetTool.name();
+
+    QString filename;
+    if (!Editor->filename().isNull() && !Editor->filename().isEmpty())
+    {
+        QFileInfo file(Editor->filename());
+        filename = file.fileName();
+    }
+    else
+        filename = "Untitled";
+
+    name += (Editor->isModified() ?
+             QString(" - *") :
+             QString(" - ")) + filename;
+    toToolWidget::setCaption(name);
+}
+
+toToolWidget* toWorksheet::fileWorksheet(const QString &file)
+{
+    toWorksheet *worksheet = static_cast<toWorksheet*>(WorksheetTool.createWindow());
+    worksheet->editor()->openFilename(file);
+    worksheet->slotSetCaption();
+
+    return worksheet;
+}
+
+void toWorksheet::slotRefreshSetup(void)
+{
+    bool ok = false;
+    int num = QInputDialog::getInteger(this,
+                                       tr("Enter refreshrate"),
+                                       tr("Refresh rate of query in seconds"),
+                                       RefreshSeconds,
+                                       0,
+                                       1000000,
+                                       1,
+                                       &ok);
+    if (ok)
+    {
+        RefreshSeconds = num;
+        RefreshTimer.start(num * 1000);
+    }
+    else
+        RefreshTimer.stop();
+}
+
+void toWorksheet::slotStop(void)
+{
+    RefreshTimer.stop();
+    Result->slotStop();
+}
+
+
+void toWorksheet::slotCreatePopupMenu(const QPoint &pos)
+{
+    if (!context)
+    {
+        context = new QMenu;
+
+        context->addAction(executeAct);
+        context->addAction(executeStepAct);
+        context->addAction(executeAllAct);
+        context->addAction(refreshAct);
+
+        context->addSeparator();
+
+        context->addAction(describeAct);
+        context->addAction(describeActNew);
+        context->addAction(explainAct);
+
+        context->addSeparator();
+
+        context->addAction(toEditMenuSingle::Instance().undoAct);
+        context->addAction(toEditMenuSingle::Instance().redoAct);
+
+        context->addSeparator();
+
+        context->addAction(toEditMenuSingle::Instance().cutAct);
+        context->addAction(toEditMenuSingle::Instance().copyAct);
+        context->addAction(toEditMenuSingle::Instance().pasteAct);
+
+        context->addSeparator();
+
+        context->addAction(toEditMenuSingle::Instance().selectAllAct);
+
+        context->addSeparator();
+
+        context->addAction(stopAct);
+
+        context->addSeparator();
+
+        context->addAction(SavedMenu->menuAction());
+        context->addAction(InsertSavedMenu->menuAction());
+        context->addAction(saveLastAct);
+    }
+
+    context->exec(QCursor::pos());
+}
+
+
+void toWorksheet::slotChangeConnection(void)
+{
+    // Schema->refresh(); - Schema(instance of toResult) has it's own connectionChanged slot
+    if (connection().providerIs("QMYSQL"))
+        Schema->setSelected(connection().database());
+    else if (connection().providerIs("Oracle") || connection().providerIs("SapDB"))
+        Schema->setSelected(connection().user().toUpper());
+    else
+        Schema->setSelected(connection().user());
+
+    LockedConnection.clear();
+    lockConnectionAct->setChecked(false);
+}
+
+void toWorksheet::slotLockConnection(bool enabled)
+{
+	if(enabled) {
+		QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(connection()));
+		this->LockedConnection = conn;
+	} else
+		this->LockedConnection.clear();
+}
+
+toWorksheetSetup::toWorksheetSetup(toTool *tool, QWidget* parent, const char* name)
+    : QWidget(parent), toSettingTab("worksheet.html#preferences"), Tool(tool)
+{
+
+    setupUi(this);
+    AutoSave->setChecked(toConfigurationSingle::Instance().wsAutoSave());
+    CheckSave->setChecked(toConfigurationSingle::Instance().wsCheckSave());
+    LogAtEnd->setChecked(toConfigurationSingle::Instance().wsLogAtEnd());
+    LogMulti->setChecked(toConfigurationSingle::Instance().wsLogMulti());
+    MoveToError->setChecked(toConfigurationSingle::Instance().wsMoveToErr());
+    Statistics->setChecked(toConfigurationSingle::Instance().wsStatistics());
+    TimedStatistics->setChecked(toConfigurationSingle::Instance().wsTimedStats());
+    History->setChecked(toConfigurationSingle::Instance().wsHistory());
+    DisplayNumber->setChecked(toConfigurationSingle::Instance().wsNumber());
+    ToplevelDescribe->setChecked(toConfigurationSingle::Instance().wsToplevelDescribe());
+    DefaultFile->setText(toConfigurationSingle::Instance().wsAutoLoad());
+    ExecLog->setChecked(toConfigurationSingle::Instance().wsExecLog());
+}
+
+
+void toWorksheetSetup::saveSetting(void)
+{
+    toConfigurationSingle::Instance().setWsAutoSave(AutoSave->isChecked());
+    toConfigurationSingle::Instance().setWsCheckSave(CheckSave->isChecked());
+    toConfigurationSingle::Instance().setWsLogAtEnd(LogAtEnd->isChecked());
+    toConfigurationSingle::Instance().setWsLogMulti(LogMulti->isChecked());
+    toConfigurationSingle::Instance().setWsToplevelDescribe(ToplevelDescribe->isChecked());
+    toConfigurationSingle::Instance().setWsMoveToErr(MoveToError->isChecked());
+    toConfigurationSingle::Instance().setWsStatistics(Statistics->isChecked());
+    toConfigurationSingle::Instance().setWsHistory(History->isChecked());
+    toConfigurationSingle::Instance().setWsTimedStats(TimedStatistics->isChecked());
+    toConfigurationSingle::Instance().setWsNumber(DisplayNumber->isChecked());
+    toConfigurationSingle::Instance().setWsExecLog(ExecLog->isChecked());
+    toConfigurationSingle::Instance().setWsAutoLoad(DefaultFile->text());
+}
+
+
+void toWorksheetSetup::slotChooseFile(void)
+{
+    QString str = Utils::toOpenFilename(DefaultFile->text(), QString::null, this);
+    if (!str.isEmpty())
+        DefaultFile->setText(str);
+}

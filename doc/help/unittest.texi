@@ -1,0 +1,39 @@
+@node unittest
+@section PL/SQL Unit Tester
+@cindex PL/SQL Unit Tester
+
+This tool allows you to run procedures, functions,
+and package members independently. Selecting proper
+PL/SQL unit will result in anonymous PL/SQL block
+containing given unit and an environment with
+setting variables and required outputs with unit
+results (via DBMS_OUTPUT).
+
+Automatically created code blocks can be modified
+by user.
+
+What is the Unit Test Script? The anonymous PL/SQL block with the following
+structure:
+
+@example
+DECLARE
+    -- declarations of IN/OUT parameters
+    foo number;
+    bar varchar2(22);
+BEGIN
+    -- definitions of parameters
+    foo := 1;
+    bar := 2;
+    -- calling requested unit
+    MYOWN.COOLPACKAGE.FOOBAR(
+        foo => foo,
+        bar => bar
+        );
+    -- printing of the results
+    sys.dbms_output.put_line('foo: ' || foo);
+    sys.dbms_output.put_line('bar: ' || bar);
+END;
+@end example
+
+It can handle only basic data types currently.
+No PLSQLdata (record of etc.) supported yet.

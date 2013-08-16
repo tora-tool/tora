@@ -1,0 +1,138 @@
+There is also a Mingw32 Fedora 11 Cross Compile build 
+- see the README file in the win32-cross directory, 
+which also contains utility scripts for that build.
+
+Content:
+- Building with MSVC - CMake
+- Building Windows installer.
+
+# 
+# Building with MSVC - CMake (+ See README.CMAKE)
+#
+  All information below assumes D:\DEVEL as the base directory, and
+  D:\DEVEL\tora3 as tora checkout.
+  
+  1. Download and install "Microsoft Visual Studio 2010 Express"
+  1a. (Optional) Download and install "Microsoft DirectX SDK (June 2010)"
+  1b. (Optional) Download and install "Microsoft Windows SDK v7.1".
+      If you have Windows SDK 7.1 use it's command prompt.
+  1c. Download and install Tortoise SVN. Including command line tools. Into D:\DEVEL (*without* spaces in the PATH)
+
+  2. All related steps are done in the "Visual Studio Command Prompt" 
+     I have MS Visual Studio 2010 Express. (Or Windows SDK 7.1 command prompt).
+
+  3. Download and install Active state Perl
+
+  4. Download and unzip OpenSSL-<ver>.tgz
+  4a. Build OpenSSL as described here: http://qt-project.org/wiki/Building_Qt_Desktop_for_Windows_with_MSVC
+  4b. set environment qt32.bat (or qt64.bat)
+  4b. perl Configure VC-WIN32 --prefix=D:\Devel\OpenSSL
+  4c. ms\do_ms
+  4d. nmake -f ms\ntdll.mak
+  4e. nmake -f ms\ntdll.mak install
+  
+  5. Download and unzip Boost headers. The is no need to compile anything. Only few headers are needed.
+
+  6. Download and unzip Qt4 source version for Windows. (Version 4.8.4)
+  6a. Build OpenSSL as described here: http://qt-project.org/wiki/Building_Qt_Desktop_for_Windows_with_MSVC
+  6b. Configure QT: configure.exe -debug-and-release -fast -openssl -webkit -nomake examples -nomake demos -system-proxies -stl
+  6c. Compile QT: nmake (and wait)
+
+  7. Install Oracle client - instant or standard one. (set env. variable ORACLE_HOME)
+
+  8. (Optional) Download and install Postgresql including development packages. 
+     It's a part of the default install - just check its component.
+     NOTE: Install it to the path *without* spaces in its name - Qt has
+           problems with compilation in the case of space.
+
+        URL: http://www.enterprisedb.com/products/pgdownload.do#windows
+	Seems that this installer doesn't prompt for any paths/etc.
+	Be sure and disable postgres service after install if you won't be running the server itself
+
+  9. (Optional) Download and install Mysql including development packages. 
+     It's a part of default installer - just check its component.
+     NOTE: Install it to the path *without* space in its name - Qt has
+           problems with compilation in the case of space.
+
+        URL: http://dev.mysql.com/downloads/mysql/5.1.html#win32
+	I am testing with the 5.1.37 MSI installer, not the 'Essentials' one
+  
+  10. Compile QT DB drivers for MySQL and PostgresSQL as described here: http://qt-project.org/doc/qt-4.8/sql-driver.html
+
+  11. Download and install cmake from www.cmake.org. Into D:\DEVEL (*without* spaces in the PATH)
+
+  12. Check and set paths in utils/qt32.bat
+      - QTDIR
+      - CMAKE
+      - Doxygen (Optional)
+      - OpenSSL
+      - Nasm (Optional)
+      - Perl
+      - DirectX SDK (Optional)
+      - Windows SDK 7.1 (Optional)
+      - Tortoise SVN (svn.exe is needed while building)
+      - MSVC
+
+  13. Compile Tora in a GUI.
+       cd d:\devel\tora3
+       cmake-gui
+       - Where is the source core: d:\devel\tora3
+       - Where to build the binaries: d:\devel\tora3
+       - Add Entry: Name:  BOOST_ROOT
+                    Type:  "Path"
+                    Value" "D:/DEVEL/boost_1_46_1"
+       - Add Entry: Name:  CMAKE_BUILD_TYPE
+                    Value: either "Debug" or "Release"
+       - (Optional) Add Entry: Name: Subversion_SVN_EXECUTABLE
+                    Type: "Path"
+                    Value: D:/DEVEL/TortoiseSVN/bin/svn.exe
+         Do not use SVN provided by cygwin		    
+       - Toggle WANT_INTERNAL_QSCINTILLA to Y.       
+       - Click Configure/Generate, set generator to Visual Studio 10 (or Visual Studio 10 64bit)
+  13b. Open Visual Studio 2010 and import solution tora.sln
+  13c. Compile projects tora poracle
+
+  14. Compile Tora in command prompt  
+      mkdir d:\devel\tora3\debug
+      cd d:\devel\tora3\debug
+      cmake -DBOOST_ROOT=D:/DEVEL/boost_1_46_1 -DWANT_INTERNAL_QSCINTILLA=1 -DCMAKE_BUILD_TYPE=Debug -G "NMake Makefiles" ..
+      nmake
+
+#
+# Testing
+#
+Above build will generate into the tora-build\RELEASE dir. Copy the various dll files from Qt, Postgres, MySQL 
+installs into that dir as well:
+MSVC 2010 Runtime libs:
+	msvcp100.dll
+	msvcr100.dll 
+QT Libs:
+	qsqlmysqld4.dll
+	qsqlpsql4.dll
+	QtCore4.dll QtGui4.dll QtHelp4.dll QtNetwork4.dll QtSql4.dll QtXml4.dll 
+Tora Libs:
+	antlr3c.dll
+	parsing.dll
+	poracle.dll
+	trotl.dll
+Then you should be able to run tora.exe from that dir. This can be used to test prior to packaging.
+
+#
+# Building Windows installer.
+#
+
+    1. Obtain and install NSIS installer software from 
+        http://nsis.sourceforge.net
+
+    2. Copy all the distribution files with desired directory structure
+       to the src/windows/installer/files directory within your TOra directory 
+       structure (or use it as INSTALLDIR when building TOra and use step 9 
+       of above build instrucstions).
+
+    3. Run NSIS compiler GUI and then drag and drop the tora.nsi file from
+        src/windows/installer directory in TOra to the compiler GUI window and 
+        wait till installer will finish the build.
+
+Please report any bugs should you find them as this port is still in the
+experimental stage.
+

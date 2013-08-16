@@ -1,0 +1,6 @@
+#!/bin/sh -x
+
+#for f in *.texi; do texi2html $f; done
+
+makeinfo --html --output=. tora.texi
+

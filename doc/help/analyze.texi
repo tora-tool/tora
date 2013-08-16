@@ -1,0 +1,30 @@
+@node analyze
+@section Statistics manager
+@cindex Statistics manager
+
+This tool is useful for collecting statistics and analysing tables in parallel. You can also use it to browse collected statistics.
+
+@image{images/analyze,15cm}
+
+You control the interface through the controls in the toolbar. The rest of the interface simply displays currently available tables in the current schema. When collecting statistics only the selected items in the tablelist are analysed.
+
+@table @asis
+@item @strong{Refresh}
+Refresh the table list from the database.
+@item @strong{Schema}
+The next control is which schema to investigate tables for.
+@item @strong{Operation}
+What operation to perform. Select one of @strong{compute statistics}, @strong{estimate statistics}, @strong{delete statistics} and @strong{validate references}.
+@item @strong{Target}
+Depending on the @strong{operation} you can sometimes select what kind of statistic to collect. Choose between @strong{all}, @strong{table}, @strong{indexed columns} and @strong{local indexes}.
+@item @strong{Sample}
+If the @strong{operation} is @strong{estimate statistics} you can choose how large sample should be used to estimate the statistic information in percent of total amount of data.
+@item @strong{Parallel}
+Indicate the number of separate connections to open to the database and run collecting statistics concurrently when collecting.
+@item @strong{Start analyzing}
+Press this button to perform the indicated operation on the tables selected in the list below the toolbar.
+@item @strong{Stop}
+Stop current run. Before the stop button you can also see information about the currently running statistics gathering run if any is running.
+
+@end table
+

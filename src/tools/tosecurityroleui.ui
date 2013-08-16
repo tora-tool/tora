@@ -1,0 +1,207 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>toSecurityRoleUI</class>
+  <widget class="QWidget" name="toSecurityRoleUI" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>576</width>
+        <height>480</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Form2</string>
+    </property>
+    <layout class="QGridLayout" >
+      <property name="margin" >
+        <number>11</number>
+      </property>
+      <property name="spacing" >
+        <number>6</number>
+      </property>
+      <item row="0" column="1" >
+        <widget class="QLineEdit" name="Name" />
+      </item>
+      <item row="0" column="0" >
+        <widget class="QLabel" name="NameLabel" >
+          <property name="text" >
+            <string>&amp;Name</string>
+          </property>
+          <property name="buddy" >
+            <cstring>Name</cstring>
+          </property>
+          <property name="wordWrap" >
+            <bool>false</bool>
+          </property>
+        </widget>
+      </item>
+      <item rowspan="1" row="1" column="0" colspan="2" >
+        <widget class="QTabWidget" name="Authentication" >
+          <property name="sizePolicy" >
+            <sizepolicy>
+              <hsizetype>7</hsizetype>
+              <vsizetype>1</vsizetype>
+            </sizepolicy>
+          </property>
+          <widget class="QWidget" name="PasswordTab" >
+            <attribute name="title" >
+              <string>&amp;Password</string>
+            </attribute>
+            <layout class="QGridLayout" >
+              <property name="margin" >
+                <number>11</number>
+              </property>
+              <property name="spacing" >
+                <number>6</number>
+              </property>
+              <item row="0" column="0" >
+                <widget class="QLabel" name="TextLabel4" >
+                  <property name="text" >
+                    <string>Enter Password</string>
+                  </property>
+                  <property name="buddy" >
+                    <cstring>Password</cstring>
+                  </property>
+                  <property name="wordWrap" >
+                    <bool>false</bool>
+                  </property>
+                </widget>
+              </item>
+              <item row="0" column="1" >
+                <widget class="QLineEdit" name="Password" >
+                  <property name="echoMode" >
+                    <enum>QLineEdit::Password</enum>
+                  </property>
+                </widget>
+              </item>
+              <item row="1" column="1" >
+                <widget class="QLineEdit" name="Password2" >
+                  <property name="echoMode" >
+                    <enum>QLineEdit::Password</enum>
+                  </property>
+                </widget>
+              </item>
+              <item row="1" column="0" >
+                <widget class="QLabel" name="TextLabel4_2" >
+                  <property name="text" >
+                    <string>Confirm Password</string>
+                  </property>
+                  <property name="buddy" >
+                    <cstring>Password2</cstring>
+                  </property>
+                  <property name="wordWrap" >
+                    <bool>false</bool>
+                  </property>
+                </widget>
+              </item>
+              <item row="1" column="2" >
+                <spacer name="Spacer1" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>20</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>QSizePolicy::Expanding</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Qt::Horizontal</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </widget>
+          <widget class="QWidget" name="ExternalTab" >
+            <attribute name="title" >
+              <string>&amp;External</string>
+            </attribute>
+            <layout class="QGridLayout" >
+              <property name="margin" >
+                <number>11</number>
+              </property>
+              <property name="spacing" >
+                <number>6</number>
+              </property>
+              <item row="0" column="0" >
+                <widget class="QLabel" name="TextLabel3" >
+                  <property name="text" >
+                    <string>Role authenticated by the operating system</string>
+                  </property>
+                  <property name="wordWrap" >
+                    <bool>false</bool>
+                  </property>
+                </widget>
+              </item>
+            </layout>
+          </widget>
+          <widget class="QWidget" name="GlobalTab" >
+            <attribute name="title" >
+              <string>&amp;Global</string>
+            </attribute>
+            <layout class="QGridLayout" >
+              <property name="margin" >
+                <number>11</number>
+              </property>
+              <property name="spacing" >
+                <number>6</number>
+              </property>
+              <item row="0" column="0" >
+                <widget class="QLabel" name="TextLabel3_2" >
+                  <property name="text" >
+                    <string>Role authenticated globally</string>
+                  </property>
+                  <property name="wordWrap" >
+                    <bool>false</bool>
+                  </property>
+                </widget>
+              </item>
+            </layout>
+          </widget>
+          <widget class="QWidget" name="NoneTab" >
+            <attribute name="title" >
+              <string>None</string>
+            </attribute>
+            <layout class="QGridLayout" >
+              <property name="margin" >
+                <number>11</number>
+              </property>
+              <property name="spacing" >
+                <number>6</number>
+              </property>
+              <item row="0" column="0" >
+                <widget class="QLabel" name="TextLabel1" >
+                  <property name="text" >
+                    <string>No password required for role</string>
+                  </property>
+                  <property name="wordWrap" >
+                    <bool>false</bool>
+                  </property>
+                </widget>
+              </item>
+            </layout>
+          </widget>
+        </widget>
+      </item>
+      <item row="2" column="1" >
+        <spacer name="Spacer1_2" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+    </layout>
+  </widget>
+</ui>

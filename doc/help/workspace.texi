@@ -1,0 +1,34 @@
+@node workspace
+@chapter Getting to know your workspace
+@cindex Getting to know your workspace
+
+This section will help you familiarize yourself with the framework of the TOra application which is common to all tools in the toolkit.
+
+@c @itemize @bullet
+
+@c @item @uref{window.html,Elements of the main window}
+@c @item @uref{newconnection.html,Connecting to a database}
+@c @item @uref{whatprivileges.html,What privileges do you need to run TOra}
+@c @item @uref{editors.html,Using editors}
+@c @item @uref{lists.html,Using lists}
+@c @item @uref{charts.html,Using charts}
+@c @item @uref{searchreplace.html,Search & replace}
+@c @item @uref{preferences.html,Options}
+@c @item @xpref{advancedpreferences,Advanced preferences}
+@c @item @uref{common.html,Other common elements}
+
+@c @end itemize
+
+@menu
+* Elements of the main window:window.
+* Connecting to a database:newconnection.
+* What privileges do you need to run TOra:whatprivileges.
+* Using editors:editors.
+* Using lists:lists.
+* Using charts:charts.
+* Search & Replace:searchreplace.
+* Options:preferences.
+* Advanced preferences:advancedpreferences.
+* Other common elements:common.
+@end menu
+

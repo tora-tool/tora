@@ -1,0 +1,81 @@
+This is draft version until accepted by TOra developers
+
+directory layout for TOra
+=========================
+
+tora/
+   +--cmake/modules/
+   | 
+   +--debian/ (not used yet)
+   |
+   +--doc/
+   |    +--help/
+   |
+   +--extlibs/
+   |    +--libantlr3c-3.3
+   |    +--libermodel
+   |    +--loki
+   |    +--parsing
+   |    +--qscintilla2
+   |    +--stack
+   |    +--trotl
+   |
+   +--rpm/ (not used yet)
+   |   
+   +--src/
+   |    +--core                  Tora core classes
+   |    +--editor                Editor related classes
+   |    +--tools                 Tora tools
+   |    +--connection            Connection provider implementations
+   |         +--db2
+   |    +--ts_log                Thread safe logger
+   |    +--docklets   
+   |    +--migratetool
+   |    +--shortcuteditor   
+   |    +--windows
+   |         +--installer
+   |    +--icons
+   |         +--svg
+   |    +--images   
+   |    +--templates
+   |    +--i18n                  Commented out now
+   |    +--parsing
+   |    +--help                  <--- symlinks to doc/help
+   |         +--images
+   |    +--tests
+   |    +--obsolete              Various not-converted tools, components, classes
+   |         +--dummyoci
+   |    +--result   
+   |
+   +--utils/
+        +--qscintilla/
+
+
+What goes in which directory ?
+===============================
+
+project-root:
+	- READMEs/NEWS ...
+
+debian:
+	- debian specific files
+
+doc:
+	- for documentation
+          note that there is a symlink to this folder from src/help
+
+extlibs:
+	- directory for external libraries which are part of the 
+	  TOra distribution
+
+rpm:
+	- for building RPMs
+
+src:
+	- all source code goes there
+
+test:   
+        - for CppUnit tests
+
+utils:
+	- helper tools for the project goes there

@@ -1,0 +1,7 @@
+@node whatprivileges
+@section What privileges do you need to run TOra
+@cindex What privileges do you need to run TOra
+
+TOra should be able to run as any user, although off course you can never do anything in TOra that aren't allowed from that Oracle account. You will be able to use pretty much any tool in TOra for read only purposes if you are granted the @strong{SELECT_CATALOG_ROLE}, also some parts of TOra will have limited functionality if you do not have the @strong{ALTER SESSION} privilege.
+
+Also you need to be able to create the plan table if that is not done for you. The plan table (see @pxref{database,Database Settings} for how to select plan table name) must also be available with @strong{INSERT} and @strong{SELECT} access. TOra will function without the plan table but off course you will not be able to display any execution plans.

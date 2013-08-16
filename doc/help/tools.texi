@@ -1,0 +1,27 @@
+@node tools
+@chapter Available tools
+@cindex Available tools
+
+These are the available tools in a standard TOra installation. Individual installations may vary.
+
+@menu
+* SQL Worksheet: worksheet.
+* Schema Browser: browser.
+* PL/SQL Editor: plsqleditor.
+* PL/SQL Debugger: debugger.
+* PL/SQL Unit Tester: unittest.
+* Server Tuning: tuning.
+* Security Manager:security.
+* Storage Manager: storage.
+* Sessions: session.
+* Rollback Segments: rollback.
+* SGA Trace: trace.
+* Current Session: current.
+* DB Extraction/Compare/Search:script.
+* Statistics Manager:analyze.
+* Alert Tool:alert.
+* Invalid Objects:invalid.
+* SQL Output Viewer:output.
+* Template Help:template.
+* SQL Editor:sqledit.
+@end menu

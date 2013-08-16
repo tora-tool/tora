@@ -1,0 +1,14 @@
+@node externalapi
+@section API Reference
+
+API documentation can be genereated on your own directly from
+source code files.
+
+You need to have Doxygen (doxygen.org) installed.
+
+Base configuration for the documentation are located in TORA_SRC_DIR/doc/help/api
+directory.
+
+Unix/Linux: just run make in this directory. Make clean and more various targets are predefined. See the Makefile.
+
+MS Windows: Try make too. Or run doxygen manually.

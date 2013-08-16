@@ -1,0 +1,275 @@
+<ui version="4.0" >
+ <class>toStorageTablespaceUI</class>
+ <widget class="QWidget" name="toStorageTablespaceUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>592</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form1</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>11</number>
+   </property>
+   <property name="topMargin" >
+    <number>11</number>
+   </property>
+   <property name="rightMargin" >
+    <number>11</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>11</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>6</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="toFilesize" native="1" name="MinimumExtent" />
+   </item>
+   <item row="1" column="0" >
+    <widget class="QGroupBox" name="ButtonGroup1" >
+     <property name="title" >
+      <string>&amp;Options</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>11</number>
+      </property>
+      <property name="topMargin" >
+       <number>11</number>
+      </property>
+      <property name="rightMargin" >
+       <number>11</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>11</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>6</number>
+      </property>
+      <item row="0" column="0" >
+       <widget class="QCheckBox" name="Logging" >
+        <property name="toolTip" >
+         <string>Should objects created in this tablespace be logging by default</string>
+        </property>
+        <property name="text" >
+         <string>&amp;Logging</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QCheckBox" name="Online" >
+        <property name="toolTip" >
+         <string>Should tablespace be online at the time of creation</string>
+        </property>
+        <property name="text" >
+         <string>&amp;Online</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QCheckBox" name="Permanent" >
+        <property name="toolTip" >
+         <string>Should objects in this tablespace be permanent after the end of the session</string>
+        </property>
+        <property name="text" >
+         <string>&amp;Permanent</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="QCheckBox" name="DefaultStorage" >
+        <property name="toolTip" >
+         <string>Specify default storage clause (In separate tab)</string>
+        </property>
+        <property name="text" >
+         <string>&amp;Default storage</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QGroupBox" name="ExtentGroup" >
+     <property name="title" >
+      <string>&amp;Extent allocation</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>11</number>
+      </property>
+      <property name="topMargin" >
+       <number>11</number>
+      </property>
+      <property name="rightMargin" >
+       <number>11</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>11</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>6</number>
+      </property>
+      <item row="0" column="0" >
+       <widget class="QRadioButton" name="Dictionary" >
+        <property name="toolTip" >
+         <string>Manage tablespace extents using dictionary tables</string>
+        </property>
+        <property name="text" >
+         <string>&amp;Dictionary</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QRadioButton" name="LocalAuto" >
+        <property name="toolTip" >
+         <string>Specify how space is allocated in the tablespace</string>
+        </property>
+        <property name="text" >
+         <string>Local &amp;autoallocation</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QRadioButton" name="LocalSelect" >
+        <property name="enabled" >
+         <bool>true</bool>
+        </property>
+        <property name="toolTip" >
+         <string>The tablespace is locally managed with fixed extent sizes of specified size</string>
+        </property>
+        <property name="text" >
+         <string>Local &amp;uniform</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="toFilesize" native="1" name="LocalUniform" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>toFilesize</class>
+   <extends>QWidget</extends>
+   <header>tools/tofilesize.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>DefaultStorage</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>toStorageTablespaceUI</receiver>
+   <slot>allowDefault(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Permanent</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>toStorageTablespaceUI</receiver>
+   <slot>permanentToggle(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Dictionary</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>toStorageTablespaceUI</receiver>
+   <slot>dictionaryToggle(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>LocalSelect</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>toStorageTablespaceUI</receiver>
+   <slot>uniformToggle(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -1,0 +1,264 @@
+<ui version="4.0" >
+ <class>toEditExtensionSetupUI</class>
+ <widget class="QWidget" name="toEditExtensionSetupUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>527</width>
+    <height>421</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form1</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <layout class="QHBoxLayout" >
+     <item>
+      <widget class="QLabel" name="TextLabel1_2" >
+       <property name="text" >
+        <string>&amp;Same line comment column</string>
+       </property>
+       <property name="wordWrap" >
+        <bool>false</bool>
+       </property>
+       <property name="buddy" >
+        <cstring>CommentColumn</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="CommentColumn" />
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" >
+     <item>
+      <widget class="QCheckBox" name="CommaBefore" >
+       <property name="toolTip" >
+        <string/>
+       </property>
+       <property name="text" >
+        <string>Place &amp;comma on new line before item instead of after on same line</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="BlockOpenLine" >
+       <property name="toolTip" >
+        <string/>
+       </property>
+       <property name="text" >
+        <string>Place THEN, LOOP, AS and IS on new line at b&amp;eginning of new block</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="OperatorSpace" >
+       <property name="toolTip" >
+        <string>Insert extra spaces between operators.</string>
+       </property>
+       <property name="text" >
+        <string>Put spaces around operators</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="KeywordUpper" >
+       <property name="toolTip" >
+        <string/>
+       </property>
+       <property name="text" >
+        <string>Transform keywords to &amp;uppercase</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="RightSeparator" >
+       <property name="toolTip" >
+        <string/>
+       </property>
+       <property name="text" >
+        <string>&amp;Right align keywords in each statement.</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="EndBlockNewline" >
+       <property name="text" >
+        <string>Insert a &amp;newline after each block</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="AutoIndent" >
+       <property name="text" >
+        <string>Auto indent read only SQL text editors</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="DragDrop" >
+       <property name="text" >
+        <string>Allow Drag and Drop</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="ExampleLabel" >
+       <property name="text" >
+        <string>Example</string>
+       </property>
+       <property name="wordWrap" >
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="toHighlightedText" native="1" name="Example" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>toHighlightedText</class>
+   <extends>QWidget</extends>
+   <header>tohighlightedtext.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>CommentColumn</tabstop>
+  <tabstop>CommaBefore</tabstop>
+  <tabstop>BlockOpenLine</tabstop>
+  <tabstop>OperatorSpace</tabstop>
+  <tabstop>KeywordUpper</tabstop>
+  <tabstop>RightSeparator</tabstop>
+  <tabstop>EndBlockNewline</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>CommaBefore</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>toEditExtensionSetupUI</receiver>
+   <slot>changed()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>BlockOpenLine</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>toEditExtensionSetupUI</receiver>
+   <slot>changed()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>KeywordUpper</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>toEditExtensionSetupUI</receiver>
+   <slot>changed()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>RightSeparator</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>toEditExtensionSetupUI</receiver>
+   <slot>changed()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>EndBlockNewline</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>toEditExtensionSetupUI</receiver>
+   <slot>changed()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>OperatorSpace</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>toEditExtensionSetupUI</receiver>
+   <slot>changed()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>CommentColumn</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>toEditExtensionSetupUI</receiver>
+   <slot>changed()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

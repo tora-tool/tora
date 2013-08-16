@@ -1,0 +1,205 @@
+/* BEGIN_COMMON_COPYRIGHT_HEADER
+ *
+ * TOra - An Oracle Toolkit for DBA's and developers
+ *
+ * Shared/mixed copyright is held throughout files in this product
+ *
+ * Portions Copyright (C) 2000-2001 Underscore AB
+ * Portions Copyright (C) 2003-2005 Quest Software, Inc.
+ * Portions Copyright (C) 2004-20010 Numerous Other Contributors
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation;  only version 2 of
+ * the License is valid for this program.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *      As a special exception, you have permission to link this program
+ *      with the Oracle Client libraries and distribute executables, as long
+ *      as you follow the requirements of the GNU GPL in regard to all of the
+ *      software in the executable aside from Oracle client libraries.
+ *
+ *      Specifically you are not permitted to link this program with the
+ *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+ *      And you are not permitted to distribute binaries compiled against
+ *      these libraries.
+ *
+ *      You may link this product with any GPL'd Qt library.
+ *
+ * All trademarks belong to their respective owners.
+ *
+ * END_COMMON_COPYRIGHT_HEADER */
+
+#ifndef TOQUERY_H
+#define TOQUERY_H
+
+#include "core/tora_export.h"
+#include "core/tocache.h"
+#include "core/toqvalue.h"
+#include "core/toqueryimpl.h"
+#include "core/toconnection.h"
+#include "core/toconnectionsubloan.h"
+
+class toConnection;
+class toConnectionSub;
+class toConnectionSubLoan;
+class toSQL;
+class queryImpl;
+
+#include <QtCore/QPointer>
+
+/** This class is used to perform a query on a database connection.
+ */
+class toQuery : public QObject
+{
+    Q_OBJECT;
+    friend class queryImpl;
+
+public:
+    struct HeaderDesc
+    {
+        QString           name;        /* column name */
+        QString           datatype;    /* data type */
+    };
+
+	typedef QList<toQValue> Row;
+	typedef QList<Row> RowList;
+    typedef QList<HeaderDesc> HeaderList;
+
+    /** Create a normal query.
+     * @param conn Connection to create query on.
+     * @param sql SQL to run.
+     * @param params Parameters to pass to query.
+     */
+    toQuery(toConnectionSubLoan &conn, const toSQL &sql, toQueryParams const &params);
+
+    /** Create a normal query.
+     * @param conn Connection to create query on.
+     * @param sql SQL to run.
+     * @param params Parameters to pass to query.
+     */
+    //toQuery(toConnection &conn, const QString &sql, toQueryParams const &params);
+    toQuery(toConnectionSubLoan &conn, const QString &sql, toQueryParams const &params);
+
+    /** Destroy query.
+     */
+    virtual ~toQuery();
+
+    // GETTERS
+
+    /** Connection object of this object. */
+    inline toConnection const& connection(void)
+    {
+        return m_ConnectionSub.ParentConnection;
+    }
+
+    /** Actual database connection that this query is currently using. */
+    inline toConnectionSubLoan& connectionSub(void)
+    {
+        return m_ConnectionSub;
+    }
+
+    inline toConnectionSub* connectionSubPtr(void)
+    {
+        return m_ConnectionSub.ConnectionSub;
+    }
+
+    /** Parameters of the current query. */
+    inline toQueryParams const& params(void) const
+    {
+        return m_Params;
+    }
+
+    /** SQL to run. Observe that this string is in UTF8 format. */
+    inline QString const& sql(void) const
+    {
+        return m_SQL;
+    }
+
+    /** Read a value from the query.
+     * @return Value read.
+     */
+    toQValue readValue(void);
+
+    /** Check if end of query is reached.
+     * @return True if end of query is reached.
+     */
+    bool eof(void);
+
+    /** Get the number of rows processed by the query. */
+    inline unsigned long rowsProcessed(void)
+    {
+        return m_Query->rowsProcessed();
+    }
+
+    /** Get a list of descriptions for the columns. This function is relatively slow. */
+    toQColumnDescriptionList describe(void);
+
+    /** Get the number of columns in the resultset of the query.*/
+    inline unsigned columns(void) const
+    {
+        return m_Query->columns();
+    }
+
+    /** Execute a query and return all the values returned by it.
+     * @param conn Connection to run query on.
+     * @param sql SQL to run.
+     * @param params Parameters to pass to query.
+     * @return A list of @ref toQValue(s) read from the query.
+     */
+    static std::list<toQValue> readQuery(toConnection &conn, const toSQL &sql, toQueryParams const &params);
+
+    /** Execute a query and return all the values returned by it.
+     * @param conn Connection to run query on.
+     * @param sql SQL to run.
+     * @param params Parameters to pass to query.
+     * @return A list of @ref toQValues:s read from the query.
+     */
+    static std::list<toQValue> readQuery(toConnection &conn, const QString &sql, toQueryParams const &params);
+
+    /** Execute a query using this oracle session and return all values.
+      * @param sql SQL to run.
+      * @param params Parameters to pass to query.
+      * @return A list of @ref toQValues:s read from query
+      */
+    //std::list<toQValue> readQuery(const QString &sql, toQueryParams const& params);
+
+    /** Specify if busy cursor must be displayed while a query is running */
+    inline void setShowBusy(bool busy)
+    {
+        m_ShowBusy = busy;
+    }
+protected:
+    toConnectionSub* sub()
+    {
+    	return m_ConnectionSub.ConnectionSub;
+    }
+private:
+    /** This class contains a reference onto loaned connection
+     * therefore an instance of toQuery it MUST not live longer
+     * than instance of toConnectionSubLoan
+     *
+     * An instance of toQuery can be allocated on stack only.
+     */
+    void *operator new(size_t);
+    void *operator new[](size_t);
+private:
+    toConnectionSubLoan& m_ConnectionSub;
+    toQueryParams m_Params;
+    QString m_SQL;
+    bool m_ShowBusy; // does a "busy" indicator has to be shown while query is running (default - true)
+
+    queryImpl *m_Query;
+    toQuery(const toQuery &);
+};
+
+#endif
+

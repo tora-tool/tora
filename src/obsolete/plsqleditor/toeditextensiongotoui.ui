@@ -1,0 +1,107 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>toEditExtensionGotoUI</class>
+  <widget class="QDialog" name="todebuggotolineUI" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>224</width>
+        <height>117</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Go to line</string>
+    </property>
+    <layout class="QGridLayout" >
+      <item row="0" column="1" >
+        <widget class="QSpinBox" name="Line" />
+      </item>
+      <item rowspan="1" row="2" column="0" colspan="2" >
+        <layout class="QHBoxLayout" >
+          <item>
+            <spacer name="spacer1" >
+              <property name="sizeHint" >
+                <size>
+                  <width>80</width>
+                  <height>20</height>
+                </size>
+              </property>
+              <property name="sizeType" >
+                <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+              </property>
+            </spacer>
+          </item>
+          <item>
+            <widget class="QPushButton" name="pushButton1" >
+              <property name="text" >
+                <string>&amp;Ok</string>
+              </property>
+              <property name="default" >
+                <bool>true</bool>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QPushButton" name="pushButton2" >
+              <property name="text" >
+                <string>&amp;Cancel</string>
+              </property>
+            </widget>
+          </item>
+        </layout>
+      </item>
+      <item row="1" column="1" >
+        <spacer name="spacer2" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>21</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+      <item row="0" column="0" >
+        <widget class="QLabel" name="textLabel1" >
+          <property name="text" >
+            <string>Line Number</string>
+          </property>
+          <property name="wordWrap" >
+            <bool>false</bool>
+          </property>
+        </widget>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <tabstops>
+    <tabstop>Line</tabstop>
+    <tabstop>pushButton1</tabstop>
+    <tabstop>pushButton2</tabstop>
+  </tabstops>
+  <connections>
+    <connection>
+      <sender>pushButton1</sender>
+      <signal>clicked()</signal>
+      <receiver>todebuggotolineUI</receiver>
+      <slot>accept()</slot>
+    </connection>
+    <connection>
+      <sender>pushButton2</sender>
+      <signal>clicked()</signal>
+      <receiver>todebuggotolineUI</receiver>
+      <slot>reject()</slot>
+    </connection>
+  </connections>
+</ui>

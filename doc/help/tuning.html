@@ -1,0 +1,81 @@
+<html lang="en">
+<head>
+<title>tuning - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.13">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="tools.html#tools" title="tools">
+<link rel="prev" href="unittest.html#unittest" title="unittest">
+<link rel="next" href="security.html#security" title="security">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 2.1.4+.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<a name="tuning"></a>
+<p>
+Next:&nbsp;<a rel="next" accesskey="n" href="security.html#security">security</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="unittest.html#unittest">unittest</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
+<hr>
+</div>
+
+<h3 class="section">4.6 Server Tuning</h3>
+
+<p><a name="index-Server-Tuning-25"></a>
+This tool provides easy access to important server indicators as well as server statistics and an editor for database parameters.
+
+   <div class="block-image"><img src="images/tuning.png" alt="images/tuning.png"></div>
+
+   <p>The interface for this tool is very simple. First there is a toolbar with the following controlls.
+
+     <dl>
+<dt><strong>Refresh</strong><dd>Refresh data from the database, will not read another value for charts. 
+<br><dt><strong>Refresh rate</strong><dd>The interval between which to auto update data, observe that setting this too low could put a high load on a database server. This is also the sample interval for charts. 
+<br><dt><strong>Change connection</strong><dd>Change the connection to monitor in the tuning tool. 
+</dl>
+
+   <p>There are several tabs in the window.
+
+     <dl>
+<dt><strong>Overview</strong><dd>Displays an overview of dtabase statistics, shows the flow of data through the server in an intuitive way. 
+<br><dt><strong>Charts</strong><dd>Charts containing important performance information from the database. 
+<br><dt><strong>Wait events</strong><dd>Information and charts about wait events. 
+<br><dt><strong>File I/O</strong><dd>Displays information about I/O separated by tablespace or datafile. You can select if you want to see average wait time, blocks for tablespace or datafile by using the combobox at the top of the charts. 
+<br><dt><strong>Indicators</strong><dd>Important performance indicators. 
+<br><dt><strong>Statistics</strong><dd>Raw statistic information from the server. The statistics is shown in two columns, the first one contain the actual value, the second show the change in the value since the last update. 
+<br><dt><strong>Parameters</strong><dd>This tab displays the values of the parameters of the database. You can also use it to change the values by selecting a row and entering a new value at the bottom of the tab. After changes has been made you can apply or export these changes using the buttons in the toolbar at the top of the parameter editor.
+
+     <div class="block-image"><img src="images/pfileeditor.png" alt="images/pfileeditor.png"></div>
+          <dl>
+    <dt><strong>Display hidden parameters</strong><dd>    TODO
+    <br><dt><strong>Generate configuration file</strong><dd>    Generate a p-file with the current changes (And original changes as well) into a memo editor(see <a href="memoeditor.html#memoeditor">memoeditor</a>). 
+    <br><dt><strong>Apply changes to system</strong><dd>    Apply changes made to the system. 
+    <br><dt><strong>Apply changes to session</strong><dd>    Apply changes to the current session. Will only apply changes to the main connection and not any child sessions TOra might open for instance when statements are executed in the worksheet. 
+    <br><dt><strong>Drop changes</strong><dd>    Drop the changes currently made to the parameters and revert to the current session settings. 
+    </dl>
+
+     <br><dt><strong>Blocking locks</strong><dd>TODO. 
+<br><dt><strong>Library cache</strong><dd>TODO. 
+<br><dt><strong>Control files</strong><dd>TODO. 
+<br><dt><strong>Options</strong><dd>List the options available in the database server. 
+<br><dt><strong>Licenses</strong><dd>Display license information to the current database.
+
+   </dl>
+
+   </body></html>
+

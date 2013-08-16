@@ -1,0 +1,7 @@
+@node memoeditor
+@subsection Memo editor
+
+@image{images/memo,8cm}
+
+This is used to display or edit larger text than is easily entered in a oneline editor or list. To the top is a toolbar with some editing buttons. Specifically you have the save changes button to the left. You can also do this using the key @strong{CTRL+Return}. 
+You can remove the editor without saving changes using the @strong{Escape} key or closing the window.

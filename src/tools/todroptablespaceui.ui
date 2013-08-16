@@ -1,0 +1,113 @@
+<ui version="4.0" >
+ <class>toDropTablespaceUI</class>
+ <widget class="QWidget" name="toDropTablespaceUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>436</width>
+    <height>133</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form1</string>
+  </property>
+  <widget class="QGroupBox" name="buttonGroup3" >
+   <property name="geometry" >
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>410</width>
+     <height>110</height>
+    </rect>
+   </property>
+   <property name="title" >
+    <string>Options</string>
+   </property>
+   <widget class="QCheckBox" name="CascadeCheck" >
+    <property name="enabled" >
+     <bool>false</bool>
+    </property>
+    <property name="geometry" >
+     <rect>
+      <x>40</x>
+      <y>50</y>
+      <width>340</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>even if there is some forerign key referencing them</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="dataFileCheck" >
+    <property name="enabled" >
+     <bool>false</bool>
+    </property>
+    <property name="geometry" >
+     <rect>
+      <x>40</x>
+      <y>80</y>
+      <width>150</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Delete datafiles</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="IncludingObjectsCheck" >
+    <property name="geometry" >
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>220</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Drop even if it contains objects</string>
+    </property>
+    <property name="checked" >
+     <bool>false</bool>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <resources/>
+ <connections>
+  <connection>
+   <sender>IncludingObjectsCheck</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CascadeCheck</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>IncludingObjectsCheck</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dataFileCheck</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

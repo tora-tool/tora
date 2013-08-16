@@ -1,0 +1,142 @@
+
+/* BEGIN_COMMON_COPYRIGHT_HEADER
+ *
+ * TOra - An Oracle Toolkit for DBA's and developers
+ *
+ * Shared/mixed copyright is held throughout files in this product
+ *
+ * Portions Copyright (C) 2000-2001 Underscore AB
+ * Portions Copyright (C) 2003-2005 Quest Software, Inc.
+ * Portions Copyright (C) 2004-2009 Numerous Other Contributors
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation;  only version 2 of
+ * the License is valid for this program.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *      As a special exception, you have permission to link this program
+ *      with the Oracle Client libraries and distribute executables, as long
+ *      as you follow the requirements of the GNU GPL in regard to all of the
+ *      software in the executable aside from Oracle client libraries.
+ *
+ *      Specifically you are not permitted to link this program with the
+ *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+ *      And you are not permitted to distribute binaries compiled against
+ *      these libraries.
+ *
+ *      You may link this product with any GPL'd Qt library.
+ *
+ * All trademarks belong to their respective owners.
+ *
+ * END_COMMON_COPYRIGHT_HEADER */
+
+#include "result/toproviderobserver.h"
+#include "core/utils.h"
+
+toEventQueryObserverObject::toEventQueryObserverObject(Observer &o, QObject *parent)
+	: QObject(parent)
+	, toEventQuery::Client()
+	, m_observer(o)
+	, m_eventQuery(NULL)
+{}
+
+toEventQueryObserverObject::~toEventQueryObserverObject()
+{
+	if(m_eventQuery && m_eventQuery->parent() == this)
+		delete m_eventQuery;
+	m_eventQuery = NULL;
+}
+
+void toEventQueryObserverObject::setQuery(toEventQuery *query)
+{
+	bool retval;
+
+	if( m_eventQuery != NULL && m_eventQuery->parent() == this)
+	{
+		delete m_eventQuery;
+	}
+
+	m_eventQuery = query;
+}
+
+void toEventQueryObserverObject::eqDescriptionAvailable(toEventQuery *query, const toQColumnDescriptionList &desc)
+{
+	Q_ASSERT_X(m_eventQuery != NULL , qPrintable(__QHERE__), " phantom data");
+	Q_ASSERT_X(m_eventQuery == query, qPrintable(__QHERE__), " unknown data source");
+
+	// TODO to be moved into Policy class (tomvc.h)
+	toQuery::HeaderList headers;
+	for (toQColumnDescriptionList::const_iterator i = desc.constBegin(); i != desc.constEnd(); i++)
+	{
+		struct toQuery::HeaderDesc d;
+
+		d.name = (*i).Name;
+		d.datatype = (*i).Datatype;
+
+		headers << d;
+	}
+
+	m_observer.observeHeaders(headers);
+}
+
+void toEventQueryObserverObject::eqDataAvailable(toEventQuery *query)
+{
+	m_observer.observeData(query);
+//	try
+//	{
+//		Q_ASSERT_X(m_eventQuery != NULL , qPrintable(__QHERE__), " phantom data");
+//		Q_ASSERT_X(m_eventQuery == query, qPrintable(__QHERE__), " unknown data source");
+//		Q_ASSERT_X(m_eventQuery->columnCount() >0, qPrintable(__QHERE__), " not described yet");
+//
+//		// TODO to be moved into Policy class (tomvc.h)
+//		int columns = query->columnCount();
+//		toQuery::RowList m_rows;
+//		while(query->hasMore())
+//		{
+//			toQuery::Row row;
+//			m_observer.observeRow(row);
+//			for(int i=0; i < columns; i++)
+//			{
+//				row << query->readValue();
+//			}
+//			m_rows << row;
+//			row.clear();
+//		}
+//		m_observer.observeBeginData();
+//		m_observer.observeData(m_rows);
+//		m_observer.observeEndData();
+//	}
+//	TOCATCH
+}
+
+void toEventQueryObserverObject::eqDone(toEventQuery*)
+{
+	m_observer.observeDone();
+
+	bool retval = m_eventQuery->disconnect(this);
+	if(retval == false)
+		throw __QHERE__ + " disconnect failed";
+	m_eventQuery->deleteLater();
+	m_eventQuery = NULL;
+}
+
+void toEventQueryObserverObject::eqError(toEventQuery *query, const toConnection::exception &e)
+{
+	if(query == m_eventQuery)
+	{
+		m_observer.observeError(e);
+		throw (e);
+	}
+	Q_ASSERT_X(false, qPrintable(__QHERE__), "unknown data source");
+}
+
+
