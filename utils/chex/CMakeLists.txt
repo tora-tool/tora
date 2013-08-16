@@ -1,7 +1,0 @@
-SET(CHEX_SOURCES
-    chex.cpp
-)
-
-ADD_EXECUTABLE(chex
-  ${CHEX_SOURCES}
-)
