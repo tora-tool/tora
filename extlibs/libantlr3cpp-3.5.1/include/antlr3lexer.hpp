@@ -177,10 +177,10 @@ public:
 	 */
     void	popCharStream();
 
-    /** Pointer to a function that emits the supplied token as the next token in
+    /** Function that emits (a copy of ) the supplied token as the next token in
      *  the stream.
      */
-    void	emitNew(const CommonTokenType* token);
+    void	emit(const CommonTokenType* token);
 
     /** Pointer to a function that constructs a new token from the lexer stored information
      */

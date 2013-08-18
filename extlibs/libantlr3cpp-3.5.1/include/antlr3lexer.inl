@@ -178,7 +178,7 @@ void	Lexer<ImplTraits>::popCharStream()
 }
 
 template<class ImplTraits>
-void	Lexer<ImplTraits>::emitNew(const CommonTokenType* token)
+void	Lexer<ImplTraits>::emit(const CommonTokenType* token)
 {
 	this->get_rec()->get_state()->set_token(token);
 }
