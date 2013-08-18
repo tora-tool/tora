@@ -107,13 +107,37 @@ public:
 		typedef typename antlr3::TokenSource<ImplTraits> super;
 		typedef typename antlr3::TokenSource<ImplTraits>::TokenType TokenType;
 	public:
+		TokenSourceType()
+			: super()
+			, jumpToken(NULL)
+		{}
+
 		ANTLR_INLINE TokenType*  nextToken()
 		{
-			if( tokenBuffer.empty())
-				return super::nextToken();
-			TokenType* retval = tokenBuffer.front();
-			tokenBuffer.pop();
-			usedTokens.push(retval);
+			TokenType* retval = NULL;
+			if (!tokenBuffer.empty()) // previous call returned some token(s) in a buffer
+			{
+				retval = tokenBuffer.front();
+				tokenBuffer.pop();
+				usedTokens.push(retval);
+				return retval;
+			}
+
+			if (jumpToken) // previous call returned more than one token
+			{
+				retval = jumpToken;
+				jumpToken = NULL;
+				return retval;
+			}
+
+			retval = super::nextToken();
+			if (!tokenBuffer.empty())  // call to mTokens returned more than one token
+			{
+				jumpToken = retval;    // try to "flush" buffer first;
+				retval = tokenBuffer.front();
+				tokenBuffer.pop();
+				usedTokens.push(retval);
+			}
 			return retval;
 		}
 
@@ -144,7 +168,8 @@ public:
 	private:
 		// buffer (queue) to hold the emit()'d tokens
 		std::queue<TokenType*> tokenBuffer;
-		std::queue<TokenType*> usedTokens;
+		std::queue<TokenType*> usedTokens; // "virtually" emitted tokens are kept and freed here
+		TokenType* jumpToken;
 	};	
 };
 

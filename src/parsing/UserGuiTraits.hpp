@@ -29,6 +29,55 @@ public:
 	//but it leaves the start and stop tokens. So they can be accessed as usual
 	//static const bool TOKENS_ACCESSED_FROM_OWNING_RULE = true;
 
+	static void displayRecognitionError(const std::string& str)
+	{
+		antlr3::CustomTraitsBase<ImplTraits>::displayRecognitionError(str);
+	}
+	
+	template<class StreamType>
+	class RecognizerType : public antlr3::BaseRecognizer<ImplTraits, StreamType>
+	{
+	public:
+		typedef antlr3::BaseRecognizer<ImplTraits, StreamType> BaseType;
+		typedef typename antlr3::BaseRecognizer<ImplTraits, StreamType>::RecognizerSharedStateType RecognizerSharedStateType;
+		RecognizerType(ANTLR_UINT32 sizeHint, RecognizerSharedStateType* state)
+			: BaseType(sizeHint, state)
+		{}
+
+		ANTLR_INLINE void reportError()
+		{
+			BaseType::reportError();
+		}
+
+		// This recover method is probably only called from Parser
+		// ANTLR_INLINE void recover()
+		// {
+		// 	BaseType::recover();
+		// }
+	};
+
+	class BaseLexerType : public antlr3::Lexer<ImplTraits>
+	{
+	public:
+		typedef antlr3::Lexer<ImplTraits> super;
+		typedef typename antlr3::Lexer<ImplTraits>::RecognizerSharedStateType RecognizerSharedStateType;
+		typedef typename antlr3::Lexer<ImplTraits>::InputStreamType InputStreamType;
+
+		BaseLexerType(ANTLR_UINT32 sizeHint, RecognizerSharedStateType* state)
+			: super(sizeHint, state)
+		{}
+		BaseLexerType(ANTLR_UINT32 sizeHint, InputStreamType* input, RecognizerSharedStateType* state)
+			: super(sizeHint, input, state)
+		{}
+		
+		ANTLR_INLINE void recover()
+		{
+			//super::recover();
+			this->get_lexstate()->set_type(213);
+			this->emit();
+		}
+	};
+  
 	class ToraToken : public antlr3::CommonToken<ImplTraits>
 	{
 		typedef antlr3::CommonToken<ImplTraits> super;
@@ -58,14 +107,43 @@ public:
 		typedef typename antlr3::TokenSource<ImplTraits> super;
 		typedef typename antlr3::TokenSource<ImplTraits>::TokenType TokenType;
 	public:
+		TokenSourceType()
+			: super()
+			, jumpToken(NULL)
+		{}
+
 		ANTLR_INLINE TokenType*  nextToken()
 		{
-			if( tokenBuffer.empty())
-				return super::nextToken();
-			TokenType* retval = tokenBuffer.front();
-			tokenBuffer.pop();
-			usedTokens.push(retval);
+			TokenType* retval = NULL;
+			if (!tokenBuffer.empty()) // previous call returned some token(s) in a buffer
+			{
+				retval = tokenBuffer.front();
+				tokenBuffer.pop();
+				usedTokens.push(retval);
+				return retval;
+			}
+
+			if (jumpToken) // previous call returned more than one token
+			{
+				retval = jumpToken;
+				jumpToken = NULL;
+				return retval;
+			}
+
+			retval = super::nextToken();
+			if (!tokenBuffer.empty())  // call to mTokens returned more than one token
+			{
+				jumpToken = retval;    // try to "flush" buffer first;
+				retval = tokenBuffer.front();
+				tokenBuffer.pop();
+				usedTokens.push(retval);
+			}
 			return retval;
+		}
+
+		ANTLR_INLINE void recover()
+		{
+			super::recover();
 		}
 
 		ANTLR_INLINE void enqueueToken(TokenType *t)
@@ -90,9 +168,9 @@ public:
 	private:
 		// buffer (queue) to hold the emit()'d tokens
 		std::queue<TokenType*> tokenBuffer;
-		std::queue<TokenType*> usedTokens;
-	};
-
+		std::queue<TokenType*> usedTokens; // "virtually" emitted tokens are kept and freed here
+		TokenType* jumpToken;
+	};	
 };
 
 class EmptyParser {};
