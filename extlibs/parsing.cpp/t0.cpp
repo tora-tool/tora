@@ -72,23 +72,44 @@ void parseFile(const char* fName, int fd)
 
 	tstream = new PLSQLGuiLexerTraits::TokenStreamType(ANTLR_SIZE_HINT, lxr->get_tokSource());
 
-	//putc('L', stdout); fflush(stdout);
-	{
-		ANTLR_INT32 T = 0;
-		while	(T != PLSQLGuiLexer::EOF_TOKEN)
-		{
-			T = tstream->_LA(1);
-			PLSQLGuiLexerTraits::CommonTokenType const* token = tstream->_LT(1);
-			ANTLR_UINT8 const *name = lxr->getTokenName(T);
+	// //putc('L', stdout); fflush(stdout);
+	// {
+	// 	ANTLR_INT32 T = 0;
+	// 	while	(T != PLSQLGuiLexer::EOF_TOKEN)
+	// 	{
+	// 		T = tstream->_LA(1);
+	// 		PLSQLGuiLexerTraits::CommonTokenType const* token = tstream->_LT(1);
+	// 		ANTLR_UINT8 const *name = lxr->getTokenName(T);
 			  
-			printf("%d %s\t\"%s\" %d %d\n",
-			       T,
+	// 		printf("%d %s\t\"%s\" %d %d\n",
+	// 		       T,
+	// 		       name,
+	// 		       token->getText().c_str(),
+	// 		       token->getBlockContext(),
+	// 		       token->get_channel()
+	// 		       );
+	// 		//std::cerr << token->getText();
+	// 		tstream->consume();
+	// 	}
+	// }
+	
+	int n = tstream->getTokens()->size();
+	{
+		for (int i=0; i<n; i++)	       
+		{
+			PLSQLGuiLexerTraits::CommonTokenType const* token = tstream->get(i);
+			ANTLR_UINT8 const *name = lxr->getTokenName(token->get_type());
+			
+			printf("%d %s\t\"%s\" %d %d %d %d\n",
+			       token->get_type(),
 			       name,
 			       token->getText().c_str(),
 			       token->getBlockContext(),
-			       token->get_channel()
+			       token->get_channel(),
+			       token->get_line(),
+			       token->get_charPositionInLine()
 			       );
-			std::cerr << token->getText();
+			//std::cerr << token->getText();
 			tstream->consume();
 		}
 	}

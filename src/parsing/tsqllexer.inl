@@ -174,7 +174,7 @@ namespace SQLLexer
 	{};
 
 	inline Lexer::token_const_iterator::token_const_iterator(Lexer const& l, int i)
-    	: _mLastIndex(l.size()+1) // +1 for EOF token
+    	: _mLastIndex(l.size()) // add +1 for EOF token (_LT(i) is slow/ get(i) does not return EOF)
     	, _mCurrentIndex(i)
     	, _mLexer(l)
 	{};

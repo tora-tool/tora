@@ -28,8 +28,8 @@ public:
 	typedef SQLLexer::BlkCtx::BlockContextEnum B;
 
 protected:
-	virtual int size() const;
-	virtual const Token& LA(int pos) const;
+	virtual int size() const;                // Number of tokens - including the last EOF token
+	virtual const Token& LA(int pos) const;  // Get token at pos - starting from 1st
 
 private:
 	void init();
@@ -156,14 +156,26 @@ void OracleGuiLexer::clean()
 int OracleGuiLexer::size() const
 {
 	if(tstream)
-		return tstream->getTokens()->size();
+		return tstream->getTokens()->size() + 1;
 	else
 		return 0;
 }
 
 const Token& OracleGuiLexer::LA(int pos) const
 {
-	CommonTokenType const* token = tstream->_LT(pos);
+	if ( pos <= 0 || pos > size())
+		throw Exception();
+
+	if( pos == size())
+	{
+		Token::TokenType type = Token::X_EOF;
+		retvalLA = Token(Position(0, 0), 0, PLSQLGuiLexer::EOF_TOKEN, type);
+		retvalLA.setText("EOF");
+		retvalLA.setBlockContext(NONE);
+		return retvalLA;
+	}
+
+	CommonTokenType const* token = tstream->get(pos-1);
 	if(token)
 	{
 		// ANTLR3 starts with 1st while QScintilla starts with 0th

@@ -106,7 +106,7 @@ PLSQL_COMMAND_INTRODUCER:
         c='CREATE'    { $c->setBlockContext(BlkCtx::CREATE);    $c->set_type(PLSQL_COMMAND_INTRODUCER); get_tokSource()->enqueueToken($c); } |
         p='PACKAGE'   { $p->setBlockContext(BlkCtx::PACKAGE);   $p->set_type(PLSQL_COMMAND_INTRODUCER); get_tokSource()->enqueueToken($p); }
         )
-        { $channel = HIDDEN; }
+        { skip(); }//{ $channel = HIDDEN; }
     ;
 
 OTHER_COMMAND_INTRODUCER:
@@ -239,14 +239,14 @@ SQLPLUS_COMMAND_INTRODUCER
     ;
 
 // All these PLSQL constructs can also contain 'END';
-R_IF:   r='IF'   { $r->setBlockContext(BlkCtx::LOOP); $r->set_type(R_IF);   get_tokSource()->enqueueToken($r); $channel = HIDDEN; };
+R_IF:   r='IF'   { $r->setBlockContext(BlkCtx::LOOP); $r->set_type(R_IF);   get_tokSource()->enqueueToken($r); skip(); /*$channel = HIDDEN;*/ };
 R_THEN: r='THEN';
-R_LOOP: r='LOOP' { $r->setBlockContext(BlkCtx::LOOP); $r->set_type(R_LOOP); get_tokSource()->enqueueToken($r); $channel = HIDDEN; };
-R_CASE: r='CASE' { $r->setBlockContext(BlkCtx::LOOP); $r->set_type(R_CASE); get_tokSource()->enqueueToken($r); $channel = HIDDEN; };
-R_END:  r='END'	 { $r->setBlockContext(BlkCtx::END);  $r->set_type(R_END);  get_tokSource()->enqueueToken($r); $channel = HIDDEN; };
+R_LOOP: r='LOOP' { $r->setBlockContext(BlkCtx::LOOP); $r->set_type(R_LOOP); get_tokSource()->enqueueToken($r); skip(); /*$channel = HIDDEN;*/ };
+R_CASE: r='CASE' { $r->setBlockContext(BlkCtx::LOOP); $r->set_type(R_CASE); get_tokSource()->enqueueToken($r); skip(); /*$channel = HIDDEN;*/ };
+R_END:  r='END'	 { $r->setBlockContext(BlkCtx::END);  $r->set_type(R_END);  get_tokSource()->enqueueToken($r); skip(); /*$channel = HIDDEN;*/ };
 
-R_AS:   a='AS' { $a->setBlockContext(BlkCtx::DECLARE); $a->set_type(PLSQL_RESERVED); get_tokSource()->enqueueToken($a); $channel = HIDDEN; };
-R_IS:   i='IS' { $i->setBlockContext(BlkCtx::DECLARE); $i->set_type(PLSQL_RESERVED); get_tokSource()->enqueueToken($i); $channel = HIDDEN; };
+R_AS:   a='AS' { $a->setBlockContext(BlkCtx::DECLARE); $a->set_type(PLSQL_RESERVED); get_tokSource()->enqueueToken($a); skip(); /*$channel = HIDDEN;*/ };
+R_IS:   i='IS' { $i->setBlockContext(BlkCtx::DECLARE); $i->set_type(PLSQL_RESERVED); get_tokSource()->enqueueToken($i); skip(); /*$channel = HIDDEN;*/ };
 
 PLSQL_RESERVED:
         'A'                                                                     | /* A_KEY: */
@@ -988,7 +988,7 @@ FOR_NOTATION
 	)
 	// All three tokens were already emited (the token of type FOR_NOTATION is put into the hidden channel)
 	// { skip(); } // this does not work in C++ target. Order of emitted tokens is garbled
-	{ $channel=HIDDEN; }
+	{ skip(); }//{ $channel=HIDDEN; }
     ;
 
 PERIOD
@@ -1219,7 +1219,7 @@ LINEEND
 		| // or nothing
 	)
 )
-{ $channel=HIDDEN; }
+{ skip(); }//{ $channel=HIDDEN; }
 	;
 	
 //{ Rule #522 <SPACE>

@@ -18,6 +18,7 @@ public:
     virtual void setStatement(const char *s, unsigned len = -1);
     virtual void setStatement(const QString &s);
 
+	typedef MySQLGuiLexerTraits::CommonTokenType CommonTokenType;
 protected:
     virtual int size() const;
     virtual const Token& LA(int pos) const;
@@ -134,13 +135,25 @@ void mySQLGuiLexer::clean()
 int mySQLGuiLexer::size() const
 {
 	if(tstream)
-		return tstream->getTokens()->size();
+		return tstream->getTokens()->size()+1;
 	else
 		return 0;
 }
 const Token& mySQLGuiLexer::LA(int pos) const
 {
-	MySQLGuiLexerTraits::CommonTokenType const* token = tstream->_LT(pos);
+	if ( pos <= 0 || pos > size())
+		throw Exception();
+
+	if( pos == size())
+	{
+		Token::TokenType type = Token::X_EOF;
+		retvalLA = Token(Position(0, 0), 0, MySQLGuiLexer::EOF_TOKEN, type);
+		retvalLA.setText("EOF");
+		retvalLA.setBlockContext(NONE);
+		return retvalLA;
+	}
+
+	CommonTokenType const* token = tstream->get(pos-1);
 	if(token)
 	{
 		// ANTLR3 starts with 1st while QScintilla starts with 0th
