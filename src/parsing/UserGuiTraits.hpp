@@ -73,8 +73,6 @@ public:
 		ANTLR_INLINE void recover()
 		{
 			super::recover();
-			//this->get_lexstate()->set_type(213);
-			//this->emit();
 		}
 	};
   
