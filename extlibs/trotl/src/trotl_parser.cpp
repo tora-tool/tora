@@ -82,7 +82,7 @@ bool SimplePlsqlParser::parse (const tstring &statement)
 
 #endif
 
-	static rule<> delim_tm= ( str_p("..") | ch_p(';') | ',' | '(' | ')' |  '.' | blank_p | eol_p );
+	static rule<> delim_tm= ( str_p("..") | ch_p(';') | ',' | '(' | ')' |  '.' | '[' | ']' | blank_p | eol_p );
 	//static rule<> char_tm2= ( /*ch_p('*') | ch_p('.') |*/
 	//static rule<> char_tm3= ( ch_p('+') | ch_p('-') | ch_p('/') | ch_p('!') );
 	//static rule<> char_tm4= ( /*ch_p('<') | ch_p('>') | c_p('%') |*/
