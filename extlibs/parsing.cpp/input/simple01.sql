@@ -1,3 +1,10 @@
+setup
+settings
+set aaaa
+set (
+set line
+set line 200
+
 for update of xyz.a123.g5556 for update of abc.b789.h8888
 /*1234*/
 

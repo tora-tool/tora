@@ -143,11 +143,11 @@ SET
 	:   // First check is set is part sqlplus command (should start on newline)
         ('SET' SPACE REGULAR_ID SPACE
             (
-            	('.'|';'|'_'|'&'|'#'|'>'|'\\'|'$'|'%'|'@'|'?') (NEWLINE|EOF)
+             	('.'|';'|'_'|'&'|'#'|'>'|'\\'|'$'|'%'|'@'|'?') (NEWLINE|EOF)
             |	UNSIGNED_INTEGER
             |	CHAR_STRING
             )
-        ) => s='SET' SWALLOW_TO_NEWLINE_FRAGMENT
+        ) => ('SET' SPACE SWALLOW_TO_NEWLINE_FRAGMENT)
         	{ $type = SQLPLUS_COMMAND_INTRODUCER; }
         // Second check if is followed by '(' => part of SET operator (buildin function)
     	|	('SET' SPACE_FRAGMENT LEFT_PAREN) => 'SET'
