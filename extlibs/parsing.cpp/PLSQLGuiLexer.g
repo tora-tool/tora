@@ -1255,18 +1255,18 @@ DELIMITED_ID
     :    '"' (~('"' | '\r' | '\n') | '"' '"')+ '"' 
     ;
 
-DELIMITED_ID_PART
-    :    '"' (~('"' | '\r' | '\n') | '"' '"')+ (NEWLINE|EOF)
-    ;
+// DELIMITED_ID_PART
+//     :    '"' (~('"' | '\r' | '\n') | '"' '"')+ (NEWLINE|EOF)
+//     ;
 
 // these two rules are use to tocustomlext to highlight partially edited line
-COMMENT_ML_PART
-    :    '/*' (options{greedy=false;} : ~('*/') )* (NEWLINE)
-    ;
+// COMMENT_ML_PART
+//     :    '/*' (options{greedy=false;} : ~('*/') )* (NEWLINE)
+//     ;
 
-COMMENT_ML_END
-    :    '*/'
-    ;
+// COMMENT_ML_END
+//     :    '*/'
+//     ;
 
 // Last resort rule matches any character. This lexer should never fail.
 TOKEN_FAILURE : . ;

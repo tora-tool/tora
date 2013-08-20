@@ -200,12 +200,12 @@ const Token& OracleGuiLexer::LA(int pos) const
 			type = Token::L_STRING;
 			break;
 		case PLSQLGuiLexer::COMMENT_ML:
-		case PLSQLGuiLexer::COMMENT_ML_PART:
+//		case PLSQLGuiLexer::COMMENT_ML_PART:
 			type = Token::X_COMMENT_ML;
 			break;
-		case PLSQLGuiLexer::COMMENT_ML_END:
-			type = Token::X_COMMENT_ML_END;
-			break;
+//		case PLSQLGuiLexer::COMMENT_ML_END:
+//			type = Token::X_COMMENT_ML_END;
+//			break;
 		case PLSQLGuiLexer::COMMENT_SL:
 			type = Token::X_COMMENT;
 			break;
@@ -442,8 +442,10 @@ Lexer::token_const_iterator OracleGuiLexer::findEndToken( Lexer::token_const_ite
 			if( tokenContext == BlkCtx::NONE)
 				continue;
 
-			if( prevText == "%" && currText.toUpper() == "TYPE") // var. decl. referencing %TYPE
-				continue;                                        // this is not type body declaration
+			// "TYPE" is not reserved word - beside beeing an OBJECT(type) it can also be a column name or part pf the "%TYPE" declaration
+			static const QSet<QString> TYPE_HACK = QSet<QString>() << "=" << "." << "%" << "," << "SET";
+			if ( currText.toUpper() == "TYPE" && TYPE_HACK.contains(prevText))
+				continue;                                                       // this is not type body declaration
 
 
 			// Combine two enumerated values. The current Stack's top
