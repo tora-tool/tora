@@ -1192,6 +1192,8 @@ void toWorksheet::querySelection(execTypeEnum execType)
 	int lineFrom, indexFrom, lineTo, indexTo;
 	Editor->editor()->getSelection(&lineFrom, &indexFrom, &lineTo, &indexTo);
 
+	if(indexTo == 0)
+		lineTo = (std::max)(lineFrom, lineTo-1);
 	toSyntaxAnalyzer::statement stat(lineFrom, lineTo);
 	analyzer->sanitizeStatement(stat);
 	query(stat, execType, DontSelectQueryEnum);
