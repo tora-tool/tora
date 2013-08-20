@@ -1,3 +1,9 @@
+execute
+executed
+
+execute
+immediate
+
 setup
 settings
 set aaaa

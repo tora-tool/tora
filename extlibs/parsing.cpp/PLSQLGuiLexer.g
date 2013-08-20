@@ -175,6 +175,23 @@ EXIT
         }
 	;
 
+// Ambiguous word can be either PLSQL statement or SQLPLUS command
+EXECUTE
+	@init
+	{
+		ANTLR_UINT32 linePos = getCharPositionInLine(); // TODO check linePos == 0
+		ANTLR_UINT32 line = getLine();
+	}
+	: ('EXECUTE' (SPACE|NEWLINE)+ 'IMMEDIATE') => e='EXECUTE' { $type = PLSQL_RESERVED; }
+    | 'EXECUTE'
+       {
+            if( linePos == 0 )
+                $type = SQLPLUS_COMMAND_INTRODUCER;
+			else
+                $type = PLSQL_RESERVED;
+       }
+	;
+
 // All these should start a NEWLINE, tricky to implement
 fragment
 SQLPLUS_COMMAND_INTRODUCER
@@ -204,7 +221,7 @@ SQLPLUS_COMMAND_INTRODUCER
     |   'DESC' ('R'('I'('B'('E')?)?)?)?
     |   'DISCONNECT'
     |   'EDIT'
-    |   'EXEC' ('U'('T'('E')?)?)?
+    |   'EXEC' ('U'('T')?)?  // the whole word "EXECUTE" is handled elsewhere
     //|   'EXIT'     // See EXIT rule
     |   'GET'
     |   'HELP'
