@@ -83,6 +83,10 @@ int main(int argc, char **argv)
      */
     QApplication app(argc, argv);
 
+#pragma message WARN( "TODO/FIXME: hicolor theme is broken for Docklet icons. But we need to resolve X11 themes one day" )
+    if (QIcon::themeName() == "hicolor")
+        QIcon::setThemeName("oxygen");
+
     try
     {
         QString style(toConfigurationSingle::Instance().style());

@@ -90,7 +90,7 @@ toViewDirectory::toViewDirectory(QWidget *parent,
 
 QIcon toViewDirectory::icon() const
 {
-    return style()->standardIcon(QStyle::SP_ComputerIcon);
+    return style()->standardIcon(QStyle::SP_DirIcon);
 }
 
 
