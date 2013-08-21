@@ -197,6 +197,9 @@ int main(int argc, char **argv)
 		    qApp->processEvents();
             }
 
+            label->setText(qApp->translate("main", "Examinating Oracle clients..."));
+            qApp->processEvents();
+
             // Loop over all providers found and try to load desired Oracle client
             // 1st try to load requested Oracle client(if set) then load thick(TNS) Oracle client
             QDir oHome = toConfigurationSingle::Instance().oracleHome();
