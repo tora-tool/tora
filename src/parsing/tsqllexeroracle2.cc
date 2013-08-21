@@ -389,7 +389,7 @@ Lexer::token_const_iterator OracleGuiLexer::findEndToken( Lexer::token_const_ite
 			throw Exception(); // Assertion error. 1st Token must have block context
 		stack << tokenContext;     // Push the 1st value onto stack
 		
-		QString prevText, currText;
+		QString prevText, currText = i->getText();
 		while(!exitLoop)
 		{
 			i++;
@@ -442,11 +442,16 @@ Lexer::token_const_iterator OracleGuiLexer::findEndToken( Lexer::token_const_ite
 			if( tokenContext == BlkCtx::NONE)
 				continue;
 
-			// "TYPE" is not reserved word - beside beeing an OBJECT(type) it can also be a column name or part pf the "%TYPE" declaration
-			static const QSet<QString> TYPE_HACK = QSet<QString>() << "=" << "." << "%" << "," << "SET";
-			if ( currText.toUpper() == "TYPE" && TYPE_HACK.contains(prevText))
+			// "TYPE" is not reserved word - beside being an OBJECT(type) it can also be a column name or part of the "%TYPE" declaration
+			// NOTE: TODO "CREATE" TYPE does not end with "END TYPE;" (but "CREATE TYPE BODY " does)
+			if ( currText.toUpper() == "TYPE" && stackContext != CREATE)
 				continue;                                                       // this is not type body declaration
 
+			if ( currText.toUpper() == "IF" && prevText == "END")                   // "END IF;" IF does not start a new block
+				continue;
+
+			if ( currText.toUpper() == "LOOP" && prevText == "END")                  // "END LOOP;" LOOP does not start a new block
+				continue;
 
 			// Combine two enumerated values. The current Stack's top
 			// and the current Token's context. The resulting value will be used in switch/case.

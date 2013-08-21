@@ -97,7 +97,7 @@ DML_COMMAND_INTRODUCER:
 PLSQL_COMMAND_INTRODUCER:
         (
         c='CALL'                        | // TODO hande call in the TRIGGER declaration
-        d='DECLARE'   { $d->setBlockContext(BlkCtx::CREATE);    $d->set_type(PLSQL_COMMAND_INTRODUCER); get_tokSource()->enqueueToken($d); } |
+        d='DECLARE'   { $d->setBlockContext(BlkCtx::DECLARE);   $d->set_type(PLSQL_COMMAND_INTRODUCER); get_tokSource()->enqueueToken($d); } |
         b='BEGIN'     { $b->setBlockContext(BlkCtx::BEGIN);     $b->set_type(PLSQL_COMMAND_INTRODUCER); get_tokSource()->enqueueToken($b); } |
         p='PROCEDURE' { $p->setBlockContext(BlkCtx::PROCEDURE); $p->set_type(PLSQL_COMMAND_INTRODUCER); get_tokSource()->enqueueToken($p); } |
         t='TYPE'      { $t->setBlockContext(BlkCtx::PROCEDURE); $t->set_type(PLSQL_COMMAND_INTRODUCER); get_tokSource()->enqueueToken($t); } |            
