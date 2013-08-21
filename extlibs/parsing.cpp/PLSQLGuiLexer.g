@@ -92,6 +92,7 @@ DML_COMMAND_INTRODUCER:
         'COMMIT'                        | // COMMIT COMMENT 'Transfer From 7715 to 7720' WRITE IMMEDIATE NOWAIT;
         'ROLLBACK'                      | // ROLLBACK TO my_savepoint;
         'SAVEPOINT'                     |
+        'LOCK'                          |
         'DELETE';
     
 PLSQL_COMMAND_INTRODUCER:
@@ -120,7 +121,6 @@ OTHER_COMMAND_INTRODUCER:
         'EXPLAIN'                       |        
         'FLASHBACK'                     |
         'GRANT'                         |
-        'LOCK'                          |
         'NOAUDIT'                       |
         'RENAME'                        |
         'REVOKE'                        |
@@ -192,6 +192,23 @@ EXECUTE
        }
 	;
 
+// Ambiguous word can be either SQL keyword or SQLPLUS command
+CONNECT
+	@init
+	{
+		ANTLR_UINT32 linePos = getCharPositionInLine(); // TODO check linePos == 0
+		ANTLR_UINT32 line = getLine();
+	}
+	: ('CONNECT' (SPACE|NEWLINE)+ 'BY') => e='CONNECT' { $type = PLSQL_RESERVED; }
+    | 'CONNECT'
+       {
+            if( linePos == 0 )
+                $type = SQLPLUS_COMMAND_INTRODUCER;
+			else
+                $type = PLSQL_RESERVED;
+       }
+	;
+
 // All these should start a NEWLINE, tricky to implement
 fragment
 SQLPLUS_COMMAND_INTRODUCER
@@ -214,15 +231,15 @@ SQLPLUS_COMMAND_INTRODUCER
     |   'CLEAR'
     |   'COLUMN'
     |   'COMPUTE'
-    |   'CONN' ('E'('C'('T')?)?)?
+    |   'CONN' ('E'('C')?)?                 // the whole word "CONNECT" is handled elsewhere
     |   'COPY'
     |   'DEF'  ('I'('N'('E')?)?)?
     |   'DEL'
     |   'DESC' ('R'('I'('B'('E')?)?)?)?
     |   'DISCONNECT'
     |   'EDIT'
-    |   'EXEC' ('U'('T')?)?  // the whole word "EXECUTE" is handled elsewhere
-    //|   'EXIT'     // See EXIT rule
+    |   'EXEC' ('U'('T')?)?                       // the whole word "EXECUTE" is handled elsewhere
+    //|   'EXIT'                                  // See EXIT rule
     |   'GET'
     |   'HELP'
     |   'HOST'

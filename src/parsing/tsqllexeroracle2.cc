@@ -447,10 +447,13 @@ Lexer::token_const_iterator OracleGuiLexer::findEndToken( Lexer::token_const_ite
 			if ( currText.toUpper() == "TYPE" && stackContext != CREATE)
 				continue;                                                       // this is not type body declaration
 
-			if ( currText.toUpper() == "IF" && prevText == "END")                   // "END IF;" IF does not start a new block
+			if ( currText.toUpper() == "IF" && prevText.toUpper() == "END")                   // "END IF;" IF does not start a new block
 				continue;
 
-			if ( currText.toUpper() == "LOOP" && prevText == "END")                  // "END LOOP;" LOOP does not start a new block
+			if ( currText.toUpper() == "LOOP" && prevText.toUpper() == "END")                  // "END LOOP;" LOOP does not start a new block
+				continue;
+
+			if ( currText.toUpper() == "CASE" && prevText.toUpper() == "END")                  // "END CASE;" CASE does not start a new block
 				continue;
 
 			// Combine two enumerated values. The current Stack's top
@@ -540,7 +543,7 @@ Lexer::token_const_iterator OracleGuiLexer::findEndToken( Lexer::token_const_ite
 				if( stack.isEmpty() )
 					exitLoop = true;
 				// TODO find SEMICOLON (or label_name/package_name SEMICOLON)
-				i = i.consumeUntil(PLSQLGuiLexer::SEMICOLON);
+				// i = i.consumeUntil(PLSQLGuiLexer::SEMICOLON);
 				continue;
 			}
 			case M<LOOP,      END >::value :
@@ -549,7 +552,7 @@ Lexer::token_const_iterator OracleGuiLexer::findEndToken( Lexer::token_const_ite
 				if( stack.isEmpty() )
 					exitLoop = true;
 				// TODO find LOOP/CASE/IF SEMICOLON
-				i = i.consumeUntil(PLSQLGuiLexer::SEMICOLON);
+				// i = i.consumeUntil(PLSQLGuiLexer::SEMICOLON);
 				continue;
 			}
 
