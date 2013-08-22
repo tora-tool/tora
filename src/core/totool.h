@@ -107,6 +107,7 @@ class toTool : public QObject
     Q_OBJECT;
     friend class toWorkSpace;
     friend class toToolsRegistry;
+    friend class toToolWidget;
 public:
     /**
      * Get the name.

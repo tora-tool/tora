@@ -72,7 +72,12 @@ public:
 
 	void addToolWidget(toToolWidget*);
 
-	QList<toToolWidget*> toolWindowList();
+	QList<toToolWidget*> toolWindowList() const;
+
+	toToolWidget* currentTool() const;
+
+	void setCurrentTool(toToolWidget*);
+
 signals:
 	void activeToolChaged(toToolWidget*);
 private slots:

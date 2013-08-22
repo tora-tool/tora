@@ -202,7 +202,8 @@ void toWorkSpace::slotToolCaptionChanged(QWidget *w)
 	//m_tabBar->setTabIcon(index, tool->windowIcon());
 }
 
-QList<toToolWidget*> toWorkSpace::toolWindowList() {
+QList<toToolWidget*> toWorkSpace::toolWindowList() const
+{
 	QList<toToolWidget*> retval;
 	for(int idx = 0; idx < m_tabBar->count(); idx++)
 	{
@@ -211,4 +212,43 @@ QList<toToolWidget*> toWorkSpace::toolWindowList() {
 			retval << w;
 	}
 	return retval;
+}
+
+toToolWidget* toWorkSpace::currentTool() const
+{
+	int idx = m_tabBar->currentIndex();
+	if (idx == -1)
+		return NULL;
+	toToolWidget *w = dynamic_cast<toToolWidget*>(m_tabBar->tabData(idx).value<QWidget*>());
+	return w;
+}
+
+void toWorkSpace::setCurrentTool(toToolWidget* tool)
+{
+	Q_ASSERT_X(tool != NULL, qPrintable(__QHERE__), "Tool widget == NULL");
+	int idx = -1;
+	for(int i = 0; i < m_tabBar->count(); i++)
+	{
+		toToolWidget *w = dynamic_cast<toToolWidget*>(m_tabBar->tabData(i).value<QWidget*>());
+		if(tool == w)
+		{
+			idx = i;
+		}
+	}
+	if (idx == -1)
+		return;
+
+	ToolIndex i = m_toolsRegistry.value(tool);
+	if(i.TabBarIndex != idx) // Some tool was closed and numerical indexes were shifted
+	{
+		i.TabBarIndex = idx;
+		i.WidgetIndex = m_stackedWidget->indexOf(tool);
+		m_toolsRegistry.insert(tool, i);
+	}
+
+	m_lastWidget = tool;
+	int WidgetIndex = m_toolsRegistry.value(tool).WidgetIndex;
+	m_stackedWidget->setCurrentWidget(m_lastWidget);
+	m_tabBar->setCurrentIndex(idx);
+	emit activeToolChaged(tool);  // => toTool::slotWindowActivated
 }

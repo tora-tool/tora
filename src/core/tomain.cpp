@@ -135,10 +135,6 @@ toMain::toMain()
     }
 
     connect(&Poll, SIGNAL(timeout()), this, SLOT(checkCaching()));
-    // connect(toMainWidget()->workspace(),
-    //         SIGNAL(subWindowActivated(QMdiSubWindow *)),
-    //         this,
-    //         SLOT(windowActivated(QMdiSubWindow *)));
 
     // Connect this "main" window to global events dispatcher
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_addRecentFile(QString const&)),
@@ -626,35 +622,19 @@ void toMain::updateWindowsMenu(void)
     //windowsMenu->addSeparator();
 
     QList<toToolWidget*> tools = toWorkSpaceSingle::Instance().toolWindowList();
-     int index = 0;
-     Q_FOREACH(toToolWidget *tool, tools)
-     {
-    	 QAction *action = tool->activationAction();
-    	 windowsMenu->addAction(action);
-    	 action->setCheckable(true);
-     }
-
-   // QList<QMdiSubWindow *> list = workspace()->subWindowList();
-
-   // for (QList<QMdiSubWindow *>::iterator it = list.begin(); it != list.end(); it++, index++)
-   // {
-   //     if (!(*it)->isHidden())
-   //     {
-   //         QString caption = (*it)->windowTitle().trimmed();
-
-   //         if (index < 9)
-   //             caption = "&" + QString::number(index + 1) + "  " + caption;
-
-   //         QAction *action = new QAction(caption, (*it));
-   //         if (index < 9)
-   //             action->setShortcut(Qt::CTRL + Qt::Key_1 + index);
-
-   //         windowsMenu->addAction(action);
-   //         action->setCheckable(true);
-   //         if ((*it) == LastActiveWindow)
-   //             action->setChecked(true);
-   //     }
-   // }
+    toToolWidget *currentTool = toWorkSpaceSingle::Instance().currentTool();
+    int index = 0;
+    Q_FOREACH(toToolWidget *tool, tools)
+    {
+    	QAction *action = tool->activationAction();
+    	windowsMenu->addAction(action);
+    	action->setChecked(tool == currentTool);
+    	//         if (index < 9)
+    	//             caption = "&" + QString::number(index + 1) + "  " + caption;
+    	//         QAction *action = new QAction(caption, (*it));
+    	//         if (index < 9)
+    	//             action->setShortcut(Qt::CTRL + Qt::Key_1 + index);
+    }
 }
 
 
@@ -672,22 +652,13 @@ void toMain::windowCallback(QAction *action)
 //        //             !workspace()->subWindowList().at(0)->close())
 //        //         return;
     }  else if (action == windowCloseAct) {
-//        QWidget *widget = LastActiveWindow;
+    	toToolWidget *currentTool = toWorkSpaceSingle::Instance().currentTool();
 //        if (widget)
 //            widget->close();
     } else {
-        QList<toToolWidget*> tools = toWorkSpaceSingle::Instance().toolWindowList();
-       //QMdiSubWindow *w = dynamic_cast<QMdiSubWindow *>(action->parentWidget());
-       //if(w)
-       {
-           // workspace()->setActiveSubWindow(w);
-           // w->raise();
-           // if(w->widget())
-           //     w->widget()->setFocus();
-           // // piece of shit mdi doesn't always send window activated
-           // // signal
-           // windowActivated(w);
-       }
+    	toToolWidget *requestedTool = dynamic_cast<toToolWidget*>(action->parent());
+    	Q_ASSERT_X(requestedTool, qPrintable(__QHERE__), "QAction - invalid parent");
+    	toWorkSpaceSingle::Instance().setCurrentTool(requestedTool);
     }
 }
 
