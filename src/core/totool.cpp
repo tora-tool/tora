@@ -57,6 +57,7 @@
 #include <QtGui/QToolBar>
 #include <QtGui/QMenu>
 #include <QtGui/QBoxLayout>
+#include <QtGui/QAction>
 
 // A little magic to get lrefresh to work and get a check on qApp
 #undef QT_TRANSLATE_NOOP
@@ -111,7 +112,8 @@ toToolWidget::toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, to
     : QWidget(parent),
       toHelpContext(ctx),
       toConnectionWidget(conn, this),
-      Tool(tool)
+      Tool(tool),
+      Action(NULL)
 {
     if (name)
     {
@@ -195,6 +197,15 @@ toTimer *toToolWidget::timer(void)
     return Timer;
 }
 
+QAction *toToolWidget::activationAction()
+{
+	if (Action == NULL)
+	{
+		Action = new QAction(windowIcon(), windowTitle(), this);
+	}
+	return Action;
+}
+
 #ifdef TORA3_SESSION
 void toToolWidget::exportData(std::map<QString, QString> &data, const QString &prefix)
 {
@@ -259,6 +270,7 @@ void toToolWidget::setCaption(QString const& caption)
     if(this->windowTitle() != title)
     {
     	this->setWindowTitle(title);
+    	activationAction()->setText(title);
     	emit toolCaptionChanged();
     }
 }

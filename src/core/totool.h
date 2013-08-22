@@ -53,6 +53,7 @@ class QPixmap;
 class QAction;
 class QFocusEvent;
 class QPaintEvent;
+class QAction;
 
 class toConnection;
 class toTimer;
@@ -376,6 +377,8 @@ public:
      */
     toTimer *timer(void);
 
+    QAction *activationAction();
+
 #ifdef TORA3_GRAPH
     /** Export data to a map.
      * @param data A map that can be used to recreate the data of a chart.
@@ -413,6 +416,7 @@ private slots:
 private:
     toTimer *Timer;
     toTool &Tool;
+    QAction *Action;
 };
 
 /*

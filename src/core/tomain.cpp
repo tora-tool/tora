@@ -625,14 +625,14 @@ void toMain::updateWindowsMenu(void)
     //windowsMenu->addSeparator();
     //windowsMenu->addSeparator();
 
-    //QList<toToolWidget*> tools = toWorkSpaceSingle::Instance().toolWindowList();
-    // int index = 0;
-    // Q_FOREACH(toToolWidget *tool, tools)
-    // {
-    //	 QAction *action = new QAction(tool->windowTitle(), tool);
-    //	 windowsMenu->addAction(action);
-    //	 action->setCheckable(true);
-    // }
+    QList<toToolWidget*> tools = toWorkSpaceSingle::Instance().toolWindowList();
+     int index = 0;
+     Q_FOREACH(toToolWidget *tool, tools)
+     {
+    	 QAction *action = tool->activationAction();
+    	 windowsMenu->addAction(action);
+    	 action->setCheckable(true);
+     }
 
    // QList<QMdiSubWindow *> list = workspace()->subWindowList();
 
@@ -676,6 +676,7 @@ void toMain::windowCallback(QAction *action)
 //        if (widget)
 //            widget->close();
     } else {
+        QList<toToolWidget*> tools = toWorkSpaceSingle::Instance().toolWindowList();
        //QMdiSubWindow *w = dynamic_cast<QMdiSubWindow *>(action->parentWidget());
        //if(w)
        {
