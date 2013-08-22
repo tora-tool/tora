@@ -612,16 +612,14 @@ void toMain::updateWindowsMenu(void)
     // i'm lazy and this beats the hell out of tracking all the
     // windowsMenu actions and adding/removing each.
     windowsMenu->clear();
-    //QList<QString> list = toWorkSpaceSingle::Instance().toolWindowList();
-    //windowCloseAct->setDisabled(list.empty());
-    //windowCloseAllAct->setDisabled(list.empty());
-
-    //windowsMenu->addAction(windowCloseAct);
-    //windowsMenu->addAction(windowCloseAllAct);
-    //windowsMenu->addSeparator();
-    //windowsMenu->addSeparator();
-
     QList<toToolWidget*> tools = toWorkSpaceSingle::Instance().toolWindowList();
+    windowCloseAct->setDisabled(tools.empty());
+    windowCloseAllAct->setDisabled(tools.empty());
+
+    windowsMenu->addAction(windowCloseAct);
+    windowsMenu->addAction(windowCloseAllAct);
+    windowsMenu->addSeparator();
+
     toToolWidget *currentTool = toWorkSpaceSingle::Instance().currentTool();
     int index = 0;
     Q_FOREACH(toToolWidget *tool, tools)
@@ -629,11 +627,12 @@ void toMain::updateWindowsMenu(void)
     	QAction *action = tool->activationAction();
     	windowsMenu->addAction(action);
     	action->setChecked(tool == currentTool);
-    	//         if (index < 9)
-    	//             caption = "&" + QString::number(index + 1) + "  " + caption;
-    	//         QAction *action = new QAction(caption, (*it));
-    	//         if (index < 9)
-    	//             action->setShortcut(Qt::CTRL + Qt::Key_1 + index);
+    	if (index < 9)
+    	{
+    		action->setText( QString("&") + QString::number(index + 1) + QString(" ") + tool->windowTitle());
+    		//caption = "&" + QString::number(index + 1) + "  " + caption;
+    		action->setShortcut(Qt::CTRL + Qt::Key_1 + index++);
+    	}
     }
 }
 
@@ -646,15 +645,10 @@ void toMain::windowCallback(QAction *action)
 
     if (action == windowCloseAllAct)
     {
-//        // while (workspace()->subWindowList().count() > 0 &&
-//        //         workspace()->subWindowList().at(0))
-//        //     if (workspace()->subWindowList().at(0) &&
-//        //             !workspace()->subWindowList().at(0)->close())
-//        //         return;
+    	toWorkSpaceSingle::Instance().closeAllToolWidgets();
     }  else if (action == windowCloseAct) {
     	toToolWidget *currentTool = toWorkSpaceSingle::Instance().currentTool();
-//        if (widget)
-//            widget->close();
+    	toWorkSpaceSingle::Instance().closeToolWidget(currentTool);
     } else {
     	toToolWidget *requestedTool = dynamic_cast<toToolWidget*>(action->parent());
     	Q_ASSERT_X(requestedTool, qPrintable(__QHERE__), "QAction - invalid parent");

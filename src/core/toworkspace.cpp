@@ -233,6 +233,7 @@ void toWorkSpace::setCurrentTool(toToolWidget* tool)
 		if(tool == w)
 		{
 			idx = i;
+			break;
 		}
 	}
 	if (idx == -1)
@@ -251,4 +252,35 @@ void toWorkSpace::setCurrentTool(toToolWidget* tool)
 	m_stackedWidget->setCurrentWidget(m_lastWidget);
 	m_tabBar->setCurrentIndex(idx);
 	emit activeToolChaged(tool);  // => toTool::slotWindowActivated
+}
+
+void toWorkSpace::closeToolWidget(toToolWidget* tool)
+{
+	Q_ASSERT_X(tool != NULL, qPrintable(__QHERE__), "Tool widget == NULL");
+	int idx = -1;
+	for(int i = 0; i < m_tabBar->count(); i++)
+	{
+		toToolWidget *w = dynamic_cast<toToolWidget*>(m_tabBar->tabData(i).value<QWidget*>());
+		if(tool == w)
+		{
+			idx = i;
+			break;
+		}
+	}
+	if (idx == -1)
+		return;
+	ToolIndex i = m_toolsRegistry.value(tool);
+	m_tabBar->setCurrentIndex(idx); // show tab before showing Save dialog
+	if(tool->close())
+	{
+		m_stackedWidget->removeWidget(tool);
+		m_tabBar->removeTab(idx);
+		delete tool;
+		m_label->setText(QString("*%1").arg(idx));
+		m_lastWidget = NULL;
+	}
+}
+
+void toWorkSpace::closeAllToolWidgets()
+{
 }

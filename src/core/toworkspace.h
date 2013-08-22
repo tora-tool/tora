@@ -72,6 +72,10 @@ public:
 
 	void addToolWidget(toToolWidget*);
 
+	void closeToolWidget(toToolWidget*);
+
+	void closeAllToolWidgets();
+
 	QList<toToolWidget*> toolWindowList() const;
 
 	toToolWidget* currentTool() const;
@@ -85,6 +89,7 @@ private slots:
 	void slotTabMoved(int from, int to);
 	void slotTabCloseRequested(int);
 	void slotToolCaptionChanged(QWidget*);
+
 private:
 	QTabBar *m_tabBar;
 	QLabel *m_label; // TODO DEBUG ONLY
