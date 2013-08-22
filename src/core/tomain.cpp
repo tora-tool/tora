@@ -389,17 +389,11 @@ void toMain::createMenus()
 
     // windows menu handled separately by update function
     windowsMenu = menuBar()->addMenu(tr("&Window"));
-    updateWindowsMenu();
-//    connect(windowsMenu,
-//            SIGNAL(triggered(QAction *)),
-//            this,
-//            SLOT(windowCallback(QAction *)));
-//
-//    connect(windowsMenu, SIGNAL(aboutToShow()), this, SLOT(updateWindowsMenu()));
-//    connect(windowsMenu,
-//            SIGNAL(triggered(QAction *)),
-//            this,
-//            SLOT(commandCallback(QAction *)));
+    connect(windowsMenu, SIGNAL(aboutToShow()), this, SLOT(updateWindowsMenu()));
+    connect(windowsMenu,
+            SIGNAL(triggered(QAction *)),
+            this,
+            SLOT(windowCallback(QAction *)));
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
 
@@ -622,20 +616,24 @@ void toMain::updateWindowsMenu(void)
     // i'm lazy and this beats the hell out of tracking all the
     // windowsMenu actions and adding/removing each.
     windowsMenu->clear();
+    //QList<QString> list = toWorkSpaceSingle::Instance().toolWindowList();
+    //windowCloseAct->setDisabled(list.empty());
+    //windowCloseAllAct->setDisabled(list.empty());
 
-//    windowCloseAct->setEnabled(LastActiveWindow != 0);
-//    windowCloseAllAct->setEnabled(LastActiveWindow != 0);
-//    cascadeAct->setEnabled(LastActiveWindow != 0);
-//    tileAct->setEnabled(LastActiveWindow != 0);
-//
-//    windowsMenu->addAction(windowCloseAct);
-//    windowsMenu->addAction(windowCloseAllAct);
-//    windowsMenu->addSeparator();
-//    windowsMenu->addAction(cascadeAct);
-//    windowsMenu->addAction(tileAct);
-//    windowsMenu->addSeparator();
+    //windowsMenu->addAction(windowCloseAct);
+    //windowsMenu->addAction(windowCloseAllAct);
+    //windowsMenu->addSeparator();
+    //windowsMenu->addSeparator();
 
-   // int index = 0;
+    //QList<toToolWidget*> tools = toWorkSpaceSingle::Instance().toolWindowList();
+    // int index = 0;
+    // Q_FOREACH(toToolWidget *tool, tools)
+    // {
+    //	 QAction *action = new QAction(tool->windowTitle(), tool);
+    //	 windowsMenu->addAction(action);
+    //	 action->setCheckable(true);
+    // }
+
    // QList<QMdiSubWindow *> list = workspace()->subWindowList();
 
    // for (QList<QMdiSubWindow *>::iterator it = list.begin(); it != list.end(); it++, index++)
@@ -663,38 +661,33 @@ void toMain::updateWindowsMenu(void)
 void toMain::windowCallback(QAction *action)
 {
     // action's parent is the window widget. get parent and raise it.
+    if (action == NULL || action->parentWidget() == NULL)
+        return;
 
-//    if (action == NULL || action->parentWidget() == NULL)
-//        return;
-//
-//    if (action == windowCloseAllAct)
-//    {
+    if (action == windowCloseAllAct)
+    {
 //        // while (workspace()->subWindowList().count() > 0 &&
 //        //         workspace()->subWindowList().at(0))
 //        //     if (workspace()->subWindowList().at(0) &&
 //        //             !workspace()->subWindowList().at(0)->close())
 //        //         return;
-//    }
-//    else if (action == windowCloseAct)
-//    {
+    }  else if (action == windowCloseAct) {
 //        QWidget *widget = LastActiveWindow;
 //        if (widget)
 //            widget->close();
-//    }
-//    else
-//    {
-//       QMdiSubWindow *w = dynamic_cast<QMdiSubWindow *>(action->parentWidget());
-//       if(w)
-//       {
-//           // workspace()->setActiveSubWindow(w);
-//           // w->raise();
-//           // if(w->widget())
-//           //     w->widget()->setFocus();
-//           // // piece of shit mdi doesn't always send window activated
-//           // // signal
-//           // windowActivated(w);
-//       }
-//    }
+    } else {
+       //QMdiSubWindow *w = dynamic_cast<QMdiSubWindow *>(action->parentWidget());
+       //if(w)
+       {
+           // workspace()->setActiveSubWindow(w);
+           // w->raise();
+           // if(w->widget())
+           //     w->widget()->setFocus();
+           // // piece of shit mdi doesn't always send window activated
+           // // signal
+           // windowActivated(w);
+       }
+    }
 }
 
 

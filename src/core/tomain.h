@@ -150,16 +150,7 @@ signals:
     /** Invoked before a chart is destroyed.
      */
     void chartRemoved(toLineChart *chart);
-    /** Invoked when a connection is added.
-     * @param str Connection identifier.
-     */
 #endif
-
-    void addedToolWidget(toToolWidget *tool);
-    /** Invoked when a tool window is closed.
-     * @param tool Tool about to be removed.
-     */
-    void removedToolWidget(toToolWidget *tool);
 
     /**
      * emitted when widgets related to editing.

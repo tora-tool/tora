@@ -202,3 +202,13 @@ void toWorkSpace::slotToolCaptionChanged(QWidget *w)
 	//m_tabBar->setTabIcon(index, tool->windowIcon());
 }
 
+QList<toToolWidget*> toWorkSpace::toolWindowList() {
+	QList<toToolWidget*> retval;
+	for(int idx = 0; idx < m_tabBar->count(); idx++)
+	{
+		toToolWidget *w = dynamic_cast<toToolWidget*>(m_tabBar->tabData(idx).value<QWidget*>());
+		if(w)
+			retval << w;
+	}
+	return retval;
+}

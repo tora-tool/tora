@@ -65,13 +65,14 @@ class toWorkSpace : public QWidget
 		int TabBarIndex;
 		int WidgetIndex;
 	};
-	typedef QMap<toToolWidget*, ToolIndex> ToolsRegistry;
+	typedef QMap<toToolWidget*, ToolIndex> ToolWindowsRegistry;
 
 public:
 	toWorkSpace(QWidget *parent = NULL);
 
 	void addToolWidget(toToolWidget*);
 
+	QList<toToolWidget*> toolWindowList();
 signals:
 	void activeToolChaged(toToolWidget*);
 private slots:
@@ -84,7 +85,7 @@ private:
 	QLabel *m_label; // TODO DEBUG ONLY
 	QStackedWidget *m_stackedWidget;
 	QSignalMapper *m_signalMapper;
-	ToolsRegistry m_toolsRegistry;
+	ToolWindowsRegistry m_toolsRegistry;
 	toToolWidget *m_lastWidget;
 };
 

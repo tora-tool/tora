@@ -67,7 +67,7 @@ toViewDirectory::toViewDirectory(QWidget *parent,
             this,
             SLOT(handleActivated(const QModelIndex &)));
 
-    connect(toMainWindow::lookup(),
+    connect(&toGlobalEventSingle::Instance(),
             SIGNAL(addedToolWidget(toToolWidget *)),
             this,
             SLOT(handleToolAdded(toToolWidget *)));

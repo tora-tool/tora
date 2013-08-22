@@ -68,15 +68,15 @@ void toGlobalEvent::addCustomMenu(QMenu *menu)
 	emit s_addCustomMenu(menu);
 }
 
-//void toGlobalEvent::toolWidgetAdded(toToolWidget *tool)
-//{
-//	emit s_toolWidgetAdded(tool);
-//}
-//
-//void toGlobalEvent::toolWidgetRemoved(toToolWidget *tool)
-//{
-//	emit s_toolWidgetRemoved(tool);
-//}
+void toGlobalEvent::toolWidgetAdded(toToolWidget *tool)
+{
+	emit s_toolWidgetAdded(tool);
+}
+
+void toGlobalEvent::toolWidgetRemoved(toToolWidget *tool)
+{
+	emit s_toolWidgetRemoved(tool);
+}
 
 void toGlobalEvent::setCoordinates(int x, int y)
 {

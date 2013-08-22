@@ -89,12 +89,12 @@ public:
     /** Called by @ref toTool when a new tool is created.
      * @param tool The tool widget created.
      */
-    //void toolWidgetAdded(toToolWidget *tool);
+    void toolWidgetAdded(toToolWidget *tool);
 
     /** Called by @ref toToolWidget when a new tool is about to be destroyed.
      * @param tool The tool widget created.
      */
-    //void toolWidgetRemoved(toToolWidget *tool);
+    void toolWidgetRemoved(toToolWidget *tool);
 
     /**
      * Set coordinates in the statusbar.
@@ -137,8 +137,8 @@ signals:
     void s_editOpenFile(const QString &filename);
     void s_addRecentFile(const QString &filename);
     void s_addCustomMenu(QMenu *menu);
-//    void s_toolWidgetAdded(toToolWidget *tool);
-//    void s_toolWidgetRemoved(toToolWidget *tool);
+    void s_toolWidgetAdded(toToolWidget *tool);
+    void s_toolWidgetRemoved(toToolWidget *tool);
     void s_setCoordinates(int x, int y);
     void s_createDefaultTool(void);
     void s_showMessage(QString str, bool save, bool log);
