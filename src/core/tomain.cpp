@@ -1174,18 +1174,6 @@ void toMain::changeConnection(QString description)
 	toConnectionRegistrySing::Instance().changeConnection(description);
 }
 
-void toMain::showBusy()
-{
-    qApp->setOverrideCursor(Qt::WaitCursor);
-}
-
-
-void toMain::removeBusy()
-{
-    qApp->restoreOverrideCursor();
-}
-
-
 void toMain::editOpenFile(const QString &file)
 {
     toWorksheet *sheet = 0;

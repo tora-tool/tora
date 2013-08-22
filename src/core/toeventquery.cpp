@@ -228,6 +228,7 @@ void toEventQuery::stop(void)
 
 	if(Thread && Thread->isRunning())
 	{
+		Utils::toBusy busy;
 		TLOG(7, toDecorator, __HERE__) << "toEventQuery stop Thread is running" << std::endl;
 		CancelCondition->Mutex.lock();
 		emit stopRequested();

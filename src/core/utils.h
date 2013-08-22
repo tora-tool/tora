@@ -44,12 +44,13 @@
 
 #include "core/tora_export.h"
 
+#include <QtCore/QAtomicInt>
 #include <QtCore/QString>
 #include <QtCore/QThread>
-#include <QtGui/QMainWindow>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtGui/QMessageBox>
+#include <QtGui/QMainWindow>
 
 #ifdef Q_OS_WIN32
 #define NOMINMAX
@@ -283,18 +284,18 @@ QKeySequence toKeySequence(const QString &keysequence);
 
 /** Whenever this class is instantiated the window will display a busy cursor. You
 * can instantiate this function as many times as you want, only when all of them are
-* destructed the curser will revert back to normal.
+* destructed the cursor will revert back to normal.
 * If you want to control if busy cursor is actually shown for a particular case, you
 * can use a boolean parameter in constructor. For example debugger is setting this as
 * false in order for cursor NOT to be busy until program unit being debugged finishes.
 */
 class toBusy
 {
-private:
-    bool Busy;
 public:
-    toBusy(bool busy = true);
+    toBusy();
     ~toBusy();
+private:
+    static QAtomicInt m_busyCount;
 };
 
 /** Display a message in the statusbar of the main window.

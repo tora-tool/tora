@@ -201,22 +201,6 @@ protected slots:
 
     void changeConnection(QString description);
 
-    /**
-     * Show a busy cursor or other indicators. Must be called from the
-     * main thread.
-     *
-     * class toBusy calls this method.
-     */
-    void showBusy(void);
-
-    /**
-     * Remove busy cursor or other indicators. Must be called from the
-     * main thread.
-     *
-     * class toBusy calls this method.
-     */
-    void removeBusy(void);
-
     /** Open a file in sql worksheet */
     void editOpenFile(const QString &file);
 

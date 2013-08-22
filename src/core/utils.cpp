@@ -794,22 +794,19 @@ QKeySequence toKeySequence(const QString &key)
     return ret;
 }
 
-toBusy::toBusy(bool busy)
+toBusy::toBusy()
 {
-    Busy = busy;
-    if (busy)
-        QMetaObject::invokeMethod(toMainWindow::lookup(),
-                                  "showBusy",
-                                  Qt::QueuedConnection);
+	if (m_busyCount.fetchAndAddAcquire(1) == 0)
+		qApp->setOverrideCursor(Qt::WaitCursor);
 }
 
 toBusy::~toBusy()
 {
-    if (Busy)
-        QMetaObject::invokeMethod(toMainWindow::lookup(),
-                                  "removeBusy",
-                                  Qt::QueuedConnection);
+	if (m_busyCount.deref() == false)
+		qApp->restoreOverrideCursor();
 }
+
+QAtomicInt toBusy::m_busyCount(0);
 
 QToolBar *toAllocBar(QWidget *parent, const QString &str)
 {
