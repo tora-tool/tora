@@ -267,14 +267,6 @@ bool toConnection::closeWidgets(void)
 
         // make double sure destroy flag is set
         (*i)->setAttribute(Qt::WA_DeleteOnClose);
-
-//        // black magic to close widget's MDI subwindow too
-//        if ((*i)->parent()
-//                && (*i)->parent()->metaObject()->className() == QMdiSubWindow::staticMetaObject.className())
-//        {
-//            qobject_cast<QMdiSubWindow*>((*i)->parent())->close();
-//        }
-
         if (!(*i)->close())
         {
             // close will fail if parent already closed.
@@ -317,20 +309,19 @@ QString toConnection::description(bool version) const
     return ret;
 }
 
-void toConnection::addInit(const QString &sql)
+void toConnection::setInit(const QString &key, const QString &sql)
 {
-    delInit(sql);
-    InitStrings.insert(InitStrings.end(), sql);
+    InitStrings.insert(key, sql);
 }
 
-void toConnection::delInit(const QString &sql)
+void toConnection::delInit(const QString &key)
 {
-    InitStrings.removeAll(sql);
+    InitStrings.remove(key);
 }
 
 QList<QString> const& toConnection::initStrings() const
 {
-    return InitStrings;
+    return InitStrings.values();
 }
 
 toConnection& toConnection::currentConnection(QObject *cur)
@@ -375,15 +366,10 @@ void toConnection::putBackSub(toConnectionSub *conn)
 
 void toConnection::allExecute(toSQL const& sql)
 {
-
+    throw exception("Not implemented yet: void toConnection::allExecute(QString const& sql)");
 }
 
 void toConnection::allExecute(QString const& sql)
 {
     throw exception("Not implemented yet: void toConnection::allExecute(QString const& sql)");
-}
-
-void toConnection::allExecute(QString const& sql, toQueryParams const& params)
-{
-    throw exception("Not implemented yet: void toConnection::allExecute(QString const& sql, toQueryParams &params)");
 }

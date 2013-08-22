@@ -316,9 +316,9 @@ void toOutput::disable(bool dis)
             connection().allExecute(SQLEnable);
         QString str = toSQL::string(SQLEnable, connection());
         if (dis)
-            connection().delInit(str);
+            connection().delInit("OUTPUT");
         else
-            connection().addInit(str);
+            connection().setInit("OUTPUT", str);
     }
     catch (...)
     {

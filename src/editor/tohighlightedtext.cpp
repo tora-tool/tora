@@ -198,6 +198,7 @@ toHighlightedText::~toHighlightedText()
 {
 	m_parserThread->quit();
 	m_parserThread->wait();
+	delete m_parserThread;
     if (complAPI)
         //delete complAPI;
     if (popup)

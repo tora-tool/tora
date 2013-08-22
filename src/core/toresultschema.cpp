@@ -126,24 +126,17 @@ void toResultSchema::update(const QString &schema)
         {
             if (conn.providerIs("Oracle"))
             {
-                /* remove current schema initstring */
-                conn.delInit(CHANGE_CURRENT_SCHEMA.arg(conn.user()));
-
                 /* set the new one with selected schema */
-                QString sql = CHANGE_CURRENT_SCHEMA.arg(schema);
-                conn.allExecute(sql);
-
-                conn.addInit(sql);
+                conn.setInit("SCHEMA", CHANGE_CURRENT_SCHEMA.arg(conn.user()));
             }
             else if (conn.providerIs("QMYSQL"))
             {
-                conn.allExecute(QString("USE `%1`").arg(schema));
-                //mysql conn.setDatabase(schema);
+                conn.setInit("SCHEMA", QString("USE `%1`").arg(schema));
             }
             else if (conn.providerIs("PostgreSQL"))
-                conn.allExecute(CHANGE_CURRENT_SCHEMA_PG.arg(schema));
+            	conn.setInit("SCHEMA", CHANGE_CURRENT_SCHEMA_PG.arg(schema));
             else if (conn.providerIs("Teradata"))
-                conn.allExecute(CHANGE_CURRENT_SCHEMA_TD.arg(schema));
+            	conn.setInit("SCHEMA", CHANGE_CURRENT_SCHEMA_TD.arg(schema));
             else
                 throw QString("No support for changing schema for this database");
 

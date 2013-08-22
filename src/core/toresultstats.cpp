@@ -102,8 +102,7 @@ toResultStats::toResultStats(bool onlyChanged
     try
     {
     	toConnectionSubLoan conn(connection());
-        toQueryParams params;
-        toQuery query(conn, SQLSession, params);
+        toQuery query(conn, SQLSession, toQueryParams());
         SessionID = query.readValue().toInt();
     }
     catch (...)

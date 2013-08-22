@@ -1592,6 +1592,7 @@ void toWorksheet::saveDefaults(void)
 }
 
 #define ENABLETIMED "ALTER SESSION SET TIMED_STATISTICS = TRUE"
+#define DISABLETIMED "ALTER SESSION SET TIMED_STATISTICS = FALSE"
 
 void toWorksheet::slotEnableStatistic(bool ena)
 {
@@ -1603,21 +1604,12 @@ void toWorksheet::slotEnableStatistic(bool ena)
         Statistics->clear();
         if (toConfigurationSingle::Instance().wsTimedStats())
         {
-            try
-            {
-                connection().allExecute(QString::fromLatin1(ENABLETIMED));
-                connection().addInit(QString::fromLatin1(ENABLETIMED));
-            }
-            TOCATCH;
+        	connection().setInit("STATISTICS", QString::fromLatin1(ENABLETIMED));
         }
     }
     else
     {
-        try
-        {
-            connection().delInit(QString::fromLatin1(ENABLETIMED));
-        }
-        catch (...) {}
+    	connection().setInit("STATISTICS", QString::fromLatin1(DISABLETIMED));
         Result->setStatistics(NULL);
         ResultTab->setTabEnabled(ResultTab->indexOf(StatTab), false);
         statisticAct->setChecked(false);

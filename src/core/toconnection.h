@@ -50,6 +50,7 @@
 #include <QtCore/QPointer>
 #include <QtGui/QWidget>
 #include <QtCore/QSet>
+#include <QtCore/QMap>
 #include <QtCore/QMetaType>
 #include <QtCore/QDateTime>
 #include <QtCore/QAtomicInt>
@@ -239,9 +240,7 @@ public:
      * @param params Parameters to pass to query.
      */
     void allExecute(QString const& sql);
-    void allExecute(QString const& sql, toQueryParams const& params);
     void allExecute(toSQL const& sql);
-    void allExecute(toSQL const& sql, toQueryParams const& params);
 
     /** Commit connection implementation */
     void commit(toConnectionSub *sub);
@@ -282,10 +281,10 @@ public:
      * Add a statement to be run uppon making new connections.
      * @param sql Statement to run.
      */
-    void addInit(const QString &sql);
+    void setInit(const QString &key, const QString &sql);
 
     /** Remove a statement that was added using @ref addInit. */
-    void delInit(const QString &sql);
+    void delInit(const QString &key);
 
     /** Try to stop all running queries. */
     void cancelAll(void);
@@ -368,7 +367,7 @@ private:
     QString Version;
     QString Color;
     QList<QPointer<QWidget> > Widgets;
-    QList<QString> InitStrings;
+    QMap<QString, QString> InitStrings; // Key, SQL
     QSet<QString> Options;
     QSet<toConnectionSub*> Connections;
     connectionImpl *pConnectionImpl;
