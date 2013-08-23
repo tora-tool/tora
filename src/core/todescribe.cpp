@@ -107,7 +107,7 @@ void toDescribe::changeParams(const QString & owner, const QString & object)
     	}
 
         QMessageBox::information(this, "Describe",
-                                 tr("Object %1.%2 (%3) cannot be described").arg(object, owner).arg(objectTypeStr));
+                                 tr("Object %1.%2 (%3) cannot be described").arg(owner, object).arg(objectTypeStr));
         return;
     }
 
