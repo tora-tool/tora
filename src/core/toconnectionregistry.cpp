@@ -45,6 +45,12 @@
 
 #include <QtGui/QAction>
 
+toConnectionRegistry::~toConnectionRegistry()
+{
+	Utils::toBusy::m_enabled = false;
+	int size = m_ConnectionsList.size();
+}
+
 bool toConnectionRegistry::isEmpty() const
 {
 	return m_ConnectionsList.empty();
@@ -57,7 +63,9 @@ void toConnectionRegistry::changeConnection(QAction *act)
 
 void toConnectionRegistry::changeConnection(QString description)
 {
-	if( m_ConnectionsMap.contains(description))
+	if (description.isEmpty()) // All connections were closed
+		m_currentConnectionDescription = description;
+	else if( m_ConnectionsMap.contains(description))
 		m_currentConnectionDescription = description;
 	else
 		throw QString("Unregistered connection(change): %1").arg(description);
@@ -96,13 +104,14 @@ void toConnectionRegistry::removeConnection(toConnection *conn)
 	if(descriptions.size() != 1 || !m_ConnectionsList.contains(conn))
 	{
 		conn->setParent(this);
-		delete conn;
 		throw QString("Unregistered connection: %1").arg(description);
 	}
+	delete conn;
 
 	int pos = m_ConnectionsList.indexOf(conn);
 	beginRemoveRows(QModelIndex(), pos, pos);
-	m_ConnectionsMap.remove(descriptions.at(0));
+	int mRemoved = m_ConnectionsMap.remove(descriptions.at(0));
+	//int lRemoved = 
 	m_ConnectionsList.removeAt(pos);
 	endRemoveRows();
 }

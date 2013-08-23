@@ -254,7 +254,7 @@ void toWorkSpace::setCurrentTool(toToolWidget* tool)
 	emit activeToolChaged(tool);  // => toTool::slotWindowActivated
 }
 
-void toWorkSpace::closeToolWidget(toToolWidget* tool)
+bool toWorkSpace::closeToolWidget(toToolWidget* tool)
 {
 	Q_ASSERT_X(tool != NULL, qPrintable(__QHERE__), "Tool widget == NULL");
 	int idx = -1;
@@ -267,8 +267,8 @@ void toWorkSpace::closeToolWidget(toToolWidget* tool)
 			break;
 		}
 	}
-	if (idx == -1)
-		return;
+	Q_ASSERT_X(idx != -1, qPrintable(__QHERE__), "Unknown Tool widget to close");
+
 	ToolIndex i = m_toolsRegistry.value(tool);
 	m_tabBar->setCurrentIndex(idx); // show tab before showing Save dialog
 	if(tool->close())
@@ -278,9 +278,19 @@ void toWorkSpace::closeToolWidget(toToolWidget* tool)
 		delete tool;
 		m_label->setText(QString("*%1").arg(idx));
 		m_lastWidget = NULL;
+		return true;
 	}
+	return false;
 }
 
 void toWorkSpace::closeAllToolWidgets()
 {
+	// 1st close the current tool window
+	toToolWidget *tool;
+	while ((tool = currentTool()) != NULL)
+	{
+		if (closeToolWidget(tool))
+			continue;
+		break;
+	}
 }

@@ -56,6 +56,7 @@ class TORA_EXPORT toConnectionRegistry : public QAbstractListModel
 	Q_OBJECT;
 public:
 	toConnectionRegistry() {};
+	~toConnectionRegistry();
 
 	bool isEmpty() const;
 

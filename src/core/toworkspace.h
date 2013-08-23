@@ -72,7 +72,7 @@ public:
 
 	void addToolWidget(toToolWidget*);
 
-	void closeToolWidget(toToolWidget*);
+	bool closeToolWidget(toToolWidget*);
 
 	void closeAllToolWidgets();
 

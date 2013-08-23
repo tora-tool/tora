@@ -1029,6 +1029,13 @@ void toMain::enableConnectionActions(bool enabled)
 
 void toMain::closeEvent(QCloseEvent *event)
 {
+	toWorkSpaceSingle::Instance().closeAllToolWidgets();
+	if ( toWorkSpaceSingle::Instance().currentTool() != NULL) // at least one tool window refused to be closed
+	 {
+	     event->ignore();        // stop widget refused
+	     return;
+	 }
+
     while (!Connections.isEmpty())
     {
         if (!delCurrentConnection())
@@ -1038,12 +1045,6 @@ void toMain::closeEvent(QCloseEvent *event)
         }
     }
 
-    // Workspace->closeAllSubWindows();
-    // if (Workspace->currentSubWindow() != 0)
-    // {
-    //     event->ignore();        // stop widget refused
-    //     return;
-    // }
 #ifdef TORA3_SESSION
     std::map<QString, QString> session;
     exportData(session, "TOra");

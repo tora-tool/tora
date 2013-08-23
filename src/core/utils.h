@@ -291,9 +291,12 @@ QKeySequence toKeySequence(const QString &keysequence);
 */
 class toBusy
 {
+	friend class toConnectionRegistry;
 public:
     toBusy();
     ~toBusy();
+protected:
+    static bool m_enabled; // disabled when main application window is already closed
 private:
     static QAtomicInt m_busyCount;
 };

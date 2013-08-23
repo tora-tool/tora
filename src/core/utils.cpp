@@ -796,7 +796,7 @@ QKeySequence toKeySequence(const QString &key)
 
 toBusy::toBusy()
 {
-	if (m_busyCount.fetchAndAddAcquire(1) == 0)
+	if (m_busyCount.fetchAndAddAcquire(1) == 0 && m_enabled)
 		qApp->setOverrideCursor(Qt::WaitCursor);
 }
 
@@ -806,6 +806,7 @@ toBusy::~toBusy()
 		qApp->restoreOverrideCursor();
 }
 
+bool toBusy::m_enabled(true);
 QAtomicInt toBusy::m_busyCount(0);
 
 QToolBar *toAllocBar(QWidget *parent, const QString &str)
