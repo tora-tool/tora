@@ -68,6 +68,7 @@
 class QComboBox;
 class toTimer;
 class toConnection;
+class toConnectionRegistry;
 
 //namespace Utils {
 //
@@ -291,7 +292,7 @@ QKeySequence toKeySequence(const QString &keysequence);
 */
 class toBusy
 {
-	friend class toConnectionRegistry;
+	friend class ::toConnectionRegistry;
 public:
     toBusy();
     ~toBusy();
