@@ -524,7 +524,7 @@ void toHighlightedText::tableAtCursor(toCache::ObjectRef &table, bool mark)
         {
         	//setSelection(tokens.line(), tokens.offset(), lastTokens.line(), lastTokens.offset());
         }
-
+        table.second = word;
     }
     catch (...)
     {
