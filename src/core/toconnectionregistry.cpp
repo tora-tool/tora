@@ -106,6 +106,10 @@ void toConnectionRegistry::removeConnection(toConnection *conn)
 		conn->setParent(this);
 		throw QString("Unregistered connection: %1").arg(description);
 	}
+	// TODO if TCP connection is lost this can hang "forever" - preventing application exit
+	// There must be some ugly way of doing this asynchronously in bg thread:
+	// conn->setParent(NULL); conn->setThread(<something>);
+	// emit something and then wait for threads response
 	delete conn;
 
 	int pos = m_ConnectionsList.indexOf(conn);
