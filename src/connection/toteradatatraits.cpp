@@ -58,18 +58,18 @@
 *   When processing data entered by user quoteLowercase should be false
 * @return String addressing table.
 */
-QString toTeradataTraits::quote(QString const &name, bool quoteLowercase) const
+QString toTeradataTraits::quote(QString const &name) const
 {
-    bool ok = true;
+    bool mustBeQuoted = false;
     // Identifiers starting with digit should be quoted
     if (name.at(0).isDigit())
-        ok = false;
+        mustBeQuoted = true;
     else
     {
         for (int i = 0; i < name.length(); i++)
         {
-            if ((name.at(i).toUpper() != name.at(i) && quoteLowercase) || !Utils::toIsIdent(name.at(i)))
-                ok = false;
+            if ((name.at(i).toUpper() != name.at(i)) || !Utils::toIsIdent(name.at(i)))
+                mustBeQuoted = true;
         }
     }
 
@@ -82,15 +82,13 @@ QString toTeradataTraits::quote(QString const &name, bool quoteLowercase) const
     //      ok = false;
     //  i++;
     //}
-    if (ok)
-    {
-        if (toConfigurationSingle::Instance().objectNamesUpper())
-            return name.toUpper();
-        else
-            return name.toLower();
-    }
+    if (mustBeQuoted)
+    	return QString::fromLatin1("\"") + name + QString::fromLatin1("\"");
+
+    if (toConfigurationSingle::Instance().objectNamesUpper())
+    	return name.toUpper();
     else
-        return QString::fromLatin1("\"") + name + QString::fromLatin1("\"");
+    	return name.toLower();
 }
 
 QString toTeradataTraits::unQuote(QString const &str) const

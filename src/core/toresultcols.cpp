@@ -543,6 +543,8 @@ void toResultCols::query(const QString &sql, toQueryParams const& param)
 	    }	    
 			    
         //TableName = conn.getTraits().quote(Owner) + "." + conn.getTraits().quote(Name);
+	    Owner = conn.getTraits().unQuote(Owner);
+	    Name = conn.getTraits().unQuote(Name);
 
         // TODO call is only if cache entry is not "described"
         Columns->refreshWithParams(toQueryParams() << Owner << Name);

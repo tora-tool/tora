@@ -51,7 +51,7 @@ public:
     * @param quoteLowercase Enclose in quotes when identifier has lowercase letters
     * @return String addressing table.
     */
-    virtual QString quote(const QString &name, const bool quoteLowercase = true) const = 0;
+    virtual QString quote(const QString &name) const = 0;
 
     /** Perform the opposite of @ref quote.
     * @param name The name to be un-quoted.

@@ -127,8 +127,32 @@ QString toMarkedText::wordAtPosition(int position) const
 
     long start_pos = SendScintilla(SCI_WORDSTARTPOSITION, position, true);
     long end_pos = SendScintilla(SCI_WORDENDPOSITION, position, true);
-    int word_len = end_pos - start_pos;
 
+	int style1 = SendScintilla(QsciScintilla::SCI_GETSTYLEAT, start_pos) & 0x1f;
+    int style2 = SendScintilla(QsciScintilla::SCI_GETSTYLEAT, end_pos) & 0x1f;
+
+    // QScintilla returned single word within quotes
+    if( style1 == QsciLexerSQL::DoubleQuotedString || style1 == QsciLexerSQL::SingleQuotedString)
+    {
+    	start_pos = SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, start_pos);
+    	int style = SendScintilla(QsciScintilla::SCI_GETSTYLEAT, start_pos) & 0x1f;
+    	while( style == style1)
+    	{
+    		start_pos = SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, start_pos);
+        	style = SendScintilla(QsciScintilla::SCI_GETSTYLEAT, start_pos) & 0x1f;
+    	}
+    	start_pos = SendScintilla(QsciScintilla::SCI_POSITIONAFTER, start_pos);
+
+    	end_pos = SendScintilla(QsciScintilla::SCI_POSITIONAFTER, end_pos);
+    	style = SendScintilla(QsciScintilla::SCI_GETSTYLEAT, end_pos) & 0x1f;
+    	while( style == style1)
+    	{
+    		end_pos = SendScintilla(QsciScintilla::SCI_POSITIONAFTER, end_pos);
+        	style = SendScintilla(QsciScintilla::SCI_GETSTYLEAT, end_pos) & 0x1f;
+    	}
+    }
+
+    int word_len = end_pos - start_pos;
     if (word_len <= 0)
         return QString();
 

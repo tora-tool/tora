@@ -40,7 +40,7 @@
 
 #include "connection/toqmysqltraits.h"
 
-QString toQMySqlTraits::quote(const QString &name, const bool quoteLowercase) const
+QString toQMySqlTraits::quote(const QString &name) const
 {
 	return name;
 }
