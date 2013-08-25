@@ -1536,7 +1536,7 @@ SqlStatement& SqlStatement::operator>> (SqlCursor &val)
 
 // Plus error handling functions
 OciException::OciException(tstring where, SqlStatement& stmt) :
-	_where(where), _mess(where)
+	_where(where), _mess(where), _parse_offset(0), _line(0), _column(0)
 {
 	ub4 size = sizeof(_parse_offset);
 	sword res2 = OCICALL(OCIAttrGet(stmt, OCI_HTYPE_STMT, &_parse_offset, &size, OCI_ATTR_PARSE_ERROR_OFFSET, stmt._errh));
@@ -1620,6 +1620,9 @@ OciException::OciException(tstring where, SqlStatement& stmt) :
 		*p++ = '^';
 		*p = '\0';
 
+		_line = line;
+		_column = column;
+
 		l = strlen(buffer);
 		//#ifdef __STDC_WANT_SECURE_LIB__
 		//		snprintf_s(buffer+l, sizeof(buffer)-l, _TRUNCATE, "\n\nlast SQL statement:\n%s\n", sql);
@@ -1628,7 +1631,6 @@ OciException::OciException(tstring where, SqlStatement& stmt) :
 		//#endif
 	}
 	_mess += '\n' + tstring(buffer);
-
 #ifdef DEBUG
 	dbg::stack s;
 	std::copy(s.begin(), s.end(), std::ostream_iterator<dbg::stack_frame>(_stack, "\n"));

@@ -296,13 +296,18 @@ public:
      */
     class exception : public QString
     {
-        int Offset;
+        int Offset, Line, Column;
     public:
         /** Create an empty exception */
-        inline exception() : QString(), Offset(-1) {}
+        inline exception() : QString(), Offset(-1), Line(-1), Column(-1) {}
 
         /** Create an exception with a string description. */
-        inline exception(const QString &str, int offset = -1) : QString(str), Offset(offset) {}
+        inline exception(const QString &str, int offset = -1, int line = -1, int column = -1)
+        	: QString(str)
+        	, Offset(offset)
+        	, Line(line)
+        	, Column(column)
+        {}
 
         /** Get the offset of the error of the current statement. */
         inline int offset(void) const
@@ -310,10 +315,14 @@ public:
             return Offset;
         }
 
-        /** Set the offset of the error of the error. */
-        inline void setOffset(int offset)
+        inline int line() const
         {
-            Offset = offset;
+            return Line;
+        }
+
+        inline int column() const
+        {
+            return Column;
         }
     };
 

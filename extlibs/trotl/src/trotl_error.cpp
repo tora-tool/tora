@@ -98,7 +98,7 @@ CriticalErrorList::CriticalErrorList()
 };
 
 OciException::OciException(tstring where, OCIEnv* envh) :
-	_where(where), _mess(where)
+	_where(where), _mess(where), _line(0), _column(0)
 {
 	OraText buffer[1024];
 
@@ -133,7 +133,7 @@ OciException::OciException(tstring where, OCIEnv* envh) :
 }
 
 OciException::OciException(tstring where, OCIError* errh) :
-	_where(where), _mess(where)
+	_where(where), _mess(where), _line(0), _column(0)
 {
 	char buffer[1024];
 	sb4 errorcode;
@@ -170,7 +170,7 @@ OciException::OciException(tstring where, OCIError* errh) :
 }
 
 OciException::OciException(tstring where, const char* msg) :
-	_where(where), _mess(where), _last_sql(""), _parse_offset(0)
+	_where(where), _mess(where), _last_sql(""), _parse_offset(0), _line(0), _column(0)
 {
 	_mess += '\n' + msg;
 
@@ -187,7 +187,9 @@ OciException::OciException(const OciException& other)
 	, _stack()
 	, _mess(other._mess)
 	, _last_sql(other._last_sql)
-	, _parse_offset() // _parse_offset(other._parse_offset)
+	, _parse_offset(other._parse_offset)
+	, _line(other._line)
+	, _column(other._column)
 {
 	//throw std::logic_error("OciException should not be copied");
 	//std::cerr << __TROTL_HERE__ << "OciException should not be copied" << std::endl;

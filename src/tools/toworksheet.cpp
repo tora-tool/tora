@@ -369,7 +369,6 @@ void toWorksheet::setup(bool autoLoad)
     RefreshSeconds = 60;
     connect(&RefreshTimer, SIGNAL(timeout()), this, SLOT(slotRefresh()));
 
-    LastLine = LastOffset = -1;
     LastID = 0;
 
     EditSplitter = new QSplitter(Qt::Vertical, this);
@@ -572,6 +571,7 @@ void toWorksheet::setup(bool autoLoad)
 
 toWorksheet::toWorksheet(QWidget *main, toConnection &connection, bool autoLoad)
     : toToolWidget(WorksheetTool, "worksheet.html", main, connection, "toWorksheet")
+	, CurrentTab(NULL)
 {
     createActions();
     setup(autoLoad);
@@ -1000,7 +1000,7 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
     	Editor->editor()->SendScintilla(QsciScintilla::SCI_SETSEL, statement.posFrom, statement.posTo);
 
     TLOG(0, toDecorator, __HERE__)
-            << "Current statements: [" << LastLine << ',' << LastOffset << ']' << std::endl
+            << "Current statement: " << std::endl
             << statement.sql.toStdString() << std::endl;
 
     if (statement.firstWord.trimmed().isEmpty())
@@ -1057,7 +1057,7 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
     	}
     	catch (const QString &exc)
     	{
-    		slotAddLog(statement.sql, exc, true);
+    		addLog(exc);
     	}
     } break;
     // This is in fact Batch Execution
@@ -1105,7 +1105,7 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
     	}
     	catch (const QString &exc)
     	{
-    		slotAddLog(statement.sql, exc, true);
+    		addLog(exc);
     		if (QMessageBox::question(this, tr("Direct Execute Error"),
     				exc + "\n\n" + tr("Stop execution ('No' to continue)?"),
     				QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
@@ -1168,11 +1168,11 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
     	}
     	catch (const toConnection::exception &exc)
     	{
-    		slotAddLog(statement.sql, exc, true);
+    		addLog(exc);
     	}
     	catch (const QString &exc)
     	{
-    		slotAddLog(statement.sql, exc, true);
+    		addLog(exc);
     	}
     	try
     	{
@@ -1263,86 +1263,22 @@ void toWorksheet::slotAddLog(const QString &sql,
                          const toConnection::exception &result,
                          bool error)
 {
-    QString now = QDateTime::currentDateTime().toString(Qt::SystemLocaleDate);
-    toResultViewItem *item = NULL;
-
-    LastID++;
-
-    int dur = Time.elapsed();
     m_FirstDataReceived = true;
 
-    if (Logging)
+    if (error && result.offset() >= 0 && toConfigurationSingle::Instance().wsMoveToErr())
     {
-        if (!toConfigurationSingle::Instance().wsLogMulti())
-        {
-            if (!toConfigurationSingle::Instance().wsLogAtEnd())
-                item = new toResultViewItem(Logging, NULL);
-            else
-                item = new toResultViewItem(Logging, LastLogItem);
-        }
-        else if (!toConfigurationSingle::Instance().wsLogAtEnd())
-            item = new toResultViewMLine(Logging, NULL);
-        else
-            item = new toResultViewMLine(Logging, LastLogItem);
-        item->setText(0, sql);
-
-        LastLogItem = item;
-        item->setText(1, result);
-        item->setText(2, now);
-        if (toConfigurationSingle::Instance().wsHistory())
-            item->setText(4, QString::number(LastID));
-        item->setText(5, QString::number(result.offset()));
-    }
-
-    if (result.offset() >= 0 && LastLine >= 0 && LastOffset >= 0 &&
-            toConfigurationSingle::Instance().wsMoveToErr())
-    {
-        QChar cmp = '\n';
-        int lastnl = 0;
-        int lines = 0;
-        for (int i = 0; i < result.offset() && i < sql.length(); i++)
-        {
-            if (sql.at(i) == cmp)
-            {
-                LastOffset = 0;
-                lastnl = i + 1;
-                lines++;
-            }
-        }
-        Editor->setCursorPosition(LastLine + lines, LastOffset + result.offset() - lastnl);
-        LastLine = LastOffset = -1;
-    }
-
-    QString buf = duration(dur);
-
-    if (Logging)
-    {
-        item->setText(3, buf);
-
-        toTreeWidgetItem *last = Logging->currentItem();
-        toResultViewItem *citem = NULL;
-        if (last)
-            citem = dynamic_cast<toResultViewItem *>(last);
-        if (!citem || citem->allText(0) != sql)
-        {
-            disconnect(Logging,
-                       SIGNAL(selectionChanged(toTreeWidgetItem *)),
-                       this,
-                       SLOT(slotExecuteLog()));
-            Logging->setSelected(item, true);
-            connect(Logging,
-                    SIGNAL(selectionChanged(toTreeWidgetItem *)),
-                    this,
-                    SLOT(slotExecuteLog()));
-            Logging->ensureItemVisible(item);
-        }
-    }
-
-    {
-        QString str = result;
-        str += "\n" + tr("(Duration %1)").arg(buf);
-        if (!error)
-            Utils::toStatusMessage(str, false, false);
+//        QChar cmp = '\n';
+//        int lastnl = 0;
+//        int lines = 0;
+//        for (int i = 0; i < result.offset() && i < sql.length(); i++)
+//        {
+//            if (sql.at(i) == cmp)
+//            {
+//                lastnl = i + 1;
+//                lines++;
+//            }
+//        }
+        Editor->setCursorPosition(m_lastQuery.lineFrom + result.line() - 1, result.column() - 1);
     }
 
     if (!error)
@@ -1350,24 +1286,25 @@ void toWorksheet::slotAddLog(const QString &sql,
         if(ResultTab)
             slotChangeResult(ResultTab->indexOf(CurrentTab));
 
-        // the sql string will be trimmed but case will be same as the
-        // original.  the code originally compared the result return, but
-        // that class doesn't know if a commit is needed either.
-
-        static QRegExp re(QString::fromLatin1("^SELECT"));
-        re.setCaseSensitivity(Qt::CaseInsensitive);
         try
         {
-            if (!sql.contains(re))
-            {
-                if (toConfigurationSingle::Instance().autoCommit())
-                    connection().commit();
-                else
-		    toGlobalEventSingle::Instance().setNeedCommit(connection());
-            }
+        	// TODO: DDL commit/rollback on non-Oracle DBs
+        	if (m_lastQuery.statementType == toSyntaxAnalyzer::DML)
+        	{
+        		if (toConfigurationSingle::Instance().autoCommit())
+        			connection().commit();
+        		else
+        			toGlobalEventSingle::Instance().setNeedCommit(connection());
+        	}
         }
         TOCATCH;
+
+    	QString str = result;
+    	str += "\n" + tr("(Duration ") + duration(Time.elapsed()) + ")";
+    	Utils::toStatusMessage(str, false, false);
     }
+
+    addLog(result);
 
     saveDefaults();
 }
@@ -1538,9 +1475,6 @@ void toWorksheet::slotParseAll()
 
 void toWorksheet::slotEraseLogButton()
 {
-    if (!Logging)
-        return;
-
     Logging->clear();
     LastLogItem = NULL;
     for (std::map<int, QWidget *>::iterator i = History.begin(); i != History.end(); i++)
@@ -1550,15 +1484,7 @@ void toWorksheet::slotEraseLogButton()
 
 void toWorksheet::slotQueryDone(void)
 {
-    if (!m_FirstDataReceived && !m_lastQuery.sql.isEmpty())
-        slotAddLog(m_lastQuery.sql, toConnection::exception(tr("Aborted")), false);
-    else
-        emit executed();
-    try
-    {
-        timer()->stop();
-    }
-    TOCATCH
+	timer()->stop();
     stopAct->setEnabled(false);
     Poll.stop();
     stopAct->setEnabled(false);
@@ -1906,7 +1832,6 @@ void toWorksheet::slotExecutePreviousLog(void)
 {
     Result->slotStop();
 
-    LastLine = LastOffset = -1;
     saveHistory();
 
     toTreeWidgetItem *item = Logging->currentItem();
@@ -1925,7 +1850,6 @@ void toWorksheet::slotExecuteLog(void)
 {
     Result->slotStop();
 
-    LastLine = LastOffset = -1;
     saveHistory();
 
     toTreeWidgetItem *ci = Logging->currentItem();
@@ -1959,7 +1883,6 @@ void toWorksheet::slotExecuteNextLog(void)
 {
     Result->slotStop();
 
-    LastLine = LastOffset = -1;
     saveHistory();
 
     toTreeWidgetItem *item = Logging->currentItem();
@@ -2150,6 +2073,42 @@ void toWorksheet::slotLockConnection(bool enabled)
 		this->LockedConnection = conn;
 	} else
 		this->LockedConnection.clear();
+}
+
+void toWorksheet::addLog(const QString &result)
+{
+	QString dur = duration(Time.elapsed());
+	QString now = QDateTime::currentDateTime().toString(Qt::SystemLocaleDate);
+	toResultViewItem *item = NULL;
+
+	if (!toConfigurationSingle::Instance().wsLogMulti())
+	{
+		if (!toConfigurationSingle::Instance().wsLogAtEnd())
+			item = new toResultViewItem(Logging, NULL);
+		else
+			item = new toResultViewItem(Logging, LastLogItem);
+	}
+	else if (!toConfigurationSingle::Instance().wsLogAtEnd())
+		item = new toResultViewMLine(Logging, NULL);
+	else
+		item = new toResultViewMLine(Logging, LastLogItem);
+
+	LastLogItem = item;
+	item->setText(0, m_lastQuery.sql);
+	item->setText(1, result);
+	item->setText(2, now);
+	item->setText(3, dur);
+	if (toConfigurationSingle::Instance().wsHistory())
+		item->setText(4, QString::number(LastID));
+
+	toResultViewItem *citem= dynamic_cast<toResultViewItem *>(Logging->currentItem());
+	if (!citem || citem->allText(0) != m_lastQuery.sql)
+	{
+		bool oldState = Logging->blockSignals(true);
+		Logging->setSelected(item, true);
+		Logging->ensureItemVisible(item);
+		Logging->blockSignals(oldState);
+	}
 }
 
 toWorksheetSetup::toWorksheetSetup(toTool *tool, QWidget* parent, const char* name)

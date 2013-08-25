@@ -125,9 +125,6 @@ protected:
     virtual void focusInEvent(QFocusEvent *e);
     virtual void focusOutEvent(QFocusEvent *e);
 
-signals:
-    void executed(void);
-
 public slots:
     bool slotClose();
     void slotConnectionChanged(void);
@@ -208,6 +205,8 @@ private:
     // Imitate something like "create or replace" syntax for MySQL
     void mySQLBeforeCreate(QString &chk);
 
+    void addLog(const QString &result);
+
     toWorksheetEditor *Editor;
     toTabWidget       *ResultTab;
     toResultTableView *Result;
@@ -248,9 +247,6 @@ private:
     QWidget *Current;
     std::map<int, QWidget *> History;
     int LastID;
-
-    int LastLine;
-    int LastOffset;
 
     QMenu *ToolMenu, *context;
 

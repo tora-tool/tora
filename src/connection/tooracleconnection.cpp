@@ -73,7 +73,7 @@ void ThrowException(const ::trotl::OciException &exc)
             << "--------------------------------------------------------------------------------"
             << std::endl;
 
-    toConnection::exception ret(QString::fromUtf8(exc.get_mesg()));
+    toConnection::exception ret(QString::fromUtf8(exc.get_mesg()), exc.parse_offset(), exc.line(), exc.column());
     throw ret;
 }
 

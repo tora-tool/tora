@@ -108,13 +108,27 @@ struct TROTL_EXPORT OciException : public std::exception
 		return criticalErrorList.find(get_code()) != criticalErrorList.end();
 	};
 
+	inline int parse_offset() const
+	{
+		return _parse_offset;
+	};
+
+	inline int line() const
+	{
+		return _line;
+	};
+
+	inline int column() const
+	{
+		return _column;
+	};
 private:
 	::std::vector<int> _sql_error_code;
 	tstring _where;
 	tostream _stack;
 	tstring _mess;
 	tstring _last_sql;
-	ub2 _parse_offset;
+	ub2 _parse_offset, _line, _column;
 	static CriticalErrorList criticalErrorList;
 };
 
