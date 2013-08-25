@@ -693,7 +693,7 @@ void toAnalyze::slotSelectPlan(void)
 {
     QModelIndex index = Plans->selectedIndex();
     if (index.isValid())
-        CurrentPlan->query("SAVED:" + index.data(Qt::EditRole).toString(), toQueryParams());
+        CurrentPlan->query("SAVED:" + index.data(Qt::EditRole).toString(), toQueryParams() << QString("SAVED") << index.data(Qt::EditRole).toString());
 }
 
 void toAnalyze::slotFillOwner(void)

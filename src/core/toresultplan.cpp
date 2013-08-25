@@ -288,8 +288,7 @@ void toResultPlan::query(const QString &sql, toQueryParams const& param)
 
     try
     {
-        if (!setSqlAndParams(sql, param))
-            return ;
+    	setSqlAndParams(sql, param);
 
         toConnection &conn = connection();
         if (conn.providerIs("QMYSQL") || conn.providerIs("QPSQL"))
@@ -349,22 +348,15 @@ void toResultPlan::query(const QString &sql, toQueryParams const& param)
         // Execute EXPLAIN PLAN FOR ...
         else
         {
-        	throw QString("toResultPlan::query EXPLAIN PLAN FOR ... not implemented yet.");
-
+        	//throw QString("toResultPlan::query EXPLAIN PLAN FOR ... not implemented yet.");
+        	{
+        		QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(connection()));
+        		this->LockedConnection = conn;
+        	}
             Explaining = true;
             Ident = QString::fromLatin1("TOra ") + QString::number(QDateTime::currentMSecsSinceEpoch()/1000 + rand());
             TopItem = new toResultViewItem(this, NULL, QString::fromLatin1("EXPLAIN PLAN:"));
             TopItem->setText(1, sql.left(50).trimmed());
-
-            //            std::list<toSQLParse::statement> ret = toSQLParse::parse(sql);
-            //            addStatements(ret);
-            //            QString sql = Utils::toShift(Statements);
-            //            if (sql.isEmpty())
-            //            {
-            //                return ;
-            //            }
-            //            if(sql.endsWith(';'))
-            //                sql.truncate(sql.length() - 1);
 
             QString planTable(toConfigurationSingle::Instance().planTable(conn.user()));
 
@@ -373,7 +365,7 @@ void toResultPlan::query(const QString &sql, toQueryParams const& param)
                               arg(planTable).
                               arg(Utils::toSQLStripSpecifier(sql));
 
-    		Query = new toEventQuery(this, conn, explain, toQueryParams(), toEventQuery::READ_ALL);
+    		Query = new toEventQuery(this, LockedConnection, explain, toQueryParams(), toEventQuery::READ_ALL);
             connectSlotsAndStart();
         }
     }
@@ -548,7 +540,7 @@ void toResultPlan::slotQueryDone()
         toConnection &conn(connection());
 
         Query = new toEventQuery(this
-        		                 , connection()
+        		                 , LockedConnection
         		                 , toSQL::string(SQLViewPlan, conn).
                                  // arg(toConfigurationSingle::Instance().planTable()).
                                  // Since EXPLAIN PLAN is always to conn.user() plan_table
@@ -574,6 +566,7 @@ void toResultPlan::slotQueryDone()
         //    //    toMainWidget()->setNeedCommit(connection());
         //}
         //oracleNext();
+		LockedConnection.clear();
     }
 } // queryDone
 
@@ -607,12 +600,10 @@ void toResultPlan::checkException(const QString &str)
                                                 tr("&Yes"), tr("&No"), QString::null, 0, 1);
                 if (ret == 0)
                 {
-                	Utils::toStatusMessage("Not implemented yet toResultPlan::checkException");
-                    //connection().execute(toSQL::string(toSQL::TOSQL_CREATEPLAN,
-                    //                                   connection()).arg(planTable));
-                    //QString t = sql();
-                    //setSQL(QString::null);
-                    //query(t, params());
+                	Utils::toBusy busy;
+                	toConnectionSubLoan conn(connection());
+                	toQuery planTable(conn, toSQL::string(toSQL::TOSQL_CREATEPLAN, connection()).arg(planTable), toQueryParams());
+                	planTable.eof();
                 }
             }
         }

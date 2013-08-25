@@ -818,7 +818,7 @@ void toWorksheet::slotChangeResult(int index)
     if (!m_lastQuery.sql.isEmpty())
     {
         if (CurrentTab == Plan)
-            Plan->query(m_lastQuery.sql, toQueryParams());
+            Plan->query(m_lastQuery.sql, toQueryParams() << QString("EXPLAIN"));
         else if (CurrentTab == ResourceSplitter)
             viewResources();
         else if (CurrentTab == Statistics && Result->running())
@@ -1045,9 +1045,8 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
     {
     case OnlyPlan: {
     	if (ResultTab->currentIndex() != ResultTab->indexOf(Plan))
-    		ResultTab->setCurrentIndex(ResultTab->indexOf(Plan)); //this calls Plan->query
-    	else
-    		Plan->query(statement.sql, toQueryParams());
+    		ResultTab->setCurrentIndex(ResultTab->indexOf(Plan));
+    	Plan->query(statement.sql, toQueryParams() << QString("EXPLAIN"));
     	slotUnhideResults();
     } break;
     case Parse: {

@@ -146,7 +146,7 @@ void toSGAStatement::changeTab(int index)
                     toQuery::readQuery(conn, toSQL::string(SQLcheckVSQL, conn).arg(Address), toQueryParams()).begin()->toInt() > 0
                 )
                 {
-                    Plan->query(QString::fromLatin1("SGA:") + Address, toQueryParams());
+                    Plan->query(QString::fromLatin1("SGA:") + Address, toQueryParams() << QString("SGA") << Address);
                 } else {
                     toQueryParams params;
                     toQList l = toQuery::readQuery(conn, SQLParsingSchema, toQueryParams() << Address);

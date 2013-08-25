@@ -126,12 +126,13 @@ void toOracleSetting::saveSetting()
 
 void toOracleSetting::createPlanTable()
 {
+	throw QString(__QHERE__ + "No implemeted yet");
+#ifdef TORA3_QUERY
     try
     {
-#ifdef TORA3_QUERY
-        toConnectionSubLoan connSub(toMainWindow::lookup()->currentConnection());
+        toConnectionSubLoan connSub(toConnection::currentConnection());
         connSub->execute(toSQL::string(SQLCreatePlanTable, conn).arg(ExplainPlan->text()));
-#endif
     }
     TOCATCH;
+#endif
 }

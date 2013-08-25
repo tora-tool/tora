@@ -59,3 +59,47 @@ static toSQL SQLListObjectInSchema("toConnection:ListObjectsInSchema",
                             , "List all the objects to cache for a connection"
 							, "0800"
 							, "Oracle");
+
+/*
+** 11g version, see $ORACLE_HOME/rdbms/admin/utlxplan.sql
+*/
+static toSQL SQLCreatePlanTable(toSQL::TOSQL_CREATEPLAN,
+                                "CREATE TABLE %1 (\n"
+                                "STATEMENT_ID        VARCHAR2(30),\n"
+                                "PLAN_ID             NUMBER,\n"
+                                "TIMESTAMP           DATE,\n"
+                                "REMARKS             VARCHAR2(4000),\n"
+                                "OPERATION           VARCHAR2(30),\n"
+                                "OPTIONS             VARCHAR2(255),\n"
+                                "OBJECT_NODE         VARCHAR2(128),\n"
+                                "OBJECT_OWNER        VARCHAR2(30),\n"
+                                "OBJECT_NAME         VARCHAR2(30),\n"
+                                "OBJECT_ALIAS        VARCHAR2(65),\n"
+                                "OBJECT_INSTANCE     NUMERIC,\n"
+                                "OBJECT_TYPE         VARCHAR2(30),\n"
+                                "OPTIMIZER           VARCHAR2(255),\n"
+                                "SEARCH_COLUMNS      NUMBER,\n"
+                                "ID                  NUMERIC,\n"
+                                "PARENT_ID           NUMERIC,\n"
+                                "DEPTH               NUMERIC,\n"
+                                "POSITION            NUMERIC,\n"
+                                "COST                NUMERIC,\n"
+                                "CARDINALITY         NUMERIC,\n"
+                                "BYTES               NUMERIC,\n"
+                                "OTHER_TAG           VARCHAR2(255),\n"
+                                "PARTITION_START     VARCHAR2(255),\n"
+                                "PARTITION_STOP      VARCHAR2(255),\n"
+                                "PARTITION_ID        NUMERIC,\n"
+                                "OTHER               LONG,\n"
+                                "DISTRIBUTION        VARCHAR2(30),\n"
+                                "CPU_COST            NUMERIC,\n"
+                                "IO_COST             NUMERIC,\n"
+                                "TEMP_SPACE          NUMERIC,\n"
+                                "ACCESS_PREDICATES   VARCHAR2(4000),\n"
+                                "FILTER_PREDICATES   VARCHAR2(4000),\n"
+                                "PROJECTION          VARCHAR2(4000),\n"
+                                "TIME                NUMERIC,\n"
+                                "QBLOCK_NAME         VARCHAR2(30),\n"
+                                "OTHER_XML           CLOB\n"
+                                ")",
+                                "Create plan table, must have same % signs");

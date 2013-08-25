@@ -90,6 +90,9 @@ private:
     QPointer<toEventQuery> Query;
     QString Schema;
     toResultCombo *CursorChildSel; //Used for Oracle for V$SQL_PLAN to choose plans among cursor children
+
+    QSharedPointer<toConnectionSubLoan> LockedConnection;
+
     void checkException(const QString &);
     void oracleSetup(void);
 
