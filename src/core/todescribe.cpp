@@ -87,12 +87,14 @@ void toDescribe::changeParams(const QString & owner, const QString & object)
         cacheEntry = toConnection::currentConnection(this).getCache().findEntry(toCache::ObjectRef(owner, object));
         if( cacheEntry)
             objectType = cacheEntry->type;
-
-        if ( !cacheEntry) // only check if object was not found in already cached list
-        {
-            // If object was not found in cache, then try updating the cache
-            //conn addedNewObject = toConnection::currentConnection(this).rereadObject(owner, object);
-        }
+        else
+        	objectType = toCache::TABLE;
+        // TODO
+        // if ( !cacheEntry) // only check if object was not found in already cached list
+        // {
+        // // If object was not found in cache, then try updating the cache
+        // //conn addedNewObject = toConnection::currentConnection(this).rereadObject(owner, object);
+        // }
     }
 
     widget = toBrowserWidgetFactory::Instance().createPtr(objectType, this);
