@@ -44,13 +44,15 @@
 #include "core/toconfiguration.h"
 #include "core/toglobalevent.h"
 
-#include <Qsci/qsciprinter.h>
 #include <QtGui/QClipboard>
 #include <QtGui/QPrintDialog>
 #include <QtXml/QDomDocument>
 #include <QtGui/QShortcut>
 #include <QtCore/QtDebug>
 #include <QtGui/QMenu>
+
+#include <Qsci/qsciprinter.h>
+#include <Qsci/qscilexersql.h>
 
 #include "icons/undo.xpm"
 #include "icons/redo.xpm"

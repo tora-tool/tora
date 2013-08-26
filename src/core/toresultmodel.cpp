@@ -165,11 +165,11 @@ toResultModel::toResultModel(const QString &owner,
 
 toResultModel::~toResultModel()
 {
-    slotCleanup();
+    cleanup();
 }
 
 
-void toResultModel::slotCleanup()
+void toResultModel::cleanup()
 {
     if (Query)
     {
@@ -190,7 +190,7 @@ void toResultModel::slotQueryError(toEventQuery*, const toConnection::exception 
         emit firstResult(err, true);
         First = !First;
         Utils::toStatusMessage(err);
-        slotCleanup();
+        cleanup();
     }
 }
 
@@ -214,7 +214,7 @@ void toResultModel::slotReadData()
 {
     if (!Query)
     {
-        slotCleanup();
+        cleanup();
         return;
     }
 
@@ -287,7 +287,7 @@ void toResultModel::slotReadData()
             return;
         if (!Query->hasMore() && Query->eof())
         {
-            slotCleanup();
+            cleanup();
             return;
         }
     }
@@ -299,7 +299,7 @@ void toResultModel::slotReadData()
             emit firstResult(str, true);
         }
         Utils::toStatusMessage(str);
-        slotCleanup();
+        cleanup();
         return;
     }
     catch (const QString &str)
@@ -310,7 +310,7 @@ void toResultModel::slotReadData()
             emit firstResult(str, true);
         }
         Utils::toStatusMessage(str);
-        slotCleanup();
+        cleanup();
         return;
     }
 }

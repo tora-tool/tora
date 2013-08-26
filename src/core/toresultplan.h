@@ -100,6 +100,7 @@ private:
     // TODO: toSQLParse disabled void addStatements(std::list<toSQLParse::statement> &stats);
     void connectSlotsAndStart();
 
+    void cleanup();
 private slots:
     void slotPoll();
     void slotQueryDone();

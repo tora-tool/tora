@@ -122,7 +122,7 @@ private:
 private slots:
     // destroys query, stops timer, good things.
     // emits done()
-    void slotCleanup(void);
+
 
     void slotQueryError(toEventQuery*, const toConnection::exception &);
 
@@ -267,7 +267,7 @@ public:
      */
     void stop(void)
     {
-        slotCleanup();
+        cleanup();
     }
 
     /**
@@ -386,6 +386,8 @@ public:
     void commitChanges(toConnection &conn, unsigned int &updated, unsigned int &added, unsigned int &deleted);
 
 protected:
+    void cleanup(void);
+
     void commitUpdate(toConnection &conn, const toQuery::Row &row, unsigned int &updated);
     void commitAdd(toConnection &conn, const toQuery::Row &row, unsigned int &added);
     void commitDelete(toConnection &conn, const toQuery::Row &row, unsigned int &deleted);

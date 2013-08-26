@@ -375,8 +375,26 @@ void toResultPlan::query(const QString &sql, toQueryParams const& param)
     }
 }
 
+void toResultPlan::cleanup()
+{
+    if (Query)
+    {
+        disconnect(Query, 0, this, 0);
+
+        Query->stop();
+        delete Query;
+        Query = NULL;
+    }
+}
+
 void toResultPlan::slotPoll(void)
 {
+    if (!Query)
+    {
+        cleanup();
+        return;
+    }
+
     if (!Utils::toCheckModal(this))
         return;
 
@@ -602,8 +620,8 @@ void toResultPlan::checkException(const QString &str)
                 {
                 	Utils::toBusy busy;
                 	toConnectionSubLoan conn(connection());
-                	toQuery planTable(conn, toSQL::string(toSQL::TOSQL_CREATEPLAN, connection()).arg(planTable), toQueryParams());
-                	planTable.eof();
+                	toQuery createPlanTable(conn, toSQL::string(toSQL::TOSQL_CREATEPLAN, connection()).arg(planTable), toQueryParams());
+                	createPlanTable.eof();
                 }
             }
         }
