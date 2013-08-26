@@ -96,7 +96,6 @@ private:
     void checkException(const QString &);
     void oracleSetup(void);
 
-    //void oracleNext();
     // TODO: toSQLParse disabled void addStatements(std::list<toSQLParse::statement> &stats);
     void connectSlotsAndStart();
 

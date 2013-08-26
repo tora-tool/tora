@@ -73,7 +73,6 @@ class toResultItem;
 class toResultPlan;
 class toResultTableView;
 class toResultStats;
-class toVisualize;
 class toTabWidget;
 class toTreeWidgetItem;
 class toEditableMenu;
@@ -225,7 +224,6 @@ private:
     QSplitter         *EditSplitter;
     QSplitter         *ResourceSplitter;
     toResultTableView *LongOps;
-    //obsolete toVisualize       *Visualize;
     toTreeWidgetItem  *LastLogItem;
     QWidget           *StatTab;
     //! Used only for DESC/DESCRIBE sql statements

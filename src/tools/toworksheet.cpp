@@ -1007,8 +1007,8 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
         return;
 
     // Imitate something like "create or replace" syntax for MySQL
-//    if (connection().providerIs("QMYSQL") && code && toConfigurationSingle::Instance().createAction() > 0)
-//        mySQLBeforeCreate(chk);
+    //if (connection().providerIs("QMYSQL") && code && toConfigurationSingle::Instance().createAction() > 0)
+    //mySQLBeforeCreate(chk);
 
     if (describe(statement))
     	return;
@@ -1145,25 +1145,23 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
     	{
     		saveHistory();
     		Result->removeSQL();
-    		//    		if (LockedConnection)
-    		//    			Result->querySub(LockedConnection, statement.sql, param);
-    		//    		else
-    		Result->query(statement.sql, param);
+    		if (LockedConnection)
+    			Result->querySub(LockedConnection, statement.sql, param);
+    		else
+    			Result->query(statement.sql, param);
 
-    		//                 if (CurrentTab)
-    		//                 {
+    		if (CurrentTab)
+    		{
     		// todo
-    		// if(CurrentTab == Visualize)
-    		//                         Visualize->display();
     		// PV - let's open really required tab for called action
     		// e.g. Plan for explainplan, Result for run statement action etc.
     		// It stops to really run a statement when I expect explain plan
-    		//                     else
-    		//                     if (CurrentTab == Plan)
-    		//                         Plan->query(QueryString);
-    		//                     else if (CurrentTab == ResourceSplitter)
-    		//                         viewResources();
-    		//                 }
+    		// if (CurrentTab == Plan)
+    		// Plan->query(QueryString);
+    		// else
+    			if (CurrentTab == ResourceSplitter)
+    				viewResources();
+    		}
     	}
     	catch (const toConnection::exception &exc)
     	{

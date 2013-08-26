@@ -123,8 +123,9 @@ void toBrowserSchemaTableView::updateCache(void)
 } // updateCache
 
 toBrowserSchemaCodeBrowser::toBrowserSchemaCodeBrowser(QWidget * parent)
-    : QTreeView(parent),
-      toBrowserSchemaBase()
+    : QTreeView(parent)
+    , toBrowserSchemaBase()
+    , m_filter(NULL)
 {
     m_model = new toCodeModel(this);
     setModel(m_model);
