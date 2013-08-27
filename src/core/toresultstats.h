@@ -129,13 +129,17 @@ private:
     /** Setup widget.
      */
     void setup();
+
+    int sid();
+
     /** Add value
      */
     void addValue(bool reset, int id, const QString &name, double value);
 
     /** Session ID to get statistics for.
      */
-    int SessionID;
+    int m_sessionID;
+
     /** Number of rows of statistics
      */
     int Row;

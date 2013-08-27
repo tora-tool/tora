@@ -84,7 +84,7 @@ toResultStats::toResultStats(bool onlyChanged
     if (!handled())
         return ;
 
-    SessionID = ses;
+    m_sessionID = ses;
     setSQLName(QString::fromLatin1("toResultStats"));
     System = false;
     setup();
@@ -95,21 +95,11 @@ toResultStats::toResultStats(bool onlyChanged
 		                     , const char *name)
     : toResultView(false, false, parent, name)
 	, OnlyChanged(onlyChanged)
+	, m_sessionID(-2)
 {
     if (!handled())
         return ;
 
-    try
-    {
-    	toConnectionSubLoan conn(connection());
-        toQuery query(conn, SQLSession, toQueryParams());
-        SessionID = query.readValue().toInt();
-    }
-    catch (...)
-    {
-        TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-        SessionID = -1;
-    }
     System = false;
 
     setup();
@@ -157,7 +147,7 @@ void toResultStats::resetStats(void)
         toConnectionSubLoan conn(connection());
         toQueryParams args;
         if (!System)
-            args << SessionID;
+            args << sid();
         toQuery query(conn, System ? SQLSystemStatistics : SQLStatistics, args);
         while (!query.eof())
         {
@@ -192,11 +182,11 @@ void toResultStats::slotChangeSession(int ses)
 
     if (System)
         throw tr("Can't change session on system statistics");
-    if (SessionID != ses)
+    if (m_sessionID != ses)
     {
-        SessionID = ses;
-        emit sessionChanged(SessionID);
-        emit sessionChanged(QString::number(SessionID));
+        m_sessionID = ses;
+        emit sessionChanged(sid());
+        emit sessionChanged(QString::number(sid()));
         resetStats();
     }
 }
@@ -213,7 +203,7 @@ void toResultStats::slotRefreshStats(bool reset)
         toConnection &conn = connection();
         toQueryParams args;
         if (!System)
-            args << SessionID;
+            args << sid();
         Query = new toEventQuery(this
 				 , conn
                                  , toSQL::string(System ? SQLSystemStatisticName : SQLStatisticName, connection())
@@ -330,6 +320,25 @@ void toResultStats::setup(void)
             this,
             SLOT(slotRefreshStats()),
             Qt::QueuedConnection);
+}
+
+int toResultStats::sid()
+{
+	// TODO: this is non-sense here we store SID of randomly borrowed session
+	if (m_sessionID == -2)
+	try
+	{
+			toConnectionSubLoan conn(connection());
+			toQuery query(conn, SQLSession, toQueryParams());
+			m_sessionID = query.readValue().toInt();
+	}
+	catch (...)
+	{
+		TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
+		m_sessionID = -1;
+	}
+
+	return m_sessionID;
 }
 
 void toResultStats::addValue(bool reset, int id, const QString &name, double value)
