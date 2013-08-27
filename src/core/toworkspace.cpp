@@ -174,6 +174,7 @@ void toWorkSpace::slotTabMoved(int from, int to)
 		i.WidgetIndex = m_stackedWidget->indexOf(w);
 		m_toolsRegistry.insert(w, i);
 	}
+	toGlobalEventSingle::Instance().toolWidgetsReordered();
 }
 
 void toWorkSpace::slotTabCloseRequested(int idx)
@@ -193,6 +194,7 @@ void toWorkSpace::slotTabCloseRequested(int idx)
 
 		delete w;
 		m_label->setText(QString("*%1->%2").arg(idx).arg(m_tabBar->currentIndex()));
+		toGlobalEventSingle::Instance().toolWidgetRemoved(w);
 	}
 }
 
@@ -288,6 +290,8 @@ bool toWorkSpace::closeToolWidget(toToolWidget* tool)
 		delete tool;
 		m_label->setText(QString("*%1").arg(idx));
 		m_lastWidget = NULL;
+
+		toGlobalEventSingle::Instance().toolWidgetRemoved(tool);
 
 		return true;
 	}

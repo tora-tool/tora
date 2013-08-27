@@ -388,6 +388,8 @@ void toMain::createMenus()
 	    this, SLOT(updateWindowsMenu()));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_toolWidgetRemoved(toToolWidget*)),
 	    this, SLOT(updateWindowsMenu()));
+    connect(&toGlobalEventSingle::Instance(), SIGNAL(s_toolWidgetsReordered()),
+	    this, SLOT(updateWindowsMenu()));
 
     connect(windowsMenu,
             SIGNAL(triggered(QAction *)),

@@ -78,6 +78,11 @@ void toGlobalEvent::toolWidgetRemoved(toToolWidget *tool)
 	emit s_toolWidgetRemoved(tool);
 }
 
+void toGlobalEvent::toolWidgetsReordered()
+{
+	emit s_toolWidgetsReordered();
+}
+
 void toGlobalEvent::setCoordinates(int x, int y)
 {
 	emit s_setCoordinates(x, y);
