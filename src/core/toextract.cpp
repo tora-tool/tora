@@ -48,8 +48,8 @@
 
 #include <QtGui/QApplication>
 #include <QtGui/QProgressDialog>
-#include <QtGui/QString>
-#include <QtGui/QHostInfo>
+#include <QtCore/QString>
+#include <QtNetwork/QHostInfo>
 
 std::map<QString, toExtract::extractor *> *toExtract::Extractors;
 

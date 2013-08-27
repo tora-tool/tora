@@ -42,15 +42,15 @@
 #ifndef TO_EXTRACT
 #define TO_EXTRACT
 
-#include "core/tosqlparse.h"
+//#include "core/tosqlparse.h"
 
 #include <list>
 #include <map>
 
-#include <QtGui/QFile>
-#include <QtGui/QTextStream>
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
 #include <QtCore/QVariant>
-#include <QtGui/QString>
+#include <QtCore/QString>
 
 class QWidget;
 class toConnection;
