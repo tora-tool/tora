@@ -44,7 +44,7 @@
 #include "core/tologger.h"
 #include "core/tochangeconnection.h"
 #include "core/toconf.h"
-//#include "core/toextract.h"
+#include "core/toextract.h"
 #include "editor/todebugtext.h"
 #include "core/toresultcode.h"
 #include "core/toresulttableview.h"
@@ -203,14 +203,14 @@ void toInvalid::recompileSelected(void)
         {
             // only SYS user is allowed to do ALTER PUBLIC SYNONYM ...
             // other users can only do CREATE OR REPLACE PUBLIC SYNONYM ...
-            //obsolete std::list<QString> objects;
-            // toExtract extract(const_cast<toConnection&>(conn.ParentConnection), NULL);
-            // extract.setCode(true);
-            // extract.setHeading(false);
-            // extract.setPrompt(false);
-            // extract.setReplace(true); // get create OR REPLACE statement
-            // objects.insert(objects.end(), type + QString::fromLatin1(":") + "PUBLIC" + QString::fromLatin1(".") + name);
-            // sql = extract.create(objects);
+        	std::list<QString> objects;
+        	toExtract extract(const_cast<toConnection&>(conn.ParentConnection), NULL);
+        	extract.setCode(true);
+        	extract.setHeading(false);
+        	extract.setPrompt(false);
+        	extract.setReplace(true); // get create OR REPLACE statement
+        	objects.insert(objects.end(), type + QString::fromLatin1(":") + "PUBLIC" + QString::fromLatin1(".") + name);
+        	sql = extract.create(objects);
 	    throw tr("recompileSelected SYNONYM not implement yet");
         }
         else

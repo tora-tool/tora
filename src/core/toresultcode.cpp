@@ -41,6 +41,7 @@
 
 #include "core/toresultcode.h"
 #include "core/utils.h"
+#include "core/toextract.h"
 #include "core/toconfiguration.h"
 #include "editor/todebugtext.h"
 
@@ -135,14 +136,13 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
         else
             objects.insert(objects.end(), type + QString::fromLatin1(":") + owner + QString::fromLatin1(".") + name);
 
-        //obsolete toExtract extract(conn, NULL);
-        // extract.setCode(toConfigurationSingle::Instance().extractorIncludeCode());
-        // extract.setHeading(m_heading && toConfigurationSingle::Instance().extractorIncludeHeader());
-        // extract.setPrompt(Prompt);
-        // extract.setReplace(true); // generate create OR REPLACE statements
-        // extract.setParallel(toConfigurationSingle::Instance().extractorIncludeParallel());
-        // editor()->setText(extract.create(objects));
-	throw tr("toResultExtract::query(const QString &sql, toQueryParams const& param) -> toExtract not implemented yet");
+        toExtract extract(conn, NULL);
+        extract.setCode(toConfigurationSingle::Instance().extractorIncludeCode());
+        extract.setHeading(m_heading && toConfigurationSingle::Instance().extractorIncludeHeader());
+        extract.setPrompt(Prompt);
+        extract.setReplace(true); // generate create OR REPLACE statements
+        extract.setParallel(toConfigurationSingle::Instance().extractorIncludeParallel());
+        editor()->setText(extract.create(objects));
     }
     TOCATCH
 }

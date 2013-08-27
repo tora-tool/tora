@@ -41,7 +41,7 @@
 #include "connection/tooracleextract.h"
 #include "core/toconnectiontraits.h"
 #include "core/utils.h"
-#include "core/toconf.h"
+#include "core/toconfiguration.h"
 #include "core/toquery.h"
 #include "core/toextract.h"
 #include "core/tosql.h"
@@ -1910,10 +1910,10 @@ QString toOracleExtract::createPartitionedTable(toExtract &ext,
                 toQList storage;
                 QString partition = Utils::toShift(segment);
                 QString highValue = Utils::toShift(segment);
-                toPush(storage, toQValue("      "));
-                toPush(storage, toQValue(organization));
+                Utils::toPush(storage, toQValue("      "));
+                Utils::toPush(storage, toQValue(organization));
                 for (int i = 0; i < 16; i++)
-                    toPush(storage, Utils::toShift(segment));
+                    Utils::toPush(storage, Utils::toShift(segment));
 
                 ret += comma;
                 ret += QString("PARTITION %1 VALUES LESS THAN\n"
@@ -2285,10 +2285,10 @@ QString toOracleExtract::rangePartitions(toExtract &ext,
         QString highValue = Utils::toShift(result);
 
         toQList storage;
-        toPush(storage, toQValue("      "));
-        toPush(storage, toQValue("INDEX"));
+        Utils::toPush(storage, toQValue("      "));
+        Utils::toPush(storage, toQValue("INDEX"));
         for (int i = 0; i < 16; i++)
-            toPush(storage, Utils::toShift(result));
+            Utils::toPush(storage, Utils::toShift(result));
 
         ret += comma;
         ret += "PARTITION ";
@@ -2301,6 +2301,7 @@ QString toOracleExtract::rangePartitions(toExtract &ext,
 
         if (subPartitionType == "HASH")
         {
+        	toConnectionSubLoan conn(ext.connection());
             toQuery inf(conn, SQLIndexSubPartitionName, toQueryParams() << name << partition << owner);
             ret +=
                 "        (\n"
@@ -2911,7 +2912,8 @@ void toOracleExtract::describeIndexColumns(toExtract &ext,
 {
     static QRegExp quote("\"");
     static QRegExp func("^sys_nc[0-9]g");
-    toQuery inf(CONNECTION, SQLIndexColumns, toQueryParams() << name << owner);
+	toConnectionSubLoan conn(ext.connection());
+    toQuery inf(conn, SQLIndexColumns, toQueryParams() << name << owner);
     int num = 1;
     while (!inf.eof())
     {
@@ -2920,7 +2922,8 @@ void toOracleExtract::describeIndexColumns(toExtract &ext,
         QString row;
         if (func.indexIn(col) >= 0)
         {
-            toQuery def(CONNECTION, SQLIndexFunction, toQueryParams() << col << name << owner);
+			toConnectionSubLoan conn2(ext.connection());
+            toQuery def(conn2, SQLIndexFunction, toQueryParams() << col << name << owner);
             QString function(def.readValue());
             inf.readValue(); // we read function index from def, but inf has to be shifted too
             function.replace(quote, "");
@@ -2958,7 +2961,8 @@ void toOracleExtract::describeMView(toExtract &ext, std::list<QString> &lst,
     QString updatable = Utils::toShift(result);
     QString query = Utils::toShift(result);
 
-    toQuery inf(CONNECTION, SQLIndexName, toQueryParams() << table << owner);
+	toConnectionSubLoan conn(ext.connection());
+    toQuery inf(conn, SQLIndexName, toQueryParams() << table << owner);
     QString index(inf.readValue());
 
     std::list<QString> ctx;
@@ -3078,7 +3082,8 @@ void toOracleExtract::describeMViewLog(toExtract &ext,
         ctx.insert(ctx.end(), "WITH PRIMARY KEY");
     addDescription(lst, ctx);
 
-    toQuery inf(CONNECTION, SQLSnapshotColumns, toQueryParams() << name << owner);
+	toConnectionSubLoan conn(ext.connection());
+    toQuery inf(conn, SQLSnapshotColumns, toQueryParams() << name << owner);
     bool first = true;
     if (!inf.eof())
     {
@@ -3148,10 +3153,10 @@ void toOracleExtract::describePartitions(toExtract &ext,
         QString highValue = Utils::toShift(result);
 
         toQList storage;
-        toPush(storage, toQValue("      "));
-        toPush(storage, toQValue("INDEX"));
+        Utils::toPush(storage, toQValue("      "));
+        Utils::toPush(storage, toQValue("INDEX"));
         for (int i = 0; i < 16; i++)
-            toPush(storage, Utils::toShift(result));
+            Utils::toPush(storage, Utils::toShift(result));
 
         std::list<QString> cctx = ctx;
         cctx.insert(cctx.end(), QUOTE(partition));
@@ -3163,7 +3168,8 @@ void toOracleExtract::describePartitions(toExtract &ext,
 
         if (subPartitionType == "HASH")
         {
-            toQuery inf(CONNECTION, SQLIndexSubPartitionName, toQueryParams() << name << partition << owner);
+			toConnectionSubLoan conn(ext.connection());
+            toQuery inf(conn, SQLIndexSubPartitionName, toQueryParams() << name << partition << owner);
             while (!inf.eof())
             {
                 QString sub(inf.readValue());
@@ -3186,13 +3192,14 @@ void toOracleExtract::describePartitionedIOT(toExtract &ext,
     describeTableText(ext, lst, ctx, result, schema, owner, name);
     if (ext.getPartition())
     {
-        toQuery inf(CONNECTION, SQLPartitionIndexNames, toQueryParams() << name << owner);
+		toConnectionSubLoan conn(ext.connection());
+        toQuery inf(conn, SQLPartitionIndexNames, toQueryParams() << name << owner);
         if (!inf.eof())
             throw qApp->translate("toOracleExtract", "Couldn't find index partitions for %1.%2").arg(owner).arg(name);
         QString index(inf.readValue());
         std::list<QString> cctx = ctx;
-        toPush(cctx, QString("PARTITION COLUMNS"));
-        toPush(cctx, partitionKeyColumns(ext, owner, name, "TABLE"));
+        Utils::toPush(cctx, QString("PARTITION COLUMNS"));
+        Utils::toPush(cctx, partitionKeyColumns(ext, owner, name, "TABLE"));
         addDescription(lst, cctx);
         describePartitions(ext, lst, cctx, owner, index, "NONE", "IOT");
     }
@@ -3302,10 +3309,10 @@ void toOracleExtract::describePartitionedTable(toExtract &ext,
                 toQList storage;
                 QString partition = Utils::toShift(segment);
                 QString highValue = Utils::toShift(segment);
-                toPush(storage, toQValue("      "));
-                toPush(storage, toQValue(organization));
+                Utils::toPush(storage, toQValue("      "));
+                Utils::toPush(storage, toQValue(organization));
                 for (int i = 0; i < 16; i++)
-                    toPush(storage, Utils::toShift(segment));
+                    Utils::toPush(storage, Utils::toShift(segment));
 
                 std::list<QString> cctx = ctx;
                 cctx.insert(cctx.end(), prtstr);
@@ -3481,7 +3488,8 @@ QString toOracleExtract::createConstraint(toExtract &ext,
 
     if (ext.getConstraints())
     {
-        toQuery inf(CONNECTION, SQLListConstraint, toQueryParams() << owner << name);
+		toConnectionSubLoan conn(ext.connection());
+        toQuery inf(conn, SQLListConstraint, toQueryParams() << owner << name);
         if (inf.eof())
             throw qApp->translate("toOracleExtract", "Constraint %1.%2 doesn't exist").arg(owner).arg(name);
         QString table(inf.readValue());
@@ -3521,7 +3529,8 @@ QString toOracleExtract::createConstraint(toExtract &ext,
 
             if (tchr == "R")
             {
-                toQuery query(CONNECTION, SQLConstraintTable, toQueryParams() << rOwner << rName);
+				toConnectionSubLoan conn(ext.connection());
+                toQuery query(conn, SQLConstraintTable, toQueryParams() << rOwner << rName);
                 ret += " REFERENCES ";
                 ret += ext.intSchema(rOwner, false);
                 ret += QUOTE(query.readValue());
@@ -3565,7 +3574,8 @@ QString toOracleExtract::createDBLink(toExtract &ext,
                                       const QString &owner,
                                       const QString &name) const
 {
-    toQuery inf(CONNECTION, SQLDBLink, toQueryParams() << owner << name);
+	toConnectionSubLoan conn(ext.connection());
+    toQuery inf(conn, SQLDBLink, toQueryParams() << owner << name);
     if (inf.eof())
         throw qApp->translate("toOracleExtract", "DBLink %1.%2 doesn't exist").arg(owner).arg(name);
     QString user(inf.readValue());
@@ -3600,7 +3610,8 @@ QString toOracleExtract::createDirectory(toExtract &ext,
         const QString &owner,
         const QString &name) const
 {
-    toQuery inf(CONNECTION, SQLDirectory, toQueryParams() << name);
+	toConnectionSubLoan conn(ext.connection());
+    toQuery inf(conn, SQLDirectory, toQueryParams() << name);
     if (inf.eof())
         throw qApp->translate("toOracleExtract", "Directory %1 doesn't exist").arg(name);
     QString dname(inf.readValue());
@@ -3699,7 +3710,8 @@ QString toOracleExtract::createExchangeIndex(toExtract &ext,
     QString segment = str.first();
     QString partition = str.last();
 
-    toQuery inf(CONNECTION, segments(ext, SQLPartitionSegmentType), toQueryParams() << segment << partition << owner);
+	toConnectionSubLoan conn(ext.connection());
+    toQuery inf(conn, segments(ext, SQLPartitionSegmentType), toQueryParams() << segment << partition << owner);
     if (inf.eof())
         throw qApp->translate("toOracleExtract", "Exchange index %1.%2 doesn't exist").arg(owner).arg(name);
     QString type = inf.readValue();
@@ -3714,7 +3726,7 @@ QString toOracleExtract::createExchangeIndex(toExtract &ext,
     QString unique = Utils::toShift(result);
     QString bitmap = Utils::toShift(result);
 
-    toUnShift(result, toQValue(""));
+    Utils::toUnShift(result, toQValue(""));
 
     sql = QString("CREATE%1%2 INDEX %3%4 ON %3%5\n").
           arg(unique).arg(bitmap).arg(schema).arg(segment).arg(QUOTE(table));
@@ -3803,7 +3815,8 @@ QString toOracleExtract::createExchangeTable(toExtract &ext,
     QString segment = str.first();
     QString partition = str.last();
 
-    toQuery inf(CONNECTION, segments(ext, SQLPartitionSegmentType), toQueryParams() << segment << partition << owner);
+	toConnectionSubLoan conn(ext.connection());
+    toQuery inf(conn, segments(ext, SQLPartitionSegmentType), toQueryParams() << segment << partition << owner);
     if (inf.eof())
         throw qApp->translate("toOracleExtract", "Exchange table %1.%2 doesn't exist").arg(owner).arg(name);
     QString type = inf.readValue();
@@ -4028,7 +4041,8 @@ QString toOracleExtract::createIndex(toExtract &ext,
     if (!ext.getIndexes())
         return "";
 
-    toQList res = toQuery::readQuery(CONNECTION, SQLIndexInfo, toQueryParams() << name << owner);
+	toConnectionSubLoan conn(ext.connection());
+    toQList res = toQuery::readQuery(ext.connection(), SQLIndexInfo, toQueryParams() << name << owner);
     if (res.size() != 10)
         throw qApp->translate("toOracleExtract", "Couldn't find index %1.%2").arg(owner).arg(name);
 
@@ -4043,7 +4057,7 @@ QString toOracleExtract::createIndex(toExtract &ext,
     QString domName = Utils::toShift(res);
     QString domParam = Utils::toShift(res);
 
-    toQList storage = toQuery::readQuery(CONNECTION, segments(ext, SQLIndexSegment), name, owner);
+    toQList storage = toQuery::readQuery(ext.connection(), segments(ext, SQLIndexSegment), toQueryParams() << name << owner);
     QString degree = Utils::toShift(storage);
     QString instances = Utils::toShift(storage);
     QString compressed = Utils::toShift(storage);
@@ -4090,7 +4104,7 @@ QString toOracleExtract::createIndex(toExtract &ext,
     if (partitioned == "YES")
         return createPartitionedIndex(ext, schema, owner, name, ret);
 
-    toUnShift(storage, toQValue(""));
+    Utils::toUnShift(storage, toQValue(""));
     ret += segmentAttributes(ext, storage);
     if (!compressed.isEmpty() && compressed != "0" && ext.getStorage())
     {
@@ -4269,7 +4283,7 @@ QString toOracleExtract::createRollbackSegment(toExtract &ext,
         const QString &,
         const QString &name) const
 {
-    toQList result = toQuery::readQuery(CONNECTION, SQLRollbackSegment, toQueryParams() << name);
+	toQList result = toQuery::readQuery(ext.connection(), SQLRollbackSegment, toQueryParams() << name);
     QString isPublic = Utils::toShift(result);
     QString tablespaceName = Utils::toShift(result);
     QString initialExtent = Utils::toShift(result);
@@ -4627,7 +4641,8 @@ QString toOracleExtract::createTable(toExtract &ext,
                                      const QString &owner,
                                      const QString &name) const
 {
-    toQuery inf(CONNECTION, SQLTableType, toQueryParams() << name << owner);
+	toConnectionSubLoan conn(ext.connection());
+    toQuery inf(conn, SQLTableType, toQueryParams() << name << owner);
     if (inf.eof())
         throw qApp->translate("toOracleExtract", "Couldn't find table %1.%2").arg(owner).arg(name);
 
@@ -4754,7 +4769,8 @@ QString toOracleExtract::createTableFamily(toExtract &ext,
 {
     QString ret = createTable(ext, schema, owner, name);
 
-    toQuery inf(CONNECTION, SQLTableType, toQueryParams() << name << owner);
+	toConnectionSubLoan conn(ext.connection());
+    toQuery inf(conn, SQLTableType, toQueryParams() << name << owner);
     if (inf.eof())
         throw qApp->translate("toOracleExtract", "Couldn't find table %1.%2").arg(owner).arg(name);
 
@@ -4817,7 +4833,8 @@ void toOracleExtract::createTableContents(toExtract &ext,
         if (PROMPT)
             stream << QString("PROMPT CONTENTS OF %1%2\n\n").arg(schema).arg(QUOTE(name));
 
-        toQuery query(CONNECTION, QString("SELECT * FROM %1.%2").arg(QUOTE(owner)).arg(QUOTE(name)), toQueryParams());
+		toConnectionSubLoan conn(ext.connection());
+        toQuery query(conn, QString("SELECT * FROM %1.%2").arg(QUOTE(owner)).arg(QUOTE(name)), toQueryParams());
 
         toQColumnDescriptionList desc = query.describe();
         int cols = query.columns();
@@ -4901,7 +4918,7 @@ QString toOracleExtract::createTableReferences(toExtract &ext,
         const QString &name) const
 {
     QString ret;
-    toQList constraints = toQuery::readQuery(CONNECTION, SQLTableReferences, toQueryParams() << name << owner);
+	toQList constraints = toQuery::readQuery(ext.connection(), SQLTableReferences, toQueryParams() << name << owner);
     while (!constraints.empty())
         ret += createConstraint(ext, schema, owner, Utils::toShift(constraints));
     return ret;
@@ -5090,10 +5107,9 @@ QString toOracleExtract::createTablespace(toExtract &ext,
     }
     ret += sql;
 
-    toQList files = toQuery::readQuery(CONNECTION,
+	toQList files = toQuery::readQuery(ext.connection(),
                                        SQLDatafileInfo,
-                                       QString::number(ext.getBlockSize()),
-                                       name);
+                                       toQueryParams() << QString::number(ext.getBlockSize()) << name);
     if (extentManagement == "LOCAL" && contents == "TEMPORARY")
         ret += "TEMPFILE\n";
     else
@@ -5209,7 +5225,7 @@ QString toOracleExtract::createTrigger(toExtract &ext,
 {
     if (!ext.getCode())
         return "";
-    toQList result = toQuery::readQuery(CONNECTION, SQLTriggerInfo, toQueryParams() << name << owner);
+	toQList result = toQuery::readQuery(ext.connection(), SQLTriggerInfo, toQueryParams() << name << owner);
     if (result.size() != 10)
         throw qApp->translate("toOracleExtract", "Couldn't find trigger %1.%2").arg(owner).arg(name);
     QString triggerType = Utils::toShift(result);
@@ -5374,7 +5390,7 @@ QString toOracleExtract::createUser(toExtract &ext,
 
     if (ext.getStorage())
     {
-        toQList quota = toQuery::readQuery(CONNECTION, SQLUserQuotas, toQueryParams() << name);
+		toQList quota = toQuery::readQuery(ext.connection(), SQLUserQuotas, toQueryParams() << name);
         while (!quota.empty())
         {
             QString siz = Utils::toShift(quota);
@@ -5413,9 +5429,9 @@ QString toOracleExtract::createView(toExtract &ext,
 {
     if (!ext.getCode())
         return "";
-    toQList source = toQuery::readQuery(CONNECTION,
+	toQList source = toQuery::readQuery(ext.connection(),
                                         SQLViewSource,
-                                        name, owner);
+                                        toQueryParams() << name << owner);
     if (source.empty())
         throw qApp->translate("toOracleExtract", "Couldn't find view %1.%2").arg(QUOTE(owner)).arg(QUOTE(name));
 
@@ -5459,7 +5475,8 @@ void toOracleExtract::describeConstraint(toExtract &ext,
 {
     if (ext.getConstraints())
     {
-        toQuery inf(CONNECTION, SQLListConstraint, toQueryParams() << owner << name);
+		toConnectionSubLoan conn(ext.connection());
+        toQuery inf(conn, SQLListConstraint, toQueryParams() << owner << name);
         if (inf.eof())
             throw qApp->translate("toOracleExtract", "Constraint %1.%2 doesn't exist").arg(owner).arg(name);
         QString table(inf.readValue());
@@ -5499,7 +5516,8 @@ void toOracleExtract::describeConstraint(toExtract &ext,
 
             if (tchr == "R")
             {
-                toQuery query(CONNECTION, SQLConstraintTable, toQueryParams() << rOwner << rName);
+				toConnectionSubLoan conn(ext.connection());
+                toQuery query(conn, SQLConstraintTable, toQueryParams() << rOwner << rName);
                 ret += " REFERENCES ";
                 ret += ext.intSchema(rOwner, false);
                 ret += QUOTE(query.readValue());
@@ -5534,7 +5552,8 @@ void toOracleExtract::describeDBLink(toExtract &ext,
                                      const QString &owner,
                                      const QString &name) const
 {
-    toQuery inf(CONNECTION, SQLDBLink, toQueryParams() << owner << name);
+	toConnectionSubLoan conn(ext.connection());
+    toQuery inf(conn, SQLDBLink, toQueryParams() << owner << name);
     if (inf.eof())
         throw qApp->translate("toOracleExtract", "DBLink %1.%2 doesn't exist").arg(owner).arg(name);
     QString user(inf.readValue());
@@ -5566,7 +5585,8 @@ void toOracleExtract::describeExchangeIndex(toExtract &ext,
     QString segment = str.first();
     QString partition = str.last();
 
-    toQuery inf(CONNECTION, segments(ext, SQLPartitionSegmentType), toQueryParams() << segment <<  partition << owner);
+	toConnectionSubLoan conn(ext.connection());
+    toQuery inf(conn, segments(ext, SQLPartitionSegmentType), toQueryParams() << segment <<  partition << owner);
     if (inf.eof())
         throw qApp->translate("toOracleExtract", "Exchange index %1.%2 doesn't exist").arg(owner).arg(name);
     QString type = inf.readValue();
@@ -5580,7 +5600,7 @@ void toOracleExtract::describeExchangeIndex(toExtract &ext,
     QString unique = Utils::toShift(result);
     QString bitmap = Utils::toShift(result);
 
-    toUnShift(result, toQValue(""));
+    Utils::toUnShift(result, toQValue(""));
 
     std::list<QString> ctx;
     ctx.insert(ctx.end(), schema);
@@ -5613,7 +5633,8 @@ void toOracleExtract::describeExchangeTable(toExtract &ext,
     QString segment = str.first();
     QString partition = str.last();
 
-    toQuery inf(CONNECTION, segments(ext, SQLPartitionSegmentType), toQueryParams() << segment << partition << owner);
+	toConnectionSubLoan conn(ext.connection());
+    toQuery inf(conn, segments(ext, SQLPartitionSegmentType), toQueryParams() << segment << partition << owner);
     if (inf.eof())
         throw qApp->translate("toOracleExtract", "Exchange table %1.%2 doesn't exist").arg(owner).arg(name);
     QString type = inf.readValue();
@@ -5699,7 +5720,7 @@ void toOracleExtract::describeIndex(toExtract &ext,
         return ;
     }
 
-    toUnShift(storage, toQValue(""));
+    Utils::toUnShift(storage, toQValue(""));
     describeAttributes(ext, lst, ctx, storage);
     if (!compressed.isEmpty() && compressed != "0" && ext.getStorage())
         addDescription(lst, ctx, "COMPRESS", compressed);
@@ -5905,7 +5926,8 @@ void toOracleExtract::describeTable(toExtract &ext,
                                     const QString &owner,
                                     const QString &name) const
 {
-    toQuery inf(CONNECTION, SQLTableType, toQueryParams() << name << owner);
+	toConnectionSubLoan conn(ext.connection());
+    toQuery inf(conn, SQLTableType, toQueryParams() << name << owner);
     if (inf.eof())
         throw qApp->translate("toOracleExtract", "Couldn't find table %1.%2").arg(owner).arg(name);
 
@@ -5951,7 +5973,8 @@ void toOracleExtract::describeTableFamily(toExtract &ext,
         describeIndex(ext, lst, ext.intSchema(indOwner, true), indOwner, Utils::toShift(indexes));
     }
 
-    toQuery inf(CONNECTION, SQLTableType, toQueryParams() << name << owner);
+	toConnectionSubLoan conn(ext.connection());
+    toQuery inf(conn, SQLTableType, toQueryParams() << name << owner);
     if (inf.eof())
         throw qApp->translate("toOracleExtract", "Couldn't find table %1.%2").arg(owner).arg(name);
 
@@ -5968,7 +5991,7 @@ void toOracleExtract::describeTableFamily(toExtract &ext,
         Utils::toShift(constraints);
     }
 
-    toQList triggers = toQuery::readQuery(CONNECTION, SQLTableTriggers, toQueryParams() name << owner);
+	toQList triggers = toQuery::readQuery(ext.connection(), SQLTableTriggers, toQueryParams() << name << owner);
     while (!triggers.empty())
         describeTrigger(ext, lst, schema, owner, Utils::toShift(triggers));
 }
@@ -5990,10 +6013,9 @@ void toOracleExtract::describeTablespace(toExtract &ext,
         const QString &,
         const QString &name) const
 {
-    toQList info = toQuery::readQuery(CONNECTION,
+	toQList info = toQuery::readQuery(ext.connection(),
                                       SQLTablespaceInfo,
-                                      QString::number(ext.getBlockSize()),
-                                      toQueryParams() << name);
+                                      toQueryParams() << QString::number(ext.getBlockSize()) << name);
 
     if (info.size() != 10)
         throw qApp->translate("toOracleExtract", "Couldn't find tablespace %1").arg(name);
@@ -6253,7 +6275,8 @@ void toOracleExtract::describeView(toExtract &ext,
     addDescription(lst, ctx, "AS", text);
     describeComments(ext, lst, ctx, owner, name);
 
-    toQuery query(CONNECTION, "SELECT * FROM " + QUOTE(owner) + "." + QUOTE(name) + " WHERE NULL = NULL");
+	toConnectionSubLoan conn(ext.connection());
+    toQuery query(conn, "SELECT * FROM " + QUOTE(owner) + "." + QUOTE(name) + " WHERE NULL = NULL", toQueryParams());
 
     toQColumnDescriptionList desc = query.describe();
     int num = 1;
@@ -7268,7 +7291,8 @@ static toSQL SQLDbmsMetadataGetDdl("toOracleExtract:DbmsMetadataGetDdl",
 
 QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, const QString &name, const QString &type) const
 {
-    toQuery inf(CONNECTION, SQLDbmsMetadataGetDdl, toQueryParams() << type << name << owner);
+	toConnectionSubLoan conn(ext.connection());
+    toQuery inf(conn, SQLDbmsMetadataGetDdl, toQueryParams() << type << name << owner);
     if (inf.eof())
         throw qApp->translate("toOracleExtract", "Couldn't get meta information for %1 %2.%3").arg(type).arg(owner).arg(name);
 
@@ -7602,7 +7626,9 @@ void toOracleExtract::initialize(toExtract &ext) const
     toConnectionSubLoan conn(CONNECTION);
     try
     {
-        toQuery(CONNECTION, "select * from sys.dba_segments where null=null", toQueryParams());
+		toConnectionSubLoan conn(ext.connection());
+        toQuery q(conn, "select * from sys.dba_segments where null=null", toQueryParams());
+		q.eof();
         DbaSegments = "sys.dba_segments";
     }
     catch (...)
@@ -7614,14 +7640,14 @@ void toOracleExtract::initialize(toExtract &ext) const
 
     try
     {
-        toQList ret = toQuery::readQuery(CONNECTION, SQLSetSizing);
+		toQList ret = toQuery::readQuery(ext.connection(), SQLSetSizing, toQueryParams());
         ext.setBlockSize(Utils::toShift(ret).toInt());
     }
     catch (...)
     {
-        toQList ret = toQuery::readQuery(CONNECTION, SQLSetSizingFallback, toQueryParams());
+        toQList ret = toQuery::readQuery(ext.connection(), SQLSetSizingFallback, toQueryParams());
         if (ret.empty())
-            ret = toQuery::readQuery(CONNECTION, SQLSetSizingFallback2, toQueryParams());
+            ret = toQuery::readQuery(ext.connection(), SQLSetSizingFallback2, toQueryParams());
         ext.setBlockSize(Utils::toShift(ret).toInt());
     }
 }
@@ -7861,12 +7887,12 @@ void toOracleExtract::migrate(toExtract &ext,
 {
     clearFlags(ext);
 
-    if (type == "TABLE")
-        stream << migrateTable(ext, src, dst);
+//    if (type == "TABLE")
+//        stream << migrateTable(ext, src, dst);
 //    TODO: Add other missing objects: views, indexes, tablespaces etc.
 //    else if (type == "OTHEROBJECTS")
 //        stream << migrateOtherObject(otherparams);
-    else
+//    else
     {
         throw qApp->translate("toOracleExtract", "Invalid type %1 to migrate").arg(type);
     }

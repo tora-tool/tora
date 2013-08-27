@@ -691,8 +691,8 @@ public:
      * @param end End of parameters.
      * @return The indented statement.
      */
-    QString createFromParse(std::list<toSQLParse::statement>::iterator start,
-                            std::list<toSQLParse::statement>::iterator end);
+    //QString createFromParse(std::list<toSQLParse::statement>::iterator start,
+    //                        std::list<toSQLParse::statement>::iterator end);
 
     /** Create a source and destination object list to two other lists
      * containing dropped and created objects or attributes.

@@ -908,18 +908,18 @@ QString toExtract::contextDescribe(const QString &str, int level)
     return QString::null;
 }
 
-QString toExtract::createFromParse(std::list<toSQLParse::statement>::iterator start,
-                                   std::list<toSQLParse::statement>::iterator end)
-{
-    QString ret;
-    toSQLParse::statement newstat(toSQLParse::statement::Statement);
-    while (start != end)
-    {
-        newstat.subTokens().insert(newstat.subTokens().end(), *start);
-        start++;
-    }
-    return toSQLParse::indentStatement(newstat, connection()).trimmed();
-}
+//QString toExtract::createFromParse(std::list<toSQLParse::statement>::iterator start,
+//                                   std::list<toSQLParse::statement>::iterator end)
+//{
+//    QString ret;
+//    toSQLParse::statement newstat(toSQLParse::statement::Statement);
+//    while (start != end)
+//    {
+//        newstat.subTokens().insert(newstat.subTokens().end(), *start);
+//        start++;
+//    }
+//    return toSQLParse::indentStatement(newstat, connection()).trimmed();
+//}
 
 std::list<toExtract::columnInfo> toExtract::parseColumnDescription(std::list<QString>::const_iterator begin,
         std::list<QString>::const_iterator end,

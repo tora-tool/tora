@@ -464,7 +464,7 @@ SET(TORA_SOURCES
   core/toresultcode.cpp
   core/toresultfield.cpp
   #obsolere core/tosqlparse.cpp
-  #obsolete core/toextract.cpp  
+  core/toextract.cpp  
   core/toresultgrants.cpp
   core/toresultdepend.cpp  
   core/toresultextent.cpp
@@ -509,6 +509,7 @@ SET(TORA_SOURCES
 
   connection/tooraclefind.cpp
   connection/tooraclesql.cpp
+  connection/tooracleextract.cpp
   connection/toteradatafind.cpp
   connection/toqsqlfind.cpp
   connection/toqsqlconnection.cpp
@@ -574,7 +575,6 @@ SET(TORA_SOURCES
   tools/towaitevents.cpp
   tools/tocurrent.cpp
   tools/toinvalid.cpp 
-  #obsolete core/tooracleextract.cpp
   tools/tobackup.cpp
   tools/tobackuptool.cpp
   tools/tounittest.cpp

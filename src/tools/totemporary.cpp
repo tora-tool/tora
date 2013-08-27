@@ -44,7 +44,6 @@
 #include "core/tochangeconnection.h"
 #include "core/toconf.h"
 #include "core/toconnection.h"
-////obsolete #include "core/toextract.h"
 #include "core/toresultlong.h"
 #include "tools/tosgastatement.h"
 #include "core/toglobalevent.h"
