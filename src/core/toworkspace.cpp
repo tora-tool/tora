@@ -41,6 +41,7 @@
 
 #include "core/toworkspace.h"
 #include "core/totool.h"
+#include "core/toglobalevent.h"
 #include "core/utils.h"
 #include "ts_log/ts_log_utils.h"
 
@@ -121,6 +122,7 @@ void toWorkSpace::addToolWidget(toToolWidget *toolWidget)
 	connect(toolWidget, SIGNAL(toolCaptionChanged()), m_signalMapper, SLOT(map()));
 
 	Q_ASSERT_X(m_lastWidget != NULL, qPrintable(__QHERE__), "Tool widgets list corrupted");
+	toGlobalEventSingle::Instance().toolWidgetAdded(toolWidget);
 }
 
 void toWorkSpace::slotCurrentIndexChanged(int idx)
@@ -182,11 +184,15 @@ void toWorkSpace::slotTabCloseRequested(int idx)
 	m_tabBar->setCurrentIndex(idx); // show tab before showing Save dialog
 	if(w->close())
 	{		
-		m_stackedWidget->removeWidget(w);
-		m_tabBar->removeTab(idx);
-		delete w;
-		m_label->setText(QString("*%1").arg(idx));
 		m_lastWidget = NULL;
+		m_stackedWidget->removeWidget(w);
+		m_tabBar->removeTab(idx);            // this may emit currentChanged => m_lastWidget will be overwritten
+
+		int i = m_toolsRegistry.remove(w);
+		Q_ASSERT_X(i == 1, qPrintable(__QHERE__), "m_toolsRegistry.remove() <> 1");
+
+		delete w;
+		m_label->setText(QString("*%1->%2").arg(idx).arg(m_tabBar->currentIndex()));
 	}
 }
 
@@ -275,9 +281,14 @@ bool toWorkSpace::closeToolWidget(toToolWidget* tool)
 	{
 		m_stackedWidget->removeWidget(tool);
 		m_tabBar->removeTab(idx);
+
+		int i = m_toolsRegistry.remove(tool);
+		Q_ASSERT_X(i == 1, qPrintable(__QHERE__), "m_toolsRegistry.remove() <> 1");
+
 		delete tool;
 		m_label->setText(QString("*%1").arg(idx));
 		m_lastWidget = NULL;
+
 		return true;
 	}
 	return false;

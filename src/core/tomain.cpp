@@ -141,10 +141,6 @@ toMain::toMain()
 	    this, SLOT(addRecentFile(QString const&)));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_addCustomMenu(QMenu*)),
 	    this, SLOT(addCustomMenu(QMenu*)));
-//    connect(&toGlobalEventSingle::Instance(), SIGNAL(s_toolWidgetAdded(toToolWidget*)),
-//	    this, SLOT(toolWidgetAdded(toToolWidget*)));
-//    connect(&toGlobalEventSingle::Instance(), SIGNAL(s_toolWidgetRemoved(toToolWidget*)),
-//	    this, SLOT(toolWidgetRemoved(toToolWidget*)));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_setCoordinates(int,int)),
 	    this, SLOT(setCoordinates(int, int)));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_createDefaultTool(void)),
@@ -386,6 +382,13 @@ void toMain::createMenus()
     // windows menu handled separately by update function
     windowsMenu = menuBar()->addMenu(tr("&Window"));
     connect(windowsMenu, SIGNAL(aboutToShow()), this, SLOT(updateWindowsMenu()));
+
+    // Refresh QAction shortcuts when tools are added/removed
+    connect(&toGlobalEventSingle::Instance(), SIGNAL(s_toolWidgetAdded(toToolWidget*)),
+	    this, SLOT(updateWindowsMenu()));
+    connect(&toGlobalEventSingle::Instance(), SIGNAL(s_toolWidgetRemoved(toToolWidget*)),
+	    this, SLOT(updateWindowsMenu()));
+
     connect(windowsMenu,
             SIGNAL(triggered(QAction *)),
             this,
