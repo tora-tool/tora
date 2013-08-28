@@ -1260,6 +1260,10 @@ void toWorksheet::slotAddLog(const QString &sql,
                          const toConnection::exception &result,
                          bool error)
 {
+	// Stop ticking clock
+	// TODO: resume (un-pause) the clock when read-all is executed in Model
+    Poll.stop();
+
     m_FirstDataReceived = true;
 
     if (error && result.offset() >= 0 && toConfigurationSingle::Instance().wsMoveToErr())

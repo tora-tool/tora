@@ -239,8 +239,8 @@ private:
     toEditableMenu *InsertSavedMenu;
 
     bool m_FirstDataReceived;
-    QTime Time;
-    QTimer Poll;
+    QTime Time;     // Timer used for query run duration (See QLabel *Started, slotPoll())
+    QTimer Poll;	// Periodically refresh duration timer "Started"
 
     QWidget *Current;
     std::map<int, QWidget *> History;
