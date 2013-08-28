@@ -73,6 +73,11 @@
 
 int main(int argc, char **argv)
 {
+    /* This is probably needed for toWorksheet parser threads
+     * otherwise application crashes with:
+     * "Fatal IO error 11 (Resource temporarily unavailable) on X server :0"
+     */
+    QCoreApplication::setAttribute(Qt::AA_X11InitThreads); //  or just XInitThreads();
     toConfiguration::setQSettingsEnv();
 
     /*! \warning: Keep the code before QApplication init as small

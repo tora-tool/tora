@@ -138,7 +138,7 @@ ENDIF (WIN32 AND NOT DEFINED WANT_INTERNAL_QSCINTILLA)
 ########## Find Dependencies                                                                        ##########
 
 SET (QT_MT_REQUIRED true)
-SET (QT_MIN_VERSION "4.3.0")
+SET (QT_MIN_VERSION "4.8.0")
 SET (QT_USE_QTSQL TRUE)
 SET (QT_USE_QTNETWORK TRUE)
 SET (QT_USE_QTXML TRUE)
