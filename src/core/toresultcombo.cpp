@@ -74,6 +74,7 @@ void toResultCombo::query(const QString &sql, toQueryParams const& param)
     try
     {
         clear();
+        blockSignals(true); // Do not emit currentIndexChanged when 1st field is inserted
         addItems(Additional);
         for (int i = 0; i < Additional.count(); i++)
             if (Additional[i] == Selected)
@@ -154,6 +155,8 @@ void toResultCombo::slotPoll(void)
     }
     catch (const QString &exc)
     {
+        blockSignals(false);
+        emit currentIndexChanged(currentText());
         emit done();
         Utils::toStatusMessage(exc);
     }
@@ -161,6 +164,7 @@ void toResultCombo::slotPoll(void)
 
 void toResultCombo::slotQueryDone(void)
 {
+    blockSignals(false);
     switch(SelectionPolicy)
     {
     case First:
@@ -187,7 +191,7 @@ void toResultCombo::slotQueryDone(void)
 //        connection().getCache().updateUserList(userList, toCache::USERS);
 //        userList.clear();
 //    }
-
+    emit currentIndexChanged(currentText());
     emit done();
     delete Query;
     Query = NULL;

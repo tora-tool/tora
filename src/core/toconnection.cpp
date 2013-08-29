@@ -61,7 +61,6 @@ toConnection::toConnection(const QString &provider,
     , Password(password)
     , Host(host)
     , Database(database)
-    , Schema(schema)
     , Color(color)
     , Options(options)
     , pConnectionImpl(NULL)
@@ -77,6 +76,8 @@ toConnection::toConnection(const QString &provider,
     toConnectionSub* connSub = addConnection();
     Version = connSub->version();
     Connections.insert(connSub);
+
+    setSchema(schema);
 
     pCache = new toCache(*this, description(false).trimmed());
 
@@ -112,6 +113,8 @@ toConnection::toConnection(const toConnection &other)
     //PoolPtr sub(ConnectionPool);
     //Version = Connection->version(*sub);
 
+    setSchema(other.Schema);
+
     {
     	QWriteLocker lock(&pCache->cacheLock);
         pCache->refCount.fetchAndAddAcquire(1);
@@ -129,7 +132,8 @@ toConnectionSub* toConnection::addConnection()
     {
         try
         {
-            //sub->execute(sql, params);
+    		//toQuery q(sub, sql, toQueryParams());
+    		//q.eof();
         }
         TOCATCH
     }
@@ -312,11 +316,21 @@ QString toConnection::description(bool version) const
 /** Set connection's current schema. */
 void toConnection::setSchema(QString const & schema)
 {
+	if(this->Schema == schema)
+		return;
+
 #define CHANGE_CURRENT_SCHEMA QString("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"")
 #define CHANGE_CURRENT_SCHEMA_PG QString("SET search_path TO %1,\"$user\",public")
 #define CHANGE_CURRENT_SCHEMA_TD QString("DATABASE \"%1\"")
 #define CHANGE_CURRENT_SCHEMA_MY QString("USE `%1`")
     Schema = schema;
+
+	if(Schema.isEmpty())
+	{
+		delInit("SCHEMA");
+		return;
+	}
+
     if (providerIs("Oracle"))
         setInit("SCHEMA", CHANGE_CURRENT_SCHEMA.arg(schema));
     else if (providerIs("QMYSQL"))
@@ -327,6 +341,8 @@ void toConnection::setSchema(QString const & schema)
     	setInit("SCHEMA", CHANGE_CURRENT_SCHEMA_TD.arg(schema));
     else
         throw QString("No support for changing schema for this database");
+
+    allExecute(InitStrings.value("SCHEMA"));
 }
 
 void toConnection::setInit(const QString &key, const QString &sql)
@@ -391,5 +407,14 @@ void toConnection::allExecute(toSQL const& sql)
 
 void toConnection::allExecute(QString const& sql)
 {
-    throw exception("Not implemented yet: void toConnection::allExecute(QString const& sql)");
+	try
+	{
+		Q_FOREACH(toConnectionSub *con, Connections)
+		{
+			//TODO
+			//toQuery q(*con, sql, toQueryParams());
+			//q.eof();
+		}
+	}
+	TOCATCH
 }

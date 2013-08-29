@@ -149,6 +149,10 @@ static toSQL SQLAddress("Global:Address",
                         " WHERE SQL_Text LIKE :f1<char[150]>||'%'",
                         "Get address of an SQL statement");
 
+static toSQL SQLCurrentSchema("Global:CurrentSchema",
+                        "select sys_context('userenv', 'current_schema') from dual",
+                        "Get address of an SQL statement");
+
 static QString toSQLToAddress(toConnection &conn, const QString &sql)
 {
   QString search = Utils::toSQLStripSpecifier(sql);
@@ -2069,9 +2073,21 @@ void toWorksheet::slotChangeConnection(void)
 
 void toWorksheet::slotLockConnection(bool enabled)
 {
-	if(enabled) {
+	if(enabled)
+	{
 		QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(connection(), toConnectionSubLoan::INIT_SESSION));
 		this->LockedConnection = conn;
+
+		try
+		{
+			Utils::toBusy busy;
+			toQuery schema(*LockedConnection, SQLCurrentSchema, toQueryParams());
+			QString value = schema.readValue();
+			Schema->setSelected(value);
+			Schema->refresh();
+			connection().setSchema(value);
+		}
+		TOCATCH
 	} else
 		this->LockedConnection.clear();
 }
