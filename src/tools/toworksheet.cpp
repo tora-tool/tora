@@ -2070,7 +2070,7 @@ void toWorksheet::slotChangeConnection(void)
 void toWorksheet::slotLockConnection(bool enabled)
 {
 	if(enabled) {
-		QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(connection()));
+		QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(connection(), toConnectionSubLoan::INIT_SESSION));
 		this->LockedConnection = conn;
 	} else
 		this->LockedConnection.clear();

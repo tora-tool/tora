@@ -78,6 +78,8 @@ public:
 
         virtual void execute(void);
 
+        virtual void execute(QString const&);
+
         virtual void cancel(void);
 
         QString parseReorder(const QString &str);

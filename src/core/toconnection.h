@@ -173,7 +173,7 @@ public:
     QString description(bool version = true) const;
 
     /** Get a list of the current init strings. */
-    QList<QString> const& initStrings() const;
+    QList<QString> initStrings() const;
 
     /**
      * Get information about if the connection has uncommitted data.
@@ -217,10 +217,7 @@ public:
     }
 
     /** Set connection's current schema. */
-    inline void setSchema(QString const & schema)
-    {
-        Schema = schema;
-    }
+    void setSchema(QString const & schema);
 
     /** set connections' color */
     inline void setColor(QString const& color)

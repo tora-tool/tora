@@ -181,6 +181,38 @@ void oracleQuery::execute(void)
     }
 }
 
+void oracleQuery::execute(QString const& sql)
+{
+	toOracleConnectionSub *conn = dynamic_cast<toOracleConnectionSub*>(query()->connectionSubPtr());
+    if (!conn)
+        throw QString::fromLatin1("Internal error, not an Oracle sub connection");
+    try
+    {
+        if(Query) delete Query;
+        Query = NULL;
+
+        if (Cancel)
+            throw QString::fromLatin1("Query aborted before started");
+        Running = true;
+
+        Query = new oracleQuery::trotlQuery(*conn->_conn, ::std::string(sql.toUtf8().constData()));
+        TLOG(0, toDecorator, __HERE__) << "SQL(conn=" << conn->_conn << ", this=" << Query << "): " << ::std::string(sql.toUtf8().constData()) << std::endl;
+        // TODO autocommit ??
+        // Query->set_commit(0);
+        Query->execute_internal(::trotl::g_OCIPL_BULK_ROWS, OCI_DEFAULT);
+        Running = false;
+    }
+    catch (const ::trotl::OciException &exc)
+    {
+        delete Query;
+        Query = NULL;
+        Running = false;
+		if(exc.is_critical())
+			conn->Broken = true;
+        ThrowException(exc);
+    }
+}
+
 toQValue oracleQuery::readValue(void)
 {
     toQValue retval;

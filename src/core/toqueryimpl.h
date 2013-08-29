@@ -79,6 +79,11 @@ public:
     /** Execute a query. Parameters can be gotten from the @ref toQuery object.
      */
     virtual void execute(void) = 0;
+
+    /** Execute a query. No parameters provided. Used for init alter session statements
+     */
+    virtual void execute(QString const&) = 0;
+
     /** Read the next value from the stream.
      * @return The value read from the query.
      */

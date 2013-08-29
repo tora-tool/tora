@@ -12,7 +12,17 @@ class toConnectionSubLoan
 	friend class toEventQuery;
 	friend class toQuery;
 public:
-    toConnectionSubLoan(toConnection &con);
+
+	/* If set to INIT_SESSION
+	 *
+	 */
+	enum InitModeEnum
+	{
+		NO_INIT_SESSION = 0,
+		INIT_SESSION = 1
+	};
+
+    toConnectionSubLoan(toConnection &con, InitModeEnum = NO_INIT_SESSION);
 
     /** This special kind of constructor is used by @ref toQuery while testing the connections*/
     toConnectionSubLoan(toConnection &con, int*);
@@ -44,6 +54,8 @@ public:
     }
 
     toConnection const& ParentConnection;
+    InitModeEnum InitMode;
+    bool Initialized;
 private:
     inline void check() const
     {

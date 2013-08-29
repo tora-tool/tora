@@ -172,11 +172,6 @@ public:
       */
     //std::list<toQValue> readQuery(const QString &sql, toQueryParams const& params);
 
-    /** Specify if busy cursor must be displayed while a query is running */
-    inline void setShowBusy(bool busy)
-    {
-        m_ShowBusy = busy;
-    }
 protected:
     toConnectionSub* sub()
     {
@@ -192,10 +187,11 @@ private:
     void *operator new(size_t);
     void *operator new[](size_t);
 private:
+    void init();
+
     toConnectionSubLoan& m_ConnectionSub;
     toQueryParams m_Params;
     QString m_SQL;
-    bool m_ShowBusy; // does a "busy" indicator has to be shown while query is running (default - true)
 
     queryImpl *m_Query;
     toQuery(const toQuery &);

@@ -309,6 +309,26 @@ QString toConnection::description(bool version) const
     return ret;
 }
 
+/** Set connection's current schema. */
+void toConnection::setSchema(QString const & schema)
+{
+#define CHANGE_CURRENT_SCHEMA QString("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"")
+#define CHANGE_CURRENT_SCHEMA_PG QString("SET search_path TO %1,\"$user\",public")
+#define CHANGE_CURRENT_SCHEMA_TD QString("DATABASE \"%1\"")
+#define CHANGE_CURRENT_SCHEMA_MY QString("USE `%1`")
+    Schema = schema;
+    if (providerIs("Oracle"))
+        setInit("SCHEMA", CHANGE_CURRENT_SCHEMA.arg(schema));
+    else if (providerIs("QMYSQL"))
+        setInit("SCHEMA", CHANGE_CURRENT_SCHEMA_MY.arg(schema));
+    else if (providerIs("PostgreSQL"))
+    	setInit("SCHEMA", CHANGE_CURRENT_SCHEMA_PG.arg(schema));
+    else if (providerIs("Teradata"))
+    	setInit("SCHEMA", CHANGE_CURRENT_SCHEMA_TD.arg(schema));
+    else
+        throw QString("No support for changing schema for this database");
+}
+
 void toConnection::setInit(const QString &key, const QString &sql)
 {
     InitStrings.insert(key, sql);
@@ -319,7 +339,7 @@ void toConnection::delInit(const QString &key)
     InitStrings.remove(key);
 }
 
-QList<QString> const& toConnection::initStrings() const
+QList<QString> toConnection::initStrings() const
 {
     return InitStrings.values();
 }

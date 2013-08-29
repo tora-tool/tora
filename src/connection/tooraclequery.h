@@ -78,6 +78,8 @@ public:
 
     virtual void execute(void);
 
+    virtual void execute(QString const&);
+
     virtual toQValue readValue(void);
 
     virtual void cancel(void);

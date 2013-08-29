@@ -142,6 +142,12 @@ void mysqlQuery::execute(void)
     checkQuery();
 }
 
+void mysqlQuery::execute(QString const& sql)
+{
+    QList<QString> empty;
+    Query = createQuery(sql);
+    checkQuery();
+}
 void mysqlQuery::cancel(void)
 {
 	if (!Connection->ConnectionID.isEmpty())

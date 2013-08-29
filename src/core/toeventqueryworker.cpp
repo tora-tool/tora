@@ -114,7 +114,6 @@ void toEventQueryWorker::init()
 	try
 	{
 		Query.moveToThread(this->thread());
-
 		toQColumnDescriptionList desc = Query.describe();
 		ColumnCount = Query.columns();
 		emit headers(desc, ColumnCount);

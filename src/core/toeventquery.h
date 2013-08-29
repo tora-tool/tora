@@ -121,6 +121,7 @@ public:
 			, QString const &sql
 			, toQueryParams const &param
 			, FETCH_MODE
+			, QList<QString> const &init = QList<QString>()
 			//, toResultStats *statistics = NULL
 		);
 
@@ -137,14 +138,7 @@ public:
 			, QString const &sql
 			, toQueryParams const &param
 			, FETCH_MODE
-			//, toResultStats *statistics = NULL
-		);
-
-	toEventQuery(QObject *parent
-			, toConnection &conn
-			, QList<QString> const &sqls
-			, toQueryParams const &param
-			// , FETCH_MODE READ_ALL by default
+			, QList<QString> const &init = QList<QString>()
 			//, toResultStats *statistics = NULL
 		);
 

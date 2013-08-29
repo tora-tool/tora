@@ -51,37 +51,34 @@ toQuery::toQuery(toConnectionSubLoan &conn, const toSQL &sql, toQueryParams cons
     : m_ConnectionSub(conn)
     , m_Params(params)
 	, m_SQL(sql(conn.ParentConnection).toAscii())
-    , m_ShowBusy(true)
     , m_Query(NULL)
 {
-    Utils::toBusy busy;
-    try
-    {
-        m_Query = m_ConnectionSub->createQuery(this);
-        m_ConnectionSub->setQuery(this);
-        m_Query->execute();
-    }
-    catch (...)
-    {
-        if (m_Query)
-            delete m_Query;
-        m_ConnectionSub->setQuery(NULL);
-        m_Query = NULL;
-        throw;
-    }
-
+	init();
 }
 
 toQuery::toQuery(toConnectionSubLoan &conn, QString const& sql, toQueryParams const& params)
     : m_ConnectionSub(conn)
     , m_Params(params)
     , m_SQL(sql)
-    , m_ShowBusy(true)
     , m_Query(NULL)
 {
-    Utils::toBusy busy;
+	init();
+}
+
+void toQuery::init()
+{
     try
     {
+    	if ( m_ConnectionSub.InitMode == toConnectionSubLoan::INIT_SESSION)
+    	{
+    		Q_FOREACH(QString sql, m_ConnectionSub.ParentConnection.initStrings())
+			{
+    	        m_Query = m_ConnectionSub->createQuery(this);
+    	        m_ConnectionSub->setQuery(this);
+    	        m_Query->execute(sql);
+			}
+    	}
+		  
         m_Query = m_ConnectionSub->createQuery(this);
         m_ConnectionSub->setQuery(this);
         m_Query->execute();
@@ -94,7 +91,6 @@ toQuery::toQuery(toConnectionSubLoan &conn, QString const& sql, toQueryParams co
         m_Query = NULL;
         throw;
     }
-
 }
 
 toQuery::~toQuery()

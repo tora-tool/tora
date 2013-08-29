@@ -54,6 +54,7 @@ toEventQuery::toEventQuery(QObject *parent
 				 , QString const& sql
 				 , toQueryParams const& param
 				 , FETCH_MODE mode
+				 , QList<QString> const &init
 				 //, toResultStats *stats
 	)
 	: QObject(parent)
@@ -83,6 +84,7 @@ toEventQuery::toEventQuery(QObject *parent
 				 , QString const& sql
 				 , toQueryParams const& param
 				 , FETCH_MODE mode
+				 , QList<QString> const &init
 				 //, toResultStats *stats
 	)
 	: QObject(parent)
