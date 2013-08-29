@@ -117,3 +117,8 @@ void toGlobalEvent::rollbackRequested(toConnection &conn)
 {
 	emit s_rollbackRequested(conn);
 }
+
+void toGlobalEvent::stopRequested(toConnection &conn)
+{
+	emit s_stopRequested(conn);
+}

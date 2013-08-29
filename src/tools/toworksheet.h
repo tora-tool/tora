@@ -149,7 +149,7 @@ public slots:
     void slotExecutePreviousLog(void);
     void slotExecuteNextLog(void);
     void slotExecuteLog(void);
-    void slotAddLog(const QString &sql, const toConnection::exception &result, bool error);
+    void slotFirstResult(const QString &sql, const toConnection::exception &result, bool error);
     void slotChangeRefresh(const QString &);
     void slotSaveLast(void);
     void slotSaveStatistics(void);

@@ -133,6 +133,7 @@ public:
 
     void commitRequested(toConnection &conn);
     void rollbackRequested(toConnection &conn);
+    void stopRequested(toConnection &conn);
 
 signals:
 	void s_checkCaching(void);
@@ -150,6 +151,7 @@ signals:
 
     void s_commitRequested(toConnection &conn);
     void s_rollbackRequested(toConnection &conn);
+    void s_stopRequested(toConnection &conn);
 };
 
 typedef Loki::SingletonHolder<toGlobalEvent> toGlobalEventSingle;

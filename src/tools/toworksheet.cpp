@@ -396,7 +396,7 @@ void toWorksheet::setup(bool autoLoad)
                                const toConnection::exception &,
                                bool)),
             this,
-            SLOT(slotAddLog(const QString &,
+            SLOT(slotFirstResult(const QString &,
                         const toConnection::exception &,
                         bool)));
     connect(Result,
@@ -549,6 +549,11 @@ void toWorksheet::setup(bool autoLoad)
             SIGNAL(s_rollbackRequested(toConnection &)),
             this,
             SLOT(slotRollbackChanges(toConnection &)));
+
+    connect(&toGlobalEventSingle::Instance(),
+            SIGNAL(s_stopRequested(toConnection &)),
+            this,
+            SLOT(slotStop()));
 
     ///setFocusProxy(Editor);
 
@@ -1037,7 +1042,7 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
     if (statement.statementType == toSyntaxAnalyzer::SQLPLUS)
     {
     	QString t = tr("Ignoring SQL*Plus command");
-    	slotAddLog(statement.sql, toConnection::exception(t), false);
+    	slotFirstResult(statement.sql, toConnection::exception(t), false);
     	Utils::toStatusMessage(t, true);
     	return ;
     }
@@ -1104,7 +1109,7 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
 #endif
     		}
 
-    		slotAddLog(statement.sql, toConnection::exception(buffer), false);
+    		slotFirstResult(statement.sql, toConnection::exception(buffer), false);
     	}
     	catch (const QString &exc)
     	{
@@ -1213,7 +1218,7 @@ void toWorksheet::saveHistory(void)
         Result->slotStop();
         disconnect(Result, SIGNAL(done(void)), this, SLOT(slotQueryDone(void)));
         disconnect(Result, SIGNAL(firstResult(const QString &, const toConnection::exception &, bool)),
-                   this, SLOT(slotAddLog(const QString &, const toConnection::exception &, bool)));
+                   this, SLOT(slotFirstResult(const QString &, const toConnection::exception &, bool)));
         disconnect(stopAct, SIGNAL(clicked(void)), Result, SLOT(slotStop(void)));
 
         Result = new toResultTableView(Result->parentWidget());
@@ -1224,7 +1229,7 @@ void toWorksheet::saveHistory(void)
         connect(stopAct, SIGNAL(clicked(void)), Result, SLOT(slotStop(void)));
         connect(Result, SIGNAL(done(void)), this, SLOT(slotQueryDone(void)));
         connect(Result, SIGNAL(firstResult(const QString &, const toConnection::exception &, bool)),
-                this, SLOT(slotAddLog(const QString &, const toConnection::exception &, bool)));
+                this, SLOT(slotFirstResult(const QString &, const toConnection::exception &, bool)));
     }
 #endif
 }
@@ -1260,31 +1265,19 @@ QString toWorksheet::duration(int dur, bool hundreds)
     return QString::fromLatin1(buf);
 }
 
-void toWorksheet::slotAddLog(const QString &sql,
+void toWorksheet::slotFirstResult(const QString &sql,
                          const toConnection::exception &result,
                          bool error)
 {
 	// Stop ticking clock
 	// TODO: resume (un-pause) the clock when read-all is executed in Model
     Poll.stop();
+	timer()->stop();
 
     m_FirstDataReceived = true;
 
     if (error && result.offset() >= 0 && toConfigurationSingle::Instance().wsMoveToErr())
-    {
-//        QChar cmp = '\n';
-//        int lastnl = 0;
-//        int lines = 0;
-//        for (int i = 0; i < result.offset() && i < sql.length(); i++)
-//        {
-//            if (sql.at(i) == cmp)
-//            {
-//                lastnl = i + 1;
-//                lines++;
-//            }
-//        }
-        Editor->setCursorPosition(m_lastQuery.lineFrom + result.line() - 1, result.column() - 1);
-    }
+    	Editor->setCursorPosition(m_lastQuery.lineFrom + result.line() - 1, result.column() - 1);
 
     if (!error)
     {
@@ -1490,10 +1483,7 @@ void toWorksheet::slotEraseLogButton()
 void toWorksheet::slotQueryDone(void)
 {
 	timer()->stop();
-    stopAct->setEnabled(false);
-    Poll.stop();
-    stopAct->setEnabled(false);
-    saveDefaults();
+    stopAct->setDisabled(true);
 }
 
 void toWorksheet::saveDefaults(void)
