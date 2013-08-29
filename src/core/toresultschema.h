@@ -74,20 +74,11 @@ public:
     virtual void query(const QString &sql, toQueryParams const& param);
 
 public slots:
-    /**
-     * Updates connections to use schema
-     */
-    void update(const QString &schema);
-
-    /**
-     * Update to currently selected schema
-     */
-    void update(void);
-
     virtual void refresh(void);
 
 private slots:
     // stores last schema selected in qsettings
+	// also set schema in toConnection
     void updateLastSchema(const QString &schema);
 
     // refreshes user list from connections cache, no query is executed

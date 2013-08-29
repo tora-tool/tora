@@ -103,50 +103,6 @@ void toResultSchema::query(const QString &sql, toQueryParams const& param)
 	}
 }
 
-#define CHANGE_CURRENT_SCHEMA QString("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"")
-#define CHANGE_CURRENT_SCHEMA_PG QString("SET search_path TO %1,\"$user\",public")
-#define CHANGE_CURRENT_SCHEMA_TD QString("DATABASE \"%1\"")
-
-void toResultSchema::update()
-{
-    update(toResultCombo::currentText());
-}
-
-
-void toResultSchema::update(const QString &schema)
-{
-    if(schema.isEmpty())
-        return;
-
-    try
-    {
-        toConnection &conn = connection();
-
-        if (schema != conn.schema())
-        {
-            if (conn.providerIs("Oracle"))
-            {
-                /* set the new one with selected schema */
-                conn.setInit("SCHEMA", CHANGE_CURRENT_SCHEMA.arg(conn.user()));
-            }
-            else if (conn.providerIs("QMYSQL"))
-            {
-                conn.setInit("SCHEMA", QString("USE `%1`").arg(schema));
-            }
-            else if (conn.providerIs("PostgreSQL"))
-            	conn.setInit("SCHEMA", CHANGE_CURRENT_SCHEMA_PG.arg(schema));
-            else if (conn.providerIs("Teradata"))
-            	conn.setInit("SCHEMA", CHANGE_CURRENT_SCHEMA_TD.arg(schema));
-            else
-                throw QString("No support for changing schema for this database");
-
-            conn.setSchema(schema);
-        }
-    }
-    TOCATCH;
-}
-
-
 void toResultSchema::updateLastSchema(const QString &schema)
 {
 	if (schema.isEmpty())
