@@ -118,8 +118,28 @@ public:
 
     /* virtual */ QString userData() const throw()
     {
-        return QString("Datape: Oracle [N]CLOB\nSize: %1B\n")
-               .arg(getLength());
+        ::trotl::SqlOpenLob clob_open(_data, OCI_LOB_READONLY);
+        QString retval;
+        char buffer[524288];
+        unsigned offset = 0;
+        unsigned to_read = 16 * _data.getChunkSize();
+        oraub8 bytes_read = 0, chars_read = 0;
+
+        while(true)
+        {
+            oraub8 cr = 0, br = 0;
+            br = _data.read(&buffer[0], sizeof(buffer), offset + 1, to_read, &cr);
+            offset += cr;
+            chars_read += cr;
+            bytes_read += br;
+            if(br == 0) // end of LOB reached
+                break;
+            retval += QString::fromUtf8(buffer, br);
+        }
+
+        if(offset != _data.length())
+            retval += "\n...<TRUNCATED>";
+        return retval;
     }
 
     /* virtual */ QString const& tooltipData() const throw()

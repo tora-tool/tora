@@ -7289,9 +7289,25 @@ static toSQL SQLDbmsMetadataGetDdl("toOracleExtract:DbmsMetadataGetDdl",
                                    "                             :sch<char[100]>) FROM dual",
                                    "Get object creation ddl using dbms_metadata package");
 
+static toSQL SQLDbmsMetadataSetTransform("toOracleExtract:DbmsMetadataGetSetTransform",
+                                   "begin                                                                                            \n"
+                                   " DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'SQLTERMINATOR',true);        \n"
+                                   " DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'CONSTRAINTS_AS_ALTER',true); \n"
+                                   "end;                                                                                             \n",
+                                   "Configure dbms_metadata package");
+
 QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, const QString &name, const QString &type) const
 {
 	toConnectionSubLoan conn(ext.connection());
+
+	/* TODO
+	 * DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,’PRETTY’,false);
+	 * DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,’SQLTERMINATOR’,true);
+	 * DBMS_METADATA.SET_TRANSFORM_PARAM (DBMS_METADATA.SESSION_TRANSFORM, ‘STORAGE’,false);
+	 * DBMS_METADATA.SET_TRANSFORM_PARAM (DBMS_METADATA.SESSION_TRANSFORM, ‘SEGMENT_ATTRIBUTES’,false);
+	*/
+    toQuery query1(conn, SQLDbmsMetadataSetTransform, toQueryParams());
+    query1.eof();
     toQuery inf(conn, SQLDbmsMetadataGetDdl, toQueryParams() << type << name << owner);
     if (inf.eof())
         throw qApp->translate("toOracleExtract", "Couldn't get meta information for %1 %2.%3").arg(type).arg(owner).arg(name);
@@ -7304,7 +7320,6 @@ QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, co
               arg(QUOTE(name));
     toQValue sql = inf.readValue();
     ret += sql.userData();
-    ret += ';';
     return ret;
 } // createMeatada
 

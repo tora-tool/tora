@@ -191,6 +191,7 @@ public:
     QString displayData() const;
     /** Used for EditRole
      */
+    // TODO add maxsixe parameter here
     QString editData() const;
     /** Used for UserRole(CSV export)
      */

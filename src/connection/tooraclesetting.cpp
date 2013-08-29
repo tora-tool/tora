@@ -77,6 +77,8 @@ toOracleSetting::toOracleSetting(QWidget *parent)
     cbIncludeCode->setChecked(toConfigurationSingle::Instance().extractorIncludeCode());
     cbIncludeHeader->setChecked(toConfigurationSingle::Instance().extractorIncludeHeader());
     cbIncludePrompt->setChecked(toConfigurationSingle::Instance().extractorIncludePrompt());
+    connect(cbUseDbmsMetadata, SIGNAL(toggled(bool)), this, SLOT(dbmsMetadataClicked(bool)));
+    dbmsMetadataClicked(cbUseDbmsMetadata->isChecked());
     try
     {
         // Check if connection exists
@@ -123,6 +125,17 @@ void toOracleSetting::saveSetting()
     toConfigurationSingle::Instance().setExtractorIncludePrompt(cbIncludePrompt->isChecked());
 }
 
+void toOracleSetting::dbmsMetadataClicked(bool)
+{
+	cbIncludeStorage->setDisabled(cbUseDbmsMetadata->isChecked());
+	cbSkipOrgMon->setDisabled(cbUseDbmsMetadata->isChecked());
+	cbSkiptStorExTablespace->setDisabled(cbUseDbmsMetadata->isChecked());
+	cbIncludeParallel->setDisabled(cbUseDbmsMetadata->isChecked());
+	cbIncludePartition->setDisabled(cbUseDbmsMetadata->isChecked());
+	cbIncludeCode->setDisabled(cbUseDbmsMetadata->isChecked());
+	cbIncludeHeader->setDisabled(cbUseDbmsMetadata->isChecked());
+	cbIncludePrompt->setDisabled(cbUseDbmsMetadata->isChecked());
+}
 
 void toOracleSetting::createPlanTable()
 {

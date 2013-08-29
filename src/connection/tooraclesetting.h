@@ -67,6 +67,8 @@ public:
 public slots:
     virtual void saveSetting(void);
     virtual void createPlanTable(void);
+
+    void dbmsMetadataClicked(bool);
 };
 
 #endif
