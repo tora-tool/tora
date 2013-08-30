@@ -43,6 +43,7 @@
 #include "core/toeditmenu.h"
 #include "core/toglobalevent.h"
 #include "core/utils.h"
+#include "ts_log/ts_log_utils.h"
 
 #include <QtCore/QFileSystemWatcher>
 #include <QtCore/QtDebug>
