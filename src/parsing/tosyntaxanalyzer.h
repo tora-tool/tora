@@ -43,6 +43,9 @@
 #define TOSYNTAX_ANALYZER_H
 
 #include <QtCore/QObject>
+#include <QtGui/QColor>
+
+#include <Qsci/qscilexersql.h>
 
 class toHighlightedText;
 class QsciLexer;
@@ -55,6 +58,7 @@ class toSyntaxAnalyzer : public QObject
 {
 	Q_OBJECT;
 	Q_ENUMS(statementClass);
+	Q_ENUMS(wordClass);
 	friend class toHighlightedText;
 public:
     /** Indicates type of statement - DDL/DML or PLSQL block
@@ -70,6 +74,77 @@ public:
         PLSQL,      // DECLARE/BEGIN ...
         OTHER,      // ALTER SESSION ..., ANALYZE, SET ROLE, EXPLAIN
         SQLPLUS		// sqlplus command
+    };
+
+    //! This enum defines the meanings of the different styles used by the
+    //! SQL lexer. This enum is copied from QsciLexerSQL
+    enum wordClass {
+    	//! The default.  - not used at all - or used for whitespace only
+    	Default = QsciLexerSQL::Default,
+
+    	//! A comment.
+    	Comment = QsciLexerSQL::Comment,
+
+    	//! A line comment.
+    	////CommentLine = 2,                    - not used, see Comment
+
+    	//! A JavaDoc/Doxygen style comment.
+    	////CommentDoc = 3,                     - not used, see Comment
+
+    	//! A number.
+    	Number = QsciLexerSQL::Number,
+
+    	//! A keyword.
+    	Keyword = QsciLexerSQL::Keyword,
+
+    	//! A double-quoted string.
+    	DoubleQuotedString = 6,
+
+    	//! A single-quoted string.
+    	SingleQuotedString = QsciLexerSQL::SingleQuotedString,
+
+    	//! An SQL*Plus keyword.
+    	PlusKeyword = 8,
+
+    	//! An SQL*Plus prompt.
+    	PlusPrompt = 9,
+
+    	//! An operator.
+    	Operator = QsciLexerSQL::Operator,
+
+    	//! An identifier
+    	Identifier = QsciLexerSQL::Identifier,
+
+    	//! An SQL*Plus comment.
+    	////PlusComment = 13,                 - not used, see Comment
+
+    	//! A '#' line comment.
+    	////CommentLineHash = 15,             - not used, see Comment
+
+    	//! A JavaDoc/Doxygen keyword.        - not used, see Comment
+    	////CommentDocKeyword = 17,
+
+    	//! A JavaDoc/Doxygen keyword error.  - not used, see Comment
+    	////CommentDocKeywordError = 18,
+
+    	//! A keyword defined in keyword set number 5.  The class must be
+    	//! sub-classed and re-implement keywords() to make use of this style.
+    	KeywordSet5 = 19,
+
+    	//! A keyword defined in keyword set number 6.  The class must be
+    	//! sub-classed and re-implement keywords() to make use of this style.
+    	////KeywordSet6 = 20,
+
+    	//! A keyword defined in keyword set number 7.  The class must be
+    	//! sub-classed and re-implement keywords() to make use of this style.
+    	////KeywordSet7 = 21,
+
+    	//! A keyword defined in keyword set number 8.  The class must be
+    	//! sub-classed and re-implement keywords() to make use of this style.
+    	////KeywordSet8 = 22,
+
+    	//! A quoted identifier.
+    	QuotedIdentifier = 23
     };
 
     /* statements is represented only by lines range */
@@ -90,6 +165,8 @@ public:
     toSyntaxAnalyzer(toHighlightedText *parent);
     virtual ~toSyntaxAnalyzer();
 
+    QColor getColor(wordClass type) const;
+
     /*
      * this method should be "stateless" can be called from "both" threads
      */
@@ -100,6 +177,11 @@ public:
     virtual QsciLexer* createLexer(QObject *parent = 0) = 0;
 
     virtual void sanitizeStatement(statement&) = 0;
+private:
+    /** Colors allocated for the different @ref wordClass values.
+     */
+    QMap<wordClass, QColor> Colors;
+
 };
 
 /* This "analyzer" uses an empty line as statement delimiter */

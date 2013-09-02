@@ -438,9 +438,7 @@ QToolBar* toToolsRegistry::toolsToolbar(QToolBar *toolbar) const
             int priority = pTool->priority();
             if (priority / 100 != lastPriorityPix / 100 && pixmap)
             {
-#ifndef TO_NO_ORACLE
                 toolbar->addSeparator();
-#endif
                 lastPriorityPix = priority;
             }
 
@@ -481,9 +479,7 @@ QMenu* toToolsRegistry::toolsMenu(QMenu *menu) const
             int priority = pTool->priority();
             if (priority / 100 != lastPriorityMenu / 100 && menuName)
             {
-#ifndef TO_NO_ORACLE
                 menu->addSeparator();
-#endif
                 lastPriorityMenu = priority;
             }
 

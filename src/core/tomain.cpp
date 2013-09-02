@@ -1013,20 +1013,10 @@ void toMain::enableConnectionActions(bool enabled)
     		if (!pTool)
     			continue;
 
-#ifdef TO_NO_ORACLE
-    		// hide icon if tool doesn't support connection. this is to
-    		// hide all of the oracle tools that don't make sense if
-    		// compiled without it.
-    		if(conn)
-    			pTool->setActionVisible(*conn);
-    		else
-    			pTool->setActionVisible(false);
-#else
     		if (!enabled)
     			pTool->enableAction(false);
     		else
     			pTool->enableAction(conn);
-#endif
     	}
     } catch(QString const& e) {
 		TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << e << std::endl;

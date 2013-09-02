@@ -52,6 +52,7 @@
 
 class QFont;
 class QListWidgetItem;
+class toSyntaxAnalyzer;
 
 class toSyntaxSetup : public QWidget
     , public Ui::toSyntaxSetupUI
@@ -63,13 +64,13 @@ class toSyntaxSetup : public QWidget
     QString List;
     QListWidgetItem *Current;
     std::map<QString, QColor> Colors;
-    //toSyntaxAnalyzer Analyzer;
+    toSyntaxAnalyzer* Analyzer;
     QString color();
+    void checkFixedWidth(const QFont &fnt);
 
 public:
     toSyntaxSetup(QWidget *parent = 0, const char *name = 0, Qt::WFlags fl = 0);
     virtual void saveSetting(void);
-    void checkFixedWidth(const QFont &fnt);
 
 public slots:
     virtual void changeLine(QListWidgetItem *);

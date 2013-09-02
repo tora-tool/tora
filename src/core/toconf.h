@@ -69,7 +69,6 @@
 #define DEFAULT_KEYWORD_UPPER false
 #define CONF_OBJECT_NAMES_UPPER "ObjectNamesUpper"
 #define DEFAULT_OBJECT_NAMES_UPPER false
-#define CONF_COLOR  "KeywordColor"
 #define CONF_CACHE_DIR  "CacheDir"
 #define CONF_CACHE_DISK  "CacheDiskUse"
 #define DEFAULT_CACHE_DISK true

@@ -80,7 +80,25 @@ toSyntaxAnalyzer::statement& toSyntaxAnalyzer::statement::operator=(toSyntaxAnal
 
 toSyntaxAnalyzer::toSyntaxAnalyzer(toHighlightedText *parent)
 	: QObject(parent)
-{}
+{
+//	Colors[Default] = toConfigurationSingle::Instance().syntaxDefault();
+//	Colors[Comment] = toConfigurationSingle::Instance().syntaxComment();
+//	Colors[Number] = toConfigurationSingle::Instance().syntaxNumber();
+//	Colors[Keyword] = toConfigurationSingle::Instance().syntaxKeyword();
+//	Colors[String] = toConfigurationSingle::Instance().syntaxString();
+//	Colors[DefaultBg] = toConfigurationSingle::Instance().syntaxDefaultBg();
+//	Colors[ErrorBg] = toConfigurationSingle::Instance().syntaxErrorBg();
+//	Colors[DebugBg] = toConfigurationSingle::Instance().syntaxDebugBg();
+//	Colors[CurrentLineMarker] = toConfigurationSingle::Instance().syntaxCurrentLineMarker();
+//	Colors[StaticBg] = toConfigurationSingle::Instance().syntaxStaticBg();
+}
+
+QColor toSyntaxAnalyzer::getColor(toSyntaxAnalyzer::wordClass type) const
+{
+	if (Colors.contains(type))
+		return Colors[type];
+	throw QString("Unknown color reference: %1").arg(type);
+}
 
 toSyntaxAnalyzer::~toSyntaxAnalyzer()
 {

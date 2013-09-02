@@ -44,20 +44,25 @@
 #include "core/totreewidget.h"
 #include "core/toconfiguration.h"
 #include "core/utils.h"
+#include "parsing/tosyntaxanalyzer.h"
+#include "editor/todebugtext.h"
 
+#include <QtCore/QMetaEnum>
 #include <QtGui/QFontDialog>
 #include <QtGui/QColorDialog>
 
 toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     : QWidget(parent)
     , toSettingTab("fonts.html")
-    //, Analyzer(toSyntaxAnalyzer::defaultAnalyzer())
 {
 
     if (name)
         setObjectName(name);
 
     setupUi(this);
+
+    Analyzer = new toSyntaxAnalyzerNL(Example->editor());
+
     KeywordUpper->setChecked(toConfigurationSingle::Instance().keywordUpper());
     ObjectNamesUpper->setChecked(toConfigurationSingle::Instance().objectNamesUpper());
     // TODO SyntaxHighlighting->setChecked(toConfigurationSingle::Instance().highlightType());
@@ -86,7 +91,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
         QFont font;
         if (str.isEmpty())
         {
-            QWidget *wid = new toTreeWidget;
+            QWidget *wid = new toTreeWidget(this);
             font = qApp->font(wid);
         }
         else
@@ -97,38 +102,16 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
         ResultExample->setFont(font);
     }
 
-    try
+    QMetaEnum const& e = toSyntaxAnalyzer::staticMetaObject.enumerator(toSyntaxAnalyzer::staticMetaObject.indexOfEnumerator("wordClass"));
+    for (int idx = 0; idx < e.keyCount(); idx++)
     {
-    	//#define INIT_COL(c) {                                                   \
-    	//            Colors[Analyzer.typeString(c)] = Analyzer.getColor(c);      \
-    	//            SyntaxComponent->addItem(tr(Analyzer.typeString(c).toAscii().constData())); \
-    	//        }
-    	//
-    	//        INIT_COL(toSyntaxAnalyzer::Default);
-    	//        INIT_COL(toSyntaxAnalyzer::Comment);
-    	//        INIT_COL(toSyntaxAnalyzer::Number);
-    	//        INIT_COL(toSyntaxAnalyzer::Keyword);
-    	//        INIT_COL(toSyntaxAnalyzer::String);
-    	//        INIT_COL(toSyntaxAnalyzer::DefaultBg);
-    	//        INIT_COL(toSyntaxAnalyzer::ErrorBg);
-    	//        INIT_COL(toSyntaxAnalyzer::DebugBg);
-    	//        INIT_COL(toSyntaxAnalyzer::CurrentLineMarker);
-    	//        INIT_COL(toSyntaxAnalyzer::StaticBg);
+    	QString colorName = e.key(idx);
+    	//Colors[colorName] = Analyzer->getColor((toSyntaxAnalyzer::wordClass)e.value(idx));
+    	SyntaxComponent->addItem(colorName);
     }
-    TOCATCH;
-    	//
-    	//    Example->setAnalyzer(Analyzer);
+    //    Example->setAnalyzer(Analyzer);
     Example->setReadOnly(true);
 
-#ifdef TO_NO_ORACLE
-    Example->setText(QString::fromLatin1("create procedure CheckObvious\n"
-                                         "begin\n"
-                                         "  set Quest = 'Great'; -- This variable doesn't exist\n"
-                                         "  if Quest = 'Great' then\n"
-                                         "    call Obvious(true);\n"
-                                         "  end if;\n"
-                                         "end"));
-#else
     Example->setText(QString::fromLatin1("create procedure CheckObvious as\n"
                                          "begin\n"
                                          "  Quest:='Great'; -- This variable doesn't exist\n"
@@ -140,7 +123,6 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
                                          " * multi line comment\n"
                                          " */\n"
                                          "end;"));
-#endif
 
     Example->setCurrentDebugLine(4);
     QMap<int, QString> Errors;
@@ -150,22 +132,23 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     Current = NULL;
 }
 
-// void toSyntaxAnalyzer::readColor(const QColor &def, infoType typ) {
-//     QString conf(CONF_COLOR ":");
-//     conf += typeString(typ);
-//     QString res = toConfigurationSingle::Instance().globalConfig(conf, "");
+//void toSyntaxAnalyzer::readColor(const QColor &def, infoType typ)
+//{
+//#define CONF_COLOR  "KeywordColor"
+//	QString conf(CONF_COLOR ":");
+//	conf += typeString(typ);
+//	QString res = toConfigurationSingle::Instance().globalConfig(conf, "");
 //
-//     if (res.isEmpty())
-//         Colors[typ] = def;
-//     else {
-//         int r, g, b;
-//         if (sscanf(res.toAscii().constData(), "%d,%d,%d", &r, &g, &b) != 3)
-//             throw qApp->translate("toSyntaxAnalyzer", "Wrong format of color in setings");
-//         QColor col(r, g, b);
-//         Colors[typ] = col;
-//     }
-// }
-
+//	if (res.isEmpty())
+//		Colors[typ] = def;
+//	else {
+//		int r, g, b;
+//		if (sscanf(res.toAscii().constData(), "%d,%d,%d", &r, &g, &b) != 3)
+//			throw qApp->translate("toSyntaxAnalyzer", "Wrong format of color in setings");
+//		QColor col(r, g, b);
+//		Colors[typ] = col;
+//	}
+//}
 
 void toSyntaxSetup::checkFixedWidth(const QFont &fnt)
 {
@@ -256,8 +239,8 @@ void toSyntaxSetup::selectColor(void)
                 palette.setColor(QPalette::Background, col);
                 ExampleColor->setPalette(palette);
 
-                //                Example->analyzer().Colors[toSyntaxAnalyzer::typeString(coleng)] = col;
-                //                Example->updateSyntaxColor(toSyntaxAnalyzer::typeString(coleng));
+                // Example->analyzer().Colors[toSyntaxAnalyzer::typeString(coleng)] = col;
+                // Example->updateSyntaxColor(toSyntaxAnalyzer::typeString(coleng));
                 Example->update();
             }
         }
@@ -282,8 +265,9 @@ void toSyntaxSetup::saveSetting(void)
     toConfigurationSingle::Instance().setAutoIndent(AutoIndent->isChecked());
     toConfigurationSingle::Instance().setTabStop(TabStop->value());
     toConfigurationSingle::Instance().setTabSpaces(TabSpaces->isChecked());
-//     for (std::map<QString, QColor>::iterator i = Colors.begin();i != Colors.end();i++) {
-//         QString str(CONF_COLOR);
+    for (std::map<QString, QColor>::iterator i = Colors.begin(); i != Colors.end(); i++)
+    {
+//    	QString str(CONF_COLOR);
 //         str += ":";
 //         str += (*i).first;
 //         QString res;
@@ -292,19 +276,19 @@ void toSyntaxSetup::saveSetting(void)
 //                     (*i).second.green(),
 //                     (*i).second.blue());
 //         toConfigurationSingle::Instance().globalSetConfig(str, res);
-//     }
+    }
 
-    //    #define C2T(c) (Colors[Analyzer.typeString((c))])
-    //    toConfigurationSingle::Instance().setSyntaxDefault(C2T(toSyntaxAnalyzer::Default));
-    //    toConfigurationSingle::Instance().setSyntaxComment(C2T(toSyntaxAnalyzer::Comment));
-    //    toConfigurationSingle::Instance().setSyntaxNumber(C2T(toSyntaxAnalyzer::Number));
-    //    toConfigurationSingle::Instance().setSyntaxKeyword(C2T(toSyntaxAnalyzer::Keyword));
-    //    toConfigurationSingle::Instance().setSyntaxString(C2T(toSyntaxAnalyzer::String));
-    //    toConfigurationSingle::Instance().setSyntaxDefaultBg(C2T(toSyntaxAnalyzer::DefaultBg));
-    //    toConfigurationSingle::Instance().setSyntaxDebugBg(C2T(toSyntaxAnalyzer::DebugBg));
-    //    toConfigurationSingle::Instance().setSyntaxErrorBg(C2T(toSyntaxAnalyzer::ErrorBg));
-    //    toConfigurationSingle::Instance().setSyntaxCurrentLineMarker(C2T(toSyntaxAnalyzer::CurrentLineMarker));
-    //    toConfigurationSingle::Instance().setSyntaxStaticBg(C2T(toSyntaxAnalyzer::StaticBg));
+//#define C2T(c) (Colors[Analyzer.typeString((c))])
+//    toConfigurationSingle::Instance().setSyntaxDefault(C2T(toSyntaxAnalyzer::Default));
+//    toConfigurationSingle::Instance().setSyntaxComment(C2T(toSyntaxAnalyzer::Comment));
+//    toConfigurationSingle::Instance().setSyntaxNumber(C2T(toSyntaxAnalyzer::Number));
+//    toConfigurationSingle::Instance().setSyntaxKeyword(C2T(toSyntaxAnalyzer::Keyword));
+//    toConfigurationSingle::Instance().setSyntaxString(C2T(toSyntaxAnalyzer::String));
+//    toConfigurationSingle::Instance().setSyntaxDefaultBg(C2T(toSyntaxAnalyzer::DefaultBg));
+//    toConfigurationSingle::Instance().setSyntaxDebugBg(C2T(toSyntaxAnalyzer::DebugBg));
+//    toConfigurationSingle::Instance().setSyntaxErrorBg(C2T(toSyntaxAnalyzer::ErrorBg));
+//    toConfigurationSingle::Instance().setSyntaxCurrentLineMarker(C2T(toSyntaxAnalyzer::CurrentLineMarker));
+//    toConfigurationSingle::Instance().setSyntaxStaticBg(C2T(toSyntaxAnalyzer::StaticBg));
     //
     //    toSyntaxAnalyzer::defaultAnalyzer().updateSettings();
     toConfigurationSingle::Instance().setExtensions(Extensions->text());
