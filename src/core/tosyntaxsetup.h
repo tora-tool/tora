@@ -49,6 +49,7 @@
 #include <map>
 
 #include <QtCore/QString>
+#include <QtCore/QMetaEnum>
 
 class QFont;
 class QListWidgetItem;
@@ -63,11 +64,10 @@ class toSyntaxSetup : public QWidget
 
     QString List;
     QListWidgetItem *Current;
-    std::map<QString, QColor> Colors;
+    QMetaEnum ColorsEnum;
+    QMap<int, QColor> FGColors, BGColors; // enum toSyntaxAnalyzer::wordClass => QColor
+    QMap<int, QFont> Fonts;               // enum toSyntaxAnalyzer::wordClass => QFont
     toSyntaxAnalyzer* Analyzer;
-    QString color();
-    void checkFixedWidth(const QFont &fnt);
-
 public:
     toSyntaxSetup(QWidget *parent = 0, const char *name = 0, Qt::WFlags fl = 0);
     virtual void saveSetting(void);
@@ -89,6 +89,9 @@ public slots:
         Example->update();
     }
     void openEditorShortcutsDialog();
+private:
+    int wordClass() const;         // returns enum toSyntaxAnalyzer::wordClass
+    void checkFixedWidth(const QFont &fnt);
 };
 
 #endif

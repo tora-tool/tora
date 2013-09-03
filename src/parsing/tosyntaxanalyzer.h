@@ -57,15 +57,15 @@ class QsciLexer;
 class toSyntaxAnalyzer : public QObject
 {
 	Q_OBJECT;
-	Q_ENUMS(statementClass);
-	Q_ENUMS(wordClass);
+	Q_ENUMS(statementClassEnum);
+	Q_ENUMS(wordClassEnum);
 	friend class toHighlightedText;
 public:
     /** Indicates type of statement - DDL/DML or PLSQL block
         This is later used when deciding if trailing semicolon should
         be removed or not before executing.
      */
-    enum statementClass
+    enum statementClassEnum
     {
         UNKNOWN,
         SELECT,		// SELECT/WITH - this one shows data grid with result
@@ -78,7 +78,7 @@ public:
 
     //! This enum defines the meanings of the different styles used by the
     //! SQL lexer. This enum is copied from QsciLexerSQL
-    enum wordClass {
+    enum wordClassEnum {
     	//! The default.  - not used at all - or used for whitespace only
     	Default = QsciLexerSQL::Default,
 
@@ -154,7 +154,7 @@ public:
     	int lineFrom, lineTo;
     	int posFrom, posTo;
     	QString sql, firstWord;
-    	statementClass statementType;
+    	statementClassEnum statementType;
     	statement();
     	statement(unsigned lf, unsigned lt);
     	statement& operator=(statement const& other);
@@ -165,7 +165,7 @@ public:
     toSyntaxAnalyzer(toHighlightedText *parent);
     virtual ~toSyntaxAnalyzer();
 
-    QColor getColor(wordClass type) const;
+    QColor getColor(wordClassEnum type) const;
 
     /*
      * this method should be "stateless" can be called from "both" threads
@@ -180,7 +180,7 @@ public:
 private:
     /** Colors allocated for the different @ref wordClass values.
      */
-    QMap<wordClass, QColor> Colors;
+    QMap<wordClassEnum, QColor> Colors;
 
 };
 

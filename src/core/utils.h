@@ -189,6 +189,8 @@ class toConnectionRegistry;
 // Usage: QString txt = QLatin1String(ENUM_VALUE(toHighlightedTextEditor, HighlighterTypeEnum , enumValue));
 #define ENUM_NAME(o,e,v) (o::staticMetaObject.enumerator(o::staticMetaObject.indexOfEnumerator(#e)).valueToKey((v)))
 
+#define ENUM_REF(o,e) (o::staticMetaObject.enumerator(o::staticMetaObject.indexOfEnumerator(#e)))
+
 namespace Utils
 {
 

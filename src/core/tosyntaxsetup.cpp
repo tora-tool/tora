@@ -47,13 +47,16 @@
 #include "parsing/tosyntaxanalyzer.h"
 #include "editor/todebugtext.h"
 
-#include <QtCore/QMetaEnum>
+#include <Qsci/qscilexersql.h>
+
 #include <QtGui/QFontDialog>
 #include <QtGui/QColorDialog>
 
 toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     : QWidget(parent)
     , toSettingTab("fonts.html")
+	, ColorsEnum(ENUM_REF(toSyntaxAnalyzer,wordClassEnum))
+	, Current(NULL)
 {
 
     if (name)
@@ -102,14 +105,21 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
         ResultExample->setFont(font);
     }
 
-    QMetaEnum const& e = toSyntaxAnalyzer::staticMetaObject.enumerator(toSyntaxAnalyzer::staticMetaObject.indexOfEnumerator("wordClass"));
-    for (int idx = 0; idx < e.keyCount(); idx++)
+    QsciLexerSQL *l = new QsciLexerSQL(this);
+    for (int idx = 0; idx < ColorsEnum.keyCount(); idx++)
     {
-    	QString colorName = e.key(idx);
-    	//Colors[colorName] = Analyzer->getColor((toSyntaxAnalyzer::wordClass)e.value(idx));
+    	QColor fg = l->color((int)ColorsEnum.value(idx));
+    	QColor bg = l->paper((int)ColorsEnum.value(idx));
+    	QFont  fo = l->font((int)ColorsEnum.value(idx));
+
+    	QString colorName = ColorsEnum.key(idx);
+    	int colorNameE = ColorsEnum.value(idx);
+    	FGColors.insert(colorNameE, fg);
+    	BGColors.insert(colorNameE, bg);
+    	Fonts.insert(colorNameE, fo);
     	SyntaxComponent->addItem(colorName);
     }
-    //    Example->setAnalyzer(Analyzer);
+    //Example->setAnalyzer(Analyzer);
     Example->setReadOnly(true);
 
     Example->setText(QString::fromLatin1("create procedure CheckObvious as\n"
@@ -128,8 +138,6 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     QMap<int, QString> Errors;
     Errors[2] = tr("Unknown variable");
     Example->setErrors(Errors);
-
-    Current = NULL;
 }
 
 //void toSyntaxAnalyzer::readColor(const QColor &def, infoType typ)
@@ -202,13 +210,14 @@ void toSyntaxSetup::openEditorShortcutsDialog()
     dia.exec();
 }
 
-QString toSyntaxSetup::color()
+int toSyntaxSetup::wordClass() const
 {
     QString t = Current->text();
-    for (std::map<QString, QColor>::iterator i = Colors.begin(); i != Colors.end(); i++)
-        if (qApp->translate("toSyntaxSetup", (*i).first.toAscii().constData()) == t)
-            return (*i).first;
-    throw tr("Unknown color name %1").arg(t);
+    int e = ColorsEnum.keyToValue(t.toStdString().c_str());
+    if (e == -1)
+    	throw tr("Unknown color name %1").arg(t);
+
+    return e;
 }
 
 void toSyntaxSetup::changeLine(QListWidgetItem *item)
@@ -216,10 +225,27 @@ void toSyntaxSetup::changeLine(QListWidgetItem *item)
     Current = item;
     if (Current)
     {
-        QColor col = Colors[color()];
-        QPalette palette = ExampleColor->palette();
-        palette.setColor(QPalette::Background, col);
+    	toSyntaxAnalyzer::wordClassEnum wc = (toSyntaxAnalyzer::wordClassEnum) wordClass();
+    	QPalette palette = ExampleColor->palette();
+        palette.setColor(QPalette::Background, BGColors[wc]);
+        palette.setColor(QPalette::Foreground, FGColors[wc]);
         ExampleColor->setPalette(palette);
+        //ExampleColor->setAutoFillBackground(true);
+        //ExampleColor->setText("What ever text");
+
+        palette = FGSample->palette();
+        palette.setColor(QPalette::Background, FGColors[wc]);
+        FGSample->setPalette(palette);
+
+        palette = BGSample->palette();
+        palette.setColor(QPalette::Background, BGColors[wc]);
+        BGSample->setPalette(palette);
+
+        palette = FontSample->palette();
+        palette.setColor(QPalette::Background, BGColors[wc]);
+        palette.setColor(QPalette::Foreground, FGColors[wc]);
+        FontSample->setFont(Fonts[wc]);
+        FontSample->setPalette(palette);
     }
 }
 
@@ -229,11 +255,11 @@ void toSyntaxSetup::selectColor(void)
     {
         if (Current)
         {
-            QString coleng = color();
-            QColor col = QColorDialog::getColor(Colors[coleng]);
+            int coleng = wordClass();
+            QColor col = QColorDialog::getColor(FGColors[coleng]);
             if (col.isValid())
             {
-                Colors[coleng] = col;
+                FGColors[coleng] = col;
 
                 QPalette palette = ExampleColor->palette();
                 palette.setColor(QPalette::Background, col);
@@ -265,7 +291,7 @@ void toSyntaxSetup::saveSetting(void)
     toConfigurationSingle::Instance().setAutoIndent(AutoIndent->isChecked());
     toConfigurationSingle::Instance().setTabStop(TabStop->value());
     toConfigurationSingle::Instance().setTabSpaces(TabSpaces->isChecked());
-    for (std::map<QString, QColor>::iterator i = Colors.begin(); i != Colors.end(); i++)
+    //for (std::map<QString, QColor>::iterator i = Colors.begin(); i != Colors.end(); i++)
     {
 //    	QString str(CONF_COLOR);
 //         str += ":";

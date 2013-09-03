@@ -26,7 +26,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="OptionsTab">
       <attribute name="title">
@@ -299,8 +299,14 @@
           <property name="spacing">
            <number>6</number>
           </property>
+          <item row="0" column="0" colspan="2">
+           <widget class="QListWidget" name="SyntaxComponent"/>
+          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="ExampleColor">
+            <property name="autoFillBackground">
+             <bool>true</bool>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -309,8 +315,18 @@
             </property>
            </widget>
           </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="BGSample">
+            <property name="autoFillBackground">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="1">
-           <widget class="QPushButton" name="PushButton3">
+           <widget class="QPushButton" name="PickButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -322,8 +338,71 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="0" colspan="2">
-           <widget class="QListWidget" name="SyntaxComponent"/>
+          <item row="3" column="0">
+           <widget class="QLabel" name="BGColorLabel">
+            <property name="text">
+             <string>Background</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLabel" name="FontSample">
+            <property name="autoFillBackground">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>Sample</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="FontLabel">
+            <property name="text">
+             <string>Font</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0" colspan="2">
+           <widget class="QTextBrowser" name="textBrowser">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>100</height>
+             </size>
+            </property>
+            <property name="openLinks">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="FGColorLabel">
+            <property name="text">
+             <string>Foreground</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="FGSample">
+            <property name="autoFillBackground">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -353,7 +432,7 @@
  </customwidgets>
  <tabstops>
   <tabstop>SyntaxComponent</tabstop>
-  <tabstop>PushButton3</tabstop>
+  <tabstop>PickButton</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -422,7 +501,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>PushButton3</sender>
+   <sender>PickButton</sender>
    <signal>clicked()</signal>
    <receiver>toSyntaxSetupUI</receiver>
    <slot>selectColor()</slot>
