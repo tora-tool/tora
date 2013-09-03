@@ -110,15 +110,16 @@ OciException::OciException(tstring where, OCIEnv* envh) :
 	{
 	case OCI_SUCCESS:
 		_sql_error_code.push_back(errorcode);
-		_mess += (const char *)buffer;
+		_mess.append((const char *)buffer);
 		break;
 	case OCI_INVALID_HANDLE:
 		_sql_error_code.push_back(21001); // my bogus value
-		_mess += "ORACLE_HOME not found\n";
+		_mess.append("ORACLE_HOME not found\n");
 		break;
 	case OCI_NO_DATA:
 		_sql_error_code.push_back(21002); // my bogus value
-		_mess += "OCIErrorGet: OCI_NO_DATA\n";
+		_mess.append("OCIErrorGet: OCI_NO_DATA\n");
+		break;
 	default:
 		_sql_error_code.push_back(0);
 	}
@@ -126,7 +127,8 @@ OciException::OciException(tstring where, OCIEnv* envh) :
 #ifdef DEBUG
 	dbg::stack s;
 	std::copy(s.begin(), s.end(), std::ostream_iterator<dbg::stack_frame>(_stack, "\n"));
-	_mess += "\n" + _stack.str();
+	_mess.push_back('\n');
+	_mess.append(_stack.str());
 #endif
 
 	_parse_offset = 0;
@@ -145,25 +147,33 @@ OciException::OciException(tstring where, OCIError* errh) :
 	case OCI_SUCCESS:
 	{
 		_sql_error_code.push_back(errorcode);
-		_mess += '\n' + buffer;
+		_mess.push_back('\n');
+		_mess.append(buffer);
 		break;
 	}
 	case OCI_NO_DATA:
 	{
 		_sql_error_code.push_back(21002);
-		_mess += '\n' + "OCIErrorGet: OCI_NO_DATA\n";
+		_mess.push_back('\n');
+		_mess.append("OCIErrorGet: OCI_NO_DATA\n");
+		break;
 	}
 	default:
 	{
+		tostream s;
 		_sql_error_code.push_back(0);
-		_mess += '\n' + "OCIErrorGet: unknown error: \n" + res;
+		_mess.push_back('\n');
+		_mess.append("OCIErrorGet: unknown error: \n");
+		s << res;
+		_mess.append(s.str());
 	}
 	}
 
 #ifdef DEBUG
 	dbg::stack s;
 	std::copy(s.begin(), s.end(), std::ostream_iterator<dbg::stack_frame>(_stack, "\n"));
-	_mess += "\n" + _stack.str();
+	_mess.push_back('\n');
+	_mess.append(_stack.str());
 #endif
 
 	_parse_offset = 0;
@@ -172,12 +182,13 @@ OciException::OciException(tstring where, OCIError* errh) :
 OciException::OciException(tstring where, const char* msg) :
 	_where(where), _mess(where), _last_sql(""), _parse_offset(0), _line(0), _column(0)
 {
-	_mess += '\n' + msg;
-
+	_mess.push_back('\n');
+	_mess.append(msg);
 #ifdef DEBUG
 	dbg::stack s;
 	std::copy(s.begin(), s.end(), std::ostream_iterator<dbg::stack_frame>(_stack, "\n"));
-	_mess += "\n" + _stack.str();
+	_mess.push_back('\n');
+	_mess.append(_stack.str());
 #endif
 }
 

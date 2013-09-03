@@ -1630,11 +1630,13 @@ OciException::OciException(tstring where, SqlStatement& stmt) :
 		snprintf(buffer+l, sizeof(buffer)-l, "\n\nlast SQL statement:\n%s\n", sql);
 		//#endif
 	}
-	_mess += '\n' + tstring(buffer);
+	_mess.push_back('\n');
+	_mess.append(buffer);
 #ifdef DEBUG
 	dbg::stack s;
 	std::copy(s.begin(), s.end(), std::ostream_iterator<dbg::stack_frame>(_stack, "\n"));
-	_mess += "\n" + _stack.str();
+	_mess.push_back('\n');
+	_mess.append(_stack.str());
 #endif
 }
 
