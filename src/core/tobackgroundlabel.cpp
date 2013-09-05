@@ -50,8 +50,14 @@ QMovie* toBackgroundLabel::Animation = 0;
 
 toBackgroundLabel::toBackgroundLabel(QWidget *parent) : QLabel(parent)
 {
-    Animation = new QMovie(":/icons/backgroundlabel.gif");
-    setMovie(Animation);
+	if (Animation == NULL)
+		Animation = new QMovie(":/icons/backgroundlabel.gif");
+	setMovie(Animation);
+
+	// Start animation and stop it again
+	// this make the image displayed immediately
+	movie()->start();
+	Animation->setPaused(true);
 }
 
 toBackgroundLabel::~toBackgroundLabel()
